@@ -29,7 +29,7 @@ use Propel\Tests\Bookstore\ReviewPeer;
 use Propel\Runtime\Propel;
 use Propel\Runtime\Collection\PropelCollection;
 use Propel\Runtime\Exception\PropelException;
-use Propel\Runtime\Formatter\PropelFormatter;
+use Propel\Runtime\Formatter\AbstractFormatter;
 use Propel\Runtime\Formatter\PropelStatementFormatter;
 use Propel\Runtime\Util\BasePeer;
 use Propel\Runtime\Util\PropelModelPager;
@@ -69,29 +69,29 @@ class ModelCriteriaTest extends BookstoreTestBase
     public function testFormatter()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
-        $this->assertTrue($c->getFormatter() instanceof PropelFormatter, 'getFormatter() returns a PropelFormatter instance');
+        $this->assertTrue($c->getFormatter() instanceof AbstractFormatter, 'getFormatter() returns a PropelFormatter instance');
 
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $c->setFormatter(ModelCriteria::FORMAT_STATEMENT);
-        $this->assertTrue($c->getFormatter() instanceof PropelStatementFormatter, 'setFormatter() accepts the name of a PropelFormatter class');
+        $this->assertTrue($c->getFormatter() instanceof PropelStatementFormatter, 'setFormatter() accepts the name of a AbstractFormatter class');
 
         try {
             $c->setFormatter('Propel\Tests\Bookstore\Book');
-            $this->fail('setFormatter() throws an exception when passed the name of a class not extending PropelFormatter');
+            $this->fail('setFormatter() throws an exception when passed the name of a class not extending AbstractFormatter');
         } catch(PropelException $e) {
-            $this->assertTrue(true, 'setFormatter() throws an exception when passed the name of a class not extending PropelFormatter');
+            $this->assertTrue(true, 'setFormatter() throws an exception when passed the name of a class not extending AbstractFormatter');
         }
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $formatter = new PropelStatementFormatter();
         $c->setFormatter($formatter);
-        $this->assertTrue($c->getFormatter() instanceof PropelStatementFormatter, 'setFormatter() accepts a PropelFormatter instance');
+        $this->assertTrue($c->getFormatter() instanceof PropelStatementFormatter, 'setFormatter() accepts a AbstractFormatter instance');
 
         try {
             $formatter = new Book();
             $c->setFormatter($formatter);
-            $this->fail('setFormatter() throws an exception when passed an object not extending PropelFormatter');
+            $this->fail('setFormatter() throws an exception when passed an object not extending AbstractFormatter');
         } catch(PropelException $e) {
-            $this->assertTrue(true, 'setFormatter() throws an exception when passedan object not extending PropelFormatter');
+            $this->assertTrue(true, 'setFormatter() throws an exception when passedan object not extending AbstractFormatter');
         }
 
     }

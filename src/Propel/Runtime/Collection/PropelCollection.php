@@ -12,7 +12,7 @@ namespace Propel\Runtime\Collection;
 
 use Propel\Runtime\Propel;
 use Propel\Runtime\Exception\PropelException;
-use Propel\Runtime\Formatter\PropelFormatter;
+use Propel\Runtime\Formatter\AbstractFormatter;
 use Propel\Runtime\Om\BaseObject;
 use Propel\Runtime\Parser\AbstractParser;
 use Propel\Runtime\Util\BasePeer;
@@ -51,7 +51,7 @@ class PropelCollection extends ArrayObject implements Serializable
     protected $iterator;
 
     /**
-     * @var       PropelFormatter
+     * @var       AbstractFormatter
      */
     protected $formatter;
 
@@ -463,15 +463,15 @@ class PropelCollection extends ArrayObject implements Serializable
     }
 
     /**
-     * @param     PropelFormatter  $formatter
+     * @param     AbstractFormatter  $formatter
      */
-    public function setFormatter(PropelFormatter $formatter)
+    public function setFormatter(AbstractFormatter $formatter)
     {
         $this->formatter = $formatter;
     }
 
     /**
-     * @return    PropelFormatter
+     * @return    AbstractFormatter
      */
     public function getFormatter()
     {

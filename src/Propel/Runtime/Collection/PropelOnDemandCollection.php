@@ -11,7 +11,7 @@
 namespace Propel\Runtime\Collection;
 
 use Propel\Runtime\Exception\PropelException;
-use Propel\Runtime\Formatter\PropelFormatter;
+use Propel\Runtime\Formatter\AbstractFormatter;
 use Propel\Runtime\Util\BasePeer;
 
 use \PDOStatement;
@@ -35,10 +35,10 @@ class PropelOnDemandCollection extends PropelCollection
         $isValid = null;
 
     /**
-     * @param     PropelFormatter $formatter
+     * @param     AbstractFormatter $formatter
      * @param     PDOStatement $stmt
      */
-    public function initIterator(PropelFormatter $formatter, PDOStatement $stmt)
+    public function initIterator(AbstractFormatter $formatter, PDOStatement $stmt)
     {
         $this->iterator = new PropelOnDemandIterator($formatter, $stmt);
     }

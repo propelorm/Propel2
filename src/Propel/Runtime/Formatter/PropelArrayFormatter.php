@@ -23,7 +23,7 @@ use \PDOStatement;
  * @version    $Revision$
  * @package    propel.runtime.formatter
  */
-class PropelArrayFormatter extends PropelFormatter
+class PropelArrayFormatter extends AbstractFormatter
 {
     protected $collectionName = '\Propel\Runtime\Collection\PropelArrayCollection';
     protected $alreadyHydratedObjects = array();

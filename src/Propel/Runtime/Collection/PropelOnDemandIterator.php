@@ -12,7 +12,7 @@ namespace Propel\Runtime\Collection;
 
 use Propel\Runtime\Propel;
 use Propel\Runtime\Exception\PropelException;
-use Propel\Runtime\Formatter\PropelFormatter;
+use Propel\Runtime\Formatter\AbstractFormatter;
 
 use \PDO;
 use \PDOStatement;
@@ -42,10 +42,10 @@ class PropelOnDemandIterator implements \Iterator
         $enableInstancePoolingOnFinish = false;
 
     /**
-     * @param     PropelFormatter  $formatter
+     * @param     AbstractFormatter  $formatter
      * @param     PDOStatement     $stmt
      */
-    public function __construct(PropelFormatter $formatter, PDOStatement $stmt)
+    public function __construct(AbstractFormatter $formatter, PDOStatement $stmt)
     {
         $this->formatter = $formatter;
         $this->stmt = $stmt;

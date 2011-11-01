@@ -13,7 +13,7 @@ namespace Propel\Runtime\Query;
 use Propel\Runtime\Propel;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\PropelException;
-use Propel\Runtime\Formatter\PropelFormatter;
+use Propel\Runtime\Formatter\AbstractFormatter;
 use Propel\Runtime\Formatter\PropelObjectFormatter;
 use Propel\Runtime\Map\ColumnMap;
 use Propel\Runtime\Map\RelationMap;
@@ -166,13 +166,13 @@ class ModelCriteria extends Criteria
 
     /**
      * Sets the formatter to use for the find() output
-     * Formatters must extend PropelFormatter
+     * Formatters must extend AbstractFormatter
      * Use the ModelCriteria constants for class names:
      * <code>
      * $c->setFormatter(ModelCriteria::FORMAT_ARRAY);
      * </code>
      *
-     * @param     string|PropelFormatter $formatter a formatter class name, or a formatter instance
+     * @param     string|AbstractFormatter $formatter a formatter class name, or a formatter instance
      * @return    ModelCriteria The current object, for fluid interface
      */
     public function setFormatter($formatter)
@@ -180,8 +180,8 @@ class ModelCriteria extends Criteria
         if(is_string($formatter)) {
             $formatter = new $formatter();
         }
-        if (!$formatter instanceof PropelFormatter) {
-            throw new PropelException('setFormatter() only accepts classes extending PropelFormatter');
+        if (!$formatter instanceof AbstractFormatter) {
+            throw new PropelException('setFormatter() only accepts classes extending AbstractFormatter');
         }
         $this->formatter = $formatter;
 
@@ -192,7 +192,7 @@ class ModelCriteria extends Criteria
      * Gets the formatter to use for the find() output
      * Defaults to an instance of ModelCriteria::$defaultFormatterClass, i.e. PropelObjectsFormatter
      *
-     * @return PropelFormatter
+     * @return AbstractFormatter
      */
     public function getFormatter()
     {

@@ -23,7 +23,7 @@ use \PDOStatement;
  * @version    $Revision$
  * @package    propel.runtime.formatter
  */
-abstract class PropelFormatter
+abstract class AbstractFormatter
 {
     protected
         $dbName,
@@ -47,7 +47,7 @@ abstract class PropelFormatter
      *
      * @param ModelCriteria $criteria
      *
-     * @return PropelFormatter The current formatter object
+     * @return AbstractFormatter The current formatter object
      */
     public function init(ModelCriteria $criteria)
     {

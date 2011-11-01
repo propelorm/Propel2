@@ -20,7 +20,7 @@ use \PDOStatement;
  * @version    $Revision$
  * @package    propel.runtime.formatter
  */
-class PropelStatementFormatter extends PropelFormatter
+class PropelStatementFormatter extends AbstractFormatter
 {
     public function format(PDOStatement $stmt)
     {
