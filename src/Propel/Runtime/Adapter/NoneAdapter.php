@@ -19,7 +19,7 @@ namespace Propel\Runtime\Adapter;
  * @version    $Revision$
  * @package    propel.runtime.adapter
  */
-class DBNone extends AbstractAdapter
+class NoneAdapter extends AbstractAdapter
 {
 
     /**
