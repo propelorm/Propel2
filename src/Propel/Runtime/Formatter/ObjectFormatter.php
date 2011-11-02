@@ -17,7 +17,7 @@ use Propel\Runtime\Exception\PropelException;
 
 /**
  * Object formatter for Propel query
- * format() returns a PropelObjectCollection of Propel model objects
+ * format() returns a ObjectCollection of Propel model objects
  *
  * @author     Francois Zaninotto
  * @version    $Revision$
@@ -25,7 +25,7 @@ use Propel\Runtime\Exception\PropelException;
  */
 class ObjectFormatter extends AbstractFormatter
 {
-    protected $collectionName = '\Propel\Runtime\Collection\PropelObjectCollection';
+    protected $collectionName = '\Propel\Runtime\Collection\ObjectCollection';
 
     public function format(PDOStatement $stmt)
     {

@@ -23,7 +23,7 @@ use Propel\Runtime\Query\PropelQuery;
  * Test class for PropelOnDemandCollection.
  *
  * @author     Francois Zaninotto
- * @version    $Id: PropelObjectCollectionTest.php 1348 2009-12-03 21:49:00Z francois $
+ * @version    $Id: ObjectCollectionTest.php 1348 2009-12-03 21:49:00Z francois $
  * @package    runtime.collection
  */
 class PropelOnDemandCollectionTest extends BookstoreEmptyTestBase
@@ -92,7 +92,7 @@ class PropelOnDemandCollectionTest extends BookstoreEmptyTestBase
     public function testToArray()
     {
         $this->assertNotEquals(array(), $this->books->toArray());
-        // since the code from toArray comes frmo PropelObjectCollection, we'll assume it's good
+        // since the code from toArray comes frmo ObjectCollection, we'll assume it's good
     }
 
     /**

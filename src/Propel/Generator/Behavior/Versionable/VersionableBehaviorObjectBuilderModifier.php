@@ -443,7 +443,7 @@ public function getOneVersion(\$versionNumber, \$con = null)
  *
  * @param   ConnectionInterface \$con the connection to use
  *
- * @return  PropelObjectCollection A list of {$versionARClassname} objects
+ * @return  ObjectCollection A list of {$versionARClassname} objects
  */
 public function getAllVersions(\$con = null)
 {

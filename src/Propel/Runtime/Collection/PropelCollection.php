@@ -494,7 +494,7 @@ class PropelCollection extends ArrayObject implements Serializable
     /**
      * Populate the current collection from a string, using a given parser format
      * <code>
-     * $coll = new PropelObjectCollection();
+     * $coll = new ObjectCollection();
      * $coll->setModel('Book');
      * $coll->importFrom('JSON', '{{"Id":9012,"Title":"Don Juan","ISBN":"0140422161","Price":12.99,"PublisherId":1234,"AuthorId":5678}}');
      * </code>

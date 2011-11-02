@@ -21,7 +21,7 @@ use Propel\Tests\Bookstore\Behavior\Table10;
 use Propel\Tests\Bookstore\Behavior\Table10Peer;
 
 use Propel\Runtime\Propel;
-use Propel\Runtime\Collection\PropelObjectCollection;
+use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Query\Criteria;
 use Propel\Runtime\Om\NestedSetRecursiveIterator;
@@ -442,7 +442,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
                |  \
                t6 t7
         */
-    $this->assertTrue($t2->getChildren() instanceof PropelObjectCollection, 'getChildren() returns a collection');
+    $this->assertTrue($t2->getChildren() instanceof ObjectCollection, 'getChildren() returns a collection');
         $this->assertEquals(0, count($t2->getChildren()), 'getChildren() returns an empty collection for leafs');
         $children = $t3->getChildren();
         $expected = array(

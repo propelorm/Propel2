@@ -242,7 +242,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
             '\Propel\Runtime\Om\Persistent',
             '\Propel\Runtime\Util\BasePeer',
             '\Propel\Runtime\Collection\PropelCollection',
-            '\Propel\Runtime\Collection\PropelObjectCollection'
+            '\Propel\Runtime\Collection\ObjectCollection'
         );
 
         $table = $this->getTable();
@@ -3449,7 +3449,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
         if (null !== \$this->$collName && !\$overrideExisting) {
             return;
         }
-        \$this->$collName = new PropelObjectCollection();
+        \$this->$collName = new ObjectCollection();
         \$this->{$collName}->setModel('" . $this->getNewStubObjectBuilder($refFK->getTable())->getClassname() . "');
     }
 ";
@@ -3890,7 +3890,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
      */
     public function init$relCol()
     {
-        \$this->$collName = new PropelObjectCollection();
+        \$this->$collName = new ObjectCollection();
         \$this->{$collName}->setModel('$relatedObjectClassName');
     }
 ";

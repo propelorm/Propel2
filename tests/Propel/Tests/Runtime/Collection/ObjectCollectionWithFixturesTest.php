@@ -20,18 +20,18 @@ use Propel\Tests\Bookstore\BookPeer;
 use Propel\Tests\Bookstore\BookQuery;
 
 use Propel\Runtime\Propel;
-use Propel\Runtime\Collection\PropelObjectCollection;
+use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Query\Criteria;
 use Propel\Runtime\Query\PropelQuery;
 
 /**
- * Test class for PropelObjectCollection.
+ * Test class for ObjectCollection.
  *
  * @author     Francois Zaninotto
  * @version    $Id$
  * @package    runtime.collection
  */
-class PropelObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
+class ObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
 {
     protected function setUp()
     {
@@ -82,7 +82,7 @@ class PropelObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
             array('Title' => 'Mansfield Park', 'AuthorId' => $author->getId()),
             array('Title' => 'Pride And PRejudice', 'AuthorId' => $author->getId())
         );
-        $col = new PropelObjectCollection();
+        $col = new ObjectCollection();
         $col->setModel('\Propel\Tests\Bookstore\Book');
         $col->fromArray($books);
         $col->save();
@@ -205,7 +205,7 @@ class PropelObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
         BookPeer::clearInstancePool();
         $authors = AuthorQuery::create()->find();
         $books = $authors->populateRelation('Book');
-        $this->assertTrue($books instanceof PropelObjectCollection, 'populateRelation() returns a PropelCollection instance');
+        $this->assertTrue($books instanceof ObjectCollection, 'populateRelation() returns a PropelCollection instance');
         $this->assertEquals('Propel\Tests\Bookstore\Book', $books->getModel(), 'populateRelation() returns a collection of the related objects');
         $this->assertEquals(4, count($books), 'populateRelation() the list of related objects');
     }
@@ -230,7 +230,7 @@ class PropelObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
             ->find($this->con);
         $count = $this->con->getQueryCount();
         $books = $authors->populateRelation('Book', null, $this->con);
-        $this->assertTrue($books instanceof PropelObjectCollection, 'populateRelation() returns a PropelCollection instance');
+        $this->assertTrue($books instanceof ObjectCollection, 'populateRelation() returns a PropelCollection instance');
         $this->assertEquals('Propel\Tests\Bookstore\Book', $books->getModel(), 'populateRelation() returns a collection of the related objects');
         $this->assertEquals(0, count($books), 'populateRelation() the list of related objects');
         $this->assertEquals($count, $this->con->getQueryCount(), 'populateRelation() doesn\'t issue a new query on empy collections');

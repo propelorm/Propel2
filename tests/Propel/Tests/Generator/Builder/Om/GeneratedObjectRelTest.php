@@ -33,7 +33,7 @@ use Propel\Tests\Bookstore\Review;
 
 use Propel\Runtime\Propel;
 use Propel\Runtime\Query\Criteria;
-use Propel\Runtime\Collection\PropelObjectCollection;
+use Propel\Runtime\Collection\ObjectCollection;
 
 use \DateTime;
 
@@ -174,7 +174,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
     {
         $blc1 = new BookClubList();
         $books = $blc1->getBooks();
-        $this->assertTrue($books instanceof PropelObjectCollection, 'getCrossRefFK() returns a Propel collection');
+        $this->assertTrue($books instanceof ObjectCollection, 'getCrossRefFK() returns a Propel collection');
         $this->assertEquals('Book', $books->getModel(), 'getCrossRefFK() returns a collection of the correct model');
         $this->assertEquals(0, count($books), 'getCrossRefFK() returns an empty list for new objects');
         $query = BookQuery::create()
@@ -188,7 +188,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         BookstoreDataPopulator::populate();
         $blc1 = BookClubListQuery::create()->findOneByGroupLeader('Crazyleggs');
         $books = $blc1->getBooks();
-        $this->assertTrue($books instanceof PropelObjectCollection, 'getCrossRefFK() returns a Propel collection');
+        $this->assertTrue($books instanceof ObjectCollection, 'getCrossRefFK() returns a Propel collection');
         $this->assertEquals('Propel\Tests\Bookstore\Book', $books->getModel(), 'getCrossRefFK() returns a collection of the correct model');
         $this->assertEquals(2, count($books), 'getCrossRefFK() returns the correct list of objects');
         $query = BookQuery::create()
@@ -248,7 +248,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         $list->clearBookListRels();
         $list->clearBooks();
         $books = $list->getBooks();
-        $expected = new PropelObjectCollection(array($book));
+        $expected = new ObjectCollection(array($book));
         $expected->setModel('Book');
         $this->assertEquals($expected, $books, 'addCrossFk() adds the object properly');
         $this->assertEquals(1, $list->countBookListRels());
@@ -406,7 +406,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         BookClubListQuery::create()->deleteAll();
         BookListRelQuery::create()->deleteAll();
 
-        $books = new PropelObjectCollection();
+        $books = new ObjectCollection();
         for ($i = 0; $i < 10; $i++) {
             $b = new Book();
             $b->setTitle('My Book ' . $i);
@@ -509,7 +509,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         BookClubListQuery::create()->deleteAll();
         BookListRelQuery::create()->deleteAll();
 
-        $books = new PropelObjectCollection();
+        $books = new ObjectCollection();
         $this->assertEquals(0, $books->count());
 
         // Basic usage
@@ -538,7 +538,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         // Modify it but don't save it
         $book->setTitle('My Title');
 
-        $coll = new PropelObjectCollection();
+        $coll = new ObjectCollection();
         $coll[] = $book;
 
         BookPeer::clearInstancePool();
@@ -567,7 +567,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         BookClubListQuery::create()->deleteAll();
         BookListRelQuery::create()->deleteAll();
 
-        $coll = new PropelObjectCollection();
+        $coll = new ObjectCollection();
         $coll->setModel('Book');
 
         $coll[] = new Book();
@@ -625,7 +625,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         BookListRelQuery::create()->deleteAll();
 
         $bookClubList = new BookClubList();
-        $bookClubList->setBooks(new PropelObjectCollection());
+        $bookClubList->setBooks(new ObjectCollection());
         $bookClubList->save();
 
         $this->assertEquals(0, count($bookClubList->getBooks()));
@@ -642,7 +642,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         BookClubListQuery::create()->deleteAll();
         BookListRelQuery::create()->deleteAll();
 
-        $books = new PropelObjectCollection();
+        $books = new ObjectCollection();
         foreach (array('foo', 'bar') as $title) {
             $b = new Book();
             $b->setTitle($title);
@@ -657,7 +657,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         $this->assertEquals('foo', $books[0]->getTitle());
         $this->assertEquals('bar', $books[1]->getTitle());
 
-        $books = new PropelObjectCollection();
+        $books = new ObjectCollection();
         foreach (array('bam', 'bom') as $title) {
             $b = new Book();
             $b->setTitle($title);

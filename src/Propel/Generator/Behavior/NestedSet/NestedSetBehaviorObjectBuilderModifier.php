@@ -74,7 +74,7 @@ protected \$nestedSetQueries = array();
 
 /**
  * Internal cache for children nodes
- * @var        null|PropelObjectCollection
+ * @var        null|ObjectCollection
  */
 protected \$collNestedSetChildren = null;
 
@@ -705,7 +705,7 @@ public function clearNestedSetChildren()
  */
 public function initNestedSetChildren()
 {
-    \$this->collNestedSetChildren = new PropelObjectCollection();
+    \$this->collNestedSetChildren = new ObjectCollection();
     \$this->collNestedSetChildren->setModel('" . $this->builder->getNewStubObjectBuilder($this->table)->getFullyQualifiedClassname() . "');
 }
 ";

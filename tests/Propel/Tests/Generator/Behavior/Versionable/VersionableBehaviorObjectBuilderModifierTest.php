@@ -14,7 +14,7 @@ use Propel\Generator\Util\QuickBuilder;
 use Propel\Generator\Behavior\Versionable\VersionableBehavior;
 
 use Propel\Runtime\Propel;
-use Propel\Runtime\Collection\PropelObjectCollection;
+use Propel\Runtime\Collection\ObjectCollection;
 
 /**
  * Tests for VersionableBehavior class
@@ -573,7 +573,7 @@ EOF;
         $o->setBar(456); // version 2
         $o->save();
         $versions = $o->getAllVersions();
-        $this->assertTrue($versions instanceof PropelObjectCollection);
+        $this->assertTrue($versions instanceof ObjectCollection);
         $this->assertEquals(2, $versions->count());
         $this->assertEquals(1, $versions[0]->getVersion());
         $this->assertEquals(123, $versions[0]->getBar());

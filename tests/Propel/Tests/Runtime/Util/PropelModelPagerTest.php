@@ -15,7 +15,7 @@ use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\BookQuery;
 
 use Propel\Runtime\Collection\ArrayCollection;
-use Propel\Runtime\Collection\PropelObjectCollection;
+use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Util\PropelModelPager;
 use Propel\Runtime\Query\ModelCriteria;
 
@@ -34,7 +34,7 @@ class PropelModelPagerTest extends BookstoreEmptyTestBase
     protected function createBooks($nb = 15, $con = null)
     {
         BookQuery::create()->deleteAll($con);
-        $books = new PropelObjectCollection();
+        $books = new ObjectCollection();
         $books->setModel('\Propel\Tests\Bookstore\Book');
         for ($i=0; $i < $nb; $i++) {
             $b = new Book();
@@ -86,7 +86,7 @@ class PropelModelPagerTest extends BookstoreEmptyTestBase
     {
         $this->createBooks(5);
         $pager = $this->getPager(4, 1);
-        $this->assertTrue($pager->getResults() instanceof PropelObjectCollection, 'getResults() returns a PropelObjectCollection');
+        $this->assertTrue($pager->getResults() instanceof ObjectCollection, 'getResults() returns a PropelObjectCollection');
         $this->assertEquals(4, count($pager->getResults()), 'getResults() returns at most $maxPerPage results');
         $pager = $this->getPager(4, 2);
         $this->assertEquals(1, count($pager->getResults()), 'getResults() returns the remaining results when in the last page');

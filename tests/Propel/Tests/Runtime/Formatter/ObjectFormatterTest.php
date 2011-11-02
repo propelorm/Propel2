@@ -19,7 +19,7 @@ use Propel\Tests\Bookstore\BookPeer;
 use Propel\Runtime\Propel;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Collection\PropelCollection;
-use Propel\Runtime\Collection\PropelObjectCollection;
+use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Formatter\ObjectFormatter;
 use Propel\Runtime\Query\ModelCriteria;
 
@@ -58,7 +58,7 @@ class ObjectFormatterTest extends BookstoreEmptyTestBase
         $formatter = new ObjectFormatter();
         $formatter->setClass('\Propel\Tests\Bookstore\Book');
         $books = $formatter->format($stmt);
-        $this->assertTrue($books instanceof PropelObjectCollection);
+        $this->assertTrue($books instanceof ObjectCollection);
         $this->assertEquals(4, $books->count());
     }
 

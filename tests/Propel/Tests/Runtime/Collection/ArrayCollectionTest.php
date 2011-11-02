@@ -8,7 +8,7 @@
  * @license    MIT License
  */
 
-namespace Propel\Tests\Runtime\collection;
+namespace Propel\Tests\Runtime\Collection;
 
 use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
 use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
@@ -18,7 +18,7 @@ use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\BookPeer;
 use Propel\Tests\Bookstore\ContestView;
 
-use Propel\Runtime\Collection\PropelObjectCollection;
+use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Collection\ArrayCollection;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Query\ModelCriteria;
@@ -26,10 +26,10 @@ use Propel\Runtime\Query\PropelQuery;
 use Propel\Runtime\Util\BasePeer;
 
 /**
- * Test class for PropelObjectCollection.
+ * Test class for ObjectCollection.
  *
  * @author     Francois Zaninotto
- * @version    $Id: PropelObjectCollectionTest.php 1348 2009-12-03 21:49:00Z francois $
+ * @version    $Id: ObjectCollectionTest.php 1348 2009-12-03 21:49:00Z francois $
  * @package    runtime.collection
  */
 class ArrayCollectionTest extends BookstoreEmptyTestBase
@@ -235,7 +235,7 @@ class ArrayCollectionTest extends BookstoreEmptyTestBase
 
 }
 
-class TestableArrayCollection extends PropelArrayCollection
+class TestableArrayCollection extends ArrayCollection
 {
     public function getWorkerObject()
     {

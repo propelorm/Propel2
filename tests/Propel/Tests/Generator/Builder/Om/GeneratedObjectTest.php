@@ -45,7 +45,7 @@ use Propel\Tests\Bookstore\BookstoreContestEntry;
 use Propel\Tests\Bookstore\BookstoreSale;
 
 use Propel\Runtime\Propel;
-use Propel\Runtime\Collection\PropelObjectCollection;
+use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Query\Criteria;
 use Propel\Runtime\Util\BasePeer;
 
@@ -1063,7 +1063,7 @@ EOF;
         BookQuery::create()->deleteAll();
         AuthorQuery::create()->deleteAll();
 
-        $coll = new PropelObjectCollection();
+        $coll = new ObjectCollection();
         $coll->setModel('\Propel\Tests\Bookstore\Book');
 
         for ($i = 0; $i < 3; $i++) {
@@ -1076,7 +1076,7 @@ EOF;
         $a->setBooks($coll);
         $a->save();
 
-        $this->assertInstanceOf('\Propel\Runtime\Collection\PropelObjectCollection', $a->getBooks());
+        $this->assertInstanceOf('\Propel\Runtime\Collection\ObjectCollection', $a->getBooks());
         $this->assertEquals(3, $a->getBooks()->count());
         $this->assertEquals(1, AuthorQuery::create()->count());
         $this->assertEquals(3, BookQuery::create()->count());
@@ -1141,7 +1141,7 @@ EOF;
         BookQuery::create()->deleteAll();
         AuthorQuery::create()->deleteAll();
 
-        $books = new PropelObjectCollection();
+        $books = new ObjectCollection();
         $this->assertEquals(0, $books->count());
 
         // Basic usage
@@ -1167,7 +1167,7 @@ EOF;
         // Modify it but don't save it
         $book->setTitle('My Title');
 
-        $coll = new PropelObjectCollection();
+        $coll = new ObjectCollection();
         $coll[] = $book;
 
         BookPeer::clearInstancePool();
@@ -1194,7 +1194,7 @@ EOF;
         BookQuery::create()->deleteAll();
         AuthorQuery::create()->deleteAll();
 
-        $coll = new PropelObjectCollection();
+        $coll = new ObjectCollection();
         $coll->setModel('\Propel\Tests\Bookstore\Book');
 
         $coll[] = new Book();
@@ -1248,7 +1248,7 @@ EOF;
         AuthorQuery::create()->deleteAll();
 
         $a = new Author();
-        $a->setBooks(new PropelObjectCollection());
+        $a->setBooks(new ObjectCollection());
         $a->save();
 
         $this->assertEquals(0, count($a->getBooks()));
@@ -1263,7 +1263,7 @@ EOF;
         BookQuery::create()->deleteAll();
         AuthorQuery::create()->deleteAll();
 
-        $books = new PropelObjectCollection();
+        $books = new ObjectCollection();
         foreach (array('foo', 'bar') as $title) {
             $b = new Book();
             $b->setTitle($title);
@@ -1278,7 +1278,7 @@ EOF;
         $this->assertEquals('foo', $books[0]->getTitle());
         $this->assertEquals('bar', $books[1]->getTitle());
 
-        $books = new PropelObjectCollection();
+        $books = new ObjectCollection();
         foreach (array('bam', 'bom') as $title) {
             $b = new Book();
             $b->setTitle($title);

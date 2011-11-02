@@ -1160,7 +1160,7 @@ class ModelCriteria extends Criteria
      *
      * @param     ConnectionInterface $con an optional connection object
      *
-     * @return     PropelObjectCollection|array|mixed the list of results, formatted by the current formatter
+     * @return     ObjectCollection|array|mixed the list of results, formatted by the current formatter
      */
     public function find($con = null)
     {

@@ -15,7 +15,7 @@ use Propel\Tests\Helpers\Bookstore\Behavior\BookstoreNestedSetTestBase;
 use Propel\Tests\Bookstore\Behavior\Table9;
 use Propel\Tests\Bookstore\Behavior\Table9Query;
 
-use Propel\Runtime\Collection\PropelObjectCollection;
+use Propel\Runtime\Collection\ObjectCollection;
 
 /**
  * Tests for NestedSetBehaviorQueryBuilderModifier class
@@ -279,7 +279,7 @@ class NestedSetBehaviorQueryBuilderModifierTest extends BookstoreNestedSetTestBa
 
     protected function buildCollection($arr)
     {
-        $coll = new PropelObjectCollection();
+        $coll = new ObjectCollection();
         $coll->setData($arr);
         $coll->setModel('Table9');
 

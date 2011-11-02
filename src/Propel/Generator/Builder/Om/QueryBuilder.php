@@ -567,7 +567,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
      * @param     array \$keys Primary keys to use for the query
      * @param     ConnectionInterface \$con an optional connection object
      *
-     * @return    PropelObjectCollection|array|mixed the list of results, formatted by the current formatter
+     * @return    ObjectCollection|array|mixed the list of results, formatted by the current formatter
      */
     public function findPks(\$keys, \$con = null)
     {

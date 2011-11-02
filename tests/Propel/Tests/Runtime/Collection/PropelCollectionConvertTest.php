@@ -11,7 +11,7 @@
 namespace Propel\Tests\Runtime\Collection;
 
 use Propel\Runtime\Collection\PropelCollection;
-use Propel\Runtime\Collection\PropelObjectCollection;
+use Propel\Runtime\Collection\ObjectCollection;
 
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 use Propel\Tests\Bookstore\Book;
@@ -44,7 +44,7 @@ class PropelCollectionConvertTest extends BookstoreTestBase
         $book2->setPrice(10.99);
         $book2->resetModified();
 
-        $this->coll = new PropelObjectCollection();
+        $this->coll = new ObjectCollection();
         $this->coll->setModel('\Propel\Tests\Bookstore\Book');
         $this->coll[]= $book1;
         $this->coll[]= $book2;
@@ -91,7 +91,7 @@ EOF;
      */
     public function testFromXML($expected)
     {
-        $coll = new PropelObjectCollection();
+        $coll = new ObjectCollection();
         $coll->setModel('\Propel\Tests\Bookstore\Book');
         $coll->fromXML($expected);
         // fix modified columns order
@@ -138,7 +138,7 @@ EOF;
      */
     public function testFromYAML($expected)
     {
-        $coll = new PropelObjectCollection();
+        $coll = new ObjectCollection();
         $coll->setModel('\Propel\Tests\Bookstore\Book');
         $coll->fromYAML($expected);
         // fix modified columns order
@@ -171,7 +171,7 @@ EOF;
      */
     public function testfromJSON($expected)
     {
-        $coll = new PropelObjectCollection();
+        $coll = new ObjectCollection();
         $coll->setModel('\Propel\Tests\Bookstore\Book');
         $coll->fromJSON($expected);
         // fix modified columns order
@@ -202,7 +202,7 @@ EOF;
      */
     public function testfromCSV($expected)
     {
-        $coll = new PropelObjectCollection();
+        $coll = new ObjectCollection();
         $coll->setModel('\Propel\Tests\Bookstore\Book');
         $coll->fromCSV($expected);
         // fix modified columns order
@@ -223,7 +223,7 @@ EOF;
 
     public function testToStringUsesCustomStringFormat()
     {
-        $coll = new PropelObjectCollection();
+        $coll = new ObjectCollection();
         $coll->setModel('\Propel\Tests\Bookstore\Publisher');
         $publisher = new Publisher();
         $publisher->setId(12345);

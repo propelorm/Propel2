@@ -23,7 +23,7 @@ use Propel\Runtime\Util\BasePeer;
  * @author     Francois Zaninotto
  * @package    propel.runtime.collection
  */
-class PropelObjectCollection extends PropelCollection
+class ObjectCollection extends PropelCollection
 {
 
     /**
@@ -242,7 +242,7 @@ class PropelObjectCollection extends PropelCollection
      * @param     Criteria   $criteria  Optional Criteria object to filter the related object collection
      * @param     ConnectionInterface  $con       Optional connection object
      *
-     * @return    PropelObjectCollection  The list of related objects
+     * @return    ObjectCollection  The list of related objects
      */
     public function populateRelation($relation, $criteria = null, $con = null)
     {
@@ -252,7 +252,7 @@ class PropelObjectCollection extends PropelCollection
         $relationMap = $this->getFormatter()->getTableMap()->getRelation($relation);
         if ($this->isEmpty()) {
             // save a useless query and return an empty collection
-            $coll = new PropelObjectCollection();
+            $coll = new ObjectCollection();
             $coll->setModel($relationMap->getRightTable()->getClassname());
 
             return $coll;

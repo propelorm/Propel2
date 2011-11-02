@@ -18,7 +18,7 @@ use Propel\Tests\Bookstore\Behavior\Table2;
 use Propel\Tests\Bookstore\Behavior\Table2Peer;
 use Propel\Tests\Bookstore\Behavior\Table2Query;
 
-use Propel\Runtime\Collection\PropelObjectCollection;
+use Propel\Runtime\Collection\ObjectCollection;
 
 /**
  * Tests for TimestampableBehavior class
@@ -138,7 +138,7 @@ class TimestampableBehaviorTest extends BookstoreTestBase
     protected function populateUpdatedAt()
     {
         Table2Query::create()->deleteAll();
-        $ts = new PropelObjectCollection();
+        $ts = new ObjectCollection();
         $ts->setModel('\Propel\Tests\Bookstore\Behavior\Table2');
         for ($i=0; $i < 10; $i++) {
             $t = new Table2();
@@ -153,7 +153,7 @@ class TimestampableBehaviorTest extends BookstoreTestBase
     protected function populateCreatedAt()
     {
         Table2Query::create()->deleteAll();
-        $ts = new PropelObjectCollection();
+        $ts = new ObjectCollection();
         $ts->setModel('\Propel\Tests\Bookstore\Behavior\Table2');
         for ($i=0; $i < 10; $i++) {
             $t = new Table2();

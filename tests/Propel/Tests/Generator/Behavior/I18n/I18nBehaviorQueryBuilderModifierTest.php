@@ -245,7 +245,7 @@ EOF;
             ->joinWithI18n('en_EN')
             ->limit(2)
             ->find();
-        $this->assertInstanceOf('\Propel\Runtime\Collection\PropelObjectCollection', $res);
+        $this->assertInstanceOf('\Propel\Runtime\Collection\ObjectCollection', $res);
     }
 
     // This is not a desired behavior, but there is no way to overcome it

@@ -17,7 +17,7 @@ use Propel\Tests\Bookstore\Behavior\Table12Peer;
 use Propel\Tests\Bookstore\Behavior\Table12Query;
 
 use Propel\Runtime\Query\Criteria;
-use Propel\Runtime\Collection\PropelObjectCollection;
+use Propel\Runtime\Collection\ObjectCollection;
 
 /**
  * Tests for SortableBehavior class query modifier when the scope is enabled
@@ -88,7 +88,7 @@ class SortableBehaviorQueryBuilderModifierWithScopeTest extends BookstoreSortabl
     public function testFindList()
     {
         $ts = Table12Query::create()->findList(1);
-        $this->assertTrue($ts instanceof PropelObjectCollection, 'findList() returns a collection of objects');
+        $this->assertTrue($ts instanceof ObjectCollection, 'findList() returns a collection of objects');
         $this->assertEquals(4, count($ts), 'findList() filters the query by scope');
         $this->assertEquals('row1', $ts[0]->getTitle(), 'findList() returns an ordered scoped list');
         $this->assertEquals('row2', $ts[1]->getTitle(), 'findList() returns an ordered scoped list');

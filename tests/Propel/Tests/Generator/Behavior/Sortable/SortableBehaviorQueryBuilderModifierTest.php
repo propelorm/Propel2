@@ -17,7 +17,7 @@ use Propel\Tests\Bookstore\Behavior\Table11Peer;
 use Propel\Tests\Bookstore\Behavior\Table11Query;
 
 use Propel\Runtime\Query\Criteria;
-use Propel\Runtime\Collection\PropelObjectCollection;
+use Propel\Runtime\Collection\ObjectCollection;
 
 /**
  * Tests for SortableBehavior class query modifier
@@ -70,7 +70,7 @@ class SortableBehaviorQueryBuilderModifierTest extends BookstoreSortableTestBase
     public function testFindList()
     {
         $ts = Table11Query::create()->findList();
-        $this->assertTrue($ts instanceof PropelObjectCollection, 'findList() returns a collection of objects');
+        $this->assertTrue($ts instanceof ObjectCollection, 'findList() returns a collection of objects');
         $this->assertEquals(4, count($ts), 'findList() does not filter the query');
         $this->assertEquals('row1', $ts[0]->getTitle(), 'findList() returns an ordered list');
         $this->assertEquals('row2', $ts[1]->getTitle(), 'findList() returns an ordered list');
