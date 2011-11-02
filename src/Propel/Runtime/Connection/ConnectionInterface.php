@@ -31,11 +31,11 @@ Interface ConnectionInterface
 
     /**
      * Turns off autocommit mode.
-     * 
-     * While autocommit mode is turned off, changes made to the database via 
-     * the Connection object instance are not committed until you end the 
+     *
+     * While autocommit mode is turned off, changes made to the database via
+     * the Connection object instance are not committed until you end the
      * transaction by calling Connection::commit().
-     * Calling Conneciton::rollBack() will roll back all changes to the database 
+     * Calling Conneciton::rollBack() will roll back all changes to the database
      * and return the connection to autocommit mode.
      *
      * @return boolean TRUE on success or FALSE on failure.
@@ -66,7 +66,7 @@ Interface ConnectionInterface
 
     /**
      * Checks if inside a transaction.
-     * 
+     *
      * @return bool TRUE if a transaction is currently active, and FALSE if not.
      */
     public function inTransaction();
@@ -75,23 +75,23 @@ Interface ConnectionInterface
      * Fetch the SQLSTATE associated with the last operation on the database handle.
      *
      * errorCode() only retrieves error codes for operations performed directly
-     * on the database handle. 
-     * If you create a Statement object through Connection::prepare() or 
+     * on the database handle.
+     * If you create a Statement object through Connection::prepare() or
      * Connection::query() and invoke an error on the statement handle,
      * Connection::errorCode() will not reflect that error. You must call
-     * Statement::errorCode() to return the error code for an operation performed 
+     * Statement::errorCode() to return the error code for an operation performed
      * on a particular statement handle.
      *
-     * @return mixed An SQLSTATE, a five characters alphanumeric identifier defined 
+     * @return mixed An SQLSTATE, a five characters alphanumeric identifier defined
      *               in the ANSI SQL-92 standard, or NULL if no operation has been
      *               run on the database handle.
      */
     public function errorCode();
 
     /**
-     * Fetch extended error information associated with the last operation on 
+     * Fetch extended error information associated with the last operation on
      * the database handle.
-     * 
+     *
      * @return array An array of error information about the last operation performed
      *               by this database handle
      */
@@ -99,8 +99,8 @@ Interface ConnectionInterface
 
     /**
      * Retrieve a database connection attribute.
-     * 
-     * @param string $attribute The name of the attribute to retrieve, 
+     *
+     * @param string $attribute The name of the attribute to retrieve,
      *                          e.g. PDO::ATTR_AUTOCOMMIT
      *
      * @return mixed A successful call returns the value of the requested attribute.
@@ -111,9 +111,9 @@ Interface ConnectionInterface
     /**
      * Set an attribute.
      *
-     * @param string $attribute 
+     * @param string $attribute
      * @param mixec $value
-     * 
+     *
      * @return bool TRUE on success or FALSE on failure.
      */
     public function setAttribute($attribute, $value);
@@ -124,7 +124,7 @@ Interface ConnectionInterface
      * @param string $statement The SQL statement to prepare and execute.
      *                          Data inside the query should be properly escaped.
      *
-     * @return int   The number of rows that were modified or deleted by the SQL 
+     * @return int   The number of rows that were modified or deleted by the SQL
      *               statement you issued. If no rows were affected, returns 0.
      */
     public function exec($statement);
@@ -135,16 +135,16 @@ Interface ConnectionInterface
      * Prepares an SQL statement to be executed by the Statement::execute() method.
      * The SQL statement can contain zero or more named (:name) or question mark (?)
      * parameter markers for which real values will be substituted when the statement
-     * is executed. You cannot use both named and question mark parameter markers 
+     * is executed. You cannot use both named and question mark parameter markers
      * within the same SQL statement; pick one or the other parameter style. Use
      * these parameters to bind any user-input, do not include the user-input
      * directly in the query.
      *
-     * @param string $statement This must be a valid SQL statement for the target 
+     * @param string $statement This must be a valid SQL statement for the target
      *                          database server.
      * @param array $driver_options
-     * 
-     * @return StatementInterface|bool A Statement object if the database server 
+     *
+     * @return StatementInterface|bool A Statement object if the database server
      *                                 successfully prepares, FALSE otherwise.
      * @throws ConnectionException depending on error handling.
      */
@@ -152,11 +152,11 @@ Interface ConnectionInterface
 
     /**
      * Executes an SQL statement, returning a result set as a Statement object.
-     * 
+     *
      * @param string $statement The SQL statement to prepare and execute.
      *                          Data inside the query should be properly escaped.
      *
-     * @return StatementInterface|bool A Statement object if the database server 
+     * @return StatementInterface|bool A Statement object if the database server
      *                                 successfully prepares, FALSE otherwise.
      * @throws ConnectionException depending on error handling.
      */
@@ -166,13 +166,13 @@ Interface ConnectionInterface
      * Quotes a string for use in a query.
      *
      * Places quotes around the input string (if required) and escapes special
-     * characters within the input string, using a quoting style appropriate to 
+     * characters within the input string, using a quoting style appropriate to
      * the underlying driver.
-     * 
+     *
      * @param string $string The string to be quoted.
-     * @param int    $parameter_type Provides a data type hint for drivers that 
+     * @param int    $parameter_type Provides a data type hint for drivers that
      *                               have alternate quoting styles.
-     * 
+     *
      * @return string A quoted string that is theoretically safe to pass into an
      *                SQL statement. Returns FALSE if the driver does not support
      *                quoting in this way.
@@ -181,22 +181,22 @@ Interface ConnectionInterface
 
     /**
      * Return an array of available Connection drivers.
-     * 
-     * @return array A list of Conenction driver names. 
+     *
+     * @return array A list of Conenction driver names.
      *               If no drivers are available, it returns an empty array.
      */
     static public function getAvailableDrivers();
 
     /**
      * Returns the ID of the last inserted row or sequence value.
-     * 
+     *
      * Returns the ID of the last inserted row, or the last value from a sequence
-     * object, depending on the underlying driver. For example, PDO_PGSQL() 
+     * object, depending on the underlying driver. For example, PDO_PGSQL()
      * requires you to specify the name of a sequence object for the name parameter.
-     * 
+     *
      * @param string $name Name of the sequence object from which the ID should be
      *                     returned.
-     * 
+     *
      * @return string If a sequence name was not specified for the name parameter,
      *                returns a string representing the row ID of the last row that was
      *                inserted into the database.
