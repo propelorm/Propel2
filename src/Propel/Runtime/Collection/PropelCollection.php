@@ -521,7 +521,7 @@ class PropelCollection extends ArrayObject implements Serializable
      *  => {{"Id":9012,"Title":"Don Juan","ISBN":"0140422161","Price":12.99,"PublisherId":1234,"AuthorId":5678}}');
      * </code>
      *
-     * A PropelOnDemandCollection cannot be exported. Any attempt will result in a PropelExecption being thrown.
+     * A OnDemandCollection cannot be exported. Any attempt will result in a PropelExecption being thrown.
      *
      * @param     mixed   $parser                 A AbstractParser instance, or a format name ('XML', 'YAML', 'JSON', 'CSV')
      * @param     boolean $usePrefix              (optional) If true, the returned element keys will be prefixed with the

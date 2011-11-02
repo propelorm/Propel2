@@ -14,19 +14,19 @@ use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
 use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
 
 use Propel\Runtime\Propel;
-use Propel\Runtime\Collection\PropelOnDemandCollection;
+use Propel\Runtime\Collection\OnDemandCollection;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Query\ModelCriteria;
 use Propel\Runtime\Query\PropelQuery;
 
 /**
- * Test class for PropelOnDemandCollection.
+ * Test class for OnDemandCollection.
  *
  * @author     Francois Zaninotto
  * @version    $Id: ObjectCollectionTest.php 1348 2009-12-03 21:49:00Z francois $
  * @package    runtime.collection
  */
-class PropelOnDemandCollectionTest extends BookstoreEmptyTestBase
+class OnDemandCollectionTest extends BookstoreEmptyTestBase
 {
     protected function setUp()
     {
@@ -44,7 +44,7 @@ class PropelOnDemandCollectionTest extends BookstoreEmptyTestBase
 
     public function testSetFormatter()
     {
-        $this->assertTrue($this->books instanceof PropelOnDemandCollection);
+        $this->assertTrue($this->books instanceof OnDemandCollection);
         $this->assertEquals(4, count($this->books));
     }
 

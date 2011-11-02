@@ -22,7 +22,7 @@ use \PDOStatement;
  * @author     Francois Zaninotto
  * @package    propel.runtime.collection
  */
-class PropelOnDemandCollection extends PropelCollection
+class OnDemandCollection extends PropelCollection
 {
     /**
      * @var       PropelOnDemandIterator
@@ -263,6 +263,6 @@ class PropelOnDemandCollection extends PropelCollection
      */
     public function exportTo($parser, $usePrefix = true, $includeLazyLoadColumns = true)
     {
-        throw new PropelException('A PropelOnDemandCollection cannot be exported.');
+        throw new PropelException('A OnDemandCollection cannot be exported.');
     }
 }

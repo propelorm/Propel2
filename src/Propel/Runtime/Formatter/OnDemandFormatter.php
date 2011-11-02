@@ -18,7 +18,7 @@ use \PDOStatement;
 
 /**
  * Object formatter for Propel query
- * format() returns a PropelOnDemandCollection that hydrates objects as the use iterates on the collection
+ * format() returns a OnDemandCollection that hydrates objects as the use iterates on the collection
  * This formatter consumes less memory than the ObjectFormatter, but doesn't use Instance Pool
  *
  * @author     Francois Zaninotto
@@ -27,7 +27,7 @@ use \PDOStatement;
  */
 class OnDemandFormatter extends ObjectFormatter
 {
-    protected $collectionName = '\Propel\Runtime\Collection\PropelOnDemandCollection';
+    protected $collectionName = '\Propel\Runtime\Collection\OnDemandCollection';
     protected $isSingleTableInheritance = false;
 
     public function init(ModelCriteria $criteria)
