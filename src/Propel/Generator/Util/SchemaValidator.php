@@ -20,7 +20,7 @@ use Propel\Generator\Model\Table;
  *
  * @example Basic usage:
  * <code>
- * $validator = new PropelSchemaValidator($appData);
+ * $validator = new SchemaValidator($appData);
  * if (!$validator->validate()) {
  *   throw new Exception("Invalid schema:\n" . join("\n", $validator->getErrors()));
  * }
@@ -29,7 +29,7 @@ use Propel\Generator\Model\Table;
  * @package    propel.generator.util
  * @author     François Zaninotto
  */
-class PropelSchemaValidator
+class SchemaValidator
 {
     protected $appData;
     protected $errors = array();
