@@ -10,7 +10,7 @@
 
 namespace Propel\Generator\Task;
 
-use Propel\Generator\Util\PropelMigrationManager;
+use Propel\Generator\Util\MigrationManager;
 
 /**
  * This Task lists the migrations yet to be executed
@@ -22,12 +22,12 @@ class PropelMigrationStatusTask extends BasePropelMigrationTask
 {
     public function main()
     {
-        $manager = new PropelMigrationManager();
+        $manager = new MigrationManager();
         $manager->setConnections($this->getGeneratorConfig()->getBuildConnections());
         $manager->setMigrationTable($this->getMigrationTable());
         $manager->setMigrationDir($this->getOutputDirectory());
 
-        // the following is a verbose version of PropelMigrationManager::getValidMigrationTimestamps()
+        // the following is a verbose version of MigrationManager::getValidMigrationTimestamps()
         // mostly for explicit output
 
         $this->log('Checking Database Versions...');

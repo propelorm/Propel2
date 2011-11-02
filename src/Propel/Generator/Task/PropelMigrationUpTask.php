@@ -10,7 +10,7 @@
 
 namespace Propel\Generator\Task;
 
-use Propel\Generator\Util\PropelMigrationManager;
+use Propel\Generator\Util\MigrationManager;
 
 /**
  * This Task executes the next migration up
@@ -25,7 +25,7 @@ class PropelMigrationUpTask extends BasePropelMigrationTask
      */
     public function main()
     {
-        $manager = new PropelMigrationManager();
+        $manager = new MigrationManager();
         $manager->setConnections($this->getGeneratorConfig()->getBuildConnections());
         $manager->setMigrationTable($this->getMigrationTable());
         $manager->setMigrationDir($this->getOutputDirectory());

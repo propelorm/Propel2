@@ -10,7 +10,7 @@
 
 namespace Propel\Generator\Task;
 
-use Propel\Generator\Util\PropelMigrationManager;
+use Propel\Generator\Util\MigrationManager;
 use Propel\Generator\Util\SqlParser;
 
 use \PDOException;
@@ -29,7 +29,7 @@ class PropelMigrationDownTask extends BasePropelMigrationTask
      */
     public function main()
     {
-        $manager = new PropelMigrationManager();
+        $manager = new MigrationManager();
         $manager->setConnections($this->getGeneratorConfig()->getBuildConnections());
         $manager->setMigrationTable($this->getMigrationTable());
         $manager->setMigrationDir($this->getOutputDirectory());

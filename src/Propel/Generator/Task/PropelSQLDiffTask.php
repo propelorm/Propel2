@@ -13,7 +13,7 @@ namespace Propel\Generator\Task;
 use Propel\Generator\Builder\Om\ClassTools;
 use Propel\Generator\Builder\Om\OMBuilder;
 use Propel\Generator\Model\Diff\PropelDatabaseComparator;
-use Propel\Generator\Util\PropelMigrationManager;
+use Propel\Generator\Util\MigrationManager;
 
 /**
  * This Task creates the OM classes based on the XML schema file.
@@ -137,7 +137,7 @@ class PropelSQLDiffTask extends AbstractPropelDataModelTask
 
         // comparing models
         $this->log('Comparing models...');
-        $manager = new PropelMigrationManager();
+        $manager = new MigrationManager();
         $manager->setConnections($connections);
         $manager->setMigrationDir($this->getOutputDirectory());
         $migrationsUp = array();

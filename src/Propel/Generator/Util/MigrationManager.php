@@ -20,7 +20,7 @@ use Propel\Generator\Model\Table;
  * @version    $Revision$
  * @package    propel.generator.util
  */
-class PropelMigrationManager
+class MigrationManager
 {
     protected $connections;
     protected $pdoConnections = array();
