@@ -12,6 +12,7 @@ namespace Propel\Generator\Config;
 
 use Propel\Generator\Model\Table;
 use Propel\Generator\Platform\PlatformInterface;
+use Propel\Generator\Reverse\SchemaParserInterface;
 
 use \PDO;
 
@@ -190,14 +191,14 @@ class GeneratorConfig implements GeneratorConfigInterface
     /**
      * Creates and configures a new SchemaParser class for specified platform.
      * @param      PDO $con
-     * @return     SchemaParser
+     * @return     SchemaParserInterface
      */
     public function getConfiguredSchemaParser(PDO $con = null)
     {
         $clazz = $this->getClassname("reverseParserClass");
         $parser = new $clazz();
-        if (!$parser instanceof SchemaParser) {
-            throw new BuildException("Specified platform class ($clazz) does implement SchemaParser interface.", $this->getLocation());
+        if (!$parser instanceof SchemaParserInterface) {
+            throw new BuildException("Specified platform class ($clazz) does implement SchemaParserInterface interface.", $this->getLocation());
         }
         $parser->setConnection($con);
         $parser->setMigrationTable($this->getBuildProperty('migrationTable'));

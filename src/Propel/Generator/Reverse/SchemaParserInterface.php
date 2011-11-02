@@ -26,7 +26,7 @@ use \Task;
  * @version    $Revision$
  * @package    propel.generator.reverse
  */
-interface SchemaParser
+interface SchemaParserInterface
 {
 
     /**
