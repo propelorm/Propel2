@@ -167,9 +167,9 @@ class DatabaseDiff
      * Add a table difference
      *
      * @param string $tableName
-     * @param PropelTableDiff $modifiedTable
+     * @param TableDiff $modifiedTable
      */
-    public function addModifiedTable($tableName, PropelTableDiff $modifiedTable)
+    public function addModifiedTable($tableName, TableDiff $modifiedTable)
     {
         $this->modifiedTables[$tableName] = $modifiedTable;
     }

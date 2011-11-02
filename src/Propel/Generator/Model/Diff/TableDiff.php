@@ -22,7 +22,7 @@ use Propel\Generator\Model\Table;
  *
  * @package    propel.generator.model.diff
  */
-class PropelTableDiff
+class TableDiff
 {
     protected $fromTable;
     protected $toTable;
@@ -586,7 +586,7 @@ class PropelTableDiff
     /**
      * Get the reverse diff for this diff
      *
-     * @return PropelTableDiff
+     * @return TableDiff
      */
     public function getReverseDiff()
     {

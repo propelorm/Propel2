@@ -13,7 +13,7 @@ use Propel\Generator\Model\Column;
 use Propel\Generator\Model\ColumnDefaultValue;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Model\Diff\TableComparator;
-use Propel\Generator\Model\Diff\PropelTableDiff;
+use Propel\Generator\Model\Diff\TableDiff;
 use Propel\Generator\Model\Diff\ColumnComparator;
 use Propel\Generator\Platform\MysqlPlatform;
 
@@ -56,7 +56,7 @@ class PropelTablePkColumnComparatorTest extends \PHPUnit_Framework_TestCase
         $t2->addColumn($c2);
 
         $diff = TableComparator::computeDiff($t1, $t2);
-        $this->assertTrue($diff instanceof PropelTableDiff);
+        $this->assertTrue($diff instanceof TableDiff);
     }
 
     public function testCompareAddedPkColumn()

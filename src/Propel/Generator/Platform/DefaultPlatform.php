@@ -22,7 +22,7 @@ use Propel\Generator\Model\Table;
 use Propel\Generator\Model\Unique;
 use Propel\Generator\Model\Diff\ColumnDiff;
 use Propel\Generator\Model\Diff\DatabaseDiff;
-use Propel\Generator\Model\Diff\PropelTableDiff;
+use Propel\Generator\Model\Diff\TableDiff;
 use Propel\Generator\Exception\EngineException;
 
 use \PDO;
@@ -709,11 +709,11 @@ ALTER TABLE %s RENAME TO %s;
 
     /**
      * Builds the DDL SQL to alter a table
-     * based on a PropelTableDiff instance
+     * based on a TableDiff instance
      *
      * @return     string
      */
-    public function getModifyTableDDL(PropelTableDiff $tableDiff)
+    public function getModifyTableDDL(TableDiff $tableDiff)
     {
         $ret = '';
 
@@ -774,11 +774,11 @@ ALTER TABLE %s RENAME TO %s;
 
     /**
      * Builds the DDL SQL to alter a table
-     * based on a PropelTableDiff instance
+     * based on a TableDiff instance
      *
      * @return     string
      */
-    public function getModifyTableColumnsDDL(PropelTableDiff $tableDiff)
+    public function getModifyTableColumnsDDL(TableDiff $tableDiff)
     {
         $ret = '';
 
@@ -803,11 +803,11 @@ ALTER TABLE %s RENAME TO %s;
 
     /**
      * Builds the DDL SQL to alter a table's primary key
-     * based on a PropelTableDiff instance
+     * based on a TableDiff instance
      *
      * @return     string
      */
-    public function getModifyTablePrimaryKeyDDL(PropelTableDiff $tableDiff)
+    public function getModifyTablePrimaryKeyDDL(TableDiff $tableDiff)
     {
         $ret = '';
 
@@ -821,11 +821,11 @@ ALTER TABLE %s RENAME TO %s;
 
     /**
      * Builds the DDL SQL to alter a table's indices
-     * based on a PropelTableDiff instance
+     * based on a TableDiff instance
      *
      * @return     string
      */
-    public function getModifyTableIndicesDDL(PropelTableDiff $tableDiff)
+    public function getModifyTableIndicesDDL(TableDiff $tableDiff)
     {
         $ret = '';
 
@@ -848,11 +848,11 @@ ALTER TABLE %s RENAME TO %s;
 
     /**
      * Builds the DDL SQL to alter a table's foreign keys
-     * based on a PropelTableDiff instance
+     * based on a TableDiff instance
      *
      * @return     string
      */
-    public function getModifyTableForeignKeysDDL(PropelTableDiff $tableDiff)
+    public function getModifyTableForeignKeysDDL(TableDiff $tableDiff)
     {
         $ret = '';
 

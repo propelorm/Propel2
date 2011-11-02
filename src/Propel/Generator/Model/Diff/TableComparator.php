@@ -25,7 +25,7 @@ class TableComparator
 
     public function __construct($tableDiff = null)
     {
-        $this->tableDiff = (null === $tableDiff) ? new PropelTableDiff() : $tableDiff;
+        $this->tableDiff = (null === $tableDiff) ? new TableDiff() : $tableDiff;
     }
 
     public function getTableDiff()
@@ -81,7 +81,7 @@ class TableComparator
      * @param boolean $caseInsensitive Whether the comparison is case insensitive.
      *                                 False by default.
      *
-     * @return PropelTableDiff|boolean return false if the two tables are similar
+     * @return TableDiff|boolean return false if the two tables are similar
      */
     public static function computeDiff(Table $fromTable, Table $toTable, $caseInsensitive = false)
     {

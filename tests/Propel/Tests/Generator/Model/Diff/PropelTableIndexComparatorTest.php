@@ -15,7 +15,7 @@ use Propel\Generator\Model\Index;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Model\Unique;
 use Propel\Generator\Model\Diff\TableComparator;
-use Propel\Generator\Model\Diff\PropelTableDiff;
+use Propel\Generator\Model\Diff\TableDiff;
 use Propel\Generator\Platform\MysqlPlatform;
 
 /**
@@ -84,7 +84,7 @@ class PropelTableIndexComparatorTest extends \PHPUnit_Framework_TestCase
         $t2->addIndex($i2);
 
         $diff = TableComparator::computeDiff($t1, $t2);
-        $this->assertTrue($diff instanceof PropelTableDiff);
+        $this->assertTrue($diff instanceof TableDiff);
     }
 
     public function testCompareCaseInsensitive()

@@ -13,7 +13,7 @@ use Propel\Generator\Model\Column;
 use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Model\Diff\TableComparator;
-use Propel\Generator\Model\Diff\PropelTableDiff;
+use Propel\Generator\Model\Diff\TableDiff;
 use Propel\Generator\Platform\MysqlPlatform;
 use Propel\Generator\Model\Database;
 
@@ -59,7 +59,7 @@ class PropelTableForeignKeyComparatorTest extends \PHPUnit_Framework_TestCase
         $t2 = new Table('Baz');
 
         $diff = TableComparator::computeDiff($t1, $t2);
-        $this->assertTrue($diff instanceof PropelTableDiff);
+        $this->assertTrue($diff instanceof TableDiff);
     }
 
     public function testCaseInsensitive()
