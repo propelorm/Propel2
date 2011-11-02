@@ -21,7 +21,7 @@ use \PDO;
  * @version    $Revision$
  * @package    propel.generator.util
  */
-class PropelSqlManager
+class SqlManager
 {
     /**
      * @var array

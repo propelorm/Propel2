@@ -10,7 +10,7 @@
 
 namespace Propel\Generator\Task;
 
-use Propel\Generator\Util\PropelSqlManager;
+use Propel\Generator\Util\SqlManager;
 
 /**
  * The new task for building SQL DDL based on the XML datamodel.
@@ -25,7 +25,7 @@ class PropelSqlBuildTask extends AbstractPropelDataModelTask
         $this->validate();
         $this->packageObjectModel = true;
 
-        $manager = new PropelSqlManager();
+        $manager = new SqlManager();
         $manager->setGeneratorConfig($this->getGeneratorConfig());
         $manager->setDataModels($this->getDataModels());
         $manager->setWorkingDirectory($this->getOutputDirectory());
