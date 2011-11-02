@@ -21,7 +21,7 @@ use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Model\Unique;
 use Propel\Generator\Model\Diff\ColumnDiff;
-use Propel\Generator\Model\Diff\PropelDatabaseDiff;
+use Propel\Generator\Model\Diff\DatabaseDiff;
 
 use \PDO;
 
@@ -480,11 +480,11 @@ ALTER TABLE %s DROP FOREIGN KEY %s;
 
     /**
      * Builds the DDL SQL to modify a database
-     * based on a PropelDatabaseDiff instance
+     * based on a DatabaseDiff instance
      *
      * @return     string
      */
-    public function getModifyDatabaseDDL(PropelDatabaseDiff $databaseDiff)
+    public function getModifyDatabaseDDL(DatabaseDiff $databaseDiff)
     {
         $ret = $this->getBeginDDL();
 

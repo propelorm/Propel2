@@ -14,7 +14,7 @@ use Propel\Generator\Model\ColumnDefaultValue;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Model\Diff\DatabaseComparator;
-use Propel\Generator\Model\Diff\PropelDatabaseDiff;
+use Propel\Generator\Model\Diff\DatabaseDiff;
 use Propel\Generator\Model\Diff\PropelTableComparator;
 use Propel\Generator\Platform\MysqlPlatform;
 
@@ -71,7 +71,7 @@ class PropelDatabaseTableComparatorTest extends \PHPUnit_Framework_TestCase
         $d2->addTable($t2);
 
         $diff = DatabaseComparator::computeDiff($d1, $d2);
-        $this->assertTrue($diff instanceof PropelDatabaseDiff);
+        $this->assertTrue($diff instanceof DatabaseDiff);
     }
 
     public function testCompareCaseInsensitive()

@@ -27,7 +27,7 @@ class DatabaseComparator
 
     public function __construct($databaseDiff = null)
     {
-        $this->databaseDiff = (null === $databaseDiff) ? new PropelDatabaseDiff() : $databaseDiff;
+        $this->databaseDiff = (null === $databaseDiff) ? new DatabaseDiff() : $databaseDiff;
     }
 
     public function getDatabaseDiff()
@@ -83,7 +83,7 @@ class DatabaseComparator
      * @param  boolean $caseInsensitive Whether the comparison is case insensitive.
      *                                  False by default.
      *
-     * @return PropelDatabaseDiff|boolean return false if the two databases are similar
+     * @return DatabaseDiff|boolean return false if the two databases are similar
      */
     public static function computeDiff(Database $fromDatabase, Database $toDatabase, $caseInsensitive = false)
     {

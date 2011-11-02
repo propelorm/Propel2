@@ -20,7 +20,7 @@ use Propel\Generator\Model\Table;
  *
  * @package    propel.generator.model.diff
  */
-class PropelDatabaseDiff
+class DatabaseDiff
 {
     protected $addedTables = array();
     protected $removedTables = array();
@@ -238,7 +238,7 @@ class PropelDatabaseDiff
     /**
      * Get the reverse diff for this diff
      *
-     * @return PropelDatabaseDiff
+     * @return DatabaseDiff
      */
     public function getReverseDiff()
     {
