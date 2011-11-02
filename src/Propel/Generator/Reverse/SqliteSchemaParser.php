@@ -8,12 +8,12 @@
  * @license    MIT License
  */
 
-namespace Propel\Generator\Reverse\Sqlite;
+namespace Propel\Generator\Reverse;
 
 use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Reverse\AbstractSchemaParser;
 
-use PDO;
+use \PDO;
 
 /**
  * SQLite database schema parser.

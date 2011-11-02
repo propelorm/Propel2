@@ -8,7 +8,7 @@
  * @license    MIT License
  */
 
-namespace Propel\Generator\Reverse\Mssql;
+namespace Propel\Generator\Reverse;
 
 use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Reverse\AbstractSchemaParser;
@@ -63,15 +63,15 @@ class MssqlSchemaParser extends AbstractSchemaParser
         "varchar" => PropelTypes::VARCHAR,
         "varchar(max)" => PropelTypes::CLOB,
         "uniqueidentifier" => PropelTypes::CHAR,
-    // SQL Server 2000 only
+        // SQL Server 2000 only
         "bigint identity" => PropelTypes::BIGINT,
         "bigint" => PropelTypes::BIGINT,
         "sql_variant" => PropelTypes::VARCHAR,
     );
 
-  /**
-   * @see        AbstractSchemaParser::getTypeMapping()
-   */
+    /**
+     * @see        AbstractSchemaParser::getTypeMapping()
+     */
     protected function getTypeMapping()
     {
         return self::$mssqlTypeMap;
@@ -166,12 +166,12 @@ class MssqlSchemaParser extends AbstractSchemaParser
         $database = $table->getDatabase();
 
         $stmt = $this->dbh->query("SELECT ccu1.TABLE_NAME, ccu1.COLUMN_NAME, ccu2.TABLE_NAME AS FK_TABLE_NAME, ccu2.COLUMN_NAME AS FK_COLUMN_NAME
-                                    FROM INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE ccu1 INNER JOIN
-                                            INFORMATION_SCHEMA.TABLE_CONSTRAINTS tc1 ON tc1.CONSTRAINT_NAME = ccu1.CONSTRAINT_NAME AND
-                                            CONSTRAINT_TYPE = 'Foreign Key' INNER JOIN
-                                            INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS rc1 ON rc1.CONSTRAINT_NAME = tc1.CONSTRAINT_NAME INNER JOIN
-                                            INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE ccu2 ON ccu2.CONSTRAINT_NAME = rc1.UNIQUE_CONSTRAINT_NAME
-                                    WHERE (ccu1.table_name = '".$table->getName()."')");
+            FROM INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE ccu1 INNER JOIN
+            INFORMATION_SCHEMA.TABLE_CONSTRAINTS tc1 ON tc1.CONSTRAINT_NAME = ccu1.CONSTRAINT_NAME AND
+            CONSTRAINT_TYPE = 'Foreign Key' INNER JOIN
+            INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS rc1 ON rc1.CONSTRAINT_NAME = tc1.CONSTRAINT_NAME INNER JOIN
+            INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE ccu2 ON ccu2.CONSTRAINT_NAME = rc1.UNIQUE_CONSTRAINT_NAME
+            WHERE (ccu1.table_name = '".$table->getName()."')");
 
         $foreignKeys = array(); // local store to avoid duplicates
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
@@ -226,11 +226,11 @@ class MssqlSchemaParser extends AbstractSchemaParser
     protected function addPrimaryKey(Table $table)
     {
         $stmt = $this->dbh->query("SELECT COLUMN_NAME
-                        FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS
-                                INNER JOIN INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE ON
-                        INFORMATION_SCHEMA.TABLE_CONSTRAINTS.CONSTRAINT_NAME = INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE.constraint_name
-                        WHERE     (INFORMATION_SCHEMA.TABLE_CONSTRAINTS.CONSTRAINT_TYPE = 'PRIMARY KEY') AND
-                        (INFORMATION_SCHEMA.TABLE_CONSTRAINTS.TABLE_NAME = '".$table->getName()."')");
+            FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS
+            INNER JOIN INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE ON
+            INFORMATION_SCHEMA.TABLE_CONSTRAINTS.CONSTRAINT_NAME = INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE.constraint_name
+            WHERE     (INFORMATION_SCHEMA.TABLE_CONSTRAINTS.CONSTRAINT_TYPE = 'PRIMARY KEY') AND
+            (INFORMATION_SCHEMA.TABLE_CONSTRAINTS.TABLE_NAME = '".$table->getName()."')");
 
         // Loop through the returned results, grouping the same key_name together
         // adding each column for that key.

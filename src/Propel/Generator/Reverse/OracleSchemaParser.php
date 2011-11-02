@@ -8,12 +8,12 @@
  * @license    MIT License
  */
 
-namespace Propel\Generator\Reverse\Oracle;
+namespace Propel\Generator\Reverse;
 
 use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Reverse\AbstractSchemaParser;
 
-use PDO;
+use \PDO;
 
 /**
  * Oracle database schema parser.

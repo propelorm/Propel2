@@ -8,13 +8,13 @@
  * @license    MIT License
  */
 
-namespace Propel\Tests\Generator\Reverse\Mysql;
+namespace Propel\Tests\Generator\Reverse;
 
 use Propel\Generator\Config\QuickGeneratorConfig;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Platform\DefaultPlatform;
-use Propel\Generator\Reverse\Mysql\MysqlSchemaParser;
+use Propel\Generator\Reverse\MysqlSchemaParser;
 use Propel\Generator\Task\PropelConvertConfTask;
 
 use Propel\Runtime\Propel;
@@ -33,7 +33,7 @@ class MysqlSchemaParserTest extends \PHPUnit_Framework_TestCase
         parent::setUp();
 
         $xmlDom = new \DOMDocument();
-        $xmlDom->load(__DIR__ . '/../../../../../Fixtures/reverse/mysql/runtime-conf.xml');
+        $xmlDom->load(__DIR__ . '/../../../../Fixtures/reverse/mysql/runtime-conf.xml');
         $xml = simplexml_load_string($xmlDom->saveXML());
         $phpconf = OpenedPropelConvertConfTask::simpleXmlToArray($xml);
 
@@ -44,7 +44,7 @@ class MysqlSchemaParserTest extends \PHPUnit_Framework_TestCase
     protected function tearDown()
     {
         parent::tearDown();
-        Propel::init(__DIR__ . '/../../../../../Fixtures/bookstore/build/conf/bookstore-conf.php');
+        Propel::init(__DIR__ . '/../../../../Fixtures/bookstore/build/conf/bookstore-conf.php');
     }
 
     public function testParse()

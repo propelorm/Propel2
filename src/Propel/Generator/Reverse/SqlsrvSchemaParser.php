@@ -8,7 +8,7 @@
  * @license    MIT License
  */
 
-namespace Propel\Generator\Reverse\Sqlsrv;
+namespace Propel\Generator\Reverse;
 
 /**
  * Microsoft SQL Server database schema parser.

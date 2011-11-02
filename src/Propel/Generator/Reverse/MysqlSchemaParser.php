@@ -8,15 +8,14 @@
  * @license    MIT License
  */
 
-namespace Propel\Generator\Reverse\Mysql;
+namespace Propel\Generator\Reverse;
 
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Model\PropelTypes;
-use Propel\Generator\Reverse\AbstractSchemaParser;
 
-use PDO;
+use \PDO;
 
 // TODO: to remove
 require_once 'phing/Task.php';
