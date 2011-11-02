@@ -19,7 +19,7 @@ use Propel\Generator\Model\Database;
  *
  * @package     propel.generator.model.diff
  */
-class PropelDatabaseComparator
+class DatabaseComparator
 {
     protected $databaseDiff;
     protected $fromDatabase;

@@ -13,13 +13,13 @@ use Propel\Generator\Model\Column;
 use Propel\Generator\Model\ColumnDefaultValue;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\Table;
-use Propel\Generator\Model\Diff\PropelDatabaseComparator;
+use Propel\Generator\Model\Diff\DatabaseComparator;
 use Propel\Generator\Model\Diff\PropelDatabaseDiff;
 use Propel\Generator\Model\Diff\PropelTableComparator;
 use Propel\Generator\Platform\MysqlPlatform;
 
 /**
- * Tests for the Table method of the PropelDatabaseComparator service class.
+ * Tests for the Table method of the DatabaseComparator service class.
  *
  * @package    generator.model.diff
  */
@@ -58,7 +58,7 @@ class PropelDatabaseTableComparatorTest extends \PHPUnit_Framework_TestCase
         $t4 = new Table('Bar');
         $d2->addTable($t4);
 
-        $this->assertFalse(PropelDatabaseComparator::computeDiff($d1, $d2));
+        $this->assertFalse(DatabaseComparator::computeDiff($d1, $d2));
     }
 
     public function testCompareNotSameTables()
@@ -70,7 +70,7 @@ class PropelDatabaseTableComparatorTest extends \PHPUnit_Framework_TestCase
         $t2 = new Table('Bar');
         $d2->addTable($t2);
 
-        $diff = PropelDatabaseComparator::computeDiff($d1, $d2);
+        $diff = DatabaseComparator::computeDiff($d1, $d2);
         $this->assertTrue($diff instanceof PropelDatabaseDiff);
     }
 
@@ -83,7 +83,7 @@ class PropelDatabaseTableComparatorTest extends \PHPUnit_Framework_TestCase
         $t2 = new Table('fOO');
         $d2->addTable($t2);
 
-        $this->assertFalse(PropelDatabaseComparator::computeDiff($d1, $d2, true));
+        $this->assertFalse(DatabaseComparator::computeDiff($d1, $d2, true));
     }
 
     public function testCompareAddedTable()
@@ -112,7 +112,7 @@ class PropelDatabaseTableComparatorTest extends \PHPUnit_Framework_TestCase
         $t4 = new Table('Bar');
         $d2->addTable($t4);
 
-        $dc = new PropelDatabaseComparator();
+        $dc = new DatabaseComparator();
         $dc->setFromDatabase($d1);
         $dc->setToDatabase($d2);
         $nbDiffs = $dc->compareTables();
@@ -149,7 +149,7 @@ class PropelDatabaseTableComparatorTest extends \PHPUnit_Framework_TestCase
         $t4->setSkipSql(true);
         $d2->addTable($t4);
 
-        $dc = new PropelDatabaseComparator();
+        $dc = new DatabaseComparator();
         $dc->setFromDatabase($d1);
         $dc->setToDatabase($d2);
         $nbDiffs = $dc->compareTables();
@@ -183,7 +183,7 @@ class PropelDatabaseTableComparatorTest extends \PHPUnit_Framework_TestCase
         $t3->addColumn($c3);
         $d2->addTable($t3);
 
-        $dc = new PropelDatabaseComparator();
+        $dc = new DatabaseComparator();
         $dc->setFromDatabase($d1);
         $dc->setToDatabase($d2);
         $nbDiffs = $dc->compareTables();
@@ -220,7 +220,7 @@ class PropelDatabaseTableComparatorTest extends \PHPUnit_Framework_TestCase
         $t3->addColumn($c3);
         $d2->addTable($t3);
 
-        $dc = new PropelDatabaseComparator();
+        $dc = new DatabaseComparator();
         $dc->setFromDatabase($d1);
         $dc->setToDatabase($d2);
         $nbDiffs = $dc->compareTables();
@@ -259,7 +259,7 @@ class PropelDatabaseTableComparatorTest extends \PHPUnit_Framework_TestCase
         $t4 = new Table('Bar');
         $d2->addTable($t4);
 
-        $dc = new PropelDatabaseComparator();
+        $dc = new DatabaseComparator();
         $dc->setFromDatabase($d1);
         $dc->setToDatabase($d2);
         $nbDiffs = $dc->compareTables();
@@ -298,7 +298,7 @@ class PropelDatabaseTableComparatorTest extends \PHPUnit_Framework_TestCase
         $t4 = new Table('Bar');
         $d2->addTable($t4);
 
-        $dc = new PropelDatabaseComparator();
+        $dc = new DatabaseComparator();
         $dc->setFromDatabase($d1);
         $dc->setToDatabase($d2);
         $nbDiffs = $dc->compareTables();
@@ -352,7 +352,7 @@ class PropelDatabaseTableComparatorTest extends \PHPUnit_Framework_TestCase
         $d2->addTable($t5);
 
         // Foo_Table was modified, Bar was renamed, Baz was removed, Biz was added
-        $dc = new PropelDatabaseComparator();
+        $dc = new DatabaseComparator();
         $dc->setFromDatabase($d1);
         $dc->setToDatabase($d2);
         $nbDiffs = $dc->compareTables();

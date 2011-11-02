@@ -12,7 +12,7 @@ namespace Propel\Tests\Generator\Platform;
 
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\VendorInfo;
-use Propel\Generator\Model\Diff\PropelDatabaseComparator;
+use Propel\Generator\Model\Diff\DatabaseComparator;
 use Propel\Generator\Platform\OraclePlatform;
 
 /**
@@ -384,7 +384,7 @@ EOF;
 EOF;
         $d1 = $this->getDatabaseFromSchema($schema1);
         $d2 = $this->getDatabaseFromSchema($schema2);
-        $databaseDiff = PropelDatabaseComparator::computeDiff($d1, $d2);
+        $databaseDiff = DatabaseComparator::computeDiff($d1, $d2);
         $expected = "
 ALTER SESSION SET NLS_DATE_FORMAT='YYYY-MM-DD';
 ALTER SESSION SET NLS_TIMESTAMP_FORMAT='YYYY-MM-DD HH24:MI:SS';

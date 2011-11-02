@@ -12,7 +12,7 @@ namespace Propel\Generator\Task;
 
 use Propel\Generator\Builder\Om\ClassTools;
 use Propel\Generator\Builder\Om\OMBuilder;
-use Propel\Generator\Model\Diff\PropelDatabaseComparator;
+use Propel\Generator\Model\Diff\DatabaseComparator;
 use Propel\Generator\Util\MigrationManager;
 
 /**
@@ -149,7 +149,7 @@ class PropelSQLDiffTask extends AbstractPropelDataModelTask
                 // FIXME: tables present in database but not in XML
                 continue;
             }
-            $databaseDiff = PropelDatabaseComparator::computeDiff($database, $appDataFromXml->getDatabase($name), $this->isCaseInsensitive());
+            $databaseDiff = DatabaseComparator::computeDiff($database, $appDataFromXml->getDatabase($name), $this->isCaseInsensitive());
 
             if (!$databaseDiff) {
                 $this->log(sprintf('Same XML and database structures for datasource "%s" - no diff to generate', $name), Project::MSG_VERBOSE);

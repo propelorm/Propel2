@@ -12,7 +12,7 @@ namespace Propel\Tests\Generator\Platform;
 
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\Table;
-use Propel\Generator\Model\Diff\PropelDatabaseComparator;
+use Propel\Generator\Model\Diff\DatabaseComparator;
 use Propel\Generator\Model\Diff\ColumnComparator;
 use Propel\Generator\Model\Diff\PropelTableComparator;
 
@@ -64,7 +64,7 @@ EOF;
         $d1 = $this->getDatabaseFromSchema($schema1);
         $d2 = $this->getDatabaseFromSchema($schema2);
 
-        return array(array(PropelDatabaseComparator::computeDiff($d1, $d2)));
+        return array(array(DatabaseComparator::computeDiff($d1, $d2)));
     }
 
     public function providerForTestGetRenameTableDDL()
@@ -520,7 +520,7 @@ EOF;
 EOF;
         $d1 = $this->getDatabaseFromSchema($schema1);
         $d2 = $this->getDatabaseFromSchema($schema2);
-        $diff = PropelDatabaseComparator::computeDiff($d1, $d2);
+        $diff = DatabaseComparator::computeDiff($d1, $d2);
 
         return array(array($diff));
     }
@@ -554,7 +554,7 @@ EOF;
 EOF;
         $d1 = $this->getDatabaseFromSchema($schema1);
         $d2 = $this->getDatabaseFromSchema($schema2);
-        $diff = PropelDatabaseComparator::computeDiff($d2, $d1);
+        $diff = DatabaseComparator::computeDiff($d2, $d1);
 
         return array(array($diff));
     }
