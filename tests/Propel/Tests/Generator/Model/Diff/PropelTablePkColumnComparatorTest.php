@@ -12,13 +12,13 @@
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\ColumnDefaultValue;
 use Propel\Generator\Model\Table;
-use Propel\Generator\Model\Diff\PropelTableComparator;
+use Propel\Generator\Model\Diff\TableComparator;
 use Propel\Generator\Model\Diff\PropelTableDiff;
 use Propel\Generator\Model\Diff\ColumnComparator;
 use Propel\Generator\Platform\MysqlPlatform;
 
 /**
- * Tests for the Column methods of the PropelTableComparator service class.
+ * Tests for the Column methods of the TableComparator service class.
  *
  * @package    generator.model.diff
  */
@@ -42,7 +42,7 @@ class PropelTablePkColumnComparatorTest extends \PHPUnit_Framework_TestCase
         $c2->setPrimaryKey(true);
         $t2->addColumn($c2);
 
-        $this->assertFalse(PropelTableComparator::computeDiff($t1, $t2));
+        $this->assertFalse(TableComparator::computeDiff($t1, $t2));
     }
 
     public function testCompareNotSamePks()
@@ -55,7 +55,7 @@ class PropelTablePkColumnComparatorTest extends \PHPUnit_Framework_TestCase
         $c2 = new Column('Foo');
         $t2->addColumn($c2);
 
-        $diff = PropelTableComparator::computeDiff($t1, $t2);
+        $diff = TableComparator::computeDiff($t1, $t2);
         $this->assertTrue($diff instanceof PropelTableDiff);
     }
 
@@ -71,7 +71,7 @@ class PropelTablePkColumnComparatorTest extends \PHPUnit_Framework_TestCase
         $c3->getDomain()->copy($this->platform->getDomainForType('LONGVARCHAR'));
         $t2->addColumn($c3);
 
-        $tc = new PropelTableComparator();
+        $tc = new TableComparator();
         $tc->setFromTable($t1);
         $tc->setToTable($t2);
         $nbDiffs = $tc->comparePrimaryKeys();
@@ -93,7 +93,7 @@ class PropelTablePkColumnComparatorTest extends \PHPUnit_Framework_TestCase
         $t1->addColumn($c2);
         $t2 = new Table();
 
-        $tc = new PropelTableComparator();
+        $tc = new TableComparator();
         $tc->setFromTable($t1);
         $tc->setToTable($t2);
         $nbDiffs = $tc->comparePrimaryKeys();
@@ -124,7 +124,7 @@ class PropelTablePkColumnComparatorTest extends \PHPUnit_Framework_TestCase
         $c2->setPrimaryKey(true);
         $t2->addColumn($c2);
 
-        $tc = new PropelTableComparator();
+        $tc = new TableComparator();
         $tc->setFromTable($t1);
         $tc->setToTable($t2);
         $nbDiffs = $tc->comparePrimaryKeys();
@@ -175,7 +175,7 @@ class PropelTablePkColumnComparatorTest extends \PHPUnit_Framework_TestCase
         $t2->addColumn($c6);
 
         // col2 was renamed, col3 was removed, col4 was added
-        $tc = new PropelTableComparator();
+        $tc = new TableComparator();
         $tc->setFromTable($t1);
         $tc->setToTable($t2);
         $nbDiffs = $tc->comparePrimaryKeys();

@@ -14,12 +14,12 @@ use Propel\Generator\Model\ColumnDefaultValue;
 use Propel\Generator\Model\Index;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Model\Unique;
-use Propel\Generator\Model\Diff\PropelTableComparator;
+use Propel\Generator\Model\Diff\TableComparator;
 use Propel\Generator\Model\Diff\PropelTableDiff;
 use Propel\Generator\Platform\MysqlPlatform;
 
 /**
- * Tests for the Column methods of the PropelTableComparator service class.
+ * Tests for the Column methods of the TableComparator service class.
  *
  * @package    generator.model.diff
  */
@@ -55,7 +55,7 @@ class PropelTableIndexComparatorTest extends \PHPUnit_Framework_TestCase
         $i2->addColumn($c2);
         $t2->addIndex($i2);
 
-        $this->assertFalse(PropelTableComparator::computeDiff($t1, $t2));
+        $this->assertFalse(TableComparator::computeDiff($t1, $t2));
     }
 
     public function testCompareNotSameIndices()
@@ -83,7 +83,7 @@ class PropelTableIndexComparatorTest extends \PHPUnit_Framework_TestCase
         $i2->addColumn($c2);
         $t2->addIndex($i2);
 
-        $diff = PropelTableComparator::computeDiff($t1, $t2);
+        $diff = TableComparator::computeDiff($t1, $t2);
         $this->assertTrue($diff instanceof PropelTableDiff);
     }
 
@@ -112,7 +112,7 @@ class PropelTableIndexComparatorTest extends \PHPUnit_Framework_TestCase
         $i2->addColumn($c2);
         $t2->addIndex($i2);
 
-        $this->assertFalse(PropelTableComparator::computeDiff($t1, $t2, true));
+        $this->assertFalse(TableComparator::computeDiff($t1, $t2, true));
     }
 
     public function testCompareAddedIndices()
@@ -130,7 +130,7 @@ class PropelTableIndexComparatorTest extends \PHPUnit_Framework_TestCase
         $i2->addColumn($c2);
         $t2->addIndex($i2);
 
-        $tc = new PropelTableComparator();
+        $tc = new TableComparator();
         $tc->setFromTable($t1);
         $tc->setToTable($t2);
         $nbDiffs = $tc->compareIndices();
@@ -155,7 +155,7 @@ class PropelTableIndexComparatorTest extends \PHPUnit_Framework_TestCase
         $t1->addIndex($i1);
         $t2 = new Table();
 
-        $tc = new PropelTableComparator();
+        $tc = new TableComparator();
         $tc->setFromTable($t1);
         $tc->setToTable($t2);
         $nbDiffs = $tc->compareIndices();
@@ -188,7 +188,7 @@ class PropelTableIndexComparatorTest extends \PHPUnit_Framework_TestCase
         $i2->addColumn($c2);
         $t2->addIndex($i2);
 
-        $tc = new PropelTableComparator();
+        $tc = new TableComparator();
         $tc->setFromTable($t1);
         $tc->setToTable($t2);
         $nbDiffs = $tc->compareIndices();

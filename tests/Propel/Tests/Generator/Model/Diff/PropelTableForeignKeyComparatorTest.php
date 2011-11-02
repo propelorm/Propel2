@@ -12,13 +12,13 @@
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\Table;
-use Propel\Generator\Model\Diff\PropelTableComparator;
+use Propel\Generator\Model\Diff\TableComparator;
 use Propel\Generator\Model\Diff\PropelTableDiff;
 use Propel\Generator\Platform\MysqlPlatform;
 use Propel\Generator\Model\Database;
 
 /**
- * Tests for the Column methods of the PropelTableComparator service class.
+ * Tests for the Column methods of the TableComparator service class.
  *
  * @package    generator.model.diff
  */
@@ -44,7 +44,7 @@ class PropelTableForeignKeyComparatorTest extends \PHPUnit_Framework_TestCase
         $t2 = new Table('Baz');
         $t2->addForeignKey($fk2);
 
-        $this->assertFalse(PropelTableComparator::computeDiff($t1, $t2));
+        $this->assertFalse(TableComparator::computeDiff($t1, $t2));
     }
 
     public function testCompareNotSameFks()
@@ -58,7 +58,7 @@ class PropelTableForeignKeyComparatorTest extends \PHPUnit_Framework_TestCase
 
         $t2 = new Table('Baz');
 
-        $diff = PropelTableComparator::computeDiff($t1, $t2);
+        $diff = TableComparator::computeDiff($t1, $t2);
         $this->assertTrue($diff instanceof PropelTableDiff);
     }
 
@@ -78,7 +78,7 @@ class PropelTableForeignKeyComparatorTest extends \PHPUnit_Framework_TestCase
         $fk2->addReference($c3, $c4);
         $t2->addForeignKey($fk2);
 
-        $this->assertFalse(PropelTableComparator::computeDiff($t1, $t2, true));
+        $this->assertFalse(TableComparator::computeDiff($t1, $t2, true));
     }
 
     public function testCompareAddedFks()
@@ -100,7 +100,7 @@ class PropelTableForeignKeyComparatorTest extends \PHPUnit_Framework_TestCase
         $db2->addTable($t2);
         $t2->doNaming();
 
-        $tc = new PropelTableComparator();
+        $tc = new TableComparator();
         $tc->setFromTable($t1);
         $tc->setToTable($t2);
         $nbDiffs = $tc->compareForeignKeys();
@@ -129,7 +129,7 @@ class PropelTableForeignKeyComparatorTest extends \PHPUnit_Framework_TestCase
         $db2->addTable($t2);
         $t2->doNaming();
 
-        $tc = new PropelTableComparator();
+        $tc = new TableComparator();
         $tc->setFromTable($t1);
         $tc->setToTable($t2);
         $nbDiffs = $tc->compareForeignKeys();
@@ -163,7 +163,7 @@ class PropelTableForeignKeyComparatorTest extends \PHPUnit_Framework_TestCase
         $db2->addTable($t2);
         $t2->doNaming();
 
-        $tc = new PropelTableComparator();
+        $tc = new TableComparator();
         $tc->setFromTable($t1);
         $tc->setToTable($t2);
         $nbDiffs = $tc->compareForeignKeys();

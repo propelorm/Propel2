@@ -19,7 +19,7 @@ use Propel\Generator\Model\Table;
  *
  * @package     propel.generator.model.diff
  */
-class PropelTableComparator
+class TableComparator
 {
     protected $tableDiff;
 

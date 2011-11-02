@@ -14,7 +14,7 @@ use Propel\Generator\Model\Column;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Model\Diff\DatabaseComparator;
 use Propel\Generator\Model\Diff\ColumnComparator;
-use Propel\Generator\Model\Diff\PropelTableComparator;
+use Propel\Generator\Model\Diff\TableComparator;
 
 /**
  * provider for platform migration unit tests
@@ -128,7 +128,7 @@ EOF;
         $t1 = $this->getDatabaseFromSchema($schema1)->getTable('foo');
         $t2 = $this->getDatabaseFromSchema($schema2)->getTable('foo');
 
-        return array(array(PropelTableComparator::computeDiff($t1,$t2)));
+        return array(array(TableComparator::computeDiff($t1,$t2)));
     }
 
     public function providerForTestGetModifyTableColumnsDDL()
@@ -154,7 +154,7 @@ EOF;
 EOF;
         $t1 = $this->getDatabaseFromSchema($schema1)->getTable('foo');
         $t2 = $this->getDatabaseFromSchema($schema2)->getTable('foo');
-        $tc = new PropelTableComparator();
+        $tc = new TableComparator();
         $tc->setFromTable($t1);
         $tc->setToTable($t2);
         $tc->compareColumns();
@@ -184,7 +184,7 @@ EOF;
 EOF;
         $t1 = $this->getDatabaseFromSchema($schema1)->getTable('foo');
         $t2 = $this->getDatabaseFromSchema($schema2)->getTable('foo');
-        $tc = new PropelTableComparator();
+        $tc = new TableComparator();
         $tc->setFromTable($t1);
         $tc->setToTable($t2);
         $tc->comparePrimaryKeys();
@@ -229,7 +229,7 @@ EOF;
 EOF;
         $t1 = $this->getDatabaseFromSchema($schema1)->getTable('foo');
         $t2 = $this->getDatabaseFromSchema($schema2)->getTable('foo');
-        $tc = new PropelTableComparator();
+        $tc = new TableComparator();
         $tc->setFromTable($t1);
         $tc->setToTable($t2);
         $tc->compareIndices();
@@ -283,7 +283,7 @@ EOF;
 EOF;
         $t1 = $this->getDatabaseFromSchema($schema1)->getTable('foo1');
         $t2 = $this->getDatabaseFromSchema($schema2)->getTable('foo1');
-        $tc = new PropelTableComparator();
+        $tc = new TableComparator();
         $tc->setFromTable($t1);
         $tc->setToTable($t2);
         $tc->compareForeignKeys();
@@ -325,7 +325,7 @@ EOF;
 EOF;
         $t1 = $this->getDatabaseFromSchema($schema1)->getTable('foo1');
         $t2 = $this->getDatabaseFromSchema($schema2)->getTable('foo1');
-        $tc = new PropelTableComparator();
+        $tc = new TableComparator();
         $tc->setFromTable($t1);
         $tc->setToTable($t2);
         $tc->compareForeignKeys();
@@ -364,7 +364,7 @@ EOF;
 EOF;
         $t1 = $this->getDatabaseFromSchema($schema1)->getTable('foo1');
         $t2 = $this->getDatabaseFromSchema($schema2)->getTable('foo1');
-        $tc = new PropelTableComparator();
+        $tc = new TableComparator();
         $tc->setFromTable($t1);
         $tc->setToTable($t2);
         $tc->compareForeignKeys();

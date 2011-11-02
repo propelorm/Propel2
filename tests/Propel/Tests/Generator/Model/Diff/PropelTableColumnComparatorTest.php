@@ -12,13 +12,13 @@
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\ColumnDefaultValue;
 use Propel\Generator\Model\Table;
-use Propel\Generator\Model\Diff\PropelTableComparator;
+use Propel\Generator\Model\Diff\TableComparator;
 use Propel\Generator\Model\Diff\PropelTableDiff;
 use Propel\Generator\Model\Diff\ColumnComparator;
 use Propel\Generator\Platform\MysqlPlatform;
 
 /**
- * Tests for the Column methods of the PropelTableComparator service class.
+ * Tests for the Column methods of the TableComparator service class.
  *
  * @package    generator.model.diff
  */
@@ -48,7 +48,7 @@ class PropelTableColumnComparatorTest extends \PHPUnit_Framework_TestCase
         $c2->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_VALUE));
         $t2->addColumn($c2);
 
-        $this->assertFalse(PropelTableComparator::computeDiff($t1, $t2));
+        $this->assertFalse(TableComparator::computeDiff($t1, $t2));
     }
 
     public function testCompareNotSameColumns()
@@ -60,7 +60,7 @@ class PropelTableColumnComparatorTest extends \PHPUnit_Framework_TestCase
         $c2 = new Column('Bar');
         $t2->addColumn($c2);
 
-        $diff = PropelTableComparator::computeDiff($t1, $t2);
+        $diff = TableComparator::computeDiff($t1, $t2);
         $this->assertTrue($diff instanceof PropelTableDiff);
     }
 
@@ -73,10 +73,10 @@ class PropelTableColumnComparatorTest extends \PHPUnit_Framework_TestCase
         $c2 = new Column('fOO');
         $t2->addColumn($c2);
 
-        $diff = PropelTableComparator::computeDiff($t1, $t2);
+        $diff = TableComparator::computeDiff($t1, $t2);
         $this->assertTrue($diff instanceof PropelTableDiff);
 
-        $this->assertFalse(PropelTableComparator::computeDiff($t1, $t2, true));
+        $this->assertFalse(TableComparator::computeDiff($t1, $t2, true));
     }
 
     public function testCompareAddedColumn()
@@ -91,7 +91,7 @@ class PropelTableColumnComparatorTest extends \PHPUnit_Framework_TestCase
         $c2->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_VALUE));
         $t2->addColumn($c2);
 
-        $tc = new PropelTableComparator();
+        $tc = new TableComparator();
         $tc->setFromTable($t1);
         $tc->setToTable($t2);
         $nbDiffs = $tc->compareColumns();
@@ -113,7 +113,7 @@ class PropelTableColumnComparatorTest extends \PHPUnit_Framework_TestCase
         $t1->addColumn($c1);
         $t2 = new Table();
 
-        $tc = new PropelTableComparator();
+        $tc = new TableComparator();
         $tc->setFromTable($t1);
         $tc->setToTable($t2);
         $nbDiffs = $tc->compareColumns();
@@ -140,7 +140,7 @@ class PropelTableColumnComparatorTest extends \PHPUnit_Framework_TestCase
         $c2->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_VALUE));
         $t2->addColumn($c2);
 
-        $tc = new PropelTableComparator();
+        $tc = new TableComparator();
         $tc->setFromTable($t1);
         $tc->setToTable($t2);
         $nbDiffs = $tc->compareColumns();
@@ -170,7 +170,7 @@ class PropelTableColumnComparatorTest extends \PHPUnit_Framework_TestCase
         $c2->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_VALUE));
         $t2->addColumn($c2);
 
-        $tc = new PropelTableComparator();
+        $tc = new TableComparator();
         $tc->setFromTable($t1);
         $tc->setToTable($t2);
         $nbDiffs = $tc->compareColumns();
@@ -217,7 +217,7 @@ class PropelTableColumnComparatorTest extends \PHPUnit_Framework_TestCase
         $t2->addColumn($c6);
 
         // col1 was modified, col2 was renamed, col3 was removed, col4 was added
-        $tc = new PropelTableComparator();
+        $tc = new TableComparator();
         $tc->setFromTable($t1);
         $tc->setToTable($t2);
         $nbDiffs = $tc->compareColumns();

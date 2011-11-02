@@ -15,7 +15,7 @@ use Propel\Generator\Model\Database;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Model\Diff\DatabaseComparator;
 use Propel\Generator\Model\Diff\DatabaseDiff;
-use Propel\Generator\Model\Diff\PropelTableComparator;
+use Propel\Generator\Model\Diff\TableComparator;
 use Propel\Generator\Platform\MysqlPlatform;
 
 /**
@@ -266,7 +266,7 @@ class PropelDatabaseTableComparatorTest extends \PHPUnit_Framework_TestCase
         $databaseDiff = $dc->getDatabaseDiff();
         $this->assertEquals(1, $nbDiffs);
         $this->assertEquals(1, count($databaseDiff->getModifiedTables()));
-        $tableDiff = PropelTableComparator::computeDiff($t1, $t3);
+        $tableDiff = TableComparator::computeDiff($t1, $t3);
         $this->assertEquals(array('Foo_Table' => $tableDiff), $databaseDiff->getModifiedTables());
     }
 
@@ -361,7 +361,7 @@ class PropelDatabaseTableComparatorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(array('Bar' => 'Bar2'), $databaseDiff->getRenamedTables());
         $this->assertEquals(array('Biz' => $t5), $databaseDiff->getAddedTables());
         $this->assertEquals(array('Baz' => $t11), $databaseDiff->getRemovedTables());
-        $tableDiff = PropelTableComparator::computeDiff($t1, $t3);
+        $tableDiff = TableComparator::computeDiff($t1, $t3);
         $this->assertEquals(array('Foo_Table' => $tableDiff), $databaseDiff->getModifiedTables());
     }
 
