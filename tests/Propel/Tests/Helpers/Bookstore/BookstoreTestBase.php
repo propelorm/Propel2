@@ -19,8 +19,13 @@ use Propel\Tests\Bookstore\BookPeer;
  */
 abstract class BookstoreTestBase extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var Boolean
+     */
     static private $isInitialized = false;
-
+    /**
+     * @var \PDO
+     */
     protected $con;
 
     static public function setUpBeforeClass()
@@ -54,5 +59,10 @@ abstract class BookstoreTestBase extends \PHPUnit_Framework_TestCase
             $this->con->commit();
         }
         $this->con = null;
+    }
+
+    static public function tearDownAfterClass()
+    {
+        Propel::close();
     }
 }

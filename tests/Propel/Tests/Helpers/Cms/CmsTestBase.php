@@ -10,25 +10,23 @@
 
 namespace Propel\Tests\Helpers\Cms;
 
-use Propel\Runtime\Propel;
-
 use Propel\Tests\Bookstore\Cms\PagePeer;
+
+use Propel\Runtime\Propel;
 
 /**
  * Base class contains some methods shared by subclass test cases.
  */
 abstract class CmsTestBase extends \PHPUnit_Framework_TestCase
 {
-    static private $isInitialized = false;
-
+    /**
+     * @var \PDO
+     */
     protected $con;
 
     static public function setUpBeforeClass()
     {
-        if (true !== self::$isInitialized) {
-            Propel::init(__DIR__ . '/../../../../Fixtures/bookstore/build/conf/bookstore-conf.php');
-            self::$isInitialized = true;
-        }
+        Propel::init(__DIR__ . '/../../../../Fixtures/bookstore/build/conf/bookstore-conf.php');
     }
 
     /**
@@ -56,5 +54,10 @@ abstract class CmsTestBase extends \PHPUnit_Framework_TestCase
             $this->con->commit();
             $this->con = null;
         }
+    }
+
+    static public function tearDownAfterClass()
+    {
+        Propel::close();
     }
 }

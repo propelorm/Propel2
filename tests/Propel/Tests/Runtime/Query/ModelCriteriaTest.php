@@ -28,6 +28,7 @@ use Propel\Tests\Bookstore\ReviewPeer;
 
 use Propel\Runtime\Propel;
 use Propel\Runtime\Collection\Collection;
+use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Formatter\AbstractFormatter;
 use Propel\Runtime\Formatter\StatementFormatter;
@@ -1597,7 +1598,7 @@ class ModelCriteriaTest extends BookstoreTestBase
 
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $books = $c->findPks(array(765432, 434535));
-        $this->assertEquals($books instanceof Collection, 'findPks() returns a PropelCollection');
+        $this->assertTrue($books instanceof Collection, 'findPks() returns a Collection');
         $this->assertEquals(0, count($books), 'findPks() returns an empty collection when the primary keys are not found');
 
         BookstoreDataPopulator::populate();
