@@ -225,7 +225,7 @@ class PropelTableComparator
 
         foreach ($toTableIndices as $toTableIndexPos => $toTableIndex) {
             foreach ($fromTableIndices as $fromTableIndexPos => $fromTableIndex) {
-                if (PropelIndexComparator::computeDiff($fromTableIndex, $toTableIndex, $caseInsensitive) === false) {
+                if (IndexComparator::computeDiff($fromTableIndex, $toTableIndex, $caseInsensitive) === false) {
                     unset($fromTableIndices[$fromTableIndexPos]);
                     unset($toTableIndices[$toTableIndexPos]);
                 } else {

@@ -12,14 +12,14 @@
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\Index;
 use Propel\Generator\Model\Unique;
-use Propel\Generator\Model\Diff\PropelIndexComparator;
+use Propel\Generator\Model\Diff\IndexComparator;
 
 /**
  * Tests for the ColumnComparator service class.
  *
  * @package    generator.model.diff
  */
-class PropelIndexComparatorTest extends \PHPUnit_Framework_TestCase
+class IndexComparatorTest extends \PHPUnit_Framework_TestCase
 {
     public function testCompareNoDifference()
     {
@@ -29,7 +29,7 @@ class PropelIndexComparatorTest extends \PHPUnit_Framework_TestCase
         $c2 = new Column('Foo');
         $i2 = new Index('Foo_Index');
         $i2->addColumn($c2);
-        $this->assertFalse(PropelIndexComparator::computeDiff($i1, $i2));
+        $this->assertFalse(IndexComparator::computeDiff($i1, $i2));
 
         $c1 = new Column('Foo');
         $c2 = new Column('Bar');
@@ -41,7 +41,7 @@ class PropelIndexComparatorTest extends \PHPUnit_Framework_TestCase
         $i2 = new Index('Foo_Bar_Index');
         $i2->addColumn($c3);
         $i2->addColumn($c4);
-        $this->assertFalse(PropelIndexComparator::computeDiff($i1, $i2));
+        $this->assertFalse(IndexComparator::computeDiff($i1, $i2));
     }
 
     public function testCompareCaseInsensitive()
@@ -52,7 +52,7 @@ class PropelIndexComparatorTest extends \PHPUnit_Framework_TestCase
         $c2 = new Column('fOO');
         $i2 = new Index('fOO_iNDEX');
         $i2->addColumn($c2);
-        $this->assertFalse(PropelIndexComparator::computeDiff($i1, $i2, true));
+        $this->assertFalse(IndexComparator::computeDiff($i1, $i2, true));
     }
 
     public function testCompareType()
@@ -63,7 +63,7 @@ class PropelIndexComparatorTest extends \PHPUnit_Framework_TestCase
         $c2 = new Column('Foo');
         $i2 = new Unique('Foo_Index');
         $i2->addColumn($c2);
-        $this->assertTrue(PropelIndexComparator::computeDiff($i1, $i2));
+        $this->assertTrue(IndexComparator::computeDiff($i1, $i2));
     }
 
     public function testCompareDifferentColumns()
@@ -73,7 +73,7 @@ class PropelIndexComparatorTest extends \PHPUnit_Framework_TestCase
         $i1->addColumn($c1);
         $c2 = new Column('Bar');
         $i2 = new Unique('Foo_Index');
-        $this->assertTrue(PropelIndexComparator::computeDiff($i1, $i2));
+        $this->assertTrue(IndexComparator::computeDiff($i1, $i2));
     }
 
     public function testCompareDifferentOrder()
@@ -88,7 +88,7 @@ class PropelIndexComparatorTest extends \PHPUnit_Framework_TestCase
         $i2 = new Index('Foo_Bar_Index');
         $i2->addColumn($c4);
         $i2->addColumn($c3);
-        $this->assertTrue(PropelIndexComparator::computeDiff($i1, $i2));
+        $this->assertTrue(IndexComparator::computeDiff($i1, $i2));
     }
 
 }

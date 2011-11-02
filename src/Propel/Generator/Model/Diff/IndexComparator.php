@@ -19,7 +19,7 @@ use Propel\Generator\Model\Index;
  *
  * @package     propel.generator.model.diff
  */
-class PropelIndexComparator
+class IndexComparator
 {
     /**
      * Compute the difference between two index objects
