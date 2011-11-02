@@ -18,7 +18,7 @@ use Propel\Generator\Model\IdMethod;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Model\Unique;
-use Propel\Generator\Model\Diff\PropelColumnDiff;
+use Propel\Generator\Model\Diff\ColumnDiff;
 
 /**
  * Postgresql PlatformInterface implementation.
@@ -387,7 +387,7 @@ DROP TABLE %s CASCADE;
      * @return     string
      * @see        DefaultPlatform::getModifyColumnDDL
      */
-    public function getModifyColumnDDL(PropelColumnDiff $columnDiff)
+    public function getModifyColumnDDL(ColumnDiff $columnDiff)
     {
         $ret = '';
         $changedProperties = $columnDiff->getChangedProperties();

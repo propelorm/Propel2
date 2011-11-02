@@ -19,7 +19,7 @@ use Propel\Generator\Model\Column;
  *
  * @package    propel.generator.model.diff
  */
-class PropelColumnDiff
+class ColumnDiff
 {
     protected $changedProperties = array();
     protected $fromColumn;
@@ -88,7 +88,7 @@ class PropelColumnDiff
     /**
      * Get the reverse diff for this diff
      *
-     * @return PropelColumnDiff
+     * @return ColumnDiff
      */
     public function getReverseDiff()
     {

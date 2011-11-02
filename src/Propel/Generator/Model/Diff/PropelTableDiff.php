@@ -204,9 +204,9 @@ class PropelTableDiff
      * Add a column difference
      *
      * @param string $columnName
-     * @param PropelColumnDiff $modifiedColumn
+     * @param ColumnDiff $modifiedColumn
      */
-    public function addModifiedColumn($columnName, PropelColumnDiff $modifiedColumn)
+    public function addModifiedColumn($columnName, ColumnDiff $modifiedColumn)
     {
         $this->modifiedColumns[$columnName] = $modifiedColumn;
     }

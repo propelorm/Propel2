@@ -27,7 +27,7 @@ class ColumnComparator
      * @param Column $fromColumn
      * @param Column $toColumn
      *
-     * @return PropelColumnDiff|boolean return false if the two columns are similar
+     * @return ColumnDiff|boolean return false if the two columns are similar
      */
     static public function computeDiff(Column $fromColumn, Column $toColumn)
     {
@@ -38,7 +38,7 @@ class ColumnComparator
                     return false;
                 }
             }
-            $columnDiff = new PropelColumnDiff();
+            $columnDiff = new ColumnDiff();
             $columnDiff->setFromColumn($fromColumn);
             $columnDiff->setToColumn($toColumn);
             $columnDiff->setChangedProperties($changedProperties);

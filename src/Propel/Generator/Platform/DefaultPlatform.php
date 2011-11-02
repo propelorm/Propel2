@@ -20,7 +20,7 @@ use Propel\Generator\Model\Index;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Model\Unique;
-use Propel\Generator\Model\Diff\PropelColumnDiff;
+use Propel\Generator\Model\Diff\ColumnDiff;
 use Propel\Generator\Model\Diff\PropelDatabaseDiff;
 use Propel\Generator\Model\Diff\PropelTableDiff;
 use Propel\Generator\Exception\EngineException;
@@ -912,7 +912,7 @@ ALTER TABLE %s RENAME COLUMN %s TO %s;
      *
      * @return     string
      */
-    public function getModifyColumnDDL(PropelColumnDiff $columnDiff)
+    public function getModifyColumnDDL(ColumnDiff $columnDiff)
     {
         $toColumn = $columnDiff->getToColumn();
         $pattern = "

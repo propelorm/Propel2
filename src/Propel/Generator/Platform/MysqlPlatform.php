@@ -20,7 +20,7 @@ use Propel\Generator\Model\Index;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Model\Unique;
-use Propel\Generator\Model\Diff\PropelColumnDiff;
+use Propel\Generator\Model\Diff\ColumnDiff;
 use Propel\Generator\Model\Diff\PropelDatabaseDiff;
 
 use \PDO;
@@ -556,7 +556,7 @@ ALTER TABLE %s DROP %s;
      *
      * @return     string
      */
-    public function getModifyColumnDDL(PropelColumnDiff $columnDiff)
+    public function getModifyColumnDDL(ColumnDiff $columnDiff)
     {
         return $this->getChangeColumnDDL($columnDiff->getFromColumn(), $columnDiff->getToColumn());
     }
