@@ -14,7 +14,7 @@ use Propel\Generator\Model\ColumnDefaultValue;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Model\Diff\PropelTableComparator;
 use Propel\Generator\Model\Diff\PropelTableDiff;
-use Propel\Generator\Model\Diff\PropelColumnComparator;
+use Propel\Generator\Model\Diff\ColumnComparator;
 use Propel\Generator\Platform\MysqlPlatform;
 
 /**
@@ -147,7 +147,7 @@ class PropelTableColumnComparatorTest extends \PHPUnit_Framework_TestCase
         $tableDiff = $tc->getTableDiff();
         $this->assertEquals(1, $nbDiffs);
         $this->assertEquals(1, count($tableDiff->getModifiedColumns()));
-        $columnDiff = PropelColumnComparator::computeDiff($c1, $c2);
+        $columnDiff = ColumnComparator::computeDiff($c1, $c2);
         $this->assertEquals(array('Foo' => $columnDiff), $tableDiff->getModifiedColumns());
     }
 
@@ -226,7 +226,7 @@ class PropelTableColumnComparatorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(array(array($c2, $c5)), $tableDiff->getRenamedColumns());
         $this->assertEquals(array('col4' => $c6), $tableDiff->getAddedColumns());
         $this->assertEquals(array('col3' => $c3), $tableDiff->getRemovedColumns());
-        $columnDiff = PropelColumnComparator::computeDiff($c1, $c4);
+        $columnDiff = ColumnComparator::computeDiff($c1, $c4);
         $this->assertEquals(array('col1' => $columnDiff), $tableDiff->getModifiedColumns());
     }
 

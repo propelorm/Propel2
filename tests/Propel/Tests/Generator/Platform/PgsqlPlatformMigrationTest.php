@@ -15,7 +15,7 @@ use Propel\Generator\Model\Column;
 use Propel\Generator\Model\ColumnDefaultValue;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Model\VendorInfo;
-use Propel\Generator\Model\Diff\PropelColumnComparator;
+use Propel\Generator\Model\Diff\ColumnComparator;
 use Propel\Generator\Platform\PgsqlPlatform;
 
 /**
@@ -260,7 +260,7 @@ ALTER TABLE foo ALTER COLUMN bar TYPE DOUBLE PRECISION;
         $c2->getDomain()->replaceSize(3);
         $c2->getDomain()->setDefaultValue(new ColumnDefaultValue(-100, ColumnDefaultValue::TYPE_VALUE));
         $t2->addColumn($c2);
-        $columnDiff = PropelColumnComparator::computeDiff($c1, $c2);
+        $columnDiff = ColumnComparator::computeDiff($c1, $c2);
         $expected = <<<END
 
 ALTER TABLE foo ALTER COLUMN bar TYPE DOUBLE PRECISION;
@@ -333,7 +333,7 @@ EOF;
 
         $table = $this->getDatabaseFromSchema($schema)->getTable('foo');
         $c2 = $table->getColumn('bar');
-        $columnDiff = PropelColumnComparator::computeDiff($c1, $c2);
+        $columnDiff = ColumnComparator::computeDiff($c1, $c2);
         $expected = false;
         $this->assertSame($expected, $columnDiff);
     }
@@ -362,7 +362,7 @@ EOF;
         $db = $appData->getDatabase();
         $table = $db->getTable('foo');
         $c2 = $table->getColumn('bar');
-        $columnDiff = PropelColumnComparator::computeDiff($c1, $c2);
+        $columnDiff = ColumnComparator::computeDiff($c1, $c2);
         $expected = false;
         $this->assertSame($expected, $columnDiff);
     }

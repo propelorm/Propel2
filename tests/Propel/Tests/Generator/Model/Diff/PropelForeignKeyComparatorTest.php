@@ -15,7 +15,7 @@ use Propel\Generator\Model\Table;
 use Propel\Generator\Model\Diff\PropelForeignKeyComparator;
 
 /**
- * Tests for the PropelColumnComparator service class.
+ * Tests for the ColumnComparator service class.
  *
  * @package    generator.model.diff
  */

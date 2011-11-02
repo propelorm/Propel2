@@ -19,7 +19,7 @@ use Propel\Generator\Model\Column;
  *
  * @package    propel.generator.model.diff
  */
-class PropelColumnComparator
+class ColumnComparator
 {
     /**
      * Compute and return the difference between two column objects

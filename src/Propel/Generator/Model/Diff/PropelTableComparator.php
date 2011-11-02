@@ -133,7 +133,7 @@ class PropelTableComparator
         foreach ($fromTableColumns as $fromColumn) {
             if ($this->getToTable()->hasColumn($fromColumn->getName(), $caseInsensitive)) {
                 $toColumn = $this->getToTable()->getColumn($fromColumn->getName(), $caseInsensitive);
-                $columnDiff = PropelColumnComparator::computeDiff($fromColumn, $toColumn, $caseInsensitive);
+                $columnDiff = ColumnComparator::computeDiff($fromColumn, $toColumn, $caseInsensitive);
                 if ($columnDiff) {
                     $this->tableDiff->addModifiedColumn($fromColumn->getName(), $columnDiff);
                     $columnDifferences++;
@@ -144,7 +144,7 @@ class PropelTableComparator
         // check for column renamings
         foreach ($this->tableDiff->getAddedColumns() as $addedColumnName => $addedColumn) {
             foreach ($this->tableDiff->getRemovedColumns() as $removedColumnName => $removedColumn) {
-                if (!PropelColumnComparator::computeDiff($addedColumn, $removedColumn, $caseInsensitive)) {
+                if (!ColumnComparator::computeDiff($addedColumn, $removedColumn, $caseInsensitive)) {
                     // no difference except the name, that's probably a renaming
                     $this->tableDiff->addRenamedColumn($removedColumn, $addedColumn);
                     $this->tableDiff->removeAddedColumn($addedColumnName);
@@ -194,7 +194,7 @@ class PropelTableComparator
         // check for column renamings
         foreach ($this->tableDiff->getAddedPkColumns() as $addedColumnName => $addedColumn) {
             foreach ($this->tableDiff->getRemovedPkColumns() as $removedColumnName => $removedColumn) {
-                if (!PropelColumnComparator::computeDiff($addedColumn, $removedColumn, $caseInsensitive)) {
+                if (!ColumnComparator::computeDiff($addedColumn, $removedColumn, $caseInsensitive)) {
                     // no difference except the name, that's probably a renaming
                     $this->tableDiff->addRenamedPkColumn($removedColumn, $addedColumn);
                     $this->tableDiff->removeAddedPkColumn($addedColumnName);

@@ -13,7 +13,7 @@ namespace Propel\Tests\Generator\Platform;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Model\Diff\PropelDatabaseComparator;
-use Propel\Generator\Model\Diff\PropelColumnComparator;
+use Propel\Generator\Model\Diff\ColumnComparator;
 use Propel\Generator\Model\Diff\PropelTableComparator;
 
 /**
@@ -412,7 +412,7 @@ EOF;
         $c2->getDomain()->replaceSize(3);
         $t2->addColumn($c2);
 
-        return array(array(PropelColumnComparator::computeDiff($c1, $c2)));
+        return array(array(ColumnComparator::computeDiff($c1, $c2)));
     }
 
     public function providerForTestGetModifyColumnsDDL()
@@ -438,8 +438,8 @@ EOF;
         $t2->addColumn($c4);
 
         return array(array(array(
-            PropelColumnComparator::computeDiff($c1, $c3),
-            PropelColumnComparator::computeDiff($c2, $c4)
+            ColumnComparator::computeDiff($c1, $c3),
+            ColumnComparator::computeDiff($c2, $c4)
         )));
     }
 
@@ -488,7 +488,7 @@ EOF;
         $c2->getDomain()->setType('INTEGER');
         $t2->addColumn($c2);
 
-        return array(array(PropelColumnComparator::computeDiff($c1, $c2)));
+        return array(array(ColumnComparator::computeDiff($c1, $c2)));
     }
 
     public function providerForTestGetModifyTableForeignKeysSkipSql3DDL()

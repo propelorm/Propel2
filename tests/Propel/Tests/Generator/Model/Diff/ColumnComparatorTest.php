@@ -11,15 +11,15 @@
 
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\ColumnDefaultValue;
-use Propel\Generator\Model\Diff\PropelColumnComparator;
+use Propel\Generator\Model\Diff\ColumnComparator;
 use Propel\Generator\Platform\MysqlPlatform;
 
 /**
- * Tests for the PropelColumnComparator service class.
+ * Tests for the ColumnComparator service class.
  *
  * @package    generator.model.diff
  */
-class PropelColumnComparatorTest extends \PHPUnit_Framework_TestCase
+class ColumnComparatorTest extends \PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
@@ -40,7 +40,7 @@ class PropelColumnComparatorTest extends \PHPUnit_Framework_TestCase
         $c2->getDomain()->replaceSize(3);
         $c2->setNotNull(true);
         $c2->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_VALUE));
-        $this->assertEquals(array(), PropelColumnComparator::compareColumns($c1, $c2));
+        $this->assertEquals(array(), ColumnComparator::compareColumns($c1, $c2));
     }
 
     public function testCompareType()
@@ -53,7 +53,7 @@ class PropelColumnComparatorTest extends \PHPUnit_Framework_TestCase
             'type'    => array('VARCHAR', 'LONGVARCHAR'),
             'sqlType' => array('VARCHAR', 'TEXT'),
         );
-        $this->assertEquals($expectedChangedProperties, PropelColumnComparator::compareColumns($c1, $c2));
+        $this->assertEquals($expectedChangedProperties, ColumnComparator::compareColumns($c1, $c2));
     }
 
     public function testCompareScale()
@@ -63,7 +63,7 @@ class PropelColumnComparatorTest extends \PHPUnit_Framework_TestCase
         $c2 = new Column();
         $c2->getDomain()->replaceScale(3);
         $expectedChangedProperties = array('scale' => array(2, 3));
-        $this->assertEquals($expectedChangedProperties, PropelColumnComparator::compareColumns($c1, $c2));
+        $this->assertEquals($expectedChangedProperties, ColumnComparator::compareColumns($c1, $c2));
     }
 
     public function testCompareSize()
@@ -73,7 +73,7 @@ class PropelColumnComparatorTest extends \PHPUnit_Framework_TestCase
         $c2 = new Column();
         $c2->getDomain()->replaceSize(3);
         $expectedChangedProperties = array('size' => array(2, 3));
-        $this->assertEquals($expectedChangedProperties, PropelColumnComparator::compareColumns($c1, $c2));
+        $this->assertEquals($expectedChangedProperties, ColumnComparator::compareColumns($c1, $c2));
     }
 
     public function testCompareSqlType()
@@ -84,7 +84,7 @@ class PropelColumnComparatorTest extends \PHPUnit_Framework_TestCase
         $c2->getDomain()->copy($this->platform->getDomainForType('INTEGER'));
         $c2->getDomain()->setSqlType('INTEGER(10) UNSIGNED');
         $expectedChangedProperties = array('sqlType' => array('INTEGER', 'INTEGER(10) UNSIGNED'));
-        $this->assertEquals($expectedChangedProperties, PropelColumnComparator::compareColumns($c1, $c2));
+        $this->assertEquals($expectedChangedProperties, ColumnComparator::compareColumns($c1, $c2));
     }
 
     public function testCompareNotNull()
@@ -94,7 +94,7 @@ class PropelColumnComparatorTest extends \PHPUnit_Framework_TestCase
         $c2 = new Column();
         $c2->setNotNull(false);
         $expectedChangedProperties = array('notNull' => array(true, false));
-        $this->assertEquals($expectedChangedProperties, PropelColumnComparator::compareColumns($c1, $c2));
+        $this->assertEquals($expectedChangedProperties, ColumnComparator::compareColumns($c1, $c2));
     }
 
     public function testCompareDefaultValueToNull()
@@ -106,7 +106,7 @@ class PropelColumnComparatorTest extends \PHPUnit_Framework_TestCase
             'defaultValueType' => array(ColumnDefaultValue::TYPE_VALUE, null),
             'defaultValueValue' => array(123, null)
         );
-        $this->assertEquals($expectedChangedProperties, PropelColumnComparator::compareColumns($c1, $c2));
+        $this->assertEquals($expectedChangedProperties, ColumnComparator::compareColumns($c1, $c2));
     }
 
     public function testCompareDefaultValueFromNull()
@@ -118,7 +118,7 @@ class PropelColumnComparatorTest extends \PHPUnit_Framework_TestCase
             'defaultValueType' => array(null, ColumnDefaultValue::TYPE_VALUE),
             'defaultValueValue' => array(null, 123)
         );
-        $this->assertEquals($expectedChangedProperties, PropelColumnComparator::compareColumns($c1, $c2));
+        $this->assertEquals($expectedChangedProperties, ColumnComparator::compareColumns($c1, $c2));
     }
 
     public function testCompareDefaultValueValue()
@@ -130,7 +130,7 @@ class PropelColumnComparatorTest extends \PHPUnit_Framework_TestCase
         $expectedChangedProperties = array(
             'defaultValueValue' => array(123, 456)
         );
-        $this->assertEquals($expectedChangedProperties, PropelColumnComparator::compareColumns($c1, $c2));
+        $this->assertEquals($expectedChangedProperties, ColumnComparator::compareColumns($c1, $c2));
     }
 
     public function testCompareDefaultValueType()
@@ -142,7 +142,7 @@ class PropelColumnComparatorTest extends \PHPUnit_Framework_TestCase
         $expectedChangedProperties = array(
             'defaultValueType' => array(ColumnDefaultValue::TYPE_VALUE, ColumnDefaultValue::TYPE_EXPR)
         );
-        $this->assertEquals($expectedChangedProperties, PropelColumnComparator::compareColumns($c1, $c2));
+        $this->assertEquals($expectedChangedProperties, ColumnComparator::compareColumns($c1, $c2));
     }
 
     /**
@@ -154,7 +154,7 @@ class PropelColumnComparatorTest extends \PHPUnit_Framework_TestCase
         $c1->getDomain()->setDefaultValue(new ColumnDefaultValue("NOW()", ColumnDefaultValue::TYPE_EXPR));
         $c2 = new Column();
         $c2->getDomain()->setDefaultValue(new ColumnDefaultValue("CURRENT_TIMESTAMP", ColumnDefaultValue::TYPE_EXPR));
-        $this->assertEquals(array(), PropelColumnComparator::compareColumns($c1, $c2));
+        $this->assertEquals(array(), ColumnComparator::compareColumns($c1, $c2));
     }
 
     public function testCompareAutoincrement()
@@ -164,7 +164,7 @@ class PropelColumnComparatorTest extends \PHPUnit_Framework_TestCase
         $c2 = new Column();
         $c2->setAutoIncrement(false);
         $expectedChangedProperties = array('autoIncrement' => array(true, false));
-        $this->assertEquals($expectedChangedProperties, PropelColumnComparator::compareColumns($c1, $c2));
+        $this->assertEquals($expectedChangedProperties, ColumnComparator::compareColumns($c1, $c2));
     }
 
     public function testCompareMultipleDifferences()
@@ -187,6 +187,6 @@ class PropelColumnComparatorTest extends \PHPUnit_Framework_TestCase
             'defaultValueType' => array(NULL, ColumnDefaultValue::TYPE_VALUE),
             'defaultValueValue' => array(NULL, 123)
         );
-        $this->assertEquals($expectedChangedProperties, PropelColumnComparator::compareColumns($c1, $c2));
+        $this->assertEquals($expectedChangedProperties, ColumnComparator::compareColumns($c1, $c2));
     }
 }
