@@ -25,7 +25,7 @@ use \PDOStatement;
 class OnDemandCollection extends PropelCollection
 {
     /**
-     * @var       PropelOnDemandIterator
+     * @var       OnDemandIterator
      */
     protected $iterator;
 
@@ -40,7 +40,7 @@ class OnDemandCollection extends PropelCollection
      */
     public function initIterator(AbstractFormatter $formatter, PDOStatement $stmt)
     {
-        $this->iterator = new PropelOnDemandIterator($formatter, $stmt);
+        $this->iterator = new OnDemandIterator($formatter, $stmt);
     }
 
     /**
@@ -107,7 +107,7 @@ class OnDemandCollection extends PropelCollection
     // IteratorAggregate Interface
 
     /**
-     * @return    PropelOnDemandIterator
+     * @return    OnDemandIterator
      */
     public function getIterator()
     {

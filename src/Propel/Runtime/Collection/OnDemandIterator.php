@@ -23,7 +23,7 @@ use \PDOStatement;
  * @author     Francois Zaninotto
  * @package    propel.runtime.collection
  */
-class PropelOnDemandIterator implements \Iterator
+class OnDemandIterator implements \Iterator
 {
     /**
      * @var       ObjectFormatter
