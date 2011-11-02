@@ -10,7 +10,7 @@
 
 namespace Propel\Tests\Generator\Behavior\Versionable;
 
-use Propel\Generator\Util\PropelQuickBuilder;
+use Propel\Generator\Util\QuickBuilder;
 use Propel\Generator\Behavior\Versionable\VersionableBehavior;
 
 use Propel\Runtime\Propel;
@@ -37,7 +37,7 @@ class VersionableBehaviorPeerBuilderModifierTest extends \PHPUnit_Framework_Test
     </table>
 </database>>
 EOF;
-            PropelQuickBuilder::buildSchema($schema);
+            QuickBuilder::buildSchema($schema);
         }
     }
 

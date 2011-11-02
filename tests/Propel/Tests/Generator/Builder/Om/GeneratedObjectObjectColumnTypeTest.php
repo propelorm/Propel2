@@ -10,7 +10,7 @@
 
 namespace Propel\Tests\Generator\Builder\Om;
 
-use Propel\Generator\Util\PropelQuickBuilder;
+use Propel\Generator\Util\QuickBuilder;
 
 use Propel\Runtime\Propel;
 
@@ -32,7 +32,7 @@ class GeneratedObjectObjectColumnTypeTest extends \PHPUnit_Framework_TestCase
     </table>
 </database>
 EOF;
-        PropelQuickBuilder::buildSchema($schema);
+        QuickBuilder::buildSchema($schema);
         $e = new \ComplexColumnTypeEntity1();
         $this->assertNull($e->getBar(), 'object columns are null by default');
         $c = new FooColumnValue();

@@ -10,7 +10,7 @@
 
 namespace Propel\Tests\Generator\Builder\Om;
 
-use Propel\Generator\Util\PropelQuickBuilder;
+use Propel\Generator\Util\QuickBuilder;
 
 use Propel\Runtime\Propel;
 use Propel\Runtime\Query\Criteria;
@@ -35,7 +35,7 @@ class GeneratedQueryArrayColumnTypeTest extends \PHPUnit_Framework_TestCase
     </table>
 </database>
 EOF;
-            PropelQuickBuilder::buildSchema($schema);
+            QuickBuilder::buildSchema($schema);
             $e0 = new \ComplexColumnTypeEntity11();
             $e0->save();
             $e1 = new \ComplexColumnTypeEntity11();

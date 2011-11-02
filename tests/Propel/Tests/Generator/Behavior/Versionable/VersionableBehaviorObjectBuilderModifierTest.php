@@ -10,7 +10,7 @@
 
 namespace Propel\Tests\Generator\Behavior\Versionable;
 
-use Propel\Generator\Util\PropelQuickBuilder;
+use Propel\Generator\Util\QuickBuilder;
 use Propel\Generator\Behavior\Versionable\VersionableBehavior;
 
 use Propel\Runtime\Propel;
@@ -71,7 +71,7 @@ class VersionableBehaviorObjectBuilderModifierTest extends \PHPUnit_Framework_Te
 
 </database>
 EOF;
-            PropelQuickBuilder::buildSchema($schema);
+            QuickBuilder::buildSchema($schema);
         }
         if (!class_exists('\VersionableBehaviorTest6')) {
             $schema2 = <<<EOF
@@ -103,7 +103,7 @@ EOF;
         </behavior>
     </table>
 EOF;
-            PropelQuickBuilder::buildSchema($schema2);
+            QuickBuilder::buildSchema($schema2);
         }
     }
 

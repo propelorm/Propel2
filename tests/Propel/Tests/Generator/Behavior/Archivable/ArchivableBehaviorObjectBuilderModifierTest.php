@@ -11,7 +11,7 @@
 
 namespace Propel\Tests\Generator\Behavior\Archivable;
 
-use Propel\Generator\Util\PropelQuickBuilder;
+use Propel\Generator\Util\QuickBuilder;
 use Propel\Generator\Behavior\Archivable\ArchivableBehavior;
 
 use Propel\Runtime\Propel;
@@ -82,7 +82,7 @@ class ArchivableBehaviorObjectBuilderModifierTest extends \PHPUnit_Framework_Tes
 
 </database>
 EOF;
-            PropelQuickBuilder::buildSchema($schema);
+            QuickBuilder::buildSchema($schema);
         }
     }
 

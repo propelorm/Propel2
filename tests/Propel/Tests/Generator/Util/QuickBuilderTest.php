@@ -10,7 +10,7 @@
 
 use Propel\Generator\Platform\MysqlPlatform;
 use Propel\Generator\Platform\SqlitePlatform;
-use Propel\Generator\Util\PropelQuickBuilder;
+use Propel\Generator\Util\QuickBuilder;
 
 use Propel\Runtime\Propel;
 use Propel\Runtime\Om\BaseObject;
@@ -19,14 +19,14 @@ use Propel\Runtime\Om\BaseObject;
  *
  * @package    generator.util
  */
-class PropelQuickBuilderTest extends \PHPUnit_Framework_TestCase
+class QuickBuilderTest extends \PHPUnit_Framework_TestCase
 {
     public function testGetPlatform()
     {
-        $builder = new PropelQuickBuilder();
+        $builder = new QuickBuilder();
         $builder->setPlatform(new MysqlPlatform());
         $this->assertTrue($builder->getPlatform() instanceof MysqlPlatform);
-        $builder = new PropelQuickBuilder();
+        $builder = new QuickBuilder();
         $this->assertTrue($builder->getPlatform() instanceof SqlitePlatform);
     }
 
@@ -40,7 +40,7 @@ class PropelQuickBuilderTest extends \PHPUnit_Framework_TestCase
     </table>
 </database>
 EOF;
-        $builder = new PropelQuickBuilder();
+        $builder = new QuickBuilder();
         $builder->setSchema($schema);
 
         return array(array($builder));
@@ -115,7 +115,7 @@ EOF;
     </table>
 </database>
 EOF;
-        $builder = new PropelQuickBuilder();
+        $builder = new QuickBuilder();
         $builder->setSchema($schema);
         $builder->build();
         $this->assertEquals(0, QuickBuildFoo2Query::create()->count());

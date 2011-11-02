@@ -10,7 +10,7 @@
 
 namespace Propel\Tests\Generator\Behavior\I18n;
 
-use Propel\Generator\Util\PropelQuickBuilder;
+use Propel\Generator\Util\QuickBuilder;
 use Propel\Generator\Behavior\I18n\I18nBehavior;
 
 use Propel\Runtime\Propel;
@@ -41,7 +41,7 @@ class I18nBehaviorPeerBuilderModifierTest extends \PHPUnit_Framework_TestCase
     </table>
 </database>
 EOF;
-        PropelQuickBuilder::buildSchema($schema);
+        QuickBuilder::buildSchema($schema);
         $this->assertEquals('en_EN', \I18nBehaviorTest01Peer::DEFAULT_LOCALE);
         $this->assertEquals('fr_FR', \I18nBehaviorTest02Peer::DEFAULT_LOCALE);
     }
@@ -61,7 +61,7 @@ EOF;
     </table>
 </database>
 EOF;
-        PropelQuickBuilder::buildSchema($schema);
+        QuickBuilder::buildSchema($schema);
         $this->assertEquals(array(0, 1, 2), \I18nBehaviorTest03Peer::getFieldNames(BasePeer::TYPE_NUM));
     }
 

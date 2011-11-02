@@ -10,7 +10,7 @@
 
 namespace Propel\Tests\Generator\Behavior\I18n;
 
-use Propel\Generator\Util\PropelQuickBuilder;
+use Propel\Generator\Util\QuickBuilder;
 use Propel\Generator\Behavior\I18n\I18nBehavior;
 
 use Propel\Runtime\Propel;
@@ -37,7 +37,7 @@ class I18nBehaviorTest extends \PHPUnit_Framework_TestCase
     </table>
 </database>
 EOF;
-        $builder = new PropelQuickBuilder();
+        $builder = new QuickBuilder();
         $builder->setSchema($schema);
         $expected = <<<EOF
 -----------------------------------------------------------------------
@@ -71,7 +71,7 @@ EOF;
     </table>
 </database>
 EOF;
-        $builder = new PropelQuickBuilder();
+        $builder = new QuickBuilder();
         $builder->setSchema($schema);
         $expected = <<<EOF
 -----------------------------------------------------------------------
@@ -130,7 +130,7 @@ EOF;
      */
     public function testModifyTableAddsI18nTable($schema)
     {
-        $builder = new PropelQuickBuilder();
+        $builder = new QuickBuilder();
         $builder->setSchema($schema);
         $expected = <<<EOF
 -----------------------------------------------------------------------
@@ -149,7 +149,7 @@ EOF;
      */
     public function testModifyTableRelatesI18nTableToMainTable($schema)
     {
-        $builder = new PropelQuickBuilder();
+        $builder = new QuickBuilder();
         $builder->setSchema($schema);
         $expected = <<<EOF
 -- FOREIGN KEY (id) REFERENCES i18n_behavior_test_0 (id)
@@ -162,7 +162,7 @@ EOF;
      */
     public function testModifyTableAddsLocaleColumnToI18n($schema)
     {
-        $builder = new PropelQuickBuilder();
+        $builder = new QuickBuilder();
         $builder->setSchema($schema);
         $expected = <<<EOF
 CREATE TABLE i18n_behavior_test_0_i18n
@@ -178,7 +178,7 @@ EOF;
      */
     public function testModifyTableMovesI18nColumns($schema)
     {
-        $builder = new PropelQuickBuilder();
+        $builder = new QuickBuilder();
         $builder->setSchema($schema);
         $expected = <<<EOF
 CREATE TABLE i18n_behavior_test_0_i18n
@@ -197,7 +197,7 @@ EOF;
      */
     public function testModifyTableDoesNotMoveNonI18nColumns($schema)
     {
-        $builder = new PropelQuickBuilder();
+        $builder = new QuickBuilder();
         $builder->setSchema($schema);
         $expected = <<<EOF
 CREATE TABLE i18n_behavior_test_0
@@ -225,7 +225,7 @@ EOF;
     </table>
 </database>
 EOF;
-        $builder = new PropelQuickBuilder();
+        $builder = new QuickBuilder();
         $builder->setSchema($schema);
         $table = $builder->getDatabase()->getTable('i18n_behavior_test_0');
         $this->assertEquals(array(), $table->getValidators());
@@ -251,7 +251,7 @@ EOF;
     </table>
 </database>
 EOF;
-        $builder = new PropelQuickBuilder();
+        $builder = new QuickBuilder();
         $builder->setSchema($schema);
         $table = $builder->getDatabase()->getTable('i18n_behavior_test_0');
         $this->assertEquals(1, count($table->getValidators()));
@@ -271,7 +271,7 @@ EOF;
     </table>
 </database>
 EOF;
-        $builder = new PropelQuickBuilder();
+        $builder = new QuickBuilder();
         $builder->setSchema($schema);
         $expected = <<<EOF
 -----------------------------------------------------------------------
@@ -302,7 +302,7 @@ EOF;
     </table>
 </database>
 EOF;
-        $builder = new PropelQuickBuilder();
+        $builder = new QuickBuilder();
         $builder->setSchema($schema);
         $expected = <<<EOF
 -----------------------------------------------------------------------
@@ -333,7 +333,7 @@ EOF;
     </table>
 </database>
 EOF;
-        $builder = new PropelQuickBuilder();
+        $builder = new QuickBuilder();
         $builder->setSchema($schema);
         $expected = <<<EOF
 -----------------------------------------------------------------------

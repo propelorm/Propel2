@@ -20,7 +20,7 @@ use Propel\Runtime\Connection\PropelPDO;
 use \PDO;
 use \PDOStatement;
 
-class PropelQuickBuilder
+class QuickBuilder
 {
     protected $schema, $platform, $config, $database;
 

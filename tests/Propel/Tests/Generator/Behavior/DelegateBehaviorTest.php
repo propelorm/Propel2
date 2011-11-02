@@ -11,7 +11,7 @@
 namespace Propel\Tests\Generator\Behavior;
 
 use Propel\Generator\Behavior\DelegateBehavior;
-use Propel\Generator\Util\PropelQuickBuilder;
+use Propel\Generator\Util\QuickBuilder;
 
 use Propel\Runtime\Propel;
 
@@ -102,7 +102,7 @@ class DelegateBehaviorTest extends \PHPUnit_Framework_TestCase
 
 </database>
 EOF;
-            PropelQuickBuilder::buildSchema($schema);
+            QuickBuilder::buildSchema($schema);
         }
     }
 
@@ -259,7 +259,7 @@ EOF;
 
 </database>
 EOF;
-        PropelQuickBuilder::buildSchema($schema);
+        QuickBuilder::buildSchema($schema);
         $main = new \FooTestTablePrefixSameDatabaseMain();
         $main->setSubtitle('bar');
         $delegate = $main->getFooTestTablePrefixSameDatabaseDelegate();

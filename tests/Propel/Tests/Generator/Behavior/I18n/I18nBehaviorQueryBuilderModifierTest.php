@@ -10,7 +10,7 @@
 
 namespace Propel\Tests\Generator\Behavior\I18n;
 
-use Propel\Generator\Util\PropelQuickBuilder;
+use Propel\Generator\Util\QuickBuilder;
 use Propel\Generator\Behavior\I18n\I18nBehavior;
 
 use Propel\Runtime\Propel;
@@ -54,8 +54,8 @@ class I18nBehaviorQueryBuilderModifierTest extends \PHPUnit_Framework_TestCase
     </table>
 </database>
 EOF;
-            //PropelQuickBuilder::debugClassesForTable($schema, 'i18n_behavior_test_11');
-            PropelQuickBuilder::buildSchema($schema);
+            //QuickBuilder::debugClassesForTable($schema, 'i18n_behavior_test_11');
+            QuickBuilder::buildSchema($schema);
         }
     }
 

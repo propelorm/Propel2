@@ -10,7 +10,7 @@
 
 namespace Propel\Tests\Generator\Builder\Om;
 
-use Propel\Generator\Util\PropelQuickBuilder;
+use Propel\Generator\Util\QuickBuilder;
 
 use Propel\Runtime\Propel;
 
@@ -34,8 +34,8 @@ class GeneratedObjectLazyLoadTest extends \PHPUnit_Framework_TestCase
     </table>
 </database>
 EOF;
-            //PropelQuickBuilder::debugClassesForTable($schema, 'lazy_load_active_record');
-            PropelQuickBuilder::buildSchema($schema);
+            //QuickBuilder::debugClassesForTable($schema, 'lazy_load_active_record');
+            QuickBuilder::buildSchema($schema);
         }
     }
 

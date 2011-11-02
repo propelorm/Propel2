@@ -11,7 +11,7 @@
 namespace Propel\Tests\Generator\Util;
 
 use Propel\Generator\Util\SchemaValidator;
-use Propel\Generator\Util\PropelQuickBuilder;
+use Propel\Generator\Util\QuickBuilder;
 
 use Propel\Generator\Model\AppData;
 use Propel\Generator\Model\Column;
@@ -51,7 +51,7 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
     </table>
 </database>
 EOF;
-        $builder = new PropelQuickBuilder();
+        $builder = new QuickBuilder();
         $builder->setSchema($schema);
         $database = $builder->getDatabase();
         $appData = new AppData();

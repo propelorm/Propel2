@@ -10,7 +10,7 @@
 
 namespace Propel\Tests\Generator\Behavior\Versionable;
 
-use Propel\Generator\Util\PropelQuickBuilder;
+use Propel\Generator\Util\QuickBuilder;
 use Propel\Generator\Behavior\Versionable\VersionableBehavior;
 
 use Propel\Runtime\Propel;
@@ -44,7 +44,7 @@ EOF;
      */
     public function testModifyTableAddsVersionColumn($schema)
     {
-        $builder = new PropelQuickBuilder();
+        $builder = new QuickBuilder();
         $builder->setSchema($schema);
         $expected = <<<EOF
 -----------------------------------------------------------------------
@@ -76,7 +76,7 @@ EOF;
     </table>
 </database>
 EOF;
-        $builder = new PropelQuickBuilder();
+        $builder = new QuickBuilder();
         $builder->setSchema($schema);
         $expected = <<<EOF
 -----------------------------------------------------------------------
@@ -106,7 +106,7 @@ EOF;
     </table>
 </database>
 EOF;
-        $builder = new PropelQuickBuilder();
+        $builder = new QuickBuilder();
         $builder->setSchema($schema);
         $expected = <<<EOF
 -----------------------------------------------------------------------
@@ -154,7 +154,7 @@ EOF;
      */
     public function testModifyTableAddsVersionColumnForForeignKeysIfForeignTableIsVersioned($schema)
     {
-        $builder = new PropelQuickBuilder();
+        $builder = new QuickBuilder();
         $builder->setSchema($schema);
         $expected = <<<EOF
 -----------------------------------------------------------------------
@@ -201,7 +201,7 @@ EOF;
      */
     public function testModifyTableAddsVersionColumnForReferrersIfForeignTableIsVersioned($schema)
     {
-        $builder = new PropelQuickBuilder();
+        $builder = new QuickBuilder();
         $builder->setSchema($schema);
         $expected = <<<EOF
 -----------------------------------------------------------------------
@@ -247,7 +247,7 @@ EOF;
      */
     public function testModifyTableAddsVersionTable($schema)
     {
-        $builder = new PropelQuickBuilder();
+        $builder = new QuickBuilder();
         $builder->setSchema($schema);
         $expected = <<<EOF
 -----------------------------------------------------------------------
@@ -283,7 +283,7 @@ EOF;
     </table>
 </database>
 EOF;
-        $builder = new PropelQuickBuilder();
+        $builder = new QuickBuilder();
         $builder->setSchema($schema);
         $expected = <<<EOF
 -----------------------------------------------------------------------
@@ -321,7 +321,7 @@ EOF;
     </table>
 </database>
 EOF;
-        $builder = new PropelQuickBuilder();
+        $builder = new QuickBuilder();
         $builder->setSchema($schema);
         $expected = <<<EOF
 
@@ -378,7 +378,7 @@ EOF;
      */
     public function testModifyTableAddsLogColumns($schema)
     {
-        $builder = new PropelQuickBuilder();
+        $builder = new QuickBuilder();
         $builder->setSchema($schema);
         $expected = <<<EOF
 -----------------------------------------------------------------------
@@ -405,7 +405,7 @@ EOF;
      */
     public function testModifyTableAddsVersionTableLogColumns($schema)
     {
-        $builder = new PropelQuickBuilder();
+        $builder = new QuickBuilder();
         $builder->setSchema($schema);
         $expected = <<<EOF
 -----------------------------------------------------------------------
@@ -442,7 +442,7 @@ EOF;
     </table>
 </database>
 EOF;
-            $builder = new PropelQuickBuilder();
+            $builder = new QuickBuilder();
             $builder->setSchema($schema);
             $builder->getSQL();
     }
