@@ -12,7 +12,7 @@
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\Table;
-use Propel\Generator\Model\Diff\PropelForeignKeyComparator;
+use Propel\Generator\Model\Diff\ForeignKeyComparator;
 
 /**
  * Tests for the ColumnComparator service class.
@@ -35,7 +35,7 @@ class PropelForeignComparatorTest extends \PHPUnit_Framework_TestCase
         $fk2->addReference($c3, $c4);
         $t2 = new Table('Baz');
         $t2->addForeignKey($fk2);
-        $this->assertFalse(PropelForeignKeyComparator::computeDiff($fk1, $fk2));
+        $this->assertFalse(ForeignKeyComparator::computeDiff($fk1, $fk2));
     }
 
     public function testCompareCaseInsensitive()
@@ -52,7 +52,7 @@ class PropelForeignComparatorTest extends \PHPUnit_Framework_TestCase
         $fk2->addReference($c3, $c4);
         $t2 = new Table('bAZ');
         $t2->addForeignKey($fk2);
-        $this->assertFalse(PropelForeignKeyComparator::computeDiff($fk1, $fk2, true));
+        $this->assertFalse(ForeignKeyComparator::computeDiff($fk1, $fk2, true));
     }
 
     public function testCompareLocalColumn()
@@ -69,7 +69,7 @@ class PropelForeignComparatorTest extends \PHPUnit_Framework_TestCase
         $fk2->addReference($c3, $c4);
         $t2 = new Table('Baz');
         $t2->addForeignKey($fk2);
-        $this->assertTrue(PropelForeignKeyComparator::computeDiff($fk1, $fk2));
+        $this->assertTrue(ForeignKeyComparator::computeDiff($fk1, $fk2));
     }
 
     public function testCompareForeignColumn()
@@ -86,7 +86,7 @@ class PropelForeignComparatorTest extends \PHPUnit_Framework_TestCase
         $fk2->addReference($c3, $c4);
         $t2 = new Table('Baz');
         $t2->addForeignKey($fk2);
-        $this->assertTrue(PropelForeignKeyComparator::computeDiff($fk1, $fk2));
+        $this->assertTrue(ForeignKeyComparator::computeDiff($fk1, $fk2));
     }
 
     public function testCompareColumnMappings()
@@ -106,7 +106,7 @@ class PropelForeignComparatorTest extends \PHPUnit_Framework_TestCase
         $fk2->addReference($c5, $c6);
         $t2 = new Table('Baz');
         $t2->addForeignKey($fk2);
-        $this->assertTrue(PropelForeignKeyComparator::computeDiff($fk1, $fk2));
+        $this->assertTrue(ForeignKeyComparator::computeDiff($fk1, $fk2));
     }
 
     public function testCompareOnUpdate()
@@ -125,7 +125,7 @@ class PropelForeignComparatorTest extends \PHPUnit_Framework_TestCase
         $fk2->setOnUpdate(ForeignKey::RESTRICT);
         $t2 = new Table('Baz');
         $t2->addForeignKey($fk2);
-        $this->assertTrue(PropelForeignKeyComparator::computeDiff($fk1, $fk2));
+        $this->assertTrue(ForeignKeyComparator::computeDiff($fk1, $fk2));
     }
 
     public function testCompareOnDelete()
@@ -144,7 +144,7 @@ class PropelForeignComparatorTest extends \PHPUnit_Framework_TestCase
         $fk2->setOnDelete(ForeignKey::RESTRICT);
         $t2 = new Table('Baz');
         $t2->addForeignKey($fk2);
-        $this->assertTrue(PropelForeignKeyComparator::computeDiff($fk1, $fk2));
+        $this->assertTrue(ForeignKeyComparator::computeDiff($fk1, $fk2));
     }
 
     public function testCompareSort()
@@ -163,6 +163,6 @@ class PropelForeignComparatorTest extends \PHPUnit_Framework_TestCase
         $fk2->addReference($c1, $c3);
         $t2 = new Table('Baz');
         $t2->addForeignKey($fk2);
-        $this->assertFalse(PropelForeignKeyComparator::computeDiff($fk1, $fk2));
+        $this->assertFalse(ForeignKeyComparator::computeDiff($fk1, $fk2));
     }
 }

@@ -274,7 +274,7 @@ class PropelTableComparator
 
         foreach ($fromTableFks as $fromTableFkPos => $fromTableFk) {
             foreach ($toTableFks as $toTableFkPos => $toTableFk) {
-                if (PropelForeignKeyComparator::computeDiff($fromTableFk, $toTableFk, $caseInsensitive) === false) {
+                if (ForeignKeyComparator::computeDiff($fromTableFk, $toTableFk, $caseInsensitive) === false) {
                     unset($fromTableFks[$fromTableFkPos]);
                     unset($toTableFks[$toTableFkPos]);
                 } else {

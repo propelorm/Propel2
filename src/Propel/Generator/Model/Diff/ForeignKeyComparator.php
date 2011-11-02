@@ -19,7 +19,7 @@ use Propel\Generator\Model\ForeignKey;
  *
  * @package     propel.generator.model.diff
  */
-class PropelForeignKeyComparator
+class ForeignKeyComparator
 {
     /**
      * Compute the difference between two Foreign key objects
