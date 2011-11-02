@@ -56,7 +56,7 @@ class PropelMigrationUpTask extends BasePropelMigrationTask
             ), Project::MSG_VERBOSE);
             $pdo = $manager->getPdoConnection($datasource);
             $res = 0;
-            $statements = PropelSQLParser::parseString($sql);
+            $statements = SqlParser::parseString($sql);
             foreach ($statements as $statement) {
                 try {
                     $this->log(sprintf('Executing statement "%s"', $statement), Project::MSG_VERBOSE);

@@ -8,13 +8,13 @@
  * @license    MIT License
  */
 
-use Propel\Generator\Util\PropelPHPParser;
+use Propel\Generator\Util\PhpParser;
 
 /**
  *
  * @package    generator.util
  */
-class PropelPHPParserTest extends \PHPUnit_Framework_TestCase
+class PhpParserTest extends \PHPUnit_Framework_TestCase
 {
     public function basicClassCodeProvider()
     {
@@ -58,7 +58,7 @@ EOF;
      */
     public function testFindMethodNotExistsReturnsFalse($code)
     {
-        $parser = new PropelPHPParser($code);
+        $parser = new PhpParser($code);
         $this->assertFalse($parser->findMethod('foo'));
     }
 
@@ -67,7 +67,7 @@ EOF;
      */
     public function testFindMethodNReturnsMethod($code)
     {
-        $parser = new PropelPHPParser($code);
+        $parser = new PhpParser($code);
         $expected = <<<EOF
 
 
@@ -84,7 +84,7 @@ EOF;
      */
     public function testFindMethodPrecededByAttribute($code)
     {
-        $parser = new PropelPHPParser($code);
+        $parser = new PhpParser($code);
         $expected = <<<EOF
 
 
@@ -101,7 +101,7 @@ EOF;
      */
     public function testFindMethodPrecededByComment($code)
     {
-        $parser = new PropelPHPParser($code);
+        $parser = new PhpParser($code);
         $expected = <<<EOF
 
 
@@ -121,7 +121,7 @@ EOF;
      */
     public function testFindMethodWithWrongCurlyBraces($code)
     {
-        $parser = new PropelPHPParser($code);
+        $parser = new PhpParser($code);
         $expected = <<<EOF
 
 
@@ -139,7 +139,7 @@ EOF;
      */
     public function testRemoveMethodNotExistsReturnsFalse($code)
     {
-        $parser = new PropelPHPParser($code);
+        $parser = new PhpParser($code);
         $this->assertFalse($parser->removeMethod('foo'));
     }
 
@@ -148,7 +148,7 @@ EOF;
      */
     public function testRemoveMethodReturnsMethod($code)
     {
-        $parser = new PropelPHPParser($code);
+        $parser = new PhpParser($code);
         $expected = <<<EOF
 
 
@@ -165,7 +165,7 @@ EOF;
      */
     public function testRemoveMethodRemovesMethod($code)
     {
-        $parser = new PropelPHPParser($code);
+        $parser = new PhpParser($code);
         $parser->removeMethod('bar1');
         $expected = <<<EOF
 <?php
@@ -201,7 +201,7 @@ EOF;
      */
     public function testReplaceMethodNotExistsReturnsFalse($code)
     {
-        $parser = new PropelPHPParser($code);
+        $parser = new PhpParser($code);
         $this->assertFalse($parser->replaceMethod('foo', '// foo'));
     }
 
@@ -210,7 +210,7 @@ EOF;
      */
     public function testReplaceMethodReturnsMethod($code)
     {
-        $parser = new PropelPHPParser($code);
+        $parser = new PhpParser($code);
         $expected = <<<EOF
 
 
@@ -227,7 +227,7 @@ EOF;
      */
     public function testReplaceMethodReplacesMethod($code)
     {
-        $parser = new PropelPHPParser($code);
+        $parser = new PhpParser($code);
         $newCode = <<<EOF
 
 

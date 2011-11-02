@@ -122,7 +122,7 @@ class PropelQuickBuilder
 
     public function buildSQL(PDO $con)
     {
-        $statements = PropelSQLParser::parseString($this->getSQL());
+        $statements = SqlParser::parseString($this->getSQL());
         foreach ($statements as $statement) {
             if (strpos($statement, 'DROP') === 0) {
                 // drop statements cause errors since the table doesn't exist

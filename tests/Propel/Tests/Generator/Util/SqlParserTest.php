@@ -8,13 +8,13 @@
  * @license    MIT License
  */
 
-use Propel\Generator\Util\PropelSQLParser;
+use Propel\Generator\Util\SqlParser;
 
 /**
  *
  * @package    generator.util
  */
-class PropelSQLParserTest extends \PHPUnit_Framework_TestCase
+class SqlParserTest extends \PHPUnit_Framework_TestCase
 {
     public function stripSqlCommentsDataProvider()
     {
@@ -38,7 +38,7 @@ class PropelSQLParserTest extends \PHPUnit_Framework_TestCase
      */
     public function testStripSQLComments($input, $output)
     {
-        $parser = new PropelSQLParser();
+        $parser = new SqlParser();
         $parser->setSQL($input);
         $parser->stripSQLCommentLines();
         $this->assertEquals($output, $parser->getSQL());
@@ -61,7 +61,7 @@ class PropelSQLParserTest extends \PHPUnit_Framework_TestCase
      */
     public function testConvertLineFeedsToUnixStyle($input, $output)
     {
-        $parser = new PropelSQLParser();
+        $parser = new SqlParser();
         $parser->setSQL($input);
         $parser->convertLineFeedsToUnixStyle();
         $this->assertEquals($output, $parser->getSQL());
@@ -87,7 +87,7 @@ class PropelSQLParserTest extends \PHPUnit_Framework_TestCase
      */
     public function testExplodeIntoStatements($input, $output)
     {
-        $parser = new PropelSQLParser();
+        $parser = new SqlParser();
         $parser->setSQL($input);
         $this->assertEquals($output, $parser->explodeIntoStatements());
     }

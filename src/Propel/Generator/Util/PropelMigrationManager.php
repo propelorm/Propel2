@@ -187,7 +187,7 @@ class PropelMigrationManager
         // insert the table into the database
         $statements = $platform->getAddTableDDL($table);
         $pdo = $this->getPdoConnection($datasource);
-        $res = PropelSQLParser::executeString($statements, $pdo);
+        $res = SqlParser::executeString($statements, $pdo);
         if (!$res) {
             throw new Exception(sprintf('Unable to create migration table in datasource "%s"', $datasource));
         }

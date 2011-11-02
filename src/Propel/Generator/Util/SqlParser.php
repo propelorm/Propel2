@@ -17,7 +17,7 @@ namespace Propel\Generator\Util;
  * @version    $Revision$
  * @package    propel.generator.util
  */
-class PropelSQLParser
+class SqlParser
 {
     protected $delimiter = ';';
 
@@ -102,7 +102,7 @@ class PropelSQLParser
      * Explodes a SQL string into an array of SQL statements.
      * @example
      * <code>
-     * echo PropelSQLParser::parseString("-- Table foo
+     * echo SqlParser::parseString("-- Table foo
      * DROP TABLE foo;
      * CREATE TABLE foo (
      *   id int(11) NOT NULL AUTO_INCREMENT,
@@ -137,7 +137,7 @@ class PropelSQLParser
      * Explodes a SQL file into an array of SQL statements.
      * @example
      * <code>
-     * echo PropelSQLParser::parseFile('/var/tmp/foo.sql');
+     * echo SqlParser::parseFile('/var/tmp/foo.sql');
      * // results in
      * // array(
      * //   "DROP TABLE foo;",

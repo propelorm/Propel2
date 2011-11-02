@@ -22,7 +22,7 @@ else {
  * @example Basic usage:
  * <code>
  * $script = file_get_contents($fileName);
- * $parser = new PropelPHPParser($script);
+ * $parser = new PhpParser($script);
  * $parser->removeMethod('foo');
  * $parser->replaceMethod('bar', '// bar method was removed');
  * file_put_contents($fileName, $parser->getCode());
@@ -32,7 +32,7 @@ else {
  * @version    $Revision$
  * @package    propel.generator.util
  */
-class PropelPHPParser
+class PhpParser
 {
     protected $code;
     protected $isAddPhp = false;

@@ -11,7 +11,7 @@
 namespace Propel\Generator\Task;
 
 use Propel\Generator\Config\GeneratorConfig;
-use Propel\Generator\Util\PropelSQLParser;
+use Propel\Generator\Util\SqlParser;
 
 use \PDO;
 
@@ -240,7 +240,7 @@ class PropelSQLExec extends Task
                 $fullFileName = $this->srcDir ? $this->srcDir . DIRECTORY_SEPARATOR . $fileName : $fileName;
                 if (file_exists($fullFileName)) {
                     $this->log(sprintf('  Loading statements from "%s"', $fullFileName));
-                    $fileStatements = PropelSQLParser::parseFile($fullFileName);
+                    $fileStatements = SqlParser::parseFile($fullFileName);
                     $this->log(sprintf('    %d statements to execute', count($fileStatements)), Project::MSG_VERBOSE);
                     $statements[$database] = array_merge($statements[$database], $fileStatements);
                 } else {

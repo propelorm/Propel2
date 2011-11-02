@@ -210,7 +210,7 @@ class PropelSqlManager
                 $filename = $this->getWorkingDirectory() . DIRECTORY_SEPARATOR . $sqlFile;
 
                 if (file_exists($filename)) {
-                    foreach (PropelSQLParser::parseFile($filename) as $sql) {
+                    foreach (SqlParser::parseFile($filename) as $sql) {
                         $statementsToInsert[$database][] = $sql;
                     }
                 }
