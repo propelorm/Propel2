@@ -21,7 +21,7 @@ use \PDO;
  * @version    $Revision$
  * @package    propel.generator.reverse
  */
-abstract class BaseSchemaParser implements SchemaParser
+abstract class AbstractSchemaParser implements SchemaParser
 {
 
     /**

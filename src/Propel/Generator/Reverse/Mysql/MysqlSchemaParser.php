@@ -14,7 +14,7 @@ use Propel\Generator\Model\Column;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Model\PropelTypes;
-use Propel\Generator\Reverse\BaseSchemaParser;
+use Propel\Generator\Reverse\AbstractSchemaParser;
 
 use PDO;
 
@@ -29,7 +29,7 @@ use \Task;
  * @version    $Revision$
  * @package    propel.generator.reverse.mysql
  */
-class MysqlSchemaParser extends BaseSchemaParser
+class MysqlSchemaParser extends AbstractSchemaParser
 {
 
     /**

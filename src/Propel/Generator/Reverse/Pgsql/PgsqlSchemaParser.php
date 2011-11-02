@@ -11,7 +11,7 @@
 namespace Propel\Generator\Reverse\Pgsql;
 
 use Propel\Generator\Model\PropelTypes;
-use Propel\Generator\Reverse\BaseSchemaParser;
+use Propel\Generator\Reverse\AbstractSchemaParser;
 
 use PDO;
 
@@ -22,7 +22,7 @@ use PDO;
  * @version    $Revision$
  * @package    propel.generator.reverse.pgsql
  */
-class PgsqlSchemaParser extends BaseSchemaParser
+class PgsqlSchemaParser extends AbstractSchemaParser
 {
 
     /**

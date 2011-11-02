@@ -11,7 +11,7 @@
 namespace Propel\Generator\Reverse\Mssql;
 
 use Propel\Generator\Model\PropelTypes;
-use Propel\Generator\Reverse\BaseSchemaParser;
+use Propel\Generator\Reverse\AbstractSchemaParser;
 
 use PDO;
 
@@ -22,7 +22,7 @@ use PDO;
  * @version    $Revision$
  * @package    propel.generator.reverse.mssql
  */
-class MssqlSchemaParser extends BaseSchemaParser
+class MssqlSchemaParser extends AbstractSchemaParser
 {
 
     /**
@@ -70,7 +70,7 @@ class MssqlSchemaParser extends BaseSchemaParser
     );
 
   /**
-   * @see        BaseSchemaParser::getTypeMapping()
+   * @see        AbstractSchemaParser::getTypeMapping()
    */
     protected function getTypeMapping()
     {

@@ -11,7 +11,7 @@
 namespace Propel\Generator\Reverse\Oracle;
 
 use Propel\Generator\Model\PropelTypes;
-use Propel\Generator\Reverse\BaseSchemaParser;
+use Propel\Generator\Reverse\AbstractSchemaParser;
 
 use PDO;
 
@@ -23,7 +23,7 @@ use PDO;
  * @version    $Revision$
  * @package    propel.generator.reverse.oracle
  */
-class OracleSchemaParser extends BaseSchemaParser
+class OracleSchemaParser extends AbstractSchemaParser
 {
 
     /**
