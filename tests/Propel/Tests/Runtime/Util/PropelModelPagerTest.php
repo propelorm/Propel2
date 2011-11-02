@@ -14,7 +14,7 @@ use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
 use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\BookQuery;
 
-use Propel\Runtime\Collection\PropelArrayCollection;
+use Propel\Runtime\Collection\ArrayCollection;
 use Propel\Runtime\Collection\PropelObjectCollection;
 use Propel\Runtime\Util\PropelModelPager;
 use Propel\Runtime\Query\ModelCriteria;
@@ -102,7 +102,7 @@ class PropelModelPagerTest extends BookstoreEmptyTestBase
         $pager = new PropelModelPager($query, 4);
         $pager->setPage(1);
         $pager->init();
-        $this->assertTrue($pager->getResults() instanceof PropelArrayCollection, 'getResults() returns a PropelArrayCollection if the query uses array hydration');
+        $this->assertTrue($pager->getResults() instanceof ArrayCollection, 'getResults() returns a PropelArrayCollection if the query uses array hydration');
     }
 
     public function testGetIterator()

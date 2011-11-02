@@ -15,7 +15,7 @@ use \PDOStatement;
 
 /**
  * Array formatter for Propel select query
- * format() returns a PropelArrayCollection of associative arrays, a string,
+ * format() returns a ArrayCollection of associative arrays, a string,
  * or an array
  *
  * @author     Benjamin Runnels
@@ -23,7 +23,7 @@ use \PDOStatement;
  * @package    propel.runtime.formatter
  */
 class SimpleArrayFormatter extends AbstractFormatter {
-    protected $collectionName = '\Propel\Runtime\Collection\PropelArrayCollection';
+    protected $collectionName = '\Propel\Runtime\Collection\ArrayCollection';
 
     public function format(PDOStatement $stmt) {
         $this->checkInit ();

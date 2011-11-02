@@ -502,16 +502,16 @@ class ModelCriteria extends Criteria
     }
 
     /**
-     * Makes the ModelCriteria return a string, array, or PropelArrayCollection
+     * Makes the ModelCriteria return a string, array, or ArrayCollection
      * Examples:
      *   ArticleQuery::create()->select('Name')->find();
-     *   => PropelArrayCollection Object ('Foo', 'Bar')
+     *   => ArrayCollection Object ('Foo', 'Bar')
      *
      *   ArticleQuery::create()->select('Name')->findOne();
      *   => string 'Foo'
      *
      *   ArticleQuery::create()->select(array('Id', 'Name'))->find();
-     *   => PropelArrayCollection Object (
+     *   => ArrayCollection Object (
      *        array('Id' => 1, 'Name' => 'Foo'),
      *        array('Id' => 2, 'Name' => 'Bar')
      *      )

@@ -51,8 +51,8 @@ class ModelCriteriaSelectTest extends BookstoreTestBase
 
         $expectedSQL = 'SELECT book.TITLE AS "Title" FROM `book` WHERE book.TITLE = \'kdjfhlkdsh\'';
         $this->assertEquals($expectedSQL, $this->con->getLastExecutedQuery(), 'find() called after select(string) selects a single column');
-        $this->assertInstanceOf('Propel\Runtime\Collection\PropelArrayCollection', $titles, 'find() called after select(string) returns a PropelArrayCollection object');
-        $this->assertTrue(is_array($titles->getData()), 'find() called after select(string) returns an empty PropelArrayCollection object');
+        $this->assertInstanceOf('Propel\Runtime\Collection\ArrayCollection', $titles, 'find() called after select(string) returns a PropelArrayCollection object');
+        $this->assertTrue(is_array($titles->getData()), 'find() called after select(string) returns an empty ArrayCollection object');
         $this->assertEquals(0, count($titles), 'find() called after select(string) returns an empty array if no record is found');
 
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');

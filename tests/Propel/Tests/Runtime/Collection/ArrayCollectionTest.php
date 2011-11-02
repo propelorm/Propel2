@@ -19,7 +19,7 @@ use Propel\Tests\Bookstore\BookPeer;
 use Propel\Tests\Bookstore\ContestView;
 
 use Propel\Runtime\Collection\PropelObjectCollection;
-use Propel\Runtime\Collection\PropelArrayCollection;
+use Propel\Runtime\Collection\ArrayCollection;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Query\ModelCriteria;
 use Propel\Runtime\Query\PropelQuery;
@@ -32,7 +32,7 @@ use Propel\Runtime\Util\BasePeer;
  * @version    $Id: PropelObjectCollectionTest.php 1348 2009-12-03 21:49:00Z francois $
  * @package    runtime.collection
  */
-class PropelArrayCollectionTest extends BookstoreEmptyTestBase
+class ArrayCollectionTest extends BookstoreEmptyTestBase
 {
     protected function setUp()
     {
@@ -60,7 +60,7 @@ class PropelArrayCollectionTest extends BookstoreEmptyTestBase
      */
     public function testSaveOnReadOnlyEntityThrowsException()
     {
-        $col = new PropelArrayCollection();
+        $col = new ArrayCollection();
         $col->setModel('ContestView');
         $cv = new ContestView();
         $col []= $cv;
@@ -82,7 +82,7 @@ class PropelArrayCollectionTest extends BookstoreEmptyTestBase
      */
     public function testDeleteOnReadOnlyEntityThrowsException()
     {
-        $col = new PropelArrayCollection();
+        $col = new ArrayCollection();
         $col->setModel('ContestView');
         $cv = new ContestView();
         $cv->setNew(false);
@@ -124,7 +124,7 @@ class PropelArrayCollectionTest extends BookstoreEmptyTestBase
             array('Title' => 'Mansfield Park', 'AuthorId' => $author->getId()),
             array('Title' => 'Pride And PRejudice', 'AuthorId' => $author->getId())
         );
-        $col = new PropelArrayCollection();
+        $col = new ArrayCollection();
         $col->setModel('\Propel\Tests\Bookstore\Book');
         $col->fromArray($books);
         $col->save();
@@ -190,7 +190,7 @@ class PropelArrayCollectionTest extends BookstoreEmptyTestBase
         $book->setPrice(12.99);
         $book->setAuthor($author);
 
-        $coll = new PropelArrayCollection();
+        $coll = new ArrayCollection();
         $coll->setModel('\Propel\Tests\Bookstore\Book');
         $coll[]= $book->toArray(BasePeer::TYPE_PHPNAME, true, array(), true);
         $expected = array(array(
@@ -216,7 +216,7 @@ class PropelArrayCollectionTest extends BookstoreEmptyTestBase
 
     public function getWorkerObject()
     {
-        $col = new TestablePropelArrayCollection();
+        $col = new TestableArrayCollection();
         $col->setModel('\Propel\Tests\Bookstore\Book');
         $book = $col->getWorkerObject();
         $this->assertTrue($book instanceof Book, 'getWorkerObject() returns an object of the collection model');
@@ -229,13 +229,13 @@ class PropelArrayCollectionTest extends BookstoreEmptyTestBase
      */
     public function testGetWorkerObjectNoModel()
     {
-        $col = new TestablePropelArrayCollection();
+        $col = new TestableArrayCollection();
         $col->getWorkerObject();
     }
 
 }
 
-class TestablePropelArrayCollection extends PropelArrayCollection
+class TestableArrayCollection extends PropelArrayCollection
 {
     public function getWorkerObject()
     {

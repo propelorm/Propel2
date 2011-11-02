@@ -17,7 +17,7 @@ use \PDOStatement;
 
 /**
  * Array formatter for Propel query
- * format() returns a PropelArrayCollection of associative arrays
+ * format() returns a ArrayCollection of associative arrays
  *
  * @author     Francois Zaninotto
  * @version    $Revision$
@@ -25,7 +25,7 @@ use \PDOStatement;
  */
 class ArrayFormatter extends AbstractFormatter
 {
-    protected $collectionName = '\Propel\Runtime\Collection\PropelArrayCollection';
+    protected $collectionName = '\Propel\Runtime\Collection\ArrayCollection';
     protected $alreadyHydratedObjects = array();
     protected $emptyVariable;
 
