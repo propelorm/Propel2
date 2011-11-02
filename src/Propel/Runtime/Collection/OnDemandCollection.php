@@ -22,7 +22,7 @@ use \PDOStatement;
  * @author     Francois Zaninotto
  * @package    propel.runtime.collection
  */
-class OnDemandCollection extends PropelCollection
+class OnDemandCollection extends Collection
 {
     /**
      * @var       OnDemandIterator

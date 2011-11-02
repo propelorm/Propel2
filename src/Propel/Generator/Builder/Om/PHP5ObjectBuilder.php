@@ -241,7 +241,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
             '\Propel\Runtime\Om\BaseObject',
             '\Propel\Runtime\Om\Persistent',
             '\Propel\Runtime\Util\BasePeer',
-            '\Propel\Runtime\Collection\PropelCollection',
+            '\Propel\Runtime\Collection\Collection',
             '\Propel\Runtime\Collection\ObjectCollection'
         );
 
@@ -3286,7 +3286,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
      * @param      Criteria \$criteria optional Criteria object to narrow the query
      * @param      ConnectionInterface \$con optional connection object
      * @param      string \$join_behavior optional join type to use (defaults to $join_behavior)
-     * @return     PropelCollection|array {$className}[] List of $className objects
+     * @return     Collection|array {$className}[] List of $className objects
      */
     public function get".$relCol."Join".$relCol2."(\$criteria = null, \$con = null, \$join_behavior = $join_behavior)
     {";
@@ -3570,7 +3570,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
      *
      * @param      Criteria \$criteria optional Criteria object to narrow the query
      * @param      ConnectionInterface \$con optional connection object
-     * @return     PropelCollection|array {$className}[] List of $className objects
+     * @return     Collection|array {$className}[] List of $className objects
      * @throws     PropelException
      */
     public function get$relCol(\$criteria = null, ConnectionInterface \$con = null)
@@ -3617,10 +3617,10 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
      * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
      * and new objects from the given Propel collection.
      *
-     * @param      PropelCollection \${$inputCollection} A Propel collection.
+     * @param      Collection \${$inputCollection} A Propel collection.
      * @param      ConnectionInterface \$con Optional connection object
      */
-    public function set{$relatedName}(PropelCollection \${$inputCollection}, ConnectionInterface \$con = null)
+    public function set{$relatedName}(Collection \${$inputCollection}, ConnectionInterface \$con = null)
     {
         \$this->{$inputCollection}ScheduledForDeletion = \$this->get{$relatedName}(new Criteria(), \$con)->diff(\${$inputCollection});
 
@@ -3918,7 +3918,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
      * @param      Criteria \$criteria Optional query object to filter the query
      * @param      ConnectionInterface \$con Optional connection object
      *
-     * @return     PropelCollection|array {$relatedObjectClassName}[] List of {$relatedObjectClassName} objects
+     * @return     Collection|array {$relatedObjectClassName}[] List of {$relatedObjectClassName} objects
      */
     public function get{$relatedName}(\$criteria = null, ConnectionInterface \$con = null)
     {
@@ -3978,10 +3978,10 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
      * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
      * and new objects from the given Propel collection.
      *
-     * @param      PropelCollection \${$inputCollection} A Propel collection.
+     * @param      Collection \${$inputCollection} A Propel collection.
      * @param      ConnectionInterface \$con Optional connection object
      */
-    public function set{$relatedName}(PropelCollection \${$inputCollection}, ConnectionInterface \$con = null)
+    public function set{$relatedName}(Collection \${$inputCollection}, ConnectionInterface \$con = null)
     {
         {$crossRefObjectClassName}s = {$crossRefQueryClassName}Query::create()
             ->filterBy{$relatedObjectClassName}(\${$inputCollection})
@@ -5177,7 +5177,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 
         foreach ($vars as $varName) {
             $script .= "
-        if (\$this->$varName instanceof PropelCollection) {
+        if (\$this->$varName instanceof Collection) {
             \$this->{$varName}->clearIterator();
         }
         \$this->$varName = null;";

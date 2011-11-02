@@ -933,7 +933,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
     protected function addFilterByFk(&$script, $fk)
     {
         $this->declareClasses(
-            '\Propel\Runtime\Collection\PropelCollection',
+            '\Propel\Runtime\Collection\Collection',
             '\Propel\Runtime\Exception\PropelException'
         );
         $table = $this->getTable();
@@ -953,7 +953,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
      * @param     $fkPhpName $objectName The related object to use as filter";
         } else {
             $script .= "
-     * @param     $fkPhpName|PropelCollection $objectName The related object(s) to use as filter";
+     * @param     $fkPhpName|Collection $objectName The related object(s) to use as filter";
         }
         $script .= "
      * @param     string \$comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
@@ -975,7 +975,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
             $localColumnConstant = $this->getColumnConstant($fk->getLocalColumn());
             $foreignColumnName = $fk->getForeignColumn()->getPhpName();
             $script .= "
-        } elseif ($objectName instanceof PropelCollection) {
+        } elseif ($objectName instanceof Collection) {
             if (null === \$comparison) {
                 \$comparison = Criteria::IN;
             }
@@ -990,7 +990,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
             throw new PropelException('filterBy$relationName() only accepts arguments of type $fkPhpName');";
         } else {
             $script .= "
-            throw new PropelException('filterBy$relationName() only accepts arguments of type $fkPhpName or PropelCollection');";
+            throw new PropelException('filterBy$relationName() only accepts arguments of type $fkPhpName or Collection');";
         }
         $script .= "
         }
@@ -1005,7 +1005,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
     protected function addFilterByRefFk(&$script, $fk)
     {
         $this->declareClasses(
-            '\Propel\Runtime\Collection\PropelCollection',
+            '\Propel\Runtime\Collection\Collection',
             '\Propel\Runtime\Exception\PropelException'
         );
         $table = $this->getTable();
@@ -1038,7 +1038,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
         $script .= ";";
         if (!$fk->isComposite()) {
             $script .= "
-        } elseif ($objectName instanceof PropelCollection) {
+        } elseif ($objectName instanceof Collection) {
             return \$this
                 ->use{$relationName}Query()
                 ->filterByPrimaryKeys({$objectName}->getPrimaryKeys())
@@ -1051,7 +1051,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
             throw new PropelException('filterBy$relationName() only accepts arguments of type $fkPhpName');";
         } else {
             $script .= "
-            throw new PropelException('filterBy$relationName() only accepts arguments of type $fkPhpName or PropelCollection');";
+            throw new PropelException('filterBy$relationName() only accepts arguments of type $fkPhpName or Collection');";
         }
         $script .= "
         }

@@ -25,10 +25,10 @@ use \Serializable;
  * Class for iterating over a list of Propel elements
  * The collection keys must be integers - no associative array accepted
  *
- * @method     PropelCollection fromXML(string $data) Populate the collection from an XML string
- * @method     PropelCollection fromYAML(string $data) Populate the collection from a YAML string
- * @method     PropelCollection fromJSON(string $data) Populate the collection from a JSON string
- * @method     PropelCollection fromCSV(string $data) Populate the collection from a CSV string
+ * @method     Collection fromXML(string $data) Populate the collection from an XML string
+ * @method     Collection fromYAML(string $data) Populate the collection from a YAML string
+ * @method     Collection fromJSON(string $data) Populate the collection from a JSON string
+ * @method     Collection fromCSV(string $data) Populate the collection from a CSV string
  *
  * @method     string toXML(boolean $usePrefix, boolean $includeLazyLoadColumns) Export the collection to an XML string
  * @method     string toYAML(boolean $usePrefix, boolean $includeLazyLoadColumns) Export the collection to a YAML string
@@ -38,7 +38,7 @@ use \Serializable;
  * @author     Francois Zaninotto
  * @package    propel.runtime.collection
  */
-class PropelCollection extends ArrayObject implements Serializable
+class Collection extends ArrayObject implements Serializable
 {
     /**
      * @var       string
@@ -346,10 +346,10 @@ class PropelCollection extends ArrayObject implements Serializable
      * Returns an array of objects present in the collection that
      * are not presents in the given collection.
      *
-     * @param PropelCollection $collection	A Propel collection.
-     * @return PropelCollection				An array of Propel objects from the collection that are not presents in the given collection.
+     * @param Collection $collection	A Propel collection.
+     * @return Collection				An array of Propel objects from the collection that are not presents in the given collection.
      */
-    public function diff(PropelCollection $collection)
+    public function diff(Collection $collection)
     {
         $diff = clone $this;
         $diff->clear();
@@ -417,7 +417,7 @@ class PropelCollection extends ArrayObject implements Serializable
 
     /**
      * Clear the internal Iterator.
-     * PHP 5.3 doesn't know how to free a PropelCollection object if it has an attached
+     * PHP 5.3 doesn't know how to free a Collection object if it has an attached
      * Iterator, so this must be done manually to avoid memory leaks.
      * @see http://www.propelorm.org/ticket/1232
      */

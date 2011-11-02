@@ -205,7 +205,7 @@ class ObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
         BookPeer::clearInstancePool();
         $authors = AuthorQuery::create()->find();
         $books = $authors->populateRelation('Book');
-        $this->assertTrue($books instanceof ObjectCollection, 'populateRelation() returns a PropelCollection instance');
+        $this->assertTrue($books instanceof ObjectCollection, 'populateRelation() returns a Collection instance');
         $this->assertEquals('Propel\Tests\Bookstore\Book', $books->getModel(), 'populateRelation() returns a collection of the related objects');
         $this->assertEquals(4, count($books), 'populateRelation() the list of related objects');
     }
@@ -230,7 +230,7 @@ class ObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
             ->find($this->con);
         $count = $this->con->getQueryCount();
         $books = $authors->populateRelation('Book', null, $this->con);
-        $this->assertTrue($books instanceof ObjectCollection, 'populateRelation() returns a PropelCollection instance');
+        $this->assertTrue($books instanceof ObjectCollection, 'populateRelation() returns a Collection instance');
         $this->assertEquals('Propel\Tests\Bookstore\Book', $books->getModel(), 'populateRelation() returns a collection of the related objects');
         $this->assertEquals(0, count($books), 'populateRelation() the list of related objects');
         $this->assertEquals($count, $this->con->getQueryCount(), 'populateRelation() doesn\'t issue a new query on empy collections');

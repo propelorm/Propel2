@@ -96,7 +96,7 @@ class PropelModelPager implements \IteratorAggregate, \Countable
     /**
      * Get the collection of results in the page
      *
-     * @return PropelCollection A collection of results
+     * @return Collection A collection of results
      */
     public function getResults()
     {
@@ -338,7 +338,7 @@ class PropelModelPager implements \IteratorAggregate, \Countable
 
     /**
      * Check whether the internal pointer is at the beginning of the list
-     * @see       PropelCollection
+     * @see       Collection
      *
      * @return    boolean
      */
@@ -349,7 +349,7 @@ class PropelModelPager implements \IteratorAggregate, \Countable
 
     /**
      * Check whether the internal pointer is at the end of the list
-     * @see       PropelCollection
+     * @see       Collection
      *
      * @return    boolean
      */
@@ -360,7 +360,7 @@ class PropelModelPager implements \IteratorAggregate, \Countable
 
     /**
      * Check if the collection is empty
-     * @see       PropelCollection
+     * @see       Collection
      *
      * @return    boolean
      */
@@ -371,7 +371,7 @@ class PropelModelPager implements \IteratorAggregate, \Countable
 
     /**
      * Check if the current index is an odd integer
-     * @see       PropelCollection
+     * @see       Collection
      *
      * @return    boolean
      */
@@ -382,7 +382,7 @@ class PropelModelPager implements \IteratorAggregate, \Countable
 
     /**
      * Check if the current index is an even integer
-     * @see       PropelCollection
+     * @see       Collection
      *
      * @return    boolean
      */

@@ -17,7 +17,7 @@ use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\BookPeer;
 
 use Propel\Runtime\Propel;
-use Propel\Runtime\Collection\PropelCollection;
+use Propel\Runtime\Collection\Collection;
 use Propel\Runtime\Collection\OnDemandCollection;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Formatter\OnDemandFormatter;
@@ -141,7 +141,7 @@ class OnDemandFormatterTest extends BookstoreEmptyTestBase
         $formatter->init(new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book'));
         $books = $formatter->format($stmt);
 
-        $this->assertTrue($books instanceof OnDemandCollection, 'OnDemandFormatter::format() returns a PropelCollection');
+        $this->assertTrue($books instanceof OnDemandCollection, 'OnDemandFormatter::format() returns a Collection');
         $this->assertEquals(0, count($books), 'OnDemandFormatter::format() returns an empty collection when no record match the query');
         foreach ($books as $book) {
             $this->fail('OnDemandFormatter returns an empty iterator when no record match the query');

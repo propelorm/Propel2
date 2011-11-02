@@ -16,7 +16,7 @@ use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
 use Propel\Tests\Bookstore\BookPeer;
 
 use Propel\Runtime\Propel;
-use Propel\Runtime\Collection\PropelCollection;
+use Propel\Runtime\Collection\Collection;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Formatter\ArrayFormatter;
 use Propel\Runtime\Query\ModelCriteria;
@@ -59,7 +59,7 @@ class ArrayFormatterTest extends BookstoreEmptyTestBase
         $formatter->init(new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book'));
         $books = $formatter->format($stmt);
 
-        $this->assertTrue($books instanceof PropelCollection, 'ArrayFormatter::format() returns a PropelCollection');
+        $this->assertTrue($books instanceof Collection, 'ArrayFormatter::format() returns a PropelCollection');
         $this->assertEquals(4, count($books), 'ArrayFormatter::format() returns as many rows as the results in the query');
         foreach ($books as $book) {
             $this->assertTrue(is_array($book), 'ArrayFormatter::format() returns an array of arrays');
@@ -75,7 +75,7 @@ class ArrayFormatterTest extends BookstoreEmptyTestBase
         $formatter->init(new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book'));
         $books = $formatter->format($stmt);
 
-        $this->assertTrue($books instanceof PropelCollection, 'ArrayFormatter::format() returns a PropelCollection');
+        $this->assertTrue($books instanceof Collection, 'ArrayFormatter::format() returns a PropelCollection');
         $this->assertEquals(1, count($books), 'ArrayFormatter::format() returns as many rows as the results in the query');
         $book = $books->shift();
         $this->assertTrue(is_array($book), 'ArrayFormatter::format() returns an array of arrays');
@@ -93,7 +93,7 @@ class ArrayFormatterTest extends BookstoreEmptyTestBase
         $formatter->init(new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book'));
         $books = $formatter->format($stmt);
 
-        $this->assertTrue($books instanceof PropelCollection, 'ArrayFormatter::format() returns a PropelCollection');
+        $this->assertTrue($books instanceof Collection, 'ArrayFormatter::format() returns a PropelCollection');
         $this->assertEquals(0, count($books), 'ArrayFormatter::format() returns as many rows as the results in the query');
     }
 

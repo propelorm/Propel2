@@ -19,7 +19,7 @@ use Propel\Runtime\Exception\PropelException;
  * @author     Francois Zaninotto
  * @package    propel.runtime.collection
  */
-class ArrayCollection extends PropelCollection
+class ArrayCollection extends Collection
 {
     protected $workerObject;
 

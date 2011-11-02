@@ -10,7 +10,7 @@
 
 namespace Propel\Tests\Runtime\Collection;
 
-use Propel\Runtime\Collection\PropelCollection;
+use Propel\Runtime\Collection\Collection;
 use Propel\Runtime\Collection\ObjectCollection;
 
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
@@ -18,13 +18,13 @@ use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\Publisher;
 
 /**
- * Test class for PropelCollection.
+ * Test class for Collection.
  *
  * @author     Francois Zaninotto
- * @version    $Id: PropelCollectionTest.php 1348 2009-12-03 21:49:00Z francois $
+ * @version    $Id: CollectionTest.php 1348 2009-12-03 21:49:00Z francois $
  * @package    runtime.collection
  */
-class PropelCollectionConvertTest extends BookstoreTestBase
+class CollectionConvertTest extends BookstoreTestBase
 {
     protected function setUp()
     {
@@ -218,7 +218,7 @@ EOF;
      */
     public function testToStringUsesDefaultStringFormat($expected)
     {
-        $this->assertEquals($expected, (string) $this->coll, 'PropelCollection::__toString() uses the YAML representation by default');
+        $this->assertEquals($expected, (string) $this->coll, 'Collection::__toString() uses the YAML representation by default');
     }
 
     public function testToStringUsesCustomStringFormat()

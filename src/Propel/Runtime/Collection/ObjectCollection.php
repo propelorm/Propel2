@@ -23,7 +23,7 @@ use Propel\Runtime\Util\BasePeer;
  * @author     Francois Zaninotto
  * @package    propel.runtime.collection
  */
-class ObjectCollection extends PropelCollection
+class ObjectCollection extends Collection
 {
 
     /**
