@@ -208,16 +208,16 @@ class MysqlAdapter extends AbstractAdapter
     }
 
     /**
-     * Prepare connection parameters.
-     * See: http://www.propelorm.org/ticket/1360
+     * Prepare the parameters for a PDO connection.
+     * Protects MySQL from charset injection risk.
+     * @see   http://www.propelorm.org/ticket/1360
      *
-     * @param array    $params
-     * @return array
+     * @param array the connection parameters from the configuration
+     * 
+     * @return array the modified parameters
      */
-    public function prepareParams($params)
+    protected function prepareParams($params)
     {
-        $params = parent::prepareParams($params);
-
         if(isset($params['settings']['charset']['value'])) {
             if(version_compare(PHP_VERSION, '5.3.6', '<')) {
                 throw new PropelException(<<<EXCEPTION
@@ -234,6 +234,6 @@ EXCEPTION
             }
         }
 
-        return $params;
+        return parent::prepareParams($params);
     }
 }

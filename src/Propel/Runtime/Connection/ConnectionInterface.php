@@ -20,16 +20,6 @@ namespace Propel\Runtime\Connection;
 Interface ConnectionInterface
 {
     /**
-     * Creates a Connection instance to represent a connection to the requested database.
-     *
-     * @param string $dsn The Data Source Name, or DSN, contains the information required to connect to the database.
-     * @param string $username The user name for the DSN string.
-     * @param string $password The password for the DSN string.
-     * @param array $driver_options A key=>value array of driver-specific connection options.
-     */
-    public function __construct($dsn, $username = null, $password = null, $driver_options = array());
-
-    /**
      * Turns off autocommit mode.
      *
      * While autocommit mode is turned off, changes made to the database via
@@ -70,32 +60,6 @@ Interface ConnectionInterface
      * @return bool TRUE if a transaction is currently active, and FALSE if not.
      */
     public function inTransaction();
-
-    /**
-     * Fetch the SQLSTATE associated with the last operation on the database handle.
-     *
-     * errorCode() only retrieves error codes for operations performed directly
-     * on the database handle.
-     * If you create a Statement object through Connection::prepare() or
-     * Connection::query() and invoke an error on the statement handle,
-     * Connection::errorCode() will not reflect that error. You must call
-     * Statement::errorCode() to return the error code for an operation performed
-     * on a particular statement handle.
-     *
-     * @return mixed An SQLSTATE, a five characters alphanumeric identifier defined
-     *               in the ANSI SQL-92 standard, or NULL if no operation has been
-     *               run on the database handle.
-     */
-    public function errorCode();
-
-    /**
-     * Fetch extended error information associated with the last operation on
-     * the database handle.
-     *
-     * @return array An array of error information about the last operation performed
-     *               by this database handle
-     */
-    public function errorInfo();
 
     /**
      * Retrieve a database connection attribute.
@@ -178,14 +142,6 @@ Interface ConnectionInterface
      *                quoting in this way.
      */
     public function quote($string, $parameter_type = 2);
-
-    /**
-     * Return an array of available Connection drivers.
-     *
-     * @return array A list of Conenction driver names.
-     *               If no drivers are available, it returns an empty array.
-     */
-    static public function getAvailableDrivers();
 
     /**
      * Returns the ID of the last inserted row or sequence value.

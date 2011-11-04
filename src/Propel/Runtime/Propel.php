@@ -547,14 +547,6 @@ class Propel
      */
     public static function initConnection($conparams, $name, $defaultClass = Propel::CLASS_PROPEL_PDO)
     {
-        $adapter = self::getDB($name);
-
-        if (null === $conparams['dsn']) {
-            throw new PropelException('No dsn specified in your connection parameters for datasource ['.$name.']');
-        }
-
-        $conparams = $adapter->prepareParams($conparams);
-
         if (isset($conparams['classname']) && !empty($conparams['classname'])) {
             $classname = $conparams['classname'];
             if (!class_exists($classname)) {
@@ -563,24 +555,12 @@ class Propel
         } else {
             $classname = $defaultClass;
         }
-
-        $dsn      = $conparams['dsn'];
-        $user     = isset($conparams['user']) ? $conparams['user'] : null;
-        $password = isset($conparams['password']) ? $conparams['password'] : null;
-
-        // load any driver options from the config file
-        // driver options are those PDO settings that have to be passed during the connection construction
-        $driver_options = array();
-        if ( isset($conparams['options']) && is_array($conparams['options']) ) {
-            try {
-                self::processDriverOptions( $conparams['options'], $driver_options );
-            } catch (PropelException $e) {
-                throw new PropelException('Error processing driver options for datasource ['.$name.']', $e);
-            }
-        }
-
+        
+        $adapter = self::getDB($name);
+        $connection = $adapter->getConnection($conparams);
+        
         try {
-            $con = new $classname($dsn, $user, $password, $driver_options);
+            $con = new $classname($connection, $adapter);
             $con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch (PDOException $e) {
             throw new PropelException("Unable to open PDO connection", $e);
@@ -589,46 +569,19 @@ class Propel
         // load any connection options from the config file
         // connection attributes are those PDO flags that have to be set on the initialized connection
         if (isset($conparams['attributes']) && is_array($conparams['attributes'])) {
-            $attributes = array();
-            try {
-                self::processDriverOptions( $conparams['attributes'], $attributes );
-            } catch (PropelException $e) {
-                throw new PropelException('Error processing connection attributes for datasource ['.$name.']', $e);
-            }
-            foreach ($attributes as $key => $value) {
-                $con->setAttribute($key, $value);
+            foreach ($conparams['attributes'] as $option => $optiondata) {
+                $value = $optiondata['value'];
+                if (is_string($value) && strpos($value, '::') !== false) {
+                    if (!defined($value)) {
+                        throw new PropelException(sprintf('Invalid class constant specified "%s" while processing connection attributes for datasource "%s"'), $value, $name);
+                    }
+                    $value = constant($value);
+                }
+                $con->setAttribute($option, $value);
             }
         }
-
-        // initialize the connection using the settings provided in the config file. this could be a "SET NAMES <charset>" query for MySQL, for instance
-        $adapter->initConnection($con, isset($conparams['settings']) && is_array($conparams['settings']) ? $conparams['settings'] : array());
 
         return $con;
-    }
-
-    /**
-     * Internal function to handle driver options or conneciton attributes in PDO.
-     *
-     * Process the INI file flags to be passed to each connection.
-     *
-     * @param      array Where to find the list of constant flags and their new setting.
-     * @param      array Put the data into here
-     *
-     * @throws     PropelException If invalid options were specified.
-     */
-    private static function processDriverOptions($source, &$write_to)
-    {
-        foreach ($source as $option => $optiondata) {
-            $value = $optiondata['value'];
-            if (is_string($value) && strpos($value, '::') !== false) {
-                if (!defined($value)) {
-                    throw new PropelException("Invalid PDO option/attribute value specified: ".$value);
-                }
-                $value = constant($value);
-            }
-
-            $write_to[$option] = $value;
-        }
     }
 
     /**

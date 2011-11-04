@@ -95,7 +95,7 @@ class DebugPDOStatement extends PDOStatement
         $return = parent::execute($input_parameters);
 
         $sql = $this->getExecutedQueryString();
-        $this->connection->log($sql, null, __METHOD__, $debug);
+        $this->connection->log($sql, null, 'statement_execute', $debug);
         $this->connection->setLastExecutedQuery($sql);
         $this->connection->incrementQueryCount();
 
@@ -151,7 +151,7 @@ class DebugPDOStatement extends PDOStatement
 
         $this->boundValues[$pos] = $valuestr;
 
-        $this->connection->log($msg, null, __METHOD__, $debug);
+        $this->connection->log($msg, null, 'bindParam', $debug);
 
         return $return;
     }

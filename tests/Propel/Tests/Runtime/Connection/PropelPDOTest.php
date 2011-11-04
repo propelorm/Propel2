@@ -434,12 +434,12 @@ class PropelPDOTest extends BookstoreTestBase
         $con->setLogger($testLog);
 
         $logEverything = array(
-            'Propel\Runtime\Connection\PropelPDO::exec',
-            'Propel\Runtime\Connection\PropelPDO::query',
-            'Propel\Runtime\Connection\PropelPDO::beginTransaction',
-            'Propel\Runtime\Connection\PropelPDO::commit',
-            'Propel\Runtime\Connection\PropelPDO::rollBack',
-            'Propel\Runtime\Connection\DebugPDOStatement::execute'
+            'exec',
+            'query',
+            'beginTransaction',
+            'commit',
+            'rollBack',
+            'statement_execute'
         );
 
         Propel::getConfiguration(Configuration::TYPE_OBJECT)->setParameter("debugpdo.logging.methods", $logEverything, false);
