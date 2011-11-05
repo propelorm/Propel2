@@ -124,7 +124,7 @@ Interface ConnectionInterface
      *                                 successfully prepares, FALSE otherwise.
      * @throws ConnectionException depending on error handling.
      */
-    public function query($statement);
+    public function query();
 
     /**
      * Quotes a string for use in a query.

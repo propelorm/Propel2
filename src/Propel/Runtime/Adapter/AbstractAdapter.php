@@ -16,6 +16,7 @@ use Propel\Runtime\Map\DatabaseMap;
 use Propel\Runtime\Util\PropelColumnTypes;
 use Propel\Runtime\Util\PropelDateTime;
 use Propel\Runtime\Query\Criteria;
+use Propel\Runtime\Connection\PdoConnection;
 
 use \PDO;
 use \PDOStatement;
@@ -120,7 +121,7 @@ abstract class AbstractAdapter
             }
         }
 
-        $con = new PDO($dsn, $user, $password, $driver_options);
+        $con = new PdoConnection($dsn, $user, $password, $driver_options);
         $this->initConnection($con, isset($conparams['settings']) && is_array($conparams['settings']) ? $conparams['settings'] : array());
 
         return $con;
@@ -308,7 +309,7 @@ abstract class AbstractAdapter
 
     /**
      * Gets the generated ID (either last ID for autoincrement or next sequence ID).
-
+     *
      * @param     PDO     $con
      * @param     string  $name
      *

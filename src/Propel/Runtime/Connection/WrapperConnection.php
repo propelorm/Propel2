@@ -16,7 +16,7 @@ use Propel\Runtime\Config\Configuration;
 use Propel\Runtime\Exception\PropelException;
 
 /**
- * Base for a Connection class, providing nested transactions, and logging.
+ * Wraps a Connection class, providing nested transactions, and logging.
  *
  * This class was designed to work around the limitation in PDO where attempting to begin
  * a transaction when one has already been begun will trigger a PDOException.  Propel
@@ -29,12 +29,18 @@ use Propel\Runtime\Exception\PropelException;
  * in-progress.
  *
  */
-abstract class AbstractConnection
+class WrapperConnection implements ConnectionInterface
 {
 
     const DEFAULT_SLOW_THRESHOLD        = 0.1;
     const DEFAULT_ONLYSLOW_ENABLED      = false;
 
+    /**
+     * The wrapped connection class
+     * @var ConnectionInterface
+     */
+    protected $connection;
+    
     /**
      * The current transaction depth.
      * @var       integer
@@ -101,20 +107,19 @@ abstract class AbstractConnection
      *
      * @param mixed $connectionData The elements required to connect to the database
      */
-    public function __construct($connectionData)
+    public function __construct($connection)
     {
         if ($this->useDebug) {
             $debug = $this->getDebugSnapshot();
         }
-
-        $this->doConstruct($connectionData);
+        
+        $this->connection = $connection;
 
         if ($this->useDebug) {
+            $this->connection->useDebug(true);
             $this->log('Opening connection', null, 'construct', $debug);
         }
     }
-    
-    abstract protected function doConstruct($connectionData);
 
     /**
      * Inject the runtime configuration
@@ -190,7 +195,7 @@ abstract class AbstractConnection
     {
         $return = true;
         if (!$this->nestedTransactionCount) {
-            $return = $this->doBeginTransaction();
+            $return = $this->connection->beginTransaction();
             if ($this->useDebug) {
                 $this->log('Begin transaction', null, 'beginTransaction');
             }
@@ -200,8 +205,6 @@ abstract class AbstractConnection
 
         return $return;
     }
-    
-    abstract protected function doBeginTransaction();
 
     /**
      * Overrides PDO::commit() to only commit the transaction if we are in the outermost
@@ -219,7 +222,7 @@ abstract class AbstractConnection
                 if ($this->isUncommitable) {
                     throw new PropelException('Cannot commit because a nested transaction was rolled back');
                 } else {
-                    $return = $this->doCommit();
+                    $return = $this->connection->commit();
                     if ($this->useDebug) {
                         $this->log('Commit transaction', null, 'commit');
                     }
@@ -231,8 +234,6 @@ abstract class AbstractConnection
 
         return $return;
     }
-    
-    abstract protected function doCommit();
 
     /**
      * Overrides PDO::rollBack() to only rollback the transaction if we are in the outermost
@@ -247,7 +248,7 @@ abstract class AbstractConnection
 
         if ($opcount > 0) {
             if ($opcount === 1) {
-                $return = $this->doRollBack();
+                $return = $this->connection->rollBack();
                 if ($this->useDebug) {
                     $this->log('Rollback transaction', null, 'rollBack');
                 }
@@ -274,7 +275,7 @@ abstract class AbstractConnection
         if ($this->nestedTransactionCount) {
             // If we're in a transaction, always roll it back
             // regardless of nesting level.
-            $return = $this->doRollBack();
+            $return = $this->connection->rollBack();
 
             // reset nested transaction count to 0 so that we don't
             // try to commit (or rollback) the transaction outside this scope.
@@ -288,7 +289,48 @@ abstract class AbstractConnection
         return $return;
     }
 
-    abstract protected function doRollBack();
+    /**
+     * Checks if inside a transaction.
+     *
+     * @return bool TRUE if a transaction is currently active, and FALSE if not.
+     */
+    public function inTransaction()
+    {
+        return $this->connection->inTransaction();
+    }
+
+    /**
+     * Retrieve a database connection attribute.
+     *
+     * @param string $attribute The name of the attribute to retrieve,
+     *                          e.g. PDO::ATTR_AUTOCOMMIT
+     *
+     * @return mixed A successful call returns the value of the requested attribute.
+     *               An unsuccessful call returns null.
+     */
+    public function getAttribute($attribute)
+    {
+        return $this->connection->getAttribute($attribute);
+    }
+
+    /**
+     * Set an attribute.
+     *
+     * @param string $attribute
+     * @param mixec $value
+     *
+     * @return bool TRUE on success or FALSE on failure.
+     */
+    public function setAttribute($attribute, $value)
+    {
+        if (is_string($attribute) && strpos($attribute, '::') !== false) {
+            if (!defined($attribute)) {
+                throw new PropelException(sprintf('Invalid connection option/attribute name specified: "%s"', $attribute));
+            }
+            $attribute = constant($attribute);
+        }
+        return $this->connection->setAttribute($attribute, $value);
+    }
 
     /**
      * Prepares a statement for execution and returns a statement object.
@@ -309,7 +351,7 @@ abstract class AbstractConnection
             $debug = $this->getDebugSnapshot();
         }
 
-        $return = $this->doPrepare($sql, $driver_options);
+        $return = $this->connection->prepare($sql, $driver_options);
 
         if ($this->useDebug) {
             $this->log($sql, null, 'prepare', $debug);
@@ -317,8 +359,6 @@ abstract class AbstractConnection
 
         return $return;
     }
-    
-    abstract protected function doPrepare($sql, $driver_options = array());
 
     /**
      * Execute an SQL statement and return the number of affected rows.
@@ -333,7 +373,7 @@ abstract class AbstractConnection
             $debug = $this->getDebugSnapshot();
         }
 
-        $return = $this->doExec($sql);
+        $return = $this->connection->exec($sql);
 
         if ($this->useDebug) {
             $this->log($sql, null, 'exec', $debug);
@@ -343,8 +383,6 @@ abstract class AbstractConnection
 
         return $return;
     }
-
-    abstract protected function doExec($sql);
     
     /**
      * Executes an SQL statement, returning a result set as a PDOStatement object.
@@ -356,14 +394,14 @@ abstract class AbstractConnection
      *
      * @return    PDOStatement
      */
-    public function query($statement)
+    public function query()
     {
         if ($this->useDebug) {
             $debug = $this->getDebugSnapshot();
         }
 
         $args = func_get_args();
-        $return = call_user_func_array(array($this, 'doQuery'), $args);
+        $return = call_user_func_array(array($this->connection, 'query'), $args);
 
         if ($this->useDebug) {
             $sql = $args[0];
@@ -374,8 +412,48 @@ abstract class AbstractConnection
 
         return $return;
     }
-    
-    abstract protected function doQuery($statement);
+
+    /**
+     * Quotes a string for use in a query.
+     *
+     * Places quotes around the input string (if required) and escapes special
+     * characters within the input string, using a quoting style appropriate to
+     * the underlying driver.
+     *
+     * @param string $string The string to be quoted.
+     * @param int    $parameter_type Provides a data type hint for drivers that
+     *                               have alternate quoting styles.
+     *
+     * @return string A quoted string that is theoretically safe to pass into an
+     *                SQL statement. Returns FALSE if the driver does not support
+     *                quoting in this way.
+     */
+    public function quote($string, $parameter_type = 2)
+    {
+        return $this->connection->quote($string, $parameter_type);
+    }
+
+    /**
+     * Returns the ID of the last inserted row or sequence value.
+     *
+     * Returns the ID of the last inserted row, or the last value from a sequence
+     * object, depending on the underlying driver. For example, PDO_PGSQL()
+     * requires you to specify the name of a sequence object for the name parameter.
+     *
+     * @param string $name Name of the sequence object from which the ID should be
+     *                     returned.
+     *
+     * @return string If a sequence name was not specified for the name parameter,
+     *                returns a string representing the row ID of the last row that was
+     *                inserted into the database.
+     *                If a sequence name was specified for the name parameter, returns
+     *                a string representing the last value retrieved from the specified
+     *                sequence object.
+     */
+    public function lastInsertId($name = null)
+    {
+        return $this->connection->lastInsertId($name);
+    }
 
     /**
      * Returns the number of queries this DebugPDO instance has performed on the database connection.
@@ -657,6 +735,10 @@ abstract class AbstractConnection
         return number_format($bytes, $precision) . ' ' . $suffix[$i];
     }
     
+    public function __call($method, $args)
+    {
+        return call_user_func_array(array($this->connection, $method), $args);
+    }
     /**
      * If so configured, makes an entry to the log of the state of this object just prior to its destruction.
      * Add Connection::__destruct to $defaultLogMethods to see this message
@@ -668,5 +750,6 @@ abstract class AbstractConnection
         if ($this->useDebug) {
             $this->log('Closing connection', null, __METHOD__, $this->getDebugSnapshot());
         }
+        $this->connection = null;
     }
 }

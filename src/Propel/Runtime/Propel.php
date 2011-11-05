@@ -560,7 +560,7 @@ class Propel
         $connection = $adapter->getConnection($conparams);
         
         try {
-            $con = new $classname($connection, $adapter);
+            $con = new $classname($connection);
             $con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch (PDOException $e) {
             throw new PropelException("Unable to open PDO connection", $e);
