@@ -10,7 +10,6 @@
 
 namespace Propel\Runtime\Connection;
 
-use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Propel;
 use Propel\Runtime\Config\Configuration;
 use Propel\Runtime\Exception\PropelException;
@@ -29,7 +28,7 @@ use Propel\Runtime\Exception\PropelException;
  * in-progress.
  *
  */
-class WrapperConnection implements ConnectionInterface
+class ConnectionWrapper implements ConnectionInterface
 {
 
     const DEFAULT_SLOW_THRESHOLD        = 0.1;
@@ -100,14 +99,18 @@ class WrapperConnection implements ConnectionInterface
      *
      * @var       array
      */
-    protected static $defaultLogMethods = array();
+    protected static $defaultLogMethods = array(
+        'exec',
+        'query',
+        'statement_execute',
+    );
 
     /**
-     * Creates a Connection instance
+     * Creates a Connection instance.
      *
-     * @param mixed $connectionData The elements required to connect to the database
+     * @param ConnectionInterface $connection
      */
-    public function __construct($connection)
+    public function __construct(ConnectionInterface $connection)
     {
         if ($this->useDebug) {
             $debug = $this->getDebugSnapshot();
@@ -116,11 +119,18 @@ class WrapperConnection implements ConnectionInterface
         $this->connection = $connection;
 
         if ($this->useDebug) {
-            $this->connection->useDebug(true);
             $this->log('Opening connection', null, 'construct', $debug);
         }
     }
 
+    /**
+     * @return ConnectionInterface
+     */
+    public function getWrappedConnection()
+    {
+        return $this->connection;
+    }
+    
     /**
      * Inject the runtime configuration
      *
@@ -351,7 +361,7 @@ class WrapperConnection implements ConnectionInterface
             $debug = $this->getDebugSnapshot();
         }
 
-        $return = $this->connection->prepare($sql, $driver_options);
+        $return = new StatementWrapper($sql, $this, $driver_options);
 
         if ($this->useDebug) {
             $this->log($sql, null, 'prepare', $debug);
@@ -739,6 +749,7 @@ class WrapperConnection implements ConnectionInterface
     {
         return call_user_func_array(array($this->connection, $method), $args);
     }
+    
     /**
      * If so configured, makes an entry to the log of the state of this object just prior to its destruction.
      * Add Connection::__destruct to $defaultLogMethods to see this message

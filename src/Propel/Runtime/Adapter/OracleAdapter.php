@@ -13,6 +13,7 @@ namespace Propel\Runtime\Adapter;
 use Propel\Runtime\Map\ColumnMap;
 use Propel\Runtime\Util\BasePeer;
 use Propel\Runtime\Query\Criteria;
+use Propel\Runtime\Connection\StatementInterface;
 
 use \PDO;
 use \PDOStatement;
@@ -229,7 +230,7 @@ class OracleAdapter extends AbstractAdapter
      *
      * @return    boolean
      */
-    public function bindValue(PDOStatement $stmt, $parameter, $value, ColumnMap $cMap, $position = null)
+    public function bindValue(StatementInterface $stmt, $parameter, $value, ColumnMap $cMap, $position = null)
     {
         if ($cMap->isTemporal()) {
             $value = $this->formatTemporalValue($value, $cMap);

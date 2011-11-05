@@ -10,7 +10,7 @@
 
 namespace Propel\Runtime\Connection;
 
-use Propel\Runtime\Connection\WrapperConnection;
+use Propel\Runtime\Connection\ConnectionWrapper;
 
 /**
  * Class kept for BC sake - the functionality of the old PropelPDO class was moved to:
@@ -18,6 +18,6 @@ use Propel\Runtime\Connection\WrapperConnection;
  * - PDOConnection for the PDO wrapper
  *
  */
-class PropelPDO extends WrapperConnection
+class PropelPDO extends ConnectionWrapper
 {
 }

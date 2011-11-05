@@ -13,9 +13,9 @@ namespace Propel\Runtime\Collection;
 use Propel\Runtime\Propel;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Formatter\AbstractFormatter;
+use Propel\Runtime\Connection\StatementInterface;
 
 use \PDO;
-use \PDOStatement;
 
 /**
  * Class for iterating over a statement and returning one Propel object at a time
@@ -43,9 +43,9 @@ class OnDemandIterator implements \Iterator
 
     /**
      * @param     AbstractFormatter  $formatter
-     * @param     PDOStatement     $stmt
+     * @param     StatementInterface     $stmt
      */
-    public function __construct(AbstractFormatter $formatter, PDOStatement $stmt)
+    public function __construct(AbstractFormatter $formatter, StatementInterface $stmt)
     {
         $this->formatter = $formatter;
         $this->stmt = $stmt;

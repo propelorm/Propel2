@@ -16,7 +16,8 @@ use Propel\Runtime\Map\DatabaseMap;
 use Propel\Runtime\Util\PropelColumnTypes;
 use Propel\Runtime\Util\PropelDateTime;
 use Propel\Runtime\Query\Criteria;
-use Propel\Runtime\Connection\PdoConnection;
+use Propel\Runtime\Connection\ConnectionPdo;
+use Propel\Runtime\Connection\StatementInterface;
 
 use \PDO;
 use \PDOStatement;
@@ -121,7 +122,7 @@ abstract class AbstractAdapter
             }
         }
 
-        $con = new PdoConnection($dsn, $user, $password, $driver_options);
+        $con = new ConnectionPdo($dsn, $user, $password, $driver_options);
         $this->initConnection($con, isset($conparams['settings']) && is_array($conparams['settings']) ? $conparams['settings'] : array());
 
         return $con;
@@ -586,7 +587,7 @@ abstract class AbstractAdapter
      * @param     array         $params  array('column' => ..., 'table' => ..., 'value' => ...)
      * @param     DatabaseMap   $dbMap
      */
-    public function bindValues(PDOStatement $stmt, array $params, DatabaseMap $dbMap)
+    public function bindValues(StatementInterface $stmt, array $params, DatabaseMap $dbMap)
     {
         $position = 0;
         foreach ($params as $param) {
@@ -619,7 +620,7 @@ abstract class AbstractAdapter
      *
      * @return    boolean
      */
-    public function bindValue(PDOStatement $stmt, $parameter, $value, ColumnMap $cMap, $position = null)
+    public function bindValue(StatementInterface $stmt, $parameter, $value, ColumnMap $cMap, $position = null)
     {
         if ($cMap->isTemporal()) {
             $value = $this->formatTemporalValue($value, $cMap);

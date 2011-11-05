@@ -16,10 +16,9 @@ use Propel\Runtime\Exception\PropelException;
 use \PDO;
 
 /**
- * Connection wrapping around a PDO connection that provides the basic fixes to PDO that are required by Propel.
- *
+ * PDO extension that provides prepared statement caching.
  */
-class PdoConnection extends PDO implements ConnectionInterface
+class ConnectionPdo extends PDO implements ConnectionInterface
 {
     protected $useDebug = false;
 
@@ -43,15 +42,14 @@ class PdoConnection extends PDO implements ConnectionInterface
     protected $cachePreparedStatements = false;
 
     /**
-     * The default value for runtime config item "debugpdo.logging.methods".
-     *
-     * @var       array
+     * Creates a PDO instance representing a connection to a database.
      */
-    protected static $defaultLogMethods = array(
-        'exec',
-        'query',
-        'statement_execute',
-    );
+    public function __construct($dsn, $user = null, $password = null, array $options = null)
+    {
+        parent::__construct($dsn, $user, $password, $options);
+        $this->setAttribute(PDO::ATTR_STATEMENT_CLASS, array('\Propel\Runtime\Connection\StatementPDO', array()));
+        $this->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    }
 
     /**
      * Sets a connection attribute.
@@ -131,59 +129,4 @@ class PdoConnection extends PDO implements ConnectionInterface
     {
         $this->preparedStatements = array();
     }
-
-    /**
-     * Configures the PDOStatement class for this connection.
-     *
-     * @param     string   $class
-     * @param     boolean  $suppressError  Whether to suppress an exception if the statement class cannot be set.
-     *
-     * @throws    PropelException if the statement class cannot be set (and $suppressError is false).
-     */
-    protected function configureStatementClass($class = '\PDOStatement', $suppressError = true)
-    {
-        // extending PDOStatement is only supported with non-persistent connections
-        if (!$this->getAttribute(PDO::ATTR_PERSISTENT)) {
-            $this->setAttribute(PDO::ATTR_STATEMENT_CLASS, array($class, array($this)));
-        } elseif (!$suppressError) {
-            throw new PropelException('Extending PDOStatement is not supported with persistent connections.');
-        }
-    }
-
-    /**
-     * Returns the number of queries this DebugPDO instance has performed on the database connection.
-     *
-     * When using DebugPDOStatement as the statement class, any queries by DebugPDOStatement instances
-     * are counted as well.
-     *
-     * @throws     PropelException if persistent connection is used (since unable to override PDOStatement in that case).
-     * @return     integer
-     */
-    public function getQueryCount()
-    {
-        // extending PDOStatement is not supported with persistent connections
-        if ($this->getAttribute(PDO::ATTR_PERSISTENT)) {
-            throw new PropelException('Extending PDOStatement is not supported with persistent connections. Count would be inaccurate, because we cannot count the PDOStatment::execute() calls. Either don\'t use persistent connections or don\'t call PropelPDO::getQueryCount()');
-        }
-
-        return parent::getQueryCount();
-    }
-
-
-    /**
-     * Enable or disable the query debug features
-     *
-     * @param     boolean  $value  True to enable debug (default), false to disable it
-     */
-    public function useDebug($value = true)
-    {
-        if ($value) {
-            $this->configureStatementClass('\Propel\Runtime\Connection\DebugPDOStatement', true);
-        } else {
-            // reset query logging
-            $this->setAttribute(PDO::ATTR_STATEMENT_CLASS, array('\PDOStatement'));
-        }
-        $this->clearStatementCache();
-    }
-
 }

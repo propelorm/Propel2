@@ -10,8 +10,9 @@
 
 namespace Propel\Runtime\Formatter;
 
+use Propel\Runtime\Connection\StatementInterface;
+
 use \PDO;
-use \PDOStatement;
 
 /**
  * Array formatter for Propel select query
@@ -25,7 +26,7 @@ use \PDOStatement;
 class SimpleArrayFormatter extends AbstractFormatter {
     protected $collectionName = '\Propel\Runtime\Collection\ArrayCollection';
 
-    public function format(PDOStatement $stmt) {
+    public function format(StatementInterface $stmt) {
         $this->checkInit ();
         if ($class = $this->collectionName) {
             $collection = new $class();
@@ -47,7 +48,7 @@ class SimpleArrayFormatter extends AbstractFormatter {
         return $collection;
     }
 
-    public function formatOne(PDOStatement $stmt) {
+    public function formatOne(StatementInterface $stmt) {
         $this->checkInit ();
         $result = null;
         while ($row = $stmt->fetch (PDO::FETCH_NUM)) {

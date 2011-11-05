@@ -138,10 +138,10 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
             '\Propel\Runtime\Propel',
             '\Propel\Runtime\Exception\PropelException',
             '\Propel\Runtime\Connection\ConnectionInterface',
+            'Propel\Runtime\Connection\StatementInterface',
             '\Propel\Runtime\Util\BasePeer',
             '\Propel\Runtime\Query\Criteria',
-            '\PDO',
-            '\PDOStatement'
+            '\PDO'
         );
     }
 
@@ -1123,7 +1123,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
      * @throws     PropelException Any exceptions caught during processing will be
      *         rethrown wrapped into a PropelException.
      */
-    public static function populateObjects(PDOStatement \$stmt)
+    public static function populateObjects(StatementInterface \$stmt)
     {
         \$results = array();
     ";

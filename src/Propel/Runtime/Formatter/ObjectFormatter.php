@@ -11,9 +11,9 @@
 namespace Propel\Runtime\Formatter;
 
 use \PDO;
-use \PDOStatement;
 
 use Propel\Runtime\Exception\PropelException;
+use Propel\Runtime\Connection\StatementInterface;
 
 /**
  * Object formatter for Propel query
@@ -27,7 +27,7 @@ class ObjectFormatter extends AbstractFormatter
 {
     protected $collectionName = '\Propel\Runtime\Collection\ObjectCollection';
 
-    public function format(PDOStatement $stmt)
+    public function format(StatementInterface $stmt)
     {
         $this->checkInit();
         if($class = $this->collectionName) {
@@ -61,7 +61,7 @@ class ObjectFormatter extends AbstractFormatter
         return $collection;
     }
 
-    public function formatOne(PDOStatement $stmt)
+    public function formatOne(StatementInterface $stmt)
     {
         $this->checkInit();
         $result = null;
