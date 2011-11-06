@@ -12,8 +12,7 @@ namespace Propel\Generator\Reverse;
 
 use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Model\Database;
-
-use \PDO;
+use Propel\Runtime\Connection\ConnectionInterface;
 
 // TODO: to remove
 require_once 'phing/Task.php';
@@ -31,16 +30,16 @@ interface SchemaParserInterface
 
     /**
      * Gets the database connection.
-     * @return     PDO
+     * @return     ConnectionInterface
      */
     public function getConnection();
 
     /**
      * Sets the database connection.
      *
-     * @param      PDO $dbh
+     * @param      ConnectionInterface $dbh
      */
-    public function setConnection(PDO $dbh);
+    public function setConnection(ConnectionInterface $dbh);
 
     /**
      * Sets the GeneratorConfig to use in the parsing.
