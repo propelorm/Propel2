@@ -127,12 +127,12 @@ abstract class AbstractAdapter
 
         return $con;
     }
-    
+
     /**
      * Prepare the parameters for a Connection
-     * 
+     *
      * @param array the connection parameters from the configuration
-     * 
+     *
      * @return array the modified parameters
      */
     protected function prepareParams($conparams)
@@ -600,7 +600,8 @@ abstract class AbstractAdapter
             }
             $tableName = $param['table'];
             if (null === $tableName) {
-                $stmt->bindValue($parameter, $value);
+                $type = isset($param['type']) ? $param['type'] : PDO::PARAM_STR;
+                $stmt->bindValue($parameter, $value, $type);
                 continue;
             }
             $cMap = $dbMap->getTable($tableName)->getColumn($param['column']);

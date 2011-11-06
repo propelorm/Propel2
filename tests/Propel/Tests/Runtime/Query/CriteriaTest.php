@@ -21,6 +21,8 @@ use Propel\Runtime\Query\Criteria;
 use Propel\Runtime\Query\Join;
 use Propel\Runtime\Util\BasePeer;
 
+use \PDO;
+
 /**
  * Test class for Criteria.
  *
@@ -428,7 +430,7 @@ class CriteriaTest extends BookstoreTestBase
 
     }
 
-    public function testIn()
+    public function testInOperator()
     {
         $c = new Criteria();
         $c->addSelectColumn("*");
@@ -446,7 +448,7 @@ class CriteriaTest extends BookstoreTestBase
         $this->assertEquals($expect, $result);
     }
 
-    public function testInEmptyAfterFull()
+    public function testInOperatorEmptyAfterFull()
     {
         $c = new Criteria();
         $c->addSelectColumn("*");
@@ -464,7 +466,7 @@ class CriteriaTest extends BookstoreTestBase
         $this->assertEquals($expect, $result);
     }
 
-    public function testInNested()
+    public function testInOperatorNested()
     {
         // now do a nested logic test, just for sanity (not that this should be any surprise)
 
@@ -486,7 +488,27 @@ class CriteriaTest extends BookstoreTestBase
 
     }
 
-    public function testJoinObject ()
+    /**
+     * Test the Criteria::RAW behavior.
+     */
+    public function testRawOperator()
+    {
+        $c = new Criteria();
+        $c->addSelectColumn('A.COL');
+        $c->addAsColumn('foo', 'B.COL');
+        $c->add('foo = ?', 123, Criteria::RAW, PDO::PARAM_STR);
+
+        $params = array();
+        $result = BasePeer::createSelectSql($c, $params);
+        $expected = "SELECT A.COL, B.COL AS foo FROM A WHERE foo = :p1";
+        $this->assertEquals($expected, $result);
+        $expected = array(
+            array('table' => null, 'type' => PDO::PARAM_STR, 'value' => 123)
+        );
+        $this->assertEquals($expected, $params);
+    }
+
+    public function testJoinObject()
     {
         $j = new Join('TABLE_A.COL_1', 'TABLE_B.COL_2');
         $this->assertEquals('INNER JOIN', $j->getJoinType());

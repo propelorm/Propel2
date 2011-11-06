@@ -46,6 +46,12 @@ class Criterion
     /** Column name. */
     protected $column;
 
+    /**
+     * Binding type to be used for Criteria::RAW comparison
+     * @var string any of the PDO::PARAM_ constant values
+     */
+    protected $type;
+
     /** flag to ignore case in comparison */
     protected $ignoreStringCase = false;
 
@@ -72,14 +78,15 @@ class Criterion
      * @param      mixed $value
      * @param      string $comparison
      */
-    public function __construct(Criteria $outer, $column, $value, $comparison = null)
+    public function __construct(Criteria $outer, $column, $value, $comparison = null, $type = null)
     {
         $this->value = $value;
         $dotPos = strrpos($column, '.');
-        if ($dotPos === false) {
+        if ($dotPos === false || $comparison == Criteria::RAW) {
             // no dot => aliased column
             $this->table = null;
             $this->column = $column;
+            $this->type = $type;
         } else {
             $this->table = substr($column, 0, $dotPos);
             $this->column = substr($column, $dotPos + 1);
@@ -288,6 +295,10 @@ class Criterion
                 // custom expression with no parameter binding
                 $this->appendCustomToPs($sb, $params);
                 break;
+            case Criteria::RAW:
+                // custom expression with a typed parameter binding
+                $this->appendRawToPs($sb, $params);
+                break;
             case Criteria::IN:
             case Criteria::NOT_IN:
                 // table.column IN (?, ?) or table.column NOT IN (?, ?)
@@ -322,6 +333,23 @@ class Criterion
 
     /**
      * Appends a Prepared Statement representation of the Criterion onto the buffer
+     * For custom expressions with a typed binding, e.g. 'foobar = ?'
+     *
+     * @param      string &$sb The string that will receive the Prepared Statement
+     * @param      array $params A list to which Prepared Statement parameters will be appended
+     */
+    protected function appendRawToPs(&$sb, array &$params)
+    {
+        if (substr_count($this->column, '?') != 1) {
+            throw new PropelException(sprintf('Could not build SQL for expression "%s" because Criteria::RAW works only with a clause containing a single question mark placeholder', $this->column));
+        }
+        $params[] = array('table' => null, 'type' => $this->type, 'value' => $this->value);
+        $sb .= str_replace('?', ':p' . count($params), $this->column);
+    }
+
+ 	/**
+ 	 * Appends a Prepared Statement representation of the Criterion onto the buffer
+     *
      * For IN expressions, e.g. table.column IN (?, ?) or table.column NOT IN (?, ?)
      *
      * @param      string &$sb The string that will receive the Prepared Statement

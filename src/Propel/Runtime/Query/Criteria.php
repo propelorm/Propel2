@@ -79,6 +79,9 @@ class Criteria implements \IteratorAggregate
     /** Comparison type. */
     const CUSTOM = "CUSTOM";
 
+    /** Comparison type */
+    const RAW = "RAW";
+
     /** Comparison type for update */
     const CUSTOM_EQUAL = "CUSTOM_EQUAL";
 
@@ -749,15 +752,16 @@ class Criteria implements \IteratorAggregate
      * @param      string $critOrColumn The column to run the comparison on, or Criterion object.
      * @param      mixed $value
      * @param      string $comparison A String.
+     * @param      string $type An optional PDO type, e.g. PDO::PARAM_INT (for Criteria::RAW comarisons)
      *
      * @return     A modified Criteria object.
      */
-    public function add($p1, $value = null, $comparison = null)
+    public function add($p1, $value = null, $comparison = null, $type = null)
     {
         if ($p1 instanceof Criterion) {
             $this->map[$p1->getTable() . '.' . $p1->getColumn()] = $p1;
         } else {
-            $criterion = new Criterion($this, $p1, $value, $comparison);
+            $criterion = new Criterion($this, $p1, $value, $comparison, $type);
             $this->map[$p1] = $criterion;
         }
 
@@ -784,15 +788,16 @@ class Criteria implements \IteratorAggregate
      * @param      string $p1 The column to run the comparison on, or Criterion object.
      * @param      mixed $value
      * @param      string $comparison A String.
+     * @param      string $type An optional PDO type, e.g. PDO::PARAM_INT (for Criteria::RAW comarisons)
      *
      * @return     A modified Criteria object.
      */
-    public function addCond($name, $p1, $value = null, $comparison = null)
+    public function addCond($name, $p1, $value = null, $comparison = null, $type = null)
     {
         if ($p1 instanceof Criterion) {
             $this->namedCriterions[$name] = $p1;
         } else {
-            $criterion = new Criterion($this, $p1, $value, $comparison);
+            $criterion = new Criterion($this, $p1, $value, $comparison, $type);
             $this->namedCriterions[$name] = $criterion;
         }
 
