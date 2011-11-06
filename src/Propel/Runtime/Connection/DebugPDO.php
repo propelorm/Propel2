@@ -8,7 +8,9 @@
  * @license    MIT License
  */
 
-use Propel\Runtime\Connection\ConnectionWrapper
+namespace Propel\Runtime\Connection;
+
+use Propel\Runtime\Connection\ConnectionWrapper;
 
 /**
  * PDO connection subclass that provides some basic support for query counting and logging.
