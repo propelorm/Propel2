@@ -17,7 +17,7 @@ use Propel\Runtime\Connection\StatementInterface;
  */
 class StatementPdo extends \PDOStatement implements StatementInterface
 {
-    public function __construct()
+    protected function __construct()
     {
     }
 }
