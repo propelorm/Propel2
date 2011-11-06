@@ -15,7 +15,7 @@ use Propel\Runtime\Config\Configuration;
 use Propel\Runtime\Exception\PropelException;
 
 /**
- * Wraps a Connection class, providing nested transactions, and logging.
+ * Wraps a Connection class, providing nested transactions, statement cache, and logging.
  *
  * This class was designed to work around the limitation in PDO where attempting to begin
  * a transaction when one has already been begun will trigger a PDOException.  Propel
@@ -34,6 +34,11 @@ class ConnectionWrapper implements ConnectionInterface
     const DEFAULT_SLOW_THRESHOLD        = 0.1;
     const DEFAULT_ONLYSLOW_ENABLED      = false;
 
+    /**
+     * Attribute to use to set whether to cache prepared statements.
+     */
+    const PROPEL_ATTR_CACHE_PREPARES    = -1;
+    
     /**
      * The wrapped connection class
      * @var ConnectionInterface
@@ -65,6 +70,20 @@ class ConnectionWrapper implements ConnectionInterface
      * @var       string
      */
     protected $lastExecutedQuery;
+
+    /**
+     * Cache of prepared statements (StatementWrapper) keyed by SQL.
+     *
+     * @var       array  [sql => StatementWrapper]
+     */
+    protected $cachedPreparedStatements = array();
+
+    /**
+     * Whether to cache prepared statements.
+     *
+     * @var       boolean
+     */
+    protected $isCachePreparedStatements = false;
 
     /**
      * Whether or not the debug is enabled
@@ -320,14 +339,20 @@ class ConnectionWrapper implements ConnectionInterface
      */
     public function getAttribute($attribute)
     {
-        return $this->connection->getAttribute($attribute);
+        switch($attribute) {
+            case self::PROPEL_ATTR_CACHE_PREPARES:
+                return $this->isCachePreparedStatements;
+                break;
+            default:
+                return $this->connection->getAttribute($attribute);
+        }
     }
 
     /**
      * Set an attribute.
      *
-     * @param string $attribute
-     * @param mixec $value
+     * @param string $attribute The attribute name, or the constant name containing the attribute name (e.g. 'PDO::ATTR_CASE')
+     * @param mixed $value
      *
      * @return bool TRUE on success or FALSE on failure.
      */
@@ -339,7 +364,13 @@ class ConnectionWrapper implements ConnectionInterface
             }
             $attribute = constant($attribute);
         }
-        return $this->connection->setAttribute($attribute, $value);
+        switch($attribute) {
+            case self::PROPEL_ATTR_CACHE_PREPARES:
+                $this->isCachePreparedStatements = $value;
+                break;
+            default:
+                $this->connection->setAttribute($attribute, $value);
+        }
     }
 
     /**
@@ -361,7 +392,16 @@ class ConnectionWrapper implements ConnectionInterface
             $debug = $this->getDebugSnapshot();
         }
 
-        $return = new StatementWrapper($sql, $this, $driver_options);
+        if ($this->isCachePreparedStatements) {
+            if (!isset($this->cachedPreparedStatements[$sql])) {
+                $return = new StatementWrapper($sql, $this, $driver_options);
+                $this->cachedPreparedStatements[$sql] = $return;
+            } else {
+                $return = $this->cachedPreparedStatements[$sql];
+            }
+        } else {
+            $return = new StatementWrapper($sql, $this, $driver_options);
+        }
 
         if ($this->useDebug) {
             $this->log($sql, null, 'prepare', $debug);
@@ -466,6 +506,14 @@ class ConnectionWrapper implements ConnectionInterface
     }
 
     /**
+     * Clears any stored prepared statements for this connection.
+     */
+    public function clearStatementCache()
+    {
+        $this->cachedPreparedStatements = array();
+    }
+
+    /**
      * Returns the number of queries this DebugPDO instance has performed on the database connection.
      *
      * When using DebugPDOStatement as the statement class, any queries by DebugPDOStatement instances
@@ -523,6 +571,7 @@ class ConnectionWrapper implements ConnectionInterface
             $this->setLastExecutedQuery('');
             $this->queryCount = 0;
         }
+        $this->clearStatementCache();
         $this->useDebug = $value;
     }
 

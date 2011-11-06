@@ -10,7 +10,7 @@
 
 namespace Propel\Runtime\Connection;
 
-use Propel\Runtime\Connection\ConnectionWrapper;
+use Propel\Runtime\Connection\PropelPDO;
 
 /**
  * PDO connection subclass that provides some basic support for query counting and logging.
@@ -106,7 +106,7 @@ use Propel\Runtime\Connection\ConnectionWrapper;
  * @since      2006-09-22
  * @package    propel.runtime.connection
  */
-class DebugPDO extends ConnectionWrapper
+class DebugPDO extends PropelPDO
 {
     /**
      * @var       boolean

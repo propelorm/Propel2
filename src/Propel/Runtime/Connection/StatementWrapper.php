@@ -12,8 +12,10 @@ namespace Propel\Runtime\Connection;
 
 use Propel\Runtime\Connection\StatementInterface;
 
+use \PDO;
+
 /**
- * Wraps a Statement class, providing and logging.
+ * Wraps a Statement class, providing logging.
  *
  */
 class StatementWrapper implements StatementInterface
@@ -80,15 +82,17 @@ class StatementWrapper implements StatementInterface
      */
     public function bindParam($pos, &$value, $type = PDO::PARAM_STR, $length = 0, $driver_options = null)
     {
-        $debug    = $this->connection->getDebugSnapshot();
-        $typestr  = isset(self::$typeMap[$type]) ? self::$typeMap[$type] : '(default)';
-        $return   = $this->statement->bindParam($pos, $value, $type, $length, $driver_options);
-        $valuestr = $length > 100 ? '[Large value]' : var_export($value, true);
-        $msg      = sprintf('Binding %s at position %s w/ PDO type %s', $valuestr, $pos, $typestr);
-
-        $this->boundValues[$pos] = $valuestr;
-
-        $this->connection->log($msg, null, 'bindParam', $debug);
+        if ($this->connection->useDebug) {
+            $debug = $this->connection->getDebugSnapshot();
+        }
+        $return = $this->statement->bindParam($pos, $value, $type, $length, $driver_options);
+        if ($this->connection->useDebug) {
+            $typestr  = isset(self::$typeMap[$type]) ? self::$typeMap[$type] : '(default)';
+            $valuestr = $length > 100 ? '[Large value]' : var_export($value, true);
+            $this->boundValues[$pos] = $valuestr;
+            $msg = sprintf('Binding %s at position %s w/ PDO type %s', $valuestr, $pos, $typestr);
+            $this->connection->log($msg, null, 'bindParam', $debug);
+        }
 
         return $return;
     }
@@ -105,15 +109,17 @@ class StatementWrapper implements StatementInterface
      */
     public function bindValue($pos, $value, $type = PDO::PARAM_STR)
     {
-        $debug    = $this->connection->getDebugSnapshot();
-        $typestr  = isset(self::$typeMap[$type]) ? self::$typeMap[$type] : '(default)';
-        $return   = $this->statement->bindValue($pos, $value, $type);
-        $valuestr = $type == \PDO::PARAM_LOB ? '[LOB value]' : var_export($value, true);
-        $msg      = sprintf('Binding %s at position %s w/ PDO type %s', $valuestr, $pos, $typestr);
-
-        $this->boundValues[$pos] = $valuestr;
-
-        $this->connection->log($msg, null, __METHOD__, $debug);
+        if ($this->connection->useDebug) {
+            $debug = $this->connection->getDebugSnapshot();
+        }
+        $return = $this->statement->bindValue($pos, $value, $type);
+        if ($this->connection->useDebug) {
+            $typestr = isset(self::$typeMap[$type]) ? self::$typeMap[$type] : '(default)';
+            $valuestr = $type == \PDO::PARAM_LOB ? '[LOB value]' : var_export($value, true);
+            $this->boundValues[$pos] = $valuestr;
+            $msg = sprintf('Binding %s at position %s w/ PDO type %s', $valuestr, $pos, $typestr);
+            $this->connection->log($msg, null, 'bindValue', $debug);
+        }
 
         return $return;
     }
@@ -168,13 +174,16 @@ class StatementWrapper implements StatementInterface
      */
     public function execute($input_parameters = null)
     {
-        $debug  = $this->connection->getDebugSnapshot();
+        if ($this->connection->useDebug) {
+            $debug = $this->connection->getDebugSnapshot();
+        }
         $return = $this->statement->execute($input_parameters);
-
-        $sql = $this->getExecutedQueryString();
-        $this->connection->log($sql, null, 'statement_execute', $debug);
-        $this->connection->setLastExecutedQuery($sql);
-        $this->connection->incrementQueryCount();
+        if ($this->connection->useDebug) {
+            $sql = $this->getExecutedQueryString();
+            $this->connection->log($sql, null, 'statement_execute', $debug);
+            $this->connection->setLastExecutedQuery($sql);
+            $this->connection->incrementQueryCount();
+        }
 
         return $return;
     }

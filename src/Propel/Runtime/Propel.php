@@ -555,16 +555,13 @@ class Propel
         } else {
             $classname = $defaultClass;
         }
-        
         $adapter = self::getDB($name);
-        $connection = $adapter->getConnection($conparams);
-        
         try {
-            $con = new $classname($connection);
-            $con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $connection = $adapter->getConnection($conparams);
         } catch (PDOException $e) {
             throw new PropelException("Unable to open PDO connection", $e);
         }
+        $con = new $classname($connection);
 
         // load any connection options from the config file
         // connection attributes are those PDO flags that have to be set on the initialized connection
