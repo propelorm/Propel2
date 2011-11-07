@@ -10,6 +10,8 @@
 
 namespace Propel\Runtime\Connection;
 
+use Propel\Runtime\Connection\PropelPDO;
+
 /**
  * PDO connection subclass that provides some basic support for query counting and logging.
  *

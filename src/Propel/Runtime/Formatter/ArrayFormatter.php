@@ -11,9 +11,9 @@
 namespace Propel\Runtime\Formatter;
 
 use Propel\Runtime\Exception\PropelException;
+use Propel\Runtime\Connection\StatementInterface;
 
 use \PDO;
-use \PDOStatement;
 
 /**
  * Array formatter for Propel query
@@ -29,7 +29,7 @@ class ArrayFormatter extends AbstractFormatter
     protected $alreadyHydratedObjects = array();
     protected $emptyVariable;
 
-    public function format(PDOStatement $stmt)
+    public function format(StatementInterface $stmt)
     {
         $this->checkInit();
         if($class = $this->collectionName) {
@@ -54,7 +54,7 @@ class ArrayFormatter extends AbstractFormatter
         return $collection;
     }
 
-    public function formatOne(PDOStatement $stmt)
+    public function formatOne(StatementInterface $stmt)
     {
         $this->checkInit();
         $result = null;

@@ -13,8 +13,7 @@ namespace Propel\Runtime\Collection;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Formatter\AbstractFormatter;
 use Propel\Runtime\Util\BasePeer;
-
-use \PDOStatement;
+use Propel\Runtime\Connection\StatementInterface;
 
 /**
  * Class for iterating over a statement and returning one Propel object at a time
@@ -36,9 +35,9 @@ class OnDemandCollection extends Collection
 
     /**
      * @param     AbstractFormatter $formatter
-     * @param     PDOStatement $stmt
+     * @param     StatementInterface $stmt
      */
-    public function initIterator(AbstractFormatter $formatter, PDOStatement $stmt)
+    public function initIterator(AbstractFormatter $formatter, StatementInterface $stmt)
     {
         $this->iterator = new OnDemandIterator($formatter, $stmt);
     }

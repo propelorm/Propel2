@@ -11,10 +11,11 @@
 namespace Propel\Runtime\Adapter;
 
 use Propel\Runtime\Map\ColumnMap;
+use Propel\Runtime\Connection\ConnectionInterface;
+use Propel\Runtime\Connection\StatementInterface;
 
 use \PDO;
 use \PDOException;
-use \PDOStatement;
 
 /**
  * This is used in order to connect to a MySQL database.
@@ -92,12 +93,12 @@ class MysqlAdapter extends AbstractAdapter
     /**
      * Locks the specified table.
      *
-     * @param     PDO     $con  The Propel connection to use.
+     * @param     ConnectionInterface $con  The Propel connection to use.
      * @param     string  $table  The name of the table to lock.
      *
      * @throws    PDOException  No Statement could be created or executed.
      */
-    public function lockTable(PDO $con, $table)
+    public function lockTable($con, $table)
     {
         $con->exec("LOCK TABLE " . $table . " WRITE");
     }
@@ -105,12 +106,12 @@ class MysqlAdapter extends AbstractAdapter
     /**
      * Unlocks the specified table.
      *
-     * @param     PDO     $con  The PDO connection to use.
+     * @param     ConnectionInterface $con  The Propel connection to use.
      * @param     string  $table  The name of the table to unlock.
      *
      * @throws    PDOException  No Statement could be created or executed.
      */
-    public function unlockTable(PDO $con, $table)
+    public function unlockTable($con, $table)
     {
         $statement = $con->exec("UNLOCK TABLES");
     }
@@ -178,7 +179,7 @@ class MysqlAdapter extends AbstractAdapter
     /**
      * @see       AbstractAdapter::bindValue()
      *
-     * @param     PDOStatement  $stmt
+     * @param     StatementInterface $stmt
      * @param     string        $parameter
      * @param     mixed         $value
      * @param     ColumnMap     $cMap
@@ -186,7 +187,7 @@ class MysqlAdapter extends AbstractAdapter
      *
      * @return    boolean
      */
-    public function bindValue(PDOStatement $stmt, $parameter, $value, ColumnMap $cMap, $position = null)
+    public function bindValue(StatementInterface $stmt, $parameter, $value, ColumnMap $cMap, $position = null)
     {
         $pdoType = $cMap->getPdoType();
         // FIXME - This is a temporary hack to get around apparent bugs w/ PDO+MYSQL
@@ -208,16 +209,16 @@ class MysqlAdapter extends AbstractAdapter
     }
 
     /**
-     * Prepare connection parameters.
-     * See: http://www.propelorm.org/ticket/1360
+     * Prepare the parameters for a PDO connection.
+     * Protects MySQL from charset injection risk.
+     * @see   http://www.propelorm.org/ticket/1360
      *
-     * @param array    $params
-     * @return array
+     * @param array the connection parameters from the configuration
+     * 
+     * @return array the modified parameters
      */
-    public function prepareParams($params)
+    protected function prepareParams($params)
     {
-        $params = parent::prepareParams($params);
-
         if(isset($params['settings']['charset']['value'])) {
             if(version_compare(PHP_VERSION, '5.3.6', '<')) {
                 throw new PropelException(<<<EXCEPTION
@@ -234,6 +235,6 @@ EXCEPTION
             }
         }
 
-        return $params;
+        return parent::prepareParams($params);
     }
 }
