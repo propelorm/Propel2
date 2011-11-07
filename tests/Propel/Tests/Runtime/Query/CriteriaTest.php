@@ -496,7 +496,7 @@ class CriteriaTest extends BookstoreTestBase
         $c = new Criteria();
         $c->addSelectColumn('A.COL');
         $c->addAsColumn('foo', 'B.COL');
-        $c->addRaw('foo = ?', 123, PDO::PARAM_STR);
+        $c->add('foo = ?', 123, PDO::PARAM_STR);
 
         $params = array();
         $result = BasePeer::createSelectSql($c, $params);

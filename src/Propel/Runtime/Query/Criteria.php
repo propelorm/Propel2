@@ -768,32 +768,6 @@ class Criteria implements \IteratorAggregate
     }
 
     /**
-     * Add a new raw criterion to the list of criterias.
-     *
-     * A raw criterion is composed of a SQL clause, a value to bind, and a binding type.
-     * If a criterion for the given clause already exists, it is replaced.
-     *
-     * @example
-     * <code>
-     * $crit = new Criteria();
-     * $crit->addRaw('col.value LIKE ?', $value, PDO::PARAM_INT);
-     * </code>
-     *
-     * @param      string $clause The clause containing the condition. Must include question mark.
-     *                            E.g. 'foobar < ?'
-     * @param      mixed  $value
-     * @param      string $bindingType An optional PDO type, e.g. PDO::PARAM_INT
-     *
-     * @return     Criteria A modified Criteria object.
-     */
-    public function addRaw($clause, $value = null, $bindingType = null)
-    {
-        $this->map[$clause] = new Criterion($this, $clause, $value, Criteria::RAW, $bindingType);
-
-        return $this;
-    }
-
-    /**
      * This method creates a new criterion but keeps it for later use with combine()
      * Until combine() is called, the condition is not added to the query
      *
@@ -819,27 +793,6 @@ class Criteria implements \IteratorAggregate
     public function addCond($name, $p1, $value = null, $comparison = null)
     {
         $this->namedCriterions[$name] = $this->getCriterionForCondition($p1, $value, $comparison);
-
-        return $this;
-    }
-
-    /**
-     * Create a new raw criterion but keeps it for later use with combine().
-     *
-     * @see addRaw()
-     * @see addCond()
-     *
-     * @param      string $name name to combine the criterion later
-     * @param      string $clause The clause containing the condition. Must include question mark.
-     *                            E.g. 'foobar < ?'
-     * @param      mixed  $value
-     * @param      string $bindingType An optional PDO type, e.g. PDO::PARAM_INT
-     *
-     * @return     Criteria A modified Criteria object.
-     */
-    public function addCondRaw($name, $clause, $value = null, $bindingType = null)
-    {
-        $this->namedCriterions[$name] = new Criterion($this, $clause, $value, Criteria::RAW, $bindingType);
 
         return $this;
     }
@@ -1664,33 +1617,38 @@ class Criteria implements \IteratorAggregate
     }
 
     /**
-     * Add a new raw criterion as a having clause.
+     * Build a Criterion.
      *
-     * A raw criterion is composed of a SQL clause, a value to bind, and a binding type.
+     * This method has multiple signatures, and behaves differently according to it:
      *
-     * @see addRaw
+     *  - If the first argument is a Criterion, it just resturns this Criterion.
+     *    <code>$c->getCriterionForConsition($criterion); // returns $criterion</code>
      *
-     * @param      string $clause The clause containing the condition. Must include question mark.
-     *                            E.g. 'foobar < ?'
-     * @param      mixed  $value
-     * @param      string $bindingType An optional PDO type, e.g. PDO::PARAM_INT
+     *  - If the last argument is a PDO::PARAM_* constant value, create a Criterion
+     *    using Criteria::RAW and $comparison as a type.
+     *    <code>$c->getCriterionForConsition('foo like ?', '%bar%', PDO::PARAM_STR);</code>
      *
-     * @return     Criteria A modified Criteria object.
+     *  - Otherwise, create a classic Criterion based on a column name and a comparison.
+     *    <code>$c->getCriterionForConsition(BookPeer::TITLE, 'War%', Criteria::LIKE);</code>
+     *
+     * @param mixed $p1 A Criterion, or a SQL clause with a question mark placeholder, or a column name
+     * @param mixed $value The value to bind in the condition
+     * @param mixed $comparison A Criteria class constant, or a PDO::PARAM_ class constant
+     *
+     * @return Criterion
      */
-    public function addHavingRaw($clause, $value = null, $bindingType = null)
-    {
-        $this->having = new Criterion($this, $clause, $value, Criteria::RAW, $bindingType);
-
-        return $this;
-    }
-
     protected function getCriterionForCondition($p1, $value = null, $comparison = null)
     {
         if ($p1 instanceof Criterion) {
+			// it's already a Criterion, so ignore $value and $comparison
             return $p1;
         } elseif (is_int($comparison)) {
+            // $comparison is a PDO::PARAM_* constant value
+            // something like $c->add('foo like ?', '%bar%', PDO::PARAM_STR);
             return new Criterion($this, $p1, $value, Criteria::RAW, $comparison);;
         } else {
+            // $comparison is one of Criteria's constants
+            // something like $c->add(BookPeer::TITLE, 'War%', Criteria::LIKE);
             return new Criterion($this, $p1, $value, $comparison);
         }
     }
