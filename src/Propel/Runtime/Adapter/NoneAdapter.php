@@ -25,7 +25,7 @@ class NoneAdapter extends AbstractAdapter
     /**
      * @see        AbstractAdapter::initConnection()
      *
-     * @param     PDO    $con
+     * @param     ConnectionInterface $con
      * @param     array  $settings
      */
     public function initConnection($con, array $settings)

@@ -17,10 +17,10 @@ use Propel\Runtime\Util\PropelColumnTypes;
 use Propel\Runtime\Util\PropelDateTime;
 use Propel\Runtime\Query\Criteria;
 use Propel\Runtime\Connection\ConnectionPdo;
+use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\StatementInterface;
 
 use \PDO;
-use \PDOStatement;
 
 /**
  * AbstractAdapter</code> defines the interface for a Propel database adapter.
@@ -92,7 +92,7 @@ abstract class AbstractAdapter
      *
      * @param array    $conparams connection parameters
      *
-     * @return PDO A PDO instance
+     * @return ConnectionPdo
      */
     public function getConnection($conparams)
     {
@@ -109,10 +109,10 @@ abstract class AbstractAdapter
         // load any driver options from the config file
         // driver options are those PDO settings that have to be passed during the connection construction
         $driver_options = array();
-        if ( isset($conparams['options']) && is_array($conparams['options']) ) {
+        if (isset($conparams['options']) && is_array($conparams['options'])) {
             foreach ($conparams['options'] as $option => $optiondata) {
                 $value = $optiondata['value'];
-                if (is_string($value) && strpos($value, '::') !== false) {
+                if (is_string($value) && false !== strpos($value, '::')) {
                     if (!defined($value)) {
                         throw new PropelException(sprintf('Error processing driver options for dsn "%s"', $dsn));
                     }
@@ -129,7 +129,7 @@ abstract class AbstractAdapter
     }
     
     /**
-     * Prepare the parameters for a PDO connection
+     * Prepare the parameters for a Connection
      * 
      * @param array the connection parameters from the configuration
      * 
@@ -151,7 +151,7 @@ abstract class AbstractAdapter
      *
      * @see       setCharset()
      *
-     * @param     PDO    $con  A PDO connection instance.
+     * @param     ConnectionPdo    $con
      * @param     array  $settings  An array of settings.
      */
     public function initConnection($con, array $settings)
@@ -176,7 +176,7 @@ abstract class AbstractAdapter
      *
      * @see       initConnection()
      *
-     * @param     PDO     $con  A $PDO PDO connection instance.
+     * @param     ConnectionPdo $con
      * @param     string  $charset  The $string charset encoding.
      */
     public function setCharset($con, $charset)
@@ -311,7 +311,7 @@ abstract class AbstractAdapter
     /**
      * Gets the generated ID (either last ID for autoincrement or next sequence ID).
      *
-     * @param     PDO     $con
+     * @param     ConnectionInterface $con
      * @param     string  $name
      *
      * @return    mixed
@@ -398,7 +398,7 @@ abstract class AbstractAdapter
     }
 
     /**
-     * Allows manipulation of the query string before PDOStatement is instantiated.
+     * Allows manipulation of the query string before StatementPdo is instantiated.
      *
      * @param     string       $sql  The sql statement
      * @param     array        $params  array('column' => ..., 'table' => ..., 'value' => ...)
@@ -583,7 +583,7 @@ abstract class AbstractAdapter
      * $stmt->execute();
      * </code>
      *
-     * @param     PDOStatement  $stmt
+     * @param     StatementInterface $stmt
      * @param     array         $params  array('column' => ..., 'table' => ..., 'value' => ...)
      * @param     DatabaseMap   $dbMap
      */
@@ -612,7 +612,7 @@ abstract class AbstractAdapter
      * Binds a value to a positioned parameted in a statement,
      * given a ColumnMap object to infer the binding type.
      *
-     * @param     PDOStatement  $stmt  The statement to bind
+     * @param     StatementInterface $stmt  The statement to bind
      * @param     string        $parameter  Parameter identifier
      * @param     mixed         $value  The value to bind
      * @param     ColumnMap     $cMap  The ColumnMap of the column to bind

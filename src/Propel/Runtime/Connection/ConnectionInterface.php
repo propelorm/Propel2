@@ -17,7 +17,7 @@ namespace Propel\Runtime\Connection;
  *
  * @author     Francois Zaninotto
  */
-Interface ConnectionInterface
+interface ConnectionInterface
 {
     /**
      * Turns off autocommit mode.

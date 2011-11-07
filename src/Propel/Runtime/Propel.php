@@ -568,7 +568,7 @@ class Propel
         if (isset($conparams['attributes']) && is_array($conparams['attributes'])) {
             foreach ($conparams['attributes'] as $option => $optiondata) {
                 $value = $optiondata['value'];
-                if (is_string($value) && strpos($value, '::') !== false) {
+                if (is_string($value) && false !== strpos($value, '::')) {
                     if (!defined($value)) {
                         throw new PropelException(sprintf('Invalid class constant specified "%s" while processing connection attributes for datasource "%s"'), $value, $name);
                     }

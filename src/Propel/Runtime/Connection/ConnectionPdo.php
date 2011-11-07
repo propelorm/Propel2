@@ -26,7 +26,7 @@ class ConnectionPdo extends PDO implements ConnectionInterface
     public function __construct($dsn, $user = null, $password = null, array $options = null)
     {
         parent::__construct($dsn, $user, $password, $options);
-        $this->setAttribute(PDO::ATTR_STATEMENT_CLASS, array('\Propel\Runtime\Connection\StatementPDO', array()));
+        $this->setAttribute(PDO::ATTR_STATEMENT_CLASS, array('\Propel\Runtime\Connection\StatementPdo', array()));
         $this->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
 
@@ -40,7 +40,7 @@ class ConnectionPdo extends PDO implements ConnectionInterface
      */
     public function setAttribute($attribute, $value)
     {
-        if (is_string($attribute) && strpos($attribute, '::') === false) {
+        if (is_string($attribute) && false === strpos($attribute, '::')) {
             $attribute = '\PDO::' . $attribute;
             if (!defined($attribute)) {
                 throw new PropelException(sprintf('Invalid PDO option/attribute name specified: "%s"', $attribute));

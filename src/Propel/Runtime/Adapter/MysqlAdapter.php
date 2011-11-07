@@ -11,11 +11,11 @@
 namespace Propel\Runtime\Adapter;
 
 use Propel\Runtime\Map\ColumnMap;
+use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\StatementInterface;
 
 use \PDO;
 use \PDOException;
-use \PDOStatement;
 
 /**
  * This is used in order to connect to a MySQL database.
@@ -93,7 +93,7 @@ class MysqlAdapter extends AbstractAdapter
     /**
      * Locks the specified table.
      *
-     * @param     PDO     $con  The Propel connection to use.
+     * @param     ConnectionInterface $con  The Propel connection to use.
      * @param     string  $table  The name of the table to lock.
      *
      * @throws    PDOException  No Statement could be created or executed.
@@ -106,7 +106,7 @@ class MysqlAdapter extends AbstractAdapter
     /**
      * Unlocks the specified table.
      *
-     * @param     PDO     $con  The PDO connection to use.
+     * @param     ConnectionInterface $con  The Propel connection to use.
      * @param     string  $table  The name of the table to unlock.
      *
      * @throws    PDOException  No Statement could be created or executed.
@@ -179,7 +179,7 @@ class MysqlAdapter extends AbstractAdapter
     /**
      * @see       AbstractAdapter::bindValue()
      *
-     * @param     PDOStatement  $stmt
+     * @param     StatementInterface $stmt
      * @param     string        $parameter
      * @param     mixed         $value
      * @param     ColumnMap     $cMap

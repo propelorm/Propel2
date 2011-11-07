@@ -38,7 +38,14 @@ class ConnectionWrapper implements ConnectionInterface
      * Attribute to use to set whether to cache prepared statements.
      */
     const PROPEL_ATTR_CACHE_PREPARES    = -1;
-    
+
+    /**
+     * Whether or not the debug is enabled
+     *
+     * @var       boolean
+     */
+    public $useDebug = false;
+
     /**
      * The wrapped connection class
      * @var ConnectionInterface
@@ -86,13 +93,6 @@ class ConnectionWrapper implements ConnectionInterface
     protected $isCachePreparedStatements = false;
 
     /**
-     * Whether or not the debug is enabled
-     *
-     * @var       boolean
-     */
-    public $useDebug = false;
-
-    /**
      * Configured BasicLogger (or compatible) logger.
      *
      * @var       BasicLogger
@@ -104,7 +104,7 @@ class ConnectionWrapper implements ConnectionInterface
      *
      * @var       integer
      */
-    private $logLevel = Propel::LOG_DEBUG;
+    protected $logLevel = Propel::LOG_DEBUG;
 
     /**
      * The runtime configuration

@@ -138,7 +138,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
             '\Propel\Runtime\Propel',
             '\Propel\Runtime\Exception\PropelException',
             '\Propel\Runtime\Connection\ConnectionInterface',
-            'Propel\Runtime\Connection\StatementInterface',
+            '\Propel\Runtime\Connection\StatementInterface',
             '\Propel\Runtime\Util\BasePeer',
             '\Propel\Runtime\Query\Criteria',
             '\PDO'
