@@ -86,12 +86,12 @@ class Criterion
             // no dot => aliased column
             $this->table = null;
             $this->column = $column;
-            $this->type = $type;
         } else {
             $this->table = substr($column, 0, $dotPos);
             $this->column = substr($column, $dotPos + 1);
         }
         $this->comparison = ($comparison === null) ? Criteria::EQUAL : $comparison;
+        $this->type = $type;
         $this->init($outer);
     }
 

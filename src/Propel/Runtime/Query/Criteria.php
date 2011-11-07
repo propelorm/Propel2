@@ -752,18 +752,43 @@ class Criteria implements \IteratorAggregate
      * @param      string $critOrColumn The column to run the comparison on, or Criterion object.
      * @param      mixed $value
      * @param      string $comparison A String.
-     * @param      string $type An optional PDO type, e.g. PDO::PARAM_INT (for Criteria::RAW comarisons)
      *
      * @return     A modified Criteria object.
      */
-    public function add($p1, $value = null, $comparison = null, $type = null)
+    public function add($p1, $value = null, $comparison = null)
     {
+        $criterion = $this->getCriterionForCondition($p1, $value, $comparison);
         if ($p1 instanceof Criterion) {
-            $this->map[$p1->getTable() . '.' . $p1->getColumn()] = $p1;
+            $this->map[$p1->getTable() . '.' . $p1->getColumn()] = $criterion;
         } else {
-            $criterion = new Criterion($this, $p1, $value, $comparison, $type);
             $this->map[$p1] = $criterion;
         }
+
+        return $this;
+    }
+
+    /**
+     * Add a new raw criterion to the list of criterias.
+     *
+     * A raw criterion is composed of a SQL clause, a value to bind, and a binding type.
+     * If a criterion for the given clause already exists, it is replaced.
+     *
+     * @example
+     * <code>
+     * $crit = new Criteria();
+     * $crit->addRaw('col.value LIKE ?', $value, PDO::PARAM_INT);
+     * </code>
+     *
+     * @param      string $clause The clause containing the condition. Must include question mark.
+     *                            E.g. 'foobar < ?'
+     * @param      mixed  $value
+     * @param      string $bindingType An optional PDO type, e.g. PDO::PARAM_INT
+     *
+     * @return     Criteria A modified Criteria object.
+     */
+    public function addRaw($clause, $value = null, $bindingType = null)
+    {
+        $this->map[$clause] = new Criterion($this, $clause, $value, Criteria::RAW, $bindingType);
 
         return $this;
     }
@@ -788,18 +813,33 @@ class Criteria implements \IteratorAggregate
      * @param      string $p1 The column to run the comparison on, or Criterion object.
      * @param      mixed $value
      * @param      string $comparison A String.
-     * @param      string $type An optional PDO type, e.g. PDO::PARAM_INT (for Criteria::RAW comarisons)
      *
      * @return     A modified Criteria object.
      */
-    public function addCond($name, $p1, $value = null, $comparison = null, $type = null)
+    public function addCond($name, $p1, $value = null, $comparison = null)
     {
-        if ($p1 instanceof Criterion) {
-            $this->namedCriterions[$name] = $p1;
-        } else {
-            $criterion = new Criterion($this, $p1, $value, $comparison, $type);
-            $this->namedCriterions[$name] = $criterion;
-        }
+        $this->namedCriterions[$name] = $this->getCriterionForCondition($p1, $value, $comparison);
+
+        return $this;
+    }
+
+    /**
+     * Create a new raw criterion but keeps it for later use with combine().
+     *
+     * @see addRaw()
+     * @see addCond()
+     *
+     * @param      string $name name to combine the criterion later
+     * @param      string $clause The clause containing the condition. Must include question mark.
+     *                            E.g. 'foobar < ?'
+     * @param      mixed  $value
+     * @param      string $bindingType An optional PDO type, e.g. PDO::PARAM_INT
+     *
+     * @return     Criteria A modified Criteria object.
+     */
+    public function addCondRaw($name, $clause, $value = null, $bindingType = null)
+    {
+        $this->namedCriterions[$name] = new Criterion($this, $clause, $value, Criteria::RAW, $bindingType);
 
         return $this;
     }
@@ -1616,11 +1656,43 @@ class Criteria implements \IteratorAggregate
      *
      * @return     A modified Criteria object.
      */
-    public function addHaving(Criterion $having)
+    public function addHaving($p1, $value = null, $comparison = null)
     {
-        $this->having = $having;
+        $this->having = $this->getCriterionForCondition($p1, $value, $comparison);
 
         return $this;
+    }
+
+    /**
+     * Add a new raw criterion as a having clause.
+     *
+     * A raw criterion is composed of a SQL clause, a value to bind, and a binding type.
+     *
+     * @see addRaw
+     *
+     * @param      string $clause The clause containing the condition. Must include question mark.
+     *                            E.g. 'foobar < ?'
+     * @param      mixed  $value
+     * @param      string $bindingType An optional PDO type, e.g. PDO::PARAM_INT
+     *
+     * @return     Criteria A modified Criteria object.
+     */
+    public function addHavingRaw($clause, $value = null, $bindingType = null)
+    {
+        $this->having = new Criterion($this, $clause, $value, Criteria::RAW, $bindingType);
+
+        return $this;
+    }
+
+    protected function getCriterionForCondition($p1, $value = null, $comparison = null)
+    {
+        if ($p1 instanceof Criterion) {
+            return $p1;
+        } elseif (is_int($comparison)) {
+            return new Criterion($this, $p1, $value, Criteria::RAW, $comparison);;
+        } else {
+            return new Criterion($this, $p1, $value, $comparison);
+        }
     }
 
     /**
@@ -1639,7 +1711,7 @@ class Criteria implements \IteratorAggregate
      */
     public function addAnd($p1, $p2 = null, $p3 = null, $preferColumnCondition = true)
     {
-        $criterion = ($p1 instanceof Criterion) ? $p1 : new Criterion($this, $p1, $p2, $p3);
+        $criterion = $this->getCriterionForCondition($p1, $p2, $p3);
 
         $key = $criterion->getTable() . '.' . $criterion->getColumn();
         if ($preferColumnCondition && $this->containsKey($key)) {
@@ -1670,7 +1742,7 @@ class Criteria implements \IteratorAggregate
      */
     public function addOr($p1, $p2 = null, $p3 = null, $preferColumnCondition = true)
     {
-        $rightCriterion = ($p1 instanceof Criterion) ? $p1 : new Criterion($this, $p1, $p2, $p3);
+        $rightCriterion = $criterion = $this->getCriterionForCondition($p1, $p2, $p3);
 
         $key = $rightCriterion->getTable() . '.' . $rightCriterion->getColumn();
         if ($preferColumnCondition && $this->containsKey($key)) {
