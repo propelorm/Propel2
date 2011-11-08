@@ -11,6 +11,7 @@
 namespace Propel\Generator\Behavior\Archivable;
 
 use Propel\Generator\Model\Behavior;
+use Propel\Generator\Model\Index;
 
 /**
  * Keeps tracks of an ActiveRecord object, even after deletion
@@ -101,11 +102,18 @@ class ArchivableBehavior extends Behavior
                 $copiedIndex->setName('');
                 $archiveTable->addIndex($copiedIndex);
             }
-            // copy unique indices
+            // copy unique indices to indices
+            // see https://github.com/propelorm/Propel/issues/175 for details
             foreach ($table->getUnices() as $unique) {
-                $copiedUnique = clone $unique;
-                $copiedUnique->setName('');
-                $archiveTable->addUnique($copiedUnique);
+                $index = new Index();
+                foreach ($unique->getColumns() as $columnName) {
+                    if ($size = $unique->getColumnSize($columnName)) {
+                        $index->addColumn(array('name' => $columnName, 'size' => $size));
+                    } else {
+                        $index->addColumn(array('name' => $columnName));
+                    }
+                }
+                $archiveTable->addIndex($index);
             }
             // every behavior adding a table should re-execute database behaviors
             foreach ($database->getBehaviors() as $behavior) {
@@ -135,7 +143,7 @@ class ArchivableBehavior extends Behavior
 
     public function getArchiveTableQueryName($builder)
     {
-        if ($this->getParameter('archive_class') == '') {
+        if ($this->hasArchiveClass()) {
             return $this->getParameter('archive_class') . 'Query';
         }
         return $builder->getNewStubQueryBuilder($this->getArchiveTable())->getClassname();
@@ -143,7 +151,7 @@ class ArchivableBehavior extends Behavior
 
     public function hasArchiveClass()
     {
-        return $this->getParameter('archive_class') != '';
+        return ($this->getParameter('archive_class') != '');
     }
 
     /**

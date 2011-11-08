@@ -64,6 +64,9 @@ class ArchivableBehaviorTest extends \PHPUnit_Framework_TestCase
         <column name="title" type="VARCHAR" size="100" primaryString="true" />
         <column name="age" type="INTEGER" />
         <column name="foo_id" type="INTEGER" />
+        <unique>
+            <unique-column name="title" />
+        </unique>
         <behavior name="archivable">
             <parameter name="log_archived_at" value="false" />
             <parameter name="archive_table" value="my_old_archivable_test_3" />
@@ -135,6 +138,13 @@ EOF;
     {
         $table = \ArchivableTest1ArchivePeer::getTableMap();
         $expected = "CREATE INDEX archivable_test_1_archive_I_1 ON archivable_test_1_archive (title,age);";
+        $this->assertContains($expected, self::$generatedSQL);
+    }
+
+    public function testCopiesUniquesToIndices()
+    {
+        $table = \ArchivableTest2ArchivePeer::getTableMap();
+        $expected = "CREATE INDEX my_old_archivable_test_3_I_1 ON my_old_archivable_test_3 (title);";
         $this->assertContains($expected, self::$generatedSQL);
     }
 
