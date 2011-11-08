@@ -13,6 +13,7 @@ namespace Propel\Runtime\Formatter;
 use Propel\Runtime\Propel;
 use Propel\Runtime\Query\ModelCriteria;
 use Propel\Runtime\Exception\PropelException;
+use Propel\Runtime\Connection\StatementInterface;
 
 use \PDOStatement;
 
@@ -135,9 +136,9 @@ abstract class AbstractFormatter
         return $record;
     }
 
-    abstract public function format(PDOStatement $stmt);
+    abstract public function format(StatementInterface $stmt);
 
-    abstract public function formatOne(PDOStatement $stmt);
+    abstract public function formatOne(StatementInterface $stmt);
 
     abstract public function isObjectFormatter();
 

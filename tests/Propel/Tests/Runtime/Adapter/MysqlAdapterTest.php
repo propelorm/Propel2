@@ -49,7 +49,7 @@ class MysqlAdapterTest extends BookstoreTestBase
             $this->markTestSkipped('PHP_VERSION >= 5.3.6, no need to throw an exception.');
         }
 
-        $db = new MysqlAdapter();
+        $db = new TestableMysqlAdapter();
         $db->prepareParams($conparams);
     }
 
@@ -62,7 +62,7 @@ class MysqlAdapterTest extends BookstoreTestBase
             $this->markTestSkipped('PHP_VERSION < 5.3.6 will throw an exception.');
         }
 
-        $db = new MysqlAdapter();
+        $db = new TestableMysqlAdapter();
         $params = $db->prepareParams($conparams);
 
         $this->assertTrue(is_array($params));
@@ -79,7 +79,7 @@ class MysqlAdapterTest extends BookstoreTestBase
             $this->markTestSkipped('PHP_VERSION < 5.3.6 will throw an exception.');
         }
 
-        $db = new MysqlAdapter();
+        $db = new TestableMysqlAdapter();
         $params = $db->prepareParams($conparams);
 
         $settings = array();
@@ -109,5 +109,13 @@ class MockPDO extends \PDO
 {
     public function __construct()
     {
+    }
+}
+
+class TestableMysqlAdapter extends MysqlAdapter
+{
+    public function prepareParams($conparams)
+    {
+        return parent::prepareParams($conparams);
     }
 }

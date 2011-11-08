@@ -17,18 +17,8 @@ namespace Propel\Runtime\Connection;
  *
  * @author     Francois Zaninotto
  */
-Interface ConnectionInterface
+interface ConnectionInterface
 {
-    /**
-     * Creates a Connection instance to represent a connection to the requested database.
-     *
-     * @param string $dsn The Data Source Name, or DSN, contains the information required to connect to the database.
-     * @param string $username The user name for the DSN string.
-     * @param string $password The password for the DSN string.
-     * @param array $driver_options A key=>value array of driver-specific connection options.
-     */
-    public function __construct($dsn, $username = null, $password = null, $driver_options = array());
-
     /**
      * Turns off autocommit mode.
      *
@@ -40,7 +30,7 @@ Interface ConnectionInterface
      *
      * @return boolean TRUE on success or FALSE on failure.
      */
-    public function beginTransaction();
+    function beginTransaction();
 
     /**
      * Commits a transaction.
@@ -50,7 +40,7 @@ Interface ConnectionInterface
      *
      * @return boolean TRUE on success or FALSE on failure.
      */
-    public function commit();
+    function commit();
 
     /**
      * Rolls back a transaction.
@@ -62,40 +52,14 @@ Interface ConnectionInterface
      *
      * @return bool TRUE on success or FALSE on failure.
      */
-    public function rollBack();
+    function rollBack();
 
     /**
      * Checks if inside a transaction.
      *
      * @return bool TRUE if a transaction is currently active, and FALSE if not.
      */
-    public function inTransaction();
-
-    /**
-     * Fetch the SQLSTATE associated with the last operation on the database handle.
-     *
-     * errorCode() only retrieves error codes for operations performed directly
-     * on the database handle.
-     * If you create a Statement object through Connection::prepare() or
-     * Connection::query() and invoke an error on the statement handle,
-     * Connection::errorCode() will not reflect that error. You must call
-     * Statement::errorCode() to return the error code for an operation performed
-     * on a particular statement handle.
-     *
-     * @return mixed An SQLSTATE, a five characters alphanumeric identifier defined
-     *               in the ANSI SQL-92 standard, or NULL if no operation has been
-     *               run on the database handle.
-     */
-    public function errorCode();
-
-    /**
-     * Fetch extended error information associated with the last operation on
-     * the database handle.
-     *
-     * @return array An array of error information about the last operation performed
-     *               by this database handle
-     */
-    public function errorInfo();
+    function inTransaction();
 
     /**
      * Retrieve a database connection attribute.
@@ -106,7 +70,7 @@ Interface ConnectionInterface
      * @return mixed A successful call returns the value of the requested attribute.
      *               An unsuccessful call returns null.
      */
-    public function getAttribute($attribute);
+    function getAttribute($attribute);
 
     /**
      * Set an attribute.
@@ -116,7 +80,7 @@ Interface ConnectionInterface
      *
      * @return bool TRUE on success or FALSE on failure.
      */
-    public function setAttribute($attribute, $value);
+    function setAttribute($attribute, $value);
 
     /**
      * Execute an SQL statement and return the number of affected rows.
@@ -127,7 +91,7 @@ Interface ConnectionInterface
      * @return int   The number of rows that were modified or deleted by the SQL
      *               statement you issued. If no rows were affected, returns 0.
      */
-    public function exec($statement);
+    function exec($statement);
 
     /**
      * Prepares a statement for execution and returns a statement object.
@@ -148,7 +112,7 @@ Interface ConnectionInterface
      *                                 successfully prepares, FALSE otherwise.
      * @throws ConnectionException depending on error handling.
      */
-    public function prepare($statement, $driver_options = array());
+    function prepare($statement, $driver_options = array());
 
     /**
      * Executes an SQL statement, returning a result set as a Statement object.
@@ -160,7 +124,7 @@ Interface ConnectionInterface
      *                                 successfully prepares, FALSE otherwise.
      * @throws ConnectionException depending on error handling.
      */
-    public function query($statement);
+    function query();
 
     /**
      * Quotes a string for use in a query.
@@ -177,15 +141,7 @@ Interface ConnectionInterface
      *                SQL statement. Returns FALSE if the driver does not support
      *                quoting in this way.
      */
-    public function quote($string, $parameter_type = 2);
-
-    /**
-     * Return an array of available Connection drivers.
-     *
-     * @return array A list of Conenction driver names.
-     *               If no drivers are available, it returns an empty array.
-     */
-    static public function getAvailableDrivers();
+    function quote($string, $parameter_type = 2);
 
     /**
      * Returns the ID of the last inserted row or sequence value.
@@ -204,5 +160,5 @@ Interface ConnectionInterface
      *                a string representing the last value retrieved from the specified
      *                sequence object.
      */
-    public function lastInsertId($name = null);
+    function lastInsertId($name = null);
 }

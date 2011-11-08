@@ -10,6 +10,8 @@
 
 namespace Propel\Runtime\Adapter;
 
+use Propel\Runtime\Connection\StatementInterface;
+
 /**
  * This is used to connect to a MSSQL database using pdo_sqlsrv driver.
  *
@@ -25,7 +27,7 @@ class SqlsrvAdapter extends MssqlAdapter
      * @param     PDO    $con
      * @param     array  $settings
      */
-    public function initConnection(PDO $con, array $settings)
+    public function initConnection($con, array $settings)
     {
         $con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $con->setAttribute(PDO::ATTR_STRINGIFY_FETCHES, false);
@@ -94,7 +96,7 @@ class SqlsrvAdapter extends MssqlAdapter
      *
      * @return    boolean
      */
-    public function bindValue(PDOStatement $stmt, $parameter, $value, ColumnMap $cMap, $position = null)
+    public function bindValue(StatementInterface $stmt, $parameter, $value, ColumnMap $cMap, $position = null)
     {
         if ($cMap->isTemporal()) {
             $value = $this->formatTemporalValue($value, $cMap);

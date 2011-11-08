@@ -10,7 +10,7 @@
 
 namespace Propel\Runtime\Formatter;
 
-use \PDOStatement;
+use Propel\Runtime\Connection\StatementInterface;
 
 /**
  * statement formatter for Propel query
@@ -22,12 +22,12 @@ use \PDOStatement;
  */
 class StatementFormatter extends AbstractFormatter
 {
-    public function format(PDOStatement $stmt)
+    public function format(StatementInterface $stmt)
     {
         return $stmt;
     }
 
-    public function formatOne(PDOStatement $stmt)
+    public function formatOne(StatementInterface $stmt)
     {
         if ($stmt->rowCount() == 0) {
             return null;

@@ -11,8 +11,7 @@
 namespace Propel\Generator\Reverse;
 
 use Propel\Generator\Config\GeneratorConfigInterface;
-
-use \PDO;
+use Propel\Runtime\Connection\ConnectionInterface;
 
 /**
  * Base class for reverse engineering a database schema.
@@ -26,7 +25,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
 
     /**
      * The database connection.
-     * @var        PDO
+     * @var        ConnectionInterface
      */
     protected $dbh;
 
@@ -68,26 +67,28 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
     protected $platform;
 
     /**
-     * @param      PDO $dbh Optional database connection
+     * @param      ConnectionInterface $dbh Optional database connection
      */
-    public function __construct(PDO $dbh = null)
+    public function __construct(ConnectionInterface $dbh = null)
     {
-        if ($dbh) $this->setConnection($dbh);
+        if ($dbh) {
+            $this->setConnection($dbh);
+        }
     }
 
     /**
      * Sets the database connection.
      *
-     * @param      PDO $dbh
+     * @param      ConnectionInterface $dbh
      */
-    public function setConnection(PDO $dbh)
+    public function setConnection(ConnectionInterface $dbh)
     {
         $this->dbh = $dbh;
     }
 
     /**
      * Gets the database connection.
-     * @return     PDO
+     * @return     ConnectionInterface
      */
     public function getConnection()
     {

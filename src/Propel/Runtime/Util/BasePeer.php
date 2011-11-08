@@ -187,6 +187,7 @@ class BasePeer
      */
     public static function doDeleteAll($tableName, ConnectionInterface $con, $databaseName = null)
     {
+        
         try {
             $db = Propel::getDB($databaseName);
             if ($db->useQuoteIdentifier()) {
@@ -194,6 +195,7 @@ class BasePeer
             }
             $sql = "DELETE FROM " . $tableName;
             $stmt = $con->prepare($sql);
+            
             $stmt->execute();
 
             return $stmt->rowCount();

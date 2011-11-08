@@ -12,9 +12,9 @@ namespace Propel\Runtime\Formatter;
 
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Query\ModelCriteria;
+use Propel\Runtime\Connection\StatementInterface;
 
 use \PDO;
-use \PDOStatement;
 
 /**
  * Object formatter for Propel query
@@ -38,7 +38,7 @@ class OnDemandFormatter extends ObjectFormatter
         return $this;
     }
 
-    public function format(PDOStatement $stmt)
+    public function format(StatementInterface $stmt)
     {
         $this->checkInit();
         if ($this->isWithOneToMany()) {

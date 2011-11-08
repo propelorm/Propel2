@@ -15,10 +15,12 @@ use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Model\Table;
 
 use Propel\Runtime\Propel;
-use Propel\Runtime\Connection\PropelPDO;
+use Propel\Runtime\Connection\ConnectionInterface;
+use Propel\Runtime\Connection\ConnectionPdo;
+use Propel\Runtime\Connection\ConnectionWrapper;
+use Propel\Runtime\Connection\StatementInterface;
 
 use \PDO;
-use \PDOStatement;
 
 class QuickBuilder
 {
@@ -93,7 +95,8 @@ class QuickBuilder
         if (null === $adapter) {
             $adapter = new \Propel\Runtime\Adapter\SqliteAdapter();
         }
-        $con = new PropelPDO($dsn, $user, $pass);
+        $pdo = new ConnectionPdo($dsn, $user, $pass);
+        $con = new ConnectionWrapper($pdo);
         $con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
         $this->buildSQL($con);
         $this->buildClasses();
@@ -120,7 +123,7 @@ class QuickBuilder
         return $this->database;
     }
 
-    public function buildSQL(PDO $con)
+    public function buildSQL(ConnectionInterface $con)
     {
         $statements = SqlParser::parseString($this->getSQL());
         foreach ($statements as $statement) {
@@ -129,7 +132,7 @@ class QuickBuilder
                 continue;
             }
             $stmt = $con->prepare($statement);
-            if ($stmt instanceof PDOStatement) {
+            if ($stmt instanceof StatementInterface) {
                 // only execute if has no error
                 $stmt->execute();
             }
