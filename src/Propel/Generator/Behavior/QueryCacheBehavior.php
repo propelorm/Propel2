@@ -50,6 +50,7 @@ class QueryCacheBehavior extends Behavior
 
     public function queryMethods($builder)
     {
+        $builder->declareClasses('\Propel\Runtime\Util\BasePeer');
         $this->peerClassname = $builder->getStubPeerBuilder()->getClassname();
         $script = '';
         $this->addSetQueryKey($script);
