@@ -14,8 +14,7 @@
 
     <testsuites>
         <testsuite name="Propel2 Test Suite">
-            <directory>./tests/Propel/Tests/Generator/</directory>
-            <directory>./tests/Propel/Tests/Runtime/</directory>
+            <directory>./tests/Propel/Tests/</directory>
         </testsuite>
     </testsuites>
 

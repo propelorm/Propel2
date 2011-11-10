@@ -82,23 +82,19 @@ class BasePeer
      */
     const TYPE_NUM = 'num';
 
-    static public function getFieldnames ($classname, $type = self::TYPE_PHPNAME) {
-
-        // TODO we should take care of including the peer class here
-
-        $peerclass = 'Base' . $classname . 'Peer'; // TODO is this always true?
-        $callable = array($peerclass, 'getFieldnames');
+    static public function getFieldnames($classname, $type = self::TYPE_PHPNAME)
+    {
+        $peerclass  = $classname . 'Peer';
+        $callable   = array($peerclass, 'getFieldnames');
 
         return call_user_func($callable, $type);
     }
 
-    static public function translateFieldname($classname, $fieldname, $fromType, $toType) {
-
-        // TODO we should take care of including the peer class here
-
-        $peerclass = 'Base' . $classname . 'Peer'; // TODO is this always true?
-        $callable = array($peerclass, 'translateFieldname');
-        $args = array($fieldname, $fromType, $toType);
+    static public function translateFieldname($classname, $fieldname, $fromType, $toType)
+    {
+        $peerclass  = $classname . 'Peer';
+        $callable   = array($peerclass, 'translateFieldname');
+        $args       = array($fieldname, $fromType, $toType);
 
         return call_user_func_array($callable, $args);
     }
@@ -187,7 +183,7 @@ class BasePeer
      */
     public static function doDeleteAll($tableName, ConnectionInterface $con, $databaseName = null)
     {
-        
+
         try {
             $db = Propel::getDB($databaseName);
             if ($db->useQuoteIdentifier()) {
@@ -195,7 +191,7 @@ class BasePeer
             }
             $sql = "DELETE FROM " . $tableName;
             $stmt = $con->prepare($sql);
-            
+
             $stmt->execute();
 
             return $stmt->rowCount();
