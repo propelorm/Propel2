@@ -141,7 +141,7 @@ class ModelCriteria extends Criteria
      */
     public function getModelShortName()
     {
-      return array_pop(explode('\\', $this->modelName));
+        return self::getShortName($this->modelName);
     }
 
     /**
@@ -651,7 +651,7 @@ class ModelCriteria extends Criteria
             $tableMap = $this->getTableMap();
         } else {
             list($leftName, $relationName) = explode('.', $fullName);
-            $shortLeftName = array_pop(explode('\\', $leftName));
+            $shortLeftName = self::getShortName($leftName);
             // find the TableMap for the left table using the $leftName
             if ($leftName == $this->getModelAliasOrName() || $leftName == $this->getModelShortName()) {
                 $previousJoin = $this->getPreviousJoin();
@@ -1950,7 +1950,7 @@ class ModelCriteria extends Criteria
         } else {
             list($class, $phpName) = explode('.', $phpName);
         }
-        $shortClass = array_pop(explode('\\', $class));
+        $shortClass = self::getShortName($class);
 
         if ($class == $this->getModelAliasOrName()) {
             // column of the Criteria's model
@@ -2054,6 +2054,19 @@ class ModelCriteria extends Criteria
         } else {
             return $colName;
         }
+    }
+
+    /**
+     * Return the short Classname for classe with namespace
+     *
+     * @param     string The fully qualified class name
+     *
+     * @return    string The short class name
+     */
+    public static function getShortName($fullyQualifiedClassName)
+    {
+        $namespaceParts = explode('\\', $fullyQualifiedClassName);
+        return array_pop($namespaceParts);
     }
 
     /**
