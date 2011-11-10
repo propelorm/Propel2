@@ -47,6 +47,7 @@ class ModelCriteria extends Criteria
     const MODEL_CLAUSE_ARRAY    = "MODEL CLAUSE ARRAY";
     const MODEL_CLAUSE_LIKE     = "MODEL CLAUSE LIKE";
     const MODEL_CLAUSE_SEVERAL  = "MODEL CLAUSE SEVERAL";
+    const MODEL_CLAUSE_RAW      = "MODEL CLAUSE RAW";
 
     const FORMAT_STATEMENT  = '\Propel\Runtime\Formatter\StatementFormatter';
     const FORMAT_ARRAY      = '\Propel\Runtime\Formatter\ArrayFormatter';
@@ -295,14 +296,14 @@ class ModelCriteria extends Criteria
      *
      * @return     ModelCriteria The current object, for fluid interface
      */
-    public function where($clause, $value = null)
+    public function where($clause, $value = null, $bindingType = null)
     {
         if (is_array($clause)) {
             // where(array('cond1', 'cond2'), Criteria::LOGICAL_OR)
             $criterion = $this->getCriterionForConditions($clause, $value);
         } else {
             // where('Book.AuthorId = ?', 12)
-            $criterion = $this->getCriterionForClause($clause, $value);
+            $criterion = $this->getCriterionForClause($clause, $value, $bindingType);
         }
         $this->addUsingOperator($criterion, null, null);
 
@@ -329,11 +330,11 @@ class ModelCriteria extends Criteria
      *
      * @return     ModelCriteria The current object, for fluid interface
      */
-    public function orWhere($clause, $value = null)
+    public function orWhere($clause, $value = null, $bindingType = null)
     {
         return $this
             ->_or()
-            ->where($clause, $value);
+            ->where($clause, $value, $bindingType);
     }
 
     /**
@@ -356,14 +357,14 @@ class ModelCriteria extends Criteria
      *
      * @return     ModelCriteria The current object, for fluid interface
      */
-    public function having($clause, $value = null)
+    public function having($clause, $value = null, $bindingType = null)
     {
         if (is_array($clause)) {
             // having(array('cond1', 'cond2'), Criteria::LOGICAL_OR)
             $criterion = $this->getCriterionForConditions($clause, $value);
         } else {
             // having('Book.AuthorId = ?', 12)
-            $criterion = $this->getCriterionForClause($clause, $value);
+            $criterion = $this->getCriterionForClause($clause, $value, $bindingType);
         }
         $this->addHaving($criterion);
 
@@ -708,7 +709,7 @@ class ModelCriteria extends Criteria
      *
      * @return ModelCriteria The current object, for fluid interface
      */
-    public function addJoinCondition($name, $clause, $value = null, $operator = null)
+    public function addJoinCondition($name, $clause, $value = null, $operator = null, $bindingType = null)
     {
         if (!isset($this->joins[$name])) {
             throw new PropelException(sprintf('Adding a condition to a nonexistent join, %s. Try calling join() first.', $name));
@@ -717,7 +718,7 @@ class ModelCriteria extends Criteria
         if (!$join->getJoinCondition() instanceof Criterion) {
             $join->buildJoinCondition($this);
         }
-        $criterion = $this->getCriterionForClause($clause, $value);
+        $criterion = $this->getCriterionForClause($clause, $value, $bindingType);
         $method = $operator === Criteria::LOGICAL_OR ? 'addOr' : 'addAnd';
         $join->getJoinCondition()->$method($criterion);
 
@@ -1781,13 +1782,15 @@ class ModelCriteria extends Criteria
      *
      * @return     Criterion a Criterion or ModelCriterion object
      */
-    protected function getCriterionForClause($clause, $value)
+    protected function getCriterionForClause($clause, $value, $bindingType = null)
     {
         $clause = trim($clause);
         if($this->replaceNames($clause)) {
             // at least one column name was found and replaced in the clause
             // this is enough to determine the type to bind the parameter to
-            if (preg_match('/IN \?$/i', $clause) !== 0) {
+            if (null !== $bindingType) {
+                $operator = ModelCriteria::MODEL_CLAUSE_RAW;
+            } elseif (preg_match('/IN \?$/i', $clause) !== 0) {
                 $operator = ModelCriteria::MODEL_CLAUSE_ARRAY;
             } elseif (preg_match('/LIKE \?$/i', $clause) !== 0) {
                 $operator = ModelCriteria::MODEL_CLAUSE_LIKE;
@@ -1798,16 +1801,20 @@ class ModelCriteria extends Criteria
             }
             $colMap = $this->replacedColumns[0];
             $value = $this->convertValueForColumn($value, $colMap);
-            $criterion = new ModelCriterion($this, $colMap, $value, $operator, $clause);
+            $criterion = new ModelCriterion($this, $colMap, $value, $operator, $clause, $bindingType);
             if ($this->currentAlias != '') {
                 $criterion->setTable($this->currentAlias);
             }
         } else {
             // no column match in clause, must be an expression like '1=1'
             if (strpos($clause, '?') !== false) {
-                throw new PropelException("Cannot determine the column to bind to the parameter in clause '$clause'");
+                if (null === $bindingType) {
+                    throw new PropelException("Cannot determine the column to bind to the parameter in clause '$clause'");
+                }
+                $criterion = new Criterion($this, $clause, $value, Criteria::RAW, $bindingType);
+            } else {
+                $criterion = new Criterion($this, null, $clause, Criteria::CUSTOM);
             }
-            $criterion = new Criterion($this, null, $clause, Criteria::CUSTOM);
         }
 
         return $criterion;

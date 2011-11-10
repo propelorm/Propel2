@@ -1700,7 +1700,7 @@ class Criteria implements \IteratorAggregate
      */
     public function addOr($p1, $p2 = null, $p3 = null, $preferColumnCondition = true)
     {
-        $rightCriterion = $criterion = $this->getCriterionForCondition($p1, $p2, $p3);
+        $rightCriterion = $this->getCriterionForCondition($p1, $p2, $p3);
 
         $key = $rightCriterion->getTable() . '.' . $rightCriterion->getColumn();
         if ($preferColumnCondition && $this->containsKey($key)) {

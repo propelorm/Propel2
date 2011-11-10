@@ -923,7 +923,37 @@ class CriteriaTest extends BookstoreTestBase
         $crit = $c->getNewCriterion("column_alias", "FOO");
         $this->assertNull($crit->getTable());
         $this->assertEquals("column_alias", $crit->getColumn());
-        $c->addHaving($crit); // produces invalid SQL referring to '.olumn_alias'
+    }
+
+    public function testHaving()
+    {
+        $c = new Criteria();
+        $c->addSelectColumn(BookPeer::TITLE);
+        $c->addAsColumn('isb_n', BookPeer::ISBN);
+        $crit = $c->getNewCriterion('isb_n', '1234567890123');
+        $c->addHaving($crit);
+        $expected = 'SELECT book.TITLE, book.ISBN AS isb_n FROM book HAVING isb_n=:p1';
+        $params = array();
+        $result = BasePeer::createSelectSql($c, $params);
+        $this->assertEquals($expected, $result);
+        BasePEer::doSelect($c, $this->con);
+        $expected = 'SELECT book.TITLE, book.ISBN AS isb_n FROM book HAVING isb_n=\'1234567890123\'';
+        $this->assertEquals($expected, $this->con->getLastExecutedQuery());
+    }
+
+    public function testHavingRaw()
+    {
+        $c = new Criteria();
+        $c->addSelectColumn(BookPeer::TITLE);
+        $c->addAsColumn("isb_n", BookPeer::ISBN);
+        $c->addHaving('isb_n = ?', '1234567890123', PDO::PARAM_STR);
+        $expected = 'SELECT book.TITLE, book.ISBN AS isb_n FROM book HAVING isb_n = :p1';
+        $params = array();
+        $result = BasePeer::createSelectSql($c, $params);
+        $this->assertEquals($expected, $result);
+        BasePEer::doSelect($c, $this->con);
+        $expected = 'SELECT book.TITLE, book.ISBN AS isb_n FROM book HAVING isb_n = \'1234567890123\'';
+        $this->assertEquals($expected, $this->con->getLastExecutedQuery());
     }
 
     /**
