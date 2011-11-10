@@ -1,0 +1,6 @@
+<script type="text/javascript">
+    var regex = /wiki|ticket/gi
+    if (window.location.href.match(regex)) {
+        window.location = window.location.href.replace(/www/gi, 'trac');
+    }
+</script>

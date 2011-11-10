@@ -1,0 +1,14 @@
+---
+layout: base
+---
+
+<ul class="toc"></ul>
+<div class="markdown">
+    {{ content }}
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('.toc').tableOfContents(null, { startLevel: 2 });
+    });
+</script>
