@@ -2073,6 +2073,7 @@ class ModelCriteria extends Criteria
     public static function getShortName($fullyQualifiedClassName)
     {
         $namespaceParts = explode('\\', $fullyQualifiedClassName);
+
         return array_pop($namespaceParts);
     }
 

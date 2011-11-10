@@ -299,6 +299,7 @@ class ModelCriterion extends Criterion
         if($firstChar !== false) {
             $beforeStr = substr($subject,0,$firstChar);
             $afterStr = substr($subject, $firstChar + strlen($search));
+
             return $beforeStr.$replace.$afterStr;
         } else {
             return $subject;

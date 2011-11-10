@@ -214,7 +214,7 @@ class MysqlAdapter extends AbstractAdapter
      * @see   http://www.propelorm.org/ticket/1360
      *
      * @param array the connection parameters from the configuration
-     * 
+     *
      * @return array the modified parameters
      */
     protected function prepareParams($params)

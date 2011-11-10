@@ -347,8 +347,8 @@ class Criterion
         $sb .= str_replace('?', ':p' . count($params), $this->column);
     }
 
- 	/**
- 	 * Appends a Prepared Statement representation of the Criterion onto the buffer
+     /**
+      * Appends a Prepared Statement representation of the Criterion onto the buffer
      *
      * For IN expressions, e.g. table.column IN (?, ?) or table.column NOT IN (?, ?)
      *

@@ -51,7 +51,7 @@ class ConnectionWrapper implements ConnectionInterface
      * @var ConnectionInterface
      */
     protected $connection;
-    
+
     /**
      * The current transaction depth.
      * @var       integer
@@ -134,7 +134,7 @@ class ConnectionWrapper implements ConnectionInterface
         if ($this->useDebug) {
             $debug = $this->getDebugSnapshot();
         }
-        
+
         $this->connection = $connection;
 
         if ($this->useDebug) {
@@ -149,7 +149,7 @@ class ConnectionWrapper implements ConnectionInterface
     {
         return $this->connection;
     }
-    
+
     /**
      * Inject the runtime configuration
      *
@@ -433,7 +433,7 @@ class ConnectionWrapper implements ConnectionInterface
 
         return $return;
     }
-    
+
     /**
      * Executes an SQL statement, returning a result set as a PDOStatement object.
      * Despite its signature here, this method takes a variety of parameters.
@@ -793,12 +793,12 @@ class ConnectionWrapper implements ConnectionInterface
 
         return number_format($bytes, $precision) . ' ' . $suffix[$i];
     }
-    
+
     public function __call($method, $args)
     {
         return call_user_func_array(array($this->connection, $method), $args);
     }
-    
+
     /**
      * If so configured, makes an entry to the log of the state of this object just prior to its destruction.
      * Add Connection::__destruct to $defaultLogMethods to see this message

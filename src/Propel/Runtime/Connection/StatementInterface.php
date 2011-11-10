@@ -22,13 +22,13 @@ interface StatementInterface
     /**
      * Binds a parameter to the specified variable name.
      *
-     * Binds a PHP variable to a corresponding named or question mark placeholder in the 
+     * Binds a PHP variable to a corresponding named or question mark placeholder in the
      * SQL statement that was use to prepare the statement. Unlike PDOStatement->bindValue(),
-     * the variable is bound as a reference and will only be evaluated at the time 
+     * the variable is bound as a reference and will only be evaluated at the time
      * that PDOStatement->execute() is called.
      *
-     * Most parameters are input parameters, that is, parameters that are 
-     * used in a read-only fashion to build up the query. Some drivers support the invocation 
+     * Most parameters are input parameters, that is, parameters that are
+     * used in a read-only fashion to build up the query. Some drivers support the invocation
      * of stored procedures that return data as output parameters, and some also as input/output
      * parameters that both send in data and are updated to receive it.
      *
@@ -65,10 +65,10 @@ interface StatementInterface
     /**
      * Closes the cursor, enabling the statement to be executed again.
      *
-     * closeCursor() frees up the connection to the server so that other SQL 
+     * closeCursor() frees up the connection to the server so that other SQL
      * statements may be issued, but leaves the statement in a state that enables
      * it to be executed again.
-     * 
+     *
      * This method is useful for database drivers that do not support executing
      * a PDOStatement object when a previously executed PDOStatement object still
      * has unfetched rows. If your database driver suffers from this limitation,
@@ -78,18 +78,18 @@ interface StatementInterface
      */
     function closeCursor();
 
-    /** 
+    /**
      * Returns the number of columns in the result set.
      *
-     * Use columnCount() to return the number of columns in the result set 
+     * Use columnCount() to return the number of columns in the result set
      * represented by the Statement object.
-     * 
+     *
      * If the Statement object was returned from PDO::query(), the column count
      * is immediately available.
-     * 
+     *
      * If the Statement object was returned from PDO::prepare(), an accurate
      * column count will not be available until you invoke Statement::execute().
-     * Returns the number of columns in the result set 
+     * Returns the number of columns in the result set
      *
      * @return integer              Returns the number of columns in the result set represented
      *                              by the PDOStatement object. If there is no result set,
@@ -116,7 +116,7 @@ interface StatementInterface
     /**
      * Fetches the next row from a result set.
      *
-     * Fetches a row from a result set associated with a Statement object. 
+     * Fetches a row from a result set associated with a Statement object.
      * The fetch_style parameter determines how the Connection returns the row.
      *
      * @param integer $fetchStyle           Controls how the next row will be returned to the caller.
@@ -127,7 +127,7 @@ interface StatementInterface
      *                                      parameter is set to PDO::FETCH_ORI_ABS, this value
      *                                      specifies the absolute number of the row in the
      *                                      result set that shall be fetched.
-     *                                      
+     *
      *                                      For a PDOStatement object representing a
      *                                      scrollable cursor for which the cursor_orientation
      *                                      parameter is set to PDO::FETCH_ORI_REL, this value
@@ -142,7 +142,7 @@ interface StatementInterface
      * Returns an array containing all of the result set rows.
      *
      * @param integer $fetchStyle           Controls the contents of the returned array as documented in fetch()
-     * @param integer $columnIndex          This argument have a different meaning depending 
+     * @param integer $columnIndex          This argument have a different meaning depending
      *                                      on the value of the fetch_style parameter.
      * @return array
      */
@@ -150,9 +150,9 @@ interface StatementInterface
 
     /**
      * Returns a single column from the next row of a result set.
-     * 
-     * @param integer $columnIndex          0-indexed number of the column you wish to retrieve from the row. If no 
-     *                                      value is supplied, PDOStatement->fetchColumn() 
+     *
+     * @param integer $columnIndex          0-indexed number of the column you wish to retrieve from the row. If no
+     *                                      value is supplied, PDOStatement->fetchColumn()
      *                                      fetches the first column.
      *
      * @return string                       A single column in the next row of a result set.
@@ -162,12 +162,12 @@ interface StatementInterface
     /**
      * Returns the number of rows affected by the last SQL statement
      *
-     * rowCount() returns the number of rows affected by the last DELETE, INSERT, or UPDATE statement 
+     * rowCount() returns the number of rows affected by the last DELETE, INSERT, or UPDATE statement
      * executed by the corresponding Statement object.
      *
-     * If the last SQL statement executed by the associated Statement object was a SELECT statement, 
-     * some databases may return the number of rows returned by that statement. However, 
-     * this behaviour is not guaranteed for all databases and should not be 
+     * If the last SQL statement executed by the associated Statement object was a SELECT statement,
+     * some databases may return the number of rows returned by that statement. However,
+     * this behaviour is not guaranteed for all databases and should not be
      * relied on for portable applications.
      *
      * @return integer                      The number of rows.

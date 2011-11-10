@@ -1640,7 +1640,7 @@ class Criteria implements \IteratorAggregate
     protected function getCriterionForCondition($p1, $value = null, $comparison = null)
     {
         if ($p1 instanceof Criterion) {
-			// it's already a Criterion, so ignore $value and $comparison
+            // it's already a Criterion, so ignore $value and $comparison
             return $p1;
         } elseif (is_int($comparison)) {
             // $comparison is a PDO::PARAM_* constant value
