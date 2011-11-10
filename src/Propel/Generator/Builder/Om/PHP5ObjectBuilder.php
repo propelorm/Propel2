@@ -243,7 +243,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
             '\Propel\Runtime\Util\BasePeer',
             '\Propel\Runtime\Collection\Collection',
             '\Propel\Runtime\Collection\ObjectCollection',
-            '\Exception
+            '\Exception'
         );
 
         $table = $this->getTable();
