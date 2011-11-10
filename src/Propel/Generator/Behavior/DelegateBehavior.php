@@ -114,15 +114,17 @@ class DelegateBehavior extends Behavior
                 $fks = $delegateTable->getForeignKeysReferencingTable($this->getTable()->getName());
                 $fk = $fks[0];
                 $ARClassName = $builder->getNewStubObjectBuilder($fk->getTable())->getClassname();
+                $ARFQCN = $builder->getNewStubObjectBuilder($fk->getTable())->getFullyQualifiedClassname();
                 $relationName = $builder->getRefFKPhpNameAffix($fk, $plural = false);
             } else {
                 $fks = $this->getTable()->getForeignKeysReferencingTable($delegate);
                 $fk = $fks[0];
                 $ARClassName = $builder->getNewStubObjectBuilder($delegateTable)->getClassname();
+                $ARFQCN = $builder->getNewStubObjectBuilder($delegateTable)->getFullyQualifiedClassname();
                 $relationName = $builder->getFKPhpNameAffix($fk);
             }
                 $script .= "
-if (is_callable(array('$ARClassName', \$name))) {
+if (is_callable(array('$ARFQCN', \$name))) {
     if (!\$delegate = \$this->get$relationName()) {
         \$delegate = new $ARClassName();
         \$this->set$relationName(\$delegate);
