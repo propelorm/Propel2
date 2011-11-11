@@ -12,6 +12,7 @@ namespace Propel\Runtime\Adapter\Pdo;
 
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
+use Propel\Runtime\Query\Criteria;
 
 use \PDO;
 
@@ -143,14 +144,14 @@ class PgsqlAdapter extends PdoAdapter implements AdapterInterface
     }
 
     /**
-     * @see        AbstractAdapter::getDeleteFromClause()
-
-     * @param     Criteria  $criteria
+     * @see       PdoAdapter::getDeleteFromClause()
+     *
+     * @param     Propel\Runtime\Query\Criteria  $criteria
      * @param     string    $tableName
      *
      * @return    string
      */
-    public function getDeleteFromClause($criteria, $tableName)
+    public function getDeleteFromClause(Criteria $criteria, $tableName)
     {
         $sql = 'DELETE ';
         if ($queryComment = $criteria->getComment()) {

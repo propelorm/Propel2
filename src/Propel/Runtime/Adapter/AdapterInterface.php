@@ -33,7 +33,7 @@ interface AdapterInterface
      *
      * @param array    $conparams connection parameters
      *
-     * @return ConnectionInterface
+     * @return Propel\Runtime\Connection\ConnectionInterface
      */
     function getConnection($conparams);
 
@@ -45,7 +45,7 @@ interface AdapterInterface
      *
      * @see       initConnection()
      *
-     * @param     ConnectionInterface $con
+     * @param     Propel\Runtime\Connection\ConnectionInterface $con
      * @param     string  $charset  The $string charset encoding.
      */
     function setCharset(ConnectionInterface $con, $charset);
@@ -124,7 +124,7 @@ interface AdapterInterface
 
     /**
      * Quotes a database table which could have space seperating it from an alias,
-     * both should be identified seperately. This doesn't take care of dots which 
+     * both should be identified separately. This doesn't take care of dots which
      * separate schema names from table names. Adapters for RDBMs which support
      * schemas have to implement that in the platform-specific way.
      *
@@ -150,7 +150,7 @@ interface AdapterInterface
     /**
      * Gets the generated ID (either last ID for autoincrement or next sequence ID).
      *
-     * @param     ConnectionInterface $con
+     * @param     Propel\Runtime\Connection\ConnectionInterface $con
      * @param     string  $name
      *
      * @return    mixed
@@ -161,7 +161,7 @@ interface AdapterInterface
      * Formats a temporal value before binding, given a ColumnMap object
      *
      * @param     mixed      $value  The temporal value
-     * @param     ColumnMap  $cMap
+     * @param     Propel\Runtime\Map\ColumnMap  $cMap
      *
      * @return    string  The formatted temporal value
      */
@@ -206,8 +206,8 @@ interface AdapterInterface
      *
      * @param     string       $sql  The sql statement
      * @param     array        $params  array('column' => ..., 'table' => ..., 'value' => ...)
-     * @param     Criteria     $values
-     * @param     DatabaseMap  $dbMap
+     * @param     Propel\Runtime\Map\Criteria     $values
+     * @param     Propel\Runtime\Map\DatabaseMap  $dbMap
      */
     function cleanupSQL(&$sql, array &$params, Criteria $values, DatabaseMap $dbMap);
 
@@ -230,19 +230,19 @@ interface AdapterInterface
     /**
      * Returns the "DELETE FROM <table> [AS <alias>]" part of DELETE query.
      *
-     * @param     Criteria  $criteria
+     * @param     Propel\Runtime\Map\Criteria  $criteria
      * @param     string    $tableName
      *
      * @return    string
      */
-    function getDeleteFromClause($criteria, $tableName);
+    function getDeleteFromClause(Criteria $criteria, $tableName);
 
     /**
      * Builds the SELECT part of a SQL statement based on a Criteria
      * taking into account select columns and 'as' columns (i.e. columns aliases)
      * Move from BasePeer to AbstractAdapter and turn from static to non static
      *
-     * @param     Criteria  $criteria
+     * @param     Propel\Runtime\Map\Criteria  $criteria
      * @param     array     $fromClause
      * @param     boolean   $aliasAll
      *
@@ -257,8 +257,8 @@ interface AdapterInterface
      *
      * @see http://propel.phpdb.org/trac/ticket/795
      *
-     * @param     Criteria  $criteria
-     * @return    Criteria  The input, with Select columns replaced by aliases
+     * @param     Propel\Runtime\Map\Criteria  $criteria
+     * @return    Propel\Runtime\Map\Criteria  The input, with Select columns replaced by aliases
      */
     function turnSelectColumnsToAliases(Criteria $criteria);
 
@@ -278,9 +278,9 @@ interface AdapterInterface
      * $stmt->execute();
      * </code>
      *
-     * @param     StatementInterface $stmt
+     * @param     Propel\Runtime\Connection\StatementInterface $stmt
      * @param     array         $params  array('column' => ..., 'table' => ..., 'value' => ...)
-     * @param     DatabaseMap   $dbMap
+     * @param     Propel\Runtime\Map\DatabaseMap   $dbMap
      */
     function bindValues(StatementInterface $stmt, array $params, DatabaseMap $dbMap);
 
@@ -288,10 +288,10 @@ interface AdapterInterface
      * Binds a value to a positioned parameted in a statement,
      * given a ColumnMap object to infer the binding type.
      *
-     * @param     StatementInterface $stmt  The statement to bind
+     * @param     Propel\Runtime\Connection\StatementInterface $stmt  The statement to bind
      * @param     string        $parameter  Parameter identifier
      * @param     mixed         $value  The value to bind
-     * @param     ColumnMap     $cMap  The ColumnMap of the column to bind
+     * @param     Propel\Runtime\Map\ColumnMap     $cMap  The ColumnMap of the column to bind
      * @param     null|integer  $position  The position of the parameter to bind
      *
      * @return    boolean

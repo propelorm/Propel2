@@ -24,10 +24,10 @@ class AdapterFactory
      * @param     string  $driver The name of the Propel driver to create a new adapter instance
      *                            for or a shorter form adapter key.
      *
-     * @throws    PropelException  If the adapter could not be instantiated.
-     * @return    AdapterInterface        An instance of a Propel database adapter.
+     * @throws    Propel\Runtime\Exception\PropelException  If the adapter could not be instantiated.
+     * @return    Propel\Runtime\Adapter\AdapterInterface        An instance of a Propel database adapter.
      */
-    public static function create($driver)
+    static public function create($driver)
     {
         if (!$driver) {
             $adapterClass = '\Propel\Runtime\Adapter\NoneAdapter';
