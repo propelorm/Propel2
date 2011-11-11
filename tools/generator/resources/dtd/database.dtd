@@ -57,7 +57,6 @@ PHP class or method name.
   readOnly (true|false) "false"
   abstract (true|false) "false"
   isCrossRef (true|false) "false"
-  treeMode (MaterializedPath|NestedSet|AdjacencyList) "AdjacencyList"
   package CDATA #IMPLIED
   schema CDATA #IMPLIED
   namespace CDATA #IMPLIED

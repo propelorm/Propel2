@@ -198,34 +198,6 @@ class QuickBuilder
             $script .= $this->fixNamespaceDeclarations($interface);
         }
 
-        if ($table->treeMode()) {
-            switch($table->treeMode()) {
-            case 'NestedSet':
-                foreach (array('nestedsetpeer', 'nestedset') as $target) {
-                    $class = $this->getConfig()->getConfiguredBuilder($table, $target)->build();
-                    $class = "\nnamespace\n{\n" . $class . "\n}\n";
-                    $script .= $this->fixNamespaceDeclarations($class);
-                }
-                break;
-            case 'MaterializedPath':
-                foreach (array('nodepeer', 'node') as $target) {
-                    $class = $this->getConfig()->getConfiguredBuilder($table, $target)->build();
-                    $class = "\nnamespace\n{\n" . $class . "\n}\n";
-                    $script .= $this->fixNamespaceDeclarations($class);
-                }
-                foreach (array('nodepeerstub', 'nodestub') as $target) {
-                    $class = $this->getConfig()->getConfiguredBuilder($table, $target)->build();
-                    $class = "\nnamespace\n{\n" . $class . "\n}\n";
-                    $script .= $this->fixNamespaceDeclarations($class);
-                }
-                break;
-            case 'AdjacencyList':
-                // No implementation for this yet.
-            default:
-                break;
-            }
-        }
-
         if ($table->hasAdditionalBuilders()) {
             foreach ($table->getAdditionalBuilders() as $builderClass) {
                 $builder = new $builderClass($table);

@@ -192,39 +192,6 @@ class PropelOMTask extends AbstractPropelDataModelTask
                             $nbWrittenFiles += $this->build($builder, $overwrite=false);
                         }
 
-                        // -----------------------------------------------------------------------------------------
-                        // Create tree Node classes
-                        // -----------------------------------------------------------------------------------------
-
-                        if ($table->treeMode()) {
-                            switch($table->treeMode()) {
-                                case 'NestedSet':
-                                    foreach (array('nestedsetpeer', 'nestedset') as $target) {
-                                        $builder = $generatorConfig->getConfiguredBuilder($table, $target);
-                                        $nbWrittenFiles += $this->build($builder);
-                                    }
-                                break;
-
-                                case 'MaterializedPath':
-                                    foreach (array('nodepeer', 'node') as $target) {
-                                        $builder = $generatorConfig->getConfiguredBuilder($table, $target);
-                                        $nbWrittenFiles += $this->build($builder);
-                                    }
-
-                                    foreach (array('nodepeerstub', 'nodestub') as $target) {
-                                        $builder = $generatorConfig->getConfiguredBuilder($table, $target);
-                                        $nbWrittenFiles += $this->build($builder, $overwrite=false);
-                                    }
-                                break;
-
-                                case 'AdjacencyList':
-                                    // No implementation for this yet.
-                                default:
-                                break;
-                            }
-
-                        } // if Table->treeMode()
-
                         // ----------------------------------
                         // Create classes added by behaviors
                         // ----------------------------------

@@ -41,18 +41,7 @@ class PHP5ExtensionObjectBuilder extends ObjectBuilder
         $this->declareClassFromBuilder($this->getObjectBuilder());
         $tableName = $table->getName();
         $tableDesc = $table->getDescription();
-
-        switch($table->treeMode()) {
-            case 'NestedSet':
-                $baseClassname = $this->getNestedSetBuilder()->getClassname();
-            break;
-
-            case 'MaterializedPath':
-            case "AdjacencyList":
-            default:
-                $baseClassname = $this->getObjectBuilder()->getClassname();
-            break;
-        }
+        $baseClassname = $this->getObjectBuilder()->getClassname();
 
         $script .= "
 

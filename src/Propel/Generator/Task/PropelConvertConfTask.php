@@ -358,23 +358,6 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask
                             $classMap[$builder->getFullyQualifiedClassname()] = $builder->getClassFilePath();
                         }
 
-                        // ----------------------------------------------
-                        // Add classes from old treeMode implementations
-                        // ----------------------------------------------
-
-                        if ($table->treeMode() == 'MaterializedPath') {
-                            foreach (array('nodepeerstub', 'nodestub', 'nodepeer', 'node') as $target) {
-                                $builder = $generatorConfig->getConfiguredBuilder($table, $target);
-                                $classMap[$builder->getFullyQualifiedClassname()] = $builder->getClassFilePath();
-                            }
-                        }
-                        if ($table->treeMode() == 'NestedSet') {
-                            foreach (array('nestedset', 'nestedsetpeer') as $target) {
-                                $builder = $generatorConfig->getConfiguredBuilder($table, $target);
-                                $classMap[$builder->getFullyQualifiedClassname()] = $builder->getClassFilePath();
-                            }
-                        }
-
                         // ----------------------------------
                         // Add classes added by behaviors
                         // ----------------------------------

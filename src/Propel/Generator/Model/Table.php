@@ -249,13 +249,6 @@ class Table extends ScopedElement implements IdMethod
     private $forReferenceOnly;
 
     /**
-     * The tree mode (nested set, etc.) implemented by this table.
-     *
-     * @var       string
-     */
-    private $treeMode;
-
-    /**
      * Whether to reload the rows in this table after insert.
      *
      * @var       boolean
@@ -346,7 +339,6 @@ class Table extends ScopedElement implements IdMethod
             && $this->getDatabase()->isHeavyIndexing() ) );
         $this->description = $this->getAttribute("description");
         $this->enterface = $this->getAttribute("interface"); // sic ('interface' is reserved word)
-        $this->treeMode = $this->getAttribute("treeMode");
 
         $this->reloadOnInsert = $this->booleanValue($this->getAttribute("reloadOnInsert"));
         $this->reloadOnUpdate = $this->booleanValue($this->getAttribute("reloadOnUpdate"));
@@ -1682,24 +1674,6 @@ class Table extends ScopedElement implements IdMethod
     }
 
     /**
-     * Flag to determine if tree node class should be generated for this table.
-     * @return    valur of treeMode
-     */
-    public function treeMode()
-    {
-        return $this->treeMode;
-    }
-
-    /**
-     * Flag to determine if tree node class should be generated for this table.
-     * @param     v	Value to assign to treeMode.
-     */
-    public function setTreeMode($v)
-    {
-        $this->treeMode = $v;
-    }
-
-    /**
      * Appends XML nodes to passed-in DOMNode.
      *
      * @param     DOMNode $node
@@ -1729,10 +1703,6 @@ class Table extends ScopedElement implements IdMethod
 
         if ($this->readOnly !== null) {
             $tableNode->setAttribute('readOnly', var_export($this->readOnly, true));
-        }
-
-        if ($this->treeMode !== null) {
-            $tableNode->setAttribute('treeMode', $this->treeMode);
         }
 
         if ($this->reloadOnInsert !== null) {

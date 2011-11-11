@@ -154,14 +154,6 @@
 		</xs:restriction>
 	</xs:simpleType>
 
-	<xs:simpleType name="treemode">
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="AdjacencyList"/>
-			<xs:enumeration value="MaterializedPath"/>
-			<xs:enumeration value="NestedSet"/>
-		</xs:restriction>
-	</xs:simpleType>
-
 	<!-- Visibility for column accessor and mutator methods -->
 	<xs:simpleType name="visibility">
 		<xs:restriction base="xs:string">
@@ -445,42 +437,7 @@
 				</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>
-		<xs:attribute name="nodeKeySep" type="xs:string" use="optional">
-			<xs:annotation>
-				<xs:documentation xml:lang="en">
-					(DEPRECATED) For use with treeMode table attribute.
-				</xs:documentation>
-			</xs:annotation>
-		</xs:attribute>
-		<xs:attribute name="nodeKey" type="xs:string" use="optional">
-			<xs:annotation>
-				<xs:documentation xml:lang="en">
-					(DEPRECATED) For use with treeMode table attribute.
-				</xs:documentation>
-			</xs:annotation>
-		</xs:attribute>
-		<xs:attribute name="nestedSetLeftKey" type="xs:boolean" default="false">
-			<xs:annotation>
-				<xs:documentation xml:lang="en">
-					(DEPRECATED) For use with treeMode table attribute.
-				</xs:documentation>
-			</xs:annotation>
-		</xs:attribute>
-		<xs:attribute name="nestedSetRightKey" type="xs:boolean" default="false">
-			<xs:annotation>
-				<xs:documentation xml:lang="en">
-					(DEPRECATED) For use with treeMode table attribute.
-				</xs:documentation>
-			</xs:annotation>
-		</xs:attribute>
-		<xs:attribute name="treeScopeKey" type="xs:boolean" default="false">
-			<xs:annotation>
-				<xs:documentation xml:lang="en">
-					(DEPRECATED) For use with treeMode table attribute.
-				</xs:documentation>
-			</xs:annotation>
-		</xs:attribute>
-		<xs:attribute name="primaryString" type="xs:boolean" default="false">
+        <xs:attribute name="primaryString" type="xs:boolean" default="false">
 			<xs:annotation>
 				<xs:documentation xml:lang="en">
 					 A column defined as primary string serves as default value for a `__toString()` method in the generated Propel object.
@@ -761,14 +718,7 @@
 				</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>
-		<xs:attribute name="treeMode" type="treemode" use="optional">
-			<xs:annotation>
-				<xs:documentation xml:lang="en">
-					Used to indicate that this table is part of a node tree. Currently the only supported values are "NestedSet" and "MaterializedPath" (DEPRECATED: use nested_set behavior instead).
-				</xs:documentation>
-			</xs:annotation>
-		</xs:attribute>
-		<xs:attribute name="reloadOnInsert" type="xs:boolean" default="false">
+        <xs:attribute name="reloadOnInsert" type="xs:boolean" default="false">
 			<xs:annotation>
 				<xs:documentation xml:lang="en">
 					Indicate that the object should be reloaded from the database when an INSERT is performed.  This is useful if you have triggers (or other server-side functionality like column default expressions) that alters the database row on INSERT.
