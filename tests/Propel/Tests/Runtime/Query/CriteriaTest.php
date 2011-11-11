@@ -14,9 +14,9 @@ use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 use Propel\Tests\Bookstore\BookPeer;
 
 use Propel\Runtime\Propel;
-use Propel\Runtime\Adapter\MysqlAdapter;
-use Propel\Runtime\Adapter\PgsqlAdapter;
-use Propel\Runtime\Adapter\SqliteAdapter;
+use Propel\Runtime\Adapter\Pdo\MysqlAdapter;
+use Propel\Runtime\Adapter\Pdo\PgsqlAdapter;
+use Propel\Runtime\Adapter\Pdo\SqliteAdapter;
 use Propel\Runtime\Query\Criteria;
 use Propel\Runtime\Query\Join;
 use Propel\Runtime\Util\BasePeer;

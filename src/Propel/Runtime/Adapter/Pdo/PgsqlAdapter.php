@@ -8,7 +8,13 @@
  * @license    MIT License
  */
 
-namespace Propel\Runtime\Adapter;
+namespace Propel\Runtime\Adapter\Pdo;
+
+use Propel\Runtime\Adapter\AdapterInterface;
+use Propel\Runtime\Connection\ConnectionInterface;
+use Propel\Runtime\Query\Criteria;
+
+use \PDO;
 
 /**
  * This is used to connect to PostgresQL databases.
@@ -20,30 +26,8 @@ namespace Propel\Runtime\Adapter;
  * @version    $Revision$
  * @package    propel.runtime.adapter
  */
-class PgsqlAdapter extends AbstractAdapter
+class PgsqlAdapter extends PdoAdapter implements AdapterInterface
 {
-
-    /**
-     * This method is used to ignore case.
-     *
-     * @param     string  $in  The string to transform to upper case.
-     * @return    string  The upper case string.
-     */
-    public function toUpperCase($in)
-    {
-        return "UPPER(" . $in . ")";
-    }
-
-    /**
-     * This method is used to ignore case.
-     *
-     * @param     string  $in  The string whose case to ignore.
-     * @return    string  The string in a case that can be ignored.
-     */
-    public function ignoreCase($in)
-    {
-        return "UPPER(" . $in . ")";
-    }
 
     /**
      * Returns SQL which concatenates the second string to the first.
@@ -96,12 +80,12 @@ class PgsqlAdapter extends AbstractAdapter
     /**
      * Gets ID for specified sequence name.
      *
-     * @param     PDO     $con
+     * @param     ConnectionInterface $con
      * @param     string  $name
      *
      * @return    integer
      */
-    public function getId(PDO $con, $name = null)
+    public function getId(ConnectionInterface $con, $name = null)
     {
         if ($name === null) {
             throw new PropelException("Unable to fetch next sequence ID without sequence name.");
@@ -160,14 +144,14 @@ class PgsqlAdapter extends AbstractAdapter
     }
 
     /**
-     * @see        AbstractAdapter::getDeleteFromClause()
-
-     * @param     Criteria  $criteria
+     * @see       PdoAdapter::getDeleteFromClause()
+     *
+     * @param     Propel\Runtime\Query\Criteria  $criteria
      * @param     string    $tableName
      *
      * @return    string
      */
-    public function getDeleteFromClause($criteria, $tableName)
+    public function getDeleteFromClause(Criteria $criteria, $tableName)
     {
         $sql = 'DELETE ';
         if ($queryComment = $criteria->getComment()) {

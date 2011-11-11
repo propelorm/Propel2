@@ -11,8 +11,8 @@
 namespace Propel\Runtime\Query;
 
 use Propel\Runtime\Propel;
-use Propel\Runtime\Adapter\AbstractAdapter;
-use Propel\Runtime\Adapter\PgsqlAdapter;
+use Propel\Runtime\Adapter\AdapterInterface;
+use Propel\Runtime\Adapter\Pdo\PgsqlAdapter;
 
 /**
  * This is an "inner" class that describes an object in the criteria.
@@ -108,7 +108,7 @@ class Criterion
         } catch (Exception $e) {
             // we are only doing this to allow easier debugging, so
             // no need to throw up the exception, just make note of it.
-            Propel::log("Could not get a AbstractAdapter, sql may be wrong", Propel::LOG_ERR);
+            Propel::log("Could not get a AdapterInterface, sql may be wrong", Propel::LOG_ERR);
         }
 
         // init $this->realtable
@@ -170,9 +170,9 @@ class Criterion
 
     /**
      * Get the value of db.
-     * The AbstractAdapter which might be used to get db specific
+     * The AdapterInterface which might be used to get db specific
      * variations of sql.
-     * @return     AbstractAdapter value of db.
+     * @return     AdapterInterface value of db.
      */
     public function getDB()
     {
@@ -181,11 +181,11 @@ class Criterion
 
     /**
      * Set the value of db.
-     * The AbstractAdapter might be used to get db specific variations of sql.
-     * @param      AbstractAdapter $v Value to assign to db.
+     * The AdapterInterface might be used to get db specific variations of sql.
+     * @param      AdapterInterface $v Value to assign to db.
      * @return     void
      */
-    public function setDB(AbstractAdapter $v)
+    public function setDB(AdapterInterface $v)
     {
         $this->db = $v;
         foreach ( $this->clauses as $clause ) {

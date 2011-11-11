@@ -8,11 +8,12 @@
  * @license    MIT License
  */
 
-namespace Propel\Tests\Runtime\adapter;
+namespace Propel\Tests\Runtime\Adapter\Pdo;
 
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
-use Propel\Runtime\Adapter\MysqlAdapter;
+use Propel\Runtime\Connection\ConnectionInterface;
+use Propel\Runtime\Adapter\Pdo\MysqlAdapter;
 
 /**
  * Tests the DbMySQL adapter
@@ -93,22 +94,13 @@ class MysqlAdapterTest extends BookstoreTestBase
     protected function getPdoMock()
     {
         $con = $this
-            ->getMockBuilder('\Propel\Tests\Runtime\Adapter\MockPDO')
-            ->getMock();
+            ->getMock('\Propel\Runtime\Connection\ConnectionInterface');
 
         $con
             ->expects($this->never())
             ->method('exec');
 
         return $con;
-    }
-}
-
-// See: http://stackoverflow.com/questions/3138946/mocking-the-pdo-object-using-phpunit
-class MockPDO extends \PDO
-{
-    public function __construct()
-    {
     }
 }
 
