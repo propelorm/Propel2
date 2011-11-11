@@ -43,7 +43,7 @@ class BasePeerTest extends BookstoreTestBase
             if ($db instanceof PgsqlAdapter) {
                 $c->addSelectColumn("substring(".BookPeer::TITLE." from position('Potter' in ".BookPeer::TITLE.")) AS col");
             } else {
-                $this->markTestSkipped();
+                $this->markTestSkipped('Configured database vendor is not PostgreSQL');
             }
             $stmt = BookPeer::doSelectStmt( $c );
         } catch (PropelException $x) {
@@ -140,7 +140,7 @@ class BasePeerTest extends BookstoreTestBase
         $db = Propel::getDB(BookPeer::DATABASE_NAME);
         if(! ($db instanceof MssqlAdapter))
         {
-            $this->markTestSkipped();
+            $this->markTestSkipped('Configured database vendor is not MsSQL');
         }
 
         $c = new Criteria(BookPeer::DATABASE_NAME);
@@ -166,7 +166,7 @@ class BasePeerTest extends BookstoreTestBase
         $db = Propel::getDB(BookPeer::DATABASE_NAME);
         if(! ($db instanceof MssqlAdapter))
         {
-            $this->markTestSkipped();
+            $this->markTestSkipped('Configured database vendor is not MsSQL');
         }
 
         $c = new Criteria(BookPeer::DATABASE_NAME);
@@ -190,7 +190,7 @@ class BasePeerTest extends BookstoreTestBase
         $db = Propel::getDB(BookPeer::DATABASE_NAME);
         if(! ($db instanceof MssqlAdapter))
         {
-            $this->markTestSkipped();
+            $this->markTestSkipped('Configured database vendor is not MsSQL');
         }
 
         $c = new Criteria(BookPeer::DATABASE_NAME);
@@ -215,7 +215,7 @@ class BasePeerTest extends BookstoreTestBase
         $db = Propel::getDB(BookPeer::DATABASE_NAME);
         if(! ($db instanceof MssqlAdapter))
         {
-            $this->markTestSkipped();
+            $this->markTestSkipped('Configured database vendor is not MsSQL');
         }
 
         $c = new Criteria(BookPeer::DATABASE_NAME);
