@@ -10,6 +10,8 @@
 
 namespace Propel\Runtime\Adapter;
 
+use \PDO;
+
 /**
  * This is used to connect to PostgresQL databases.
  *
@@ -96,12 +98,12 @@ class PgsqlAdapter extends AbstractAdapter
     /**
      * Gets ID for specified sequence name.
      *
-     * @param     PDO     $con
-     * @param     string  $name
+     * @param     ConnectionInterface $con
+     * @param     string $name
      *
      * @return    integer
      */
-    public function getId(PDO $con, $name = null)
+    public function getId($con, $name = null)
     {
         if ($name === null) {
             throw new PropelException("Unable to fetch next sequence ID without sequence name.");

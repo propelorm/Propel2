@@ -16,7 +16,6 @@ use Propel\Runtime\Query\Criteria;
 use Propel\Runtime\Connection\StatementInterface;
 
 use \PDO;
-use \PDOStatement;
 
 /**
  * Oracle adapter.
@@ -39,8 +38,8 @@ class OracleAdapter extends AbstractAdapter
      *
      * @see       parent::initConnection()
      *
-     * @param     PDO    $con
-     * @param     array  $settings  A $PDO PDO connection instance
+     * @param     \Propel\Runtime\Connection\ConnectionPdo $con
+     * @param     array $settings  A $PDO PDO connection instance
      */
     public function initConnection($con, array $settings)
     {
@@ -153,13 +152,13 @@ class OracleAdapter extends AbstractAdapter
     }
 
     /**
-     * @param     PDO     $con
-     * @param     string  $name
+     * @param     ConnectionInterface $con
+     * @param     string $name
      *
      * @throws    PropelException
      * @return    integer
      */
-    public function getId(PDO $con, $name = null)
+    public function getId($con, $name = null)
     {
         if ($name === null) {
             throw new PropelException("Unable to fetch next sequence ID without sequence name.");

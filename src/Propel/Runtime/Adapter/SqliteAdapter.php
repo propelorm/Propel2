@@ -10,6 +10,8 @@
 
 namespace Propel\Runtime\Adapter;
 
+use Propel\Runtime\Connection\ConnectionPdo;
+
 /**
  * This is used in order to connect to a SQLite database.
  *
@@ -24,12 +26,12 @@ class SqliteAdapter extends AbstractAdapter
      * For SQLite this method has no effect, since SQLite doesn't support specifying a character
      * set (or, another way to look at it, it doesn't require a single character set per DB).
      *
-     * @param     PDO     $con  A PDO connection instance.
-     * @param     string  $charset  The charset encoding.
+     * @param     ConnectionPdo $con    A ConnectionPdo connection instance.
+     * @param     string $charset       The charset encoding.
      *
      * @throws    PropelException If the specified charset doesn't match sqlite_libencoding()
      */
-    public function setCharset(PDO $con, $charset)
+    public function setCharset(ConnectionPdo $con, $charset)
     {
     }
 

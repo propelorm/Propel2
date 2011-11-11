@@ -11,11 +11,9 @@
 namespace Propel\Runtime\Adapter;
 
 use Propel\Runtime\Map\ColumnMap;
-use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\StatementInterface;
 
 use \PDO;
-use \PDOException;
 
 /**
  * This is used in order to connect to a MySQL database.
