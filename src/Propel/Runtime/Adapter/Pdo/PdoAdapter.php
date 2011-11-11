@@ -8,85 +8,25 @@
  * @license    MIT License
  */
 
-namespace Propel\Runtime\Adapter;
+namespace Propel\Runtime\Adapter\Pdo;
 
-use Propel\Runtime\Exception\PropelException;
-use Propel\Runtime\Map\ColumnMap;
-use Propel\Runtime\Map\DatabaseMap;
-use Propel\Runtime\Util\PropelColumnTypes;
-use Propel\Runtime\Util\PropelDateTime;
-use Propel\Runtime\Query\Criteria;
+use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Connection\ConnectionPdo;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\StatementInterface;
+use Propel\Runtime\Map\ColumnMap;
+use Propel\Runtime\Map\DatabaseMap;
+use Propel\Runtime\Query\Criteria;
+use Propel\Runtime\Util\PropelDateTime;
+use Propel\Runtime\Util\PropelColumnTypes;
 
 use \PDO;
 
 /**
- * AbstractAdapter</code> defines the interface for a Propel database adapter.
- *
- * <p>Support for new databases is added by subclassing
- * <code>AbstractAdapter</code> and implementing its abstract interface, and by
- * registering the new database adapter and corresponding Propel
- * driver in the private adapters map (array) in this class.</p>
- *
- * <p>The Propel database adapters exist to present a uniform
- * interface to database access across all available databases.  Once
- * the necessary adapters have been written and configured,
- * transparent swapping of databases is theoretically supported with
- * <i>zero code change</i> and minimal configuration file
- * modifications.</p>
- *
- * @author     Hans Lellelid <hans@xmpl.org> (Propel)
- * @author     Jon S. Stevens <jon@latchkey.com> (Torque)
- * @author     Brett McLaughlin <bmclaugh@algx.net> (Torque)
- * @author     Daniel Rall <dlr@finemaltcoding.com> (Torque)
- * @version    $Revision$
- * @package    propel.runtime.adapter
+ * Base for PDO database adapters.
  */
-abstract class AbstractAdapter
+abstract class PdoAdapter
 {
-    const ID_METHOD_NONE            = 0;
-    const ID_METHOD_AUTOINCREMENT    = 1;
-    const ID_METHOD_SEQUENCE        = 2;
-
-    /**
-     * Propel driver to Propel adapter map.
-     * @var array
-     */
-    private static $adapters = array(
-        'mysql'  => '\Propel\Runtime\Adapter\MysqlAdapter',
-        'mysqli' => '\Propel\Runtime\Adapter\DBMySQLi',
-        'mssql'  => '\Propel\Runtime\Adapter\MssqlAdapter',
-        'sqlsrv' => '\Propel\Runtime\Adapter\SqlsrvAdapter',
-        'oracle' => '\Propel\Runtime\Adapter\OracleAdapter',
-        'oci'    => '\Propel\Runtime\Adapter\OracleAdapter',
-        'pgsql'  => '\Propel\Runtime\Adapter\PgsqlAdapter',
-        'sqlite' => '\Propel\Runtime\Adapter\SqliteAdapter',
-        ''       => '\Propel\Runtime\Adapter\NoneAdapter',
-    );
-
-    /**
-     * Creates a new instance of the database adapter associated
-     * with the specified Propel driver.
-     *
-     * @param     string  $driver The name of the Propel driver to create a new adapter instance
-     *                            for or a shorter form adapter key.
-     *
-     * @throws    PropelException  If the adapter could not be instantiated.
-     * @return    AbstractAdapter        An instance of a Propel database adapter.
-     */
-    public static function factory($driver) {
-        $adapterClass = isset(self::$adapters[$driver]) ? self::$adapters[$driver] : null;
-        if ($adapterClass !== null) {
-            $a = new $adapterClass();
-
-            return $a;
-        } else {
-            throw new PropelException("Unsupported Propel driver: " . $driver . ": Check your configuration file");
-        }
-    }
-
     /**
      * Build database connection
      *
@@ -176,10 +116,10 @@ abstract class AbstractAdapter
      *
      * @see       initConnection()
      *
-     * @param     ConnectionPdo $con
+     * @param     ConnectionInterface $con
      * @param     string  $charset  The $string charset encoding.
      */
-    public function setCharset($con, $charset)
+    public function setCharset(ConnectionInterface $con, $charset)
     {
         $con->exec("SET NAMES '" . $charset . "'");
     }
@@ -187,21 +127,12 @@ abstract class AbstractAdapter
     /**
      * This method is used to ignore case.
      *
-     * @param     string  $in The string to transform to upper case.
+     * @param     string  $in  The string to transform to upper case.
      * @return    string  The upper case string.
      */
-    public abstract function toUpperCase($in);
-
-    /**
-     * Returns the character used to indicate the beginning and end of
-     * a piece of text used in a SQL statement (generally a single
-     * quote).
-     *
-     * @return    string  The text delimeter.
-     */
-    public function getStringDelimiter()
+    public function toUpperCase($in)
     {
-        return '\'';
+        return 'UPPER(' . $in . ')';
     }
 
     /**
@@ -210,7 +141,10 @@ abstract class AbstractAdapter
      * @param     string  $in The string whose case to ignore.
      * @return    string  The string in a case that can be ignored.
      */
-    public abstract function ignoreCase($in);
+    public function ignoreCase($in)
+    {
+        return 'UPPER(' . $in . ')';
+    }
 
     /**
      * This method is used to ignore case in an ORDER BY clause.
@@ -227,34 +161,16 @@ abstract class AbstractAdapter
     }
 
     /**
-     * Returns SQL which concatenates the second string to the first.
+     * Returns the character used to indicate the beginning and end of
+     * a piece of text used in a SQL statement (generally a single
+     * quote).
      *
-     * @param     string  $s1  String to concatenate.
-     * @param     string  $s2  String to append.
-     *
-     * @return    string
+     * @return    string  The text delimeter.
      */
-    public abstract function concatString($s1, $s2);
-
-    /**
-     * Returns SQL which extracts a substring.
-     *
-     * @param     string   $s  String to extract from.
-     * @param     integer  $pos  Offset to start from.
-     * @param     integer  $len  Number of characters to extract.
-     *
-     * @return    string
-     */
-    public abstract function subString($s, $pos, $len);
-
-    /**
-     * Returns SQL which calculates the length (in chars) of a string.
-     *
-     * @param     string  $s  String to calculate length of.
-     * @return    string
-     */
-    public abstract function strLength($s);
-
+    public function getStringDelimiter()
+    {
+        return '\'';
+    }
 
     /**
      * Quotes database objec identifiers (table names, col names, sequences, etc.).
@@ -267,25 +183,27 @@ abstract class AbstractAdapter
     }
 
     /**
-     * Quotes a database table which could have space seperating it from an alias, both should be identified seperately
-     * This doesn't take care of dots which separate schema names from table names. Adapters for RDBMs which support
+     * Quotes a database table which could have space seperating it from an alias,
+     * both should be identified seperately. This doesn't take care of dots which 
+     * separate schema names from table names. Adapters for RDBMs which support
      * schemas have to implement that in the platform-specific way.
      *
      * @param     string  $table  The table name to quo
      * @return    string  The quoted table name
      **/
-    public function quoteIdentifierTable($table) {
+    public function quoteIdentifierTable($table)
+    {
         return implode(" ", array_map(array($this, "quoteIdentifier"), explode(" ", $table) ) );
     }
 
     /**
      * Returns the native ID method for this RDBMS.
      *
-     * @return    integer  One of AbstractAdapter:ID_METHOD_SEQUENCE, AbstractAdapter::ID_METHOD_AUTOINCREMENT.
+     * @return    integer  One of AdapterInterface:ID_METHOD_SEQUENCE, AdapterInterface::ID_METHOD_AUTOINCREMENT.
      */
     protected function getIdMethod()
     {
-        return AbstractAdapter::ID_METHOD_AUTOINCREMENT;
+        return AdapterInterface::ID_METHOD_AUTOINCREMENT;
     }
 
     /**
@@ -295,7 +213,7 @@ abstract class AbstractAdapter
      */
     public function isGetIdBeforeInsert()
     {
-        return ($this->getIdMethod() === AbstractAdapter::ID_METHOD_SEQUENCE);
+        return ($this->getIdMethod() === AdapterInterface::ID_METHOD_SEQUENCE);
     }
 
     /**
@@ -305,7 +223,7 @@ abstract class AbstractAdapter
      */
     public function isGetIdAfterInsert()
     {
-        return ($this->getIdMethod() === AbstractAdapter::ID_METHOD_AUTOINCREMENT);
+        return ($this->getIdMethod() === AdapterInterface::ID_METHOD_AUTOINCREMENT);
     }
 
     /**
@@ -316,20 +234,20 @@ abstract class AbstractAdapter
      *
      * @return    mixed
      */
-    public function getId($con, $name = null)
+    public function getId(ConnectionInterface $con, $name = null)
     {
         return $con->lastInsertId($name);
     }
 
     /**
-     * Formats a temporal value brefore binding, given a ColumnMap object
+     * Formats a temporal value before binding, given a ColumnMap object
      *
      * @param     mixed      $value  The temporal value
      * @param     ColumnMap  $cMap
      *
      * @return    string  The formatted temporal value
      */
-    protected function formatTemporalValue($value, ColumnMap $cMap)
+    public function formatTemporalValue($value, ColumnMap $cMap)
     {
         /** @var $dt PropelDateTime */
         if ($dt = PropelDateTime::newInstance($value)) {
@@ -387,7 +305,6 @@ abstract class AbstractAdapter
      *
      * it`s a workaround...!!!
      *
-     * @todo       should be abstract
      * @deprecated
      *
      * @return    boolean
@@ -408,22 +325,6 @@ abstract class AbstractAdapter
     public function cleanupSQL(&$sql, array &$params, Criteria $values, DatabaseMap $dbMap)
     {
     }
-
-    /**
-     * Modifies the passed-in SQL to add LIMIT and/or OFFSET.
-     *
-     * @param     string   $sql
-     * @param     integer  $offset
-     * @param     integer  $limit
-     */
-    public abstract function applyLimit(&$sql, $offset, $limit);
-
-    /**
-     * Gets the SQL string that this adapter uses for getting a random number.
-     *
-     * @param     mixed $seed (optional) seed value for databases that support this
-     */
-    public abstract function random($seed = null);
 
     /**
      * Returns the "DELETE FROM <table> [AS <alias>]" part of DELETE query.
@@ -457,7 +358,7 @@ abstract class AbstractAdapter
     /**
      * Builds the SELECT part of a SQL statement based on a Criteria
      * taking into account select columns and 'as' columns (i.e. columns aliases)
-     * Move from BasePeer to AbstractAdapter and turn from static to non static
+     * Move from BasePeer to PdoAdapter and turn from static to non static
      *
      * @param     Criteria  $criteria
      * @param     array     $fromClause
@@ -530,7 +431,7 @@ abstract class AbstractAdapter
     /**
      * Ensures uniqueness of select column names by turning them all into aliases
      * This is necessary for queries on more than one table when the tables share a column name
-     * Moved from BasePeer to AbstractAdapter and turned from static to non static
+     * Moved from BasePeer to PdoAdapter and turned from static to non static
      *
      * @see http://propel.phpdb.org/trac/ticket/795
      *

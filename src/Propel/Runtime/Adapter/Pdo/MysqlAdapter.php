@@ -8,11 +8,12 @@
  * @license    MIT License
  */
 
-namespace Propel\Runtime\Adapter;
+namespace Propel\Runtime\Adapter\Pdo;
 
-use Propel\Runtime\Map\ColumnMap;
+use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\StatementInterface;
+use Propel\Runtime\Map\ColumnMap;
 
 use \PDO;
 use \PDOException;
@@ -27,29 +28,8 @@ use \PDOException;
  * @version    $Revision$
  * @package    propel.runtime.adapter
  */
-class MysqlAdapter extends AbstractAdapter
+class MysqlAdapter extends PdoAdapter implements AdapterInterface
 {
-    /**
-     * This method is used to ignore case.
-     *
-     * @param     string  $in  The string to transform to upper case.
-     * @return    string  The upper case string.
-     */
-    public function toUpperCase($in)
-    {
-        return "UPPER(" . $in . ")";
-    }
-
-    /**
-     * This method is used to ignore case.
-     *
-     * @param     string  $in  The string whose case to ignore.
-     * @return    string  The string in a case that can be ignored.
-     */
-    public function ignoreCase($in)
-    {
-        return "UPPER(" . $in . ")";
-    }
 
     /**
      * Returns SQL which concatenates the second string to the first.
@@ -89,7 +69,6 @@ class MysqlAdapter extends AbstractAdapter
         return "CHAR_LENGTH($s)";
     }
 
-
     /**
      * Locks the specified table.
      *
@@ -100,7 +79,7 @@ class MysqlAdapter extends AbstractAdapter
      */
     public function lockTable($con, $table)
     {
-        $con->exec("LOCK TABLE " . $table . " WRITE");
+        $con->exec("LOCK TABLE $table WRITE");
     }
 
     /**

@@ -8,11 +8,11 @@
  * @license    MIT License
  */
 
-namespace Propel\Tests\Runtime\adapter;
+namespace Propel\Tests\Runtime\Adapter\Pdo;
 
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
-use Propel\Runtime\Adapter\MysqlAdapter;
+use Propel\Runtime\Adapter\Pdo\MysqlAdapter;
 
 /**
  * Tests the DbMySQL adapter

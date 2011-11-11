@@ -8,9 +8,13 @@
  * @license    MIT License
  */
 
-namespace Propel\Runtime\Adapter;
+namespace Propel\Runtime\Adapter\Pdo;
 
+use Propel\Runtime\Adapter\AdapterInterface;
+use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\StatementInterface;
+
+use \PDO;
 
 /**
  * This is used to connect to a MSSQL database using pdo_sqlsrv driver.
@@ -19,7 +23,7 @@ use Propel\Runtime\Connection\StatementInterface;
  * @version    $Revision$
  * @package    propel.runtime.adapter
  */
-class SqlsrvAdapter extends MssqlAdapter
+class SqlsrvAdapter extends MssqlAdapter implements AdapterInterface
 {
     /**
      * @see       parent::initConnection()
@@ -43,7 +47,7 @@ class SqlsrvAdapter extends MssqlAdapter
      *
      * @throws    PropelException
      */
-    public function setCharset(PDO $con, $charset)
+    public function setCharset(ConnectionInterface $con, $charset)
     {
         switch (strtolower($charset)) {
         case 'utf-8':

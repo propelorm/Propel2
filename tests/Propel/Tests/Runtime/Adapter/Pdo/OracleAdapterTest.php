@@ -8,10 +8,10 @@
  * @license    MIT License
  */
 
-namespace Propel\Tests\Runtime\Adapter;
+namespace Propel\Tests\Runtime\Adapter\Pdo;
 
 use Propel\Runtime\Propel;
-use Propel\Runtime\Adapter\OracleAdapter;
+use Propel\Runtime\Adapter\Pdo\OracleAdapter;
 use Propel\Runtime\Query\Criteria;
 use Propel\Runtime\Util\BasePeer;
 
