@@ -32,8 +32,8 @@ use Propel\Tests\Bookstore\BookstoreContest;
 use Propel\Tests\Bookstore\BookstoreContestPeer;
 use Propel\Tests\Bookstore\BookstoreContestEntry;
 use Propel\Tests\Bookstore\BookstoreContestEntryPeer;
-use Propel\tests\Bookstore\Contest;
-use Propel\tests\Bookstore\Customer;
+use Propel\Tests\Bookstore\Contest;
+use Propel\Tests\Bookstore\Customer;
 use Propel\Tests\Bookstore\ReaderFavorite;
 use Propel\Tests\Bookstore\ReaderFavoritePeer;
 
