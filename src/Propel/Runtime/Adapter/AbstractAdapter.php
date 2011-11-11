@@ -151,8 +151,8 @@ abstract class AbstractAdapter
      *
      * @see       setCharset()
      *
-     * @param     ConnectionPdo $con
-     * @param     array $settings  An array of settings.
+     * @param     ConnectionPdo    $con
+     * @param     array  $settings  An array of settings.
      */
     public function initConnection($con, array $settings)
     {
@@ -179,7 +179,7 @@ abstract class AbstractAdapter
      * @param     ConnectionPdo $con
      * @param     string  $charset  The $string charset encoding.
      */
-    public function setCharset(ConnectionPdo $con, $charset)
+    public function setCharset($con, $charset)
     {
         $con->exec("SET NAMES '" . $charset . "'");
     }

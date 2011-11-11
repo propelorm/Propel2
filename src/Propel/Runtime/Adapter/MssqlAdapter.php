@@ -10,8 +10,6 @@
 
 namespace Propel\Runtime\Adapter;
 
-use Propel\Runtime\Connection\ConnectionPdo;
-
 /**
  * This is used to connect to a MSSQL database.
  *
@@ -26,10 +24,10 @@ class MssqlAdapter extends AbstractAdapter
      *
      * @see       AbstractAdapter::setCharset()
      *
-     * @param     ConnectionPdo $con
-     * @param     string $charset
+     * @param     PDO     $con
+     * @param     string  $charset
      */
-    public function setCharset(ConnectionPdo $con, $charset)
+    public function setCharset(PDO $con, $charset)
     {
     }
 
@@ -277,7 +275,7 @@ class MssqlAdapter extends AbstractAdapter
             if (null !== $param['table']) {
                 $column = $dbMap->getTable($param['table'])->getColumn($param['column']);
                 /* MSSQL pdo_dblib and pdo_mssql blob values must be converted to hex and then the hex added
-                 * to the query string directly.  If it goes through ConnectionPdoStatement::bindValue quotes will cause
+                 * to the query string directly.  If it goes through PDOStatement::bindValue quotes will cause
                  * an error with the insert or update.
                  */
                 if (is_resource($param['value']) && $column->isLob()) {

@@ -12,8 +12,6 @@ namespace Propel\Runtime\Adapter;
 
 use Propel\Runtime\Connection\StatementInterface;
 
-use \PDO;
-
 /**
  * This is used to connect to a MSSQL database using pdo_sqlsrv driver.
  *
@@ -26,8 +24,8 @@ class SqlsrvAdapter extends MssqlAdapter
     /**
      * @see       parent::initConnection()
      *
-     * @param     ConnectionPdo $con
-     * @param     array $settings
+     * @param     PDO    $con
+     * @param     array  $settings
      */
     public function initConnection($con, array $settings)
     {
@@ -40,12 +38,12 @@ class SqlsrvAdapter extends MssqlAdapter
     /**
      * @see       parent::setCharset()
      *
-     * @param     ConnectionPdo $con
-     * @param     string $charset
+     * @param     PDO     $con
+     * @param     string  $charset
      *
      * @throws    PropelException
      */
-    public function setCharset(ConnectionPdo $con, $charset)
+    public function setCharset(PDO $con, $charset)
     {
         switch (strtolower($charset)) {
         case 'utf-8':
