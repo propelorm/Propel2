@@ -8,7 +8,10 @@
  * @license    MIT License
  */
 
-namespace Propel\Runtime\Adapter;
+namespace Propel\Runtime\Adapter\Pdo;
+
+use Propel\Runtime\Adapter\AdapterInterface;
+use Propel\Runtime\Connection\ConnectionInterface;
 
 /**
  * This is used to connect to a MSSQL database.
@@ -17,40 +20,18 @@ namespace Propel\Runtime\Adapter;
  * @version    $Revision$
  * @package    propel.runtime.adapter
  */
-class MssqlAdapter extends AbstractAdapter
+class MssqlAdapter extends PdoAdapter implements AdapterInterface
 {
     /**
      * MS SQL Server does not support SET NAMES
      *
      * @see       AbstractAdapter::setCharset()
      *
-     * @param     PDO     $con
+     * @param     ConnectionInterface $con
      * @param     string  $charset
      */
-    public function setCharset(PDO $con, $charset)
+    public function setCharset(ConnectionInterface $con, $charset)
     {
-    }
-
-    /**
-     * This method is used to ignore case.
-     *
-     * @param     string $in The string to transform to upper case.
-     * @return    string The upper case string.
-     */
-    public function toUpperCase($in)
-    {
-        return $this->ignoreCase($in);
-    }
-
-    /**
-     * This method is used to ignore case.
-     *
-     * @param     string $in The string whose case to ignore.
-     * @return    string The string in a case that can be ignored.
-     */
-    public function ignoreCase($in)
-    {
-        return 'UPPER(' . $in . ')';
     }
 
     /**

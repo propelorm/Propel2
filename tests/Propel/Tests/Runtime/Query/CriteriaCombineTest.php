@@ -15,7 +15,7 @@ use Propel\Tests\Helpers\BaseTestCase;
 use Propel\Runtime\Propel;
 use Propel\Runtime\Query\Criteria;
 use Propel\Runtime\Util\BasePeer;
-use Propel\Runtime\Adapter\SqliteAdapter;
+use Propel\Runtime\Adapter\Pdo\SqliteAdapter;
 
 /**
  * Test class for Criteria combinations.

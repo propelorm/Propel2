@@ -10,7 +10,8 @@
 
 namespace Propel\Runtime;
 
-use Propel\Runtime\Adapter\AbstractAdapter;
+use Propel\Runtime\Adapter\AdapterFactory;
+use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Config\Configuration;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\PropelException;
@@ -600,7 +601,7 @@ class Propel
             if (!isset(self::$configuration['datasources'][$name]['adapter'])) {
                 throw new PropelException("Unable to find adapter for datasource [" . $name . "].");
             }
-            $db = AbstractAdapter::factory(self::$configuration['datasources'][$name]['adapter']);
+            $db = AdapterFactory::create(self::$configuration['datasources'][$name]['adapter']);
             // register the adapter for this name
             self::$adapterMap[$name] = $db;
         }
@@ -614,7 +615,7 @@ class Propel
      * @param      string $name The datasource name.
      * @param      AbstractAdapter $adapter The AbstractAdapter implementation to use.
      */
-    public static function setDB($name, AbstractAdapter $adapter)
+    public static function setDB($name, AdapterInterface $adapter)
     {
         if ($name === null) {
             $name = self::getDefaultDB();

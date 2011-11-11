@@ -8,12 +8,14 @@
  * @license    MIT License
  */
 
-namespace Propel\Runtime\Adapter;
+namespace Propel\Runtime\Adapter\Pdo;
 
+use Propel\Runtime\Adapter\AdapterInterface;
+use Propel\Runtime\Connection\ConnectionInterface;
+use Propel\Runtime\Connection\StatementInterface;
 use Propel\Runtime\Map\ColumnMap;
 use Propel\Runtime\Util\BasePeer;
 use Propel\Runtime\Query\Criteria;
-use Propel\Runtime\Connection\StatementInterface;
 
 use \PDO;
 use \PDOStatement;
@@ -30,7 +32,7 @@ use \PDOStatement;
  * @version    $Revision$
  * @package    propel.runtime.adapter
  */
-class OracleAdapter extends AbstractAdapter
+class OracleAdapter extends PdoAdapter implements AdapterInterface
 {
     /**
      * This method is called after a connection was created to run necessary
@@ -53,28 +55,6 @@ class OracleAdapter extends AbstractAdapter
                 }
             }
         }
-    }
-
-    /**
-     * This method is used to ignore case.
-     *
-     * @param     string  $in  The string to transform to upper case.
-     * @return    string  The upper case string.
-     */
-    public function toUpperCase($in)
-    {
-        return "UPPER(" . $in . ")";
-    }
-
-    /**
-     * This method is used to ignore case.
-     *
-     * @param     string  $in  The string whose case to ignore.
-     * @return    string  The string in a case that can be ignored.
-     */
-    public function ignoreCase($in)
-    {
-        return "UPPER(" . $in . ")";
     }
 
     /**
@@ -153,13 +133,13 @@ class OracleAdapter extends AbstractAdapter
     }
 
     /**
-     * @param     PDO     $con
+     * @param     ConnectionInterface $con
      * @param     string  $name
      *
      * @throws    PropelException
      * @return    integer
      */
-    public function getId(PDO $con, $name = null)
+    public function getId(ConnectionInterface $con, $name = null)
     {
         if ($name === null) {
             throw new PropelException("Unable to fetch next sequence ID without sequence name.");

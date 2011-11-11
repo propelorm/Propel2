@@ -93,7 +93,7 @@ class QuickBuilder
             $dsn = 'sqlite::memory:';
         }
         if (null === $adapter) {
-            $adapter = new \Propel\Runtime\Adapter\SqliteAdapter();
+            $adapter = new \Propel\Runtime\Adapter\Pdo\SqliteAdapter();
         }
         $pdo = new ConnectionPdo($dsn, $user, $pass);
         $con = new ConnectionWrapper($pdo);

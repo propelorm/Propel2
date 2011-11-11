@@ -8,7 +8,12 @@
  * @license    MIT License
  */
 
-namespace Propel\Runtime\Adapter;
+namespace Propel\Runtime\Adapter\Pdo;
+
+use Propel\Runtime\Adapter\AdapterInterface;
+use Propel\Runtime\Connection\ConnectionInterface;
+
+use \PDO;
 
 /**
  * This is used in order to connect to a SQLite database.
@@ -17,7 +22,7 @@ namespace Propel\Runtime\Adapter;
  * @version    $Revision$
  * @package    propel.runtime.adapter
  */
-class SqliteAdapter extends AbstractAdapter
+class SqliteAdapter extends PdoAdapter implements AdapterInterface
 {
 
     /**
@@ -29,30 +34,8 @@ class SqliteAdapter extends AbstractAdapter
      *
      * @throws    PropelException If the specified charset doesn't match sqlite_libencoding()
      */
-    public function setCharset(PDO $con, $charset)
+    public function setCharset(ConnectionInterface $con, $charset)
     {
-    }
-
-    /**
-     * This method is used to ignore case.
-     *
-     * @param     string  $in  The string to transform to upper case.
-     * @return    string  The upper case string.
-     */
-    public function toUpperCase($in)
-    {
-        return 'UPPER(' . $in . ')';
-    }
-
-    /**
-     * This method is used to ignore case.
-     *
-     * @param     string  $in  The string whose case to ignore.
-     * @return    string  The string in a case that can be ignored.
-     */
-    public function ignoreCase($in)
-    {
-        return 'UPPER(' . $in . ')';
     }
 
     /**
