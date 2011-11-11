@@ -32,29 +32,6 @@ class PHP5ExtensionPeerBuilder extends PeerBuilder
     }
 
     /**
-     * Adds the include() statements for files that this class depends on or utilizes.
-     * @param      string &$script The script will be modified in this method.
-     */
-    protected function addIncludes(&$script)
-    {
-        switch($this->getTable()->treeMode()) {
-            case 'NestedSet':
-                $requiredClassFilePath = $this->getNestedSetPeerBuilder()->getClassFilePath();
-            break;
-
-            case 'MaterializedPath':
-            case 'AdjacencyList':
-            default:
-                $requiredClassFilePath = $this->getPeerBuilder()->getClassFilePath();
-            break;
-        }
-
-        $script .="
-require '".$requiredClassFilePath."';
-";
-    } // addIncludes()
-
-    /**
      * Adds class phpdoc comment and openning of class.
      * @param      string &$script The script will be modified in this method.
      */

@@ -48,9 +48,6 @@ abstract class OMBuilder extends DataModelBuilder
         $this->validateModel();
 
         $script = '';
-        if ($this->isAddIncludes()) {
-            $this->addIncludes($script);
-        }
         $this->addClassOpen($script);
         $this->addClassBody($script);
         $this->addClassClose($script);
@@ -481,15 +478,6 @@ abstract class OMBuilder extends DataModelBuilder
         }
 
         return $relCol;
-    }
-
-    /**
-     * Whether to add the include statements.
-     * This is based on the build property propel.addIncludes
-     */
-    protected function isAddIncludes()
-    {
-        return $this->getBuildProperty('addIncludes');
     }
 
     /**

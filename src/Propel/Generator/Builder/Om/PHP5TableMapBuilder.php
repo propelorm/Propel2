@@ -53,14 +53,6 @@ class PHP5TableMapBuilder extends OMBuilder
     }
 
     /**
-     * Adds the include() statements for files that this class depends on or utilizes.
-     * @param      string &$script The script will be modified in this method.
-     */
-    protected function addIncludes(&$script)
-    {
-    } // addIncludes()
-
-    /**
      * Adds class phpdoc comment and openning of class.
      * @param      string &$script The script will be modified in this method.
      */

@@ -102,19 +102,6 @@ class QueryInheritanceBuilder extends OMBuilder
     }
 
     /**
-     * Adds the include() statements for files that this class depends on or utilizes.
-     * @param      string &$script The script will be modified in this method.
-     */
-    protected function addIncludes(&$script)
-    {
-        $requiredClassFilePath = $this->getStubQueryBuilder()->getClassFilePath();
-
-        $script .="
-require '".$requiredClassFilePath."';
-";
-    } // addIncludes()
-
-    /**
      * Adds class phpdoc comment and openning of class.
      * @param      string &$script The script will be modified in this method.
      */
