@@ -1,4 +1,4 @@
-# $Id$
+# $Id: build.properties 1688 2010-04-19 20:23:27Z francois $
 #
 # This is a project-specific build.properties file.  The properties
 # in this file override anything set in Propel's top-level build.properties
@@ -10,16 +10,15 @@
 # Because this file is included before the top-level build.properties file,
 # you cannot refer to any properties set therein.
 
-propel.project = bookstore
-propel.database = mysql
-propel.database.url = mysql:dbname=test
-propel.mysql.tableType = InnoDB
+propel.project                  = bookstore_namespaced
+propel.database                 = ##DATABASE_VENDOR##
+propel.database.url             = ##DATABASE_VENDOR##:dbname=test
+propel.mysql.tableType          = InnoDB
 propel.disableIdentifierQuoting = true
-propel.schema.autoPrefix = false
 
 # For MySQL or Oracle, you also need to specify username & password
-#propel.database.user = [db username]
-#propel.database.password = [db password]
+propel.database.user            = ##DATABASE_USER##
+propel.database.password        = ##DATABASE_PASSWORD##
 
 # Note that if you do not wish to specify the database (e.g. if you
 # are using multiple databses) you can use the @DB@ token which
@@ -29,9 +28,4 @@ propel.schema.autoPrefix = false
 
 # propel.database.createUrl = (doesn't apply for SQLite, since db is auto-created)
 
-propel.targetPackage = bookstore
-
-# We need to test behavior hooks
-propel.behavior.test_all_hooks.class    = \Propel\Tests\Helpers\Bookstore\Behavior\Testallhooksbehavior
-propel.behavior.do_nothing.class        = \Propel\Tests\Helpers\Bookstore\Behavior\DonothingBehavior
-propel.behavior.add_class.class         = \Propel\Tests\Helpers\Bookstore\Behavior\AddClassBehavior
+propel.targetPackage            = bookstore

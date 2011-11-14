@@ -10,8 +10,10 @@
 # Because this file is included before the top-level build.properties file,
 # you cannot refer to any properties set therein.
 
-propel.project = bookstore
-propel.database = mysql
-propel.database.url = mysql:dbname=test
-propel.mysql.tableType = InnoDB
+propel.project                  = bookstore
+propel.database                 = ##DATABASE_VENDOR##
+propel.database.url             = ##DATABASE_VENDOR##:dbname=test
+propel.database.user            = ##DATABASE_USER##
+propel.database.password        = ##DATABASE_PASSWORD##
+propel.mysql.tableType          = InnoDB
 propel.disableIdentifierQuoting = true

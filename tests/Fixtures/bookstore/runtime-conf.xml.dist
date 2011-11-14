@@ -12,16 +12,13 @@
             <datasource id="bookstore">
 
                 <!-- the Propel adapter to use for this connection -->
-                <adapter>mysql</adapter>
+                <adapter>##DATABASE_VENDOR##</adapter>
                 <!-- Connection parameters. See PDO documentation for DSN format and available option constants. -->
                 <connection>
                     <classname>\Propel\Runtime\Connection\DebugPDO</classname>
-                    <dsn>mysql:dbname=test</dsn>
-                    <!--
-                    For MySQL and Oracle you must specify username + password separate from DSN:
-                    <user>bookstore</user>
-                    <password></password>
-                    -->
+                    <dsn>##DATABASE_VENDOR##:dbname=test</dsn>
+                    <user>##DATABASE_USER##</user>
+                    <password>##DATABASE_PASSWORD##</password>
                     <options>
                         <option id="ATTR_PERSISTENT">false</option>
                     </options>
@@ -48,15 +45,12 @@
             </datasource>
 
             <datasource id="bookstore-cms">
-                <adapter>mysql</adapter>
+                <adapter>##DATABASE_VENDOR##</adapter>
                 <connection>
                     <classname>\Propel\Runtime\Connection\DebugPDO</classname>
-                    <dsn>mysql:dbname=test</dsn>
-                    <!--
-                    For MySQL and Oracle you must specify username + password separate from DSN:
-                    <user>bookstore</user>
-                    <password></password>
-                    -->
+                    <dsn>##DATABASE_VENDOR##:dbname=test</dsn>
+                    <user>##DATABASE_USER##</user>
+                    <password>##DATABASE_PASSWORD##</password>
                     <options>
                         <option id="ATTR_PERSISTENT">false</option>
                     </options>
@@ -70,15 +64,12 @@
             </datasource>
 
             <datasource id="bookstore-behavior">
-                <adapter>mysql</adapter>
+                <adapter>##DATABASE_VENDOR##</adapter>
                 <connection>
                     <classname>\Propel\Runtime\Connection\DebugPDO</classname>
-                    <dsn>mysql:dbname=test</dsn>
-                    <!--
-                    For MySQL and Oracle you must specify username + password separate from DSN:
-                    <user>bookstore</user>
-                    <password></password>
-                    -->
+                    <dsn>##DATABASE_VENDOR##:dbname=test</dsn>
+                    <user>##DATABASE_USER##</user>
+                    <password>##DATABASE_PASSWORD##</password>
                     <options>
                         <option id="ATTR_PERSISTENT">false</option>
                     </options>

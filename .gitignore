@@ -3,5 +3,10 @@ tests/Fixtures/bookstore/build/
 tests/Fixtures/namespaced/build/
 tests/Fixtures/nestedset/build/
 tests/Fixtures/schemas/build/
-tests/Fixtures/treetest/build/
+tests/Fixtures/bookstore/runtime-conf.xml-e
+tests/Fixtures/bookstore/runtime-conf.xml
+tests/Fixtures/namespaced/runtime-conf.xml-e
+tests/Fixtures/namespaced/runtime-conf.xml
+tests/Fixtures/schemas/runtime-conf.xml-e
+tests/Fixtures/schemas/runtime-conf.xml
 vendor/
