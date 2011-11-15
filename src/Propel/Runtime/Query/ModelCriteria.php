@@ -1311,7 +1311,7 @@ class ModelCriteria extends Criteria
         $this->configureSelectColumns();
 
         $dbMap = Propel::getDatabaseMap($this->getDbName());
-        $db = Propel::getDB($this->getDbName());
+        $db = Propel::getAdapter($this->getDbName());
 
         $params = array();
         $sql = BasePeer::createSelectSql($this, $params);
@@ -1451,7 +1451,7 @@ class ModelCriteria extends Criteria
     protected function doCount($con)
     {
         $dbMap = Propel::getDatabaseMap($this->getDbName());
-        $db = Propel::getDB($this->getDbName());
+        $db = Propel::getAdapter($this->getDbName());
 
         // check that the columns of the main class are already added (if this is the primary ModelCriteria)
         if (!$this->hasSelectClause() && !$this->getPrimaryCriteria()) {

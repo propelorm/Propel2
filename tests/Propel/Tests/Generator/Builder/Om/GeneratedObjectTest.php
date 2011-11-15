@@ -143,7 +143,7 @@ class GeneratedObjectTest extends BookstoreTestBase
      */
     public function testDefaultExpresions()
     {
-        if (Propel::getDb(BookstoreEmployeePeer::DATABASE_NAME) instanceof DBSqlite) {
+        if (Propel::getAdapter(BookstoreEmployeePeer::DATABASE_NAME) instanceof DBSqlite) {
             $this->markTestSkipped("Cannot test default expressions with SQLite");
         }
         BookstoreEmployeeAccountPeer::doDeleteAll();
@@ -188,7 +188,7 @@ class GeneratedObjectTest extends BookstoreTestBase
      */
     public function testDefaultExpresions_ReloadOnInsert()
     {
-        if (Propel::getDb(BookstoreEmployeePeer::DATABASE_NAME) instanceof DBSqlite) {
+        if (Propel::getAdapter(BookstoreEmployeePeer::DATABASE_NAME) instanceof DBSqlite) {
             $this->markTestSkipped("Cannot test default date expressions with SQLite");
         }
 
@@ -228,7 +228,7 @@ class GeneratedObjectTest extends BookstoreTestBase
      */
     public function testDefaultExpresions_ReloadOnInsert_Override()
     {
-        if (Propel::getDb(BookstoreEmployeePeer::DATABASE_NAME) instanceof DBSqlite) {
+        if (Propel::getAdapter(BookstoreEmployeePeer::DATABASE_NAME) instanceof DBSqlite) {
             $this->markTestSkipped("Cannot test default date expressions with SQLite");
         }
 

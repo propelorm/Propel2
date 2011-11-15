@@ -355,7 +355,7 @@ class PropelPDOTest extends BookstoreTestBase
         $con->useDebug(true);
         $books = BookPeer::doSelect($c, $con);
         $latestExecutedQuery = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.TITLE LIKE 'Harry%s'";
-        if (!Propel::getDB(BookPeer::DATABASE_NAME)->useQuoteIdentifier()) {
+        if (!Propel::getAdapter(BookPeer::DATABASE_NAME)->useQuoteIdentifier()) {
             $latestExecutedQuery = str_replace('`', '', $latestExecutedQuery);
         }
         $this->assertEquals($latestExecutedQuery, $con->getLastExecutedQuery(), 'PropelPDO updates the last executed query when useLogging is true');

@@ -611,14 +611,14 @@ class Criteria implements \IteratorAggregate
 
     /**
      * Set the DatabaseMap name.  If <code>null</code> is supplied, uses value
-     * provided by <code>Propel::getDefaultDB()</code>.
+     * provided by <code>Propel::getDefaultDatasource()</code>.
      *
      * @param      string $dbName The Database (Map) name.
      * @return     void
      */
     public function setDbName($dbName = null)
     {
-        $this->dbName = ($dbName === null ? Propel::getDefaultDB() : $dbName);
+        $this->dbName = ($dbName === null ? Propel::getDefaultDatasource() : $dbName);
     }
 
     /**

@@ -114,7 +114,7 @@ class BasePeer
      */
     public static function doDelete(Criteria $criteria, ConnectionInterface $con)
     {
-        $db = Propel::getDB($criteria->getDbName());
+        $db = Propel::getAdapter($criteria->getDbName());
         $dbMap = Propel::getDatabaseMap($criteria->getDbName());
 
         //join are not supported with DELETE statement
@@ -185,7 +185,7 @@ class BasePeer
     {
 
         try {
-            $db = Propel::getDB($databaseName);
+            $db = Propel::getAdapter($databaseName);
             if ($db->useQuoteIdentifier()) {
                 $tableName = $db->quoteIdentifierTable($tableName);
             }
@@ -229,7 +229,7 @@ class BasePeer
         // the primary key
         $id = null;
 
-        $db = Propel::getDB($criteria->getDbName());
+        $db = Propel::getAdapter($criteria->getDbName());
 
         // Get the table name and method for determining the primary
         // key value.
@@ -266,7 +266,7 @@ class BasePeer
         }
 
         try {
-            $adapter = Propel::getDB($criteria->getDBName());
+            $adapter = Propel::getAdapter($criteria->getDBName());
 
             $qualifiedCols = $criteria->keys(); // we need table.column cols when populating values
             $columns = array(); // but just 'column' cols for the SQL
@@ -338,7 +338,7 @@ class BasePeer
      */
     public static function doUpdate(Criteria $selectCriteria, Criteria $updateValues, ConnectionInterface $con) {
 
-        $db = Propel::getDB($selectCriteria->getDbName());
+        $db = Propel::getAdapter($selectCriteria->getDbName());
         $dbMap = Propel::getDatabaseMap($selectCriteria->getDbName());
 
         // Get list of required tables, containing all columns
@@ -461,7 +461,7 @@ class BasePeer
     public static function doSelect(Criteria $criteria, ConnectionInterface $con = null)
     {
         $dbMap = Propel::getDatabaseMap($criteria->getDbName());
-        $db = Propel::getDB($criteria->getDbName());
+        $db = Propel::getAdapter($criteria->getDbName());
         $stmt = null;
 
         if ($con === null) {
@@ -503,7 +503,7 @@ class BasePeer
     public static function doCount(Criteria $criteria, ConnectionInterface $con = null)
     {
         $dbMap = Propel::getDatabaseMap($criteria->getDbName());
-        $db = Propel::getDB($criteria->getDbName());
+        $db = Propel::getAdapter($criteria->getDbName());
 
         if ($con === null) {
             $con = Propel::getConnection($criteria->getDbName(), Propel::CONNECTION_READ);
@@ -648,7 +648,7 @@ class BasePeer
      */
     public static function createSelectSql(Criteria $criteria, &$params)
     {
-        $db = Propel::getDB($criteria->getDbName());
+        $db = Propel::getAdapter($criteria->getDbName());
         $dbMap = Propel::getDatabaseMap($criteria->getDbName());
 
         $fromClause = array();
@@ -669,7 +669,7 @@ class BasePeer
         // joins of a specified type: the LEFT side will be added to the fromClause and the RIGHT to the joinClause
         foreach ($criteria->getJoins() as $join) {
 
-            $join->setDB($db);
+            $join->setAdapter($db);
 
             // add 'em to the queues..
             if (!$fromClause) {
@@ -703,7 +703,7 @@ class BasePeer
                     }
             }
 
-            $criterion->setDB($db);
+            $criterion->setAdapter($db);
 
             $sb = '';
             $criterion->appendPsTo($sb, $params);
@@ -875,6 +875,7 @@ class BasePeer
         try {
             $v = isset(self::$validatorMap[$classname]) ? self::$validatorMap[$classname] : null;
             if ($v === null) {
+                // FIXME: use namespace autoloading instead
                 $cls = Propel::importClass($classname);
                 $v = new $cls();
                 self::$validatorMap[$classname] = $v;

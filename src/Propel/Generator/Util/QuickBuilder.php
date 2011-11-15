@@ -101,10 +101,7 @@ class QuickBuilder
         $this->buildSQL($con);
         $this->buildClasses();
         $name = $this->getDatabase()->getName();
-        if (!Propel::isInit()) {
-            Propel::setConfiguration(array('datasources' => array('default' => $name)));
-        }
-        Propel::setDB($name, $adapter);
+        Propel::setAdapter($name, $adapter);
         Propel::setConnection($name, $con, Propel::CONNECTION_READ);
         Propel::setConnection($name, $con, Propel::CONNECTION_WRITE);
 

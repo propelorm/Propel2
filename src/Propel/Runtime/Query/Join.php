@@ -439,23 +439,25 @@ class Join
     }
 
     /**
-     * Get the value of db.
+     * Get the adapter.
+     *
      * The AdapterInterface which might be used to get db specific
      * variations of sql.
      * @return     AdapterInterface value of db.
      */
-    public function getDB()
+    public function getAdapter()
     {
         return $this->db;
     }
 
     /**
-     * Set the value of db.
+     * Set the adapter.
+     *
      * The AdapterInterface might be used to get db specific variations of sql.
      * @param      AdapterInterface $db Value to assign to db.
      * @return     void
      */
-    public function setDB(AdapterInterface $db)
+    public function setAdapter(AdapterInterface $db)
     {
         $this->db = $db;
     }
@@ -530,8 +532,8 @@ class Join
 
         $rightTableName = $this->getRightTableWithAlias();
 
-        if (null !== $this->db && $this->db->useQuoteIdentifier()) {
-            $rightTableName = $this->db->quoteIdentifierTable($rightTableName);
+        if (null !== $this->getAdapter() && $this->getAdapter()->useQuoteIdentifier()) {
+            $rightTableName = $this->getAdapter()->quoteIdentifierTable($rightTableName);
         }
 
         return sprintf('%s %s ON %s',

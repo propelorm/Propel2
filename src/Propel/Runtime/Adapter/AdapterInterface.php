@@ -270,7 +270,7 @@ interface AdapterInterface
      * values that should be substituted.
      *
      * <code>
-     * $db = Propel::getDB($criteria->getDbName());
+     * $db = Propel::getAdapter($criteria->getDbName());
      * $sql = BasePeer::createSelectSql($criteria, $params);
      * $stmt = $con->prepare($sql);
      * $params = array();

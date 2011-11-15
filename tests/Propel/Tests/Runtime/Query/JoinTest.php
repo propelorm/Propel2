@@ -38,13 +38,13 @@ class JoinTest extends BaseTestCase
         Propel::init(dirname(__FILE__) . '/../../../../Fixtures/bookstore/build/conf/bookstore-conf.php');
         parent::setUp();
 
-        $this->savedAdapter = Propel::getDB(null);
-        Propel::setDB(null, new SqliteAdapter());
+        $this->savedAdapter = Propel::getAdapter(null);
+        Propel::setAdapter(null, new SqliteAdapter());
     }
 
     protected function tearDown()
     {
-        Propel::setDB(null, $this->savedAdapter);
+        Propel::setAdapter(null, $this->savedAdapter);
         parent::tearDown();
     }
 

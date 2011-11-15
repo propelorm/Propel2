@@ -51,13 +51,13 @@ class CriteriaTest extends BookstoreTestBase
     {
         parent::setUp();
         $this->c = new Criteria();
-        $this->savedAdapter = Propel::getDB(null);
-        Propel::setDB(null, new SqliteAdapter());
+        $this->savedAdapter = Propel::getAdapter(null);
+        Propel::setAdapter(null, new SqliteAdapter());
     }
 
     protected function tearDown()
     {
-        Propel::setDB(null, $this->savedAdapter);
+        Propel::setAdapter(null, $this->savedAdapter);
         parent::tearDown();
     }
 
@@ -316,14 +316,14 @@ class CriteriaTest extends BookstoreTestBase
      */
     public function testCriterionIgnoreCase()
     {
-        $originalDB = Propel::getDB();
+        $originalDB = Propel::getAdapter();
         $adapters = array(new MysqlAdapter(), new PgsqlAdapter());
         $expectedIgnore = array("UPPER(TABLE.COLUMN) LIKE UPPER(:p1)", "TABLE.COLUMN ILIKE :p1");
 
         $i =0;
         foreach ($adapters as $adapter) {
 
-            Propel::setDB(null, $adapter);
+            Propel::setAdapter(null, $adapter);
             $myCriteria = new Criteria();
 
             $myCriterion = $myCriteria->getNewCriterion(
@@ -344,13 +344,13 @@ class CriteriaTest extends BookstoreTestBase
             $this->assertEquals($expectedIgnore[$i], $sb);
             $i++;
         }
-        Propel::setDB(null, $originalDB);
+        Propel::setAdapter(null, $originalDB);
     }
 
     public function testOrderByIgnoreCase()
     {
-        $originalDB = Propel::getDB();
-        Propel::setDB(null, new MysqlAdapter());
+        $originalDB = Propel::getAdapter();
+        Propel::setAdapter(null, new MysqlAdapter());
 
         $criteria = new Criteria();
         $criteria->setIgnoreCase(true);
@@ -361,7 +361,7 @@ class CriteriaTest extends BookstoreTestBase
         $expectedSQL = 'SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID, UPPER(book.TITLE) FROM `book` ORDER BY UPPER(book.TITLE) ASC';
         $this->assertEquals($expectedSQL, $sql);
 
-        Propel::setDB(null, $originalDB);
+        Propel::setAdapter(null, $originalDB);
     }
 
     /**

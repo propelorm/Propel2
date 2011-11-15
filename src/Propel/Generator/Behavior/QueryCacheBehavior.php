@@ -178,7 +178,7 @@ protected function doSelect(\$con)
     \$this->configureSelectColumns();
 
     \$dbMap = Propel::getDatabaseMap(" . $this->peerClassname ."::DATABASE_NAME);
-    \$db = Propel::getDB(" . $this->peerClassname ."::DATABASE_NAME);
+    \$db = Propel::getAdapter(" . $this->peerClassname ."::DATABASE_NAME);
 
     \$key = \$this->getQueryKey();
     if (\$key && \$this->cacheContains(\$key)) {
@@ -212,7 +212,7 @@ protected function doSelect(\$con)
 protected function doCount(\$con)
 {
     \$dbMap = Propel::getDatabaseMap(\$this->getDbName());
-    \$db = Propel::getDB(\$this->getDbName());
+    \$db = Propel::getAdapter(\$this->getDbName());
 
     \$key = \$this->getQueryKey();
     if (\$key && \$this->cacheContains(\$key)) {
