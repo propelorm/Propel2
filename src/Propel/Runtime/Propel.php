@@ -171,11 +171,25 @@ class Propel
         // set default datasource
         $defaultDatasource = isset($c['datasources']['default']) ? $c['datasources']['default'] : self::DEFAULT_NAME;
         Configuration::getInstance()->setDefaultDatasource($defaultDatasource);
-        // set adapters
         if (isset($c['datasources'])) {
             foreach ($c['datasources'] as $name => $params) {
-                if (is_array($params) && isset($params['adapter'])) {
+                if (!is_array($params)) {
+                    continue;
+                }
+                // set adapters
+                if (isset($params['adapter'])) {
                     Configuration::getInstance()->setAdapterClass($name, $params['adapter']);
+                }
+                // set connection settings
+                if (isset($params['connection'])) {
+                    $connectionConfiguration = array();
+                    $conParams = $params['connection'];
+                    if (isset($conParams['slaves'])) {
+                        $connectionConfiguration['read'] = $conParams['slaves'];
+                        unset($conParams['slaves']);
+                    }
+                    $connectionConfiguration['write'] = $conParams;
+                    Configuration::getInstance()->setConnectionConfiguration($name, $connectionConfiguration);
                 }
             }
         }
@@ -367,7 +381,7 @@ class Propel
      */
     public static function setForceMasterConnection($bool)
     {
-        self::$isForceMasterConnection = (bool) $bool;
+        Configuration::getInstance()->setForceMasterConnection($bool);
     }
 
     /**
@@ -377,7 +391,7 @@ class Propel
      */
     public static function isForceMasterConnection()
     {
-        return self::$isForceMasterConnection;
+        return Configuration::getInstance()->isForceMasterConnection();
     }
 
     /**
@@ -424,7 +438,7 @@ class Propel
         if (null === $name) {
             $name = self::getDefaultDatasource();
         }
-        if ($mode != Propel::CONNECTION_READ || self::$isForceMasterConnection) {
+        if ($mode != Propel::CONNECTION_READ || self::isForceMasterConnection()) {
             return self::getMasterConnection($name);
         } else {
             return self::getSlaveConnection($name);

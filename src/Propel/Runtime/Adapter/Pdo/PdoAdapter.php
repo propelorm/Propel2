@@ -11,6 +11,7 @@
 namespace Propel\Runtime\Adapter\Pdo;
 
 use Propel\Runtime\Adapter\AdapterInterface;
+use Propel\Runtime\Adapter\AdapterException;
 use Propel\Runtime\Connection\ConnectionPdo;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\StatementInterface;
@@ -21,6 +22,7 @@ use Propel\Runtime\Util\PropelDateTime;
 use Propel\Runtime\Util\PropelColumnTypes;
 
 use \PDO;
+use \PDOException;
 
 /**
  * Base for PDO database adapters.
@@ -62,8 +64,12 @@ abstract class PdoAdapter
             }
         }
 
-        $con = new ConnectionPdo($dsn, $user, $password, $driver_options);
-        $this->initConnection($con, isset($conparams['settings']) && is_array($conparams['settings']) ? $conparams['settings'] : array());
+        try {
+            $con = new ConnectionPdo($dsn, $user, $password, $driver_options);
+            $this->initConnection($con, isset($conparams['settings']) && is_array($conparams['settings']) ? $conparams['settings'] : array());
+        } catch (PDOException $e) {
+            throw new AdapterException("Unable to open PDO connection", $e);
+        }
 
         return $con;
     }
