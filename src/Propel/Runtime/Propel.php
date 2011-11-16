@@ -10,11 +10,12 @@
 
 namespace Propel\Runtime;
 
-use Propel\Runtime\Adapter\AdapterFactory;
 use Propel\Runtime\Adapter\AdapterInterface;
-use Propel\Runtime\Config\Configuration;
+use Propel\Runtime\Config\Configuration as Registry;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\PropelException;
+use Propel\Runtime\Configuration;
+use Propel\Runtime\Map\DatabaseMap;
 
 use \PDO;
 use \PDOException;
@@ -114,16 +115,6 @@ class Propel
     const CONNECTION_WRITE = 'write';
 
     /**
-     * @var        array The global cache of database maps
-     */
-    private static $dbMaps = array();
-
-    /**
-     * @var        array The cache of DB adapter keys
-     */
-    private static $adapterMap = array();
-
-    /**
      * @var        array Cache of established connections (to eliminate overhead).
      */
     private static $connectionMap = array();
@@ -137,11 +128,6 @@ class Propel
      * @var        Log optional logger
      */
     private static $logger = null;
-
-    /**
-     * @var        string The name of the database mapper class
-     */
-    private static $databaseMapClass = '\Propel\Runtime\Map\DatabaseMap';
 
     /**
      * @var        bool Whether the object instance pooling is enabled
@@ -180,8 +166,20 @@ class Propel
         self::$logger = null;
         self::closeConnections();
         if (is_array($c)) {
-            $c = new Configuration($c);
+            $c = new Registry($c);
         }
+        // set default datasource
+        $defaultDatasource = isset($c['datasources']['default']) ? $c['datasources']['default'] : self::DEFAULT_NAME;
+        Configuration::getInstance()->setDefaultDatasource($defaultDatasource);
+        // set adapters
+        if (isset($c['datasources'])) {
+            foreach ($c['datasources'] as $name => $params) {
+                if (is_array($params) && isset($params['adapter'])) {
+                    Configuration::getInstance()->setAdapterClass($name, $params['adapter']);
+                }
+            }
+        }
+
         self::$configuration = $c;
     }
 
@@ -195,7 +193,7 @@ class Propel
      *                 - Configuration::TYPE_OBJECT: return the configuration as a PropelConfiguration instance
      * @return     mixed The Configuration (array or Configuration)
      */
-    public static function getConfiguration($type = Configuration::TYPE_ARRAY)
+    public static function getConfiguration($type = Registry::TYPE_ARRAY)
     {
         return self::$configuration->getParameters($type);
     }
@@ -309,7 +307,7 @@ class Propel
      */
     public static function setDefaultDatasource($name = self::DEFAULT_NAME)
     {
-        self::$configuration['datasources']['default'] = $name;
+        Configuration::getInstance()->setDefaultDatasource($name);
     }
 
     /**
@@ -319,11 +317,7 @@ class Propel
      */
     public static function getDefaultDatasource()
     {
-        if (!isset(self::$configuration['datasources']['default'])) {
-            return self::DEFAULT_NAME;
-        }
-
-        return self::$configuration['datasources']['default'];
+        return Configuration::getInstance()->getDefaultDatasource();
     }
 
     /**
@@ -340,19 +334,7 @@ class Propel
      */
     public static function getDatabaseMap($name = null)
     {
-        if ($name === null) {
-            $name = self::getDefaultDatasource();
-            if ($name === null) {
-                throw new PropelException("DatabaseMap name is null!");
-            }
-        }
-
-        if (!isset(self::$dbMaps[$name])) {
-            $clazz = self::$databaseMapClass;
-            self::$dbMaps[$name] = new $clazz($name);
-        }
-
-        return self::$dbMaps[$name];
+        return Configuration::getInstance()->getDatabaseMap($name);
     }
 
     /**
@@ -363,10 +345,7 @@ class Propel
      */
     public static function setDatabaseMap($name, DatabaseMap $map)
     {
-        if ($name === null) {
-            $name = self::getDefaultDatasource();
-        }
-        self::$dbMaps[$name] = $map;
+        Configuraton::getInstance()->setDatabaseMap($name, $map);
     }
 
     /**
@@ -378,7 +357,7 @@ class Propel
      */
     public static function setDatabaseMapClass($name)
     {
-        self::$databaseMapClass = $name;
+        Configuration::getInstance()->setDatabaseMapClass($name);
     }
 
     /**
@@ -604,20 +583,7 @@ class Propel
      */
     public static function getAdapter($name = null)
     {
-        if ($name === null) {
-            $name = self::getDefaultDatasource();
-        }
-
-        if (!isset(self::$adapterMap[$name])) {
-            if (!isset(self::$configuration['datasources'][$name]['adapter'])) {
-                throw new PropelException("Unable to find adapter for datasource [" . $name . "].");
-            }
-            $db = AdapterFactory::create(self::$configuration['datasources'][$name]['adapter']);
-            // register the adapter for this name
-            self::$adapterMap[$name] = $db;
-        }
-
-        return self::$adapterMap[$name];
+        return Configuration::getInstance()->getAdapter($name);
     }
 
     /**
@@ -628,10 +594,7 @@ class Propel
      */
     public static function setAdapter($name, AdapterInterface $adapter)
     {
-        if ($name === null) {
-            $name = self::getDefaultDatasource();
-        }
-        self::$adapterMap[$name] = $adapter;
+        Configuration::getInstance()->setAdapter($name, $adapter);
     }
 
     /**

@@ -51,13 +51,13 @@ class CriteriaTest extends BookstoreTestBase
     {
         parent::setUp();
         $this->c = new Criteria();
-        $this->savedAdapter = Propel::getAdapter(null);
-        Propel::setAdapter(null, new SqliteAdapter());
+        $this->savedAdapter = Propel::getAdapter(Propel::getDefaultDatasource());
+        Propel::setAdapter(Propel::getDefaultDatasource(), new SqliteAdapter());
     }
 
     protected function tearDown()
     {
-        Propel::setAdapter(null, $this->savedAdapter);
+        Propel::setAdapter(Propel::getDefaultDatasource(), $this->savedAdapter);
         parent::tearDown();
     }
 
@@ -323,7 +323,7 @@ class CriteriaTest extends BookstoreTestBase
         $i =0;
         foreach ($adapters as $adapter) {
 
-            Propel::setAdapter(null, $adapter);
+            Propel::setAdapter(Propel::getDefaultDatasource(), $adapter);
             $myCriteria = new Criteria();
 
             $myCriterion = $myCriteria->getNewCriterion(
@@ -344,13 +344,13 @@ class CriteriaTest extends BookstoreTestBase
             $this->assertEquals($expectedIgnore[$i], $sb);
             $i++;
         }
-        Propel::setAdapter(null, $originalDB);
+        Propel::setAdapter(Propel::getDefaultDatasource(), $originalDB);
     }
 
     public function testOrderByIgnoreCase()
     {
         $originalDB = Propel::getAdapter();
-        Propel::setAdapter(null, new MysqlAdapter());
+        Propel::setAdapter(Propel::getDefaultDatasource(), new MysqlAdapter());
 
         $criteria = new Criteria();
         $criteria->setIgnoreCase(true);
@@ -361,7 +361,7 @@ class CriteriaTest extends BookstoreTestBase
         $expectedSQL = 'SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID, UPPER(book.TITLE) FROM `book` ORDER BY UPPER(book.TITLE) ASC';
         $this->assertEquals($expectedSQL, $sql);
 
-        Propel::setAdapter(null, $originalDB);
+        Propel::setAdapter(Propel::getDefaultDatasource(), $originalDB);
     }
 
     /**
