@@ -20,6 +20,7 @@ use Propel\Runtime\Map\DatabaseMap;
 use Propel\Runtime\Query\Criteria;
 use Propel\Runtime\Util\PropelDateTime;
 use Propel\Runtime\Util\PropelColumnTypes;
+use Propel\Runtime\Exception\PropelException;
 
 use \PDO;
 use \PDOException;
@@ -41,7 +42,7 @@ abstract class PdoAdapter
         $conparams = $this->prepareParams($conparams);
 
         if (!isset($conparams['dsn'])) {
-            throw new PropelException(sprintf('No dsn specified in your connection parameters for datasource "%s"', $name));
+            throw new PropelException('No dsn specified in your connection parameters');
         }
 
         $dsn      = $conparams['dsn'];

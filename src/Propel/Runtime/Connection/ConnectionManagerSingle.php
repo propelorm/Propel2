@@ -45,7 +45,7 @@ class ConnectionManagerSingle implements ConnectionManagerInterface
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface
      */
-    public function getWriteConnection(AdapterInterface $adapter)
+    public function getWriteConnection(AdapterInterface $adapter = null)
     {
         if (null === $this->connection) {
             $this->connection = ConnectionFactory::create($this->configuration, $adapter);
@@ -59,7 +59,7 @@ class ConnectionManagerSingle implements ConnectionManagerInterface
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface
      */
-    public function getReadConnection(AdapterInterface $adapter)
+    public function getReadConnection(AdapterInterface $adapter = null)
     {
         return $this->getWriteConnection($adapter);
     }
