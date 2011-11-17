@@ -152,7 +152,7 @@ abstract class ".$this->getClassname()." {
     public static function isCodeBase(\$con = null)
     {
         if (\$con === null)
-            \$con = Propel::getConnection($peerClassname::DATABASE_NAME);
+            \$con = Configuration::getInstance()->getReadConnection($peerClassname::DATABASE_NAME);
 
         return (get_class(\$con) == 'ODBCConnection' &&
                 get_class(\$con->getAdapter()) == 'CodeBaseAdapter');
@@ -184,7 +184,7 @@ abstract class ".$this->getClassname()." {
     public static function createNewRootNode(\$obj, ConnectionInterface \$con = null)
     {
         if (\$con === null)
-            \$con = Propel::getConnection($peerClassname::DATABASE_NAME, Propel::CONNECTION_WRITE);
+            \$con = Configuration::getInstance()->getWriteConnection($peerClassname::DATABASE_NAME);
 
         \$con->beginTransaction();
 
@@ -229,7 +229,7 @@ abstract class ".$this->getClassname()." {
     public static function insertNewRootNode(\$obj, ConnectionInterface \$con = null)
     {
         if (\$con === null)
-            \$con = Propel::getConnection($peerClassname::DATABASE_NAME, Propel::CONNECTION_WRITE);
+            \$con = Configuration::getInstance()->getWriteConnection($peerClassname::DATABASE_NAME);
 
         \$con->beginTransaction();
         try {
@@ -403,7 +403,7 @@ abstract class ".$this->getClassname()." {
             throw new PropelException('Cannot move a node subtree within itself.');
 
         if (\$con === null)
-            \$con = Propel::getConnection($peerClassname::DATABASE_NAME, Propel::CONNECTION_WRITE);
+            \$con = Configuration::getInstance()->getWriteConnection($peerClassname::DATABASE_NAME);
 
         /**
          * Example:
@@ -473,7 +473,7 @@ abstract class ".$this->getClassname()." {
     public static function deleteNodeSubTree(\$nodePath, ConnectionInterface \$con = null)
     {
         if (\$con === null)
-            \$con = Propel::getConnection($peerClassname::DATABASE_NAME, Propel::CONNECTION_WRITE);
+            \$con = Configuration::getInstance()->getWriteConnection($peerClassname::DATABASE_NAME);
 
         /**
          * DELETE FROM table

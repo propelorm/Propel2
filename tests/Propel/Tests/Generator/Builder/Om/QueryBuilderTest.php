@@ -32,6 +32,7 @@ use Propel\Tests\Bookstore\ReaderFavoriteQuery;
 use Propel\Tests\Bookstore\PublisherPeer;
 
 use Propel\Runtime\Propel;
+use Propel\Runtime\Configuration;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Query\Criteria;
 use Propel\Runtime\Query\ModelCriteria;
@@ -1004,7 +1005,7 @@ class QueryBuilderTest extends BookstoreTestBase
 
     public function testUseFkQueryNoAliasThenWith()
     {
-        $con = Propel::getConnection();
+        $con = Configuration::getInstance()->getReadConnection(BookPeer::DATABASE_NAME);
         $books = BookQuery::create()
             ->useAuthorQuery()
                 ->filterByFirstName('Leo')

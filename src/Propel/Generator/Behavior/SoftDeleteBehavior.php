@@ -374,7 +374,7 @@ public static function isSoftDeleteEnabled()
 public static function doSoftDelete(\$values, ConnectionInterface \$con = null)
 {
     if (\$con === null) {
-        \$con = Propel::getConnection({$this->getTable()->getPhpName()}Peer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+        \$con = Configuration::getInstance()->getWriteConnection({$this->getTable()->getPhpName()}Peer::DATABASE_NAME);
     }
     if (\$values instanceof Criteria) {
         // rename for clarity
@@ -447,7 +447,7 @@ public static function doDelete2(\$values, ConnectionInterface \$con = null)
 public static function doSoftDeleteAll(ConnectionInterface \$con = null)
 {
     if (\$con === null) {
-        \$con = Propel::getConnection({$this->builder->getPeerClassname()}::DATABASE_NAME, Propel::CONNECTION_WRITE);
+        \$con = Configuration::getInstance()->getWriteConnection({$this->builder->getPeerClassname()}::DATABASE_NAME);
     }
     \$selectCriteria = new Criteria();
     \$selectCriteria->add({$this->builder->getColumnConstant($this->getColumnForParameter('deleted_column'))}, null, Criteria::ISNULL);

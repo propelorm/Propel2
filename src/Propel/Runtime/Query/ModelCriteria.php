@@ -1167,7 +1167,7 @@ class ModelCriteria extends Criteria
     public function find($con = null)
     {
         if ($con === null) {
-            $con = Propel::getConnection($this->getDbName(), Propel::CONNECTION_READ);
+            $con = Configuration::getInstance()->getReadConnection($this->getDbName());
         }
         $this->basePreSelect($con);
         $criteria = $this->isKeepQuery() ? clone $this : $this;
@@ -1188,7 +1188,7 @@ class ModelCriteria extends Criteria
     public function findOne($con = null)
     {
         if ($con === null) {
-            $con = Propel::getConnection($this->getDbName(), Propel::CONNECTION_READ);
+            $con = Configuration::getInstance()->getReadConnection($this->getDbName());
         }
         $this->basePreSelect($con);
         $criteria = $this->isKeepQuery() ? clone $this : $this;
@@ -1238,7 +1238,7 @@ class ModelCriteria extends Criteria
     public function findPk($key, $con = null)
     {
         if ($con === null) {
-            $con = Propel::getConnection($this->getDbName(), Propel::CONNECTION_READ);
+            $con = Configuration::getInstance()->getReadConnection($this->getDbName());
         }
         // As the query uses a PK condition, no limit(1) is necessary.
         $this->basePreSelect($con);
@@ -1277,7 +1277,7 @@ class ModelCriteria extends Criteria
     public function findPks($keys, $con = null)
     {
         if ($con === null) {
-            $con = Propel::getConnection($this->getDbName(), Propel::CONNECTION_READ);
+            $con = Configuration::getInstance()->getReadConnection($this->getDbName());
         }
         // As the query uses a PK condition, no limit(1) is necessary.
         $this->basePreSelect($con);
@@ -1426,7 +1426,7 @@ class ModelCriteria extends Criteria
     public function count($con = null)
     {
         if ($con === null) {
-            $con = Propel::getConnection($this->getDbName(), Propel::CONNECTION_READ);
+            $con = Configuration::getInstance()->getReadConnection($this->getDbName());
         }
         $this->basePreSelect($con);
         $criteria = $this->isKeepQuery() ? clone $this : $this;
@@ -1559,7 +1559,7 @@ class ModelCriteria extends Criteria
         }
 
         if ($con === null) {
-            $con = Propel::getConnection($this->getDbName(), Propel::CONNECTION_WRITE);
+            $con = Configuration::getInstance()->getWriteConnection($this->getDbName());
         }
 
         $criteria = $this->isKeepQuery() ? clone $this : $this;
@@ -1606,7 +1606,7 @@ class ModelCriteria extends Criteria
     public function deleteAll($con = null)
     {
         if ($con === null) {
-            $con = Propel::getConnection($this->getDbName(), Propel::CONNECTION_WRITE);
+            $con = Configuration::getInstance()->getWriteConnection($this->getDbName());
         }
         $con->beginTransaction();
         try {
@@ -1693,7 +1693,7 @@ class ModelCriteria extends Criteria
         }
 
         if ($con === null) {
-            $con = Propel::getConnection($this->getDbName(), Propel::CONNECTION_WRITE);
+            $con = Configuration::getInstance()->getWriteConnection($this->getDbName());
         }
 
         $criteria = $this->isKeepQuery() ? clone $this : $this;

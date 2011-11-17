@@ -169,7 +169,7 @@ class BasePeer
      * <code>
      * public static function doDeleteAll($con = null)
      * {
-     *   if ($con === null) $con = Propel::getConnection(self::DATABASE_NAME);
+     *   if ($con === null) $con = Configuration::getInstance()->getWriteConnection(self::DATABASE_NAME);
      *   BasePeer::doDeleteAll(self::TABLE_NAME, $con, self::DATABASE_NAME);
      * }
      * </code>
@@ -466,7 +466,7 @@ class BasePeer
         $stmt = null;
 
         if ($con === null) {
-            $con = Propel::getConnection($criteria->getDbName(), Propel::CONNECTION_READ);
+            $con = Configuration::getInstance()->getReadConnection($criteria->getDbName());
         }
 
         try {
@@ -507,7 +507,7 @@ class BasePeer
         $db = Configuration::getInstance()->getAdapter($criteria->getDbName());
 
         if ($con === null) {
-            $con = Propel::getConnection($criteria->getDbName(), Propel::CONNECTION_READ);
+            $con = Configuration::getInstance()->getReadConnection($criteria->getDbName());
         }
 
         $stmt = null;

@@ -15,6 +15,7 @@ use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\BookPeer;
 
 use Propel\Runtime\Propel;
+use Propel\Runtime\Configuration;
 use Propel\Runtime\Collection\Collection;
 
 /**
@@ -344,7 +345,7 @@ class CollectionTest extends BookstoreTestBase
         $col->setModel('\Propel\Tests\Bookstore\Book');
         $con = Propel::getConnection(BookPeer::DATABASE_NAME);
         $this->assertEquals($con, $col->getConnection(), 'getConnection() returns a connection for the collection model');
-        $con = Propel::getConnection(BookPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+        $con = Configuration::getInstance()->getWriteConnection(BookPeer::DATABASE_NAME);
         $this->assertEquals($con, $col->getConnection(Propel::CONNECTION_WRITE), 'getConnection() accepts a connection type parameter');
     }
 

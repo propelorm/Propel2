@@ -21,6 +21,7 @@ use Propel\Tests\Bookstore\Behavior\Table10;
 use Propel\Tests\Bookstore\Behavior\Table10Peer;
 
 use Propel\Runtime\Propel;
+use Propel\Runtime\Configuration;
 use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Query\Criteria;
@@ -323,7 +324,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
                |  \
                t6 t7
         */
-        $con = Propel::getConnection();
+        $con = Configuration::getInstance()->getReadConnection(Table9Peer::DATABASE_NAME);
         $count = $con->getQueryCount();
         $parent = $t5->getParent($con);
         $parent = $t5->getParent($con);
@@ -462,7 +463,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
     public function testGetChildrenCache()
     {
         list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
-        $con = Propel::getConnection();
+        $con = Configuration::getInstance()->getReadConnection(Table9Peer::DATABASE_NAME);
         $count = $con->getQueryCount();
         $children = $t3->getChildren(null, $con);
         $children = $t3->getChildren(null, $con);
@@ -522,7 +523,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
                |  \
                t6 t7
         */
-        $con = Propel::getConnection();
+        $con = Configuration::getInstance()->getReadConnection(Table9Peer::DATABASE_NAME);
         $count = $con->getQueryCount();
         $children = $t3->getChildren(null, $con);
         $nbChildren = $t3->countChildren(null, $con);

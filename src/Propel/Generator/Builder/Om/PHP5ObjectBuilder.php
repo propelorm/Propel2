@@ -226,6 +226,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
         $this->declareClassFromBuilder($this->getStubQueryBuilder());
         $this->declareClasses(
             '\Propel\Runtime\Propel',
+            '\Propel\Runtime\Configuration',
             '\Propel\Runtime\Exception\PropelException',
             '\PDO',
             '\Propel\Runtime\Connection\ConnectionInterface',
@@ -2497,7 +2498,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
         }
 
         if (\$con === null) {
-            \$con = Propel::getConnection(".$this->getPeerClassname()."::DATABASE_NAME, Propel::CONNECTION_WRITE);
+            \$con = Configuration::getInstance()->getWriteConnection(".$this->getPeerClassname()."::DATABASE_NAME);
         }
 
         \$con->beginTransaction();
@@ -2580,7 +2581,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
         }
 
         if (\$con === null) {
-            \$con = Propel::getConnection(".$this->getPeerClassname()."::DATABASE_NAME, Propel::CONNECTION_READ);
+            \$con = Configuration::getInstance()->getReadConnection(".$this->getPeerClassname()."::DATABASE_NAME);
         }
 
         // We don't need to alter the object instance pool; we're just modifying this instance
@@ -4642,7 +4643,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
         }
 
         if (\$con === null) {
-            \$con = Propel::getConnection(".$this->getPeerClassname()."::DATABASE_NAME, Propel::CONNECTION_WRITE);
+            \$con = Configuration::getInstance()->getWriteConnection(".$this->getPeerClassname()."::DATABASE_NAME);
         }
 
         \$con->beginTransaction();

@@ -74,7 +74,7 @@ class BasePeerTest extends BookstoreTestBase
 
     public function testDoCountDuplicateColumnName()
     {
-        $con = Propel::getConnection();
+        $con = Configuration::getInstance()->getReadConnection(BookPeer::DATABASE_NAME);
         $c = new Criteria();
         $c->addSelectColumn(BookPeer::ID);
         $c->addJoin(BookPeer::AUTHOR_ID, AuthorPeer::ID);
@@ -242,7 +242,7 @@ class BasePeerTest extends BookstoreTestBase
      */
     public function testDoDeleteNoCondition()
     {
-        $con = Propel::getConnection();
+        $con = Configuration::getInstance()->getWriteConnection(BookPeer::DATABASE_NAME);
         $c = new Criteria(BookPeer::DATABASE_NAME);
         BasePeer::doDelete($c, $con);
     }
@@ -252,7 +252,7 @@ class BasePeerTest extends BookstoreTestBase
      */
     public function testDoDeleteJoin()
     {
-        $con = Propel::getConnection();
+        $con = Configuration::getInstance()->getWriteConnection(BookPeer::DATABASE_NAME);
         $c = new Criteria(BookPeer::DATABASE_NAME);
         $c->add(BookPeer::TITLE, 'War And Peace');
         $c->addJoin(BookPeer::AUTHOR_ID, AuthorPeer::ID);
@@ -261,7 +261,7 @@ class BasePeerTest extends BookstoreTestBase
 
     public function testDoDeleteSimpleCondition()
     {
-        $con = Propel::getConnection();
+        $con = Configuration::getInstance()->getWriteConnection(BookPeer::DATABASE_NAME);
         $c = new Criteria(BookPeer::DATABASE_NAME);
         $c->add(BookPeer::TITLE, 'War And Peace');
         BasePeer::doDelete($c, $con);
@@ -271,7 +271,7 @@ class BasePeerTest extends BookstoreTestBase
 
     public function testDoDeleteSeveralConditions()
     {
-        $con = Propel::getConnection();
+        $con = Configuration::getInstance()->getWriteConnection(BookPeer::DATABASE_NAME);
         $c = new Criteria(BookPeer::DATABASE_NAME);
         $c->add(BookPeer::TITLE, 'War And Peace');
         $c->add(BookPeer::ID, 12);
@@ -282,7 +282,7 @@ class BasePeerTest extends BookstoreTestBase
 
     public function testDoDeleteTableAlias()
     {
-        $con = Propel::getConnection();
+        $con = Configuration::getInstance()->getWriteConnection(BookPeer::DATABASE_NAME);
         $c = new Criteria(BookPeer::DATABASE_NAME);
         $c->addAlias('b', BookPeer::TABLE_NAME);
         $c->add('b.TITLE', 'War And Peace');
@@ -297,7 +297,7 @@ class BasePeerTest extends BookstoreTestBase
      */
     public function testDoDeleteSeveralTables()
     {
-        $con = Propel::getConnection();
+        $con = Configuration::getInstance()->getWriteConnection(BookPeer::DATABASE_NAME);
         $count = $con->getQueryCount();
         $c = new Criteria(BookPeer::DATABASE_NAME);
         $c->add(BookPeer::TITLE, 'War And Peace');

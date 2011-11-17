@@ -38,6 +38,7 @@ use Propel\Tests\Bookstore\ReaderFavorite;
 use Propel\Tests\Bookstore\ReaderFavoritePeer;
 
 use Propel\Runtime\Propel;
+use Propel\Runtime\Configuration;
 use Propel\Runtime\Query\Criteria;
 use Propel\Runtime\Util\BasePeer;
 
@@ -176,11 +177,11 @@ class GeneratedPeerDoSelectTest extends BookstoreEmptyTestBase
 
     public function testDoSelectJoinOneToOne()
     {
-        $con = Propel::getConnection();
+        $con = Configuration::getInstance()->getReadConnection(BookstoreEmployeeAccountPeer::DATABASE_NAME);
         $count = $con->getQueryCount();
         Propel::disableInstancePooling();
         $c = new Criteria();
-        $accs = BookstoreEmployeeAccountPeer::doSelectJoinBookstoreEmployee($c);
+        $accs = BookstoreEmployeeAccountPeer::doSelectJoinBookstoreEmployee($c, $con);
         Propel::enableInstancePooling();
         $this->assertEquals(1, $con->getQueryCount() - $count, 'doSelectJoin() makes only one query in a one-to-one relationship');
     }
