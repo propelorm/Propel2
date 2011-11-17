@@ -34,6 +34,7 @@ use Propel\Tests\Bookstore\ReaderFavorite;
 use Propel\Tests\Bookstore\ReaderFavoritePeer;
 
 use Propel\Runtime\Propel;
+use Propel\Runtime\Configuration;
 use Propel\Runtime\Query\Criteria;
 
 /**
@@ -336,7 +337,7 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
      */
     public function testDoDeleteCompositePK()
     {
-        $con = Propel::getConnection(BookPeer::DATABASE_NAME);
+        $con = Configuration::getInstance()->getConnection(BookPeer::DATABASE_NAME);
 
         ReaderFavoritePeer::doDeleteAll();
         // Create books with IDs 1 to 3
@@ -535,7 +536,7 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
      */
     private function createBookWithId($id)
     {
-        $con = Propel::getConnection(BookPeer::DATABASE_NAME);
+        $con = Configuration::getInstance()->getConnection(BookPeer::DATABASE_NAME);
         $b = BookPeer::retrieveByPK($id);
         if (!$b) {
             $b = new Book();
@@ -554,7 +555,7 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
      */
     private function createReaderWithId($id)
     {
-        $con = Propel::getConnection(BookReaderPeer::DATABASE_NAME);
+        $con = Configuration::getInstance()->getConnection(BookReaderPeer::DATABASE_NAME);
         $r = BookReaderPeer::retrieveByPK($id);
         if (!$r) {
             $r = new BookReader();

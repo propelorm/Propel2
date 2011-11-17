@@ -354,7 +354,7 @@ class GeneratedObjectTest extends BookstoreTestBase
         $this->assertSame($pub1, $book->getPublisher());
 
         // now change values behind the scenes
-        $con = Propel::getConnection(BookstoreEmployeeAccountPeer::DATABASE_NAME);
+        $con = Configuration::getInstance()->getConnection(BookstoreEmployeeAccountPeer::DATABASE_NAME);
         $con->exec("UPDATE " . BookPeer::TABLE_NAME . " SET "
             . " publisher_id = " . $pub2->getId()
             . " WHERE id = " . $book->getId());
@@ -965,7 +965,7 @@ EOF;
 
     public function testPreSaveFalse()
     {
-        $con = Propel::getConnection(AuthorPeer::DATABASE_NAME);
+        $con = Configuration::getInstance()->getConnection(AuthorPeer::DATABASE_NAME);
         $author = new TestAuthorSaveFalse();
         $author->setFirstName("bogus");
         $author->setLastName("Lastname");
@@ -998,7 +998,7 @@ EOF;
 
     public function testPreDeleteFalse()
     {
-        $con = Propel::getConnection(AuthorPeer::DATABASE_NAME);
+        $con = Configuration::getInstance()->getConnection(AuthorPeer::DATABASE_NAME);
         $author = new TestAuthorDeleteFalse();
         $author->setFirstName("bogus");
         $author->setLastName("Lastname");

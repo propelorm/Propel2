@@ -333,7 +333,7 @@ class BasePeerTest extends BookstoreTestBase
         $c1->setComment('Foo');
         $c2 = new Criteria();
         $c2->add(BookPeer::TITLE, 'Updated Title');
-        $con = Propel::getConnection(BookPeer::DATABASE_NAME);
+        $con = Configuration::getInstance()->getConnection(BookPeer::DATABASE_NAME);
         BasePeer::doUpdate($c1, $c2, $con);
         $expected = 'UPDATE /* Foo */ `book` SET `TITLE`=\'Updated Title\'';
         $this->assertEquals($expected, $con->getLastExecutedQuery(), 'Criteria::setComment() adds a comment to update queries');
@@ -344,7 +344,7 @@ class BasePeerTest extends BookstoreTestBase
         $c = new Criteria();
         $c->setComment('Foo');
         $c->add(BookPeer::TITLE, 'War And Peace');
-        $con = Propel::getConnection(BookPeer::DATABASE_NAME);
+        $con = Configuration::getInstance()->getConnection(BookPeer::DATABASE_NAME);
         BasePeer::doDelete($c, $con);
         $expected = 'DELETE /* Foo */ FROM `book` WHERE book.TITLE=\'War And Peace\'';
         $this->assertEquals($expected, $con->getLastExecutedQuery(), 'Criteria::setComment() adds a comment to delete queries');

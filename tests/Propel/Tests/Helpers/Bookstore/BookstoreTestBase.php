@@ -11,6 +11,7 @@
 namespace Propel\Tests\Helpers\Bookstore;
 
 use Propel\Runtime\Propel;
+use Propel\Runtime\Configuration;
 
 use Propel\Tests\Bookstore\BookPeer;
 
@@ -41,7 +42,7 @@ abstract class BookstoreTestBase extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->con = Propel::getConnection(BookPeer::DATABASE_NAME);
+        $this->con = Configuration::getInstance()->getConnection(BookPeer::DATABASE_NAME);
         $this->con->beginTransaction();
     }
 

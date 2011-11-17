@@ -11,6 +11,7 @@
 namespace Propel\Runtime\Collection;
 
 use Propel\Runtime\Propel;
+use Propel\Runtime\Configuration;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Formatter\AbstractFormatter;
 use Propel\Runtime\Om\BaseObject;
@@ -488,7 +489,7 @@ class Collection extends ArrayObject implements Serializable
     {
         $databaseName = constant($this->getPeerClass() . '::DATABASE_NAME');
 
-        return Propel::getConnection($databaseName, $type);
+        return Configuration::getInstance()->getConnection($databaseName, $type);
     }
 
     /**

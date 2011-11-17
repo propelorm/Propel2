@@ -347,7 +347,7 @@ class GeneratedPeerDoSelectTest extends BookstoreEmptyTestBase
      */
     public function testMultiColFk()
     {
-        $con = Propel::getConnection(BookPeer::DATABASE_NAME);
+        $con = Configuration::getInstance()->getConnection(BookPeer::DATABASE_NAME);
 
         ReaderFavoritePeer::doDeleteAll();
 

@@ -13,6 +13,7 @@ namespace Propel\Tests\Generator\Builder\Om;
 use Propel\Generator\Util\QuickBuilder;
 
 use Propel\Runtime\Propel;
+use Propel\Runtime\Configuration;
 
 /**
  * Tests the generated Object classes for lazy load columns.
@@ -41,7 +42,7 @@ EOF;
 
     public function testNormalColumnsRequireNoQueryOnGetter()
     {
-        $con = Propel::getconnection(\LazyLoadActiveRecordPeer::DATABASE_NAME);
+        $con = Configuration::getInstance()->getConnection(\LazyLoadActiveRecordPeer::DATABASE_NAME);
         $con->useDebug(true);
         $obj = new \LazyLoadActiveRecord();
         $obj->setFoo('hello');
@@ -55,7 +56,7 @@ EOF;
 
     public function testLazyLoadedColumnsRequireAnAdditionalQueryOnGetter()
     {
-        $con = Propel::getconnection(\LazyLoadActiveRecordPeer::DATABASE_NAME);
+        $con = Configuration::getInstance()->getConnection(\LazyLoadActiveRecordPeer::DATABASE_NAME);
         $con->useDebug(true);
         $obj = new \LazyLoadActiveRecord();
         $obj->setBar('hello');
@@ -69,7 +70,7 @@ EOF;
 
     public function testLazyLoadedColumnsWithDefaultRequireAnAdditionalQueryOnGetter()
     {
-        $con = Propel::getconnection(\LazyLoadActiveRecordPeer::DATABASE_NAME);
+        $con = Configuration::getInstance()->getConnection(\LazyLoadActiveRecordPeer::DATABASE_NAME);
         $con->useDebug(true);
         $obj = new \LazyLoadActiveRecord();
         $obj->setBaz('hello');

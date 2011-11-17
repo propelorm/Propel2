@@ -18,6 +18,7 @@ use Propel\Generator\Reverse\MysqlSchemaParser;
 use Propel\Generator\Task\PropelConvertConfTask;
 
 use Propel\Runtime\Propel;
+use Propel\Runtime\Configuration;
 
 /**
  * Tests for Mysql database schema parser.
@@ -48,7 +49,7 @@ class MysqlSchemaParserTest extends \PHPUnit_Framework_TestCase
 
     public function testParse()
     {
-        $parser = new MysqlSchemaParser(Propel::getConnection('reverse-bookstore'));
+        $parser = new MysqlSchemaParser(Configuration::getInstance()->getConnection('reverse-bookstore'));
         $parser->setGeneratorConfig(new QuickGeneratorConfig());
 
         $database = new Database();

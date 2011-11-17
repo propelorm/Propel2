@@ -60,7 +60,7 @@ class BookstoreDataPopulator
     public static function populate($con = null)
     {
         if($con === null) {
-            $con = Propel::getConnection(BookPeer::DATABASE_NAME);
+            $con = Configuration::getInstance()->getConnection(BookPeer::DATABASE_NAME);
         }
         $con->beginTransaction();
 
@@ -237,7 +237,7 @@ class BookstoreDataPopulator
     public static function populateOpinionFavorite($con = null)
     {
         if($con === null) {
-            $con = Propel::getConnection(BookPeer::DATABASE_NAME);
+            $con = Configuration::getInstance()->getConnection(BookPeer::DATABASE_NAME);
         }
         $con->beginTransaction();
 
@@ -288,7 +288,7 @@ class BookstoreDataPopulator
         }
         // delete records from the database
         if ($con === null) {
-            $con = Propel::getConnection(BookPeer::DATABASE_NAME);
+            $con = Configuration::getInstance()->getConnection(BookPeer::DATABASE_NAME);
         }
         $con->beginTransaction();
         foreach ($peerClasses as $peerClass) {

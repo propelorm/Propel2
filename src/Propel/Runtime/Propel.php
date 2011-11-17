@@ -376,21 +376,6 @@ class Propel
     }
 
     /**
-     * Get an already-opened PDO connection or opens a new one for passed-in db name.
-     *
-     * @param      string $name The datasource name that is used to look up the DSN from the runtime configuation file.
-     * @param      string $mode The connection mode (this applies to replication systems).
-     *
-     * @return     PDO A database connection
-     *
-     * @throws     PropelException - if connection cannot be configured or initialized.
-     */
-    public static function getConnection($name = null, $mode = Propel::CONNECTION_WRITE)
-    {
-        return Configuration::getInstance()->getConnection($name, $mode);
-    }
-
-    /**
      * Include once a file specified in DOT notation and return unqualified classname.
      *
      * Typically, Propel uses autoload is used to load classes and expects that all classes
