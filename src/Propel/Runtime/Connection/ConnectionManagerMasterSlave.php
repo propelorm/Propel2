@@ -117,7 +117,7 @@ class ConnectionManagerMasterSlave implements ConnectionManagerInterface
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface
      */
-    public function getWriteConnection(AdapterInterface $adapter)
+    public function getWriteConnection(AdapterInterface $adapter = null)
     {
         if (null === $this->writeConnection) {
             $this->writeConnection = ConnectionFactory::create($this->writeConfiguration, $adapter);
@@ -136,7 +136,7 @@ class ConnectionManagerMasterSlave implements ConnectionManagerInterface
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface
      */
-    public function getReadConnection(AdapterInterface $adapter)
+    public function getReadConnection(AdapterInterface $adapter = null)
     {
         if ($this->isForceMasterConnection()) {
             return $this->getWriteConnection($adapter);
@@ -145,7 +145,9 @@ class ConnectionManagerMasterSlave implements ConnectionManagerInterface
             if (null === $this->readConfiguration) {
                 $this->readConnection = $this->getWriteConnection($adapter);
             } else {
-                $configuration = array_rand($this->readConfiguration);
+                $keys = array_keys($this->readConfiguration);
+                $key = $keys[mt_rand(0, count($keys) - 1)];
+                $configuration = $this->readConfiguration[$key];
                 $this->readConnection = ConnectionFactory::create($configuration, $adapter);
             }
         }

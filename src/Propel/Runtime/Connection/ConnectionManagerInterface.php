@@ -14,7 +14,7 @@ use Propel\Runtime\Adapter\AdapterInterface;
 
 interface ConnectionManagerInterface
 {
-    function getWriteConnection(AdapterInterface $adapter);
-    function getReadConnection(AdapterInterface $adapter);
+    function getWriteConnection(AdapterInterface $adapter = null);
+    function getReadConnection(AdapterInterface $adapter = null);
     function closeConnections();
 }
