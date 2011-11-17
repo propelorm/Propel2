@@ -274,7 +274,7 @@ interface AdapterInterface
      * $sql = BasePeer::createSelectSql($criteria, $params);
      * $stmt = $con->prepare($sql);
      * $params = array();
-     * $db->populateStmtValues($stmt, $params, Propel::getDatabaseMap($critera->getDbName()));
+     * $db->populateStmtValues($stmt, $params, Configuration::getInstance()->getDatabaseMap($critera->getDbName()));
      * $stmt->execute();
      * </code>
      *

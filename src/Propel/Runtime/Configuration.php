@@ -205,6 +205,10 @@ class Configuration
     }
 
     /**
+     * Get the database map for a given datasource.
+     *
+     * The database maps are "registered" by the generated map builder classes.
+     *
      * @param string $name The datasource name
      *
      * @return \Propel\Runtime\Map\DatabaseMap
@@ -223,6 +227,8 @@ class Configuration
     }
 
     /**
+     * Set the database map object to use for a given datasource.
+     *
      * @param string $name The datasource name
      * @param \Propel\Runtime\Map\DatabaseMap $databaseMap
      */

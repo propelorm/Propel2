@@ -12,7 +12,7 @@ namespace Propel\Tests\Runtime\Map;
 
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
-use Propel\Runtime\Propel;
+use Propel\Runtime\Configuration;
 
 /**
  * Test class for RelatedMap::getSymmetricalRelation.
@@ -28,7 +28,7 @@ class RelatedMapSymmetricalTest extends BookstoreTestBase
     protected function setUp()
     {
         parent::setUp();
-        $this->databaseMap = Propel::getDatabaseMap('bookstore');
+        $this->databaseMap = Configuration::getInstance()->getDatabaseMap('bookstore');
     }
 
     public function testOneToMany()

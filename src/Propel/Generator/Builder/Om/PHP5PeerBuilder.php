@@ -127,6 +127,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         $this->declareClassFromBuilder($this->getStubObjectBuilder());
         parent::addClassBody($script);
         $this->declareClasses(
+            '\Propel\Runtime\Configuration',
             '\Propel\Runtime\Propel',
             '\Propel\Runtime\Exception\PropelException',
             '\Propel\Runtime\Connection\ConnectionInterface',
@@ -513,7 +514,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
      */
     public static function buildTableMap()
     {
-      \$dbMap = Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME);
+      \$dbMap = Configuration::getInstance()->getDatabaseMap(".$this->getClassname()."::DATABASE_NAME);
       if (!\$dbMap->hasTable(".$this->getClassname()."::TABLE_NAME))
       {
         \$dbMap->addTableObject(new ".$this->getTableMapClass()."());
@@ -1842,7 +1843,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         \$columns = array();
 
         if (\$cols) {
-            \$dbMap = Propel::getDatabaseMap(".$this->getPeerClassname()."::DATABASE_NAME);
+            \$dbMap = Configuration::getInstance()->getDatabaseMap(".$this->getPeerClassname()."::DATABASE_NAME);
             \$tableMap = \$dbMap->getTable(".$this->getPeerClassname()."::TABLE_NAME);
 
             if (! is_array(\$cols)) {
@@ -2022,7 +2023,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
      */
     public static function getTableMap()
     {
-        return Propel::getDatabaseMap(self::DATABASE_NAME)->getTable(self::TABLE_NAME);
+        return Configuration::getInstance()->getDatabaseMap(self::DATABASE_NAME)->getTable(self::TABLE_NAME);
     }
 ";
     }

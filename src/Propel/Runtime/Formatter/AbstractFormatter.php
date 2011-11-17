@@ -11,6 +11,7 @@
 namespace Propel\Runtime\Formatter;
 
 use Propel\Runtime\Propel;
+use Propel\Runtime\Configuration;
 use Propel\Runtime\Query\ModelCriteria;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Connection\StatementInterface;
@@ -151,7 +152,7 @@ abstract class AbstractFormatter
 
     public function getTableMap()
     {
-        return Propel::getDatabaseMap($this->dbName)->getTableByPhpName($this->class);
+        return Configuration::getInstance()->getDatabaseMap($this->dbName)->getTableByPhpName($this->class);
     }
 
     protected function isWithOneToMany()

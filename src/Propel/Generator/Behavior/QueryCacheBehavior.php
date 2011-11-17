@@ -50,7 +50,7 @@ class QueryCacheBehavior extends Behavior
 
     public function queryMethods($builder)
     {
-        $builder->declareClasses('\Propel\Runtime\Util\BasePeer');
+        $builder->declareClasses('\Propel\Runtime\Configuration', '\Propel\Runtime\Util\BasePeer');
         $this->peerClassname = $builder->getStubPeerBuilder()->getClassname();
         $script = '';
         $this->addSetQueryKey($script);
@@ -177,7 +177,7 @@ protected function doSelect(\$con)
     }
     \$this->configureSelectColumns();
 
-    \$dbMap = Propel::getDatabaseMap(" . $this->peerClassname ."::DATABASE_NAME);
+    \$dbMap = Configuration::getInstance()->getDatabaseMap(" . $this->peerClassname ."::DATABASE_NAME);
     \$db = Propel::getAdapter(" . $this->peerClassname ."::DATABASE_NAME);
 
     \$key = \$this->getQueryKey();
@@ -211,7 +211,7 @@ protected function doSelect(\$con)
         $script .= "
 protected function doCount(\$con)
 {
-    \$dbMap = Propel::getDatabaseMap(\$this->getDbName());
+    \$dbMap = Configuration::getInstance()->getDatabaseMap(\$this->getDbName());
     \$db = Propel::getAdapter(\$this->getDbName());
 
     \$key = \$this->getQueryKey();

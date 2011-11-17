@@ -11,6 +11,7 @@
 namespace Propel\Runtime\Query;
 
 use Propel\Runtime\Propel;
+use Propel\Runtime\Configuration;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Formatter\AbstractFormatter;
@@ -83,7 +84,7 @@ class ModelCriteria extends Criteria
         $this->modelName = $modelName;
         $this->modelPeerName = constant($this->modelName . '::PEER');
         $this->modelAlias = $modelAlias;
-        $this->tableMap = Propel::getDatabaseMap($this->getDbName())->getTableByPhpName($this->modelName);
+        $this->tableMap = Configuration::getInstance()->getDatabaseMap($this->getDbName())->getTableByPhpName($this->modelName);
     }
 
     /**
@@ -1310,7 +1311,7 @@ class ModelCriteria extends Criteria
         }
         $this->configureSelectColumns();
 
-        $dbMap = Propel::getDatabaseMap($this->getDbName());
+        $dbMap = Configuration::getInstance()->getDatabaseMap($this->getDbName());
         $db = Propel::getAdapter($this->getDbName());
 
         $params = array();
@@ -1450,7 +1451,7 @@ class ModelCriteria extends Criteria
 
     protected function doCount($con)
     {
-        $dbMap = Propel::getDatabaseMap($this->getDbName());
+        $dbMap = Configuration::getInstance()->getDatabaseMap($this->getDbName());
         $db = Propel::getAdapter($this->getDbName());
 
         // check that the columns of the main class are already added (if this is the primary ModelCriteria)
@@ -2102,7 +2103,7 @@ class ModelCriteria extends Criteria
     public function getParams()
     {
         $params = array();
-        $dbMap = Propel::getDatabaseMap($this->getDbName());
+        $dbMap = Configuration::getInstance()->getDatabaseMap($this->getDbName());
 
         foreach ($this->getMap() as $criterion) {
 

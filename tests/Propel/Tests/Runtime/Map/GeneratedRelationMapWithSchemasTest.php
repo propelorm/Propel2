@@ -12,7 +12,7 @@ namespace Propel\Tests\Runtime\Map;
 
 use Propel\Tests\Helpers\Schemas\SchemasTestBase;
 
-use Propel\Runtime\Propel;
+use Propel\Runtime\Configuration;
 use Propel\Runtime\Map\RelationMap;
 
 /**
@@ -29,7 +29,7 @@ class GeneratedRelationMapWithSchemasTest extends SchemasTestBase
     protected function setUp()
     {
         parent::setUp();
-        $this->databaseMap = Propel::getDatabaseMap('bookstore-schemas');
+        $this->databaseMap = Configuration::getInstance()->getDatabaseMap('bookstore-schemas');
     }
 
     public function testGetRightTable()

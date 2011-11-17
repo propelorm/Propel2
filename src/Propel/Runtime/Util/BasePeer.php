@@ -11,6 +11,7 @@
 namespace Propel\Runtime\Util;
 
 use Propel\Runtime\Propel;
+use Propel\Runtime\Configuration;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Query\Criteria;
@@ -115,7 +116,7 @@ class BasePeer
     public static function doDelete(Criteria $criteria, ConnectionInterface $con)
     {
         $db = Propel::getAdapter($criteria->getDbName());
-        $dbMap = Propel::getDatabaseMap($criteria->getDbName());
+        $dbMap = Configuration::getInstance()->getDatabaseMap($criteria->getDbName());
 
         //join are not supported with DELETE statement
         if (count($criteria->getJoins())) {
@@ -240,7 +241,7 @@ class BasePeer
             throw new PropelException("Database insert attempted without anything specified to insert");
         }
 
-        $dbMap = Propel::getDatabaseMap($criteria->getDbName());
+        $dbMap = Configuration::getInstance()->getDatabaseMap($criteria->getDbName());
         $tableMap = $dbMap->getTable($tableName);
         $keyInfo = $tableMap->getPrimaryKeyMethodInfo();
         $useIdGen = $tableMap->isUseIdGenerator();
@@ -339,7 +340,7 @@ class BasePeer
     public static function doUpdate(Criteria $selectCriteria, Criteria $updateValues, ConnectionInterface $con) {
 
         $db = Propel::getAdapter($selectCriteria->getDbName());
-        $dbMap = Propel::getDatabaseMap($selectCriteria->getDbName());
+        $dbMap = Configuration::getInstance()->getDatabaseMap($selectCriteria->getDbName());
 
         // Get list of required tables, containing all columns
         $tablesColumns = $selectCriteria->getTablesColumns();
@@ -460,7 +461,7 @@ class BasePeer
      */
     public static function doSelect(Criteria $criteria, ConnectionInterface $con = null)
     {
-        $dbMap = Propel::getDatabaseMap($criteria->getDbName());
+        $dbMap = Configuration::getInstance()->getDatabaseMap($criteria->getDbName());
         $db = Propel::getAdapter($criteria->getDbName());
         $stmt = null;
 
@@ -502,7 +503,7 @@ class BasePeer
      */
     public static function doCount(Criteria $criteria, ConnectionInterface $con = null)
     {
-        $dbMap = Propel::getDatabaseMap($criteria->getDbName());
+        $dbMap = Configuration::getInstance()->getDatabaseMap($criteria->getDbName());
         $db = Propel::getAdapter($criteria->getDbName());
 
         if ($con === null) {
@@ -560,7 +561,7 @@ class BasePeer
      */
     public static function doValidate($dbName, $tableName, $columns)
     {
-        $dbMap = Propel::getDatabaseMap($dbName);
+        $dbMap = Configuration::getInstance()->getDatabaseMap($dbName);
         $tableMap = $dbMap->getTable($tableName);
         $failureMap = array(); // map of ValidationFailed objects
         foreach ($columns as $colName => $colValue) {
@@ -600,7 +601,7 @@ class BasePeer
 
         if (!empty($table)) {
 
-            $dbMap = Propel::getDatabaseMap($criteria->getDbName());
+            $dbMap = Configuration::getInstance()->getDatabaseMap($criteria->getDbName());
 
             $pks = $dbMap->getTable($table)->getPrimaryKeys();
             if (!empty($pks)) {
@@ -649,7 +650,7 @@ class BasePeer
     public static function createSelectSql(Criteria $criteria, &$params)
     {
         $db = Propel::getAdapter($criteria->getDbName());
-        $dbMap = Propel::getDatabaseMap($criteria->getDbName());
+        $dbMap = Configuration::getInstance()->getDatabaseMap($criteria->getDbName());
 
         $fromClause = array();
         $joinClause = array();
