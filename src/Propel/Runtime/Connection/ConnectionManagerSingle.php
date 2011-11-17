@@ -50,6 +50,7 @@ class ConnectionManagerSingle implements ConnectionManagerInterface
         if (null === $this->connection) {
             $this->connection = ConnectionFactory::create($this->configuration, $adapter);
         }
+
         return $this->connection;
     }
 

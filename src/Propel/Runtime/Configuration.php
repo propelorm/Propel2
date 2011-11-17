@@ -36,7 +36,7 @@ class Configuration
      * The default DatabaseMap class created by getDatabaseMap()
      */
     const DEFAULT_DATABASE_MAP_CLASS = '\Propel\Runtime\Map\DatabaseMap';
-    
+
     /**
      * @var \Propel\Runtime\Configuration The unique instance for this singleton
      */
@@ -61,7 +61,7 @@ class Configuration
      * @var string
      */
     private $databaseMapClass = self::DEFAULT_DATABASE_MAP_CLASS;
-    
+
     /**
      * @var array[\Propel\Runtime\Map\DatabaseMap] List of database map instances
      */
@@ -76,7 +76,7 @@ class Configuration
      * @var array[\Propel\Runtime\Connection\ConnectionManagerInterface] List of connection managers
      */
     private $connectionManagers = array();
-    
+
     /**
      * Get the singleton instance for this class.
      *
@@ -171,7 +171,7 @@ class Configuration
 
         return $this->adapters[$name];
     }
-    
+
     /**
      * Set the adapter for a given datasource.
      *
@@ -222,7 +222,7 @@ class Configuration
             $class = $this->databaseMapClass;
             $this->databaseMaps[$name] = new $class($name);
         }
-        
+
         return $this->databaseMaps[$name];
     }
 
@@ -282,8 +282,8 @@ class Configuration
 
     /**
      * Get a connection for a given datasource.
-     * 
-     * If the connection has not been opened, open it using the related 
+     *
+     * If the connection has not been opened, open it using the related
      * connectionSettings. If the connection has already been opened, return it.
      *
      * @param      string $name The datasource name
@@ -299,13 +299,14 @@ class Configuration
         if (self::CONNECTION_READ == $mode) {
             return $this->getReadConnection($name);
         }
+
         return $this->getWriteConnection($name);
     }
 
     /**
      * Get a write connection for a given datasource.
-     * 
-     * If the connection has not been opened, open it using the related 
+     *
+     * If the connection has not been opened, open it using the related
      * connectionSettings. If the connection has already been opened, return it.
      *
      * @param      string $name The datasource name that is used to look up the DSN
@@ -341,7 +342,7 @@ class Configuration
      * Shortcut to define a single connectino for a datasource.
      *
      * @param string $name The datasource name
-     * @param \Propel\Runtime\Connection\ConnectionInterface A database connection 
+     * @param \Propel\Runtime\Connection\ConnectionInterface A database connection
      */
     public function setConnection($name, ConnectionInterface $connection)
     {

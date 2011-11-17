@@ -110,7 +110,7 @@ class ConnectionManagerMasterSlave implements ConnectionManagerInterface
 
     /**
      * Get a master connection.
-     * 
+     *
      * If no master connection exist yet, open it using the write configuration.
      *
      * @param  \Propel\Runtime\Adapter\AdapterInterface $adapter
@@ -122,13 +122,14 @@ class ConnectionManagerMasterSlave implements ConnectionManagerInterface
         if (null === $this->writeConnection) {
             $this->writeConnection = ConnectionFactory::create($this->writeConfiguration, $adapter);
         }
+
         return $this->writeConnection;
     }
 
     /**
      * Get a slave connection.
-     * 
-     * If no slave connection exist yet, choose one configuration randomly in the 
+     *
+     * If no slave connection exist yet, choose one configuration randomly in the
      * read configuration to open it.
      *
      * @param  \Propel\Runtime\Adapter\AdapterInterface $adapter
@@ -148,6 +149,7 @@ class ConnectionManagerMasterSlave implements ConnectionManagerInterface
                 $this->readConnection = ConnectionFactory::create($configuration, $adapter);
             }
         }
+
         return $this->readConnection;
     }
 
