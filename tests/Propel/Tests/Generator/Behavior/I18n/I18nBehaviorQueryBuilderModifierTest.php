@@ -13,7 +13,6 @@ namespace Propel\Tests\Generator\Behavior\I18n;
 use Propel\Generator\Util\QuickBuilder;
 use Propel\Generator\Behavior\I18n\I18nBehavior;
 
-use Propel\Runtime\Propel;
 use Propel\Runtime\Configuration;
 use Propel\Runtime\Query\Criteria;
 use Propel\Runtime\Util\BasePeer;

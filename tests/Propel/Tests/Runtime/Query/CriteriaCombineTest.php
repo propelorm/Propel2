@@ -46,13 +46,14 @@ class CriteriaCombineTest extends BaseTestCase
         Propel::init(__DIR__ . '/../../../../Fixtures/bookstore/build/conf/bookstore-conf.php');
         parent::setUp();
         $this->c = new Criteria();
-        $this->savedAdapter = Configuration::getInstance()->getAdapter(Propel::getDefaultDatasource());
-        Configuration::getInstance()->setAdapter(Propel::getDefaultDatasource(), new SqliteAdapter());
+        $defaultDatasource = Configuration::getInstance()->getDefaultDatasource();
+        $this->savedAdapter = Configuration::getInstance()->getAdapter($defaultDatasource);
+        Configuration::getInstance()->setAdapter($defaultDatasource, new SqliteAdapter());
     }
 
     protected function tearDown()
     {
-        Configuration::getInstance()->setAdapter(Propel::getDefaultDatasource(), $this->savedAdapter);
+        Configuration::getInstance()->setAdapter(Configuration::getInstance()->getDefaultDatasource(), $this->savedAdapter);
         parent::tearDown();
     }
 

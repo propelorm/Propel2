@@ -2167,7 +2167,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         \$criteria = clone \$criteria;
 
         // Set the correct dbName if it has not been overridden
-        if (\$criteria->getDbName() == Propel::getDefaultDatasource()) {
+        if (\$criteria->getDbName() == Configuration::getInstance()->getDefaultDatasource()) {
             \$criteria->setDbName(self::DATABASE_NAME);
         }
 
@@ -2375,7 +2375,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         \$criteria = clone \$criteria;
 
         // Set the correct dbName if it has not been overridden
-        if (\$criteria->getDbName() == Propel::getDefaultDatasource()) {
+        if (\$criteria->getDbName() == Configuration::getInstance()->getDefaultDatasource()) {
             \$criteria->setDbName(self::DATABASE_NAME);
         }
 
@@ -2643,7 +2643,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         // Set the correct dbName if it has not been overridden
         // \$criteria->getDbName() will return the same object if not set to another value
         // so == check is okay and faster
-        if (\$criteria->getDbName() == Propel::getDefaultDatasource()) {
+        if (\$criteria->getDbName() == Configuration::getInstance()->getDefaultDatasource()) {
             \$criteria->setDbName(self::DATABASE_NAME);
         }
 

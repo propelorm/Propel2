@@ -10,7 +10,6 @@
 
 namespace Propel\Tests\Helpers\Bookstore;
 
-use Propel\Runtime\Propel;
 use Propel\Runtime\Configuration;
 use Propel\Runtime\Query\Criteria;
 

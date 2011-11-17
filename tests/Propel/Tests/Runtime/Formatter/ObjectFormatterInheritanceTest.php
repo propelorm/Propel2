@@ -19,7 +19,6 @@ use Propel\Tests\Bookstore\BookstoreEmployeePeer;
 use Propel\Tests\Bookstore\BookstoreCashier;
 use Propel\Tests\Bookstore\BookstoreManager;
 
-use Propel\Runtime\Propel;
 use Propel\Runtime\Configuration;
 use Propel\Runtime\Formatter\ObjectFormatter;
 use Propel\Runtime\Query\ModelCriteria;

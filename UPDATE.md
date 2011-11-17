@@ -10,5 +10,6 @@ The static methods from the `Propel` class have been moved to a singleton. There
     Propel::getDB($name)                                    Configuration::getInstance()->getAdapter($name)
     Propel::getConnection($name, Propel::CONNECTION_READ)   Configuration::getInstance()->getReadConnection($name)
     Propel::getConnection($name, Propel::CONNECTION_WRITE)  Configuration::getInstance()->getWriteConnection($name)
+    Propel::getDefaultDB()                                  Configuration::getInstance()->getDefaultDatasource()
 
 The generated model is automatically updated once you rebuild your model.

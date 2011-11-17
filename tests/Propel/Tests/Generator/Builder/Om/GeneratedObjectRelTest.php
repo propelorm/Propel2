@@ -31,7 +31,6 @@ use Propel\Tests\Bookstore\Customer;
 use Propel\Tests\Bookstore\PublisherPeer;
 use Propel\Tests\Bookstore\Review;
 
-use Propel\Runtime\Propel;
 use Propel\Runtime\Configuration;
 use Propel\Runtime\Query\Criteria;
 use Propel\Runtime\Collection\ObjectCollection;

@@ -52,13 +52,14 @@ class CriteriaTest extends BookstoreTestBase
     {
         parent::setUp();
         $this->c = new Criteria();
-        $this->savedAdapter = Configuration::getInstance()->getAdapter(Propel::getDefaultDatasource());
-        Configuration::getInstance()->setAdapter(Propel::getDefaultDatasource(), new SqliteAdapter());
+        $defaultDatasource = Configuration::getInstance()->getDefaultDatasource();
+        $this->savedAdapter = Configuration::getInstance()->getAdapter($defaultDatasource);
+        Configuration::getInstance()->setAdapter($defaultDatasource, new SqliteAdapter());
     }
 
     protected function tearDown()
     {
-        Configuration::getInstance()->setAdapter(Propel::getDefaultDatasource(), $this->savedAdapter);
+        Configuration::getInstance()->setAdapter(Configuration::getInstance()->getDefaultDatasource(), $this->savedAdapter);
         parent::tearDown();
     }
 
@@ -324,7 +325,7 @@ class CriteriaTest extends BookstoreTestBase
         $i =0;
         foreach ($adapters as $adapter) {
 
-            Configuration::getInstance()->setAdapter(Propel::getDefaultDatasource(), $adapter);
+            Configuration::getInstance()->setAdapter(Configuration::getInstance()->getDefaultDatasource(), $adapter);
             $myCriteria = new Criteria();
 
             $myCriterion = $myCriteria->getNewCriterion(
@@ -345,13 +346,13 @@ class CriteriaTest extends BookstoreTestBase
             $this->assertEquals($expectedIgnore[$i], $sb);
             $i++;
         }
-        Configuration::getInstance()->setAdapter(Propel::getDefaultDatasource(), $originalDB);
+        Configuration::getInstance()->setAdapter(Configuration::getInstance()->getDefaultDatasource(), $originalDB);
     }
 
     public function testOrderByIgnoreCase()
     {
         $originalDB = Configuration::getInstance()->getAdapter();
-        Configuration::getInstance()->setAdapter(Propel::getDefaultDatasource(), new MysqlAdapter());
+        Configuration::getInstance()->setAdapter(Configuration::getInstance()->getDefaultDatasource(), new MysqlAdapter());
 
         $criteria = new Criteria();
         $criteria->setIgnoreCase(true);
@@ -362,7 +363,7 @@ class CriteriaTest extends BookstoreTestBase
         $expectedSQL = 'SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID, UPPER(book.TITLE) FROM `book` ORDER BY UPPER(book.TITLE) ASC';
         $this->assertEquals($expectedSQL, $sql);
 
-        Configuration::getInstance()->setAdapter(Propel::getDefaultDatasource(), $originalDB);
+        Configuration::getInstance()->setAdapter(Configuration::getInstance()->getDefaultDatasource(), $originalDB);
     }
 
     /**

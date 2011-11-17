@@ -92,21 +92,6 @@ class Propel
     const LOG_DEBUG = 7;
 
     /**
-     * The class name for a PDO object.
-     */
-    const CLASS_PDO = '\PDO';
-
-    /**
-     * The class name for a PropelPDO object.
-     */
-    const CLASS_PROPEL_PDO = '\Propel\Runtime\Connection\PropelPDO';
-
-    /**
-     * The class name for a DebugPDO object.
-     */
-    const CLASS_DEBUG_PDO = '\Propel\Runtime\Connection\DebugPDO';
-
-    /**
      * Constant used to request a READ connection (applies to replication).
      */
     const CONNECTION_READ = 'read';
@@ -115,11 +100,6 @@ class Propel
      * Constant used to request a WRITE connection (applies to replication).
      */
     const CONNECTION_WRITE = 'write';
-
-    /**
-     * @var        array Cache of established connections (to eliminate overhead).
-     */
-    private static $connectionMap = array();
 
     /**
      * @var        Configuration Propel-specific configuration.
@@ -166,7 +146,7 @@ class Propel
     public static function setConfiguration($c)
     {
         self::$logger = null;
-        self::closeConnections();
+        Configuration::getInstance()->closeConnections();
         if (is_array($c)) {
             $c = new Registry($c);
         }
@@ -318,61 +298,6 @@ class Propel
         }
 
         return true;
-    }
-
-    /**
-     * Define the name of the default datasource
-     *
-     * @return     string
-     */
-    public static function setDefaultDatasource($name = self::DEFAULT_NAME)
-    {
-        Configuration::getInstance()->setDefaultDatasource($name);
-    }
-
-    /**
-     * Get the name of the default datasource
-     *
-     * @return     string
-     */
-    public static function getDefaultDatasource()
-    {
-        return Configuration::getInstance()->getDefaultDatasource();
-    }
-
-    /**
-     * For replication, set whether to always force the use of a master connection.
-     *
-     * @param      boolean $bool
-     */
-    public static function setForceMasterConnection($bool)
-    {
-        foreach (Configuration::getInstance()->getConnectionManagers() as $manager) {
-            $manager->setForceMasterConnection($bool);
-        }
-    }
-
-    /**
-     * For replication, whether to always force the use of a master connection.
-     *
-     * @return     boolean
-     */
-    public static function isForceMasterConnection()
-    {
-        return false;
-    }
-
-    /**
-     * Close any associated resource handles.
-     *
-     * This method frees any database connection handles that have been
-     * opened by the getConnection() method.
-     */
-    public static function closeConnections()
-    {
-        foreach (Configuration::getInstance()->getConnectionManagers() as $manager) {
-            $manager->closeConnections();
-        }
     }
 
     /**

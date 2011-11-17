@@ -10,7 +10,7 @@
 
 namespace Propel\Runtime\Query;
 
-use Propel\Runtime\Propel;
+use Propel\Runtime\Configuration;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Util\BasePeer;
 use Propel\Runtime\Util\PropelConditionalProxy;
@@ -611,14 +611,14 @@ class Criteria implements \IteratorAggregate
 
     /**
      * Set the DatabaseMap name.  If <code>null</code> is supplied, uses value
-     * provided by <code>Propel::getDefaultDatasource()</code>.
+     * provided by <code>Configuration::getDefaultDatasource()</code>.
      *
      * @param      string $dbName The Database (Map) name.
      * @return     void
      */
     public function setDbName($dbName = null)
     {
-        $this->dbName = ($dbName === null ? Propel::getDefaultDatasource() : $dbName);
+        $this->dbName = ($dbName === null ? Configuration::getInstance()->getDefaultDatasource() : $dbName);
     }
 
     /**

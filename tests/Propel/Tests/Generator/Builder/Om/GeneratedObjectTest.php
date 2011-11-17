@@ -44,7 +44,6 @@ use Propel\Tests\Bookstore\BookstoreEmployeeAccountPeer;
 use Propel\Tests\Bookstore\BookstoreContestEntry;
 use Propel\Tests\Bookstore\BookstoreSale;
 
-use Propel\Runtime\Propel;
 use Propel\Runtime\Configuration;
 use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Query\Criteria;

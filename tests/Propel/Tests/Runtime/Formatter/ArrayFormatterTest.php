@@ -15,7 +15,6 @@ use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
 
 use Propel\Tests\Bookstore\BookPeer;
 
-use Propel\Runtime\Propel;
 use Propel\Runtime\Configuration;
 use Propel\Runtime\Collection\Collection;
 use Propel\Runtime\Exception\PropelException;

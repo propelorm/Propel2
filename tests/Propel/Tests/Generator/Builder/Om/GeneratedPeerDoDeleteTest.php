@@ -33,7 +33,6 @@ use Propel\Tests\Bookstore\ReviewPeer;
 use Propel\Tests\Bookstore\ReaderFavorite;
 use Propel\Tests\Bookstore\ReaderFavoritePeer;
 
-use Propel\Runtime\Propel;
 use Propel\Runtime\Configuration;
 use Propel\Runtime\Query\Criteria;
 
