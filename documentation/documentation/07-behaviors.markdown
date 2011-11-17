@@ -385,7 +385,7 @@ public function findPk(\$key, \$con = null)
 {
   \$query = 'SELECT * from `%s` WHERE id = ?';
   if (null ### \$con) {
-    \$con = Propel::getConnection(%sPeer::DATABASE_NAME);
+    \$con = Configuration::getInstance()->getConnection(%sPeer::DATABASE_NAME);
   }
   \$stmt = \$con->prepare(\$query);
   \$stmt->bindValue(1, \$key);

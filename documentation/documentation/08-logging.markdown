@@ -207,7 +207,7 @@ The debug mode is disabled by default, but you can enable it at runtime as follo
 
 {% highlight php %}
 <?php
-$con = Propel::getConnection(MyObjPeer::DATABASE_NAME);
+$con = Configuration::getInstance()->getConnection(MyObjPeer::DATABASE_NAME);
 $con->useDebug(true);
 {% endhighlight %}
 
@@ -235,7 +235,7 @@ In debug mode, `PropelPDO` keeps track of the number of queries that are execute
 
 {% highlight php %}
 <?php
-$con = Propel::getConnection(MyObjPeer::DATABASE_NAME);
+$con = Configuration::getInstance()->getConnection(MyObjPeer::DATABASE_NAME);
 $myObjs = MyObjPeer::doSelect(new Criteria(), $con);
 echo $con->getQueryCount();  // 1
 {% endhighlight %}
@@ -248,7 +248,7 @@ For debugging purposes, you may need the SQL code of the latest executed query. 
 
 {% highlight php %}
 <?php
-$con = Propel::getConnection(MyObjPeer::DATABASE_NAME);
+$con = Configuration::getInstance()->getConnection(MyObjPeer::DATABASE_NAME);
 $myObjs = MyObjPeer::doSelect(new Criteria(), $con);
 echo $con->getLastExecutedQuery(); // 'SELECT * FROM my_obj';
 {% endhighlight %}
@@ -259,7 +259,7 @@ Propel also keeps track of the queries executed directly on the connection objec
 
 {% highlight php %}
 <?php
-$con = Propel::getConnection(MyObjPeer::DATABASE_NAME);
+$con = Configuration::getInstance()->getConnection(MyObjPeer::DATABASE_NAME);
 $stmt = $con->prepare('SELECT * FROM my_obj WHERE name = :p1');
 $stmt->bindValue(':p1', 'foo');
 $stmt->execute();
@@ -412,7 +412,7 @@ By default the connection log messages are logged at the `Propel::LOG_DEBUG` lev
 
 {% highlight php %}
 <?php
-$con = Propel::getConnection(MyObjPeer::DATABASE_NAME);
+$con = Configuration::getInstance()->getConnection(MyObjPeer::DATABASE_NAME);
 $con->setLogLevel(Propel::LOG_INFO);
 {% endhighlight %}
 
@@ -426,7 +426,7 @@ If you would like the queries to be logged using a different logger (e.g. to a d
 
 {% highlight php %}
 <?php
-$con = Propel::getConnection(MyObjPeer::DATABASE_NAME);
+$con = Configuration::getInstance()->getConnection(MyObjPeer::DATABASE_NAME);
 $logger = Log::factory('syslog', LOG_LOCAL0, 'propel', array(), PEAR_LOG_INFO);
 $con->setLogger($logger);
 {% endhighlight %}

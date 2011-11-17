@@ -15,10 +15,12 @@ Propel uses PDO as database abstraction layer, and therefore uses [PDO's built-i
 
 {% highlight php %}
 <?php
+use Propel\Runtime\Configuration;
+// ...
 public function transferMoney($fromAccountNumber, $toAccountNumber, $amount)
 {
   // get the PDO connection object from Propel
-  $con = Propel::getConnection(AccountPeer::DATABASE_NAME);
+  $con = Configuration::getInstance()->getConnection(AccountPeer::DATABASE_NAME);
 
   $fromAccount = AccountPeer::retrieveByPk($fromAccountNumber, $con);
   $toAccount   = AccountPeer::retrieveByPk($toAccountNumber, $con);
@@ -45,7 +47,7 @@ The transaction statements are `beginTransaction()`, `commit()` and `rollback()`
 
 In this example, if something wrong happens while saving either one of the two accounts, an `Exception` is thrown, and the whole operation is rolled back. That means that the transfer is cancelled, with an insurance that the money hasn't vanished (that's the A in ACID, which stands for "Atomicity"). If both account modifications work as expected, the whole transaction is committed, meaning that the data changes enclosed in the transaction are persisted in the database.
 
-Tip: In order to build a transaction, you need a connection object. The connection object for a Propel model is always available through `Propel::getConnection([ModelName]Peer::DATABASE_NAME)`.
+Tip: In order to build a transaction, you need a connection object. The connection object for a Propel model is always available through `Configuration::getInstance()->getConnection([ModelName]Peer::DATABASE_NAME)`.
 
 ## Denormalization And Transactions ##
 
@@ -192,7 +194,7 @@ A database transaction has a cost in terms of performance. In fact, for simple d
 
 {% highlight php %}
 <?php
-$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+$con = Configuration::getInstance()->getConnection(BookPeer::DATABASE_NAME);
 for ($i=0; $i<2002; $i++)
 {
   $book = new Book();
@@ -220,7 +222,7 @@ You can take advantage of Propel's nested transaction capabilities to encapsulat
 
 {% highlight php %}
 <?php
-$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+$con = Configuration::getInstance()->getConnection(BookPeer::DATABASE_NAME);
 $con->beginTransaction();
 for ($i=0; $i<2002; $i++)
 {
@@ -252,7 +254,7 @@ All the code examples in this chapter show the connection object passed a a para
 
 {% highlight php %}
 <?php
-$con = Propel::getConnection(AccountPeer::DATABASE_NAME);
+$con = Configuration::getInstance()->getConnection(AccountPeer::DATABASE_NAME);
 $fromAccount = AccountPeer::retrieveByPk($fromAccountNumber, $con);
 $fromAccount->setValue($fromAccount->getValue() - $amount);
 $fromAccount->save($con);
