@@ -16,7 +16,6 @@ use Propel\Runtime\Propel;
 
 /**
  * Tests the generated objects for temporal column types accessor & mutator.
- * This requires that the model was built with propel.useDateTimeClass=true
  *
  * @author     Francois Zaninotto
  * @package    generator.builder.om
@@ -123,5 +122,19 @@ EOF;
         \ComplexColumnTypeEntity5Peer::clearInstancePool();
         $r1 = \ComplexColumnTypeEntity5Query::create()->findPk($r->getId());
         $this->assertEquals('1999-12-20 12:55', $r1->getBar3(null)->format('Y-m-d H:i'));
+    }
+
+    public function testDateTimeGetterReturnsADateTime()
+    {
+        $r = new \ComplexColumnTypeEntity5();
+        $r->setBar3(new \DateTime());
+        $r->save();
+
+        $this->assertInstanceOf('DateTime', $r->getBar3());
+
+        $r->setBar3(strtotime('10/10/2011'));
+        $r->save();
+
+        $this->assertInstanceOf('DateTime', $r->getBar3());
     }
 }

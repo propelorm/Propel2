@@ -732,11 +732,10 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
      **/
     public function addTemporalAccessorComment(&$script, Column $col) {
         $clo = strtolower($col->getName());
-        $useDateTime = $this->getBuildProperty('useDateTimeClass');
 
         $dateTimeClass = $this->getBuildProperty('dateTimeClass');
         if (!$dateTimeClass) {
-            $dateTimeClass = 'DateTime';
+            $dateTimeClass = '\DateTime';
         }
 
         $handleMysqlDate = false;
@@ -754,24 +753,13 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
         $script .= "
     /**
      * Get the [optionally formatted] temporal [$clo] column value.
-     * ".$col->getDescription();
-        if (!$useDateTime) {
-            $script .= "
-     * This accessor only only work with unix epoch dates.  Consider enabling the propel.useDateTimeClass
-     * option in order to avoid converstions to integers (which are limited in the dates they can express).";
-        }
-        $script .= "
+     * {$col->getDescription()}
      *
      * @param      string \$format The date/time format string (either date()-style or strftime()-style).
-     *                            If format is NULL, then the raw ".($useDateTime ? 'DateTime object' : 'unix timestamp integer')." will be returned.";
-        if ($useDateTime) {
-            $script .= "
-     * @return     mixed Formatted date/time value as string or $dateTimeClass object (if format is NULL), NULL if column is NULL" .($handleMysqlDate ? ', and 0 if column value is ' . $mysqlInvalidDateString : '');
-        } else {
-            $script .= "
-     * @return     mixed Formatted date/time value as string or (integer) unix timestamp (if format is NULL), NULL if column is NULL".($handleMysqlDate ? ', and 0 if column value is ' . $mysqlInvalidDateString : '');
-        }
-        $script .= "
+     *                            If format is NULL, then the raw \DateTime object will be returned.
+     *
+     * @return     mixed Formatted date/time value as string or $dateTimeClass object (if format is NULL), NULL if column is NULL" .($handleMysqlDate ? ', and 0 if column value is ' . $mysqlInvalidDateString : '')."
+     *
      * @throws     PropelException - if unable to parse/validate the date/time value.
      */";
     }
@@ -834,8 +822,6 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
         $cfc = $col->getPhpName();
         $clo = strtolower($col->getName());
 
-        $useDateTime = $this->getBuildProperty('useDateTimeClass');
-
         $dateTimeClass = $this->getBuildProperty('dateTimeClass');
         if (!$dateTimeClass) {
             $dateTimeClass = 'DateTime';
@@ -883,7 +869,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
         } else {
             try {
                 \$dt = new $dateTimeClass(\$this->$clo);
-            } catch (Exception \$x) {
+            } catch (\Exception \$x) {
                 throw new PropelException(\"Internally stored date/time/timestamp value could not be converted to $dateTimeClass: \" . var_export(\$this->$clo, true), \$x);
             }
         }
@@ -893,7 +879,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 
         try {
             \$dt = new $dateTimeClass(\$this->$clo);
-        } catch (Exception \$x) {
+        } catch (\Exception \$x) {
             throw new PropelException(\"Internally stored date/time/timestamp value could not be converted to $dateTimeClass: \" . var_export(\$this->$clo, true), \$x);
         }
 ";
@@ -901,18 +887,8 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 
         $script .= "
         if (\$format === null) {";
-        if ($useDateTime) {
-            $script .= "
-            // Because propel.useDateTimeClass is TRUE, we return a $dateTimeClass object.
-            return \$dt;";
-        } else {
-            $script .= "
-            // We cast here to maintain BC in API; obviously we will lose data if we're dealing with pre-/post-epoch dates.
-            return (int) \$dt->format('U');";
-        }
         $script .= "
-        } elseif (strpos(\$format, '%') !== false) {
-            return strftime(\$format, \$dt->format('U'));
+            return \$dt;
         } else {
             return \$dt->format(\$format);
         }";
