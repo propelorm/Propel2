@@ -14,6 +14,9 @@ use Propel\Runtime\Adapter\AdapterFactory;
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Adapter\AdapterException;
 use Propel\Runtime\Connection\ConnectionInterface;
+use Propel\Runtime\Connection\ConnectionManagerInterface;
+use Propel\Runtime\Connection\ConnectionManagerSingle;
+use Propel\Runtime\Connection\ConnectionFactory;
 use Propel\Runtime\Map\DatabaseMap;
 use Propel\Runtime\Exception\PropelException;
 
@@ -33,11 +36,6 @@ class Configuration
      * The default DatabaseMap class created by getDatabaseMap()
      */
     const DEFAULT_DATABASE_MAP_CLASS = '\Propel\Runtime\Map\DatabaseMap';
-
-    /**
-     * The default connection class created by initConnection()
-     */
-    const DEFAULT_CONNECTION_CLASS = '\Propel\Runtime\Connection\ConnectionWrapper';
     
     /**
      * @var \Propel\Runtime\Configuration The unique instance for this singleton
@@ -75,26 +73,16 @@ class Configuration
     private $isForceMasterConnection = false;
 
     /**
-     * @var array[\Propel\Runtime\Connection\ConnectionInterface] List of established connections
+     * @var array[\Propel\Runtime\Connection\ConnectionManagerInterface] List of connection managers
      */
-    private $connections = array();
-
-    /**
-     * @var array List of the database connection settings, required to establish actual connections
-     */
-    private $connectionConfigurations = array();
-    
-    /**
-     * @var string
-     */
-    private $connectionClass = self::DEFAULT_CONNECTION_CLASS;
+    private $connectionManagers = array();
     
     /**
      * Get the singleton instance for this class.
      *
      * @return \Propel\Runtime\Configuration
      */
-    final public function getInstance()
+    final static public function getInstance()
     {
         if (null === self::$instance) {
             self::$instance = new static();
@@ -244,104 +232,33 @@ class Configuration
     }
 
     /**
-     * Get the connection settings for a given datasource.
-     *
      * @param string $name The datasource name
-     * @param string $mode Whether this is for a READ or WRITE connection (self::CONNECTION_READ or self::CONNECTION_WRITE)
-     *
-     * @return array
+     * @param \Propel\Runtime\Connection\ConnectionManagerInterface $manager
      */
-    public function getConnectionConfiguration($name = null, $mode = self::CONNECTION_WRITE)
+    public function setConnectionManager($name, ConnectionManagerInterface $manager)
     {
-        if ($name === null) {
-            $name = $this->getDefaultDatasource();
+        if (isset($this->connectionManagers[$name])) {
+            $this->connectionManagers[$name]->closeConnections();
         }
-        
-        return $this->connectionConfigurations[$name][$mode];
+        $this->connectionManagers[$name] = $manager;
     }
 
     /**
-     * Chack whether the connection settings are defined for a given datasource.
-     *
      * @param string $name The datasource name
-     * @param string $mode Whether this is for a READ or WRITE connection (self::CONNECTION_READ or self::CONNECTION_WRITE)
      *
-     * @return bool
+     * @return \Propel\Runtime\Connection\ConnectionManagerInterface
      */
-    public function hasConnectionConfiguration($name = null, $mode = self::CONNECTION_WRITE)
+    public function getConnectionManager($name)
     {
-        if ($name === null) {
-            $name = $this->getDefaultDatasource();
-        }
-        
-        return isset($this->connectionConfigurations[$name][$mode]);
+        return $this->connectionManagers[$name];
     }
 
     /**
-     * Set the connection settings for a given datasource.
-     *
-     * Example connection settings:
-     * array(
-     *   'write' => array(
-     *     'dsn'      => 'mysql:dbname=test_master',
-     *     'user'     => 'mywriteuser',
-     *     'password' => 'S3cr3t'
-     *   ),
-     *   'read' => array(
-     *     array(
-     *       'dsn'      => 'mysql:dbname=test_slave1',
-     *       'user'     => 'myreaduser',
-     *       'password' => 'F00baR'
-     *     ),
-     *     array(
-     *       'dsn'      => 'mysql:dbname=test_slave2',
-     *       'user'     => 'myreaduser',
-     *       'password' => 'F00baR'
-     *     )
-     *   )
-     * )
-     *
-     * @param string $name The datasource name
-     * @param array $connectionSettings
+     * @return array[\Propel\Runtime\Connection\ConnectionManagerInterface]
      */
-    public function setConnectionConfiguration($name, $connectionConfiguration)
+    public function getConnectionManagers()
     {
-        $this->connectionConfigurations[$name] = $connectionConfiguration;
-        $this->closeConnection($name);
-    }
-
-    /**
-     * Set connection settings for all datasources.
-     *
-     * Also close existing connections.
-     *
-     * @param array $connectionConfigurations A list of connection configurations
-     */
-    public function setConnectionConfigurations($connectionConfigurations)
-    {
-        foreach ($connectionConfigurations as $name => $connectionConfiguration) {
-            $this->setConnectionConfiguration($name, $connectionConfiguration);
-        }
-    }
-
-    /**
-     * For replication, whether to always force the use of a master connection.
-     *
-     * @return     boolean
-     */
-    public function isForceMasterConnection()
-    {
-        return $this->isForceMasterConnection;
-    }
-
-    /**
-     * For replication, set whether to always force the use of a master connection.
-     *
-     * @param      boolean $isForceMasterConnection
-     */
-    public function setForceMasterConnection($isForceMasterConnection)
-    {
-        $this->isForceMasterConnection = (bool) $isForceMasterConnection;
+        return $this->connectionManagers;
     }
 
     /**
@@ -352,23 +269,9 @@ class Configuration
      */
     public function closeConnections()
     {
-        foreach ($this->connections as $name => $connection) {
-            $this->closeConnection($name);
+        foreach ($this->connectionManagers as $name => $manager) {
+            $manager->closeConnections();
         }
-    }
-
-    /**
-     * Close a connection for a given datasource.
-     *
-     * This method frees the database connection handles that have been
-     * opened by the getConnection() method.
-     *
-     * @param string $name The datasource name
-     */
-    public function closeConnection($name)
-    {
-        unset($this->connections[$name][self::CONNECTION_WRITE]);
-        unset($this->connections[$name][self::CONNECTION_READ]);
     }
 
     /**
@@ -387,10 +290,10 @@ class Configuration
         if (null === $name) {
             $name = $this->getDefaultDatasource();
         }
-        if (self::CONNECTION_WRITE == $mode || $this->isForceMasterConnection()) {
-            return $this->getMasterConnection($name);
+        if (self::CONNECTION_READ == $mode) {
+            return $this->getReadConnection($name);
         }
-        return $this->getSlaveConnection($name);
+        return $this->getWriteConnection($name);
     }
 
     /**
@@ -406,18 +309,9 @@ class Configuration
      *
      * @throws     PropelException - if connection is not properly configured
      */
-    public function getMasterConnection($name)
+    public function getWriteConnection($name)
     {
-        $mode = self::CONNECTION_WRITE;
-        if (!isset($this->connections[$name][$mode])) {
-            if (!$this->hasConnectionConfiguration($name, $mode)) {
-                throw new PropelException(sprintf('No connection settings defined for datasource "%s"', $name));
-            }
-            $con = $this->initConnection($name, $this->getConnectionConfiguration($name, $mode));
-            $this->connections[$name][$mode] = $con;
-        }
-
-        return $this->connections[$name][$mode];
+        return $this->getConnectionManager($name)->getWriteConnection($this->getAdapter($name));
     }
 
     /**
@@ -432,114 +326,22 @@ class Configuration
      *
      * @return     ConnectionInterface A database connection
      */
-    public function getSlaveConnection($name)
+    public function getReadConnection($name)
     {
-        $mode = self::CONNECTION_READ;
-        if (!isset($this->connections[$name][$mode])) {
-            if (!$this->hasConnectionConfiguration($name, $mode)) {
-                // fallback to master
-                return $this->getMasterConnection($name);
-            }
-            $slaveConnectionConfigurations = $this->getConnectionConfiguration($name, $mode);
-            $key = mt_rand(0, count($slaveConnectionConfigurations) - 1);
-            $con = $this->initConnection($name, $slaveConnectionConfigurations[$key]);
-            $this->connections[$name][$mode] = $con;
-        }
-
-        return $this->connections[$name][$mode];
+        return $this->getConnectionManager($name)->getReadConnection($this->getAdapter($name));
     }
 
     /**
-     * Set a connection for a given datasource.
+     * Shortcut to define a single connectino for a datasource.
      *
-     * @param      string $name The datasource name
-     * @param      \Propel\Runtime\Connection\ConnectionInterface $con The database connection.
-     * @param      string $mode Whether this is a READ or WRITE connection (self::CONNECTION_READ or self::CONNECTION_WRITE)
+     * @param string $name The datasource name
+     * @param \Propel\Runtime\Connection\ConnectionInterface A database connection 
      */
-    public function setConnection($name, ConnectionInterface $con, $mode = self::CONNECTION_WRITE)
+    public function setConnection($name, ConnectionInterface $connection)
     {
-        if ($mode == self::CONNECTION_READ) {
-            $this->setSlaveConnection($name, $con);
-        } else {
-            $this->setMasterConnection($name, $con);
-        }
-    }
-
-    /**
-     * Sets the master connection for a given datasource name
-     *
-     * @param      string $name The datasource name
-     * @param      \Propel\Runtime\Connection\ConnectionInterface $con The database connection.
-     */
-    public function setMasterConnection($name, ConnectionInterface $con)
-    {
-        $this->connections[$name][self::CONNECTION_WRITE] = $con;
-    }
-
-    /**
-     * Sets the slave connection a given datasource
-     *
-     * @param      string $name The datasource name
-     * @param      \Propel\Runtime\Connection\ConnectionInterface $con The database connection.
-     */
-    public function addSlaveConnection($name, ConnectionInterface $con)
-    {
-        $this->connections[$name][self::CONNECTION_READ][] = $con;
-    }
-
-    /**
-     * Opens a new connection for a given datasource.
-     *
-     * Use the connection configuration to build a connection.
-     *
-     * @param      string $name Datasource name.
-     * @param      array $connectionConfiguration Connection paramters.
-     * @param      string $connectionClass  The name of a class implementing
-     *                                      \Propel\Runtime\Connection\ConnectionInterface,
-     *                                     (default is ConnectionWrapper)
-     *
-     * @return     \Propel\Runtime\Connection\ConnectionWrapper A database connection
-     *
-     * @throws     PropelException - if lower-level exception caught when trying to connect.
-     */
-    public function initConnection($name, $connectionConfiguration)
-    {
-        if (isset($connectionConfiguration['classname'])) {
-            $connectionClass = $connectionConfiguration['classname'];
-        } else {
-            $connectionClass = $this->connectionClass;
-        }
-        $adapter = $this->getAdapter($name);
-        try {
-            $adapterConnection = $adapter->getConnection($connectionConfiguration);
-        } catch (AdapterException $e) {
-            throw new PropelException("Unable to open PDO connection", $e);
-        }
-        $connection = new $connectionClass($adapterConnection);
-
-        // load any connection options from the config file
-        // connection attributes are those PDO flags that have to be set on the initialized connection
-        if (isset($connectionConfiguration['attributes']) && is_array($connectionConfiguration['attributes'])) {
-            foreach ($connectionConfiguration['attributes'] as $option => $value) {
-                if (is_string($value) && false !== strpos($value, '::')) {
-                    if (!defined($value)) {
-                        throw new PropelException(sprintf('Invalid class constant specified "%s" while processing connection attributes for datasource "%s"'), $value, $name);
-                    }
-                    $value = constant($value);
-                }
-                $connection->setAttribute($option, $value);
-            }
-        }
-
-        return $connection;
-    }
-
-    /**
-     * @param string $connectionClass
-     */
-    public function setConnectionClass($connectionClass)
-    {
-        $this->connectionClass = $connectionClass;
+        $manager = new ConnectionManagerSingle();
+        $manager->setConnection($connection);
+        $this->setConnectionManager($name, $manager);
     }
 
     final private function __clone()
