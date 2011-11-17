@@ -341,46 +341,6 @@ class Propel
     }
 
     /**
-     * Returns the database map information. Name relates to the name
-     * of the connection pool to associate with the map.
-     *
-     * The database maps are "registered" by the generated map builder classes.
-     *
-     * @param      string The name of the database corresponding to the DatabaseMap to retrieve.
-     *
-     * @return     DatabaseMap The named <code>DatabaseMap</code>.
-     *
-     * @throws     PropelException - if database map is null or propel was not initialized properly.
-     */
-    public static function getDatabaseMap($name = null)
-    {
-        return Configuration::getInstance()->getDatabaseMap($name);
-    }
-
-    /**
-     * Sets the database map object to use for specified datasource.
-     *
-     * @param      string $name The datasource name.
-     * @param      DatabaseMap $map The database map object to use for specified datasource.
-     */
-    public static function setDatabaseMap($name, DatabaseMap $map)
-    {
-        Configuraton::getInstance()->setDatabaseMap($name, $map);
-    }
-
-    /**
-     * Set your own class-name for Database-Mapping. Then
-     * you can change the whole TableMap-Model, but keep its
-     * functionality for Criteria.
-     *
-     * @param      string The name of the class.
-     */
-    public static function setDatabaseMapClass($name)
-    {
-        Configuration::getInstance()->setDatabaseMapClass($name);
-    }
-
-    /**
      * For replication, set whether to always force the use of a master connection.
      *
      * @param      boolean $bool
@@ -428,31 +388,6 @@ class Propel
     public static function getConnection($name = null, $mode = Propel::CONNECTION_WRITE)
     {
         return Configuration::getInstance()->getConnection($name, $mode);
-    }
-
-    /**
-     * Returns database adapter for a specific datasource.
-     *
-     * @param      string The datasource name.
-     *
-     * @return     AbstractAdapter The corresponding database adapter.
-     *
-     * @throws     PropelException If unable to find DBdapter for specified db.
-     */
-    public static function getAdapter($name = null)
-    {
-        return Configuration::getInstance()->getAdapter($name);
-    }
-
-    /**
-     * Sets a database adapter for specified datasource.
-     *
-     * @param      string $name The datasource name.
-     * @param      AbstractAdapter $adapter The AbstractAdapter implementation to use.
-     */
-    public static function setAdapter($name, AdapterInterface $adapter)
-    {
-        Configuration::getInstance()->setAdapter($name, $adapter);
     }
 
     /**

@@ -115,7 +115,7 @@ class BasePeer
      */
     public static function doDelete(Criteria $criteria, ConnectionInterface $con)
     {
-        $db = Propel::getAdapter($criteria->getDbName());
+        $db = Configuration::getInstance()->getAdapter($criteria->getDbName());
         $dbMap = Configuration::getInstance()->getDatabaseMap($criteria->getDbName());
 
         //join are not supported with DELETE statement
@@ -186,7 +186,7 @@ class BasePeer
     {
 
         try {
-            $db = Propel::getAdapter($databaseName);
+            $db = Configuration::getInstance()->getAdapter($databaseName);
             if ($db->useQuoteIdentifier()) {
                 $tableName = $db->quoteIdentifierTable($tableName);
             }
@@ -230,7 +230,7 @@ class BasePeer
         // the primary key
         $id = null;
 
-        $db = Propel::getAdapter($criteria->getDbName());
+        $db = Configuration::getInstance()->getAdapter($criteria->getDbName());
 
         // Get the table name and method for determining the primary
         // key value.
@@ -267,7 +267,7 @@ class BasePeer
         }
 
         try {
-            $adapter = Propel::getAdapter($criteria->getDBName());
+            $adapter = Configuration::getInstance()->getAdapter($criteria->getDBName());
 
             $qualifiedCols = $criteria->keys(); // we need table.column cols when populating values
             $columns = array(); // but just 'column' cols for the SQL
@@ -339,7 +339,7 @@ class BasePeer
      */
     public static function doUpdate(Criteria $selectCriteria, Criteria $updateValues, ConnectionInterface $con) {
 
-        $db = Propel::getAdapter($selectCriteria->getDbName());
+        $db = Configuration::getInstance()->getAdapter($selectCriteria->getDbName());
         $dbMap = Configuration::getInstance()->getDatabaseMap($selectCriteria->getDbName());
 
         // Get list of required tables, containing all columns
@@ -462,7 +462,7 @@ class BasePeer
     public static function doSelect(Criteria $criteria, ConnectionInterface $con = null)
     {
         $dbMap = Configuration::getInstance()->getDatabaseMap($criteria->getDbName());
-        $db = Propel::getAdapter($criteria->getDbName());
+        $db = Configuration::getInstance()->getAdapter($criteria->getDbName());
         $stmt = null;
 
         if ($con === null) {
@@ -504,7 +504,7 @@ class BasePeer
     public static function doCount(Criteria $criteria, ConnectionInterface $con = null)
     {
         $dbMap = Configuration::getInstance()->getDatabaseMap($criteria->getDbName());
-        $db = Propel::getAdapter($criteria->getDbName());
+        $db = Configuration::getInstance()->getAdapter($criteria->getDbName());
 
         if ($con === null) {
             $con = Propel::getConnection($criteria->getDbName(), Propel::CONNECTION_READ);
@@ -649,7 +649,7 @@ class BasePeer
      */
     public static function createSelectSql(Criteria $criteria, &$params)
     {
-        $db = Propel::getAdapter($criteria->getDbName());
+        $db = Configuration::getInstance()->getAdapter($criteria->getDbName());
         $dbMap = Configuration::getInstance()->getDatabaseMap($criteria->getDbName());
 
         $fromClause = array();

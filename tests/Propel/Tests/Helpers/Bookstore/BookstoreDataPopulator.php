@@ -11,6 +11,7 @@
 namespace Propel\Tests\Helpers\Bookstore;
 
 use Propel\Runtime\Propel;
+use Propel\Runtime\Configuration;
 use Propel\Runtime\Query\Criteria;
 
 use Propel\Tests\Bookstore\AcctAccessRole;
@@ -167,7 +168,7 @@ class BookstoreDataPopulator
         $m1->setBook($td);
         $m1->setCoverImage(file_get_contents($blob_path));
         // CLOB is broken in PDO OCI, see http://pecl.php.net/bugs/bug.php?id=7943
-        if (get_class(Propel::getAdapter()) != "OracleAdapter") {
+        if (get_class(Configuration::getInstance()->getAdapter()) != "OracleAdapter") {
             $m1->setExcerpt(file_get_contents($clob_path));
         }
         $m1->save($con);

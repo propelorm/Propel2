@@ -14,6 +14,7 @@ use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 use Propel\Tests\Bookstore\BookPeer;
 
 use Propel\Runtime\Propel;
+use Propel\Runtime\Configuration;
 use Propel\Runtime\Adapter\Pdo\MysqlAdapter;
 use Propel\Runtime\Adapter\Pdo\PgsqlAdapter;
 use Propel\Runtime\Adapter\Pdo\SqliteAdapter;
@@ -51,13 +52,13 @@ class CriteriaTest extends BookstoreTestBase
     {
         parent::setUp();
         $this->c = new Criteria();
-        $this->savedAdapter = Propel::getAdapter(Propel::getDefaultDatasource());
-        Propel::setAdapter(Propel::getDefaultDatasource(), new SqliteAdapter());
+        $this->savedAdapter = Configuration::getInstance()->getAdapter(Propel::getDefaultDatasource());
+        Configuration::getInstance()->setAdapter(Propel::getDefaultDatasource(), new SqliteAdapter());
     }
 
     protected function tearDown()
     {
-        Propel::setAdapter(Propel::getDefaultDatasource(), $this->savedAdapter);
+        Configuration::getInstance()->setAdapter(Propel::getDefaultDatasource(), $this->savedAdapter);
         parent::tearDown();
     }
 
@@ -316,14 +317,14 @@ class CriteriaTest extends BookstoreTestBase
      */
     public function testCriterionIgnoreCase()
     {
-        $originalDB = Propel::getAdapter();
+        $originalDB = Configuration::getInstance()->getAdapter();
         $adapters = array(new MysqlAdapter(), new PgsqlAdapter());
         $expectedIgnore = array("UPPER(TABLE.COLUMN) LIKE UPPER(:p1)", "TABLE.COLUMN ILIKE :p1");
 
         $i =0;
         foreach ($adapters as $adapter) {
 
-            Propel::setAdapter(Propel::getDefaultDatasource(), $adapter);
+            Configuration::getInstance()->setAdapter(Propel::getDefaultDatasource(), $adapter);
             $myCriteria = new Criteria();
 
             $myCriterion = $myCriteria->getNewCriterion(
@@ -344,13 +345,13 @@ class CriteriaTest extends BookstoreTestBase
             $this->assertEquals($expectedIgnore[$i], $sb);
             $i++;
         }
-        Propel::setAdapter(Propel::getDefaultDatasource(), $originalDB);
+        Configuration::getInstance()->setAdapter(Propel::getDefaultDatasource(), $originalDB);
     }
 
     public function testOrderByIgnoreCase()
     {
-        $originalDB = Propel::getAdapter();
-        Propel::setAdapter(Propel::getDefaultDatasource(), new MysqlAdapter());
+        $originalDB = Configuration::getInstance()->getAdapter();
+        Configuration::getInstance()->setAdapter(Propel::getDefaultDatasource(), new MysqlAdapter());
 
         $criteria = new Criteria();
         $criteria->setIgnoreCase(true);
@@ -361,7 +362,7 @@ class CriteriaTest extends BookstoreTestBase
         $expectedSQL = 'SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID, UPPER(book.TITLE) FROM `book` ORDER BY UPPER(book.TITLE) ASC';
         $this->assertEquals($expectedSQL, $sql);
 
-        Propel::setAdapter(Propel::getDefaultDatasource(), $originalDB);
+        Configuration::getInstance()->setAdapter(Propel::getDefaultDatasource(), $originalDB);
     }
 
     /**

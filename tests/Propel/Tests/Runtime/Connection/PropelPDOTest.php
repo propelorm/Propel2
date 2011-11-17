@@ -17,8 +17,9 @@ use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\BookPeer;
 
 use Propel\Runtime\Propel;
+use Propel\Runtime\Configuration;
 use Propel\Runtime\Connection\PropelPDO;
-use Propel\Runtime\Config\Configuration;
+use Propel\Runtime\Config\Configuration as Registry;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Query\Criteria;
 
@@ -355,7 +356,7 @@ class PropelPDOTest extends BookstoreTestBase
         $con->useDebug(true);
         $books = BookPeer::doSelect($c, $con);
         $latestExecutedQuery = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.TITLE LIKE 'Harry%s'";
-        if (!Propel::getAdapter(BookPeer::DATABASE_NAME)->useQuoteIdentifier()) {
+        if (!Configuration::getInstance()->getAdapter(BookPeer::DATABASE_NAME)->useQuoteIdentifier()) {
             $latestExecutedQuery = str_replace('`', '', $latestExecutedQuery);
         }
         $this->assertEquals($latestExecutedQuery, $con->getLastExecutedQuery(), 'PropelPDO updates the last executed query when useLogging is true');
@@ -424,7 +425,7 @@ class PropelPDOTest extends BookstoreTestBase
     public function testDebugLog()
     {
         $con = Propel::getConnection(BookPeer::DATABASE_NAME);
-        $config = Propel::getConfiguration(Configuration::TYPE_OBJECT);
+        $config = Propel::getConfiguration(Registry::TYPE_OBJECT);
 
         // save data to return to normal state after test
         $logger = $con->getLogger();
@@ -441,7 +442,7 @@ class PropelPDOTest extends BookstoreTestBase
             'statement_execute'
         );
 
-        Propel::getConfiguration(Configuration::TYPE_OBJECT)->setParameter("debugpdo.logging.methods", $logEverything, false);
+        Propel::getConfiguration(Registry::TYPE_OBJECT)->setParameter("debugpdo.logging.methods", $logEverything, false);
         $con->useDebug(true);
 
         $con->beginTransaction();

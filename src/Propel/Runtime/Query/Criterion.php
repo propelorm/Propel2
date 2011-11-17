@@ -11,6 +11,7 @@
 namespace Propel\Runtime\Query;
 
 use Propel\Runtime\Propel;
+use Propel\Runtime\Configuration;
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Adapter\Pdo\PgsqlAdapter;
 
@@ -103,7 +104,7 @@ class Criterion
     {
         // init $this->db
         try {
-            $db = Propel::getAdapter($criteria->getDbName());
+            $db = Configuration::getInstance()->getAdapter($criteria->getDbName());
             $this->setAdapter($db);
         } catch (Exception $e) {
             // we are only doing this to allow easier debugging, so

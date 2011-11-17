@@ -7,5 +7,6 @@ The static methods from the `Propel` class have been moved to a singleton. There
     Replace...                                With...
     use Propel\Runtime\Propel                 use Propel\Runtime\Configuration
     Propel::getDatabase($name)                Configuration::getInstance()->getDatabase($name)
+    Propel::getDB($name)                      Configuration::getInstance()->getAdapter($name)
 
 The generated model is automatically updated once you rebuild your model.

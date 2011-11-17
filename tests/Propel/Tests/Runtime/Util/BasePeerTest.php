@@ -17,6 +17,7 @@ use Propel\Tests\Bookstore\Bookstore;
 use Propel\Tests\Bookstore\BookstorePeer;
 
 use Propel\Runtime\Propel;
+use Propel\Runtime\Configuration;
 use Propel\Runtime\Query\Criteria;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Util\BasePeer;
@@ -36,7 +37,7 @@ class BasePeerTest extends BookstoreTestBase
      */
     public function testMultipleFunctionInCriteria()
     {
-        $db = Propel::getAdapter(BookPeer::DATABASE_NAME);
+        $db = Configuration::getInstance()->getAdapter(BookPeer::DATABASE_NAME);
         try {
             $c = new Criteria();
             $c->setDistinct();
@@ -137,7 +138,7 @@ class BasePeerTest extends BookstoreTestBase
 
     public function testMssqlApplyLimitNoOffset()
     {
-        $db = Propel::getAdapter(BookPeer::DATABASE_NAME);
+        $db = Configuration::getInstance()->getAdapter(BookPeer::DATABASE_NAME);
         if(! ($db instanceof MssqlAdapter))
         {
             $this->markTestSkipped('Configured database vendor is not MsSQL');
@@ -163,7 +164,7 @@ class BasePeerTest extends BookstoreTestBase
 
     public function testMssqlApplyLimitWithOffset()
     {
-        $db = Propel::getAdapter(BookPeer::DATABASE_NAME);
+        $db = Configuration::getInstance()->getAdapter(BookPeer::DATABASE_NAME);
         if(! ($db instanceof MssqlAdapter))
         {
             $this->markTestSkipped('Configured database vendor is not MsSQL');
@@ -187,7 +188,7 @@ class BasePeerTest extends BookstoreTestBase
 
     public function testMssqlApplyLimitWithOffsetOrderByAggregate()
     {
-        $db = Propel::getAdapter(BookPeer::DATABASE_NAME);
+        $db = Configuration::getInstance()->getAdapter(BookPeer::DATABASE_NAME);
         if(! ($db instanceof MssqlAdapter))
         {
             $this->markTestSkipped('Configured database vendor is not MsSQL');
@@ -212,7 +213,7 @@ class BasePeerTest extends BookstoreTestBase
 
     public function testMssqlApplyLimitWithOffsetMultipleOrderBy()
     {
-        $db = Propel::getAdapter(BookPeer::DATABASE_NAME);
+        $db = Configuration::getInstance()->getAdapter(BookPeer::DATABASE_NAME);
         if(! ($db instanceof MssqlAdapter))
         {
             $this->markTestSkipped('Configured database vendor is not MsSQL');
