@@ -45,37 +45,32 @@ class Configuration
     /**
      * @var array[\Propel\Runtime\Adapter\AdapterInterface] List of database adapter instances
      */
-    private $adapters = array();
+    protected $adapters = array();
 
     /**
      * @var array[string] List of database adapter classes
      */
-    private $adapterClasses = array();
+    protected $adapterClasses = array();
 
     /**
      * @var string
      */
-    private $defaultDatasource = 'default';
+    protected $defaultDatasource = 'default';
 
     /**
      * @var string
      */
-    private $databaseMapClass = self::DEFAULT_DATABASE_MAP_CLASS;
+    protected $databaseMapClass = self::DEFAULT_DATABASE_MAP_CLASS;
 
     /**
      * @var array[\Propel\Runtime\Map\DatabaseMap] List of database map instances
      */
-    private $databaseMaps = array();
-
-    /**
-     * @var bool For replication, whether to force the use of master connection.
-     */
-    private $isForceMasterConnection = false;
+    protected $databaseMaps = array();
 
     /**
      * @var array[\Propel\Runtime\Connection\ConnectionManagerInterface] List of connection managers
      */
-    private $connectionManagers = array();
+    protected $connectionManagers = array();
 
     /**
      * Get the singleton instance for this class.
@@ -89,6 +84,16 @@ class Configuration
         }
 
         return self::$instance;
+    }
+
+    /**
+     * Get the singleton instance for this class.
+     *
+     * @param \Propel\Runtime\Configuration
+     */
+    final static public function setInstance($instance)
+    {
+        self::$instance = $instance;
     }
 
     /**
@@ -145,7 +150,7 @@ class Configuration
     public function setAdapterClasses($adapterClasses)
     {
         $this->adapterClasses = $adapterClasses;
-        $this->adapters = null;
+        $this->adapters = array();
     }
 
     /**
@@ -191,6 +196,8 @@ class Configuration
      */
     public function setAdapters($adapters)
     {
+        $this->adapterClasses = array();
+        $this->adapters = array();
         foreach ($adapters as $name => $adapter) {
             $this->setAdapter($name, $adapter);
         }
