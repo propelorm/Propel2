@@ -483,11 +483,11 @@ abstract class PdoAdapter
      * values that should be substituted.
      *
      * <code>
-     * $adapter = Configuration::getInstance()->getAdapter($criteria->getDbName());
+     * $adapter = Propel::getServiceContainer()->getAdapter($criteria->getDbName());
      * $sql = BasePeer::createSelectSql($criteria, $params);
      * $stmt = $con->prepare($sql);
      * $params = array();
-     * $adapter->populateStmtValues($stmt, $params, Configuration::getInstance()->getDatabaseMap($critera->getDbName()));
+     * $adapter->populateStmtValues($stmt, $params, Propel::getServiceContainer()->getDatabaseMap($critera->getDbName()));
      * $stmt->execute();
      * </code>
      *

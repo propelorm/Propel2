@@ -11,6 +11,7 @@
 namespace Propel\Runtime\Connection;
 
 use Propel\Runtime\Adapter\AdapterInterface;
+use Propel\Runtime\Adapter\AdapterException;
 use Propel\Runtime\Exception\PropelException;
 
 class ConnectionFactory

@@ -17,7 +17,6 @@ use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\BookPeer;
 
 use Propel\Runtime\Propel;
-use Propel\Runtime\Configuration;
 use Propel\Runtime\Collection\Collection;
 use Propel\Runtime\Collection\OnDemandCollection;
 use Propel\Runtime\Exception\PropelException;
@@ -36,7 +35,7 @@ class OnDemandFormatterTest extends BookstoreEmptyTestBase
 
     public function testFormatNoCriteria()
     {
-        $con = Configuration::getInstance()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
 
         $stmt = $con->query('SELECT * FROM book');
         $formatter = new OnDemandFormatter();
@@ -50,7 +49,7 @@ class OnDemandFormatterTest extends BookstoreEmptyTestBase
 
     public function testFormatManyResults()
     {
-        $con = Configuration::getInstance()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
         BookstoreDataPopulator::populate($con);
 
         $stmt = $con->query('SELECT * FROM book');
@@ -70,7 +69,7 @@ class OnDemandFormatterTest extends BookstoreEmptyTestBase
      */
     public function testFormatManyResultsIteratedTwice()
     {
-        $con = Configuration::getInstance()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
         BookstoreDataPopulator::populate($con);
 
         $stmt = $con->query('SELECT * FROM book');
@@ -89,7 +88,7 @@ class OnDemandFormatterTest extends BookstoreEmptyTestBase
     public function testFormatALotOfResults()
     {
         $nbBooks = 50;
-        $con = Configuration::getInstance()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
         Propel::disableInstancePooling();
         $book = new Book();
         for ($i=0; $i < $nbBooks; $i++) {
@@ -117,7 +116,7 @@ class OnDemandFormatterTest extends BookstoreEmptyTestBase
 
     public function testFormatOneResult()
     {
-        $con = Configuration::getInstance()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
         BookstoreDataPopulator::populate($con);
 
         $stmt = $con->query('SELECT * FROM book WHERE book.TITLE = "Quicksilver"');
@@ -135,7 +134,7 @@ class OnDemandFormatterTest extends BookstoreEmptyTestBase
 
     public function testFormatNoResult()
     {
-        $con = Configuration::getInstance()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
 
         $stmt = $con->query('SELECT * FROM book WHERE book.TITLE = "foo"');
         $formatter = new OnDemandFormatter();
@@ -151,7 +150,7 @@ class OnDemandFormatterTest extends BookstoreEmptyTestBase
 
     public function testFormatOneManyResults()
     {
-        $con = Configuration::getInstance()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
         BookstoreDataPopulator::populate($con);
 
         $stmt = $con->query('SELECT * FROM book');

@@ -13,7 +13,6 @@ namespace Propel\Tests\Runtime\Query;
 use Propel\Tests\Helpers\BaseTestCase;
 
 use Propel\Runtime\Propel;
-use Propel\Runtime\Configuration;
 use Propel\Runtime\Adapter\Pdo\SqliteAdapter;
 use Propel\Runtime\Query\Criteria;
 use Propel\Runtime\Query\Join;
@@ -39,13 +38,13 @@ class JoinTest extends BaseTestCase
         Propel::init(dirname(__FILE__) . '/../../../../Fixtures/bookstore/build/conf/bookstore-conf.php');
         parent::setUp();
 
-        $this->savedAdapter = Configuration::getInstance()->getAdapter(null);
-        Configuration::getInstance()->setAdapter(null, new SqliteAdapter());
+        $this->savedAdapter = Propel::getServiceContainer()->getAdapter(null);
+        Propel::getServiceContainer()->setAdapter(null, new SqliteAdapter());
     }
 
     protected function tearDown()
     {
-        Configuration::getInstance()->setAdapter(null, $this->savedAdapter);
+        Propel::getServiceContainer()->setAdapter(null, $this->savedAdapter);
         parent::tearDown();
     }
 

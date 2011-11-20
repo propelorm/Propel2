@@ -57,15 +57,15 @@ The `<slaves>` section is at the same level as the master `<connection>` and con
 
 The replication functionality is implemented in the Propel connection configuration and initialization code and in the generated Peer and Object classes.
 
-### `Configuration::getReadConnection()` and `Configuration::getWriteConnection()` ###
+### `Propel::getReadConnection()` and `Propel::getWriteConnection()` ###
 
-When requesting a connection from Propel (`Configuration::getInstance()->getConnection()`), you get a write connection by default. 
+When requesting a connection from Propel (`Propel::getConnection()`), you get a write connection by default. 
 
 You can also specify that you want a READ connection (slave) or a WRITE connection (master).  Methods that are designed to perform READ operations, like `ModelCriteria::find()`, will always request a READ connection like so:
 
 {% highlight php %}
 <?php
-$con = Configuration::getInstance()->getReadConnection(MyPeer::DATABASE_NAME);
+$con = Propel::getReadConnection(MyPeer::DATABASE_NAME);
 $books = BookQuery::create()->find($con);
 {% endhighlight %}
 
@@ -73,7 +73,7 @@ Other methods that are designed to perform write operations, like `ModelCriteria
 
 {% highlight php %}
 <?php
-$con = Configuration::getInstance()->getWriteConnection(MyPeer::DATABASE_NAME);
+$con = Propel::getWriteConnection(MyPeer::DATABASE_NAME);
 BookQuery::create()->deleteAll($con);
 {% endhighlight %}
 
@@ -85,22 +85,22 @@ Both READ (slave) and WRITE (master) connections are only configured on demand. 
 
 {% highlight php %}
 <?php
-$con = Configuration::getInstance()->getReadConnection(MyPeer::DATABASE_NAME);
+$con = Propel::getReadConnection(MyPeer::DATABASE_NAME);
 $stmt = $con->query('SELECT * FROM my');
 /* ... */
 {% endhighlight %}
 
 ### `ConnectionManager::setForceMasterConnection()` ###
 
-You can force Propel to always return a WRITE (master) connection when calling `Configuration::getInstance()->getReadConnection()`, even though there are some slaves connections defined.
+You can force Propel to always return a WRITE (master) connection when calling `Propel::getServiceContainer()->getReadConnection()`, even though there are some slaves connections defined.
 
 To do so, call the `setForceMasterConnection()` method on the related `ConnectionManager`, as follows:
 
 {% highlight php %}
 <?php
-$manager = Configuration::getInstance()->getConnectionManager(MyPeer::DATABASE_NAME);
+$manager = Propel::getServiceContainer()->getConnectionManager(MyPeer::DATABASE_NAME);
 $manager->setForceMasterConnection(true);
-$con = Configuration::getInstance()->getReadConnection(MyPeer::DATABASE_NAME);
+$con = Propel::getReadConnection(MyPeer::DATABASE_NAME);
 // $con is a WRITE connection
 {% endhighlight %}
 

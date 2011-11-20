@@ -25,7 +25,6 @@ use Propel\Tests\Bookstore\Review;
 use Propel\Tests\Bookstore\ReviewPeer;
 
 use Propel\Runtime\Propel;
-use Propel\Runtime\Configuration;
 use Propel\Runtime\Query\ModelCriteria;
 
 /**
@@ -39,7 +38,7 @@ class OnDemandFormatterWithTest extends BookstoreEmptyTestBase
 {
     protected function assertCorrectHydration1($c, $msg)
     {
-        $con = Configuration::getInstance()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
         $c->limit(1);
         $books = $c->find($con);
         foreach ($books as $book) {
@@ -127,7 +126,7 @@ class OnDemandFormatterWithTest extends BookstoreEmptyTestBase
         $c->leftJoin('Propel\Tests\Bookstore\Book.Author');
         $c->with('Author');
         $c->limit(1);
-        $con = Configuration::getInstance()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
         $books = $c->find($con);
         foreach ($books as $book) {
             break;
@@ -146,7 +145,7 @@ class OnDemandFormatterWithTest extends BookstoreEmptyTestBase
         $c->with('s');
         $c->where('s.Name = ?', 'John');
         $c->limit(1);
-        $con = Configuration::getInstance()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
         $emps = $c->find($con);
         foreach ($emps as $emp) {
             break;
@@ -181,7 +180,7 @@ class OnDemandFormatterWithTest extends BookstoreEmptyTestBase
         $c->with('AuthorRelatedByFirstAuthor');
         $c->where('Propel\Tests\Bookstore\Essay.Title = ?', 'Foo');
         $c->limit(1);
-        $con = Configuration::getInstance()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
         $essays = $c->find($con);
         foreach ($essays as $essay) {
             break;
@@ -209,7 +208,7 @@ class OnDemandFormatterWithTest extends BookstoreEmptyTestBase
         $c->join('Book.Author');
         $c->with('Author');
         $c->limit(1);
-        $con = Configuration::getInstance()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
         $reviews = $c->find($con);
         foreach ($reviews as $review) {
             break;
@@ -235,7 +234,7 @@ class OnDemandFormatterWithTest extends BookstoreEmptyTestBase
         $c->joinWith('Propel\Tests\Bookstore\BookSummary.SummarizedBook');
         $c->joinWith('SummarizedBook.Author');
         $c->setFormatter(ModelCriteria::FORMAT_ON_DEMAND);
-        $con = Configuration::getInstance()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
         $summary = $c->findOne($con);
         $count = $con->getQueryCount();
         $this->assertEquals('Harry Potter does some amazing magic!', $summary->getSummary(), 'Main object is correctly hydrated');
@@ -293,7 +292,7 @@ class OnDemandFormatterWithTest extends BookstoreEmptyTestBase
         $c->withColumn('Author.FirstName', 'AuthorName');
         $c->withColumn('Author.LastName', 'AuthorName2');
         $c->limit(1);
-        $con = Configuration::getInstance()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
         $books = $c->find($con);
         foreach ($books as $book) {
             break;
@@ -319,7 +318,7 @@ class OnDemandFormatterWithTest extends BookstoreEmptyTestBase
         $c->withColumn('Author.LastName', 'AuthorName2');
         $c->with('Author');
         $c->limit(1);
-        $con = Configuration::getInstance()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
         $books = $c->find($con);
         foreach ($books as $book) {
             break;

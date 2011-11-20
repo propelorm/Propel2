@@ -8,7 +8,7 @@
  * @license    MIT License
  */
 
-namespace Propel\Runtime;
+namespace Propel\Runtime\ServiceContainer;
 
 use Propel\Runtime\Adapter\AdapterFactory;
 use Propel\Runtime\Adapter\AdapterInterface;
@@ -20,28 +20,8 @@ use Propel\Runtime\Connection\ConnectionFactory;
 use Propel\Runtime\Map\DatabaseMap;
 use Propel\Runtime\Exception\PropelException;
 
-class Configuration
+class StandardServiceContainer implements ServiceContainerInterface
 {
-    /**
-     * Constant used to request a READ connection (applies to replication).
-     */
-    const CONNECTION_READ = 'read';
-
-    /**
-     * Constant used to request a WRITE connection (applies to replication).
-     */
-    const CONNECTION_WRITE = 'write';
-
-    /**
-     * The default DatabaseMap class created by getDatabaseMap()
-     */
-    const DEFAULT_DATABASE_MAP_CLASS = '\Propel\Runtime\Map\DatabaseMap';
-
-    /**
-     * @var \Propel\Runtime\Configuration The unique instance for this singleton
-     */
-    private static $instance;
-
     /**
      * @var array[\Propel\Runtime\Adapter\AdapterInterface] List of database adapter instances
      */
@@ -55,12 +35,12 @@ class Configuration
     /**
      * @var string
      */
-    protected $defaultDatasource = 'default';
+    protected $defaultDatasource = ServiceContainerInterface::DEFAULT_DATASOURCE_NAME;
 
     /**
      * @var string
      */
-    protected $databaseMapClass = self::DEFAULT_DATABASE_MAP_CLASS;
+    protected $databaseMapClass = ServiceContainerInterface::DEFAULT_DATABASE_MAP_CLASS;
 
     /**
      * @var array[\Propel\Runtime\Map\DatabaseMap] List of database map instances
@@ -71,30 +51,6 @@ class Configuration
      * @var array[\Propel\Runtime\Connection\ConnectionManagerInterface] List of connection managers
      */
     protected $connectionManagers = array();
-
-    /**
-     * Get the singleton instance for this class.
-     *
-     * @return \Propel\Runtime\Configuration
-     */
-    final static public function getInstance()
-    {
-        if (null === self::$instance) {
-            self::$instance = new static();
-        }
-
-        return self::$instance;
-    }
-
-    /**
-     * Get the singleton instance for this class.
-     *
-     * @param \Propel\Runtime\Configuration
-     */
-    final static public function setInstance($instance)
-    {
-        self::$instance = $instance;
-    }
 
     /**
      * @return string
@@ -298,12 +254,12 @@ class Configuration
      *
      * @return     \Propel\Runtime\Connection\ConnectionInterface A database connection
      */
-    public function getConnection($name = null, $mode = self::CONNECTION_WRITE)
+    public function getConnection($name = null, $mode = ServiceContainerInterface::CONNECTION_WRITE)
     {
         if (null === $name) {
             $name = $this->getDefaultDatasource();
         }
-        if (self::CONNECTION_READ == $mode) {
+        if (ServiceContainerInterface::CONNECTION_READ == $mode) {
             return $this->getReadConnection($name);
         }
 

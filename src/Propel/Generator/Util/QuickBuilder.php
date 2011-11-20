@@ -14,7 +14,7 @@ use Propel\Generator\Builder\Util\XmlToAppData;
 use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Model\Table;
 
-use Propel\Runtime\Configuration;
+use Propel\Runtime\Propel;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\ConnectionPdo;
 use Propel\Runtime\Connection\ConnectionWrapper;
@@ -102,8 +102,8 @@ class QuickBuilder
         $this->buildSQL($con);
         $this->buildClasses();
         $name = $this->getDatabase()->getName();
-        Configuration::getInstance()->setAdapter($name, $adapter);
-        Configuration::getInstance()->setConnection($name, $con);
+        Propel::getServiceContainer()->setAdapter($name, $adapter);
+        Propel::getServiceContainer()->setConnection($name, $con);
 
         return $con;
     }

@@ -11,7 +11,6 @@
 namespace Propel\Tests\Helpers\Schemas;
 
 use Propel\Runtime\Propel;
-use Propel\Runtime\Configuration;
 
 /**
  * Bse class for tests on the schemas schema
@@ -38,7 +37,7 @@ abstract class SchemasTestBase extends \PHPUnit_Framework_TestCase
 
     static public function tearDownAfterClass()
     {
-        Configuration::getInstance()->closeConnections();
+        Propel::getServiceContainer()->closeConnections();
         Propel::init(dirname(__FILE__) . '/../../../../Fixtures/bookstore/build/conf/bookstore-conf.php');
     }
 }

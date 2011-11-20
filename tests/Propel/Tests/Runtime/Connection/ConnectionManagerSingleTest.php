@@ -45,7 +45,7 @@ class ConnectionManagerSingleTest extends BaseTestCase
         $readCon  = $manager->getReadConnection(new SqliteAdapter());
         $this->assertSame($writeCon, $readCon);
     }
-    
+
     public function testSetConnection()
     {
         $connection = new ConnectionPdo('sqlite::memory:');

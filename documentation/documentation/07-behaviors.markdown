@@ -41,7 +41,7 @@ Then, you can force the update of the `created_at` column before every insertion
 <?php
 class Book extends BaseBook
 {
-  public function preInsert(PropelPDO $con = null)
+  public function preInsert(ConnectionInterface $con = null)
   {
     $this->setCreatedAt(time());
     return true;
@@ -384,8 +384,8 @@ class FastPkFindBehavior extends Behavior
 public function findPk(\$key, \$con = null)
 {
   \$query = 'SELECT * from `%s` WHERE id = ?';
-  if (null ### \$con) {
-    \$con = Configuration::getInstance()->getConnection(%sPeer::DATABASE_NAME);
+  if (null === \$con) {
+    \$con = Propel::getReadConnection(%sPeer::DATABASE_NAME);
   }
   \$stmt = \$con->prepare(\$query);
   \$stmt->bindValue(1, \$key);

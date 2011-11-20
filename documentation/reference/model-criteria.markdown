@@ -332,7 +332,7 @@ $books = BookQuery::create()
 <?php
 // All the termination methods accept a Connection object
 // So you can specify which connection to use
-$con = Configuration::getInstance()->getConnection('bookstore', Propel::CONNECTION_READ);
+$con = Propel::getReadConnection(BookPeer::DATABASE_NAME);
 $nbBooks = BookQuery::create()
   ->findOne($con);
 {% endhighlight %}

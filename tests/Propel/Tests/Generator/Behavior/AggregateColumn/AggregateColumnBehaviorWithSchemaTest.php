@@ -22,7 +22,6 @@ use Propel\Tests\BookstoreSchemas\CustomerQuery;
 use Propel\Tests\Helpers\Schemas\SchemasTestBase;
 
 use Propel\Runtime\Propel;
-use Propel\Runtime\Configuration;
 
 /**
  * Tests for AggregateColumnBehavior class
@@ -34,7 +33,7 @@ class AggregateColumnBehaviorWithSchemaTest extends SchemasTestBase
     protected function setUp()
     {
         parent::setUp();
-        $this->con = Configuration::getInstance()->getConnection(BookstorePeer::DATABASE_NAME);
+        $this->con = Propel::getServiceContainer()->getConnection(BookstorePeer::DATABASE_NAME);
         $this->con->beginTransaction();
     }
 

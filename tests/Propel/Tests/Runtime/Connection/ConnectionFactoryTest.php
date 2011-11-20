@@ -58,7 +58,7 @@ class ConnectionFactoryTest extends BaseTestCase
         $pdo = $con->getWrappedConnection();
         $this->assertInstanceOf('Propel\Runtime\Connection\ConnectionPdo', $pdo);
     }
-    
+
     public function testCreateSetsAttributesAfterConnection()
     {
         $con = ConnectionFactory::create(array('dsn' => 'sqlite::memory:', 'attributes' => array(PDO::ATTR_CASE => PDO::CASE_LOWER)), new SqliteAdapter());

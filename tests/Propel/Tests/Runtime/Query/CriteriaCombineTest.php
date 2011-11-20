@@ -13,7 +13,6 @@ namespace Propel\Tests\Runtime\Query;
 use Propel\Tests\Helpers\BaseTestCase;
 
 use Propel\Runtime\Propel;
-use Propel\Runtime\Configuration;
 use Propel\Runtime\Query\Criteria;
 use Propel\Runtime\Util\BasePeer;
 use Propel\Runtime\Adapter\Pdo\SqliteAdapter;
@@ -46,14 +45,14 @@ class CriteriaCombineTest extends BaseTestCase
         Propel::init(__DIR__ . '/../../../../Fixtures/bookstore/build/conf/bookstore-conf.php');
         parent::setUp();
         $this->c = new Criteria();
-        $defaultDatasource = Configuration::getInstance()->getDefaultDatasource();
-        $this->savedAdapter = Configuration::getInstance()->getAdapter($defaultDatasource);
-        Configuration::getInstance()->setAdapter($defaultDatasource, new SqliteAdapter());
+        $defaultDatasource = Propel::getServiceContainer()->getDefaultDatasource();
+        $this->savedAdapter = Propel::getServiceContainer()->getAdapter($defaultDatasource);
+        Propel::getServiceContainer()->setAdapter($defaultDatasource, new SqliteAdapter());
     }
 
     protected function tearDown()
     {
-        Configuration::getInstance()->setAdapter(Configuration::getInstance()->getDefaultDatasource(), $this->savedAdapter);
+        Propel::getServiceContainer()->setAdapter(Propel::getServiceContainer()->getDefaultDatasource(), $this->savedAdapter);
         parent::tearDown();
     }
 

@@ -17,7 +17,7 @@ use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\BookPeer;
 use Propel\Tests\Bookstore\Publisher;
 
-use Propel\Runtime\Configuration;
+use Propel\Runtime\Propel;
 use Propel\Runtime\Adapter\PgsqlAdapter;
 use Propel\Runtime\Adapter\SqliteAdapter;
 
@@ -56,7 +56,7 @@ class CharacterEncodingTest extends BookstoreTestBase
 
     public function testUtf8()
     {
-        $db = Configuration::getInstance()->getAdapter(BookPeer::DATABASE_NAME);
+        $db = Propel::getServiceContainer()->getAdapter(BookPeer::DATABASE_NAME);
 
         $title = "Смерть на брудершафт. Младенец и черт";
         //        1234567890123456789012345678901234567
@@ -85,7 +85,7 @@ class CharacterEncodingTest extends BookstoreTestBase
 
     public function testInvalidCharset()
     {
-        $db = Configuration::getInstance()->getAdapter(BookPeer::DATABASE_NAME);
+        $db = Propel::getServiceContainer()->getAdapter(BookPeer::DATABASE_NAME);
         if ($db instanceof SqliteAdapter) {
             $this->markTestSkipped();
         }

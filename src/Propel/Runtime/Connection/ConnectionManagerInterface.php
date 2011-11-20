@@ -14,7 +14,19 @@ use Propel\Runtime\Adapter\AdapterInterface;
 
 interface ConnectionManagerInterface
 {
+    /**
+     * @param  \Propel\Runtime\Adapter\AdapterInterface $adapter
+     *
+     * @return \Propel\Runtime\Connection\ConnectionInterface
+     */
     function getWriteConnection(AdapterInterface $adapter = null);
+
+    /**
+     * @param  \Propel\Runtime\Adapter\AdapterInterface $adapter
+     *
+     * @return \Propel\Runtime\Connection\ConnectionInterface
+     */
     function getReadConnection(AdapterInterface $adapter = null);
+
     function closeConnections();
 }

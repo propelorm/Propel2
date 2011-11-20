@@ -10,7 +10,7 @@
 
 namespace Propel\Tests\Runtime\Map;
 
-use Propel\Runtime\Configuration;
+use Propel\Runtime\Propel;
 
 use Propel\Tests\Helpers\Schemas\SchemasTestBase;
 
@@ -28,7 +28,7 @@ class RelatedMapSymmetricalWithSchemasTest extends SchemasTestBase
     protected function setUp()
     {
         parent::setUp();
-        $this->databaseMap = Configuration::getInstance()->getDatabaseMap('bookstore-schemas');
+        $this->databaseMap = Propel::getServiceContainer()->getDatabaseMap('bookstore-schemas');
     }
 
     public function testOneToMany()

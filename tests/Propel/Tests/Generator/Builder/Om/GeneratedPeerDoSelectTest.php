@@ -38,7 +38,6 @@ use Propel\Tests\Bookstore\ReaderFavorite;
 use Propel\Tests\Bookstore\ReaderFavoritePeer;
 
 use Propel\Runtime\Propel;
-use Propel\Runtime\Configuration;
 use Propel\Runtime\Query\Criteria;
 use Propel\Runtime\Util\BasePeer;
 
@@ -177,7 +176,7 @@ class GeneratedPeerDoSelectTest extends BookstoreEmptyTestBase
 
     public function testDoSelectJoinOneToOne()
     {
-        $con = Configuration::getInstance()->getReadConnection(BookstoreEmployeeAccountPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getReadConnection(BookstoreEmployeeAccountPeer::DATABASE_NAME);
         $count = $con->getQueryCount();
         Propel::disableInstancePooling();
         $c = new Criteria();
@@ -347,7 +346,7 @@ class GeneratedPeerDoSelectTest extends BookstoreEmptyTestBase
      */
     public function testMultiColFk()
     {
-        $con = Configuration::getInstance()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
 
         ReaderFavoritePeer::doDeleteAll();
 

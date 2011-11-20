@@ -283,7 +283,7 @@ public static function deleteTree(" . ($useScope ? "\$scope = null, " : "") . "C
 public static function shiftRLValues(\$delta, \$first, \$last = null" . ($useScope ? ", \$scope = null" : ""). ", ConnectionInterface \$con = null)
 {
     if (\$con === null) {
-        \$con = Configuration::getInstance()->getWriteConnection($peerClassname::DATABASE_NAME);
+        \$con = Propel::getServiceContainer()->getWriteConnection($peerClassname::DATABASE_NAME);
     }
 
     // Shift left column values
@@ -347,7 +347,7 @@ public static function shiftRLValues(\$delta, \$first, \$last = null" . ($useSco
 public static function shiftLevel(\$delta, \$first, \$last" . ($useScope ? ", \$scope = null" : ""). ", ConnectionInterface \$con = null)
 {
     if (\$con === null) {
-        \$con = Configuration::getInstance()->getWriteConnection($peerClassname::DATABASE_NAME);
+        \$con = Propel::getServiceContainer()->getWriteConnection($peerClassname::DATABASE_NAME);
     }
 
     \$whereCriteria = new Criteria($peerClassname::DATABASE_NAME);

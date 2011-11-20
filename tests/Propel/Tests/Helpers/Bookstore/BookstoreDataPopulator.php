@@ -10,7 +10,7 @@
 
 namespace Propel\Tests\Helpers\Bookstore;
 
-use Propel\Runtime\Configuration;
+use Propel\Runtime\Propel;
 use Propel\Runtime\Query\Criteria;
 
 use Propel\Tests\Bookstore\AcctAccessRole;
@@ -59,7 +59,7 @@ class BookstoreDataPopulator
     public static function populate($con = null)
     {
         if($con === null) {
-            $con = Configuration::getInstance()->getConnection(BookPeer::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
         }
         $con->beginTransaction();
 
@@ -167,7 +167,7 @@ class BookstoreDataPopulator
         $m1->setBook($td);
         $m1->setCoverImage(file_get_contents($blob_path));
         // CLOB is broken in PDO OCI, see http://pecl.php.net/bugs/bug.php?id=7943
-        if (get_class(Configuration::getInstance()->getAdapter()) != "OracleAdapter") {
+        if (get_class(Propel::getServiceContainer()->getAdapter()) != "OracleAdapter") {
             $m1->setExcerpt(file_get_contents($clob_path));
         }
         $m1->save($con);
@@ -236,7 +236,7 @@ class BookstoreDataPopulator
     public static function populateOpinionFavorite($con = null)
     {
         if($con === null) {
-            $con = Configuration::getInstance()->getConnection(BookPeer::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
         }
         $con->beginTransaction();
 
@@ -287,7 +287,7 @@ class BookstoreDataPopulator
         }
         // delete records from the database
         if ($con === null) {
-            $con = Configuration::getInstance()->getConnection(BookPeer::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
         }
         $con->beginTransaction();
         foreach ($peerClasses as $peerClass) {

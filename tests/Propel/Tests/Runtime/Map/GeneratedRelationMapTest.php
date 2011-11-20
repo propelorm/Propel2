@@ -12,7 +12,7 @@ namespace Propel\Tests\Runtime\Map;
 
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
-use Propel\Runtime\Configuration;
+use Propel\Runtime\Propel;
 use Propel\Runtime\Map\RelationMap;
 
 /**
@@ -29,7 +29,7 @@ class GeneratedRelationMapTest extends BookstoreTestBase
     protected function setUp()
     {
         parent::setUp();
-        $this->databaseMap = Configuration::getInstance()->getDatabaseMap('bookstore');
+        $this->databaseMap = Propel::getServiceContainer()->getDatabaseMap('bookstore');
     }
 
     public function testGetRightTable()

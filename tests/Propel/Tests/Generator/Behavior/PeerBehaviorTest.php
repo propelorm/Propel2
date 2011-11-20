@@ -13,7 +13,7 @@ namespace Propel\Tests\Generator\Behavior;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 use Propel\Tests\Bookstore\Behavior\Table3Peer;
 
-use Propel\Runtime\Configuration;
+use Propel\Runtime\Propel;
 use Propel\Runtime\Query\Criteria;
 
 /**
@@ -38,7 +38,7 @@ class PeerBehaviorTest extends BookstoreTestBase
 
     public function testPreSelect()
     {
-        $con = Configuration::getInstance()->getReadConnection(Table3Peer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getReadConnection(Table3Peer::DATABASE_NAME);
         $con->preSelect = 0;
         Table3Peer::doSelect(new Criteria, $con);
         $this->assertNotEquals($con->preSelect, 0, 'preSelect hook is called in doSelect()');

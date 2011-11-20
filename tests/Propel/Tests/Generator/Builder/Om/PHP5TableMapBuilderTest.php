@@ -13,7 +13,7 @@ namespace Propel\Tests\Generator\Builder\Om;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 use Propel\Tests\Bookstore\Behavior\Table1Peer;
 
-use Propel\Runtime\Configuration;
+use Propel\Runtime\Propel;
 use Propel\Runtime\Map\RelationMap;
 
 /**
@@ -30,7 +30,7 @@ class PHP5TableMapBuilderTest extends BookstoreTestBase
   protected function setUp()
   {
       parent::setUp();
-    $this->databaseMap = Configuration::getInstance()->getDatabaseMap('bookstore');
+    $this->databaseMap = Propel::getServiceContainer()->getDatabaseMap('bookstore');
   }
 
   public function testColumnDefaultValue()
@@ -138,7 +138,7 @@ class PHP5TableMapBuilderTest extends BookstoreTestBase
   {
     $bookTable = $this->databaseMap->getTableByPhpName('Propel\Tests\Bookstore\Book');
     $this->assertEquals($bookTable->getBehaviors(), array(), 'getBehaviors() returns an empty array when no behaviors are registered');
-    $tmap = Configuration::getInstance()->getDatabaseMap(Table1Peer::DATABASE_NAME)->getTable(Table1Peer::TABLE_NAME);
+    $tmap = Propel::getServiceContainer()->getDatabaseMap(Table1Peer::DATABASE_NAME)->getTable(Table1Peer::TABLE_NAME);
     $expectedBehaviorParams = array('timestampable' => array('create_column' => 'created_on', 'update_column' => 'updated_on'));
     $this->assertEquals($tmap->getBehaviors(), $expectedBehaviorParams, 'The map builder creates a getBehaviors() method to retrieve behaviors parameters when behaviors are registered');
   }

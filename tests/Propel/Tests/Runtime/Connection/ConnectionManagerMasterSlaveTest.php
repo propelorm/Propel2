@@ -91,7 +91,7 @@ class ConnectionManagerMasterSlaveTest extends BaseTestCase
         $expected = array(PDO::CASE_LOWER, PDO::CASE_UPPER);
         $this->assertContains($pdo->getAttribute(PDO::ATTR_CASE), $expected);
     }
-    
+
     public function testIsForceMasterConnectionFalseByDefault()
     {
         $manager = new ConnectionManagerMasterSlave();

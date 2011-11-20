@@ -17,7 +17,6 @@ use Propel\Tests\Bookstore\Bookstore;
 use Propel\Tests\Bookstore\BookstorePeer;
 
 use Propel\Runtime\Propel;
-use Propel\Runtime\Configuration;
 use Propel\Runtime\Query\Criteria;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Util\BasePeer;
@@ -37,7 +36,7 @@ class BasePeerTest extends BookstoreTestBase
      */
     public function testMultipleFunctionInCriteria()
     {
-        $db = Configuration::getInstance()->getAdapter(BookPeer::DATABASE_NAME);
+        $db = Propel::getServiceContainer()->getAdapter(BookPeer::DATABASE_NAME);
         try {
             $c = new Criteria();
             $c->setDistinct();
@@ -74,7 +73,7 @@ class BasePeerTest extends BookstoreTestBase
 
     public function testDoCountDuplicateColumnName()
     {
-        $con = Configuration::getInstance()->getReadConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getReadConnection(BookPeer::DATABASE_NAME);
         $c = new Criteria();
         $c->addSelectColumn(BookPeer::ID);
         $c->addJoin(BookPeer::AUTHOR_ID, AuthorPeer::ID);
@@ -138,7 +137,7 @@ class BasePeerTest extends BookstoreTestBase
 
     public function testMssqlApplyLimitNoOffset()
     {
-        $db = Configuration::getInstance()->getAdapter(BookPeer::DATABASE_NAME);
+        $db = Propel::getServiceContainer()->getAdapter(BookPeer::DATABASE_NAME);
         if(! ($db instanceof MssqlAdapter))
         {
             $this->markTestSkipped('Configured database vendor is not MsSQL');
@@ -164,7 +163,7 @@ class BasePeerTest extends BookstoreTestBase
 
     public function testMssqlApplyLimitWithOffset()
     {
-        $db = Configuration::getInstance()->getAdapter(BookPeer::DATABASE_NAME);
+        $db = Propel::getServiceContainer()->getAdapter(BookPeer::DATABASE_NAME);
         if(! ($db instanceof MssqlAdapter))
         {
             $this->markTestSkipped('Configured database vendor is not MsSQL');
@@ -188,7 +187,7 @@ class BasePeerTest extends BookstoreTestBase
 
     public function testMssqlApplyLimitWithOffsetOrderByAggregate()
     {
-        $db = Configuration::getInstance()->getAdapter(BookPeer::DATABASE_NAME);
+        $db = Propel::getServiceContainer()->getAdapter(BookPeer::DATABASE_NAME);
         if(! ($db instanceof MssqlAdapter))
         {
             $this->markTestSkipped('Configured database vendor is not MsSQL');
@@ -213,7 +212,7 @@ class BasePeerTest extends BookstoreTestBase
 
     public function testMssqlApplyLimitWithOffsetMultipleOrderBy()
     {
-        $db = Configuration::getInstance()->getAdapter(BookPeer::DATABASE_NAME);
+        $db = Propel::getServiceContainer()->getAdapter(BookPeer::DATABASE_NAME);
         if(! ($db instanceof MssqlAdapter))
         {
             $this->markTestSkipped('Configured database vendor is not MsSQL');
@@ -242,7 +241,7 @@ class BasePeerTest extends BookstoreTestBase
      */
     public function testDoDeleteNoCondition()
     {
-        $con = Configuration::getInstance()->getWriteConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getWriteConnection(BookPeer::DATABASE_NAME);
         $c = new Criteria(BookPeer::DATABASE_NAME);
         BasePeer::doDelete($c, $con);
     }
@@ -252,7 +251,7 @@ class BasePeerTest extends BookstoreTestBase
      */
     public function testDoDeleteJoin()
     {
-        $con = Configuration::getInstance()->getWriteConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getWriteConnection(BookPeer::DATABASE_NAME);
         $c = new Criteria(BookPeer::DATABASE_NAME);
         $c->add(BookPeer::TITLE, 'War And Peace');
         $c->addJoin(BookPeer::AUTHOR_ID, AuthorPeer::ID);
@@ -261,7 +260,7 @@ class BasePeerTest extends BookstoreTestBase
 
     public function testDoDeleteSimpleCondition()
     {
-        $con = Configuration::getInstance()->getWriteConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getWriteConnection(BookPeer::DATABASE_NAME);
         $c = new Criteria(BookPeer::DATABASE_NAME);
         $c->add(BookPeer::TITLE, 'War And Peace');
         BasePeer::doDelete($c, $con);
@@ -271,7 +270,7 @@ class BasePeerTest extends BookstoreTestBase
 
     public function testDoDeleteSeveralConditions()
     {
-        $con = Configuration::getInstance()->getWriteConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getWriteConnection(BookPeer::DATABASE_NAME);
         $c = new Criteria(BookPeer::DATABASE_NAME);
         $c->add(BookPeer::TITLE, 'War And Peace');
         $c->add(BookPeer::ID, 12);
@@ -282,7 +281,7 @@ class BasePeerTest extends BookstoreTestBase
 
     public function testDoDeleteTableAlias()
     {
-        $con = Configuration::getInstance()->getWriteConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getWriteConnection(BookPeer::DATABASE_NAME);
         $c = new Criteria(BookPeer::DATABASE_NAME);
         $c->addAlias('b', BookPeer::TABLE_NAME);
         $c->add('b.TITLE', 'War And Peace');
@@ -297,7 +296,7 @@ class BasePeerTest extends BookstoreTestBase
      */
     public function testDoDeleteSeveralTables()
     {
-        $con = Configuration::getInstance()->getWriteConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getWriteConnection(BookPeer::DATABASE_NAME);
         $count = $con->getQueryCount();
         $c = new Criteria(BookPeer::DATABASE_NAME);
         $c->add(BookPeer::TITLE, 'War And Peace');
@@ -333,7 +332,7 @@ class BasePeerTest extends BookstoreTestBase
         $c1->setComment('Foo');
         $c2 = new Criteria();
         $c2->add(BookPeer::TITLE, 'Updated Title');
-        $con = Configuration::getInstance()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
         BasePeer::doUpdate($c1, $c2, $con);
         $expected = 'UPDATE /* Foo */ `book` SET `TITLE`=\'Updated Title\'';
         $this->assertEquals($expected, $con->getLastExecutedQuery(), 'Criteria::setComment() adds a comment to update queries');
@@ -344,7 +343,7 @@ class BasePeerTest extends BookstoreTestBase
         $c = new Criteria();
         $c->setComment('Foo');
         $c->add(BookPeer::TITLE, 'War And Peace');
-        $con = Configuration::getInstance()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
         BasePeer::doDelete($c, $con);
         $expected = 'DELETE /* Foo */ FROM `book` WHERE book.TITLE=\'War And Peace\'';
         $this->assertEquals($expected, $con->getLastExecutedQuery(), 'Criteria::setComment() adds a comment to delete queries');

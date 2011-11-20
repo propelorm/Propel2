@@ -15,12 +15,12 @@ Propel uses PDO as database abstraction layer, and therefore uses [PDO's built-i
 
 {% highlight php %}
 <?php
-use Propel\Runtime\Configuration;
+use Propel\Runtime\Propel;
 // ...
 public function transferMoney($fromAccountNumber, $toAccountNumber, $amount)
 {
   // get the PDO connection object from Propel
-  $con = Configuration::getInstance()->getConnection(AccountPeer::DATABASE_NAME);
+  $con = Propel::getWriteConnection(AccountPeer::DATABASE_NAME);
 
   $fromAccount = AccountPeer::retrieveByPk($fromAccountNumber, $con);
   $toAccount   = AccountPeer::retrieveByPk($toAccountNumber, $con);
@@ -47,7 +47,7 @@ The transaction statements are `beginTransaction()`, `commit()` and `rollback()`
 
 In this example, if something wrong happens while saving either one of the two accounts, an `Exception` is thrown, and the whole operation is rolled back. That means that the transfer is cancelled, with an insurance that the money hasn't vanished (that's the A in ACID, which stands for "Atomicity"). If both account modifications work as expected, the whole transaction is committed, meaning that the data changes enclosed in the transaction are persisted in the database.
 
-Tip: In order to build a transaction, you need a connection object. The connection object for a Propel model is always available through `Configuration::getInstance()->getConnection([ModelName]Peer::DATABASE_NAME)`.
+Tip: In order to build a transaction, you need a connection object. The connection object for a Propel model is always available through `Propel::getReadConnection([ModelName]Peer::DATABASE_NAME)` (for READ queries) and `Propel::getWriteConnection([ModelName]Peer::DATABASE_NAME)` (for WRITE queries).
 
 ## Denormalization And Transactions ##
 
@@ -79,17 +79,17 @@ You must update this new column every time you save or delete a `Book` object; t
 <?php
 class Book extends BaseBook
 {
-  public function postSave(PropelPDO $con)
+  public function postSave(ConnectionInterface $con)
   {
     $this->updateNbBooks($con);
   }
 
-  public function postDelete(PropelPDO $con)
+  public function postDelete(ConnectionInterface $con)
   {
     $this->updateNbBooks($con);
   }
 
-  public function updateNbBooks(PropelPDO $con)
+  public function updateNbBooks(ConnectionInterface $con)
   {
     $author = $this->getAuthor();
     $nbBooks = $author->countBooks($con);
@@ -105,7 +105,7 @@ The `BaseBook::save()` method wraps the actual database INSERT/UPDATE query insi
 <?php
 class Book extends BaseBook
 {
-  public function save(PropelPDO $con)
+  public function save(ConnectionInterface $con)
   {
     $con->beginTransaction();
 
@@ -138,7 +138,7 @@ Some RDBMS offer the ability to nest transactions, to allow partial rollback of 
 
 {% highlight php %}
 <?php
-function deleteBooksWithNoPrice(PropelPDO $con)
+function deleteBooksWithNoPrice(ConnectionInterface $con)
 {
   $con->beginTransaction();
   try {
@@ -152,7 +152,7 @@ function deleteBooksWithNoPrice(PropelPDO $con)
   }
 }
 
-function deleteAuthorsWithNoEmail(PropelPDO $con)
+function deleteAuthorsWithNoEmail(ConnectionInterface $con)
 {
   $con->beginTransaction();
   try {
@@ -166,7 +166,7 @@ function deleteAuthorsWithNoEmail(PropelPDO $con)
   }
 }
 
-function cleanup(PropelPDO $con)
+function cleanup(ConnectionInterface $con)
 {
   $con->beginTransaction();
   try {
@@ -194,7 +194,7 @@ A database transaction has a cost in terms of performance. In fact, for simple d
 
 {% highlight php %}
 <?php
-$con = Configuration::getInstance()->getConnection(BookPeer::DATABASE_NAME);
+$con = Propel::getConnection(BookPeer::DATABASE_NAME);
 for ($i=0; $i<2002; $i++)
 {
   $book = new Book();
@@ -222,7 +222,7 @@ You can take advantage of Propel's nested transaction capabilities to encapsulat
 
 {% highlight php %}
 <?php
-$con = Configuration::getInstance()->getConnection(BookPeer::DATABASE_NAME);
+$con = Propel::getConnection(BookPeer::DATABASE_NAME);
 $con->beginTransaction();
 for ($i=0; $i<2002; $i++)
 {
@@ -250,11 +250,11 @@ Tip: Until the final `commit()` is called, most database engines lock updated ro
 
 ## Why Is The Connection Always Passed As Parameter? ##
 
-All the code examples in this chapter show the connection object passed a a parameter to Propel methods that trigger a database query:
+All the code examples in this chapter show the connection object passed as a parameter to Propel methods that trigger a database query:
 
 {% highlight php %}
 <?php
-$con = Configuration::getInstance()->getConnection(AccountPeer::DATABASE_NAME);
+$con = Propel::getConnection(AccountPeer::DATABASE_NAME);
 $fromAccount = AccountPeer::retrieveByPk($fromAccountNumber, $con);
 $fromAccount->setValue($fromAccount->getValue() - $amount);
 $fromAccount->save($con);

@@ -10,7 +10,7 @@
 
 namespace Propel\Tests\Runtime\Adapter;
 
-use Propel\Runtime\Configuration;
+use Propel\Runtime\Propel;
 use Propel\Runtime\Query\Criteria;
 
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
@@ -28,7 +28,7 @@ class AbstractAdapterTest extends BookstoreTestBase
 
     public function testTurnSelectColumnsToAliases()
     {
-        $db = Configuration::getInstance()->getAdapter(BookPeer::DATABASE_NAME);
+        $db = Propel::getServiceContainer()->getAdapter(BookPeer::DATABASE_NAME);
         $c1 = new Criteria();
         $c1->addSelectColumn(BookPeer::ID);
         $db->turnSelectColumnsToAliases($c1);
@@ -40,7 +40,7 @@ class AbstractAdapterTest extends BookstoreTestBase
 
     public function testTurnSelectColumnsToAliasesPreservesAliases()
     {
-        $db = Configuration::getInstance()->getAdapter(BookPeer::DATABASE_NAME);
+        $db = Propel::getServiceContainer()->getAdapter(BookPeer::DATABASE_NAME);
         $c1 = new Criteria();
         $c1->addSelectColumn(BookPeer::ID);
         $c1->addAsColumn('foo', BookPeer::TITLE);
@@ -54,7 +54,7 @@ class AbstractAdapterTest extends BookstoreTestBase
 
     public function testTurnSelectColumnsToAliasesExisting()
     {
-        $db = Configuration::getInstance()->getAdapter(BookPeer::DATABASE_NAME);
+        $db = Propel::getServiceContainer()->getAdapter(BookPeer::DATABASE_NAME);
         $c1 = new Criteria();
         $c1->addSelectColumn(BookPeer::ID);
         $c1->addAsColumn('book_ID', BookPeer::ID);
@@ -68,7 +68,7 @@ class AbstractAdapterTest extends BookstoreTestBase
 
     public function testTurnSelectColumnsToAliasesDuplicate()
     {
-        $db = Configuration::getInstance()->getAdapter(BookPeer::DATABASE_NAME);
+        $db = Propel::getServiceContainer()->getAdapter(BookPeer::DATABASE_NAME);
         $c1 = new Criteria();
         $c1->addSelectColumn(BookPeer::ID);
         $c1->addSelectColumn(BookPeer::ID);
@@ -82,7 +82,7 @@ class AbstractAdapterTest extends BookstoreTestBase
 
     public function testCreateSelectSqlPart()
     {
-        $db = Configuration::getInstance()->getAdapter(BookPeer::DATABASE_NAME);
+        $db = Propel::getServiceContainer()->getAdapter(BookPeer::DATABASE_NAME);
         $c = new Criteria();
         $c->addSelectColumn(BookPeer::ID);
         $c->addAsColumn('book_ID', BookPeer::ID);
@@ -94,7 +94,7 @@ class AbstractAdapterTest extends BookstoreTestBase
 
     public function testCreateSelectSqlPartSelectModifier()
     {
-        $db = Configuration::getInstance()->getAdapter(BookPeer::DATABASE_NAME);
+        $db = Propel::getServiceContainer()->getAdapter(BookPeer::DATABASE_NAME);
         $c = new Criteria();
         $c->addSelectColumn(BookPeer::ID);
         $c->addAsColumn('book_ID', BookPeer::ID);
@@ -107,7 +107,7 @@ class AbstractAdapterTest extends BookstoreTestBase
 
     public function testCreateSelectSqlPartAliasAll()
     {
-        $db = Configuration::getInstance()->getAdapter(BookPeer::DATABASE_NAME);
+        $db = Propel::getServiceContainer()->getAdapter(BookPeer::DATABASE_NAME);
         $c = new Criteria();
         $c->addSelectColumn(BookPeer::ID);
         $c->addAsColumn('book_ID', BookPeer::ID);

@@ -20,7 +20,6 @@ use Propel\Tests\Bookstore\BookPeer;
 use Propel\Tests\Bookstore\BookQuery;
 
 use Propel\Runtime\Propel;
-use Propel\Runtime\Configuration;
 use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Query\Criteria;
 use Propel\Runtime\Query\PropelQuery;
@@ -254,7 +253,7 @@ class ObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
 
     public function testPopulateRelationManyToOne()
     {
-        $con = Configuration::getInstance()->getReadConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getReadConnection(BookPeer::DATABASE_NAME);
         AuthorPeer::clearInstancePool();
         BookPeer::clearInstancePool();
         $books = BookQuery::create()->find($con);

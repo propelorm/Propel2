@@ -50,7 +50,7 @@ class QueryCacheBehavior extends Behavior
 
     public function queryMethods($builder)
     {
-        $builder->declareClasses('\Propel\Runtime\Configuration', '\Propel\Runtime\Util\BasePeer');
+        $builder->declareClasses('\Propel\Runtime\Propel', '\Propel\Runtime\Util\BasePeer');
         $this->peerClassname = $builder->getStubPeerBuilder()->getClassname();
         $script = '';
         $this->addSetQueryKey($script);
@@ -177,8 +177,8 @@ protected function doSelect(\$con)
     }
     \$this->configureSelectColumns();
 
-    \$dbMap = Configuration::getInstance()->getDatabaseMap(" . $this->peerClassname ."::DATABASE_NAME);
-    \$db = Configuration::getInstance()->getAdapter(" . $this->peerClassname ."::DATABASE_NAME);
+    \$dbMap = Propel::getServiceContainer()->getDatabaseMap(" . $this->peerClassname ."::DATABASE_NAME);
+    \$db = Propel::getServiceContainer()->getAdapter(" . $this->peerClassname ."::DATABASE_NAME);
 
     \$key = \$this->getQueryKey();
     if (\$key && \$this->cacheContains(\$key)) {
@@ -211,8 +211,8 @@ protected function doSelect(\$con)
         $script .= "
 protected function doCount(\$con)
 {
-    \$dbMap = Configuration::getInstance()->getDatabaseMap(\$this->getDbName());
-    \$db = Configuration::getInstance()->getAdapter(\$this->getDbName());
+    \$dbMap = Propel::getServiceContainer()->getDatabaseMap(\$this->getDbName());
+    \$db = Propel::getServiceContainer()->getAdapter(\$this->getDbName());
 
     \$key = \$this->getQueryKey();
     if (\$key && \$this->cacheContains(\$key)) {

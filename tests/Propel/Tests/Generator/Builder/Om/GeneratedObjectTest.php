@@ -44,7 +44,7 @@ use Propel\Tests\Bookstore\BookstoreEmployeeAccountPeer;
 use Propel\Tests\Bookstore\BookstoreContestEntry;
 use Propel\Tests\Bookstore\BookstoreSale;
 
-use Propel\Runtime\Configuration;
+use Propel\Runtime\Propel;
 use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Query\Criteria;
 use Propel\Runtime\Util\BasePeer;
@@ -143,7 +143,7 @@ class GeneratedObjectTest extends BookstoreTestBase
      */
     public function testDefaultExpresions()
     {
-        if (Configuration::getInstance()->getAdapter(BookstoreEmployeePeer::DATABASE_NAME) instanceof DBSqlite) {
+        if (Propel::getServiceContainer()->getAdapter(BookstoreEmployeePeer::DATABASE_NAME) instanceof DBSqlite) {
             $this->markTestSkipped("Cannot test default expressions with SQLite");
         }
         BookstoreEmployeeAccountPeer::doDeleteAll();
@@ -188,7 +188,7 @@ class GeneratedObjectTest extends BookstoreTestBase
      */
     public function testDefaultExpresions_ReloadOnInsert()
     {
-        if (Configuration::getInstance()->getAdapter(BookstoreEmployeePeer::DATABASE_NAME) instanceof DBSqlite) {
+        if (Propel::getServiceContainer()->getAdapter(BookstoreEmployeePeer::DATABASE_NAME) instanceof DBSqlite) {
             $this->markTestSkipped("Cannot test default date expressions with SQLite");
         }
 
@@ -228,7 +228,7 @@ class GeneratedObjectTest extends BookstoreTestBase
      */
     public function testDefaultExpresions_ReloadOnInsert_Override()
     {
-        if (Configuration::getInstance()->getAdapter(BookstoreEmployeePeer::DATABASE_NAME) instanceof DBSqlite) {
+        if (Propel::getServiceContainer()->getAdapter(BookstoreEmployeePeer::DATABASE_NAME) instanceof DBSqlite) {
             $this->markTestSkipped("Cannot test default date expressions with SQLite");
         }
 
@@ -353,7 +353,7 @@ class GeneratedObjectTest extends BookstoreTestBase
         $this->assertSame($pub1, $book->getPublisher());
 
         // now change values behind the scenes
-        $con = Configuration::getInstance()->getConnection(BookstoreEmployeeAccountPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookstoreEmployeeAccountPeer::DATABASE_NAME);
         $con->exec("UPDATE " . BookPeer::TABLE_NAME . " SET "
             . " publisher_id = " . $pub2->getId()
             . " WHERE id = " . $book->getId());
@@ -964,7 +964,7 @@ EOF;
 
     public function testPreSaveFalse()
     {
-        $con = Configuration::getInstance()->getConnection(AuthorPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(AuthorPeer::DATABASE_NAME);
         $author = new TestAuthorSaveFalse();
         $author->setFirstName("bogus");
         $author->setLastName("Lastname");
@@ -997,7 +997,7 @@ EOF;
 
     public function testPreDeleteFalse()
     {
-        $con = Configuration::getInstance()->getConnection(AuthorPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(AuthorPeer::DATABASE_NAME);
         $author = new TestAuthorDeleteFalse();
         $author->setFirstName("bogus");
         $author->setLastName("Lastname");

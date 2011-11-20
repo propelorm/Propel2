@@ -16,11 +16,10 @@ use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\ConnectionManagerSingle;
 use Propel\Runtime\Connection\ConnectionManagerMasterSlave;
 use Propel\Runtime\Exception\PropelException;
-use Propel\Runtime\Configuration;
+use Propel\Runtime\Propel;
 use Propel\Runtime\Map\DatabaseMap;
-
-use \PDO;
-use \PDOException;
+use Propel\Runtime\ServiceContainer\ServiceContainerInterface;
+use Propel\Runtime\ServiceContainer\StandardServiceContainer;
 
 /**
  * Propel's main resource pool and initialization & configuration class.
@@ -92,19 +91,14 @@ class Propel
     const LOG_DEBUG = 7;
 
     /**
-     * Constant used to request a READ connection (applies to replication).
-     */
-    const CONNECTION_READ = 'read';
-
-    /**
-     * Constant used to request a WRITE connection (applies to replication).
-     */
-    const CONNECTION_WRITE = 'write';
-
-    /**
      * @var        Configuration Propel-specific configuration.
      */
     private static $configuration;
+
+    /**
+     * @var \Propel\Runtime\ServiceContainer\ServiceContainerInterface
+     */
+    private static $serviceContainer;
 
     /**
      * @var        Log optional logger
@@ -145,14 +139,14 @@ class Propel
      */
     public static function setConfiguration($c)
     {
-        self::$logger = null;
-        Configuration::getInstance()->closeConnections();
+        $serviceContainer = self::getServiceContainer();
+        $serviceContainer->closeConnections();
         if (is_array($c)) {
             $c = new Registry($c);
         }
         // set default datasource
         $defaultDatasource = isset($c['datasources']['default']) ? $c['datasources']['default'] : self::DEFAULT_NAME;
-        Configuration::getInstance()->setDefaultDatasource($defaultDatasource);
+        $serviceContainer->setDefaultDatasource($defaultDatasource);
         if (isset($c['datasources'])) {
             foreach ($c['datasources'] as $name => $params) {
                 if (!is_array($params)) {
@@ -160,7 +154,7 @@ class Propel
                 }
                 // set adapters
                 if (isset($params['adapter'])) {
-                    Configuration::getInstance()->setAdapterClass($name, $params['adapter']);
+                    $serviceContainer->setAdapterClass($name, $params['adapter']);
                 }
                 // set connection settings
                 if (isset($params['connection'])) {
@@ -175,11 +169,11 @@ class Propel
                         $manager = new ConnectionManagerSingle();
                         $manager->setConfiguration($conParams);
                     }
-                    Configuration::getInstance()->setConnectionManager($name, $manager);
+                    $serviceContainer->setConnectionManager($name, $manager);
                 }
             }
         }
-
+        self::$logger = null;
         self::$configuration = $c;
     }
 
@@ -196,6 +190,138 @@ class Propel
     public static function getConfiguration($type = Registry::TYPE_ARRAY)
     {
         return self::$configuration->getParameters($type);
+    }
+
+    /**
+     * Get the service container instance.
+     *
+     * @return \Propel\Runtime\ServiceContainer\ServiceContainerInterface
+     */
+    static public function getServiceContainer()
+    {
+        if (null === self::$serviceContainer) {
+            self::$serviceContainer = new StandardServiceContainer();
+        }
+
+        return self::$serviceContainer;
+    }
+
+    /**
+     * Set the service container instance.
+     *
+     * @param \Propel\Runtime\ServiceContainer\ServiceContainerInterface
+     */
+    static public function setServiceContainer(ServiceContainerInterface $serviceContainer)
+    {
+        self::$serviceContainer = $serviceContainer;
+    }
+
+    /**
+     * @return string
+     */
+    static public function getDefaultDatasource()
+    {
+        return self::$serviceContainer->getDefaultDatasource();
+    }
+
+    /**
+     * Get the adapter for a given datasource.
+     *
+     * If the adapter does not yet exist, build it using the related adapterClass.
+     *
+     * @param string $name The datasource name
+     *
+     * @return Propel\Runtime\Adapter\AdapterInterface
+     */
+    static public function getAdapter($name = null)
+    {
+        return self::$serviceContainer->getAdapter($name);
+    }
+
+    /**
+     * Get the database map for a given datasource.
+     *
+     * The database maps are "registered" by the generated map builder classes.
+     *
+     * @param string $name The datasource name
+     *
+     * @return \Propel\Runtime\Map\DatabaseMap
+     */
+    static public function getDatabaseMap($name = null)
+    {
+        return self::$serviceContainer->getDatabaseMap($name);
+    }
+
+    /**
+     * @param string $name The datasource name
+     *
+     * @return \Propel\Runtime\Connection\ConnectionManagerInterface
+     */
+    static public function getConnectionManager($name)
+    {
+        return self::$serviceContainer->getConnectionManager($name);
+    }
+
+    /**
+     * Close any associated resource handles.
+     *
+     * This method frees any database connection handles that have been
+     * opened by the getConnection() method.
+     */
+    static public function closeConnections()
+    {
+        return self::$serviceContainer->closeConnections();
+    }
+
+    /**
+     * Get a connection for a given datasource.
+     *
+     * If the connection has not been opened, open it using the related
+     * connectionSettings. If the connection has already been opened, return it.
+     *
+     * @param      string $name The datasource name
+     * @param      string $mode The connection mode (this applies to replication systems).
+     *
+     * @return     \Propel\Runtime\Connection\ConnectionInterface A database connection
+     */
+    static public function getConnection($name = null, $mode = ServiceContainerInterface::CONNECTION_WRITE)
+    {
+        return self::$serviceContainer->getConnection($name, $mode);
+    }
+
+    /**
+     * Get a write connection for a given datasource.
+     *
+     * If the connection has not been opened, open it using the related
+     * connectionSettings. If the connection has already been opened, return it.
+     *
+     * @param      string $name The datasource name that is used to look up the DSN
+     *                          from the runtime configuration file. Empty name not allowed.
+     *
+     * @return     ConnectionInterface A database connection
+     *
+     * @throws     PropelException - if connection is not properly configured
+     */
+    static public function getWriteConnection($name)
+    {
+        return self::$serviceContainer->getWriteConnection($name);
+    }
+
+    /**
+     * Get a read connection for a given datasource.
+     *
+     * If the slave connection has not been opened, open it using a random read connection
+     * setting for the related datasource. If no read connection setting exist, return the master
+     * connection. If the slave connection has already been opened, return it.
+     *
+     * @param      string $name The datasource name that is used to look up the DSN
+     *                          from the runtime configuration file. Empty name not allowed.
+     *
+     * @return     ConnectionInterface A database connection
+     */
+    static public function getReadConnection($name)
+    {
+        return self::$serviceContainer->getReadConnection($name);
     }
 
     /**

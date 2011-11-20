@@ -10,7 +10,7 @@
 
 namespace Propel\Tests\Runtime\Adapter\Pdo;
 
-use Propel\Runtime\Configuration;
+use Propel\Runtime\Propel;
 use Propel\Runtime\Adapter\Pdo\OracleAdapter;
 use Propel\Runtime\Query\Criteria;
 use Propel\Runtime\Util\BasePeer;
@@ -30,7 +30,7 @@ class OracleAdapterTest extends BookstoreTestBase
 {
     public function testApplyLimitSimple()
     {
-        Configuration::getInstance()->setAdapter('oracle', new OracleAdapter());
+        Propel::getServiceContainer()->setAdapter('oracle', new OracleAdapter());
         $c = new Criteria();
         $c->setDbName('oracle');
         BookPeer::addSelectColumns($c);
@@ -42,7 +42,7 @@ class OracleAdapterTest extends BookstoreTestBase
 
     public function testApplyLimitDuplicateColumnName()
     {
-        Configuration::getInstance()->setAdapter('oracle', new OracleAdapter());
+        Propel::getServiceContainer()->setAdapter('oracle', new OracleAdapter());
         $c = new Criteria();
         $c->setDbName('oracle');
         BookPeer::addSelectColumns($c);
@@ -55,7 +55,7 @@ class OracleAdapterTest extends BookstoreTestBase
 
     public function testApplyLimitDuplicateColumnNameWithColumn()
     {
-        Configuration::getInstance()->setAdapter('oracle', new OracleAdapter());
+        Propel::getServiceContainer()->setAdapter('oracle', new OracleAdapter());
         $c = new Criteria();
         $c->setDbName('oracle');
         BookPeer::addSelectColumns($c);
@@ -71,8 +71,8 @@ class OracleAdapterTest extends BookstoreTestBase
 
     public function testCreateSelectSqlPart()
     {
-        Configuration::getInstance()->setAdapter('oracle', new OracleAdapter());
-        $db = Configuration::getInstance()->getAdapter();
+        Propel::getServiceContainer()->setAdapter('oracle', new OracleAdapter());
+        $db = Propel::getServiceContainer()->getAdapter();
         $c = new Criteria();
         $c->addSelectColumn(BookPeer::ID);
         $c->addAsColumn('book_ID', BookPeer::ID);
