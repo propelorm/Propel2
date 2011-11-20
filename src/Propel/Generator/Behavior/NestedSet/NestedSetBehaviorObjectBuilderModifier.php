@@ -1393,7 +1393,7 @@ protected function moveSubtreeTo(\$destLeft, \$levelDelta, ConnectionInterface \
     \$treeSize = \$right - \$left +1;
 
     if (\$con === null) {
-        \$con = Propel::getConnection($peerClassname::DATABASE_NAME, Propel::CONNECTION_WRITE);
+        \$con = Propel::getServiceContainer()->getWriteConnection($peerClassname::DATABASE_NAME);
     }
 
     \$con->beginTransaction();
@@ -1452,7 +1452,7 @@ public function deleteDescendants(ConnectionInterface \$con = null)
         return;
     }
     if (\$con === null) {
-        \$con = Propel::getConnection($peerClassname::DATABASE_NAME, Propel::CONNECTION_READ);
+        \$con = Propel::getServiceContainer()->getReadConnection($peerClassname::DATABASE_NAME);
     }
     \$left = \$this->getLeftValue();
     \$right = \$this->getRightValue();";

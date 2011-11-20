@@ -229,7 +229,7 @@ public function findList(" . ($useScope ? "\$scope = null, " : "") . "\$con = nu
 public function getMaxRank(" . ($useScope ? "\$scope = null, " : "") . "ConnectionInterface \$con = null)
 {
     if (\$con === null) {
-        \$con = Propel::getConnection({$this->peerClassname}::DATABASE_NAME);
+        \$con = Propel::getServiceContainer()->getReadConnection({$this->peerClassname}::DATABASE_NAME);
     }
     // shift the objects with a position lower than the one of object
     \$this->addSelectColumn('MAX(' . {$this->peerClassname}::RANK_COL . ')');";
@@ -267,7 +267,7 @@ public function getMaxRank(" . ($useScope ? "\$scope = null, " : "") . "Connecti
 public function reorder(array \$order, ConnectionInterface \$con = null)
 {
     if (\$con === null) {
-        \$con = Propel::getConnection($peerClassname::DATABASE_NAME);
+        \$con = Propel::getServiceContainer()->getReadConnection($peerClassname::DATABASE_NAME);
     }
 
     \$con->beginTransaction();

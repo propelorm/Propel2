@@ -10,14 +10,16 @@
 
 namespace Propel\Runtime;
 
-use Propel\Runtime\Adapter\AdapterFactory;
 use Propel\Runtime\Adapter\AdapterInterface;
-use Propel\Runtime\Config\Configuration;
+use Propel\Runtime\Config\Configuration as Registry;
 use Propel\Runtime\Connection\ConnectionInterface;
+use Propel\Runtime\Connection\ConnectionManagerSingle;
+use Propel\Runtime\Connection\ConnectionManagerMasterSlave;
 use Propel\Runtime\Exception\PropelException;
-
-use \PDO;
-use \PDOException;
+use Propel\Runtime\Propel;
+use Propel\Runtime\Map\DatabaseMap;
+use Propel\Runtime\ServiceContainer\ServiceContainerInterface;
+use Propel\Runtime\ServiceContainer\StandardServiceContainer;
 
 /**
  * Propel's main resource pool and initialization & configuration class.
@@ -89,59 +91,14 @@ class Propel
     const LOG_DEBUG = 7;
 
     /**
-     * The class name for a PDO object.
-     */
-    const CLASS_PDO = '\PDO';
-
-    /**
-     * The class name for a PropelPDO object.
-     */
-    const CLASS_PROPEL_PDO = '\Propel\Runtime\Connection\PropelPDO';
-
-    /**
-     * The class name for a DebugPDO object.
-     */
-    const CLASS_DEBUG_PDO = '\Propel\Runtime\Connection\DebugPDO';
-
-    /**
-     * Constant used to request a READ connection (applies to replication).
-     */
-    const CONNECTION_READ = 'read';
-
-    /**
-     * Constant used to request a WRITE connection (applies to replication).
-     */
-    const CONNECTION_WRITE = 'write';
-
-    /**
-     * @var        string The db name that is specified as the default in the property file
-     */
-    private static $defaultDBName;
-
-    /**
-     * @var        array The global cache of database maps
-     */
-    private static $dbMaps = array();
-
-    /**
-     * @var        array The cache of DB adapter keys
-     */
-    private static $adapterMap = array();
-
-    /**
-     * @var        array Cache of established connections (to eliminate overhead).
-     */
-    private static $connectionMap = array();
-
-    /**
      * @var        Configuration Propel-specific configuration.
      */
     private static $configuration;
 
     /**
-     * @var        bool flag to set to true once this class has been initialized
+     * @var \Propel\Runtime\ServiceContainer\ServiceContainerInterface
      */
-    private static $isInit = false;
+    private static $serviceContainer;
 
     /**
      * @var        Log optional logger
@@ -149,103 +106,30 @@ class Propel
     private static $logger = null;
 
     /**
-     * @var        string The name of the database mapper class
-     */
-    private static $databaseMapClass = '\Propel\Runtime\Map\DatabaseMap';
-
-    /**
      * @var        bool Whether the object instance pooling is enabled
      */
-    private static $instancePoolingEnabled = true;
+    private static $isInstancePoolingEnabled = true;
 
     /**
      * @var        bool For replication, whether to force the use of master connection.
      */
-    private static $forceMasterConnection = false;
-
-    /**
-     * Initializes Propel
-     *
-     * @throws     PropelException Any exceptions caught during processing will be
-     *                             rethrown wrapped into a PropelException.
-     */
-    public static function initialize()
-    {
-        if (self::$configuration === null) {
-            throw new PropelException("Propel cannot be initialized without a valid configuration. Please check the log files for further details.");
-        }
-
-        self::configureLogging();
-
-        // reset the connection map (this should enable runtime changes of connection params)
-        self::$connectionMap = array();
-
-        //if (isset(self::$configuration['classmap']) && is_array(self::$configuration['classmap'])) {
-        //    PropelAutoloader::getInstance()->addClassPaths(self::$configuration['classmap']);
-        //    PropelAutoloader::getInstance()->register();
-        //}
-
-        self::$isInit = true;
-    }
+    private static $isForceMasterConnection = false;
 
     /**
      * Configure Propel a PHP (array) config file.
      *
-     * @param      string Path (absolute or relative to include_path) to config file.
+     * @param      string $configFile Path (absolute or relative to include_path) to config file.
      *
      * @throws     PropelException If configuration file cannot be opened.
      *                             (E_WARNING probably will also be raised by PHP)
      */
-    public static function configure($configFile)
+    public static function init($configFile)
     {
         $configuration = include($configFile);
         if ($configuration === false) {
-            throw new PropelException("Unable to open configuration file: " . var_export($configFile, true));
+            throw new PropelException(sprintf('Unable to open configuration file: "%s"', $configFile));
         }
         self::setConfiguration($configuration);
-    }
-
-    /**
-     * Configure the logging system, if config is specified in the runtime configuration.
-     */
-    protected static function configureLogging()
-    {
-        if (self::$logger === null) {
-            if (isset(self::$configuration['log']) && is_array(self::$configuration['log']) && count(self::$configuration['log'])) {
-                include_once 'Log.php'; // PEAR Log class
-                $c = self::$configuration['log'];
-                $type = isset($c['type']) ? $c['type'] : 'file';
-                $name = isset($c['name']) ? $c['name'] : './propel.log';
-                $ident = isset($c['ident']) ? $c['ident'] : 'propel';
-                $conf = isset($c['conf']) ? $c['conf'] : array();
-                $level = isset($c['level']) ? $c['level'] : PEAR_LOG_DEBUG;
-                self::$logger = Log::singleton($type, $name, $ident, $conf, $level);
-            } // if isset()
-        }
-    }
-
-    /**
-     * Initialization of Propel a PHP (array) configuration file.
-     *
-     * @param      string $c The Propel configuration file path.
-     *
-     * @throws     PropelException Any exceptions caught during processing will be
-     *                             rethrown wrapped into a PropelException.
-     */
-    public static function init($c)
-    {
-        self::configure($c);
-        self::initialize();
-    }
-
-    /**
-     * Determine whether Propel has already been initialized.
-     *
-     * @return     bool True if Propel is already initialized.
-     */
-    public static function isInit()
-    {
-        return self::$isInit;
     }
 
     /**
@@ -255,12 +139,41 @@ class Propel
      */
     public static function setConfiguration($c)
     {
+        $serviceContainer = self::getServiceContainer();
+        $serviceContainer->closeConnections();
         if (is_array($c)) {
-            if (isset($c['propel']) && is_array($c['propel'])) {
-                $c = $c['propel'];
-            }
-            $c = new Configuration($c);
+            $c = new Registry($c);
         }
+        // set default datasource
+        $defaultDatasource = isset($c['datasources']['default']) ? $c['datasources']['default'] : self::DEFAULT_NAME;
+        $serviceContainer->setDefaultDatasource($defaultDatasource);
+        if (isset($c['datasources'])) {
+            foreach ($c['datasources'] as $name => $params) {
+                if (!is_array($params)) {
+                    continue;
+                }
+                // set adapters
+                if (isset($params['adapter'])) {
+                    $serviceContainer->setAdapterClass($name, $params['adapter']);
+                }
+                // set connection settings
+                if (isset($params['connection'])) {
+                    $connectionConfiguration = array();
+                    $conParams = $params['connection'];
+                    if (isset($conParams['slaves'])) {
+                        $manager = new ConnectionManagerMasterSlave();
+                        $manager->setReadConfiguration($conParams['slaves']);
+                        unset($conParams['slaves']);
+                        $manager->setWriteConfiguration($conParams);
+                    } else {
+                        $manager = new ConnectionManagerSingle();
+                        $manager->setConfiguration($conParams);
+                    }
+                    $serviceContainer->setConnectionManager($name, $manager);
+                }
+            }
+        }
+        self::$logger = null;
         self::$configuration = $c;
     }
 
@@ -274,9 +187,189 @@ class Propel
      *                 - Configuration::TYPE_OBJECT: return the configuration as a PropelConfiguration instance
      * @return     mixed The Configuration (array or Configuration)
      */
-    public static function getConfiguration($type = Configuration::TYPE_ARRAY)
+    public static function getConfiguration($type = Registry::TYPE_ARRAY)
     {
         return self::$configuration->getParameters($type);
+    }
+
+    /**
+     * Get the service container instance.
+     *
+     * @return \Propel\Runtime\ServiceContainer\ServiceContainerInterface
+     */
+    static public function getServiceContainer()
+    {
+        if (null === self::$serviceContainer) {
+            self::$serviceContainer = new StandardServiceContainer();
+        }
+
+        return self::$serviceContainer;
+    }
+
+    /**
+     * Set the service container instance.
+     *
+     * @param \Propel\Runtime\ServiceContainer\ServiceContainerInterface
+     */
+    static public function setServiceContainer(ServiceContainerInterface $serviceContainer)
+    {
+        self::$serviceContainer = $serviceContainer;
+    }
+
+    /**
+     * @return string
+     */
+    static public function getDefaultDatasource()
+    {
+        return self::$serviceContainer->getDefaultDatasource();
+    }
+
+    /**
+     * Get the adapter for a given datasource.
+     *
+     * If the adapter does not yet exist, build it using the related adapterClass.
+     *
+     * @param string $name The datasource name
+     *
+     * @return Propel\Runtime\Adapter\AdapterInterface
+     */
+    static public function getAdapter($name = null)
+    {
+        return self::$serviceContainer->getAdapter($name);
+    }
+
+    /**
+     * Get the database map for a given datasource.
+     *
+     * The database maps are "registered" by the generated map builder classes.
+     *
+     * @param string $name The datasource name
+     *
+     * @return \Propel\Runtime\Map\DatabaseMap
+     */
+    static public function getDatabaseMap($name = null)
+    {
+        return self::$serviceContainer->getDatabaseMap($name);
+    }
+
+    /**
+     * @param string $name The datasource name
+     *
+     * @return \Propel\Runtime\Connection\ConnectionManagerInterface
+     */
+    static public function getConnectionManager($name)
+    {
+        return self::$serviceContainer->getConnectionManager($name);
+    }
+
+    /**
+     * Close any associated resource handles.
+     *
+     * This method frees any database connection handles that have been
+     * opened by the getConnection() method.
+     */
+    static public function closeConnections()
+    {
+        return self::$serviceContainer->closeConnections();
+    }
+
+    /**
+     * Get a connection for a given datasource.
+     *
+     * If the connection has not been opened, open it using the related
+     * connectionSettings. If the connection has already been opened, return it.
+     *
+     * @param      string $name The datasource name
+     * @param      string $mode The connection mode (this applies to replication systems).
+     *
+     * @return     \Propel\Runtime\Connection\ConnectionInterface A database connection
+     */
+    static public function getConnection($name = null, $mode = ServiceContainerInterface::CONNECTION_WRITE)
+    {
+        return self::$serviceContainer->getConnection($name, $mode);
+    }
+
+    /**
+     * Get a write connection for a given datasource.
+     *
+     * If the connection has not been opened, open it using the related
+     * connectionSettings. If the connection has already been opened, return it.
+     *
+     * @param      string $name The datasource name that is used to look up the DSN
+     *                          from the runtime configuration file. Empty name not allowed.
+     *
+     * @return     ConnectionInterface A database connection
+     *
+     * @throws     PropelException - if connection is not properly configured
+     */
+    static public function getWriteConnection($name)
+    {
+        return self::$serviceContainer->getWriteConnection($name);
+    }
+
+    /**
+     * Get a read connection for a given datasource.
+     *
+     * If the slave connection has not been opened, open it using a random read connection
+     * setting for the related datasource. If no read connection setting exist, return the master
+     * connection. If the slave connection has already been opened, return it.
+     *
+     * @param      string $name The datasource name that is used to look up the DSN
+     *                          from the runtime configuration file. Empty name not allowed.
+     *
+     * @return     ConnectionInterface A database connection
+     */
+    static public function getReadConnection($name)
+    {
+        return self::$serviceContainer->getReadConnection($name);
+    }
+
+    /**
+     * Returns true if a logger, for example PEAR::Log, has been configured,
+     * otherwise false.
+     *
+     * @return     bool True if Propel uses logging
+     */
+    public static function hasLogger()
+    {
+        if (null === self::$logger) {
+            self::configureLogging();
+        }
+
+        return self::$logger !== false;
+    }
+
+    /**
+     * Get the configured logger.
+     *
+     * @return     object Configured log class ([PEAR] Log or BasicLogger).
+     */
+    public static function getLogger()
+    {
+        if (null === self::$logger) {
+            self::configureLogging();
+        }
+
+        return self::$logger;
+    }
+
+    /**
+     * Configure the logging system, if config is specified in the runtime configuration.
+     */
+    protected static function configureLogging()
+    {
+        if (isset(self::$configuration['log']) && is_array(self::$configuration['log']) && count(self::$configuration['log'])) {
+            include_once 'Log.php'; // PEAR Log class
+            $c = self::$configuration['log'];
+            $type = isset($c['type']) ? $c['type'] : 'file';
+            $name = isset($c['name']) ? $c['name'] : './propel.log';
+            $ident = isset($c['ident']) ? $c['ident'] : 'propel';
+            $conf = isset($c['conf']) ? $c['conf'] : array();
+            $level = isset($c['level']) ? $c['level'] : PEAR_LOG_DEBUG;
+            self::$logger = Log::singleton($type, $name, $ident, $conf, $level);
+        } else {
+            self::$logger = false;
+        }
     }
 
     /**
@@ -297,27 +390,6 @@ class Propel
     }
 
     /**
-     * Returns true if a logger, for example PEAR::Log, has been configured,
-     * otherwise false.
-     *
-     * @return     bool True if Propel uses logging
-     */
-    public static function hasLogger()
-    {
-        return (self::$logger !== null);
-    }
-
-    /**
-     * Get the configured logger.
-     *
-     * @return     object Configured log class ([PEAR] Log or BasicLogger).
-     */
-    public static function logger()
-    {
-        return self::$logger;
-    }
-
-    /**
      * Logs a message
      * If a logger has been configured, the logger will be used, otherwrise the
      * logging message will be discarded without any further action
@@ -330,7 +402,7 @@ class Propel
     public static function log($message, $level = self::LOG_DEBUG)
     {
         if (self::hasLogger()) {
-            $logger = self::logger();
+            $logger = self::getLogger();
             switch ($level) {
             case self::LOG_EMERG:
                 return $logger->log($message, $level);
@@ -352,304 +424,6 @@ class Propel
         }
 
         return true;
-    }
-
-    /**
-     * Returns the database map information. Name relates to the name
-     * of the connection pool to associate with the map.
-     *
-     * The database maps are "registered" by the generated map builder classes.
-     *
-     * @param      string The name of the database corresponding to the DatabaseMap to retrieve.
-     *
-     * @return     DatabaseMap The named <code>DatabaseMap</code>.
-     *
-     * @throws     PropelException - if database map is null or propel was not initialized properly.
-     */
-    public static function getDatabaseMap($name = null)
-    {
-        if ($name === null) {
-            $name = self::getDefaultDB();
-            if ($name === null) {
-                throw new PropelException("DatabaseMap name is null!");
-            }
-        }
-
-        if (!isset(self::$dbMaps[$name])) {
-            $clazz = self::$databaseMapClass;
-            self::$dbMaps[$name] = new $clazz($name);
-        }
-
-        return self::$dbMaps[$name];
-    }
-
-    /**
-     * Sets the database map object to use for specified datasource.
-     *
-     * @param      string $name The datasource name.
-     * @param      DatabaseMap $map The database map object to use for specified datasource.
-     */
-    public static function setDatabaseMap($name, DatabaseMap $map)
-    {
-        if ($name === null) {
-            $name = self::getDefaultDB();
-        }
-        self::$dbMaps[$name] = $map;
-    }
-
-    /**
-     * For replication, set whether to always force the use of a master connection.
-     *
-     * @param      boolean $bit True or False
-     */
-    public static function setForceMasterConnection($bit)
-    {
-        self::$forceMasterConnection = (bool) $bit;
-    }
-
-    /**
-     * For replication, whether to always force the use of a master connection.
-     *
-     * @return     boolean
-     */
-    public static function getForceMasterConnection()
-    {
-        return self::$forceMasterConnection;
-    }
-
-    /**
-     * Sets a Connection for specified datasource name.
-     *
-     * @param      string $name The datasource name for the connection being set.
-     * @param      ConnectionInterface $con The PDO connection.
-     * @param      string $mode Whether this is a READ or WRITE connection (Propel::CONNECTION_READ, Propel::CONNECTION_WRITE)
-     */
-    public static function setConnection($name, ConnectionInterface $con, $mode = Propel::CONNECTION_WRITE)
-    {
-        if ($name === null) {
-            $name = self::getDefaultDB();
-        }
-        if ($mode == Propel::CONNECTION_READ) {
-            self::$connectionMap[$name]['slave'] = $con;
-        } else {
-            self::$connectionMap[$name]['master'] = $con;
-        }
-    }
-
-    /**
-     * Gets an already-opened PDO connection or opens a new one for passed-in db name.
-     *
-     * @param      string $name The datasource name that is used to look up the DSN from the runtime configuation file.
-     * @param      string $mode The connection mode (this applies to replication systems).
-     *
-     * @return     PDO A database connection
-     *
-     * @throws     PropelException - if connection cannot be configured or initialized.
-     */
-    public static function getConnection($name = null, $mode = Propel::CONNECTION_WRITE)
-    {
-        if ($name === null) {
-            $name = self::getDefaultDB();
-        }
-
-        // IF a WRITE-mode connection was requested
-        // or Propel is configured to always use the master connection
-        // THEN return the master connection.
-        if ($mode != Propel::CONNECTION_READ || self::$forceMasterConnection) {
-            return self::getMasterConnection($name);
-        } else {
-            return self::getSlaveConnection($name);
-        }
-
-    }
-
-    /**
-     * Gets an already-opened write PDO connection or opens a new one for passed-in db name.
-     *
-     * @param      string $name The datasource name that is used to look up the DSN
-     *                          from the runtime configuation file. Empty name not allowed.
-     *
-     * @return     PDO A database connection
-     *
-     * @throws     PropelException - if connection cannot be configured or initialized.
-     */
-    public static function getMasterConnection($name)
-    {
-        if (!isset(self::$connectionMap[$name]['master'])) {
-            // load connection parameter for master connection
-            $conparams = isset(self::$configuration['datasources'][$name]['connection']) ? self::$configuration['datasources'][$name]['connection'] : null;
-            if (empty($conparams)) {
-                throw new PropelException('No connection information in your runtime configuration file for datasource ['.$name.']');
-            }
-            // initialize master connection
-            $con = Propel::initConnection($conparams, $name);
-            self::$connectionMap[$name]['master'] = $con;
-        }
-
-        return self::$connectionMap[$name]['master'];
-    }
-
-    /**
-     * Gets an already-opened read PDO connection or opens a new one for passed-in db name.
-     *
-     * @param      string $name The datasource name that is used to look up the DSN
-     *                          from the runtime configuation file. Empty name not allowed.
-     *
-     * @return     PDO A database connection
-     *
-     * @throws     PropelException - if connection cannot be configured or initialized.
-     */
-    public static function getSlaveConnection($name)
-    {
-        if (!isset(self::$connectionMap[$name]['slave'])) {
-
-            $slaveconfigs = isset(self::$configuration['datasources'][$name]['slaves']) ? self::$configuration['datasources'][$name]['slaves'] : null;
-
-            if (empty($slaveconfigs)) {
-                // no slaves configured for this datasource
-                // fallback to the master connection
-                self::$connectionMap[$name]['slave'] = self::getMasterConnection($name);
-            } else {
-                // Initialize a new slave
-                if (isset($slaveconfigs['connection']['dsn'])) {
-                    // only one slave connection configured
-                    $conparams = $slaveconfigs['connection'];
-                } else {
-                    // more than one sleve connection configured
-                    // pickup a random one
-                    $randkey = array_rand($slaveconfigs['connection']);
-                    $conparams = $slaveconfigs['connection'][$randkey];
-                    if (empty($conparams)) {
-                        throw new PropelException('No connection information in your runtime configuration file for SLAVE ['.$randkey.'] to datasource ['.$name.']');
-                    }
-                }
-
-                // initialize slave connection
-                $con = Propel::initConnection($conparams, $name);
-                self::$connectionMap[$name]['slave'] = $con;
-            }
-
-        } // if datasource slave not set
-
-        return self::$connectionMap[$name]['slave'];
-    }
-
-    /**
-     * Opens a new PDO connection for passed-in db name.
-     *
-     * @param      array $conparams Connection paramters.
-     * @param      string $name Datasource name.
-     * @param      string $defaultClass The PDO subclass to instantiate if there is no explicit classname
-     *                                     specified in the connection params (default is Propel::CLASS_PROPEL_PDO)
-     *
-     * @return     PDO A database connection of the given class (PDO, PropelPDO, SlavePDO or user-defined)
-     *
-     * @throws     PropelException - if lower-level exception caught when trying to connect.
-     */
-    public static function initConnection($conparams, $name, $defaultClass = Propel::CLASS_PROPEL_PDO)
-    {
-        if (isset($conparams['classname']) && !empty($conparams['classname'])) {
-            $classname = $conparams['classname'];
-            if (!class_exists($classname)) {
-                throw new PropelException('Unable to load specified PDO subclass: ' . $classname);
-            }
-        } else {
-            $classname = $defaultClass;
-        }
-        $adapter = self::getDB($name);
-        try {
-            $connection = $adapter->getConnection($conparams);
-        } catch (PDOException $e) {
-            throw new PropelException("Unable to open PDO connection", $e);
-        }
-        $con = new $classname($connection);
-
-        // load any connection options from the config file
-        // connection attributes are those PDO flags that have to be set on the initialized connection
-        if (isset($conparams['attributes']) && is_array($conparams['attributes'])) {
-            foreach ($conparams['attributes'] as $option => $optiondata) {
-                $value = $optiondata['value'];
-                if (is_string($value) && false !== strpos($value, '::')) {
-                    if (!defined($value)) {
-                        throw new PropelException(sprintf('Invalid class constant specified "%s" while processing connection attributes for datasource "%s"'), $value, $name);
-                    }
-                    $value = constant($value);
-                }
-                $con->setAttribute($option, $value);
-            }
-        }
-
-        return $con;
-    }
-
-    /**
-     * Returns database adapter for a specific datasource.
-     *
-     * @param      string The datasource name.
-     *
-     * @return     AbstractAdapter The corresponding database adapter.
-     *
-     * @throws     PropelException If unable to find DBdapter for specified db.
-     */
-    public static function getDB($name = null)
-    {
-        if ($name === null) {
-            $name = self::getDefaultDB();
-        }
-
-        if (!isset(self::$adapterMap[$name])) {
-            if (!isset(self::$configuration['datasources'][$name]['adapter'])) {
-                throw new PropelException("Unable to find adapter for datasource [" . $name . "].");
-            }
-            $db = AdapterFactory::create(self::$configuration['datasources'][$name]['adapter']);
-            // register the adapter for this name
-            self::$adapterMap[$name] = $db;
-        }
-
-        return self::$adapterMap[$name];
-    }
-
-    /**
-     * Sets a database adapter for specified datasource.
-     *
-     * @param      string $name The datasource name.
-     * @param      AbstractAdapter $adapter The AbstractAdapter implementation to use.
-     */
-    public static function setDB($name, AdapterInterface $adapter)
-    {
-        if ($name === null) {
-            $name = self::getDefaultDB();
-        }
-        self::$adapterMap[$name] = $adapter;
-    }
-
-    /**
-     * Returns the name of the default database.
-     *
-     * @return     string Name of the default DB
-     */
-    public static function getDefaultDB()
-    {
-        if (self::$defaultDBName === null) {
-            // Determine default database name.
-            self::$defaultDBName = isset(self::$configuration['datasources']['default']) && is_scalar(self::$configuration['datasources']['default']) ? self::$configuration['datasources']['default'] : self::DEFAULT_NAME;
-        }
-
-        return self::$defaultDBName;
-    }
-
-    /**
-     * Closes any associated resource handles.
-     *
-     * This method frees any database connection handles that have been
-     * opened by the getConnection() method.
-     */
-    public static function close()
-    {
-        foreach (self::$connectionMap as $idx => $cons) {
-            // Propel::log("Closing connections for " . $idx, Propel::LOG_DEBUG);
-            unset(self::$connectionMap[$idx]);
-        }
     }
 
     /**
@@ -692,18 +466,6 @@ class Propel
     }
 
     /**
-     * Set your own class-name for Database-Mapping. Then
-     * you can change the whole TableMap-Model, but keep its
-     * functionality for Criteria.
-     *
-     * @param      string The name of the class.
-     */
-    public static function setDatabaseMapClass($name)
-    {
-        self::$databaseMapClass = $name;
-    }
-
-    /**
      * Disable instance pooling.
      *
      * @return boolean true if the method changed the instance pooling state,
@@ -711,10 +473,10 @@ class Propel
      */
     public static function disableInstancePooling()
     {
-        if (!self::$instancePoolingEnabled) {
+        if (!self::$isInstancePoolingEnabled) {
             return false;
         }
-        self::$instancePoolingEnabled = false;
+        self::$isInstancePoolingEnabled = false;
 
         return true;
     }
@@ -727,10 +489,10 @@ class Propel
      */
     public static function enableInstancePooling()
     {
-        if (self::$instancePoolingEnabled) {
+        if (self::$isInstancePoolingEnabled) {
             return false;
         }
-        self::$instancePoolingEnabled = true;
+        self::$isInstancePoolingEnabled = true;
 
         return true;
     }
@@ -742,6 +504,7 @@ class Propel
      */
     public static function isInstancePoolingEnabled()
     {
-        return self::$instancePoolingEnabled;
+        return self::$isInstancePoolingEnabled;
     }
+
 }

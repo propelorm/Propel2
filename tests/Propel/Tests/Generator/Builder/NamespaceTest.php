@@ -240,7 +240,7 @@ class NamespaceTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(1, $book2->countNamespacedBookClubs());
         $nbRels = \Baz\NamespacedBookListRelQuery::create()->count();
         $this->assertEquals(3, $nbRels);
-        $con = Propel::getConnection(\Baz\NamespacedBookListRelPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(\Baz\NamespacedBookListRelPeer::DATABASE_NAME);
         $books = \Foo\Bar\NamespacedBookQuery::create()
             ->orderByTitle()
             ->joinWith('NamespacedBookListRel')

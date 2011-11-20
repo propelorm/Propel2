@@ -41,7 +41,7 @@ abstract class BookstoreTestBase extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->con = Propel::getConnection(BookPeer::DATABASE_NAME);
+        $this->con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
         $this->con->beginTransaction();
     }
 
@@ -63,6 +63,6 @@ abstract class BookstoreTestBase extends \PHPUnit_Framework_TestCase
 
     static public function tearDownAfterClass()
     {
-        Propel::close();
+        Propel::getServiceContainer()->closeConnections();
     }
 }

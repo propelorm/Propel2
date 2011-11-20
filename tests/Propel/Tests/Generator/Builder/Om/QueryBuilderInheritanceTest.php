@@ -135,7 +135,6 @@ class QueryBuilderInheritanceTest extends BookstoreTestBase
 
     public function testGetCorrectTableMapClassWithAbstractSingleTableInheritance()
     {
-        Propel::initialize();
         $this->assertInstanceOf('\Propel\Tests\Bookstore\Map\DistributionTableMap', DistributionPeer::getTableMap(), 'getTableMap should return the right table map');
     }
 

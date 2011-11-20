@@ -34,7 +34,7 @@ class ArrayCollection extends Collection
             throw new PropelException('Cannot save objects on a read-only model');
         }
         if (null === $con) {
-            $con = $this->getConnection(Propel::CONNECTION_WRITE);
+            $con = $this->getWriteConnection();
         }
         $con->beginTransaction();
         try {
@@ -62,7 +62,7 @@ class ArrayCollection extends Collection
             throw new PropelException('Cannot delete objects on a read-only model');
         }
         if (null === $con) {
-            $con = $this->getConnection(Propel::CONNECTION_WRITE);
+            $con = $this->getWriteConnection();
         }
         $con->beginTransaction();
         try {

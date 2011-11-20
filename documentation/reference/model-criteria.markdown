@@ -330,9 +330,9 @@ $books = BookQuery::create()
 
 {% highlight php %}
 <?php
-// All the termination methods accept a PropelPDO connection instance
+// All the termination methods accept a Connection object
 // So you can specify which connection to use
-$con = Propel::getConnection('bookstore', Propel::CONNECTION_READ);
+$con = Propel::getReadConnection(BookPeer::DATABASE_NAME);
 $nbBooks = BookQuery::create()
   ->findOne($con);
 {% endhighlight %}

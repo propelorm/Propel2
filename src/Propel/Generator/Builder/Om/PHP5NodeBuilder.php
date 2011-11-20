@@ -652,7 +652,7 @@ abstract class ".$this->getClassname()." implements IteratorAggregate {
             throw new PropelException('Invalid beforeNode.');
 
         if (\$con === null)
-            \$con = Propel::getConnection($peerClassname::DATABASE_NAME, Propel::CONNECTION_WRITE);
+            \$con = Propel::getServiceContainer()->getWriteConnection($peerClassname::DATABASE_NAME);
 
         if (!\$this->obj->isNew()) \$con->beginTransaction();
 
@@ -789,7 +789,7 @@ abstract class ".$this->getClassname()." implements IteratorAggregate {
         }
 
         if (\$con === null) {
-            \$con = Propel::getConnection($peerClassname::DATABASE_NAME, Propel::CONNECTION_WRITE);
+            \$con = Propel::getServiceContainer()->getWriteConnection($peerClassname::DATABASE_NAME);
         }
 
         if (!\$this->obj->isNew()) {
@@ -966,7 +966,7 @@ abstract class ".$this->getClassname()." implements IteratorAggregate {
             return;
 
         if (\$con === null)
-            \$con = Propel::getConnection($peerClassname::DATABASE_NAME);
+            \$con = Propel::getServiceContainer()->getWriteConnection($peerClassname::DATABASE_NAME);
 
         if (!\$this->obj->isNew())
         {

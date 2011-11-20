@@ -37,7 +37,7 @@ abstract class SchemasTestBase extends \PHPUnit_Framework_TestCase
 
     static public function tearDownAfterClass()
     {
-        Propel::close();
+        Propel::getServiceContainer()->closeConnections();
         Propel::init(dirname(__FILE__) . '/../../../../Fixtures/bookstore/build/conf/bookstore-conf.php');
     }
 }

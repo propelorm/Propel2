@@ -33,7 +33,7 @@ class AggregateColumnBehaviorWithSchemaTest extends SchemasTestBase
     protected function setUp()
     {
         parent::setUp();
-        $this->con = Propel::getConnection(BookstorePeer::DATABASE_NAME);
+        $this->con = Propel::getServiceContainer()->getConnection(BookstorePeer::DATABASE_NAME);
         $this->con->beginTransaction();
     }
 

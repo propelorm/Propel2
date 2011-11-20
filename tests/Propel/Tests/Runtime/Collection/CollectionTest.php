@@ -338,14 +338,12 @@ class CollectionTest extends BookstoreTestBase
         $col->getPeerClass();
     }
 
-    public function testGetConnection()
+    public function testGetWriteConnection()
     {
         $col = new Collection();
         $col->setModel('\Propel\Tests\Bookstore\Book');
-        $con = Propel::getConnection(BookPeer::DATABASE_NAME);
-        $this->assertEquals($con, $col->getConnection(), 'getConnection() returns a connection for the collection model');
-        $con = Propel::getConnection(BookPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
-        $this->assertEquals($con, $col->getConnection(Propel::CONNECTION_WRITE), 'getConnection() accepts a connection type parameter');
+        $con = Propel::getServiceContainer()->getWriteConnection(BookPeer::DATABASE_NAME);
+        $this->assertEquals($con, $col->getWriteConnection(), 'getWriteConnection() returns a write connection for the collection model');
     }
 
     /**

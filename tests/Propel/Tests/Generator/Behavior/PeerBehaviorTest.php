@@ -38,7 +38,7 @@ class PeerBehaviorTest extends BookstoreTestBase
 
     public function testPreSelect()
     {
-        $con = Propel::getConnection(Table3Peer::DATABASE_NAME, Propel::CONNECTION_READ);
+        $con = Propel::getServiceContainer()->getReadConnection(Table3Peer::DATABASE_NAME);
         $con->preSelect = 0;
         Table3Peer::doSelect(new Criteria, $con);
         $this->assertNotEquals($con->preSelect, 0, 'preSelect hook is called in doSelect()');

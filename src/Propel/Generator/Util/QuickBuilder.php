@@ -18,6 +18,7 @@ use Propel\Runtime\Propel;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\ConnectionPdo;
 use Propel\Runtime\Connection\ConnectionWrapper;
+use Propel\Runtime\Connection\ConnectionManagerSingle;
 use Propel\Runtime\Connection\StatementInterface;
 
 use \PDO;
@@ -101,12 +102,8 @@ class QuickBuilder
         $this->buildSQL($con);
         $this->buildClasses();
         $name = $this->getDatabase()->getName();
-        if (!Propel::isInit()) {
-            Propel::setConfiguration(array('datasources' => array('default' => $name)));
-        }
-        Propel::setDB($name, $adapter);
-        Propel::setConnection($name, $con, Propel::CONNECTION_READ);
-        Propel::setConnection($name, $con, Propel::CONNECTION_WRITE);
+        Propel::getServiceContainer()->setAdapter($name, $adapter);
+        Propel::getServiceContainer()->setConnection($name, $con);
 
         return $con;
     }

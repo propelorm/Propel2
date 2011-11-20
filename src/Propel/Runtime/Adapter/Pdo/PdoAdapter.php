@@ -11,6 +11,7 @@
 namespace Propel\Runtime\Adapter\Pdo;
 
 use Propel\Runtime\Adapter\AdapterInterface;
+use Propel\Runtime\Adapter\AdapterException;
 use Propel\Runtime\Connection\ConnectionPdo;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\StatementInterface;
@@ -19,8 +20,10 @@ use Propel\Runtime\Map\DatabaseMap;
 use Propel\Runtime\Query\Criteria;
 use Propel\Runtime\Util\PropelDateTime;
 use Propel\Runtime\Util\PropelColumnTypes;
+use Propel\Runtime\Exception\PropelException;
 
 use \PDO;
+use \PDOException;
 
 /**
  * Base for PDO database adapters.
@@ -39,7 +42,7 @@ abstract class PdoAdapter
         $conparams = $this->prepareParams($conparams);
 
         if (!isset($conparams['dsn'])) {
-            throw new PropelException(sprintf('No dsn specified in your connection parameters for datasource "%s"', $name));
+            throw new PropelException('No dsn specified in your connection parameters');
         }
 
         $dsn      = $conparams['dsn'];
@@ -62,8 +65,12 @@ abstract class PdoAdapter
             }
         }
 
-        $con = new ConnectionPdo($dsn, $user, $password, $driver_options);
-        $this->initConnection($con, isset($conparams['settings']) && is_array($conparams['settings']) ? $conparams['settings'] : array());
+        try {
+            $con = new ConnectionPdo($dsn, $user, $password, $driver_options);
+            $this->initConnection($con, isset($conparams['settings']) && is_array($conparams['settings']) ? $conparams['settings'] : array());
+        } catch (PDOException $e) {
+            throw new AdapterException("Unable to open PDO connection", $e);
+        }
 
         return $con;
     }
@@ -476,11 +483,11 @@ abstract class PdoAdapter
      * values that should be substituted.
      *
      * <code>
-     * $db = Propel::getDB($criteria->getDbName());
+     * $adapter = Propel::getServiceContainer()->getAdapter($criteria->getDbName());
      * $sql = BasePeer::createSelectSql($criteria, $params);
      * $stmt = $con->prepare($sql);
      * $params = array();
-     * $db->populateStmtValues($stmt, $params, Propel::getDatabaseMap($critera->getDbName()));
+     * $adapter->populateStmtValues($stmt, $params, Propel::getServiceContainer()->getDatabaseMap($critera->getDbName()));
      * $stmt->execute();
      * </code>
      *

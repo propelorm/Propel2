@@ -191,7 +191,7 @@ $book->delete();
 // DELETE FROM book WHERE id = 1234
 
 // All persistence methods accept a connection object
-$con = Propel::getConnection(BookPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+$con = Propel::getWriteConnection(BookPeer::DATABASE_NAME);
 $book->delete($con);
 {% endhighlight %}
 

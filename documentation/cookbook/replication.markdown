@@ -57,35 +57,54 @@ The `<slaves>` section is at the same level as the master `<connection>` and con
 
 The replication functionality is implemented in the Propel connection configuration and initialization code and in the generated Peer and Object classes.
 
-### Propel::getConnection() ###
+### `Propel::getReadConnection()` and `Propel::getWriteConnection()` ###
 
-When requesting a connection from Propel (_Propel::getConnection()_), you can either specify that you want a READ connection (slave) or WRITE connection (master).  Methods that are designed to perform READ operations, like the `doSelect*()` methods of your generated Peer classes, will always request a READ connection like so:
+When requesting a connection from Propel (`Propel::getConnection()`), you get a write connection by default. 
+
+You can also specify that you want a READ connection (slave) or a WRITE connection (master).  Methods that are designed to perform READ operations, like `ModelCriteria::find()`, will always request a READ connection like so:
 
 {% highlight php %}
 <?php
-
-$con = Propel::getConnection(MyPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+$con = Propel::getReadConnection(MyPeer::DATABASE_NAME);
+$books = BookQuery::create()->find($con);
 {% endhighlight %}
 
-Other methods that are designed to perform write operations will explicitly request a Propel::CONNECTION_WRITE connection.  The WRITE connections are also the default, however, so applications that make a call to _Propel::getConnection()_ without specifying a connection mode will always get a master connection.
+Other methods that are designed to perform write operations, like `ModelCriteria::update()` or `ModelCriteria::delete()`; will explicitly request a WRITE connection:
 
-If you do have configured slave connections, Propel will choose a single random slave to use per request for any connections where the mode is Propel::CONNECTION_READ.
+{% highlight php %}
+<?php
+$con = Propel::getWriteConnection(MyPeer::DATABASE_NAME);
+BookQuery::create()->deleteAll($con);
+{% endhighlight %}
+
+If you do have configured slave connections, Propel will choose a single random slave to use per request for any connections where the mode is READ.
 
 Both READ (slave) and WRITE (master) connections are only configured on demand.  If all of your SQL statements are SELECT queries, Propel will never create a connection to the master database (unless, of course, you have configured Propel to always use the master connection -- see below).
 
-_Important:_ if you are using Propel to execute custom SQL queries in your application (and you want to make sure that Propel respects your replication setup), you will need to explicitly get the correct connection.  For example:
+**Warning**: If you are using Propel to execute custom SQL queries in your application (and you want to make sure that Propel respects your replication setup), you will need to explicitly get the correct connection. For example:
 
 {% highlight php %}
 <?php
-
-$con = Propel::getConnection(MyPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+$con = Propel::getReadConnection(MyPeer::DATABASE_NAME);
 $stmt = $con->query('SELECT * FROM my');
 /* ... */
 {% endhighlight %}
 
-### Propel::setForceMasterConnection() ###
+### `ConnectionManager::setForceMasterConnection()` ###
 
-You can force Propel to always return a WRITE (master) connection from _Propel::getConnection()_ by calling _Propel::setForceMasterConnection(true);_.  This can be useful if you must be sure that you are getting the most up-to-date data (i.e. if there is some latency possible between master and slaves).
+You can force Propel to always return a WRITE (master) connection when calling `Propel::getServiceContainer()->getReadConnection()`, even though there are some slaves connections defined.
+
+To do so, call the `setForceMasterConnection()` method on the related `ConnectionManager`, as follows:
+
+{% highlight php %}
+<?php
+$manager = Propel::getServiceContainer()->getConnectionManager(MyPeer::DATABASE_NAME);
+$manager->setForceMasterConnection(true);
+$con = Propel::getReadConnection(MyPeer::DATABASE_NAME);
+// $con is a WRITE connection
+{% endhighlight %}
+
+This can be useful if you must be sure that you are getting the most up-to-date data (i.e. if there is some latency possible between master and slaves). But remember that the only safe way to get data integrity is to use transactions.
 
 ## Databases ##
 

@@ -11,6 +11,7 @@
 namespace Propel\Runtime\Map;
 
 use Propel\Runtime\Exception\PropelException;
+use Propel\Runtime\Propel;
 
 /**
  * DatabaseMap is used to model a database.
@@ -195,11 +196,12 @@ class DatabaseMap
 
     /**
      * Convenience method to get the AbstractAdapter registered with Propel for this database.
+     * @see     Propel::getServiceContainer()->getAdapter(string).
+     *
      * @return  AbstractAdapter
-     * @see     Propel::getDB(string)
      */
     public function getAbstractAdapter()
     {
-        return Propel::getDB($this->name);
+        return Propel::getServiceContainer()->getAdapter($this->name);
     }
 }

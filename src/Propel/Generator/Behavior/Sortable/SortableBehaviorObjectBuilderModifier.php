@@ -412,7 +412,7 @@ public function moveToRank(\$newRank, ConnectionInterface \$con = null)
         throw new PropelException('New objects cannot be moved. Please use insertAtRank() instead');
     }
     if (\$con === null) {
-        \$con = Propel::getConnection($peerClassname::DATABASE_NAME);
+        \$con = Propel::getServiceContainer()->getWriteConnection($peerClassname::DATABASE_NAME);
     }
     if (\$newRank < 1 || \$newRank > {$this->queryClassname}::create()->getMaxRank(" . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con)) {
         throw new PropelException('Invalid rank ' . \$newRank);
@@ -460,7 +460,7 @@ public function moveToRank(\$newRank, ConnectionInterface \$con = null)
 public function swapWith(\$object, ConnectionInterface \$con = null)
 {
     if (\$con === null) {
-        \$con = Propel::getConnection({$this->peerClassname}::DATABASE_NAME);
+        \$con = Propel::getServiceContainer()->getWriteConnection({$this->peerClassname}::DATABASE_NAME);
     }
     \$con->beginTransaction();
     try {
@@ -497,7 +497,7 @@ public function moveUp(ConnectionInterface \$con = null)
         return \$this;
     }
     if (\$con === null) {
-        \$con = Propel::getConnection({$this->peerClassname}::DATABASE_NAME);
+        \$con = Propel::getServiceContainer()->getWriteConnection({$this->peerClassname}::DATABASE_NAME);
     }
     \$con->beginTransaction();
     try {
@@ -530,7 +530,7 @@ public function moveDown(ConnectionInterface \$con = null)
         return \$this;
     }
     if (\$con === null) {
-        \$con = Propel::getConnection({$this->peerClassname}::DATABASE_NAME);
+        \$con = Propel::getServiceContainer()->getWriteConnection({$this->peerClassname}::DATABASE_NAME);
     }
     \$con->beginTransaction();
     try {
@@ -585,7 +585,7 @@ public function moveToBottom(ConnectionInterface \$con = null)
         return false;
     }
     if (\$con === null) {
-        \$con = Propel::getConnection({$this->peerClassname}::DATABASE_NAME);
+        \$con = Propel::getServiceContainer()->getWriteConnection({$this->peerClassname}::DATABASE_NAME);
     }
     \$con->beginTransaction();
     try {

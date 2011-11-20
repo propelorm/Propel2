@@ -123,7 +123,7 @@ const SCOPE_COL = '" . $tableName . '.' . $this->getColumnConstant('scope_column
 public static function getMaxRank(" . ($useScope ? "\$scope = null, " : "") . "ConnectionInterface \$con = null)
 {
     if (\$con === null) {
-        \$con = Propel::getConnection({$this->peerClassname}::DATABASE_NAME);
+        \$con = Propel::getServiceContainer()->getReadConnection({$this->peerClassname}::DATABASE_NAME);
     }
     // shift the objects with a position lower than the one of object
     \$c = new Criteria();
@@ -161,7 +161,7 @@ public static function getMaxRank(" . ($useScope ? "\$scope = null, " : "") . "C
 public static function retrieveByRank(\$rank, " . ($useScope ? "\$scope = null, " : "") . "ConnectionInterface \$con = null)
 {
     if (\$con === null) {
-        \$con = Propel::getConnection($peerClassname::DATABASE_NAME);
+        \$con = Propel::getServiceContainer()->getReadConnection($peerClassname::DATABASE_NAME);
     }
 
     \$c = new Criteria;
@@ -196,7 +196,7 @@ public static function retrieveByRank(\$rank, " . ($useScope ? "\$scope = null, 
 public static function reorder(array \$order, ConnectionInterface \$con = null)
 {
     if (\$con === null) {
-        \$con = Propel::getConnection($peerClassname::DATABASE_NAME);
+        \$con = Propel::getServiceContainer()->getWriteConnection($peerClassname::DATABASE_NAME);
     }
 
     \$con->beginTransaction();
@@ -237,7 +237,7 @@ public static function reorder(array \$order, ConnectionInterface \$con = null)
 public static function doSelectOrderByRank(Criteria \$criteria = null, \$order = Criteria::ASC, ConnectionInterface \$con = null)
 {
     if (\$con === null) {
-        \$con = Propel::getConnection($peerClassname::DATABASE_NAME);
+        \$con = Propel::getServiceContainer()->getReadConnection($peerClassname::DATABASE_NAME);
     }
 
     if (\$criteria === null) {
@@ -347,7 +347,7 @@ public static function deleteList(\$scope, ConnectionInterface \$con = null)
 public static function shiftRank(\$delta, \$first, \$last = null, " . ($useScope ? "\$scope = null, " : "") . "ConnectionInterface \$con = null)
 {
     if (\$con === null) {
-        \$con = Propel::getConnection($peerClassname::DATABASE_NAME, Propel::CONNECTION_WRITE);
+        \$con = Propel::getServiceContainer()->getWriteConnection($peerClassname::DATABASE_NAME);
     }
 
     \$whereCriteria = new Criteria($peerClassname::DATABASE_NAME);
