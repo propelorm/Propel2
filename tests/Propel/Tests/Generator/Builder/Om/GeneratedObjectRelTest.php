@@ -367,7 +367,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         BookstoreDataPopulator::populate();
         BookPeer::clearInstancePool();
         AuthorPeer::clearInstancePool();
-        $con = Propel::getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
         $author = AuthorPeer::doSelectOne(new Criteria(), $con);
         // populate book instance pool
         $books = $author->getBooks(null, $con);
@@ -382,7 +382,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         BookPeer::clearInstancePool();
         AuthorPeer::clearInstancePool();
         PublisherPeer::clearInstancePool();
-        $con = Propel::getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
         $author = AuthorPeer::doSelectOne(new Criteria(), $con);
         // populate book instance pool
         $books = $author->getBooksJoinPublisher(null, $con);

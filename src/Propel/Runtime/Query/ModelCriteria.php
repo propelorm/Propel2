@@ -83,7 +83,7 @@ class ModelCriteria extends Criteria
         $this->modelName = $modelName;
         $this->modelPeerName = constant($this->modelName . '::PEER');
         $this->modelAlias = $modelAlias;
-        $this->tableMap = Propel::getDatabaseMap($this->getDbName())->getTableByPhpName($this->modelName);
+        $this->tableMap = Propel::getServiceContainer()->getDatabaseMap($this->getDbName())->getTableByPhpName($this->modelName);
     }
 
     /**
@@ -1166,7 +1166,7 @@ class ModelCriteria extends Criteria
     public function find($con = null)
     {
         if ($con === null) {
-            $con = Propel::getConnection($this->getDbName(), Propel::CONNECTION_READ);
+            $con = Propel::getServiceContainer()->getReadConnection($this->getDbName());
         }
         $this->basePreSelect($con);
         $criteria = $this->isKeepQuery() ? clone $this : $this;
@@ -1187,7 +1187,7 @@ class ModelCriteria extends Criteria
     public function findOne($con = null)
     {
         if ($con === null) {
-            $con = Propel::getConnection($this->getDbName(), Propel::CONNECTION_READ);
+            $con = Propel::getServiceContainer()->getReadConnection($this->getDbName());
         }
         $this->basePreSelect($con);
         $criteria = $this->isKeepQuery() ? clone $this : $this;
@@ -1237,7 +1237,7 @@ class ModelCriteria extends Criteria
     public function findPk($key, $con = null)
     {
         if ($con === null) {
-            $con = Propel::getConnection($this->getDbName(), Propel::CONNECTION_READ);
+            $con = Propel::getServiceContainer()->getReadConnection($this->getDbName());
         }
         // As the query uses a PK condition, no limit(1) is necessary.
         $this->basePreSelect($con);
@@ -1276,7 +1276,7 @@ class ModelCriteria extends Criteria
     public function findPks($keys, $con = null)
     {
         if ($con === null) {
-            $con = Propel::getConnection($this->getDbName(), Propel::CONNECTION_READ);
+            $con = Propel::getServiceContainer()->getReadConnection($this->getDbName());
         }
         // As the query uses a PK condition, no limit(1) is necessary.
         $this->basePreSelect($con);
@@ -1310,8 +1310,8 @@ class ModelCriteria extends Criteria
         }
         $this->configureSelectColumns();
 
-        $dbMap = Propel::getDatabaseMap($this->getDbName());
-        $db = Propel::getDB($this->getDbName());
+        $dbMap = Propel::getServiceContainer()->getDatabaseMap($this->getDbName());
+        $db = Propel::getServiceContainer()->getAdapter($this->getDbName());
 
         $params = array();
         $sql = BasePeer::createSelectSql($this, $params);
@@ -1425,7 +1425,7 @@ class ModelCriteria extends Criteria
     public function count($con = null)
     {
         if ($con === null) {
-            $con = Propel::getConnection($this->getDbName(), Propel::CONNECTION_READ);
+            $con = Propel::getServiceContainer()->getReadConnection($this->getDbName());
         }
         $this->basePreSelect($con);
         $criteria = $this->isKeepQuery() ? clone $this : $this;
@@ -1450,8 +1450,8 @@ class ModelCriteria extends Criteria
 
     protected function doCount($con)
     {
-        $dbMap = Propel::getDatabaseMap($this->getDbName());
-        $db = Propel::getDB($this->getDbName());
+        $dbMap = Propel::getServiceContainer()->getDatabaseMap($this->getDbName());
+        $db = Propel::getServiceContainer()->getAdapter($this->getDbName());
 
         // check that the columns of the main class are already added (if this is the primary ModelCriteria)
         if (!$this->hasSelectClause() && !$this->getPrimaryCriteria()) {
@@ -1558,7 +1558,7 @@ class ModelCriteria extends Criteria
         }
 
         if ($con === null) {
-            $con = Propel::getConnection($this->getDbName(), Propel::CONNECTION_WRITE);
+            $con = Propel::getServiceContainer()->getWriteConnection($this->getDbName());
         }
 
         $criteria = $this->isKeepQuery() ? clone $this : $this;
@@ -1605,7 +1605,7 @@ class ModelCriteria extends Criteria
     public function deleteAll($con = null)
     {
         if ($con === null) {
-            $con = Propel::getConnection($this->getDbName(), Propel::CONNECTION_WRITE);
+            $con = Propel::getServiceContainer()->getWriteConnection($this->getDbName());
         }
         $con->beginTransaction();
         try {
@@ -1692,7 +1692,7 @@ class ModelCriteria extends Criteria
         }
 
         if ($con === null) {
-            $con = Propel::getConnection($this->getDbName(), Propel::CONNECTION_WRITE);
+            $con = Propel::getServiceContainer()->getWriteConnection($this->getDbName());
         }
 
         $criteria = $this->isKeepQuery() ? clone $this : $this;
@@ -2102,7 +2102,7 @@ class ModelCriteria extends Criteria
     public function getParams()
     {
         $params = array();
-        $dbMap = Propel::getDatabaseMap($this->getDbName());
+        $dbMap = Propel::getServiceContainer()->getDatabaseMap($this->getDbName());
 
         foreach ($this->getMap() as $criterion) {
 

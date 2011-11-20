@@ -23,7 +23,7 @@ public function archive($con = null, $useLittleMemory = true)
         $criteria->setFormatter(ModelCriteria::FORMAT_ON_DEMAND);
     }
     if ($con === null) {
-        $con = Propel::getConnection(<?php echo $modelPeerName ?>::DATABASE_NAME, Propel::CONNECTION_WRITE);
+        $con = Propel::getServiceContainer()->getWriteConnection(<?php echo $modelPeerName ?>::DATABASE_NAME);
     }
     $con->beginTransaction();
     try {

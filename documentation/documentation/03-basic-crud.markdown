@@ -165,6 +165,7 @@ As Propel uses PDO to query the underlying database, you can always write custom
 
 {% highlight php %}
 <?php
+use Propel\Runtime\Propel;
 $con = Propel::getConnection(BookPeer::DATABASE_NAME);
 $sql = "SELECT * FROM book WHERE id NOT IN "
         ."(SELECT book_review.book_id FROM book_review"

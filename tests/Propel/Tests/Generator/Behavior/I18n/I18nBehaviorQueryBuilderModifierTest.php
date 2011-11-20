@@ -105,7 +105,7 @@ EOF;
 
     public function testJoinI18nCreatesACorrectQuery()
     {
-        $con = Propel::getConnection(\I18nBehaviorTest11Peer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(\I18nBehaviorTest11Peer::DATABASE_NAME);
         $con->useDebug(true);
         \I18nBehaviorTest11Query::create()
             ->joinI18n('fr_FR')
@@ -145,7 +145,7 @@ EOF;
 
     public function testUseI18nQueryCreatesACorrectQuery()
     {
-        $con = Propel::getConnection(\I18nBehaviorTest11Peer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(\I18nBehaviorTest11Peer::DATABASE_NAME);
         $con->useDebug(true);
         \I18nBehaviorTest11Query::create()
             ->useI18nQuery('fr_FR')
@@ -196,7 +196,7 @@ EOF;
 
     public function testJoinWithI18nHydratesRelatedObject()
     {
-        $con = Propel::getConnection(\I18nBehaviorTest11Peer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(\I18nBehaviorTest11Peer::DATABASE_NAME);
         $con->useDebug(true);
         \I18nBehaviorTest11Query::create()->deleteAll();
         \I18nBehaviorTest11I18nQuery::create()->deleteAll();
@@ -260,7 +260,7 @@ EOF;
     public function testJoinWithI18nDoesNotExecuteAdditionalQueryWhenNoTranslationIsFound()
     {
         $this->markTestSkipped();
-        $con = Propel::getConnection(I18nBehaviorTest11Peer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(I18nBehaviorTest11Peer::DATABASE_NAME);
         $con->useDebug(true);
         \I18nBehaviorTest11Query::create()->deleteAll();
         \I18nBehaviorTest11I18nQuery::create()->deleteAll();

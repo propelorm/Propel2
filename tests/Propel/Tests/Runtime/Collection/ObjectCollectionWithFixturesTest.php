@@ -253,7 +253,7 @@ class ObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
 
     public function testPopulateRelationManyToOne()
     {
-        $con = Propel::getConnection();
+        $con = Propel::getServiceContainer()->getReadConnection(BookPeer::DATABASE_NAME);
         AuthorPeer::clearInstancePool();
         BookPeer::clearInstancePool();
         $books = BookQuery::create()->find($con);

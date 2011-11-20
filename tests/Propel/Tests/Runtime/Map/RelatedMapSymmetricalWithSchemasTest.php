@@ -28,7 +28,7 @@ class RelatedMapSymmetricalWithSchemasTest extends SchemasTestBase
     protected function setUp()
     {
         parent::setUp();
-        $this->databaseMap = Propel::getDatabaseMap('bookstore-schemas');
+        $this->databaseMap = Propel::getServiceContainer()->getDatabaseMap('bookstore-schemas');
     }
 
     public function testOneToMany()

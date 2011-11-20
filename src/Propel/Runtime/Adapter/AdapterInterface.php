@@ -270,11 +270,11 @@ interface AdapterInterface
      * values that should be substituted.
      *
      * <code>
-     * $db = Propel::getDB($criteria->getDbName());
+     * $adapter = Propel::getServiceContainer()->getAdapter($criteria->getDbName());
      * $sql = BasePeer::createSelectSql($criteria, $params);
      * $stmt = $con->prepare($sql);
      * $params = array();
-     * $db->populateStmtValues($stmt, $params, Propel::getDatabaseMap($critera->getDbName()));
+     * $adapter->populateStmtValues($stmt, $params, Propel::getServiceContainer()->getDatabaseMap($critera->getDbName()));
      * $stmt->execute();
      * </code>
      *

@@ -151,7 +151,7 @@ abstract class AbstractFormatter
 
     public function getTableMap()
     {
-        return Propel::getDatabaseMap($this->dbName)->getTableByPhpName($this->class);
+        return Propel::getServiceContainer()->getDatabaseMap($this->dbName)->getTableByPhpName($this->class);
     }
 
     protected function isWithOneToMany()

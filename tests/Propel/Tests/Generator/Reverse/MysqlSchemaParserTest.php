@@ -37,8 +37,7 @@ class MysqlSchemaParserTest extends \PHPUnit_Framework_TestCase
         $xml = simplexml_load_string($xmlDom->saveXML());
         $phpconf = OpenedPropelConvertConfTask::simpleXmlToArray($xml);
 
-        Propel::setConfiguration($phpconf);
-        Propel::initialize();
+        Propel::setConfiguration($phpconf['propel']);
     }
 
     protected function tearDown()
@@ -49,7 +48,7 @@ class MysqlSchemaParserTest extends \PHPUnit_Framework_TestCase
 
     public function testParse()
     {
-        $parser = new MysqlSchemaParser(Propel::getConnection('reverse-bookstore'));
+        $parser = new MysqlSchemaParser(Propel::getServiceContainer()->getConnection('reverse-bookstore'));
         $parser->setGeneratorConfig(new QuickGeneratorConfig());
 
         $database = new Database();

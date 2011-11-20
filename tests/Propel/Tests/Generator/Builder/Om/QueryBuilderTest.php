@@ -1004,7 +1004,7 @@ class QueryBuilderTest extends BookstoreTestBase
 
     public function testUseFkQueryNoAliasThenWith()
     {
-        $con = Propel::getConnection();
+        $con = Propel::getServiceContainer()->getReadConnection(BookPeer::DATABASE_NAME);
         $books = BookQuery::create()
             ->useAuthorQuery()
                 ->filterByFirstName('Leo')

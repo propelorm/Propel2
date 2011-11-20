@@ -162,6 +162,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
     {
         // namespaces
         $this->declareClasses(
+            '\Propel\Runtime\Propel',
             '\Propel\Runtime\Query\ModelCriteria',
             '\Propel\Runtime\Query\Criteria',
             '\Propel\Runtime\Query\ModelJoin'
@@ -412,7 +413,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
             return \$obj;
         }
         if (\$con === null) {
-            \$con = Propel::getConnection({$peerClassname}::DATABASE_NAME, Propel::CONNECTION_READ);
+            \$con = Propel::getServiceContainer()->getReadConnection({$peerClassname}::DATABASE_NAME);
         }
         \$this->basePreSelect(\$con);
         if (\$this->formatter || \$this->modelAlias || \$this->with || \$this->select
@@ -573,7 +574,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
     public function findPks(\$keys, \$con = null)
     {
         if (\$con === null) {
-            \$con = Propel::getConnection(\$this->getDbName(), Propel::CONNECTION_READ);
+            \$con = Propel::getServiceContainer()->getReadConnection(\$this->getDbName());
         }
         \$this->basePreSelect(\$con);
         \$criteria = \$this->isKeepQuery() ? clone \$this : \$this;

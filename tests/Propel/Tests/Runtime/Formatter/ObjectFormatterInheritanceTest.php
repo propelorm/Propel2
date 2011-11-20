@@ -48,7 +48,7 @@ class ObjectFormatterInheritanceTest extends BookstoreEmptyTestBase
 
     public function testFormat()
     {
-        $con = Propel::getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
         BookstoreEmployeePeer::clearInstancePool();
 
         $stmt = $con->query('SELECT * FROM bookstore_employee');

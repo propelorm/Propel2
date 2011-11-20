@@ -513,7 +513,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
      */
     public static function buildTableMap()
     {
-      \$dbMap = Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME);
+      \$dbMap = Propel::getServiceContainer()->getDatabaseMap(".$this->getClassname()."::DATABASE_NAME);
       if (!\$dbMap->hasTable(".$this->getClassname()."::TABLE_NAME))
       {
         \$dbMap->addTableObject(new ".$this->getTableMapClass()."());
@@ -670,7 +670,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         \$criteria->setDbName(self::DATABASE_NAME); // Set the correct dbName
 
         if (\$con === null) {
-            \$con = Propel::getConnection(".$this->getPeerClassname()."::DATABASE_NAME, Propel::CONNECTION_READ);
+            \$con = Propel::getServiceContainer()->getReadConnection(".$this->getPeerClassname()."::DATABASE_NAME);
         }";
 
         // apply behaviors
@@ -766,7 +766,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
     public static function doSelectStmt(Criteria \$criteria, ConnectionInterface \$con = null)
     {
         if (\$con === null) {
-            \$con = Propel::getConnection(".$this->getPeerClassname()."::DATABASE_NAME, Propel::CONNECTION_READ);
+            \$con = Propel::getServiceContainer()->getReadConnection(".$this->getPeerClassname()."::DATABASE_NAME);
         }
 
         if (!\$criteria->hasSelectClause()) {
@@ -1337,7 +1337,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
     public static function doInsert(\$values, ConnectionInterface \$con = null)
     {
         if (\$con === null) {
-            \$con = Propel::getConnection(".$this->getPeerClassname()."::DATABASE_NAME, Propel::CONNECTION_WRITE);
+            \$con = Propel::getServiceContainer()->getWriteConnection(".$this->getPeerClassname()."::DATABASE_NAME);
         }
 
         if (\$values instanceof Criteria) {
@@ -1412,7 +1412,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
     public static function doUpdate(\$values, ConnectionInterface \$con = null)
     {
         if (\$con === null) {
-            \$con = Propel::getConnection(".$this->getPeerClassname()."::DATABASE_NAME, Propel::CONNECTION_WRITE);
+            \$con = Propel::getServiceContainer()->getWriteConnection(".$this->getPeerClassname()."::DATABASE_NAME);
         }
 
         \$selectCriteria = new Criteria(self::DATABASE_NAME);
@@ -1465,7 +1465,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
     public static function doDeleteAll(ConnectionInterface \$con = null)
     {
         if (\$con === null) {
-            \$con = Propel::getConnection(".$this->getPeerClassname()."::DATABASE_NAME, Propel::CONNECTION_WRITE);
+            \$con = Propel::getServiceContainer()->getWriteConnection(".$this->getPeerClassname()."::DATABASE_NAME);
         }
         \$affectedRows = 0; // initialize var to track total num of affected rows
         try {
@@ -1521,7 +1521,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
      public static function doDelete(\$values, ConnectionInterface \$con = null)
      {
         if (\$con === null) {
-            \$con = Propel::getConnection(".$this->getPeerClassname()."::DATABASE_NAME, Propel::CONNECTION_WRITE);
+            \$con = Propel::getServiceContainer()->getWriteConnection(".$this->getPeerClassname()."::DATABASE_NAME);
         }
 
         if (\$values instanceof Criteria) {";
@@ -1842,7 +1842,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         \$columns = array();
 
         if (\$cols) {
-            \$dbMap = Propel::getDatabaseMap(".$this->getPeerClassname()."::DATABASE_NAME);
+            \$dbMap = Propel::getServiceContainer()->getDatabaseMap(".$this->getPeerClassname()."::DATABASE_NAME);
             \$tableMap = \$dbMap->getTable(".$this->getPeerClassname()."::TABLE_NAME);
 
             if (! is_array(\$cols)) {
@@ -1901,7 +1901,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         }
 
         if (\$con === null) {
-            \$con = Propel::getConnection(".$this->getPeerClassname()."::DATABASE_NAME, Propel::CONNECTION_READ);
+            \$con = Propel::getServiceContainer()->getReadConnection(".$this->getPeerClassname()."::DATABASE_NAME);
         }
 
         \$criteria = new Criteria(".$this->getPeerClassname()."::DATABASE_NAME);
@@ -1933,7 +1933,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
     public static function ".$this->getRetrieveMethodName()."s(\$pks, ConnectionInterface \$con = null)
     {
         if (\$con === null) {
-            \$con = Propel::getConnection(".$this->getPeerClassname()."::DATABASE_NAME, Propel::CONNECTION_READ);
+            \$con = Propel::getServiceContainer()->getReadConnection(".$this->getPeerClassname()."::DATABASE_NAME);
         }
 
         \$objs = null;
@@ -1991,7 +1991,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         }
 
         if (\$con === null) {
-            \$con = Propel::getConnection(".$this->getPeerClassname()."::DATABASE_NAME, Propel::CONNECTION_READ);
+            \$con = Propel::getServiceContainer()->getReadConnection(".$this->getPeerClassname()."::DATABASE_NAME);
         }
         \$criteria = new Criteria(".$this->getPeerClassname()."::DATABASE_NAME);";
         foreach ($table->getPrimaryKey() as $col) {
@@ -2022,7 +2022,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
      */
     public static function getTableMap()
     {
-        return Propel::getDatabaseMap(self::DATABASE_NAME)->getTable(self::TABLE_NAME);
+        return Propel::getServiceContainer()->getDatabaseMap(self::DATABASE_NAME)->getTable(self::TABLE_NAME);
     }
 ";
     }
@@ -2166,7 +2166,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         \$criteria = clone \$criteria;
 
         // Set the correct dbName if it has not been overridden
-        if (\$criteria->getDbName() == Propel::getDefaultDB()) {
+        if (\$criteria->getDbName() == Propel::getServiceContainer()->getDefaultDatasource()) {
             \$criteria->setDbName(self::DATABASE_NAME);
         }
 
@@ -2319,7 +2319,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         \$criteria->setDbName(self::DATABASE_NAME);
 
         if (\$con === null) {
-            \$con = Propel::getConnection(".$this->getPeerClassname()."::DATABASE_NAME, Propel::CONNECTION_READ);
+            \$con = Propel::getServiceContainer()->getReadConnection(".$this->getPeerClassname()."::DATABASE_NAME);
         }
 ";
             $script .= $this->addCriteriaJoin($fk, $table, $joinTable, $joinedTablePeerBuilder);
@@ -2374,7 +2374,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         \$criteria = clone \$criteria;
 
         // Set the correct dbName if it has not been overridden
-        if (\$criteria->getDbName() == Propel::getDefaultDB()) {
+        if (\$criteria->getDbName() == Propel::getServiceContainer()->getDefaultDatasource()) {
             \$criteria->setDbName(self::DATABASE_NAME);
         }
 
@@ -2562,7 +2562,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         \$criteria->setDbName(self::DATABASE_NAME);
 
         if (\$con === null) {
-            \$con = Propel::getConnection(".$this->getPeerClassname()."::DATABASE_NAME, Propel::CONNECTION_READ);
+            \$con = Propel::getServiceContainer()->getReadConnection(".$this->getPeerClassname()."::DATABASE_NAME);
         }
 ";
 
@@ -2642,7 +2642,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         // Set the correct dbName if it has not been overridden
         // \$criteria->getDbName() will return the same object if not set to another value
         // so == check is okay and faster
-        if (\$criteria->getDbName() == Propel::getDefaultDB()) {
+        if (\$criteria->getDbName() == Propel::getServiceContainer()->getDefaultDatasource()) {
             \$criteria->setDbName(self::DATABASE_NAME);
         }
 
@@ -2847,7 +2847,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         \$criteria->setDbName(self::DATABASE_NAME);
 
         if (\$con === null) {
-            \$con = Propel::getConnection(".$this->getPeerClassname()."::DATABASE_NAME, Propel::CONNECTION_READ);
+            \$con = Propel::getServiceContainer()->getReadConnection(".$this->getPeerClassname()."::DATABASE_NAME);
         }
     ";
 

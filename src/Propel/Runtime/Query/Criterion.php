@@ -103,8 +103,8 @@ class Criterion
     {
         // init $this->db
         try {
-            $db = Propel::getDB($criteria->getDbName());
-            $this->setDB($db);
+            $db = Propel::getServiceContainer()->getAdapter($criteria->getDbName());
+            $this->setAdapter($db);
         } catch (Exception $e) {
             // we are only doing this to allow easier debugging, so
             // no need to throw up the exception, just make note of it.
@@ -169,27 +169,29 @@ class Criterion
     }
 
     /**
-     * Get the value of db.
+     * Get the adapter.
+     *
      * The AdapterInterface which might be used to get db specific
      * variations of sql.
      * @return     AdapterInterface value of db.
      */
-    public function getDB()
+    public function getAdapter()
     {
         return $this->db;
     }
 
     /**
-     * Set the value of db.
+     * Set the adapter.
+     *
      * The AdapterInterface might be used to get db specific variations of sql.
      * @param      AdapterInterface $v Value to assign to db.
      * @return     void
      */
-    public function setDB(AdapterInterface $v)
+    public function setAdapter(AdapterInterface $v)
     {
         $this->db = $v;
-        foreach ( $this->clauses as $clause ) {
-            $clause->setDB($v);
+        foreach ($this->clauses as $clause) {
+            $clause->setAdapter($v);
         }
     }
 
@@ -384,7 +386,7 @@ class Criterion
     protected function appendLikeToPs(&$sb, array &$params)
     {
         $field = ($this->table === null) ? $this->column : $this->table . '.' . $this->column;
-        $db = $this->getDb();
+        $db = $this->getAdapter();
         // If selection is case insensitive use ILIKE for PostgreSQL or SQL
         // UPPER() function on column name for other databases.
         if ($this->ignoreStringCase) {
@@ -436,7 +438,7 @@ class Criterion
                 // default case, it is a normal col = value expression; value
                 // will be replaced w/ '?' and will be inserted later using PDO bindValue()
                 if ($this->ignoreStringCase) {
-                    $sb .= $this->getDb()->ignoreCase($field) . $this->comparison . $this->getDb()->ignoreCase(':p'.count($params));
+                    $sb .= $this->getAdapter()->ignoreCase($field) . $this->comparison . $this->getAdapter()->ignoreCase(':p'.count($params));
                 } else {
                     $sb .= $field . $this->comparison . ':p'.count($params);
                 }
