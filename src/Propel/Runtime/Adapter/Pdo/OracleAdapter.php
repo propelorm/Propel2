@@ -44,7 +44,7 @@ class OracleAdapter extends PdoAdapter implements AdapterInterface
      * @param     PDO    $con
      * @param     array  $settings  A $PDO PDO connection instance
      */
-    public function initConnection($con, array $settings)
+    public function initConnection(ConnectionInterface $con, array $settings)
     {
         $con->exec("ALTER SESSION SET NLS_DATE_FORMAT='YYYY-MM-DD'");
         $con->exec("ALTER SESSION SET NLS_TIMESTAMP_FORMAT='YYYY-MM-DD HH24:MI:SS'");
