@@ -454,7 +454,7 @@ class BasePeer
      *
      * @param      Criteria $criteria A Criteria.
      * @param      ConnectionInterface $con A ConnectionInterface connection to use.
-     * @return     PDOStatement The resultset.
+     * @return     Propel\Runtime\Connection\StatementInterface The resultset.
      * @throws     PropelException
      * @see        createSelectSql()
      */
@@ -496,7 +496,7 @@ class BasePeer
      *
      * @param      Criteria $criteria A Criteria.
      * @param      ConnectionInterface $con A ConnectionInterface connection to use.
-     * @return     PDOStatement The resultset statement.
+     * @return     Propel\Runtime\Connection\StatementInterface The resultset statement.
      * @throws     PropelException
      * @see        createSelectSql()
      */

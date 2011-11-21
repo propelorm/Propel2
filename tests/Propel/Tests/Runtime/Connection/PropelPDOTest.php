@@ -334,10 +334,10 @@ class PropelPDOTest extends BookstoreTestBase
         $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
         $con->useDebug(false);
         $stmtClass = $con->getAttribute(PDO::ATTR_STATEMENT_CLASS);
-        $this->assertEquals('Propel\Runtime\Connection\StatementPdo', $stmtClass[0], 'Statement is StatementPdo when debug is false');
+        $this->assertEquals('Propel\Runtime\Adapter\Pdo\PdoStatement', $stmtClass[0], 'Statement is Propel Statement when debug is false');
         $con->useDebug(true);
         $stmtClass = $con->getAttribute(PDO::ATTR_STATEMENT_CLASS);
-        $this->assertEquals('Propel\Runtime\Connection\StatementPdo', $stmtClass[0], 'Statement is StatementPdo when debug is true');
+        $this->assertEquals('Propel\Runtime\Adapter\Pdo\PdoStatement', $stmtClass[0], 'Statement is Propel Statement when debug is true');
     }
 
     public function testDebugLatestQuery()
