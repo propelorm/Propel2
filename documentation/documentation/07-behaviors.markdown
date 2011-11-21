@@ -140,7 +140,6 @@ Propel currently bundles several behaviors. Check the behavior documentation for
 * [delegate](../behaviors/delegate)
 * [timestampable](../behaviors/timestampable)
 * [sluggable](../behaviors/sluggable)
-* [soft_delete](../behaviors/soft-delete) **Deprecated**
 * [sortable](../behaviors/sortable)
 * [nested_set](../behaviors/nested-set)
 * [versionable](../behaviors/versionable)
@@ -227,7 +226,7 @@ In this example, both the `book` and `author` table benefit from the `timestampa
 Going one step further, you can even apply a behavior to all the databases of your project, provided the behavior doesn't need parameters - or can use default parameters. To add a behavior to all databases, simply declare it in the project's `build.properties` under the `propel.behavior.default` key, as follows:
 
 {% highlight ini %}
-propel.behavior.default = soft_delete, timestampable
+propel.behavior.default = archivable, timestampable
 {% endhighlight %}
 
 ## Writing a Behavior ##

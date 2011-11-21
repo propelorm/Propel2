@@ -44,7 +44,6 @@ title: Documentation
 * [`nested_set`](../behaviors/nested-set.html)
 * [`query_cache`](../behaviors/query-cache.html)
 * [`sluggable`](../behaviors/sluggable.html)
-* *[`soft_delete`](../behaviors/soft-delete.html) (deprecated, use `archivable` instead)*
 * [`timestampable`](../behaviors/timestampable.html)
 * [`sortable`](../behaviors/sortable.html)
 * [`versionable`](../behaviors/versionable.html)

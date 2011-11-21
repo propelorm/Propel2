@@ -327,5 +327,5 @@ propel.behavior.my_behavior.class = my.custom.path.to.MyBehaviorClass
 # Behaviors are enabled on a per-table basis in the `schema.xml`. However, you
 # can add behaviors for all your schemas, provided that you define them in the
 # `propel.behavior.default` setting:
-propel.behavior.default = soft_delete,my_behavior
+propel.behavior.default = archivable,my_behavior
 {% endhighlight %}
