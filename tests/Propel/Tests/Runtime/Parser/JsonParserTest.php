@@ -21,7 +21,7 @@ use Propel\Runtime\Parser\JsonParser;
  */
 class JsonParserTest extends \PHPUnit_Framework_TestCase
 {
-    public static function arrayJsonConversionDataProvider()
+    static public function arrayJsonConversionDataProvider()
     {
         return array(
             array(array(), '[]', 'empty array'),
@@ -74,7 +74,7 @@ class JsonParserTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($arrayData, $parser->fromJSON($jsonData), 'JsonParser::fromJSON() converts to ' . $type . ' correctly');
     }
 
-    public static function listToJSONDataProvider()
+    static public function listToJSONDataProvider()
     {
         $list = array(
             'book0' => array('Id' => 123, 'Title' => 'Pride and Prejudice', 'AuthorId' => 456, 'ISBN' => '0553213105', 'Author' => array('Id' => 456, 'FirstName' => 'Jane', 'LastName' => 'Austen')),

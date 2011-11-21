@@ -99,7 +99,7 @@ class ModelCriteriaTest extends BookstoreTestBase
 
     }
 
-    public static function conditionsForTestReplaceNames()
+    static public function conditionsForTestReplaceNames()
     {
         return array(
             array('Propel\Tests\Bookstore\Book.Title = ?', 'Title', 'book.TITLE = ?'), // basic case
@@ -149,7 +149,7 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals($modifiedClause, $origClause);
     }
 
-    public static function conditionsForTestReplaceMultipleNames()
+    static public function conditionsForTestReplaceMultipleNames()
     {
         return array(
             array('(Propel\Tests\Bookstore\Book.Id+Book.Id)=1', array('Id', 'Id'), '(book.ID+book.ID)=1'), // match multiple names
@@ -228,7 +228,7 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertCriteriaTranslation($c, $sql, $params, 'condition() can store condition for later combination');
     }
 
-    public static function conditionsForTestWhere()
+    static public function conditionsForTestWhere()
     {
         return array(
             array('Propel\Tests\Bookstore\Book.Title = ?', 'foo', 'book.TITLE = :p1', array(array('table' => 'book', 'column' => 'TITLE', 'value' => 'foo'))),
@@ -1287,7 +1287,7 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals($expectedJoinKeys, array_keys($joins), 'joinWith() adds the join');
     }
 
-    public static function conditionsForTestWithColumn()
+    static public function conditionsForTestWithColumn()
     {
         return array(
             array('Propel\Tests\Bookstore\Book.Title', 'BookTitle', 'book.TITLE AS BookTitle'),
@@ -1309,7 +1309,7 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertCriteriaTranslation($c, $sql, $params, 'withColumn() adds a calculated column to the select clause');
     }
 
-    public static function conditionsForTestWithColumnAndQuotes()
+    static public function conditionsForTestWithColumnAndQuotes()
     {
         return array(
             // Examples for simple string concatenation needed for MSSQL.
@@ -1940,7 +1940,7 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals('3456', $book->getISBN(), 'update() updates only the records matching the criteria');
     }
 
-    public static function conditionsForTestGetRelationName()
+    static public function conditionsForTestGetRelationName()
     {
         return array(
             array('Author', 'Author'),

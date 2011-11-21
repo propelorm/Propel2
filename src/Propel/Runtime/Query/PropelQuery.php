@@ -21,7 +21,7 @@ use Propel\Runtime\Exception\PropelException;
  */
 class PropelQuery
 {
-    public static function from($queryClassAndAlias)
+    static public function from($queryClassAndAlias)
     {
         list($class, $alias) = ModelCriteria::getClassAndAlias($queryClassAndAlias);
         $queryClass = $class . 'Query';

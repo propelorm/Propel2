@@ -83,7 +83,7 @@ class TableComparator
      *
      * @return TableDiff|boolean return false if the two tables are similar
      */
-    public static function computeDiff(Table $fromTable, Table $toTable, $caseInsensitive = false)
+    static public function computeDiff(Table $fromTable, Table $toTable, $caseInsensitive = false)
     {
         $tc = new self();
         $tc->setFromTable($fromTable);

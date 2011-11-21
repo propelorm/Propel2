@@ -35,7 +35,7 @@ class PHP5ObjectBuilderTest extends \PHPUnit_Framework_TestCase
         $this->builder = $builder;
     }
 
-    public static function getDefaultValueStringProvider()
+    static public function getDefaultValueStringProvider()
     {
         $col1 = new Column('Bar');
         $col1->setDomain(new Domain('VARCHAR'));

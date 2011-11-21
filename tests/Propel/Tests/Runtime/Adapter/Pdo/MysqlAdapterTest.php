@@ -24,7 +24,7 @@ use Propel\Runtime\Adapter\Pdo\MysqlAdapter;
  */
 class MysqlAdapterTest extends BookstoreTestBase
 {
-    public static function getConParams()
+    static public function getConParams()
     {
         return array(
             array(

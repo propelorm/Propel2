@@ -28,7 +28,7 @@ interface NodePeer
      * @param      object $node    Propel object for model
      * @return     object        Inserted propel object for model
      */
-    public static function createRoot(NodeObject $node);
+    static public function createRoot(NodeObject $node);
 
     /**
      * Returns the root node for a given scope id
@@ -37,7 +37,7 @@ interface NodePeer
      * @param      ConnectionInterface $con    Connection to use.
      * @return     object            Propel object for root node
      */
-    public static function retrieveRoot($scopeId = 1, ConnectionInterface $con = null);
+    static public function retrieveRoot($scopeId = 1, ConnectionInterface $con = null);
 
     /**
      * Inserts $child as first child of destination node $parent
@@ -47,7 +47,7 @@ interface NodePeer
      * @param      ConnectionInterface $con    Connection to use.
      * @return     void
      */
-    public static function insertAsFirstChildOf(NodeObject $child, NodeObject $parent, ConnectionInterface $con = null);
+    static public function insertAsFirstChildOf(NodeObject $child, NodeObject $parent, ConnectionInterface $con = null);
 
     /**
      * Inserts $child as last child of destination node $parent
@@ -57,7 +57,7 @@ interface NodePeer
      * @param      ConnectionInterface $con    Connection to use.
      * @return     void
      */
-    public static function insertAsLastChildOf(NodeObject $child, NodeObject $parent, ConnectionInterface $con = null);
+    static public function insertAsLastChildOf(NodeObject $child, NodeObject $parent, ConnectionInterface $con = null);
 
     /**
      * Inserts $sibling as previous sibling to destination node $node
@@ -67,7 +67,7 @@ interface NodePeer
      * @param      ConnectionInterface $con    Connection to use.
      * @return     void
      */
-    public static function insertAsPrevSiblingOf(NodeObject $node, NodeObject $sibling, ConnectionInterface $con = null);
+    static public function insertAsPrevSiblingOf(NodeObject $node, NodeObject $sibling, ConnectionInterface $con = null);
 
     /**
      * Inserts $sibling as next sibling to destination node $node
@@ -77,7 +77,7 @@ interface NodePeer
      * @param      ConnectionInterface $con    Connection to use.
      * @return     void
      */
-    public static function insertAsNextSiblingOf(NodeObject $node, NodeObject $sibling, ConnectionInterface $con = null);
+    static public function insertAsNextSiblingOf(NodeObject $node, NodeObject $sibling, ConnectionInterface $con = null);
 
     /**
      * Inserts $parent as parent of given $node.
@@ -88,7 +88,7 @@ interface NodePeer
      * @return     void
      * @throws     Exception      When trying to insert node as parent of a root node
      */
-    public static function insertAsParentOf(NodeObject $parent, NodeObject $node, ConnectionInterface $con = null);
+    static public function insertAsParentOf(NodeObject $parent, NodeObject $node, ConnectionInterface $con = null);
 
     /**
      * Inserts $node as root node
@@ -97,7 +97,7 @@ interface NodePeer
      * @param      ConnectionInterface $con    Connection to use.
      * @return     void
      */
-    public static function insertRoot(NodeObject $node, ConnectionInterface $con = null);
+    static public function insertRoot(NodeObject $node, ConnectionInterface $con = null);
 
     /**
      * Delete root node
@@ -106,7 +106,7 @@ interface NodePeer
      * @param      ConnectionInterface $con    Connection to use.
      * @return     boolean        Deletion status
      */
-    public static function deleteRoot($scopeId = 1, ConnectionInterface $con = null);
+    static public function deleteRoot($scopeId = 1, ConnectionInterface $con = null);
 
     /**
      * Delete $dest node
@@ -115,7 +115,7 @@ interface NodePeer
      * @param      ConnectionInterface $con    Connection to use.
      * @return     boolean        Deletion status
      */
-    public static function deleteNode(NodeObject $dest, ConnectionInterface $con = null);
+    static public function deleteNode(NodeObject $dest, ConnectionInterface $con = null);
 
     /**
      * Moves $child to be first child of $parent
@@ -125,7 +125,7 @@ interface NodePeer
      * @param      ConnectionInterface $con    Connection to use.
      * @return     void
      */
-    public static function moveToFirstChildOf(NodeObject $parent, NodeObject $child, ConnectionInterface $con = null);
+    static public function moveToFirstChildOf(NodeObject $parent, NodeObject $child, ConnectionInterface $con = null);
 
     /**
      * Moves $node to be last child of $dest
@@ -135,7 +135,7 @@ interface NodePeer
      * @param      ConnectionInterface $con    Connection to use.
      * @return     void
      */
-    public static function moveToLastChildOf(NodeObject $dest, NodeObject $node, ConnectionInterface $con = null);
+    static public function moveToLastChildOf(NodeObject $dest, NodeObject $node, ConnectionInterface $con = null);
 
     /**
      * Moves $node to be prev sibling to $dest
@@ -145,7 +145,7 @@ interface NodePeer
      * @param      ConnectionInterface $con    Connection to use.
      * @return     void
      */
-    public static function moveToPrevSiblingOf(NodeObject $dest, NodeObject $node, ConnectionInterface $con = null);
+    static public function moveToPrevSiblingOf(NodeObject $dest, NodeObject $node, ConnectionInterface $con = null);
 
     /**
      * Moves $node to be next sibling to $dest
@@ -155,7 +155,7 @@ interface NodePeer
      * @param      ConnectionInterface $con    Connection to use.
      * @return     void
      */
-    public static function moveToNextSiblingOf(NodeObject $dest, NodeObject $node, ConnectionInterface $con = null);
+    static public function moveToNextSiblingOf(NodeObject $dest, NodeObject $node, ConnectionInterface $con = null);
 
     /**
      * Gets first child for the given node if it exists
@@ -164,7 +164,7 @@ interface NodePeer
      * @param      ConnectionInterface $con    Connection to use.
      * @return     mixed         Propel object if exists else false
      */
-    public static function retrieveFirstChild(NodeObject $node, ConnectionInterface $con = null);
+    static public function retrieveFirstChild(NodeObject $node, ConnectionInterface $con = null);
 
     /**
      * Gets last child for the given node if it exists
@@ -173,7 +173,7 @@ interface NodePeer
      * @param      ConnectionInterface $con    Connection to use.
      * @return     mixed         Propel object if exists else false
      */
-    public static function retrieveLastChild(NodeObject $node, ConnectionInterface $con = null);
+    static public function retrieveLastChild(NodeObject $node, ConnectionInterface $con = null);
 
     /**
      * Gets prev sibling for the given node if it exists
@@ -182,7 +182,7 @@ interface NodePeer
      * @param      ConnectionInterface $con    Connection to use.
      * @return     mixed         Propel object if exists else false
      */
-    public static function retrievePrevSibling(NodeObject $node, ConnectionInterface $con = null);
+    static public function retrievePrevSibling(NodeObject $node, ConnectionInterface $con = null);
 
     /**
      * Gets next sibling for the given node if it exists
@@ -191,7 +191,7 @@ interface NodePeer
      * @param      ConnectionInterface $con    Connection to use.
      * @return     mixed         Propel object if exists else false
      */
-    public static function retrieveNextSibling(NodeObject $node, ConnectionInterface $con = null);
+    static public function retrieveNextSibling(NodeObject $node, ConnectionInterface $con = null);
 
     /**
      * Retrieves the entire tree from root
@@ -199,14 +199,14 @@ interface NodePeer
      * @param      int $scopeId        Scope id to determine which scope tree to return
      * @param      ConnectionInterface $con    Connection to use.
      */
-    public static function retrieveTree($scopeId = 1, ConnectionInterface $con = null);
+    static public function retrieveTree($scopeId = 1, ConnectionInterface $con = null);
 
     /**
      * Retrieves the entire tree from parent $node
      *
      * @param      ConnectionInterface $con    Connection to use.
      */
-    public static function retrieveBranch(NodeObject $node, ConnectionInterface $con = null);
+    static public function retrieveBranch(NodeObject $node, ConnectionInterface $con = null);
 
     /**
      * Gets direct children for the node
@@ -214,7 +214,7 @@ interface NodePeer
      * @param      object $node    Propel object for parent node
      * @param      ConnectionInterface $con    Connection to use.
      */
-    public static function retrieveChildren(NodeObject $node, ConnectionInterface $con = null);
+    static public function retrieveChildren(NodeObject $node, ConnectionInterface $con = null);
 
     /**
      * Gets all descendants for the node
@@ -222,7 +222,7 @@ interface NodePeer
      * @param      object $node    Propel object for parent node
      * @param      ConnectionInterface $con    Connection to use.
      */
-    public static function retrieveDescendants(NodeObject $node, ConnectionInterface $con = null);
+    static public function retrieveDescendants(NodeObject $node, ConnectionInterface $con = null);
 
     /**
      * Gets all siblings for the node
@@ -230,7 +230,7 @@ interface NodePeer
      * @param      object $node    Propel object for src node
      * @param      ConnectionInterface $con    Connection to use.
      */
-    public static function retrieveSiblings(NodeObject $node, ConnectionInterface $con = null);
+    static public function retrieveSiblings(NodeObject $node, ConnectionInterface $con = null);
 
     /**
      * Gets ancestor for the given node if it exists
@@ -239,7 +239,7 @@ interface NodePeer
      * @param      ConnectionInterface $con    Connection to use.
      * @return     mixed         Propel object if exists else false
      */
-    public static function retrieveParent(NodeObject $node, ConnectionInterface $con = null);
+    static public function retrieveParent(NodeObject $node, ConnectionInterface $con = null);
 
     /**
      * Gets level for the given node
@@ -248,7 +248,7 @@ interface NodePeer
      * @param      ConnectionInterface $con    Connection to use.
      * @return     int            Level for the given node
      */
-    public static function getLevel(NodeObject $node, ConnectionInterface $con = null);
+    static public function getLevel(NodeObject $node, ConnectionInterface $con = null);
 
     /**
      * Gets number of direct children for given node
@@ -257,7 +257,7 @@ interface NodePeer
      * @param      ConnectionInterface $con    Connection to use.
      * @return     int            Level for the given node
      */
-    public static function getNumberOfChildren(NodeObject $node, ConnectionInterface $con = null);
+    static public function getNumberOfChildren(NodeObject $node, ConnectionInterface $con = null);
 
     /**
      * Gets number of descendants for given node
@@ -266,7 +266,7 @@ interface NodePeer
      * @param      ConnectionInterface $con    Connection to use.
      * @return     int            Level for the given node
      */
-    public static function getNumberOfDescendants(NodeObject $node, ConnectionInterface $con = null);
+    static public function getNumberOfDescendants(NodeObject $node, ConnectionInterface $con = null);
 
      /**
      * Returns path to a specific node as an array, useful to create breadcrumbs
@@ -275,7 +275,7 @@ interface NodePeer
      * @param      ConnectionInterface $con    Connection to use.
      * @return     array        Array in order of heirarchy
      */
-    public static function getPath(NodeObject $node, ConnectionInterface $con = null);
+    static public function getPath(NodeObject $node, ConnectionInterface $con = null);
 
     /**
      * Tests if node is valid
@@ -283,7 +283,7 @@ interface NodePeer
      * @param      object $node    Propel object for src node
      * @return     bool
      */
-    public static function isValid(NodeObject $node = null);
+    static public function isValid(NodeObject $node = null);
 
     /**
      * Tests if node is a root
@@ -291,7 +291,7 @@ interface NodePeer
      * @param      object $node    Propel object for src node
      * @return     bool
      */
-    public static function isRoot(NodeObject $node);
+    static public function isRoot(NodeObject $node);
 
     /**
      * Tests if node is a leaf
@@ -299,7 +299,7 @@ interface NodePeer
      * @param      object $node    Propel object for src node
      * @return     bool
      */
-    public static function isLeaf(NodeObject $node);
+    static public function isLeaf(NodeObject $node);
 
     /**
      * Tests if $child is a child of $parent
@@ -308,7 +308,7 @@ interface NodePeer
      * @param      object $parent    Propel object for node
      * @return     bool
      */
-    public static function isChildOf(NodeObject $child, NodeObject $parent);
+    static public function isChildOf(NodeObject $child, NodeObject $parent);
 
     /**
      * Tests if $node1 is equal to $node2
@@ -317,7 +317,7 @@ interface NodePeer
      * @param      object $node2    Propel object for node
      * @return     bool
      */
-    public static function isEqualTo(NodeObject $node1, NodeObject $node2);
+    static public function isEqualTo(NodeObject $node1, NodeObject $node2);
 
     /**
      * Tests if $node has an ancestor
@@ -326,7 +326,7 @@ interface NodePeer
      * @param      ConnectionInterface $con        Connection to use.
      * @return     bool
      */
-    public static function hasParent(NodeObject $node, ConnectionInterface $con = null);
+    static public function hasParent(NodeObject $node, ConnectionInterface $con = null);
 
     /**
      * Tests if $node has prev sibling
@@ -335,7 +335,7 @@ interface NodePeer
      * @param      ConnectionInterface $con    Connection to use.
      * @return     bool
      */
-    public static function hasPrevSibling(NodeObject $node, ConnectionInterface $con = null);
+    static public function hasPrevSibling(NodeObject $node, ConnectionInterface $con = null);
 
     /**
      * Tests if $node has next sibling
@@ -344,7 +344,7 @@ interface NodePeer
      * @param      ConnectionInterface $con    Connection to use.
      * @return     bool
      */
-    public static function hasNextSibling(NodeObject $node, ConnectionInterface $con = null);
+    static public function hasNextSibling(NodeObject $node, ConnectionInterface $con = null);
 
     /**
      * Tests if $node has children
@@ -352,7 +352,7 @@ interface NodePeer
      * @param      object $node    Propel object for node
      * @return     bool
      */
-    public static function hasChildren(NodeObject $node);
+    static public function hasChildren(NodeObject $node);
 
     /**
      * Deletes $node and all of its descendants
@@ -360,7 +360,7 @@ interface NodePeer
      * @param      object $node    Propel object for source node
      * @param      ConnectionInterface $con    Connection to use.
      */
-    public static function deleteDescendants(NodeObject $node, ConnectionInterface $con = null);
+    static public function deleteDescendants(NodeObject $node, ConnectionInterface $con = null);
 
     /**
      * Returns a node given its primary key or the node itself
@@ -369,6 +369,6 @@ interface NodePeer
      * @param      ConnectionInterface $con    Connection to use.
      * @return     object        Propel object for model
      */
-    public static function getNode($node, ConnectionInterface $con = null);
+    static public function getNode($node, ConnectionInterface $con = null);
 
 } // NodePeer

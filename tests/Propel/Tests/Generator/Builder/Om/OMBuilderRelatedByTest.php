@@ -45,7 +45,7 @@ class OMBuilderRelatedByTest extends \PHPUnit_Framework_TestCase
         return $fks[$index];
     }
 
-    public static function getRelatedBySuffixDataProvider()
+    static public function getRelatedBySuffixDataProvider()
     {
         return array(
             array('book', 0, '', ''),
@@ -73,12 +73,12 @@ class OMBuilderRelatedByTest extends \PHPUnit_Framework_TestCase
 
 class TestableOMBuilder extends OMBuilder
 {
-    public static function getRelatedBySuffix(ForeignKey $fk)
+    static public function getRelatedBySuffix(ForeignKey $fk)
     {
         return parent::getRelatedBySuffix($fk);
     }
 
-    public static function getRefRelatedBySuffix(ForeignKey $fk)
+    static public function getRefRelatedBySuffix(ForeignKey $fk)
     {
         return parent::getRefRelatedBySuffix($fk);
     }

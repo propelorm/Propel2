@@ -138,12 +138,12 @@ class OMBuilderNamespaceTest extends \PHPUnit_Framework_TestCase
 
 class TestableOMBuilder2 extends OMBuilder
 {
-    public static function getRelatedBySuffix(ForeignKey $fk)
+    static public function getRelatedBySuffix(ForeignKey $fk)
     {
         return parent::getRelatedBySuffix($fk);
     }
 
-    public static function getRefRelatedBySuffix(ForeignKey $fk)
+    static public function getRefRelatedBySuffix(ForeignKey $fk)
     {
         return parent::getRefRelatedBySuffix($fk);
     }

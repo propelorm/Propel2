@@ -270,7 +270,7 @@ class MigrationManager
         return $this->getOldestDatabaseVersion();
     }
 
-    public static function getMigrationClassName($timestamp)
+    static public function getMigrationClassName($timestamp)
     {
         return sprintf('PropelMigration_%d', $timestamp);
     }
@@ -352,12 +352,12 @@ EOP;
         return $migrationClassBody;
     }
 
-    public static function getMigrationFileName($timestamp)
+    static public function getMigrationFileName($timestamp)
     {
         return sprintf('%s.php', self::getMigrationClassName($timestamp));
     }
 
-    public static function getUser()
+    static public function getUser()
     {
         if (function_exists('posix_getuid')) {
             $currentUser = posix_getpwuid(posix_getuid());

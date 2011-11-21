@@ -112,7 +112,7 @@ class BasePeer
      *                 is returned (supported) by the PDO driver.
      * @throws     PropelException
      */
-    public static function doDelete(Criteria $criteria, ConnectionInterface $con)
+    static public function doDelete(Criteria $criteria, ConnectionInterface $con)
     {
         $db = Propel::getServiceContainer()->getAdapter($criteria->getDbName());
         $dbMap = Propel::getServiceContainer()->getDatabaseMap($criteria->getDbName());
@@ -166,7 +166,7 @@ class BasePeer
      *
      * This method is invoked from generated Peer classes like this:
      * <code>
-     * public static function doDeleteAll($con = null)
+     * static public function doDeleteAll($con = null)
      * {
      *   if ($con === null) $con = Propel::getServiceContainer()->getWriteConnection(self::DATABASE_NAME);
      *   BasePeer::doDeleteAll(self::TABLE_NAME, $con, self::DATABASE_NAME);
@@ -181,7 +181,7 @@ class BasePeer
      *                      is returned (supported) by the Propel db driver.
      * @throws     PropelException - wrapping SQLException caught from statement execution.
      */
-    public static function doDeleteAll($tableName, ConnectionInterface $con, $databaseName = null)
+    static public function doDeleteAll($tableName, ConnectionInterface $con, $databaseName = null)
     {
 
         try {
@@ -224,7 +224,7 @@ class BasePeer
      *                is auto-generated.  Otherwise will return <code>null</code>.
      * @throws     PropelException
      */
-    public static function doInsert(Criteria $criteria, ConnectionInterface $con) {
+    static public function doInsert(Criteria $criteria, ConnectionInterface $con) {
 
         // the primary key
         $id = null;
@@ -336,7 +336,7 @@ class BasePeer
      *                 is returned (supported) by the Propel db driver.
      * @throws     PropelException
      */
-    public static function doUpdate(Criteria $selectCriteria, Criteria $updateValues, ConnectionInterface $con) {
+    static public function doUpdate(Criteria $selectCriteria, Criteria $updateValues, ConnectionInterface $con) {
 
         $db = Propel::getServiceContainer()->getAdapter($selectCriteria->getDbName());
         $dbMap = Propel::getServiceContainer()->getDatabaseMap($selectCriteria->getDbName());
@@ -458,7 +458,7 @@ class BasePeer
      * @throws     PropelException
      * @see        createSelectSql()
      */
-    public static function doSelect(Criteria $criteria, ConnectionInterface $con = null)
+    static public function doSelect(Criteria $criteria, ConnectionInterface $con = null)
     {
         $dbMap = Propel::getServiceContainer()->getDatabaseMap($criteria->getDbName());
         $db = Propel::getServiceContainer()->getAdapter($criteria->getDbName());
@@ -500,7 +500,7 @@ class BasePeer
      * @throws     PropelException
      * @see        createSelectSql()
      */
-    public static function doCount(Criteria $criteria, ConnectionInterface $con = null)
+    static public function doCount(Criteria $criteria, ConnectionInterface $con = null)
     {
         $dbMap = Propel::getServiceContainer()->getDatabaseMap($criteria->getDbName());
         $db = Propel::getServiceContainer()->getAdapter($criteria->getDbName());
@@ -558,7 +558,7 @@ class BasePeer
      * @param      string $tableName The name of the table
      * @param      array $columns Array of column names as key and column values as value.
      */
-    public static function doValidate($dbName, $tableName, $columns)
+    static public function doValidate($dbName, $tableName, $columns)
     {
         $dbMap = Propel::getServiceContainer()->getDatabaseMap($dbName);
         $tableMap = $dbMap->getTable($tableName);
@@ -616,7 +616,7 @@ class BasePeer
      * This is implemented in a service class rather than in Criteria itself
      * in order to avoid doing the tests when it's not necessary (e.g. for SELECTs)
      */
-    public static function needsSelectAliases(Criteria $criteria)
+    static public function needsSelectAliases(Criteria $criteria)
     {
         $columnNames = array();
         foreach ($criteria->getSelectColumns() as $fullyQualifiedColumnName) {
@@ -646,7 +646,7 @@ class BasePeer
      * @return     string
      * @throws     PropelException Trouble creating the query string.
      */
-    public static function createSelectSql(Criteria $criteria, &$params)
+    static public function createSelectSql(Criteria $criteria, &$params)
     {
         $db = Propel::getServiceContainer()->getAdapter($criteria->getDbName());
         $dbMap = Propel::getServiceContainer()->getDatabaseMap($criteria->getDbName());
@@ -870,7 +870,7 @@ class BasePeer
      * @param      string $classname The dot-path name of class (e.g. myapp.propel.MyValidator)
      * @return     Validator object or null if not able to instantiate validator class (and error will be logged in this case)
      */
-    public static function getValidator($classname)
+    static public function getValidator($classname)
     {
         try {
             $v = isset(self::$validatorMap[$classname]) ? self::$validatorMap[$classname] : null;

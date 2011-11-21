@@ -35,7 +35,7 @@ class ModelCriteriaWithSchemaTest extends SchemasTestBase
         $this->assertEquals($expectedParams, $params, $message);
     }
 
-    public static function conditionsForTestReplaceNamesWithSchemas()
+    static public function conditionsForTestReplaceNamesWithSchemas()
     {
         return array(
             array('BookstoreContest.PrizeBookId = ?', 'PrizeBookId', 'contest.bookstore_contest.PRIZE_BOOK_ID = ?'), // basic case

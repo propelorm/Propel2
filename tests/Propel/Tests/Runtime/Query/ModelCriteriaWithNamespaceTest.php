@@ -22,7 +22,7 @@ use Propel\Runtime\Query\ModelCriteria;
  */
 class ModelCriteriaWithNamespaceTest extends NamespacesTestBase
 {
-    public static function conditionsForTestReplaceNamesWithNamespaces()
+    static public function conditionsForTestReplaceNamesWithNamespaces()
     {
         return array(
             array('Foo\\Bar\\NamespacedBook.Title = ?', 'Title', 'book.TITLE = ?'), // basic case

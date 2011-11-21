@@ -231,7 +231,7 @@ class PropelTypes
      * @param      $propelType The Propel type name.
      * @return     string Name of the native PHP type
      */
-    public static function getPhpNative($propelType)
+    static public function getPhpNative($propelType)
     {
         return self::$propelToPHPNativeMap[$propelType];
     }
@@ -242,7 +242,7 @@ class PropelTypes
      * @param      $type the propel added type.
      * @return     string Name of the the correct Creole type (e.g. "VARCHAR").
      */
-    public static function getCreoleType($type)
+    static public function getCreoleType($type)
     {
         return  self::$propelTypeToCreoleTypeMap[$type];
     }
@@ -251,7 +251,7 @@ class PropelTypes
      * Resturns the PDO type (PDO::PARAM_* constant) value.
      * @return     int
      */
-    public static function getPDOType($type)
+    static public function getPDOType($type)
     {
         return self::$propelTypeToPDOTypeMap[$type];
     }
@@ -260,7 +260,7 @@ class PropelTypes
      * Resturns the PDO type ('PDO::PARAM_*' constant) name.
      * @return     string
      */
-    public static function getPdoTypeString($type)
+    static public function getPdoTypeString($type)
     {
         return self::$pdoTypeNames[self::$propelTypeToPDOTypeMap[$type]];
     }
@@ -272,7 +272,7 @@ class PropelTypes
      * @param      int $sqlType The Creole SQL type constant.
      * @return     string The Propel type to use or NULL if none found.
      */
-    public static function getPropelType($sqlType)
+    static public function getPropelType($sqlType)
     {
         if (isset(self::$creoleToPropelTypeMap[$sqlType])) {
             return self::$creoleToPropelTypeMap[$sqlType];
@@ -284,7 +284,7 @@ class PropelTypes
      *
      * @return     array string[]
      */
-    public static function getPropelTypes()
+    static public function getPropelTypes()
     {
         return array_keys(self::$propelTypeToCreoleTypeMap);
     }
@@ -295,7 +295,7 @@ class PropelTypes
      * @param      string $type Propel type
      * @return     boolean
      */
-    public static function isTemporalType($type)
+    static public function isTemporalType($type)
     {
         return in_array($type, self::$TEMPORAL_TYPES);
     }
@@ -306,7 +306,7 @@ class PropelTypes
      * @param      string $type The Propel type to check.
      * @return     boolean True if values for the type need to be quoted.
      */
-    public static function isTextType($type)
+    static public function isTextType($type)
     {
         return in_array($type, self::$TEXT_TYPES);
     }
@@ -317,7 +317,7 @@ class PropelTypes
      * @param      string $type The Propel type to check.
      * @return     boolean True if values for the type need to be quoted.
      */
-    public static function isNumericType($type)
+    static public function isNumericType($type)
     {
         return in_array($type, self::$NUMERIC_TYPES);
     }
@@ -328,7 +328,7 @@ class PropelTypes
      * @param      string $type The Propel type to check.
      * @return     boolean True if values for the type need to be quoted.
      */
-    public static function isBooleanType($type)
+    static public function isBooleanType($type)
     {
         return in_array($type, self::$BOOLEAN_TYPES);
     }
@@ -338,7 +338,7 @@ class PropelTypes
      * @param      string $type Propel type to check.
      * @return     boolean
      */
-    public static function isLobType($type)
+    static public function isLobType($type)
     {
         return in_array($type, self::$LOB_TYPES);
     }
@@ -349,7 +349,7 @@ class PropelTypes
      * @param      string $phpType The PHP type to check
      * @return     boolean Whether the PHP type is a primitive (string, int, boolean, float)
      */
-    public static function isPhpPrimitiveType($phpType)
+    static public function isPhpPrimitiveType($phpType)
     {
         return in_array($phpType, array("boolean", "int", "double", "float", "string"));
     }
@@ -360,7 +360,7 @@ class PropelTypes
      * @param      string $phpType The PHP type to check
      * @return     boolean Whether the PHP type is a primitive (string, int, boolean, float)
      */
-    public static function isPhpPrimitiveNumericType($phpType)
+    static public function isPhpPrimitiveNumericType($phpType)
     {
         return in_array($phpType, array("boolean", "int", "double", "float"));
     }
@@ -371,7 +371,7 @@ class PropelTypes
      * @param      string $phpType The PHP type to check
      * @return     boolean Whether the PHP type is a primitive (string, int, boolean, float)
      */
-    public static function isPhpObjectType($phpType)
+    static public function isPhpObjectType($phpType)
     {
         return (!self::isPhpPrimitiveType($phpType) && !in_array($phpType, array("resource", "array")));
     }

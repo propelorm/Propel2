@@ -21,7 +21,7 @@ use Propel\Runtime\Parser\XmlParser;
  */
 class XmlParserTest extends \PHPUnit_Framework_TestCase
 {
-    public static function arrayXmlConversionDataProvider()
+    static public function arrayXmlConversionDataProvider()
     {
         return array(
             array(array(), "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
@@ -130,7 +130,7 @@ class XmlParserTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('', $data['Title']);
     }
 
-    public static function listToXMLDataProvider()
+    static public function listToXMLDataProvider()
     {
         $list = array(
             'book0' => array('Id' => 123, 'Title' => 'Pride and Prejudice', 'AuthorId' => 456, 'ISBN' => '0553213105', 'Author' => array('Id' => 456, 'FirstName' => 'Jane', 'LastName' => 'Austen')),

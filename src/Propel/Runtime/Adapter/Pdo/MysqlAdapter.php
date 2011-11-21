@@ -139,7 +139,7 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
     {
         if ( $limit > 0 ) {
             $sql .= " LIMIT " . ($offset > 0 ? $offset . ", " : "") . $limit;
-        } else if ( $offset > 0 ) {
+        } elseif ( $offset > 0 ) {
             $sql .= " LIMIT " . $offset . ", 18446744073709551615";
         }
     }

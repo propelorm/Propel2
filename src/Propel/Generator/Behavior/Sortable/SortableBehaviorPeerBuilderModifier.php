@@ -120,7 +120,7 @@ const SCOPE_COL = '" . $tableName . '.' . $this->getColumnConstant('scope_column
  *
  * @return    integer highest position
  */
-public static function getMaxRank(" . ($useScope ? "\$scope = null, " : "") . "ConnectionInterface \$con = null)
+static public function getMaxRank(" . ($useScope ? "\$scope = null, " : "") . "ConnectionInterface \$con = null)
 {
     if (\$con === null) {
         \$con = Propel::getServiceContainer()->getReadConnection({$this->peerClassname}::DATABASE_NAME);
@@ -158,7 +158,7 @@ public static function getMaxRank(" . ($useScope ? "\$scope = null, " : "") . "C
  *
  * @return {$this->objectClassname}
  */
-public static function retrieveByRank(\$rank, " . ($useScope ? "\$scope = null, " : "") . "ConnectionInterface \$con = null)
+static public function retrieveByRank(\$rank, " . ($useScope ? "\$scope = null, " : "") . "ConnectionInterface \$con = null)
 {
     if (\$con === null) {
         \$con = Propel::getServiceContainer()->getReadConnection($peerClassname::DATABASE_NAME);
@@ -193,7 +193,7 @@ public static function retrieveByRank(\$rank, " . ($useScope ? "\$scope = null, 
  *
  * @return    boolean true if the reordering took place, false if a database problem prevented it
  */
-public static function reorder(array \$order, ConnectionInterface \$con = null)
+static public function reorder(array \$order, ConnectionInterface \$con = null)
 {
     if (\$con === null) {
         \$con = Propel::getServiceContainer()->getWriteConnection($peerClassname::DATABASE_NAME);
@@ -234,7 +234,7 @@ public static function reorder(array \$order, ConnectionInterface \$con = null)
  *
  * @return    array list of sortable objects
  */
-public static function doSelectOrderByRank(Criteria \$criteria = null, \$order = Criteria::ASC, ConnectionInterface \$con = null)
+static public function doSelectOrderByRank(Criteria \$criteria = null, \$order = Criteria::ASC, ConnectionInterface \$con = null)
 {
     if (\$con === null) {
         \$con = Propel::getServiceContainer()->getReadConnection($peerClassname::DATABASE_NAME);
@@ -272,7 +272,7 @@ public static function doSelectOrderByRank(Criteria \$criteria = null, \$order =
  *
  * @return    array list of sortable objects
  */
-public static function retrieveList(\$scope, \$order = Criteria::ASC, ConnectionInterface \$con = null)
+static public function retrieveList(\$scope, \$order = Criteria::ASC, ConnectionInterface \$con = null)
 {
     \$c = new Criteria();
     \$c->add($peerClassname::SCOPE_COL, \$scope);
@@ -294,7 +294,7 @@ public static function retrieveList(\$scope, \$order = Criteria::ASC, Connection
  *
  * @return    array list of sortable objects
  */
-public static function countList(\$scope, ConnectionInterface \$con = null)
+static public function countList(\$scope, ConnectionInterface \$con = null)
 {
     \$c = new Criteria();
     \$c->add($peerClassname::SCOPE_COL, \$scope);
@@ -316,7 +316,7 @@ public static function countList(\$scope, ConnectionInterface \$con = null)
  *
  * @return    int number of deleted objects
  */
-public static function deleteList(\$scope, ConnectionInterface \$con = null)
+static public function deleteList(\$scope, ConnectionInterface \$con = null)
 {
     \$c = new Criteria();
     \$c->add($peerClassname::SCOPE_COL, \$scope);
@@ -344,7 +344,7 @@ public static function deleteList(\$scope, ConnectionInterface \$con = null)
         $script .= "
  * @param      ConnectionInterface \$con Connection to use.
  */
-public static function shiftRank(\$delta, \$first, \$last = null, " . ($useScope ? "\$scope = null, " : "") . "ConnectionInterface \$con = null)
+static public function shiftRank(\$delta, \$first, \$last = null, " . ($useScope ? "\$scope = null, " : "") . "ConnectionInterface \$con = null)
 {
     if (\$con === null) {
         \$con = Propel::getServiceContainer()->getWriteConnection($peerClassname::DATABASE_NAME);

@@ -27,7 +27,7 @@ class ClassTools
      * @param      string $qualifiedName
      * @return     string
      */
-    public static function classname($qualifiedName)
+    static public function classname($qualifiedName)
     {
         $pos = strrpos($qualifiedName, '.');
         if ($pos === false) {
@@ -51,7 +51,7 @@ class ClassTools
      * @param      string $extension The extension to use on the file.
      * @return     string The constructed file path.
      */
-    public static function getFilePath($path, $classname = null, $extension = '.php')
+    static public function getFilePath($path, $classname = null, $extension = '.php')
     {
         $path = strtr(ltrim($path, '.'), '.', '/');
 
@@ -68,7 +68,7 @@ class ClassTools
      * @param      string $extension The extension to use on the file.
      * @return     string The constructed file path.
      */
-    public static function createFilePath($path, $classname = null, $extension = '.php')
+    static public function createFilePath($path, $classname = null, $extension = '.php')
     {
         if ($classname !== null) {
             if ($path !== '') {
@@ -86,7 +86,7 @@ class ClassTools
      * If not, will return 'propel.util.BasePeer'
      * @return     string
      */
-    public static function getBasePeer(Table $table) {
+    static public function getBasePeer(Table $table) {
         $class = $table->getBasePeer();
         if ($class === null) {
             $class = "propel.util.BasePeer";
@@ -100,7 +100,7 @@ class ClassTools
      * If not, will return 'propel.om.BaseObject'
      * @return     string
      */
-    public static function getBaseClass(Table $table) {
+    static public function getBaseClass(Table $table) {
         $class = $table->getBaseClass();
         if ($class === null) {
             $class = "propel.om.BaseObject";
@@ -114,7 +114,7 @@ class ClassTools
      * If not, will return 'propel.om.Persistent'.
      * @return     string
      */
-    public static function getInterface(Table $table) {
+    static public function getInterface(Table $table) {
         $interface = $table->getInterface();
         if ($interface === null && !$table->isReadOnly()) {
             $interface = "propel.om.Persistent";
@@ -128,7 +128,7 @@ class ClassTools
      *
      * @return     array string[]
      */
-    public static function getPhpReservedWords()
+    static public function getPhpReservedWords()
     {
         return array(
             'and', 'or', 'xor', 'exception', '__FILE__', '__LINE__',

@@ -34,7 +34,7 @@ class Column extends XmlElement
 
     const DEFAULT_TYPE = "VARCHAR";
     const DEFAULT_VISIBILITY = 'public';
-    public static $valid_visibilities = array('public', 'protected', 'private');
+    static public $valid_visibilities = array('public', 'protected', 'private');
 
     private $name;
     private $description;
@@ -115,7 +115,7 @@ class Column extends XmlElement
      * a list of <code>String</code> objects with column names.
      * @deprecated Use the Platform::getColumnListDDL() method instead
      */
-    public static function makeList($columns, PlatformInterface $platform)
+    static public function makeList($columns, PlatformInterface $platform)
     {
         $list = array();
         foreach ($columns as $col) {
@@ -1208,7 +1208,7 @@ class Column extends XmlElement
             $this->domain->setType(PropelTypes::DATE);
         } elseif (strpos($tn, "TIME") !== false) {
             $this->domain->setType(PropelTypes::TIMESTAMP);
-        } else if (strpos($tn, "BINARY") !== false) {
+        } elseif (strpos($tn, "BINARY") !== false) {
             $this->domain->setType(PropelTypes::LONGVARBINARY);
         } else {
             $this->domain->setType(PropelTypes::VARCHAR);
@@ -1285,7 +1285,7 @@ class Column extends XmlElement
         $this->referrers = null;
     }
 
-    public static function generatePhpName($name, $phpNamingMethod = PhpNameGenerator::CONV_METHOD_CLEAN, $namePrefix = null) {
+    static public function generatePhpName($name, $phpNamingMethod = PhpNameGenerator::CONV_METHOD_CLEAN, $namePrefix = null) {
         return NameFactory::generateName(NameFactory::PHP_GENERATOR, array($name, $phpNamingMethod, $namePrefix));
     }
 }

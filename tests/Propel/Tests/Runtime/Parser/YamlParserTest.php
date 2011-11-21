@@ -21,7 +21,7 @@ use Propel\Runtime\Parser\YamlParser;
  */
 class YamlParserTest extends \PHPUnit_Framework_TestCase
 {
-    public static function arrayYAMLConversionDataProvider()
+    static public function arrayYAMLConversionDataProvider()
     {
         return array(
             array(array(), '{  }', 'empty array'),
@@ -114,7 +114,7 @@ b2: 2
         $this->assertEquals($arrayData, $parser->fromYAML($YAMLData), 'YamlParser::fromYAML() converts to ' . $type . ' correctly');
     }
 
-    public static function listToYAMLDataProvider()
+    static public function listToYAMLDataProvider()
     {
         $list = array(
             'book0' => array('Id' => 123, 'Title' => 'Pride and Prejudice', 'AuthorId' => 456, 'ISBN' => '0553213105', 'Author' => array('Id' => 456, 'FirstName' => 'Jane', 'LastName' => 'Austen')),

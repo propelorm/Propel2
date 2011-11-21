@@ -158,7 +158,7 @@ class PHP5ObjectBuilder extends ObjectBuilder
                 throw new EngineException(sprintf('Default Value "%s" is not among the enumerated values', $val));
             }
             $defaultValue = array_search($val, $valueSet);
-        } else if ($col->isPhpPrimitiveType()) {
+        } elseif ($col->isPhpPrimitiveType()) {
             settype($val, $col->getPhpType());
             $defaultValue = var_export($val, true);
         } elseif ($col->isPhpObjectType()) {
@@ -888,6 +888,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
         $script .= "
         if (\$format === null) {";
         $script .= "
+
             return \$dt;
         } else {
             return \$dt->format(\$format);
@@ -4323,7 +4324,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
         // remove pkey col since this table uses auto-increment and passing a null value for it is not valid
         \$criteria->remove($colConst);";
                 }
-            } else if (!$this->getPlatform()->supportsInsertNullPk()) {
+            } elseif (!$this->getPlatform()->supportsInsertNullPk()) {
                 $script .= "
         // remove pkey col if it is null since this table does not accept that
         if (\$criteria->containsKey($colConst) && !\$criteria->keyContainsValue($colConst) ) {

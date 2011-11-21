@@ -481,7 +481,7 @@ class ColumnMap
    * @param      string $name
    * @return     string Normalized column name.
    */
-  public static function normalizeName($name)
+  static public function normalizeName($name)
   {
     if (false !== ($pos = strrpos($name, '.'))) {
       $name = substr($name, $pos + 1);

@@ -19,7 +19,7 @@ use Propel\Generator\Model\PhpNameGenerator;
  */
 class PhpNameGeneratorTest extends \PHPUnit_Framework_TestCase
 {
-    public static function phpnameMethodDataProvider()
+    static public function phpnameMethodDataProvider()
     {
         return array(
             array('foo', 'Foo'),
@@ -42,7 +42,7 @@ class PhpNameGeneratorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($output, $generator->phpnameMethod($input));
     }
 
-    public static function underscoreMethodDataProvider()
+    static public function underscoreMethodDataProvider()
     {
         return array(
             array('foo', 'Foo'),

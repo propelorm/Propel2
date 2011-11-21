@@ -120,7 +120,7 @@ $1{";
      * @param  string $code The input code
      * @return string       The input code, without comments
      */
-    public static function stripComments($code)
+    static public function stripComments($code)
     {
         $output  = '';
         $commentTokens = array(T_COMMENT, T_DOC_COMMENT);

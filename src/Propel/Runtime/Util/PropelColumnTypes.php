@@ -90,7 +90,7 @@ class PropelColumnTypes
      * @param      string $propelType
      * @return     int
      */
-    public static function getPdoType($propelType)
+    static public function getPdoType($propelType)
     {
         return self::$propelToPdoMap[$propelType];
     }

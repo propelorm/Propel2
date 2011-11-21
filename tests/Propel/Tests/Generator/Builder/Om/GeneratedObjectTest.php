@@ -1038,7 +1038,7 @@ EOF;
         $book->fooMethodName();
     }
 
-    public static function conditionsForTestReadOnly()
+    static public function conditionsForTestReadOnly()
     {
         return array(
             array('reload'),

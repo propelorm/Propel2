@@ -143,12 +143,12 @@ class TestAllHooksPeerBuilderModifier
 {
     public function staticAttributes($builder)
     {
-        return 'public static $customStaticAttribute = 1;public static $staticAttributeBuilder = "' . get_class($builder) . '";';
+        return 'static public $customStaticAttribute = 1;public static $staticAttributeBuilder = "' . get_class($builder) . '";';
     }
 
     public function staticMethods($builder)
     {
-        return 'public static function hello() { return "' . get_class($builder) . '"; }';
+        return 'static public function hello() { return "' . get_class($builder) . '"; }';
     }
 
     public function preSelect($builder)

@@ -46,7 +46,7 @@ static \$isVersioningEnabled = true;
  *
  * @return boolean
  */
-public static function isVersioningEnabled()
+static public function isVersioningEnabled()
 {
     return self::\$isVersioningEnabled;
 }
@@ -59,7 +59,7 @@ public static function isVersioningEnabled()
 /**
  * Enables versioning
  */
-public static function enableVersioning()
+static public function enableVersioning()
 {
     self::\$isVersioningEnabled = true;
 }
@@ -72,7 +72,7 @@ public static function enableVersioning()
 /**
  * Disables versioning
  */
-public static function disableVersioning()
+static public function disableVersioning()
 {
     self::\$isVersioningEnabled = false;
 }

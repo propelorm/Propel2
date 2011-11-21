@@ -144,7 +144,7 @@ class TestDatabaseBuilder
 {
   protected static $dmap = null;
   protected static $tmap = null;
-  public static function getDmap()
+  static public function getDmap()
   {
     if (is_null(self::$dmap)) {
         self::$dmap = new DatabaseMap('foodb');
@@ -152,11 +152,11 @@ class TestDatabaseBuilder
 
     return self::$dmap;
   }
-  public static function setTmap($tmap)
+  static public function setTmap($tmap)
   {
     self::$tmap = $tmap;
   }
-  public static function getTmap()
+  static public function getTmap()
   {
     return self::$tmap;
   }

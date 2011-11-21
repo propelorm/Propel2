@@ -1064,7 +1064,7 @@ class QueryBuilderTest extends BookstoreTestBase
 
 class myCustomBookQuery extends BookQuery
 {
-    public static function create($modelAlias = null, $criteria = null)
+    static public function create($modelAlias = null, $criteria = null)
     {
         if ($criteria instanceof myCustomBookQuery) {
             return $criteria;
@@ -1084,7 +1084,7 @@ class myCustomBookQuery extends BookQuery
 
 class mySecondBookQuery extends BookQuery
 {
-    public static $preSelectWasCalled = false;
+    static public $preSelectWasCalled = false;
 
     public function __construct($dbName = 'bookstore', $modelName = '\Propel\Tests\Bookstore\Book', $modelAlias = null)
     {

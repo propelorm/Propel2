@@ -320,7 +320,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
     protected function addFactoryOpen(&$script)
     {
         $script .= "
-    public static function create(\$modelAlias = null, \$criteria = null)
+    static public function create(\$modelAlias = null, \$criteria = null)
     {";
     }
 

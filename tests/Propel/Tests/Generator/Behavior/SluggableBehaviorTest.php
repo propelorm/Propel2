@@ -76,7 +76,7 @@ class SluggableBehaviorTest extends BookstoreTestBase
         $this->assertEquals('/foo/hello-world/bar', $t->createRawSlug(), 'createRawSlug() returns a slug based on a pattern');
     }
 
-    public static function cleanupSlugProvider()
+    static public function cleanupSlugProvider()
     {
         return array(
             array('', 'n-a'),
@@ -100,7 +100,7 @@ class SluggableBehaviorTest extends BookstoreTestBase
         $this->assertEquals($out, $t->cleanupSlugPart($in), 'cleanupSlugPart() cleans up the slug part');
     }
 
-    public static function limitSlugSizeProvider()
+    static public function limitSlugSizeProvider()
     {
         return array(
             array('123', '123'),
@@ -277,7 +277,7 @@ class TestableTable13 extends Table13
         return parent::createRawSlug();
     }
 
-    public static function cleanupSlugPart($slug, $separator = '-')
+    static public function cleanupSlugPart($slug, $separator = '-')
     {
         return parent::cleanupSlugPart($slug, $separator);
     }
@@ -300,7 +300,7 @@ class TestableTable14 extends Table14
         return parent::createRawSlug();
     }
 
-    public static function limitSlugSize($slug, $incrementReservedSpace = 3)
+    static public function limitSlugSize($slug, $incrementReservedSpace = 3)
     {
         return parent::limitSlugSize($slug, $incrementReservedSpace);
     }

@@ -210,7 +210,7 @@ class PropelDateTimeTest extends \PHPUnit_Framework_TestCase
 
 class TestPropelDateTime extends PropelDateTime
 {
-    public static function isTimestamp($value)
+    static public function isTimestamp($value)
     {
         return parent::isTimestamp($value);
     }

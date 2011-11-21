@@ -123,7 +123,7 @@ class Propel
      * @throws     PropelException If configuration file cannot be opened.
      *                             (E_WARNING probably will also be raised by PHP)
      */
-    public static function init($configFile)
+    static public function init($configFile)
     {
         $configuration = include($configFile);
         if ($configuration === false) {
@@ -137,7 +137,7 @@ class Propel
      *
      * @param      mixed The Configuration (array or Configuration)
      */
-    public static function setConfiguration($c)
+    static public function setConfiguration($c)
     {
         $serviceContainer = self::getServiceContainer();
         $serviceContainer->closeConnections();
@@ -187,7 +187,7 @@ class Propel
      *                 - Configuration::TYPE_OBJECT: return the configuration as a PropelConfiguration instance
      * @return     mixed The Configuration (array or Configuration)
      */
-    public static function getConfiguration($type = Registry::TYPE_ARRAY)
+    static public function getConfiguration($type = Registry::TYPE_ARRAY)
     {
         return self::$configuration->getParameters($type);
     }
@@ -330,7 +330,7 @@ class Propel
      *
      * @return     bool True if Propel uses logging
      */
-    public static function hasLogger()
+    static public function hasLogger()
     {
         if (null === self::$logger) {
             self::configureLogging();
@@ -344,7 +344,7 @@ class Propel
      *
      * @return     object Configured log class ([PEAR] Log or BasicLogger).
      */
-    public static function getLogger()
+    static public function getLogger()
     {
         if (null === self::$logger) {
             self::configureLogging();
@@ -384,7 +384,7 @@ class Propel
      *
      * @param      object The new logger to use. ([PEAR] Log or BasicLogger)
      */
-    public static function setLogger($logger)
+    static public function setLogger($logger)
     {
         self::$logger = $logger;
     }
@@ -399,7 +399,7 @@ class Propel
      *
      * @return     bool True if the message was logged successfully or no logger was used.
      */
-    public static function log($message, $level = self::LOG_DEBUG)
+    static public function log($message, $level = self::LOG_DEBUG)
     {
         if (self::hasLogger()) {
             $logger = self::getLogger();
@@ -438,7 +438,7 @@ class Propel
      * @param      string $class dot-path to clas (e.g. path.to.my.ClassName).
      * @return     string unqualified classname
      */
-    public static function importClass($path) {
+    static public function importClass($path) {
 
         // extract classname
         if (($pos = strrpos($path, '.')) === false) {
@@ -471,7 +471,7 @@ class Propel
      * @return boolean true if the method changed the instance pooling state,
      *                 false if it was already disabled
      */
-    public static function disableInstancePooling()
+    static public function disableInstancePooling()
     {
         if (!self::$isInstancePoolingEnabled) {
             return false;
@@ -487,7 +487,7 @@ class Propel
      * @return boolean true if the method changed the instance pooling state,
      *                 false if it was already enabled
      */
-    public static function enableInstancePooling()
+    static public function enableInstancePooling()
     {
         if (self::$isInstancePoolingEnabled) {
             return false;
@@ -502,7 +502,7 @@ class Propel
      *
      * @return     boolean Whether the pooling is enabled or not.
      */
-    public static function isInstancePoolingEnabled()
+    static public function isInstancePoolingEnabled()
     {
         return self::$isInstancePoolingEnabled;
     }

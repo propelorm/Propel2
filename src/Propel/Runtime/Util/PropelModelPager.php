@@ -325,7 +325,7 @@ class PropelModelPager implements \IteratorAggregate, \Countable
             if ($this->page == 0) {
                 $this->page = 1;
             }
-        } else if ($max == 0) {
+        } elseif ($max == 0) {
             $this->maxPerPage = 0;
             $this->page = 0;
         } else {

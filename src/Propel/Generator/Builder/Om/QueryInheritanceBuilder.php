@@ -180,7 +180,7 @@ class "  .$this->getClassname() . " extends " . $baseClassname . " {
      *
      * @return    " . $classname . "
      */
-    public static function create(\$modelAlias = null, \$criteria = null)
+    static public function create(\$modelAlias = null, \$criteria = null)
     {
         if (\$criteria instanceof " . $classname . ") {
             return \$criteria;

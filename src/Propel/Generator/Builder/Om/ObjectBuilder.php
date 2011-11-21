@@ -61,14 +61,14 @@ abstract class ObjectBuilder extends OMBuilder
             // if they're not using the DateTime class than we will generate "compatibility" accessor method
             if ($col->getType() === PropelTypes::DATE || $col->getType() === PropelTypes::TIME || $col->getType() === PropelTypes::TIMESTAMP) {
                 $this->addTemporalAccessor($script, $col);
-            } else if ($col->getType() === PropelTypes::OBJECT) {
+            } elseif ($col->getType() === PropelTypes::OBJECT) {
                 $this->addObjectAccessor($script, $col);
-            } else if ($col->getType() === PropelTypes::PHP_ARRAY) {
+            } elseif ($col->getType() === PropelTypes::PHP_ARRAY) {
                 $this->addArrayAccessor($script, $col);
                 if ($col->isNamePlural()) {
                     $this->addHasArrayElement($script, $col);
                 }
-            } else if ($col->isEnumType()) {
+            } elseif ($col->isEnumType()) {
                 $this->addEnumAccessor($script, $col);
             } else {
                 $this->addDefaultAccessor($script, $col);
@@ -93,17 +93,17 @@ abstract class ObjectBuilder extends OMBuilder
                 $this->addLobMutator($script, $col);
             } elseif ($col->getType() === PropelTypes::DATE || $col->getType() === PropelTypes::TIME || $col->getType() === PropelTypes::TIMESTAMP) {
                 $this->addTemporalMutator($script, $col);
-            } else if ($col->getType() === PropelTypes::OBJECT) {
+            } elseif ($col->getType() === PropelTypes::OBJECT) {
                 $this->addObjectMutator($script, $col);
-            } else if ($col->getType() === PropelTypes::PHP_ARRAY) {
+            } elseif ($col->getType() === PropelTypes::PHP_ARRAY) {
                 $this->addArrayMutator($script, $col);
                 if ($col->isNamePlural()) {
                     $this->addAddArrayElement($script, $col);
                     $this->addRemoveArrayElement($script, $col);
                 }
-            } else if ($col->isEnumType()) {
+            } elseif ($col->isEnumType()) {
                 $this->addEnumMutator($script, $col);
-            } else if ($col->isBooleanType()) {
+            } elseif ($col->isBooleanType()) {
                 $this->addBooleanMutator($script, $col);
             } else {
                 $this->addDefaultMutator($script, $col);

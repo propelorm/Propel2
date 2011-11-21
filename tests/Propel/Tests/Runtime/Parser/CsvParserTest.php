@@ -21,7 +21,7 @@ use Propel\Runtime\Parser\CsvParser;
  */
 class CsvParserTest extends \PHPUnit_Framework_TestCase
 {
-    public static function arrayCsvConversionDataProvider()
+    static public function arrayCsvConversionDataProvider()
     {
         return array(
             array(array(), "\r\n\r\n", 'empty array'),
@@ -70,7 +70,7 @@ class CsvParserTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($arrayData, $parser->fromCSV($csvData), 'CsvParser::fromCSV() converts to ' . $type . ' correctly');
     }
 
-    public static function listToCSVDataProvider()
+    static public function listToCSVDataProvider()
     {
         $list = array(
             array('Id' => 123, 'Title' => 'Pride and Prejudice', 'AuthorId' => 456, 'ISBN' => '0553213105', 'Author' => array('Id' => 456, 'FirstName' => 'Jane', 'LastName' => 'Austen')),

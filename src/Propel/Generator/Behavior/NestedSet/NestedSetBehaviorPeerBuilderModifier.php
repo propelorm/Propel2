@@ -128,7 +128,7 @@ const SCOPE_COL = '" . $tableName . '.' . $this->getColumnConstant('scope_column
  * @param      ConnectionInterface \$con    Connection to use.
  * @return     {$this->objectClassname}            Propel object for root node
  */
-public static function retrieveRoots(Criteria \$criteria = null, ConnectionInterface \$con = null)
+static public function retrieveRoots(Criteria \$criteria = null, ConnectionInterface \$con = null)
 {
     if (\$criteria === null) {
         \$criteria = new Criteria($peerClassname::DATABASE_NAME);
@@ -156,7 +156,7 @@ public static function retrieveRoots(Criteria \$criteria = null, ConnectionInter
  * @param      ConnectionInterface \$con    Connection to use.
  * @return     {$this->objectClassname}            Propel object for root node
  */
-public static function retrieveRoot(" . ($useScope ? "\$scope = null, " : "") . "ConnectionInterface \$con = null)
+static public function retrieveRoot(" . ($useScope ? "\$scope = null, " : "") . "ConnectionInterface \$con = null)
 {
     \$c = new Criteria($peerClassname::DATABASE_NAME);
     \$c->add($peerClassname::LEFT_COL, 1, Criteria::EQUAL);";
@@ -188,7 +188,7 @@ public static function retrieveRoot(" . ($useScope ? "\$scope = null, " : "") . 
  * @param      ConnectionInterface \$con    Connection to use.
  * @return     {$this->objectClassname}            Propel object for root node
  */
-public static function retrieveTree(" . ($useScope ? "\$scope = null, " : "") . "Criteria \$criteria = null, ConnectionInterface \$con = null)
+static public function retrieveTree(" . ($useScope ? "\$scope = null, " : "") . "Criteria \$criteria = null, ConnectionInterface \$con = null)
 {
     if (\$criteria === null) {
         \$criteria = new Criteria($peerClassname::DATABASE_NAME);
@@ -215,7 +215,7 @@ public static function retrieveTree(" . ($useScope ? "\$scope = null, " : "") . 
  * @param      $objectClassname \$node    Propel object for src node
  * @return     bool
  */
-public static function isValid($objectClassname \$node = null)
+static public function isValid($objectClassname \$node = null)
 {
     if (is_object(\$node) && \$node->getRightValue() > \$node->getLeftValue()) {
         return true;
@@ -243,7 +243,7 @@ public static function isValid($objectClassname \$node = null)
  *
  * @return     int  The number of deleted nodes
  */
-public static function deleteTree(" . ($useScope ? "\$scope = null, " : "") . "ConnectionInterface \$con = null)
+static public function deleteTree(" . ($useScope ? "\$scope = null, " : "") . "ConnectionInterface \$con = null)
 {";
         if($useScope) {
             $script .= "
@@ -280,7 +280,7 @@ public static function deleteTree(" . ($useScope ? "\$scope = null, " : "") . "C
         $script .= "
  * @param      ConnectionInterface \$con        Connection to use.
  */
-public static function shiftRLValues(\$delta, \$first, \$last = null" . ($useScope ? ", \$scope = null" : ""). ", ConnectionInterface \$con = null)
+static public function shiftRLValues(\$delta, \$first, \$last = null" . ($useScope ? ", \$scope = null" : ""). ", ConnectionInterface \$con = null)
 {
     if (\$con === null) {
         \$con = Propel::getServiceContainer()->getWriteConnection($peerClassname::DATABASE_NAME);
@@ -344,7 +344,7 @@ public static function shiftRLValues(\$delta, \$first, \$last = null" . ($useSco
         $script .= "
  * @param      ConnectionInterface \$con        Connection to use.
  */
-public static function shiftLevel(\$delta, \$first, \$last" . ($useScope ? ", \$scope = null" : ""). ", ConnectionInterface \$con = null)
+static public function shiftLevel(\$delta, \$first, \$last" . ($useScope ? ", \$scope = null" : ""). ", ConnectionInterface \$con = null)
 {
     if (\$con === null) {
         \$con = Propel::getServiceContainer()->getWriteConnection($peerClassname::DATABASE_NAME);
@@ -378,7 +378,7 @@ public static function shiftLevel(\$delta, \$first, \$last" . ($useScope ? ", \$
  * @param      $objectClassname \$prune        Object to prune from the update
  * @param      ConnectionInterface \$con        Connection to use.
  */
-public static function updateLoadedNodes(\$prune = null, ConnectionInterface \$con = null)
+static public function updateLoadedNodes(\$prune = null, ConnectionInterface \$con = null)
 {
     if (Propel::isInstancePoolingEnabled()) {
         \$keys = array();
@@ -435,10 +435,10 @@ public static function updateLoadedNodes(\$prune = null, ConnectionInterface \$c
             if ($col->getPhpName() == $this->getColumnPhpName('left_column')) {
                 $script .= "
                     \$object->setLeftValue(\$row[$n]);";
-            } else if ($col->getPhpName() == $this->getColumnPhpName('right_column')) {
+            } elseif ($col->getPhpName() == $this->getColumnPhpName('right_column')) {
                 $script .= "
                     \$object->setRightValue(\$row[$n]);";
-            } else if ($col->getPhpName() == $this->getColumnPhpName('level_column')) {
+            } elseif ($col->getPhpName() == $this->getColumnPhpName('level_column')) {
                 $script .= "
                     \$object->setLevel(\$row[$n]);
                     \$object->clearNestedSetChildren();";
@@ -472,7 +472,7 @@ public static function updateLoadedNodes(\$prune = null, ConnectionInterface \$c
  * @param      mixed \$prune    Object to prune from the shift
  * @param      ConnectionInterface \$con    Connection to use.
  */
-public static function makeRoomForLeaf(\$left" . ($useScope ? ", \$scope" : ""). ", \$prune = null, ConnectionInterface \$con = null)
+static public function makeRoomForLeaf(\$left" . ($useScope ? ", \$scope" : ""). ", \$prune = null, ConnectionInterface \$con = null)
 {
     // Update database nodes
     $peerClassname::shiftRLValues(2, \$left, null" . ($useScope ? ", \$scope" : "") . ", \$con);
@@ -498,7 +498,7 @@ public static function makeRoomForLeaf(\$left" . ($useScope ? ", \$scope" : "").
          $script .= "
  * @param      ConnectionInterface \$con    Connection to use.
  */
-public static function fixLevels(" . ($useScope ? "\$scope, " : ""). "ConnectionInterface \$con = null)
+static public function fixLevels(" . ($useScope ? "\$scope, " : ""). "ConnectionInterface \$con = null)
 {
     \$c = new Criteria();";
         if ($useScope) {

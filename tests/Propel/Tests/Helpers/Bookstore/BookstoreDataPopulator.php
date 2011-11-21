@@ -56,7 +56,7 @@ define('_LOB_SAMPLE_FILE_PATH', __DIR__ . '/../../../../Fixtures/etc/lob');
 class BookstoreDataPopulator
 {
 
-    public static function populate($con = null)
+    static public function populate($con = null)
     {
         if($con === null) {
             $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
@@ -233,7 +233,7 @@ class BookstoreDataPopulator
         $con->commit();
     }
 
-    public static function populateOpinionFavorite($con = null)
+    static public function populateOpinionFavorite($con = null)
     {
         if($con === null) {
             $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
@@ -256,7 +256,7 @@ class BookstoreDataPopulator
         $con->commit();
     }
 
-    public static function depopulate($con = null)
+    static public function depopulate($con = null)
     {
         $peerClasses = array(
             '\Propel\Tests\Bookstore\AuthorPeer',
