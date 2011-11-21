@@ -677,7 +677,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
     $this->applyBehaviorModifier('preSelect', $script);
 
         $script .= "
-        // BasePeer returns a PDOStatement
+        // BasePeer returns a Statement
         \$stmt = ".$this->basePeerClassname."::doCount(\$criteria, \$con);
 
         if (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
@@ -751,7 +751,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 
         $script .= "
     /**
-     * Prepares the Criteria object and uses the parent doSelect() method to execute a PDOStatement.
+     * Prepares the Criteria object and uses the parent doSelect() method to execute a Statement.
      *
      * Use this method directly if you want to work with an executed statement durirectly (for example
      * to perform your own object hydration).
@@ -760,7 +760,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
      * @param      ConnectionInterface \$con The connection to use
      * @throws     PropelException Any exceptions caught during processing will be
      *         rethrown wrapped into a PropelException.
-     * @return     PDOStatement The executed PDOStatement object.
+     * @return     StatementInterface The executed Statement object.
      * @see        ".$this->basePeerClassname."::doSelect()
      */
     public static function doSelectStmt(Criteria \$criteria, ConnectionInterface \$con = null)
@@ -783,7 +783,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         }
         $script .= "
 
-        // BasePeer returns a PDOStatement
+        // BasePeer returns a Statement
         return ".$this->basePeerClassname."::doSelect(\$criteria, \$con);
     }";
     }

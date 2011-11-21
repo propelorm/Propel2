@@ -1863,7 +1863,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
      * for results of JOIN queries where the resultset row includes columns from two or
      * more tables.
      *
-     * @param      array \$row The row returned by PDOStatement->fetch(PDO::FETCH_NUM)
+     * @param      array \$row The row returned by Statement->fetch(PDO::FETCH_NUM)
      * @param      int \$startcol 0-based offset column which indicates which restultset column to start with.
      * @param      boolean \$rehydrate Whether this object is being re-hydrated from the database.
      * @return     int next starting column
