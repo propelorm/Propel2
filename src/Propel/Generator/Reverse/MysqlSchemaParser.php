@@ -14,6 +14,7 @@ use Propel\Generator\Model\Column;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Model\PropelTypes;
+use Propel\Generator\Model\ColumnDefaultValue;
 
 use \PDO;
 
