@@ -5,7 +5,7 @@ title: Archivable Behavior
 
 # Archivable Behavior #
 
-The `archivable` behavior gives model objects the ability to be copied to an archive table. By default, the behavior archives objects on deletion, acting as a replacement of the [`soft_delete`](./soft-delete) behavior, which is deprecated.
+The `archivable` behavior gives model objects the ability to be copied to an archive table. By default, the behavior archives objects on deletion, which maakes it the Propel implementation of the "soft delete" pattern.
 
 ## Basic Usage ##
 

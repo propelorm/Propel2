@@ -153,8 +153,8 @@ class QueryBuilderTest extends BookstoreTestBase
 
     public function testFindPk()
     {
-        $method = new ReflectionMethod('\Propel\Tests\Bookstore\Behavior\Table4Query', 'findPk');
-        $this->assertEquals('Propel\Tests\Bookstore\Behavior\Om\BaseTable4Query', $method->getDeclaringClass()->getName(), 'BaseQuery overrides findPk()');
+        $method = new ReflectionMethod('\Propel\Tests\Bookstore\BookQuery', 'findPk');
+        $this->assertEquals('Propel\Tests\Bookstore\Om\BaseBookQuery', $method->getDeclaringClass()->getName(), 'BaseQuery overrides findPk()');
     }
 
     public function testFindPkReturnsCorrectObjectForSimplePrimaryKey()
@@ -273,8 +273,8 @@ class QueryBuilderTest extends BookstoreTestBase
 
     public function testFindPks()
     {
-        $method = new ReflectionMethod('\Propel\Tests\Bookstore\Behavior\Table4Query', 'findPks');
-        $this->assertEquals('Propel\Tests\Bookstore\Behavior\Om\BaseTable4Query', $method->getDeclaringClass()->getName(), 'BaseQuery overrides findPks()');
+        $method = new ReflectionMethod('\Propel\Tests\Bookstore\BookQuery', 'findPks');
+        $this->assertEquals('Propel\Tests\Bookstore\Om\BaseBookQuery', $method->getDeclaringClass()->getName(), 'BaseQuery overrides findPks()');
     }
 
     public function testFindPksSimpleKey()
