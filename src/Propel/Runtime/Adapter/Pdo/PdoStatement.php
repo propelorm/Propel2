@@ -8,14 +8,16 @@
  * @license    MIT License
  */
 
-namespace Propel\Runtime\Connection;
+namespace Propel\Runtime\Adapter\Pdo;
 
 use Propel\Runtime\Connection\StatementInterface;
+
+use \PDOStatement as BasePdoStatement;
 
 /**
  * PDO statement that provides the basic enhancements that are required by Propel.
  */
-class StatementPdo extends \PDOStatement implements StatementInterface
+class PdoStatement extends BasePdoStatement implements StatementInterface
 {
     protected function __construct()
     {

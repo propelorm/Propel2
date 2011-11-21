@@ -19,7 +19,7 @@ use Propel\Runtime\Adapter\Pdo\SqliteAdapter;
 use Propel\Runtime\Adapter\Pdo\MysqlAdapter;
 use Propel\Runtime\Map\DatabaseMap;
 use Propel\Runtime\Connection\ConnectionManagerSingle;
-use Propel\Runtime\Connection\ConnectionPdo;
+use Propel\Runtime\Adapter\Pdo\PdoConnection;
 
 class StandardServiceContainerTest extends BaseTestCase
 {
@@ -201,7 +201,7 @@ class StandardServiceContainerTest extends BaseTestCase
     public function testSetConnectionManagerClosesExistingConnectionMAnagerForTheSameDatasource()
     {
         $manager = new TestableConnectionManagerSingle();
-        $manager->setConnection(new ConnectionPdo('sqlite::memory:'));
+        $manager->setConnection(new PdoConnection('sqlite::memory:'));
         $this->assertNotNull($manager->connection);
         $this->sc->setConnectionManager('foo', $manager);
         $this->sc->setConnectionManager('foo', new ConnectionManagerSingle());
@@ -224,9 +224,9 @@ class StandardServiceContainerTest extends BaseTestCase
     public function testCloseConnectionsClosesConnectionsOnAllConnectionManagers()
     {
         $manager1 = new TestableConnectionManagerSingle();
-        $manager1->setConnection(new ConnectionPdo('sqlite::memory:'));
+        $manager1->setConnection(new PdoConnection('sqlite::memory:'));
         $manager2 = new TestableConnectionManagerSingle();
-        $manager2->setConnection(new ConnectionPdo('sqlite::memory:'));
+        $manager2->setConnection(new PdoConnection('sqlite::memory:'));
         $this->sc->setConnectionManager('foo1', $manager1);
         $this->sc->setConnectionManager('foo2', $manager2);
         $this->sc->closeConnections();
@@ -278,13 +278,13 @@ class StandardServiceContainerTest extends BaseTestCase
 
     public function testSetConnectionAddsAConnectionManagerSingle()
     {
-        $this->sc->setConnection('foo', new ConnectionPdo('sqlite::memory:'));
+        $this->sc->setConnection('foo', new PdoConnection('sqlite::memory:'));
         $this->assertInstanceOf('Propel\Runtime\Connection\ConnectionManagerSingle', $this->sc->getConnectionManager('foo'));
     }
 
     public function testSetConnectionAddsAConnectionWhichCanBeRetrivedByGetConnection()
     {
-        $con = new ConnectionPdo('sqlite::memory:');
+        $con = new PdoConnection('sqlite::memory:');
         $this->sc->setAdapter('foo', new SqliteAdapter());
         $this->sc->setConnection('foo', $con);
         $this->assertSame($con, $this->sc->getConnection('foo'));

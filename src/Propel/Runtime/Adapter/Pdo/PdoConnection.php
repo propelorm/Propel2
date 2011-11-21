@@ -8,7 +8,7 @@
  * @license    MIT License
  */
 
-namespace Propel\Runtime\Connection;
+namespace Propel\Runtime\Adapter\Pdo;
 
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\PropelException;
@@ -18,7 +18,7 @@ use \PDO;
 /**
  * PDO extension that implements ConnectionInterface and builds statements implementting StatementInterface.
  */
-class ConnectionPdo extends PDO implements ConnectionInterface
+class PdoConnection extends PDO implements ConnectionInterface
 {
     /**
      * Creates a PDO instance representing a connection to a database.
@@ -26,7 +26,7 @@ class ConnectionPdo extends PDO implements ConnectionInterface
     public function __construct($dsn, $user = null, $password = null, array $options = null)
     {
         parent::__construct($dsn, $user, $password, $options);
-        $this->setAttribute(PDO::ATTR_STATEMENT_CLASS, array('\Propel\Runtime\Connection\StatementPdo', array()));
+        $this->setAttribute(PDO::ATTR_STATEMENT_CLASS, array('\Propel\Runtime\Adapter\Pdo\PdoStatement', array()));
         $this->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
 

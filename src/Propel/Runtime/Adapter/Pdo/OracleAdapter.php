@@ -18,7 +18,6 @@ use Propel\Runtime\Util\BasePeer;
 use Propel\Runtime\Query\Criteria;
 
 use \PDO;
-use \PDOStatement;
 
 /**
  * Oracle adapter.
@@ -202,7 +201,7 @@ class OracleAdapter extends PdoAdapter implements AdapterInterface
     /**
      * @see       AbstractAdapter::bindValue()
      *
-     * @param     PDOStatement  $stmt
+     * @param     StatementInterface $stmt
      * @param     string        $parameter
      * @param     mixed         $value
      * @param     ColumnMap     $cMap
