@@ -19,7 +19,7 @@ namespace Propel\Generator\Builder\Om;
  * @author     Francois Zaninotto
  * @package    propel.generator.builder.om
  */
-class ExtensionQueryBuilder extends OMBuilder
+class ExtensionQueryBuilder extends AbstractOMBuilder
 {
 
     /**

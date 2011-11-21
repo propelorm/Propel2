@@ -11,7 +11,7 @@
 namespace Propel\Generator\Task;
 
 use Propel\Generator\Builder\Om\ClassTools;
-use Propel\Generator\Builder\Om\OMBuilder;
+use Propel\Generator\Builder\Om\AbstractOMBuilder;
 
 use \PhingFile;
 use \Project;
@@ -69,7 +69,7 @@ class PropelOMTask extends AbstractPropelDataModelTask
      * @param      boolean $overwrite Whether to overwrite existing files with te new ones (default is YES).
      * @todo       -cPropelOMTask Consider refactoring build() method into AbstractPropelDataModelTask (would need to be more generic).
      */
-    protected function build(OMBuilder $builder, $overwrite = true)
+    protected function build(AbstractOMBuilder $builder, $overwrite = true)
     {
         $path = $builder->getClassFilePath();
         $this->ensureDirExists(dirname($path));

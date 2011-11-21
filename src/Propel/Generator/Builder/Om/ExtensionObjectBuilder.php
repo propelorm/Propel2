@@ -11,15 +11,15 @@
 namespace Propel\Generator\Builder\Om;
 
 /**
- * Generates the empty PHP5 stub interface for user object model (OM).
+ * Generates the empty PHP5 stub object class for user object model (OM).
  *
- * This class produces the empty stub interface when the interface="" attribute is used
- * in the the schema xml.
+ * This class produces the empty stub class that can be customized with application
+ * business logic, custom behavior, etc.
  *
  * @author     Hans Lellelid <hans@xmpl.org>
  * @package    propel.generator.builder.om
  */
-class PHP5InterfaceBuilder extends ObjectBuilder
+class ExtensionObjectBuilder extends AbstractObjectBuilder
 {
 
     /**
@@ -28,7 +28,7 @@ class PHP5InterfaceBuilder extends ObjectBuilder
      */
     public function getUnprefixedClassname()
     {
-        return ClassTools::classname($this->getInterface());
+        return $this->getTable()->getPhpName();
     }
 
     /**
@@ -37,16 +37,16 @@ class PHP5InterfaceBuilder extends ObjectBuilder
      */
     protected function addClassOpen(&$script)
     {
-
         $table = $this->getTable();
+        $this->declareClassFromBuilder($this->getObjectBuilder());
         $tableName = $table->getName();
         $tableDesc = $table->getDescription();
-
         $baseClassname = $this->getObjectBuilder()->getClassname();
 
         $script .= "
+
 /**
- * This is an interface that should be filled with the public api of the $tableName objects.
+ * Skeleton subclass for representing a row from the '$tableName' table.
  *
  * $tableDesc
  *";
@@ -59,13 +59,13 @@ class PHP5InterfaceBuilder extends ObjectBuilder
  *";
         }
         $script .= "
- * You should add additional method declarations to this interface to meet the
- * application requirements.  This interface will only be generated as
+ * You should add additional methods to this class to meet the
+ * application requirements.  This class will only be generated as
  * long as it does not already exist in the output directory.
  *
  * @package    propel.generator.".$this->getPackage()."
  */
-interface ".$this->getClassname()." {
+".($table->isAbstract() ? "abstract " : "")."class ".$this->getClassname()." extends $baseClassname {
 ";
     }
 
@@ -79,7 +79,6 @@ interface ".$this->getClassname()." {
      */
     protected function addClassBody(&$script)
     {
-        // there is no class body
     }
 
     /**
@@ -91,6 +90,7 @@ interface ".$this->getClassname()." {
         $script .= "
 } // " . $this->getClassname() . "
 ";
+        $this->applyBehaviorModifier('extensionObjectFilter', $script, "");
     }
 
-} // PHP5ExtensionObjectBuilder
+} // ExtensionObjectBuilder

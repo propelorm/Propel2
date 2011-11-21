@@ -137,7 +137,7 @@ class ConcreteInheritanceBehavior extends Behavior
     {
         $parentTable = $this->getParentTable();
         switch (get_class($builder)) {
-            case 'Propel\Generator\Builder\Om\PHP5ObjectBuilder':
+            case 'Propel\Generator\Builder\Om\ObjectBuilder':
                 $objectBuilder = $builder->getNewStubObjectBuilder($parentTable);
                 $builder->declareClass($objectBuilder->getFullyQualifiedClassname());
 
@@ -149,7 +149,7 @@ class ConcreteInheritanceBehavior extends Behavior
 
                 return $queryBuilder->getClassname();
                 break;
-            case 'Propel\Generator\Builder\Om\PHP5PeerBuilder':
+            case 'Propel\Generator\Builder\Om\PeerBuilder':
                 $peerBuilder = $builder->getNewStubPeerBuilder($parentTable);
                 $builder->declareClass($peerBuilder->getFullyQualifiedClassname());
 

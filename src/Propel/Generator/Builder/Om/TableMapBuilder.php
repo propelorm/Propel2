@@ -20,7 +20,7 @@ use Propel\Generator\Platform\PlatformInterface;
  * @author     Hans Lellelid <hans@xmpl.org>
  * @package    propel.generator.builder.om
  */
-class PHP5TableMapBuilder extends OMBuilder
+class TableMapBuilder extends AbstractOMBuilder
 {
 
     /**
@@ -364,4 +364,4 @@ class ".$this->getClassname()." extends \Propel\Runtime\Map\TableMap
     {
         return $this->applyBehaviorModifierBase($hookName, 'TableMapBuilderModifier', $script, $tab);
     }
-} // PHP5TableMapBuilder
+} // TableMapBuilder

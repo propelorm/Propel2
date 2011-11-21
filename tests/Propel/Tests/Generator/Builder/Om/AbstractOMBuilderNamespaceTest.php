@@ -13,7 +13,7 @@ namespace Propel\Tests\Generator\Builder\Om;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\Table;
-use Propel\Generator\Builder\Om\OMBuilder;
+use Propel\Generator\Builder\Om\AbstractOMBuilder;
 use Propel\Generator\Platform\MysqlPlatform;
 
 /**
@@ -23,7 +23,7 @@ use Propel\Generator\Platform\MysqlPlatform;
  * @version    $Id: OMBuilderBuilderTest.php 1347 2009-12-03 21:06:36Z francois $
  * @package    generator.builder.om
  */
-class OMBuilderNamespaceTest extends \PHPUnit_Framework_TestCase
+class AbstractOMBuilderNamespaceTest extends \PHPUnit_Framework_TestCase
 {
     public function testNoNamespace()
     {
@@ -136,7 +136,7 @@ class OMBuilderNamespaceTest extends \PHPUnit_Framework_TestCase
     }
 }
 
-class TestableOMBuilder2 extends OMBuilder
+class TestableOMBuilder2 extends AbstractOMBuilder
 {
     public static function getRelatedBySuffix(ForeignKey $fk)
     {

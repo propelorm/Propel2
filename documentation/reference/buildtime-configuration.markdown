@@ -275,20 +275,20 @@ propel.sql.dir = ${propel.output.dir}/sql
 
 {% highlight ini %}
 # Object Model builders
-propel.builder.peer.class = builder.om.PHP5PeerBuilder
-propel.builder.object.class = builder.om.PHP5ObjectBuilder
-propel.builder.objectstub.class = builder.om.PHP5ExtensionObjectBuilder
-propel.builder.peerstub.class = builder.om.PHP5ExtensionPeerBuilder
+propel.builder.peer.class = builder.om.PeerBuilder
+propel.builder.object.class = builder.om.ObjectBuilder
+propel.builder.objectstub.class = builder.om.ExtensionObjectBuilder
+propel.builder.peerstub.class = builder.om.ExtensionPeerBuilder
 
-propel.builder.objectmultiextend.class = builder.om.PHP5MultiExtendObjectBuilder
+propel.builder.objectmultiextend.class = builder.om.MultiExtendObjectBuilder
 
-propel.builder.tablemap.class = builder.om.PHP5TableMapBuilder
+propel.builder.tablemap.class = builder.om.TableMapBuilder
 propel.builder.query.class = builder.om.QueryBuilder
 propel.builder.querystub.class = builder.om.ExtensionQueryBuilder
 propel.builder.queryinheritance.class = builder.om.QueryInheritanceBuilder
 propel.builder.queryinheritancestub.class = builder.om.ExtensionQueryInheritanceBuilder
 
-propel.builder.interface.class = builder.om.PHP5InterfaceBuilder
+propel.builder.interface.class = builder.om.InterfaceBuilder
 
 # SQL builders
 propel.builder.datasql.class = builder.sql.${propel.database}.${propel.database}DataSQLBuilder

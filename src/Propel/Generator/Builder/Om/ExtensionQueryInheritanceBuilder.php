@@ -22,7 +22,7 @@ use Propel\Generator\Model\Inheritance;
  * @author     François Zaninotto
  * @package    propel.generator.builder.om
  */
-class ExtensionQueryInheritanceBuilder extends OMBuilder
+class ExtensionQueryInheritanceBuilder extends AbstractOMBuilder
 {
 
     /**

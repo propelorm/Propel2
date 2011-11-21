@@ -17,13 +17,13 @@ use Propel\Runtime\Propel;
 use Propel\Runtime\Map\RelationMap;
 
 /**
- * Test class for PHP5TableMapBuilder.
+ * Test class for TableMapBuilder.
  *
  * @author     François Zaninotto
  * @version    $Id$
  * @package    generator.builder.om
  */
-class PHP5TableMapBuilderTest extends BookstoreTestBase
+class TableMapBuilderTest extends BookstoreTestBase
 {
   protected $databaseMap;
 
