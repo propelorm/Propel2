@@ -25,23 +25,17 @@ use \Exception;
 class QuickGeneratorConfig implements GeneratorConfigInterface
 {
     protected $builders = array(
-        'peer'                    => '\Propel\Generator\Builder\Om\PHP5PeerBuilder',
+        'peer'                  => '\Propel\Generator\Builder\Om\PHP5PeerBuilder',
         'object'                => '\Propel\Generator\Builder\Om\PHP5ObjectBuilder',
         'objectstub'            => '\Propel\Generator\Builder\Om\PHP5ExtensionObjectBuilder',
-        'peerstub'                => '\Propel\Generator\Builder\Om\PHP5ExtensionPeerBuilder',
-        'objectmultiextend'        => '\Propel\Generator\Builder\Om\PHP5MultiExtendObjectBuilder',
-        'tablemap'                => '\Propel\Generator\Builder\Om\PHP5TableMapBuilder',
-        'query'                    => '\Propel\Generator\Builder\Om\QueryBuilder',
-        'querystub'                => '\Propel\Generator\Builder\Om\ExtensionQueryBuilder',
-        'queryinheritance'        => '\Propel\Generator\Builder\Om\QueryInheritanceBuilder',
-        'queryinheritancestub'    => '\Propel\Generator\Builder\Om\ExtensionQueryInheritanceBuilder',
-        'interface'                => '\Propel\Generator\Builder\Om\PHP5InterfaceBuilder',
-        'node'                    => '\Propel\Generator\Builder\Om\PHP5NodeBuilder',
-        'nodepeer'                => '\Propel\Generator\Builder\Om\PHP5NodePeerBuilder',
-        'nodestub'                => '\Propel\Generator\Builder\Om\PHP5ExtensionNodeBuilder',
-        'nodepeerstub'            => '\Propel\Generator\Builder\Om\PHP5ExtensionNodePeerBuilder',
-        'nestedset'                => '\Propel\Generator\Builder\Om\PHP5NestedSetBuilder',
-        'nestedsetpeer'            => '\Propel\Generator\Builder\Om\PHP5NestedSetPeerBuilder',
+        'peerstub'              => '\Propel\Generator\Builder\Om\PHP5ExtensionPeerBuilder',
+        'objectmultiextend'     => '\Propel\Generator\Builder\Om\PHP5MultiExtendObjectBuilder',
+        'tablemap'              => '\Propel\Generator\Builder\Om\PHP5TableMapBuilder',
+        'query'                 => '\Propel\Generator\Builder\Om\QueryBuilder',
+        'querystub'             => '\Propel\Generator\Builder\Om\ExtensionQueryBuilder',
+        'queryinheritance'      => '\Propel\Generator\Builder\Om\QueryInheritanceBuilder',
+        'queryinheritancestub'  => '\Propel\Generator\Builder\Om\ExtensionQueryInheritanceBuilder',
+        'interface'             => '\Propel\Generator\Builder\Om\PHP5InterfaceBuilder',
     );
 
     protected $buildProperties = array();
