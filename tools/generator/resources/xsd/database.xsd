@@ -582,7 +582,7 @@
 			<xs:element name="behavior" type="behavior" minOccurs="0" maxOccurs="unbounded">
 				<xs:annotation>
 					<xs:documentation xml:lang="en">
-						A behavior to be added to the current table. Can modify the table structure, as well as modify the runtime code of the generated Model objects linked to this table. Bundled behaviors include alternative_coding_standards, auto_add_pk, timestampable, sluggable, soft_delete, sortable, nested_set, query_cache, and concrete_inheritance.
+						A behavior to be added to the current table. Can modify the table structure, as well as modify the runtime code of the generated Model objects linked to this table. Bundled behaviors include alternative_coding_standards, auto_add_pk, timestampable, sluggable, sortable, nested_set, query_cache, and concrete_inheritance.
 					</xs:documentation>
 				</xs:annotation>
 			</xs:element>
