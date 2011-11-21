@@ -21,7 +21,7 @@ use Propel\Generator\Model\Inheritance;
  * @author     Hans Lellelid <hans@xmpl.org>
  * @package    propel.generator.builder.om
  */
-class PHP5MultiExtendObjectBuilder extends ObjectBuilder
+class MultiExtendObjectBuilder extends AbstractObjectBuilder
 {
 
     /**
@@ -190,4 +190,4 @@ class ".$this->getClassname()." extends ".$this->getParentClassname()." {
 ";
     }
 
-} // PHP5ExtensionObjectBuilder
+} // ExtensionObjectBuilder

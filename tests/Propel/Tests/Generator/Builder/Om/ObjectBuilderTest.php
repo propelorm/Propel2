@@ -10,7 +10,7 @@
 
 namespace Propel\Tests\Generator\Builder\Om;
 
-use Propel\Generator\Builder\Om\PHP5ObjectBuilder;
+use Propel\Generator\Builder\Om\ObjectBuilder;
 use Propel\Generator\Platform\MysqlPlatform;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\ColumnDefaultValue;
@@ -18,19 +18,19 @@ use Propel\Generator\Model\Domain;
 use Propel\Generator\Model\Table;
 
 /**
- * Test class for PHP5ObjectBuilder.
+ * Test class for ObjectBuilder.
  *
  * @author     François Zaninotto
  * @version    $Id$
  * @package    generator.builder.om
  */
-class PHP5ObjectBuilderTest extends \PHPUnit_Framework_TestCase
+class ObjectBuilderTest extends \PHPUnit_Framework_TestCase
 {
     protected $builder;
 
     public function setUp()
     {
-        $builder = new TestablePHP5ObjectBuilder(new Table('Foo'));
+        $builder = new TestableObjectBuilder(new Table('Foo'));
         $builder->setPlatform(new MysqlPlatform());
         $this->builder = $builder;
     }
@@ -68,7 +68,7 @@ class PHP5ObjectBuilderTest extends \PHPUnit_Framework_TestCase
 
 }
 
-class TestablePHP5ObjectBuilder extends PHP5ObjectBuilder
+class TestableObjectBuilder extends ObjectBuilder
 {
     public function getDefaultValueString(Column $col)
     {

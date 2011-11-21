@@ -34,7 +34,7 @@ class ObjectBehaviorTest extends BookstoreTestBase
         $t->preSave = 0;
         $t->save();
         $this->assertEquals($t->preSave, 1, 'preSave hook is called on object insertion');
-        $this->assertEquals('Propel\Generator\Builder\Om\PHP5ObjectBuilder', $t->preSaveBuilder, 'preSave hook is called with the object builder as parameter');
+        $this->assertEquals('Propel\Generator\Builder\Om\ObjectBuilder', $t->preSaveBuilder, 'preSave hook is called with the object builder as parameter');
         $this->assertFalse($t->preSaveIsAfterSave, 'preSave hook is called before save');
         $t->preSave = 0;
         $t->setTitle('foo');
@@ -48,7 +48,7 @@ class ObjectBehaviorTest extends BookstoreTestBase
         $t->postSave = 0;
         $t->save();
         $this->assertEquals($t->postSave, 1, 'postSave hook is called on object insertion');
-        $this->assertEquals('Propel\Generator\Builder\Om\PHP5ObjectBuilder', $t->postSaveBuilder, 'postSave hook is called with the object builder as parameter');
+        $this->assertEquals('Propel\Generator\Builder\Om\ObjectBuilder', $t->postSaveBuilder, 'postSave hook is called with the object builder as parameter');
         $this->assertTrue($t->postSaveIsAfterSave, 'postSave hook is called after save');
         $t->postSave = 0;
         $t->setTitle('foo');
@@ -56,13 +56,13 @@ class ObjectBehaviorTest extends BookstoreTestBase
         $this->assertEquals($t->postSave, 1, 'postSave hook is called on object modification');
     }
 
-    public function testPHP5ObjectBuilderPreInsert()
+    public function testObjectBuilderPreInsert()
     {
         $t = new Table3();
         $t->preInsert = 0;
         $t->save();
         $this->assertEquals($t->preInsert, 1, 'preInsert hook is called on object insertion');
-        $this->assertEquals('Propel\Generator\Builder\Om\PHP5ObjectBuilder', $t->preInsertBuilder, 'preInsert hook is called with the object builder as parameter');
+        $this->assertEquals('Propel\Generator\Builder\Om\ObjectBuilder', $t->preInsertBuilder, 'preInsert hook is called with the object builder as parameter');
         $this->assertFalse($t->preInsertIsAfterSave, 'preInsert hook is called before save');
         $t->preInsert = 0;
         $t->setTitle('foo');
@@ -76,7 +76,7 @@ class ObjectBehaviorTest extends BookstoreTestBase
         $t->postInsert = 0;
         $t->save();
         $this->assertEquals($t->postInsert, 1, 'postInsert hook is called on object insertion');
-        $this->assertEquals('Propel\Generator\Builder\Om\PHP5ObjectBuilder', $t->postInsertBuilder, 'postInsert hook is called with the object builder as parameter');
+        $this->assertEquals('Propel\Generator\Builder\Om\ObjectBuilder', $t->postInsertBuilder, 'postInsert hook is called with the object builder as parameter');
         $this->assertTrue($t->postInsertIsAfterSave, 'postInsert hook is called after save');
         $t->postInsert = 0;
         $t->setTitle('foo');
@@ -94,7 +94,7 @@ class ObjectBehaviorTest extends BookstoreTestBase
         $t->setTitle('foo');
         $t->save();
         $this->assertEquals($t->preUpdate, 1, 'preUpdate hook is called on object modification');
-        $this->assertEquals('Propel\Generator\Builder\Om\PHP5ObjectBuilder', $t->preUpdateBuilder, 'preUpdate hook is called with the object builder as parameter');
+        $this->assertEquals('Propel\Generator\Builder\Om\ObjectBuilder', $t->preUpdateBuilder, 'preUpdate hook is called with the object builder as parameter');
         $this->assertFalse($t->preUpdateIsAfterSave, 'preUpdate hook is called before save');
     }
 
@@ -108,7 +108,7 @@ class ObjectBehaviorTest extends BookstoreTestBase
         $t->setTitle('foo');
         $t->save();
         $this->assertEquals($t->postUpdate, 1, 'postUpdate hook is called on object modification');
-        $this->assertEquals('Propel\Generator\Builder\Om\PHP5ObjectBuilder', $t->postUpdateBuilder, 'postUpdate hook is called with the object builder as parameter');
+        $this->assertEquals('Propel\Generator\Builder\Om\ObjectBuilder', $t->postUpdateBuilder, 'postUpdate hook is called with the object builder as parameter');
         $this->assertTrue($t->postUpdateIsAfterSave, 'postUpdate hook is called after save');
     }
 
@@ -119,7 +119,7 @@ class ObjectBehaviorTest extends BookstoreTestBase
         $this->preDelete = 0;
         $t->delete();
         $this->assertEquals($t->preDelete, 1, 'preDelete hook is called on object deletion');
-        $this->assertEquals('Propel\Generator\Builder\Om\PHP5ObjectBuilder', $t->preDeleteBuilder, 'preDelete hook is called with the object builder as parameter');
+        $this->assertEquals('Propel\Generator\Builder\Om\ObjectBuilder', $t->preDeleteBuilder, 'preDelete hook is called with the object builder as parameter');
         $this->assertTrue($t->preDeleteIsBeforeDelete, 'preDelete hook is called before deletion');
     }
 
@@ -130,7 +130,7 @@ class ObjectBehaviorTest extends BookstoreTestBase
         $this->postDelete = 0;
         $t->delete();
         $this->assertEquals($t->postDelete, 1, 'postDelete hook is called on object deletion');
-        $this->assertEquals('Propel\Generator\Builder\Om\PHP5ObjectBuilder', $t->postDeleteBuilder, 'postDelete hook is called with the object builder as parameter');
+        $this->assertEquals('Propel\Generator\Builder\Om\ObjectBuilder', $t->postDeleteBuilder, 'postDelete hook is called with the object builder as parameter');
         $this->assertFalse($t->postDeleteIsBeforeDelete, 'postDelete hook is called before deletion');
     }
 
@@ -138,7 +138,7 @@ class ObjectBehaviorTest extends BookstoreTestBase
     {
         $t = new Table3();
         $this->assertTrue(method_exists($t, 'hello'), 'objectMethods hook is called when adding methods');
-        $this->assertEquals('Propel\Generator\Builder\Om\PHP5ObjectBuilder', $t->hello(), 'objectMethods hook is called with the object builder as parameter');
+        $this->assertEquals('Propel\Generator\Builder\Om\ObjectBuilder', $t->hello(), 'objectMethods hook is called with the object builder as parameter');
     }
 
     public function testObjectCall()
@@ -153,6 +153,6 @@ class ObjectBehaviorTest extends BookstoreTestBase
 
         $t = new Table3();
         $this->assertTrue(class_exists('testObjectFilter'), 'objectFilter hook allows complete manipulation of the generated script');
-        $this->assertEquals('Propel\Generator\Builder\Om\PHP5ObjectBuilder', testObjectFilter::FOO, 'objectFilter hook is called with the object builder as parameter');
+        $this->assertEquals('Propel\Generator\Builder\Om\ObjectBuilder', testObjectFilter::FOO, 'objectFilter hook is called with the object builder as parameter');
     }
 }

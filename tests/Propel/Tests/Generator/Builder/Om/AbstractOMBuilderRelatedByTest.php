@@ -13,7 +13,7 @@ namespace Propel\Tests\Generator\Builder\Om;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
 use Propel\Generator\Model\ForeignKey;
-use Propel\Generator\Builder\Om\OMBuilder;
+use Propel\Generator\Builder\Om\AbstractOMBuilder;
 use Propel\Generator\Builder\Util\XmlToAppData;
 use Propel\Generator\Platform\DefaultPlatform;
 
@@ -24,7 +24,7 @@ use Propel\Generator\Platform\DefaultPlatform;
  * @version    $Id: OMBuilderBuilderTest.php 1347 2009-12-03 21:06:36Z francois $
  * @package    generator.builder.om
  */
-class OMBuilderRelatedByTest extends \PHPUnit_Framework_TestCase
+class AbstractOMBuilderRelatedByTest extends \PHPUnit_Framework_TestCase
 {
     static $database;
 
@@ -71,7 +71,7 @@ class OMBuilderRelatedByTest extends \PHPUnit_Framework_TestCase
     }
 }
 
-class TestableOMBuilder extends OMBuilder
+class TestableOMBuilder extends AbstractOMBuilder
 {
     static public function getRelatedBySuffix(ForeignKey $fk)
     {

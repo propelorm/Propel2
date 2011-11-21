@@ -19,7 +19,7 @@ namespace Propel\Generator\Builder\Om;
  * @author     Hans Lellelid <hans@xmpl.org>
  * @package    propel.generator.builder.om
  */
-class PHP5ExtensionPeerBuilder extends PeerBuilder
+class ExtensionPeerBuilder extends AbstractPeerBuilder
 {
 
     /**
@@ -96,4 +96,4 @@ class ".$this->getClassname()." extends $baseClassname {
     }
 
 
-} // PHP5ExtensionPeerBuilder
+} // ExtensionPeerBuilder

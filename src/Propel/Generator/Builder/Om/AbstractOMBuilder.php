@@ -24,7 +24,7 @@ use Propel\Generator\Builder\DataModelBuilder;
  * @author     Hans Lellelid <hans@xmpl.org>
  * @package    propel.generator.builder.om
  */
-abstract class OMBuilder extends DataModelBuilder
+abstract class AbstractOMBuilder extends DataModelBuilder
 {
     /**
      * Declared fully qualified classnames, to build the 'namespace' statements

@@ -10,7 +10,7 @@
 
 namespace Propel\Tests\Generator\Builder\Om;
 
-use Propel\Generator\Builder\Om\OMBuilder;
+use Propel\Generator\Builder\Om\AbstractOMBuilder;
 
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 use Propel\Tests\Bookstore\Author;
@@ -24,7 +24,7 @@ use Propel\Tests\Bookstore\Publisher;
  * @version    $Id: OMBuilderBuilderTest.php 1347 2009-12-03 21:06:36Z francois $
  * @package    generator.builder.om
  */
-class OMBuilderTest extends \PHPUnit_Framework_TestCase
+class AbstractOMBuilderTest extends \PHPUnit_Framework_TestCase
 {
 
     public function testClear()
@@ -104,7 +104,7 @@ EOF;
 
 }
 
-class OMBuilderMock extends OMBuilder
+class OMBuilderMock extends AbstractOMBuilder
 {
     protected $pkg;
 

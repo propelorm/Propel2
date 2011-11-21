@@ -2,9 +2,9 @@
 
 namespace Propel\Tests\Helpers\Bookstore\Behavior;
 
-use Propel\Generator\Builder\Om\OMBuilder;
+use Propel\Generator\Builder\Om\AbstractOMBuilder;
 
-class AddClassBehaviorBuilder extends OMBuilder
+class AddClassBehaviorBuilder extends AbstractOMBuilder
 {
     public $overwrite = true;
 

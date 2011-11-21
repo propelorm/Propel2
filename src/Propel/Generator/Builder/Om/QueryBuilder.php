@@ -21,7 +21,7 @@ use Propel\Generator\Model\PropelTypes;
  * @author     Francois Zaninotto
  * @package    propel.generator.builder.om
  */
-class QueryBuilder extends OMBuilder
+class QueryBuilder extends AbstractOMBuilder
 {
 
     /**

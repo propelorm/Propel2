@@ -25,17 +25,17 @@ use \Exception;
 class QuickGeneratorConfig implements GeneratorConfigInterface
 {
     protected $builders = array(
-        'peer'                  => '\Propel\Generator\Builder\Om\PHP5PeerBuilder',
-        'object'                => '\Propel\Generator\Builder\Om\PHP5ObjectBuilder',
-        'objectstub'            => '\Propel\Generator\Builder\Om\PHP5ExtensionObjectBuilder',
-        'peerstub'              => '\Propel\Generator\Builder\Om\PHP5ExtensionPeerBuilder',
-        'objectmultiextend'     => '\Propel\Generator\Builder\Om\PHP5MultiExtendObjectBuilder',
-        'tablemap'              => '\Propel\Generator\Builder\Om\PHP5TableMapBuilder',
+        'peer'                  => '\Propel\Generator\Builder\Om\PeerBuilder',
+        'object'                => '\Propel\Generator\Builder\Om\ObjectBuilder',
+        'objectstub'            => '\Propel\Generator\Builder\Om\ExtensionObjectBuilder',
+        'peerstub'              => '\Propel\Generator\Builder\Om\ExtensionPeerBuilder',
+        'objectmultiextend'     => '\Propel\Generator\Builder\Om\MultiExtendObjectBuilder',
+        'tablemap'              => '\Propel\Generator\Builder\Om\TableMapBuilder',
         'query'                 => '\Propel\Generator\Builder\Om\QueryBuilder',
         'querystub'             => '\Propel\Generator\Builder\Om\ExtensionQueryBuilder',
         'queryinheritance'      => '\Propel\Generator\Builder\Om\QueryInheritanceBuilder',
         'queryinheritancestub'  => '\Propel\Generator\Builder\Om\ExtensionQueryInheritanceBuilder',
-        'interface'             => '\Propel\Generator\Builder\Om\PHP5InterfaceBuilder',
+        'interface'             => '\Propel\Generator\Builder\Om\InterfaceBuilder',
     );
 
     protected $buildProperties = array();
