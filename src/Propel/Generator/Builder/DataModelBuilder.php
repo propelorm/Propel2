@@ -105,42 +105,6 @@ abstract class DataModelBuilder
     private $multiExtendObjectBuilder;
 
     /**
-     * Node object builder for current table.
-     * @var        DataModelBuilder
-     */
-    private $nodeBuilder;
-
-    /**
-     * Node peer builder for current table.
-     * @var        DataModelBuilder
-     */
-    private $nodePeerBuilder;
-
-    /**
-     * Stub node object builder for current table.
-     * @var        DataModelBuilder
-     */
-    private $stubNodeBuilder;
-
-    /**
-     * Stub node peer builder for current table.
-     * @var        DataModelBuilder
-     */
-    private $stubNodePeerBuilder;
-
-    /**
-     * NestedSet object builder for current table.
-     * @var        DataModelBuilder
-     */
-    private $nestedSetBuilder;
-
-    /**
-     * NestedSet peer builder for current table.
-     * @var        DataModelBuilder
-     */
-    private $nestedSetPeerBuilder;
-
-    /**
      * The Data-SQL builder for current table.
      * @var        DataSQLBuilder
      */
@@ -295,84 +259,6 @@ abstract class DataModelBuilder
         }
 
         return $this->multiExtendObjectBuilder;
-    }
-
-    /**
-     * Returns new or existing node Object builder class for this table.
-     * @return     ObjectBuilder
-     */
-    public function getNodeBuilder()
-    {
-        if (!isset($this->nodeBuilder)) {
-            $this->nodeBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'node');
-        }
-
-        return $this->nodeBuilder;
-    }
-
-    /**
-     * Returns new or existing node Peer builder class for this table.
-     * @return     PeerBuilder
-     */
-    public function getNodePeerBuilder()
-    {
-        if (!isset($this->nodePeerBuilder)) {
-            $this->nodePeerBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'nodepeer');
-        }
-
-        return $this->nodePeerBuilder;
-    }
-
-    /**
-     * Returns new or existing stub node Object builder class for this table.
-     * @return     ObjectBuilder
-     */
-    public function getStubNodeBuilder()
-    {
-        if (!isset($this->stubNodeBuilder)) {
-            $this->stubNodeBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'nodestub');
-        }
-
-        return $this->stubNodeBuilder;
-    }
-
-    /**
-     * Returns new or existing stub node Peer builder class for this table.
-     * @return     PeerBuilder
-     */
-    public function getStubNodePeerBuilder()
-    {
-        if (!isset($this->stubNodePeerBuilder)) {
-            $this->stubNodePeerBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'nodepeerstub');
-        }
-
-        return $this->stubNodePeerBuilder;
-    }
-
-    /**
-     * Returns new or existing nested set object builder class for this table.
-     * @return     ObjectBuilder
-     */
-    public function getNestedSetBuilder()
-    {
-        if (!isset($this->nestedSetBuilder)) {
-            $this->nestedSetBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'nestedset');
-        }
-
-        return $this->nestedSetBuilder;
-    }
-
-    /**
-     * Returns new or existing nested set Peer builder class for this table.
-     * @return     PeerBuilder
-     */
-    public function getNestedSetPeerBuilder()
-    {
-        if (!isset($this->nestedSetPeerBuilder)) {
-            $this->nestedSetPeerBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'nestedsetpeer');
-        }
-
-        return $this->nestedSetPeerBuilder;
     }
 
     /**

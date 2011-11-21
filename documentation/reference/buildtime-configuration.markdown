@@ -290,14 +290,6 @@ propel.builder.queryinheritancestub.class = builder.om.ExtensionQueryInheritance
 
 propel.builder.interface.class = builder.om.PHP5InterfaceBuilder
 
-propel.builder.node.class = builder.om.PHP5NodeBuilder
-propel.builder.nodepeer.class = builder.om.PHP5NodePeerBuilder
-propel.builder.nodestub.class = builder.om.PHP5ExtensionNodeBuilder
-propel.builder.nodepeerstub.class = builder.om.PHP5ExtensionNodePeerBuilder
-
-propel.builder.nestedset.class = builder.om.PHP5NestedSetBuilder
-propel.builder.nestedsetpeer.class = builder.om.PHP5NestedSetPeerBuilder
-
 # SQL builders
 propel.builder.datasql.class = builder.sql.${propel.database}.${propel.database}DataSQLBuilder
 
