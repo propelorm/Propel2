@@ -14,6 +14,7 @@ use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\StatementInterface;
 use Propel\Runtime\Map\ColumnMap;
+use Propel\Runtime\Exception\PropelException;
 
 use \PDO;
 use \PDOException;
