@@ -10,7 +10,7 @@ Propel2 uses the following Symfony2 Components:
 * [ClassLoader](https://github.com/symfony/ClassLoader)
 * [Yaml](https://github.com/symfony/Yaml)
 
-Propel2 is only supported on PHP 5.3.2 and up.
+Propel2 is only supported on PHP 5.3.3 and up.
 
 
 ## Installation ##
