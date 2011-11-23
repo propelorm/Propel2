@@ -117,9 +117,6 @@ class PrepareTests extends Command
         shell_exec(sprintf('%s main', $this->propelgen));
         shell_exec(sprintf('%s insert-sql', $this->propelgen));
 
-        unlink('build.properties');
-        unlink('runtime-conf.xml');
-
         $output->writeln('done.');
 
         chdir($this->root);
