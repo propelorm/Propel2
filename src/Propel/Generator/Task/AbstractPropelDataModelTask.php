@@ -16,6 +16,7 @@ use Propel\Generator\Exception\EngineException;
 use Propel\Generator\Model\AppData;
 use Propel\Generator\Model\Database;
 
+use \BuildException;
 use \DomDocument;
 use \Fileset;
 use \FileSystem;
@@ -353,7 +354,7 @@ abstract class AbstractPropelDataModelTask extends Task
      * Maps the passed in name to a new filename & returns resolved File object.
      * @param      string $from
      * @return     PhingFile Resolved File object.
-     * @throws     BuilException    - if no Mapper element se
+     * @throws     BuildException    - if no Mapper element se
      *                          - if unable to map new filename.
      */
     protected function getMappedFile($from)
