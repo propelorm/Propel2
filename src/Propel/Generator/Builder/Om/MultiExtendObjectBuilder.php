@@ -62,7 +62,7 @@ class MultiExtendObjectBuilder extends AbstractObjectBuilder
     public function getChild()
     {
         if (!$this->child) {
-            throw new BuildException("The PHP5MultiExtendObjectBuilder needs to be told which child class to build (via setChild() method) before it can build the stub class.");
+            throw new BuildException("The MultiExtendObjectBuilder needs to be told which child class to build (via setChild() method) before it can build the stub class.");
         }
 
         return $this->child;

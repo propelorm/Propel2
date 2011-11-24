@@ -37,10 +37,10 @@ class ExtensionObjectBuilder extends AbstractObjectBuilder
     protected function addClassOpen(&$script)
     {
         $table = $this->getTable();
-        $this->declareClassFromBuilder($this->getObjectBuilder());
         $tableName = $table->getName();
         $tableDesc = $table->getDescription();
-        $baseClassname = $this->getObjectBuilder()->getClassname();
+        $baseClassname = 'Base' . $this->getObjectBuilder()->getClassname();
+        $this->declareClassNamespace($this->getObjectBuilder()->getClassname() . ' as ' . $baseClassname, $this->getObjectBuilder()->getNamespace());
 
         $script .= "
 

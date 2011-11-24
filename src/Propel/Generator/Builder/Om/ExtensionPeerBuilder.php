@@ -37,10 +37,10 @@ class ExtensionPeerBuilder extends AbstractPeerBuilder
     protected function addClassOpen(&$script)
     {
         $table = $this->getTable();
-        $this->declareClassFromBuilder($this->getPeerBuilder());
         $tableName = $table->getName();
         $tableDesc = $table->getDescription();
-        $baseClassname = $this->getPeerBuilder()->getClassname();
+        $baseClassname = 'Base' . $this->getPeerBuilder()->getClassname();
+        $this->declareClassNamespace($this->getPeerBuilder()->getClassname() . ' as ' . $baseClassname, $this->getPeerBuilder()->getNamespace());
 
         $script .= "
 
