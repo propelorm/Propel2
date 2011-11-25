@@ -221,11 +221,6 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask
             // add the childs attributes as if they where children
             foreach ( $v->attributes() as $ak => $av ) {
 
-                // if the child is not an array, transform it into one
-                if ( !is_array( $child ) ) {
-                    $child = array( "value" => $child );
-                }
-
                 if ($ak == 'id') {
                     // special exception: if there is a key named 'id'
                     // then we will name the current key after that id
