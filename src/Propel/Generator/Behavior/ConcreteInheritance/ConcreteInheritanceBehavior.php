@@ -136,22 +136,13 @@ class ConcreteInheritanceBehavior extends Behavior
         $parentTable = $this->getParentTable();
         switch (get_class($builder)) {
             case 'Propel\Generator\Builder\Om\ObjectBuilder':
-                $objectBuilder = $builder->getNewStubObjectBuilder($parentTable);
-                $builder->declareClass($objectBuilder->getFullyQualifiedClassname());
-
-                return $objectBuilder->getClassname();
+                return $builder->declareClassFromBuilder($builder->getNewStubObjectBuilder($parentTable), true);
                 break;
             case 'Propel\Generator\Builder\Om\QueryBuilder':
-                $queryBuilder = $builder->getNewStubQueryBuilder($parentTable);
-                $builder->declareClass($queryBuilder->getFullyQualifiedClassname());
-
-                return $queryBuilder->getClassname();
+                return $builder->declareClassFromBuilder($builder->getNewStubQueryBuilder($parentTable), true);
                 break;
             case 'Propel\Generator\Builder\Om\PeerBuilder':
-                $peerBuilder = $builder->getNewStubPeerBuilder($parentTable);
-                $builder->declareClass($peerBuilder->getFullyQualifiedClassname());
-
-                return $peerBuilder->getClassname();
+                return $builder->declareClassFromBuilder($builder->getNewStubPeerBuilder($parentTable), true);
                 break;
             default:
                 return null;
@@ -193,7 +184,7 @@ class ConcreteInheritanceBehavior extends Behavior
     protected function addObjectGetParentOrCreate(&$script)
     {
         $parentTable = $this->getParentTable();
-        $parentClass = $this->builder->getNewStubObjectBuilder($parentTable)->getClassname();
+        $parentClass = $this->builder->getClassnameFromBuilder($this->builder->getNewStubObjectBuilder($parentTable));
         $script .= "
 /**
  * Get or Create the parent " . $parentClass . " object of the current object
@@ -208,7 +199,7 @@ public function getParentOrCreate(\$con = null)
 
         return \$parent;
     } else {
-        return " . $this->builder->getNewStubQueryBuilder($parentTable)->getClassname() . "::create()->findPk(\$this->getPrimaryKey(), \$con);
+        return " . $this->builder->getClassnameFromBuilder($this->builder->getNewStubQueryBuilder($parentTable)) . "::create()->findPk(\$this->getPrimaryKey(), \$con);
     }
 }
 ";

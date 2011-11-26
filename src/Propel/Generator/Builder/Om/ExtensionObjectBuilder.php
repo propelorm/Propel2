@@ -39,7 +39,7 @@ class ExtensionObjectBuilder extends AbstractObjectBuilder
         $table = $this->getTable();
         $tableName = $table->getName();
         $tableDesc = $table->getDescription();
-        $baseClassname = $this->declareClassFromBuilder($this->getObjectBuilder(), true);
+        $baseClassname = $this->getClassnameFromBuilder($this->getObjectBuilder());
 
         $script .= "
 

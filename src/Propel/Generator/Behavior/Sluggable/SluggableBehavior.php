@@ -269,7 +269,7 @@ protected static function limitSlugSize(\$slug, \$incrementReservedSpace = 3)
 protected function makeSlugUnique(\$slug, \$separator = '" . $this->getParameter('separator') ."', \$increment = 0)
 {
     \$slug2 = empty(\$increment) ? \$slug : \$slug . \$separator . \$increment;
-    \$slugAlreadyExists = " . $this->builder->getStubQueryBuilder()->getClassname() . "::create()
+    \$slugAlreadyExists = " . $this->builder->getQueryClassname() . "::create()
         ->filterBySlug(\$slug2)
         ->prune(\$this)
         ->count();
@@ -302,7 +302,7 @@ protected function makeSlugUnique(\$slug, \$separator = '" . $this->getParameter
  *
  * @param     string \$slug The value to use as filter.
  *
- * @return    " . $this->builder->getStubQueryBuilder()->getClassname() . " The current query, for fluid interface
+ * @return    " . $this->builder->getQueryClassname() . " The current query, for fluid interface
  */
 public function filterBySlug(\$slug)
 {
@@ -320,7 +320,7 @@ public function filterBySlug(\$slug)
  * @param     string \$slug The value to use as filter.
  * @param     ConnectionInterface \$con The optional connection object
  *
- * @return    " . $this->builder->getStubObjectBuilder()->getClassname() . " the result, formatted by the current formatter
+ * @return    " . $this->builder->getObjectClassname() . " the result, formatted by the current formatter
  */
 public function findOneBySlug(\$slug, \$con = null)
 {

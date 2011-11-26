@@ -39,7 +39,7 @@ class ExtensionQueryBuilder extends AbstractOMBuilder
         $table = $this->getTable();
         $tableName = $table->getName();
         $tableDesc = $table->getDescription();
-        $baseClassname = $this->declareClassFromBuilder($this->getQueryBuilder(), true);
+        $baseClassname = $this->getClassnameFromBuilder($this->getQueryBuilder());
 
         $script .= "
 

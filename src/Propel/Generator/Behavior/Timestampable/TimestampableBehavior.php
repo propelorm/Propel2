@@ -94,7 +94,7 @@ if (!\$this->isColumnModified(" . $this->getColumnConstant('update_column', $bui
 /**
  * Mark the current object so that the update date doesn't get updated during next save
  *
- * @return     " . $builder->getStubObjectBuilder()->getClassname() . " The current object (for fluent API support)
+ * @return     " . $builder->getObjectClassname() . " The current object (for fluent API support)
  */
 public function keepUpdateDateUnchanged()
 {
@@ -107,7 +107,7 @@ public function keepUpdateDateUnchanged()
 
     public function queryMethods($builder)
     {
-        $queryClassName = $builder->getStubQueryBuilder()->getClassname();
+        $queryClassName = $builder->getQueryClassname();
         $updateColumnConstant = $this->getColumnConstant('update_column', $builder);
         $createColumnConstant = $this->getColumnConstant('create_column', $builder);
 

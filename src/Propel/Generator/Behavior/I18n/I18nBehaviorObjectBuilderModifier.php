@@ -38,8 +38,8 @@ class I18nBehaviorObjectBuilderModifier
             $i18nTable = $this->behavior->getI18nTable();
 
             return $this->behavior->renderTemplate('objectPostDelete', array(
-                'i18nQueryName'    => $builder->getNewStubQueryBuilder($i18nTable)->getClassname(),
-                'objectClassname' => $builder->getNewStubObjectBuilder($this->behavior->getTable())->getClassname(),
+                'i18nQueryName'    => $builder->getClassnameFromBuilder($builder->getNewStubQueryBuilder($i18nTable)),
+                'objectClassname' => $builder->getClassnameFromBuilder($builder->getNewStubObjectBuilder($this->behavior->getTable())),
             ));
         }
     }
@@ -48,7 +48,7 @@ class I18nBehaviorObjectBuilderModifier
     {
         return $this->behavior->renderTemplate('objectAttributes', array(
             'defaultLocale'   => $this->behavior->getDefaultLocale(),
-            'objectClassname' => $builder->getNewStubObjectBuilder($this->behavior->getI18nTable())->getClassname(),
+            'objectClassname' => $builder->getClassnameFromBuilder($builder->getNewStubObjectBuilder($this->behavior->getI18nTable())),
         ));
     }
 
@@ -87,7 +87,7 @@ class I18nBehaviorObjectBuilderModifier
     protected function addSetLocale()
     {
         return $this->behavior->renderTemplate('objectSetLocale', array(
-            'objectClassname'   => $this->builder->getStubObjectBuilder($this->table)->getClassname(),
+            'objectClassname'   => $this->builder->getClassnameFromBuilder($this->builder->getStubObjectBuilder($this->table)),
             'defaultLocale'     => $this->behavior->getDefaultLocale(),
             'localeColumnName'  => $this->behavior->getLocaleColumn()->getPhpName(),
         ));
@@ -103,7 +103,7 @@ class I18nBehaviorObjectBuilderModifier
     protected function addSetLocaleAlias($alias)
     {
         return $this->behavior->renderTemplate('objectSetLocaleAlias', array(
-            'objectClassname'  => $this->builder->getStubObjectBuilder($this->table)->getClassname(),
+            'objectClassname'  => $this->builder->getClassnameFromBuilder($this->builder->getStubObjectBuilder($this->table)),
             'defaultLocale'    => $this->behavior->getDefaultLocale(),
             'alias'            => ucfirst($alias),
         ));
@@ -123,12 +123,12 @@ class I18nBehaviorObjectBuilderModifier
         $fk = $this->behavior->getI18nForeignKey();
 
         return $this->behavior->renderTemplate('objectGetTranslation', array(
-            'i18nTablePhpName' => $this->builder->getNewStubObjectBuilder($i18nTable)->getClassname(),
+            'i18nTablePhpName' => $this->builder->getClassnameFromBuilder($this->builder->getNewStubObjectBuilder($i18nTable)),
             'defaultLocale'    => $this->behavior->getDefaultLocale(),
             'i18nListVariable' => $this->builder->getRefFKCollVarName($fk),
             'localeColumnName' => $this->behavior->getLocaleColumn()->getPhpName(),
-            'i18nQueryName'    => $this->builder->getNewStubQueryBuilder($i18nTable)->getClassname(),
-            'i18nSetterMethod' => $this->builder->getRefFKPhpNameAffix($fk, $plural),
+            'i18nQueryName'    => $this->builder->getClassnameFromBuilder($this->builder->getNewStubQueryBuilder($i18nTable)),
+            'i18nSetterMethod' => $this->builder->getRefFKPhpNameAffix($fk, $plural = false),
         ));
     }
 
@@ -138,9 +138,9 @@ class I18nBehaviorObjectBuilderModifier
         $fk = $this->behavior->getI18nForeignKey();
 
         return $this->behavior->renderTemplate('objectRemoveTranslation', array(
-            'objectClassname' => $this->builder->getStubObjectBuilder($this->table)->getClassname(),
+            'objectClassname' => $this->builder->getClassnameFromBuilder($this->builder->getStubObjectBuilder($this->table)),
             'defaultLocale'    => $this->behavior->getDefaultLocale(),
-            'i18nQueryName'    => $this->builder->getNewStubQueryBuilder($i18nTable)->getClassname(),
+            'i18nQueryName'    => $this->builder->getClassnameFromBuilder($this->builder->getNewStubQueryBuilder($i18nTable)),
             'i18nCollection'   => $this->builder->getRefFKCollVarName($fk),
             'localeColumnName' => $this->behavior->getLocaleColumn()->getPhpName(),
         ));
@@ -149,7 +149,7 @@ class I18nBehaviorObjectBuilderModifier
     protected function addGetCurrentTranslation()
     {
         return $this->behavior->renderTemplate('objectGetCurrentTranslation', array(
-            'i18nTablePhpName' => $this->builder->getNewStubObjectBuilder($this->behavior->getI18nTable())->getClassname(),
+            'i18nTablePhpName' => $this->builder->getClassnameFromBuilder($this->builder->getNewStubObjectBuilder($this->behavior->getI18nTable())),
         ));
     }
 
@@ -183,8 +183,8 @@ class I18nBehaviorObjectBuilderModifier
     // cannot be specified by the user
     protected function addTranslatedColumnSetter(Column $column)
     {
-        $i18nTablePhpName = $this->builder->getNewStubObjectBuilder($this->behavior->getI18nTable())->getClassname();
-        $tablePhpName = $this->builder->getStubObjectBuilder()->getClassname();
+        $i18nTablePhpName = $this->builder->getClassnameFromBuilder($this->builder->getNewStubObjectBuilder($this->behavior->getI18nTable()));
+        $tablePhpName = $this->builder->getObjectClassname();
         $objectBuilder = $this->builder->getNewObjectBuilder($this->behavior->getI18nTable());
         $comment = '';
         $functionStatement = '';

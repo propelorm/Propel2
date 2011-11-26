@@ -39,7 +39,7 @@ class ExtensionPeerBuilder extends AbstractPeerBuilder
         $table = $this->getTable();
         $tableName = $table->getName();
         $tableDesc = $table->getDescription();
-        $baseClassname = $this->declareClassFromBuilder($this->getPeerBuilder(), true);
+        $baseClassname = $this->getClassnameFromBuilder($this->getPeerBuilder());
 
         $script .= "
 

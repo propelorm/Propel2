@@ -177,7 +177,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 
     public function getTablePhpName()
     {
-        return ($this->getTable()->isAbstract() ? '' : $this->getStubObjectBuilder()->getClassname());
+        return ($this->getTable()->isAbstract() ? '' : $this->getClassnameFromBuilder($this->getStubObjectBuilder()));
     }
 
     /**
@@ -397,7 +397,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         self::" . $this->getColumnName($col) ." => array(
 ";
                 foreach ($col->getValueSet() as $value) {
-                    $script .= "            " . $this->getStubPeerBuilder()->getClassname() . '::' . $this->getColumnName($col) . '_' . $this->getEnumValueConstant($value) . ",
+                    $script .= "            " . $this->getPeerClassname() . '::' . $this->getColumnName($col) . '_' . $this->getEnumValueConstant($value) . ",
 ";
                 }
                 $script .= "        ),";
@@ -465,7 +465,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
     protected function addGetValueSets(&$script)
     {
         $this->declareClassFromBuilder($this->getTableMapBuilder());
-        $callingClass = $this->getStubPeerBuilder()->getClassname();
+        $callingClass = $this->getPeerClassname();
         $script .= "
     /**
      * Gets the list of values for all ENUM columns
@@ -953,9 +953,9 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 
                 if (ForeignKey::CASCADE === $fk->getOnDelete()  || ForeignKey::SETNULL === $fk->getOnDelete()) {
                     $script .= "
-        // Invalidate objects in ".$joinedTablePeerBuilder->getClassname()." instance pool,
+        // Invalidate objects in ".$this->getClassnameFromBuilder($joinedTablePeerBuilder)." instance pool,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
-        ".$joinedTablePeerBuilder->getClassname()."::clearInstancePool();";
+        ".$this->getClassnameFromBuilder($joinedTablePeerBuilder)."::clearInstancePool();";
                 } // if fk is on delete cascade
             } // if (! for ref only)
         } // foreach
@@ -1169,7 +1169,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
      * @param      int \$startcol The 0-based offset for reading from the resultset row.
      * @throws     PropelException Any exceptions caught during processing will be
      *         rethrown wrapped into a PropelException.
-     * @return     array (" . $this->getStubObjectBuilder()->getClassName(). " object, last column rank)
+     * @return     array (" . $this->getObjectClassName(). " object, last column rank)
      */
     static public function populateObject(\$row, \$startcol = 0)
     {

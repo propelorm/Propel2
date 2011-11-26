@@ -54,9 +54,9 @@ class SortableBehaviorObjectBuilderModifier
     protected function setBuilder($builder)
     {
         $this->builder = $builder;
-        $this->objectClassname = $builder->getStubObjectBuilder()->getClassname();
-        $this->queryClassname = $builder->getStubQueryBuilder()->getClassname();
-        $this->peerClassname = $builder->getStubPeerBuilder()->getClassname();
+        $this->objectClassname = $builder->getObjectClassname();
+        $this->queryClassname = $builder->getQueryClassname();
+        $this->peerClassname = $builder->getPeerClassname();
         $this->peerFullClassname = $builder->getStubPeerBuilder()->getFullyQualifiedClassname();
     }
 

@@ -61,8 +61,8 @@ class QueryBuilder extends AbstractOMBuilder
         $table = $this->getTable();
         $tableName = $table->getName();
         $tableDesc = $table->getDescription();
-        $queryClass = $this->getStubQueryBuilder()->getClassname();
-        $modelClass = $this->getStubObjectBuilder()->getClassname();
+        $queryClass = $this->getQueryClassname();
+        $modelClass = $this->getObjectClassname();
         $parentClass = $this->getBehaviorContent('parentClass');
         $parentClass = null === $parentClass ? 'ModelCriteria' : $parentClass;
         $script .= "
@@ -299,7 +299,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
      **/
     protected function addFactoryComment(&$script)
     {
-        $classname = $this->getNewStubQueryBuilder($this->getTable())->getClassname();
+        $classname = $this->getClassnameFromBuilder($this->getNewStubQueryBuilder($this->getTable()));
         $script .= "
     /**
      * Returns a new " . $classname . " object.
@@ -328,7 +328,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
      */
     protected function addFactoryBody(&$script)
     {
-        $classname = $this->getNewStubQueryBuilder($this->getTable())->getClassname();
+        $classname = $this->getClassnameFromBuilder($this->getNewStubQueryBuilder($this->getTable()));
         $script .= "
         if (\$criteria instanceof " . $classname . ") {
             return \$criteria;
@@ -517,7 +517,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
     protected function addFindPkComplex(&$script)
     {
         $table = $this->getTable();
-        $class = $class = $this->getStubObjectBuilder()->getClassname();
+        $class = $this->getObjectClassname();
         $this->declareClasses('\Propel\Runtime\Connection\ConnectionInterface');
         $script .= "
     /**
@@ -600,7 +600,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
      *
      * @param     mixed \$key Primary key to use for the query
      *
-     * @return    " . $this->getStubQueryBuilder()->getClassname() . " The current query, for fluid interface
+     * @return    " . $this->getQueryClassname() . " The current query, for fluid interface
      */
     public function filterByPrimaryKey(\$key)
     {";
@@ -643,7 +643,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
      *
      * @param     array \$keys The list of primary key to use for the query
      *
-     * @return    " . $this->getStubQueryBuilder()->getClassname() . " The current query, for fluid interface
+     * @return    " . $this->getQueryClassname() . " The current query, for fluid interface
      */
     public function filterByPrimaryKeys(\$keys)
     {";
@@ -769,7 +769,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
         $script .= "
      * @param     string \$comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return    " . $this->getStubQueryBuilder()->getClassname() . " The current query, for fluid interface
+     * @return    " . $this->getQueryClassname() . " The current query, for fluid interface
      */
     public function filterBy$colPhpName(\$$variableName = null, \$comparison = null)
     {";
@@ -901,7 +901,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
      * @param     mixed \$$variableName The value to use as filter
      * @param     string \$comparison Operator to use for the column comparison, defaults to Criteria::CONTAINS_ALL
      *
-     * @return    " . $this->getStubQueryBuilder()->getClassname() . " The current query, for fluid interface
+     * @return    " . $this->getQueryClassname() . " The current query, for fluid interface
      */
     public function filterBy$singularPhpName(\$$variableName = null, \$comparison = null)
     {
@@ -940,11 +940,11 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
             '\Propel\Runtime\Exception\PropelException'
         );
         $table = $this->getTable();
-        $queryClass = $this->getStubQueryBuilder()->getClassname();
+        $queryClass = $this->getQueryClassname();
         $fkTable = $this->getForeignTable($fk);
         $fkStubObjectBuilder = $this->getNewStubObjectBuilder($fkTable);
         $this->declareClassFromBuilder($fkStubObjectBuilder);
-        $fkPhpName = $fkStubObjectBuilder->getClassname();
+        $fkPhpName = $this->getClassnameFromBuilder($fkStubObjectBuilder);
         $relationName = $this->getFKPhpNameAffix($fk);
         $objectName = '$' . $fkTable->getStudlyPhpName();
         $script .= "
@@ -1012,11 +1012,11 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
             '\Propel\Runtime\Exception\PropelException'
         );
         $table = $this->getTable();
-        $queryClass = $this->getStubQueryBuilder()->getClassname();
+        $queryClass = $this->getQueryClassname();
         $fkTable = $this->getTable()->getDatabase()->getTable($fk->getTableName());
         $fkStubObjectBuilder = $this->getNewStubObjectBuilder($fkTable);
         $this->declareClassFromBuilder($fkStubObjectBuilder);
-        $fkPhpName = $fkStubObjectBuilder->getClassname();
+        $fkPhpName = $this->getClassnameFromBuilder($fkStubObjectBuilder);
         $relationName = $this->getRefFKPhpNameAffix($fk);
         $objectName = '$' . $fkTable->getStudlyPhpName();
         $script .= "
@@ -1068,7 +1068,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
      */
     protected function addJoinFk(&$script, $fk)
     {
-        $queryClass = $this->getStubQueryBuilder()->getClassname();
+        $queryClass = $this->getQueryClassname();
         $fkTable = $this->getForeignTable($fk);
         $relationName = $this->getFKPhpNameAffix($fk);
         $joinType = $this->getJoinType($fk);
@@ -1081,7 +1081,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
      */
     protected function addJoinRefFk(&$script, $fk)
     {
-        $queryClass = $this->getStubQueryBuilder()->getClassname();
+        $queryClass = $this->getQueryClassname();
         $fkTable = $this->getTable()->getDatabase()->getTable($fk->getTableName());
         $relationName = $this->getRefFKPhpNameAffix($fk);
         $joinType = $this->getJoinType($fk);
@@ -1137,7 +1137,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
     {
         $fkTable = $this->getForeignTable($fk);
         $fkQueryBuilder = $this->getNewStubQueryBuilder($fkTable);
-        $queryClass = $fkQueryBuilder->getClassname();
+        $queryClass = $this->getClassnameFromBuilder($fkQueryBuilder);
         if ($namespace = $fkQueryBuilder->getNamespace()) {
             $queryClass = '\\' . $namespace . '\\' . $queryClass;
         }
@@ -1154,7 +1154,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
     {
         $fkTable = $this->getTable()->getDatabase()->getTable($fk->getTableName());
         $fkQueryBuilder = $this->getNewStubQueryBuilder($fkTable);
-        $queryClass = $fkQueryBuilder->getClassname();
+        $queryClass = $this->getClassnameFromBuilder($fkQueryBuilder);
         if ($namespace = $fkQueryBuilder->getNamespace()) {
             $queryClass = '\\' . $namespace . '\\' . $queryClass;
         }
@@ -1192,7 +1192,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 
     protected function addFilterByCrossFK(&$script, $refFK, $crossFK)
     {
-        $queryClass = $this->getStubQueryBuilder()->getClassname();
+        $queryClass = $this->getQueryClassname();
         $crossRefTable = $crossFK->getTable();
         $foreignTable = $crossFK->getForeignTable();
         $fkPhpName =  $foreignTable->getPhpName();
@@ -1227,7 +1227,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
     protected function addPrune(&$script)
     {
         $table = $this->getTable();
-        $class = $this->getStubObjectBuilder()->getClassname();
+        $class = $this->getObjectClassname();
         $objectName = '$' . $table->getStudlyPhpName();
         $script .= "
     /**
@@ -1235,7 +1235,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
      *
      * @param     $class $objectName Object to remove from the list of results
      *
-     * @return    " . $this->getStubQueryBuilder()->getClassname() . " The current query, for fluid interface
+     * @return    " . $this->getQueryClassname() . " The current query, for fluid interface
      */
     public function prune($objectName = null)
     {
