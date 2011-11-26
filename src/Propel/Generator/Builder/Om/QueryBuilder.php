@@ -165,7 +165,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
             '\Propel\Runtime\Query\Criteria',
             '\Propel\Runtime\Query\ModelJoin'
         );
-        $this->declareClassFromBuilder($this->getStubQueryBuilder());
+        $this->declareClassFromBuilder($this->getStubQueryBuilder(), 'Child');
         $this->declareClassFromBuilder($this->getStubPeerBuilder());
 
         // apply behaviors

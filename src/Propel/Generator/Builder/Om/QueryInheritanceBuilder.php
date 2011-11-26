@@ -167,7 +167,7 @@ class "  .$this->getClassname() . " extends " . $baseClassname . " {
     protected function addFactory(&$script)
     {
         $builder = $this->getNewStubQueryInheritanceBuilder($this->getChild());
-        $this->declareClassFromBuilder($builder);
+        $this->declareClassFromBuilder($builder, 'Child');
         $classname = $builder->getClassname();
         $script .= "
     /**

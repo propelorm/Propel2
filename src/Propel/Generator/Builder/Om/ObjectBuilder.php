@@ -2975,7 +2975,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
     protected function addFKMethods(&$script)
     {
         foreach ($this->getTable()->getForeignKeys() as $fk) {
-            $this->declareClassFromBuilder($this->getNewStubObjectBuilder($fk->getForeignTable()));
+            $this->declareClassFromBuilder($this->getNewStubObjectBuilder($fk->getForeignTable()), 'Child');
             $this->declareClassFromBuilder($this->getNewStubQueryBuilder($fk->getForeignTable()));
             $this->addFKMutator($script, $fk);
             $this->addFKAccessor($script, $fk);
@@ -3331,7 +3331,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
         }
         $this->addInitRelations($script, $referrers);
         foreach ($referrers as $refFK) {
-            $this->declareClassFromBuilder($this->getNewStubObjectBuilder($refFK->getTable()));
+            $this->declareClassFromBuilder($this->getNewStubObjectBuilder($refFK->getTable()), 'Child');
             $this->declareClassFromBuilder($this->getNewStubQueryBuilder($refFK->getTable()));
             if ($refFK->isLocalPrimaryKey()) {
                 $this->addPKRefFKGet($script, $refFK);
@@ -3801,7 +3801,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
     {
         foreach ($this->getTable()->getCrossFks() as $fkList) {
             list($refFK, $crossFK) = $fkList;
-            $this->declareClassFromBuilder($this->getNewStubObjectBuilder($crossFK->getForeignTable()));
+            $this->declareClassFromBuilder($this->getNewStubObjectBuilder($crossFK->getForeignTable()), 'Child');
             $this->declareClassFromBuilder($this->getNewStubQueryBuilder($crossFK->getForeignTable()));
 
             $this->addCrossFKClear($script, $crossFK);

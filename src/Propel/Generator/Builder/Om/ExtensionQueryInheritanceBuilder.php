@@ -64,7 +64,7 @@ class ExtensionQueryInheritanceBuilder extends AbstractOMBuilder
     public function getChild()
     {
         if (!$this->child) {
-            throw new BuildException("The PHP5MultiExtendObjectBuilder needs to be told which child class to build (via setChild() method) before it can build the stub class.");
+            throw new BuildException("The MultiExtendObjectBuilder needs to be told which child class to build (via setChild() method) before it can build the stub class.");
         }
 
         return $this->child;
@@ -81,8 +81,7 @@ class ExtensionQueryInheritanceBuilder extends AbstractOMBuilder
         $tableDesc = $table->getDescription();
 
         $baseBuilder = $this->getNewQueryInheritanceBuilder($this->getChild());
-        $baseClassname = 'Base' . $baseBuilder->getClassname();
-        $this->declareClassNamespace($baseBuilder->getClassname() . ' as ' . $baseClassname, $baseBuilder->getNamespace());
+        $baseClassname = $this->declareClassFromBuilder($baseBuilder, true);
 
         $script .= "
 

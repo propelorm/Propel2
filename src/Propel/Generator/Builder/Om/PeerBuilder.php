@@ -57,7 +57,8 @@ class PeerBuilder extends AbstractPeerBuilder
      */
     public function getUnprefixedClassname()
     {
-        return $this->getBuildProperty('basePrefix') . $this->getStubPeerBuilder()->getUnprefixedClassname();
+        return $this->getBuildProperty('basePrefix')
+        . $this->getStubPeerBuilder()->getUnprefixedClassname();
     }
 
     /**
@@ -121,16 +122,16 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 
     protected function addClassBody(&$script)
     {
-        $this->declareClassFromBuilder($this->getStubPeerBuilder());
+        $this->declareClassFromBuilder($this->getStubPeerBuilder(), 'Child');
         $this->declareClassFromBuilder($this->getStubObjectBuilder());
 
         parent::addClassBody($script);
 
         $this->declareClasses(
             '\Propel\Runtime\Propel',
-            '\Propel\Runtime\Exception\PropelException',
             '\Propel\Runtime\Connection\ConnectionInterface',
             '\Propel\Runtime\Connection\StatementInterface',
+            '\Propel\Runtime\Exception\PropelException',
             '\Propel\Runtime\Util\BasePeer',
             '\Propel\Runtime\Query\Criteria',
             '\PDO'
