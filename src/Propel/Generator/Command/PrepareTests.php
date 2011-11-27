@@ -113,8 +113,10 @@ class PrepareTests extends Command
             return;
         }
 
+        if (is_file('schema.xml')) {
+            shell_exec(sprintf('%s main', $this->propelgen));
+        }
 
-        shell_exec(sprintf('%s main', $this->propelgen));
         shell_exec(sprintf('%s insert-sql', $this->propelgen));
 
         $output->writeln('done.');
