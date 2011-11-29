@@ -14,7 +14,7 @@
                 <adapter>##DATABASE_VENDOR##</adapter>
                 <connection>
                     <classname>\Propel\Runtime\Connection\DebugPDO</classname>
-                    <dsn>##DATABASE_VENDOR##:##DATABASE_SERVER##;dbname=test</dsn>
+                    <dsn>##DATABASE_VENDOR##:host=##DATABASE_SERVER##;dbname=test</dsn>
                     <user>##DATABASE_USER##</user>
                     <password>##DATABASE_PASSWORD##</password>
                     <options>

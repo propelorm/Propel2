@@ -11,7 +11,7 @@ use Symfony\Component\Console\Command\Command;
 /**
  * @author William Durand <william.durand1@gmail.com>
  */
-class PrepareTests extends Command
+class TestPrepare extends Command
 {
     /**
      * @var string
@@ -72,7 +72,7 @@ class PrepareTests extends Command
                 new InputOption('vendor', null, InputOption::VALUE_REQUIRED, 'The database vendor', self::DEFAULT_VENDOR),
                 new InputOption('server', 's', InputOption::VALUE_REQUIRED, 'The database server', self::DEFAULT_DB_SERVER),
                 new InputOption('user', 'u', InputOption::VALUE_REQUIRED, 'The database user', self::DEFAULT_DB_USER),
-                new InputOption('password', 'p', InputOption::VALUE_REQUIRED, 'The database password', selft::DEFAULT_DB_PASSWD),
+                new InputOption('password', 'p', InputOption::VALUE_REQUIRED, 'The database password', self::DEFAULT_DB_PASSWD),
                 new InputOption('fixtures-dir', null, InputOption::VALUE_REQUIRED, 'A fixture directory to build', null),
             ))
             ->setName('test:prepare')

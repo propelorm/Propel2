@@ -14,7 +14,7 @@
                 <adapter>mysql</adapter>
                 <connection>
                     <classname>\Propel\Runtime\Connection\DebugPDO</classname>
-                    <dsn>mysql:##DATABASE_SERVER##;dbname=reverse_bookstore</dsn>
+                    <dsn>mysql:host=##DATABASE_SERVER##;dbname=reverse_bookstore</dsn>
                     <user>##DATABASE_USER##</user>
                     <password>##DATABASE_PASSWORD##</password>
                 <options>
