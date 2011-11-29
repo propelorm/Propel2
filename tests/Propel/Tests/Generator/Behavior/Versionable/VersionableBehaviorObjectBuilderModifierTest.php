@@ -400,6 +400,11 @@ EOF;
         $this->assertEquals(2, $bs[0]->getVersion());
         $this->assertEquals(1, $bs[1]->getVersion());
         $this->assertEquals(1, $bs[2]->getVersion());
+
+        $a->toVersion(1);
+        $bs = $a->getVersionableBehaviorTest5s();
+        $this->assertEquals(1, $bs[0]->getVersion());
+        $this->assertEquals(1, $bs[1]->getVersion());
     }
 
     public function testGetLastVersionNumber()
