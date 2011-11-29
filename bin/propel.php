@@ -11,5 +11,5 @@ if (!class_exists('\Symfony\Component\Console\Application')) {
 use \Symfony\Component\Console\Application;
 
 $app = new Application('Propel', '2.0 (dev)');
-$app->add(new \Propel\Generator\Command\PrepareTests());
+$app->add(new \Propel\Generator\Command\TestPrepare());
 $app->run();
