@@ -14,12 +14,9 @@
                 <adapter>mysql</adapter>
                 <connection>
                     <classname>\Propel\Runtime\Connection\DebugPDO</classname>
-                    <dsn>mysql:dbname=reverse_bookstore</dsn>
-                    <!--
-                    For MySQL and Oracle you must specify username + password separate from DSN:
-                    <user>bookstore</user>
-                    <password></password>
-                    -->
+                    <dsn>mysql:##DATABASE_SERVER##;dbname=reverse_bookstore</dsn>
+                    <user>##DATABASE_USER##</user>
+                    <password>##DATABASE_PASSWORD##</password>
                 <options>
                         <option id="ATTR_PERSISTENT">false</option>
                     </options>

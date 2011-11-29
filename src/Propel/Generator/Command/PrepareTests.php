@@ -14,6 +14,26 @@ use Symfony\Component\Console\Command\Command;
 class PrepareTests extends Command
 {
     /**
+     * @var string
+     */
+    const DEFAULT_VENDOR    = 'mysql';
+
+    /**
+     * @var string
+     */
+    const DEFAULT_DB_SERVER = '127.0.0.1';
+
+    /**
+     * @var string
+     */
+    const DEFAULT_DB_USER   = 'root';
+
+    /**
+     * @var string
+     */
+    const DEFAULT_DB_PASSWD = '';
+
+    /**
      * @var array
      */
     protected $fixturesDirs = array(
@@ -49,9 +69,10 @@ class PrepareTests extends Command
     {
         $this
             ->setDefinition(array(
-                new InputOption('vendor', null, InputOption::VALUE_REQUIRED, 'The database vendor', 'mysql'),
-                new InputOption('user', 'u', InputOption::VALUE_REQUIRED, 'The database user', 'root'),
-                new InputOption('password', 'p', InputOption::VALUE_REQUIRED, 'The database password', ''),
+                new InputOption('vendor', null, InputOption::VALUE_REQUIRED, 'The database vendor', self::DEFAULT_VENDOR),
+                new InputOption('server', 's', InputOption::VALUE_REQUIRED, 'The database server', self::DEFAULT_DB_SERVER),
+                new InputOption('user', 'u', InputOption::VALUE_REQUIRED, 'The database user', self::DEFAULT_DB_USER),
+                new InputOption('password', 'p', InputOption::VALUE_REQUIRED, 'The database password', selft::DEFAULT_DB_PASSWD),
                 new InputOption('fixtures-dir', null, InputOption::VALUE_REQUIRED, 'A fixture directory to build', null),
             ))
             ->setName('test:prepare')
@@ -91,6 +112,7 @@ class PrepareTests extends Command
             $content = file_get_contents('build.properties.dist');
 
             $content = str_replace('##DATABASE_VENDOR##', $input->getOption('vendor'), $content);
+            $content = str_replace('##DATABASE_SERVER##', $input->getOption('server'), $content);
             $content = str_replace('##DATABASE_USER##', $input->getOption('user'), $content);
             $content = str_replace('##DATABASE_PASSWORD##', $input->getOption('password'), $content);
 
@@ -104,6 +126,7 @@ class PrepareTests extends Command
             $content = file_get_contents('runtime-conf.xml.dist');
 
             $content = str_replace('##DATABASE_VENDOR##', $input->getOption('vendor'), $content);
+            $content = str_replace('##DATABASE_SERVER##', $input->getOption('server'), $content);
             $content = str_replace('##DATABASE_USER##', $input->getOption('user'), $content);
             $content = str_replace('##DATABASE_PASSWORD##', $input->getOption('password'), $content);
 

@@ -16,7 +16,7 @@
                 <!-- Connection parameters. See PDO documentation for DSN format and available option constants. -->
                 <connection>
                     <classname>\Propel\Runtime\Connection\DebugPDO</classname>
-                    <dsn>##DATABASE_VENDOR##:dbname=test</dsn>
+                    <dsn>##DATABASE_VENDOR##:##DATABASE_SERVER##;dbname=test</dsn>
                     <user>##DATABASE_USER##</user>
                     <password>##DATABASE_PASSWORD##</password>
                     <options>
