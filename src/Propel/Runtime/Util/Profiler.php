@@ -15,41 +15,23 @@ namespace Propel\Runtime\Util;
 */
 class Profiler
 {
-    protected $slowTreshold = 1;
-    protected $details = array();
+    protected $slowTreshold = 0.1;
+    protected $details = array(
+        'time' => array(
+            'name'      => 'Time',
+            'precision' => 3,
+            'pad'       => 8
+        ),
+        'mem' => array(
+            'name'      => 'Memory',
+            'precision' => 3,
+            'pad'       => 7
+        ),
+    );
     protected $innerGlue = ': ';
     protected $outerGlue = ' | ';
 
     protected $snapshot;
-
-    public function __construct($details = null)
-    {
-        if (null === $details) {
-            $details = array(
-                'time' => array(
-                    'name'      => 'Time',
-                    'precision' => 3,
-                    'pad'       => 5
-                ),
-                'mem' => array(
-                    'name'      => 'Memory',
-                    'precision' => 3,
-                    'pad'       => 5
-                ),
-                'memDelta' => array(
-                    'name'      => 'Delta',
-                    'precision' => 3,
-                    'pad'       => 5
-                ),
-                'memPeak' => array(
-                    'name'      => 'Peak',
-                    'precision' => 3,
-                    'pad'       => 5
-                )
-            );
-        }
-        $this->details = $details;
-    }
 
     /**
      * Set the duration which triggers the 'slow' label on details.
@@ -59,6 +41,16 @@ class Profiler
     public function setSlowTreshold($slowTreshold)
     {
         $this->slowTreshold = $slowTreshold;
+    }
+
+    /**
+     * Set the list of details to be included in a profile.
+     *
+     * @param array $details
+     */
+    public function setDetails($details)
+    {
+        $this->details = $details;
     }
 
     /**
@@ -81,39 +73,82 @@ class Profiler
         $this->outerGlue = $outerGlue;
     }
 
+    /**
+     * Configure the profiler from an array.
+     *
+     * @param array $profilerConfiguration
+     */
+    public function setConfiguration($profilerConfiguration)
+    {
+        if (isset($profilerConfiguration['slowTreshold'])) {
+            $this->setSlowTreshold($profilerConfiguration['slowTreshold']);
+        }
+        if (isset($profilerConfiguration['details'])) {
+            $this->setDetails($profilerConfiguration['details']);
+        }
+        if (isset($profilerConfiguration['innerGlue'])) {
+            $this->setInnerGlue($profilerConfiguration['innerGlue']);
+        }
+        if (isset($profilerConfiguration['outerGlue'])) {
+            $this->setOuterGlue($profilerConfiguration['outerGlue']);
+        }
+    }
+
+    /**
+     * Get an array representing the configuration of the profiler.
+     *
+     * This array can be used as an input for self::setConfiguration().
+     *
+     * @return array
+     */
+    public function getConfiguration()
+    {
+        return array(
+            'slowTreshold' => $this->slowTreshold,
+            'details'      => $this->details,
+            'innerGlue'    => $this->innerGlue,
+            'outerGlue'    => $this->outerGlue,
+        );
+    }
+
     public function start()
     {
         $this->snapshot = self::getSnapshot();
     }
 
+    public function isSlow()
+    {
+        return microtime(true) - $this->snapshot['microtime'] > $this->slowTreshold;
+    }
+
     public function getProfile()
     {
-        return $this->getDetails($this->snapshot, self::getSnapshot());
+        return $this->getProfileBetween($this->snapshot, self::getSnapshot());
     }
 
     /**
-     * Returns a prefix that may be prepended to a log line, containing debug information according
-     * to the current configuration.
+     * Returns a string that may be prepended to a log line, containing debug information
+     * according to the current configuration.
      *
-     * Uses a given $debugSnapshot to calculate how much time has passed since the call to self::getDebugSnapshot(),
-     * how much the memory consumption by PHP has changed etc.
+     * Uses two debug snapshots to calculate how much time has passed since the call to
+     * self::start(), how much the memory consumption by PHP has changed etc.
      *
-     * @see       self::getDebugSnapshot()
+     * @see       self::getSnapshot()
      *
-     * @param     string  $methodName  Name of the method whose execution is being logged.
-     * @param     array   $debugSnapshot  A previous return value from self::getDebugSnapshot().
+     * @param     array   $startSnapshot  A snapshot, as returned by self::getSnapshot().
+     * @param     array   $endSnapshot    A snapshot, as returned by self::getSnapshot().
      *
      * @return    string
      */
-    public function getDetails($startSnapshot, $endSnapshot)
+    public function getProfileBetween($startSnapshot, $endSnapshot)
     {
-        $details = '';
+        $profile = '';
 
         if ($this->slowTreshold) {
             if ($endSnapshot['microtime'] - $startSnapshot['microtime'] >= $this->slowTreshold) {
-                $details .= 'SLOW ';
+                $profile .= 'SLOW ';
             } else {
-                $details .= '     ';
+                $profile .= '     ';
             }
         }
 
@@ -137,11 +172,11 @@ class Profiler
                     $value = 'n/a';
                     break;
             }
-            $details .= $config['name'] . $this->innerGlue . str_pad($value, $config['pad'], ' ', STR_PAD_LEFT) . $this->outerGlue;
+            $profile .= $config['name'] . $this->innerGlue . str_pad($value, $config['pad'], ' ', STR_PAD_LEFT) . $this->outerGlue;
 
         }
 
-        return $details;
+        return $profile;
     }
 
     /**

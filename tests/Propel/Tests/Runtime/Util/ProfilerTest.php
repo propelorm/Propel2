@@ -16,81 +16,93 @@ use Propel\Runtime\Util\Profiler;
 
 class ProfilerTest extends BaseTestCase
 {
-    public function testGetDetailsAddsSlowTreshold()
+    public function testGetProfileBetweenAddsSlowTreshold()
     {
-        $profiler = new Profiler(array());
+        $profiler = new Profiler();
+        $profiler->setDetails(array());
         $profiler->setSlowTreshold(1000);
-        $res = $profiler->getDetails(array('microtime' => 1000), array('microtime' => 1200));
+        $res = $profiler->getProfileBetween(array('microtime' => 1000), array('microtime' => 1200));
         $this->assertEquals('     ', $res);
-        $res = $profiler->getDetails(array('microtime' => 1000), array('microtime' => 2200));
+        $res = $profiler->getProfileBetween(array('microtime' => 1000), array('microtime' => 2200));
         $this->assertEquals('SLOW ', $res);
     }
 
-    public function testGetDetailsDoesNotAddSlowTresholdWhenValueIsNull()
+    public function testGetProfileBetweenDoesNotAddSlowTresholdWhenValueIsNull()
     {
-        $profiler = new Profiler(array());
+        $profiler = new Profiler();
+        $profiler->setDetails(array());
         $profiler->setSlowTreshold(0);
-        $res = $profiler->getDetails(array('microtime' => 1000), array('microtime' => 1200));
+        $res = $profiler->getProfileBetween(array('microtime' => 1000), array('microtime' => 1200));
         $this->assertEquals('', $res);
-        $res = $profiler->getDetails(array('microtime' => 1000), array('microtime' => 2200));
+        $res = $profiler->getProfileBetween(array('microtime' => 1000), array('microtime' => 2200));
         $this->assertEquals('', $res);
     }
 
-    public function testGetDetailsAddsTime()
+    public function testGetProfileBetweenAddsTime()
     {
-        $profiler = new Profiler(array('time' => array('name' => 'Time', 'precision' => 3, 'pad' => 3)));
+        $profiler = new Profiler();
+        $profiler->setDetails(array('time' => array('name' => 'Time', 'precision' => 3, 'pad' => 3)));
         $profiler->setSlowTreshold(0);
-        $res = $profiler->getDetails(array('microtime' => 1.000), array('microtime' => 1.234));
+        $res = $profiler->getProfileBetween(array('microtime' => 1.000), array('microtime' => 1.234));
         $this->assertEquals('Time: 234ms | ', $res);
-        $res = $profiler->getDetails(array('microtime' => 1.234), array('microtime' => 2.345));
+        $res = $profiler->getProfileBetween(array('microtime' => 1.234), array('microtime' => 2.345));
         $this->assertEquals('Time: 1.11s  | ', $res);
     }
 
-    public function testGetDetailsAddsMemoryUsage()
+    public function testGetProfileBetweenAddsMemoryUsage()
     {
-        $profiler = new Profiler(array('mem' => array('name' => 'Memory', 'precision' => 3, 'pad' => 3)));
+        $profiler = new Profiler();
+        $profiler->setDetails(array('mem' => array('name' => 'Memory', 'precision' => 3, 'pad' => 3)));
         $profiler->setSlowTreshold(0);
-        $res = $profiler->getDetails(array(), array('memoryUsage' => 343245));
+        $res = $profiler->getProfileBetween(array(), array('memoryUsage' => 343245));
         $this->assertEquals('Memory: 335kB | ', $res);
-        $res = $profiler->getDetails(array(), array('memoryUsage' => 73456345634));
+        $res = $profiler->getProfileBetween(array(), array('memoryUsage' => 73456345634));
         $this->assertEquals('Memory: 68.4GB | ', $res);
     }
 
-    public function testGetDetailsAddsMemoryDeltaUsage()
+    public function testGetProfileBetweenAddsMemoryDeltaUsage()
     {
-        $profiler = new Profiler(array('memDelta' => array('name' => 'Delta', 'precision' => 3, 'pad' => 3)));
+        $profiler = new Profiler();
+        $profiler->setDetails(array('memDelta' => array('name' => 'Delta', 'precision' => 3, 'pad' => 3)));
         $profiler->setSlowTreshold(0);
-        $res = $profiler->getDetails(array('memoryUsage' => 343245), array('memoryUsage' => 888064));
+        $res = $profiler->getProfileBetween(array('memoryUsage' => 343245), array('memoryUsage' => 888064));
         $this->assertEquals('Delta: +532kB | ', $res);
-        $res = $profiler->getDetails(array('memoryUsage' => 234523523), array('memoryUsage' => 73456345634));
+        $res = $profiler->getProfileBetween(array('memoryUsage' => 234523523), array('memoryUsage' => 73456345634));
         $this->assertEquals('Delta: +68.2GB | ', $res);
-        $res = $profiler->getDetails(array('memoryUsage' => 73456345634), array('memoryUsage' => 234523523));
+        $res = $profiler->getProfileBetween(array('memoryUsage' => 73456345634), array('memoryUsage' => 234523523));
         $this->assertEquals('Delta: -68.2GB | ', $res);
     }
 
-    public function testGetDetailsAddsMemoryPeakUsage()
+    public function testGetProfileBetweenAddsMemoryPeakUsage()
     {
-        $profiler = new Profiler(array('memPeak' => array('name' => 'Peak', 'precision' => 3, 'pad' => 3)));
+        $profiler = new Profiler();
+        $profiler->setDetails(array('memPeak' => array('name' => 'Peak', 'precision' => 3, 'pad' => 3)));
         $profiler->setSlowTreshold(0);
-        $res = $profiler->getDetails(array(), array('memoryPeakUsage' => 343245));
+        $res = $profiler->getProfileBetween(array(), array('memoryPeakUsage' => 343245));
         $this->assertEquals('Peak: 335kB | ', $res);
-        $res = $profiler->getDetails(array(), array('memoryPeakUsage' => 73456345634));
+        $res = $profiler->getProfileBetween(array(), array('memoryPeakUsage' => 73456345634));
         $this->assertEquals('Peak: 68.4GB | ', $res);
     }
 
-    public function testGetDetailsCombinesDetails()
+    public function testGetProfileBetweenCombinesDetails()
     {
         $profiler = new Profiler();
-        $res = $profiler->getDetails(
+        $profiler->setDetails(array(
+            'time'     => array('name' => 'Time', 'precision' => 3, 'pad' => 3),
+            'mem'      => array('name' => 'Memory', 'precision' => 3, 'pad' => 3),
+            'memDelta' => array('name' => 'Delta', 'precision' => 3, 'pad' => 3),
+            'memPeak'  => array('name' => 'Peak', 'precision' => 3, 'pad' => 3),
+        ));
+        $res = $profiler->getProfileBetween(
             array('microtime' => 1.234, 'memoryUsage' => 343245, 'memoryPeakUsage' => 314357),
             array('microtime' => 2.345, 'memoryUsage' => 888064, 'memoryPeakUsage' => 343245)
         );
         $this->assertEquals('SLOW Time: 1.11s  | Memory: 867kB | Delta: +532kB | Peak: 335kB | ', $res);
-        $res = $profiler->getDetails(
+        $res = $profiler->getProfileBetween(
             array('microtime' => 1.000, 'memoryUsage' => 343245, 'memoryPeakUsage' => 314357),
-            array('microtime' => 1.234, 'memoryUsage' => 245643, 'memoryPeakUsage' => 343245)
+            array('microtime' => 1.0345, 'memoryUsage' => 245643, 'memoryPeakUsage' => 343245)
         );
-        $this->assertEquals('     Time: 234ms | Memory: 240kB | Delta: -95.3kB | Peak: 335kB | ', $res);
+        $this->assertEquals('     Time: 34.5ms | Memory: 240kB | Delta: -95.3kB | Peak: 335kB | ', $res);
     }
 
     public function providerForTestFormatMemory()
