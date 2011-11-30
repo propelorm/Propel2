@@ -201,11 +201,15 @@ public function isVersioningNecessary(\$con = null)
         foreach ($this->behavior->getVersionableReferrers() as $fk) {
             $fkGetter = $this->builder->getRefFKPhpNameAffix($fk, $plural = true);
             $script .= "
+    // to avoid infinite loops, emulate in save
+    \$this->alreadyInSave = true;
     foreach (\$this->get{$fkGetter}(null, \$con) as \$relatedObject) {
         if (\$relatedObject->isVersioningNecessary(\$con)) {
+            \$this->alreadyInSave = false;
             return true;
         }
     }
+    \$this->alreadyInSave = false;
 ";
         }
         $script .= "

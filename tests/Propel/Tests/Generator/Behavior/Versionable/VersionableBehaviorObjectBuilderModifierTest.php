@@ -459,6 +459,30 @@ EOF;
         $o->save();
         $this->assertFalse($o->isVersioningNecessary());
         \VersionableBehaviorTest1Peer::enableVersioning();
+
+        $b1 = new \VersionableBehaviorTest5();
+        $b1->setFoo('Hello');
+        $b2 = new \VersionableBehaviorTest5();
+        $b2->setFoo('World');
+        $a = new \VersionableBehaviorTest4();
+        $a->setBar(123); // a1
+        $this->assertTrue($a->isVersioningNecessary());
+        $a->save();
+        $this->assertFalse($a->isVersioningNecessary());
+        $a->addVersionableBehaviorTest5($b1);
+        $this->assertTrue($a->isVersioningNecessary());
+        $a->save();
+        $this->assertFalse($a->isVersioningNecessary());
+        $a->addVersionableBehaviorTest5($b2);
+        $this->assertTrue($a->isVersioningNecessary());
+        $a->save();
+        $this->assertFalse($a->isVersioningNecessary());
+        $b2->setFoo('World !');
+        $this->assertTrue($b2->isVersioningNecessary());
+        $this->assertTrue($a->isVersioningNecessary());
+        $a->save();
+        $this->assertFalse($b2->isVersioningNecessary());
+        $this->assertFalse($a->isVersioningNecessary());
     }
 
     public function testAddVersionNewObject()
