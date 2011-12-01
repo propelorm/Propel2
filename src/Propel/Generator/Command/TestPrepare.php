@@ -137,10 +137,10 @@ class TestPrepare extends Command
         }
 
         if (is_file('schema.xml')) {
-            shell_exec(sprintf('%s main', $this->propelgen));
+            shell_exec(sprintf('"%s" main', $this->propelgen));
         }
 
-        shell_exec(sprintf('%s insert-sql', $this->propelgen));
+        shell_exec(sprintf('"%s" insert-sql', $this->propelgen));
 
         $output->writeln('done.');
 
