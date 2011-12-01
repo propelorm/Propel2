@@ -108,32 +108,25 @@ class TestPrepare extends Command
 
         chdir($fixturesDir);
 
-        if (is_file('build.properties.dist')) {
-            $content = file_get_contents('build.properties.dist');
+        $distributionFiles = array(
+            'build.properties.dist' => 'build.properties',
+            'runtime-conf.xml.dist' => 'runtime-conf.xml',
+        );
 
-            $content = str_replace('##DATABASE_VENDOR##', $input->getOption('vendor'), $content);
-            $content = str_replace('##DATABASE_SERVER##', $input->getOption('server'), $content);
-            $content = str_replace('##DATABASE_USER##', $input->getOption('user'), $content);
-            $content = str_replace('##DATABASE_PASSWORD##', $input->getOption('password'), $content);
+        foreach ($distributionFiles as $sourceFile => $targetFile) {
+            if (is_file($sourceFile)) {
+                $content = file_get_contents($sourceFile);
 
-            file_put_contents('build.properties', $content);
-        } else {
-            $output->writeln('<error>No "build.properties.dist" file found, skipped.</error>');
-            return;
-        }
+                $content = str_replace('##DATABASE_VENDOR##', $input->getOption('vendor'), $content);
+                $content = str_replace('##DATABASE_SERVER##', $input->getOption('server'), $content);
+                $content = str_replace('##DATABASE_USER##', $input->getOption('user'), $content);
+                $content = str_replace('##DATABASE_PASSWORD##', $input->getOption('password'), $content);
 
-        if (is_file('runtime-conf.xml.dist')) {
-            $content = file_get_contents('runtime-conf.xml.dist');
-
-            $content = str_replace('##DATABASE_VENDOR##', $input->getOption('vendor'), $content);
-            $content = str_replace('##DATABASE_SERVER##', $input->getOption('server'), $content);
-            $content = str_replace('##DATABASE_USER##', $input->getOption('user'), $content);
-            $content = str_replace('##DATABASE_PASSWORD##', $input->getOption('password'), $content);
-
-            file_put_contents('runtime-conf.xml', $content);
-        } else {
-            $output->writeln('<error>No "runtime-conf.xml.dist" file found, skipped.</error>');
-            return;
+                file_put_contents($targetFile, $content);
+            } else {
+                $output->writeln(sprintf('<error>No "%s" file found, skipped.</error>', $sourceFile));
+                return;
+            }
         }
 
         if (is_file('schema.xml')) {
