@@ -42,7 +42,7 @@ class PgsqlPlatformMigrationTest extends PlatformMigrationTestProvider
     {
         $expected = <<<END
 
-DROP TABLE foo1 CASCADE;
+DROP TABLE IF EXISTS foo1 CASCADE;
 
 ALTER TABLE foo3 RENAME TO foo4;
 
