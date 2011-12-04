@@ -35,8 +35,13 @@ class ObjectCollection extends Collection
      */
     public function save($con = null)
     {
+<<<<<<< HEAD
         if (!method_exists($this->getModel(), 'save')) {
             throw new ReadOnlyModelException('Cannot save objects on a read-only model');
+=======
+        if (!method_exists($this->getFullyQualifiedModel(), 'save')) {
+            throw new PropelException('Cannot save objects on a read-only model');
+>>>>>>> [Runtime][Collection] fix setModel to handle FQCN correctly, fix call to getModel
         }
         if (null === $con) {
             $con = $this->getWriteConnection();
@@ -61,8 +66,13 @@ class ObjectCollection extends Collection
      */
     public function delete($con = null)
     {
+<<<<<<< HEAD
         if (!method_exists($this->getModel(), 'delete')) {
             throw new ReadOnlyModelException('Cannot delete objects on a read-only model');
+=======
+        if (!method_exists($this->getFullyQualifiedModel(), 'delete')) {
+            throw new PropelException('Cannot delete objects on a read-only model');
+>>>>>>> [Runtime][Collection] fix setModel to handle FQCN correctly, fix call to getModel
         }
         if (null === $con) {
             $con = $this->getWriteConnection();
@@ -108,7 +118,7 @@ class ObjectCollection extends Collection
      */
     public function fromArray($arr)
     {
-        $class = $this->getModel();
+        $class = $this->getFullyQualifiedModel();
         foreach ($arr as $element) {
             /** @var $obj BaseObject */
             $obj = new $class();
