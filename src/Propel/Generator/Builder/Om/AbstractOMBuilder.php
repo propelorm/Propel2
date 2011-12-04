@@ -196,11 +196,16 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     }
 
     /**
-     * this decare le class use and get the correct name to use (short classname or Alias)
-     * @param $builder
+     * this decare the class use and get the correct name to use (short classname, Alias, or FQCN)
+     * @param AbstractOMBuilder $builder
+     * @param boolean $fqcn true to return the $fqcn classname
+     * @return string Classname, Alias or FQCN
      */
-    public function getClassnameFromBuilder($builder)
+    public function getClassnameFromBuilder($builder, $fqcn = false)
     {
+        if ($fqcn) {
+            return $builder->getFullyQualifiedClassname();
+        }
         $namespace = $builder->getNamespace();
         $class = $builder->getClassname();
 
@@ -350,33 +355,33 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * Shortcut method to return the [stub] peer classname for current table.
      * This is the classname that is used whenever object or peer classes want
      * to invoke methods of the peer classes.
+     * @param      boolean $fqcn
      * @return     string (e.g. 'MyPeer')
-     * @see        StubPeerBuilder::getClassname()
      */
-    public function getPeerClassname() {
-        return $this->getClassnameFromBuilder($this->getStubPeerBuilder());
+    public function getPeerClassname($fqcn = false) {
+        return $this->getClassnameFromBuilder($this->getStubPeerBuilder(), $fqcn);
     }
 
     /**
      * Shortcut method to return the [stub] query classname for current table.
      * This is the classname that is used whenever object or peer classes want
      * to invoke methods of the query classes.
+     * @param      boolean $fqcn
      * @return     string (e.g. 'Myquery')
-     * @see        StubQueryBuilder::getClassname()
      */
-    public function getQueryClassname() {
-        return $this->getClassnameFromBuilder($this->getStubQueryBuilder());
+    public function getQueryClassname($fqcn = false) {
+        return $this->getClassnameFromBuilder($this->getStubQueryBuilder(), $fqcn);
     }
 
     /**
      * Returns the object classname for current table.
      * This is the classname that is used whenever object or peer classes want
      * to invoke methods of the object classes.
+     * @param      boolean $fqcn
      * @return     string (e.g. 'My')
-     * @see        StubPeerBuilder::getClassname()
      */
-    public function getObjectClassname() {
-        return $this->getClassnameFromBuilder($this->getStubObjectBuilder());
+    public function getObjectClassname($fqcn = false) {
+        return $this->getClassnameFromBuilder($this->getStubObjectBuilder(), $fqcn);
     }
 
     /**
