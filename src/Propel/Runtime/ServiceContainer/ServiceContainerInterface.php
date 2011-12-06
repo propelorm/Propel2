@@ -33,6 +33,11 @@ interface ServiceContainerInterface
     const DEFAULT_DATASOURCE_NAME = 'default';
 
     /**
+     * The name of the defautl Profiler class created by getProfiler()
+     */
+    const DEFAULT_PROFILER_CLASS = '\Propel\Runtime\Util\Profiler';
+
+    /**
      * @return string
      */
     function getDefaultDatasource();
@@ -115,4 +120,11 @@ interface ServiceContainerInterface
      * @return     ConnectionInterface A database connection
      */
     function getReadConnection($name);
+
+    /**
+     * Get a profiler instance.
+     *
+     * @return \Propel\Runtime\Util\Profiler.
+     */
+    function getProfiler();
 }
