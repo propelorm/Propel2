@@ -108,6 +108,10 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask
             $phpconf['propel']['log'] = $phpconf['log'];
             unset($phpconf['log']);
         }
+        if (isset($phpconf['profiler'])) {
+            $phpconf['propel']['profiler'] = $phpconf['profiler'];
+            unset($phpconf['profiler']);
+        }
 
         if(isset($phpconf['propel'])) {
             $phpconf = $phpconf['propel'];

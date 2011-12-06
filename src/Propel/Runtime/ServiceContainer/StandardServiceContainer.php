@@ -340,17 +340,19 @@ class StandardServiceContainer implements ServiceContainerInterface
     public function setProfilerClass($profilerClass)
     {
         $this->profilerClass = $profilerClass;
+        $this->profiler = null;
     }
 
     /**
      * Set the profiler configuration.
-     * @see \Propel\Runtime\Util\Profiler::configure()
+     * @see \Propel\Runtime\Util\Profiler::setConfiguration()
      *
      * @param array $profilerConfiguration
      */
     public function setProfilerConfiguration($profilerConfiguration)
     {
         $this->profilerConfiguration = $profilerConfiguration;
+        $this->profiler = null;
     }
 
     /**
@@ -363,6 +365,13 @@ class StandardServiceContainer implements ServiceContainerInterface
         $this->profiler = $profiler;
     }
 
+    /**
+     * Get a profiler instance.
+     *
+     * If no profiler is set, create one using profilerClass and profilerConfiguration.
+     *
+     * @return \Propel\Runtime\Util\Profiler
+     */
     public function getProfiler()
     {
         if (null === $this->profiler) {

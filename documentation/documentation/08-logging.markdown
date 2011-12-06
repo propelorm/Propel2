@@ -33,7 +33,7 @@ The Propel log handler is configured in the `<log>` section of your project's `r
 </config>
 {% endhighlight %}
 
-Using these parameters, Propel creates a `file` Log handler in the background, and keeps it for later use:
+Using these parameters, Propel creates a `file` Log handler in the background, and keeps it for later use. You can do the same at runtime using the `Propel::setLogger()` method:
 
 {% highlight php %}
 <?php
@@ -199,7 +199,7 @@ class MyLogger implements BasicLogger
 
 ## Debugging Database Activity ##
 
-By default, Propel uses `PropelPDO` for database connections. This class, which extends PHP's `PDO`, offers a debug mode to keep track of all the database activity, including all the executed queries.
+By default, Propel uses the `Propel\Runtime\Connection\ConnectionWrapper` class for database connections. This class, which wraps around PHP's `PDO`, offers a debug mode to keep track of all the database activity, including all the executed queries.
 
 ### Enabling The Debug Mode ###
 
@@ -213,7 +213,7 @@ $con->useDebug(true);
 
 You can also disable the debug mode at runtime, by calling `PropelPDO::useDebug(false)`. Using this method, you can choose to enable the debug mode for only one particular query, or for all queries.
 
-Alternatively, you can ask Propel to always enable the debug mode for a particular connection by using the `DebugPDO` class instead of the default `PropelPDO` class. This is accomplished in the `runtime-conf.xml` file, in the `<classname>` tag of a given datasource connection (see the [runtime configuration reference]() for more details).
+Alternatively, you can ask Propel to always enable the debug mode for a particular connection by using the `Propel\Runtime\Connection\DebugPDO` class instead of the default `ConnectionWrapper` class. This is accomplished in the `runtime-conf.xml` file, in the `<classname>` tag of a given datasource connection (see the [runtime configuration reference]() for more details).
 
 {% highlight xml %}
 <?xml version="1.0"?>
@@ -224,14 +224,14 @@ Alternatively, you can ask Propel to always enable the debug mode for a particul
         <adapter>sqlite</adapter>
         <connection>
           <!-- the classname that Propel should instantiate, must be PropelPDO subclass -->
-          <classname>DebugPDO</classname>
+          <classname>Propel\Runtime\Connection\DebugPDO</classname>
 {% endhighlight %}
 
->**Tip**<br />You can use your own connection class there, but make sure that it extends `PropelPDO` and not only `PDO`. Propel requires certain fixes to PDO API that are provided by `PropelPDO`.
+>**Tip**<br />You can use your own connection class there, but make sure that it implements `Propel\Runtime\Connection\ConnectionInterface`. Propel requires certain fixes to PDO API that are provided by this interface.
 
 ### Counting Queries ###
 
-In debug mode, `PropelPDO` keeps track of the number of queries that are executed. Use `PropelPDO::getQueryCount()` to retrieve this number:
+In debug mode, the connection class keeps track of the number of queries that are executed. Use `ConnectionWrapper::getQueryCount()` to retrieve this number:
 
 {% highlight php %}
 <?php
@@ -240,11 +240,11 @@ $myObjs = MyObjPeer::doSelect(new Criteria(), $con);
 echo $con->getQueryCount();  // 1
 {% endhighlight %}
 
-Tip: You cannot use persistent connections if you want the query count to work. Actually, the debug mode in general requires that you don't use persistent connections in order for it to correctly log bound values and count executed statements.
+>**Tip**<br />You cannot use persistent connections if you want the query count to work. Actually, the debug mode in general requires that you don't use persistent connections in order for it to correctly log bound values and count executed statements.
 
 ### Retrieving The Latest Executed Query ###
 
-For debugging purposes, you may need the SQL code of the latest executed query. It is available at runtime in debug mode using `PropelPDO::getLastExecutedQuery()`, as follows:
+For debugging purposes, you may need the SQL code of the latest executed query. It is available at runtime in debug mode using `ConnectionWrapper::getLastExecutedQuery()`, as follows:
 
 {% highlight php %}
 <?php
@@ -253,7 +253,7 @@ $myObjs = MyObjPeer::doSelect(new Criteria(), $con);
 echo $con->getLastExecutedQuery(); // 'SELECT * FROM my_obj';
 {% endhighlight %}
 
-Tip: You can also get a decent SQL representation of the criteria being used in a SELECT query by using the `Criteria->toString()` method.
+>**Tip**<br/>You can also get a decent SQL representation of the criteria being used in a SELECT query by using the `Criteria->toString()` method.
 
 Propel also keeps track of the queries executed directly on the connection object, and displays the bound values correctly.
 
@@ -270,7 +270,7 @@ echo $con->getLastExecutedQuery(); // 'SELECT * FROM my_obj where name = "foo"';
 
 ## Full Query Logging ##
 
-The combination of the debug mode and a logging facility provides a powerful debugging tool named _full query logging_. If you have properly configured a log handler, enabling the debug mode (or using `DebugPDO`) automatically logs the executed queries into Propel's default log file:
+If you use both the debug mode and a logger, then Propel logs automatically all executed queries in the provided log handler (or the `propel.log` file if no custom handler is defined):
 
 {% highlight text %}
 Oct 04 00:00:18 propel-bookstore [debug] INSERT INTO publisher (`ID`,`NAME`) VALUES (NULL,'William Morrow')
@@ -283,91 +283,22 @@ Oct 04 00:00:18 propel-bookstore [debug] SELECT bookstore_employee_account.EMPLO
 
 By default, Propel logs all SQL queries, together with the date of the query and the name of the connection.
 
-### Setting The Data To Log ###
+### Adding Profiler Information ###
 
-The full query logging feature can be configured either in the `runtime-conf.xml` configuration file, or using the runtime configuration API.
-
-In `runtime-conf.xml`, tweak the feature by adding a `<debugpdo>` tag under `<propel>`:
+In addition to the executed queries, you can ask Propel to log the execution time for each query, the memory consumption, and more. To enable profiling, change the connection class name to `Propel\Runtime\Connection\ProfilerConnectionWrapper` in the `runtime-conf.xml`, as follows:
 
 {% highlight xml %}
 <?xml version="1.0"?>
 <config>
-  <log>
-    ...
-  </log>
   <propel>
     <datasources default="bookstore">
-      ...
-    </datasources>
-    <debugpdo>
-      <logging>
-        <details>
-          <method>
-            <enabled>true</enabled>
-          </method>
-          <time>
-            <enabled>true</enabled>
-          </time>
-          <mem>
-            <enabled>true</enabled>
-          </mem>
-        </details>
-      </logging>
-    </debugpdo>
-  </propel>
-</config>
+      <datasource id="bookstore">
+        <adapter>sqlite</adapter>
+        <connection>
+          <classname>Propel\Runtime\Connection\ProfilerConnectionWrapper</classname>
 {% endhighlight %}
 
-To accomplish the same configuration as above at runtime, change the settings in your main include file, after `Propel::init()`, as follows:
-
-{% highlight php %}
-<?php
-$config = Propel::getConfiguration(PropelConfiguration::TYPE_OBJECT);
-$config->setParameter('debugpdo.logging.details.method.enabled', true);
-$config->setParameter('debugpdo.logging.details.time.enabled', true);
-$config->setParameter('debugpdo.logging.details.mem.enabled', true);
-{% endhighlight %}
-
-Let's see a few of the provided parameters.
-
-### Logging More Connection Messages ###
-
-`PropelPDO` can log queries, but also connection events (open and close), and transaction events (begin, commit and rollback). Since Propel can emulate nested transactions, you may need to know when an actual `COMMIT` or `ROLLBACK` is issued.
-
-To extend which methods of `PropelPDO` do log messages in debug mode, customize the `'debugpdo.logging.methods'` parameter, as follows:
-
-{% highlight php %}
-<?php
-$allMethods = array(
-  'PropelPDO::__construct',       // logs connection opening
-  'PropelPDO::__destruct',        // logs connection close
-  'PropelPDO::exec',              // logs a query
-  'PropelPDO::query',             // logs a query
-  'PropelPDO::prepare',           // logs the preparation of a statement
-  'PropelPDO::beginTransaction',  // logs a transaction begin
-  'PropelPDO::commit',            // logs a transaction commit
-  'PropelPDO::rollBack',          // logs a transaction rollBack (watch out for the capital 'B')
-  'DebugPDOStatement::execute',   // logs a query from a prepared statement
-  'DebugPDOStatement::bindValue'  // logs the value and type for each bind
-);
-$config = Propel::getConfiguration(PropelConfiguration::TYPE_OBJECT);
-$config->setParameter('debugpdo.logging.methods', $allMethods, false);
-{% endhighlight %}
-
-By default, only the messages coming from `PropelPDO::exec`, `PropelPDO::query`, and `DebugPDOStatement::execute` are logged.
-
-### Logging Execution Time And Memory ###
-
-In debug mode, Propel counts the time and memory necessary for each database query. This very valuable data can be added to the log messages on demand, by adding the following configuration:
-
-{% highlight php %}
-<?php
-$config = Propel::getConfiguration(PropelConfiguration::TYPE_OBJECT);
-$config->setParameter('debugpdo.logging.details.time.enabled', true);
-$config->setParameter('debugpdo.logging.details.mem.enabled', true);
-{% endhighlight %}
-
-Enabling the options shown above, you get log output along the lines of:
+The logged queries now contain profiling information for each query:
 
 {% highlight text %}
 Feb 23 16:41:04 Propel [debug] time: 0.000 sec | mem: 1.4 MB | SET NAMES 'utf8'
@@ -375,36 +306,73 @@ Feb 23 16:41:04 Propel [debug] time: 0.002 sec | mem: 1.6 MB | SELECT COUNT(tags
 Feb 23 16:41:04 Propel [debug] time: 0.012 sec | mem: 2.4 MB | SELECT tags.NAME, image.FILENAME FROM tags LEFT JOIN image ON tags.IMAGEID = image.ID WHERE image.ID = 12
 {% endhighlight %}
 
-The order in which the logging details are enabled is significant, since it determines the order in which they will appear in the log file.
+### Tweaking the Profiling Information Using Configuration ###
 
-### Complete List Of Logging Options ###
+You can tweak the type and formatting of the profiler information prefix using the `<profiler>` tag in the `runtime-conf.xml` file:
 
-The following settings can be customized at runtime or in the configuration file:
+{% highlight xml %}
+<?xml version="1.0"?>
+<config>
+  <profiler class="\Runtime\Runtime\Util\Profiler">
+    <slowTreshold>0.1</slowTreshold>
+    <details>
+      <time name="Time" precision="3" pad="8" />
+      <mem name="Memory" precision="3" pad="8" />
+    </details>
+    <innerGlue>: </innerGlue>
+    <outerGlue> | </outerGlue>
+  </profiler>
+</config>
+{% endhighlight %}
 
-|Parameter                                      |Default    |Meaning
-|-----------------------------------------------|-----------|---------------------------------------------------------------------------------
-|`debugpdo.logging.innerglue`                   |":"        |String to use for combining the title of a detail and its value
-|`debugpdo.logging.outerglue`                   |"&#124;"   |String to use for combining details together on a log line
-|`debugpdo.logging.realmemoryusage`             |`false`    |Parameter to [memory_get_usage()](http://www.php.net/manual/en/function.memory-get-usage.php) and [memory_get_peak_usage()](http://www.php.net/manual/en/function.memory-get-peak-usage.php) calls
-|`debugpdo.logging.methods`                     |`array`    |An array of method names (`Class::method`) to be included in method call logging
-|`debugpdo.logging.details.slow.enabled`        |`false`    |Enables flagging of slow method calls
-|`debugpdo.logging.details.slow.threshold`      |`0.1`      |Method calls taking more seconds than this threshold are considered slow
-|`debugpdo.logging.details.time.enabled`        |`false`    |Enables logging of method execution times
-|`debugpdo.logging.details.time.precision`      |`3`        |Determines the precision of the execution time logging
-|`debugpdo.logging.details.time.pad`            |`10`       |How much horizontal space to reserve for the execution time on a log line
-|`debugpdo.logging.details.mem.enabled`         |`false`    |Enables logging of the instantaneous PHP memory consumption
-|`debugpdo.logging.details.mem.precision`       |`1`        |Determines the precision of the memory consumption logging
-|`debugpdo.logging.details.mem.pad`             |`9`        |How much horizontal space to reserve for the memory consumption on a log line
-|`debugpdo.logging.details.memdelta.enabled`    |`false`    |Enables logging differences in memory consumption before and after the method call
-|`debugpdo.logging.details.memdelta.precision`  |`1`        |Determines the precision of the memory difference logging
-|`debugpdo.logging.details.memdelta.pad`        |`10`       |How much horizontal space to reserve for the memory difference on a log line
-|`debugpdo.logging.details.mempeak.enabled`     |`false`    |Enables logging the peak memory consumption thus far by the currently executing PHP script
-|`debugpdo.logging.details.mempeak.precision`   |`1`        |Determines the precision of the memory peak logging
-|`debugpdo.logging.details.mempeak.pad`         |`9`        |How much horizontal space to reserve for the memory peak on a log line
-|`debugpdo.logging.details.querycount.enabled`  |`false`    |Enables logging of the number of queries performed by the DebugPDO instance thus far
-|`debugpdo.logging.details.querycount.pad`      |`2`        |How much horizontal space to reserve for the query count on a log line
-|`debugpdo.logging.details.method.enabled`      |`false`    |Enables logging of the name of the method call
-|`debugpdo.logging.details.method.pad`          |`28`       |How much horizontal space to reserve for the method name on a log line
+The `slowTreshold` parameter specifies when the profiler considers a query slow. By default, its value is of 0.1s, or 100ms.
+
+>**Tip**<br/>You can choose to only log slow queries when using the `ProfilerConnectionWrapper` connection class. Just add a `isSlowOnly` attribute to the connection in `runtime-conf.xml`, as follows:
+
+{% highlight xml %}
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+  <propel>
+    <datasources default="bookstore">
+      <datasource id="bookstore">
+        <adapter>sqlite</adapter>
+        <connection>
+          <classname>Propel\Runtime\Connection\ProfilerConnectionWrapper</classname>
+          <attributes>
+            <option id="isSlowOnly">true</option>
+          </attributes>
+{% endhighlight %}
+
+The supported `details` include `<time>` (the time used by the RDBMS to execute the SQL request), `<mem>` (the memory used so far by the PHP script), `<memDelta>` (the memory used specifically for this query), and `<memPeak>` (the peak memory used by the PHP script). For each detail, you can modify the formatting by setting any of the `name`, `precision`, and `pad` attributes.
+
+Each detail is separated from its name using the `innerGlue` string, and the details are separated from each other using the `outerGlue` string. Modify the corresponding attributes at will.
+
+### Tweaking the Profiling Information At Runtime ###
+
+All the settings described above act on a `Propel\Runtime\Util\Profiler` instance. Instead of using configuration, you can modify the profiler service settings at runtime using the `StandardServiceContainer` instance:
+
+{% highlight php %}
+<?php
+$serviceContainer = Propel::getServiceContainer();
+$serviceContainer->setProfilerClass('\Runtime\Runtime\Util\Profiler');
+$serviceContainer->setProfilerConfiguration(array(
+   'slowTreshold' => 0.1,
+   'details' => array(
+       'time' => array(
+           'name' => 'Time',
+           'precision' => '3',
+           'pad' => '8',
+        ),
+        'mem' => array(
+            'name' => 'Memory',
+            'precision' => '3',
+            'pad' => '8',
+        )
+   ),
+   'outerGlue' => ': ',
+   'innerGlue' => ' | '
+));
+{% endhighlight %}
 
 ### Changing the Log Level ###
 
@@ -420,7 +388,7 @@ Now all queries and bind param values will be logged at the INFO level.
 
 ### Configuring a Different Full Query Logger ###
 
-By default the `PropelPDO` connection logs queries and binds param values using the `Propel::log()` static method. As explained above, this method uses the log storage configured by the `<log>` tag in the `runtime-conf.xml` file.
+By default the `ConnectionWrapper` connection logs queries and binds param values using the `Propel::log()` static method. As explained above, this method uses the log storage configured by the `<log>` tag in the `runtime-conf.xml` file.
 
 If you would like the queries to be logged using a different logger (e.g. to a different file, or with different ident, etc.), you can set a logger explicitly on the connection at runtime, using `Propel::setLogger()`:
 

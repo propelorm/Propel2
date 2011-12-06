@@ -144,9 +144,7 @@ class Propel
         if (is_array($c)) {
             $c = new Registry($c);
         }
-        // set default datasource
-        $defaultDatasource = isset($c['datasources']['default']) ? $c['datasources']['default'] : self::DEFAULT_NAME;
-        $serviceContainer->setDefaultDatasource($defaultDatasource);
+        // set datasources
         if (isset($c['datasources'])) {
             foreach ($c['datasources'] as $name => $params) {
                 if (!is_array($params)) {
@@ -171,6 +169,20 @@ class Propel
                     }
                     $serviceContainer->setConnectionManager($name, $manager);
                 }
+            }
+        }
+        // set default datasource
+        $defaultDatasource = isset($c['datasources']['default']) ? $c['datasources']['default'] : self::DEFAULT_NAME;
+        $serviceContainer->setDefaultDatasource($defaultDatasource);
+        // set profiler
+        if (isset($c['profiler'])) {
+            $profilerConf = $c['profiler'];
+            if (isset($profilerConf['class'])) {
+                $serviceContainer->setProfilerClass($profilerConf['class']);
+                unset($profilerConf['class']);
+            }
+            if ($profilerConf) {
+                $serviceContainer->setProfilerConfiguration($profilerConf);
             }
         }
         self::$logger = null;
@@ -322,6 +334,16 @@ class Propel
     static public function getReadConnection($name)
     {
         return self::$serviceContainer->getReadConnection($name);
+    }
+
+    /**
+     * Get a profiler instance.
+     *
+     * @return \Propel\Runtime\Util\Profiler
+     */
+    static public function getProfiler()
+    {
+        return self::$serviceContainer->getProfiler();
     }
 
     /**
