@@ -53,6 +53,21 @@ class StandardServiceContainer implements ServiceContainerInterface
     protected $connectionManagers = array();
 
     /**
+     * @var string
+     */
+    protected $profilerClass = ServiceContainerInterface::DEFAULT_PROFILER_CLASS;
+
+    /**
+     * @var array
+     */
+    protected $profilerConfiguration = array();
+
+    /**
+     * @var \Propel\Runtime\Util\Profiler
+     */
+    protected $profiler;
+
+    /**
      * @return string
      */
     public function getDefaultDatasource()
@@ -312,6 +327,63 @@ class StandardServiceContainer implements ServiceContainerInterface
         $manager = new ConnectionManagerSingle();
         $manager->setConnection($connection);
         $this->setConnectionManager($name, $manager);
+    }
+
+    /**
+     * Override the default profiler class.
+     *
+     * The service container uses this class to instanctiate a new profiler when
+     * getProfiler() is called.
+     *
+     * @param string $profilerClass
+     */
+    public function setProfilerClass($profilerClass)
+    {
+        $this->profilerClass = $profilerClass;
+        $this->profiler = null;
+    }
+
+    /**
+     * Set the profiler configuration.
+     * @see \Propel\Runtime\Util\Profiler::setConfiguration()
+     *
+     * @param array $profilerConfiguration
+     */
+    public function setProfilerConfiguration($profilerConfiguration)
+    {
+        $this->profilerConfiguration = $profilerConfiguration;
+        $this->profiler = null;
+    }
+
+    /**
+     * Set the profiler instance.
+     *
+     * @param \Propel\Runtime\Util\Profiler $profiler
+     */
+    public function setProfiler($profiler)
+    {
+        $this->profiler = $profiler;
+    }
+
+    /**
+     * Get a profiler instance.
+     *
+     * If no profiler is set, create one using profilerClass and profilerConfiguration.
+     *
+     * @return \Propel\Runtime\Util\Profiler
+     */
+    public function getProfiler()
+    {
+        if (null === $this->profiler) {
+            $class = $this->profilerClass;
+            $profiler = new $class();
+            if (!empty($this->profilerConfiguration)) {
+                $profiler->setConfiguration($this->profilerConfiguration);
+            }
+            $this->profiler = $profiler;
+        }
+
+        return $this->profiler;
     }
 
     final private function __clone()

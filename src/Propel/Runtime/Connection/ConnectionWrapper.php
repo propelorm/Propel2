@@ -30,10 +30,6 @@ use Propel\Runtime\Exception\PropelException;
  */
 class ConnectionWrapper implements ConnectionInterface
 {
-
-    const DEFAULT_SLOW_THRESHOLD        = 0.1;
-    const DEFAULT_ONLYSLOW_ENABLED      = false;
-
     /**
      * Attribute to use to set whether to cache prepared statements.
      */
@@ -131,14 +127,9 @@ class ConnectionWrapper implements ConnectionInterface
      */
     public function __construct(ConnectionInterface $connection)
     {
-        if ($this->useDebug) {
-            $debug = $this->getDebugSnapshot();
-        }
-
         $this->connection = $connection;
-
         if ($this->useDebug) {
-            $this->log('Opening connection', null, 'construct', $debug);
+            $this->log('Opening connection', null, 'construct');
         }
     }
 
@@ -384,14 +375,10 @@ class ConnectionWrapper implements ConnectionInterface
      * @param     array   $driver_options  One $array or more key => value pairs to set attribute values
      *                                      for the PDOStatement object that this method returns.
      *
-     * @return    PDOStatement
+     * @return    \Propel\Runtime\Connection\StatementInterface
      */
     public function prepare($sql, $driver_options = array())
     {
-        if ($this->useDebug) {
-            $debug = $this->getDebugSnapshot();
-        }
-
         if ($this->isCachePreparedStatements) {
             if (!isset($this->cachedPreparedStatements[$sql])) {
                 $return = new StatementWrapper($sql, $this, $driver_options);
@@ -402,9 +389,8 @@ class ConnectionWrapper implements ConnectionInterface
         } else {
             $return = new StatementWrapper($sql, $this, $driver_options);
         }
-
         if ($this->useDebug) {
-            $this->log($sql, null, 'prepare', $debug);
+            $this->log($sql, null, 'prepare');
         }
 
         return $return;
@@ -419,14 +405,9 @@ class ConnectionWrapper implements ConnectionInterface
      */
     public function exec($sql)
     {
-        if ($this->useDebug) {
-            $debug = $this->getDebugSnapshot();
-        }
-
         $return = $this->connection->exec($sql);
-
         if ($this->useDebug) {
-            $this->log($sql, null, 'exec', $debug);
+            $this->log($sql, null, 'exec');
             $this->setLastExecutedQuery($sql);
             $this->incrementQueryCount();
         }
@@ -446,16 +427,12 @@ class ConnectionWrapper implements ConnectionInterface
      */
     public function query()
     {
-        if ($this->useDebug) {
-            $debug = $this->getDebugSnapshot();
-        }
-
         $args = func_get_args();
         $return = call_user_func_array(array($this->connection, 'query'), $args);
 
         if ($this->useDebug) {
             $sql = $args[0];
-            $this->log($sql, null, 'query', $debug);
+            $this->log($sql, null, 'query');
             $this->setLastExecutedQuery($sql);
             $this->incrementQueryCount();
         }
@@ -616,9 +593,8 @@ class ConnectionWrapper implements ConnectionInterface
      * @param     string   $msg  Message to log.
      * @param     integer  $level  Log level to use; will use self::setLogLevel() specified level by default.
      * @param     string   $methodName  Name of the method whose execution is being logged.
-     * @param     array    $debugSnapshot  Previous return value from self::getDebugSnapshot().
      */
-    public function log($msg, $level = null, $methodName = null, array $debugSnapshot = null)
+    public function log($msg, $level = null, $methodName = null)
     {
         // If logging has been specifically disabled, this method won't do anything
         if (!$this->getLoggingConfig('enabled', true)) {
@@ -635,19 +611,6 @@ class ConnectionWrapper implements ConnectionInterface
             $level = $this->logLevel;
         }
 
-        // Determine if this query is slow enough to warrant logging
-        if ($this->getLoggingConfig("onlyslow", self::DEFAULT_ONLYSLOW_ENABLED)) {
-            $now = $this->getDebugSnapshot();
-            if ($now['microtime'] - $debugSnapshot['microtime'] < $this->getLoggingConfig("details.slow.threshold", self::DEFAULT_SLOW_THRESHOLD)) {
-                return;
-            }
-        }
-
-        // If the necessary additional parameters were given, get the debug log prefix for the log line
-        if ($methodName && $debugSnapshot) {
-            $msg = $this->getLogPrefix($methodName, $debugSnapshot) . $msg;
-        }
-
         // We won't log empty messages
         if (!$msg) {
             return;
@@ -658,24 +621,6 @@ class ConnectionWrapper implements ConnectionInterface
             $this->logger->log($msg, $level);
         } else {
             Propel::log($msg, $level);
-        }
-    }
-
-    /**
-     * Returns a snapshot of the current values of some functions useful in debugging.
-     *
-     * @return    array
-     */
-    public function getDebugSnapshot()
-    {
-        if ($this->useDebug) {
-            return array(
-                'microtime'             => microtime(true),
-                'memory_get_usage'      => memory_get_usage($this->getLoggingConfig('realmemoryusage', false)),
-                'memory_get_peak_usage' => memory_get_peak_usage($this->getLoggingConfig('realmemoryusage', false)),
-            );
-        } else {
-            throw new PropelException('Should not get debug snapshot when not debugging');
         }
     }
 
@@ -694,106 +639,6 @@ class ConnectionWrapper implements ConnectionInterface
         return $this->getConfiguration()->getParameter("debugpdo.logging.$key", $defaultValue);
     }
 
-    /**
-     * Returns a prefix that may be prepended to a log line, containing debug information according
-     * to the current configuration.
-     *
-     * Uses a given $debugSnapshot to calculate how much time has passed since the call to self::getDebugSnapshot(),
-     * how much the memory consumption by PHP has changed etc.
-     *
-     * @see       self::getDebugSnapshot()
-     *
-     * @param     string  $methodName  Name of the method whose execution is being logged.
-     * @param     array   $debugSnapshot  A previous return value from self::getDebugSnapshot().
-     *
-     * @return    string
-     */
-    protected function getLogPrefix($methodName, $debugSnapshot)
-    {
-        $config = $this->getConfiguration()->getParameters();
-        if (!isset($config['debugpdo']['logging']['details'])) {
-            return '';
-        }
-        $prefix     = '';
-        $logDetails = $config['debugpdo']['logging']['details'];
-        $now        = $this->getDebugSnapshot();
-        $innerGlue  = $this->getLoggingConfig('innerglue', ': ');
-        $outerGlue  = $this->getLoggingConfig('outerglue', ' | ');
-
-        // Iterate through each detail that has been configured to be enabled
-        foreach ($logDetails as $detailName => $details) {
-
-            if (!$this->getLoggingConfig("details.$detailName.enabled", false)) {
-                continue;
-            }
-
-            switch ($detailName) {
-
-                case 'slow';
-                $value = $now['microtime'] - $debugSnapshot['microtime'] >= $this->getLoggingConfig('details.slow.threshold', self::DEFAULT_SLOW_THRESHOLD) ? 'YES' : ' NO';
-                break;
-
-            case 'time':
-                $value = number_format($now['microtime'] - $debugSnapshot['microtime'], $this->getLoggingConfig('details.time.precision', 3)) . ' sec';
-                $value = str_pad($value, $this->getLoggingConfig('details.time.pad', 10), ' ', STR_PAD_LEFT);
-                break;
-
-            case 'mem':
-                $value = self::getReadableBytes($now['memory_get_usage'], $this->getLoggingConfig('details.mem.precision', 1));
-                $value = str_pad($value, $this->getLoggingConfig('details.mem.pad', 9), ' ', STR_PAD_LEFT);
-                break;
-
-            case 'memdelta':
-                $value = $now['memory_get_usage'] - $debugSnapshot['memory_get_usage'];
-                $value = ($value > 0 ? '+' : '') . self::getReadableBytes($value, $this->getLoggingConfig('details.memdelta.precision', 1));
-                $value = str_pad($value, $this->getLoggingConfig('details.memdelta.pad', 10), ' ', STR_PAD_LEFT);
-                break;
-
-            case 'mempeak':
-                $value = self::getReadableBytes($now['memory_get_peak_usage'], $this->getLoggingConfig('details.mempeak.precision', 1));
-                $value = str_pad($value, $this->getLoggingConfig('details.mempeak.pad', 9), ' ', STR_PAD_LEFT);
-                break;
-
-            case 'querycount':
-                $value = str_pad($this->getQueryCount(), $this->getLoggingConfig('details.querycount.pad', 2), ' ', STR_PAD_LEFT);
-                break;
-
-            case 'method':
-                $value = str_pad($methodName, $this->getLoggingConfig('details.method.pad', 28), ' ', STR_PAD_RIGHT);
-                break;
-
-            default:
-                $value = 'n/a';
-                break;
-            }
-
-            $prefix .= $detailName . $innerGlue . $value . $outerGlue;
-
-        }
-
-        return $prefix;
-    }
-
-    /**
-     * Returns a human-readable representation of the given byte count.
-     *
-     * @param     integer  $bytes  Byte count to convert.
-     * @param     integer  $precision  How many decimals to include.
-     *
-     * @return    string
-     */
-    protected function getReadableBytes($bytes, $precision)
-    {
-        $suffix = array('B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB');
-        $total = count($suffix);
-
-        for ($i = 0; $bytes > 1024 && $i < $total; $i++) {
-            $bytes /= 1024;
-        }
-
-        return number_format($bytes, $precision) . ' ' . $suffix[$i];
-    }
-
     public function __call($method, $args)
     {
         return call_user_func_array(array($this->connection, $method), $args);
@@ -808,7 +653,7 @@ class ConnectionWrapper implements ConnectionInterface
     public function __destruct()
     {
         if ($this->useDebug) {
-            $this->log('Closing connection', null, __METHOD__, $this->getDebugSnapshot());
+            $this->log('Closing connection', null, __METHOD__);
         }
         $this->connection = null;
     }
