@@ -4046,7 +4046,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
      * @param      " . $crossObjectClassName . " " . $crossObjectName . " The $className object to relate
      * @return     void
      */
-    public function add{$relatedObjectClassName}($crossObjectName)
+    public function add{$relatedObjectClassName}($crossObjectClassName $crossObjectName)
     {
         if (\$this->" . $collName . " === null) {
             \$this->init" . $relCol . "();
