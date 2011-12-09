@@ -1181,7 +1181,7 @@ ALTER TABLE %s ADD
         $script = '';
         $hasValuePreparation = false;
         if ($column->isTemporalType()) {
-            // nothing special, the internal value was already properly formatted by the setter
+            $columnValueAccessor = $columnValueAccessor . " ? " . $columnValueAccessor . "->format(\""  . $this->getTimeStampFormatter() . "\") : null";
         } elseif ($column->isLobType()) {
             // we always need to make sure that the stream is rewound, otherwise nothing will
             // get written to database.

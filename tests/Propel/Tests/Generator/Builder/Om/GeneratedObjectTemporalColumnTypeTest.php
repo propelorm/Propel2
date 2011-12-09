@@ -32,6 +32,7 @@ class GeneratedObjectTemporalColumnTypeTest extends \PHPUnit_Framework_TestCase
         <column name="bar1" type="DATE" />
         <column name="bar2" type="TIME"  />
         <column name="bar3" type="TIMESTAMP" />
+        <column name="bar4" type="TIMESTAMP" default="2011-12-09" />
     </table>
 </database>
 EOF;
@@ -137,4 +138,29 @@ EOF;
 
         $this->assertInstanceOf('DateTime', $r->getBar3());
     }
+
+	public function testDateTimeGetterReturnsAReference()
+	{
+		$r = new \ComplexColumnTypeEntity5();
+		$r->setBar3(new \DateTime('2011-11-23'));
+		$r->getBar3()->modify('+1 days');
+		$this->assertEquals('2011-11-24', $r->getBar3('Y-m-d'));
+	}
+	
+	public function testHasOnlyDefaultValues()
+	{
+		$r = new \ComplexColumnTypeEntity5();
+		$this->assertEquals('2011-12-09', $r->getBar4('Y-m-d'));
+		$this->assertTrue($r->hasOnlyDefaultValues());
+	}
+	
+	public function testDateTimesSerialize()
+	{
+		$r = new \ComplexColumnTypeEntity5();
+		$r->setBar3(new \DateTime('2011-11-23'));
+		$str = serialize($r);
+		
+		$r2 = unserialize($str);
+		$this->assertEquals('2011-11-23', $r2->getBar3('Y-m-d'));
+	}
 }
