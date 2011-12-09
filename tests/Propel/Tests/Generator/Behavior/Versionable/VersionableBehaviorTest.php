@@ -103,6 +103,7 @@ EOF;
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <column name="bar" type="INTEGER" />
         <column name="version" type="BIGINT" />
+        <behavior name="versionable" />
     </table>
 </database>
 EOF;
