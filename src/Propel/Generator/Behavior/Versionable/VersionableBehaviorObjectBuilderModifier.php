@@ -321,7 +321,7 @@ public function populateFromVersion(\$version, \$con = null, &\$loadedObjects = 
         }
         foreach ($this->behavior->getVersionableFks() as $fk) {
             $foreignTable = $fk->getForeignTable();
-            $foreignVersionTable = $fk->getForeignTable()->getBehavior('versionable')->getVersionTable();
+            $foreignVersionTable = $fk->getForeignTable()->getBehavior($this->behavior->getName())->getVersionTable();
             $relatedClassname = $this->builder->getNewStubObjectBuilder($foreignTable)->getClassname();
             $relatedVersionQueryClassname = $this->builder->getNewStubQueryBuilder($foreignVersionTable)->getClassname();
             $fkColumnName = $fk->getLocalColumnName();
@@ -349,7 +349,7 @@ public function populateFromVersion(\$version, \$con = null, &\$loadedObjects = 
             $fkPhpNames = $this->builder->getRefFKPhpNameAffix($fk, $plural = true);
             $fkPhpName = $this->builder->getRefFKPhpNameAffix($fk, $plural = false);
             $foreignTable = $fk->getTable();
-            $foreignBehavior = $foreignTable->getBehavior('versionable');
+            $foreignBehavior = $foreignTable->getBehavior($this->behavior->getName());
             $foreignVersionTable = $foreignBehavior->getVersionTable();
             $fkColumnIds = $this->behavior->getReferrerIdsColumn($fk);
             $fkColumnVersions = $this->behavior->getReferrerVersionsColumn($fk);
