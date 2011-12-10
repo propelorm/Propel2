@@ -11,6 +11,7 @@
 namespace Propel\Tests\Generator\Builder\Om;
 
 use Propel\Generator\Util\QuickBuilder;
+use Propel\Generator\Platform\MysqlPlatform;
 
 use Propel\Runtime\Propel;
 
@@ -152,6 +153,34 @@ EOF;
 		$r = new \ComplexColumnTypeEntity5();
 		$this->assertEquals('2011-12-09', $r->getBar4('Y-m-d'));
 		$this->assertTrue($r->hasOnlyDefaultValues());
+	}
+	
+	public function testHydrateWithMysqlInvalidDate()
+	{
+	    $schema = <<<EOF
+<database name="generated_object_complex_type_test_6">
+<table name="complex_column_type_entity_6">
+    <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+    <column name="bar1" type="DATE" />
+    <column name="bar2" type="TIME"  />
+    <column name="bar3" type="TIMESTAMP" />
+</table>
+</database>
+EOF;
+        $builder = new QuickBuilder();
+        $builder->setSchema($schema);
+        $builder->setPlatform(new MysqlPlatform());
+        $builder->buildClasses();
+		$r = new \ComplexColumnTypeEntity6();
+		$r->hydrate(array(
+			123,
+			'0000-00-00',
+			'00:00:00',
+			'0000-00-00 00:00:00'
+		));
+		$this->assertNull($r->getBar1());
+		$this->assertEquals('00:00:00', $r->getBar2()->format('H:i:s'));
+		$this->assertNull($r->getBar3());
 	}
 	
 	public function testDateTimesSerialize()

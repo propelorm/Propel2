@@ -1883,7 +1883,24 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 				    if (!$dateTimeClass) {
 				        $dateTimeClass = '\DateTime';
 				    }
-					$script .= "
+					$handleMysqlDate = false;
+					if ($this->getPlatform() instanceof MysqlPlatform) {
+						if ($col->getType() === PropelTypes::TIMESTAMP) {
+							$handleMysqlDate = true;
+					        $mysqlInvalidDateString = '0000-00-00 00:00:00';
+					    } elseif ($col->getType() === PropelTypes::DATE) {
+					        $handleMysqlDate = true;
+					        $mysqlInvalidDateString = '0000-00-00';
+					    }
+					    // 00:00:00 is a valid time, so no need to check for that.
+					}
+			        if ($handleMysqlDate) {
+			            $script .= "
+            if (\$row[\$startcol + $n] === '$mysqlInvalidDateString') {
+                \$row[\$startcol + $n] = null;
+            }";
+			        }
+			        $script .= "
             \$this->$clo = (\$row[\$startcol + $n] !== null) ? PropelDateTime::newInstance(\$row[\$startcol + $n], null, '$dateTimeClass') : null;";
 				} elseif ($col->isPhpPrimitiveType()) {
                     $script .= "
