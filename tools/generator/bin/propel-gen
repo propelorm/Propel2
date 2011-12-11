@@ -64,7 +64,7 @@ if [ -z "$PHING_COMMAND" ] ; then
 fi
 
 if [ $# = 1 ] ; then
-  $PHING_COMMAND -f $PROPEL_GEN_HOME/build.xml -Dusing.propel-gen=true -Dproject.dir=$saveddir $*
+  $PHING_COMMAND -f "$PROPEL_GEN_HOME/build.xml" -Dusing.propel-gen=true -Dproject.dir="$saveddir" $*
 else
-  $PHING_COMMAND -f $PROPEL_GEN_HOME/build.xml -Dusing.propel-gen=true -Dproject.dir=$*
+  $PHING_COMMAND -f "$PROPEL_GEN_HOME/build.xml" -Dusing.propel-gen=true -Dproject.dir="$*"
 fi

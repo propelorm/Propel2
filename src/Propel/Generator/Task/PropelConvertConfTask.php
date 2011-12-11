@@ -108,6 +108,10 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask
             $phpconf['propel']['log'] = $phpconf['log'];
             unset($phpconf['log']);
         }
+        if (isset($phpconf['profiler'])) {
+            $phpconf['propel']['profiler'] = $phpconf['profiler'];
+            unset($phpconf['profiler']);
+        }
 
         if(isset($phpconf['propel'])) {
             $phpconf = $phpconf['propel'];
@@ -220,11 +224,6 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask
 
             // add the childs attributes as if they where children
             foreach ( $v->attributes() as $ak => $av ) {
-
-                // if the child is not an array, transform it into one
-                if ( !is_array( $child ) ) {
-                    $child = array( "value" => $child );
-                }
 
                 if ($ak == 'id') {
                     // special exception: if there is a key named 'id'

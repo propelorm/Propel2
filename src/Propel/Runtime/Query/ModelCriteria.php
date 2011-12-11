@@ -219,12 +219,13 @@ class ModelCriteria extends Criteria
      * @param      string $conditionName A name to store the condition for a later combination with combine()
      * @param      string $clause The pseudo SQL clause, e.g. 'AuthorId = ?'
      * @param      mixed  $value A value for the condition
+     * @param      mixed  $bindingType A value for the condition
      *
      * @return     ModelCriteria The current object, for fluid interface
      */
-    public function condition($conditionName, $clause, $value = null)
+    public function condition($conditionName, $clause, $value = null, $bindingType = null)
     {
-        $this->addCond($conditionName, $this->getCriterionForClause($clause, $value), null, null);
+        $this->addCond($conditionName, $this->getCriterionForClause($clause, $value, $bindingType), null, $bindingType);
 
         return $this;
     }

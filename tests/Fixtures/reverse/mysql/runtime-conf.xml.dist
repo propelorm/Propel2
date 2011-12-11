@@ -8,19 +8,16 @@
     # project uses several databases.
     -->
     <propel>
-        <datasources default="bookstore-schemas">
+        <datasources default="reverse-bookstore">
 
-            <datasource id="bookstore-schemas">
+            <datasource id="reverse-bookstore">
                 <adapter>mysql</adapter>
                 <connection>
                     <classname>\Propel\Runtime\Connection\DebugPDO</classname>
-                    <dsn>mysql:dbname=test</dsn>
-                    <!--
-                    For MySQL and Oracle you must specify username + password separate from DSN:
-                    <user>bookstore</user>
-                    <password></password>
-                    -->
-                    <options>
+                    <dsn>mysql:host=##DATABASE_SERVER##;dbname=reverse_bookstore</dsn>
+                    <user>##DATABASE_USER##</user>
+                    <password>##DATABASE_PASSWORD##</password>
+                <options>
                         <option id="ATTR_PERSISTENT">false</option>
                     </options>
                     <attributes>

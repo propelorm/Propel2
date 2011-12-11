@@ -400,6 +400,11 @@ EOF;
         $this->assertEquals(2, $bs[0]->getVersion());
         $this->assertEquals(1, $bs[1]->getVersion());
         $this->assertEquals(1, $bs[2]->getVersion());
+
+        $a->toVersion(1);
+        $bs = $a->getVersionableBehaviorTest5s();
+        $this->assertEquals(1, $bs[0]->getVersion());
+        $this->assertEquals(1, $bs[1]->getVersion());
     }
 
     public function testGetLastVersionNumber()
@@ -454,6 +459,30 @@ EOF;
         $o->save();
         $this->assertFalse($o->isVersioningNecessary());
         \VersionableBehaviorTest1Peer::enableVersioning();
+
+        $b1 = new \VersionableBehaviorTest5();
+        $b1->setFoo('Hello');
+        $b2 = new \VersionableBehaviorTest5();
+        $b2->setFoo('World');
+        $a = new \VersionableBehaviorTest4();
+        $a->setBar(123); // a1
+        $this->assertTrue($a->isVersioningNecessary());
+        $a->save();
+        $this->assertFalse($a->isVersioningNecessary());
+        $a->addVersionableBehaviorTest5($b1);
+        $this->assertTrue($a->isVersioningNecessary());
+        $a->save();
+        $this->assertFalse($a->isVersioningNecessary());
+        $a->addVersionableBehaviorTest5($b2);
+        $this->assertTrue($a->isVersioningNecessary());
+        $a->save();
+        $this->assertFalse($a->isVersioningNecessary());
+        $b2->setFoo('World !');
+        $this->assertTrue($b2->isVersioningNecessary());
+        $this->assertTrue($a->isVersioningNecessary());
+        $a->save();
+        $this->assertFalse($b2->isVersioningNecessary());
+        $this->assertFalse($a->isVersioningNecessary());
     }
 
     public function testAddVersionNewObject()

@@ -10,15 +10,15 @@
 # Because this file is included before the top-level build.properties file,
 # you cannot refer to any properties set therein.
 
-propel.project = bookstore_namespaced
-propel.database = mysql
-propel.database.url = mysql:dbname=test
-propel.mysql.tableType = InnoDB
-propel.disableIdentifierQuoting=true
+propel.project                  = bookstore_namespaced
+propel.database                 = ##DATABASE_VENDOR##
+propel.database.url             = ##DATABASE_VENDOR##:host=##DATABASE_SERVER##;dbname=test
+propel.mysql.tableType          = InnoDB
+propel.disableIdentifierQuoting = true
 
 # For MySQL or Oracle, you also need to specify username & password
-#propel.database.user = [db username]
-#propel.database.password = [db password]
+propel.database.user            = ##DATABASE_USER##
+propel.database.password        = ##DATABASE_PASSWORD##
 
 # Note that if you do not wish to specify the database (e.g. if you
 # are using multiple databses) you can use the @DB@ token which
@@ -28,4 +28,4 @@ propel.disableIdentifierQuoting=true
 
 # propel.database.createUrl = (doesn't apply for SQLite, since db is auto-created)
 
-propel.targetPackage = bookstore
+propel.targetPackage            = bookstore

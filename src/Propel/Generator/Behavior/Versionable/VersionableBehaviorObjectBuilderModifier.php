@@ -201,11 +201,15 @@ public function isVersioningNecessary(\$con = null)
         foreach ($this->behavior->getVersionableReferrers() as $fk) {
             $fkGetter = $this->builder->getRefFKPhpNameAffix($fk, $plural = true);
             $script .= "
+    // to avoid infinite loops, emulate in save
+    \$this->alreadyInSave = true;
     foreach (\$this->get{$fkGetter}(null, \$con) as \$relatedObject) {
         if (\$relatedObject->isVersioningNecessary(\$con)) {
+            \$this->alreadyInSave = false;
             return true;
         }
     }
+    \$this->alreadyInSave = false;
 ";
         }
         $script .= "
@@ -292,25 +296,32 @@ public function toVersion(\$versionNumber, \$con = null)
     {
         $ARclassName = $this->getActiveRecordClassName();
         $versionTable = $this->behavior->getVersionTable();
+        $versionColumnName = $versionTable->getColumn($this->behavior->getParameter('version_column'))->getPhpName();
         $versionARClassname = $this->builder->getNewStubObjectBuilder($versionTable)->getClassname();
+        $tablePKs = $this->table->getPrimaryKey();
+        $primaryKeyName = $tablePKs[0]->getPhpName();
         $script .= "
 /**
  * Sets the properties of the curent object to the value they had at a specific version
  *
  * @param   {$versionARClassname} \$version The version object to use
  * @param   ConnectionInterface \$con the connection to use
+ * @param   array \$loadedObjects objects thats been loaded in a chain of populateFromVersion calls on referrer or fk objects.
  *
  * @return  {$ARclassName} The current object (for fluent API support)
  */
-public function populateFromVersion(\$version, \$con = null)
+public function populateFromVersion(\$version, \$con = null, &\$loadedObjects = array())
 {";
+        $script .= "
+    \$loadedObjects['{$ARclassName}'][\$version->get{$primaryKeyName}()][\$version->get{$versionColumnName}()] = \$this;";
+
         foreach ($this->table->getColumns() as $col) {
             $script .= "
     \$this->set" . $col->getPhpName() . "(\$version->get" . $col->getPhpName() . "());";
         }
         foreach ($this->behavior->getVersionableFks() as $fk) {
             $foreignTable = $fk->getForeignTable();
-            $foreignVersionTable = $fk->getForeignTable()->getBehavior('versionable')->getVersionTable();
+            $foreignVersionTable = $fk->getForeignTable()->getBehavior($this->behavior->getName())->getVersionTable();
             $relatedClassname = $this->builder->getNewStubObjectBuilder($foreignTable)->getClassname();
             $relatedVersionQueryClassname = $this->builder->getNewStubQueryBuilder($foreignVersionTable)->getClassname();
             $fkColumnName = $fk->getLocalColumnName();
@@ -320,13 +331,17 @@ public function populateFromVersion(\$version, \$con = null)
             // FIXME: breaks lazy-loading
             $script .= "
     if (\$fkValue = \$version->get{$fkColumnPhpName}()) {
-        \$related = new {$relatedClassname}();
-        \$relatedVersion = {$relatedVersionQueryClassname}::create()
-            ->filterBy{$fk->getForeignColumn()->getPhpName()}(\$fkValue)
-            ->filterByVersion(\$version->get{$fkVersionColumnPhpName}())
-            ->findOne(\$con);
-        \$related->populateFromVersion(\$relatedVersion, \$con);
-        \$related->setNew(false);
+        if (isset(\$loadedObjects['{$relatedClassname}']) && isset(\$loadedObjects['{$relatedClassname}'][\$fkValue]) && isset(\$loadedObjects['{$relatedClassname}'][\$fkValue][\$version->get{$fkVersionColumnPhpName}()])) {
+            \$related = \$loadedObjects['{$relatedClassname}'][\$fkValue][\$version->get{$fkVersionColumnPhpName}()];
+        } else {
+            \$related = new {$relatedClassname}();
+            \$relatedVersion = {$relatedVersionQueryClassname}::create()
+                ->filterBy{$fk->getForeignColumn()->getPhpName()}(\$fkValue)
+                ->filterByVersion(\$version->get{$fkVersionColumnPhpName}())
+                ->findOne(\$con);
+            \$related->populateFromVersion(\$relatedVersion, \$con, \$loadedObjects);
+            \$related->setNew(false);
+        }
         \$this->set{$fkPhpname}(\$related);
     }";
         }
@@ -334,27 +349,34 @@ public function populateFromVersion(\$version, \$con = null)
             $fkPhpNames = $this->builder->getRefFKPhpNameAffix($fk, $plural = true);
             $fkPhpName = $this->builder->getRefFKPhpNameAffix($fk, $plural = false);
             $foreignTable = $fk->getTable();
-            $foreignBehavior = $foreignTable->getBehavior('versionable');
+            $foreignBehavior = $foreignTable->getBehavior($this->behavior->getName());
             $foreignVersionTable = $foreignBehavior->getVersionTable();
             $fkColumnIds = $this->behavior->getReferrerIdsColumn($fk);
             $fkColumnVersions = $this->behavior->getReferrerVersionsColumn($fk);
             $relatedVersionQueryClassname = $this->builder->getNewStubQueryBuilder($foreignVersionTable)->getClassname();
+            $relatedVersionPeerClassname = $this->builder->getNewStubPeerBuilder($foreignVersionTable)->getClassname();
             $relatedClassname = $this->builder->getNewStubObjectBuilder($foreignTable)->getClassname();
+            $fkColumn = $fk->getForeignColumn();
+            $fkVersionColumn = $foreignVersionTable->getColumn($this->behavior->getParameter('version_column'));
             $script .= "
     if (\$fkValues = \$version->get{$fkColumnIds->getPhpName()}()) {
         \$this->clear{$fkPhpNames}();
         \$fkVersions = \$version->get{$fkColumnVersions->getPhpName()}();
         \$query = {$relatedVersionQueryClassname}::create();
         foreach (\$fkValues as \$key => \$value) {
-            \$c1 = \$query->getNewCriterion({$this->builder->getColumnConstant($fkColumnIds)}, \$value);
-            \$c2 = \$query->getNewCriterion({$this->builder->getColumnConstant($fkColumnVersions)}, \$fkVersions[\$key]);
+            \$c1 = \$query->getNewCriterion({$this->builder->getColumnConstant($fkColumn, $relatedVersionPeerClassname)}, \$value);
+            \$c2 = \$query->getNewCriterion({$this->builder->getColumnConstant($fkVersionColumn, $relatedVersionPeerClassname)}, \$fkVersions[\$key]);
             \$c1->addAnd(\$c2);
             \$query->addOr(\$c1);
         }
         foreach (\$query->find(\$con) as \$relatedVersion) {
-            \$related = new {$relatedClassname}();
-            \$related->populateFromVersion(\$relatedVersion, \$con);
-            \$related->setNew(false);
+            if (isset(\$loadedObjects['{$relatedClassname}']) && isset(\$loadedObjects['{$relatedClassname}'][\$relatedVersion->get{$fkColumn->getPhpName()}()]) && isset(\$loadedObjects['{$relatedClassname}'][\$relatedVersion->get{$fkColumn->getPhpName()}()][\$relatedVersion->get{$fkVersionColumn->getPhpName()}()])) {
+                \$related = \$loadedObjects['{$relatedClassname}'][\$relatedVersion->get{$fkColumn->getPhpName()}()][\$relatedVersion->get{$fkVersionColumn->getPhpName()}()];
+            } else {
+                \$related = new {$relatedClassname}();
+                \$related->populateFromVersion(\$relatedVersion, \$con, \$loadedObjects);
+                \$related->setNew(false);
+            }
             \$this->add{$fkPhpName}(\$related);
         }
     }";

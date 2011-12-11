@@ -43,7 +43,7 @@ To run unit tests, you'll have to install vendors:
 
 Once done, build fixtures:
 
-    ./tests/reset_tests.sh
+    php bin/propel test:prepare
 
 Now you can run unit tests:
 

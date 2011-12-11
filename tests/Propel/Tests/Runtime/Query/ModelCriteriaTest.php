@@ -228,6 +228,22 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertCriteriaTranslation($c, $sql, $params, 'condition() can store condition for later combination');
     }
 
+    public function testConditionCustomOperator()
+    {
+        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
+        $c->withColumn('SUBSTRING(Book.Title, 1, 4)', 'title_start');
+        $c->condition('cond1', 'Book.Title <> ?', 'foo');
+        $c->condition('cond2', 'title_start like ?', '%bar%', PDO::PARAM_STR);
+        $c->combine(array('cond1', 'cond2'), 'or');
+
+        $sql = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID, SUBSTRING(book.TITLE, 1, 4) AS title_start FROM `book` WHERE (book.TITLE <> :p1 OR title_start like :p2)";
+        $params = array(
+          array('table' => 'book', 'column' => 'TITLE', 'value' => 'foo'),
+          array('table' => null, 'type' => PDO::PARAM_STR, 'value' => '%bar%'),
+        );
+        $this->assertCriteriaTranslation($c, $sql, $params, 'condition() accepts RAW sql parameters');
+    }
+
     static public function conditionsForTestWhere()
     {
         return array(

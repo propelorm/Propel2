@@ -20,6 +20,7 @@ use Propel\Runtime\Adapter\Pdo\MysqlAdapter;
 use Propel\Runtime\Map\DatabaseMap;
 use Propel\Runtime\Connection\ConnectionManagerSingle;
 use Propel\Runtime\Adapter\Pdo\PdoConnection;
+use Propel\Runtime\Util\Profiler;
 
 class StandardServiceContainerTest extends BaseTestCase
 {
@@ -289,6 +290,52 @@ class StandardServiceContainerTest extends BaseTestCase
         $this->sc->setConnection('foo', $con);
         $this->assertSame($con, $this->sc->getConnection('foo'));
     }
+
+    public function testGetProfilerReturnsAProfiler()
+    {
+        $profiler = $this->sc->getProfiler();
+        $this->assertInstanceOf('\Propel\Runtime\Util\Profiler', $profiler);
+    }
+
+    public function testGetProfilerUsesProfilerClass()
+    {
+        $this->sc->setProfilerClass('\Propel\Tests\Runtime\ServiceContainer\myProfiler');
+        $profiler = $this->sc->getProfiler();
+        $this->assertInstanceOf('\Propel\Tests\Runtime\ServiceContainer\myProfiler', $profiler);
+    }
+
+    public function testGetProfilerUsesDefaultConfiguration()
+    {
+        $config = $this->sc->getProfiler()->getConfiguration();
+        $expected = array(
+            'details' => array(
+                'time' => array(
+                    'name'      => 'Time',
+                    'precision' => 3,
+                    'pad'       => 8,
+                ),
+                'mem' => array(
+                    'name'      => 'Memory',
+                    'precision' => 3,
+                    'pad'       => 7,
+                )
+            ),
+            'innerGlue'    => ': ',
+            'outerGlue'    => ' | ',
+            'slowTreshold' => 0.1
+        );
+        $this->assertEquals($expected, $config);
+    }
+
+    public function testGetProfilerUsesProfilerConfigurationWhenGiven()
+    {
+        $this->sc->setProfilerConfiguration(array(
+            'slowTreshold' => 22
+        ));
+        $config = $this->sc->getProfiler()->getConfiguration();
+        $this->assertEquals(22, $config['slowTreshold']);
+    }
+
 }
 
 class TestableServiceContainer extends StandardServiceContainer
@@ -298,6 +345,10 @@ class TestableServiceContainer extends StandardServiceContainer
 }
 
 class MyDatabaseMap extends DatabaseMap
+{
+}
+
+class myProfiler extends Profiler
 {
 }
 
