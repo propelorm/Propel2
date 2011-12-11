@@ -440,23 +440,21 @@ class StandardServiceContainer implements ServiceContainerInterface
         }
         $logger = new Logger($name);
         $configuration = $this->loggerConfigurations[$name];
-        foreach ($configuration['handlers'] as $type => $params) {
-            switch ($type) {
-                case 'stream':
-                    $handler = new \Monolog\Handler\StreamHandler($params['path'], isset($params['level']) ? $params['level'] : null, isset($params['bubble']) ? $params['bubble'] : null);
-                    break;
-                case 'rotating_file':
-                    $handler = new \Monolog\Handler\RotatingFileHandler($params['path'], isset($params['max_files']) ? $params['max_files'] : null, isset($params['level']) ? $params['level'] : null, isset($params['bubble']) ? $params['bubble'] : null);
-                    break;
-                case 'syslog':
-                    $handler = new \Monolog\Handler\SyslogHandler($params['ident'], isset($params['facility']) ? $params['facility'] : null, isset($params['level']) ? $params['level'] : null, isset($params['bubble']) ? $params['bubble'] : null);
-                    break;
-                default:
-                    throw new UnexpectedValueException(sprintf('Handler type "%s" not supported by StandardServiceContainer. Try setting the Logger manually, or use another ServiceContainer.', $type));
-                    break;
-            }
-            $logger->pushHandler($handler);
+        switch ($configuration['type']) {
+            case 'stream':
+                $handler = new \Monolog\Handler\StreamHandler($configuration['path'], isset($configuration['level']) ? $configuration['level'] : null, isset($configuration['bubble']) ? $configuration['bubble'] : null);
+                break;
+            case 'rotating_file':
+                $handler = new \Monolog\Handler\RotatingFileHandler($configuration['path'], isset($configuration['max_files']) ? $configuration['max_files'] : null, isset($configuration['level']) ? $configuration['level'] : null, isset($configuration['bubble']) ? $configuration['bubble'] : null);
+                break;
+            case 'syslog':
+                $handler = new \Monolog\Handler\SyslogHandler($configuration['ident'], isset($configuration['facility']) ? $configuration['facility'] : null, isset($configuration['level']) ? $configuration['level'] : null, isset($configuration['bubble']) ? $configuration['bubble'] : null);
+                break;
+            default:
+                throw new UnexpectedValueException(sprintf('Handler type "%s" not supported by StandardServiceContainer. Try setting the Logger manually, or use another ServiceContainer.', $configuration['type']));
+                break;
         }
+        $logger->pushHandler($handler);
 
         return $logger;
     }

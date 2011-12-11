@@ -391,9 +391,10 @@ class StandardServiceContainerTest extends BaseTestCase
 
     public function testGetLoggerLazyLoadsLoggerFromConfiguration()
     {
-        $this->sc->setLoggerConfiguration('defaultLogger', array('handlers' => array(
-            'stream' => array('path' => 'php://stderr')
-        )));
+        $this->sc->setLoggerConfiguration('defaultLogger', array(
+            'type' => 'stream',
+            'path' => 'php://stderr',
+        ));
         $logger = $this->sc->getLogger();
         $this->assertInstanceOf('\Monolog\Logger', $logger);
         $handler = $logger->popHandler();
