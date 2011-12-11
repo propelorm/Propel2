@@ -21,6 +21,7 @@ use Propel\Runtime\Map\DatabaseMap;
 use Propel\Runtime\Connection\ConnectionManagerSingle;
 use Propel\Runtime\Adapter\Pdo\PdoConnection;
 use Propel\Runtime\Util\Profiler;
+use Monolog\Logger;
 
 class StandardServiceContainerTest extends BaseTestCase
 {
@@ -334,6 +335,69 @@ class StandardServiceContainerTest extends BaseTestCase
         ));
         $config = $this->sc->getProfiler()->getConfiguration();
         $this->assertEquals(22, $config['slowTreshold']);
+    }
+
+    public function testHasLoggerReturnsFalseByDefault()
+    {
+        $this->assertFalse($this->sc->hasLogger());
+    }
+
+    public function testHasLoggerReturnsTrueWhenALoggerIsSet()
+    {
+        $logger = new Logger('defaultLogger');
+        $this->sc->setLogger('defaultLogger', $logger);
+        $this->assertTrue($this->sc->hasLogger());
+    }
+
+    public function testGetLoggerReturnsNullByDefault()
+    {
+        $this->assertNull($this->sc->getLogger());
+    }
+
+    public function testGetLoggerReturnsNullForConnectionNamesByDefault()
+    {
+        $this->assertNull($this->sc->getLogger('book'));
+    }
+
+    public function testGetLoggerReturnsLoggerPreviouslySet()
+    {
+        $logger = new Logger('book');
+        $this->sc->setLogger('book', $logger);
+        $this->assertEquals($logger, $this->sc->getLogger('book'));
+    }
+
+    public function testGetLoggerWithNoArgumentReturnsDefaultLogger()
+    {
+        $logger = new Logger('defaultLogger');
+        $this->sc->setLogger('defaultLogger', $logger);
+        $this->assertEquals($logger, $this->sc->getLogger());
+    }
+
+    public function testGetLoggerWithAnArgumentReturnsLoggerSetOnThatArgument()
+    {
+        $logger1 = new Logger('defaultLogger');
+        $this->sc->setLogger('defaultLogger', $logger1);
+        $logger2 = new Logger('book');
+        $this->sc->setLogger('book', $logger2);
+        $this->assertEquals($logger2, $this->sc->getLogger('book'));
+    }
+
+    public function testGetLoggerWithAnArgumentReturnsDefaultLoggerOnFallback()
+    {
+        $logger = new Logger('defaultLogger');
+        $this->sc->setLogger('defaultLogger', $logger);
+        $this->assertEquals($logger, $this->sc->getLogger('book'));
+    }
+
+    public function testGetLoggerLazyLoadsLoggerFromConfiguration()
+    {
+        $this->sc->setLoggerConfiguration('defaultLogger', array('handlers' => array(
+            'stream' => array('path' => 'php://stderr')
+        )));
+        $logger = $this->sc->getLogger();
+        $this->assertInstanceOf('\Monolog\Logger', $logger);
+        $handler = $logger->popHandler();
+        $this->assertInstanceOf('\Monolog\Handler\StreamHandler', $handler);
     }
 
 }
