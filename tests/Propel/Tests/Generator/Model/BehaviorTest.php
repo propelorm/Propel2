@@ -96,7 +96,7 @@ EOF;
     }
 
   /**
-   * @expectedException InvalidArgumentException
+   * @expectedException \InvalidArgumentException
    */
     public function testUnkownBehavior()
     {

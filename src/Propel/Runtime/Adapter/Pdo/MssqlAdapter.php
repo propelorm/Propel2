@@ -13,6 +13,7 @@ namespace Propel\Runtime\Adapter\Pdo;
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\ColumnNotFoundException;
+use Propel\Runtime\Exception\InvalidArgumentException;
 
 /**
  * This is used to connect to a MSSQL database.
@@ -127,7 +128,7 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
         // make sure offset and limit are numeric
         if(! is_numeric($offset) || ! is_numeric($limit))
         {
-			throw new \InvalidArgumentException('MssqlAdapter::applyLimit() expects a number for argument 2 and 3');
+			throw new InvalidArgumentException('MssqlAdapter::applyLimit() expects a number for argument 2 and 3');
         }
 
         //split the select and from clauses out of the original query

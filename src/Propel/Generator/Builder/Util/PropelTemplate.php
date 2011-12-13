@@ -10,6 +10,8 @@
 
 namespace Propel\Generator\Builder\Util;
 
+use \InvalidArgumentException;
+
 /**
  * Simple templating system to ease behavior writing
  *

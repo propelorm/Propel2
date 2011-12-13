@@ -12,6 +12,8 @@ namespace Propel\Generator\Behavior\AggregateColumn;
 
 use Propel\Generator\Model\Behavior;
 
+use \InvalidArgumentException;
+
 /**
  * Keeps an aggregate column updated with related table
  *
@@ -37,7 +39,7 @@ class AggregateColumnBehavior extends Behavior
     {
         $table = $this->getTable();
         if (!$columnName = $this->getParameter('name')) {
-            throw new \InvalidArgumentException(sprintf('You must define a \'name\' parameter for the \'aggregate_column\' behavior in the \'%s\' table', $table->getName()));
+            throw new InvalidArgumentException(sprintf('You must define a \'name\' parameter for the \'aggregate_column\' behavior in the \'%s\' table', $table->getName()));
         }
 
         // add the aggregate column if not present
@@ -63,7 +65,7 @@ class AggregateColumnBehavior extends Behavior
     public function objectMethods($builder)
     {
         if (!$foreignTableName = $this->getParameter('foreign_table')) {
-            throw new \InvalidArgumentException(sprintf('You must define a \'foreign_table\' parameter for the \'aggregate_column\' behavior in the \'%s\' table', $this->getTable()->getName()));
+            throw new InvalidArgumentException(sprintf('You must define a \'foreign_table\' parameter for the \'aggregate_column\' behavior in the \'%s\' table', $this->getTable()->getName()));
         }
         $script = '';
         $script .= $this->addObjectCompute();
@@ -122,7 +124,7 @@ class AggregateColumnBehavior extends Behavior
         // let's infer the relation from the foreign table
         $fks = $foreignTable->getForeignKeysReferencingTable($this->getTable()->getName());
         if (!$fks) {
-            throw new \InvalidArgumentException(sprintf('You must define a foreign key to the \'%s\' table in the \'%s\' table to enable the \'aggregate_column\' behavior', $this->getTable()->getName(), $foreignTable->getName()));
+            throw new InvalidArgumentException(sprintf('You must define a foreign key to the \'%s\' table in the \'%s\' table to enable the \'aggregate_column\' behavior', $this->getTable()->getName(), $foreignTable->getName()));
         }
         // FIXME doesn't work when more than one fk to the same table
         return array_shift($fks);

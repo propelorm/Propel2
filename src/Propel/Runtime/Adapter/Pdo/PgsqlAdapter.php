@@ -12,10 +12,10 @@ namespace Propel\Runtime\Adapter\Pdo;
 
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
+use Propel\Runtime\Exception\InvalidArgumentException;
 use Propel\Runtime\Query\Criteria;
 
 use \PDO;
-use \InvalidArgumentException;
 
 /**
  * This is used to connect to PostgresQL databases.

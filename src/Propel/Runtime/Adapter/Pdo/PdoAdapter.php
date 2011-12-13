@@ -14,6 +14,7 @@ use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Adapter\AdapterException;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\StatementInterface;
+use Propel\Runtime\Exception\InvalidArgumentException;
 use Propel\Runtime\Map\ColumnMap;
 use Propel\Runtime\Map\DatabaseMap;
 use Propel\Runtime\Query\Criteria;
@@ -41,7 +42,7 @@ abstract class PdoAdapter
         $conparams = $this->prepareParams($conparams);
 
         if (!isset($conparams['dsn'])) {
-			throw new \InvalidArgumentException('No dsn specified in your connection parameters');
+			throw new InvalidArgumentException('No dsn specified in your connection parameters');
         }
 
         $dsn      = $conparams['dsn'];

@@ -12,6 +12,7 @@ namespace Propel\Generator\Util;
 
 use Propel\Generator\Config\GeneratorConfigInterface;
 
+use \InvalidArgumentException;
 use \PDO;
 
 /**

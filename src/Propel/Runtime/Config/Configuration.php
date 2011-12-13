@@ -10,6 +10,8 @@
 
 namespace Propel\Runtime\Config;
 
+use Propel\Runtime\Exception\InvalidArgumentException;
+
 /**
  * Configuration is a container for all Propel's runtime configuration data.
  *
@@ -144,7 +146,7 @@ class Configuration implements \ArrayAccess
     }
 
     /**
-     * @throws     \InvalidArgumentException
+     * @throws     \Propel\Runtime\Exception\InvalidArgumentException
      *
      * @param     integer  $type
      * @return    mixed
@@ -159,7 +161,7 @@ class Configuration implements \ArrayAccess
             case Configuration::TYPE_OBJECT:
                 return $this;
             default:
-                throw new \InvalidArgumentException('Unknown configuration type: '. var_export($type, true));
+                throw new InvalidArgumentException('Unknown configuration type: '. var_export($type, true));
         }
     }
 

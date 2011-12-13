@@ -21,7 +21,7 @@ use \PDO;
 class ConnectionFactoryTest extends BaseTestCase
 {
     /**
-     * @expectedException \InvalidArgumentException
+     * @expectedException \Propel\Runtime\Exception\InvalidArgumentException
      */
     public function testCreateFailsIfGivenIncorrectConfiguration()
     {

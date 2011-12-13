@@ -19,7 +19,7 @@ use Propel\Runtime\Adapter\Pdo\SqliteAdapter;
 class ConnectionManagerSingleTest extends BaseTestCase
 {
     /**
-	 * @expectedException \InvalidArgumentException
+	 * @expectedException \Propel\Runtime\Exception\InvalidArgumentException
      */
     public function testGetWriteConnectionFailsIfManagerIsNotConfigured()
     {
