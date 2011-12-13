@@ -75,9 +75,11 @@ class PeerBuilder extends AbstractPeerBuilder
         if ($namespace = parent::getNamespace()) {
             if ($this->getGeneratorConfig() && $omns = $this->getGeneratorConfig()->getBuildProperty('namespaceOm')) {
                 return $namespace . '\\' . $omns;
+            } else {
+                return $namespace . '\\Base';
             }
-
-            return $namespace;
+        } else {
+            return 'Base';
         }
     }
 

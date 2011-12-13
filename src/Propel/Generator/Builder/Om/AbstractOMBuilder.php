@@ -270,6 +270,9 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         if (str_replace('\\Base', '', $namespace) == str_replace('\\Base', '', $this->getNamespace())) {
             return true;
         }
+        if (('' == $namespace && 'Base' == $this->getNamespace()) && str_replace(array('Peer','Query'), '', $class) == str_replace(array('Peer','Query'), '', $this->getClassname())) {
+            return true;
+        }
     }
 
     public function declareClassNamespacePrefix($class, $namespace = '', $aliasPrefix = false)

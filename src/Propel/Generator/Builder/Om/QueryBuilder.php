@@ -38,8 +38,10 @@ class QueryBuilder extends AbstractOMBuilder
             if ($this->getGeneratorConfig() && $omns = $this->getGeneratorConfig()->getBuildProperty('namespaceOm')) {
                 return $namespace . '\\' . $omns;
             } else {
-                return $namespace;
+                return $namespace . '\\Base';
             }
+        } else {
+            return 'Base';
         }
     }
 

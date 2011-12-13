@@ -36,8 +36,10 @@ class TableMapBuilder extends AbstractOMBuilder
             if ($this->getGeneratorConfig() && $omns = $this->getGeneratorConfig()->getBuildProperty('namespaceMap')) {
                 return $namespace . '\\' . $omns;
             } else {
-                return $namespace;
+                return $namespace .'Map';
             }
+        } else {
+            return 'Map';
         }
     }
 
