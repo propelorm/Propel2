@@ -434,7 +434,7 @@ EOF;
 
     public function testDatabaseLevelBehavior()
     {
-            $schema = <<<EOF
+        $schema = <<<EOF
 <database name="versionable_behavior_test_0">
     <behavior name="versionable" />
     <table name="versionable_behavior_test_0">
@@ -443,9 +443,27 @@ EOF;
     </table>
 </database>
 EOF;
-            $builder = new QuickBuilder();
-            $builder->setSchema($schema);
-            $builder->getSQL();
+        $expected = <<<EOF
+-----------------------------------------------------------------------
+-- versionable_behavior_test_0_version
+-----------------------------------------------------------------------
+
+DROP TABLE versionable_behavior_test_0_version;
+
+CREATE TABLE versionable_behavior_test_0_version
+(
+    id INTEGER NOT NULL,
+    bar INTEGER,
+    version INTEGER DEFAULT 0 NOT NULL,
+    PRIMARY KEY (id,version)
+);
+
+-- SQLite does not support foreign keys; this is just for reference
+-- FOREIGN KEY (id) REFERENCES versionable_behavior_test_0 (id)
+EOF;
+        $builder = new QuickBuilder();
+        $builder->setSchema($schema);
+        $this->assertContains($expected, $builder->getSQL());
     }
 
 }
