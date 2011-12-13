@@ -198,7 +198,7 @@ protected function doSelect(\$con)
         \$stmt->execute();
         } catch (Exception \$e) {
             Propel::log(\$e->getMessage(), Propel::LOG_ERR);
-            throw new PropelException(sprintf('Unable to execute SELECT statement [%s]', \$sql), \$e);
+            throw new PropelException(sprintf('Unable to execute SELECT statement [%s]', \$sql), 0, \$e);
         }
 
     return \$stmt;
@@ -259,7 +259,7 @@ protected function doCount(\$con)
         \$stmt->execute();
     } catch (Exception \$e) {
         Propel::log(\$e->getMessage(), Propel::LOG_ERR);
-        throw new PropelException(sprintf('Unable to execute COUNT statement [%s]', \$sql), \$e);
+        throw new PropelException(sprintf('Unable to execute COUNT statement [%s]', \$sql), 0, \$e);
     }
 
     return \$stmt;

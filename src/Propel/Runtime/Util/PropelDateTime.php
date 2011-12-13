@@ -99,7 +99,7 @@ class PropelDateTime extends DateTime
                 }
             }
         } catch (\Exception $e) {
-            throw new PropelException('Error parsing date/time value: ' . var_export($value, true), $e);
+            throw new PropelException('Error parsing date/time value: ' . var_export($value, true), 0, $e);
         }
 
         return $dateTimeObject;
