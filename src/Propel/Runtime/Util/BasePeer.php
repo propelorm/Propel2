@@ -39,12 +39,15 @@ use \Exception;
  */
 class BasePeer
 {
-
-    /** Array (hash) that contains the cached mapBuilders. */
+	/**
+	 * Array (hash) that contains the cached mapBuilders.
+	 */
     private static $mapBuilders = array();
 
-    /** Array (hash) that contains cached validators */
-    private static $validatorMap = array();
+	/**
+	 * Array (hash) that contains cached validators
+	 */
+	private static $validatorMap = array();
 
     /**
      * phpname type
@@ -589,7 +592,7 @@ class BasePeer
      *          key, or null if it doesn't.
      * @throws     PropelException
      */
-    private static function getPrimaryKey(Criteria $criteria)
+	static private function getPrimaryKey(Criteria $criteria)
     {
         // Assume all the keys are for the same table.
         $keys = $criteria->keys();
@@ -599,7 +602,6 @@ class BasePeer
         $pk = null;
 
         if (!empty($table)) {
-
             $dbMap = Propel::getServiceContainer()->getDatabaseMap($criteria->getDbName());
 
             $pks = $dbMap->getTable($table)->getPrimaryKeys();
@@ -850,41 +852,38 @@ class BasePeer
      * @param      Criteria $values
      * @return     array params array('column' => ..., 'table' => ..., 'value' => ...)
      */
-    private static function buildParams($columns, Criteria $values)
+    static private function buildParams($columns, Criteria $values)
     {
-        $params = array();
-        foreach ($columns as $key) {
-            if ($values->containsKey($key)) {
-                $crit = $values->getCriterion($key);
-                $params[] = array('column' => $crit->getColumn(), 'table' => $crit->getTable(), 'value' => $crit->getValue());
-            }
-        }
+		$params = array();
+		foreach ($columns as $key) {
+			if ($values->containsKey($key)) {
+				$crit = $values->getCriterion($key);
+				$params[] = array('column' => $crit->getColumn(), 'table' => $crit->getTable(), 'value' => $crit->getValue());
+			}
+		}
 
-        return $params;
-    }
+		return $params;
+	}
 
     /**
      * This function searches for the given validator $name under propel/validator/$name.php,
      * imports and caches it.
      *
-     * @param      string $classname The dot-path name of class (e.g. myapp.propel.MyValidator)
-     * @return     Validator object or null if not able to instantiate validator class (and error will be logged in this case)
+     * @param	string $classname	The name of class
+     * @return	Validator object or null if not able to instantiate validator class (and error will be logged in this case)
      */
     static public function getValidator($classname)
     {
         try {
-            $v = isset(self::$validatorMap[$classname]) ? self::$validatorMap[$classname] : null;
+			$v = isset(self::$validatorMap[$classname]) ? self::$validatorMap[$classname] : null;
             if ($v === null) {
-                // FIXME: use namespace autoloading instead
-                $cls = Propel::importClass($classname);
-                $v = new $cls();
-                self::$validatorMap[$classname] = $v;
-            }
+				$v = new $classname();
+				self::$validatorMap[$classname] = $v;
+			}
 
             return $v;
         } catch (Exception $e) {
             Propel::log("BasePeer::getValidator(): failed trying to instantiate " . $classname . ": ".$e->getMessage(), Propel::LOG_ERR);
         }
     }
-
 }
