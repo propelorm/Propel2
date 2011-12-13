@@ -12,6 +12,7 @@ namespace Propel\Runtime\Collection;
 
 use Propel\Runtime\Propel;
 use Propel\Runtime\Connection\ConnectionInterface;
+use Propel\Runtime\Exception\BadMethodCallException;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\RelationMap;
 use Propel\Runtime\Query\PropelQuery;
@@ -34,7 +35,7 @@ class ObjectCollection extends Collection
     public function save($con = null)
     {
         if (!method_exists($this->getModel(), 'save')) {
-            throw new \BadMethodCallException('Cannot save objects on a read-only model');
+            throw new BadMethodCallException('Cannot save objects on a read-only model');
         }
         if (null === $con) {
             $con = $this->getWriteConnection();
@@ -60,7 +61,7 @@ class ObjectCollection extends Collection
     public function delete($con = null)
     {
         if (!method_exists($this->getModel(), 'delete')) {
-            throw new \BadMethodCallException('Cannot delete objects on a read-only model');
+            throw new BadMethodCallException('Cannot delete objects on a read-only model');
         }
         if (null === $con) {
             $con = $this->getWriteConnection();

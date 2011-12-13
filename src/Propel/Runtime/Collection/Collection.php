@@ -11,6 +11,7 @@
 namespace Propel\Runtime\Collection;
 
 use Propel\Runtime\Propel;
+use Propel\Runtime\Exception\BadMethodCallException;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Formatter\AbstractFormatter;
 use Propel\Runtime\Om\BaseObject;
@@ -563,7 +564,7 @@ class Collection extends ArrayObject implements Serializable
 
             return $this->exportTo($matches[1], $usePrefix, $includeLazyLoadColumns);
         }
-		throw new \BadMethodCallException('Call to undefined method: ' . $name);
+		throw new BadMethodCallException('Call to undefined method: ' . $name);
     }
 
     /**

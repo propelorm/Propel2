@@ -347,7 +347,7 @@ class CollectionTest extends BookstoreTestBase
     }
 
     /**
-	 * @expectedException \BadMethodCallException
+	 * @expectedException \Propel\Runtime\Exception\BadMethodCallException
      */
     public function testGetConnectionNoModel()
     {
