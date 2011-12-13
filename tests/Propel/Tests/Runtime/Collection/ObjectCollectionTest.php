@@ -87,10 +87,10 @@ class ObjectCollectionTest extends BookstoreTestBase
         $this->assertEquals(4, count($pks));
 
         $keys = array(
-            '\Propel\Tests\Bookstore\Book_0',
-            '\Propel\Tests\Bookstore\Book_1',
-            '\Propel\Tests\Bookstore\Book_2',
-            '\Propel\Tests\Bookstore\Book_3'
+            'Book_0',
+            'Book_1',
+            'Book_2',
+            'Book_3'
         );
         $this->assertEquals($keys, array_keys($pks));
 

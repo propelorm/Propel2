@@ -447,7 +447,7 @@ class Collection extends ArrayObject implements Serializable
         } else {
             $this->model = $model;
         }
-        $this->fullyQualifiedModel = $model;
+        $this->fullyQualifiedModel = ((0 === strpos($model, '\\')) ?'':'\\') . $model;
     }
 
     /**
