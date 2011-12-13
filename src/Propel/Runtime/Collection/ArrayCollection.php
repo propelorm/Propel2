@@ -31,7 +31,7 @@ class ArrayCollection extends Collection
     public function save($con = null)
     {
         if (!method_exists($this->getModel(), 'save')) {
-            throw new PropelException('Cannot save objects on a read-only model');
+			throw new \BadMethodCallException('Cannot save objects on a read-only model');
         }
         if (null === $con) {
             $con = $this->getWriteConnection();
@@ -59,7 +59,7 @@ class ArrayCollection extends Collection
     public function delete($con = null)
     {
         if (!method_exists($this->getModel(), 'delete')) {
-            throw new PropelException('Cannot delete objects on a read-only model');
+            throw new \BadMethodCallException('Cannot delete objects on a read-only model');
         }
         if (null === $con) {
             $con = $this->getWriteConnection();

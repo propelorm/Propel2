@@ -56,7 +56,7 @@ class ArrayCollectionTest extends BookstoreEmptyTestBase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
+     * @expectedException \BadMethodCallException
      */
     public function testSaveOnReadOnlyEntityThrowsException()
     {
@@ -78,7 +78,7 @@ class ArrayCollectionTest extends BookstoreEmptyTestBase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
+     * @expectedException \BadMethodCallException
      */
     public function testDeleteOnReadOnlyEntityThrowsException()
     {

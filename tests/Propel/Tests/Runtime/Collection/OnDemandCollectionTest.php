@@ -74,7 +74,7 @@ class OnDemandCollectionTest extends BookstoreEmptyTestBase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
+     * @expectedException \BadMethodCallException
      */
     public function testoffsetSet()
     {
@@ -82,7 +82,7 @@ class OnDemandCollectionTest extends BookstoreEmptyTestBase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
+     * @expectedException \BadMethodCallException
      */
     public function testoffsetUnset()
     {
@@ -96,7 +96,7 @@ class OnDemandCollectionTest extends BookstoreEmptyTestBase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
+     * @expectedException \BadMethodCallException
      */
     public function testFromArray()
     {

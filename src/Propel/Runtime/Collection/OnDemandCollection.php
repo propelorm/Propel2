@@ -100,7 +100,7 @@ class OnDemandCollection extends Collection
      */
     public function fromArray($arr)
     {
-        throw new PropelException('The On Demand Collection is read only');
+        throw new \BadMethodCallException('The On Demand Collection is read only');
     }
 
     // IteratorAggregate Interface
@@ -144,23 +144,23 @@ class OnDemandCollection extends Collection
     }
 
     /**
-     * @throws    PropelException
+     * @throws    \BadMethodCallException
      *
      * @param     integer  $offset
      * @param     mixed    $value
      */
     public function offsetSet($offset, $value)
     {
-        throw new PropelException('The On Demand Collection is read only');
+        throw new \BadMethodCallException('The On Demand Collection is read only');
     }
 
     /**
-     * @throws    PropelException
+     * @throws    \BadMethodCallException
      * @param     integer  $offset
      */
     public function offsetUnset($offset)
     {
-        throw new PropelException('The On Demand Collection is read only');
+        throw new \BadMethodCallException('The On Demand Collection is read only');
     }
 
     // Serializable Interface
@@ -199,22 +199,22 @@ class OnDemandCollection extends Collection
 
     public function append($value)
     {
-        throw new PropelException('The On Demand Collection is read only');
+        throw new \BadMethodCallException('The On Demand Collection is read only');
     }
 
     public function prepend($value)
     {
-        throw new PropelException('The On Demand Collection is read only');
+        throw new \BadMethodCallException('The On Demand Collection is read only');
     }
 
     public function asort()
     {
-        throw new PropelException('The On Demand Collection is read only');
+        throw new \BadMethodCallException('The On Demand Collection is read only');
     }
 
     public function exchangeArray($input)
     {
-        throw new PropelException('The On Demand Collection is read only');
+        throw new \BadMethodCallException('The On Demand Collection is read only');
     }
 
     public function getArrayCopy()
@@ -229,17 +229,17 @@ class OnDemandCollection extends Collection
 
     public function ksort()
     {
-        throw new PropelException('The On Demand Collection is read only');
+        throw new \BadMethodCallException('The On Demand Collection is read only');
     }
 
     public function natcasesort()
     {
-        throw new PropelException('The On Demand Collection is read only');
+        throw new \BadMethodCallException('The On Demand Collection is read only');
     }
 
     public function natsort()
     {
-        throw new PropelException('The On Demand Collection is read only');
+        throw new \BadMethodCallException('The On Demand Collection is read only');
     }
 
     public function setFlags($flags)
@@ -249,12 +249,12 @@ class OnDemandCollection extends Collection
 
     public function uasort($cmp_function)
     {
-        throw new PropelException('The On Demand Collection is read only');
+        throw new \BadMethodCallException('The On Demand Collection is read only');
     }
 
     public function uksort($cmp_function)
     {
-        throw new PropelException('The On Demand Collection is read only');
+        throw new \BadMethodCallException('The On Demand Collection is read only');
     }
 
     /**

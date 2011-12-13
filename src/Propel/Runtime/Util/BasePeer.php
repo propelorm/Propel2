@@ -12,11 +12,11 @@ namespace Propel\Runtime\Util;
 
 use Propel\Runtime\Propel;
 use Propel\Runtime\Connection\ConnectionInterface;
-use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Query\Criteria;
 use Propel\Runtime\Validator\ValidationFailed;
 
 use \Exception;
+use \RuntimeException;
 
 /**
  * This is a utility class for all generated Peer classes in the system.
@@ -113,7 +113,7 @@ class BasePeer
      *                 will correspond to the number of rows affected by the call to this
      *                 method.  Note that the return value does require that this information
      *                 is returned (supported) by the PDO driver.
-     * @throws     PropelException
+     * @throws     \RuntimeException
      */
     static public function doDelete(Criteria $criteria, ConnectionInterface $con)
     {
@@ -122,14 +122,14 @@ class BasePeer
 
         //join are not supported with DELETE statement
         if (count($criteria->getJoins())) {
-            throw new PropelException('Delete does not support join');
+            throw new RuntimeException('Delete does not support join');
         }
 
         // Set up a list of required tables (one DELETE statement will
         // be executed per table)
         $tables = $criteria->getTablesColumns();
         if (empty($tables)) {
-            throw new PropelException("Cannot delete from an empty Criteria");
+            throw new RuntimeException("Cannot delete from an empty Criteria");
         }
 
         $affectedRows = 0; // initialize this in case the next loop has no iterations.
@@ -156,7 +156,7 @@ class BasePeer
                 $affectedRows = $stmt->rowCount();
             } catch (Exception $e) {
                 Propel::log($e->getMessage(), Propel::LOG_ERR);
-                throw new PropelException(sprintf('Unable to execute DELETE statement [%s]', $sql), 0, $e);
+                throw new RuntimeException(sprintf('Unable to execute DELETE statement [%s]', $sql), 0, $e);
             }
 
         } // for each table
@@ -182,7 +182,7 @@ class BasePeer
      * @return     int      The number of rows affected by the statement. Note
      *                      that the return value does require that this information
      *                      is returned (supported) by the Propel db driver.
-     * @throws     PropelException - wrapping SQLException caught from statement execution.
+     * @throws     \RuntimeException - wrapping SQLException caught from statement execution.
      */
     static public function doDeleteAll($tableName, ConnectionInterface $con, $databaseName = null)
     {
@@ -200,7 +200,7 @@ class BasePeer
             return $stmt->rowCount();
         } catch (Exception $e) {
             Propel::log($e->getMessage(), Propel::LOG_ERR);
-            throw new PropelException(sprintf('Unable to execute DELETE ALL statement [%s]', $sql), 0, $e);
+            throw new RuntimeException(sprintf('Unable to execute DELETE ALL statement [%s]', $sql), 0, $e);
         }
     }
 
@@ -225,7 +225,7 @@ class BasePeer
      * @param      ConnectionInterface $con A ConnectionInterface connection.
      * @return     mixed The primary key for the new row if (and only if!) the primary key
      *                is auto-generated.  Otherwise will return <code>null</code>.
-     * @throws     PropelException
+     * @throws     \RuntimeException
      */
     static public function doInsert(Criteria $criteria, ConnectionInterface $con) {
 
@@ -240,7 +240,7 @@ class BasePeer
         if (!empty($keys)) {
             $tableName = $criteria->getTableName( $keys[0] );
         } else {
-            throw new PropelException("Database insert attempted without anything specified to insert");
+            throw new RuntimeException("Database insert attempted without anything specified to insert");
         }
 
         $dbMap = Propel::getServiceContainer()->getDatabaseMap($criteria->getDbName());
@@ -263,7 +263,7 @@ class BasePeer
             try {
                 $id = $db->getId($con, $keyInfo);
             } catch (Exception $e) {
-                throw new PropelException("Unable to get sequence id.", 0, $e);
+                throw new RuntimeException("Unable to get sequence id.", 0, $e);
             }
             $criteria->add($pk->getFullyQualifiedName(), $id);
         }
@@ -303,7 +303,7 @@ class BasePeer
 
         } catch (Exception $e) {
             Propel::log($e->getMessage(), Propel::LOG_ERR);
-            throw new PropelException(sprintf('Unable to execute INSERT statement [%s]', $sql), 0, $e);
+            throw new RuntimeException(sprintf('Unable to execute INSERT statement [%s]', $sql), 0, $e);
         }
 
         // If the primary key column is auto-incremented, get the id now.
@@ -311,7 +311,7 @@ class BasePeer
             try {
                 $id = $db->getId($con, $keyInfo);
             } catch (Exception $e) {
-                throw new PropelException("Unable to get autoincrement id.", 0, $e);
+                throw new RuntimeException("Unable to get autoincrement id.", 0, $e);
             }
         }
 
@@ -337,7 +337,7 @@ class BasePeer
      *                 will correspond to the number of rows affected by the call to this
      *                 method.  Note that the return value does require that this information
      *                 is returned (supported) by the Propel db driver.
-     * @throws     PropelException
+     * @throws     \RuntimeException
      */
     static public function doUpdate(Criteria $selectCriteria, Criteria $updateValues, ConnectionInterface $con) {
 
@@ -444,7 +444,7 @@ class BasePeer
             } catch (Exception $e) {
                 if ($stmt) $stmt = null; // close
                 Propel::log($e->getMessage(), Propel::LOG_ERR);
-                throw new PropelException(sprintf('Unable to execute UPDATE statement [%s]', $sql), 0, $e);
+                throw new RuntimeException(sprintf('Unable to execute UPDATE statement [%s]', $sql), 0, $e);
             }
 
         } // foreach table in the criteria
@@ -458,7 +458,7 @@ class BasePeer
      * @param      Criteria $criteria A Criteria.
      * @param      ConnectionInterface $con A ConnectionInterface connection to use.
      * @return     Propel\Runtime\Connection\StatementInterface The resultset.
-     * @throws     PropelException
+     * @throws     \RuntimeException
      * @see        createSelectSql()
      */
     static public function doSelect(Criteria $criteria, ConnectionInterface $con = null)
@@ -487,7 +487,7 @@ class BasePeer
                 $stmt = null; // close
             }
             Propel::log($e->getMessage(), Propel::LOG_ERR);
-            throw new PropelException(sprintf('Unable to execute SELECT statement [%s]', $sql), 0, $e);
+            throw new RuntimeException(sprintf('Unable to execute SELECT statement [%s]', $sql), 0, $e);
         }
 
         return $stmt;
@@ -500,7 +500,7 @@ class BasePeer
      * @param      Criteria $criteria A Criteria.
      * @param      ConnectionInterface $con A ConnectionInterface connection to use.
      * @return     Propel\Runtime\Connection\StatementInterface The resultset statement.
-     * @throws     PropelException
+     * @throws     \RuntimeException
      * @see        createSelectSql()
      */
     static public function doCount(Criteria $criteria, ConnectionInterface $con = null)
@@ -527,7 +527,7 @@ class BasePeer
             if ($needsComplexCount) {
                 if (self::needsSelectAliases($criteria)) {
                     if ($criteria->getHaving()) {
-                        throw new PropelException('Propel cannot create a COUNT query when using HAVING and  duplicate column names in the SELECT part');
+                        throw new RuntimeException('Propel cannot create a COUNT query when using HAVING and  duplicate column names in the SELECT part');
                     }
                     $db->turnSelectColumnsToAliases($criteria);
                 }
@@ -548,7 +548,7 @@ class BasePeer
                 $stmt = null;
             }
             Propel::log($e->getMessage(), Propel::LOG_ERR);
-            throw new PropelException(sprintf('Unable to execute COUNT statement [%s]', $sql), 0, $e);
+            throw new RuntimeException(sprintf('Unable to execute COUNT statement [%s]', $sql), 0, $e);
         }
 
         return $stmt;
@@ -590,7 +590,7 @@ class BasePeer
      * @param      Criteria $criteria A Criteria.
      * @return     ColumnMap If the Criteria object contains a primary
      *          key, or null if it doesn't.
-     * @throws     PropelException
+     * @throws     \RuntimeException
      */
 	static private function getPrimaryKey(Criteria $criteria)
     {
@@ -646,7 +646,7 @@ class BasePeer
      * @param      Criteria $criteria Criteria for the SELECT query.
      * @param      array &$params Parameters that are to be replaced in prepared statement.
      * @return     string
-     * @throws     PropelException Trouble creating the query string.
+     * @throws     \RuntimeException Trouble creating the query string.
      */
     static public function createSelectSql(Criteria $criteria, &$params)
     {

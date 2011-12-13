@@ -34,7 +34,7 @@ class ObjectCollection extends Collection
     public function save($con = null)
     {
         if (!method_exists($this->getModel(), 'save')) {
-            throw new PropelException('Cannot save objects on a read-only model');
+            throw new \BadMethodCallException('Cannot save objects on a read-only model');
         }
         if (null === $con) {
             $con = $this->getWriteConnection();
@@ -60,7 +60,7 @@ class ObjectCollection extends Collection
     public function delete($con = null)
     {
         if (!method_exists($this->getModel(), 'delete')) {
-            throw new PropelException('Cannot delete objects on a read-only model');
+            throw new \BadMethodCallException('Cannot delete objects on a read-only model');
         }
         if (null === $con) {
             $con = $this->getWriteConnection();
@@ -247,7 +247,7 @@ class ObjectCollection extends Collection
     public function populateRelation($relation, $criteria = null, $con = null)
     {
         if (!Propel::isInstancePoolingEnabled()) {
-            throw new PropelException('populateRelation() needs instance pooling to be enabled prior to populating the collection');
+            throw new \RuntimeException('populateRelation() needs instance pooling to be enabled prior to populating the collection');
         }
         $relationMap = $this->getFormatter()->getTableMap()->getRelation($relation);
         if ($this->isEmpty()) {

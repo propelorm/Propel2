@@ -12,6 +12,7 @@ namespace Propel\Runtime\Adapter\Pdo;
 
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
+use Propel\Runtime\Exception\ColumnNotFoundException;
 
 /**
  * This is used to connect to a MSSQL database.
@@ -126,7 +127,7 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
         // make sure offset and limit are numeric
         if(! is_numeric($offset) || ! is_numeric($limit))
         {
-            throw new PropelException('MssqlAdapter::applyLimit() expects a number for argument 2 and 3');
+			throw new \InvalidArgumentException('MssqlAdapter::applyLimit() expects a number for argument 2 and 3');
         }
 
         //split the select and from clauses out of the original query
@@ -227,7 +228,7 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
             if(isset($firstColumnOrderStatement)) {
                 $orderStatement = $firstColumnOrderStatement;
             } else {
-                throw new Exception('MssqlAdapter::applyLimit() unable to find column to use with ROW_NUMBER()');
+                throw new ColumnNotFoundException('MssqlAdapter::applyLimit() unable to find column to use with ROW_NUMBER()');
             }
         }
 

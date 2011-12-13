@@ -226,7 +226,7 @@ class Collection extends ArrayObject implements Serializable
     public function get($key)
     {
         if (!$this->offsetExists($key)) {
-            throw new PropelException('Unknown key ' . $key);
+			throw new \UnexpectedValueException('Unknown key ' . $key);
         }
 
         return $this->offsetGet($key);
@@ -304,7 +304,7 @@ class Collection extends ArrayObject implements Serializable
     public function remove($key)
     {
         if (!$this->offsetExists($key)) {
-            throw new PropelException('Unknown key ' . $key);
+            throw new \UnexpectedValueException('Unknown key ' . $key);
         }
 
         return $this->offsetUnset($key);
@@ -563,7 +563,7 @@ class Collection extends ArrayObject implements Serializable
 
             return $this->exportTo($matches[1], $usePrefix, $includeLazyLoadColumns);
         }
-        throw new PropelException('Call to undefined method: ' . $name);
+		throw new \BadMethodCallException('Call to undefined method: ' . $name);
     }
 
     /**

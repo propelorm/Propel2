@@ -15,6 +15,7 @@ use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Query\Criteria;
 
 use \PDO;
+use \InvalidArgumentException;
 
 /**
  * This is used to connect to PostgresQL databases.
@@ -88,7 +89,7 @@ class PgsqlAdapter extends PdoAdapter implements AdapterInterface
     public function getId(ConnectionInterface $con, $name = null)
     {
         if ($name === null) {
-            throw new PropelException("Unable to fetch next sequence ID without sequence name.");
+            throw new InvalidArgumentException("Unable to fetch next sequence ID without sequence name.");
         }
         $stmt = $con->query("SELECT nextval(".$con->quote($name).")");
         $row = $stmt->fetch(PDO::FETCH_NUM);

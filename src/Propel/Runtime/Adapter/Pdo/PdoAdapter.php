@@ -41,7 +41,7 @@ abstract class PdoAdapter
         $conparams = $this->prepareParams($conparams);
 
         if (!isset($conparams['dsn'])) {
-            throw new PropelException('No dsn specified in your connection parameters');
+			throw new \InvalidArgumentException('No dsn specified in your connection parameters');
         }
 
         $dsn      = $conparams['dsn'];

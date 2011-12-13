@@ -13,6 +13,7 @@ namespace Propel\Runtime\Adapter\Pdo;
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\StatementInterface;
+use Propel\Runtime\Exception\UnsupportedEncodingException;
 
 use \PDO;
 
@@ -45,7 +46,7 @@ class SqlsrvAdapter extends MssqlAdapter implements AdapterInterface
      * @param     PDO     $con
      * @param     string  $charset
      *
-     * @throws    PropelException
+     * @throws    \Propel\Runtime\Exception\UnsupportedEncodingException
      */
     public function setCharset(ConnectionInterface $con, $charset)
     {
@@ -57,7 +58,7 @@ class SqlsrvAdapter extends MssqlAdapter implements AdapterInterface
             $con->setAttribute(PDO::SQLSRV_ATTR_ENCODING, PDO::SQLSRV_ENCODING_SYSTEM);
             break;
         default:
-            throw new PropelException('only utf-8 or system encoding are supported by the pdo_sqlsrv driver');
+            throw new UnsupportedEncodingException('only utf-8 or system encoding are supported by the pdo_sqlsrv driver');
         }
     }
 

@@ -237,7 +237,7 @@ class BasePeerTest extends BookstoreTestBase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
+     * @expectedException \RuntimeException
      */
     public function testDoDeleteNoCondition()
     {
@@ -247,7 +247,7 @@ class BasePeerTest extends BookstoreTestBase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
+     * @expectedException \RuntimeException
      */
     public function testDoDeleteJoin()
     {

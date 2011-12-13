@@ -18,6 +18,7 @@ use Propel\Runtime\Util\BasePeer;
 use Propel\Runtime\Query\Criteria;
 
 use \PDO;
+use \InvalidArgumentException;
 
 /**
  * Oracle adapter.
@@ -135,13 +136,13 @@ class OracleAdapter extends PdoAdapter implements AdapterInterface
      * @param     ConnectionInterface $con
      * @param     string  $name
      *
-     * @throws    PropelException
+     * @throws    \InvalidArgumentException
      * @return    integer
      */
     public function getId(ConnectionInterface $con, $name = null)
     {
         if ($name === null) {
-            throw new PropelException("Unable to fetch next sequence ID without sequence name.");
+            throw new InvalidArgumentException("Unable to fetch next sequence ID without sequence name.");
         }
 
         $stmt = $con->query("SELECT " . $name . ".nextval FROM dual");

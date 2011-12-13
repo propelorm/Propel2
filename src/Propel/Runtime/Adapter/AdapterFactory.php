@@ -10,8 +10,6 @@
 
 namespace Propel\Runtime\Adapter;
 
-use Propel\Runtime\Exception\PropelException;
-
 /**
  * Factory for Adapter classes.
  */
@@ -24,7 +22,7 @@ class AdapterFactory
      * @param     string  $driver The name of the Propel driver to create a new adapter instance
      *                            for or a shorter form adapter key.
      *
-     * @throws    Propel\Runtime\Exception\PropelException  If the adapter could not be instantiated.
+     * @throws    \InvalidArgumentException	If the adapter could not be instantiated.
      * @return    Propel\Runtime\Adapter\AdapterInterface        An instance of a Propel database adapter.
      */
     static public function create($driver)
@@ -39,7 +37,7 @@ class AdapterFactory
         if (class_exists($adapterClass)) {
             return new $adapterClass();
         }
-        throw new PropelException(sprintf('Unsupported Propel driver: "%s". Check your configuration file', $driver));
+		throw new \InvalidArgumentException(sprintf('Unsupported Propel driver: "%s". Check your configuration file', $driver));
     }
 
 }

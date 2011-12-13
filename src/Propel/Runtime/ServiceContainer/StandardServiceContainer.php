@@ -18,7 +18,6 @@ use Propel\Runtime\Connection\ConnectionManagerInterface;
 use Propel\Runtime\Connection\ConnectionManagerSingle;
 use Propel\Runtime\Connection\ConnectionFactory;
 use Propel\Runtime\Map\DatabaseMap;
-use Propel\Runtime\Exception\PropelException;
 
 class StandardServiceContainer implements ServiceContainerInterface
 {
@@ -140,7 +139,7 @@ class StandardServiceContainer implements ServiceContainerInterface
         }
         if (!isset($this->adapters[$name])) {
             if (!isset($this->adapterClasses[$name])) {
-                throw new PropelException(sprintf('No adapter class defined for datasource "%s"', $name));
+                throw new AdapterException(sprintf('No adapter class defined for datasource "%s"', $name));
             }
             $this->adapters[$name] = AdapterFactory::create($this->adapterClasses[$name]);
         }
@@ -292,7 +291,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      *
      * @return     ConnectionInterface A database connection
      *
-     * @throws     PropelException - if connection is not properly configured
+	 * @throws     \Propel\Runtime\Adapter\AdapterException - if connection is not properly configured
      */
     public function getWriteConnection($name)
     {
