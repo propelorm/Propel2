@@ -12,11 +12,11 @@ namespace Propel\Runtime\Util;
 
 use Propel\Runtime\Propel;
 use Propel\Runtime\Connection\ConnectionInterface;
+use Propel\Runtime\Exception\RuntimeException;
 use Propel\Runtime\Query\Criteria;
 use Propel\Runtime\Validator\ValidationFailed;
 
 use \Exception;
-use \RuntimeException;
 
 /**
  * This is a utility class for all generated Peer classes in the system.
@@ -113,7 +113,7 @@ class BasePeer
      *                 will correspond to the number of rows affected by the call to this
      *                 method.  Note that the return value does require that this information
      *                 is returned (supported) by the PDO driver.
-     * @throws     \RuntimeException
+     * @throws     \Propel\Runtime\Exception\RuntimeException
      */
     static public function doDelete(Criteria $criteria, ConnectionInterface $con)
     {
@@ -182,7 +182,7 @@ class BasePeer
      * @return     int      The number of rows affected by the statement. Note
      *                      that the return value does require that this information
      *                      is returned (supported) by the Propel db driver.
-     * @throws     \RuntimeException - wrapping SQLException caught from statement execution.
+     * @throws     \Propel\Runtime\Exception\RuntimeException - wrapping SQLException caught from statement execution.
      */
     static public function doDeleteAll($tableName, ConnectionInterface $con, $databaseName = null)
     {
@@ -225,7 +225,7 @@ class BasePeer
      * @param      ConnectionInterface $con A ConnectionInterface connection.
      * @return     mixed The primary key for the new row if (and only if!) the primary key
      *                is auto-generated.  Otherwise will return <code>null</code>.
-     * @throws     \RuntimeException
+     * @throws     \Propel\Runtime\Exception\RuntimeException
      */
     static public function doInsert(Criteria $criteria, ConnectionInterface $con) {
 
@@ -337,7 +337,7 @@ class BasePeer
      *                 will correspond to the number of rows affected by the call to this
      *                 method.  Note that the return value does require that this information
      *                 is returned (supported) by the Propel db driver.
-     * @throws     \RuntimeException
+     * @throws     \Propel\Runtime\Exception\RuntimeException
      */
     static public function doUpdate(Criteria $selectCriteria, Criteria $updateValues, ConnectionInterface $con) {
 
@@ -458,7 +458,7 @@ class BasePeer
      * @param      Criteria $criteria A Criteria.
      * @param      ConnectionInterface $con A ConnectionInterface connection to use.
      * @return     Propel\Runtime\Connection\StatementInterface The resultset.
-     * @throws     \RuntimeException
+     * @throws     \Propel\Runtime\Exception\RuntimeException
      * @see        createSelectSql()
      */
     static public function doSelect(Criteria $criteria, ConnectionInterface $con = null)
@@ -500,7 +500,7 @@ class BasePeer
      * @param      Criteria $criteria A Criteria.
      * @param      ConnectionInterface $con A ConnectionInterface connection to use.
      * @return     Propel\Runtime\Connection\StatementInterface The resultset statement.
-     * @throws     \RuntimeException
+     * @throws     \Propel\Runtime\Exception\RuntimeException
      * @see        createSelectSql()
      */
     static public function doCount(Criteria $criteria, ConnectionInterface $con = null)
@@ -590,7 +590,7 @@ class BasePeer
      * @param      Criteria $criteria A Criteria.
      * @return     ColumnMap If the Criteria object contains a primary
      *          key, or null if it doesn't.
-     * @throws     \RuntimeException
+     * @throws     \Propel\Runtime\Exception\RuntimeException
      */
     static private function getPrimaryKey(Criteria $criteria)
     {
@@ -646,7 +646,7 @@ class BasePeer
      * @param      Criteria $criteria Criteria for the SELECT query.
      * @param      array &$params Parameters that are to be replaced in prepared statement.
      * @return     string
-     * @throws     \RuntimeException Trouble creating the query string.
+     * @throws     \Propel\Runtime\Exception\RuntimeException	Trouble creating the query string.
      */
     static public function createSelectSql(Criteria $criteria, &$params)
     {
