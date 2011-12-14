@@ -74,7 +74,7 @@ class ConnectionFactoryTest extends BaseTestCase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
+     * @expectedException \Propel\Runtime\Exception\InvalidArgumentException
      */
     public function testCreateFailsWhenPassedAnIncorrectAttributeName()
     {

@@ -11,8 +11,9 @@
 namespace Propel\Runtime\Collection;
 
 use Propel\Runtime\Propel;
+use Propel\Runtime\Collection\Exception\NotFoundModelException;
 use Propel\Runtime\Exception\BadMethodCallException;
-use Propel\Runtime\Exception\PropelException;
+use Propel\Runtime\Exception\UnexpectedValueException;
 use Propel\Runtime\Formatter\AbstractFormatter;
 use Propel\Runtime\Om\BaseObject;
 use Propel\Runtime\Parser\AbstractParser;
@@ -227,7 +228,7 @@ class Collection extends ArrayObject implements Serializable
     public function get($key)
     {
         if (!$this->offsetExists($key)) {
-			throw new \UnexpectedValueException('Unknown key ' . $key);
+			throw new UnexpectedValueException('Unknown key ' . $key);
         }
 
         return $this->offsetGet($key);
@@ -305,7 +306,7 @@ class Collection extends ArrayObject implements Serializable
     public function remove($key)
     {
         if (!$this->offsetExists($key)) {
-            throw new \UnexpectedValueException('Unknown key ' . $key);
+            throw new UnexpectedValueException('Unknown key ' . $key);
         }
 
         return $this->offsetUnset($key);
@@ -457,7 +458,7 @@ class Collection extends ArrayObject implements Serializable
     public function getPeerClass()
     {
         if ($this->model == '') {
-            throw new PropelException('You must set the collection model before interacting with it');
+			throw new NotFoundModelException('You must set the collection model before interacting with it');
         }
 
         return constant($this->getModel() . '::PEER');
