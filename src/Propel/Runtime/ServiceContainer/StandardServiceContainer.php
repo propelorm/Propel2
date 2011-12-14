@@ -12,7 +12,7 @@ namespace Propel\Runtime\ServiceContainer;
 
 use Propel\Runtime\Adapter\AdapterFactory;
 use Propel\Runtime\Adapter\AdapterInterface;
-use Propel\Runtime\Adapter\AdapterException;
+use Propel\Runtime\Adapter\Exception\AdapterException;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\ConnectionManagerInterface;
 use Propel\Runtime\Connection\ConnectionManagerSingle;
@@ -291,7 +291,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      *
      * @return     ConnectionInterface A database connection
      *
-	 * @throws     \Propel\Runtime\Adapter\AdapterException - if connection is not properly configured
+	 * @throws     \Propel\Runtime\Adapter\Exception\AdapterException - if connection is not properly configured
      */
     public function getWriteConnection($name)
     {
