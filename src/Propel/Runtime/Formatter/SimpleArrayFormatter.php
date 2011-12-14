@@ -11,6 +11,7 @@
 namespace Propel\Runtime\Formatter;
 
 use Propel\Runtime\Connection\StatementInterface;
+use Propel\Runtime\Exception\LogicException;
 
 use \PDO;
 
@@ -36,7 +37,7 @@ class SimpleArrayFormatter extends AbstractFormatter {
             $collection = array();
         }
         if ($this->isWithOneToMany () && $this->hasLimit) {
-            throw new PropelException('Cannot use limit() in conjunction with with() on a one-to-many relationship. Please remove the with() call, or the limit() call.');
+            throw new LogicException('Cannot use limit() in conjunction with with() on a one-to-many relationship. Please remove the with() call, or the limit() call.');
         }
         while ($row = $stmt->fetch (PDO::FETCH_NUM)) {
             if ($rowArray = $this->getStructuredArrayFromRow ($row)) {

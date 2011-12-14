@@ -11,6 +11,7 @@
 namespace Propel\Runtime\Formatter;
 
 use Propel\Runtime\Connection\StatementInterface;
+use Propel\Runtime\Exception\PropelException;
 
 /**
  * statement formatter for Propel query
@@ -45,5 +46,4 @@ class StatementFormatter extends AbstractFormatter
     {
         return false;
     }
-
 }
