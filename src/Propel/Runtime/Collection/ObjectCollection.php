@@ -288,7 +288,7 @@ class ObjectCollection extends Collection
             // nothing to do; the instance pool will catch all calls to getRelatedObject()
             // and return the object in memory
         } else {
-			throw new UnsupportedRelationException('populateRelation() does not support this relation type');
+            throw new UnsupportedRelationException('populateRelation() does not support this relation type');
         }
 
         return $relatedObjects;

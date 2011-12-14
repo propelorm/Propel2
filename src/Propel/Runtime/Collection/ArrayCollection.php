@@ -32,7 +32,7 @@ class ArrayCollection extends Collection
     public function save($con = null)
     {
         if (!method_exists($this->getModel(), 'save')) {
-			throw new ReadOnlyModelException('Cannot save objects on a read-only model');
+            throw new ReadOnlyModelException('Cannot save objects on a read-only model');
         }
         if (null === $con) {
             $con = $this->getWriteConnection();

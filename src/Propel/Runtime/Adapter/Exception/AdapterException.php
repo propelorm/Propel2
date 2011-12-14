@@ -16,8 +16,8 @@ use \Exception;
 
 class AdapterException extends RuntimeException
 {
-	public function __construct($message, Exception $exception)
-	{
-		parent::__construct($message, 0, $exception);
-	}
+    public function __construct($message, Exception $exception)
+    {
+        parent::__construct($message, 0, $exception);
+    }
 }

@@ -129,7 +129,7 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
         // make sure offset and limit are numeric
         if(! is_numeric($offset) || ! is_numeric($limit))
         {
-			throw new InvalidArgumentException('MssqlAdapter::applyLimit() expects a number for argument 2 and 3');
+            throw new InvalidArgumentException('MssqlAdapter::applyLimit() expects a number for argument 2 and 3');
         }
 
         //split the select and from clauses out of the original query
@@ -142,7 +142,7 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
             $selectStatement = trim($selectSegment[1]);
             $fromStatement = trim($selectSegment[2]);
         } else {
-			throw new MalformedClauseException('MssqlAdapter::applyLimit() could not locate the select statement at the start of the query.');
+            throw new MalformedClauseException('MssqlAdapter::applyLimit() could not locate the select statement at the start of the query.');
         }
 
         if (preg_match('/\Aselect(\s+)distinct/i', $sql)) {
@@ -206,7 +206,7 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
             } else {
                 //agregate columns must always have an alias clause
                 if(! stristr($selCol, ' AS ')) {
-					throw new MalformedClauseException('MssqlAdapter::applyLimit() requires aggregate columns to have an Alias clause');
+                    throw new MalformedClauseException('MssqlAdapter::applyLimit() requires aggregate columns to have an Alias clause');
                 }
 
                 //aggregate column alias can't be used as the count column you must use the entire aggregate statement

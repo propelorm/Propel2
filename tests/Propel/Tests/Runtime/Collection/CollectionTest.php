@@ -252,8 +252,8 @@ class CollectionTest extends BookstoreTestBase
     }
 
     /**
-	 * @expectedException \UnexpectedValueException
-	 */
+     * @expectedException \UnexpectedValueException
+     */
     public function testRemoveUnknownOffset()
     {
         $col = new Collection();
@@ -347,7 +347,7 @@ class CollectionTest extends BookstoreTestBase
     }
 
     /**
-	 * @expectedException \Propel\Runtime\Exception\BadMethodCallException
+     * @expectedException \Propel\Runtime\Exception\BadMethodCallException
      */
     public function testGetConnectionNoModel()
     {

@@ -228,7 +228,7 @@ class Collection extends ArrayObject implements Serializable
     public function get($key)
     {
         if (!$this->offsetExists($key)) {
-			throw new UnexpectedValueException('Unknown key ' . $key);
+            throw new UnexpectedValueException('Unknown key ' . $key);
         }
 
         return $this->offsetGet($key);
@@ -458,7 +458,7 @@ class Collection extends ArrayObject implements Serializable
     public function getPeerClass()
     {
         if ($this->model == '') {
-			throw new NotFoundModelException('You must set the collection model before interacting with it');
+            throw new NotFoundModelException('You must set the collection model before interacting with it');
         }
 
         return constant($this->getModel() . '::PEER');
@@ -565,7 +565,7 @@ class Collection extends ArrayObject implements Serializable
 
             return $this->exportTo($matches[1], $usePrefix, $includeLazyLoadColumns);
         }
-		throw new BadMethodCallException('Call to undefined method: ' . $name);
+        throw new BadMethodCallException('Call to undefined method: ' . $name);
     }
 
     /**

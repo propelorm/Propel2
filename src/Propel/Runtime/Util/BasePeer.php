@@ -39,15 +39,15 @@ use \RuntimeException;
  */
 class BasePeer
 {
-	/**
-	 * Array (hash) that contains the cached mapBuilders.
-	 */
+    /**
+     * Array (hash) that contains the cached mapBuilders.
+     */
     private static $mapBuilders = array();
 
-	/**
-	 * Array (hash) that contains cached validators
-	 */
-	private static $validatorMap = array();
+    /**
+     * Array (hash) that contains cached validators
+     */
+    private static $validatorMap = array();
 
     /**
      * phpname type
@@ -592,7 +592,7 @@ class BasePeer
      *          key, or null if it doesn't.
      * @throws     \RuntimeException
      */
-	static private function getPrimaryKey(Criteria $criteria)
+    static private function getPrimaryKey(Criteria $criteria)
     {
         // Assume all the keys are for the same table.
         $keys = $criteria->keys();
@@ -854,16 +854,16 @@ class BasePeer
      */
     static private function buildParams($columns, Criteria $values)
     {
-		$params = array();
-		foreach ($columns as $key) {
-			if ($values->containsKey($key)) {
-				$crit = $values->getCriterion($key);
-				$params[] = array('column' => $crit->getColumn(), 'table' => $crit->getTable(), 'value' => $crit->getValue());
-			}
-		}
+        $params = array();
+        foreach ($columns as $key) {
+            if ($values->containsKey($key)) {
+                $crit = $values->getCriterion($key);
+                $params[] = array('column' => $crit->getColumn(), 'table' => $crit->getTable(), 'value' => $crit->getValue());
+            }
+        }
 
-		return $params;
-	}
+        return $params;
+    }
 
     /**
      * This function searches for the given validator $name under propel/validator/$name.php,
@@ -875,11 +875,11 @@ class BasePeer
     static public function getValidator($classname)
     {
         try {
-			$v = isset(self::$validatorMap[$classname]) ? self::$validatorMap[$classname] : null;
+            $v = isset(self::$validatorMap[$classname]) ? self::$validatorMap[$classname] : null;
             if ($v === null) {
-				$v = new $classname();
-				self::$validatorMap[$classname] = $v;
-			}
+                $v = new $classname();
+                self::$validatorMap[$classname] = $v;
+            }
 
             return $v;
         } catch (Exception $e) {

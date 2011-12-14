@@ -291,7 +291,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      *
      * @return     ConnectionInterface A database connection
      *
-	 * @throws     \Propel\Runtime\Adapter\Exception\AdapterException - if connection is not properly configured
+     * @throws     \Propel\Runtime\Adapter\Exception\AdapterException - if connection is not properly configured
      */
     public function getWriteConnection($name)
     {
