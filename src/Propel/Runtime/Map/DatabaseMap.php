@@ -10,7 +10,7 @@
 
 namespace Propel\Runtime\Map;
 
-use Propel\Runtime\Exception\PropelException;
+use Propel\Runtime\Map\Exception\TableNotFoundException;
 use Propel\Runtime\Propel;
 
 /**
@@ -132,13 +132,13 @@ class DatabaseMap
      * Get a TableMap for the table by name.
      *
      * @param      string $name Name of the table.
-     * @return     \Propel\Runtime\Map\TableMap A TableMap
-     * @throws     \Propel\Runtime\Exception\PropelException if the table is undefined
+     * @return     \Propel\Runtime\Map\TableMap	A TableMap
+     * @throws     \Propel\Runtime\Map\Exception\TableNotFoundException	If the table is undefined
      */
     public function getTable($name)
     {
         if (!isset($this->tables[$name])) {
-            throw new PropelException("Cannot fetch TableMap for undefined table: $name");
+            throw new TableNotFoundException("Cannot fetch TableMap for undefined table: $name");
         }
 
         return $this->tables[$name];
@@ -158,9 +158,9 @@ class DatabaseMap
      * Get a ColumnMap for the column by name.
      * Name must be fully qualified, e.g. book.AUTHOR_ID
      *
-     * @param      string $qualifiedColumnName Name of the column.
-     * @return     \Propel\Runtime\Map\ColumnMap A TableMap
-     * @throws     \Propel\Runtime\Exception\PropelException if the table is undefined, or if the table is undefined
+     * @param      $qualifiedColumnName Name of the column.
+     * @return     \Propel\Runtime\Map\ColumnMap	A TableMap
+     * @throws     \Propel\Runtime\Map\TableNotFoundException	If the table is undefined, or if the table is undefined
      */
     public function getColumn($qualifiedColumnName)
     {
@@ -169,25 +169,25 @@ class DatabaseMap
         return $this->getTable($tableName)->getColumn($columnName, false);
     }
 
-	public function getTableByPhpName($phpName)
-	{
-		if ('\\' === substr($phpName, 0, 1)) {
-			$phpName = substr($phpName, 1);
-		}
-		if (array_key_exists($phpName, $this->tablesByPhpName)) {
-			return $this->tablesByPhpName[$phpName];
-		} elseif (class_exists($tmClass = $phpName . 'TableMap')) {
-			$this->addTableFromMapClass($tmClass);
+    public function getTableByPhpName($phpName)
+    {
+        if ('\\' === substr($phpName, 0, 1)) {
+            $phpName = substr($phpName, 1);
+        }
+        if (array_key_exists($phpName, $this->tablesByPhpName)) {
+            return $this->tablesByPhpName[$phpName];
+        } elseif (class_exists($tmClass = $phpName . 'TableMap')) {
+            $this->addTableFromMapClass($tmClass);
 
-			return $this->tablesByPhpName[$phpName];
-		} elseif (class_exists($tmClass = substr_replace($phpName, '\\Map\\', strrpos($phpName, '\\'), 1) . 'TableMap')) {
-			$this->addTableFromMapClass($tmClass);
+            return $this->tablesByPhpName[$phpName];
+        } elseif (class_exists($tmClass = substr_replace($phpName, '\\Map\\', strrpos($phpName, '\\'), 1) . 'TableMap')) {
+            $this->addTableFromMapClass($tmClass);
 
-			return $this->tablesByPhpName[$phpName];
-		} else {
-			throw new PropelException("Cannot fetch TableMap for undefined table phpName: " . $phpName);
-		}
-	}
+            return $this->tablesByPhpName[$phpName];
+        } else {
+            throw new TableNotFoundException("Cannot fetch TableMap for undefined table phpName: $phpName");
+        }
+    }
 
     /**
      * Convenience method to get the AbstractAdapter registered with Propel for this database.

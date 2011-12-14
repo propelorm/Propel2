@@ -10,7 +10,7 @@
 
 namespace Propel\Runtime\Map;
 
-use Propel\Runtime\Exception\PropelException;
+use Propel\Runtime\Map\Exception\ForeignKeyNotFoundException;
 use Propel\Runtime\Util\PropelColumnTypes;
 
 /**
@@ -368,8 +368,8 @@ class ColumnMap
             if($relation->getType() == RelationMap::MANY_TO_ONE) {
                 if ($relation->getForeignTable()->getName() == $this->getRelatedTableName() &&
                     array_key_exists($this->getFullyQualifiedName(), $relation->getColumnMappings())) {
-                    return $relation;
-                }
+                        return $relation;
+                    }
             }
         }
     }
