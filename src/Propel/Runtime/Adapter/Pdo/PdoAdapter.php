@@ -20,7 +20,6 @@ use Propel\Runtime\Map\DatabaseMap;
 use Propel\Runtime\Query\Criteria;
 use Propel\Runtime\Util\PropelDateTime;
 use Propel\Runtime\Util\PropelColumnTypes;
-use Propel\Runtime\Exception\PropelException;
 
 use \PDO;
 use \PDOException;
@@ -57,7 +56,7 @@ abstract class PdoAdapter
                 $value = $optiondata['value'];
                 if (is_string($value) && false !== strpos($value, '::')) {
                     if (!defined($value)) {
-                        throw new PropelException(sprintf('Error processing driver options for dsn "%s"', $dsn));
+                        throw new InvalidArgumentException(sprintf('Error processing driver options for dsn "%s"', $dsn));
                     }
                     $value = constant($value);
                 }

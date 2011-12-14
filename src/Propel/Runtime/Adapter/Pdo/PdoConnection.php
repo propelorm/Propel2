@@ -11,7 +11,7 @@
 namespace Propel\Runtime\Adapter\Pdo;
 
 use Propel\Runtime\Connection\ConnectionInterface;
-use Propel\Runtime\Exception\PropelException;
+use Propel\Runtime\Exception\InvalidArgumentException;
 
 use \PDO;
 
@@ -43,7 +43,7 @@ class PdoConnection extends PDO implements ConnectionInterface
         if (is_string($attribute) && false === strpos($attribute, '::')) {
             $attribute = '\PDO::' . $attribute;
             if (!defined($attribute)) {
-                throw new PropelException(sprintf('Invalid PDO option/attribute name specified: "%s"', $attribute));
+                throw new InvalidArgumentException(sprintf('Invalid PDO option/attribute name specified: "%s"', $attribute));
             }
             $attribute = constant($attribute);
         }

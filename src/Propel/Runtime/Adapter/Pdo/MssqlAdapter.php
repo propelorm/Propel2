@@ -11,8 +11,9 @@
 namespace Propel\Runtime\Adapter\Pdo;
 
 use Propel\Runtime\Adapter\AdapterInterface;
+use Propel\Runtime\Adapter\Exception\MalformedClauseException;
+use Propel\Runtime\Adapter\Exception\ColumnNotFoundException;
 use Propel\Runtime\Connection\ConnectionInterface;
-use Propel\Runtime\Exception\ColumnNotFoundException;
 use Propel\Runtime\Exception\InvalidArgumentException;
 
 /**
@@ -141,7 +142,7 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
             $selectStatement = trim($selectSegment[1]);
             $fromStatement = trim($selectSegment[2]);
         } else {
-            throw new Exception('MssqlAdapter::applyLimit() could not locate the select statement at the start of the query.');
+			throw new MalformedClauseException('MssqlAdapter::applyLimit() could not locate the select statement at the start of the query.');
         }
 
         if (preg_match('/\Aselect(\s+)distinct/i', $sql)) {
@@ -205,7 +206,7 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
             } else {
                 //agregate columns must always have an alias clause
                 if(! stristr($selCol, ' AS ')) {
-                    throw new Exception('MssqlAdapter::applyLimit() requires aggregate columns to have an Alias clause');
+					throw new MalformedClauseException('MssqlAdapter::applyLimit() requires aggregate columns to have an Alias clause');
                 }
 
                 //aggregate column alias can't be used as the count column you must use the entire aggregate statement

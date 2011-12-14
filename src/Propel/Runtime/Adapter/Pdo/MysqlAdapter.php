@@ -76,7 +76,7 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
      * @param     ConnectionInterface $con  The Propel connection to use.
      * @param     string  $table  The name of the table to lock.
      *
-     * @throws    PDOException  No Statement could be created or executed.
+     * @throws    \PDOException  No Statement could be created or executed.
      */
     public function lockTable($con, $table)
     {
@@ -89,7 +89,7 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
      * @param     ConnectionInterface $con  The Propel connection to use.
      * @param     string  $table  The name of the table to unlock.
      *
-     * @throws    PDOException  No Statement could be created or executed.
+     * @throws    \PDOException  No Statement could be created or executed.
      */
     public function unlockTable($con, $table)
     {
