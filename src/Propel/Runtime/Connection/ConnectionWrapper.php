@@ -12,7 +12,8 @@ namespace Propel\Runtime\Connection;
 
 use Propel\Runtime\Propel;
 use Propel\Runtime\Config\Configuration;
-use Propel\Runtime\Exception\PropelException;
+use Propel\Runtime\Connection\Exception\RollbackException;
+use Propel\Runtime\Exception\InvalidArgumentException;
 
 /**
  * Wraps a Connection class, providing nested transactions, statement cache, and logging.
@@ -240,7 +241,7 @@ class ConnectionWrapper implements ConnectionInterface
         if ($opcount > 0) {
             if ($opcount === 1) {
                 if ($this->isUncommitable) {
-                    throw new PropelException('Cannot commit because a nested transaction was rolled back');
+                    throw new RollbackException('Cannot commit because a nested transaction was rolled back');
                 } else {
                     $return = $this->connection->commit();
                     if ($this->useDebug) {
@@ -351,7 +352,7 @@ class ConnectionWrapper implements ConnectionInterface
     {
         if (is_string($attribute) && strpos($attribute, '::') !== false) {
             if (!defined($attribute)) {
-                throw new PropelException(sprintf('Invalid connection option/attribute name specified: "%s"', $attribute));
+                throw new InvalidArgumentException(sprintf('Invalid connection option/attribute name specified: "%s"', $attribute));
             }
             $attribute = constant($attribute);
         }
@@ -496,7 +497,6 @@ class ConnectionWrapper implements ConnectionInterface
      * When using DebugPDOStatement as the statement class, any queries by DebugPDOStatement instances
      * are counted as well.
      *
-     * @throws     PropelException if persistent connection is used (since unable to override PDOStatement in that case).
      * @return     integer
      */
     public function getQueryCount()

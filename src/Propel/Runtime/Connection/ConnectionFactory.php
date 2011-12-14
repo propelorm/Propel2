@@ -12,7 +12,8 @@ namespace Propel\Runtime\Connection;
 
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Adapter\Exception\AdapterException;
-use Propel\Runtime\Exception\PropelException;
+use Propel\Runtime\Connection\Exception\ConnectionException;
+use Propel\Runtime\Exception\InvalidArgumentException;
 
 class ConnectionFactory
 {
@@ -37,7 +38,7 @@ class ConnectionFactory
         try {
             $adapterConnection = $adapter->getConnection($configuration);
         } catch (AdapterException $e) {
-            throw new PropelException("Unable to open connection", $e);
+            throw new ConnectionException("Unable to open connection", 0, $e);
         }
         $connection = new $connectionClass($adapterConnection);
 
@@ -47,7 +48,7 @@ class ConnectionFactory
             foreach ($configuration['attributes'] as $option => $value) {
                 if (is_string($value) && false !== strpos($value, '::')) {
                     if (!defined($value)) {
-                        throw new PropelException(sprintf('Invalid class constant specified "%s" while processing connection attributes for datasource "%s"'), $value, $name);
+                        throw new InvalidArgumentException(sprintf('Invalid class constant specified "%s" while processing connection attributes for datasource "%s"'), $value, $name);
                     }
                     $value = constant($value);
                 }
