@@ -330,7 +330,7 @@ class CollectionTest extends BookstoreTestBase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Collection\Exception\NotFoundModelException
+     * @expectedException \Propel\Runtime\Collection\Exception\ModelNotFoundException
      */
     public function testGetPeerClassNoModel()
     {

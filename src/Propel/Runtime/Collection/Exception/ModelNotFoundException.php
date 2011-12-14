@@ -15,6 +15,6 @@ use Propel\Runtime\Exception\RuntimeException;
 /**
  * @author William Durand <william.durand1@gmail.com>
  */
-class NotFoundModelException extends RuntimeException
+class ModelNotFoundException extends RuntimeException
 {
 }
