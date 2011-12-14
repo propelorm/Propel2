@@ -10,7 +10,7 @@
 
 namespace Propel\Runtime\Query;
 
-use Propel\Runtime\Exception\PropelException;
+use Propel\Runtime\Exception\ClassNotFoundException;
 
 /**
  * Factory for model queries
@@ -26,7 +26,7 @@ class PropelQuery
         list($class, $alias) = ModelCriteria::getClassAndAlias($queryClassAndAlias);
         $queryClass = $class . 'Query';
         if (!class_exists($queryClass)) {
-            throw new PropelException('Cannot find a query class for ' . $class);
+            throw new ClassNotFoundException('Cannot find a query class for ' . $class);
         }
         $query = new $queryClass();
         if ($alias !== null) {

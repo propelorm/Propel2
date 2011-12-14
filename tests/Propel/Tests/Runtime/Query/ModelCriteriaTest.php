@@ -29,12 +29,18 @@ use Propel\Tests\Bookstore\ReviewPeer;
 use Propel\Runtime\Propel;
 use Propel\Runtime\Collection\Collection;
 use Propel\Runtime\Collection\ObjectCollection;
+use Propel\Runtime\Exception\InvalidArgumentException;
+use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\Exception\PropelException;
+use Propel\Runtime\Exception\UnexpectedValueException;
 use Propel\Runtime\Formatter\AbstractFormatter;
 use Propel\Runtime\Formatter\StatementFormatter;
 use Propel\Runtime\Util\BasePeer;
 use Propel\Runtime\Util\PropelModelPager;
 use Propel\Runtime\Query\Criteria;
+use Propel\Runtime\Query\Exception\UnknownColumnException;
+use Propel\Runtime\Query\Exception\UnknownModelException;
+use Propel\Runtime\Query\Exception\UnknownRelationException;
 use Propel\Runtime\Query\ModelCriteria;
 
 use \PDO;
@@ -81,7 +87,7 @@ class ModelCriteriaTest extends BookstoreTestBase
         try {
             $c->setFormatter('Propel\Tests\Bookstore\Book');
             $this->fail('setFormatter() throws an exception when passed the name of a class not extending AbstractFormatter');
-        } catch(PropelException $e) {
+        } catch(InvalidArgumentException $e) {
             $this->assertTrue(true, 'setFormatter() throws an exception when passed the name of a class not extending AbstractFormatter');
         }
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
@@ -93,8 +99,8 @@ class ModelCriteriaTest extends BookstoreTestBase
             $formatter = new Book();
             $c->setFormatter($formatter);
             $this->fail('setFormatter() throws an exception when passed an object not extending AbstractFormatter');
-        } catch(PropelException $e) {
-            $this->assertTrue(true, 'setFormatter() throws an exception when passedan object not extending AbstractFormatter');
+        } catch(InvalidArgumentException $e) {
+            $this->assertTrue(true, 'setFormatter() throws an exception when passed an object not extending AbstractFormatter');
         }
 
     }
@@ -527,14 +533,14 @@ class ModelCriteriaTest extends BookstoreTestBase
         try {
             $c->orderBy('Propel\Tests\Bookstore\Book.Foo');
             $this->fail('orderBy() throws an exception when called with an unkown column name');
-        } catch (PropelException $e) {
+        } catch (UnknownColumnException $e) {
             $this->assertTrue(true, 'orderBy() throws an exception when called with an unkown column name');
         }
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         try {
             $c->orderBy('Propel\Tests\Bookstore\Book.Title', 'foo');
             $this->fail('orderBy() throws an exception when called with an unkown order');
-        } catch (PropelException $e) {
+        } catch (UnexpectedValueException $e) {
             $this->assertTrue(true, 'orderBy() throws an exception when called with an unkown order');
         }
     }
@@ -573,7 +579,7 @@ class ModelCriteriaTest extends BookstoreTestBase
         try {
             $c->groupBy('Book.Foo');
             $this->fail('groupBy() throws an exception when called with an unkown column name');
-        } catch (PropelException $e) {
+        } catch (UnknownColumnException $e) {
             $this->assertTrue(true, 'groupBy() throws an exception when called with an unkown column name');
         }
     }
@@ -600,7 +606,7 @@ class ModelCriteriaTest extends BookstoreTestBase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
+     * @expectedException \Propel\Runtime\Exception\ClassNotFoundException
      */
     public function testGroupByClassThrowsExceptionOnUnkownClass()
     {
@@ -714,7 +720,7 @@ class ModelCriteriaTest extends BookstoreTestBase
         try {
             $c->join('Propel\Tests\Bookstore\Book.Foo');
             $this->fail('join() throws an exception when called with a non-existing relation');
-        } catch (PropelException $e) {
+        } catch (UnknownRelationException $e) {
             $this->assertTrue(true, 'join() throws an exception when called with a non-existing relation');
         }
 
@@ -1051,7 +1057,7 @@ class ModelCriteriaTest extends BookstoreTestBase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
+     * @expectedException \Propel\Runtime\Query\Exception\UnknownRelationException
      */
     public function testWithThrowsExceptionWhenJoinLacks()
     {
@@ -1069,7 +1075,7 @@ class ModelCriteriaTest extends BookstoreTestBase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
+     * @expectedException \Propel\Runtime\Query\Exception\UnknownRelationException
      */
     public function testWithThrowsExceptionWhenNotUsingAlias()
     {
@@ -1707,7 +1713,7 @@ class ModelCriteriaTest extends BookstoreTestBase
             $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
             $books = $c->findBy('Foo', 'Bar');
             $this->fail('findBy() throws an exception when called on an unknown column name');
-        } catch (PropelException $e) {
+        } catch (UnknownColumnException $e) {
             $this->assertTrue(true, 'findBy() throws an exception when called on an unknown column name');
         }
 
@@ -1738,7 +1744,7 @@ class ModelCriteriaTest extends BookstoreTestBase
             $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
             $book = $c->findOneBy('Foo', 'Bar');
             $this->fail('findOneBy() throws an exception when called on an unknown column name');
-        } catch (PropelException $e) {
+        } catch (UnknownColumnException $e) {
             $this->assertTrue(true, 'findOneBy() throws an exception when called on an unknown column name');
         }
 

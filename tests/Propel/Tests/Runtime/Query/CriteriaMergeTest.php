@@ -153,7 +153,7 @@ class CriteriaMergeTest extends BookstoreTestBase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
+     * @expectedException \Propel\Runtime\Exception\LogicException
      */
     public function testMergeWithAsColumnsThrowsException()
     {
@@ -392,7 +392,7 @@ class CriteriaMergeTest extends BookstoreTestBase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
+     * @expectedException \Propel\Runtime\Exception\LogicException
      */
     public function testMergeWithAliasesThrowsException()
     {

@@ -11,6 +11,7 @@
 namespace Propel\Runtime\Query;
 
 use Propel\Runtime\Adapter\AdapterInterface;
+use Propel\Runtime\Exception\LogicException;
 
 /**
  * Data object to describe a join between two tables, for example
@@ -124,7 +125,7 @@ class Join
     public function addConditions($lefts, $rights, $operators = array())
     {
         if (count($lefts) != count($rights) ) {
-            throw new PropelException("Unable to create join because the left column count isn't equal to the right column count");
+            throw new LogicException("Unable to create join because the left column count isn't equal to the right column count");
         }
         foreach ($lefts as $key => $left) {
             $this->addCondition($left, $rights[$key], isset($operators[$key]) ? $operators[$key] : self::EQUAL);
