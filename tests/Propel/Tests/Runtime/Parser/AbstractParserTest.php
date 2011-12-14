@@ -29,7 +29,7 @@ class AbstractParserTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
+     * @expectedException \Propel\Runtime\Exception\FileNotFoundException
      */
     public function testGetParserThrowsExceptionOnWrongParser()
     {

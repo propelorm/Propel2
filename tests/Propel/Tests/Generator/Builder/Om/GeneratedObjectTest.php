@@ -1030,7 +1030,7 @@ EOF;
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
+     * @expectedException \Propel\Runtime\Exception\BadMethodCallException
      */
     public function testMagicCallUndefined()
     {
