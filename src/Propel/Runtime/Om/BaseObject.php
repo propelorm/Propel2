@@ -11,6 +11,7 @@
 namespace Propel\Runtime\Om;
 
 use Propel\Runtime\Connection\ConnectionInterface;
+use Propel\Runtime\Exception\BadMethodCallException;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Parser\AbstractParser;
 use Propel\Runtime\Util\BasePeer;
@@ -36,7 +37,6 @@ use Propel\Runtime\Util\BasePeer;
  */
 abstract class BaseObject
 {
-
     /**
      * attribute to determine if this object has previously been saved.
      * @var        boolean
@@ -158,15 +158,15 @@ abstract class BaseObject
      */
     public function postSave(ConnectionInterface $con = null) { }
 
-    /**
-     * Code to be run before inserting to database
-     * @param ConnectionInterface $con
-     * @return boolean
-     */
-    public function preInsert(ConnectionInterface $con = null)
-    {
-        return true;
-    }
+        /**
+         * Code to be run before inserting to database
+         * @param ConnectionInterface $con
+         * @return boolean
+         */
+        public function preInsert(ConnectionInterface $con = null)
+        {
+            return true;
+        }
 
     /**
      * Code to be run after inserting to database
@@ -174,15 +174,15 @@ abstract class BaseObject
      */
     public function postInsert(ConnectionInterface $con = null) { }
 
-    /**
-     * Code to be run before updating the object in database
-     * @param ConnectionInterface $con
-     * @return boolean
-     */
-    public function preUpdate(ConnectionInterface $con = null)
-    {
-        return true;
-    }
+        /**
+         * Code to be run before updating the object in database
+         * @param ConnectionInterface $con
+         * @return boolean
+         */
+        public function preUpdate(ConnectionInterface $con = null)
+        {
+            return true;
+        }
 
     /**
      * Code to be run after updating the object in database
@@ -190,15 +190,15 @@ abstract class BaseObject
      */
     public function postUpdate(ConnectionInterface $con = null) { }
 
-    /**
-     * Code to be run before deleting the object in database
-     * @param ConnectionInterface $con
-     * @return boolean
-     */
-    public function preDelete(ConnectionInterface $con = null)
-    {
-        return true;
-    }
+        /**
+         * Code to be run before deleting the object in database
+         * @param ConnectionInterface $con
+         * @return boolean
+         */
+        public function preDelete(ConnectionInterface $con = null)
+        {
+            return true;
+        }
 
     /**
      * Code to be run after deleting the object in database
@@ -206,21 +206,21 @@ abstract class BaseObject
      */
     public function postDelete(ConnectionInterface $con = null) { }
 
-    /**
-     * Sets the modified state for the object to be false.
-     * @param string $col If supplied, only the specified column is reset.
-     * @return void
-     */
-    public function resetModified($col = null)
-    {
-        if ($col !== null) {
-            while (($offset = array_search($col, $this->modifiedColumns)) !== false) {
-                array_splice($this->modifiedColumns, $offset, 1);
+        /**
+         * Sets the modified state for the object to be false.
+         * @param string $col If supplied, only the specified column is reset.
+         * @return void
+         */
+        public function resetModified($col = null)
+        {
+            if ($col !== null) {
+                while (($offset = array_search($col, $this->modifiedColumns)) !== false) {
+                    array_splice($this->modifiedColumns, $offset, 1);
+                }
+            } else {
+                $this->modifiedColumns = array();
             }
-        } else {
-            $this->modifiedColumns = array();
         }
-    }
 
     /**
      * Compares this with another <code>BaseObject</code> instance.  If
@@ -411,6 +411,6 @@ abstract class BaseObject
 
             return $this->exportTo($matches[1], $includeLazyLoadColumns);
         }
-        throw new PropelException('Call to undefined method: ' . $name);
+        throw new BadMethodCallException('Call to undefined method: ' . $name);
     }
 }
