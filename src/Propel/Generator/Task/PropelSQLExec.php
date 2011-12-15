@@ -36,7 +36,6 @@ use \Project;
  * @author     Tim Stephenson <tim.stephenson@sybase.com> (Torque)
  * @author     Jason van Zyl <jvanzyl@apache.org> (Torque)
  * @author     Martin Poeschl <mpoeschl@marmot.at> (Torque)
- * @package    propel.generator.task
  */
 class PropelSQLExec extends Task
 {

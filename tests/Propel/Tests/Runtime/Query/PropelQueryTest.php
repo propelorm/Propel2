@@ -24,7 +24,6 @@ use Propel\Tests\Bookstore\BookQuery;
  *
  * @author     Francois Zaninotto
  * @version    $Id: PropelQueryTest.php 1351 2009-12-04 22:05:01Z francois $
- * @package    runtime.query
  */
 class PropelQueryTest extends BookstoreTestBase
 {

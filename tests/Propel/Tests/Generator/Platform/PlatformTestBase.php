@@ -14,7 +14,6 @@ use Propel\Generator\Builder\Util\XmlToAppData;
 
 /**
  * Base class for all Platform tests
- * @package    generator.platform
  */
 abstract class PlatformTestBase extends \PHPUnit_Framework_TestCase
 {

@@ -35,7 +35,6 @@ use Propel\Runtime\ServiceContainer\StandardServiceContainer;
  * @author     Martin Poeschl <mpoeschl@marmot.at> (Torque)
  * @author     Henning P. Schmiedehausen <hps@intermeta.de> (Torque)
  * @author     Kurt Schrader <kschrader@karmalab.org> (Torque)
- * @package    propel.runtime
  */
 class Propel
 {

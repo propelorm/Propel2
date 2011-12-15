@@ -35,7 +35,6 @@ use \Task;
  * @author     Hans Lellelid <hans@xmpl.org> (Propel)
  * @author     Jason van Zyl <jvanzyl@zenplex.com> (Torque)
  * @author     Daniel Rall <dlr@finemaltcoding.com> (Torque)
- * @package    propel.generator.task
  */
 abstract class AbstractPropelDataModelTask extends Task
 {

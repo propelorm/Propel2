@@ -19,7 +19,6 @@ use \PDO;
  * Postgresql database schema parser.
  *
  * @author     Hans Lellelid <hans@xmpl.org>
- * @package    propel.generator.reverse.pgsql
  */
 class PgsqlSchemaParser extends AbstractSchemaParser
 {

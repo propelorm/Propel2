@@ -20,7 +20,6 @@ use Propel\Generator\Platform\MssqlPlatform;
 
 /**
  *
- * @package    generator.platform
  */
 class MssqlPlatformTest extends PlatformTestProvider
 {

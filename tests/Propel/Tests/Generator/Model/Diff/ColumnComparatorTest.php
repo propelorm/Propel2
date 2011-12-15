@@ -17,7 +17,6 @@ use Propel\Generator\Platform\MysqlPlatform;
 /**
  * Tests for the ColumnComparator service class.
  *
- * @package    generator.model.diff
  */
 class ColumnComparatorTest extends \PHPUnit_Framework_TestCase
 {

@@ -16,7 +16,6 @@ use Propel\Generator\Util\SqlManager;
  * The new task for building SQL DDL based on the XML datamodel.
  *
  * @author     William Durand <william.durand1@gmail.com>
- * @package    propel.generator.task
  */
 class PropelSqlBuildTask extends AbstractPropelDataModelTask
 {

@@ -15,7 +15,6 @@ namespace Propel\Generator\Model;
  *
  * @author     Hans Lellelid <hans@xmpl.org> (Propel)
  * @author     Martin Poeschl <mpoeschl@marmot.at> (Torque)
- * @package    propel.generator.model
  */
 class Domain extends XmlElement
 {

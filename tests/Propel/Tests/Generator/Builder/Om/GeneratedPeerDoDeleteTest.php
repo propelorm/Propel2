@@ -49,7 +49,6 @@ use Propel\Runtime\Query\Criteria;
  *
  * @see        BookstoreDataPopulator
  * @author     Hans Lellelid <hans@xmpl.org>
- * @package    generator.builder.om
  */
 class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
 {

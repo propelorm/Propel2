@@ -19,7 +19,6 @@ use \IOException;
  * This Task lists the migrations yet to be executed
  *
  * @author     Francois Zaninotto
- * @package    propel.generator.task
  */
 abstract class BasePropelMigrationTask extends Task
 {

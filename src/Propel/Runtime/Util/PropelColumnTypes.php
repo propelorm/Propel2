@@ -18,7 +18,6 @@ use \PDO;
  * THIS CLASS MUST BE KEPT UP-TO-DATE WITH THE MORE EXTENSIVE GENERATOR VERSION OF THIS CLASS.
  *
  * @author     Hans Lellelid <hans@xmpl.org> (Propel)
- * @package    propel.runtime.util
  */
 class PropelColumnTypes
 {

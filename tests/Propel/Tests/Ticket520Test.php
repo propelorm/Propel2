@@ -23,7 +23,6 @@ after studying the current implementation to make it look as bad as
 possible. I am really sorry. :-( */
 
 /**
- * @package misc
  */
 class Ticket520Test extends BookstoreTestBase
 {

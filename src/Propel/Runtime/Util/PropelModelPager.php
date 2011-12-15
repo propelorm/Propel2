@@ -19,7 +19,6 @@ use Propel\Runtime\Query\ModelCriteria;
  * @author         Fabien Potencier <fabien.potencier@symfony-project.com>
  * @author         François Zaninotto
  * @version         $Revision$
- * @package         propel.runtime.query
  */
 class PropelModelPager implements \IteratorAggregate, \Countable
 {

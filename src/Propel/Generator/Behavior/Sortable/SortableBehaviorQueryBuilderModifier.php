@@ -14,7 +14,6 @@ namespace Propel\Generator\Behavior\Sortable;
  * Behavior to add sortable query methods
  *
  * @author     François Zaninotto
- * @package    propel.generator.behavior.sortable
  */
 class SortableBehaviorQueryBuilderModifier
 {

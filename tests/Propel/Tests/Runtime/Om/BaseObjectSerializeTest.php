@@ -22,7 +22,6 @@ use Propel\Tests\Bookstore\BookQuery;
  *
  * @author     Francois Zaninotto
  * @version    $Id: CollectionTest.php 1348 2009-12-03 21:49:00Z francois $
- * @package    runtime.om
  */
 class BaseObjectSerializeTest extends BookstoreTestBase
 {

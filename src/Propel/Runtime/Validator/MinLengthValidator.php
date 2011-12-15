@@ -24,7 +24,6 @@ use Propel\Runtime\Map\ValidatorMap;
  * </code>
  *
  * @author     Michael Aichler <aichler@mediacluster.de>
- * @package    propel.runtime.validator
  */
 class MinLengthValidator implements BasicValidator
 {

@@ -16,7 +16,6 @@ use Propel\Generator\Builder\Sql\DataSQLBuilder;
  * MS SQL Server using pdo_sqlsrv driver class for building data dump SQL.
  *
  * @author     Benjamin Runnels
- * @package    propel.generator.builder.sql.sqlsrv
  */
 class SqlsrvDataSQLBuilder extends DataSQLBuilder
 {

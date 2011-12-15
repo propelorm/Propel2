@@ -16,7 +16,6 @@ use Propel\Generator\Model\Behavior;
  * Speeds up queries on a model by caching the query
  *
  * @author     François Zaninotto
- * @package    propel.generator.behavior.cacheable
  */
 class QueryCacheBehavior extends Behavior
 {

@@ -16,7 +16,6 @@ use Propel\Generator\Model\Table;
  * Tools to support class & package inclusion and referencing.
  *
  * @author     Hans Lellelid <hans@xmpl.org>
- * @package    propel.generator.builder.om
  */
 class ClassTools
 {

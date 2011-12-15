@@ -25,7 +25,6 @@ use \DateTimeZone;
  * @author     Alan Pinstein
  * @author     Soenke Ruempler
  * @author     Hans Lellelid
- * @package    propel.runtime.util
  */
 class PropelDateTime extends DateTime
 {

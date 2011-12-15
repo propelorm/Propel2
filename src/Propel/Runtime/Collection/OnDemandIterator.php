@@ -21,7 +21,6 @@ use \PDO;
  * Class for iterating over a statement and returning one Propel object at a time
  *
  * @author     Francois Zaninotto
- * @package    propel.runtime.collection
  */
 class OnDemandIterator implements \Iterator
 {

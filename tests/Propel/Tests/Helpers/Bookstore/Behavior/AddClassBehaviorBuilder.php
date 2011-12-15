@@ -34,7 +34,6 @@ class AddClassBehaviorBuilder extends AbstractOMBuilder
 /**
  * Test class for Additional builder enabled on the '$tableName' table.
  *
- * @package    propel.generator.".$this->getPackage()."
  */
 class ".$this->getClassname()."
 {

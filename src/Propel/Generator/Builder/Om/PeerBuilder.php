@@ -19,7 +19,6 @@ use Propel\Generator\Model\ForeignKey;
  * the custom-built query and manipulator methods.
  *
  * @author     Hans Lellelid <hans@xmpl.org>
- * @package    propel.generator.builder.om
  */
 class PeerBuilder extends AbstractPeerBuilder
 {
@@ -115,7 +114,6 @@ class PeerBuilder extends AbstractPeerBuilder
         }
 
         $script .= "
- * @package    propel.generator.".$this->getPackage()."
  */
 abstract class ".$this->getClassname(). $extendingPeerClass . " {
 ";

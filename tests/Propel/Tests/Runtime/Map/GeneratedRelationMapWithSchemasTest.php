@@ -20,7 +20,6 @@ use Propel\Runtime\Map\RelationMap;
  *
  * @author     Ulf Hermann
  * @version    $Id$
- * @package    runtime.map
  */
 class GeneratedRelationMapWithSchemasTest extends SchemasTestBase
 {

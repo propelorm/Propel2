@@ -28,7 +28,6 @@ use Propel\Runtime\Query\ModelCriteria;
  *
  * @author     Francois Zaninotto
  * @version    $Id: OnDemandFormatterTest.php 1374 2009-12-26 23:21:37Z francois $
- * @package    runtime.formatter
  */
 class OnDemandFormatterTest extends BookstoreEmptyTestBase
 {

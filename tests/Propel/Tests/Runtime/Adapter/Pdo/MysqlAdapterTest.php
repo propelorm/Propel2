@@ -20,7 +20,6 @@ use Propel\Runtime\Adapter\Pdo\MysqlAdapter;
  *
  * @see        BookstoreDataPopulator
  * @author     William Durand
- * @package    runtime.adapter
  */
 class MysqlAdapterTest extends BookstoreTestBase
 {

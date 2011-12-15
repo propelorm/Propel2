@@ -18,7 +18,6 @@ use Propel\Runtime\Propel;
  * Tests the generated Peer classes for enum column type constants
  *
  * @author     Francois Zaninotto
- * @package    generator.builder.om
  */
 class GeneratedPeerEnumColumnTypeTest extends \PHPUnit_Framework_TestCase
 {

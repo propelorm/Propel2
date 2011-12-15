@@ -104,7 +104,6 @@ use Propel\Runtime\Connection\ConnectionWrapper;
  * @author     Christian Abegg <abegg.ch@gmail.com>
  * @author     Jarno Rantanen <jarno.rantanen@tkk.fi>
  * @since      2006-09-22
- * @package    propel.runtime.connection
  */
 class DebugPDO extends ConnectionWrapper
 {

@@ -16,7 +16,6 @@ use Propel\Generator\Platform\MysqlPlatform;
 
 /**
  *
- * @package    generator.platform
  */
 class MysqlPlatformMigrationTest extends PlatformMigrationTestProvider
 {

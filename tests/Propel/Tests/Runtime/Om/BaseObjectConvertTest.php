@@ -20,7 +20,6 @@ use Propel\Tests\Bookstore\Publisher;
  *
  * @author     François Zaninotto
  * @version    $Id: BaseObjectTest.php 1347 2009-12-03 21:06:36Z francois $
- * @package    runtime.om
  */
 class BaseObjectConvertTest extends BookstoreTestBase
 {

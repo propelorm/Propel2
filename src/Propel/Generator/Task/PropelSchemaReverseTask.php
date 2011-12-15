@@ -21,7 +21,6 @@ use \PDOTask;
  * the database metadata.
  *
  * @author     Hans Lellelid <hans@xmpl.org>
- * @package    propel.generator.task
  */
 class PropelSchemaReverseTask extends PDOTask
 {
@@ -516,7 +515,6 @@ class PropelSchemaReverseTask extends PDOTask
 
 /**
  * A helper class to store validator sets indexed by column.
- * @package    propel.generator.task
  */
 class PropelSchemaReverse_ValidatorSet
 {

@@ -16,7 +16,6 @@ use Propel\Runtime\Exception\PropelException;
  * Test for PropelException class
  *
  * @author     Francois Zaninotto
- * @package    runtime.exception
  */
 class PropelExceptionTest extends \PHPUnit_Framework_TestCase
 {

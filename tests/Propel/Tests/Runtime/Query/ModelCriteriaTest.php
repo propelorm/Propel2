@@ -44,7 +44,6 @@ use \PDO;
  *
  * @author     Francois Zaninotto
  * @version    $Id$
- * @package    runtime.query
  */
 class ModelCriteriaTest extends BookstoreTestBase
 {

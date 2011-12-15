@@ -16,7 +16,6 @@ use Propel\Generator\Builder\Sql\DataSQLBuilder;
  * MS SQL Server class for building data dump SQL.
  *
  * @author     Hans Lellelid <hans@xmpl.org>
- * @package    propel.generator.builder.sql.mssql
  */
 class MssqlDataSQLBuilder extends DataSQLBuilder
 {

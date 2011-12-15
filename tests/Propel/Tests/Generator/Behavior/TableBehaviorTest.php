@@ -16,7 +16,6 @@ use Propel\Tests\Bookstore\Behavior\Table3Peer;
  * Tests the table structure behavior hooks.
  *
  * @author     Francois Zaninotto
- * @package    generator.behavior
  */
 class TableBehaviorTest extends \PHPUnit_Framework_TestCase
 {

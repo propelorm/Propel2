@@ -23,7 +23,6 @@ use Propel\Runtime\Util\BasePeer;
  *
  * @see        BookstoreDataPopulator
  * @author     Francois Zaninotto
- * @package    runtime.util
  */
 class BasePeerExceptionsTest extends BookstoreTestBase
 {

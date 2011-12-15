@@ -38,7 +38,6 @@ use Propel\Runtime\Map\ValidatorMap;
  *
  * @author     Michael Aichler <aichler@mediacluster.de>
  * @author     Hans Lellelid <hans@xmpl.org>
- * @package    propel.runtime.validator
  */
 class MatchValidator implements BasicValidator
 {

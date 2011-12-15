@@ -17,7 +17,6 @@ use Propel\Runtime\Connection\StatementInterface;
  * format() returns a PDO statement
  *
  * @author     Francois Zaninotto
- * @package    propel.runtime.formatter
  */
 class StatementFormatter extends AbstractFormatter
 {

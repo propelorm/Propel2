@@ -22,7 +22,6 @@ use Propel\Generator\Platform\PgsqlPlatform;
 
 /**
  *
- * @package    generator.platform
  */
 class PgsqlPlatformTest extends PlatformTestProvider
 {

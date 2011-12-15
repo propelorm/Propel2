@@ -21,7 +21,6 @@ use \PDO;
 
 /**
  *
- * @package    generator.platform
  */
 class SqlitePlatformTest extends PlatformTestProvider
 {

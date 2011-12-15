@@ -20,7 +20,6 @@ use Propel\Runtime\Collection\ObjectCollection;
  * Tests for VersionableBehavior class
  *
  * @author     François Zaninotto
- * @package    generator.behavior.versionable
  */
 class VersionableBehaviorObjectBuilderModifierTest extends \PHPUnit_Framework_TestCase
 {

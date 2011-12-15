@@ -17,7 +17,6 @@ use Propel\Generator\Platform\OraclePlatform;
 
 /**
  *
- * @package    generator.platform
  */
 class OraclePlatformMigrationTest extends PlatformMigrationTestProvider
 {

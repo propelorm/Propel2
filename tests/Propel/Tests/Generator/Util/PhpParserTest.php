@@ -12,7 +12,6 @@ use Propel\Generator\Util\PhpParser;
 
 /**
  *
- * @package    generator.util
  */
 class PhpParserTest extends \PHPUnit_Framework_TestCase
 {

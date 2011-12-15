@@ -24,7 +24,6 @@ use Propel\Runtime\Collection\ObjectCollection;
  * Tests for TimestampableBehavior class
  *
  * @author     François Zaninotto
- * @package    generator.behavior
  */
 class TimestampableBehaviorTest extends BookstoreTestBase
 {

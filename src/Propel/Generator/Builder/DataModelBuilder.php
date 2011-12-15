@@ -26,7 +26,6 @@ use Propel\Generator\Platform\PlatformInterface;
  * anyway.
  *
  * @author     Hans Lellelid <hans@xmpl.org>
- * @package    propel.generator.builder
  */
 abstract class DataModelBuilder
 {

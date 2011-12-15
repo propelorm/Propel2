@@ -17,7 +17,6 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @author     Francois Zaninotto (Propel)
  * @author     Jonathan H. Wage <jwage@mac.com> (Doctrine_Parser)
- * @package    propel.runtime.parser
  */
 abstract class AbstractParser
 {

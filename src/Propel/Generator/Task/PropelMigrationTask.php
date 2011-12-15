@@ -18,7 +18,6 @@ use \PDOException;
  * This Task executes the next migrations up
  *
  * @author     Francois Zaninotto
- * @package    propel.generator.task
  */
 class PropelMigrationTask extends BasePropelMigrationTask
 {

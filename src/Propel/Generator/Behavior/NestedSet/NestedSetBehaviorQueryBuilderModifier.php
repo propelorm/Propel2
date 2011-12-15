@@ -14,7 +14,6 @@ namespace Propel\Generator\Behavior\NestedSet;
  * Behavior to adds nested set tree structure columns and abilities
  *
  * @author     François Zaninotto
- * @package    propel.generator.behavior.nestedset
  */
 class NestedSetBehaviorQueryBuilderModifier
 {

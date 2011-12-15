@@ -13,7 +13,6 @@ use Propel\Generator\Model\ColumnDefaultValue;
 /**
  * Tests for ColumnDefaultValue class.
  *
- * @package    generator.model
  */
 class ColumnDefaultValueTest extends \PHPUnit_Framework_TestCase
 {

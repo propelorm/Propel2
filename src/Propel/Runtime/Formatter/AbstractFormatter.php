@@ -21,7 +21,6 @@ use \PDOStatement;
  * Abstract class for query formatter
  *
  * @author     Francois Zaninotto
- * @package    propel.runtime.formatter
  */
 abstract class AbstractFormatter
 {

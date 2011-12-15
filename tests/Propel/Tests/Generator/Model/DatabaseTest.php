@@ -21,7 +21,6 @@ use Propel\Generator\Model\Table;
 /**
  * Tests for Database model class.
  *
- * @package    generator.model
  */
 class DatabaseTest extends \PHPUnit_Framework_TestCase
 {

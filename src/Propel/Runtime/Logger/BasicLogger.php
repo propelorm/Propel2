@@ -20,7 +20,6 @@ namespace Propel\Runtime\Logger;
  * and Jon Parise <jon@php.net>.
  *
  * @author     Hans Lellelid <hans@xmpl.org>
- * @package    propel.runtime.logger
  */
 interface BasicLogger
 {

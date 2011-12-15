@@ -22,7 +22,6 @@ use Propel\Generator\Builder\DataModelBuilder;
  * Node classes, Nested Set classes, etc.
  *
  * @author     Hans Lellelid <hans@xmpl.org>
- * @package    propel.generator.builder.om
  */
 abstract class AbstractOMBuilder extends DataModelBuilder
 {

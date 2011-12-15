@@ -19,7 +19,6 @@ use Propel\Runtime\Propel;
  * Tests for DelegateBehavior class
  *
  * @author     François Zaninotto
- * @package    generator.behavior
  */
 class DelegateBehaviorTest extends \PHPUnit_Framework_TestCase
 {

@@ -17,7 +17,6 @@ use Propel\Runtime\Map\RelationMap;
  * ModelWith objects are used by formatters to hydrate related objects
  *
  * @author     Francois Zaninotto (Propel)
- * @package    propel.runtime.query
  */
 class ModelWith
 {

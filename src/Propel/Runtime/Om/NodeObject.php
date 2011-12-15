@@ -19,7 +19,6 @@ use \IteratorAggregate;
  * business objects within the system to handle Node object.
  *
  * @author     Heltem <heltem@o2php.com> (Propel)
- * @package    propel.runtime.om
  */
 interface NodeObject extends IteratorAggregate
 {

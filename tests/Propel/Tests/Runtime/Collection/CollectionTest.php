@@ -22,7 +22,6 @@ use Propel\Runtime\Collection\Collection;
  *
  * @author     Francois Zaninotto
  * @version    $Id: CollectionTest.php 1348 2009-12-03 21:49:00Z francois $
- * @package    runtime.collection
  */
 class CollectionTest extends BookstoreTestBase
 {

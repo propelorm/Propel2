@@ -45,7 +45,6 @@ use Propel\Runtime\Util\BasePeer;
  *
  * @see        BookstoreDataPopulator
  * @author     Hans Lellelid <hans@xmpl.org>
- * @package    generator.builder.om
  */
 class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
 {

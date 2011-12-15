@@ -23,7 +23,6 @@ use Propel\Tests\Bookstore\Behavior\Table14Query;
  * Tests for SluggableBehavior class
  *
  * @author     François Zaninotto
- * @package    generator.behavior.sluggable
  */
 class SluggableBehaviorTest extends BookstoreTestBase
 {

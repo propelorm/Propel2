@@ -16,7 +16,6 @@ use Propel\Runtime\Exception\PropelException;
  * Factory for model queries
  *
  * @author     François Zaninotto
- * @package    propel.runtime.query
  */
 class PropelQuery
 {

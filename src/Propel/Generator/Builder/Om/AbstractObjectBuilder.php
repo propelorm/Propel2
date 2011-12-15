@@ -21,7 +21,6 @@ use Propel\Generator\Model\Table;
  * template code in it -- simply basic logic & utility methods.
  *
  * @author     Hans Lellelid <hans@xmpl.org>
- * @package    propel.generator.builder.om
  */
 abstract class AbstractObjectBuilder extends AbstractOMBuilder
 {

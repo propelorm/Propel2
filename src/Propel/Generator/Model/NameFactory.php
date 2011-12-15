@@ -17,7 +17,6 @@ use Propel\Generator\Exception\EngineException;
  *
  * @author     Hans Lellelid <hans@xmpl.org> (Propel)
  * @author     Daniel Rall <dlr@finemaltcoding.com> (Torque)
- * @package    propel.generator.model
  */
 class NameFactory
 {

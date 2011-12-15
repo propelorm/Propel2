@@ -26,7 +26,6 @@ use \Project;
  * This class uses the new DDLBuilder classes instead of the Capsule PHP templates.
  *
  * @author     Hans Lellelid <hans@xmpl.org>
- * @package    propel.generator.task
  */
 class PropelSQLTask extends AbstractPropelDataModelTask
 {

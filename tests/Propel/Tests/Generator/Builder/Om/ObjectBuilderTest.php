@@ -22,7 +22,6 @@ use Propel\Generator\Model\Table;
  *
  * @author     François Zaninotto
  * @version    $Id$
- * @package    generator.builder.om
  */
 class ObjectBuilderTest extends \PHPUnit_Framework_TestCase
 {

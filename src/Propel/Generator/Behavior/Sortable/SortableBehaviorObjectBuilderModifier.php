@@ -15,7 +15,6 @@ namespace Propel\Generator\Behavior\Sortable;
  *
  * @author     François Zaninotto
  * @author     heltem <heltem@o2php.com>
- * @package    propel.generator.behavior.sortable
  */
 class SortableBehaviorObjectBuilderModifier
 {

@@ -45,7 +45,6 @@ use \ReflectionMethod;
  *
  * @author     François Zaninotto
  * @version    $Id: QueryBuilderTest.php 1347 2009-12-03 21:06:36Z francois $
- * @package    generator.builder.om
  */
 class QueryBuilderTest extends BookstoreTestBase
 {

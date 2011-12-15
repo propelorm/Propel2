@@ -29,7 +29,6 @@ use \Exception;
 /**
  * Test for PropelPDO subclass.
  *
- * @package    runtime.connection
  */
 class PropelPDOTest extends BookstoreTestBase
 {

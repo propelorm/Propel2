@@ -18,7 +18,6 @@ use Propel\Generator\Behavior\AlternativeCodingStandardsBehavior;
  * Tests for TimestampableBehavior class
  *
  * @author     François Zaninotto
- * @package    generator.behavior
  */
 class AlternativeCodingStandardsBehaviorTest extends \PHPUnit_Framework_TestCase
 {

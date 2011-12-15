@@ -22,7 +22,6 @@ use Propel\Runtime\Map\ValidatorMap;
  * failed.
  *
  * @author     Hans Lellelid <hans@xmpl.org>
- * @package    propel.runtime.validator
  * @see        BasePeer::doValidate()
  */
 class ValidationFailed

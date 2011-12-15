@@ -21,7 +21,6 @@ use Propel\Generator\Platform\MysqlPlatform;
 /**
  * Tests for the Column methods of the TableComparator service class.
  *
- * @package    generator.model.diff
  */
 class PropelTableIndexComparatorTest extends \PHPUnit_Framework_TestCase
 {

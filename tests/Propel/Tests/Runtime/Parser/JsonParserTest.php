@@ -17,7 +17,6 @@ use Propel\Runtime\Parser\JsonParser;
  * Test for JsonParser class
  *
  * @author     Francois Zaninotto
- * @package    runtime.parser
  */
 class JsonParserTest extends \PHPUnit_Framework_TestCase
 {

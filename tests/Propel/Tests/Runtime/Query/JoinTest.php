@@ -22,7 +22,6 @@ use Propel\Runtime\Query\Join;
  *
  * @author     François Zaninotto
  * @version    $Id$
- * @package    runtime.query
  */
 class JoinTest extends BaseTestCase
 {

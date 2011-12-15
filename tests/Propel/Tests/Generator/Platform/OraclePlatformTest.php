@@ -20,7 +20,6 @@ use Propel\Generator\Platform\OraclePlatform;
 
 /**
  *
- * @package    generator.platform
  */
 class OraclePlatformTest extends PlatformTestProvider
 {

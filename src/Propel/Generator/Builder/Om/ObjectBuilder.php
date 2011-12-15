@@ -27,7 +27,6 @@ use \DateTime;
  * the custom-built accessor and setter methods.
  *
  * @author     Hans Lellelid <hans@xmpl.org>
- * @package    propel.generator.builder.om
  */
 class ObjectBuilder extends AbstractObjectBuilder
 {
@@ -198,7 +197,6 @@ class ObjectBuilder extends AbstractObjectBuilder
  *";
         }
         $script .= "
- * @package    propel.generator.".$this->getPackage()."
  */
 abstract class ".$this->getClassname()." extends ".$parentClass." ";
 

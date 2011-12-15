@@ -19,7 +19,6 @@ use \PDO;
  * SQLite database schema parser.
  *
  * @author     Hans Lellelid <hans@xmpl.org>
- * @package    propel.generator.reverse.sqlite
  */
 class SqliteSchemaParser extends AbstractSchemaParser
 {

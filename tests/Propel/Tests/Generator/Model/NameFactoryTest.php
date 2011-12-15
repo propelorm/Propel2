@@ -32,7 +32,6 @@ use Propel\Tests\Helpers\BaseTestCase;
  *
  * @author     <a href="mailto:dlr@collab.net">Daniel Rall</a>
  * @version    $Id$
- * @package    generator.model
  */
 class NameFactoryTest extends BaseTestCase
 {

@@ -26,7 +26,6 @@ use Propel\Generator\Model\Unique;
  * @author     Hans Lellelid <hans@xmpl.org> (Propel)
  * @author     Martin Poeschl <mpoeschl@marmot.at> (Torque)
  * @author     Denis Dalmais
- * @package    propel.generator.platform
  */
 class OraclePlatform extends DefaultPlatform
 {

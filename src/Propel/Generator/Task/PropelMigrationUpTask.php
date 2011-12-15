@@ -16,7 +16,6 @@ use Propel\Generator\Util\MigrationManager;
  * This Task executes the next migration up
  *
  * @author     Francois Zaninotto
- * @package    propel.generator.task
  */
 class PropelMigrationUpTask extends BasePropelMigrationTask
 {

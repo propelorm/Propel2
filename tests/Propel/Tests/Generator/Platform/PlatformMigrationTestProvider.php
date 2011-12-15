@@ -18,7 +18,6 @@ use Propel\Generator\Model\Diff\TableComparator;
 
 /**
  * provider for platform migration unit tests
- * @package    generator.platform
  */
 abstract class PlatformMigrationTestProvider extends PlatformTestBase
 {

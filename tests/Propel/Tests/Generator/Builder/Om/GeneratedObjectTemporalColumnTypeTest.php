@@ -19,7 +19,6 @@ use Propel\Runtime\Propel;
  * Tests the generated objects for temporal column types accessor & mutator.
  *
  * @author     Francois Zaninotto
- * @package    generator.builder.om
  */
 class GeneratedObjectTemporalColumnTypeTest extends \PHPUnit_Framework_TestCase
 {

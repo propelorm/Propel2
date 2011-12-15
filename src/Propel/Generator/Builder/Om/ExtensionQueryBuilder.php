@@ -17,7 +17,6 @@ namespace Propel\Generator\Builder\Om;
  * business logic, custom behavior, etc.
  *
  * @author     Francois Zaninotto
- * @package    propel.generator.builder.om
  */
 class ExtensionQueryBuilder extends AbstractOMBuilder
 {
@@ -63,7 +62,6 @@ class ExtensionQueryBuilder extends AbstractOMBuilder
  * application requirements.  This class will only be generated as
  * long as it does not already exist in the output directory.
  *
- * @package    propel.generator.".$this->getPackage()."
  */
 class ".$this->getClassname()." extends $baseClassname {
 ";

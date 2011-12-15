@@ -19,7 +19,6 @@ use Propel\Runtime\Query\Criteria;
  * Tests the generated queries for enum column types filters
  *
  * @author     Francois Zaninotto
- * @package    generator.builder.om
  */
 class GeneratedQueryEnumColumnTest extends \PHPUnit_Framework_TestCase
 {

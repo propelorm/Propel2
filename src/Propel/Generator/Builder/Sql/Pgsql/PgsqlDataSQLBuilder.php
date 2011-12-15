@@ -16,7 +16,6 @@ use Propel\Generator\Builder\Sql\DataSQLBuilder;
  * PostgreSQL class for building data dump SQL.
  *
  * @author     Hans Lellelid <hans@xmpl.org>
- * @package    propel.generator.builder.sql.pgsql
  */
 class PgsqlDataSQLBuilder extends DataSQLBuilder
 {

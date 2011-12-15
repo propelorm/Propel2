@@ -15,7 +15,6 @@ namespace Propel\Generator\Behavior\I18n;
  * Modifier for the query builder.
  *
  * @author     François Zaninotto
- * @package    propel.generator.behavior.i18n
  */
 class I18nBehaviorQueryBuilderModifier
 {

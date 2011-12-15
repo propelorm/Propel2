@@ -16,7 +16,6 @@ use Propel\Generator\Util\MigrationManager;
  * This Task lists the migrations yet to be executed
  *
  * @author     Francois Zaninotto
- * @package    propel.generator.task
  */
 class PropelMigrationStatusTask extends BasePropelMigrationTask
 {

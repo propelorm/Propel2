@@ -14,7 +14,6 @@ namespace Propel\Generator\Model;
  * Data about an element with a name and optional namespace/schema/package attributes
  *
  * @author     Ulf Hermann <ulfhermann@kulturserver.de>
- * @package    propel.generator.model
  */
 abstract class ScopedElement extends XmlElement
 {

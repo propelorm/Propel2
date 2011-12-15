@@ -33,7 +33,6 @@ use Propel\Runtime\Query\Criteria;
  *
  * @author    François Zaniontto
  * @version   $Revision$
- * @package   generator.behavior.concrete_inheritance
  */
 class ConcreteInheritanceBehaviorTest extends BookstoreTestBase
 {

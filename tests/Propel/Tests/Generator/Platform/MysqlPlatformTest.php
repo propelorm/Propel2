@@ -22,7 +22,6 @@ use Propel\Generator\Platform\MysqlPlatform;
 
 /**
  *
- * @package    generator.platform
  */
 class MysqlPlatformTest extends PlatformTestProvider
 {

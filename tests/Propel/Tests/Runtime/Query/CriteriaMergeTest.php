@@ -24,7 +24,6 @@ use Propel\Runtime\Util\BasePeer;
  * @author     <a href="mailto:celkins@scardini.com">Christopher Elkins</a>
  * @author     <a href="mailto:sam@neurogrid.com">Sam Joseph</a>
  * @version    $Id: CriteriaTest.php 1347 2009-12-03 21:06:36Z francois $
- * @package    runtime.query
  */
 class CriteriaMergeTest extends BookstoreTestBase
 {

@@ -19,7 +19,6 @@ use Propel\Runtime\Query\Criteria;
  * Tests the generated queries for object column types filters
  *
  * @author     Francois Zaninotto
- * @package    generator.builder.om
  */
 class GeneratedQueryObjectColumnTest extends \PHPUnit_Framework_TestCase
 {

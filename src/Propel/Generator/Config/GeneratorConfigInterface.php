@@ -16,7 +16,6 @@ use \PDO;
 
 /**
  *
- * @package      propel.generator.config
  */
 interface GeneratorConfigInterface
 {

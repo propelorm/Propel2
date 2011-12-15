@@ -22,7 +22,6 @@ use \Project;
  * This Task converts the XML runtime configuration file into a PHP array for faster performance.
  *
  * @author     Hans Lellelid <hans@xmpl.org>
- * @package    propel.generator.task
  */
 class PropelConvertConfTask extends AbstractPropelDataModelTask
 {

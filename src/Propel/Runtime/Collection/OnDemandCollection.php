@@ -19,7 +19,6 @@ use Propel\Runtime\Connection\StatementInterface;
  * Class for iterating over a statement and returning one Propel object at a time
  *
  * @author     Francois Zaninotto
- * @package    propel.runtime.collection
  */
 class OnDemandCollection extends Collection
 {

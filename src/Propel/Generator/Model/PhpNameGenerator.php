@@ -17,7 +17,6 @@ namespace Propel\Generator\Model;
  * @author     Daniel Rall <dlr@finemaltcoding.com> (Torque)
  * @author     Byron Foster <byron_foster@yahoo.com> (Torque)
  * @author     Bernd Goldschmidt <bgoldschmidt@rapidsoft.de>
- * @package    propel.generator.model
  */
 class PhpNameGenerator implements NameGenerator
 {

@@ -29,7 +29,6 @@ use Propel\Runtime\Query\PropelQuery;
  *
  * @author     Francois Zaninotto
  * @version    $Id$
- * @package    runtime.collection
  */
 class ObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
 {

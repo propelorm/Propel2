@@ -17,7 +17,6 @@ use Propel\Runtime\Propel;
 
 /**
  *
- * @package    generator.platform
  */
 class DefaultPlatformTest extends \PHPUnit_Framework_TestCase
 {

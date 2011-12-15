@@ -21,7 +21,6 @@ use Propel\Runtime\Query\ModelCriteria;
  *
  * @author     Francois Zaninotto
  * @version    $Id: ModelCriteriaTest.php 2090 2010-12-13 22:37:03Z francois $
- * @package    runtime.query
  */
 class ModelCriteriaWithSchemaTest extends SchemasTestBase
 {

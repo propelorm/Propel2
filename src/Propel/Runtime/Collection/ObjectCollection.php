@@ -21,7 +21,6 @@ use Propel\Runtime\Util\BasePeer;
  * Class for iterating over a list of Propel objects
  *
  * @author     Francois Zaninotto
- * @package    propel.runtime.collection
  */
 class ObjectCollection extends Collection
 {

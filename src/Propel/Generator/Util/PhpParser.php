@@ -29,7 +29,6 @@ else {
  * </code>
  *
  * @author     François Zaninotto
- * @package    propel.generator.util
  */
 class PhpParser
 {

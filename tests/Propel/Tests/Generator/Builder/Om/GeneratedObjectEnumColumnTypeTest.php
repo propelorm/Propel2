@@ -18,7 +18,6 @@ use Propel\Runtime\Propel;
  * Tests the generated objects for enum column types accessor & mutator
  *
  * @author     Francois Zaninotto
- * @package    generator.builder.om
  */
 class GeneratedObjectEnumColumnTypeTest extends \PHPUnit_Framework_TestCase
 {

@@ -26,7 +26,6 @@ use Propel\Runtime\Query\ModelCriteria;
  *
  * @author     Francois Zaninotto
  * @version    $Id$
- * @package    runtime.formatter
  */
 class ArrayFormatterTest extends BookstoreEmptyTestBase
 {

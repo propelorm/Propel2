@@ -19,7 +19,6 @@ use Propel\Runtime\Propel;
  *
  * @author     François Zaninotto
  * @version    $Id: GeneratedRelationMapTest.php 1347 2009-12-03 21:06:36Z francois $
- * @package    runtime.map
  */
 class RelatedMapSymmetricalTest extends BookstoreTestBase
 {

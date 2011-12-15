@@ -22,7 +22,6 @@ use \PDO;
  * This formatter consumes less memory than the ObjectFormatter, but doesn't use Instance Pool
  *
  * @author     Francois Zaninotto
- * @package    propel.runtime.formatter
  */
 class OnDemandFormatter extends ObjectFormatter
 {

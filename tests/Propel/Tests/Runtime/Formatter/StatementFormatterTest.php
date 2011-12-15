@@ -29,7 +29,6 @@ use \PDOStatement;
  *
  * @author     Francois Zaninotto
  * @version    $Id$
- * @package    runtime.formatter
  */
 class StatementFormatterTest extends BookstoreEmptyTestBase
 {

@@ -28,7 +28,6 @@ use \PDO;
  * @author     Brett McLaughlin <bmclaugh@algx.net> (Torque)
  * @author     Bill Schneider <bschneider@vecna.com> (Torque)
  * @author     Daniel Rall <dlr@finemaltcoding.com> (Torque)
- * @package    propel.runtime.adapter
  */
 class OracleAdapter extends PdoAdapter implements AdapterInterface
 {

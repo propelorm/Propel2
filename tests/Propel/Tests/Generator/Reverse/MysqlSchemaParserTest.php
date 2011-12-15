@@ -24,7 +24,6 @@ use Propel\Runtime\Propel;
  *
  * @author      William Durand
  * @version     $Revision$
- * @package     propel.generator.reverse.mysql
  */
 class MysqlSchemaParserTest extends \PHPUnit_Framework_TestCase
 {

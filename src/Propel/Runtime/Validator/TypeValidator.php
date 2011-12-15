@@ -24,7 +24,6 @@ use Propel\Runtime\Map\ValidatorMap;
  * </code>
  *
  * @author     Hans Lellelid <hans@xmpl.org>
- * @package    propel.runtime.validator
  */
 class TypeValidator implements BasicValidator
 {

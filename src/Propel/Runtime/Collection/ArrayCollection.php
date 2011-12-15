@@ -17,7 +17,6 @@ use Propel\Runtime\Exception\PropelException;
  * Class for iterating over a list of Propel objects stored as arrays
  *
  * @author     Francois Zaninotto
- * @package    propel.runtime.collection
  */
 class ArrayCollection extends Collection
 {

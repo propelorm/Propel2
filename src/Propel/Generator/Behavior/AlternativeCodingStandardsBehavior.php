@@ -37,7 +37,6 @@ use Propel\Generator\Model\Behavior;
  *   - comments are stripped (optional)
  *
  * @author     François Zaninotto
- * @package    propel.generator.behavior
  */
 class AlternativeCodingStandardsBehavior extends Behavior
 {

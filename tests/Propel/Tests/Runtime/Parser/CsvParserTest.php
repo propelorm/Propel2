@@ -17,7 +17,6 @@ use Propel\Runtime\Parser\CsvParser;
  * Test for CsvParser class
  *
  * @author     Francois Zaninotto
- * @package    runtime.parser
  */
 class CsvParserTest extends \PHPUnit_Framework_TestCase
 {

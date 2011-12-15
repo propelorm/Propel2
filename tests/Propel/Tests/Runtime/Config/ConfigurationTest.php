@@ -17,7 +17,6 @@ use Propel\Runtime\Config\ConfigurationIterator;
  * Test for Configuration class
  *
  * @author     Francois Zaninotto
- * @package    runtime.config
  */
 class ConfigurationTest extends \PHPUnit_Framework_TestCase
 {

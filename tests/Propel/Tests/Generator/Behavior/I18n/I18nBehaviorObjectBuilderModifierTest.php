@@ -24,7 +24,6 @@ use Propel\Runtime\Propel;
  * Tests for I18nBehavior class object modifier
  *
  * @author     François Zaninotto
- * @package    generator.behavior.i18n
  */
 class I18nBehaviorObjectBuilderModifierTest extends \PHPUnit_Framework_TestCase
 {

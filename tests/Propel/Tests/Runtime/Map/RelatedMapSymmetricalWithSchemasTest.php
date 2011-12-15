@@ -19,7 +19,6 @@ use Propel\Tests\Helpers\Schemas\SchemasTestBase;
  *
  * @author     Ulf Hermann
  * @version    $Id$
- * @package    runtime.map
  */
 class RelatedMapSymmetricalWithSchemasTest extends SchemasTestBase
 {

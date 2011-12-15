@@ -18,7 +18,6 @@ namespace Propel\Generator\Builder\Util;
  * @link http://api.cakephp.org/view_source/inflector/
  *
  * @author     paul.hanssen
- * @package    propel.generator.builder.util
  */
 class StandardEnglishPluralizer implements Pluralizer
 {

@@ -17,7 +17,6 @@ use Propel\Generator\Model\Table;
  * Service class for preparing and executing migrations
  *
  * @author     François Zaninotto
- * @package    propel.generator.util
  */
 class MigrationManager
 {

@@ -17,7 +17,6 @@ namespace Propel\Generator\Builder\Om;
  * business logic, custom behavior, etc.
  *
  * @author     Hans Lellelid <hans@xmpl.org>
- * @package    propel.generator.builder.om
  */
 class ExtensionObjectBuilder extends AbstractObjectBuilder
 {
@@ -63,7 +62,6 @@ class ExtensionObjectBuilder extends AbstractObjectBuilder
  * application requirements.  This class will only be generated as
  * long as it does not already exist in the output directory.
  *
- * @package    propel.generator.".$this->getPackage()."
  */
 ".($table->isAbstract() ? "abstract " : "")."class ".$this->getClassname()." extends $baseClassname {
 ";

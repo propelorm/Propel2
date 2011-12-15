@@ -36,7 +36,6 @@ use \Serializable;
  * @method     string toCSV(boolean $usePrefix, boolean $includeLazyLoadColumns) Export the collection to a CSV string
  *
  * @author     Francois Zaninotto
- * @package    propel.runtime.collection
  */
 class Collection extends ArrayObject implements Serializable
 {

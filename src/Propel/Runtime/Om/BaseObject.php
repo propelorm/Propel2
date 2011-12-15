@@ -31,7 +31,6 @@ use Propel\Runtime\Util\BasePeer;
  * @author     Hans Lellelid <hans@xmpl.org> (Propel)
  * @author     Frank Y. Kim <frank.kim@clearink.com> (Torque)
  * @author     John D. McNally <jmcnally@collab.net> (Torque)
- * @package    propel.runtime.om
  */
 abstract class BaseObject
 {

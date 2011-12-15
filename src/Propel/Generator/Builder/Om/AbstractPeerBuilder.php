@@ -23,7 +23,6 @@ use Propel\Generator\Model\Table;
  * methods.
  *
  * @author     Hans Lellelid <hans@xmpl.org>
- * @package    propel.generator.builder.om
  */
 abstract class AbstractPeerBuilder extends AbstractOMBuilder
 {

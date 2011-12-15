@@ -19,7 +19,6 @@ use Propel\Generator\Model\PropelTypes;
  *
  * @author    Francois Zaninotto
  * @version        $Revision$
- * @package        propel.generator.behavior.i18n
  */
 class I18nBehavior extends Behavior
 {

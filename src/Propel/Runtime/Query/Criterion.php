@@ -20,7 +20,6 @@ use Propel\Runtime\Adapter\Pdo\PgsqlAdapter;
  * In Torque this is an inner class of the Criteria class.
  *
  * @author     Hans Lellelid <hans@xmpl.org> (Propel)
- * @package    propel.runtime.query
  */
 class Criterion
 {

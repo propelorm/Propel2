@@ -15,7 +15,6 @@ use \Exception;
 /**
  * Class for exceptions thrown during schema parsing
  *
- * @package    propel.generator.exception
  */
 class SchemaException extends Exception
 {

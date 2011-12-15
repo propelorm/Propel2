@@ -37,7 +37,6 @@ if (!defined('TESTS_BASE_DIR')) {
  *
  * @see        BookstoreDataPopulator
  * @author     Hans Lellelid <hans@xmpl.org>
- * @package    generator.builder.om
  */
 class GeneratedObjectLobTest extends BookstoreEmptyTestBase
 {

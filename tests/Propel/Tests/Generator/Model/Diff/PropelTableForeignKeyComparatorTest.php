@@ -20,7 +20,6 @@ use Propel\Generator\Model\Database;
 /**
  * Tests for the Column methods of the TableComparator service class.
  *
- * @package    generator.model.diff
  */
 class PropelTableForeignKeyComparatorTest extends \PHPUnit_Framework_TestCase
 {

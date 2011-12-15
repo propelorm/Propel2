@@ -22,7 +22,6 @@ use Propel\Runtime\Query\PropelQuery;
  *
  * @author     Francois Zaninotto
  * @version    $Id: ObjectCollectionTest.php 1348 2009-12-03 21:49:00Z francois $
- * @package    runtime.collection
  */
 class OnDemandIteratorTest extends BookstoreEmptyTestBase
 {

@@ -18,7 +18,6 @@ use Propel\Tests\Bookstore\Behavior\Table3;
  * Tests the generated Object behavior hooks.
  *
  * @author     Francois Zaninotto
- * @package    generator.behavior
  */
 class ObjectBehaviorTest extends BookstoreTestBase
 {

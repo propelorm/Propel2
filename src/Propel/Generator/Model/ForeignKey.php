@@ -20,7 +20,6 @@ use \DOMDocument;
  * @author     Fedor <fedor.karpelevitch@home.com>
  * @author     Daniel Rall <dlr@finemaltcoding.com>
  * @author     Ulf Hermann <ulfhermann@kulturserver.de>
- * @package    propel.generator.model
  */
 class ForeignKey extends XmlElement
 {

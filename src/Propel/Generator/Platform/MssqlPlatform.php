@@ -21,7 +21,6 @@ use Propel\Generator\Model\Table;
  *
  * @author     Hans Lellelid <hans@xmpl.org> (Propel)
  * @author     Martin Poeschl <mpoeschl@marmot.at> (Torque)
- * @package    propel.generator.platform
  */
 class MssqlPlatform extends DefaultPlatform
 {

@@ -19,7 +19,6 @@ use \DOMDocument;
  * Object to hold vendor-specific info.
  *
  * @author     Hans Lellelid <hans@xmpl.org>
- * @package    propel.generator.model
  */
 class VendorInfo extends XmlElement
 {

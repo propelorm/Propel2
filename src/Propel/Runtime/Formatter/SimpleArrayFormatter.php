@@ -20,7 +20,6 @@ use \PDO;
  * or an array
  *
  * @author     Benjamin Runnels
- * @package    propel.runtime.formatter
  */
 class SimpleArrayFormatter extends AbstractFormatter {
     protected $collectionName = '\Propel\Runtime\Collection\ArrayCollection';

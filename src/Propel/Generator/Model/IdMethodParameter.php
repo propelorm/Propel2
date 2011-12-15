@@ -16,7 +16,6 @@ namespace Propel\Generator\Model;
  * @author     Hans Lellelid <hans@xmpl.org> (Propel)
  * @author     John McNally <jmcnally@collab.net> (Torque)
  * @author     Daniel Rall <dlr@collab.net> (Torque)
- * @package    propel.generator.model
  */
 class IdMethodParameter extends XmlElement
 {

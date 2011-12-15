@@ -26,7 +26,6 @@ use Propel\Generator\Model\Table;
  * }
  * </code>
  *
- * @package    propel.generator.util
  * @author     François Zaninotto
  */
 class SchemaValidator

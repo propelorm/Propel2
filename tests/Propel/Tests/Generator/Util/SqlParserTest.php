@@ -12,7 +12,6 @@ use Propel\Generator\Util\SqlParser;
 
 /**
  *
- * @package    generator.util
  */
 class SqlParserTest extends \PHPUnit_Framework_TestCase
 {

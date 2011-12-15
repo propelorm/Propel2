@@ -17,7 +17,6 @@ use Propel\Runtime\Parser\YamlParser;
  * Test for YamlParser class
  *
  * @author     Francois Zaninotto
- * @package    runtime.parser
  */
 class YamlParserTest extends \PHPUnit_Framework_TestCase
 {

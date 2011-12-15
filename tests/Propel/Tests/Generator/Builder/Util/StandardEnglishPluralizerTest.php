@@ -15,7 +15,6 @@ use Propel\Generator\Builder\Util\StandardEnglishPluralizer;
 /**
  * Tests for the StandardEnglishPluralizer class
  *
- * @package    generator.builder.util
  */
 class StandardEnglishPluralizerTest extends \PHPUnit_Framework_TestCase
 {

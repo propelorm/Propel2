@@ -23,7 +23,6 @@ use \PDO;
  *
  * @author     Hans Lellelid <hans@xmpl.org> (Propel)
  * @author     Hakan Tandogan <hakan42@gmx.de> (Torque)
- * @package    propel.runtime.adapter
  */
 class PgsqlAdapter extends PdoAdapter implements AdapterInterface
 {

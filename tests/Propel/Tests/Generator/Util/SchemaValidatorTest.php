@@ -20,7 +20,6 @@ use Propel\Generator\Model\Table;
 
 /**
  *
- * @package    generator.util
  */
 class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
 {

@@ -19,7 +19,6 @@ use Propel\Generator\Model\PropelTypes;
  * the custom-built query methods.
  *
  * @author     Francois Zaninotto
- * @package    propel.generator.builder.om
  */
 class QueryBuilder extends AbstractOMBuilder
 {
@@ -143,7 +142,6 @@ class QueryBuilder extends AbstractOMBuilder
 
         $script .= "
  *
- * @package    propel.generator.".$this->getPackage()."
  */
 abstract class ".$this->getClassname()." extends " . $parentClass . "
 {

@@ -18,7 +18,6 @@ use Propel\Runtime\Query\ModelCriteria;
  * Test class for ModelCriteria with namespaces.
  *
  * @author     Pierre-Yves LEBECQ <py.lebecq@gmail.com>
- * @package    runtime.query
  */
 class ModelCriteriaWithNamespaceTest extends NamespacesTestBase
 {

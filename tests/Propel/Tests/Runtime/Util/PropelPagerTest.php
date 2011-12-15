@@ -25,7 +25,6 @@ use Propel\Runtime\Util\PropelPager;
  *
  * @author     Niklas Närhinen <niklas@narhinen.net>
  * @version    $Id: PropelPagerTest.php
- * @package    runtime.util
  */
 class PropelPagerTest extends BookstoreEmptyTestBase
 {

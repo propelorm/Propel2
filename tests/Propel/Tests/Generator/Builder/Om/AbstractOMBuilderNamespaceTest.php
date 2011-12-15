@@ -21,7 +21,6 @@ use Propel\Generator\Platform\MysqlPlatform;
  *
  * @author     François Zaninotto
  * @version    $Id: OMBuilderBuilderTest.php 1347 2009-12-03 21:06:36Z francois $
- * @package    generator.builder.om
  */
 class AbstractOMBuilderNamespaceTest extends \PHPUnit_Framework_TestCase
 {

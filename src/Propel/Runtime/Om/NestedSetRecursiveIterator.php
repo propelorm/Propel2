@@ -16,7 +16,6 @@ use \RecursiveIterator;
  * Pre-order node iterator for Node objects.
  *
  * @author     Heltem <heltem@o2php.com>
- * @package    propel.runtime.om
  */
 class NestedSetRecursiveIterator implements RecursiveIterator
 {

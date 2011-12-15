@@ -22,7 +22,6 @@ use Propel\Runtime\Adapter\Pdo\SqliteAdapter;
  *
  * @author     Francois Zaninotto
  * @version    $Id$
- * @package    runtime.query
  */
 class CriteriaCombineTest extends BaseTestCase
 {

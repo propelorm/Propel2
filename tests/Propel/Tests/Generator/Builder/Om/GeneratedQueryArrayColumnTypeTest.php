@@ -19,7 +19,6 @@ use Propel\Runtime\Query\Criteria;
  * Tests the generated queries for array column types filters
  *
  * @author     Francois Zaninotto
- * @package    generator.builder.om
  */
 class GeneratedQueryArrayColumnTypeTest extends \PHPUnit_Framework_TestCase
 {

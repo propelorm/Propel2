@@ -19,7 +19,6 @@ use Propel\Generator\Util\MigrationManager;
  * This Task creates the OM classes based on the XML schema file.
  *
  * @author     Hans Lellelid <hans@xmpl.org>
- * @package    propel.generator.task
  */
 class PropelSQLDiffTask extends AbstractPropelDataModelTask
 {

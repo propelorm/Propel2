@@ -17,7 +17,6 @@ use Propel\Runtime\Propel;
 /**
  * Tests the generated Peer classes for lazy load columns.
  *
- * @package    generator.builder.om
  */
 class GeneratedPeerLazyLoadTest extends \PHPUnit_Framework_TestCase
 {

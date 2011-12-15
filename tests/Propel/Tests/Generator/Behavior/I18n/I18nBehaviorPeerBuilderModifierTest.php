@@ -20,7 +20,6 @@ use Propel\Runtime\Util\BasePeer;
  * Tests for I18nBehavior class peer modifier
  *
  * @author     François Zaninotto
- * @package    generator.behavior.i18n
  */
 class I18nBehaviorPeerBuilderModifierTest extends \PHPUnit_Framework_TestCase
 {

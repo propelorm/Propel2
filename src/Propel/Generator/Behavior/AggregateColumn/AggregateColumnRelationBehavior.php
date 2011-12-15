@@ -16,7 +16,6 @@ use Propel\Generator\Model\Behavior;
  * Keeps an aggregate column updated with related table
  *
  * @author     François Zaninotto
- * @package    propel.generator.behavior.aggregate_column
  */
 class AggregateColumnRelationBehavior extends Behavior
 {

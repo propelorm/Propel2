@@ -17,7 +17,6 @@ use DomNode;
  * XML parser. Converts data between associative array and XML formats
  *
  * @author     Francois Zaninotto
- * @package    propel.runtime.parser
  */
 class XmlParser extends AbstractParser
 {

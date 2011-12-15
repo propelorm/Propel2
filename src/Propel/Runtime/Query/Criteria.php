@@ -28,7 +28,6 @@ use Propel\Runtime\Util\PropelConditionalProxy;
  * @author     Eric Dobbs <eric@dobbse.net> (Torque)
  * @author     Henning P. Schmiedehausen <hps@intermeta.de> (Torque)
  * @author     Sam Joseph <sam@neurogrid.com> (Torque)
- * @package    propel.runtime.query
  */
 class Criteria implements \IteratorAggregate
 {

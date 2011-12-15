@@ -17,7 +17,6 @@ use Propel\Runtime\Parser\XmlParser;
  * Test for XmlParser class
  *
  * @author     Francois Zaninotto
- * @package    runtime.parser
  */
 class XmlParserTest extends \PHPUnit_Framework_TestCase
 {

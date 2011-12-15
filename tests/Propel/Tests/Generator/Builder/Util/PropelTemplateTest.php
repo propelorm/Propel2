@@ -15,7 +15,6 @@ use Propel\Generator\Builder\Util\PropelTemplate;
 /**
  * Tests for PropelTemplate class
  *
- * @package    generator.builder.util
  */
 class PropelTemplateTest extends \PHPUnit_Framework_TestCase
 {

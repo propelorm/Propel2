@@ -20,7 +20,6 @@ use \Exception;
 
 /**
  *
- * @package         propel.generator.config
  */
 class QuickGeneratorConfig implements GeneratorConfigInterface
 {

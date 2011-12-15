@@ -26,7 +26,6 @@ use \Exception;
  * @author     Jason van Zyl <jvanzyl@apache.org> (Torque)
  * @author     Martin Poeschl <mpoeschl@marmot.at> (Torque)
  * @author     Daniel Rall <dlr@collab.net> (Torque)
- * @package    propel.generator.builder.util
  */
 class XmlToAppData
 {

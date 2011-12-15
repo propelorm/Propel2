@@ -15,7 +15,6 @@ namespace Propel\Generator\Model;
  *
  * @author     Hans Lellelid <hans@xmpl.org> (Propel)
  * @author     John McNally <jmcnally@collab.net> (Torque)
- * @package    propel.generator.model
  */
 class Inheritance extends XmlElement
 {

@@ -41,7 +41,6 @@ use \DateTime;
  *
  * @author     Francois Zaninotto
  * @author     Hans Lellelid <hans@xmpl.org>
- * @package    misc
  */
 class BookstoreTest extends BookstoreEmptyTestBase
 {

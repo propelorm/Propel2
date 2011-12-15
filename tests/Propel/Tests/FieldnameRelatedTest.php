@@ -33,7 +33,6 @@ use Propel\Tests\Bookstore\Bookstore;
  * behaviour. The tests will run faster this way.
  *
  * @author     Sven Fuchs <svenfuchs@artweb-design.de>
- * @package    misc
  */
 class FieldnameRelatedTest extends \PHPUnit_Framework_TestCase
 {

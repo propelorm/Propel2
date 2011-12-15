@@ -21,7 +21,6 @@ use Propel\Tests\Bookstore\BookPeer;
  *
  * @see        BookstoreDataPopulator
  * @author     Francois EZaninotto
- * @package    runtime.adapter
  */
 class AbstractAdapterTest extends BookstoreTestBase
 {

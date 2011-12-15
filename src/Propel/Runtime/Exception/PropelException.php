@@ -13,7 +13,6 @@ namespace Propel\Runtime\Exception;
 /**
  * The base class of all exceptions thrown by Propel.
  * @author     Hans Lellelid <hans@xmpl.org>
- * @package    propel.runtime.exception
  */
 class PropelException extends \Exception
 {

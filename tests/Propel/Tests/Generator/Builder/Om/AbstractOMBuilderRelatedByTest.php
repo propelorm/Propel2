@@ -22,7 +22,6 @@ use Propel\Generator\Platform\DefaultPlatform;
  *
  * @author     François Zaninotto
  * @version    $Id: OMBuilderBuilderTest.php 1347 2009-12-03 21:06:36Z francois $
- * @package    generator.builder.om
  */
 class AbstractOMBuilderRelatedByTest extends \PHPUnit_Framework_TestCase
 {

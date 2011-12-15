@@ -17,7 +17,6 @@ use Propel\Runtime\Propel;
 /**
  * Tests the generated Object classes for lazy load columns.
  *
- * @package    generator.builder.om
  */
 class GeneratedObjectLazyLoadTest extends \PHPUnit_Framework_TestCase
 {

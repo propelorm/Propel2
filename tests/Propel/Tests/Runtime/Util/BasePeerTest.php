@@ -26,7 +26,6 @@ use Propel\Runtime\Util\BasePeer;
  *
  * @see        BookstoreDataPopulator
  * @author     Hans Lellelid <hans@xmpl.org>
- * @package    runtime.util
  */
 class BasePeerTest extends BookstoreTestBase
 {

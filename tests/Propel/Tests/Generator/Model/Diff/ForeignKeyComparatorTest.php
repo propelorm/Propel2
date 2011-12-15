@@ -17,7 +17,6 @@ use Propel\Generator\Model\Diff\ForeignKeyComparator;
 /**
  * Tests for the ColumnComparator service class.
  *
- * @package    generator.model.diff
  */
 class PropelForeignComparatorTest extends \PHPUnit_Framework_TestCase
 {

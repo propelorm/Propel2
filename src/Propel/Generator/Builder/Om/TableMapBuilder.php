@@ -18,7 +18,6 @@ use Propel\Generator\Platform\PlatformInterface;
  * Generates the PHP5 table map class for user object model (OM).
  *
  * @author     Hans Lellelid <hans@xmpl.org>
- * @package    propel.generator.builder.om
  */
 class TableMapBuilder extends AbstractOMBuilder
 {
@@ -80,7 +79,6 @@ class TableMapBuilder extends AbstractOMBuilder
  * ORDER BY clause to know whether it needs to apply SQL to make the ORDER BY case-insensitive
  * (i.e. if it's a text column type).
  *
- * @package    propel.generator.".$this->getPackage()."
  */
 class ".$this->getClassname()." extends \Propel\Runtime\Map\TableMap
 {

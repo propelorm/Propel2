@@ -40,7 +40,6 @@ use Propel\Runtime\Query\ModelCriteria;
  *
  * @author     Francois Zaninotto
  * @version    $Id: ObjectFormatterWithTest.php 1348 2009-12-03 21:49:00Z francois $
- * @package    runtime.formatter
  */
 class ObjectFormatterWithTest extends BookstoreEmptyTestBase
 {

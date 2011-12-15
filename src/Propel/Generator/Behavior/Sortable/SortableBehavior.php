@@ -18,7 +18,6 @@ use Propel\Generator\Model\Behavior;
  *
  * @author      Massimiliano Arione
  * @version     $Revision$
- * @package     propel.generator.behavior.sortable
  */
 class SortableBehavior extends Behavior
 {

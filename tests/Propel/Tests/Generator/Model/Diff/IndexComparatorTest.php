@@ -17,7 +17,6 @@ use Propel\Generator\Model\Diff\IndexComparator;
 /**
  * Tests for the ColumnComparator service class.
  *
- * @package    generator.model.diff
  */
 class IndexComparatorTest extends \PHPUnit_Framework_TestCase
 {

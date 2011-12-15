@@ -20,7 +20,6 @@ use Propel\Generator\Platform\PgsqlPlatform;
 
 /**
  *
- * @package    generator.platform
  */
 class PgsqlPlatformMigrationTest extends PlatformMigrationTestProvider
 {

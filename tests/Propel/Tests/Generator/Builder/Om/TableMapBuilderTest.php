@@ -21,7 +21,6 @@ use Propel\Runtime\Map\RelationMap;
  *
  * @author     François Zaninotto
  * @version    $Id$
- * @package    generator.builder.om
  */
 class TableMapBuilderTest extends BookstoreTestBase
 {

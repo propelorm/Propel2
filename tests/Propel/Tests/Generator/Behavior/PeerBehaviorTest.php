@@ -20,7 +20,6 @@ use Propel\Runtime\Query\Criteria;
  * Tests the generated Peer behavior hooks.
  *
  * @author     Francois Zaninotto
- * @package    generator.behavior
  */
 class PeerBehaviorTest extends BookstoreTestBase
 {

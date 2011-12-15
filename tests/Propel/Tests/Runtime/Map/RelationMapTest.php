@@ -20,7 +20,6 @@ use Propel\Runtime\Map\TableMap;
  *
  * @author     François Zaninotto
  * @version    $Id$
- * @package    runtime.map
  */
 class RelationMapTest extends \PHPUnit_Framework_TestCase
 {

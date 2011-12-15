@@ -17,7 +17,6 @@ use Propel\Runtime\Om\BaseObject;
 
 /**
  *
- * @package    generator.util
  */
 class QuickBuilderTest extends \PHPUnit_Framework_TestCase
 {

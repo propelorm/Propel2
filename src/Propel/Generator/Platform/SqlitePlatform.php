@@ -20,7 +20,6 @@ use Propel\Generator\Model\Table;
  * SQLite PlatformInterface implementation.
  *
  * @author     Hans Lellelid <hans@xmpl.org>
- * @package    propel.generator.platform
  */
 class SqlitePlatform extends DefaultPlatform
 {

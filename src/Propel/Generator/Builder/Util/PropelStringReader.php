@@ -16,7 +16,6 @@ include_once 'phing/system/io/Reader.php';
  * Overrides Phing's StringReader to allow inclusin inside a BufferedReader
  *
  * @author     François Zaninotto
- * @package    propel.generator.builder.util
  */
 class PropelStringReader extends Reader
 {

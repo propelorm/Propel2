@@ -16,7 +16,6 @@ use Propel\Runtime\Propel;
  * Tests the generated objects for array column types accessor & mutator
  *
  * @author     Francois Zaninotto
- * @package    generator.builder.om
  */
 class GeneratedObjectArrayColumnTypeTest extends \PHPUnit_Framework_TestCase
 {

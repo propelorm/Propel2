@@ -16,7 +16,6 @@ namespace Propel\Runtime\Adapter;
  * @author     Hans Lellelid <hans@xmpl.org> (Propel)
  * @author     Jon S. Stevens <jon@clearink.com> (Torque)
  * @author     Brett McLaughlin <bmclaugh@algx.net> (Torque)
- * @package    propel.runtime.adapter
  */
 class NoneAdapter extends AbstractAdapter
 {
