@@ -19,7 +19,6 @@ use PDO;
  * Microsoft SQL Server database schema parser.
  *
  * @author     Hans Lellelid <hans@xmpl.org>
- * @version    $Revision$
  * @package    propel.generator.reverse.mssql
  */
 class MssqlSchemaParser extends AbstractSchemaParser

@@ -17,7 +17,6 @@ use Propel\Generator\Model\Behavior;
  * Uses two additional columns storing the creation and update date
  *
  * @author     François Zaninotto
- * @version    $Revision$
  * @package    propel.generator.behavior
  */
 class TimestampableBehavior extends Behavior

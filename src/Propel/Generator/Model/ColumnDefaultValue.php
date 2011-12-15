@@ -14,7 +14,6 @@ namespace Propel\Generator\Model;
  * A class for holding a column default value.
  *
  * @author     Hans Lellelid <hans@xmpl.org>
- * @version    $Revision$
  * @package    propel.generator.model
  */
 class ColumnDefaultValue

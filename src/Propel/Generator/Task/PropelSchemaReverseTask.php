@@ -21,7 +21,6 @@ use \PDOTask;
  * the database metadata.
  *
  * @author     Hans Lellelid <hans@xmpl.org>
- * @version    $Revision$
  * @package    propel.generator.task
  */
 class PropelSchemaReverseTask extends PDOTask

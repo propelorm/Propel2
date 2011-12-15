@@ -16,7 +16,6 @@ use Propel\Generator\Exception\EngineException;
  * Validator.
  *
  * @author     Michael Aichler <aichler@mediacluster.de> (Propel)
- * @version    $Revision$
  * @package    propel.generator.model
  */
 class Validator extends XmlElement

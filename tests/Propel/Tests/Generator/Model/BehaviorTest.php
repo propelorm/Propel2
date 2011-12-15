@@ -17,7 +17,6 @@ use Propel\Generator\Model\Behavior\TimestampableBehavior;
  * Tests for Behavior class
  *
  * @author     <a href="mailto:mpoeschl@marmot.at>Martin Poeschl</a>
- * @version    $Revision$
  * @package    generator.model
  */
 class BehaviorTest extends \PHPUnit_Framework_TestCase {

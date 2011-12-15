@@ -15,7 +15,6 @@ namespace Propel\Runtime\Config;
  * build a flat array from nesting configuration arrays.
  *
  * @author     Veikko Mäkinen <veikko@veikko.fi>
- * @version    $Revision$
  * @package    propel.runtime.config
  */
 class ConfigurationIterator extends \RecursiveIteratorIterator

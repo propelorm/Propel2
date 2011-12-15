@@ -17,7 +17,6 @@ use Propel\Runtime\Connection\ConnectionInterface;
  * This is used to connect to a MSSQL database.
  *
  * @author     Hans Lellelid <hans@xmpl.org> (Propel)
- * @version    $Revision$
  * @package    propel.runtime.adapter
  */
 class MssqlAdapter extends PdoAdapter implements AdapterInterface

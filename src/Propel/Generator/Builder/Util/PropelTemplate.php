@@ -14,7 +14,6 @@ namespace Propel\Generator\Builder\Util;
  * Simple templating system to ease behavior writing
  *
  * @author     François Zaninotto
- * @version    $Revision$
  * @package    propel.generator.builder.util
  */
 class PropelTemplate

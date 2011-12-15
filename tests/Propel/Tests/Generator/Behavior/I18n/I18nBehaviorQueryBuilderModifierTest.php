@@ -21,7 +21,6 @@ use Propel\Runtime\Util\BasePeer;
  * Tests for I18nBehavior class query modifier
  *
  * @author     François Zaninotto
- * @version    $Revision$
  * @package    generator.behavior.i18n
  */
 class I18nBehaviorQueryBuilderModifierTest extends \PHPUnit_Framework_TestCase

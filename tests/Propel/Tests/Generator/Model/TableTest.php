@@ -29,7 +29,6 @@ use \DOMDocument;
  * Tests for Table model class
  *
  * @author     Martin Poeschl (mpoeschl@marmot.at)
- * @version    $Revision$
  * @package    generator.model
  */
 class TableTest extends \PHPUnit_Framework_TestCase

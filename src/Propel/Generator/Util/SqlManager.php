@@ -18,7 +18,6 @@ use \PDO;
  * Service class for managing SQL.
  *
  * @author     William Durand <william.durand1@gmail.com>
- * @version    $Revision$
  * @package    propel.generator.util
  */
 class SqlManager

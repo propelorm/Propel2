@@ -20,7 +20,6 @@ use Propel\Runtime\Connection\StatementInterface;
  * format() returns a ObjectCollection of Propel model objects
  *
  * @author     Francois Zaninotto
- * @version    $Revision$
  * @package    propel.runtime.formatter
  */
 class ObjectFormatter extends AbstractFormatter

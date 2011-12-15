@@ -21,7 +21,6 @@ use Propel\Generator\Model\ForeignKey;
  * to the parent model.
  *
  * @author     François Zaninotto
- * @version    $Revision$
  * @package    propel.generator.behavior.concrete_inheritance
  */
 class ConcreteInheritanceBehavior extends Behavior

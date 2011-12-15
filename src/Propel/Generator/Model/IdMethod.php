@@ -16,7 +16,6 @@ namespace Propel\Generator\Model;
  *
  * @author     Hans Lellelid <hans@xmpl.org> (Propel)
  * @author     Daniel Rall <dlr@collab.net> (Torque)
- * @version    $Revision$
  * @package    propel.generator.model
  */
 interface IdMethod

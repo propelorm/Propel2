@@ -30,7 +30,6 @@ use \PDO;
  *
  * @author     Hans Lellelid <hans@xmpl.org> (Propel)
  * @author     Martin Poeschl <mpoeschl@marmot.at> (Torque)
- * @version    $Revision$
  * @package    propel.generator.platform
  */
 class MysqlPlatform extends DefaultPlatform

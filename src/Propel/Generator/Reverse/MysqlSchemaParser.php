@@ -26,7 +26,6 @@ use \Task;
  * Mysql database schema parser.
  *
  * @author     Hans Lellelid <hans@xmpl.org>
- * @version    $Revision$
  * @package    propel.generator.reverse.mysql
  */
 class MysqlSchemaParser extends AbstractSchemaParser

@@ -21,7 +21,6 @@ use Propel\Generator\Platform\PlatformInterface;
  * @author     Leon Messerschmidt <leon@opticode.co.za> (Torque)
  * @author     John McNally <jmcnally@collab.net> (Torque)
  * @author     Daniel Rall <dlr@finemaltcoding.com> (Torque)
- * @version    $Revision$
  * @package    propel.generator.model
  */
 class AppData

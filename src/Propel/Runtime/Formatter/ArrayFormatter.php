@@ -20,7 +20,6 @@ use \PDO;
  * format() returns a ArrayCollection of associative arrays
  *
  * @author     Francois Zaninotto
- * @version    $Revision$
  * @package    propel.runtime.formatter
  */
 class ArrayFormatter extends AbstractFormatter

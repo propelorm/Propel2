@@ -22,7 +22,6 @@ use \Task;
  * Interface for reverse engineering schema parsers.
  *
  * @author     Hans Lellelid <hans@xmpl.org>
- * @version    $Revision$
  * @package    propel.generator.reverse
  */
 interface SchemaParserInterface

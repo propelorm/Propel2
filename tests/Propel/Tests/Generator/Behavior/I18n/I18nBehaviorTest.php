@@ -19,7 +19,6 @@ use Propel\Runtime\Propel;
  * Tests for I18nBehavior class
  *
  * @author     François Zaninotto
- * @version    $Revision$
  * @package    generator.behavior.i18n
  */
 class I18nBehaviorTest extends \PHPUnit_Framework_TestCase

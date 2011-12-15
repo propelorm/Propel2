@@ -25,7 +25,6 @@ use Propel\Runtime\Query\Criteria;
  * </code>
  *
  * @author     Michael Aichler <aichler@mediacluster.de>
- * @version    $Revision$
  * @package    propel.runtime.validator
  */
 class UniqueValidator implements BasicValidator

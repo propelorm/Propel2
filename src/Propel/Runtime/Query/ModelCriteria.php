@@ -38,7 +38,6 @@ use \PDOStatement;
  * @method     ModelCriteria innerJoin($relation) Adds a INNER JOIN clause to the query
  *
  * @author     François Zaninotto
- * @version    $Revision$
  * @package    propel.runtime.query
  */
 class ModelCriteria extends Criteria

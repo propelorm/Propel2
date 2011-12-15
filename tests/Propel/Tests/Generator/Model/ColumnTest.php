@@ -19,7 +19,6 @@ use Propel\Generator\Platform\DefaultPlatform;
  * Tests for package handling.
  *
  * @author     <a href="mailto:mpoeschl@marmot.at>Martin Poeschl</a>
- * @version    $Revision$
  * @package    generator.model
  */
 class ColumnTest extends \PHPUnit_Framework_TestCase

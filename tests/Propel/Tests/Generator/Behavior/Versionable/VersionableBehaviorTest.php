@@ -19,7 +19,6 @@ use Propel\Runtime\Propel;
  * Tests for VersionableBehavior class
  *
  * @author     François Zaninotto
- * @version    $Revision$
  * @package    generator.behavior.versionable
  */
 class VersionableBehaviorTest extends \PHPUnit_Framework_TestCase

@@ -21,7 +21,6 @@ use Propel\Runtime\Exception\PropelException;
  * Configuration instance.
  *
  * @author     Veikko Mäkinen <veikko@veikko.fi>
- * @version    $Revision$
  * @package    propel.runtime.config
  */
 class Configuration implements \ArrayAccess

@@ -31,7 +31,6 @@ use \PDO;
  * Default implementation for the Platform interface.
  *
  * @author     Martin Poeschl <mpoeschl@marmot.at> (Torque)
- * @version    $Revision$
  * @package    propel.generator.platform
  */
 class DefaultPlatform implements PlatformInterface

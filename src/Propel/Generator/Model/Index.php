@@ -20,7 +20,6 @@ use \DOMDocument;
  *
  * @author     Jason van Zyl <vanzyl@apache.org>
  * @author     Daniel Rall <dlr@finemaltcoding.com>
- * @version    $Revision$
  * @package    propel.generator.model
  */
 class Index extends XmlElement

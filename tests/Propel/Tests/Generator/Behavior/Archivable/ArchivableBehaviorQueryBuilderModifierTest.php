@@ -20,7 +20,6 @@ use Propel\Runtime\Propel;
  * Tests for ArchivableBehavior class
  *
  * @author     François Zaninotto
- * @version    $Revision$
  * @package    generator.behavior.archivable
  */
 class ArchivableBehaviorQueryBuilderModifierTest extends \PHPUnit_Framework_TestCase

@@ -14,7 +14,6 @@ namespace Propel\Runtime\Logger;
  * Mojavi logging adapter for propel
  *
  * @author     Brandon Keepers <brandon@opensoul.org>
- * @version    $Revision$
  * @package    propel.runtime.logger
  */
 class MojaviLogAdapter implements BasicLogger

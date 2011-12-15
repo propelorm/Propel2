@@ -26,7 +26,6 @@ use Propel\Generator\Model\Diff\ColumnDiff;
  * @author     Hans Lellelid <hans@xmpl.org> (Propel)
  * @author     Martin Poeschl <mpoeschl@marmot.at> (Torque)
  * @author     Niklas Närhinen <niklas@narhinen.net>
- * @version    $Revision$
  * @package    propel.generator.platform
  */
 class PgsqlPlatform extends DefaultPlatform

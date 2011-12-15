@@ -14,7 +14,6 @@ namespace Propel\Generator\Builder\Util;
  * The default Enlglish pluralizer class.
  *
  * @author     Hans Lellelid <hans@xmpl.org>
- * @version    $Revision$
  * @package    propel.generator.builder.util
  */
 class DefaultEnglishPluralizer implements Pluralizer

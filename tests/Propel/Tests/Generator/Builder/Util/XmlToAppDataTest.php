@@ -15,7 +15,6 @@ use Propel\Generator\Builder\Util\XmlToAppData;
 /**
  * Tests for XmlToAppData class
  *
- * @version    $Revision$
  * @package    generator.builder.util
  */
 class XmlToAppDataTest extends \PHPUnit_Framework_TestCase

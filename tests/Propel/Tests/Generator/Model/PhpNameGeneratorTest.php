@@ -14,7 +14,6 @@ use Propel\Generator\Model\PhpNameGenerator;
  * Tests for PhpNameGenerator
  *
  * @author     <a href="mailto:mpoeschl@marmot.at>Martin Poeschl</a>
- * @version    $Revision$
  * @package    generator.model
  */
 class PhpNameGeneratorTest extends \PHPUnit_Framework_TestCase

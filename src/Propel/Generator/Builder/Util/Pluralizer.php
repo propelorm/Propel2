@@ -14,7 +14,6 @@ namespace Propel\Generator\Builder\Util;
  * The generic interface to create a plural form of a name.
  *
  * @author     Hans Lellelid <hans@xmpl.org>
- * @version    $Revision$
  * @package    propel.generator.builder.util
  */
 interface Pluralizer

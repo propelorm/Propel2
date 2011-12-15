@@ -16,7 +16,6 @@ require_once 'phing/parser/AbstractHandler.php';
  * A Class that is used to parse an data dump XML file and create SQL using a DataSQLBuilder class.
  *
  * @author     Hans Lellelid <hans@xmpl.org> (Propel)
- * @version    $Revision$
  * @package    propel.generator.builder.util
  */
 class XmlToDataSQL extends AbstractHandler

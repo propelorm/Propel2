@@ -26,7 +26,6 @@ use Propel\Runtime\Map\ValidatorMap;
  * </code>
  *
  * @author     Michael Aichler <aichler@mediacluster.de>
- * @version    $Revision$
  * @package    propel.runtime.validator
  */
 class RequiredValidator implements BasicValidator

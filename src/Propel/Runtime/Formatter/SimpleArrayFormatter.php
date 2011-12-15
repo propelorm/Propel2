@@ -20,7 +20,6 @@ use \PDO;
  * or an array
  *
  * @author     Benjamin Runnels
- * @version    $Revision$
  * @package    propel.runtime.formatter
  */
 class SimpleArrayFormatter extends AbstractFormatter {

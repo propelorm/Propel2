@@ -90,7 +90,6 @@ use Propel\Runtime\Query\Criteria;
  *
  * @author     Rob Halff <info@rhalff.com>
  * @author       Niklas Närhinen <niklas@narhinen.net>
- * @version    $Revision$
  * @copyright  Copyright (c) 2004 Rob Halff: LGPL - See LICENCE
  * @package    propel.runtime.util
  */

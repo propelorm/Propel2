@@ -18,7 +18,6 @@ use Propel\Generator\Model\Behavior;
  * concrete_inheritance_parent
  *
  * @author     François Zaninotto
- * @version    $Revision$
  * @package    propel.generator.behavior.concrete_inheritance
  */
 class ConcreteInheritanceParentBehavior extends Behavior

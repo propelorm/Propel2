@@ -18,7 +18,6 @@ use \PhingFile;
  * A task to generate Graphviz dot files from Propel datamodel.
  *
  * @author     Mark Kimsal
- * @version    $Revision$
  * @package    propel.generator.task
  */
 class PropelGraphvizTask extends AbstractPropelDataModelTask

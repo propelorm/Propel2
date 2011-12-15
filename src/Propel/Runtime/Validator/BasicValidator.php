@@ -20,7 +20,6 @@ use Propel\Runtime\Map\ValidatorMap;
  * is valid.
  *
  * @author     Michael Aichler <aichler@mediacluster.de>
- * @version    $Revision$
  * @package    propel.runtime.validator
  */
 interface BasicValidator

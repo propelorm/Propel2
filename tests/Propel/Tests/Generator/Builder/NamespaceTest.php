@@ -16,7 +16,6 @@ use Propel\Runtime\Propel;
  * Tests for Namespaces in generated classes class
  * Requires a build of the 'namespaced' fixture
  *
- * @version    $Revision$
  * @package    generator.builder
  */
 class NamespaceTest extends \PHPUnit_Framework_TestCase

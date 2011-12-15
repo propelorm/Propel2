@@ -19,7 +19,6 @@ use \ReflectionObject;
  * Information about behaviors of a table.
  *
  * @author     François Zaninotto
- * @version    $Revision$
  * @package    propel.generator.model
  */
 class Behavior extends XmlElement
