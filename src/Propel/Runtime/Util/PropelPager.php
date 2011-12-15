@@ -176,31 +176,6 @@ class PropelPager implements \Countable, \Iterator
 
     /**
      * Set the Peer select method.
-     * This exists for legacy support, please use setPeerSelectMethod().
-     * @param      string $method The name of the static method to call on the Peer class.
-     * @return     void
-     * @see        setPeerSelectMethod()
-     * @deprecated
-     */
-    public function setPeerMethod($method)
-    {
-        $this->setPeerSelectMethod($method);
-    }
-
-    /**
-     * Return the Peer select method.
-     * This exists for legacy support, please use getPeerSelectMethod().
-     * @return     string
-     * @see        getPeerSelectMethod()
-     * @deprecated
-     */
-    public function getPeerMethod()
-    {
-        return $this->getPeerSelectMethod();
-    }
-
-    /**
-     * Set the Peer select method.
      *
      * @param      string $method The name of the static method to call on the Peer class.
      * @return     void

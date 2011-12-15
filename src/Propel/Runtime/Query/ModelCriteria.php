@@ -310,33 +310,6 @@ class ModelCriteria extends Criteria
     }
 
     /**
-     * Adds a condition on a column based on a pseudo SQL clause
-     * Uses introspection to translate the column phpName into a fully qualified name
-     * <code>
-     * // simple clause
-     * $c->orWhere('b.Title = ?', 'foo');
-     * // named conditions
-     * $c->condition('cond1', 'b.Title = ?', 'foo');
-     * $c->condition('cond2', 'b.ISBN = ?', 12345);
-     * $c->orWhere(array('cond1', 'cond2'), Criteria::LOGICAL_OR);
-     * </code>
-     *
-     * @see Criteria::addOr()
-     * @deprecated Use _or()->where() instead
-     *
-     * @param      string $clause The pseudo SQL clause, e.g. 'AuthorId = ?'
-     * @param      mixed  $value A value for the condition
-     *
-     * @return     ModelCriteria The current object, for fluid interface
-     */
-    public function orWhere($clause, $value = null, $bindingType = null)
-    {
-        return $this
-            ->_or()
-            ->where($clause, $value, $bindingType);
-    }
-
-    /**
      * Adds a having condition on a column based on a pseudo SQL clause
      * Uses introspection to translate the column phpName into a fully qualified name
      * <code>

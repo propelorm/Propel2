@@ -856,8 +856,8 @@ class BookstoreTest extends BookstoreEmptyTestBase
         // Attempting to delete books by complex criteria
         BookQuery::create()
             ->filterByISBN("043935806X")
-            ->orWhere('Book.ISBN = ?', "0380977427")
-            ->orWhere('Book.ISBN = ?', "0140422161")
+            ->_or()->where('Book.ISBN = ?', "0380977427")
+            ->_or()->where('Book.ISBN = ?', "0140422161")
             ->delete();
 
         // Attempting to delete book [id = $td_id]

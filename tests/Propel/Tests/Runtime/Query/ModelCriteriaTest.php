@@ -375,7 +375,7 @@ class ModelCriteriaTest extends BookstoreTestBase
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $c->where('Propel\Tests\Bookstore\Book.Title <> ?', 'foo');
-        $c->orWhere('Propel\Tests\Bookstore\Book.Title like ?', '%bar%');
+        $c->_or()->where('Propel\Tests\Bookstore\Book.Title like ?', '%bar%');
 
         $sql = "SELECT  FROM `book` WHERE (book.TITLE <> :p1 OR book.TITLE like :p2)";
         $params = array(
@@ -391,7 +391,7 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c->where('Propel\Tests\Bookstore\Book.Id = ?', 12);
         $c->condition('cond1', 'Propel\Tests\Bookstore\Book.Title <> ?', 'foo');
         $c->condition('cond2', 'Propel\Tests\Bookstore\Book.Title like ?', '%bar%');
-        $c->orWhere(array('cond1', 'cond2'));
+        $c->_or()->where(array('cond1', 'cond2'));
 
         $sql = "SELECT  FROM `book` WHERE (book.ID = :p1 OR (book.TITLE <> :p2 AND book.TITLE like :p3))";
         $params = array(
@@ -405,7 +405,7 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c->where('Propel\Tests\Bookstore\Book.Id = ?', 12);
         $c->condition('cond1', 'Propel\Tests\Bookstore\Book.Title <> ?', 'foo');
         $c->condition('cond2', 'Propel\Tests\Bookstore\Book.Title like ?', '%bar%');
-        $c->orWhere(array('cond1', 'cond2'), Criteria::LOGICAL_OR);
+        $c->_or()->where(array('cond1', 'cond2'), Criteria::LOGICAL_OR);
 
         $sql = "SELECT  FROM `book` WHERE (book.ID = :p1 OR (book.TITLE <> :p2 OR book.TITLE like :p3))";
         $this->assertCriteriaTranslation($c, $sql, $params, 'orWhere() accepts an array of named conditions with operator');
