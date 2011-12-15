@@ -567,7 +567,7 @@ class BasePeer
         $tableMap = $dbMap->getTable($tableName);
         $failureMap = array(); // map of ValidationFailed objects
         foreach ($columns as $colName => $colValue) {
-            if ($tableMap->containsColumn($colName)) {
+            if ($tableMap->hasColumn($colName)) {
                 $col = $tableMap->getColumn($colName);
                 foreach ($col->getValidators() as $validatorMap) {
                     $validator = BasePeer::getValidator($validatorMap->getClass());

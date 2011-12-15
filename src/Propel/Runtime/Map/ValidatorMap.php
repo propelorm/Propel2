@@ -21,20 +21,32 @@ namespace Propel\Runtime\Map;
  * These classes in themselves do not do any database metadata lookups.
  *
  * @author     Michael Aichler <aichler@mediacluster.de>
- * @version    $Revision$
- * @package    propel.runtime.map
  */
 class ValidatorMap
 {
-    /** rule name of this validator */
+    /**
+     * rule name of this validator
+     */
     private $name;
-    /** the dot-path to class to use for validator */
+
+    /**
+     * the dot-path to class to use for validator
+     */
     private $classname;
-    /** value to check against */
+
+    /**
+     * value to check against
+     */
     private $value;
-    /** execption message thrown on invalid input */
+
+    /**
+     * execption message thrown on invalid input
+     */
     private $message;
-    /** related column */
+
+    /**
+     * related column
+     */
     private $column;
 
     public function __construct($containingColumn)

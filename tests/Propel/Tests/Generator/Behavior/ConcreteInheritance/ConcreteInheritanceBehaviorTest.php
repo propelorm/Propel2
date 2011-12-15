@@ -49,7 +49,7 @@ class ConcreteInheritanceBehaviorTest extends BookstoreTestBase
         $contentColumns = array('id', 'title', 'category_id');
         $article = ConcreteArticlePeer::getTableMap();
         foreach ($contentColumns as $column) {
-            $this->assertTrue($article->containsColumn($column), 'modifyTable() adds the columns of the parent table');
+            $this->assertTrue($article->hasColumn($column), 'modifyTable() adds the columns of the parent table');
         }
         $quizz = ConcreteQuizzPeer::getTableMap();
         $this->assertEquals(3, count($quizz->getColumns()), 'modifyTable() does not add a column of the parent table if a similar column exists');

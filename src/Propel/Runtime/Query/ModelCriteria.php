@@ -1243,7 +1243,7 @@ class ModelCriteria extends Criteria
         // As the query uses a PK condition, no limit(1) is necessary.
         $this->basePreSelect($con);
         $criteria = $this->isKeepQuery() ? clone $this : $this;
-        $pkCols = $this->getTableMap()->getPrimaryKeyColumns();
+        $pkCols = array_values($this->getTableMap()->getPrimaryKeys());
         if (count($pkCols) == 1) {
             // simple primary key
             $pkCol = $pkCols[0];
@@ -1282,7 +1282,7 @@ class ModelCriteria extends Criteria
         // As the query uses a PK condition, no limit(1) is necessary.
         $this->basePreSelect($con);
         $criteria = $this->isKeepQuery() ? clone $this : $this;
-        $pkCols = $this->getTableMap()->getPrimaryKeyColumns();
+        $pkCols = $this->getTableMap()->getPrimaryKeys();
         if (count($pkCols) == 1) {
             // simple primary key
             $pkCol = array_shift($pkCols);
