@@ -83,12 +83,6 @@ class ConcreteInheritanceBehavior extends Behavior
             $this->getTable()->addForeignKey($copiedFk);
         }
 
-        // add the validators of the parent table
-        foreach ($parentTable->getValidators() as $validator) {
-            $copiedValidator = clone $validator;
-            $this->getTable()->addValidator($copiedValidator);
-        }
-
         // add the indices of the parent table
         foreach ($parentTable->getIndices() as $index) {
             $copiedIndex = clone $index;

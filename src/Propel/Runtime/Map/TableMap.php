@@ -528,32 +528,6 @@ class TableMap
     }
 
     /**
-     * Add a validator to a table's column
-     *
-     * @param      string $columnName The name of the validator's column
-     * @param      string $name The rule name of this validator
-     * @param      string $classname The dot-path name of class to use (e.g. myapp.propel.MyValidator)
-     * @param      string $value
-     * @param      string $message The error message which is returned on invalid values
-     */
-    public function addValidator($columnName, $name, $classname, $value, $message)
-    {
-        if (false !== ($pos = strpos($columnName, '.'))) {
-            $columnName = substr($columnName, $pos + 1);
-        }
-
-        $col = $this->getColumn($columnName);
-        if ($col !== null) {
-            $validator = new ValidatorMap($col);
-            $validator->setName($name);
-            $validator->setClass($classname);
-            $validator->setValue($value);
-            $validator->setMessage($message);
-            $col->addValidator($validator);
-        }
-    }
-
-    /**
      * Build relations
      * Relations are lazy loaded for performance reasons
      * This method should be overridden by descendents

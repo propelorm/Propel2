@@ -141,16 +141,11 @@ class I18nBehavior extends Behavior
                 }
                 $column = $table->getColumn($columnName);
                 // add the column
-                $i18nTable->addColumn(clone $column);
-                // add related validators
-                if ($validator = $column->getValidator()) {
-                    $i18nTable->addValidator(clone $validator);
-                }
+                $i18nColumn = $i18nTable->addColumn(clone $column);
                 // FIXME: also move FKs, and indices on this column
             }
             if ($table->hasColumn($columnName)) {
                 $table->removeColumn($columnName);
-                $table->removeValidatorForColumn($columnName);
             }
         }
     }

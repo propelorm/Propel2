@@ -11,7 +11,6 @@
 namespace Propel\Generator\Builder\Om;
 
 use Propel\Generator\Model\IdMethod;
-use Propel\Generator\Model\Validator;
 use Propel\Generator\Platform\PlatformInterface;
 
 /**
@@ -151,7 +150,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
 
         $script .= "
     /**
-     * Initialize the table attributes, columns and validators
+     * Initialize the table attributes and columns
      * Relations are not initialized by this method since they are lazy loaded
      *
      * @return     void
@@ -234,23 +233,6 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
         \$this->getColumn('$cup', false)->setPrimaryString(true);";
             }
         } // foreach
-
-        // validators
-        $script .= "
-        // validators";
-        foreach ($table->getValidators() as $val) {
-            $col = $val->getColumn();
-            $cup = strtoupper($col->getName());
-            foreach ($val->getRules() as $rule) {
-                if ($val->getTranslate() !== Validator::TRANSLATE_NONE) {
-                    $script .= "
-        \$this->addValidator('$cup', '".$rule->getName()."', '".$rule->getClass()."', '".str_replace("'", "\'", $rule->getValue())."', ".$val->getTranslate()."('".str_replace("'", "\'", $rule->getMessage())."'));";
-                } else {
-                    $script .= "
-        \$this->addValidator('$cup', '".$rule->getName()."', '".$rule->getClass()."', '".str_replace("'", "\'", $rule->getValue())."', '".str_replace("'", "\'", $rule->getMessage())."');";
-                } // if ($rule->getTranslation() ...
-                } // foreach rule
-        }  // foreach validator
 
         $script .= "
     } // initialize()

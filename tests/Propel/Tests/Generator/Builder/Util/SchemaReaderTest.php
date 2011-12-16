@@ -83,7 +83,7 @@ EOF;
         $schema = $schemaReader->parseFile($path);
         $expectedSchema = <<<EOF
 <app-data>
-<database name="foo" defaultIdMethod="native" defaultPhpNamingMethod="underscore" defaultTranslateMethod="none">
+<database name="foo" defaultIdMethod="native" defaultPhpNamingMethod="underscore">
   <table name="bar" phpName="Bar" idMethod="false" readOnly="false" reloadOnInsert="false" reloadOnUpdate="false" abstract="false">
     <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
   </table>
@@ -100,7 +100,7 @@ EOF;
         $schema = $schemaReader->parseFile($path);
         $expectedSchema = <<<EOF
 <app-data>
-<database name="foo" defaultIdMethod="native" defaultPhpNamingMethod="underscore" defaultTranslateMethod="none">
+<database name="foo" defaultIdMethod="native" defaultPhpNamingMethod="underscore">
   <table name="bar1" phpName="Bar1" idMethod="false" readOnly="false" reloadOnInsert="false" reloadOnUpdate="false" abstract="false">
     <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
   </table>

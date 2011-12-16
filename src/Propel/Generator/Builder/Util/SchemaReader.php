@@ -45,8 +45,6 @@ class SchemaReader
 
     private $currUnique;
 
-    private $currValidator;
-
     private $currBehavior;
 
     private $currVendorObject;
@@ -242,11 +240,7 @@ class SchemaReader
                     $this->currVendorObject = $this->currTable->addVendorInfo($attributes);
                     break;
 
-                case 'validator':
-                    $this->currValidator = $this->currTable->addValidator($attributes);
-                  break;
-
-                case 'id-method-parameter':
+              case "id-method-parameter":
                     $this->currTable->addIdMethodParameter($attributes);
                     break;
 
@@ -327,16 +321,7 @@ class SchemaReader
                 default:
                     $this->_throwInvalidTagException($parser, $name);
             }
-        } elseif ('validator' === $parentTag) {
-            switch ($name) {
-                case 'rule':
-                    $this->currValidator->addRule($attributes);
-                    break;
-
-                default:
-                    $this->_throwInvalidTagException($parser, $name);
-            }
-        } elseif ('vendor' === $parentTag) {
+        } elseif ($parentTag == "vendor") {
 
             switch ($name) {
                 case 'parameter':
