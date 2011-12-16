@@ -37,7 +37,6 @@ class Database extends ScopedElement
     private $basePeer;
     private $defaultIdMethod;
     private $defaultPhpNamingMethod;
-    private $defaultTranslateMethod;
     private $dbParent;
     private $tablesByName = array();
     private $tablesByLowercaseName = array();
@@ -84,7 +83,6 @@ class Database extends ScopedElement
         $this->basePeer = $this->getAttribute("basePeer");
         $this->defaultIdMethod = $this->getAttribute("defaultIdMethod", IdMethod::NATIVE);
         $this->defaultPhpNamingMethod = $this->getAttribute("defaultPhpNamingMethod", NameGenerator::CONV_METHOD_UNDERSCORE);
-        $this->defaultTranslateMethod = $this->getAttribute("defaultTranslateMethod", Validator::TRANSLATE_NONE);
         $this->heavyIndexing = $this->booleanValue($this->getAttribute("heavyIndexing"));
         $this->tablePrefix = $this->getAttribute('tablePrefix', $this->getBuildProperty('tablePrefix'));
         $this->defaultStringFormat = $this->getAttribute('defaultStringFormat', 'YAML');
@@ -200,16 +198,6 @@ class Database extends ScopedElement
     }
 
     /**
-     * Get the value of defaultTranslateMethod which specifies the
-     * method for translate validator error messages.
-     * @return     string The default translate method.
-     */
-    public function getDefaultTranslateMethod()
-    {
-        return $this->defaultTranslateMethod;
-    }
-
-    /**
      * Set the default string format for ActiveRecord objects in this Db.
      *
      * @param      string $defaultStringFormat Any of 'XML', 'YAML', 'JSON', or 'CSV'
@@ -227,15 +215,6 @@ class Database extends ScopedElement
     public function getDefaultStringFormat()
     {
         return $this->defaultStringFormat;
-    }
-
-    /**
-     * Set the value of defaultTranslateMethod.
-     * @param      string $v The default translate method to use.
-     */
-    public function setDefaultTranslateMethod($v)
-    {
-        $this->defaultTranslateMethod = $v;
     }
 
     /**

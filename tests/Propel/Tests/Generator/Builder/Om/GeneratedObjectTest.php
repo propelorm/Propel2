@@ -750,18 +750,6 @@ class GeneratedObjectTest extends BookstoreTestBase
     }
 
     /**
-     * Test regexp validator for ticket:542
-     * @link       http://propel.phpdb.org/trac/ticket/542
-     */
-    public function testRegexValidator()
-    {
-        $b = new Bookstore();
-        $b->setWebsite("http://this.is.valid.com/foo.bar");
-        $res = $b->validate();
-        $this->assertTrue($res, "Expected URL to validate");
-    }
-
-    /**
      * Test that setting the auto-increment primary key will result in exception.
      */
     public function testSettingAutoIncrementPK()

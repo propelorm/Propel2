@@ -1269,21 +1269,13 @@ class Column extends XmlElement
         return null !== $this->getTable() && null !== $this->getTable()->getDatabase() && null !== $this->getTable()->getDatabase()->getPlatform();
     }
 
-    public function getValidator()
-    {
-        foreach ($this->getTable()->getValidators() as $validator) {
-            if ($validator->getColumn() == $this) {
-                return $validator;
-            }
-        }
-    }
-
     public function __clone()
     {
         $this->referrers = null;
     }
 
-    static public function generatePhpName($name, $phpNamingMethod = PhpNameGenerator::CONV_METHOD_CLEAN, $namePrefix = null) {
+	static public function generatePhpName($name, $phpNamingMethod = PhpNameGenerator::CONV_METHOD_CLEAN, $namePrefix = null)
+	{
         return NameFactory::generateName(NameFactory::PHP_GENERATOR, array($name, $phpNamingMethod, $namePrefix));
-    }
+	}
 }

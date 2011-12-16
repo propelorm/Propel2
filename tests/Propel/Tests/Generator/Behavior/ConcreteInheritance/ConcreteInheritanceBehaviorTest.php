@@ -109,12 +109,6 @@ class ConcreteInheritanceBehaviorTest extends BookstoreTestBase
         $this->assertTrue($article->hasRelation('ConcreteNews'), 'modifyTable() copies relationships from parent table and removes hardcoded refPhpName');
     }
 
-    public function testModifyTableAddsValidators()
-    {
-        $article = ConcreteArticlePeer::getTableMap();
-        $this->assertTrue($article->getColumn('title')->hasValidators(), 'modifyTable() copies validators from parent table');
-    }
-
     // no way to test copying of indices and uniques, except by reverse engineering the db...
 
     public function testParentObjectClass()

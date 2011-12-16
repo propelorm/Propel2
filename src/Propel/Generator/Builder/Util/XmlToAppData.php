@@ -40,7 +40,6 @@ class XmlToAppData
     private $currFK;
     private $currIndex;
     private $currUnique;
-    private $currValidator;
     private $currBehavior;
     private $currVendorObject;
 
@@ -236,10 +235,6 @@ class XmlToAppData
                     $this->currVendorObject = $this->currTable->addVendorInfo($attributes);
                 break;
 
-              case "validator":
-                  $this->currValidator = $this->currTable->addValidator($attributes);
-              break;
-
               case "id-method-parameter":
                     $this->currTable->addIdMethodParameter($attributes);
                 break;
@@ -318,14 +313,6 @@ class XmlToAppData
                     $this->currBehavior->addParameter($attributes);
                 break;
 
-                default:
-                    $this->_throwInvalidTagException($parser, $name);
-            }
-        } elseif ($parentTag == "validator") {
-            switch($name) {
-                case "rule":
-                    $this->currValidator->addRule($attributes);
-                break;
                 default:
                     $this->_throwInvalidTagException($parser, $name);
             }

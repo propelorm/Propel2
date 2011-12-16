@@ -156,25 +156,10 @@ propel.packageObjectModel = false
 #   If true, the reverse task will add vendor specific information
 #   to the database schema
 #
-# addValidators
-#   List of Validators that the reverse task may add to the schema
-#   based on database constraints.
-#   Allowed tokens are:
-#      none       add no validators
-#      all        add all validators
-#      maxlength  add maxlengths for string type columns
-#      maxvalue   add maxvalue for numeric columns
-#      type       add notmatch validators for numeric columns
-#      required   add required validators for required columns
-#      unique     add unique validators for unique indexes
-#   You can cherry-pick allowed validators by using a comma-separated value, e.g
-#      maxvalue,type,required
-#
 # -------------------------------------------------------------------
 
 # propel.samePhpName = false
 # propel.addVendorInfo=true
-# propel.addValidators=none
 
 
 # -------------------------------------------------------------------
