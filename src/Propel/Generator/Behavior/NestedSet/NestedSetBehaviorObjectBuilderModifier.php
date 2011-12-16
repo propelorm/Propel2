@@ -241,11 +241,6 @@ if (\$this->isInTree()) {
         );
         $this->addGetIterator($script);
 
-        if ($this->getParameter('method_proxies') == 'true')
-        {
-            $this->addCompatibilityProxies($script);
-        }
-
         return $script;
     }
 
@@ -1495,125 +1490,6 @@ public function deleteDescendants(ConnectionInterface \$con = null)
 public function getIterator()
 {
     return new NestedSetRecursiveIterator(\$this);
-}
-";
-    }
-
-    protected function addCompatibilityProxies(&$script)
-    {
-        $objectClassname = $this->objectClassname;
-        $script .= "
-/**
- * Alias for makeRoot(), for BC with Propel 1.4 nested sets
- *
- * @deprecated since 1.5
- * @see        makeRoot
- */
-public function createRoot()
-{
-    return \$this->makeRoot();
-}
-
-/**
- * Alias for getParent(), for BC with Propel 1.4 nested sets
- *
- * @deprecated since 1.5
- * @see        getParent
- */
-public function retrieveParent(ConnectionInterface \$con = null)
-{
-    return \$this->getParent(\$con);
-}
-
-/**
- * Alias for setParent(), for BC with Propel 1.4 nested sets
- *
- * @deprecated since 1.5
- * @see        setParent
- */
-public function setParentNode(\$parent = null)
-{
-    return \$this->setParent(\$parent);
-}
-
-/**
- * Alias for countDecendants(), for BC with Propel 1.4 nested sets
- *
- * @deprecated since 1.5
- * @see        setParent
- */
-public function getNumberOfDescendants(ConnectionInterface \$con = null)
-{
-    return \$this->countDescendants(null, \$con);
-}
-
-/**
- * Alias for countChildren(), for BC with Propel 1.4 nested sets
- *
- * @deprecated since 1.5
- * @see        setParent
- */
-public function getNumberOfChildren(ConnectionInterface \$con = null)
-{
-    return \$this->countChildren(null, \$con);
-}
-
-/**
- * Alias for getPrevSibling(), for BC with Propel 1.4 nested sets
- *
- * @deprecated since 1.5
- * @see        getParent
- */
-public function retrievePrevSibling(ConnectionInterface \$con = null)
-{
-    return \$this->getPrevSibling(\$con);
-}
-
-/**
- * Alias for getNextSibling(), for BC with Propel 1.4 nested sets
- *
- * @deprecated since 1.5
- * @see        getParent
- */
-public function retrieveNextSibling(ConnectionInterface \$con = null)
-{
-    return \$this->getNextSibling(\$con);
-}
-
-/**
- * Alias for getFirstChild(), for BC with Propel 1.4 nested sets
- *
- * @deprecated since 1.5
- * @see        getParent
- */
-public function retrieveFirstChild(ConnectionInterface \$con = null)
-{
-    return \$this->getFirstChild(null, \$con);
-}
-
-/**
- * Alias for getLastChild(), for BC with Propel 1.4 nested sets
- *
- * @deprecated since 1.5
- * @see        getParent
- */
-public function retrieveLastChild(ConnectionInterface \$con = null)
-{
-    return \$this->getLastChild(null, \$con);
-}
-
-/**
- * Alias for getAncestors(), for BC with Propel 1.4 nested sets
- *
- * @deprecated since 1.5
- * @see        getAncestors
- */
-public function getPath(ConnectionInterface \$con = null)
-{
-    \$path = \$this->getAncestors(null, \$con);
-    \$path []= \$this;
-
-    return \$path;
 }
 ";
     }

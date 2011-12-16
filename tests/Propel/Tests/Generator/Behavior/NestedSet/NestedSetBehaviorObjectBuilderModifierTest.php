@@ -1488,25 +1488,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
         }
     }
 
-    public function testCompatibilityProxies()
-    {
-        $proxies = array('createRoot', 'retrieveParent', 'setParentNode', 'getNumberOfDescendants', 'getNumberOfChildren', 'retrievePrevSibling', 'retrieveNextSibling', 'retrieveFirstChild', 'retrieveLastChild', 'getPath');
-        foreach ($proxies as $method) {
-            $this->assertFalse(method_exists('\Propel\Tests\Bookstore\Behavior\Table9', $method), 'proxies are not enabled by default');
-            $this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table10', $method), 'setting method_proxies to true adds compatibility proxies');
-        }
-    }
-
-    public function testCreateRoot()
-    {
-        $t = new Table10();
-        $t->createRoot();
-        $this->assertEquals($t->getLeftValue(), 1, 'createRoot() is an alias for makeRoot()');
-        $this->assertEquals($t->getRightValue(), 2, 'createRoot() is an alias for makeRoot()');
-        $this->assertEquals($t->getLevel(), 0, 'createRoot() is an alias for makeRoot()');
-    }
-
-    public function testGetPath()
+    public function testGetAncestors2()
     {
         list($t1, $t2, $t3, $t4, $t5, $t6, $t7, $t8, $t9, $t10) = $this->initTreeWithScope();
         /* Tree used for tests
@@ -1523,14 +1505,11 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
          | \
          t9 t10
         */
-        $this->assertEquals(array($t1), $t1->getPath(), 'getPath() returns the current object for roots');
-        $path = $t5->getPath();
+        $path = $t5->getAncestors();
         $expected = array(
             't1' => array(1, 14, 0),
             't3' => array(4, 13, 1),
-            't5' => array(7, 12, 2),
         );
-        $this->assertEquals($expected, $this->dumpNodes($path), 'getPath() returns path from the current scope only');
+        $this->assertEquals($expected, $this->dumpNodes($path), 'getAncestors() returns path from the current scope only');
     }
-
 }
