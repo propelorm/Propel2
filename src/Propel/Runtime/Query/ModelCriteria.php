@@ -12,7 +12,11 @@ namespace Propel\Runtime\Query;
 
 use Propel\Runtime\Propel;
 use Propel\Runtime\Connection\ConnectionInterface;
+use Propel\Runtime\Exception\ClassNotFoundException;
+use Propel\Runtime\Exception\InvalidArgumentException;
+use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\Exception\PropelException;
+use Propel\Runtime\Exception\UnexpectedValueException;
 use Propel\Runtime\Formatter\AbstractFormatter;
 use Propel\Runtime\Formatter\ObjectFormatter;
 use Propel\Runtime\Map\ColumnMap;
@@ -20,6 +24,9 @@ use Propel\Runtime\Map\RelationMap;
 use Propel\Runtime\Util\BasePeer;
 use Propel\Runtime\Util\PropelModelPager;
 use Propel\Runtime\Query\Criteria;
+use Propel\Runtime\Query\Exception\UnknownColumnException;
+use Propel\Runtime\Query\Exception\UnknownModelException;
+use Propel\Runtime\Query\Exception\UnknownRelationException;
 
 use \PDO;
 use \PDOStatement;
@@ -180,7 +187,7 @@ class ModelCriteria extends Criteria
             $formatter = new $formatter();
         }
         if (!$formatter instanceof AbstractFormatter) {
-            throw new PropelException('setFormatter() only accepts classes extending AbstractFormatter');
+            throw new InvalidArgumentException('setFormatter() only accepts classes extending AbstractFormatter');
         }
         $this->formatter = $formatter;
 
@@ -370,7 +377,7 @@ class ModelCriteria extends Criteria
             $this->addDescendingOrderByColumn($realColumnName);
             break;
         default:
-            throw new PropelException('ModelCriteria::orderBy() only accepts Criteria::ASC or Criteria::DESC as argument');
+            throw new UnexpectedValueException('ModelCriteria::orderBy() only accepts Criteria::ASC or Criteria::DESC as argument');
         }
 
         return $this;
@@ -418,7 +425,7 @@ class ModelCriteria extends Criteria
             // column of a relations's model
             $tableMap = $this->joins[$class]->getTableMap();
         } else {
-            throw new PropelException('Unknown model or alias ' . $class);
+            throw new ClassNotFoundException("Unknown model or alias: $class");
         }
         foreach ($tableMap->getColumns() as $column) {
             if (isset($this->aliases[$class])) {
@@ -643,7 +650,7 @@ class ModelCriteria extends Criteria
 
         // find the RelationMap in the TableMap using the $relationName
         if(!$tableMap->hasRelation($relationName)) {
-            throw new PropelException('Unknown relation ' . $relationName . ' on the ' . $leftName .' table');
+            throw new UnknownRelationException('Unknown relation ' . $relationName . ' on the ' . $leftName .' table');
         }
         $relationMap = $tableMap->getRelation($relationName);
 
@@ -795,7 +802,7 @@ class ModelCriteria extends Criteria
     public function with($relation)
     {
         if (!isset($this->joins[$relation])) {
-            throw new PropelException('Unknown relation name or alias ' . $relation);
+            throw new UnknownRelationException('Unknown relation name or alias ' . $relation);
         }
         $join = $this->joins[$relation];
         if ($join->getRelationMap()->getType() == RelationMap::MANY_TO_MANY) {
@@ -1293,7 +1300,7 @@ class ModelCriteria extends Criteria
             $stmt->execute();
         } catch (Exception $e) {
             Propel::log($e->getMessage(), Propel::LOG_ERR);
-            throw new PropelException(sprintf('Unable to execute SELECT statement [%s]', $sql), $e);
+            throw new PropelException(sprintf('Unable to execute SELECT statement [%s]', $sql), 0, $e);
         }
 
         return $stmt;
@@ -1442,7 +1449,7 @@ class ModelCriteria extends Criteria
         if ($needsComplexCount) {
             if (BasePeer::needsSelectAliases($this)) {
                 if ($this->getHaving()) {
-                    throw new PropelException('Propel cannot create a COUNT query when using HAVING and  duplicate column names in the SELECT part');
+                    throw new LogicException('Propel cannot create a COUNT query when using HAVING and  duplicate column names in the SELECT part');
                 }
                 $db->turnSelectColumnsToAliases($this);
             }
@@ -1459,7 +1466,7 @@ class ModelCriteria extends Criteria
             $stmt->execute();
         } catch (Exception $e) {
             Propel::log($e->getMessage(), Propel::LOG_ERR);
-            throw new PropelException(sprintf('Unable to execute COUNT statement [%s]', $sql), $e);
+            throw new PropelException(sprintf('Unable to execute COUNT statement [%s]', $sql), 0, $e);
         }
 
         return $stmt;
@@ -1948,7 +1955,7 @@ class ModelCriteria extends Criteria
         } elseif ($failSilently) {
             return array(null, null);
         } else {
-            throw new PropelException(sprintf('Unknown model or alias "%s"', $class));
+            throw new UnknownModelException(sprintf('Unknown model or alias "%s"', $class));
         }
 
         if ($tableMap->hasColumnByPhpName($phpName)) {
@@ -1967,7 +1974,7 @@ class ModelCriteria extends Criteria
         } elseif ($failSilently) {
             return array(null, null);
         } else {
-            throw new PropelException(sprintf('Unknown column "%s" on model or alias "%s"', $phpName, $class));
+            throw new UnknownColumnException(sprintf('Unknown column "%s" on model or alias "%s"', $phpName, $class));
         }
     }
 
@@ -2008,7 +2015,7 @@ class ModelCriteria extends Criteria
     protected function getRealColumnName($columnName)
     {
         if (!$this->getTableMap()->hasColumnByPhpName($columnName)) {
-            throw new PropelException('Unkown column ' . $columnName . ' in model ' . $this->modelName);
+            throw new UnknownColumnException('Unkown column ' . $columnName . ' in model ' . $this->modelName);
         }
         if ($this->useAliasInSQL) {
             return $this->modelAlias . '.' . $this->getTableMap()->getColumnByPhpName($columnName)->getName();

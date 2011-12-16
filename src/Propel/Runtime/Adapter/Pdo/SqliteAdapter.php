@@ -30,7 +30,7 @@ class SqliteAdapter extends PdoAdapter implements AdapterInterface
      * @param     PDO     $con  A PDO connection instance.
      * @param     string  $charset  The charset encoding.
      *
-     * @throws    PropelException If the specified charset doesn't match sqlite_libencoding()
+     * @throws    \Propel\Runtime\Exception\PropelException If the specified charset doesn't match sqlite_libencoding()
      */
     public function setCharset(ConnectionInterface $con, $charset)
     {

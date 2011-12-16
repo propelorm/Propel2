@@ -10,7 +10,7 @@
 
 namespace Propel\Runtime\Parser;
 
-use Propel\Runtime\Exception\PropelException;
+use Propel\Runtime\Exception\FileNotFoundException;
 
 /**
  * Base class for all parsers. A parser converts data from and to an associative array.
@@ -60,8 +60,9 @@ abstract class AbstractParser
     public function load($path)
     {
         if (!file_exists($path)) {
-            throw new PropelException(sprintf('File "%s" does not exist or is unreadable', $path));
+            throw new FileNotFoundException(sprintf('File "%s" does not exist or is unreadable', $path));
         }
+
         ob_start();
         include($path);
         $contents = ob_get_clean();
@@ -94,8 +95,9 @@ abstract class AbstractParser
     static public function getParser($type = 'XML')
     {
         $class = sprintf('\Propel\Runtime\Parser\%sParser', ucfirst(strtolower($type)));
+
         if (!class_exists($class)) {
-            throw new PropelException(sprintf('Unknown parser class "%s"', $class));
+            throw new FileNotFoundException(sprintf('Unknown parser class "%s"', $class));
         }
 
         return new $class;

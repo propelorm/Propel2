@@ -13,7 +13,7 @@ namespace Propel\Tests\Runtime\Query;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
 
-use Propel\Runtime\Exception\PropelException;
+use Propel\Runtime\Exception\ClassNotFoundException;
 use Propel\Runtime\Query\PropelQuery;
 
 use Propel\Tests\Bookstore\Book;
@@ -45,7 +45,7 @@ class PropelQueryTest extends BookstoreTestBase
         try {
             $q = PropelQuery::from('Foo');
             $this->fail('PropelQuery::from() throws an exception when called on a non-existing query class');
-        } catch (PropelException $e) {
+        } catch (ClassNotFoundException $e) {
             $this->assertTrue(true, 'PropelQuery::from() throws an exception when called on a non-existing query class');
         }
     }

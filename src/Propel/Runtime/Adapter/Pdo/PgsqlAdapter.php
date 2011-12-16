@@ -12,6 +12,7 @@ namespace Propel\Runtime\Adapter\Pdo;
 
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
+use Propel\Runtime\Exception\InvalidArgumentException;
 use Propel\Runtime\Query\Criteria;
 
 use \PDO;
@@ -86,7 +87,7 @@ class PgsqlAdapter extends PdoAdapter implements AdapterInterface
     public function getId(ConnectionInterface $con, $name = null)
     {
         if ($name === null) {
-            throw new PropelException("Unable to fetch next sequence ID without sequence name.");
+            throw new InvalidArgumentException("Unable to fetch next sequence ID without sequence name.");
         }
         $stmt = $con->query("SELECT nextval(".$con->quote($name).")");
         $row = $stmt->fetch(PDO::FETCH_NUM);

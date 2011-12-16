@@ -13,6 +13,7 @@ namespace Propel\Runtime\Adapter\Pdo;
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\StatementInterface;
+use Propel\Runtime\Exception\InvalidArgumentException;
 use Propel\Runtime\Map\ColumnMap;
 use Propel\Runtime\Util\BasePeer;
 use Propel\Runtime\Query\Criteria;
@@ -133,13 +134,13 @@ class OracleAdapter extends PdoAdapter implements AdapterInterface
      * @param     ConnectionInterface $con
      * @param     string  $name
      *
-     * @throws    PropelException
+     * @throws    \Propel\Runtime\Exception\InvalidArgumentException
      * @return    integer
      */
     public function getId(ConnectionInterface $con, $name = null)
     {
         if ($name === null) {
-            throw new PropelException("Unable to fetch next sequence ID without sequence name.");
+            throw new InvalidArgumentException("Unable to fetch next sequence ID without sequence name.");
         }
 
         $stmt = $con->query("SELECT " . $name . ".nextval FROM dual");

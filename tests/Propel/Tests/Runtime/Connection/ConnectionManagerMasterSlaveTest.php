@@ -20,7 +20,7 @@ use \PDO;
 class ConnectionManagerMasterSlaveTest extends BaseTestCase
 {
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
+     * @expectedException \Propel\Runtime\Exception\InvalidArgumentException
      */
     public function testGetWriteConnectionFailsIfManagerIsNotConfigured()
     {

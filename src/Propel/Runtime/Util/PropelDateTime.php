@@ -14,6 +14,7 @@ use Propel\Runtime\Exception\PropelException;
 
 use \DateTime;
 use \DateTimeZone;
+use \Exception;
 
 /**
  * DateTime subclass which supports serialization.
@@ -97,8 +98,8 @@ class PropelDateTime extends DateTime
                     $dateTimeObject = new $dateTimeClass($value, $timeZone);
                 }
             }
-        } catch (\Exception $e) {
-            throw new PropelException('Error parsing date/time value: ' . var_export($value, true), $e);
+        } catch (Exception $e) {
+            throw new PropelException('Error parsing date/time value: ' . var_export($value, true), 0, $e);
         }
 
         return $dateTimeObject;

@@ -26,18 +26,11 @@ class PropelExceptionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('this is an error', $e->getMessage());
     }
 
-    public function testExceptionConstructor()
-    {
-        $e1 = new FooException('real cause');
-        $e = new PropelException($e1);
-        $this->assertEquals(' [wrapped: real cause]', $e->getMessage());
-    }
-
     public function testCompositeConstructor()
     {
         $e1 = new FooException('real cause');
-        $e = new PropelException('this is an error', $e1);
-        $this->assertEquals('this is an error [wrapped: real cause]', $e->getMessage());
+        $e = new PropelException('this is an error', 0, $e1);
+        $this->assertEquals('this is an error', $e->getMessage());
     }
 
     /**
@@ -49,20 +42,10 @@ class PropelExceptionTest extends \PHPUnit_Framework_TestCase
         throw $e;
     }
 
-    public function testGetCause()
-    {
-        $e1 = new FooException('real cause');
-        $e = new PropelException('this is an error', $e1);
-        $this->assertEquals($e1, $e->getCause());
-    }
-
     public function testGetPrevious()
     {
-        if (version_compare(PHP_VERSION, '5.3.0') < 0) {
-            $this->markTestSkipped();
-        }
         $e1 = new FooException('real cause');
-        $e = new PropelException('this is an error', $e1);
+        $e = new PropelException('this is an error', 0, $e1);
         $this->assertEquals($e1, $e->getPrevious());
     }
 }

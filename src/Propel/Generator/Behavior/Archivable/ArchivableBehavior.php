@@ -13,6 +13,8 @@ namespace Propel\Generator\Behavior\Archivable;
 use Propel\Generator\Model\Behavior;
 use Propel\Generator\Model\Index;
 
+use \InvalidArgumentException;
+
 /**
  * Keeps tracks of an ActiveRecord object, even after deletion
  *

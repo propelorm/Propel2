@@ -13,9 +13,11 @@ namespace Propel\Tests\Runtime\Map;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
 use Propel\Runtime\Propel;
+use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\DatabaseMap;
 use Propel\Runtime\Map\TableMap;
-use Propel\Runtime\Exception\PropelException;
+use Propel\Runtime\Map\Exception\ColumnNotFoundException;
+use Propel\Runtime\Map\Exception\TableNotFoundException;
 
 /**
  * Test class for DatabaseMap.
@@ -25,147 +27,147 @@ use Propel\Runtime\Exception\PropelException;
  */
 class DatabaseMapTest extends BookstoreTestBase
 {
-  protected $databaseMap;
+    protected $databaseMap;
 
-  protected function setUp()
-  {
-    parent::setUp();
-    $this->databaseName = 'foodb';
-    $this->databaseMap = TestDatabaseBuilder::getDmap();
-  }
-
-  protected function tearDown()
-  {
-    // nothing to do for now
-    parent::tearDown();
-  }
-
-  public function testConstructor()
-  {
-    $this->assertEquals($this->databaseName, $this->databaseMap->getName(), 'constructor sets the table name');
-  }
-
-  public function testAddTable()
-  {
-    $this->assertFalse($this->databaseMap->hasTable('foo'), 'tables are empty by default');
-    try
+    protected function setUp()
     {
-      $this->databaseMap->getTable('foo');
-      $this->fail('getTable() throws an exception when called on an inexistent table');
-    } catch(PropelException $e) {
-      $this->assertTrue(true, 'getTable() throws an exception when called on an inexistent table');
+        parent::setUp();
+        $this->databaseName = 'foodb';
+        $this->databaseMap = TestDatabaseBuilder::getDmap();
     }
-    $tmap = $this->databaseMap->addTable('foo');
-    $this->assertTrue($this->databaseMap->hasTable('foo'), 'hasTable() returns true when the table was added by way of addTable()');
-    $this->assertEquals($tmap, $this->databaseMap->getTable('foo'), 'getTable() returns a table by name when the table was added by way of addTable()');
-  }
 
-  public function testAddTableObject()
-  {
-    $this->assertFalse($this->databaseMap->hasTable('foo2'), 'tables are empty by default');
-    try
+    protected function tearDown()
     {
-      $this->databaseMap->getTable('foo2');
-      $this->fail('getTable() throws an exception when called on a table with no builder');
-    } catch(PropelException $e) {
-      $this->assertTrue(true, 'getTable() throws an exception when called on a table with no builder');
+        // nothing to do for now
+        parent::tearDown();
     }
-    $tmap = new TableMap('foo2');
-    $this->databaseMap->addTableObject($tmap);
-    $this->assertTrue($this->databaseMap->hasTable('foo2'), 'hasTable() returns true when the table was added by way of addTableObject()');
-    $this->assertEquals($tmap, $this->databaseMap->getTable('foo2'), 'getTable() returns a table by name when the table was added by way of addTableObject()');
-  }
 
-  public function testAddTableFromMapClass()
-  {
-    $table1 = $this->databaseMap->addTableFromMapClass('\Propel\Tests\Runtime\Map\BazTableMap');
-    try
+    public function testConstructor()
     {
-      $table2 = $this->databaseMap->getTable('baz');
-      $this->assertEquals($table1, $table2, 'addTableFromMapClass() adds a table from a map class');
-    } catch(PropelException $e) {
-      $this->fail('addTableFromMapClass() adds a table from a map class');
+        $this->assertEquals($this->databaseName, $this->databaseMap->getName(), 'constructor sets the table name');
     }
-  }
 
-  public function testGetColumn()
-  {
-    try
+    public function testAddTable()
     {
-      $this->databaseMap->getColumn('foo.BAR');
-      $this->fail('getColumn() throws an exception when called on column of an inexistent table');
-    } catch(PropelException $e) {
-      $this->assertTrue(true, 'getColumn() throws an exception when called on column of an inexistent table');
+        $this->assertFalse($this->databaseMap->hasTable('foo'), 'tables are empty by default');
+        try
+        {
+            $this->databaseMap->getTable('foo');
+            $this->fail('getTable() throws an exception when called on an inexistent table');
+        } catch(TableNotFoundException $e) {
+            $this->assertTrue(true, 'getTable() throws an exception when called on an inexistent table');
+        }
+        $tmap = $this->databaseMap->addTable('foo');
+        $this->assertTrue($this->databaseMap->hasTable('foo'), 'hasTable() returns true when the table was added by way of addTable()');
+        $this->assertEquals($tmap, $this->databaseMap->getTable('foo'), 'getTable() returns a table by name when the table was added by way of addTable()');
     }
-    $tmap = $this->databaseMap->addTable('foo');
-    try
-    {
-      $this->databaseMap->getColumn('foo.BAR');
-      $this->fail('getColumn() throws an exception when called on an inexistent column of an existent table');
-    } catch(PropelException $e) {
-      $this->assertTrue(true, 'getColumn() throws an exception when called on an inexistent column of an existent table');
-    }
-    $column = $tmap->addColumn('BAR', 'Bar', 'INTEGER');
-    $this->assertEquals($column, $this->databaseMap->getColumn('foo.BAR'), 'getColumn() returns a ColumnMap object based on a fully qualified name');
-  }
 
-  public function testGetTableByPhpName()
-  {
-    try
+    public function testAddTableObject()
     {
-      $this->databaseMap->getTableByPhpName('Foo1');
-      $this->fail('getTableByPhpName() throws an exception when called on an inexistent table');
-    } catch(PropelException $e) {
-      $this->assertTrue(true, 'getTableByPhpName() throws an exception when called on an inexistent table');
+        $this->assertFalse($this->databaseMap->hasTable('foo2'), 'tables are empty by default');
+        try
+        {
+            $this->databaseMap->getTable('foo2');
+            $this->fail('getTable() throws an exception when called on a table with no builder');
+        } catch(TableNotFoundException $e) {
+            $this->assertTrue(true, 'getTable() throws an exception when called on a table with no builder');
+        }
+        $tmap = new TableMap('foo2');
+        $this->databaseMap->addTableObject($tmap);
+        $this->assertTrue($this->databaseMap->hasTable('foo2'), 'hasTable() returns true when the table was added by way of addTableObject()');
+        $this->assertEquals($tmap, $this->databaseMap->getTable('foo2'), 'getTable() returns a table by name when the table was added by way of addTableObject()');
     }
-    $tmap = $this->databaseMap->addTable('foo1');
-    try
-    {
-      $this->databaseMap->getTableByPhpName('Foo1');
-      $this->fail('getTableByPhpName() throws an exception when called on a table with no phpName');
-    } catch(PropelException $e) {
-      $this->assertTrue(true, 'getTableByPhpName() throws an exception when called on a table with no phpName');
-    }
-    $tmap2 = new TableMap('foo2');
-    $tmap2->setClassname('Foo2');
-    $this->databaseMap->addTableObject($tmap2);
-    $this->assertEquals($tmap2, $this->databaseMap->getTableByPhpName('Foo2'), 'getTableByPhpName() returns tableMap when phpName was set by way of TableMap::setPhpName()');
-  }
 
-  public function testGetTableByPhpNameNotLoaded()
-  {
+    public function testAddTableFromMapClass()
+    {
+        $table1 = $this->databaseMap->addTableFromMapClass('\Propel\Tests\Runtime\Map\BazTableMap');
+        try
+        {
+            $table2 = $this->databaseMap->getTable('baz');
+            $this->assertEquals($table1, $table2, 'addTableFromMapClass() adds a table from a map class');
+        } catch(PropelException $e) {
+            $this->fail('addTableFromMapClass() adds a table from a map class');
+        }
+    }
+
+    public function testGetColumn()
+    {
+        try
+        {
+            $this->databaseMap->getColumn('foo.BAR');
+            $this->fail('getColumn() throws an exception when called on column of an inexistent table');
+        } catch(ColumnNotFoundException $e) {
+            $this->assertTrue(true, 'getColumn() throws an exception when called on column of an inexistent table');
+        }
+        $tmap = $this->databaseMap->addTable('foo');
+        try
+        {
+            $this->databaseMap->getColumn('foo.BAR');
+            $this->fail('getColumn() throws an exception when called on an inexistent column of an existent table');
+        } catch(ColumnNotFoundException $e) {
+            $this->assertTrue(true, 'getColumn() throws an exception when called on an inexistent column of an existent table');
+        }
+        $column = $tmap->addColumn('BAR', 'Bar', 'INTEGER');
+        $this->assertEquals($column, $this->databaseMap->getColumn('foo.BAR'), 'getColumn() returns a ColumnMap object based on a fully qualified name');
+    }
+
+    public function testGetTableByPhpName()
+    {
+        try
+        {
+            $this->databaseMap->getTableByPhpName('Foo1');
+            $this->fail('getTableByPhpName() throws an exception when called on an inexistent table');
+        } catch(TableNotFoundException $e) {
+            $this->assertTrue(true, 'getTableByPhpName() throws an exception when called on an inexistent table');
+        }
+        $tmap = $this->databaseMap->addTable('foo1');
+        try
+        {
+            $this->databaseMap->getTableByPhpName('Foo1');
+            $this->fail('getTableByPhpName() throws an exception when called on a table with no phpName');
+        } catch(TableNotFoundException $e) {
+            $this->assertTrue(true, 'getTableByPhpName() throws an exception when called on a table with no phpName');
+        }
+        $tmap2 = new TableMap('foo2');
+        $tmap2->setClassname('Foo2');
+        $this->databaseMap->addTableObject($tmap2);
+        $this->assertEquals($tmap2, $this->databaseMap->getTableByPhpName('Foo2'), 'getTableByPhpName() returns tableMap when phpName was set by way of TableMap::setPhpName()');
+    }
+
+    public function testGetTableByPhpNameNotLoaded()
+    {
         $this->assertEquals('book', Propel::getServiceContainer()->getDatabaseMap('bookstore')->getTableByPhpName('Propel\Tests\Bookstore\Book')->getName(), 'getTableByPhpName() can autoload a TableMap when the Peer class is generated and autoloaded');
-  }
+    }
 
 }
 
 class TestDatabaseBuilder
 {
-  protected static $dmap = null;
-  protected static $tmap = null;
-  static public function getDmap()
-  {
-    if (is_null(self::$dmap)) {
-        self::$dmap = new DatabaseMap('foodb');
-    }
+    protected static $dmap = null;
+    protected static $tmap = null;
+    static public function getDmap()
+    {
+        if (is_null(self::$dmap)) {
+            self::$dmap = new DatabaseMap('foodb');
+        }
 
-    return self::$dmap;
-  }
-  static public function setTmap($tmap)
-  {
-    self::$tmap = $tmap;
-  }
-  static public function getTmap()
-  {
-    return self::$tmap;
-  }
+        return self::$dmap;
+    }
+    static public function setTmap($tmap)
+    {
+        self::$tmap = $tmap;
+    }
+    static public function getTmap()
+    {
+        return self::$tmap;
+    }
 }
 
 class BazTableMap extends TableMap
 {
-  public function initialize()
-  {
-    $this->setName('baz');
-    $this->setPhpName('Baz');
-  }
+    public function initialize()
+    {
+        $this->setName('baz');
+        $this->setPhpName('Baz');
+    }
 }

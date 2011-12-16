@@ -108,9 +108,9 @@ interface ConnectionInterface
      *                          database server.
      * @param array $driver_options
      *
-     * @return StatementInterface|bool A Statement object if the database server
+     * @return \Propel\Runtime\Connection\StatementInterface|bool A Statement object if the database server
      *                                 successfully prepares, FALSE otherwise.
-     * @throws ConnectionException depending on error handling.
+     * @throws \Propel\Runtime\Connection\ConnectionException depending on error handling.
      */
     function prepare($statement, $driver_options = array());
 
@@ -120,9 +120,9 @@ interface ConnectionInterface
      * @param string $statement The SQL statement to prepare and execute.
      *                          Data inside the query should be properly escaped.
      *
-     * @return StatementInterface|bool A Statement object if the database server
+     * @return \Propel\Runtime\Connection\StatementInterface|bool A Statement object if the database server
      *                                 successfully prepares, FALSE otherwise.
-     * @throws ConnectionException depending on error handling.
+     * @throws \Propel\Runtime\Connection\ConnectionException depending on error handling.
      */
     function query();
 

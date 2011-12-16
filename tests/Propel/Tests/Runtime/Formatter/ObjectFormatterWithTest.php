@@ -299,7 +299,7 @@ class ObjectFormatterWithTest extends BookstoreEmptyTestBase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
+     * @expectedException \Propel\Runtime\Exception\LogicException
      */
     public function testFindOneWithOneToManyAndLimit()
     {

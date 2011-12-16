@@ -10,6 +10,8 @@
 
 namespace Propel\Generator\Model;
 
+use \InvalidArgumentException;
+
 /**
  * An abstract class for elements represented by XML tags (e.g. Column, Table).
  *
@@ -152,7 +154,7 @@ abstract class XmlElement
             return $class;
         }
 
-        throw new \InvalidArgumentException(sprintf('Unknown behavior "%s"; make sure you configured the propel.behavior.%s.class setting in your build.properties', $bname, $bname));
+        throw new InvalidArgumentException(sprintf('Unknown behavior "%s"; make sure you configured the propel.behavior.%s.class setting in your build.properties', $bname, $bname));
     }
 
     /**

@@ -10,8 +10,8 @@
 
 namespace Propel\Runtime\Map;
 
-use Propel\Generator\Model\PrimaryKey;
-use Propel\Runtime\Exception\PropelException;
+use Propel\Runtime\Map\Exception\ColumnNotFoundException;
+use Propel\Runtime\Map\Exception\RelationNotFoundException;
 
 /**
  * TableMap is used to model a table in a database.
@@ -389,7 +389,7 @@ class TableMap
      * @param      string    $name A String with the name of the table.
      * @param      boolean   $normalize Normalize the column name (if column name not like FIRST_NAME)
      * @return     \Propel\Runtime\Map\ColumnMap A ColumnMap.
-     * @throws     \Propel\Runtime\Exception\PropelException if the column is undefined
+     * @throws     \Propel\Runtime\Map\Exception\ColumnNotFoundException	If the column is undefined
      */
     public function getColumn($name, $normalize = true)
     {
@@ -397,7 +397,7 @@ class TableMap
             $name = ColumnMap::normalizeName($name);
         }
         if (!$this->hasColumn($name, false)) {
-            throw new PropelException("Cannot fetch ColumnMap for undefined column: " . $name);
+            throw new ColumnNotFoundException("Cannot fetch ColumnMap for undefined column: $name");
         }
 
         return $this->columns[$name];
@@ -418,13 +418,13 @@ class TableMap
      * Get a ColumnMap for the table.
      *
      * @param      string    $phpName A String with the name of the table.
-     * @return     \Propel\Runtime\Map\ColumnMap A ColumnMap.
-     * @throws     \Propel\Runtime\Exception\PropelException if the column is undefined
+     * @return     \Propel\Runtime\Map\ColumnMap	A ColumnMap.
+     * @throws     \Propel\Runtime\Map\Exception\ColumnNotFoundException	If the column is undefined
      */
     public function getColumnByPhpName($phpName)
     {
         if (!isset($this->columnsByPhpName[$phpName])) {
-            throw new PropelException("Cannot fetch ColumnMap for undefined column phpName: " . $phpName);
+            throw new ColumnNotFoundException("Cannot fetch ColumnMap for undefined column phpName: $phpName");
         }
 
         return $this->columnsByPhpName[$phpName];
@@ -622,14 +622,14 @@ class TableMap
      * Gets a RelationMap of the table by relation name
      * This method will build the relations if they are not built yet
      *
-     * @param       string $name The relation name
-     * @return      \Propel\Runtime\Map\RelationMap The relation object
-     * @throws      \Propel\Runtime\Exception\PropelException When called on an inexistent relation
+     * @param       string	$name The relation name
+     * @return      \Propel\Runtime\Map\RelationMap	The relation object
+     * @throws      \Propel\Runtime\Map\Exception\RelationNotFoundException	When called on an inexistent relation
      */
     public function getRelation($name)
     {
-        if (!array_key_exists($name, $this->getRelations())) {
-            throw new PropelException('Calling getRelation() on an unknown relation: ' . $name);
+		if (!array_key_exists($name, $this->getRelations())) {
+            throw new RelationNotFoundException("Calling getRelation() on an unknown relation: $name");
         }
 
         return $this->relations[$name];

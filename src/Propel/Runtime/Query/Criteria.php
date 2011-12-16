@@ -11,7 +11,7 @@
 namespace Propel\Runtime\Query;
 
 use Propel\Runtime\Propel;
-use Propel\Runtime\Exception\PropelException;
+use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\Util\BasePeer;
 use Propel\Runtime\Util\PropelConditionalProxy;
 
@@ -811,7 +811,7 @@ class Criteria implements \IteratorAggregate
                 $namedCriterions[]= $this->namedCriterions[$key];
                 unset($this->namedCriterions[$key]);
             } else {
-                throw new PropelException('Cannot combine unknown condition ' . $key);
+                throw new LogicException('Cannot combine unknown condition ' . $key);
             }
         }
         $firstCriterion = array_shift($namedCriterions);
@@ -1540,7 +1540,7 @@ class Criteria implements \IteratorAggregate
         // merge as columns
         $commonAsColumns = array_intersect_key($this->getAsColumns(), $criteria->getAsColumns());
         if (!empty($commonAsColumns)) {
-            throw new PropelException('The given criteria contains an AsColumn with an alias already existing in the current object');
+            throw new LogicException('The given criteria contains an AsColumn with an alias already existing in the current object');
         }
         $this->asColumns = array_merge($this->getAsColumns(), $criteria->getAsColumns());
 
@@ -1581,7 +1581,7 @@ class Criteria implements \IteratorAggregate
         // merge alias
         $commonAliases = array_intersect_key($this->getAliases(), $criteria->getAliases());
         if (!empty($commonAliases)) {
-            throw new PropelException('The given criteria contains an alias already existing in the current object');
+            throw new LogicException('The given criteria contains an alias already existing in the current object');
         }
         $this->aliases = array_merge($this->getAliases(), $criteria->getAliases());
 
@@ -1790,7 +1790,7 @@ class Criteria implements \IteratorAggregate
     public function _elseif($cond)
     {
     if (!$this->conditionalProxy) {
-      throw new PropelException('_elseif() must be called after _if()');
+      throw new LogicException('_elseif() must be called after _if()');
     }
 
     return $this->conditionalProxy->_elseif($cond);
@@ -1805,7 +1805,7 @@ class Criteria implements \IteratorAggregate
     public function _else()
     {
     if (!$this->conditionalProxy) {
-      throw new PropelException('_else() must be called after _if()');
+      throw new LogicException('_else() must be called after _if()');
     }
 
     return $this->conditionalProxy->_else();
@@ -1820,7 +1820,7 @@ class Criteria implements \IteratorAggregate
     public function _endif()
     {
     if (!$this->conditionalProxy) {
-      throw new PropelException('_endif() must be called after _if()');
+      throw new LogicException('_endif() must be called after _if()');
     }
 
     $this->conditionalProxy = $this->conditionalProxy->getParentProxy();

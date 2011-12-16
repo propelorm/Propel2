@@ -10,10 +10,11 @@
 
 namespace Propel\Runtime\Collection;
 
+use Propel\Runtime\Collection\Exception\ReadOnlyModelException;
+use Propel\Runtime\Connection\StatementInterface;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Formatter\AbstractFormatter;
 use Propel\Runtime\Util\BasePeer;
-use Propel\Runtime\Connection\StatementInterface;
 
 /**
  * Class for iterating over a statement and returning one Propel object at a time
@@ -99,7 +100,7 @@ class OnDemandCollection extends Collection
      */
     public function fromArray($arr)
     {
-        throw new PropelException('The On Demand Collection is read only');
+        throw new ReadOnlyModelException('The On Demand Collection is read only');
     }
 
     // IteratorAggregate Interface
@@ -115,7 +116,7 @@ class OnDemandCollection extends Collection
     // ArrayAccess Interface
 
     /**
-     * @throws    PropelException
+     * @throws    \Propel\Runtime\Exception\PropelException
      * @param     integer  $offset
      *
      * @return    boolean
@@ -129,7 +130,7 @@ class OnDemandCollection extends Collection
     }
 
     /**
-     * @throws    PropelException
+     * @throws    \Propel\Runtime\Exception\PropelException
      * @param     integer  $offset
      *
      * @return    mixed
@@ -143,29 +144,29 @@ class OnDemandCollection extends Collection
     }
 
     /**
-     * @throws    PropelException
+     * @throws    \Propel\Runtime\Collection\Exception\ReadOnlyModelException
      *
      * @param     integer  $offset
      * @param     mixed    $value
      */
     public function offsetSet($offset, $value)
     {
-        throw new PropelException('The On Demand Collection is read only');
+        throw new ReadOnlyModelException('The On Demand Collection is read only');
     }
 
     /**
-     * @throws    PropelException
+     * @throws    \Propel\Runtime\Collection\Exception\ReadOnlyModelException
      * @param     integer  $offset
      */
     public function offsetUnset($offset)
     {
-        throw new PropelException('The On Demand Collection is read only');
+        throw new ReadOnlyModelException('The On Demand Collection is read only');
     }
 
     // Serializable Interface
 
     /**
-     * @throws    PropelException
+     * @throws    \Propel\Runtime\Exception\PropelException
      */
     public function serialize()
     {
@@ -173,7 +174,7 @@ class OnDemandCollection extends Collection
     }
 
     /**
-     * @throws    PropelException
+     * @throws    \Propel\Runtime\Exception\PropelException
      * @param     string  $data
      */
     public function unserialize($data)
@@ -198,22 +199,22 @@ class OnDemandCollection extends Collection
 
     public function append($value)
     {
-        throw new PropelException('The On Demand Collection is read only');
+        throw new ReadOnlyModelException('The On Demand Collection is read only');
     }
 
     public function prepend($value)
     {
-        throw new PropelException('The On Demand Collection is read only');
+        throw new ReadOnlyModelException('The On Demand Collection is read only');
     }
 
     public function asort()
     {
-        throw new PropelException('The On Demand Collection is read only');
+        throw new ReadOnlyModelException('The On Demand Collection is read only');
     }
 
     public function exchangeArray($input)
     {
-        throw new PropelException('The On Demand Collection is read only');
+        throw new ReadOnlyModelException('The On Demand Collection is read only');
     }
 
     public function getArrayCopy()
@@ -228,17 +229,17 @@ class OnDemandCollection extends Collection
 
     public function ksort()
     {
-        throw new PropelException('The On Demand Collection is read only');
+        throw new ReadOnlyModelException('The On Demand Collection is read only');
     }
 
     public function natcasesort()
     {
-        throw new PropelException('The On Demand Collection is read only');
+        throw new ReadOnlyModelException('The On Demand Collection is read only');
     }
 
     public function natsort()
     {
-        throw new PropelException('The On Demand Collection is read only');
+        throw new ReadOnlyModelException('The On Demand Collection is read only');
     }
 
     public function setFlags($flags)
@@ -248,12 +249,12 @@ class OnDemandCollection extends Collection
 
     public function uasort($cmp_function)
     {
-        throw new PropelException('The On Demand Collection is read only');
+        throw new ReadOnlyModelException('The On Demand Collection is read only');
     }
 
     public function uksort($cmp_function)
     {
-        throw new PropelException('The On Demand Collection is read only');
+        throw new ReadOnlyModelException('The On Demand Collection is read only');
     }
 
     /**
