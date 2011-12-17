@@ -48,7 +48,7 @@ class MigrationManager
     public function getConnection($datasource)
     {
         if (!isset($this->connections[$datasource])) {
-            throw new InvalidArgumentException(sprintf('Unkown datasource "%s"', $datasource));
+            throw new InvalidArgumentException(sprintf('Unknown datasource "%s"', $datasource));
         }
 
         return $this->connections[$datasource];
