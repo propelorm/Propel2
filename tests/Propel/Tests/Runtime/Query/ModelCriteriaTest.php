@@ -525,16 +525,16 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         try {
             $c->orderBy('Propel\Tests\Bookstore\Book.Foo');
-            $this->fail('orderBy() throws an exception when called with an unkown column name');
+            $this->fail('orderBy() throws an exception when called with an unknown column name');
         } catch (PropelException $e) {
-            $this->assertTrue(true, 'orderBy() throws an exception when called with an unkown column name');
+            $this->assertTrue(true, 'orderBy() throws an exception when called with an unknown column name');
         }
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         try {
             $c->orderBy('Propel\Tests\Bookstore\Book.Title', 'foo');
-            $this->fail('orderBy() throws an exception when called with an unkown order');
+            $this->fail('orderBy() throws an exception when called with an unknown order');
         } catch (PropelException $e) {
-            $this->assertTrue(true, 'orderBy() throws an exception when called with an unkown order');
+            $this->assertTrue(true, 'orderBy() throws an exception when called with an unknown order');
         }
     }
 
@@ -571,9 +571,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         try {
             $c->groupBy('Book.Foo');
-            $this->fail('groupBy() throws an exception when called with an unkown column name');
+            $this->fail('groupBy() throws an exception when called with an unknown column name');
         } catch (PropelException $e) {
-            $this->assertTrue(true, 'groupBy() throws an exception when called with an unkown column name');
+            $this->assertTrue(true, 'groupBy() throws an exception when called with an unknown column name');
         }
     }
 
@@ -601,7 +601,7 @@ class ModelCriteriaTest extends BookstoreTestBase
     /**
      * @expectedException \Propel\Runtime\Exception\PropelException
      */
-    public function testGroupByClassThrowsExceptionOnUnkownClass()
+    public function testGroupByClassThrowsExceptionOnUnknownClass()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $c->groupByClass('Author');

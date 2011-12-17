@@ -70,7 +70,7 @@ class SqlManager
     public function getConnection($datasource)
     {
         if (!$this->hasConnection($datasource)) {
-            throw new InvalidArgumentException(sprintf('Unkown datasource "%s"', $datasource));
+            throw new InvalidArgumentException(sprintf('Unknown datasource "%s"', $datasource));
         }
 
         return $this->connections[$datasource];
