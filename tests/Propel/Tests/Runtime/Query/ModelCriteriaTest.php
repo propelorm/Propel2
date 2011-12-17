@@ -607,7 +607,7 @@ class ModelCriteriaTest extends BookstoreTestBase
     /**
      * @expectedException \Propel\Runtime\Exception\ClassNotFoundException
      */
-    public function testGroupByClassThrowsExceptionOnUnkownClass()
+    public function testGroupByClassThrowsExceptionOnUnknownClass()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $c->groupByClass('Author');

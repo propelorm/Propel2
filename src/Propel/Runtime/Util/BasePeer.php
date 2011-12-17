@@ -351,6 +351,16 @@ class BasePeer
         // we also need the columns for the update SQL
         $updateTablesColumns = $updateValues->getTablesColumns();
 
+        // If no columns are changing values, we may get here with
+        // an empty array in $updateTablesColumns.  In that case,
+        // there is nothing to do, so we return the rows affected,
+        // which is 0.  Fixes a bug in which an UPDATE statement
+        // would fail in this instance.
+
+        if (empty($updateTablesColumns)) {
+            return 0;
+        }
+
         $affectedRows = 0; // initialize this in case the next loop has no iterations.
 
         foreach ($tablesColumns as $tableName => $columns) {
@@ -365,15 +375,15 @@ class BasePeer
                 }
                 // is it a table alias?
                 if ($tableName2 = $selectCriteria->getTableForAlias($tableName)) {
-                    $udpateTable = $tableName2 . ' ' . $tableName;
+                    $updateTable = $tableName2 . ' ' . $tableName;
                     $tableName = $tableName2;
                 } else {
-                    $udpateTable = $tableName;
+                    $updateTable = $tableName;
                 }
                 if ($db->useQuoteIdentifier()) {
-                    $sql .= $db->quoteIdentifierTable($udpateTable);
+                    $sql .= $db->quoteIdentifierTable($updateTable);
                 } else {
-                    $sql .= $udpateTable;
+                    $sql .= $updateTable;
                 }
                 $sql .= " SET ";
                 $p = 1;

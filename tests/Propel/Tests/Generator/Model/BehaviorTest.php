@@ -96,7 +96,7 @@ EOF;
   /**
    * @expectedException \Propel\Generator\Exception\BehaviorNotFoundException
    */
-    public function testUnkownBehavior()
+    public function testUnknownBehavior()
     {
         $xmlToAppData = new XmlToAppData();
         $schema = <<<EOF
