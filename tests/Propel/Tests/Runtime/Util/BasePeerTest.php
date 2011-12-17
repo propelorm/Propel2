@@ -348,4 +348,24 @@ class BasePeerTest extends BookstoreTestBase
         $this->assertEquals($expected, $con->getLastExecutedQuery(), 'Criteria::setComment() adds a comment to delete queries');
     }
 
+    public function testIneffectualUpdateUsingBookObject()
+    {
+        $con = Propel::getConnection(BookPeer::DATABASE_NAME);
+        $c = new Criteria();
+        $book = BookPeer::doSelectOne($c, $con);
+        $count = $con->getQueryCount();
+        $book->setTitle($book->getTitle());
+        $book->setISBN($book->getISBN());
+        try
+        {
+            $rowCount = BookPeer::doUpdate($book, $con);
+            $this->assertEquals(0, $rowCount, 'BookPeer::doUpdate() should indicate zero rows updated');
+        }
+        catch (Exception $ex)
+        {
+            $this->fail('BookPeer::doUpdate() threw an exception');
+        }
+
+        $this->assertEquals($count, $con->getQueryCount(), 'BookPeer::doUpdate(0 does not execute any queries when there are no changes');
+    }
 }

@@ -2008,7 +2008,7 @@ class ModelCriteria extends Criteria
     protected function getRealColumnName($columnName)
     {
         if (!$this->getTableMap()->hasColumnByPhpName($columnName)) {
-            throw new PropelException('Unkown column ' . $columnName . ' in model ' . $this->modelName);
+            throw new PropelException('Unknown column ' . $columnName . ' in model ' . $this->modelName);
         }
         if ($this->useAliasInSQL) {
             return $this->modelAlias . '.' . $this->getTableMap()->getColumnByPhpName($columnName)->getName();
