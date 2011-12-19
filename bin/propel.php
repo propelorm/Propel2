@@ -1,9 +1,6 @@
 <?php
 
 if (!class_exists('\Symfony\Component\Console\Application')) {
-    if (file_exists($file = __DIR__.'/../vendor/.composer/autoload.php')) {
-        require_once $file;
-    }
     if (file_exists($file = __DIR__.'/../autoload.php')) {
         require_once $file;
     } elseif (file_exists($file = __DIR__.'/../autoload.php.dist')) {
