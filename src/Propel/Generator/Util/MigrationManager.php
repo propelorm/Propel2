@@ -13,6 +13,8 @@ namespace Propel\Generator\Util;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\Table;
 
+use \InvalidArgumentException;
+
 /**
  * Service class for preparing and executing migrations
  *

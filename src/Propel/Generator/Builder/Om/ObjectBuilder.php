@@ -1215,7 +1215,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
         $script .= "
             \$this->".$clo."_isLoaded = true;
         } catch (Exception \$e) {
-            throw new PropelException(\"Error loading value for [$clo] column on demand.\", \$e);
+            throw new PropelException(\"Error loading value for [$clo] column on demand.\", 0, \$e);
         }";
     }
 
@@ -1933,7 +1933,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
             return \$startcol + $n; // $n = ".$this->getPeerClassname()."::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception \$e) {
-            throw new PropelException(\"Error populating ".$this->getStubObjectBuilder()->getClassname()." object\", \$e);
+            throw new PropelException(\"Error populating ".$this->getStubObjectBuilder()->getClassname()." object\", 0, \$e);
         }";
     }
 
@@ -4403,7 +4403,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
             $script .= $platform->getIdentifierPhp('$this->'. $columnProperty, '$con', $primaryKeyMethodInfo, '                ');
             $script .= "
             } catch (Exception \$e) {
-                throw new PropelException('Unable to get sequence id.', \$e);
+                throw new PropelException('Unable to get sequence id.', 0, \$e);
             }
         }
 ";
@@ -4447,7 +4447,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
             \$stmt->execute();
         } catch (Exception \$e) {
             Propel::log(\$e->getMessage(), Propel::LOG_ERR);
-            throw new PropelException(sprintf('Unable to execute INSERT statement [%s]', \$sql), \$e);
+            throw new PropelException(sprintf('Unable to execute INSERT statement [%s]', \$sql), 0, \$e);
         }
 ";
 
@@ -4460,7 +4460,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
             $script .= $platform->getIdentifierPhp('$pk', '$con', $primaryKeyMethodInfo);
             $script .= "
         } catch (Exception \$e) {
-            throw new PropelException('Unable to get autoincrement id.', \$e);
+            throw new PropelException('Unable to get autoincrement id.', 0, \$e);
         }";
             if ($table->isAllowPkInsert()) {
                 $script .= "

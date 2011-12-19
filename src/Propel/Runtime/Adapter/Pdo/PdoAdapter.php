@@ -11,15 +11,15 @@
 namespace Propel\Runtime\Adapter\Pdo;
 
 use Propel\Runtime\Adapter\AdapterInterface;
-use Propel\Runtime\Adapter\AdapterException;
+use Propel\Runtime\Adapter\Exception\AdapterException;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\StatementInterface;
+use Propel\Runtime\Exception\InvalidArgumentException;
 use Propel\Runtime\Map\ColumnMap;
 use Propel\Runtime\Map\DatabaseMap;
 use Propel\Runtime\Query\Criteria;
 use Propel\Runtime\Util\PropelDateTime;
 use Propel\Runtime\Util\PropelColumnTypes;
-use Propel\Runtime\Exception\PropelException;
 
 use \PDO;
 use \PDOException;
@@ -41,7 +41,7 @@ abstract class PdoAdapter
         $conparams = $this->prepareParams($conparams);
 
         if (!isset($conparams['dsn'])) {
-            throw new PropelException('No dsn specified in your connection parameters');
+            throw new InvalidArgumentException('No dsn specified in your connection parameters');
         }
 
         $dsn      = $conparams['dsn'];
@@ -56,7 +56,7 @@ abstract class PdoAdapter
                 $value = $optiondata['value'];
                 if (is_string($value) && false !== strpos($value, '::')) {
                     if (!defined($value)) {
-                        throw new PropelException(sprintf('Error processing driver options for dsn "%s"', $dsn));
+                        throw new InvalidArgumentException(sprintf('Error processing driver options for dsn "%s"', $dsn));
                     }
                     $value = constant($value);
                 }

@@ -13,6 +13,8 @@ namespace Propel\Generator\Behavior;
 use Propel\Generator\Model\Behavior;
 use Propel\Generator\Model\ForeignKey;
 
+use \InvalidArgumentException;
+
 /**
  * Gives a model class the ability to delegate methods to a relationship.
  *

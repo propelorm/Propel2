@@ -191,7 +191,7 @@ class CollectionTest extends BookstoreTestBase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
+     * @expectedException \UnexpectedValueException
      */
     public function testGetUnknownOffset()
     {
@@ -251,7 +251,7 @@ class CollectionTest extends BookstoreTestBase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
+     * @expectedException \UnexpectedValueException
      */
     public function testRemoveUnknownOffset()
     {
@@ -329,7 +329,7 @@ class CollectionTest extends BookstoreTestBase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
+     * @expectedException \Propel\Runtime\Collection\Exception\ModelNotFoundException
      */
     public function testGetPeerClassNoModel()
     {
@@ -346,7 +346,7 @@ class CollectionTest extends BookstoreTestBase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
+     * @expectedException \Propel\Runtime\Exception\BadMethodCallException
      */
     public function testGetConnectionNoModel()
     {

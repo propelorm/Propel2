@@ -17,9 +17,9 @@ use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\BookPeer;
 
 use Propel\Runtime\Propel;
+use Propel\Runtime\Connection\Exception\RollbackException;
 use Propel\Runtime\Connection\PropelPDO;
 use Propel\Runtime\Config\Configuration as Registry;
-use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Query\Criteria;
 
 use \PDO;
@@ -253,7 +253,7 @@ class PropelPDOTest extends BookstoreTestBase
 
             $con->commit();
             $this->fail("Commit fails after a nested rollback");
-        } catch (PropelException $e) {
+        } catch (RollbackException $e) {
             $this->assertTrue(true, "Commit fails after a nested rollback");
             $con->rollback();
         }

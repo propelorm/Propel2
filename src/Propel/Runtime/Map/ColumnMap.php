@@ -10,7 +10,7 @@
 
 namespace Propel\Runtime\Map;
 
-use Propel\Runtime\Exception\PropelException;
+use Propel\Runtime\Map\Exception\ForeignKeyNotFoundException;
 use Propel\Runtime\Util\PropelColumnTypes;
 
 /**
@@ -368,8 +368,8 @@ class ColumnMap
             if($relation->getType() == RelationMap::MANY_TO_ONE) {
                 if ($relation->getForeignTable()->getName() == $this->getRelatedTableName() &&
                     array_key_exists($this->getFullyQualifiedName(), $relation->getColumnMappings())) {
-                    return $relation;
-                }
+                        return $relation;
+                    }
             }
         }
     }
@@ -408,14 +408,14 @@ class ColumnMap
      * Get the TableMap object that this column is related to.
      *
      * @return     \Propel\Runtime\Map\TableMap The related TableMap object
-     * @throws     \Propel\Runtime\Exception\PropelException when called on a column with no foreign key
+     * @throws     \Propel\Runtime\Map\Exception\ForeignKeyNotFoundException when called on a column with no foreign key
      */
     public function getRelatedTable()
     {
         if ($this->relatedTableName) {
             return $this->table->getDatabaseMap()->getTable($this->relatedTableName);
         } else {
-            throw new PropelException("Cannot fetch RelatedTable for column with no foreign key: " . $this->columnName);
+            throw new ForeignKeyNotFoundException("Cannot fetch RelatedTable for column with no foreign key: " . $this->columnName);
         }
     }
 
@@ -423,7 +423,7 @@ class ColumnMap
      * Get the TableMap object that this column is related to.
      *
      * @return     \Propel\Runtime\Map\ColumnMap The related ColumnMap object
-     * @throws     \Propel\Runtime\Exception\PropelException when called on a column with no foreign key
+     * @throws     \Propel\Runtime\Map\Exception\ForeignKeyNotFoundException when called on a column with no foreign key
      */
     public function getRelatedColumn()
     {

@@ -11,7 +11,10 @@
 namespace Propel\Runtime\Adapter\Pdo;
 
 use Propel\Runtime\Adapter\AdapterInterface;
+use Propel\Runtime\Adapter\Exception\MalformedClauseException;
+use Propel\Runtime\Adapter\Exception\ColumnNotFoundException;
 use Propel\Runtime\Connection\ConnectionInterface;
+use Propel\Runtime\Exception\InvalidArgumentException;
 
 /**
  * This is used to connect to a MSSQL database.
@@ -124,7 +127,7 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
         // make sure offset and limit are numeric
         if(! is_numeric($offset) || ! is_numeric($limit))
         {
-            throw new PropelException('MssqlAdapter::applyLimit() expects a number for argument 2 and 3');
+            throw new InvalidArgumentException('MssqlAdapter::applyLimit() expects a number for argument 2 and 3');
         }
 
         //split the select and from clauses out of the original query
@@ -137,7 +140,7 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
             $selectStatement = trim($selectSegment[1]);
             $fromStatement = trim($selectSegment[2]);
         } else {
-            throw new Exception('MssqlAdapter::applyLimit() could not locate the select statement at the start of the query.');
+            throw new MalformedClauseException('MssqlAdapter::applyLimit() could not locate the select statement at the start of the query.');
         }
 
         if (preg_match('/\Aselect(\s+)distinct/i', $sql)) {
@@ -201,7 +204,7 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
             } else {
                 //agregate columns must always have an alias clause
                 if(! stristr($selCol, ' AS ')) {
-                    throw new Exception('MssqlAdapter::applyLimit() requires aggregate columns to have an Alias clause');
+                    throw new MalformedClauseException('MssqlAdapter::applyLimit() requires aggregate columns to have an Alias clause');
                 }
 
                 //aggregate column alias can't be used as the count column you must use the entire aggregate statement
@@ -225,7 +228,7 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
             if(isset($firstColumnOrderStatement)) {
                 $orderStatement = $firstColumnOrderStatement;
             } else {
-                throw new Exception('MssqlAdapter::applyLimit() unable to find column to use with ROW_NUMBER()');
+                throw new ColumnNotFoundException('MssqlAdapter::applyLimit() unable to find column to use with ROW_NUMBER()');
             }
         }
 

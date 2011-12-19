@@ -10,7 +10,7 @@
 
 namespace Propel\Runtime\Formatter;
 
-use Propel\Runtime\Exception\PropelException;
+use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\Query\ModelCriteria;
 use Propel\Runtime\Connection\StatementInterface;
 
@@ -40,7 +40,7 @@ class OnDemandFormatter extends ObjectFormatter
     {
         $this->checkInit();
         if ($this->isWithOneToMany()) {
-            throw new PropelException('OnDemandFormatter cannot hydrate related objects using a one-to-many relationship. Try removing with() from your query.');
+            throw new LogicException('OnDemandFormatter cannot hydrate related objects using a one-to-many relationship. Try removing with() from your query.');
         }
         $class = $this->collectionName;
         $collection = new $class();

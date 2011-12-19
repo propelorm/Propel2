@@ -103,7 +103,7 @@ interface ServiceContainerInterface
      *
      * @return     ConnectionInterface A database connection
      *
-     * @throws     PropelException - if connection is not properly configured
+     * @throws     \Propel\Runtime\Adapter\Exception\AdapterException - if connection is not properly configured
      */
     function getWriteConnection($name);
 

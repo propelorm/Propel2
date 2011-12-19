@@ -13,6 +13,7 @@ namespace Propel\Generator\Model;
 use Propel\Generator\Exception\EngineException;
 use Propel\Generator\Builder\Util\PropelTemplate;
 
+use \InvalidArgumentException;
 use \ReflectionObject;
 
 /**
