@@ -101,6 +101,7 @@ class TestPrepare extends Command
     {
         if (!file_exists($fixturesDir)) {
             $output->writeln(sprintf('<error>Directory "%s" not found.</error>', $fixturesDir));
+
             return;
         }
 
@@ -125,6 +126,7 @@ class TestPrepare extends Command
                 file_put_contents($targetFile, $content);
             } else {
                 $output->writeln(sprintf('<error>No "%s" file found, skipped.</error>', $sourceFile));
+
                 return;
             }
         }

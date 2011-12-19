@@ -205,6 +205,7 @@ public function isVersioningNecessary(\$con = null)
     foreach (\$this->get{$fkGetter}(null, \$con) as \$relatedObject) {
         if (\$relatedObject->isVersioningNecessary(\$con)) {
             \$this->alreadyInSave = false;
+
             return true;
         }
     }

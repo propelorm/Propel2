@@ -628,7 +628,7 @@ class TableMap
      */
     public function getRelation($name)
     {
-		if (!array_key_exists($name, $this->getRelations())) {
+        if (!array_key_exists($name, $this->getRelations())) {
             throw new RelationNotFoundException("Calling getRelation() on an unknown relation: $name");
         }
 

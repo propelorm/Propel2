@@ -157,7 +157,7 @@ class ObjectBuilder extends AbstractObjectBuilder
                 throw new EngineException(sprintf('Default Value "%s" is not among the enumerated values', $val));
             }
             $defaultValue = array_search($val, $valueSet);
-        } else if ($col->isPhpPrimitiveType()) {
+        } elseif ($col->isPhpPrimitiveType()) {
             settype($val, $col->getPhpType());
             $defaultValue = var_export($val, true);
         } elseif ($col->isPhpObjectType()) {
@@ -684,17 +684,17 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
         foreach ($colsWithDefaults as $col) {
             $clo = strtolower($col->getName());
             $defaultValue = $this->getDefaultValueString($col);
-			if ($col->isTemporalType()) {
-				$dateTimeClass = $this->getBuildProperty('dateTimeClass');
-			    if (!$dateTimeClass) {
-			        $dateTimeClass = '\DateTime';
-			    }
-				$script .= "
+            if ($col->isTemporalType()) {
+                $dateTimeClass = $this->getBuildProperty('dateTimeClass');
+                if (!$dateTimeClass) {
+                    $dateTimeClass = '\DateTime';
+                }
+                $script .= "
         \$this->".$clo." = PropelDateTime::newInstance($defaultValue, null, '$dateTimeClass');";
-			} else {
-				$script .= "
+            } else {
+                $script .= "
         \$this->".$clo." = $defaultValue;";
-			}
+            }
         }
     }
 
@@ -853,6 +853,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
         $script .= "
         if (\$format === null) {";
         $script .= "
+
             return \$this->$clo;
         } else {
             return \$this->$clo !== null ? \$this->{$clo}->format(\$format) : null;
@@ -1775,11 +1776,11 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
         foreach ($colsWithDefaults as $col) {
 
             $clo = strtolower($col->getName());
-			$accessor = "\$this->$clo";
-			if ($col->isTemporalType()) {
-				$fmt = $this->getTemporalFormatter($col);
-				$accessor = "\$this->$clo && \$this->{$clo}->format('$fmt')";
-			}
+            $accessor = "\$this->$clo";
+            if ($col->isTemporalType()) {
+                $fmt = $this->getTemporalFormatter($col);
+                $accessor = "\$this->$clo && \$this->{$clo}->format('$fmt')";
+            }
             $script .= "
             if ($accessor !== " . $this->getDefaultValueString($col).") {
                 return false;
@@ -1877,30 +1878,30 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
                 \$this->$clo = null;
             }";
                 } elseif ($col->isTemporalType()) {
-					$dateTimeClass = $this->getBuildProperty('dateTimeClass');
-				    if (!$dateTimeClass) {
-				        $dateTimeClass = '\DateTime';
-				    }
-					$handleMysqlDate = false;
-					if ($this->getPlatform() instanceof MysqlPlatform) {
-						if ($col->getType() === PropelTypes::TIMESTAMP) {
-							$handleMysqlDate = true;
-					        $mysqlInvalidDateString = '0000-00-00 00:00:00';
-					    } elseif ($col->getType() === PropelTypes::DATE) {
-					        $handleMysqlDate = true;
-					        $mysqlInvalidDateString = '0000-00-00';
-					    }
-					    // 00:00:00 is a valid time, so no need to check for that.
-					}
-			        if ($handleMysqlDate) {
-			            $script .= "
+                    $dateTimeClass = $this->getBuildProperty('dateTimeClass');
+                    if (!$dateTimeClass) {
+                        $dateTimeClass = '\DateTime';
+                    }
+                    $handleMysqlDate = false;
+                    if ($this->getPlatform() instanceof MysqlPlatform) {
+                        if ($col->getType() === PropelTypes::TIMESTAMP) {
+                            $handleMysqlDate = true;
+                            $mysqlInvalidDateString = '0000-00-00 00:00:00';
+                        } elseif ($col->getType() === PropelTypes::DATE) {
+                            $handleMysqlDate = true;
+                            $mysqlInvalidDateString = '0000-00-00';
+                        }
+                        // 00:00:00 is a valid time, so no need to check for that.
+                    }
+                    if ($handleMysqlDate) {
+                        $script .= "
             if (\$row[\$startcol + $n] === '$mysqlInvalidDateString') {
                 \$row[\$startcol + $n] = null;
             }";
-			        }
-			        $script .= "
+                    }
+                    $script .= "
             \$this->$clo = (\$row[\$startcol + $n] !== null) ? PropelDateTime::newInstance(\$row[\$startcol + $n], null, '$dateTimeClass') : null;";
-				} elseif ($col->isPhpPrimitiveType()) {
+                } elseif ($col->isPhpPrimitiveType()) {
                     $script .= "
             \$this->$clo = (\$row[\$startcol + $n] !== null) ? (".$col->getPhpType().") \$row[\$startcol + $n] : null;";
                 } elseif ($col->getType() == PropelTypes::OBJECT) {
@@ -4314,7 +4315,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
         // remove pkey col since this table uses auto-increment and passing a null value for it is not valid
         \$criteria->remove($colConst);";
                 }
-            } else if (!$this->getPlatform()->supportsInsertNullPk()) {
+            } elseif (!$this->getPlatform()->supportsInsertNullPk()) {
                 $script .= "
         // remove pkey col if it is null since this table does not accept that
         if (\$criteria->containsKey($colConst) && !\$criteria->keyContainsValue($colConst) ) {
