@@ -8,6 +8,7 @@ Propel2 is an open-source Object-Relational Mapping (ORM) for PHP 5.3.
 Propel2 uses the following Symfony2 Components:
 
 * [ClassLoader](https://github.com/symfony/ClassLoader)
+* [Console](https://github.com/symfony/Console)
 * [Yaml](https://github.com/symfony/Yaml)
 
 Propel2 is only supported on PHP 5.3.3 and up.
@@ -21,7 +22,7 @@ Read the [Propel documentation](http://www.propelorm.org/).
 ## Contribute ##
 
 Everybody can contribute to Propel2. Just fork it, and send Pull Requests.
-You have to follow [Propel2 Coding Standards](http://github.com/propelorm/Propel2/issues/2) and provides unit tests as much as possible.
+You have to follow [Propel2 Coding Standards](https://github.com/propelorm/Propel2/wiki/Coding-Standards) and provides unit tests as much as possible.
 
 **Note:** you can fix checkstyle before to submit a Pull Request by using the Symfony2 `check_cs` script.
 You just need to install [Finder](http://github.com/symfony/Finder) and the script:
@@ -37,9 +38,14 @@ Then use it:
 
 ## Unit Tests ##
 
-To run unit tests, you'll have to install vendors:
+To run unit tests, you'll have to install vendors by using [**Composer**](https://github.com/composer/composer).
+If you don't have an available `composer.phar` command, just download it:
 
-    ./bin/install_vendors.sh
+    wget http://getcomposer.org/composer.phar
+
+Then, install dependencies:
+
+    php composer.phar install
 
 Once done, build fixtures:
 

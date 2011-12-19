@@ -13,8 +13,8 @@ $loader->registerNamespaces(array(
         __DIR__ . '/tests/Fixtures/bookstore/build/classes',
         __DIR__ . '/tests/Fixtures/schemas/build/classes',
     ),
-	'Propel\Runtime'	=> __DIR__ . '/src',
-	'Propel\Generator'	=> __DIR__ . '/src',
-	'Symfony\Component' => __DIR__ . '/vendor',
+    'Propel\Runtime'    => __DIR__ . '/src',
+    'Propel\Generator'  => __DIR__ . '/src',
+    'Symfony\Component' => __DIR__ . '/vendor',
 ));
 $loader->register();
