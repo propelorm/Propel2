@@ -1,4 +1,3 @@
-composer.lock
 composer.phar
 tests/Fixtures/bookstore-packaged/build/
 tests/Fixtures/bookstore/build/
