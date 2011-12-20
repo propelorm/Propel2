@@ -8,36 +8,38 @@
  * @license    MIT License
  */
 
-namespace Propel\Generator\Util;
+namespace Propel\Generator\Manager;
 
 use Propel\Generator\Config\GeneratorConfigInterface;
+use Propel\Generator\Exception\InvalidArgumentException;
 
-use \InvalidArgumentException;
 use \PDO;
+use \PDOException;
+
+use \Exception;
 
 /**
  * Service class for managing SQL.
  *
  * @author     William Durand <william.durand1@gmail.com>
  */
-class SqlManager
+class SqlManager extends AbstractManager
 {
     /**
      * @var array
      */
     protected $connections;
+
     /**
      * @var GeneratorConfigInterface
      */
     protected $generatorConfig;
-    /**
-     * @var array
-     */
-    protected $dataModels;
+
     /**
      * @var array
      */
     protected $databases = null;
+
     /**
      * @var string
      */
@@ -91,22 +93,6 @@ class SqlManager
     public function getGeneratorConfig()
     {
         return $this->generatorConfig;
-    }
-
-    /**
-     * @param array $dataModels
-     */
-    public function setDataModels($dataModels)
-    {
-        $this->dataModels = $dataModels;
-    }
-
-    /**
-     * @return array
-     */
-    public function getDataModels()
-    {
-        return $this->dataModels;
     }
 
     /**

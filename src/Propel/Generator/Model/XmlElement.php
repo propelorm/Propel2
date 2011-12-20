@@ -10,7 +10,7 @@
 
 namespace Propel\Generator\Model;
 
-use \InvalidArgumentException;
+use Propel\Generator\Exception\InvalidArgumentException;
 
 /**
  * An abstract class for elements represented by XML tags (e.g. Column, Table).
@@ -19,7 +19,6 @@ use \InvalidArgumentException;
  */
 abstract class XmlElement
 {
-
     /**
      * The name => value attributes from XML.
      *
