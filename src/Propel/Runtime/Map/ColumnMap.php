@@ -83,13 +83,6 @@ class ColumnMap
     protected $phpName;
 
     /**
-     * The validators for this column
-     *
-     * @var array
-     */
-    protected $validators = array();
-
-    /**
      * The allowed values for an ENUM column
      *
      * @var array
@@ -428,21 +421,6 @@ class ColumnMap
     public function getRelatedColumn()
     {
         return $this->getRelatedTable()->getColumn($this->relatedColumnName);
-    }
-
-    public function addValidator($validator)
-    {
-        $this->validators[] = $validator;
-    }
-
-    public function hasValidators()
-    {
-        return count($this->validators) > 0;
-    }
-
-    public function getValidators()
-    {
-        return $this->validators;
     }
 
     /**

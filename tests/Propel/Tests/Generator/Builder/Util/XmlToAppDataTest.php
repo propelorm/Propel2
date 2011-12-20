@@ -54,7 +54,7 @@ class XmlToAppDataTest extends \PHPUnit_Framework_TestCase
         $schema = '<database name="foo"></database>';
         $xtad = new XmlToAppData();
         $appData = $xtad->parseString($schema);
-        $expectedDatabase = '<database name="foo" defaultIdMethod="native" defaultPhpNamingMethod="underscore" defaultTranslateMethod="none"/>';
+        $expectedDatabase = '<database name="foo" defaultIdMethod="native" defaultPhpNamingMethod="underscore"/>';
         $database = $appData->getDatabase();
         $this->assertEquals($expectedDatabase, $database->toString());
         $expectedAppData = "<app-data>\n$expectedDatabase\n</app-data>";
@@ -83,7 +83,7 @@ EOF;
         $appData = $xtad->parseFile($path);
         $expectedAppData = <<<EOF
 <app-data>
-<database name="foo" defaultIdMethod="native" defaultPhpNamingMethod="underscore" defaultTranslateMethod="none">
+<database name="foo" defaultIdMethod="native" defaultPhpNamingMethod="underscore">
   <table name="bar" phpName="Bar" idMethod="false" readOnly="false" reloadOnInsert="false" reloadOnUpdate="false" abstract="false">
     <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
   </table>
@@ -100,7 +100,7 @@ EOF;
         $appData = $xtad->parseFile($path);
         $expectedAppData = <<<EOF
 <app-data>
-<database name="foo" defaultIdMethod="native" defaultPhpNamingMethod="underscore" defaultTranslateMethod="none">
+<database name="foo" defaultIdMethod="native" defaultPhpNamingMethod="underscore">
   <table name="bar1" phpName="Bar1" idMethod="false" readOnly="false" reloadOnInsert="false" reloadOnUpdate="false" abstract="false">
     <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
   </table>
