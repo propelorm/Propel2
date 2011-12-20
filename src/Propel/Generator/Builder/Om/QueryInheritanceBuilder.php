@@ -89,12 +89,12 @@ class QueryInheritanceBuilder extends AbstractOMBuilder
     {
         $ancestorClassName = ClassTools::classname($this->getChild()->getAncestor());
         if ($this->getDatabase()->hasTableByPhpName($ancestorClassName)) {
-            return $this->getNewStubQueryBuilder($this->getDatabase()->getTableByPhpName($ancestorClassName))->getClassname();
+            return $this->getNewStubQueryBuilder($this->getDatabase()->getTableByPhpName($ancestorClassName))->getUnqualifiedClassname();
         } else {
             // find the inheritance for the parent class
             foreach ($this->getTable()->getChildrenColumn()->getChildren() as $child) {
                 if ($child->getClassName() == $ancestorClassName) {
-                    return $this->getNewStubQueryInheritanceBuilder($child)->getClassname();
+                    return $this->getNewStubQueryInheritanceBuilder($child)->getUnqualifiedClassname();
                 }
             }
         }
@@ -134,7 +134,7 @@ class QueryInheritanceBuilder extends AbstractOMBuilder
  * long as it does not already exist in the output directory.
  *
  */
-class "  .$this->getClassname() . " extends " . $baseClassname . " {
+class "  .$this->getUnqualifiedClassname() . " extends " . $baseClassname . " {
 ";
     }
 
@@ -202,7 +202,7 @@ class "  .$this->getClassname() . " extends " . $baseClassname . " {
 
         $script .= "
     /**
-     * Filters the query to target only " . $child->getClassname() . " objects.
+     * Filters the query to target only " . $child->getClassName() . " objects.
      */
     public function preSelect(ConnectionInterface \$con)
     {
@@ -217,7 +217,7 @@ class "  .$this->getClassname() . " extends " . $baseClassname . " {
 
         $script .= "
     /**
-     * Filters the query to target only " . $child->getClassname() . " objects.
+     * Filters the query to target only " . $child->getClassName() . " objects.
      */
     public function preUpdate(&\$values, ConnectionInterface \$con, \$forceIndividualSaves = false)
     {
@@ -232,7 +232,7 @@ class "  .$this->getClassname() . " extends " . $baseClassname . " {
 
         $script .= "
     /**
-     * Filters the query to target only " . $child->getClassname() . " objects.
+     * Filters the query to target only " . $child->getClassName() . " objects.
      */
     public function preDelete(ConnectionInterface \$con)
     {
@@ -256,7 +256,7 @@ class "  .$this->getClassname() . " extends " . $baseClassname . " {
         $script .= "
     /**
      * Issue a DELETE query based on the current ModelCriteria deleting all rows in the table
-     * Having the " . $child->getClassname() . " class.
+     * Having the " . $child->getClassName() . " class.
      * This method is called by ModelCriteria::deleteAll() inside a transaction
      *
      * @param ConnectionInterface \$con a connection object
@@ -278,7 +278,7 @@ class "  .$this->getClassname() . " extends " . $baseClassname . " {
     protected function addClassClose(&$script)
     {
         $script .= "
-} // " . $this->getClassname() . "
+} // " . $this->getUnqualifiedClassname() . "
 ";
     }
 }

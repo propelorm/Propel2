@@ -81,7 +81,7 @@ class TableMapBuilder extends AbstractOMBuilder
  * (i.e. if it's a text column type).
  *
  */
-class ".$this->getClassname()." extends \Propel\Runtime\Map\TableMap
+class ".$this->getUnqualifiedClassname()." extends \Propel\Runtime\Map\TableMap
 {
 ";
     }
@@ -133,7 +133,7 @@ class ".$this->getClassname()." extends \Propel\Runtime\Map\TableMap
     protected function addClassClose(&$script)
     {
         $script .= "
-} // " . $this->getClassname() . "
+} // " . $this->getUnqualifiedClassname() . "
 ";
         $this->applyBehaviorModifier('tableMapFilter', $script, "");
     }

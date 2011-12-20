@@ -39,6 +39,7 @@ class InterfaceBuilder extends AbstractObjectBuilder
         $table = $this->getTable();
         $tableName = $table->getName();
         $tableDesc = $table->getDescription();
+        $baseClassname = $this->getObjectBuilder()->getUnqualifiedClassname();
 
         $script .= "
 /**
@@ -60,7 +61,7 @@ class InterfaceBuilder extends AbstractObjectBuilder
  * long as it does not already exist in the output directory.
  *
  */
-interface ".$this->getClassname()." {
+interface ".$this->getUnqualifiedClassname()." {
 ";
     }
 
@@ -84,7 +85,7 @@ interface ".$this->getClassname()." {
     protected function addClassClose(&$script)
     {
         $script .= "
-} // " . $this->getClassname() . "
+} // " . $this->getUnqualifiedClassname() . "
 ";
     }
 

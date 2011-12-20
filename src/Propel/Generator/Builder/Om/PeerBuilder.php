@@ -118,7 +118,7 @@ class PeerBuilder extends AbstractPeerBuilder
 
         $script .= "
  */
-abstract class ".$this->getClassname(). $extendingPeerClass . " {
+abstract class ".$this->getUnqualifiedClassname(). $extendingPeerClass . " {
 ";
     }
 
@@ -152,7 +152,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         $this->applyBehaviorModifier('staticMethods', $script, '    ');
 
         $script .= "
-} // " . $this->getClassname() . "
+} // " . $this->getUnqualifiedClassname() . "
 ";
         $this->addStaticTableMapRegistration($script);
     }
@@ -166,7 +166,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         $script .= "
 // This is the static code needed to register the TableMap for this table with the main Propel class.
 //
-".$this->getClassName()."::buildTableMap();
+".$this->getUnqualifiedClassname()."::buildTableMap();
 
 ";
         $this->applyBehaviorModifier('peerFilter', $script, '');
@@ -174,7 +174,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 
     public function getTableMapClass()
     {
-        return $this->getStubObjectBuilder()->getClassname().'TableMap';
+        return $this->getStubObjectBuilder()->getUnqualifiedClassname() . 'TableMap';
     }
 
     public function getTablePhpName()
@@ -514,8 +514,8 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
      */
     static public function buildTableMap()
     {
-      \$dbMap = Propel::getServiceContainer()->getDatabaseMap(".$this->getClassname()."::DATABASE_NAME);
-      if (!\$dbMap->hasTable(".$this->getClassname()."::TABLE_NAME))
+      \$dbMap = Propel::getServiceContainer()->getDatabaseMap(static::DATABASE_NAME);
+      if (!\$dbMap->hasTable(static::TABLE_NAME))
       {
         \$dbMap->addTableObject(new ".$this->getTableMapClass()."());
       }
@@ -547,10 +547,10 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
     const CLASSKEY_".strtoupper($child->getKey())." = '" . $child->getKey() . "';
 ";
 
-            if (strtoupper($child->getClassname()) != strtoupper($child->getKey())) {
+            if (strtoupper($child->getClassName()) != strtoupper($child->getKey())) {
                 $script .= "
     /** A key representing a particular subclass */
-    const CLASSKEY_".strtoupper($child->getClassname())." = '" . $child->getKey() . "';
+    const CLASSKEY_".strtoupper($child->getClassName())." = '" . $child->getKey() . "';
 ";
             }
 

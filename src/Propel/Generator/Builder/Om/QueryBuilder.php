@@ -145,7 +145,7 @@ class QueryBuilder extends AbstractOMBuilder
         $script .= "
  *
  */
-abstract class ".$this->getClassname()." extends " . $parentClass . "
+abstract class ".$this->getUnqualifiedClassname()." extends " . $parentClass . "
 {
     ";
     }
@@ -217,7 +217,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
     protected function addClassClose(&$script)
     {
         $script .= "
-} // " . $this->getClassname() . "";
+} // " . $this->getUnqualifiedClassname() . "";
         $this->applyBehaviorModifier('queryFilter', $script, "");
     }
 

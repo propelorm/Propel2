@@ -35,7 +35,7 @@ class AddClassBehaviorBuilder extends AbstractOMBuilder
  * Test class for Additional builder enabled on the '$tableName' table.
  *
  */
-class ".$this->getClassname()."
+class ".$this->getUnqualifiedClassname()."
 {
 ";
     }
@@ -57,7 +57,7 @@ class ".$this->getClassname()."
     protected function addClassClose(&$script)
     {
         $script .= "
-} // " . $this->getClassname() . "
+} // " . $this->getUnqualifiedClassname() . "
 ";
     }
 }

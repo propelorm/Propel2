@@ -105,26 +105,46 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     abstract public function getUnprefixedClassname();
 
     /**
-     * Returns the prefixed classname that is being built by the current class.
-     * @return     string
-     * @see        DataModelBuilder#prefixClassname()
+     * return the unqualified classname (e.g. Book)
+     * @return string
      */
-    public function getClassname()
+    public function getUnqualifiedClassname()
     {
-        return $this->prefixClassname($this->getUnprefixedClassname());
+        return $this->getUnprefixedClassname();
+    }
+    
+    /**
+     * return the qualified classname (e.g. Model\Book)
+     * @return string
+     */
+    public function getQualifiedClassname()
+    {
+        if ($namespace = $this->getNamespace()) {
+            return $namespace . '\\' . $this->getUnqualifiedClassname();
+        } else {
+            return $this->getUnqualifiedClassname();
+        }
     }
 
     /**
-     * Returns the namespaced classname if there is a namespace, and the raw classname otherwise
+     * return the fully qualified classname (e.g. \Model\Book)
      * @return     string
      */
     public function getFullyQualifiedClassname()
     {
         if ($namespace = $this->getNamespace()) {
-            return $namespace . '\\' . $this->getClassname();
+            return '\\' . $this->getQualifiedClassname();
         } else {
-            return $this->getClassname();
+            return 'namespace\\' . $this->getQualifiedClassname();
         }
+    }
+    /**
+     * Returns FQCN alias of getFullyQualifiedClassname
+     * @return     string
+     */
+    public function getClassname()
+    {
+        return $this->getFullyQualifiedClassname();
     }
 
     /**
@@ -134,9 +154,9 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     public function getClasspath()
     {
         if ($this->getPackage()) {
-            $path = $this->getPackage() . '.' . $this->getClassname();
+            $path = $this->getPackage() . '.' . $this->getUnqualifiedClassname();
         } else {
-            $path = $this->getClassname();
+            $path = $this->getUnqualifiedClassname();
         }
 
         return $path;
@@ -148,7 +168,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      */
     public function getClassFilePath()
     {
-        return ClassTools::createFilePath($this->getPackagePath(), $this->getClassname());
+        return ClassTools::createFilePath($this->getPackagePath(), $this->getUnqualifiedClassname());
     }
 
     /**
@@ -207,7 +227,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
             return $builder->getFullyQualifiedClassname();
         }
         $namespace = $builder->getNamespace();
-        $class = $builder->getClassname();
+        $class = $builder->getUnqualifiedClassname();
 
         if (isset($this->declaredClasses[$namespace])
            && isset($this->declaredClasses[$namespace][$class])) {
@@ -270,7 +290,8 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         if (str_replace('\\Base', '', $namespace) == str_replace('\\Base', '', $this->getNamespace())) {
             return true;
         }
-        if (('' == $namespace && 'Base' == $this->getNamespace()) && str_replace(array('Peer','Query'), '', $class) == str_replace(array('Peer','Query'), '', $this->getClassname())) {
+        if (('' == $namespace && 'Base' == $this->getNamespace()) 
+                && str_replace(array('Peer','Query'), '', $class) == str_replace(array('Peer','Query'), '', $this->getUnqualifiedClassname())) {
             return true;
         }
     }
@@ -302,7 +323,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      */
     public function declareClassFromBuilder($builder, $aliasPrefix = false)
     {
-        return $this->declareClassNamespacePrefix($builder->getClassname(), $builder->getNamespace(), $aliasPrefix);
+        return $this->declareClassNamespacePrefix($builder->getUnqualifiedClassname(), $builder->getNamespace(), $aliasPrefix);
     }
 
     public function declareClasses()

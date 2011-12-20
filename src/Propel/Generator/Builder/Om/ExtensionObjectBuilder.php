@@ -62,7 +62,7 @@ class ExtensionObjectBuilder extends AbstractObjectBuilder
  * long as it does not already exist in the output directory.
  *
  */
-".($table->isAbstract() ? "abstract " : "")."class ".$this->getClassname()." extends $baseClassname {
+".($table->isAbstract() ? "abstract " : "")."class ".$this->getUnqualifiedClassname()." extends $baseClassname {
 ";
     }
 
@@ -85,7 +85,7 @@ class ExtensionObjectBuilder extends AbstractObjectBuilder
     protected function addClassClose(&$script)
     {
         $script .= "
-} // " . $this->getClassname() . "
+} // " . $this->getUnqualifiedClassname() . "
 ";
         $this->applyBehaviorModifier('extensionObjectFilter', $script, "");
     }

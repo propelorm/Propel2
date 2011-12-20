@@ -104,7 +104,7 @@ class ExtensionQueryInheritanceBuilder extends AbstractOMBuilder
  * long as it does not already exist in the output directory.
  *
  */
-class "  .$this->getClassname() . " extends " . $baseClassname . " {
+class "  .$this->getUnqualifiedClassname() . " extends " . $baseClassname . " {
 ";
     }
 
@@ -127,7 +127,7 @@ class "  .$this->getClassname() . " extends " . $baseClassname . " {
     protected function addClassClose(&$script)
     {
         $script .= "
-} // " . $this->getClassname() . "
+} // " . $this->getUnqualifiedClassname() . "
 ";
     }
 
