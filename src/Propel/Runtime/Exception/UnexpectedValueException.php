@@ -13,6 +13,6 @@ namespace Propel\Runtime\Exception;
 /**
  * @author William Durand <william.durand1@gmail.com>
  */
-class UnexpectedValueException extends \UnexpectedValueException
+class UnexpectedValueException extends \UnexpectedValueException implements ExceptionInterface
 {
 }

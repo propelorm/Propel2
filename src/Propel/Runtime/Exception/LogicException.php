@@ -13,6 +13,6 @@ namespace Propel\Runtime\Exception;
 /**
  * @author William Durand <william.durand1@gmail.com>
  */
-class LogicException extends \LogicException
+class LogicException extends \LogicException implements ExceptionInterface
 {
 }
