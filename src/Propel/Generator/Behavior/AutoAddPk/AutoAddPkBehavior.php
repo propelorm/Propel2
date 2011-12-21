@@ -8,7 +8,7 @@
  * @license    MIT License
  */
 
-namespace Propel\Generator\Behavior;
+namespace Propel\Generator\Behavior\AutoAddPk;
 
 use Propel\Generator\Model\Behavior;
 
