@@ -14,6 +14,8 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Finder\Finder;
 
+use Propel\Generator\Exception\RuntimeException;
+
 /**
  * @author William Durand <william.durand1@gmail.com>
  */
@@ -40,7 +42,7 @@ abstract class AbstractCommand extends Command
         $properties = array();
 
         if (false === $lines = @file($file)) {
-            throw new \Exception(sprintf('Unable to parse contents of "%s".', $file));
+            throw new RuntimeException(sprintf('Unable to parse contents of "%s".', $file));
         }
 
         foreach ($lines as $line) {
