@@ -111,6 +111,7 @@ class TestPrepare extends Command
         chdir($fixturesDir);
 
         $distributionFiles = array(
+            'build.properties.dist' => 'build.properties',
             'runtime-conf.xml.dist' => 'runtime-conf.xml',
         );
 
