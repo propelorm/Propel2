@@ -35,11 +35,6 @@ class SqlBuild extends Command
     const DEFAULT_MYSQL_ENGINE      = 'MyISAM';
 
     /**
-     * @var \Symfony\Component\Console\Output\OutputInterface
-     */
-    private $output;
-
-    /**
      * {@inheritdoc}
      */
     protected function configure()
