@@ -141,6 +141,7 @@ class TestPrepare extends Command
                 '--input-dir'   => '.',
                 '--output-dir'  => 'build/sql/',
                 '--platform'    => ucfirst($input->getOption('vendor')) . 'Platform',
+                '--verbose'		=> $input->getOption('vendor'),
             ));
 
             $command = $this->getApplication()->find('sql:build');
@@ -151,6 +152,7 @@ class TestPrepare extends Command
                 '--input-dir'   => '.',
                 '--output-dir'  => 'build/classes/',
                 '--platform'    => ucfirst($input->getOption('vendor')) . 'Platform',
+                '--verbose'		=> $input->getOption('vendor'),
             ));
 
             $command = $this->getApplication()->find('model:build');
