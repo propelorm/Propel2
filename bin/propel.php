@@ -13,4 +13,5 @@ use \Symfony\Component\Console\Application;
 $app = new Application('Propel', '2.0 (dev)');
 $app->add(new \Propel\Generator\Command\TestPrepare());
 $app->add(new \Propel\Generator\Command\SqlBuild());
+$app->add(new \Propel\Generator\Command\ModelBuild());
 $app->run();

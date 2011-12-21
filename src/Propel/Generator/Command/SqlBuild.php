@@ -84,7 +84,7 @@ class SqlBuild extends Command
 
         $manager->setValidate($input->getOption('validate'));
         $manager->setGeneratorConfig($generatorConfig);
-        $manager->setIncludedFiles($files);
+        $manager->setSchemas($files);
         $manager->setLoggerClosure(function($message) use ($output) {
             $output->writeln($message);
         });

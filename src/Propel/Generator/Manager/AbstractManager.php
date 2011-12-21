@@ -11,13 +11,14 @@
 namespace Propel\Generator\Manager;
 
 use Propel\Generator\Builder\Util\XmlToAppData;
-use Propel\Generator\Config\GeneratorConfig;
+use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Exception\BuildException;
 use Propel\Generator\Exception\EngineException;
 use Propel\Generator\Model\AppData;
 use Propel\Generator\Model\Database;
 
 use \DomDocument;
+use \Exception;
 
 /**
  * An abstract base Propel manager to perform work related to the XML schema file.
@@ -69,7 +70,12 @@ abstract class AbstractManager
      *
      * @var array
      */
-    protected $includedFiles = array();
+    protected $schemas = array();
+
+    /**
+     * @var string
+     */
+    protected $workingDirectory;
 
     /**
      * @var \closure
@@ -92,18 +98,35 @@ abstract class AbstractManager
     /**
      * @return array
      */
-    public function getIncludedFiles()
+    public function getSchemas()
     {
-        return $this->includedFiles;
+        return $this->schemas;
     }
 
     /**
      * @param  array
      */
-    public function setIncludedFiles($includedFiles)
+    public function setSchemas($schemas)
     {
-        $this->includedFiles = $includedFiles;
+        $this->schemas = $schemas;
     }
+
+    /**
+     * @param string $workingDirectory
+     */
+    public function setWorkingDirectory($workingDirectory)
+    {
+        $this->workingDirectory = $workingDirectory;
+    }
+
+    /**
+     * return string
+     */
+    public function getWorkingDirectory()
+    {
+        return $this->workingDirectory;
+    }
+
 
     /**
      * Return the data models that have been
@@ -190,7 +213,7 @@ abstract class AbstractManager
     {
         $ads = array();
         $totalNbTables   = 0;
-        $dataModelFiles  = $this->getIncludedFiles();
+        $dataModelFiles  = $this->getSchemas();
         $defaultPlatform = $this->getGeneratorConfig()->getConfiguredPlatform();
 
         // Make a transaction for each file
@@ -327,11 +350,19 @@ EOT
     /**
      * Gets the GeneratorConfig object for this manager or creates it on-demand.
      *
-     * @return     \Propel\Generator\Config\GeneratorConfig
+     * @return     \Propel\Generator\Config\GeneratorConfigInterface
      */
     protected function getGeneratorConfig()
     {
         return $this->generatorConfig;
+    }
+
+    /**
+     * @param GeneratorConfigInterface $generatorConfig
+     */
+    public function setGeneratorConfig(GeneratorConfigInterface $generatorConfig)
+    {
+        $this->generatorConfig = $generatorConfig;
     }
 
     protected function validate()
@@ -351,5 +382,33 @@ EOT
         } else {
             var_dump($message);
         }
+    }
+
+    /**
+     * Returns an array of properties as key/value pairs from an input file.
+     *
+     * @param string $file  A file properties.
+     * @return array        An array of properties as key/value pairs.
+     */
+    protected function getProperties($file)
+    {
+        $properties = array();
+
+        if (false === $lines = @file($file)) {
+            throw new Exception(sprintf('Unable to parse contents of "%s".', $file));
+        }
+
+        foreach ($lines as $line) {
+            $line = trim($line);
+
+            if ('' == $line || in_array($line[0], array('#', ';'))) {
+                continue;
+            }
+
+            $pos = strpos($line, '=');
+            $properties[trim(substr($line, 0, $pos))] = trim(substr($line, $pos + 1));
+        }
+
+        return $properties;
     }
 }
