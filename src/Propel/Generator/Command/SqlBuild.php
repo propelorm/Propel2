@@ -61,11 +61,8 @@ class SqlBuild extends Command
     {
         $manager = new SqlManager();
 
-        $buildProperties   = realpath($input->getOption('input-dir') . DIRECTORY_SEPARATOR . 'build.properties');
-        $defaultProperties = realpath(__DIR__.'/../../../../tools/generator/default.properties');
-
+        $buildProperties = realpath($input->getOption('input-dir') . DIRECTORY_SEPARATOR . 'build.properties');
         $generatorConfig = new GeneratorConfig(array_merge(
-            $this->getBuildProperties($defaultProperties),
             $this->getBuildProperties($buildProperties),
             array(
                 'propel.platform.class' => $input->getOption('platform'),
