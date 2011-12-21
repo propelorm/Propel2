@@ -32,7 +32,7 @@ class SqlBuild extends Command
 
     const DEFAULT_PLATFORM          = 'MysqlPlatform';
 
-    const DEFAULT_MYSQL_ENGINE		= 'MyISAM';
+    const DEFAULT_MYSQL_ENGINE      = 'MyISAM';
 
     /**
      * @var \Symfony\Component\Console\Output\OutputInterface
@@ -51,7 +51,7 @@ class SqlBuild extends Command
                 new InputOption('validate',     null, InputOption::VALUE_NONE,      ''),
                 new InputOption('platform',     null, InputOption::VALUE_REQUIRED,  'The platform', self::DEFAULT_PLATFORM),
                 new InputOption('schema-name',  null, InputOption::VALUE_REQUIRED,  'The schema name for RDBMS supporting them', ''),
-                new InputOption('encoding',		null, InputOption::VALUE_REQUIRED,  'The encoding to use for the database', ''),
+                new InputOption('encoding',     null, InputOption::VALUE_REQUIRED,  'The encoding to use for the database', ''),
                 new InputOption('table-prefix', null, InputOption::VALUE_REQUIRED,  'Add a prefix to all the table names in the database', ''),
                 // MySQL specific
                 new InputOption('mysql-engine', null, InputOption::VALUE_REQUIRED,  'MySQL engine (MyISAM, InnoDB, ...)', self::DEFAULT_MYSQL_ENGINE),
@@ -68,12 +68,12 @@ class SqlBuild extends Command
     {
         $manager = new SqlManager();
         $generatorConfig = new GeneratorConfig(array(
-            'propel.platform.class'		=> $input->getOption('platform'),
-            'propel.database.schema'	=> $input->getOption('schema-name'),
-            'propel.database.encoding'	=> $input->getOption('encoding'),
-            'propel.tablePrefix'		=> $input->getOption('table-prefix'),
+            'propel.platform.class'     => $input->getOption('platform'),
+            'propel.database.schema'    => $input->getOption('schema-name'),
+            'propel.database.encoding'  => $input->getOption('encoding'),
+            'propel.tablePrefix'        => $input->getOption('table-prefix'),
             // MySQL specific
-            'propel.mysql.tableType'	=> $input->getOption('mysql-engine'),
+            'propel.mysql.tableType'    => $input->getOption('mysql-engine'),
         ));
 
         $finder = new Finder();
