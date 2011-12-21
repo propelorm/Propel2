@@ -279,7 +279,7 @@ EOT
             $this->dataModelDbMap[$ad->getName()] = $ad->getDatabase(null, false)->getName();
         }
 
-        if (count($ads) > 1) {
+        if (count($ads) > 1 && $this->getGeneratorConfig()->getBuildProperty('packageObjectModel')) {
             $ad = $this->joinDataModels($ads);
             $this->dataModels = array($ad);
         } else {

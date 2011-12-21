@@ -28,8 +28,6 @@ class SqlBuild extends AbstractCommand
 {
     const DEFAULT_OUTPUT_DIRECTORY  = 'generated-sql';
 
-    const DEFAULT_MYSQL_ENGINE      = 'MyISAM';
-
     /**
      * {@inheritdoc}
      */
@@ -43,8 +41,6 @@ class SqlBuild extends AbstractCommand
             ->addOption('schema-name',  null, InputOption::VALUE_REQUIRED,  'The schema name for RDBMS supporting them', '')
             ->addOption('encoding',     null, InputOption::VALUE_REQUIRED,  'The encoding to use for the database', '')
             ->addOption('table-prefix', null, InputOption::VALUE_REQUIRED,  'Add a prefix to all the table names in the database', '')
-            // MySQL specific
-            ->addOption('mysql-engine', null, InputOption::VALUE_REQUIRED,  'MySQL engine (MyISAM, InnoDB, ...)', self::DEFAULT_MYSQL_ENGINE)
             ->setName('sql:build')
             ->setDescription('Build SQL files')
             ;
@@ -56,12 +52,14 @@ class SqlBuild extends AbstractCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $generatorConfig = new GeneratorConfig(array(
-            'propel.platform.class'     => $input->getOption('platform'),
-            'propel.database.schema'    => $input->getOption('schema-name'),
-            'propel.database.encoding'  => $input->getOption('encoding'),
-            'propel.tablePrefix'        => $input->getOption('table-prefix'),
+            'propel.platform.class'                 => $input->getOption('platform'),
+            'propel.database.schema'                => $input->getOption('schema-name'),
+            'propel.database.encoding'              => $input->getOption('encoding'),
+            'propel.tablePrefix'                    => $input->getOption('table-prefix'),
+            'propel.useLeftJoinsInDoJoinMethods'    => true,
             // MySQL specific
-            'propel.mysql.tableType'    => $input->getOption('mysql-engine'),
+            'propel.mysql.tableType'                => $input->getOption('mysql-engine'),
+            'propel.mysql.tableEngineKeyword'       => 'ENGINE',
         ));
 
         $filesystem = new Filesystem();

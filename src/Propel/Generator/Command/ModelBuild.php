@@ -40,7 +40,7 @@ class ModelBuild extends AbstractCommand
 
     const DEFAULT_TABLEMAP_BUILDER                  = '\Propel\Generator\Builder\Om\TableMapBuilder';
 
-    const DEFAULT_PLURALIZER                        = '\Propel\Generator\Builder\Util\DefaultEnglishPluralizer';
+    const DEFAULT_PLURALIZER                        = '\Propel\Generator\Builder\Util\StandardEnglishPluralizer';
 
     /**
      * {@inheritdoc}
@@ -73,8 +73,16 @@ class ModelBuild extends AbstractCommand
                 'The tablemap class generator name', self::DEFAULT_TABLEMAP_BUILDER)
             ->addOption('pluralizer-class', null, InputOption::VALUE_REQUIRED,
                 'The pluralizer class name', self::DEFAULT_PLURALIZER)
-            ->addOption('disable-identifier-quoting', null, InputOption::VALUE_NONE,
+            ->addOption('enable-identifier-quoting', null, InputOption::VALUE_NONE,
                 'Identifier quoting may result in undesired behavior (especially in Postgres)')
+            ->addOption('target-package', null, InputOption::VALUE_REQUIRED,
+                '', '')
+            ->addOption('enable-package-object-model', null, InputOption::VALUE_NONE,
+                '')
+            ->addOption('disable-namespace-auto-package', null, InputOption::VALUE_NONE,
+                'Disable namespace auto-packaging')
+            ->addOption('base-prefix', null, InputOption::VALUE_REQUIRED,
+                'Prefix for base classes', 'Base')
             ->setName('model:build')
             ->setDescription('Build the model classes based on Propel XML schemas')
             ;
@@ -98,7 +106,26 @@ class ModelBuild extends AbstractCommand
             'propel.builder.queryinheritancestub.class' => $input->getOption('query-inheritance-stub-class'),
             'propel.builder.tablemap.class'             => $input->getOption('tablemap-class'),
             'propel.builder.pluralizer.class'           => $input->getOption('pluralizer-class'),
-            'propel.disableIdentifierQuoting'           => $input->getOption('disable-identifier-quoting'),
+            'propel.disableIdentifierQuoting'           => !$input->getOption('enable-identifier-quoting'),
+            'propel.targetPackage'                      => $input->getOption('target-package'),
+            'propel.packageObjectModel'                 => $input->getOption('enable-package-object-model'),
+            'propel.namespace.autoPackage'              => !$input->getOption('disable-namespace-auto-package'),
+            'propel.basePrefix'                         => $input->getOption('base-prefix'),
+            'propel.addGenericAccessors'                => true,
+            'propel.addGenericMutators'                 => true,
+            'propel.addSaveMethod'                      => true,
+            'propel.addTimeStamp'                       => false,
+            'propel.addValidateMethod'                  => true,
+            'propel.addHooks'                           => true,
+            'propel.namespace.om'                       => 'Om',
+            'propel.namespace.map'                      => 'Map',
+            'propel.useLeftJoinsInDoJoinMethods'        => true,
+            'propel.emulateForeignKeyConstraints'       => false,
+            'propel.schema.autoPrefix = false'          => false,
+            'propel.dateTimeClass'                      => '\DateTime',
+            // MySQL specific
+            'propel.mysql.tableType'                    => $input->getOption('mysql-engine'),
+            'propel.mysql.tableEngineKeyword'           => 'ENGINE',
         ));
 
         $filesystem = new Filesystem();
