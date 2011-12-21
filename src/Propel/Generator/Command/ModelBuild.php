@@ -19,11 +19,7 @@ use Propel\Generator\Util\Filesystem;
  */
 class ModelBuild extends Command
 {
-    const DEFAULT_INPUT_DIRECTORY                   = '.';
-
     const DEFAULT_OUTPUT_DIRECTORY                  = 'generated-classes';
-
-    const DEFAULT_PLATFORM                          = 'MysqlPlatform';
 
     const DEFAULT_PEER_BUILDER                      = '\Propel\Generator\Builder\Om\PeerBuilder';
 
@@ -54,9 +50,7 @@ class ModelBuild extends Command
     {
         $this
             ->setDefinition(array(
-                new InputOption('input-dir',    null, InputOption::VALUE_REQUIRED,  'The input directory', self::DEFAULT_INPUT_DIRECTORY),
                 new InputOption('output-dir',   null, InputOption::VALUE_REQUIRED,  'The output directory', self::DEFAULT_OUTPUT_DIRECTORY),
-                new InputOption('platform',     null, InputOption::VALUE_REQUIRED,  'The platform', self::DEFAULT_PLATFORM),
             ))
             ->addOption('peer-class', null, InputOption::VALUE_REQUIRED,
                 'The peer class generator name', self::DEFAULT_PEER_BUILDER)
@@ -92,7 +86,8 @@ class ModelBuild extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $manager = new ModelManager();
+        parent::configure();
+
         $generatorConfig = new GeneratorConfig(array(
             'propel.platform.class'                     => $input->getOption('platform'),
             'propel.builder.peer.class'                 => $input->getOption('peer-class'),
@@ -109,19 +104,12 @@ class ModelBuild extends Command
             'propel.disableIdentifierQuoting'           => $input->getOption('disable-identifier-quoting'),
         ));
 
-        $finder = new Finder();
-        $files  = $finder
-            ->name('*schema.xml')
-            ->in($input->getOption('input-dir'))
-            ->depth(0)
-            ->files()
-            ;
-
         $filesystem = new Filesystem();
         $filesystem->mkdir($input->getOption('output-dir'));
 
+        $manager = new ModelManager();
         $manager->setGeneratorConfig($generatorConfig);
-        $manager->setSchemas($files);
+        $manager->setSchemas($this->getSchemas());
         $manager->setLoggerClosure(function($message) use ($input, $output) {
             if ($input->getOption('verbose')) {
                 $output->writeln($message);
