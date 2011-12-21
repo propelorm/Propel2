@@ -10,7 +10,7 @@
 
 namespace Propel\Generator\Model;
 
-use Propel\Generator\Exception\InvalidArgumentException;
+use Propel\Generator\Exception\BehaviorNotFoundException;
 
 /**
  * An abstract class for elements represented by XML tags (e.g. Column, Table).
@@ -133,12 +133,11 @@ abstract class XmlElement
 
     /**
      * Find the best class name for a given behavior
-     * Looks in build.properties for path like propel.behavior.[bname].class
-     * If not found, tries to autoload [Bname]Behavior
+     * If not found, tries to autoload \Propel\Generator\Behavior\[Bname]\[Bname]Behavior
      * If no success, returns 'Behavior'
      *
-     * @param  string $bname behavior name, e.g. 'timestampable'
-     * @return string        behavior class name, e.g. 'TimestampableBehavior'
+     * @param  string $bname A behavior name, e.g. 'timestampable'
+     * @return string A behavior class name, e.g. '\Propel\Generator\Behavior\Timestampable\TimestampableBehavior'
      */
     public function getConfiguredBehavior($bname)
     {
@@ -147,13 +146,15 @@ abstract class XmlElement
                 return $class;
             }
         }
-        // fallback: maybe the behavior is loaded or autoloaded
+
         $gen = new PhpNameGenerator();
-        if(class_exists($class = '\\Propel\\Generator\\Behavior\\' . $gen->generateName(array($bname, PhpNameGenerator::CONV_METHOD_PHPNAME)) . 'Behavior')) {
+        $phpName = $gen->generateName(array($bname, PhpNameGenerator::CONV_METHOD_PHPNAME));
+
+        if(class_exists($class = sprintf('\\Propel\\Generator\\Behavior\\%s\\%sBehavior', $phpName, $phpName))) {
             return $class;
         }
 
-        throw new InvalidArgumentException(sprintf('Unknown behavior "%s"; make sure you configured the propel.behavior.%s.class setting in your build.properties', $bname, $bname));
+        throw new BehaviorNotFoundException(sprintf('Unknown behavior "%s"', $bname));
     }
 
     /**
