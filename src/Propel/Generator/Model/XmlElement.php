@@ -155,7 +155,7 @@ abstract class XmlElement
             $class = sprintf('\\Propel\\Generator\\Behavior\\%s\\%sBehavior', $phpName, $phpName);
         }
 
-		if (class_exists($class)) {
+        if (class_exists($class)) {
             return $class;
         }
 
