@@ -26,6 +26,9 @@ use \PDO;
 use \PDOException;
 use \Exception;
 
+use \Monolog\Logger;
+use \Monolog\Handler\AbstractHandler;
+
 /**
  * Test for PropelPDO subclass.
  *
@@ -427,42 +430,42 @@ class PropelPDOTest extends BookstoreTestBase
 
         // save data to return to normal state after test
         $logger = $con->getLogger();
-        $testLog = new myLogger();
+        $logMethods = $con->getLogMethods();
 
+        $testLog = new Logger('debug');
+        $handler = new LastMessageHandler();
+        $testLog->pushHandler($handler);
         $con->setLogger($testLog);
-
-        $logEverything = array(
+        $con->setLogMethods(array(
             'exec',
             'query',
+            'execute',
             'beginTransaction',
             'commit',
             'rollBack',
-            'statement_execute'
-        );
-
-        Propel::getConfiguration(Registry::TYPE_OBJECT)->setParameter("debugpdo.logging.methods", $logEverything, false);
+        ));
         $con->useDebug(true);
 
         $con->beginTransaction();
         // test transaction log
-        $this->assertEquals('log: Begin transaction', $testLog->latestMessage, 'PropelPDO logs begin transation in debug mode');
+        $this->assertEquals('Begin transaction', $handler->latestMessage, 'PropelPDO logs begin transation in debug mode');
 
         $con->commit();
-        $this->assertEquals('log: Commit transaction', $testLog->latestMessage, 'PropelPDO logs commit transation in debug mode');
+        $this->assertEquals('Commit transaction', $handler->latestMessage, 'PropelPDO logs commit transation in debug mode');
 
         $con->beginTransaction();
         $con->rollBack();
-        $this->assertEquals('log: Rollback transaction', $testLog->latestMessage, 'PropelPDO logs rollback transation in debug mode');
+        $this->assertEquals('Rollback transaction', $handler->latestMessage, 'PropelPDO logs rollback transation in debug mode');
 
         $con->beginTransaction();
-        $testLog->latestMessage = '';
+        $handler->latestMessage = '';
         $con->beginTransaction();
-        $this->assertEquals('', $testLog->latestMessage, 'PropelPDO does not log nested begin transation in debug mode');
+        $this->assertEquals('', $handler->latestMessage, 'PropelPDO does not log nested begin transation in debug mode');
         $con->commit();
-        $this->assertEquals('', $testLog->latestMessage, 'PropelPDO does not log nested commit transation in debug mode');
+        $this->assertEquals('', $handler->latestMessage, 'PropelPDO does not log nested commit transation in debug mode');
         $con->beginTransaction();
         $con->rollBack();
-        $this->assertEquals('', $testLog->latestMessage, 'PropelPDO does not log nested rollback transation in debug mode');
+        $this->assertEquals('', $handler->latestMessage, 'PropelPDO does not log nested rollback transation in debug mode');
         $con->rollback();
 
         // test query log
@@ -473,30 +476,32 @@ class PropelPDOTest extends BookstoreTestBase
 
         $books = BookPeer::doSelect($c, $con);
         $latestExecutedQuery = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.TITLE LIKE 'Harry%s'";
-        $this->assertEquals('log: ' . $latestExecutedQuery, $testLog->latestMessage, 'PropelPDO logs queries and populates bound parameters in debug mode');
+        $this->assertEquals($latestExecutedQuery, $handler->latestMessage, 'PropelPDO logs queries and populates bound parameters in debug mode');
 
         BookPeer::doDeleteAll($con);
         $latestExecutedQuery = "DELETE FROM `book`";
-        $this->assertEquals('log: ' . $latestExecutedQuery, $testLog->latestMessage, 'PropelPDO logs deletion queries in debug mode');
+        $this->assertEquals($latestExecutedQuery, $handler->latestMessage, 'PropelPDO logs deletion queries in debug mode');
 
         $latestExecutedQuery = 'DELETE FROM book WHERE 1=1';
         $con->exec($latestExecutedQuery);
-        $this->assertEquals('log: ' . $latestExecutedQuery, $testLog->latestMessage, 'PropelPDO logs exec queries in debug mode');
+        $this->assertEquals($latestExecutedQuery, $handler->latestMessage, 'PropelPDO logs exec queries in debug mode');
 
         $con->commit();
 
         // return to normal state after test
         $con->setLogger($logger);
-        $config->setParameter("debugpdo.logging.methods", array('PropelPDO::exec', 'PropelPDO::query', 'DebugPDOStatement::execute'));
+        $con->setLogMethods($logMethods);
     }
 }
 
-class myLogger
+class LastMessageHandler extends AbstractHandler
 {
     public $latestMessage = '';
 
-    public function __call($method, $arguments)
+    public function handle(array $record)
     {
-        $this->latestMessage = $method . ': ' . array_shift($arguments);
+        $this->latestMessage = (string) $record['message'];
+
+        return false === $this->bubble;
     }
 }

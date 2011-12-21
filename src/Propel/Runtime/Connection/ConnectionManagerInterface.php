@@ -15,6 +15,16 @@ use Propel\Runtime\Adapter\AdapterInterface;
 interface ConnectionManagerInterface
 {
     /**
+     * @param string $name The datasource name associated to this connection
+     */
+    function setName($name);
+
+    /**
+     * @return string The datasource name associated to this connection
+     */
+    function getName();
+
+    /**
      * @param  \Propel\Runtime\Adapter\AdapterInterface $adapter
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface

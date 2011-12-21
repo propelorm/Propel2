@@ -153,11 +153,13 @@ class Propel
                     $conParams = $params['connection'];
                     if (isset($conParams['slaves'])) {
                         $manager = new ConnectionManagerMasterSlave();
+                        $manager->setName($name);
                         $manager->setReadConfiguration($conParams['slaves']);
                         unset($conParams['slaves']);
                         $manager->setWriteConfiguration($conParams);
                     } else {
                         $manager = new ConnectionManagerSingle();
+                        $manager->setName($name);
                         $manager->setConfiguration($conParams);
                     }
                     $serviceContainer->setConnectionManager($name, $manager);

@@ -136,7 +136,7 @@ Alternatively, you can ask Propel to always enable the debug mode for a particul
           <classname>Propel\Runtime\Connection\DebugPDO</classname>
 {% endhighlight %}
 
->**Tip**<br />You can use your own connection class there, but make sure that it implements `Propel\Runtime\Connection\ConnectionInterface`. Propel requires certain fixes to PDO API that are provided by this interface.
+>**Tip**<br />You can use your own connection class there, but make sure that it implements `Propel\Runtime\Connection\ConnectionInterface`.
 
 ### Counting Queries ###
 
@@ -179,7 +179,7 @@ echo $con->getLastExecutedQuery(); // 'SELECT * FROM my_obj where name = "foo"';
 
 ## Full Query Logging ##
 
-If you use both the debug mode and a logger, then Propel logs automatically all executed queries in the provided log handler (or the `propel.log` file if no custom handler is defined):
+If you use both the debug mode and a logger, then Propel logs automatically all executed queries in the provided log handler:
 
 {% highlight text %}
 Oct 04 00:00:18 propel-bookstore [debug] INSERT INTO publisher (`ID`,`NAME`) VALUES (NULL,'William Morrow')
@@ -191,6 +191,54 @@ Oct 04 00:00:18 propel-bookstore [debug] SELECT bookstore_employee_account.EMPLO
 {% endhighlight %}
 
 By default, Propel logs all SQL queries, together with the date of the query and the name of the connection.
+
+### Using a Custom Logger per Connection ###
+
+To log SQL queries for a connection, Propel first looks for a logger named after the connection itself, and falls back to the default logger if no custom logger is defined for the connection.
+
+Using the follofing config, Propel will log SQL queries from the `bookstore` datasource into a `propel_bookstore.log` file, and the SQL queries for all other datasources into a `propel.log` file.
+
+{% highlight xml %}
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<config>
+  <log>
+    <logger name="defaultLogger">
+      <type>stream</type>
+      <path>/var/log/propel.log</path>
+      <level>300</level>
+    </logger>
+    <logger name="bookstore">
+      <type>stream</type>
+      <path>/var/log/propel_bookstore.log</path>
+    </logger>
+  </log>
+  <propel>
+    ...
+  </propel>
+</config>
+{% endhighlight %}
+
+This allows you to define a different logger per connection, for instance to have different log files for each database, or to log only the queries from a MySQL database to a file while the ones from an Oracle database go into Syslog.
+
+### Logging More Events ###
+
+By default, the full query logger logs only executed SQL queries. But the `ConnectionWrapper` class can write into the log when most of its methods are called. To enable more methods, just set the list of logging methods to use by calling `ConnectionWrapper::setLogMethods()`, as follows:
+
+{% highlight php %}
+<?php
+$con = Propel::getConnection(MyObjPeer::DATABASE_NAME);
+$con->setLogMethods(array(
+  'exec',
+  'query',
+  'execute', // these first three are the default
+  'beginTransaction',
+  'commit',
+  'rollBack',
+  'bindValue'
+));
+{% endhighlight %}
+
+Note that this list takes into account the methods from both `ConnecitonWrapper` and `StatementWrapper`.
 
 ### Adding Profiler Information ###
 
@@ -282,30 +330,3 @@ $serviceContainer->setProfilerConfiguration(array(
    'innerGlue' => ' | '
 ));
 {% endhighlight %}
-
-### Changing the Log Level ###
-
-By default the connection log messages are logged at the `Propel::LOG_DEBUG` level. This can be changed by calling the `setLogLevel()` method on the connection object:
-
-{% highlight php %}
-<?php
-$con = Propel::getConnection(MyObjPeer::DATABASE_NAME);
-$con->setLogLevel(Propel::LOG_INFO);
-{% endhighlight %}
-
-Now all queries and bind param values will be logged at the INFO level.
-
-### Configuring a Different Full Query Logger ###
-
-By default the `ConnectionWrapper` connection logs queries and binds param values using the `Propel::log()` static method. As explained above, this method uses the log storage configured by the `<log>` tag in the `runtime-conf.xml` file.
-
-If you would like the queries to be logged using a different logger (e.g. to a different file, or with different ident, etc.), you can set a logger explicitly on the connection at runtime, using `Propel::setLogger()`:
-
-{% highlight php %}
-<?php
-$con = Propel::getConnection(MyObjPeer::DATABASE_NAME);
-$logger = Log::factory('syslog', LOG_LOCAL0, 'propel', array(), PEAR_LOG_INFO);
-$con->setLogger($logger);
-{% endhighlight %}
-
-This will not affect the general Propel logging, but only the full query logging. That way you can log the Propel error and warnings in one file, and the SQL queries in another file.

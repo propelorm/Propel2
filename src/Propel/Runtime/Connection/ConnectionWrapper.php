@@ -11,9 +11,9 @@
 namespace Propel\Runtime\Connection;
 
 use Propel\Runtime\Propel;
-use Propel\Runtime\Config\Configuration;
 use Propel\Runtime\Connection\Exception\RollbackException;
 use Propel\Runtime\Exception\InvalidArgumentException;
+use Monolog\Logger;
 
 /**
  * Wraps a Connection class, providing nested transactions, statement cache, and logging.
@@ -36,7 +36,12 @@ class ConnectionWrapper implements ConnectionInterface
      */
     const PROPEL_ATTR_CACHE_PREPARES    = -1;
 
-    /**
+     /**
+     * @var string The datasource name associated to this connection
+     */
+    protected $name;
+
+   /**
      * Whether or not the debug is enabled
      *
      * @var       boolean
@@ -90,36 +95,22 @@ class ConnectionWrapper implements ConnectionInterface
     protected $isCachePreparedStatements = false;
 
     /**
+     * The list of methods that trigger logging.
+     *
+     * @var array
+     */
+    protected $logMethods = array(
+        'exec',
+        'query',
+        'execute',
+    );
+
+    /**
      * Configured BasicLogger (or compatible) logger.
      *
      * @var       BasicLogger
      */
     protected $logger;
-
-    /**
-     * The log level to use for logging.
-     *
-     * @var       integer
-     */
-    protected $logLevel = Propel::LOG_DEBUG;
-
-    /**
-     * The runtime configuration
-     *
-     * @var       Configuration
-     */
-    protected $configuration;
-
-    /**
-     * The default value for runtime config item "debugpdo.logging.methods".
-     *
-     * @var       array
-     */
-    protected static $defaultLogMethods = array(
-        'exec',
-        'query',
-        'statement_execute',
-    );
 
     /**
      * Creates a Connection instance.
@@ -130,8 +121,24 @@ class ConnectionWrapper implements ConnectionInterface
     {
         $this->connection = $connection;
         if ($this->useDebug) {
-            $this->log('Opening connection', null, 'construct');
+            $this->log('Opening connection');
         }
+    }
+
+    /**
+     * @param string $name The datasource name associated to this connection
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * @return string The datasource name associated to this connection
+     */
+    public function getName()
+    {
+        return $this->name;
     }
 
     /**
@@ -140,30 +147,6 @@ class ConnectionWrapper implements ConnectionInterface
     public function getWrappedConnection()
     {
         return $this->connection;
-    }
-
-    /**
-     * Inject the runtime configuration
-     *
-     * @param     Configuration  $configuration
-     */
-    public function setConfiguration($configuration)
-    {
-        $this->configuration = $configuration;
-    }
-
-    /**
-     * Get the runtime configuration
-     *
-     * @return    Configuration
-     */
-    public function getConfiguration()
-    {
-        if (null === $this->configuration) {
-            $this->configuration = Propel::getConfiguration(Configuration::TYPE_OBJECT);
-        }
-
-        return $this->configuration;
     }
 
     /**
@@ -218,7 +201,7 @@ class ConnectionWrapper implements ConnectionInterface
         if (!$this->nestedTransactionCount) {
             $return = $this->connection->beginTransaction();
             if ($this->useDebug) {
-                $this->log('Begin transaction', null, 'beginTransaction');
+                $this->log('Begin transaction');
             }
             $this->isUncommitable = false;
         }
@@ -245,7 +228,7 @@ class ConnectionWrapper implements ConnectionInterface
                 } else {
                     $return = $this->connection->commit();
                     if ($this->useDebug) {
-                        $this->log('Commit transaction', null, 'commit');
+                        $this->log('Commit transaction');
                     }
                 }
             }
@@ -271,7 +254,7 @@ class ConnectionWrapper implements ConnectionInterface
             if ($opcount === 1) {
                 $return = $this->connection->rollBack();
                 if ($this->useDebug) {
-                    $this->log('Rollback transaction', null, 'rollBack');
+                    $this->log('Rollback transaction');
                 }
             } else {
                 $this->isUncommitable = true;
@@ -303,7 +286,7 @@ class ConnectionWrapper implements ConnectionInterface
             $this->nestedTransactionCount = 0;
 
             if ($this->useDebug) {
-                $this->log('Rollback transaction', null, 'forceRollBack');
+                $this->log('Rollback transaction');
             }
         }
 
@@ -391,7 +374,7 @@ class ConnectionWrapper implements ConnectionInterface
             $return = new StatementWrapper($sql, $this, $driver_options);
         }
         if ($this->useDebug) {
-            $this->log($sql, null, 'prepare');
+            $this->log($sql);
         }
 
         return $return;
@@ -408,7 +391,7 @@ class ConnectionWrapper implements ConnectionInterface
     {
         $return = $this->connection->exec($sql);
         if ($this->useDebug) {
-            $this->log($sql, null, 'exec');
+            $this->log($sql);
             $this->setLastExecutedQuery($sql);
             $this->incrementQueryCount();
         }
@@ -433,7 +416,7 @@ class ConnectionWrapper implements ConnectionInterface
 
         if ($this->useDebug) {
             $sql = $args[0];
-            $this->log($sql, null, 'query');
+            $this->log($sql);
             $this->setLastExecutedQuery($sql);
             $this->incrementQueryCount();
         }
@@ -553,92 +536,84 @@ class ConnectionWrapper implements ConnectionInterface
     }
 
     /**
-     * Sets the logging level to use for logging method calls and SQL statements.
-     *
-     * @param     integer  $level  Value of one of the Propel::LOG_* class constants.
+     * @param array $logMethods
      */
-    public function setLogLevel($level)
+    public function setLogMethods($logMethods)
     {
-        $this->logLevel = $level;
+        $this->logMethods = $logMethods;
     }
 
     /**
-     * Sets a logger to use.
-     *
-     * The logger will be used by this class to log various method calls and their properties.
-     *
-     * @param     BasicLogger  $logger  A Logger with an API compatible with BasicLogger (or PEAR Log).
+     * @return array
      */
-    public function setLogger($logger)
+    public function getLogMethods()
+    {
+        return $this->logMethods;
+    }
+
+    protected function isLogEnabledForMethod($methodName)
+    {
+        return in_array($methodName, $this->getLogMethods());
+    }
+
+    /**
+     * Set a logger to use for this connection.
+     *
+     * @param     \Monolog\Logger  A Monolog logger
+     */
+    public function setLogger(Logger $logger = null)
     {
         $this->logger = $logger;
     }
 
     /**
-     * Gets the logger in use.
+     * Gets the logger to use for this connection.
      *
-     * @return    BasicLogger  A Logger with an API compatible with BasicLogger (or PEAR Log).
+     * If no logger was set, returns the default logger from the Service Container.
+     *
+     * @return    \Monolog\Logger  A Monolog logger, or null.
      */
     public function getLogger()
     {
+        if (null === $this->logger) {
+            return Propel::getServiceContainer()->getLogger($this->getName());
+        }
+
         return $this->logger;
     }
 
     /**
-     * Logs the method call or SQL using the Propel::log() method or a registered logger class.
+     * Check if this connection has a configured logger.
      *
-     * @uses      self::getLogPrefix()
-     * @see       self::setLogger()
-     *
-     * @param     string   $msg  Message to log.
-     * @param     integer  $level  Log level to use; will use self::setLogLevel() specified level by default.
-     * @param     string   $methodName  Name of the method whose execution is being logged.
+     * @return boolean
      */
-    public function log($msg, $level = null, $methodName = null)
+    public function hasLogger()
     {
-        // If logging has been specifically disabled, this method won't do anything
-        if (!$this->getLoggingConfig('enabled', true)) {
-            return;
-        }
-
-        // If the method being logged isn't one of the ones to be logged, bail
-        if (!in_array($methodName, $this->getLoggingConfig('methods', static::$defaultLogMethods))) {
-            return;
-        }
-
-        // If a logging level wasn't provided, use the default one
-        if ($level === null) {
-            $level = $this->logLevel;
-        }
-
-        // We won't log empty messages
-        if (!$msg) {
-            return;
-        }
-
-        // Delegate the actual logging forward
-        if ($this->logger) {
-            $this->logger->log($msg, $level);
-        } else {
-            Propel::log($msg, $level);
-        }
+        return $this->logger !== null || Propel::getServiceContainer()->hasLogger($this->getName());
     }
 
     /**
-     * Returns a named configuration item from the Propel runtime configuration, from under the
-     * 'debugpdo.logging' prefix.  If such a configuration setting hasn't been set, the given default
-     * value will be returned.
+     * Logs the method call or the executed SQL statement.
      *
-     * @param     string  $key  Key for which to return the value.
-     * @param     mixed   $defaultValue  Default value to apply if config item hasn't been set.
-     *
-     * @return    mixed
+     * @param     string   $msg  Message to log.
      */
-    protected function getLoggingConfig($key, $defaultValue)
+    public function log($msg)
     {
-        return $this->getConfiguration()->getParameter("debugpdo.logging.$key", $defaultValue);
+        $backtrace = debug_backtrace();
+        if (!isset($backtrace[1]['function'])) {
+            return;
+        }
+        $callingMethod = $backtrace[1]['function'];
+        if (!$msg || !$this->hasLogger() || !$this->isLogEnabledForMethod($callingMethod)) {
+            return;
+        }
+
+        $this->getLogger()->addInfo($msg);
     }
 
+    /**
+     * Forward any call to a method not found to the wrapped connection.
+     */
     public function __call($method, $args)
     {
         return call_user_func_array(array($this->connection, $method), $args);
@@ -646,14 +621,13 @@ class ConnectionWrapper implements ConnectionInterface
 
     /**
      * If so configured, makes an entry to the log of the state of this object just prior to its destruction.
-     * Add Connection::__destruct to $defaultLogMethods to see this message
      *
      * @see       self::log()
      */
     public function __destruct()
     {
         if ($this->useDebug) {
-            $this->log('Closing connection', null, __METHOD__);
+            $this->log('Closing connection');
         }
         $this->connection = null;
     }
