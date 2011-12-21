@@ -9,10 +9,10 @@
  * @license    MIT License
  */
 
-namespace Propel\Tests\Generator\Behavior;
+namespace Propel\Tests\Generator\Behavior\AlternativeCodingStandards;
 
 use Propel\Generator\Model\Behavior;
-use Propel\Generator\Behavior\AlternativeCodingStandardsBehavior;
+use Propel\Generator\Behavior\AlternativeCodingStandards\AlternativeCodingStandardsBehavior;
 
 /**
  * Tests for TimestampableBehavior class

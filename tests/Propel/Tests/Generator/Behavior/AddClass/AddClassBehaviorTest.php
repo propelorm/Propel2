@@ -8,7 +8,7 @@
  * @license    MIT License
  */
 
-namespace Propel\Tests\Generator\Behavior;
+namespace Propel\Tests\Generator\Behavior\AddClass;
 
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 use Propel\Tests\Bookstore\Behavior\AddClassTableFooClass;

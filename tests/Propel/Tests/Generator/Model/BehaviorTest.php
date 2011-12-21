@@ -94,7 +94,7 @@ EOF;
     }
 
   /**
-   * @expectedException \InvalidArgumentException
+   * @expectedException \Propel\Generator\Exception\BehaviorNotFoundException
    */
     public function testUnkownBehavior()
     {
