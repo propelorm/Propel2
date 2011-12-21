@@ -32,10 +32,9 @@ abstract class AbstractCommand extends Command
     protected function configure()
     {
         $this
-            ->setDefinition(array(
-                new InputOption('input-dir',    null, InputOption::VALUE_REQUIRED,  'The input directory', self::DEFAULT_INPUT_DIRECTORY),
-                new InputOption('platform',     null, InputOption::VALUE_REQUIRED,  'The platform', self::DEFAULT_PLATFORM),
-            ));
+            ->addOption('input-dir', null, InputOption::VALUE_REQUIRED,  'The input directory', self::DEFAULT_INPUT_DIRECTORY)
+            ->addOption('platform',  null, InputOption::VALUE_REQUIRED,  'The platform', self::DEFAULT_PLATFORM)
+            ;
     }
 
     protected function getBuildProperties($file)

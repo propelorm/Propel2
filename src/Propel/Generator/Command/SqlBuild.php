@@ -38,16 +38,13 @@ class SqlBuild extends AbstractCommand
         parent::configure();
 
         $this
-            ->setDefinition(array(
-                new InputOption('output-dir',   null, InputOption::VALUE_REQUIRED,  'The output directory', self::DEFAULT_OUTPUT_DIRECTORY),
-                new InputOption('validate',     null, InputOption::VALUE_NONE,      ''),
-                new InputOption('platform',     null, InputOption::VALUE_REQUIRED,  'The platform', self::DEFAULT_PLATFORM),
-                new InputOption('schema-name',  null, InputOption::VALUE_REQUIRED,  'The schema name for RDBMS supporting them', ''),
-                new InputOption('encoding',     null, InputOption::VALUE_REQUIRED,  'The encoding to use for the database', ''),
-                new InputOption('table-prefix', null, InputOption::VALUE_REQUIRED,  'Add a prefix to all the table names in the database', ''),
-                // MySQL specific
-                new InputOption('mysql-engine', null, InputOption::VALUE_REQUIRED,  'MySQL engine (MyISAM, InnoDB, ...)', self::DEFAULT_MYSQL_ENGINE),
-            ))
+            ->addOption('output-dir',   null, InputOption::VALUE_REQUIRED,  'The output directory', self::DEFAULT_OUTPUT_DIRECTORY)
+            ->addOption('validate',     null, InputOption::VALUE_NONE,      '')
+            ->addOption('schema-name',  null, InputOption::VALUE_REQUIRED,  'The schema name for RDBMS supporting them', '')
+            ->addOption('encoding',     null, InputOption::VALUE_REQUIRED,  'The encoding to use for the database', '')
+            ->addOption('table-prefix', null, InputOption::VALUE_REQUIRED,  'Add a prefix to all the table names in the database', '')
+            // MySQL specific
+            ->addOption('mysql-engine', null, InputOption::VALUE_REQUIRED,  'MySQL engine (MyISAM, InnoDB, ...)', self::DEFAULT_MYSQL_ENGINE)
             ->setName('sql:build')
             ->setDescription('Build SQL files')
             ;
@@ -73,7 +70,7 @@ class SqlBuild extends AbstractCommand
         $manager = new SqlManager();
         $manager->setValidate($input->getOption('validate'));
         $manager->setGeneratorConfig($generatorConfig);
-        $manager->setSchemas($this->getSchemas());
+        $manager->setSchemas($this->getSchemas($input));
         $manager->setLoggerClosure(function($message) use ($input, $output) {
             if ($input->getOption('verbose')) {
                 $output->writeln($message);

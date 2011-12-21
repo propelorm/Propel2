@@ -2,7 +2,6 @@
 
 namespace Propel\Generator\Command;
 
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -17,7 +16,7 @@ use Propel\Generator\Util\Filesystem;
  * @author Florian Klein <florian.klein@free.fr>
  * @author William Durand <william.durand1@gmail.com>
  */
-class ModelBuild extends Command
+class ModelBuild extends AbstractCommand
 {
     const DEFAULT_OUTPUT_DIRECTORY                  = 'generated-classes';
 
@@ -48,10 +47,10 @@ class ModelBuild extends Command
      */
     protected function configure()
     {
+		parent::configure();
+
         $this
-            ->setDefinition(array(
-                new InputOption('output-dir',   null, InputOption::VALUE_REQUIRED,  'The output directory', self::DEFAULT_OUTPUT_DIRECTORY),
-            ))
+            ->addOption('output-dir', null, InputOption::VALUE_REQUIRED, 'The output directory', self::DEFAULT_OUTPUT_DIRECTORY)
             ->addOption('peer-class', null, InputOption::VALUE_REQUIRED,
                 'The peer class generator name', self::DEFAULT_PEER_BUILDER)
             ->addOption('peer-stub-class', null, InputOption::VALUE_REQUIRED,
@@ -86,8 +85,6 @@ class ModelBuild extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        parent::configure();
-
         $generatorConfig = new GeneratorConfig(array(
             'propel.platform.class'                     => $input->getOption('platform'),
             'propel.builder.peer.class'                 => $input->getOption('peer-class'),
@@ -109,7 +106,7 @@ class ModelBuild extends Command
 
         $manager = new ModelManager();
         $manager->setGeneratorConfig($generatorConfig);
-        $manager->setSchemas($this->getSchemas());
+        $manager->setSchemas($this->getSchemas($input));
         $manager->setLoggerClosure(function($message) use ($input, $output) {
             if ($input->getOption('verbose')) {
                 $output->writeln($message);
