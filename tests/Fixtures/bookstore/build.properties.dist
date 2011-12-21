@@ -30,8 +30,3 @@ propel.database.password                = ##DATABASE_PASSWORD##
 # propel.database.createUrl = (doesn't apply for SQLite, since db is auto-created)
 
 propel.targetPackage                    = bookstore
-
-# We need to test behavior hooks
-propel.behavior.test_all_hooks.class    = \Propel\Tests\Helpers\Bookstore\Behavior\Testallhooksbehavior
-propel.behavior.do_nothing.class        = \Propel\Tests\Helpers\Bookstore\Behavior\DonothingBehavior
-propel.behavior.add_class.class         = \Propel\Tests\Helpers\Bookstore\Behavior\AddClassBehavior

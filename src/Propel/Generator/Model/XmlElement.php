@@ -147,10 +147,15 @@ abstract class XmlElement
             }
         }
 
-        $gen = new PhpNameGenerator();
-        $phpName = $gen->generateName(array($bname, PhpNameGenerator::CONV_METHOD_PHPNAME));
+        if (false !== strpos($bname, '\\')) {
+            $class = $bname;
+        } else {
+            $gen = new PhpNameGenerator();
+            $phpName = $gen->generateName(array($bname, PhpNameGenerator::CONV_METHOD_PHPNAME));
+            $class = sprintf('\\Propel\\Generator\\Behavior\\%s\\%sBehavior', $phpName, $phpName);
+        }
 
-        if(class_exists($class = sprintf('\\Propel\\Generator\\Behavior\\%s\\%sBehavior', $phpName, $phpName))) {
+		if (class_exists($class)) {
             return $class;
         }
 
