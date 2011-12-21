@@ -122,8 +122,10 @@ class ModelBuild extends Command
 
         $manager->setGeneratorConfig($generatorConfig);
         $manager->setSchemas($files);
-        $manager->setLoggerClosure(function($message) use ($output) {
-            $output->writeln($message);
+        $manager->setLoggerClosure(function($message) use ($input, $output) {
+            if ($input->getOption('verbose')) {
+                $output->writeln($message);
+            }
         });
         $manager->setWorkingDirectory($input->getOption('output-dir'));
 

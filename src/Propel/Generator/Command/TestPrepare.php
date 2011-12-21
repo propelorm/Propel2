@@ -2,6 +2,7 @@
 
 namespace Propel\Generator\Command;
 
+use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -89,7 +90,7 @@ class TestPrepare extends Command
             $this->buildFixtures($fixturesDir, $input, $output);
         } else {
             foreach ($this->fixturesDirs as $fixturesDir) {
-                $this->buildFixtures($this->root.'/tests/Fixtures/'.$fixturesDir, $input, $output);
+                $this->buildFixtures('tests/Fixtures/'.$fixturesDir, $input, $output);
             }
         }
     }
@@ -105,12 +106,11 @@ class TestPrepare extends Command
             return;
         }
 
-        $output->write(sprintf('Building fixtures in <info>%s</info>... ', $fixturesDir));
+        $output->write(sprintf('Building fixtures in <info>%-40s</info> ', $fixturesDir));
 
         chdir($fixturesDir);
 
         $distributionFiles = array(
-            'build.properties.dist' => 'build.properties',
             'runtime-conf.xml.dist' => 'runtime-conf.xml',
         );
 
@@ -132,12 +132,33 @@ class TestPrepare extends Command
         }
 
         if (is_file('schema.xml')) {
-            shell_exec(sprintf('"%s" main', $this->propelgen));
+            shell_exec(sprintf('"%s" convert-conf', $this->propelgen));
+
+            // use new commands
+            $in = new ArrayInput(array(
+                'command'	    => 'sql:build',
+                '--input-dir'   => '.',
+                '--output-dir'  => 'build/sql/',
+                '--platform'    => ucfirst($input->getOption('vendor')) . 'Platform',
+            ));
+
+            $command = $this->getApplication()->find('sql:build');
+            $command->run($in, $output);
+
+            $in = new ArrayInput(array(
+                'command'       => 'model:build',
+                '--input-dir'   => '.',
+                '--output-dir'  => 'build/classes/',
+                '--platform'    => ucfirst($input->getOption('vendor')) . 'Platform',
+            ));
+
+            $command = $this->getApplication()->find('model:build');
+            $command->run($in, $output);
         }
 
         shell_exec(sprintf('"%s" insert-sql', $this->propelgen));
 
-        $output->writeln('done.');
+        $output->writeln('OK');
 
         chdir($this->root);
     }
