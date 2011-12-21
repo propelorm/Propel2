@@ -156,7 +156,7 @@ class ModelManager extends AbstractManager
         }
 
         // skip unchanged files
-        if ($file->isFile() && $script == file_get_contents($file->getPathname)) {
+        if ($file->isFile() && $script == file_get_contents($file->getPathname())) {
             $this->log("\t-> (unchanged) " . $builder->getClassFilePath());
 
             return 0;
