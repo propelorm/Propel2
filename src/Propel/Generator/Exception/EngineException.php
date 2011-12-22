@@ -10,8 +10,6 @@
 
 namespace Propel\Generator\Exception;
 
-require_once 'phing/BuildException.php';
-
 /**
  * The base class of all exceptions thrown by the engine.
  *
@@ -19,6 +17,6 @@ require_once 'phing/BuildException.php';
  * @author     Daniel Rall <dlr@collab.net> (Torque)
  * @author     Jason van Zyl <jvz@apache.org> (Torque)
  */
-class EngineException extends \BuildException
+class EngineException extends BuildException
 {
 }
