@@ -66,6 +66,7 @@ abstract class AbstractCommand extends Command
     protected function getSchemas(InputInterface $input)
     {
         $finder = new Finder();
+
         return $finder
             ->name('*schema.xml')
             ->in($input->getOption('input-dir'))
