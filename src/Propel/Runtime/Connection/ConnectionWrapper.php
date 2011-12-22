@@ -13,7 +13,7 @@ namespace Propel\Runtime\Connection;
 use Propel\Runtime\Propel;
 use Propel\Runtime\Connection\Exception\RollbackException;
 use Propel\Runtime\Exception\InvalidArgumentException;
-use Monolog\Logger;
+use Propel\Runtime\Logger\LoggerInterface;
 
 /**
  * Wraps a Connection class, providing nested transactions, statement cache, and logging.
@@ -108,7 +108,7 @@ class ConnectionWrapper implements ConnectionInterface
     /**
      * Configured logger.
      *
-     * @var       \Monolog\Logger
+     * @var       \Propel\Runtime\Logger\LoggerInterface
      */
     protected $logger;
 
@@ -559,9 +559,9 @@ class ConnectionWrapper implements ConnectionInterface
     /**
      * Set a logger to use for this connection.
      *
-     * @param     \Monolog\Logger  A Monolog logger
+     * @param     \Propel\Runtime\Logger\LoggerInterface  A logger
      */
-    public function setLogger(Logger $logger = null)
+    public function setLogger(LoggerInterface $logger = null)
     {
         $this->logger = $logger;
     }
@@ -571,7 +571,7 @@ class ConnectionWrapper implements ConnectionInterface
      *
      * If no logger was set, returns the default logger from the Service Container.
      *
-     * @return    \Monolog\Logger  A Monolog logger, or null.
+     * @return    \Propel\Runtime\Logger\LoggerInterface  A logger, or null.
      */
     public function getLogger()
     {

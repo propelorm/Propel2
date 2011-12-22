@@ -124,7 +124,7 @@ interface ServiceContainerInterface
     /**
      * Get a profiler instance.
      *
-     * @return \Propel\Runtime\Util\Profiler.
+     * @return \Propel\Runtime\Util\Profiler
      */
     function getProfiler();
 
@@ -138,7 +138,7 @@ interface ServiceContainerInterface
     /**
      * Get a logger for a given datasource, or the default logger.
      *
-     * @return \Monolog\Logger
+     * @return \Propel\Runtime\Logger\LoggerInterface
      */
     function getLogger($name = 'defaultLogger');
 }

@@ -12,16 +12,16 @@ namespace Propel\Tests\Runtime\ServiceContainer;
 
 use Propel\Tests\Helpers\BaseTestCase;
 
-use Propel\Runtime\ServiceContainer\StandardServiceContainer;
-use Propel\Runtime\ServiceContainer\ServiceContainerInterface;
 use Propel\Runtime\Adapter\AdapterInterface;
+use Propel\Runtime\Adapter\Pdo\PdoConnection;
 use Propel\Runtime\Adapter\Pdo\SqliteAdapter;
 use Propel\Runtime\Adapter\Pdo\MysqlAdapter;
+use Propel\Runtime\Logger\Logger;
 use Propel\Runtime\Map\DatabaseMap;
 use Propel\Runtime\Connection\ConnectionManagerSingle;
-use Propel\Runtime\Adapter\Pdo\PdoConnection;
+use Propel\Runtime\ServiceContainer\StandardServiceContainer;
+use Propel\Runtime\ServiceContainer\ServiceContainerInterface;
 use Propel\Runtime\Util\Profiler;
-use Monolog\Logger;
 
 class StandardServiceContainerTest extends BaseTestCase
 {
