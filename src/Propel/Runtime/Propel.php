@@ -51,42 +51,42 @@ class Propel
     /**
      * A constant defining 'System is unusuable' logging level
      */
-    const LOG_EMERG = 0;
+    const LOG_EMERG = 550;
 
     /**
      * A constant defining 'Immediate action required' logging level
      */
-    const LOG_ALERT = 1;
+    const LOG_ALERT = 550;
 
     /**
      * A constant defining 'Critical conditions' logging level
      */
-    const LOG_CRIT = 2;
+    const LOG_CRIT = 500;
 
     /**
      * A constant defining 'Error conditions' logging level
      */
-    const LOG_ERR = 3;
+    const LOG_ERR = 400;
 
     /**
      * A constant defining 'Warning conditions' logging level
      */
-    const LOG_WARNING = 4;
+    const LOG_WARNING = 300;
 
     /**
      * A constant defining 'Normal but significant' logging level
      */
-    const LOG_NOTICE = 5;
+    const LOG_NOTICE = 200;
 
     /**
      * A constant defining 'Informational' logging level
      */
-    const LOG_INFO = 6;
+    const LOG_INFO = 200;
 
     /**
      * A constant defining 'Debug-level messages' logging level
      */
-    const LOG_DEBUG = 7;
+    const LOG_DEBUG = 100;
 
     /**
      * @var        Configuration Propel-specific configuration.
@@ -97,11 +97,6 @@ class Propel
      * @var \Propel\Runtime\ServiceContainer\ServiceContainerInterface
      */
     private static $serviceContainer;
-
-    /**
-     * @var        Log optional logger
-     */
-    private static $logger = null;
 
     /**
      * @var        bool Whether the object instance pooling is enabled
@@ -158,11 +153,13 @@ class Propel
                     $conParams = $params['connection'];
                     if (isset($conParams['slaves'])) {
                         $manager = new ConnectionManagerMasterSlave();
+                        $manager->setName($name);
                         $manager->setReadConfiguration($conParams['slaves']);
                         unset($conParams['slaves']);
                         $manager->setWriteConfiguration($conParams);
                     } else {
                         $manager = new ConnectionManagerSingle();
+                        $manager->setName($name);
                         $manager->setConfiguration($conParams);
                     }
                     $serviceContainer->setConnectionManager($name, $manager);
@@ -183,7 +180,14 @@ class Propel
                 $serviceContainer->setProfilerConfiguration($profilerConf);
             }
         }
-        self::$logger = null;
+        // set logger
+        if (isset($c['log'])) {
+            foreach ($c['log'] as $loggerConfiguration) {
+                $name = $loggerConfiguration['name'];
+                unset($loggerConfiguration['name']);
+                $serviceContainer->setLoggerConfiguration($name, $loggerConfiguration);
+            }
+        }
         self::$configuration = $c;
     }
 
@@ -345,68 +349,23 @@ class Propel
     }
 
     /**
-     * Returns true if a logger, for example PEAR::Log, has been configured,
-     * otherwise false.
+     * Returns true if a logger has been configured, otherwise false.
      *
      * @return     bool True if Propel uses logging
      */
     static public function hasLogger()
     {
-        if (null === self::$logger) {
-            self::configureLogging();
-        }
-
-        return self::$logger !== false;
+        return self::$serviceContainer->hasLogger();
     }
 
     /**
      * Get the configured logger.
      *
-     * @return     object Configured log class ([PEAR] Log or BasicLogger).
+     * @return     \Monolog\Logger Configured log class
      */
     static public function getLogger()
     {
-        if (null === self::$logger) {
-            self::configureLogging();
-        }
-
-        return self::$logger;
-    }
-
-    /**
-     * Configure the logging system, if config is specified in the runtime configuration.
-     */
-    protected static function configureLogging()
-    {
-        if (isset(self::$configuration['log']) && is_array(self::$configuration['log']) && count(self::$configuration['log'])) {
-            include_once 'Log.php'; // PEAR Log class
-            $c = self::$configuration['log'];
-            $type = isset($c['type']) ? $c['type'] : 'file';
-            $name = isset($c['name']) ? $c['name'] : './propel.log';
-            $ident = isset($c['ident']) ? $c['ident'] : 'propel';
-            $conf = isset($c['conf']) ? $c['conf'] : array();
-            $level = isset($c['level']) ? $c['level'] : PEAR_LOG_DEBUG;
-            self::$logger = Log::singleton($type, $name, $ident, $conf, $level);
-        } else {
-            self::$logger = false;
-        }
-    }
-
-    /**
-     * Override the configured logger.
-     *
-     * This is primarily for things like unit tests / debugging where
-     * you want to change the logger without altering the configuration file.
-     *
-     * You can use any logger class that implements the propel.logger.BasicLogger
-     * interface.  This interface is based on PEAR::Log, so you can also simply pass
-     * a PEAR::Log object to this method.
-     *
-     * @param      object The new logger to use. ([PEAR] Log or BasicLogger)
-     */
-    static public function setLogger($logger)
-    {
-        self::$logger = $logger;
+        return self::$serviceContainer->getLogger();
     }
 
     /**
@@ -421,25 +380,23 @@ class Propel
      */
     static public function log($message, $level = self::LOG_DEBUG)
     {
-        if (self::hasLogger()) {
-            $logger = self::getLogger();
+        if (self::$serviceContainer->hasLogger()) {
+            $logger = self::$serviceContainer->getLogger();
             switch ($level) {
-            case self::LOG_EMERG:
-                return $logger->log($message, $level);
-            case self::LOG_ALERT:
-                return $logger->alert($message);
-            case self::LOG_CRIT:
-                return $logger->crit($message);
-            case self::LOG_ERR:
-                return $logger->err($message);
-            case self::LOG_WARNING:
-                return $logger->warning($message);
-            case self::LOG_NOTICE:
-                return $logger->notice($message);
-            case self::LOG_INFO:
-                return $logger->info($message);
-            default:
-                return $logger->debug($message);
+                case self::LOG_EMERG:
+                case self::LOG_ALERT:
+                    return $logger->addAlert($message);
+                case self::LOG_CRIT:
+                    return $logger->addCritical($message);
+                case self::LOG_ERR:
+                    return $logger->addError($message);
+                case self::LOG_WARNING:
+                    return $logger->addWarning($message);
+                case self::LOG_NOTICE:
+                case self::LOG_INFO:
+                    return $logger->addInfo($message);
+                default:
+                    return $logger->addDebug($message);
             }
         }
 

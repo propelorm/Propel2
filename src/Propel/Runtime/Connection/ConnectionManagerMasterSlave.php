@@ -19,6 +19,11 @@ class ConnectionManagerMasterSlave implements ConnectionManagerInterface
 {
 
     /**
+     * @var string The datasource name associated to this connection
+     */
+    protected $name;
+
+    /**
      * @var array
      */
     protected $writeConfiguration;
@@ -42,6 +47,22 @@ class ConnectionManagerMasterSlave implements ConnectionManagerInterface
      * @var boolean Whether a call to getReadConnection() alsways returns a write connection.
      */
     protected $isForceMasterConnection = false;
+
+    /**
+     * @param string $name The datasource name associated to this connection
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * @return string The datasource name associated to this connection
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
 
     /**
      * For replication, whether to always force the use of a master connection.
@@ -121,6 +142,7 @@ class ConnectionManagerMasterSlave implements ConnectionManagerInterface
     {
         if (null === $this->writeConnection) {
             $this->writeConnection = ConnectionFactory::create($this->writeConfiguration, $adapter);
+            $this->writeConnection->setName($this->getName());
         }
 
         return $this->writeConnection;
@@ -149,6 +171,7 @@ class ConnectionManagerMasterSlave implements ConnectionManagerInterface
                 $key = $keys[mt_rand(0, count($keys) - 1)];
                 $configuration = $this->readConfiguration[$key];
                 $this->readConnection = ConnectionFactory::create($configuration, $adapter);
+                $this->readConnection->setName($this->getName());
             }
         }
 

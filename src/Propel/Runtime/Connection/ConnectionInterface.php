@@ -20,6 +20,16 @@ namespace Propel\Runtime\Connection;
 interface ConnectionInterface
 {
     /**
+     * @param string $name The datasource name associated to this connection
+     */
+    function setName($name);
+
+    /**
+     * @return string The datasource name associated to this connection
+     */
+    function getName();
+
+    /**
      * Turns off autocommit mode.
      *
      * While autocommit mode is turned off, changes made to the database via

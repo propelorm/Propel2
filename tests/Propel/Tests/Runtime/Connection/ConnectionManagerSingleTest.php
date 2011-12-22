@@ -18,6 +18,19 @@ use Propel\Runtime\Adapter\Pdo\SqliteAdapter;
 
 class ConnectionManagerSingleTest extends BaseTestCase
 {
+    public function testGetNameReturnsNullByDefault()
+    {
+        $manager = new ConnectionManagerSingle();
+        $this->assertNull($manager->getName());
+    }
+
+    public function testGetNameReturnsNameSetUsingSetName()
+    {
+        $manager = new ConnectionManagerSingle();
+        $manager->setName('foo');
+        $this->assertEquals('foo', $manager->getName());
+    }
+
     /**
      * @expectedException \Propel\Runtime\Exception\InvalidArgumentException
      */
@@ -35,6 +48,15 @@ class ConnectionManagerSingleTest extends BaseTestCase
         $this->assertInstanceOf('Propel\Runtime\Connection\ConnectionWrapper', $con);
         $pdo = $con->getWrappedConnection();
         $this->assertInstanceOf('Propel\Runtime\Adapter\Pdo\PdoConnection', $pdo);
+    }
+
+    public function testGetWriteConnectionReturnsAConnectionNamedAfterTheManager()
+    {
+        $manager = new ConnectionManagerSingle();
+        $manager->setName('foo');
+        $manager->setConfiguration(array('dsn' => 'sqlite::memory:'));
+        $con = $manager->getWriteConnection(new SqliteAdapter());
+        $this->assertEquals('foo', $con->getName());
     }
 
     public function testGetReadConnectionReturnsWriteConnection()

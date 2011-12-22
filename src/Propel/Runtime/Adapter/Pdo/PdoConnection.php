@@ -21,6 +21,27 @@ use \PDO;
 class PdoConnection extends PDO implements ConnectionInterface
 {
     /**
+     * @var string The datasource name associated to this connection
+     */
+    protected $name;
+
+    /**
+     * @param string $name The datasource name associated to this connection
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * @return string The datasource name associated to this connection
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
      * Creates a PDO instance representing a connection to a database.
      */
     public function __construct($dsn, $user = null, $password = null, array $options = null)

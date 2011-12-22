@@ -9,23 +9,58 @@ Propel provides tools to monitor and debug your model. Whether you need to check
 
 ## Propel Logs ##
 
-Propel uses the logging facility configured in `runtime-conf.xml` to record errors, warnings, and debug information.
+Propel uses [Monolog](https://github.com/Seldaek/monolog) to log errors, warnings, and debug information.
 
-By default Propel will attempt to use the Log framework that is distributed with PEAR. If you are not familiar with it, check its [online documentation](http://www.indelible.org/php/Log/guide.html). It is also easy to configure Propel to use your own logging framework -- or none at all.
+You can set the Propel loggers by configuration (in `runtime-conf.xml`), or directly in the service container.
+
+### Setting a Logger Manually ###
+
+By default, Propel uses a single logger called 'defaultLogger'. To enable logging, just set this logger using Propel's `ServiceContainer`:
+
+{% highlight php %}
+<?php
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
+$logger = new Logger('defaultLogger');
+$logger->pushHandler(new StreamHandler('php://stderr'));
+Propel::getServiceContainer()->setLogger('defaultLogger', $logger);
+{% endhighlight %}
+
+Propel can use specialized loggers for each connection. For instance, you may want to log the queries for a MySQL database in a file, and the errors of the Propel runtime in another file. To do so, just set another logger using the datasource name, as follows:
+
+{% highlight php %}
+<?php
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
+$defaultLogger = new Logger('defaultLogger');
+$defaultLogger->pushHandler(new StreamHandler('/var/log/propel.log', Logger::WARNING));
+Propel::getServiceContainer()->setLogger('defaultLogger', $defaultLogger);
+$queryLogger = new Logger('bookstore');
+$queryLogger->pushHandler(new StreamHandler('/var/log/propel_bookstore.log'));
+Propel::getServiceContainer()->setLogger('bookstore', $queryLogger);
+{% endhighlight %}
+
+>**Tip**<br/>If you don't configure a logger for a particular connection, Propel falls back to the default logger.
 
 ### Logger Configuration ###
 
-The Propel log handler is configured in the `<log>` section of your project's `runtime-conf.xml` file. Here is the accepted format for this section with the default values that Propel uses:
+Alternatively, you can configure the logger to use via `runtime-conf.xml`, under the `<log>` section. Configuration only allows one handler per logger, and only from a subset of handler types, but this is enough for most use cases.
+
+Here is the way to define the same loggers as in the previous snippet using configuration:
 
 {% highlight xml %}
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <config>
   <log>
-    <type>file</type>
-    <name>./propel.log</name>
-    <ident>propel</ident>
-    <level>7</level> <!-- PEAR_LOG_DEBUG -->
-    <conf></conf>
+    <logger name="defaultLogger">
+      <type>stream</type>
+      <path>/var/log/propel.log</path>
+      <level>300</level>
+    </logger>
+    <logger name="bookstore">
+      <type>stream</type>
+      <path>/var/log/propel_bookstore.log</path>
+    </logger>
   </log>
   <propel>
     ...
@@ -33,169 +68,43 @@ The Propel log handler is configured in the `<log>` section of your project's `r
 </config>
 {% endhighlight %}
 
-Using these parameters, Propel creates a `file` Log handler in the background, and keeps it for later use. You can do the same at runtime using the `Propel::setLogger()` method:
-
-{% highlight php %}
-<?php
-Propel::setLogger(Log::singleton($type = 'file', $name = './propel.log', $ident = 'propel', $conf = array(), $level = PEAR_LOG_DEBUG));
-{% endhighlight %}
-
-The meaning of each of the `<log>` nested elements may vary, depending on which log handler you are using. Most common accepted logger types are `file`, `console`, `syslog`, `display`, `error_log`, `firebug`, and `sqlite`. Refer to the [PEAR::Log](http://www.indelible.org/php/Log/guide.html#standard-log-handlers) documentation for more details on log handlers configuration and options.
-
-Note that the `<level>` tag needs to correspond to the integer represented by one of the `PEAR_LOG_*` constants:
-
-|Constant           |Value  |Description
-|-------------------|-------|-------------------------
-|PEAR_LOG_EMERG     |0      |System is unusable
-|PEAR_LOG_ALERT     |1      |Immediate action required
-|PEAR_LOG_CRIT      |2      |Critical conditions
-|PEAR_LOG_ERR       |3      |Error conditions
-|PEAR_LOG_WARNING   |4      |Warning conditions
-|PEAR_LOG_NOTICE    |5      |Normal but significant
-|PEAR_LOG_INFO      |6      |Informational
-|PEAR_LOG_DEBUG     |7      |Debug-level messages
+The meaning of each of the `<log>` nested elements may vary, depending on which log handler you are using. Accepted handler types in configuration are `stream`, `rotating_file`, and `syslog`. Refer to the [Monolog](https://github.com/Seldaek/monolog) documentation for more details on log handlers configuration and options.
 
 ### Logging Messages ###
 
-Use the static `Propel::log()` method to log a message using the configured log handler:
+The service container offers a `getLogger()` method which, when called without parameter, returns the 'defaultLogger'. You can use then use the logger to add messages in the usual Monolog way.
+
+{% highlight php %}
+<?php
+$logger = Propel::getServiceContainer()->getLogger();
+$logger->addInfo('This is a message');
+{% endhighlight %}
+
+Alternatively, use the static `Propel::log()` method, passing a log level as parameter:
 
 {% highlight php %}
 <?php
 $myObj = new MyObj();
 $myObj->setName('foo');
-Propel::log('uh-oh, something went wrong with ' . $myObj->getName(), Propel::LOG_ERR);
+Propel::log('uh-oh, something went wrong with ' . $myObj->getName(), Logger::ERROR);
 {% endhighlight %}
 
-You can log your own messages from the generated model objects by using their `log()` method, inherited from `BaseObject`:
+You can also log your own messages from the generated model objects by using their `log()` method, inherited from `BaseObject`:
 
 {% highlight php %}
 <?php
 $myObj = new MyObj();
-$myObj->log('uh-oh, something went wrong', Propel::LOG_ERR);
+$myObj->log('uh-oh, something went wrong', Logger::ERROR);
 {% endhighlight %}
 
 The log messages will show up in the log handler defined in `runtime-conf.xml` (`propel.log` file by default) as follows:
 
 {% highlight text %}
-Oct 04 00:00:18 [error] uh-oh, something went wrong with foo
-Oct 04 00:00:18 [error] MyObj: uh-oh, something went wrong
+[2011-12-12 00:29:31] defaultLogger.ERROR: uh-oh, something went wrong with foo
+[2011-12-12 00:29:31] defaultLogger.ERROR: MyObj: uh-oh, something went wrong
 {% endhighlight %}
 
 >**Tip**<br />All serious errors coming from the Propel core do not only issue a log message, they are also thrown as `PropelException`.
-
-### Using An Alternative PEAR Log Handler ###
-
-In many cases you may wish to integrate Propel's logging facility with the rest of your web application. In `runtime-conf.xml`, you can customize a different PEAR logger. Here are a few examples:
-
-_Example 1:_ Using `display` handler (for output to HTML)
-
-{% highlight xml %}
- <log>
-  <type>display</type>
-  <level>6</level> <!-- PEAR_LOG_INFO -->
- </log>
-{% endhighlight %}
-
-_Example 2:_ Using `syslog` handler
-
-{% highlight xml %}
- <log>
-  <type>syslog</type>
-  <name>8</name> <!-- LOG_USER -->
-  <ident>propel</ident>
-  <level>6</level>
- </log>
-{% endhighlight %}
-
-### Using A Custom Logger ###
-
-If you omit the `<log>` section of your `runtime-conf.xml`, then Propel will not setup _any_ logging for you. In this case, you can set a custom logging facility and pass it to Propel at runtime.
-
-Here's an example of how you could configure your own logger and then set Propel to use it:
-
-{% highlight php %}
-<?php
-require_once 'MyLogger.php';
-$logger = new MyLogger();
-require_once 'propel/Propel.php';
-Propel::setLogger($logger);
-Propel::init('/path/to/runtime-conf.php');
-{% endhighlight %}
-
-Your custom logger could be any object that implements a basic logger interface. Check the `BasicLogger` interface provided with the Propel runtime to see the methods that a logger must implement in order to be compatible with Propel. You do not actually have to implement this interface, but all the specified methods must be present in your container.
-
-Let's see an example of a simple log container suitable for use with Propel:
-
-{% highlight php %}
-<?php
-class MyLogger implements BasicLogger
-{
-  public function emergency($m)
-  {
-    $this->log($m, Propel::LOG_EMERG);
-  }
-  public function alert($m)
-  {
-    $this->log($m, Propel::LOG_ALERT);
-  }
-  public function crit($m)
-  {
-    $this->log($m, Propel::LOG_CRIT);
-  }
-  public function err($m)
-  {
-    $this->log($m, Propel::LOG_ERR);
-  }
-  public function warning($m)
-  {
-    $this->log($m, Propel::LOG_WARNING);
-  }
-  public function notice($m)
-  {
-    $this->log($m, Propel::LOG_NOTICE);
-  }
-  public function info($m)
-  {
-    $this->log($m, Propel::LOG_INFO);
-  }
-  public function debug($m)
-  {
-    $this->log($m, Propel::LOG_DEBUG);
-  }
-
-  public function log($message, $priority)
-  {
-    $color = $this->priorityToColor($priority);
-    echo '<p style="color: ' . $color . '">$message</p>';
-  }
-
-  private function priorityToColor($priority)
-  {
-     switch($priority) {
-       case Propel::LOG_EMERG:
-       case Propel::LOG_ALERT:
-       case Propel::LOG_CRIT:
-       case Propel::LOG_ERR:
-         return 'red';
-         break;
-       case Propel::LOG_WARNING:
-         return 'orange';
-         break;
-       case Propel::LOG_NOTICE:
-         return 'green';
-         break;
-       case Propel::LOG_INFO:
-         return 'blue';
-         break;
-       case Propel::LOG_DEBUG:
-         return 'grey';
-         break;
-     }
-  }
-}
-{% endhighlight %}
-
->**Tip**<br />There is also a bundled `MojaviLogAdapter` class which allows you to use a Mojavi logger with Propel.
 
 ## Debugging Database Activity ##
 
@@ -227,7 +136,7 @@ Alternatively, you can ask Propel to always enable the debug mode for a particul
           <classname>Propel\Runtime\Connection\DebugPDO</classname>
 {% endhighlight %}
 
->**Tip**<br />You can use your own connection class there, but make sure that it implements `Propel\Runtime\Connection\ConnectionInterface`. Propel requires certain fixes to PDO API that are provided by this interface.
+>**Tip**<br />You can use your own connection class there, but make sure that it implements `Propel\Runtime\Connection\ConnectionInterface`.
 
 ### Counting Queries ###
 
@@ -270,7 +179,7 @@ echo $con->getLastExecutedQuery(); // 'SELECT * FROM my_obj where name = "foo"';
 
 ## Full Query Logging ##
 
-If you use both the debug mode and a logger, then Propel logs automatically all executed queries in the provided log handler (or the `propel.log` file if no custom handler is defined):
+If you use both the debug mode and a logger, then Propel logs automatically all executed queries in the provided log handler:
 
 {% highlight text %}
 Oct 04 00:00:18 propel-bookstore [debug] INSERT INTO publisher (`ID`,`NAME`) VALUES (NULL,'William Morrow')
@@ -282,6 +191,54 @@ Oct 04 00:00:18 propel-bookstore [debug] SELECT bookstore_employee_account.EMPLO
 {% endhighlight %}
 
 By default, Propel logs all SQL queries, together with the date of the query and the name of the connection.
+
+### Using a Custom Logger per Connection ###
+
+To log SQL queries for a connection, Propel first looks for a logger named after the connection itself, and falls back to the default logger if no custom logger is defined for the connection.
+
+Using the following config, Propel will log SQL queries from the `bookstore` datasource into a `propel_bookstore.log` file, and the SQL queries for all other datasources into a `propel.log` file.
+
+{% highlight xml %}
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<config>
+  <log>
+    <logger name="defaultLogger">
+      <type>stream</type>
+      <path>/var/log/propel.log</path>
+      <level>300</level>
+    </logger>
+    <logger name="bookstore">
+      <type>stream</type>
+      <path>/var/log/propel_bookstore.log</path>
+    </logger>
+  </log>
+  <propel>
+    ...
+  </propel>
+</config>
+{% endhighlight %}
+
+This allows you to define a different logger per connection, for instance to have different log files for each database, or to log only the queries from a MySQL database to a file while the ones from an Oracle database go into Syslog.
+
+### Logging More Events ###
+
+By default, the full query logger logs only executed SQL queries. But the `ConnectionWrapper` class can write into the log when most of its methods are called. To enable more methods, just set the list of logging methods to use by calling `ConnectionWrapper::setLogMethods()`, as follows:
+
+{% highlight php %}
+<?php
+$con = Propel::getConnection(MyObjPeer::DATABASE_NAME);
+$con->setLogMethods(array(
+  'exec',
+  'query',
+  'execute', // these first three are the default
+  'beginTransaction',
+  'commit',
+  'rollBack',
+  'bindValue'
+));
+{% endhighlight %}
+
+Note that this list takes into account the methods from both `ConnectionWrapper` and `StatementWrapper`.
 
 ### Adding Profiler Information ###
 
@@ -373,30 +330,3 @@ $serviceContainer->setProfilerConfiguration(array(
    'innerGlue' => ' | '
 ));
 {% endhighlight %}
-
-### Changing the Log Level ###
-
-By default the connection log messages are logged at the `Propel::LOG_DEBUG` level. This can be changed by calling the `setLogLevel()` method on the connection object:
-
-{% highlight php %}
-<?php
-$con = Propel::getConnection(MyObjPeer::DATABASE_NAME);
-$con->setLogLevel(Propel::LOG_INFO);
-{% endhighlight %}
-
-Now all queries and bind param values will be logged at the INFO level.
-
-### Configuring a Different Full Query Logger ###
-
-By default the `ConnectionWrapper` connection logs queries and binds param values using the `Propel::log()` static method. As explained above, this method uses the log storage configured by the `<log>` tag in the `runtime-conf.xml` file.
-
-If you would like the queries to be logged using a different logger (e.g. to a different file, or with different ident, etc.), you can set a logger explicitly on the connection at runtime, using `Propel::setLogger()`:
-
-{% highlight php %}
-<?php
-$con = Propel::getConnection(MyObjPeer::DATABASE_NAME);
-$logger = Log::factory('syslog', LOG_LOCAL0, 'propel', array(), PEAR_LOG_INFO);
-$con->setLogger($logger);
-{% endhighlight %}
-
-This will not affect the general Propel logging, but only the full query logging. That way you can log the Propel error and warnings in one file, and the SQL queries in another file.

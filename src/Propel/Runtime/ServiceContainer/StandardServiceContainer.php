@@ -13,11 +13,13 @@ namespace Propel\Runtime\ServiceContainer;
 use Propel\Runtime\Adapter\AdapterFactory;
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Adapter\Exception\AdapterException;
+use Preopl\Runtime\Exception\UnexpectedValueException;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\ConnectionManagerInterface;
 use Propel\Runtime\Connection\ConnectionManagerSingle;
 use Propel\Runtime\Connection\ConnectionFactory;
 use Propel\Runtime\Map\DatabaseMap;
+use Monolog\Logger;
 
 class StandardServiceContainer implements ServiceContainerInterface
 {
@@ -65,6 +67,16 @@ class StandardServiceContainer implements ServiceContainerInterface
      * @var \Propel\Runtime\Util\Profiler
      */
     protected $profiler;
+
+    /**
+     * @var array[\Monolog\Logger] list of loggers
+     */
+    protected $loggers = array();
+
+    /**
+     * @var array
+     */
+    protected $loggerConfigurations = array();
 
     /**
      * @return string
@@ -383,6 +395,91 @@ class StandardServiceContainer implements ServiceContainerInterface
         }
 
         return $this->profiler;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function hasLogger($name = 'defaultLogger')
+    {
+        return null !== $this->getLogger($name);
+    }
+
+    /**
+     * Get a logger instance
+     *
+     * @return \Monolog\Logger
+     */
+    public function getLogger($name = 'defaultLogger')
+    {
+        if (!array_key_exists($name, $this->loggers)) {
+            $this->loggers[$name] = $this->buildLogger($name);
+        }
+
+        return $this->loggers[$name];
+    }
+
+    /**
+     * @param string $name the name of the logger to be set
+     * @param \Monolog\Logger $logger A logger instance
+     */
+    public function setLogger($name, Logger $logger)
+    {
+        $this->loggers[$name] = $logger;
+    }
+
+    protected function buildLogger($name = 'defaultLogger')
+    {
+        if (!isset($this->loggerConfigurations[$name])) {
+            if ('defaultLogger' == $name) {
+                return null;
+            } else {
+                // fallback to default logger
+                return $this->getLogger();
+            }
+        }
+        $logger = new Logger($name);
+        $configuration = $this->loggerConfigurations[$name];
+        switch ($configuration['type']) {
+            case 'stream':
+                $handler = new \Monolog\Handler\StreamHandler($configuration['path'], isset($configuration['level']) ? $configuration['level'] : null, isset($configuration['bubble']) ? $configuration['bubble'] : null);
+                break;
+            case 'rotating_file':
+                $handler = new \Monolog\Handler\RotatingFileHandler($configuration['path'], isset($configuration['max_files']) ? $configuration['max_files'] : null, isset($configuration['level']) ? $configuration['level'] : null, isset($configuration['bubble']) ? $configuration['bubble'] : null);
+                break;
+            case 'syslog':
+                $handler = new \Monolog\Handler\SyslogHandler($configuration['ident'], isset($configuration['facility']) ? $configuration['facility'] : null, isset($configuration['level']) ? $configuration['level'] : null, isset($configuration['bubble']) ? $configuration['bubble'] : null);
+                break;
+            default:
+                throw new UnexpectedValueException(sprintf('Handler type "%s" not supported by StandardServiceContainer. Try setting the Logger manually, or use another ServiceContainer.', $configuration['type']));
+                break;
+        }
+        $logger->pushHandler($handler);
+
+        return $logger;
+    }
+
+    /**
+     * Set the configuration for the logger of a given datasource.
+     *
+     * A logger configuration must contain a 'handlers' key defining one
+     * or more handlers of type stream, rotating_file, or syslog.
+     * You can also create more complex loggers by hand and set them directly
+     * using setLogger().
+     *
+     * @example
+     * <code>
+     * $sc->setLoggerConfiguration('bookstore', array(
+     *   'handlers' => array('stream' => array('path' => '/var/log/Propel.log'))
+     *  ));
+     * </code>
+     *
+     * @param string $name
+     * @param array $loggerConfiguration
+     */
+    public function setLoggerConfiguration($name, $loggerConfiguration)
+    {
+        $this->loggerConfigurations[$name] = $loggerConfiguration;
     }
 
     final private function __clone()

@@ -19,6 +19,7 @@ if (file_exists($file = __DIR__.'/vendor/.composer/autoload.php')) {
         'Propel\Runtime'    => __DIR__ . '/src',
         'Propel\Generator'  => __DIR__ . '/src',
         'Symfony\Component' => __DIR__ . '/vendor',
+        'Monolog'           => __DIR__ . '/vendor/Monolog/src/',
         'Foo'               => __DIR__ . '/tests/Fixtures/namespaced/build/classes',
         'Baz'               => __DIR__ . '/tests/Fixtures/namespaced/build/classes',
         'Propel\Tests'      => array(
