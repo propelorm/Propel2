@@ -196,7 +196,7 @@ By default, Propel logs all SQL queries, together with the date of the query and
 
 To log SQL queries for a connection, Propel first looks for a logger named after the connection itself, and falls back to the default logger if no custom logger is defined for the connection.
 
-Using the follofing config, Propel will log SQL queries from the `bookstore` datasource into a `propel_bookstore.log` file, and the SQL queries for all other datasources into a `propel.log` file.
+Using the following config, Propel will log SQL queries from the `bookstore` datasource into a `propel_bookstore.log` file, and the SQL queries for all other datasources into a `propel.log` file.
 
 {% highlight xml %}
 <?xml version="1.0" encoding="ISO-8859-1"?>
@@ -238,7 +238,7 @@ $con->setLogMethods(array(
 ));
 {% endhighlight %}
 
-Note that this list takes into account the methods from both `ConnecitonWrapper` and `StatementWrapper`.
+Note that this list takes into account the methods from both `ConnectionWrapper` and `StatementWrapper`.
 
 ### Adding Profiler Information ###
 

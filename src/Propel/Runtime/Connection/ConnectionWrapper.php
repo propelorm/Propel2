@@ -36,12 +36,12 @@ class ConnectionWrapper implements ConnectionInterface
      */
     const PROPEL_ATTR_CACHE_PREPARES    = -1;
 
-     /**
+    /**
      * @var string The datasource name associated to this connection
      */
     protected $name;
 
-   /**
+    /**
      * Whether or not the debug is enabled
      *
      * @var       boolean
@@ -106,16 +106,16 @@ class ConnectionWrapper implements ConnectionInterface
     );
 
     /**
-     * Configured BasicLogger (or compatible) logger.
+     * Configured logger.
      *
-     * @var       BasicLogger
+     * @var       \Monolog\Logger
      */
     protected $logger;
 
     /**
      * Creates a Connection instance.
      *
-     * @param ConnectionInterface $connection
+     * @param \Propel\Runtime\Connection\ConnectionInterface $connection
      */
     public function __construct(ConnectionInterface $connection)
     {
@@ -142,7 +142,7 @@ class ConnectionWrapper implements ConnectionInterface
     }
 
     /**
-     * @return ConnectionInterface
+     * @return \Propel\Runtime\Connection\ConnectionInterface
      */
     public function getWrappedConnection()
     {
