@@ -44,9 +44,6 @@
   <includepath classpath="${propel.home}/../../src" />
 
   <taskdef
-    name="propel-om"
-    classname="Propel.Generator.Task.PropelOMTaskCompat" />
-  <taskdef
     name="propel-data-dump"
     classname="Propel.Generator.Task.PropelDataDumpTaskCompat" />
   <taskdef
@@ -55,9 +52,6 @@
    <taskdef
     name="propel-schema-reverse"
     classname="Propel.Generator.Task.PropelSchemaReverseTaskCompat" />
-  <taskdef
-    name="propel-sql"
-    classname="Propel.Generator.Task.PropelSQLTaskCompat" />
   <taskdef
     name="propel-sql-diff"
     classname="Propel.Generator.Task.PropelSQLDiffTaskCompat" />
@@ -94,11 +88,8 @@
 
   <target
     name="main"
-  	depends="mysqli-check"
     description="==> generates sql + om classes">
 
-    <phingcall target="sql"/>
-    <phingcall target="om"/>
     <phingcall target="convert-conf"/>
   </target>
 
@@ -122,17 +113,6 @@
   <!-- to the base Turbine tables! The tables you require for your      -->
   <!-- project should be specified in project-schema.xml.               -->
   <!-- ================================================================ -->
-
-  <target
-    name="sql-check"
-    depends="check-run-only-on-schema-change"
-    if="propel.internal.runOnlyOnSchemaChange">
-    <uptodate
-      property="propel.internal.sql.uptodate"
-      targetfile="${propel.sql.dir}/${propel.schema.default.basename}.sql">
-      <srcfiles dir="${propel.schema.dir}" includes="**/${propel.schema.default.basename}.xml" />
-    </uptodate>
-  </target>
 
   <!--	temporary target to check whether postgres is being used with identifier quoting ON.
 		If so, a warning is issued, since identifier quoting is only paritally implemented & this point.  -->
@@ -158,59 +138,6 @@
 	</if>
   </target>
 
-	  <!--	temporary target to check whether mysqli is being used
-			If so, a warning is issued, since this is deprecated  -->
-	  <target name="mysqli-check">
-	  	<if>
-	  		<and>
-				<equals arg1="${propel.database}" arg2="mysqli"/>
-			</and>
-			<then>
-				<warn>ATTENTION: It appears you are using the mysqli driver.</warn>
-				<warn></warn>
-				<warn>This driver is no longer supported by Propel because Propel now uses PDO for database connections.</warn>
-				<warn>Please use mysqli driver instead.</warn>
-				<fail>Use 'mysql' instead of 'mysqli' for your propel.database property.</fail>
-			</then>
-		</if>
-	  </target>
-
-  <target
-    name="sql"
-    depends="sql-check,pgsql-quoting-check,mysqli-check"
-    unless="propel.internal.sql.uptodate"
-    description="==> generates the SQL for your project">
-
-    <echo message="+------------------------------------------+"/>
-    <echo message="|                                          |"/>
-    <echo message="| Generating SQL for YOUR Propel project!  |"/>
-    <echo message="|                                          |"/>
-    <echo message="+------------------------------------------+"/>
-
-    <phingcall target="sql-template"/>
-
-  </target>
-
-  <target name="sql-template">
-    <propel-sql
-      validate="${propel.schema.validate}"
-      xsd="${propel.schema.xsd.file}"
-      xsl="${propel.schema.xsl.file}"
-      outputDirectory="${propel.sql.dir}"
-      sqldbmap="${propel.sql.dir}/sqldb.map"
-      targetDatabase="${propel.database}"
-      packageObjectModel="${propel.packageObjectModel}"
-      url="${propel.database.url}"
-      userId="${propel.database.user}"
-      password="${propel.database.password}">
-      <mapper type="glob" from="${propel.sql.mapper.from}" to="${propel.sql.mapper.to}"/>
-      <schemafileset dir="${propel.schema.dir}"
-        includes="${propel.schema.sql.includes}"
-        excludes="${propel.schema.sql.excludes}"
-      />
-    </propel-sql>
-  </target>
-
   <!-- ================================================================ -->
   <!-- C R E A T E  T A R G E T  D A T A B A S E                        -->
   <!-- ================================================================ -->
@@ -227,7 +154,7 @@
   <target
     name="create-db"
     unless="propel.internal.manualCreation"
-    depends="create-db-check,mysqli-check"
+    depends="create-db-check"
     description="==> generates the target database">
 
     <fail message="create-db target temporarily disabled, while we replace creole components."/>
@@ -299,7 +226,7 @@
 
   <target
     name="sql-diff"
-    depends="sql-check,pgsql-quoting-check,mysqli-check"
+    depends="pgsql-quoting-check"
     unless="propel.internal.sql.uptodate"
     description="==> generates a SQL diff for your project">
 
@@ -337,7 +264,7 @@
 
   <target
     name="migration-status"
-    depends="sql-check,pgsql-quoting-check,mysqli-check"
+    depends="pgsql-quoting-check"
     unless="propel.internal.sql.uptodate"
     description="Lists the migrations left to be executed">
 
@@ -360,7 +287,7 @@
 
   <target
     name="migration-up"
-    depends="sql-check,pgsql-quoting-check,mysqli-check"
+    depends="pgsql-quoting-check"
     unless="propel.internal.sql.uptodate"
     description="Execute the next migration">
 
@@ -383,7 +310,7 @@
 
   <target
     name="migration-down"
-    depends="sql-check,pgsql-quoting-check,mysqli-check"
+    depends="pgsql-quoting-check"
     unless="propel.internal.sql.uptodate"
     description="Execute the next migration">
 
@@ -406,7 +333,7 @@
 
   <target
     name="migration"
-    depends="sql-check,pgsql-quoting-check,mysqli-check"
+    depends="pgsql-quoting-check"
     unless="propel.internal.sql.uptodate"
     description="Execute the next migration">
 
@@ -493,58 +420,6 @@
      </propel-data-dump>
   </target>
 
-  <!-- ================================================================ -->
-  <!-- G E N E R A T E  P R O J E C T  P E E R  B A S E D  O M          -->
-  <!-- ================================================================ -->
-  <!-- Generate the Peer-based object model for your project.           -->
-  <!-- These are in addition to the base Propel OM!                     -->
-  <!-- ================================================================ -->
-
-  <target
-    name="om-check"
-    depends="check-run-only-on-schema-change"
-    if="propel.internal.runOnlyOnSchemaChange">
-    <uptodate
-      property="propel.internal.om.uptodate"
-      targetfile="${propel.php.dir}/report.${propel.project}.om.generation">
-      <srcfiles dir="${propel.schema.dir}" includes="**/${propel.schema.om.includes}.xml" />
-    </uptodate>
-  </target>
-
-  <target
-    name="om"
-    depends="om-check,mysqli-check"
-    unless="propel.internal.om.uptodate"
-    description="==> generates the Peer-based object model for your project">
-
-    <echo message="+------------------------------------------+"/>
-    <echo message="|                                          |"/>
-    <echo message="| Generating Peer-based Object Model for   |"/>
-    <echo message="| YOUR Propel project!                     |"/>
-    <echo message="|                                          |"/>
-    <echo message="+------------------------------------------+"/>
-
-    <phingcall target="om-template"/>
-    <!--<phingcall target="om-tar"/>-->
-  </target>
-
-  <target name="om-template">
-    <propel-om
-      validate="${propel.schema.validate}"
-      xsd="${propel.schema.xsd.file}"
-      xsl="${propel.schema.xsl.file}"
-      outputDirectory="${propel.php.dir}"
-      targetDatabase="${propel.database}"
-      targetPackage="${propel.targetPackage}"
-      targetPlatform="${propel.targetPlatform}"
-      packageObjectModel="${propel.packageObjectModel}">
-      <schemafileset dir="${propel.schema.dir}"
-        includes="${propel.schema.om.includes}"
-        excludes="${propel.schema.om.excludes}"
-      />
-    </propel-om>
-  </target>
-
   <!-- ================================================================== -->
   <!-- X M L   R U N T I M E   C O N F   T O   P H P   A R R A Y          -->
   <!-- ================================================================== -->
@@ -598,7 +473,6 @@
 
   <target
     name="graphviz"
-    depends="sql-check"
     description="==> generates Graphviz file for your project">
 
     <echo message="+------------------------------------------+"/>
@@ -619,23 +493,6 @@
         excludes="${propel.schema.sql.excludes}"
       />
     </propel-graphviz>
-  </target>
-
-  <taskdef
-    name="propel-build-sql"
-    classname="Propel.Generator.Task.PropelSqlBuildTaskCompat" />
-
-  <target name="build-sql">
-    <propel-build-sql outputDirectory="${propel.sql.dir}"
-      validate="${propel.schema.validate}"
-      xsd="${propel.schema.xsd.file}"
-      xsl="${propel.schema.xsl.file}"
-	>
-      <schemafileset dir="${propel.schema.dir}"
-        includes="${propel.schema.sql.includes}"
-        excludes="${propel.schema.sql.excludes}"
-      />
-    </propel-build-sql>
   </target>
 
 </project>

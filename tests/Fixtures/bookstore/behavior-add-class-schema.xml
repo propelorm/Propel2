@@ -4,7 +4,7 @@
     <table name="add_class_table">
         <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
         <column name="title" type="VARCHAR" size="100" primaryString="true" />
-        <behavior name="add_class" />
+        <behavior name="\Propel\Tests\Helpers\Bookstore\Behavior\AddClassBehavior" />
     </table>
 
 </database>

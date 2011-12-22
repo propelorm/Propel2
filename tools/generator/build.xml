@@ -79,9 +79,7 @@
 	<echo message="$&gt; propel-gen /path/to/projectdir [taskname]"/>
 	<echo message=" "/>
 	<echo message="Available tasknames are:"/>
-	<echo message="  om"/>
 	<echo message="  convert-conf"/>
-	<echo message="  sql"/>
 	<echo message="  insert-sql"/>
 	<echo message="  diff"/>
 	<echo message="  status"/>
@@ -176,18 +174,6 @@
 	<phing phingfile="build-propel.xml" target="insert-sql"/>
 </target>
 
-<target name="om" depends="configure">
-	<phing phingfile="build-propel.xml" target="om"/>
-</target>
-
-<target name="new-om" depends="configure">
-	<phing phingfile="build-propel.xml" target="new-om"/>
-</target>
-
-<target name="sql" depends="configure">
-	<phing phingfile="build-propel.xml" target="sql"/>
-</target>
-
 <target name="sql-diff" depends="configure">
 	<phing phingfile="build-propel.xml" target="sql-diff"/>
 </target>
@@ -221,10 +207,6 @@
 </target>
 
 <target name="migrate" depends="migration" />
-
-<target name="old-sql" depends="configure">
-	<phing phingfile="build-propel.xml" target="old-sql"/>
-</target>
 
 <target name="dbd2propel" depends="configure">
 	<phing phingfile="build-propel.xml" target="dbd2propel"/>

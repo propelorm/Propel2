@@ -8,7 +8,7 @@
  * @license    MIT License
  */
 
-namespace Propel\Generator\Behavior;
+namespace Propel\Generator\Behavior\Sluggable;
 
 use Propel\Generator\Model\Behavior;
 use Propel\Generator\Model\Unique;

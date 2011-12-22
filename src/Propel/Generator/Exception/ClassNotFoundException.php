@@ -10,11 +10,9 @@
 
 namespace Propel\Generator\Exception;
 
-use \Exception;
-
 /**
- * Class for exceptions thrown during schema parsing
+ * @author William Durand <william.durand1@gmail.com>
  */
-class SchemaException extends Exception implements ExceptionInterface
+class ClassNotFoundException extends RuntimeException implements ExceptionInterface
 {
 }

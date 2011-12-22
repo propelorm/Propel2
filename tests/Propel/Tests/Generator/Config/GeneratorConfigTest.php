@@ -58,7 +58,7 @@ class GeneratorConfigTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-      * @expectedException BuildException
+      * @expectedException \Propel\Generator\Exception\BuildException
       */
     public function testGetClassnameOnInexistantProperty()
     {
