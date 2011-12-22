@@ -127,4 +127,18 @@ interface ServiceContainerInterface
      * @return \Propel\Runtime\Util\Profiler.
      */
     function getProfiler();
+
+    /**
+     * Check if a logger is available for a given datasource.
+     *
+     * @return boolean
+     */
+    function hasLogger($name = 'defaultLogger');
+
+    /**
+     * Get a logger for a given datasource, or the default logger.
+     *
+     * @return \Monolog\Logger
+     */
+    function getLogger($name = 'defaultLogger');
 }

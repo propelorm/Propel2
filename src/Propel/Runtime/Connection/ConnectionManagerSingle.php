@@ -19,6 +19,11 @@ use Propel\Runtime\Connection\ConnectionInterface;
 class ConnectionManagerSingle implements ConnectionManagerInterface
 {
     /**
+     * @var string The datasource name associated to this connection
+     */
+    protected $name;
+
+    /**
      * @var array
      */
     protected $configuration;
@@ -27,6 +32,22 @@ class ConnectionManagerSingle implements ConnectionManagerInterface
      * @var \Propel\Runtime\Connection\ConnectionInterface
      */
     protected $connection;
+
+    /**
+     * @param string $name The datasource name associated to this connection
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * @return string The datasource name associated to this connection
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
 
     public function setConnection(ConnectionInterface $connection)
     {
@@ -49,6 +70,7 @@ class ConnectionManagerSingle implements ConnectionManagerInterface
     {
         if (null === $this->connection) {
             $this->connection = ConnectionFactory::create($this->configuration, $adapter);
+            $this->connection->setName($this->getName());
         }
 
         return $this->connection;

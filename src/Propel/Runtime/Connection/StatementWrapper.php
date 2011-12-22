@@ -88,7 +88,7 @@ class StatementWrapper implements StatementInterface
             $valuestr = $length > 100 ? '[Large value]' : var_export($value, true);
             $this->boundValues[$pos] = $valuestr;
             $msg = sprintf('Binding %s at position %s w/ PDO type %s', $valuestr, $pos, $typestr);
-            $this->connection->log($msg, null, 'bindParam');
+            $this->connection->log($msg);
         }
 
         return $return;
@@ -112,7 +112,7 @@ class StatementWrapper implements StatementInterface
             $valuestr = $type == \PDO::PARAM_LOB ? '[LOB value]' : var_export($value, true);
             $this->boundValues[$pos] = $valuestr;
             $msg = sprintf('Binding %s at position %s w/ PDO type %s', $valuestr, $pos, $typestr);
-            $this->connection->log($msg, null, 'bindValue');
+            $this->connection->log($msg);
         }
 
         return $return;
@@ -171,7 +171,7 @@ class StatementWrapper implements StatementInterface
         $return = $this->statement->execute($input_parameters);
         if ($this->connection->useDebug) {
             $sql = $this->getExecutedQueryString();
-            $this->connection->log($sql, null, 'statement_execute');
+            $this->connection->log($sql);
             $this->connection->setLastExecutedQuery($sql);
             $this->connection->incrementQueryCount();
         }

@@ -19,6 +19,19 @@ use \PDO;
 
 class ConnectionManagerMasterSlaveTest extends BaseTestCase
 {
+    public function testGetNameReturnsNullByDefault()
+    {
+        $manager = new ConnectionManagerMasterSlave();
+        $this->assertNull($manager->getName());
+    }
+
+    public function testGetNameReturnsNameSetUsingSetName()
+    {
+        $manager = new ConnectionManagerMasterSlave();
+        $manager->setName('foo');
+        $this->assertEquals('foo', $manager->getName());
+    }
+
     /**
      * @expectedException \Propel\Runtime\Exception\InvalidArgumentException
      */
@@ -46,6 +59,15 @@ class ConnectionManagerMasterSlaveTest extends BaseTestCase
         $con = $manager->getWriteConnection(new SqliteAdapter());
         $pdo = $con->getWrappedConnection();
         $this->assertEquals(PDO::CASE_UPPER, $pdo->getAttribute(PDO::ATTR_CASE));
+    }
+
+    public function testGetWriteConnectionReturnsAConnectionNamedAfterTheManager()
+    {
+        $manager = new ConnectionManagerMasterSlave();
+        $manager->setName('foo');
+        $manager->setWriteConfiguration(array('dsn' => 'sqlite::memory:'));
+        $con = $manager->getWriteConnection(new SqliteAdapter());
+        $this->assertEquals('foo', $con->getName());
     }
 
     public function testGetReadConnectionBuildsConnectionBasedOnReadConfiguration()
@@ -89,6 +111,15 @@ class ConnectionManagerMasterSlaveTest extends BaseTestCase
         $pdo = $con->getWrappedConnection();
         $expected = array(PDO::CASE_LOWER, PDO::CASE_UPPER);
         $this->assertContains($pdo->getAttribute(PDO::ATTR_CASE), $expected);
+    }
+
+    public function testGetReadConnectionReturnsAConnectionNamedAfterTheManager()
+    {
+        $manager = new ConnectionManagerMasterSlave();
+        $manager->setName('foo');
+        $manager->setReadConfiguration(array(array('dsn' => 'sqlite::memory:')));
+        $con = $manager->getReadConnection(new SqliteAdapter());
+        $this->assertEquals('foo', $con->getName());
     }
 
     public function testIsForceMasterConnectionFalseByDefault()
