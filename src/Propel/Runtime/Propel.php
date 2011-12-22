@@ -361,7 +361,7 @@ class Propel
     /**
      * Get the configured logger.
      *
-     * @return     \Monolog\Logger Configured log class
+     * @return     \Propel\Runtime\Logger\Logger Configured log class
      */
     static public function getLogger()
     {
@@ -384,19 +384,21 @@ class Propel
             $logger = self::$serviceContainer->getLogger();
             switch ($level) {
                 case self::LOG_EMERG:
+                    return $logger->emerg($message);
                 case self::LOG_ALERT:
-                    return $logger->addAlert($message);
+                    return $logger->alert($message);
                 case self::LOG_CRIT:
-                    return $logger->addCritical($message);
+                    return $logger->crit($message);
                 case self::LOG_ERR:
-                    return $logger->addError($message);
+                    return $logger->error($message);
                 case self::LOG_WARNING:
-                    return $logger->addWarning($message);
+                    return $logger->warn($message);
                 case self::LOG_NOTICE:
+                    return $logger->notice($message);
                 case self::LOG_INFO:
-                    return $logger->addInfo($message);
+                    return $logger->info($message);
                 default:
-                    return $logger->addDebug($message);
+                    return $logger->debug($message);
             }
         }
 

@@ -18,8 +18,9 @@ use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\ConnectionManagerInterface;
 use Propel\Runtime\Connection\ConnectionManagerSingle;
 use Propel\Runtime\Connection\ConnectionFactory;
+use Propel\Runtime\Logger\Logger;
+use Propel\Runtime\Logger\LoggerInterface;
 use Propel\Runtime\Map\DatabaseMap;
-use Monolog\Logger;
 
 class StandardServiceContainer implements ServiceContainerInterface
 {
@@ -69,7 +70,7 @@ class StandardServiceContainer implements ServiceContainerInterface
     protected $profiler;
 
     /**
-     * @var array[\Monolog\Logger] list of loggers
+     * @var array[\Propel\Runtime\Logger\LoggerInterface] list of loggers
      */
     protected $loggers = array();
 
@@ -408,7 +409,7 @@ class StandardServiceContainer implements ServiceContainerInterface
     /**
      * Get a logger instance
      *
-     * @return \Monolog\Logger
+     * @return \Logger\Propel\Runtime\LoggerInterface
      */
     public function getLogger($name = 'defaultLogger')
     {
@@ -421,9 +422,9 @@ class StandardServiceContainer implements ServiceContainerInterface
 
     /**
      * @param string $name the name of the logger to be set
-     * @param \Monolog\Logger $logger A logger instance
+     * @param \Propel\Runtime\Logger\LoggerInterface $logger A logger instance
      */
-    public function setLogger($name, Logger $logger)
+    public function setLogger($name, LoggerInterface $logger)
     {
         $this->loggers[$name] = $logger;
     }
