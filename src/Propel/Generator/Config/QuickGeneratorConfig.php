@@ -152,18 +152,4 @@ class QuickGeneratorConfig implements GeneratorConfigInterface
     {
         return null;
     }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getConfiguredBehavior($name)
-    {
-        $propname = 'behavior' . ucfirst(strtolower($name)) . 'Class';
-
-        if ($class = $this->getBuildProperty($propname)) {
-            return $class;
-        }
-
-        return null;
-    }
 }

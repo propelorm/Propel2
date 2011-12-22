@@ -27,6 +27,20 @@ use \DOMDocument;
  */
 class Database extends ScopedElement
 {
+    /**
+     * The default string format for objects based on this database
+     * (e.g. 'XML', 'YAML', 'CSV', 'JSON')
+     *
+     * @var       string
+     */
+    protected $defaultStringFormat;
+
+    /**
+     * List of behaviors registered for this table
+     *
+     * @var array
+     */
+    protected $behaviors = array();
 
     private $platform;
     private $tableList = array();
@@ -45,22 +59,7 @@ class Database extends ScopedElement
     private $heavyIndexing;
     protected $tablePrefix = '';
 
-    /**
-     * The default string format for objects based on this database
-     * (e.g. 'XML', 'YAML', 'CSV', 'JSON')
-     *
-     * @var       string
-     */
-    protected $defaultStringFormat;
-
     private $domainMap = array();
-
-    /**
-     * List of behaviors registered for this table
-     *
-     * @var array
-     */
-    protected $behaviors = array();
 
     /**
      * Constructs a new Database object.
@@ -463,55 +462,55 @@ class Database extends ScopedElement
         return null; // just to be explicit
     }
 
-  public function getGeneratorConfig()
-  {
-      if ($this->getAppData()) {
-          return $this->getAppData()->getGeneratorConfig();
-      } else {
-          return null;
-      }
-  }
-
-  public function getBuildProperty($key)
-  {
-      if($config = $this->getGeneratorConfig()) {
-          return $config->getBuildProperty($key);
-      } else {
-          return '';
-      }
-  }
-
-  /**
-   * Adds a new Behavior to the database
-   * @return Behavior A behavior instance
-   */
-  public function addBehavior($bdata)
-  {
-    if ($bdata instanceof Behavior) {
-      $behavior = $bdata;
-      $behavior->setDatabase($this);
-      $this->behaviors[$behavior->getName()] = $behavior;
-
-      return $behavior;
-    } else {
-      $class = $this->getConfiguredBehavior($bdata['name']);
-      $behavior = new $class();
-      $behavior->loadFromXML($bdata);
-
-      return $this->addBehavior($behavior);
+    public function getGeneratorConfig()
+    {
+        if ($this->getAppData()) {
+            return $this->getAppData()->getGeneratorConfig();
+        } else {
+            return null;
+        }
     }
-  }
 
-  /**
-   * Get the database behaviors
-   * @return Array of Behavior objects
-   */
-  public function getBehaviors()
-  {
-    return $this->behaviors;
-  }
+    public function getBuildProperty($key)
+    {
+        if($config = $this->getGeneratorConfig()) {
+            return $config->getBuildProperty($key);
+        } else {
+            return '';
+        }
+    }
 
-  /**
+    /**
+     * Adds a new Behavior to the database
+     * @return Behavior A behavior instance
+     */
+    public function addBehavior($bdata)
+    {
+        if ($bdata instanceof Behavior) {
+            $behavior = $bdata;
+            $behavior->setDatabase($this);
+            $this->behaviors[$behavior->getName()] = $behavior;
+
+            return $behavior;
+        } else {
+            $class = $this->getConfiguredBehavior($bdata['name']);
+            $behavior = new $class();
+            $behavior->loadFromXML($bdata);
+
+            return $this->addBehavior($behavior);
+        }
+    }
+
+    /**
+     * Get the database behaviors
+     * @return Array of Behavior objects
+     */
+    public function getBehaviors()
+    {
+        return $this->behaviors;
+    }
+
+    /**
      * check if the database has a behavior by name
      *
      * @param     string $name the behavior name
@@ -522,25 +521,25 @@ class Database extends ScopedElement
         return array_key_exists($name, $this->behaviors);
     }
 
-  /**
-   * Get one database behavior by name
-   * @param string $name the behavior name
-   * @return Behavior a behavior object
-   */
-  public function getBehavior($name)
-  {
-    return $this->behaviors[$name];
-  }
+    /**
+     * Get one database behavior by name
+     * @param string $name the behavior name
+     * @return Behavior a behavior object
+     */
+    public function getBehavior($name)
+    {
+        return $this->behaviors[$name];
+    }
 
-  /**
-   * Get the table prefix for this database
-   *
-   * @return string the table prefix
-   */
-  public function getTablePrefix()
-  {
-    return $this->tablePrefix;
-  }
+    /**
+     * Get the table prefix for this database
+     *
+     * @return string the table prefix
+     */
+    public function getTablePrefix()
+    {
+        return $this->tablePrefix;
+    }
 
     /**
      * Get the next behavior on all tables, ordered by behavior priority,
@@ -655,7 +654,7 @@ class Database extends ScopedElement
         foreach ($this->domainMap as $domain) {
         $domain->appendXml($dbNode);
         }
-        */
+         */
         foreach ($this->vendorInfos as $vi) {
             $vi->appendXml($dbNode);
         }

@@ -58,12 +58,4 @@ interface GeneratorConfigInterface
      * @return     Platform
      */
     function getConfiguredPlatform(PDO $con = null, $database = null);
-
-    /**
-     * Gets a configured behavior class
-     *
-     * @param string $name a behavior name
-     * @return string a behavior class name
-     */
-    function getConfiguredBehavior($name);
 }

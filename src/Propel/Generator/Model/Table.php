@@ -29,7 +29,6 @@ use \DOMDocument;
  */
 class Table extends ScopedElement implements IdMethod
 {
-
     /**
      * Enables some debug printing.
      */

@@ -232,25 +232,6 @@ class GeneratorConfig implements GeneratorConfigInterface
         return $pluralizer;
     }
 
-    /**
-     * Gets a configured behavior class
-     *
-     * @param string $name a behavior name
-     * @return string a behavior class name
-     */
-    public function getConfiguredBehavior($name)
-    {
-        $propname = 'behavior' . ucfirst(strtolower($name)) . 'Class';
-        try {
-            $ret = $this->getClassname($propname);
-        } catch (BuildException $e) {
-            // class path not configured
-            $ret = false;
-        }
-
-        return $ret;
-    }
-
     public function setBuildConnections($buildConnections)
     {
         $this->buildConnections = $buildConnections;

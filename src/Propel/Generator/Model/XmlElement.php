@@ -141,12 +141,6 @@ abstract class XmlElement
      */
     public function getConfiguredBehavior($bname)
     {
-        if ($config = $this->getGeneratorConfig()) {
-            if ($class = $config->getConfiguredBehavior($bname)) {
-                return $class;
-            }
-        }
-
         if (false !== strpos($bname, '\\')) {
             $class = $bname;
         } else {
