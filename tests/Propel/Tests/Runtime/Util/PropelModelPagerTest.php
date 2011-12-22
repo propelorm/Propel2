@@ -20,7 +20,7 @@ use Propel\Runtime\Util\PropelModelPager;
 use Propel\Runtime\Query\ModelCriteria;
 
 /**
- * Test the utility class PropelPager
+ * Test the utility class PropelModelPager
  *
  * @author		 Francois Zaninotto
  * @version		 $Id: PropelModelPagerTest.php
