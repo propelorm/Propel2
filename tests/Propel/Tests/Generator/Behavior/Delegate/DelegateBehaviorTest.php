@@ -8,9 +8,9 @@
  * @license    MIT License
  */
 
-namespace Propel\Tests\Generator\Behavior;
+namespace Propel\Tests\Generator\Behavior\Delegate;
 
-use Propel\Generator\Behavior\DelegateBehavior;
+use Propel\Generator\Behavior\Delegate\DelegateBehavior;
 use Propel\Generator\Util\QuickBuilder;
 
 use Propel\Runtime\Propel;

@@ -8,7 +8,7 @@
  * @license    MIT License
  */
 
-namespace Propel\Tests\Generator\Behavior;
+namespace Propel\Tests\Generator\Behavior\Sluggable;
 
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 

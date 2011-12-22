@@ -102,7 +102,7 @@ EOF;
 EOF;
         $appData = $xmlToAppData->parseString($schema);
         $table = $appData->getDatabase('test1')->getTable('table1');
-        $this->assertThat($table->getBehavior('timestampable'), $this->isInstanceOf('\Propel\Generator\Behavior\TimestampableBehavior'), 'addBehavior() uses the behavior class defined in build.properties');
+        $this->assertThat($table->getBehavior('timestampable'), $this->isInstanceOf('\Propel\Generator\Behavior\Timestampable\TimestampableBehavior'), 'addBehavior() uses the behavior class defined in build.properties');
     }
 
     /**

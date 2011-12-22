@@ -8,40 +8,29 @@
  * @license    MIT License
  */
 
-namespace Propel\Generator\Util;
+namespace Propel\Generator\Manager;
 
-use Propel\Generator\Config\GeneratorConfigInterface;
+use Propel\Generator\Exception\InvalidArgumentException;
 
-use \InvalidArgumentException;
 use \PDO;
+use \PDOException;
 
 /**
  * Service class for managing SQL.
  *
  * @author     William Durand <william.durand1@gmail.com>
  */
-class SqlManager
+class SqlManager extends AbstractManager
 {
     /**
      * @var array
      */
     protected $connections;
-    /**
-     * @var GeneratorConfigInterface
-     */
-    protected $generatorConfig;
-    /**
-     * @var array
-     */
-    protected $dataModels;
+
     /**
      * @var array
      */
     protected $databases = null;
-    /**
-     * @var string
-     */
-    protected $workingDirectory;
 
     /**
      * Set the database connection settings
@@ -75,54 +64,6 @@ class SqlManager
         }
 
         return $this->connections[$datasource];
-    }
-
-    /**
-     * @param GeneratorConfigInterface $generatorConfig
-     */
-    public function setGeneratorConfig(GeneratorConfigInterface $generatorConfig)
-    {
-        $this->generatorConfig = $generatorConfig;
-    }
-
-    /**
-     * @return GeneratorConfigInterface
-     */
-    public function getGeneratorConfig()
-    {
-        return $this->generatorConfig;
-    }
-
-    /**
-     * @param array $dataModels
-     */
-    public function setDataModels($dataModels)
-    {
-        $this->dataModels = $dataModels;
-    }
-
-    /**
-     * @return array
-     */
-    public function getDataModels()
-    {
-        return $this->dataModels;
-    }
-
-    /**
-     * @param string $workingDirectory
-     */
-    public function setWorkingDirectory($workingDirectory)
-    {
-        $this->workingDirectory = $workingDirectory;
-    }
-
-    /**
-     * return string
-     */
-    public function getWorkingDirectory()
-    {
-        return $this->workingDirectory;
     }
 
     /**
@@ -258,33 +199,5 @@ class SqlManager
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         return $pdo;
-    }
-
-    /**
-     * Returns an array of properties as key/value pairs from an input file.
-     *
-     * @param string $file  A file properties.
-     * @return array        An array of properties as key/value pairs.
-     */
-    protected function getProperties($file)
-    {
-        $properties = array();
-
-        if (false === $lines = @file($file)) {
-            throw new Exception(sprintf('Unable to parse contents of "%s".', $file));
-        }
-
-        foreach ($lines as $line) {
-            $line = trim($line);
-
-            if ('' == $line || in_array($line[0], array('#', ';'))) {
-                continue;
-            }
-
-            $pos = strpos($line, '=');
-            $properties[trim(substr($line, 0, $pos))] = trim(substr($line, $pos + 1));
-        }
-
-        return $properties;
     }
 }

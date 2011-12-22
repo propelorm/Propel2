@@ -10,16 +10,12 @@
 
 namespace Propel\Generator\Config;
 
+use Propel\Generator\Exception\BuildException;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Platform\PlatformInterface;
 use Propel\Generator\Reverse\SchemaParserInterface;
 
 use \PDO;
-
-// Phing dependencies
-require_once 'phing/Phing.php';
-use \Phing;
-use \BuildException;
 
 /**
  * A class that holds build properties and provide a class loading mechanism for the generator.
@@ -32,11 +28,12 @@ class GeneratorConfig implements GeneratorConfigInterface
     /**
      * The build properties.
      *
-     * @var        array
+     * @var array
      */
     private $buildProperties = array();
 
     protected $buildConnections = null;
+
     protected $defaultBuildConnection = null;
 
     /**
@@ -45,7 +42,9 @@ class GeneratorConfig implements GeneratorConfigInterface
      */
     public function __construct($props = null)
     {
-        if ($props) $this->setBuildProperties($props);
+        if ($props) {
+            $this->setBuildProperties($props);
+        }
     }
 
     /**
@@ -135,8 +134,6 @@ class GeneratorConfig implements GeneratorConfigInterface
         if (empty($classpath)) {
             throw new BuildException("Unable to find class path for '$propname' property.");
         }
-
-        $clazz = Phing::import($classpath);
 
         return $clazz;
     }
