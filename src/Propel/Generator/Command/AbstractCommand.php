@@ -26,18 +26,14 @@ abstract class AbstractCommand extends Command
 
     const DEFAULT_PLATFORM          = 'MysqlPlatform';
 
-    const DEFAULT_MYSQL_ENGINE      = 'InnoDB';
-
     /**
      * {@inheritdoc}
      */
     protected function configure()
     {
         $this
-            ->addOption('input-dir', null, InputOption::VALUE_REQUIRED,  'The input directory', self::DEFAULT_INPUT_DIRECTORY)
             ->addOption('platform',  null, InputOption::VALUE_REQUIRED,  'The platform', self::DEFAULT_PLATFORM)
-            // MySQL specific
-            ->addOption('mysql-engine', null, InputOption::VALUE_REQUIRED,  'MySQL engine (MyISAM, InnoDB, ...)', self::DEFAULT_MYSQL_ENGINE)
+            ->addOption('input-dir', null, InputOption::VALUE_REQUIRED,  'The input directory', self::DEFAULT_INPUT_DIRECTORY)
             ;
     }
 

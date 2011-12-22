@@ -20,6 +20,8 @@ class ModelBuild extends AbstractCommand
 {
     const DEFAULT_OUTPUT_DIRECTORY                  = 'generated-classes';
 
+    const DEFAULT_MYSQL_ENGINE                      = 'InnoDB';
+
     const DEFAULT_PEER_BUILDER                      = '\Propel\Generator\Builder\Om\PeerBuilder';
 
     const DEFAULT_PEER_STUB_BUILDER                 = '\Propel\Generator\Builder\Om\ExtensionPeerBuilder';
@@ -50,6 +52,7 @@ class ModelBuild extends AbstractCommand
         parent::configure();
 
         $this
+            ->addOption('mysql-engine', null, InputOption::VALUE_REQUIRED,  'MySQL engine (MyISAM, InnoDB, ...)', self::DEFAULT_MYSQL_ENGINE)
             ->addOption('output-dir', null, InputOption::VALUE_REQUIRED, 'The output directory', self::DEFAULT_OUTPUT_DIRECTORY)
             ->addOption('peer-class', null, InputOption::VALUE_REQUIRED,
                 'The peer class generator name', self::DEFAULT_PEER_BUILDER)

@@ -8,24 +8,37 @@
  * @license    MIT License
  */
 
-namespace Propel\Generator\Util;
+namespace Propel\Generator\Manager;
 
+use Propel\Generator\Exception\InvalidArgumentException;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\Table;
 
-use \InvalidArgumentException;
+use \PDO;
+use \Exception;
+use \PDOException;
 
 /**
  * Service class for preparing and executing migrations
  *
- * @author     François Zaninotto
+ * @author	François Zaninotto
  */
-class MigrationManager
+class MigrationManager extends AbstractManager
 {
-    protected $connections;
+    /**
+     * @var array
+     */
+    protected $connections = array();
+
+    /**
+     * @var array
+     */
     protected $pdoConnections = array();
-    protected $migrationTable = 'propel_migration';
-    protected $migrationDir;
+
+    /**
+     * @var string
+	 */
+    protected $migrationTable;
 
     /**
      * Set the database connection settings
@@ -77,13 +90,9 @@ class MigrationManager
 
     public function getPlatform($datasource)
     {
-        $params = $this->getConnection($datasource);
-        $adapter = $params['adapter'];
-        $adapterClass = ucfirst($adapter) . 'Platform';
-        require_once sprintf('%s/../platform/%s.php',
-            dirname(__FILE__),
-            $adapterClass
-        );
+        $params       = $this->getConnection($datasource);
+        $adapter      = $params['adapter'];
+        $adapterClass = '\\Propel\\Generator\\Platform\\' . ucfirst($adapter) . 'Platform';
 
         return new $adapterClass();
     }
@@ -108,33 +117,14 @@ class MigrationManager
         return $this->migrationTable;
     }
 
-    /**
-     * Set the path to the migration classes
-     *
-     * @param string $migrationDir
-     */
-    public function setMigrationDir($migrationDir)
-    {
-        $this->migrationDir = $migrationDir;
-    }
-
-    /**
-     * Get the path to the migration classes
-     *
-     * @return string
-     */
-    public function getMigrationDir()
-    {
-        return $this->migrationDir;
-    }
-
     public function getOldestDatabaseVersion()
     {
         if (!$connections = $this->getConnections()) {
             throw new Exception('You must define database connection settings in a buildtime-conf.xml file to use migrations');
         }
+
         $oldestMigrationTimestamp = null;
-        $migrationTimestamps = array();
+        $migrationTimestamps      = array();
         foreach ($connections as $name => $params) {
             $pdo = $this->getPdoConnection($name);
             $sql = sprintf('SELECT version FROM %s', $this->getMigrationTable());
@@ -150,6 +140,7 @@ class MigrationManager
                 $oldestMigrationTimestamp = 0;
             }
         }
+
         if ($oldestMigrationTimestamp === null && $migrationTimestamps) {
             sort($migrationTimestamps);
             $oldestMigrationTimestamp = array_shift($migrationTimestamps);
@@ -178,16 +169,20 @@ class MigrationManager
         // modelize the table
         $database = new Database($datasource);
         $database->setPlatform($platform);
+
         $table = new Table($this->getMigrationTable());
         $database->addTable($table);
+
         $column = new Column('version');
         $column->getDomain()->copy($platform->getDomainForType('INTEGER'));
         $column->setDefaultValue(0);
+
         $table->addColumn($column);
         // insert the table into the database
         $statements = $platform->getAddTableDDL($table);
         $pdo = $this->getPdoConnection($datasource);
         $res = SqlParser::executeString($statements, $pdo);
+
         if (!$res) {
             throw new Exception(sprintf('Unable to create migration table in datasource "%s"', $datasource));
         }
@@ -213,7 +208,7 @@ class MigrationManager
 
     public function getMigrationTimestamps()
     {
-        $path = $this->getMigrationDir();
+        $path = $this->getWorkingDirectory();
         $migrationTimestamps = array();
 
         if (is_dir($path)) {
@@ -279,7 +274,7 @@ class MigrationManager
     {
         $className = $this->getMigrationClassName($timestamp);
         require_once sprintf('%s/%s.php',
-            $this->getMigrationDir(),
+            $this->getWorkingDirectory(),
             $className
         );
 
