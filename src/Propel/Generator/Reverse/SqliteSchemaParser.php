@@ -141,7 +141,7 @@ class SqliteSchemaParser extends AbstractSchemaParser
             // If column is primary key and of type INTEGER, it is auto increment
             // See: http://sqlite.org/faq.html#q1
             $autoincrement = ($row['pk'] == 1 && strtolower($type) == 'integer');
-            $not_null = $row['notnull'];
+            $notNull = $row['notnull'];
             $default = $row['dflt_value'];
 
 
@@ -162,7 +162,7 @@ class SqliteSchemaParser extends AbstractSchemaParser
                 $column->getDomain()->setDefaultValue(new ColumnDefaultValue($default, ColumnDefaultValue::TYPE_VALUE));
             }
             $column->setAutoIncrement($autoincrement);
-            $column->setNotNull($not_null);
+            $column->setNotNull($notNull);
 
 
             if (($row['pk'] == 1) || (strtolower($type) == 'integer')) {

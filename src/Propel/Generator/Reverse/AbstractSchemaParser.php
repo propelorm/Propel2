@@ -230,8 +230,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
 
     public function getPlatform()
     {
-      if (null === $this->platform)
-      {
+      if (null === $this->platform) {
         $this->platform = $this->getGeneratorConfig()->getConfiguredPlatform();
       }
 

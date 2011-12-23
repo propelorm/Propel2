@@ -87,8 +87,8 @@ class PgsqlSchemaParser extends AbstractSchemaParser
             throw new EngineException("Failed to get database version");
         }
 
-        $arrVersion = sscanf ($nativeVersion, '%*s %d.%d');
-        $version = sprintf ("%d.%d", $arrVersion[0], $arrVersion[1]);
+        $arrVersion = sscanf($nativeVersion, '%*s %d.%d');
+        $version = sprintf("%d.%d", $arrVersion[0], $arrVersion[1]);
 
         // Clean up
         $stmt = null;
@@ -105,14 +105,18 @@ class PgsqlSchemaParser extends AbstractSchemaParser
         $tableWraps = array();
 
         // First load the tables (important that this happen before filling out details of tables)
-        if ($task) $task->log("Reverse Engineering Tables", Project::MSG_VERBOSE);
+        if ($task) {
+            $task->log("Reverse Engineering Tables", Project::MSG_VERBOSE);
+        }
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $name = $row['relname'];
             $namespacename = $row['nspname'];
             if ($name == $this->getMigrationTable()) {
                 continue;
             }
-            if ($task) $task->log("  Adding table '" . $name . "' in schema '" . $namespacename . "'", Project::MSG_VERBOSE);
+            if ($task) {
+                $task->log("  Adding table '" . $name . "' in schema '" . $namespacename . "'", Project::MSG_VERBOSE);
+            }
             $oid = $row['oid'];
             $table = new Table($name);
             if ($namespacename != 'public') {
@@ -129,16 +133,24 @@ class PgsqlSchemaParser extends AbstractSchemaParser
         }
 
         // Now populate only columns.
-        if ($task) $task->log("Reverse Engineering Columns", Project::MSG_VERBOSE);
+        if ($task) {
+            $task->log("Reverse Engineering Columns", Project::MSG_VERBOSE);
+        }
         foreach ($tableWraps as $wrap) {
-            if ($task) $task->log("  Adding columns for table '" . $wrap->table->getName() . "'", Project::MSG_VERBOSE);
+            if ($task) {
+                $task->log("  Adding columns for table '" . $wrap->table->getName() . "'", Project::MSG_VERBOSE);
+            }
             $this->addColumns($wrap->table, $wrap->oid, $version);
         }
 
         // Now add indexes and constraints.
-        if ($task) $task->log("Reverse Engineering Indices And Constraints", Project::MSG_VERBOSE);
+        if ($task) {
+            $task->log("Reverse Engineering Indices And Constraints", Project::MSG_VERBOSE);
+        }
         foreach ($tableWraps as $wrap) {
-            if ($task) $task->log("  Adding indices and constraints for table '" . $wrap->table->getName() . "'", Project::MSG_VERBOSE);
+            if ($task) {
+                $task->log("  Adding indices and constraints for table '" . $wrap->table->getName() . "'", Project::MSG_VERBOSE);
+            }
             $this->addForeignKeys($wrap->table, $wrap->oid, $version);
             $this->addIndexes($wrap->table, $wrap->oid, $version);
             $this->addPrimaryKey($wrap->table, $wrap->oid, $version);
@@ -196,37 +208,37 @@ class PgsqlSchemaParser extends AbstractSchemaParser
 
             // Check to ensure that this column isn't an array data type
             if (((int) $row['isarray']) === 1) {
-                throw new EngineException (sprintf ("Array datatypes are not currently supported [%s.%s]", $this->name, $row['attname']));
+                throw new EngineException(sprintf("Array datatypes are not currently supported [%s.%s]", $this->name, $row['attname']));
             } // if (((int) $row['isarray']) === 1)
 
             $name = $row['attname'];
 
             // If they type is a domain, Process it
-            if (strtolower ($row['typtype']) == 'd') {
-                $arrDomain = $this->processDomain ($row['typname']);
+            if (strtolower($row['typtype']) == 'd') {
+                $arrDomain = $this->processDomain($row['typname']);
                 $type = $arrDomain['type'];
                 $size = $arrDomain['length'];
                 $precision = $size;
                 $scale = $arrDomain['scale'];
-                $boolHasDefault = (strlen (trim ($row['atthasdef'])) > 0) ? $row['atthasdef'] : $arrDomain['hasdefault'];
-                $default = (strlen (trim ($row['adsrc'])) > 0) ? $row['adsrc'] : $arrDomain['default'];
-                $is_nullable = (strlen (trim ($row['attnotnull'])) > 0) ? $row['attnotnull'] : $arrDomain['notnull'];
-                $is_nullable = (($is_nullable == 't') ? false : true);
+                $boolHasDefault = (strlen(trim($row['atthasdef'])) > 0) ? $row['atthasdef'] : $arrDomain['hasdefault'];
+                $default = (strlen(trim($row['adsrc'])) > 0) ? $row['adsrc'] : $arrDomain['default'];
+                $isNullable = (strlen(trim($row['attnotnull'])) > 0) ? $row['attnotnull'] : $arrDomain['notnull'];
+                $isNullable = (($isNullable == 't') ? false : true);
             } else {
                 $type = $row['typname'];
-                $arrLengthPrecision = $this->processLengthScale ($row['atttypmod'], $type);
+                $arrLengthPrecision = $this->processLengthScale($row['atttypmod'], $type);
                 $size = $arrLengthPrecision['length'];
                 $precision = $size;
                 $scale = $arrLengthPrecision['scale'];
                 $boolHasDefault = $row['atthasdef'];
                 $default = $row['adsrc'];
-                $is_nullable = (($row['attnotnull'] == 't') ? false : true);
+                $isNullable = (($row['attnotnull'] == 't') ? false : true);
             } // else (strtolower ($row['typtype']) == 'd')
 
             $autoincrement = null;
 
             // if column has a default
-            if (($boolHasDefault == 't') && (strlen (trim ($default)) > 0)) {
+            if (($boolHasDefault == 't') && (strlen(trim($default)) > 0)) {
                 if (!preg_match('/^nextval\(/', $default)) {
                     $strDefault= preg_replace('/::[\W\D]*/', '', $default);
                     $default = preg_replace('/(\'?)\'/', '${1}', $strDefault);
@@ -260,7 +272,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
                 $column->getDomain()->setDefaultValue(new ColumnDefaultValue($default, $type));
             }
             $column->setAutoIncrement($autoincrement);
-            $column->setNotNull(!$is_nullable);
+            $column->setNotNull(!$isNullable);
 
             $table->addColumn($column);
         }
@@ -271,11 +283,10 @@ class PgsqlSchemaParser extends AbstractSchemaParser
     private function processLengthScale($intTypmod, $strName)
     {
         // Define the return array
-        $arrRetVal = array ('length'=>null, 'scale'=>null);
+        $arrRetVal = array('length'=>null, 'scale'=>null);
 
         // Some datatypes don't have a Typmod
-        if ($intTypmod == -1)
-        {
+        if ($intTypmod == -1) {
             return $arrRetVal;
         } // if ($intTypmod == -1)
 
@@ -283,10 +294,9 @@ class PgsqlSchemaParser extends AbstractSchemaParser
         if ($strName == $this->getMappedNativeType(PropelTypes::NUMERIC)) {
             $intLen = ($intTypmod - 4) >> 16;
             $intPrec = ($intTypmod - 4) & 0xffff;
-            $intLen = sprintf ("%ld", $intLen);
-            if ($intPrec)
-            {
-                $intPrec = sprintf ("%ld", $intPrec);
+            $intLen = sprintf("%ld", $intLen);
+            if ($intPrec) {
+                $intPrec = sprintf("%ld", $intPrec);
             } // if ($intPrec)
             $arrRetVal['length'] = $intLen;
             $arrRetVal['scale'] = $intPrec;
@@ -295,11 +305,11 @@ class PgsqlSchemaParser extends AbstractSchemaParser
             || $strName == $this->getMappedNativeType(PropelTypes::TIMESTAMP) || $strName == 'timestamptz'
             || $strName == 'interval' || $strName == 'bit')
         {
-            $arrRetVal['length'] = sprintf ("%ld", $intTypmod);
+            $arrRetVal['length'] = sprintf("%ld", $intTypmod);
         } // elseif (TIME, TIMESTAMP, INTERVAL, BIT)
         else
         {
-            $arrRetVal['length'] = sprintf ("%ld", ($intTypmod - 4));
+            $arrRetVal['length'] = sprintf("%ld", ($intTypmod - 4));
         } // else
 
         return $arrRetVal;
@@ -307,8 +317,8 @@ class PgsqlSchemaParser extends AbstractSchemaParser
 
     private function processDomain($strDomain)
     {
-        if (strlen(trim ($strDomain)) < 1) {
-            throw new EngineException ("Invalid domain name [" . $strDomain . "]");
+        if (strlen(trim($strDomain)) < 1) {
+            throw new EngineException("Invalid domain name [" . $strDomain . "]");
         }
 
         $stmt = $this->dbh->prepare("SELECT
@@ -329,7 +339,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
 
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         if (!$row) {
-            throw new EngineException ("Domain [" . $strDomain . "] not found.");
+            throw new EngineException("Domain [" . $strDomain . "] not found.");
         }
 
         $arrDomain = array ();
@@ -339,7 +349,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
         $arrDomain['scale'] = $arrLengthPrecision['scale'];
         $arrDomain['notnull'] = $row['typnotnull'];
         $arrDomain['default'] = $row['typdefault'];
-        $arrDomain['hasdefault'] = (strlen (trim ($row['typdefault'])) > 0) ? 't' : 'f';
+        $arrDomain['hasdefault'] = (strlen(trim($row['typdefault'])) > 0) ? 't' : 'f';
 
         $stmt = null; // cleanup
 
@@ -389,33 +399,43 @@ class PgsqlSchemaParser extends AbstractSchemaParser
 
             // On Update
             switch ($row['confupdtype']) {
-              case 'c':
-                $onupdate = ForeignKey::CASCADE; break;
-              case 'd':
-                $onupdate = ForeignKey::SETDEFAULT; break;
-              case 'n':
-                $onupdate = ForeignKey::SETNULL; break;
-              case 'r':
-                $onupdate = ForeignKey::RESTRICT; break;
-              default:
-              case 'a':
-                //NOACTION is the postgresql default
-                $onupdate = ForeignKey::NONE; break;
+                case 'c':
+                    $onupdate = ForeignKey::CASCADE;
+                    break;
+                case 'd':
+                    $onupdate = ForeignKey::SETDEFAULT;
+                    break;
+                case 'n':
+                    $onupdate = ForeignKey::SETNULL;
+                    break;
+                case 'r':
+                    $onupdate = ForeignKey::RESTRICT;
+                    break;
+                default:
+                case 'a':
+                    //NOACTION is the postgresql default
+                    $onupdate = ForeignKey::NONE;
+                    break;
             }
             // On Delete
             switch ($row['confdeltype']) {
-              case 'c':
-                $ondelete = ForeignKey::CASCADE; break;
-              case 'd':
-                $ondelete = ForeignKey::SETDEFAULT; break;
-              case 'n':
-                $ondelete = ForeignKey::SETNULL; break;
-              case 'r':
-                $ondelete = ForeignKey::RESTRICT; break;
-              default:
-              case 'a':
-                //NOACTION is the postgresql default
-                $ondelete = ForeignKey::NONE; break;
+                case 'c':
+                    $ondelete = ForeignKey::CASCADE;
+                    break;
+                case 'd':
+                    $ondelete = ForeignKey::SETDEFAULT;
+                    break;
+                case 'n':
+                    $ondelete = ForeignKey::SETNULL;
+                    break;
+                case 'r':
+                    $ondelete = ForeignKey::RESTRICT;
+                    break;
+                default:
+                case 'a':
+                    //NOACTION is the postgresql default
+                    $ondelete = ForeignKey::NONE;
+                    break;
             }
 
             $foreignTable = $database->getTable($foreign_table);
@@ -477,9 +497,8 @@ class PgsqlSchemaParser extends AbstractSchemaParser
                 $table->addIndex($indexes[$name]);
             }
 
-            $arrColumns = explode (' ', $row['indkey']);
-            foreach ($arrColumns as $intColNum)
-            {
+            $arrColumns = explode(' ', $row['indkey']);
+            foreach ($arrColumns as $intColNum) {
                    $stmt2->bindValue(1, $oid);
                    $stmt2->bindValue(2, $intColNum);
                    $stmt2->execute();
@@ -516,7 +535,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
         // adding each column for that key.
 
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $arrColumns = explode (' ', $row['indkey']);
+            $arrColumns = explode(' ', $row['indkey']);
             foreach ($arrColumns as $intColNum) {
                 $stmt2 = $this->dbh->prepare("SELECT a.attname
                                                 FROM pg_catalog.pg_class c JOIN pg_catalog.pg_attribute a ON a.attrelid = c.oid
