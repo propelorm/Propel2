@@ -24,7 +24,7 @@ use Propel\Generator\Util\Filesystem;
 /**
  * @author William Durand <william.durand1@gmail.com>
  */
-class InsertSql extends AbstractCommand
+class SqlInsert extends AbstractCommand
 {
     const DEFAULT_OUTPUT_DIRECTORY  = 'generated-sql';
 
