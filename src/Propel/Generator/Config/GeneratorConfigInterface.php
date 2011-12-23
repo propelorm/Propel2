@@ -31,7 +31,7 @@ interface GeneratorConfigInterface
     /**
     * Gets a configured Pluralizer class.
     *
-    * @return     Pluralizer
+    * @return     \Propel\Common\Pluralizer\PluralizerInterface
     */
     function getConfiguredPluralizer();
 

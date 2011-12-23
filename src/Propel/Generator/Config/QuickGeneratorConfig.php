@@ -10,10 +10,9 @@
 
 namespace Propel\Generator\Config;
 
+use Propel\Common\Pluralizer\StandardEnglishPluralizer;
 use Propel\Generator\Config\GeneratorConfigInterface;
-use Propel\Generator\Builder\Util\DefaultEnglishPluralizer;
 use Propel\Generator\Model\Table;
-
 
 use \PDO;
 use \Exception;
@@ -90,11 +89,11 @@ class QuickGeneratorConfig implements GeneratorConfigInterface
     /**
     * Gets a configured Pluralizer class.
     *
-    * @return     Pluralizer
+    * @return     \Propel\Common\Pluralizer\PluralizerInterface
     */
     public function getConfiguredPluralizer()
     {
-        return new DefaultEnglishPluralizer();
+        return new StandardEnglishPluralizer();
     }
 
     /**

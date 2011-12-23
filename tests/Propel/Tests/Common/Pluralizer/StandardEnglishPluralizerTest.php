@@ -8,9 +8,9 @@
  * @license    MIT License
  */
 
-namespace Propel\Tests\Generator\Builder\Util;
+namespace Propel\Tests\Common\Pluralizer;
 
-use Propel\Generator\Builder\Util\StandardEnglishPluralizer;
+use Propel\Common\Pluralizer\StandardEnglishPluralizer;
 
 /**
  * Tests for the StandardEnglishPluralizer class

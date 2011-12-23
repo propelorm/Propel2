@@ -8,7 +8,7 @@
  * @license    MIT License
  */
 
-namespace Propel\Generator\Builder\Util;
+namespace Propel\Common\Pluralizer;
 
 /**
  * Standard replacement English pluralizer class. Based on the links below
@@ -19,9 +19,12 @@ namespace Propel\Generator\Builder\Util;
  *
  * @author     paul.hanssen
  */
-class StandardEnglishPluralizer implements Pluralizer
+class StandardEnglishPluralizer implements PluralizerInterface
 {
-    protected $_plural = array(
+    /**
+     * @var array
+     */
+    protected $plural = array(
         '(matr|vert|ind)(ix|ex)' => '\1ices',
         '(alumn|bacill|cact|foc|fung|nucle|radi|stimul|syllab|termin|vir)us' => '\1i',
         '(buffal|tomat)o' => '\1oes',
@@ -135,7 +138,7 @@ class StandardEnglishPluralizer implements Pluralizer
         }
 
         // check for irregular singular suffixes
-        foreach ($this->_plural as $pattern => $result) {
+        foreach ($this->plural as $pattern => $result) {
             $searchPattern = '/' . $pattern . '$/i';
             if (preg_match($searchPattern, $root)) {
                 return preg_replace($searchPattern, $result, $root);

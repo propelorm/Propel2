@@ -40,7 +40,7 @@ class ModelBuild extends AbstractCommand
 
     const DEFAULT_TABLEMAP_BUILDER                  = '\Propel\Generator\Builder\Om\TableMapBuilder';
 
-    const DEFAULT_PLURALIZER                        = '\Propel\Generator\Builder\Util\StandardEnglishPluralizer';
+    const DEFAULT_PLURALIZER                        = '\Propel\Common\Pluralizer\StandardEnglishPluralizer';
 
     /**
      * {@inheritdoc}
