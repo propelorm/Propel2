@@ -127,8 +127,8 @@ class PropelSQLTask extends AbstractPropelDataModelTask
         }
     }
 
-    public function main() {
-
+    public function main()
+    {
         $this->validate();
 
         if (!$this->mapperElement) {
@@ -227,7 +227,8 @@ class PropelSQLTask extends AbstractPropelDataModelTask
      *
      * @return     array The packaged datamodels
      */
-    protected function packageDataModels() {
+    protected function packageDataModels() 
+    {
 
         static $packagedDataModels;
 
@@ -259,7 +260,8 @@ class PropelSQLTask extends AbstractPropelDataModelTask
         return $packagedDataModels;
     }
 
-    protected function cloneDatabase($db) {
+    protected function cloneDatabase($db) 
+    {
 
         $attributes = array (
             'name' => $db->getName(),

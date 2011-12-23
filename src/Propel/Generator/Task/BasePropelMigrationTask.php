@@ -68,7 +68,8 @@ abstract class BasePropelMigrationTask extends Task
      * @return     void
      * @throws     Exception
      */
-    public function setOutputDirectory(PhingFile $outputDirectory) {
+    public function setOutputDirectory(PhingFile $outputDirectory) 
+    {
         try {
             if (!$outputDirectory->exists()) {
                 $this->log("Output directory does not exist, creating: " . $outputDirectory->getPath(),Project::MSG_VERBOSE);
@@ -86,7 +87,8 @@ abstract class BasePropelMigrationTask extends Task
      * Get the output directory.
      * @return     string
      */
-    public function getOutputDirectory() {
+    public function getOutputDirectory() 
+    {
         return $this->outputDirectory;
     }
 

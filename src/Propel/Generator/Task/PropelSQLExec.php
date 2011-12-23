@@ -360,14 +360,18 @@ class PropelSQLExec extends Task
         try {
             $this->totalSql++;
 
-            if (!$this->autocommit) $this->conn->beginTransaction();
+            if (!$this->autocommit) {
+                $this->conn->beginTransaction();
+            }
 
             $stmt = $this->conn->prepare($sql);
             $this->log(sprintf('    Executing statement "%s"',$sql), Project::MSG_VERBOSE);
             $stmt->execute();
             $this->log(sprintf('    %d rows affected', $stmt->rowCount()), Project::MSG_VERBOSE);
 
-            if (!$this->autocommit) $this->conn->commit();
+            if (!$this->autocommit) {
+                $this->conn->commit();
+            }
 
             $this->goodSql++;
         } catch (PDOException $e) {

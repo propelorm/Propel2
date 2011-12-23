@@ -223,9 +223,9 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask
             $datadbmap->load($this->getDataDbMap());
         }
 
-        foreach ($this->getDataModels() as $dataModel) {            // there is really one 1 db per datamodel
+        foreach ($this->getDataModels() as $dataModel) {
+            // there is really one 1 db per datamodel
             foreach ($dataModel->getDatabases() as $database) {
-
                 // if database name is specified, then we only want to dump that one db.
                 if (empty($this->databaseName) || ($this->databaseName && $database->getName() == $this->databaseName)) {
                     $outFile = $this->getMappedFile($dataModel->getName());
@@ -263,7 +263,8 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask
         $this->createDataDbMap();
 
         // 2) Now go create the XML files from teh database(s)
-        foreach ($this->getDataModels() as $dataModel) {            // there is really one 1 db per datamodel
+        foreach ($this->getDataModels() as $dataModel) {
+            // there is really one 1 db per datamodel
             foreach ($dataModel->getDatabases() as $database) {
 
                 // if database name is specified, then we only want to dump that one db.

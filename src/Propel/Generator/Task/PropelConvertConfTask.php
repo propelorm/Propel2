@@ -112,7 +112,7 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask
             unset($phpconf['profiler']);
         }
 
-        if(isset($phpconf['propel'])) {
+        if (isset($phpconf['propel'])) {
             $phpconf = $phpconf['propel'];
         }
 
@@ -208,7 +208,7 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask
     {
         $ar = array();
 
-        foreach ( $xml->children() as $k => $v ) {
+        foreach ($xml->children() as $k => $v) {
 
             // recurse the child
             $child = self::simpleXmlToArray( $v );
@@ -222,7 +222,7 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask
             }
 
             // add the childs attributes as if they where children
-            foreach ( $v->attributes() as $ak => $av ) {
+            foreach ($v->attributes() as $ak => $av) {
 
                 if ($ak == 'id') {
                     // special exception: if there is a key named 'id'
@@ -246,7 +246,9 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask
                 // array, that it has numeric keys.  this distinguishes it from simply having other
                 // nested element data.
 
-                if ( !is_array($ar[$k]) || !isset($ar[$k][0]) ) { $ar[$k] = array($ar[$k]); }
+                if (!is_array($ar[$k]) || !isset($ar[$k][0])) {
+                    $ar[$k] = array($ar[$k]);
+                }
                 $ar[$k][] = $child;
             }
 
