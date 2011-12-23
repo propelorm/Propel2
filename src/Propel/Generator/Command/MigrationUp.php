@@ -76,7 +76,7 @@ class MigrationUp extends AbstractCommand
         foreach ($migration->getUpSQL() as $datasource => $sql) {
             $connection = $manager->getConnection($datasource);
 
-            if ($this->getOption('verbose')) {
+            if ($input->getOption('verbose')) {
                 $output->writeln(sprintf(
                     'Connecting to database "%s" using DSN "%s"',
                     $datasource,
@@ -89,7 +89,7 @@ class MigrationUp extends AbstractCommand
             $statements = SqlParser::parseString($sql);
             foreach ($statements as $statement) {
                 try {
-                    if ($this->getOption('verbose')) {
+                    if ($input->getOption('verbose')) {
                         $output->writeln(sprintf('Executing statement "%s"', $statement));
                     }
 
@@ -119,7 +119,7 @@ class MigrationUp extends AbstractCommand
                 $datasource
             ));
             $manager->updateLatestMigrationTimestamp($datasource, $nextMigrationTimestamp);
-            if ($this->getOption('verbose')) {
+            if ($input->getOption('verbose')) {
                 $output->writeln(sprintf(
                     'Updated latest migration date to %d for datasource "%s"',
                     $nextMigrationTimestamp,
