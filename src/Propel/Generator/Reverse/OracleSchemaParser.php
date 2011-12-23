@@ -82,7 +82,9 @@ class OracleSchemaParser extends AbstractSchemaParser
             'oracleAutoincrementSequencePattern'
         );
 
-        if ($task) $task->log("Reverse Engineering Table Structures", Project::MSG_VERBOSE);
+        if ($task) {
+            $task->log("Reverse Engineering Table Structures", Project::MSG_VERBOSE);
+        }
         // First load the tables (important that this happen before filling out details of tables)
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             if (strpos($row['OBJECT_NAME'], '$') !== false) {
@@ -94,7 +96,9 @@ class OracleSchemaParser extends AbstractSchemaParser
             }
             $table = new Table($row['OBJECT_NAME']);
             $table->setIdMethod($database->getDefaultIdMethod());
-            if ($task) $task->log("Adding table '" . $table->getName() . "'", Project::MSG_VERBOSE);
+            if ($task) {
+                $task->log("Adding table '" . $table->getName() . "'", Project::MSG_VERBOSE);
+            }
             $database->addTable($table);
             // Add columns, primary keys and indexes.
             $this->addColumns($table);
@@ -120,10 +124,14 @@ class OracleSchemaParser extends AbstractSchemaParser
             $tables[] = $table;
         }
 
-        if ($task) $task->log("Reverse Engineering Foreign Keys", Project::MSG_VERBOSE);
+        if ($task) {
+            $task->log("Reverse Engineering Foreign Keys", Project::MSG_VERBOSE);
+        }
 
         foreach ($tables as $table) {
-            if ($task) $task->log("Adding foreign keys for table '" . $table->getName() . "'", Project::MSG_VERBOSE);
+            if ($task) {
+                $task->log("Adding foreign keys for table '" . $table->getName() . "'", Project::MSG_VERBOSE);
+            }
             $this->addForeignKeys($table);
         }
 
@@ -209,7 +217,7 @@ class OracleSchemaParser extends AbstractSchemaParser
 
         foreach ($indices as $indexName => $columnNames) {
             $index = new Index($indexName);
-            foreach($columnNames AS $columnName) {
+            foreach ($columnNames as $columnName) {
                 // Oracle deals with complex indices using an internal reference, so...
                 // let's ignore this kind of index
                 if ($table->hasColumn($columnName)) {

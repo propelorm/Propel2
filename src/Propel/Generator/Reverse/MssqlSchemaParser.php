@@ -124,7 +124,7 @@ class MssqlSchemaParser extends AbstractSchemaParser
             $name = $row['COLUMN_NAME'];
             $type = $row['TYPE_NAME'];
             $size = $row['LENGTH'];
-            $is_nullable = $row['NULLABLE'];
+            $isNullable = $row['NULLABLE'];
             $default = $row['COLUMN_DEF'];
             $precision = $row['PRECISION'];
             $scale = $row['SCALE'];
@@ -150,7 +150,7 @@ class MssqlSchemaParser extends AbstractSchemaParser
                 $column->getDomain()->setDefaultValue(new ColumnDefaultValue($default, ColumnDefaultValue::TYPE_VALUE));
             }
             $column->setAutoIncrement($autoincrement);
-            $column->setNotNull(!$is_nullable);
+            $column->setNotNull(!$isNullable);
 
             $table->addColumn($column);
         }

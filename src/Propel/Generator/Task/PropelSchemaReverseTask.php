@@ -292,7 +292,7 @@ class PropelSchemaReverseTask extends PDOTask
         $exprs = explode(',', $v);
         foreach ($exprs as $expr) {
             $expr = trim($expr);
-            if(!empty($expr)) {
+            if (!empty($expr)) {
               if (!isset(self::$validatorBitMap[$expr])) {
                   throw new BuildException("Unable to interpret validator in expression ('$v'): " . $expr);
               }
@@ -457,7 +457,8 @@ class PropelSchemaReverseTask extends PDOTask
 
             foreach ($table->getUnices() as $unique) {
                 $colnames = $unique->getColumns();
-                if (count($colnames) == 1) { // currently 'unique' validator only works w/ single columns.
+                // currently 'unique' validator only works w/ single columns.
+                if (count($colnames) == 1) {
                     $col = $table->getColumn($colnames[0]);
                     $validator = $set->getValidator($col);
                     $validator->addRule($this->getValidatorRule($col, 'unique'));

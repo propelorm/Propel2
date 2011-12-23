@@ -187,7 +187,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
     public function getColumnFromRow($row, Table $table)
     {
         $name = $row['Field'];
-        $is_nullable = ($row['Null'] == 'YES');
+        $isNullable = ($row['Null'] == 'YES');
         $autoincrement = (strpos($row['Extra'], 'auto_increment') !== false);
         $size = null;
         $precision = null;
@@ -256,8 +256,12 @@ class MysqlSchemaParser extends AbstractSchemaParser
         $column->getDomain()->replaceScale($scale);
         if ($default !== null) {
             if ($propelType == PropelTypes::BOOLEAN) {
-                if ($default == '1') $default = 'true';
-                if ($default == '0') $default = 'false';
+                if ($default == '1') {
+                    $default = 'true';
+                }
+                if ($default == '0') {
+                    $default = 'false';
+                }
             }
             if (in_array($default, array('CURRENT_TIMESTAMP'))) {
                 $type = ColumnDefaultValue::TYPE_EXPR;
@@ -267,7 +271,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
             $column->getDomain()->setDefaultValue(new ColumnDefaultValue($default, $type));
         }
         $column->setAutoIncrement($autoincrement);
-        $column->setNotNull(!$is_nullable);
+        $column->setNotNull(!$isNullable);
 
         if ($this->addVendorInfo) {
             $vi = $this->getNewVendorInfoObject($row);
@@ -301,12 +305,12 @@ class MysqlSchemaParser extends AbstractSchemaParser
                 $fkey = $matches[5][$curKey];
 
                 $lcols = array();
-                foreach(preg_split('/`, `/', $rawlcol) as $piece) {
+                foreach (preg_split('/`, `/', $rawlcol) as $piece) {
                     $lcols[] = trim($piece, '` ');
                 }
 
                 $fcols = array();
-                foreach(preg_split('/`, `/', $rawfcol) as $piece) {
+                foreach (preg_split('/`, `/', $rawfcol) as $piece) {
                     $fcols[] = trim($piece, '` ');
                 }
 
@@ -319,7 +323,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
                 if ($fkey) {
                     //split foreign key information -> search for ON DELETE and afterwords for ON UPDATE action
                     foreach (array_keys($fkactions) as $fkaction) {
-                        $result = NULL;
+                        $result = null;
                         preg_match('/' . $fkaction . ' (' . ForeignKey::CASCADE . '|' . ForeignKey::SETNULL . ')/', $fkey, $result);
                         if ($result && is_array($result) && isset($result[1])) {
                             $fkactions[$fkaction] = $result[1];
@@ -336,13 +340,12 @@ class MysqlSchemaParser extends AbstractSchemaParser
 
                 $localColumns = array();
                 $foreignColumns = array();
-                ;
                 $foreignTable = $database->getTable($ftbl, true);
 
-                foreach($fcols as $fcol) {
+                foreach ($fcols as $fcol) {
                     $foreignColumns[] = $foreignTable->getColumn($fcol);
                 }
-                foreach($lcols as $lcol) {
+                foreach ($lcols as $lcol) {
                     $localColumns[] = $table->getColumn($lcol);
                 }
 
@@ -356,7 +359,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
                     $foreignKeys[$name] = $fk;
                 }
 
-                for($i=0; $i < count($localColumns); $i++) {
+                for ($i = 0; $i < count($localColumns); $i++) {
                     $foreignKeys[$name]->addReference($localColumns[$i], $foreignColumns[$i]);
                 }
 
