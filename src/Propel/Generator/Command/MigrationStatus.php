@@ -58,7 +58,7 @@ class MigrationStatus extends AbstractCommand
 
         $output->writeln('Checking Database Versions...');
         foreach ($manager->getConnections() as $datasource => $params) {
-            if ($this->getOption('verbose')) {
+            if ($input->getOption('verbose')) {
                 $output->writeln(sprintf(
                     'Connecting to database "%s" using DSN "%s"',
                     $datasource,
@@ -67,7 +67,7 @@ class MigrationStatus extends AbstractCommand
             }
 
             if (!$manager->migrationTableExists($datasource)) {
-                if ($this->getOption('verbose')) {
+                if ($input->getOption('verbose')) {
                     $output->writeln(sprintf(
                         'Migration table does not exist in datasource "%s"; creating it.',
                         $datasource
@@ -77,7 +77,7 @@ class MigrationStatus extends AbstractCommand
             }
         }
 
-        if ($this->getOption('verbose')) {
+        if ($input->getOption('verbose')) {
             if ($oldestMigrationTimestamp = $manager->getOldestDatabaseVersion()) {
                 $output->writeln(sprintf(
                     'Latest migration was executed on %s (timestamp %d)',
@@ -90,7 +90,7 @@ class MigrationStatus extends AbstractCommand
         }
 
         $output->writeln('Listing Migration files...');
-        $dir = $this->getOutputDirectory();
+        $dir = $input->getOption('output-dir');
         $migrationTimestamps  = $manager->getMigrationTimestamps();
         $nbExistingMigrations = count($migrationTimestamps);
 
@@ -111,7 +111,7 @@ class MigrationStatus extends AbstractCommand
                 }
             }
             foreach ($migrationTimestamps as $timestamp) {
-                if ($timestamp > $oldestMigrationTimestamp || $this->getOption('verbose')) {
+                if ($timestamp > $oldestMigrationTimestamp || $input->getOption('verbose')) {
                     $output->writeln(sprintf(
                         ' %s %s %s',
                         $timestamp == $oldestMigrationTimestamp ? '>' : ' ',
@@ -122,7 +122,6 @@ class MigrationStatus extends AbstractCommand
             }
         } else {
             $output->writeln(sprintf('No migration file found in "%s".', $dir));
-            $output->writeln('Make sure you run the sql-diff task.');
 
             return false;
         }

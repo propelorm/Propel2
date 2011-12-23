@@ -84,7 +84,7 @@ class MigrationDown extends AbstractCommand
         foreach ($migration->getDownSQL() as $datasource => $sql) {
             $connection = $manager->getConnection($datasource);
 
-            if ($this->getOption('verbose')) {
+            if ($input->getOption('verbose')) {
                 $output->writeln(sprintf(
                     'Connecting to database "%s" using DSN "%s"',
                     $datasource,
@@ -98,7 +98,7 @@ class MigrationDown extends AbstractCommand
 
             foreach ($statements as $statement) {
                 try {
-                    if ($this->getOption('verbose')) {
+                    if ($input->getOption('verbose')) {
                         $output->writeln(sprintf('Executing statement "%s"', $statement));
                     }
 
@@ -129,7 +129,7 @@ class MigrationDown extends AbstractCommand
 
             $manager->updateLatestMigrationTimestamp($datasource, $previousTimestamp);
 
-            if ($this->getOption('verbose')) {
+            if ($input->getOption('verbose')) {
                 $output->writeln(sprintf(
                     'Downgraded migration date to %d for datasource "%s"',
                     $previousTimestamp,
