@@ -148,7 +148,7 @@ class ObjectCollectionTest extends BookstoreTestBase
         AuthorPeer::clearInstancePool();
         BookPeer::clearInstancePool();
         $coll = new ObjectCollection();
-        $coll->setFormatter(new ObjectFormatter(new ModelCriteria(null, 'Propel\Tests\Bookstore\Author')));
+        $coll->setFormatter(new ObjectFormatter(new ModelCriteria(null, '\Propel\Tests\Bookstore\Author')));
         $coll []= $author;
         $books = $coll->populateRelation('Book', null, $this->con);
         $this->assertEquals(0, $books->count());
