@@ -58,7 +58,9 @@ class DefaultPlatform implements PlatformInterface
      */
     public function __construct(PDO $con = null)
     {
-        if ($con) $this->setConnection($con);
+        if ($con) {
+            $this->setConnection($con);
+        }
         $this->initialize();
     }
 
@@ -225,8 +227,7 @@ class DefaultPlatform implements PlatformInterface
                         $longNamesMap[$table->getName()] = strval(count($longNamesMap) + 1);
                     }
                     $result = substr($table->getName(), 0, $maxIdentifierLength - strlen("_SEQ_" . $longNamesMap[$table->getName()])) . "_SEQ_" . $longNamesMap[$table->getName()];
-                }
-                else {
+                } else {
                     $result = substr($table->getName(), 0, $maxIdentifierLength -4) . "_SEQ";
                 }
             } else {
@@ -339,18 +340,18 @@ DROP TABLE " . $this->quoteIdentifier($table->getName()) . ";
         $ddl = array($this->quoteIdentifier($col->getName()));
         $sqlType = $domain->getSqlType();
         if ($this->hasSize($sqlType) && $col->isDefaultSqlType($this)) {
-            $ddl []= $sqlType . $domain->printSize();
+            $ddl[] = $sqlType . $domain->printSize();
         } else {
-            $ddl []= $sqlType;
+            $ddl[] = $sqlType;
         }
         if ($default = $this->getColumnDefaultValueDDL($col)) {
-            $ddl []= $default;
+            $ddl[] = $default;
         }
         if ($notNull = $this->getNullString($col->isNotNull())) {
-            $ddl []= $notNull;
+            $ddl[] = $notNull;
         }
         if ($autoIncrement = $col->getAutoIncrementString()) {
-            $ddl []= $autoIncrement;
+            $ddl[] = $autoIncrement;
         }
 
         return implode(' ', $ddl);
@@ -937,7 +938,7 @@ ALTER TABLE %s MODIFY %s;
             if (null === $tableName) {
                 $tableName = $toColumn->getTable()->getName();
             }
-            $lines []= $this->getColumnDDL($toColumn);
+            $lines[] = $this->getColumnDDL($toColumn);
         }
 
         $sep = ",
@@ -986,7 +987,7 @@ ALTER TABLE %s ADD %s;
             if (null === $tableName) {
                 $tableName = $column->getTable()->getName();
             }
-            $lines []= $this->getColumnDDL($column);
+            $lines[] = $this->getColumnDDL($column);
         }
 
         $sep = ",

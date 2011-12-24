@@ -131,7 +131,8 @@ class SqlitePlatform extends DefaultPlatform
         );
     }
 
-    public function hasSize($sqlType) {
+    public function hasSize($sqlType)
+    {
         return !("MEDIUMTEXT" == $sqlType || "LONGTEXT" == $sqlType
                 || "BLOB" == $sqlType || "MEDIUMBLOB" == $sqlType
                 || "LONGBLOB" == $sqlType);

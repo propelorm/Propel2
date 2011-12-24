@@ -32,7 +32,7 @@ class Column extends XmlElement
 
     const DEFAULT_TYPE = "VARCHAR";
     const DEFAULT_VISIBILITY = 'public';
-    static public $valid_visibilities = array('public', 'protected', 'private');
+    static public $validVisibilities = array('public', 'protected', 'private');
 
     private $name;
     private $description;
@@ -134,7 +134,7 @@ class Column extends XmlElement
     {
         try {
             $dom = $this->getAttribute("domain");
-            if ($dom)     {
+            if ($dom) {
                 $this->getDomain()->copy($this->getTable()->getDatabase()->getDomain($dom));
             } else {
                 $type = strtoupper($this->getAttribute("type"));
@@ -369,8 +369,8 @@ class Column extends XmlElement
         $phpname = $this->getPhpName();
         if (strlen($phpname) > 1) {
             return strtolower(substr($phpname, 0, 1)) . substr($phpname, 1);
-        } else { // 0 or 1 chars (I suppose that's rare)
-
+        } else {
+            // 0 or 1 chars (I suppose that's rare)
             return strtolower($phpname);
         }
     }
@@ -379,7 +379,8 @@ class Column extends XmlElement
      * Get the visibility of the accessors of this column / attribute
      * @return         string
      */
-    public function getAccessorVisibility() {
+    public function getAccessorVisibility() 
+    {
         if ($this->accessorVisibility !== null) {
             return $this->accessorVisibility;
         } else {
@@ -391,8 +392,9 @@ class Column extends XmlElement
      * Set the visibility of the accessor methods for this column / attribute
      * @param             $newVisibility string
      */
-    public function setAccessorVisibility($newVisibility) {
-        if (in_array($newVisibility, self::$valid_visibilities)) {
+    public function setAccessorVisibility($newVisibility) 
+    {
+        if (in_array($newVisibility, self::$validVisibilities)) {
             $this->accessorVisibility = $newVisibility;
         } else {
             $this->accessorVisibility = self::DEFAULT_VISIBILITY;
@@ -404,7 +406,8 @@ class Column extends XmlElement
      * Get the visibility of the mutator of this column / attribute
      * @return         string
      */
-    public function getMutatorVisibility() {
+    public function getMutatorVisibility()
+    {
         if ($this->mutatorVisibility !== null) {
             return $this->mutatorVisibility;
         } else {
@@ -416,8 +419,9 @@ class Column extends XmlElement
      * Set the visibility of the mutator methods for this column / attribute
      * @param             $newVisibility string
      */
-    public function setMutatorVisibility($newVisibility) {
-        if (in_array($newVisibility, self::$valid_visibilities)) {
+    public function setMutatorVisibility($newVisibility)
+    {
+        if (in_array($newVisibility, self::$validVisibilities)) {
             $this->mutatorVisibility = $newVisibility;
         } else {
             $this->mutatorVisibility = self::DEFAULT_VISIBILITY;
@@ -452,7 +456,8 @@ class Column extends XmlElement
      * Get the Peer constant name that will identify this column.
      * @return         string
      */
-    public function getPeerName() {
+    public function getPeerName()
+    {
         return $this->peerName;
     }
 
@@ -460,7 +465,8 @@ class Column extends XmlElement
      * Set the Peer constant name that will identify this column.
      * @param             $name string
      */
-    public function setPeerName($name) {
+    public function setPeerName($name)
+    {
         $this->peerName = $name;
     }
 
@@ -1283,7 +1289,8 @@ class Column extends XmlElement
         $this->referrers = null;
     }
 
-    static public function generatePhpName($name, $phpNamingMethod = PhpNameGenerator::CONV_METHOD_CLEAN, $namePrefix = null) {
+    static public function generatePhpName($name, $phpNamingMethod = PhpNameGenerator::CONV_METHOD_CLEAN, $namePrefix = null) 
+    {
         return NameFactory::generateName(NameFactory::PHP_GENERATOR, array($name, $phpNamingMethod, $namePrefix));
     }
 }
