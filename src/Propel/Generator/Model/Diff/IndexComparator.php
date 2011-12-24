@@ -34,7 +34,7 @@ class IndexComparator
     {
         // Check for removed index columns in $toIndex
         $fromIndexColumns = $fromIndex->getColumns();
-        for($i = 0; $i < count($fromIndexColumns); $i++) {
+        for ($i = 0; $i < count($fromIndexColumns); $i++) {
             $indexColumn = $fromIndexColumns[$i];
             if (!$toIndex->hasColumnAtPosition($i, $indexColumn, null, $caseInsensitive)) {
                 return true;
@@ -43,7 +43,7 @@ class IndexComparator
 
         // Check for new index columns in $toIndex
         $toIndexColumns = $toIndex->getColumns();
-        for($i = 0; $i < count($toIndexColumns); $i++) {
+        for ($i = 0; $i < count($toIndexColumns); $i++) {
             $indexColumn = $toIndexColumns[$i];
             if (!$fromIndex->hasColumnAtPosition($i, $indexColumn, null, $caseInsensitive)) {
                 return true;

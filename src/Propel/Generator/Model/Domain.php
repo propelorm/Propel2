@@ -335,7 +335,7 @@ class Domain extends XmlElement
      */
     public function printSize()
     {
-        if ($this->size !== null && $this->scale !== null)  {
+        if ($this->size !== null && $this->scale !== null) {
             return '(' . $this->size . ',' . $this->scale . ')';
         } elseif ($this->size !== null) {
             return '(' . $this->size . ')';

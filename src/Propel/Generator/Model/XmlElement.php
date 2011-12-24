@@ -181,4 +181,4 @@ abstract class XmlElement
     {
         return $this->toString();
     }
-    }
+}

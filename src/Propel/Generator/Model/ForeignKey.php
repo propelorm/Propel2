@@ -370,7 +370,7 @@ class ForeignKey extends XmlElement
         $columns = array();
         $localTable = $this->getTable();
         foreach ($this->localColumns as $columnName) {
-            $columns []= $localTable->getColumn($columnName);
+            $columns[] = $localTable->getColumn($columnName);
         }
 
         return $columns;
@@ -487,7 +487,7 @@ class ForeignKey extends XmlElement
         $columns = array();
         $foreignTable = $this->getForeignTable();
         foreach ($this->foreignColumns as $columnName) {
-            $columns []= $foreignTable->getColumn($columnName);
+            $columns[] = $foreignTable->getColumn($columnName);
         }
 
         return $columns;
@@ -622,8 +622,8 @@ class ForeignKey extends XmlElement
 
         foreach ($foreignTable->getForeignKeys() as $refFK) {
             $fkMap = $refFK->getLocalForeignMapping();
-            if ( ($refFK->getTableName() == $this->getTableName()) && ($map == $fkMap) ) { // compares keys and values, but doesn't care about order, included check to make sure it's the same table (fixes #679)
-
+            // compares keys and values, but doesn't care about order, included check to make sure it's the same table (fixes #679)
+            if (($refFK->getTableName() == $this->getTableName()) && ($map == $fkMap)) { 
                 return $refFK;
             }
         }

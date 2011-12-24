@@ -303,7 +303,7 @@ class Database extends ScopedElement
         $tables = array();
         foreach ($this->tableList as $table) {
             if (!$table->isSkipSql()) {
-                $tables []= $table;
+                $tables[] = $table;
             }
         }
 
@@ -432,12 +432,12 @@ class Database extends ScopedElement
      * Adds Domain object from <domain> tag.
      * @param      mixed XML attributes (array) or Domain object.
      */
-    public function addDomain($data) {
-
+    public function addDomain($data) 
+    {
         if ($data instanceof Domain) {
             $domain = $data; // alias
             $domain->setDatabase($this);
-            $this->domainMap[ $domain->getName() ] = $domain;
+            $this->domainMap[$domain->getName()] = $domain;
 
             return $domain;
         } else {
@@ -473,7 +473,7 @@ class Database extends ScopedElement
 
     public function getBuildProperty($key)
     {
-        if($config = $this->getGeneratorConfig()) {
+        if ($config = $this->getGeneratorConfig()) {
             return $config->getBuildProperty($key);
         } else {
             return '';
@@ -572,7 +572,7 @@ class Database extends ScopedElement
         $this->setupTableReferrers();
 
         // add default behaviors to database
-        if($defaultBehaviors = $this->getBuildProperty('behaviorDefault')) {
+        if ($defaultBehaviors = $this->getBuildProperty('behaviorDefault')) {
             // add generic behaviors from build.properties
             $defaultBehaviors = explode(',', $defaultBehaviors);
             foreach ($defaultBehaviors as $behavior) {
