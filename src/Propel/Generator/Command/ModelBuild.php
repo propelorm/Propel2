@@ -85,7 +85,7 @@ class ModelBuild extends AbstractCommand
             ->addOption('disable-namespace-auto-package', null, InputOption::VALUE_NONE,
                 'Disable namespace auto-packaging')
             ->addOption('base-prefix', null, InputOption::VALUE_REQUIRED,
-                'Prefix for base classes', 'Base')
+                'Prefix for base classes', '') //should be removed
             ->setName('model:build')
             ->setDescription('Build the model classes based on Propel XML schemas')
             ;
@@ -113,14 +113,14 @@ class ModelBuild extends AbstractCommand
             'propel.targetPackage'                      => $input->getOption('target-package'),
             'propel.packageObjectModel'                 => $input->getOption('enable-package-object-model'),
             'propel.namespace.autoPackage'              => !$input->getOption('disable-namespace-auto-package'),
-            'propel.basePrefix'                         => $input->getOption('base-prefix'),
+            'propel.basePrefix'                         => $input->getOption('base-prefix'), //should be removed
             'propel.addGenericAccessors'                => true,
             'propel.addGenericMutators'                 => true,
             'propel.addSaveMethod'                      => true,
             'propel.addTimeStamp'                       => false,
             'propel.addValidateMethod'                  => true,
             'propel.addHooks'                           => true,
-            'propel.namespace.om'                       => 'Om',
+            'propel.namespace.om'                       => 'Base',
             'propel.namespace.map'                      => 'Map',
             'propel.useLeftJoinsInDoJoinMethods'        => true,
             'propel.emulateForeignKeyConstraints'       => false,
