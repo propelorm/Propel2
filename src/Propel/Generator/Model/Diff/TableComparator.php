@@ -178,7 +178,7 @@ class TableComparator
                 !$this->getFromTable()->getColumn($column->getName(), $caseInsensitive)->isPrimaryKey()) {
                     $this->tableDiff->addAddedPkColumn($column->getName(), $column);
                     $pkDifferences++;
-                }
+            }
         }
 
         // check for removed pk columns in $toTable
@@ -187,7 +187,7 @@ class TableComparator
                 !$this->getToTable()->getColumn($column->getName(), $caseInsensitive)->isPrimaryKey()) {
                     $this->tableDiff->addRemovedPkColumn($column->getName(), $column);
                     $pkDifferences++;
-                }
+            }
         }
 
         // check for column renamings

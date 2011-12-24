@@ -63,7 +63,7 @@ class ModelManager extends AbstractManager
                         // these classes are only generated if they don't already exist
                         foreach (array('peerstub', 'objectstub', 'querystub') as $target) {
                             $builder = $generatorConfig->getConfiguredBuilder($table, $target);
-                            $nbWrittenFiles += $this->doBuild($builder, $overwrite=false);
+                            $nbWrittenFiles += $this->doBuild($builder, $overwrite = false);
                         }
 
                         // -----------------------------------------------------------------------------------------
@@ -80,12 +80,12 @@ class ModelManager extends AbstractManager
                                         }
                                         $builder = $generatorConfig->getConfiguredBuilder($table, $target);
                                         $builder->setChild($child);
-                                        $nbWrittenFiles += $this->doBuild($builder, $overwrite=true);
+                                        $nbWrittenFiles += $this->doBuild($builder, $overwrite = true);
                                     }
                                     foreach (array('objectmultiextend', 'queryinheritancestub') as $target) {
                                         $builder = $generatorConfig->getConfiguredBuilder($table, $target);
                                         $builder->setChild($child);
-                                        $nbWrittenFiles += $this->doBuild($builder, $overwrite=false);
+                                        $nbWrittenFiles += $this->doBuild($builder, $overwrite = false);
                                     }
                                 } // foreach
                             } // if col->is enumerated
@@ -98,7 +98,7 @@ class ModelManager extends AbstractManager
                         // Create [empty] interface if it does not already exist
                         if ($table->getInterface()) {
                             $builder = $generatorConfig->getConfiguredBuilder($table, 'interface');
-                            $nbWrittenFiles += $this->doBuild($builder, $overwrite=false);
+                            $nbWrittenFiles += $this->doBuild($builder, $overwrite = false);
                         }
 
                         // ----------------------------------

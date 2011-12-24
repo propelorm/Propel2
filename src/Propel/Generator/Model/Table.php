@@ -487,7 +487,7 @@ class Table extends ScopedElement implements IdMethod
             if (!array_key_exists($localColumnsHash, $_indices)) {
                 // no matching index defined in the schema, so we have to create one. MySQL needs indices on any columns that serve as foreign keys. these are not auto-created prior to 4.1.2
                 $index = new Index();
-                $index->setName(substr_replace($foreignKey->getName(), 'FI_',  strrpos($foreignKey->getName(), 'FK_'), 3));
+                $index->setName(substr_replace($foreignKey->getName(), 'FI_', strrpos($foreignKey->getName(), 'FK_'), 3));
                 $index->setColumns($localColumns);
                 $index->resetColumnSize();
                 $this->addIndex($index);
@@ -548,8 +548,8 @@ class Table extends ScopedElement implements IdMethod
      * Names composing objects which haven't yet been named.	This
      * currently consists of foreign-key and index entities.
      */
-    public function doNaming() {
-
+    public function doNaming() 
+    {
         // Assure names are unique across all databases.
         try {
             for ($i=0, $size = count($this->foreignKeys); $i < $size; $i++) {
@@ -705,7 +705,7 @@ class Table extends ScopedElement implements IdMethod
             $col = $this->getColumn($col);
         }
         $pos = array_search($col, $this->columnList);
-        if(false === $pos) {
+        if (false === $pos) {
             throw new EngineException(sprintf('No column named %s found in table %s', $col->getName(), $table->getName()));
         }
         unset($this->columnList[$pos]);
@@ -820,7 +820,7 @@ class Table extends ScopedElement implements IdMethod
         if ($this->inheritanceColumn === null
             || !$this->inheritanceColumn->isEnumeratedClasses()) {
                 return null;
-            }
+        }
         $children = $this->inheritanceColumn->getChildren();
         $names = array();
         for ($i = 0, $size=count($children); $i < $size; $i++) {
@@ -1157,9 +1157,9 @@ class Table extends ScopedElement implements IdMethod
         if ($this->schema && $this->getDatabase() && $this->getDatabase()->getPlatform() &&
             $this->getDatabase()->getPlatform()->supportsSchemas()) {
                 return $this->schema . '.' . $this->commonName;
-            } else {
+        } else {
                 return $this->commonName;
-            }
+        }
     }
 
     /**
@@ -1235,8 +1235,8 @@ class Table extends ScopedElement implements IdMethod
         $phpname = $this->getPhpName();
         if (strlen($phpname) > 1) {
             return strtolower(substr($phpname, 0, 1)) . substr($phpname, 1);
-        } else { // 0 or 1 chars (I suppose that's rare)
-
+        } else {
+            // 0 or 1 chars (I suppose that's rare)
             return strtolower($phpname);
         }
     }
@@ -1901,7 +1901,8 @@ class Table extends ScopedElement implements IdMethod
      * @return    A CSV list.
      * @deprecated Use the Platform::getColumnListDDL() method.
      */
-    private function printList($list) {
+    private function printList($list) 
+    {
         $result = "";
         $comma = 0;
         for ($i=0,$_i=count($list); $i < $_i; $i++) {
