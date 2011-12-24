@@ -137,8 +137,12 @@ class PropelGraphvizTask extends AbstractPropelDataModelTask
 
                     foreach ($tbl->getColumns() as $col) {
                         $fk = $col->getForeignKeys();
-                        if ( count($fk) == 0 or $fk === null ) continue;
-                        if ( count($fk) > 1 ) throw( new Exception("not sure what to do here...") );
+                        if (count($fk) == 0 or $fk === null) {
+                            continue;
+                        }
+                        if (count($fk) > 1) {
+                            throw(new Exception("not sure what to do here..."));
+                        }
                         $fk = $fk[0];   // try first one
                         $dotSyntax .= 'node'.$tbl->getName() .':cols -> node'.$fk->getForeignTableName() . ':table [label="' . $col->getName() . '=' . implode(',', $fk->getForeignColumns()) . ' "];';
                         $dotSyntax .= "\n";
@@ -162,7 +166,8 @@ class PropelGraphvizTask extends AbstractPropelDataModelTask
     /**
      * probably insecure
      */
-    function writeDot($dotSyntax, PhingFile $outputDir, $baseFilename) {
+    function writeDot($dotSyntax, PhingFile $outputDir, $baseFilename) 
+    {
         $file = new PhingFile($outputDir, $baseFilename . '.schema.dot');
         $this->log("Writing dot file to " . $file->getAbsolutePath());
         file_put_contents($file->getAbsolutePath(), $dotSyntax);
