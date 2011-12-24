@@ -53,10 +53,10 @@ Once done, build fixtures:
 
     php bin/propel test:prepare
 
-Now you can run unit tests:
+Now you can run the test suite by running:
 
     phpunit
-
+    
 
 ## License ##
 
