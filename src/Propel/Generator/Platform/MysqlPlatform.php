@@ -173,7 +173,7 @@ SET FOREIGN_KEY_CHECKS = 1;
             $lines[] = $this->getUniqueDDL($unique);
         }
 
-        foreach ($table->getIndices() as $index ) {
+        foreach ($table->getIndices() as $index) {
             $lines[] = $this->getIndexDDL($index);
         }
 
@@ -198,7 +198,7 @@ SET FOREIGN_KEY_CHECKS = 1;
         $tableOptions = $this->getTableOptions($table);
 
         if ($table->getDescription()) {
-            $tableOptions []= 'COMMENT=' . $this->quote($table->getDescription());
+            $tableOptions[] = 'COMMENT=' . $this->quote($table->getDescription());
         }
 
         $tableOptions = $tableOptions ? ' ' . implode(' ', $tableOptions) : '';
@@ -251,12 +251,12 @@ CREATE TABLE %s
         );
         foreach ($supportedOptions as $name => $sqlName) {
             if ($vi->hasParameter($name)) {
-                $tableOptions []= sprintf('%s=%s',
+                $tableOptions[] = sprintf('%s=%s',
                     $sqlName,
                     $this->quote($vi->getParameter($name))
                 );
             } elseif ($vi->hasParameter($sqlName)) {
-                $tableOptions []= sprintf('%s=%s',
+                $tableOptions[] = sprintf('%s=%s',
                     $sqlName,
                     $this->quote($vi->getParameter($sqlName))
                 );
@@ -284,7 +284,8 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
         // See: http://propel.phpdb.org/trac/ticket/538
         if ($sqlType == 'DATETIME') {
             $def = $domain->getDefaultValue();
-            if ($def && $def->isExpression()) { // DATETIME values can only have constant expressions
+            if ($def && $def->isExpression()) {
+                // DATETIME values can only have constant expressions
                 $sqlType = 'TIMESTAMP';
             }
         } elseif ($sqlType == 'DATE') {
@@ -300,18 +301,18 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
 
         $ddl = array($this->quoteIdentifier($col->getName()));
         if ($this->hasSize($sqlType) && $col->isDefaultSqlType($this)) {
-            $ddl []= $sqlType . $domain->printSize();
+            $ddl[] = $sqlType . $domain->printSize();
         } else {
-            $ddl []= $sqlType;
+            $ddl[] = $sqlType;
         }
         $colinfo = $col->getVendorInfoForType($this->getDatabaseType());
         if ($colinfo->hasParameter('Charset')) {
-            $ddl []= 'CHARACTER SET '. $this->quote($colinfo->getParameter('Charset'));
+            $ddl[] = 'CHARACTER SET '. $this->quote($colinfo->getParameter('Charset'));
         }
         if ($colinfo->hasParameter('Collation')) {
-            $ddl []= 'COLLATE '. $this->quote($colinfo->getParameter('Collation'));
+            $ddl[] = 'COLLATE '. $this->quote($colinfo->getParameter('Collation'));
         } elseif ($colinfo->hasParameter('Collate')) {
-            $ddl []= 'COLLATE '. $this->quote($colinfo->getParameter('Collate'));
+            $ddl[] = 'COLLATE '. $this->quote($colinfo->getParameter('Collate'));
         }
         if ($sqlType == 'TIMESTAMP') {
             if ($notNullString == '') {
@@ -321,24 +322,24 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
                 $defaultSetting = 'DEFAULT CURRENT_TIMESTAMP';
             }
             if ($notNullString) {
-                $ddl []= $notNullString;
+                $ddl[] = $notNullString;
             }
             if ($defaultSetting) {
-                $ddl []= $defaultSetting;
+                $ddl[] = $defaultSetting;
             }
         } else {
             if ($defaultSetting) {
-                $ddl []= $defaultSetting;
+                $ddl[] = $defaultSetting;
             }
             if ($notNullString) {
-                $ddl []= $notNullString;
+                $ddl[] = $notNullString;
             }
         }
         if ($autoIncrement = $col->getAutoIncrementString()) {
-            $ddl []= $autoIncrement;
+            $ddl[] = $autoIncrement;
         }
         if ($col->getDescription()) {
-            $ddl []= 'COMMENT ' . $this->quote($col->getDescription());
+            $ddl[] = 'COMMENT ' . $this->quote($col->getDescription());
         }
 
         return implode(' ', $ddl);

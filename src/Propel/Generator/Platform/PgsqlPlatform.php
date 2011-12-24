@@ -330,18 +330,18 @@ DROP TABLE IF EXISTS %s CASCADE;
             $sqlType = $col->getType() === PropelTypes::BIGINT ? 'bigserial' : 'serial';
         }
         if ($this->hasSize($sqlType) && $col->isDefaultSqlType($this)) {
-            $ddl []= $sqlType . $domain->printSize();
+            $ddl[] = $sqlType . $domain->printSize();
         } else {
-            $ddl []= $sqlType;
+            $ddl[] = $sqlType;
         }
         if ($default = $this->getColumnDefaultValueDDL($col)) {
-            $ddl []= $default;
+            $ddl[] = $default;
         }
         if ($notNull = $this->getNullString($col->isNotNull())) {
-            $ddl []= $notNull;
+            $ddl[] = $notNull;
         }
         if ($autoIncrement = $col->getAutoIncrementString()) {
-            $ddl []= $autoIncrement;
+            $ddl[] = $autoIncrement;
         }
 
         return implode(' ', $ddl);
