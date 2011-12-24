@@ -128,7 +128,7 @@ class SqlManager extends AbstractManager
             $sqlDbMapContent .= sprintf("%s=%s\n", $filename, $datasource);
         }
 
-        file_put_contents ($this->getSqlDbMapFilename(), $sqlDbMapContent);
+        file_put_contents($this->getSqlDbMapFilename(), $sqlDbMapContent);
     }
 
     /**
