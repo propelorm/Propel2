@@ -57,6 +57,7 @@ Now you can run the test suite by running:
 
     phpunit
     
+Note that when testing on MySQL servers, you need to create the databases `reverse_bookstore`, `bookstore_schemas`, `contest` and `second_hand_books`.
 
 ## License ##
 
