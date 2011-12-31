@@ -57,6 +57,7 @@ Now you can run the test suite by running:
 
     phpunit
     
+You'll need to create a database named `test`, and four schemas: `reverse_bookstore`, `bookstore_schemas`, `contest` and `second_hand_books`. Note, MySQL doesn't differentiate databases and schemas.
 
 ## License ##
 
