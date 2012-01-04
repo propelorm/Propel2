@@ -1,1 +1,1 @@
-[{"package":"symfony\/class-loader","version":"2.1.0-dev"},{"package":"symfony\/console","version":"2.1.0-dev"},{"package":"symfony\/finder","version":"2.1.0-dev"},{"package":"symfony\/yaml","version":"2.1.0-dev"},{"package":"monolog\/monolog","version":"master-dev"}]
+[{"package":"symfony\/finder","version":"2.1.0-dev"},{"package":"monolog\/monolog","version":"master-dev"},{"package":"symfony\/console","version":"2.1.0-dev"},{"package":"symfony\/yaml","version":"2.1.0-dev"}]
