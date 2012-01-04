@@ -83,6 +83,14 @@ class ArchivableBehaviorTest extends \PHPUnit_Framework_TestCase
         </behavior>
     </table>
 
+    <table name="archivable_test_5">
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+        <behavior name="archivable">
+            <parameter name="archive_table" value="archivable_test_5_backup" />
+            <parameter name="archive_phpname" value="ArchivableTest5MyBackup" />
+        </behavior>
+    </table>
+
 </database>
 EOF;
             $builder = new QuickBuilder();
@@ -96,6 +104,7 @@ EOF;
     {
         $table = \ArchivableTest1Peer::getTableMap();
         $this->assertTrue($table->getDatabaseMap()->hasTable('archivable_test_1_archive'));
+        $this->assertSame("ArchivableTest1Archive", $table->getDatabaseMap()->getTable('archivable_test_1_archive')->getPhpName());
     }
 
     public function testDoesNotCreateCustomArchiveTableIfExists()
@@ -108,12 +117,20 @@ EOF;
     {
         $table = \ArchivableTest3Peer::getTableMap();
         $this->assertTrue($table->getDatabaseMap()->hasTable('my_old_archivable_test_3'));
+        $this->assertSame("MyOldArchivableTest3", $table->getDatabaseMap()->getTable('my_old_archivable_test_3')->getPhpName());
     }
 
     public function testDoesNotCreateCustomArchiveTableIfArchiveClassIsSpecified()
     {
         $table = \ArchivableTest4Peer::getTableMap();
         $this->assertFalse($table->getDatabaseMap()->hasTable('archivable_test_4_archive'));
+    }
+
+    public function testCanCreateCustomArchiveTableNameAndPhpName()
+    {
+        $table = ArchivableTest5Peer::getTableMap();
+        $this->assertTrue($table->getDatabaseMap()->hasTable('archivable_test_5_backup'));
+        $this->assertSame("ArchivableTest5MyBackup", $table->getDatabaseMap()->getTable('archivable_test_5_backup')->getPhpName());
     }
 
     public function testCopiesColumnsToArchiveTable()
