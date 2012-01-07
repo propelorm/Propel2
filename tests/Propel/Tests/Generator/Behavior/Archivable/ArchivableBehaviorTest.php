@@ -128,7 +128,7 @@ EOF;
 
     public function testCanCreateCustomArchiveTableNameAndPhpName()
     {
-        $table = ArchivableTest5Peer::getTableMap();
+        $table = \ArchivableTest5Peer::getTableMap();
         $this->assertTrue($table->getDatabaseMap()->hasTable('archivable_test_5_backup'));
         $this->assertSame("ArchivableTest5MyBackup", $table->getDatabaseMap()->getTable('archivable_test_5_backup')->getPhpName());
     }
