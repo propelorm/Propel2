@@ -27,6 +27,7 @@ class ArchivableBehavior extends Behavior
     // default parameters value
     protected $parameters = array(
         'archive_table'       => '',
+        'archive_phpname'     => NULL,
         'archive_class'       => '',
         'log_archived_at'     => 'true',
         'archived_at_column'  => 'archived_at',
@@ -74,6 +75,7 @@ class ArchivableBehavior extends Behavior
             // create the version table
             $archiveTable = $database->addTable(array(
                 'name'      => $archiveTableName,
+                'phpName'   => $this->getParameter('archive_phpname'),
                 'package'   => $table->getPackage(),
                 'schema'    => $table->getSchema(),
                 'namespace' => $table->getNamespace() ? '\\' . $table->getNamespace() : null,
