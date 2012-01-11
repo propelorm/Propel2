@@ -132,7 +132,7 @@ class MssqlSchemaParser extends AbstractSchemaParser
             $propelType = $this->getMappedPropelType($type);
             if (!$propelType) {
                 $propelType = Column::DEFAULT_TYPE;
-                $this->warn('Column ['.$table->getName().'.'.$name.'] has a column type ('.$type.') that Propel does not support.');
+                $this->warn(sprintf('Column [%s.%s] has a column type (%s) that Propel does not support.', $table->getName(), $name, $type));
             }
 
             $column = new Column($name);
