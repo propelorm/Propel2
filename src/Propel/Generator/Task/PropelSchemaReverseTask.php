@@ -24,7 +24,6 @@ use \PDOTask;
  */
 class PropelSchemaReverseTask extends PDOTask
 {
-
     /**
      * Zero bit for no validators
      */
@@ -62,77 +61,85 @@ class PropelSchemaReverseTask extends PDOTask
 
     /**
      * File to contain XML database schema.
-     * @var        PhingFIle
+     *
+     * @var PhingFile
      */
     protected $xmlSchema;
 
     /**
      * DB encoding to use
-     * @var        string
+     *
+     * @var string
      */
     protected $dbEncoding = 'iso-8859-1';
 
     /**
      * DB schema to use.
-     * @var        string
+     *
+     * @var string
      */
     protected $dbSchema;
 
     /**
      * The datasource name (used for <database name=""> in schema.xml)
      *
-     * @var        string
+     * @var string
      */
     protected $databaseName;
 
     /**
      * DOM document produced.
-     * @var        DOMDocument
+     *
+     * @var DOMDocument
      */
     protected $doc;
 
     /**
      * The document root element.
-     * @var        DOMElement
+     *
+     * @var DOMElement
      */
     protected $databaseNode;
 
     /**
      * Hashtable of columns that have primary keys.
-     * @var        array
+     *
+     * @var array
      */
     protected $primaryKeys;
 
     /**
      * Whether to use same name for phpName or not.
-     * @var        boolean
+     *
+     * @var boolean
      */
     protected $samePhpName;
 
     /**
-     * whether to add vendor info or not
-     * @var        boolean
+     * Whether to add vendor info or not.
+     *
+     * @var boolean
      */
     protected $addVendorInfo;
 
     /**
      * Bitfield to switch on/off which validators will be created.
      *
-     * @var        int
+     * @var int
      */
     protected $validatorBits = PropelSchemaReverseTask::VALIDATORS_NONE;
 
     /**
      * Collect validatorInfos to create validators.
      *
-     * @var        int
+     * @var int
      */
     protected $validatorInfos;
 
     /**
      * An initialized GeneratorConfig object containing the converted Phing props.
      *
-     * @var        GeneratorConfig
+     * @var GeneratorConfig
      */
     private $generatorConfig;
 
@@ -142,22 +149,22 @@ class PropelSchemaReverseTask extends PDOTask
      * The tokens are used in the propel.addValidators property to define
      * which validators are to be added
      *
-     * @var        array
+     * @var array
      */
-    static protected $validatorBitMap = array (
-        'none' => PropelSchemaReverseTask::VALIDATORS_NONE,
+    static protected $validatorBitMap = array(
+        'none'      => PropelSchemaReverseTask::VALIDATORS_NONE,
         'maxlength' => PropelSchemaReverseTask::VALIDATORS_MAXLENGTH,
-        'maxvalue' => PropelSchemaReverseTask::VALIDATORS_MAXVALUE,
-        'type' => PropelSchemaReverseTask::VALIDATORS_TYPE,
-        'required' => PropelSchemaReverseTask::VALIDATORS_REQUIRED,
-        'unique' => PropelSchemaReverseTask::VALIDATORS_UNIQUE,
-        'all' => PropelSchemaReverseTask::VALIDATORS_ALL,
+        'maxvalue'  => PropelSchemaReverseTask::VALIDATORS_MAXVALUE,
+        'type'      => PropelSchemaReverseTask::VALIDATORS_TYPE,
+        'required'  => PropelSchemaReverseTask::VALIDATORS_REQUIRED,
+        'unique'    => PropelSchemaReverseTask::VALIDATORS_UNIQUE,
+        'all'       => PropelSchemaReverseTask::VALIDATORS_ALL,
     );
 
     /**
      * Defines messages that are added to validators
      *
-     * @var        array
+     * @var array
      */
     static protected $validatorMessages = array (
         'maxlength' => array (
@@ -282,9 +289,6 @@ class PropelSchemaReverseTask extends PDOTask
      */
     public function setAddValidators($v)
     {
-        $validKeys = array_keys(self::$validatorBitMap);
-
-        // lowercase input
         $v = strtolower($v);
 
         $bits = self::VALIDATORS_NONE;
@@ -422,9 +426,6 @@ class PropelSchemaReverseTask extends PDOTask
      */
     protected function addValidators(Database $database)
     {
-
-        $platform = $this->getGeneratorConfig()->getConfiguredPlatform();
-
         foreach ($database->getTables() as $table) {
 
             $set = new PropelSchemaReverse_ValidatorSet();
@@ -501,9 +502,6 @@ class PropelSchemaReverseTask extends PDOTask
      */
     protected function getRuleMessage(Column $column, $type, $value)
     {
-        // create message
-        $colName = $column->getName();
-        $tableName = $column->getTable()->getName();
         $msg = self::$validatorMessages[strtolower($type)];
         $tmp = compact($msg['var']);
         array_unshift($tmp, $msg['msg']);

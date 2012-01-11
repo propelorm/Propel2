@@ -130,8 +130,6 @@ class PropelDataSQLTask extends AbstractPropelDataModelTask
     {
         $this->validate();
 
-        $targetDatabase = $this->getTargetDatabase();
-
         $platform = $this->getGeneratorConfig()->getConfiguredPlatform();
 
         // Load the Data XML -> DB Name properties
@@ -169,7 +167,7 @@ class PropelDataSQLTask extends AbstractPropelDataModelTask
                     $dataXmlParser = new XmlToDataSQL($db, $this->getGeneratorConfig(), $this->dbEncoding);
                     $dataXmlParser->transform($dataXMLFile, $sqlWriter);
                 } catch (Exception $e) {
-                    throw new BuildException("Exception parsing data XML: " . $e->getMessage(), $x);
+                    throw new BuildException('Exception parsing data XML: '.$e->getMessage());
                 }
 
                 // Place the generated SQL file(s)

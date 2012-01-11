@@ -72,11 +72,6 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask
     public $conn;
 
     /**
-     * The statement used to acquire the data to dump.
-     */
-    private $stmt;
-
-    /**
      * Set the file that maps between data XML files and databases.
      *
      * @param      PhingFile $sqldbmap the db map

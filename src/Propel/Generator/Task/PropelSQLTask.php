@@ -146,10 +146,6 @@ class PropelSQLTask extends AbstractPropelDataModelTask
         $this->createSqlDbMap();
 
         // 2) Now actually create the DDL based on the datamodel(s) from XML schema file.
-        $targetDatabase = $this->getTargetDatabase();
-
-        $generatorConfig = $this->getGeneratorConfig();
-
         foreach ($dataModels as $package => $dataModel) {
 
             foreach ($dataModel->getDatabases() as $database) {

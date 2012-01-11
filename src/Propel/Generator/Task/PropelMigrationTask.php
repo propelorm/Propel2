@@ -31,7 +31,7 @@ class PropelMigrationTask extends BasePropelMigrationTask
         $manager->setMigrationTable($this->getMigrationTable());
         $manager->setMigrationDir($this->getOutputDirectory());
 
-        if (!$nextMigrationTimestamp = $manager->getFirstUpMigrationTimestamp()) {
+        if (!$manager->getFirstUpMigrationTimestamp()) {
             $this->log('All migrations were already executed - nothing to migrate.');
 
             return false;
