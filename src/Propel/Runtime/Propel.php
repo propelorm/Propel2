@@ -104,11 +104,6 @@ class Propel
     private static $isInstancePoolingEnabled = true;
 
     /**
-     * @var        bool For replication, whether to force the use of master connection.
-     */
-    private static $isForceMasterConnection = false;
-
-    /**
      * Configure Propel a PHP (array) config file.
      *
      * @param      string $configFile Path (absolute or relative to include_path) to config file.
@@ -149,7 +144,6 @@ class Propel
                 }
                 // set connection settings
                 if (isset($params['connection'])) {
-                    $connectionConfiguration = array();
                     $conParams = $params['connection'];
                     if (isset($conParams['slaves'])) {
                         $manager = new ConnectionManagerMasterSlave();
