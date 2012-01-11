@@ -107,7 +107,6 @@ class PgsqlPlatform extends DefaultPlatform
      */
     public function getSequenceName(Table $table)
     {
-        static $longNamesMap = array();
         $result = null;
         if ($table->getIdMethod() == IdMethod::NATIVE) {
             $idMethodParams = $table->getIdMethodParameters();
