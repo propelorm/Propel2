@@ -52,7 +52,6 @@ class AggregateColumnRelationBehavior extends Behavior
     protected function addObjectUpdateRelated($builder)
     {
         $relationName = $this->getRelationName($builder);
-        $updateMethodName = $this->getParameter('update_method');
 
         return $this->renderTemplate('objectUpdateRelated', array(
             'relationName'     => $relationName,
