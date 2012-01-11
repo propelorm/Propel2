@@ -78,7 +78,7 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
      */
     public function lockTable($con, $table)
     {
-        $con->exec('LOCK TABLE $table WRITE');
+        $con->exec("LOCK TABLE $table WRITE");
     }
 
     /**
