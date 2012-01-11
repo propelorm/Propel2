@@ -41,7 +41,7 @@ class Unique extends Index
 
         $uniqueNode = $node->appendChild($doc->createElement('unique'));
         $uniqueNode->setAttribute('name', $this->getName());
-        $columns = $this->getColumns();
+
         foreach ($this->getColumns() as $colname) {
             $uniqueColNode = $uniqueNode->appendChild($doc->createElement('unique-column'));
             $uniqueColNode->setAttribute('name', $colname);
