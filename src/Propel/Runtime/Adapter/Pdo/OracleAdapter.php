@@ -103,6 +103,7 @@ class OracleAdapter extends PdoAdapter implements AdapterInterface
      */
     public function applyLimit(&$sql, $offset, $limit, $criteria = null)
     {
+        $params = array();
         if (BasePeer::needsSelectAliases($criteria)) {
             $crit = clone $criteria;
             $selectSql = $this->createSelectSqlPart($crit, $params, true);
