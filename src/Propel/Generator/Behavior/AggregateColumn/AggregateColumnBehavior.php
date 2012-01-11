@@ -42,7 +42,7 @@ class AggregateColumnBehavior extends Behavior
 
         // add the aggregate column if not present
         if(!$this->getTable()->containsColumn($columnName)) {
-            $column = $this->getTable()->addColumn(array(
+            $this->getTable()->addColumn(array(
                 'name'    => $columnName,
                 'type'    => 'INTEGER',
             ));
@@ -53,7 +53,6 @@ class AggregateColumnBehavior extends Behavior
         if (!$foreignTable->hasBehavior('concrete_inheritance_parent')) {
             $relationBehavior = new AggregateColumnRelationBehavior();
             $relationBehavior->setName('aggregate_column_relation');
-            $foreignKey = $this->getForeignKey();
             $relationBehavior->addParameter(array('name' => 'foreign_table', 'value' => $table->getName()));
             $relationBehavior->addParameter(array('name' => 'update_method', 'value' => 'update' . $this->getColumn()->getPhpName()));
             $foreignTable->addBehavior($relationBehavior);
@@ -62,7 +61,7 @@ class AggregateColumnBehavior extends Behavior
 
     public function objectMethods($builder)
     {
-        if (!$foreignTableName = $this->getParameter('foreign_table')) {
+        if (!$this->getParameter('foreign_table')) {
             throw new InvalidArgumentException(sprintf('You must define a \'foreign_table\' parameter for the \'aggregate_column\' behavior in the \'%s\' table', $this->getTable()->getName()));
         }
         $script = '';
