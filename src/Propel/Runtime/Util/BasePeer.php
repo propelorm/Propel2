@@ -38,11 +38,6 @@ use \Exception;
 class BasePeer
 {
     /**
-     * Array (hash) that contains the cached mapBuilders.
-     */
-    private static $mapBuilders = array();
-
-    /**
      * Array (hash) that contains cached validators
      */
     private static $validatorMap = array();
@@ -669,7 +664,6 @@ class BasePeer
 
         $orderBy = $criteria->getOrderByColumns();
         $groupBy = $criteria->getGroupByColumns();
-        $ignoreCase = $criteria->isIgnoreCase();
 
         // get the first part of the SQL statement, the SELECT part
         $selectSql = $db->createSelectSqlPart($criteria, $fromClause);
