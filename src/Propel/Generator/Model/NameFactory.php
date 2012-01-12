@@ -32,11 +32,6 @@ class NameFactory
     const CONSTRAINT_GENERATOR = '\Propel\Generator\Model\ConstraintNameGenerator';
 
     /**
-     * The single instance of this class.
-     */
-    private static $instance;
-
-    /**
      * The cache of <code>NameGenerator</code> algorithms in use for
      * name generation, keyed by fully qualified class name.
      */

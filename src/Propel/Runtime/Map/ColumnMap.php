@@ -348,11 +348,7 @@ class ColumnMap
      */
     public function isForeignKey()
     {
-        if ($this->relatedTableName) {
-            return true;
-        } else {
-            return false;
-        }
+        return !empty($this->relatedTableName);
     }
 
     /**
@@ -360,16 +356,16 @@ class ColumnMap
      */
     public function getRelation()
     {
-        if(!$this->relatedTableName) {
+        if (!$this->relatedTableName) {
             return null;
         }
 
-        foreach ($this->getTable()->getRelations() as $name => $relation) {
-            if($relation->getType() == RelationMap::MANY_TO_ONE) {
-                if ($relation->getForeignTable()->getName() == $this->getRelatedTableName() &&
-                    array_key_exists($this->getFullyQualifiedName(), $relation->getColumnMappings())) {
-                        return $relation;
-                    }
+        foreach ($this->getTable()->getRelations() as $relation) {
+            if ($relation->getType() == RelationMap::MANY_TO_ONE) {
+                if ($relation->getForeignTable()->getName() == $this->getRelatedTableName() 
+                    && array_key_exists($this->getFullyQualifiedName(), $relation->getColumnMappings())) {
+                    return $relation;
+                }
             }
         }
     }
@@ -485,9 +481,9 @@ class ColumnMap
     {
         if ($this->isText()) {
             return $db->ignoreCase($str);
-        } else {
-            return $str;
         }
+
+        return $str;
     }
 
     /**

@@ -102,7 +102,6 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask
          * 'log' section and 'propel' sections. To maintain backward compatibility
          * we need to put 'log' back into the 'propel' section.
          */
-        $log = array();
         if (isset($phpconf['log'])) {
             $phpconf['propel']['log'] = $phpconf['log'];
             unset($phpconf['log']);

@@ -72,7 +72,6 @@ class Column extends XmlElement
     private $isUnique = false;
     private $isAutoIncrement = false;
     private $isLazyLoad = false;
-    private $defaultValue;
     private $referrers;
     private $isPrimaryString = false;
 
@@ -1123,8 +1122,8 @@ class Column extends XmlElement
 
     /**
      * Get the default value object for this column.
-     * @return         ColumnDefaultValue
-     * @see                 Domain::getDefaultValue()
+     * @return  ColumnDefaultValue
+     * @see     Domain::getDefaultValue()
      */
     public function getDefaultValue()
     {
@@ -1133,8 +1132,8 @@ class Column extends XmlElement
 
     /**
      * Get the default value suitable for use in PHP.
-     * @return         mixed
-     * @see                 Domain::getPhpDefaultValue()
+     * @return  mixed
+     * @see     Domain::getPhpDefaultValue()
      */
     public function getPhpDefaultValue()
     {

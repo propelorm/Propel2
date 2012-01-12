@@ -167,10 +167,10 @@ class ArrayFormatter extends AbstractFormatter
 
         if ($mainObjectIsNew) {
             return $this->alreadyHydratedObjects[$this->class][$mainKey];
-        } else {
-            // we still need to return a reference to something to avoid a warning
-            return $emptyVariable;
         }
+
+        // we still need to return a reference to something to avoid a warning
+        return $this->emptyVariable;
     }
 
 }

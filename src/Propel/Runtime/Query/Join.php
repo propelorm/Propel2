@@ -292,7 +292,7 @@ class Join
     {
         $columns = array();
         foreach ($this->left as $index => $column) {
-            $columns []= $this->getLeftColumn($index);
+            $columns[] = $this->getLeftColumn($index);
         }
 
         return $columns;
@@ -349,7 +349,7 @@ class Join
      */
     public function addRightColumnName($right)
     {
-        $this->right []= $right;
+        $this->right[] = $right;
     }
 
     /**
@@ -393,7 +393,7 @@ class Join
     {
         $columns = array();
         foreach ($this->right as $index => $column) {
-            $columns []= $this->getRightColumn($index);
+            $columns[] = $this->getRightColumn($index);
         }
 
         return $columns;

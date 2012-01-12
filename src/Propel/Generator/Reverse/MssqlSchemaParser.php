@@ -28,56 +28,53 @@ class MssqlSchemaParser extends AbstractSchemaParser
      * @var        array
      */
     private static $mssqlTypeMap = array(
-        "binary" => PropelTypes::BINARY,
-        "bit" => PropelTypes::BOOLEAN,
-        "char" => PropelTypes::CHAR,
-        "datetime" => PropelTypes::TIMESTAMP,
-        "decimal() identity"  => PropelTypes::DECIMAL,
-        "decimal"  => PropelTypes::DECIMAL,
-        "image" => PropelTypes::LONGVARBINARY,
-        "int" => PropelTypes::INTEGER,
-        "int identity" => PropelTypes::INTEGER,
-        "integer" => PropelTypes::INTEGER,
-        "money" => PropelTypes::DECIMAL,
-        "nchar" => PropelTypes::CHAR,
-        "ntext" => PropelTypes::LONGVARCHAR,
-        "numeric() identity" => PropelTypes::NUMERIC,
-        "numeric" => PropelTypes::NUMERIC,
-        "nvarchar" => PropelTypes::VARCHAR,
-        "real" => PropelTypes::REAL,
-        "float" => PropelTypes::FLOAT,
-        "smalldatetime" => PropelTypes::TIMESTAMP,
-        "smallint" => PropelTypes::SMALLINT,
-        "smallint identity" => PropelTypes::SMALLINT,
-        "smallmoney" => PropelTypes::DECIMAL,
-        "sysname" => PropelTypes::VARCHAR,
-        "text" => PropelTypes::LONGVARCHAR,
-        "timestamp" => PropelTypes::BINARY,
-        "tinyint identity" => PropelTypes::TINYINT,
-        "tinyint" => PropelTypes::TINYINT,
-        "uniqueidentifier" => PropelTypes::CHAR,
-        "varbinary" => PropelTypes::VARBINARY,
-        "varbinary(max)" => PropelTypes::CLOB,
-        "varchar" => PropelTypes::VARCHAR,
-        "varchar(max)" => PropelTypes::CLOB,
-        "uniqueidentifier" => PropelTypes::CHAR,
+        'binary' => PropelTypes::BINARY,
+        'bit' => PropelTypes::BOOLEAN,
+        'char' => PropelTypes::CHAR,
+        'datetime' => PropelTypes::TIMESTAMP,
+        'decimal() identity'  => PropelTypes::DECIMAL,
+        'decimal'  => PropelTypes::DECIMAL,
+        'image' => PropelTypes::LONGVARBINARY,
+        'int' => PropelTypes::INTEGER,
+        'int identity' => PropelTypes::INTEGER,
+        'integer' => PropelTypes::INTEGER,
+        'money' => PropelTypes::DECIMAL,
+        'nchar' => PropelTypes::CHAR,
+        'ntext' => PropelTypes::LONGVARCHAR,
+        'numeric() identity' => PropelTypes::NUMERIC,
+        'numeric' => PropelTypes::NUMERIC,
+        'nvarchar' => PropelTypes::VARCHAR,
+        'real' => PropelTypes::REAL,
+        'float' => PropelTypes::FLOAT,
+        'smalldatetime' => PropelTypes::TIMESTAMP,
+        'smallint' => PropelTypes::SMALLINT,
+        'smallint identity' => PropelTypes::SMALLINT,
+        'smallmoney' => PropelTypes::DECIMAL,
+        'sysname' => PropelTypes::VARCHAR,
+        'text' => PropelTypes::LONGVARCHAR,
+        'timestamp' => PropelTypes::BINARY,
+        'tinyint identity' => PropelTypes::TINYINT,
+        'tinyint' => PropelTypes::TINYINT,
+        'uniqueidentifier' => PropelTypes::CHAR,
+        'varbinary' => PropelTypes::VARBINARY,
+        'varbinary(max)' => PropelTypes::CLOB,
+        'varchar' => PropelTypes::VARCHAR,
+        'varchar(max)' => PropelTypes::CLOB,
+        'uniqueidentifier' => PropelTypes::CHAR,
         // SQL Server 2000 only
-        "bigint identity" => PropelTypes::BIGINT,
-        "bigint" => PropelTypes::BIGINT,
-        "sql_variant" => PropelTypes::VARCHAR,
+        'bigint identity' => PropelTypes::BIGINT,
+        'bigint' => PropelTypes::BIGINT,
+        'sql_variant' => PropelTypes::VARCHAR,
     );
 
     /**
-     * @see        AbstractSchemaParser::getTypeMapping()
+     * @see AbstractSchemaParser::getTypeMapping()
      */
     protected function getTypeMapping()
     {
         return self::$mssqlTypeMap;
     }
 
-    /**
-     *
-     */
     public function parse(Database $database, Task $task = null)
     {
         $stmt = $this->dbh->query("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME <> 'dtproperties'");
@@ -126,17 +123,16 @@ class MssqlSchemaParser extends AbstractSchemaParser
             $size = $row['LENGTH'];
             $isNullable = $row['NULLABLE'];
             $default = $row['COLUMN_DEF'];
-            $precision = $row['PRECISION'];
             $scale = $row['SCALE'];
             $autoincrement = false;
-            if (strtolower($type) == "int identity") {
+            if (strtolower($type) == 'int identity') {
                 $autoincrement = true;
             }
 
             $propelType = $this->getMappedPropelType($type);
             if (!$propelType) {
                 $propelType = Column::DEFAULT_TYPE;
-                $this->warn("Column [" . $table->getName() . "." . $name. "] has a column type (".$type.") that Propel does not support.");
+                $this->warn(sprintf('Column [%s.%s] has a column type (%s) that Propel does not support.', $table->getName(), $name, $type));
             }
 
             $column = new Column($name);

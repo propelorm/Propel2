@@ -68,7 +68,6 @@ class GeneratorConfig implements GeneratorConfigInterface
     {
         $this->buildProperties = array();
 
-        $renamedPropelProps = array();
         foreach ($props as $key => $propValue) {
             if (strpos($key, "propel.") === 0) {
                 $newKey = substr($key, strlen("propel."));
@@ -135,7 +134,7 @@ class GeneratorConfig implements GeneratorConfigInterface
             throw new BuildException("Unable to find class path for '$propname' property.");
         }
 
-        return $clazz;
+        return $classpath;
     }
 
     /**
@@ -210,7 +209,7 @@ class GeneratorConfig implements GeneratorConfigInterface
      * @param      string $type The type of builder ('ddl', 'sql', etc.)
      * @return     DataModelBuilder
      */
-    public function getConfiguredBuilder(Table $table, $type, $cache = true)
+    public function getConfiguredBuilder(Table $table, $type)
     {
         $classname = $this->getBuilderClassname($type);
         $builder = new $classname($table);

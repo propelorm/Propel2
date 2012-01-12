@@ -44,7 +44,6 @@ class Database extends ScopedElement
 
     private $platform;
     private $tableList = array();
-    private $curColumn;
     private $name;
 
     private $baseClass;
