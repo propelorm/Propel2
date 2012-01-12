@@ -107,7 +107,7 @@ class OracleSchemaParser extends AbstractSchemaParser
 
             $pkColumns = $table->getPrimaryKey();
             if (count($pkColumns) == 1 && $seqPattern) {
-                $seqName = str_replace('${table}', $tableName, $seqPattern);
+                $seqName = str_replace('${table}', $table->getName(), $seqPattern);
                 $seqName = strtoupper($seqName);
 
                 $stmt2 = $this->dbh->query("SELECT * FROM USER_SEQUENCES WHERE SEQUENCE_NAME = '" . $seqName . "'");

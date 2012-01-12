@@ -264,7 +264,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      */
     public function closeConnections()
     {
-        foreach ($this->connectionManagers as $name => $manager) {
+        foreach ($this->connectionManagers as $manager) {
             $manager->closeConnections();
         }
     }

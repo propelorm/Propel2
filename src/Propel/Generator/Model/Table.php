@@ -706,7 +706,7 @@ class Table extends ScopedElement implements IdMethod
         }
         $pos = array_search($col, $this->columnList);
         if (false === $pos) {
-            throw new EngineException(sprintf('No column named %s found in table %s', $col->getName(), $table->getName()));
+            throw new EngineException(sprintf('No column named %s found in table %s', $col->getName(), $col->getTableName()));
         }
         unset($this->columnList[$pos]);
         unset($this->columnsByName[$col->getName()]);

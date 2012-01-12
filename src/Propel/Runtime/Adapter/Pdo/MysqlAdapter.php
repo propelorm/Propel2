@@ -91,7 +91,7 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
      */
     public function unlockTable($con, $table)
     {
-        $statement = $con->exec("UNLOCK TABLES");
+        $con->exec('UNLOCK TABLES');
     }
 
     /**
@@ -137,9 +137,9 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
     public function applyLimit(&$sql, $offset, $limit)
     {
         if ( $limit > 0 ) {
-            $sql .= " LIMIT " . ($offset > 0 ? $offset . ", " : "") . $limit;
+            $sql .= ' LIMIT ' . ($offset > 0 ? $offset . ', ' : '') . $limit;
         } elseif ( $offset > 0 ) {
-            $sql .= " LIMIT " . $offset . ", 18446744073709551615";
+            $sql .= ' LIMIT ' . $offset . ', 18446744073709551615';
         }
     }
 

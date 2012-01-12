@@ -317,7 +317,7 @@ EOT
             $externalSchema->parentNode->removeChild($externalSchema);
 
             $externalSchemaDom = new DomDocument('1.0', 'UTF-8');
-            $externalSchemaDom->load(realpath($externalSchemaFile));
+            $externalSchemaDom->load(realpath($include));
 
             // The external schema may have external schemas of its own ; recurse
             $this->includeExternalSchemas($externalSchemaDom, $srcDir);
