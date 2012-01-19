@@ -21,6 +21,9 @@
     <filter>
         <whitelist>
             <directory>./src/Propel/</directory>
+            <exclude>
+                <directory>./src/Propel/Generator/Behavior/*/templates/</directory>
+            </exclude>
         </whitelist>
     </filter>
 </phpunit>
