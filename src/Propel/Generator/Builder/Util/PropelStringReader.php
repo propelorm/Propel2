@@ -10,7 +10,9 @@
 
 namespace Propel\Generator\Builder\Util;
 
+// @TODO remove
 include_once 'phing/system/io/Reader.php';
+use Reader;
 
 /**
  * Overrides Phing's StringReader to allow inclusin inside a BufferedReader
@@ -53,15 +55,16 @@ class PropelStringReader extends Reader
     {
         if ($len === null) {
             return $this->_string;
-        } else {
-            if ($this->currPos >= strlen($this->_string)) {
-                return -1;
-            }
-            $out = substr($this->_string, $this->currPos, $len);
-            $this->currPos += $len;
-
-            return $out;
         }
+
+        if ($this->currPos >= strlen($this->_string)) {
+            return -1;
+        }
+
+        $out = substr($this->_string, $this->currPos, $len);
+        $this->currPos += $len;
+
+        return $out;
     }
 
     public function mark()
@@ -74,11 +77,20 @@ class PropelStringReader extends Reader
         $this->currPos = $this->mark;
     }
 
-    public function close() {}
+    public function close()
+    {
+        
+    }
 
-    public function open() {}
+    public function open()
+    {
+        
+    }
 
-    public function ready() {}
+    public function ready()
+    {
+        
+    }
 
     public function markSupported()
     {

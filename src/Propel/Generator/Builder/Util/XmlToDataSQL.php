@@ -17,7 +17,7 @@ require_once 'phing/parser/AbstractHandler.php';
  *
  * @author     Hans Lellelid <hans@xmpl.org> (Propel)
  */
-class XmlToDataSQL extends AbstractHandler
+class XmlToDataSQL extends \AbstractHandler
 {
 
     /**
@@ -210,54 +210,4 @@ class XmlToDataSQL extends AbstractHandler
         }
     }
 
-} // XmlToData
-
-/**
- * "inner class"
- */
-class DataRow
-{
-    private $table;
-    private $columnValues;
-
-    public function __construct(Table $table, $columnValues)
-    {
-        $this->table = $table;
-        $this->columnValues = $columnValues;
-    }
-
-    public function getTable()
-    {
-        return $this->table;
-    }
-
-    public function getColumnValues()
-    {
-        return $this->columnValues;
-    }
-}
-
-/**
- * "inner" class
- */
-class ColumnValue {
-
-    private $col;
-    private $val;
-
-    public function __construct(Column $col, $val)
-    {
-        $this->col = $col;
-        $this->val = $val;
-    }
-
-    public function getColumn()
-    {
-        return $this->col;
-    }
-
-    public function getValue()
-    {
-        return $this->val;
-    }
 }

@@ -11,6 +11,8 @@
 namespace Propel\Generator\Builder\Sql;
 
 use Propel\Generator\Builder\DataModelBuilder;
+use Propel\Generator\Builder\Util\ColumnValue;
+use Propel\Generator\Builder\Util\DataRow;
 use Propel\Generator\Model\PropelTypes;
 
 /**

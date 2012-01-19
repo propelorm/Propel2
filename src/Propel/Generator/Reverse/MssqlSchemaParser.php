@@ -10,10 +10,15 @@
 
 namespace Propel\Generator\Reverse;
 
-use Propel\Generator\Model\PropelTypes;
-use Propel\Generator\Reverse\AbstractSchemaParser;
+// TODO: to remove
+require_once 'phing/Task.php';
+use Task;
 
 use PDO;
+use Propel\Generator\Model\Table;
+use Propel\Generator\Model\Database;
+use Propel\Generator\Model\PropelTypes;
+use Propel\Generator\Reverse\AbstractSchemaParser;
 
 /**
  * Microsoft SQL Server database schema parser.
