@@ -10,9 +10,12 @@
 
 namespace Propel\Runtime\Adapter\Pdo;
 
+use PDO;
+use PDOException;
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Adapter\Exception\AdapterException;
 use Propel\Runtime\Connection\ConnectionInterface;
+use Propel\Runtime\Adapter\Pdo\PdoConnection;
 use Propel\Runtime\Connection\StatementInterface;
 use Propel\Runtime\Exception\InvalidArgumentException;
 use Propel\Runtime\Map\ColumnMap;
@@ -20,9 +23,6 @@ use Propel\Runtime\Map\DatabaseMap;
 use Propel\Runtime\Query\Criteria;
 use Propel\Runtime\Util\PropelDateTime;
 use Propel\Runtime\Util\PropelColumnTypes;
-
-use \PDO;
-use \PDOException;
 
 /**
  * Base for PDO database adapters.

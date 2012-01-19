@@ -10,12 +10,14 @@
 
 namespace Propel\Runtime\Adapter\Pdo;
 
+use PDO;
 use Propel\Runtime\Adapter\AdapterInterface;
+use Propel\Runtime\Adapter\Exception\UnsupportedEncodingException;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\StatementInterface;
-use Propel\Runtime\Adapter\Exception\UnsupportedEncodingException;
-
-use \PDO;
+use Propel\Runtime\Query\Criteria;
+use Propel\Runtime\Map\ColumnMap;
+use Propel\Runtime\Map\DatabaseMap;
 
 /**
  * This is used to connect to a MSSQL database using pdo_sqlsrv driver.
@@ -27,10 +29,10 @@ class SqlsrvAdapter extends MssqlAdapter implements AdapterInterface
     /**
      * @see       parent::initConnection()
      *
-     * @param     PDO    $con
-     * @param     array  $settings
+     * @param     Propel\Runtime\Connection\ConnectionInterface    $con
+     * @param     array  $settings  An array of settings.
      */
-    public function initConnection($con, array $settings)
+    public function initConnection(ConnectionInterface $con, array $settings)
     {
         $con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $con->setAttribute(PDO::ATTR_STRINGIFY_FETCHES, false);
@@ -89,7 +91,7 @@ class SqlsrvAdapter extends MssqlAdapter implements AdapterInterface
     }
 
     /**
-     * @see       AbstractAdapter::bindValue()
+     * @see       AdapterInterface::bindValue()
      *
      * @param     PDOStatement  $stmt
      * @param     string        $parameter
@@ -111,7 +113,7 @@ class SqlsrvAdapter extends MssqlAdapter implements AdapterInterface
             // driver option can be utilized. This requires a unique blob parameter because the bindParam
             // value is passed by reference and if we didn't do this then the referenced parameter value
             // would change on the next loop
-            $blob = "blob".$position;
+            $blob = 'blob'.$position;
             $$blob = $value;
 
             return $stmt->bindParam($parameter, ${$blob}, PDO::PARAM_LOB, 0, PDO::SQLSRV_ENCODING_BINARY);

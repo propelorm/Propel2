@@ -67,13 +67,13 @@ class PgsqlAdapter extends PdoAdapter implements AdapterInterface
     }
 
     /**
-     * @see       AbstractAdapter::getIdMethod()
+     * @see       AdapterInterface::getIdMethod()
      *
      * @return    integer
      */
     protected function getIdMethod()
     {
-        return AbstractAdapter::ID_METHOD_SEQUENCE;
+        return AdapterInterface::ID_METHOD_SEQUENCE;
     }
 
     /**
@@ -115,7 +115,7 @@ class PgsqlAdapter extends PdoAdapter implements AdapterInterface
     }
 
     /**
-     * @see       AbstractAdapter::applyLimit()
+     * @see       AdapterInterface::applyLimit()
      *
      * @param     string   $sql
      * @param     integer  $offset
@@ -132,7 +132,7 @@ class PgsqlAdapter extends PdoAdapter implements AdapterInterface
     }
 
     /**
-     * @see       AbstractAdapter::random()
+     * @see       AdapterInterface::random()
      *
      * @param     string  $seed
      * @return    string
@@ -172,7 +172,7 @@ class PgsqlAdapter extends PdoAdapter implements AdapterInterface
     }
 
     /**
-     * @see        AbstractAdapter::quoteIdentifierTable()
+     * @see        AdapterInterface::quoteIdentifierTable()
      *
      * @param     string  $table
      * @return    string

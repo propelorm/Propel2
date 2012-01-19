@@ -95,7 +95,7 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
     }
 
     /**
-     * @see       AbstractAdapter::quoteIdentifier()
+     * @see       AdapterInterface::quoteIdentifier()
      *
      * @param     string  $text
      * @return    string
@@ -106,7 +106,7 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
     }
 
     /**
-     * @see       AbstractAdapter::quoteIdentifierTable()
+     * @see       AdapterInterface::quoteIdentifierTable()
      *
      * @param     string  $table
      * @return    string
@@ -118,7 +118,7 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
     }
 
     /**
-     * @see       AbstractAdapter::useQuoteIdentifier()
+     * @see       AdapterInterface::useQuoteIdentifier()
      *
      * @return    boolean
      */
@@ -128,7 +128,7 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
     }
 
     /**
-     * @see       AbstractAdapter::applyLimit()
+     * @see       AdapterInterface::applyLimit()
      *
      * @param     string   $sql
      * @param     integer  $offset
@@ -144,7 +144,7 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
     }
 
     /**
-     * @see       AbstractAdapter::random()
+     * @see       AdapterInterface::random()
      *
      * @param     string  $seed
      * @return    string
@@ -155,7 +155,7 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
     }
 
     /**
-     * @see       AbstractAdapter::bindValue()
+     * @see       AdapterInterface::bindValue()
      *
      * @param     StatementInterface $stmt
      * @param     string        $parameter
