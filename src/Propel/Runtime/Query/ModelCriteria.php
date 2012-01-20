@@ -10,6 +10,8 @@
 
 namespace Propel\Runtime\Query;
 
+use PDO;
+use PDOStatement;
 use Propel\Runtime\Propel;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\ClassNotFoundException;
@@ -27,9 +29,6 @@ use Propel\Runtime\Query\Criteria;
 use Propel\Runtime\Query\Exception\UnknownColumnException;
 use Propel\Runtime\Query\Exception\UnknownModelException;
 use Propel\Runtime\Query\Exception\UnknownRelationException;
-
-use \PDO;
-use \PDOStatement;
 
 /**
  * This class extends the Criteria by adding runtime introspection abilities

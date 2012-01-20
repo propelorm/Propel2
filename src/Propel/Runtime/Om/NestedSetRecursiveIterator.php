@@ -10,7 +10,7 @@
 
 namespace Propel\Runtime\Om;
 
-use \RecursiveIterator;
+use RecursiveIterator;
 
 /**
  * Pre-order node iterator for Node objects.
