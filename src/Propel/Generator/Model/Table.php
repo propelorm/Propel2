@@ -10,11 +10,10 @@
 
 namespace Propel\Generator\Model;
 
+use DOMNode;
+use DOMDocument;
 use Propel\Generator\Exception\EngineException;
 use Propel\Generator\Platform\MysqlPlatform;
-
-use \DOMNode;
-use \DOMDocument;
 
 /**
  * Data about a table used in an application.

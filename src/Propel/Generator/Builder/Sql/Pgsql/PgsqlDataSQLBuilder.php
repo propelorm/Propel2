@@ -11,6 +11,8 @@
 namespace Propel\Generator\Builder\Sql\Pgsql;
 
 use Propel\Generator\Builder\Sql\DataSQLBuilder;
+use Propel\Generator\Builder\Util\ColumnValue;
+use Propel\Generator\Builder\Util\DataRow;
 
 /**
  * PostgreSQL class for building data dump SQL.
@@ -102,5 +104,4 @@ class PgsqlDataSQLBuilder extends DataSQLBuilder
 
         return "'" . pg_escape_bytea($blob) . "'";
     }
-
 }

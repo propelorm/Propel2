@@ -239,7 +239,7 @@ interface AdapterInterface
     /**
      * Builds the SELECT part of a SQL statement based on a Criteria
      * taking into account select columns and 'as' columns (i.e. columns aliases)
-     * Move from BasePeer to AbstractAdapter and turn from static to non static
+     * Move from BasePeer to AdapterInterface and turn from static to non static
      *
      * @param     Propel\Runtime\Map\Criteria  $criteria
      * @param     array     $fromClause
@@ -252,7 +252,7 @@ interface AdapterInterface
     /**
      * Ensures uniqueness of select column names by turning them all into aliases
      * This is necessary for queries on more than one table when the tables share a column name
-     * Moved from BasePeer to AbstractAdapter and turned from static to non static
+     * Moved from BasePeer to AdapterInterface and turned from static to non static
      *
      * @see http://propel.phpdb.org/trac/ticket/795
      *

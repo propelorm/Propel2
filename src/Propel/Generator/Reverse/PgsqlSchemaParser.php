@@ -10,10 +10,16 @@
 
 namespace Propel\Generator\Reverse;
 
+// TODO: to remove
+require_once 'phing/Task.php';
+use Task;
+
+use PDO;
+use Propel\Generator\Model\Column;
+use Propel\Generator\Model\Database;
+use Propel\Generator\Model\Table;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Reverse\AbstractSchemaParser;
-
-use \PDO;
 
 /**
  * Postgresql database schema parser.

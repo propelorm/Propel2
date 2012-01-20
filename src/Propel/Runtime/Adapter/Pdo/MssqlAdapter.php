@@ -15,6 +15,8 @@ use Propel\Runtime\Adapter\Exception\MalformedClauseException;
 use Propel\Runtime\Adapter\Exception\ColumnNotFoundException;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\InvalidArgumentException;
+use Propel\Runtime\Map\DatabaseMap;
+use Propel\Runtime\Query\Criteria;
 
 /**
  * This is used to connect to a MSSQL database.
@@ -26,7 +28,7 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
     /**
      * MS SQL Server does not support SET NAMES
      *
-     * @see       AbstractAdapter::setCharset()
+     * @see       AdapterInterface::setCharset()
      *
      * @param     ConnectionInterface $con
      * @param     string  $charset
@@ -74,7 +76,7 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
     }
 
     /**
-     * @see       AbstractAdapter::quoteIdentifier()
+     * @see       AdapterInterface::quoteIdentifier()
      *
      * @param     string  $text
      * @return    string
@@ -85,7 +87,7 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
     }
 
     /**
-     * @see       AbstractAdapter::quoteIdentifierTable()
+     * @see       AdapterInterface::quoteIdentifierTable()
      *
      * @param     string  $table
      * @return    string
@@ -97,7 +99,7 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
     }
 
     /**
-     * @see       AbstractAdapter::random()
+     * @see       AdapterInterface::random()
      *
      * @param     string  $seed
      * @return    string
@@ -113,7 +115,7 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
      * This rewrites the $sql query to apply the offset and limit.
      * some of the ORDER BY logic borrowed from Doctrine MsSqlPlatform
      *
-     * @see       AbstractAdapter::applyLimit()
+     * @see       AdapterInterface::applyLimit()
      * @author    Benjamin Runnels <kraven@kraven.org>
      *
      * @param     string   $sql

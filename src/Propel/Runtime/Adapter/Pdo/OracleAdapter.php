@@ -94,7 +94,7 @@ class OracleAdapter extends PdoAdapter implements AdapterInterface
     }
 
     /**
-     * @see       AbstractAdapter::applyLimit()
+     * @see       AdapterInterface::applyLimit()
      *
      * @param     string   $sql
      * @param     integer  $offset
@@ -128,7 +128,7 @@ class OracleAdapter extends PdoAdapter implements AdapterInterface
      */
     protected function getIdMethod()
     {
-        return AbstractAdapter::ID_METHOD_SEQUENCE;
+        return AdapterInterface::ID_METHOD_SEQUENCE;
     }
 
     /**
@@ -199,7 +199,7 @@ class OracleAdapter extends PdoAdapter implements AdapterInterface
     }
 
     /**
-     * @see       AbstractAdapter::bindValue()
+     * @see       AdapterInterface::bindValue()
      *
      * @param     StatementInterface $stmt
      * @param     string        $parameter

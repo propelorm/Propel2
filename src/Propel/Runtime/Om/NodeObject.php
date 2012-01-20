@@ -10,9 +10,8 @@
 
 namespace Propel\Runtime\Om;
 
+use IteratorAggregate;
 use Propel\Runtime\Connection\ConnectionInterface;
-
-use \IteratorAggregate;
 
 /**
  * This interface defines methods that must be implemented by all

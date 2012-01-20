@@ -10,13 +10,13 @@
 
 namespace Propel\Generator\Reverse;
 
+// TODO: to remove
+require_once 'phing/Task.php';
+use Task;
+
 use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Model\Database;
 use Propel\Runtime\Connection\ConnectionInterface;
-
-// TODO: to remove
-require_once 'phing/Task.php';
-use \Task;
 
 /**
  * Interface for reverse engineering schema parsers.
