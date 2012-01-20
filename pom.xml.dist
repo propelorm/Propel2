@@ -1,0 +1,54 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.propelorm.propel2</groupId>
+    <artifactId>Propel2</artifactId>
+    <name>The Propel2 PHP ORM</name>
+    <version>2.0.0-DEV</version>
+    <packaging>pom</packaging>
+
+    <build>
+        <sourceDirectory>src</sourceDirectory>
+        <testSourceDirectory>tests</testSourceDirectory>
+    </build>
+
+    <properties>
+
+    <!-- General settings -->
+
+        <sonar.language>php</sonar.language>
+
+    <!-- Database settings -->
+    <!--
+        <sonar.jdbc.url>
+            <![CDATA[jdbc:mysql://127.0.0.1:3306/sonar?useUnicode=true&characterEncoding=utf8]]>
+        </sonar.jdbc.url>
+        <sonar.jdbc.driverClassName> com.mysql.jdbc.Driver</sonar.jdbc.driverClassName>
+        <sonar.jdbc.username>sonar</sonar.jdbc.username>
+        <sonar.jdbc.password>sonar</sonar.jdbc.password>
+
+    -->
+
+    <!-- Automated tools settings -->
+
+        <sonar.dynamicAnalysis>true</sonar.dynamicAnalysis>
+
+        <sonar.phpDepend.shouldRun>true</sonar.phpDepend.shouldRun>
+
+        <sonar.phpPmd.shouldRun>true</sonar.phpPmd.shouldRun>
+        <sonar.phpPmd.analyzeOnly>false</sonar.phpPmd.analyzeOnly>
+
+        <sonar.phpCodesniffer.shouldRun>true</sonar.phpCodesniffer.shouldRun>
+
+        <sonar.phpUnit.analyze.test.directory>false</sonar.phpUnit.analyze.test.directory>
+        <sonar.phpUnit.skip>true</sonar.phpUnit.skip>
+        <!--
+        <sonar.phpUnit.coverage.skip>true</sonar.phpUnit.coverage.skip>
+        <sonar.phpUnit.mainTestClass>/source/tests/AllTests2.php</sonar.phpUnit.mainTestClass>
+        -->
+
+        <sonar.phpcpd.shouldRun>true</sonar.phpcpd.shouldRun>
+        <sonar.phpcpd.excludes>tests</sonar.phpcpd.excludes>
+
+    </properties>
+</project>
