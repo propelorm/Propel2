@@ -10,6 +10,8 @@
 
 namespace Propel\Runtime\Query;
 
+use Iterator;
+
 /**
  * Class that implements SPL Iterator interface.  This allows foreach () to
  * be used w/ Criteria objects.  Probably there is no performance advantage
@@ -19,36 +21,40 @@ namespace Propel\Runtime\Query;
  */
 class CriterionIterator implements Iterator
 {
-
     private $idx = 0;
     private $criteria;
     private $criteriaKeys;
     private $criteriaSize;
 
-    public function __construct(Criteria $criteria) {
+    public function __construct(Criteria $criteria)
+    {
         $this->criteria = $criteria;
         $this->criteriaKeys = $criteria->keys();
         $this->criteriaSize = count($this->criteriaKeys);
     }
 
-    public function rewind() {
+    public function rewind()
+    {
         $this->idx = 0;
     }
 
-    public function valid() {
+    public function valid()
+    {
         return $this->idx < $this->criteriaSize;
     }
 
-    public function key() {
+    public function key()
+    {
         return $this->criteriaKeys[$this->idx];
     }
 
-    public function current() {
+    public function current()
+    {
         return $this->criteria->getCriterion($this->criteriaKeys[$this->idx]);
     }
 
-    public function next() {
+    public function next()
+    {
         $this->idx++;
     }
-
 }

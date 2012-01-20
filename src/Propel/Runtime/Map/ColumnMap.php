@@ -10,6 +10,7 @@
 
 namespace Propel\Runtime\Map;
 
+use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Map\Exception\ForeignKeyNotFoundException;
 use Propel\Runtime\Util\PropelColumnTypes;
 
@@ -475,9 +476,9 @@ class ColumnMap
      * Performs DB-specific ignore case, but only if the column type necessitates it.
      *
      * @param      string $str The expression we want to apply the ignore case formatting to (e.g. the column name).
-     * @param      \Propel\Runtime\Adapter\AbstractAdapter $db
+     * @param      \Propel\Runtime\Adapter\AdapterInterface $db
      */
-    public function ignoreCase($str, AbstractAdapter $db)
+    public function ignoreCase($str, AdapterInterface $db)
     {
         if ($this->isText()) {
             return $db->ignoreCase($str);

@@ -1172,7 +1172,7 @@ ALTER TABLE %s ADD
 
     /**
      * Get the PHP snippet for binding a value to a column.
-     * Warning: duplicates logic from AbstractAdapter::bindValue().
+     * Warning: duplicates logic from AdapterInterface::bindValue().
      * Any code modification here must be ported there.
      */
     public function getColumnBindingPHP($column, $identifier, $columnValueAccessor, $tab = "            ")
@@ -1202,7 +1202,7 @@ if (is_resource($columnValueAccessor)) {
 
     /**
      * Get the PHP snippet for getting a Pk from the database.
-     * Warning: duplicates logic from AbstractAdapter::getId().
+     * Warning: duplicates logic from AdapterInterface::getId().
      * Any code modification here must be ported there.
      *
      * Typical output:

@@ -10,6 +10,7 @@
 
 namespace Propel\Runtime\Query;
 
+use IteratorAggregate;
 use Propel\Runtime\Propel;
 use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\Util\BasePeer;
@@ -29,7 +30,7 @@ use Propel\Runtime\Util\PropelConditionalProxy;
  * @author     Henning P. Schmiedehausen <hps@intermeta.de> (Torque)
  * @author     Sam Joseph <sam@neurogrid.com> (Torque)
  */
-class Criteria implements \IteratorAggregate
+class Criteria implements IteratorAggregate
 {
 
     /** Comparison type. */

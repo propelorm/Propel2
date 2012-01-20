@@ -190,10 +190,10 @@ class DatabaseMap
     }
 
     /**
-     * Convenience method to get the AbstractAdapter registered with Propel for this database.
+     * Convenience method to get the AdapterInterface registered with Propel for this database.
      * @see     Propel::getServiceContainer()->getAdapter(string).
      *
-     * @return  \Propel\Runtime\Adapter\AbstractAdapter
+     * @return  \Propel\Runtime\Adapter\AdapterInterface
      */
     public function getAbstractAdapter()
     {

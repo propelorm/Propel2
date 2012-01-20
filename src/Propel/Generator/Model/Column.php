@@ -10,11 +10,10 @@
 
 namespace Propel\Generator\Model;
 
+use DOMNode;
+use DOMDocument;
 use Propel\Generator\Exception\EngineException;
 use Propel\Generator\Platform\PlatformInterface;
-
-use \DOMNode;
-use \DOMDocument;
 
 /**
  * A Class for holding data about a column used in an Application.
@@ -29,19 +28,28 @@ use \DOMDocument;
  */
 class Column extends XmlElement
 {
-
     const DEFAULT_TYPE = "VARCHAR";
+
     const DEFAULT_VISIBILITY = 'public';
+
     static public $validVisibilities = array('public', 'protected', 'private');
 
     private $name;
+
     private $description;
+
     private $phpName = null;
+
     private $phpNamingMethod;
+
     private $isNotNull = false;
+
     private $size;
+
     private $namePrefix;
+
     private $accessorVisibility;
+
     private $mutatorVisibility;
 
     /**
