@@ -10,9 +10,13 @@
 
 namespace Propel\Generator\Builder\Util;
 
-class ColumnValue {
+use Propel\Generator\Model\Column;
+
+class ColumnValue
+{
 
     private $col;
+
     private $val;
 
     public function __construct(Column $col, $val)
