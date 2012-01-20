@@ -10,6 +10,8 @@
 
 namespace Propel\Generator\Builder\Util;
 
+use Propel\Generator\Model\Table;
+
 class DataRow
 {
     private $table;
