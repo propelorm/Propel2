@@ -158,8 +158,6 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
      */
     protected function addStaticTableMapRegistration(&$script)
     {
-        $table = $this->getTable();
-
         $script .= "
 // This is the static code needed to register the TableMap for this table with the main Propel class.
 //
@@ -529,7 +527,6 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         if ($this->getTable()->getChildrenColumn()) {
 
             $col = $this->getTable()->getChildrenColumn();
-            $cfc = $col->getPhpName();
 
             if ($col->isEnumeratedClasses()) {
 
@@ -561,7 +558,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
             } /* if col->isenumerated...() */
         } /* if table->getchildrencolumn() */
 
-    } //
+    }
 
     /**
      * Adds the alias() utility method.
@@ -816,7 +813,6 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
      */
     protected function addAddInstanceToPool(&$script)
     {
-        $table = $this->getTable();
         $script .= "
     /**
      * Adds an object to the instance pool.
@@ -954,7 +950,6 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 
             $joinedTablePeerBuilder = $this->getNewStubPeerBuilder($tblFK);
             $this->declareClassFromBuilder($joinedTablePeerBuilder);
-            $tblFKPackage = $joinedTablePeerBuilder->getStubPeerBuilder()->getPackage();
 
             if (!$tblFK->isForReferenceOnly()) {
                 // we can't perform operations on tables that are
@@ -1347,7 +1342,6 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 ";
 
         foreach ($table->getColumns() as $col) {
-            $cfc = $col->getPhpName();
             if ($col->isPrimaryKey() && $col->isAutoIncrement() && $table->getIdMethod() != "none" && !$table->isAllowPkInsert()) {
                 $script .= "
         if (\$criteria->containsKey(".$this->getColumnConstant($col).") && \$criteria->keyContainsValue(" . $this->getColumnConstant($col) . ") ) {
@@ -1696,7 +1690,6 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
             $tblFK = $fk->getTable();
 
             $joinedTablePeerBuilder = $this->getNewPeerBuilder($tblFK);
-            $tblFKPackage = $joinedTablePeerBuilder->getStubPeerBuilder()->getPackage();
 
             if (!$tblFK->isForReferenceOnly()) {
                 // we can't perform operations on tables that are
@@ -2095,7 +2088,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
           // simple foreign key
           $lftCol = $lftCols[0];
           $script .= sprintf("
-        \$criteria->addJoin(%s, %s, \$join_behavior);
+        \$criteria->addJoin(%s, %s, \$joinBehavior);
 ",
         $this->getColumnConstant($table->getColumn($lftCol) ),
         $joinedTablePeerBuilder->getColumnConstant($joinTable->getColumn( $lfMap[$lftCol] ) ));
@@ -2113,7 +2106,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
                   $joinedTablePeerBuilder->getColumnConstant($joinTable->getColumn( $lfMap[$columnName] ) )
                 );
             }
-            $script .= "      ), \$join_behavior);
+            $script .= "      ), \$joinBehavior);
 ";
         }
 
@@ -2129,7 +2122,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         $table = $this->getTable();
         $className = $this->getObjectClassname();
         $countFK = count($table->getForeignKeys());
-        $join_behavior = $this->getJoinBehavior();
+        $joinBehavior = $this->getJoinBehavior();
 
         if ($countFK >= 1) {
 
@@ -2155,12 +2148,12 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
      * Selects a collection of $className objects pre-filled with their $joinClassName objects.
      * @param      Criteria  \$criteria
      * @param      ConnectionInterface \$con
-     * @param      String    \$join_behavior the type of joins to use, defaults to $join_behavior
+     * @param      String    \$joinBehavior the type of joins to use, defaults to $joinBehavior
      * @return     array Array of $className objects.
      * @throws     PropelException Any exceptions caught during processing will be
      *         rethrown wrapped into a PropelException.
      */
-    public static function doSelectJoin".$thisTableObjectBuilder->getFKPhpNameAffix($fk, $plural = false)."(Criteria \$criteria, \$con = null, \$join_behavior = $join_behavior)
+    public static function doSelectJoin".$thisTableObjectBuilder->getFKPhpNameAffix($fk, false)."(Criteria \$criteria, \$con = null, \$joinBehavior = $joinBehavior)
     {
         \$criteria = clone \$criteria;
 
@@ -2236,7 +2229,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
                 \$obj1->set" . $joinedTablePeerBuilder->getObjectClassname() . "(\$obj2);";
                         } else {
                             $script .= "
-                \$obj2->add" . $joinedTableObjectBuilder->getRefFKPhpNameAffix($fk, $plural = false)."(\$obj1);";
+                \$obj2->add" . $joinedTableObjectBuilder->getRefFKPhpNameAffix($fk, false)."(\$obj1);";
                         }
                         $script .= "
 
@@ -2263,9 +2256,8 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
     protected function addDoCountJoin(&$script)
     {
         $table = $this->getTable();
-        $className = $this->getObjectClassname();
         $countFK = count($table->getForeignKeys());
-        $join_behavior = $this->getJoinBehavior();
+        $joinBehavior = $this->getJoinBehavior();
 
         if ($countFK >= 1) {
 
@@ -2281,20 +2273,18 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
                         $joinedTableObjectBuilder = $this->getNewObjectBuilder($joinTable);
                         $joinedTablePeerBuilder = $this->getNewPeerBuilder($joinTable);
 
-                        $joinClassName = $joinedTableObjectBuilder->getObjectClassname();
-
                         $script .= "
 
     /**
-     * Returns the number of rows matching criteria, joining the related ".$thisTableObjectBuilder->getFKPhpNameAffix($fk, $plural = false)." table
+     * Returns the number of rows matching criteria, joining the related ".$thisTableObjectBuilder->getFKPhpNameAffix($fk, false)." table
      *
      * @param      Criteria \$criteria
      * @param      boolean \$distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
      * @param      ConnectionInterface \$con
-     * @param      String    \$join_behavior the type of joins to use, defaults to $join_behavior
+     * @param      String    \$joinBehavior the type of joins to use, defaults to $joinBehavior
      * @return     int Number of matching rows.
      */
-    public static function doCountJoin".$thisTableObjectBuilder->getFKPhpNameAffix($fk, $plural = false)."(Criteria \$criteria, \$distinct = false, ConnectionInterface \$con = null, \$join_behavior = $join_behavior)
+    public static function doCountJoin".$thisTableObjectBuilder->getFKPhpNameAffix($fk, false)."(Criteria \$criteria, \$distinct = false, ConnectionInterface \$con = null, \$joinBehavior = $joinBehavior)
     {
         // we're going to modify criteria, so copy it first
         \$criteria = clone \$criteria;
@@ -2354,7 +2344,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
     {
         $table = $this->getTable();
         $className = $this->getObjectClassname();
-        $join_behavior = $this->getJoinBehavior();
+        $joinBehavior = $this->getJoinBehavior();
 
         $script .= "
 
@@ -2363,12 +2353,12 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
      *
      * @param      Criteria  \$criteria
      * @param      ConnectionInterface \$con
-     * @param      String    \$join_behavior the type of joins to use, defaults to $join_behavior
+     * @param      String    \$joinBehavior the type of joins to use, defaults to $joinBehavior
      * @return     array Array of $className objects.
      * @throws     PropelException Any exceptions caught during processing will be
      *         rethrown wrapped into a PropelException.
      */
-    public static function doSelectJoinAll(Criteria \$criteria, \$con = null, \$join_behavior = $join_behavior)
+    public static function doSelectJoinAll(Criteria \$criteria, \$con = null, \$joinBehavior = $joinBehavior)
     {
         \$criteria = clone \$criteria;
 
@@ -2447,10 +2437,9 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         foreach ($table->getForeignKeys() as $fk ) {
             // want to cover this case, but the code is not there yet.
             // Why not? -because we'd have to alias the tables in the JOIN
-            if ( $fk->getForeignTableName() != $table->getName() ) {
+            if ($fk->getForeignTableName() != $table->getName()) {
                 $joinTable = $table->getDatabase()->getTable($fk->getForeignTableName());
 
-                $thisTableObjectBuilder = $this->getNewObjectBuilder($table);
                 $joinedTableObjectBuilder = $this->getNewObjectBuilder($joinTable);
                 $joinedTablePeerBuilder = $this->getNewPeerBuilder($joinTable);
 
@@ -2495,7 +2484,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
                 \$obj1->set".$joinedTablePeerBuilder->getObjectClassname()."(\$obj".$index.");";
                 } else {
                     $script .= "
-                \$obj".$index."->add".$joinedTableObjectBuilder->getRefFKPhpNameAffix($fk, $plural = false)."(\$obj1);";
+                \$obj".$index."->add".$joinedTableObjectBuilder->getRefFKPhpNameAffix($fk, false)."(\$obj1);";
                 }
                 $script .= "
             } // if joined row not null
@@ -2523,8 +2512,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
     protected function addDoCountJoinAll(&$script)
     {
         $table = $this->getTable();
-        $className = $this->getObjectClassname();
-        $join_behavior = $this->getJoinBehavior();
+        $joinBehavior = $this->getJoinBehavior();
 
         $script .= "
 
@@ -2534,10 +2522,10 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
      * @param      Criteria \$criteria
      * @param      boolean \$distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
      * @param      ConnectionInterface \$con
-     * @param      String    \$join_behavior the type of joins to use, defaults to $join_behavior
+     * @param      String    \$joinBehavior the type of joins to use, defaults to $joinBehavior
      * @return     int Number of matching rows.
      */
-    public static function doCountJoinAll(Criteria \$criteria, \$distinct = false, ConnectionInterface \$con = null, \$join_behavior = $join_behavior)
+    public static function doCountJoinAll(Criteria \$criteria, \$distinct = false, ConnectionInterface \$con = null, \$joinBehavior = $joinBehavior)
     {
         // we're going to modify criteria, so copy it first
         \$criteria = clone \$criteria;
@@ -2567,7 +2555,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 
         foreach ($table->getForeignKeys() as $fk) {
             // want to cover this case, but the code is not there yet.
-            if ( $fk->getForeignTableName() != $table->getName() ) {
+            if ($fk->getForeignTableName() != $table->getName()) {
                 $joinTable = $table->getDatabase()->getTable($fk->getForeignTableName());
                 $joinedTablePeerBuilder = $this->getNewPeerBuilder($joinTable);
         $script .= $this->addCriteriaJoin($fk, $table, $joinTable, $joinedTablePeerBuilder);
@@ -2598,7 +2586,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
     protected function addDoSelectJoinAllExcept(&$script)
     {
         $table = $this->getTable();
-        $join_behavior = $this->getJoinBehavior();
+        $joinBehavior = $this->getJoinBehavior();
 
         // ------------------------------------------------------------------------
         // doSelectJoinAllExcept*()
@@ -2611,16 +2599,11 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         // getForeignKeys() will cause this to only execute one time.
         foreach ($fkeys as $fk ) {
 
-            $tblFK = $table->getDatabase()->getTable($fk->getForeignTableName());
-
             $excludedTable = $table->getDatabase()->getTable($fk->getForeignTableName());
 
             $thisTableObjectBuilder = $this->getNewObjectBuilder($table);
             $excludedTableObjectBuilder = $this->getNewObjectBuilder($excludedTable);
-            $excludedTablePeerBuilder = $this->getNewPeerBuilder($excludedTable);
-
             $excludedClassName = $excludedTableObjectBuilder->getObjectClassname();
-
 
             $script .= "
 
@@ -2629,12 +2612,12 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
      *
      * @param      Criteria  \$criteria
      * @param      ConnectionInterface \$con
-     * @param      String    \$join_behavior the type of joins to use, defaults to $join_behavior
+     * @param      String    \$joinBehavior the type of joins to use, defaults to $joinBehavior
      * @return     array Array of ".$this->getObjectClassname()." objects.
      * @throws     PropelException Any exceptions caught during processing will be
      *         rethrown wrapped into a PropelException.
      */
-    public static function doSelectJoinAllExcept".$thisTableObjectBuilder->getFKPhpNameAffix($fk, $plural = false)."(Criteria \$criteria, \$con = null, \$join_behavior = $join_behavior)
+    public static function doSelectJoinAllExcept".$thisTableObjectBuilder->getFKPhpNameAffix($fk, false)."(Criteria \$criteria, \$con = null, \$joinBehavior = $joinBehavior)
     {
         \$criteria = clone \$criteria;
 
@@ -2767,7 +2750,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
                 \$obj1->set".$joinedTablePeerBuilder->getObjectClassname()."(\$obj".$index.");";
                 } else {
                     $script .= "
-                \$obj".$index."->add".$joinedTableObjectBuilder->getRefFKPhpNameAffix($subfk, $plural = false)."(\$obj1);";
+                \$obj".$index."->add".$joinedTableObjectBuilder->getRefFKPhpNameAffix($subfk, false)."(\$obj1);";
                 }
                 $script .= "
 
@@ -2795,34 +2778,28 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
     protected function addDoCountJoinAllExcept(&$script)
     {
         $table = $this->getTable();
-        $join_behavior = $this->getJoinBehavior();
+        $joinBehavior = $this->getJoinBehavior();
 
         $fkeys = $table->getForeignKeys();  // this sep assignment is necessary otherwise sub-loops over
         // getForeignKeys() will cause this to only execute one time.
-        foreach ($fkeys as $fk ) {
-
-            $tblFK = $table->getDatabase()->getTable($fk->getForeignTableName());
-
+        foreach ($fkeys as $fk) {
             $excludedTable = $table->getDatabase()->getTable($fk->getForeignTableName());
-
             $thisTableObjectBuilder = $this->getNewObjectBuilder($table);
             $excludedTableObjectBuilder = $this->getNewObjectBuilder($excludedTable);
-            $excludedTablePeerBuilder = $this->getNewPeerBuilder($excludedTable);
-
             $excludedClassName = $excludedTableObjectBuilder->getObjectClassname();
 
             $script .= "
 
     /**
-     * Returns the number of rows matching criteria, joining the related ".$thisTableObjectBuilder->getFKPhpNameAffix($fk, $plural = false)." table
+     * Returns the number of rows matching criteria, joining the related ".$thisTableObjectBuilder->getFKPhpNameAffix($fk, false)." table
      *
      * @param      Criteria \$criteria
      * @param      boolean \$distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
      * @param      ConnectionInterface \$con
-     * @param      String    \$join_behavior the type of joins to use, defaults to $join_behavior
+     * @param      String    \$joinBehavior the type of joins to use, defaults to $joinBehavior
      * @return     int Number of matching rows.
      */
-    public static function doCountJoinAllExcept".$thisTableObjectBuilder->getFKPhpNameAffix($fk, $plural = false)."(Criteria \$criteria, \$distinct = false, ConnectionInterface \$con = null, \$join_behavior = $join_behavior)
+    public static function doCountJoinAllExcept".$thisTableObjectBuilder->getFKPhpNameAffix($fk, false)."(Criteria \$criteria, \$distinct = false, ConnectionInterface \$con = null, \$joinBehavior = $joinBehavior)
     {
         // we're going to modify criteria, so copy it first
         \$criteria = clone \$criteria;
@@ -2852,7 +2829,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 
             foreach ($table->getForeignKeys() as $subfk) {
                 // want to cover this case, but the code is not there yet.
-                if ( $subfk->getForeignTableName() != $table->getName() ) {
+                if ($subfk->getForeignTableName() != $table->getName()) {
                     $joinTable = $table->getDatabase()->getTable($subfk->getForeignTableName());
                     $joinedTablePeerBuilder = $this->getNewPeerBuilder($joinTable);
                     $joinClassName = $joinedTablePeerBuilder->getObjectClassname();
