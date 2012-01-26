@@ -10,6 +10,8 @@
 
 namespace Propel\Runtime\Util;
 
+use Countable;
+use IteratorAggregate;
 use Propel\Runtime\Query\ModelCriteria;
 
 /**
@@ -18,29 +20,44 @@ use Propel\Runtime\Query\ModelCriteria;
  *
  * @author         Fabien Potencier <fabien.potencier@symfony-project.com>
  * @author         François Zaninotto
- * @version         $Revision$
+ * @version        $Revision$
  */
-class PropelModelPager implements \IteratorAggregate, \Countable
+class PropelModelPager implements IteratorAggregate, Countable
 {
-    protected
-        $query = null,
-        $page = 1,
-        $maxPerPage = 10,
-        $lastPage = 1,
-        $nbResults = 0,
-        $objects = null,
-        $parameters = array(),
-        $currentMaxLink = 1,
-        $parameterHolder = null,
-        $maxRecordLimit = false,
-        $results = null,
-        $resultsCounter    = 0,
-        $con = null;
+    protected $query;
+
+    protected $page;
+
+    protected $maxPerPage;
+
+    protected $lastPage;
+
+    protected $nbResults;
+
+    protected $objects;
+
+    protected $parameters;
+
+    protected $currentMaxLink;
+
+    protected $maxRecordLimit;
+
+    protected $results;
+
+    protected $con;
 
     public function __construct(ModelCriteria $query, $maxPerPage = 10)
     {
+        $this->parameters = array();
+
         $this->setQuery($query);
         $this->setMaxPerPage($maxPerPage);
+        $this->setPage(1);
+        $this->setLastPage(1);
+        $this->setMaxRecordLimit(false);
+        $this->setNbResults(0);
+
+        $this->currentMaxLink = 1;
     }
 
     public function setQuery(ModelCriteria $query)
