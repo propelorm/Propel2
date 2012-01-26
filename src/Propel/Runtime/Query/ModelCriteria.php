@@ -366,7 +366,7 @@ class ModelCriteria extends Criteria
      */
     public function orderBy($columnName, $order = Criteria::ASC)
     {
-        list($column, $realColumnName) = $this->getColumnFromName($columnName, false);
+        list(, $realColumnName) = $this->getColumnFromName($columnName, false);
         $order = strtoupper($order);
         switch ($order) {
         case Criteria::ASC:
@@ -396,7 +396,7 @@ class ModelCriteria extends Criteria
      */
     public function groupBy($columnName)
     {
-        list($column, $realColumnName) = $this->getColumnFromName($columnName, false);
+        list(, $realColumnName) = $this->getColumnFromName($columnName, false);
         $this->addGroupByColumn($realColumnName);
 
         return $this;
@@ -1085,7 +1085,7 @@ class ModelCriteria extends Criteria
         } elseif (false === strpos($fullName, '.')) {
             $relationName = $fullName;
         } else {
-            list($leftName, $relationName) = explode('.', $fullName);
+            list(, $relationName) = explode('.', $fullName);
         }
 
         return $relationName;
