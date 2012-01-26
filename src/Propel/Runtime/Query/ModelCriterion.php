@@ -30,7 +30,7 @@ class ModelCriterion extends Criterion
      * @param      string $comparison, among ModelCriteria::MODEL_CLAUSE
      * @param      string $clause A simple pseudo-SQL clause, e.g. 'foo.BAR LIKE ?'
      */
-    public function __construct(Criteria $outer, $column, $value = null, $comparison = ModelCriteria::MODEL_CLAUSE, $clause, $type = null)
+    public function __construct(Criteria $outer, $column, $value = null, $comparison = ModelCriteria::MODEL_CLAUSE, $clause = null, $type = null)
     {
         $this->value = $value;
         if ($column instanceof ColumnMap) {
@@ -161,7 +161,7 @@ class ModelCriterion extends Criterion
     {
         $clause = $this->clause;
         foreach ((array) $this->value as $value) {
-            if ($value === null) {
+            if (null === $value) {
                 // FIXME we eventually need to translate a BETWEEN to
                 // something like WHERE (col < :p1 OR :p1 IS NULL) AND (col < :p2 OR :p2 IS NULL)
                 // in order to support null values
@@ -182,20 +182,20 @@ class ModelCriterion extends Criterion
      */
     public function appendModelClauseArrayToPs(&$sb, array &$params)
     {
-        $_bindParams = array(); // the param names used in query building
-        $_idxstart = count($params);
+        $bindParams = array(); // the param names used in query building
+        $idxstart = count($params);
         $valuesLength = 0;
-        foreach ( (array) $this->value as $value ) {
+        foreach ((array) $this->value as $value) {
             $valuesLength++; // increment this first to correct for wanting bind params to start with :p1
             $params[] = array('table' => $this->realtable, 'column' => $this->column, 'value' => $value);
-            $_bindParams[] = ':p'.($_idxstart + $valuesLength);
+            $bindParams[] = ':p'.($idxstart + $valuesLength);
         }
-        if ($valuesLength !== 0) {
-            $sb .= str_replace('?', '(' . implode(',', $_bindParams) . ')', $this->clause);
+        if (0 !== $valuesLength) {
+            $sb .= str_replace('?', '(' . implode(',', $bindParams) . ')', $this->clause);
         } else {
             $sb .= (stripos($this->clause, ' NOT IN ') === false) ? "1<>1" : "1=1";
         }
-        unset ( $value, $valuesLength );
+        unset($value, $valuesLength);
     }
 
     /**
@@ -291,16 +291,16 @@ class ModelCriterion extends Criterion
      * taken from http://www.php.net/manual/en/function.str-replace.php
      *
      */
-    protected static function strReplaceOnce($search, $replace, $subject)
+    static protected function strReplaceOnce($search, $replace, $subject)
     {
         $firstChar = strpos($subject, $search);
-        if($firstChar !== false) {
+        if (false !== $firstChar) {
             $beforeStr = substr($subject,0,$firstChar);
             $afterStr = substr($subject, $firstChar + strlen($search));
 
             return $beforeStr.$replace.$afterStr;
-        } else {
-            return $subject;
         }
+
+        return $subject;
     }
 }

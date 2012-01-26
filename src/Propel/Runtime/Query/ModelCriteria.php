@@ -47,11 +47,11 @@ use Propel\Runtime\Query\Exception\UnknownRelationException;
  */
 class ModelCriteria extends Criteria
 {
-    const MODEL_CLAUSE          = "MODEL CLAUSE";
-    const MODEL_CLAUSE_ARRAY    = "MODEL CLAUSE ARRAY";
-    const MODEL_CLAUSE_LIKE     = "MODEL CLAUSE LIKE";
-    const MODEL_CLAUSE_SEVERAL  = "MODEL CLAUSE SEVERAL";
-    const MODEL_CLAUSE_RAW      = "MODEL CLAUSE RAW";
+    const MODEL_CLAUSE          = 'MODEL CLAUSE';
+    const MODEL_CLAUSE_ARRAY    = 'MODEL CLAUSE ARRAY';
+    const MODEL_CLAUSE_LIKE     = 'MODEL CLAUSE LIKE';
+    const MODEL_CLAUSE_SEVERAL  = 'MODEL CLAUSE SEVERAL';
+    const MODEL_CLAUSE_RAW      = 'MODEL CLAUSE RAW';
 
     const FORMAT_STATEMENT  = '\Propel\Runtime\Formatter\StatementFormatter';
     const FORMAT_ARRAY      = '\Propel\Runtime\Formatter\ArrayFormatter';
@@ -80,7 +80,7 @@ class ModelCriteria extends Criteria
      * @param     string $modelName The phpName of a model, e.g. 'Book'
      * @param     string $modelAlias The alias for the model in this query, e.g. 'b'
      */
-    public function __construct($dbName = null, $modelName, $modelAlias = null)
+    public function __construct($dbName = null, $modelName = null, $modelAlias = null)
     {
         $this->setDbName($dbName);
         $this->originalDbName = $dbName;
@@ -424,7 +424,7 @@ class ModelCriteria extends Criteria
             // column of a relations's model
             $tableMap = $this->joins[$class]->getTableMap();
         } else {
-            throw new ClassNotFoundException("Unknown model or alias: $class");
+            throw new ClassNotFoundException(sprintf('Unknown model or alias: %s.', $class));
         }
         foreach ($tableMap->getColumns() as $column) {
             if (isset($this->aliases[$class])) {
@@ -1787,7 +1787,7 @@ class ModelCriteria extends Criteria
             // no column match in clause, must be an expression like '1=1'
             if (strpos($clause, '?') !== false) {
                 if (null === $bindingType) {
-                    throw new PropelException("Cannot determine the column to bind to the parameter in clause '$clause'");
+                    throw new PropelException(sprintf("Cannot determine the column to bind to the parameter in clause '%s'", $clause));
                 }
                 $criterion = new Criterion($this, $clause, $value, Criteria::RAW, $bindingType);
             } else {

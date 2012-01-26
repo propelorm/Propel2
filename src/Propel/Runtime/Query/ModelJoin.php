@@ -105,6 +105,7 @@ class ModelJoin extends Join
     {
         return $this->hasRightTableAlias();
     }
+
     /**
      * This method returns the last related, but already hydrated object up until this join
      * Starting from $startObject and continuously calling the getters to get
@@ -118,15 +119,15 @@ class ModelJoin extends Join
      */
     public function getObjectToRelate($startObject)
     {
-        if($this->isPrimary()) {
+        if ($this->isPrimary()) {
             return $startObject;
-        } else {
-            $previousJoin = $this->getPreviousJoin();
-            $previousObject = $previousJoin->getObjectToRelate($startObject);
-            $method = 'get' . $previousJoin->getRelationMap()->getName();
-
-            return $previousObject->$method();
         }
+
+        $previousJoin = $this->getPreviousJoin();
+        $previousObject = $previousJoin->getObjectToRelate($startObject);
+        $method = 'get' . $previousJoin->getRelationMap()->getName();
+
+        return $previousObject->$method();
     }
 
     public function equals($join)
