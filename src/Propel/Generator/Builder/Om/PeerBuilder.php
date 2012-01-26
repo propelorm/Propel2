@@ -530,8 +530,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 
             if ($col->isEnumeratedClasses()) {
 
-                if ($col->isPhpPrimitiveNumericType()) $quote = "";
-                else $quote = '"';
+                $quote = $col->isPhpPrimitiveNumericType() ? '' : '"';
 
                 foreach ($col->getChildren() as $child) {
                     $childBuilder = $this->getMultiExtendObjectBuilder();
