@@ -77,7 +77,7 @@ class PropelTemplate
         try
         {
             if (null !== $this->templateFile) {
-                require($this->templateFile);
+                require $this->templateFile;
             } else {
                 eval('?>' . $this->template . '<?php ');
             }
