@@ -10,19 +10,19 @@
 
 namespace Propel\Runtime\Collection;
 
+use Iterator;
+use PDO;
 use Propel\Runtime\Propel;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Formatter\AbstractFormatter;
 use Propel\Runtime\Connection\StatementInterface;
-
-use \PDO;
 
 /**
  * Class for iterating over a statement and returning one Propel object at a time
  *
  * @author     Francois Zaninotto
  */
-class OnDemandIterator implements \Iterator
+class OnDemandIterator implements Iterator
 {
     /**
      * @var       ObjectFormatter
@@ -34,11 +34,13 @@ class OnDemandIterator implements \Iterator
      */
     protected $stmt;
 
-    protected
-        $currentRow,
-        $currentKey = -1,
-        $isValid = null,
-        $enableInstancePoolingOnFinish = false;
+    protected $currentRow;
+
+    protected $currentKey;
+
+    protected $isValid;
+
+    protected $enableInstancePoolingOnFinish;
 
     /**
      * @param     AbstractFormatter  $formatter
@@ -46,6 +48,7 @@ class OnDemandIterator implements \Iterator
      */
     public function __construct(AbstractFormatter $formatter, StatementInterface $stmt)
     {
+        $this->currentKey = -1;
         $this->formatter = $formatter;
         $this->stmt = $stmt;
         $this->enableInstancePoolingOnFinish = Propel::disableInstancePooling();
