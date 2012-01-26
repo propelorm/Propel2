@@ -127,7 +127,7 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
     public function applyLimit(&$sql, $offset, $limit)
     {
         // make sure offset and limit are numeric
-        if(! is_numeric($offset) || ! is_numeric($limit))
+        if (! is_numeric($offset) || ! is_numeric($limit))
         {
             throw new InvalidArgumentException('MssqlAdapter::applyLimit() expects a number for argument 2 and 3');
         }
@@ -138,7 +138,7 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
         $selectText = 'SELECT ';
 
         preg_match('/\Aselect(.*)from(.*)/si', $sql, $selectSegment);
-        if(count($selectSegment) == 3) {
+        if (count($selectSegment) == 3) {
             $selectStatement = trim($selectSegment[1]);
             $fromStatement = trim($selectSegment[2]);
         } else {
@@ -152,7 +152,7 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
 
         // if we're starting at offset 0 then theres no need to simulate limit,
         // just grab the top $limit number of rows
-        if($offset == 0) {
+        if ($offset == 0) {
             $sql = $selectText . 'TOP ' . $limit . ' ' . $selectStatement . ' FROM ' . $fromStatement;
 
             return;
@@ -162,7 +162,7 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
         $orderStatement = stristr($fromStatement, 'ORDER BY');
         $orders = '';
 
-        if($orderStatement !== false) {
+        if ($orderStatement !== false) {
             //remove order statement from the from statement
             $fromStatement = trim(str_replace($orderStatement, '', $fromStatement));
 
@@ -185,18 +185,20 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
             $selColCount = count($selColArr) - 1;
 
             //make sure the current column isn't * or an aggregate
-            if($selColArr[0] != '*' && ! strstr($selColArr[0], '(')) {
-                if(isset($orderArr[$selColArr[0]])) {
+            if ($selColArr[0] != '*' && ! strstr($selColArr[0], '(')) {
+                if (isset($orderArr[$selColArr[0]])) {
                     $orders[$orderArr[$selColArr[0]]['key']] = $selColArr[0] . ' ' . $orderArr[$selColArr[0]]['sort'];
                 }
 
                 //use the alias if one was present otherwise use the column name
                 $alias = (! stristr($selCol, ' AS ')) ? $selColArr[0] : $selColArr[$selColCount];
                 //don't quote the identifier if it is already quoted
-                if($alias[0] != '[') $alias = $this->quoteIdentifier($alias);
+                if ($alias[0] != '[') {
+                    $alias = $this->quoteIdentifier($alias);
+                }
 
                 //save the first non-aggregate column for use in ROW_NUMBER() if required
-                if(! isset($firstColumnOrderStatement)) {
+                if (! isset($firstColumnOrderStatement)) {
                     $firstColumnOrderStatement = 'ORDER BY ' . $selColArr[0];
                 }
 
@@ -205,29 +207,32 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
                 $outerSelect .= $alias . ', ';
             } else {
                 //agregate columns must always have an alias clause
-                if(! stristr($selCol, ' AS ')) {
+                if (! stristr($selCol, ' AS ')) {
                     throw new MalformedClauseException('MssqlAdapter::applyLimit() requires aggregate columns to have an Alias clause');
                 }
 
                 //aggregate column alias can't be used as the count column you must use the entire aggregate statement
-                if(isset($orderArr[$selColArr[$selColCount]])) {
+                if (isset($orderArr[$selColArr[$selColCount]])) {
                     $orders[$orderArr[$selColArr[$selColCount]]['key']] = str_replace($selColArr[$selColCount - 1] . ' ' . $selColArr[$selColCount], '', $selCol) . $orderArr[$selColArr[$selColCount]]['sort'];
                 }
 
                 //quote the alias
                 $alias = $selColArr[$selColCount];
                 //don't quote the identifier if it is already quoted
-                if($alias[0] != '[') $alias = $this->quoteIdentifier($alias);
+                if ($alias[0] != '[') {
+                    $alias = $this->quoteIdentifier($alias);
+                }
+
                 $innerSelect .= str_replace($selColArr[$selColCount], $alias, $selCol) . ', ';
                 $outerSelect .= $alias . ', ';
             }
         }
 
-        if(is_array($orders)) {
+        if (is_array($orders)) {
             $orderStatement = 'ORDER BY ' . implode(', ', $orders);
         } else {
             //use the first non aggregate column in our select statement if no ORDER BY clause present
-            if(isset($firstColumnOrderStatement)) {
+            if (isset($firstColumnOrderStatement)) {
                 $orderStatement = $firstColumnOrderStatement;
             } else {
                 throw new ColumnNotFoundException('MssqlAdapter::applyLimit() unable to find column to use with ROW_NUMBER()');
@@ -278,7 +283,7 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
         }
 
         //if we made changes re-number the params
-        if($params != $paramCols)
+        if ($params != $paramCols)
         {
             $params = $paramCols;
             unset($paramCols);

@@ -10,13 +10,13 @@
 
 namespace Propel\Runtime\Util;
 
+
+use Exception;
 use Propel\Runtime\Propel;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\RuntimeException;
 use Propel\Runtime\Query\Criteria;
 use Propel\Runtime\Validator\ValidationFailed;
-
-use \Exception;
 
 /**
  * This is a utility class for all generated Peer classes in the system.
@@ -280,9 +280,11 @@ class BasePeer
                 . ' (' . implode(',', $columns) . ')'
                 . ' VALUES (';
             // . substr(str_repeat("?,", count($columns)), 0, -1) .
-            for($p=1, $cnt=count($columns); $p <= $cnt; $p++) {
+            for ($p = 1, $cnt = count($columns); $p <= $cnt; $p++) {
                 $sql .= ':p'.$p;
-                if ($p !== $cnt) $sql .= ',';
+                if ($p !== $cnt) {
+                    $sql .= ',';
+                }
             }
             $sql .= ')';
 
@@ -398,7 +400,7 @@ class BasePeer
                                 $raw = $param['raw'];
                                 $rawcvt = '';
                                 // parse the $params['raw'] for ? chars
-                                for($r=0,$len=strlen($raw); $r < $len; $r++) {
+                                for ($r=0,$len=strlen($raw); $r < $len; $r++) {
                                     if ($raw{$r} == '?') {
                                         $rawcvt .= ':p'.$p++;
                                     } else {
@@ -445,7 +447,9 @@ class BasePeer
                 $stmt = null; // close
 
             } catch (Exception $e) {
-                if ($stmt) $stmt = null; // close
+                if ($stmt) {
+                    $stmt = null; // close
+                }
                 Propel::log($e->getMessage(), Propel::LOG_ERR);
                 throw new RuntimeException(sprintf('Unable to execute UPDATE statement [%s]', $sql), 0, $e);
             }

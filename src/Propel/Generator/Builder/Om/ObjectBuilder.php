@@ -2516,7 +2516,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
         try {
             \$deleteQuery = ".$this->getQueryClassname()."::create()
                 ->filterByPrimaryKey(\$this->getPrimaryKey());";
-        if($this->getGeneratorConfig()->getBuildProperty('addHooks')) {
+        if ($this->getGeneratorConfig()->getBuildProperty('addHooks')) {
             $script .= "
             \$ret = \$this->preDelete(\$con);";
             // apply behaviors
@@ -3506,12 +3506,12 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
      */
     public function count$relCol(Criteria \$criteria = null, \$distinct = false, ConnectionInterface \$con = null)
     {
-        if(null === \$this->$collName || null !== \$criteria) {
+        if (null === \$this->$collName || null !== \$criteria) {
             if (\$this->isNew() && null === \$this->$collName) {
                 return 0;
             } else {
                 \$query = $fkQueryClassname::create(null, \$criteria);
-                if(\$distinct) {
+                if (\$distinct) {
                     \$query->distinct();
                 }
 
@@ -3557,7 +3557,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
      */
     public function get$relCol(\$criteria = null, ConnectionInterface \$con = null)
     {
-        if(null === \$this->$collName || null !== \$criteria) {
+        if (null === \$this->$collName || null !== \$criteria) {
             if (\$this->isNew() && null === \$this->$collName) {
                 // return empty collection
                 \$this->init".$this->getRefFKPhpNameAffix($refFK, true)."();
@@ -3898,7 +3898,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
      */
     public function get{$relatedName}(\$criteria = null, ConnectionInterface \$con = null)
     {
-        if(null === \$this->$collName || null !== \$criteria) {
+        if (null === \$this->$collName || null !== \$criteria) {
             if (\$this->isNew() && null === \$this->$collName) {
                 // return empty collection
                 \$this->init{$relatedName}();
@@ -4001,12 +4001,12 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
      */
     public function count{$relatedName}(\$criteria = null, \$distinct = false, ConnectionInterface \$con = null)
     {
-        if(null === \$this->$collName || null !== \$criteria) {
+        if (null === \$this->$collName || null !== \$criteria) {
             if (\$this->isNew() && null === \$this->$collName) {
                 return 0;
             } else {
                 \$query = $relatedQueryClassName::create(null, \$criteria);
-                if(\$distinct) {
+                if (\$distinct) {
                     \$query->distinct();
                 }
 
@@ -4620,7 +4620,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
         \$isInsert = \$this->isNew();
         try {";
 
-        if($this->getGeneratorConfig()->getBuildProperty('addHooks')) {
+        if ($this->getGeneratorConfig()->getBuildProperty('addHooks')) {
             // save with runtime hools
             $script .= "
             \$ret = \$this->preSave(\$con);";
@@ -4662,7 +4662,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
             if ($this->hasBehaviorModifier('preUpdate'))
             {
                 $script .= "
-            if(!\$isInsert) {";
+            if (!\$isInsert) {";
                 $this->applyBehaviorModifier('preUpdate', $script, "                ");
                 $script .= "
             }";
@@ -4670,7 +4670,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
             if ($this->hasBehaviorModifier('preInsert'))
             {
                 $script .= "
-            if(\$isInsert) {";
+            if (\$isInsert) {";
                 $this->applyBehaviorModifier('preInsert', $script, "                ");
                 $script .= "
             }";
@@ -4681,7 +4681,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
             if ($this->hasBehaviorModifier('postUpdate'))
             {
                 $script .= "
-            if(!\$isInsert) {";
+            if (!\$isInsert) {";
                 $this->applyBehaviorModifier('postUpdate', $script, "                ");
                 $script .= "
             }";
@@ -4689,7 +4689,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
             if ($this->hasBehaviorModifier('postInsert'))
             {
                 $script .= "
-            if(\$isInsert) {";
+            if (\$isInsert) {";
                 $this->applyBehaviorModifier('postInsert', $script, "                ");
                 $script .= "
             }";
@@ -5059,7 +5059,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
             $clo = strtolower($col->getName());
             $script .= "
         \$this->".$clo." = null;";
-            if($col->isLazyLoad()){
+            if ($col->isLazyLoad()) {
                 $script .= "
         \$this->".$clo."_isLoaded = false;";
             }

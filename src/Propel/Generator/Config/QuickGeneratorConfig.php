@@ -51,17 +51,19 @@ class QuickGeneratorConfig implements GeneratorConfigInterface
     {
         $properties = array();
         if (($lines = @file($filepath)) === false) {
-            throw new Exception("Unable to parse contents of $filepath");
+            throw new Exception(sprintf('Unable to parse contents of %s.', $filepath));
         }
-        foreach($lines as $line) {
+        foreach ($lines as $line) {
                 $line = trim($line);
-                if ($line == "" || $line{0} == '#' || $line{0} == ';') continue;
+                if (empty($line) || '#' ===  $line{0} || ';' === $line{0}) {
+                    continue;
+                }
                 $pos = strpos($line, '=');
                 $property = trim(substr($line, 0, $pos));
                 $value = trim(substr($line, $pos + 1));
-                if ($value === "true") {
+                if ('true' === $value) {
                     $value = true;
-                } elseif ($value === "false") {
+                } elseif ('false' === $value) {
                     $value = false;
                 }
                 $properties[$property] = $value;

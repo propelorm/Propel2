@@ -30,7 +30,9 @@ class NestedSetBehavior extends Behavior
     );
 
     protected $objectBuilderModifier;
+
     protected $queryBuilderModifier;
+
     protected $peerBuilderModifier;
 
     /**
@@ -38,19 +40,19 @@ class NestedSetBehavior extends Behavior
      */
     public function modifyTable()
     {
-        if(!$this->getTable()->containsColumn($this->getParameter('left_column'))) {
+        if (!$this->getTable()->containsColumn($this->getParameter('left_column'))) {
             $this->getTable()->addColumn(array(
                 'name' => $this->getParameter('left_column'),
                 'type' => 'INTEGER'
             ));
         }
-        if(!$this->getTable()->containsColumn($this->getParameter('right_column'))) {
+        if (!$this->getTable()->containsColumn($this->getParameter('right_column'))) {
             $this->getTable()->addColumn(array(
                 'name' => $this->getParameter('right_column'),
                 'type' => 'INTEGER'
             ));
         }
-        if(!$this->getTable()->containsColumn($this->getParameter('level_column'))) {
+        if (!$this->getTable()->containsColumn($this->getParameter('level_column'))) {
             $this->getTable()->addColumn(array(
                 'name' => $this->getParameter('level_column'),
                 'type' => 'INTEGER'
@@ -67,8 +69,7 @@ class NestedSetBehavior extends Behavior
 
     public function getObjectBuilderModifier()
     {
-        if (is_null($this->objectBuilderModifier))
-        {
+        if (is_null($this->objectBuilderModifier)) {
             $this->objectBuilderModifier = new NestedSetBehaviorObjectBuilderModifier($this);
         }
 
@@ -77,8 +78,7 @@ class NestedSetBehavior extends Behavior
 
     public function getQueryBuilderModifier()
     {
-        if (is_null($this->queryBuilderModifier))
-        {
+        if (is_null($this->queryBuilderModifier)) {
             $this->queryBuilderModifier = new NestedSetBehaviorQueryBuilderModifier($this);
         }
 
@@ -87,8 +87,7 @@ class NestedSetBehavior extends Behavior
 
     public function getPeerBuilderModifier()
     {
-        if (is_null($this->peerBuilderModifier))
-        {
+        if (is_null($this->peerBuilderModifier)) {
             $this->peerBuilderModifier = new NestedSetBehaviorPeerBuilderModifier($this);
         }
 
@@ -97,7 +96,6 @@ class NestedSetBehavior extends Behavior
 
     public function useScope()
     {
-        return $this->getParameter('use_scope') == 'true';
+        return 'true' === $this->getParameter('use_scope');
     }
-
 }

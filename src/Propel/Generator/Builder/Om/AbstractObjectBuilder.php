@@ -166,7 +166,9 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
     protected function hasDefaultValues()
     {
         foreach ($this->getTable()->getColumns() as $col) {
-            if($col->getDefaultValue() !== null) return true;
+            if (null !== $col->getDefaultValue()) {
+                return true;
+            }
         }
 
         return false;
@@ -200,5 +202,4 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
     {
         return $this->getBehaviorContentBase($contentName, 'ObjectBuilderModifier');
     }
-
 }
