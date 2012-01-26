@@ -801,7 +801,9 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 
         $script .= "
     ".$visibility." function get$cfc(\$format = ".var_export($defaultfmt, true)."";
-        if ($col->isLazyLoad()) $script .= ", \$con = null";
+        if ($col->isLazyLoad()) {
+            $script .= ", \$con = null";
+        }
         $script .= ")
     {";
     }
@@ -1017,11 +1019,17 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
      * @return     Boolean
      */
     $visibility function has$singularPhpName(\$value";
-        if ($col->isLazyLoad()) $script .= ", ConnectionInterface \$con = null";
+        if ($col->isLazyLoad()) {
+            $script .= ", ConnectionInterface \$con = null";
+        }
+
         $script .= ")
     {
         return in_array(\$value, \$this->get$cfc(";
-        if ($col->isLazyLoad()) $script .= "\$con";
+        if ($col->isLazyLoad()) {
+            $script .= "\$con";
+        }
+
         $script .= "));
     } // has$singularPhpName()
 ";
@@ -1077,7 +1085,10 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 
         $script .= "
     ".$visibility." function get$cfc(";
-        if ($col->isLazyLoad()) $script .= "ConnectionInterface \$con = null";
+        if ($col->isLazyLoad()) {
+            $script .= "ConnectionInterface \$con = null";
+        }
+
         $script .= ")
     {";
     }
@@ -1553,11 +1564,17 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
      * @return     ".$this->getObjectClassname()." The current object (for fluent API support)
      */
     $visibility function add$singularPhpName(\$value";
-        if ($col->isLazyLoad()) $script .= ", ConnectionInterface \$con = null";
+        if ($col->isLazyLoad()) {
+            $script .= ", ConnectionInterface \$con = null";
+        }
+
         $script .= ")
     {
         \$currentArray = \$this->get$cfc(";
-        if ($col->isLazyLoad()) $script .= "\$con";
+        if ($col->isLazyLoad()) {
+            $script .= "\$con";
+        }
+
         $script .= ");
         \$currentArray []= \$value;
         \$this->set$cfc(\$currentArray);
@@ -1591,13 +1608,17 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
      * @return     ".$this->getObjectClassname()." The current object (for fluent API support)
      */
     $visibility function remove$singularPhpName(\$value";
-        if ($col->isLazyLoad()) $script .= ", ConnectionInterface \$con = null";
+        if ($col->isLazyLoad()) {
+            $script .= ", ConnectionInterface \$con = null";
+        }
         // we want to reindex the array, so array_ functions are not the best choice
         $script .= ")
     {
         \$targetArray = array();
         foreach (\$this->get$cfc(";
-        if ($col->isLazyLoad()) $script .= "\$con";
+        if ($col->isLazyLoad()) {
+            $script .= "\$con";
+        }
         $script .= ") as \$element) {
             if (\$element != \$value) {
                 \$targetArray []= \$element;
