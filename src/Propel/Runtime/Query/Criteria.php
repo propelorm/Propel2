@@ -1644,7 +1644,7 @@ class Criteria implements IteratorAggregate
         } elseif (is_int($comparison)) {
             // $comparison is a PDO::PARAM_* constant value
             // something like $c->add('foo like ?', '%bar%', PDO::PARAM_STR);
-            return new Criterion($this, $p1, $value, Criteria::RAW, $comparison);;
+            return new Criterion($this, $p1, $value, Criteria::RAW, $comparison);
         } else {
             // $comparison is one of Criteria's constants
             // something like $c->add(BookPeer::TITLE, 'War%', Criteria::LIKE);
