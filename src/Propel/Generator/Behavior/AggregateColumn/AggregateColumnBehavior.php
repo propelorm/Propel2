@@ -26,6 +26,7 @@ class AggregateColumnBehavior extends Behavior
     protected $parameters = array(
         'name'           => null,
         'expression'     => null,
+        'condition'      => null,
         'foreign_table'  => null,
         'foreign_schema' => null,
     );
@@ -74,6 +75,10 @@ class AggregateColumnBehavior extends Behavior
     protected function addObjectCompute()
     {
         $conditions = array();
+        if ($this->getParameter('condition')) {
+            $conditions[] = $this->getParameter('condition');
+        }
+
         $bindings = array();
         $database = $this->getTable()->getDatabase();
         foreach ($this->getForeignKey()->getColumnObjectsMapping() as $index => $columnReference) {
