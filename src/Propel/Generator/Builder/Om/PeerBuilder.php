@@ -137,14 +137,14 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 
     /**
      * Closes class.
-     * Adds closing brace at end of class and the static map builder registration code.
+     * Adds closing brace at end of class and the static
+     * map builder registration code.
      * @param      string &$script The script will be modified in this method.
      * @see        addStaticTableMapRegistration()
      */
     protected function addClassClose(&$script)
     {
-      // apply behaviors
-    $this->applyBehaviorModifier('staticMethods', $script, "    ");
+        $this->applyBehaviorModifier('staticMethods', $script, '    ');
 
         $script .= "
 } // " . $this->getClassname() . "
@@ -669,7 +669,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         }";
 
         // apply behaviors
-    $this->applyBehaviorModifier('preSelect', $script);
+        $this->applyBehaviorModifier('preSelect', $script);
 
         $script .= "
         // BasePeer returns a Statement
@@ -772,9 +772,8 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         // Set the correct dbName
         \$criteria->setDbName(self::DATABASE_NAME);";
         // apply behaviors
-        if ($this->hasBehaviorModifier('preSelect'))
-        {
-      $this->applyBehaviorModifier('preSelect', $script);
+        if ($this->hasBehaviorModifier('preSelect')) {
+            $this->applyBehaviorModifier('preSelect', $script);
         }
         $script .= "
 
@@ -791,7 +790,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
     public function getInstancePoolKeySnippet($pkphp)
     {
         $pkphp = (array) $pkphp; // make it an array if it is not.
-        $script = "";
+        $script = '';
         if (count($pkphp) > 1) {
             $script .= "serialize(array(";
             $i = 0;
@@ -1042,15 +1041,15 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         return ".$this->getInstancePoolKeySnippet($pk).";
     }
 ";
-    } // addGetPrimaryKeyHash
+    }
 
-        /**
-         * Adds method to get the primary key from a row
-         * @param      string &$script The script will be modified in this method.
-         */
-        protected function addGetPrimaryKeyFromRow(&$script)
-        {
-            $script .= "
+    /**
+     * Adds method to get the primary key from a row
+     * @param string &$script The script will be modified in this method.
+     */
+    protected function addGetPrimaryKeyFromRow(&$script)
+    {
+        $script .= "
     /**
      * Retrieves the primary key from the DB resultset row
      * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
@@ -1063,35 +1062,37 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
     public static function getPrimaryKeyFromRow(\$row, \$startcol = 0)
     {";
 
-            // We have to iterate through all the columns so that we know the offset of the primary
-            // key columns.
-            $table = $this->getTable();
-            $n = 0;
-            $pks = array();
-            foreach ($table->getColumns() as $col) {
-                if (!$col->isLazyLoad()) {
-                    if ($col->isPrimaryKey()) {
-                        $pk = '(' . $col->getPhpType() . ') ' . ($n ? "\$row[\$startcol + $n]" : "\$row[\$startcol]");
-                        if ($table->hasCompositePrimaryKey()) {
-                            $pks[] = $pk;
-                        }
+        // We have to iterate through all the columns so that we
+        // know the offset of the primary key columns.
+        $table = $this->getTable();
+        $n = 0;
+        $pks = array();
+        foreach ($table->getColumns() as $col) {
+            if (!$col->isLazyLoad()) {
+                if ($col->isPrimaryKey()) {
+                    $pk = '(' . $col->getPhpType() . ') ' . ($n ? "\$row[\$startcol + $n]" : "\$row[\$startcol]");
+                    if ($table->hasCompositePrimaryKey()) {
+                        $pks[] = $pk;
                     }
-                    $n++;
                 }
+                $n++;
             }
-            if ($table->hasCompositePrimaryKey()) {
-                $script .= "
+        }
 
-        return array(" . implode($pks, ', '). ");";
-            } else {
-                $script .= "
-
-        return " . $pk . ";";
-            }
+        if ($table->hasCompositePrimaryKey()) {
             $script .= "
+
+            return array(" . implode($pks, ', '). ");";
+        } else {
+            $script .= "
+
+            return " . $pk . ";";
+        }
+
+        $script .= "
     }
     ";
-        } // addGetPrimaryKeyFromRow
+    }
 
     /**
      * Adds the populateObjects() method.
@@ -1347,9 +1348,8 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
             throw new PropelException('Cannot insert a value for auto-increment primary key ('.".$this->getColumnConstant($col).".')');
         }
 ";
-                if (!$this->getPlatform()->supportsInsertNullPk())
-                {
-                  $script .= "
+                if (!$this->getPlatform()->supportsInsertNullPk()) {
+                    $script .= "
         // remove pkey col since this table uses auto-increment and passing a null value for it is not valid
         \$criteria->remove(".$this->getColumnConstant($col).");
 ";
@@ -2077,32 +2077,31 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         return $offsets;
     }
 
-  public function addCriteriaJoin($fk, $table, $joinTable, $joinedTablePeerBuilder)
-  {
-    $script = '';
+    public function addCriteriaJoin($fk, $table, $joinTable, $joinedTablePeerBuilder)
+    {
+        $script = '';
         $lfMap = $fk->getLocalForeignMapping();
         $lftCols = $fk->getLocalColumns();
-        if (count($lftCols) == 1)
-        {
-          // simple foreign key
-          $lftCol = $lftCols[0];
-          $script .= sprintf("
+        if (1 === count($lftCols)) {
+            // simple foreign key
+            $lftCol = $lftCols[0];
+            $script .= sprintf(
+                "
         \$criteria->addJoin(%s, %s, \$joinBehavior);
 ",
-        $this->getColumnConstant($table->getColumn($lftCol) ),
-        $joinedTablePeerBuilder->getColumnConstant($joinTable->getColumn( $lfMap[$lftCol] ) ));
-        }
-        else
-        {
+                $this->getColumnConstant($table->getColumn($lftCol)),
+                $joinedTablePeerBuilder->getColumnConstant($joinTable->getColumn($lfMap[$lftCol] ))
+            );
+        } else {
           // composite foreign key
           $script .= "
         \$criteria->addMultipleJoin(array(
 ";
-          foreach ($lftCols as $columnName ) {
+          foreach ($lftCols as $columnName) {
             $script .= sprintf("        array(%s, %s),
 ",
-                  $this->getColumnConstant($table->getColumn($columnName) ),
-                  $joinedTablePeerBuilder->getColumnConstant($joinTable->getColumn( $lfMap[$columnName] ) )
+                  $this->getColumnConstant($table->getColumn($columnName)),
+                  $joinedTablePeerBuilder->getColumnConstant($joinTable->getColumn( $lfMap[$columnName]))
                 );
             }
             $script .= "      ), \$joinBehavior);
@@ -2110,7 +2109,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         }
 
         return $script;
-  }
+    }
 
     /**
      * Adds the doSelectJoin*() methods.
@@ -2131,9 +2130,9 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 
                 if (!$joinTable->isForReferenceOnly()) {
 
-                    // This condition is necessary because Propel lacks a system for
-                    // aliasing the table if it is the same table.
-                    if ( $fk->getForeignTableName() != $table->getName() ) {
+                    // This condition is necessary because Propel lacks
+                    // a system for aliasing the table if it is the same table.
+                    if ($fk->getForeignTableName() != $table->getName()) {
 
                         $thisTableObjectBuilder = $this->getNewObjectBuilder($table);
                         $joinedTableObjectBuilder = $this->getNewObjectBuilder($joinTable);
