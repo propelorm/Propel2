@@ -15,7 +15,14 @@ namespace Propel\Runtime\Util;
 */
 class Profiler
 {
-    protected $slowTreshold = 0.1;
+    protected $slowTreshold;
+
+    protected $innerGlue;
+
+    protected $outerGlue;
+
+    protected $snapshot;
+
     protected $details = array(
         'time' => array(
             'name'      => 'Time',
@@ -28,10 +35,13 @@ class Profiler
             'pad'       => 7
         ),
     );
-    protected $innerGlue = ': ';
-    protected $outerGlue = ' | ';
 
-    protected $snapshot;
+    public function __construct($slowTreshold = 0.1, $innerGlue = ': ', $outerGlue = ' | ')
+    {
+        $this->slowTreshold = $slowTreshold;
+        $this->innerGlue    = $innerGlue;
+        $this->outerGlue    = $outerGlue;
+    }
 
     /**
      * Set the duration which triggers the 'slow' label on details.
@@ -256,7 +266,7 @@ class Profiler
         return self::toPrecision($duration, $precision) . $unit;
     }
 
-   /**
+    /**
      * Rounding to significant digits (sort of like JavaScript's toPrecision()).
      *
      *
@@ -267,9 +277,10 @@ class Profiler
      */
     static public function toPrecision($number, $significantFigures = 3)
     {
-        if ($number == 0) {
+        if (0 === $number) {
             return 0;
         }
+
         $significantDecimals = floor($significantFigures - log10(abs($number)));
         $magnitude = pow(10, $significantDecimals);
         $shifted = round($number * $magnitude);
