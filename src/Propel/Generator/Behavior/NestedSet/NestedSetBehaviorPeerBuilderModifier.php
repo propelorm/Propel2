@@ -104,7 +104,7 @@ const SCOPE_COL = '" . $tableName . '.' . $this->getColumnConstant('scope_column
         $this->setBuilder($builder);
         $script = '';
 
-        if ($this->getParameter('use_scope') == 'true') {
+        if ('true' === $this->getParameter('use_scope')) {
             $this->addRetrieveRoots($script);
         }
 
@@ -133,7 +133,7 @@ const SCOPE_COL = '" . $tableName . '.' . $this->getColumnConstant('scope_column
  */
 static public function retrieveRoots(Criteria \$criteria = null, ConnectionInterface \$con = null)
 {
-    if (\$criteria === null) {
+    if (null === \$criteria) {
         \$criteria = new Criteria($peerClassname::DATABASE_NAME);
     }
     \$criteria->add($peerClassname::LEFT_COL, 1, Criteria::EQUAL);
@@ -193,7 +193,7 @@ static public function retrieveRoot(" . ($useScope ? "\$scope = null, " : "") . 
  */
 static public function retrieveTree(" . ($useScope ? "\$scope = null, " : "") . "Criteria \$criteria = null, ConnectionInterface \$con = null)
 {
-    if (\$criteria === null) {
+    if (null === \$criteria) {
         \$criteria = new Criteria($peerClassname::DATABASE_NAME);
     }
     \$criteria->addAscendingOrderByColumn($peerClassname::LEFT_COL);";
@@ -395,7 +395,7 @@ static public function updateLoadedNodes(\$prune = null, ConnectionInterface \$c
             // We don't need to alter the object instance pool; we're just modifying these ones
             // already in the pool.
             \$criteria = new Criteria($peerClassname::DATABASE_NAME);";
-        if (count($this->table->getPrimaryKey()) === 1) {
+        if (1 === count($this->table->getPrimaryKey())) {
             $pkey = $this->table->getPrimaryKey();
             $col = array_shift($pkey);
             $script .= "
@@ -470,7 +470,7 @@ static public function updateLoadedNodes(\$prune = null, ConnectionInterface \$c
  *
  * @param      int \$left    left column value";
          if ($useScope) {
-                      $script .= "
+             $script .= "
  * @param      integer \$scope    scope column value";
          }
          $script .= "
@@ -497,7 +497,7 @@ static public function makeRoomForLeaf(\$left" . ($useScope ? ", \$scope" : "").
  * Update the tree to allow insertion of a leaf at the specified position
  *";
          if ($useScope) {
-                      $script .= "
+             $script .= "
  * @param      integer \$scope    scope column value";
          }
          $script .= "

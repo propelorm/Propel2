@@ -39,13 +39,13 @@ abstract class BaseObject
      * attribute to determine if this object has previously been saved.
      * @var        boolean
      */
-    protected $_new = true;
+    protected $new = true;
 
     /**
      * attribute to determine whether this object has been deleted.
      * @var        boolean
      */
-    protected $_deleted = false;
+    protected $deleted = false;
 
     /**
      * The columns that have been modified in current object.
@@ -107,7 +107,7 @@ abstract class BaseObject
      */
     public function isNew()
     {
-        return $this->_new;
+        return $this->new;
     }
 
     /**
@@ -118,7 +118,7 @@ abstract class BaseObject
      */
     public function setNew($b)
     {
-        $this->_new = (boolean) $b;
+        $this->new = (boolean) $b;
     }
 
     /**
@@ -127,7 +127,7 @@ abstract class BaseObject
      */
     public function isDeleted()
     {
-        return $this->_deleted;
+        return $this->deleted;
     }
 
     /**
@@ -137,7 +137,7 @@ abstract class BaseObject
      */
     public function setDeleted($b)
     {
-        $this->_deleted = (boolean) $b;
+        $this->deleted = (boolean) $b;
     }
 
     /**
@@ -154,71 +154,83 @@ abstract class BaseObject
      * Code to be run after persisting the object
      * @param ConnectionInterface $con
      */
-    public function postSave(ConnectionInterface $con = null) { }
+    public function postSave(ConnectionInterface $con = null)
+    {
+        
+    }
 
-        /**
-         * Code to be run before inserting to database
-         * @param ConnectionInterface $con
-         * @return boolean
-         */
-        public function preInsert(ConnectionInterface $con = null)
-        {
-            return true;
-        }
+    /**
+     * Code to be run before inserting to database
+     * @param ConnectionInterface $con
+     * @return boolean
+     */
+    public function preInsert(ConnectionInterface $con = null)
+    {
+        return true;
+    }
 
     /**
      * Code to be run after inserting to database
      * @param ConnectionInterface $con
      */
-    public function postInsert(ConnectionInterface $con = null) { }
+    public function postInsert(ConnectionInterface $con = null)
+    {
+        
+    }
 
-        /**
-         * Code to be run before updating the object in database
-         * @param ConnectionInterface $con
-         * @return boolean
-         */
-        public function preUpdate(ConnectionInterface $con = null)
-        {
-            return true;
-        }
+    /**
+     * Code to be run before updating the object in database
+     * @param ConnectionInterface $con
+     * @return boolean
+     */
+    public function preUpdate(ConnectionInterface $con = null)
+    {
+        return true;
+    }
 
     /**
      * Code to be run after updating the object in database
      * @param ConnectionInterface $con
      */
-    public function postUpdate(ConnectionInterface $con = null) { }
+    public function postUpdate(ConnectionInterface $con = null)
+    {
+        
+    }
 
-        /**
-         * Code to be run before deleting the object in database
-         * @param ConnectionInterface $con
-         * @return boolean
-         */
-        public function preDelete(ConnectionInterface $con = null)
-        {
-            return true;
-        }
+    /**
+     * Code to be run before deleting the object in database
+     * @param ConnectionInterface $con
+     * @return boolean
+     */
+    public function preDelete(ConnectionInterface $con = null)
+    {
+        return true;
+    }
 
     /**
      * Code to be run after deleting the object in database
      * @param ConnectionInterface $con
      */
-    public function postDelete(ConnectionInterface $con = null) { }
+    public function postDelete(ConnectionInterface $con = null)
+    {
+        
+    }
 
-        /**
-         * Sets the modified state for the object to be false.
-         * @param string $col If supplied, only the specified column is reset.
-         * @return void
-         */
-        public function resetModified($col = null)
-        {
-            if ($col !== null) {
-                while (($offset = array_search($col, $this->modifiedColumns)) !== false) {
-                    array_splice($this->modifiedColumns, $offset, 1);
-                }
-            } else {
-                $this->modifiedColumns = array();
+    /**
+     * Sets the modified state for the object to be false.
+     * @param string $col If supplied, only the specified column is reset.
+     * @return void
+     */
+    public function resetModified($col = null)
+    {
+        if (null !== $col) {
+            while (false !== ($offset = array_search($col, $this->modifiedColumns))) {
+                array_splice($this->modifiedColumns, $offset, 1);
             }
+        } else {
+            $this->modifiedColumns = array();
         }
+    }
 
     /**
      * Compares this with another <code>BaseObject</code> instance.  If
@@ -234,14 +246,14 @@ abstract class BaseObject
         if (is_object($obj) && $obj instanceof $thisclazz) {
             if ($this === $obj) {
                 return true;
-            } elseif ($this->getPrimaryKey() === null || $obj->getPrimaryKey() === null)  {
+            } elseif (null === $this->getPrimaryKey() || null === $obj->getPrimaryKey())  {
                 return false;
             } else {
                 return ($this->getPrimaryKey() === $obj->getPrimaryKey());
             }
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     /**
@@ -253,7 +265,7 @@ abstract class BaseObject
     public function hashCode()
     {
         $ok = $this->getPrimaryKey();
-        if ($ok === null) {
+        if (null === $ok) {
             return crc32(serialize($this));
         }
 
@@ -290,7 +302,7 @@ abstract class BaseObject
     public function getVirtualColumn($name)
     {
         if (!$this->hasVirtualColumn($name)) {
-            throw new PropelException('Cannot get value of inexistent virtual column ' . $name);
+            throw new PropelException(sprintf('Cannot get value of inexistent virtual column %s.', $name));
         }
 
         return $this->virtualColumns[$name];
@@ -395,20 +407,24 @@ abstract class BaseObject
             if ($this->hasVirtualColumn($virtualColumn)) {
                 return $this->getVirtualColumn($virtualColumn);
             }
+
             // no lcfirst in php<5.3...
             $virtualColumn[0] = strtolower($virtualColumn[0]);
             if ($this->hasVirtualColumn($virtualColumn)) {
                 return $this->getVirtualColumn($virtualColumn);
             }
         }
+
         if (preg_match('/^from(\w+)$/', $name, $matches)) {
             return $this->importFrom($matches[1], reset($params));
         }
+
         if (preg_match('/^to(\w+)$/', $name, $matches)) {
             $includeLazyLoadColumns = isset($params[0]) ? $params[0] : true;
 
             return $this->exportTo($matches[1], $includeLazyLoadColumns);
         }
-        throw new BadMethodCallException('Call to undefined method: ' . $name);
+
+        throw new BadMethodCallException(sprintf('Call to undefined method: %s.', $name));
     }
 }

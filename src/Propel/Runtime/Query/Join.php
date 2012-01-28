@@ -54,8 +54,11 @@ class Join
     protected $db;
 
     protected $leftTableName;
+
     protected $rightTableName;
+
     protected $leftTableAlias;
+
     protected $rightTableAlias;
 
     protected $joinCondition;
@@ -213,7 +216,7 @@ class Join
 
     public function getOperators()
     {
-      return $this->operators;
+        return $this->operators;
     }
 
     /**
@@ -225,7 +228,7 @@ class Join
      */
     public function setJoinType($joinType = null)
     {
-      $this->joinType = $joinType;
+        $this->joinType = $joinType;
     }
 
     /**
@@ -251,7 +254,7 @@ class Join
      */
     public function addLeftColumnName($left)
     {
-        $this->left []= $left;
+        $this->left[] = $left;
     }
 
     /**
@@ -550,10 +553,11 @@ class Join
 
     public function equals($join)
     {
-        return $join !== null
-                && $join instanceof Join
-                && $this->joinType == $join->getJoinType()
-                && $this->getConditions() == $join->getConditions();
+        return null !== $join
+            && $join instanceof Join
+            && $this->joinType == $join->getJoinType()
+            && $this->getConditions() == $join->getConditions()
+        ;
     }
 
     /**

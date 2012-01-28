@@ -20,7 +20,6 @@ use Propel\Runtime\Connection\ConnectionInterface;
  */
 abstract class AbstractSchemaParser implements SchemaParserInterface
 {
-
     /**
      * The database connection.
      * @var        ConnectionInterface
@@ -162,7 +161,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
      */
     public function getBuildProperty($name)
     {
-        if ($this->generatorConfig !== null) {
+        if (null !== $this->generatorConfig) {
             return $this->generatorConfig->getBuildProperty($name);
         }
 
@@ -184,9 +183,10 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
      */
     protected function getMappedPropelType($nativeType)
     {
-        if ($this->nativeToPropelTypeMap === null) {
+        if (null === $this->nativeToPropelTypeMap) {
             $this->nativeToPropelTypeMap = $this->getTypeMapping();
         }
+
         if (isset($this->nativeToPropelTypeMap[$nativeType])) {
             return $this->nativeToPropelTypeMap[$nativeType];
         }
@@ -202,7 +202,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
      */
     protected function getMappedNativeType($propelType)
     {
-        if ($this->reverseTypeMap === null) {
+        if (null === $this->reverseTypeMap) {
             $this->reverseTypeMap = array_flip($this->getTypeMapping());
         }
 
@@ -225,15 +225,15 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
 
     public function setPlatform($platform)
     {
-      $this->platform = $platform;
+        $this->platform = $platform;
     }
 
     public function getPlatform()
     {
-      if (null === $this->platform) {
-        $this->platform = $this->getGeneratorConfig()->getConfiguredPlatform();
-      }
+        if (null === $this->platform) {
+            $this->platform = $this->getGeneratorConfig()->getConfiguredPlatform();
+        }
 
-      return $this->platform;
+        return $this->platform;
     }
 }

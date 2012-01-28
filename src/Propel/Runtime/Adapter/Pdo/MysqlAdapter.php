@@ -10,14 +10,13 @@
 
 namespace Propel\Runtime\Adapter\Pdo;
 
+use PDO;
+use PDOException;
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\StatementInterface;
 use Propel\Runtime\Map\ColumnMap;
 use Propel\Runtime\Exception\PropelException;
-
-use \PDO;
-use \PDOException;
 
 /**
  * This is used in order to connect to a MySQL database.
@@ -136,9 +135,9 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
      */
     public function applyLimit(&$sql, $offset, $limit)
     {
-        if ( $limit > 0 ) {
+        if ($limit > 0) {
             $sql .= ' LIMIT ' . ($offset > 0 ? $offset . ', ' : '') . $limit;
-        } elseif ( $offset > 0 ) {
+        } elseif ($offset > 0) {
             $sql .= ' LIMIT ' . $offset . ', 18446744073709551615';
         }
     }
@@ -170,7 +169,7 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
         $pdoType = $cMap->getPdoType();
         // FIXME - This is a temporary hack to get around apparent bugs w/ PDO+MYSQL
         // See http://pecl.php.net/bugs/bug.php?id=9919
-        if ($pdoType == PDO::PARAM_BOOL) {
+        if (PDO::PARAM_BOOL === $pdoType) {
             $value = (int) $value;
             $pdoType = PDO::PARAM_INT;
 
@@ -197,16 +196,16 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
      */
     protected function prepareParams($params)
     {
-        if(isset($params['settings']['charset']['value'])) {
-            if(version_compare(PHP_VERSION, '5.3.6', '<')) {
+        if (isset($params['settings']['charset']['value'])) {
+            if (version_compare(PHP_VERSION, '5.3.6', '<')) {
                 throw new PropelException(<<<EXCEPTION
 Connection option "charset" cannot be used for MySQL connections in PHP versions older than 5.3.6.
 Please refer to http://www.propelorm.org/ticket/1360 for instructions and details about the implications of
 using a SET NAMES statement in the "queries" setting.
 EXCEPTION
-            );
+                );
             } else {
-                if(strpos($params['dsn'], ';charset=') === false) {
+                if (false === strpos($params['dsn'], ';charset=')) {
                     $params['dsn'] .= ';charset=' . $params['settings']['charset']['value'];
                     unset($params['settings']['charset']);
                 }

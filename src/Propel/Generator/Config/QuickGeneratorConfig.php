@@ -10,12 +10,11 @@
 
 namespace Propel\Generator\Config;
 
+use PDO;
+use Exception;
 use Propel\Common\Pluralizer\StandardEnglishPluralizer;
 use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Model\Table;
-
-use \PDO;
-use \Exception;
 
 /**
  *
@@ -50,23 +49,27 @@ class QuickGeneratorConfig implements GeneratorConfigInterface
     protected function parsePseudoIniFile($filepath)
     {
         $properties = array();
-        if (($lines = @file($filepath)) === false) {
+        if (false === ($lines = @file($filepath))) {
             throw new Exception(sprintf('Unable to parse contents of %s.', $filepath));
         }
+
         foreach ($lines as $line) {
-                $line = trim($line);
-                if (empty($line) || '#' ===  $line{0} || ';' === $line{0}) {
-                    continue;
-                }
-                $pos = strpos($line, '=');
-                $property = trim(substr($line, 0, $pos));
-                $value = trim(substr($line, $pos + 1));
-                if ('true' === $value) {
-                    $value = true;
-                } elseif ('false' === $value) {
-                    $value = false;
-                }
-                $properties[$property] = $value;
+            $line = trim($line);
+            if (empty($line) || '#' ===  $line{0} || ';' === $line{0}) {
+                continue;
+            }
+
+            $pos = strpos($line, '=');
+            $property = trim(substr($line, 0, $pos));
+            $value = trim(substr($line, $pos + 1));
+
+            if ('true' === $value) {
+                $value = true;
+            } elseif ('false' === $value) {
+                $value = false;
+            }
+
+            $properties[$property] = $value;
         }
 
         return $properties;
@@ -114,8 +117,8 @@ class QuickGeneratorConfig implements GeneratorConfigInterface
             if (strpos($key, "propel.") === 0) {
                 $newKey = substr($key, strlen("propel."));
                 $j = strpos($newKey, '.');
-                while ($j !== false) {
-                    $newKey =     substr($newKey, 0, $j) . ucfirst(substr($newKey, $j + 1));
+                while (false !== $j) {
+                    $newKey = substr($newKey, 0, $j) . ucfirst(substr($newKey, $j + 1));
                     $j = strpos($newKey, '.');
                 }
                 $this->setBuildProperty($newKey, $propValue);

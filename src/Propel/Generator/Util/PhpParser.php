@@ -32,7 +32,8 @@ if (!defined('T_ML_COMMENT')) {
 class PhpParser
 {
     protected $code;
-    protected $isAddPhp = false;
+
+    protected $isAddPhp;
 
     /**
      * Parser constructor
@@ -59,12 +60,12 @@ class PhpParser
 
     protected function addPhp($code)
     {
-      return '<?php '. $code;
+        return '<?php '. $code;
     }
 
     protected function removePhp($code)
     {
-      return substr($code, 6);
+        return substr($code, 6);
     }
 
     /**

@@ -273,13 +273,13 @@ abstract class DataModelBuilder
         return $this->dataSqlBuilder;
     }
 
- /**
-    * Gets a new data model builder class for specified table and classname.
-    *
-    * @param      Table $table
-    * @param      string $classname The class of builder
-    * @return     DataModelBuilder
-    */
+    /**
+     * Gets a new data model builder class for specified table and classname.
+     *
+     * @param      Table $table
+     * @param      string $classname The class of builder
+     * @return     DataModelBuilder
+     */
     public function getNewBuilder(Table $table, $classname)
     {
         $builder = new $classname($table);
@@ -289,8 +289,8 @@ abstract class DataModelBuilder
     }
 
     /**
-     * Convenience method to return a NEW Peer class builder instance.
-   *
+     * Returns a new Peer class builder instance.
+     *
      * This is used very frequently from the peer and object builders to get
      * a peer builder for a RELATED table.
      *

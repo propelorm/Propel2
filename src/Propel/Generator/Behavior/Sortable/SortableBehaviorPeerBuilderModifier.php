@@ -19,9 +19,13 @@ namespace Propel\Generator\Behavior\Sortable;
 class SortableBehaviorPeerBuilderModifier
 {
     protected $behavior;
+
     protected $table;
+
     protected $builder;
+
     protected $objectClassname;
+
     protected $peerClassname;
 
     public function __construct($behavior)
@@ -40,7 +44,7 @@ class SortableBehaviorPeerBuilderModifier
         return strtolower($this->behavior->getColumnForParameter($name)->getName());
     }
 
-        protected function getColumnConstant($name)
+    protected function getColumnConstant($name)
     {
         return strtoupper($this->behavior->getColumnForParameter($name)->getName());
     }
@@ -110,7 +114,7 @@ const SCOPE_COL = '" . $tableName . '.' . $this->getColumnConstant('scope_column
 /**
  * Get the highest rank
  * ";
-        if($useScope) {
+        if ($useScope) {
             $script .= "
  * @param      int \$scope        Scope to determine which suite to consider";
         }
@@ -121,14 +125,14 @@ const SCOPE_COL = '" . $tableName . '.' . $this->getColumnConstant('scope_column
  */
 static public function getMaxRank(" . ($useScope ? "\$scope = null, " : "") . "ConnectionInterface \$con = null)
 {
-    if (\$con === null) {
+    if (null === \$con) {
         \$con = Propel::getServiceContainer()->getReadConnection({$this->peerClassname}::DATABASE_NAME);
     }
     // shift the objects with a position lower than the one of object
     \$c = new Criteria();
     \$c->addSelectColumn('MAX(' . {$this->peerClassname}::RANK_COL . ')');";
         if ($useScope) {
-        $script .= "
+            $script .= "
     \$c->add({$this->peerClassname}::SCOPE_COL, \$scope, Criteria::EQUAL);";
         }
         $script .= "
@@ -148,7 +152,7 @@ static public function getMaxRank(" . ($useScope ? "\$scope = null, " : "") . "C
  * Get an item from the list based on its rank
  *
  * @param     integer   \$rank rank";
-        if($useScope) {
+        if ($useScope) {
             $script .= "
  * @param      int \$scope        Scope to determine which suite to consider";
         }
@@ -159,13 +163,13 @@ static public function getMaxRank(" . ($useScope ? "\$scope = null, " : "") . "C
  */
 static public function retrieveByRank(\$rank, " . ($useScope ? "\$scope = null, " : "") . "ConnectionInterface \$con = null)
 {
-    if (\$con === null) {
+    if (null === \$con) {
         \$con = Propel::getServiceContainer()->getReadConnection($peerClassname::DATABASE_NAME);
     }
 
     \$c = new Criteria;
     \$c->add($peerClassname::RANK_COL, \$rank);";
-        if($useScope) {
+        if ($useScope) {
             $script .= "
     \$c->add($peerClassname::SCOPE_COL, \$scope, Criteria::EQUAL);";
         }
@@ -194,7 +198,7 @@ static public function retrieveByRank(\$rank, " . ($useScope ? "\$scope = null, 
  */
 static public function reorder(array \$order, ConnectionInterface \$con = null)
 {
-    if (\$con === null) {
+    if (null === \$con) {
         \$con = Propel::getServiceContainer()->getWriteConnection($peerClassname::DATABASE_NAME);
     }
 
@@ -235,11 +239,11 @@ static public function reorder(array \$order, ConnectionInterface \$con = null)
  */
 static public function doSelectOrderByRank(Criteria \$criteria = null, \$order = Criteria::ASC, ConnectionInterface \$con = null)
 {
-    if (\$con === null) {
+    if (null === \$con) {
         \$con = Propel::getServiceContainer()->getReadConnection($peerClassname::DATABASE_NAME);
     }
 
-    if (\$criteria === null) {
+    if (null === \$criteria) {
         \$criteria = new Criteria();
     } elseif (\$criteria instanceof Criteria) {
         \$criteria = clone \$criteria;
@@ -247,7 +251,7 @@ static public function doSelectOrderByRank(Criteria \$criteria = null, \$order =
 
     \$criteria->clearOrderByColumns();
 
-    if (\$order == Criteria::ASC) {
+    if (Criteria::ASC == \$order) {
         \$criteria->addAscendingOrderByColumn($peerClassname::RANK_COL);
     } else {
         \$criteria->addDescendingOrderByColumn($peerClassname::RANK_COL);
@@ -336,7 +340,7 @@ static public function deleteList(\$scope, ConnectionInterface \$con = null)
  * @param      int \$delta Value to be shifted by, can be negative
  * @param      int \$first First node to be shifted
  * @param      int \$last  Last node to be shifted";
-        if($useScope) {
+        if ($useScope) {
             $script .= "
  * @param      int \$scope Scope to use for the shift";
         }
@@ -345,7 +349,7 @@ static public function deleteList(\$scope, ConnectionInterface \$con = null)
  */
 static public function shiftRank(\$delta, \$first, \$last = null, " . ($useScope ? "\$scope = null, " : "") . "ConnectionInterface \$con = null)
 {
-    if (\$con === null) {
+    if (null === \$con) {
         \$con = Propel::getServiceContainer()->getWriteConnection($peerClassname::DATABASE_NAME);
     }
 

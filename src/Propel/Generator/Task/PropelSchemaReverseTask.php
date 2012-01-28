@@ -10,11 +10,11 @@
 
 namespace Propel\Generator\Task;
 
+require_once 'phing/tasks/ext/pdo/PDOTask.php';
+
+use PDOTask;
 use Propel\Generator\Config\GeneratorConfig;
 use Propel\Generator\Model\PropelTypes;
-
-require_once 'phing/tasks/ext/pdo/PDOTask.php';
-use \PDOTask;
 
 /**
  * This class generates an XML schema of an existing database from
@@ -170,23 +170,23 @@ class PropelSchemaReverseTask extends PDOTask
         'maxlength' => array (
             'msg' => 'The field %s must be not longer than %s characters.',
             'var' => array('colName', 'value')
-    ),
+        ),
         'maxvalue' => array (
             'msg' => 'The field %s must be not greater than %s.',
             'var' => array('colName', 'value')
-    ),
+        ),
         'type' => array (
             'msg' => 'The column %s must be an %s value.',
             'var' => array('colName', 'value')
-    ),
+        ),
         'required' => array (
             'msg' => 'The field %s is required.',
             'var' => array('colName')
-    ),
+        ),
         'unique' => array (
             'msg' => 'This %s already exists in table %s.',
             'var' => array('colName', 'tableName')
-    ),
+        ),
     );
 
     /**
@@ -297,10 +297,10 @@ class PropelSchemaReverseTask extends PDOTask
         foreach ($exprs as $expr) {
             $expr = trim($expr);
             if (!empty($expr)) {
-              if (!isset(self::$validatorBitMap[$expr])) {
-                  throw new BuildException("Unable to interpret validator in expression ('$v'): " . $expr);
-              }
-              $bits |= self::$validatorBitMap[$expr];
+                if (!isset(self::$validatorBitMap[$expr])) {
+                    throw new BuildException(sprintf("Unable to interpret validator in expression ('%s'): %s.", $v, $expr));
+                }
+                $bits |= self::$validatorBitMap[$expr];
             }
         }
 
@@ -334,12 +334,12 @@ class PropelSchemaReverseTask extends PDOTask
     public function main()
     {
         if (!$this->getDatabaseName()) {
-            throw new BuildException("The databaseName attribute (defined in propel.project property) is required for schema reverse engineering", $this->getLocation());
+            throw new BuildException('The databaseName attribute (defined in propel.project property) is required for schema reverse engineering', $this->getLocation());
         }
 
-        //(not yet supported) $this->log("schema : " . $this->dbSchema);
-        //DocumentTypeImpl docType = new DocumentTypeImpl(null, "database", null,
-        //       "http://jakarta.apache.org/turbine/dtd/database.dtd");
+        // (not yet supported) $this->log("schema : " . $this->dbSchema);
+        // DocumentTypeImpl docType = new DocumentTypeImpl(null, "database", null,
+        // "http://jakarta.apache.org/turbine/dtd/database.dtd");
 
         $this->doc = new DOMDocument('1.0', 'utf-8');
         $this->doc->formatOutput = true; // pretty printing
@@ -377,7 +377,7 @@ class PropelSchemaReverseTask extends PDOTask
      */
     protected function getGeneratorConfig()
     {
-        if ($this->generatorConfig === null) {
+        if (null === $this->generatorConfig) {
             $this->generatorConfig = new GeneratorConfig();
             $this->generatorConfig->setBuildProperties($this->getProject()->getProperties());
         }
@@ -469,9 +469,7 @@ class PropelSchemaReverseTask extends PDOTask
             foreach ($set->getValidators() as $validator) {
                 $table->addValidator($validator);
             }
-
-        } // foreach table
-
+        }
     }
 
     /**

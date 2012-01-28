@@ -26,18 +26,23 @@ use Propel\Generator\Model\Table;
  */
 abstract class AbstractPeerBuilder extends AbstractOMBuilder
 {
-
     protected $basePeerClass;
+
     protected $basePeerClassname;
 
     /**
      * Constructs a new PeerBuilder subclass.
+     *
+     * @param Table $table A Table instance
      */
-    public function __construct(Table $table) {
+    public function __construct(Table $table)
+    {
         parent::__construct($table);
+
         $this->basePeerClassname = $this->basePeerClass = $this->getBasePeer($table);
-        $pos = strrpos($this->basePeerClassname, '.');
-        if ($pos !== false) {
+        ;
+
+        if (false !== $pos = strrpos($this->basePeerClassname, '.')) {
             $this->basePeerClassname = substr($this->basePeerClassname, $pos + 1);
         }
     }
@@ -68,7 +73,6 @@ abstract class AbstractPeerBuilder extends AbstractOMBuilder
         $this->addGetPrimaryKeyFromRow($script);
         $this->addPopulateObjects($script); // <-- there's PDO code in here
         $this->addPopulateObject($script);
-
     }
 
     /**
@@ -99,12 +103,15 @@ abstract class AbstractPeerBuilder extends AbstractOMBuilder
         $this->addDoUpdate($script);
         $this->addDoDeleteAll($script);
         $this->addDoDelete($script);
+
         if ($this->isDeleteCascadeEmulationNeeded()) {
             $this->addDoOnDeleteCascade($script);
         }
+
         if ($this->isDeleteSetNullEmulationNeeded()) {
             $this->addDoOnDeleteSetNull($script);
         }
+
         $this->addDoValidate($script);
     }
 
@@ -114,7 +121,7 @@ abstract class AbstractPeerBuilder extends AbstractOMBuilder
      */
     protected function addRetrieveByPKMethods(&$script)
     {
-        if (count($this->getTable()->getPrimaryKey()) === 1) {
+        if (1 === count($this->getTable()->getPrimaryKey())) {
             $this->addRetrieveByPK_SinglePK($script);
             $this->addRetrieveByPKs_SinglePK($script);
         } else {
@@ -135,7 +142,6 @@ abstract class AbstractPeerBuilder extends AbstractOMBuilder
      */
     protected function addClassBody(&$script)
     {
-
         $table = $this->getTable();
 
         if (!$table->isAlias()) {
@@ -179,7 +185,7 @@ abstract class AbstractPeerBuilder extends AbstractOMBuilder
         $table = $this->getTable();
         if ((!$this->getPlatform()->supportsNativeDeleteTrigger() || $this->getBuildProperty('emulateForeignKeyConstraints')) && count($table->getReferrers()) > 0) {
             foreach ($table->getReferrers() as $fk) {
-                if ($fk->getOnDelete() == ForeignKey::CASCADE) {
+                if (ForeignKey::CASCADE === $fk->getOnDelete()) {
                     return true;
                 }
             }
@@ -197,7 +203,7 @@ abstract class AbstractPeerBuilder extends AbstractOMBuilder
         $table = $this->getTable();
         if ((!$this->getPlatform()->supportsNativeDeleteTrigger() || $this->getBuildProperty('emulateForeignKeyConstraints')) && count($table->getReferrers()) > 0) {
             foreach ($table->getReferrers() as $fk) {
-                if ($fk->getOnDelete() == ForeignKey::SETNULL) {
+                if (ForeignKey::SETNULL === $fk->getOnDelete()) {
                     return true;
                 }
             }
@@ -241,9 +247,9 @@ abstract class AbstractPeerBuilder extends AbstractOMBuilder
     public function getRetrieveMethodName()
     {
         if ($this->getTable()->isAlias()) {
-            $retrieveMethod = "retrieve" . $this->getTable()->getPhpName() . "ByPK";
+            $retrieveMethod = sprint('retrieve%sByPK', $this->getTable()->getPhpName());
         } else {
-            $retrieveMethod = "retrieveByPK";
+            $retrieveMethod = 'retrieveByPK';
         }
 
         return $retrieveMethod;
@@ -263,39 +269,41 @@ abstract class AbstractPeerBuilder extends AbstractOMBuilder
      * @return     string If $phpName is provided, then will return {$phpName}Peer::COLUMN_NAME; if not, just COLUMN_NAME.
      * @deprecated
      */
-    public static function getColumnName(Column $col, $phpName = null) {
+    public static function getColumnName(Column $col, $phpName = null)
+    {
         // was it overridden in schema.xml ?
         if ($col->getPeerName()) {
             $const = strtoupper($col->getPeerName());
         } else {
             $const = strtoupper($col->getName());
         }
-        if ($phpName !== null) {
-            return $phpName . 'Peer::' . $const;
-        } else {
-            return $const;
+
+        if (null !== $phpName) {
+            return sprintf('%sPeer::$s', $phpName, $const);
         }
+
+        return $const;
     }
 
     /**
-   * Checks whether any registered behavior on that table has a modifier for a hook
-   * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
-   * @return boolean
-   */
-  public function hasBehaviorModifier($hookName, $modifier = null)
-  {
-    return parent::hasBehaviorModifier($hookName, 'PeerBuilderModifier');
-  }
+     * Checks whether any registered behavior on that table has a modifier for a hook
+     * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
+     * @return boolean
+     */
+    public function hasBehaviorModifier($hookName, $modifier = null)
+    {
+        return parent::hasBehaviorModifier($hookName, 'PeerBuilderModifier');
+    }
 
-  /**
-   * Checks whether any registered behavior on that table has a modifier for a hook
-   * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
+    /**
+     * Checks whether any registered behavior on that table has a modifier for a hook
+     * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
      * @param string &$script The script will be modified in this method.
-   */
-  public function applyBehaviorModifier($hookName, &$script, $tab = "        ")
-  {
-    return $this->applyBehaviorModifierBase($hookName, 'PeerBuilderModifier', $script, $tab);
-  }
+     */
+    public function applyBehaviorModifier($hookName, &$script, $tab = "        ")
+    {
+        return $this->applyBehaviorModifierBase($hookName, 'PeerBuilderModifier', $script, $tab);
+    }
 
     /**
      * Checks whether any registered behavior content creator on that table exists a contentName
@@ -306,13 +314,13 @@ abstract class AbstractPeerBuilder extends AbstractOMBuilder
         return $this->getBehaviorContentBase($contentName, 'PeerBuilderModifier');
     }
 
-  /**
-   * Get the BasePeer class name for the current table (e.g. 'BasePeer')
-   *
-   * @return string The Base Peer Class name
-   */
-  public function getBasePeerClassname()
-  {
-      return $this->basePeerClassname;
-  }
+    /**
+     * Get the BasePeer class name for the current table (e.g. 'BasePeer')
+     *
+     * @return string The Base Peer Class name
+     */
+    public function getBasePeerClassname()
+    {
+        return $this->basePeerClassname;
+    }
 }
