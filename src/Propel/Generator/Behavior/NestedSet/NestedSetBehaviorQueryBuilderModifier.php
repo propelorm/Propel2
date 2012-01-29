@@ -314,12 +314,12 @@ public function orderByLevel(\$reverse = false)
 /**
  * Returns " . ($useScope ? 'a' : 'the') ." root node for the tree
  *";
-         if ($useScope) {
-             $script .= "
+        if ($useScope) {
+            $script .= "
  * @param      int \$scope        Scope to determine which root node to return";
-         }
+        }
 
-         $script .= "
+        $script .= "
  * @param      ConnectionInterface \$con    Connection to use.
  *
  * @return     {$this->objectClassname} The tree root object
@@ -364,10 +364,10 @@ public function findRoots(\$con = null)
 /**
  * Returns " . ($useScope ? 'a' : 'the') ." tree of objects
  *";
-         if ($useScope) {
-             $script .= "
+        if ($useScope) {
+            $script .= "
  * @param      int \$scope        Scope to determine which tree node to return";
-         }
+        }
 
         $script .= "
  * @param      ConnectionInterface \$con    Connection to use.

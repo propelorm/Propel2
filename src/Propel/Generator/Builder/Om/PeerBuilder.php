@@ -2176,12 +2176,12 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         ".$joinedTablePeerBuilder->getPeerClassname()."::addSelectColumns(\$criteria);
 ";
 
-            $script .= $this->addCriteriaJoin($fk, $table, $joinTable, $joinedTablePeerBuilder);
+                        $script .= $this->addCriteriaJoin($fk, $table, $joinTable, $joinedTablePeerBuilder);
 
-            // apply behaviors
-            $this->applyBehaviorModifier('preSelect', $script);
+                        // apply behaviors
+                        $this->applyBehaviorModifier('preSelect', $script);
 
-            $script .= "
+                        $script .= "
         \$stmt = ".$this->basePeerClassname."::doSelect(\$criteria, \$con);
         \$results = array();
 
@@ -2404,7 +2404,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
             if ($fk->getForeignTableName() !== $table->getName()) {
                 $joinTable = $table->getDatabase()->getTable($fk->getForeignTableName());
                 $joinedTablePeerBuilder = $this->getNewPeerBuilder($joinTable);
-        $script .= $this->addCriteriaJoin($fk, $table, $joinTable, $joinedTablePeerBuilder);
+                $script .= $this->addCriteriaJoin($fk, $table, $joinTable, $joinedTablePeerBuilder);
             }
         }
 
@@ -2565,7 +2565,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
             if ($fk->getForeignTableName() != $table->getName()) {
                 $joinTable = $table->getDatabase()->getTable($fk->getForeignTableName());
                 $joinedTablePeerBuilder = $this->getNewPeerBuilder($joinTable);
-        $script .= $this->addCriteriaJoin($fk, $table, $joinTable, $joinedTablePeerBuilder);
+                $script .= $this->addCriteriaJoin($fk, $table, $joinTable, $joinedTablePeerBuilder);
             } // if fk->getForeignTableName != table->getName
         } // foreach [sub] foreign keys
 
@@ -2666,7 +2666,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
                     $joinClassName = $joinedTablePeerBuilder->getObjectClassname();
 
                     if ($joinClassName !== $excludedClassName) {
-            $script .= $this->addCriteriaJoin($subfk, $table, $joinTable, $joinedTablePeerBuilder);
+                        $script .= $this->addCriteriaJoin($subfk, $table, $joinTable, $joinedTablePeerBuilder);
                     }
                 }
             }
@@ -2740,23 +2740,23 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
                             $script .= "
                         \$cls = ".$joinedTablePeerBuilder->getPeerClassname()."::getOMClass(false);
 ";
-                  } /* $joinTable->getChildrenColumn() */
+                        } /* $joinTable->getChildrenColumn() */
 
-                  $script .= "
+                        $script .= "
                     " . $this->buildObjectInstanceCreationCode('$obj' . $index, '$cls') . "
                     \$obj".$index."->hydrate(\$row, \$startcol$index);
                     ".$joinedTablePeerBuilder->getPeerClassname()."::addInstanceToPool(\$obj$index, \$key$index);
                 } // if \$obj$index already loaded
 
                 // Add the \$obj1 (".$this->getObjectClassname().") to the collection in \$obj".$index." (".$joinedTablePeerBuilder->getObjectClassname().")";
-                if ($subfk->isLocalPrimaryKey()) {
-                    $script .= "
+                        if ($subfk->isLocalPrimaryKey()) {
+                            $script .= "
                 \$obj1->set".$joinedTablePeerBuilder->getObjectClassname()."(\$obj".$index.");";
-                } else {
-                    $script .= "
+                        } else {
+                            $script .= "
                 \$obj".$index."->add".$joinedTableObjectBuilder->getRefFKPhpNameAffix($subfk, false)."(\$obj1);";
-                }
-                $script .= "
+                        }
+                        $script .= "
 
             } // if joined row is not null
 ";
@@ -2839,7 +2839,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
                     $joinClassName = $joinedTablePeerBuilder->getObjectClassname();
 
                     if ($joinClassName !== $excludedClassName) {
-            $script .= $this->addCriteriaJoin($subfk, $table, $joinTable, $joinedTablePeerBuilder);
+                        $script .= $this->addCriteriaJoin($subfk, $table, $joinTable, $joinedTablePeerBuilder);
                     }
                 }
             }

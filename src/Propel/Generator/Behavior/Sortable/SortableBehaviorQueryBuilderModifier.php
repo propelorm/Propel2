@@ -187,12 +187,12 @@ public function findOneByRank(\$rank, " . ($useScope ? "\$scope = null, " : "") 
 /**
  * Returns " . ($useScope ? 'a' : 'the') ." list of objects
  *";
-         if ($useScope) {
-             $script .= "
+        if ($useScope) {
+            $script .= "
  * @param      int \$scope        Scope to determine which list to return";
-         }
+        }
 
-         $script .= "
+        $script .= "
  * @param      ConnectionInterface \$con    Connection to use.
  *
  * @return     mixed the list of results, formatted by the current formatter
@@ -200,6 +200,7 @@ public function findOneByRank(\$rank, " . ($useScope ? "\$scope = null, " : "") 
 public function findList(" . ($useScope ? "\$scope = null, " : "") . "\$con = null)
 {
     return \$this";
+
         if ($useScope) {
             $script .= "
         ->inList(\$scope)";

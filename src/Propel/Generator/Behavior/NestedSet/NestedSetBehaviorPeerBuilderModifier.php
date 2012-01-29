@@ -151,11 +151,11 @@ static public function retrieveRoots(Criteria \$criteria = null, ConnectionInter
 /**
  * Returns the root node for a given scope
  *";
-         if ($useScope) {
-             $script .= "
+        if ($useScope) {
+            $script .= "
  * @param      int \$scope        Scope to determine which root node to return";
-         }
-         $script .= "
+        }
+        $script .= "
  * @param      ConnectionInterface \$con    Connection to use.
  * @return     {$this->objectClassname}            Propel object for root node
  */
@@ -182,11 +182,11 @@ static public function retrieveRoot(" . ($useScope ? "\$scope = null, " : "") . 
 /**
  * Returns the whole tree node for a given scope
  *";
-         if ($useScope) {
-             $script .= "
+        if ($useScope) {
+            $script .= "
  * @param      int \$scope        Scope to determine which root node to return";
-         }
-         $script .= "
+        }
+        $script .= "
  * @param      Criteria \$criteria    Optional Criteria to filter the query
  * @param      ConnectionInterface \$con    Connection to use.
  * @return     {$this->objectClassname}            Propel object for root node
@@ -237,11 +237,11 @@ static public function isValid($objectClassname \$node = null)
 /**
  * Delete an entire tree
  * ";
-         if ($useScope) {
-             $script .= "
+        if ($useScope) {
+            $script .= "
  * @param      int \$scope        Scope to determine which tree to delete";
-         }
-         $script .= "
+        }
+        $script .= "
  * @param      ConnectionInterface \$con    Connection to use.
  *
  * @return     int  The number of deleted nodes
@@ -469,11 +469,11 @@ static public function updateLoadedNodes(\$prune = null, ConnectionInterface \$c
  * Update the tree to allow insertion of a leaf at the specified position
  *
  * @param      int \$left    left column value";
-         if ($useScope) {
-             $script .= "
+        if ($useScope) {
+            $script .= "
  * @param      integer \$scope    scope column value";
-         }
-         $script .= "
+        }
+        $script .= "
  * @param      mixed \$prune    Object to prune from the shift
  * @param      ConnectionInterface \$con    Connection to use.
  */
@@ -496,11 +496,11 @@ static public function makeRoomForLeaf(\$left" . ($useScope ? ", \$scope" : "").
 /**
  * Update the tree to allow insertion of a leaf at the specified position
  *";
-         if ($useScope) {
-             $script .= "
+        if ($useScope) {
+            $script .= "
  * @param      integer \$scope    scope column value";
-         }
-         $script .= "
+        }
+        $script .= "
  * @param      ConnectionInterface \$con    Connection to use.
  */
 static public function fixLevels(" . ($useScope ? "\$scope, " : ""). "ConnectionInterface \$con = null)

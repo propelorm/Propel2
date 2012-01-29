@@ -108,7 +108,7 @@ class MultiExtendObjectBuilder extends AbstractObjectBuilder
         if ($this->getChild()->getAncestor()) {
             $ancestorClassName = $this->getChild()->getAncestor();
             if ($this->getDatabase()->hasTableByPhpName($ancestorClassName)) {
-            $this->declareClassFromBuilder($this->getNewStubObjectBuilder($this->getDatabase()->getTableByPhpName($ancestorClassName)));
+                $this->declareClassFromBuilder($this->getNewStubObjectBuilder($this->getDatabase()->getTableByPhpName($ancestorClassName)));
             } else {
                 $this->declareClassNamespace($ancestorClassName, $this->getNamespace());
             }
