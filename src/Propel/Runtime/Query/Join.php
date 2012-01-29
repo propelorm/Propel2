@@ -31,8 +31,8 @@ use Propel\Runtime\Exception\LogicException;
  */
 class Join
 {
-  // default comparison type
-    const EQUAL = "=";
+    // default comparison type
+    const EQUAL = '=';
     const INNER_JOIN = 'INNER JOIN';
 
     // the left parts of the join condition
@@ -42,7 +42,7 @@ class Join
     protected $right = array();
 
     // the comparison operators for each pair of columns in the join condition
-    protected $operator = array();
+    protected $operators = array();
 
     // the type of the join (LEFT JOIN, ...)
     protected $joinType;
@@ -54,8 +54,11 @@ class Join
     protected $db;
 
     protected $leftTableName;
+
     protected $rightTableName;
+
     protected $leftTableAlias;
+
     protected $rightTableAlias;
 
     protected $joinCondition;
@@ -83,6 +86,7 @@ class Join
                 $this->addCondition($leftColumn, $rightColumn);
             }
         }
+
         if (null !== $joinType) {
             $this->setJoinType($joinType);
         }
@@ -105,12 +109,14 @@ class Join
         } else {
             $this->left[] = $left;
         }
+
         if ($pos = strrpos($right, '.')) {
             list($this->rightTableName, $this->right[]) = explode('.', $right);
         } else {
             $this->right[] = $right;
         }
-        $this->operator[] = $operator;
+
+        $this->operators[] = $operator;
         $this->count++;
     }
 
@@ -123,9 +129,10 @@ class Join
      */
     public function addConditions($lefts, $rights, $operators = array())
     {
-        if (count($lefts) != count($rights) ) {
+        if (count($lefts) != count($rights)) {
             throw new LogicException("Unable to create join because the left column count isn't equal to the right column count");
         }
+
         foreach ($lefts as $key => $left) {
             $this->addCondition($left, $rights[$key], isset($operators[$key]) ? $operators[$key] : self::EQUAL);
         }
@@ -150,15 +157,15 @@ class Join
      * @param string $rightTableAlias
      * @param string $operator The comparison operator of the join condition, default Join::EQUAL
      */
-    public function addExplicitCondition($leftTableName, $leftColumnName, $leftTableAlias = null, $rightTableName, $rightColumnName, $rightTableAlias = null, $operator = self::EQUAL)
+    public function addExplicitCondition($leftTableName, $leftColumnName, $leftTableAlias = null, $rightTableName = null, $rightColumnName = null, $rightTableAlias = null, $operator = self::EQUAL)
     {
         $this->leftTableName   = $leftTableName;
         $this->leftTableAlias  = $leftTableAlias;
         $this->rightTableName  = $rightTableName;
         $this->rightTableAlias = $rightTableAlias;
-        $this->left     []= $leftColumnName;
-        $this->right    []= $rightColumnName;
-        $this->operator []= $operator;
+        $this->left[] = $leftColumnName;
+        $this->right[] = $rightColumnName;
+        $this->operators[] = $operator;
         $this->count++;
     }
 
@@ -169,7 +176,7 @@ class Join
      */
     public function countConditions()
     {
-      return $this->count;
+        return $this->count;
     }
 
     /**
@@ -179,37 +186,37 @@ class Join
      */
     public function getConditions()
     {
-      $conditions = array();
-      for ($i=0; $i < $this->count; $i++) {
-        $conditions[] = array(
-          'left'     => $this->getLeftColumn($i),
-          'operator' => $this->getOperator($i),
-          'right'    => $this->getRightColumn($i)
-        );
-      }
+        $conditions = array();
+        for ($i=0; $i < $this->count; $i++) {
+            $conditions[] = array(
+                'left'     => $this->getLeftColumn($i),
+                'operator' => $this->getOperator($i),
+                'right'    => $this->getRightColumn($i)
+            );
+        }
 
-      return $conditions;
+        return $conditions;
     }
 
-  /**
-   * @param     string $operator the comparison operator for the join condition
-   */
-  public function addOperator($operator = null)
-  {
-    $this->operator []= $operator;
-  }
+    /**
+     * @param     string $operator the comparison operator for the join condition
+     */
+    public function addOperator($operator = null)
+    {
+        $this->operators[] = $operator;
+    }
 
-  /**
-   * @return     the comparison operator for the join condition
-   */
-  public function getOperator($index = 0)
-  {
-    return $this->operator[$index];
-  }
+    /**
+     * @return     the comparison operator for the join condition
+     */
+    public function getOperator($index = 0)
+    {
+        return $this->operators[$index];
+    }
 
     public function getOperators()
     {
-      return $this->operator;
+        return $this->operators;
     }
 
     /**
@@ -221,7 +228,7 @@ class Join
      */
     public function setJoinType($joinType = null)
     {
-      $this->joinType = $joinType;
+        $this->joinType = $joinType;
     }
 
     /**
@@ -247,7 +254,7 @@ class Join
      */
     public function addLeftColumnName($left)
     {
-        $this->left []= $left;
+        $this->left[] = $left;
     }
 
     /**
@@ -498,6 +505,7 @@ class Join
                 $joinCondition = $joinCondition->addAnd($criterion);
             }
         }
+
         $this->joinCondition = $joinCondition;
     }
 
@@ -545,16 +553,17 @@ class Join
 
     public function equals($join)
     {
-        return $join !== null
-                && $join instanceof Join
-                && $this->joinType == $join->getJoinType()
-                && $this->getConditions() == $join->getConditions();
+        return null !== $join
+            && $join instanceof Join
+            && $this->joinType == $join->getJoinType()
+            && $this->getConditions() == $join->getConditions()
+        ;
     }
 
     /**
-     * Returns a String representation of the class,
+     * Returns a string representation of the class,
      *
-     * @return string     A String representation of the class
+     * @return string     A string representation of the object
      */
     public function toString()
     {

@@ -19,19 +19,20 @@ namespace Propel\Generator\Model;
  */
 class IdMethodParameter extends XmlElement
 {
-
     private $name;
+
     private $value;
+
     private $parentTable;
 
-   /**
+    /**
      * Sets up the IdMethodParameter object based on the attributes that were passed to loadFromXML().
      * @see        parent::loadFromXML()
      */
     protected function setupObject()
     {
-        $this->name = $this->getAttribute("name");
-        $this->value = $this->getAttribute("value");
+        $this->name = $this->getAttribute('name');
+        $this->value = $this->getAttribute('value');
     }
 
     /**

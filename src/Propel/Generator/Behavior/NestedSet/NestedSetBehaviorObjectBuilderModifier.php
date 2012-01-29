@@ -19,9 +19,13 @@ namespace Propel\Generator\Behavior\NestedSet;
 class NestedSetBehaviorObjectBuilderModifier
 {
     protected $behavior;
+
     protected $table;
+
     protected $builder;
+
     protected $objectClassname;
+
     protected $peerClassname;
 
     public function __construct($behavior)
@@ -52,13 +56,6 @@ class NestedSetBehaviorObjectBuilderModifier
         $this->queryClassname = $builder->getStubQueryBuilder()->getClassname();
         $this->peerClassname = $builder->getStubPeerBuilder()->getClassname();
     }
-
-    /*
-    public function objectFilter(&$script, $builder)
-    {
-        $script = str_replace('implements Persistent', 'implements Persistent, NodeObject', $script);
-    }
-    */
 
     public function objectAttributes($builder)
     {
@@ -553,7 +550,7 @@ public function setParent(\$parent = null)
  */
 public function getParent(ConnectionInterface \$con = null)
 {
-    if (\$this->aNestedSetParent === null && \$this->hasParent()) {
+    if (null === \$this->aNestedSetParent && \$this->hasParent()) {
         \$this->aNestedSetParent = {$this->queryClassname}::create()
             ->ancestorsOf(\$this)
             ->orderByLevel(true)
@@ -721,7 +718,7 @@ public function initNestedSetChildren()
  */
 public function addNestedSetChild($objectName)
 {
-    if (\$this->collNestedSetChildren === null) {
+    if (null === \$this->collNestedSetChildren) {
         \$this->initNestedSetChildren();
     }
     if (!\$this->collNestedSetChildren->contains($objectName)) { // only add it if the **same** object is not already associated
@@ -761,7 +758,7 @@ public function hasChildren()
  */
 public function getChildren(\$criteria = null, ConnectionInterface \$con = null)
 {
-    if(null === \$this->collNestedSetChildren || null !== \$criteria) {
+    if (null === \$this->collNestedSetChildren || null !== \$criteria) {
         if (\$this->isLeaf() || (\$this->isNew() && null === \$this->collNestedSetChildren)) {
             // return empty collection
             \$this->initNestedSetChildren();
@@ -796,7 +793,7 @@ public function getChildren(\$criteria = null, ConnectionInterface \$con = null)
  */
 public function countChildren(\$criteria = null, ConnectionInterface \$con = null)
 {
-    if(null === \$this->collNestedSetChildren || null !== \$criteria) {
+    if (null === \$this->collNestedSetChildren || null !== \$criteria) {
         if (\$this->isLeaf() || (\$this->isNew() && null === \$this->collNestedSetChildren)) {
             return 0;
         } else {
@@ -825,7 +822,7 @@ public function countChildren(\$criteria = null, ConnectionInterface \$con = nul
  */
 public function getFirstChild(\$query = null, ConnectionInterface \$con = null)
 {
-    if(\$this->isLeaf()) {
+    if (\$this->isLeaf()) {
         return array();
     } else {
         return $queryClassname::create(null, \$query)
@@ -851,7 +848,7 @@ public function getFirstChild(\$query = null, ConnectionInterface \$con = null)
  */
 public function getLastChild(\$query = null, ConnectionInterface \$con = null)
 {
-    if(\$this->isLeaf()) {
+    if (\$this->isLeaf()) {
         return array();
     } else {
         return $queryClassname::create(null, \$query)
@@ -879,7 +876,7 @@ public function getLastChild(\$query = null, ConnectionInterface \$con = null)
  */
 public function getSiblings(\$includeNode = false, \$query = null, ConnectionInterface \$con = null)
 {
-    if(\$this->isRoot()) {
+    if (\$this->isRoot()) {
         return array();
     } else {
          \$query = $queryClassname::create(null, \$query)
@@ -909,7 +906,7 @@ public function getSiblings(\$includeNode = false, \$query = null, ConnectionInt
  */
 public function getDescendants(\$query = null, ConnectionInterface \$con = null)
 {
-    if(\$this->isLeaf()) {
+    if (\$this->isLeaf()) {
         return array();
     } else {
         return $queryClassname::create(null, \$query)
@@ -935,7 +932,7 @@ public function getDescendants(\$query = null, ConnectionInterface \$con = null)
  */
 public function countDescendants(\$query = null, ConnectionInterface \$con = null)
 {
-    if(\$this->isLeaf()) {
+    if (\$this->isLeaf()) {
         // save one query
         return 0;
     } else {
@@ -984,7 +981,7 @@ public function getBranch(\$query = null, ConnectionInterface \$con = null)
  */
 public function getAncestors(\$query = null, ConnectionInterface \$con = null)
 {
-    if(\$this->isRoot()) {
+    if (\$this->isRoot()) {
         // save one query
         return array();
     } else {
@@ -1229,13 +1226,15 @@ public function moveToFirstChildOf(\$parent, ConnectionInterface \$con = null)
     if (!\$this->isInTree()) {
         throw new PropelException('A $objectClassname object must be already in the tree to be moved. Use the insertAsFirstChildOf() instead.');
     }";
-    if ($this->behavior->useScope()) {
-        $script .= "
+
+        if ($this->behavior->useScope()) {
+            $script .= "
     if (\$parent->getScopeValue() != \$this->getScopeValue()) {
         throw new PropelException('Moving nodes across trees is not supported');
     }";
-    }
-    $script .= "
+        }
+
+        $script .= "
     if (\$parent->isDescendantOf(\$this)) {
         throw new PropelException('Cannot move a node as child of one of its subtree nodes.');
     }
@@ -1265,13 +1264,15 @@ public function moveToLastChildOf(\$parent, ConnectionInterface \$con = null)
     if (!\$this->isInTree()) {
         throw new PropelException('A $objectClassname object must be already in the tree to be moved. Use the insertAsLastChildOf() instead.');
     }";
-    if ($this->behavior->useScope()) {
-        $script .= "
+
+        if ($this->behavior->useScope()) {
+            $script .= "
     if (\$parent->getScopeValue() != \$this->getScopeValue()) {
         throw new PropelException('Moving nodes across trees is not supported');
     }";
-    }
-    $script .= "
+        }
+
+        $script .= "
     if (\$parent->isDescendantOf(\$this)) {
         throw new PropelException('Cannot move a node as child of one of its subtree nodes.');
     }
@@ -1304,13 +1305,15 @@ public function moveToPrevSiblingOf(\$sibling, ConnectionInterface \$con = null)
     if (\$sibling->isRoot()) {
         throw new PropelException('Cannot move to previous sibling of a root node.');
     }";
-    if ($this->behavior->useScope()) {
-        $script .= "
+
+        if ($this->behavior->useScope()) {
+            $script .= "
     if (\$sibling->getScopeValue() != \$this->getScopeValue()) {
         throw new PropelException('Moving nodes across trees is not supported');
     }";
-    }
-    $script .= "
+        }
+
+        $script .= "
     if (\$sibling->isDescendantOf(\$this)) {
         throw new PropelException('Cannot move a node as sibling of one of its subtree nodes.');
     }
@@ -1343,13 +1346,15 @@ public function moveToNextSiblingOf(\$sibling, ConnectionInterface \$con = null)
     if (\$sibling->isRoot()) {
         throw new PropelException('Cannot move to next sibling of a root node.');
     }";
-    if ($this->behavior->useScope()) {
-        $script .= "
+
+        if ($this->behavior->useScope()) {
+            $script .= "
     if (\$sibling->getScopeValue() != \$this->getScopeValue()) {
         throw new PropelException('Moving nodes across trees is not supported');
     }";
-    }
-    $script .= "
+        }
+
+        $script .= "
     if (\$sibling->isDescendantOf(\$this)) {
         throw new PropelException('Cannot move a node as sibling of one of its subtree nodes.');
     }
@@ -1386,7 +1391,7 @@ protected function moveSubtreeTo(\$destLeft, \$levelDelta, ConnectionInterface \
 
     \$treeSize = \$right - \$left +1;
 
-    if (\$con === null) {
+    if (null === \$con) {
         \$con = Propel::getServiceContainer()->getWriteConnection($peerClassname::DATABASE_NAME);
     }
 
@@ -1441,11 +1446,11 @@ protected function moveSubtreeTo(\$destLeft, \$levelDelta, ConnectionInterface \
  */
 public function deleteDescendants(ConnectionInterface \$con = null)
 {
-    if(\$this->isLeaf()) {
+    if (\$this->isLeaf()) {
         // save one query
         return;
     }
-    if (\$con === null) {
+    if (null === \$con) {
         \$con = Propel::getServiceContainer()->getReadConnection($peerClassname::DATABASE_NAME);
     }
     \$left = \$this->getLeftValue();

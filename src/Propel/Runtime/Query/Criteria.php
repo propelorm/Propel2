@@ -34,114 +34,115 @@ class Criteria implements IteratorAggregate
 {
 
     /** Comparison type. */
-    const EQUAL = "=";
+    const EQUAL = '=';
 
     /** Comparison type. */
-    const NOT_EQUAL = "<>";
+    const NOT_EQUAL = '<>';
 
     /** Comparison type. */
-    const ALT_NOT_EQUAL = "!=";
+    const ALT_NOT_EQUAL = '!=';
 
     /** Comparison type. */
-    const GREATER_THAN = ">";
+    const GREATER_THAN = '>';
 
     /** Comparison type. */
-    const LESS_THAN = "<";
+    const LESS_THAN = '<';
 
     /** Comparison type. */
-    const GREATER_EQUAL = ">=";
+    const GREATER_EQUAL = '>=';
 
     /** Comparison type. */
-    const LESS_EQUAL = "<=";
+    const LESS_EQUAL = '<=';
 
     /** Comparison type. */
-    const LIKE = " LIKE ";
+    const LIKE = ' LIKE ';
 
     /** Comparison type. */
-    const NOT_LIKE = " NOT LIKE ";
+    const NOT_LIKE = ' NOT LIKE ';
 
     /** Comparison for array column types */
-    const CONTAINS_ALL = "CONTAINS_ALL";
+    const CONTAINS_ALL = 'CONTAINS_ALL';
 
     /** Comparison for array column types */
-    const CONTAINS_SOME = "CONTAINS_SOME";
+    const CONTAINS_SOME = 'CONTAINS_SOME';
 
     /** Comparison for array column types */
-    const CONTAINS_NONE = "CONTAINS_NONE";
+    const CONTAINS_NONE = 'CONTAINS_NONE';
 
     /** PostgreSQL comparison type */
-    const ILIKE = " ILIKE ";
+    const ILIKE = ' ILIKE ';
 
     /** PostgreSQL comparison type */
-    const NOT_ILIKE = " NOT ILIKE ";
+    const NOT_ILIKE = ' NOT ILIKE ';
 
     /** Comparison type. */
-    const CUSTOM = "CUSTOM";
+    const CUSTOM = 'CUSTOM';
 
     /** Comparison type */
-    const RAW = "RAW";
+    const RAW = 'RAW';
 
     /** Comparison type for update */
-    const CUSTOM_EQUAL = "CUSTOM_EQUAL";
+    const CUSTOM_EQUAL = 'CUSTOM_EQUAL';
 
     /** Comparison type. */
-    const DISTINCT = "DISTINCT";
+    const DISTINCT = 'DISTINCT';
 
     /** Comparison type. */
-    const IN = " IN ";
+    const IN = ' IN ';
 
     /** Comparison type. */
-    const NOT_IN = " NOT IN ";
+    const NOT_IN = ' NOT IN ';
 
     /** Comparison type. */
-    const ALL = "ALL";
+    const ALL = 'ALL';
 
     /** Comparison type. */
-    const JOIN = "JOIN";
+    const JOIN = 'JOIN';
 
     /** Binary math operator: AND */
-    const BINARY_AND = "&";
+    const BINARY_AND = '&';
 
     /** Binary math operator: OR */
-    const BINARY_OR = "|";
+    const BINARY_OR = '|';
 
-    /** "Order by" qualifier - ascending */
-    const ASC = "ASC";
+    /** 'Order by' qualifier - ascending */
+    const ASC = 'ASC';
 
-    /** "Order by" qualifier - descending */
-    const DESC = "DESC";
+    /** 'Order by' qualifier - descending */
+    const DESC = 'DESC';
 
-    /** "IS NULL" null comparison */
-    const ISNULL = " IS NULL ";
+    /** 'IS NULL' null comparison */
+    const ISNULL = ' IS NULL ';
 
-    /** "IS NOT NULL" null comparison */
-    const ISNOTNULL = " IS NOT NULL ";
+    /** 'IS NOT NULL' null comparison */
+    const ISNOTNULL = ' IS NOT NULL ';
 
-    /** "CURRENT_DATE" ANSI SQL function */
-    const CURRENT_DATE = "CURRENT_DATE";
+    /** 'CURRENT_DATE' ANSI SQL function */
+    const CURRENT_DATE = 'CURRENT_DATE';
 
-    /** "CURRENT_TIME" ANSI SQL function */
-    const CURRENT_TIME = "CURRENT_TIME";
+    /** 'CURRENT_TIME' ANSI SQL function */
+    const CURRENT_TIME = 'CURRENT_TIME';
 
-    /** "CURRENT_TIMESTAMP" ANSI SQL function */
-    const CURRENT_TIMESTAMP = "CURRENT_TIMESTAMP";
+    /** 'CURRENT_TIMESTAMP' ANSI SQL function */
+    const CURRENT_TIMESTAMP = 'CURRENT_TIMESTAMP';
 
-    /** "LEFT JOIN" SQL statement */
-    const LEFT_JOIN = "LEFT JOIN";
+    /** 'LEFT JOIN' SQL statement */
+    const LEFT_JOIN = 'LEFT JOIN';
 
-    /** "RIGHT JOIN" SQL statement */
-    const RIGHT_JOIN = "RIGHT JOIN";
+    /** 'RIGHT JOIN' SQL statement */
+    const RIGHT_JOIN = 'RIGHT JOIN';
 
-    /** "INNER JOIN" SQL statement */
-    const INNER_JOIN = "INNER JOIN";
+    /** 'INNER JOIN' SQL statement */
+    const INNER_JOIN = 'INNER JOIN';
 
     /** logical OR operator */
-    const LOGICAL_OR = "OR";
+    const LOGICAL_OR = 'OR';
 
     /** logical AND operator */
-    const LOGICAL_AND = "AND";
+    const LOGICAL_AND = 'AND';
 
     protected $ignoreCase = false;
+
     protected $singleRecord = false;
 
     /**
@@ -191,6 +192,7 @@ class Criteria implements IteratorAggregate
      * @var        array
      */
     protected $joins = array();
+
     protected $selectQueries = array();
 
     /**
@@ -313,7 +315,7 @@ class Criteria implements IteratorAggregate
      *
      * <code>
      * Criteria myCrit = new Criteria();
-     * myCrit->addAsColumn("alias", "ALIAS(".MyPeer::ID.")");
+     * myCrit->addAsColumn('alias', 'ALIAS('.MyPeer::ID.')');
      * </code>
      *
      * @param      string $name Wanted Name of the column (alias).
@@ -419,9 +421,9 @@ class Criteria implements IteratorAggregate
     {
         if (isset($this->aliases[$tableAliasOrName])) {
             return array($this->aliases[$tableAliasOrName], $tableAliasOrName);
-        } else {
-            return array($tableAliasOrName, null);
         }
+
+        return array($tableAliasOrName, null);
     }
 
     /**
@@ -461,7 +463,7 @@ class Criteria implements IteratorAggregate
     {
         // must use array_key_exists() because the key could
         // exist but have a NULL value (that'd be valid).
-        return (array_key_exists($column, $this->map) && ($this->map[$column]->getValue() !== null) );
+        return (array_key_exists($column, $this->map) && (null !== $this->map[$column]->getValue()));
     }
 
     /**
@@ -486,7 +488,7 @@ class Criteria implements IteratorAggregate
      */
     public function setUseTransaction($v)
     {
-        $this->useTransaction = (boolean) $v;
+        $this->useTransaction = (Boolean) $v;
     }
 
     /**
@@ -521,7 +523,7 @@ class Criteria implements IteratorAggregate
      */
     public function getLastCriterion()
     {
-        if($cnt = count($this->map)) {
+        if ($cnt = count($this->map)) {
             $map = array_values($this->map);
 
             return $map[$cnt - 1];
@@ -591,7 +593,7 @@ class Criteria implements IteratorAggregate
      */
     public function getComparison($key)
     {
-        if ( isset ( $this->map[$key] ) ) {
+        if (isset($this->map[$key])) {
             return $this->map[$key]->getComparison();
         }
 
@@ -617,7 +619,7 @@ class Criteria implements IteratorAggregate
      */
     public function setDbName($dbName = null)
     {
-        $this->dbName = ($dbName === null ? Propel::getServiceContainer()->getDefaultDatasource() : $dbName);
+        $this->dbName = (null === $dbName ? Propel::getServiceContainer()->getDefaultDatasource() : $dbName);
     }
 
     /**
@@ -721,7 +723,7 @@ class Criteria implements IteratorAggregate
     public function putAll($t)
     {
         if (is_array($t)) {
-            foreach ($t as $key=>$value) {
+            foreach ($t as $key => $value) {
                 if ($value instanceof Criterion) {
                     $this->map[$key] = $value;
                 } else {
@@ -805,7 +807,7 @@ class Criteria implements IteratorAggregate
      */
     public function combine($criterions = array(), $operator = self::LOGICAL_AND, $name = null)
     {
-        $operatorMethod = (strtoupper($operator) == self::LOGICAL_AND) ? 'addAnd' : 'addOr';
+        $operatorMethod = (self::LOGICAL_AND === strtoupper($operator)) ? 'addAnd' : 'addOr';
         $namedCriterions = array();
         foreach ($criterions as $key) {
             if (array_key_exists($key, $this->namedCriterions)) {
@@ -819,7 +821,7 @@ class Criteria implements IteratorAggregate
         foreach ($namedCriterions as $criterion) {
             $firstCriterion->$operatorMethod($criterion);
         }
-        if ($name === null) {
+        if (null === $name) {
             $this->add($firstCriterion, null, null);
         } else {
             $this->addCond($name, $firstCriterion, null, null);
@@ -841,7 +843,7 @@ class Criteria implements IteratorAggregate
      * @param      mixed $joinType A String with the join operator
      *                             among Criteria::INNER_JOIN, Criteria::LEFT_JOIN,
      *                             and Criteria::RIGHT_JOIN
-   *
+     *
      * @return     Criteria A modified Criteria object.
      */
     public function addJoin($left, $right, $joinType = null)
@@ -850,7 +852,7 @@ class Criteria implements IteratorAggregate
             $conditions = array();
             foreach ($left as $key => $value) {
                 $condition = array($value, $right[$key]);
-                $conditions []= $condition;
+                $conditions[] = $condition;
             }
 
             return $this->addMultipleJoin($conditions, $joinType);
@@ -873,7 +875,8 @@ class Criteria implements IteratorAggregate
         $join->addExplicitCondition(
             $leftTableName, $leftColumnName, $leftTableAlias,
             $rightTableName, $rightColumnName, $rightTableAlias,
-            Join::EQUAL);
+            Join::EQUAL
+        );
 
         $join->setJoinType($joinType);
 
@@ -915,6 +918,7 @@ class Criteria implements IteratorAggregate
                 list($leftTableName, $leftTableAlias) = array(null, null);
                 $leftColumnName = $left;
             }
+
             if ($pos = strrpos($right, '.')) {
                 $rightTableAlias = substr($right, 0, $pos);
                 $rightColumnName = substr($right, $pos + 1);
@@ -923,18 +927,22 @@ class Criteria implements IteratorAggregate
                 list($rightTableName, $rightTableAlias) = array(null, null);
                 $rightColumnName = $right;
             }
+
             if (!$join->getRightTableName()) {
                 $join->setRightTableName($rightTableName);
             }
+
             if (!$join->getRightTableAlias()) {
                 $join->setRightTableAlias($rightTableAlias);
             }
+
             $conditionClause = $leftTableAlias ? $leftTableAlias . '.' : ($leftTableName ? $leftTableName . '.' : '');
             $conditionClause .= $leftColumnName;
             $conditionClause .= isset($condition[2]) ? $condition[2] : JOIN::EQUAL;
             $conditionClause .= $rightTableAlias ? $rightTableAlias . '.' : ($rightTableName ? $rightTableName . '.' : '');
             $conditionClause .= $rightColumnName;
             $criterion = $this->getNewCriterion($leftTableName.'.'.$leftColumnName, $conditionClause, Criteria::CUSTOM);
+
             if (null === $joinCondition) {
                 $joinCondition = $criterion;
             } else {
@@ -956,7 +964,7 @@ class Criteria implements IteratorAggregate
      */
     public function addJoinObject(Join $join)
     {
-      if (!in_array($join, $this->joins)) { // compare equality, NOT identity
+        if (!in_array($join, $this->joins)) { // compare equality, NOT identity
             $this->joins[] = $join;
         }
 
@@ -998,7 +1006,7 @@ class Criteria implements IteratorAggregate
      */
     public function hasSelectQueries()
     {
-        return (bool) $this->selectQueries;
+        return (Boolean) $this->selectQueries;
     }
 
     /**
@@ -1044,7 +1052,7 @@ class Criteria implements IteratorAggregate
     }
 
     /**
-     * Adds "ALL" modifier to the SQL statement.
+     * Adds 'ALL' modifier to the SQL statement.
      * @return     Criteria Modified Criteria object (for fluent API)
      */
     public function setAll()
@@ -1056,7 +1064,7 @@ class Criteria implements IteratorAggregate
     }
 
     /**
-     * Adds "DISTINCT" modifier to the SQL statement.
+     * Adds 'DISTINCT' modifier to the SQL statement.
      * @return     Criteria Modified Criteria object (for fluent API)
      */
     public function setDistinct()
@@ -1120,7 +1128,7 @@ class Criteria implements IteratorAggregate
      */
     public function setIgnoreCase($b)
     {
-        $this->ignoreCase = (boolean) $b;
+        $this->ignoreCase = (Boolean) $b;
 
         return $this;
     }
@@ -1149,7 +1157,7 @@ class Criteria implements IteratorAggregate
      */
     public function setSingleRecord($b)
     {
-        $this->singleRecord = (boolean) $b;
+        $this->singleRecord = (Boolean) $b;
 
         return $this;
     }
@@ -1395,10 +1403,10 @@ class Criteria implements IteratorAggregate
      */
     public function remove($key)
     {
-        if ( isset ( $this->map[$key] ) ) {
+        if (isset($this->map[$key])) {
             $removed = $this->map[$key];
-            unset ( $this->map[$key] );
-            if ( $removed instanceof Criterion ) {
+            unset($this->map[$key]);
+            if ($removed instanceof Criterion) {
                 return $removed->getValue();
             }
 
@@ -1414,22 +1422,21 @@ class Criteria implements IteratorAggregate
     public function toString()
     {
 
-        $sb = "Criteria:";
+        $sb = 'Criteria:';
         try {
 
             $params = array();
-            $sb .= "\nSQL (may not be complete): "
-              . BasePeer::createSelectSql($this, $params);
+            $sb .= "\nSQL (may not be complete): ".BasePeer::createSelectSql($this, $params);
 
             $sb .= "\nParams: ";
             $paramstr = array();
             foreach ($params as $param) {
                 $paramstr[] = $param['table'] . '.' . $param['column'] . ' => ' . var_export($param['value'], true);
             }
-            $sb .= implode(", ", $paramstr);
+            $sb .= implode(', ', $paramstr);
 
         } catch (Exception $exc) {
-            $sb .= "(Error: " . $exc->getMessage() . ")";
+            $sb .= '(Error: ' . $exc->getMessage() . ')';
         }
 
         return $sb;
@@ -1451,16 +1458,20 @@ class Criteria implements IteratorAggregate
      */
     public function equals($crit)
     {
-        if ($crit === null || !($crit instanceof Criteria)) {
+        if (null === $crit || !($crit instanceof Criteria)) {
             return false;
-        } elseif ($this === $crit) {
+        }
+
+        if ($this === $crit) {
             return true;
-        } elseif ($this->size() === $crit->size()) {
+        }
+
+        if ($this->size() === $crit->size()) {
 
             // Important: nested criterion objects are checked
 
             $criteria = $crit; // alias
-            if  ($this->offset          === $criteria->getOffset()
+            if  ($this->offset            === $criteria->getOffset()
                 && $this->limit           === $criteria->getLimit()
                 && $this->ignoreCase      === $criteria->isIgnoreCase()
                 && $this->singleRecord    === $criteria->isSingleRecord()
@@ -1484,10 +1495,12 @@ class Criteria implements IteratorAggregate
                         return false;
                     }
                 }
+ 
                 $joins = $criteria->getJoins();
                 if (count($joins) != count($this->joins)) {
                     return false;
                 }
+ 
                 foreach ($joins as $key => $join) {
                     if (!$join->equals($this->joins[$key])) {
                         return false;
@@ -1519,13 +1532,13 @@ class Criteria implements IteratorAggregate
     {
         // merge limit
         $limit = $criteria->getLimit();
-        if($limit != 0 && $this->getLimit() == 0) {
+        if ($limit !== 0 && 0 === $this->getLimit()) {
             $this->limit = $limit;
         }
 
         // merge offset
         $offset = $criteria->getOffset();
-        if($offset != 0 && $this->getOffset() == 0) {
+        if ($offset != 0 && 0 === $this->getOffset()) {
             $this->offset = $offset;
         }
 
@@ -1644,7 +1657,7 @@ class Criteria implements IteratorAggregate
         } elseif (is_int($comparison)) {
             // $comparison is a PDO::PARAM_* constant value
             // something like $c->add('foo like ?', '%bar%', PDO::PARAM_STR);
-            return new Criterion($this, $p1, $value, Criteria::RAW, $comparison);;
+            return new Criterion($this, $p1, $value, Criteria::RAW, $comparison);
         } else {
             // $comparison is one of Criteria's constants
             // something like $c->add(BookPeer::TITLE, 'War%', Criteria::LIKE);
@@ -1711,7 +1724,7 @@ class Criteria implements IteratorAggregate
             $leftCriterion = $this->getLastCriterion();
         }
 
-        if ($leftCriterion !== null) {
+        if (null !== $leftCriterion) {
             // combine the given criterion with the existing one with an 'OR'
             $leftCriterion->addOr($rightCriterion);
         } else {
@@ -1741,9 +1754,9 @@ class Criteria implements IteratorAggregate
             $this->defaultCombineOperator = Criteria::LOGICAL_AND;
 
             return $this->addOr($p1, $value, $operator, $preferColumnCondition);
-        } else {
-            return $this->addAnd($p1, $value, $operator, $preferColumnCondition);
         }
+
+        return $this->addAnd($p1, $value, $operator, $preferColumnCondition);
     }
 
     // Fluid operators
@@ -1777,7 +1790,7 @@ class Criteria implements IteratorAggregate
     {
         $this->conditionalProxy = new PropelConditionalProxy($this, $cond, $this->conditionalProxy);
 
-    return $this->conditionalProxy->getCriteriaOrProxy();
+        return $this->conditionalProxy->getCriteriaOrProxy();
     }
 
     /**
@@ -1790,11 +1803,11 @@ class Criteria implements IteratorAggregate
      */
     public function _elseif($cond)
     {
-    if (!$this->conditionalProxy) {
-      throw new LogicException('_elseif() must be called after _if()');
-    }
+        if (!$this->conditionalProxy) {
+            throw new LogicException('_elseif() must be called after _if()');
+        }
 
-    return $this->conditionalProxy->_elseif($cond);
+        return $this->conditionalProxy->_elseif($cond);
     }
 
     /**
@@ -1805,11 +1818,11 @@ class Criteria implements IteratorAggregate
      */
     public function _else()
     {
-    if (!$this->conditionalProxy) {
-      throw new LogicException('_else() must be called after _if()');
-    }
+        if (!$this->conditionalProxy) {
+            throw new LogicException('_else() must be called after _if()');
+        }
 
-    return $this->conditionalProxy->_else();
+        return $this->conditionalProxy->_else();
     }
 
     /**
@@ -1820,18 +1833,18 @@ class Criteria implements IteratorAggregate
      */
     public function _endif()
     {
-    if (!$this->conditionalProxy) {
-      throw new LogicException('_endif() must be called after _if()');
-    }
+        if (!$this->conditionalProxy) {
+            throw new LogicException('_endif() must be called after _if()');
+        }
 
-    $this->conditionalProxy = $this->conditionalProxy->getParentProxy();
+        $this->conditionalProxy = $this->conditionalProxy->getParentProxy();
 
-    if ($this->conditionalProxy) {
-      return $this->conditionalProxy->getCriteriaOrProxy();
-    }
+        if ($this->conditionalProxy) {
+            return $this->conditionalProxy->getCriteriaOrProxy();
+        }
 
-    // reached last level
-    return $this;
+        // reached last level
+        return $this;
     }
 
     /**
@@ -1842,12 +1855,13 @@ class Criteria implements IteratorAggregate
         foreach ($this->map as $key => $criterion) {
             $this->map[$key] = clone $criterion;
         }
+
         foreach ($this->joins as $key => $join) {
             $this->joins[$key] = clone $join;
         }
+
         if (null !== $this->having) {
             $this->having = clone $this->having;
         }
     }
-
 }

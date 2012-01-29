@@ -119,9 +119,8 @@ class SqlManager extends AbstractManager
             $ddl = $platform->getAddTablesDDL($database);
 
             $file = $this->getWorkingDirectory() . DIRECTORY_SEPARATOR . $filename;
-            if (file_exists($file) && $ddl == file_get_contents($file)) {
-                // Unchanged
-            } else {
+            // Check if the file changed
+            if (!file_exists($file) || $ddl !== file_get_contents($file)) {
                 file_put_contents($file, $ddl);
             }
 

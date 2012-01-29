@@ -64,7 +64,7 @@ abstract class AbstractParser
         }
 
         ob_start();
-        include($path);
+        include $path;
         $contents = ob_get_clean();
 
         return $contents;

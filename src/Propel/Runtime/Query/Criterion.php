@@ -23,7 +23,6 @@ use Propel\Runtime\Adapter\Pdo\PgsqlAdapter;
  */
 class Criterion
 {
-
     const UND = " AND ";
     const ODER = " OR ";
 
@@ -63,6 +62,7 @@ class Criterion
      * other connected criteria and their conjunctions.
      */
     protected $clauses = array();
+
     protected $conjunctions = array();
 
     /** "Parent" Criteria class */
@@ -80,7 +80,7 @@ class Criterion
     {
         $this->value = $value;
         $dotPos = strrpos($column, '.');
-        if ($dotPos === false || $comparison == Criteria::RAW) {
+        if (false === $dotPos || Criteria::RAW === $comparison) {
             // no dot => aliased column
             $this->table = null;
             $this->column = $column;
@@ -88,7 +88,7 @@ class Criterion
             $this->table = substr($column, 0, $dotPos);
             $this->column = substr($column, $dotPos + 1);
         }
-        $this->comparison = ($comparison === null) ? Criteria::EQUAL : $comparison;
+        $this->comparison = (null === $comparison) ? Criteria::EQUAL : $comparison;
         $this->type = $type;
         $this->init($outer);
     }
@@ -211,10 +211,10 @@ class Criterion
      *
      * @return     boolean True if case is ignored.
      */
-     public function isIgnoreCase()
-     {
-         return $this->ignoreStringCase;
-     }
+    public function isIgnoreCase()
+    {
+        return $this->ignoreStringCase;
+    }
 
     /**
      * Get the list of clauses in this Criterion.
@@ -357,7 +357,7 @@ class Criterion
      */
     protected function appendInToPs(&$sb, array &$params)
     {
-        if ($this->value !== "") {
+        if ($this->value !== '') {
             $bindParams = array();
             $index = count($params); // to avoid counting the number of parameters for each element in the array
             foreach ((array) $this->value as $value) {
@@ -369,7 +369,7 @@ class Criterion
                 $field = ($this->table === null) ? $this->column : $this->table . '.' . $this->column;
                 $sb .= $field . $this->comparison . '(' . implode(',', $bindParams) . ')';
             } else {
-                $sb .= ($this->comparison === Criteria::IN) ? "1<>1" : "1=1";
+                $sb .= ($this->comparison === Criteria::IN) ? '1<>1' : '1=1';
             }
         }
     }
@@ -389,9 +389,9 @@ class Criterion
         // UPPER() function on column name for other databases.
         if ($this->ignoreStringCase) {
             if ($db instanceof PgsqlAdapter) {
-                if ($this->comparison === Criteria::LIKE) {
+                if (Criteria::LIKE === $this->comparison) {
                     $this->comparison = Criteria::ILIKE;
-                } elseif ($this->comparison === Criteria::NOT_LIKE) {
+                } elseif (Criteria::NOT_LIKE === $this->comparison) {
                     $this->comparison = Criteria::NOT_ILIKE;
                 }
             } else {
@@ -421,13 +421,13 @@ class Criterion
      */
     protected function appendBasicToPs(&$sb, array &$params)
     {
-        $field = ($this->table === null) ? $this->column : $this->table . '.' . $this->column;
+        $field = (null === $this->table) ? $this->column : $this->table . '.' . $this->column;
         // NULL VALUES need special treatment because the SQL syntax is different
         // i.e. table.column IS NULL rather than table.column = null
         if ($this->value !== null) {
 
             // ANSI SQL functions get inserted right into SQL (not escaped, etc.)
-            if ($this->value === Criteria::CURRENT_DATE || $this->value === Criteria::CURRENT_TIME || $this->value === Criteria::CURRENT_TIMESTAMP) {
+            if (Criteria::CURRENT_DATE === $this->value || Criteria::CURRENT_TIME === $this->value || Criteria::CURRENT_TIMESTAMP === $this->value) {
                 $sb .= $field . $this->comparison . $this->value;
             } else {
 
@@ -446,15 +446,14 @@ class Criterion
 
             // value is null, which means it was either not specified or specifically
             // set to null.
-            if ($this->comparison === Criteria::EQUAL || $this->comparison === Criteria::ISNULL) {
+            if (Criteria::EQUAL === $this->comparison || Criteria::ISNULL === $this->comparison) {
                 $sb .= $field . Criteria::ISNULL;
-            } elseif ($this->comparison === Criteria::NOT_EQUAL || $this->comparison === Criteria::ISNOTNULL) {
+            } elseif (Criteria::NOT_EQUAL === $this->comparison || Criteria::ISNOTNULL === $this->comparison) {
                 $sb .= $field . Criteria::ISNOTNULL;
             } else {
                 // for now throw an exception, because not sure how to interpret this
-                throw new PropelException("Could not build SQL for expression: $field " . $this->comparison . " NULL");
+                throw new PropelException(sprintf('Could not build SQL for expression: %s %s NULL', $field, $this->comparison));
             }
-
         }
     }
 
@@ -470,17 +469,17 @@ class Criterion
             return true;
         }
 
-        if (($obj === null) || !($obj instanceof Criterion)) {
+        if ((null === $obj) || !($obj instanceof Criterion)) {
             return false;
         }
 
         $crit = $obj;
 
-        $isEquiv = ( ( ($this->table === null && $crit->getTable() === null)
-            || ( $this->table !== null && $this->table === $crit->getTable() )
-                          )
+        $isEquiv = (((null === $this->table && null === $crit->getTable())
+            || (null !== $this->table && $this->table === $crit->getTable()))
             && $this->column === $crit->getColumn()
-            && $this->comparison === $crit->getComparison());
+            && $this->comparison === $crit->getComparison())
+        ;
 
         // check chained criterion
 
@@ -507,15 +506,15 @@ class Criterion
     {
         $h = crc32(serialize($this->value)) ^ crc32($this->comparison);
 
-        if ($this->table !== null) {
+        if (null !== $this->table) {
             $h ^= crc32($this->table);
         }
 
-        if ($this->column !== null) {
+        if (null !== $this->column) {
             $h ^= crc32($this->column);
         }
 
-        foreach ( $this->clauses as $clause ) {
+        foreach ($this->clauses as $clause) {
             // TODO: i KNOW there is a php incompatibility with the following line
             // but i dont remember what it is, someone care to look it up and
             // replace it if it doesnt bother us?
@@ -524,7 +523,7 @@ class Criterion
             $params = array();
             $clause->appendPsTo($sb,$params);
             $h ^= crc32(serialize(array($sb,$params)));
-            unset ( $sb, $params );
+            unset ($sb, $params);
         }
 
         return $h;
@@ -550,7 +549,7 @@ class Criterion
     private function addCriterionTable(Criterion $c, array &$s)
     {
         $s[] = $c->getTable();
-        foreach ( $c->getClauses() as $clause ) {
+        foreach ($c->getClauses() as $clause) {
             $this->addCriterionTable($clause, $s);
         }
     }

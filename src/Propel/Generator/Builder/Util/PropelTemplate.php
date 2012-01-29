@@ -19,12 +19,14 @@ use \InvalidArgumentException;
  */
 class PropelTemplate
 {
-    protected $template, $templateFile;
+    protected $template;
+
+    protected $templateFile;
 
     /**
-     * Set a string as a template.
+     * Sets a string as a template.
      * The string doesn't need closing php tags.
-   *
+     *
      * <code>
      * $template->setTemplate('This is <?php echo $name ?>');
      * </code>
@@ -66,7 +68,7 @@ class PropelTemplate
      */
     public function render($vars = array())
     {
-      if (null === $this->templateFile && null === $this->template) {
+        if (null === $this->templateFile && null === $this->template) {
             throw new InvalidArgumentException('You must set a template or a template file before rendering');
         }
 
@@ -77,13 +79,11 @@ class PropelTemplate
         try
         {
             if (null !== $this->templateFile) {
-                require($this->templateFile);
+                require $this->templateFile;
             } else {
                 eval('?>' . $this->template . '<?php ');
             }
-        }
-        catch (Exception $e)
-        {
+        } catch (Exception $e) {
             // need to end output buffering before throwing the exception #7596
             ob_end_clean();
             throw $e;

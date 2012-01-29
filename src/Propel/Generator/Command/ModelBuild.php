@@ -47,7 +47,7 @@ class ModelBuild extends AbstractCommand
      */
     protected function configure()
     {
-		parent::configure();
+        parent::configure();
 
         $this
             ->addOption('output-dir', null, InputOption::VALUE_REQUIRED, 'The output directory', self::DEFAULT_OUTPUT_DIRECTORY)

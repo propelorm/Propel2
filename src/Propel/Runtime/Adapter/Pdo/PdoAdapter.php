@@ -105,6 +105,7 @@ abstract class PdoAdapter
         if (isset($settings['charset']['value'])) {
             $this->setCharset($con, $settings['charset']['value']);
         }
+
         if (isset($settings['queries']) && is_array($settings['queries'])) {
             foreach ($settings['queries'] as $queries) {
                 foreach ((array)$queries as $query) {
@@ -219,7 +220,7 @@ abstract class PdoAdapter
      */
     public function isGetIdBeforeInsert()
     {
-        return ($this->getIdMethod() === AdapterInterface::ID_METHOD_SEQUENCE);
+        return (AdapterInterface::ID_METHOD_SEQUENCE === $this->getIdMethod());
     }
 
     /**
@@ -229,7 +230,7 @@ abstract class PdoAdapter
      */
     public function isGetIdAfterInsert()
     {
-        return ($this->getIdMethod() === AdapterInterface::ID_METHOD_AUTOINCREMENT);
+        return (AdapterInterface::ID_METHOD_AUTOINCREMENT === $this->getIdMethod());
     }
 
     /**
@@ -258,17 +259,17 @@ abstract class PdoAdapter
         /** @var $dt PropelDateTime */
         if ($dt = PropelDateTime::newInstance($value)) {
             switch($cMap->getType()) {
-            case PropelColumnTypes::TIMESTAMP:
-            case PropelColumnTypes::BU_TIMESTAMP:
-                $value = $dt->format($this->getTimestampFormatter());
-                break;
-            case PropelColumnTypes::DATE:
-            case PropelColumnTypes::BU_DATE:
-                $value = $dt->format($this->getDateFormatter());
-                break;
-            case PropelColumnTypes::TIME:
-                $value = $dt->format($this->getTimeFormatter());
-                break;
+                case PropelColumnTypes::TIMESTAMP:
+                case PropelColumnTypes::BU_TIMESTAMP:
+                    $value = $dt->format($this->getTimestampFormatter());
+                    break;
+                case PropelColumnTypes::DATE:
+                case PropelColumnTypes::BU_DATE:
+                    $value = $dt->format($this->getDateFormatter());
+                    break;
+                case PropelColumnTypes::TIME:
+                    $value = $dt->format($this->getTimeFormatter());
+                    break;
             }
         }
 
@@ -346,6 +347,7 @@ abstract class PdoAdapter
         if ($queryComment = $criteria->getComment()) {
             $sql .= '/* ' . $queryComment . ' */ ';
         }
+
         if ($realTableName = $criteria->getTableForAlias($tableName)) {
             if ($this->useQuoteIdentifier()) {
                 $realTableName = $this->quoteIdentifierTable($realTableName);
@@ -392,15 +394,15 @@ abstract class PdoAdapter
                 $parenPos = strrpos($columnName, '(');
                 $dotPos = strrpos($columnName, '.', ($parenPos !== false ? $parenPos : 0));
 
-                if ($dotPos !== false) {
-                    if ($parenPos === false) { // table.column
+                if (false !== $dotPos) {
+                    if (false === $parenPos) { // table.column
                         $tableName = substr($columnName, 0, $dotPos);
                     } else { // FUNC(table.column)
                         // functions may contain qualifiers so only take the last
                         // word as the table name.
                         // COUNT(DISTINCT books.price)
                         $lastSpace = strpos($tableName, ' ');
-                        if ($lastSpace !== false) { // COUNT(DISTINCT books.price)
+                        if (false !== $lastSpace) { // COUNT(DISTINCT books.price)
                             $tableName = substr($tableName, $lastSpace + 1);
                         } else {
                             $tableName = substr($columnName, $parenPos + 1, $dotPos - ($parenPos + 1));

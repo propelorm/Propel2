@@ -25,6 +25,7 @@ use Propel\Tests\Bookstore\Behavior\ConcreteQuizz;
 use Propel\Tests\Bookstore\Behavior\ConcreteQuizzPeer;
 use Propel\Tests\Bookstore\Behavior\ConcreteQuizzQuery;
 
+use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\RelationMap;
 use Propel\Runtime\Query\Criteria;
 
@@ -85,11 +86,9 @@ class ConcreteInheritanceBehaviorTest extends BookstoreTestBase
         }
     }
 
-    /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
-     */
     public function testModifyTableNoCopyDataKeepsAutoIncrement()
     {
+        $this->setExpectedException('Propel\\Runtime\\Exception\\PropelException');
         $content = new ConcreteContent();
         $content->save();
         $c = new Criteria;

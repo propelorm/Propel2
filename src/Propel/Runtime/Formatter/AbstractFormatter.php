@@ -24,17 +24,27 @@ use \PDOStatement;
  */
 abstract class AbstractFormatter
 {
-    protected
-        $dbName,
-        $class,
-        $peer,
-        $with = array(),
-        $asColumns = array(),
-        $hasLimit = false,
-        $currentObjects = array();
+    protected $dbName;
+
+    protected $class;
+
+    protected $peer;
+
+    protected $with;
+
+    protected $asColumns;
+
+    protected $hasLimit;
+
+    protected $currentObjects;
 
     public function __construct(ModelCriteria $criteria = null)
     {
+        $this->with = array();
+        $this->asColumns = array();
+        $this->currentObjects = array();
+        $this->hasLimit = false;
+
         if (null !== $criteria) {
             $this->init($criteria);
         }

@@ -10,9 +10,8 @@
 
 namespace Propel\Generator\Task;
 
+use PhingFile;
 use Propel\Generator\Model\AppData;
-
-use \PhingFile;
 
 /**
  * A task to generate Graphviz dot files from Propel datamodel.
@@ -21,7 +20,6 @@ use \PhingFile;
  */
 class PropelGraphvizTask extends AbstractPropelDataModelTask
 {
-
     /**
      * The properties file that maps an SQL file to a particular database.
      * @var        PhingFile
@@ -38,7 +36,6 @@ class PropelGraphvizTask extends AbstractPropelDataModelTask
      */
     private $outDir;
 
-
     /**
      * Set the sqldbmap.
      * @param      PhingFile $sqldbmap The db map.
@@ -48,9 +45,9 @@ class PropelGraphvizTask extends AbstractPropelDataModelTask
         if (!$out->exists()) {
             $out->mkdirs();
         }
+
         $this->outDir = $out;
     }
-
 
     /**
      * Set the sqldbmap.
@@ -87,7 +84,6 @@ class PropelGraphvizTask extends AbstractPropelDataModelTask
     {
         return $this->database;
     }
-
 
     public function main()
     {
@@ -143,20 +139,14 @@ class PropelGraphvizTask extends AbstractPropelDataModelTask
                         $dotSyntax .= "\n";
                     }
                 }
+            }
 
-
-
-            } // foreach database
             $dotSyntax .= "}\n";
-
             $this->writeDot($dotSyntax,$this->outDir,$database->getName());
+            $dotSyntax = '';
 
-        $dotSyntax = '';
-
-        } //foreach datamodels
-
-    } // main()
-
+        }
+    }
 
     /**
      * probably insecure
@@ -164,8 +154,7 @@ class PropelGraphvizTask extends AbstractPropelDataModelTask
     function writeDot($dotSyntax, PhingFile $outputDir, $baseFilename) 
     {
         $file = new PhingFile($outputDir, $baseFilename . '.schema.dot');
-        $this->log("Writing dot file to " . $file->getAbsolutePath());
+        $this->log(sprintf('Writing dot file to %s.', $file->getAbsolutePath()));
         file_put_contents($file->getAbsolutePath(), $dotSyntax);
     }
-
 }

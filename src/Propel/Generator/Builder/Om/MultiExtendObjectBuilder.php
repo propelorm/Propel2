@@ -22,7 +22,6 @@ use Propel\Generator\Model\Inheritance;
  */
 class MultiExtendObjectBuilder extends AbstractObjectBuilder
 {
-
     /**
      * The current child "object" we are operating on.
      */
@@ -77,9 +76,9 @@ class MultiExtendObjectBuilder extends AbstractObjectBuilder
     {
         if ($this->getChild()->getAncestor()) {
             return $this->getChild()->getAncestor();
-        } else {
-            return $this->getObjectBuilder()->getClasspath();
         }
+
+        return $this->getObjectBuilder()->getClasspath();
     }
 
     /**
@@ -108,11 +107,11 @@ class MultiExtendObjectBuilder extends AbstractObjectBuilder
     {
         if ($this->getChild()->getAncestor()) {
             $ancestorClassName = $this->getChild()->getAncestor();
-          if ($this->getDatabase()->hasTableByPhpName($ancestorClassName)) {
-            $this->declareClassFromBuilder($this->getNewStubObjectBuilder($this->getDatabase()->getTableByPhpName($ancestorClassName)));
-          } else {
-              $this->declareClassNamespace($ancestorClassName, $this->getNamespace());
-          }
+            if ($this->getDatabase()->hasTableByPhpName($ancestorClassName)) {
+                $this->declareClassFromBuilder($this->getNewStubObjectBuilder($this->getDatabase()->getTableByPhpName($ancestorClassName)));
+            } else {
+                $this->declareClassNamespace($ancestorClassName, $this->getNamespace());
+            }
         } else {
             $this->declareClassFromBuilder($this->getObjectBuilder());
         }
@@ -187,5 +186,4 @@ class ".$this->getClassname()." extends ".$this->getParentClassname()." {
 } // " . $this->getClassname() . "
 ";
     }
-
-} // ExtensionObjectBuilder
+}

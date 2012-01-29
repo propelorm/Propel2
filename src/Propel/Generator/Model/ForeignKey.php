@@ -10,8 +10,8 @@
 
 namespace Propel\Generator\Model;
 
-use \DOMNode;
-use \DOMDocument;
+use DOMNode;
+use DOMDocument;
 
 /**
  * A Class for information about foreign keys of a table.
@@ -25,15 +25,25 @@ class ForeignKey extends XmlElement
 {
 
     protected $foreignTableCommonName;
+
     protected $foreignSchemaName;
+
     protected $name;
+
     protected $phpName;
+
     protected $refPhpName;
+
     protected $defaultJoin;
+
     protected $onUpdate = '';
+
     protected $onDelete = '';
+
     protected $parentTable;
+
     protected $localColumns = array();
+
     protected $foreignColumns = array();
 
     /**
@@ -44,12 +54,12 @@ class ForeignKey extends XmlElement
     protected $skipSql = false;
 
     // the uppercase equivalent of the onDelete/onUpdate values in the dtd
-    const NONE     = "";            // No "ON [ DELETE | UPDATE]" behaviour specified.
-    const NOACTION  = "NO ACTION";
-    const CASCADE  = "CASCADE";
-    const RESTRICT = "RESTRICT";
-    const SETDEFAULT  = "SET DEFAULT";
-    const SETNULL  = "SET NULL";
+    const NONE        = '';  // No 'ON [ DELETE | UPDATE]' behaviour specified.
+    const NOACTION    = 'NO ACTION';
+    const CASCADE     = 'CASCADE';
+    const RESTRICT    = 'RESTRICT';
+    const SETDEFAULT  = 'SET DEFAULT';
+    const SETNULL     = 'SET NULL';
 
     /**
      * Constructs a new ForeignKey object.
@@ -67,20 +77,21 @@ class ForeignKey extends XmlElement
      */
     protected function setupObject()
     {
-        $this->foreignTableCommonName = $this->getTable()->getDatabase()->getTablePrefix() . $this->getAttribute("foreignTable");
-        $this->foreignSchemaName = $this->getAttribute("foreignSchema");
+        $this->foreignTableCommonName = $this->getTable()->getDatabase()->getTablePrefix() . $this->getAttribute('foreignTable');
+        $this->foreignSchemaName = $this->getAttribute('foreignSchema');
         if (!$this->foreignSchemaName) {
             if ($this->getTable()->getSchema()) {
                 $this->foreignSchemaName = $this->getTable()->getSchema();
             }
         }
-        $this->name = $this->getAttribute("name");
-        $this->phpName = $this->getAttribute("phpName");
-        $this->refPhpName = $this->getAttribute("refPhpName");
+
+        $this->name = $this->getAttribute('name');
+        $this->phpName = $this->getAttribute('phpName');
+        $this->refPhpName = $this->getAttribute('refPhpName');
         $this->defaultJoin = $this->getAttribute('defaultJoin');
-        $this->onUpdate = $this->normalizeFKey($this->getAttribute("onUpdate"));
-        $this->onDelete = $this->normalizeFKey($this->getAttribute("onDelete"));
-        $this->skipSql = $this->booleanValue($this->getAttribute("skipSql"));
+        $this->onUpdate = $this->normalizeFKey($this->getAttribute('onUpdate'));
+        $this->onDelete = $this->normalizeFKey($this->getAttribute('onDelete'));
+        $this->skipSql = $this->booleanValue($this->getAttribute('skipSql'));
     }
 
     /**
@@ -88,11 +99,11 @@ class ForeignKey extends XmlElement
      */
     public function normalizeFKey($attrib)
     {
-        if ($attrib === null  || strtoupper($attrib) == "NONE") {
+        if (null === $attrib || 'NONE' === strtoupper($attrib)) {
             $attrib = self::NONE;
         }
         $attrib = strtoupper($attrib);
-        if ($attrib == "SETNULL") {
+        if ('SETNULL' === $attrib) {
             $attrib =  self::SETNULL;
         }
 
@@ -104,7 +115,7 @@ class ForeignKey extends XmlElement
      */
     public function hasOnUpdate()
     {
-        return ($this->onUpdate !== self::NONE);
+        return self::NONE !== $this->onUpdate;
     }
 
     /**
@@ -112,7 +123,7 @@ class ForeignKey extends XmlElement
      */
     public function hasOnDelete()
     {
-        return ($this->onDelete !== self::NONE);
+        return self::NONE !== $this->onDelete;
     }
 
     /**
@@ -227,9 +238,9 @@ class ForeignKey extends XmlElement
     {
         if ($this->foreignSchemaName && $this->getTable()->getDatabase()->getPlatform()->supportsSchemas()) {
             return $this->foreignSchemaName . '.' . $this->foreignTableCommonName;
-        } else {
-            return $this->foreignTableCommonName;
         }
+
+        return $this->foreignTableCommonName;
     }
 
     /**
@@ -312,7 +323,7 @@ class ForeignKey extends XmlElement
     public function addReference($p1, $p2 = null)
     {
         if (is_array($p1)) {
-            $this->addReference(@$p1["local"], @$p1["foreign"]);
+            $this->addReference(@$p1['local'], @$p1['foreign']);
         } else {
             if ($p1 instanceof Column) {
                 $p1 = $p1->getName();
@@ -401,7 +412,7 @@ class ForeignKey extends XmlElement
     public function getLocalForeignMapping()
     {
         $h = array();
-        for ($i=0, $size=count($this->localColumns); $i < $size; $i++) {
+        for ($i = 0, $size = count($this->localColumns); $i < $size; $i++) {
             $h[$this->localColumns[$i]] = $this->foreignColumns[$i];
         }
 
@@ -415,7 +426,7 @@ class ForeignKey extends XmlElement
     public function getForeignLocalMapping()
     {
         $h = array();
-        for ($i=0, $size=count($this->localColumns); $i < $size; $i++) {
+        for ($i = 0, $size = count($this->localColumns); $i < $size; $i++) {
             $h[$this->foreignColumns[$i]] = $this->localColumns[$i];
         }
 
@@ -431,7 +442,7 @@ class ForeignKey extends XmlElement
         $mapping = array();
         $localTable = $this->getTable();
         $foreignTable = $this->getForeignTable();
-        for ($i=0, $size=count($this->localColumns); $i < $size; $i++) {
+        for ($i = 0, $size = count($this->localColumns); $i < $size; $i++) {
             $mapping[]= array(
                 'local'   => $localTable->getColumn($this->localColumns[$i]),
                 'foreign' => $foreignTable->getColumn($this->foreignColumns[$i]),
@@ -547,19 +558,20 @@ class ForeignKey extends XmlElement
             $foreignCols[] = $foreignTable->getColumn($lfmap[$colName])->getName();
         }
 
-        return ((count($foreignPKCols) === count($foreignCols)) &&
-            !array_diff($foreignPKCols, $foreignCols));
+        return ((count($foreignPKCols) === count($foreignCols))
+            && !array_diff($foreignPKCols, $foreignCols))
+        ;
     }
 
-  /**
-   * Whether this foreign key relies on more than one column binding
-   *
-   * @return Boolean
-   */
-  public function isComposite()
-  {
-    return count($this->getLocalColumns()) > 1;
-  }
+    /**
+     * Whether this foreign key relies on more than one column binding
+     *
+     * @return Boolean
+     */
+    public function isComposite()
+    {
+        return count($this->getLocalColumns()) > 1;
+    }
 
     /**
      * Whether this foreign key is also the primary key of the local table.

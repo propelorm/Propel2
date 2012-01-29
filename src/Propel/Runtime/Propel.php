@@ -113,8 +113,8 @@ class Propel
      */
     static public function init($configFile)
     {
-        $configuration = include($configFile);
-        if ($configuration === false) {
+        $configuration = include $configFile;
+        if (false === $configuration) {
             throw new PropelException(sprintf('Unable to open configuration file: "%s"', $configFile));
         }
         self::setConfiguration($configuration);

@@ -24,12 +24,14 @@ use Propel\Runtime\Exception\InvalidArgumentException;
  */
 class Configuration implements \ArrayAccess
 {
-    const TYPE_ARRAY = 1;
+    const TYPE_ARRAY      = 1;
     const TYPE_ARRAY_FLAT = 2;
-    const TYPE_OBJECT = 3;
+    const TYPE_OBJECT     = 3;
 
     protected $parameters = array();
+
     protected $flattenedParameters = array();
+
     protected $isFlattened = false;
 
     /**
@@ -98,7 +100,7 @@ class Configuration implements \ArrayAccess
      *   echo $c->getParameter('foo1'); => null
      *   echo $c->getParameter('foo1.foo2'); => 'bar'
      * </code>
-   *
+     *
      * @param     string  $name  Parameter name
      * @param     mixed   $default  Default value to be used if the requested value is not found
      *

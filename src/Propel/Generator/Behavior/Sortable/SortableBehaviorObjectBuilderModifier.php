@@ -19,10 +19,15 @@ namespace Propel\Generator\Behavior\Sortable;
 class SortableBehaviorObjectBuilderModifier
 {
     protected $behavior;
+
     protected $table;
+
     protected $builder;
+
     protected $objectClassname;
+
     protected $peerClassname;
+
     protected $peerFullClassname;
 
     public function __construct($behavior)
@@ -150,7 +155,7 @@ protected \$sortableQueries = array();
      */
     protected function addRankAccessors(&$script)
     {
-    $script .= "
+        $script .= "
 /**
  * Wrap the getter for rank value
  *
@@ -181,7 +186,7 @@ public function setRank(\$v)
      */
     protected function addScopeAccessors(&$script)
     {
-    $script .= "
+        $script .= "
 /**
  * Wrap the getter for scope value
  *
@@ -410,7 +415,7 @@ public function moveToRank(\$newRank, ConnectionInterface \$con = null)
     if (\$this->isNew()) {
         throw new PropelException('New objects cannot be moved. Please use insertAtRank() instead');
     }
-    if (\$con === null) {
+    if (null === \$con) {
         \$con = Propel::getServiceContainer()->getWriteConnection($peerClassname::DATABASE_NAME);
     }
     if (\$newRank < 1 || \$newRank > {$this->queryClassname}::create()->getMaxRank(" . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con)) {
@@ -458,7 +463,7 @@ public function moveToRank(\$newRank, ConnectionInterface \$con = null)
  */
 public function swapWith(\$object, ConnectionInterface \$con = null)
 {
-    if (\$con === null) {
+    if (null === \$con) {
         \$con = Propel::getServiceContainer()->getWriteConnection({$this->peerClassname}::DATABASE_NAME);
     }
     \$con->beginTransaction();
@@ -495,7 +500,7 @@ public function moveUp(ConnectionInterface \$con = null)
     if (\$this->isFirst()) {
         return \$this;
     }
-    if (\$con === null) {
+    if (null === \$con) {
         \$con = Propel::getServiceContainer()->getWriteConnection({$this->peerClassname}::DATABASE_NAME);
     }
     \$con->beginTransaction();
@@ -528,7 +533,7 @@ public function moveDown(ConnectionInterface \$con = null)
     if (\$this->isLast(\$con)) {
         return \$this;
     }
-    if (\$con === null) {
+    if (null === \$con) {
         \$con = Propel::getServiceContainer()->getWriteConnection({$this->peerClassname}::DATABASE_NAME);
     }
     \$con->beginTransaction();
@@ -583,7 +588,7 @@ public function moveToBottom(ConnectionInterface \$con = null)
     if (\$this->isLast(\$con)) {
         return false;
     }
-    if (\$con === null) {
+    if (null === \$con) {
         \$con = Propel::getServiceContainer()->getWriteConnection({$this->peerClassname}::DATABASE_NAME);
     }
     \$con->beginTransaction();
@@ -622,7 +627,7 @@ public function removeFromList()
     // remove the object from the list
     \$this->{$this->getColumnSetter('rank_column')}(null);";
         if ($useScope) {
-        $script .= "
+            $script .= "
     \$this->{$this->getColumnSetter('scope_column')}(null);";
         }
         $script .= "

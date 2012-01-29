@@ -19,9 +19,13 @@ namespace Propel\Generator\Behavior\NestedSet;
 class NestedSetBehaviorPeerBuilderModifier
 {
     protected $behavior;
+
     protected $table;
+
     protected $builder;
+
     protected $objectClassname;
+
     protected $peerClassname;
 
     public function __construct($behavior)
@@ -100,10 +104,10 @@ const SCOPE_COL = '" . $tableName . '.' . $this->getColumnConstant('scope_column
         $this->setBuilder($builder);
         $script = '';
 
-        if ($this->getParameter('use_scope') == 'true')
-        {
+        if ('true' === $this->getParameter('use_scope')) {
             $this->addRetrieveRoots($script);
         }
+
         $this->addRetrieveRoot($script);
         $this->addRetrieveTree($script);
         $this->addIsValid($script);
@@ -129,7 +133,7 @@ const SCOPE_COL = '" . $tableName . '.' . $this->getColumnConstant('scope_column
  */
 static public function retrieveRoots(Criteria \$criteria = null, ConnectionInterface \$con = null)
 {
-    if (\$criteria === null) {
+    if (null === \$criteria) {
         \$criteria = new Criteria($peerClassname::DATABASE_NAME);
     }
     \$criteria->add($peerClassname::LEFT_COL, 1, Criteria::EQUAL);
@@ -147,11 +151,11 @@ static public function retrieveRoots(Criteria \$criteria = null, ConnectionInter
 /**
  * Returns the root node for a given scope
  *";
-         if($useScope) {
-             $script .= "
+        if ($useScope) {
+            $script .= "
  * @param      int \$scope        Scope to determine which root node to return";
-         }
-         $script .= "
+        }
+        $script .= "
  * @param      ConnectionInterface \$con    Connection to use.
  * @return     {$this->objectClassname}            Propel object for root node
  */
@@ -159,7 +163,7 @@ static public function retrieveRoot(" . ($useScope ? "\$scope = null, " : "") . 
 {
     \$c = new Criteria($peerClassname::DATABASE_NAME);
     \$c->add($peerClassname::LEFT_COL, 1, Criteria::EQUAL);";
-        if($useScope) {
+        if ($useScope) {
             $script .= "
     \$c->add($peerClassname::SCOPE_COL, \$scope, Criteria::EQUAL);";
         }
@@ -178,22 +182,22 @@ static public function retrieveRoot(" . ($useScope ? "\$scope = null, " : "") . 
 /**
  * Returns the whole tree node for a given scope
  *";
-         if($useScope) {
-             $script .= "
+        if ($useScope) {
+            $script .= "
  * @param      int \$scope        Scope to determine which root node to return";
-         }
-         $script .= "
+        }
+        $script .= "
  * @param      Criteria \$criteria    Optional Criteria to filter the query
  * @param      ConnectionInterface \$con    Connection to use.
  * @return     {$this->objectClassname}            Propel object for root node
  */
 static public function retrieveTree(" . ($useScope ? "\$scope = null, " : "") . "Criteria \$criteria = null, ConnectionInterface \$con = null)
 {
-    if (\$criteria === null) {
+    if (null === \$criteria) {
         \$criteria = new Criteria($peerClassname::DATABASE_NAME);
     }
     \$criteria->addAscendingOrderByColumn($peerClassname::LEFT_COL);";
-        if($useScope) {
+        if ($useScope) {
             $script .= "
     \$criteria->add($peerClassname::SCOPE_COL, \$scope, Criteria::EQUAL);";
         }
@@ -233,18 +237,18 @@ static public function isValid($objectClassname \$node = null)
 /**
  * Delete an entire tree
  * ";
-         if($useScope) {
-             $script .= "
+        if ($useScope) {
+            $script .= "
  * @param      int \$scope        Scope to determine which tree to delete";
-         }
-         $script .= "
+        }
+        $script .= "
  * @param      ConnectionInterface \$con    Connection to use.
  *
  * @return     int  The number of deleted nodes
  */
 static public function deleteTree(" . ($useScope ? "\$scope = null, " : "") . "ConnectionInterface \$con = null)
 {";
-        if($useScope) {
+        if ($useScope) {
             $script .= "
     \$c = new Criteria($peerClassname::DATABASE_NAME);
     \$c->add($peerClassname::SCOPE_COL, \$scope, Criteria::EQUAL);
@@ -272,7 +276,7 @@ static public function deleteTree(" . ($useScope ? "\$scope = null, " : "") . "C
  * @param      int \$delta        Value to be shifted by, can be negative
  * @param      int \$first        First node to be shifted
  * @param      int \$last            Last node to be shifted (optional)";
-        if($useScope) {
+        if ($useScope) {
             $script .= "
  * @param      int \$scope        Scope to use for the shift";
         }
@@ -336,7 +340,7 @@ static public function shiftRLValues(\$delta, \$first, \$last = null" . ($useSco
  * @param      int \$delta        Value to be shifted by, can be negative
  * @param      int \$first        First node to be shifted
  * @param      int \$last            Last node to be shifted";
-        if($useScope) {
+        if ($useScope) {
             $script .= "
  * @param      int \$scope        Scope to use for the shift";
         }
@@ -391,7 +395,7 @@ static public function updateLoadedNodes(\$prune = null, ConnectionInterface \$c
             // We don't need to alter the object instance pool; we're just modifying these ones
             // already in the pool.
             \$criteria = new Criteria($peerClassname::DATABASE_NAME);";
-        if (count($this->table->getPrimaryKey()) === 1) {
+        if (1 === count($this->table->getPrimaryKey())) {
             $pkey = $this->table->getPrimaryKey();
             $col = array_shift($pkey);
             $script .= "
@@ -430,7 +434,9 @@ static public function updateLoadedNodes(\$prune = null, ConnectionInterface \$c
                 if (null !== (\$object = $peerClassname::getInstanceFromPool(\$key))) {";
         $n = 0;
         foreach ($this->table->getColumns() as $col) {
-            if ($col->isLazyLoad()) continue;
+            if ($col->isLazyLoad()) {
+                continue;
+            }
             if ($col->getPhpName() == $this->getColumnPhpName('left_column')) {
                 $script .= "
                     \$object->setLeftValue(\$row[$n]);";
@@ -463,11 +469,11 @@ static public function updateLoadedNodes(\$prune = null, ConnectionInterface \$c
  * Update the tree to allow insertion of a leaf at the specified position
  *
  * @param      int \$left    left column value";
-         if ($useScope) {
-                      $script .= "
+        if ($useScope) {
+            $script .= "
  * @param      integer \$scope    scope column value";
-         }
-         $script .= "
+        }
+        $script .= "
  * @param      mixed \$prune    Object to prune from the shift
  * @param      ConnectionInterface \$con    Connection to use.
  */
@@ -490,11 +496,11 @@ static public function makeRoomForLeaf(\$left" . ($useScope ? ", \$scope" : "").
 /**
  * Update the tree to allow insertion of a leaf at the specified position
  *";
-         if ($useScope) {
-                      $script .= "
+        if ($useScope) {
+            $script .= "
  * @param      integer \$scope    scope column value";
-         }
-         $script .= "
+        }
+        $script .= "
  * @param      ConnectionInterface \$con    Connection to use.
  */
 static public function fixLevels(" . ($useScope ? "\$scope, " : ""). "ConnectionInterface \$con = null)
