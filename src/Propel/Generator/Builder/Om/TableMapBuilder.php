@@ -10,10 +10,10 @@
 
 namespace Propel\Generator\Builder\Om;
 
-
 use Propel\Generator\Model\IdMethod;
 use Propel\Generator\Model\Validator;
 use Propel\Generator\Platform\PlatformInterface;
+
 /**
  * Generates the PHP5 table map class for user object model (OM).
  *
@@ -21,7 +21,6 @@ use Propel\Generator\Platform\PlatformInterface;
  */
 class TableMapBuilder extends AbstractOMBuilder
 {
-
     /**
      * Gets the package for the map builder classes.
      * @return     string
@@ -316,9 +315,8 @@ class ".$this->getClassname()." extends \Propel\Runtime\Map\TableMap
      */
     protected function addGetBehaviors(&$script)
     {
-      if ($behaviors = $this->getTable()->getBehaviors())
-      {
-          $script .= "
+        if ($behaviors = $this->getTable()->getBehaviors()) {
+            $script .= "
     /**
      *
      * Gets the list of behaviors registered for this table
@@ -362,4 +360,4 @@ class ".$this->getClassname()." extends \Propel\Runtime\Map\TableMap
     {
         return $this->applyBehaviorModifierBase($hookName, 'TableMapBuilderModifier', $script, $tab);
     }
-} // TableMapBuilder
+}

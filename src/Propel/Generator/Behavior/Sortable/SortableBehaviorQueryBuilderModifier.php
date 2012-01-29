@@ -18,9 +18,13 @@ namespace Propel\Generator\Behavior\Sortable;
 class SortableBehaviorQueryBuilderModifier
 {
     protected $behavior;
+
     protected $table;
+
     protected $builder;
+
     protected $objectClassname;
+
     protected $peerClassname;
 
     public function __construct($behavior)
@@ -183,10 +187,11 @@ public function findOneByRank(\$rank, " . ($useScope ? "\$scope = null, " : "") 
 /**
  * Returns " . ($useScope ? 'a' : 'the') ." list of objects
  *";
-         if($useScope) {
-             $script .= "
+        if ($useScope) {
+            $script .= "
  * @param      int \$scope        Scope to determine which list to return";
-         }
+        }
+
         $script .= "
  * @param      ConnectionInterface \$con    Connection to use.
  *
@@ -195,6 +200,7 @@ public function findOneByRank(\$rank, " . ($useScope ? "\$scope = null, " : "") 
 public function findList(" . ($useScope ? "\$scope = null, " : "") . "\$con = null)
 {
     return \$this";
+
         if ($useScope) {
             $script .= "
         ->inList(\$scope)";
@@ -216,7 +222,7 @@ public function findList(" . ($useScope ? "\$scope = null, " : "") . "\$con = nu
 /**
  * Get the highest rank
  * ";
-        if($useScope) {
+        if ($useScope) {
             $script .= "
  * @param      int \$scope        Scope to determine which suite to consider";
         }
@@ -227,13 +233,13 @@ public function findList(" . ($useScope ? "\$scope = null, " : "") . "\$con = nu
  */
 public function getMaxRank(" . ($useScope ? "\$scope = null, " : "") . "ConnectionInterface \$con = null)
 {
-    if (\$con === null) {
+    if (null === \$con) {
         \$con = Propel::getServiceContainer()->getReadConnection({$this->peerClassname}::DATABASE_NAME);
     }
     // shift the objects with a position lower than the one of object
     \$this->addSelectColumn('MAX(' . {$this->peerClassname}::RANK_COL . ')');";
         if ($useScope) {
-        $script .= "
+            $script .= "
     \$this->add({$this->peerClassname}::SCOPE_COL, \$scope, Criteria::EQUAL);";
         }
         $script .= "
@@ -246,9 +252,7 @@ public function getMaxRank(" . ($useScope ? "\$scope = null, " : "") . "Connecti
 
     protected function addReorder(&$script)
     {
-        $this->builder->declareClasses(
-            '\Propel\Runtime\Propel'
-        );
+        $this->builder->declareClasses('\Propel\Runtime\Propel');
         $peerClassname = $this->peerClassname;
         $columnGetter = 'get' . $this->behavior->getColumnForParameter('rank_column')->getPhpName();
         $columnSetter = 'set' . $this->behavior->getColumnForParameter('rank_column')->getPhpName();
@@ -265,7 +269,7 @@ public function getMaxRank(" . ($useScope ? "\$scope = null, " : "") . "Connecti
  */
 public function reorder(array \$order, ConnectionInterface \$con = null)
 {
-    if (\$con === null) {
+    if (null === \$con) {
         \$con = Propel::getServiceContainer()->getReadConnection($peerClassname::DATABASE_NAME);
     }
 
@@ -290,5 +294,4 @@ public function reorder(array \$order, ConnectionInterface \$con = null)
 }
 ";
     }
-
 }

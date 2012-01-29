@@ -674,7 +674,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
             $script .= "
             \$this->addOr(\$cton0);
         }";
-        $script .= "
+            $script .= "
 
         return \$this;";
         }

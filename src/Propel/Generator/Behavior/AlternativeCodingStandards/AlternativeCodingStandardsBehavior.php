@@ -92,23 +92,23 @@ class AlternativeCodingStandardsBehavior extends Behavior
     protected function filter(&$script)
     {
         $filter = array();
-        if($this->getParameter('brackets_newline') == 'true') {
+        if ('true' === $this->getParameter('brackets_newline')) {
             $filter['#^(\t*)\}\h(else|elseif|catch)(.*)\h\{$#m'] = "$1}
 $1$2$3
 $1{";
             $filter['#^(\t*)(\w.*)\h\{$#m'] = "$1$2
 $1{";
         }
-        if ($this->getParameter('remove_closing_comments') == 'true') {
+        if ('true' === $this->getParameter('remove_closing_comments')) {
             $filter['#^(\t*)} //.*$#m'] = "$1}";
         }
-        if ($this->getParameter('use_whitespace') == 'true') {
+        if ('true' === $this->getParameter('use_whitespace')) {
             $filter['#\t#'] = str_repeat(' ', $this->getParameter('tab_size'));
         }
 
         $script = preg_replace(array_keys($filter), array_values($filter), $script);
 
-        if ($this->getParameter('strip_comments') == 'true') {
+        if ('true' === $this->getParameter('strip_comments')) {
             $script = self::stripComments($script);
         }
     }
@@ -124,10 +124,13 @@ $1{";
         $commentTokens = array(T_COMMENT, T_DOC_COMMENT);
         foreach (token_get_all($code) as $token) {
             if (is_array($token)) {
-            if (in_array($token[0], $commentTokens)) continue;
+                if (in_array($token[0], $commentTokens)) {
+                    continue;
+                }
                 $token = $token[1];
-          }
-          $output .= $token;
+            }
+
+            $output .= $token;
         }
 
         return $output;

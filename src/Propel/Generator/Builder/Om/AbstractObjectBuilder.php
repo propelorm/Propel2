@@ -24,14 +24,6 @@ use Propel\Generator\Model\Table;
  */
 abstract class AbstractObjectBuilder extends AbstractOMBuilder
 {
-
-    /**
-     * Constructs a new PeerBuilder subclass.
-     */
-    public function __construct(Table $table) {
-        parent::__construct($table);
-    }
-
     /**
      * This method adds the contents of the generated class to the script.
      *
@@ -174,7 +166,9 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
     protected function hasDefaultValues()
     {
         foreach ($this->getTable()->getColumns() as $col) {
-            if($col->getDefaultValue() !== null) return true;
+            if (null !== $col->getDefaultValue()) {
+                return true;
+            }
         }
 
         return false;
@@ -208,5 +202,4 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
     {
         return $this->getBehaviorContentBase($contentName, 'ObjectBuilderModifier');
     }
-
 }

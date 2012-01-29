@@ -51,14 +51,14 @@ class SqlsrvAdapter extends MssqlAdapter implements AdapterInterface
     public function setCharset(ConnectionInterface $con, $charset)
     {
         switch (strtolower($charset)) {
-        case 'utf-8':
-            $con->setAttribute(PDO::SQLSRV_ATTR_ENCODING, PDO::SQLSRV_ENCODING_UTF8);
-            break;
-        case 'system':
-            $con->setAttribute(PDO::SQLSRV_ATTR_ENCODING, PDO::SQLSRV_ENCODING_SYSTEM);
-            break;
-        default:
-            throw new UnsupportedEncodingException('only utf-8 or system encoding are supported by the pdo_sqlsrv driver');
+            case 'utf-8':
+                $con->setAttribute(PDO::SQLSRV_ATTR_ENCODING, PDO::SQLSRV_ENCODING_UTF8);
+                break;
+            case 'system':
+                $con->setAttribute(PDO::SQLSRV_ATTR_ENCODING, PDO::SQLSRV_ENCODING_SYSTEM);
+                break;
+            default:
+                throw new UnsupportedEncodingException('only utf-8 or system encoding are supported by the pdo_sqlsrv driver');
         }
     }
 
@@ -82,7 +82,7 @@ class SqlsrvAdapter extends MssqlAdapter implements AdapterInterface
             // http://social.msdn.microsoft.com/Forums/en-US/sqldriverforphp/thread/5a755bdd-41e9-45cb-9166-c9da4475bb94
             if (null !== $tableName) {
                 $cMap = $dbMap->getTable($tableName)->getColumn($columnName);
-                if($value === null && $cMap->isLob()) {
+                if (null === $value && $cMap->isLob()) {
                     $sql = str_replace(":p$i", "CONVERT(VARBINARY(MAX), :p$i)", $sql);
                 }
             }

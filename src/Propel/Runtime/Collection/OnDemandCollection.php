@@ -28,10 +28,11 @@ class OnDemandCollection extends Collection
      */
     protected $iterator;
 
-    protected
-        $currentRow,
-        $currentKey = -1,
-        $isValid = null;
+    protected $currentRow;
+
+    protected $currentKey;
+
+    protected $isValid;
 
     /**
      * @param     AbstractFormatter $formatter
@@ -39,6 +40,7 @@ class OnDemandCollection extends Collection
      */
     public function initIterator(AbstractFormatter $formatter, StatementInterface $stmt)
     {
+        $this->currentKey = -1;
         $this->iterator = new OnDemandIterator($formatter, $stmt);
     }
 
