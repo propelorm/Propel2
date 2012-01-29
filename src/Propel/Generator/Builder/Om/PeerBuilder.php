@@ -1344,8 +1344,8 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 
         foreach ($table->getColumns() as $col) {
             if ($col->isPrimaryKey() 
-                && 'none' !== $col->isAutoIncrement()
-                && $table->getIdMethod()
+                && $col->isAutoIncrement()
+                && 'none' !== $table->getIdMethod()
                 && !$table->isAllowPkInsert()
             ) {
                 $script .= "
