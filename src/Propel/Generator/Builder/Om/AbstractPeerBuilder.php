@@ -269,7 +269,7 @@ abstract class AbstractPeerBuilder extends AbstractOMBuilder
      * @return     string If $phpName is provided, then will return {$phpName}Peer::COLUMN_NAME; if not, just COLUMN_NAME.
      * @deprecated
      */
-    public static function getColumnName(Column $col, $phpName = null)
+    static public function getColumnName(Column $col, $phpName = null)
     {
         // was it overridden in schema.xml ?
         if ($col->getPeerName()) {

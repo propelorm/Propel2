@@ -215,7 +215,7 @@ class Profiler
      *
      * @return    array
      */
-    public static function getSnapshot()
+    static public function getSnapshot()
     {
         return array(
             'microtime'       => microtime(true),
