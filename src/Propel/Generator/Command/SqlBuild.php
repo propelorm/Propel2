@@ -10,12 +10,10 @@
 
 namespace Propel\Generator\Command;
 
-
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\Output;
-
 
 use Propel\Generator\Config\GeneratorConfig;
 use Propel\Generator\Manager\SqlManager;
@@ -28,6 +26,8 @@ class SqlBuild extends AbstractCommand
 {
     const DEFAULT_OUTPUT_DIRECTORY  = 'generated-sql';
 
+    const DEFAULT_MYSQL_ENGINE      = 'InnoDB';
+
     /**
      * {@inheritdoc}
      */
@@ -36,6 +36,7 @@ class SqlBuild extends AbstractCommand
         parent::configure();
 
         $this
+            ->addOption('mysql-engine', null, InputOption::VALUE_REQUIRED,  'MySQL engine (MyISAM, InnoDB, ...)', self::DEFAULT_MYSQL_ENGINE)
             ->addOption('output-dir',   null, InputOption::VALUE_REQUIRED,  'The output directory', self::DEFAULT_OUTPUT_DIRECTORY)
             ->addOption('validate',     null, InputOption::VALUE_NONE,      '')
             ->addOption('schema-name',  null, InputOption::VALUE_REQUIRED,  'The schema name for RDBMS supporting them', '')
