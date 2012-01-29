@@ -104,7 +104,7 @@ public function inList(\$scope = null)
  * Filter the query based on a rank in the list
  *
  * @param     integer   \$rank rank";
-        if($useScope) {
+        if ($useScope) {
             $script .= "
  * @param     int \$scope        Scope to determine which suite to consider";
         }
@@ -162,7 +162,7 @@ public function orderByRank(\$order = Criteria::ASC)
  * Get an item from the list based on its rank
  *
  * @param     integer   \$rank rank";
-        if($useScope) {
+        if ($useScope) {
             $script .= "
  * @param     int \$scope        Scope to determine which suite to consider";
         }

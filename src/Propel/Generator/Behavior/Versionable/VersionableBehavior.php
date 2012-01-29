@@ -72,7 +72,7 @@ class VersionableBehavior extends Behavior
     {
         $table = $this->getTable();
         // add the version column
-        if(!$table->containsColumn($this->getParameter('version_column'))) {
+        if (!$table->containsColumn($this->getParameter('version_column'))) {
             $table->addColumn(array(
                 'name'    => $this->getParameter('version_column'),
                 'type'    => 'INTEGER',

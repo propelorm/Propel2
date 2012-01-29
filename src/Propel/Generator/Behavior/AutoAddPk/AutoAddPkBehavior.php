@@ -34,7 +34,7 @@ class AutoAddPkBehavior extends Behavior
     public function modifyDatabase()
     {
         foreach ($this->getDatabase()->getTables() as $table) {
-            if(!$table->hasPrimaryKey()) {
+            if (!$table->hasPrimaryKey()) {
                 $b = clone $this;
                 $table->addBehavior($b);
             }
