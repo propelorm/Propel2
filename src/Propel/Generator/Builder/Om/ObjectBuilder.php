@@ -4069,6 +4069,8 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
      */
     protected function addCrossFKDoAdd(&$script, ForeignKey $refFK, ForeignKey $crossFK)
     {
+        $relatedObjectClassName = $this->getFKPhpNameAffix($crossFK, $plural = false);
+
         // lcfirst() doesn't exist in PHP < 5.3
         $lowerRelatedObjectClassName = $relatedObjectClassName;
         $lowerRelatedObjectClassName[0] = strtolower($lowerRelatedObjectClassName[0]);
