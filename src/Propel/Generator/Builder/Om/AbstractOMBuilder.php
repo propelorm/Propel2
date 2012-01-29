@@ -51,13 +51,13 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         $this->addClassBody($script);
         $this->addClassClose($script);
 
-        if($useStatements = $this->getUseStatements($ignoredNamespace = $this->getNamespace())) {
+        if ($useStatements = $this->getUseStatements($ignoredNamespace = $this->getNamespace())) {
             $script = $useStatements . $script;
         }
-        if($namespaceStatement = $this->getNamespaceStatement()) {
+        if ($namespaceStatement = $this->getNamespaceStatement()) {
             $script = $namespaceStatement . $script;
         }
-        //if($this->getTable()->getName() == 'book_club_list') die($ignoredNamespace);
+        //if ($this->getTable()->getName() == 'book_club_list') die($ignoredNamespace);
 
         return "<" . "?php
 

@@ -805,7 +805,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
         if (null === \$comparison || \$comparison == Criteria::CONTAINS_ALL) {
             foreach (\$$variableName as \$value) {
                 \$value = '%| ' . \$value . ' |%';
-                if(\$this->containsKey(\$key)) {
+                if (\$this->containsKey(\$key)) {
                     \$this->addAnd(\$key, \$value, Criteria::LIKE);
                 } else {
                     \$this->add(\$key, \$value, Criteria::LIKE);
@@ -816,7 +816,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
         } elseif (\$comparison == Criteria::CONTAINS_SOME) {
             foreach (\$$variableName as \$value) {
                 \$value = '%| ' . \$value . ' |%';
-                if(\$this->containsKey(\$key)) {
+                if (\$this->containsKey(\$key)) {
                     \$this->addOr(\$key, \$value, Criteria::LIKE);
                 } else {
                     \$this->add(\$key, \$value, Criteria::LIKE);
@@ -827,7 +827,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
         } elseif (\$comparison == Criteria::CONTAINS_NONE) {
             foreach (\$$variableName as \$value) {
                 \$value = '%| ' . \$value . ' |%';
-                if(\$this->containsKey(\$key)) {
+                if (\$this->containsKey(\$key)) {
                     \$this->addAnd(\$key, \$value, Criteria::NOT_LIKE);
                 } else {
                     \$this->add(\$key, \$value, Criteria::NOT_LIKE);
@@ -911,7 +911,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
             \$$variableName = '%| ' . \$$variableName . ' |%';
             \$comparison = Criteria::NOT_LIKE;
             \$key = \$this->getAliasedColName($qualifiedName);
-            if(\$this->containsKey(\$key)) {
+            if (\$this->containsKey(\$key)) {
                 \$this->addAnd(\$key, \$$variableName, \$comparison);
             } else {
                 \$this->addAnd(\$key, \$$variableName, \$comparison);
@@ -1116,7 +1116,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
         }
 
         // add the ModelJoin to the current object
-        if(\$relationAlias) {
+        if (\$relationAlias) {
             \$this->addAlias(\$relationAlias, \$relationMap->getRightTable()->getName());
             \$this->addJoinObject(\$join, \$relationAlias);
         } else {

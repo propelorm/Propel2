@@ -66,7 +66,7 @@ class I18nBehavior extends Behavior
         $table = $this->getTable();
         $database = $table->getDatabase();
         $i18nTableName = $this->getI18nTableName();
-        if($database->hasTable($i18nTableName)) {
+        if ($database->hasTable($i18nTableName)) {
             $this->i18nTable = $database->getTable($i18nTableName);
         } else {
             $this->i18nTable = $database->addTable(array(
