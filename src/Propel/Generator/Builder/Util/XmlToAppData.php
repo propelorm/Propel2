@@ -10,7 +10,6 @@
 
 namespace Propel\Generator\Builder\Util;
 
-use Exception;
 use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Exception\SchemaException;
 use Propel\Generator\Model\AppData;
@@ -62,7 +61,7 @@ class XmlToAppData
 
     private $encoding;
 
-    /*
+    /**
      * two-dimensional array,
      * first dimension is for schemas(key is the path to the schema file),
      * second is for tags within the schema
@@ -134,7 +133,7 @@ class XmlToAppData
         xml_set_object($parser, $this);
         xml_set_element_handler($parser, 'startElement', 'endElement');
         if (!xml_parse($parser, $xmlString)) {
-            throw new Exception(sprintf('XML error: %s at line %d',
+            throw new SchemaException(sprintf('XML error: %s at line %d',
                 xml_error_string(xml_get_error_code($parser)),
                 xml_get_current_line_number($parser))
             );
