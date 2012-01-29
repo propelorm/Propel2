@@ -37,7 +37,7 @@ class SluggableBehavior extends Behavior
      */
     public function modifyTable()
     {
-        if(!$this->getTable()->containsColumn($this->getParameter('slug_column'))) {
+        if (!$this->getTable()->containsColumn($this->getParameter('slug_column'))) {
             $this->getTable()->addColumn(array(
                 'name' => $this->getParameter('slug_column'),
                 'type' => 'VARCHAR',
