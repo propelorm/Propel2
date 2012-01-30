@@ -1,1 +1,25 @@
-[{"package":"symfony\/finder","version":"2.1.0-dev"},{"package":"monolog\/monolog","version":"master-dev"},{"package":"symfony\/console","version":"2.1.0-dev"},{"package":"symfony\/yaml","version":"2.1.0-dev"}]
+{
+    "hash": "e6605353791de19a676b599bfd011cb1",
+    "packages": [
+        {
+            "package": "symfony\/finder",
+            "version": "2.1.0-dev"
+        },
+        {
+            "package": "monolog\/monolog",
+            "version": "master-dev"
+        },
+        {
+            "package": "symfony\/console",
+            "version": "2.1.0-dev"
+        },
+        {
+            "package": "symfony\/yaml",
+            "version": "2.1.0-dev"
+        },
+        {
+            "package": "phing",
+            "version": "master-dev"
+        }
+    ]
+}
