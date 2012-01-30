@@ -25,6 +25,10 @@
             "package": "symfony/yaml",
             "version": "dev-master",
             "source-reference": "2552c643a158ee7fb6c52c0dd55806055c575841"
+        },
+        {
+            "package": "phing",
+            "version": "dev-master"
         }
     ],
     "aliases": [

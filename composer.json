@@ -15,12 +15,26 @@
             "email": "william.durand1@gmail.com"
         }
     ],
+    "repositories": {
+        "phing": {
+            "package": {
+                "name": "phing",
+                "version": "master-dev",
+                "source": {
+                    "url": "git://github.com/Xosofox/phing.git",
+                    "type": "git",
+                    "reference": "1fd92c78f14a02b3e1cd9c59c7a08b4cab532d33"
+                }
+            }
+        }
+    },
     "require": {
         "php": ">=5.3.2",
         "symfony/yaml": ">=2.0",
         "symfony/console": ">=2.0",
         "monolog/monolog": ">=1.0.2",
-        "symfony/finder": ">=2.0"
+        "symfony/finder": ">=2.0",
+        "phing": "master-dev"
     },
     "autoload": {
         "psr-0": {
