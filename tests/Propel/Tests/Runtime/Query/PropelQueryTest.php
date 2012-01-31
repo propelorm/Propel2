@@ -19,6 +19,10 @@ use Propel\Runtime\Query\PropelQuery;
 use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\BookQuery;
 
+use Propel\Tests\Bookstore\Behavior\Table6;
+use Propel\Tests\Bookstore\Behavior\Table6Query;
+use Propel\Tests\Bookstore\Behavior\Table6Peer;
+
 /**
  * Test class for PropelQuery
  *
@@ -62,6 +66,21 @@ class PropelQueryTest extends BookstoreTestBase
         $this->assertTrue($book instanceof Book);
         $this->assertEquals('Don Juan', $book->getTitle());
 
+    }
+
+    public function testInstancePool()
+    {
+        $object = new Table6();
+        $object->setTitle('test');
+        $object->save();
+        $key = $object->getId();
+
+        $this->assertSame($object, Table6Peer::getInstanceFromPool($key));
+        Table6Peer::removeInstanceFromPool($object);
+        $this->assertNull(Table6Peer::getInstanceFromPool($key));
+
+        $object = Table6Query::create()->findPk($key);
+        $this->assertSame($object, Table6Peer::getInstanceFromPool($key));
     }
 }
 

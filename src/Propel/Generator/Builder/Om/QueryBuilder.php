@@ -450,8 +450,12 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
             implode(' AND ', $conditions)
         );
         $pks = array();
-        foreach ($table->getPrimaryKey() as $index => $column) {
-            $pks []= "\$row[$index]";
+        if ($table->hasCompositePrimaryKey()) {
+            foreach ($table->getPrimaryKey() as $index => $column) {
+                $pks []= "\$key[$index]";
+            }
+        } else {
+            $pks []= "\$key";
         }
         $pkHashFromRow = $this->getPeerBuilder()->getInstancePoolKeySnippet($pks);
         $script .= "
