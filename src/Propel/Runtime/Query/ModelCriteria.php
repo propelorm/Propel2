@@ -1478,6 +1478,7 @@ class ModelCriteria extends Criteria
             || $this->getLimit()
             || $this->getHaving()
             || in_array(Criteria::DISTINCT, $this->getSelectModifiers())
+            || count($this->selectQueries) > 0
         ;
 
         $params = array();
