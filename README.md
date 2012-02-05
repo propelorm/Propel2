@@ -49,13 +49,9 @@ Then, install dependencies:
 
     php composer.phar install
 
-Alternatively, if you get errors about composer.lock being out of sync run:
-
-    php composer.phar update
-
 Once done, build fixtures:
 
-    php bin/propel.php test:prepare
+    php bin/propel test:prepare
 
 Now you can run the test suite by running:
 
