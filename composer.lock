@@ -28,7 +28,7 @@
         },
         {
             "package": "phing",
-            "version": "dev-master"
+            "version": "2.4.9"
         }
     ],
     "aliases": [

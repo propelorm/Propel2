@@ -17,14 +17,8 @@
     ],
     "repositories": {
         "phing": {
-            "package": {
-                "name": "phing",
-                "version": "master-dev",
-                "source": {
-                    "url": "git://github.com/Xosofox/phing.git",
-                    "type": "git",
-                    "reference": "1fd92c78f14a02b3e1cd9c59c7a08b4cab532d33"
-                }
+            "pear": {
+                "url": "http://pear.phing.info"
             }
         }
     },
@@ -34,7 +28,7 @@
         "symfony/console": ">=2.0",
         "monolog/monolog": ">=1.0.2",
         "symfony/finder": ">=2.0",
-        "phing": "master-dev"
+        "phing": "2.4.9"
     },
     "autoload": {
         "psr-0": {
