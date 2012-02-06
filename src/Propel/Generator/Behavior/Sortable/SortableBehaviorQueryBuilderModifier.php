@@ -156,7 +156,6 @@ public function orderByRank(\$order = Criteria::ASC)
     protected function addFindOneByRank(&$script)
     {
         $useScope = $this->behavior->useScope();
-        $peerClassname = $this->peerClassname;
         $script .= "
 /**
  * Get an item from the list based on its rank
