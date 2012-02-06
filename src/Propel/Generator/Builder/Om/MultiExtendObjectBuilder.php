@@ -119,8 +119,6 @@ class MultiExtendObjectBuilder extends AbstractObjectBuilder
         $tableName = $table->getName();
         $tableDesc = $table->getDescription();
 
-        $baseClassname = $this->getObjectBuilder()->getClassname();
-
         $script .= "
 
 /**

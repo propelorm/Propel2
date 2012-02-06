@@ -526,38 +526,36 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
      */
     public function addInheritanceColumnConstants(&$script)
     {
-        if ($this->getTable()->getChildrenColumn()) {
+        if (!$col = $this->getTable()->getChildrenColumn()) {
+            return;
+        }
 
-            $col = $this->getTable()->getChildrenColumn();
+        if (!$col->isEnumeratedClasses()) {
+            return;
+        }
 
-            if ($col->isEnumeratedClasses()) {
+        foreach ($col->getChildren() as $child) {
+            $childBuilder = $this->getMultiExtendObjectBuilder();
+            $childBuilder->setChild($child);
+            $fqcn = addslashes($childBuilder->getFullyQualifiedClassname());
 
-                $quote = $col->isPhpPrimitiveNumericType() ? '' : '"';
-
-                foreach ($col->getChildren() as $child) {
-                    $childBuilder = $this->getMultiExtendObjectBuilder();
-                    $childBuilder->setChild($child);
-                    $fqcn = addslashes($childBuilder->getFullyQualifiedClassname());
-
-                    $script .= "
+            $script .= "
     /** A key representing a particular subclass */
     const CLASSKEY_".strtoupper($child->getKey())." = '" . $child->getKey() . "';
 ";
 
-                    if (strtoupper($child->getClassname()) != strtoupper($child->getKey())) {
-                        $script .= "
+            if (strtoupper($child->getClassname()) != strtoupper($child->getKey())) {
+                $script .= "
     /** A key representing a particular subclass */
     const CLASSKEY_".strtoupper($child->getClassname())." = '" . $child->getKey() . "';
 ";
-                    }
+            }
 
-                    $script .= "
+            $script .= "
     /** A class that can be returned by this peer. */
     const CLASSNAME_".strtoupper($child->getKey())." = '". $fqcn . "';
 ";
-                } /* foreach children */
-            } /* if col->isenumerated...() */
-        } /* if table->getchildrencolumn() */
+        }
     }
 
     /**
@@ -2279,7 +2277,6 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
                     if ($fk->getForeignTableName() != $table->getName()) {
 
                         $thisTableObjectBuilder = $this->getNewObjectBuilder($table);
-                        $joinedTableObjectBuilder = $this->getNewObjectBuilder($joinTable);
                         $joinedTablePeerBuilder = $this->getNewPeerBuilder($joinTable);
 
                         $script .= "
