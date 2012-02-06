@@ -1,5 +1,5 @@
 {
-    "hash": "e6605353791de19a676b599bfd011cb1",
+    "hash": "bb325847c51028efa0c07979f8d4bb2a",
     "packages": [
         {
             "package": "symfony\/finder",
@@ -19,7 +19,7 @@
         },
         {
             "package": "phing",
-            "version": "master-dev"
+            "version": "2.4.9"
         }
     ]
 }

@@ -32,4 +32,4 @@ if (file_exists($file = __DIR__.'/vendor/.composer/autoload.php')) {
 }
 
 // Register phing include path
-set_include_path(get_include_path().PATH_SEPARATOR.realpath(dirname(__FILE__)).'/vendor/phing/classes/');
+set_include_path(get_include_path().PATH_SEPARATOR.__DIR__.'/vendor/');
