@@ -804,7 +804,7 @@ class BasePeer
         if ($criteria->hasSelectQueries()) {
             foreach ($fromClause as $key => $ftable) {
                 if (strpos($ftable, ' ') !== false) {
-                    list($realtable, $tableName) = explode(' ', $ftable);
+                    list(, $tableName) = explode(' ', $ftable);
                 } else {
                     $tableName = $ftable;
                 }

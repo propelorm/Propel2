@@ -491,7 +491,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
         \$obj = null;
         if (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {";
 
-        if ($col = $table->getChildrenColumn()) {
+        if ($table->getChildrenColumn()) {
             $script .="
             \$cls = {$peerClassname}::getOMClass(\$row, 0, false);
             \$obj = new \$cls();";
@@ -517,7 +517,6 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
     protected function addFindPkComplex(&$script)
     {
         $table = $this->getTable();
-        $pks = $table->getPrimaryKey();
         $class = $class = $this->getStubObjectBuilder()->getClassname();
         $this->declareClasses('\Propel\Runtime\Connection\ConnectionInterface');
         $script .= "
@@ -1069,7 +1068,6 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
      */
     protected function addJoinFk(&$script, $fk)
     {
-        $table = $this->getTable();
         $queryClass = $this->getStubQueryBuilder()->getClassname();
         $fkTable = $this->getForeignTable($fk);
         $relationName = $this->getFKPhpNameAffix($fk);
@@ -1083,7 +1081,6 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
      */
     protected function addJoinRefFk(&$script, $fk)
     {
-        $table = $this->getTable();
         $queryClass = $this->getStubQueryBuilder()->getClassname();
         $fkTable = $this->getTable()->getDatabase()->getTable($fk->getTableName());
         $relationName = $this->getRefFKPhpNameAffix($fk);
@@ -1138,7 +1135,6 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
      */
     protected function addUseFkQuery(&$script, $fk)
     {
-        $table = $this->getTable();
         $fkTable = $this->getForeignTable($fk);
         $fkQueryBuilder = $this->getNewStubQueryBuilder($fkTable);
         $queryClass = $fkQueryBuilder->getClassname();
@@ -1156,7 +1152,6 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
      */
     protected function addUseRefFkQuery(&$script, $fk)
     {
-        $table = $this->getTable();
         $fkTable = $this->getTable()->getDatabase()->getTable($fk->getTableName());
         $fkQueryBuilder = $this->getNewStubQueryBuilder($fkTable);
         $queryClass = $fkQueryBuilder->getClassname();

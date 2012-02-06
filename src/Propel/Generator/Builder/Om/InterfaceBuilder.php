@@ -36,12 +36,9 @@ class InterfaceBuilder extends AbstractObjectBuilder
      */
     protected function addClassOpen(&$script)
     {
-
         $table = $this->getTable();
         $tableName = $table->getName();
         $tableDesc = $table->getDescription();
-
-        $baseClassname = $this->getObjectBuilder()->getClassname();
 
         $script .= "
 /**
