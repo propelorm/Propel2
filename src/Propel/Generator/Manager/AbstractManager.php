@@ -10,15 +10,14 @@
 
 namespace Propel\Generator\Manager;
 
+use DomDocument;
+use Exception;
 use Propel\Generator\Builder\Util\XmlToAppData;
 use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Exception\BuildException;
 use Propel\Generator\Exception\EngineException;
 use Propel\Generator\Model\AppData;
 use Propel\Generator\Model\Database;
-
-use \DomDocument;
-use \Exception;
 
 /**
  * An abstract base Propel manager to perform work related to the XML schema file.
@@ -247,12 +246,7 @@ abstract class AbstractManager
                 $this->log('  Validating XML using schema ' . $this->xsd->getPath());
 
                 if (!$dom->schemaValidate($this->xsd->getAbsolutePath())) {
-                    throw new EngineException(<<<EOT
-XML schema file ($xmlFile->getPath()) does not validate.
-See warnings above for reasons validation failed (make sure error_reporting
-is set to show E_WARNING if you don't see any)
-EOT
-                    , $this->getLocation());
+                    throw new EngineException(sprintf("XML schema file (%s) does not validate. See warnings above for reasons validation failed (make sure error_reporting is set to show E_WARNING if you don't see any).", $dmFilename), $this->getLocation());
                 }
             }
 

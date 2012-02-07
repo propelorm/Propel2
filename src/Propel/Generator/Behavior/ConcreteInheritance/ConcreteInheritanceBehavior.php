@@ -241,7 +241,7 @@ public function getSyncParent(\$con = null)
             if (isset($fk->isParentChild) && $fk->isParentChild) {
                 continue;
             }
-            $refPhpName = $this->builder->getFKPhpNameAffix($fk, $plural = false);
+            $refPhpName = $this->builder->getFKPhpNameAffix($fk, false);
             $script .= "
     if (\$this->get" . $refPhpName . "() && \$this->get" . $refPhpName . "()->isNew()) {
         \$parent->set" . $refPhpName . "(\$this->get" . $refPhpName . "());
@@ -253,5 +253,4 @@ public function getSyncParent(\$con = null)
 }
 ";
     }
-
 }

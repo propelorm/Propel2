@@ -18,9 +18,13 @@ namespace Propel\Generator\Behavior\Versionable;
 class VersionableBehaviorObjectBuilderModifier
 {
     protected $behavior;
+
     protected $table;
+
     protected $builder;
+
     protected $objectClassname;
+
     protected $peerClassname;
 
     public function __construct($behavior)
@@ -458,7 +462,7 @@ public function getOneVersion(\$versionNumber, \$con = null)
         $versionARClassname = $this->builder->getNewStubObjectBuilder($versionTable)->getClassname();
         $versionForeignColumn = $versionTable->getColumn($this->behavior->getParameter('version_column'));
         $fks = $versionTable->getForeignKeysReferencingTable($this->table->getName());
-        $relCol = $this->builder->getRefFKPhpNameAffix($fks[0], $plural = true);
+        $relCol = $this->builder->getRefFKPhpNameAffix($fks[0], true);
         $script .= "
 /**
  * Gets all the versions of this object, in incremental order
@@ -480,10 +484,7 @@ public function getAllVersions(\$con = null)
     protected function addCompareVersions(&$script)
     {
         $versionTable = $this->behavior->getVersionTable();
-        $versionARClassname = $this->builder->getNewStubObjectBuilder($versionTable)->getClassname();
-        $versionForeignColumn = $versionTable->getColumn($this->behavior->getParameter('version_column'));
         $fks = $versionTable->getForeignKeysReferencingTable($this->table->getName());
-        $relCol = $this->builder->getRefFKPhpNameAffix($fks[0], $plural = true);
         $script .= "
 /**
  * Gets all the versions of this object, in incremental order.

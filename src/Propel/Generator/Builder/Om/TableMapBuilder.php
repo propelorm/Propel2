@@ -296,7 +296,7 @@ class ".$this->getClassname()." extends \Propel\Runtime\Map\TableMap
             }
         }
         foreach ($this->getTable()->getCrossFks() as $fkList) {
-            list($refFK, $crossFK) = $fkList;
+            list(, $crossFK) = $fkList;
             $relationName = $this->getFKPhpNameAffix($crossFK);
             $pluralName = "'" . $this->getFKPhpNameAffix($crossFK, true) . "'";
             $onDelete = $fkey->hasOnDelete() ? "'" . $fkey->getOnDelete() . "'" : 'null';

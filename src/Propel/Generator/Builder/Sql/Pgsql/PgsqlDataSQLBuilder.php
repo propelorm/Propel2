@@ -30,16 +30,6 @@ class PgsqlDataSQLBuilder extends DataSQLBuilder
     private $maxSeqVal;
 
     /**
-     * Construct a new PgsqlDataSQLBuilder object.
-     *
-     * @param      Table $table
-     */
-    public function __construct(Table $table)
-    {
-        parent::__construct($table);
-    }
-
-    /**
      * The main method in this class, returns the SQL for INSERTing data into a row.
      * @param      DataRow $row The row to process.
      * @return     string

@@ -160,7 +160,6 @@ class VersionableBehavior extends Behavior
 
     public function addForeignKeyVersionColumns()
     {
-        $table = $this->getTable();
         $versionTable = $this->versionTable;
         foreach ($this->getVersionableFks() as $fk) {
             $fkVersionColumnName = $fk->getLocalColumnName() . '_version';
@@ -172,6 +171,7 @@ class VersionableBehavior extends Behavior
                 ));
             }
         }
+
         foreach ($this->getVersionableReferrers() as $fk) {
             $fkTableName = $fk->getTable()->getName();
             $fkIdsColumnName = $fkTableName . '_ids';
@@ -181,6 +181,7 @@ class VersionableBehavior extends Behavior
                     'type'    => 'ARRAY'
                 ));
             }
+
             $fkVersionsColumnName = $fkTableName . '_versions';
             if (!$versionTable->containsColumn($fkVersionsColumnName)) {
                 $versionTable->addColumn(array(

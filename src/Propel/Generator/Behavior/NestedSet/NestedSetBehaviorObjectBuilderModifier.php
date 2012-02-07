@@ -564,7 +564,6 @@ public function getParent(ConnectionInterface \$con = null)
 
     protected function addHasPrevSibling(&$script)
     {
-        $peerClassname = $this->peerClassname;
         $queryClassname = $this->queryClassname;
         $script .= "
 /**
@@ -617,7 +616,6 @@ public function getPrevSibling(ConnectionInterface \$con = null)
 
     protected function addHasNextSibling(&$script)
     {
-        $peerClassname = $this->peerClassname;
         $queryClassname = $this->queryClassname;
         $script .= "
 /**
@@ -781,7 +779,6 @@ public function getChildren(\$criteria = null, ConnectionInterface \$con = null)
 
     protected function addCountChildren(&$script)
     {
-        $objectClassname = $this->objectClassname;
         $queryClassname = $this->queryClassname;
         $script .= "
 /**
@@ -920,7 +917,6 @@ public function getDescendants(\$query = null, ConnectionInterface \$con = null)
 
     protected function addCountDescendants(&$script)
     {
-        $objectClassname = $this->objectClassname;
         $queryClassname = $this->queryClassname;
         $script .= "
 /**
@@ -997,7 +993,6 @@ public function getAncestors(\$query = null, ConnectionInterface \$con = null)
     protected function addAddChild(&$script)
     {
         $objectClassname = $this->objectClassname;
-        $useScope = $this->behavior->useScope();
         $script .= "
 /**
  * Inserts the given \$child node as first child of current
@@ -1368,7 +1363,6 @@ public function moveToNextSiblingOf(\$sibling, ConnectionInterface \$con = null)
 
     protected function addMoveSubtreeTo(&$script)
     {
-        $objectClassname = $this->objectClassname;
         $peerClassname = $this->peerClassname;
         $useScope = $this->behavior->useScope();
         $script .= "

@@ -12,12 +12,8 @@ use Propel\Generator\Model\Column;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Platform\DefaultPlatform;
 use Propel\Generator\Util\QuickBuilder;
-
 use Propel\Runtime\Propel;
 
-/**
- *
- */
 class DefaultPlatformTest extends \PHPUnit_Framework_TestCase
 {
     protected $platform;
@@ -39,6 +35,59 @@ class DefaultPlatformTest extends \PHPUnit_Framework_TestCase
     protected function tearDown()
     {
         $this->platform = null;
+    }
+
+    /**
+     * @dataProvider provideValidBooleanValues
+     *
+     */
+    public function testGetBooleanString($value)
+    {
+        $p = $this->getPlatform();
+
+        $this->assertEquals('1', $p->getBooleanString($value));
+    }
+
+    public function provideValidBooleanValues()
+    {
+        return array(
+            array(true),
+            array('TRUE'),
+            array('true'),
+            array('1'),
+            array(1),
+            array('y'),
+            array('Y'),
+            array('yes'),
+            array('YES'),
+        );
+    }
+
+    /**
+     * @dataProvider provideInvalidBooleanValues
+     *
+     */
+    public function testGetNonBooleanString($value)
+    {
+        $p = $this->getPlatform();
+
+        $this->assertEquals('0', $p->getBooleanString($value));
+    }
+
+    public function provideInvalidBooleanValues()
+    {
+        return array(
+            array(false),
+            array('FALSE'),
+            array('false'),
+            array('0'),
+            array(0),
+            array('n'),
+            array('N'),
+            array('no'),
+            array('NO'),
+            array('foo'),
+        );
     }
 
     public function testQuote()
