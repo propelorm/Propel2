@@ -58,9 +58,10 @@ class DefaultPlatform implements PlatformInterface
      */
     public function __construct(PDO $con = null)
     {
-        if ($con) {
+        if (null !== $con) {
             $this->setConnection($con);
         }
+
         $this->initialize();
     }
 
@@ -100,7 +101,7 @@ class DefaultPlatform implements PlatformInterface
      */
     protected function getBuildProperty($name)
     {
-        if ($this->generatorConfig !== null) {
+        if (null !== $this->generatorConfig) {
             return $this->generatorConfig->getBuildProperty($name);
         }
 
@@ -193,7 +194,7 @@ class DefaultPlatform implements PlatformInterface
      */
     public function getNullString($notNull)
     {
-        return ($notNull ? "NOT NULL" : "");
+        return $notNull ? 'NOT NULL' : '';
     }
 
     /**
@@ -201,7 +202,7 @@ class DefaultPlatform implements PlatformInterface
      */
     public function getAutoIncrement()
     {
-        return "IDENTITY";
+        return 'IDENTITY';
     }
 
     /**
@@ -218,17 +219,17 @@ class DefaultPlatform implements PlatformInterface
     {
         static $longNamesMap = array();
         $result = null;
-        if ($table->getIdMethod() == IdMethod::NATIVE) {
+        if (IdMethod::NATIVE === $table->getIdMethod()) {
             $idMethodParams = $table->getIdMethodParameters();
             $maxIdentifierLength = $this->getMaxColumnNameLength();
             if (empty($idMethodParams)) {
-                if (strlen($table->getName() . "_SEQ") > $maxIdentifierLength) {
+                if (strlen($table->getName() . '_SEQ') > $maxIdentifierLength) {
                     if (!isset($longNamesMap[$table->getName()])) {
                         $longNamesMap[$table->getName()] = strval(count($longNamesMap) + 1);
                     }
-                    $result = substr($table->getName(), 0, $maxIdentifierLength - strlen("_SEQ_" . $longNamesMap[$table->getName()])) . "_SEQ_" . $longNamesMap[$table->getName()];
+                    $result = substr($table->getName(), 0, $maxIdentifierLength - strlen('_SEQ_' . $longNamesMap[$table->getName()])) . '_SEQ_' . $longNamesMap[$table->getName()];
                 } else {
-                    $result = substr($table->getName(), 0, $maxIdentifierLength -4) . "_SEQ";
+                    $result = substr($table->getName(), 0, $maxIdentifierLength -4) . '_SEQ';
                 }
             } else {
                 $result = substr($idMethodParams[0]->getValue(), 0, $maxIdentifierLength);
@@ -1068,7 +1069,7 @@ ALTER TABLE %s ADD
 
     public function setIdentifierQuoting($enabled = true)
     {
-        $this->isIdentifierQuotingEnabled = $enabled;
+        $this->isIdentifierQuotingEnabled = (Boolean) $enabled;
     }
 
     public function getIdentifierQuoting()
@@ -1138,9 +1139,20 @@ ALTER TABLE %s ADD
      */
     public function getBooleanString($b)
     {
-        $b = ($b === true || strtolower($b) === 'true' || $b === 1 || $b === '1' || strtolower($b) === 'y' || strtolower($b) === 'yes');
+        if (is_bool($b) && true === $b) {
+            return '1';
+        }
 
-        return ($b ? '1' : '0');
+        if (is_int($b) && 1 === $b) {
+            return '1';
+        }
+
+        if (is_string($b)
+            && in_array(strtolower($b), array('1', 'true', 'y', 'yes'))) {
+            return '1';
+        }
+
+        return '0';
     }
 
     /**

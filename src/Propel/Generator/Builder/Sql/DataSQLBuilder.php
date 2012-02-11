@@ -80,32 +80,25 @@ abstract class DataSQLBuilder extends DataModelBuilder
      */
     public function buildRowSql(DataRow $row)
     {
-        $sql = "";
-        $platform = $this->getPlatform();
-        $table = $this->getTable();
-
-        $sql .= "INSERT INTO ".$this->quoteIdentifier($this->getTable()->getName())." (";
-
         // add column names to SQL
         $colNames = array();
         foreach ($row->getColumnValues() as $colValue) {
             $colNames[] = $this->quoteIdentifier($colValue->getColumn()->getName());
         }
 
-        $sql .= implode(',', $colNames);
-
-        $sql .= ") VALUES (";
-
         $colVals = array();
         foreach ($row->getColumnValues() as $colValue) {
             $colVals[] = $this->getColumnValueSql($colValue);
         }
 
-        $sql .= implode(',', $colVals);
-        $sql .= ");
-";
+        $sql = sprintf(
+            'INSERT INTO %s (%s) VALUES (%s);',
+            $this->quoteIdentifier($this->getTable()->getName()),
+            implode(',', $colNames),
+            implode(',', $colVals)
+        );
 
-        return $sql;
+        return $sql."\n";
     }
 
     /**

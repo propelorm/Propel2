@@ -1101,7 +1101,6 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
      **/
     protected function addDefaultAccessorBody(&$script, Column $col)
     {
-        $cfc = $col->getPhpName();
         $clo = strtolower($col->getName());
         if ($col->isLazyLoad()) {
             $script .= $this->getAccessorLazyLoadSnippet($col);
@@ -2868,15 +2867,14 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
     {";
         $i = 0;
         foreach ($this->getTable()->getPrimaryKey() as $pk) {
-            $pktype = $pk->getPhpType();
             $script .= "
         \$this->set".$pk->getPhpName()."(\$keys[$i]);";
             $i++;
-        } /* foreach ($table->getPrimaryKey() */
+        }
         $script .= "
     }
 ";
-    } // addSetPrimaryKey_MultiPK
+    }
 
     /**
      * Adds the setPrimaryKey() method for objects that have no primary key.
@@ -3177,9 +3175,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
     {
         $table = $this->getTable();
 
-        #$className = $this->getForeignTable($fk)->getPhpName();
         $methodAffix = $this->getFKPhpNameAffix($fk);
-        #$varName = $this->getFKVarName($fk);
 
         $script .= "
     /**
@@ -3191,7 +3187,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
             $script .= "
      * Note: It is important that the xml schema used to create this class
      * maintains consistency in the order of related columns between
-     * ".$table->getName()." and ". $tblFK->getName().".
+     * ".$table->getName()." and ". $fk->getName().".
      * If for some reason this is impossible, this method should be
      * overridden in <code>".$table->getPhpName()."</code>.";
         }

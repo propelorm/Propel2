@@ -199,7 +199,6 @@ class "  .$this->getClassname() . " extends " . $baseClassname . " {
     protected function addPreSelect(&$script)
     {
         $child = $this->getChild();
-        $col = $child->getColumn();
 
         $script .= "
     /**
@@ -215,7 +214,6 @@ class "  .$this->getClassname() . " extends " . $baseClassname . " {
     protected function addPreUpdate(&$script)
     {
         $child = $this->getChild();
-        $col = $child->getColumn();
 
         $script .= "
     /**
@@ -231,7 +229,6 @@ class "  .$this->getClassname() . " extends " . $baseClassname . " {
     protected function addPreDelete(&$script)
     {
         $child = $this->getChild();
-        $col = $child->getColumn();
 
         $script .= "
     /**
@@ -284,5 +281,4 @@ class "  .$this->getClassname() . " extends " . $baseClassname . " {
 } // " . $this->getClassname() . "
 ";
     }
-
-} // QueryInheritanceBuilder
+}

@@ -51,15 +51,16 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         $this->addClassBody($script);
         $this->addClassClose($script);
 
-        if ($useStatements = $this->getUseStatements($ignoredNamespace = $this->getNamespace())) {
+        $ignoredNamespace = $this->getNamespace();
+        if ($useStatements = $this->getUseStatements($ignoredNamespace)) {
             $script = $useStatements . $script;
         }
+
         if ($namespaceStatement = $this->getNamespaceStatement()) {
             $script = $namespaceStatement . $script;
         }
-        //if ($this->getTable()->getName() == 'book_club_list') die($ignoredNamespace);
 
-        return "<" . "?php
+        return '<' . "?php
 
 " . $script;
     }
@@ -404,8 +405,9 @@ abstract class AbstractOMBuilder extends DataModelBuilder
             $localTable  = $fk->getTable();
             $localColumn = $localTable->getColumn($localColumnName);
             if (!$localColumn) {
-                throw new Exception("Could not fetch column: $columnName in table " . $localTable->getName());
+                throw new Exception(sprintf('Could not fetch column: %s in table %s.', $localColumnName, $localTable->getName()));
             }
+
             if (count($localTable->getForeignKeysReferencingTable($fk->getForeignTableName())) > 1
              || count($fk->getForeignTable()->getForeignKeysReferencingTable($fk->getTableName())) > 0
              || $fk->getForeignTableName() == $fk->getTableName()) {
@@ -433,20 +435,17 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      */
     public function getRefFKPhpNameAffix(ForeignKey $fk, $plural = false)
     {
+        $pluralizer = $this->getPluralizer();
         if ($fk->getRefPhpName()) {
-            if ($plural) {
-                return $this->getPluralizer()->getPluralForm($fk->getRefPhpName());
-            } else {
-                return $fk->getRefPhpName();
-            }
-        } else {
-            $className = $fk->getTable()->getPhpName();
-            if ($plural) {
-                $className = $this->getPluralizer()->getPluralForm($className);
-            }
-
-            return $className . $this->getRefRelatedBySuffix($fk);
+            return $plural ? $pluralizer->getPluralForm($fk->getRefPhpName()) : $fk->getRefPhpName();
         }
+
+        $className = $fk->getTable()->getPhpName();
+        if ($plural) {
+            $className = $pluralizer->getPluralForm($className);
+        }
+
+        return $className . $this->getRefRelatedBySuffix($fk);
     }
 
     protected static function getRefRelatedBySuffix(ForeignKey $fk)
@@ -456,7 +455,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
             $localTable = $fk->getTable();
             $localColumn = $localTable->getColumn($localColumnName);
             if (!$localColumn) {
-                throw new Exception("Could not fetch column: $columnName in table " . $localTable->getName());
+                throw new Exception(sprintf('Could not fetch column: %s in table %s.', $localColumnName, $localTable->getName()));
             }
             $foreignKeysToForeignTable = $localTable->getForeignKeysReferencingTable($fk->getForeignTableName());
             if ($fk->getForeignTableName() == $fk->getTableName()) {
