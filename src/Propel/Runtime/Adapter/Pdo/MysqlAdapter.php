@@ -196,7 +196,7 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
      */
     protected function prepareParams($params)
     {
-        if (isset($params['settings']['charset']['value'])) {
+        if (isset($params['settings']['charset'])) {
             if (version_compare(PHP_VERSION, '5.3.6', '<')) {
                 throw new PropelException(<<<EXCEPTION
 Connection option "charset" cannot be used for MySQL connections in PHP versions older than 5.3.6.
@@ -206,7 +206,7 @@ EXCEPTION
                 );
             } else {
                 if (false === strpos($params['dsn'], ';charset=')) {
-                    $params['dsn'] .= ';charset=' . $params['settings']['charset']['value'];
+                    $params['dsn'] .= ';charset=' . $params['settings']['charset'];
                     unset($params['settings']['charset']);
                 }
             }
