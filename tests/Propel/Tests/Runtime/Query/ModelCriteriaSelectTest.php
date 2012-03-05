@@ -10,6 +10,7 @@
 
 namespace Propel\Tests\Runtime\Query;
 
+use Propel\Tests\Bookstore\AuthorPeer;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
 
@@ -123,22 +124,25 @@ class ModelCriteriaSelectTest extends BookstoreTestBase
         $this->assertEquals(count($author), 1, 'findOne() called after select(string) allows for where() statements');
         $expectedSQL = "SELECT author.FIRST_NAME AS \"FirstName\" FROM `author` WHERE author.FIRST_NAME = 'Neal' LIMIT 1";
         $this->assertEquals($expectedSQL, $this->con->getLastExecutedQuery(), 'findOne() called after select(string) allows for where() statements');
-        
+
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Author');
         $c->select(AuthorPeer::FIRST_NAME);
         $author = $c->find($this->con);
         $expectedSQL = "SELECT author.FIRST_NAME AS \"author.FIRST_NAME\" FROM `author`";
         $this->assertEquals($expectedSQL, $this->con->getLastExecutedQuery(), 'select(string) accepts model Peer Constants');
     }
-    
+
     /**
-    * @expectedException PropelException
-    */
+     * As $failSilently is `true` by default, it doesn't throw any exception, just returns null.
+     * So, we check the query fails here.
+     *
+     * @expectedException \PDOException
+     */
     public function testSelectStringFindCalledWithNonExistingColumn()
     {
         BookstoreDataPopulator::depopulate($this->con);
         BookstoreDataPopulator::populate($this->con);
-        	
+
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Author');
         $c->select('author.NOT_EXISTING_COLUMN');
         $author = $c->find($this->con);

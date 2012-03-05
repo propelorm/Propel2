@@ -389,14 +389,14 @@ class ModelCriteria extends Criteria
         list(, $realColumnName) = $this->getColumnFromName($columnName, false);
         $order = strtoupper($order);
         switch ($order) {
-            case Criteria::ASC:
-                $this->addAscendingOrderByColumn($realColumnName);
-                break;
-            case Criteria::DESC:
-                $this->addDescendingOrderByColumn($realColumnName);
-                break;
-            default:
-                throw new UnexpectedValueException('ModelCriteria::orderBy() only accepts Criteria::ASC or Criteria::DESC as argument');
+        case Criteria::ASC:
+            $this->addAscendingOrderByColumn($realColumnName);
+            break;
+        case Criteria::DESC:
+            $this->addDescendingOrderByColumn($realColumnName);
+            break;
+        default:
+            throw new UnexpectedValueException('ModelCriteria::orderBy() only accepts Criteria::ASC or Criteria::DESC as argument');
         }
 
         return $this;
@@ -1479,7 +1479,7 @@ class ModelCriteria extends Criteria
             || $this->getHaving()
             || in_array(Criteria::DISTINCT, $this->getSelectModifiers())
             || count($this->selectQueries) > 0
-        ;
+            ;
 
         $params = array();
         if ($needsComplexCount) {
@@ -1893,22 +1893,22 @@ class ModelCriteria extends Criteria
             $char = $clause[$pos];
             // check flags for strings or escaper
             switch ($char) {
-                case '\\':
-                    $isAfterBackslash = true;
-                    break;
-                case "'":
-                case '"':
-                    if ($isInString && $stringQuotes == $char) {
-                        if (!$isAfterBackslash) {
-                            $isInString = false;
-                        }
-                    } elseif (!$isInString) {
-                        $parsedString .= preg_replace_callback("/[\w\\\]+\.\w+/", array($this, 'doReplaceNameInExpression'), $stringToTransform);
-                        $stringToTransform = '';
-                        $stringQuotes = $char;
-                        $isInString = true;
+            case '\\':
+                $isAfterBackslash = true;
+                break;
+            case "'":
+            case '"':
+                if ($isInString && $stringQuotes == $char) {
+                    if (!$isAfterBackslash) {
+                        $isInString = false;
                     }
-                    break;
+                } elseif (!$isInString) {
+                    $parsedString .= preg_replace_callback("/[\w\\\]+\.\w+/", array($this, 'doReplaceNameInExpression'), $stringToTransform);
+                    $stringToTransform = '';
+                    $stringQuotes = $char;
+                    $isInString = true;
+                }
+                break;
             }
 
             if ('\\' !== $char) {
@@ -1975,61 +1975,61 @@ class ModelCriteria extends Criteria
      */
     protected function getColumnFromName($phpName, $failSilently = true)
     {
-    	if (false === strpos($phpName, '.')) {
-    		$prefix = $this->getModelAliasOrName();
-    	} else {
-    		// $prefix could be either class name or table name
-    		list($prefix, $phpName) = explode('.', $phpName);
-    	}
+        if (false === strpos($phpName, '.')) {
+            $prefix = $this->getModelAliasOrName();
+        } else {
+            // $prefix could be either class name or table name
+            list($prefix, $phpName) = explode('.', $phpName);
+        }
 
-    	$shortClass = self::getShortName($prefix);
+        $shortClass = self::getShortName($prefix);
 
-    	if ($prefix === $this->getModelAliasOrName()) {
-    		// column of the Criteria's model
-    		$tableMap = $this->getTableMap();
-    	} elseif ($prefix === $this->getModelShortName()) {
-    		// column of the Criteria's model
-    		$tableMap = $this->getTableMap();
-    	} elseif ($prefix == $this->getTableMap()->getName()) {
-    		// column name from Criteria's peer
-    		$tableMap = $this->getTableMap();
-    	} elseif (isset($this->joins[$prefix])) {
-    		// column of a relations's model
-    		$tableMap = $this->joins[$prefix]->getTableMap();
-    	} elseif (isset($this->joins[$shortClass])) {
-    		// column of a relations's model
-    		$tableMap = $this->joins[$shortClass]->getTableMap();
-    	} elseif ($this->hasSelectQuery($prefix)) {
-    		return $this->getColumnFromSubQuery($prefix, $phpName, $failSilently);
-    	} elseif ($failSilently) {
-    		return array(null, null);
-    	} else {
-    		throw new UnknownModelException(sprintf('Unknown model, alias or table "%s"', $prefix));
-    	}
+        if ($prefix === $this->getModelAliasOrName()) {
+            // column of the Criteria's model
+            $tableMap = $this->getTableMap();
+        } elseif ($prefix === $this->getModelShortName()) {
+            // column of the Criteria's model
+            $tableMap = $this->getTableMap();
+        } elseif ($prefix == $this->getTableMap()->getName()) {
+            // column name from Criteria's peer
+            $tableMap = $this->getTableMap();
+        } elseif (isset($this->joins[$prefix])) {
+            // column of a relations's model
+            $tableMap = $this->joins[$prefix]->getTableMap();
+        } elseif (isset($this->joins[$shortClass])) {
+            // column of a relations's model
+            $tableMap = $this->joins[$shortClass]->getTableMap();
+        } elseif ($this->hasSelectQuery($prefix)) {
+            return $this->getColumnFromSubQuery($prefix, $phpName, $failSilently);
+        } elseif ($failSilently) {
+            return array(null, null);
+        } else {
+            throw new UnknownModelException(sprintf('Unknown model, alias or table "%s"', $prefix));
+        }
 
-    	if ($tableMap->hasColumnByPhpName($phpName)) {
-    		$column = $tableMap->getColumnByPhpName($phpName);
-    		if (isset($this->aliases[$prefix])) {
-    			$this->currentAlias = $prefix;
-    			$realColumnName = $prefix . '.' . $column->getName();
-    		} else {
-    			$realColumnName = $column->getFullyQualifiedName();
-    		}
+        if ($tableMap->hasColumnByPhpName($phpName)) {
+            $column = $tableMap->getColumnByPhpName($phpName);
+            if (isset($this->aliases[$prefix])) {
+                $this->currentAlias = $prefix;
+                $realColumnName = $prefix . '.' . $column->getName();
+            } else {
+                $realColumnName = $column->getFullyQualifiedName();
+            }
 
-    		return array($column, $realColumnName);
-    	} elseif ($tableMap->hasColumn($phpName,false)) {
-    		$column = $tableMap->getColumn($phpName,false);
-    		$realColumnName = $column->getFullyQualifiedName();
+            return array($column, $realColumnName);
+        } elseif ($tableMap->hasColumn($phpName,false)) {
+            $column = $tableMap->getColumn($phpName,false);
+            $realColumnName = $column->getFullyQualifiedName();
 
-    		return array($column, $realColumnName);
-    	} elseif (isset($this->asColumns[$phpName])) {
-    		// aliased column
-    		return array(null, $phpName);
-    	} elseif ($failSilently) {
-    		return array(null, null);
-    	} else {
-    		throw new UnknownColumnException(sprintf('Unknown column "%s" on model, alias or table "%s"', $phpName, $prefix));
-    	}
+            return array($column, $realColumnName);
+        } elseif (isset($this->asColumns[$phpName])) {
+            // aliased column
+            return array(null, $phpName);
+        } elseif ($failSilently) {
+            return array(null, null);
+        } else {
+            throw new UnknownColumnException(sprintf('Unknown column "%s" on model, alias or table "%s"', $phpName, $prefix));
+        }
     }
 
     /**
@@ -2080,7 +2080,7 @@ class ModelCriteria extends Criteria
             ->getTableMap()
             ->getColumnByPhpName($columnName)
             ->getFullyQualifiedName()
-        ;
+            ;
     }
 
     /**
@@ -2156,8 +2156,8 @@ class ModelCriteria extends Criteria
                 if (($this->isIgnoreCase()
                     || $attachedCriterion->isIgnoreCase())
                     && $dbMap->getTable($table)->getColumn($attachedCriterion->getColumn())->isText()) {
-                    $attachedCriterion->setIgnoreCase(true);
-                }
+                        $attachedCriterion->setIgnoreCase(true);
+                    }
             }
 
             $sb = '';
