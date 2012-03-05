@@ -49,6 +49,18 @@ Then, install dependencies:
 
     php composer.phar install
 
+Create the mysql databases to insert fixtures
+
+    mysqladmin -uroot create test
+    mysqladmin -uroot create reverse_bookstore
+    mysqladmin -uroot create bookstore_schemas
+    mysqladmin -uroot create contest
+    mysqladmin -uroot create second_hand_books
+
+If phing is not in your path add:
+
+    export PHING_COMMAND=/YourPath/Propel2/vendor/phing/bin/phing
+
 Once done, build fixtures:
 
     php bin/propel test:prepare
