@@ -170,12 +170,16 @@ propel.packageObjectModel = false
 #   You can cherry-pick allowed validators by using a comma-separated value, e.g
 #      maxvalue,type,required
 #
+# normalizeXmlOrder
+#   If true, the reverse task will sort all entities in alphabetical order
+#   by name. This ensures the same XML output regardless of the order of
+#   changes that were applied to the database over time.
 # -------------------------------------------------------------------
 
 # propel.samePhpName = false
 # propel.addVendorInfo=true
 # propel.addValidators=none
-
+# propel.normalizeXmlOrder=false
 
 # -------------------------------------------------------------------
 #

@@ -94,6 +94,10 @@
 	<phing phingfile="build-propel.xml" target="reverse"/>
 </target>
 
+<target name="normalize" depends="configure">
+	<phing phingfile="build-propel.xml" target="normalize"/>
+</target>
+
 <target name="datadtd" depends="configure">
 	<phing phingfile="build-propel.xml" target="datadtd"/>
 </target>
