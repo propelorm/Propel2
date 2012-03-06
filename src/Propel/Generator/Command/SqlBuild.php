@@ -68,7 +68,7 @@ class SqlBuild extends AbstractCommand
         $manager = new SqlManager();
         $manager->setValidate($input->getOption('validate'));
         $manager->setGeneratorConfig($generatorConfig);
-        $manager->setSchemas($this->getSchemas($input));
+        $manager->setSchemas($this->getSchemas($input->getOption('input-dir')));
         $manager->setLoggerClosure(function($message) use ($input, $output) {
             if ($input->getOption('verbose')) {
                 $output->writeln($message);

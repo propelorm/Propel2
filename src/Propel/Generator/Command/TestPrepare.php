@@ -7,12 +7,11 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\Output;
-use Symfony\Component\Console\Command\Command;
 
 /**
  * @author William Durand <william.durand1@gmail.com>
  */
-class TestPrepare extends Command
+class TestPrepare extends AbstractCommand
 {
     /**
      * @var string
@@ -43,7 +42,7 @@ class TestPrepare extends Command
      * @var array
      */
     protected $fixturesDirs = array(
-        'bookstore',
+        //'bookstore',
         'bookstore-packaged',
         'namespaced',
         'reverse/mysql',
@@ -132,32 +131,34 @@ class TestPrepare extends Command
             }
         }
 
-        shell_exec(sprintf('"%s" convert-conf', $this->propelgen));
+        if (0 < count((array) $this->getSchemas('.'))) {
+            shell_exec(sprintf('"%s" convert-conf', $this->propelgen));
 
-        // use new commands
-        $in = new ArrayInput(array(
-            'command'	    => 'sql:build',
-            '--input-dir'   => '.',
-            '--output-dir'  => 'build/sql/',
-            '--platform'    => ucfirst($input->getOption('vendor')) . 'Platform',
-            '--verbose'		=> $input->getOption('verbose'),
-        ));
+            // use new commands
+            $in = new ArrayInput(array(
+                'command'	    => 'sql:build',
+                '--input-dir'   => '.',
+                '--output-dir'  => 'build/sql/',
+                '--platform'    => ucfirst($input->getOption('vendor')) . 'Platform',
+                '--verbose'		=> $input->getOption('verbose'),
+            ));
 
-        $command = $this->getApplication()->find('sql:build');
-        $command->run($in, $output);
+            $command = $this->getApplication()->find('sql:build');
+            $command->run($in, $output);
 
-        $in = new ArrayInput(array(
-            'command'       => 'model:build',
-            '--input-dir'   => '.',
-            '--output-dir'  => 'build/classes/',
-            '--platform'    => ucfirst($input->getOption('vendor')) . 'Platform',
-            '--verbose'		=> $input->getOption('verbose'),
-        ));
+            $in = new ArrayInput(array(
+                'command'       => 'model:build',
+                '--input-dir'   => '.',
+                '--output-dir'  => 'build/classes/',
+                '--platform'    => ucfirst($input->getOption('vendor')) . 'Platform',
+                '--verbose'		=> $input->getOption('verbose'),
+            ));
 
-        $command = $this->getApplication()->find('model:build');
-        $command->run($in, $output);
+            $command = $this->getApplication()->find('model:build');
+            $command->run($in, $output);
 
-        shell_exec(sprintf('"%s" insert-sql', $this->propelgen));
+            shell_exec(sprintf('"%s" insert-sql', $this->propelgen));
+        }
 
         $output->writeln('OK');
 

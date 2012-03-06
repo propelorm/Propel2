@@ -63,14 +63,14 @@ abstract class AbstractCommand extends Command
         return $properties;
     }
 
-    protected function getSchemas(InputInterface $input)
+    protected function getSchemas($directory)
     {
         $finder = new Finder();
-        return $finder
+        return iterator_to_array($finder
             ->name('*schema.xml')
-            ->in($input->getOption('input-dir'))
+            ->in($directory)
             ->depth(0)
             ->files()
-            ;
+        );
     }
 }
