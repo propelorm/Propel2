@@ -1,13 +1,13 @@
-DROP TABLE IF EXISTS book;
+DROP TABLE IF EXISTS reverse_book;
 DROP VIEW IF EXISTS view_book_titles;
 
-CREATE TABLE book
+CREATE TABLE reverse_book
 (
     id INTEGER NOT NULL AUTO_INCREMENT COMMENT 'Book Id',
     title VARCHAR(255) NOT NULL COMMENT 'Book Title',
     isbn VARCHAR(24) NOT NULL COMMENT 'ISBN Number',
     price FLOAT COMMENT 'Price of the book.',
     PRIMARY KEY (id)
-) ENGINE=InnoDB COMMENT='Book Table';
+) ENGINE=InnoDB COMMENT='Reverse Book Table';
 
-CREATE VIEW view_book_titles AS SELECT title FROM book;
+CREATE VIEW view_book_titles AS SELECT title FROM reverse_book;
