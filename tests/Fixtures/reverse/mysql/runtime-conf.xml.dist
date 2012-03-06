@@ -1,23 +1,15 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <config>
-    <!--
-    #
-    #  P R O P E L  P R O P E R T I E S
-    #
-    # Note that you can configure multiple datasources; for example if your
-    # project uses several databases.
-    -->
     <propel>
         <datasources default="reverse-bookstore">
-
             <datasource id="reverse-bookstore">
-                <adapter>mysql</adapter>
+                <adapter>##DATABASE_VENDOR##</adapter>
                 <connection>
                     <classname>\Propel\Runtime\Connection\DebugPDO</classname>
-                    <dsn>mysql:host=##DATABASE_SERVER##;dbname=reverse_bookstore</dsn>
+                    <dsn>##DATABASE_URL##</dsn>
                     <user>##DATABASE_USER##</user>
                     <password>##DATABASE_PASSWORD##</password>
-                <options>
+                    <options>
                         <option id="ATTR_PERSISTENT">false</option>
                     </options>
                     <attributes>
@@ -28,7 +20,6 @@
                     </settings>
                 </connection>
             </datasource>
-
         </datasources>
     </propel>
 </config>

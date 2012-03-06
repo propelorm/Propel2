@@ -10,9 +10,17 @@
 # Because this file is included before the top-level build.properties file,
 # you cannot refer to any properties set therein.
 
-propel.project              = bookstore-packaged
-propel.database             = sqlite
-propel.database.url         = sqlite:/var/tmp/test.db
+propel.project                      = bookstore-packaged
+propel.database                     = ##DATABASE_VENDOR##
+propel.database.url                 = ##DATABASE_URL##
+propel.mysql.tableType              = InnoDB
+propel.disableIdentifierQuoting     = true
+propel.schema.autoPrefix            = false
+
+# For MySQL or Oracle, you also need to specify username & password
+propel.database.user                = ##DATABASE_USER##
+propel.database.password            = ##DATABASE_PASSWORD##
+
 # propel.database.createUrl = (doesn't aply for SQLite, since db is auto-created)
 
 propel.targetPackage         = bookstore-packaged

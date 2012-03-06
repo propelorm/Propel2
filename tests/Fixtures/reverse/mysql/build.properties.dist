@@ -10,16 +10,16 @@
 # Because this file is included before the top-level build.properties file,
 # you cannot refer to any properties set therein.
 
-propel.project = reverse_bookstore
+propel.project                  = reverse_bookstore
 
-propel.database = mysql
-propel.database.url = mysql:host=##DATABASE_SERVER##;dbname=reverse_bookstore
+propel.database                 = ##DATABASE_VENDOR##
+propel.database.url             = ##DATABASE_URL##
 
 # For MySQL or Oracle, you also need to specify username & password
-propel.database.user = ##DATABASE_USER##
-propel.database.password = ##DATABASE_PASSWORD##
+propel.database.user            = ##DATABASE_USER##
+propel.database.password        = ##DATABASE_PASSWORD##
 
-propel.mysql.tableType = InnoDB
+propel.mysql.tableType          = InnoDB
 
 propel.disableIdentifierQuoting = true
-propel.schema.autoPrefix = true
+propel.schema.autoPrefix        = true
