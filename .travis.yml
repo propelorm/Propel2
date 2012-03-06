@@ -1,0 +1,12 @@
+language: php
+
+env:
+  - DB=mysql
+
+before_script:
+  - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'create database test;'; fi"
+  - wget http://getcomposer.org/composer.phar
+  - php composer.phar install
+  - php bin/propel test:prepare --vendor="$DB" --dsn="$DB:dbname=test" --user="root"
+
+script: phpunit
