@@ -15,7 +15,7 @@
       name="review_date"
       required="true"
       type="DATE"
-      default="01/01/2001"
+      default="2001-01-01"
       description="Date of Review"/>
     <column
       name="recommended"
