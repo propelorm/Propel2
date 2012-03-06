@@ -51,7 +51,7 @@ class SqlBuild extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $generatorConfig = new GeneratorConfig(array(
+        $generatorConfig = new GeneratorConfig(array_merge(array(
             'propel.platform.class'                 => $input->getOption('platform'),
             'propel.database.schema'                => $input->getOption('schema-name'),
             'propel.database.encoding'              => $input->getOption('encoding'),
@@ -60,7 +60,7 @@ class SqlBuild extends AbstractCommand
             // MySQL specific
             'propel.mysql.tableType'                => $input->getOption('mysql-engine'),
             'propel.mysql.tableEngineKeyword'       => 'ENGINE',
-        ));
+        ), $this->getBuildProperties($input->getOption('input-dir') . '/build.properties')));
 
         $filesystem = new Filesystem();
         $filesystem->mkdir($input->getOption('output-dir'));

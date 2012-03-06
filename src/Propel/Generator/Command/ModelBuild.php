@@ -93,7 +93,7 @@ class ModelBuild extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $generatorConfig = new GeneratorConfig(array(
+        $generatorConfig = new GeneratorConfig(array_merge(array(
             'propel.platform.class'                     => $input->getOption('platform'),
             'propel.builder.peer.class'                 => $input->getOption('peer-class'),
             'propel.builder.peerstub.class'             => $input->getOption('peer-stub-class'),
@@ -126,7 +126,7 @@ class ModelBuild extends AbstractCommand
             // MySQL specific
             'propel.mysql.tableType'                    => $input->getOption('mysql-engine'),
             'propel.mysql.tableEngineKeyword'           => 'ENGINE',
-        ));
+        ), $this->getBuildProperties($input->getOption('input-dir') . '/build.properties')));
 
         $filesystem = new Filesystem();
         $filesystem->mkdir($input->getOption('output-dir'));
