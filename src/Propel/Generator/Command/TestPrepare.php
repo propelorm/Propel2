@@ -134,18 +134,6 @@ class TestPrepare extends AbstractCommand
         if (0 < count((array) $this->getSchemas('.'))) {
             shell_exec(sprintf('"%s" convert-conf', $this->propelgen));
 
-            // use new commands
-            $in = new ArrayInput(array(
-                'command'	    => 'sql:build',
-                '--input-dir'   => '.',
-                '--output-dir'  => 'build/sql/',
-                '--platform'    => ucfirst($input->getOption('vendor')) . 'Platform',
-                '--verbose'		=> $input->getOption('verbose'),
-            ));
-
-            $command = $this->getApplication()->find('sql:build');
-            $command->run($in, $output);
-
             $in = new ArrayInput(array(
                 'command'       => 'model:build',
                 '--input-dir'   => '.',
@@ -158,6 +146,20 @@ class TestPrepare extends AbstractCommand
             $command->run($in, $output);
 
             shell_exec(sprintf('"%s" insert-sql', $this->propelgen));
+        }
+
+        if (0 < count((array) $this->getSchemas('.')) || false !== strpos('reverse', $fixturesDir)) {
+            // use new commands
+            $in = new ArrayInput(array(
+                'command'	    => 'sql:build',
+                '--input-dir'   => '.',
+                '--output-dir'  => 'build/sql/',
+                '--platform'    => ucfirst($input->getOption('vendor')) . 'Platform',
+                '--verbose'		=> $input->getOption('verbose'),
+            ));
+
+            $command = $this->getApplication()->find('sql:build');
+            $command->run($in, $output);
         }
 
         $output->writeln('OK');
