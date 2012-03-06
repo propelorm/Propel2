@@ -121,7 +121,7 @@ class ModelBuild extends AbstractCommand
             'propel.namespace.map'                      => 'Map',
             'propel.useLeftJoinsInDoJoinMethods'        => true,
             'propel.emulateForeignKeyConstraints'       => false,
-            'propel.schema.autoPrefix = false'          => false,
+            'propel.schema.autoPrefix'                  => false,
             'propel.dateTimeClass'                      => '\DateTime',
             // MySQL specific
             'propel.mysql.tableType'                    => $input->getOption('mysql-engine'),
