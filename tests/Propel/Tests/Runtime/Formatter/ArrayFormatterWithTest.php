@@ -381,6 +381,10 @@ class ArrayFormatterWithTest extends BookstoreEmptyTestBase
 
     public function testFindWithLeftJoinWithManyToOneAndNullObject()
     {
+        if ('sqlite' !== $this->con->getAttribute(\PDO::ATTR_DRIVER_NAME)) {
+            $this->markTestSkipped('This test is designed for SQLite as it saves an empty object.');
+        }
+
         BookPeer::clearInstancePool();
         AuthorPeer::clearInstancePool();
         ReviewPeer::clearInstancePool();
