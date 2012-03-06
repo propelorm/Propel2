@@ -10,6 +10,9 @@
 
 namespace Propel\Generator\Model;
 
+use \DOMDocument;
+use \DOMNode;
+
 /**
  * Information about unique columns of a table.  This class assumes
  * that in the underlying RDBMS, unique constraints and unique indices
