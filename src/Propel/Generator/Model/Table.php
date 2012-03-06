@@ -12,6 +12,7 @@ namespace Propel\Generator\Model;
 
 use DOMNode;
 use DOMDocument;
+use Propel\Generator\Exception\BuildException;
 use Propel\Generator\Exception\EngineException;
 use Propel\Generator\Platform\MysqlPlatform;
 
@@ -547,7 +548,7 @@ class Table extends ScopedElement implements IdMethod
      * Names composing objects which haven't yet been named.	This
      * currently consists of foreign-key and index entities.
      */
-    public function doNaming() 
+    public function doNaming()
     {
         // Assure names are unique across all databases.
         try {
@@ -1900,7 +1901,7 @@ class Table extends ScopedElement implements IdMethod
      * @return    A CSV list.
      * @deprecated Use the Platform::getColumnListDDL() method.
      */
-    private function printList($list) 
+    private function printList($list)
     {
         $result = "";
         $comma = 0;
