@@ -42,7 +42,7 @@ class TestPrepare extends AbstractCommand
      * @var array
      */
     protected $fixturesDirs = array(
-        //'bookstore',
+        'bookstore',
         'bookstore-packaged',
         'namespaced',
         'reverse/mysql',
