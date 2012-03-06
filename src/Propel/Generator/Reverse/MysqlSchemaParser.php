@@ -17,7 +17,10 @@ use Task;
 use PDO;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\Database;
+use Propel\Generator\Model\ForeignKey;
+use Propel\Generator\Model\Index;
 use Propel\Generator\Model\Table;
+use Propel\Generator\Model\Unique;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Model\ColumnDefaultValue;
 
