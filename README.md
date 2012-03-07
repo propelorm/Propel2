@@ -64,11 +64,19 @@ Here is the set of commands to run in order to setup MySQL:
     mysql -uroot -e 'create schema contest'
     mysql -uroot -e 'create schema second_hand_books'
 
-Once done, build fixtures:
+Once done, build fixtures (default vendor is `mysql`):
 
     bin/propel test:prepare
 
+#### PostgreSQL ####
+
+Create mandatory databases, then run:
+
+    bin/propel test:prepare --vendor=postgres --dsn="dbname=test" --user="postgres"
+
 #### SQLite ####
+
+There is nothing to setup, just run:
 
     bin/propel test:prepare --vendor=sqlite --dsn="sqlite:/tmp/database.sqlite" --user="" --password=""
 
