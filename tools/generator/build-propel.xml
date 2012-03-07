@@ -56,26 +56,8 @@
     name="propel-sql-diff"
     classname="Propel.Generator.Task.PropelSQLDiffTaskCompat" />
   <taskdef
-    name="propel-migration-status"
-    classname="Propel.Generator.Task.PropelMigrationStatusTaskCompat" />
-  <taskdef
-    name="propel-migration-up"
-    classname="Propel.Generator.Task.PropelMigrationUpTaskCompat" />
-  <taskdef
-    name="propel-migration-down"
-    classname="Propel.Generator.Task.PropelMigrationDownTaskCompat" />
-  <taskdef
-    name="propel-migration"
-    classname="Propel.Generator.Task.PropelMigrationTaskCompat" />
-  <taskdef
     name="propel-sql-exec"
     classname="Propel.Generator.Task.PropelSQLExecCompat" />
-  <taskdef
-    name="propel-graphviz"
-    classname="Propel.Generator.Task.PropelGraphvizTaskCompat" />
-  <taskdef
-    name="propel-convert-conf"
-    classname="Propel.Generator.Task.PropelConvertConfTaskCompat" />
 
   <!-- ================================================================ -->
   <!-- M A I N  T A R G E T                                             -->
@@ -470,29 +452,4 @@
       <mapper type="regexp" from="^(.*)\.xml$" to="\1.schema.xml"/>
     </xslt>
   </target>
-
-  <target
-    name="graphviz"
-    description="==> generates Graphviz file for your project">
-
-    <echo message="+------------------------------------------+"/>
-    <echo message="|                                          |"/>
-    <echo message="| Generating Graphiz for YOUR Propel       |"/>
-    <echo message="| project!                                 |"/>
-    <echo message="|                                          |"/>
-    <echo message="+------------------------------------------+"/>
-
-    <propel-graphviz
-      outputDirectory="${propel.graph.dir}"
-      targetDatabase="${propel.database}"
-      sqldbmap="${propel.sql.dir}/sqldb.map"
-      packageObjectModel="${propel.packageObjectModel}">
-      <mapper type="glob" from="${propel.sql.mapper.from}" to="${propel.sql.mapper.to}"/>
-      <schemafileset dir="${propel.schema.dir}"
-        includes="${propel.schema.sql.includes}"
-        excludes="${propel.schema.sql.excludes}"
-      />
-    </propel-graphviz>
-  </target>
-
 </project>
