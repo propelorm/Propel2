@@ -79,7 +79,10 @@ abstract class AbstractCommand extends Command
         $extras = array();
         foreach (explode(';', $dsn) as $element) {
             $parts = preg_split('/=/', $element);
-            $extras[strtolower($parts[0])] = $parts[1];
+
+            if (2 === count($parts)) {
+                $extras[strtolower($parts[0])] = $parts[1];
+            }
         }
 
         return array($name, $dsn, $extras);

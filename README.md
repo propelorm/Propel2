@@ -51,6 +51,9 @@ Then, install dependencies:
 
     php composer.phar install
 
+
+#### MySQL ####
+
 The Propel test suite requires a database (`test` for instance, but feel free to choose the name you want), and
 three database schemas: `bookstore_schemas`, `contest`, and `second_hand_books`.
 
@@ -63,7 +66,12 @@ Here is the set of commands to run in order to setup MySQL:
 
 Once done, build fixtures:
 
-    php bin/propel test:prepare
+    bin/propel test:prepare
+
+#### SQLite ####
+
+    bin/propel test:prepare --vendor=sqlite --dsn="sqlite:/tmp/database.sqlite" --user="" --password=""
+
 
 Now you can run the test suite by running:
 

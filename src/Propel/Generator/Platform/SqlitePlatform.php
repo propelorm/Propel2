@@ -165,4 +165,10 @@ class SqlitePlatform extends DefaultPlatform
         return false;
     }
 
+    public function getDropTableDDL(Table $table)
+    {
+        return "
+DROP TABLE IF EXISTS " . $table->getName() . ";
+";
+    }
 }
