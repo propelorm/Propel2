@@ -38,7 +38,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
      * Map PostgreSQL native types to Propel types.
      * @var array
      */
-     /** Map MySQL native types to Propel (JDBC) types. */
+    /** Map MySQL native types to Propel (JDBC) types. */
     private static $pgsqlTypeMap = array(
         'bool'        => PropelTypes::BOOLEAN,
         'boolean'     => PropelTypes::BOOLEAN,
@@ -105,13 +105,13 @@ class PgsqlSchemaParser extends AbstractSchemaParser
         $stmt = null;
 
         $stmt = $this->dbh->query("SELECT c.oid,
-                                    c.relname, n.nspname
-                                    FROM pg_class c join pg_namespace n on (c.relnamespace=n.oid)
-                                    WHERE c.relkind = 'r'
-                                      AND n.nspname NOT IN ('information_schema','pg_catalog')
-                                      AND n.nspname NOT LIKE 'pg_temp%'
-                                      AND n.nspname NOT LIKE 'pg_toast%'
-                                    ORDER BY relname");
+            c.relname, n.nspname
+            FROM pg_class c join pg_namespace n on (c.relnamespace=n.oid)
+            WHERE c.relkind = 'r'
+            AND n.nspname NOT IN ('information_schema','pg_catalog')
+            AND n.nspname NOT LIKE 'pg_temp%'
+            AND n.nspname NOT LIKE 'pg_toast%'
+            ORDER BY relname");
 
         $tableWraps = array();
 
@@ -174,7 +174,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
     }
 
 
-     /**
+    /**
      * Adds Columns to the specified table.
      *
      * @param      Table $table The Table model class to add columns to.
@@ -186,27 +186,27 @@ class PgsqlSchemaParser extends AbstractSchemaParser
         // Get the columns, types, etc.
         // Based on code from pgAdmin3 (http://www.pgadmin.org/)
         $stmt = $this->dbh->prepare("SELECT
-                                        att.attname,
-                                        att.atttypmod,
-                                        att.atthasdef,
-                                        att.attnotnull,
-                                        def.adsrc,
-                                        CASE WHEN att.attndims > 0 THEN 1 ELSE 0 END AS isarray,
-                                        CASE
-                                            WHEN ty.typname = 'bpchar'
-                                                THEN 'char'
-                                            WHEN ty.typname = '_bpchar'
-                                                THEN '_char'
-                                            ELSE
-                                                ty.typname
-                                        END AS typname,
-                                        ty.typtype
-                                    FROM pg_attribute att
-                                        JOIN pg_type ty ON ty.oid=att.atttypid
-                                        LEFT OUTER JOIN pg_attrdef def ON adrelid=att.attrelid AND adnum=att.attnum
-                                    WHERE att.attrelid = ? AND att.attnum > 0
-                                        AND att.attisdropped IS FALSE
-                                    ORDER BY att.attnum");
+            att.attname,
+            att.atttypmod,
+            att.atthasdef,
+            att.attnotnull,
+            def.adsrc,
+            CASE WHEN att.attndims > 0 THEN 1 ELSE 0 END AS isarray,
+            CASE
+            WHEN ty.typname = 'bpchar'
+            THEN 'char'
+            WHEN ty.typname = '_bpchar'
+            THEN '_char'
+            ELSE
+            ty.typname
+            END AS typname,
+            ty.typtype
+            FROM pg_attribute att
+            JOIN pg_type ty ON ty.oid=att.atttypid
+            LEFT OUTER JOIN pg_attrdef def ON adrelid=att.attrelid AND adnum=att.attnum
+            WHERE att.attrelid = ? AND att.attnum > 0
+            AND att.attisdropped IS FALSE
+            ORDER BY att.attnum");
 
         $stmt->bindValue(1, $oid, PDO::PARAM_INT);
         $stmt->execute();
@@ -251,8 +251,8 @@ class PgsqlSchemaParser extends AbstractSchemaParser
             // if column has a default
             if (($boolHasDefault == 't') && (strlen(trim($default)) > 0)) {
                 if (!preg_match('/^nextval\(/', $default)) {
-                    $strDefault= preg_replace('/::[\W\D]*/', '', $default);
-                    $default = preg_replace('/(\'?)\'/', '${1}', $strDefault);
+                    $strDefault= preg_replace ('/::[\W\D]*/', '', $default);
+                    $default = str_replace ("'", '', $strDefault);
                 } else {
                     $autoincrement = true;
                     $default = null;
@@ -333,18 +333,18 @@ class PgsqlSchemaParser extends AbstractSchemaParser
         }
 
         $stmt = $this->dbh->prepare("SELECT
-                                        d.typname as domname,
-                                        b.typname as basetype,
-                                        d.typlen,
-                                        d.typtypmod,
-                                        d.typnotnull,
-                                        d.typdefault
-                                    FROM pg_type d
-                                        INNER JOIN pg_type b ON b.oid = CASE WHEN d.typndims > 0 then d.typelem ELSE d.typbasetype END
-                                    WHERE
-                                        d.typtype = 'd'
-                                        AND d.typname = ?
-                                    ORDER BY d.typname");
+            d.typname as domname,
+            b.typname as basetype,
+            d.typlen,
+            d.typtypmod,
+            d.typnotnull,
+            d.typdefault
+            FROM pg_type d
+            INNER JOIN pg_type b ON b.oid = CASE WHEN d.typndims > 0 then d.typelem ELSE d.typbasetype END
+            WHERE
+            d.typtype = 'd'
+            AND d.typname = ?
+            ORDER BY d.typname");
         $stmt->bindValue(1, $strDomain);
         $stmt->execute();
 
@@ -374,27 +374,27 @@ class PgsqlSchemaParser extends AbstractSchemaParser
     {
         $database = $table->getDatabase();
         $stmt = $this->dbh->prepare("SELECT
-                                          conname,
-                                          confupdtype,
-                                          confdeltype,
-                                          CASE nl.nspname WHEN 'public' THEN cl.relname ELSE nl.nspname||'.'||cl.relname END as fktab,
-                                          array_agg(DISTINCT a2.attname) AS fkcols,
-                                          CASE nr.nspname WHEN 'public' THEN cr.relname ELSE nr.nspname||'.'||cr.relname END as reftab,
-                                          array_agg(DISTINCT a1.attname) AS refcols
-                                    FROM pg_constraint ct
-                                         JOIN pg_class cl ON cl.oid=conrelid
-                                         JOIN pg_class cr ON cr.oid=confrelid
-                                         JOIN pg_namespace nl ON nl.oid = cl.relnamespace
-                                         JOIN pg_namespace nr ON nr.oid = cr.relnamespace
-                                         LEFT JOIN pg_catalog.pg_attribute a1 ON a1.attrelid = ct.confrelid
-                                         LEFT JOIN pg_catalog.pg_attribute a2 ON a2.attrelid = ct.conrelid
-                                    WHERE
-                                         contype='f'
-                                         AND conrelid = ?
-                                          AND a2.attnum = ANY (ct.conkey)
-                                          AND a1.attnum = ANY (ct.confkey)
-                                    GROUP BY conname, confupdtype, confdeltype, fktab, reftab
-                                    ORDER BY conname");
+            conname,
+            confupdtype,
+            confdeltype,
+            CASE nl.nspname WHEN 'public' THEN cl.relname ELSE nl.nspname||'.'||cl.relname END as fktab,
+            array_agg(DISTINCT a2.attname) AS fkcols,
+            CASE nr.nspname WHEN 'public' THEN cr.relname ELSE nr.nspname||'.'||cr.relname END as reftab,
+            array_agg(DISTINCT a1.attname) AS refcols
+            FROM pg_constraint ct
+            JOIN pg_class cl ON cl.oid=conrelid
+            JOIN pg_class cr ON cr.oid=confrelid
+            JOIN pg_namespace nl ON nl.oid = cl.relnamespace
+            JOIN pg_namespace nr ON nr.oid = cr.relnamespace
+            LEFT JOIN pg_catalog.pg_attribute a1 ON a1.attrelid = ct.confrelid
+            LEFT JOIN pg_catalog.pg_attribute a2 ON a2.attrelid = ct.conrelid
+            WHERE
+            contype='f'
+            AND conrelid = ?
+            AND a2.attnum = ANY (ct.conkey)
+            AND a1.attnum = ANY (ct.confkey)
+            GROUP BY conname, confupdtype, confdeltype, fktab, reftab
+            ORDER BY conname");
         $stmt->bindValue(1, $oid);
         $stmt->execute();
 
@@ -410,43 +410,43 @@ class PgsqlSchemaParser extends AbstractSchemaParser
 
             // On Update
             switch ($row['confupdtype']) {
-                case 'c':
-                    $onupdate = ForeignKey::CASCADE;
-                    break;
-                case 'd':
-                    $onupdate = ForeignKey::SETDEFAULT;
-                    break;
-                case 'n':
-                    $onupdate = ForeignKey::SETNULL;
-                    break;
-                case 'r':
-                    $onupdate = ForeignKey::RESTRICT;
-                    break;
-                default:
-                case 'a':
-                    //NOACTION is the postgresql default
-                    $onupdate = ForeignKey::NONE;
-                    break;
+            case 'c':
+                $onupdate = ForeignKey::CASCADE;
+                break;
+            case 'd':
+                $onupdate = ForeignKey::SETDEFAULT;
+                break;
+            case 'n':
+                $onupdate = ForeignKey::SETNULL;
+                break;
+            case 'r':
+                $onupdate = ForeignKey::RESTRICT;
+                break;
+            default:
+            case 'a':
+                //NOACTION is the postgresql default
+                $onupdate = ForeignKey::NONE;
+                break;
             }
             // On Delete
             switch ($row['confdeltype']) {
-                case 'c':
-                    $ondelete = ForeignKey::CASCADE;
-                    break;
-                case 'd':
-                    $ondelete = ForeignKey::SETDEFAULT;
-                    break;
-                case 'n':
-                    $ondelete = ForeignKey::SETNULL;
-                    break;
-                case 'r':
-                    $ondelete = ForeignKey::RESTRICT;
-                    break;
-                default:
-                case 'a':
-                    //NOACTION is the postgresql default
-                    $ondelete = ForeignKey::NONE;
-                    break;
+            case 'c':
+                $ondelete = ForeignKey::CASCADE;
+                break;
+            case 'd':
+                $ondelete = ForeignKey::SETDEFAULT;
+                break;
+            case 'n':
+                $ondelete = ForeignKey::SETNULL;
+                break;
+            case 'r':
+                $ondelete = ForeignKey::RESTRICT;
+                break;
+            default:
+            case 'a':
+                //NOACTION is the postgresql default
+                $ondelete = ForeignKey::NONE;
+                break;
             }
 
             $foreignTable = $database->getTable($foreign_table);
@@ -477,22 +477,22 @@ class PgsqlSchemaParser extends AbstractSchemaParser
     protected function addIndexes(Table $table, $oid, $version)
     {
         $stmt = $this->dbh->prepare("SELECT
-                                        DISTINCT ON(cls.relname)
-                                        cls.relname as idxname,
-                                        indkey,
-                                        indisunique
-                                    FROM pg_index idx
-                                         JOIN pg_class cls ON cls.oid=indexrelid
-                                    WHERE indrelid = ? AND NOT indisprimary
-                                    ORDER BY cls.relname");
+            DISTINCT ON(cls.relname)
+            cls.relname as idxname,
+            indkey,
+            indisunique
+            FROM pg_index idx
+            JOIN pg_class cls ON cls.oid=indexrelid
+            WHERE indrelid = ? AND NOT indisprimary
+            ORDER BY cls.relname");
 
         $stmt->bindValue(1, $oid);
         $stmt->execute();
 
         $stmt2 = $this->dbh->prepare("SELECT a.attname
-                                        FROM pg_catalog.pg_class c JOIN pg_catalog.pg_attribute a ON a.attrelid = c.oid
-                                        WHERE c.oid = ? AND a.attnum = ? AND NOT a.attisdropped
-                                        ORDER BY a.attnum");
+            FROM pg_catalog.pg_class c JOIN pg_catalog.pg_attribute a ON a.attrelid = c.oid
+            WHERE c.oid = ? AND a.attnum = ? AND NOT a.attisdropped
+            ORDER BY a.attnum");
 
         $indexes = array();
 
@@ -510,9 +510,9 @@ class PgsqlSchemaParser extends AbstractSchemaParser
 
             $arrColumns = explode(' ', $row['indkey']);
             foreach ($arrColumns as $intColNum) {
-                   $stmt2->bindValue(1, $oid);
-                   $stmt2->bindValue(2, $intColNum);
-                   $stmt2->execute();
+                $stmt2->bindValue(1, $oid);
+                $stmt2->bindValue(2, $intColNum);
+                $stmt2->execute();
 
                 $row2 = $stmt2->fetch(PDO::FETCH_ASSOC);
 
@@ -531,14 +531,14 @@ class PgsqlSchemaParser extends AbstractSchemaParser
     {
 
         $stmt = $this->dbh->prepare("SELECT
-                                        DISTINCT ON(cls.relname)
-                                        cls.relname as idxname,
-                                        indkey,
-                                        indisunique
-                                    FROM pg_index idx
-                                        JOIN pg_class cls ON cls.oid=indexrelid
-                                    WHERE indrelid = ? AND indisprimary
-                                    ORDER BY cls.relname");
+            DISTINCT ON(cls.relname)
+            cls.relname as idxname,
+            indkey,
+            indisunique
+            FROM pg_index idx
+            JOIN pg_class cls ON cls.oid=indexrelid
+            WHERE indrelid = ? AND indisprimary
+            ORDER BY cls.relname");
         $stmt->bindValue(1, $oid);
         $stmt->execute();
 
@@ -549,9 +549,9 @@ class PgsqlSchemaParser extends AbstractSchemaParser
             $arrColumns = explode(' ', $row['indkey']);
             foreach ($arrColumns as $intColNum) {
                 $stmt2 = $this->dbh->prepare("SELECT a.attname
-                                                FROM pg_catalog.pg_class c JOIN pg_catalog.pg_attribute a ON a.attrelid = c.oid
-                                                WHERE c.oid = ? AND a.attnum = ? AND NOT a.attisdropped
-                                                ORDER BY a.attnum");
+                    FROM pg_catalog.pg_class c JOIN pg_catalog.pg_attribute a ON a.attrelid = c.oid
+                    WHERE c.oid = ? AND a.attnum = ? AND NOT a.attisdropped
+                    ORDER BY a.attnum");
                 $stmt2->bindValue(1, $oid);
                 $stmt2->bindValue(2, $intColNum);
                 $stmt2->execute();
@@ -595,7 +595,6 @@ class PgsqlSchemaParser extends AbstractSchemaParser
             $obj->oid = $row['oid'];
             $this->sequences[strtoupper($row['relname'])] = $obj;
         }
-        */
+         */
     }
-
 }
