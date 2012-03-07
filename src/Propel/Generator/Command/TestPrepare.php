@@ -90,14 +90,14 @@ class TestPrepare extends AbstractCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         foreach ($this->fixturesDirs as $fixturesDir) {
-            $this->buildFixtures(sprintf('%s/%s', self::FIXTURES_DIR, $fixturesDir), $input, $output);
+            $this->buildFixtures(sprintf('%s/%s', self::FIXTURES_DIR, $fixturesDir), $fixturesDir, $input, $output);
         }
     }
 
     /**
      * @param string $fixturesDir
      */
-    protected function buildFixtures($fixturesDir, InputInterface $input, OutputInterface $output)
+    protected function buildFixtures($fixturesDir, $projectName, InputInterface $input, OutputInterface $output)
     {
         if (!file_exists($fixturesDir)) {
             $output->writeln(sprintf('<error>Directory "%s" not found.</error>', $fixturesDir));
@@ -132,7 +132,15 @@ class TestPrepare extends AbstractCommand
         }
 
         if (0 < count((array) $this->getSchemas('.'))) {
-            shell_exec(sprintf('"%s" convert-conf', $this->propelgen));
+            $in = new ArrayInput(array(
+                'command'       => 'config:build',
+                '--input-dir'   => '.',
+                '--output-file' => sprintf('build/conf/%s-conf.php', $projectName),
+                '--verbose'     => $input->getOption('verbose'),
+            ));
+
+            $command = $this->getApplication()->find('config:build');
+            $command->run($in, $output);
 
             $in = new ArrayInput(array(
                 'command'       => 'model:build',
