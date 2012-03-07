@@ -150,28 +150,8 @@
  issue as far as maintenance is concerned.
 -->
 
-<target name="convert-conf" depends="configure">
-	<phing phingfile="build-propel.xml" target="convert-conf"/>
-</target>
-
-<target name="create-db" depends="configure">
-	<phing phingfile="build-propel.xml" target="create-db"/>
-</target>
-
 <target name="reverse" depends="configure">
 	<phing phingfile="build-propel.xml" target="reverse"/>
-</target>
-
-<target name="datadump" depends="configure">
-	<phing phingfile="build-propel.xml" target="datadump"/>
-</target>
-
-<target name="datasql" depends="configure">
-	<phing phingfile="build-propel.xml" target="datasql"/>
-</target>
-
-<target name="insert-sql" depends="configure">
-	<phing phingfile="build-propel.xml" target="insert-sql"/>
 </target>
 
 <target name="sql-diff" depends="configure">
@@ -210,14 +190,6 @@
 
 <target name="dbd2propel" depends="configure">
 	<phing phingfile="build-propel.xml" target="dbd2propel"/>
-</target>
-
-<target name="graphviz" depends="configure">
-	<phing phingfile="build-propel.xml" target="graphviz"/>
-</target>
-
-<target name="build-sql" depends="configure">
-	<phing phingfile="build-propel.xml" target="build-sql"/>
 </target>
 
 </project>
