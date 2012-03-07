@@ -11,11 +11,11 @@
 namespace Propel\Tests\Generator\Reverse;
 
 use Propel\Generator\Config\QuickGeneratorConfig;
+use Propel\Generator\Manager\ConfigManager;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Platform\DefaultPlatform;
 use Propel\Generator\Reverse\MysqlSchemaParser;
-use Propel\Generator\Task\PropelConvertConfTask;
 
 use Propel\Runtime\Propel;
 
@@ -34,7 +34,7 @@ class MysqlSchemaParserTest extends \PHPUnit_Framework_TestCase
         $xmlDom = new \DOMDocument();
         $xmlDom->load(__DIR__ . '/../../../../Fixtures/reverse/mysql/runtime-conf.xml');
         $xml = simplexml_load_string($xmlDom->saveXML());
-        $phpconf = OpenedPropelConvertConfTask::simpleXmlToArray($xml);
+        $phpconf = OpenedConfigManager::simpleXmlToArray($xml);
 
         Propel::setConfiguration($phpconf['propel']);
     }
@@ -66,7 +66,7 @@ class MysqlSchemaParserTest extends \PHPUnit_Framework_TestCase
     }
 }
 
-class OpenedPropelConvertConfTask extends PropelConvertConfTask
+class OpenedConfigManager extends ConfigManager
 {
     static public function simpleXmlToArray($xml)
     {
