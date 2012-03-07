@@ -10,19 +10,19 @@
 
 namespace Propel\Tests\Generator\Command;
 
-use Propel\Generator\Command\SqlInsert;
+use Propel\Generator\Command\AbstractCommand;
 use Propel\Tests\TestCase;
 
 /**
  * @author William Durand <william.durand1@gmail.com>
  */
-class SqlInsertTest extends TestCase
+class AbstractCommandTest extends TestCase
 {
     protected $command;
 
     public function setUp()
     {
-        $this->command = new TestableSqlInsert();
+        $this->command = new TestableAbstractCommand();
     }
 
     public function testParseConnection()
@@ -34,8 +34,13 @@ class SqlInsertTest extends TestCase
     }
 }
 
-class TestableSqlInsert extends SqlInsert
+class TestableAbstractCommand extends AbstractCommand
 {
+    protected function configure()
+    {
+        $this->setName('testable-command');
+    }
+
     public function parseConnection($connection)
     {
         return parent::parseConnection($connection);

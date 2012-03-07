@@ -28,8 +28,9 @@ class MigrationStatus extends AbstractCommand
         parent::configure();
 
         $this
-            ->addOption('output-dir', null, InputOption::VALUE_REQUIRED,  'The output directory', self::DEFAULT_OUTPUT_DIRECTORY)
-            ->addOption('migration-table', null, InputOption::VALUE_REQUIRED,  'Migration table name', self::DEFAULT_MIGRATION_TABLE)
+            ->addOption('output-dir',       null, InputOption::VALUE_REQUIRED,  'The output directory', self::DEFAULT_OUTPUT_DIRECTORY)
+            ->addOption('migration-table',  null, InputOption::VALUE_REQUIRED,  'Migration table name', self::DEFAULT_MIGRATION_TABLE)
+            ->addOption('connection',       null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Connection to use', array())
             ->setName('migration:status')
             ->setDescription('Get migration status')
             ;
@@ -50,9 +51,13 @@ class MigrationStatus extends AbstractCommand
         $manager = new MigrationManager();
         $manager->setGeneratorConfig($generatorConfig);
 
-        // /!\
-        // $manager->setConnections($this->getGeneratorConfig()->getBuildConnections());
+        $connections = array();
+        foreach ($input->getOption('connection') as $connection) {
+            list($name, $dsn, $infos) = $this->parseConnection($connection);
+            $connections[$name] = array_merge(array('dsn' => $dsn), $infos);
+        }
 
+        $manager->setConnections($connections);
         $manager->setMigrationTable($input->getOption('migration-table'));
         $manager->setWorkingDirectory($input->getOption('output-dir'));
 

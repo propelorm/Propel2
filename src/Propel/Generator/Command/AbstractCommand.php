@@ -69,4 +69,19 @@ abstract class AbstractCommand extends Command
             ->files()
         );
     }
+
+    protected function parseConnection($connection)
+    {
+        $pos  = strpos($connection, '=');
+        $name = substr($connection, 0, $pos);
+        $dsn  = substr($connection, $pos + 1, strlen($connection));
+
+        $extras = array();
+        foreach (explode(';', $dsn) as $element) {
+            $parts = preg_split('/=/', $element);
+            $extras[strtolower($parts[0])] = $parts[1];
+        }
+
+        return array($name, $dsn, $extras);
+    }
 }
