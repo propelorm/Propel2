@@ -1,7 +1,11 @@
 language: php
 
+php:
+  - 5.3
+  - 5.4
+
 env:
-  - DB=mysql
+  - DB=mysql DB_USER=root
 
 before_script:
   # MySQL
@@ -10,6 +14,7 @@ before_script:
   # Composer
   - wget http://getcomposer.org/composer.phar
   - php composer.phar install
-  - php bin/propel test:prepare --vendor="$DB" --dsn="$DB:dbname=test" --user="root"
+
+  - php bin/propel test:prepare --vendor="$DB" --dsn="$DB:dbname=test" --user="$DB_USER"
 
 script: phpunit
