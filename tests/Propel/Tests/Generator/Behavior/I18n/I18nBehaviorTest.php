@@ -42,7 +42,7 @@ EOF;
 -- i18n_behavior_test_0_i18n
 -----------------------------------------------------------------------
 
-DROP TABLE i18n_behavior_test_0_i18n;
+DROP TABLE IF EXISTS i18n_behavior_test_0_i18n;
 
 CREATE TABLE i18n_behavior_test_0_i18n
 (
@@ -76,7 +76,7 @@ EOF;
 -- i18n_behavior_test_0_i18n
 -----------------------------------------------------------------------
 
-DROP TABLE i18n_behavior_test_0_i18n;
+DROP TABLE IF EXISTS i18n_behavior_test_0_i18n;
 
 CREATE TABLE i18n_behavior_test_0_i18n
 (
@@ -135,7 +135,7 @@ EOF;
 -- i18n_behavior_test_0_i18n
 -----------------------------------------------------------------------
 
-DROP TABLE i18n_behavior_test_0_i18n;
+DROP TABLE IF EXISTS i18n_behavior_test_0_i18n;
 
 CREATE TABLE i18n_behavior_test_0_i18n
 EOF;
@@ -276,7 +276,7 @@ EOF;
 -- foo_table
 -----------------------------------------------------------------------
 
-DROP TABLE foo_table;
+DROP TABLE IF EXISTS foo_table;
 
 CREATE TABLE foo_table
 (
@@ -307,7 +307,7 @@ EOF;
 -- i18n_behavior_test_0_i18n
 -----------------------------------------------------------------------
 
-DROP TABLE i18n_behavior_test_0_i18n;
+DROP TABLE IF EXISTS i18n_behavior_test_0_i18n;
 
 CREATE TABLE i18n_behavior_test_0_i18n
 (
@@ -338,7 +338,7 @@ EOF;
 -- i18n_behavior_test_0_i18n
 -----------------------------------------------------------------------
 
-DROP TABLE i18n_behavior_test_0_i18n;
+DROP TABLE IF EXISTS i18n_behavior_test_0_i18n;
 
 CREATE TABLE i18n_behavior_test_0_i18n
 (

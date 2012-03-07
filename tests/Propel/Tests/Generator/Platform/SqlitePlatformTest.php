@@ -78,7 +78,7 @@ class SqlitePlatformTest extends PlatformTestProvider
 -- book
 -----------------------------------------------------------------------
 
-DROP TABLE book;
+DROP TABLE IF EXISTS book;
 
 CREATE TABLE book
 (
@@ -96,7 +96,7 @@ CREATE INDEX book_I_1 ON book (title);
 -- author
 -----------------------------------------------------------------------
 
-DROP TABLE author;
+DROP TABLE IF EXISTS author;
 
 CREATE TABLE author
 (
@@ -193,7 +193,7 @@ CREATE TABLE foo
     {
         $table = new Table('foo');
         $expected = "
-DROP TABLE foo;
+DROP TABLE IF EXISTS foo;
 ";
         $this->assertEquals($expected, $this->getPlatform()->getDropTableDDL($table));
     }
