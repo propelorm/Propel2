@@ -47,7 +47,7 @@ class TestPrepare extends AbstractCommand
         'bookstore-packaged'    => array('bookstore-packaged', 'bookstore-log'),
         'namespaced'            => array('bookstore_namespaced'),
         'reverse/mysql'         => array('reverse-bookstore'),
-        'schemas'               => array('bookstore'),
+        'schemas'               => array('bookstore-schemas'),
     );
 
     /**

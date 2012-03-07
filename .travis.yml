@@ -4,7 +4,10 @@ env:
   - DB=mysql
 
 before_script:
-  - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'create database test;'; fi"
+  # MySQL
+  - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'create database test; create schema bookstore_schemas; create schema contest; create schema second_hand_books;'; fi"
+
+  # Composer
   - wget http://getcomposer.org/composer.phar
   - php composer.phar install
   - php bin/propel test:prepare --vendor="$DB" --dsn="$DB:dbname=test" --user="root"
