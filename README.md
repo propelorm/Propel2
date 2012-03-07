@@ -49,17 +49,15 @@ Then, install dependencies:
 
     php composer.phar install
 
-Create the mysql databases to insert fixtures
+The Propel test suite requires a database (`test` for instance, but feel free to choose the name you want), and
+three database schemas: `bookstore_schemas`, `contest`, and `second_hand_books`.
 
-    mysqladmin -uroot create test
-    mysqladmin -uroot create reverse_bookstore
-    mysqladmin -uroot create bookstore_schemas
-    mysqladmin -uroot create contest
-    mysqladmin -uroot create second_hand_books
+Here is the set of commands to run in order to setup MySQL:
 
-If phing is not in your path add:
-
-    export PHING_COMMAND=/YourPath/Propel2/vendor/phing/bin/phing
+    mysql -uroot -e 'create database test'
+    mysql -uroot -e 'create schema bookstore_schemas'
+    mysql -uroot -e 'create schema contest'
+    mysql -uroot -e 'create schema second_hand_books'
 
 Once done, build fixtures:
 
@@ -68,8 +66,6 @@ Once done, build fixtures:
 Now you can run the test suite by running:
 
     phpunit
-    
-You'll need to create a database named `test`, and four schemas: `reverse_bookstore`, `bookstore_schemas`, `contest` and `second_hand_books`. Note, MySQL doesn't differentiate databases and schemas.
 
 ## License ##
 
