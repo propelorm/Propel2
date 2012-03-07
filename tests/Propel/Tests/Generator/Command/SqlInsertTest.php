@@ -27,10 +27,10 @@ class SqlInsertTest extends TestCase
 
     public function testParseConnection()
     {
-        $result = $this->command->parseConnection('bookstore=mysql:host=127.0.0.1;dbname=test;username=root');
+        $result = $this->command->parseConnection('bookstore=mysql:host=127.0.0.1;dbname=test;user=root');
 
         $this->assertEquals('bookstore', $result[0]);
-        $this->assertEquals('mysql:host=127.0.0.1;dbname=test;username=root', $result[1]);
+        $this->assertEquals('mysql:host=127.0.0.1;dbname=test;user=root', $result[1]);
     }
 }
 

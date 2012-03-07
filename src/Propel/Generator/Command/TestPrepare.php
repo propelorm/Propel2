@@ -42,11 +42,12 @@ class TestPrepare extends AbstractCommand
      * @var array
      */
     protected $fixtures = array(
+        // directory - array of connections
         'bookstore'             => array('bookstore', 'bookstore-cms', 'bookstore-behavior'),
         'bookstore-packaged'    => array('bookstore-packaged', 'bookstore-log'),
-        'namespaced'            => 'bookstore_namespaced',
-        'reverse/mysql'         => 'reverse-bookstore',
-        'schemas'               => 'bookstore',
+        'namespaced'            => array('bookstore_namespaced'),
+        'reverse/mysql'         => array('reverse-bookstore'),
+        'schemas'               => array('bookstore'),
     );
 
     /**
@@ -58,7 +59,7 @@ class TestPrepare extends AbstractCommand
     {
         parent::__construct();
 
-        $this->root      = realpath(__DIR__.'/../../../../');
+        $this->root = realpath(__DIR__.'/../../../../');
     }
 
     /**
@@ -83,15 +84,15 @@ class TestPrepare extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        foreach ($this->fixtures as $fixturesDir => $database) {
-            $this->buildFixtures(sprintf('%s/%s', self::FIXTURES_DIR, $fixturesDir), $database, $input, $output);
+        foreach ($this->fixtures as $fixturesDir => $connections) {
+            $this->buildFixtures(sprintf('%s/%s', self::FIXTURES_DIR, $fixturesDir), $connections, $input, $output);
         }
     }
 
     /**
      * @param string $fixturesDir
      */
-    protected function buildFixtures($fixturesDir, $database, InputInterface $input, OutputInterface $output)
+    protected function buildFixtures($fixturesDir, $connections, InputInterface $input, OutputInterface $output)
     {
         if (!file_exists($fixturesDir)) {
             $output->writeln(sprintf('<error>Directory "%s" not found.</error>', $fixturesDir));
@@ -137,19 +138,11 @@ class TestPrepare extends AbstractCommand
             $command = $this->getApplication()->find('sql:build');
             $command->run($in, $output);
 
-            $connections = array();
-            if (is_array($database)) {
-                foreach ($database as $db) {
-                    $connections[] = sprintf(
-                        '%s=%s;username=%s;password=%s',
-                        $db, $input->getOption('dsn'),
-                        $input->getOption('user'), $input->getOption('password')
-                    );
-                }
-            } else {
-                $connections[] = sprintf(
-                    '%s=%s;username=%s;password=%s',
-                    $database, $input->getOption('dsn'),
+            $conParams = array();
+            foreach ($connections as $con) {
+                $conParams[] = sprintf(
+                    '%s=%s;user=%s;password=%s',
+                    $con, $input->getOption('dsn'),
                     $input->getOption('user'), $input->getOption('password')
                 );
             }
@@ -157,7 +150,7 @@ class TestPrepare extends AbstractCommand
             $in = new ArrayInput(array(
                 'command'       => 'sql:insert',
                 '--output-dir'  => 'build/sql/',
-                '--connection'  => $connections,
+                '--connection'  => $conParams,
                 '--verbose'		=> $input->getOption('verbose'),
             ));
 
@@ -169,7 +162,7 @@ class TestPrepare extends AbstractCommand
             $in = new ArrayInput(array(
                 'command'       => 'config:build',
                 '--input-dir'   => '.',
-                '--output-file' => sprintf('build/conf/%s-conf.php', is_array($database) ? $database[0] : $database),
+                '--output-file' => sprintf('build/conf/%s-conf.php', $connections[0]), // the first connection is the main one
                 '--verbose'     => $input->getOption('verbose'),
             ));
 

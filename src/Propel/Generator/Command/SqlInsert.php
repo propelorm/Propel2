@@ -50,8 +50,8 @@ class SqlInsert extends AbstractCommand
 
         $connections = array();
         foreach ($input->getOption('connection') as $connection) {
-            list($name, $dsn)   = $this->parseConnection($connection);
-            $connections[$name] = array('dsn' => $dsn);
+            list($name, $dsn, $infos) = $this->parseConnection($connection);
+            $connections[$name] = array_merge(array('dsn' => $dsn), $infos);
         }
 
         $manager->setConnections($connections);
@@ -71,6 +71,12 @@ class SqlInsert extends AbstractCommand
         $name = substr($connection, 0, $pos);
         $dsn  = substr($connection, $pos + 1, strlen($connection));
 
-        return array($name, $dsn);
+        $extras = array();
+        foreach (explode(';', $dsn) as $element) {
+            $parts = preg_split('/=/', $element);
+            $extras[strtolower($parts[0])] = $parts[1];
+        }
+
+        return array($name, $dsn, $extras);
     }
 }
