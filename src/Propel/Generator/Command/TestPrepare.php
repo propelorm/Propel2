@@ -42,11 +42,11 @@ class TestPrepare extends AbstractCommand
      * @var array
      */
     protected $fixtures = array(
-        'bookstore'             => 'bookstore',
-        'bookstore_packaged'    => 'bookstore-packaged',
-        'namespaced'            => 'namespaced',
-        ''                      => 'reverse/mysql',
-        'bookstore'             => 'schemas',
+        'bookstore'             => array('bookstore', 'bookstore-cms', 'bookstore-behavior'),
+        'bookstore-packaged'    => array('bookstore-packaged', 'bookstore-log'),
+        'namespaced'            => 'bookstore_namespaced',
+        'reverse/mysql'         => 'reverse-bookstore',
+        'schemas'               => 'bookstore',
     );
 
     /**
@@ -54,17 +54,11 @@ class TestPrepare extends AbstractCommand
      */
     protected $root = null;
 
-    /**
-     * @var string
-     */
-    protected $propelgen = null;
-
     public function __construct()
     {
         parent::__construct();
 
         $this->root      = realpath(__DIR__.'/../../../../');
-        $this->propelgen = $this->root.'/tools/generator/bin/propel-gen';
     }
 
     /**
@@ -89,15 +83,15 @@ class TestPrepare extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        foreach ($this->fixtures as $databaseName => $fixturesDir) {
-            $this->buildFixtures(sprintf('%s/%s', self::FIXTURES_DIR, $fixturesDir), $databaseName, $input, $output);
+        foreach ($this->fixtures as $fixturesDir => $database) {
+            $this->buildFixtures(sprintf('%s/%s', self::FIXTURES_DIR, $fixturesDir), $database, $input, $output);
         }
     }
 
     /**
      * @param string $fixturesDir
      */
-    protected function buildFixtures($fixturesDir, $databaseName, InputInterface $input, OutputInterface $output)
+    protected function buildFixtures($fixturesDir, $database, InputInterface $input, OutputInterface $output)
     {
         if (!file_exists($fixturesDir)) {
             $output->writeln(sprintf('<error>Directory "%s" not found.</error>', $fixturesDir));
@@ -105,7 +99,7 @@ class TestPrepare extends AbstractCommand
             return;
         }
 
-        $output->write(sprintf('Building fixtures in <info>%-40s</info> ', $fixturesDir));
+        $output->writeln(sprintf('Building fixtures in <info>%-40s</info> ', $fixturesDir));
 
         chdir($fixturesDir);
 
@@ -131,11 +125,51 @@ class TestPrepare extends AbstractCommand
             }
         }
 
+        if (0 < count((array) $this->getSchemas('.')) || false === strstr($fixturesDir, 'reverse')) {
+            $in = new ArrayInput(array(
+                'command'	    => 'sql:build',
+                '--input-dir'   => '.',
+                '--output-dir'  => 'build/sql/',
+                '--platform'    => ucfirst($input->getOption('vendor')) . 'Platform',
+                '--verbose'		=> $input->getOption('verbose'),
+            ));
+
+            $command = $this->getApplication()->find('sql:build');
+            $command->run($in, $output);
+
+            $connections = array();
+            if (is_array($database)) {
+                foreach ($database as $db) {
+                    $connections[] = sprintf(
+                        '%s=%s;username=%s;password=%s',
+                        $db, $input->getOption('dsn'),
+                        $input->getOption('user'), $input->getOption('password')
+                    );
+                }
+            } else {
+                $connections[] = sprintf(
+                    '%s=%s;username=%s;password=%s',
+                    $database, $input->getOption('dsn'),
+                    $input->getOption('user'), $input->getOption('password')
+                );
+            }
+
+            $in = new ArrayInput(array(
+                'command'       => 'sql:insert',
+                '--output-dir'  => 'build/sql/',
+                '--connection'  => $connections,
+                '--verbose'		=> $input->getOption('verbose'),
+            ));
+
+            $command = $this->getApplication()->find('sql:insert');
+            $command->run($in, $output);
+        }
+
         if (0 < count((array) $this->getSchemas('.'))) {
             $in = new ArrayInput(array(
                 'command'       => 'config:build',
                 '--input-dir'   => '.',
-                '--output-file' => sprintf('build/conf/%s-conf.php', $databaseName),
+                '--output-file' => sprintf('build/conf/%s-conf.php', is_array($database) ? $database[0] : $database),
                 '--verbose'     => $input->getOption('verbose'),
             ));
 
@@ -152,39 +186,7 @@ class TestPrepare extends AbstractCommand
 
             $command = $this->getApplication()->find('model:build');
             $command->run($in, $output);
-
-            $in = new ArrayInput(array(
-                'command'       => 'sql:insert',
-                '--input-dir'   => '.',
-                '--output-dir'  => 'build/sql/',
-                '--platform'    => ucfirst($input->getOption('vendor')) . 'Platform',
-                '--connection'  => sprintf(
-                    '%s=%s;username=%s;password=%s',
-                    $databaseName, $input->getOption('dsn'),
-                    $input->getOption('user'), $input->getOption('password')
-                ),
-                '--verbose'		=> $input->getOption('verbose'),
-            ));
-
-            $command = $this->getApplication()->find('sql:insert');
-            $command->run($in, $output);
         }
-
-        if (0 < count((array) $this->getSchemas('.')) || false !== strpos('reverse', $fixturesDir)) {
-            // use new commands
-            $in = new ArrayInput(array(
-                'command'	    => 'sql:build',
-                '--input-dir'   => '.',
-                '--output-dir'  => 'build/sql/',
-                '--platform'    => ucfirst($input->getOption('vendor')) . 'Platform',
-                '--verbose'		=> $input->getOption('verbose'),
-            ));
-
-            $command = $this->getApplication()->find('sql:build');
-            $command->run($in, $output);
-        }
-
-        $output->writeln('OK');
 
         chdir($this->root);
     }

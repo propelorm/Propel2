@@ -33,12 +33,11 @@ class SqlInsert extends AbstractCommand
      */
     protected function configure()
     {
-        parent::configure();
-
         $this
+            ->addOption('output-dir', null, InputOption::VALUE_REQUIRED,  'The output directory', self::DEFAULT_OUTPUT_DIRECTORY)
             ->addOption('connection', null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Connection to use', array())
             ->setName('sql:insert')
-            ->setDescription('Insert SQL')
+            ->setDescription('Insert SQL statements')
             ;
     }
 
@@ -50,9 +49,9 @@ class SqlInsert extends AbstractCommand
         $manager = new SqlManager();
 
         $connections = array();
-        foreach ($this->getOption('connection') as $connection) {
+        foreach ($input->getOption('connection') as $connection) {
             list($name, $dsn)   = $this->parseConnection($connection);
-            $connections[$name] = $dsn;
+            $connections[$name] = array('dsn' => $dsn);
         }
 
         $manager->setConnections($connections);

@@ -11,6 +11,7 @@
 namespace Propel\Generator\Manager;
 
 use Propel\Generator\Exception\InvalidArgumentException;
+use Propel\Generator\Util\SqlParser;
 
 use \PDO;
 use \PDOException;
@@ -136,22 +137,27 @@ class SqlManager extends AbstractManager
     public function insertSql($datasource = null)
     {
         $statementsToInsert = array();
+
         foreach ($this->getProperties($this->getSqlDbMapFilename()) as $sqlFile => $database) {
             if (null !== $datasource && $database !== $datasource) {
                 // skip
+                $this->log(sprintf('Skipping %s.', $sqlFile));
                 break;
             }
 
             if (!isset($statementsToInsert[$database])) {
                 $statementsToInsert[$database] = array();
             }
-            if (null === $database || (null !== $database && $database === $datasource)) {
+
+            if (null === $datasource || (null !== $database && $database === $datasource)) {
                 $filename = $this->getWorkingDirectory() . DIRECTORY_SEPARATOR . $sqlFile;
 
                 if (file_exists($filename)) {
                     foreach (SqlParser::parseFile($filename) as $sql) {
                         $statementsToInsert[$database][] = $sql;
                     }
+                } else {
+                    $this->log(sprintf("File %s doesn't exist", $filename));
                 }
             }
         }
