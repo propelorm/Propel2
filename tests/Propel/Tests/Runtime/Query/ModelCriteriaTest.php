@@ -209,8 +209,12 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c->join('b.Author a');
         $c->where('a.FirstName = ?', 'john');
 
+        if (in_array($this->getDriver(), array('mysql'))) {
+            $sql = "SELECT  FROM `book` `b` INNER JOIN `author` `a` ON (b.AUTHOR_ID=a.ID) WHERE b.TITLE = :p1 AND a.FIRST_NAME = :p2";
+        } else {
+            $sql = "SELECT  FROM book b INNER JOIN author a ON (b.AUTHOR_ID=a.ID) WHERE b.TITLE = :p1 AND a.FIRST_NAME = :p2";
+        }
 
-        $sql = "SELECT  FROM `book` `b` INNER JOIN `author` `a` ON (b.AUTHOR_ID=a.ID) WHERE b.TITLE = :p1 AND a.FIRST_NAME = :p2";
         $params = array(
             array('table' => 'book', 'column' => 'TITLE', 'value' => 'foo'),
             array('table' => 'author', 'column' => 'FIRST_NAME', 'value' => 'john'),
@@ -225,7 +229,12 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c->condition('cond2', 'Propel\Tests\Bookstore\Book.Title like ?', '%bar%');
         $c->combine(array('cond1', 'cond2'), 'or');
 
-        $sql = "SELECT  FROM `book` WHERE (book.TITLE <> :p1 OR book.TITLE like :p2)";
+        if (in_array($this->getDriver(), array('mysql'))) {
+            $sql = "SELECT  FROM `book` WHERE (book.TITLE <> :p1 OR book.TITLE like :p2)";
+        } else {
+            $sql = "SELECT  FROM book WHERE (book.TITLE <> :p1 OR book.TITLE like :p2)";
+        }
+
         $params = array(
             array('table' => 'book', 'column' => 'TITLE', 'value' => 'foo'),
             array('table' => 'book', 'column' => 'TITLE', 'value' => '%bar%'),
@@ -241,10 +250,15 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c->condition('cond2', 'title_start like ?', '%bar%', PDO::PARAM_STR);
         $c->combine(array('cond1', 'cond2'), 'or');
 
-        $sql = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID, SUBSTRING(book.TITLE, 1, 4) AS title_start FROM `book` WHERE (book.TITLE <> :p1 OR title_start like :p2)";
+        if (in_array($this->getDriver(), array('mysql'))) {
+            $sql = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID, SUBSTRING(book.TITLE, 1, 4) AS title_start FROM `book` WHERE (book.TITLE <> :p1 OR title_start like :p2)";
+        } else {
+            $sql = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID, SUBSTRING(book.TITLE, 1, 4) AS title_start FROM book WHERE (book.TITLE <> :p1 OR title_start like :p2)";
+        }
+
         $params = array(
-          array('table' => 'book', 'column' => 'TITLE', 'value' => 'foo'),
-          array('table' => null, 'type' => PDO::PARAM_STR, 'value' => '%bar%'),
+            array('table' => 'book', 'column' => 'TITLE', 'value' => 'foo'),
+            array('table' => null, 'type' => PDO::PARAM_STR, 'value' => '%bar%'),
         );
         $this->assertCriteriaTranslation($c, $sql, $params, 'condition() accepts RAW sql parameters');
     }
@@ -273,7 +287,13 @@ class ModelCriteriaTest extends BookstoreTestBase
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $c->where($clause, $value);
-        $sql = 'SELECT  FROM `book` WHERE ' . $sql;
+
+        if (in_array($this->getDriver(), array('mysql'))) {
+            $sql = 'SELECT  FROM `book` WHERE ' . $sql;
+        } else {
+            $sql = 'SELECT  FROM book WHERE ' . $sql;
+        }
+
         $this->assertCriteriaTranslation($c, $sql, $params, 'where() accepts a string clause');
     }
 
@@ -283,7 +303,13 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c->where('Propel\Tests\Bookstore\Book.Id = ?', 12);
         $c->_or();
         $c->where('Propel\Tests\Bookstore\Book.Title = ?', 'foo');
-        $sql = 'SELECT  FROM `book` WHERE (book.ID = :p1 OR book.TITLE = :p2)';
+
+        if (in_array($this->getDriver(), array('mysql'))) {
+            $sql = 'SELECT  FROM `book` WHERE (book.ID = :p1 OR book.TITLE = :p2)';
+        } else {
+            $sql = 'SELECT  FROM book WHERE (book.ID = :p1 OR book.TITLE = :p2)';
+        }
+
         $params = array(
             array('table' => 'book', 'column' => 'ID', 'value' => '12'),
             array('table' => 'book', 'column' => 'TITLE', 'value' => 'foo'),
@@ -302,7 +328,13 @@ class ModelCriteriaTest extends BookstoreTestBase
             array('table' => 'book', 'column' => 'ID', 'value' => '3'),
             array('table' => 'book', 'column' => 'ID', 'value' => '5'),
         );
-        $sql = 'SELECT  FROM `book` WHERE (book.ID IN (:p1,:p2,:p3) AND book.ID <> :p4)';
+
+        if (in_array($this->getDriver(), array('mysql'))) {
+            $sql = 'SELECT  FROM `book` WHERE (book.ID IN (:p1,:p2,:p3) AND book.ID <> :p4)';
+        } else {
+            $sql = 'SELECT  FROM book WHERE (book.ID IN (:p1,:p2,:p3) AND book.ID <> :p4)';
+        }
+
         $this->assertCriteriaTranslation($c, $sql, $params, 'where() adds clauses on the same column correctly');
     }
 
@@ -313,7 +345,12 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c->condition('cond2', 'Propel\Tests\Bookstore\Book.Title like ?', '%bar%');
         $c->where(array('cond1', 'cond2'));
 
-        $sql = "SELECT  FROM `book` WHERE (book.TITLE <> :p1 AND book.TITLE like :p2)";
+        if (in_array($this->getDriver(), array('mysql'))) {
+            $sql = "SELECT  FROM `book` WHERE (book.TITLE <> :p1 AND book.TITLE like :p2)";
+        } else {
+            $sql = "SELECT  FROM book WHERE (book.TITLE <> :p1 AND book.TITLE like :p2)";
+        }
+
         $params = array(
             array('table' => 'book', 'column' => 'TITLE', 'value' => 'foo'),
             array('table' => 'book', 'column' => 'TITLE', 'value' => '%bar%'),
@@ -325,7 +362,12 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c->condition('cond2', 'Propel\Tests\Bookstore\Book.Title like ?', '%bar%');
         $c->where(array('cond1', 'cond2'), Criteria::LOGICAL_OR);
 
-        $sql = "SELECT  FROM `book` WHERE (book.TITLE <> :p1 OR book.TITLE like :p2)";
+        if (in_array($this->getDriver(), array('mysql'))) {
+            $sql = "SELECT  FROM `book` WHERE (book.TITLE <> :p1 OR book.TITLE like :p2)";
+        } else {
+            $sql = "SELECT  FROM book WHERE (book.TITLE <> :p1 OR book.TITLE like :p2)";
+        }
+
         $this->assertCriteriaTranslation($c, $sql, $params, 'where() accepts an array of named conditions with operator');
     }
 
@@ -335,7 +377,12 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c->where('b.Title = ?', 'foo');
         $c->where('1=1');
 
-        $sql = "SELECT  FROM `book` WHERE book.TITLE = :p1 AND 1=1";
+        if (in_array($this->getDriver(), array('mysql'))) {
+            $sql = "SELECT  FROM `book` WHERE book.TITLE = :p1 AND 1=1";
+        } else {
+            $sql = "SELECT  FROM book WHERE book.TITLE = :p1 AND 1=1";
+        }
+
         $params = array(
             array('table' => 'book', 'column' => 'TITLE', 'value' => 'foo'),
         );
@@ -355,7 +402,12 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book', 'b');
         $c->where('UPPER(b.Title) = ?', 'foo');
 
-        $sql = "SELECT  FROM `book` WHERE UPPER(book.TITLE) = :p1";
+        if (in_array($this->getDriver(), array('mysql'))) {
+            $sql = "SELECT  FROM `book` WHERE UPPER(book.TITLE) = :p1";
+        } else {
+            $sql = "SELECT  FROM book WHERE UPPER(book.TITLE) = :p1";
+        }
+
         $params = array(
             array('table' => 'book', 'column' => 'TITLE', 'value' => 'foo'),
         );
@@ -367,13 +419,24 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book', 'b');
         $c->where('LOCATE(\'foo\', b.Title) = ?', true, PDO::PARAM_BOOL);
 
-        $sql = "SELECT  FROM `book` WHERE LOCATE('foo', book.TITLE) = :p1";
+        if (in_array($this->getDriver(), array('mysql'))) {
+            $sql = "SELECT  FROM `book` WHERE LOCATE('foo', book.TITLE) = :p1";
+        } else {
+            $sql = "SELECT  FROM book WHERE LOCATE('foo', book.TITLE) = :p1";
+        }
+
         $params = array(
             array('table' => null, 'type' => PDO::PARAM_BOOL, 'value' => true),
         );
         $this->assertCriteriaTranslation($c, $sql, $params, 'where() accepts a complex calculation');
         $c->find($this->con);
-        $expected = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE LOCATE('foo', book.TITLE) = true";
+
+        if (in_array($this->getDriver(), array('mysql'))) {
+            $expected = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE LOCATE('foo', book.TITLE) = true";
+        } else {
+            $expected = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM book WHERE LOCATE('foo', book.TITLE) = true";
+        }
+
         $this->assertEquals($expected, $this->con->getLastExecutedQuery());
     }
 
@@ -383,7 +446,12 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c->where('Propel\Tests\Bookstore\Book.Title <> ?', 'foo');
         $c->_or()->where('Propel\Tests\Bookstore\Book.Title like ?', '%bar%');
 
-        $sql = "SELECT  FROM `book` WHERE (book.TITLE <> :p1 OR book.TITLE like :p2)";
+        if (in_array($this->getDriver(), array('mysql'))) {
+            $sql = "SELECT  FROM `book` WHERE (book.TITLE <> :p1 OR book.TITLE like :p2)";
+        } else {
+            $sql = "SELECT  FROM book WHERE (book.TITLE <> :p1 OR book.TITLE like :p2)";
+        }
+
         $params = array(
             array('table' => 'book', 'column' => 'TITLE', 'value' => 'foo'),
             array('table' => 'book', 'column' => 'TITLE', 'value' => '%bar%'),
@@ -399,7 +467,12 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c->condition('cond2', 'Propel\Tests\Bookstore\Book.Title like ?', '%bar%');
         $c->_or()->where(array('cond1', 'cond2'));
 
-        $sql = "SELECT  FROM `book` WHERE (book.ID = :p1 OR (book.TITLE <> :p2 AND book.TITLE like :p3))";
+        if (in_array($this->getDriver(), array('mysql'))) {
+            $sql = "SELECT  FROM `book` WHERE (book.ID = :p1 OR (book.TITLE <> :p2 AND book.TITLE like :p3))";
+        } else {
+            $sql = "SELECT  FROM book WHERE (book.ID = :p1 OR (book.TITLE <> :p2 AND book.TITLE like :p3))";
+        }
+
         $params = array(
             array('table' => 'book', 'column' => 'ID', 'value' => 12),
             array('table' => 'book', 'column' => 'TITLE', 'value' => 'foo'),
@@ -413,7 +486,12 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c->condition('cond2', 'Propel\Tests\Bookstore\Book.Title like ?', '%bar%');
         $c->_or()->where(array('cond1', 'cond2'), Criteria::LOGICAL_OR);
 
-        $sql = "SELECT  FROM `book` WHERE (book.ID = :p1 OR (book.TITLE <> :p2 OR book.TITLE like :p3))";
+        if (in_array($this->getDriver(), array('mysql'))) {
+            $sql = "SELECT  FROM `book` WHERE (book.ID = :p1 OR (book.TITLE <> :p2 OR book.TITLE like :p3))";
+        } else {
+            $sql = "SELECT  FROM book WHERE (book.ID = :p1 OR (book.TITLE <> :p2 OR book.TITLE like :p3))";
+        }
+
         $this->assertCriteriaTranslation($c, $sql, $params, 'orWhere() accepts an array of named conditions with operator');
     }
 
@@ -423,7 +501,12 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c->where('Propel\Tests\Bookstore\Book.Title = ?', 'foo');
         $c->add(BookPeer::ID, array(1, 2), Criteria::IN);
 
-        $sql = 'SELECT  FROM `book` WHERE book.TITLE = :p1 AND book.ID IN (:p2,:p3)';
+        if (in_array($this->getDriver(), array('mysql'))) {
+            $sql = 'SELECT  FROM `book` WHERE book.TITLE = :p1 AND book.ID IN (:p2,:p3)';
+        } else {
+            $sql = 'SELECT  FROM book WHERE book.TITLE = :p1 AND book.ID IN (:p2,:p3)';
+        }
+
         $params =  array(
             array('table' => 'book', 'column' => 'TITLE', 'value' => 'foo'),
             array('table' => 'book', 'column' => 'ID', 'value' => 1),
@@ -437,7 +520,12 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $c->filterBy('Title', 'foo');
 
-        $sql = 'SELECT  FROM `book` WHERE book.TITLE=:p1';
+        if (in_array($this->getDriver(), array('mysql'))) {
+            $sql = 'SELECT  FROM `book` WHERE book.TITLE=:p1';
+        } else {
+            $sql = 'SELECT  FROM book WHERE book.TITLE=:p1';
+        }
+
         $params =  array(
             array('table' => 'book', 'column' => 'TITLE', 'value' => 'foo'),
         );
@@ -446,7 +534,12 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $c->filterBy('Title', 'foo', Criteria::NOT_EQUAL);
 
-        $sql = 'SELECT  FROM `book` WHERE book.TITLE<>:p1';
+        if (in_array($this->getDriver(), array('mysql'))) {
+            $sql = 'SELECT  FROM `book` WHERE book.TITLE<>:p1';
+        } else {
+            $sql = 'SELECT  FROM book WHERE book.TITLE<>:p1';
+        }
+
         $params =  array(
             array('table' => 'book', 'column' => 'TITLE', 'value' => 'foo'),
         );
@@ -455,7 +548,12 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book', 'b');
         $c->filterBy('Title', 'foo');
 
-        $sql = 'SELECT  FROM `book` WHERE book.TITLE=:p1';
+        if (in_array($this->getDriver(), array('mysql'))) {
+            $sql = 'SELECT  FROM `book` WHERE book.TITLE=:p1';
+        } else {
+            $sql = 'SELECT  FROM book WHERE book.TITLE=:p1';
+        }
+
         $params =  array(
             array('table' => 'book', 'column' => 'TITLE', 'value' => 'foo'),
         );
@@ -503,13 +601,24 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c->withColumn('SUBSTRING(Book.Title, 1, 4)', 'title_start');
         $c->having('title_start = ?', 'foo', PDO::PARAM_STR);
 
-        $sql = 'SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID, SUBSTRING(book.TITLE, 1, 4) AS title_start FROM `book` HAVING title_start = :p1';
+        if (in_array($this->getDriver(), array('mysql'))) {
+            $sql = 'SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID, SUBSTRING(book.TITLE, 1, 4) AS title_start FROM `book` HAVING title_start = :p1';
+        } else {
+            $sql = 'SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID, SUBSTRING(book.TITLE, 1, 4) AS title_start FROM book HAVING title_start = :p1';
+        }
+
         $params = array(
             array('table' => null, 'type' => 2, 'value' => 'foo'),
         );
         $this->assertCriteriaTranslation($c, $sql, $params, 'having() accepts a string clause');
         $c->find($this->con);
-        $expected = 'SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID, SUBSTRING(book.TITLE, 1, 4) AS title_start FROM `book` HAVING title_start = \'foo\'';
+
+        if (in_array($this->getDriver(), array('mysql'))) {
+            $expected = 'SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID, SUBSTRING(book.TITLE, 1, 4) AS title_start FROM `book` HAVING title_start = \'foo\'';
+        } else {
+            $expected = 'SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID, SUBSTRING(book.TITLE, 1, 4) AS title_start FROM book HAVING title_start = \'foo\'';
+        }
+
         $this->assertEquals($expected, $this->con->getLastExecutedQuery());
     }
 
@@ -2248,7 +2357,13 @@ class ModelCriteriaTest extends BookstoreTestBase
 
         $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
         $c->find($con);
-        $expectedSQL = "SELECT review.ID, review.REVIEWED_BY, review.REVIEW_DATE, review.RECOMMENDED, review.STATUS, review.BOOK_ID, book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID, author.ID, author.FIRST_NAME, author.LAST_NAME, author.EMAIL, author.AGE FROM `review` INNER JOIN `book` ON (review.BOOK_ID=book.ID) INNER JOIN `author` ON (book.AUTHOR_ID=author.ID)";
+
+        if (in_array($this->getDriver(), array('mysql'))) {
+            $expectedSQL = "SELECT review.ID, review.REVIEWED_BY, review.REVIEW_DATE, review.RECOMMENDED, review.STATUS, review.BOOK_ID, book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID, author.ID, author.FIRST_NAME, author.LAST_NAME, author.EMAIL, author.AGE FROM `review` INNER JOIN `book` ON (review.BOOK_ID=book.ID) INNER JOIN `author` ON (book.AUTHOR_ID=author.ID)";
+        } else {
+            $expectedSQL = "SELECT review.ID, review.REVIEWED_BY, review.REVIEW_DATE, review.RECOMMENDED, review.STATUS, review.BOOK_ID, book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID, author.ID, author.FIRST_NAME, author.LAST_NAME, author.EMAIL, author.AGE FROM review INNER JOIN book ON (review.BOOK_ID=book.ID) INNER JOIN author ON (book.AUTHOR_ID=author.ID)";
+        }
+
         $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'useQuery() and joinWith() can be used together and form a correct query');
     }
 
@@ -2267,7 +2382,13 @@ class ModelCriteriaTest extends BookstoreTestBase
 
         $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
         $c->find($con);
-        $expectedSQL = "SELECT bookstore_contest.BOOKSTORE_ID, bookstore_contest.CONTEST_ID, bookstore_contest.PRIZE_BOOK_ID FROM `bookstore_contest` LEFT JOIN `book` ON (bookstore_contest.PRIZE_BOOK_ID=book.ID) WHERE book.TITLE = 'War And Peace'";
+
+        if (in_array($this->getDriver(), array('mysql'))) {
+            $expectedSQL = "SELECT bookstore_contest.BOOKSTORE_ID, bookstore_contest.CONTEST_ID, bookstore_contest.PRIZE_BOOK_ID FROM `bookstore_contest` LEFT JOIN `book` ON (bookstore_contest.PRIZE_BOOK_ID=book.ID) WHERE book.TITLE = 'War And Peace'";
+        } else {
+            $expectedSQL = "SELECT bookstore_contest.BOOKSTORE_ID, bookstore_contest.CONTEST_ID, bookstore_contest.PRIZE_BOOK_ID FROM bookstore_contest LEFT JOIN book ON (bookstore_contest.PRIZE_BOOK_ID=book.ID) WHERE book.TITLE = 'War And Peace'";
+        }
+
         $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'useQuery() and endUse() allow to merge a secondary criteria');
     }
 
@@ -2286,7 +2407,13 @@ class ModelCriteriaTest extends BookstoreTestBase
 
         $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
         $c->find($con);
-        $expectedSQL = "SELECT bookstore_contest.BOOKSTORE_ID, bookstore_contest.CONTEST_ID, bookstore_contest.PRIZE_BOOK_ID FROM `bookstore_contest` LEFT JOIN `book` `w` ON (bookstore_contest.PRIZE_BOOK_ID=w.ID) WHERE w.TITLE = 'War And Peace'";
+
+        if (in_array($this->getDriver(), array('mysql'))) {
+            $expectedSQL = "SELECT bookstore_contest.BOOKSTORE_ID, bookstore_contest.CONTEST_ID, bookstore_contest.PRIZE_BOOK_ID FROM `bookstore_contest` LEFT JOIN `book` `w` ON (bookstore_contest.PRIZE_BOOK_ID=w.ID) WHERE w.TITLE = 'War And Peace'";
+        } else {
+            $expectedSQL = "SELECT bookstore_contest.BOOKSTORE_ID, bookstore_contest.CONTEST_ID, bookstore_contest.PRIZE_BOOK_ID FROM bookstore_contest LEFT JOIN book w ON (bookstore_contest.PRIZE_BOOK_ID=w.ID) WHERE w.TITLE = 'War And Peace'";
+        }
+
         $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'useQuery() and endUse() allow to merge a secondary criteria');
     }
 
@@ -2424,7 +2551,14 @@ class ModelCriteriaTest extends BookstoreTestBase
             ->filterByPrice(2);
         $params = array();
         $sql = BasePeer::createSelectSql($bookQuery1, $params);
-        $this->assertEquals('SELECT  FROM `book` WHERE book.PRICE=:p1', $sql, 'conditions applied on a cloned query don\'t get applied on the original query');
+
+        if (in_array($this->getDriver(), array('mysql'))) {
+            $expected = 'SELECT  FROM `book` WHERE book.PRICE=:p1';
+        } else {
+            $expected = 'SELECT  FROM book WHERE book.PRICE=:p1';
+        }
+
+        $this->assertEquals($expected, $sql, 'conditions applied on a cloned query don\'t get applied on the original query');
     }
 
     public function testMagicFindByObject()
@@ -2434,7 +2568,13 @@ class ModelCriteriaTest extends BookstoreTestBase
         $testAuthor = $c->findOne();
         $q = BookQuery::create()
             ->findByAuthor($testAuthor);
-        $expectedSQL = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.AUTHOR_ID=" . $testAuthor->getId();
+
+        if (in_array($this->getDriver(), array('mysql'))) {
+            $expectedSQL = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.AUTHOR_ID=" . $testAuthor->getId();
+        } else {
+            $expectedSQL = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM book WHERE book.AUTHOR_ID=" . $testAuthor->getId();
+        }
+
         $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'findByXXX($value) is turned into findBy(XXX, $value)');
 
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Author');

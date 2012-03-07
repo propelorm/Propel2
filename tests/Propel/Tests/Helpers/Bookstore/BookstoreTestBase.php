@@ -61,6 +61,11 @@ abstract class BookstoreTestBase extends \PHPUnit_Framework_TestCase
         $this->con = null;
     }
 
+    protected function getDriver()
+    {
+        return $this->con->getAttribute(\PDO::ATTR_DRIVER_NAME);
+    }
+
     static public function tearDownAfterClass()
     {
         Propel::getServiceContainer()->closeConnections();
