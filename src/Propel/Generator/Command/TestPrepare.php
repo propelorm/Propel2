@@ -41,12 +41,12 @@ class TestPrepare extends AbstractCommand
     /**
      * @var array
      */
-    protected $fixturesDirs = array(
-        'bookstore',
-        'bookstore-packaged',
-        'namespaced',
-        'reverse/mysql',
-        'schemas',
+    protected $fixtures = array(
+        'bookstore'             => 'bookstore',
+        'bookstore_packaged'    => 'bookstore-packaged',
+        'namespaced'            => 'namespaced',
+        ''                      => 'reverse/mysql',
+        'bookstore'             => 'schemas',
     );
 
     /**
@@ -89,15 +89,15 @@ class TestPrepare extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        foreach ($this->fixturesDirs as $fixturesDir) {
-            $this->buildFixtures(sprintf('%s/%s', self::FIXTURES_DIR, $fixturesDir), $fixturesDir, $input, $output);
+        foreach ($this->fixtures as $databaseName => $fixturesDir) {
+            $this->buildFixtures(sprintf('%s/%s', self::FIXTURES_DIR, $fixturesDir), $databaseName, $input, $output);
         }
     }
 
     /**
      * @param string $fixturesDir
      */
-    protected function buildFixtures($fixturesDir, $projectName, InputInterface $input, OutputInterface $output)
+    protected function buildFixtures($fixturesDir, $databaseName, InputInterface $input, OutputInterface $output)
     {
         if (!file_exists($fixturesDir)) {
             $output->writeln(sprintf('<error>Directory "%s" not found.</error>', $fixturesDir));
@@ -135,7 +135,7 @@ class TestPrepare extends AbstractCommand
             $in = new ArrayInput(array(
                 'command'       => 'config:build',
                 '--input-dir'   => '.',
-                '--output-file' => sprintf('build/conf/%s-conf.php', $projectName),
+                '--output-file' => sprintf('build/conf/%s-conf.php', $databaseName),
                 '--verbose'     => $input->getOption('verbose'),
             ));
 
@@ -153,7 +153,21 @@ class TestPrepare extends AbstractCommand
             $command = $this->getApplication()->find('model:build');
             $command->run($in, $output);
 
-            shell_exec(sprintf('"%s" insert-sql', $this->propelgen));
+            $in = new ArrayInput(array(
+                'command'       => 'sql:insert',
+                '--input-dir'   => '.',
+                '--output-dir'  => 'build/sql/',
+                '--platform'    => ucfirst($input->getOption('vendor')) . 'Platform',
+                '--connection'  => sprintf(
+                    '%s=%s;username=%s;password=%s',
+                    $databaseName, $input->getOption('dsn'),
+                    $input->getOption('user'), $input->getOption('password')
+                ),
+                '--verbose'		=> $input->getOption('verbose'),
+            ));
+
+            $command = $this->getApplication()->find('sql:insert');
+            $command->run($in, $output);
         }
 
         if (0 < count((array) $this->getSchemas('.')) || false !== strpos('reverse', $fixturesDir)) {

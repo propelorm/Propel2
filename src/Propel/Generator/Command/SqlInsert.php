@@ -36,6 +36,7 @@ class SqlInsert extends AbstractCommand
         parent::configure();
 
         $this
+            ->addOption('connection', null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Connection to use', array())
             ->setName('sql:insert')
             ->setDescription('Insert SQL')
             ;
@@ -47,7 +48,14 @@ class SqlInsert extends AbstractCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $manager = new SqlManager();
-        $manager->setConnections(array());
+
+        $connections = array();
+        foreach ($this->getOption('connection') as $connection) {
+            list($name, $dsn)   = $this->parseConnection($connection);
+            $connections[$name] = $dsn;
+        }
+
+        $manager->setConnections($connections);
         $manager->setLoggerClosure(function($message) use ($input, $output) {
             if ($input->getOption('verbose')) {
                 $output->writeln($message);
@@ -56,5 +64,14 @@ class SqlInsert extends AbstractCommand
         $manager->setWorkingDirectory($input->getOption('output-dir'));
 
         $manager->insertSql();
+    }
+
+    protected function parseConnection($connection)
+    {
+        $pos  = strpos($connection, '=');
+        $name = substr($connection, 0, $pos);
+        $dsn  = substr($connection, $pos + 1, strlen($connection));
+
+        return array($name, $dsn);
     }
 }
