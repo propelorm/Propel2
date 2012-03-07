@@ -14,12 +14,17 @@ namespace Propel\Generator\Reverse;
 require_once 'phing/Task.php';
 use Task;
 
-use PDO;
 use Propel\Generator\Model\Column;
+use Propel\Generator\Model\ColumnDefaultValue;
 use Propel\Generator\Model\Database;
-use Propel\Generator\Model\Table;
+use Propel\Generator\Model\ForeignKey;
+use Propel\Generator\Model\Index;
 use Propel\Generator\Model\PropelTypes;
+use Propel\Generator\Model\Table;
+use Propel\Generator\Model\Unique;
 use Propel\Generator\Reverse\AbstractSchemaParser;
+
+use PDO;
 
 /**
  * Postgresql database schema parser.
@@ -132,7 +137,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
             $database->addTable($table);
 
             // Create a wrapper to hold these tables and their associated OID
-            $wrap = new stdClass;
+            $wrap = new \stdClass;
             $wrap->table = $table;
             $wrap->oid = $oid;
             $tableWraps[] = $wrap;

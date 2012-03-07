@@ -47,6 +47,7 @@ class TestPrepare extends AbstractCommand
         'bookstore-packaged'    => array('bookstore-packaged', 'bookstore-log'),
         'namespaced'            => array('bookstore_namespaced'),
         'reverse/mysql'         => array('reverse-bookstore'),
+        'reverse/pgsql'         => array('reverse-bookstore'),
         'schemas'               => array('bookstore-schemas'),
     );
 
@@ -105,8 +106,8 @@ class TestPrepare extends AbstractCommand
         chdir($fixturesDir);
 
         $distributionFiles = array(
-            'build.properties.dist' => 'build.properties',
             'runtime-conf.xml.dist' => 'runtime-conf.xml',
+            'build.properties.dist' => 'build.properties',
         );
 
         foreach ($distributionFiles as $sourceFile => $targetFile) {
@@ -121,6 +122,7 @@ class TestPrepare extends AbstractCommand
                 file_put_contents($targetFile, $content);
             } else {
                 $output->writeln(sprintf('<error>No "%s" file found, skipped.</error>', $sourceFile));
+                chdir($this->root);
 
                 return;
             }
