@@ -148,7 +148,7 @@
     </table>
 
     <table name="book_x_list" phpName="BookListRel" isCrossRef="true"
-        description="Cross-reference table for many-to-many relationship between book rows and book_club_list rows.">
+        description="Cross-reference table between book and book_club_list rows.">
         <column name="book_id" primaryKey="true" type="INTEGER" description="Fkey to book.id" />
         <column name="book_club_list_id" primaryKey="true" type="INTEGER" description="Fkey to book_club_list.id" />
         <foreign-key foreignTable="book" onDelete="cascade">
@@ -179,7 +179,7 @@
     </table>
 
     <!-- Test one-to-one (1:1) relationship, default values -->
-    <table name="bookstore_employee_account" reloadOnInsert="true" reloadOnUpdate="true" description="A table that represents a bookstore employees login credentials.">
+    <table name="bookstore_employee_account" reloadOnInsert="true" reloadOnUpdate="true" description="Bookstore employees login credentials.">
         <column name="employee_id" type="INTEGER" primaryKey="true" description="Primary key for the account ..." />
         <column name="login" type="VARCHAR" size="32" />
         <column name="password" type="VARCHAR" size="100" default="'@''34&quot;" />

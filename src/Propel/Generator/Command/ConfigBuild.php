@@ -38,12 +38,12 @@ class ConfigBuild extends AbstractCommand
     {
         $filesystem = new Filesystem();
         $outputFile = $input->getOption('output-file');
-
-        $parts = explode(DIRECTORY_SEPARATOR, $outputFile);
+        
+        $parts = explode('/', $outputFile);
         array_pop($parts);
-
+      
         if (0 < count($parts)) {
-            $dirs  = implode(DIRECTORY_SEPARATOR, $parts);
+            $dirs  = implode('/', $parts);
         }
 
         $filesystem->mkdir($dirs);
