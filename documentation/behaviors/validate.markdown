@@ -37,11 +37,14 @@ The `value` of the parameters is an array in YAML format, in wich we need to spe
 * `options`: an array of optional values to pass to the validator constraint class, according to its reference documentation
 
 
-Rebuild your model and you're ready to go. The ActiveRecord object now has two methods:
+Rebuild your model and you're ready to go. The ActiveRecord object now has three methods:
+* `loadValidatorMetadata`: this static method contains validation rules
 * `validate()`: this method performs validation on the ActiveRecord object itself and all related objects. If the validation is successful it returns true, otherwise false.
 * `getValidationFailures()`: if validate() is false, this method returns a [`ConstraintViolationList`](http://api.symfony.com/2.0/Symfony/Component/Validator/ConstraintViolationList.html) object.
 
-Standard validation
+
+Standard validation:
+
 {% highlight php %}
 <?php
 
@@ -62,4 +65,72 @@ else
    echo "Everything's all right!";
 }
 
+{% endhighlight %}
+
+The behavior adds to ActiveRecord object the static loadValidatorMetadata() method. So, inside your Symfony or Silex projects, you can perform "usual" validation:
+
+{% highlight php %}
+//Symfony 2
+
+use Symfony\Component\HttpFoundation\Response;
+use YouVendor\YourBundle\Model\Author;
+// ...
+
+public function indexAction()
+{
+    $author = new Author();
+    // ... do something to the $author object
+
+    $validator = $this->get('validator');
+    $errors = $validator->validate($author);
+
+    if (count($errors) > 0) {
+        return new Response(print_r($errors, true));
+    } else {
+        return new Response('The author is valid! Yes!');
+    }
+}
+{% endhighlight %}
+{% highlight php %}
+//Silex
+
+// ...
+
+$app->post('/authors/new', function () use ($app) {
+    $post = new Author();
+    $author->setLastName($app['request']->get('lastname'));
+    $author->setFirstName($app['request']->get('firstname'));
+    $author->setEmail($app['request']->get('email'));
+    
+    $violations = $app['validator']->validate($author);
+    return $violations;
+{% endhighlight %}
+
+But if you wish to validate also related objects, you can pass the registered validator object instance:
+
+{% highlight php %}
+//Symfony 2
+
+use Symfony\Component\HttpFoundation\Response;
+use YouVendor\YourBundle\Model\Author;
+// ...
+
+public function indexAction()
+{
+    $author = new Author();
+    // ... do something to the $author object
+
+    $validator = $this->get('validator');
+    if (!$author->validate($validator))
+    {
+        $errors = $author->getValidationFailures();
+        
+        return new Response(print_r($errors, true));
+    
+    } 
+    else 
+    {
+        return new Response('The author is valid! Yes!');
+    }
+}
 {% endhighlight %}
