@@ -26,9 +26,13 @@ protected function doValidate(Validator $validator)
         // foreign key reference.
         
         <?php foreach($aVarNames as $aVarName) : ?>
-        if (!$this-><?php echo $aVarName; ?>->validate($validator))
+        //If validate() method exists, the validate-behavior is configured for related object
+        if (method_exists($this-><?php echo $aVarName; ?>, 'validate'))
         {
-            $failureMap->addAll($this-><?php echo $aVarName; ?>->getValidationFailures());
+            if (!$this-><?php echo $aVarName; ?>->validate($validator))
+            {
+                $failureMap->addAll($this-><?php echo $aVarName; ?>->getValidationFailures());
+            }
         }
         <?php endforeach; ?>
         <?php endif; ?>
@@ -44,9 +48,12 @@ protected function doValidate(Validator $validator)
         {
             foreach ($this-><?php echo $collVarName; ?> as $referrerFK)
             {
-                if (!$referrerFK->validate($validator))
+                if (method_exists($referrerFK, 'validate'))
                 {
-                    $failureMap->addAll($referrerFK->getValidationFailures());
+                    if (!$referrerFK->validate($validator))
+                    {
+                        $failureMap->addAll($referrerFK->getValidationFailures());
+                    }
                 }
             }
         }
