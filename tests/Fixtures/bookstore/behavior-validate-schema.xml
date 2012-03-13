@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<database name="bookstore-behavior" defaultIdMethod="native" package="behavior.validate" namespace="Propel\Tests\Bookstore\Behavior">
+
+    <table name="validate_book" description="Book Table">
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" description="Book Id" />
+        <column name="title" type="VARCHAR" required="true" description="Book Title" primaryString="true" />
+        <column name="isbn" type="VARCHAR" size="24" phpName="ISBN" description="ISBN Number" primaryString="false" />
+        <column name="price" required="false" type="FLOAT" description="Price of the book." />
+        <column name="publisher_id" required="false" type="INTEGER" description="Foreign Key Publisher" />
+        <column name="author_id" required="false" type="INTEGER" description="Foreign Key Author" />
+        <foreign-key foreignTable="validate_publisher" onDelete="setnull">
+            <reference local="publisher_id" foreign="id" />
+        </foreign-key>
+        <foreign-key foreignTable="validate_author" onDelete="setnull" onUpdate="cascade">
+            <reference local="author_id" foreign="id" />
+        </foreign-key>
+        <behavior name="validate">
+            <parameter name="rule1" value="{column: title, validator: NotNull}" />
+        </behavior>
+    </table>
+
+    <table name="validate_publisher" description="Publisher Table">
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" description="Publisher Id" />
+        <column name="name" required="true" type="VARCHAR" size="128" default="Penguin" description="Publisher Name" />
+        <column name="website" type="VARCHAR" description="Publisher's web site" />
+        <behavior name="validate">
+            <parameter name="rule1" value="{column: name, validator: NotNull}" />
+            <parameter name="rule2" value="{column: website, validator: Url}" />
+        </behavior>
+    </table>
+
+    <table name="validate_author" description="Author Table">
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" description="Author Id" />
+        <column name="first_name" required="true" type="VARCHAR" size="128" description="First Name" />
+        <column name="last_name" required="true" type="VARCHAR" size="128" description="Last Name" />
+        <column name="email" type="VARCHAR" size="128" description="E-Mail Address" />
+        <column name="birthday" type="DATE" description="The authors birthday" />
+        <behavior name="validate">
+            <parameter name="rule1" value="{column: first_name, validator: NotNull}" />
+            <parameter name="rule2" value="{column: first_name, validator: MaxLength, options: {limit: 128}}" />
+            <parameter name="rule3" value="{column: last_name, validator: NotNull}" />
+            <parameter name="rule4" value="{column: last_name, validator: MaxLength, options: {limit: 128}}" />
+            <parameter name="rule5" value="{column: email, validator: Email}" />
+            <parameter name="rule6" value="{column: birthday, validator: Date}" />
+        </behavior>
+    </table>
+    
+    <table name="validate_reader" description="Reader Table">
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" description="Author Id" />
+        <column name="first_name" required="true" type="VARCHAR" size="128" description="First Name" />
+        <column name="last_name" required="true" type="VARCHAR" size="128" description="Last Name" />
+        <column name="email" type="VARCHAR" size="128" description="E-Mail Address" />
+        <column name="birthday" type="DATE" description="The authors birthday" />
+        <behavior name="validate">
+            <parameter name="rule1" value="{column: first_name, validator: NotNull}" />
+            <parameter name="rule2" value="{column: first_name, validator: MaxLength, options: {limit: 128}}" />
+            <parameter name="rule3" value="{column: last_name, validator: NotNull}" />
+            <parameter name="rule4" value="{column: last_name, validator: MaxLength, options: {limit: 128}}" />
+            <parameter name="rule5" value="{column: email, validator: Email}" />
+            <parameter name="rule6" value="{column: birthday, validator: Date}" />
+        </behavior>
+    </table>
+    
+    <table name="validate_reader_book" isCrossRef="true">
+         <column name="reader_id" type="INTEGER" primaryKey="true"/>
+         <column name="book_id" type="INTEGER" primaryKey="true"/>
+         <column name="date_of_purchase" type="DATE" description="The date in wich the reader has bought the book" />
+         <column name="evaluation" type="VARCHAR" size="50" valueSet="wonderful, good, sufficient, ugly, awful, unreadable, kill the author!" description="Short evaluation" />
+         <column name="comment" type="CLOB" lazyLoad="true" description="Reader's comment" />
+         <foreign-key foreignTable="validate_reader">
+              <reference local="reader_id" foreign="id"/>
+         </foreign-key>
+         <foreign-key foreignTable="validate_book">
+              <reference local="book_id" foreign="id"/>
+         </foreign-key>
+         <behavior name="validate">
+            <parameter name="rule1" value="{column: evaluation, validator: Choice, options: {choices: [wonderful, good, sufficient, ugly, awful, unreadable, kill the author!]}}" />
+            <parameter name="rule2" value="{column: date_of_purchase, validator: Date}" />
+        </behavior>
+     </table>
+    
+</database>
