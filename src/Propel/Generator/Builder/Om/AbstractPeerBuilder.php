@@ -279,7 +279,7 @@ abstract class AbstractPeerBuilder extends AbstractOMBuilder
         }
 
         if (null !== $phpName) {
-            return sprintf('%sPeer::$s', $phpName, $const);
+            return sprintf('static::$s', $const);
         }
 
         return $const;

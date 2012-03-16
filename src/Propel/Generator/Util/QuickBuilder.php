@@ -150,7 +150,9 @@ class QuickBuilder
 
     public function buildClasses(array $classTargets = null)
     {
-        eval($this->getClasses($classTargets));
+        $code = $this->getClasses($classTargets);
+        file_put_contents ('/var/local/webroot/propel2/gen.class.log', $code);
+        eval($code);
     }
 
     public function getClasses(array $classTargets = null)
@@ -173,9 +175,6 @@ class QuickBuilder
 
         foreach ($classTargets as $target) {
             $class = $this->getConfig()->getConfiguredBuilder($table, $target)->build();
-            if (false === strpos($class, 'namespace')) { //prevent nested namespace
-                $class = "\nnamespace\n{\n" . $class . "\n}\n";
-            }
             $script .= $this->fixNamespaceDeclarations($class);
         }
 
@@ -186,18 +185,12 @@ class QuickBuilder
                         $builder = $this->getConfig()->getConfiguredBuilder('queryinheritance', $target);
                         $builder->setChild($child);
                         $class = $builder->build();
-                        if (false === strpos($class, 'namespace')) { //prevent nested namespace
-                            $class = "\nnamespace\n{\n" . $class . "\n}\n";
-                        }
                         $script .= $this->fixNamespaceDeclarations($class);
                     }
                     foreach (array('objectmultiextend', 'queryinheritancestub') as $target) {
                         $builder = $this->getConfig()->getConfiguredBuilder($table, $target);
                         $builder->setChild($child);
-                        $class = $builder->build();
-                        if (false === strpos($class, 'namespace')) {
-                            $class = "\nnamespace\n{\n" . $class . "\n}\n";
-                        }
+                        $class = $this->forceNamespace($builder->build());
                         $script .= $this->fixNamespaceDeclarations($class);
 
                         foreach (array('objectmultiextend', 'queryinheritancestub') as $target) {
@@ -224,9 +217,6 @@ class QuickBuilder
             foreach ($table->getAdditionalBuilders() as $builderClass) {
                 $builder = new $builderClass($table);
                 $class = $builder->build();
-                if (false === strpos($class, 'namespace')) {
-                    $class = "\nnamespace\n{\n" . $class . "\n}\n";
-                }
                 $script .= $this->fixNamespaceDeclarations($class);
             }
         }
@@ -252,6 +242,8 @@ class QuickBuilder
      */
     public function fixNamespaceDeclarations($source)
     {
+        $source = $this->forceNamespace($source);
+
         if (!function_exists('token_get_all')) {
             return $source;
         }
@@ -294,5 +286,18 @@ class QuickBuilder
         }
 
         return $output;
+    }
+
+    /**
+     * prevent generated class without namespace to fail
+     * @param string $code
+     * @return string
+     */
+    protected function forceNamespace($code) {
+        if (0 == preg_match('/\nnamespace/', $code)) {
+            return "\nnamespace\n{\n" . $code . "\n}\n";
+        }
+
+        return $code;
     }
 }

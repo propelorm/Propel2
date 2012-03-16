@@ -60,7 +60,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         $this->addClassClose($script);
 
         $ignoredNamespace = $this->getNamespace();
-        if ($useStatements = $this->getUseStatements($ignoredNamespace)) {
+        if ($useStatements = $this->getUseStatements($ignoredNamespace?:'namespace')) {
             $script = $useStatements . $script;
         }
 
@@ -112,7 +112,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     {
         return $this->getUnprefixedClassname();
     }
-    
+
     /**
      * return the qualified classname (e.g. Model\Book)
      * @return string
@@ -132,6 +132,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      */
     public function getFullyQualifiedClassname()
     {
+        return '\\' . $this->getQualifiedClassname();
         if ($namespace = $this->getNamespace()) {
             return '\\' . $this->getQualifiedClassname();
         } else {
@@ -247,6 +248,11 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      */
     public function declareClassNamespace($class, $namespace = '', $alias = false)
     {
+        //prevent from declaring current class
+        if ($class == $this->getUnqualifiedClassname() && $namespace == $this->getClassname()) {
+            return $class;
+        }
+
         //check if the class is already
         if (isset($this->declaredClasses[$namespace])
            && isset($this->declaredClasses[$namespace][$class])) {
@@ -290,7 +296,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         if (str_replace('\\Base', '', $namespace) == str_replace('\\Base', '', $this->getNamespace())) {
             return true;
         }
-        if (('' == $namespace && 'Base' == $this->getNamespace()) 
+        if (('' == $namespace && 'Base' == $this->getNamespace())
                 && str_replace(array('Peer','Query'), '', $class) == str_replace(array('Peer','Query'), '', $this->getUnqualifiedClassname())) {
             return true;
         }

@@ -11,7 +11,9 @@
 use Propel\Generator\Util\QuickBuilder;
 
 use Propel\Runtime\Propel;
-use Propel\Runtime\Query\ModelCriteria;
+use MyNameSpace\ComplexColumnTypeEntity2;
+use MyNameSpace\ComplexColumnTypeEntity2Peer;
+use MyNameSpace\ComplexColumnTypeEntity2Query;
 
 /**
  * Tests the generated objects for array column types accessor & mutator
@@ -22,9 +24,9 @@ class GeneratedObjectArrayColumnTypeTest extends \PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
-        if (!class_exists('ComplexColumnTypeEntity2')) {
+        if (!class_exists('MyNameSpace\\ComplexColumnTypeEntity2')) {
             $schema = <<<EOF
-<database name="generated_object_complex_type_test_2">
+<database name="generated_object_complex_type_test_2" namespace="MyNameSpace">
     <table name="complex_column_type_entity_2">
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <column name="tags" type="ARRAY" />

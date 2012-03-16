@@ -4080,7 +4080,7 @@ abstract class ".$this->getUnqualifiedClassname()." extends ".$parentClass." ";
      */
     protected function addCrossFKDoAdd(&$script, ForeignKey $refFK, ForeignKey $crossFK)
     {
-        $relatedObjectClassName = $this->getFKPhpNameAffix($crossFK, $plural = false);
+        $relatedObjectClassName = $this->getFKPhpNameAffix($crossFK, false);
 
         // lcfirst() doesn't exist in PHP < 5.3
         $lowerRelatedObjectClassName = $relatedObjectClassName;
@@ -4088,19 +4088,21 @@ abstract class ".$this->getUnqualifiedClassname()." extends ".$parentClass." ";
 
         $joinedTableObjectBuilder = $this->getNewObjectBuilder($refFK->getTable());
         $className = $joinedTableObjectBuilder->getObjectClassname();
+        $unqualifiedClassName = $joinedTableObjectBuilder->getStubObjectBuilder()->getUnqualifiedClassname();
 
         $tblFK = $refFK->getTable();
         $foreignObjectName = '$' . $tblFK->getStudlyPhpName();
 
         $script .= "
     /**
+     * {$this->getRefFKPhpNameAffix($crossFK, false)} != {$this->getFKPhpNameAffix($crossFK, false)}
      * @param    {$relatedObjectClassName} \${$lowerRelatedObjectClassName} The $lowerRelatedObjectClassName object to add.
      */
     protected function doAdd{$relatedObjectClassName}(\${$lowerRelatedObjectClassName})
     {
         {$foreignObjectName} = new {$className}();
         {$foreignObjectName}->set{$relatedObjectClassName}(\${$lowerRelatedObjectClassName});
-        \$this->add{$className}({$foreignObjectName});
+        \$this->add{$unqualifiedClassName}({$foreignObjectName});
     }
 ";
     }
