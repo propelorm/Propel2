@@ -196,7 +196,7 @@ public function isVersioningNecessary(\$con = null)
         foreach ($this->behavior->getVersionableFks() as $fk) {
             $fkGetter = $this->builder->getFKPhpNameAffix($fk, $plural = false);
             $script .= "
-    if (\$this->get{$fkGetter}(\$con)->isVersioningNecessary(\$con)) {
+    if (null !== (\$object = \$this->get{$fkGetter}(\$con)) && \$object->isVersioningNecessary(\$con)) {
         return true;
     }
 ";

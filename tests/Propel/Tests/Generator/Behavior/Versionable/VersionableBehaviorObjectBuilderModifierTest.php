@@ -483,6 +483,21 @@ EOF;
         $this->assertFalse($a->isVersioningNecessary());
     }
 
+    public function testIsVersioningNecessaryWithNullFk()
+    {
+        // the purpose of this tests is to highlight a bug with FK
+        // and isVersioningNecessary()
+        $b1 = new \VersionableBehaviorTest5();
+        $b1->setNew(false);
+
+        // this time, the object isn't modified, so the
+        // isVersioningNecessary() method is called on FK objects...
+        // which can be null.
+        $b1->isVersioningNecessary();
+
+        $this->assertTrue(true, 'getting here means that nothing went wrong');
+    }
+
     public function testAddVersionNewObject()
     {
         \VersionableBehaviorTest1Peer::disableVersioning();
