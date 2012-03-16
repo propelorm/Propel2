@@ -30,9 +30,7 @@ class MysqlAdapterTest extends BookstoreTestBase
                 array(
                     'dsn' => 'dsn=my_dsn',
                     'settings' => array(
-                        'charset' => array(
-                            'value' => 'foobar'
-                        )
+                        'charset' => 'foobar'
                     )
                 )
             )
