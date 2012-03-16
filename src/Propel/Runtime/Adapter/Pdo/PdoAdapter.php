@@ -102,8 +102,8 @@ abstract class PdoAdapter
      */
     public function initConnection(ConnectionInterface $con, array $settings)
     {
-        if (isset($settings['charset']['value'])) {
-            $this->setCharset($con, $settings['charset']['value']);
+        if (isset($settings['charset'])) {
+            $this->setCharset($con, $settings['charset']);
         }
 
         if (isset($settings['queries']) && is_array($settings['queries'])) {
