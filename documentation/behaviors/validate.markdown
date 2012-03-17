@@ -70,6 +70,8 @@ else
 The behavior adds to ActiveRecord object the static loadValidatorMetadata() method. So, inside your Symfony or Silex projects, you can perform "usual" validation:
 
 {% highlight php %}
+<?php
+
 //Symfony 2
 
 use Symfony\Component\HttpFoundation\Response;
@@ -92,6 +94,8 @@ public function indexAction()
 }
 {% endhighlight %}
 {% highlight php %}
+<?php
+
 //Silex
 
 // ...
@@ -109,6 +113,8 @@ $app->post('/authors/new', function () use ($app) {
 But if you wish to validate also related objects, you can pass the registered validator object instance:
 
 {% highlight php %}
+<?php
+
 //Symfony 2
 
 use Symfony\Component\HttpFoundation\Response;
