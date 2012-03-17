@@ -230,8 +230,8 @@ class PgsqlSchemaParser extends BaseSchemaParser
             // if column has a default
             if (($boolHasDefault == 't') && (strlen (trim ($default)) > 0)) {
                 if (!preg_match('/^nextval\(/', $default)) {
-                    $strDefault= preg_replace('/::[\W\D]*/', '', $default);
-                    $default = preg_replace('/(\'?)\'/', '${1}', $strDefault);
+                    $strDefault= preg_replace ('/::[\W\D]*/', '', $default);
+                    $default = str_replace ("'", '', $strDefault);
                 } else {
                     $autoincrement = true;
                     $default = null;
