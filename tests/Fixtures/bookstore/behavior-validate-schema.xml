@@ -53,7 +53,7 @@
         <column name="birthday" type="DATE" description="The authors birthday" />
         <behavior name="validate">
             <parameter name="rule1" value="{column: first_name, validator: NotNull}" />
-            <parameter name="rule2" value="{column: first_name, validator: MaxLength, options: {limit: 128}}" />
+            <parameter name="rule2" value="{column: first_name, validator: MinLength, options: {limit: 4}}" />
             <parameter name="rule3" value="{column: last_name, validator: NotNull}" />
             <parameter name="rule4" value="{column: last_name, validator: MaxLength, options: {limit: 128}}" />
             <parameter name="rule5" value="{column: email, validator: Email}" />
@@ -64,9 +64,6 @@
     <table name="validate_reader_book" isCrossRef="true">
          <column name="reader_id" type="INTEGER" primaryKey="true"/>
          <column name="book_id" type="INTEGER" primaryKey="true"/>
-         <column name="date_of_purchase" type="DATE" description="The date in wich the reader has bought the book" />
-         <column name="evaluation" type="VARCHAR" size="50" valueSet="wonderful, good, sufficient, ugly, awful, unreadable, kill the author!" description="Short evaluation" />
-         <column name="comment" type="CLOB" lazyLoad="true" description="Reader's comment" />
          <foreign-key foreignTable="validate_reader">
               <reference local="reader_id" foreign="id"/>
          </foreign-key>
@@ -74,8 +71,10 @@
               <reference local="book_id" foreign="id"/>
          </foreign-key>
          <behavior name="validate">
-            <parameter name="rule1" value="{column: evaluation, validator: Choice, options: {choices: [wonderful, good, sufficient, ugly, awful, unreadable, kill the author!]}}" />
-            <parameter name="rule2" value="{column: date_of_purchase, validator: Date}" />
+            <parameter name="rule1" value="{column: reader_id, validator: NotNull}" />
+            <parameter name="rule2" value="{column: book_id, validator: NotNull}" />
+            <parameter name="rule3" value="{column: reader_id, validator: Type, options: {type: integer}}" />
+            <parameter name="rule4" value="{column: book_id, validator: Type, options: {type: integer}}" />
         </behavior>
      </table>
     
