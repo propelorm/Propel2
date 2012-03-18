@@ -994,9 +994,9 @@ class QueryBuilderTest extends BookstoreTestBase
                 ->filterByName('Penguin')
             ->endUse();
         $q1 = BookQuery::create()
-            ->join('Propel\Tests\Bookstore\Book.Author', Criteria::LEFT_JOIN)
+            ->join('\Propel\Tests\Bookstore\Book.Author', Criteria::LEFT_JOIN)
             ->add(AuthorPeer::FIRST_NAME, 'Leo', Criteria::EQUAL)
-            ->join('Propel\Tests\Bookstore\Book.Publisher', Criteria::LEFT_JOIN)
+            ->join('\Propel\Tests\Bookstore\Book.Publisher', Criteria::LEFT_JOIN)
             ->add(PublisherPeer::NAME, 'Penguin', Criteria::EQUAL);
         $this->assertTrue($q->equals($q1), 'useFkQuery() called twice on two relations creates two joins');
     }
@@ -1044,7 +1044,7 @@ class QueryBuilderTest extends BookstoreTestBase
         BookstoreDataPopulator::populate();
 
         // save all books to make sure related objects are also saved - BookstoreDataPopulator keeps some unsaved
-        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
+        $c = new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book');
         $books = $c->find();
         foreach ($books as $book) {
             $book->save();

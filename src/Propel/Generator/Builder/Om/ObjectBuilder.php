@@ -3929,29 +3929,20 @@ abstract class ".$this->getUnqualifiedClassname()." extends ".$parentClass." ";
 
     protected function addCrossFKSet(&$script, $refFK, $crossFK)
     {
-        $relatedName = $this->getFKPhpNameAffix($crossFK, $plural = true);
-        $relatedObjectClassName = $this->getClassnameFromBuilder($this->getNewStubObjectBuilder($crossFK->getForeignTable()));
-        $selfRelationName = $this->getFKPhpNameAffix($refFK, $plural = false);
-        $relatedQueryClassName = $this->getClassnameFromBuilder($this->getNewStubQueryBuilder($crossFK->getForeignTable()));
-        $crossRefQueryClassName = $this->getRefFKPhpNameAffix($refFK, $plural = false);
+        $relatedName = $this->getFKPhpNameAffix($crossFK, true);
+        $relatedObjectClassName = $this->getNewStubObjectBuilder($crossFK->getForeignTable())->getUnqualifiedClassname();
+        $selfRelationName = $this->getFKPhpNameAffix($refFK, false);
+        $crossRefQueryClassName = $this->getClassnameFromBuilder($this->getNewStubQueryBuilder($refFK->getTable()));
         $crossRefTableName = $crossFK->getTableName();
         $collName = $this->getCrossFKVarName($crossFK);
         $joinedTableObjectBuilder = $this->getNewObjectBuilder($refFK->getTable());
-        $className = $joinedTableObjectBuilder->getObjectClassname();
+        $className = $joinedTableObjectBuilder->getStubObjectBuilder()->getUnqualifiedClassname();
 
-        // No lcfirst() in PHP < 5.3
-        $lowerClassName = $className;
-        $lowerClassName[0] = strtolower($lowerClassName[0]);
+        $crossRefObjectClassName = '$' . lcfirst($className);
 
-        $crossRefObjectClassName = '$' . $lowerClassName;
+        $inputCollection = lcfirst($relatedName);
 
-        // No lcfirst() in PHP < 5.3
-        $inputCollection = $relatedName;
-        $inputCollection[0] = strtolower($inputCollection[0]);
-
-        // No lcfirst() in PHP < 5.3
-        $inputCollectionEntry = $this->getFKPhpNameAffix($crossFK, false);
-        $inputCollectionEntry[0] = strtolower($inputCollectionEntry[0]);
+        $inputCollectionEntry = lcfirst($this->getFKPhpNameAffix($crossFK, false));
 
         $relCol = $this->getRefFKPhpNameAffix($refFK, true);
         $relColVarName = $this->getRefFKCollVarName($crossFK);
@@ -3968,7 +3959,7 @@ abstract class ".$this->getUnqualifiedClassname()." extends ".$parentClass." ";
      */
     public function set{$relatedName}(Collection \${$inputCollection}, ConnectionInterface \$con = null)
     {
-        {$crossRefObjectClassName}s = {$crossRefQueryClassName}Query::create()
+        {$crossRefObjectClassName}s = {$crossRefQueryClassName}::create()
             ->filterBy{$relatedObjectClassName}(\${$inputCollection})
             ->filterBy{$selfRelationName}(\$this)
             ->find(\$con);

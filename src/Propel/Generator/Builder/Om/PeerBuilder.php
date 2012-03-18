@@ -2232,7 +2232,7 @@ abstract class ".$this->getUnqualifiedClassname(). $extendingPeerClass . " {
                         if ($fk->isLocalPrimaryKey()) {
                             $script .= "
                 // one to one relationship
-                \$obj1->set" . $joinedTablePeerBuilder->getObjectClassname() . "(\$obj2);";
+                \$obj1->set" . $joinedTablePeerBuilder->getStubObjectBuilder()->getUnqualifiedClassname() . "(\$obj2);";
                         } else {
                             $script .= "
                 \$obj2->add" . $joinedTableObjectBuilder->getRefFKPhpNameAffix($fk, false)."(\$obj1);";
@@ -2485,7 +2485,7 @@ abstract class ".$this->getUnqualifiedClassname(). $extendingPeerClass . " {
                 // Add the \$obj1 (".$this->getObjectClassname().") to the collection in \$obj".$index." (".$joinedTablePeerBuilder->getObjectClassname().")";
                 if ($fk->isLocalPrimaryKey()) {
                     $script .= "
-                \$obj1->set".$joinedTablePeerBuilder->getObjectClassname()."(\$obj".$index.");";
+                \$obj1->set".$joinedTablePeerBuilder->getStubObjectBuilder()->getUnqualifiedClassname()."(\$obj".$index.");";
                 } else {
                     $script .= "
                 \$obj".$index."->add".$joinedTableObjectBuilder->getRefFKPhpNameAffix($fk, false)."(\$obj1);";
