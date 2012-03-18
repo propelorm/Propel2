@@ -37,7 +37,7 @@ class ValidateBehavior extends Behavior
       * options: (optional) array of options according to the documentation of the constraint
       * @see http://symfony.com/doc/current/reference/constraints.html
       */
-     protected $parameters = null;
+     protected $parameters = array();
      
      protected $builder;
   
@@ -48,9 +48,10 @@ class ValidateBehavior extends Behavior
       */      
      public function objectMethods($builder)
      {
-         if (is_null($this->getParameters()))
+         $array = $this->getParameters();
+         if (empty($array))
          {
-             throw new InvalidArgumentException('You must define the rules for validation.');
+             throw new InvalidArgumentException('Please, define your rules for validation.');
          }
          
          $this->builder = $builder;
@@ -116,9 +117,19 @@ public static function loadValidatorMetadata(ClassMetadata \$metadata)
   */
   protected function addValidatorConstraint($properties)
   {
+      if (!isset($properties['column']))
+      {
+          throw new InvalidArgumentException('Please, define the column to validate.');
+      }
+      
+      if (!isset($properties['validator']))
+      {
+          throw new InvalidArgumentException('Please, define the validator constraint.');
+      }
+      
       if (!class_exists("Symfony\\Component\\Validator\\Constraints\\".$properties['validator'], true))
       {
-           throw new InvalidArgumentException('The validator class '.$properties['validator'].' does not exist.');
+           throw new InvalidArgumentException('The constraint class '.$properties['validator'].' does not exist.');
       }
       
       $this->builder->declareClass("Symfony\\Component\\Validator\\Constraints\\".$properties['validator']);
@@ -127,7 +138,7 @@ public static function loadValidatorMetadata(ClassMetadata \$metadata)
       {
           if (!is_array($properties['options']))
           {
-              throw new InvalidArgumentException('The option value, in <parameter> tag must be an array');
+              throw new InvalidArgumentException('The options value, in <parameter> tag must be an array (in Yaml format)');
           }
           
           $output .= $this->arrayToString($properties['options']);
