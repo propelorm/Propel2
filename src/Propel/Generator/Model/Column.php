@@ -821,6 +821,11 @@ class Column extends XmlElement
         $this->referrers = null;
     }
 
+    public function clearInheritanceList()
+    {
+        $this->inheritanceList = array();
+    }
+
     /**
      * Sets the domain up for specified Propel type.
      *
