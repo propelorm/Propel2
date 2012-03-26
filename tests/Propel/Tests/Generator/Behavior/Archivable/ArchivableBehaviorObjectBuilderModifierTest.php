@@ -379,4 +379,14 @@ EOF;
         $this->assertEquals(0, \ArchivableTest10ArchiveQuery::create()->count());
     }
 
+    public function testArchiveSetArchivedAtToTheCurrentTime()
+    {
+        $a = new \ArchivableTest10();
+        $a->setTitle('foo');
+        $a->save();
+        $ret = $a->archive();
+        // time without seconds
+        $this->assertEquals(date('Y-m-d H:i'), $ret->getArchivedAt('Y-m-d H:i'));
+    }
+
 }
