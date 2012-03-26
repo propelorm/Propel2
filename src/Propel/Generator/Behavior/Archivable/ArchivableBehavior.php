@@ -165,8 +165,8 @@ class ArchivableBehavior extends Behavior
      */
     public function getArchivedAtColumn()
     {
-        if ($this->getParameter('log_archived_at') == 'true') {
-            return $this->getTable()->getColumn($this->getParameter('archived_at_column'));
+        if ($this->getArchiveTable() && $this->getParameter('log_archived_at') == 'true') {
+            return $this->getArchiveTable()->getColumn($this->getParameter('archived_at_column'));
         }
     }
 
