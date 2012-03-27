@@ -212,7 +212,7 @@ In previous example, if you want to perform validations also on reader objects, 
      </table>
 {% endhighlight %}
 
-And now the validation flow wil be the following:
+And now the validation flow will be the following:
 
 1.    search the author and publisher objects
 2.    author and publisher objects have the validate behavior tag in its schema definition, so `$author->validate()` and `$publisher->validate()` are called
@@ -289,9 +289,59 @@ But inside an xml string the double-quote characters should be escaped, so repla
 {% endhighlight %}
 
 
+## Automatic validation ##
+
+You can automatic validate an ActiveRecord, before saving it into your database, thanks to `preSave()` hook (see [behaviors documentation](/documentation/07-behaviors.html)).     
+For example, let's suppose we whish to add automatic validation capability to our `Book` class. Open `Book.php`, in your model path, and add the following code:
+
+{% highlight php %}
+<?php
+//Code of your Book class.
+//Remember use statement to set properly ConnectionInterface namespace
+
+public function preSave(ConnectionInterface $con = null)
+{
+    return $this->validate();
+}
+{% endhighlight %}
+
+If validation failed, `preSave()` returns false and the saving operation stops. No error is raised but the `save()` method of your ActiveRecord returns the integer `0`, because no object was affected. So, we can check the returned value of `save()` method to see what was happened and to get any error messages:
+
+{% highlight php %}
+<?php
+// your app code
+
+$author = AuthorQuery::create()->findPk(1);
+$publisher = PublisherQuery::create()->findPk(1);
+
+$book = new Book();
+$book->setAuthor($author);
+$book->setPublisher($publisher);
+$book->setTitle('The country house');
+$book->setPrice(10,00);
+
+$ret = $book->save();
+
+//if $ret <= 0 means no affected rows, that is validation failed or no object to persist
+if ($ret <= 0)
+{
+    $failures = $this->getValidationFailures();
+    
+    //count($failures) > 0 means that we have ConstraintViolation objects and validation failed
+    if (count($failures) > 0)
+    {
+        foreach ($this->getValidationFailures() as $failure)
+        {
+            echo $failure->getPropertyPath()." validation failed: ".$failure->getMessage();
+        }
+    }
+}
+{% endhighlight %}
+
+
 ## Inside Symfony2 ##
 
-The behavior adds to ActiveRecord objects the static `loadValidatorMetadata()` method, wich contains all validation rules. So, inside your Symfony projects, you can perform "usual" Symfony validations:
+The behavior adds to ActiveRecord objects the static `loadValidatorMetadata()` method, which contains all validation rules. So, inside your Symfony projects, you can perform "usual" Symfony validations:
 
 {% highlight php %}
 <?php
