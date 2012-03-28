@@ -53,14 +53,6 @@ class ValidateBehaviorTest extends \PHPUnit_Framework_TestCase
         }
     }
     
-    public function testHasDoValidateMethod()
-    {
-        foreach ($this->classes as $class)
-        {
-             $this->assertTrue(method_exists($class, 'doValidate'));
-        }
-    }
-    
     public function testHasLoadValidatorMetadataMethod()
     {
         foreach ($this->classes as $class)
@@ -177,7 +169,7 @@ EOF;
     
     /**
      * @expectedException  InvalidArgumentException
-     * @expectedExceptionMessage  The options value, in <parameter> tag must be an array (in Yaml format)
+     * @expectedExceptionMessage  The options value, in <parameter> tag must be an array
      */
     public function testConstraintOptionsNotValid()
     {

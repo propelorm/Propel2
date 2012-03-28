@@ -460,6 +460,5 @@ The behavior adds the following properties to your ActiveRecord:
 The behavior adds the following methods to your ActiveRecord:
 
 *   `validate`:  this *public* method validates the object and all objects related to it.
-*   `doValidate`:  this *protected* method performs the validation work for complex object models. It's called by `validate()`.
 *   `getValidationFailures`:  this *public* method gets the ConstraintViolationList object, that contains all ConstraintViolation objects resulted from last call to `validate()` method.
 *   `loadValidatorMetadata`:  this *public static* method contains all the Constraint objects.
