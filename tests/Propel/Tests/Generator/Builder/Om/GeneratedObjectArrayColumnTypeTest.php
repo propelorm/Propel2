@@ -11,6 +11,7 @@
 use Propel\Generator\Util\QuickBuilder;
 
 use Propel\Runtime\Propel;
+use Propel\Runtime\Query\ModelCriteria;
 
 /**
  * Tests the generated objects for array column types accessor & mutator
@@ -126,5 +127,28 @@ EOF;
         ComplexColumnTypeEntity2Peer::clearInstancePool();
         $e = ComplexColumnTypeEntity2Query::create()->findOne();
         $this->assertEquals($value, $e->getTags(), 'array columns are persisted');
+    }
+
+    public function testGetterDoesNotKeepValueBetweenTwoHydrationsWhenUsingOnDemandFormatter()
+    {
+        ComplexColumnTypeEntity2Query::create()->deleteAll();
+
+        $e = new ComplexColumnTypeEntity2();
+        $e->setTags(array(1,2));
+        $e->save();
+
+        $e = new ComplexColumnTypeEntity2();
+        $e->setTags(array(3,4));
+        $e->save();
+
+        $q = ComplexColumnTypeEntity2Query::create()
+            ->setFormatter(ModelCriteria::FORMAT_ON_DEMAND)
+            ->find();
+
+        $tags = array();
+        foreach($q as $e) {
+            $tags[] = $e->getTags();
+        }
+        $this->assertNotEquals($tags[0], $tags[1]);
     }
 }
