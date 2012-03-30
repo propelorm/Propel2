@@ -53,11 +53,20 @@ class SchemaValidator
     protected function validateDatabaseTables(Database $database)
     {
         $phpNames = array();
+        $namespaces = array();
         foreach ($database->getTables() as $table) {
-            if (in_array($table->getPhpName(), $phpNames)) {
+            $list = &$phpNames;
+            if ($table->getNamespace()) {
+                if (!isset($namespaces[$table->getNamespace()])) {
+                    $namespaces[$table->getNamespace()] = array();
+                }
+
+                $list = &$namespaces[$table->getNamespace()];
+            }
+            if (in_array($table->getPhpName(), $list)) {
                 $this->errors[] = sprintf('Table "%s" declares a phpName already used in another table', $table->getName());
             }
-            $phpNames[]= $table->getPhpName();
+            $list[] = $table->getPhpName();
             $this->validateTableAttributes($table);
             $this->validateTableColumns($table);
         }
