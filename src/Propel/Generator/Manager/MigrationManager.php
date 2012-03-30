@@ -37,7 +37,7 @@ class MigrationManager extends AbstractManager
 
     /**
      * @var string
-	 */
+     */
     protected $migrationTable;
 
     /**
@@ -236,6 +236,11 @@ class MigrationManager extends AbstractManager
         sort($migrationTimestamps);
 
         return $migrationTimestamps;
+    }
+
+    public function hasPendingMigrations()
+    {
+        return array() !== $this->getValidMigrationTimestamps();
     }
 
     public function getAlreadyExecutedMigrationTimestamps()
