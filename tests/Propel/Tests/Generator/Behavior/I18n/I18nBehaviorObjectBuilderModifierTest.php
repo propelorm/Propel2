@@ -76,6 +76,16 @@ class I18nBehaviorObjectBuilderModifierTest extends \PHPUnit_Framework_TestCase
             <reference local="movie_id" foreign="id" />
         </foreign-key>
     </table>
+
+    <table name="i18n_behavior_test_local_column">
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <column name="foo" type="INTEGER" />
+        <column name="bar" type="VARCHAR" size="100" />
+        <behavior name="i18n">
+            <parameter name="i18n_columns" value="bar" />
+            <parameter name="locale_column" value="my_lang" />
+        </behavior>
+    </table>
 </database>
 EOF;
             QuickBuilder::buildSchema($schema);
@@ -388,5 +398,19 @@ EOF;
         $this->assertEquals(2, $count, '2 i18n toys');
         $count = \MovieI18nQuery::create()->count();
         $this->assertEquals(0, $count, '0 i18n movies');
+    }
+
+    public function testUseLocalColumnParameter()
+    {
+        $o = new \I18nBehaviorTestLocalColumn();
+        $translation1 = new \I18nBehaviorTestLocalColumnI18n();
+        $translation1->setMyLang('en_EN');
+        $o->addI18nBehaviorTestLocalColumnI18n($translation1);
+        $translation2 = new \I18nBehaviorTestLocalColumnI18n();
+        $translation2->setMyLang('fr_FR');
+        $o->addI18nBehaviorTestLocalColumnI18n($translation2);
+        $o->save();
+        $this->assertEquals($translation1, $o->getTranslation('en_EN'));
+        $this->assertEquals($translation2, $o->getTranslation('fr_FR'));
     }
 }

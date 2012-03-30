@@ -209,7 +209,7 @@ class I18nBehaviorObjectBuilderModifier
         $pattern = '/public function add' . $i18nTablePhpName . '.*[\r\n]\s*\{/';
         $addition = "
         if (\$l && \$locale = \$l->get$localeColumnName()) {
-            \$this->set$localeColumnName(\$locale);
+            \$this->set{$localeColumnName}(\$locale);
             \$this->currentTranslations[\$locale] = \$l;
         }";
         $replacement = "\$0$addition";
