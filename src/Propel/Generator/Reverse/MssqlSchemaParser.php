@@ -87,7 +87,7 @@ class MssqlSchemaParser extends AbstractSchemaParser
         // First load the tables (important that this happen before filling out details of tables)
         $tables = array();
         while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $name = $row[0];
+            $name = $this->cleanDelimitedIdentifiers($row[0]);
             if ($name == $this->getMigrationTable()) {
                 continue;
             }
@@ -123,7 +123,7 @@ class MssqlSchemaParser extends AbstractSchemaParser
 
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
-            $name = $row['COLUMN_NAME'];
+            $name = $this->cleanDelimitedIdentifiers($row['COLUMN_NAME']);
             $type = $row['TYPE_NAME'];
             $size = $row['LENGTH'];
             $isNullable = $row['NULLABLE'];
@@ -175,9 +175,9 @@ class MssqlSchemaParser extends AbstractSchemaParser
         $foreignKeys = array(); // local store to avoid duplicates
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
-            $lcol = $row['COLUMN_NAME'];
-            $ftbl = $row['FK_TABLE_NAME'];
-            $fcol = $row['FK_COLUMN_NAME'];
+            $lcol = $this->cleanDelimitedIdentifiers($row['COLUMN_NAME']);
+            $ftbl = $this->cleanDelimitedIdentifiers($row['FK_TABLE_NAME']);
+            $fcol = $this->cleanDelimitedIdentifiers($row['FK_COLUMN_NAME']);
 
             $foreignTable = $database->getTable($ftbl);
             $foreignColumn = $foreignTable->getColumn($fcol);
@@ -206,8 +206,8 @@ class MssqlSchemaParser extends AbstractSchemaParser
 
         $indexes = array();
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $colName = $row["COLUMN_NAME"];
-            $name = $row['INDEX_NAME'];
+            $colName = $this->cleanDelimitedIdentifiers($row["COLUMN_NAME"]);
+            $name = $this->cleanDelimitedIdentifiers($row['INDEX_NAME']);
 
             // FIXME -- Add UNIQUE support
             if (!isset($indexes[$name])) {
@@ -234,9 +234,23 @@ class MssqlSchemaParser extends AbstractSchemaParser
         // Loop through the returned results, grouping the same key_name together
         // adding each column for that key.
         while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $name = $row[0];
+            $name = $this->cleanDelimitedIdentifiers($row[0]);
             $table->getColumn($name)->setPrimaryKey(true);
         }
     }
+
+
+  /**
+   * according to the identifier definition, we have to clean simple quote (') around the identifier name
+   * returns by mssql
+   * @see http://msdn.microsoft.com/library/ms175874.aspx
+   *
+   * @param string $identifier
+   * @return string
+   */
+  protected function cleanDelimitedIdentifiers($identifier)
+  {
+    return preg_replace('/^\'(.*)\'$/U', '$1', $identifier);
+  }
 
 }
