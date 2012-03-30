@@ -412,4 +412,15 @@ class ModelCriteriaSelectTest extends BookstoreTestBase
             'Propel\Tests\Bookstore\Book.AuthorId'
         ), $c->getSelect());
     }
+
+    public function testFormatterWithSelect()
+    {
+        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
+        $c->keepQuery(false); // just for this test's purpose
+        $c->setFormatter(ModelCriteria::FORMAT_ON_DEMAND);
+        $c->select(array('Id', 'Title'));
+        $rows = $c->find($this->con);
+
+        $this->assertTrue($c->getFormatter() instanceof \Propel\Runtime\Formatter\OnDemandFormatter, 'The formatter is preserved');
+    }
 }
