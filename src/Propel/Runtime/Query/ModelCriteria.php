@@ -1218,6 +1218,10 @@ class ModelCriteria extends Criteria
      */
     public function findOneOrCreate($con = null)
     {
+        if ($this->joins) {
+            throw new PropelException('findOneOrCreate() cannot be used on a query with a join, because Propel cannot transform a SQL JOIN into a subquery. You should split the query in two queries to avoid joins.');
+        }
+
         if (!$ret = $this->findOne($con)) {
             $class = $this->getModelName();
             $obj = new $class();

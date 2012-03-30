@@ -1660,6 +1660,19 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals(125, $book->getPrice(), 'findOneOrCreate() returns a populated objects based on the conditions');
     }
 
+    /**
+     * @expectedException Propel\Runtime\Exception\PropelException
+     */
+    public function testFindOneOrCreateThrowsExceptionWhenQueryContainsJoin()
+    {
+        $book = BookQuery::create('b')
+            ->filterByPrice(125)
+            ->useAuthorQuery()
+                ->filterByFirstName('Leo')
+            ->endUse()
+            ->findOneOrCreate();
+    }
+
     public function testFindOneOrCreateMakesOneQueryWhenRecordNotExists()
     {
         $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
