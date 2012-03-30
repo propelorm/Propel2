@@ -635,7 +635,7 @@ class ForeignKey extends XmlElement
         foreach ($foreignTable->getForeignKeys() as $refFK) {
             $fkMap = $refFK->getLocalForeignMapping();
             // compares keys and values, but doesn't care about order, included check to make sure it's the same table (fixes #679)
-            if (($refFK->getTableName() == $this->getTableName()) && ($map == $fkMap)) { 
+            if (($refFK->getTableName() == $this->getTableName()) && ($map == $fkMap)) {
                 return $refFK;
             }
         }

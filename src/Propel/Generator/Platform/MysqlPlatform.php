@@ -255,7 +255,7 @@ CREATE TABLE %s
 
             if ($vi->hasParameter($name)) {
                 $parameterValue = $vi->getParameter( $name );
-            } else if ($vi->hasParameter($sqlName)) {
+            } elseif ($vi->hasParameter($sqlName)) {
                 $parameterValue = $vi->getParameter( $sqlName );
             }
 

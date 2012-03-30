@@ -1495,12 +1495,12 @@ class Criteria implements IteratorAggregate
                         return false;
                     }
                 }
- 
+
                 $joins = $criteria->getJoins();
                 if (count($joins) != count($this->joins)) {
                     return false;
                 }
- 
+
                 foreach ($joins as $key => $join) {
                     if (!$join->equals($this->joins[$key])) {
                         return false;

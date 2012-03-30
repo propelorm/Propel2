@@ -156,7 +156,7 @@ abstract class BaseObject
      */
     public function postSave(ConnectionInterface $con = null)
     {
-        
+
     }
 
     /**
@@ -175,7 +175,7 @@ abstract class BaseObject
      */
     public function postInsert(ConnectionInterface $con = null)
     {
-        
+
     }
 
     /**
@@ -194,7 +194,7 @@ abstract class BaseObject
      */
     public function postUpdate(ConnectionInterface $con = null)
     {
-        
+
     }
 
     /**
@@ -213,7 +213,7 @@ abstract class BaseObject
      */
     public function postDelete(ConnectionInterface $con = null)
     {
-        
+
     }
 
     /**

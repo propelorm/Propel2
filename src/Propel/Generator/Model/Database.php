@@ -431,7 +431,7 @@ class Database extends ScopedElement
      * Adds Domain object from <domain> tag.
      * @param      mixed XML attributes (array) or Domain object.
      */
-    public function addDomain($data) 
+    public function addDomain($data)
     {
         if ($data instanceof Domain) {
             $domain = $data; // alias

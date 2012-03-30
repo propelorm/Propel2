@@ -331,7 +331,7 @@ abstract class AbstractPropelDataModelTask extends Task
      * Get the output directory.
      * @return     string
      */
-    public function getOutputDirectory() 
+    public function getOutputDirectory()
     {
         return $this->outputDirectory;
     }
@@ -342,7 +342,7 @@ abstract class AbstractPropelDataModelTask extends Task
      * @return     Mapper  The created Mapper type object.
      * @throws     BuildException
      */
-    public function createMapper() 
+    public function createMapper()
     {
         if ($this->mapperElement !== null) {
             throw new BuildException("Cannot define more than one mapper.", $this->location);
@@ -513,7 +513,7 @@ abstract class AbstractPropelDataModelTask extends Task
      * @param      string $srcDir
      * @return     void (objects, DomDocument, are references by default in PHP 5, so returning it is useless)
      **/
-    protected function includeExternalSchemas(DomDocument $dom, $srcDir) 
+    protected function includeExternalSchemas(DomDocument $dom, $srcDir)
     {
         $databaseNode = $dom->getElementsByTagName("database")->item(0);
         $externalSchemaNodes = $dom->getElementsByTagName("external-schema");

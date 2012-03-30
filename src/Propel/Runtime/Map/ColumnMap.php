@@ -363,7 +363,7 @@ class ColumnMap
 
         foreach ($this->getTable()->getRelations() as $relation) {
             if ($relation->getType() == RelationMap::MANY_TO_ONE) {
-                if ($relation->getForeignTable()->getName() == $this->getRelatedTableName() 
+                if ($relation->getForeignTable()->getName() == $this->getRelatedTableName()
                     && array_key_exists($this->getFullyQualifiedName(), $relation->getColumnMappings())) {
                     return $relation;
                 }

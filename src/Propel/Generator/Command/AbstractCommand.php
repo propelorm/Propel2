@@ -62,6 +62,7 @@ abstract class AbstractCommand extends Command
     protected function getSchemas($directory)
     {
         $finder = new Finder();
+
         return iterator_to_array($finder
             ->name('*schema.xml')
             ->in($directory)

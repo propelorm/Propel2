@@ -635,6 +635,7 @@ public function getLastVersions(\$number = 10, \$criteria = null, \$con = null)
     \$criteria = {$this->getVersionQueryClassName()}::create(null, \$criteria);
     \$criteria->addDescendingOrderByColumn({$versionPeer}::VERSION);
     \$criteria->limit(\$number);
+
     return \$this->{$versionGetter}(\$criteria, \$con);
 }
 EOF;

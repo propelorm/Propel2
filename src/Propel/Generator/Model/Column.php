@@ -386,7 +386,7 @@ class Column extends XmlElement
      * Get the visibility of the accessors of this column / attribute
      * @return         string
      */
-    public function getAccessorVisibility() 
+    public function getAccessorVisibility()
     {
         if ($this->accessorVisibility !== null) {
             return $this->accessorVisibility;
@@ -399,7 +399,7 @@ class Column extends XmlElement
      * Set the visibility of the accessor methods for this column / attribute
      * @param             $newVisibility string
      */
-    public function setAccessorVisibility($newVisibility) 
+    public function setAccessorVisibility($newVisibility)
     {
         if (in_array($newVisibility, self::$validVisibilities)) {
             $this->accessorVisibility = $newVisibility;
@@ -1301,7 +1301,7 @@ class Column extends XmlElement
         $this->referrers = null;
     }
 
-    static public function generatePhpName($name, $phpNamingMethod = PhpNameGenerator::CONV_METHOD_CLEAN, $namePrefix = null) 
+    static public function generatePhpName($name, $phpNamingMethod = PhpNameGenerator::CONV_METHOD_CLEAN, $namePrefix = null)
     {
         return NameFactory::generateName(NameFactory::PHP_GENERATOR, array($name, $phpNamingMethod, $namePrefix));
     }
