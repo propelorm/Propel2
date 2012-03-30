@@ -12,6 +12,7 @@ namespace Propel\Generator\Behavior\Validate;
 use Propel\Generator\Model\Behavior;
 use Symfony\Component\Yaml\Parser;
 use Propel\Generator\Exception\InvalidArgumentException;
+use Propel\Generator\Exception\ConstraintNotFoundException;
 
 /**
  * Validate a model object using Symfony2 Validator component
@@ -38,8 +39,7 @@ class ValidateBehavior extends Behavior
     public function objectMethods($builder)
     {
         $array = $this->getParameters();
-        if (empty($array))
-        {
+        if (empty($array)) {
             throw new InvalidArgumentException('Please, define your rules for validation.');
         }
         $this->cleanupParameters();
@@ -53,7 +53,6 @@ class ValidateBehavior extends Behavior
         $script .= $this->addGetValidationFailuresMethod();
      
         return $script;
-         
     }
      
     /**
@@ -74,10 +73,8 @@ class ValidateBehavior extends Behavior
     {
       $parser = new Parser();
       $params = $this->getParameters();
-      foreach ($params as $key => $value) 
-      {
-          if (is_string($value))
-          {
+      foreach ($params as $key => $value) {
+          if (is_string($value)) {
               $params[$key] = $parser->parse($value);
           }
       }
@@ -96,25 +93,20 @@ class ValidateBehavior extends Behavior
         
         foreach ($params as $key=>$properties)
         {
-            if (!isset($properties['column']))
-            {
+            if (!isset($properties['column'])) {
                 throw new InvalidArgumentException('Please, define the column to validate.');
             }
       
-            if (!isset($properties['validator']))
-            {
+            if (!isset($properties['validator'])) {
                 throw new InvalidArgumentException('Please, define the validator constraint.');
             }
       
-            if (!class_exists("Symfony\\Component\\Validator\\Constraints\\".$properties['validator'], true))
-            {
-                throw new InvalidArgumentException('The constraint class '.$properties['validator'].' does not exist.');
+            if (!class_exists("Symfony\\Component\\Validator\\Constraints\\".$properties['validator'], true)) {
+                throw new ConstraintNotFoundException('The constraint class '.$properties['validator'].' does not exist.');
             }
       
-            if (isset($properties['options']))
-            {
-                if (!is_array($properties['options']))
-                {
+            if (isset($properties['options'])) {
+                if (!is_array($properties['options'])) {
                     throw new InvalidArgumentException('The options value, in <parameter> tag must be an array');
                 }
           
@@ -126,7 +118,6 @@ class ValidateBehavior extends Behavior
         }
         
         return $this->renderTemplate('objectLoadValidatorMetadata', array('constraints' => $constraints));
-      
     }
   
     /**
@@ -140,28 +131,23 @@ class ValidateBehavior extends Behavior
     protected function arrayToString ($array, $deep = false)
     {
         $string = "array(";
-        foreach ($array as $key => $value)
-        {
+        foreach ($array as $key => $value) {
             $string .= "'$key' => ";
           
-            if (is_array($value))
-            {
+            if (is_array($value)) {
                 $string .= $this->arrayToString($value, true);
             }
-            else
-            {
+            else {
                 $string .= "'$value', ";
             }
         }
         $string .= ")";
       
-        if ($deep)
-        {
+        if ($deep) {
             $string .= ", ";
         }
       
         return $string;
-  
     }
   
     /**
@@ -177,22 +163,17 @@ class ValidateBehavior extends Behavior
         $refFkVarNames = array();
         $collVarNames = array();
         
-        if ($hasForeignKeys)
-        {
-            foreach ($foreignKeys as $fk)
-            {
+        if ($hasForeignKeys) {
+            foreach ($foreignKeys as $fk) {
                 $aVarNames[] = $this->builder->getFKVarName($fk);            
             }
         }
         
-        foreach ($table->getReferrers() as $refFK)
-        {
-            if ($refFK->isLocalPrimaryKey())
-            {
+        foreach ($table->getReferrers() as $refFK) {
+            if ($refFK->isLocalPrimaryKey()) {
                 $refFkVarNames[] = $this->builder->getPKRefFKVarName($refFK);
             } 
-            else
-            {
+            else {
                 $collVarNames[] = $this->builder->getRefFKCollVarName($refFK);
             }
         }
@@ -203,7 +184,6 @@ class ValidateBehavior extends Behavior
             'refFkVarNames'  => $refFkVarNames,
             'collVarNames'   => $collVarNames
         ));
-        
     }
     
     /**
@@ -212,9 +192,7 @@ class ValidateBehavior extends Behavior
      */
     protected function addGetValidationFailuresMethod()
     {
-        
         return $this->renderTemplate('objectGetValidationFailures');
-        
     } 
   
 }

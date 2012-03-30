@@ -1,5 +1,4 @@
 
-
 /**
  * Validates the object and all objects related to this table.
  *
@@ -10,15 +9,13 @@
  */
 public function validate(Validator $validator = null)
 {
-    if (is_null($validator))
-    {
+    if (is_null($validator)) {
         $validator = new Validator(new ClassMetadataFactory(new StaticMethodLoader()), new ConstraintValidatorFactory());
     }
     
     $failureMap = new ConstraintViolationList();
     
-    if (!$this->alreadyInValidation) 
-    {
+    if (!$this->alreadyInValidation) {
         $this->alreadyInValidation = true;
         $retval = null;
         
@@ -30,10 +27,8 @@ public function validate(Validator $validator = null)
         
 <?php foreach($aVarNames as $aVarName) : ?>
         //If validate() method exists, the validate-behavior is configured for related object
-        if (method_exists($this-><?php echo $aVarName; ?>, 'validate'))
-        {
-            if (!$this-><?php echo $aVarName; ?>->validate($validator))
-            {
+        if (method_exists($this-><?php echo $aVarName; ?>, 'validate')) {
+            if (!$this-><?php echo $aVarName; ?>->validate($validator)) {
                 $failureMap->addAll($this-><?php echo $aVarName; ?>->getValidationFailures());
             }
         }
@@ -41,20 +36,15 @@ public function validate(Validator $validator = null)
 <?php endif; ?>
 
         $retval = $validator->validate($this);
-        if (count($retval) > 0)
-        {
+        if (count($retval) > 0) {
             $failureMap->addAll($retval);
         }
 
 <?php foreach($collVarNames as $collVarName) : ?>
-        if (!is_null($this-><?php echo $collVarName; ?>))
-        {
-            foreach ($this-><?php echo $collVarName; ?> as $referrerFK)
-            {
-                if (method_exists($referrerFK, 'validate'))
-                {
-                    if (!$referrerFK->validate($validator))
-                    {
+        if (!is_null($this-><?php echo $collVarName; ?>)) {
+            foreach ($this-><?php echo $collVarName; ?> as $referrerFK) {
+                if (method_exists($referrerFK, 'validate')) {
+                    if (!$referrerFK->validate($validator)) {
                         $failureMap->addAll($referrerFK->getValidationFailures());
                     }
                 }
@@ -70,4 +60,3 @@ public function validate(Validator $validator = null)
     return (bool) (!(count($this->validationFailures) > 0));
       
 }
-

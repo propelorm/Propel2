@@ -21,7 +21,7 @@ Then add validation rules via `<parameter>` tag.
   <column name="first_name" required="true" type="VARCHAR" size="128" description="First Name" />
   <column name="last_name" required="true" type="VARCHAR" size="128" description="Last Name" />
   <column name="email" type="VARCHAR" size="128" description="E-Mail Address" />
-  
+
   <behavior name="validate">
     <parameter name="rule1" value="{column: first_name, validator: NotNull}" />
     <parameter name="rule2" value="{column: first_name, validator: MaxLength, options: {limit: 128}}" />
@@ -38,7 +38,7 @@ Let's now see the properties of `<parameter>` tag:
      `column`: the column to validate      
      `validator`: the name of [Validator Constraint](http://symfony.com/doc/current/reference/constraints.html)      
      `options`: (optional)an array of optional values to pass to the validator constraint class, according to its reference documentation       
-     
+
 
 
 Rebuild your model and you're ready to go. The ActiveRecord object now exposes two public methods:
@@ -56,15 +56,12 @@ $author->setLastName('Wilde');
 $author->setFirstName('Oscar');
 $author->setEmail('oscar.wilde@gmail.com');
 
-if (!$author->validate())
-{
-    foreach ($author->getValidationFailures() as $failure)
-    {
+if (!$author->validate()) {
+    foreach ($author->getValidationFailures() as $failure) {
         echo "Property ".$failure->getPropertyPath().": ".$failure->getMessage()."\n";
     }
 }
-else
-{
+else {
    echo "Everything's all right!";
 }
 
@@ -135,7 +132,7 @@ Consider the following model:
             <parameter name="rule5" value="{column: email, validator: Email}" />
         </behavior>
     </table>
-    
+
     <table name="reader">
         <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
         <column name="first_name" required="true" type="VARCHAR" size="128" />
@@ -149,7 +146,7 @@ Consider the following model:
             <parameter name="rule5" value="{column: email, validator: Email}" />
         </behavior>
     </table>
-    
+
     <table name="reader_book" isCrossRef="true">
          <column name="reader_id" type="INTEGER" primaryKey="true"/>
          <column name="book_id" type="INTEGER" primaryKey="true"/>
@@ -160,7 +157,7 @@ Consider the following model:
               <reference local="book_id" foreign="id"/>
          </foreign-key>
      </table>
-    
+
 </database>
 {% endhighlight %}
 
@@ -243,7 +240,7 @@ In the following example, only the third and the fourth rules will be considered
        <parameter name="rule1" value="{column: reader_id, validator: Type, options: {type: integer}}" />
        <parameter name="rule2" value="{column: book_id, validator: Type, options: {type: integer}}" />
     </behavior>
-    
+
 <!-- end of your schema -->
 {% endhighlight %}
 
@@ -269,7 +266,7 @@ In the following example, we add a constraint to validate ISBN. It's very compli
       .......
       <parameter name="rule1" value="{column: isbn, validator: Regex, options: {pattern: "/[^\d-]+/", match: false, message: Please enter a valid ISBN}}" />
   </behavior>
-    
+
 <!-- end of your schema -->
 {% endhighlight %}
 
@@ -284,7 +281,7 @@ But inside an xml string the double-quote characters should be escaped, so repla
       .......
       <parameter name="rule1" value="{column: isbn, validator: Regex, options: {pattern: &quot;/[^\d-]+/&quot;, match: false, message: Please enter a valid ISBN }}" />
   </behavior>
-    
+
 <!-- end of your schema -->
 {% endhighlight %}
 
@@ -323,15 +320,12 @@ $book->setPrice(10,00);
 $ret = $book->save();
 
 //if $ret <= 0 means no affected rows, that is validation failed or no object to persist
-if ($ret <= 0)
-{
-    $failures = $this->getValidationFailures();
-    
+if ($ret <= 0) {
+    $failures = $book->getValidationFailures();
+
     //count($failures) > 0 means that we have ConstraintViolation objects and validation failed
-    if (count($failures) > 0)
-    {
-        foreach ($this->getValidationFailures() as $failure)
-        {
+    if (count($failures) > 0) {
+        foreach ($failures as $failure) {
             echo $failure->getPropertyPath()." validation failed: ".$failure->getMessage();
         }
     }
@@ -349,7 +343,7 @@ The behavior adds to ActiveRecord objects the static `loadValidatorMetadata()` m
 //Symfony 2
 
 use Symfony\Component\HttpFoundation\Response;
-use YouVendor\YourBundle\Model\Author;
+use YourVendor\YourBundle\Model\Author;
 // ...
 
 public function indexAction()
@@ -385,15 +379,13 @@ public function indexAction()
     // ... do something to the $author object
 
     $validator = $this->get('validator');
-    if (!$author->validate($validator))
-    {
+    if (!$author->validate($validator)) {
         $errors = $author->getValidationFailures();
-        
+
         return new Response(print_r($errors, true));
-    
+
     } 
-    else 
-    {
+    else {
         return new Response('The author is valid! Yes!');
     }
 }
@@ -406,21 +398,21 @@ Using the behavior inside a Silex project, is about the same as we've seen for S
 
 {% highlight php %}
 <?php
-      
+
 //Silex
-       
+
 // ...
-       
+
 $app->post('/authors/new', function () use ($app) {
     $post = new Author();
     $author->setLastName($app['request']->get('lastname'));
     $author->setFirstName($app['request']->get('firstname'));
     $author->setEmail($app['request']->get('email'));
-    
+
     $violations = $app['validator']->validate($author);
-    
+
     return $violations;
-     
+
 }
 {% endhighlight %}
 
@@ -428,22 +420,22 @@ and if you wish to automatically validate also related objects:
 
 {% highlight php %}
 <?php
-     
+
 //Silex
-      
+
 // ...
-        
+
 $app->post('/authors/new', function () use ($app) {
     $post = new Author();
     $author->setLastName($app['request']->get('lastname'));
     $author->setFirstName($app['request']->get('firstname'));
     $author->setEmail($app['request']->get('email'));
-    
+
     $author->validate($app['validator']))
     $violations = $author->getValidationFailures();
-        
+
     return $violations;
-    
+
 }
 {% endhighlight %}
 
@@ -453,8 +445,6 @@ The behavior adds the following properties to your ActiveRecord:
 
 *   `alreadyInValidation`:  this *protected* property is a flag to prevent endless validation loop, if this object is referenced by another object on which we're performing a validation.
 *   `validationFailures`:   this *protected* property contains the ConstraintViolationList object.
-
-
 
 
 The behavior adds the following methods to your ActiveRecord:

@@ -33,8 +33,7 @@ class ValidateBehaviorTest extends \PHPUnit_Framework_TestCase
     
     public function assertPreConditions()
     {
-        if (!class_exists('Propel\Tests\Bookstore\Behavior\ValidateAuthor')) 
-        {
+        if (!class_exists('Propel\Tests\Bookstore\Behavior\ValidateAuthor')) {
             throw new \Exception('Please, run \'bin/propel test:prepare\' command before starting to test this behavior');
         }
         
@@ -47,47 +46,42 @@ class ValidateBehaviorTest extends \PHPUnit_Framework_TestCase
     
     public function testHasValidateMethod()
     {
-        foreach ($this->classes as $class)
-        {
+        foreach ($this->classes as $class) {
              $this->assertTrue(method_exists($class, 'validate'));
         }
     }
     
     public function testHasLoadValidatorMetadataMethod()
     {
-        foreach ($this->classes as $class)
-        {
+        foreach ($this->classes as $class) {
              $this->assertTrue(method_exists($class, 'loadValidatorMetadata'));
         }
     }
     
     public function testHasAlreadyInValidationAttribute()
     {
-        foreach ($this->classes as $class)
-        {
+        foreach ($this->classes as $class) {
              $this->assertClassHasAttribute('alreadyInValidation', $class);
         }
     }
     
     public function testHasValidationFailuresAttribute()
     {
-        foreach ($this->classes as $class)
-        {
+        foreach ($this->classes as $class) {
              $this->assertClassHasAttribute('validationFailures', $class);
         }
     }
     
     public function testLoadValidatorMetadataMethodIsStatic()
     {
-        foreach ($this->classes as $class)
-        {
+        foreach ($this->classes as $class) {
              $method = new \ReflectionMethod($class, 'loadValidatorMetadata');
              $this->assertTrue($method->isStatic());
         }
     }
     
     /**
-     * @expectedException  InvalidArgumentException
+     * @expectedException  Propel\Generator\Exception\InvalidArgumentException
      * @expectedExceptionMessage  Please, define your rules for validation.
      */
     public function testParametersNotDefined()
@@ -105,7 +99,7 @@ EOF;
     }
     
     /**
-     * @expectedException  InvalidArgumentException
+     * @expectedException  Propel\Generator\Exception\InvalidArgumentException
      * @expectedExceptionMessage  Please, define the column to validate.
      */
     public function testColumnNameNotDefined()
@@ -126,7 +120,7 @@ EOF;
     }
     
     /**
-     * @expectedException  InvalidArgumentException
+     * @expectedException  Propel\Generator\Exception\InvalidArgumentException
      * @expectedExceptionMessage  Please, define the validator constraint.
      */
     public function testValidatorNameNotDefined()
@@ -147,7 +141,7 @@ EOF;
     }
     
     /**
-     * @expectedException  InvalidArgumentException
+     * @expectedException  Propel\Generator\Exception\ConstraintNotFoundException
      * @expectedExceptionMessage  The constraint class MaximumLength does not exist.
      */
     public function testConstraintNameNotValid()
@@ -168,7 +162,7 @@ EOF;
     }
     
     /**
-     * @expectedException  InvalidArgumentException
+     * @expectedException  Propel\Generator\Exception\InvalidArgumentException
      * @expectedExceptionMessage  The options value, in <parameter> tag must be an array
      */
     public function testConstraintOptionsNotValid()
@@ -280,8 +274,7 @@ EOF;
        $this->assertInstanceOf('Symfony\Component\Validator\ConstraintViolationList', $failures);
        $this->assertEquals(3, count($failures), 'Three constraint violation objects expected');
        
-       foreach ($failures as $failure)
-       {
+       foreach ($failures as $failure) {
            $this->assertInstanceOf('Symfony\Component\Validator\ConstraintViolation', $failure);
            $this->assertTrue(in_array($failure->getPropertyPath(), $failedProperties));
        }
@@ -430,8 +423,7 @@ EOF;
         $this->assertInstanceOf('Symfony\Component\Validator\ConstraintViolationList', $failures);
         $this->assertEquals(5, count($failures), 'Five constraint violation objects expected.');
        
-        foreach ($failures as $failure)
-        {
+        foreach ($failures as $failure) {
             $this->assertInstanceOf('Symfony\Component\Validator\ConstraintViolation', $failure);
         
             $failObject = new \ReflectionObject($failure->getRoot());
@@ -439,7 +431,6 @@ EOF;
             $this->assertTrue(in_array($failure->getPropertyPath(), array_keys($failedProperties)));
             $this->assertEquals($failedProperties[$failure->getPropertyPath()], $failObject->getName());
         }
-    
     }
     
   }

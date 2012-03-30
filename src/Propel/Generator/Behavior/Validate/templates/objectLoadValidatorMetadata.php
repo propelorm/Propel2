@@ -5,7 +5,7 @@
  *
  * @param ClassMetadata $metadata
  */
-public static function loadValidatorMetadata(ClassMetadata $metadata)
+static public function loadValidatorMetadata(ClassMetadata $metadata)
 {
 <?php foreach($constraints as $constraint) : ?>
     $metadata->addPropertyConstraint('<?php echo $constraint['column']; ?>', new <?php echo $constraint['validator']; ?>(<?php  echo((isset($constraint['options'])) ? $constraint['options'] : ''); ?>));
