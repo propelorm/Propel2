@@ -9,22 +9,22 @@
         {
             "package": "symfony/class-loader",
             "version": "dev-master",
-            "source-reference": "da83c40b126ce8622fc052332b2c54a135ed976c"
+            "source-reference": "cd1550a4a6c0794b6b109af2db43fde6e18ee363"
         },
         {
             "package": "symfony/console",
             "version": "dev-master",
-            "source-reference": "5fcd408b7b34f3e544f9743cf33e179767e9a000"
+            "source-reference": "8e3c42aa976f18a9bfcb0694553e5f99def3309c"
         },
         {
             "package": "symfony/finder",
             "version": "dev-master",
-            "source-reference": "be30ecc95281d729ee51b9e89644d442bcf60451"
+            "source-reference": "713ba1dbd03b424afd1f944626dc0ce1b5b8c442"
         },
         {
             "package": "symfony/yaml",
             "version": "dev-master",
-            "source-reference": "2552c643a158ee7fb6c52c0dd55806055c575841"
+            "source-reference": "0647ee4ca69b60f9043256e89f8dbaa0cedd854c"
         }
     ],
     "aliases": [
