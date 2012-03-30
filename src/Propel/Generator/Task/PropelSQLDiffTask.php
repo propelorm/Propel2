@@ -104,6 +104,14 @@ class PropelSQLDiffTask extends AbstractPropelDataModelTask
         if (!$connections) {
             throw new Exception('You must define database connection settings in a buildtime-conf.xml file to use diff');
         }
+        $manager = new PropelMigrationManager();
+        $manager->setConnections($connections);
+        $manager->setMigrationDir($this->getOutputDirectory());
+
+        if ($manager->hasPendingMigrations()) {
+            throw new Exception('Uncommitted migrations have been found ; you should either execute or delete them before rerunning the \'diff\' task');
+        }
+
         $totalNbTables = 0;
         $ad = new AppData();
         foreach ($connections as $name => $params) {
@@ -136,9 +144,6 @@ class PropelSQLDiffTask extends AbstractPropelDataModelTask
 
         // comparing models
         $this->log('Comparing models...');
-        $manager = new MigrationManager();
-        $manager->setConnections($connections);
-        $manager->setMigrationDir($this->getOutputDirectory());
         $migrationsUp = array();
         $migrationsDown = array();
         foreach ($ad->getDatabases() as $database) {
