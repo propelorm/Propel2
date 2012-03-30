@@ -250,16 +250,21 @@ CREATE TABLE %s
             'Union'           => 'UNION',
         );
         foreach ($supportedOptions as $name => $sqlName) {
+
+            $parameterValue = NULL;
+
             if ($vi->hasParameter($name)) {
-                $tableOptions[] = sprintf('%s=%s',
-                    $sqlName,
-                    $this->quote($vi->getParameter($name))
-                );
+                $parameterValue = $vi->getParameter($name);
             } elseif ($vi->hasParameter($sqlName)) {
-                $tableOptions[] = sprintf('%s=%s',
-                    $sqlName,
-                    $this->quote($vi->getParameter($sqlName))
-                );
+                $parameterValue = $vi->getParameter($sqlName);
+            }
+
+            if(!is_null($parameterValue)) {
+
+                //if the value is numeric, then there is no need for quotes
+                $parameterValue = is_numeric($parameterValue) ? $parameterValue : $this->quote($parameterValue);
+
+                $tableOptions [] = sprintf('%s=%s', $sqlName, $parameterValue);
             }
         }
 
