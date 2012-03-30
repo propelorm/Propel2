@@ -140,7 +140,10 @@ class VersionableBehaviorObjectBuilderModifier
         $this->addIsLastVersion($script);
         $this->addGetOneVersion($script);
         $this->addGetAllVersions($script);
+        $this->addCompareVersion($script);
         $this->addCompareVersions($script);
+        $this->addComputeDiff($script);
+        $this->addGetLastVersions($script);
 
         return $script;
     }
@@ -481,33 +484,33 @@ public function getAllVersions(\$con = null)
 ";
     }
 
-    protected function addCompareVersions(&$script)
+    protected function addComputeDiff(&$script)
     {
         $versionTable = $this->behavior->getVersionTable();
         $fks = $versionTable->getForeignKeysReferencingTable($this->table->getName());
         $script .= "
 /**
- * Gets all the versions of this object, in incremental order.
+ * Computes the diff between two versions.
  * <code>
- * print_r(\$book->compare(1, 2));
+ * print_r(\$book->computeDiff(1, 2));
  * => array(
  *   '1' => array('Title' => 'Book title at version 1'),
  *   '2' => array('Title' => 'Book title at version 2')
  * );
  * </code>
  *
- * @param   integer   \$fromVersionNumber
- * @param   integer   \$toVersionNumber
- * @param   string    \$keys Main key used for the result diff (versions|columns)
- * @param   ConnectionInterface \$con the connection to use
+ * @param   array     \$fromVersion     An array representing the original version.
+ * @param   array     \$toVersion       An array representing the destination version.
+ * @param   string    \$keys            Main key used for the result diff (versions|columns).
+ * @param   array     \$ignoredColumns  The columns to exclude from the diff.
  *
  * @return  array A list of differences
  */
-public function compareVersions(\$fromVersionNumber, \$toVersionNumber, \$keys = 'columns', \$con = null)
+protected function computeDiff(\$fromVersion, \$toVersion, \$keys = 'columns', \$ignoredColumns = array())
 {
-    \$fromVersion = \$this->getOneVersion(\$fromVersionNumber, \$con)->toArray();
-    \$toVersion = \$this->getOneVersion(\$toVersionNumber, \$con)->toArray();
-    \$ignoredColumns = array(
+    \$fromVersionNumber = \$fromVersion['{$this->getColumnPhpName()}'];
+    \$toVersionNumber = \$toVersion['{$this->getColumnPhpName()}'];
+    \$ignoredColumns = array_merge(array(
         '{$this->getColumnPhpName()}',";
         if ($this->behavior->getParameter('log_created_at') == 'true') {
             $script .= "
@@ -522,7 +525,7 @@ public function compareVersions(\$fromVersionNumber, \$toVersionNumber, \$keys =
         'VersionComment',";
         }
         $script .= "
-    );
+    ), \$ignoredColumns);
     \$diff = array();
     foreach (\$fromVersion as \$key => \$value) {
         if (in_array(\$key, \$ignoredColumns)) {
@@ -547,5 +550,93 @@ public function compareVersions(\$fromVersionNumber, \$toVersionNumber, \$keys =
     return \$diff;
 }
 ";
+    }
+
+    protected function addCompareVersion(&$script)
+    {
+        $script .= "
+/**
+ * Compares the current object with another of its version.
+ * <code>
+ * print_r(\$book->compareVersion(1));
+ * => array(
+ *   '1' => array('Title' => 'Book title at version 1'),
+ *   '2' => array('Title' => 'Book title at version 2')
+ * );
+ * </code>
+ *
+ * @param   integer   \$versionNumber
+ * @param   string    \$keys Main key used for the result diff (versions|columns)
+ * @param   PropelPDO \$con the connection to use
+ * @param   array     \$ignoredColumns  The columns to exclude from the diff.
+ *
+ * @return  array A list of differences
+ */
+public function compareVersion(\$versionNumber, \$keys = 'columns', \$con = null, \$ignoredColumns = array())
+{
+    \$fromVersion = \$this->toArray();
+    \$toVersion = \$this->getOneVersion(\$versionNumber, \$con)->toArray();
+
+    return \$this->computeDiff(\$fromVersion, \$toVersion, \$keys, \$ignoredColumns);
+}
+";
+    }
+
+    protected function addCompareVersions(&$script)
+    {
+        $script .= "
+/**
+ * Compares two versions of the current object.
+ * <code>
+ * print_r(\$book->compareVersions(1, 2));
+ * => array(
+ *   '1' => array('Title' => 'Book title at version 1'),
+ *   '2' => array('Title' => 'Book title at version 2')
+ * );
+ * </code>
+ *
+ * @param   integer   \$fromVersionNumber
+ * @param   integer   \$toVersionNumber
+ * @param   string    \$keys Main key used for the result diff (versions|columns)
+ * @param   PropelPDO \$con the connection to use
+ * @param   array     \$ignoredColumns  The columns to exclude from the diff.
+ *
+ * @return  array A list of differences
+ */
+public function compareVersions(\$fromVersionNumber, \$toVersionNumber, \$keys = 'columns', \$con = null, \$ignoredColumns = array())
+{
+    \$fromVersion = \$this->getOneVersion(\$fromVersionNumber, \$con)->toArray();
+    \$toVersion = \$this->getOneVersion(\$toVersionNumber, \$con)->toArray();
+
+    return \$this->computeDiff(\$fromVersion, \$toVersion, \$keys, \$ignoredColumns);
+}
+";
+    }
+
+    protected function addGetLastVersions(&$script)
+    {
+        $versionTable = $this->behavior->getVersionTable();
+        $versionARClassname = $this->builder->getNewStubObjectBuilder($versionTable)->getClassname();
+        $versionForeignColumn = $versionTable->getColumn($this->behavior->getParameter('version_column'));
+        $fks = $versionTable->getForeignKeysReferencingTable($this->table->getName());
+        $relCol = $this->builder->getRefFKPhpNameAffix($fks[0], $plural = true);
+        $versionGetter = 'get'.$relCol;
+        $versionPeer = $this->builder->getNewStubPeerBuilder($versionTable)->getClassname();
+
+        $script .= <<<EOF
+/**
+ * retrieve the last \$number versions.
+ *
+ * @param Integer \$number the number of record to return.
+ * @return PropelCollection|array {$versionARClassname}[] List of {$versionARClassname} objects
+ */
+public function getLastVersions(\$number = 10, \$criteria = null, \$con = null)
+{
+    \$criteria = {$this->getVersionQueryClassName()}::create(null, \$criteria);
+    \$criteria->addDescendingOrderByColumn({$versionPeer}::VERSION);
+    \$criteria->limit(\$number);
+    return \$this->{$versionGetter}(\$criteria, \$con);
+}
+EOF;
     }
 }
