@@ -74,6 +74,30 @@ EOF;
         $this->assertContains('Table "bar" declares a phpName already used in another table', $validator->getErrors());
     }
 
+    public function testValidateReturnsTrueWhenTwoTablesHaveSamePhpNameInDifferentNamespaces()
+    {
+        $column1 = new Column('id');
+        $column1->setPrimaryKey(true);
+        $table1 = new Table('foo');
+        $table1->addColumn($column1);
+        $table1->setNamespace('Foo');
+
+        $column2 = new Column('id');
+        $column2->setPrimaryKey(true);
+        $table2 = new Table('bar');
+        $table2->addColumn($column2);
+        $table2->setPhpName('Foo');
+        $table2->setNamespace('Bar');
+
+        $database = new Database();
+        $database->addTable($table1);
+        $database->addTable($table2);
+        $appData = new AppData();
+        $appData->addDatabase($database);
+        $validator = new SchemaValidator($appData);
+        $this->assertTrue($validator->validate());
+    }
+
     public function testValidateReturnsFalseWhenTableHasNoPk()
     {
         $appData = $this->getAppDataForTable(new Table('foo'));
