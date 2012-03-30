@@ -11,7 +11,6 @@
 namespace Propel\Generator\Reverse;
 
 // TODO: to remove
-require_once 'phing/Task.php';
 use Task;
 
 use Propel\Generator\Config\GeneratorConfigInterface;
@@ -25,26 +24,25 @@ use Propel\Runtime\Connection\ConnectionInterface;
  */
 interface SchemaParserInterface
 {
-
     /**
      * Gets the database connection.
      * @return     ConnectionInterface
      */
-    public function getConnection();
+    function getConnection();
 
     /**
      * Sets the database connection.
      *
      * @param      ConnectionInterface $dbh
      */
-    public function setConnection(ConnectionInterface $dbh);
+    function setConnection(ConnectionInterface $dbh);
 
     /**
      * Sets the GeneratorConfig to use in the parsing.
      *
      * @param      GeneratorConfigInterface $config
      */
-    public function setGeneratorConfig(GeneratorConfigInterface $config);
+    function setGeneratorConfig(GeneratorConfigInterface $config);
 
     /**
      * Gets a specific propel (renamed) property from the build.
@@ -52,13 +50,13 @@ interface SchemaParserInterface
      * @param      string $name
      * @return     mixed
      */
-    public function getBuildProperty($name);
+    function getBuildProperty($name);
 
     /**
      * Gets array of warning messages.
      * @return     array string[]
      */
-    public function getWarnings();
+    function getWarnings();
 
     /**
      * Parse the schema and populate passed-in Database model object.
@@ -67,5 +65,5 @@ interface SchemaParserInterface
      * @param      Task $task
      * @return     int number of generated tables
      */
-    public function parse(Database $database, Task $task = null);
+    function parse(Database $database, Task $task = null);
 }

@@ -11,7 +11,6 @@
 namespace Propel\Generator\Reverse;
 
 // TODO: to remove
-require_once 'phing/Task.php';
 use Task;
 
 use PDO;
