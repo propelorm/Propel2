@@ -1107,6 +1107,9 @@ class ModelCriteria extends Criteria
         } else {
             $alias = null;
         }
+        if (0 === strpos($class, '\\')) {
+            $class = substr($class, 1);
+        }
 
         return array($class, $alias);
     }
