@@ -81,7 +81,7 @@ class TableMapBuilder extends AbstractOMBuilder
  * (i.e. if it's a text column type).
  *
  */
-class ".$this->getUnqualifiedClassname()." extends \Propel\Runtime\Map\TableMap
+class ".$this->getUnqualifiedClassname()." extends TableMap
 {
 ";
     }
