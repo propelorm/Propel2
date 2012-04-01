@@ -13,6 +13,7 @@ namespace Propel\Generator\Behavior\I18n;
 use Propel\Generator\Model\Behavior;
 use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\PropelTypes;
+use Propel\Generator\Behavior\Validate\ValidateBehavior;
 
 /**
  * Allows translation of text columns through transparent one-to-many relationship
@@ -134,6 +135,7 @@ class I18nBehavior extends Behavior
     {
         $table = $this->getTable();
         $i18nTable = $this->i18nTable;
+        $i18nValidateParams = array();
         foreach ($this->getI18nColumnNamesFromConfig() as $columnName) {
             if (!$i18nTable->hasColumn($columnName)) {
                 if (!$table->hasColumn($columnName)) {
@@ -142,11 +144,31 @@ class I18nBehavior extends Behavior
                 $column = $table->getColumn($columnName);
                 // add the column
                 $i18nColumn = $i18nTable->addColumn(clone $column);
+
+                //validate behavior: move rules associated to the column
+                if ($table->hasBehavior('validate')) {
+                    $vBehavior = $table->getBehavior('validate');
+                    $params = $vBehavior->getParametersFromColumnName($columnName);
+                    $i18nValidateParams = array_merge($i18nValidateParams, $params);
+                    $vBehavior->removeParametersFromColumnName($columnName);
+                }
                 // FIXME: also move FKs, and indices on this column
             }
             if ($table->hasColumn($columnName)) {
                 $table->removeColumn($columnName);
             }
+        }
+
+        //validate behavior
+        if (count($i18nValidateParams) > 0) {
+            $i18nVbehavior = new ValidateBehavior();
+            $i18nVbehavior->setName('validate');
+            $i18nVbehavior->setParameters($i18nValidateParams);
+            $i18nTable->addBehavior($i18nVbehavior);
+
+            //current table must have almost 1 validation rule
+            $validate = $table->getBehavior('validate');
+            $validate->addRuleOnPk();
         }
     }
 
