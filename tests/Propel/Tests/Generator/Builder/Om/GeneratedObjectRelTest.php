@@ -188,7 +188,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         $blc1 = BookClubListQuery::create()->findOneByGroupLeader('Crazyleggs');
         $books = $blc1->getBooks();
         $this->assertTrue($books instanceof ObjectCollection, 'getCrossRefFK() returns a Propel collection');
-        $this->assertEquals('Propel\Tests\Bookstore\Book', $books->getModel(), 'getCrossRefFK() returns a collection of the correct model');
+        $this->assertEquals('Book', $books->getModel(), 'getCrossRefFK() returns a collection of the correct model');
         $this->assertEquals(2, count($books), 'getCrossRefFK() returns the correct list of objects');
         $query = BookQuery::create()
             ->filterByTitle('Harry Potter and the Order of the Phoenix');

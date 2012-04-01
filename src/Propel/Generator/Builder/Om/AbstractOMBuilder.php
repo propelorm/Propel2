@@ -12,6 +12,7 @@ namespace Propel\Generator\Builder\Om;
 
 use Propel\Generator\Builder\DataModelBuilder;
 use Propel\Generator\Exception\EngineException;
+use Propel\Generator\Exception\LogicException;
 use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\Table;
 
@@ -260,6 +261,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         }
 
         $forcedAlias = $this->needAliasForClassname($class, $namespace);
+
         if (false === $alias || true === $alias || null === $alias) {
             $aliasWanted = $class;
             $alias = $alias || $forcedAlias;
@@ -267,15 +269,18 @@ abstract class AbstractOMBuilder extends DataModelBuilder
             $aliasWanted = $alias;
             $forcedAlias = false;
         }
+
         if (!$forcedAlias && !isset($this->declaredShortClassesOrAlias[$aliasWanted])) {
             if (!isset($this->declaredClasses[$namespace])) {
                 $this->declaredClasses[$namespace] = array();
             }
+
             $this->declaredClasses[$namespace][$class] = $aliasWanted;
             $this->declaredShortClassesOrAlias[$aliasWanted] = $namespace . '\\' . $class;
 
             return $aliasWanted;
         }
+
         // we have a duplicate class and asked for an automatic Alias
         if (false !== $alias) {
             if ('\\Base' == substr($namespace, -5)) {
@@ -284,8 +289,11 @@ abstract class AbstractOMBuilder extends DataModelBuilder
                 return $this->declareClassNamespace($class, $namespace, 'Child' . $class);
             }
         }
-         throw new Exception(sprintf('The class %s duplicate the class %s and can\'t be used without alias', $namespace . '\\' . $class,
-             $this->declaredShortClassesOrAlias[$aliasWanted]));
+
+        throw new LogicException(
+            sprintf('The class %s duplicates the class %s and can\'t be used without alias',
+            $namespace . '\\' . $class, $this->declaredShortClassesOrAlias[$aliasWanted])
+        );
     }
 
     protected function needAliasForClassname($class, $namespace)
@@ -309,6 +317,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         } else {
             $alias = $aliasPrefix;
         }
+
         return $this->declareClassNamespace($class, $namespace, $alias);
     }
 

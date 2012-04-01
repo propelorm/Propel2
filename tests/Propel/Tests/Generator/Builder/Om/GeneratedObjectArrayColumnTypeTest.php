@@ -11,6 +11,7 @@
 use Propel\Generator\Util\QuickBuilder;
 
 use Propel\Runtime\Propel;
+use Propel\Runtime\Query\ModelCriteria;;
 use MyNameSpace\ComplexColumnTypeEntity2;
 use MyNameSpace\ComplexColumnTypeEntity2Peer;
 use MyNameSpace\ComplexColumnTypeEntity2Query;
@@ -40,17 +41,17 @@ EOF;
 
     public function testActiveRecordMethods()
     {
-        $this->assertTrue(method_exists('ComplexColumnTypeEntity2', 'getTags'));
-        $this->assertTrue(method_exists('ComplexColumnTypeEntity2', 'hasTag'));
-        $this->assertTrue(method_exists('ComplexColumnTypeEntity2', 'setTags'));
-        $this->assertTrue(method_exists('ComplexColumnTypeEntity2', 'addTag'));
-        $this->assertTrue(method_exists('ComplexColumnTypeEntity2', 'removeTag'));
+        $this->assertTrue(method_exists('MyNameSpace\ComplexColumnTypeEntity2', 'getTags'));
+        $this->assertTrue(method_exists('MyNameSpace\ComplexColumnTypeEntity2', 'hasTag'));
+        $this->assertTrue(method_exists('MyNameSpace\ComplexColumnTypeEntity2', 'setTags'));
+        $this->assertTrue(method_exists('MyNameSpace\ComplexColumnTypeEntity2', 'addTag'));
+        $this->assertTrue(method_exists('MyNameSpace\ComplexColumnTypeEntity2', 'removeTag'));
         // only plural column names get a tester, an adder, and a remover method
-        $this->assertTrue(method_exists('ComplexColumnTypeEntity2', 'getValueSet'));
-        $this->assertFalse(method_exists('ComplexColumnTypeEntity2', 'hasValueSet'));
-        $this->assertTrue(method_exists('ComplexColumnTypeEntity2', 'setValueSet'));
-        $this->assertFalse(method_exists('ComplexColumnTypeEntity2', 'addValueSet'));
-        $this->assertFalse(method_exists('ComplexColumnTypeEntity2', 'removeValueSet'));
+        $this->assertTrue(method_exists('MyNameSpace\ComplexColumnTypeEntity2', 'getValueSet'));
+        $this->assertFalse(method_exists('MyNameSpace\ComplexColumnTypeEntity2', 'hasValueSet'));
+        $this->assertTrue(method_exists('MyNameSpace\ComplexColumnTypeEntity2', 'setValueSet'));
+        $this->assertFalse(method_exists('MyNameSpace\ComplexColumnTypeEntity2', 'addValueSet'));
+        $this->assertFalse(method_exists('MyNameSpace\ComplexColumnTypeEntity2', 'removeValueSet'));
     }
 
     public function testGetterDefaultValue()
