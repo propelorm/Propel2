@@ -4,7 +4,7 @@
  *
  * @return    string $locale Locale to use for the translation, e.g. 'fr_FR'
  */
-public function getLocale()
+public function get<?php echo $localeColumnName ?>()
 {
     return $this->currentLocale;
 }

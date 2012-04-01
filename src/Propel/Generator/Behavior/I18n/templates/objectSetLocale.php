@@ -6,7 +6,7 @@
  *
  * @return    <?php echo $objectClassname ?> The current object (for fluent API support)
  */
-public function setLocale($locale = '<?php echo $defaultLocale ?>')
+public function set<?php echo $localeColumnName ?>($locale = '<?php echo $defaultLocale ?>')
 {
     $this->currentLocale = $locale;
 

@@ -62,16 +62,20 @@ class I18nBehaviorObjectBuilderModifier
     public function objectMethods($builder)
     {
         $this->builder = $builder;
+
         $script = '';
         $script .= $this->addSetLocale();
         $script .= $this->addGetLocale();
+
         if ($alias = $this->behavior->getParameter('locale_alias')) {
             $script .= $this->addGetLocaleAlias($alias);
             $script .= $this->addSetLocaleAlias($alias);
         }
+
         $script .= $this->addGetTranslation();
         $script .= $this->addRemoveTranslation();
         $script .= $this->addGetCurrentTranslation();
+
         foreach ($this->behavior->getI18nColumns() as $column) {
             $script .= $this->addTranslatedColumnGetter($column);
             $script .= $this->addTranslatedColumnSetter($column);
@@ -83,20 +87,23 @@ class I18nBehaviorObjectBuilderModifier
     protected function addSetLocale()
     {
         return $this->behavior->renderTemplate('objectSetLocale', array(
-            'objectClassname' => $this->builder->getStubObjectBuilder($this->table)->getClassname(),
-            'defaultLocale'    => $this->behavior->getDefaultLocale(),
+            'objectClassname'   => $this->builder->getStubObjectBuilder($this->table)->getClassname(),
+            'defaultLocale'     => $this->behavior->getDefaultLocale(),
+            'localeColumnName'  => $this->behavior->getLocaleColumn()->getPhpName(),
         ));
     }
 
     protected function addGetLocale()
     {
-        return $this->behavior->renderTemplate('objectGetLocale');
+        return $this->behavior->renderTemplate('objectGetLocale', array(
+            'localeColumnName'  => $this->behavior->getLocaleColumn()->getPhpName(),
+        ));
     }
 
     protected function addSetLocaleAlias($alias)
     {
         return $this->behavior->renderTemplate('objectSetLocaleAlias', array(
-            'objectClassname' => $this->builder->getStubObjectBuilder($this->table)->getClassname(),
+            'objectClassname'  => $this->builder->getStubObjectBuilder($this->table)->getClassname(),
             'defaultLocale'    => $this->behavior->getDefaultLocale(),
             'alias'            => ucfirst($alias),
         ));
