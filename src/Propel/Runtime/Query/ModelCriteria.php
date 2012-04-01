@@ -99,7 +99,12 @@ class ModelCriteria extends Criteria
     {
         $this->setDbName($dbName);
         $this->originalDbName = $dbName;
-        $this->modelName = $modelName;
+        if (0 === strpos($modelName, '\\')) {
+            $this->modelName = substr($modelName, 1);
+        } else {
+            $this->modelName = $modelName;
+        }
+
         $this->modelPeerName = constant($this->modelName . '::PEER');
         $this->modelAlias = $modelAlias;
         $this->tableMap = Propel::getServiceContainer()->getDatabaseMap($this->getDbName())->getTableByPhpName($this->modelName);
@@ -113,6 +118,11 @@ class ModelCriteria extends Criteria
     public function getModelName()
     {
         return $this->modelName;
+    }
+
+    public function getFullyQualifiedModelName()
+    {
+        return '\\' . $this->getModelName();
     }
 
     /**
