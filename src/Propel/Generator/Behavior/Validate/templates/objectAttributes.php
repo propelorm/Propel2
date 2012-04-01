@@ -5,10 +5,10 @@
  * @var        boolean
  */
 protected $alreadyInValidation = false;
-    
+
 /**
  * ConstraintViolationList object
- * 
+ *
  * @see     http://api.symfony.com/2.0/Symfony/Component/Validator/ConstraintViolationList.html
  * @var     ConstraintViolationList
  */

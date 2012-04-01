@@ -12,19 +12,19 @@ public function validate(Validator $validator = null)
     if (is_null($validator)) {
         $validator = new Validator(new ClassMetadataFactory(new StaticMethodLoader()), new ConstraintValidatorFactory());
     }
-    
+
     $failureMap = new ConstraintViolationList();
-    
+
     if (!$this->alreadyInValidation) {
         $this->alreadyInValidation = true;
         $retval = null;
-        
+
 <?php if ($hasForeignKeys) : ?>
         // We call the validate method on the following object(s) if they
         // were passed to this object by their coresponding set
         // method.  This object relates to these object(s) by a
         // foreign key reference.
-        
+
 <?php foreach($aVarNames as $aVarName) : ?>
         //If validate() method exists, the validate-behavior is configured for related object
         if (method_exists($this-><?php echo $aVarName; ?>, 'validate')) {
@@ -54,9 +54,9 @@ public function validate(Validator $validator = null)
 
         $this->alreadyInValidation = false;
     }
-    
+
     $this->validationFailures = $failureMap;
-    
+
     return (bool) (!(count($this->validationFailures) > 0));
-      
+
 }
