@@ -10,17 +10,14 @@
 
 namespace Propel\Generator\Behavior\Archivable;
 
+use Propel\Generator\Exception\InvalidArgumentException;
 use Propel\Generator\Model\Behavior;
 use Propel\Generator\Model\Index;
-
-use \InvalidArgumentException;
 
 /**
  * Keeps tracks of an ActiveRecord object, even after deletion
  *
  * @author    Francois Zaninotto
- * @version		$Revision$
- * @package		propel.generator.archivable
  */
 class ArchivableBehavior extends Behavior
 {

@@ -112,7 +112,7 @@ class PeerBuilder extends AbstractPeerBuilder
 
         if (null !== $parentClass) {
             $extendingPeerClass = ' extends '.$parentClass;
-        } elseif ('BasePeer' !== $this->basePeerClassname) {
+        } else if ('BasePeer' !== $this->basePeerClassname) {
             $extendingPeerClass = ' extends '.$this->basePeerClassname;
         }
 
