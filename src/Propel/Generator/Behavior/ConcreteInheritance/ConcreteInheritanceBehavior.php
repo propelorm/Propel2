@@ -195,7 +195,7 @@ public function getParentOrCreate(\$con = null)
 {
     if (\$this->isNew() && \$this->isPrimaryKeyNull()) {
         \$parent = new " . $parentClass . "();
-        \$parent->set" . $this->getParentTable()->getColumn($this->getParameter('descendant_column'))->getPhpName() . "('" . $this->builder->getStubObjectBuilder()->getFullyQualifiedClassname() . "');
+        \$parent->set" . $this->getParentTable()->getColumn($this->getParameter('descendant_column'))->getPhpName() . "('" . $this->builder->getStubObjectBuilder()->getQualifiedClassname() . "');
 
         return \$parent;
     } else {
