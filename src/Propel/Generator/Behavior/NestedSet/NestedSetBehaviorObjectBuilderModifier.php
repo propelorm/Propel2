@@ -1015,12 +1015,7 @@ public function addChild($objectClassname \$child)
 
     protected function getPeerClassNameWithNamespace()
     {
-        $peerClassname = $this->peerClassname;
-        if ($namespace = $this->builder->getStubPeerBuilder()->getNamespace()) {
-            $peerClassname = '\\\\' . $namespace . '\\\\' . $peerClassname;
-        }
-
-        return $peerClassname;
+        return $this->builder->getClassnameFromBuilder($this->builder->getStubPeerBuilder(), true);
     }
 
     protected function addInsertAsFirstChildOf(&$script)
