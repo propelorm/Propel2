@@ -623,10 +623,6 @@ class Database extends ScopedElement
             $dbNode->setAttribute('defaultPhpNamingMethod', $this->defaultPhpNamingMethod);
         }
 
-        if ($this->defaultTranslateMethod) {
-            $dbNode->setAttribute('defaultTranslateMethod', $this->defaultTranslateMethod);
-        }
-
         /*
 
         FIXME - Before we can add support for domains in the schema, we need

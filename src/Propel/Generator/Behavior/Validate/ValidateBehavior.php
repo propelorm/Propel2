@@ -186,7 +186,13 @@ class ValidateBehavior extends Behavior
             }
 
             if (!class_exists("Symfony\\Component\\Validator\\Constraints\\".$properties['validator'], true)) {
-                throw new ConstraintNotFoundException('The constraint class '.$properties['validator'].' does not exist.');
+                if (!class_exists("Propel\\Runtime\\Validator\\Constraints\\".$properties['validator'], true)) {
+                    throw new ConstraintNotFoundException('The constraint class '.$properties['validator'].' does not exist.');
+                } else {
+                    $classConstraint = "Propel\\Runtime\\Validator\\Constraints\\".$properties['validator'];
+                }
+            } else {
+                $classConstraint = "Symfony\\Component\\Validator\\Constraints\\".$properties['validator'];
             }
 
             if (isset($properties['options'])) {
@@ -198,7 +204,7 @@ class ValidateBehavior extends Behavior
             }
 
             $constraints[] = $properties;
-            $this->builder->declareClass("Symfony\\Component\\Validator\\Constraints\\".$properties['validator']);
+            $this->builder->declareClass($classConstraint);
         }
 
         return $this->renderTemplate('objectLoadValidatorMetadata', array('constraints' => $constraints));

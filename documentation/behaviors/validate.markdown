@@ -332,6 +332,30 @@ if ($ret <= 0) {
 }
 {% endhighlight %}
 
+## Supported constraints ##
+
+The behavior supports all Symfony Validator Constraints (see [http://symfony.com/doc/current/reference/constraints.html]), except `UniqueEntity` which is not compatible with Propel.
+Propel has its own unique validator: `Unique` constraint.
+This constraint checks if a certain value is already stored in the database. You can use it in the same way:
+
+{% highlight xml %}
+<!-- your schema -->
+  <behavior name="validate">
+      <parameter name="rule1" value="{column: column_name, validator: Unique}" />
+  </behavior>
+{% endhighlight %}
+
+And if you want to specify an error message:
+
+{% highlight xml %}
+<!-- your schema -->
+  <behavior name="validate">
+      <parameter name="rule1" value="{column: column_name, validator: Unique, options: {message: Your message here}}" />
+  </behavior>
+{% endhighlight %}
+
+>**Tip**<br />`Date`, `Time` and `DateTime` constraints are useful if you store a date-time value inside a string. If you use a php `DateTime` object, if a value isn't valid, the `DateTime` object itself raises an exception, before performing any validations.
+
 
 ## Inside Symfony2 ##
 
