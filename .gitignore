@@ -1,4 +1,5 @@
 composer.phar
+composer.lock
 pom.xml
 tests/Fixtures/bookstore-packaged/build/
 tests/Fixtures/bookstore/build/
