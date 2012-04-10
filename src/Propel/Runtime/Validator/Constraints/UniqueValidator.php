@@ -11,15 +11,19 @@ namespace Propel\Runtime\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
+use Propel\Runtime\Util\BasePeer;
 
 class UniqueValidator extends ConstraintValidator
 {
     public function isValid($value, Constraint $constraint)
     {
-        $className = get_class($this->context->getRoot());
+        $object = $this->context->getRoot();
+        $className = get_class($object);
+        $peer = $object->getPeer();
         $colName = $this->context->getCurrentProperty();
+        $colName = $peer->translateFieldName($colName, BasePeer::TYPE_STUDLYPHPNAME, BasePeer::TYPE_PHPNAME);
         $query = call_user_func($className.'Query::create');
-        $filter = 'filterBy'.ucfirst($colName);
+        $filter = 'filterBy'.$colName;
         $ret = $query->$filter($value)->count();
         if ($ret >0) {
             $this->setMessage($constraint->message);
