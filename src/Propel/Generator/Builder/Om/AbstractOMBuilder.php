@@ -134,9 +134,9 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     {
         if ($namespace = $this->getNamespace()) {
             return $namespace . '\\' . $this->getUnqualifiedClassname();
-        } else {
-            return $this->getUnqualifiedClassname();
         }
+
+        return $this->getUnqualifiedClassname();
     }
 
     /**
@@ -147,11 +147,6 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     public function getFullyQualifiedClassname()
     {
         return '\\' . $this->getQualifiedClassname();
-        if ($namespace = $this->getNamespace()) {
-            return '\\' . $this->getQualifiedClassname();
-        } else {
-            return 'namespace\\' . $this->getQualifiedClassname();
-        }
     }
     /**
      * Returns FQCN alias of getFullyQualifiedClassname
@@ -171,12 +166,10 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     public function getClasspath()
     {
         if ($this->getPackage()) {
-            $path = $this->getPackage() . '.' . $this->getUnqualifiedClassname();
-        } else {
-            $path = $this->getUnqualifiedClassname();
+            return $this->getPackage() . '.' . $this->getUnqualifiedClassname();
         }
 
-        return $path;
+        return $this->getUnqualifiedClassname();
     }
 
     /**
@@ -297,9 +290,9 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         if (false !== $alias) {
             if ('\\Base' == substr($namespace, -5) || 'Base' == $namespace) {
                 return $this->declareClassNamespace($class, $namespace, 'Base' . $class);
-            } else {
-                return $this->declareClassNamespace($class, $namespace, 'Child' . $class);
             }
+
+            return $this->declareClassNamespace($class, $namespace, 'Child' . $class);
         }
 
         throw new LogicException(
@@ -374,10 +367,9 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         $fullyQualifiedClassName = trim($fullyQualifiedClassName, '\\');
         if (($pos = strrpos($fullyQualifiedClassName, '\\')) !== false) {
             return $this->declareClassNamespacePrefix(substr($fullyQualifiedClassName, $pos + 1), substr($fullyQualifiedClassName, 0, $pos), $aliasPrefix);
-        } else {
-            // root namespace
-            return $this->declareClassNamespacePrefix($fullyQualifiedClassName, '', $aliasPrefix);
         }
+        // root namespace
+        return $this->declareClassNamespacePrefix($fullyQualifiedClassName, '', $aliasPrefix);
     }
 
     /**
@@ -410,9 +402,9 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     {
         if (null !== $namespace && isset($this->declaredClasses[$namespace])) {
             return $this->declaredClasses[$namespace];
-        } else {
-            return $this->declaredClasses;
         }
+
+        return $this->declaredClasses;
     }
 
     /**
@@ -586,9 +578,9 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         if ($fk->getPhpName()) {
             if ($plural) {
                 return $this->getPluralizer()->getPluralForm($fk->getPhpName());
-            } else {
-                return $fk->getPhpName();
             }
+
+            return $fk->getPhpName();
         } else {
             $className = $fk->getForeignTable()->getPhpName();
             if ($plural) {
