@@ -40,6 +40,8 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      */
     protected $declaredShortClassesOrAlias = array();
 
+    protected $whiteListOfDeclaratedClasses = array('PDO', 'Exception', 'DateTime');
+
     /**
      * Builds the PHP source for current class and returns it as a string.
      *
@@ -249,12 +251,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      */
     public function declareClassNamespace($class, $namespace = '', $alias = false)
     {
-        //prevent from declaring current class
-        if ($class == $this->getUnqualifiedClassname() && $namespace == $this->getClassname()) {
-            return $class;
-        }
-
-        //check if the class is already
+        //check if the class is already declared
         if (isset($this->declaredClasses[$namespace])
            && isset($this->declaredClasses[$namespace][$class])) {
             return $this->declaredClasses[$namespace][$class];
@@ -283,7 +280,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
 
         // we have a duplicate class and asked for an automatic Alias
         if (false !== $alias) {
-            if ('\\Base' == substr($namespace, -5)) {
+            if ('\\Base' == substr($namespace, -5) || 'Base' == $namespace) {
                 return $this->declareClassNamespace($class, $namespace, 'Base' . $class);
             } else {
                 return $this->declareClassNamespace($class, $namespace, 'Child' . $class);
@@ -296,6 +293,11 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         );
     }
 
+    /**
+     * check if the current $class need an alias or if the class could be used with a shortname without conflict
+     * @param string $class
+     * @param string $namespace
+     */
     protected function needAliasForClassname($class, $namespace)
     {
         if ($namespace == $this->getNamespace()) {
@@ -304,10 +306,17 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         if (str_replace('\\Base', '', $namespace) == str_replace('\\Base', '', $this->getNamespace())) {
             return true;
         }
-        if (('' == $namespace && 'Base' == $this->getNamespace())
-                && str_replace(array('Peer','Query'), '', $class) == str_replace(array('Peer','Query'), '', $this->getUnqualifiedClassname())) {
-            return true;
+        if ('' == $namespace && 'Base' == $this->getNamespace()) {
+            if (str_replace(array('Peer','Query'), '', $class) == str_replace(array('Peer','Query'), '', $this->getUnqualifiedClassname())) {
+                return true;
+            } else if ((false !== strpos($class,'Peer') || false !== strpos($class,'Query'))) {
+                return true;
+            } else if (false === array_search($class, $this->whiteListOfDeclaratedClasses, true)) { //force alias for model without namespace
+                return true;
+            }
         }
+
+        return false;
     }
 
     public function declareClassNamespacePrefix($class, $namespace = '', $aliasPrefix = false)
@@ -377,6 +386,10 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         foreach ($declaredClasses as $namespace => $classes) {
             asort($classes);
             foreach ($classes as $class => $alias) {
+                //Don't use our own class
+                if ($class == $this->getUnqualifiedClassname() && $namespace == $this->getNamespace()) {
+                    continue;
+                }
                 if ($class == $alias) {
                     $script .= sprintf("use %s\\%s;
 ", $namespace, $class);

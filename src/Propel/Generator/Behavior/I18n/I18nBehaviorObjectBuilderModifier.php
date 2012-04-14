@@ -39,7 +39,7 @@ class I18nBehaviorObjectBuilderModifier
 
             return $this->behavior->renderTemplate('objectPostDelete', array(
                 'i18nQueryName'    => $builder->getClassnameFromBuilder($builder->getNewStubQueryBuilder($i18nTable)),
-                'objectClassname' => $builder->getClassnameFromBuilder($builder->getNewStubObjectBuilder($this->behavior->getTable())),
+                'objectClassname' => $builder->getNewStubObjectBuilder($this->behavior->getTable())->getUnqualifiedClassname(),
             ));
         }
     }

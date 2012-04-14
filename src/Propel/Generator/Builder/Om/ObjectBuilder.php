@@ -1451,7 +1451,7 @@ abstract class ".$this->getUnqualifiedClassname()." extends ".$parentClass." ";
         if (!$dateTimeClass) {
             $dateTimeClass = '\DateTime';
         }
-        $this->declareClasses($dateTimeClass, '\DateTimeZone', '\Propel\Runtime\Util\PropelDateTime');
+        $this->declareClasses($dateTimeClass, '\Propel\Runtime\Util\PropelDateTime');
 
         $this->addTemporalMutatorComment($script, $col);
         $this->addMutatorOpenOpen($script, $col);
