@@ -13,7 +13,9 @@ namespace Propel\Runtime\Adapter\Pdo;
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\InvalidArgumentException;
+use Propel\Runtime\Propel;
 use Propel\Runtime\Query\Criteria;
+use Propel\Runtime\Util\BasePeer;
 
 use \PDO;
 
@@ -181,5 +183,45 @@ class PgsqlAdapter extends PdoAdapter implements AdapterInterface
     {
         // e.g. 'database.table alias' should be escaped as '"database"."table" "alias"'
         return '"' . strtr($table, array('.' => '"."', ' ' => '" "')) . '"';
+    }
+
+    /**
+     * Do Explain Plan for query object or query string
+     *
+     * @param ConnectionInterface $con    propel connection
+     * @param Criteria|string     $query  query the criteria or the query string
+     *
+     * @throws PropelException
+     * @return PDOStatement A PDO statement executed using the connection, ready to be fetched
+     */
+    public function doExplainPlan(ConnectionInterface $con, $query)
+    {
+        if ($query instanceof Criteria) {
+            $params = array();
+            $dbMap = Propel::getServiceContainer()->getDatabaseMap($query->getDbName());
+            $sql = BasePeer::createSelectSql($query, $params);
+        } else {
+            $sql = $query;
+        }
+
+        $stmt = $con->prepare($this->getExplainPlanQuery($sql));
+
+        if ($query instanceof Criteria) {
+            $this->bindValues($stmt, $params, $dbMap);
+        }
+
+        $stmt->execute();
+
+        return $stmt;
+    }
+
+    /**
+     * Explain Plan compute query getter
+     *
+     * @param string $query query to explain
+     */
+    public function getExplainPlanQuery($query)
+    {
+        return 'EXPLAIN ' . $query;
     }
 }
