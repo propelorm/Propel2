@@ -36,16 +36,18 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     protected $declaredClasses = array();
 
     /**
-     * Mapping bettwen fully qualified classnames and their short classname or alias
+     * Mapping between fully qualified classnames and their short classname or alias
      *
      * @var array
      */
     protected $declaredShortClassesOrAlias = array();
 
     /**
+     * List of classes that can be use without alias when model don't have namespace
+     *
      * @var array
      */
-    protected $whiteListOfDeclaratedClasses = array('PDO', 'Exception', 'DateTime');
+    protected $whiteListOfDeclaredClasses = array('PDO', 'Exception', 'DateTime');
 
     /**
      * Builds the PHP source for current class and returns it as a string.
@@ -324,13 +326,13 @@ abstract class AbstractOMBuilder extends DataModelBuilder
                 return true;
             } elseif ((false !== strpos($class,'Peer') || false !== strpos($class,'Query'))) {
                 return true;
-            } elseif (false === array_search($class, $this->whiteListOfDeclaratedClasses, true)) { //force alias for model without namespace
+            } elseif (false === array_search($class, $this->whiteListOfDeclaredClasses, true)) { //force alias for model without namespace
 
                 return true;
             }
         }
         if ('Base' == $namespace && '' == $this->getNamespace()) {
-            if (false === array_search($class, $this->whiteListOfDeclaratedClasses, true)) { //force alias for model without namespace
+            if (false === array_search($class, $this->whiteListOfDeclaredClasses, true)) { //force alias for model without namespace
 
                 return true;
             }
@@ -339,6 +341,15 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         return false;
     }
 
+    /**
+     * Declare a use statement for a $class with a $namespace and an $aliasPrefix
+     * This return the short Classname or an alias
+     *
+     * @param string $class the class
+     * @param string $namespace the namespace
+     * @param mixed $aliasPrefix optionaly an alias or True to force an automatic alias prefix (Base or Child)
+     * @return string the short Classname or an alias
+     */
     public function declareClassNamespacePrefix($class, $namespace = '', $aliasPrefix = false)
     {
         if (false !== $aliasPrefix && true !== $aliasPrefix) {
@@ -350,6 +361,14 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         return $this->declareClassNamespace($class, $namespace, $alias);
     }
 
+    /**
+     * Declare a Fully qualified classname with an $aliasPrefix
+     * This return the short Classname to use or an alias
+     *
+     * @param string $fullyQualifiedClassName the fully qualified classname
+     * @param mixed $aliasPrefix optionaly an alias or True to force an automatic alias prefix (Base or Child)
+     * @return string the short Classname or an alias
+     */
     public function declareClass($fullyQualifiedClassName, $aliasPrefix = false)
     {
         $fullyQualifiedClassName = trim($fullyQualifiedClassName, '\\');
@@ -370,6 +389,9 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         return $this->declareClassNamespacePrefix($builder->getUnqualifiedClassname(), $builder->getNamespace(), $aliasPrefix);
     }
 
+    /**
+     * @param string classname
+     */
     public function declareClasses()
     {
         $args = func_get_args();
@@ -378,6 +400,12 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         }
     }
 
+    /**
+     * Get the list of declared classes for a given $namespace or all declared classes
+     *
+     * @param string $namespace the namespace or null
+     * @return array list of declared classes
+     */
     public function getDeclaredClasses($namespace = null)
     {
         if (null !== $namespace && isset($this->declaredClasses[$namespace])) {
@@ -387,6 +415,11 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         }
     }
 
+    /**
+     * return the string for the class namespace
+     *
+     * @return string
+     */
     public function getNamespaceStatement()
     {
         $namespace = $this->getNamespace();
@@ -397,6 +430,12 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         }
     }
 
+    /**
+     * Return all the use statement of the class
+     *
+     * @param string $ignoredNamespace the ignored namespace
+     * @return string
+     */
     public function getUseStatements($ignoredNamespace = null)
     {
         $script = '';
@@ -430,7 +469,8 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * @param      boolean $fqcn
      * @return     string (e.g. 'MyPeer')
      */
-    public function getPeerClassname($fqcn = false) {
+    public function getPeerClassname($fqcn = false)
+    {
         return $this->getClassnameFromBuilder($this->getStubPeerBuilder(), $fqcn);
     }
 
@@ -441,7 +481,8 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * @param      boolean $fqcn
      * @return     string (e.g. 'Myquery')
      */
-    public function getQueryClassname($fqcn = false) {
+    public function getQueryClassname($fqcn = false)
+    {
         return $this->getClassnameFromBuilder($this->getStubQueryBuilder(), $fqcn);
     }
 
@@ -452,7 +493,8 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * @param      boolean $fqcn
      * @return     string (e.g. 'My')
      */
-    public function getObjectClassname($fqcn = false) {
+    public function getObjectClassname($fqcn = false)
+    {
         return $this->getClassnameFromBuilder($this->getStubObjectBuilder(), $fqcn);
     }
 
@@ -489,7 +531,8 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * If not, will return 'propel.util.BasePeer'
      * @return     string
      */
-    public function getBasePeer(Table $table) {
+    public function getBasePeer(Table $table)
+    {
         $class = $table->getBasePeer();
         if ($class === null) {
             $class = "propel.util.BasePeer";
