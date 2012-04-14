@@ -33,9 +33,9 @@ class QueryInheritanceBuilder extends AbstractOMBuilder
      * Returns the name of the current class being built.
      * @return     string
      */
-    public function getUnprefixedClassname()
+    public function getUnprefixedClassName()
     {
-        return $this->getNewStubQueryInheritanceBuilder($this->getChild())->getUnprefixedClassname();
+        return $this->getNewStubQueryInheritanceBuilder($this->getChild())->getUnprefixedClassName();
     }
 
     /**
@@ -87,12 +87,12 @@ class QueryInheritanceBuilder extends AbstractOMBuilder
     {
         $ancestorClassName = ClassTools::classname($this->getChild()->getAncestor());
         if ($this->getDatabase()->hasTableByPhpName($ancestorClassName)) {
-            return $this->getNewStubQueryBuilder($this->getDatabase()->getTableByPhpName($ancestorClassName))->getUnqualifiedClassname();
+            return $this->getNewStubQueryBuilder($this->getDatabase()->getTableByPhpName($ancestorClassName))->getUnqualifiedClassName();
         } else {
             // find the inheritance for the parent class
             foreach ($this->getTable()->getChildrenColumn()->getChildren() as $child) {
                 if ($child->getClassName() == $ancestorClassName) {
-                    return $this->getNewStubQueryInheritanceBuilder($child)->getUnqualifiedClassname();
+                    return $this->getNewStubQueryInheritanceBuilder($child)->getUnqualifiedClassName();
                 }
             }
         }
@@ -110,7 +110,7 @@ class QueryInheritanceBuilder extends AbstractOMBuilder
 
         $baseBuilder = $this->getStubQueryBuilder();
         $this->declareClassFromBuilder($baseBuilder);
-        $baseClassname = $this->getParentClassName();
+        $baseClassName = $this->getParentClassName();
 
         $script .= "
 /**
@@ -132,7 +132,7 @@ class QueryInheritanceBuilder extends AbstractOMBuilder
  * long as it does not already exist in the output directory.
  *
  */
-class "  .$this->getUnqualifiedClassname() . " extends " . $baseClassname . " {
+class "  .$this->getUnqualifiedClassName() . " extends " . $baseClassName . " {
 ";
     }
 
@@ -166,7 +166,7 @@ class "  .$this->getUnqualifiedClassname() . " extends " . $baseClassname . " {
     {
         $builder = $this->getNewStubQueryInheritanceBuilder($this->getChild());
         $this->declareClassFromBuilder($builder, 'Child');
-        $classname = $builder->getClassname();
+        $classname = $builder->getClassName();
         $script .= "
     /**
      * Returns a new " . $classname . " object.
@@ -244,7 +244,7 @@ class "  .$this->getUnqualifiedClassname() . " extends " . $baseClassname . " {
         $child = $this->getChild();
         $col = $child->getColumn();
 
-        return "\$this->addUsingAlias(" . $col->getConstantName() . ", " . $this->getPeerClassname()."::CLASSKEY_".strtoupper($child->getKey()).");";
+        return "\$this->addUsingAlias(" . $col->getConstantName() . ", " . $this->getPeerClassName()."::CLASSKEY_".strtoupper($child->getKey()).");";
     }
 
     protected function addDoDeleteAll(&$script)
@@ -276,7 +276,7 @@ class "  .$this->getUnqualifiedClassname() . " extends " . $baseClassname . " {
     protected function addClassClose(&$script)
     {
         $script .= "
-} // " . $this->getUnqualifiedClassname() . "
+} // " . $this->getUnqualifiedClassName() . "
 ";
     }
 }

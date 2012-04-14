@@ -25,7 +25,7 @@ class InterfaceBuilder extends AbstractObjectBuilder
      * Returns the name of the current class being built.
      * @return     string
      */
-    public function getUnprefixedClassname()
+    public function getUnprefixedClassName()
     {
         return ClassTools::classname($this->getInterface());
     }
@@ -39,7 +39,7 @@ class InterfaceBuilder extends AbstractObjectBuilder
         $table = $this->getTable();
         $tableName = $table->getName();
         $tableDesc = $table->getDescription();
-        $baseClassname = $this->getObjectBuilder()->getUnqualifiedClassname();
+        $baseClassName = $this->getObjectBuilder()->getUnqualifiedClassName();
 
         $script .= "
 /**
@@ -61,7 +61,7 @@ class InterfaceBuilder extends AbstractObjectBuilder
  * long as it does not already exist in the output directory.
  *
  */
-interface ".$this->getUnqualifiedClassname()." {
+interface ".$this->getUnqualifiedClassName()." {
 ";
     }
 
@@ -85,7 +85,7 @@ interface ".$this->getUnqualifiedClassname()." {
     protected function addClassClose(&$script)
     {
         $script .= "
-} // " . $this->getUnqualifiedClassname() . "
+} // " . $this->getUnqualifiedClassName() . "
 ";
     }
 

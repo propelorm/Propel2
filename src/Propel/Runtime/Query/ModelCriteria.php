@@ -166,7 +166,7 @@ class ModelCriteria extends Criteria
     }
 
     /**
-     * Return The short model name (the short Classname for classe with namespace)
+     * Return The short model name (the short ClassName for classe with namespace)
      *
      * @return    string The short model name
      */
@@ -925,7 +925,7 @@ class ModelCriteria extends Criteria
      *
      * @see       ModelCriteria::endUse()
      * @param     string $relationName Relation name or alias
-     * @param     string $secondCriteriaClass Classname for the ModelCriteria to be used
+     * @param     string $secondCriteriaClass ClassName for the ModelCriteria to be used
      *
      * @return    ModelCriteria The secondary criteria object
      */
@@ -935,7 +935,7 @@ class ModelCriteria extends Criteria
             throw new PropelException('Unknown class or alias ' . $relationName);
         }
 
-        $className = $this->joins[$relationName]->getTableMap()->getClassname();
+        $className = $this->joins[$relationName]->getTableMap()->getClassName();
         if (null === $secondaryCriteriaClass) {
             $secondaryCriteria = PropelQuery::from($className);
         } else {
@@ -1086,7 +1086,7 @@ class ModelCriteria extends Criteria
     public function addRelationSelectColumns($relation)
     {
         $join = $this->joins[$relation];
-        call_user_func(array($join->getTableMap()->getPeerClassname(), 'addSelectColumns'), $this, $join->getRelationAlias());
+        call_user_func(array($join->getTableMap()->getPeerClassName(), 'addSelectColumns'), $this, $join->getRelationAlias());
 
         return $this;
     }
@@ -2121,7 +2121,7 @@ class ModelCriteria extends Criteria
     }
 
     /**
-     * Return the short Classname for classe with namespace
+     * Return the short ClassName for classe with namespace
      *
      * @param     string The fully qualified class name
      *

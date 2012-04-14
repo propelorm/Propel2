@@ -63,7 +63,7 @@ class AggregateColumnRelationBehavior extends Behavior
     public function objectFilter(&$script, $builder)
     {
         $relationName = $this->getRelationName($builder);
-        $relatedClass = $builder->getClassnameFromBuilder($builder->getNewStubObjectBuilder($this->getForeignTable()));
+        $relatedClass = $builder->getClassNameFromBuilder($builder->getNewStubObjectBuilder($this->getForeignTable()));
         $search = "    public function set{$relationName}({$relatedClass} \$v = null)
     {";
         $replace = $search . "
@@ -132,7 +132,7 @@ class AggregateColumnRelationBehavior extends Behavior
             'foreignTable'     => $this->getForeignTable(),
             'relationName'     => $relationName,
             'variableName'     => lcfirst($relationName),
-            'foreignQueryName' => $foreignQueryBuilder->getClassname(),
+            'foreignQueryName' => $foreignQueryBuilder->getClassName(),
             'refRelationName'  => $builder->getRefFKPhpNameAffix($foreignKey),
         ));
     }

@@ -25,7 +25,7 @@ class ExtensionObjectBuilder extends AbstractObjectBuilder
      * Returns the name of the current class being built.
      * @return     string
      */
-    public function getUnprefixedClassname()
+    public function getUnprefixedClassName()
     {
         return $this->getTable()->getPhpName();
     }
@@ -39,7 +39,7 @@ class ExtensionObjectBuilder extends AbstractObjectBuilder
         $table = $this->getTable();
         $tableName = $table->getName();
         $tableDesc = $table->getDescription();
-        $baseClassname = $this->getClassnameFromBuilder($this->getObjectBuilder());
+        $baseClassName = $this->getClassNameFromBuilder($this->getObjectBuilder());
 
         $script .= "
 
@@ -62,7 +62,7 @@ class ExtensionObjectBuilder extends AbstractObjectBuilder
  * long as it does not already exist in the output directory.
  *
  */
-".($table->isAbstract() ? "abstract " : "")."class ".$this->getUnqualifiedClassname()." extends $baseClassname {
+".($table->isAbstract() ? "abstract " : "")."class ".$this->getUnqualifiedClassName()." extends $baseClassName {
 ";
     }
 
@@ -85,7 +85,7 @@ class ExtensionObjectBuilder extends AbstractObjectBuilder
     protected function addClassClose(&$script)
     {
         $script .= "
-} // " . $this->getUnqualifiedClassname() . "
+} // " . $this->getUnqualifiedClassName() . "
 ";
         $this->applyBehaviorModifier('extensionObjectFilter', $script, "");
     }

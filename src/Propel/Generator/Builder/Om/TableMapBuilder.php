@@ -47,7 +47,7 @@ class TableMapBuilder extends AbstractOMBuilder
      * Returns the name of the current class being built.
      * @return     string
      */
-    public function getUnprefixedClassname()
+    public function getUnprefixedClassName()
     {
         return $this->getTable()->getPhpName() . 'TableMap';
     }
@@ -81,7 +81,7 @@ class TableMapBuilder extends AbstractOMBuilder
  * (i.e. if it's a text column type).
  *
  */
-class ".$this->getUnqualifiedClassname()." extends TableMap
+class ".$this->getUnqualifiedClassName()." extends TableMap
 {
 ";
     }
@@ -133,7 +133,7 @@ class ".$this->getUnqualifiedClassname()." extends TableMap
     protected function addClassClose(&$script)
     {
         $script .= "
-} // " . $this->getUnqualifiedClassname() . "
+} // " . $this->getUnqualifiedClassName() . "
 ";
         $this->applyBehaviorModifier('tableMapFilter', $script, "");
     }
@@ -161,7 +161,7 @@ class ".$this->getUnqualifiedClassname()." extends TableMap
         // attributes
         \$this->setName('".$table->getName()."');
         \$this->setPhpName('".$table->getPhpName()."');
-        \$this->setClassname('" . addslashes($this->getStubObjectBuilder()->getFullyQualifiedClassname()) . "');
+        \$this->setClassName('" . addslashes($this->getStubObjectBuilder()->getFullyQualifiedClassName()) . "');
         \$this->setPackage('" . parent::getPackage() . "');";
         if ($table->getIdMethod() == "native") {
             $script .= "
@@ -278,7 +278,7 @@ class ".$this->getUnqualifiedClassname()." extends TableMap
             $onDelete = $fkey->hasOnDelete() ? "'" . $fkey->getOnDelete() . "'" : 'null';
             $onUpdate = $fkey->hasOnUpdate() ? "'" . $fkey->getOnUpdate() . "'" : 'null';
             $script .= "
-        \$this->addRelation('" . $this->getFKPhpNameAffix($fkey) . "', '" . addslashes($this->getNewStubObjectBuilder($fkey->getForeignTable())->getFullyQualifiedClassname()) . "', RelationMap::MANY_TO_ONE, $columnMapping, $onDelete, $onUpdate);";
+        \$this->addRelation('" . $this->getFKPhpNameAffix($fkey) . "', '" . addslashes($this->getNewStubObjectBuilder($fkey->getForeignTable())->getFullyQualifiedClassName()) . "', RelationMap::MANY_TO_ONE, $columnMapping, $onDelete, $onUpdate);";
         }
         foreach ($this->getTable()->getReferrers() as $fkey) {
             $relationName = $this->getRefFKPhpNameAffix($fkey);
@@ -290,7 +290,7 @@ class ".$this->getUnqualifiedClassname()." extends TableMap
             $onDelete = $fkey->hasOnDelete() ? "'" . $fkey->getOnDelete() . "'" : 'null';
             $onUpdate = $fkey->hasOnUpdate() ? "'" . $fkey->getOnUpdate() . "'" : 'null';
             $script .= "
-        \$this->addRelation('$relationName', '" . addslashes($this->getNewStubObjectBuilder($fkey->getTable())->getFullyQualifiedClassname()) . "', RelationMap::ONE_TO_" . ($fkey->isLocalPrimaryKey() ? "ONE" : "MANY") .", $columnMapping, $onDelete, $onUpdate";
+        \$this->addRelation('$relationName', '" . addslashes($this->getNewStubObjectBuilder($fkey->getTable())->getFullyQualifiedClassName()) . "', RelationMap::ONE_TO_" . ($fkey->isLocalPrimaryKey() ? "ONE" : "MANY") .", $columnMapping, $onDelete, $onUpdate";
             if ($fkey->isLocalPrimaryKey()) {
                  $script .= ");";
             } else {
@@ -304,7 +304,7 @@ class ".$this->getUnqualifiedClassname()." extends TableMap
             $onDelete = $fkey->hasOnDelete() ? "'" . $fkey->getOnDelete() . "'" : 'null';
             $onUpdate = $fkey->hasOnUpdate() ? "'" . $fkey->getOnUpdate() . "'" : 'null';
             $script .= "
-        \$this->addRelation('$relationName', '" . addslashes($this->getNewStubObjectBuilder($crossFK->getForeignTable())->getFullyQualifiedClassname()) . "', RelationMap::MANY_TO_MANY, array(), $onDelete, $onUpdate, $pluralName);";
+        \$this->addRelation('$relationName', '" . addslashes($this->getNewStubObjectBuilder($crossFK->getForeignTable())->getFullyQualifiedClassName()) . "', RelationMap::MANY_TO_MANY, array(), $onDelete, $onUpdate, $pluralName);";
         }
         $script .= "
     } // buildRelations()

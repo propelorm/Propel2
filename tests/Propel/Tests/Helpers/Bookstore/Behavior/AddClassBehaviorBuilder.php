@@ -17,9 +17,9 @@ class AddClassBehaviorBuilder extends AbstractOMBuilder
      * Returns the name of the current class being built.
      * @return     string
      */
-    public function getUnprefixedClassname()
+    public function getUnprefixedClassName()
     {
-        return $this->getStubObjectBuilder()->getUnprefixedClassname() . 'FooClass';
+        return $this->getStubObjectBuilder()->getUnprefixedClassName() . 'FooClass';
     }
 
     /**
@@ -35,7 +35,7 @@ class AddClassBehaviorBuilder extends AbstractOMBuilder
  * Test class for Additional builder enabled on the '$tableName' table.
  *
  */
-class ".$this->getUnqualifiedClassname()."
+class ".$this->getUnqualifiedClassName()."
 {
 ";
     }
@@ -57,7 +57,7 @@ class ".$this->getUnqualifiedClassname()."
     protected function addClassClose(&$script)
     {
         $script .= "
-} // " . $this->getUnqualifiedClassname() . "
+} // " . $this->getUnqualifiedClassName() . "
 ";
     }
 }

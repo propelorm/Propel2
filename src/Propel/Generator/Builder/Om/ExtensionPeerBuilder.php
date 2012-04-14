@@ -25,9 +25,9 @@ class ExtensionPeerBuilder extends AbstractPeerBuilder
      * Returns the name of the current class being built.
      * @return     string
      */
-    public function getUnprefixedClassname()
+    public function getUnprefixedClassName()
     {
-        return $this->getStubObjectBuilder()->getUnprefixedClassname() . 'Peer';
+        return $this->getStubObjectBuilder()->getUnprefixedClassName() . 'Peer';
     }
 
     /**
@@ -39,7 +39,7 @@ class ExtensionPeerBuilder extends AbstractPeerBuilder
         $table = $this->getTable();
         $tableName = $table->getName();
         $tableDesc = $table->getDescription();
-        $baseClassname = $this->getClassnameFromBuilder($this->getPeerBuilder());
+        $baseClassName = $this->getClassNameFromBuilder($this->getPeerBuilder());
 
         $script .= "
 
@@ -62,7 +62,7 @@ class ExtensionPeerBuilder extends AbstractPeerBuilder
  * long as it does not already exist in the output directory.
  *
  */
-class ".$this->getUnqualifiedClassname()." extends $baseClassname {
+class ".$this->getUnqualifiedClassName()." extends $baseClassName {
 ";
     }
 
@@ -87,7 +87,7 @@ class ".$this->getUnqualifiedClassname()." extends $baseClassname {
     protected function addClassClose(&$script)
     {
         $script .= "
-} // " . $this->getUnqualifiedClassname() . "
+} // " . $this->getUnqualifiedClassName() . "
 ";
         $this->applyBehaviorModifier('extensionPeerFilter', $script, "");
     }

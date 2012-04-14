@@ -59,7 +59,7 @@ class TableMap
     protected $phpName;
 
     /**
-     * The Classname for this table
+     * The ClassName for this table
      */
     protected $classname;
 
@@ -203,32 +203,32 @@ class TableMap
     }
 
     /**
-     * Set the Classname of the Table. Could be useful for calling
+     * Set the ClassName of the Table. Could be useful for calling
      * Peer and Object methods dynamically.
      *
-     * @param      string $classname The Classname
+     * @param      string $classname The ClassName
      */
-    public function setClassname($classname)
+    public function setClassName($classname)
     {
         $this->classname = $classname;
     }
 
     /**
-     * Get the Classname of the Propel Class belonging to this table.
+     * Get the ClassName of the Propel Class belonging to this table.
      *
      * @return     string
      */
-    public function getClassname()
+    public function getClassName()
     {
         return $this->classname;
     }
 
     /**
-     * Get the Peer Classname of the Propel Class belonging to this table.
+     * Get the Peer ClassName of the Propel Class belonging to this table.
      *
      * @return     string
      */
-    public function getPeerClassname()
+    public function getPeerClassName()
     {
         return constant($this->classname . '::PEER');
     }

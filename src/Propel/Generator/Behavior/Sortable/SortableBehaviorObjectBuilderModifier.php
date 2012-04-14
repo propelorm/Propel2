@@ -24,11 +24,11 @@ class SortableBehaviorObjectBuilderModifier
 
     protected $builder;
 
-    protected $objectClassname;
+    protected $objectClassName;
 
-    protected $peerClassname;
+    protected $peerClassName;
 
-    protected $peerFullClassname;
+    protected $peerFullClassName;
 
     public function __construct($behavior)
     {
@@ -54,10 +54,10 @@ class SortableBehaviorObjectBuilderModifier
     protected function setBuilder($builder)
     {
         $this->builder = $builder;
-        $this->objectClassname = $builder->getObjectClassname();
-        $this->queryClassname = $builder->getQueryClassname();
-        $this->peerClassname = $builder->getPeerClassname();
-        $this->peerFullClassname = $builder->getStubPeerBuilder()->getFullyQualifiedClassname();
+        $this->objectClassName = $builder->getObjectClassName();
+        $this->queryClassName = $builder->getQueryClassName();
+        $this->peerClassName = $builder->getPeerClassName();
+        $this->peerFullClassName = $builder->getStubPeerBuilder()->getFullyQualifiedClassName();
     }
 
     /**
@@ -90,8 +90,8 @@ class SortableBehaviorObjectBuilderModifier
         $useScope = $this->behavior->useScope();
         $this->setBuilder($builder);
 
-        return "if (!\$this->isColumnModified({$this->peerClassname}::RANK_COL)) {
-    \$this->{$this->getColumnSetter()}({$this->queryClassname}::create()->getMaxRank(" . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con) + 1);
+        return "if (!\$this->isColumnModified({$this->peerClassName}::RANK_COL)) {
+    \$this->{$this->getColumnSetter()}({$this->queryClassName}::create()->getMaxRank(" . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con) + 1);
 }
 ";
     }
@@ -102,8 +102,8 @@ class SortableBehaviorObjectBuilderModifier
         $this->setBuilder($builder);
 
         return "
-{$this->peerClassname}::shiftRank(-1, \$this->{$this->getColumnGetter()}() + 1, null, " . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con);
-{$this->peerClassname}::clearInstancePool();
+{$this->peerClassName}::shiftRank(-1, \$this->{$this->getColumnGetter()}() + 1, null, " . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con);
+{$this->peerClassName}::clearInstancePool();
 ";
     }
 
@@ -170,7 +170,7 @@ public function getRank()
  * Wrap the setter for rank value
  *
  * @param     int
- * @return    {$this->objectClassname}
+ * @return    {$this->objectClassName}
  */
 public function setRank(\$v)
 {
@@ -201,7 +201,7 @@ public function getScopeValue()
  * Wrap the setter for scope value
  *
  * @param     int
- * @return    {$this->objectClassname}
+ * @return    {$this->objectClassName}
  */
 public function setScopeValue(\$v)
 {
@@ -238,7 +238,7 @@ public function isFirst()
  */
 public function isLast(ConnectionInterface \$con = null)
 {
-    return \$this->{$this->getColumnGetter()}() == {$this->queryClassname}::create()->getMaxRank(" . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con);
+    return \$this->{$this->getColumnGetter()}() == {$this->queryClassName}::create()->getMaxRank(" . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con);
 }
 ";
     }
@@ -252,21 +252,21 @@ public function isLast(ConnectionInterface \$con = null)
  *
  * @param     ConnectionInterface  \$con      optional connection
  *
- * @return    {$this->objectClassname}
+ * @return    {$this->objectClassName}
  */
 public function getNext(ConnectionInterface \$con = null)
 {";
         if ($this->behavior->getParameter('rank_column') == 'rank' && $useScope) {
             $script .= "
 
-    return {$this->queryClassname}::create()
+    return {$this->queryClassName}::create()
         ->filterByRank(\$this->{$this->getColumnGetter()}() + 1)
         ->inList(\$this->{$this->getColumnGetter('scope_column')}())
         ->findOne(\$con);";
         } else {
             $script .= "
 
-    return {$this->queryClassname}::create()->findOneByRank(\$this->{$this->getColumnGetter()}() + 1, " . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con);";
+    return {$this->queryClassName}::create()->findOneByRank(\$this->{$this->getColumnGetter()}() + 1, " . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con);";
         }
 
         $script .= "
@@ -283,21 +283,21 @@ public function getNext(ConnectionInterface \$con = null)
  *
  * @param     ConnectionInterface  \$con      optional connection
  *
- * @return    {$this->objectClassname}
+ * @return    {$this->objectClassName}
  */
 public function getPrevious(ConnectionInterface \$con = null)
 {";
         if ($this->behavior->getParameter('rank_column') == 'rank' && $useScope) {
             $script .= "
 
-    return {$this->queryClassname}::create()
+    return {$this->queryClassName}::create()
         ->filterByRank(\$this->{$this->getColumnGetter()}() - 1)
         ->inList(\$this->{$this->getColumnGetter('scope_column')}())
         ->findOne(\$con);";
         } else {
             $script .= "
 
-    return {$this->queryClassname}::create()->findOneByRank(\$this->{$this->getColumnGetter()}() - 1, " . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con);";
+    return {$this->queryClassName}::create()->findOneByRank(\$this->{$this->getColumnGetter()}() - 1, " . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con);";
         }
         $script .= "
 }
@@ -307,7 +307,7 @@ public function getPrevious(ConnectionInterface \$con = null)
     protected function addInsertAtRank(&$script)
     {
         $useScope = $this->behavior->useScope();
-        $peerClassname = $this->peerFullClassname;
+        $peerClassName = $this->peerFullClassName;
         $script .= "
 /**
  * Insert at specified rank
@@ -316,7 +316,7 @@ public function getPrevious(ConnectionInterface \$con = null)
  * @param     integer    \$rank rank value
  * @param     ConnectionInterface  \$con      optional connection
  *
- * @return    {$this->objectClassname} the current object
+ * @return    {$this->objectClassName} the current object
  *
  * @throws    PropelException
  */
@@ -329,7 +329,7 @@ public function insertAtRank(\$rank, ConnectionInterface \$con = null)
     }";
         }
         $script .= "
-    \$maxRank = {$this->queryClassname}::create()->getMaxRank(" . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con);
+    \$maxRank = {$this->queryClassName}::create()->getMaxRank(" . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con);
     if (\$rank < 1 || \$rank > \$maxRank + 1) {
         throw new PropelException('Invalid rank ' . \$rank);
     }
@@ -338,7 +338,7 @@ public function insertAtRank(\$rank, ConnectionInterface \$con = null)
     if (\$rank != \$maxRank + 1) {
         // Keep the list modification query for the save() transaction
         \$this->sortableQueries []= array(
-            'callable'  => array('$peerClassname', 'shiftRank'),
+            'callable'  => array('$peerClassName', 'shiftRank'),
             'arguments' => array(1, \$rank, null, " . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}()" : '') . ")
         );
     }
@@ -358,7 +358,7 @@ public function insertAtRank(\$rank, ConnectionInterface \$con = null)
  *
  * @param ConnectionInterface \$con optional connection
  *
- * @return    {$this->objectClassname} the current object
+ * @return    {$this->objectClassName} the current object
  *
  * @throws    PropelException
  */
@@ -371,7 +371,7 @@ public function insertAtBottom(ConnectionInterface \$con = null)
     }";
         }
         $script .= "
-    \$this->{$this->getColumnSetter()}({$this->queryClassname}::create()->getMaxRank(" . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con) + 1);
+    \$this->{$this->getColumnSetter()}({$this->queryClassName}::create()->getMaxRank(" . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con) + 1);
 
     return \$this;
 }
@@ -385,7 +385,7 @@ public function insertAtBottom(ConnectionInterface \$con = null)
  * Insert in the first rank
  * The modifications are not persisted until the object is saved.
  *
- * @return    {$this->objectClassname} the current object
+ * @return    {$this->objectClassName} the current object
  */
 public function insertAtTop()
 {
@@ -397,7 +397,7 @@ public function insertAtTop()
     protected function addMoveToRank(&$script)
     {
         $useScope = $this->behavior->useScope();
-        $peerClassname = $this->peerClassname;
+        $peerClassName = $this->peerClassName;
         $script .= "
 /**
  * Move the object to a new rank, and shifts the rank
@@ -406,7 +406,7 @@ public function insertAtTop()
  * @param     integer   \$newRank rank value
  * @param     ConnectionInterface \$con optional connection
  *
- * @return    {$this->objectClassname} the current object
+ * @return    {$this->objectClassName} the current object
  *
  * @throws    PropelException
  */
@@ -416,9 +416,9 @@ public function moveToRank(\$newRank, ConnectionInterface \$con = null)
         throw new PropelException('New objects cannot be moved. Please use insertAtRank() instead');
     }
     if (null === \$con) {
-        \$con = Propel::getServiceContainer()->getWriteConnection($peerClassname::DATABASE_NAME);
+        \$con = Propel::getServiceContainer()->getWriteConnection($peerClassName::DATABASE_NAME);
     }
-    if (\$newRank < 1 || \$newRank > {$this->queryClassname}::create()->getMaxRank(" . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con)) {
+    if (\$newRank < 1 || \$newRank > {$this->queryClassName}::create()->getMaxRank(" . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con)) {
         throw new PropelException('Invalid rank ' . \$newRank);
     }
 
@@ -431,7 +431,7 @@ public function moveToRank(\$newRank, ConnectionInterface \$con = null)
     try {
         // shift the objects between the old and the new rank
         \$delta = (\$oldRank < \$newRank) ? -1 : 1;
-        $peerClassname::shiftRank(\$delta, min(\$oldRank, \$newRank), max(\$oldRank, \$newRank), " . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con);
+        $peerClassName::shiftRank(\$delta, min(\$oldRank, \$newRank), max(\$oldRank, \$newRank), " . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con);
 
         // move the object to its new rank
         \$this->{$this->getColumnSetter()}(\$newRank);
@@ -454,17 +454,17 @@ public function moveToRank(\$newRank, ConnectionInterface \$con = null)
 /**
  * Exchange the rank of the object with the one passed as argument, and saves both objects
  *
- * @param     {$this->objectClassname} \$object
+ * @param     {$this->objectClassName} \$object
  * @param     ConnectionInterface \$con optional connection
  *
- * @return    {$this->objectClassname} the current object
+ * @return    {$this->objectClassName} the current object
  *
  * @throws Exception if the database cannot execute the two updates
  */
 public function swapWith(\$object, ConnectionInterface \$con = null)
 {
     if (null === \$con) {
-        \$con = Propel::getServiceContainer()->getWriteConnection({$this->peerClassname}::DATABASE_NAME);
+        \$con = Propel::getServiceContainer()->getWriteConnection({$this->peerClassName}::DATABASE_NAME);
     }
     \$con->beginTransaction();
     try {
@@ -493,7 +493,7 @@ public function swapWith(\$object, ConnectionInterface \$con = null)
  *
  * @param     ConnectionInterface \$con optional connection
  *
- * @return    {$this->objectClassname} the current object
+ * @return    {$this->objectClassName} the current object
  */
 public function moveUp(ConnectionInterface \$con = null)
 {
@@ -501,7 +501,7 @@ public function moveUp(ConnectionInterface \$con = null)
         return \$this;
     }
     if (null === \$con) {
-        \$con = Propel::getServiceContainer()->getWriteConnection({$this->peerClassname}::DATABASE_NAME);
+        \$con = Propel::getServiceContainer()->getWriteConnection({$this->peerClassName}::DATABASE_NAME);
     }
     \$con->beginTransaction();
     try {
@@ -526,7 +526,7 @@ public function moveUp(ConnectionInterface \$con = null)
  *
  * @param     ConnectionInterface \$con optional connection
  *
- * @return    {$this->objectClassname} the current object
+ * @return    {$this->objectClassName} the current object
  */
 public function moveDown(ConnectionInterface \$con = null)
 {
@@ -534,7 +534,7 @@ public function moveDown(ConnectionInterface \$con = null)
         return \$this;
     }
     if (null === \$con) {
-        \$con = Propel::getServiceContainer()->getWriteConnection({$this->peerClassname}::DATABASE_NAME);
+        \$con = Propel::getServiceContainer()->getWriteConnection({$this->peerClassName}::DATABASE_NAME);
     }
     \$con->beginTransaction();
     try {
@@ -559,7 +559,7 @@ public function moveDown(ConnectionInterface \$con = null)
  *
  * @param     ConnectionInterface \$con optional connection
  *
- * @return    {$this->objectClassname} the current object
+ * @return    {$this->objectClassName} the current object
  */
 public function moveToTop(ConnectionInterface \$con = null)
 {
@@ -589,11 +589,11 @@ public function moveToBottom(ConnectionInterface \$con = null)
         return false;
     }
     if (null === \$con) {
-        \$con = Propel::getServiceContainer()->getWriteConnection({$this->peerClassname}::DATABASE_NAME);
+        \$con = Propel::getServiceContainer()->getWriteConnection({$this->peerClassName}::DATABASE_NAME);
     }
     \$con->beginTransaction();
     try {
-        \$bottom = {$this->queryClassname}::create()->getMaxRank(" . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con);
+        \$bottom = {$this->queryClassName}::create()->getMaxRank(" . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con);
         \$res = \$this->moveToRank(\$bottom, \$con);
         \$con->commit();
 
@@ -609,19 +609,19 @@ public function moveToBottom(ConnectionInterface \$con = null)
     protected function addRemoveFromList(&$script)
     {
         $useScope = $this->behavior->useScope();
-        $peerClassname = $this->peerFullClassname;
+        $peerClassName = $this->peerFullClassName;
         $script .= "
 /**
  * Removes the current object from the list.
  * The modifications are not persisted until the object is saved.
  *
- * @return    {$this->objectClassname} the current object
+ * @return    {$this->objectClassName} the current object
  */
 public function removeFromList()
 {
     // Keep the list modification query for the save() transaction
     \$this->sortableQueries []= array(
-        'callable'  => array('$peerClassname', 'shiftRank'),
+        'callable'  => array('$peerClassName', 'shiftRank'),
         'arguments' => array(-1, \$this->{$this->getColumnGetter()}() + 1, null" . ($useScope ? ", \$this->{$this->getColumnGetter('scope_column')}()" : '') . ")
     );
     // remove the object from the list

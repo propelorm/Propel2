@@ -110,7 +110,7 @@ class GeneratorConfig implements GeneratorConfigInterface
      * @return     string The class name.
      * @throws     BuildException If the classname cannot be determined or class cannot be loaded.
      */
-    public function getClassname($propname)
+    public function getClassName($propname)
     {
         $classpath = $this->getBuildProperty($propname);
         if (null === $classpath) {
@@ -143,11 +143,11 @@ class GeneratorConfig implements GeneratorConfigInterface
      * @param      string $type
      * @return     string The class name.
      */
-    public function getBuilderClassname($type)
+    public function getBuilderClassName($type)
     {
         $propname = 'builder' . ucfirst(strtolower($type)) . 'Class';
 
-        return $this->getClassname($propname);
+        return $this->getClassName($propname);
     }
 
     /**
@@ -190,7 +190,7 @@ class GeneratorConfig implements GeneratorConfigInterface
      */
     public function getConfiguredSchemaParser(PDO $con = null)
     {
-        $clazz = $this->getClassname("reverseParserClass");
+        $clazz = $this->getClassName("reverseParserClass");
         $parser = new $clazz();
         if (!$parser instanceof SchemaParserInterface) {
             throw new BuildException("Specified platform class ($clazz) does implement SchemaParserInterface interface.", $this->getLocation());
@@ -211,7 +211,7 @@ class GeneratorConfig implements GeneratorConfigInterface
      */
     public function getConfiguredBuilder(Table $table, $type)
     {
-        $classname = $this->getBuilderClassname($type);
+        $classname = $this->getBuilderClassName($type);
         $builder = new $classname($table);
         $builder->setGeneratorConfig($this);
 
@@ -225,7 +225,7 @@ class GeneratorConfig implements GeneratorConfigInterface
      */
     public function getConfiguredPluralizer()
     {
-        $classname = $this->getBuilderClassname('pluralizer');
+        $classname = $this->getBuilderClassName('pluralizer');
         $pluralizer = new $classname();
 
         return $pluralizer;

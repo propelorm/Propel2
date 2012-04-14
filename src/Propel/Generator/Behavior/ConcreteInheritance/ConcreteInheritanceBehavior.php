@@ -180,7 +180,7 @@ class ConcreteInheritanceBehavior extends Behavior
     protected function addObjectGetParentOrCreate(&$script)
     {
         $parentTable = $this->getParentTable();
-        $parentClass = $this->builder->getClassnameFromBuilder($this->builder->getNewStubObjectBuilder($parentTable));
+        $parentClass = $this->builder->getClassNameFromBuilder($this->builder->getNewStubObjectBuilder($parentTable));
         $script .= "
 /**
  * Get or Create the parent " . $parentClass . " object of the current object
@@ -191,11 +191,11 @@ public function getParentOrCreate(\$con = null)
 {
     if (\$this->isNew() && \$this->isPrimaryKeyNull()) {
         \$parent = new " . $parentClass . "();
-        \$parent->set" . $this->getParentTable()->getColumn($this->getParameter('descendant_column'))->getPhpName() . "('" . $this->builder->getStubObjectBuilder()->getQualifiedClassname() . "');
+        \$parent->set" . $this->getParentTable()->getColumn($this->getParameter('descendant_column'))->getPhpName() . "('" . $this->builder->getStubObjectBuilder()->getQualifiedClassName() . "');
 
         return \$parent;
     } else {
-        return " . $this->builder->getClassnameFromBuilder($this->builder->getNewStubQueryBuilder($parentTable)) . "::create()->findPk(\$this->getPrimaryKey(), \$con);
+        return " . $this->builder->getClassNameFromBuilder($this->builder->getNewStubQueryBuilder($parentTable)) . "::create()->findPk(\$this->getPrimaryKey(), \$con);
     }
 }
 ";

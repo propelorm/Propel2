@@ -25,7 +25,7 @@ class ExtensionQueryBuilder extends AbstractOMBuilder
      * Returns the name of the current class being built.
      * @return     string
      */
-    public function getUnprefixedClassname()
+    public function getUnprefixedClassName()
     {
         return $this->getTable()->getPhpName() . 'Query';
     }
@@ -39,7 +39,7 @@ class ExtensionQueryBuilder extends AbstractOMBuilder
         $table = $this->getTable();
         $tableName = $table->getName();
         $tableDesc = $table->getDescription();
-        $baseClassname = $this->getClassnameFromBuilder($this->getQueryBuilder());
+        $baseClassName = $this->getClassNameFromBuilder($this->getQueryBuilder());
 
         $script .= "
 
@@ -62,7 +62,7 @@ class ExtensionQueryBuilder extends AbstractOMBuilder
  * long as it does not already exist in the output directory.
  *
  */
-class ".$this->getUnqualifiedClassname()." extends $baseClassname {
+class ".$this->getUnqualifiedClassName()." extends $baseClassName {
 ";
     }
 
@@ -86,7 +86,7 @@ class ".$this->getUnqualifiedClassname()." extends $baseClassname {
     protected function addClassClose(&$script)
     {
         $script .= "
-} // " . $this->getUnqualifiedClassname() . "
+} // " . $this->getUnqualifiedClassName() . "
 ";
         $this->applyBehaviorModifier('extensionQueryFilter', $script, "");
     }
@@ -113,7 +113,7 @@ class ".$this->getUnqualifiedClassname()." extends $baseClassname {
 
     /**
      * Checks whether any registered behavior content creator on that table exists a contentName
-     * @param string $contentName The name of the content as called from one of this class methods, e.g. "parentClassname"
+     * @param string $contentName The name of the content as called from one of this class methods, e.g. "parentClassName"
      */
     public function getBehaviorContent($contentName)
     {

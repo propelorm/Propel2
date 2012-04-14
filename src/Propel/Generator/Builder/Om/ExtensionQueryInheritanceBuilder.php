@@ -33,7 +33,7 @@ class ExtensionQueryInheritanceBuilder extends AbstractOMBuilder
      * Returns the name of the current class being built.
      * @return     string
      */
-    public function getUnprefixedClassname()
+    public function getUnprefixedClassName()
     {
         return $this->getChild()->getClassName() . 'Query';
     }
@@ -81,7 +81,7 @@ class ExtensionQueryInheritanceBuilder extends AbstractOMBuilder
         $tableDesc = $table->getDescription();
 
         $baseBuilder = $this->getNewQueryInheritanceBuilder($this->getChild());
-        $baseClassname = $this->getClassnameFromBuilder($baseBuilder);
+        $baseClassName = $this->getClassNameFromBuilder($baseBuilder);
 
         $script .= "
 
@@ -104,7 +104,7 @@ class ExtensionQueryInheritanceBuilder extends AbstractOMBuilder
  * long as it does not already exist in the output directory.
  *
  */
-class "  .$this->getUnqualifiedClassname() . " extends " . $baseClassname . " {
+class "  .$this->getUnqualifiedClassName() . " extends " . $baseClassName . " {
 ";
     }
 
@@ -127,7 +127,7 @@ class "  .$this->getUnqualifiedClassname() . " extends " . $baseClassname . " {
     protected function addClassClose(&$script)
     {
         $script .= "
-} // " . $this->getUnqualifiedClassname() . "
+} // " . $this->getUnqualifiedClassName() . "
 ";
     }
 

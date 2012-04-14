@@ -62,7 +62,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     public function build()
     {
         $this->validateModel();
-        $this->declareClass($this->getFullyQualifiedClassname());
+        $this->declareClass($this->getFullyQualifiedClassName());
 
         $script = '';
         $this->addClassOpen($script);
@@ -113,16 +113,16 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      *
      * @return     string
      */
-    abstract public function getUnprefixedClassname();
+    abstract public function getUnprefixedClassName();
 
     /**
      * Returns the unqualified classname (e.g. Book)
      *
      * @return string
      */
-    public function getUnqualifiedClassname()
+    public function getUnqualifiedClassName()
     {
-        return $this->getUnprefixedClassname();
+        return $this->getUnprefixedClassName();
     }
 
     /**
@@ -130,13 +130,13 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      *
      * @return string
      */
-    public function getQualifiedClassname()
+    public function getQualifiedClassName()
     {
         if ($namespace = $this->getNamespace()) {
-            return $namespace . '\\' . $this->getUnqualifiedClassname();
+            return $namespace . '\\' . $this->getUnqualifiedClassName();
         }
 
-        return $this->getUnqualifiedClassname();
+        return $this->getUnqualifiedClassName();
     }
 
     /**
@@ -144,18 +144,18 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      *
      * @return     string
      */
-    public function getFullyQualifiedClassname()
+    public function getFullyQualifiedClassName()
     {
-        return '\\' . $this->getQualifiedClassname();
+        return '\\' . $this->getQualifiedClassName();
     }
     /**
-     * Returns FQCN alias of getFullyQualifiedClassname
+     * Returns FQCN alias of getFullyQualifiedClassName
      *
      * @return     string
      */
-    public function getClassname()
+    public function getClassName()
     {
-        return $this->getFullyQualifiedClassname();
+        return $this->getFullyQualifiedClassName();
     }
 
     /**
@@ -166,10 +166,10 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     public function getClasspath()
     {
         if ($this->getPackage()) {
-            return $this->getPackage() . '.' . $this->getUnqualifiedClassname();
+            return $this->getPackage() . '.' . $this->getUnqualifiedClassName();
         }
 
-        return $this->getUnqualifiedClassname();
+        return $this->getUnqualifiedClassName();
     }
 
     /**
@@ -179,7 +179,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      */
     public function getClassFilePath()
     {
-        return ClassTools::createFilePath($this->getPackagePath(), $this->getUnqualifiedClassname());
+        return ClassTools::createFilePath($this->getPackagePath(), $this->getUnqualifiedClassName());
     }
 
     /**
@@ -231,15 +231,15 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      *
      * @param AbstractOMBuilder $builder
      * @param boolean $fqcn true to return the $fqcn classname
-     * @return string Classname, Alias or FQCN
+     * @return string ClassName, Alias or FQCN
      */
-    public function getClassnameFromBuilder($builder, $fqcn = false)
+    public function getClassNameFromBuilder($builder, $fqcn = false)
     {
         if ($fqcn) {
-            return $builder->getFullyQualifiedClassname();
+            return $builder->getFullyQualifiedClassName();
         }
         $namespace = $builder->getNamespace();
-        $class = $builder->getUnqualifiedClassname();
+        $class = $builder->getUnqualifiedClassName();
 
         if (isset($this->declaredClasses[$namespace])
            && isset($this->declaredClasses[$namespace][$class])) {
@@ -265,7 +265,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
             return $this->declaredClasses[$namespace][$class];
         }
 
-        $forcedAlias = $this->needAliasForClassname($class, $namespace);
+        $forcedAlias = $this->needAliasForClassName($class, $namespace);
 
         if (false === $alias || true === $alias || null === $alias) {
             $aliasWanted = $class;
@@ -306,7 +306,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * @param string $class
      * @param string $namespace
      */
-    protected function needAliasForClassname($class, $namespace)
+    protected function needAliasForClassName($class, $namespace)
     {
         if ($namespace == $this->getNamespace()) {
             return false;
@@ -315,7 +315,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
             return true;
         }
         if ('' == $namespace && 'Base' == $this->getNamespace()) {
-            if (str_replace(array('Peer','Query'), '', $class) == str_replace(array('Peer','Query'), '', $this->getUnqualifiedClassname())) {
+            if (str_replace(array('Peer','Query'), '', $class) == str_replace(array('Peer','Query'), '', $this->getUnqualifiedClassName())) {
                 return true;
             } elseif ((false !== strpos($class,'Peer') || false !== strpos($class,'Query'))) {
                 return true;
@@ -336,12 +336,12 @@ abstract class AbstractOMBuilder extends DataModelBuilder
 
     /**
      * Declare a use statement for a $class with a $namespace and an $aliasPrefix
-     * This return the short Classname or an alias
+     * This return the short ClassName or an alias
      *
      * @param string $class the class
      * @param string $namespace the namespace
      * @param mixed $aliasPrefix optionaly an alias or True to force an automatic alias prefix (Base or Child)
-     * @return string the short Classname or an alias
+     * @return string the short ClassName or an alias
      */
     public function declareClassNamespacePrefix($class, $namespace = '', $aliasPrefix = false)
     {
@@ -356,11 +356,11 @@ abstract class AbstractOMBuilder extends DataModelBuilder
 
     /**
      * Declare a Fully qualified classname with an $aliasPrefix
-     * This return the short Classname to use or an alias
+     * This return the short ClassName to use or an alias
      *
      * @param string $fullyQualifiedClassName the fully qualified classname
      * @param mixed $aliasPrefix optionaly an alias or True to force an automatic alias prefix (Base or Child)
-     * @return string the short Classname or an alias
+     * @return string the short ClassName or an alias
      */
     public function declareClass($fullyQualifiedClassName, $aliasPrefix = false)
     {
@@ -378,7 +378,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      */
     public function declareClassFromBuilder($builder, $aliasPrefix = false)
     {
-        return $this->declareClassNamespacePrefix($builder->getUnqualifiedClassname(), $builder->getNamespace(), $aliasPrefix);
+        return $this->declareClassNamespacePrefix($builder->getUnqualifiedClassName(), $builder->getNamespace(), $aliasPrefix);
     }
 
     /**
@@ -438,7 +438,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
             asort($classes);
             foreach ($classes as $class => $alias) {
                 //Don't use our own class
-                if ($class == $this->getUnqualifiedClassname() && $namespace == $this->getNamespace()) {
+                if ($class == $this->getUnqualifiedClassName() && $namespace == $this->getNamespace()) {
                     continue;
                 }
                 if ($class == $alias) {
@@ -461,9 +461,9 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * @param      boolean $fqcn
      * @return     string (e.g. 'MyPeer')
      */
-    public function getPeerClassname($fqcn = false)
+    public function getPeerClassName($fqcn = false)
     {
-        return $this->getClassnameFromBuilder($this->getStubPeerBuilder(), $fqcn);
+        return $this->getClassNameFromBuilder($this->getStubPeerBuilder(), $fqcn);
     }
 
     /**
@@ -473,9 +473,9 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * @param      boolean $fqcn
      * @return     string (e.g. 'Myquery')
      */
-    public function getQueryClassname($fqcn = false)
+    public function getQueryClassName($fqcn = false)
     {
-        return $this->getClassnameFromBuilder($this->getStubQueryBuilder(), $fqcn);
+        return $this->getClassNameFromBuilder($this->getStubQueryBuilder(), $fqcn);
     }
 
     /**
@@ -485,9 +485,9 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * @param      boolean $fqcn
      * @return     string (e.g. 'My')
      */
-    public function getObjectClassname($fqcn = false)
+    public function getObjectClassName($fqcn = false)
     {
-        return $this->getClassnameFromBuilder($this->getStubObjectBuilder(), $fqcn);
+        return $this->getClassNameFromBuilder($this->getStubObjectBuilder(), $fqcn);
     }
 
     /**
@@ -729,7 +729,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
 
     /**
      * Checks whether any registered behavior content creator on that table exists a contentName
-     * @param string $contentName The name of the content as called from one of this class methods, e.g. "parentClassname"
+     * @param string $contentName The name of the content as called from one of this class methods, e.g. "parentClassName"
      * @param string $modifier The name of the modifier object providing the method in the behavior
      */
     public function getBehaviorContentBase($contentName, $modifier)

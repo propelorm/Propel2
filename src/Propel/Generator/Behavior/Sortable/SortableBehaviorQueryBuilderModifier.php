@@ -23,9 +23,9 @@ class SortableBehaviorQueryBuilderModifier
 
     protected $builder;
 
-    protected $objectClassname;
+    protected $objectClassName;
 
-    protected $peerClassname;
+    protected $peerClassName;
 
     public function __construct($behavior)
     {
@@ -46,9 +46,9 @@ class SortableBehaviorQueryBuilderModifier
     protected function setBuilder($builder)
     {
         $this->builder = $builder;
-        $this->objectClassname = $builder->getObjectClassname();
-        $this->queryClassname = $builder->getQueryClassname();
-        $this->peerClassname = $builder->getPeerClassname();
+        $this->objectClassName = $builder->getObjectClassName();
+        $this->queryClassName = $builder->getQueryClassName();
+        $this->peerClassName = $builder->getPeerClassName();
     }
 
     public function queryMethods($builder)
@@ -86,11 +86,11 @@ class SortableBehaviorQueryBuilderModifier
  *
  * @param     int \$scope        Scope to determine which objects node to return
  *
- * @return    {$this->queryClassname} The current query, for fluid interface
+ * @return    {$this->queryClassName} The current query, for fluid interface
  */
 public function inList(\$scope = null)
 {
-    return \$this->addUsingAlias({$this->peerClassname}::SCOPE_COL, \$scope, Criteria::EQUAL);
+    return \$this->addUsingAlias({$this->peerClassName}::SCOPE_COL, \$scope, Criteria::EQUAL);
 }
 ";
     }
@@ -98,7 +98,7 @@ public function inList(\$scope = null)
     protected function addFilterByRank(&$script)
     {
         $useScope = $this->behavior->useScope();
-        $peerClassname = $this->peerClassname;
+        $peerClassName = $this->peerClassName;
         $script .= "
 /**
  * Filter the query based on a rank in the list
@@ -110,7 +110,7 @@ public function inList(\$scope = null)
         }
         $script .= "
  *
- * @return    " . $this->queryClassname . " The current query, for fluid interface
+ * @return    " . $this->queryClassName . " The current query, for fluid interface
  */
 public function filterByRank(\$rank" . ($useScope ? ", \$scope = null" : "") . ")
 {
@@ -120,7 +120,7 @@ public function filterByRank(\$rank" . ($useScope ? ", \$scope = null" : "") . "
         ->inList(\$scope)";
         }
         $script .= "
-        ->addUsingAlias($peerClassname::RANK_COL, \$rank, Criteria::EQUAL);
+        ->addUsingAlias($peerClassName::RANK_COL, \$rank, Criteria::EQUAL);
 }
 ";
     }
@@ -134,20 +134,20 @@ public function filterByRank(\$rank" . ($useScope ? ", \$scope = null" : "") . "
  *
  * @param     string \$order either Criteria::ASC (default) or Criteria::DESC
  *
- * @return    " . $this->queryClassname . " The current query, for fluid interface
+ * @return    " . $this->queryClassName . " The current query, for fluid interface
  */
 public function orderByRank(\$order = Criteria::ASC)
 {
     \$order = strtoupper(\$order);
     switch (\$order) {
         case Criteria::ASC:
-            return \$this->addAscendingOrderByColumn(\$this->getAliasedColName(" . $this->peerClassname . "::RANK_COL));
+            return \$this->addAscendingOrderByColumn(\$this->getAliasedColName(" . $this->peerClassName . "::RANK_COL));
             break;
         case Criteria::DESC:
-            return \$this->addDescendingOrderByColumn(\$this->getAliasedColName(" . $this->peerClassname . "::RANK_COL));
+            return \$this->addDescendingOrderByColumn(\$this->getAliasedColName(" . $this->peerClassName . "::RANK_COL));
             break;
         default:
-            throw new \Propel\Runtime\Exception\PropelException('" . $this->queryClassname . "::orderBy() only accepts \"asc\" or \"desc\" as argument');
+            throw new \Propel\Runtime\Exception\PropelException('" . $this->queryClassName . "::orderBy() only accepts \"asc\" or \"desc\" as argument');
     }
 }
 ";
@@ -168,7 +168,7 @@ public function orderByRank(\$order = Criteria::ASC)
         $script .= "
  * @param     ConnectionInterface \$con optional connection
  *
- * @return    {$this->objectClassname}
+ * @return    {$this->objectClassName}
  */
 public function findOneByRank(\$rank, " . ($useScope ? "\$scope = null, " : "") . "ConnectionInterface \$con = null)
 {
@@ -233,13 +233,13 @@ public function findList(" . ($useScope ? "\$scope = null, " : "") . "\$con = nu
 public function getMaxRank(" . ($useScope ? "\$scope = null, " : "") . "ConnectionInterface \$con = null)
 {
     if (null === \$con) {
-        \$con = Propel::getServiceContainer()->getReadConnection({$this->peerClassname}::DATABASE_NAME);
+        \$con = Propel::getServiceContainer()->getReadConnection({$this->peerClassName}::DATABASE_NAME);
     }
     // shift the objects with a position lower than the one of object
-    \$this->addSelectColumn('MAX(' . {$this->peerClassname}::RANK_COL . ')');";
+    \$this->addSelectColumn('MAX(' . {$this->peerClassName}::RANK_COL . ')');";
         if ($useScope) {
             $script .= "
-    \$this->add({$this->peerClassname}::SCOPE_COL, \$scope, Criteria::EQUAL);";
+    \$this->add({$this->peerClassName}::SCOPE_COL, \$scope, Criteria::EQUAL);";
         }
         $script .= "
     \$stmt = \$this->doSelect(\$con);
@@ -252,7 +252,7 @@ public function getMaxRank(" . ($useScope ? "\$scope = null, " : "") . "Connecti
     protected function addReorder(&$script)
     {
         $this->builder->declareClasses('\Propel\Runtime\Propel');
-        $peerClassname = $this->peerClassname;
+        $peerClassName = $this->peerClassName;
         $columnGetter = 'get' . $this->behavior->getColumnForParameter('rank_column')->getPhpName();
         $columnSetter = 'set' . $this->behavior->getColumnForParameter('rank_column')->getPhpName();
         $script .= "
@@ -269,7 +269,7 @@ public function getMaxRank(" . ($useScope ? "\$scope = null, " : "") . "Connecti
 public function reorder(array \$order, ConnectionInterface \$con = null)
 {
     if (null === \$con) {
-        \$con = Propel::getServiceContainer()->getReadConnection($peerClassname::DATABASE_NAME);
+        \$con = Propel::getServiceContainer()->getReadConnection($peerClassName::DATABASE_NAME);
     }
 
     \$con->beginTransaction();

@@ -24,9 +24,9 @@ class SortableBehaviorPeerBuilderModifier
 
     protected $builder;
 
-    protected $objectClassname;
+    protected $objectClassName;
 
-    protected $peerClassname;
+    protected $peerClassName;
 
     public function __construct($behavior)
     {
@@ -57,8 +57,8 @@ class SortableBehaviorPeerBuilderModifier
     protected function setBuilder($builder)
     {
         $this->builder = $builder;
-        $this->objectClassname = $builder->getObjectClassname();
-        $this->peerClassname = $builder->getPeerClassname();
+        $this->objectClassName = $builder->getObjectClassName();
+        $this->peerClassName = $builder->getPeerClassName();
     }
 
     public function staticAttributes($builder)
@@ -126,17 +126,17 @@ const SCOPE_COL = '" . $tableName . '.' . $this->getColumnConstant('scope_column
 static public function getMaxRank(" . ($useScope ? "\$scope = null, " : "") . "ConnectionInterface \$con = null)
 {
     if (null === \$con) {
-        \$con = Propel::getServiceContainer()->getReadConnection({$this->peerClassname}::DATABASE_NAME);
+        \$con = Propel::getServiceContainer()->getReadConnection({$this->peerClassName}::DATABASE_NAME);
     }
     // shift the objects with a position lower than the one of object
     \$c = new Criteria();
-    \$c->addSelectColumn('MAX(' . {$this->peerClassname}::RANK_COL . ')');";
+    \$c->addSelectColumn('MAX(' . {$this->peerClassName}::RANK_COL . ')');";
         if ($useScope) {
             $script .= "
-    \$c->add({$this->peerClassname}::SCOPE_COL, \$scope, Criteria::EQUAL);";
+    \$c->add({$this->peerClassName}::SCOPE_COL, \$scope, Criteria::EQUAL);";
         }
         $script .= "
-    \$stmt = {$this->peerClassname}::doSelectStmt(\$c, \$con);
+    \$stmt = {$this->peerClassName}::doSelectStmt(\$c, \$con);
 
     return \$stmt->fetchColumn();
 }
@@ -145,7 +145,7 @@ static public function getMaxRank(" . ($useScope ? "\$scope = null, " : "") . "C
 
     protected function addRetrieveByRank(&$script)
     {
-        $peerClassname = $this->peerClassname;
+        $peerClassName = $this->peerClassName;
         $useScope = $this->behavior->useScope();
         $script .= "
 /**
@@ -159,30 +159,30 @@ static public function getMaxRank(" . ($useScope ? "\$scope = null, " : "") . "C
         $script .= "
  * @param     ConnectionInterface \$con optional connection
  *
- * @return {$this->objectClassname}
+ * @return {$this->objectClassName}
  */
 static public function retrieveByRank(\$rank, " . ($useScope ? "\$scope = null, " : "") . "ConnectionInterface \$con = null)
 {
     if (null === \$con) {
-        \$con = Propel::getServiceContainer()->getReadConnection($peerClassname::DATABASE_NAME);
+        \$con = Propel::getServiceContainer()->getReadConnection($peerClassName::DATABASE_NAME);
     }
 
     \$c = new Criteria;
-    \$c->add($peerClassname::RANK_COL, \$rank);";
+    \$c->add($peerClassName::RANK_COL, \$rank);";
         if ($useScope) {
             $script .= "
-    \$c->add($peerClassname::SCOPE_COL, \$scope, Criteria::EQUAL);";
+    \$c->add($peerClassName::SCOPE_COL, \$scope, Criteria::EQUAL);";
         }
         $script .= "
 
-    return $peerClassname::doSelectOne(\$c, \$con);
+    return $peerClassName::doSelectOne(\$c, \$con);
 }
 ";
     }
 
     protected function addReorder(&$script)
     {
-        $peerClassname = $this->peerClassname;
+        $peerClassName = $this->peerClassName;
         $columnGetter = 'get' . $this->behavior->getColumnForParameter('rank_column')->getPhpName();
         $columnSetter = 'set' . $this->behavior->getColumnForParameter('rank_column')->getPhpName();
         $script .= "
@@ -199,13 +199,13 @@ static public function retrieveByRank(\$rank, " . ($useScope ? "\$scope = null, 
 static public function reorder(array \$order, ConnectionInterface \$con = null)
 {
     if (null === \$con) {
-        \$con = Propel::getServiceContainer()->getWriteConnection($peerClassname::DATABASE_NAME);
+        \$con = Propel::getServiceContainer()->getWriteConnection($peerClassName::DATABASE_NAME);
     }
 
     \$con->beginTransaction();
     try {
         \$ids = array_keys(\$order);
-        \$objects = $peerClassname::retrieveByPKs(\$ids);
+        \$objects = $peerClassName::retrieveByPKs(\$ids);
         foreach (\$objects as \$object) {
             \$pk = \$object->getPrimaryKey();
             if (\$object->$columnGetter() != \$order[\$pk]) {
@@ -226,7 +226,7 @@ static public function reorder(array \$order, ConnectionInterface \$con = null)
 
     protected function addDoSelectOrderByRank(&$script)
     {
-        $peerClassname = $this->peerClassname;
+        $peerClassName = $this->peerClassName;
         $script .= "
 /**
  * Return an array of sortable objects ordered by position
@@ -240,7 +240,7 @@ static public function reorder(array \$order, ConnectionInterface \$con = null)
 static public function doSelectOrderByRank(Criteria \$criteria = null, \$order = Criteria::ASC, ConnectionInterface \$con = null)
 {
     if (null === \$con) {
-        \$con = Propel::getServiceContainer()->getReadConnection($peerClassname::DATABASE_NAME);
+        \$con = Propel::getServiceContainer()->getReadConnection($peerClassName::DATABASE_NAME);
     }
 
     if (null === \$criteria) {
@@ -252,19 +252,19 @@ static public function doSelectOrderByRank(Criteria \$criteria = null, \$order =
     \$criteria->clearOrderByColumns();
 
     if (Criteria::ASC == \$order) {
-        \$criteria->addAscendingOrderByColumn($peerClassname::RANK_COL);
+        \$criteria->addAscendingOrderByColumn($peerClassName::RANK_COL);
     } else {
-        \$criteria->addDescendingOrderByColumn($peerClassname::RANK_COL);
+        \$criteria->addDescendingOrderByColumn($peerClassName::RANK_COL);
     }
 
-    return $peerClassname::doSelect(\$criteria, \$con);
+    return $peerClassName::doSelect(\$criteria, \$con);
 }
 ";
     }
 
     protected function addRetrieveList(&$script)
     {
-        $peerClassname = $this->peerClassname;
+        $peerClassName = $this->peerClassName;
         $script .= "
 /**
  * Return an array of sortable objects in the given scope ordered by position
@@ -278,16 +278,16 @@ static public function doSelectOrderByRank(Criteria \$criteria = null, \$order =
 static public function retrieveList(\$scope, \$order = Criteria::ASC, ConnectionInterface \$con = null)
 {
     \$c = new Criteria();
-    \$c->add($peerClassname::SCOPE_COL, \$scope);
+    \$c->add($peerClassName::SCOPE_COL, \$scope);
 
-    return $peerClassname::doSelectOrderByRank(\$c, \$order, \$con);
+    return $peerClassName::doSelectOrderByRank(\$c, \$order, \$con);
 }
 ";
     }
 
     protected function addCountList(&$script)
     {
-        $peerClassname = $this->peerClassname;
+        $peerClassName = $this->peerClassName;
         $script .= "
 /**
  * Return the number of sortable objects in the given scope
@@ -300,16 +300,16 @@ static public function retrieveList(\$scope, \$order = Criteria::ASC, Connection
 static public function countList(\$scope, ConnectionInterface \$con = null)
 {
     \$c = new Criteria();
-    \$c->add($peerClassname::SCOPE_COL, \$scope);
+    \$c->add($peerClassName::SCOPE_COL, \$scope);
 
-    return $peerClassname::doCount(\$c, \$con);
+    return $peerClassName::doCount(\$c, \$con);
 }
 ";
     }
 
     protected function addDeleteList(&$script)
     {
-        $peerClassname = $this->peerClassname;
+        $peerClassName = $this->peerClassName;
         $script .= "
 /**
  * Deletes the sortable objects in the given scope
@@ -322,16 +322,16 @@ static public function countList(\$scope, ConnectionInterface \$con = null)
 static public function deleteList(\$scope, ConnectionInterface \$con = null)
 {
     \$c = new Criteria();
-    \$c->add($peerClassname::SCOPE_COL, \$scope);
+    \$c->add($peerClassName::SCOPE_COL, \$scope);
 
-    return $peerClassname::doDelete(\$c, \$con);
+    return $peerClassName::doDelete(\$c, \$con);
 }
 ";
     }
     protected function addShiftRank(&$script)
     {
         $useScope = $this->behavior->useScope();
-        $peerClassname = $this->peerClassname;
+        $peerClassName = $this->peerClassName;
         $script .= "
 /**
  * Adds \$delta to all Rank values that are >= \$first and <= \$last.
@@ -350,26 +350,26 @@ static public function deleteList(\$scope, ConnectionInterface \$con = null)
 static public function shiftRank(\$delta, \$first, \$last = null, " . ($useScope ? "\$scope = null, " : "") . "ConnectionInterface \$con = null)
 {
     if (null === \$con) {
-        \$con = Propel::getServiceContainer()->getWriteConnection($peerClassname::DATABASE_NAME);
+        \$con = Propel::getServiceContainer()->getWriteConnection($peerClassName::DATABASE_NAME);
     }
 
-    \$whereCriteria = new Criteria($peerClassname::DATABASE_NAME);
-    \$criterion = \$whereCriteria->getNewCriterion($peerClassname::RANK_COL, \$first, Criteria::GREATER_EQUAL);
+    \$whereCriteria = new Criteria($peerClassName::DATABASE_NAME);
+    \$criterion = \$whereCriteria->getNewCriterion($peerClassName::RANK_COL, \$first, Criteria::GREATER_EQUAL);
     if (null !== \$last) {
-        \$criterion->addAnd(\$whereCriteria->getNewCriterion($peerClassname::RANK_COL, \$last, Criteria::LESS_EQUAL));
+        \$criterion->addAnd(\$whereCriteria->getNewCriterion($peerClassName::RANK_COL, \$last, Criteria::LESS_EQUAL));
     }
     \$whereCriteria->add(\$criterion);";
         if ($useScope) {
             $script .= "
-    \$whereCriteria->add($peerClassname::SCOPE_COL, \$scope, Criteria::EQUAL);";
+    \$whereCriteria->add($peerClassName::SCOPE_COL, \$scope, Criteria::EQUAL);";
         }
         $script .= "
 
-    \$valuesCriteria = new Criteria($peerClassname::DATABASE_NAME);
-    \$valuesCriteria->add($peerClassname::RANK_COL, array('raw' => $peerClassname::RANK_COL . ' + ?', 'value' => \$delta), Criteria::CUSTOM_EQUAL);
+    \$valuesCriteria = new Criteria($peerClassName::DATABASE_NAME);
+    \$valuesCriteria->add($peerClassName::RANK_COL, array('raw' => $peerClassName::RANK_COL . ' + ?', 'value' => \$delta), Criteria::CUSTOM_EQUAL);
 
-    {$this->builder->getPeerBuilder()->getBasePeerClassname()}::doUpdate(\$whereCriteria, \$valuesCriteria, \$con);
-    $peerClassname::clearInstancePool();
+    {$this->builder->getPeerBuilder()->getBasePeerClassName()}::doUpdate(\$whereCriteria, \$valuesCriteria, \$con);
+    $peerClassName::clearInstancePool();
 }
 ";
     }

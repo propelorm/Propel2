@@ -28,7 +28,7 @@ abstract class AbstractPeerBuilder extends AbstractOMBuilder
 {
     protected $basePeerClass;
 
-    protected $basePeerClassname;
+    protected $basePeerClassName;
 
     /**
      * Constructs a new PeerBuilder subclass.
@@ -39,11 +39,11 @@ abstract class AbstractPeerBuilder extends AbstractOMBuilder
     {
         parent::__construct($table);
 
-        $this->basePeerClassname = $this->basePeerClass = $this->getBasePeer($table);
+        $this->basePeerClassName = $this->basePeerClass = $this->getBasePeer($table);
         ;
 
-        if (false !== $pos = strrpos($this->basePeerClassname, '.')) {
-            $this->basePeerClassname = substr($this->basePeerClassname, $pos + 1);
+        if (false !== $pos = strrpos($this->basePeerClassName, '.')) {
+            $this->basePeerClassName = substr($this->basePeerClassName, $pos + 1);
         }
     }
 
@@ -307,7 +307,7 @@ abstract class AbstractPeerBuilder extends AbstractOMBuilder
 
     /**
      * Checks whether any registered behavior content creator on that table exists a contentName
-     * @param string $contentName The name of the content as called from one of this class methods, e.g. "parentClassname"
+     * @param string $contentName The name of the content as called from one of this class methods, e.g. "parentClassName"
      */
     public function getBehaviorContent($contentName)
     {
@@ -319,8 +319,8 @@ abstract class AbstractPeerBuilder extends AbstractOMBuilder
      *
      * @return string The Base Peer Class name
      */
-    public function getBasePeerClassname()
+    public function getBasePeerClassName()
     {
-        return $this->basePeerClassname;
+        return $this->basePeerClassName;
     }
 }

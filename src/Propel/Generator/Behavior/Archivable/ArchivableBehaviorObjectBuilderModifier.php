@@ -95,7 +95,7 @@ class ArchivableBehaviorObjectBuilderModifier
     {
         if ($this->behavior->isArchiveOnDelete()) {
             return $this->behavior->renderTemplate('objectPreDelete', array(
-                'queryClassname' => $builder->getQueryClassname(),
+                'queryClassName' => $builder->getQueryClassName(),
                 'isAddHooks'     => $builder->getGeneratorConfig()->getBuildProperty('addHooks'),
             ));
         }
@@ -153,7 +153,7 @@ class ArchivableBehaviorObjectBuilderModifier
     public function addRestoreFromArchive($builder)
     {
         return $this->behavior->renderTemplate('objectRestoreFromArchive', array(
-            'objectClassname' => $this->builder->getObjectClassname(),
+            'objectClassName' => $this->builder->getObjectClassName(),
         ));
     }
 
@@ -169,7 +169,7 @@ class ArchivableBehaviorObjectBuilderModifier
         return $this->behavior->renderTemplate('objectPopulateFromArchive', array(
             'archiveTablePhpName' => $this->behavior->getArchiveTablePhpName($builder),
             'usesAutoIncrement'   => $this->table->hasAutoIncrementPrimaryKey(),
-            'objectClassname'     => $this->builder->getObjectClassname(),
+            'objectClassName'     => $this->builder->getObjectClassName(),
             'columns'             => $this->table->getColumns(),
         ));
     }
@@ -180,7 +180,7 @@ class ArchivableBehaviorObjectBuilderModifier
     public function addSaveWithoutArchive($builder)
     {
         return $this->behavior->renderTemplate('objectSaveWithoutArchive', array(
-            'objectClassname'   => $this->builder->getObjectClassname(),
+            'objectClassName'   => $this->builder->getObjectClassName(),
             'isArchiveOnInsert' => $this->behavior->isArchiveOnInsert(),
             'isArchiveOnUpdate' => $this->behavior->isArchiveOnUpdate(),
         ));
@@ -192,7 +192,7 @@ class ArchivableBehaviorObjectBuilderModifier
     public function addDeleteWithoutArchive($builder)
     {
         return $this->behavior->renderTemplate('objectDeleteWithoutArchive', array(
-            'objectClassname' => $this->builder->getObjectClassname(),
+            'objectClassName' => $this->builder->getObjectClassName(),
         ));
     }
 

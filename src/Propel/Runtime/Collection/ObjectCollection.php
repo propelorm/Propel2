@@ -255,13 +255,13 @@ class ObjectCollection extends Collection
         if ($this->isEmpty()) {
             // save a useless query and return an empty collection
             $coll = new ObjectCollection();
-            $coll->setModel($relationMap->getRightTable()->getClassname());
+            $coll->setModel($relationMap->getRightTable()->getClassName());
 
             return $coll;
         }
         $symRelationMap = $relationMap->getSymmetricalRelation();
 
-        $query = PropelQuery::from($relationMap->getRightTable()->getClassname());
+        $query = PropelQuery::from($relationMap->getRightTable()->getClassName());
         if (null !== $criteria) {
             $query->mergeWith($criteria);
         }

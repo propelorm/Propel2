@@ -47,8 +47,8 @@ class ModelWith
     public function init(ModelJoin $join)
     {
         $tableMap = $join->getTableMap();
-        $this->setModelName($tableMap->getClassname());
-        $this->setModelPeerName($tableMap->getPeerClassname());
+        $this->setModelName($tableMap->getClassName());
+        $this->setModelPeerName($tableMap->getPeerClassName());
         $this->isSingleTableInheritance = $tableMap->isSingleTableInheritance();
         $relation = $join->getRelationMap();
         $relationName = $relation->getName();

@@ -20,8 +20,8 @@ class VersionableBehaviorQueryBuilderModifier
     protected $behavior;
     protected $table;
     protected $builder;
-    protected $objectClassname;
-    protected $peerClassname;
+    protected $objectClassName;
+    protected $peerClassName;
 
     public function __construct($behavior)
     {
@@ -46,15 +46,15 @@ class VersionableBehaviorQueryBuilderModifier
 
     protected function getVersionQueryClassName()
     {
-        return $this->builder->getClassnameFromBuilder($this->builder->getNewStubQueryBuilder($this->behavior->getVersionTable()));
+        return $this->builder->getClassNameFromBuilder($this->builder->getNewStubQueryBuilder($this->behavior->getVersionTable()));
     }
 
     protected function setBuilder($builder)
     {
         $this->builder = $builder;
-        $this->objectClassname = $builder->getObjectClassname();
-        $this->queryClassname = $builder->getQueryClassname();
-        $this->peerClassname = $builder->getPeerClassname();
+        $this->objectClassName = $builder->getObjectClassName();
+        $this->queryClassName = $builder->getQueryClassName();
+        $this->peerClassName = $builder->getPeerClassName();
     }
 
     /**
@@ -97,7 +97,7 @@ class VersionableBehaviorQueryBuilderModifier
  *
  * @param     integer \$version
  * @param     string  \$comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
- * @return    " . $this->builder->getQueryClassname() . " The current query, for fluid interface
+ * @return    " . $this->builder->getQueryClassName() . " The current query, for fluid interface
  */
 public function filterByVersion(\$version = null, \$comparison = null)
 {
@@ -113,7 +113,7 @@ public function filterByVersion(\$version = null, \$comparison = null)
  * Wrap the order on the version volumn
  *
  * @param   string \$order The sorting order. Criteria::ASC by default, also accepts Criteria::DESC
- * @return  " . $this->builder->getQueryClassname() . " The current query, for fluid interface
+ * @return  " . $this->builder->getQueryClassName() . " The current query, for fluid interface
  */
 public function orderByVersion(\$order = Criteria::ASC)
 {

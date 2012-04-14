@@ -1,7 +1,7 @@
 <?php if ($isAddHooks) : ?>
 if ($ret) {
     if ($this->archiveOnDelete) {
-        // do nothing yet. The object will be archived later when calling <?php echo $queryClassname ?>::delete().
+        // do nothing yet. The object will be archived later when calling <?php echo $queryClassName ?>::delete().
     } else {
         $deleteQuery->setArchiveOnDelete(false);
         $this->archiveOnDelete = true;
@@ -9,7 +9,7 @@ if ($ret) {
 }
 <?php else: ?>
 if ($this->archiveOnDelete) {
-    // do nothing yet. The object will be archived later when calling <?php echo $queryClassname ?>::delete().
+    // do nothing yet. The object will be archived later when calling <?php echo $queryClassName ?>::delete().
 } else {
     $deleteQuery->setArchiveOnDelete(false);
     $this->archiveOnDelete = true;
