@@ -30,16 +30,21 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     /**
      * Declared fully qualified classnames, to build the 'namespace' statements
      * according to this table's namespace.
+     *
      * @var array
      */
     protected $declaredClasses = array();
 
     /**
      * Mapping bettwen fully qualified classnames and their short classname or alias
+     *
      * @var array
      */
     protected $declaredShortClassesOrAlias = array();
 
+    /**
+     * @var array
+     */
     protected $whiteListOfDeclaratedClasses = array('PDO', 'Exception', 'DateTime');
 
     /**
@@ -63,7 +68,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         $this->addClassClose($script);
 
         $ignoredNamespace = $this->getNamespace();
-        if ($useStatements = $this->getUseStatements($ignoredNamespace?:'namespace')) {
+        if ($useStatements = $this->getUseStatements($ignoredNamespace ?: 'namespace')) {
             $script = $useStatements . $script;
         }
 
@@ -103,12 +108,14 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     /**
      * Returns the qualified (prefixed) classname that is being built by the current class.
      * This method must be implemented by child classes.
+     *
      * @return     string
      */
     abstract public function getUnprefixedClassname();
 
     /**
-     * return the unqualified classname (e.g. Book)
+     * Returns the unqualified classname (e.g. Book)
+     *
      * @return string
      */
     public function getUnqualifiedClassname()
@@ -117,7 +124,8 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     }
 
     /**
-     * return the qualified classname (e.g. Model\Book)
+     * Returns the qualified classname (e.g. Model\Book)
+     *
      * @return string
      */
     public function getQualifiedClassname()
@@ -130,7 +138,8 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     }
 
     /**
-     * return the fully qualified classname (e.g. \Model\Book)
+     * Returns the fully qualified classname (e.g. \Model\Book)
+     *
      * @return     string
      */
     public function getFullyQualifiedClassname()
@@ -144,6 +153,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     }
     /**
      * Returns FQCN alias of getFullyQualifiedClassname
+     *
      * @return     string
      */
     public function getClassname()
@@ -153,6 +163,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
 
     /**
      * Gets the dot-path representation of current class being built.
+     *
      * @return     string
      */
     public function getClasspath()
@@ -168,6 +179,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
 
     /**
      * Gets the full path to the file for the current class.
+     *
      * @return     string
      */
     public function getClassFilePath()
@@ -209,7 +221,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     }
 
     /**
-     * Return the user-defined namespace for this table,
+     * Returns the user-defined namespace for this table,
      * or the database namespace otherwise.
      *
      * @return    string
@@ -220,7 +232,8 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     }
 
     /**
-     * this decare the class use and get the correct name to use (short classname, Alias, or FQCN)
+     * This decare the class use and get the correct name to use (short classname, Alias, or FQCN)
+     *
      * @param AbstractOMBuilder $builder
      * @param boolean $fqcn true to return the $fqcn classname
      * @return string Classname, Alias or FQCN

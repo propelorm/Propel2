@@ -280,12 +280,14 @@ class QuickBuilder
     }
 
     /**
-     * prevent generated class without namespace to fail
+     * Prevent generated class without namespace to fail.
+     *
      * @param string $code
      * @return string
      */
-    protected function forceNamespace($code) {
-        if (0 == preg_match('/\nnamespace/', $code)) {
+    protected function forceNamespace($code)
+    {
+        if (0 === preg_match('/\nnamespace/', $code)) {
             return "\nnamespace\n{\n" . $code . "\n}\n";
         }
 

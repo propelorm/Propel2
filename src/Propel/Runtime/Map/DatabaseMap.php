@@ -188,6 +188,7 @@ class DatabaseMap
                 return $this->tablesByPhpName[$phpName];
             }
         }
+
         throw new TableNotFoundException("Cannot fetch TableMap for undefined table phpName: $phpName");
     }
 

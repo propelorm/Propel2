@@ -47,7 +47,8 @@ class Collection extends ArrayObject implements Serializable
     protected $model = '';
 
     /**
-     * the fully qualified classname of the model
+     * The fully qualified classname of the model
+     *
      * @var       string
      */
     protected $fullyQualifiedModel = '';
