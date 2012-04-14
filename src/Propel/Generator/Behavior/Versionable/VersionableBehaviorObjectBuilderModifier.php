@@ -487,8 +487,6 @@ public function getAllVersions(\$con = null)
     protected function addComputeDiff(&$script)
     {
         $versionTable = $this->behavior->getVersionTable();
-        $versionARClassname = $this->builder->getClassnameFromBuilder($this->builder->getNewStubObjectBuilder($versionTable));
-        $versionForeignColumn = $versionTable->getColumn($this->behavior->getParameter('version_column'));
         $fks = $versionTable->getForeignKeysReferencingTable($this->table->getName());
 
         $script .= "
