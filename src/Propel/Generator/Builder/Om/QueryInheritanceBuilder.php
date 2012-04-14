@@ -55,6 +55,8 @@ class QueryInheritanceBuilder extends AbstractOMBuilder
             } else {
                 return $namespace;
             }
+        } else {
+            return 'Base';
         }
     }
 

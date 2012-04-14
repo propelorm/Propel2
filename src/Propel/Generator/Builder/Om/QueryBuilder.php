@@ -330,7 +330,7 @@ abstract class ".$this->getUnqualifiedClassname()." extends " . $parentClass . "
      */
     protected function addFactoryBody(&$script)
     {
-        $classname = $this->getClassnameFromBuilder($this->getNewStubQueryBuilder($this->getTable()));
+        $classname = $this->getClassnameFromBuilder($this->getNewStubQueryBuilder($this->getTable()), true);
         $script .= "
         if (\$criteria instanceof " . $classname . ") {
             return \$criteria;
@@ -946,7 +946,7 @@ abstract class ".$this->getUnqualifiedClassname()." extends " . $parentClass . "
         $fkTable = $this->getForeignTable($fk);
         $fkStubObjectBuilder = $this->getNewStubObjectBuilder($fkTable);
         $this->declareClassFromBuilder($fkStubObjectBuilder);
-        $fkPhpName = $this->getClassnameFromBuilder($fkStubObjectBuilder);
+        $fkPhpName = $this->getClassnameFromBuilder($fkStubObjectBuilder, true);
         $relationName = $this->getFKPhpNameAffix($fk);
         $objectName = '$' . $fkTable->getStudlyPhpName();
         $script .= "
@@ -1018,7 +1018,7 @@ abstract class ".$this->getUnqualifiedClassname()." extends " . $parentClass . "
         $fkTable = $this->getTable()->getDatabase()->getTable($fk->getTableName());
         $fkStubObjectBuilder = $this->getNewStubObjectBuilder($fkTable);
         $this->declareClassFromBuilder($fkStubObjectBuilder);
-        $fkPhpName = $this->getClassnameFromBuilder($fkStubObjectBuilder);
+        $fkPhpName = $this->getClassnameFromBuilder($fkStubObjectBuilder, true);
         $relationName = $this->getRefFKPhpNameAffix($fk);
         $objectName = '$' . $fkTable->getStudlyPhpName();
         $script .= "
