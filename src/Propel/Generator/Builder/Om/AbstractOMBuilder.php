@@ -337,7 +337,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
             return $this->declareClassNamespacePrefix(substr($fullyQualifiedClassName, $pos + 1), substr($fullyQualifiedClassName, 0, $pos), $aliasPrefix);
         } else {
             // root namespace
-            return$this->declareClassNamespacePrefix($fullyQualifiedClassName, '', $aliasPrefix);
+            return $this->declareClassNamespacePrefix($fullyQualifiedClassName, '', $aliasPrefix);
         }
     }
 

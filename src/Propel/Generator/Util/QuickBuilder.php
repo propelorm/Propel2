@@ -180,22 +180,15 @@ class QuickBuilder
             if ($col->isEnumeratedClasses()) {
                 foreach ($col->getChildren() as $child) {
                     if ($child->getAncestor()) {
-                        $builder = $this->getConfig()->getConfiguredBuilder('queryinheritance', $target);
+                        $builder = $this->getConfig()->getConfiguredBuilder($table, 'queryinheritance');
                         $builder->setChild($child);
                         $class = $builder->build();
-                        $script .= $this->fixNamespaceDeclarations($class);
-                    }
-                    foreach (array('objectmultiextend', 'queryinheritancestub') as $target) {
-                        $builder = $this->getConfig()->getConfiguredBuilder($table, $target);
-                        $builder->setChild($child);
-                        $class = $this->forceNamespace($builder->build());
                         $script .= $this->fixNamespaceDeclarations($class);
 
                         foreach (array('objectmultiextend', 'queryinheritancestub') as $target) {
                             $builder = $this->getConfig()->getConfiguredBuilder($table, $target);
                             $builder->setChild($child);
                             $class = $builder->build();
-                            $class = "\nnamespace\n{\n" . $class . "\n}\n";
                             $script .= $this->fixNamespaceDeclarations($class);
                         }
                     }
