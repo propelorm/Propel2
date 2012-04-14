@@ -309,14 +309,16 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         if ('' == $namespace && 'Base' == $this->getNamespace()) {
             if (str_replace(array('Peer','Query'), '', $class) == str_replace(array('Peer','Query'), '', $this->getUnqualifiedClassname())) {
                 return true;
-            } else if ((false !== strpos($class,'Peer') || false !== strpos($class,'Query'))) {
+            } elseif ((false !== strpos($class,'Peer') || false !== strpos($class,'Query'))) {
                 return true;
-            } else if (false === array_search($class, $this->whiteListOfDeclaratedClasses, true)) { //force alias for model without namespace
+            } elseif (false === array_search($class, $this->whiteListOfDeclaratedClasses, true)) { //force alias for model without namespace
+
                 return true;
             }
         }
         if ('Base' == $namespace && '' == $this->getNamespace()) {
             if (false === array_search($class, $this->whiteListOfDeclaratedClasses, true)) { //force alias for model without namespace
+
                 return true;
             }
         }

@@ -31,3 +31,7 @@ The classes used by Propel internally to build the object model were renamed. Th
     PHP5ObjectBuilder.php            ObjectBuilder.php
     PHP5PeerBuilder.php              PeerBuilder.php
     PHP5TableMapBuilder.php          TableMapBuilder.php
+
+## Base classes reorganized
+
+Base classes are generated in a `Base` directory, and base classes are no more prefixed by `Base`.
