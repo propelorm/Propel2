@@ -35,3 +35,5 @@ The classes used by Propel internally to build the object model were renamed. Th
 ## Base classes reorganized
 
 Base classes are generated in a `Base` directory, and base classes are no more prefixed by `Base`.
+
+Parameters `basePrefix` and `namespaceOm` have been removed
