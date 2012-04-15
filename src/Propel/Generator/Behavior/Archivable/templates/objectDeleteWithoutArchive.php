@@ -4,7 +4,7 @@
  *
  * @param ConnectionInterface $con Optional connection object
  *
- * @return     <?php echo $objectClassname ?> The current object (for fluent API support)
+ * @return     <?php echo $objectClassName ?> The current object (for fluent API support)
  */
 public function deleteWithoutArchive(ConnectionInterface $con = null)
 {

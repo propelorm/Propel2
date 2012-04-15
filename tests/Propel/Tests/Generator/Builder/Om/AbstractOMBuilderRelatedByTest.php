@@ -82,7 +82,7 @@ class TestableOMBuilder extends AbstractOMBuilder
         return parent::getRefRelatedBySuffix($fk);
     }
 
-    public function getUnprefixedClassname()
+    public function getUnprefixedClassName()
     {
     }
 }

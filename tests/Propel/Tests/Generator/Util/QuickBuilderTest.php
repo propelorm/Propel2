@@ -15,6 +15,14 @@ use Propel\Generator\Util\QuickBuilder;
 use Propel\Runtime\Propel;
 use Propel\Runtime\Om\BaseObject;
 
+use MyNameSpace\QuickBuildFoo1;
+use MyNameSpace\QuickBuildFoo1Peer;
+use MyNameSpace\QuickBuildFoo1Query;
+
+use MyNameSpace2\QuickBuildFoo2;
+use MyNameSpace2\QuickBuildFoo2Peer;
+use MyNameSpace2\QuickBuildFoo2Query;
+
 /**
  *
  */
@@ -32,7 +40,7 @@ class QuickBuilderTest extends \PHPUnit_Framework_TestCase
     public function simpleSchemaProvider()
     {
         $schema = <<<EOF
-<database name="test_quick_build_2">
+<database name="test_quick_build_2" namespace="MyNameSpace">
     <table name="quick_build_foo_1">
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <column name="bar" type="INTEGER" />
@@ -88,9 +96,9 @@ EOF;
         $this->assertContains('class QuickBuildFoo1 extends BaseQuickBuildFoo1', $script);
         $this->assertContains('class QuickBuildFoo1Peer extends BaseQuickBuildFoo1Peer', $script);
         $this->assertContains('class QuickBuildFoo1Query extends BaseQuickBuildFoo1Query', $script);
-        $this->assertContains('class BaseQuickBuildFoo1 extends BaseObject', $script);
-        $this->assertContains('class BaseQuickBuildFoo1Peer', $script);
-        $this->assertContains('class BaseQuickBuildFoo1Query extends ModelCriteria', $script);
+        $this->assertContains('class QuickBuildFoo1 extends BaseObject', $script);
+        $this->assertContains('class QuickBuildFoo1Peer', $script);
+        $this->assertContains('class QuickBuildFoo1Query extends ModelCriteria', $script);
     }
 
     /**
@@ -102,9 +110,9 @@ EOF;
         $this->assertNotContains('class QuickBuildFoo1 extends BaseQuickBuildFoo1', $script);
         $this->assertNotContains('class QuickBuildFoo1Peer extends BaseQuickBuildFoo1Peer', $script);
         $this->assertNotContains('class QuickBuildFoo1Query extends BaseQuickBuildFoo1Query', $script);
-        $this->assertContains('class BaseQuickBuildFoo1 extends BaseObject', $script);
-        $this->assertContains('class BaseQuickBuildFoo1Peer', $script);
-        $this->assertContains('class BaseQuickBuildFoo1Query extends ModelCriteria', $script);
+        $this->assertContains('class QuickBuildFoo1 extends BaseObject', $script);
+        $this->assertContains('class QuickBuildFoo1Peer', $script);
+        $this->assertContains('class QuickBuildFoo1Query extends ModelCriteria', $script);
     }
 
     /**
@@ -115,13 +123,13 @@ EOF;
         $builder->buildClasses();
         $foo = new QuickBuildFoo1();
         $this->assertTrue($foo instanceof BaseObject);
-        $this->assertTrue(QuickBuildFoo1Peer::getTableMap() instanceof QuickBuildFoo1TableMap);
+        $this->assertTrue(QuickBuildFoo1Peer::getTableMap() instanceof \MyNameSpace\Map\QuickBuildFoo1TableMap);
     }
 
     public function testBuild()
     {
         $schema = <<<EOF
-<database name="test_quick_build_2">
+<database name="test_quick_build_2" namespace="MyNameSpace2">
     <table name="quick_build_foo_2">
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <column name="bar" type="INTEGER" />

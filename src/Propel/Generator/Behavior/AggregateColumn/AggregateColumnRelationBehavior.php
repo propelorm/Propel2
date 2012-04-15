@@ -55,7 +55,7 @@ class AggregateColumnRelationBehavior extends Behavior
 
         return $this->renderTemplate('objectUpdateRelated', array(
             'relationName'     => $relationName,
-            'variableName'     => self::lcfirst($relationName),
+            'variableName'     => lcfirst($relationName),
             'updateMethodName' => $this->getParameter('update_method'),
         ));
     }
@@ -63,7 +63,7 @@ class AggregateColumnRelationBehavior extends Behavior
     public function objectFilter(&$script, $builder)
     {
         $relationName = $this->getRelationName($builder);
-        $relatedClass = $this->getForeignTable()->getPhpName();
+        $relatedClass = $builder->getClassNameFromBuilder($builder->getNewStubObjectBuilder($this->getForeignTable()));
         $search = "    public function set{$relationName}({$relatedClass} \$v = null)
     {";
         $replace = $search . "
@@ -120,6 +120,7 @@ class AggregateColumnRelationBehavior extends Behavior
     protected function addQueryFindRelated($builder)
     {
         $foreignKey = $this->getForeignKey();
+        $foreignQueryBuilder = $builder->getNewStubQueryBuilder($foreignKey->getForeignTable());
         $relationName = $this->getRelationName($builder);
 
         $builder->declareClassNamespace(
@@ -130,8 +131,8 @@ class AggregateColumnRelationBehavior extends Behavior
         return $this->renderTemplate('queryFindRelated', array(
             'foreignTable'     => $this->getForeignTable(),
             'relationName'     => $relationName,
-            'variableName'     => self::lcfirst($relationName),
-            'foreignQueryName' => $foreignKey->getForeignTable()->getPhpName() . 'Query',
+            'variableName'     => lcfirst($relationName),
+            'foreignQueryName' => $foreignQueryBuilder->getClassName(),
             'refRelationName'  => $builder->getRefFKPhpNameAffix($foreignKey),
         ));
     }
@@ -142,7 +143,7 @@ class AggregateColumnRelationBehavior extends Behavior
 
         return $this->renderTemplate('queryUpdateRelated', array(
             'relationName'     => $relationName,
-            'variableName'     => self::lcfirst($relationName),
+            'variableName'     => lcfirst($relationName),
             'updateMethodName' => $this->getParameter('update_method'),
         ));
     }
@@ -164,13 +165,5 @@ class AggregateColumnRelationBehavior extends Behavior
     protected function getRelationName($builder)
     {
         return $builder->getFKPhpNameAffix($this->getForeignKey());
-    }
-
-    protected static function lcfirst($input)
-    {
-        // no lcfirst in php<5.3...
-        $input[0] = strtolower($input[0]);
-
-        return $input;
     }
 }

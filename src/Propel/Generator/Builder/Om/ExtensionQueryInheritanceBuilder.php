@@ -33,7 +33,7 @@ class ExtensionQueryInheritanceBuilder extends AbstractOMBuilder
      * Returns the name of the current class being built.
      * @return     string
      */
-    public function getUnprefixedClassname()
+    public function getUnprefixedClassName()
     {
         return $this->getChild()->getClassName() . 'Query';
     }
@@ -64,7 +64,7 @@ class ExtensionQueryInheritanceBuilder extends AbstractOMBuilder
     public function getChild()
     {
         if (!$this->child) {
-            throw new BuildException("The PHP5MultiExtendObjectBuilder needs to be told which child class to build (via setChild() method) before it can build the stub class.");
+            throw new BuildException("The MultiExtendObjectBuilder needs to be told which child class to build (via setChild() method) before it can build the stub class.");
         }
 
         return $this->child;
@@ -81,8 +81,7 @@ class ExtensionQueryInheritanceBuilder extends AbstractOMBuilder
         $tableDesc = $table->getDescription();
 
         $baseBuilder = $this->getNewQueryInheritanceBuilder($this->getChild());
-        $this->declareClassFromBuilder($baseBuilder);
-        $baseClassname = $baseBuilder->getClassname();
+        $baseClassName = $this->getClassNameFromBuilder($baseBuilder);
 
         $script .= "
 
@@ -105,7 +104,7 @@ class ExtensionQueryInheritanceBuilder extends AbstractOMBuilder
  * long as it does not already exist in the output directory.
  *
  */
-class "  .$this->getClassname() . " extends " . $baseClassname . " {
+class "  .$this->getUnqualifiedClassName() . " extends " . $baseClassName . " {
 ";
     }
 
@@ -128,7 +127,7 @@ class "  .$this->getClassname() . " extends " . $baseClassname . " {
     protected function addClassClose(&$script)
     {
         $script .= "
-} // " . $this->getClassname() . "
+} // " . $this->getUnqualifiedClassName() . "
 ";
     }
 

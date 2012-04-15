@@ -54,22 +54,22 @@ class CollectionConvertTest extends BookstoreTestBase
         $expected = <<<EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <data>
-  <PropelTestsBookstoreBook>
+  <Book>
     <Id>9012</Id>
     <Title><![CDATA[Don Juan]]></Title>
     <ISBN><![CDATA[0140422161]]></ISBN>
     <Price>12.99</Price>
     <PublisherId>1234</PublisherId>
     <AuthorId>5678</AuthorId>
-  </PropelTestsBookstoreBook>
-  <PropelTestsBookstoreBook>
+  </Book>
+  <Book>
     <Id>58</Id>
     <Title><![CDATA[Harry Potter and the Order of the Phoenix]]></Title>
     <ISBN><![CDATA[043935806X]]></ISBN>
     <Price>10.99</Price>
     <PublisherId></PublisherId>
     <AuthorId></AuthorId>
-  </PropelTestsBookstoreBook>
+  </Book>
 </data>
 
 EOF;
@@ -104,14 +104,14 @@ EOF;
     public function toYamlDataProvider()
     {
         $expected = <<<EOF
-\Propel\Tests\Bookstore\Book_0:
+Book_0:
     Id: 9012
     Title: 'Don Juan'
     ISBN: '0140422161'
     Price: 12.99
     PublisherId: 1234
     AuthorId: 5678
-\Propel\Tests\Bookstore\Book_1:
+Book_1:
     Id: 58
     Title: 'Harry Potter and the Order of the Phoenix'
     ISBN: 043935806X
@@ -151,7 +151,7 @@ EOF;
     public function toJsonDataProvider()
     {
         $expected = <<<EOF
-{"\\\Propel\\\Tests\\\Bookstore\\\Book_0":{"Id":9012,"Title":"Don Juan","ISBN":"0140422161","Price":12.99,"PublisherId":1234,"AuthorId":5678},"\\\Propel\\\Tests\\\Bookstore\\\Book_1":{"Id":58,"Title":"Harry Potter and the Order of the Phoenix","ISBN":"043935806X","Price":10.99,"PublisherId":null,"AuthorId":null}}
+{"Book_0":{"Id":9012,"Title":"Don Juan","ISBN":"0140422161","Price":12.99,"PublisherId":1234,"AuthorId":5678},"Book_1":{"Id":58,"Title":"Harry Potter and the Order of the Phoenix","ISBN":"043935806X","Price":10.99,"PublisherId":null,"AuthorId":null}}
 EOF;
 
         return array(array($expected));
@@ -231,10 +231,10 @@ EOF;
         $expected = <<<EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <data>
-  <PropelTestsBookstorePublisher>
+  <Publisher>
     <Id>12345</Id>
     <Name><![CDATA[Penguinoo]]></Name>
-  </PropelTestsBookstorePublisher>
+  </Publisher>
 </data>
 
 EOF;

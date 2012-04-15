@@ -34,7 +34,7 @@ class TableMapBuilderTest extends BookstoreTestBase
 
   public function testColumnDefaultValue()
   {
-    $table = $this->databaseMap->getTableByPhpName('Propel\Tests\Bookstore\BookstoreEmployeeAccount');
+    $table = $this->databaseMap->getTableByPhpName('\Propel\Tests\Bookstore\BookstoreEmployeeAccount');
     $this->assertNull($table->getColumn('login')->getDefaultValue(), 'null default values are correctly mapped');
     $this->assertEquals('\'@\'\'34"', $table->getColumn('password')->getDefaultValue(), 'string default values are correctly escaped and mapped');
     $this->assertTrue($table->getColumn('enabled')->getDefaultValue(), 'boolean default values are correctly mapped');

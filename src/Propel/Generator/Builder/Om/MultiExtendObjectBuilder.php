@@ -31,9 +31,9 @@ class MultiExtendObjectBuilder extends AbstractObjectBuilder
      * Returns the name of the current class being built.
      * @return     string
      */
-    public function getUnprefixedClassname()
+    public function getUnprefixedClassName()
     {
-        return $this->getChild()->getClassname();
+        return $this->getChild()->getClassName();
     }
 
     /**
@@ -62,7 +62,7 @@ class MultiExtendObjectBuilder extends AbstractObjectBuilder
     public function getChild()
     {
         if (!$this->child) {
-            throw new BuildException("The PHP5MultiExtendObjectBuilder needs to be told which child class to build (via setChild() method) before it can build the stub class.");
+            throw new BuildException("The MultiExtendObjectBuilder needs to be told which child class to build (via setChild() method) before it can build the stub class.");
         }
 
         return $this->child;
@@ -85,7 +85,7 @@ class MultiExtendObjectBuilder extends AbstractObjectBuilder
      * Returns classname of parent class.
      * @return     string
      */
-    protected function getParentClassname()
+    protected function getParentClassName()
     {
         return ClassTools::classname($this->getParentClasspath());
     }
@@ -140,7 +140,7 @@ class MultiExtendObjectBuilder extends AbstractObjectBuilder
  * long as it does not already exist in the output directory.
  *
  */
-class ".$this->getClassname()." extends ".$this->getParentClassname()." {
+class ".$this->getUnqualifiedClassName()." extends ".$this->getParentClassName()." {
 ";
     }
 
@@ -163,13 +163,13 @@ class ".$this->getClassname()." extends ".$this->getParentClassname()." {
 
         $script .= "
     /**
-     * Constructs a new ".$this->getChild()->getClassname()." class, setting the ".$col->getName()." column to ".$this->getPeerClassname()."::$const.
+     * Constructs a new ".$this->getChild()->getClassName()." class, setting the ".$col->getName()." column to ".$this->getPeerClassName()."::$const.
      */
     public function __construct()
     {";
         $script .= "
         parent::__construct();
-        \$this->set$cfc(".$this->getPeerClassname()."::CLASSKEY_".strtoupper($child->getKey()).");
+        \$this->set$cfc(".$this->getPeerClassName()."::CLASSKEY_".strtoupper($child->getKey()).");
     }
 ";
     }
@@ -181,7 +181,7 @@ class ".$this->getClassname()." extends ".$this->getParentClassname()." {
     protected function addClassClose(&$script)
     {
         $script .= "
-} // " . $this->getClassname() . "
+} // " . $this->getUnqualifiedClassName() . "
 ";
     }
 }

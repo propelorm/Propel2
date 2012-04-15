@@ -35,7 +35,7 @@ class ObjectCollection extends Collection
      */
     public function save($con = null)
     {
-        if (!method_exists($this->getModel(), 'save')) {
+        if (!method_exists($this->getFullyQualifiedModel(), 'save')) {
             throw new ReadOnlyModelException('Cannot save objects on a read-only model');
         }
         if (null === $con) {
@@ -61,7 +61,7 @@ class ObjectCollection extends Collection
      */
     public function delete($con = null)
     {
-        if (!method_exists($this->getModel(), 'delete')) {
+        if (!method_exists($this->getFullyQualifiedModel(), 'delete')) {
             throw new ReadOnlyModelException('Cannot delete objects on a read-only model');
         }
         if (null === $con) {
@@ -108,7 +108,7 @@ class ObjectCollection extends Collection
      */
     public function fromArray($arr)
     {
-        $class = $this->getModel();
+        $class = $this->getFullyQualifiedModel();
         foreach ($arr as $element) {
             /** @var $obj BaseObject */
             $obj = new $class();
@@ -255,13 +255,13 @@ class ObjectCollection extends Collection
         if ($this->isEmpty()) {
             // save a useless query and return an empty collection
             $coll = new ObjectCollection();
-            $coll->setModel($relationMap->getRightTable()->getClassname());
+            $coll->setModel($relationMap->getRightTable()->getClassName());
 
             return $coll;
         }
         $symRelationMap = $relationMap->getSymmetricalRelation();
 
-        $query = PropelQuery::from($relationMap->getRightTable()->getClassname());
+        $query = PropelQuery::from($relationMap->getRightTable()->getClassName());
         if (null !== $criteria) {
             $query->mergeWith($criteria);
         }

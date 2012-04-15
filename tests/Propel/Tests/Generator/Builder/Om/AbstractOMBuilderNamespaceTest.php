@@ -89,20 +89,30 @@ class AbstractOMBuilderNamespaceTest extends \PHPUnit_Framework_TestCase
     {
         $builder = new TestableOMBuilder2(new Table('fooTable'));
         $builder->declareClassNamespace('Foo');
-        $this->assertEquals(array('' => array('Foo')), $builder->getDeclaredClasses());
+        $this->assertEquals(array('' => array('Foo' => 'Foo')), $builder->getDeclaredClasses());
         $builder->declareClassNamespace('Bar');
-        $this->assertEquals(array('' => array('Foo', 'Bar')), $builder->getDeclaredClasses());
+        $this->assertEquals(array('' => array('Foo' => 'Foo', 'Bar' => 'Bar')), $builder->getDeclaredClasses());
         $builder->declareClassNamespace('Foo');
-        $this->assertEquals(array('' => array('Foo', 'Bar')), $builder->getDeclaredClasses());
+        $this->assertEquals(array('' => array('Foo' => 'Foo', 'Bar' => 'Bar')), $builder->getDeclaredClasses());
         $builder = new TestableOMBuilder2(new Table('fooTable'));
         $builder->declareClassNamespace('Foo', 'Foo');
-        $this->assertEquals(array('Foo' => array('Foo')), $builder->getDeclaredClasses());
+        $this->assertEquals(array('Foo' => array('Foo' => 'Foo')), $builder->getDeclaredClasses());
         $builder->declareClassNamespace('Bar', 'Foo');
-        $this->assertEquals(array('Foo' => array('Foo', 'Bar')), $builder->getDeclaredClasses());
+        $this->assertEquals(array('Foo' => array('Foo' => 'Foo', 'Bar' => 'Bar')), $builder->getDeclaredClasses());
         $builder->declareClassNamespace('Foo', 'Foo');
-        $this->assertEquals(array('Foo' => array('Foo', 'Bar')), $builder->getDeclaredClasses());
-        $builder->declareClassNamespace('Bar', 'Bar');
-        $this->assertEquals(array('Foo' => array('Foo', 'Bar'), 'Bar' => array('Bar')), $builder->getDeclaredClasses());
+        $this->assertEquals(array('Foo' => array('Foo' => 'Foo', 'Bar' => 'Bar')), $builder->getDeclaredClasses());
+        $builder->declareClassNamespace('Bar', 'Bar', 'Bar2');
+        $this->assertEquals(array('Foo' => array('Foo' => 'Foo', 'Bar' => 'Bar'), 'Bar' => array('Bar' => 'Bar2')), $builder->getDeclaredClasses());
+    }
+
+    /**
+     * @expectedException \Propel\Generator\Exception\LogicException
+     */
+    public function testDeclareClassNamespaceDuplicateException()
+    {
+        $builder = new TestableOMBuilder2(new Table('fooTable'));
+        $builder->declareClassNamespace('Bar');
+        $builder->declareClassNamespace('Bar', 'Foo');
     }
 
     public function testGetDeclareClass()
@@ -110,16 +120,16 @@ class AbstractOMBuilderNamespaceTest extends \PHPUnit_Framework_TestCase
         $builder = new TestableOMBuilder2(new Table('fooTable'));
         $this->assertEquals(array(), $builder->getDeclaredClasses());
         $builder->declareClass('\\Foo');
-        $this->assertEquals(array('Foo'), $builder->getDeclaredClasses(''));
+        $this->assertEquals(array('Foo' => 'Foo'), $builder->getDeclaredClasses(''));
         $builder->declareClass('Bar');
-        $this->assertEquals(array('Foo', 'Bar'), $builder->getDeclaredClasses(''));
-        $builder->declareClass('Foo\\Bar');
-        $this->assertEquals(array('Bar'), $builder->getDeclaredClasses('Foo'));
+        $this->assertEquals(array('Foo' => 'Foo', 'Bar' => 'Bar'), $builder->getDeclaredClasses(''));
+        $builder->declareClass('Foo\\Bar2');
+        $this->assertEquals(array('Bar2' => 'Bar2'), $builder->getDeclaredClasses('Foo'));
         $builder->declareClass('Foo\\Bar\\Baz');
-        $this->assertEquals(array('Bar'), $builder->getDeclaredClasses('Foo'));
-        $this->assertEquals(array('Baz'), $builder->getDeclaredClasses('Foo\\Bar'));
+        $this->assertEquals(array('Bar2' => 'Bar2'), $builder->getDeclaredClasses('Foo'));
+        $this->assertEquals(array('Baz' => 'Baz'), $builder->getDeclaredClasses('Foo\\Bar'));
         $builder->declareClass('\\Hello\\World');
-        $this->assertEquals(array('World'), $builder->getDeclaredClasses('Hello'));
+        $this->assertEquals(array('World' => 'World'), $builder->getDeclaredClasses('Hello'));
     }
 
     public function testDeclareClasses()
@@ -127,9 +137,9 @@ class AbstractOMBuilderNamespaceTest extends \PHPUnit_Framework_TestCase
         $builder = new TestableOMBuilder2(new Table('fooTable'));
         $builder->declareClasses('Foo', '\\Bar', 'Baz\\Baz', 'Hello\\Cruel\\World');
         $expected = array(
-            ''             => array('Foo', 'Bar'),
-            'Baz'          => array('Baz'),
-            'Hello\\Cruel' => array('World')
+            ''             => array('Foo' => 'Foo', 'Bar' => 'Bar'),
+            'Baz'          => array('Baz' => 'Baz'),
+            'Hello\\Cruel' => array('World' => 'World')
         );
         $this->assertEquals($expected, $builder->getDeclaredClasses());
     }
@@ -147,7 +157,7 @@ class TestableOMBuilder2 extends AbstractOMBuilder
         return parent::getRefRelatedBySuffix($fk);
     }
 
-    public function getUnprefixedClassname()
+    public function getUnprefixedClassName()
     {
     }
 }

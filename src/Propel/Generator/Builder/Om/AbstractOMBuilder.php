@@ -10,9 +10,11 @@
 
 namespace Propel\Generator\Builder\Om;
 
+use Propel\Generator\Builder\DataModelBuilder;
+use Propel\Generator\Exception\EngineException;
+use Propel\Generator\Exception\LogicException;
 use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\Table;
-use Propel\Generator\Builder\DataModelBuilder;
 
 /**
  * Baseclass for OM-building classes.
@@ -28,9 +30,24 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     /**
      * Declared fully qualified classnames, to build the 'namespace' statements
      * according to this table's namespace.
+     *
      * @var array
      */
     protected $declaredClasses = array();
+
+    /**
+     * Mapping between fully qualified classnames and their short classname or alias
+     *
+     * @var array
+     */
+    protected $declaredShortClassesOrAlias = array();
+
+    /**
+     * List of classes that can be use without alias when model don't have namespace
+     *
+     * @var array
+     */
+    protected $whiteListOfDeclaredClasses = array('PDO', 'Exception', 'DateTime');
 
     /**
      * Builds the PHP source for current class and returns it as a string.
@@ -45,6 +62,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     public function build()
     {
         $this->validateModel();
+        $this->declareClass($this->getFullyQualifiedClassName());
 
         $script = '';
         $this->addClassOpen($script);
@@ -52,7 +70,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         $this->addClassClose($script);
 
         $ignoredNamespace = $this->getNamespace();
-        if ($useStatements = $this->getUseStatements($ignoredNamespace)) {
+        if ($useStatements = $this->getUseStatements($ignoredNamespace ?: 'namespace')) {
             $script = $useStatements . $script;
         }
 
@@ -92,55 +110,76 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     /**
      * Returns the qualified (prefixed) classname that is being built by the current class.
      * This method must be implemented by child classes.
+     *
      * @return     string
      */
-    abstract public function getUnprefixedClassname();
+    abstract public function getUnprefixedClassName();
 
     /**
-     * Returns the prefixed classname that is being built by the current class.
-     * @return     string
-     * @see        DataModelBuilder#prefixClassname()
+     * Returns the unqualified classname (e.g. Book)
+     *
+     * @return string
      */
-    public function getClassname()
+    public function getUnqualifiedClassName()
     {
-        return $this->prefixClassname($this->getUnprefixedClassname());
+        return $this->getUnprefixedClassName();
     }
 
     /**
-     * Returns the namespaced classname if there is a namespace, and the raw classname otherwise
-     * @return     string
+     * Returns the qualified classname (e.g. Model\Book)
+     *
+     * @return string
      */
-    public function getFullyQualifiedClassname()
+    public function getQualifiedClassName()
     {
         if ($namespace = $this->getNamespace()) {
-            return $namespace . '\\' . $this->getClassname();
-        } else {
-            return $this->getClassname();
+            return $namespace . '\\' . $this->getUnqualifiedClassName();
         }
+
+        return $this->getUnqualifiedClassName();
+    }
+
+    /**
+     * Returns the fully qualified classname (e.g. \Model\Book)
+     *
+     * @return     string
+     */
+    public function getFullyQualifiedClassName()
+    {
+        return '\\' . $this->getQualifiedClassName();
+    }
+    /**
+     * Returns FQCN alias of getFullyQualifiedClassName
+     *
+     * @return     string
+     */
+    public function getClassName()
+    {
+        return $this->getFullyQualifiedClassName();
     }
 
     /**
      * Gets the dot-path representation of current class being built.
+     *
      * @return     string
      */
     public function getClasspath()
     {
         if ($this->getPackage()) {
-            $path = $this->getPackage() . '.' . $this->getClassname();
-        } else {
-            $path = $this->getClassname();
+            return $this->getPackage() . '.' . $this->getUnqualifiedClassName();
         }
 
-        return $path;
+        return $this->getUnqualifiedClassName();
     }
 
     /**
      * Gets the full path to the file for the current class.
+     *
      * @return     string
      */
     public function getClassFilePath()
     {
-        return ClassTools::createFilePath($this->getPackagePath(), $this->getClassname());
+        return ClassTools::createFilePath($this->getPackagePath(), $this->getUnqualifiedClassName());
     }
 
     /**
@@ -177,7 +216,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     }
 
     /**
-     * Return the user-defined namespace for this table,
+     * Returns the user-defined namespace for this table,
      * or the database namespace otherwise.
      *
      * @return    string
@@ -187,31 +226,164 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         return $this->getTable()->getNamespace();
     }
 
-    public function declareClassNamespace($class, $namespace = '')
+    /**
+     * This decare the class use and get the correct name to use (short classname, Alias, or FQCN)
+     *
+     * @param AbstractOMBuilder $builder
+     * @param boolean $fqcn true to return the $fqcn classname
+     * @return string ClassName, Alias or FQCN
+     */
+    public function getClassNameFromBuilder($builder, $fqcn = false)
     {
-        if (isset($this->declaredClasses[$namespace])
-         && in_array($class, $this->declaredClasses[$namespace])) {
-            return;
+        if ($fqcn) {
+            return $builder->getFullyQualifiedClassName();
         }
-        $this->declaredClasses[$namespace][] = $class;
+        $namespace = $builder->getNamespace();
+        $class = $builder->getUnqualifiedClassName();
+
+        if (isset($this->declaredClasses[$namespace])
+           && isset($this->declaredClasses[$namespace][$class])) {
+            return $this->declaredClasses[$namespace][$class];
+        }
+
+        return $this->declareClassNamespace($class, $namespace, true);
     }
 
-    public function declareClass($fullyQualifiedClassName)
+    /**
+     * Declare a class to be use and return it's name or it's alias
+     *
+     * @param string $class the class name
+     * @param string $namespace the namespace
+     * @param string|boolean $alias the alias wanted, if set to True, it automaticaly add an alias when needed
+     * @return string the class name or it's alias
+     */
+    public function declareClassNamespace($class, $namespace = '', $alias = false)
+    {
+        //check if the class is already declared
+        if (isset($this->declaredClasses[$namespace])
+           && isset($this->declaredClasses[$namespace][$class])) {
+            return $this->declaredClasses[$namespace][$class];
+        }
+
+        $forcedAlias = $this->needAliasForClassName($class, $namespace);
+
+        if (false === $alias || true === $alias || null === $alias) {
+            $aliasWanted = $class;
+            $alias = $alias || $forcedAlias;
+        } else {
+            $aliasWanted = $alias;
+            $forcedAlias = false;
+        }
+
+        if (!$forcedAlias && !isset($this->declaredShortClassesOrAlias[$aliasWanted])) {
+            if (!isset($this->declaredClasses[$namespace])) {
+                $this->declaredClasses[$namespace] = array();
+            }
+
+            $this->declaredClasses[$namespace][$class] = $aliasWanted;
+            $this->declaredShortClassesOrAlias[$aliasWanted] = $namespace . '\\' . $class;
+
+            return $aliasWanted;
+        }
+
+        // we have a duplicate class and asked for an automatic Alias
+        if (false !== $alias) {
+            if ('\\Base' == substr($namespace, -5) || 'Base' == $namespace) {
+                return $this->declareClassNamespace($class, $namespace, 'Base' . $class);
+            }
+
+            return $this->declareClassNamespace($class, $namespace, 'Child' . $class);
+        }
+
+        throw new LogicException(
+            sprintf('The class %s duplicates the class %s and can\'t be used without alias',
+            $namespace . '\\' . $class, $this->declaredShortClassesOrAlias[$aliasWanted])
+        );
+    }
+
+    /**
+     * check if the current $class need an alias or if the class could be used with a shortname without conflict
+     * @param string $class
+     * @param string $namespace
+     */
+    protected function needAliasForClassName($class, $namespace)
+    {
+        if ($namespace == $this->getNamespace()) {
+            return false;
+        }
+        if (str_replace('\\Base', '', $namespace) == str_replace('\\Base', '', $this->getNamespace())) {
+            return true;
+        }
+        if ('' == $namespace && 'Base' == $this->getNamespace()) {
+            if (str_replace(array('Peer','Query'), '', $class) == str_replace(array('Peer','Query'), '', $this->getUnqualifiedClassName())) {
+                return true;
+            } elseif ((false !== strpos($class,'Peer') || false !== strpos($class,'Query'))) {
+                return true;
+            } elseif (false === array_search($class, $this->whiteListOfDeclaredClasses, true)) { //force alias for model without namespace
+
+                return true;
+            }
+        }
+        if ('Base' == $namespace && '' == $this->getNamespace()) {
+            if (false === array_search($class, $this->whiteListOfDeclaredClasses, true)) { //force alias for model without namespace
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Declare a use statement for a $class with a $namespace and an $aliasPrefix
+     * This return the short ClassName or an alias
+     *
+     * @param string $class the class
+     * @param string $namespace the namespace
+     * @param mixed $aliasPrefix optionaly an alias or True to force an automatic alias prefix (Base or Child)
+     * @return string the short ClassName or an alias
+     */
+    public function declareClassNamespacePrefix($class, $namespace = '', $aliasPrefix = false)
+    {
+        if (false !== $aliasPrefix && true !== $aliasPrefix) {
+            $alias = $aliasPrefix . $class;
+        } else {
+            $alias = $aliasPrefix;
+        }
+
+        return $this->declareClassNamespace($class, $namespace, $alias);
+    }
+
+    /**
+     * Declare a Fully qualified classname with an $aliasPrefix
+     * This return the short ClassName to use or an alias
+     *
+     * @param string $fullyQualifiedClassName the fully qualified classname
+     * @param mixed $aliasPrefix optionaly an alias or True to force an automatic alias prefix (Base or Child)
+     * @return string the short ClassName or an alias
+     */
+    public function declareClass($fullyQualifiedClassName, $aliasPrefix = false)
     {
         $fullyQualifiedClassName = trim($fullyQualifiedClassName, '\\');
         if (($pos = strrpos($fullyQualifiedClassName, '\\')) !== false) {
-            $this->declareClassNamespace(substr($fullyQualifiedClassName, $pos + 1), substr($fullyQualifiedClassName, 0, $pos));
-        } else {
-            // root namespace
-            $this->declareClassNamespace($fullyQualifiedClassName);
+            return $this->declareClassNamespacePrefix(substr($fullyQualifiedClassName, $pos + 1), substr($fullyQualifiedClassName, 0, $pos), $aliasPrefix);
         }
+        // root namespace
+        return $this->declareClassNamespacePrefix($fullyQualifiedClassName, '', $aliasPrefix);
     }
 
-    public function declareClassFromBuilder($builder)
+    /**
+     * @param $builder
+     * @param boolean|string $aliasPrefix the prefix for the Alias or True for auto generation of the Alias
+     */
+    public function declareClassFromBuilder($builder, $aliasPrefix = false)
     {
-        $this->declareClassNamespace($builder->getClassname(), $builder->getNamespace());
+        return $this->declareClassNamespacePrefix($builder->getUnqualifiedClassName(), $builder->getNamespace(), $aliasPrefix);
     }
 
+    /**
+     * @param string classname
+     */
     public function declareClasses()
     {
         $args = func_get_args();
@@ -220,15 +392,26 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         }
     }
 
+    /**
+     * Get the list of declared classes for a given $namespace or all declared classes
+     *
+     * @param string $namespace the namespace or null
+     * @return array list of declared classes
+     */
     public function getDeclaredClasses($namespace = null)
     {
         if (null !== $namespace && isset($this->declaredClasses[$namespace])) {
             return $this->declaredClasses[$namespace];
-        } else {
-            return $this->declaredClasses;
         }
+
+        return $this->declaredClasses;
     }
 
+    /**
+     * return the string for the class namespace
+     *
+     * @return string
+     */
     public function getNamespaceStatement()
     {
         $namespace = $this->getNamespace();
@@ -239,6 +422,12 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         }
     }
 
+    /**
+     * Return all the use statement of the class
+     *
+     * @param string $ignoredNamespace the ignored namespace
+     * @return string
+     */
     public function getUseStatements($ignoredNamespace = null)
     {
         $script = '';
@@ -246,10 +435,19 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         unset($declaredClasses[$ignoredNamespace]);
         ksort($declaredClasses);
         foreach ($declaredClasses as $namespace => $classes) {
-            sort($classes);
-            foreach ($classes as $class) {
-                $script .= sprintf("use %s\\%s;
+            asort($classes);
+            foreach ($classes as $class => $alias) {
+                //Don't use our own class
+                if ($class == $this->getUnqualifiedClassName() && $namespace == $this->getNamespace()) {
+                    continue;
+                }
+                if ($class == $alias) {
+                    $script .= sprintf("use %s\\%s;
 ", $namespace, $class);
+                } else {
+                    $script .= sprintf("use %s\\%s as %s;
+", $namespace, $class, $alias);
+                }
             }
         }
 
@@ -260,33 +458,36 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * Shortcut method to return the [stub] peer classname for current table.
      * This is the classname that is used whenever object or peer classes want
      * to invoke methods of the peer classes.
+     * @param      boolean $fqcn
      * @return     string (e.g. 'MyPeer')
-     * @see        StubPeerBuilder::getClassname()
      */
-    public function getPeerClassname() {
-        return $this->getStubPeerBuilder()->getClassname();
+    public function getPeerClassName($fqcn = false)
+    {
+        return $this->getClassNameFromBuilder($this->getStubPeerBuilder(), $fqcn);
     }
 
     /**
      * Shortcut method to return the [stub] query classname for current table.
      * This is the classname that is used whenever object or peer classes want
      * to invoke methods of the query classes.
+     * @param      boolean $fqcn
      * @return     string (e.g. 'Myquery')
-     * @see        StubQueryBuilder::getClassname()
      */
-    public function getQueryClassname() {
-        return $this->getStubQueryBuilder()->getClassname();
+    public function getQueryClassName($fqcn = false)
+    {
+        return $this->getClassNameFromBuilder($this->getStubQueryBuilder(), $fqcn);
     }
 
     /**
      * Returns the object classname for current table.
      * This is the classname that is used whenever object or peer classes want
      * to invoke methods of the object classes.
+     * @param      boolean $fqcn
      * @return     string (e.g. 'My')
-     * @see        StubPeerBuilder::getClassname()
      */
-    public function getObjectClassname() {
-        return $this->getStubObjectBuilder()->getClassname();
+    public function getObjectClassName($fqcn = false)
+    {
+        return $this->getClassNameFromBuilder($this->getStubObjectBuilder(), $fqcn);
     }
 
     /**
@@ -322,7 +523,8 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * If not, will return 'propel.util.BasePeer'
      * @return     string
      */
-    public function getBasePeer(Table $table) {
+    public function getBasePeer(Table $table)
+    {
         $class = $table->getBasePeer();
         if ($class === null) {
             $class = "propel.util.BasePeer";
@@ -376,9 +578,9 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         if ($fk->getPhpName()) {
             if ($plural) {
                 return $this->getPluralizer()->getPluralForm($fk->getPhpName());
-            } else {
-                return $fk->getPhpName();
             }
+
+            return $fk->getPhpName();
         } else {
             $className = $fk->getForeignTable()->getPhpName();
             if ($plural) {
@@ -527,7 +729,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
 
     /**
      * Checks whether any registered behavior content creator on that table exists a contentName
-     * @param string $contentName The name of the content as called from one of this class methods, e.g. "parentClassname"
+     * @param string $contentName The name of the content as called from one of this class methods, e.g. "parentClassName"
      * @param string $modifier The name of the modifier object providing the method in the behavior
      */
     public function getBehaviorContentBase($contentName, $modifier)

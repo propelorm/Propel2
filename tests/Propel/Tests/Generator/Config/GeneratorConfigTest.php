@@ -23,7 +23,7 @@ class GeneratorConfigTest extends \PHPUnit_Framework_TestCase
         $this->pathToFixtureFiles = __DIR__ . '/../../../../Fixtures/generator/config';
     }
 
-    public function testGetClassnameWithClass()
+    public function testGetClassNameWithClass()
     {
         $file = $this->pathToFixtureFiles . '/Foobar.php';
 
@@ -37,10 +37,10 @@ class GeneratorConfigTest extends \PHPUnit_Framework_TestCase
         $generator = new GeneratorConfig();
         $generator->setBuildProperty('propel.foo.bar', 'Foobar');
 
-        $this->assertSame('Foobar', $generator->getClassname('propel.foo.bar'));
+        $this->assertSame('Foobar', $generator->getClassName('propel.foo.bar'));
     }
 
-    public function testGetClassnameWithClassAndNamespace()
+    public function testGetClassNameWithClassAndNamespace()
     {
         $file = $this->pathToFixtureFiles . '/FoobarWithNS.php';
 
@@ -54,15 +54,15 @@ class GeneratorConfigTest extends \PHPUnit_Framework_TestCase
         $generator = new GeneratorConfig();
         $generator->setBuildProperty('propel.foo.bar', '\Foo\Test\FoobarWithNS');
 
-        $this->assertSame('\Foo\Test\FoobarWithNS', $generator->getClassname('propel.foo.bar'));
+        $this->assertSame('\Foo\Test\FoobarWithNS', $generator->getClassName('propel.foo.bar'));
     }
 
     /**
       * @expectedException \Propel\Generator\Exception\BuildException
       */
-    public function testGetClassnameOnInexistantProperty()
+    public function testGetClassNameOnInexistantProperty()
     {
         $generator = new GeneratorConfig();
-        $generator->getClassname('propel.foo.bar');
+        $generator->getClassName('propel.foo.bar');
     }
 }

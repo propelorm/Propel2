@@ -96,10 +96,10 @@ class ArrayCollectionTest extends BookstoreEmptyTestBase
         $this->assertEquals(4, count($pks));
 
         $keys = array(
-            'Propel\Tests\Bookstore\Book_0',
-            'Propel\Tests\Bookstore\Book_1',
-            'Propel\Tests\Bookstore\Book_2',
-            'Propel\Tests\Bookstore\Book_3'
+            'Book_0',
+            'Book_1',
+            'Book_2',
+            'Book_3'
         );
         $this->assertEquals($keys, array_keys($pks));
 
@@ -155,10 +155,10 @@ class ArrayCollectionTest extends BookstoreEmptyTestBase
 
         $booksArray = $books->toArray(null, true);
         $keys = array(
-            'Propel\Tests\Bookstore\Book_0',
-            'Propel\Tests\Bookstore\Book_1',
-            'Propel\Tests\Bookstore\Book_2',
-            'Propel\Tests\Bookstore\Book_3'
+            'Book_0',
+            'Book_1',
+            'Book_2',
+            'Book_3'
         );
         $this->assertEquals($keys, array_keys($booksArray));
 
@@ -168,10 +168,10 @@ class ArrayCollectionTest extends BookstoreEmptyTestBase
 
         $booksArray = $books->toArray('Title', true);
         $keys = array(
-            'Propel\Tests\Bookstore\Book_Harry Potter and the Order of the Phoenix',
-            'Propel\Tests\Bookstore\Book_Quicksilver',
-            'Propel\Tests\Bookstore\Book_Don Juan',
-            'Propel\Tests\Bookstore\Book_The Tin Drum'
+            'Book_Harry Potter and the Order of the Phoenix',
+            'Book_Quicksilver',
+            'Book_Don Juan',
+            'Book_The Tin Drum'
         );
         $this->assertEquals($keys, array_keys($booksArray));
     }

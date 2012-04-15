@@ -9,7 +9,7 @@
  *               If false, autoincrement columns are left intact.
  <?php endif; ?>
  *
- * @return     <?php echo $objectClassname ?> The current object (for fluent API support)
+ * @return     <?php echo $objectClassName ?> The current object (for fluent API support)
  */
 public function populateFromArchive($archive<?php if ($usesAutoIncrement): ?>, $populateAutoIncrementPrimaryKeys = false<?php endif; ?>)
 {

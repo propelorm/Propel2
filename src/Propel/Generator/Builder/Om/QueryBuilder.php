@@ -29,27 +29,25 @@ class QueryBuilder extends AbstractOMBuilder
      */
     public function getPackage()
     {
-        return parent::getPackage() . ".Om";
+        return parent::getPackage() . ".Base";
     }
 
     public function getNamespace()
     {
         if ($namespace = parent::getNamespace()) {
-            if ($this->getGeneratorConfig() && $omns = $this->getGeneratorConfig()->getBuildProperty('namespaceOm')) {
-                return $namespace . '\\' . $omns;
-            } else {
-                return $namespace;
-            }
+                return $namespace . '\\Base';
         }
+
+        return 'Base';
     }
 
     /**
      * Returns the name of the current class being built.
      * @return     string
      */
-    public function getUnprefixedClassname()
+    public function getUnprefixedClassName()
     {
-        return $this->getBuildProperty('basePrefix') . $this->getStubQueryBuilder()->getUnprefixedClassname();
+        return $this->getStubQueryBuilder()->getUnprefixedClassName();
     }
 
     /**
@@ -61,8 +59,8 @@ class QueryBuilder extends AbstractOMBuilder
         $table = $this->getTable();
         $tableName = $table->getName();
         $tableDesc = $table->getDescription();
-        $queryClass = $this->getStubQueryBuilder()->getClassname();
-        $modelClass = $this->getStubObjectBuilder()->getClassname();
+        $queryClass = $this->getQueryClassName();
+        $modelClass = $this->getObjectClassName();
         $parentClass = $this->getBehaviorContent('parentClass');
         $parentClass = null === $parentClass ? 'ModelCriteria' : $parentClass;
         $script .= "
@@ -143,7 +141,7 @@ class QueryBuilder extends AbstractOMBuilder
         $script .= "
  *
  */
-abstract class ".$this->getClassname()." extends " . $parentClass . "
+abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
 {
     ";
     }
@@ -165,7 +163,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
             '\Propel\Runtime\Query\Criteria',
             '\Propel\Runtime\Query\ModelJoin'
         );
-        $this->declareClassFromBuilder($this->getStubQueryBuilder());
+        $this->declareClassFromBuilder($this->getStubQueryBuilder(), 'Child');
         $this->declareClassFromBuilder($this->getStubPeerBuilder());
 
         // apply behaviors
@@ -215,7 +213,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
     protected function addClassClose(&$script)
     {
         $script .= "
-} // " . $this->getClassname() . "";
+} // " . $this->getUnqualifiedClassName() . "";
         $this->applyBehaviorModifier('queryFilter', $script, "");
     }
 
@@ -240,7 +238,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
     {
         $script .= "
     /**
-     * Initializes internal state of ".$this->getClassname()." object.
+     * Initializes internal state of ".$this->getClassName()." object.
      *
      * @param     string \$dbName The dabase name
      * @param     string \$modelName The phpName of a model, e.g. 'Book'
@@ -256,7 +254,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
     {
         $table = $this->getTable();
         $script .= "
-    public function __construct(\$dbName = '" . $table->getDatabase()->getName() . "', \$modelName = '" . addslashes($this->getNewStubObjectBuilder($table)->getFullyQualifiedClassname()) . "', \$modelAlias = null)
+    public function __construct(\$dbName = '" . $table->getDatabase()->getName() . "', \$modelName = '" . addslashes($this->getNewStubObjectBuilder($table)->getFullyQualifiedClassName()) . "', \$modelAlias = null)
     {";
     }
 
@@ -299,7 +297,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
      **/
     protected function addFactoryComment(&$script)
     {
-        $classname = $this->getNewStubQueryBuilder($this->getTable())->getClassname();
+        $classname = $this->getClassNameFromBuilder($this->getNewStubQueryBuilder($this->getTable()));
         $script .= "
     /**
      * Returns a new " . $classname . " object.
@@ -328,7 +326,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
      */
     protected function addFactoryBody(&$script)
     {
-        $classname = $this->getNewStubQueryBuilder($this->getTable())->getClassname();
+        $classname = $this->getClassNameFromBuilder($this->getNewStubQueryBuilder($this->getTable()), true);
         $script .= "
         if (\$criteria instanceof " . $classname . ") {
             return \$criteria;
@@ -357,8 +355,8 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 
     protected function addFindPk(&$script)
     {
-        $class = $this->getObjectClassname();
-        $peerClassname = $this->getPeerClassname();
+        $class = $this->getObjectClassName();
+        $peerClassName = $this->getPeerClassName();
         $table = $this->getTable();
         $script .= "
     /**
@@ -406,12 +404,12 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
         }
         $pkHash = $this->getPeerBuilder()->getInstancePoolKeySnippet($pks);
         $script .= "
-        if ((null !== (\$obj = {$peerClassname}::getInstanceFromPool({$pkHash}))) && !\$this->formatter) {
+        if ((null !== (\$obj = {$peerClassName}::getInstanceFromPool({$pkHash}))) && !\$this->formatter) {
             // the object is alredy in the instance pool
             return \$obj;
         }
         if (\$con === null) {
-            \$con = Propel::getServiceContainer()->getReadConnection({$peerClassname}::DATABASE_NAME);
+            \$con = Propel::getServiceContainer()->getReadConnection({$peerClassName}::DATABASE_NAME);
         }
         \$this->basePreSelect(\$con);
         if (\$this->formatter || \$this->modelAlias || \$this->with || \$this->select
@@ -429,8 +427,8 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
     {
         $table = $this->getTable();
         $platform = $this->getPlatform();
-        $peerClassname = $this->getPeerClassname();
-        $ARClassname = $this->getObjectClassname();
+        $peerClassName = $this->getPeerClassName();
+        $ARClassName = $this->getObjectClassName();
         $this->declareClassFromBuilder($this->getStubObjectBuilder());
         $this->declareClasses('\PDO');
         $selectColumns = array();
@@ -466,7 +464,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
      * @param     mixed \$key Primary key to use for the query
      * @param     ConnectionInterface \$con A connection object
      *
-     * @return    $ARClassname A model object, or null if the key is not found
+     * @return    $ARClassName A model object, or null if the key is not found
      */
     protected function findPkSimple(\$key, \$con)
     {
@@ -493,15 +491,15 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 
         if ($table->getChildrenColumn()) {
             $script .="
-            \$cls = {$peerClassname}::getOMClass(\$row, 0, false);
+            \$cls = {$peerClassName}::getOMClass(\$row, 0, false);
             \$obj = new \$cls();";
         } else {
             $script .="
-            \$obj = new $ARClassname();";
+            \$obj = new $ARClassName();";
         }
         $script .= "
             \$obj->hydrate(\$row);
-            {$peerClassname}::addInstanceToPool(\$obj, $pkHashFromRow);
+            {$peerClassName}::addInstanceToPool(\$obj, $pkHashFromRow);
         }
         \$stmt->closeCursor();
 
@@ -517,7 +515,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
     protected function addFindPkComplex(&$script)
     {
         $table = $this->getTable();
-        $class = $class = $this->getStubObjectBuilder()->getClassname();
+        $class = $this->getObjectClassName();
         $this->declareClasses('\Propel\Runtime\Connection\ConnectionInterface');
         $script .= "
     /**
@@ -600,7 +598,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
      *
      * @param     mixed \$key Primary key to use for the query
      *
-     * @return    " . $this->getStubQueryBuilder()->getClassname() . " The current query, for fluid interface
+     * @return    " . $this->getQueryClassName() . " The current query, for fluid interface
      */
     public function filterByPrimaryKey(\$key)
     {";
@@ -643,7 +641,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
      *
      * @param     array \$keys The list of primary key to use for the query
      *
-     * @return    " . $this->getStubQueryBuilder()->getClassname() . " The current query, for fluid interface
+     * @return    " . $this->getQueryClassName() . " The current query, for fluid interface
      */
     public function filterByPrimaryKeys(\$keys)
     {";
@@ -769,7 +767,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
         $script .= "
      * @param     string \$comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return    " . $this->getStubQueryBuilder()->getClassname() . " The current query, for fluid interface
+     * @return    " . $this->getQueryClassName() . " The current query, for fluid interface
      */
     public function filterBy$colPhpName(\$$variableName = null, \$comparison = null)
     {";
@@ -842,7 +840,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
         }";
         } elseif ($col->getType() == PropelTypes::ENUM) {
             $script .= "
-        \$valueSet = " . $this->getPeerClassname() . "::getValueSet(" . $this->getColumnConstant($col) . ");
+        \$valueSet = " . $this->getPeerClassName() . "::getValueSet(" . $this->getColumnConstant($col) . ");
         if (is_scalar(\$$variableName)) {
             if (!in_array(\$$variableName, \$valueSet)) {
                 throw new PropelException(sprintf('Value \"%s\" is not accepted in this enumerated column', \$$variableName));
@@ -901,7 +899,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
      * @param     mixed \$$variableName The value to use as filter
      * @param     string \$comparison Operator to use for the column comparison, defaults to Criteria::CONTAINS_ALL
      *
-     * @return    " . $this->getStubQueryBuilder()->getClassname() . " The current query, for fluid interface
+     * @return    " . $this->getQueryClassName() . " The current query, for fluid interface
      */
     public function filterBy$singularPhpName(\$$variableName = null, \$comparison = null)
     {
@@ -940,11 +938,11 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
             '\Propel\Runtime\Exception\PropelException'
         );
         $table = $this->getTable();
-        $queryClass = $this->getStubQueryBuilder()->getClassname();
+        $queryClass = $this->getQueryClassName();
         $fkTable = $this->getForeignTable($fk);
         $fkStubObjectBuilder = $this->getNewStubObjectBuilder($fkTable);
         $this->declareClassFromBuilder($fkStubObjectBuilder);
-        $fkPhpName = $fkStubObjectBuilder->getClassname();
+        $fkPhpName = $this->getClassNameFromBuilder($fkStubObjectBuilder, true);
         $relationName = $this->getFKPhpNameAffix($fk);
         $objectName = '$' . $fkTable->getStudlyPhpName();
         $script .= "
@@ -1012,11 +1010,11 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
             '\Propel\Runtime\Exception\PropelException'
         );
         $table = $this->getTable();
-        $queryClass = $this->getStubQueryBuilder()->getClassname();
+        $queryClass = $this->getQueryClassName();
         $fkTable = $this->getTable()->getDatabase()->getTable($fk->getTableName());
         $fkStubObjectBuilder = $this->getNewStubObjectBuilder($fkTable);
         $this->declareClassFromBuilder($fkStubObjectBuilder);
-        $fkPhpName = $fkStubObjectBuilder->getClassname();
+        $fkPhpName = $this->getClassNameFromBuilder($fkStubObjectBuilder, true);
         $relationName = $this->getRefFKPhpNameAffix($fk);
         $objectName = '$' . $fkTable->getStudlyPhpName();
         $script .= "
@@ -1068,7 +1066,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
      */
     protected function addJoinFk(&$script, $fk)
     {
-        $queryClass = $this->getStubQueryBuilder()->getClassname();
+        $queryClass = $this->getQueryClassName();
         $fkTable = $this->getForeignTable($fk);
         $relationName = $this->getFKPhpNameAffix($fk);
         $joinType = $this->getJoinType($fk);
@@ -1081,7 +1079,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
      */
     protected function addJoinRefFk(&$script, $fk)
     {
-        $queryClass = $this->getStubQueryBuilder()->getClassname();
+        $queryClass = $this->getQueryClassName();
         $fkTable = $this->getTable()->getDatabase()->getTable($fk->getTableName());
         $relationName = $this->getRefFKPhpNameAffix($fk);
         $joinType = $this->getJoinType($fk);
@@ -1137,12 +1135,10 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
     {
         $fkTable = $this->getForeignTable($fk);
         $fkQueryBuilder = $this->getNewStubQueryBuilder($fkTable);
-        $queryClass = $fkQueryBuilder->getClassname();
-        if ($namespace = $fkQueryBuilder->getNamespace()) {
-            $queryClass = '\\' . $namespace . '\\' . $queryClass;
-        }
+        $queryClass = $this->getClassNameFromBuilder($fkQueryBuilder, true);
         $relationName = $this->getFKPhpNameAffix($fk);
         $joinType = $this->getJoinType($fk);
+
         $this->addUseRelatedQuery($script, $fkTable, $queryClass, $relationName, $joinType);
     }
 
@@ -1154,12 +1150,10 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
     {
         $fkTable = $this->getTable()->getDatabase()->getTable($fk->getTableName());
         $fkQueryBuilder = $this->getNewStubQueryBuilder($fkTable);
-        $queryClass = $fkQueryBuilder->getClassname();
-        if ($namespace = $fkQueryBuilder->getNamespace()) {
-            $queryClass = '\\' . $namespace . '\\' . $queryClass;
-        }
+        $queryClass = $this->getClassNameFromBuilder($fkQueryBuilder, true);
         $relationName = $this->getRefFKPhpNameAffix($fk);
         $joinType = $this->getJoinType($fk);
+
         $this->addUseRelatedQuery($script, $fkTable, $queryClass, $relationName, $joinType);
     }
 
@@ -1192,7 +1186,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 
     protected function addFilterByCrossFK(&$script, $refFK, $crossFK)
     {
-        $queryClass = $this->getStubQueryBuilder()->getClassname();
+        $queryClass = $this->getQueryClassName();
         $crossRefTable = $crossFK->getTable();
         $foreignTable = $crossFK->getForeignTable();
         $fkPhpName =  $foreignTable->getPhpName();
@@ -1227,7 +1221,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
     protected function addPrune(&$script)
     {
         $table = $this->getTable();
-        $class = $this->getStubObjectBuilder()->getClassname();
+        $class = $this->getObjectClassName();
         $objectName = '$' . $table->getStudlyPhpName();
         $script .= "
     /**
@@ -1235,7 +1229,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
      *
      * @param     $class $objectName Object to remove from the list of results
      *
-     * @return    " . $this->getStubQueryBuilder()->getClassname() . " The current query, for fluid interface
+     * @return    " . $this->getQueryClassName() . " The current query, for fluid interface
      */
     public function prune($objectName = null)
     {
@@ -1420,7 +1414,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 
     /**
      * Checks whether any registered behavior content creator on that table exists a contentName
-     * @param string $contentName The name of the content as called from one of this class methods, e.g. "parentClassname"
+     * @param string $contentName The name of the content as called from one of this class methods, e.g. "parentClassName"
      */
     public function getBehaviorContent($contentName)
     {

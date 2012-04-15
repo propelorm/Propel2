@@ -121,7 +121,7 @@ class OMBuilderMock extends AbstractOMBuilder
         return $this->pkg;
     }
 
-    public function getUnprefixedClassname()
+    public function getUnprefixedClassName()
     {
     }
 }
