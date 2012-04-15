@@ -38,17 +38,21 @@ class ObjectBuilder extends AbstractObjectBuilder
         return parent::getPackage() . ".Base";
     }
 
+    /**
+     * (non-PHPdoc)
+     * @see Propel\Generator\Builder\Om.AbstractOMBuilder::getNamespace()
+     */
     public function getNamespace()
     {
         if ($namespace = parent::getNamespace()) {
             if ($this->getGeneratorConfig() && $omns = $this->getGeneratorConfig()->getBuildProperty('namespaceOm')) {
                 return $namespace . '\\' . $omns;
-            } else {
-                return $namespace . '\\Base';
             }
-        } else {
-            return 'Base';
+
+            return $namespace . '\\Base';
         }
+
+        return 'Base';
     }
 
     /**
@@ -3452,11 +3456,9 @@ abstract class ".$this->getUnqualifiedClassname()." extends ".$parentClass." ";
         $joinedTableObjectBuilder = $this->getNewObjectBuilder($refFK->getTable());
         $className = $joinedTableObjectBuilder->getObjectClassname();
 
-        /* FIXME : use the right methode to get the base Classes
         if ($tblFK->getChildrenColumn()) {
-            $className = 'Base' . $className;
+            $className = $joinedTableObjectBuilder->getFullyQualifiedClassname();
         }
-        */
 
         $collName = $this->getRefFKCollVarName($refFK);
 
@@ -4086,7 +4088,6 @@ abstract class ".$this->getUnqualifiedClassname()." extends ".$parentClass." ";
 
         $script .= "
     /**
-     * {$this->getRefFKPhpNameAffix($crossFK, false)} != {$this->getFKPhpNameAffix($crossFK, false)}
      * @param    {$relatedObjectClassName} \${$lowerRelatedObjectClassName} The $lowerRelatedObjectClassName object to add.
      */
     protected function doAdd{$relatedObjectClassName}(\${$lowerRelatedObjectClassName})
