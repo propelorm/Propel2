@@ -1136,9 +1136,6 @@ abstract class ".$this->getUnqualifiedClassname()." extends " . $parentClass . "
         $fkTable = $this->getForeignTable($fk);
         $fkQueryBuilder = $this->getNewStubQueryBuilder($fkTable);
         $queryClass = $this->getClassnameFromBuilder($fkQueryBuilder, true);
-        if ($namespace = $fkQueryBuilder->getNamespace()) {
-            $queryClass = '\\' . $queryClass;
-        }
         $relationName = $this->getFKPhpNameAffix($fk);
         $joinType = $this->getJoinType($fk);
         $this->addUseRelatedQuery($script, $fkTable, $queryClass, $relationName, $joinType);
@@ -1153,9 +1150,6 @@ abstract class ".$this->getUnqualifiedClassname()." extends " . $parentClass . "
         $fkTable = $this->getTable()->getDatabase()->getTable($fk->getTableName());
         $fkQueryBuilder = $this->getNewStubQueryBuilder($fkTable);
         $queryClass = $this->getClassnameFromBuilder($fkQueryBuilder, true);
-        if ($namespace = $fkQueryBuilder->getNamespace()) {
-            $queryClass = '\\' . $queryClass;
-        }
         $relationName = $this->getRefFKPhpNameAffix($fk);
         $joinType = $this->getJoinType($fk);
         $this->addUseRelatedQuery($script, $fkTable, $queryClass, $relationName, $joinType);
