@@ -35,14 +35,10 @@ class QueryBuilder extends AbstractOMBuilder
     public function getNamespace()
     {
         if ($namespace = parent::getNamespace()) {
-            if ($this->getGeneratorConfig() && $omns = $this->getGeneratorConfig()->getBuildProperty('namespaceOm')) {
-                return $namespace . '\\' . $omns;
-            } else {
                 return $namespace . '\\Base';
-            }
-        } else {
-            return 'Base';
         }
+
+        return 'Base';
     }
 
     /**
@@ -51,7 +47,7 @@ class QueryBuilder extends AbstractOMBuilder
      */
     public function getUnprefixedClassname()
     {
-        return $this->getBuildProperty('basePrefix') . $this->getStubQueryBuilder()->getUnprefixedClassname();
+        return $this->getStubQueryBuilder()->getUnprefixedClassname();
     }
 
     /**

@@ -198,9 +198,6 @@ class QuickBuilder
 
         if ($table->getInterface()) {
             $interface = $this->getConfig()->getConfiguredBuilder('interface', $target)->build();
-            if (false === strpos($class, 'namespace')) {
-                $interface = "\nnamespace\n{\n" . $interface . "\n}\n";
-            }
             $script .= $this->fixNamespaceDeclarations($interface);
         }
 

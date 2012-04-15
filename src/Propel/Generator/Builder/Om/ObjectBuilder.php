@@ -45,10 +45,6 @@ class ObjectBuilder extends AbstractObjectBuilder
     public function getNamespace()
     {
         if ($namespace = parent::getNamespace()) {
-            if ($this->getGeneratorConfig() && $omns = $this->getGeneratorConfig()->getBuildProperty('namespaceOm')) {
-                return $namespace . '\\' . $omns;
-            }
-
             return $namespace . '\\Base';
         }
 
@@ -61,7 +57,7 @@ class ObjectBuilder extends AbstractObjectBuilder
      */
     public function getUnprefixedClassname()
     {
-        return $this->getBuildProperty('basePrefix') . $this->getStubObjectBuilder()->getUnprefixedClassname();
+        return $this->getStubObjectBuilder()->getUnprefixedClassname();
     }
 
     /**

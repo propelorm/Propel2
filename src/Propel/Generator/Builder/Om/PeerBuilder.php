@@ -57,8 +57,7 @@ class PeerBuilder extends AbstractPeerBuilder
      */
     public function getUnprefixedClassname()
     {
-        return $this->getBuildProperty('basePrefix')
-        . $this->getStubPeerBuilder()->getUnprefixedClassname();
+        return $this->getStubPeerBuilder()->getUnprefixedClassname();
     }
 
     /**
@@ -73,14 +72,10 @@ class PeerBuilder extends AbstractPeerBuilder
     public function getNamespace()
     {
         if ($namespace = parent::getNamespace()) {
-            if ($this->getGeneratorConfig() && $omns = $this->getGeneratorConfig()->getBuildProperty('namespaceOm')) {
-                return $namespace . '\\' . $omns;
-            } else {
                 return $namespace . '\\Base';
-            }
-        } else {
-            return 'Base';
         }
+
+        return 'Base';
     }
 
     /**

@@ -35,7 +35,7 @@ class QueryInheritanceBuilder extends AbstractOMBuilder
      */
     public function getUnprefixedClassname()
     {
-        return $this->getBuildProperty('basePrefix') . $this->getNewStubQueryInheritanceBuilder($this->getChild())->getUnprefixedClassname();
+        return $this->getNewStubQueryInheritanceBuilder($this->getChild())->getUnprefixedClassname();
     }
 
     /**
@@ -50,14 +50,10 @@ class QueryInheritanceBuilder extends AbstractOMBuilder
     public function getNamespace()
     {
         if ($namespace = parent::getNamespace()) {
-            if ($this->getGeneratorConfig() && $omns = $this->getGeneratorConfig()->getBuildProperty('namespaceOm')) {
-                return $namespace . '\\' . $omns;
-            } else {
-                return $namespace;
-            }
-        } else {
-            return 'Base';
+                return $namespace . '\\Base';
         }
+
+        return 'Base';
     }
 
     /**

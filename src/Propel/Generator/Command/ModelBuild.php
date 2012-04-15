@@ -117,7 +117,6 @@ class ModelBuild extends AbstractCommand
             'propel.addTimeStamp'                       => false,
             'propel.addValidateMethod'                  => true,
             'propel.addHooks'                           => true,
-            'propel.namespace.om'                       => 'Base',
             'propel.namespace.map'                      => 'Map',
             'propel.useLeftJoinsInDoJoinMethods'        => true,
             'propel.emulateForeignKeyConstraints'       => false,
