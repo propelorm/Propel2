@@ -53,7 +53,7 @@ class ArrayFormatterWithTest extends BookstoreEmptyTestBase
         BookstoreDataPopulator::populate();
         BookPeer::clearInstancePool();
         AuthorPeer::clearInstancePool();
-        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
+        $c = new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book');
         $c->setFormatter(ModelCriteria::FORMAT_ARRAY);
         $c->orderBy('Propel\Tests\Bookstore\Book.Title');
         $c->join('Propel\Tests\Bookstore\Book.Author');
@@ -68,7 +68,7 @@ class ArrayFormatterWithTest extends BookstoreEmptyTestBase
         BookstoreDataPopulator::populate();
         BookPeer::clearInstancePool();
         AuthorPeer::clearInstancePool();
-        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
+        $c = new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book');
         $c->setFormatter(ModelCriteria::FORMAT_ARRAY);
         $c->orderBy('Propel\Tests\Bookstore\Book.Title');
         $c->join('Propel\Tests\Bookstore\Book.Author a');
@@ -83,7 +83,7 @@ class ArrayFormatterWithTest extends BookstoreEmptyTestBase
         BookstoreDataPopulator::populate();
         BookPeer::clearInstancePool();
         AuthorPeer::clearInstancePool();
-        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
+        $c = new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book');
         $c->setFormatter(ModelCriteria::FORMAT_ARRAY);
         $c->setModelAlias('b', true);
         $c->orderBy('b.Title');
@@ -98,7 +98,7 @@ class ArrayFormatterWithTest extends BookstoreEmptyTestBase
     {
         BookstoreDataPopulator::populate();
         // instance pool contains all objects by default, since they were just populated
-        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
+        $c = new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book');
         $c->setFormatter(ModelCriteria::FORMAT_ARRAY);
         $c->orderBy('Propel\Tests\Bookstore\Book.Title');
         $c->join('Propel\Tests\Bookstore\Book.Author');
@@ -114,7 +114,7 @@ class ArrayFormatterWithTest extends BookstoreEmptyTestBase
         $b = new Book();
         $b->setTitle('Foo');
         $b->save();
-        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
+        $c = new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book');
         $c->setFormatter(ModelCriteria::FORMAT_ARRAY);
         $c->where('Propel\Tests\Bookstore\Book.Title = ?', 'Foo');
         $c->leftJoin('Propel\Tests\Bookstore\Book.Author');
@@ -162,7 +162,7 @@ class ArrayFormatterWithTest extends BookstoreEmptyTestBase
         BookPeer::clearInstancePool();
         AuthorPeer::clearInstancePool();
 
-        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
+        $c = new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book');
         $c->setFormatter(ModelCriteria::FORMAT_ARRAY);
         $c->join('Propel\Tests\Bookstore\Book.Author');
         $c->with('Author');
@@ -253,7 +253,7 @@ class ArrayFormatterWithTest extends BookstoreEmptyTestBase
      */
     public function testFindOneWithOneToManyAndLimit()
     {
-        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
+        $c = new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book');
         $c->setFormatter(ModelCriteria::FORMAT_ARRAY);
         $c->add(BookPeer::ISBN, '043935806X');
         $c->leftJoin('Propel\Tests\Bookstore\Book.Review');
@@ -268,7 +268,7 @@ class ArrayFormatterWithTest extends BookstoreEmptyTestBase
         BookPeer::clearInstancePool();
         AuthorPeer::clearInstancePool();
         ReviewPeer::clearInstancePool();
-        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
+        $c = new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book');
         $c->setFormatter(ModelCriteria::FORMAT_ARRAY);
         $c->add(BookPeer::ISBN, '043935806X');
         $c->leftJoin('Propel\Tests\Bookstore\Book.Review');
@@ -405,7 +405,7 @@ class ArrayFormatterWithTest extends BookstoreEmptyTestBase
         BookPeer::clearInstancePool();
         AuthorPeer::clearInstancePool();
         ReviewPeer::clearInstancePool();
-        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
+        $c = new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book');
         $c->setFormatter(ModelCriteria::FORMAT_ARRAY);
         $c->filterByTitle('The Tin Drum');
         $c->join('Propel\Tests\Bookstore\Book.Author');
@@ -425,7 +425,7 @@ class ArrayFormatterWithTest extends BookstoreEmptyTestBase
         BookPeer::clearInstancePool();
         AuthorPeer::clearInstancePool();
         ReviewPeer::clearInstancePool();
-        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
+        $c = new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book');
         $c->setFormatter(ModelCriteria::FORMAT_ARRAY);
         $c->filterByTitle('The Tin Drum');
         $c->join('Propel\Tests\Bookstore\Book.Author');

@@ -23,9 +23,9 @@ class NestedSetBehaviorQueryBuilderModifier
 
     protected $builder;
 
-    protected $objectClassname;
+    protected $objectClassName;
 
-    protected $peerClassname;
+    protected $peerClassName;
 
     public function __construct($behavior)
     {
@@ -46,9 +46,9 @@ class NestedSetBehaviorQueryBuilderModifier
     protected function setBuilder($builder)
     {
         $this->builder = $builder;
-        $this->objectClassname = $builder->getStubObjectBuilder()->getClassname();
-        $this->queryClassname = $builder->getStubQueryBuilder()->getClassname();
-        $this->peerClassname = $builder->getStubPeerBuilder()->getClassname();
+        $this->objectClassName = $builder->getObjectClassName();
+        $this->queryClassName = $builder->getQueryClassName();
+        $this->peerClassName = $builder->getPeerClassName();
     }
 
     public function queryMethods($builder)
@@ -86,11 +86,11 @@ class NestedSetBehaviorQueryBuilderModifier
 /**
  * Filter the query to restrict the result to root objects
  *
- * @return    {$this->queryClassname} The current query, for fluid interface
+ * @return    {$this->queryClassName} The current query, for fluid interface
  */
 public function treeRoots()
 {
-    return \$this->addUsingAlias({$this->peerClassname}::LEFT_COL, 1, Criteria::EQUAL);
+    return \$this->addUsingAlias({$this->peerClassName}::LEFT_COL, 1, Criteria::EQUAL);
 }
 ";
     }
@@ -103,11 +103,11 @@ public function treeRoots()
  *
  * @param     int \$scope        Scope to determine which objects node to return
  *
- * @return    {$this->queryClassname} The current query, for fluid interface
+ * @return    {$this->queryClassName} The current query, for fluid interface
  */
 public function inTree(\$scope = null)
 {
-    return \$this->addUsingAlias({$this->peerClassname}::SCOPE_COL, \$scope, Criteria::EQUAL);
+    return \$this->addUsingAlias({$this->peerClassName}::SCOPE_COL, \$scope, Criteria::EQUAL);
 }
 ";
     }
@@ -119,9 +119,9 @@ public function inTree(\$scope = null)
 /**
  * Filter the query to restrict the result to descendants of an object
  *
- * @param     {$this->objectClassname} $objectName The object to use for descendant search
+ * @param     {$this->objectClassName} $objectName The object to use for descendant search
  *
- * @return    {$this->queryClassname} The current query, for fluid interface
+ * @return    {$this->queryClassName} The current query, for fluid interface
  */
 public function descendantsOf($objectName)
 {
@@ -131,8 +131,8 @@ public function descendantsOf($objectName)
         ->inTree({$objectName}->getScopeValue())";
         }
         $script .= "
-        ->addUsingAlias({$this->peerClassname}::LEFT_COL, {$objectName}->getLeftValue(), Criteria::GREATER_THAN)
-        ->addUsingAlias({$this->peerClassname}::LEFT_COL, {$objectName}->getRightValue(), Criteria::LESS_THAN);
+        ->addUsingAlias({$this->peerClassName}::LEFT_COL, {$objectName}->getLeftValue(), Criteria::GREATER_THAN)
+        ->addUsingAlias({$this->peerClassName}::LEFT_COL, {$objectName}->getRightValue(), Criteria::LESS_THAN);
 }
 ";
     }
@@ -145,9 +145,9 @@ public function descendantsOf($objectName)
  * Filter the query to restrict the result to the branch of an object.
  * Same as descendantsOf(), except that it includes the object passed as parameter in the result
  *
- * @param     {$this->objectClassname} $objectName The object to use for branch search
+ * @param     {$this->objectClassName} $objectName The object to use for branch search
  *
- * @return    {$this->queryClassname} The current query, for fluid interface
+ * @return    {$this->queryClassName} The current query, for fluid interface
  */
 public function branchOf($objectName)
 {
@@ -157,8 +157,8 @@ public function branchOf($objectName)
         ->inTree({$objectName}->getScopeValue())";
         }
         $script .= "
-        ->addUsingAlias({$this->peerClassname}::LEFT_COL, {$objectName}->getLeftValue(), Criteria::GREATER_EQUAL)
-        ->addUsingAlias({$this->peerClassname}::LEFT_COL, {$objectName}->getRightValue(), Criteria::LESS_EQUAL);
+        ->addUsingAlias({$this->peerClassName}::LEFT_COL, {$objectName}->getLeftValue(), Criteria::GREATER_EQUAL)
+        ->addUsingAlias({$this->peerClassName}::LEFT_COL, {$objectName}->getRightValue(), Criteria::LESS_EQUAL);
 }
 ";
     }
@@ -170,15 +170,15 @@ public function branchOf($objectName)
 /**
  * Filter the query to restrict the result to children of an object
  *
- * @param     {$this->objectClassname} $objectName The object to use for child search
+ * @param     {$this->objectClassName} $objectName The object to use for child search
  *
- * @return    {$this->queryClassname} The current query, for fluid interface
+ * @return    {$this->queryClassName} The current query, for fluid interface
  */
 public function childrenOf($objectName)
 {
     return \$this
         ->descendantsOf($objectName)
-        ->addUsingAlias({$this->peerClassname}::LEVEL_COL, {$objectName}->getLevel() + 1, Criteria::EQUAL);
+        ->addUsingAlias({$this->peerClassName}::LEVEL_COL, {$objectName}->getLevel() + 1, Criteria::EQUAL);
 }
 ";
     }
@@ -191,16 +191,16 @@ public function childrenOf($objectName)
  * Filter the query to restrict the result to siblings of an object.
  * The result does not include the object passed as parameter.
  *
- * @param     {$this->objectClassname} $objectName The object to use for sibling search
+ * @param     {$this->objectClassName} $objectName The object to use for sibling search
  * @param      ConnectionInterface \$con Connection to use.
  *
- * @return    {$this->queryClassname} The current query, for fluid interface
+ * @return    {$this->queryClassName} The current query, for fluid interface
  */
 public function siblingsOf($objectName, ConnectionInterface \$con = null)
 {
     if ({$objectName}->isRoot()) {
         return \$this->
-            add({$this->peerClassname}::LEVEL_COL, '1<>1', Criteria::CUSTOM);
+            add({$this->peerClassName}::LEVEL_COL, '1<>1', Criteria::CUSTOM);
     } else {
         return \$this
             ->childrenOf({$objectName}->getParent(\$con))
@@ -217,9 +217,9 @@ public function siblingsOf($objectName, ConnectionInterface \$con = null)
 /**
  * Filter the query to restrict the result to ancestors of an object
  *
- * @param     {$this->objectClassname} $objectName The object to use for ancestors search
+ * @param     {$this->objectClassName} $objectName The object to use for ancestors search
  *
- * @return    {$this->queryClassname} The current query, for fluid interface
+ * @return    {$this->queryClassName} The current query, for fluid interface
  */
 public function ancestorsOf($objectName)
 {
@@ -229,8 +229,8 @@ public function ancestorsOf($objectName)
         ->inTree({$objectName}->getScopeValue())";
         }
         $script .= "
-        ->addUsingAlias({$this->peerClassname}::LEFT_COL, {$objectName}->getLeftValue(), Criteria::LESS_THAN)
-        ->addUsingAlias({$this->peerClassname}::RIGHT_COL, {$objectName}->getRightValue(), Criteria::GREATER_THAN);
+        ->addUsingAlias({$this->peerClassName}::LEFT_COL, {$objectName}->getLeftValue(), Criteria::LESS_THAN)
+        ->addUsingAlias({$this->peerClassName}::RIGHT_COL, {$objectName}->getRightValue(), Criteria::GREATER_THAN);
 }
 ";
     }
@@ -243,9 +243,9 @@ public function ancestorsOf($objectName)
  * Filter the query to restrict the result to roots of an object.
  * Same as ancestorsOf(), except that it includes the object passed as parameter in the result
  *
- * @param     {$this->objectClassname} $objectName The object to use for roots search
+ * @param     {$this->objectClassName} $objectName The object to use for roots search
  *
- * @return    {$this->queryClassname} The current query, for fluid interface
+ * @return    {$this->queryClassName} The current query, for fluid interface
  */
 public function rootsOf($objectName)
 {
@@ -255,8 +255,8 @@ public function rootsOf($objectName)
         ->inTree({$objectName}->getScopeValue())";
         }
         $script .= "
-        ->addUsingAlias({$this->peerClassname}::LEFT_COL, {$objectName}->getLeftValue(), Criteria::LESS_EQUAL)
-        ->addUsingAlias({$this->peerClassname}::RIGHT_COL, {$objectName}->getRightValue(), Criteria::GREATER_EQUAL);
+        ->addUsingAlias({$this->peerClassName}::LEFT_COL, {$objectName}->getLeftValue(), Criteria::LESS_EQUAL)
+        ->addUsingAlias({$this->peerClassName}::RIGHT_COL, {$objectName}->getRightValue(), Criteria::GREATER_EQUAL);
 }
 ";
     }
@@ -269,16 +269,16 @@ public function rootsOf($objectName)
  *
  * @param     bool \$reverse if true, reverses the order
  *
- * @return    {$this->queryClassname} The current query, for fluid interface
+ * @return    {$this->queryClassName} The current query, for fluid interface
  */
 public function orderByBranch(\$reverse = false)
 {
     if (\$reverse) {
         return \$this
-            ->addDescendingOrderByColumn({$this->peerClassname}::LEFT_COL);
+            ->addDescendingOrderByColumn({$this->peerClassName}::LEFT_COL);
     } else {
         return \$this
-            ->addAscendingOrderByColumn({$this->peerClassname}::LEFT_COL);
+            ->addAscendingOrderByColumn({$this->peerClassName}::LEFT_COL);
     }
 }
 ";
@@ -292,16 +292,16 @@ public function orderByBranch(\$reverse = false)
  *
  * @param     bool \$reverse if true, reverses the order
  *
- * @return    {$this->queryClassname} The current query, for fluid interface
+ * @return    {$this->queryClassName} The current query, for fluid interface
  */
 public function orderByLevel(\$reverse = false)
 {
     if (\$reverse) {
         return \$this
-            ->addAscendingOrderByColumn({$this->peerClassname}::RIGHT_COL);
+            ->addAscendingOrderByColumn({$this->peerClassName}::RIGHT_COL);
     } else {
         return \$this
-            ->addDescendingOrderByColumn({$this->peerClassname}::RIGHT_COL);
+            ->addDescendingOrderByColumn({$this->peerClassName}::RIGHT_COL);
     }
 }
 ";
@@ -322,12 +322,12 @@ public function orderByLevel(\$reverse = false)
         $script .= "
  * @param      ConnectionInterface \$con    Connection to use.
  *
- * @return     {$this->objectClassname} The tree root object
+ * @return     {$this->objectClassName} The tree root object
  */
 public function findRoot(" . ($useScope ? "\$scope = null, " : "") . "\$con = null)
 {
     return \$this
-        ->addUsingAlias({$this->peerClassname}::LEFT_COL, 1, Criteria::EQUAL)";
+        ->addUsingAlias({$this->peerClassName}::LEFT_COL, 1, Criteria::EQUAL)";
         if ($useScope) {
             $script .= "
         ->inTree(\$scope)";

@@ -181,10 +181,10 @@ class TableMapTest extends \PHPUnit_Framework_TestCase
     public function testAddRelation()
     {
         $foreigntmap1 = new TableMap('bar');
-        $foreigntmap1->setClassname('Bar');
+        $foreigntmap1->setClassName('Bar');
         $this->databaseMap->addTableObject($foreigntmap1);
         $foreigntmap2 = new TableMap('baz');
-        $foreigntmap2->setClassname('Baz');
+        $foreigntmap2->setClassName('Baz');
         $this->databaseMap->addTableObject($foreigntmap2);
         $this->rmap1 = $this->tmap->addRelation('Bar', 'Bar', RelationMap::MANY_TO_ONE);
         $this->rmap2 = $this->tmap->addRelation('Bazz', 'Baz', RelationMap::ONE_TO_MANY);

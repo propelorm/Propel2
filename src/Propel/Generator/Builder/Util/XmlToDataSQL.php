@@ -116,7 +116,7 @@ class XmlToDataSQL extends \AbstractHandler
         // Reset some vars just in case this is being run multiple times.
         $this->currTableName = $this->currBuilder = null;
 
-        $this->builderClazz = $this->generatorConfig->getBuilderClassname('datasql');
+        $this->builderClazz = $this->generatorConfig->getBuilderClassName('datasql');
 
         try {
             $fr = new FileReader($xmlFile);

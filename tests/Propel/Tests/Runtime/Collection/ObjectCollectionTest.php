@@ -87,10 +87,10 @@ class ObjectCollectionTest extends BookstoreTestBase
         $this->assertEquals(4, count($pks));
 
         $keys = array(
-            '\Propel\Tests\Bookstore\Book_0',
-            '\Propel\Tests\Bookstore\Book_1',
-            '\Propel\Tests\Bookstore\Book_2',
-            '\Propel\Tests\Bookstore\Book_3'
+            'Book_0',
+            'Book_1',
+            'Book_2',
+            'Book_3'
         );
         $this->assertEquals($keys, array_keys($pks));
 
@@ -148,7 +148,7 @@ class ObjectCollectionTest extends BookstoreTestBase
         AuthorPeer::clearInstancePool();
         BookPeer::clearInstancePool();
         $coll = new ObjectCollection();
-        $coll->setFormatter(new ObjectFormatter(new ModelCriteria(null, 'Propel\Tests\Bookstore\Author')));
+        $coll->setFormatter(new ObjectFormatter(new ModelCriteria(null, '\Propel\Tests\Bookstore\Author')));
         $coll []= $author;
         $books = $coll->populateRelation('Book', null, $this->con);
         $this->assertEquals(0, $books->count());

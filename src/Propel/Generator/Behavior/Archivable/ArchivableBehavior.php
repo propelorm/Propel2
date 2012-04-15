@@ -10,17 +10,14 @@
 
 namespace Propel\Generator\Behavior\Archivable;
 
+use Propel\Generator\Exception\InvalidArgumentException;
 use Propel\Generator\Model\Behavior;
 use Propel\Generator\Model\Index;
-
-use \InvalidArgumentException;
 
 /**
  * Keeps tracks of an ActiveRecord object, even after deletion
  *
  * @author    Francois Zaninotto
- * @version		$Revision$
- * @package		propel.generator.archivable
  */
 class ArchivableBehavior extends Behavior
 {
@@ -143,7 +140,7 @@ class ArchivableBehavior extends Behavior
             return $this->getParameter('archive_class');
         }
 
-        return $builder->getNewStubObjectBuilder($this->getArchiveTable())->getClassname();
+        return $builder->getClassNameFromBuilder($builder->getNewStubObjectBuilder($this->getArchiveTable()));
     }
 
     public function getArchiveTableQueryName($builder)
@@ -152,7 +149,7 @@ class ArchivableBehavior extends Behavior
             return $this->getParameter('archive_class') . 'Query';
         }
 
-        return $builder->getNewStubQueryBuilder($this->getArchiveTable())->getClassname();
+        return $builder->getClassNameFromBuilder($builder->getNewStubQueryBuilder($this->getArchiveTable()));
     }
 
     public function hasArchiveClass()

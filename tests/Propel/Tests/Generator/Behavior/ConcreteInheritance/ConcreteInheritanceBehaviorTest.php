@@ -118,17 +118,17 @@ class ConcreteInheritanceBehaviorTest extends BookstoreTestBase
 
     public function testParentObjectClass()
     {
-        $r = new \ReflectionClass('Propel\Tests\Bookstore\Behavior\Om\BaseConcreteArticle');
+        $r = new \ReflectionClass('Propel\Tests\Bookstore\Behavior\Base\ConcreteArticle');
         $this->assertEquals('Propel\Tests\Bookstore\Behavior\ConcreteContent', $r->getParentClass()->getName(), 'concrete_inheritance changes the parent class of the Model Object to the parent object class');
-        $r = new \ReflectionClass('Propel\Tests\Bookstore\Behavior\Om\BaseConcreteQuizz');
+        $r = new \ReflectionClass('Propel\Tests\Bookstore\Behavior\Base\ConcreteQuizz');
         $this->assertEquals('Propel\Tests\Bookstore\Behavior\ConcreteContent', $r->getParentClass()->getName(), 'concrete_inheritance changes the parent class of the Model Object to the parent object class');
     }
 
     public function testParentQueryClass()
     {
-        $r = new \ReflectionClass('Propel\Tests\Bookstore\Behavior\Om\BaseConcreteArticleQuery');
+        $r = new \ReflectionClass('Propel\Tests\Bookstore\Behavior\Base\ConcreteArticleQuery');
         $this->assertEquals('Propel\Tests\Bookstore\Behavior\ConcreteContentQuery', $r->getParentClass()->getName(), 'concrete_inheritance changes the parent class of the Query Object to the parent object class');
-        $r = new \ReflectionClass('Propel\Tests\Bookstore\Behavior\Om\BaseConcreteQuizzQuery');
+        $r = new \ReflectionClass('Propel\Tests\Bookstore\Behavior\Base\ConcreteQuizzQuery');
         $this->assertEquals('Propel\Tests\Bookstore\Behavior\ConcreteContentQuery', $r->getParentClass()->getName(), 'concrete_inheritance changes the parent class of the Query Object to the parent object class');
     }
 
@@ -137,9 +137,9 @@ class ConcreteInheritanceBehaviorTest extends BookstoreTestBase
      */
     public function testParentPeerClass()
     {
-        $r = new \ReflectionClass('Propel\Tests\Bookstore\Behavior\Om\BaseConcreteArticlePeer');
+        $r = new \ReflectionClass('Propel\Tests\Bookstore\Behavior\Base\ConcreteArticlePeer');
         $this->assertEquals('Propel\Tests\Bookstore\Behavior\ConcreteContentPeer', $r->getParentClass()->getName(), 'concrete_inheritance changes the parent class of the Peer Object to the parent object class');
-        $r = new \ReflectionClass('Propel\Tests\Bookstore\Behavior\Om\BaseConcreteQuizzPeer');
+        $r = new \ReflectionClass('Propel\Tests\Bookstore\Behavior\Base\ConcreteQuizzPeer');
         $this->assertEquals('Propel\Tests\Bookstore\Behavior\ConcreteContentPeer', $r->getParentClass()->getName(), 'concrete_inheritance changes the parent class of the Peer Object to the parent object class');
     }
 

@@ -325,7 +325,7 @@ class CollectionTest extends BookstoreTestBase
     {
         $col = new Collection();
         $col->setModel('\Propel\Tests\Bookstore\Book');
-        $this->assertEquals('Propel\Tests\Bookstore\BookPeer', $col->getPeerClass(), 'getPeerClass() returns the Peer class for the collection model');
+        $this->assertEquals('\Propel\Tests\Bookstore\BookPeer', $col->getPeerClass(), 'getPeerClass() returns the Peer class for the collection model');
     }
 
     /**

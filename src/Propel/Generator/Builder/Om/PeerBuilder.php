@@ -55,9 +55,9 @@ class PeerBuilder extends AbstractPeerBuilder
      * Returns the name of the current class being built.
      * @return     string
      */
-    public function getUnprefixedClassname()
+    public function getUnprefixedClassName()
     {
-        return $this->getBuildProperty('basePrefix') . $this->getStubPeerBuilder()->getUnprefixedClassname();
+        return $this->getStubPeerBuilder()->getUnprefixedClassName();
     }
 
     /**
@@ -66,18 +66,16 @@ class PeerBuilder extends AbstractPeerBuilder
      */
     public function getPackage()
     {
-        return parent::getPackage().'.Om';
+        return parent::getPackage() . ".Base";
     }
 
     public function getNamespace()
     {
         if ($namespace = parent::getNamespace()) {
-            if ($this->getGeneratorConfig() && $omns = $this->getGeneratorConfig()->getBuildProperty('namespaceOm')) {
-                return $namespace . '\\' . $omns;
-            }
-
-            return $namespace;
+                return $namespace . '\\Base';
         }
+
+        return 'Base';
     }
 
     /**
@@ -109,28 +107,27 @@ class PeerBuilder extends AbstractPeerBuilder
 
         if (null !== $parentClass) {
             $extendingPeerClass = ' extends '.$parentClass;
-        } elseif ('BasePeer' !== $this->basePeerClassname) {
-            $extendingPeerClass = ' extends '.$this->basePeerClassname;
+        } elseif ('BasePeer' !== $this->basePeerClassName) {
+            $extendingPeerClass = ' extends '.$this->basePeerClassName;
         }
 
         $script .= "
  */
-abstract class ".$this->getClassname(). $extendingPeerClass . " {
+abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 ";
     }
 
     protected function addClassBody(&$script)
     {
-        $this->declareClassFromBuilder($this->getStubPeerBuilder());
         $this->declareClassFromBuilder($this->getStubObjectBuilder());
 
         parent::addClassBody($script);
 
         $this->declareClasses(
             '\Propel\Runtime\Propel',
-            '\Propel\Runtime\Exception\PropelException',
             '\Propel\Runtime\Connection\ConnectionInterface',
             '\Propel\Runtime\Connection\StatementInterface',
+            '\Propel\Runtime\Exception\PropelException',
             '\Propel\Runtime\Util\BasePeer',
             '\Propel\Runtime\Query\Criteria',
             '\PDO'
@@ -149,7 +146,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         $this->applyBehaviorModifier('staticMethods', $script, '    ');
 
         $script .= "
-} // " . $this->getClassname() . "
+} // " . $this->getUnqualifiedClassName() . "
 ";
         $this->addStaticTableMapRegistration($script);
     }
@@ -163,7 +160,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         $script .= "
 // This is the static code needed to register the TableMap for this table with the main Propel class.
 //
-".$this->getClassName()."::buildTableMap();
+".$this->getUnqualifiedClassName()."::buildTableMap();
 
 ";
         $this->applyBehaviorModifier('peerFilter', $script, '');
@@ -171,12 +168,12 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 
     public function getTableMapClass()
     {
-        return $this->getStubObjectBuilder()->getClassname().'TableMap';
+        return $this->getStubObjectBuilder()->getUnqualifiedClassName() . 'TableMap';
     }
 
     public function getTablePhpName()
     {
-        return ($this->getTable()->isAbstract() ? '' : $this->getStubObjectBuilder()->getClassname());
+        return ($this->getTable()->isAbstract() ? '' : $this->getClassNameFromBuilder($this->getStubObjectBuilder()));
     }
 
     /**
@@ -188,7 +185,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
     {
         $dbName = $this->getDatabase()->getName();
         $tableName = $this->getTable()->getName();
-        $tablePhpName = $this->getTable()->isAbstract() ? '' : addslashes($this->getStubObjectBuilder()->getFullyQualifiedClassname());
+        $tablePhpName = $this->getTable()->isAbstract() ? '' : addslashes($this->getStubObjectBuilder()->getFullyQualifiedClassName());
         $script .= "
     /** the default database name for this class */
     const DATABASE_NAME = '$dbName';
@@ -225,10 +222,10 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
     const DEFAULT_STRING_FORMAT = '" . $this->getTable()->getDefaultStringFormat() . "';
 
     /**
-     * An identiy map to hold any loaded instances of ".$this->getObjectClassname()." objects.
+     * An identiy map to hold any loaded instances of ".$this->getObjectClassName()." objects.
      * This must be public so that other peer classes can access this when hydrating from JOIN
      * queries.
-     * @var        array ".$this->getObjectClassname()."[]
+     * @var        array ".$this->getObjectClassName()."[]
      */
     static public \$instances = array();
 
@@ -396,7 +393,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         self::" . $this->getColumnName($col) ." => array(
 ";
                 foreach ($col->getValueSet() as $value) {
-                    $script .= "            " . $this->getStubPeerBuilder()->getClassname() . '::' . $this->getColumnName($col) . '_' . $this->getEnumValueConstant($value) . ",
+                    $script .= "            self::" . $this->getColumnName($col) . '_' . $this->getEnumValueConstant($value) . ",
 ";
                 }
                 $script .= "        ),";
@@ -463,8 +460,6 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
      */
     protected function addGetValueSets(&$script)
     {
-        $this->declareClassFromBuilder($this->getTableMapBuilder());
-        $callingClass = $this->getStubPeerBuilder()->getClassname();
         $script .= "
     /**
      * Gets the list of values for all ENUM columns
@@ -472,7 +467,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
      */
     static public function getValueSets()
     {
-      return {$callingClass}::\$enumValueSets;
+      return static::\$enumValueSets;
     }
 ";
     }
@@ -483,7 +478,6 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
      */
     protected function addGetValueSet(&$script)
     {
-        $this->declareClassFromBuilder($this->getTableMapBuilder());
         $script .= "
     /**
      * Gets the list of values for an ENUM column
@@ -511,8 +505,8 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
      */
     static public function buildTableMap()
     {
-      \$dbMap = Propel::getServiceContainer()->getDatabaseMap(".$this->getClassname()."::DATABASE_NAME);
-      if (!\$dbMap->hasTable(".$this->getClassname()."::TABLE_NAME))
+      \$dbMap = Propel::getServiceContainer()->getDatabaseMap(static::DATABASE_NAME);
+      if (!\$dbMap->hasTable(static::TABLE_NAME))
       {
         \$dbMap->addTableObject(new ".$this->getTableMapClass()."());
       }
@@ -537,17 +531,17 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         foreach ($col->getChildren() as $child) {
             $childBuilder = $this->getMultiExtendObjectBuilder();
             $childBuilder->setChild($child);
-            $fqcn = addslashes($childBuilder->getFullyQualifiedClassname());
+            $fqcn = addslashes($childBuilder->getFullyQualifiedClassName());
 
             $script .= "
     /** A key representing a particular subclass */
     const CLASSKEY_".strtoupper($child->getKey())." = '" . $child->getKey() . "';
 ";
 
-            if (strtoupper($child->getClassname()) != strtoupper($child->getKey())) {
+            if (strtoupper($child->getClassName()) != strtoupper($child->getKey())) {
                 $script .= "
     /** A key representing a particular subclass */
-    const CLASSKEY_".strtoupper($child->getClassname())." = '" . $child->getKey() . "';
+    const CLASSKEY_".strtoupper($child->getClassName())." = '" . $child->getKey() . "';
 ";
             }
 
@@ -574,12 +568,12 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
      *        \$c->addJoin(TablePeer::alias(\"alias1\", TablePeer::PRIMARY_KEY_COLUMN), TablePeer::PRIMARY_KEY_COLUMN);
      * </code>
      * @param      string \$alias The alias for the current table.
-     * @param      string \$column The column name for current table. (i.e. ".$this->getPeerClassname()."::COLUMN_NAME).
+     * @param      string \$column The column name for current table. (i.e. ".$this->getPeerClassName(true)."::COLUMN_NAME).
      * @return     string
      */
     static public function alias(\$alias, \$column)
     {
-        return str_replace(".$this->getPeerClassname()."::TABLE_NAME.'.', \$alias.'.', \$column);
+        return str_replace(static::TABLE_NAME.'.', \$alias.'.', \$column);
     }
 ";
     }
@@ -609,7 +603,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         foreach ($this->getTable()->getColumns() as $col) {
             if (!$col->isLazyLoad()) {
                 $script .= "
-            \$criteria->addSelectColumn(".$this->getPeerClassname()."::".$this->getColumnName($col).");";
+            \$criteria->addSelectColumn(static::".$this->getColumnName($col).");";
             } // if !col->isLazyLoad
         } // foreach
         $script .= "
@@ -650,21 +644,21 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         // We need to set the primary table name, since in the case that there are no WHERE columns
         // it will be impossible for the BasePeer::createSelectSql() method to determine which
         // tables go into the FROM clause.
-        \$criteria->setPrimaryTableName(".$this->getPeerClassname()."::TABLE_NAME);
+        \$criteria->setPrimaryTableName(static::TABLE_NAME);
 
         if (\$distinct && !in_array(Criteria::DISTINCT, \$criteria->getSelectModifiers())) {
             \$criteria->setDistinct();
         }
 
         if (!\$criteria->hasSelectClause()) {
-            ".$this->getPeerClassname()."::addSelectColumns(\$criteria);
+            static::addSelectColumns(\$criteria);
         }
 
         \$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
         \$criteria->setDbName(self::DATABASE_NAME); // Set the correct dbName
 
         if (null === \$con) {
-            \$con = Propel::getServiceContainer()->getReadConnection(".$this->getPeerClassname()."::DATABASE_NAME);
+            \$con = Propel::getServiceContainer()->getReadConnection(static::DATABASE_NAME);
         }";
 
         // apply behaviors
@@ -672,7 +666,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 
         $script .= "
         // BasePeer returns a Statement
-        \$stmt = ".$this->basePeerClassname."::doCount(\$criteria, \$con);
+        \$stmt = ".$this->basePeerClassName."::doCount(\$criteria, \$con);
 
         if (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
             \$count = (int) \$row[0];
@@ -697,7 +691,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
      *
      * @param      Criteria \$criteria object used to create the SELECT statement.
      * @param      ConnectionInterface \$con
-     * @return     ".$this->getObjectClassname()."
+     * @return     ".$this->getObjectClassName()."
      * @throws     PropelException Any exceptions caught during processing will be
      *         rethrown wrapped into a PropelException.
      */
@@ -705,7 +699,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
     {
         \$critcopy = clone \$criteria;
         \$critcopy->setLimit(1);
-        \$objects = ".$this->getPeerClassname()."::doSelect(\$critcopy, \$con);
+        \$objects = static::doSelect(\$critcopy, \$con);
         if (\$objects) {
             return \$objects[0];
         }
@@ -732,7 +726,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
      */
     static public function doSelect(Criteria \$criteria, ConnectionInterface \$con = null)
     {
-        return ".$this->getPeerClassname()."::populateObjects(".$this->getPeerClassname()."::doSelectStmt(\$criteria, \$con));
+        return static::populateObjects(static::doSelectStmt(\$criteria, \$con));
     }";
     }
 
@@ -754,17 +748,17 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
      * @throws     PropelException Any exceptions caught during processing will be
      *         rethrown wrapped into a PropelException.
      * @return     StatementInterface The executed Statement object.
-     * @see        ".$this->basePeerClassname."::doSelect()
+     * @see        ".$this->basePeerClassName."::doSelect()
      */
     static public function doSelectStmt(Criteria \$criteria, ConnectionInterface \$con = null)
     {
         if (null === \$con) {
-            \$con = Propel::getServiceContainer()->getReadConnection(".$this->getPeerClassname()."::DATABASE_NAME);
+            \$con = Propel::getServiceContainer()->getReadConnection(static::DATABASE_NAME);
         }
 
         if (!\$criteria->hasSelectClause()) {
             \$criteria = clone \$criteria;
-            ".$this->getPeerClassname()."::addSelectColumns(\$criteria);
+            static::addSelectColumns(\$criteria);
         }
 
         // Set the correct dbName
@@ -776,7 +770,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         $script .= "
 
         // BasePeer returns a Statement
-        return ".$this->basePeerClassname."::doSelect(\$criteria, \$con);
+        return ".$this->basePeerClassName."::doSelect(\$criteria, \$con);
     }";
     }
 
@@ -819,7 +813,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
      * to the cache in order to ensure that the same objects are always returned by doSelect*()
      * and retrieveByPK*() calls.
      *
-     * @param      ".$this->getObjectClassname()." \$value A ".$this->getObjectClassname()." object.
+     * @param      ".$this->getObjectClassName()." \$value A ".$this->getObjectClassName()." object.
      * @param      string \$key (optional) key to use for instance map (for performance boost if key was already calculated externally).
      */
     static public function addInstanceToPool(\$obj, \$key = null)
@@ -859,7 +853,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
      * methods in your stub classes -- you may need to explicitly remove objects
      * from the cache in order to prevent returning objects that no longer exist.
      *
-     * @param      mixed \$value A ".$this->getObjectClassname()." object or a primary key value.
+     * @param      mixed \$value A ".$this->getObjectClassName()." object or a primary key value.
      */
     static public function removeInstanceFromPool(\$value)
     {";
@@ -868,7 +862,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         $pks = $table->getPrimaryKey();
 
         $script .= "
-            if (is_object(\$value) && \$value instanceof ".$this->getObjectClassname().") {";
+            if (is_object(\$value) && \$value instanceof \\".$this->getStubObjectBuilder()->getQualifiedClassName().") {";
 
         $php = array();
         foreach ($pks as $pk) {
@@ -893,7 +887,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
                 \$key = ".$this->getInstancePoolKeySnippet($php).";";
         $script .= "
             } else {
-                \$e = new PropelException(\"Invalid value passed to removeInstanceFromPool().  Expected primary key or ".$this->getObjectClassname()." object; got \" . (is_object(\$value) ? get_class(\$value) . ' object.' : var_export(\$value,true)));
+                \$e = new PropelException(\"Invalid value passed to removeInstanceFromPool().  Expected primary key or ".$this->getObjectClassName()." object; got \" . (is_object(\$value) ? get_class(\$value) . ' object.' : var_export(\$value,true)));
                 throw \$e;
             }
 
@@ -952,9 +946,9 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 
                 if (ForeignKey::CASCADE === $fk->getOnDelete()  || ForeignKey::SETNULL === $fk->getOnDelete()) {
                     $script .= "
-        // Invalidate objects in ".$joinedTablePeerBuilder->getClassname()." instance pool,
+        // Invalidate objects in ".$this->getClassNameFromBuilder($joinedTablePeerBuilder)." instance pool,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
-        ".$joinedTablePeerBuilder->getClassname()."::clearInstancePool();";
+        ".$this->getClassNameFromBuilder($joinedTablePeerBuilder)."::clearInstancePool();";
                 } // if fk is on delete cascade
             } // if (! for ref only)
         } // foreach
@@ -977,7 +971,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
      * a multi-column primary key, a serialize()d version of the primary key will be returned.
      *
      * @param      string \$key The key (@see getPrimaryKeyHash()) for this instance.
-     * @return     ".$this->getObjectClassname()." Found object or NULL if 1) no instance exists for specified key or 2) instance pooling has been disabled.
+     * @return     ".$this->getObjectClassName()." Found object or NULL if 1) no instance exists for specified key or 2) instance pooling has been disabled.
      * @see        getPrimaryKeyHash()
      */
     static public function getInstanceFromPool(\$key)
@@ -1113,14 +1107,14 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         if (!$table->getChildrenColumn()) {
             $script .= "
         // set the class once to avoid overhead in the loop
-        \$cls = ".$this->getPeerClassname()."::getOMClass(false);";
+        \$cls = static::getOMClass(false);";
         }
 
         $script .= "
         // populate the object(s)
         while (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
-            \$key = ".$this->getPeerClassname()."::getPrimaryKeyHashFromRow(\$row, 0);
-            if (null !== (\$obj = ".$this->getPeerClassname()."::getInstanceFromPool(\$key))) {
+            \$key = static::getPrimaryKeyHashFromRow(\$row, 0);
+            if (null !== (\$obj = static::getInstanceFromPool(\$key))) {
                 // We no longer rehydrate the object, since this can cause data loss.
                 // See http://www.propelorm.org/ticket/509
                 // \$obj->hydrate(\$row, 0, true); // rehydrate
@@ -1131,18 +1125,18 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         if ($table->getChildrenColumn()) {
             $script .= "
                 // class must be set each time from the record row
-                \$cls = ".$this->getPeerClassname()."::getOMClass(\$row, 0);
+                \$cls = static::getOMClass(\$row, 0);
                 \$cls = preg_replace('#\.#', '\\\\', \$cls);
                 " . $this->buildObjectInstanceCreationCode('$obj', '$cls') . "
                 \$obj->hydrate(\$row);
                 \$results[] = \$obj;
-                ".$this->getPeerClassname()."::addInstanceToPool(\$obj, \$key);";
+                static::addInstanceToPool(\$obj, \$key);";
         } else {
             $script .= "
                 " . $this->buildObjectInstanceCreationCode('$obj', '$cls') . "
                 \$obj->hydrate(\$row);
                 \$results[] = \$obj;
-                ".$this->getPeerClassname()."::addInstanceToPool(\$obj, \$key);";
+                static::addInstanceToPool(\$obj, \$key);";
         }
         $script .= "
             } // if key exists
@@ -1168,37 +1162,37 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
      * @param      int \$startcol The 0-based offset for reading from the resultset row.
      * @throws     PropelException Any exceptions caught during processing will be
      *         rethrown wrapped into a PropelException.
-     * @return     array (" . $this->getStubObjectBuilder()->getClassName(). " object, last column rank)
+     * @return     array (" . $this->getObjectClassName(). " object, last column rank)
      */
     static public function populateObject(\$row, \$startcol = 0)
     {
-        \$key = ".$this->getPeerClassname()."::getPrimaryKeyHashFromRow(\$row, \$startcol);
-        if (null !== (\$obj = ".$this->getPeerClassname()."::getInstanceFromPool(\$key))) {
+        \$key = static::getPrimaryKeyHashFromRow(\$row, \$startcol);
+        if (null !== (\$obj = static::getInstanceFromPool(\$key))) {
             // We no longer rehydrate the object, since this can cause data loss.
             // See http://www.propelorm.org/ticket/509
             // \$obj->hydrate(\$row, \$startcol, true); // rehydrate
-            \$col = \$startcol + " . $this->getPeerClassname() . "::NUM_HYDRATE_COLUMNS;";
+            \$col = \$startcol + static::NUM_HYDRATE_COLUMNS;";
         if ($table->isAbstract()) {
             $script .= "
         } elseif (null == \$key) {
             // empty resultset, probably from a left join
             // since this table is abstract, we can't hydrate an empty object
             \$obj = null;
-            \$col = \$startcol + " . $this->getPeerClassname() . "::NUM_HYDRATE_COLUMNS;";
+            \$col = \$startcol + static::NUM_HYDRATE_COLUMNS;";
         }
         $script .= "
         } else {";
         if (!$table->getChildrenColumn()) {
             $script .= "
-            \$cls = ".$this->getPeerClassname()."::OM_CLASS;";
+            \$cls = static::OM_CLASS;";
         } else {
             $script .= "
-            \$cls = ".$this->getPeerClassname()."::getOMClass(\$row, \$startcol, false);";
+            \$cls = static::getOMClass(\$row, \$startcol, false);";
         }
         $script .= "
             \$obj = new \$cls();
             \$col = \$obj->hydrate(\$row, \$startcol);
-            " . $this->getPeerClassname() . "::addInstanceToPool(\$obj, \$key);
+            static::addInstanceToPool(\$obj, \$key);
         }
 
         return array(\$obj, \$col);
@@ -1288,7 +1282,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
      */
     static public function getOMClass(\$withPrefix = true)
     {
-        return \$withPrefix ? ".$this->getPeerClassname()."::CLASS_DEFAULT : ".$this->getPeerClassname()."::OM_CLASS;
+        return \$withPrefix ? static::CLASS_DEFAULT : static::OM_CLASS;
     }
 ";
     }
@@ -1304,7 +1298,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
      * The class that the Peer will make instances of.
      *
      * This method must be overridden by the stub subclass, because
-     * ".$this->getObjectClassname()." is declared abstract in the schema.
+     * ".$this->getObjectClassName()." is declared abstract in the schema.
      */
     abstract static public function getOMClass(\$withPrefix = true);
 ";
@@ -1319,9 +1313,9 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         $table = $this->getTable();
         $script .= "
     /**
-     * Performs an INSERT on the database, given a ".$this->getObjectClassname()." or Criteria object.
+     * Performs an INSERT on the database, given a ".$this->getObjectClassName()." or Criteria object.
      *
-     * @param      mixed \$values Criteria or ".$this->getObjectClassname()." object containing data that is used to create the INSERT statement.
+     * @param      mixed \$values Criteria or ".$this->getObjectClassName()." object containing data that is used to create the INSERT statement.
      * @param      ConnectionInterface \$con the ConnectionInterface connection to use
      * @return     mixed The new primary key.
      * @throws     PropelException Any exceptions caught during processing will be
@@ -1330,13 +1324,13 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
     static public function doInsert(\$values, ConnectionInterface \$con = null)
     {
         if (null === \$con) {
-            \$con = Propel::getServiceContainer()->getWriteConnection(".$this->getPeerClassname()."::DATABASE_NAME);
+            \$con = Propel::getServiceContainer()->getWriteConnection(static::DATABASE_NAME);
         }
 
         if (\$values instanceof Criteria) {
             \$criteria = clone \$values; // rename for clarity
         } else {
-            \$criteria = \$values->buildCriteria(); // build Criteria from ".$this->getObjectClassname()." object
+            \$criteria = \$values->buildCriteria(); // build Criteria from ".$this->getObjectClassName()." object
         }
 ";
 
@@ -1380,7 +1374,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
             // use transaction because \$criteria could contain info
             // for more than one table (I guess, conceivably)
             \$con->beginTransaction();
-            \$pk = ".$this->basePeerClassname."::doInsert(\$criteria, \$con);
+            \$pk = ".$this->basePeerClassName."::doInsert(\$criteria, \$con);
             \$con->commit();
         } catch(PropelException \$e) {
             \$con->rollBack();
@@ -1401,9 +1395,9 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         $table = $this->getTable();
         $script .= "
     /**
-     * Performs an UPDATE on the database, given a ".$this->getObjectClassname()." or Criteria object.
+     * Performs an UPDATE on the database, given a ".$this->getObjectClassName()." or Criteria object.
      *
-     * @param      mixed \$values Criteria or ".$this->getObjectClassname()." object containing data that is used to create the UPDATE statement.
+     * @param      mixed \$values Criteria or ".$this->getObjectClassName()." object containing data that is used to create the UPDATE statement.
      * @param      ConnectionInterface \$con The connection to use (specify ConnectionInterface connection object to exert more control over transactions).
      * @return     int The number of affected rows (if supported by underlying database driver).
      * @throws     PropelException Any exceptions caught during processing will be
@@ -1412,7 +1406,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
     static public function doUpdate(\$values, ConnectionInterface \$con = null)
     {
         if (null === \$con) {
-            \$con = Propel::getServiceContainer()->getWriteConnection(".$this->getPeerClassname()."::DATABASE_NAME);
+            \$con = Propel::getServiceContainer()->getWriteConnection(static::DATABASE_NAME);
         }
 
         \$selectCriteria = new Criteria(self::DATABASE_NAME);
@@ -1428,14 +1422,14 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
             if (\$value) {
                 \$selectCriteria->add(".$this->getColumnConstant($col).", \$value, \$comparison);
             } else {
-                \$selectCriteria->setPrimaryTableName(".$this->getPeerClassname()."::TABLE_NAME);
+                \$selectCriteria->setPrimaryTableName(static::TABLE_NAME);
             }
 ";
             }  /* if col is prim key */
         } /* foreach */
 
         $script .= "
-        } else { // \$values is ".$this->getObjectClassname()." object
+        } else { // \$values is ".$this->getObjectClassName()." object
             \$criteria = \$values->buildCriteria(); // gets full criteria
             \$selectCriteria = \$values->buildPkeyCriteria(); // gets criteria w/ primary key(s)
         }
@@ -1443,7 +1437,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         // set the correct dbName
         \$criteria->setDbName(self::DATABASE_NAME);
 
-        return {$this->basePeerClassname}::doUpdate(\$selectCriteria, \$criteria, \$con);
+        return {$this->basePeerClassName}::doUpdate(\$selectCriteria, \$criteria, \$con);
     }
 ";
     }
@@ -1465,7 +1459,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
     static public function doDeleteAll(ConnectionInterface \$con = null)
     {
         if (null === \$con) {
-            \$con = Propel::getServiceContainer()->getWriteConnection(".$this->getPeerClassname()."::DATABASE_NAME);
+            \$con = Propel::getServiceContainer()->getWriteConnection(static::DATABASE_NAME);
         }
         \$affectedRows = 0; // initialize var to track total num of affected rows
         try {
@@ -1474,19 +1468,19 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
             \$con->beginTransaction();
             ";
         if ($this->isDeleteCascadeEmulationNeeded()) {
-            $script .="\$affectedRows += ".$this->getPeerClassname()."::doOnDeleteCascade(new Criteria(".$this->getPeerClassname()."::DATABASE_NAME), \$con);
+            $script .="\$affectedRows += static::doOnDeleteCascade(new Criteria(static::DATABASE_NAME), \$con);
             ";
         }
         if ($this->isDeleteSetNullEmulationNeeded()) {
-            $script .= $this->getPeerClassname() . "::doOnDeleteSetNull(new Criteria(".$this->getPeerClassname() . "::DATABASE_NAME), \$con);
+            $script .= "static::doOnDeleteSetNull(new Criteria(static::DATABASE_NAME), \$con);
             ";
         }
-        $script .= "\$affectedRows += {$this->basePeerClassname}::doDeleteAll(".$this->getPeerClassname()."::TABLE_NAME, \$con, ".$this->getPeerClassname()."::DATABASE_NAME);
+        $script .= "\$affectedRows += {$this->basePeerClassName}::doDeleteAll(static::TABLE_NAME, \$con, static::DATABASE_NAME);
             // Because this db requires some delete cascade/set null emulation, we have to
             // clear the cached instance *after* the emulation has happened (since
             // instances get re-added by the select statement contained therein).
-            ".$this->getPeerClassname()."::clearInstancePool();
-            ".$this->getPeerClassname()."::clearRelatedInstancePool();
+            static::clearInstancePool();
+            static::clearRelatedInstancePool();
             \$con->commit();
 
             return \$affectedRows;
@@ -1508,9 +1502,9 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         $emulateCascade = $this->isDeleteCascadeEmulationNeeded() || $this->isDeleteSetNullEmulationNeeded();
         $script .= "
     /**
-     * Performs a DELETE on the database, given a ".$this->getObjectClassname()." or Criteria object OR a primary key value.
+     * Performs a DELETE on the database, given a ".$this->getObjectClassName()." or Criteria object OR a primary key value.
      *
-     * @param      mixed \$values Criteria or ".$this->getObjectClassname()." object or primary key or array of primary keys
+     * @param      mixed \$values Criteria or ".$this->getObjectClassName()." object or primary key or array of primary keys
      *              which is used to create the DELETE statement
      * @param      ConnectionInterface \$con the connection to use
      * @return     int     The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
@@ -1521,7 +1515,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
      static public function doDelete(\$values, ConnectionInterface \$con = null)
      {
         if (null === \$con) {
-            \$con = Propel::getServiceContainer()->getWriteConnection(".$this->getPeerClassname()."::DATABASE_NAME);
+            \$con = Propel::getServiceContainer()->getWriteConnection(static::DATABASE_NAME);
         }
 
         if (\$values instanceof Criteria) {";
@@ -1530,16 +1524,16 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
             // invalidate the cache for all objects of this type, since we have no
             // way of knowing (without running a query) what objects should be invalidated
             // from the cache based on this Criteria.
-            ".$this->getPeerClassname()."::clearInstancePool();";
+            static::clearInstancePool();";
         }
         $script .= "
             // rename for clarity
             \$criteria = clone \$values;
-        } elseif (\$values instanceof ".$this->getObjectClassname().") { // it's a model object";
+        } elseif (\$values instanceof \\".$this->getStubObjectBuilder()->getQualifiedClassName().") { // it's a model object";
         if (!$emulateCascade) {
             $script .= "
             // invalidate the cache for this single object
-            ".$this->getPeerClassname()."::removeInstanceFromPool(\$values);";
+            static::removeInstanceFromPool(\$values);";
         }
         if (count($table->getPrimaryKey()) > 0) {
             $script .= "
@@ -1565,7 +1559,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
                 $script .= "
             // invalidate the cache for this object(s)
             foreach ((array) \$values as \$singleval) {
-                ".$this->getPeerClassname()."::removeInstanceFromPool(\$singleval);
+                static::removeInstanceFromPool(\$singleval);
             }";
             }
         } else {
@@ -1593,7 +1587,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
             if (!$emulateCascade) {
                 $script .= "
                 // we can invalidate the cache for this single PK
-                ".$this->getPeerClassname()."::removeInstanceFromPool(\$value);";
+                static::removeInstanceFromPool(\$value);";
             }
             $script .= "
             }";
@@ -1617,7 +1611,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
             $script .= "
             // cloning the Criteria in case it's modified by doSelect() or doSelectStmt()
             \$c = clone \$criteria;
-            \$affectedRows += ".$this->getPeerClassname()."::doOnDeleteCascade(\$c, \$con);
+            \$affectedRows += static::doOnDeleteCascade(\$c, \$con);
             ";
         }
 
@@ -1625,7 +1619,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
             $script .= "
             // cloning the Criteria in case it's modified by doSelect() or doSelectStmt()
             \$c = clone \$criteria;
-            " . $this->getPeerClassname() . "::doOnDeleteSetNull(\$c, \$con);
+            static::doOnDeleteSetNull(\$c, \$con);
             ";
         }
 
@@ -1635,20 +1629,20 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
             // clear the cached instance *after* the emulation has happened (since
             // instances get re-added by the select statement contained therein).
             if (\$values instanceof Criteria) {
-                ".$this->getPeerClassname()."::clearInstancePool();
-            } elseif (\$values instanceof ".$this->getObjectClassname().") { // it's a model object
-                ".$this->getPeerClassname()."::removeInstanceFromPool(\$values);
+                static::clearInstancePool();
+            } elseif (\$values instanceof \\".$this->getStubObjectBuilder()->getQualifiedClassName().") { // it's a model object
+                static::removeInstanceFromPool(\$values);
             } else { // it's a primary key, or an array of pks
                 foreach ((array) \$values as \$singleval) {
-                    ".$this->getPeerClassname()."::removeInstanceFromPool(\$singleval);
+                    static::removeInstanceFromPool(\$singleval);
                 }
             }
             ";
         }
 
         $script .= "
-            \$affectedRows += {$this->basePeerClassname}::doDelete(\$criteria, \$con);
-            ".$this->getPeerClassname()."::clearRelatedInstancePool();
+            \$affectedRows += {$this->basePeerClassName}::doDelete(\$criteria, \$con);
+            static::clearRelatedInstancePool();
             \$con->commit();
 
             return \$affectedRows;
@@ -1687,7 +1681,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         \$affectedRows = 0;
 
         // first find the objects that are implicated by the \$criteria
-        \$objects = ".$this->getPeerClassname()."::doSelect(\$criteria, \$con);
+        \$objects = static::doSelect(\$criteria, \$con);
         foreach (\$objects as \$obj) {
 ";
 
@@ -1703,7 +1697,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
                 // we can't perform operations on tables that are
                 // not within the schema (i.e. that we have no map for, etc.)
 
-                $fkClassName = $joinedTablePeerBuilder->getObjectClassname();
+                $fkClassName = $joinedTablePeerBuilder->getObjectClassName();
 
                 if (ForeignKey::CASCADE === $fk->getOnDelete()) {
 
@@ -1714,7 +1708,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
                     $script .= "
 
             // delete related $fkClassName objects
-            \$criteria = new Criteria(".$joinedTablePeerBuilder->getPeerClassname()."::DATABASE_NAME);
+            \$criteria = new Criteria(".$joinedTablePeerBuilder->getPeerClassName(true)."::DATABASE_NAME);
             ";
                     for ($x = 0, $xlen = count($columnNamesF); $x < $xlen; $x++) {
                         $columnFK = $tblFK->getColumn($columnNamesF[$x]);
@@ -1725,7 +1719,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
                     }
 
                     $script .= "
-            \$affectedRows += ".$joinedTablePeerBuilder->getPeerClassname()."::doDelete(\$criteria, \$con);";
+            \$affectedRows += ".$joinedTablePeerBuilder->getPeerClassName(true)."::doDelete(\$criteria, \$con);";
 
                 } // if cascade && fkey table name != curr table name
 
@@ -1764,7 +1758,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
     {
 
         // first find the objects that are implicated by the \$criteria
-        \$objects = ".$this->getPeerClassname()."::doSelect(\$criteria, \$con);
+        \$objects = static::doSelect(\$criteria, \$con);
         foreach (\$objects as \$obj) {
 ";
 
@@ -1783,7 +1777,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
                 // we can't perform operations on tables that are
                 // not within the schema (i.e. that we have no map for, etc.)
 
-                $fkClassName = $refTablePeerBuilder->getObjectClassname();
+                $fkClassName = $refTablePeerBuilder->getObjectClassName();
 
                 if (ForeignKey::SETNULL === $fk->getOnDelete()) {
 
@@ -1792,8 +1786,8 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
                     $columnNamesL = $fk->getForeignColumns(); // should be same num as foreign
                     $script .= "
             // set fkey col in related $fkClassName rows to NULL
-            \$selectCriteria = new Criteria(".$this->getPeerClassname()."::DATABASE_NAME);
-            \$updateValues = new Criteria(".$this->getPeerClassname()."::DATABASE_NAME);";
+            \$selectCriteria = new Criteria(static::DATABASE_NAME);
+            \$updateValues = new Criteria(static::DATABASE_NAME);";
 
                     for ($x = 0, $xlen = count($columnNamesF); $x < $xlen; $x++) {
                         $columnFK = $tblFK->getColumn($columnNamesF[$x]);
@@ -1805,7 +1799,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
                     }
 
                     $script .= "
-            {$this->basePeerClassname}::doUpdate(\$selectCriteria, \$updateValues, \$con); // use BasePeer because generated Peer doUpdate() methods only update using pkey
+            {$this->basePeerClassName}::doUpdate(\$selectCriteria, \$updateValues, \$con); // use BasePeer because generated Peer doUpdate() methods only update using pkey
 ";
                 } // if setnull && fkey table name != curr table name
             } // if not for ref only
@@ -1826,13 +1820,13 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         $table = $this->getTable();
         $script .= "
     /**
-     * Validates all modified columns of given ".$this->getObjectClassname()." object.
+     * Validates all modified columns of given ".$this->getObjectClassName()." object.
      * If parameter \$columns is either a single column name or an array of column names
      * than only those columns are validated.
      *
      * NOTICE: This does not apply to primary or foreign keys for now.
      *
-     * @param      ".$this->getObjectClassname()." \$obj The object to validate.
+     * @param      ".$this->getObjectClassName()." \$obj The object to validate.
      * @param      mixed \$cols Column name or array of column names.
      *
      * @return     mixed TRUE if all columns are valid or the error message of the first invalid column.
@@ -1842,8 +1836,8 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         \$columns = array();
 
         if (\$cols) {
-            \$dbMap = Propel::getServiceContainer()->getDatabaseMap(".$this->getPeerClassname()."::DATABASE_NAME);
-            \$tableMap = \$dbMap->getTable(".$this->getPeerClassname()."::TABLE_NAME);
+            \$dbMap = Propel::getServiceContainer()->getDatabaseMap(static::DATABASE_NAME);
+            \$tableMap = \$dbMap->getTable(static::TABLE_NAME);
 
             if (! is_array(\$cols)) {
                 \$cols = array(\$cols);
@@ -1870,7 +1864,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         $script .= "
         }
 
-        return {$this->basePeerClassname}::doValidate(".$this->getPeerClassname()."::DATABASE_NAME, ".$this->getPeerClassname()."::TABLE_NAME, \$columns);
+        return {$this->basePeerClassName}::doValidate(static::DATABASE_NAME, static::TABLE_NAME, \$columns);
     }
 ";
     } // end addDoValidate()
@@ -1891,23 +1885,23 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
      *
      * @param      ".$col->getPhpType()." \$pk the primary key.
      * @param      ConnectionInterface \$con the connection to use
-     * @return     " .$this->getObjectClassname(). "
+     * @return     " .$this->getObjectClassName(). "
      */
     static public function ".$this->getRetrieveMethodName()."(\$pk, ConnectionInterface \$con = null)
     {
 
-        if (null !== (\$obj = ".$this->getPeerClassname()."::getInstanceFromPool(".$this->getInstancePoolKeySnippet('$pk')."))) {
+        if (null !== (\$obj = static::getInstanceFromPool(".$this->getInstancePoolKeySnippet('$pk')."))) {
             return \$obj;
         }
 
         if (null === \$con) {
-            \$con = Propel::getServiceContainer()->getReadConnection(".$this->getPeerClassname()."::DATABASE_NAME);
+            \$con = Propel::getServiceContainer()->getReadConnection(static::DATABASE_NAME);
         }
 
-        \$criteria = new Criteria(".$this->getPeerClassname()."::DATABASE_NAME);
+        \$criteria = new Criteria(static::DATABASE_NAME);
         \$criteria->add(".$this->getColumnConstant($col).", \$pk);
 
-        \$v = ".$this->getPeerClassname()."::doSelect(\$criteria, \$con);
+        \$v = static::doSelect(\$criteria, \$con);
 
         return !empty(\$v) > 0 ? \$v[0] : null;
     }
@@ -1933,19 +1927,19 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
     static public function ".$this->getRetrieveMethodName()."s(\$pks, ConnectionInterface \$con = null)
     {
         if (null === \$con) {
-            \$con = Propel::getServiceContainer()->getReadConnection(".$this->getPeerClassname()."::DATABASE_NAME);
+            \$con = Propel::getServiceContainer()->getReadConnection(static::DATABASE_NAME);
         }
 
         \$objs = null;
         if (empty(\$pks)) {
             \$objs = array();
         } else {
-            \$criteria = new Criteria(".$this->getPeerClassname()."::DATABASE_NAME);";
+            \$criteria = new Criteria(static::DATABASE_NAME);";
         $k1 = $table->getPrimaryKey();
         $script .= "
             \$criteria->add(".$this->getColumnConstant($k1[0]).", \$pks, Criteria::IN);";
         $script .= "
-            \$objs = ".$this->getPeerClassname()."::doSelect(\$criteria, \$con);
+            \$objs = static::doSelect(\$criteria, \$con);
         }
 
         return \$objs;
@@ -1971,7 +1965,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         }
         $script .= "
      * @param      ConnectionInterface \$con
-     * @return     ".$this->getObjectClassname()."
+     * @return     ".$this->getObjectClassName()."
      */
     static public function ".$this->getRetrieveMethodName()."(";
 
@@ -1986,21 +1980,21 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         $script .= ", ConnectionInterface \$con = null) {
         \$_instancePoolKey = ".$this->getInstancePoolKeySnippet($php).";";
          $script .= "
-         if (null !== (\$obj = ".$this->getPeerClassname()."::getInstanceFromPool(\$_instancePoolKey))) {
+         if (null !== (\$obj = static::getInstanceFromPool(\$_instancePoolKey))) {
              return \$obj;
         }
 
         if (null === \$con) {
-            \$con = Propel::getServiceContainer()->getReadConnection(".$this->getPeerClassname()."::DATABASE_NAME);
+            \$con = Propel::getServiceContainer()->getReadConnection(static::DATABASE_NAME);
         }
-        \$criteria = new Criteria(".$this->getPeerClassname()."::DATABASE_NAME);";
+        \$criteria = new Criteria(static::DATABASE_NAME);";
         foreach ($table->getPrimaryKey() as $col) {
             $clo = strtolower($col->getName());
             $script .= "
         \$criteria->add(".$this->getColumnConstant($col).", $".$clo.");";
         }
         $script .= "
-        \$v = ".$this->getPeerClassname()."::doSelect(\$criteria, \$con);
+        \$v = static::doSelect(\$criteria, \$con);
 
         return !empty(\$v) ? \$v[0] : null;
     }";
@@ -2127,7 +2121,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
     protected function addDoSelectJoin(&$script)
     {
         $table = $this->getTable();
-        $className = $this->getObjectClassname();
+        $className = $this->getObjectClassName();
         $countFK = count($table->getForeignKeys());
         $joinBehavior = $this->getJoinBehavior();
 
@@ -2147,7 +2141,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
                         $joinedTableObjectBuilder = $this->getNewObjectBuilder($joinTable);
                         $joinedTablePeerBuilder = $this->getNewPeerBuilder($joinTable);
 
-                        $joinClassName = $joinedTableObjectBuilder->getObjectClassname();
+                        $joinClassName = $joinedTableObjectBuilder->getObjectClassName();
 
                         $script .= "
 
@@ -2169,9 +2163,9 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
             \$criteria->setDbName(self::DATABASE_NAME);
         }
 
-        ".$this->getPeerClassname()."::addSelectColumns(\$criteria);
-        \$startcol = ".$this->getPeerClassname()."::NUM_HYDRATE_COLUMNS;
-        ".$joinedTablePeerBuilder->getPeerClassname()."::addSelectColumns(\$criteria);
+        static::addSelectColumns(\$criteria);
+        \$startcol = static::NUM_HYDRATE_COLUMNS;
+        ".$joinedTablePeerBuilder->getPeerClassName(true)."::addSelectColumns(\$criteria);
 ";
 
                         $script .= $this->addCriteriaJoin($fk, $table, $joinTable, $joinedTablePeerBuilder);
@@ -2180,12 +2174,12 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
                         $this->applyBehaviorModifier('preSelect', $script);
 
                         $script .= "
-        \$stmt = ".$this->basePeerClassname."::doSelect(\$criteria, \$con);
+        \$stmt = ".$this->basePeerClassName."::doSelect(\$criteria, \$con);
         \$results = array();
 
         while (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
-            \$key1 = ".$this->getPeerClassname()."::getPrimaryKeyHashFromRow(\$row, 0);
-            if (null !== (\$obj1 = ".$this->getPeerClassname()."::getInstanceFromPool(\$key1))) {
+            \$key1 = static::getPrimaryKeyHashFromRow(\$row, 0);
+            if (null !== (\$obj1 = static::getInstanceFromPool(\$key1))) {
                 // We no longer rehydrate the object, since this can cause data loss.
                 // See http://www.propelorm.org/ticket/509
                 // \$obj1->hydrate(\$row, 0, true); // rehydrate
@@ -2193,47 +2187,47 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 ";
                         if ($table->getChildrenColumn()) {
                             $script .= "
-                \$omClass = ".$this->getPeerClassname()."::getOMClass(\$row, 0);
+                \$omClass = static::getOMClass(\$row, 0);
                 \$omClass = preg_replace('#\.#', '\\\\', \$omClass);
 ";
                         } else {
                             $script .= "
-                \$cls = ".$this->getPeerClassname()."::getOMClass(false);
+                \$cls = static::getOMClass(false);
 ";
                         }
                         $script .= "
                 " . $this->buildObjectInstanceCreationCode('$obj1', '$cls') . "
                 \$obj1->hydrate(\$row);
-                ".$this->getPeerClassname()."::addInstanceToPool(\$obj1, \$key1);
+                static::addInstanceToPool(\$obj1, \$key1);
             } // if \$obj1 already loaded
 
-            \$key2 = ".$joinedTablePeerBuilder->getPeerClassname()."::getPrimaryKeyHashFromRow(\$row, \$startcol);
+            \$key2 = ".$joinedTablePeerBuilder->getPeerClassName(true)."::getPrimaryKeyHashFromRow(\$row, \$startcol);
             if (\$key2 !== null) {
-                \$obj2 = ".$joinedTablePeerBuilder->getPeerClassname()."::getInstanceFromPool(\$key2);
+                \$obj2 = ".$joinedTablePeerBuilder->getPeerClassName(true)."::getInstanceFromPool(\$key2);
                 if (!\$obj2) {
 ";
                         if ($joinTable->getChildrenColumn()) {
                             $script .= "
-                    \$omClass = ".$joinedTablePeerBuilder->getPeerClassname()."::getOMClass(\$row, \$startcol);
+                    \$omClass = ".$joinedTablePeerBuilder->getPeerClassName(true)."::getOMClass(\$row, \$startcol);
                     \$cls = preg_replace('#\.#', '\\\\', \$omClass);
 ";
                         } else {
                             $script .= "
-                    \$cls = ".$joinedTablePeerBuilder->getPeerClassname()."::getOMClass(false);
+                    \$cls = ".$joinedTablePeerBuilder->getPeerClassName(true)."::getOMClass(false);
 ";
                         }
 
                         $script .= "
                     " . $this->buildObjectInstanceCreationCode('$obj2', '$cls') . "
                     \$obj2->hydrate(\$row, \$startcol);
-                    ".$joinedTablePeerBuilder->getPeerClassname()."::addInstanceToPool(\$obj2, \$key2);
+                    ".$joinedTablePeerBuilder->getPeerClassName(true)."::addInstanceToPool(\$obj2, \$key2);
                 } // if obj2 already loaded
 
-                // Add the \$obj1 (".$this->getObjectClassname().") to \$obj2 (".$joinedTablePeerBuilder->getObjectClassname().")";
+                // Add the \$obj1 (".$this->getObjectClassName().") to \$obj2 (".$joinedTablePeerBuilder->getObjectClassName().")";
                         if ($fk->isLocalPrimaryKey()) {
                             $script .= "
                 // one to one relationship
-                \$obj1->set" . $joinedTablePeerBuilder->getObjectClassname() . "(\$obj2);";
+                \$obj1->set" . $joinedTablePeerBuilder->getStubObjectBuilder()->getUnqualifiedClassName() . "(\$obj2);";
                         } else {
                             $script .= "
                 \$obj2->add" . $joinedTableObjectBuilder->getRefFKPhpNameAffix($fk, false)."(\$obj1);";
@@ -2298,14 +2292,14 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         // We need to set the primary table name, since in the case that there are no WHERE columns
         // it will be impossible for the BasePeer::createSelectSql() method to determine which
         // tables go into the FROM clause.
-        \$criteria->setPrimaryTableName(".$this->getPeerClassname()."::TABLE_NAME);
+        \$criteria->setPrimaryTableName(static::TABLE_NAME);
 
         if (\$distinct && !in_array(Criteria::DISTINCT, \$criteria->getSelectModifiers())) {
             \$criteria->setDistinct();
         }
 
         if (!\$criteria->hasSelectClause()) {
-            ".$this->getPeerClassname()."::addSelectColumns(\$criteria);
+            static::addSelectColumns(\$criteria);
         }
 
         \$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
@@ -2314,7 +2308,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         \$criteria->setDbName(self::DATABASE_NAME);
 
         if (null === \$con) {
-            \$con = Propel::getServiceContainer()->getReadConnection(".$this->getPeerClassname()."::DATABASE_NAME);
+            \$con = Propel::getServiceContainer()->getReadConnection(static::DATABASE_NAME);
         }
 ";
                         $script .= $this->addCriteriaJoin($fk, $table, $joinTable, $joinedTablePeerBuilder);
@@ -2323,7 +2317,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
                         $this->applyBehaviorModifier('preSelect', $script);
 
                         $script .= "
-        \$stmt = ".$this->basePeerClassname."::doCount(\$criteria, \$con);
+        \$stmt = ".$this->basePeerClassName."::doCount(\$criteria, \$con);
 
         if (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
             \$count = (int) \$row[0];
@@ -2348,7 +2342,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
     protected function addDoSelectJoinAll(&$script)
     {
         $table = $this->getTable();
-        $className = $this->getObjectClassname();
+        $className = $this->getObjectClassName();
         $joinBehavior = $this->getJoinBehavior();
 
         $script .= "
@@ -2372,8 +2366,8 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
             \$criteria->setDbName(self::DATABASE_NAME);
         }
 
-        ".$this->getPeerClassname()."::addSelectColumns(\$criteria);
-        \$startcol2 = ".$this->getPeerClassname()."::NUM_HYDRATE_COLUMNS;
+        static::addSelectColumns(\$criteria);
+        \$startcol2 = static::NUM_HYDRATE_COLUMNS;
 ";
         $index = 2;
         foreach ($table->getForeignKeys() as $fk) {
@@ -2385,11 +2379,11 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
                 $new_index = $index + 1;
 
                 $joinedTablePeerBuilder = $this->getNewPeerBuilder($joinTable);
-                $joinClassName = $joinedTablePeerBuilder->getObjectClassname();
+                $joinClassName = $joinedTablePeerBuilder->getObjectClassName();
 
                 $script .= "
-        ".$joinedTablePeerBuilder->getPeerClassname()."::addSelectColumns(\$criteria);
-        \$startcol$new_index = \$startcol$index + ".$joinedTablePeerBuilder->getPeerClassname()."::NUM_HYDRATE_COLUMNS;
+        ".$joinedTablePeerBuilder->getPeerClassName(true)."::addSelectColumns(\$criteria);
+        \$startcol$new_index = \$startcol$index + ".$joinedTablePeerBuilder->getPeerClassName(true)."::NUM_HYDRATE_COLUMNS;
 ";
                 $index = $new_index;
 
@@ -2409,12 +2403,12 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         $this->applyBehaviorModifier('preSelect', $script);
 
         $script .= "
-        \$stmt = ".$this->basePeerClassname."::doSelect(\$criteria, \$con);
+        \$stmt = ".$this->basePeerClassName."::doSelect(\$criteria, \$con);
         \$results = array();
 
         while (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
-            \$key1 = ".$this->getPeerClassname()."::getPrimaryKeyHashFromRow(\$row, 0);
-            if (null !== (\$obj1 = ".$this->getPeerClassname()."::getInstanceFromPool(\$key1))) {
+            \$key1 = static::getPrimaryKeyHashFromRow(\$row, 0);
+            if (null !== (\$obj1 = static::getInstanceFromPool(\$key1))) {
                 // We no longer rehydrate the object, since this can cause data loss.
                 // See http://www.propelorm.org/ticket/509
                 // \$obj1->hydrate(\$row, 0, true); // rehydrate
@@ -2422,19 +2416,19 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 
         if ($table->getChildrenColumn()) {
             $script .= "
-                \$omClass = ".$this->getPeerClassname()."::getOMClass(\$row, 0);
+                \$omClass = static::getOMClass(\$row, 0);
                 \$omClass = preg_replace('#\.#', '\\\\', \$omClass);
 ";
         } else {
             $script .= "
-                \$cls = ".$this->getPeerClassname()."::getOMClass(false);
+                \$cls = static::getOMClass(false);
 ";
         }
 
         $script .= "
                 " . $this->buildObjectInstanceCreationCode('$obj1', '$cls') . "
                 \$obj1->hydrate(\$row);
-                ".$this->getPeerClassname()."::addInstanceToPool(\$obj1, \$key1);
+                static::addInstanceToPool(\$obj1, \$key1);
             } // if obj1 already loaded
 ";
 
@@ -2449,11 +2443,11 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
                 $joinedTablePeerBuilder = $this->getNewPeerBuilder($joinTable);
 
 
-                $joinClassName = $joinedTableObjectBuilder->getObjectClassname();
+                $joinClassName = $joinedTableObjectBuilder->getObjectClassName();
                 $interfaceName = $joinClassName;
 
                 if ($joinTable->getInterface()) {
-                    $interfaceName = $this->prefixClassname($joinTable->getInterface());
+                    $interfaceName = $this->prefixClassName($joinTable->getInterface());
                 }
 
                 $index++;
@@ -2461,32 +2455,32 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
                 $script .= "
             // Add objects for joined $joinClassName rows
 
-            \$key$index = ".$joinedTablePeerBuilder->getPeerClassname()."::getPrimaryKeyHashFromRow(\$row, \$startcol$index);
+            \$key$index = ".$joinedTablePeerBuilder->getPeerClassName(true)."::getPrimaryKeyHashFromRow(\$row, \$startcol$index);
             if (\$key$index !== null) {
-                \$obj$index = ".$joinedTablePeerBuilder->getPeerClassname()."::getInstanceFromPool(\$key$index);
+                \$obj$index = ".$joinedTablePeerBuilder->getPeerClassName(true)."::getInstanceFromPool(\$key$index);
                 if (!\$obj$index) {
 ";
                 if ($joinTable->getChildrenColumn()) {
                     $script .= "
-                    \$omClass = ".$joinedTablePeerBuilder->getPeerClassname()."::getOMClass(\$row, \$startcol$index);
+                    \$omClass = ".$joinedTablePeerBuilder->getPeerClassName(true)."::getOMClass(\$row, \$startcol$index);
                     \$cls = preg_replace('#\.#', '\\\\', \$omClass);
 ";
                 } else {
                     $script .= "
-                    \$cls = ".$joinedTablePeerBuilder->getPeerClassname()."::getOMClass(false);
+                    \$cls = ".$joinedTablePeerBuilder->getPeerClassName(true)."::getOMClass(false);
 ";
                 } /* $joinTable->getChildrenColumn() */
 
                 $script .= "
                     " . $this->buildObjectInstanceCreationCode('$obj' . $index, '$cls') . "
                     \$obj".$index."->hydrate(\$row, \$startcol$index);
-                    ".$joinedTablePeerBuilder->getPeerClassname()."::addInstanceToPool(\$obj$index, \$key$index);
+                    ".$joinedTablePeerBuilder->getPeerClassName(true)."::addInstanceToPool(\$obj$index, \$key$index);
                 } // if obj$index loaded
 
-                // Add the \$obj1 (".$this->getObjectClassname().") to the collection in \$obj".$index." (".$joinedTablePeerBuilder->getObjectClassname().")";
+                // Add the \$obj1 (".$this->getObjectClassName().") to the collection in \$obj".$index." (".$joinedTablePeerBuilder->getObjectClassName().")";
                 if ($fk->isLocalPrimaryKey()) {
                     $script .= "
-                \$obj1->set".$joinedTablePeerBuilder->getObjectClassname()."(\$obj".$index.");";
+                \$obj1->set".$joinedTablePeerBuilder->getStubObjectBuilder()->getUnqualifiedClassName()."(\$obj".$index.");";
                 } else {
                     $script .= "
                 \$obj".$index."->add".$joinedTableObjectBuilder->getRefFKPhpNameAffix($fk, false)."(\$obj1);";
@@ -2537,14 +2531,14 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         // We need to set the primary table name, since in the case that there are no WHERE columns
         // it will be impossible for the BasePeer::createSelectSql() method to determine which
         // tables go into the FROM clause.
-        \$criteria->setPrimaryTableName(".$this->getPeerClassname()."::TABLE_NAME);
+        \$criteria->setPrimaryTableName(static::TABLE_NAME);
 
         if (\$distinct && !in_array(Criteria::DISTINCT, \$criteria->getSelectModifiers())) {
             \$criteria->setDistinct();
         }
 
         if (!\$criteria->hasSelectClause()) {
-            ".$this->getPeerClassname()."::addSelectColumns(\$criteria);
+            static::addSelectColumns(\$criteria);
         }
 
         \$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
@@ -2553,7 +2547,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         \$criteria->setDbName(self::DATABASE_NAME);
 
         if (null === \$con) {
-            \$con = Propel::getServiceContainer()->getReadConnection(".$this->getPeerClassname()."::DATABASE_NAME);
+            \$con = Propel::getServiceContainer()->getReadConnection(static::DATABASE_NAME);
         }
 ";
 
@@ -2570,7 +2564,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         $this->applyBehaviorModifier('preSelect', $script);
 
         $script .= "
-        \$stmt = ".$this->basePeerClassname."::doCount(\$criteria, \$con);
+        \$stmt = ".$this->basePeerClassName."::doCount(\$criteria, \$con);
 
         if (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
             \$count = (int) \$row[0];
@@ -2607,17 +2601,17 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 
             $thisTableObjectBuilder = $this->getNewObjectBuilder($table);
             $excludedTableObjectBuilder = $this->getNewObjectBuilder($excludedTable);
-            $excludedClassName = $excludedTableObjectBuilder->getObjectClassname();
+            $excludedClassName = $excludedTableObjectBuilder->getObjectClassName();
 
             $script .= "
 
     /**
-     * Selects a collection of ".$this->getObjectClassname()." objects pre-filled with all related objects except ".$thisTableObjectBuilder->getFKPhpNameAffix($fk).".
+     * Selects a collection of ".$this->getObjectClassName()." objects pre-filled with all related objects except ".$thisTableObjectBuilder->getFKPhpNameAffix($fk).".
      *
      * @param      Criteria  \$criteria
      * @param      ConnectionInterface \$con
      * @param      String    \$joinBehavior the type of joins to use, defaults to $joinBehavior
-     * @return     array Array of ".$this->getObjectClassname()." objects.
+     * @return     array Array of ".$this->getObjectClassName()." objects.
      * @throws     PropelException Any exceptions caught during processing will be
      *         rethrown wrapped into a PropelException.
      */
@@ -2632,8 +2626,8 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
             \$criteria->setDbName(self::DATABASE_NAME);
         }
 
-        ".$this->getPeerClassname()."::addSelectColumns(\$criteria);
-        \$startcol2 = ".$this->getPeerClassname()."::NUM_HYDRATE_COLUMNS;
+        static::addSelectColumns(\$criteria);
+        \$startcol2 = static::NUM_HYDRATE_COLUMNS;
 ";
             $index = 2;
             foreach ($table->getForeignKeys() as $subfk) {
@@ -2642,13 +2636,13 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
                 if (!($subfk->getForeignTableName() == $table->getName())) {
                     $joinTable = $table->getDatabase()->getTable($subfk->getForeignTableName());
                     $joinTablePeerBuilder = $this->getNewPeerBuilder($joinTable);
-                    $joinClassName = $joinTablePeerBuilder->getObjectClassname();
+                    $joinClassName = $joinTablePeerBuilder->getObjectClassName();
 
                     if ($joinClassName !== $excludedClassName) {
                         $new_index = $index + 1;
                         $script .= "
-        ".$joinTablePeerBuilder->getPeerClassname()."::addSelectColumns(\$criteria);
-        \$startcol$new_index = \$startcol$index + ".$joinTablePeerBuilder->getPeerClassname()."::NUM_HYDRATE_COLUMNS;
+        ".$joinTablePeerBuilder->getPeerClassName(true)."::addSelectColumns(\$criteria);
+        \$startcol$new_index = \$startcol$index + ".$joinTablePeerBuilder->getPeerClassName(true)."::NUM_HYDRATE_COLUMNS;
 ";
                         $index = $new_index;
                     } // if joinClassName not excludeClassName
@@ -2660,7 +2654,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
                 if ($subfk->getForeignTableName() != $table->getName()) {
                     $joinTable = $table->getDatabase()->getTable($subfk->getForeignTableName());
                     $joinedTablePeerBuilder = $this->getNewPeerBuilder($joinTable);
-                    $joinClassName = $joinedTablePeerBuilder->getObjectClassname();
+                    $joinClassName = $joinedTablePeerBuilder->getObjectClassName();
 
                     if ($joinClassName !== $excludedClassName) {
                         $script .= $this->addCriteriaJoin($subfk, $table, $joinTable, $joinedTablePeerBuilder);
@@ -2673,31 +2667,31 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 
             $script .= "
 
-        \$stmt = ".$this->basePeerClassname ."::doSelect(\$criteria, \$con);
+        \$stmt = ".$this->basePeerClassName ."::doSelect(\$criteria, \$con);
         \$results = array();
 
         while (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
-            \$key1 = ".$this->getPeerClassname()."::getPrimaryKeyHashFromRow(\$row, 0);
-            if (null !== (\$obj1 = ".$this->getPeerClassname()."::getInstanceFromPool(\$key1))) {
+            \$key1 = static::getPrimaryKeyHashFromRow(\$row, 0);
+            if (null !== (\$obj1 = static::getInstanceFromPool(\$key1))) {
                 // We no longer rehydrate the object, since this can cause data loss.
                 // See http://www.propelorm.org/ticket/509
                 // \$obj1->hydrate(\$row, 0, true); // rehydrate
             } else {";
             if ($table->getChildrenColumn()) {
                 $script .= "
-                \$omClass = ".$this->getPeerClassname()."::getOMClass(\$row, 0);
+                \$omClass = static::getOMClass(\$row, 0);
                 \$cls = preg_replace('#\.#', '\\\\', \$omClass);
 ";
             } else {
                 $script .= "
-                \$cls = ".$this->getPeerClassname()."::getOMClass(false);
+                \$cls = static::getOMClass(false);
 ";
             }
 
             $script .= "
                 " . $this->buildObjectInstanceCreationCode('$obj1', '$cls') . "
                 \$obj1->hydrate(\$row);
-                ".$this->getPeerClassname()."::addInstanceToPool(\$obj1, \$key1);
+                static::addInstanceToPool(\$obj1, \$key1);
             } // if obj1 already loaded
 ";
 
@@ -2708,11 +2702,11 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
                     $joinTable = $table->getDatabase()->getTable($subfk->getForeignTableName());
                     $joinedTableObjectBuilder = $this->getNewObjectBuilder($joinTable);
                     $joinedTablePeerBuilder = $this->getNewPeerBuilder($joinTable);
-                    $joinClassName = $joinedTableObjectBuilder->getObjectClassname();
+                    $joinClassName = $joinedTableObjectBuilder->getObjectClassName();
 
                     $interfaceName = $joinClassName;
                     if ($joinTable->getInterface()) {
-                        $interfaceName = $this->prefixClassname($joinTable->getInterface());
+                        $interfaceName = $this->prefixClassName($joinTable->getInterface());
                     }
 
                     if ($joinClassName !== $excludedClassName) {
@@ -2722,33 +2716,33 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
                         $script .= "
                 // Add objects for joined $joinClassName rows
 
-                \$key$index = ".$joinedTablePeerBuilder->getPeerClassname()."::getPrimaryKeyHashFromRow(\$row, \$startcol$index);
+                \$key$index = ".$joinedTablePeerBuilder->getPeerClassName(true)."::getPrimaryKeyHashFromRow(\$row, \$startcol$index);
                 if (\$key$index !== null) {
-                    \$obj$index = ".$joinedTablePeerBuilder->getPeerClassname()."::getInstanceFromPool(\$key$index);
+                    \$obj$index = ".$joinedTablePeerBuilder->getPeerClassName(true)."::getInstanceFromPool(\$key$index);
                     if (!\$obj$index) {
     ";
 
                         if ($joinTable->getChildrenColumn()) {
                             $script .= "
-                        \$omClass = ".$joinedTablePeerBuilder->getPeerClassname()."::getOMClass(\$row, \$startcol$index);
+                        \$omClass = ".$joinedTablePeerBuilder->getPeerClassName(true)."::getOMClass(\$row, \$startcol$index);
                         \$cls = preg_replace('#\.#', '\\\\', \$omClass);
 ";
                         } else {
                             $script .= "
-                        \$cls = ".$joinedTablePeerBuilder->getPeerClassname()."::getOMClass(false);
+                        \$cls = ".$joinedTablePeerBuilder->getPeerClassName(true)."::getOMClass(false);
 ";
                         } /* $joinTable->getChildrenColumn() */
 
                         $script .= "
                     " . $this->buildObjectInstanceCreationCode('$obj' . $index, '$cls') . "
                     \$obj".$index."->hydrate(\$row, \$startcol$index);
-                    ".$joinedTablePeerBuilder->getPeerClassname()."::addInstanceToPool(\$obj$index, \$key$index);
+                    ".$joinedTablePeerBuilder->getPeerClassName(true)."::addInstanceToPool(\$obj$index, \$key$index);
                 } // if \$obj$index already loaded
 
-                // Add the \$obj1 (".$this->getObjectClassname().") to the collection in \$obj".$index." (".$joinedTablePeerBuilder->getObjectClassname().")";
+                // Add the \$obj1 (".$this->getObjectClassName().") to the collection in \$obj".$index." (".$joinedTablePeerBuilder->getObjectClassName().")";
                         if ($subfk->isLocalPrimaryKey()) {
                             $script .= "
-                \$obj1->set".$joinedTablePeerBuilder->getObjectClassname()."(\$obj".$index.");";
+                \$obj1->set".$joinedTablePeerBuilder->getObjectClassName()."(\$obj".$index.");";
                         } else {
                             $script .= "
                 \$obj".$index."->add".$joinedTableObjectBuilder->getRefFKPhpNameAffix($subfk, false)."(\$obj1);";
@@ -2787,7 +2781,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
             $excludedTable = $table->getDatabase()->getTable($fk->getForeignTableName());
             $thisTableObjectBuilder = $this->getNewObjectBuilder($table);
             $excludedTableObjectBuilder = $this->getNewObjectBuilder($excludedTable);
-            $excludedClassName = $excludedTableObjectBuilder->getObjectClassname();
+            $excludedClassName = $excludedTableObjectBuilder->getObjectClassName();
 
             $script .= "
 
@@ -2808,14 +2802,14 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         // We need to set the primary table name, since in the case that there are no WHERE columns
         // it will be impossible for the BasePeer::createSelectSql() method to determine which
         // tables go into the FROM clause.
-        \$criteria->setPrimaryTableName(".$this->getPeerClassname()."::TABLE_NAME);
+        \$criteria->setPrimaryTableName(static::TABLE_NAME);
 
         if (\$distinct && !in_array(Criteria::DISTINCT, \$criteria->getSelectModifiers())) {
             \$criteria->setDistinct();
         }
 
         if (!\$criteria->hasSelectClause()) {
-            ".$this->getPeerClassname()."::addSelectColumns(\$criteria);
+            static::addSelectColumns(\$criteria);
         }
 
         \$criteria->clearOrderByColumns(); // ORDER BY should not affect count
@@ -2824,7 +2818,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         \$criteria->setDbName(self::DATABASE_NAME);
 
         if (null === \$con) {
-            \$con = Propel::getServiceContainer()->getReadConnection(".$this->getPeerClassname()."::DATABASE_NAME);
+            \$con = Propel::getServiceContainer()->getReadConnection(static::DATABASE_NAME);
         }
     ";
 
@@ -2833,7 +2827,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
                 if ($subfk->getForeignTableName() !== $table->getName()) {
                     $joinTable = $table->getDatabase()->getTable($subfk->getForeignTableName());
                     $joinedTablePeerBuilder = $this->getNewPeerBuilder($joinTable);
-                    $joinClassName = $joinedTablePeerBuilder->getObjectClassname();
+                    $joinClassName = $joinedTablePeerBuilder->getObjectClassName();
 
                     if ($joinClassName !== $excludedClassName) {
                         $script .= $this->addCriteriaJoin($subfk, $table, $joinTable, $joinedTablePeerBuilder);
@@ -2845,7 +2839,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
             $this->applyBehaviorModifier('preSelect', $script);
 
             $script .= "
-        \$stmt = ".$this->basePeerClassname."::doCount(\$criteria, \$con);
+        \$stmt = ".$this->basePeerClassName."::doCount(\$criteria, \$con);
 
         if (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
             \$count = (int) \$row[0];

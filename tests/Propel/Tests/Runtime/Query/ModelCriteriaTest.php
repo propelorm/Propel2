@@ -66,12 +66,27 @@ class ModelCriteriaTest extends BookstoreTestBase
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $this->assertEquals('Propel\Tests\Bookstore\Book', $c->getModelName(), 'getModelName() returns the name of the class associated to the model class');
+
+        $c = new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book');
+        $this->assertEquals('Propel\Tests\Bookstore\Book', $c->getModelName(), 'getModelName() returns the name of the class associated to the model class');
+    }
+
+    public function testGetFullyQualifiedModelName()
+    {
+        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
+        $this->assertEquals('\Propel\Tests\Bookstore\Book', $c->getFullyQualifiedModelName(), 'getFullyQualifiedModelName() returns the name of the class associated to the model class');
+
+        $c = new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book');
+        $this->assertEquals('\Propel\Tests\Bookstore\Book', $c->getFullyQualifiedModelName(), 'getFullyQualifiedModelName() returns the name of the class associated to the model class');
     }
 
     public function testGetModelPeerName()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
-        $this->assertEquals('Propel\Tests\Bookstore\BookPeer', $c->getModelPeerName(), 'getModelPeerName() returns the name of the Peer class associated to the model class');
+        $this->assertEquals('\Propel\Tests\Bookstore\BookPeer', $c->getModelPeerName(), 'getModelPeerName() returns the name of the Peer class associated to the model class');
+
+        $c = new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book');
+        $this->assertEquals('\Propel\Tests\Bookstore\BookPeer', $c->getModelPeerName(), 'getModelPeerName() returns the name of the Peer class associated to the model class');
     }
 
     public function testFormatter()
@@ -2463,6 +2478,14 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c1 = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book', 'b');
         $c1->leftJoinWith('b.Author a');
         $c2 = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Author');
+        $c1->mergeWith($c2);
+        $with = $c1->getWith();
+        $this->assertEquals(1, count($with), 'mergeWith() does not remove an existing join');
+        $this->assertEquals('modelName: Propel\Tests\Bookstore\Author, relationName: Author, relationMethod: setAuthor, leftPhpName: , rightPhpName: a', $with['a']->__toString(), 'mergeWith() does not remove an existing join');
+
+        $c1 = new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book', 'b');
+        $c1->leftJoinWith('b.Author a');
+        $c2 = new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Author');
         $c1->mergeWith($c2);
         $with = $c1->getWith();
         $this->assertEquals(1, count($with), 'mergeWith() does not remove an existing join');

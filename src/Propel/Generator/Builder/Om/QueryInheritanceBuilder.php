@@ -33,9 +33,9 @@ class QueryInheritanceBuilder extends AbstractOMBuilder
      * Returns the name of the current class being built.
      * @return     string
      */
-    public function getUnprefixedClassname()
+    public function getUnprefixedClassName()
     {
-        return $this->getBuildProperty('basePrefix') . $this->getNewStubQueryInheritanceBuilder($this->getChild())->getUnprefixedClassname();
+        return $this->getNewStubQueryInheritanceBuilder($this->getChild())->getUnprefixedClassName();
     }
 
     /**
@@ -44,18 +44,16 @@ class QueryInheritanceBuilder extends AbstractOMBuilder
      */
     public function getPackage()
     {
-        return ($this->getChild()->getPackage() ? $this->getChild()->getPackage() : parent::getPackage()) . ".Om";
+        return ($this->getChild()->getPackage() ? $this->getChild()->getPackage() : parent::getPackage()) . ".Base";
     }
 
     public function getNamespace()
     {
         if ($namespace = parent::getNamespace()) {
-            if ($this->getGeneratorConfig() && $omns = $this->getGeneratorConfig()->getBuildProperty('namespaceOm')) {
-                return $namespace . '\\' . $omns;
-            } else {
-                return $namespace;
-            }
+                return $namespace . '\\Base';
         }
+
+        return 'Base';
     }
 
     /**
@@ -89,12 +87,12 @@ class QueryInheritanceBuilder extends AbstractOMBuilder
     {
         $ancestorClassName = ClassTools::classname($this->getChild()->getAncestor());
         if ($this->getDatabase()->hasTableByPhpName($ancestorClassName)) {
-            return $this->getNewStubQueryBuilder($this->getDatabase()->getTableByPhpName($ancestorClassName))->getClassname();
+            return $this->getNewStubQueryBuilder($this->getDatabase()->getTableByPhpName($ancestorClassName))->getUnqualifiedClassName();
         } else {
             // find the inheritance for the parent class
             foreach ($this->getTable()->getChildrenColumn()->getChildren() as $child) {
                 if ($child->getClassName() == $ancestorClassName) {
-                    return $this->getNewStubQueryInheritanceBuilder($child)->getClassname();
+                    return $this->getNewStubQueryInheritanceBuilder($child)->getUnqualifiedClassName();
                 }
             }
         }
@@ -112,7 +110,7 @@ class QueryInheritanceBuilder extends AbstractOMBuilder
 
         $baseBuilder = $this->getStubQueryBuilder();
         $this->declareClassFromBuilder($baseBuilder);
-        $baseClassname = $this->getParentClassName();
+        $baseClassName = $this->getParentClassName();
 
         $script .= "
 /**
@@ -134,7 +132,7 @@ class QueryInheritanceBuilder extends AbstractOMBuilder
  * long as it does not already exist in the output directory.
  *
  */
-class "  .$this->getClassname() . " extends " . $baseClassname . " {
+class "  .$this->getUnqualifiedClassName() . " extends " . $baseClassName . " {
 ";
     }
 
@@ -167,8 +165,8 @@ class "  .$this->getClassname() . " extends " . $baseClassname . " {
     protected function addFactory(&$script)
     {
         $builder = $this->getNewStubQueryInheritanceBuilder($this->getChild());
-        $this->declareClassFromBuilder($builder);
-        $classname = $builder->getClassname();
+        $this->declareClassFromBuilder($builder, 'Child');
+        $classname = $builder->getClassName();
         $script .= "
     /**
      * Returns a new " . $classname . " object.
@@ -202,7 +200,7 @@ class "  .$this->getClassname() . " extends " . $baseClassname . " {
 
         $script .= "
     /**
-     * Filters the query to target only " . $child->getClassname() . " objects.
+     * Filters the query to target only " . $child->getClassName() . " objects.
      */
     public function preSelect(ConnectionInterface \$con)
     {
@@ -217,7 +215,7 @@ class "  .$this->getClassname() . " extends " . $baseClassname . " {
 
         $script .= "
     /**
-     * Filters the query to target only " . $child->getClassname() . " objects.
+     * Filters the query to target only " . $child->getClassName() . " objects.
      */
     public function preUpdate(&\$values, ConnectionInterface \$con, \$forceIndividualSaves = false)
     {
@@ -232,7 +230,7 @@ class "  .$this->getClassname() . " extends " . $baseClassname . " {
 
         $script .= "
     /**
-     * Filters the query to target only " . $child->getClassname() . " objects.
+     * Filters the query to target only " . $child->getClassName() . " objects.
      */
     public function preDelete(ConnectionInterface \$con)
     {
@@ -246,7 +244,7 @@ class "  .$this->getClassname() . " extends " . $baseClassname . " {
         $child = $this->getChild();
         $col = $child->getColumn();
 
-        return "\$this->addUsingAlias(" . $col->getConstantName() . ", " . $this->getPeerClassname()."::CLASSKEY_".strtoupper($child->getKey()).");";
+        return "\$this->addUsingAlias(" . $col->getConstantName() . ", " . $this->getPeerClassName()."::CLASSKEY_".strtoupper($child->getKey()).");";
     }
 
     protected function addDoDeleteAll(&$script)
@@ -256,7 +254,7 @@ class "  .$this->getClassname() . " extends " . $baseClassname . " {
         $script .= "
     /**
      * Issue a DELETE query based on the current ModelCriteria deleting all rows in the table
-     * Having the " . $child->getClassname() . " class.
+     * Having the " . $child->getClassName() . " class.
      * This method is called by ModelCriteria::deleteAll() inside a transaction
      *
      * @param ConnectionInterface \$con a connection object
@@ -278,7 +276,7 @@ class "  .$this->getClassname() . " extends " . $baseClassname . " {
     protected function addClassClose(&$script)
     {
         $script .= "
-} // " . $this->getClassname() . "
+} // " . $this->getUnqualifiedClassName() . "
 ";
     }
 }
