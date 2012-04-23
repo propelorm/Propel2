@@ -35,6 +35,7 @@ use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Exception\UnexpectedValueException;
 use Propel\Runtime\Formatter\AbstractFormatter;
 use Propel\Runtime\Formatter\StatementFormatter;
+use Propel\Runtime\Formatter\ArrayFormatter;
 use Propel\Runtime\Util\BasePeer;
 use Propel\Runtime\Util\PropelModelPager;
 use Propel\Runtime\Query\Criteria;
@@ -2578,7 +2579,7 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals($c2, $c1, 'addUsingalias() translates to addAnd() when the table already has a condition on the column');
     }
 
-    public function testClone()
+    public function testCloneCopiesConditions()
     {
         $bookQuery1 = BookQuery::create()
             ->filterByPrice(1);
@@ -2595,6 +2596,28 @@ class ModelCriteriaTest extends BookstoreTestBase
         }
 
         $this->assertEquals($expected, $sql, 'conditions applied on a cloned query don\'t get applied on the original query');
+    }
+
+    public function testCloneCopiesFormatter()
+    {
+        $formatter1 = new ArrayFormatter();
+        $formatter1->test = false;
+        $bookQuery1 = BookQuery::create();
+        $bookQuery1->setFormatter($formatter1);
+        $bookQuery2 = clone $bookQuery1;
+        $formatter2 = $bookQuery2->getFormatter();
+        $this->assertFalse($formatter2->test);
+        $formatter2->test = true;
+        $this->assertFalse($formatter1->test);
+    }
+
+    public function testCloneCopiesSelect()
+    {
+        $bookQuery1 = BookQuery::create();
+        $bookQuery1->select(array('Id', 'Title'));
+        $bookQuery2 = clone $bookQuery1;
+        $bookQuery2->select(array('ISBN', 'Price'));
+        $this->assertEquals(array('Id', 'Title'), $bookQuery1->getSelect());
     }
 
     public function testMagicFindByObject()
