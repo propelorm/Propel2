@@ -193,7 +193,7 @@ public function isVersioningNecessary(\$con = null)
     if (\$this->alreadyInSave) {
         return false;
     }
-    if ({$peerClass}::isVersioningEnabled() && (\$this->isNew() || \$this->isModified())) {
+    if ({$peerClass}::isVersioningEnabled() && (\$this->isNew() || \$this->isModified()) || \$this->isDeleted()) {
         return true;
     }";
         foreach ($this->behavior->getVersionableFks() as $fk) {

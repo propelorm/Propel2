@@ -121,6 +121,42 @@ EOF;
 EOF;
             QuickBuilder::buildSchema($schema2);
         }
+
+
+        if (!class_exists('\VersionableBehaviorTest10')) {
+            $schema4 = <<<EOF
+<database name="versionable_behavior_test_4">
+    <table name="VersionableBehaviorTest10">
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <column name="bar" type="INTEGER" />
+
+        <behavior name="versionable" />
+    </table>
+
+    <table name="VersionableBehaviorTest11">
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <column name="foo" type="VARCHAR" size="100" />
+    </table>
+
+    <table name="VersionableBehaviorTest12">
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <column name="bar_id" type="INTEGER" />
+        <column name="foo_id" type="INTEGER" />
+        <column name="baz" type="VARCHAR" size="25" />
+
+        <behavior name="versionable" />
+
+        <foreign-key foreignTable="VersionableBehaviorTest10">
+            <reference local="bar_id" foreign="id" />
+        </foreign-key>
+        <foreign-key foreignTable="VersionableBehaviorTest11">
+            <reference local="foo_id" foreign="id" />
+        </foreign-key>
+    </table>
+</database>
+EOF;
+            QuickBuilder::buildSchema($schema4);
+        }
     }
 
     public function testGetVersionExists()
@@ -203,6 +239,32 @@ EOF;
         $o->setBar(12);
         $o->save();
         $this->assertEquals(4, $o->getVersion());
+    }
+
+    public function testVersionValueIncrementsOnDeleteManyToMany()
+    {
+        $bar = new \VersionableBehaviorTest10();
+        $bar->setBar(42);
+        $bar->save();
+
+        $foo = new \VersionableBehaviorTest11();
+        $foo->setFoo('Marvin');
+        $foo->save();
+
+        $baz = new \VersionableBehaviorTest12();
+        $baz->setVersionablebehaviortest11($foo);
+        $baz->setBaz('So long and thanks for all the fish');
+
+        $bar->addVersionablebehaviortest12($baz);
+        $bar->save();
+
+        $this->assertEquals(1, $baz->getVersion());
+        $this->assertEquals(2, $bar->getVersion());
+
+        $baz->delete();
+        $bar->save();
+
+        $this->assertEquals(3, $bar->getVersion());
     }
 
     /**
