@@ -107,6 +107,7 @@ class PropelSQLDiffTask extends AbstractPropelDataModelTask
         $manager = new PropelMigrationManager();
         $manager->setConnections($connections);
         $manager->setMigrationDir($this->getOutputDirectory());
+        $manager->setMigrationTable($this->getGeneratorConfig()->getBuildProperty('migrationTable'));
 
         if ($manager->hasPendingMigrations()) {
             throw new Exception('Uncommitted migrations have been found ; you should either execute or delete them before rerunning the \'diff\' task');
