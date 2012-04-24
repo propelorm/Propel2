@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
@@ -9,10 +10,10 @@
 
 namespace Propel\Generator\Behavior\Validate;
 
+use Propel\Generator\Exception\ConstraintNotFoundException;
+use Propel\Generator\Exception\InvalidArgumentException;
 use Propel\Generator\Model\Behavior;
 use Symfony\Component\Yaml\Parser;
-use Propel\Generator\Exception\InvalidArgumentException;
-use Propel\Generator\Exception\ConstraintNotFoundException;
 
 /**
  * Validate a model object using Symfony2 Validator component
@@ -67,10 +68,9 @@ class ValidateBehavior extends Behavior
      * @param string The column name
      * @return array The array of parameters associated to given column
      */
-    public function getParametersFromColumnName($columnName = '')
+    public function getParametersFromColumnName($columnName = null)
     {
-        if ('' == $columnName) {
-
+        if (null == $columnName) {
             return array();
         } else {
             $outArray = array();
@@ -92,9 +92,9 @@ class ValidateBehavior extends Behavior
      *
      * @param  string  The column name
      */
-    public function removeParametersFromColumnName($columnName = '')
+    public function removeParametersFromColumnName($columnName = null)
     {
-        if ($columnName != '') {
+        if (null !== $columnName) {
             $newParams = array();
             $parameters = $this->getParameters();
             foreach ($parameters as $key=>$parameter) {
@@ -130,22 +130,22 @@ class ValidateBehavior extends Behavior
      * This method avoid that there are rules with the same name, when adding parameters programmatically.
      * Useful for Concrete Inheritance behavior.
      */
-    public function mergeParameters($paramsArray = null)
+    public function mergeParameters(array $params = null)
     {
-        if (!is_null($paramsArray)) {
-            $params = $this->getParameters();
-            $outArray = array();
+        if (null !== $params) {
+            $parameters = $this->getParameters();
+            $out = array();
             $i = 1;
-            foreach($params as $key=>$param) {
-                $outArray["rule$i"] = $param;
+            foreach($parameters as $key => $parameter) {
+                $out["rule$i"] = $parameter;
                 $i++;
             }
-            foreach($paramsArray as $key=>$paramArray) {
-                $outArray["rule$i"] = $paramArray;
+            foreach($params as $key => $param) {
+                $out["rule$i"] = $param;
                 $i++;
             }
 
-            $this->setParameters($outArray);
+            $this->setParameters($out);
         }
     }
 
@@ -175,7 +175,7 @@ class ValidateBehavior extends Behavior
         $params = $this->getParameters();
         $constraints = array();
 
-        foreach ($params as $key=>$properties)
+        foreach ($params as $key => $properties)
         {
             if (!isset($properties['column'])) {
                 throw new InvalidArgumentException('Please, define the column to validate.');
@@ -200,7 +200,10 @@ class ValidateBehavior extends Behavior
                     throw new InvalidArgumentException('The options value, in <parameter> tag must be an array');
                 }
 
-                $properties['options'] = $this->arrayToString($properties['options']);
+                $opt = var_export($properties['options'], true);
+                $opt = str_replace("\n", '', $opt);
+                $opt = str_replace('  ', '', $opt);
+                $properties['options'] = $opt;
             }
 
             $constraints[] = $properties;
@@ -208,36 +211,6 @@ class ValidateBehavior extends Behavior
         }
 
         return $this->renderTemplate('objectLoadValidatorMetadata', array('constraints' => $constraints));
-    }
-
-    /**
-     * Convenience method that takes an array and gives a string representing its php definition.
-     * This method will recurse into deeper arrays.
-     *
-     * @param array    $array  Array to process
-     * @param boolean  $deep  true if it's a recursive call
-     * @return string  The php definition of input array
-    */
-    protected function arrayToString ($array, $deep = false)
-    {
-        $string = "array(";
-        foreach ($array as $key => $value) {
-            $string .= "'$key' => ";
-
-            if (is_array($value)) {
-                $string .= $this->arrayToString($value, true);
-            }
-            else {
-                $string .= "'$value', ";
-            }
-        }
-        $string .= ")";
-
-        if ($deep) {
-            $string .= ", ";
-        }
-
-        return $string;
     }
 
     /**
