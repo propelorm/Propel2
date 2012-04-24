@@ -541,7 +541,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
             if (strtoupper($child->getClassName()) != strtoupper($child->getKey())) {
                 $script .= "
     /** A key representing a particular subclass */
-    const CLASSKEY_".strtoupper($child->getClassName())." = '" . $child->getKey() . "';
+    const CLASSKEY_".strtoupper($child->getClassname())." = '" . $fqcn . "';
 ";
             }
 
