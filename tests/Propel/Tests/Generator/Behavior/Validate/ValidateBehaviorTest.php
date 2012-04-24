@@ -10,19 +10,23 @@
 
 namespace Propel\Tests\Generator\Behavior\Validate;
 
+use Propel\Generator\Behavior\Validate\ValidateBehavior;
 use Propel\Generator\Util\QuickBuilder;
+use Propel\Runtime\Propel;
 use Propel\Tests\Bookstore\Behavior\ValidateAuthor;
-use Propel\Tests\Bookstore\Behavior\ValidatePublisher;
 use Propel\Tests\Bookstore\Behavior\ValidateBook;
-use Propel\Tests\Bookstore\Behavior\ValidateReader;
 use Propel\Tests\Bookstore\Behavior\ValidateBookReader;
+use Propel\Tests\Bookstore\Behavior\ValidatePublisher;
+use Propel\Tests\Bookstore\Behavior\ValidateReader;
+use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
+
 
 /**
  * Tests for ValidateBehavior class
  *
  * @author     Cristiano Cinotti
  */
-class ValidateBehaviorTest extends \PHPUnit_Framework_TestCase
+class ValidateBehaviorTest extends BookstoreTestBase
 {
     /**
      * @private  array   The names of ValidateAuthor, ValidateBook, ValidatePublisher, ValidateReader classes. 
@@ -43,7 +47,7 @@ class ValidateBehaviorTest extends \PHPUnit_Framework_TestCase
         $this->classes[] = 'Propel\Tests\Bookstore\Behavior\ValidateReader';
         $this->classes[] = 'Propel\Tests\Bookstore\Behavior\ValidateReaderBook';
     }
-    
+
     public function testHasValidateMethod()
     {
         foreach ($this->classes as $class) {
@@ -432,5 +436,5 @@ EOF;
             $this->assertEquals($failedProperties[$failure->getPropertyPath()], $failObject->getName());
         }
     }
-    
-  }
+
+}
