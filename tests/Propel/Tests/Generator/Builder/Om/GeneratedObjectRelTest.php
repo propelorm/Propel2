@@ -24,6 +24,9 @@ use Propel\Tests\Bookstore\BookClubListQuery;
 use Propel\Tests\Bookstore\BookListRel;
 use Propel\Tests\Bookstore\BookListRelPeer;
 use Propel\Tests\Bookstore\BookListRelQuery;
+use Propel\Tests\Bookstore\BookListFavorite;
+use Propel\Tests\Bookstore\BookListFavoritePeer;
+use Propel\Tests\Bookstore\BookListFavoriteQuery;
 use Propel\Tests\Bookstore\BookstoreContest;
 use Propel\Tests\Bookstore\BookstoreContestEntry;
 use Propel\Tests\Bookstore\Contest;
@@ -673,5 +676,39 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         $this->assertEquals(1, BookClubListQuery::create()->count());
         $this->assertEquals(2, BookListRelQuery::create()->count());
         $this->assertEquals(4, BookQuery::create()->count());
+    }
+
+    public function testSetterCollectionWithCustomNamedFKs() {
+        // Ensure no data
+        BookQuery::create()->deleteAll();
+        BookClubListQuery::create()->deleteAll();
+        BookListRelQuery::create()->deleteAll();
+        BookListFavoriteQuery::create()->deleteAll();
+
+        $books = new ObjectCollection();
+        foreach (array('foo', 'bar', 'test') as $title) {
+            $b = new Book();
+            $b->setTitle($title);
+            $books[] = $b;
+        }
+
+        $bookClubList = new BookClubList();
+        $bookClubList->setFavoriteBooks($books);
+        $bookClubList->save();
+
+        $bookClubList->reload(true);
+
+        $this->assertCount(3, $bookClubList->getFavoriteBooks());
+
+        $bookClubList->reload(true);
+
+        $books->shift();
+
+        $bookClubList->setFavoriteBooks($books);
+        $bookClubList->save();
+
+        $bookClubList->reload(true);
+
+        $this->assertCount(2, $bookClubList->getFavoriteBooks());
     }
 }
