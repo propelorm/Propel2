@@ -678,7 +678,8 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         $this->assertEquals(4, BookQuery::create()->count());
     }
 
-    public function testSetterCollectionWithCustomNamedFKs() {
+    public function testSetterCollectionWithCustomNamedFKs()
+    {
         // Ensure no data
         BookQuery::create()->deleteAll();
         BookClubListQuery::create()->deleteAll();
