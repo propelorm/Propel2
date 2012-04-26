@@ -3927,7 +3927,8 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
 
     protected function addCrossFKSet(&$script, $refFK, $crossFK)
     {
-        $relatedName = $this->getFKPhpNameAffix($crossFK, true);
+        $relatedNamePlural = $this->getFKPhpNameAffix($crossFK, true);
+        $relatedName = $this->getFKPhpNameAffix($crossFK, false);
         $relatedObjectClassName = $this->getNewStubObjectBuilder($crossFK->getForeignTable())->getUnqualifiedClassName();
         $selfRelationName = $this->getFKPhpNameAffix($refFK, false);
         $crossRefQueryClassName = $this->getClassNameFromBuilder($this->getNewStubQueryBuilder($refFK->getTable()));
@@ -3938,7 +3939,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
 
         $crossRefObjectClassName = '$' . lcfirst($className);
 
-        $inputCollection = lcfirst($relatedName);
+        $inputCollection = lcfirst($relatedNamePlural);
 
         $inputCollectionEntry = lcfirst($this->getFKPhpNameAffix($crossFK, false));
 
@@ -3955,22 +3956,36 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * @param      Collection \${$inputCollection} A Propel collection.
      * @param      ConnectionInterface \$con Optional connection object
      */
-    public function set{$relatedName}(Collection \${$inputCollection}, ConnectionInterface \$con = null)
+    public function set{$relatedNamePlural}(Collection \${$inputCollection}, ConnectionInterface \$con = null)
     {
         {$crossRefObjectClassName}s = {$crossRefQueryClassName}::create()
-            ->filterBy{$relatedObjectClassName}(\${$inputCollection})
+            ->filterBy{$relatedName}(\${$inputCollection})
             ->filterBy{$selfRelationName}(\$this)
             ->find(\$con);
 
-        \$this->{$inputCollection}ScheduledForDeletion = \$this->get{$relCol}()->diff({$crossRefObjectClassName}s);
+        \$current{$relCol} = \$this->get{$relCol}();
+
+        \$this->{$inputCollection}ScheduledForDeletion = \$current{$relCol}->diff({$crossRefObjectClassName}s);
         \$this->{$relColVarName} = {$crossRefObjectClassName}s;
 
         foreach (\${$inputCollection} as \${$inputCollectionEntry}) {
+            // Skip objects that are already in the current collection.
+            \$isInCurrent = false;
+            foreach (\$current{$relCol} as {$crossRefObjectClassName}) {
+                if ({$crossRefObjectClassName}->get{$relatedName}() == \${$inputCollectionEntry}) {
+                    \$isInCurrent = true;
+                    break;
+                }
+            }
+            if (\$isInCurrent) {
+                continue;
+            }
+
             // Fix issue with collection modified by reference
             if (\${$inputCollectionEntry}->isNew()) {
-                \$this->doAdd{$relatedObjectClassName}(\${$inputCollectionEntry});
+                \$this->doAdd{$relatedName}(\${$inputCollectionEntry});
             } else {
-                \$this->add{$relatedObjectClassName}(\${$inputCollectionEntry});
+                \$this->add{$relatedName}(\${$inputCollectionEntry});
             }
         }
 
