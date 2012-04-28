@@ -296,7 +296,7 @@ Specifies any SQL statements to run when the database connection is initialized.
     <slaves>
 {% endhighlight %}
 
-The `<slaves>` tag groups slave `<connection>` elements which provide support for configuring slave db servers -- when using Propel in a master-slave replication environment. See the [Master-Slave documentation](../cookbook/replication.html) for more information.  The nested `<connection>` elements are configured the same way as the top-level `<connection>` element is configured.
+The `<slaves>` tag groups lists slave `<connection>` elements which provide support for configuring slave db servers -- when using Propel in a master-slave replication environment. See the [Master-Slave documentation](../cookbook/replication.html) for more information.  The nested `<connection>` elements are configured the same way as the top-level `<connection>` element is configured.
 
 ### `<profiler>` ###
 

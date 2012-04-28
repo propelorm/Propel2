@@ -269,35 +269,70 @@ propel-gen insert-sql
 
 ## Runtime Connection Settings ##
 
-The database and PHP classes are now ready to be used. But they don't know yet how to communicate with each other at runtime. You must add a configuration file so that the generated object model classes and the shared Propel runtime classes can connect to the database, and log the Propel activity.
+The database and PHP classes are now ready to be used. But they don't know yet how to communicate with each other at runtime. You must tell Propel which database connection settings should be used to finish the setup.
 
-### Writing The XML Runtime Configuration ###
+Propel stores the runtime settings in a service container, available from everywhere using `\Propel\Runtime\Propel::getServiceContainer()`. The service container uses lazy-loading to initiate connections only when necessary. 
+
+Here is a sample setup file:
+
+{% highlight php %}
+<?php
+// setup the autoloading
+require_once '/path/to/propel/vendor/autoload.php';
+use Propel\Runtime\Propel;
+use Propel\Runtime\Connection\ConnectionManagerSingle;
+$serviceContainer = Propel::getServiceContainer();
+$serviceContainer->setAdapterClass('bookstore', 'mysql');
+$manager = new ConnectionManagerSingle();
+$manager->setConfiguration(array (
+  'dsn'      => 'mysql:host=localhost;dbname=my_db_name',
+  'user'     => 'my_db_user',
+  'password' => 's3cr3t',
+));
+$serviceContainer->setConnectionManager('bookstore', $manager);
+{% endhighlight %}
+
+Notice how the "bookstore" name passed to `setAdapterClass()` and `setConnectionManager()` matches the connection name defined in the `<database>` tag of the `schema.xml`. This is how Propel maps a database description to a connection.
+
+It's a good practice to add a logger to the service container, so that Propel can log warnings and errors. You can do so by adding the following code to the setup script:
+
+{% highlight php %}
+<?php
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
+$defaultLogger = new Logger('defaultLogger');
+$defaultLogger->pushHandler(new StreamHandler('/var/log/propel.log', Logger::WARNING));
+$serviceContainer->setLogger('defaultLogger', $defaultLogger);
+{% endhighlight %}
+
+**Tip**: You may wish to write the setup code in a standalone script that is included at the beginning of your PHP scripts.
+
+Now you are ready to start using your model classes!
+
+### Alternative: Writing The XML Runtime Configuration ###
+
+Alternatively, you can write the runtime configuration settings in an XML file and convert this file to PHP.
 
 Create a file called `runtime-conf.xml` at the root of the `bookstore` project, using the following content:
 
 {% highlight xml %}
 <?xml version="1.0" encoding="UTF-8"?>
 <config>
-  <!-- Uncomment this if you have PEAR Log installed
-  <log>
-    <type>file</type>
-    <name>/path/to/propel.log</name>
-    <ident>propel-bookstore</ident>
-    <level>7</level>
-  </log>
-  -->
-  <propel>
-    <datasources default="bookstore">
-      <datasource id="bookstore">
-        <adapter>mysql</adapter> <!-- sqlite, mysql, myssql, oracle, or pgsql -->
-        <connection>
-          <dsn>mysql:host=localhost;dbname=my_db_name</dsn>
-          <user>my_db_user</user>
-          <password>my_db_password</password>
-        </connection>
-      </datasource>
-    </datasources>
-  </propel>
+  <datasources default="bookstore">
+    <datasource id="bookstore">
+      <adapter>mysql</adapter> <!-- sqlite, mysql, myssql, oracle, or pgsql -->
+      <connection>
+        <dsn>mysql:host=localhost;dbname=my_db_name</dsn>
+        <user>my_db_user</user>
+        <password>s3cr3t</password>
+      </connection>
+    </datasource>
+  </datasources>
+  <logger name="defaultLogger">
+    <type>stream</type>
+    <path>/var/log/propel.log</path>
+    <level>300</level>
+  </logger>
 </config>
 {% endhighlight %}
 
@@ -307,50 +342,24 @@ Replace the `<adapter>` and the `<connection>` settings with the ones of your da
 
 See the [runtime configuration reference](../reference/runtime-configuration) for a more detailed explanation of this file.
 
->**Tip**<br />If you uncomment the `<log>` section, Propel will attempt to instantiate the `Log` class (from the [PEAR Log](http://pear.php.net/package/Log/) package) with the specified parameters and use that to log queries. Propel's statement logging happens at the DEBUG level (7); errors and warnings are logged at the appropriate (non-debug) level.
-
 ### Building the Runtime Configuration ###
 
 For performance reasons, Propel prefers to use a PHP version of the connection settings rather than the XML file you just defined. So you must use the `propel-gen` script one last time to build the PHP version of the `runtime-conf.xml` configuration:
 
 {% highlight bash %}
 cd /path/to/bookstore
-propel-gen convert-conf
+propel-gen config:convert-xml
 {% endhighlight %}
 
 The resulting file can be found under `build/conf/bookstore-conf.php`, where "bookstore" is the name of the project you defined in `build.properties`.
 
->**Tip**<br />As you saw, a Propel project setup requires that you call three commands with the `propel-gen` script: `om`, `sql`, and `convert-conf`. This is so usual that if you call the `propel-gen` script with no parameter, it will execute these three commands in a row:
-
-{% highlight bash %}
-cd /path/to/bookstore
-propel-gen
-{% endhighlight %}
-
-## Setting Up Propel ##
-
-This is the final step: initialize Propel in your PHP script. You may wish to do this step in an init or setup script that is included at the beginning of your PHP scripts.
-
-Here is a sample initialization file:
+This simplifies the setup of Propel to the following script:
 
 {% highlight php %}
 <?php
-// Include the main Propel script
-require_once '/path/to/propel/runtime/lib/Propel.php';
+// setup the autoloading
+require_once '/path/to/propel/vendor/autoload.php';
 
-// Initialize Propel with the runtime configuration
-Propel::init("/path/to/bookstore/build/conf/bookstore-conf.php");
-
-// Add the generated 'classes' directory to the include path
-set_include_path("/path/to/bookstore/build/classes" . PATH_SEPARATOR . get_include_path());
-{% endhighlight %}
-
-Now you are ready to start using your model classes!
-
->**Tip**<br />If you installed Propel using PEAR, you can replace the first line of this script with the more simple:
-
-{% highlight php %}
-<?php
-// Include the main Propel script
-require_once 'propel/Propel.php';
+// setup Propel
+require_once 'build/conf/bookstore-conf.php';
 {% endhighlight %}
