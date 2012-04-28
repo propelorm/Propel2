@@ -122,9 +122,6 @@ class TestPrepare extends AbstractCommand
                 file_put_contents($targetFile, $content);
             } else {
                 $output->writeln(sprintf('<error>No "%s" file found, skipped.</error>', $sourceFile));
-                chdir($this->root);
-
-                return;
             }
         }
 
@@ -160,17 +157,19 @@ class TestPrepare extends AbstractCommand
             $command->run($in, $output);
         }
 
-        if (0 < count((array) $this->getSchemas('.'))) {
+        if (is_file('runtime-conf.xml')) {
             $in = new ArrayInput(array(
-                'command'       => 'config:build',
+                'command'       => 'config:convert-xml',
                 '--input-dir'   => '.',
-                '--output-file' => sprintf('build/conf/%s-conf.php', $connections[0]), // the first connection is the main one
-                '--verbose'     => $input->getOption('verbose'),
+                '--output-dir'  => './build/conf',
+                '--output-file' => sprintf('%s-conf.php', $connections[0]), // the first connection is the main one
             ));
 
-            $command = $this->getApplication()->find('config:build');
+            $command = $this->getApplication()->find('config:convert-xml');
             $command->run($in, $output);
+        }
 
+        if (0 < count((array) $this->getSchemas('.'))) {
             $in = new ArrayInput(array(
                 'command'       => 'model:build',
                 '--input-dir'   => '.',

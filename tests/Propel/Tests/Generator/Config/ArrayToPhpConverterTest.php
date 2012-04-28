@@ -34,7 +34,7 @@ class ArrayToPhpConverterTest extends \PHPUnit_Framework_TestCase
 $serviceContainer = \Propel\Runtime\Propel::getServiceContainer();
 $serviceContainer->setAdapterClass('bookstore', 'mysql');
 $manager = new \Propel\Runtime\Connection\ConnectionManagerSingle();
-$manager->setWriteConfiguration(array (
+$manager->setConfiguration(array (
   'classname' => 'DebugPDO',
   'dsn' => 'mysql:host=localhost;dbname=bookstore',
   'user' => 'testuser',
@@ -199,7 +199,7 @@ EOF;
 $serviceContainer = \Propel\Runtime\Propel::getServiceContainer();
 $serviceContainer->setAdapterClass('bookstore', 'mysql');
 $manager = new \Propel\Runtime\Connection\ConnectionManagerSingle();
-$manager->setWriteConfiguration(array (
+$manager->setConfiguration(array (
   'classname' => '\\Propel\\Runtime\\Connection\\DebugPDO',
   'dsn' => 'mysql:host=127.0.0.1;dbname=test',
   'user' => 'root',

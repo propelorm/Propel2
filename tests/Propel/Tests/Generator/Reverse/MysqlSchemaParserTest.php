@@ -11,7 +11,6 @@
 namespace Propel\Tests\Generator\Reverse;
 
 use Propel\Generator\Config\QuickGeneratorConfig;
-use Propel\Generator\Manager\ConfigManager;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Platform\DefaultPlatform;
@@ -30,13 +29,7 @@ class MysqlSchemaParserTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         parent::setUp();
-
-        $xmlDom = new \DOMDocument();
-        $xmlDom->load(__DIR__ . '/../../../../Fixtures/reverse/mysql/runtime-conf.xml');
-        $xml = simplexml_load_string($xmlDom->saveXML());
-        $phpconf = OpenedConfigManager::simpleXmlToArray($xml);
-
-        Propel::setConfiguration($phpconf['propel']);
+        Propel::init(__DIR__ . '/../../../../Fixtures/reverse/mysql/build/conf/reverse-bookstore-conf.php');
     }
 
     protected function tearDown()
@@ -63,13 +56,5 @@ class MysqlSchemaParserTest extends \PHPUnit_Framework_TestCase
         $table = $tables[0];
         $this->assertEquals('Book', $table->getPhpName());
         $this->assertEquals(4, count($table->getColumns()));
-    }
-}
-
-class OpenedConfigManager extends ConfigManager
-{
-    static public function simpleXmlToArray($xml)
-    {
-        return parent::simpleXmlToArray($xml);
     }
 }
