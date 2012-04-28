@@ -1,5 +1,21 @@
 # List of Backwards Incompatible Changes
 
+## Tasks become Commands... and change names
+
+The Phing tasks that you used at buildtime are now refactored to Commands using the Symfony2 Command component. They work the same, but their name has changed.
+
+    Replace...           Whith...
+    build-model          model:build
+    build-sql            sql:build
+    insert-sql           sql:insert
+    convert-conf         config:convert-xml
+    diff                 [not yet refactored]
+    status               migration:status
+    migrate              [not yet refactored]
+    up                   migration:up
+    down                 migration:down
+    reverse              [not yet refactored]
+
 ## `Propel\Runtime\Propel` methods renamed.
 
 Some static methods from the `Propel` class have been renamed. Therefore, you must replace the following occurrences in your code:
@@ -20,7 +36,7 @@ The generated model is automatically updated once you rebuild your model.
 
 The classes used by Propel internally to build the object model were renamed. This affects your project if you extended one of these classes.
 
-    Old name                         New name
+    Replace...                       With...
     OMBuilder.php                    AbstractOMBuilder.php
     ObjectBuilder.php                AbstractObjectBuilder.php
     PeerBuilder.php                  AbstractPeerBuilder.php
