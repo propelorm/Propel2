@@ -15,7 +15,7 @@ Propel2 uses the following Symfony2 Components:
 Propel2 also relies on [**Composer**](https://github.com/composer/composer) to manage dependencies but you
 also can use [ClassLoader](https://github.com/symfony/ClassLoader) (see the `autoload.php.dist` file for instance).
 
-Propel2 is only supported on PHP 5.3.3 and up.
+Propel2 is only supported on PHP 5.3.2 and up.
 
 
 ## Installation ##
