@@ -235,6 +235,9 @@ class StandardServiceContainer implements ServiceContainerInterface
         if (isset($this->connectionManagers[$name])) {
             $this->connectionManagers[$name]->closeConnections();
         }
+        if (!$manager->getName()) {
+            $manager->setName($name);
+        }
         $this->connectionManagers[$name] = $manager;
     }
 

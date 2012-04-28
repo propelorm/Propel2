@@ -11,7 +11,6 @@
 namespace Propel\Tests\Generator\Reverse;
 
 use Propel\Generator\Config\QuickGeneratorConfig;
-use Propel\Generator\Manager\ConfigManager;
 use Propel\Generator\Model\ColumnDefaultValue;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\PropelTypes;
@@ -32,13 +31,7 @@ class PgsqlSchemaParserTest extends TestCase
     protected function setUp()
     {
         parent::setUp();
-
-        $xmlDom = new DOMDocument();
-        $xmlDom->load(__DIR__ . '/../../../../Fixtures/reverse/pgsql/runtime-conf.xml');
-        $xml = simplexml_load_string($xmlDom->saveXML());
-        $phpconf = TestableConfigManager::simpleXmlToArray($xml);
-
-        Propel::setConfiguration($phpconf['propel']);
+        Propel::init(__DIR__ . '/../../../../Fixtures/reverse/pgsql/build/conf/reverse-bookstore-conf.php');
 
         $this->con = Propel::getConnection('reverse-bookstore');
         $this->con->beginTransaction();
@@ -92,13 +85,5 @@ class PgsqlSchemaParserTest extends TestCase
         $this->assertEquals($expectedColumnPhpName, $columns[0]->getPhpName());
         $this->assertEquals($expectedColumnDefaultType, $defaultValue->getType());
         $this->assertEquals($expectedColumnDefaultValue, $defaultValue->getValue());
-    }
-}
-
-class TestableConfigManager extends ConfigManager
-{
-    public static function simpleXmlToArray($xml)
-    {
-        return parent::simpleXmlToArray($xml);
     }
 }
