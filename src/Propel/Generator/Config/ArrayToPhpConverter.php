@@ -84,17 +84,30 @@ class ArrayToPhpConverter
         }
         // set logger
         if (isset($c['log'])) {
-            $loggerConfiguration = $c['log'];
-            $name = 'default';
-            if (isset($loggerConfiguration['name'])) {
-                $name = $loggerConfiguration['name'];
-                unset($loggerConfiguration['name']);
+            $loggerConfiguration = $c['log']['logger'];
+            // is it a single logger or a list of loggers?
+            if (isset($loggerConfiguration[0])) {
+              foreach ($loggerConfiguration as $singleLoggerConfiguration) {
+                $conf .= self::getLoggerCode($singleLoggerConfiguration);
+              }
+            } else {
+                $conf .= self::getLoggerCode($loggerConfiguration);
             }
-            $conf .= "
-\$serviceContainer->setLoggerConfiguration('{$name}', " . var_export($loggerConfiguration, true) . ");";
             unset($c['log']);
         }
         return $conf;
+    }
+    
+    protected static function getLoggerCode($conf)
+    {
+        $name = 'default';
+        if (isset($conf['name'])) {
+            $name = $conf['name'];
+            unset($conf['name']);
+        }
+        
+        return "
+\$serviceContainer->setLoggerConfiguration('{$name}', " . var_export($conf, true) . ");";
     }
 
 }

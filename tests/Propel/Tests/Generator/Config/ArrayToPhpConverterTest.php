@@ -137,18 +137,50 @@ EOF;
 
     public function testConvertConvertsLogSection()
     {
+        $conf = array('log' => array('logger' => array(
+            'type' => 'stream',
+            'name' => 'defaultLogger',
+            'level' => '300',
+            'path' => '/var/log/propel.log',
+        )));
+        $expected = <<<'EOF'
+$serviceContainer = \Propel\Runtime\Propel::getServiceContainer();
+$serviceContainer->setLoggerConfiguration('defaultLogger', array (
+  'type' => 'stream',
+  'level' => '300',
+  'path' => '/var/log/propel.log',
+));
+EOF;
+        $this->assertEquals($expected, ArrayToPhpConverter::convert($conf));
+    }
+
+    public function testConvertConvertsLogSectionWithMultipleLoggers()
+    {
         $conf = array('log' => array(
-            'type' => 'file',
-            'name' => '/path/to/propel.log',
-            'ident' => 'propel-bookstore',
-            'level' => 7
+            'logger' => array(
+                array(
+                    'type' => 'stream',
+                    'path' => '/var/log/propel.log',
+                    'level' => '300',
+                    'name' => 'defaultLogger',
+                ),
+                array(
+                    'type' => 'stream',
+                    'path' => '/var/log/propel_bookstore.log',
+                    'name' => 'bookstore',
+                ),
+            ),
         ));
         $expected = <<<'EOF'
 $serviceContainer = \Propel\Runtime\Propel::getServiceContainer();
-$serviceContainer->setLoggerConfiguration('/path/to/propel.log', array (
-  'type' => 'file',
-  'ident' => 'propel-bookstore',
-  'level' => 7,
+$serviceContainer->setLoggerConfiguration('defaultLogger', array (
+  'type' => 'stream',
+  'path' => '/var/log/propel.log',
+  'level' => '300',
+));
+$serviceContainer->setLoggerConfiguration('bookstore', array (
+  'type' => 'stream',
+  'path' => '/var/log/propel_bookstore.log',
 ));
 EOF;
         $this->assertEquals($expected, ArrayToPhpConverter::convert($conf));
@@ -157,12 +189,12 @@ EOF;
     public function testConvertConvertsCompleteConfiguration()
     {
         $conf = array(
-          'log' => array(
-            'type' => 'file',
-            'name' => '/path/to/propel.log',
-            'ident' => 'propel-bookstore',
-            'level' => 7
-          ),
+          'log' => array('logger' => array(
+            'type' => 'stream',
+            'name' => 'defaultLogger',
+            'level' => '300',
+            'path' => '/var/log/propel.log',
+          )),
           'datasources' => array(
             'bookstore' => array(
               'adapter' => 'mysql',
@@ -240,10 +272,10 @@ $manager->setWriteConfiguration(array (
 $manager->setName('bookstore-cms');
 $serviceContainer->setConnectionManager('bookstore-cms', $manager);
 $serviceContainer->setDefaultDatasource('bookstore');
-$serviceContainer->setLoggerConfiguration('/path/to/propel.log', array (
-  'type' => 'file',
-  'ident' => 'propel-bookstore',
-  'level' => 7,
+$serviceContainer->setLoggerConfiguration('defaultLogger', array (
+  'type' => 'stream',
+  'level' => '300',
+  'path' => '/var/log/propel.log',
 ));
 EOF;
         $this->assertEquals($expected, ArrayToPhpConverter::convert($conf));

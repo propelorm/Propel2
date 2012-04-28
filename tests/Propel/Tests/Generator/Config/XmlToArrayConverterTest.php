@@ -20,20 +20,21 @@ class XmlToArrayConverterTest extends \PHPUnit_Framework_TestCase
 <?xml version="1.0" encoding="utf-8"?>
 <config>
   <log>
-    <type>file</type>
-    <name>/path/to/propel.log</name>
-    <ident>propel-bookstore</ident>
-    <level>7</level>
+    <logger name="defaultLogger">
+      <type>stream</type>
+      <path>/var/log/propel.log</path>
+      <level>300</level>
+    </logger>
   </log>
 </config>
 EOF;
         $converted = XmlToArrayConverter::convert($xml);
-        $expected = array('log' => array(
-            'type' => 'file',
-            'name' => '/path/to/propel.log',
-            'ident' => 'propel-bookstore',
-            'level' => 7
-        ));
+        $expected = array('log' => array('logger' => array(
+            'type' => 'stream',
+            'name' => 'defaultLogger',
+            'level' => '300',
+            'path' => '/var/log/propel.log',
+        )));
         $this->assertEquals($expected, $converted);
     }
 
@@ -45,21 +46,22 @@ EOF;
 <config>
   <propel>
     <log>
-      <type>file</type>
-      <name>/path/to/propel.log</name>
-      <ident>propel-bookstore</ident>
-      <level>7</level>
+      <logger name="defaultLogger">
+        <type>stream</type>
+        <path>/var/log/propel.log</path>
+        <level>300</level>
+      </logger>
     </log>
   </propel>
 </config>
 EOF;
         $converted = XmlToArrayConverter::convert($xml);
-        $expected = array('log' => array(
-            'type' => 'file',
-            'name' => '/path/to/propel.log',
-            'ident' => 'propel-bookstore',
-            'level' => 7
-        ));
+        $expected = array('log' => array('logger' => array(
+            'type' => 'stream',
+            'name' => 'defaultLogger',
+            'level' => '300',
+            'path' => '/var/log/propel.log',
+        )));
         $this->assertEquals($expected, $converted);
     }
 

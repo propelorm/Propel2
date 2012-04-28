@@ -328,11 +328,13 @@ Create a file called `runtime-conf.xml` at the root of the `bookstore` project, 
       </connection>
     </datasource>
   </datasources>
-  <logger name="defaultLogger">
-    <type>stream</type>
-    <path>/var/log/propel.log</path>
-    <level>300</level>
-  </logger>
+  <log>
+    <logger name="defaultLogger">
+      <type>stream</type>
+      <path>/var/log/propel.log</path>
+      <level>300</level>
+    </logger>
+  </log>
 </config>
 {% endhighlight %}
 
