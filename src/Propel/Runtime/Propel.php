@@ -101,6 +101,7 @@ class Propel
      * Configure Propel a PHP (array) config file.
      *
      * @param      string $configFile Path (absolute or relative to include_path) to config file.
+     * @deprecated Why don't you just include the configuration file?
      */
     static public function init($configFile)
     {
