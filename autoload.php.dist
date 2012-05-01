@@ -16,6 +16,7 @@ if (file_exists($file = __DIR__.'/vendor/.composer/autoload.php')) {
 
     $loader = new \Symfony\Component\ClassLoader\UniversalClassLoader();
     $loader->registerNamespaces(array(
+        'Propel\Common'     => __DIR__ . '/src',
         'Propel\Runtime'    => __DIR__ . '/src',
         'Propel\Generator'  => __DIR__ . '/src',
         'Symfony\Component' => __DIR__ . '/vendor',
