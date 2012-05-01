@@ -8,6 +8,8 @@
  * @license    MIT License
  */
 
+namespace Propel\Tests\Generator\Config;
+
 use Propel\Generator\Config\GeneratorConfig;
 
 /**

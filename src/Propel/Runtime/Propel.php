@@ -11,7 +11,6 @@
 namespace Propel\Runtime;
 
 use Propel\Runtime\Adapter\AdapterInterface;
-use Propel\Runtime\Config\Configuration as Registry;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\ConnectionManagerSingle;
 use Propel\Runtime\Connection\ConnectionManagerMasterSlave;
@@ -89,11 +88,6 @@ class Propel
     const LOG_DEBUG = 100;
 
     /**
-     * @var        Configuration Propel-specific configuration.
-     */
-    private static $configuration;
-
-    /**
      * @var \Propel\Runtime\ServiceContainer\ServiceContainerInterface
      */
     private static $serviceContainer;
@@ -107,97 +101,13 @@ class Propel
      * Configure Propel a PHP (array) config file.
      *
      * @param      string $configFile Path (absolute or relative to include_path) to config file.
-     *
-     * @throws     PropelException If configuration file cannot be opened.
-     *                             (E_WARNING probably will also be raised by PHP)
+     * @deprecated Why don't you just include the configuration file?
      */
     static public function init($configFile)
     {
-        $configuration = include $configFile;
-        if (false === $configuration) {
-            throw new PropelException(sprintf('Unable to open configuration file: "%s"', $configFile));
-        }
-        self::setConfiguration($configuration);
-    }
-
-    /**
-     * Sets the configuration for Propel and all dependencies.
-     *
-     * @param      mixed The Configuration (array or Configuration)
-     */
-    static public function setConfiguration($c)
-    {
         $serviceContainer = self::getServiceContainer();
         $serviceContainer->closeConnections();
-        if (is_array($c)) {
-            $c = new Registry($c);
-        }
-        // set datasources
-        if (isset($c['datasources'])) {
-            foreach ($c['datasources'] as $name => $params) {
-                if (!is_array($params)) {
-                    continue;
-                }
-                // set adapters
-                if (isset($params['adapter'])) {
-                    $serviceContainer->setAdapterClass($name, $params['adapter']);
-                }
-                // set connection settings
-                if (isset($params['connection'])) {
-                    $conParams = $params['connection'];
-                    if (isset($conParams['slaves'])) {
-                        $manager = new ConnectionManagerMasterSlave();
-                        $manager->setName($name);
-                        $manager->setReadConfiguration($conParams['slaves']);
-                        unset($conParams['slaves']);
-                        $manager->setWriteConfiguration($conParams);
-                    } else {
-                        $manager = new ConnectionManagerSingle();
-                        $manager->setName($name);
-                        $manager->setConfiguration($conParams);
-                    }
-                    $serviceContainer->setConnectionManager($name, $manager);
-                }
-            }
-        }
-        // set default datasource
-        $defaultDatasource = isset($c['datasources']['default']) ? $c['datasources']['default'] : self::DEFAULT_NAME;
-        $serviceContainer->setDefaultDatasource($defaultDatasource);
-        // set profiler
-        if (isset($c['profiler'])) {
-            $profilerConf = $c['profiler'];
-            if (isset($profilerConf['class'])) {
-                $serviceContainer->setProfilerClass($profilerConf['class']);
-                unset($profilerConf['class']);
-            }
-            if ($profilerConf) {
-                $serviceContainer->setProfilerConfiguration($profilerConf);
-            }
-        }
-        // set logger
-        if (isset($c['log'])) {
-            foreach ($c['log'] as $loggerConfiguration) {
-                $name = $loggerConfiguration['name'];
-                unset($loggerConfiguration['name']);
-                $serviceContainer->setLoggerConfiguration($name, $loggerConfiguration);
-            }
-        }
-        self::$configuration = $c;
-    }
-
-    /**
-     * Get the configuration for this component.
-     *
-     * @param      int - Configuration::TYPE_ARRAY: return the configuration as an array
-     *                   (for backward compatibility this is the default)
-     *                 - Configuration::TYPE_ARRAY_FLAT: return the configuration as a flat array
-     *                   ($config['name.space.item'])
-     *                 - Configuration::TYPE_OBJECT: return the configuration as a PropelConfiguration instance
-     * @return     mixed The Configuration (array or Configuration)
-     */
-    static public function getConfiguration($type = Registry::TYPE_ARRAY)
-    {
-        return self::$configuration->getParameters($type);
+        include $configFile;
     }
 
     /**
