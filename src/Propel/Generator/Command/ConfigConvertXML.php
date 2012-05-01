@@ -12,12 +12,12 @@ use Propel\Generator\Config\XmlToArrayConverter;
 use Propel\Generator\Config\ArrayToPhpConverter;
 use Propel\Generator\Util\Filesystem;
 
-class ConfigConvertXML extends Command
+class ConfigConvertXml extends Command
 {
     const DEFAULT_INPUT_DIRECTORY   = '.';
-    const DEFAULT_INPUT_FILE = 'runtime-conf.xml';
-    const DEFAULT_OUTPUT_DIRECTORY = './generated-conf';
-    const DEFAULT_OUTPUT_FILE = 'config.php';
+    const DEFAULT_INPUT_FILE        = 'runtime-conf.xml';
+    const DEFAULT_OUTPUT_DIRECTORY  = './generated-conf';
+    const DEFAULT_OUTPUT_FILE       = 'config.php';
 
     /**
      * {@inheritdoc}
@@ -25,10 +25,10 @@ class ConfigConvertXML extends Command
     protected function configure()
     {
         $this
-            ->addOption('input-dir',   null, InputOption::VALUE_REQUIRED,  'The input directory', self::DEFAULT_INPUT_DIRECTORY)
-            ->addOption('input-file',  null, InputOption::VALUE_REQUIRED,  'The input file', self::DEFAULT_INPUT_FILE)
-            ->addOption('output-dir',  null, InputOption::VALUE_REQUIRED,  'The output directory', self::DEFAULT_OUTPUT_DIRECTORY)
-            ->addOption('output-file', null, InputOption::VALUE_REQUIRED,  'The output file', self::DEFAULT_OUTPUT_FILE)
+            ->addOption('input-dir',   null, InputOption::VALUE_REQUIRED,  'The input directory',   self::DEFAULT_INPUT_DIRECTORY)
+            ->addOption('input-file',  null, InputOption::VALUE_REQUIRED,  'The input file',        self::DEFAULT_INPUT_FILE)
+            ->addOption('output-dir',  null, InputOption::VALUE_REQUIRED,  'The output directory',  self::DEFAULT_OUTPUT_DIRECTORY)
+            ->addOption('output-file', null, InputOption::VALUE_REQUIRED,  'The output file',       self::DEFAULT_OUTPUT_FILE)
             ->setName('config:convert-xml')
             ->setDescription('Transform the XML configuration to PHP code leveraging the ServiceContainer')
             ;
@@ -43,7 +43,7 @@ class ConfigConvertXML extends Command
         if (!file_exists($inputFilePath)) {
             throw new \RuntimeException(sprintf('Unable to find the "%s" configuration file', $inputFilePath));
         }
-        
+
         $filesystem = new Filesystem();
         if (!$filesystem->mkdir($input->getOption('output-dir'))) {
             throw new \RuntimeException(sprintf('Unable to write the "%s" output directory', $input->getOption('output-dir')));
@@ -53,11 +53,11 @@ class ConfigConvertXML extends Command
         if (!is_writable(dirname($outputFilePath))) {
             throw new \RuntimeException(sprintf('Unable to write the "%s" output file', $outputFilePath));
         }
-        
+
         $stringConf = file_get_contents($inputFilePath);
-        $arrayConf = XmlToArrayConverter::convert($stringConf);
-        $phpConf = ArrayToPhpConverter::convert($arrayConf);
-        $phpConf = "<?php
+        $arrayConf  = XmlToArrayConverter::convert($stringConf);
+        $phpConf    = ArrayToPhpConverter::convert($arrayConf);
+        $phpConf    = "<?php
 " . $phpConf;
 
         if (file_exists($outputFilePath)) {

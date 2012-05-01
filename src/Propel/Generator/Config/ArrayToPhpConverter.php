@@ -83,7 +83,7 @@ class ArrayToPhpConverter
             unset($c['profiler']);
         }
         // set logger
-        if (isset($c['log'])) {
+        if (isset($c['log']) && isset($c['log']['logger'])) {
             $loggerConfiguration = $c['log']['logger'];
             // is it a single logger or a list of loggers?
             if (isset($loggerConfiguration[0])) {
@@ -97,7 +97,7 @@ class ArrayToPhpConverter
         }
         return $conf;
     }
-    
+
     protected static function getLoggerCode($conf)
     {
         $name = 'default';
@@ -105,7 +105,7 @@ class ArrayToPhpConverter
             $name = $conf['name'];
             unset($conf['name']);
         }
-        
+
         return "
 \$serviceContainer->setLoggerConfiguration('{$name}', " . var_export($conf, true) . ");";
     }
