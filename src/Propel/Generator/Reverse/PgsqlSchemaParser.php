@@ -10,10 +10,7 @@
 
 namespace Propel\Generator\Reverse;
 
-// TODO: to remove
-require_once 'phing/Task.php';
-use Task;
-
+use PDO;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\ColumnDefaultValue;
 use Propel\Generator\Model\Database;
@@ -23,8 +20,6 @@ use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Model\Unique;
 use Propel\Generator\Reverse\AbstractSchemaParser;
-
-use PDO;
 
 /**
  * Postgresql database schema parser.
@@ -89,7 +84,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
     /**
      *
      */
-    public function parse(Database $database, Task $task = null)
+    public function parse(Database $database)
     {
         $stmt = $this->dbh->query("SELECT version() as ver");
         $nativeVersion = $stmt->fetchColumn();
@@ -116,17 +111,11 @@ class PgsqlSchemaParser extends AbstractSchemaParser
         $tableWraps = array();
 
         // First load the tables (important that this happen before filling out details of tables)
-        if ($task) {
-            $task->log("Reverse Engineering Tables", Project::MSG_VERBOSE);
-        }
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $name = $row['relname'];
             $namespacename = $row['nspname'];
             if ($name == $this->getMigrationTable()) {
                 continue;
-            }
-            if ($task) {
-                $task->log("  Adding table '" . $name . "' in schema '" . $namespacename . "'", Project::MSG_VERBOSE);
             }
             $oid = $row['oid'];
             $table = new Table($name);
@@ -144,24 +133,12 @@ class PgsqlSchemaParser extends AbstractSchemaParser
         }
 
         // Now populate only columns.
-        if ($task) {
-            $task->log("Reverse Engineering Columns", Project::MSG_VERBOSE);
-        }
         foreach ($tableWraps as $wrap) {
-            if ($task) {
-                $task->log("  Adding columns for table '" . $wrap->table->getName() . "'", Project::MSG_VERBOSE);
-            }
             $this->addColumns($wrap->table, $wrap->oid, $version);
         }
 
         // Now add indexes and constraints.
-        if ($task) {
-            $task->log("Reverse Engineering Indices And Constraints", Project::MSG_VERBOSE);
-        }
         foreach ($tableWraps as $wrap) {
-            if ($task) {
-                $task->log("  Adding indices and constraints for table '" . $wrap->table->getName() . "'", Project::MSG_VERBOSE);
-            }
             $this->addForeignKeys($wrap->table, $wrap->oid, $version);
             $this->addIndexes($wrap->table, $wrap->oid, $version);
             $this->addPrimaryKey($wrap->table, $wrap->oid, $version);
@@ -170,9 +147,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
         // TODO - Handle Sequences ...
 
         return count($tableWraps);
-
     }
-
 
     /**
      * Adds Columns to the specified table.
@@ -192,21 +167,21 @@ class PgsqlSchemaParser extends AbstractSchemaParser
             att.attnotnull,
             def.adsrc,
             CASE WHEN att.attndims > 0 THEN 1 ELSE 0 END AS isarray,
-            CASE
-            WHEN ty.typname = 'bpchar'
-            THEN 'char'
-            WHEN ty.typname = '_bpchar'
-            THEN '_char'
-            ELSE
-            ty.typname
-            END AS typname,
-            ty.typtype
-            FROM pg_attribute att
-            JOIN pg_type ty ON ty.oid=att.atttypid
-            LEFT OUTER JOIN pg_attrdef def ON adrelid=att.attrelid AND adnum=att.attnum
-            WHERE att.attrelid = ? AND att.attnum > 0
-            AND att.attisdropped IS FALSE
-            ORDER BY att.attnum");
+                CASE
+                    WHEN ty.typname = 'bpchar'
+                    THEN 'char'
+                    WHEN ty.typname = '_bpchar'
+                    THEN '_char'
+                    ELSE
+                        ty.typname
+                        END AS typname,
+                        ty.typtype
+                        FROM pg_attribute att
+                        JOIN pg_type ty ON ty.oid=att.atttypid
+                        LEFT OUTER JOIN pg_attrdef def ON adrelid=att.attrelid AND adnum=att.attnum
+                        WHERE att.attrelid = ? AND att.attnum > 0
+                        AND att.attisdropped IS FALSE
+                        ORDER BY att.attnum");
 
         $stmt->bindValue(1, $oid, PDO::PARAM_INT);
         $stmt->execute();
@@ -378,23 +353,23 @@ class PgsqlSchemaParser extends AbstractSchemaParser
             confupdtype,
             confdeltype,
             CASE nl.nspname WHEN 'public' THEN cl.relname ELSE nl.nspname||'.'||cl.relname END as fktab,
-            array_agg(DISTINCT a2.attname) AS fkcols,
-            CASE nr.nspname WHEN 'public' THEN cr.relname ELSE nr.nspname||'.'||cr.relname END as reftab,
-            array_agg(DISTINCT a1.attname) AS refcols
-            FROM pg_constraint ct
-            JOIN pg_class cl ON cl.oid=conrelid
-            JOIN pg_class cr ON cr.oid=confrelid
-            JOIN pg_namespace nl ON nl.oid = cl.relnamespace
-            JOIN pg_namespace nr ON nr.oid = cr.relnamespace
-            LEFT JOIN pg_catalog.pg_attribute a1 ON a1.attrelid = ct.confrelid
-            LEFT JOIN pg_catalog.pg_attribute a2 ON a2.attrelid = ct.conrelid
-            WHERE
-            contype='f'
-            AND conrelid = ?
-            AND a2.attnum = ANY (ct.conkey)
-            AND a1.attnum = ANY (ct.confkey)
-            GROUP BY conname, confupdtype, confdeltype, fktab, reftab
-            ORDER BY conname");
+                array_agg(DISTINCT a2.attname) AS fkcols,
+                CASE nr.nspname WHEN 'public' THEN cr.relname ELSE nr.nspname||'.'||cr.relname END as reftab,
+                    array_agg(DISTINCT a1.attname) AS refcols
+                    FROM pg_constraint ct
+                    JOIN pg_class cl ON cl.oid=conrelid
+                    JOIN pg_class cr ON cr.oid=confrelid
+                    JOIN pg_namespace nl ON nl.oid = cl.relnamespace
+                    JOIN pg_namespace nr ON nr.oid = cr.relnamespace
+                    LEFT JOIN pg_catalog.pg_attribute a1 ON a1.attrelid = ct.confrelid
+                    LEFT JOIN pg_catalog.pg_attribute a2 ON a2.attrelid = ct.conrelid
+                    WHERE
+                    contype='f'
+                    AND conrelid = ?
+                    AND a2.attnum = ANY (ct.conkey)
+                    AND a1.attnum = ANY (ct.confkey)
+                    GROUP BY conname, confupdtype, confdeltype, fktab, reftab
+                    ORDER BY conname");
         $stmt->bindValue(1, $oid);
         $stmt->execute();
 

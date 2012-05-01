@@ -10,10 +10,6 @@
 
 namespace Propel\Generator\Reverse;
 
-// TODO: to remove
-require_once 'phing/Task.php';
-use Task;
-
 use PDO;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\Database;
@@ -78,7 +74,7 @@ class OracleSchemaParser extends AbstractSchemaParser
      * Searches for tables in the database. Maybe we want to search also the views.
      * @param    Database $database The Database model class to add tables to.
      */
-    public function parse(Database $database, Task $task = null)
+    public function parse(Database $database)
     {
         $tables = array();
         $stmt = $this->dbh->query("SELECT OBJECT_NAME FROM USER_OBJECTS WHERE OBJECT_TYPE = 'TABLE'");
@@ -87,9 +83,6 @@ class OracleSchemaParser extends AbstractSchemaParser
             'oracleAutoincrementSequencePattern'
         );
 
-        if ($task) {
-            $task->log("Reverse Engineering Table Structures", Project::MSG_VERBOSE);
-        }
         // First load the tables (important that this happen before filling out details of tables)
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             if (strpos($row['OBJECT_NAME'], '$') !== false) {
@@ -101,9 +94,6 @@ class OracleSchemaParser extends AbstractSchemaParser
             }
             $table = new Table($row['OBJECT_NAME']);
             $table->setIdMethod($database->getDefaultIdMethod());
-            if ($task) {
-                $task->log("Adding table '" . $table->getName() . "'", Project::MSG_VERBOSE);
-            }
             $database->addTable($table);
             // Add columns, primary keys and indexes.
             $this->addColumns($table);
@@ -129,14 +119,7 @@ class OracleSchemaParser extends AbstractSchemaParser
             $tables[] = $table;
         }
 
-        if ($task) {
-            $task->log("Reverse Engineering Foreign Keys", Project::MSG_VERBOSE);
-        }
-
         foreach ($tables as $table) {
-            if ($task) {
-                $task->log("Adding foreign keys for table '" . $table->getName() . "'", Project::MSG_VERBOSE);
-            }
             $this->addForeignKeys($table);
         }
 

@@ -10,10 +10,6 @@
 
 namespace Propel\Generator\Reverse;
 
-// TODO: to remove
-require_once 'phing/Task.php';
-use Task;
-
 use PDO;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\Database;
@@ -82,7 +78,7 @@ class SqliteSchemaParser extends AbstractSchemaParser
     /**
      *
      */
-    public function parse(Database $database, Task $task = null)
+    public function parse(Database $database)
     {
         $stmt = $this->dbh->query("SELECT name FROM sqlite_master WHERE type='table' UNION ALL SELECT name FROM sqlite_temp_master WHERE type='table' ORDER BY name;");
 
@@ -126,7 +122,6 @@ class SqliteSchemaParser extends AbstractSchemaParser
         $stmt = $this->dbh->query("PRAGMA table_info('" . $table->getName() . "')");
 
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-
             $name = $row['name'];
 
             $fulltype = $row['type'];
@@ -150,8 +145,8 @@ class SqliteSchemaParser extends AbstractSchemaParser
             $notNull = $row['notnull'];
             $default = $row['dflt_value'];
 
-
             $propelType = $this->getMappedPropelType(strtolower($type));
+
             if (!$propelType) {
                 $propelType = Column::DEFAULT_TYPE;
                 $this->warn("Column [" . $table->getName() . "." . $name. "] has a column type (".$type.") that Propel does not support.");
@@ -164,22 +159,20 @@ class SqliteSchemaParser extends AbstractSchemaParser
             // $column->getDomain()->replaceSqlType($type);
             $column->getDomain()->replaceSize($size);
             $column->getDomain()->replaceScale($scale);
+
             if ($default !== null) {
                 $column->getDomain()->setDefaultValue(new ColumnDefaultValue($default, ColumnDefaultValue::TYPE_VALUE));
             }
+
             $column->setAutoIncrement($autoincrement);
             $column->setNotNull($notNull);
-
 
             if (($row['pk'] == 1) || (strtolower($type) == 'integer')) {
                 $column->setPrimaryKey(true);
             }
 
             $table->addColumn($column);
-
         }
-
-
     } // addColumn()
 
     /**
@@ -190,7 +183,6 @@ class SqliteSchemaParser extends AbstractSchemaParser
         $stmt = $this->dbh->query("PRAGMA index_list('" . $table->getName() . "')");
 
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-
             $name = $row['name'];
             $index = new Index($name);
 
@@ -201,8 +193,6 @@ class SqliteSchemaParser extends AbstractSchemaParser
             }
 
             $table->addIndex($index);
-
         }
     }
-
 }
