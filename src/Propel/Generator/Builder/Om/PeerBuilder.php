@@ -819,7 +819,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
     static public function addInstanceToPool(\$obj, \$key = null)
     {
         if (Propel::isInstancePoolingEnabled()) {
-            if (\$key === null) {";
+            if (null === \$key) {";
 
         $pks = $this->getTable()->getPrimaryKey();
 
@@ -877,7 +877,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 
         if (count($pks) > 1) {
             $php = array();
-            for ($i=0; $i < count($pks); $i++) {
+            for ($i = 0; $i < count($pks); $i++) {
                 $php[] = "\$value[$i]";
             }
         } else {
@@ -2717,7 +2717,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
                 // Add objects for joined $joinClassName rows
 
                 \$key$index = ".$joinedTablePeerBuilder->getPeerClassName(true)."::getPrimaryKeyHashFromRow(\$row, \$startcol$index);
-                if (\$key$index !== null) {
+                if (null !== \$key$index) {
                     \$obj$index = ".$joinedTablePeerBuilder->getPeerClassName(true)."::getInstanceFromPool(\$key$index);
                     if (!\$obj$index) {
     ";

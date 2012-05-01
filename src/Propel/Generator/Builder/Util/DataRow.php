@@ -15,6 +15,7 @@ use Propel\Generator\Model\Table;
 class DataRow
 {
     private $table;
+
     private $columnValues;
 
     public function __construct(Table $table, $columnValues)
