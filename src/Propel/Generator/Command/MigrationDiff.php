@@ -165,7 +165,7 @@ class MigrationDiff extends AbstractCommand
 
         if (null !== $editorCmd = $input->getOption('editor')) {
             $output->writeln(sprintf('Using "%s" as text editor', $editorCmd));
-            shell_exec($editorCmd . ' ' . escapeshellarg($file);
+            shell_exec($editorCmd . ' ' . escapeshellarg($file));
         } else {
             $output->writeln('Please review the generated SQL statements, and add data migration code if necessary.');
             $output->writeln('Once the migration class is valid, call the "migrate" task to execute it.');
