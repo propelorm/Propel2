@@ -10,9 +10,6 @@
 
 namespace Propel\Generator\Reverse;
 
-// TODO: to remove
-use Task;
-
 use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Model\Database;
 use Propel\Runtime\Connection\ConnectionInterface;
@@ -62,8 +59,7 @@ interface SchemaParserInterface
      * Parse the schema and populate passed-in Database model object.
      *
      * @param      Database $database
-     * @param      Task $task
      * @return     int number of generated tables
      */
-    function parse(Database $database, Task $task = null);
+    function parse(Database $database);
 }

@@ -10,10 +10,6 @@
 
 namespace Propel\Generator\Reverse;
 
-// TODO: to remove
-require_once 'phing/Task.php';
-use Task;
-
 use PDO;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\Database;
@@ -95,7 +91,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
     /**
      *
      */
-    public function parse(Database $database, Task $task = null)
+    public function parse(Database $database)
     {
         $this->addVendorInfo = $this->getGeneratorConfig()->getBuildProperty('addVendorInfo');
 
@@ -103,21 +99,12 @@ class MysqlSchemaParser extends AbstractSchemaParser
 
         // First load the tables (important that this happen before filling out details of tables)
         $tables = array();
-
-        if ($task) {
-            $task->log("Reverse Engineering Tables", Project::MSG_VERBOSE);
-        }
-
         while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
             $name = $row[0];
             $type = $row[1];
 
             if ($name == $this->getMigrationTable() || $type != "BASE TABLE") {
                 continue;
-            }
-
-            if ($task) {
-                $task->log("  Adding table '" . $name . "'", Project::MSG_VERBOSE);
             }
 
             $table = new Table($name);
@@ -127,27 +114,12 @@ class MysqlSchemaParser extends AbstractSchemaParser
         }
 
         // Now populate only columns.
-        if ($task) {
-            $task->log("Reverse Engineering Columns", Project::MSG_VERBOSE);
-        }
-
         foreach ($tables as $table) {
-            if ($task) {
-                $task->log("  Adding columns for table '" . $table->getName() . "'", Project::MSG_VERBOSE);
-            }
             $this->addColumns($table);
         }
 
         // Now add indices and constraints.
-        if ($task) {
-            $task->log("Reverse Engineering Indices And Constraints", Project::MSG_VERBOSE);
-        }
-
         foreach ($tables as $table) {
-            if ($task) {
-                $task->log("  Adding indices and constraints for table '" . $table->getName() . "'", Project::MSG_VERBOSE);
-            }
-
             $this->addForeignKeys($table);
             $this->addIndexes($table);
             $this->addPrimaryKey($table);

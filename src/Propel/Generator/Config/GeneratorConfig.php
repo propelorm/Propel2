@@ -190,11 +190,13 @@ class GeneratorConfig implements GeneratorConfigInterface
      */
     public function getConfiguredSchemaParser(PDO $con = null)
     {
-        $clazz = $this->getClassName("reverseParserClass");
+        $clazz  = $this->getClassName("reverseParserClass");
         $parser = new $clazz();
+
         if (!$parser instanceof SchemaParserInterface) {
             throw new BuildException("Specified platform class ($clazz) does implement SchemaParserInterface interface.", $this->getLocation());
         }
+
         $parser->setConnection($con);
         $parser->setMigrationTable($this->getBuildProperty('migrationTable'));
         $parser->setGeneratorConfig($this);
@@ -212,7 +214,7 @@ class GeneratorConfig implements GeneratorConfigInterface
     public function getConfiguredBuilder(Table $table, $type)
     {
         $classname = $this->getBuilderClassName($type);
-        $builder = new $classname($table);
+        $builder   = new $classname($table);
         $builder->setGeneratorConfig($this);
 
         return $builder;
