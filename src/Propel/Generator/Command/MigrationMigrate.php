@@ -33,7 +33,7 @@ class MigrationMigrate extends AbstractCommand
             ->addOption('connection',       null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Connection to use', array())
             ->setName('migration:migrate')
             ->setDescription('Execute all pending migrations')
-            ;
+        ;
     }
 
     /**

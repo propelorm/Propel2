@@ -37,7 +37,7 @@ class GraphvizGenerate extends AbstractCommand
             ->addOption('output-dir',   null, InputOption::VALUE_REQUIRED,  'The output directory', self::DEFAULT_OUTPUT_DIRECTORY)
             ->setName('graphviz:generate')
             ->setDescription('Generate Graphviz files (.dot)')
-            ;
+        ;
     }
 
     /**
