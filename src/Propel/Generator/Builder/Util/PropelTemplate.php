@@ -10,7 +10,7 @@
 
 namespace Propel\Generator\Builder\Util;
 
-use \InvalidArgumentException;
+use Propel\Generator\Exception\InvalidArgumentException;
 
 /**
  * Simple templating system to ease behavior writing
@@ -19,8 +19,14 @@ use \InvalidArgumentException;
  */
 class PropelTemplate
 {
+    /**
+     * @var string
+     */
     protected $template;
 
+    /**
+     * @var string
+     */
     protected $templateFile;
 
     /**
@@ -76,14 +82,13 @@ class PropelTemplate
         ob_start();
         ob_implicit_flush(0);
 
-        try
-        {
+        try {
             if (null !== $this->templateFile) {
                 require $this->templateFile;
             } else {
                 eval('?>' . $this->template . '<?php ');
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // need to end output buffering before throwing the exception #7596
             ob_end_clean();
             throw $e;
