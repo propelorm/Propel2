@@ -10,9 +10,8 @@
 
 namespace Propel\Tests\Generator\Behavior;
 
-use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
-
 use Propel\Tests\Bookstore\Behavior\Table3;
+use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
 /**
  * Tests the generated Object behavior hooks.
@@ -148,10 +147,12 @@ class ObjectBehaviorTest extends BookstoreTestBase
 
     public function testObjectFilter()
     {
-        $this->markTestSkipped('Need to fix this test as we cannot add more than one class in the same PHP file');
-
         $t = new Table3();
-        $this->assertTrue(class_exists('testObjectFilter'), 'objectFilter hook allows complete manipulation of the generated script');
-        $this->assertEquals('Propel\Generator\Builder\Om\ObjectBuilder', testObjectFilter::FOO, 'objectFilter hook is called with the object builder as parameter');
+        $this->assertTrue(class_exists('Propel\Tests\Bookstore\Behavior\Base\testObjectFilter'),
+            'objectFilter hook allows complete manipulation of the generated script'
+        );
+        $this->assertEquals('Propel\Generator\Builder\Om\ObjectBuilder', \Propel\Tests\Bookstore\Behavior\Base\testObjectFilter::FOO,
+            'objectFilter hook is called with the object builder as parameter'
+        );
     }
 }

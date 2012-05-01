@@ -258,11 +258,12 @@ EOF;
     public function testJoinWithI18nDoesNotExecuteAdditionalQueryWhenNoTranslationIsFound()
     {
         $this->markTestSkipped();
-        $con = Propel::getServiceContainer()->getConnection(I18nBehaviorTest11Peer::DATABASE_NAME);
+
+        $con = Propel::getServiceContainer()->getConnection(\I18nBehaviorTest11Peer::DATABASE_NAME);
         $con->useDebug(true);
         \I18nBehaviorTest11Query::create()->deleteAll();
         \I18nBehaviorTest11I18nQuery::create()->deleteAll();
-        $o = new I18nBehaviorTest11();
+        $o = new \I18nBehaviorTest11();
         $o->save();
         $o = \I18nBehaviorTest11Query::create()
             ->joinWithI18n('en_EN')

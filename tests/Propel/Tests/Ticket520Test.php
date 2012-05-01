@@ -11,12 +11,10 @@
 namespace Propel\Tests;
 
 use Propel\Runtime\Query\Criteria;
-
-use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
-
 use Propel\Tests\Bookstore\Author;
 use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\BookPeer;
+use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
 /* It's only fair to admit that these tests were carefully crafted
 after studying the current implementation to make it look as bad as
@@ -253,5 +251,4 @@ class Ticket520Test extends BookstoreTestBase
         $this->assertFalse($b1->isNew());
         $this->assertFalse($b2->isNew());
     }
-
 }

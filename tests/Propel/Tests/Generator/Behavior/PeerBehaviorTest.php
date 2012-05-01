@@ -59,10 +59,12 @@ class PeerBehaviorTest extends BookstoreTestBase
 
     public function testPeerFilter()
     {
-        $this->markTestSkipped('Need to fix this test as we cannot add more than one class in the same PHP file');
-
         Table3Peer::TABLE_NAME;
-        $this->assertTrue(class_exists('testPeerFilter'), 'peerFilter hook allows complete manipulation of the generated script');
-        $this->assertEquals('Propel\Generator\Builder\Om\PeerBuilder', testPeerFilter::FOO, 'peerFilter hook is called with the peer builder as parameter');
+        $this->assertTrue(class_exists('Propel\Tests\Bookstore\Behavior\Base\testPeerFilter'),
+            'peerFilter hook allows complete manipulation of the generated script'
+        );
+        $this->assertEquals('Propel\Generator\Builder\Om\PeerBuilder', \Propel\Tests\Bookstore\Behavior\Base\testPeerFilter::FOO,
+            'peerFilter hook is called with the peer builder as parameter'
+        );
     }
 }
