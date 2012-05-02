@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <phpunit backupGlobals="false"
     backupStaticAttributes="false"
     colors="true"
@@ -22,7 +21,11 @@
         <whitelist>
             <directory>./src/Propel/</directory>
             <exclude>
+                <directory>./bin</directory>
                 <directory>./src/Propel/Generator/Behavior/*/templates/</directory>
+                <directory>./tests</directory>
+                <directory>./tools</directory>
+                <directory>./vendor</directory>
             </exclude>
         </whitelist>
     </filter>
