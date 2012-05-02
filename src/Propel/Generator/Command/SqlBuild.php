@@ -44,7 +44,7 @@ class SqlBuild extends AbstractCommand
             ->addOption('table-prefix', null, InputOption::VALUE_REQUIRED,  'Add a prefix to all the table names in the database', '')
             ->setName('sql:build')
             ->setDescription('Build SQL files')
-            ;
+        ;
     }
 
     /**

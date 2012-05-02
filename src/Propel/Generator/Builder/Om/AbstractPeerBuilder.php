@@ -40,7 +40,6 @@ abstract class AbstractPeerBuilder extends AbstractOMBuilder
         parent::__construct($table);
 
         $this->basePeerClassName = $this->basePeerClass = $this->getBasePeer($table);
-        ;
 
         if (false !== $pos = strrpos($this->basePeerClassName, '.')) {
             $this->basePeerClassName = substr($this->basePeerClassName, $pos + 1);

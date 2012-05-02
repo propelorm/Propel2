@@ -44,7 +44,7 @@ class RelationMap
 
     protected $type;
 
-    protected$localTable;
+    protected $localTable;
 
     protected $foreignTable;
 
@@ -206,7 +206,7 @@ class RelationMap
         if ($direction == RelationMap::LEFT_TO_RIGHT && $this->getType() == RelationMap::MANY_TO_ONE) {
             $direction = RelationMap::LOCAL_TO_FOREIGN;
         }
-        for ($i=0, $size=count($this->localColumns); $i < $size; $i++) {
+        for ($i = 0, $size = count($this->localColumns); $i < $size; $i++) {
             if ($direction == RelationMap::LOCAL_TO_FOREIGN) {
                 $h[$this->localColumns[$i]->getFullyQualifiedName()] = $this->foreignColumns[$i]->getFullyQualifiedName();
             } else {

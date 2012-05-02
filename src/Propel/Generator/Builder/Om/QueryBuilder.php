@@ -22,14 +22,13 @@ use Propel\Generator\Model\PropelTypes;
  */
 class QueryBuilder extends AbstractOMBuilder
 {
-
     /**
      * Gets the package for the [base] object classes.
      * @return     string
      */
     public function getPackage()
     {
-        return parent::getPackage() . ".Base";
+        return parent::getPackage() . '.Base';
     }
 
     public function getNamespace()
@@ -556,7 +555,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     /**
      * Find objects by primary key
      * <code>";
-        if ($count === 1) {
+        if (1 === $count) {
             $script .= "
      * \$objs = \$c->findPks(array(12, 56, 832), \$con);";
         } else {
@@ -572,7 +571,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
      */
     public function findPks(\$keys, \$con = null)
     {
-        if (\$con === null) {
+        if (null === \$con) {
             \$con = Propel::getServiceContainer()->getReadConnection(\$this->getDbName());
         }
         \$this->basePreSelect(\$con);
@@ -604,7 +603,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     {";
         $table = $this->getTable();
         $pks = $table->getPrimaryKey();
-        if (count($pks) === 1) {
+        if (1 === count($pks)) {
             // simple primary key
             $col = $pks[0];
             $const = $this->getColumnConstant($col);
@@ -647,7 +646,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     {";
         $table = $this->getTable();
         $pks = $table->getPrimaryKey();
-        if (count($pks) === 1) {
+        if (1 === count($pks)) {
             // simple primary key
             $col = $pks[0];
             $const = $this->getColumnConstant($col);
@@ -666,7 +665,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
                 $const = $this->getColumnConstant($col);
                 $script .= "
             \$cton$i = \$this->getNewCriterion($const, \$key[$i], Criteria::EQUAL);";
-                if ($i>0) {
+                if ($i > 0) {
                     $script .= "
             \$cton0->addAnd(\$cton$i);";
                 }
@@ -1420,5 +1419,4 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     {
         return $this->getBehaviorContentBase($contentName, 'QueryBuilderModifier');
     }
-
 }

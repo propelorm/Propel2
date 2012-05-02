@@ -77,7 +77,7 @@ class TestPrepare extends AbstractCommand
             ))
             ->setName('test:prepare')
             ->setDescription('Prepare the Propel test suite by building fixtures')
-            ;
+        ;
     }
 
     /**

@@ -31,7 +31,7 @@ class ConfigConvertXml extends Command
             ->addOption('output-file', null, InputOption::VALUE_REQUIRED,  'The output file',       self::DEFAULT_OUTPUT_FILE)
             ->setName('config:convert-xml')
             ->setDescription('Transform the XML configuration to PHP code leveraging the ServiceContainer')
-            ;
+        ;
     }
 
     /**
