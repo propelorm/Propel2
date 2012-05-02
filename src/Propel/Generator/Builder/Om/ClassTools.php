@@ -67,7 +67,7 @@ class ClassTools
      */
     static public function createFilePath($path, $classname = null, $extension = '.php')
     {
-        if (null === $className) {
+        if (null === $classname) {
             return $path . $extension;
         }
 
