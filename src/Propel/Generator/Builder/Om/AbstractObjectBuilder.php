@@ -49,11 +49,14 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
         foreach ($table->getColumns() as $col) {
 
             // if they're not using the DateTime class than we will generate "compatibility" accessor method
-            if ($col->getType() === PropelTypes::DATE || $col->getType() === PropelTypes::TIME || $col->getType() === PropelTypes::TIMESTAMP) {
+            if (PropelTypes::DATE === $col->getType()
+                || PropelTypes::TIME === $col->getType()
+                || PropelTypes::TIMESTAMP === $col->getType()
+            ) {
                 $this->addTemporalAccessor($script, $col);
-            } elseif ($col->getType() === PropelTypes::OBJECT) {
+            } elseif (PropelTypes::OBJECT === $col->getType()) {
                 $this->addObjectAccessor($script, $col);
-            } elseif ($col->getType() === PropelTypes::PHP_ARRAY) {
+            } elseif (PropelTypes::PHP_ARRAY === $col->getType()) {
                 $this->addArrayAccessor($script, $col);
                 if ($col->isNamePlural()) {
                     $this->addHasArrayElement($script, $col);
@@ -81,11 +84,15 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
         foreach ($this->getTable()->getColumns() as $col) {
             if ($col->isLobType()) {
                 $this->addLobMutator($script, $col);
-            } elseif ($col->getType() === PropelTypes::DATE || $col->getType() === PropelTypes::TIME || $col->getType() === PropelTypes::TIMESTAMP) {
+            } elseif (
+                PropelTypes::DATE === $col->getType()
+                || PropelTypes::TIME === $col->getType()
+                || PropelTypes::TIMESTAMP === $col->getType()
+            ) {
                 $this->addTemporalMutator($script, $col);
-            } elseif ($col->getType() === PropelTypes::OBJECT) {
+            } elseif (PropelTypes::OBJECT === $col->getType()) {
                 $this->addObjectMutator($script, $col);
-            } elseif ($col->getType() === PropelTypes::PHP_ARRAY) {
+            } elseif (PropelTypes::PHP_ARRAY === $col->getType()) {
                 $this->addArrayMutator($script, $col);
                 if ($col->isNamePlural()) {
                     $this->addAddArrayElement($script, $col);
@@ -107,10 +114,11 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
      * If not, will return 'propel.om.BaseObject'
      * @return     string
      */
-    protected function getBaseClass() {
+    protected function getBaseClass()
+    {
         $class = $this->getTable()->getBaseClass();
-        if ($class === null) {
-            $class = "propel.om.BaseObject";
+        if (null === $class) {
+            $class = 'propel.om.BaseObject';
         }
 
         return $class;
@@ -121,10 +129,11 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
      * If not, will return 'propel.om.Persistent'.
      * @return     string
      */
-    protected function getInterface() {
+    protected function getInterface()
+    {
         $interface = $this->getTable()->getInterface();
-        if ($interface === null && !$this->getTable()->isReadOnly()) {
-            $interface = "propel.om.Persistent";
+        if (null === $interface && !$this->getTable()->isReadOnly()) {
+            $interface = 'propel.om.Persistent';
         }
 
         return $interface;

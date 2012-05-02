@@ -205,7 +205,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     {
         $pkg = $this->getPackage();
 
-        if (strpos($pkg, '/') !== false) {
+        if (false !== strpos($pkg, '/')) {
             $pkg = preg_replace('#\.(map|om)$#', '/\1', $pkg);
             $pkg = preg_replace('#\.(Map|Om)$#', '/\1', $pkg);
 
@@ -238,11 +238,12 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         if ($fqcn) {
             return $builder->getFullyQualifiedClassName();
         }
+
         $namespace = $builder->getNamespace();
         $class = $builder->getUnqualifiedClassName();
 
         if (isset($this->declaredClasses[$namespace])
-           && isset($this->declaredClasses[$namespace][$class])) {
+            && isset($this->declaredClasses[$namespace][$class])) {
             return $this->declaredClasses[$namespace][$class];
         }
 
@@ -261,7 +262,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     {
         //check if the class is already declared
         if (isset($this->declaredClasses[$namespace])
-           && isset($this->declaredClasses[$namespace][$class])) {
+            && isset($this->declaredClasses[$namespace][$class])) {
             return $this->declaredClasses[$namespace][$class];
         }
 
@@ -311,10 +312,12 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         if ($namespace == $this->getNamespace()) {
             return false;
         }
+
         if (str_replace('\\Base', '', $namespace) == str_replace('\\Base', '', $this->getNamespace())) {
             return true;
         }
-        if ('' == $namespace && 'Base' == $this->getNamespace()) {
+
+        if (empty($namespace) && 'Base' === $this->getNamespace()) {
             if (str_replace(array('Peer','Query'), '', $class) == str_replace(array('Peer','Query'), '', $this->getUnqualifiedClassName())) {
                 return true;
             } elseif ((false !== strpos($class,'Peer') || false !== strpos($class,'Query'))) {
@@ -324,6 +327,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
                 return true;
             }
         }
+
         if ('Base' == $namespace && '' == $this->getNamespace()) {
             if (false === array_search($class, $this->whiteListOfDeclaredClasses, true)) { //force alias for model without namespace
 
@@ -415,7 +419,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     public function getNamespaceStatement()
     {
         $namespace = $this->getNamespace();
-        if ($namespace != '') {
+        if (!empty($namespace)) {
             return sprintf("namespace %s;
 
 ", $namespace);
@@ -500,14 +504,14 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      */
     public function getColumnConstant($col, $classname = null)
     {
-        if ($col === null) {
-            $e = new Exception("No col specified.");
-            print $e;
-            throw $e;
+        if (null === $col) {
+            throw new Exception('No columns were specified.');
         }
-        if ($classname === null) {
+
+        if (null === $classname) {
             return $this->getBuildProperty('classPrefix') . $col->getConstantName();
         }
+
         // was it overridden in schema.xml ?
         if ($col->getPeerName()) {
             $const = strtoupper($col->getPeerName());
@@ -526,8 +530,8 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     public function getBasePeer(Table $table)
     {
         $class = $table->getBasePeer();
-        if ($class === null) {
-            $class = "propel.util.BasePeer";
+        if (null === $class) {
+            $class = 'propel.util.BasePeer';
         }
 
         return $class;
@@ -556,6 +560,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         if ($defaultJoin = $fk->getDefaultJoin()) {
             return "'" . $defaultJoin . "'";
         }
+
         if ($fk->isLocalColumnsRequired()) {
             return 'Criteria::INNER_JOIN';
         }
@@ -581,14 +586,14 @@ abstract class AbstractOMBuilder extends DataModelBuilder
             }
 
             return $fk->getPhpName();
-        } else {
-            $className = $fk->getForeignTable()->getPhpName();
-            if ($plural) {
-                $className = $this->getPluralizer()->getPluralForm($className);
-            }
-
-            return $className . $this->getRelatedBySuffix($fk);
         }
+
+        $className = $fk->getForeignTable()->getPhpName();
+        if ($plural) {
+            $className = $this->getPluralizer()->getPluralForm($className);
+        }
+
+        return $className . $this->getRelatedBySuffix($fk);
     }
 
     /**
@@ -618,7 +623,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
             }
         }
 
-        if ($relCol != '') {
+        if (!empty($relCol)) {
             $relCol = 'RelatedBy' . $relCol;
         }
 
@@ -673,7 +678,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
             }
         }
 
-        if ($relCol != '') {
+        if (!empty($relCol)) {
             $relCol = 'RelatedBy' . $relCol;
         }
 

@@ -34,7 +34,7 @@ abstract class AbstractCommand extends Command
         $this
             ->addOption('platform',  null, InputOption::VALUE_REQUIRED,  'The platform', self::DEFAULT_PLATFORM)
             ->addOption('input-dir', null, InputOption::VALUE_REQUIRED,  'The input directory', self::DEFAULT_INPUT_DIRECTORY)
-            ;
+        ;
     }
 
     protected function getBuildProperties($file)
@@ -48,7 +48,7 @@ abstract class AbstractCommand extends Command
         foreach ($lines as $line) {
             $line = trim($line);
 
-            if ('' == $line || in_array($line[0], array('#', ';'))) {
+            if (empty($line) || in_array($line[0], array('#', ';'))) {
                 continue;
             }
 

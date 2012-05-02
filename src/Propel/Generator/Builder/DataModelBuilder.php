@@ -457,8 +457,9 @@ abstract class DataModelBuilder
     {
         if (null === $this->platform) {
             // try to load the platform from the table
-            if ($this->getTable() && $this->getTable()->getDatabase()) {
-                $this->setPlatform($this->getTable()->getDatabase()->getPlatform());
+            $table = $this->getTable();
+            if ($table && $database = $table->getDatabase()) {
+                $this->setPlatform($database->getPlatform());
             }
         }
 
@@ -532,5 +533,4 @@ abstract class DataModelBuilder
     {
         return $this->getBuildProperty('classPrefix') . $identifier;
     }
-
 }

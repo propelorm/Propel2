@@ -27,12 +27,11 @@ class ClassTools
      */
     static public function classname($qualifiedName)
     {
-        $pos = strrpos($qualifiedName, '.');
-        if ($pos === false) {
+        if (false === $pos = strrpos($qualifiedName, '.')) {
             return $qualifiedName;  // there is no '.' in the qualifed name
-        } else {
-            return substr($qualifiedName, $pos + 1); // start just after '.'
         }
+
+        return substr($qualifiedName, $pos + 1); // start just after '.'
     }
 
     /**
@@ -68,15 +67,15 @@ class ClassTools
      */
     static public function createFilePath($path, $classname = null, $extension = '.php')
     {
-        if ($classname !== null) {
-            if ($path !== '') {
-                $path .= '/';
-            }
-
-            return $path . $classname . $extension;
-        } else {
+        if (null === $className) {
             return $path . $extension;
         }
+
+        if (!empty($path)) {
+            $path .= '/';
+        }
+
+        return $path . $classname . $extension;
     }
 
     /**
@@ -84,10 +83,10 @@ class ClassTools
      * If not, will return 'propel.util.BasePeer'
      * @return     string
      */
-    static public function getBasePeer(Table $table) {
-        $class = $table->getBasePeer();
-        if ($class === null) {
-            $class = "propel.util.BasePeer";
+    static public function getBasePeer(Table $table)
+    {
+        if (null === $class = $table->getBasePeer()) {
+            $class = 'propel.util.BasePeer';
         }
 
         return $class;
@@ -98,10 +97,10 @@ class ClassTools
      * If not, will return 'propel.om.BaseObject'
      * @return     string
      */
-    static public function getBaseClass(Table $table) {
-        $class = $table->getBaseClass();
-        if ($class === null) {
-            $class = "propel.om.BaseObject";
+    static public function getBaseClass(Table $table)
+    {
+        if (null === $class = $table->getBaseClass()) {
+            $class = 'propel.om.BaseObject';
         }
 
         return $class;
@@ -112,10 +111,11 @@ class ClassTools
      * If not, will return 'propel.om.Persistent'.
      * @return     string
      */
-    static public function getInterface(Table $table) {
+    static public function getInterface(Table $table)
+    {
         $interface = $table->getInterface();
-        if ($interface === null && !$table->isReadOnly()) {
-            $interface = "propel.om.Persistent";
+        if (null === $interface && !$table->isReadOnly()) {
+            $interface = 'propel.om.Persistent';
         }
 
         return $interface;
@@ -136,7 +136,7 @@ class ClassTools
             'eval', 'exit', 'extends', 'for', 'foreach', 'function', 'global',
             'if', 'include', 'include_once', 'isset', 'list', 'new', 'print', 'require',
             'require_once', 'return', 'static', 'switch', 'unset', 'use', 'var', 'while',
-            '__FUNCTION__', '__CLASS__', '__METHOD__', 'final', 'php_user_filter', 'interface',
+            '__FUNCTION__', '__CLASS__', '__METHOD__', '__DIR__', '__NAMESPACE__', 'final', 'php_user_filter', 'interface',
             'implements', 'extends', 'public', 'protected', 'private', 'abstract', 'clone', 'try', 'catch',
             'throw', 'this', 'namespace'
         );

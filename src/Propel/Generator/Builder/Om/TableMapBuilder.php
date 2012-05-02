@@ -32,15 +32,16 @@ class TableMapBuilder extends AbstractOMBuilder
 
     public function getNamespace()
     {
-        if ($namespace = parent::getNamespace()) {
-            if ($this->getGeneratorConfig() && $omns = $this->getGeneratorConfig()->getBuildProperty('namespaceMap')) {
-                return $namespace . '\\' . $omns;
-            } else {
-                return $namespace .'Map';
-            }
-        } else {
+        if (!$namespace = parent::getNamespace()) {
             return 'Map';
         }
+
+        if ($this->getGeneratorConfig()
+            && $omns = $this->getGeneratorConfig()->getBuildProperty('namespaceMap')) {
+            return $namespace . '\\' . $omns;
+        }
+
+        return $namespace .'Map';
     }
 
     /**
@@ -195,8 +196,8 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
             $script .= "
         // columns";
         foreach ($table->getColumns() as $col) {
-            $cup=strtoupper($col->getName());
-            $cfc=$col->getPhpName();
+            $cup = strtoupper($col->getName());
+            $cfc = $col->getPhpName();
             if (!$col->getSize()) {
                 $size = "null";
             } else {

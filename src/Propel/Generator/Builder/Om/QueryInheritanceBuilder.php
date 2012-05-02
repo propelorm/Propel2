@@ -44,13 +44,13 @@ class QueryInheritanceBuilder extends AbstractOMBuilder
      */
     public function getPackage()
     {
-        return ($this->getChild()->getPackage() ? $this->getChild()->getPackage() : parent::getPackage()) . ".Base";
+        return ($this->getChild()->getPackage() ? $this->getChild()->getPackage() : parent::getPackage()) . '.Base';
     }
 
     public function getNamespace()
     {
         if ($namespace = parent::getNamespace()) {
-                return $namespace . '\\Base';
+            return $namespace . '\\Base';
         }
 
         return 'Base';
@@ -88,12 +88,12 @@ class QueryInheritanceBuilder extends AbstractOMBuilder
         $ancestorClassName = ClassTools::classname($this->getChild()->getAncestor());
         if ($this->getDatabase()->hasTableByPhpName($ancestorClassName)) {
             return $this->getNewStubQueryBuilder($this->getDatabase()->getTableByPhpName($ancestorClassName))->getUnqualifiedClassName();
-        } else {
-            // find the inheritance for the parent class
-            foreach ($this->getTable()->getChildrenColumn()->getChildren() as $child) {
-                if ($child->getClassName() == $ancestorClassName) {
-                    return $this->getNewStubQueryInheritanceBuilder($child)->getUnqualifiedClassName();
-                }
+        }
+
+        // find the inheritance for the parent class
+        foreach ($this->getTable()->getChildrenColumn()->getChildren() as $child) {
+            if ($child->getClassName() == $ancestorClassName) {
+                return $this->getNewStubQueryInheritanceBuilder($child)->getUnqualifiedClassName();
             }
         }
     }
