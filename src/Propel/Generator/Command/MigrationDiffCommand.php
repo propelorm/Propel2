@@ -14,7 +14,6 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\Output;
-
 use Propel\Generator\Config\GeneratorConfig;
 use Propel\Generator\Exception\RuntimeException;
 use Propel\Generator\Manager\MigrationManager;
@@ -24,7 +23,7 @@ use Propel\Generator\Util\Filesystem;
 /**
  * @author William Durand <william.durand1@gmail.com>
  */
-class MigrationDiff extends AbstractCommand
+class MigrationDiffCommand extends AbstractCommand
 {
     const DEFAULT_OUTPUT_DIRECTORY  = 'generated-diff-classes';
 
