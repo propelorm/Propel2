@@ -39,7 +39,7 @@ class QuickBuilderTest extends \PHPUnit_Framework_TestCase
 
     public function simpleSchemaProvider()
     {
-        $schema = <<<EOF
+        $xmlSchema = <<<EOF
 <database name="test_quick_build_2" namespace="MyNameSpace">
     <table name="quick_build_foo_1">
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
@@ -48,7 +48,7 @@ class QuickBuilderTest extends \PHPUnit_Framework_TestCase
 </database>
 EOF;
         $builder = new QuickBuilder();
-        $builder->setSchema($schema);
+        $builder->setSchema($xmlSchema);
 
         return array(array($builder));
     }
@@ -128,7 +128,7 @@ EOF;
 
     public function testBuild()
     {
-        $schema = <<<EOF
+        $xmlSchema = <<<EOF
 <database name="test_quick_build_2" namespace="MyNameSpace2">
     <table name="quick_build_foo_2">
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
@@ -137,7 +137,7 @@ EOF;
 </database>
 EOF;
         $builder = new QuickBuilder();
-        $builder->setSchema($schema);
+        $builder->setSchema($xmlSchema);
         $builder->build();
         $this->assertEquals(0, QuickBuildFoo2Query::create()->count());
         $foo = new QuickBuildFoo2();

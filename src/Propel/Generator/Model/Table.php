@@ -1046,7 +1046,7 @@ class Table extends ScopedElement implements IdMethod
      */
     public function getGeneratorConfig()
     {
-        return $this->getDatabase()->getSchema()->getGeneratorConfig();
+        return $this->getDatabase()->getMappingSchema()->getGeneratorConfig();
     }
 
     /**

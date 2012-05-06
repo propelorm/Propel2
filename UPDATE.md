@@ -63,7 +63,7 @@ Before:
 
 After:
 
-    public function setSchema(Schema $parent)
+    public function setMappingSchema(Schema $parent)
 
 Before:
 

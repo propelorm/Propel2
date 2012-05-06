@@ -415,7 +415,7 @@ class Database extends ScopedElement
      *
      * @param Schema $parent The parent schema
      */
-    public function setSchema(Schema $parent)
+    public function setMappingSchema(Schema $parent)
     {
         $this->parentSchema = $parent;
     }
@@ -425,7 +425,7 @@ class Database extends ScopedElement
      *
      * @return Schema
      */
-    public function getSchema()
+    public function getMappingSchema()
     {
         return $this->parentSchema;
     }
