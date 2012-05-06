@@ -39,7 +39,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
      */
     public function testIdMethodHandling()
     {
-        $xmlToAppData = new SchemaReader();
+        $schemaReader = new SchemaReader();
         $schema = <<<EOF
 <database name="iddb" defaultIdMethod="native">
   <table name="table_native">
@@ -52,7 +52,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
   </table>
 </database>
 EOF;
-        $appData = $xmlToAppData->parseString($schema);
+        $appData = $schemaReader->parseString($schema);
 
         $db = $appData->getDatabase("iddb");
         $this->assertEquals(IdMethod::NATIVE, $db->getDefaultIdMethod());
@@ -66,7 +66,7 @@ EOF;
 
     public function testGeneratorConfig()
     {
-        $xmlToAppData = new SchemaReader();
+        $schemaReader = new SchemaReader();
         $schema = <<<EOF
 <database name="test1">
   <table name="table1">
@@ -74,7 +74,7 @@ EOF;
   </table>
 </database>
 EOF;
-        $appData = $xmlToAppData->parseString($schema);
+        $appData = $schemaReader->parseString($schema);
         $table = $appData->getDatabase('test1')->getTable('table1');
         $config = new GeneratorConfig();
         $config->setBuildProperties(array('propel.foo.bar.class' => 'bazz'));
@@ -85,13 +85,13 @@ EOF;
 
     public function testAddBehavior()
     {
-        $xmlToAppData = new SchemaReader(new DefaultPlatform());
+        $schemaReader = new SchemaReader(new DefaultPlatform());
         $config = new GeneratorConfig();
         $config->setBuildProperties(array(
             'propel.platform.class' => 'propel.engine.platform.DefaultPlatform',
             'propel.behavior.timestampable.class' => '\Propel\Generator\Behavior\TimestampableBehavior'
         ));
-        $xmlToAppData->setGeneratorConfig($config);
+        $schemaReader->setGeneratorConfig($config);
         $schema = <<<EOF
 <database name="test1">
   <table name="table1">
@@ -100,7 +100,7 @@ EOF;
   </table>
 </database>
 EOF;
-        $appData = $xmlToAppData->parseString($schema);
+        $appData = $schemaReader->parseString($schema);
         $table = $appData->getDatabase('test1')->getTable('table1');
         $this->assertThat($table->getBehavior('timestampable'), $this->isInstanceOf('\Propel\Generator\Behavior\Timestampable\TimestampableBehavior'), 'addBehavior() uses the behavior class defined in build.properties');
     }
@@ -110,7 +110,7 @@ EOF;
      */
     public function testUniqueColumnName()
     {
-        $xmlToAppData = new SchemaReader();
+        $schemaReader = new SchemaReader();
         $schema = <<<EOF
 <database name="columnTest" defaultIdMethod="native">
     <table name="columnTestTable">
@@ -121,7 +121,7 @@ EOF;
 </database>
 EOF;
         // Parsing file with duplicate column names in one table throws exception
-        $appData = $xmlToAppData->parseString($schema);
+        $appData = $schemaReader->parseString($schema);
     }
 
     /**
@@ -129,7 +129,7 @@ EOF;
      */
     public function testUniqueTableName()
     {
-        $xmlToAppData = new SchemaReader();
+        $schemaReader = new SchemaReader();
         $schema = <<<EOF
 <database name="columnTest" defaultIdMethod="native">
     <table name="columnTestTable">
@@ -143,7 +143,7 @@ EOF;
 </database>
 EOF;
         // Parsing file with duplicate table name throws exception
-        $appData = $xmlToAppData->parseString($schema);
+        $appData = $schemaReader->parseString($schema);
     }
 
     public function providerForTestHasColumn()
@@ -251,7 +251,7 @@ EOF;
 
     public function testRemoveValidatorForColumn()
     {
-        $xmlToAppData = new SchemaReader(new DefaultPlatform());
+        $schemaReader = new SchemaReader(new DefaultPlatform());
         $schema = <<<EOF
 <database name="test">
   <table name="table1">
@@ -263,7 +263,7 @@ EOF;
   </table>
 </database>
 EOF;
-        $appData = $xmlToAppData->parseString($schema);
+        $appData = $schemaReader->parseString($schema);
         $table1 = $appData->getDatabase('test')->getTable('table1');
         $title1Column = $table1->getColumn('title1');
         $this->assertNotNull($title1Column->getValidator());
@@ -281,8 +281,8 @@ EOF;
   </table>
 </database>
 EOF;
-        $xmlToAppData = new SchemaReader(new DefaultPlatform());
-        $appData1 = $xmlToAppData->parseString($schema1);
+        $schemaReader = new SchemaReader(new DefaultPlatform());
+        $appData1 = $schemaReader->parseString($schema1);
         $schema2 = <<<EOF
 <database name="DB1" namespace="NS2">
   <table name="table2">
@@ -291,8 +291,8 @@ EOF;
   </table>
 </database>
 EOF;
-        $xmlToAppData = new SchemaReader(new DefaultPlatform());
-        $appData2 = $xmlToAppData->parseString($schema2);
+        $schemaReader = new SchemaReader(new DefaultPlatform());
+        $appData2 = $schemaReader->parseString($schema2);
         $appData1->joinAppDatas(array($appData2));
         $this->assertEquals('NS1', $appData1->getDatabase('DB1')->getTable('table1')->getNamespace());
         $this->assertEquals('NS2', $appData1->getDatabase('DB1')->getTable('table2')->getNamespace());
@@ -310,9 +310,9 @@ EOF;
 EOF;
         $config = new GeneratorConfig();
         $config->setBuildProperties(array('propel.namespace.autoPackage' => 'true'));
-        $xmlToAppData = new SchemaReader(new DefaultPlatform());
-        $xmlToAppData->setGeneratorConfig($config);
-        $table = $xmlToAppData->parseString($schema)->getDatabase('DB')->getTable('table');
+        $schemaReader = new SchemaReader(new DefaultPlatform());
+        $schemaReader->setGeneratorConfig($config);
+        $table = $schemaReader->parseString($schema)->getDatabase('DB')->getTable('table');
         $this->assertEquals('NS', $table->getPackage());
     }
 
@@ -328,9 +328,9 @@ EOF;
 EOF;
         $config = new GeneratorConfig();
         $config->setBuildProperties(array('propel.namespace.autoPackage' => 'true'));
-        $xmlToAppData = new SchemaReader(new DefaultPlatform());
-        $xmlToAppData->setGeneratorConfig($config);
-        $table = $xmlToAppData->parseString($schema)->getDatabase('DB')->getTable('table');
+        $schemaReader = new SchemaReader(new DefaultPlatform());
+        $schemaReader->setGeneratorConfig($config);
+        $table = $schemaReader->parseString($schema)->getDatabase('DB')->getTable('table');
         $this->assertEquals('NS1.NS2', $table->getPackage());
     }
 
@@ -346,9 +346,9 @@ EOF;
 EOF;
         $config = new GeneratorConfig();
         $config->setBuildProperties(array('propel.namespace.autoPackage' => 'true'));
-        $xmlToAppData = new SchemaReader(new DefaultPlatform());
-        $xmlToAppData->setGeneratorConfig($config);
-        $table = $xmlToAppData->parseString($schema)->getDatabase('DB')->getTable('table');
+        $schemaReader = new SchemaReader(new DefaultPlatform());
+        $schemaReader->setGeneratorConfig($config);
+        $table = $schemaReader->parseString($schema)->getDatabase('DB')->getTable('table');
         $this->assertEquals('foo', $table->getPackage());
     }
 
@@ -441,7 +441,7 @@ EOF;
 
     public function testIsCrossRefAttribute()
     {
-        $xmlToAppData = new SchemaReader();
+        $schemaReader = new SchemaReader();
         $schema = <<<EOF
 <database name="iddb" defaultIdMethod="native">
     <table name="table_native">
@@ -458,7 +458,7 @@ EOF;
     </table>
 </database>
 EOF;
-        $appData = $xmlToAppData->parseString($schema);
+        $appData = $schemaReader->parseString($schema);
 
         $db = $appData->getDatabase("iddb");
 

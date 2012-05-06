@@ -20,7 +20,7 @@ use Propel\Generator\Model\Behavior\TimestampableBehavior;
  */
 class BehaviorTest extends \PHPUnit_Framework_TestCase {
 
-  private $xmlToAppData;
+  private $schemaReader;
   private $appData;
 
   public function testSetupObject()
@@ -69,7 +69,7 @@ class BehaviorTest extends \PHPUnit_Framework_TestCase {
      */
     public function testSchemaReader()
     {
-        $xmlToAppData = new SchemaReader();
+        $schemaReader = new SchemaReader();
         $schema = <<<EOF
 <database name="test1">
   <table name="table1">
@@ -84,7 +84,7 @@ class BehaviorTest extends \PHPUnit_Framework_TestCase {
   </table>
 </database>
 EOF;
-        $appData = $xmlToAppData->parseString($schema);
+        $appData = $schemaReader->parseString($schema);
         $table = $appData->getDatabase('test1')->getTable('table1');
         $behaviors = $table->getBehaviors();
         $this->assertEquals(1, count($behaviors), 'SchemaReader ads as many behaviors as there are behaviors tags');
@@ -98,7 +98,7 @@ EOF;
    */
     public function testUnknownBehavior()
     {
-        $xmlToAppData = new SchemaReader();
+        $schemaReader = new SchemaReader();
         $schema = <<<EOF
 <database name="test1">
   <table name="table1">
@@ -107,12 +107,12 @@ EOF;
   </table>
 </database>
 EOF;
-        $appData = $xmlToAppData->parseString($schema);
+        $appData = $schemaReader->parseString($schema);
     }
 
     public function testModifyTable()
     {
-        $xmlToAppData = new SchemaReader();
+        $schemaReader = new SchemaReader();
         $schema = <<<EOF
 <database name="test1">
   <table name="table2">
@@ -122,14 +122,14 @@ EOF;
   </table>
 </database>
 EOF;
-        $appData = $xmlToAppData->parseString($schema);
+        $appData = $schemaReader->parseString($schema);
         $table = $appData->getDatabase('test1')->getTable('table2');
         $this->assertEquals(count($table->getColumns()), 4, 'A behavior can modify its table by implementing modifyTable()');
     }
 
   public function testModifyDatabase()
   {
-        $xmlToAppData = new SchemaReader();
+        $schemaReader = new SchemaReader();
         $schema = <<<EOF
 <database name="test1">
   <behavior name="timestampable" />
@@ -138,14 +138,14 @@ EOF;
   </table>
 </database>
 EOF;
-        $appData = $xmlToAppData->parseString($schema);
+        $appData = $schemaReader->parseString($schema);
         $table = $appData->getDatabase('test1')->getTable('table1');
         $this->assertTrue(array_key_exists('timestampable', $table->getBehaviors()), 'A database behavior is automatically copied to all its table');
     }
 
   public function testGetColumnForParameter()
   {
-        $xmlToAppData = new SchemaReader();
+        $schemaReader = new SchemaReader();
         $schema = <<<EOF
 <database name="test1">
   <table name="table1">
@@ -160,7 +160,7 @@ EOF;
   </table>
 </database>
 EOF;
-        $appData = $xmlToAppData->parseString($schema);
+        $appData = $schemaReader->parseString($schema);
         $table = $appData->getDatabase('test1')->getTable('table1');
         $behavior = $table->getBehavior('timestampable');
         $this->assertEquals($table->getColumn('created_on'), $behavior->getColumnForParameter('create_column'), 'getColumnForParameter() returns the configured column for behavior based on a parameter name');

@@ -52,7 +52,7 @@ class ColumnTest extends \PHPUnit_Framework_TestCase
 
     public function testPhpNamingMethod()
     {
-        $xmlToAppData = new SchemaReader(new DefaultPlatform());
+        $schemaReader = new SchemaReader(new DefaultPlatform());
         $schema = <<<EOF
 <database name="test1">
   <behavior name="auto_add_pk" />
@@ -63,7 +63,7 @@ class ColumnTest extends \PHPUnit_Framework_TestCase
   </table>
 </database>
 EOF;
-        $appData = $xmlToAppData->parseString($schema);
+        $appData = $schemaReader->parseString($schema);
         $column = $appData->getDatabase('test1')->getTable('table1')->getColumn('author_id');
       $this->assertEquals('AuthorId', $column->getPhpName(), 'setPhpName() uses the default phpNamingMethod');
         $column = $appData->getDatabase('test1')->getTable('table1')->getColumn('editor_id');
@@ -72,7 +72,7 @@ EOF;
 
     public function testDefaultPhpNamingMethod()
     {
-        $xmlToAppData = new SchemaReader(new DefaultPlatform());
+        $schemaReader = new SchemaReader(new DefaultPlatform());
         $schema = <<<EOF
 <database name="test2" defaultPhpNamingMethod="nochange">
   <behavior name="auto_add_pk" />
@@ -82,14 +82,14 @@ EOF;
   </table>
 </database>
 EOF;
-        $appData = $xmlToAppData->parseString($schema);
+        $appData = $schemaReader->parseString($schema);
         $column = $appData->getDatabase('test2')->getTable('table1')->getColumn('author_id');
       $this->assertEquals('author_id', $column->getPhpName(), 'setPhpName() uses the database defaultPhpNamingMethod if given');
     }
 
     public function testGetConstantName()
     {
-        $xmlToAppData = new SchemaReader(new DefaultPlatform());
+        $schemaReader = new SchemaReader(new DefaultPlatform());
         $schema = <<<EOF
 <database name="test">
   <table name="table1">
@@ -98,14 +98,14 @@ EOF;
   </table>
 </database>
 EOF;
-    $appData = $xmlToAppData->parseString($schema);
+    $appData = $schemaReader->parseString($schema);
     $column = $appData->getDatabase('test')->getTable('table1')->getColumn('title');
     $this->assertEquals('Table1Peer::TITLE', $column->getConstantName(), 'getConstantName() returns the complete constant name by default');
     }
 
     public function testIsLocalColumnsRequired()
     {
-        $xmlToAppData = new SchemaReader(new DefaultPlatform());
+        $schemaReader = new SchemaReader(new DefaultPlatform());
         $schema = <<<EOF
 <database name="test">
   <table name="table1">
@@ -126,7 +126,7 @@ EOF;
   </table>
 </database>
 EOF;
-        $appData = $xmlToAppData->parseString($schema);
+        $appData = $schemaReader->parseString($schema);
         $fk = $appData->getDatabase('test')->getTable('table1')->getColumnForeignKeys('table2_foo');
         $this->assertFalse($fk[0]->isLocalColumnsRequired());
         $fk = $appData->getDatabase('test')->getTable('table1')->getColumnForeignKeys('table2_bar');
@@ -155,7 +155,7 @@ EOF;
 
     public function testGetValidator()
     {
-        $xmlToAppData = new SchemaReader(new DefaultPlatform());
+        $schemaReader = new SchemaReader(new DefaultPlatform());
         $schema = <<<EOF
 <database name="test">
   <table name="table1">
@@ -172,7 +172,7 @@ EOF;
   </table>
 </database>
 EOF;
-        $appData = $xmlToAppData->parseString($schema);
+        $appData = $schemaReader->parseString($schema);
         $table1 = $appData->getDatabase('test')->getTable('table1');
         $this->assertNull($table1->getColumn('id')->getValidator());
         $title1Column = $table1->getColumn('title1');
