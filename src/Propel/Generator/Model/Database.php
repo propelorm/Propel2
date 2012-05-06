@@ -479,7 +479,7 @@ class Database extends ScopedElement
             return $config->getBuildProperty($key);
         }
 
-        return '';
+        return null;
     }
 
     /**
