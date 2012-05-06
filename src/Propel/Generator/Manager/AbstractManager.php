@@ -210,7 +210,7 @@ abstract class AbstractManager
      */
     protected function loadDataModels()
     {
-        $ads = array();
+        $schemas = array();
         $totalNbTables   = 0;
         $dataModelFiles  = $this->getSchemas();
         $defaultPlatform = $this->getGeneratorConfig()->getConfiguredPlatform();
@@ -252,36 +252,36 @@ abstract class AbstractManager
 
             $xmlParser = new SchemaReader($defaultPlatform, $this->dbEncoding);
             $xmlParser->setGeneratorConfig($this->getGeneratorConfig());
-            $ad = $xmlParser->parseString($dom->saveXML(), $dmFilename);
-            $nbTables = $ad->getDatabase(null, false)->countTables();
+            $schema = $xmlParser->parseString($dom->saveXML(), $dmFilename);
+            $nbTables = $schema->getDatabase(null, false)->countTables();
             $totalNbTables += $nbTables;
 
             $this->log(sprintf('  %d tables processed successfully', $nbTables));
 
-            $ad->setName($dmFilename);
-            $ads[] = $ad;
+            $schema->setName($dmFilename);
+            $schemas[] = $schema;
         }
 
         $this->log(sprintf('%d tables found in %d schema files.', $totalNbTables, count($dataModelFiles)));
 
-        if (empty($ads)) {
+        if (empty($schemas)) {
             throw new BuildException('No schema files were found (matching your schema fileset definition).');
         }
 
-        foreach ($ads as $ad) {
+        foreach ($schemas as $schema) {
             // map schema filename with database name
-            $this->dataModelDbMap[$ad->getName()] = $ad->getDatabase(null, false)->getName();
+            $this->dataModelDbMap[$schema->getName()] = $schema->getDatabase(null, false)->getName();
         }
 
-        if (count($ads) > 1 && $this->getGeneratorConfig()->getBuildProperty('packageObjectModel')) {
-            $ad = $this->joinDataModels($ads);
-            $this->dataModels = array($ad);
+        if (count($schemas) > 1 && $this->getGeneratorConfig()->getBuildProperty('packageObjectModel')) {
+            $schema = $this->joinDataModels($schemas);
+            $this->dataModels = array($schema);
         } else {
-            $this->dataModels = $ads;
+            $this->dataModels = $schemas;
         }
 
-        foreach ($this->dataModels as &$ad) {
-            $ad->doFinalInitialization();
+        foreach ($this->dataModels as &$schema) {
+            $schema->doFinalInitialization();
         }
 
         $this->dataModelsLoaded = true;
@@ -330,7 +330,7 @@ abstract class AbstractManager
      * We need to join the datamodels in this case to allow for foreign keys
      * that point to tables in different packages.
      *
-     * @param      array[\Propel\Generator\Model\Schema] $ads The datamodels to join
+     * @param      array[\Propel\Generator\Model\Schema] $schemas The datamodels to join
      * @return     \Propel\Generator\Model\Schema        The single datamodel with all other datamodels joined in
      */
     protected function joinDataModels($schemas)
