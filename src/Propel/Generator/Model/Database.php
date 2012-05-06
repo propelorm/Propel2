@@ -10,10 +10,9 @@
 
 namespace Propel\Generator\Model;
 
+use DOMNode;
+use DOMDocument;
 use Propel\Generator\Exception\EngineException;
-
-use \DOMNode;
-use \DOMDocument;
 
 /**
  * A class for holding application data structures.
@@ -471,7 +470,7 @@ class Database extends ScopedElement
             return $this->getSchema()->getGeneratorConfig();
         }
 
-        return null;Schema
+        return null;
     }
 
     public function getBuildProperty($key)
