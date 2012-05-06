@@ -54,3 +54,48 @@ The classes used by Propel internally to build the object model were renamed. Th
 Base classes are generated in a `Base` directory, and base classes are no more prefixed by `Base`.
 
 Parameters `basePrefix` and `namespaceOm` have been removed
+
+## `Propel\Generator\Model\Database` methods renamed.
+
+Before:
+
+    public function setAppData(AppData $parent)
+
+After:
+
+    public function setSchema(Schema $parent)
+
+Before:
+
+    public function getAppData()
+
+After:
+
+    public function getSchema()
+
+## `Propel\Generator\Model\AppData` class has been renamed to `Schema`.
+
+The `AppData::joinAppDatas` method has been renamed to `Schema::joinSchemas`.
+
+Before:
+
+    public function joinAppDatas($ads)
+
+After:
+
+    public function joinSchemas($schemas)
+
+## `Propel\Generator\Builder\Util\XmlToAppData` class has been renamed to `SchemaReader`.
+
+Both `SchemaReader::parseString` and `SchemaReader::parseFile` methods return
+a `Propel\Generator\Model\Schema` object instead of a `Propel\Generator\Model\AppData` object.
+
+## `Propel\Generator\Util\SchemaValidator` constructor signature changed.
+
+Before:
+
+    public function __construct(AppData $appData)
+
+After:
+
+    public function __construct(Schema $schema)
