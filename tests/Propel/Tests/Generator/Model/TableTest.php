@@ -417,7 +417,7 @@ EOF;
         $schema->setGeneratorConfig($config);
 
         $db = new Database('testDb');
-        $db->setMappingSchema($schema);
+        $db->setParentSchema($schema);
 
         $table = new Table('test');
         $table->setDatabase($db);

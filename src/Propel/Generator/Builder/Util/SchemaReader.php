@@ -16,7 +16,7 @@ use Propel\Generator\Model\Schema;
 use Propel\Generator\Platform\PlatformInterface;
 
 /**
- * A class that is used to parse an input xml schema file and creates an Schema
+ * A class that is used to parse an input xml schema file and creates a Schema
  * PHP object.
  *
  * @author     Hans Lellelid <hans@xmpl.org> (Propel)

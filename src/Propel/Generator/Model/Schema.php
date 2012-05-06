@@ -217,7 +217,7 @@ class Schema
     public function addDatabase($db)
     {
         if ($db instanceof Database) {
-            $db->setMappingSchema($this);
+            $db->setParentSchema($this);
             if (null === $db->getPlatform()) {
                 if ($config = $this->getGeneratorConfig()) {
                     $pf = $config->getConfiguredPlatform(null, $db->getName());
@@ -232,7 +232,7 @@ class Schema
         } else {
             // XML attributes array / hash
             $d = new Database();
-            $d->setMappingSchema($this);
+            $d->setParentSchema($this);
             $d->loadFromXML($db);
 
             return $this->addDatabase($d); // calls self w/ different param type

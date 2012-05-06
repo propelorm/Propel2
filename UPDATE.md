@@ -63,7 +63,7 @@ Before:
 
 After:
 
-    public function setMappingSchema(Schema $parent)
+    public function setParentSchema(Schema $parent)
 
 Before:
 
@@ -71,7 +71,7 @@ Before:
 
 After:
 
-    public function getMappingSchema()
+    public function getParentSchema()
 
 ## `Propel\Generator\Model\AppData` class has been renamed to `Schema`.
 
