@@ -420,6 +420,7 @@ class Table extends ScopedElement implements IdMethod
     private function doHeavyIndexing()
     {
         if (self::DEBUG) {
+            // @TODO remove hardcoded print statements
             print("doHeavyIndex() called on table " . $this->getName()."\n");
         }
 
@@ -429,7 +430,7 @@ class Table extends ScopedElement implements IdMethod
         // We start at an offset of 1 because the entire column
         // list is generally implicitly indexed by the fact that
         // it's a primary key.
-        for ($i=1; $i < $size; $i++) {
+        for ($i = 1; $i < $size; $i++) {
             $idx = new Index();
             $idx->setColumns(array_slice($pk, $i, $size));
             $this->addIndex($idx);
@@ -584,6 +585,7 @@ class Table extends ScopedElement implements IdMethod
             // as test cases), so we'll assume that we needn't add an
             // entry to the system name list for these.
         } catch (EngineException $nameAlreadyInUse) {
+            // @TODO remove hardcoded print statements
             print $nameAlreadyInUse->getMessage() . "\n";
             print $nameAlreadyInUse->getTraceAsString();
         }
