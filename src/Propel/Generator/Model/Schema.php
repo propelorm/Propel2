@@ -22,7 +22,7 @@ use Propel\Generator\Platform\PlatformInterface;
  * @author     John McNally <jmcnally@collab.net> (Torque)
  * @author     Daniel Rall <dlr@finemaltcoding.com> (Torque)
  */
-class AppData
+class Schema
 {
 
     /**
@@ -192,7 +192,7 @@ class AppData
     }
 
     /**
-     * Checks whether a database with the specified nam exists in this AppData
+     * Checks whether a database with the specified nam exists in this Schema
      *
      * @param      name database name
      * @return     boolean
@@ -209,15 +209,15 @@ class AppData
     }
 
     /**
-     * Add a database to the list and sets the AppData property to this
-     * AppData
+     * Add a database to the list and sets the Schema property to this
+     * Schema
      *
      * @param      db the database to add
      */
     public function addDatabase($db)
     {
         if ($db instanceof Database) {
-            $db->setAppData($this);
+            $db->setSchema($this);
             if (null === $db->getPlatform()) {
                 if ($config = $this->getGeneratorConfig()) {
                     $pf = $config->getConfiguredPlatform(null, $db->getName());
@@ -232,7 +232,7 @@ class AppData
         } else {
             // XML attributes array / hash
             $d = new Database();
-            $d->setAppData($this);
+            $d->setSchema($this);
             $d->loadFromXML($db);
 
             return $this->addDatabase($d); // calls self w/ different param type
@@ -253,9 +253,9 @@ class AppData
     /**
      * Merge other appData objects into this object
      *
-     * @param array[AppData] $ads
+     * @param array[Schema] $ads
      */
-    public function joinAppDatas($ads)
+    public function joinSchemas($ads)
     {
         foreach ($ads as $appData) {
             foreach ($appData->getDatabases(false) as $addDb) {
@@ -288,7 +288,7 @@ class AppData
     }
 
     /**
-     * Returns the number of tables in all the databases of this AppData object
+     * Returns the number of tables in all the databases of this Schema object
      *
      * @return integer
      */
@@ -303,7 +303,7 @@ class AppData
     }
 
     /**
-     * Creates a string representation of this AppData.
+     * Creates a string representation of this Schema.
      * The representation is given in xml format.
      *
      * @return     string Representation in xml format

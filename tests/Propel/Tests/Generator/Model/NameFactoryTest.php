@@ -10,7 +10,7 @@
 
 namespace Propel\Tests\Generator\Model;
 
-use Propel\Generator\Model\AppData;
+use Propel\Generator\Model\Schema;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\NameFactory;
 use Propel\Generator\Model\NameGenerator;
@@ -102,8 +102,9 @@ class NameFactoryTest extends BaseTestCase
      * @param      int $len the number of characters to include in the string
      * @return     a string of length <code>len</code> with every character an 'A'
      */
-    private static function makeString($len) {
-        $buf = "";
+    static private function makeString($len)
+    {
+        $buf = '';
         for ($i = 0; $i < $len; $i++) {
             $buf .= 'A';
         }
@@ -114,9 +115,9 @@ class NameFactoryTest extends BaseTestCase
     /** Sets up the Propel model. */
     public function setUp()
     {
-        $appData = new AppData(new MysqlPlatform());
+        $schema = new Schema(new MysqlPlatform());
         $this->database = new Database();
-        $appData->addDatabase($this->database);
+        $schema->addDatabase($this->database);
     }
 
     /**
@@ -124,10 +125,12 @@ class NameFactoryTest extends BaseTestCase
      */
     public function testNames()
     {
-        for ($algoIndex = 0; $algoIndex < count(self::$ALGORITHMS); $algoIndex++) {
+        $algosCount = count(self::$ALGORITHMS);
+        for ($algoIndex = 0; $algoIndex < $algosCount; $algoIndex++) {
             $algo = self::$ALGORITHMS[$algoIndex];
             $algoInputs = self::$INPUTS[$algoIndex];
-            for ($i = 0; $i < count($algoInputs); $i++) {
+            $nbAlgoInputs = count($algoInputs);
+            for ($i = 0; $i < $nbAlgoInputs; $i++) {
                 $inputs = $this->makeInputs($algo, $algoInputs[$i]);
                 $generated = NameFactory::generateName($algo, $inputs);
                 $expected = self::$OUTPUTS[$algoIndex][$i];
@@ -154,5 +157,4 @@ class NameFactoryTest extends BaseTestCase
 
         return $inputs;
     }
-
 }

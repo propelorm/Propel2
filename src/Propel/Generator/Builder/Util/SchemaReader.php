@@ -12,11 +12,11 @@ namespace Propel\Generator\Builder\Util;
 
 use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Exception\SchemaException;
-use Propel\Generator\Model\AppData;
+use Propel\Generator\Model\Schema;
 use Propel\Generator\Platform\PlatformInterface;
 
 /**
- * A class that is used to parse an input xml schema file and creates an AppData
+ * A class that is used to parse an input xml schema file and creates an Schema
  * PHP object.
  *
  * @author     Hans Lellelid <hans@xmpl.org> (Propel)
@@ -31,7 +31,7 @@ class SchemaReader
     /** enables debug output */
     const DEBUG = false;
 
-    private $app;
+    private $schema;
 
     private $currDB;
 
@@ -77,28 +77,28 @@ class SchemaReader
      */
     public function __construct(PlatformInterface $defaultPlatform = null, $defaultPackage = null, $encoding = 'iso-8859-1')
     {
-        $this->app = new AppData($defaultPlatform);
+        $this->schema = new Schema($defaultPlatform);
         $this->defaultPackage = $defaultPackage;
         $this->firstPass = true;
         $this->encoding = $encoding;
     }
 
     /**
-     * Set the AppData generator configuration
+     * Set the Schema generator configuration
      *
      * @param GeneratorConfigInterface $generatorConfig
      */
     public function setGeneratorConfig(GeneratorConfigInterface $generatorConfig)
     {
-        $this->app->setGeneratorConfig($generatorConfig);
+        $this->schema->setGeneratorConfig($generatorConfig);
     }
 
     /**
      * Parses a XML input file and returns a newly created and
-     * populated AppData structure.
+     * populated Schema structure.
      *
      * @param      string $xmlFile The input file to parse.
-     * @return     AppData populated by <code>xmlFile</code>.
+     * @return     Schema populated by <code>xmlFile</code>.
      */
     public function parseFile($xmlFile)
     {
@@ -112,11 +112,11 @@ class SchemaReader
 
     /**
      * Parses a XML input string and returns a newly created and
-     * populated AppData structure.
+     * populated Schema structure.
      *
      * @param      string $xmlString The input string to parse.
      * @param      string $xmlFile The input file name.
-     * @return     AppData populated by <code>xmlFile</code>.
+     * @return     Schema populated by <code>xmlFile</code>.
      */
     public function parseString($xmlString, $xmlFile = null)
     {
@@ -142,7 +142,7 @@ class SchemaReader
 
         array_pop($this->schemasTagsStack);
 
-        return $this->app;
+        return $this->schema;
     }
 
     /**
@@ -167,7 +167,7 @@ class SchemaReader
                             $this->currentPackage = $this->defaultPackage;
                         }
                     } else {
-                        $this->currDB = $this->app->addDatabase($attributes);
+                        $this->currDB = $this->schema->addDatabase($attributes);
                     }
                     break;
 

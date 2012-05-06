@@ -51,7 +51,7 @@ class Database extends ScopedElement
     private $defaultIdMethod;
     private $defaultPhpNamingMethod;
     private $defaultTranslateMethod;
-    private $dbParent;
+    private $parentSchema;
     private $tablesByName = array();
     private $tablesByLowercaseName = array();
     private $tablesByPhpName = array();
@@ -412,19 +412,23 @@ class Database extends ScopedElement
     }
 
     /**
-     * Set the parent of the database
+     * Sets the parent schema
+     *
+     * @param Schema $parent The parent schema
      */
-    public function setAppData(AppData $parent)
+    public function setSchema(Schema $parent)
     {
-        $this->dbParent = $parent;
+        $this->parentSchema = $parent;
     }
 
     /**
-     * Get the parent of the table
+     * Returns the parent schema
+     *
+     * @return Schema
      */
-    public function getAppData()
+    public function getSchema()
     {
-        return $this->dbParent;
+        return $this->parentSchema;
     }
 
     /**
@@ -439,13 +443,13 @@ class Database extends ScopedElement
             $this->domainMap[$domain->getName()] = $domain;
 
             return $domain;
-        } else {
-            $domain = new Domain();
-            $domain->setDatabase($this);
-            $domain->loadFromXML($data);
-
-            return $this->addDomain($domain); // call self w/ different param
         }
+
+        $domain = new Domain();
+        $domain->setDatabase($this);
+        $domain->loadFromXML($data);
+
+        return $this->addDomain($domain); // call self w/ different param
     }
 
     /**
@@ -463,20 +467,20 @@ class Database extends ScopedElement
 
     public function getGeneratorConfig()
     {
-        if ($this->getAppData()) {
-            return $this->getAppData()->getGeneratorConfig();
-        } else {
-            return null;
+        if ($this->getSchema()) {
+            return $this->getSchema()->getGeneratorConfig();
         }
+
+        return null;Schema
     }
 
     public function getBuildProperty($key)
     {
         if ($config = $this->getGeneratorConfig()) {
             return $config->getBuildProperty($key);
-        } else {
-            return '';
         }
+
+        return '';
     }
 
     /**

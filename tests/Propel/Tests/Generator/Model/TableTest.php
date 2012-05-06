@@ -12,7 +12,7 @@ namespace Propel\Tests\Generator\Model;
 
 use Propel\Generator\Builder\Util\SchemaReader;
 use Propel\Generator\Config\GeneratorConfig;
-use Propel\Generator\Model\AppData;
+use Propel\Generator\Model\Schema;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\IdMethod;
@@ -32,7 +32,6 @@ use \DOMDocument;
  */
 class TableTest extends \PHPUnit_Framework_TestCase
 {
-
     /**
      * test if the tables get the package name from the properties file
      *
@@ -40,7 +39,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
     public function testIdMethodHandling()
     {
         $schemaReader = new SchemaReader();
-        $schema = <<<EOF
+        $xmlSchema = <<<EOF
 <database name="iddb" defaultIdMethod="native">
   <table name="table_native">
     <column name="table_a_id" required="true" autoIncrement="true" primaryKey="true" type="INTEGER" />
@@ -52,9 +51,9 @@ class TableTest extends \PHPUnit_Framework_TestCase
   </table>
 </database>
 EOF;
-        $appData = $schemaReader->parseString($schema);
+        $schema = $schemaReader->parseString($xmlSchema);
 
-        $db = $appData->getDatabase("iddb");
+        $db = $schema->getDatabase("iddb");
         $this->assertEquals(IdMethod::NATIVE, $db->getDefaultIdMethod());
 
         $table1 = $db->getTable("table_native");
@@ -67,18 +66,18 @@ EOF;
     public function testGeneratorConfig()
     {
         $schemaReader = new SchemaReader();
-        $schema = <<<EOF
+        $xmlSchema = <<<EOF
 <database name="test1">
   <table name="table1">
     <column name="id" type="INTEGER" primaryKey="true" />
   </table>
 </database>
 EOF;
-        $appData = $schemaReader->parseString($schema);
-        $table = $appData->getDatabase('test1')->getTable('table1');
+        $schema = $schemaReader->parseString($xmlSchema);
+        $table = $schema->getDatabase('test1')->getTable('table1');
         $config = new GeneratorConfig();
         $config->setBuildProperties(array('propel.foo.bar.class' => 'bazz'));
-        $table->getDatabase()->getAppData()->setGeneratorConfig($config);
+        $table->getDatabase()->getSchema()->setGeneratorConfig($config);
         $this->assertThat($table->getGeneratorConfig(), $this->isInstanceOf('\Propel\Generator\Config\GeneratorConfig'), 'getGeneratorConfig() returns an instance of the generator configuration');
         $this->assertEquals($table->getGeneratorConfig()->getBuildProperty('fooBarClass'), 'bazz', 'getGeneratorConfig() returns the instance of the generator configuration used in the platform');
     }
@@ -92,7 +91,7 @@ EOF;
             'propel.behavior.timestampable.class' => '\Propel\Generator\Behavior\TimestampableBehavior'
         ));
         $schemaReader->setGeneratorConfig($config);
-        $schema = <<<EOF
+        $xmlSchema = <<<EOF
 <database name="test1">
   <table name="table1">
     <behavior name="timestampable" />
@@ -100,8 +99,8 @@ EOF;
   </table>
 </database>
 EOF;
-        $appData = $schemaReader->parseString($schema);
-        $table = $appData->getDatabase('test1')->getTable('table1');
+        $schema = $schemaReader->parseString($xmlSchema);
+        $table = $schema->getDatabase('test1')->getTable('table1');
         $this->assertThat($table->getBehavior('timestampable'), $this->isInstanceOf('\Propel\Generator\Behavior\Timestampable\TimestampableBehavior'), 'addBehavior() uses the behavior class defined in build.properties');
     }
 
@@ -111,7 +110,7 @@ EOF;
     public function testUniqueColumnName()
     {
         $schemaReader = new SchemaReader();
-        $schema = <<<EOF
+        $xmlSchema = <<<EOF
 <database name="columnTest" defaultIdMethod="native">
     <table name="columnTestTable">
         <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" description="Book Id" />
@@ -121,7 +120,7 @@ EOF;
 </database>
 EOF;
         // Parsing file with duplicate column names in one table throws exception
-        $appData = $schemaReader->parseString($schema);
+        $schema = $schemaReader->parseString($xmlSchema);
     }
 
     /**
@@ -130,7 +129,7 @@ EOF;
     public function testUniqueTableName()
     {
         $schemaReader = new SchemaReader();
-        $schema = <<<EOF
+        $xmlSchema = <<<EOF
 <database name="columnTest" defaultIdMethod="native">
     <table name="columnTestTable">
         <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" description="Book Id" />
@@ -143,7 +142,7 @@ EOF;
 </database>
 EOF;
         // Parsing file with duplicate table name throws exception
-        $appData = $schemaReader->parseString($schema);
+        $schema = $schemaReader->parseString($xmlSchema);
     }
 
     public function providerForTestHasColumn()
@@ -252,7 +251,7 @@ EOF;
     public function testRemoveValidatorForColumn()
     {
         $schemaReader = new SchemaReader(new DefaultPlatform());
-        $schema = <<<EOF
+        $xmlSchema = <<<EOF
 <database name="test">
   <table name="table1">
     <column name="id" primaryKey="true" />
@@ -263,8 +262,8 @@ EOF;
   </table>
 </database>
 EOF;
-        $appData = $schemaReader->parseString($schema);
-        $table1 = $appData->getDatabase('test')->getTable('table1');
+        $schema = $schemaReader->parseString($xmlSchema);
+        $table1 = $schema->getDatabase('test')->getTable('table1');
         $title1Column = $table1->getColumn('title1');
         $this->assertNotNull($title1Column->getValidator());
         $table1->removeValidatorForColumn('title1');
@@ -273,7 +272,7 @@ EOF;
 
     public function testTableNamespaceAcrossDatabase()
     {
-        $schema1 = <<<EOF
+        $xmlSchema1 = <<<EOF
 <database name="DB1" namespace="NS1">
   <table name="table1">
     <column name="id" primaryKey="true" />
@@ -282,8 +281,8 @@ EOF;
 </database>
 EOF;
         $schemaReader = new SchemaReader(new DefaultPlatform());
-        $appData1 = $schemaReader->parseString($schema1);
-        $schema2 = <<<EOF
+        $schema1 = $schemaReader->parseString($xmlSchema1);
+        $xmlSchema2 = <<<EOF
 <database name="DB1" namespace="NS2">
   <table name="table2">
     <column name="id" primaryKey="true" />
@@ -292,15 +291,15 @@ EOF;
 </database>
 EOF;
         $schemaReader = new SchemaReader(new DefaultPlatform());
-        $appData2 = $schemaReader->parseString($schema2);
-        $appData1->joinAppDatas(array($appData2));
-        $this->assertEquals('NS1', $appData1->getDatabase('DB1')->getTable('table1')->getNamespace());
-        $this->assertEquals('NS2', $appData1->getDatabase('DB1')->getTable('table2')->getNamespace());
+        $schema2 = $schemaReader->parseString($xmlSchema2);
+        $schema1->joinSchemas(array($schema2));
+        $this->assertEquals('NS1', $schema1->getDatabase('DB1')->getTable('table1')->getNamespace());
+        $this->assertEquals('NS2', $schema1->getDatabase('DB1')->getTable('table2')->getNamespace());
     }
 
     public function testSetNamespaceSetsPackageWhenBuildPropertySet()
     {
-        $schema = <<<EOF
+        $xmlSchema = <<<EOF
 <database name="DB">
   <table name="table" namespace="NS">
     <column name="id" primaryKey="true" />
@@ -312,13 +311,13 @@ EOF;
         $config->setBuildProperties(array('propel.namespace.autoPackage' => 'true'));
         $schemaReader = new SchemaReader(new DefaultPlatform());
         $schemaReader->setGeneratorConfig($config);
-        $table = $schemaReader->parseString($schema)->getDatabase('DB')->getTable('table');
+        $table = $schemaReader->parseString($xmlSchema)->getDatabase('DB')->getTable('table');
         $this->assertEquals('NS', $table->getPackage());
     }
 
     public function testSetNamespaceSetsCompletePackageWhenBuildPropertySet()
     {
-        $schema = <<<EOF
+        $xmlSchema = <<<EOF
 <database name="DB" namespace="NS1">
   <table name="table" namespace="NS2">
     <column name="id" primaryKey="true" />
@@ -330,13 +329,13 @@ EOF;
         $config->setBuildProperties(array('propel.namespace.autoPackage' => 'true'));
         $schemaReader = new SchemaReader(new DefaultPlatform());
         $schemaReader->setGeneratorConfig($config);
-        $table = $schemaReader->parseString($schema)->getDatabase('DB')->getTable('table');
+        $table = $schemaReader->parseString($xmlSchema)->getDatabase('DB')->getTable('table');
         $this->assertEquals('NS1.NS2', $table->getPackage());
     }
 
     public function testSetPackageOverridesNamespaceAutoPackage()
     {
-        $schema = <<<EOF
+        $xmlSchema = <<<EOF
 <database name="DB" namespace="NS1">
   <table name="table" namespace="NS2" package="foo">
     <column name="id" primaryKey="true" />
@@ -348,12 +347,13 @@ EOF;
         $config->setBuildProperties(array('propel.namespace.autoPackage' => 'true'));
         $schemaReader = new SchemaReader(new DefaultPlatform());
         $schemaReader->setGeneratorConfig($config);
-        $table = $schemaReader->parseString($schema)->getDatabase('DB')->getTable('table');
+        $table = $schemaReader->parseString($xmlSchema)->getDatabase('DB')->getTable('table');
         $this->assertEquals('foo', $table->getPackage());
     }
 
-    public function testAppendXmlPackage() {
-        $schema = <<<EOF
+    public function testAppendXmlPackage()
+    {
+        $xmlSchema = <<<EOF
 <?xml version="1.0"?>
 <table name="test" package="test/package"/>
 EOF;
@@ -366,11 +366,12 @@ EOF;
         $table->appendXml($doc);
 
         $xmlstr = trim($doc->saveXML());
-        $this->assertSame($schema, $xmlstr);
+        $this->assertSame($xmlSchema, $xmlstr);
     }
 
-    public function testAppendXmlNamespace() {
-        $schema = <<<EOF
+    public function testAppendXmlNamespace()
+    {
+        $xmlSchema = <<<EOF
 <?xml version="1.0"?>
 <table name="test" namespace="\\testNs"/>
 EOF;
@@ -383,9 +384,9 @@ EOF;
         $table->appendXml($doc);
 
         $xmlstr = trim($doc->saveXML());
-        $this->assertSame($schema, $xmlstr);
+        $this->assertSame($xmlSchema, $xmlstr);
 
-        $schema = <<<EOF
+        $xmlSchema = <<<EOF
 <?xml version="1.0"?>
 <table name="test" namespace="\\testNs" package="testPkg"/>
 EOF;
@@ -396,11 +397,12 @@ EOF;
         $table->appendXml($doc);
 
         $xmlstr = trim($doc->saveXML());
-        $this->assertSame($schema, $xmlstr);
+        $this->assertSame($xmlSchema, $xmlstr);
     }
 
-    public function testAppendXmlNamespaceWithAutoPackage() {
-        $schema = <<<EOF
+    public function testAppendXmlNamespaceWithAutoPackage()
+    {
+        $xmlSchema = <<<EOF
 <?xml version="1.0"?>
 <table name="test" namespace="\\testNs"/>
 EOF;
@@ -411,11 +413,11 @@ EOF;
         $config = new GeneratorConfig();
         $config->setBuildProperties(array('propel.namespace.autoPackage' => 'true'));
 
-        $appData = new AppData();
-        $appData->setGeneratorConfig($config);
+        $schema = new Schema();
+        $schema->setGeneratorConfig($config);
 
         $db = new Database('testDb');
-        $db->setAppData($appData);
+        $db->setSchema($schema);
 
         $table = new Table('test');
         $table->setDatabase($db);
@@ -423,9 +425,9 @@ EOF;
         $table->appendXml($doc);
 
         $xmlstr = trim($doc->saveXML());
-        $this->assertSame($schema, $xmlstr);
+        $this->assertSame($xmlSchema, $xmlstr);
 
-        $schema = <<<EOF
+        $xmlSchema = <<<EOF
 <?xml version="1.0"?>
 <table name="test" namespace="\\testNs" package="testPkg"/>
 EOF;
@@ -436,13 +438,13 @@ EOF;
         $table->appendXml($doc);
 
         $xmlstr = trim($doc->saveXML());
-        $this->assertSame($schema, $xmlstr);
+        $this->assertSame($xmlSchema, $xmlstr);
     }
 
     public function testIsCrossRefAttribute()
     {
         $schemaReader = new SchemaReader();
-        $schema = <<<EOF
+        $xmlSchema = <<<EOF
 <database name="iddb" defaultIdMethod="native">
     <table name="table_native">
         <column name="table_a_id" required="true" primaryKey="true" type="INTEGER" />
@@ -458,9 +460,9 @@ EOF;
     </table>
 </database>
 EOF;
-        $appData = $schemaReader->parseString($schema);
+        $schema = $schemaReader->parseString($xmlSchema);
 
-        $db = $appData->getDatabase("iddb");
+        $db = $schema->getDatabase("iddb");
 
         $table1 = $db->getTable("table_native");
         $this->assertFalse($table1->getIsCrossRef());

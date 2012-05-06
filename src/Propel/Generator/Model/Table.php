@@ -1046,7 +1046,7 @@ class Table extends ScopedElement implements IdMethod
      */
     public function getGeneratorConfig()
     {
-        return $this->getDatabase()->getAppData()->getGeneratorConfig();
+        return $this->getDatabase()->getSchema()->getGeneratorConfig();
     }
 
     /**
@@ -1061,13 +1061,13 @@ class Table extends ScopedElement implements IdMethod
             $this->behaviors[$behavior->getName()] = $behavior;
 
             return $behavior;
-        } else {
-            $class = $this->getConfiguredBehavior($bdata['name']);
-            $behavior = new $class();
-            $behavior->loadFromXML($bdata);
-
-            return $this->addBehavior($behavior);
         }
+
+        $class = $this->getConfiguredBehavior($bdata['name']);
+        $behavior = new $class();
+        $behavior->loadFromXML($bdata);
+
+        return $this->addBehavior($behavior);
     }
 
     /**
@@ -1154,12 +1154,15 @@ class Table extends ScopedElement implements IdMethod
      */
     public function getName()
     {
-        if ($this->schema && $this->getDatabase() && $this->getDatabase()->getPlatform() &&
-            $this->getDatabase()->getPlatform()->supportsSchemas()) {
-                return $this->schema . '.' . $this->commonName;
-        } else {
-                return $this->commonName;
+        if ($this->schema 
+            && $this->getDatabase()
+            && $this->getDatabase()->getPlatform() 
+            && $this->getDatabase()->getPlatform()->supportsSchemas()) {
+
+            return $this->schema . '.' . $this->commonName;
         }
+
+        return $this->commonName;
     }
 
     /**
@@ -1194,13 +1197,14 @@ class Table extends ScopedElement implements IdMethod
      */
     public function getPhpName()
     {
-        if ($this->phpName === null) {
+        if (null === $this->phpName) {
             $inputs = array();
             $inputs[] = $this->getStdSeparatedName();
             $inputs[] = $this->phpNamingMethod;
             try {
                 $this->phpName = NameFactory::generateName(NameFactory::PHP_GENERATOR, $inputs);
             } catch (EngineException $e) {
+                // @TODO remove these print statements?
                 print $e->getMessage() . "\n";
                 print $e->getTraceAsString();
             }
@@ -1235,10 +1239,10 @@ class Table extends ScopedElement implements IdMethod
         $phpname = $this->getPhpName();
         if (strlen($phpname) > 1) {
             return strtolower(substr($phpname, 0, 1)) . substr($phpname, 1);
-        } else {
-            // 0 or 1 chars (I suppose that's rare)
-            return strtolower($phpname);
         }
+
+        // 0 or 1 chars (I suppose that's rare)
+        return strtolower($phpname);
     }
 
     /**
@@ -1291,11 +1295,11 @@ class Table extends ScopedElement implements IdMethod
      */
     public function getIdMethod()
     {
-        if ($this->idMethod === null) {
+        if (null === $this->idMethod) {
             return IdMethod::NO_ID_METHOD;
-        } else {
-            return $this->idMethod;
         }
+
+        return $this->idMethod;
     }
 
     /**
@@ -1381,7 +1385,7 @@ class Table extends ScopedElement implements IdMethod
      */
     public function isAlias()
     {
-        return ($this->alias !== null);
+        return null !== $this->alias;
     }
 
     /**
@@ -1437,7 +1441,7 @@ class Table extends ScopedElement implements IdMethod
      */
     public function setAbstract($v)
     {
-        $this->abstractValue = (boolean) $v;
+        $this->abstractValue = (Boolean) $v;
     }
 
     /**
@@ -1544,11 +1548,12 @@ class Table extends ScopedElement implements IdMethod
         if ($col instanceof Column) {
             $col = $col->getName();
         }
+
         if ($caseInsensitive) {
             return array_key_exists(strtolower($col), $this->columnsByLowercaseName);
-        } else {
-            return array_key_exists($col, $this->columnsByName);
         }
+
+        return array_key_exists($col, $this->columnsByName);
     }
 
     /**
@@ -1560,15 +1565,15 @@ class Table extends ScopedElement implements IdMethod
      */
     public function getColumn($name, $caseInsensitive = false)
     {
-        if ($this->hasColumn($name, $caseInsensitive)) {
-            if ($caseInsensitive) {
-                return $this->columnsByLowercaseName[strtolower($name)];
-            } else {
-                return $this->columnsByName[$name];
-            }
+        if (!$this->hasColumn($name, $caseInsensitive)) {
+            return null; // just to be explicit
         }
 
-        return null; // just to be explicit
+        if ($caseInsensitive) {
+            return $this->columnsByLowercaseName[strtolower($name)];
+        }
+
+        return $this->columnsByName[$name];
     }
 
     /**
@@ -1667,7 +1672,7 @@ class Table extends ScopedElement implements IdMethod
      */
     public function setForReferenceOnly($v)
     {
-        $this->forReferenceOnly = (boolean) $v;
+        $this->forReferenceOnly = (Boolean) $v;
     }
 
     /**
@@ -1682,63 +1687,63 @@ class Table extends ScopedElement implements IdMethod
         $tableNode = $node->appendChild($doc->createElement('table'));
         $tableNode->setAttribute('name', $this->getCommonName());
 
-        if ($this->getSchema() !== null) {
+        if (null !== $this->getSchema()) {
             $tableNode->setAttribute('schema', $this->getSchema());
         }
 
-        if ($this->phpName !== null) {
+        if (null !== $this->phpName) {
             $tableNode->setAttribute('phpName', $this->phpName);
         }
 
-        if ($this->idMethod !== null) {
+        if (null !== $this->idMethod) {
             $tableNode->setAttribute('idMethod', $this->idMethod);
         }
 
-        if ($this->skipSql !== null) {
+        if (null !== $this->skipSql) {
             $tableNode->setAttribute('idMethod', var_export($this->skipSql, true));
         }
 
-        if ($this->readOnly !== null) {
+        if (null !== $this->readOnly) {
             $tableNode->setAttribute('readOnly', var_export($this->readOnly, true));
         }
 
-        if ($this->reloadOnInsert !== null) {
+        if (null !== $this->reloadOnInsert) {
             $tableNode->setAttribute('reloadOnInsert', var_export($this->reloadOnInsert, true));
         }
 
-        if ($this->reloadOnUpdate !== null) {
+        if (null !== $this->reloadOnUpdate) {
             $tableNode->setAttribute('reloadOnUpdate', var_export($this->reloadOnUpdate, true));
         }
 
-        if ($this->forReferenceOnly !== null) {
+        if (null !== $this->forReferenceOnly) {
             $tableNode->setAttribute('forReferenceOnly', var_export($this->forReferenceOnly, true));
         }
 
-        if ($this->abstractValue !== null) {
+        if (null !== $this->abstractValue) {
             $tableNode->setAttribute('abstract', var_export($this->abstractValue, true));
         }
 
-        if ($this->interface !== null) {
+        if (null !== $this->interface) {
             $tableNode->setAttribute('interface', $this->interface);
         }
 
-        if ($this->description !== null) {
+        if (null !== $this->description) {
             $tableNode->setAttribute('description', $this->description);
         }
 
-        if ($this->namespace !== null) {
+        if (null !== $this->namespace) {
             $tableNode->setAttribute('namespace', $this->namespace);
         }
 
-        if ($this->pkg !== null && !$this->pkgOverridden) {
+        if (null !== $this->pkg && !$this->pkgOverridden) {
             $tableNode->setAttribute('package', $this->pkg);
         }
 
-        if ($this->baseClass !== null) {
+        if (null !== $this->baseClass) {
             $tableNode->setAttribute('baseClass', $this->baseClass);
         }
 
-        if ($this->basePeer !== null) {
+        if (null !== $this->basePeer) {
             $tableNode->setAttribute('basePeer', $this->basePeer);
         }
 
@@ -1774,7 +1779,6 @@ class Table extends ScopedElement implements IdMethod
         foreach ($this->vendorInfos as $vi) {
             $vi->appendXml($tableNode);
         }
-
     }
 
     /**
@@ -1855,7 +1859,7 @@ class Table extends ScopedElement implements IdMethod
     public function getAutoIncrementPrimaryKey()
     {
         if ($this->getIdMethod() != IdMethod::NO_ID_METHOD) {
-            $pks =$this->getPrimaryKey();
+            $pks = $this->getPrimaryKey();
             foreach ($pks as $pk) {
                 if ($pk->isAutoIncrement()) {
                     return $pk;
@@ -1892,7 +1896,7 @@ class Table extends ScopedElement implements IdMethod
      */
     public function setIsCrossRef($isCrossRef)
     {
-        $this->isCrossRef = (bool) $isCrossRef;
+        $this->isCrossRef = (Boolean) $isCrossRef;
     }
 
     /**
@@ -1903,9 +1907,9 @@ class Table extends ScopedElement implements IdMethod
      */
     private function printList($list)
     {
-        $result = "";
-        $comma = 0;
-        for ($i=0,$_i=count($list); $i < $_i; $i++) {
+        $result = '';
+        $comma  = 0;
+        for ($i = 0, $_i = count($list); $i < $_i; $i++) {
             $col = $list[$i];
             if ($col->isPrimaryKey()) {
                 $result .= ($comma++ ? ',' : '') . $this->getDatabase()->getPlatform()->quoteIdentifier($col->getName());
@@ -1921,7 +1925,7 @@ class Table extends ScopedElement implements IdMethod
      */
     public function hasForeignKeys()
     {
-        return (count($this->getForeignKeys()) !== 0);
+        return 0 !== count($this->getForeignKeys());
     }
 
     /**
@@ -1930,6 +1934,6 @@ class Table extends ScopedElement implements IdMethod
      */
     public function hasCrossForeignKeys()
     {
-        return (count($this->getCrossFks()) !== 0);
+        return 0 !== count($this->getCrossFks());
     }
 }

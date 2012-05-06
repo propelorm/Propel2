@@ -16,7 +16,7 @@ use Propel\Generator\Builder\Util\SchemaReader;
 use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Exception\BuildException;
 use Propel\Generator\Exception\EngineException;
-use Propel\Generator\Model\AppData;
+use Propel\Generator\Model\Schema;
 use Propel\Generator\Model\Database;
 
 /**
@@ -330,15 +330,15 @@ abstract class AbstractManager
      * We need to join the datamodels in this case to allow for foreign keys
      * that point to tables in different packages.
      *
-     * @param      array[\Propel\Generator\Model\AppData] $ads The datamodels to join
-     * @return     \Propel\Generator\Model\AppData        The single datamodel with all other datamodels joined in
+     * @param      array[\Propel\Generator\Model\Schema] $ads The datamodels to join
+     * @return     \Propel\Generator\Model\Schema        The single datamodel with all other datamodels joined in
      */
-    protected function joinDataModels($ads)
+    protected function joinDataModels($schemas)
     {
-        $mainAppData = array_shift($ads);
-        $mainAppData->joinAppDatas($ads);
+        $mainSchema = array_shift($schemas);
+        $mainSchema->joinSchemas($schemas);
 
-        return $mainAppData;
+        return $mainSchema;
     }
 
     /**
