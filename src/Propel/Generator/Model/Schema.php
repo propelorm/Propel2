@@ -251,14 +251,14 @@ class Schema
     }
 
     /**
-     * Merge other appData objects into this object
+     * Merge other Schema objects together into this Schema object
      *
-     * @param array[Schema] $ads
+     * @param array[Schema] $schemas
      */
-    public function joinSchemas($ads)
+    public function joinSchemas($schemas)
     {
-        foreach ($ads as $appData) {
-            foreach ($appData->getDatabases(false) as $addDb) {
+        foreach ($schemas as $schema) {
+            foreach ($schema->getDatabases(false) as $addDb) {
                 $addDbName = $addDb->getName();
                 if ($this->hasDatabase($addDbName)) {
                     $db = $this->getDatabase($addDbName, false);
