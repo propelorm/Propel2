@@ -12,7 +12,7 @@ namespace Propel\Generator\Manager;
 
 use DomDocument;
 use Exception;
-use Propel\Generator\Builder\Util\XmlToAppData;
+use Propel\Generator\Builder\Util\SchemaReader;
 use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Exception\BuildException;
 use Propel\Generator\Exception\EngineException;
@@ -42,7 +42,7 @@ abstract class AbstractManager
     protected $dataModelDbMap;
 
     /**
-     * DB encoding to use for XmlToAppData object
+     * DB encoding to use for SchemaReader object
      */
     protected $dbEncoding = 'iso-8859-1';
 
@@ -250,7 +250,7 @@ abstract class AbstractManager
                 }
             }
 
-            $xmlParser = new XmlToAppData($defaultPlatform, $this->dbEncoding);
+            $xmlParser = new SchemaReader($defaultPlatform, $this->dbEncoding);
             $xmlParser->setGeneratorConfig($this->getGeneratorConfig());
             $ad = $xmlParser->parseString($dom->saveXML(), $dmFilename);
             $nbTables = $ad->getDatabase(null, false)->countTables();

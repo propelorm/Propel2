@@ -181,7 +181,7 @@ class AppData
             return $this->dbList[0];
         }
 
-        for ($i=0,$size=count($this->dbList); $i < $size; $i++) {
+        for ($i = 0, $size = count($this->dbList); $i < $size; $i++) {
             $db = $this->dbList[$i];
             if ($db->getName() === $name) {
                 return $db;
@@ -218,7 +218,7 @@ class AppData
     {
         if ($db instanceof Database) {
             $db->setAppData($this);
-            if ($db->getPlatform() === null) {
+            if (null === $db->getPlatform()) {
                 if ($config = $this->getGeneratorConfig()) {
                     $pf = $config->getConfiguredPlatform(null, $db->getName());
                     $db->setPlatform($pf ? $pf : $this->platform);
@@ -243,7 +243,7 @@ class AppData
     public function doFinalInitialization()
     {
         if (!$this->isInitialized) {
-            for ($i=0, $size=count($this->dbList); $i < $size; $i++) {
+            for ($i = 0, $size = count($this->dbList); $i < $size; $i++) {
                 $this->dbList[$i]->doFinalInitialization();
             }
             $this->isInitialized = true;

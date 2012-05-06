@@ -14,7 +14,7 @@ use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
 use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Builder\Om\AbstractOMBuilder;
-use Propel\Generator\Builder\Util\XmlToAppData;
+use Propel\Generator\Builder\Util\SchemaReader;
 use Propel\Generator\Platform\DefaultPlatform;
 
 /**
@@ -31,7 +31,7 @@ class AbstractOMBuilderRelatedByTest extends \PHPUnit_Framework_TestCase
     {
         // run only once to save execution time
         if (null == self::$database) {
-            $xmlToAppData = new XmlToAppData(new DefaultPlatform());
+            $xmlToAppData = new SchemaReader(new DefaultPlatform());
             $appData = $xmlToAppData->parseFile(realpath(__DIR__ . '/../../../../../Fixtures/bookstore/schema.xml'));
             self::$database = $appData->getDatabase("bookstore");
         }

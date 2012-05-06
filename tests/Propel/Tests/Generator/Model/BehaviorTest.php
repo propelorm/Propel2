@@ -8,7 +8,7 @@
  * @license    MIT License
  */
 
-use Propel\Generator\Builder\Util\XmlToAppData;
+use Propel\Generator\Builder\Util\SchemaReader;
 use Propel\Generator\Model\Behavior;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Model\Behavior\TimestampableBehavior;
@@ -67,9 +67,9 @@ class BehaviorTest extends \PHPUnit_Framework_TestCase {
      * test if the tables get the package name from the properties file
      *
      */
-    public function testXmlToAppData()
+    public function testSchemaReader()
     {
-        $xmlToAppData = new XmlToAppData();
+        $xmlToAppData = new SchemaReader();
         $schema = <<<EOF
 <database name="test1">
   <table name="table1">
@@ -87,10 +87,10 @@ EOF;
         $appData = $xmlToAppData->parseString($schema);
         $table = $appData->getDatabase('test1')->getTable('table1');
         $behaviors = $table->getBehaviors();
-        $this->assertEquals(1, count($behaviors), 'XmlToAppData ads as many behaviors as there are behaviors tags');
+        $this->assertEquals(1, count($behaviors), 'SchemaReader ads as many behaviors as there are behaviors tags');
         $behavior = $table->getBehavior('timestampable');
-        $this->assertEquals('table1', $behavior->getTable()->getName(), 'XmlToAppData sets the behavior table correctly');
-        $this->assertEquals(array('create_column' => 'created_on', 'update_column' => 'updated_on'), $behavior->getParameters(), 'XmlToAppData sets the behavior parameters correctly');
+        $this->assertEquals('table1', $behavior->getTable()->getName(), 'SchemaReader sets the behavior table correctly');
+        $this->assertEquals(array('create_column' => 'created_on', 'update_column' => 'updated_on'), $behavior->getParameters(), 'SchemaReader sets the behavior parameters correctly');
     }
 
   /**
@@ -98,7 +98,7 @@ EOF;
    */
     public function testUnknownBehavior()
     {
-        $xmlToAppData = new XmlToAppData();
+        $xmlToAppData = new SchemaReader();
         $schema = <<<EOF
 <database name="test1">
   <table name="table1">
@@ -112,7 +112,7 @@ EOF;
 
     public function testModifyTable()
     {
-        $xmlToAppData = new XmlToAppData();
+        $xmlToAppData = new SchemaReader();
         $schema = <<<EOF
 <database name="test1">
   <table name="table2">
@@ -129,7 +129,7 @@ EOF;
 
   public function testModifyDatabase()
   {
-        $xmlToAppData = new XmlToAppData();
+        $xmlToAppData = new SchemaReader();
         $schema = <<<EOF
 <database name="test1">
   <behavior name="timestampable" />
@@ -145,7 +145,7 @@ EOF;
 
   public function testGetColumnForParameter()
   {
-        $xmlToAppData = new XmlToAppData();
+        $xmlToAppData = new SchemaReader();
         $schema = <<<EOF
 <database name="test1">
   <table name="table1">

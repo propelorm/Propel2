@@ -9,7 +9,7 @@
  */
 
 use Propel\Generator\Behavior\AutoAddPkBehavior;
-use Propel\Generator\Builder\Util\XmlToAppData;
+use Propel\Generator\Builder\Util\SchemaReader;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\Table;
@@ -52,7 +52,7 @@ class ColumnTest extends \PHPUnit_Framework_TestCase
 
     public function testPhpNamingMethod()
     {
-        $xmlToAppData = new XmlToAppData(new DefaultPlatform());
+        $xmlToAppData = new SchemaReader(new DefaultPlatform());
         $schema = <<<EOF
 <database name="test1">
   <behavior name="auto_add_pk" />
@@ -72,7 +72,7 @@ EOF;
 
     public function testDefaultPhpNamingMethod()
     {
-        $xmlToAppData = new XmlToAppData(new DefaultPlatform());
+        $xmlToAppData = new SchemaReader(new DefaultPlatform());
         $schema = <<<EOF
 <database name="test2" defaultPhpNamingMethod="nochange">
   <behavior name="auto_add_pk" />
@@ -89,7 +89,7 @@ EOF;
 
     public function testGetConstantName()
     {
-        $xmlToAppData = new XmlToAppData(new DefaultPlatform());
+        $xmlToAppData = new SchemaReader(new DefaultPlatform());
         $schema = <<<EOF
 <database name="test">
   <table name="table1">
@@ -105,7 +105,7 @@ EOF;
 
     public function testIsLocalColumnsRequired()
     {
-        $xmlToAppData = new XmlToAppData(new DefaultPlatform());
+        $xmlToAppData = new SchemaReader(new DefaultPlatform());
         $schema = <<<EOF
 <database name="test">
   <table name="table1">
@@ -155,7 +155,7 @@ EOF;
 
     public function testGetValidator()
     {
-        $xmlToAppData = new XmlToAppData(new DefaultPlatform());
+        $xmlToAppData = new SchemaReader(new DefaultPlatform());
         $schema = <<<EOF
 <database name="test">
   <table name="table1">

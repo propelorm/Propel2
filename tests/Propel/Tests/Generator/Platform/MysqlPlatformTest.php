@@ -10,7 +10,7 @@
 
 namespace Propel\Tests\Generator\Platform;
 
-use Propel\Generator\Builder\Util\XmlToAppData;
+use Propel\Generator\Builder\Util\SchemaReader;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\ColumnDefaultValue;
 use Propel\Generator\Model\IdMethod;
@@ -347,7 +347,7 @@ EOF;
         $platform = new MysqlPlatform();
         $platform->setTableEngineKeyword('TYPE');
         $platform->setDefaultTableEngine('MEMORY');
-        $xtad = new XmlToAppData($platform);
+        $xtad = new SchemaReader($platform);
         $appData = $xtad->parseString($schema);
         $table = $appData->getDatabase()->getTable('foo');
         $expected = "

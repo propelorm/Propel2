@@ -10,7 +10,7 @@
 
 namespace Propel\Tests\Generator\Model;
 
-use Propel\Generator\Builder\Util\XmlToAppData;
+use Propel\Generator\Builder\Util\SchemaReader;
 use Propel\Generator\Config\GeneratorConfig;
 use Propel\Generator\Model\AppData;
 use Propel\Generator\Model\Column;
@@ -39,7 +39,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
      */
     public function testIdMethodHandling()
     {
-        $xmlToAppData = new XmlToAppData();
+        $xmlToAppData = new SchemaReader();
         $schema = <<<EOF
 <database name="iddb" defaultIdMethod="native">
   <table name="table_native">
@@ -66,7 +66,7 @@ EOF;
 
     public function testGeneratorConfig()
     {
-        $xmlToAppData = new XmlToAppData();
+        $xmlToAppData = new SchemaReader();
         $schema = <<<EOF
 <database name="test1">
   <table name="table1">
@@ -85,7 +85,7 @@ EOF;
 
     public function testAddBehavior()
     {
-        $xmlToAppData = new XmlToAppData(new DefaultPlatform());
+        $xmlToAppData = new SchemaReader(new DefaultPlatform());
         $config = new GeneratorConfig();
         $config->setBuildProperties(array(
             'propel.platform.class' => 'propel.engine.platform.DefaultPlatform',
@@ -110,7 +110,7 @@ EOF;
      */
     public function testUniqueColumnName()
     {
-        $xmlToAppData = new XmlToAppData();
+        $xmlToAppData = new SchemaReader();
         $schema = <<<EOF
 <database name="columnTest" defaultIdMethod="native">
     <table name="columnTestTable">
@@ -129,7 +129,7 @@ EOF;
      */
     public function testUniqueTableName()
     {
-        $xmlToAppData = new XmlToAppData();
+        $xmlToAppData = new SchemaReader();
         $schema = <<<EOF
 <database name="columnTest" defaultIdMethod="native">
     <table name="columnTestTable">
@@ -251,7 +251,7 @@ EOF;
 
     public function testRemoveValidatorForColumn()
     {
-        $xmlToAppData = new XmlToAppData(new DefaultPlatform());
+        $xmlToAppData = new SchemaReader(new DefaultPlatform());
         $schema = <<<EOF
 <database name="test">
   <table name="table1">
@@ -281,7 +281,7 @@ EOF;
   </table>
 </database>
 EOF;
-        $xmlToAppData = new XmlToAppData(new DefaultPlatform());
+        $xmlToAppData = new SchemaReader(new DefaultPlatform());
         $appData1 = $xmlToAppData->parseString($schema1);
         $schema2 = <<<EOF
 <database name="DB1" namespace="NS2">
@@ -291,7 +291,7 @@ EOF;
   </table>
 </database>
 EOF;
-        $xmlToAppData = new XmlToAppData(new DefaultPlatform());
+        $xmlToAppData = new SchemaReader(new DefaultPlatform());
         $appData2 = $xmlToAppData->parseString($schema2);
         $appData1->joinAppDatas(array($appData2));
         $this->assertEquals('NS1', $appData1->getDatabase('DB1')->getTable('table1')->getNamespace());
@@ -310,7 +310,7 @@ EOF;
 EOF;
         $config = new GeneratorConfig();
         $config->setBuildProperties(array('propel.namespace.autoPackage' => 'true'));
-        $xmlToAppData = new XmlToAppData(new DefaultPlatform());
+        $xmlToAppData = new SchemaReader(new DefaultPlatform());
         $xmlToAppData->setGeneratorConfig($config);
         $table = $xmlToAppData->parseString($schema)->getDatabase('DB')->getTable('table');
         $this->assertEquals('NS', $table->getPackage());
@@ -328,7 +328,7 @@ EOF;
 EOF;
         $config = new GeneratorConfig();
         $config->setBuildProperties(array('propel.namespace.autoPackage' => 'true'));
-        $xmlToAppData = new XmlToAppData(new DefaultPlatform());
+        $xmlToAppData = new SchemaReader(new DefaultPlatform());
         $xmlToAppData->setGeneratorConfig($config);
         $table = $xmlToAppData->parseString($schema)->getDatabase('DB')->getTable('table');
         $this->assertEquals('NS1.NS2', $table->getPackage());
@@ -346,7 +346,7 @@ EOF;
 EOF;
         $config = new GeneratorConfig();
         $config->setBuildProperties(array('propel.namespace.autoPackage' => 'true'));
-        $xmlToAppData = new XmlToAppData(new DefaultPlatform());
+        $xmlToAppData = new SchemaReader(new DefaultPlatform());
         $xmlToAppData->setGeneratorConfig($config);
         $table = $xmlToAppData->parseString($schema)->getDatabase('DB')->getTable('table');
         $this->assertEquals('foo', $table->getPackage());
@@ -441,7 +441,7 @@ EOF;
 
     public function testIsCrossRefAttribute()
     {
-        $xmlToAppData = new XmlToAppData();
+        $xmlToAppData = new SchemaReader();
         $schema = <<<EOF
 <database name="iddb" defaultIdMethod="native">
     <table name="table_native">
