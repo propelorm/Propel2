@@ -71,7 +71,7 @@ Before:
 
 After:
 
-    public function getSchema()
+    public function getMappingSchema()
 
 ## `Propel\Generator\Model\AppData` class has been renamed to `Schema`.
 
