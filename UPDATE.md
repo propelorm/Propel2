@@ -4,7 +4,7 @@
 
 The Phing tasks that you used at buildtime are now refactored to Commands using the Symfony2 Command component. They work the same, but their name has changed.
 
-    Replace...           Whith...
+    Replace...           With...
     build-model          model:build
     build-sql            sql:build
     insert-sql           sql:insert
