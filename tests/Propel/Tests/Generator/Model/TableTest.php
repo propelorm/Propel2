@@ -77,7 +77,7 @@ EOF;
         $table = $schema->getDatabase('test1')->getTable('table1');
         $config = new GeneratorConfig();
         $config->setBuildProperties(array('propel.foo.bar.class' => 'bazz'));
-        $table->getDatabase()->getSchema()->setGeneratorConfig($config);
+        $table->getDatabase()->getMappingSchema()->setGeneratorConfig($config);
         $this->assertThat($table->getGeneratorConfig(), $this->isInstanceOf('\Propel\Generator\Config\GeneratorConfig'), 'getGeneratorConfig() returns an instance of the generator configuration');
         $this->assertEquals($table->getGeneratorConfig()->getBuildProperty('fooBarClass'), 'bazz', 'getGeneratorConfig() returns the instance of the generator configuration used in the platform');
     }
