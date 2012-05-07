@@ -10,9 +10,6 @@
 
 namespace Propel\Generator\Model;
 
-use \DOMDocument;
-use \DOMNode;
-
 /**
  * Information about unique columns of a table.  This class assumes
  * that in the underlying RDBMS, unique constraints and unique indices
@@ -26,7 +23,6 @@ use \DOMNode;
  */
 class Unique extends Index
 {
-
     /**
      * Returns <code>true</code>.
      */
@@ -38,9 +34,9 @@ class Unique extends Index
     /**
      * @see        XmlElement::appendXml(DOMNode)
      */
-    public function appendXml(DOMNode $node)
+    public function appendXml(\DOMNode $node)
     {
-        $doc = ($node instanceof DOMDocument) ? $node : $node->ownerDocument;
+        $doc = ($node instanceof \DOMDocument) ? $node : $node->ownerDocument;
 
         $uniqueNode = $node->appendChild($doc->createElement('unique'));
         $uniqueNode->setAttribute('name', $this->getName());
@@ -54,6 +50,4 @@ class Unique extends Index
             $vi->appendXml($uniqueNode);
         }
     }
-
-
 }

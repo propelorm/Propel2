@@ -43,9 +43,9 @@ class ColumnComparator
             $columnDiff->setChangedProperties($changedProperties);
 
             return $columnDiff;
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     static function compareColumns(Column $fromColumn, Column $toColumn)
@@ -55,19 +55,19 @@ class ColumnComparator
         // compare column types
         $fromDomain = $fromColumn->getDomain();
         $toDomain = $toColumn->getDomain();
-        if ($fromDomain->getType() != $toDomain->getType()) {
+        if ($fromDomain->getType() !== $toDomain->getType()) {
             $changedProperties['type'] = array($fromDomain->getType(), $toDomain->getType());
         }
-        if ($fromDomain->getScale() != $toDomain->getScale()) {
+        if ($fromDomain->getScale() !== $toDomain->getScale()) {
             $changedProperties['scale'] = array($fromDomain->getScale(), $toDomain->getScale());
         }
-        if ($fromDomain->getSize() != $toDomain->getSize()) {
+        if ($fromDomain->getSize() !== $toDomain->getSize()) {
             $changedProperties['size'] = array($fromDomain->getSize(), $toDomain->getSize());
         }
-        if (strtoupper($fromDomain->getSqlType()) != strtoupper($toDomain->getSqlType())) {
+        if (strtoupper($fromDomain->getSqlType()) !== strtoupper($toDomain->getSqlType())) {
             $changedProperties['sqlType'] = array($fromDomain->getSqlType(), $toDomain->getSqlType());
         }
-        if ($fromColumn->isNotNull() != $toColumn->isNotNull()) {
+        if ($fromColumn->isNotNull() !== $toColumn->isNotNull()) {
             $changedProperties['notNull'] = array($fromColumn->isNotNull(), $toColumn->isNotNull());
         }
 
@@ -82,16 +82,16 @@ class ColumnComparator
             $changedProperties['defaultValueValue'] = array(null, $toDefaultValue->getValue());
         } elseif ($fromDefaultValue && $toDefaultValue) {
             if (!$fromDefaultValue->equals($toDefaultValue)) {
-                if ($fromDefaultValue->getType() != $toDefaultValue->getType()) {
+                if ($fromDefaultValue->getType() !== $toDefaultValue->getType()) {
                     $changedProperties['defaultValueType'] = array($fromDefaultValue->getType(), $toDefaultValue->getType());
                 }
-                if ($fromDefaultValue->getValue() != $toDefaultValue->getValue()) {
+                if ($fromDefaultValue->getValue() !== $toDefaultValue->getValue()) {
                     $changedProperties['defaultValueValue'] = array($fromDefaultValue->getValue(), $toDefaultValue->getValue());
                 }
             }
         }
 
-        if ($fromColumn->isAutoIncrement() != $toColumn->isAutoIncrement()) {
+        if ($fromColumn->isAutoIncrement() !== $toColumn->isAutoIncrement()) {
             $changedProperties['autoIncrement'] = array($fromColumn->isAutoIncrement(), $toColumn->isAutoIncrement());
         }
 

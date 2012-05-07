@@ -79,7 +79,7 @@ class DatabaseComparator
      *
      * @param Database $fromDatabase
      * @param Database $toDatabase
-     * @param  boolean $caseInsensitive Whether the comparison is case insensitive.
+     * @param Boolean $caseInsensitive Whether the comparison is case insensitive.
      *                                  False by default.
      *
      * @return DatabaseDiff|boolean return false if the two databases are similar
@@ -89,6 +89,7 @@ class DatabaseComparator
         $dc = new self();
         $dc->setFromDatabase($fromDatabase);
         $dc->setToDatabase($toDatabase);
+
         $differences = 0;
         $differences += $dc->compareTables($caseInsensitive);
 
@@ -154,5 +155,4 @@ class DatabaseComparator
 
         return $databaseDifferences;
     }
-
 }

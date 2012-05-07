@@ -315,5 +315,4 @@ class DatabaseDiff
 
         return $ret;
     }
-
 }

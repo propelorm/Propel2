@@ -71,9 +71,9 @@ abstract class XmlElement
         $name = strtolower($name);
         if (isset($this->attributes[$name])) {
             return $this->attributes[$name];
-        } else {
-            return $defaultValue;
         }
+
+        return $defaultValue;
     }
 
     /**
@@ -84,10 +84,10 @@ abstract class XmlElement
     protected function booleanValue($val)
     {
         if (is_numeric($val)) {
-            return (bool) $val;
-        } else {
-            return (in_array(strtolower($val), array('true', 't', 'y', 'yes'), true) ? true : false);
+            return (Boolean) $val;
         }
+
+        return (in_array(strtolower($val), array('true', 't', 'y', 'yes'), true) ? true : false);
     }
 
     /**
@@ -109,12 +109,12 @@ abstract class XmlElement
             $this->vendorInfos[$vi->getType()] = $vi;
 
             return $vi;
-        } else {
-            $vi = new VendorInfo();
-            $vi->loadFromXML($data);
-
-            return $this->addVendorInfo($vi); // call self w/ different param
         }
+
+        $vi = new VendorInfo();
+        $vi->loadFromXML($data);
+
+        return $this->addVendorInfo($vi); // call self w/ different param
     }
 
     /**
@@ -125,10 +125,10 @@ abstract class XmlElement
     {
         if (isset($this->vendorInfos[$type])) {
             return $this->vendorInfos[$type];
-        } else {
-            // return an empty object
-            return new VendorInfo($type);
         }
+
+        // return an empty object
+        return new VendorInfo($type);
     }
 
     /**
