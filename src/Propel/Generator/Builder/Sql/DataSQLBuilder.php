@@ -138,9 +138,9 @@ abstract class DataSQLBuilder extends DataModelBuilder
         // they took magic __toString() out of PHP5.0.0; this sucks
         if (is_object($blob)) {
             return $this->getPlatform()->quote($blob->__toString());
-        } else {
-            return $this->getPlatform()->quote($blob);
         }
+
+        return $this->getPlatform()->quote($blob);
     }
 
     /**
@@ -153,9 +153,9 @@ abstract class DataSQLBuilder extends DataModelBuilder
         // they took magic __toString() out of PHP5.0.0; this sucks
         if (is_object($clob)) {
             return $this->getPlatform()->quote($clob->__toString());
-        } else {
-            return $this->getPlatform()->quote($clob);
         }
+
+        return $this->getPlatform()->quote($clob);
     }
 
     /**
@@ -246,5 +246,4 @@ abstract class DataSQLBuilder extends DataModelBuilder
     {
         return "'" . date('Y-m-d H:i:s', strtotime($value)) . "'";
     }
-
 }
