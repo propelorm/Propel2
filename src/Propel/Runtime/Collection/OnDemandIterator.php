@@ -10,8 +10,6 @@
 
 namespace Propel\Runtime\Collection;
 
-use Iterator;
-use PDO;
 use Propel\Runtime\Propel;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Formatter\AbstractFormatter;
@@ -22,7 +20,7 @@ use Propel\Runtime\Connection\StatementInterface;
  *
  * @author     Francois Zaninotto
  */
-class OnDemandIterator implements Iterator
+class OnDemandIterator implements \Iterator
 {
     /**
      * @var       ObjectFormatter
@@ -101,9 +99,9 @@ class OnDemandIterator implements Iterator
      */
     public function next()
     {
-        $this->currentRow = $this->stmt->fetch(PDO::FETCH_NUM);
+        $this->currentRow = $this->stmt->fetch(\PDO::FETCH_NUM);
         $this->currentKey++;
-        $this->isValid = (boolean) $this->currentRow;
+        $this->isValid = (Boolean) $this->currentRow;
         if (!$this->isValid) {
             $this->closeCursor();
             if ($this->enableInstancePoolingOnFinish) {
@@ -134,10 +132,10 @@ class OnDemandIterator implements Iterator
     }
 
     /**
-     * @return    boolean
+     * @return    Boolean
      */
     public function valid()
     {
-        return (boolean) $this->isValid;
+        return (Boolean) $this->isValid;
     }
 }

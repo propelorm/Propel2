@@ -82,7 +82,7 @@ class ArrayCollection extends Collection
     /**
      * Get an array of the primary keys of all the objects in the collection
      *
-     * @param     boolean  $usePrefix
+     * @param     Boolean  $usePrefix
      * @return    array  The list of the primary keys of the collection
      */
     public function getPrimaryKeys($usePrefix = true)
@@ -120,7 +120,7 @@ class ArrayCollection extends Collection
      *
      * @param     string   $keyColumn  If null, the returned array uses an incremental index.
      *                                 Otherwise, the array is indexed using the specified column
-     * @param     boolean  $usePrefix  If true, the returned array prefixes keys
+     * @param     Boolean  $usePrefix  If true, the returned array prefixes keys
      *                                 with the model class name ('Article_0', 'Article_1', etc).
      *
      * <code>
@@ -159,7 +159,7 @@ class ArrayCollection extends Collection
      * Synonym for toArray(), to provide a similar interface to PopelObjectCollection
      *
      * @param     string   $keyColumn
-     * @param     boolean  $usePrefix
+     * @param     Boolean  $usePrefix
      *
      * @return    array
      */
@@ -167,9 +167,9 @@ class ArrayCollection extends Collection
     {
         if (null === $keyColumn && false === $usePrefix) {
             return parent::getArrayCopy();
-        } else {
-            return $this->toArray($keyColumn, $usePrefix);
         }
+
+        return $this->toArray($keyColumn, $usePrefix);
     }
 
     /**
@@ -202,7 +202,8 @@ class ArrayCollection extends Collection
     protected function getWorkerObject()
     {
         if (null === $this->workerObject) {
-            if ($this->model == '') {
+            $model = $this->getModel();
+            if (empty($model)) {
                 throw new PropelException('You must set the collection model before interacting with it');
             }
             $class = $this->getFullyQualifiedModel();
