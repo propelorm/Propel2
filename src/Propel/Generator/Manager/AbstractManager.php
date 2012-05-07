@@ -295,7 +295,7 @@ abstract class AbstractManager
      * @param      \DOMDocument $dom
      * @param      string $srcDir
      */
-    protected function includeExternalSchemas(DOMDocument $dom, $srcDir)
+    protected function includeExternalSchemas(\DOMDocument $dom, $srcDir)
     {
         $databaseNode = $dom->getElementsByTagName('database')->item(0);
         $externalSchemaNodes = $dom->getElementsByTagName('external-schema');
