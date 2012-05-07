@@ -155,31 +155,31 @@ if (\$this->isInTree()) {
 
         $this->addProcessNestedSetQueries($script);
 
-        if ($this->getColumnPhpName('left_column') != 'LeftValue') {
+        if ('LeftValue' !== $this->getColumnPhpName('left_column')) {
             $this->addGetLeft($script);
         }
-        if ($this->getColumnPhpName('right_column') != 'RightValue') {
+        if ('RightValue' !== $this->getColumnPhpName('right_column')) {
             $this->addGetRight($script);
         }
-        if ($this->getColumnPhpName('level_column') != 'Level') {
+        if ('Level' !== $this->getColumnPhpName('level_column')) {
             $this->addGetLevel($script);
         }
-        if ($this->getParameter('use_scope') == 'true'
-         && $this->getColumnPhpName('scope_column') != 'ScopeValue') {
+        if ('true' === $this->getParameter('use_scope')
+            && 'ScopeValue' !== $this->getColumnPhpName('scope_column')) {
             $this->addGetScope($script);
         }
 
-        if ($this->getColumnPhpName('left_column') != 'LeftValue') {
+        if ('LeftValue' !== $this->getColumnPhpName('left_column')) {
             $this->addSetLeft($script);
         }
-        if ($this->getColumnPhpName('right_column') != 'RightValue') {
+        if ('RightValue' !== $this->getColumnPhpName('right_column')) {
             $this->addSetRight($script);
         }
-        if ($this->getColumnPhpName('level_column') != 'Level') {
+        if ('Level' !== $this->getColumnPhpName('level_column')) {
             $this->addSetLevel($script);
         }
-        if ($this->getParameter('use_scope') == 'true'
-         && $this->getColumnPhpName('scope_column') != 'ScopeValue') {
+        if ('true' === $this->getParameter('use_scope')
+            && 'ScopeValue' !== $this->getColumnPhpName('scope_column')) {
             $this->addSetScope($script);
         }
 

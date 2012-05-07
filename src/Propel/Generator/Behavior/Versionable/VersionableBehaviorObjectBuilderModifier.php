@@ -128,7 +128,7 @@ class VersionableBehaviorObjectBuilderModifier
     {
         $this->setBuilder($builder);
         $script = '';
-        if ($this->getParameter('version_column') != 'version') {
+        if ('version' !== $this->getParameter('version_column')) {
             $this->addVersionSetter($script);
             $this->addVersionGetter($script);
         }

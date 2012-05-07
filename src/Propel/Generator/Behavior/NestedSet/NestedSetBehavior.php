@@ -58,7 +58,7 @@ class NestedSetBehavior extends Behavior
                 'type' => 'INTEGER'
             ));
         }
-        if ($this->getParameter('use_scope') == 'true' &&
+        if ('true' === $this->getParameter('use_scope') &&
              !$this->getTable()->containsColumn($this->getParameter('scope_column'))) {
             $this->getTable()->addColumn(array(
                 'name' => $this->getParameter('scope_column'),
@@ -69,7 +69,7 @@ class NestedSetBehavior extends Behavior
 
     public function getObjectBuilderModifier()
     {
-        if (is_null($this->objectBuilderModifier)) {
+        if (null === $this->objectBuilderModifier) {
             $this->objectBuilderModifier = new NestedSetBehaviorObjectBuilderModifier($this);
         }
 
@@ -78,7 +78,7 @@ class NestedSetBehavior extends Behavior
 
     public function getQueryBuilderModifier()
     {
-        if (is_null($this->queryBuilderModifier)) {
+        if (null === $this->queryBuilderModifier) {
             $this->queryBuilderModifier = new NestedSetBehaviorQueryBuilderModifier($this);
         }
 
@@ -87,7 +87,7 @@ class NestedSetBehavior extends Behavior
 
     public function getPeerBuilderModifier()
     {
-        if (is_null($this->peerBuilderModifier)) {
+        if (null === $this->peerBuilderModifier) {
             $this->peerBuilderModifier = new NestedSetBehaviorPeerBuilderModifier($this);
         }
 

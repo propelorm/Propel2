@@ -264,7 +264,7 @@ class I18nBehavior extends Behavior
 
     public function getObjectBuilderModifier()
     {
-        if (is_null($this->objectBuilderModifier)) {
+        if (null === $this->objectBuilderModifier) {
             $this->objectBuilderModifier = new I18nBehaviorObjectBuilderModifier($this);
         }
 
@@ -273,7 +273,7 @@ class I18nBehavior extends Behavior
 
     public function getQueryBuilderModifier()
     {
-        if (is_null($this->queryBuilderModifier)) {
+        if (null === $this->queryBuilderModifier) {
             $this->queryBuilderModifier = new I18nBehaviorQueryBuilderModifier($this);
         }
 
@@ -282,11 +282,10 @@ class I18nBehavior extends Behavior
 
     public function getPeerBuilderModifier()
     {
-        if (is_null($this->peerBuilderModifier)) {
+        if (null === $this->peerBuilderModifier) {
             $this->peerBuilderModifier = new I18nBehaviorPeerBuilderModifier($this);
         }
 
         return $this->peerBuilderModifier;
     }
-
 }

@@ -195,5 +195,4 @@ class ArchivableBehaviorObjectBuilderModifier
             'objectClassName' => $this->builder->getObjectClassName(),
         ));
     }
-
 }

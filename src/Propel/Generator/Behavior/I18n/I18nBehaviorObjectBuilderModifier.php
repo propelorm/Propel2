@@ -160,7 +160,7 @@ class I18nBehaviorObjectBuilderModifier
         $objectBuilder = $this->builder->getNewObjectBuilder($this->behavior->getI18nTable());
         $comment = '';
         $functionStatement = '';
-        if ($column->getType() === PropelTypes::DATE || $column->getType() === PropelTypes::TIME || $column->getType() === PropelTypes::TIMESTAMP) {
+        if ($this->isDateType($column->getType())) {
             $objectBuilder->addTemporalAccessorComment($comment, $column);
             $objectBuilder->addTemporalAccessorOpen($functionStatement, $column);
         } else {
@@ -188,7 +188,7 @@ class I18nBehaviorObjectBuilderModifier
         $objectBuilder = $this->builder->getNewObjectBuilder($this->behavior->getI18nTable());
         $comment = '';
         $functionStatement = '';
-        if ($column->getType() === PropelTypes::DATE || $column->getType() === PropelTypes::TIME || $column->getType() === PropelTypes::TIMESTAMP) {
+        if ($this->isDateType($column->getType())) {
             $objectBuilder->addTemporalMutatorComment($comment, $column);
             $objectBuilder->addMutatorOpenOpen($functionStatement, $column);
         } else {
@@ -223,4 +223,12 @@ class I18nBehaviorObjectBuilderModifier
         $script = preg_replace($pattern, $replacement, $script);
     }
 
+    protected function isDateType($columnType)
+    {
+        return in_array($columnType, array(
+            PropelTypes::DATE,
+            PropelTypes::TIME,
+            PropelTypes::TIMESTAMP
+        ));
+    }
 }

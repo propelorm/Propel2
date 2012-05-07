@@ -122,11 +122,11 @@ protected \$sortableQueries = array();
     {
         $this->setBuilder($builder);
         $script = '';
-        if ($this->getParameter('rank_column') != 'rank') {
+        if ('rank' !== $this->getParameter('rank_column')) {
             $this->addRankAccessors($script);
         }
-        if ($this->behavior->useScope() &&
-                $this->getParameter('scope_column') != 'scope_value') {
+        if ($this->behavior->useScope()
+            && 'scope_value' !== $this->getParameter('scope_column')) {
             $this->addScopeAccessors($script);
         }
         $this->addIsFirst($script);
@@ -256,7 +256,7 @@ public function isLast(ConnectionInterface \$con = null)
  */
 public function getNext(ConnectionInterface \$con = null)
 {";
-        if ($this->behavior->getParameter('rank_column') == 'rank' && $useScope) {
+        if ('rank' === $this->behavior->getParameter('rank_column') && $useScope) {
             $script .= "
 
     return {$this->queryClassName}::create()
@@ -287,7 +287,7 @@ public function getNext(ConnectionInterface \$con = null)
  */
 public function getPrevious(ConnectionInterface \$con = null)
 {";
-        if ($this->behavior->getParameter('rank_column') == 'rank' && $useScope) {
+        if ('rank' === $this->behavior->getParameter('rank_column') && $useScope) {
             $script .= "
 
     return {$this->queryClassName}::create()
