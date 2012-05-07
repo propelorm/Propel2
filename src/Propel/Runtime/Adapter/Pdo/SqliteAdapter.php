@@ -13,8 +13,6 @@ namespace Propel\Runtime\Adapter\Pdo;
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
 
-use \PDO;
-
 /**
  * This is used in order to connect to a SQLite database.
  *
@@ -82,7 +80,7 @@ class SqliteAdapter extends PdoAdapter implements AdapterInterface
      */
     public function quoteIdentifier($text)
     {
-        return '[' . $text . ']';
+        return sprintf('[%s]', $text);
     }
 
     /**
@@ -94,10 +92,10 @@ class SqliteAdapter extends PdoAdapter implements AdapterInterface
      */
     public function applyLimit(&$sql, $offset, $limit)
     {
-        if ( $limit > 0 ) {
-            $sql .= " LIMIT " . $limit . ($offset > 0 ? " OFFSET " . $offset : "");
-        } elseif ( $offset > 0 ) {
-            $sql .= " LIMIT -1 OFFSET " . $offset;
+        if ($limit > 0) {
+            $sql .= ' LIMIT ' . $limit . ($offset > 0 ? ' OFFSET ' . $offset : '');
+        } elseif ($offset > 0) {
+            $sql .= sprintf(' LIMIT -1 OFFSET %i', $offset);
         }
     }
 
@@ -105,7 +103,7 @@ class SqliteAdapter extends PdoAdapter implements AdapterInterface
      * @param     string  $seed
      * @return    string
      */
-    public function random($seed = NULL)
+    public function random($seed = null)
     {
         return 'random()';
     }

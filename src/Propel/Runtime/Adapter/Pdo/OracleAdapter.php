@@ -18,8 +18,6 @@ use Propel\Runtime\Map\ColumnMap;
 use Propel\Runtime\Util\BasePeer;
 use Propel\Runtime\Query\Criteria;
 
-use \PDO;
-
 /**
  * Oracle adapter.
  *
@@ -39,8 +37,8 @@ class OracleAdapter extends PdoAdapter implements AdapterInterface
      *
      * @see       parent::initConnection()
      *
-     * @param     PDO    $con
-     * @param     array  $settings  A $PDO PDO connection instance
+     * @param     \PDO   $con
+     * @param     array  $settings
      */
     public function initConnection(ConnectionInterface $con, array $settings)
     {
@@ -113,9 +111,9 @@ class OracleAdapter extends PdoAdapter implements AdapterInterface
             . 'SELECT A.*, rownum AS PROPEL_ROWNUM FROM (' . $sql . ') A '
             . ') B WHERE ';
 
-        if ( $offset > 0 ) {
+        if ($offset > 0) {
             $sql .= ' B.PROPEL_ROWNUM > ' . $offset;
-            if ( $limit > 0 ) {
+            if ($limit > 0) {
                 $sql .= ' AND B.PROPEL_ROWNUM <= ' . ( $offset + $limit );
             }
         } else {
@@ -140,12 +138,12 @@ class OracleAdapter extends PdoAdapter implements AdapterInterface
      */
     public function getId(ConnectionInterface $con, $name = null)
     {
-        if ($name === null) {
-            throw new InvalidArgumentException("Unable to fetch next sequence ID without sequence name.");
+        if (null === $name) {
+            throw new InvalidArgumentException('Unable to fetch next sequence ID without sequence name.');
         }
 
-        $stmt = $con->query("SELECT " . $name . ".nextval FROM dual");
-        $row = $stmt->fetch(PDO::FETCH_NUM);
+        $stmt = $con->query(sprintf('SELECT %s.nextval FROM dual', $name));
+        $row = $stmt->fetch(\PDO::FETCH_NUM);
 
         return $row[0];
     }
@@ -211,10 +209,12 @@ class OracleAdapter extends PdoAdapter implements AdapterInterface
      */
     public function bindValue(StatementInterface $stmt, $parameter, $value, ColumnMap $cMap, $position = null)
     {
+        if (PropelColumnTypes::CLOB_EMU === $cMap->getType()) {
+            return $stmt->bindParam(':p'.$position, $value, $cMap->getPdoType(), strlen($value));
+        }
+
         if ($cMap->isTemporal()) {
             $value = $this->formatTemporalValue($value, $cMap);
-        } elseif ($cMap->getType() == PropelColumnTypes::CLOB_EMU) {
-            return $stmt->bindParam(':p'.$position, $value, $cMap->getPdoType(), strlen($value));
         } elseif (is_resource($value) && $cMap->isLob()) {
             // we always need to make sure that the stream is rewound, otherwise nothing will
             // get written to database.

@@ -17,8 +17,6 @@ use Propel\Runtime\Propel;
 use Propel\Runtime\Query\Criteria;
 use Propel\Runtime\Util\BasePeer;
 
-use \PDO;
-
 /**
  * This is used to connect to PostgresQL databases.
  *
@@ -29,7 +27,6 @@ use \PDO;
  */
 class PgsqlAdapter extends PdoAdapter implements AdapterInterface
 {
-
     /**
      * Returns SQL which concatenates the second string to the first.
      *
@@ -88,11 +85,11 @@ class PgsqlAdapter extends PdoAdapter implements AdapterInterface
      */
     public function getId(ConnectionInterface $con, $name = null)
     {
-        if ($name === null) {
+        if (null === $name) {
             throw new InvalidArgumentException("Unable to fetch next sequence ID without sequence name.");
         }
-        $stmt = $con->query("SELECT nextval(".$con->quote($name).")");
-        $row = $stmt->fetch(PDO::FETCH_NUM);
+        $stmt = $con->query(sprintf('SELECT nextval(%s)', $con->quote($name)));
+        $row = $stmt->fetch(\PDO::FETCH_NUM);
 
         return $row[0];
     }
@@ -103,7 +100,7 @@ class PgsqlAdapter extends PdoAdapter implements AdapterInterface
      */
     public function getTimestampFormatter()
     {
-        return "Y-m-d H:i:s O";
+        return 'Y-m-d H:i:s O';
     }
 
     /**
@@ -113,7 +110,7 @@ class PgsqlAdapter extends PdoAdapter implements AdapterInterface
      */
     public function getTimeFormatter()
     {
-        return "H:i:s O";
+        return 'H:i:s O';
     }
 
     /**
@@ -125,11 +122,11 @@ class PgsqlAdapter extends PdoAdapter implements AdapterInterface
      */
     public function applyLimit(&$sql, $offset, $limit)
     {
-        if ( $limit > 0 ) {
-            $sql .= " LIMIT ".$limit;
+        if ($limit > 0) {
+            $sql .= sprintf(' LIMIT %u', $limit);
         }
-        if ( $offset > 0 ) {
-            $sql .= " OFFSET ".$offset;
+        if ($offset > 0) {
+            $sql .= sprintf(' OFFSET %u', $offset);
         }
     }
 

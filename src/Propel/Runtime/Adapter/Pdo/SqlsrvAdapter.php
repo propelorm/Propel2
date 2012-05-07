@@ -10,7 +10,6 @@
 
 namespace Propel\Runtime\Adapter\Pdo;
 
-use PDO;
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Adapter\Exception\UnsupportedEncodingException;
 use Propel\Runtime\Connection\ConnectionInterface;
@@ -34,8 +33,8 @@ class SqlsrvAdapter extends MssqlAdapter implements AdapterInterface
      */
     public function initConnection(ConnectionInterface $con, array $settings)
     {
-        $con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $con->setAttribute(PDO::ATTR_STRINGIFY_FETCHES, false);
+        $con->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+        $con->setAttribute(\PDO::ATTR_STRINGIFY_FETCHES, false);
 
         parent::initConnection($con, $settings);
     }
@@ -52,10 +51,10 @@ class SqlsrvAdapter extends MssqlAdapter implements AdapterInterface
     {
         switch (strtolower($charset)) {
             case 'utf-8':
-                $con->setAttribute(PDO::SQLSRV_ATTR_ENCODING, PDO::SQLSRV_ENCODING_UTF8);
+                $con->setAttribute(\PDO::SQLSRV_ATTR_ENCODING, \PDO::SQLSRV_ENCODING_UTF8);
                 break;
             case 'system':
-                $con->setAttribute(PDO::SQLSRV_ATTR_ENCODING, PDO::SQLSRV_ENCODING_SYSTEM);
+                $con->setAttribute(\PDO::SQLSRV_ATTR_ENCODING, \PDO::SQLSRV_ENCODING_SYSTEM);
                 break;
             default:
                 throw new UnsupportedEncodingException('only utf-8 or system encoding are supported by the pdo_sqlsrv driver');
@@ -116,7 +115,7 @@ class SqlsrvAdapter extends MssqlAdapter implements AdapterInterface
             $blob = 'blob'.$position;
             $$blob = $value;
 
-            return $stmt->bindParam($parameter, ${$blob}, PDO::PARAM_LOB, 0, PDO::SQLSRV_ENCODING_BINARY);
+            return $stmt->bindParam($parameter, ${$blob}, \PDO::PARAM_LOB, 0, \PDO::SQLSRV_ENCODING_BINARY);
         }
 
         return $stmt->bindValue($parameter, $value, $cMap->getPdoType());
