@@ -13,9 +13,6 @@ namespace Propel\Generator\Model;
 use Propel\Generator\Exception\EngineException;
 use Propel\Generator\Builder\Util\PropelTemplate;
 
-use \InvalidArgumentException;
-use \ReflectionObject;
-
 /**
  * Information about behaviors of a table.
  *
@@ -204,7 +201,7 @@ class Behavior extends XmlElement
             // try with '.php' at the end
             $filePath = $filePath . '.php';
             if (!file_exists($filePath)) {
-                throw new InvalidArgumentException(sprintf('Template "%s" not found in "%s" directory',
+                throw new \InvalidArgumentException(sprintf('Template "%s" not found in "%s" directory',
                     $filename,
                     $this->getDirname() . $templateDir
                 ));
@@ -225,7 +222,7 @@ class Behavior extends XmlElement
     protected function getDirname()
     {
         if (null === $this->dirname) {
-            $r = new ReflectionObject($this);
+            $r = new \ReflectionObject($this);
             $this->dirname = dirname($r->getFileName());
         }
 
