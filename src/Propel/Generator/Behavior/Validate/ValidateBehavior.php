@@ -42,7 +42,9 @@ class ValidateBehavior extends Behavior
 
         $this->builder = $builder;
 
-        $this->builder->declareClasses('Symfony\\Component\\Validator\\Mapping\\ClassMetadata', 'Symfony\\Component\\Validator\\Validator', 'Symfony\\Component\\Validator\\Mapping\\Loader\\StaticMethodLoader', 'Symfony\\Component\\Validator\\ConstraintValidatorFactory', 'Symfony\\Component\\Validator\\Mapping\\ClassMetadataFactory', 'Symfony\\Component\\Validator\\ConstraintViolationList');
+        $this->builder->declareClasses('Symfony\\Component\\Validator\\Mapping\\ClassMetadata', 'Symfony\\Component\\Validator\\Validator',
+'Symfony\\Component\\Validator\\Mapping\\Loader\\StaticMethodLoader', 'Symfony\\Component\\Validator\\ConstraintValidatorFactory', 
+'Symfony\\Component\\Validator\\Mapping\\ClassMetadataFactory', 'Symfony\\Component\\Validator\\ConstraintViolationList');
 
         $script = $this->addLoadValidatorMetadataMethod();
         $script .= $this->addValidateMethod();
@@ -70,20 +72,17 @@ class ValidateBehavior extends Behavior
      */
     public function getParametersFromColumnName($columnName = null)
     {
-        if (null == $columnName) {
-            return array();
-        } else {
-            $outArray = array();
+        $array = array();
+        if (null !== $columnName) {
             $this->cleanupParameters();
-            $parameters = $this->getParameters();
-            foreach ($parameters as $key=>$parameter) {
-                if ($parameter['column'] == $columnName) {
-                    $outArray[$key] = $parameter;
+            foreach ($this->getParameters() as $key => $parameter) {
+                if ($parameter['column'] === $columnName) {
+                $array[$key] = $parameter;
                 }
             }
-
-            return $outArray;
         }
+
+        return $array;
     }
 
     /**
@@ -97,7 +96,7 @@ class ValidateBehavior extends Behavior
         if (null !== $columnName) {
             $newParams = array();
             $parameters = $this->getParameters();
-            foreach ($parameters as $key=>$parameter) {
+            foreach ($parameters as $key => $parameter) {
                 if ($parameter['column'] != $columnName) {
                     $newParams[$key] = $parameter;
                 }
@@ -175,8 +174,7 @@ class ValidateBehavior extends Behavior
         $params = $this->getParameters();
         $constraints = array();
 
-        foreach ($params as $key => $properties)
-        {
+        foreach ($params as $key => $properties) {
             if (!isset($properties['column'])) {
                 throw new InvalidArgumentException('Please, define the column to validate.');
             }
@@ -251,7 +249,6 @@ class ValidateBehavior extends Behavior
 
     /**
      * Adds the getValidationFailures() method.
-     * @param      string &$script The script will be modified in this method.
      */
     protected function addGetValidationFailuresMethod()
     {

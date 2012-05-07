@@ -147,10 +147,10 @@ class I18nBehavior extends Behavior
 
                 //validate behavior: move rules associated to the column
                 if ($table->hasBehavior('validate')) {
-                    $vBehavior = $table->getBehavior('validate');
-                    $params = $vBehavior->getParametersFromColumnName($columnName);
+                    $validateBehavior = $table->getBehavior('validate');
+                    $params = $validateBehavior->getParametersFromColumnName($columnName);
                     $i18nValidateParams = array_merge($i18nValidateParams, $params);
-                    $vBehavior->removeParametersFromColumnName($columnName);
+                    $validateBehavior->removeParametersFromColumnName($columnName);
                 }
                 // FIXME: also move FKs, and indices on this column
             }

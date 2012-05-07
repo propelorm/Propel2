@@ -240,7 +240,7 @@ class SchemaReader
                     $this->currVendorObject = $this->currTable->addVendorInfo($attributes);
                     break;
 
-              case "id-method-parameter":
+                case 'id-method-parameter':
                     $this->currTable->addIdMethodParameter($attributes);
                     break;
 
@@ -321,7 +321,7 @@ class SchemaReader
                 default:
                     $this->_throwInvalidTagException($parser, $name);
             }
-        } elseif ($parentTag == "vendor") {
+        } elseif ('vendor' === $parentTag) {
 
             switch ($name) {
                 case 'parameter':

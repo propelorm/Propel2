@@ -17,20 +17,18 @@ class UniqueValidator extends ConstraintValidator
 {
     public function isValid($value, Constraint $constraint)
     {
-        $object = $this->context->getRoot();
-        $className = get_class($object);
-        $peer = $object->getPeer();
-        $colName = $this->context->getCurrentProperty();
-        $colName = $peer->translateFieldName($colName, BasePeer::TYPE_STUDLYPHPNAME, BasePeer::TYPE_PHPNAME);
-        $query = call_user_func($className.'Query::create');
-        $filter = 'filterBy'.$colName;
-        $ret = $query->$filter($value)->count();
-        if ($ret >0) {
+        $object     = $this->context->getRoot();
+        $peer       = $object->getPeer();
+        $className  = get_class($object);
+        $queryClass = $className . 'Query';
+        $filter     = sprintf('filterBy%s', $peer->translateFieldName($this->context->getCurrentProperty(), BasePeer::TYPE_STUDLYPHPNAME, BasePeer::TYPE_PHPNAME));
+
+        if (0 < $queryClass::create()->$filter($value)->count()) {
             $this->setMessage($constraint->message);
 
             return true;
-        } else {
-            return false;
         }
+
+        return false;
     }
 }

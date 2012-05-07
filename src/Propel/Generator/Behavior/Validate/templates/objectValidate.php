@@ -2,14 +2,13 @@
 /**
  * Validates the object and all objects related to this table.
  *
+ * @see        getValidationFailures()
  * @param      object $validator A Validator class instance
  * @return     boolean Whether all objects pass validation.
- * @see        doValidate()
- * @see        getValidationFailures()
  */
 public function validate(Validator $validator = null)
 {
-    if (is_null($validator)) {
+    if (null === $validator) {
         $validator = new Validator(new ClassMetadataFactory(new StaticMethodLoader()), new ConstraintValidatorFactory());
     }
 
@@ -41,7 +40,7 @@ public function validate(Validator $validator = null)
         }
 
 <?php foreach($collVarNames as $collVarName) : ?>
-        if (!is_null($this-><?php echo $collVarName; ?>)) {
+        if (null !== $this-><?php echo $collVarName; ?>) {
             foreach ($this-><?php echo $collVarName; ?> as $referrerFK) {
                 if (method_exists($referrerFK, 'validate')) {
                     if (!$referrerFK->validate($validator)) {
@@ -57,6 +56,6 @@ public function validate(Validator $validator = null)
 
     $this->validationFailures = $failureMap;
 
-    return (bool) (!(count($this->validationFailures) > 0));
+    return (Boolean) (!(count($this->validationFailures) > 0));
 
 }
