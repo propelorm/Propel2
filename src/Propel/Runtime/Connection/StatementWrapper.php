@@ -12,8 +12,6 @@ namespace Propel\Runtime\Connection;
 
 use Propel\Runtime\Connection\StatementInterface;
 
-use \PDO;
-
 /**
  * Wraps a Statement class, providing logging.
  *
@@ -41,11 +39,11 @@ class StatementWrapper implements StatementInterface
      * @var       array
      */
     protected static $typeMap = array(
-        0  => "PDO::PARAM_NULL",
-        1  => "PDO::PARAM_INT",
-        2  => "PDO::PARAM_STR",
-        3  => "PDO::PARAM_LOB",
-        5  => "PDO::PARAM_BOOL",
+        0  => 'PDO::PARAM_NULL',
+        1  => 'PDO::PARAM_INT',
+        2  => 'PDO::PARAM_STR',
+        3  => 'PDO::PARAM_LOB',
+        5  => 'PDO::PARAM_BOOL',
     );
 
     /**
@@ -80,7 +78,7 @@ class StatementWrapper implements StatementInterface
      *
      * @return    boolean
      */
-    public function bindParam($pos, &$value, $type = PDO::PARAM_STR, $length = 0, $driver_options = null)
+    public function bindParam($pos, &$value, $type = \PDO::PARAM_STR, $length = 0, $driver_options = null)
     {
         $return = $this->statement->bindParam($pos, $value, $type, $length, $driver_options);
         if ($this->connection->useDebug) {
@@ -104,7 +102,7 @@ class StatementWrapper implements StatementInterface
      *
      * @return    boolean
      */
-    public function bindValue($pos, $value, $type = PDO::PARAM_STR)
+    public function bindValue($pos, $value, $type = \PDO::PARAM_STR)
     {
         $return = $this->statement->bindValue($pos, $value, $type);
         if ($this->connection->useDebug) {
