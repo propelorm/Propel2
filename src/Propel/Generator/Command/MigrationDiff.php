@@ -77,7 +77,7 @@ class MigrationDiff extends AbstractCommand
         }
 
         $totalNbTables = 0;
-        $ad = new AppData();
+        $schema = new Schema();
         foreach ($connections as $name => $params) {
             if ($input->getOption('verbose')) {
                 $output->writeln(sprintf('Connecting to database "%s" using DSN "%s"', $name, $params['dsn']));
@@ -98,7 +98,7 @@ class MigrationDiff extends AbstractCommand
             $parser   = $generatorConfig->getConfiguredSchemaParser($pdo);
             $nbTables = $parser->parse($database, $this);
 
-            $ad->addDatabase($database);
+            $schema->addDatabase($database);
             $totalNbTables += $nbTables;
 
             if ($input->getOption('verbose')) {
@@ -120,7 +120,7 @@ class MigrationDiff extends AbstractCommand
 
         $migrationsUp   = array();
         $migrationsDown = array();
-        foreach ($ad->getDatabases() as $database) {
+        foreach ($schema->getDatabases() as $database) {
             $name = $database->getName();
 
             if ($input->getOption('verbose')) {

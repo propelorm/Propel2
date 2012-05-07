@@ -10,7 +10,7 @@
 
 namespace Propel\Generator\Util;
 
-use Propel\Generator\Builder\Util\XmlToAppData;
+use Propel\Generator\Builder\Util\SchemaReader;
 use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Model\Table;
 
@@ -116,7 +116,7 @@ class QuickBuilder
     public function getDatabase()
     {
         if (null === $this->database) {
-            $xtad = new XmlToAppData($this->getPlatform());
+            $xtad = new SchemaReader($this->getPlatform());
             $xtad->setGeneratorConfig($this->getConfig());
             $appData = $xtad->parseString($this->schema);
             $this->database = $appData->getDatabase(); // does final initialization

@@ -10,7 +10,7 @@
 
 namespace Propel\Tests\Generator\Platform;
 
-use Propel\Generator\Builder\Util\XmlToAppData;
+use Propel\Generator\Builder\Util\SchemaReader;
 
 /**
  * Base class for all Platform tests
@@ -22,7 +22,7 @@ abstract class PlatformTestBase extends \PHPUnit_Framework_TestCase
 
     protected function getDatabaseFromSchema($schema)
     {
-        $xtad = new XmlToAppData($this->getPlatform());
+        $xtad = new SchemaReader($this->getPlatform());
         $appData = $xtad->parseString($schema);
 
         return $appData->getDatabase();
