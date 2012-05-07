@@ -11,11 +11,9 @@
 namespace Propel\Runtime\Formatter;
 
 use Propel\Runtime\Propel;
-use Propel\Runtime\Query\ModelCriteria;
-use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Connection\StatementInterface;
-
-use \PDOStatement;
+use Propel\Runtime\Exception\PropelException;
+use Propel\Runtime\Query\ModelCriteria;
 
 /**
  * Abstract class for query formatter
@@ -37,6 +35,8 @@ abstract class AbstractFormatter
     protected $hasLimit;
 
     protected $currentObjects;
+
+    protected $collectionName;
 
     public function __construct(ModelCriteria $criteria = null)
     {
@@ -133,6 +133,29 @@ abstract class AbstractFormatter
     }
 
     /**
+     * Returns a Collection object or a simple array.
+     *
+     * @return Collection|array
+     */
+    protected function getCollection()
+    {
+        $collection = array();
+
+        if ($class = $this->getCollectionClassName()) {
+            $collection = new $class();
+            $collection->setModel($this->class);
+            $collection->setFormatter($this);
+        }
+
+        return $collection;
+    }
+
+    public function getCollectionClassName()
+    {
+
+    }
+
+    /**
      * Formats an ActiveRecord object
      *
      * @param BaseObject $record the object to format
@@ -213,6 +236,4 @@ abstract class AbstractFormatter
 
         return $obj;
     }
-
-
 }

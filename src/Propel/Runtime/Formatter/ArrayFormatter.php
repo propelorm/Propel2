@@ -13,8 +13,6 @@ namespace Propel\Runtime\Formatter;
 use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\Connection\StatementInterface;
 
-use \PDO;
-
 /**
  * Array formatter for Propel query
  * format() returns a ArrayCollection of associative arrays
@@ -23,24 +21,19 @@ use \PDO;
  */
 class ArrayFormatter extends AbstractFormatter
 {
-    protected $collectionName = '\Propel\Runtime\Collection\ArrayCollection';
     protected $alreadyHydratedObjects = array();
     protected $emptyVariable;
 
     public function format(StatementInterface $stmt)
     {
         $this->checkInit();
-        if($class = $this->collectionName) {
-            $collection = new $class();
-            $collection->setModel($this->class);
-            $collection->setFormatter($this);
-        } else {
-            $collection = array();
-        }
+
+        $collection = $this->getCollection();
+
         if ($this->isWithOneToMany() && $this->hasLimit) {
             throw new LogicException('Cannot use limit() in conjunction with with() on a one-to-many relationship. Please remove the with() call, or the limit() call.');
         }
-        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+        while ($row = $stmt->fetch(\PDO::FETCH_NUM)) {
             if ($object = &$this->getStructuredArrayFromRow($row)) {
                 $collection[] = $object;
             }
@@ -52,11 +45,16 @@ class ArrayFormatter extends AbstractFormatter
         return $collection;
     }
 
+    public function getCollectionClassName()
+    {
+        return '\Propel\Runtime\Collection\ArrayCollection';
+    }
+
     public function formatOne(StatementInterface $stmt)
     {
         $this->checkInit();
         $result = null;
-        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+        while ($row = $stmt->fetch(\PDO::FETCH_NUM)) {
             if ($object = &$this->getStructuredArrayFromRow($row)) {
                 $result = &$object;
             }
@@ -84,7 +82,6 @@ class ArrayFormatter extends AbstractFormatter
     {
         return false;
     }
-
 
     /**
      * Hydrates a series of objects from a result row
@@ -172,5 +169,4 @@ class ArrayFormatter extends AbstractFormatter
         // we still need to return a reference to something to avoid a warning
         return $this->emptyVariable;
     }
-
 }

@@ -10,8 +10,6 @@
 
 namespace Propel\Runtime\Formatter;
 
-use \PDO;
-
 use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\Connection\StatementInterface;
 
@@ -23,24 +21,18 @@ use Propel\Runtime\Connection\StatementInterface;
  */
 class ObjectFormatter extends AbstractFormatter
 {
-    protected $collectionName = '\Propel\Runtime\Collection\ObjectCollection';
-
     public function format(StatementInterface $stmt)
     {
         $this->checkInit();
-        if($class = $this->collectionName) {
-            $collection = new $class();
-            $collection->setModel($this->class);
-            $collection->setFormatter($this);
-        } else {
-            $collection = array();
-        }
+
+        $collection = $this->getCollection();
+
         if ($this->isWithOneToMany()) {
             if ($this->hasLimit) {
                 throw new LogicException('Cannot use limit() in conjunction with with() on a one-to-many relationship. Please remove the with() call, or the limit() call.');
             }
             $pks = array();
-            while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            while ($row = $stmt->fetch(\PDO::FETCH_NUM)) {
                 $object = $this->getAllObjectsFromRow($row);
                 $pk = $object->getPrimaryKey();
                 if (!in_array($pk, $pks)) {
@@ -50,7 +42,7 @@ class ObjectFormatter extends AbstractFormatter
             }
         } else {
             // only many-to-one relationships
-            while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            while ($row = $stmt->fetch(\PDO::FETCH_NUM)) {
                 $collection[] =  $this->getAllObjectsFromRow($row);
             }
         }
@@ -59,11 +51,16 @@ class ObjectFormatter extends AbstractFormatter
         return $collection;
     }
 
+    public function getCollectionClassName()
+    {
+        return '\Propel\Runtime\Collection\ObjectCollection';
+    }
+
     public function formatOne(StatementInterface $stmt)
     {
         $this->checkInit();
         $result = null;
-        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+        while ($row = $stmt->fetch(\PDO::FETCH_NUM)) {
             $result = $this->getAllObjectsFromRow($row);
         }
         $stmt->closeCursor();
@@ -131,5 +128,4 @@ class ObjectFormatter extends AbstractFormatter
 
         return $obj;
     }
-
 }
