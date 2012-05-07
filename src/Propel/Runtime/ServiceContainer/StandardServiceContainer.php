@@ -103,7 +103,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      */
     public function getAdapterClass($name = null)
     {
-        if ($name === null) {
+        if (null === $name) {
             $name = $this->getDefaultDatasource();
         }
 
@@ -146,7 +146,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      */
     public function getAdapter($name = null)
     {
-        if ($name === null) {
+        if (null === $name) {
             $name = $this->getDefaultDatasource();
         }
         if (!isset($this->adapters[$name])) {
@@ -204,7 +204,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      */
     public function getDatabaseMap($name = null)
     {
-        if ($name === null) {
+        if (null === $name) {
             $name = $this->getDefaultDatasource();
         }
         if (!isset($this->databaseMaps[$name])) {
@@ -288,7 +288,8 @@ class StandardServiceContainer implements ServiceContainerInterface
         if (null === $name) {
             $name = $this->getDefaultDatasource();
         }
-        if (ServiceContainerInterface::CONNECTION_READ == $mode) {
+
+        if (ServiceContainerInterface::CONNECTION_READ === $mode) {
             return $this->getReadConnection($name);
         }
 
@@ -415,7 +416,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      */
     public function getLogger($name = 'defaultLogger')
     {
-        if (!array_key_exists($name, $this->loggers)) {
+        if (!isset($this->loggers[$name])) {
             $this->loggers[$name] = $this->buildLogger($name);
         }
 
@@ -434,13 +435,9 @@ class StandardServiceContainer implements ServiceContainerInterface
     protected function buildLogger($name = 'defaultLogger')
     {
         if (!isset($this->loggerConfigurations[$name])) {
-            if ('defaultLogger' == $name) {
-                return null;
-            } else {
-                // fallback to default logger
-                return $this->getLogger();
-            }
+            return 'defaultLogger' !== $name ? $this->getLogger() : null;
         }
+
         $logger = new Logger($name);
         $configuration = $this->loggerConfigurations[$name];
         switch ($configuration['type']) {
