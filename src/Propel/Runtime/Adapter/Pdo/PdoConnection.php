@@ -13,12 +13,10 @@ namespace Propel\Runtime\Adapter\Pdo;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\InvalidArgumentException;
 
-use \PDO;
-
 /**
  * PDO extension that implements ConnectionInterface and builds statements implementting StatementInterface.
  */
-class PdoConnection extends PDO implements ConnectionInterface
+class PdoConnection extends \PDO implements ConnectionInterface
 {
     /**
      * @var string The datasource name associated to this connection
@@ -47,8 +45,9 @@ class PdoConnection extends PDO implements ConnectionInterface
     public function __construct($dsn, $user = null, $password = null, array $options = null)
     {
         parent::__construct($dsn, $user, $password, $options);
-        $this->setAttribute(PDO::ATTR_STATEMENT_CLASS, array('\Propel\Runtime\Adapter\Pdo\PdoStatement', array()));
-        $this->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        $this->setAttribute(\PDO::ATTR_STATEMENT_CLASS, array('\Propel\Runtime\Adapter\Pdo\PdoStatement', array()));
+        $this->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
     }
 
     /**
@@ -68,6 +67,7 @@ class PdoConnection extends PDO implements ConnectionInterface
             }
             $attribute = constant($attribute);
         }
+
         parent::setAttribute($attribute, $value);
     }
 }

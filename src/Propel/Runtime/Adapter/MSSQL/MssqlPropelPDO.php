@@ -152,7 +152,7 @@ class MssqlPropelPDO extends PropelPDO
     }
 
     /**
-     * @return    boolean
+     * @return    Boolean
      */
     public function useQuoteIdentifier()
     {

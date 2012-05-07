@@ -10,8 +10,6 @@
 
 namespace Propel\Runtime\Adapter\Pdo;
 
-use PDO;
-use PDOException;
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\StatementInterface;
@@ -169,12 +167,14 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
         $pdoType = $cMap->getPdoType();
         // FIXME - This is a temporary hack to get around apparent bugs w/ PDO+MYSQL
         // See http://pecl.php.net/bugs/bug.php?id=9919
-        if (PDO::PARAM_BOOL === $pdoType) {
+        if (\PDO::PARAM_BOOL === $pdoType) {
             $value = (int) $value;
-            $pdoType = PDO::PARAM_INT;
+            $pdoType = \PDO::PARAM_INT;
 
             return $stmt->bindValue($parameter, $value, $pdoType);
-        } elseif ($cMap->isTemporal()) {
+        }
+
+        if ($cMap->isTemporal()) {
             $value = $this->formatTemporalValue($value, $cMap);
         } elseif (is_resource($value) && $cMap->isLob()) {
             // we always need to make sure that the stream is rewound, otherwise nothing will
