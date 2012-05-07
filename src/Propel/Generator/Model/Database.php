@@ -466,7 +466,7 @@ class Database extends ScopedElement
 
     public function getGeneratorConfig()
     {
-        if ($schema = $this->getMappingSchema()) {
+        if ($schema = $this->getParentSchema()) {
             return $schema->getGeneratorConfig();
         }
 
