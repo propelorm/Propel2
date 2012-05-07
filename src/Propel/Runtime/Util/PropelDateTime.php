@@ -12,10 +12,6 @@ namespace Propel\Runtime\Util;
 
 use Propel\Runtime\Exception\PropelException;
 
-use \DateTime;
-use \DateTimeZone;
-use \Exception;
-
 /**
  * DateTime subclass which supports serialization.
  *
@@ -27,9 +23,8 @@ use \Exception;
  * @author     Soenke Ruempler
  * @author     Hans Lellelid
  */
-class PropelDateTime extends DateTime
+class PropelDateTime extends \DateTime
 {
-
     /**
      * A string representation of the date, for serialization.
      * @var        string
@@ -76,29 +71,29 @@ class PropelDateTime extends DateTime
      */
     static public function newInstance($value, DateTimeZone $timeZone = null, $dateTimeClass = 'DateTime')
     {
-        if ($value instanceof DateTime) {
+        if ($value instanceof \DateTime) {
             return $value;
         }
-        if ($value === null || $value === '') {
+        if (empty($value)) {
             // '' is seen as NULL for temporal objects
             // because DateTime('') == DateTime('now') -- which is unexpected
             return null;
         }
         try {
             if (self::isTimestamp($value)) { // if it's a unix timestamp
-                $dateTimeObject = new $dateTimeClass('@' . $value, new DateTimeZone('UTC'));
+                $dateTimeObject = new $dateTimeClass('@' . $value, new \DateTimeZone('UTC'));
                 // timezone must be explicitly specified and then changed
                 // because of a DateTime bug: http://bugs.php.net/bug.php?id=43003
-                $dateTimeObject->setTimeZone(new DateTimeZone(date_default_timezone_get()));
+                $dateTimeObject->setTimeZone(new \DateTimeZone(date_default_timezone_get()));
             } else {
-                if ($timeZone === null) {
+                if (null === $timeZone) {
                     // stupid DateTime constructor signature
                     $dateTimeObject = new $dateTimeClass($value);
                 } else {
                     $dateTimeObject = new $dateTimeClass($value, $timeZone);
                 }
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw new PropelException('Error parsing date/time value: ' . var_export($value, true), 0, $e);
         }
 
@@ -127,7 +122,7 @@ class PropelDateTime extends DateTime
      */
     function __wakeup()
     {
-        parent::__construct($this->dateString, new DateTimeZone($this->tzString));
+        // @TODO I don't think we can call the constructor from within this method
+        parent::__construct($this->dateString, new \DateTimeZone($this->tzString));
     }
-
 }
