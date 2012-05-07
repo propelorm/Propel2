@@ -10,7 +10,6 @@
 
 namespace Propel\Generator\Reverse;
 
-use PDO;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\Table;
@@ -84,9 +83,9 @@ class SqliteSchemaParser extends AbstractSchemaParser
 
         // First load the tables (important that this happen before filling out details of tables)
         $tables = array();
-        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+        while ($row = $stmt->fetch(\PDO::FETCH_NUM)) {
             $name = $row[0];
-            if ($name == $this->getMigrationTable()) {
+            if ($name === $this->getMigrationTable()) {
                 continue;
             }
             $table = new Table($name);
@@ -106,7 +105,6 @@ class SqliteSchemaParser extends AbstractSchemaParser
         }
 
         return count($tables);
-
     }
 
 
@@ -121,7 +119,7 @@ class SqliteSchemaParser extends AbstractSchemaParser
     {
         $stmt = $this->dbh->query("PRAGMA table_info('" . $table->getName() . "')");
 
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
             $name = $row['name'];
 
             $fulltype = $row['type'];
@@ -141,7 +139,7 @@ class SqliteSchemaParser extends AbstractSchemaParser
             }
             // If column is primary key and of type INTEGER, it is auto increment
             // See: http://sqlite.org/faq.html#q1
-            $autoincrement = ($row['pk'] == 1 && strtolower($type) == 'integer');
+            $autoincrement = (1 == $row['pk'] && 'integer' === strtolower($type));
             $notNull = $row['notnull'];
             $default = $row['dflt_value'];
 
@@ -149,7 +147,7 @@ class SqliteSchemaParser extends AbstractSchemaParser
 
             if (!$propelType) {
                 $propelType = Column::DEFAULT_TYPE;
-                $this->warn("Column [" . $table->getName() . "." . $name. "] has a column type (".$type.") that Propel does not support.");
+                $this->warn('Column [' . $table->getName() . '.' . $name. '] has a column type ('.$type.') that Propel does not support.');
             }
 
             $column = new Column($name);
@@ -160,20 +158,20 @@ class SqliteSchemaParser extends AbstractSchemaParser
             $column->getDomain()->replaceSize($size);
             $column->getDomain()->replaceScale($scale);
 
-            if ($default !== null) {
+            if (null !== $default) {
                 $column->getDomain()->setDefaultValue(new ColumnDefaultValue($default, ColumnDefaultValue::TYPE_VALUE));
             }
 
             $column->setAutoIncrement($autoincrement);
             $column->setNotNull($notNull);
 
-            if (($row['pk'] == 1) || (strtolower($type) == 'integer')) {
+            if (1 == $row['pk'] || 'integer' === strtolower($type)) {
                 $column->setPrimaryKey(true);
             }
 
             $table->addColumn($column);
         }
-    } // addColumn()
+    }
 
     /**
      * Load indexes for this table
@@ -182,12 +180,12 @@ class SqliteSchemaParser extends AbstractSchemaParser
     {
         $stmt = $this->dbh->query("PRAGMA index_list('" . $table->getName() . "')");
 
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
             $name = $row['name'];
             $index = new Index($name);
 
             $stmt2 = $this->dbh->query("PRAGMA index_info('".$name."')");
-            while ($row2 = $stmt2->fetch(PDO::FETCH_ASSOC)) {
+            while ($row2 = $stmt2->fetch(\PDO::FETCH_ASSOC)) {
                 $colname = $row2['name'];
                 $index->addColumn($table->getColumn($colname));
             }

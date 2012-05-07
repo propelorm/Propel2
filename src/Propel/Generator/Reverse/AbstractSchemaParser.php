@@ -68,7 +68,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
      */
     public function __construct(ConnectionInterface $dbh = null)
     {
-        if ($dbh) {
+        if (null !== $dbh) {
             $this->setConnection($dbh);
         }
     }
@@ -217,6 +217,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
     protected function getNewVendorInfoObject(array $params)
     {
         $type = $this->getPlatform()->getDatabaseType();
+
         $vi = new VendorInfo($type);
         $vi->setParameters($params);
 
