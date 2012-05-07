@@ -12,8 +12,6 @@ namespace Propel\Runtime\Connection;
 
 use Propel\Runtime\Util\Profiler;
 
-use \PDO;
-
 /**
  * Statement class with profiling abilities.
  */
@@ -33,7 +31,7 @@ class ProfilerStatementWrapper extends StatementWrapper
      *
      * @return    boolean
      */
-    public function bindParam($pos, &$value, $type = PDO::PARAM_STR, $length = 0, $driver_options = null)
+    public function bindParam($pos, &$value, $type = \PDO::PARAM_STR, $length = 0, $driver_options = null)
     {
         $this->connection->getProfiler()->start();
 
@@ -50,7 +48,7 @@ class ProfilerStatementWrapper extends StatementWrapper
      *
      * @return    boolean
      */
-    public function bindValue($pos, $value, $type = PDO::PARAM_STR)
+    public function bindValue($pos, $value, $type = \PDO::PARAM_STR)
     {
         $this->connection->getProfiler()->start();
 

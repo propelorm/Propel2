@@ -17,7 +17,6 @@ use Propel\Runtime\Adapter\AdapterInterface;
  */
 class ConnectionManagerMasterSlave implements ConnectionManagerInterface
 {
-
     /**
      * @var string The datasource name associated to this connection
      */
