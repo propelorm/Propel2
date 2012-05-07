@@ -36,28 +36,28 @@ class OraclePlatform extends DefaultPlatform
     protected function initialize()
     {
         parent::initialize();
-        $this->schemaDomainMap[PropelTypes::BOOLEAN] = new Domain(PropelTypes::BOOLEAN_EMU, "NUMBER", "1", "0");
-        $this->schemaDomainMap[PropelTypes::CLOB] = new Domain(PropelTypes::CLOB_EMU, "CLOB");
+        $this->schemaDomainMap[PropelTypes::BOOLEAN] = new Domain(PropelTypes::BOOLEAN_EMU, 'NUMBER', '1', '0');
+        $this->schemaDomainMap[PropelTypes::CLOB] = new Domain(PropelTypes::CLOB_EMU, 'CLOB');
         $this->schemaDomainMap[PropelTypes::CLOB_EMU] = $this->schemaDomainMap[PropelTypes::CLOB];
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::TINYINT, "NUMBER", "3", "0"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::SMALLINT, "NUMBER", "5", "0"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::INTEGER, "NUMBER"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::BIGINT, "NUMBER", "20", "0"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::REAL, "NUMBER"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::DOUBLE, "FLOAT"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::DECIMAL, "NUMBER"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::NUMERIC, "NUMBER"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::VARCHAR, "NVARCHAR2"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARCHAR, "NVARCHAR2", "2000"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::TIME, "DATE"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::DATE, "DATE"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::TIMESTAMP, "TIMESTAMP"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::BINARY, "LONG RAW"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::VARBINARY, "BLOB"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARBINARY, "LONG RAW"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::OBJECT, "NVARCHAR2", "2000"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::PHP_ARRAY, "NVARCHAR2", "2000"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::ENUM, "NUMBER", "3", "0"));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::TINYINT, 'NUMBER', '3', '0'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::SMALLINT, 'NUMBER', '5', '0'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::INTEGER, 'NUMBER'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::BIGINT, 'NUMBER', '20', '0'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::REAL, 'NUMBER'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::DOUBLE, 'FLOAT'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::DECIMAL, 'NUMBER'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::NUMERIC, 'NUMBER'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::VARCHAR, 'NVARCHAR2'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARCHAR, 'NVARCHAR2', '2000'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::TIME, 'DATE'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::DATE, 'DATE'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::TIMESTAMP, 'TIMESTAMP'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::BINARY, 'LONG RAW'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::VARBINARY, 'BLOB'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARBINARY, 'LONG RAW'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::OBJECT, 'NVARCHAR2', '2000'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::PHP_ARRAY, 'NVARCHAR2', '2000'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::ENUM, 'NUMBER', '3', '0'));
 
     }
 
@@ -73,7 +73,7 @@ class OraclePlatform extends DefaultPlatform
 
     public function getAutoIncrement()
     {
-        return "";
+        return '';
     }
 
     public function supportsNativeDeleteTrigger()
@@ -155,7 +155,7 @@ ALTER SESSION SET NLS_TIMESTAMP_FORMAT='YYYY-MM-DD HH24:MI:SS';
 
     public function getAddSequencesDDL(Table $table)
     {
-        if ($table->getIdMethod() == "native") {
+        if ('native' === $table->getIdMethod()) {
             $pattern = "
 CREATE SEQUENCE %s
     INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE ORDER;
@@ -332,7 +332,7 @@ USING INDEX
     {
         // don't create index form primary key
         if ($this->getPrimaryKeyName($index->getTable()) == $this->quoteIdentifier($index->getName())) {
-            return "";
+            return '';
         }
 
         $pattern = "

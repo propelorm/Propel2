@@ -25,8 +25,6 @@ use Propel\Generator\Model\Diff\DatabaseDiff;
 use Propel\Generator\Model\Diff\TableDiff;
 use Propel\Generator\Exception\EngineException;
 
-use \PDO;
-
 /**
  * Default implementation for the Platform interface.
  *
@@ -48,7 +46,7 @@ class DefaultPlatform implements PlatformInterface
     protected $con;
 
     /**
-     * @var        boolean whether the identifier quoting is enabled
+     * @var        Boolean whether the identifier quoting is enabled
      */
     protected $isIdentifierQuotingEnabled = false;
 
@@ -56,7 +54,7 @@ class DefaultPlatform implements PlatformInterface
      * Default constructor.
      * @param      PDO $con Optional database connection to use in this platform.
      */
-    public function __construct(PDO $con = null)
+    public function __construct(\PDO $con = null)
     {
         if (null !== $con) {
             $this->setConnection($con);
@@ -69,7 +67,7 @@ class DefaultPlatform implements PlatformInterface
      * Set the database connection to use for this Platform class.
      * @param      PDO $con Database connection to use in this platform.
      */
-    public function setConnection(PDO $con = null)
+    public function setConnection(\PDO $con = null)
     {
         $this->con = $con;
     }
@@ -170,7 +168,7 @@ class DefaultPlatform implements PlatformInterface
 
     public function isNativeIdMethodAutoIncrement()
     {
-        return $this->getNativeIdMethod() == PlatformInterface::IDENTITY;
+        return PlatformInterface::IDENTITY === $this->getNativeIdMethod();
     }
 
     /**
@@ -366,14 +364,14 @@ DROP TABLE " . $this->quoteIdentifier($table->getName()) . ";
     {
         $default = '';
         $defaultValue = $col->getDefaultValue();
-        if ($defaultValue !== null) {
+        if (null !== $defaultValue) {
             $default .= 'DEFAULT ';
             if ($defaultValue->isExpression()) {
                 $default .= $defaultValue->getValue();
             } else {
                 if ($col->isTextType()) {
                     $default .= $this->quote($defaultValue->getValue());
-                } elseif ($col->getType() == PropelTypes::BOOLEAN || $col->getType() == PropelTypes::BOOLEAN_EMU) {
+                } elseif (in_array($col->getType(), array(PropelTypes::BOOLEAN, PropelTypes::BOOLEAN_EMU))) {
                     $default .= $this->getBooleanString($defaultValue->getValue());
                 } elseif ($col->getType() == PropelTypes::ENUM) {
                     $default .= array_search($defaultValue->getValue(), $col->getValueSet());
@@ -1011,7 +1009,7 @@ ALTER TABLE %s ADD
      * Returns if the RDBMS-specific SQL type has a size attribute.
      *
      * @param      string $sqlType the SQL type
-     * @return     boolean True if the type has a size attribute
+     * @return     Boolean True if the type has a size attribute
      */
     public function hasSize($sqlType)
     {
@@ -1022,7 +1020,7 @@ ALTER TABLE %s ADD
      * Returns if the RDBMS-specific SQL type has a scale attribute.
      *
      * @param      string $sqlType the SQL type
-     * @return     boolean True if the type has a scale attribute
+     * @return     Boolean True if the type has a scale attribute
      */
     public function hasScale($sqlType)
     {
@@ -1079,7 +1077,7 @@ ALTER TABLE %s ADD
 
     /**
      * Whether RDBMS supports native ON DELETE triggers (e.g. ON DELETE CASCADE).
-     * @return     boolean
+     * @return     Boolean
      */
     public function supportsNativeDeleteTrigger()
     {
@@ -1088,7 +1086,7 @@ ALTER TABLE %s ADD
 
     /**
      * Whether RDBMS supports INSERT null values in autoincremented primary keys
-     * @return     boolean
+     * @return     Boolean
      */
     public function supportsInsertNullPk()
     {
@@ -1097,7 +1095,7 @@ ALTER TABLE %s ADD
 
     /**
      * Whether the underlying PDO driver for this platform returns BLOB columns as streams (instead of strings).
-     * @return     boolean
+     * @return     Boolean
      */
     public function hasStreamBlobImpl()
     {
@@ -1126,15 +1124,15 @@ ALTER TABLE %s ADD
         return false;
     }
     /**
-     * Returns the boolean value for the RDBMS.
+     * Returns the Boolean value for the RDBMS.
      *
-     * This value should match the boolean value that is set
+     * This value should match the Boolean value that is set
      * when using Propel's PreparedStatement::setBoolean().
      *
      * This function is used to set default column values when building
      * SQL.
      *
-     * @param      mixed $tf A boolean or string representation of boolean ('y', 'true').
+     * @param      mixed $tf A Boolean or string representation of Boolean ('y', 'true').
      * @return     mixed
      */
     public function getBooleanString($b)
