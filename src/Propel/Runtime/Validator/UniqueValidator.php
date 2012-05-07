@@ -34,7 +34,7 @@ class UniqueValidator implements BasicValidator
      * @param     ValidatorMap  $map
      * @param     string        $str
      *
-     * @return    boolean
+     * @return    Boolean
      */
     public function isValid(ValidatorMap $map, $str)
     {
@@ -48,7 +48,7 @@ class UniqueValidator implements BasicValidator
         $clazz = $table . 'Peer';
         $count = call_user_func(array($clazz, 'doCount'), $c);
 
-        $isValid = ($count === 0);
+        $isValid = (0 === $count);
 
         return $isValid;
     }

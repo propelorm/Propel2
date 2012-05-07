@@ -65,10 +65,10 @@ class NotMatchValidator implements BasicValidator
      * @param     ValidatorMap  $map
      * @param     string        $str
      *
-     * @return    boolean
+     * @return    Boolean
      */
     public function isValid(ValidatorMap $map, $str)
     {
-        return (preg_match($this->prepareRegexp($map->getValue()), $str) == 0);
+        return 0 === preg_match($this->prepareRegexp($map->getValue()), $str);
     }
 }

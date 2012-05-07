@@ -33,12 +33,12 @@ class MinLengthValidator implements BasicValidator
      * @param     ValidatorMap  $map
      * @param     string        $str
      *
-     * @return    boolean
+     * @return    Boolean
      */
     public function isValid(ValidatorMap $map, $str)
     {
         $len = function_exists('mb_strlen') ? mb_strlen($str) : strlen($str);
 
-        return $len >= intval($map->getValue());
+        return $len >= (int) $map->getValue();
     }
 }

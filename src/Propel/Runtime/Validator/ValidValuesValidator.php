@@ -33,10 +33,10 @@ class ValidValuesValidator implements BasicValidator
      * @param     ValidatorMap  $map
      * @param     string        $str
      *
-     * @return    boolean
+     * @return    Boolean
      */
     public function isValid(ValidatorMap $map, $str)
     {
-        return in_array($str, preg_split("/[|,]/", $map->getValue()));
+        return in_array($str, preg_split('/[|,]/', $map->getValue()));
     }
 }
