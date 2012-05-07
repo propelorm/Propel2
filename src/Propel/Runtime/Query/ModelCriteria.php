@@ -10,8 +10,6 @@
 
 namespace Propel\Runtime\Query;
 
-use PDO;
-use PDOStatement;
 use Propel\Runtime\Propel;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\ClassNotFoundException;
@@ -1330,7 +1328,7 @@ class ModelCriteria extends Criteria
      *
      * @param  ConnectionInterface $con A connection object
      *
-     * @return PDOStatement A PDO statement executed using the connection, ready to be fetched
+     * @return \PDOStatement A PDO statement executed using the connection, ready to be fetched
      */
     protected function doSelect($con)
     {
@@ -1470,7 +1468,7 @@ class ModelCriteria extends Criteria
         $criteria->setPrimaryTableName(constant($this->modelPeerName.'::TABLE_NAME'));
 
         $stmt = $criteria->doCount($con);
-        if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+        if ($row = $stmt->fetch(\PDO::FETCH_NUM)) {
             $count = (int) $row[0];
         } else {
             $count = 0; // no rows returned; we infer that means 0 matches.
