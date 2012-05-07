@@ -227,7 +227,7 @@ class BasePeer
         // key value.
         $keys = $criteria->keys();
         if (!empty($keys)) {
-            $tableName = $criteria->getTableName( $keys[0] );
+            $tableName = $criteria->getTableName($keys[0]);
         } else {
             throw new RuntimeException('Database insert attempted without anything specified to insert.');
         }
