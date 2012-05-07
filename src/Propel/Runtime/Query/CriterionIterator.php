@@ -10,8 +10,6 @@
 
 namespace Propel\Runtime\Query;
 
-use Iterator;
-
 /**
  * Class that implements SPL Iterator interface.  This allows foreach () to
  * be used w/ Criteria objects.  Probably there is no performance advantage
@@ -19,7 +17,7 @@ use Iterator;
  *
  * @author     Hans Lellelid <hans@xmpl.org>
  */
-class CriterionIterator implements Iterator
+class CriterionIterator implements \Iterator
 {
     private $idx = 0;
     private $criteria;

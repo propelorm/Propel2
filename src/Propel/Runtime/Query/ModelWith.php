@@ -182,6 +182,6 @@ class ModelWith
 
     public function __toString()
     {
-        return sprintf("modelName: %s, relationName: %s, relationMethod: %s, leftPhpName: %s, rightPhpName: %s", $this->modelName, $this->relationName, $this->relationMethod, $this->leftPhpName, $this->rightPhpName);
+        return sprintf('modelName: %s, relationName: %s, relationMethod: %s, leftPhpName: %s, rightPhpName: %s', $this->modelName, $this->relationName, $this->relationMethod, $this->leftPhpName, $this->rightPhpName);
     }
 }

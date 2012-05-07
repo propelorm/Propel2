@@ -196,12 +196,12 @@ class Criterion
     /**
      * Sets ignore case.
      *
-     * @param      boolean $b True if case should be ignored.
+     * @param      Boolean $b True if case should be ignored.
      * @return     Criterion A modified Criterion object.
      */
     public function setIgnoreCase($b)
     {
-        $this->ignoreStringCase = (boolean) $b;
+        $this->ignoreStringCase = (Boolean) $b;
 
         return $this;
     }
@@ -209,7 +209,7 @@ class Criterion
     /**
      * Is ignore case on or off?
      *
-     * @return     boolean True if case is ignored.
+     * @return     Boolean True if case is ignored.
      */
     public function isIgnoreCase()
     {
@@ -326,7 +326,7 @@ class Criterion
      */
     protected function appendCustomToPs(&$sb, array &$params)
     {
-        if ($this->value !== "") {
+        if ('' !== $this->value) {
             $sb .= (string) $this->value;
         }
     }
@@ -340,7 +340,7 @@ class Criterion
      */
     protected function appendRawToPs(&$sb, array &$params)
     {
-        if (substr_count($this->column, '?') != 1) {
+        if (1 !== substr_count($this->column, '?')) {
             throw new PropelException(sprintf('Could not build SQL for expression "%s" because Criteria::RAW works only with a clause containing a single question mark placeholder', $this->column));
         }
         $params[] = array('table' => null, 'type' => $this->type, 'value' => $this->value);
@@ -357,7 +357,7 @@ class Criterion
      */
     protected function appendInToPs(&$sb, array &$params)
     {
-        if ($this->value !== '') {
+        if ('' !== $this->value) {
             $bindParams = array();
             $index = count($params); // to avoid counting the number of parameters for each element in the array
             foreach ((array) $this->value as $value) {
@@ -369,7 +369,7 @@ class Criterion
                 $field = ($this->table === null) ? $this->column : $this->table . '.' . $this->column;
                 $sb .= $field . $this->comparison . '(' . implode(',', $bindParams) . ')';
             } else {
-                $sb .= ($this->comparison === Criteria::IN) ? '1<>1' : '1=1';
+                $sb .= (Criteria::IN === $this->comparison) ? '1<>1' : '1=1';
             }
         }
     }
@@ -383,7 +383,7 @@ class Criterion
      */
     protected function appendLikeToPs(&$sb, array &$params)
     {
-        $field = ($this->table === null) ? $this->column : $this->table . '.' . $this->column;
+        $field = (null === $this->table) ? $this->column : $this->table . '.' . $this->column;
         $db = $this->getAdapter();
         // If selection is case insensitive use ILIKE for PostgreSQL or SQL
         // UPPER() function on column name for other databases.
@@ -460,7 +460,7 @@ class Criterion
     /**
      * This method checks another Criteria to see if they contain
      * the same attributes and hashtable entries.
-     * @return     boolean
+     * @return     Boolean
      */
     public function equals($obj)
     {
@@ -487,7 +487,7 @@ class Criterion
         $isEquiv &= (count($crit->getClauses()) == $clausesLength);
         $critConjunctions = $crit->getConjunctions();
         $critClauses = $crit->getClauses();
-        for ($i=0; $i < $clausesLength && $isEquiv; $i++) {
+        for ($i = 0; $i < $clausesLength && $isEquiv; $i++) {
             $isEquiv &= ($this->conjunctions[$i] === $critConjunctions[$i]);
             $isEquiv &= ($this->clauses[$i] === $critClauses[$i]);
         }

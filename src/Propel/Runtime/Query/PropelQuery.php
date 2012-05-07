@@ -27,7 +27,7 @@ class PropelQuery
             throw new ClassNotFoundException('Cannot find a query class for ' . $class);
         }
         $query = new $queryClass();
-        if ($alias !== null) {
+        if (null !== $alias) {
             $query->setModelAlias($alias);
         }
 
