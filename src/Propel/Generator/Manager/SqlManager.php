@@ -13,9 +13,6 @@ namespace Propel\Generator\Manager;
 use Propel\Generator\Exception\InvalidArgumentException;
 use Propel\Generator\Util\SqlParser;
 
-use \PDO;
-use \PDOException;
-
 /**
  * Service class for managing SQL.
  *
@@ -177,7 +174,7 @@ class SqlManager extends AbstractManager
                 }
 
                 $pdo->commit();
-            } catch (PDOException $e) {
+            } catch (\PDOException $e) {
                 $pdo->rollback();
                 throw $e;
             }
@@ -200,8 +197,8 @@ class SqlManager extends AbstractManager
         $username = isset($buildConnection['user']) && $buildConnection['user'] ? $buildConnection['user'] : null;
         $password = isset($buildConnection['password']) && $buildConnection['password'] ? $buildConnection['password'] : null;
 
-        $pdo = new PDO($dsn, $username, $password);
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $pdo = new \PDO($dsn, $username, $password);
+        $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
         return $pdo;
     }
