@@ -1179,14 +1179,15 @@ class Column extends XmlElement
     public function getAutoIncrementString()
     {
         $table = $this->getTable();
-        if (!$this->isAutoIncrement()) {
+        if ($this->isAutoIncrement()
+            && IdMethod::NATIVE === $table->getIdMethod()) {
+            return $this->getPlatform()->getAutoIncrement();
+        }
+
+        if ($this->isAutoIncrement()) {
             throw new EngineException(sprintf(
                 'You have specified autoIncrement for column "%s", but you have not specified idMethod="native" for table "%s".', $this->name, $table->getName()
             ));
-        }
-
-        if (IdMethod::NATIVE === $table->getIdMethod()) {
-            return $this->getPlatform()->getAutoIncrement();
         }
 
         return '';
