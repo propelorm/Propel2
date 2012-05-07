@@ -104,13 +104,13 @@ class DatabaseMap
     public function addTableFromMapClass($tableMapClass)
     {
         $table = new $tableMapClass();
-        if(!$this->hasTable($table->getName())) {
+        if (!$this->hasTable($table->getName())) {
             $this->addTableObject($table);
 
             return $table;
-        } else {
-            return $this->getTable($table->getName());
         }
+
+        return $this->getTable($table->getName());
     }
 
     /**
@@ -121,11 +121,11 @@ class DatabaseMap
      */
     public function hasTable($name)
     {
-        if ( strpos($name, '.') > 0) {
+        if (strpos($name, '.') > 0) {
             $name = substr($name, 0, strpos($name, '.'));
         }
 
-        return array_key_exists($name, $this->tables);
+        return isset($this->tables[$name]);
     }
 
     /**
@@ -138,7 +138,7 @@ class DatabaseMap
     public function getTable($name)
     {
         if (!isset($this->tables[$name])) {
-            throw new TableNotFoundException("Cannot fetch TableMap for undefined table: $name");
+            throw new TableNotFoundException(sprintf('Cannot fetch TableMap for undefined table: %s.', $name));
         }
 
         return $this->tables[$name];
@@ -171,25 +171,31 @@ class DatabaseMap
 
     public function getTableByPhpName($phpName)
     {
-        if (array_key_exists($phpName, $this->tablesByPhpName)) {
+        if (isset($this->tablesByPhpName[$phpName])) {
             return $this->tablesByPhpName[$phpName];
-        } elseif (class_exists($tmClass = $phpName . 'TableMap')) {
+        }
+
+        if (class_exists($tmClass = $phpName . 'TableMap')) {
             $this->addTableFromMapClass($tmClass);
 
             return $this->tablesByPhpName[$phpName];
-        } elseif (class_exists($tmClass = substr_replace($phpName, '\\Map\\', strrpos($phpName, '\\'), 1) . 'TableMap') ||
-                  class_exists($tmClass = '\\Map\\' .$phpName . 'TableMap')) {
+        }
+
+        if (class_exists($tmClass = substr_replace($phpName, '\\Map\\', strrpos($phpName, '\\'), 1) . 'TableMap')
+            || class_exists($tmClass = '\\Map\\' .$phpName . 'TableMap')) {
             $this->addTableFromMapClass($tmClass);
-            if (array_key_exists($phpName, $this->tablesByPhpName)) {
+
+            if (isset($this->tablesByPhpName[$phpName])) {
                 return $this->tablesByPhpName[$phpName];
             }
+
             $phpName = '\\'.$phpName;
-            if (array_key_exists($phpName, $this->tablesByPhpName)) {
+            if (isset($this->tablesByPhpName[$phpName])) {
                 return $this->tablesByPhpName[$phpName];
             }
         }
 
-        throw new TableNotFoundException("Cannot fetch TableMap for undefined table phpName: $phpName");
+        throw new TableNotFoundException(sprintf('Cannot fetch TableMap for undefined table phpName: %s.', $phpName));
     }
 
     /**

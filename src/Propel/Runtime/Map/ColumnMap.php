@@ -42,14 +42,14 @@ class ColumnMap
     /**
      * Is it a primary key?
      *
-     * @var boolean
+     * @var Boolean
      */
     protected $pk = false;
 
     /**
      * Is null value allowed?
      *
-     * @var boolean
+     * @var Boolean
      */
     protected $notNull = false;
 
@@ -61,12 +61,12 @@ class ColumnMap
     /**
      * Name of the table that this column is related to
      */
-    protected $relatedTableName = "";
+    protected $relatedTableName = '';
 
     /**
      * Name of the column that this column is related to
      */
-    protected $relatedColumnName = "";
+    protected $relatedColumnName = '';
 
     /**
      * The TableMap for this column
@@ -100,7 +100,7 @@ class ColumnMap
     /**
      * Is this a primaryString column?
      *
-     * @var boolean
+     * @var Boolean
      */
     protected $isPkString = false;
 
@@ -153,7 +153,7 @@ class ColumnMap
      */
     public function getFullyQualifiedName()
     {
-        return $this->getTableName() . "." . $this->columnName;
+        return $this->getTableName() . '.' . $this->columnName;
     }
 
     /**
@@ -209,41 +209,65 @@ class ColumnMap
     /**
      * Whether this is a BLOB, LONGVARBINARY, or VARBINARY.
      *
-     * @return     boolean
+     * @return     Boolean
      */
     public function isLob()
     {
-        return ($this->type == PropelColumnTypes::BLOB || $this->type == PropelColumnTypes::VARBINARY || $this->type == PropelColumnTypes::LONGVARBINARY);
+        return in_array($this->type, array(
+            PropelColumnTypes::BLOB,
+            PropelColumnTypes::VARBINARY,
+            PropelColumnTypes::LONGVARBINARY,
+        ));
     }
 
     /**
      * Whether this is a DATE/TIME/TIMESTAMP column.
      *
-     * @return     boolean
+     * @return     Boolean
      */
     public function isTemporal()
     {
-        return ($this->type == PropelColumnTypes::TIMESTAMP || $this->type == PropelColumnTypes::DATE || $this->type == PropelColumnTypes::TIME || $this->type == PropelColumnTypes::BU_DATE  || $this->type == PropelColumnTypes::BU_TIMESTAMP);
+        return in_array($this->type, array(
+            PropelColumnTypes::TIMESTAMP,
+            PropelColumnTypes::DATE,
+            PropelColumnTypes::TIME,
+            PropelColumnTypes::BU_DATE,
+            PropelColumnTypes::BU_TIMESTAMP,
+        ));
     }
 
     /**
      * Whether this column is numeric (int, decimal, bigint etc).
      *
-     * @return     boolean
+     * @return     Boolean
      */
     public function isNumeric()
     {
-        return ($this->type == PropelColumnTypes::NUMERIC || $this->type == PropelColumnTypes::DECIMAL || $this->type == PropelColumnTypes::TINYINT || $this->type == PropelColumnTypes::SMALLINT || $this->type == PropelColumnTypes::INTEGER || $this->type == PropelColumnTypes::BIGINT || $this->type == PropelColumnTypes::REAL || $this->type == PropelColumnTypes::FLOAT || $this->type == PropelColumnTypes::DOUBLE);
+        return in_array($this->type, array(
+            PropelColumnTypes::NUMERIC,
+            PropelColumnTypes::DECIMAL,
+            PropelColumnTypes::TINYINT,
+            PropelColumnTypes::SMALLINT,
+            PropelColumnTypes::INTEGER,
+            PropelColumnTypes::BIGINT,
+            PropelColumnTypes::REAL,
+            PropelColumnTypes::FLOAT,
+            PropelColumnTypes::DOUBLE,
+        ));
     }
 
     /**
      * Whether this column is a text column (varchar, char, longvarchar).
      *
-     * @return     boolean
+     * @return     Boolean
      */
     public function isText()
     {
-        return ($this->type == PropelColumnTypes::VARCHAR || $this->type == PropelColumnTypes::LONGVARCHAR || $this->type == PropelColumnTypes::CHAR);
+        return in_array($this->type, array(
+            PropelColumnTypes::VARCHAR,
+            PropelColumnTypes::LONGVARCHAR,
+            PropelColumnTypes::CHAR,
+        ));
     }
 
     /**
@@ -269,17 +293,17 @@ class ColumnMap
     /**
      * Set if this column is a primary key or not.
      *
-     * @param      boolean $pk True if column is a primary key.
+     * @param      Boolean $pk True if column is a primary key.
      */
     public function setPrimaryKey($pk)
     {
-        $this->pk = $pk;
+        $this->pk = (Boolean) $pk;
     }
 
     /**
      * Is this column a primary key?
      *
-     * @return     boolean True if column is a primary key.
+     * @return     Boolean True if column is a primary key.
      */
     public function isPrimaryKey()
     {
@@ -289,21 +313,21 @@ class ColumnMap
     /**
      * Set if this column may be null.
      *
-     * @param      boolean nn True if column may be null.
+     * @param      Boolean nn True if column may be null.
      */
     public function setNotNull($nn)
     {
-        $this->notNull = $nn;
+        $this->notNull = (Boolean) $nn;
     }
 
     /**
      * Is null value allowed ?
      *
-     * @return     boolean True if column may not be null.
+     * @return     Boolean True if column may not be null.
      */
     public function isNotNull()
     {
-        return ($this->notNull || $this->isPrimaryKey());
+        return $this->notNull || $this->isPrimaryKey();
     }
 
     /**
@@ -337,15 +361,16 @@ class ColumnMap
             $this->relatedTableName = $tableName;
             $this->relatedColumnName = $columnName;
         } else {
-            $this->relatedTableName = "";
-            $this->relatedColumnName = "";
+            // @TODO to remove because it seems already done by default!
+            $this->relatedTableName = '';
+            $this->relatedColumnName = '';
         }
     }
 
     /**
      * Is this column a foreign key?
      *
-     * @return     boolean True if column is a foreign key.
+     * @return     Boolean True if column is a foreign key.
      */
     public function isForeignKey()
     {
@@ -362,8 +387,8 @@ class ColumnMap
         }
 
         foreach ($this->getTable()->getRelations() as $relation) {
-            if ($relation->getType() == RelationMap::MANY_TO_ONE) {
-                if ($relation->getForeignTable()->getName() == $this->getRelatedTableName()
+            if (RelationMap::MANY_TO_ONE === $relation->getType()) {
+                if ($relation->getForeignTable()->getName() === $this->getRelatedTableName()
                     && array_key_exists($this->getFullyQualifiedName(), $relation->getColumnMappings())) {
                     return $relation;
                 }
@@ -378,7 +403,7 @@ class ColumnMap
      */
     public function getRelatedName()
     {
-        return $this->relatedTableName . "." . $this->relatedColumnName;
+        return $this->relatedTableName . '.' . $this->relatedColumnName;
     }
 
     /**
@@ -409,11 +434,11 @@ class ColumnMap
      */
     public function getRelatedTable()
     {
-        if ($this->relatedTableName) {
-            return $this->table->getDatabaseMap()->getTable($this->relatedTableName);
-        } else {
-            throw new ForeignKeyNotFoundException("Cannot fetch RelatedTable for column with no foreign key: " . $this->columnName);
+        if (!$this->relatedTableName) {
+            throw new ForeignKeyNotFoundException(sprintf('Cannot fetch RelatedTable for column with no foreign key: %s.', $this->columnName));
         }
+
+        return $this->table->getDatabaseMap()->getTable($this->relatedTableName);
     }
 
     /**
@@ -507,17 +532,17 @@ class ColumnMap
     /**
      * Set this column to be a primaryString column.
      *
-     * @param      boolean $pkString
+     * @param      Boolean $pkString
      */
     public function setPrimaryString($pkString)
     {
-        $this->isPkString = (bool) $pkString;
+        $this->isPkString = (Boolean) $pkString;
     }
 
     /**
      * Is this column a primaryString column?
      *
-     * @return     boolean True, if this column is the primaryString column.
+     * @return     Boolean True, if this column is the primaryString column.
      */
     public function isPrimaryString()
     {
