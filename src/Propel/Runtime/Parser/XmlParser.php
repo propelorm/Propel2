@@ -51,7 +51,7 @@ class XmlParser extends AbstractParser
      */
     protected function getRootNode($rootElementName = 'data')
     {
-        $xml = new DOMDocument('1.0', 'UTF-8');
+        $xml = new \DOMDocument('1.0', 'UTF-8');
         $xml->preserveWhiteSpace = false;
         $xml->formatOutput = true;
         $rootElement = $xml->createElement($rootElementName);
@@ -156,7 +156,7 @@ class XmlParser extends AbstractParser
      * @param  DOMNode $data
      * @return array
      */
-    protected function convertDOMElementToArray(DOMNode $data)
+    protected function convertDOMElementToArray(\DOMNode $data)
     {
         $array = array();
         $elementNames = array();
