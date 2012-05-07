@@ -50,12 +50,12 @@ class OnDemandCollection extends Collection
      *
      * @param     string  $keyColumn If null, the returned array uses an incremental index.
      *                               Otherwise, the array is indexed using the specified column
-     * @param     boolean $usePrefix If true, the returned array prefixes keys
+     * @param     Boolean $usePrefix If true, the returned array prefixes keys
      *                               with the model class name ('Article_0', 'Article_1', etc).
      * @param     string  $keyType   (optional) One of the class type constants BasePeer::TYPE_PHPNAME,
      *                               BasePeer::TYPE_STUDLYPHPNAME, BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME,
      *                               BasePeer::TYPE_NUM. Defaults to BasePeer::TYPE_PHPNAME.
-     * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
+     * @param     Boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
      * @param     array   $alreadyDumpedObjects List of objects to skip to avoid recursion
      *
      * <code>
@@ -121,13 +121,14 @@ class OnDemandCollection extends Collection
      * @throws    \Propel\Runtime\Exception\PropelException
      * @param     integer  $offset
      *
-     * @return    boolean
+     * @return    Boolean
      */
     public function offsetExists($offset)
     {
-        if ($offset == $this->currentKey) {
+        if ($offset === $this->currentKey) {
             return true;
         }
+
         throw new PropelException('The On Demand Collection does not allow acces by offset');
     }
 
@@ -139,9 +140,10 @@ class OnDemandCollection extends Collection
      */
     public function offsetGet($offset)
     {
-        if ($offset == $this->currentKey) {
+        if ($offset === $this->currentKey) {
             return $this->currentRow;
         }
+
         throw new PropelException('The On Demand Collection does not allow acces by offset');
     }
 

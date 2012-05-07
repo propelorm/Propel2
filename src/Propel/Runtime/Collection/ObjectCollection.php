@@ -27,7 +27,6 @@ use Propel\Runtime\Util\BasePeer;
  */
 class ObjectCollection extends Collection
 {
-
     /**
      * Save all the elements in the collection
      *
@@ -83,7 +82,7 @@ class ObjectCollection extends Collection
     /**
      * Get an array of the primary keys of all the objects in the collection
      *
-     * @param     boolean  $usePrefix
+     * @param     Boolean  $usePrefix
      * @return    array  The list of the primary keys of the collection
      */
     public function getPrimaryKeys($usePrefix = true)
@@ -123,12 +122,12 @@ class ObjectCollection extends Collection
      *
      * @param     string  $keyColumn If null, the returned array uses an incremental index.
      *                               Otherwise, the array is indexed using the specified column
-     * @param     boolean $usePrefix If true, the returned array prefixes keys
+     * @param     Boolean $usePrefix If true, the returned array prefixes keys
      *                               with the model class name ('Article_0', 'Article_1', etc).
      * @param     string  $keyType   (optional) One of the class type constants BasePeer::TYPE_PHPNAME,
      *                               BasePeer::TYPE_STUDLYPHPNAME, BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME,
      *                               BasePeer::TYPE_NUM. Defaults to BasePeer::TYPE_PHPNAME.
-     * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
+     * @param     Boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
      * @param     array   $alreadyDumpedObjects List of objects to skip to avoid recursion
      *
      * <code>
@@ -171,7 +170,7 @@ class ObjectCollection extends Collection
      *
      * @param     string   $keyColumn  If null, the returned array uses an incremental index.
      *                                 Otherwise, the array is indexed using the specified column
-     * @param     boolean  $usePrefix  If true, the returned array prefixes keys
+     * @param     Boolean  $usePrefix  If true, the returned array prefixes keys
      *                                 with the model class name ('Article_0', 'Article_1', etc).
      *
      * <code>
@@ -269,8 +268,10 @@ class ObjectCollection extends Collection
         $filterMethod = 'filterBy' . $symRelationMap->getName();
         $relatedObjects = $query
             ->$filterMethod($this)
-            ->find($con);
-        if ($relationMap->getType() == RelationMap::ONE_TO_MANY) {
+            ->find($con)
+        ;
+
+        if (RelationMap::ONE_TO_MANY === $relationMap->getType()) {
             // initialize the embedded collections of the main objects
             $relationName = $relationMap->getName();
             foreach ($this as $mainObj) {

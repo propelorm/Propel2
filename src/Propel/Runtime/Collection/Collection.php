@@ -19,10 +19,6 @@ use Propel\Runtime\Om\BaseObject;
 use Propel\Runtime\Parser\AbstractParser;
 use Propel\Runtime\Util\BasePeer;
 
-use \ArrayObject;
-use \ArrayIterator;
-use \Serializable;
-
 /**
  * Class for iterating over a list of Propel elements
  * The collection keys must be integers - no associative array accepted
@@ -32,14 +28,14 @@ use \Serializable;
  * @method     Collection fromJSON(string $data) Populate the collection from a JSON string
  * @method     Collection fromCSV(string $data) Populate the collection from a CSV string
  *
- * @method     string toXML(boolean $usePrefix, boolean $includeLazyLoadColumns) Export the collection to an XML string
- * @method     string toYAML(boolean $usePrefix, boolean $includeLazyLoadColumns) Export the collection to a YAML string
- * @method     string toJSON(boolean $usePrefix, boolean $includeLazyLoadColumns) Export the collection to a JSON string
- * @method     string toCSV(boolean $usePrefix, boolean $includeLazyLoadColumns) Export the collection to a CSV string
+ * @method     string toXML(Boolean $usePrefix, Boolean $includeLazyLoadColumns) Export the collection to an XML string
+ * @method     string toYAML(Boolean $usePrefix, Boolean $includeLazyLoadColumns) Export the collection to a YAML string
+ * @method     string toJSON(Boolean $usePrefix, Boolean $includeLazyLoadColumns) Export the collection to a JSON string
+ * @method     string toCSV(Boolean $usePrefix, Boolean $includeLazyLoadColumns) Export the collection to a CSV string
  *
  * @author     Francois Zaninotto
  */
-class Collection extends ArrayObject implements Serializable
+class Collection extends \ArrayObject implements \Serializable
 {
     /**
      * @var       string
@@ -112,11 +108,11 @@ class Collection extends ArrayObject implements Serializable
     /**
      * Check whether the internal pointer is at the beginning of the list
      *
-     * @return    boolean
+     * @return    Boolean
      */
     public function isFirst()
     {
-        return $this->getPosition() == 0;
+        return 0 === $this->getPosition();
     }
 
     /**
@@ -127,14 +123,13 @@ class Collection extends ArrayObject implements Serializable
      */
     public function getPrevious()
     {
-        $pos = $this->getPosition();
-        if ($pos == 0) {
+        if (0 === $pos = $this->getPosition()) {
             return null;
-        } else {
-            $this->getInternalIterator()->seek($pos - 1);
-
-            return $this->getCurrent();
         }
+
+        $this->getInternalIterator()->seek($pos - 1);
+
+        return $this->getCurrent();
     }
 
     /**
@@ -168,56 +163,56 @@ class Collection extends ArrayObject implements Serializable
      */
     public function getLast()
     {
-        $count = $this->count();
-        if ($count == 0) {
+        if (0 === $count = $this->count()) {
             return null;
-        } else {
-            $this->getInternalIterator()->seek($count - 1);
-
-            return $this->getCurrent();
         }
+
+        $this->getInternalIterator()->seek($count - 1);
+
+        return $this->getCurrent();
     }
 
     /**
      * Check whether the internal pointer is at the end of the list
      *
-     * @return    boolean
+     * @return    Boolean
      */
     public function isLast()
     {
         $count = $this->count();
-        if ($count == 0) {
+
+        if (0 === $count) {
             // empty list... so yes, this is the last
             return true;
-        } else {
-            return $this->getPosition() == $count - 1;
         }
+
+        return $this->getPosition() == $count - 1;
     }
 
     /**
      * Check if the collection is empty
      *
-     * @return    boolean
+     * @return    Boolean
      */
     public function isEmpty()
     {
-        return $this->count() == 0;
+        return 0 === $this->count();
     }
 
     /**
      * Check if the current index is an odd integer
      *
-     * @return    boolean
+     * @return    Boolean
      */
     public function isOdd()
     {
-        return (boolean) ($this->getInternalIterator()->key() % 2);
+        return (Boolean) ($this->getInternalIterator()->key() % 2);
     }
 
     /**
      * Check if the current index is an even integer
      *
-     * @return    boolean
+     * @return    Boolean
      */
     public function isEven()
     {
@@ -234,7 +229,7 @@ class Collection extends ArrayObject implements Serializable
     public function get($key)
     {
         if (!$this->offsetExists($key)) {
-            throw new UnexpectedValueException('Unknown key ' . $key);
+            throw new UnexpectedValueException(sprintf('Unknown key %s.', $key));
         }
 
         return $this->offsetGet($key);
@@ -247,9 +242,10 @@ class Collection extends ArrayObject implements Serializable
      */
     public function pop()
     {
-        if ($this->count() == 0) {
+        if (0  === $this->count()) {
             return null;
         }
+
         $ret = $this->getLast();
         $lastKey = $this->getInternalIterator()->key();
         $this->offsetUnset((string) $lastKey);
@@ -312,7 +308,7 @@ class Collection extends ArrayObject implements Serializable
     public function remove($key)
     {
         if (!$this->offsetExists($key)) {
-            throw new UnexpectedValueException('Unknown key ' . $key);
+            throw new UnexpectedValueException(sprintf('Unknown key %s.', $key));
         }
 
         return $this->offsetUnset($key);
@@ -332,7 +328,7 @@ class Collection extends ArrayObject implements Serializable
      * Whether or not this collection contains a specified element
      *
      * @param     mixed  $element
-     * @return    boolean
+     * @return    Boolean
      */
     public function contains($element)
     {
@@ -406,7 +402,7 @@ class Collection extends ArrayObject implements Serializable
      */
     public function getIterator()
     {
-        $this->iterator = new ArrayIterator($this);
+        $this->iterator = new \ArrayIterator($this);
 
         return $this->iterator;
     }
@@ -478,7 +474,9 @@ class Collection extends ArrayObject implements Serializable
      */
     public function getPeerClass()
     {
-        if ($this->model == '') {
+        $model = $this->getModel();
+
+        if (empty($model)) {
             throw new ModelNotFoundException('You must set the collection model before interacting with it');
         }
 
@@ -546,11 +544,11 @@ class Collection extends ArrayObject implements Serializable
      * A OnDemandCollection cannot be exported. Any attempt will result in a PropelExecption being thrown.
      *
      * @param     mixed   $parser                 A AbstractParser instance, or a format name ('XML', 'YAML', 'JSON', 'CSV')
-     * @param     boolean $usePrefix              (optional) If true, the returned element keys will be prefixed with the
+     * @param     Boolean $usePrefix              (optional) If true, the returned element keys will be prefixed with the
      *                                            model class name ('Article_0', 'Article_1', etc). Defaults to TRUE.
      *                                            Not supported by ArrayCollection, as ArrayFormatter has
      *                                            already created the array used here with integers as keys.
-     * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy load(ed) columns. Defaults to TRUE.
+     * @param     Boolean $includeLazyLoadColumns (optional) Whether to include lazy load(ed) columns. Defaults to TRUE.
      *                                            Not supported by ArrayCollection, as ArrayFormatter has
      *                                            already included lazy-load columns in the array used here.
      * @return    string                          The exported data
