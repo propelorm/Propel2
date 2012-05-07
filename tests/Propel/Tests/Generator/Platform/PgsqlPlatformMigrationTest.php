@@ -10,7 +10,7 @@
 
 namespace Propel\Tests\Generator\Platform;
 
-use Propel\Generator\Builder\Util\XmlToAppData;
+use Propel\Generator\Builder\Util\SchemaReader;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\ColumnDefaultValue;
 use Propel\Generator\Model\Table;
@@ -356,7 +356,7 @@ public function testGetModifyColumnDDLWithVarcharWithoutSizeAndPlatform()
 </database>
 EOF;
 
-        $xtad = new XmlToAppData(null);
+        $xtad = new SchemaReader(null);
         $appData = $xtad->parseString($schema);
         $db = $appData->getDatabase();
         $table = $db->getTable('foo');

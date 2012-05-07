@@ -10,7 +10,7 @@
 
 namespace Propel\Generator\Util;
 
-use Propel\Generator\Model\AppData;
+use Propel\Generator\Model\Schema;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\Table;
 
@@ -20,7 +20,7 @@ use Propel\Generator\Model\Table;
  *
  * @example Basic usage:
  * <code>
- * $validator = new SchemaValidator($appData);
+ * $validator = new SchemaValidator($schema);
  * if (!$validator->validate()) {
  *   throw new Exception("Invalid schema:\n" . join("\n", $validator->getErrors()));
  * }
@@ -30,12 +30,12 @@ use Propel\Generator\Model\Table;
  */
 class SchemaValidator
 {
-    protected $appData;
+    protected $schema;
     protected $errors = array();
 
-    public function __construct(AppData $appData)
+    public function __construct(Schema $schema)
     {
-        $this->appData = $appData;
+        $this->schema = $schema;
     }
 
     /**
@@ -43,11 +43,11 @@ class SchemaValidator
      */
     public function validate()
     {
-        foreach ($this->appData->getDatabases() as $database) {
+        foreach ($this->schema->getDatabases() as $database) {
             $this->validateDatabaseTables($database);
         }
 
-        return count($this->errors) == 0;
+        return 0 === count($this->errors);
     }
 
     protected function validateDatabaseTables(Database $database)
@@ -96,11 +96,12 @@ class SchemaValidator
     }
 
     /**
-     * @return array A list of error messages
+     * Returns the list of error messages
+     *
+     * @return array
      */
     public function getErrors()
     {
         return $this->errors;
     }
-
 }

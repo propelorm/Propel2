@@ -12,37 +12,34 @@ namespace Propel\Tests\Generator\Util;
 
 use Propel\Generator\Util\SchemaValidator;
 use Propel\Generator\Util\QuickBuilder;
-
-use Propel\Generator\Model\AppData;
+use Propel\Generator\Model\Schema;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\Table;
 
-/**
- *
- */
 class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
 {
-    protected function getAppDataForTable($table)
+    protected function getSchemaForTable($table)
     {
         $database = new Database();
         $database->addTable($table);
-        $appData = new AppData();
-        $appData->addDatabase($database);
 
-        return $appData;
+        $schema = new Schema();
+        $schema->addDatabase($database);
+
+        return $schema;
     }
 
     public function testValidateReturnsTrueForEmptySchema()
     {
-        $schema = new AppData();
+        $schema = new Schema();
         $validator = new SchemaValidator($schema);
         $this->assertTrue($validator->validate());
     }
 
     public function testValidateReturnsTrueForValidSchema()
     {
-        $schema = <<<EOF
+        $xmlSchema = <<<EOF
 <database name="bookstore">
     <table name="book">
         <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
@@ -51,11 +48,14 @@ class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
 </database>
 EOF;
         $builder = new QuickBuilder();
-        $builder->setSchema($schema);
+        $builder->setSchema($xmlSchema);
+
         $database = $builder->getDatabase();
-        $appData = new AppData();
-        $appData->addDatabase($database);
-        $validator = new SchemaValidator($appData);
+
+        $schema = new Schema();
+        $schema->addDatabase($database);
+
+        $validator = new SchemaValidator($schema);
         $this->assertTrue($validator->validate());
     }
 
@@ -64,12 +64,16 @@ EOF;
         $table1 = new Table('foo');
         $table2 = new Table('bar');
         $table2->setPhpName('Foo');
+
         $database = new Database();
         $database->addTable($table1);
         $database->addTable($table2);
-        $appData = new AppData();
-        $appData->addDatabase($database);
-        $validator = new SchemaValidator($appData);
+
+        $schema = new Schema();
+        $schema->addDatabase($database);
+
+        $validator = new SchemaValidator($schema);
+
         $this->assertFalse($validator->validate());
         $this->assertContains('Table "bar" declares a phpName already used in another table', $validator->getErrors());
     }
@@ -78,12 +82,14 @@ EOF;
     {
         $column1 = new Column('id');
         $column1->setPrimaryKey(true);
+
         $table1 = new Table('foo');
         $table1->addColumn($column1);
         $table1->setNamespace('Foo');
 
         $column2 = new Column('id');
         $column2->setPrimaryKey(true);
+
         $table2 = new Table('bar');
         $table2->addColumn($column2);
         $table2->setPhpName('Foo');
@@ -92,16 +98,20 @@ EOF;
         $database = new Database();
         $database->addTable($table1);
         $database->addTable($table2);
-        $appData = new AppData();
-        $appData->addDatabase($database);
-        $validator = new SchemaValidator($appData);
+
+        $schema = new Schema();
+        $schema->addDatabase($database);
+
+        $validator = new SchemaValidator($schema);
+
         $this->assertTrue($validator->validate());
     }
 
     public function testValidateReturnsFalseWhenTableHasNoPk()
     {
-        $appData = $this->getAppDataForTable(new Table('foo'));
-        $validator = new SchemaValidator($appData);
+        $schema = $this->getSchemaForTable(new Table('foo'));
+        $validator = new SchemaValidator($schema);
+
         $this->assertFalse($validator->validate());
         $this->assertContains('Table "foo" does not have a primary key defined. Propel requires all tables to have a primary key.', $validator->getErrors());
     }
@@ -110,15 +120,18 @@ EOF;
     {
         $table = new Table('foo');
         $table->setSkipSql(true);
-        $appData = $this->getAppDataForTable($table);
-        $validator = new SchemaValidator($appData);
+
+        $schema = $this->getSchemaForTable($table);
+        $validator = new SchemaValidator($schema);
+
         $this->assertTrue($validator->validate());
     }
 
     public function testValidateReturnsFalseWhenTableHasAReservedName()
     {
-        $appData = $this->getAppDataForTable(new Table('TABLE_NAME'));
-        $validator = new SchemaValidator($appData);
+        $schema = $this->getSchemaForTable(new Table('TABLE_NAME'));
+        $validator = new SchemaValidator($schema);
+
         $this->assertFalse($validator->validate());
         $this->assertContains('Table "TABLE_NAME" uses a reserved keyword as name', $validator->getErrors());
     }
@@ -128,14 +141,16 @@ EOF;
         $column1 = new Column('foo');
         $column2 = new Column('bar');
         $column2->setPhpName('Foo');
+
         $table = new Table('foo_table');
         $table->addColumn($column1);
         $table->addColumn($column2);
-        $appData = $this->getAppDataForTable($table);
-        $validator = new SchemaValidator($appData);
+
+        $schema = $this->getSchemaForTable($table);
+
+        $validator = new SchemaValidator($schema);
+
         $this->assertFalse($validator->validate());
         $this->assertContains('Column "bar" declares a phpName already used in table "foo_table"', $validator->getErrors());
     }
-
-
 }
