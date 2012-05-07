@@ -265,7 +265,7 @@ class Domain extends XmlElement
      */
     public function getPhpDefaultValue()
     {
-        if (null !== $this->defaultValue) {
+        if (null === $this->defaultValue) {
             return null;
         }
 
