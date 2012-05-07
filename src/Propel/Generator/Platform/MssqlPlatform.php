@@ -32,6 +32,7 @@ class MssqlPlatform extends DefaultPlatform
     protected function initialize()
     {
         parent::initialize();
+
         $this->setSchemaDomainMapping(new Domain(PropelTypes::INTEGER, "INT"));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::BOOLEAN, "INT"));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::DOUBLE, "FLOAT"));
@@ -58,7 +59,7 @@ class MssqlPlatform extends DefaultPlatform
 
     public function getNullString($notNull)
     {
-        return ($notNull ? "NOT NULL" : "NULL");
+        return $notNull ? 'NOT NULL' : 'NULL';
     }
 
     public function supportsNativeDeleteTrigger()
@@ -175,7 +176,7 @@ END
 
     public function hasSize($sqlType)
     {
-        return !("INT" == $sqlType || "TEXT" == $sqlType);
+        return !('INT' === $sqlType || 'TEXT' === $sqlType);
     }
 
     public function quoteIdentifier($text)
@@ -187,5 +188,4 @@ END
     {
         return 'Y-m-d H:i:s';
     }
-
 }

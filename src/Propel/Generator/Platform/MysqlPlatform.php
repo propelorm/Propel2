@@ -23,8 +23,6 @@ use Propel\Generator\Model\Unique;
 use Propel\Generator\Model\Diff\ColumnDiff;
 use Propel\Generator\Model\Diff\DatabaseDiff;
 
-use \PDO;
-
 /**
  * MySql PlatformInterface implementation.
  *
@@ -48,18 +46,18 @@ class MysqlPlatform extends DefaultPlatform
     protected function initialize()
     {
         parent::initialize();
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::BOOLEAN, "TINYINT", 1));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::NUMERIC, "DECIMAL"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARCHAR, "TEXT"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::BINARY, "BLOB"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::VARBINARY, "MEDIUMBLOB"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARBINARY, "LONGBLOB"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::BLOB, "LONGBLOB"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::CLOB, "LONGTEXT"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::TIMESTAMP, "DATETIME"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::OBJECT, "TEXT"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::PHP_ARRAY, "TEXT"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::ENUM, "TINYINT"));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::BOOLEAN, 'TINYINT', 1));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::NUMERIC, 'DECIMAL'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARCHAR, 'TEXT'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::BINARY, 'BLOB'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::VARBINARY, 'MEDIUMBLOB'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARBINARY, 'LONGBLOB'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::BLOB, 'LONGBLOB'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::CLOB, 'LONGTEXT'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::TIMESTAMP, 'DATETIME'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::OBJECT, 'TEXT'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::PHP_ARRAY, 'TEXT'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::ENUM, 'TINYINT'));
     }
 
     public function setGeneratorConfig(GeneratorConfigInterface $generatorConfig)
@@ -114,7 +112,7 @@ class MysqlPlatform extends DefaultPlatform
 
     public function getAutoIncrement()
     {
-        return "AUTO_INCREMENT";
+        return 'AUTO_INCREMENT';
     }
 
     public function getMaxColumnNameLength()
@@ -296,11 +294,11 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
         } elseif ($sqlType == 'DATE') {
             $def = $domain->getDefaultValue();
             if ($def && $def->isExpression()) {
-                throw new EngineException("DATE columns cannot have default *expressions* in MySQL.");
+                throw new EngineException('DATE columns cannot have default *expressions* in MySQL.');
             }
         } elseif ($sqlType == 'TEXT' || $sqlType == 'BLOB') {
             if ($domain->getDefaultValue()) {
-                throw new EngineException("BLOB and TEXT columns cannot have DEFAULT values. in MySQL.");
+                throw new EngineException('BLOB and TEXT columns cannot have DEFAULT values. in MySQL.');
             }
         }
 
@@ -607,9 +605,13 @@ ALTER TABLE %s CHANGE %s %s;
 
     public function hasSize($sqlType)
     {
-        return !("MEDIUMTEXT" == $sqlType || "LONGTEXT" == $sqlType
-                || "BLOB" == $sqlType || "MEDIUMBLOB" == $sqlType
-                || "LONGBLOB" == $sqlType);
+        return !in_array($sqlType, array(
+            'MEDIUMTEXT',
+            'LONGTEXT',
+            'BLOB',
+            'MEDIUMBLOB',
+            'LONGBLOB',
+        ));
     }
 
     /**
@@ -622,9 +624,9 @@ ALTER TABLE %s CHANGE %s %s;
         // mysql_escape_string doesn't work in PHP >= 5.4
         if (version_compare(PHP_VERSION, '5.4', '<') && function_exists('mysql_escape_string')) {
             return mysql_escape_string($text);
-        } else {
-            return addslashes($text);
         }
+
+        return addslashes($text);
     }
 
     /**
@@ -649,7 +651,7 @@ ALTER TABLE %s CHANGE %s %s;
     {
         // FIXME - This is a temporary hack to get around apparent bugs w/ PDO+MYSQL
         // See http://pecl.php.net/bugs/bug.php?id=9919
-        if ($column->getPDOType() == PDO::PARAM_BOOL) {
+        if ($column->getPDOType() === \PDO::PARAM_BOOL) {
             return sprintf(
                 "
 %s\$stmt->bindValue(%s, (int) %s, PDO::PARAM_INT);",
@@ -661,5 +663,4 @@ ALTER TABLE %s CHANGE %s %s;
 
         return parent::getColumnBindingPHP($column, $identifier, $columnValueAccessor, $tab);
     }
-
 }
