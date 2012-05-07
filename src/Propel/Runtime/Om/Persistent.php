@@ -21,7 +21,6 @@ use Propel\Runtime\Connection\ConnectionInterface;
  */
 interface Persistent
 {
-
     /**
      * getter for the object primaryKey.
      *
