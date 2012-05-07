@@ -1179,6 +1179,7 @@ class Column extends XmlElement
     public function getAutoIncrementString()
     {
         $table = $this->getTable();
+
         if ($this->isAutoIncrement()
             && IdMethod::NATIVE === $table->getIdMethod()) {
             return $this->getPlatform()->getAutoIncrement();
