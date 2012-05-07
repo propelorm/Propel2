@@ -621,7 +621,7 @@ class BasePeer
      * @param      Criteria $criteria Criteria for the SELECT query.
      * @param      array &$params Parameters that are to be replaced in prepared statement.
      * @return     string
-     * @throws     \Propel\Runtime\Exception\RuntimeException	Trouble creating the query string.
+     * @throws     \Propel\Runtime\Exception\RuntimeException    Trouble creating the query string.
      */
     static public function createSelectSql(Criteria $criteria, &$params)
     {
