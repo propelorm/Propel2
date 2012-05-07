@@ -57,9 +57,9 @@ abstract class ScopedElement extends XmlElement
      */
     protected function setupObject()
     {
-        $this->setPackage($this->getAttribute("package", $this->pkg));
-        $this->setSchema($this->getAttribute("schema", $this->schema));
-        $this->setNamespace($this->getAttribute("namespace", $this->namespace));
+        $this->setPackage($this->getAttribute('package', $this->pkg));
+        $this->setSchema($this->getAttribute('schema', $this->schema));
+        $this->setNamespace($this->getAttribute('namespace', $this->namespace));
     }
 
     /**
@@ -77,9 +77,10 @@ abstract class ScopedElement extends XmlElement
      */
     public function setNamespace($v)
     {
-        if ($v == $this->namespace) {
+        if ($v === $this->namespace) {
             return;
         }
+
         $this->namespace = $v;
         if ($v && (!$this->pkg || $this->pkgOverridden) && $this->getBuildProperty('namespaceAutoPackage')) {
             $this->pkg = str_replace('\\', '.', $v);
@@ -102,9 +103,10 @@ abstract class ScopedElement extends XmlElement
      */
     public function setPackage($v)
     {
-        if ($v == $this->pkg) {
+        if ($v === $this->pkg) {
             return;
         }
+
         $this->pkg = $v;
         $this->pkgOverridden = false;
     }
@@ -124,14 +126,16 @@ abstract class ScopedElement extends XmlElement
      */
     public function setSchema($v)
     {
-        if ($v == $this->schema) {
+        if ($v === $this->schema) {
             return;
         }
+
         $this->schema = $v;
         if ($v && !$this->pkg && $this->getBuildProperty('schemaAutoPackage')) {
             $this->pkg = $v;
             $this->pkgOverridden = true;
         }
+
         if ($v && !$this->namespace && $this->getBuildProperty('schemaAutoNamespace')) {
             $this->namespace = $v;
         }

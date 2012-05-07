@@ -17,9 +17,8 @@ namespace Propel\Generator\Model;
  */
 class ColumnDefaultValue
 {
-
-    const TYPE_VALUE = "value";
-    const TYPE_EXPR = "expr";
+    const TYPE_VALUE = 'value';
+    const TYPE_EXPR  = 'expr';
 
     /**
      * @var        string The default value, as specified in the schema.
@@ -40,7 +39,8 @@ class ColumnDefaultValue
     public function __construct($value, $type = null)
     {
         $this->setValue($value);
-        if ($type !== null) {
+
+        if (null !== $type) {
             $this->setType($type);
         }
     }
@@ -68,7 +68,7 @@ class ColumnDefaultValue
      */
     public function isExpression()
     {
-        return ($this->type == self::TYPE_EXPR);
+        return self::TYPE_EXPR === $this->type;
     }
 
     /**
@@ -96,12 +96,14 @@ class ColumnDefaultValue
      */
     public function equals(ColumnDefaultValue $other)
     {
-        if ($this->getType() != $other->getType()) {
+        if ($this->getType() !== $other->getType()) {
             return false;
         }
+
         if ($this == $other) {
             return true;
         }
+
         // special case for current timestamp
         $equivalents = array('CURRENT_TIMESTAMP', 'NOW()');
         if (in_array(strtoupper($this->getValue()), $equivalents) && in_array(strtoupper($other->getValue()), $equivalents)) {
@@ -110,6 +112,4 @@ class ColumnDefaultValue
 
         return false; // Can't help, they are different
     }
-
-
 }

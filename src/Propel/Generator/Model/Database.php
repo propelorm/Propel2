@@ -10,8 +10,6 @@
 
 namespace Propel\Generator\Model;
 
-use DOMNode;
-use DOMDocument;
 use Propel\Generator\Exception\EngineException;
 
 /**
@@ -42,7 +40,7 @@ class Database extends ScopedElement
     protected $behaviors = array();
 
     private $platform;
-    private $tableList = array();
+    private $tables = array();
     private $name;
 
     private $baseClass;
@@ -76,13 +74,14 @@ class Database extends ScopedElement
     protected function setupObject()
     {
         parent::setupObject();
-        $this->name = $this->getAttribute("name");
-        $this->baseClass = $this->getAttribute("baseClass");
-        $this->basePeer = $this->getAttribute("basePeer");
-        $this->defaultIdMethod = $this->getAttribute("defaultIdMethod", IdMethod::NATIVE);
-        $this->defaultPhpNamingMethod = $this->getAttribute("defaultPhpNamingMethod", NameGenerator::CONV_METHOD_UNDERSCORE);
-        $this->defaultTranslateMethod = $this->getAttribute("defaultTranslateMethod", Validator::TRANSLATE_NONE);
-        $this->heavyIndexing = $this->booleanValue($this->getAttribute("heavyIndexing"));
+
+        $this->name = $this->getAttribute('name');
+        $this->baseClass = $this->getAttribute('baseClass');
+        $this->basePeer = $this->getAttribute('basePeer');
+        $this->defaultIdMethod = $this->getAttribute('defaultIdMethod', IdMethod::NATIVE);
+        $this->defaultPhpNamingMethod = $this->getAttribute('defaultPhpNamingMethod', NameGenerator::CONV_METHOD_UNDERSCORE);
+        $this->defaultTranslateMethod = $this->getAttribute('defaultTranslateMethod', Validator::TRANSLATE_NONE);
+        $this->heavyIndexing = $this->booleanValue($this->getAttribute('heavyIndexing'));
         $this->tablePrefix = $this->getAttribute('tablePrefix', $this->getBuildProperty('tablePrefix'));
         $this->defaultStringFormat = $this->getAttribute('defaultStringFormat', 'YAML');
     }
@@ -240,7 +239,7 @@ class Database extends ScopedElement
      *
      * This is a synonym for getHeavyIndexing().
      *
-     * @return     boolean Value of heavyIndexing.
+     * @return     Boolean Value of heavyIndexing.
      * @see        getHeavyIndexing()
      */
     public function isHeavyIndexing()
@@ -251,7 +250,7 @@ class Database extends ScopedElement
     /**
      * Get the value of heavyIndexing.
      *
-     * @return     boolean Value of heavyIndexing.
+     * @return     Boolean Value of heavyIndexing.
      */
     public function getHeavyIndexing()
     {
@@ -260,11 +259,11 @@ class Database extends ScopedElement
 
     /**
      * Set the value of heavyIndexing.
-     * @param      boolean $v  Value to assign to heavyIndexing.
+     * @param      Boolean $v  Value to assign to heavyIndexing.
      */
     public function setHeavyIndexing($v)
     {
-        $this->heavyIndexing = (boolean) $v;
+        $this->heavyIndexing = (Boolean) $v;
     }
 
     /**
@@ -273,7 +272,7 @@ class Database extends ScopedElement
      */
     public function getTables()
     {
-        return $this->tableList;
+        return $this->tables;
     }
 
     /**
@@ -283,7 +282,7 @@ class Database extends ScopedElement
     public function countTables()
     {
         $count = 0;
-        foreach ($this->tableList as $table) {
+        foreach ($this->tables as $table) {
             if (!$table->isReadOnly()) {
                 $count++;
             }
@@ -299,7 +298,7 @@ class Database extends ScopedElement
     public function getTablesForSql()
     {
         $tables = array();
-        foreach ($this->tableList as $table) {
+        foreach ($this->tables as $table) {
             if (!$table->isSkipSql()) {
                 $tables[] = $table;
             }
@@ -311,47 +310,47 @@ class Database extends ScopedElement
     /**
      * Check whether the database has a table.
      * @param      string $name the name of the table (e.g. 'my_table')
-     * @param      boolean $caseInsensitive Whether the check is case insensitive. False by default.
+     * @param      Boolean $caseInsensitive Whether the check is case insensitive. False by default.
      *
-     * @return     boolean
+     * @return     Boolean
      */
     public function hasTable($name, $caseInsensitive = false)
     {
         if ($caseInsensitive) {
-            return array_key_exists(strtolower($name), $this->tablesByLowercaseName);
-        } else {
-            return array_key_exists($name, $this->tablesByName);
+            return isset($this->tablesByLowercaseName[ strtolower($name) ]);
         }
+
+        return isset($this->tablesByName[$name]);
     }
 
     /**
      * Return the table with the specified name.
      * @param      string $name The name of the table (e.g. 'my_table')
-     * @param      boolean $caseInsensitive Whether the check is case insensitive. False by default.
+     * @param      Boolean $caseInsensitive Whether the check is case insensitive. False by default.
      *
      * @return     Table a Table object or null if it doesn't exist
      */
     public function getTable($name, $caseInsensitive = false)
     {
-        if ($this->hasTable($name, $caseInsensitive)) {
-            if ($caseInsensitive) {
-                return $this->tablesByLowercaseName[strtolower($name)];
-            } else {
-                return $this->tablesByName[$name];
-            }
+        if (!$this->hasTable($name, $caseInsensitive)) {
+            return null;
         }
 
-        return null; // just to be explicit
+        if ($caseInsensitive) {
+            return $this->tablesByLowercaseName[strtolower($name)];
+        }
+
+        return $this->tablesByName[$name];
     }
 
     /**
      * Check whether the database has a table.
      * @param      string $phpName the PHP Name of the table (e.g. 'MyTable')
-     * @return     boolean
+     * @return     Boolean
      */
     public function hasTableByPhpName($phpName)
     {
-        return array_key_exists($phpName, $this->tablesByPhpName);
+        return isset($this->tablesByPhpName[$phpName]);
     }
 
     /**
@@ -373,41 +372,45 @@ class Database extends ScopedElement
      */
     public function addTable($data)
     {
-        if ($data instanceof Table) {
-            $tbl = $data; // alias
-            if (isset($this->tablesByName[$tbl->getName()])) {
-                throw new EngineException(sprintf('Table "%s" declared twice', $tbl->getName()));
-            }
-            $tbl->setDatabase($this);
-            if ($tbl->getSchema() === null) {
-                $tbl->setSchema($this->getSchema());
-            }
-            $this->tableList[] = $tbl;
-            $this->tablesByName[$tbl->getName()] = $tbl;
-            $this->tablesByLowercaseName[strtolower($tbl->getName())] = $tbl;
-            $this->tablesByPhpName[$tbl->getPhpName()] = $tbl;
-            if (strpos($tbl->getNamespace(), '\\') === 0) {
-                $tbl->setNamespace(substr($tbl->getNamespace(), 1));
-            } elseif ($namespace = $this->getNamespace()) {
-                if ($tbl->getNamespace() === null) {
-                    $tbl->setNamespace($namespace);
-                } else {
-                    $tbl->setNamespace($namespace . '\\' . $tbl->getNamespace());
-                }
-            }
-            if ($tbl->getPackage() === null) {
-                $tbl->setPackage($this->getPackage());
-            }
-
-            return $tbl;
-        } else {
+        if (!($data instanceof Table)) {
             $tbl = new Table();
             $tbl->setDatabase($this);
             $tbl->setSchema($this->getSchema());
             $tbl->loadFromXML($data);
 
-            return $this->addTable($tbl); // call self w/ different param
+            return $this->addTable($tbl);
         }
+
+        $tbl = $data; // alias
+        if (isset($this->tablesByName[$tbl->getName()])) {
+            throw new EngineException(sprintf('Table "%s" declared twice', $tbl->getName()));
+        }
+
+        $tbl->setDatabase($this);
+        if (null === $tbl->getSchema()) {
+            $tbl->setSchema($this->getSchema());
+        }
+
+        $this->tables[] = $tbl;
+        $this->tablesByName[$tbl->getName()] = $tbl;
+        $this->tablesByLowercaseName[strtolower($tbl->getName())] = $tbl;
+        $this->tablesByPhpName[$tbl->getPhpName()] = $tbl;
+
+        if (0 === strpos($tbl->getNamespace(), '\\')) {
+            $tbl->setNamespace(substr($tbl->getNamespace(), 1));
+        } elseif ($namespace = $this->getNamespace()) {
+            if (null === $tbl->getNamespace()) {
+                $tbl->setNamespace($namespace);
+            } else {
+                $tbl->setNamespace($namespace . '\\' . $tbl->getNamespace());
+            }
+        }
+
+        if (null === $tbl->getPackage()) {
+            $tbl->setPackage($this->getPackage());
+        }
+
+        return $tbl;
     }
 
     /**
@@ -461,7 +464,7 @@ class Database extends ScopedElement
             return $this->domainMap[$domainName];
         }
 
-        return null; // just to be explicit
+        return null;
     }
 
     public function getGeneratorConfig()
@@ -494,13 +497,13 @@ class Database extends ScopedElement
             $this->behaviors[$behavior->getName()] = $behavior;
 
             return $behavior;
-        } else {
-            $class = $this->getConfiguredBehavior($bdata['name']);
-            $behavior = new $class();
-            $behavior->loadFromXML($bdata);
-
-            return $this->addBehavior($behavior);
         }
+
+        $class = $this->getConfiguredBehavior($bdata['name']);
+        $behavior = new $class();
+        $behavior->loadFromXML($bdata);
+
+        return $this->addBehavior($behavior);
     }
 
     /**
@@ -516,11 +519,11 @@ class Database extends ScopedElement
      * check if the database has a behavior by name
      *
      * @param     string $name the behavior name
-     * @return    boolean True if the behavior exists
+     * @return    Boolean True if the behavior exists
      */
     public function hasBehavior($name)
     {
-        return array_key_exists($name, $this->behaviors);
+        return isset($this->behaviors[$name]);
     }
 
     /**
@@ -553,7 +556,7 @@ class Database extends ScopedElement
     {
         // order the behaviors according to Behavior::$tableModificationOrder
         $behaviors = array();
-        foreach ($this->getTables() as $table) {
+        foreach ($this->tables as $table) {
             foreach ($table->getBehaviors() as $behavior) {
                 if (!$behavior->isTableModified()) {
                     $behaviors[$behavior->getTableModificationOrder()][] = $behavior;
@@ -594,7 +597,7 @@ class Database extends ScopedElement
         }
 
         // do naming and heavy indexing
-        foreach ($this->getTables() as $table) {
+        foreach ($this->tables as $table) {
             $table->doFinalInitialization();
             // setup referrers again, since final initialization may have added columns
             $table->setupReferrers(true);
@@ -606,7 +609,7 @@ class Database extends ScopedElement
      */
     protected function setupTableReferrers()
     {
-        foreach ($this->getTables() as $table) {
+        foreach ($this->tables as $table) {
             $table->doNaming();
             $table->setupReferrers();
         }
@@ -615,9 +618,9 @@ class Database extends ScopedElement
     /**
      * @see        XmlElement::appendXml(DOMNode)
      */
-    public function appendXml(DOMNode $node)
+    public function appendXml(\DOMNode $node)
     {
-        $doc = ($node instanceof DOMDocument) ? $node : $node->ownerDocument;
+        $doc = ($node instanceof \DOMDocument) ? $node : $node->ownerDocument;
 
         $dbNode = $node->appendChild($doc->createElement('database'));
 
@@ -661,9 +664,8 @@ class Database extends ScopedElement
             $vi->appendXml($dbNode);
         }
 
-        foreach ($this->tableList as $table) {
+        foreach ($this->tables as $table) {
             $table->appendXml($dbNode);
         }
-
     }
 }

@@ -19,7 +19,6 @@ namespace Propel\Generator\Model;
  */
 interface NameGenerator
 {
-
     /**
      * The character used by most implementations as the separator
      * between name elements.
@@ -34,7 +33,7 @@ interface NameGenerator
      *
      * @see        PhpNameGenerator::underscoreMethod()
      */
-    const CONV_METHOD_UNDERSCORE = "underscore";
+    const CONV_METHOD_UNDERSCORE = 'underscore';
 
     /**
      * Heavier method for converting schema table and column names
@@ -45,7 +44,7 @@ interface NameGenerator
      * constants define how names for columns and tales in the
      * database schema will be converted to PHP source names.
      */
-    const CONV_METHOD_CLEAN = "clean";
+    const CONV_METHOD_CLEAN = 'clean';
 
     /**
      * Similar to {@link #CONV_METHOD_UNDERSCORE} except nothing is
@@ -53,13 +52,13 @@ interface NameGenerator
      *
      * @see        PhpNameGenerator::phpnameMethod()
      */
-    const CONV_METHOD_PHPNAME = "phpname";
+    const CONV_METHOD_PHPNAME = 'phpname';
 
     /**
      * Specifies no modification when converting from a schema column
      * or table name to a PHP name.
      */
-    const CONV_METHOD_NOCHANGE = "nochange";
+    const CONV_METHOD_NOCHANGE = 'nochange';
 
     /**
      * Given a list of <code>String</code> objects, implements an

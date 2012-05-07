@@ -10,9 +10,6 @@
 
 namespace Propel\Generator\Model;
 
-use DOMNode;
-use DOMDocument;
-
 /**
  * A Class for information about foreign keys of a table.
  *
@@ -23,7 +20,6 @@ use DOMDocument;
  */
 class ForeignKey extends XmlElement
 {
-
     protected $foreignTableCommonName;
 
     protected $foreignSchemaName;
@@ -49,7 +45,7 @@ class ForeignKey extends XmlElement
     /**
      * Whether to skip generation of SQL for this foreign key.
      *
-     * @var       boolean
+     * @var       Boolean
      */
     protected $skipSql = false;
 
@@ -77,12 +73,13 @@ class ForeignKey extends XmlElement
      */
     protected function setupObject()
     {
-        $this->foreignTableCommonName = $this->getTable()->getDatabase()->getTablePrefix() . $this->getAttribute('foreignTable');
+        $table = $this->getTable();
+
+        $this->foreignTableCommonName = $table->getDatabase()->getTablePrefix() . $this->getAttribute('foreignTable');
         $this->foreignSchemaName = $this->getAttribute('foreignSchema');
-        if (!$this->foreignSchemaName) {
-            if ($this->getTable()->getSchema()) {
-                $this->foreignSchemaName = $this->getTable()->getSchema();
-            }
+
+        if (!$this->foreignSchemaName && $schema = $table->getSchema()) {
+            $this->foreignSchemaName = $this->getTable()->getSchema();
         }
 
         $this->name = $this->getAttribute('name');
@@ -459,11 +456,8 @@ class ForeignKey extends XmlElement
     public function getMappedForeignColumn($local)
     {
         $m = $this->getLocalForeignMapping();
-        if (isset($m[$local])) {
-            return $m[$local];
-        }
 
-        return null;
+        return isset($m[$local]) ? $m[$local] : null;
     }
 
     /**
@@ -473,11 +467,8 @@ class ForeignKey extends XmlElement
     public function getMappedLocalColumn($foreign)
     {
         $m = $this->getForeignLocalMapping();
-        if (isset($m[$foreign])) {
-            return $m[$foreign];
-        }
 
-        return null;
+        return isset($m[$foreign]) ? $m[$foreign] : null;
     }
 
     /**
@@ -525,7 +516,7 @@ class ForeignKey extends XmlElement
     /**
      * Whether this foreign key uses a required column, or a list of required columns.
      *
-     * @return     boolean
+     * @return     Boolean
      */
     public function isLocalColumnsRequired()
     {
@@ -541,7 +532,7 @@ class ForeignKey extends XmlElement
     /**
      * Whether this foreign key is also the primary key of the foreign table.
      *
-     * @return     boolean
+     * @return     Boolean
      */
     public function isForeignPrimaryKey()
     {
@@ -576,7 +567,7 @@ class ForeignKey extends XmlElement
     /**
      * Whether this foreign key is also the primary key of the local table.
      *
-     * @return     boolean
+     * @return     Boolean
      */
     public function isLocalPrimaryKey()
     {
@@ -590,21 +581,22 @@ class ForeignKey extends XmlElement
         }
 
         return ((count($localPKCols) === count($localCols)) &&
-            !array_diff($localPKCols, $localCols));
+            !array_diff($localPKCols, $localCols))
+        ;
     }
 
     /**
      * Set whether this foreign key should have its creation sql generated.
-     * @param     boolean $v Value to assign to skipSql.
+     * @param     Boolean $v Value to assign to skipSql.
      */
     public function setSkipSql($v)
     {
-        $this->skipSql = $v;
+        $this->skipSql = (Boolean) $v;
     }
 
     /**
      * Skip generating sql for this foreign key.
-     * @return    boolean Value of skipSql.
+     * @return    Boolean Value of skipSql.
      */
     public function isSkipSql()
     {
@@ -619,12 +611,12 @@ class ForeignKey extends XmlElement
      * support it.
      *
      * @param      ForeignKey $fk
-     * @return     boolean
+     * @return     Boolean
      * @link       http://propel.phpdb.org/trac/ticket/549
      */
     public function isMatchedByInverseFK()
     {
-        return (bool) $this->getInverseFK();
+        return (Boolean) $this->getInverseFK();
     }
 
     public function getInverseFK()
@@ -635,7 +627,7 @@ class ForeignKey extends XmlElement
         foreach ($foreignTable->getForeignKeys() as $refFK) {
             $fkMap = $refFK->getLocalForeignMapping();
             // compares keys and values, but doesn't care about order, included check to make sure it's the same table (fixes #679)
-            if (($refFK->getTableName() == $this->getTableName()) && ($map == $fkMap)) {
+            if (($refFK->getTableName() === $this->getTableName()) && ($map === $fkMap)) {
                 return $refFK;
             }
         }
@@ -662,9 +654,9 @@ class ForeignKey extends XmlElement
     /**
      * @see        XmlElement::appendXml(DOMNode)
      */
-    public function appendXml(DOMNode $node)
+    public function appendXml(\DOMNode $node)
     {
-        $doc = ($node instanceof DOMDocument) ? $node : $node->ownerDocument;
+        $doc = ($node instanceof \DOMDocument) ? $node : $node->ownerDocument;
 
         $fkNode = $node->appendChild($doc->createElement('foreign-key'));
 
@@ -694,7 +686,7 @@ class ForeignKey extends XmlElement
             $fkNode->setAttribute('onUpdate', $this->getOnUpdate());
         }
 
-        for ($i=0, $size=count($this->localColumns); $i < $size; $i++) {
+        for ($i = 0, $size = count($this->localColumns); $i < $size; $i++) {
             $refNode = $fkNode->appendChild($doc->createElement('reference'));
             $refNode->setAttribute('local', $this->localColumns[$i]);
             $refNode->setAttribute('foreign', $this->foreignColumns[$i]);

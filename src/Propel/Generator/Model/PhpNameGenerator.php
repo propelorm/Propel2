@@ -47,9 +47,9 @@ class PhpNameGenerator implements NameGenerator
         $schemaName = $inputs[0];
         $method = $inputs[1];
 
-        if (count($inputs)>2) {
+        if (count($inputs) > 2) {
             $prefix = $inputs[2];
-            if ($prefix != '' && substr($schemaName, 0, strlen($prefix)) == $prefix) {
+            if (!empty($prefix) && substr($schemaName, 0, strlen($prefix)) === $prefix) {
                 $schemaName = substr($schemaName, strlen($prefix));
             }
         }
@@ -91,9 +91,9 @@ class PhpNameGenerator implements NameGenerator
      */
     protected function underscoreMethod($schemaName)
     {
-        $name = "";
+        $name = '';
         $tok = strtok($schemaName, self::STD_SEPARATOR_CHAR);
-        while ($tok !== false) {
+        while (false !== $tok) {
             $name .= ucfirst(strtolower($tok));
             $tok = strtok(self::STD_SEPARATOR_CHAR);
         }
@@ -116,15 +116,15 @@ class PhpNameGenerator implements NameGenerator
      */
     protected function cleanMethod($schemaName)
     {
-        $name = "";
+        $name = '';
         $regexp = '/([a-z0-9]+)/i';
         $matches = array();
-        if (preg_match_all($regexp, $schemaName, $matches)) {
-            foreach ($matches[1] as $tok) {
-                $name .= ucfirst(strtolower($tok));
-            }
-        } else {
+        if (!preg_match_all($regexp, $schemaName, $matches)) {
             return $schemaName;
+        }
+
+        foreach ($matches[1] as $tok) {
+            $name .= ucfirst(strtolower($tok));
         }
 
         return $name;
@@ -144,9 +144,9 @@ class PhpNameGenerator implements NameGenerator
      */
     protected function phpnameMethod($schemaName)
     {
-        $name = "";
+        $name = '';
         $tok = strtok($schemaName, self::STD_SEPARATOR_CHAR);
-        while ($tok !== false) {
+        while (false !== $tok) {
             $name .= ucfirst($tok);
             $tok = strtok(self::STD_SEPARATOR_CHAR);
         }

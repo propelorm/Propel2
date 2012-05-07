@@ -12,9 +12,6 @@ namespace Propel\Generator\Model;
 
 use Propel\Generator\Exception\EngineException;
 
-use \DOMNode;
-use \DOMDocument;
-
 /**
  * Information about indices of a table.
  *
@@ -49,23 +46,16 @@ class Index extends XmlElement
     private function createName()
     {
         $table = $this->getTable();
+
         $inputs = array();
         $inputs[] = $table->getDatabase();
         $inputs[] = $table->getCommonName();
-        if ($this->isUnique()) {
-            $inputs[] = "U";
-        } else {
-            $inputs[] = "I";
-        }
-        // ASSUMPTION: This Index not yet added to the list.
-        if ($this->isUnique()) {
-            $inputs[] = count($table->getUnices()) + 1;
-        } else {
-            $inputs[] = count($table->getIndices()) + 1;
-        }
+        $inputs[] = $this->isUnique() ? 'U' : 'I';
 
-        $this->indexName = NameFactory::generateName(
-        NameFactory::CONSTRAINT_GENERATOR, $inputs);
+        // ASSUMPTION: This Index not yet added to the list.
+        $inputs[] = $this->isUnique() ? count($table->getUnices()) + 1 : count($table->getIndices()) + 1;
+
+        $this->indexName = NameFactory::generateName(NameFactory::CONSTRAINT_GENERATOR, $inputs);
     }
 
     /**
@@ -74,7 +64,7 @@ class Index extends XmlElement
      */
     protected function setupObject()
     {
-        $this->indexName = $this->getAttribute("name");
+        $this->indexName = $this->getAttribute('name');
     }
 
     /**
@@ -88,6 +78,8 @@ class Index extends XmlElement
 
     /**
      * Returns the uniqueness of this index.
+     *
+     * @return Boolean
      */
     public function isUnique()
     {
@@ -108,7 +100,7 @@ class Index extends XmlElement
      */
     public function getName()
     {
-        if ($this->indexName === null) {
+        if (null === $this->indexName) {
             try {
                 // generate an index name if we don't have a supplied one
                 $this->createName();
@@ -116,11 +108,12 @@ class Index extends XmlElement
                 // still no name
             }
         }
+
         if ($database = $this->getTable()->getDatabase()) {
             return substr($this->indexName, 0, $database->getPlatform()->getMaxColumnNameLength());
-        } else {
-            return $this->indexName;
         }
+
+        return $this->indexName;
     }
 
     /**
@@ -166,6 +159,7 @@ class Index extends XmlElement
 
     /**
      * Adds a new column to an index.
+     *
      * @param      mixed $data Column or attributes from XML.
      */
     public function addColumn($data)
@@ -178,10 +172,10 @@ class Index extends XmlElement
             }
         } else {
             $attrib = $data;
-            $name = $attrib["name"];
+            $name = $attrib['name'];
             $this->indexColumns[] = $name;
-            if (isset($attrib["size"])) {
-                $this->indexColumnSizes[$name] = $attrib["size"];
+            if (isset($attrib['size'])) {
+                $this->indexColumnSizes[$name] = $attrib['size'];
             }
         }
     }
@@ -217,11 +211,7 @@ class Index extends XmlElement
      */
     public function getColumnSize($name)
     {
-        if (isset($this->indexColumnSizes[$name])) {
-            return $this->indexColumnSizes[$name];
-        }
-
-        return null; // just to be explicit
+        return isset($this->indexColumnSizes[$name]) ? $this->indexColumnSizes[$name] : null;
     }
 
     /**
@@ -275,12 +265,16 @@ class Index extends XmlElement
         if (!isset($this->indexColumns[$pos])) {
             return false;
         }
+
         $test = $caseInsensitive ?
             strtolower($this->indexColumns[$pos]) != strtolower($name) :
-            $this->indexColumns[$pos] != $name;
+            $this->indexColumns[$pos] != $name
+        ;
+
         if ($test) {
             return false;
         }
+
         if (null !== $size && $this->indexColumnSizes[$name] != $size) {
             return false;
         }
@@ -309,9 +303,9 @@ class Index extends XmlElement
     /**
      * @see        XmlElement::appendXml(DOMNode)
      */
-    public function appendXml(DOMNode $node)
+    public function appendXml(\DOMNode $node)
     {
-        $doc = ($node instanceof DOMDocument) ? $node : $node->ownerDocument;
+        $doc = ($node instanceof \DOMDocument) ? $node : $node->ownerDocument;
 
         $idxNode = $node->appendChild($doc->createElement('index'));
         $idxNode->setAttribute('name', $this->getName());

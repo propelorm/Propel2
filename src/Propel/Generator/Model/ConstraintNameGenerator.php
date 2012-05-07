@@ -37,7 +37,6 @@ class ConstraintNameGenerator implements NameGenerator
      */
     public function generateName($inputs)
     {
-
         $db = $inputs[0];
         $name = $inputs[1];
         $namePostfix = $inputs[2];
@@ -47,15 +46,8 @@ class ConstraintNameGenerator implements NameGenerator
         $maxBodyLength = -1;
         try {
             $maxColumnNameLength = (int) $db->getPlatform()->getMaxColumnNameLength();
-            $maxBodyLength = ($maxColumnNameLength - strlen($namePostfix)
-                    - strlen($constraintNbr) - 2);
-
-            if (self::DEBUG) {
-                print("maxColumnNameLength=" . $maxColumnNameLength
-                        . " maxBodyLength=" . $maxBodyLength . "\n");
-            }
+            $maxBodyLength = ($maxColumnNameLength - strlen($namePostfix) - strlen($constraintNbr) - 2);
         } catch (EngineException $e) {
-            echo $e;
             throw $e;
         }
 
