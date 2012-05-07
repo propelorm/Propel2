@@ -19,7 +19,6 @@ use Symfony\Component\Yaml\Yaml;
  */
 class YamlParser extends AbstractParser
 {
-
     /**
      * Converts data from an associative array to YAML.
      *
@@ -63,5 +62,4 @@ class YamlParser extends AbstractParser
     {
         return $this->toArray($data);
     }
-
 }
