@@ -118,7 +118,7 @@ abstract class BaseObject
      */
     public function setNew($b)
     {
-        $this->new = (boolean) $b;
+        $this->new = (Boolean) $b;
     }
 
     /**
@@ -137,7 +137,7 @@ abstract class BaseObject
      */
     public function setDeleted($b)
     {
-        $this->deleted = (boolean) $b;
+        $this->deleted = (Boolean) $b;
     }
 
     /**
@@ -243,17 +243,20 @@ abstract class BaseObject
     public function equals($obj)
     {
         $thisclazz = get_class($this);
-        if (is_object($obj) && $obj instanceof $thisclazz) {
-            if ($this === $obj) {
-                return true;
-            } elseif (null === $this->getPrimaryKey() || null === $obj->getPrimaryKey())  {
-                return false;
-            } else {
-                return ($this->getPrimaryKey() === $obj->getPrimaryKey());
-            }
+        if (!is_object($obj) || !($obj instanceof $thisclazz)) {
+            return false;
         }
 
-        return false;
+        if ($this === $obj) {
+            return true;
+        }
+
+        if (null === $this->getPrimaryKey()
+            || null === $obj->getPrimaryKey())  {
+            return false;
+        }
+
+        return $this->getPrimaryKey() === $obj->getPrimaryKey();
     }
 
     /**
@@ -291,7 +294,7 @@ abstract class BaseObject
      */
     public function hasVirtualColumn($name)
     {
-        return array_key_exists($name, $this->virtualColumns);
+        return isset($this->virtualColumns[$name]);
     }
 
     /**
