@@ -86,7 +86,7 @@ class CsvParser extends AbstractParser
                     $column = $this->quote($this->escape($column));
                     break;
                 case self::QUOTE_NONNUMERIC:
-                    if (preg_match("/[^0-9]/", $column)) {
+                    if (preg_match('/[^0-9]/', $column)) {
                         $column = $this->quote($this->escape($column));
                     }
                     break;
@@ -140,7 +140,7 @@ class CsvParser extends AbstractParser
         $special_chars[] = $this->quotechar;
         $special_chars[] = $this->delimiter;
         foreach ($special_chars as $char) {
-            if (strpos($input, $char) !== false) {
+            if (false !== strpos($input, $char)) {
                 return true;
             }
         }
@@ -241,7 +241,7 @@ class CsvParser extends AbstractParser
             if ($this->isSerialized($column)) {
                 $column = $this->unserialize($column);
             }
-            if ($column === 'N;') {
+            if ('N;' === $column) {
                 $column = null;
             }
             $row[$key] = $column;
@@ -303,5 +303,4 @@ class CsvParser extends AbstractParser
     {
         return $this->toArray($data, $isList, $includeHeading);
     }
-
 }

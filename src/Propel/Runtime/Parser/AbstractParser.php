@@ -78,11 +78,11 @@ abstract class AbstractParser
      */
     public function dump($data, $path = null)
     {
-        if ($path !== null) {
+        if (null !== $path) {
             return file_put_contents($path, $data);
-        } else {
-            echo $data;
         }
+
+        echo $data;
     }
 
     /**
