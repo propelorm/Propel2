@@ -19,9 +19,8 @@ use Propel\Generator\Exception\EngineException;
  */
 class Validator extends XmlElement
 {
-
-    const TRANSLATE_NONE = "none";
-    const TRANSLATE_GETTEXT = "gettext";
+    const TRANSLATE_NONE = 'none';
+    const TRANSLATE_GETTEXT = 'gettext';
 
     /**
      * The column this validator applies to.
@@ -35,7 +34,7 @@ class Validator extends XmlElement
      *
      * @var        array Rule[]
      */
-    private $ruleList = array();
+    private $rules = array();
 
     /**
      * The translation mode.
@@ -57,8 +56,10 @@ class Validator extends XmlElement
      */
     protected function setupObject()
     {
-        $this->column = $this->getTable()->getColumn($this->getAttribute("column"));
-        $this->translate = $this->getAttribute("translate", $this->getTable()->getDatabase()->getDefaultTranslateMethod());
+        $table = $this->getTable();
+
+        $this->column = $table->getColumn($this->getAttribute('column'));
+        $this->translate = $this->getAttribute('translate', $table->getDatabase()->getDefaultTranslateMethod());
     }
 
     /**
@@ -74,16 +75,16 @@ class Validator extends XmlElement
         if ($data instanceof Rule) {
             $rule = $data; // alias
             $rule->setValidator($this);
-            $this->ruleList[] = $rule;
+            $this->rules[] = $rule;
 
             return $rule;
-        } else {
-            $rule = new Rule();
-            $rule->setValidator($this);
-            $rule->loadFromXML($data);
-
-            return $this->addRule($rule); // call self w/ different param
         }
+
+        $rule = new Rule();
+        $rule->setValidator($this);
+        $rule->loadFromXML($data);
+
+        return $this->addRule($rule); // call self w/ different param
     }
 
     /**
@@ -92,7 +93,7 @@ class Validator extends XmlElement
      */
     public function getRules()
     {
-        return $this->ruleList;
+        return $this->rules;
     }
 
     /**
@@ -164,18 +165,18 @@ class Validator extends XmlElement
     /**
      * @see        XmlElement::appendXml(DOMNode)
      */
-    public function appendXml(DOMNode $node)
+    public function appendXml(\DOMNode $node)
     {
-        $doc = ($node instanceof DOMDocument) ? $node : $node->ownerDocument;
+        $doc = ($node instanceof \DOMDocument) ? $node : $node->ownerDocument;
 
         $valNode = $node->appendChild($doc->createElement('validator'));
         $valNode->setAttribute('column', $this->getColumnName());
 
-        if ($this->translate !== null) {
+        if (null !== $this->translate) {
             $valNode->setAttribute('translate', $this->translate);
         }
 
-        foreach ($this->ruleList as $rule) {
+        foreach ($this->rules as $rule) {
             $rule->appendXml($valNode);
         }
     }

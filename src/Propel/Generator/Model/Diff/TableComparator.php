@@ -224,7 +224,7 @@ class TableComparator
 
         foreach ($toTableIndices as $toTableIndexPos => $toTableIndex) {
             foreach ($fromTableIndices as $fromTableIndexPos => $fromTableIndex) {
-                if (IndexComparator::computeDiff($fromTableIndex, $toTableIndex, $caseInsensitive) === false) {
+                if (false === IndexComparator::computeDiff($fromTableIndex, $toTableIndex, $caseInsensitive)) {
                     unset($fromTableIndices[$fromTableIndexPos]);
                     unset($toTableIndices[$toTableIndexPos]);
                 } else {
@@ -273,7 +273,7 @@ class TableComparator
 
         foreach ($fromTableFks as $fromTableFkPos => $fromTableFk) {
             foreach ($toTableFks as $toTableFkPos => $toTableFk) {
-                if (ForeignKeyComparator::computeDiff($fromTableFk, $toTableFk, $caseInsensitive) === false) {
+                if (false === ForeignKeyComparator::computeDiff($fromTableFk, $toTableFk, $caseInsensitive)) {
                     unset($fromTableFks[$fromTableFkPos]);
                     unset($toTableFks[$toTableFkPos]);
                 } else {
@@ -307,5 +307,4 @@ class TableComparator
 
         return $fkDifferences;
     }
-
 }

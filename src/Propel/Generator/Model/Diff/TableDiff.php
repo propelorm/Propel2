@@ -724,5 +724,4 @@ class TableDiff
 
         return $ret;
     }
-
 }
