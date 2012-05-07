@@ -10,7 +10,6 @@
 
 namespace Propel\Runtime\Query;
 
-use IteratorAggregate;
 use Propel\Runtime\Propel;
 use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\Util\BasePeer;
@@ -30,7 +29,7 @@ use Propel\Runtime\Util\PropelConditionalProxy;
  * @author     Henning P. Schmiedehausen <hps@intermeta.de> (Torque)
  * @author     Sam Joseph <sam@neurogrid.com> (Torque)
  */
-class Criteria implements IteratorAggregate
+class Criteria implements \IteratorAggregate
 {
 
     /** Comparison type. */
@@ -247,7 +246,7 @@ class Criteria implements IteratorAggregate
      */
     protected $defaultCombineOperator = Criteria::LOGICAL_AND;
 
-    // flags for boolean functions
+    // flags for Boolean functions
     protected $conditionalProxy = null;
 
     /**
@@ -444,26 +443,26 @@ class Criteria implements IteratorAggregate
      * Does this Criteria object contain the specified key?
      *
      * @param      string $column [table.]column
-     * @return     boolean True if this Criteria object contain the specified key.
+     * @return     Boolean True if this Criteria object contain the specified key.
      */
     public function containsKey($column)
     {
         // must use array_key_exists() because the key could
         // exist but have a NULL value (that'd be valid).
-        return array_key_exists($column, $this->map);
+        return isset($this->map[$column]);
     }
 
     /**
      * Does this Criteria object contain the specified key and does it have a value set for the key
      *
      * @param      string $column [table.]column
-     * @return     boolean True if this Criteria object contain the specified key and a value for that key
+     * @return     Boolean True if this Criteria object contain the specified key and a value for that key
      */
     public function keyContainsValue($column)
     {
         // must use array_key_exists() because the key could
         // exist but have a NULL value (that'd be valid).
-        return (array_key_exists($column, $this->map) && (null !== $this->map[$column]->getValue()));
+        return isset($this->map[$column]) && null !== $this->map[$column]->getValue();
     }
 
     /**
@@ -471,7 +470,7 @@ class Criteria implements IteratorAggregate
      *
      * This counts conditions added with the add() method.
      *
-     * @return     boolean
+     * @return     Boolean
      * @see        add()
      */
     public function hasWhereClause()
@@ -495,7 +494,7 @@ class Criteria implements IteratorAggregate
      * Whether the sql command specified by this criteria must be wrapped
      * in a transaction.
      *
-     * @return     boolean
+     * @return     Boolean
      */
     public function isUseTransaction()
     {
@@ -814,7 +813,7 @@ class Criteria implements IteratorAggregate
                 $namedCriterions[]= $this->namedCriterions[$key];
                 unset($this->namedCriterions[$key]);
             } else {
-                throw new LogicException('Cannot combine unknown condition ' . $key);
+                throw new LogicException(sprintf('Cannot combine unknown condition %s', $key));
             }
         }
         $firstCriterion = array_shift($namedCriterions);
@@ -1034,7 +1033,7 @@ class Criteria implements IteratorAggregate
      * checks if the Criteria for a specific subQuery is set.
      *
      * @param string   $alias            alias for the subQuery
-     * @return boolean
+     * @return Boolean
      */
     public function hasSelectQuery($alias)
     {
@@ -1123,7 +1122,7 @@ class Criteria implements IteratorAggregate
     /**
      * Sets ignore case.
      *
-     * @param      boolean $b True if case should be ignored.
+     * @param      Boolean $b True if case should be ignored.
      * @return     Criteria Modified Criteria object (for fluent API)
      */
     public function setIgnoreCase($b)
@@ -1136,7 +1135,7 @@ class Criteria implements IteratorAggregate
     /**
      * Is ignore case on or off?
      *
-     * @return     boolean True if case is ignored.
+     * @return     Boolean True if case is ignored.
      */
     public function isIgnoreCase()
     {
@@ -1152,7 +1151,7 @@ class Criteria implements IteratorAggregate
      * multiple records but you are only interested in the first one then you
      * should be using setLimit(1).
      *
-     * @param      boolean $b Set to TRUE if you expect the query to select just one record.
+     * @param      Boolean $b Set to TRUE if you expect the query to select just one record.
      * @return     Criteria Modified Criteria object (for fluent API)
      */
     public function setSingleRecord($b)
@@ -1165,7 +1164,7 @@ class Criteria implements IteratorAggregate
     /**
      * Is single record?
      *
-     * @return     boolean True if a single record is being returned.
+     * @return     Boolean True if a single record is being returned.
      */
     public function isSingleRecord()
     {
@@ -1261,13 +1260,13 @@ class Criteria implements IteratorAggregate
      *
      * This will include columns added with addAsColumn() method.
      *
-     * @return     boolean
+     * @return     Boolean
      * @see        addAsColumn()
      * @see        addSelectColumn()
      */
     public function hasSelectClause()
     {
-        return (!empty($this->selectColumns) || !empty($this->asColumns));
+        return !empty($this->selectColumns) || !empty($this->asColumns);
     }
 
     /**
@@ -1454,7 +1453,7 @@ class Criteria implements IteratorAggregate
     /**
      * This method checks another Criteria to see if they contain
      * the same attributes and hashtable entries.
-     * @return     boolean
+     * @return     Boolean
      */
     public function equals($crit)
     {
@@ -1532,13 +1531,13 @@ class Criteria implements IteratorAggregate
     {
         // merge limit
         $limit = $criteria->getLimit();
-        if ($limit !== 0 && 0 === $this->getLimit()) {
+        if (0 != $limit && 0 === $this->getLimit()) {
             $this->limit = $limit;
         }
 
         // merge offset
         $offset = $criteria->getOffset();
-        if ($offset != 0 && 0 === $this->getOffset()) {
+        if (0 != $offset && 0 === $this->getOffset()) {
             $this->offset = $offset;
         }
 
@@ -1567,14 +1566,14 @@ class Criteria implements IteratorAggregate
         $this->groupByColumns = array_unique($groupByColumns);
 
         // merge where conditions
-        if ($operator == Criteria::LOGICAL_OR) {
+        if (Criteria::LOGICAL_OR === $operator) {
             $this->_or();
         }
         $isFirstCondition = true;
         foreach ($criteria->getMap() as $key => $criterion) {
-            if ($isFirstCondition && $this->defaultCombineOperator == Criteria::LOGICAL_OR) {
+            if ($isFirstCondition && Criteria::LOGICAL_OR === $this->defaultCombineOperator) {
                 $this->addOr($criterion, null, null, false);
-                $this->defaultCombineOperator == Criteria::LOGICAL_AND;
+                $this->defaultCombineOperator = Criteria::LOGICAL_AND;
             } elseif ($this->containsKey($key)) {
                 $this->addAnd($criterion);
             } else {
@@ -1654,15 +1653,17 @@ class Criteria implements IteratorAggregate
         if ($p1 instanceof Criterion) {
             // it's already a Criterion, so ignore $value and $comparison
             return $p1;
-        } elseif (is_int($comparison)) {
+        }
+
+        if (is_int($comparison)) {
             // $comparison is a PDO::PARAM_* constant value
             // something like $c->add('foo like ?', '%bar%', PDO::PARAM_STR);
             return new Criterion($this, $p1, $value, Criteria::RAW, $comparison);
-        } else {
-            // $comparison is one of Criteria's constants
-            // something like $c->add(BookPeer::TITLE, 'War%', Criteria::LIKE);
-            return new Criterion($this, $p1, $value, $comparison);
         }
+
+        // $comparison is one of Criteria's constants
+        // something like $c->add(BookPeer::TITLE, 'War%', Criteria::LIKE);
+        return new Criterion($this, $p1, $value, $comparison);
     }
 
     /**
@@ -1742,7 +1743,7 @@ class Criteria implements IteratorAggregate
      * @param      string|Criterion $p1 The column to run the comparison on (e.g. BookPeer::ID), or Criterion object
      * @param      mixed $value
      * @param      string $operator A String, like Criteria::EQUAL.
-     * @param      boolean $preferColumnCondition If true, the condition is combined with an existing condition on the same column
+     * @param      Boolean $preferColumnCondition If true, the condition is combined with an existing condition on the same column
     *                      (necessary for Propel 1.4 compatibility).
      *                     If false, the condition is combined with the last existing condition.
      *
@@ -1750,7 +1751,7 @@ class Criteria implements IteratorAggregate
      */
     public function addUsingOperator($p1, $value = null, $operator = null, $preferColumnCondition = true)
     {
-        if ($this->defaultCombineOperator == Criteria::LOGICAL_OR) {
+        if (Criteria::LOGICAL_OR === $this->defaultCombineOperator) {
             $this->defaultCombineOperator = Criteria::LOGICAL_AND;
 
             return $this->addOr($p1, $value, $operator, $preferColumnCondition);
