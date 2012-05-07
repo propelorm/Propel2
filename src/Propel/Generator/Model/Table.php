@@ -10,8 +10,6 @@
 
 namespace Propel\Generator\Model;
 
-use DOMNode;
-use DOMDocument;
 use Propel\Generator\Exception\BuildException;
 use Propel\Generator\Exception\EngineException;
 use Propel\Generator\Platform\MysqlPlatform;
@@ -39,7 +37,7 @@ class Table extends ScopedElement implements IdMethod
      *
      * @var       array Column[]
      */
-    private $columnList = array();
+    private $columns = array();
 
     /**
      * Foreign keys for this table.
@@ -100,7 +98,7 @@ class Table extends ScopedElement implements IdMethod
     /**
      * Wether an INSERT with set PK is allowed on tables with IdMethod::NATIVE
      *
-     * @var       boolean
+     * @var       Boolean
      */
     private $allowPkInsert;
 
@@ -135,7 +133,7 @@ class Table extends ScopedElement implements IdMethod
     /**
      * Whether this table contains a foreign primary key.
      *
-     * @var       boolean
+     * @var       Boolean
      */
     private $containsForeignPK;
 
@@ -149,21 +147,21 @@ class Table extends ScopedElement implements IdMethod
     /**
      * Whether to skip generation of SQL for this table.
      *
-     * @var       boolean
+     * @var       Boolean
      */
     private $skipSql;
 
     /**
      * Whether this table is "read-only".
      *
-     * @var       boolean
+     * @var       Boolean
      */
     private $readOnly;
 
     /**
      * Whether this table should result in abstract OM classes.
      *
-     * @var       boolean
+     * @var       Boolean
      */
     private $abstractValue;
 
@@ -227,28 +225,28 @@ class Table extends ScopedElement implements IdMethod
     /**
      * Whether to perform additional indexing on this table.
      *
-     * @var       boolean
+     * @var       Boolean
      */
     private $heavyIndexing;
 
     /**
      * Whether this table is for reference only.
      *
-     * @var       boolean
+     * @var       Boolean
      */
     private $forReferenceOnly;
 
     /**
      * Whether to reload the rows in this table after insert.
      *
-     * @var       boolean
+     * @var       Boolean
      */
     private $reloadOnInsert;
 
     /**
      * Whether to reload the rows in this table after update.
      *
-     * @var       boolean
+     * @var       Boolean
      */
     private $reloadOnUpdate;
 
@@ -262,7 +260,7 @@ class Table extends ScopedElement implements IdMethod
     /**
      * Whether this table is a cross-reference table for a many-to-many relationship
      *
-     * @var       boolean
+     * @var       Boolean
      */
     protected $isCrossRef = false;
 
@@ -293,9 +291,9 @@ class Table extends ScopedElement implements IdMethod
     {
         if ($this->schema && $this->getBuildProperty('schemaAutoPrefix')) {
             return $this->schema . NameGenerator::STD_SEPARATOR_CHAR . $this->getCommonName();
-        } else {
-            return $this->getCommonName();
         }
+
+        return $this->getCommonName();
     }
 
     /**
@@ -305,34 +303,40 @@ class Table extends ScopedElement implements IdMethod
     public function setupObject()
     {
         parent::setupObject();
-        $this->commonName = $this->getDatabase()->getTablePrefix() . $this->getAttribute("name");
+
+        $this->commonName = $this->getDatabase()->getTablePrefix() . $this->getAttribute('name');
 
         // retrieves the method for converting from specified name to a PHP name.
-        $this->phpNamingMethod = $this->getAttribute("phpNamingMethod", $this->getDatabase()->getDefaultPhpNamingMethod());
+        $this->phpNamingMethod = $this->getAttribute('phpNamingMethod', $this->getDatabase()->getDefaultPhpNamingMethod());
 
-        $this->phpName = $this->getAttribute("phpName", $this->buildPhpName($this->getStdSeparatedName()));
+        $this->phpName = $this->getAttribute('phpName', $this->buildPhpName($this->getStdSeparatedName()));
 
-        $this->idMethod = $this->getAttribute("idMethod", $this->getDatabase()->getDefaultIdMethod());
-        $this->allowPkInsert = $this->booleanValue($this->getAttribute("allowPkInsert"));
+        $this->idMethod = $this->getAttribute('idMethod', $this->getDatabase()->getDefaultIdMethod());
+        $this->allowPkInsert = $this->booleanValue($this->getAttribute('allowPkInsert'));
 
 
-        $this->skipSql = $this->booleanValue($this->getAttribute("skipSql"));
-        $this->readOnly = $this->booleanValue($this->getAttribute("readOnly"));
+        $this->skipSql = $this->booleanValue($this->getAttribute('skipSql'));
+        $this->readOnly = $this->booleanValue($this->getAttribute('readOnly'));
 
-        $this->abstractValue = $this->booleanValue($this->getAttribute("abstract"));
-        $this->baseClass = $this->getAttribute("baseClass");
-        $this->basePeer = $this->getAttribute("basePeer");
-        $this->alias = $this->getAttribute("alias");
+        $this->abstractValue = $this->booleanValue($this->getAttribute('abstract'));
+        $this->baseClass = $this->getAttribute('baseClass');
+        $this->basePeer = $this->getAttribute('basePeer');
+        $this->alias = $this->getAttribute('alias');
 
-        $this->heavyIndexing = ( $this->booleanValue($this->getAttribute("heavyIndexing"))
-            || ("false" !== $this->getAttribute("heavyIndexing")
-            && $this->getDatabase()->isHeavyIndexing() ) );
-        $this->description = $this->getAttribute("description");
-        $this->interface = $this->getAttribute("interface"); // sic ('interface' is reserved word)
+        $this->heavyIndexing = (
+            $this->booleanValue($this->getAttribute('heavyIndexing'))
+            || (
+                'false' !== $this->getAttribute('heavyIndexing')
+                && $this->getDatabase()->isHeavyIndexing()
+            )
+        );
 
-        $this->reloadOnInsert = $this->booleanValue($this->getAttribute("reloadOnInsert"));
-        $this->reloadOnUpdate = $this->booleanValue($this->getAttribute("reloadOnUpdate"));
-        $this->isCrossRef = $this->booleanValue($this->getAttribute("isCrossRef", false));
+        $this->description = $this->getAttribute('description');
+        $this->interface = $this->getAttribute('interface'); // sic ('interface' is reserved word)
+
+        $this->reloadOnInsert = $this->booleanValue($this->getAttribute('reloadOnInsert'));
+        $this->reloadOnUpdate = $this->booleanValue($this->getAttribute('reloadOnUpdate'));
+        $this->isCrossRef = $this->booleanValue($this->getAttribute('isCrossRef', false));
         $this->defaultStringFormat = $this->getAttribute('defaultStringFormat');
     }
 
@@ -388,7 +392,7 @@ class Table extends ScopedElement implements IdMethod
                 $anyAutoInc = true;
             }
         }
-        if ($this->getIdMethod() === IdMethod::NATIVE && !$anyAutoInc) {
+        if ( IdMethod::NATIVE === $this->getIdMethod() && !$anyAutoInc) {
             $this->setIdMethod(IdMethod::NO_ID_METHOD);
         }
     }
@@ -462,7 +466,7 @@ class Table extends ScopedElement implements IdMethod
         foreach ($this->getReferrers() as $foreignKey) {
             $referencedColumns = $foreignKey->getForeignColumnObjects();
             $referencedColumnsHash = $this->getColumnList($referencedColumns);
-            if (!array_key_exists($referencedColumnsHash, $_indices)) {
+            if (!isset($_indices[$referencedColumnsHash])) {
                 // no matching index defined in the schema, so we have to create one
                 $index = new Index();
                 $index->setName(sprintf('I_referenced_%s_%s', $foreignKey->getName(), ++$counter));
@@ -478,7 +482,7 @@ class Table extends ScopedElement implements IdMethod
         foreach ($this->getForeignKeys() as $foreignKey) {
             $localColumns = $foreignKey->getLocalColumnObjects();
             $localColumnsHash = $this->getColumnList($localColumns);
-            if (!array_key_exists($localColumnsHash, $_indices)) {
+            if (!isset($_indices[$localColumnsHash])) {
                 // no matching index defined in the schema, so we have to create one. MySQL needs indices on any columns that serve as foreign keys. these are not auto-created prior to 4.1.2
                 $index = new Index();
                 $index->setName(substr_replace($foreignKey->getName(), 'FI_', strrpos($foreignKey->getName(), 'FK_'), 3));
@@ -510,7 +514,7 @@ class Table extends ScopedElement implements IdMethod
         foreach ($columns as $column) {
             $indexedColumns[] = $column;
             $indexedColumnsHash = $this->getColumnList($indexedColumns);
-            if (!array_key_exists($indexedColumnsHash, $collectedIndexes)) {
+            if (!isset($collectedIndexes[$indexedColumnsHash])) {
                 $collectedIndexes[$indexedColumnsHash] = array();
             }
             $collectedIndexes[$indexedColumnsHash][] = $indexName;
@@ -546,7 +550,7 @@ class Table extends ScopedElement implements IdMethod
     {
         // Assure names are unique across all databases.
         try {
-            for ($i=0, $size = count($this->foreignKeys); $i < $size; $i++) {
+            for ($i = 0, $size = count($this->foreignKeys); $i < $size; $i++) {
                 $fk = $this->foreignKeys[$i];
                 $name = $fk->getName();
                 if (empty($name)) {
@@ -594,7 +598,7 @@ class Table extends ScopedElement implements IdMethod
      */
     private function acquireConstraintName($nameType, $nbr)
     {
-        $inputs = array();
+        $inputs   = array();
         $inputs[] = $this->getDatabase();
         $inputs[] = $this->getCommonName();
         $inputs[] = $nameType;
@@ -610,18 +614,20 @@ class Table extends ScopedElement implements IdMethod
      */
     public function getBaseClass()
     {
-        if ($this->isAlias() && $this->baseClass === null) {
+        if ($this->isAlias() && null === $this->baseClass) {
             return $this->alias;
-        } elseif ($this->baseClass === null) {
-            return $this->getDatabase()->getBaseClass();
-        } else {
-            return $this->baseClass;
         }
+
+        if (null === $this->baseClass) {
+            return $this->getDatabase()->getBaseClass();
+        }
+
+        return $this->baseClass;
     }
 
     /**
      * Set the value of baseClass.
-     * @param     v	Value to assign to baseClass.
+     * @param     v Value to assign to baseClass.
      */
     public function setBaseClass($v)
     {
@@ -634,18 +640,20 @@ class Table extends ScopedElement implements IdMethod
      */
     public function getBasePeer()
     {
-        if ($this->isAlias() && $this->basePeer === null) {
-            return $this->alias . "Peer";
-        } elseif ($this->basePeer === null) {
-            return $this->getDatabase()->getBasePeer();
-        } else {
-            return $this->basePeer;
+        if ($this->isAlias() && null === $this->basePeer) {
+            return $this->alias . 'Peer';
         }
+
+        if (null === $this->basePeer) {
+            return $this->getDatabase()->getBasePeer();
+        }
+
+        return $this->basePeer;
     }
 
     /**
      * Set the value of basePeer.
-     * @param     v	Value to assign to basePeer.
+     * @param     v    Value to assign to basePeer.
      */
     public function setBasePeer($v)
     {
@@ -673,21 +681,21 @@ class Table extends ScopedElement implements IdMethod
             if (isset($this->columnsByName[$col->getName()])) {
                 throw new EngineException('Duplicate column declared: ' . $col->getName());
             }
-            $this->columnList[] = $col;
+            $this->columns[] = $col;
             $this->columnsByName[$col->getName()] = $col;
             $this->columnsByLowercaseName[strtolower($col->getName())] = $col;
             $this->columnsByPhpName[$col->getPhpName()] = $col;
-            $col->setPosition(count($this->columnList));
+            $col->setPosition(count($this->columns));
             $this->needsTransactionInPostgres |= $col->requiresTransactionInPostgres();
 
             return $col;
-        } else {
-            $col = new Column();
-            $col->setTable($this);
-            $col->loadFromXML($data);
-
-            return $this->addColumn($col); // call self w/ different param
         }
+
+        $col = new Column();
+        $col->setTable($this);
+        $col->loadFromXML($data);
+
+        return $this->addColumn($col); // call self w/ different param
     }
 
     /**
@@ -699,24 +707,26 @@ class Table extends ScopedElement implements IdMethod
         if (is_string($col)) {
             $col = $this->getColumn($col);
         }
-        $pos = array_search($col, $this->columnList);
+
+        $pos = array_search($col, $this->columns);
         if (false === $pos) {
             throw new EngineException(sprintf('No column named %s found in table %s', $col->getName(), $col->getTableName()));
         }
-        unset($this->columnList[$pos]);
+
+        unset($this->columns[$pos]);
         unset($this->columnsByName[$col->getName()]);
         unset($this->columnsByLowercaseName[strtolower($col->getName())]);
         unset($this->columnsByPhpName[$col->getPhpName()]);
         $this->adjustColumnPositions();
-        // FIXME: also remove indexes on this column?
+        // @FIXME: also remove indexes and validators on this column?
     }
 
     public function adjustColumnPositions()
     {
-        $this->columnList = array_values($this->columnList);
+        $this->columns = array_values($this->columns);
         $columnCount = $this->getNumColumns();
-        for ($i=0; $i < $columnCount; $i++) {
-            $this->columnList[$i]->setPosition($i + 1);
+        for ($i = 0; $i < $columnCount; $i++) {
+            $this->columns[$i]->setPosition($i + 1);
         }
     }
 
@@ -731,21 +741,22 @@ class Table extends ScopedElement implements IdMethod
             $fk->setTable($this);
             $this->foreignKeys[] = $fk;
 
-            if ($this->foreignTableNames === null) {
+            if (null === $this->foreignTableNames) {
                 $this->foreignTableNames = array();
             }
+
             if (!in_array($fk->getForeignTableName(), $this->foreignTableNames)) {
                 $this->foreignTableNames[] = $fk->getForeignTableName();
             }
 
             return $fk;
-        } else {
-            $fk = new ForeignKey();
-            $fk->setTable($this);
-            $fk->loadFromXML($fkdata);
-
-            return $this->addForeignKey($fk);
         }
+
+        $fk = new ForeignKey();
+        $fk->setTable($this);
+        $fk->loadFromXML($fkdata);
+
+        return $this->addForeignKey($fk);
     }
 
     /**
@@ -764,13 +775,14 @@ class Table extends ScopedElement implements IdMethod
      */
     public function getChildrenNames()
     {
-        if ($this->inheritanceColumn === null
+        if (null === $this->inheritanceColumn
             || !$this->inheritanceColumn->isEnumeratedClasses()) {
-                return null;
+            return null;
         }
+
         $children = $this->inheritanceColumn->getChildren();
         $names = array();
-        for ($i = 0, $size=count($children); $i < $size; $i++) {
+        for ($i = 0, $size = count($children); $i < $size; $i++) {
             $names[] = get_class($children[$i]);
         }
 
@@ -782,9 +794,10 @@ class Table extends ScopedElement implements IdMethod
      */
     public function addReferrer(ForeignKey $fk)
     {
-        if ($this->referrers === null) {
+        if (null === $this->referrers) {
             $this->referrers = array();
         }
+
         $this->referrers[] = $fk;
     }
 
@@ -808,9 +821,9 @@ class Table extends ScopedElement implements IdMethod
 
             // table referrers
             $foreignTable = $this->getDatabase()->getTable($foreignKey->getForeignTableName());
-            if ($foreignTable !== null) {
+            if (null !== $foreignTable) {
                 $referrers = $foreignTable->getReferrers();
-                if ($referrers === null || !in_array($foreignKey, $referrers, true) ) {
+                if (null === $referrers || !in_array($foreignKey, $referrers, true) ) {
                     $foreignTable->addReferrer($foreignKey);
                 }
             } elseif ($throwErrors) {
@@ -825,7 +838,7 @@ class Table extends ScopedElement implements IdMethod
             $localColumnNames = $foreignKey->getLocalColumns();
             foreach ($localColumnNames as $localColumnName) {
                 $localColumn = $this->getColumn($localColumnName);
-                if ($localColumn !== null) {
+                if (null !== $localColumn) {
                     if ($localColumn->isPrimaryKey() && !$this->getContainsForeignPK()) {
                         $this->setContainsForeignPK(true);
                     }
@@ -844,11 +857,11 @@ class Table extends ScopedElement implements IdMethod
             // foreign column references
             $foreignColumnNames = $foreignKey->getForeignColumns();
             foreach ($foreignColumnNames as $foreignColumnName) {
-                if ($foreignTable === null) {
+                if (null === $foreignTable) {
                     continue;
                 }
                 $foreignColumn = $foreignTable->getColumn($foreignColumnName);
-                if ($foreignColumn !== null) {
+                if (null !== $foreignColumn) {
                     if (!$foreignColumn->hasReferrer($foreignKey)) {
                         $foreignColumn->addReferrer($foreignKey);
                     }
@@ -867,8 +880,7 @@ class Table extends ScopedElement implements IdMethod
             if ($this->getDatabase()->getPlatform() instanceof MysqlPlatform) {
                 $this->addExtraIndices();
             }
-        } // foreach foreign keys
-
+        }
     }
 
     public function getCrossFks()
@@ -890,7 +902,7 @@ class Table extends ScopedElement implements IdMethod
      */
     public function setContainsForeignPK($b)
     {
-        $this->containsForeignPK = (boolean) $b;
+        $this->containsForeignPK = (Boolean) $b;
     }
 
     /**
@@ -906,7 +918,7 @@ class Table extends ScopedElement implements IdMethod
      */
     public function getForeignTableNames()
     {
-        if ($this->foreignTableNames === null) {
+        if (null === $this->foreignTableNames) {
             $this->foreignTableNames = array();
         }
 
@@ -930,18 +942,18 @@ class Table extends ScopedElement implements IdMethod
         if ($impdata instanceof IdMethodParameter) {
             $imp = $impdata;
             $imp->setTable($this);
-            if ($this->idMethodParameters === null) {
+            if (null === $this->idMethodParameters) {
                 $this->idMethodParameters = array();
             }
             $this->idMethodParameters[] = $imp;
 
             return $imp;
-        } else {
-            $imp = new IdMethodParameter();
-            $imp->loadFromXML($impdata);
-
-            return $this->addIdMethodParameter($imp); // call self w/ diff param
         }
+
+        $imp = new IdMethodParameter();
+        $imp->loadFromXML($impdata);
+
+        return $this->addIdMethodParameter($imp); // call self w/ diff param
     }
 
     /**
@@ -957,12 +969,12 @@ class Table extends ScopedElement implements IdMethod
             $this->indices[] = $index;
 
             return $index;
-        } else {
-            $index = new Index($this);
-            $index->loadFromXML($idxdata);
-
-            return $this->addIndex($index);
         }
+
+        $index = new Index($this);
+        $index->loadFromXML($idxdata);
+
+        return $this->addIndex($index);
     }
 
     /**
@@ -978,12 +990,12 @@ class Table extends ScopedElement implements IdMethod
             $this->unices[] = $unique;
 
             return $unique;
-        } else {
-            $unique = new Unique($this);
-            $unique->loadFromXML($unqdata);
-
-            return $this->addUnique($unique);
         }
+
+        $unique = new Unique($this);
+        $unique->loadFromXML($unqdata);
+
+        return $this->addUnique($unique);
     }
 
     /**
@@ -1046,11 +1058,11 @@ class Table extends ScopedElement implements IdMethod
      * check if the table has a behavior by name
      *
      * @param     string $name the behavior name
-     * @return    boolean True if the behavior exists
+     * @return    Boolean True if the behavior exists
      */
     public function hasBehavior($name)
     {
-        return array_key_exists($name, $this->behaviors);
+        return isset($this->behaviors[$name]);
     }
 
     /**
@@ -1067,7 +1079,7 @@ class Table extends ScopedElement implements IdMethod
     /**
      * Check whether one of the table behaviors offer an additional builder
      *
-     * @return boolean true in the table has at least one behavior
+     * @return Boolean true in the table has at least one behavior
      *                with an additional builder, false otherwise
      */
     public function hasAdditionalBuilders()
@@ -1101,11 +1113,11 @@ class Table extends ScopedElement implements IdMethod
      */
     public function getName()
     {
-        if ($this->schema 
+        if ($this->schema
             && $this->getDatabase()
-            && $this->getDatabase()->getPlatform() 
-            && $this->getDatabase()->getPlatform()->supportsSchemas()) {
-
+            && $this->getDatabase()->getPlatform()
+            && $this->getDatabase()->getPlatform()->supportsSchemas()
+        ) {
             return $this->schema . '.' . $this->commonName;
         }
 
@@ -1226,7 +1238,10 @@ class Table extends ScopedElement implements IdMethod
      */
     public function getDefaultStringFormat()
     {
-        if (!$this->defaultStringFormat && $this->getDatabase() && $this->getDatabase()->getDefaultStringFormat()) {
+        if (!$this->defaultStringFormat
+            && $this->getDatabase()
+            && $this->getDatabase()->getDefaultStringFormat()
+        ) {
             return $this->getDatabase()->getDefaultStringFormat();
         }
 
@@ -1242,18 +1257,14 @@ class Table extends ScopedElement implements IdMethod
      */
     public function getIdMethod()
     {
-        if (null === $this->idMethod) {
-            return IdMethod::NO_ID_METHOD;
-        }
-
-        return $this->idMethod;
+        return null === $this->idMethod ? IdMethod::NO_ID_METHOD : $this->idMethod;
     }
 
     /**
      * Whether we allow to insert primary keys on tables with
      * idMethod=native
      *
-     * @return    boolean
+     * @return    Boolean
      */
     public function isAllowPkInsert()
     {
@@ -1272,7 +1283,7 @@ class Table extends ScopedElement implements IdMethod
     /**
      * Skip generating sql for this table (in the event it should
      * not be created from scratch).
-     * @return    boolean Value of skipSql.
+     * @return    Boolean Value of skipSql.
      */
     public function isSkipSql()
     {
@@ -1291,16 +1302,16 @@ class Table extends ScopedElement implements IdMethod
 
     /**
      * Set whether this table should have its creation sql generated.
-     * @param     boolean $v Value to assign to skipSql.
+     * @param     Boolean $v Value to assign to skipSql.
      */
     public function setSkipSql($v)
     {
-        $this->skipSql = $v;
+        $this->skipSql = (Boolean) $v;
     }
 
     /**
      * Whether to force object to reload on INSERT.
-     * @return    boolean
+     * @return    Boolean
      */
     public function isReloadOnInsert()
     {
@@ -1309,7 +1320,7 @@ class Table extends ScopedElement implements IdMethod
 
     /**
      * Whether to force object to reload on UPDATE.
-     * @return    boolean
+     * @return    Boolean
      */
     public function isReloadOnUpdate()
     {
@@ -1397,7 +1408,7 @@ class Table extends ScopedElement implements IdMethod
      */
     public function getColumns()
     {
-        return $this->columnList;
+        return $this->columns;
     }
 
     /**
@@ -1405,7 +1416,7 @@ class Table extends ScopedElement implements IdMethod
      */
     public function getNumColumns()
     {
-        return count($this->columnList);
+        return count($this->columns);
     }
 
     /**
@@ -1414,7 +1425,7 @@ class Table extends ScopedElement implements IdMethod
     public function getNumLazyLoadColumns()
     {
         $count = 0;
-        foreach ($this->columnList as $col) {
+        foreach ($this->columns as $col) {
             if ($col->isLazyLoad()) {
                 $count++;
             }
@@ -1425,7 +1436,7 @@ class Table extends ScopedElement implements IdMethod
 
     /**
      * Checks whether one of the columns is of type ENUM
-     * @return boolean
+     * @return Boolean
      */
     public function hasEnumColumns()
     {
@@ -1477,9 +1488,9 @@ class Table extends ScopedElement implements IdMethod
     /**
      * Check whether the table has a column.
      * @param      Column|string $col the column object or name (e.g. 'my_column')
-     * @param      boolean $caseInsensitive Whether the check is case insensitive. False by default.
+     * @param      Boolean $caseInsensitive Whether the check is case insensitive. False by default.
      *
-     * @return     boolean
+     * @return     Boolean
      */
     public function hasColumn($col, $caseInsensitive = false)
     {
@@ -1488,16 +1499,16 @@ class Table extends ScopedElement implements IdMethod
         }
 
         if ($caseInsensitive) {
-            return array_key_exists(strtolower($col), $this->columnsByLowercaseName);
+            return isset($this->columnsByLowercaseName[strtolower($col)]);
         }
 
-        return array_key_exists($col, $this->columnsByName);
+        return isset($this->columnsByName[$col]);
     }
 
     /**
      * Return the column with the specified name.
      * @param      string $name The name of the column (e.g. 'my_column')
-     * @param      boolean $caseInsensitive Whether the check is case insensitive. False by default.
+     * @param      Boolean $caseInsensitive Whether the check is case insensitive. False by default.
      *
      * @return     Column a Column object or null if it doesn't exist
      */
@@ -1566,7 +1577,7 @@ class Table extends ScopedElement implements IdMethod
      * Check whether the table has a column.
      * @param      Column|string $col the column object or name (e.g. 'my_column')
      * @deprecated use hasColumn() instead
-     * @return boolean
+     * @return Boolean
      */
     public function containsColumn($col)
     {
@@ -1596,7 +1607,7 @@ class Table extends ScopedElement implements IdMethod
     /**
      * Flag to determine if code/sql gets created for this table.
      * Table will be skipped, if return true.
-     * @return    boolean
+     * @return    Boolean
      */
     public function isForReferenceOnly()
     {
@@ -1606,7 +1617,7 @@ class Table extends ScopedElement implements IdMethod
     /**
      * Flag to determine if code/sql gets created for this table.
      * Table will be skipped, if set to true.
-     * @param     boolean $v
+     * @param     Boolean $v
      */
     public function setForReferenceOnly($v)
     {
@@ -1618,9 +1629,9 @@ class Table extends ScopedElement implements IdMethod
      *
      * @param     DOMNode $node
      */
-    public function appendXml(DOMNode $node)
+    public function appendXml(\DOMNode $node)
     {
-        $doc = ($node instanceof DOMDocument) ? $node : $node->ownerDocument;
+        $doc = ($node instanceof \DOMDocument) ? $node : $node->ownerDocument;
 
         $tableNode = $node->appendChild($doc->createElement('table'));
         $tableNode->setAttribute('name', $this->getCommonName());
@@ -1690,7 +1701,7 @@ class Table extends ScopedElement implements IdMethod
         }
 
 
-        foreach ($this->columnList as $col) {
+        foreach ($this->columns as $col) {
             $col->appendXml($tableNode);
         }
 
@@ -1724,7 +1735,7 @@ class Table extends ScopedElement implements IdMethod
     public function getPrimaryKey()
     {
         $pk = array();
-        foreach ($this->columnList as $col) {
+        foreach ($this->columns as $col) {
             if ($col->isPrimaryKey()) {
                 $pk[] = $col;
             }
@@ -1736,21 +1747,21 @@ class Table extends ScopedElement implements IdMethod
     /**
      * Determine whether this table has a primary key.
      *
-     * @return    boolean Whether this table has any primary key parts.
+     * @return    Boolean Whether this table has any primary key parts.
      */
     public function hasPrimaryKey()
     {
-        return (count($this->getPrimaryKey()) > 0);
+        return count($this->getPrimaryKey()) > 0;
     }
 
     /**
      * Determine whether this table has a composite primary key.
      *
-     * @return    boolean Whether this table has more than one primary key parts.
+     * @return    Boolean Whether this table has more than one primary key parts.
      */
     public function hasCompositePrimaryKey()
     {
-        return (count($this->getPrimaryKey()) > 1);
+        return count($this->getPrimaryKey()) > 1;
     }
 
     /**
@@ -1759,7 +1770,7 @@ class Table extends ScopedElement implements IdMethod
      */
     public function getFirstPrimaryKeyColumn()
     {
-        foreach ($this->columnList as $col) {
+        foreach ($this->columns as $col) {
             if ($col->isPrimaryKey()) {
                 return $col;
             }
@@ -1769,13 +1780,12 @@ class Table extends ScopedElement implements IdMethod
     /**
      * Determine whether this table has any auto-increment primary key(s).
      *
-     * @return    boolean Whether this table has a non-"none" id method and has a primary key column that is auto-increment.
+     * @return    Boolean Whether this table has a non-"none" id method and has a primary key column that is auto-increment.
      */
     public function hasAutoIncrementPrimaryKey()
     {
-        if ($this->getIdMethod() != IdMethod::NO_ID_METHOD) {
-            $pks =$this->getPrimaryKey();
-            foreach ($pks as $pk) {
+        if (IdMethod::NO_ID_METHOD !== $this->getIdMethod()) {
+            foreach ($this->getPrimaryKey() as $pk) {
                 if ($pk->isAutoIncrement()) {
                     return true;
                 }
@@ -1792,9 +1802,8 @@ class Table extends ScopedElement implements IdMethod
      */
     public function getAutoIncrementPrimaryKey()
     {
-        if ($this->getIdMethod() != IdMethod::NO_ID_METHOD) {
-            $pks = $this->getPrimaryKey();
-            foreach ($pks as $pk) {
+        if (IdMethod::NO_ID_METHOD !== $this->getIdMethod()) {
+            foreach ($this->getPrimaryKey() as $pk) {
                 if ($pk->isAutoIncrement()) {
                     return $pk;
                 }
@@ -1812,12 +1821,12 @@ class Table extends ScopedElement implements IdMethod
      */
     public function printPrimaryKey()
     {
-        return $this->printList($this->columnList);
+        return $this->printList($this->columns);
     }
 
     /**
      * Gets the crossRef status for this foreign key
-     * @return    boolean
+     * @return    Boolean
      */
     public function getIsCrossRef()
     {
@@ -1826,7 +1835,7 @@ class Table extends ScopedElement implements IdMethod
 
     /**
      * Sets a crossref status for this foreign key.
-     * @param     boolean $isCrossRef
+     * @param     Boolean $isCrossRef
      */
     public function setIsCrossRef($isCrossRef)
     {

@@ -94,9 +94,9 @@ class IdMethodParameter extends XmlElement
     /**
      * @see        XmlElement::appendXml(DOMNode)
      */
-    public function appendXml(DOMNode $node)
+    public function appendXml(\DOMNode $node)
     {
-        $doc = ($node instanceof DOMDocument) ? $node : $node->ownerDocument;
+        $doc = ($node instanceof \DOMDocument) ? $node : $node->ownerDocument;
 
         $paramNode = $node->appendChild($doc->createElement('id-method-parameter'));
         if ($this->getName()) {
