@@ -651,7 +651,7 @@ class BasePeer
      * @param      Criteria $criteria Criteria for the SELECT query.
      * @param      array &$params Parameters that are to be replaced in prepared statement.
      * @return     string
-     * @throws     \Propel\Runtime\Exception\RuntimeException	Trouble creating the query string.
+     * @throws     \Propel\Runtime\Exception\RuntimeException    Trouble creating the query string.
      */
     static public function createSelectSql(Criteria $criteria, &$params)
     {
@@ -878,8 +878,8 @@ class BasePeer
      * This function searches for the given validator $name under propel/validator/$name.php,
      * imports and caches it.
      *
-     * @param	string $classname	The name of class
-     * @return	Validator object or null if not able to instantiate validator class (and error will be logged in this case)
+     * @param    string $classname    The name of class
+     * @return   Validator object or null if not able to instantiate validator class (and error will be logged in this case)
      */
     static public function getValidator($classname)
     {
