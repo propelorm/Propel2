@@ -13,8 +13,6 @@ namespace Propel\Generator\Behavior\Delegate;
 use Propel\Generator\Model\Behavior;
 use Propel\Generator\Model\ForeignKey;
 
-use \InvalidArgumentException;
-
 /**
  * Gives a model class the ability to delegate methods to a relationship.
  *
@@ -44,7 +42,7 @@ class DelegateBehavior extends Behavior
         foreach ($delegates as $delegate) {
             $delegate = $database->getTablePrefix() . trim($delegate);
             if (!$database->hasTable($delegate)) {
-                throw new InvalidArgumentException(sprintf(
+                throw new \InvalidArgumentException(sprintf(
                     'No delegate table "%s" found for table "%s"',
                     $delegate,
                     $table->getName()
@@ -61,7 +59,7 @@ class DelegateBehavior extends Behavior
                     $fks = $delegateTable->getForeignKeysReferencingTable($this->getTable()->getName());
                     $fk = $fks[0];
                     if (!$fk->isLocalPrimaryKey()) {
-                        throw new InvalidArgumentException(sprintf(
+                        throw new \InvalidArgumentException(sprintf(
                             'Delegate table "%s" has a relationship with table "%s", but it\'s a one-to-many relationship. The `delegate` behavior only supports one-to-one relationships in this case.',
                             $delegate,
                             $table->getName()

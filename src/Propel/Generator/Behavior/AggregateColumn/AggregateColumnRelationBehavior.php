@@ -19,7 +19,6 @@ use Propel\Generator\Model\Behavior;
  */
 class AggregateColumnRelationBehavior extends Behavior
 {
-
     // default parameters value
     protected $parameters = array(
         'foreign_table' => '',

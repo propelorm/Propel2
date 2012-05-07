@@ -128,7 +128,7 @@ class ConcreteInheritanceBehavior extends Behavior
 
     protected function isCopyData()
     {
-        return $this->getParameter('copy_data_to_parent') == 'true';
+        return 'true' === $this->getParameter('copy_data_to_parent');
     }
 
     public function parentClass($builder)

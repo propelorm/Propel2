@@ -81,7 +81,7 @@ class VersionableBehaviorQueryBuilderModifier
     {
         $this->setBuilder($builder);
         $script = '';
-        if ($this->getParameter('version_column') != 'version') {
+        if ('version' !== $this->getParameter('version_column')) {
             $this->addFilterByVersion($script);
             $this->addOrderByVersion($script);
         }
@@ -121,5 +121,4 @@ public function orderByVersion(\$order = Criteria::ASC)
 }
 ";
     }
-
 }

@@ -75,5 +75,4 @@ class I18nBehaviorQueryBuilderModifier
             'localeColumn'         => $this->behavior->getLocaleColumn()->getPhpName(),
         ));
     }
-
 }

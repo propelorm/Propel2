@@ -154,7 +154,7 @@ class ArchivableBehavior extends Behavior
 
     public function hasArchiveClass()
     {
-        return ($this->getParameter('archive_class') != '');
+        return $this->getParameter('archive_class') ? true : false;
     }
 
     /**
@@ -162,29 +162,29 @@ class ArchivableBehavior extends Behavior
      */
     public function getArchivedAtColumn()
     {
-        if ($this->getArchiveTable() && $this->getParameter('log_archived_at') == 'true') {
+        if ($this->getArchiveTable() && 'true' === $this->getParameter('log_archived_at')) {
             return $this->getArchiveTable()->getColumn($this->getParameter('archived_at_column'));
         }
     }
 
     public function isArchiveOnInsert()
     {
-        return $this->getParameter('archive_on_insert') == 'true';
+        return 'true' === $this->getParameter('archive_on_insert');
     }
 
     public function isArchiveOnUpdate()
     {
-        return $this->getParameter('archive_on_update') == 'true';
+        return 'true' === $this->getParameter('archive_on_update');
     }
 
     public function isArchiveOnDelete()
     {
-        return $this->getParameter('archive_on_delete') == 'true';
+        return 'true' === $this->getParameter('archive_on_delete');
     }
 
     public function getObjectBuilderModifier()
     {
-        if (is_null($this->objectBuilderModifier)) {
+        if (null === $this->objectBuilderModifier) {
             $this->objectBuilderModifier = new ArchivableBehaviorObjectBuilderModifier($this);
         }
 
@@ -193,7 +193,7 @@ class ArchivableBehavior extends Behavior
 
     public function getQueryBuilderModifier()
     {
-        if (is_null($this->queryBuilderModifier)) {
+        if (null === $this->queryBuilderModifier) {
             $this->queryBuilderModifier = new ArchivableBehaviorQueryBuilderModifier($this);
         }
 
