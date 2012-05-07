@@ -10,7 +10,6 @@
 
 namespace Propel\Runtime\Om;
 
-use IteratorAggregate;
 use Propel\Runtime\Connection\ConnectionInterface;
 
 /**
@@ -19,7 +18,7 @@ use Propel\Runtime\Connection\ConnectionInterface;
  *
  * @author     Heltem <heltem@o2php.com> (Propel)
  */
-interface NodeObject extends IteratorAggregate
+interface NodeObject extends \IteratorAggregate
 {
     /**
      * If object is saved without left/right values, set them as undefined (0)
