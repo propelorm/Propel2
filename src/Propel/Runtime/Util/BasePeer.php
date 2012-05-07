@@ -225,7 +225,9 @@ class BasePeer
         // Get the table name and method for determining the primary
         // key value.
         $keys = $criteria->keys();
-        if (empty($key)) {
+        if (!empty($keys)) {
+            $tableName = $criteria->getTableName($keys[0]);
+        } else {
             throw new RuntimeException('Database insert attempted without anything specified to insert.');
         }
 
