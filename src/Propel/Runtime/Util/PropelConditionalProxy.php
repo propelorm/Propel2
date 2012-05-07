@@ -115,7 +115,7 @@ class PropelConditionalProxy
 
     protected function setConditionalState($cond)
     {
-        $this->state = (bool) $cond;
+        $this->state = (Boolean) $cond;
         $this->wasTrue = $this->wasTrue || $this->state;
 
         return $this->getCriteriaOrProxy();
