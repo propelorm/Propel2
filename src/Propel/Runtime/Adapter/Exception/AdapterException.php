@@ -12,11 +12,9 @@ namespace Propel\Runtime\Adapter\Exception;
 
 use Propel\Runtime\Exception\RuntimeException;
 
-use \Exception;
-
 class AdapterException extends RuntimeException
 {
-    public function __construct($message, Exception $exception)
+    public function __construct($message, \Exception $exception)
     {
         parent::__construct($message, 0, $exception);
     }

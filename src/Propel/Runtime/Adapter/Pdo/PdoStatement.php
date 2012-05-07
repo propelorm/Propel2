@@ -11,8 +11,7 @@
 namespace Propel\Runtime\Adapter\Pdo;
 
 use Propel\Runtime\Connection\StatementInterface;
-
-use \PDOStatement as BasePdoStatement;
+use PDOStatement as BasePdoStatement;
 
 /**
  * PDO statement that provides the basic enhancements that are required by Propel.

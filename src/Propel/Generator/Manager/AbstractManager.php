@@ -10,8 +10,6 @@
 
 namespace Propel\Generator\Manager;
 
-use DomDocument;
-use Exception;
 use Propel\Generator\Builder\Util\SchemaReader;
 use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Exception\BuildException;
@@ -220,7 +218,7 @@ abstract class AbstractManager
             $dmFilename = $schema->getPathName();
             $this->log('Processing: ' . $schema->getFileName());
 
-            $dom = new DomDocument('1.0', 'UTF-8');
+            $dom = new \DOMDocument('1.0', 'UTF-8');
             $dom->load($dmFilename);
 
             $this->includeExternalSchemas($dom, $schema->getPath());
@@ -233,7 +231,7 @@ abstract class AbstractManager
                     $this->log('Could not perform XLST transformation. Make sure PHP has been compiled/configured to support XSLT.');
                 } else {
                     // normalize the document using normalizer stylesheet
-                    $xslDom = new DomDocument('1.0', 'UTF-8');
+                    $xslDom = new \DOMDocument('1.0', 'UTF-8');
                     $xslDom->load($this->xsl->getAbsolutePath());
                     $xsl = new \XsltProcessor();
                     $xsl->importStyleSheet($xslDom);
@@ -294,10 +292,10 @@ abstract class AbstractManager
      * Note: this function very much assumes at least a reasonable XML schema, maybe it'll proof
      * users don't have those and adding some more informative exceptions would be better
      *
-     * @param      \DomDocument $dom
+     * @param      \DOMDocument $dom
      * @param      string $srcDir
      */
-    protected function includeExternalSchemas(DomDocument $dom, $srcDir)
+    protected function includeExternalSchemas(\DOMDocument $dom, $srcDir)
     {
         $databaseNode = $dom->getElementsByTagName('database')->item(0);
         $externalSchemaNodes = $dom->getElementsByTagName('external-schema');
@@ -310,7 +308,7 @@ abstract class AbstractManager
 
             $externalSchema->parentNode->removeChild($externalSchema);
 
-            $externalSchemaDom = new DomDocument('1.0', 'UTF-8');
+            $externalSchemaDom = new \DOMDocument('1.0', 'UTF-8');
             $externalSchemaDom->load(realpath($include));
 
             // The external schema may have external schemas of its own ; recurse
@@ -374,6 +372,7 @@ abstract class AbstractManager
             $closure = $this->loggerClosure;
             $closure($message);
         } else {
+            // @TODO to remove?
             var_dump($message);
         }
     }
@@ -389,13 +388,13 @@ abstract class AbstractManager
         $properties = array();
 
         if (false === $lines = @file($file)) {
-            throw new Exception(sprintf('Unable to parse contents of "%s".', $file));
+            throw new \Exception(sprintf('Unable to parse contents of "%s".', $file));
         }
 
         foreach ($lines as $line) {
             $line = trim($line);
 
-            if ('' == $line || in_array($line[0], array('#', ';'))) {
+            if (empty($line) || in_array($line[0], array('#', ';'))) {
                 continue;
             }
 

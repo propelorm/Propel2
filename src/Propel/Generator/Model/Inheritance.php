@@ -18,7 +18,6 @@ namespace Propel\Generator\Model;
  */
 class Inheritance extends XmlElement
 {
-
     private $key;
     private $className;
     private $pkg;
@@ -31,10 +30,10 @@ class Inheritance extends XmlElement
      */
     protected function setupObject()
     {
-        $this->key = $this->getAttribute("key");
-        $this->className = $this->getAttribute("class");
-        $this->pkg = $this->getAttribute("package");
-        $this->ancestor = $this->getAttribute("extends");
+        $this->key = $this->getAttribute('key');
+        $this->className = $this->getAttribute('class');
+        $this->pkg = $this->getAttribute('package');
+        $this->ancestor = $this->getAttribute('extends');
     }
 
     /**
@@ -130,15 +129,15 @@ class Inheritance extends XmlElement
     /**
      * @see        XmlElement::appendXml(DOMNode)
      */
-    public function appendXml(DOMNode $node)
+    public function appendXml(\DOMNode $node)
     {
-        $doc = ($node instanceof DOMDocument) ? $node : $node->ownerDocument;
+        $doc = ($node instanceof \DOMDocument) ? $node : $node->ownerDocument;
 
         $inherNode = $node->appendChild($doc->createElement('inheritance'));
         $inherNode->setAttribute('key', $this->key);
         $inherNode->setAttribute('class', $this->className);
 
-        if ($this->ancestor !== null) {
+        if (null !== $this->ancestor) {
             $inherNode->setAttribute('extends', $this->ancestor);
         }
     }

@@ -31,7 +31,7 @@ class AdapterFactory
     {
         if (!$driver) {
             $adapterClass = '\Propel\Runtime\Adapter\NoneAdapter';
-        } elseif (strpos($driver, '\\') === false) {
+        } elseif (false === strpos($driver, '\\')) {
             $adapterClass = '\Propel\Runtime\Adapter\Pdo\\' . ucfirst($driver) . 'Adapter';
         } else {
             $adapterClass = $driver;
@@ -41,5 +41,4 @@ class AdapterFactory
         }
         throw new InvalidArgumentException(sprintf('Unsupported Propel driver: "%s". Check your configuration file', $driver));
     }
-
 }

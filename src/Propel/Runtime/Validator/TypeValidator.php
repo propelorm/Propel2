@@ -31,44 +31,44 @@ class TypeValidator implements BasicValidator
      * @see       BasicValidator::isValid()
      *
      * @param     ValidatorMap  $map
-     * @param     mixed         $value
+     * @param     mixed         $str
      *
-     * @return    boolean
+     * @return    Boolean
      */
-    public function isValid(ValidatorMap $map, $value)
+    public function isValid(ValidatorMap $map, $str)
     {
         switch ($map->getValue()) {
             case 'array':
-                return is_array($value);
+                return is_array($str);
                 break;
             case 'bool':
             case 'boolean':
-                return is_bool($value);
+                return is_bool($str);
                 break;
             case 'float':
-                return is_float($value);
+                return is_float($str);
                 break;
             case 'int':
             case 'integer':
-                return is_int($value);
+                return is_int($str);
                 break;
             case 'numeric':
-                return is_numeric($value);
+                return is_numeric($str);
                 break;
             case 'object':
-                return is_object($value);
+                return is_object($str);
                 break;
             case 'resource':
-                return is_resource($value);
+                return is_resource($str);
                 break;
             case 'scalar':
-                return is_scalar($value);
+                return is_scalar($str);
                 break;
             case 'string':
-                return is_string($value);
+                return is_string($str);
                 break;
             case 'function':
-                return function_exists($value);
+                return function_exists($str);
                 break;
             default:
                 throw new PropelException('Unkonwn type ' . $map->getValue());

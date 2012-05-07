@@ -12,9 +12,6 @@ namespace Propel\Generator\Model;
 
 use Propel\Generator\Exception\EngineException;
 
-use \DOMNode;
-use \DOMDocument;
-
 /**
  * Object to hold vendor-specific info.
  *
@@ -53,7 +50,7 @@ class VendorInfo extends XmlElement
      */
     protected function setupObject()
     {
-        $this->type = $this->getAttribute("type");
+        $this->type = $this->getAttribute('type');
     }
 
     /**
@@ -82,8 +79,8 @@ class VendorInfo extends XmlElement
      */
     public function addParameter($attrib)
     {
-        $name = $attrib["name"];
-        $this->parameters[$name] = $attrib["value"];
+        $name = $attrib['name'];
+        $this->parameters[$name] = $attrib['value'];
     }
 
     /**
@@ -169,17 +166,17 @@ class VendorInfo extends XmlElement
     /**
      * @see        XmlElement::appendXml(DOMNode)
      */
-    public function appendXml(DOMNode $node)
+    public function appendXml(\DOMNode $node)
     {
-        $doc = ($node instanceof DOMDocument) ? $node : $node->ownerDocument;
+        $doc = ($node instanceof \DOMDocument) ? $node : $node->ownerDocument;
 
-        $vendorNode = $node->appendChild($doc->createElement("vendor"));
-        $vendorNode->setAttribute("type", $this->getType());
+        $vendorNode = $node->appendChild($doc->createElement('vendor'));
+        $vendorNode->setAttribute('type', $this->getType());
 
         foreach ($this->parameters as $key => $value) {
-            $parameterNode = $doc->createElement("parameter");
-            $parameterNode->setAttribute("name", $key);
-            $parameterNode->setAttribute("value", $value);
+            $parameterNode = $doc->createElement('parameter');
+            $parameterNode->setAttribute('name', $key);
+            $parameterNode->setAttribute('value', $value);
             $vendorNode->appendChild($parameterNode);
         }
     }

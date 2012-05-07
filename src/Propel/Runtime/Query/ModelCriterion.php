@@ -124,7 +124,7 @@ class ModelCriterion extends Criterion
      */
     public function appendModelClauseToPs(&$sb, array &$params)
     {
-        if ($this->value !== null) {
+        if (null !== $this->value) {
             $params[] = array('table' => $this->realtable, 'column' => $this->column, 'value' => $this->value);
             $sb .= str_replace('?', ':p'.count($params), $this->clause);
         } else {
@@ -206,7 +206,7 @@ class ModelCriterion extends Criterion
      */
     protected function appendModelClauseRawToPs(&$sb, array &$params)
     {
-        if (substr_count($this->clause, '?') != 1) {
+        if (1 !== substr_count($this->clause, '?')) {
             throw new PropelException(sprintf('Could not build SQL for expression "%s" because Criteria::RAW works only with a clause containing a single question mark placeholder', $this->column));
         }
         $params[] = array('table' => null, 'type' => $this->type, 'value' => $this->value);
@@ -225,14 +225,14 @@ class ModelCriterion extends Criterion
             return true;
         }
 
-        if (($obj === null) || !($obj instanceof ModelCriterion)) {
+        if (null === $obj || !($obj instanceof ModelCriterion)) {
             return false;
         }
 
         $crit = $obj;
 
-        $isEquiv = ( ( ($this->table === null && $crit->getTable() === null)
-            || ( $this->table !== null && $this->table === $crit->getTable() )
+        $isEquiv = (((null === $this->table && null === $crit->getTable())
+            || (null !== $this->table && $crit->getTable() === $this->table)
                           )
             && $this->clause === $crit->getClause()
             && $this->column === $crit->getColumn()
@@ -244,7 +244,7 @@ class ModelCriterion extends Criterion
         $isEquiv &= (count($crit->getClauses()) == $clausesLength);
         $critConjunctions = $crit->getConjunctions();
         $critClauses = $crit->getClauses();
-        for ($i=0; $i < $clausesLength && $isEquiv; $i++) {
+        for ($i = 0; $i < $clausesLength && $isEquiv; $i++) {
             $isEquiv &= ($this->conjunctions[$i] === $critConjunctions[$i]);
             $isEquiv &= ($this->clauses[$i] === $critClauses[$i]);
         }
@@ -263,15 +263,15 @@ class ModelCriterion extends Criterion
     {
         $h = crc32(serialize($this->value)) ^ crc32($this->comparison) ^ crc32($this->clause);
 
-        if ($this->table !== null) {
+        if (null !== $this->table) {
             $h ^= crc32($this->table);
         }
 
-        if ($this->column !== null) {
+        if (null !== $this->column) {
             $h ^= crc32($this->column);
         }
 
-        foreach ( $this->clauses as $clause ) {
+        foreach ($this->clauses as $clause) {
             // TODO: i KNOW there is a php incompatibility with the following line
             // but i dont remember what it is, someone care to look it up and
             // replace it if it doesnt bother us?
@@ -280,7 +280,7 @@ class ModelCriterion extends Criterion
             $params = array();
             $clause->appendPsTo($sb,$params);
             $h ^= crc32(serialize(array($sb,$params)));
-            unset ( $sb, $params );
+            unset($sb, $params);
         }
 
         return $h;
@@ -295,7 +295,7 @@ class ModelCriterion extends Criterion
     {
         $firstChar = strpos($subject, $search);
         if (false !== $firstChar) {
-            $beforeStr = substr($subject,0,$firstChar);
+            $beforeStr = substr($subject, 0, $firstChar);
             $afterStr = substr($subject, $firstChar + strlen($search));
 
             return $beforeStr.$replace.$afterStr;

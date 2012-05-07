@@ -60,13 +60,14 @@ class SortableBehaviorQueryBuilderModifier
         if ($this->behavior->useScope()) {
             $this->addInList($script);
         }
-        if ($this->getParameter('rank_column') != 'rank') {
+        if ('rank' !== $this->getParameter('rank_column')) {
             $this->addFilterByRank($script);
             $this->addOrderByRank($script);
         }
 
         // select termination methods
-        if ($this->getParameter('rank_column') != 'rank' || $this->behavior->useScope()) {
+        if ('rank' !== $this->getParameter('rank_column')
+            || $this->behavior->useScope()) {
             $this->addFindOneByRank($script);
         }
         $this->addFindList($script);

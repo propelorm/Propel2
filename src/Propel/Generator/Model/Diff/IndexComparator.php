@@ -34,7 +34,8 @@ class IndexComparator
     {
         // Check for removed index columns in $toIndex
         $fromIndexColumns = $fromIndex->getColumns();
-        for ($i = 0; $i < count($fromIndexColumns); $i++) {
+        $max = count($fromIndexColumns);
+        for ($i = 0; $i < $max; $i++) {
             $indexColumn = $fromIndexColumns[$i];
             if (!$toIndex->hasColumnAtPosition($i, $indexColumn, null, $caseInsensitive)) {
                 return true;
@@ -43,7 +44,8 @@ class IndexComparator
 
         // Check for new index columns in $toIndex
         $toIndexColumns = $toIndex->getColumns();
-        for ($i = 0; $i < count($toIndexColumns); $i++) {
+        $max = count($toIndexColumns);
+        for ($i = 0; $i < $max; $i++) {
             $indexColumn = $toIndexColumns[$i];
             if (!$fromIndex->hasColumnAtPosition($i, $indexColumn, null, $caseInsensitive)) {
                 return true;
@@ -51,10 +53,6 @@ class IndexComparator
         }
 
         // Check for difference in unicity
-        if ($fromIndex->isUnique() != $toIndex->isUnique()) {
-            return true;
-        }
-
-        return false;
+        return $fromIndex->isUnique() !== $toIndex->isUnique();
     }
 }

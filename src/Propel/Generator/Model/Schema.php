@@ -29,7 +29,7 @@ class Schema
      * The list of databases for this application.
      * @var        array Database[]
      */
-    private $dbList = array();
+    private $databases = array();
 
     /**
      * The platform class for our database(s).
@@ -150,7 +150,7 @@ class Schema
             $this->doFinalInitialization();
         }
 
-        return $this->dbList;
+        return $this->databases;
     }
 
     /**
@@ -160,7 +160,7 @@ class Schema
      */
     public function hasMultipleDatabases()
     {
-        return (count($this->dbList) > 1);
+        return count($this->databases) > 1;
     }
 
     /**
@@ -177,12 +177,12 @@ class Schema
             $this->doFinalInitialization();
         }
 
-        if ($name === null) {
-            return $this->dbList[0];
+        if (null === $name) {
+            return $this->databases[0];
         }
 
-        for ($i = 0, $size = count($this->dbList); $i < $size; $i++) {
-            $db = $this->dbList[$i];
+        for ($i = 0, $size = count($this->databases); $i < $size; $i++) {
+            $db = $this->databases[$i];
             if ($db->getName() === $name) {
                 return $db;
             }
@@ -199,7 +199,7 @@ class Schema
      */
     public function hasDatabase($name)
     {
-        foreach ($this->dbList as $db) {
+        foreach ($this->databases as $db) {
             if ($db->getName() === $name) {
                 return true;
             }
@@ -226,25 +226,24 @@ class Schema
                     $db->setPlatform($this->platform);
                 }
             }
-            $this->dbList[] = $db;
+            $this->databases[] = $db;
 
             return $db;
-        } else {
-            // XML attributes array / hash
-            $d = new Database();
-            $d->setParentSchema($this);
-            $d->loadFromXML($db);
-
-            return $this->addDatabase($d); // calls self w/ different param type
         }
 
+        // XML attributes array / hash
+        $d = new Database();
+        $d->setParentSchema($this);
+        $d->loadFromXML($db);
+
+        return $this->addDatabase($d); // calls self w/ different param type
     }
 
     public function doFinalInitialization()
     {
         if (!$this->isInitialized) {
-            for ($i = 0, $size = count($this->dbList); $i < $size; $i++) {
-                $this->dbList[$i]->doFinalInitialization();
+            for ($i = 0, $size = count($this->databases); $i < $size; $i++) {
+                $this->databases[$i]->doFinalInitialization();
             }
             $this->isInitialized = true;
         }
@@ -310,14 +309,16 @@ class Schema
      */
     public function toString()
     {
-        $result = "<app-data>\n";
-        foreach ($this->dbList as $dbList) {
+        $result = '<app-data>'."\n";
+        foreach ($this->databases as $dbList) {
             $result .= $dbList->toString();
         }
-        if ($this->dbList) {
+
+        if ($this->databases) {
             $result .= "\n";
         }
-        $result .= "</app-data>";
+
+        $result .= '</app-data>';
 
         return $result;
     }

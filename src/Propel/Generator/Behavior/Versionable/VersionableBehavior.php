@@ -17,8 +17,8 @@ use Propel\Generator\Model\ForeignKey;
  * Keeps tracks of all the modifications in an ActiveRecord object
  *
  * @author    Francois Zaninotto
- * @version		$Revision$
- * @package		propel.generator.behavior.versionable
+ * @version   $Revision$
+ * @package   propel.generator.behavior.versionable
  */
 class VersionableBehavior extends Behavior
 {
@@ -84,20 +84,20 @@ class VersionableBehavior extends Behavior
     protected function addLogColumns()
     {
         $table = $this->getTable();
-        if ($this->getParameter('log_created_at') == 'true' && !$table->containsColumn($this->getParameter('version_created_at_column'))) {
+        if ('true' === $this->getParameter('log_created_at') && !$table->containsColumn($this->getParameter('version_created_at_column'))) {
             $table->addColumn(array(
                 'name' => $this->getParameter('version_created_at_column'),
                 'type' => 'TIMESTAMP'
             ));
         }
-        if ($this->getParameter('log_created_by') == 'true' && !$table->containsColumn($this->getParameter('version_created_by_column'))) {
+        if ('true' === $this->getParameter('log_created_by') && !$table->containsColumn($this->getParameter('version_created_by_column'))) {
             $table->addColumn(array(
                 'name' => $this->getParameter('version_created_by_column'),
                 'type' => 'VARCHAR',
                 'size' => 100
             ));
         }
-        if ($this->getParameter('log_comment') == 'true'  && !$table->containsColumn($this->getParameter('version_comment_column'))) {
+        if ('true' === $this->getParameter('log_comment') && !$table->containsColumn($this->getParameter('version_comment_column'))) {
             $table->addColumn(array(
                 'name' => $this->getParameter('version_comment_column'),
                 'type' => 'VARCHAR',
@@ -249,8 +249,7 @@ class VersionableBehavior extends Behavior
 
     public function getObjectBuilderModifier()
     {
-        if (is_null($this->objectBuilderModifier))
-        {
+        if (null === $this->objectBuilderModifier) {
             $this->objectBuilderModifier = new VersionableBehaviorObjectBuilderModifier($this);
         }
 
@@ -259,8 +258,7 @@ class VersionableBehavior extends Behavior
 
     public function getQueryBuilderModifier()
     {
-        if (is_null($this->queryBuilderModifier))
-        {
+        if (null === $this->queryBuilderModifier) {
             $this->queryBuilderModifier = new VersionableBehaviorQueryBuilderModifier($this);
         }
 
@@ -269,8 +267,7 @@ class VersionableBehavior extends Behavior
 
     public function getPeerBuilderModifier()
     {
-        if (is_null($this->peerBuilderModifier))
-        {
+        if (null === $this->peerBuilderModifier) {
             $this->peerBuilderModifier = new VersionableBehaviorPeerBuilderModifier($this);
         }
 

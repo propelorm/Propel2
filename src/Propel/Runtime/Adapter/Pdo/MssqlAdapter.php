@@ -127,8 +127,7 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
     public function applyLimit(&$sql, $offset, $limit)
     {
         // make sure offset and limit are numeric
-        if (! is_numeric($offset) || ! is_numeric($limit))
-        {
+        if (!is_numeric($offset) || !is_numeric($limit)) {
             throw new InvalidArgumentException('MssqlAdapter::applyLimit() expects a number for argument 2 and 3');
         }
 
@@ -138,7 +137,7 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
         $selectText = 'SELECT ';
 
         preg_match('/\Aselect(.*)from(.*)/si', $sql, $selectSegment);
-        if (count($selectSegment) == 3) {
+        if (3 === count($selectSegment)) {
             $selectStatement = trim($selectSegment[1]);
             $fromStatement = trim($selectSegment[2]);
         } else {
@@ -152,7 +151,7 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
 
         // if we're starting at offset 0 then theres no need to simulate limit,
         // just grab the top $limit number of rows
-        if ($offset == 0) {
+        if (0 === $offset) {
             $sql = $selectText . 'TOP ' . $limit . ' ' . $selectStatement . ' FROM ' . $fromStatement;
 
             return;
@@ -162,14 +161,14 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
         $orderStatement = stristr($fromStatement, 'ORDER BY');
         $orders = '';
 
-        if ($orderStatement !== false) {
+        if (false !== $orderStatement) {
             //remove order statement from the from statement
             $fromStatement = trim(str_replace($orderStatement, '', $fromStatement));
 
             $order = str_ireplace('ORDER BY', '', $orderStatement);
             $orders = explode(',', $order);
 
-            for($i = 0; $i < count($orders); $i ++) {
+            for ($i = 0; $i < count($orders); $i ++) {
                 $orderArr[trim(preg_replace('/\s+(ASC|DESC)$/i', '', $orders[$i]))] = array(
                     'sort' => (stripos($orders[$i], ' DESC') !== false) ? 'DESC' : 'ASC',
                     'key' => $i
@@ -180,7 +179,7 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
         //setup inner and outer select selects
         $innerSelect = '';
         $outerSelect = '';
-        foreach(explode(', ', $selectStatement) as $selCol) {
+        foreach (explode(', ', $selectStatement) as $selCol) {
             $selColArr = explode(' ', $selCol);
             $selColCount = count($selColArr) - 1;
 
@@ -193,12 +192,12 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
                 //use the alias if one was present otherwise use the column name
                 $alias = (! stristr($selCol, ' AS ')) ? $selColArr[0] : $selColArr[$selColCount];
                 //don't quote the identifier if it is already quoted
-                if ($alias[0] != '[') {
+                if ('[' !== $alias[0]) {
                     $alias = $this->quoteIdentifier($alias);
                 }
 
                 //save the first non-aggregate column for use in ROW_NUMBER() if required
-                if (! isset($firstColumnOrderStatement)) {
+                if (!isset($firstColumnOrderStatement)) {
                     $firstColumnOrderStatement = 'ORDER BY ' . $selColArr[0];
                 }
 
@@ -207,7 +206,7 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
                 $outerSelect .= $alias . ', ';
             } else {
                 //agregate columns must always have an alias clause
-                if (! stristr($selCol, ' AS ')) {
+                if (!stristr($selCol, ' AS ')) {
                     throw new MalformedClauseException('MssqlAdapter::applyLimit() requires aggregate columns to have an Alias clause');
                 }
 
@@ -283,13 +282,11 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
         }
 
         //if we made changes re-number the params
-        if ($params != $paramCols)
-        {
+        if ($params != $paramCols) {
             $params = $paramCols;
             unset($paramCols);
             preg_match_all('/:p\d/', $sql, $matches);
-            foreach($matches[0] as $key => $match)
-            {
+            foreach ($matches[0] as $key => $match) {
                 $sql = str_replace($match, ':p'.($key+1), $sql);
             }
         }

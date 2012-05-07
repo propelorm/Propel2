@@ -17,7 +17,6 @@ namespace Propel\Runtime\Parser;
  */
 class JsonParser extends AbstractParser
 {
-
     /**
      * Converts data from an associative array to JSON.
      *
@@ -61,5 +60,4 @@ class JsonParser extends AbstractParser
     {
         return $this->toArray($data);
     }
-
 }

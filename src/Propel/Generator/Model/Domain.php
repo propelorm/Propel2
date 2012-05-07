@@ -18,7 +18,6 @@ namespace Propel\Generator\Model;
  */
 class Domain extends XmlElement
 {
-
     /**
      * @var        string The name of this domain
      */
@@ -71,7 +70,7 @@ class Domain extends XmlElement
     public function __construct($type = null, $sqlType = null, $size = null, $scale = null)
     {
         $this->propelType = $type;
-        $this->sqlType = ($sqlType !== null) ? $sqlType : $type;
+        $this->sqlType = (null !== $sqlType ? $sqlType : $type);
         $this->size = $size;
         $this->scale = $scale;
     }
@@ -97,23 +96,23 @@ class Domain extends XmlElement
      */
     protected function setupObject()
     {
-        $schemaType = strtoupper($this->getAttribute("type"));
+        $schemaType = strtoupper($this->getAttribute('type'));
         $this->copy($this->getDatabase()->getPlatform()->getDomainForType($schemaType));
 
         //Name
-        $this->name = $this->getAttribute("name");
+        $this->name = $this->getAttribute('name');
 
         // Default value
-        $defval = $this->getAttribute("defaultValue", $this->getAttribute("default"));
-        if ($defval !== null) {
+        $defval = $this->getAttribute('defaultValue', $this->getAttribute('default'));
+        if (null !== $defval) {
             $this->setDefaultValue(new ColumnDefaultValue($defval, ColumnDefaultValue::TYPE_VALUE));
-        } elseif ($this->getAttribute("defaultExpr") !== null) {
-            $this->setDefaultValue(new ColumnDefaultValue($this->getAttribute("defaultExpr"), ColumnDefaultValue::TYPE_EXPR));
+        } elseif (null !== $this->getAttribute('defaultExpr')) {
+            $this->setDefaultValue(new ColumnDefaultValue($this->getAttribute('defaultExpr'), ColumnDefaultValue::TYPE_EXPR));
         }
 
-        $this->size = $this->getAttribute("size");
-        $this->scale = $this->getAttribute("scale");
-        $this->description = $this->getAttribute("description");
+        $this->size = $this->getAttribute('size');
+        $this->scale = $this->getAttribute('scale');
+        $this->description = $this->getAttribute('description');
     }
 
     /**
@@ -189,7 +188,7 @@ class Domain extends XmlElement
      */
     public function replaceScale($value)
     {
-        if ($value !== null) {
+        if (null !== $value) {
             $this->scale = $value;
         }
     }
@@ -217,7 +216,7 @@ class Domain extends XmlElement
      */
     public function replaceSize($value)
     {
-        if ($value !== null) {
+        if (null !== $value) {
             $this->size = $value;
         }
     }
@@ -245,7 +244,7 @@ class Domain extends XmlElement
      */
     public function replaceType($value)
     {
-        if ($value !== null) {
+        if (null !== $value) {
             $this->propelType = $value;
         }
     }
@@ -266,18 +265,19 @@ class Domain extends XmlElement
      */
     public function getPhpDefaultValue()
     {
-        if ($this->defaultValue === null) {
+        if (null === $this->defaultValue) {
             return null;
-        } else {
-            if ($this->defaultValue->isExpression()) {
-                throw new EngineException("Cannot get PHP version of default value for default value EXPRESSION.");
-            }
-            if ($this->propelType === PropelTypes::BOOLEAN || $this->propelType === PropelTypes::BOOLEAN_EMU) {
-                return $this->booleanValue($this->defaultValue->getValue());
-            } else {
-                return $this->defaultValue->getValue();
-            }
         }
+
+        if ($this->defaultValue->isExpression()) {
+            throw new EngineException('Cannot get PHP version of default value for default value EXPRESSION.');
+        }
+
+        if (in_array($this->propelType, array(PropelTypes::BOOLEAN, PropelTypes::BOOLEAN_EMU))) {
+            return $this->booleanValue($this->defaultValue->getValue());
+        }
+
+        return $this->defaultValue->getValue();
     }
 
     /**
@@ -295,7 +295,7 @@ class Domain extends XmlElement
      */
     public function replaceDefaultValue(ColumnDefaultValue $value = null)
     {
-        if ($value !== null) {
+        if (null !== $value) {
             $this->defaultValue = $value;
         }
     }
@@ -322,7 +322,7 @@ class Domain extends XmlElement
      */
     public function replaceSqlType($sqlType)
     {
-        if ($sqlType !== null) {
+        if (null !== $sqlType) {
             $this->sqlType = $sqlType;
         }
     }
@@ -335,32 +335,29 @@ class Domain extends XmlElement
      */
     public function printSize()
     {
-        if ($this->size !== null && $this->scale !== null) {
+        if (null !== $this->size && null !== $this->scale) {
             return '(' . $this->size . ',' . $this->scale . ')';
-        } elseif ($this->size !== null) {
-            return '(' . $this->size . ')';
-        } else {
-            return "";
         }
+
+        return null !== $this->size ? '(' . $this->size . ')' : '';
     }
 
     /**
      * @see        XmlElement::appendXml(DOMNode)
      */
-    public function appendXml(DOMNode $node)
+    public function appendXml(\DOMNode $node)
     {
-        $doc = ($node instanceof DOMDocument) ? $node : $node->ownerDocument;
+        $doc = ($node instanceof \DOMDocument) ? $node : $node->ownerDocument;
 
         $domainNode = $node->appendChild($doc->createElement('domain'));
         $domainNode->setAttribute('type', $this->getType());
         $domainNode->setAttribute('name', $this->getName());
 
-        if ($this->sqlType !== $this->getType()) {
+        if ($this->getType() !== $this->sqlType) {
             $domainNode->setAttribute('sqlType', $this->sqlType);
         }
 
-        $def = $this->getDefaultValue();
-        if ($def) {
+        if ($def = $this->getDefaultValue()) {
             if ($def->isExpression()) {
                 $domainNode->setAttribute('defaultExpr', $def->getValue());
             } else {
@@ -380,5 +377,4 @@ class Domain extends XmlElement
             $domainNode->setAttribute('description', $this->description);
         }
     }
-
 }

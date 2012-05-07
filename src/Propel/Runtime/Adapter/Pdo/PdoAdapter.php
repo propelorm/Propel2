@@ -10,8 +10,6 @@
 
 namespace Propel\Runtime\Adapter\Pdo;
 
-use PDO;
-use PDOException;
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Adapter\Exception\AdapterException;
 use Propel\Runtime\Connection\ConnectionInterface;
@@ -67,7 +65,7 @@ abstract class PdoAdapter
         try {
             $con = new PdoConnection($dsn, $user, $password, $driver_options);
             $this->initConnection($con, isset($conparams['settings']) && is_array($conparams['settings']) ? $conparams['settings'] : array());
-        } catch (PDOException $e) {
+        } catch (\PDOException $e) {
             throw new AdapterException("Unable to open PDO connection", $e);
         }
 
@@ -128,7 +126,7 @@ abstract class PdoAdapter
      */
     public function setCharset(ConnectionInterface $con, $charset)
     {
-        $con->exec("SET NAMES '" . $charset . "'");
+        $con->exec(sprintf("SET NAMES '%s'", $charset));
     }
 
     /**
@@ -139,7 +137,7 @@ abstract class PdoAdapter
      */
     public function toUpperCase($in)
     {
-        return 'UPPER(' . $in . ')';
+        return sprintf('UPPER(%s)', $in);
     }
 
     /**
@@ -150,7 +148,7 @@ abstract class PdoAdapter
      */
     public function ignoreCase($in)
     {
-        return 'UPPER(' . $in . ')';
+        return sprintf('UPPER(%s)', $in);
     }
 
     /**
@@ -200,7 +198,7 @@ abstract class PdoAdapter
      **/
     public function quoteIdentifierTable($table)
     {
-        return implode(" ", array_map(array($this, "quoteIdentifier"), explode(" ", $table) ) );
+        return implode(' ', array_map(array($this, 'quoteIdentifier'), explode(' ', $table)));
     }
 
     /**
@@ -216,21 +214,21 @@ abstract class PdoAdapter
     /**
      * Whether this adapter uses an ID generation system that requires getting ID _before_ performing INSERT.
      *
-     * @return    boolean
+     * @return    Boolean
      */
     public function isGetIdBeforeInsert()
     {
-        return (AdapterInterface::ID_METHOD_SEQUENCE === $this->getIdMethod());
+        return AdapterInterface::ID_METHOD_SEQUENCE === $this->getIdMethod();
     }
 
     /**
      * Whether this adapter uses an ID generation system that requires getting ID _before_ performing INSERT.
      *
-     * @return    boolean
+     * @return    Boolean
      */
     public function isGetIdAfterInsert()
     {
-        return (AdapterInterface::ID_METHOD_AUTOINCREMENT === $this->getIdMethod());
+        return AdapterInterface::ID_METHOD_AUTOINCREMENT === $this->getIdMethod();
     }
 
     /**
@@ -258,7 +256,7 @@ abstract class PdoAdapter
     {
         /** @var $dt PropelDateTime */
         if ($dt = PropelDateTime::newInstance($value)) {
-            switch($cMap->getType()) {
+            switch ($cMap->getType()) {
                 case PropelColumnTypes::TIMESTAMP:
                 case PropelColumnTypes::BU_TIMESTAMP:
                     $value = $dt->format($this->getTimestampFormatter());
@@ -293,7 +291,7 @@ abstract class PdoAdapter
      */
     public function getDateFormatter()
     {
-        return "Y-m-d";
+        return 'Y-m-d';
     }
 
     /**
@@ -303,7 +301,7 @@ abstract class PdoAdapter
      */
     public function getTimeFormatter()
     {
-        return "H:i:s";
+        return 'H:i:s';
     }
 
     /**
@@ -314,7 +312,7 @@ abstract class PdoAdapter
      *
      * @deprecated
      *
-     * @return    boolean
+     * @return    Boolean
      */
     public function useQuoteIdentifier()
     {
@@ -370,7 +368,7 @@ abstract class PdoAdapter
      *
      * @param     Propel\Runtime\Query\Criteria  $criteria
      * @param     array     $fromClause
-     * @param     boolean   $aliasAll
+     * @param     Boolean   $aliasAll
      *
      * @return    string
      */
@@ -427,10 +425,11 @@ abstract class PdoAdapter
         $queryComment = $criteria->getComment();
 
         // Build the SQL from the arrays we compiled
-        $sql =  "SELECT "
+        $sql =  'SELECT '
             . ($queryComment ? '/* ' . $queryComment . ' */ ' : '')
             . ($selectModifiers ? (implode(' ', $selectModifiers) . ' ') : '')
-            . implode(", ", $selectClause);
+            . implode(', ', $selectClause)
+        ;
 
         return $sql;
     }
@@ -503,12 +502,12 @@ abstract class PdoAdapter
             $parameter = ':p' . $position;
             $value = $param['value'];
             if (null === $value) {
-                $stmt->bindValue($parameter, null, PDO::PARAM_NULL);
+                $stmt->bindValue($parameter, null, \PDO::PARAM_NULL);
                 continue;
             }
             $tableName = $param['table'];
             if (null === $tableName) {
-                $type = isset($param['type']) ? $param['type'] : PDO::PARAM_STR;
+                $type = isset($param['type']) ? $param['type'] : \PDO::PARAM_STR;
                 $stmt->bindValue($parameter, $value, $type);
                 continue;
             }
@@ -527,7 +526,7 @@ abstract class PdoAdapter
      * @param     Propel\Runtime\Map\ColumnMap     $cMap  The ColumnMap of the column to bind
      * @param     null|integer  $position  The position of the parameter to bind
      *
-     * @return    boolean
+     * @return    Boolean
      */
     public function bindValue(StatementInterface $stmt, $parameter, $value, ColumnMap $cMap, $position = null)
     {

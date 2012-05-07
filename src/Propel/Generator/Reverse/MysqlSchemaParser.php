@@ -10,7 +10,6 @@
 
 namespace Propel\Generator\Reverse;
 
-use PDO;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\ForeignKey;
@@ -27,46 +26,45 @@ use Propel\Generator\Model\ColumnDefaultValue;
  */
 class MysqlSchemaParser extends AbstractSchemaParser
 {
-
     /**
-     * @var        boolean
+     * @var Boolean
      */
     private $addVendorInfo = false;
 
     /**
      * Map MySQL native types to Propel types.
-     * @var        array
+     * @var array
      */
     private static $mysqlTypeMap = array(
-        'tinyint' => PropelTypes::TINYINT,
-        'smallint' => PropelTypes::SMALLINT,
-        'mediumint' => PropelTypes::SMALLINT,
-        'int' => PropelTypes::INTEGER,
-        'integer' => PropelTypes::INTEGER,
-        'bigint' => PropelTypes::BIGINT,
-        'int24' => PropelTypes::BIGINT,
-        'real' => PropelTypes::REAL,
-        'float' => PropelTypes::FLOAT,
-        'decimal' => PropelTypes::DECIMAL,
-        'numeric' => PropelTypes::NUMERIC,
-        'double' => PropelTypes::DOUBLE,
-        'char' => PropelTypes::CHAR,
-        'varchar' => PropelTypes::VARCHAR,
-        'date' => PropelTypes::DATE,
-        'time' => PropelTypes::TIME,
-        'year' => PropelTypes::INTEGER,
-        'datetime' => PropelTypes::TIMESTAMP,
-        'timestamp' => PropelTypes::TIMESTAMP,
-        'tinyblob' => PropelTypes::BINARY,
-        'blob' => PropelTypes::BLOB,
+        'tinyint'    => PropelTypes::TINYINT,
+        'smallint'   => PropelTypes::SMALLINT,
+        'mediumint'  => PropelTypes::SMALLINT,
+        'int'        => PropelTypes::INTEGER,
+        'integer'    => PropelTypes::INTEGER,
+        'bigint'     => PropelTypes::BIGINT,
+        'int24'      => PropelTypes::BIGINT,
+        'real'       => PropelTypes::REAL,
+        'float'      => PropelTypes::FLOAT,
+        'decimal'    => PropelTypes::DECIMAL,
+        'numeric'    => PropelTypes::NUMERIC,
+        'double'     => PropelTypes::DOUBLE,
+        'char'       => PropelTypes::CHAR,
+        'varchar'    => PropelTypes::VARCHAR,
+        'date'       => PropelTypes::DATE,
+        'time'       => PropelTypes::TIME,
+        'year'       => PropelTypes::INTEGER,
+        'datetime'   => PropelTypes::TIMESTAMP,
+        'timestamp'  => PropelTypes::TIMESTAMP,
+        'tinyblob'   => PropelTypes::BINARY,
+        'blob'       => PropelTypes::BLOB,
         'mediumblob' => PropelTypes::BLOB,
-        'longblob' => PropelTypes::BLOB,
-        'longtext' => PropelTypes::CLOB,
-        'tinytext' => PropelTypes::VARCHAR,
+        'longblob'   => PropelTypes::BLOB,
+        'longtext'   => PropelTypes::CLOB,
+        'tinytext'   => PropelTypes::VARCHAR,
         'mediumtext' => PropelTypes::LONGVARCHAR,
-        'text' => PropelTypes::LONGVARCHAR,
-        'enum' => PropelTypes::CHAR,
-        'set' => PropelTypes::CHAR,
+        'text'       => PropelTypes::LONGVARCHAR,
+        'enum'       => PropelTypes::CHAR,
+        'set'        => PropelTypes::CHAR,
     );
 
     protected static $defaultTypeSizes = array(
@@ -95,15 +93,15 @@ class MysqlSchemaParser extends AbstractSchemaParser
     {
         $this->addVendorInfo = $this->getGeneratorConfig()->getBuildProperty('addVendorInfo');
 
-        $stmt = $this->dbh->query("SHOW FULL TABLES");
+        $stmt = $this->dbh->query('SHOW FULL TABLES');
 
         // First load the tables (important that this happen before filling out details of tables)
         $tables = array();
-        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+        while ($row = $stmt->fetch(\PDO::FETCH_NUM)) {
             $name = $row[0];
             $type = $row[1];
 
-            if ($name == $this->getMigrationTable() || $type != "BASE TABLE") {
+            if ($name == $this->getMigrationTable() || $type !== 'BASE TABLE') {
                 continue;
             }
 
@@ -140,15 +138,13 @@ class MysqlSchemaParser extends AbstractSchemaParser
      */
     protected function addColumns(Table $table)
     {
-        $stmt = $this->dbh->query("SHOW COLUMNS FROM `" . $table->getName() . "`");
+        $stmt = $this->dbh->query(sprintf('SHOW COLUMNS FROM `%s`', $table->getName()));
 
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
             $column = $this->getColumnFromRow($row, $table);
             $table->addColumn($column);
         }
-
-
-    } // addColumn()
+    }
 
     /**
      * Factory method creating a Column object
@@ -161,8 +157,8 @@ class MysqlSchemaParser extends AbstractSchemaParser
     public function getColumnFromRow($row, Table $table)
     {
         $name = $row['Field'];
-        $isNullable = ($row['Null'] == 'YES');
-        $autoincrement = (strpos($row['Extra'], 'auto_increment') !== false);
+        $isNullable = ('YES' === $row['Null']);
+        $autoincrement = (false !== strpos($row['Extra'], 'auto_increment'));
         $size = null;
         $precision = null;
         $scale = null;
@@ -179,7 +175,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
         if (preg_match($regexp, $row['Type'], $matches)) {
             $nativeType = $matches[1];
             if ($matches[2]) {
-                if (($cpos = strpos($matches[2], ',')) !== false) {
+                if (false !== ($cpos = strpos($matches[2], ','))) {
                     $size = (int) substr($matches[2], 0, $cpos);
                     $precision = $size;
                     $scale = (int) substr($matches[2], $cpos + 1);
@@ -191,14 +187,14 @@ class MysqlSchemaParser extends AbstractSchemaParser
                 $sqlType = $row['Type'];
             }
             foreach (self::$defaultTypeSizes as $type => $defaultSize) {
-                if ($nativeType == $type && $size == $defaultSize) {
+                if ($nativeType === $type && $size === $defaultSize) {
                     $size = null;
                     continue;
                 }
             }
         } elseif (preg_match('/^(\w+)\(/', $row['Type'], $matches)) {
             $nativeType = $matches[1];
-            if ($nativeType == 'enum') {
+            if ($nativeType === 'enum') {
                 $sqlType = $row['Type'];
             }
         } else {
@@ -262,8 +258,8 @@ class MysqlSchemaParser extends AbstractSchemaParser
     {
         $database = $table->getDatabase();
 
-        $stmt = $this->dbh->query("SHOW CREATE TABLE `" . $table->getName(). "`");
-        $row = $stmt->fetch(PDO::FETCH_NUM);
+        $stmt = $this->dbh->query(sprintf('SHOW CREATE TABLE `%s`', $table->getName()));
+        $row = $stmt->fetch(\PDO::FETCH_NUM);
 
         $foreignKeys = array(); // local store to avoid duplicates
 
@@ -290,8 +286,8 @@ class MysqlSchemaParser extends AbstractSchemaParser
 
                 //typical for mysql is RESTRICT
                 $fkactions = array(
-                    'ON DELETE'    => ForeignKey::RESTRICT,
-                    'ON UPDATE'    => ForeignKey::RESTRICT,
+                    'ON DELETE' => ForeignKey::RESTRICT,
+                    'ON UPDATE' => ForeignKey::RESTRICT,
                 );
 
                 if ($fkey) {
@@ -307,7 +303,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
 
                 // restrict is the default
                 foreach ($fkactions as $key => $action) {
-                    if ($action == ForeignKey::RESTRICT) {
+                    if (ForeignKey::RESTRICT === $action) {
                         $fkactions[$key] = null;
                     }
                 }
@@ -333,14 +329,12 @@ class MysqlSchemaParser extends AbstractSchemaParser
                     $foreignKeys[$name] = $fk;
                 }
 
-                for ($i = 0; $i < count($localColumns); $i++) {
+                $max = count($localColumns);
+                for ($i = 0; $i < $max; $i++) {
                     $foreignKeys[$name]->addReference($localColumns[$i], $foreignColumns[$i]);
                 }
-
             }
-
         }
-
     }
 
     /**
@@ -348,22 +342,22 @@ class MysqlSchemaParser extends AbstractSchemaParser
      */
     protected function addIndexes(Table $table)
     {
-        $stmt = $this->dbh->query("SHOW INDEX FROM `" . $table->getName() . "`");
+        $stmt = $this->dbh->query(sprintf('SHOW INDEX FROM `%s`', $table->getName()));
 
         // Loop through the returned results, grouping the same key_name together
         // adding each column for that key.
 
         $indexes = array();
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $colName = $row["Column_name"];
-            $name = $row["Key_name"];
+        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            $colName = $row['Column_name'];
+            $name = $row['Key_name'];
 
-            if ($name == "PRIMARY") {
+            if ('PRIMARY' === $name) {
                 continue;
             }
 
             if (!isset($indexes[$name])) {
-                $isUnique = ($row["Non_unique"] == 0);
+                $isUnique = (0 == $row['Non_unique']);
                 if ($isUnique) {
                     $indexes[$name] = new Unique($name);
                 } else {
@@ -385,16 +379,16 @@ class MysqlSchemaParser extends AbstractSchemaParser
      */
     protected function addPrimaryKey(Table $table)
     {
-        $stmt = $this->dbh->query("SHOW KEYS FROM `" . $table->getName() . "`");
+        $stmt = $this->dbh->query(sprintf('SHOW KEYS FROM `%s``', $table->getName()));
 
         // Loop through the returned results, grouping the same key_name together
         // adding each column for that key.
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
             // Skip any non-primary keys.
-            if ($row['Key_name'] !== 'PRIMARY') {
+            if ('PRIMARY' !== $row['Key_name']) {
                 continue;
             }
-            $name = $row["Column_name"];
+            $name = $row['Column_name'];
             $table->getColumn($name)->setPrimaryKey(true);
         }
     }
@@ -407,7 +401,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
     protected function addTableVendorInfo(Table $table)
     {
         $stmt = $this->dbh->query("SHOW TABLE STATUS LIKE '" . $table->getName() . "'");
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $row = $stmt->fetch(\PDO::FETCH_ASSOC);
         $vi = $this->getNewVendorInfoObject($row);
         $table->addVendorInfo($vi);
     }

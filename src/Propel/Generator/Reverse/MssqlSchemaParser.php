@@ -13,7 +13,6 @@ namespace Propel\Generator\Reverse;
 // TODO: to remove
 use Task;
 
-use PDO;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\PropelTypes;
@@ -31,43 +30,43 @@ class MssqlSchemaParser extends AbstractSchemaParser
      * @var        array
      */
     private static $mssqlTypeMap = array(
-        'binary' => PropelTypes::BINARY,
-        'bit' => PropelTypes::BOOLEAN,
-        'char' => PropelTypes::CHAR,
-        'datetime' => PropelTypes::TIMESTAMP,
-        'decimal() identity'  => PropelTypes::DECIMAL,
-        'decimal'  => PropelTypes::DECIMAL,
-        'image' => PropelTypes::LONGVARBINARY,
-        'int' => PropelTypes::INTEGER,
-        'int identity' => PropelTypes::INTEGER,
-        'integer' => PropelTypes::INTEGER,
-        'money' => PropelTypes::DECIMAL,
-        'nchar' => PropelTypes::CHAR,
-        'ntext' => PropelTypes::LONGVARCHAR,
+        'binary'             => PropelTypes::BINARY,
+        'bit'                => PropelTypes::BOOLEAN,
+        'char'               => PropelTypes::CHAR,
+        'datetime'           => PropelTypes::TIMESTAMP,
+        'decimal() identity' => PropelTypes::DECIMAL,
+        'decimal'            => PropelTypes::DECIMAL,
+        'image'              => PropelTypes::LONGVARBINARY,
+        'int'                => PropelTypes::INTEGER,
+        'int identity'       => PropelTypes::INTEGER,
+        'integer'            => PropelTypes::INTEGER,
+        'money'              => PropelTypes::DECIMAL,
+        'nchar'              => PropelTypes::CHAR,
+        'ntext'              => PropelTypes::LONGVARCHAR,
         'numeric() identity' => PropelTypes::NUMERIC,
-        'numeric' => PropelTypes::NUMERIC,
-        'nvarchar' => PropelTypes::VARCHAR,
-        'real' => PropelTypes::REAL,
-        'float' => PropelTypes::FLOAT,
-        'smalldatetime' => PropelTypes::TIMESTAMP,
-        'smallint' => PropelTypes::SMALLINT,
-        'smallint identity' => PropelTypes::SMALLINT,
-        'smallmoney' => PropelTypes::DECIMAL,
-        'sysname' => PropelTypes::VARCHAR,
-        'text' => PropelTypes::LONGVARCHAR,
-        'timestamp' => PropelTypes::BINARY,
-        'tinyint identity' => PropelTypes::TINYINT,
-        'tinyint' => PropelTypes::TINYINT,
-        'uniqueidentifier' => PropelTypes::CHAR,
-        'varbinary' => PropelTypes::VARBINARY,
-        'varbinary(max)' => PropelTypes::CLOB,
-        'varchar' => PropelTypes::VARCHAR,
-        'varchar(max)' => PropelTypes::CLOB,
-        'uniqueidentifier' => PropelTypes::CHAR,
+        'numeric'            => PropelTypes::NUMERIC,
+        'nvarchar'           => PropelTypes::VARCHAR,
+        'real'               => PropelTypes::REAL,
+        'float'              => PropelTypes::FLOAT,
+        'smalldatetime'      => PropelTypes::TIMESTAMP,
+        'smallint'           => PropelTypes::SMALLINT,
+        'smallint identity'  => PropelTypes::SMALLINT,
+        'smallmoney'         => PropelTypes::DECIMAL,
+        'sysname'            => PropelTypes::VARCHAR,
+        'text'               => PropelTypes::LONGVARCHAR,
+        'timestamp'          => PropelTypes::BINARY,
+        'tinyint identity'   => PropelTypes::TINYINT,
+        'tinyint'            => PropelTypes::TINYINT,
+        'uniqueidentifier'   => PropelTypes::CHAR,
+        'varbinary'          => PropelTypes::VARBINARY,
+        'varbinary(max)'     => PropelTypes::CLOB,
+        'varchar'            => PropelTypes::VARCHAR,
+        'varchar(max)'       => PropelTypes::CLOB,
+        'uniqueidentifier'   => PropelTypes::CHAR,
         // SQL Server 2000 only
-        'bigint identity' => PropelTypes::BIGINT,
-        'bigint' => PropelTypes::BIGINT,
-        'sql_variant' => PropelTypes::VARCHAR,
+        'bigint identity'    => PropelTypes::BIGINT,
+        'bigint'             => PropelTypes::BIGINT,
+        'sql_variant'        => PropelTypes::VARCHAR,
     );
 
     /**
@@ -84,9 +83,9 @@ class MssqlSchemaParser extends AbstractSchemaParser
 
         // First load the tables (important that this happen before filling out details of tables)
         $tables = array();
-        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+        while ($row = $stmt->fetch(\PDO::FETCH_NUM)) {
             $name = $this->cleanDelimitedIdentifiers($row[0]);
-            if ($name == $this->getMigrationTable()) {
+            if ($name === $this->getMigrationTable()) {
                 continue;
             }
             $table = new Table($name);
@@ -119,7 +118,7 @@ class MssqlSchemaParser extends AbstractSchemaParser
     {
         $stmt = $this->dbh->query("sp_columns '" . $table->getName() . "'");
 
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
 
             $name = $this->cleanDelimitedIdentifiers($row['COLUMN_NAME']);
             $type = $row['TYPE_NAME'];
@@ -171,7 +170,7 @@ class MssqlSchemaParser extends AbstractSchemaParser
             WHERE (ccu1.table_name = '".$table->getName()."')");
 
         $foreignKeys = array(); // local store to avoid duplicates
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
 
             $lcol = $this->cleanDelimitedIdentifiers($row['COLUMN_NAME']);
             $ftbl = $this->cleanDelimitedIdentifiers($row['FK_TABLE_NAME']);
@@ -203,7 +202,7 @@ class MssqlSchemaParser extends AbstractSchemaParser
         $stmt = $this->dbh->query("sp_indexes_rowset '" . $table->getName() . "'");
 
         $indexes = array();
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
             $colName = $this->cleanDelimitedIdentifiers($row["COLUMN_NAME"]);
             $name = $this->cleanDelimitedIdentifiers($row['INDEX_NAME']);
 
@@ -231,7 +230,7 @@ class MssqlSchemaParser extends AbstractSchemaParser
 
         // Loop through the returned results, grouping the same key_name together
         // adding each column for that key.
-        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+        while ($row = $stmt->fetch(\PDO::FETCH_NUM)) {
             $name = $this->cleanDelimitedIdentifiers($row[0]);
             $table->getColumn($name)->setPrimaryKey(true);
         }

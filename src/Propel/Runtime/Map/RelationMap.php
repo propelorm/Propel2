@@ -166,7 +166,7 @@ class RelationMap
      */
     public function getLeftTable()
     {
-        return ($this->getType() == RelationMap::MANY_TO_ONE) ? $this->getLocalTable() : $this->getForeignTable();
+        return RelationMap::MANY_TO_ONE === $this->getType() ? $this->getLocalTable() : $this->getForeignTable();
     }
 
     /**
@@ -176,7 +176,7 @@ class RelationMap
      */
     public function getRightTable()
     {
-        return ($this->getType() == RelationMap::MANY_TO_ONE) ? $this->getForeignTable() : $this->getLocalTable();
+        return RelationMap::MANY_TO_ONE === $this->getType() ? $this->getForeignTable() : $this->getLocalTable();
     }
 
     /**
@@ -203,11 +203,13 @@ class RelationMap
     public function getColumnMappings($direction = RelationMap::LOCAL_TO_FOREIGN)
     {
         $h = array();
-        if ($direction == RelationMap::LEFT_TO_RIGHT && $this->getType() == RelationMap::MANY_TO_ONE) {
+        if (RelationMap::LEFT_TO_RIGHT === $direction
+            && RelationMap::MANY_TO_ONE === $this->getType()) {
             $direction = RelationMap::LOCAL_TO_FOREIGN;
         }
+
         for ($i = 0, $size = count($this->localColumns); $i < $size; $i++) {
-            if ($direction == RelationMap::LOCAL_TO_FOREIGN) {
+            if (RelationMap::LOCAL_TO_FOREIGN === $direction) {
                 $h[$this->localColumns[$i]->getFullyQualifiedName()] = $this->foreignColumns[$i]->getFullyQualifiedName();
             } else {
                 $h[$this->foreignColumns[$i]->getFullyQualifiedName()] = $this->localColumns[$i]->getFullyQualifiedName();
@@ -220,7 +222,7 @@ class RelationMap
     /**
      * Returns true if the relation has more than one column mapping
      *
-     * @return boolean
+     * @return Boolean
      */
     public function isComposite()
     {
@@ -264,7 +266,7 @@ class RelationMap
      */
     public function getLeftColumns()
     {
-        return ($this->getType() == RelationMap::MANY_TO_ONE) ? $this->getLocalColumns() : $this->getForeignColumns();
+        return RelationMap::MANY_TO_ONE === $this->getType() ? $this->getLocalColumns() : $this->getForeignColumns();
     }
 
     /**
@@ -274,7 +276,7 @@ class RelationMap
      */
     public function getRightColumns()
     {
-        return ($this->getType() == RelationMap::MANY_TO_ONE) ? $this->getForeignColumns() : $this->getLocalColumns();
+        return RelationMap::MANY_TO_ONE === $this->getType() ? $this->getForeignColumns() : $this->getLocalColumns();
     }
 
     /**

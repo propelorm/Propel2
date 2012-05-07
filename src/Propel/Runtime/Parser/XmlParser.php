@@ -10,9 +10,6 @@
 
 namespace Propel\Runtime\Parser;
 
-use DomDocument;
-use DomNode;
-
 /**
  * XML parser. Converts data between associative array and XML formats
  *
@@ -20,7 +17,6 @@ use DomNode;
  */
 class XmlParser extends AbstractParser
 {
-
     /**
      * Converts data from an associative array to XML.
      *
@@ -55,7 +51,7 @@ class XmlParser extends AbstractParser
      */
     protected function getRootNode($rootElementName = 'data')
     {
-        $xml = new DOMDocument('1.0', 'UTF-8');
+        $xml = new \DOMDocument('1.0', 'UTF-8');
         $xml->preserveWhiteSpace = false;
         $xml->formatOutput = true;
         $rootElement = $xml->createElement($rootElementName);
@@ -138,7 +134,7 @@ class XmlParser extends AbstractParser
      */
     public function toArray($data)
     {
-        $doc = new DomDocument('1.0', 'UTF-8');
+        $doc = new \DOMDocument('1.0', 'UTF-8');
         $doc->loadXML($data);
         $element = $doc->documentElement;
 
@@ -160,7 +156,7 @@ class XmlParser extends AbstractParser
      * @param  DOMNode $data
      * @return array
      */
-    protected function convertDOMElementToArray(DOMNode $data)
+    protected function convertDOMElementToArray(\DOMNode $data)
     {
         $array = array();
         $elementNames = array();
@@ -196,10 +192,10 @@ class XmlParser extends AbstractParser
     }
 
     /**
-     * @param  DomNode $node
+     * @param  DOMNode $node
      * @return boolean
      */
-    protected function hasOnlyTextNodes(DomNode $node)
+    protected function hasOnlyTextNodes(\DOMNode $node)
     {
         foreach ($node->childNodes as $childNode) {
             if ($childNode->nodeType != XML_CDATA_SECTION_NODE && $childNode->nodeType != XML_TEXT_NODE) {

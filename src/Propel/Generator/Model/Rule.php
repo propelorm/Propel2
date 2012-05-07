@@ -18,7 +18,6 @@ namespace Propel\Generator\Model;
  */
 class Rule extends XmlElement
 {
-
     private $name;
     private $value;
     private $message;
@@ -31,9 +30,9 @@ class Rule extends XmlElement
      */
     protected function setupObject()
     {
-        $this->name = $this->getAttribute("name");
-        $this->value = $this->getAttribute("value");
-        $this->classname = $this->getAttribute("class");
+        $this->name = $this->getAttribute('name');
+        $this->value = $this->getAttribute('value');
+        $this->classname = $this->getAttribute('class');
 
         /*
         * Set some default values if they are not specified.
@@ -46,15 +45,15 @@ class Rule extends XmlElement
         *   (this default cannot be easily set at runtime w/o changing
         *   design of class system in undesired ways)
         */
-        if ($this->value === null) {
-            switch($this->name) {
+        if (null === $this->value) {
+            switch ($this->name) {
                 case 'maxLength':
                     $this->value = $this->validator->getColumn()->getSize();
                     break;
             }
         }
 
-        $this->message = $this->getAttribute("message");
+        $this->message = $this->getAttribute('message');
     }
 
     /**
@@ -94,8 +93,8 @@ class Rule extends XmlElement
      */
     public function getClass()
     {
-        if ($this->classname === null && $this->name !== null) {
-            return "\\Propel\\Runtime\\Validator\\" . ucfirst($this->name) . "Validator";
+        if (null === $this->classname && null !== $this->name) {
+            return '\\Propel\\Runtime\\Validator\\' . ucfirst($this->name) . 'Validator';
         }
 
         return $this->classname;
@@ -172,22 +171,21 @@ class Rule extends XmlElement
     /**
      * @see        XmlElement::appendXml(DOMNode)
      */
-    public function appendXml(DOMNode $node)
+    public function appendXml(\DOMNode $node)
     {
-        $doc = ($node instanceof DOMDocument) ? $node : $node->ownerDocument;
+        $doc = ($node instanceof \DOMDocument) ? $node : $node->ownerDocument;
 
         $ruleNode = $node->appendChild($doc->createElement('rule'));
         $ruleNode->setAttribute('name', $this->getName());
 
-        if ($this->getValue() !== null) {
+        if (null !== $this->getValue()) {
             $ruleNode->setAttribute('value', $this->getValue());
         }
 
-        if ($this->classname !== null) {
+        if (null !== $this->classname) {
             $ruleNode->setAttribute('class', $this->getClass());
         }
 
         $ruleNode->setAttribute('message', $this->getMessage());
     }
-
 }

@@ -14,8 +14,6 @@ use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\Query\ModelCriteria;
 use Propel\Runtime\Connection\StatementInterface;
 
-use \PDO;
-
 /**
  * Object formatter for Propel query
  * format() returns a OnDemandCollection that hydrates objects as the use iterates on the collection
@@ -25,12 +23,12 @@ use \PDO;
  */
 class OnDemandFormatter extends ObjectFormatter
 {
-    protected $collectionName = '\Propel\Runtime\Collection\OnDemandCollection';
     protected $isSingleTableInheritance = false;
 
     public function init(ModelCriteria $criteria)
     {
         parent::init($criteria);
+
         $this->isSingleTableInheritance = $criteria->getTableMap()->isSingleTableInheritance();
 
         return $this;
@@ -42,10 +40,24 @@ class OnDemandFormatter extends ObjectFormatter
         if ($this->isWithOneToMany()) {
             throw new LogicException('OnDemandFormatter cannot hydrate related objects using a one-to-many relationship. Try removing with() from your query.');
         }
-        $class = $this->collectionName;
+
+        $collection = $this->getCollection();
+        $collection->initIterator($this, $stmt);
+
+        return $collection;
+    }
+
+    public function getCollectionClassName()
+    {
+        return '\Propel\Runtime\Collection\OnDemandCollection';
+    }
+
+    public function getCollection()
+    {
+        $class = $this->getCollectionClassName();
+
         $collection = new $class();
         $collection->setModel($this->class);
-        $collection->initIterator($this, $stmt);
 
         return $collection;
     }
@@ -108,5 +120,4 @@ class OnDemandFormatter extends ObjectFormatter
 
         return $obj;
     }
-
 }

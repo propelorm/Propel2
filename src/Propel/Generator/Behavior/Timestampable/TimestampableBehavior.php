@@ -31,14 +31,16 @@ class TimestampableBehavior extends Behavior
      */
     public function modifyTable()
     {
-        if (!$this->getTable()->containsColumn($this->getParameter('create_column'))) {
-            $this->getTable()->addColumn(array(
+        $table = $this->getTable();
+
+        if (!$table->containsColumn($this->getParameter('create_column'))) {
+            $table->addColumn(array(
                 'name' => $this->getParameter('create_column'),
                 'type' => 'TIMESTAMP'
             ));
         }
-        if (!$this->getTable()->containsColumn($this->getParameter('update_column'))) {
-            $this->getTable()->addColumn(array(
+        if (!$table->containsColumn($this->getParameter('update_column'))) {
+            $table->addColumn(array(
                 'name' => $this->getParameter('update_column'),
                 'type' => 'TIMESTAMP'
             ));

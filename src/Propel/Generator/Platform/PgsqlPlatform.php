@@ -36,22 +36,22 @@ class PgsqlPlatform extends DefaultPlatform
     protected function initialize()
     {
         parent::initialize();
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::BOOLEAN, "BOOLEAN"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::TINYINT, "INT2"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::SMALLINT, "INT2"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::BIGINT, "INT8"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::REAL, "FLOAT"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::DOUBLE, "DOUBLE PRECISION"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::FLOAT, "DOUBLE PRECISION"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARCHAR, "TEXT"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::BINARY, "BYTEA"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::VARBINARY, "BYTEA"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARBINARY, "BYTEA"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::BLOB, "BYTEA"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::CLOB, "TEXT"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::OBJECT, "TEXT"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::PHP_ARRAY, "TEXT"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::ENUM, "INT2"));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::BOOLEAN, 'BOOLEAN'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::TINYINT, 'INT2'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::SMALLINT, 'INT2'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::BIGINT, 'INT8'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::REAL, 'FLOAT'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::DOUBLE, 'DOUBLE PRECISION'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::FLOAT, 'DOUBLE PRECISION'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARCHAR, 'TEXT'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::BINARY, 'BYTEA'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::VARBINARY, 'BYTEA'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARBINARY, 'BYTEA'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::BLOB, 'BYTEA'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::CLOB, 'TEXT'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::OBJECT, 'TEXT'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::PHP_ARRAY, 'TEXT'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::ENUM, 'INT2'));
     }
 
     public function getNativeIdMethod()
@@ -364,7 +364,7 @@ DROP TABLE IF EXISTS %s CASCADE;
 
     public function hasSize($sqlType)
     {
-        return !("BYTEA" == $sqlType || "TEXT" == $sqlType || "DOUBLE PRECISION" == $sqlType);
+        return !in_array($sqlType, array('BYTEA', 'TEXT', 'DOUBLE PRECISION'));
     }
 
     public function hasStreamBlobImpl()
@@ -422,9 +422,9 @@ ALTER TABLE %s ALTER COLUMN %s;
                     }
                     break;
                 case 'notNull':
-                    $notNull = " DROP NOT NULL";
+                    $notNull = ' DROP NOT NULL';
                     if ($property[1]) {
-                        $notNull = " SET NOT NULL";
+                        $notNull = ' SET NOT NULL';
                     }
                     $ret .= sprintf($pattern, $this->quoteIdentifier($table->getName()), $colName . $notNull);
                     break;
@@ -503,7 +503,7 @@ ALTER TABLE %s ALTER COLUMN %s;
         }
         $snippet = "
 \$stmt = %s->query(\"SELECT nextval('%s')\");
-\$row = \$stmt->fetch(PDO::FETCH_NUM);
+\$row = \$stmt->fetch(\\PDO::FETCH_NUM);
 %s = \$row[0];";
         $script = sprintf($snippet,
             $connectionVariableName,

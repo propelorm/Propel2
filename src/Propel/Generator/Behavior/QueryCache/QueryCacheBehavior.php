@@ -264,5 +264,4 @@ protected function doCount(\$con)
 }
 ";
     }
-
 }

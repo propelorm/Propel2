@@ -67,7 +67,7 @@ class MatchValidator implements BasicValidator
      * @param     ValidatorMap  $map
      * @param     string        $str
      *
-     * @return    boolean
+     * @return    Boolean
      */
     public function isValid (ValidatorMap $map, $str)
     {

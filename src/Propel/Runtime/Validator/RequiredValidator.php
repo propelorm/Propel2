@@ -35,10 +35,10 @@ class RequiredValidator implements BasicValidator
      * @param     ValidatorMap  $map
      * @param     string        $str
      *
-     * @return    boolean
+     * @return    Boolean
      */
     public function isValid (ValidatorMap $map, $str)
     {
-        return ($str !== null && $str !== "");
+        return !empty($str);
     }
 }

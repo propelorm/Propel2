@@ -10,11 +10,9 @@
 
 namespace Propel\Runtime\Util;
 
-
-use Exception;
-use Propel\Runtime\Propel;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\RuntimeException;
+use Propel\Runtime\Propel;
 use Propel\Runtime\Query\Criteria;
 use Propel\Runtime\Validator\ValidationFailed;
 
@@ -136,18 +134,18 @@ class BasePeer
                 $sql = $db->getDeleteFromClause($criteria, $tableName);
 
                 foreach ($columns as $colName) {
-                    $sb = "";
+                    $sb = '';
                     $criteria->getCriterion($colName)->appendPsTo($sb, $params);
                     $whereClause[] = $sb;
                 }
-                $sql .= " WHERE " .  implode(" AND ", $whereClause);
+                $sql .= ' WHERE ' .  implode(' AND ', $whereClause);
 
                 $stmt = $con->prepare($sql);
 
                 $db->bindValues($stmt, $params, $dbMap);
                 $stmt->execute();
                 $affectedRows = $stmt->rowCount();
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 Propel::log($e->getMessage(), Propel::LOG_ERR);
                 throw new RuntimeException(sprintf('Unable to execute DELETE statement [%s]', $sql), 0, $e);
             }
@@ -191,7 +189,7 @@ class BasePeer
             $stmt->execute();
 
             return $stmt->rowCount();
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             Propel::log($e->getMessage(), Propel::LOG_ERR);
             throw new RuntimeException(sprintf('Unable to execute DELETE ALL statement [%s]', $sql), 0, $e);
         }
@@ -221,10 +219,8 @@ class BasePeer
      * @throws     \Propel\Runtime\Exception\RuntimeException
      */
     static public function doInsert(Criteria $criteria, ConnectionInterface $con) {
-
-        // the primary key
+        // The primary key
         $id = null;
-
         $db = Propel::getServiceContainer()->getAdapter($criteria->getDbName());
 
         // Get the table name and method for determining the primary
@@ -233,9 +229,10 @@ class BasePeer
         if (!empty($keys)) {
             $tableName = $criteria->getTableName( $keys[0] );
         } else {
-            throw new RuntimeException("Database insert attempted without anything specified to insert");
+            throw new RuntimeException('Database insert attempted without anything specified to insert.');
         }
 
+        $tableName = $criteria->getTableName($keys[0]);
         $dbMap = Propel::getServiceContainer()->getDatabaseMap($criteria->getDbName());
         $tableMap = $dbMap->getTable($tableName);
         $keyInfo = $tableMap->getPrimaryKeyMethodInfo();
@@ -252,11 +249,11 @@ class BasePeer
 
         // pk will be null if there is no primary key defined for the table
         // we're inserting into.
-        if ($pk !== null && $useIdGen && !$criteria->keyContainsValue($pk->getFullyQualifiedName()) && $db->isGetIdBeforeInsert()) {
+        if (null !== $pk && $useIdGen && !$criteria->keyContainsValue($pk->getFullyQualifiedName()) && $db->isGetIdBeforeInsert()) {
             try {
                 $id = $db->getId($con, $keyInfo);
-            } catch (Exception $e) {
-                throw new RuntimeException("Unable to get sequence id.", 0, $e);
+            } catch (\Exception $e) {
+                throw new RuntimeException('Unable to get sequence id.', 0, $e);
             }
             $criteria->add($pk->getFullyQualifiedName(), $id);
         }
@@ -296,16 +293,16 @@ class BasePeer
             $db->bindValues($stmt, $params, $dbMap, $db);
             $stmt->execute();
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             Propel::log($e->getMessage(), Propel::LOG_ERR);
             throw new RuntimeException(sprintf('Unable to execute INSERT statement [%s]', $sql), 0, $e);
         }
 
         // If the primary key column is auto-incremented, get the id now.
-        if ($pk !== null && $useIdGen && $db->isGetIdAfterInsert()) {
+        if (null !== $pk && $useIdGen && $db->isGetIdAfterInsert()) {
             try {
                 $id = $db->getId($con, $keyInfo);
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 throw new RuntimeException("Unable to get autoincrement id.", 0, $e);
             }
         }
@@ -400,7 +397,7 @@ class BasePeer
                                 $raw = $param['raw'];
                                 $rawcvt = '';
                                 // parse the $params['raw'] for ? chars
-                                for ($r=0,$len=strlen($raw); $r < $len; $r++) {
+                                for ($r = 0, $len = strlen($raw); $r < $len; $r++) {
                                     if ($raw{$r} == '?') {
                                         $rawcvt .= ':p'.$p++;
                                     } else {
@@ -426,11 +423,11 @@ class BasePeer
                 $sql = substr($sql, 0, -2);
                 if (!empty($columns)) {
                     foreach ($columns as $colName) {
-                        $sb = "";
+                        $sb = '';
                         $selectCriteria->getCriterion($colName)->appendPsTo($sb, $params);
                         $whereClause[] = $sb;
                     }
-                    $sql .= " WHERE " .  implode(" AND ", $whereClause);
+                    $sql .= ' WHERE ' .  implode(' AND ', $whereClause);
                 }
 
                 $db->cleanupSQL($sql, $params, $updateValues, $dbMap);
@@ -446,7 +443,7 @@ class BasePeer
 
                 $stmt = null; // close
 
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 if ($stmt) {
                     $stmt = null; // close
                 }
@@ -474,7 +471,7 @@ class BasePeer
         $db = Propel::getServiceContainer()->getAdapter($criteria->getDbName());
         $stmt = null;
 
-        if ($con === null) {
+        if (null === $con) {
             $con = Propel::getServiceContainer()->getReadConnection($criteria->getDbName());
         }
 
@@ -489,7 +486,7 @@ class BasePeer
 
             $stmt->execute();
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             if ($stmt) {
                 $stmt = null; // close
             }
@@ -515,7 +512,7 @@ class BasePeer
         $dbMap = Propel::getServiceContainer()->getDatabaseMap($criteria->getDbName());
         $db = Propel::getServiceContainer()->getAdapter($criteria->getDbName());
 
-        if ($con === null) {
+        if (null === $con) {
             $con = Propel::getServiceContainer()->getReadConnection($criteria->getDbName());
         }
 
@@ -525,7 +522,8 @@ class BasePeer
             || $criteria->getOffset()
             || $criteria->getLimit()
             || $criteria->getHaving()
-            || in_array(Criteria::DISTINCT, $criteria->getSelectModifiers());
+            || in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())
+        ;
 
         try {
 
@@ -550,8 +548,8 @@ class BasePeer
             $db->bindValues($stmt, $params, $dbMap);
             $stmt->execute();
 
-        } catch (Exception $e) {
-            if ($stmt !== null) {
+        } catch (\Exception $e) {
+            if (null !== $stmt) {
                 $stmt = null;
             }
             Propel::log($e->getMessage(), Propel::LOG_ERR);
@@ -736,7 +734,7 @@ class BasePeer
 
         $having = $criteria->getHaving();
         $havingString = null;
-        if ($having !== null) {
+        if (null !== $having) {
             $sb = '';
             $having->appendPsTo($sb, $params);
             $havingString = $sb;
@@ -803,7 +801,7 @@ class BasePeer
         // tables should not exist as alias of subQuery
         if ($criteria->hasSelectQueries()) {
             foreach ($fromClause as $key => $ftable) {
-                if (strpos($ftable, ' ') !== false) {
+                if (false !== strpos($ftable, ' ')) {
                     list(, $tableName) = explode(' ', $ftable);
                 } else {
                     $tableName = $ftable;
@@ -837,11 +835,12 @@ class BasePeer
 
         // Build the SQL from the arrays we compiled
         $sql =  $selectSql
-            ." FROM "  . $from
-            .($whereClause ? " WHERE ".implode(" AND ", $whereClause) : "")
-            .($groupByClause ? " GROUP BY ".implode(",", $groupByClause) : "")
-            .($havingString ? " HAVING ".$havingString : "")
-            .($orderByClause ? " ORDER BY ".implode(",", $orderByClause) : "");
+            .' FROM '  . $from
+            .($whereClause ? ' WHERE '.implode(' AND ', $whereClause) : '')
+            .($groupByClause ? ' GROUP BY '.implode(',', $groupByClause) : '')
+            .($havingString ? ' HAVING '.$havingString : '')
+            .($orderByClause ? ' ORDER BY '.implode(',', $orderByClause) : '')
+        ;
 
         // APPLY OFFSET & LIMIT to the query.
         if ($criteria->getLimit() || $criteria->getOffset()) {
@@ -864,7 +863,11 @@ class BasePeer
         foreach ($columns as $key) {
             if ($values->containsKey($key)) {
                 $crit = $values->getCriterion($key);
-                $params[] = array('column' => $crit->getColumn(), 'table' => $crit->getTable(), 'value' => $crit->getValue());
+                $params[] = array(
+                    'column' => $crit->getColumn(),
+                    'table' => $crit->getTable(),
+                    'value' => $crit->getValue()
+                );
             }
         }
 
@@ -882,13 +885,13 @@ class BasePeer
     {
         try {
             $v = isset(self::$validatorMap[$classname]) ? self::$validatorMap[$classname] : null;
-            if ($v === null) {
+            if (null === $v) {
                 $v = new $classname();
                 self::$validatorMap[$classname] = $v;
             }
 
             return $v;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             Propel::log("BasePeer::getValidator(): failed trying to instantiate " . $classname . ": ".$e->getMessage(), Propel::LOG_ERR);
         }
     }

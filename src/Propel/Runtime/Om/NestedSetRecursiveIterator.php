@@ -10,14 +10,12 @@
 
 namespace Propel\Runtime\Om;
 
-use RecursiveIterator;
-
 /**
  * Pre-order node iterator for Node objects.
  *
  * @author     Heltem <heltem@o2php.com>
  */
-class NestedSetRecursiveIterator implements RecursiveIterator
+class NestedSetRecursiveIterator implements \RecursiveIterator
 {
     protected $topNode = null;
 
@@ -36,7 +34,7 @@ class NestedSetRecursiveIterator implements RecursiveIterator
 
     public function valid()
     {
-        return ($this->curNode !== null);
+        return null !== $this->curNode;
     }
 
     public function current()

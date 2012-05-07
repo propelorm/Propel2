@@ -28,11 +28,7 @@ class StatementFormatter extends AbstractFormatter
 
     public function formatOne(StatementInterface $stmt)
     {
-        if ($stmt->rowCount() == 0) {
-            return null;
-        } else {
-            return $stmt;
-        }
+        return $stmt->rowCount() > 0 ? $stmt : null;
     }
 
     public function formatRecord($record = null)

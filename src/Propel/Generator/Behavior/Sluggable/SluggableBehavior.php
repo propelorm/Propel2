@@ -37,17 +37,19 @@ class SluggableBehavior extends Behavior
      */
     public function modifyTable()
     {
-        if (!$this->getTable()->containsColumn($this->getParameter('slug_column'))) {
-            $this->getTable()->addColumn(array(
+        $table = $this->getTable();
+
+        if (!$table->containsColumn($this->getParameter('slug_column'))) {
+            $table->addColumn(array(
                 'name' => $this->getParameter('slug_column'),
                 'type' => 'VARCHAR',
                 'size' => 255
             ));
             // add a unique to column
             $unique = new Unique($this->getColumnForParameter('slug_column'));
-            $unique->setName($this->getTable()->getCommonName() . '_slug');
-            $unique->addColumn($this->getTable()->getColumn($this->getParameter('slug_column')));
-            $this->getTable()->addUnique($unique);
+            $unique->setName($table->getCommonName() . '_slug');
+            $unique->addColumn($table->getColumn($this->getParameter('slug_column')));
+            $table->addUnique($unique);
         }
     }
 
@@ -82,7 +84,7 @@ class SluggableBehavior extends Behavior
         $script = "
 if (\$this->isColumnModified($const) && \$this->{$this->getColumnGetter()}()) {
     \$this->{$this->getColumnSetter()}(\$this->makeSlugUnique(\$this->{$this->getColumnGetter()}()));";
-        if ($this->getParameter('permanent') == 'true') {
+        if ('true' === $this->getParameter('permanent')) {
             $script .= "
 } elseif (!\$this->{$this->getColumnGetter()}()) {
     \$this->{$this->getColumnSetter()}(\$this->createSlug());
@@ -101,7 +103,7 @@ if (\$this->isColumnModified($const) && \$this->{$this->getColumnGetter()}()) {
     {
         $this->builder = $builder;
         $script = '';
-        if ($this->getParameter('slug_column') != 'slug') {
+        if ('slug' !== $this->getParameter('slug_column')) {
             $this->addSlugSetter($script);
             $this->addSlugGetter($script);
         }
@@ -286,7 +288,7 @@ protected function makeSlugUnique(\$slug, \$separator = '" . $this->getParameter
     {
         $this->builder = $builder;
         $script = '';
-        if ($this->getParameter('slug_column') != 'slug') {
+        if ('slug' !== $this->getParameter('slug_column')) {
             $this->addFilterBySlug($script);
         }
         $this->addFindOneBySlug($script);
@@ -328,5 +330,4 @@ public function findOneBySlug(\$slug, \$con = null)
 }
 ";
     }
-
 }

@@ -30,17 +30,18 @@ class SqlitePlatform extends DefaultPlatform
     protected function initialize()
     {
         parent::initialize();
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::NUMERIC, "DECIMAL"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARCHAR, "MEDIUMTEXT"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::DATE, "DATETIME"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::BINARY, "BLOB"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::VARBINARY, "MEDIUMBLOB"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARBINARY, "LONGBLOB"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::BLOB, "LONGBLOB"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::CLOB, "LONGTEXT"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::OBJECT, "MEDIUMTEXT"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::PHP_ARRAY, "MEDIUMTEXT"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::ENUM, "TINYINT"));
+
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::NUMERIC, 'DECIMAL'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARCHAR, 'MEDIUMTEXT'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::DATE, 'DATETIME'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::BINARY, 'BLOB'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::VARBINARY, 'MEDIUMBLOB'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARBINARY, 'LONGBLOB'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::BLOB, 'LONGBLOB'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::CLOB, 'LONGTEXT'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::OBJECT, 'MEDIUMTEXT'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::PHP_ARRAY, 'MEDIUMTEXT'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::ENUM, 'TINYINT'));
     }
 
     /**
@@ -48,7 +49,7 @@ class SqlitePlatform extends DefaultPlatform
      */
     public function getAutoIncrement()
     {
-        return "PRIMARY KEY";
+        return 'PRIMARY KEY';
     }
 
     public function getMaxColumnNameLength()
@@ -133,9 +134,13 @@ class SqlitePlatform extends DefaultPlatform
 
     public function hasSize($sqlType)
     {
-        return !("MEDIUMTEXT" == $sqlType || "LONGTEXT" == $sqlType
-                || "BLOB" == $sqlType || "MEDIUMBLOB" == $sqlType
-                || "LONGBLOB" == $sqlType);
+        return !in_array($sqlType, array(
+            'MEDIUMTEXT',
+            'LONGTEXT',
+            'BLOB',
+            'MEDIUMBLOB',
+            'LONGBLOB',
+        ));
     }
 
     /**
@@ -147,9 +152,9 @@ class SqlitePlatform extends DefaultPlatform
     {
         if (function_exists('sqlite_escape_string')) {
             return sqlite_escape_string($text);
-        } else {
-            return parent::disconnectedEscapeText($text);
         }
+
+        return parent::disconnectedEscapeText($text);
     }
 
     public function quoteIdentifier($text)

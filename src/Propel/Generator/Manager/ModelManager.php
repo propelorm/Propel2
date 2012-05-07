@@ -25,8 +25,8 @@ class ModelManager extends AbstractManager
     {
         $this->validate();
 
-        $totalNbFiles	 = 0;
-        $dataModels	 	 = $this->getDataModels();
+        $totalNbFiles    = 0;
+        $dataModels      = $this->getDataModels();
         $generatorConfig = $this->getGeneratorConfig();
 
         $this->log('Generating PHP files...');
@@ -113,7 +113,7 @@ class ModelManager extends AbstractManager
                         }
 
                         $totalNbFiles += $nbWrittenFiles;
-                        if ($nbWrittenFiles == 0) {
+                        if (0 === $nbWrittenFiles) {
                             $this->log("\t\t(no change)");
                         }
                     } // if !$table->isForReferenceOnly()

@@ -10,14 +10,12 @@
 
 namespace Propel\Runtime\Om;
 
-use Iterator;
-
 /**
  * Pre-order node iterator for Node objects.
  *
  * @author     Dave Lawson <dlawson@masterytech.com>
  */
-class PreOrderNodeIterator implements Iterator
+class PreOrderNodeIterator implements \Iterator
 {
     private $topNode = null;
 
@@ -48,7 +46,7 @@ class PreOrderNodeIterator implements Iterator
 
     public function valid()
     {
-        return ($this->curNode !== null);
+        return null !== $this->curNode;
     }
 
     public function current()
@@ -63,12 +61,10 @@ class PreOrderNodeIterator implements Iterator
 
     public function next()
     {
-        if ($this->valid())
-        {
+        if ($this->valid()) {
             $nextNode = $this->curNode->getFirstChildNode($this->querydb, $this->con);
 
-            while (null === $nextNode)
-            {
+            while (null === $nextNode) {
                 if (null === $this->curNode || $this->curNode->equals($this->topNode)) {
                     break;
                 }
@@ -85,5 +81,4 @@ class PreOrderNodeIterator implements Iterator
 
         return $this->curNode;
     }
-
 }

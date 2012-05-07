@@ -187,7 +187,7 @@ class Join
     public function getConditions()
     {
         $conditions = array();
-        for ($i=0; $i < $this->count; $i++) {
+        for ($i = 0; $i < $this->count; $i++) {
             $conditions[] = array(
                 'left'     => $this->getLeftColumn($i),
                 'operator' => $this->getOperator($i),
@@ -497,7 +497,7 @@ class Join
     public function buildJoinCondition(Criteria $c)
     {
         $joinCondition = null;
-        for ($i=0; $i < $this->count; $i++) {
+        for ($i = 0; $i < $this->count; $i++) {
             $criterion = $c->getNewCriterion($this->getLeftColumn($i), $this->getLeftColumn($i) . $this->getOperator($i) . $this->getRightColumn($i), Criteria::CUSTOM);
             if (null === $joinCondition) {
                 $joinCondition = $criterion;
@@ -529,7 +529,7 @@ class Join
     {
         if (null === $this->joinCondition) {
             $conditions = array();
-            for ($i=0; $i < $this->count; $i++) {
+            for ($i = 0; $i < $this->count; $i++) {
                 $conditions []= $this->getLeftColumn($i) . $this->getOperator($i) . $this->getRightColumn($i);
             }
             $joinCondition = sprintf('(%s)', implode($conditions, ' AND '));
@@ -555,7 +555,7 @@ class Join
     {
         return null !== $join
             && $join instanceof Join
-            && $this->joinType == $join->getJoinType()
+            && $this->joinType === $join->getJoinType()
             && $this->getConditions() == $join->getConditions()
         ;
     }

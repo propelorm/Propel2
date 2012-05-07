@@ -37,15 +37,18 @@ class SortableBehavior extends Behavior
      */
     public function modifyTable()
     {
-        if (!$this->getTable()->containsColumn($this->getParameter('rank_column'))) {
-            $this->getTable()->addColumn(array(
+        $table = $this->getTable();
+
+        if (!$table->containsColumn($this->getParameter('rank_column'))) {
+            $table->addColumn(array(
                 'name' => $this->getParameter('rank_column'),
                 'type' => 'INTEGER'
             ));
         }
-        if ($this->getParameter('use_scope') == 'true' &&
-             !$this->getTable()->containsColumn($this->getParameter('scope_column'))) {
-            $this->getTable()->addColumn(array(
+
+        if ('true' === $this->getParameter('use_scope')
+            && !$table->containsColumn($this->getParameter('scope_column'))) {
+            $table->addColumn(array(
                 'name' => $this->getParameter('scope_column'),
                 'type' => 'INTEGER'
             ));
@@ -54,7 +57,7 @@ class SortableBehavior extends Behavior
 
     public function getObjectBuilderModifier()
     {
-        if (is_null($this->objectBuilderModifier)) {
+        if (null === $this->objectBuilderModifier) {
             $this->objectBuilderModifier = new SortableBehaviorObjectBuilderModifier($this);
         }
 
@@ -63,7 +66,7 @@ class SortableBehavior extends Behavior
 
     public function getQueryBuilderModifier()
     {
-        if (is_null($this->queryBuilderModifier)) {
+        if (null === $this->queryBuilderModifier) {
             $this->queryBuilderModifier = new SortableBehaviorQueryBuilderModifier($this);
         }
 
@@ -72,7 +75,7 @@ class SortableBehavior extends Behavior
 
     public function getPeerBuilderModifier()
     {
-        if (is_null($this->peerBuilderModifier)) {
+        if (null === $this->peerBuilderModifier) {
             $this->peerBuilderModifier = new SortableBehaviorPeerBuilderModifier($this);
         }
 
@@ -81,7 +84,6 @@ class SortableBehavior extends Behavior
 
     public function useScope()
     {
-        return $this->getParameter('use_scope') == 'true';
+        return 'true' === $this->getParameter('use_scope');
     }
-
 }

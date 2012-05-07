@@ -14,10 +14,6 @@ use Propel\Generator\Exception\InvalidArgumentException;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\Table;
 
-use \PDO;
-use \Exception;
-use \PDOException;
-
 /**
  * Service class for preparing and executing migrations
  *
@@ -79,8 +75,8 @@ class MigrationManager extends AbstractManager
             $username = isset($buildConnection['user']) && $buildConnection['user'] ? $buildConnection['user'] : null;
             $password = isset($buildConnection['password']) && $buildConnection['password'] ? $buildConnection['password'] : null;
 
-            $pdo = new PDO($dsn, $username, $password);
-            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $pdo = new \PDO($dsn, $username, $password);
+            $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
             $pdoConnections[$datasource] = $pdo;
         }
@@ -120,7 +116,7 @@ class MigrationManager extends AbstractManager
     public function getOldestDatabaseVersion()
     {
         if (!$connections = $this->getConnections()) {
-            throw new Exception('You must define database connection settings in a buildtime-conf.xml file to use migrations');
+            throw new \Exception('You must define database connection settings in a buildtime-conf.xml file to use migrations');
         }
 
         $oldestMigrationTimestamp = null;
@@ -135,13 +131,13 @@ class MigrationManager extends AbstractManager
                 if ($migrationTimestamp = $stmt->fetchColumn()) {
                     $migrationTimestamps[$name] = $migrationTimestamp;
                 }
-            } catch (PDOException $e) {
+            } catch (\PDOException $e) {
                 $this->createMigrationTable($name);
                 $oldestMigrationTimestamp = 0;
             }
         }
 
-        if ($oldestMigrationTimestamp === null && $migrationTimestamps) {
+        if (null === $oldestMigrationTimestamp && $migrationTimestamps) {
             sort($migrationTimestamps);
             $oldestMigrationTimestamp = array_shift($migrationTimestamps);
         }
@@ -158,7 +154,7 @@ class MigrationManager extends AbstractManager
             $stmt->execute();
 
             return true;
-        } catch (PDOException $e) {
+        } catch (\PDOException $e) {
             return false;
         }
     }
@@ -184,7 +180,7 @@ class MigrationManager extends AbstractManager
         $res = SqlParser::executeString($statements, $pdo);
 
         if (!$res) {
-            throw new Exception(sprintf('Unable to create migration table in datasource "%s"', $datasource));
+            throw new \Exception(sprintf('Unable to create migration table in datasource "%s"', $datasource));
         }
     }
 
@@ -201,7 +197,7 @@ class MigrationManager extends AbstractManager
             $platform->quoteIdentifier('version')
         );
         $stmt = $pdo->prepare($sql);
-        $stmt->bindParam(1, $timestamp, PDO::PARAM_INT);
+        $stmt->bindParam(1, $timestamp, \PDO::PARAM_INT);
         $stmt->execute();
         $pdo->commit();
     }

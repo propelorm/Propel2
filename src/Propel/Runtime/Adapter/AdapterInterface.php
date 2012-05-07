@@ -16,16 +16,15 @@ use Propel\Runtime\Map\ColumnMap;
 use Propel\Runtime\Map\DatabaseMap;
 use Propel\Runtime\Query\Criteria;
 
-
 /**
  * Interface for adapters.
  *
  */
 interface AdapterInterface
 {
-    const ID_METHOD_NONE            = 0;
-    const ID_METHOD_AUTOINCREMENT   = 1;
-    const ID_METHOD_SEQUENCE        = 2;
+    const ID_METHOD_NONE          = 0;
+    const ID_METHOD_AUTOINCREMENT = 1;
+    const ID_METHOD_SEQUENCE      = 2;
 
     /**
      * Build database connection
@@ -135,14 +134,14 @@ interface AdapterInterface
     /**
      * Whether this adapter uses an ID generation system that requires getting ID _before_ performing INSERT.
      *
-     * @return    boolean
+     * @return    Boolean
      */
     function isGetIdBeforeInsert();
 
     /**
      * Whether this adapter uses an ID generation system that requires getting ID _before_ performing INSERT.
      *
-     * @return    boolean
+     * @return    Boolean
      */
     function isGetIdAfterInsert();
 
@@ -196,7 +195,7 @@ interface AdapterInterface
      * @todo       should be abstract
      * @deprecated
      *
-     * @return    boolean
+     * @return    Boolean
      */
     function useQuoteIdentifier();
 
@@ -243,7 +242,7 @@ interface AdapterInterface
      *
      * @param     Propel\Runtime\Map\Criteria  $criteria
      * @param     array     $fromClause
-     * @param     boolean   $aliasAll
+     * @param     Boolean   $aliasAll
      *
      * @return    string
      */
@@ -293,7 +292,7 @@ interface AdapterInterface
      * @param     Propel\Runtime\Map\ColumnMap     $cMap  The ColumnMap of the column to bind
      * @param     null|integer  $position  The position of the parameter to bind
      *
-     * @return    boolean
+     * @return    Boolean
      */
     function bindValue(StatementInterface $stmt, $parameter, $value, ColumnMap $cMap, $position = null);
 }

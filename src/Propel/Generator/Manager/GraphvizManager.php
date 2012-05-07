@@ -13,7 +13,7 @@ namespace Propel\Generator\Manager;
 use Propel\Generator\Exception\BuildException;
 
 /**
- * @author	William Durand <william.durand1@gmail.com>
+ * @author  William Durand <william.durand1@gmail.com>
  */
 class GraphvizManager extends AbstractManager
 {

@@ -118,5 +118,4 @@ class ColumnDiff
 
         return $ret;
     }
-
 }

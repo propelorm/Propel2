@@ -66,8 +66,7 @@ class ModelJoin extends Join
      */
     public function getTableMap()
     {
-        if (null === $this->tableMap && null !== $this->relationMap)
-        {
+        if (null === $this->tableMap && null !== $this->relationMap) {
             $this->tableMap = $this->relationMap->getRightTable();
         }
 
@@ -135,7 +134,8 @@ class ModelJoin extends Join
         return parent::equals($join)
             && $this->relationMap == $join->getRelationMap()
             && $this->previousJoin == $join->getPreviousJoin()
-            && $this->rightTableAlias == $join->getRightTableAlias();
+            && $this->rightTableAlias == $join->getRightTableAlias()
+        ;
     }
 
     public function __toString()
