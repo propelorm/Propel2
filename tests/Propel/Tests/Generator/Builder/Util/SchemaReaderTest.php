@@ -54,7 +54,7 @@ class SchemaReaderTest extends \PHPUnit_Framework_TestCase
         $xmlSchema = '<database name="foo"></database>';
         $schemaReader = new SchemaReader();
         $schema = $schemaReader->parseString($xmlSchema);
-        $expectedDatabase = '<database name="foo" defaultIdMethod="native" defaultPhpNamingMethod="underscore" defaultTranslateMethod="none"/>';
+        $expectedDatabase = '<database name="foo" defaultIdMethod="native" defaultPhpNamingMethod="underscore"/>';
         $database = $schema->getDatabase();
         $this->assertEquals($expectedDatabase, $database->toString());
         $expectedSchema = "<app-data>\n$expectedDatabase\n</app-data>";
