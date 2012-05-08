@@ -189,11 +189,20 @@ class ConcreteInheritanceBehavior extends Behavior
  */
 public function getParentOrCreate(\$con = null)
 {
-    if (\$this->isNew() && \$this->isPrimaryKeyNull()) {
-        \$parent = new " . $parentClass . "();
-        \$parent->set" . $this->getParentTable()->getColumn($this->getParameter('descendant_column'))->getPhpName() . "('" . $this->builder->getStubObjectBuilder()->getQualifiedClassName() . "');
-
-        return \$parent;
+    if (\$this->isNew()) {
+		if (\$this->isPrimaryKeyNull()) {
+			\$parent = new " . $parentClass . "();
+			\$parent->set" . $this->getParentTable()->getColumn($this->getParameter('descendant_column'))->getPhpName() . "('" . $this->builder->getStubObjectBuilder()->getQualifiedClassName() . "');
+			return \$parent;
+		} else {
+			\$parent = " . $this->builder->getNewStubQueryBuilder($parentTable)->getClassname() . "::create()->findPk(\$this->getPrimaryKey(), \$con);
+			if (null === \$parent || null !== \$parent->getDescendantClass()) {
+				\$parent = new " . $parentClass . "();
+				\$parent->setPrimaryKey(\$this->getPrimaryKey());
+				\$parent->set" . $this->getParentTable()->getColumn($this->getParameter('descendant_column'))->getPhpName() . "('" . $this->builder->getStubObjectBuilder()->getQualifiedClassName() . "');
+			}
+			return \$parent;
+		}
     } else {
         return " . $this->builder->getClassNameFromBuilder($this->builder->getNewStubQueryBuilder($parentTable)) . "::create()->findPk(\$this->getPrimaryKey(), \$con);
     }
