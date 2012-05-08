@@ -19,14 +19,14 @@ abstract class SchemasTestBase extends \PHPUnit_Framework_TestCase
 {
     static public function setUpBeforeClass()
     {
-        if (file_exists(dirname(__FILE__) . '/../../../../Fixtures/schemas/build/conf/bookstore-schemas-conf.php')) {
-            Propel::init(dirname(__FILE__) . '/../../../../Fixtures/schemas/build/conf/bookstore-schemas-conf.php');
+        if (file_exists(dirname(__FILE__) . '/../../../../Fixtures/schemas/build/conf/bookstore-conf.php')) {
+            Propel::init(dirname(__FILE__) . '/../../../../Fixtures/schemas/build/conf/bookstore-conf.php');
         }
     }
 
     protected function setUp()
     {
-        if (!file_exists(dirname(__FILE__) . '/../../../../Fixtures/schemas/build/conf/bookstore-schemas-conf.php')) {
+        if (!file_exists(dirname(__FILE__) . '/../../../../Fixtures/schemas/build/conf/bookstore-conf.php')) {
             $this->markTestSkipped('You must build the schemas project for this tests to run');
         }
     }

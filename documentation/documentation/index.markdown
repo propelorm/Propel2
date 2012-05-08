@@ -18,7 +18,6 @@ title: Documentation
 
 * [Basic CRUD](03-basic-crud.html) The basics of Propel C.R.U.D. (Create, Retrieve, Update, Delete) operations
 * [Relationships](04-relationships.html) Searching and manipulating data from related tables.
-* [Validators](05-validators.html) The validation framework checks data before insertion based on column type.
 * [Transactions](06-transactions.html) Where and when to use transactions.
 * [Behaviors](07-behaviors.html) The behavior system allows to package and reuse common model features.
 * [Logging And Debugging](08-logging.html) Propel can log a lot of information, including the SQL queries it executes.
@@ -46,6 +45,7 @@ title: Documentation
 * [`sluggable`](../behaviors/sluggable.html)
 * [`timestampable`](../behaviors/timestampable.html)
 * [`sortable`](../behaviors/sortable.html)
+* [`validate`](../behaviors/validate.html)
 * [`versionable`](../behaviors/versionable.html)
 * And [`concrete_inheritance`](09-inheritance.html), documented in the Inheritance Chapter even if it's a behavior
 

@@ -144,12 +144,6 @@ propel.samePhpName = true|{false}
 # does provide additional information (such as full-text indexes) which can
 # affect the generation of the DDL from the schema.
 propel.addVendorInfo = true|{false}
-
-# Which Propel validators to add to the generated schema,
-# based on the database constraints.
-propel.addValidators = {none}|maxvalue|type|required|unique|all
-# You can cherry-pick allowed validators by using a comma-separated value, e.g
-propel.addValidators = maxvalue,type,required
 {% endhighlight %}
 
 ### Customizing Generated Object Model ###
@@ -165,10 +159,6 @@ propel.addGenericMutators = {true}|false
 # If you use a versioning system, don't set this to true, or the classes
 # will be committed too often with just a date change.
 propel.addTimeStamp = true|{false}
-
-# Whether to add `validate()` method to your classes.
-# Set to false if you don't use Propel validation.
-propel.addValidateMethod = {true}|false
 
 # Whether to add `require` statements on the generated stub classes.
 # Propel uses autoloading for OM classes, and doesn't insert require statements

@@ -42,13 +42,6 @@ class Table extends ScopedElement implements IdMethod
     private $columnList = array();
 
     /**
-     * Validators for this table.
-     *
-     * @var       array Validator[]
-     */
-    private $validatorList = array();
-
-    /**
      * Foreign keys for this table.
      *
      * @var       array ForeignKey[]
@@ -715,7 +708,7 @@ class Table extends ScopedElement implements IdMethod
         unset($this->columnsByLowercaseName[strtolower($col->getName())]);
         unset($this->columnsByPhpName[$col->getPhpName()]);
         $this->adjustColumnPositions();
-        // FIXME: also remove indexes and validators on this column?
+        // FIXME: also remove indexes on this column?
     }
 
     public function adjustColumnPositions()
@@ -724,54 +717,6 @@ class Table extends ScopedElement implements IdMethod
         $columnCount = $this->getNumColumns();
         for ($i=0; $i < $columnCount; $i++) {
             $this->columnList[$i]->setPosition($i + 1);
-        }
-    }
-
-    /**
-     * Add a validator to this table.
-     *
-     * Supports two signatures:
-     * - addValidator(Validator $validator)
-     * - addValidator(array $attribs)
-     *
-     * @param     mixed $data Validator object or XML attribs (array) from <validator /> element.
-     * @return    Validator The added Validator.
-     * @throws    EngineException
-     */
-    public function addValidator($data)
-    {
-        if ($data instanceof Validator) {
-            $validator = $data;
-            $col = $this->getColumn($validator->getColumnName());
-            if ($col == null) {
-                throw new EngineException("Failed adding validator to table '" . $this->getName() .
-                    "': column '" . $validator->getColumnName() . "' does not exist !");
-            }
-            $validator->setColumn($col);
-            $validator->setTable($this);
-            $this->validatorList[] = $validator;
-
-            return $validator;
-        } else {
-            $validator = new Validator();
-            $validator->setTable($this);
-            $validator->loadFromXML($data);
-
-            return $this->addValidator($validator);
-        }
-    }
-
-    /**
-     * Removes validators based on a column name
-     *
-     * @param string the name of the column bearing a validator
-     */
-    public function removeValidatorForColumn($columnName)
-    {
-        foreach ($this->validatorList as $key => $validator) {
-            if ($validator->getColumnName() == $columnName) {
-                unset($this->validatorList[$key]);
-            }
         }
     }
 
@@ -1494,15 +1439,6 @@ class Table extends ScopedElement implements IdMethod
     }
 
     /**
-     * Returns an Array containing all the validators in the table
-     * @return    array Validator[]
-     */
-    public function getValidators()
-    {
-        return $this->validatorList;
-    }
-
-    /**
      * Returns an Array containing all the FKs in the table.
      * @return    array ForeignKey[]
      */
@@ -1756,10 +1692,6 @@ class Table extends ScopedElement implements IdMethod
 
         foreach ($this->columnList as $col) {
             $col->appendXml($tableNode);
-        }
-
-        foreach ($this->validatorList as $validator) {
-            $validator->appendXml($tableNode);
         }
 
         foreach ($this->foreignKeys as $fk) {

@@ -7,7 +7,7 @@ title: Model Introspection At Runtime
 
 In addition to the object and peer classes used to do C.R.U.D. operations, Propel generates an object mapping for your tables to allow runtime introspection.
 
-The intospection objects are instances of the map classes. Propel maps databases, tables, columns, validators, and relations into objects that you can easily use.
+The intospection objects are instances of the map classes. Propel maps databases, tables, columns and relations into objects that you can easily use.
 
 ## Retrieving a TableMap ##
 
@@ -82,7 +82,6 @@ $bookTitleColumn->isNumeric();       // false
 $bookTitleColumn->isText();          // true
 $bookTitleColumn->isPrimaryKey();    // false
 $bookTitleColumn->isForeignKey();    // false
-$bookTitleColumn->hasValidators();   // false
 $bookTitleColumn->isPrimaryString(); // true
 {% endhighlight %}
 

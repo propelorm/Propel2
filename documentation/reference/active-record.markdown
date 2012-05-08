@@ -250,7 +250,7 @@ echo $book->getAuthor()->getLastName(); // Tolstoi
     <reference local="author_id" foreign="id" />
   </foreign-key>
 </table>
-<!-- Generated methods will then be Book::setWriter(), and Book::getWriter()
+<!-- Generated methods will then be Book::setWriter(), and Book::getWriter() -->
 {% endhighlight %}
 
 ### Many-to-one Relationships ###
@@ -280,7 +280,7 @@ $author->clearBooks(); // removes the relationship
   </foreign-key>
 </table>
 <!-- Generated methods will then be Author::addPublication(), Author::getPublications(),
-     Author::countPublications(), and Author::clearPublications()
+     Author::countPublications(), and Author::clearPublications() -->
 {% endhighlight %}
 
 ### Many-to-many relationships ###
@@ -522,7 +522,7 @@ propel.addGenericMutators  = false
 
 ## Validation ##
 
-Active Record classes for tables using validation rules (defined in the schema using the `<validator>` and `<rule>` tags) have two additional methods: `validate()`, and `getValidationFailures()`.
+Active Record classes for tables using validate behavior have three additional methods: `validate()`, `getValidationFailures()` and `loadValidatorMetadata()`.
 
 {% highlight php %}
 <?php
@@ -540,7 +540,7 @@ if ($book->validate()) {
 }
 {% endhighlight %}
 
-See the [Validators documentation](../documentation/05-validators) for more details.
+See the [Validate behavior documentation](../behaviors/validate.html) for more details.
 
 ## Import and Export Capabilities ##
 

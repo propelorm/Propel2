@@ -48,7 +48,7 @@ PHP class or method name.
      note: the interface="true", requires that useManagers=true in the
      properties file.
 -->
-<!ELEMENT table (column+,(foreign-key|index|unique|id-method-parameter|validator|behavior|vendor)*)>
+<!ELEMENT table (column+,(foreign-key|index|unique|id-method-parameter|behavior|vendor)*)>
 <!ATTLIST table
   name CDATA #REQUIRED
   phpName CDATA #IMPLIED
@@ -158,21 +158,6 @@ PHP class or method name.
 <!ELEMENT unique-column (vendor*)>
 <!ATTLIST unique-column
   name CDATA #REQUIRED
->
-
-<!ELEMENT validator (rule+)>
-<!ATTLIST validator
-  column CDATA #REQUIRED
-  translate CDATA #IMPLIED
->
-
-<!ELEMENT rule EMPTY>
-<!ATTLIST rule
-  name (mask|maxLength|maxValue|minLength|minValue|required|unique|validValues|class) #REQUIRED
-  class CDATA #IMPLIED
-  value CDATA #IMPLIED
-  size ID #IMPLIED
-  message CDATA #IMPLIED
 >
 
 <!ELEMENT vendor (parameter+)>

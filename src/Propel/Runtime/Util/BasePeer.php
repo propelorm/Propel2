@@ -16,7 +16,6 @@ use Propel\Runtime\Propel;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\RuntimeException;
 use Propel\Runtime\Query\Criteria;
-use Propel\Runtime\Validator\ValidationFailed;
 
 /**
  * This is a utility class for all generated Peer classes in the system.
@@ -38,9 +37,9 @@ use Propel\Runtime\Validator\ValidationFailed;
 class BasePeer
 {
     /**
-     * Array (hash) that contains cached validators
+     * Array (hash) that contains the cached mapBuilders.
      */
-    private static $validatorMap = array();
+    private static $mapBuilders = array();
 
     /**
      * phpname type
@@ -562,35 +561,6 @@ class BasePeer
     }
 
     /**
-     * Applies any validators that were defined in the schema to the specified columns.
-     *
-     * @param      string $dbName The name of the database
-     * @param      string $tableName The name of the table
-     * @param      array $columns Array of column names as key and column values as value.
-     */
-    static public function doValidate($dbName, $tableName, $columns)
-    {
-        $dbMap = Propel::getServiceContainer()->getDatabaseMap($dbName);
-        $tableMap = $dbMap->getTable($tableName);
-        $failureMap = array(); // map of ValidationFailed objects
-        foreach ($columns as $colName => $colValue) {
-            if ($tableMap->hasColumn($colName)) {
-                $col = $tableMap->getColumn($colName);
-                foreach ($col->getValidators() as $validatorMap) {
-                    $validator = BasePeer::getValidator($validatorMap->getClass());
-                    if ($validator && ($col->isNotNull() || $colValue !== null) && $validator->isValid($validatorMap, $colValue) === false) {
-                        if (!isset($failureMap[$colName])) { // for now we do one ValidationFailed per column, not per rule
-                            $failureMap[$colName] = new ValidationFailed($colName, $validatorMap->getMessage(), $validator);
-                        }
-                    }
-                }
-            }
-        }
-
-        return (!empty($failureMap) ? $failureMap : true);
-    }
-
-    /**
      * Helper method which returns the primary key contained
      * in the given Criteria object.
      *
@@ -869,27 +839,5 @@ class BasePeer
         }
 
         return $params;
-    }
-
-    /**
-     * This function searches for the given validator $name under propel/validator/$name.php,
-     * imports and caches it.
-     *
-     * @param	string $classname	The name of class
-     * @return	Validator object or null if not able to instantiate validator class (and error will be logged in this case)
-     */
-    static public function getValidator($classname)
-    {
-        try {
-            $v = isset(self::$validatorMap[$classname]) ? self::$validatorMap[$classname] : null;
-            if ($v === null) {
-                $v = new $classname();
-                self::$validatorMap[$classname] = $v;
-            }
-
-            return $v;
-        } catch (Exception $e) {
-            Propel::log("BasePeer::getValidator(): failed trying to instantiate " . $classname . ": ".$e->getMessage(), Propel::LOG_ERR);
-        }
     }
 }

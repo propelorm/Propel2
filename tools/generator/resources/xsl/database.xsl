@@ -115,7 +115,6 @@
 			<xsl:apply-templates select='index'/>
 			<xsl:apply-templates select='unique'/>
 			<xsl:apply-templates select='id-method-parameter'/>
-			<xsl:apply-templates select='validator'/>
 			<xsl:apply-templates select='vendor'/>
 			<xsl:apply-templates select='behavior'/>
 		</table>
@@ -199,28 +198,6 @@
 			</xsl:if>
 			<xsl:apply-templates select='@*'/>
 		</id-method-parameter>
-	</xsl:template>
-
-	<!--
-	Just copy the validator node with attributes and add the rule node
-	-->
-	<xsl:template match='validator'>
-		<validator>
-			<xsl:apply-templates select='@*'/>
-			<xsl:apply-templates select='rule'/>
-		</validator>
-	</xsl:template>
-
-	<!--
-	Adds a default name to the rule (if none given) and copy the attributes
-	-->
-	<xsl:template match='rule'>
-		<rule>
-			<xsl:if test='not(boolean(@name))'>
-				<xsl:attribute name='name'>class</xsl:attribute>
-			</xsl:if>
-			<xsl:apply-templates select='@*'/>
-		</rule>
 	</xsl:template>
 
 	<!--

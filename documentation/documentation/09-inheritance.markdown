@@ -369,7 +369,7 @@ Since the columns of the main table are copied to the child tables, this schema 
 </table>
 {% endhighlight %}
 
->**Tip**<br />The `concrete_inheritance` behavior copies columns, foreign keys, indices and validators.
+>**Tip**<br />The `concrete_inheritance` behavior copies columns, foreign keys and indices. If you've configured the `validate` behavior, it copies also validators.
 
 ### Using Inherited Model Classes ###
 
