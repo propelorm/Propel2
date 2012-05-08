@@ -93,7 +93,7 @@ abstract class AbstractPeerBuilder extends AbstractOMBuilder
     }
 
     /**
-     * Adds the doInsert(), doUpdate(), doDeleteAll(), doValidate(), etc. methods.
+     * Adds the doInsert(), doUpdate(), doDeleteAll(), etc. methods.
      * @param      string &$script The script will be modified in this method.
      */
     protected function addUpdateMethods(&$script)
@@ -110,8 +110,6 @@ abstract class AbstractPeerBuilder extends AbstractOMBuilder
         if ($this->isDeleteSetNullEmulationNeeded()) {
             $this->addDoOnDeleteSetNull($script);
         }
-
-        $this->addDoValidate($script);
     }
 
     /**
@@ -165,7 +163,7 @@ abstract class AbstractPeerBuilder extends AbstractOMBuilder
 
         $this->addGetOMClassMethod($script);
 
-        // add the insert, update, delete, validate etc. methods
+        // add the insert, update, delete, etc. methods
         if (!$table->isAlias() && !$table->isReadOnly()) {
             $this->addUpdateMethods($script);
         }

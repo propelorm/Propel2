@@ -10,14 +10,6 @@
         <column name="title" type="VARCHAR" required="true" description="Book Title" primaryString="true" />
         <column name="isbn" required="true" type="VARCHAR" size="24" phpName="ISBN" description="ISBN Number" />
         <column name="price" required="false" type="FLOAT" description="Price of the book." />
-        <validator column="title" translate="none">
-            <rule name="unique" message="Book title already in database." />
-            <rule name="minLength" value="10" message="Book title must be more than ${value} characters long." />
-            <rule name="maxLength" value="255" message="Book title must not be longer than ${value} characters." />
-        </validator>
-        <validator column="isbn" translate="none">
-            <rule name="class" class="\Propel\Tests\Helpers\Bookstore\Validator\ISBNValidator" message="ISBN does not validate!"/>
-        </validator>
     </table>
 
     <!--  Test some custom php column types. -->
@@ -29,9 +21,6 @@
         <column name="total_books" type="INTEGER" />
         <column name="store_open_time" type="TIME" />
         <column name="website" type="VARCHAR" size="255"/>
-        <validator column="website">
-            <rule name="match" value="/^((ht|f)tp(s?)\:\/\/[a-zA-Z0-9\-\._]+(\.[a-zA-Z0-9\-\._]+){2,}(\/?)([a-zA-Z0-9\-\.\?\,'\/\\\+&amp;amp;%\$#_]*)?$|$)/" message="wrong url"/>
-        </validator>
         <behavior name="aggregate_column">
             <parameter name="name" value="total_contest_entries" />
             <parameter name="expression" value="COUNT(customer_id)" />

@@ -272,10 +272,6 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
             $this->addManipulationMethods($script);
         }
 
-        if ($this->isAddValidateMethod()) {
-            $this->addValidationMethods($script);
-        }
-
         if ($this->isAddGenericAccessors()) {
             $this->addGetByName($script);
             $this->addGetByPosition($script);
@@ -376,7 +372,6 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
         }
 
         $this->addAlreadyInSaveAttribute($script);
-        $this->addAlreadyInValidationAttribute($script);
 
         // apply behaviors
         $this->applyBehaviorModifier('objectAttributes', $script, "    ");
@@ -2670,54 +2665,6 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     }
 
     /**
-     * Adds the methods related to validationg the object.
-     * @param      string &$script The script will be modified in this method.
-     */
-    protected function addValidationMethods(&$script)
-    {
-        $this->addValidationFailuresAttribute($script);
-        $this->addGetValidationFailures($script);
-        $this->addValidate($script);
-        $this->addDoValidate($script);
-    }
-
-    /**
-     * Adds the $validationFailures attribute to store ValidationFailed objects.
-     * @param      string &$script The script will be modified in this method.
-     */
-    protected function addValidationFailuresAttribute(&$script)
-    {
-        $script .= "
-    /**
-     * Array of ValidationFailed objects.
-     * @var        array ValidationFailed[]
-     */
-    protected \$validationFailures = array();
-";
-    }
-
-    /**
-     * Adds the getValidationFailures() method.
-     * @param      string &$script The script will be modified in this method.
-     */
-    protected function addGetValidationFailures(&$script)
-    {
-        $script .= "
-    /**
-     * Gets any ValidationFailed objects that resulted from last call to validate().
-     *
-     *
-     * @return     array ValidationFailed[]
-     * @see        validate()
-     */
-    public function getValidationFailures()
-    {
-        return \$this->validationFailures;
-    }
-";
-    } // addGetValidationFailures()
-
-    /**
      * Adds the correct getPrimaryKey() method for this object.
      * @param      string &$script The script will be modified in this method.
      */
@@ -4739,145 +4686,6 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     }
 
     /**
-     * Adds the $alreadyInValidation attribute, which prevents attempting to re-validate the same object.
-     * @param      string &$script The script will be modified in this method.
-     */
-    protected function addAlreadyInValidationAttribute(&$script)
-    {
-        $script .= "
-    /**
-     * Flag to prevent endless validation loop, if this object is referenced
-     * by another object which falls in this transaction.
-     * @var        boolean
-     */
-    protected \$alreadyInValidation = false;
-";
-    }
-
-    /**
-     * Adds the validate() method.
-     * @param      string &$script The script will be modified in this method.
-     */
-    protected function addValidate(&$script)
-    {
-        $script .= "
-    /**
-     * Validates the objects modified field values and all objects related to this table.
-     *
-     * If \$columns is either a column name or an array of column names
-     * only those columns are validated.
-     *
-     * @param      mixed \$columns Column name or an array of column names.
-     * @return     boolean Whether all columns pass validation.
-     * @see        doValidate()
-     * @see        getValidationFailures()
-     */
-    public function validate(\$columns = null)
-    {
-        \$res = \$this->doValidate(\$columns);
-        if (\$res === true) {
-            \$this->validationFailures = array();
-
-            return true;
-        } else {
-            \$this->validationFailures = \$res;
-
-            return false;
-        }
-    }
-";
-    }
-
-    /**
-     * Adds the workhourse doValidate() method.
-     * @param      string &$script The script will be modified in this method.
-     */
-    protected function addDoValidate(&$script)
-    {
-        $table = $this->getTable();
-
-        $script .= "
-    /**
-     * This function performs the validation work for complex object models.
-     *
-     * In addition to checking the current object, all related objects will
-     * also be validated.  If all pass then <code>true</code> is returned; otherwise
-     * an aggreagated array of ValidationFailed objects will be returned.
-     *
-     * @param      array \$columns Array of column names to validate.
-     * @return     mixed <code>true</code> if all validations pass; array of <code>ValidationFailed</code> objets otherwise.
-     */
-    protected function doValidate(\$columns = null)
-    {
-        if (!\$this->alreadyInValidation) {
-            \$this->alreadyInValidation = true;
-            \$retval = null;
-
-            \$failureMap = array();
-";
-        if (count($table->getForeignKeys()) != 0) {
-            $script .= "
-
-            // We call the validate method on the following object(s) if they
-            // were passed to this object by their coresponding set
-            // method.  This object relates to these object(s) by a
-            // foreign key reference.
-";
-            foreach ($table->getForeignKeys() as $fk) {
-                $aVarName = $this->getFKVarName($fk);
-                $script .= "
-            if (\$this->".$aVarName." !== null) {
-                if (!\$this->".$aVarName."->validate(\$columns)) {
-                    \$failureMap = array_merge(\$failureMap, \$this->".$aVarName."->getValidationFailures());
-                }
-            }
-";
-            } /* for () */
-        } /* if count(fkeys) */
-
-        $script .= "
-
-            if ((\$retval = ".$this->getPeerClassName()."::doValidate(\$this, \$columns)) !== true) {
-                \$failureMap = array_merge(\$failureMap, \$retval);
-            }
-
-";
-
-        foreach ($table->getReferrers() as $refFK) {
-            if ($refFK->isLocalPrimaryKey()) {
-                $varName = $this->getPKRefFKVarName($refFK);
-                $script .= "
-                if (\$this->$varName !== null) {
-                    if (!\$this->".$varName."->validate(\$columns)) {
-                        \$failureMap = array_merge(\$failureMap, \$this->".$varName."->getValidationFailures());
-                    }
-                }
-";
-            } else {
-                $collName = $this->getRefFKCollVarName($refFK);
-                $script .= "
-                if (\$this->$collName !== null) {
-                    foreach (\$this->$collName as \$referrerFK) {
-                        if (!\$referrerFK->validate(\$columns)) {
-                            \$failureMap = array_merge(\$failureMap, \$referrerFK->getValidationFailures());
-                        }
-                    }
-                }
-";
-            }
-        } /* foreach getReferrers() */
-
-        $script .= "
-
-            \$this->alreadyInValidation = false;
-        }
-
-        return (!empty(\$failureMap) ? \$failureMap : true);
-    }
-";
-    }
-
-    /**
      * Adds the ensureConsistency() method to ensure that internal state is correct.
      * @param      string &$script The script will be modified in this method.
      */
@@ -5091,7 +4899,6 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
 
         $script .= "
         \$this->alreadyInSave = false;
-        \$this->alreadyInValidation = false;
         \$this->clearAllReferences();";
 
         if ($this->hasDefaultValues()) {

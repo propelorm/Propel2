@@ -37,17 +37,6 @@
         local="book_id"
         foreign="id"/>
     </foreign-key>
-    <validator column="reviewed_by" translate="none">
-        <rule
-            name="required"
-            message="The reviewed by field is required."/>
-    </validator>
-   <validator column="status" translate="none">
-      <rule
-         name="validValues"
-         value="new|reviewed|archived"
-         message="Invalid status. (new, reviewed, archived)" />
-    </validator>
   </table>
 
 </database>

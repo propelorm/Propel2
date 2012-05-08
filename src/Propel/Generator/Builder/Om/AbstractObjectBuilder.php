@@ -163,15 +163,6 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
         return (!$table->isAlias() && $this->getBuildProperty('addGenericAccessors'));
     }
 
-    /**
-     * Whether to add the validate() method.
-     * This is based on the build property propel.addValidateMethod
-     */
-    protected function isAddValidateMethod()
-    {
-        return $this->getBuildProperty('addValidateMethod');
-    }
-
     protected function hasDefaultValues()
     {
         foreach ($this->getTable()->getColumns() as $col) {

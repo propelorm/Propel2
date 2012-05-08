@@ -1812,64 +1812,6 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
     }
 
     /**
-     * Adds the doValidate() method.
-     * @param      string &$script The script will be modified in this method.
-     */
-    protected function addDoValidate(&$script)
-    {
-        $table = $this->getTable();
-        $script .= "
-    /**
-     * Validates all modified columns of given ".$this->getObjectClassName()." object.
-     * If parameter \$columns is either a single column name or an array of column names
-     * than only those columns are validated.
-     *
-     * NOTICE: This does not apply to primary or foreign keys for now.
-     *
-     * @param      ".$this->getObjectClassName()." \$obj The object to validate.
-     * @param      mixed \$cols Column name or array of column names.
-     *
-     * @return     mixed TRUE if all columns are valid or the error message of the first invalid column.
-     */
-    static public function doValidate(\$obj, \$cols = null)
-    {
-        \$columns = array();
-
-        if (\$cols) {
-            \$dbMap = Propel::getServiceContainer()->getDatabaseMap(static::DATABASE_NAME);
-            \$tableMap = \$dbMap->getTable(static::TABLE_NAME);
-
-            if (! is_array(\$cols)) {
-                \$cols = array(\$cols);
-            }
-
-            foreach (\$cols as \$colName) {
-                if (\$tableMap->hasColumn(\$colName)) {
-                    \$get = 'get' . \$tableMap->getColumn(\$colName)->getPhpName();
-                    \$columns[\$colName] = \$obj->\$get();
-                }
-            }
-        } else {
-";
-        foreach ($table->getValidators() as $val) {
-            $col = $val->getColumn();
-            if (!$col->isAutoIncrement()) {
-                $script .= "
-        if (\$obj->isNew() || \$obj->isColumnModified(".$this->getColumnConstant($col)."))
-            \$columns[".$this->getColumnConstant($col)."] = \$obj->get".$col->getPhpName()."();
-";
-            } // if
-        } // foreach
-
-        $script .= "
-        }
-
-        return {$this->basePeerClassName}::doValidate(static::DATABASE_NAME, static::TABLE_NAME, \$columns);
-    }
-";
-    } // end addDoValidate()
-
-    /**
      * Adds the retrieveByPK method for tables with single-column primary key.
      * @param      string &$script The script will be modified in this method.
      */

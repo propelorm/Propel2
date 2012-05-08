@@ -26,28 +26,7 @@
       name="age"
       type="INTEGER"
       description="The authors age"/>
-    <validator column="last_name" translate="none">
-        <rule
-            name="required"
-            message="The last name field is required."/>
-    </validator>
-    <validator column="email" translate="none">
-        <rule
-            name="match"
-            value="/^([a-zA-Z0-9])+([\.a-zA-Z0-9_-])*@([a-zA-Z0-9])+(\.[a-zA-Z0-9_-]+)+$/"
-            message="Please enter a valid email address."/>
-    </validator>
-    <validator column="age" translate="none">
-      <rule
-         name="minValue"
-         value="0"
-         message="Please enter a positive number." />
-      <rule
-         name="maxValue"
-         value="100"
-         message="Impressive age! Just kidding, hm?" />
-    </validator>
-
+    
   </table>
 
 </database>

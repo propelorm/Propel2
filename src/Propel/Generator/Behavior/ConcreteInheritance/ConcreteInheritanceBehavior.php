@@ -83,12 +83,6 @@ class ConcreteInheritanceBehavior extends Behavior
             $this->getTable()->addForeignKey($copiedFk);
         }
 
-        // add the validators of the parent table
-        foreach ($parentTable->getValidators() as $validator) {
-            $copiedValidator = clone $validator;
-            $this->getTable()->addValidator($copiedValidator);
-        }
-
         // add the indices of the parent table
         foreach ($parentTable->getIndices() as $index) {
             $copiedIndex = clone $index;
@@ -106,6 +100,12 @@ class ConcreteInheritanceBehavior extends Behavior
         // add the Behaviors of the parent table
         foreach ($parentTable->getBehaviors() as $behavior) {
             if ($behavior->getName() == 'concrete_inheritance_parent' || $behavior->getName() == 'concrete_inheritance') {
+                continue;
+            }
+            //validate behavior. If validate behavior already exists, clone only rules from parent
+            if ('validate' === $behavior->getName() && $table->hasBehavior('validate')) {
+                $table->getBehavior('validate')->mergeParameters($behavior->getParameters());
+
                 continue;
             }
             $copiedBehavior = clone $behavior;
