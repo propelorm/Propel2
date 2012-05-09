@@ -11,7 +11,7 @@ use Symfony\Component\Console\Output\Output;
 /**
  * @author William Durand <william.durand1@gmail.com>
  */
-class TestPrepare extends AbstractCommand
+class TestPrepareCommand extends AbstractCommand
 {
     /**
      * @var string
