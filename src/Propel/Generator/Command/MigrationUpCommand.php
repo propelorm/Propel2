@@ -6,7 +6,6 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\Output;
-
 use Propel\Generator\Config\GeneratorConfig;
 use Propel\Generator\Manager\MigrationManager;
 use Propel\Generator\Util\Filesystem;
@@ -14,7 +13,7 @@ use Propel\Generator\Util\Filesystem;
 /**
  * @author William Durand <william.durand1@gmail.com>
  */
-class MigrationDown extends AbstractCommand
+class MigrationUpCommand extends AbstractCommand
 {
     const DEFAULT_OUTPUT_DIRECTORY  = 'generated-migrations';
 
@@ -31,8 +30,8 @@ class MigrationDown extends AbstractCommand
             ->addOption('output-dir',       null, InputOption::VALUE_REQUIRED,  'The output directory', self::DEFAULT_OUTPUT_DIRECTORY)
             ->addOption('migration-table',  null, InputOption::VALUE_REQUIRED,  'Migration table name', self::DEFAULT_MIGRATION_TABLE)
             ->addOption('connection',       null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Connection to use', array())
-            ->setName('migration:down')
-            ->setDescription('Execute migrations down')
+            ->setName('migration:up')
+            ->setDescription('Execute migrations up')
         ;
     }
 
@@ -61,32 +60,24 @@ class MigrationDown extends AbstractCommand
         $manager->setMigrationTable($input->getOption('migration-table'));
         $manager->setWorkingDirectory($input->getOption('output-dir'));
 
-        $previousTimestamps = $manager->getAlreadyExecutedMigrationTimestamps();
-        if (!$nextMigrationTimestamp = array_pop($previousTimestamps)) {
-            $output->writeln('No migration were ever executed on this database - nothing to reverse.');
+        if (!$nextMigrationTimestamp = $manager->getFirstUpMigrationTimestamp()) {
+            $output->writeln('All migrations were already executed - nothing to migrate.');
 
             return false;
         }
-
         $output->writeln(sprintf(
-            'Executing migration %s down',
+            'Executing migration %s up',
             $manager->getMigrationClassName($nextMigrationTimestamp)
         ));
 
-        if ($nbPreviousTimestamps = count($previousTimestamps)) {
-            $previousTimestamp = array_pop($previousTimestamps);
-        } else {
-            $previousTimestamp = 0;
-        }
-
         $migration = $manager->getMigrationObject($nextMigrationTimestamp);
-        if (false === $migration->preDown($manager)) {
-            $output->writeln('<error>preDown() returned false. Aborting migration.</error>');
+        if (false === $migration->preUp($manager)) {
+            $output->writeln('<error>preUp() returned false. Aborting migration.</error>');
 
             return false;
         }
 
-        foreach ($migration->getDownSQL() as $datasource => $sql) {
+        foreach ($migration->getUpSQL() as $datasource => $sql) {
             $connection = $manager->getConnection($datasource);
 
             if ($input->getOption('verbose')) {
@@ -100,7 +91,6 @@ class MigrationDown extends AbstractCommand
             $pdo = $manager->getPdoConnection($datasource);
             $res = 0;
             $statements = SqlParser::parseString($sql);
-
             foreach ($statements as $statement) {
                 try {
                     if ($input->getOption('verbose')) {
@@ -111,7 +101,9 @@ class MigrationDown extends AbstractCommand
                     $stmt->execute();
                     $res++;
                 } catch (PDOException $e) {
-                    $output->writeln(sprintf('<error>Failed to execute SQL "%s"</error>', $statement));
+                    $output->writeln(sprintf('<error>Failed to execute SQL "%s". Aborting migration.</error>', $statement));
+
+                    return false;
                 }
             }
             if (!$res) {
@@ -120,35 +112,35 @@ class MigrationDown extends AbstractCommand
                     'Please review the code in "%s"',
                     $manager->getMigrationDir() . DIRECTORY_SEPARATOR . $manager->getMigrationClassName($nextMigrationTimestamp)
                 ));
-                $output->writeln('<error>Migration aborted</error>');
+                $output->writeln('<error>Migration aborted</error>', Project::MSG_ERR);
 
                 return false;
             }
-
             $output->writeln(sprintf(
                 '%d of %d SQL statements executed successfully on datasource "%s"',
                 $res,
                 count($statements),
                 $datasource
             ));
-
-            $manager->updateLatestMigrationTimestamp($datasource, $previousTimestamp);
-
+            $manager->updateLatestMigrationTimestamp($datasource, $nextMigrationTimestamp);
             if ($input->getOption('verbose')) {
                 $output->writeln(sprintf(
-                    'Downgraded migration date to %d for datasource "%s"',
-                    $previousTimestamp,
+                    'Updated latest migration date to %d for datasource "%s"',
+                    $nextMigrationTimestamp,
                     $datasource
                 ));
             }
         }
 
-        $migration->postDown($manager);
+        $migration->postUp($manager);
 
-        if ($nbPreviousTimestamps) {
-            $output->writeln(sprintf('Reverse migration complete. %d more migrations available for reverse.', $nbPreviousTimestamps));
+        if ($timestamps = $manager->getValidMigrationTimestamps()) {
+            $output->writeln(sprintf(
+                'Migration complete. %d migrations left to execute.',
+                count($timestamps)
+            ));
         } else {
-            $output->writeln('Reverse migration complete. No more migration available for reverse');
+            $output->writeln('Migration complete. No further migration to execute.');
         }
     }
 }

@@ -7,7 +7,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\Output;
 use Symfony\Component\Finder\Finder;
-
 use Propel\Generator\Config\GeneratorConfig;
 use Propel\Generator\Manager\ModelManager;
 use Propel\Generator\Util\Filesystem;
@@ -16,7 +15,7 @@ use Propel\Generator\Util\Filesystem;
  * @author Florian Klein <florian.klein@free.fr>
  * @author William Durand <william.durand1@gmail.com>
  */
-class ModelBuild extends AbstractCommand
+class ModelBuildCommand extends AbstractCommand
 {
     const DEFAULT_OUTPUT_DIRECTORY                  = 'generated-classes';
 
