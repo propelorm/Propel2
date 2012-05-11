@@ -49,7 +49,11 @@ use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Query\Criteria;
 use Propel\Runtime\Util\BasePeer;
 
+use Propel\Generator\Util\QuickBuilder;
+
 use \DateTime;
+
+use MyNameSpace\TestKeyTypeTable;
 
 /**
  * Tests the generated Object classes.
@@ -747,6 +751,30 @@ class GeneratedObjectTest extends BookstoreTestBase
         );
         $this->assertEquals($expectedKeys, array_keys($arr1), 'toArray() accepts a $keyType parameter to change the result keys');
         $this->assertEquals('Don Juan', $arr1[BookPeer::TITLE], 'toArray() returns an associative array representation of the object');
+    }
+
+    public function testToArrayKeyTypePreDefined()
+    {
+        $schema = <<<EOF
+<database name="test"  namespace="MyNameSpace">
+    <table name="test_key_type_table">
+        <column name="id_key_type" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+        <column name="name_key_type" type="VARCHAR" />
+    </table>
+</database>
+EOF;
+
+        $builder = new QuickBuilder();
+        $builder->setSchema($schema);
+        $builder->getConfig()->setBuildProperty('defaultKeyType', 'studlyPhpName');
+        $builder->buildClasses();
+
+        $expectedKeys = array(
+            'idKeyType',
+            'nameKeyType',
+        );
+        $object = new TestKeyTypeTable();
+        $this->assertEquals($expectedKeys, array_keys($object->toArray()), 'toArray() returns an associative array with pre-defined key type in properties.');
     }
 
     /**
