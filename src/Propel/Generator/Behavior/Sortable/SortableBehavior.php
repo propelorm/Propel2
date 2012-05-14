@@ -39,7 +39,7 @@ class SortableBehavior extends Behavior
     {
         $table = $this->getTable();
 
-        if (!$table->containsColumn($this->getParameter('rank_column'))) {
+        if (!$table->hasColumn($this->getParameter('rank_column'))) {
             $table->addColumn(array(
                 'name' => $this->getParameter('rank_column'),
                 'type' => 'INTEGER'
@@ -47,7 +47,7 @@ class SortableBehavior extends Behavior
         }
 
         if ('true' === $this->getParameter('use_scope')
-            && !$table->containsColumn($this->getParameter('scope_column'))) {
+            && !$table->hasColumn($this->getParameter('scope_column'))) {
             $table->addColumn(array(
                 'name' => $this->getParameter('scope_column'),
                 'type' => 'INTEGER'

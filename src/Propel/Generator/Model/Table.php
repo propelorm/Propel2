@@ -1574,17 +1574,6 @@ class Table extends ScopedElement implements IdMethod
     }
 
     /**
-     * Check whether the table has a column.
-     * @param      Column|string $col the column object or name (e.g. 'my_column')
-     * @deprecated use hasColumn() instead
-     * @return Boolean
-     */
-    public function containsColumn($col)
-    {
-        return $this->hasColumn($col);
-    }
-
-    /**
      * Set the database that contains this table.
      *
      * @param     Database $db
