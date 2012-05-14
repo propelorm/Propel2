@@ -1,6 +1,6 @@
 <?php
 
-if (file_exists($file = __DIR__.'/vendor/.composer/autoload.php')) {
+if (file_exists($file = __DIR__.'/vendor/autoload.php')) {
     $loader = require $file;
 
     $loader->add('Foo', __DIR__ . '/tests/Fixtures/namespaced/build/classes');
