@@ -29,7 +29,7 @@ class ConcreteInheritanceParentBehavior extends Behavior
     public function modifyTable()
     {
         $table = $this->getTable();
-        if (!$table->containsColumn($this->getParameter('descendant_column'))) {
+        if (!$table->hasColumn($this->getParameter('descendant_column'))) {
             $table->addColumn(array(
                 'name' => $this->getParameter('descendant_column'),
                 'type' => 'VARCHAR',

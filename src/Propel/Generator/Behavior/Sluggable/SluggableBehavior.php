@@ -39,7 +39,7 @@ class SluggableBehavior extends Behavior
     {
         $table = $this->getTable();
 
-        if (!$table->containsColumn($this->getParameter('slug_column'))) {
+        if (!$table->hasColumn($this->getParameter('slug_column'))) {
             $table->addColumn(array(
                 'name' => $this->getParameter('slug_column'),
                 'type' => 'VARCHAR',

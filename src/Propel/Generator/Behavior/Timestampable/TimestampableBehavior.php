@@ -33,13 +33,13 @@ class TimestampableBehavior extends Behavior
     {
         $table = $this->getTable();
 
-        if (!$table->containsColumn($this->getParameter('create_column'))) {
+        if (!$table->hasColumn($this->getParameter('create_column'))) {
             $table->addColumn(array(
                 'name' => $this->getParameter('create_column'),
                 'type' => 'TIMESTAMP'
             ));
         }
-        if (!$table->containsColumn($this->getParameter('update_column'))) {
+        if (!$table->hasColumn($this->getParameter('update_column'))) {
             $table->addColumn(array(
                 'name' => $this->getParameter('update_column'),
                 'type' => 'TIMESTAMP'
