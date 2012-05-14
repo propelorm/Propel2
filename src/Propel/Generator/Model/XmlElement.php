@@ -41,7 +41,7 @@ abstract class XmlElement
     /**
      * This is the entry point method for loading data from XML.
      * It calls a setupObject() method that must be implemented by the child class.
-     * @param      array $attributes The attributes for the XML tag.
+     * @param array $attributes The attributes for the XML tag.
      */
     public function loadFromXML($attributes)
     {

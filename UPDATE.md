@@ -99,3 +99,6 @@ Before:
 After:
 
     public function __construct(Schema $schema)
+
+## `Propel\Generator\Model\Table::containsColumn` method has been removed.
+
