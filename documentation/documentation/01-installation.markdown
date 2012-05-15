@@ -63,7 +63,7 @@ Propel uses the some Symfony2 components to work properly :
 
 - [Console](https://github.com/symfony/Console) : which manage the generators propel uses.
 - [Yaml](https://github.com/symfony/Yaml)
-- [Validator](https://github.com/symfony/Validator) : a way yo manage validations with Propel.
+- [Validator](https://github.com/symfony/Validator) : a way you manage validations with Propel.
 - [Finder](https://github.com/symfony/Finder) : uses in the source code to manage the files.
 
 To install these packages, we advise you to use Composer. Check out the [Composer's site](https://getcomposer.org) and then add the following to you composer.json file :
