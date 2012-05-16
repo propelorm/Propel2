@@ -31,6 +31,11 @@ use Propel\Tests\Bookstore\ReviewQuery;
 use Propel\Tests\Bookstore\ReaderFavoriteQuery;
 use Propel\Tests\Bookstore\PublisherPeer;
 
+use Propel\Tests\Bookstore\RecordLabelPeer;
+use Propel\Tests\Bookstore\RecordLabelQuery;
+use Propel\Tests\Bookstore\ReleasePoolPeer;
+use Propel\Tests\Bookstore\ReleasePoolQuery;
+
 use Propel\Runtime\Propel;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Query\Criteria;
@@ -712,6 +717,31 @@ class QueryBuilderTest extends BookstoreTestBase
         $q = AuthorQuery::create()->filterByBook($testBook, Criteria::NOT_EQUAL);
         $q1 = AuthorQuery::create()->add(AuthorPeer::ID, $testBook->getAuthorId(), Criteria::NOT_EQUAL);
         $this->assertEquals($q1, $q, 'filterByRefFk() accepts an optional comparison operator');
+    }
+
+    public function testFilterByRelationNameCompositePk()
+    {
+        BookstoreDataPopulator::depopulate();
+        BookstoreDataPopulator::populate();
+
+        $testLabel = RecordLabelQuery::create()
+            ->limit(2)
+            ->find($this->con);
+
+        $testRelease = ReleasePoolQuery::create()
+            ->addJoin(ReleasePoolPeer::RECORD_LABEL_ID, RecordLabelPeer::ID)
+            ->filterByRecordLabel($testLabel)
+            ->find($this->con);
+        $q1 = $this->con->getLastExecutedQuery();
+
+        $releasePool = ReleasePoolQuery::create()
+            ->addJoin(ReleasePoolPeer::RECORD_LABEL_ID, RecordLabelPeer::ID)
+            ->add(ReleasePoolPeer::RECORD_LABEL_ID, $testLabel->toKeyValue('Id', 'Id'), Criteria::IN)
+            ->find($this->con);
+        $q2 = $this->con->getLastExecutedQuery();
+
+        $this->assertEquals($q2, $q1, 'filterBy{RelationName}() only accepts arguments of type {RelationName} or PropelCollection');
+        $this->assertEquals($releasePool, $testRelease);
     }
 
     public function testFilterByRefFkCompositeKey()

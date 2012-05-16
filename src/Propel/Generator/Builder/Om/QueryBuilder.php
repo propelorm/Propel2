@@ -974,6 +974,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
         if (!$fk->isComposite()) {
             $localColumnConstant = $this->getColumnConstant($fk->getLocalColumn());
             $foreignColumnName = $fk->getForeignColumn()->getPhpName();
+            $keyColumn = $fk->getForeignTable()->hasCompositePrimaryKey() ? $foreignColumnName : 'PrimaryKey';
             $script .= "
         } elseif ($objectName instanceof Collection) {
             if (null === \$comparison) {
@@ -981,7 +982,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
             }
 
             return \$this
-                ->addUsingAlias($localColumnConstant, {$objectName}->toKeyValue('PrimaryKey', '$foreignColumnName'), \$comparison);";
+                ->addUsingAlias($localColumnConstant, {$objectName}->toKeyValue('$keyColumn', '$foreignColumnName'), \$comparison);";
         }
         $script .= "
         } else {";

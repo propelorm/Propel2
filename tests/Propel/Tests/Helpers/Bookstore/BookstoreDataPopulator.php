@@ -42,6 +42,9 @@ use Propel\Tests\Bookstore\ReaderFavoritePeer;
 use Propel\Tests\Bookstore\Review;
 use Propel\Tests\Bookstore\ReviewPeer;
 
+use Propel\Tests\Bookstore\RecordLabel;
+use Propel\Tests\Bookstore\ReleasePool;
+
 define('_LOB_SAMPLE_FILE_PATH', __DIR__ . '/../../../../Fixtures/etc/lob');
 
 /**
@@ -230,6 +233,37 @@ class BookstoreDataPopulator
         $summary->setSummary("Harry Potter does some amazing magic!");
         $summary->save();
 
+        // Add release_pool and record_label
+        $acuna = new RecordLabel();
+        $acuna->setAbbr('acuna');
+        $acuna->setName('Acunadeep');
+        $acuna->save();
+
+        $fade = new RecordLabel();
+        $fade->setAbbr('fade');
+        $fade->setName('Fade Records');
+        $fade->save();
+
+        $pool = new ReleasePool();
+        $pool->setName('D.Chmelyuk - Revert Me Back');
+        $pool->setRecordLabel($acuna);
+        $pool->save();
+
+        $pool = new ReleasePool();
+        $pool->setName('VIF & Lola Palmer - Dreamer');
+        $pool->setRecordLabel($acuna);
+        $pool->save();
+
+        $pool = new ReleasePool();
+        $pool->setName('Lola Palmer - Do You Belong To Me');
+        $pool->setRecordLabel($acuna);
+        $pool->save();
+
+        $pool = new ReleasePool();
+        $pool->setName('Chris Forties - Despegue (foem.info Runners Up Remixes)');
+        $pool->setRecordLabel($fade);
+        $pool->save();
+
         $con->commit();
     }
 
@@ -278,6 +312,8 @@ class BookstoreDataPopulator
             '\Propel\Tests\Bookstore\ReaderFavoritePeer',
             '\Propel\Tests\Bookstore\ReviewPeer',
             '\Propel\Tests\Bookstore\BookSummaryPeer',
+            '\Propel\Tests\Bookstore\RecordLabelPeer',
+            '\Propel\Tests\Bookstore\ReleasePoolPeer',
         );
         // free the memory from existing objects
         foreach ($peerClasses as $peerClass) {
