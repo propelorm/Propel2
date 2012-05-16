@@ -54,12 +54,11 @@ The root directory of the Propel library includes the following folders:
 |---------------|----------------------------------------------------------------------
 |bin            |Contains three scripts that manage propel command line tool (depending of your operating system)
 |src            |The propel source code. Pass over if you just want to use Propel, not to contribute.
-|tools          |Contains files that Propel uses to manage pear package and so on like DTD, XSD, etc.
 |tests          |Propel unit tests. Ignore this if you don't want to contribute to Propel.
 
 ## Installing Dependencies ##
 
-Propel uses the some Symfony2 components to work properly :
+Propel uses the some Symfony2 components to work properly:
 
 - [Console](https://github.com/symfony/Console) : which manage the generators propel uses.
 - [Yaml](https://github.com/symfony/Yaml)
@@ -80,7 +79,7 @@ To install these packages, we advise you to use Composer. Check out the [Compose
 }
 {% endhighlight %}
 
-Then, to install all of the dependencies, run in a terminal :
+Then, to install all of the dependencies, run in a terminal:
 {% highlight bash %}
 php composer.phar install
 {% endhighlight %}
@@ -105,10 +104,10 @@ cd myproject
 ln -s vendor/propel/bin/propel propel
 {% endhighlight %}
 
-Or simply edit your .bashrc or .zshrc file : 
+Or simply edit your .bashrc or .zshrc file: 
 
 {% higlight bash %}
-export PATH=$PATH:/path/to/propel/bin
+export PATH=$PATH:/path/to/vendor/bin/
 {% endhighlight %}
 
 At this point, Propel should be setup and ready to use. You can follow the steps in the [Build Guide](02-buildtime.html) to try it out.
