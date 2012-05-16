@@ -64,6 +64,10 @@ class ObjectBuilderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($value, $this->builder->getDefaultValueString($column));
     }
 
+    public function testGetDefaultKeyType()
+    {
+        $this->assertEquals('TYPE_PHPNAME', $this->builder->getDefaultKeyType());
+    }
 
 }
 
