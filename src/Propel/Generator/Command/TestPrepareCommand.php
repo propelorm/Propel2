@@ -121,17 +121,17 @@ class TestPrepareCommand extends AbstractCommand
 
                 file_put_contents($targetFile, $content);
             } else {
-                $output->writeln(sprintf('<error>No "%s" file found, skipped.</error>', $sourceFile));
+                $output->writeln(sprintf('<comment>No "%s" file found, skipped.</comment>', $sourceFile));
             }
         }
 
         if (0 < count((array) $this->getSchemas('.')) || false === strstr($fixturesDir, 'reverse')) {
             $in = new ArrayInput(array(
-                'command'	    => 'sql:build',
-                '--input-dir'   => '.',
-                '--output-dir'  => 'build/sql/',
-                '--platform'    => ucfirst($input->getOption('vendor')) . 'Platform',
-                '--verbose'		=> $input->getOption('verbose'),
+                'command'      => 'sql:build',
+                '--input-dir'  => '.',
+                '--output-dir' => 'build/sql/',
+                '--platform'   => ucfirst($input->getOption('vendor')) . 'Platform',
+                '--verbose'    => $input->getOption('verbose'),
             ));
 
             $command = $this->getApplication()->find('sql:build');
@@ -147,10 +147,10 @@ class TestPrepareCommand extends AbstractCommand
             }
 
             $in = new ArrayInput(array(
-                'command'       => 'sql:insert',
-                '--output-dir'  => 'build/sql/',
-                '--connection'  => $conParams,
-                '--verbose'		=> $input->getOption('verbose'),
+                'command'      => 'sql:insert',
+                '--output-dir' => 'build/sql/',
+                '--connection' => $conParams,
+                '--verbose'    => $input->getOption('verbose'),
             ));
 
             $command = $this->getApplication()->find('sql:insert');
@@ -171,11 +171,11 @@ class TestPrepareCommand extends AbstractCommand
 
         if (0 < count((array) $this->getSchemas('.'))) {
             $in = new ArrayInput(array(
-                'command'       => 'model:build',
-                '--input-dir'   => '.',
-                '--output-dir'  => 'build/classes/',
-                '--platform'    => ucfirst($input->getOption('vendor')) . 'Platform',
-                '--verbose'		=> $input->getOption('verbose'),
+                'command'      => 'model:build',
+                '--input-dir'  => '.',
+                '--output-dir' => 'build/classes/',
+                '--platform'   => ucfirst($input->getOption('vendor')) . 'Platform',
+                '--verbose'    => $input->getOption('verbose'),
             ));
 
             $command = $this->getApplication()->find('model:build');
