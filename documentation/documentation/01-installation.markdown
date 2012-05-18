@@ -106,7 +106,7 @@ ln -s vendor/propel/bin/propel propel
 
 Or simply edit your .bashrc or .zshrc file: 
 
-{% higlight bash %}
+{% highlight bash %}
 export PATH=$PATH:/path/to/vendor/bin/
 {% endhighlight %}
 
