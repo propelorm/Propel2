@@ -50,9 +50,6 @@ class Unique extends Index
         $this->name = NameFactory::generateName(NameFactory::CONSTRAINT_GENERATOR, $inputs);
     }
 
-    /**
-     * @see XmlElement::appendXml(DOMNode)
-     */
     public function appendXml(\DOMNode $node)
     {
         $doc = ($node instanceof \DOMDocument) ? $node : $node->ownerDocument;

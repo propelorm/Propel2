@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Model;
@@ -16,11 +16,11 @@ use Propel\Generator\Builder\Util\PropelTemplate;
 /**
  * Information about behaviors of a table.
  *
- * @author     François Zaninotto
+ * @author François Zaninotto
+ * @author Hugo Hamon <webmaster@apprendre-php.com>
  */
-class Behavior extends XmlElement
+class Behavior extends MappingModel
 {
-
     protected $table;
     protected $database;
     protected $name;
@@ -91,56 +91,71 @@ class Behavior extends XmlElement
     }
 
     /**
-     * Add a parameter
+     * Adds a single parameter.
+     *
      * Expects an associative array looking like array('name' => 'foo', 'value' => bar)
      *
-     * @param     array associative array with name and value keys
+     * @param array $parameters
      */
-    public function addParameter($attribute)
+    public function addParameter(array $parameter)
     {
-        $attribute = array_change_key_case($attribute, CASE_LOWER);
-        $this->parameters[$attribute['name']] = $attribute['value'];
+        $parameter = array_change_key_case($parameter, CASE_LOWER);
+        $this->parameters[$parameter['name']] = $parameter['value'];
     }
 
     /**
-     * Overrides the behavior parameters
-     * Expects an associative array looking like array('foo' => 'bar')
+     * Overrides the behavior parameters.
      *
-     * @param     array associative array
+     * Expects an associative array looking like array('foo' => 'bar').
+     *
+     * @param array $parameters
      */
-    public function setParameters($parameters)
+    public function setParameters(array $parameters)
     {
         $this->parameters = $parameters;
     }
 
     /**
-     * Get the associative array of parameters
-     * @return    array
+     * Returns the associative array of parameters.
+     *
+     * @return array
      */
     public function getParameters()
     {
         return $this->parameters;
     }
 
+    /**
+     * Returns a single parameter by its name.
+     *
+     * @param string $name
+     * @return array
+     */
     public function getParameter($name)
     {
         return $this->parameters[$name];
     }
 
     /**
-     * Define when this behavior must execute its modifyTable() relative to other behaviors.
-     * The bigger the value, the later the behavior is executed. Default is 50.
+     * Defines when this behavior must execute its modifyTable() method
+     * relative to other behaviors. The bigger the value is, the later the 
+     * behavior is executed.
      *
-     * @param $tableModificationOrder integer
+     * Default is 50.
+     *
+     * @param integer $tableModificationOrder
      */
     public function setTableModificationOrder($tableModificationOrder)
     {
-        $this->tableModificationOrder = $tableModificationOrder;
+        $this->tableModificationOrder = (int) $tableModificationOrder;
     }
 
     /**
-     * Get when this behavior must execute its modifyTable() relative to other behaviors.
-     * The bigger the value, the later the behavior is executed. Default is 50.
+     * Returns when this behavior must execute its modifyTable() method relative
+     * to other behaviors. The bigger the value is, the later the behavior is
+     * executed.
+     *
+     * Default is 50.
      *
      * @return integer
      */
@@ -150,9 +165,11 @@ class Behavior extends XmlElement
     }
 
     /**
-     * This method is automatically called on database behaviors when the database model is finished
-     * Propagate the behavior to the tables of the database
-     * Override this method to have a database behavior do something special
+     * This method is automatically called on database behaviors when the
+     * database model is finished.
+     *
+     * Propagates the behavior to the tables of the database and override this 
+     * method to have a database behavior do something special.
      */
     public function modifyDatabase()
     {
@@ -167,32 +184,44 @@ class Behavior extends XmlElement
     }
 
     /**
-     * This method is automatically called on table behaviors when the database model is finished
-     * Override it to add columns to the current table
+     * This method is automatically called on table behaviors when the database
+     * model is finished. It also override it to add columns to the current
+     * table.
      */
     public function modifyTable()
     {
+        
     }
 
-    public function setTableModified($bool)
+    /**
+     * Sets whether or not the table has been modified.
+     *
+     * @param Boolean $modified
+     */
+    public function setTableModified($modified)
     {
-        $this->isTableModified = $bool;
+        $this->isTableModified = $modified;
     }
 
+    /**
+     * Returns whether or not the table has been modified.
+     *
+     * @return Boolean
+     */
     public function isTableModified()
     {
         return $this->isTableModified;
     }
 
     /**
-     * Use Propel's simple templating system to render a PHP file
-     * using variables passed as arguments.
+     * Use Propel simple templating system to render a PHP file using variables
+     * passed as arguments. The template file name is relative to the behavior's 
+     * directory name.
      *
-     * @param string $filename    The template file name, relative to the behavior's dirname
-     * @param array  $vars        An associative array of argumens to be rendered
-     * @param string $templateDir The name of the template subdirectory
-     *
-     * @return string The rendered template
+     * @param string $filename
+     * @param array  $vars
+     * @param string $templateDir
+     * @return string
      */
     public function renderTemplate($filename, $vars = array(), $templateDir = '/templates/')
     {
@@ -215,9 +244,10 @@ class Behavior extends XmlElement
     }
 
     /**
-     * Returns the current dirname of this behavior (also works for descendants)
+     * Returns the current absolute directory name of this behavior. It also
+     * works for descendants.
      *
-     * @return string The absolute directory name
+     * @return string
      */
     protected function getDirname()
     {
@@ -230,29 +260,22 @@ class Behavior extends XmlElement
     }
 
     /**
-     * Retrieve a column object using a name stored in the behavior parameters
-     * Useful for table behaviors
+     * Returns a column object using a name stored in the behavior parameters.
+     * Useful for table behaviors.
      *
-     * @param     string    $param Name of the parameter storing the column name
-     * @return    ColumnMap The column of the table supporting the behavior
+     * @param string $name
+     * @return Column
      */
-    public function getColumnForParameter($param)
+    public function getColumnForParameter($name)
     {
-        return $this->getTable()->getColumn($this->getParameter($param));
+        return $this->getTable()->getColumn($this->getParameter($name));
     }
 
-    /**
-     * Sets up the Behavior object based on the attributes that were passed to loadFromXML().
-     * @see       parent::loadFromXML()
-     */
     protected function setupObject()
     {
         $this->name = $this->getAttribute("name");
     }
 
-    /**
-     * @see       parent::appendXml(DOMNode)
-     */
     public function appendXml(\DOMNode $node)
     {
         $doc = ($node instanceof \DOMDocument) ? $node : $node->ownerDocument;
@@ -267,36 +290,81 @@ class Behavior extends XmlElement
         }
     }
 
+    /**
+     * Returns the table modifier object.
+     *
+     * The current object is returned by default.
+     *
+     * @return Behavior
+     */
     public function getTableModifier()
     {
         return $this;
     }
 
+    /**
+     * Returns the object builder modifier object.
+     *
+     * The current object is returned by default.
+     *
+     * @return Behavior
+     */
     public function getObjectBuilderModifier()
     {
         return $this;
     }
 
+    /**
+     * Returns the query builder modifier object.
+     *
+     * The current object is returned by default.
+     *
+     * @return Behavior
+     */
     public function getQueryBuilderModifier()
     {
         return $this;
     }
 
+    /**
+     * Returns the peer builder modifier object.
+     *
+     * The current object is returned by default.
+     *
+     * @return Behavior
+     */
     public function getPeerBuilderModifier()
     {
         return $this;
     }
 
+    /**
+     * Returns the table map builder modifier object.
+     *
+     * The current object is returned by default.
+     *
+     * @return Behavior
+     */
     public function getTableMapBuilderModifier()
     {
         return $this;
     }
 
+    /**
+     * Returns whether or not this behavior has additional builders.
+     *
+     * @return Boolean
+     */
     public function hasAdditionalBuilders()
     {
         return !empty($this->additionalBuilders);
     }
 
+    /**
+     * Returns the list of additional builder objects.
+     *
+     * @return array
+     */
     public function getAdditionalBuilders()
     {
         return $this->additionalBuilders;

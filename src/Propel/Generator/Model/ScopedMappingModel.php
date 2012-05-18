@@ -17,20 +17,22 @@ namespace Propel\Generator\Model;
  * @author Ulf Hermann <ulfhermann@kulturserver.de>
  * @author Hugo Hamon <webmaster@apprendre-php.com>
  */
-abstract class ScopedElement extends XmlElement
+abstract class ScopedMappingModel extends MappingModel
 {
     protected $package;
-    protected $pkgOverridden;
+    protected $packageOverridden;
     protected $namespace;
     protected $schema;
 
     /**
-     * Constructs a new ScopedElement object.
+     * Constructs a new scoped model object.
      *
      */
     public function __construct()
     {
-        $this->pkgOverridden = false;
+        parent::__construct();
+
+        $this->packageOverridden = false;
     }
 
     /**
@@ -40,12 +42,6 @@ abstract class ScopedElement extends XmlElement
      */
     abstract protected function getBuildProperty($name);
 
-    /**
-     * Sets up the object based on the attributes that were passed
-     * to loadFromXML().
-     *
-     * @see parent::loadFromXML()
-     */
     protected function setupObject()
     {
         $this->setPackage($this->getAttribute('package', $this->package));
@@ -77,9 +73,9 @@ abstract class ScopedElement extends XmlElement
         }
 
         $this->namespace = $namespace;
-        if ($namespace && (!$this->package || $this->pkgOverridden) && $this->getBuildProperty('namespaceAutoPackage')) {
+        if ($namespace && (!$this->package || $this->packageOverridden) && $this->getBuildProperty('namespaceAutoPackage')) {
             $this->package = str_replace('\\', '.', $namespace);
-            $this->pkgOverridden = true;
+            $this->packageOverridden = true;
         }
     }
 
@@ -118,7 +114,7 @@ abstract class ScopedElement extends XmlElement
         }
 
         $this->package = $package;
-        $this->pkgOverridden = false;
+        $this->packageOverridden = false;
     }
 
     /**
@@ -145,7 +141,7 @@ abstract class ScopedElement extends XmlElement
         $this->schema = $schema;
         if ($schema && !$this->package && $this->getBuildProperty('schemaAutoPackage')) {
             $this->package = $schema;
-            $this->pkgOverridden = true;
+            $this->packageOverridden = true;
         }
 
         if ($schema && !$this->namespace && $this->getBuildProperty('schemaAutoNamespace')) {

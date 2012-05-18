@@ -11,12 +11,13 @@
 namespace Propel\Generator\Model;
 
 /**
- * A Class for information regarding possible objects representing a table
+ * A class for information regarding possible objects representing a table.
  *
- * @author     Hans Lellelid <hans@xmpl.org> (Propel)
- * @author     John McNally <jmcnally@collab.net> (Torque)
+ * @author Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author John McNally <jmcnally@collab.net> (Torque)
+ * @author Hugo Hamon <webmaster@apprendre-php.com>
  */
-class Inheritance extends XmlElement
+class Inheritance extends MappingModel
 {
     private $key;
     private $className;
@@ -124,11 +125,6 @@ class Inheritance extends XmlElement
         $this->ancestor = $ancestor;
     }
 
-    /**
-     * Sets up the Inheritance object based on the attributes that were passed to loadFromXML().
-     *
-     * @see parent::loadFromXML()
-     */
     protected function setupObject()
     {
         $this->key       = $this->getAttribute('key');
@@ -137,9 +133,6 @@ class Inheritance extends XmlElement
         $this->ancestor  = $this->getAttribute('extends');
     }
 
-    /**
-     * @see XmlElement::appendXml(DOMNode)
-     */
     public function appendXml(\DOMNode $node)
     {
         $doc = ($node instanceof \DOMDocument) ? $node : $node->ownerDocument;

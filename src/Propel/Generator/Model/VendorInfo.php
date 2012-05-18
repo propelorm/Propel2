@@ -18,7 +18,7 @@ use Propel\Generator\Exception\EngineException;
  * @author Hans Lellelid <hans@xmpl.org>
  * @author Hugo Hamon <webmaster@apprendre-php.com>
  */
-class VendorInfo extends XmlElement
+class VendorInfo extends MappingModel
 {
     private $type;
     private $parameters;
@@ -30,6 +30,8 @@ class VendorInfo extends XmlElement
      */
     public function __construct($type = null)
     {
+        parent::__construct();
+
         $this->parameters = array();
 
         if (null !== $type) {
@@ -137,19 +139,11 @@ class VendorInfo extends XmlElement
         return $newInfo;
     }
 
-    /**
-     * Sets up this object based on the attributes that were passed to loadFromXML().
-     *
-     * @see parent::loadFromXML()
-     */
     protected function setupObject()
     {
         $this->type = $this->getAttribute('type');
     }
 
-    /**
-     * @see XmlElement::appendXml(DOMNode)
-     */
     public function appendXml(\DOMNode $node)
     {
         $doc = ($node instanceof \DOMDocument) ? $node : $node->ownerDocument;

@@ -27,7 +27,7 @@ use Propel\Generator\Platform\MysqlPlatform;
  * @author Byron Foster <byron_foster@yahoo.com> (Torque)
  * @author Hugo Hamon <webmaster@apprendre-php.com>
  */
-class Table extends ScopedElement implements IdMethod
+class Table extends ScopedMappingModel implements IdMethod
 {
     private $columns;
     private $foreignKeys;
@@ -116,12 +116,6 @@ class Table extends ScopedElement implements IdMethod
         return $this->getCommonName();
     }
 
-    /**
-     * Sets up the Rule object based on the attributes that were passed
-     * to loadFromXML().
-     *
-     * @see parent::loadFromXML()
-     */
     public function setupObject()
     {
         parent::setupObject();
@@ -517,7 +511,7 @@ class Table extends ScopedElement implements IdMethod
 
         $column = new Column();
         $column->setTable($this);
-        $column->loadFromXML($col);
+        $column->loadMapping($col);
 
         return $this->addColumn($column); // call self w/ different param
     }
@@ -591,7 +585,7 @@ class Table extends ScopedElement implements IdMethod
 
         $fk = new ForeignKey();
         $fk->setTable($this);
-        $fk->loadFromXML($fkdata);
+        $fk->loadMapping($fkdata);
 
         return $this->addForeignKey($fk);
     }
@@ -798,7 +792,7 @@ class Table extends ScopedElement implements IdMethod
 
         $imp = new IdMethodParameter();
         $imp->setTable($this);
-        $imp->loadFromXML($idMethodParameter);
+        $imp->loadMapping($idMethodParameter);
 
         return $this->addIdMethodParameter($imp);
     }
@@ -822,7 +816,7 @@ class Table extends ScopedElement implements IdMethod
         }
 
         $idx = new Index();
-        $idx->loadFromXML($index);
+        $idx->loadMapping($index);
 
         return $this->addIndex($idx);
     }
@@ -845,7 +839,7 @@ class Table extends ScopedElement implements IdMethod
         }
 
         $unik = new Unique();
-        $unik->loadFromXML($unique);
+        $unik->loadMapping($unique);
 
         return $this->addUnique($unik);
     }
@@ -877,7 +871,7 @@ class Table extends ScopedElement implements IdMethod
 
         $class = $this->getConfiguredBehavior($bdata['name']);
         $behavior = new $class();
-        $behavior->loadFromXML($bdata);
+        $behavior->loadMapping($bdata);
 
         return $this->addBehavior($behavior);
     }
@@ -1578,7 +1572,7 @@ class Table extends ScopedElement implements IdMethod
             $tableNode->setAttribute('namespace', $this->namespace);
         }
 
-        if ($this->package && !$this->pkgOverridden) {
+        if ($this->package && !$this->packageOverridden) {
             $tableNode->setAttribute('package', $this->package);
         }
 

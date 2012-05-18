@@ -19,7 +19,7 @@ namespace Propel\Generator\Model;
  * @author Ulf Hermann <ulfhermann@kulturserver.de>
  * @author Hugo Hamon <webmaster@apprendre-php.com>
  */
-class ForeignKey extends XmlElement
+class ForeignKey extends MappingModel
 {
     /**
      * These constants are the uppercase equivalents of the onDelete / onUpdate
@@ -53,6 +53,8 @@ class ForeignKey extends XmlElement
      */
     public function __construct($name = null)
     {
+        parent::__construct();
+
         if (null !== $name) {
             $this->setName($name);
         }
@@ -64,12 +66,6 @@ class ForeignKey extends XmlElement
         $this->skipSql = false;
     }
 
-    /**
-     * Sets up the ForeignKey object based on the attributes that were
-     * passed to loadFromXML().
-     *
-     * @see parent::loadFromXML()
-     */
     protected function setupObject()
     {
         $this->foreignTableCommonName = $this->parentTable->getDatabase()->getTablePrefix() . $this->getAttribute('foreignTable');
@@ -712,9 +708,6 @@ class ForeignKey extends XmlElement
         return $fks;
     }
 
-    /**
-     * @see XmlElement::appendXml(DOMNode)
-     */
     public function appendXml(\DOMNode $node)
     {
         $doc = ($node instanceof \DOMDocument) ? $node : $node->ownerDocument;

@@ -19,7 +19,7 @@ use Propel\Generator\Exception\EngineException;
  * @author Martin Poeschl <mpoeschl@marmot.at> (Torque)
  * @author Hugo Hamon <webmaster@apprendre-php.com>
  */
-class Domain extends XmlElement
+class Domain extends MappingModel
 {
     private $name;
     private $description;
@@ -42,6 +42,8 @@ class Domain extends XmlElement
      */
     public function __construct($type = null, $sqlType = null, $size = null, $scale = null)
     {
+        parent::__construct();
+
         if (null !== $type) {
             $this->setType($type);
         }
@@ -73,12 +75,6 @@ class Domain extends XmlElement
         $this->mappingType = $domain->getType();
     }
 
-    /**
-     * Sets up the Domain object based on the attributes that were passed
-     * to loadFromXML().
-     *
-     * @see parent::loadFromXML()
-     */
     protected function setupObject()
     {
         $schemaType = strtoupper($this->getAttribute('type'));
@@ -360,9 +356,6 @@ class Domain extends XmlElement
         return '';
     }
 
-    /**
-     * @see XmlElement::appendXml(DOMNode)
-     */
     public function appendXml(\DOMNode $node)
     {
         $doc = ($node instanceof \DOMDocument) ? $node : $node->ownerDocument;
