@@ -134,10 +134,10 @@ abstract class XmlElement
     /**
      * Find the best class name for a given behavior
      * If not found, tries to autoload \Propel\Generator\Behavior\[Bname]\[Bname]Behavior
-     * If no success, returns 'Behavior'
      *
      * @param  string $bname A behavior name, e.g. 'timestampable'
      * @return string A behavior class name, e.g. '\Propel\Generator\Behavior\Timestampable\TimestampableBehavior'
+     * @throws BehaviorNotFoundException
      */
     public function getConfiguredBehavior($bname)
     {

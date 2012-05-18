@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Model;
@@ -13,60 +13,44 @@ namespace Propel\Generator\Model;
 use Propel\Generator\Exception\EngineException;
 
 /**
- * Object to hold vendor-specific info.
+ * Object to hold vendor specific information.
  *
- * @author     Hans Lellelid <hans@xmpl.org>
+ * @author Hans Lellelid <hans@xmpl.org>
+ * @author Hugo Hamon <webmaster@apprendre-php.com>
  */
 class VendorInfo extends XmlElement
 {
-
-    /**
-     * The vendor RDBMS type.
-     *
-     * @var        string
-     */
     private $type;
-
-    /**
-     * Vendor parameters.
-     *
-     * @var        array
-     */
-    private $parameters = array();
+    private $parameters;
 
     /**
      * Creates a new VendorInfo instance.
      *
-     * @param      string $type RDBMS type (optional)
+     * @param string $type RDBMS type (optional)
      */
     public function __construct($type = null)
+    {
+        $this->parameters = array();
+
+        if (null !== $type) {
+            $this->setType($type);
+        }
+    }
+
+    /**
+     * Sets the RDBMS type for this vendor specific information.
+     *
+     * @param string $type
+     */
+    public function setType($type)
     {
         $this->type = $type;
     }
 
     /**
-     * Sets up this object based on the attributes that were passed to loadFromXML().
-     * @see        parent::loadFromXML()
-     */
-    protected function setupObject()
-    {
-        $this->type = $this->getAttribute('type');
-    }
-
-    /**
-     * Set RDBMS type for this vendor-specific info.
+     * Returns the RDBMS type for this vendor specific information.
      *
-     * @param      string $v
-     */
-    public function setType($v)
-    {
-        $this->type = $v;
-    }
-
-    /**
-     * Get RDBMS type for this vendor-specific info.
-     *
-     * @return     string
+     * @return string
      */
     public function getType()
     {
@@ -74,20 +58,10 @@ class VendorInfo extends XmlElement
     }
 
     /**
-     * Adds a new vendor parameter to this object.
-     * @param      array $attrib Attributes from XML.
-     */
-    public function addParameter($attrib)
-    {
-        $name = $attrib['name'];
-        $this->parameters[$name] = $attrib['value'];
-    }
-
-    /**
-     * Sets parameter value.
+     * Sets a parameter value.
      *
-     * @param      string $name
-     * @param      mixed $value The value for the parameter.
+     * @param string $name  The parameter name
+     * @param mixed  $value The parameter value
      */
     public function setParameter($name, $value)
     {
@@ -95,24 +69,21 @@ class VendorInfo extends XmlElement
     }
 
     /**
-     * Gets parameter value.
+     * Returns a parameter value.
      *
-     * @param      string $name
-     * @return     mixed Paramter value.
+     * @param  string $name The parameter name
+     * @return mixed
      */
     public function getParameter($name)
     {
-        if (isset($this->parameters[$name])) {
-            return $this->parameters[$name];
-        }
-
-        return null; // just to be explicit
+        return isset($this->parameters[$name]) ? $this->parameters[$name] : null;
     }
 
     /**
-     * Whether parameter exists.
+     * Returns whether or not a parameter exists.
      *
-     * @param      string $name
+     * @param string $name
+     * @return Boolean
      */
     public function hasParameter($name)
     {
@@ -120,19 +91,20 @@ class VendorInfo extends XmlElement
     }
 
     /**
-     * Sets assoc array of parameters for venfor specific info.
+     * Sets an associative array of parameters for venfor specific information.
      *
-     * @param      array $params Paramter data.
+     * @param array $params Paramter data.
      */
-    public function setParameters(array $params = array())
+    public function setParameters(array $parameters = array())
     {
-        $this->parameters = $params;
+        $this->parameters = $parameters;
     }
 
     /**
-     * Gets assoc array of parameters for venfor specific info.
+     * Returns an associative array of parameters for
+     * venfor specific information.
      *
-     * @return     array
+     * @return array
      */
     public function getParameters()
     {
@@ -140,9 +112,9 @@ class VendorInfo extends XmlElement
     }
 
     /**
-     * Tests whether this vendor info is empty
+     * Returns whether or not this vendor info is empty.
      *
-     * @return boolean
+     * @return Boolean
      */
     public function isEmpty()
     {
@@ -150,28 +122,40 @@ class VendorInfo extends XmlElement
     }
 
     /**
-     * Gets a new merged VendorInfo object.
-     * @param      VendorInfo $info
-     * @return     VendorInfo new object with merged parameters
+     * Returns a new VendorInfo object that combines two VendorInfo objects.
+     *
+     * @param  VendorInfo $info
+     * @return VendorInfo
      */
-    public function getMergedVendorInfo(VendorInfo $merge)
+    public function getMergedVendorInfo(VendorInfo $info)
     {
-        $newParams = array_merge($this->getParameters(), $merge->getParameters());
-        $newInfo = new VendorInfo($this->getType());
-        $newInfo->setParameters($newParams);
+        $params = array_merge($this->parameters, $info->getParameters());
+
+        $newInfo = new VendorInfo($this->type);
+        $newInfo->setParameters($params);
 
         return $newInfo;
     }
 
     /**
-     * @see        XmlElement::appendXml(DOMNode)
+     * Sets up this object based on the attributes that were passed to loadFromXML().
+     *
+     * @see parent::loadFromXML()
+     */
+    protected function setupObject()
+    {
+        $this->type = $this->getAttribute('type');
+    }
+
+    /**
+     * @see XmlElement::appendXml(DOMNode)
      */
     public function appendXml(\DOMNode $node)
     {
         $doc = ($node instanceof \DOMDocument) ? $node : $node->ownerDocument;
 
         $vendorNode = $node->appendChild($doc->createElement('vendor'));
-        $vendorNode->setAttribute('type', $this->getType());
+        $vendorNode->setAttribute('type', $this->type);
 
         foreach ($this->parameters as $key => $value) {
             $parameterNode = $doc->createElement('parameter');

@@ -26,13 +26,14 @@ use Propel\Runtime\Propel;
 /**
  * Tests for AggregateColumnBehavior class
  *
- * @author  François Zaninotto
+ * @author François Zaninotto
  */
 class AggregateColumnBehaviorWithSchemaTest extends SchemasTestBase
 {
     protected function setUp()
     {
         parent::setUp();
+
         $this->con = Propel::getServiceContainer()->getConnection(BookstorePeer::DATABASE_NAME);
         $this->con->beginTransaction();
     }

@@ -102,3 +102,27 @@ After:
 
 ## `Propel\Generator\Model\Table::containsColumn` method has been removed.
 
+## `Propel\Generator\Model\VendorInfo::addParameter` method has been removed.
+
+## `Propel\Generator\Model\Column::setTypeFromString` method has been removed.
+
+## `Propel\Generator\Model\Column::getPropelType` method has been removed.
+
+## `Propel\Generator\Model\Column::getDefaultSetting` method has been removed.
+
+## `Propel\Generator\Model\Column::makeList` method has been removed.
+
+## `Propel\Generator\Model\Column::printSize` method has been renamed to `Propel\Generator\Model\Column::getSizeDefinition`.
+
+## `Propel\Generator\Model\ForeignKey::getLocalColumnNames` method has been removed.
+
+## `Propel\Generator\Model\ForeignKey::getForeignColumnNames` method has been removed.
+
+## `Propel\Generator\Model\Domain::printSize` method has been renamed to 
+`Propel\Generator\Model\Domain::getSizeDefinition`.
+
+## `Propel\Generator\Model\Table::printPrimaryKey` method has been removed.
+
+## `Propel\Generator\Model\Table::printList` method has been removed.
+
+## `Propel\Generator\Model\PropelTypes::getCreoleTypes` method has been removed.

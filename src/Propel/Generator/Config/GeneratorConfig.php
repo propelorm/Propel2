@@ -15,8 +15,6 @@ use Propel\Generator\Model\Table;
 use Propel\Generator\Platform\PlatformInterface;
 use Propel\Generator\Reverse\SchemaParserInterface;
 
-use \PDO;
-
 /**
  * A class that holds build properties and provide a class loading mechanism for the generator.
  *
@@ -153,10 +151,10 @@ class GeneratorConfig implements GeneratorConfigInterface
     /**
      * Creates and configures a new Platform class.
      *
-     * @param      PDO $con
+     * @param      \PDO $con
      * @return     Platform
      */
-    public function getConfiguredPlatform(PDO $con = null, $database = null)
+    public function getConfiguredPlatform(\PDO $con = null, $database = null)
     {
         $buildConnection = $this->getBuildConnection($database);
 
@@ -185,10 +183,10 @@ class GeneratorConfig implements GeneratorConfigInterface
 
     /**
      * Creates and configures a new SchemaParser class for specified platform.
-     * @param      PDO $con
+     * @param      \PDO $con
      * @return     SchemaParserInterface
      */
-    public function getConfiguredSchemaParser(PDO $con = null)
+    public function getConfiguredSchemaParser(\PDO $con = null)
     {
         $clazz  = $this->getClassName("reverseParserClass");
         $parser = new $clazz();
@@ -302,8 +300,8 @@ class GeneratorConfig implements GeneratorConfigInterface
         $username = isset($buildConnection['user']) && $buildConnection['user'] ? $buildConnection['user'] : null;
         $password = isset($buildConnection['password']) && $buildConnection['password'] ? $buildConnection['password'] : null;
 
-        $pdo = new PDO($dsn, $username, $password);
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $pdo = new \PDO($dsn, $username, $password);
+        $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
         return $pdo;
     }

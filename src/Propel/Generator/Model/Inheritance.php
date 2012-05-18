@@ -20,25 +20,14 @@ class Inheritance extends XmlElement
 {
     private $key;
     private $className;
-    private $pkg;
+    private $package;
     private $ancestor;
-    private $parent;
+    private $column;
 
     /**
-     * Sets up the Inheritance object based on the attributes that were passed to loadFromXML().
-     * @see        parent::loadFromXML()
-     */
-    protected function setupObject()
-    {
-        $this->key = $this->getAttribute('key');
-        $this->className = $this->getAttribute('class');
-        $this->pkg = $this->getAttribute('package');
-        $this->ancestor = $this->getAttribute('extends');
-    }
-
-    /**
-     * Get the value of key.
-     * @return     value of key.
+     * Returns a key name.
+     *
+     * @return string
      */
     public function getKey()
     {
@@ -46,35 +35,39 @@ class Inheritance extends XmlElement
     }
 
     /**
-     * Set the value of key.
-     * @param      v  Value to assign to key.
+     * Sets a key name.
+     *
+     * @param string $key
      */
-    public function setKey($v)
+    public function setKey($key)
     {
-        $this->key = $v;
+        $this->key = $key;
     }
 
     /**
-     * Get the value of parent.
-     * @return     value of parent.
+     * Returns the parent column.
+     *
+     * @return Column
      */
     public function getColumn()
     {
-        return $this->parent;
+        return $this->column;
     }
 
     /**
-     * Set the value of parent.
-     * @param      v  Value to assign to parent.
+     * Sets the parent column
+     *
+     * @param Column $column
      */
-    public function setColumn(Column  $v)
+    public function setColumn(Column  $column)
     {
-        $this->parent = $v;
+        $this->column = $column;
     }
 
     /**
-     * Get the value of className.
-     * @return     value of className.
+     * Returns the class name.
+     *
+     * @return string
      */
     public function getClassName()
     {
@@ -82,35 +75,39 @@ class Inheritance extends XmlElement
     }
 
     /**
-     * Set the value of className.
-     * @param      v  Value to assign to className.
+     * Sets the class name.
+     *
+     * @param string $name
      */
-    public function setClassName($v)
+    public function setClassName($name)
     {
-        $this->className = $v;
+        $this->className = $name;
     }
 
     /**
-     * Get the value of package.
-     * @return     value of package.
+     * Returns the package.
+     *
+     * @return string
      */
     public function getPackage()
     {
-        return $this->pkg;
+        return $this->package;
     }
 
     /**
-     * Set the value of package.
-     * @param      v  Value to assign to package.
+     * Sets the package.
+     *
+     * @param string $package
      */
-    public function setPackage($v)
+    public function setPackage($package)
     {
-        $this->pkg = $v;
+        $this->package = $package;
     }
 
     /**
-     * Get the value of ancestor.
-     * @return     value of ancestor.
+     * Returns the ancestor value.
+     *
+     * @return string
      */
     public function getAncestor()
     {
@@ -118,16 +115,30 @@ class Inheritance extends XmlElement
     }
 
     /**
-     * Set the value of ancestor.
-     * @param      v  Value to assign to ancestor.
+     * Sets the ancestor.
+     *
+     * @param string $ancestor
      */
-    public function setAncestor($v)
+    public function setAncestor($ancestor)
     {
-        $this->ancestor = $v;
+        $this->ancestor = $ancestor;
     }
 
     /**
-     * @see        XmlElement::appendXml(DOMNode)
+     * Sets up the Inheritance object based on the attributes that were passed to loadFromXML().
+     *
+     * @see parent::loadFromXML()
+     */
+    protected function setupObject()
+    {
+        $this->key       = $this->getAttribute('key');
+        $this->className = $this->getAttribute('class');
+        $this->package   = $this->getAttribute('package');
+        $this->ancestor  = $this->getAttribute('extends');
+    }
+
+    /**
+     * @see XmlElement::appendXml(DOMNode)
      */
     public function appendXml(\DOMNode $node)
     {

@@ -26,9 +26,9 @@ use Propel\Generator\Model\Diff\TableDiff;
 use Propel\Generator\Exception\EngineException;
 
 /**
- * Default implementation for the Platform interface.
+ * Default implementation for the PlatformInterface interface.
  *
- * @author     Martin Poeschl <mpoeschl@marmot.at> (Torque)
+ * @author Martin Poeschl <mpoeschl@marmot.at> (Torque)
  */
 class DefaultPlatform implements PlatformInterface
 {
@@ -120,7 +120,7 @@ class DefaultPlatform implements PlatformInterface
         $this->schemaDomainMap[PropelTypes::BU_TIMESTAMP] = new Domain(PropelTypes::TIMESTAMP);
 
         // Boolean is a bit special, since typically it must be mapped to INT type.
-        $this->schemaDomainMap[PropelTypes::BOOLEAN] = new Domain(PropelTypes::BOOLEAN, "INTEGER");
+        $this->schemaDomainMap[PropelTypes::BOOLEAN] = new Domain(PropelTypes::BOOLEAN, 'INTEGER');
     }
 
     /**
@@ -172,23 +172,24 @@ class DefaultPlatform implements PlatformInterface
     }
 
     /**
-     * Returns the db specific domain for a propelType.
+     * Returns the database specific domain for a mapping type.
      *
-     * @param      string $propelType the Propel type name.
-     * @return     Domain The db specific domain.
+     * @param string
+     * @return Domain
      */
-    public function getDomainForType($propelType)
+    public function getDomainForType($mappingType)
     {
-        if (!isset($this->schemaDomainMap[$propelType])) {
-            throw new EngineException("Cannot map unknown Propel type " . var_export($propelType, true) . " to native database type.");
+        if (!isset($this->schemaDomainMap[$mappingType])) {
+            throw new EngineException(sprintf('Cannot map unknown Propel type %s to native database type.', var_export($mappingType, true)));
         }
 
-        return $this->schemaDomainMap[$propelType];
+        return $this->schemaDomainMap[$mappingType];
     }
 
     /**
-     * @return     string The RDBMS-specific SQL fragment for <code>NULL</code>
-     * or <code>NOT NULL</code>.
+     * Returns the NOT NULL string for the configured RDBMS.
+     *
+     * @return string.
      */
     public function getNullString($notNull)
     {
@@ -196,7 +197,9 @@ class DefaultPlatform implements PlatformInterface
     }
 
     /**
-     * @return     The RDBMS-specific SQL fragment for autoincrement.
+     * Returns the auto increment strategy for the configured RDBMS.
+     *
+     * @return string.
      */
     public function getAutoIncrement()
     {
@@ -204,14 +207,14 @@ class DefaultPlatform implements PlatformInterface
     }
 
     /**
-     * Gets the name to use for creating a sequence for a table.
+     * Returns the name to use for creating a table sequence.
      *
-     * This will create a new name or use one specified in an id-method-parameter
-     * tag, if specified.
+     * This will create a new name or use one specified in an
+     * id-method-parameter tag, if specified.
      *
-     * @param      Table $table
+     * @param Table $table
      *
-     * @return     string Sequence name for this table.
+     * @return string
      */
     public function getSequenceName(Table $table)
     {
@@ -238,10 +241,10 @@ class DefaultPlatform implements PlatformInterface
     }
 
     /**
-     * Builds the DDL SQL to add the tables of a database
+     * Returns the DDL SQL to add the tables of a database
      * together with index and foreign keys
      *
-     * @return     string
+     * @return string
      */
     public function getAddTablesDDL(Database $database)
     {
@@ -261,7 +264,7 @@ class DefaultPlatform implements PlatformInterface
     /**
      * Gets the requests to execute at the beginning of a DDL file
      *
-     * @return     string
+     * @return string
      */
     public function getBeginDDL()
     {
@@ -270,7 +273,7 @@ class DefaultPlatform implements PlatformInterface
     /**
      * Gets the requests to execute at the end of a DDL file
      *
-     * @return     string
+     * @return string
      */
     public function getEndDDL()
     {
@@ -278,7 +281,7 @@ class DefaultPlatform implements PlatformInterface
 
     /**
      * Builds the DDL SQL to drop a table
-     * @return     string
+     * @return string
      */
     public function getDropTableDDL(Table $table)
     {
@@ -291,7 +294,7 @@ DROP TABLE " . $this->quoteIdentifier($table->getName()) . ";
      * Builds the DDL SQL to add a table
      * without index and foreign keys
      *
-     * @return     string
+     * @return string
      */
     public function getAddTableDDL(Table $table)
     {
@@ -330,7 +333,7 @@ DROP TABLE " . $this->quoteIdentifier($table->getName()) . ";
 
     /**
      * Builds the DDL SQL for a Column object.
-     * @return     string
+     * @return string
      */
     public function getColumnDDL(Column $col)
     {
@@ -339,7 +342,7 @@ DROP TABLE " . $this->quoteIdentifier($table->getName()) . ";
         $ddl = array($this->quoteIdentifier($col->getName()));
         $sqlType = $domain->getSqlType();
         if ($this->hasSize($sqlType) && $col->isDefaultSqlType($this)) {
-            $ddl[] = $sqlType . $domain->printSize();
+            $ddl[] = $sqlType . $domain->getSizeDefinition();
         } else {
             $ddl[] = $sqlType;
         }
@@ -358,7 +361,7 @@ DROP TABLE " . $this->quoteIdentifier($table->getName()) . ";
 
     /**
      * Returns the SQL for the default value of a Column object
-     * @return     string
+     * @return string
      */
     public function getColumnDefaultValueDDL(Column $col)
     {
@@ -391,10 +394,10 @@ DROP TABLE " . $this->quoteIdentifier($table->getName()) . ";
      * echo $platform->getColumnListDDL(array('foo', 'bar');
      * // '"foo","bar"'
      * </code>
-     * @param      array Column[] or string[]
-     * @param      string $delim The delimiter to use in separating the column names.
+     * @param array Column[] or string[]
+     * @param string $delim The delimiter to use in separating the column names.
      *
-     * @return     string
+     * @return string
      */
     public function getColumnListDDL($columns, $delimiter = ',')
     {
@@ -410,8 +413,9 @@ DROP TABLE " . $this->quoteIdentifier($table->getName()) . ";
     }
 
     /**
-     * Returns the name of a table primary key
-     * @return     string
+     * Returns the name of a table primary key.
+     *
+     * @return string
      */
     public function getPrimaryKeyName(Table $table)
     {
@@ -421,8 +425,9 @@ DROP TABLE " . $this->quoteIdentifier($table->getName()) . ";
     }
 
     /**
-     * Returns the SQL for the primary key of a Table object
-     * @return     string
+     * Returns the SQL for the primary key of a Table object.
+     *
+     * @return string
      */
     public function getPrimaryKeyDDL(Table $table)
     {
@@ -432,10 +437,10 @@ DROP TABLE " . $this->quoteIdentifier($table->getName()) . ";
     }
 
     /**
-     * Builds the DDL SQL to drop the primary key of a table.
+     * Returns the DDL SQL to drop the primary key of a table.
      *
-     * @param      Table $table
-     * @return     string
+     * @param Table $table
+     * @return string
      */
     public function getDropPrimaryKeyDDL(Table $table)
     {
@@ -450,10 +455,10 @@ ALTER TABLE %s DROP CONSTRAINT %s;
     }
 
     /**
-     * Builds the DDL SQL to add the primary key of a table.
+     * Returns the DDL SQL to add the primary key of a table.
      *
-     * @param      Table $table
-     * @return     string
+     * @param Table $table
+     * @return string
      */
     public function getAddPrimaryKeyDDL(Table $table)
     {
@@ -468,10 +473,10 @@ ALTER TABLE %s ADD %s;
     }
 
     /**
-     * Builds the DDL SQL to add the indices of a table.
+     * Returns the DDL SQL to add the indices of a table.
      *
-     * @param      Table $table
-     * @return     string
+     * @param  Table $table
+     * @return string
      */
     public function getAddIndicesDDL(Table $table)
     {
@@ -484,10 +489,10 @@ ALTER TABLE %s ADD %s;
     }
 
     /**
-     * Builds the DDL SQL to add an Index.
+     * Returns the DDL SQL to add an Index.
      *
-     * @param      Index $index
-     * @return     string
+     * @param  Index $index
+     * @return string
      */
     public function getAddIndexDDL(Index $index)
     {
@@ -496,7 +501,7 @@ CREATE %sINDEX %s ON %s (%s);
 ";
 
         return sprintf($pattern,
-            $index->getIsUnique() ? 'UNIQUE ' : '',
+            $index->isUnique() ? 'UNIQUE ' : '',
             $this->quoteIdentifier($index->getName()),
             $this->quoteIdentifier($index->getTable()->getName()),
             $this->getColumnListDDL($index->getColumns())
@@ -529,7 +534,7 @@ DROP INDEX %s;
     public function getIndexDDL(Index $index)
     {
         return sprintf('%sINDEX %s (%s)',
-            $index->getIsUnique() ? 'UNIQUE ' : '',
+            $index->isUnique() ? 'UNIQUE ' : '',
             $this->quoteIdentifier($index->getName()),
             $this->getColumnListDDL($index->getColumns())
         );

@@ -253,9 +253,9 @@ class Behavior extends XmlElement
     /**
      * @see       parent::appendXml(DOMNode)
      */
-    public function appendXml(DOMNode $node)
+    public function appendXml(\DOMNode $node)
     {
-        $doc = ($node instanceof DOMDocument) ? $node : $node->ownerDocument;
+        $doc = ($node instanceof \DOMDocument) ? $node : $node->ownerDocument;
 
         $bNode = $node->appendChild($doc->createElement('behavior'));
         $bNode->setAttribute('name', $this->getName());
