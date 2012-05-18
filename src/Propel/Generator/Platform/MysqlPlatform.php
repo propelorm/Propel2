@@ -26,8 +26,8 @@ use Propel\Generator\Model\Diff\DatabaseDiff;
 /**
  * MySql PlatformInterface implementation.
  *
- * @author     Hans Lellelid <hans@xmpl.org> (Propel)
- * @author     Martin Poeschl <mpoeschl@marmot.at> (Torque)
+ * @author Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author Martin Poeschl <mpoeschl@marmot.at> (Torque)
  */
 class MysqlPlatform extends DefaultPlatform
 {
@@ -304,7 +304,7 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
 
         $ddl = array($this->quoteIdentifier($col->getName()));
         if ($this->hasSize($sqlType) && $col->isDefaultSqlType($this)) {
-            $ddl[] = $sqlType . $domain->printSize();
+            $ddl[] = $sqlType . $domain->getSizeDefinition();
         } else {
             $ddl[] = $sqlType;
         }
@@ -439,7 +439,7 @@ DROP INDEX %s ON %s;
         $vendorInfo = $index->getVendorInfoForType($this->getDatabaseType());
         if ($vendorInfo && $vendorInfo->getParameter('Index_type')) {
             $type = $vendorInfo->getParameter('Index_type') . ' ';
-        } elseif ($index->getIsUnique()) {
+        } elseif ($index->isUnique()) {
             $type = 'UNIQUE ';
         }
 

@@ -329,7 +329,7 @@ DROP TABLE IF EXISTS %s CASCADE;
             $sqlType = $col->getType() === PropelTypes::BIGINT ? 'bigserial' : 'serial';
         }
         if ($this->hasSize($sqlType) && $col->isDefaultSqlType($this)) {
-            $ddl[] = $sqlType . $domain->printSize();
+            $ddl[] = $sqlType . $domain->getSizeDefinition();
         } else {
             $ddl[] = $sqlType;
         }
@@ -410,7 +410,7 @@ ALTER TABLE %s ALTER COLUMN %s;
                         $sqlType = $toColumn->getType() === PropelTypes::BIGINT ? 'bigserial' : 'serial';
                     }
                     if ($this->hasSize($sqlType)) {
-                        $sqlType .= $toColumn->getDomain()->printSize();
+                        $sqlType .= $toColumn->getDomain()->getSizeDefinition();
                     }
                     $ret .= sprintf($pattern, $this->quoteIdentifier($table->getName()), $colName . ' TYPE ' . $sqlType);
                     break;

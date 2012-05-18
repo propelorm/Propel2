@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Manager;
@@ -17,7 +17,7 @@ use Propel\Generator\Util\Filesystem;
 /**
  * This manager creates the Object Model classes based on the XML schema file.
  *
- * @author     Hans Lellelid <hans@xmpl.org>
+ * @author Hans Lellelid <hans@xmpl.org>
  */
 class ModelManager extends AbstractManager
 {

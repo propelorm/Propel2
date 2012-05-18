@@ -5,71 +5,80 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Model;
 
 use Propel\Generator\Exception\EngineException;
+use Propel\Generator\Exception\InvalidArgumentException;
+use Propel\Generator\Platform\PlatformInterface;
 
 /**
  * A class for holding application data structures.
  *
- * @author     Hans Lellelid <hans@xmpl.org> (Propel)
- * @author     Leon Messerschmidt <leon@opticode.co.za> (Torque)
- * @author     John McNally<jmcnally@collab.net> (Torque)
- * @author     Martin Poeschl<mpoeschl@marmot.at> (Torque)
- * @author     Daniel Rall<dlr@collab.net> (Torque)
- * @author     Byron Foster <byron_foster@yahoo.com> (Torque)
+ * @author Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author Leon Messerschmidt <leon@opticode.co.za> (Torque)
+ * @author John McNally<jmcnally@collab.net> (Torque)
+ * @author Martin Poeschl<mpoeschl@marmot.at> (Torque)
+ * @author Daniel Rall<dlr@collab.net> (Torque)
+ * @author Byron Foster <byron_foster@yahoo.com> (Torque)
+ * @author Hugo Hamon <webmaster@apprendre-php.com> (Torque)
  */
 class Database extends ScopedElement
 {
-    /**
-     * The default string format for objects based on this database
-     * (e.g. 'XML', 'YAML', 'CSV', 'JSON')
-     *
-     * @var       string
-     */
-    protected $defaultStringFormat;
-
-    /**
-     * List of behaviors registered for this table
-     *
-     * @var array
-     */
-    protected $behaviors = array();
+    const DEFAULT_STRING_FORMAT = 'YAML';
 
     private $platform;
-    private $tables = array();
+    private $tables;
     private $name;
-
     private $baseClass;
     private $basePeer;
     private $defaultIdMethod;
     private $defaultPhpNamingMethod;
     private $defaultTranslateMethod;
-    private $parentSchema;
-    private $tablesByName = array();
-    private $tablesByLowercaseName = array();
-    private $tablesByPhpName = array();
+    private $domainMap;
     private $heavyIndexing;
-    protected $tablePrefix = '';
+    private $parentSchema;
+    private $tablesByName;
+    private $tablesByLowercaseName;
+    private $tablesByPhpName;
 
-    private $domainMap = array();
+    protected $behaviors;
+    protected $defaultStringFormat;
+    protected $tablePrefix;
 
     /**
      * Constructs a new Database object.
      *
-     * @param      string $name
+     * @param string $name
      */
     public function __construct($name = null)
     {
-        $this->name = $name;
+        parent::__construct();
+
+        if (null !== $name) {
+            $this->setName($name);
+        }
+
+        $this->heavyIndexing = false;
+        $this->tablePrefix = '';
+        $this->defaultPhpNamingMethod = NameGenerator::CONV_METHOD_UNDERSCORE;
+        $this->defaultIdMethod = IdMethod::NATIVE;
+        $this->defaultStringFormat = static::DEFAULT_STRING_FORMAT;
+        $this->behaviors = array();
+        $this->domainMap = array();
+        $this->tables = array();
+        $this->tablesByName = array();
+        $this->tablesByPhpName = array();
+        $this->tablesByLowercaseName = array();
     }
 
     /**
-     * Sets up the Database object based on the attributes that were passed to loadFromXML().
-     * @see        parent::loadFromXML()
+     * Sets up the Database object based on the attributes that were passed
+     * to loadFromXML().
+     *
+     * @see parent::loadFromXML()
      */
     protected function setupObject()
     {
@@ -82,13 +91,13 @@ class Database extends ScopedElement
         $this->defaultPhpNamingMethod = $this->getAttribute('defaultPhpNamingMethod', NameGenerator::CONV_METHOD_UNDERSCORE);
         $this->heavyIndexing = $this->booleanValue($this->getAttribute('heavyIndexing'));
         $this->tablePrefix = $this->getAttribute('tablePrefix', $this->getBuildProperty('tablePrefix'));
-        $this->defaultStringFormat = $this->getAttribute('defaultStringFormat', 'YAML');
+        $this->defaultStringFormat = $this->getAttribute('defaultStringFormat', static::DEFAULT_STRING_FORMAT);
     }
 
     /**
      * Returns the PlatformInterface implementation for this database.
      *
-     * @return     PlatformInterface a Platform implementation
+     * @return PlatformInterface
      */
     public function getPlatform()
     {
@@ -98,15 +107,17 @@ class Database extends ScopedElement
     /**
      * Sets the PlatformInterface implementation for this database.
      *
-     * @param      PlatformInterface $platform A Platform implementation
+     * @param PlatformInterface $platform A Platform implementation
      */
-    public function setPlatform($platform)
+    public function setPlatform(PlatformInterface $platform = null)
     {
         $this->platform = $platform;
     }
 
     /**
-     * Get the name of the Database
+     * Returns the database name.
+     *
+     * @return string
      */
     public function getName()
     {
@@ -114,7 +125,9 @@ class Database extends ScopedElement
     }
 
     /**
-     * Set the name of the Database
+     * Sets the database name.
+     *
+     * @param string $name
      */
     public function setName($name)
     {
@@ -122,8 +135,10 @@ class Database extends ScopedElement
     }
 
     /**
-     * Get the value of baseClass.
-     * @return     value of baseClass.
+     * Returns the name of the base super class inherited by active record
+     * objects. This parameter is overriden at the table level.
+     *
+     * @return string
      */
     public function getBaseClass()
     {
@@ -131,17 +146,21 @@ class Database extends ScopedElement
     }
 
     /**
-     * Set the value of baseClass.
-     * @param      v  Value to assign to baseClass.
+     * Sets the name of the base super class inherited by active record objects.
+     * This parameter is overriden at the table level.
+     *
+     * @param string $class.
      */
-    public function setBaseClass($v)
+    public function setBaseClass($class)
     {
-        $this->baseClass = $v;
+        $this->baseClass = $class;
     }
 
     /**
-     * Get the value of basePeer.
-     * @return     value of basePeer.
+     * Returns the name of the base peer super class inherited by Peer classes.
+     * This parameter is overriden at the table level.
+     *
+     * @return string
      */
     public function getBasePeer()
     {
@@ -149,17 +168,21 @@ class Database extends ScopedElement
     }
 
     /**
-     * Set the value of basePeer.
-     * @param      v Value to assign to basePeer.
+     * Sets the name of the base peer super class inherited by Peer classes.
+     * This parameter is overriden at the table level.
+     *
+     * @param string $class
      */
-    public function setBasePeer($v)
+    public function setBasePeer($class)
     {
-        $this->basePeer = $v;
+        $this->basePeer = $class;
     }
 
     /**
-     * Get the value of defaultIdMethod.
-     * @return     value of defaultIdMethod.
+     * Returns the name of the default ID method strategy.
+     * This parameter can be overriden at the table level.
+     *
+     * @return string
      */
     public function getDefaultIdMethod()
     {
@@ -167,18 +190,22 @@ class Database extends ScopedElement
     }
 
     /**
-     * Set the value of defaultIdMethod.
-     * @param      v Value to assign to defaultIdMethod.
+     * Sets the name of the default ID method strategy.
+     * This parameter can be overriden at the table level.
+     *
+     * @param string $strategy
      */
-    public function setDefaultIdMethod($v)
+    public function setDefaultIdMethod($strategy)
     {
-        $this->defaultIdMethod = $v;
+        $this->defaultIdMethod = $strategy;
     }
 
     /**
-     * Get the value of defaultPHPNamingMethod which specifies the
-     * method for converting schema names for table and column to PHP names.
-     * @return     string The default naming conversion used by this database.
+     * Returns the name of the default PHP naming method strategy, which
+     * specifies the method for converting schema names for table and column to
+     * PHP names. This parameter can be overriden at the table layer.
+     *
+     * @return string
      */
     public function getDefaultPhpNamingMethod()
     {
@@ -186,28 +213,51 @@ class Database extends ScopedElement
     }
 
     /**
-     * Set the value of defaultPHPNamingMethod.
-     * @param      string $v The default naming conversion for this database to use.
+     * Sets name of the default PHP naming method strategy.
+     *
+     * @param string $strategy
      */
-    public function setDefaultPhpNamingMethod($v)
+    public function setDefaultPhpNamingMethod($strategy)
     {
-        $this->defaultPhpNamingMethod = $v;
+        $this->defaultPhpNamingMethod = $strategy;
     }
 
     /**
-     * Set the default string format for ActiveRecord objects in this Db.
+     * Returns the list of supported string formats
      *
-     * @param      string $defaultStringFormat Any of 'XML', 'YAML', 'JSON', or 'CSV'
+     * @return array
      */
-    public function setDefaultStringFormat($defaultStringFormat)
+    static public function getSupportedStringFormats()
     {
-        $this->defaultStringFormat = $defaultStringFormat;
+        return array('XML', 'YAML', 'JSON', 'CSV');
     }
 
     /**
-     * Get the default string format for ActiveRecord objects in this Db.
+     * Sets the default string format for ActiveRecord objects in this table.
+     * This parameter can be overriden at the table level.
      *
-     * @return     string The default string format
+     * Any of 'XML', 'YAML', 'JSON', or 'CSV'.
+     *
+     * @param string $format
+     * @throws InvalidArgumentException
+     */
+    public function setDefaultStringFormat($format)
+    {
+        $formats = static::getSupportedStringFormats();
+
+        $format = strtoupper($format);
+        if (!in_array($format, $formats)) {
+            throw new InvalidArgumentException(sprintf('Given "%s" default string format is not supported. Only "%s" are valid string formats.', $format, implode(', ', $formats)));
+        }
+
+        $this->defaultStringFormat = $format;
+    }
+
+    /**
+     * Returns the default string format for ActiveRecord objects in this table.
+     * This parameter can be overriden at the table level.
+     *
+     * @return string
      */
     public function getDefaultStringFormat()
     {
@@ -215,12 +265,11 @@ class Database extends ScopedElement
     }
 
     /**
-     * Get the value of heavyIndexing.
+     * Returns whether or not heavy indexing is enabled.
      *
-     * This is a synonym for getHeavyIndexing().
+     * This is an alias for getHeavyIndexing().
      *
-     * @return     Boolean Value of heavyIndexing.
-     * @see        getHeavyIndexing()
+     * @return Boolean
      */
     public function isHeavyIndexing()
     {
@@ -228,9 +277,11 @@ class Database extends ScopedElement
     }
 
     /**
-     * Get the value of heavyIndexing.
+     * Returns whether or not heavy indexing is enabled.
      *
-     * @return     Boolean Value of heavyIndexing.
+     * This is an alias for isHeavyIndexing().
+     *
+     * @return Boolean
      */
     public function getHeavyIndexing()
     {
@@ -238,16 +289,18 @@ class Database extends ScopedElement
     }
 
     /**
-     * Set the value of heavyIndexing.
-     * @param      Boolean $v  Value to assign to heavyIndexing.
+     * Sets whether or not heavy indexing is enabled.
+     *
+     * @param Boolean $heavyIndexing
      */
-    public function setHeavyIndexing($v)
+    public function setHeavyIndexing($heavyIndexing)
     {
-        $this->heavyIndexing = (Boolean) $v;
+        $this->heavyIndexing = (Boolean) $heavyIndexing;
     }
 
     /**
-     * Return the list of all tables
+     * Return the list of all tables.
+     *
      * @return array
      */
     public function getTables()
@@ -256,7 +309,8 @@ class Database extends ScopedElement
     }
 
     /**
-     * Return the number of tables in the database
+     * Return the number of tables in the database.
+     *
      * @return integer
      */
     public function countTables()
@@ -272,7 +326,8 @@ class Database extends ScopedElement
     }
 
     /**
-     * Return the list of all tables that have a SQL representation
+     * Returns the list of all tables that have a SQL representation.
+     *
      * @return array
      */
     public function getTablesForSql()
@@ -288,11 +343,11 @@ class Database extends ScopedElement
     }
 
     /**
-     * Check whether the database has a table.
-     * @param      string $name the name of the table (e.g. 'my_table')
-     * @param      Boolean $caseInsensitive Whether the check is case insensitive. False by default.
+     * Returns whether or not the database has a table.
      *
-     * @return     Boolean
+     * @param string $name
+     * @param Boolean $caseInsensitive
+     * @return Boolean
      */
     public function hasTable($name, $caseInsensitive = false)
     {
@@ -304,11 +359,11 @@ class Database extends ScopedElement
     }
 
     /**
-     * Return the table with the specified name.
-     * @param      string $name The name of the table (e.g. 'my_table')
-     * @param      Boolean $caseInsensitive Whether the check is case insensitive. False by default.
+     * Returns the table with the specified name.
      *
-     * @return     Table a Table object or null if it doesn't exist
+     * @param string $name
+     * @param Boolean $caseInsensitive
+     * @return Table
      */
     public function getTable($name, $caseInsensitive = false)
     {
@@ -324,9 +379,11 @@ class Database extends ScopedElement
     }
 
     /**
-     * Check whether the database has a table.
-     * @param      string $phpName the PHP Name of the table (e.g. 'MyTable')
-     * @return     Boolean
+     * Returns whether or not the database has a table identified by its
+     * PHP name.
+     *
+     * @param string $phpName
+     * @return Boolean
      */
     public function hasTableByPhpName($phpName)
     {
@@ -334,9 +391,10 @@ class Database extends ScopedElement
     }
 
     /**
-     * Return the table with the specified phpName.
-     * @param      string $phpName the PHP Name of the table (e.g. 'MyTable')
-     * @return     Table a Table object or null if it doesn't exist
+     * Returns the table object with the specified PHP name.
+     *
+     * @param string $phpName
+     * @return Table
      */
     public function getTableByPhpName($phpName)
     {
@@ -348,49 +406,71 @@ class Database extends ScopedElement
     }
 
     /**
-     * An utility method to add a new table from an xml attribute.
+     * Adds a new table to this database.
+     *
+     * @param Table|array $table
+     * @return Table
      */
-    public function addTable($data)
+    public function addTable($table)
     {
-        if (!($data instanceof Table)) {
+        if (!($table instanceof Table)) {
             $tbl = new Table();
             $tbl->setDatabase($this);
             $tbl->setSchema($this->getSchema());
-            $tbl->loadFromXML($data);
+            $tbl->loadFromXML($table);
 
             return $this->addTable($tbl);
         }
 
-        $tbl = $data; // alias
-        if (isset($this->tablesByName[$tbl->getName()])) {
-            throw new EngineException(sprintf('Table "%s" declared twice', $tbl->getName()));
+        if (isset($this->tablesByName[$table->getName()])) {
+            throw new EngineException(sprintf('Table "%s" declared twice', $table->getName()));
         }
 
-        $tbl->setDatabase($this);
-        if (null === $tbl->getSchema()) {
-            $tbl->setSchema($this->getSchema());
+        $table->setDatabase($this);
+        if (null === $table->getSchema()) {
+            $table->setSchema($this->getSchema());
         }
 
-        $this->tables[] = $tbl;
-        $this->tablesByName[$tbl->getName()] = $tbl;
-        $this->tablesByLowercaseName[strtolower($tbl->getName())] = $tbl;
-        $this->tablesByPhpName[$tbl->getPhpName()] = $tbl;
+        $this->tables[] = $table;
+        $this->tablesByName[$table->getName()] = $table;
+        $this->tablesByLowercaseName[strtolower($table->getName())] = $table;
+        $this->tablesByPhpName[$table->getPhpName()] = $table;
 
-        if (0 === strpos($tbl->getNamespace(), '\\')) {
-            $tbl->setNamespace(substr($tbl->getNamespace(), 1));
-        } elseif ($namespace = $this->getNamespace()) {
-            if (null === $tbl->getNamespace()) {
-                $tbl->setNamespace($namespace);
-            } else {
-                $tbl->setNamespace($namespace . '\\' . $tbl->getNamespace());
+        $this->computeTableNamespace($table);
+
+        if (null === $table->getPackage()) {
+            $table->setPackage($this->getPackage());
+        }
+
+        return $table;
+    }
+
+    /**
+     * Computes the table namespace based on the current relative or
+     * absolute table namespace and the database namespace.
+     *
+     * @param Table $table
+     * @return string
+     */
+    private function computeTableNamespace(Table $table)
+    {
+        $namespace = $table->getNamespace();
+        if ($this->isAbsoluteNamespace($namespace)) {
+            $namespace = ltrim($namespace, '\\');
+            $table->setNamespace($namespace);
+
+            return $namespace;
+        }
+
+        if ($namespace = $this->getNamespace()) {
+            if ($table->getNamespace()) {
+                $namespace .= '\\'.$table->getNamespace();
             }
+
+            $table->setNamespace($namespace);
         }
 
-        if (null === $tbl->getPackage()) {
-            $tbl->setPackage($this->getPackage());
-        }
-
-        return $tbl;
+        return $namespace;
     }
 
     /**
@@ -414,8 +494,10 @@ class Database extends ScopedElement
     }
 
     /**
-     * Adds Domain object from <domain> tag.
-     * @param      mixed XML attributes (array) or Domain object.
+     * Adds a domain object to this database.
+     *
+     * @param Domain|array $data
+     * @return Domain
      */
     public function addDomain($data)
     {
@@ -435,39 +517,54 @@ class Database extends ScopedElement
     }
 
     /**
-     * Get already configured Domain object by name.
-     * @return     Domain
+     * Returns the already configured domain object by its name.
+     *
+     * @param string $name
+     * @return Domain
      */
-    public function getDomain($domainName)
+    public function getDomain($name)
     {
-        if (isset($this->domainMap[$domainName])) {
-            return $this->domainMap[$domainName];
-        }
-
-        return null;
-    }
-
-    public function getGeneratorConfig()
-    {
-        if ($schema = $this->getParentSchema()) {
-            return $schema->getGeneratorConfig();
-        }
-
-        return null;
-    }
-
-    public function getBuildProperty($key)
-    {
-        if ($config = $this->getGeneratorConfig()) {
-            return $config->getBuildProperty($key);
+        if (isset($this->domainMap[$name])) {
+            return $this->domainMap[$name];
         }
 
         return null;
     }
 
     /**
-     * Adds a new Behavior to the database
-     * @return Behavior A behavior instance
+     * Returns the GeneratorConfigInterface object.
+     *
+     * @return GeneratorConfigInterface
+     */
+    public function getGeneratorConfig()
+    {
+        if ($this->parentSchema) {
+            return $this->parentSchema->getGeneratorConfig();
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns the build property identified by its name.
+     *
+     * @param string $name
+     * @return string
+     */
+    public function getBuildProperty($name)
+    {
+        if ($config = $this->getGeneratorConfig()) {
+            return $config->getBuildProperty($name);
+        }
+
+        return null;
+    }
+
+    /**
+     * Adds a new behavior to the database*
+     *
+     * @param Behavior|array $bdata
+     * @return Behavior
      */
     public function addBehavior($bdata)
     {
@@ -487,8 +584,9 @@ class Database extends ScopedElement
     }
 
     /**
-     * Get the database behaviors
-     * @return Array of Behavior objects
+     * Returns the list of all database behaviors.
+     *
+     * @return array
      */
     public function getBehaviors()
     {
@@ -496,10 +594,10 @@ class Database extends ScopedElement
     }
 
     /**
-     * check if the database has a behavior by name
+     * Returns whether or not the database has a specific behavior.
      *
-     * @param     string $name the behavior name
-     * @return    Boolean True if the behavior exists
+     * @param string $name
+     * @return Boolean
      */
     public function hasBehavior($name)
     {
@@ -507,19 +605,24 @@ class Database extends ScopedElement
     }
 
     /**
-     * Get one database behavior by name
-     * @param string $name the behavior name
-     * @return Behavior a behavior object
+     * Returns the corresponding behavior identified by its name.
+     *
+     * @param string $name
+     * @return Behavior
      */
     public function getBehavior($name)
     {
-        return $this->behaviors[$name];
+        if (isset($this->behaviors[$name])) {
+            return $this->behaviors[$name];
+        }
+
+        return null;
     }
 
     /**
-     * Get the table prefix for this database
+     * Returns the table prefix for this database.
      *
-     * @return string the table prefix
+     * @return string
      */
     public function getTablePrefix()
     {
@@ -527,8 +630,8 @@ class Database extends ScopedElement
     }
 
     /**
-     * Get the next behavior on all tables, ordered by behavior priority,
-     * and skipping the ones that were already executed,
+     * Returns the next behavior on all tables, ordered by behavior priority,
+     * and skipping the ones that were already executed.
      *
      * @return Behavior
      */
@@ -536,6 +639,7 @@ class Database extends ScopedElement
     {
         // order the behaviors according to Behavior::$tableModificationOrder
         $behaviors = array();
+        $nextBehavior = null;
         foreach ($this->tables as $table) {
             foreach ($table->getBehaviors() as $behavior) {
                 if (!$behavior->isTableModified()) {
@@ -544,13 +648,17 @@ class Database extends ScopedElement
             }
         }
         ksort($behaviors);
-        foreach ($behaviors as $behaviorList) {
-            foreach ($behaviorList as $behavior) {
-                return $behavior;
-            }
+        if (count($behaviors)) {
+            $nextBehavior = $behaviors[key($behaviors)][0];
         }
+        
+        return $nextBehavior;
     }
 
+    /**
+     * Finalizes the setup process.
+     *
+     */
     public function doFinalInitialization()
     {
         // add the referrers for the foreign keys
@@ -585,7 +693,8 @@ class Database extends ScopedElement
     }
 
     /**
-     * Can be called several times
+     * Setups all table referrers.
+     *
      */
     protected function setupTableReferrers()
     {
@@ -596,7 +705,7 @@ class Database extends ScopedElement
     }
 
     /**
-     * @see        XmlElement::appendXml(DOMNode)
+     * @see XmlElement::appendXml(DOMNode)
      */
     public function appendXml(\DOMNode $node)
     {
@@ -606,8 +715,8 @@ class Database extends ScopedElement
 
         $dbNode->setAttribute('name', $this->name);
 
-        if ($this->pkg) {
-            $dbNode->setAttribute('package', $this->pkg);
+        if ($this->package) {
+            $dbNode->setAttribute('package', $this->package);
         }
 
         if ($this->defaultIdMethod) {
