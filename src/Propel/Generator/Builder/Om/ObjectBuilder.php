@@ -5,12 +5,11 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Builder\Om;
 
-use DateTime;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\IdMethod;
@@ -22,16 +21,17 @@ use Propel\Generator\Platform\PlatformInterface;
 /**
  * Generates a PHP5 base Object class for user object model (OM).
  *
- * This class produces the base object class (e.g. BaseMyTable) which contains all
- * the custom-built accessor and setter methods.
+ * This class produces the base object class (e.g. BaseMyTable) which contains
+ * all the custom-built accessor and setter methods.
  *
- * @author     Hans Lellelid <hans@xmpl.org>
+ * @author Hans Lellelid <hans@xmpl.org>
  */
 class ObjectBuilder extends AbstractObjectBuilder
 {
     /**
-     * Gets the package for the [base] object classes.
-     * @return     string
+     * Returns the package for the base object classes.
+     *
+     * @return string
      */
     public function getPackage()
     {
@@ -39,7 +39,9 @@ class ObjectBuilder extends AbstractObjectBuilder
     }
 
     /**
-     * (non-PHPdoc)
+     * Returns the namespace for the base class.
+     *
+     * @return string
      * @see Propel\Generator\Builder\Om.AbstractOMBuilder::getNamespace()
      */
     public function getNamespace()
@@ -52,7 +54,10 @@ class ObjectBuilder extends AbstractObjectBuilder
     }
 
     /**
-     * Returns default key type. if not presented in configuration default will be 'TYPE_PHPNAME'
+     * Returns default key type.
+     *
+     * If not presented in configuration default will be 'TYPE_PHPNAME'
+     *
      * @return string
      */
     public function getDefaultKeyType()
@@ -64,7 +69,8 @@ class ObjectBuilder extends AbstractObjectBuilder
 
     /**
      * Returns the name of the current class being built.
-     * @return     string
+     *
+     * @return string
      */
     public function getUnprefixedClassName()
     {
@@ -72,8 +78,8 @@ class ObjectBuilder extends AbstractObjectBuilder
     }
 
     /**
-     * Validates the current table to make sure that it won't
-     * result in generated code that will not parse.
+     * Validates the current table to make sure that it won't result in
+     * generated code that will not parse.
      *
      * This method may emit warnings for code which may cause problems
      * and will throw exceptions for errors that will definitely cause
@@ -118,17 +124,18 @@ class ObjectBuilder extends AbstractObjectBuilder
 
     /**
      * Returns the appropriate formatter (from platform) for a date/time column.
-     * @param      Column $col
-     * @return     string
+     *
+     * @param Column $column
+     * @return string
      */
-    protected function getTemporalFormatter(Column $col)
+    protected function getTemporalFormatter(Column $column)
     {
         $fmt = null;
-        if ($col->getType() === PropelTypes::DATE) {
+        if ($column->getType() === PropelTypes::DATE) {
             $fmt = $this->getPlatform()->getDateFormatter();
-        } elseif ($col->getType() === PropelTypes::TIME) {
+        } elseif ($column->getType() === PropelTypes::TIME) {
             $fmt = $this->getPlatform()->getTimeFormatter();
-        } elseif ($col->getType() === PropelTypes::TIMESTAMP) {
+        } elseif ($column->getType() === PropelTypes::TIMESTAMP) {
             $fmt = $this->getPlatform()->getTimestampFormatter();
         }
 
@@ -136,46 +143,48 @@ class ObjectBuilder extends AbstractObjectBuilder
     }
 
     /**
-     * Returns the type-casted and stringified default value for the specified Column.
-     * This only works for scalar default values currently.
-     * @return     string The default value or 'NULL' if there is none.
+     * Returns the type-casted and stringified default value for the specified
+     * Column. This only works for scalar default values currently.
+     *
+     * @param Column $column
+     * @return string
      */
-    protected function getDefaultValueString(Column $col)
+    protected function getDefaultValueString(Column $column)
     {
         $defaultValue = var_export(null, true);
-        $val = $col->getPhpDefaultValue();
+        $val = $column->getPhpDefaultValue();
         if (null === $val) {
             return $defaultValue;
         }
 
-        if ($col->isTemporalType()) {
-            $fmt = $this->getTemporalFormatter($col);
+        if ($column->isTemporalType()) {
+            $fmt = $this->getTemporalFormatter($column);
             try {
                 if (!($this->getPlatform() instanceof MysqlPlatform &&
                 ($val === '0000-00-00 00:00:00' || $val === '0000-00-00'))) {
                     // while technically this is not a default value of NULL,
                     // this seems to be closest in meaning.
-                    $defDt = new DateTime($val);
+                    $defDt = new \DateTime($val);
                     $defaultValue = var_export($defDt->format($fmt), true);
                 }
             } catch (Exception $x) {
                 // prevent endless loop when timezone is undefined
                 date_default_timezone_set('America/Los_Angeles');
-                throw new EngineException(sprintf('Unable to parse default temporal value "%s" for column "%s"', $col->getDefaultValueString(), $col->getFullyQualifiedName()), $x);
+                throw new EngineException(sprintf('Unable to parse default temporal value "%s" for column "%s"', $column->getDefaultValueString(), $column->getFullyQualifiedName()), $x);
             }
-        } elseif ($col->isEnumType()) {
-            $valueSet = $col->getValueSet();
+        } elseif ($column->isEnumType()) {
+            $valueSet = $column->getValueSet();
             if (!in_array($val, $valueSet)) {
                 throw new EngineException(sprintf('Default Value "%s" is not among the enumerated values', $val));
             }
             $defaultValue = array_search($val, $valueSet);
-        } elseif ($col->isPhpPrimitiveType()) {
-            settype($val, $col->getPhpType());
+        } elseif ($column->isPhpPrimitiveType()) {
+            settype($val, $column->getPhpType());
             $defaultValue = var_export($val, true);
-        } elseif ($col->isPhpObjectType()) {
-            $defaultValue = 'new '.$col->getPhpType().'(' . var_export($val, true) . ')';
+        } elseif ($column->isPhpObjectType()) {
+            $defaultValue = 'new '.$column->getPhpType().'(' . var_export($val, true) . ')';
         } else {
-            throw new EngineException("Cannot get default value string for " . $col->getFullyQualifiedName());
+            throw new EngineException("Cannot get default value string for " . $column->getFullyQualifiedName());
         }
 
         return $defaultValue;
@@ -183,7 +192,8 @@ class ObjectBuilder extends AbstractObjectBuilder
 
     /**
      * Adds class phpdoc comment and openning of class.
-     * @param      string &$script The script will be modified in this method.
+     *
+     * @param string &$script
      */
     protected function addClassOpen(&$script)
     {
@@ -227,7 +237,9 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     /**
      * Specifies the methods that are added as part of the basic OM class.
      * This can be overridden by subclasses that wish to add more methods.
-     * @see        ObjectBuilder::addClassBody()
+     *
+     * @param string &$script
+     * @see ObjectBuilder::addClassBody()
      */
     protected function addClassBody(&$script)
     {
@@ -323,7 +335,8 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
 
     /**
      * Closes class.
-     * @param      string &$script The script will be modified in this method.
+     *
+     * @param string &$script
      */
     protected function addClassClose(&$script)
     {
@@ -335,7 +348,8 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
 
     /**
      * Adds any constants to the class.
-     * @param      string &$script The script will be modified in this method.
+     *
+     * @param string &$script
      */
     protected function addConstants(&$script)
     {
@@ -349,7 +363,8 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
 
     /**
      * Adds class attributes.
-     * @param      string &$script The script will be modified in this method.
+     *
+     * @param string &$script
      */
     protected function addAttributes(&$script)
     {
@@ -390,8 +405,8 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
 
     /**
      * Adds variables that store column values.
-     * @param      string &$script The script will be modified in this method.
-     * @see        addColumnNameConstants()
+     *
+     * @param string &$script
      */
     protected function addColumnAttributes(&$script)
     {
@@ -413,25 +428,26 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     }
 
     /**
-     * Add comment about the attribute (variable) that stores column values
-     * @param      string &$script The script will be modified in this method.
-     * @param      Column $col
-     **/
-    protected function addColumnAttributeComment(&$script, Column $col)
+     * Adds comment about the attribute (variable) that stores column values.
+     *
+     * @param string &$script
+     * @param Column $column
+     */
+    protected function addColumnAttributeComment(&$script, Column $column)
     {
-        $cptype = $col->getPhpType();
-        $clo = strtolower($col->getName());
+        $cptype = $column->getPhpType();
+        $clo = strtolower($column->getName());
 
         $script .= "
     /**
      * The value for the $clo field.";
-        if ($col->getDefaultValue()) {
-            if ($col->getDefaultValue()->isExpression()) {
+        if ($column->getDefaultValue()) {
+            if ($column->getDefaultValue()->isExpression()) {
                 $script .= "
-     * Note: this column has a database default value of: (expression) ".$col->getDefaultValue()->getValue();
+     * Note: this column has a database default value of: (expression) ".$column->getDefaultValue()->getValue();
             } else {
                 $script .= "
-     * Note: this column has a database default value of: ". $this->getDefaultValueString($col);
+     * Note: this column has a database default value of: ". $this->getDefaultValueString($column);
             }
         }
         $script .= "
@@ -440,26 +456,29 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     }
 
     /**
-     * Adds the declaration of a column value storage attribute
-     * @param      string &$script The script will be modified in this method.
-     * @param      Column $col
-     **/
-    protected function addColumnAttributeDeclaration(&$script, Column $col)
+     * Adds the declaration of a column value storage attribute.
+     *
+     * @param string &$script
+     * @param Column $column
+     */
+    protected function addColumnAttributeDeclaration(&$script, Column $column)
     {
-        $clo = strtolower($col->getName());
+        $clo = strtolower($column->getName());
         $script .= "
     protected \$" . $clo . ";
 ";
     }
 
     /**
-     * Adds the comment about the attribute keeping track if an attribute value has been loaded
-     * @param      string &$script The script will be modified in this method.
-     * @param      Column $col
-     **/
-    protected function addColumnAttributeLoaderComment(&$script, Column $col)
+     * Adds the comment about the attribute keeping track if an attribute value
+     * has been loaded.
+     *
+     * @param string &$script
+     * @param Column $column
+     */
+    protected function addColumnAttributeLoaderComment(&$script, Column $column)
     {
-        $clo = strtolower($col->getName());
+        $clo = strtolower($column->getName());
         $script .= "
     /**
      * Whether the lazy-loaded \$$clo value has been loaded from database.
@@ -469,26 +488,29 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     }
 
     /**
-     * Adds the declaration of the attribute keeping track of an attribute's loaded state
-     * @param      string &$script The script will be modified in this method.
-     * @param      Column $col
-     **/
-    protected function addColumnAttributeLoaderDeclaration(&$script, Column $col)
+     * Adds the declaration of the attribute keeping track of an attribute
+     * loaded state.
+     *
+     * @param string &$script
+     * @param Column $column
+     */
+    protected function addColumnAttributeLoaderDeclaration(&$script, Column $column)
     {
-        $clo = strtolower($col->getName());
+        $clo = strtolower($column->getName());
         $script .= "
     protected \$".$clo."_isLoaded = false;
 ";
     }
 
     /**
-     * Adds the comment about the serialized attribute
-     * @param      string &$script The script will be modified in this method.
-     * @param      Column $col
-     **/
-    protected function addColumnAttributeUnserializedComment(&$script, Column $col)
+     * Adds the comment about the serialized attribute.
+     *
+     * @param string &$script
+     * @param Column $column
+     */
+    protected function addColumnAttributeUnserializedComment(&$script, Column $column)
     {
-        $clo = strtolower($col->getName());
+        $clo = strtolower($column->getName());
         $script .= "
     /**
      * The unserialized \$$clo value - i.e. the persisted object.
@@ -498,13 +520,14 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     }
 
     /**
-     * Adds the declaration of the serialized attribute
-     * @param      string &$script The script will be modified in this method.
-     * @param      Column $col
-     **/
-    protected function addColumnAttributeUnserializedDeclaration(&$script, Column $col)
+     * Adds the declaration of the serialized attribute.
+     *
+     * @param string &$script
+     * @param Column $column
+     */
+    protected function addColumnAttributeUnserializedDeclaration(&$script, Column $column)
     {
-        $clo = strtolower($col->getName()) . "_unserialized";
+        $clo = strtolower($column->getName()) . "_unserialized";
         $script .= "
     protected \$" . $clo . ";
 ";
@@ -512,8 +535,11 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
 
     /**
      * Adds the getPeer() method.
-     * This is a convenient, non introspective way of getting the Peer class for a particular object.
-     * @param      string &$script The script will be modified in this method.
+     *
+     * This is a convenient, non introspective way of getting the Peer class for
+     * a particular object.
+     *
+     * @param string &$script
      */
     protected function addGetPeer(&$script)
     {
@@ -524,9 +550,10 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     }
 
     /**
-     * Add the comment for the getPeer method
-     * @param      string &$script The script will be modified in this method.
-     **/
+     * Adds the comment for the getPeer method.
+     *
+     * @param string &$script
+     */
     protected function addGetPeerComment(&$script)
     {
         $script .= "
@@ -542,9 +569,10 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     }
 
     /**
-     * Adds the function declaration (function opening) for the getPeer method
-     * @param      string &$script The script will be modified in this method.
-     **/
+     * Adds the function declaration (function opening) for the getPeer method.
+     *
+     * @param string &$script
+     */
     protected function addGetPeerFunctionOpen(&$script)
     {
         $script .= "
@@ -553,9 +581,10 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     }
 
     /**
-     * Adds the body of the getPeer method
-     * @param      string &$script The script will be modified in this method.
-     **/
+     * Adds the body of the getPeer method.
+     *
+     * @param string &$script
+     */
     protected function addGetPeerFunctionBody(&$script)
     {
         $script .= "
@@ -567,10 +596,14 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     }
 
     /**
-     * Add the function close for the getPeer method
-     * Note: this is just a } and the body ends with a return statement, so it's quite useless. But it's here anyway for consisency, cause there's a close function for all functions and in some other instances, they are useful
-     * @param      string &$script The script will be modified in this method.
-     **/
+     * Adds the function close for the getPeer method.
+     *
+     * Note: this is just a } and the body ends with a return statement, so it's
+     * quite useless. But it's here anyway for consisency, cause there's a close
+     * function for all functions and in some other instances, they are useful.
+     *
+     * @param string &$script
+     */
     protected function addGetPeerFunctionClose(&$script)
     {
         $script .= "
@@ -580,8 +613,8 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
 
     /**
      * Adds the constructor for this object.
-     * @param      string &$script The script will be modified in this method.
-     * @see        addConstructor()
+     *
+     * @param string &$script
      */
     protected function addConstructor(&$script)
     {
@@ -593,8 +626,9 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
 
     /**
      * Adds the comment for the constructor
-     * @param      string &$script The script will be modified in this method.
-     **/
+     *
+     * @param string &$script
+     */
     protected function addConstructorComment(&$script)
     {
         $script .= "
@@ -605,9 +639,10 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     }
 
     /**
-     * Adds the function declaration for the constructor
-     * @param      string &$script The script will be modified in this method.
-     **/
+     * Adds the function declaration for the constructor.
+     *
+     * @param string &$script
+     */
     protected function addConstructorOpen(&$script)
     {
         $script .= "
@@ -616,9 +651,10 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     }
 
     /**
-     * Adds the function body for the constructor
-     * @param      string &$script The script will be modified in this method.
-     **/
+     * Adds the function body for the constructor.
+     *
+     * @param string &$script
+     */
     protected function addConstructorBody(&$script)
     {
         $script .= "
@@ -627,9 +663,10 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     }
 
     /**
-     * Adds the function close for the constructor
-     * @param      string &$script The script will be modified in this method.
-     **/
+     * Adds the function close for the constructor.
+     *
+     * @param string &$script
+     */
     protected function addConstructorClose(&$script)
     {
         $script .= "
@@ -639,8 +676,8 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
 
     /**
      * Adds the applyDefaults() method, which is called from the constructor.
-     * @param      string &$script The script will be modified in this method.
-     * @see        addConstructor()
+     *
+     * @param string &$script
      */
     protected function addApplyDefaultValues(&$script)
     {
@@ -651,10 +688,10 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     }
 
     /**
-     * Adds the comment for the applyDefaults method
-     * @param      string &$script The script will be modified in this method.
-     * @see        addApplyDefaultValues()
-     **/
+     * Adds the comment for the applyDefaults method.
+     *
+     * @param string &$script
+     */
     protected function addApplyDefaultValuesComment(&$script)
     {
         $script .= "
@@ -667,10 +704,10 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     }
 
     /**
-     * Adds the function declaration for the applyDefaults method
-     * @param      string &$script The script will be modified in this method.
-     * @see        addApplyDefaultValues()
-     **/
+     * Adds the function declaration for the applyDefaults method.
+     *
+     * @param string &$script
+     */
     protected function addApplyDefaultValuesOpen(&$script)
     {
         $script .= "
@@ -679,10 +716,10 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     }
 
     /**
-     * Adds the function body of the applyDefault method
-     * @param      string &$script The script will be modified in this method.
-     * @see        addApplyDefaultValues()
-     **/
+     * Adds the function body of the applyDefault method.
+     *
+     * @param string &$script
+     */
     protected function addApplyDefaultValuesBody(&$script)
     {
         $table = $this->getTable();
@@ -690,17 +727,17 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
         // see: http://propel.phpdb.org/trac/ticket/378
 
         $colsWithDefaults = array();
-        foreach ($table->getColumns() as $col) {
-            $def = $col->getDefaultValue();
+        foreach ($table->getColumns() as $column) {
+            $def = $column->getDefaultValue();
             if ($def !== null && !$def->isExpression()) {
-                $colsWithDefaults[] = $col;
+                $colsWithDefaults[] = $column;
             }
         }
 
-        foreach ($colsWithDefaults as $col) {
-            $clo = strtolower($col->getName());
-            $defaultValue = $this->getDefaultValueString($col);
-            if ($col->isTemporalType()) {
+        foreach ($colsWithDefaults as $column) {
+            $clo = strtolower($column->getName());
+            $defaultValue = $this->getDefaultValueString($column);
+            if ($column->isTemporalType()) {
                 $dateTimeClass = $this->getBuildProperty('dateTimeClass');
                 if (!$dateTimeClass) {
                     $dateTimeClass = '\DateTime';
@@ -716,10 +753,10 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
 
 
     /**
-     * Adds the function close for the applyDefaults method
-     * @param      string &$script The script will be modified in this method.
-     * @see        addApplyDefaultValues()
-     **/
+     * Adds the function close for the applyDefaults method.
+     *
+     * @param string &$script
+     */
     protected function addApplyDefaultValuesClose(&$script)
     {
         $script .= "
@@ -729,28 +766,28 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
 
     /**
      * Adds a date/time/timestamp getter method.
-     * @param      string &$script The script will be modified in this method.
-     * @param      Column $col The current column.
-     * @see        parent::addColumnAccessors()
+     *
+     * @param string &$script
+     * @param Column $col
      */
-    protected function addTemporalAccessor(&$script, Column $col)
+    protected function addTemporalAccessor(&$script, Column $column)
     {
-        $this->addTemporalAccessorComment($script, $col);
-        $this->addTemporalAccessorOpen($script, $col);
-        $this->addTemporalAccessorBody($script, $col);
+        $this->addTemporalAccessorComment($script, $column);
+        $this->addTemporalAccessorOpen($script, $column);
+        $this->addTemporalAccessorBody($script, $column);
         $this->addTemporalAccessorClose($script);
     }
 
 
     /**
-     * Adds the comment for a temporal accessor
-     * @param      string &$script The script will be modified in this method.
-     * @param      Column $col The current column.
-     * @see        addTemporalAccessor
-     **/
-    public function addTemporalAccessorComment(&$script, Column $col)
+     * Adds the comment for a temporal accessor.
+     *
+     * @param string &$script
+     * @param Column $column
+     */
+    public function addTemporalAccessorComment(&$script, Column $column)
     {
-        $clo = strtolower($col->getName());
+        $clo = strtolower($column->getName());
 
         $dateTimeClass = $this->getBuildProperty('dateTimeClass');
         if (!$dateTimeClass) {
@@ -759,10 +796,10 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
 
         $handleMysqlDate = false;
         if ($this->getPlatform() instanceof MysqlPlatform) {
-            if ($col->getType() === PropelTypes::TIMESTAMP) {
+            if ($column->getType() === PropelTypes::TIMESTAMP) {
                 $handleMysqlDate = true;
                 $mysqlInvalidDateString = '0000-00-00 00:00:00';
-            } elseif ($col->getType() === PropelTypes::DATE) {
+            } elseif ($column->getType() === PropelTypes::DATE) {
                 $handleMysqlDate = true;
                 $mysqlInvalidDateString = '0000-00-00';
             }
@@ -772,7 +809,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
         $script .= "
     /**
      * Get the [optionally formatted] temporal [$clo] column value.
-     * {$col->getDescription()}
+     * {$column->getDescription()}
      *
      * @param      string \$format The date/time format string (either date()-style or strftime()-style).
      *                            If format is NULL, then the raw \DateTime object will be returned.
@@ -783,86 +820,90 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      */";
     }
 
-
     /**
-     * Adds the function declaration for a temporal accessor
-     * @param      string &$script The script will be modified in this method.
-     * @param      Column $col The current column.
-     * @see        addTemporalAccessor
-     **/
-    public function addTemporalAccessorOpen(&$script, Column $col)
+     * Adds the function declaration for a temporal accessor.
+     *
+     * @param string &$script
+     * @param Column $column
+     */
+    public function addTemporalAccessorOpen(&$script, Column $column)
     {
-        $cfc = $col->getPhpName();
+        $cfc = $column->getPhpName();
 
         $defaultfmt = null;
-                $visibility = $col->getAccessorVisibility();
+        $visibility = $column->getAccessorVisibility();
 
         // Default date/time formatter strings are specified in build.properties
-        if ($col->getType() === PropelTypes::DATE) {
+        if ($column->getType() === PropelTypes::DATE) {
             $defaultfmt = $this->getBuildProperty('defaultDateFormat');
-        } elseif ($col->getType() === PropelTypes::TIME) {
+        } elseif ($column->getType() === PropelTypes::TIME) {
             $defaultfmt = $this->getBuildProperty('defaultTimeFormat');
-        } elseif ($col->getType() === PropelTypes::TIMESTAMP) {
+        } elseif ($column->getType() === PropelTypes::TIMESTAMP) {
             $defaultfmt = $this->getBuildProperty('defaultTimeStampFormat');
         }
         if (empty($defaultfmt)) { $defaultfmt = null; }
 
         $script .= "
     ".$visibility." function get$cfc(\$format = ".var_export($defaultfmt, true)."";
-        if ($col->isLazyLoad()) {
+        if ($column->isLazyLoad()) {
             $script .= ", \$con = null";
         }
         $script .= ")
     {";
     }
 
-    protected function getAccessorLazyLoadSnippet(Column $col)
+    /**
+     * Gets accessor lazy loaded snippets.
+     *
+     * @param Column $column
+     */
+    protected function getAccessorLazyLoadSnippet(Column $column)
     {
-        if ($col->isLazyLoad()) {
-            $clo = strtolower($col->getName());
+        if ($column->isLazyLoad()) {
+            $clo = strtolower($column->getName());
             $defaultValueString = 'null';
-            $def = $col->getDefaultValue();
+            $def = $column->getDefaultValue();
             if ($def !== null && !$def->isExpression()) {
-                $defaultValueString = $this->getDefaultValueString($col);
+                $defaultValueString = $this->getDefaultValueString($column);
             }
 
             return "
         if (!\$this->{$clo}_isLoaded && \$this->{$clo} === {$defaultValueString} && !\$this->isNew()) {
-            \$this->load{$col->getPhpName()}(\$con);
+            \$this->load{$column->getPhpName()}(\$con);
         }
 ";
         }
     }
 
     /**
-     * Adds the body of the temporal accessor
-     * @param      string &$script The script will be modified in this method.
-     * @param      Column $col The current column.
-     * @see        addTemporalAccessor
-     **/
-    protected function addTemporalAccessorBody(&$script, Column $col)
+     * Adds the body of the temporal accessor.
+     *
+     * @param string &$script
+     * @param Column $column
+     */
+    protected function addTemporalAccessorBody(&$script, Column $column)
     {
-        $clo = strtolower($col->getName());
+        $clo = strtolower($column->getName());
 
         $dateTimeClass = $this->getBuildProperty('dateTimeClass');
         if (!$dateTimeClass) {
-            $dateTimeClass = 'DateTime';
+            $dateTimeClass = '\DateTime';
         }
         $this->declareClasses($dateTimeClass);
         $defaultfmt = null;
 
         // Default date/time formatter strings are specified in build.properties
-        if ($col->getType() === PropelTypes::DATE) {
+        if ($column->getType() === PropelTypes::DATE) {
             $defaultfmt = $this->getBuildProperty('defaultDateFormat');
-        } elseif ($col->getType() === PropelTypes::TIME) {
+        } elseif ($column->getType() === PropelTypes::TIME) {
             $defaultfmt = $this->getBuildProperty('defaultTimeFormat');
-        } elseif ($col->getType() === PropelTypes::TIMESTAMP) {
+        } elseif ($column->getType() === PropelTypes::TIMESTAMP) {
             $defaultfmt = $this->getBuildProperty('defaultTimeStampFormat');
         }
         if (empty($defaultfmt)) { $defaultfmt = null; }
 
-        if ($col->isLazyLoad()) {
-            $script .= $this->getAccessorLazyLoadSnippet($col);
+        if ($column->isLazyLoad()) {
+            $script .= $this->getAccessorLazyLoadSnippet($column);
         }
 
         $script .= "
@@ -877,9 +918,9 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
 
 
     /**
-     * Adds the body of the temporal accessor
+     * Adds the body of the temporal accessor.
      *
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script
      */
     protected function addTemporalAccessorClose(&$script)
     {
@@ -890,30 +931,30 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
 
     /**
      * Adds an object getter method.
-     * @param      string &$script The script will be modified in this method.
-     * @param      Column $col The current column.
-     * @see        parent::addColumnAccessors()
+     *
+     * @param string &$script
+     * @param Column $column
      */
-    protected function addObjectAccessor(&$script, Column $col)
+    protected function addObjectAccessor(&$script, Column $column)
     {
-        $this->addDefaultAccessorComment($script, $col);
-        $this->addDefaultAccessorOpen($script, $col);
-        $this->addObjectAccessorBody($script, $col);
+        $this->addDefaultAccessorComment($script, $column);
+        $this->addDefaultAccessorOpen($script, $column);
+        $this->addObjectAccessorBody($script, $column);
         $this->addDefaultAccessorClose($script);
     }
 
     /**
-     * Adds the function body for an object accessor method
-     * @param      string &$script The script will be modified in this method.
-     * @param      Column $col The current column.
-     * @see        addDefaultAccessor()
-     **/
-    protected function addObjectAccessorBody(&$script, Column $col)
+     * Adds the function body for an object accessor method.
+     *
+     * @param string &$script
+     * @param Column $column
+     */
+    protected function addObjectAccessorBody(&$script, Column $column)
     {
-        $clo = strtolower($col->getName());
+        $clo = strtolower($column->getName());
         $cloUnserialized = $clo.'_unserialized';
-        if ($col->isLazyLoad()) {
-            $script .= $this->getAccessorLazyLoadSnippet($col);
+        if ($column->isLazyLoad()) {
+            $script .= $this->getAccessorLazyLoadSnippet($column);
         }
 
         $script .= "
@@ -926,30 +967,30 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
 
     /**
      * Adds an array getter method.
-     * @param      string &$script The script will be modified in this method.
-     * @param      Column $col The current column.
-     * @see        parent::addColumnAccessors()
+     *
+     * @param string &$script
+     * @param Column $column
      */
-    protected function addArrayAccessor(&$script, Column $col)
+    protected function addArrayAccessor(&$script, Column $column)
     {
-        $this->addDefaultAccessorComment($script, $col);
-        $this->addDefaultAccessorOpen($script, $col);
-        $this->addArrayAccessorBody($script, $col);
+        $this->addDefaultAccessorComment($script, $column);
+        $this->addDefaultAccessorOpen($script, $column);
+        $this->addArrayAccessorBody($script, $column);
         $this->addDefaultAccessorClose($script);
     }
 
     /**
-     * Adds the function body for an array accessor method
-     * @param      string &$script The script will be modified in this method.
-     * @param      Column $col The current column.
-     * @see        addDefaultAccessor()
-     **/
-    protected function addArrayAccessorBody(&$script, Column $col)
+     * Adds the function body for an array accessor method.
+     *
+     * @param string &$script
+     * @param Column $column
+     */
+    protected function addArrayAccessorBody(&$script, Column $column)
     {
-        $clo = strtolower($col->getName());
+        $clo = strtolower($column->getName());
         $cloUnserialized = $clo.'_unserialized';
-        if ($col->isLazyLoad()) {
-            $script .= $this->getAccessorLazyLoadSnippet($col);
+        if ($column->isLazyLoad()) {
+            $script .= $this->getAccessorLazyLoadSnippet($column);
         }
 
         $script .= "
@@ -966,36 +1007,36 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
 
     /**
      * Adds an enum getter method.
-     * @param      string &$script The script will be modified in this method.
-     * @param      Column $col The current column.
-     * @see        parent::addColumnAccessors()
+     *
+     * @param string &$script
+     * @param Column $column
      */
-    protected function addEnumAccessor(&$script, Column $col)
+    protected function addEnumAccessor(&$script, Column $column)
     {
-        $this->addDefaultAccessorComment($script, $col);
-        $this->addDefaultAccessorOpen($script, $col);
-        $this->addEnumAccessorBody($script, $col);
+        $this->addDefaultAccessorComment($script, $column);
+        $this->addDefaultAccessorOpen($script, $column);
+        $this->addEnumAccessorBody($script, $column);
         $this->addDefaultAccessorClose($script);
     }
 
     /**
-     * Adds the function body for an enum accessor method
-     * @param      string &$script The script will be modified in this method.
-     * @param      Column $col The current column.
-     * @see        addDefaultAccessor()
-     **/
-    protected function addEnumAccessorBody(&$script, Column $col)
+     * Adds the function body for an enum accessor method.
+     *
+     * @param string &$script
+     * @param Column $column
+     */
+    protected function addEnumAccessorBody(&$script, Column $column)
     {
-        $clo = strtolower($col->getName());
-        if ($col->isLazyLoad()) {
-            $script .= $this->getAccessorLazyLoadSnippet($col);
+        $clo = strtolower($column->getName());
+        if ($column->isLazyLoad()) {
+            $script .= $this->getAccessorLazyLoadSnippet($column);
         }
 
         $script .= "
         if (null === \$this->$clo) {
             return null;
         }
-        \$valueSet = " . $this->getPeerClassName() . "::getValueSet(" . $this->getColumnConstant($col) . ");
+        \$valueSet = " . $this->getPeerClassName() . "::getValueSet(" . $this->getColumnConstant($column) . ");
         if (!isset(\$valueSet[\$this->$clo])) {
             throw new PropelException('Unknown stored enum key: ' . \$this->$clo);
         }
@@ -1005,21 +1046,22 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
 
     /**
      * Adds a tester method for an array column.
-     * @param      string &$script The script will be modified in this method.
-     * @param      Column $col The current column.
+     *
+     * @param string &$script
+     * @param Column $column
      */
-    protected function addHasArrayElement(&$script, Column $col)
+    protected function addHasArrayElement(&$script, Column $column)
     {
-        $clo = strtolower($col->getName());
-        $cfc = $col->getPhpName();
-        $visibility = $col->getAccessorVisibility();
+        $clo = strtolower($column->getName());
+        $cfc = $column->getPhpName();
+        $visibility = $column->getAccessorVisibility();
         $singularPhpName = rtrim($cfc, 's');
         $script .= "
     /**
      * Test the presence of a value in the [$clo] array column value.
      * @param      mixed \$value
-     * ".$col->getDescription();
-        if ($col->isLazyLoad()) {
+     * ".$column->getDescription();
+        if ($column->isLazyLoad()) {
             $script .= "
      * @param      ConnectionInterface An optional ConnectionInterface connection to use for fetching this lazy-loaded column.";
         }
@@ -1027,14 +1069,14 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * @return     Boolean
      */
     $visibility function has$singularPhpName(\$value";
-        if ($col->isLazyLoad()) {
+        if ($column->isLazyLoad()) {
             $script .= ", ConnectionInterface \$con = null";
         }
 
         $script .= ")
     {
         return in_array(\$value, \$this->get$cfc(";
-        if ($col->isLazyLoad()) {
+        if ($column->isLazyLoad()) {
             $script .= "\$con";
         }
 
@@ -1045,55 +1087,55 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
 
     /**
      * Adds a normal (non-temporal) getter method.
-     * @param      string &$script The script will be modified in this method.
-     * @param      Column $col The current column.
-     * @see        parent::addColumnAccessors()
+     *
+     * @param string &$script
+     * @param Column $column
      */
-    protected function addDefaultAccessor(&$script, Column $col)
+    protected function addDefaultAccessor(&$script, Column $column)
     {
-        $this->addDefaultAccessorComment($script, $col);
-        $this->addDefaultAccessorOpen($script, $col);
-        $this->addDefaultAccessorBody($script, $col);
+        $this->addDefaultAccessorComment($script, $column);
+        $this->addDefaultAccessorOpen($script, $column);
+        $this->addDefaultAccessorBody($script, $column);
         $this->addDefaultAccessorClose($script);
     }
 
     /**
-     * Add the comment for a default accessor method (a getter)
-     * @param      string &$script The script will be modified in this method.
-     * @param      Column $col The current column.
-     * @see        addDefaultAccessor()
-     **/
-    public function addDefaultAccessorComment(&$script, Column $col)
+     * Add the comment for a default accessor method (a getter).
+     *
+     * @param string &$script
+     * @param Column $column
+     */
+    public function addDefaultAccessorComment(&$script, Column $column)
     {
-        $clo=strtolower($col->getName());
+        $clo=strtolower($column->getName());
 
         $script .= "
     /**
      * Get the [$clo] column value.
-     * ".$col->getDescription();
-        if ($col->isLazyLoad()) {
+     * ".$column->getDescription();
+        if ($column->isLazyLoad()) {
             $script .= "
      * @param      ConnectionInterface An optional ConnectionInterface connection to use for fetching this lazy-loaded column.";
         }
         $script .= "
-     * @return     ".$col->getPhpType()."
+     * @return     ".$column->getPhpType()."
      */";
     }
 
     /**
-     * Adds the function declaration for a default accessor
-     * @param      string &$script The script will be modified in this method.
-     * @param      Column $col The current column.
-     * @see        addDefaultAccessor()
-     **/
-    public function addDefaultAccessorOpen(&$script, Column $col)
+     * Adds the function declaration for a default accessor.
+     *
+     * @param string &$script
+     * @param Column $column
+     */
+    public function addDefaultAccessorOpen(&$script, Column $column)
     {
-        $cfc = $col->getPhpName();
-        $visibility = $col->getAccessorVisibility();
+        $cfc = $column->getPhpName();
+        $visibility = $column->getAccessorVisibility();
 
         $script .= "
     ".$visibility." function get$cfc(";
-        if ($col->isLazyLoad()) {
+        if ($column->isLazyLoad()) {
             $script .= "ConnectionInterface \$con = null";
         }
 
@@ -1102,16 +1144,16 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     }
 
     /**
-     * Adds the function body for a default accessor method
-     * @param      string &$script The script will be modified in this method.
-     * @param      Column $col The current column.
-     * @see        addDefaultAccessor()
-     **/
-    protected function addDefaultAccessorBody(&$script, Column $col)
+     * Adds the function body for a default accessor method.
+     *
+     * @param string &$script
+     * @param Column $column
+     */
+    protected function addDefaultAccessorBody(&$script, Column $column)
     {
-        $clo = strtolower($col->getName());
-        if ($col->isLazyLoad()) {
-            $script .= $this->getAccessorLazyLoadSnippet($col);
+        $clo = strtolower($column->getName());
+        if ($column->isLazyLoad()) {
+            $script .= $this->getAccessorLazyLoadSnippet($column);
         }
 
         $script .= "
@@ -1120,10 +1162,10 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     }
 
     /**
-     * Adds the function close for a default accessor method
-     * @param      string &$script The script will be modified in this method.
-     * @see        addDefaultAccessor()
-     **/
+     * Adds the function close for a default accessor method.
+     *
+     * @param string &$script
+     */
     protected function addDefaultAccessorClose(&$script)
     {
         $script .= "
@@ -1133,27 +1175,27 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
 
     /**
      * Adds the lazy loader method.
-     * @param      string &$script The script will be modified in this method.
-     * @param      Column $col The current column.
-     * @see        parent::addColumnAccessors()
+     *
+     * @param string &$script
+     * @param Column $column
      */
-    protected function addLazyLoader(&$script, Column $col)
+    protected function addLazyLoader(&$script, Column $column)
     {
-        $this->addLazyLoaderComment($script, $col);
-        $this->addLazyLoaderOpen($script, $col);
-        $this->addLazyLoaderBody($script, $col);
+        $this->addLazyLoaderComment($script, $column);
+        $this->addLazyLoaderOpen($script, $column);
+        $this->addLazyLoaderBody($script, $column);
         $this->addLazyLoaderClose($script);
     }
 
     /**
-     * Adds the comment for the lazy loader method
-     * @param      string &$script The script will be modified in this method.
-     * @param      Column $col The current column.
-     * @see        addLazyLoader()
-     **/
-    protected function addLazyLoaderComment(&$script, Column $col)
+     * Adds the comment for the lazy loader method.
+     *
+     * @param string &$script
+     * @param Column $column
+     */
+    protected function addLazyLoaderComment(&$script, Column $column)
     {
-        $clo = strtolower($col->getName());
+        $clo = strtolower($column->getName());
 
         $script .= "
     /**
@@ -1170,35 +1212,35 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     }
 
     /**
-     * Adds the function declaration for the lazy loader method
-     * @param      string &$script The script will be modified in this method.
-     * @param      Column $col The current column.
-     * @see        addLazyLoader()
-     **/
-    protected function addLazyLoaderOpen(&$script, Column $col)
+     * Adds the function declaration for the lazy loader method.
+     *
+     * @param string &$script
+     * @param Column $column
+     */
+    protected function addLazyLoaderOpen(&$script, Column $column)
     {
-        $cfc = $col->getPhpName();
+        $cfc = $column->getPhpName();
         $script .= "
     protected function load$cfc(ConnectionInterface \$con = null)
     {";
     }
 
     /**
-     * Adds the function body for the lazy loader method
-     * @param      string &$script The script will be modified in this method.
-     * @param      Column $col The current column.
-     * @see        addLazyLoader()
-     **/
-    protected function addLazyLoaderBody(&$script, Column $col)
+     * Adds the function body for the lazy loader method.
+     *
+     * @param string &$script
+     * @param Column $column
+     */
+    protected function addLazyLoaderBody(&$script, Column $column)
     {
         $platform = $this->getPlatform();
-        $clo = strtolower($col->getName());
+        $clo = strtolower($column->getName());
 
         // pdo_sqlsrv driver requires the use of PDOStatement::bindColumn() or a hex string will be returned
-        if ($col->getType() === PropelTypes::BLOB && $platform instanceof SqlsrvPlatform) {
+        if ($column->getType() === PropelTypes::BLOB && $platform instanceof SqlsrvPlatform) {
             $script .= "
         \$c = \$this->buildPkeyCriteria();
-        \$c->addSelectColumn(".$this->getColumnConstant($col).");
+        \$c->addSelectColumn(".$this->getColumnConstant($column).");
         try {
             \$row = array(0 => null);
             \$stmt = ".$this->getPeerClassName()."::doSelectStmt(\$c, \$con);
@@ -1208,18 +1250,18 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
         } else {
             $script .= "
         \$c = \$this->buildPkeyCriteria();
-        \$c->addSelectColumn(".$this->getColumnConstant($col).");
+        \$c->addSelectColumn(".$this->getColumnConstant($column).");
         try {
             \$stmt = ".$this->getPeerClassName()."::doSelectStmt(\$c, \$con);
             \$row = \$stmt->fetch(PDO::FETCH_NUM);
             \$stmt->closeCursor();";
         }
 
-        if ($col->getType() === PropelTypes::CLOB && $platform instanceof OraclePlatform) {
+        if ($column->getType() === PropelTypes::CLOB && $platform instanceof OraclePlatform) {
             // PDO_OCI returns a stream for CLOB objects, while other PDO adapters return a string...
             $script .= "
             \$this->$clo = stream_get_contents(\$row[0]);";
-        }    elseif ($col->isLobType() && !$platform->hasStreamBlobImpl()) {
+        }    elseif ($column->isLobType() && !$platform->hasStreamBlobImpl()) {
             $script .= "
             if (\$row[0] !== null) {
                 \$this->$clo = fopen('php://memory', 'r+');
@@ -1228,12 +1270,12 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
             } else {
                 \$this->$clo = null;
             }";
-        } elseif ($col->isPhpPrimitiveType()) {
+        } elseif ($column->isPhpPrimitiveType()) {
             $script .= "
-            \$this->$clo = (\$row[0] !== null) ? (".$col->getPhpType().") \$row[0] : null;";
-        } elseif ($col->isPhpObjectType()) {
+            \$this->$clo = (\$row[0] !== null) ? (".$column->getPhpType().") \$row[0] : null;";
+        } elseif ($column->isPhpObjectType()) {
             $script .= "
-            \$this->$clo = (\$row[0] !== null) ? new ".$col->getPhpType()."(\$row[0]) : null;";
+            \$this->$clo = (\$row[0] !== null) ? new ".$column->getPhpType()."(\$row[0]) : null;";
         } else {
             $script .= "
             \$this->$clo = \$row[0];";
@@ -1247,10 +1289,9 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     }
 
     /**
-     * Adds the function close for the lazy loader
+     * Adds the function close for the lazy loader.
      *
-     * @param      string &$script The script will be modified in this method.
-     * @see        addLazyLoader()
+     * @param string &$script
      */
     protected function addLazyLoaderClose(&$script)
     {
@@ -1260,44 +1301,45 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
 
     /**
      * Adds the open of the mutator (setter) method for a column.
-     * @param      string &$script The script will be modified in this method.
-     * @param      Column $col The current column.
+     *
+     * @param string &$script
+     * @param Column $column
      */
-    protected function addMutatorOpen(&$script, Column $col)
+    protected function addMutatorOpen(&$script, Column $column)
     {
-        $this->addMutatorComment($script, $col);
-        $this->addMutatorOpenOpen($script, $col);
-        $this->addMutatorOpenBody($script, $col);
+        $this->addMutatorComment($script, $column);
+        $this->addMutatorOpenOpen($script, $column);
+        $this->addMutatorOpenBody($script, $column);
     }
 
     /**
-     * Adds the comment for a mutator
-     * @param      string &$script The script will be modified in this method.
-     * @param      Column $col The current column.
-     * @see        addMutatorOpen()
-     **/
-    public function addMutatorComment(&$script, Column $col)
+     * Adds the comment for a mutator.
+     *
+     * @param string &$script
+     * @param Column $column
+     */
+    public function addMutatorComment(&$script, Column $column)
     {
-        $clo = strtolower($col->getName());
+        $clo = strtolower($column->getName());
         $script .= "
     /**
      * Set the value of [$clo] column.
-     * ".$col->getDescription()."
-     * @param      ".$col->getPhpType()." \$v new value
+     * ".$column->getDescription()."
+     * @param      ".$column->getPhpType()." \$v new value
      * @return     ".$this->getObjectClassName(true)." The current object (for fluent API support)
      */";
     }
 
     /**
-     * Adds the mutator function declaration
-     * @param      string &$script The script will be modified in this method.
-     * @param      Column $col The current column.
-     * @see        addMutatorOpen()
-     **/
-    public function addMutatorOpenOpen(&$script, Column $col)
+     * Adds the mutator function declaration.
+     *
+     * @param string &$script
+     * @param Column $column
+     */
+    public function addMutatorOpenOpen(&$script, Column $column)
     {
-        $cfc = $col->getPhpName();
-        $visibility = $col->getMutatorVisibility();
+        $cfc = $column->getPhpName();
+        $visibility = $column->getMutatorVisibility();
 
         $script .= "
     ".$visibility." function set$cfc(\$v)
@@ -1305,16 +1347,16 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     }
 
     /**
-     * Adds the mutator open body part
-     * @param      string &$script The script will be modified in this method.
-     * @param      Column $col The current column.
-     * @see        addMutatorOpen()
-     **/
-    protected function addMutatorOpenBody(&$script, Column $col)
+     * Adds the mutator open body part.
+     *
+     * @param string &$script
+     * @param Column $column
+     */
+    protected function addMutatorOpenBody(&$script, Column $column)
     {
-        $clo = strtolower($col->getName());
-        $cfc = $col->getPhpName();
-        if ($col->isLazyLoad()) {
+        $clo = strtolower($column->getName());
+        $cfc = $column->getPhpName();
+        if ($column->isLazyLoad()) {
             $script .= "
         // explicitly set the is-loaded flag to true for this lazy load col;
         // it doesn't matter if the value is actually set or not (logic below) as
@@ -1328,31 +1370,31 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     /**
      * Adds the close of the mutator (setter) method for a column.
      *
-     * @param      string &$script The script will be modified in this method.
-     * @param      Column $col The current column.
+     * @param string &$script
+     * @param Column $column
      */
-    protected function addMutatorClose(&$script, Column $col)
+    protected function addMutatorClose(&$script, Column $column)
     {
-        $this->addMutatorCloseBody($script, $col);
-        $this->addMutatorCloseClose($script, $col);
+        $this->addMutatorCloseBody($script, $column);
+        $this->addMutatorCloseClose($script, $column);
     }
 
     /**
-     * Adds the body of the close part of a mutator
-     * @param      string &$script The script will be modified in this method.
-     * @param      Column $col The current column.
-     * @see        addMutatorClose()
-     **/
-    protected function addMutatorCloseBody(&$script, Column $col)
+     * Adds the body of the close part of a mutator.
+     *
+     * @param string &$script
+     * @param Column $column
+     */
+    protected function addMutatorCloseBody(&$script, Column $column)
     {
         $table = $this->getTable();
 
-        if ($col->isForeignKey()) {
+        if ($column->isForeignKey()) {
 
-            foreach ($col->getForeignKeys() as $fk) {
+            foreach ($column->getForeignKeys() as $fk) {
 
                 $tblFK =  $table->getDatabase()->getTable($fk->getForeignTableName());
-                $colFK = $tblFK->getColumn($fk->getMappedForeignColumn($col->getName()));
+                $colFK = $tblFK->getColumn($fk->getMappedForeignColumn($column->getName()));
 
                 $varName = $this->getFKVarName($fk);
 
@@ -1364,16 +1406,16 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
             } // foreach fk
         } /* if col is foreign key */
 
-        foreach ($col->getReferrers() as $refFK) {
+        foreach ($column->getReferrers() as $refFK) {
 
             $tblFK = $this->getDatabase()->getTable($refFK->getForeignTableName());
 
             if ( $tblFK->getName() != $table->getName() ) {
 
-                foreach ($col->getForeignKeys() as $fk) {
+                foreach ($column->getForeignKeys() as $fk) {
 
                     $tblFK = $table->getDatabase()->getTable($fk->getForeignTableName());
-                    $colFK = $tblFK->getColumn($fk->getMappedForeignColumn($col->getName()));
+                    $colFK = $tblFK->getColumn($fk->getMappedForeignColumn($column->getName()));
 
                     if ($refFK->isLocalPrimaryKey()) {
                         $varName = $this->getPKRefFKVarName($refFK);
@@ -1397,14 +1439,13 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
                     } // if (isLocalPrimaryKey
                 } // foreach col->getPrimaryKeys()
             } // if tablFk != table
-
         } // foreach
     }
 
     /**
      * Adds the close for the mutator close
      * @param      string &$script The script will be modified in this method.
-     * @param      Column $col The current column.
+     * @param Column $col The current column.
      * @see        addMutatorClose()
      **/
     protected function addMutatorCloseClose(&$script, Column $col)
@@ -1420,7 +1461,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     /**
      * Adds a setter for BLOB columns.
      * @param      string &$script The script will be modified in this method.
-     * @param      Column $col The current column.
+     * @param Column $col The current column.
      * @see        parent::addColumnMutators()
      */
     protected function addLobMutator(&$script, Column $col)
@@ -1446,7 +1487,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     /**
      * Adds a setter method for date/time/timestamp columns.
      * @param      string &$script The script will be modified in this method.
-     * @param      Column $col The current column.
+     * @param Column $col The current column.
      * @see        parent::addColumnMutators()
      */
     protected function addTemporalMutator(&$script, Column $col)
@@ -1497,7 +1538,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     /**
      * Sets the value of [$clo] column to a normalized version of the date/time value specified.
      * ".$col->getDescription()."
-     * @param      mixed \$v string, integer (timestamp), or DateTime value.
+     * @param      mixed \$v string, integer (timestamp), or \DateTime value.
      *               Empty strings are treated as NULL.
      * @return     ".$this->getObjectClassName(true)." The current object (for fluent API support)
      */";
@@ -1506,7 +1547,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     /**
      * Adds a setter for Object columns.
      * @param      string &$script The script will be modified in this method.
-     * @param      Column $col The current column.
+     * @param Column $col The current column.
      * @see        parent::addColumnMutators()
      */
     protected function addObjectMutator(&$script, Column $col)
@@ -1528,7 +1569,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     /**
      * Adds a setter for Array columns.
      * @param      string &$script The script will be modified in this method.
-     * @param      Column $col The current column.
+     * @param Column $col The current column.
      * @see        parent::addColumnMutators()
      */
     protected function addArrayMutator(&$script, Column $col)
@@ -1550,7 +1591,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     /**
      * Adds a push method for an array column.
      * @param      string &$script The script will be modified in this method.
-     * @param      Column $col The current column.
+     * @param Column $col The current column.
      */
     protected function addAddArrayElement(&$script, Column $col)
     {
@@ -1594,7 +1635,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     /**
      * Adds a remove method for an array column.
      * @param      string &$script The script will be modified in this method.
-     * @param      Column $col The current column.
+     * @param Column $col The current column.
      */
     protected function addRemoveArrayElement(&$script, Column $col)
     {
@@ -1641,7 +1682,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     /**
      * Adds a setter for Enum columns.
      * @param      string &$script The script will be modified in this method.
-     * @param      Column $col The current column.
+     * @param Column $col The current column.
      * @see        parent::addColumnMutators()
      */
     protected function addEnumMutator(&$script, Column $col)
@@ -1669,7 +1710,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     /**
      * Adds setter method for boolean columns.
      * @param      string &$script The script will be modified in this method.
-     * @param      Column $col The current column.
+     * @param Column $col The current column.
      * @see        parent::addColumnMutators()
      */
     protected function addBooleanMutator(&$script, Column $col)
@@ -1719,7 +1760,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     /**
      * Adds setter method for "normal" columns.
      * @param      string &$script The script will be modified in this method.
-     * @param      Column $col The current column.
+     * @param Column $col The current column.
      * @see        parent::addColumnMutators()
      */
     protected function addDefaultMutator(&$script, Column $col)
@@ -2806,7 +2847,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     /**
      * Generic method to set the primary key ($clo column).
      *
-     * @param      $ctype \$key Primary key.
+     * @param   $ctype \$key Primary key.
      * @return     void
      */
     public function setPrimaryKey(\$key)
@@ -2906,7 +2947,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
 
     /**
      * Constructs variable name for fkey-related objects.
-     * @param      ForeignKey $fk
+     * @param ForeignKey $fk
      * @return     string
      */
     public function getFKVarName(ForeignKey $fk)
@@ -2916,7 +2957,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
 
     /**
      * Constructs variable name for objects which referencing current table by specified foreign key.
-     * @param      ForeignKey $fk
+     * @param ForeignKey $fk
      * @return     string
      */
     public function getRefFKCollVarName(ForeignKey $fk)
@@ -2927,7 +2968,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     /**
      * Constructs variable name for single object which references current table by specified foreign key
      * which is ALSO a primary key (hence one-to-one relationship).
-     * @param      ForeignKey $fk
+     * @param ForeignKey $fk
      * @return     string
      */
     public function getPKRefFKVarName(ForeignKey $fk)
@@ -2984,7 +3025,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     /**
      * Declares an association between this object and a $className object.
      *
-     * @param      $className \$v
+     * @param   $className \$v
      * @return     ".$this->getObjectClassName(true)." The current object (for fluent API support)
      * @throws     PropelException
      */
@@ -3428,7 +3469,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * Method called to associate a $className object to this object
      * through the $className foreign key attribute.
      *
-     * @param      $className \$l $className
+     * @param   $className \$l $className
      * @return     ".$this->getObjectClassName(true)." The current object (for fluent API support)
      */
     public function add".$this->getRefFKPhpNameAffix($refFK, false)."($className \$l)
@@ -3592,8 +3633,8 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
 
     /**
      * @param        string &$script The script will be modified in this method.
-     * @param        ForeignKey $refFK
-     * @param        ForeignKey $crossFK
+     * @param ForeignKey $refFK
+     * @param ForeignKey $crossFK
      */
     protected function addRefFKDoAdd(&$script, $refFK)
     {
@@ -3656,7 +3697,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * Adds the method that sets a one-to-one related referrer fkey.
      * This is for one-to-one relationships special case.
      * @param      string &$script The script will be modified in this method.
-     * @param      ForeignKey $refFK The referencing foreign key.
+     * @param ForeignKey $refFK The referencing foreign key.
      */
     protected function addPKRefFKSet(&$script, ForeignKey $refFK)
     {
@@ -3669,7 +3710,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     /**
      * Sets a single $className object as related to this object by a one-to-one relationship.
      *
-     * @param      $className \$v $className
+     * @param   $className \$v $className
      * @return     ".$this->getObjectClassName(true)." The current object (for fluent API support)
      * @throws     PropelException
      */
@@ -4025,7 +4066,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * Associate a " . $crossObjectClassName . " object to this object
      * through the " . $tblFK->getName() . " cross reference table.
      *
-     * @param      " . $crossObjectClassName . " " . $crossObjectName . " The $className object to relate
+     * @param " . $crossObjectClassName . " " . $crossObjectName . " The $className object to relate
      * @return     void
      */
     public function add{$relatedObjectClassName}($crossObjectClassName $crossObjectName)
@@ -4044,8 +4085,8 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
 
     /**
      * @param        string &$script The script will be modified in this method.
-     * @param        ForeignKey $refFK
-     * @param        ForeignKey $crossFK
+     * @param ForeignKey $refFK
+     * @param ForeignKey $crossFK
      */
     protected function addCrossFKDoAdd(&$script, ForeignKey $refFK, ForeignKey $crossFK)
     {
@@ -4642,16 +4683,14 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
         } else {
             // save without runtime hooks
             $this->applyBehaviorModifier('preSave', $script, "            ");
-            if ($this->hasBehaviorModifier('preUpdate'))
-            {
+            if ($this->hasBehaviorModifier('preUpdate')) {
                 $script .= "
             if (!\$isInsert) {";
                 $this->applyBehaviorModifier('preUpdate', $script, "                ");
                 $script .= "
             }";
             }
-            if ($this->hasBehaviorModifier('preInsert'))
-            {
+            if ($this->hasBehaviorModifier('preInsert')) {
                 $script .= "
             if (\$isInsert) {";
                 $this->applyBehaviorModifier('preInsert', $script, "                ");
@@ -4661,16 +4700,14 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
             $script .= "
             \$affectedRows = \$this->doSave(\$con".($reloadOnUpdate || $reloadOnInsert ? ", \$skipReload" : "").");";
             $this->applyBehaviorModifier('postSave', $script, "            ");
-            if ($this->hasBehaviorModifier('postUpdate'))
-            {
+            if ($this->hasBehaviorModifier('postUpdate')) {
                 $script .= "
             if (!\$isInsert) {";
                 $this->applyBehaviorModifier('postUpdate', $script, "                ");
                 $script .= "
             }";
             }
-            if ($this->hasBehaviorModifier('postInsert'))
-            {
+            if ($this->hasBehaviorModifier('postInsert')) {
                 $script .= "
             if (\$isInsert) {";
                 $this->applyBehaviorModifier('postInsert', $script, "                ");
@@ -5048,8 +5085,9 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     }
 
     /**
-     * Adds a magic __call() method
-     * @param      string &$script The script will be modified in this method.
+     * Adds a magic __call() method.
+     *
+     * @param string &$script
      */
     protected function addMagicCall(&$script)
     {

@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Builder\Sql;
@@ -13,18 +13,16 @@ namespace Propel\Generator\Builder\Sql;
 use Propel\Generator\Builder\DataModelBuilder;
 use Propel\Generator\Builder\Util\ColumnValue;
 use Propel\Generator\Builder\Util\DataRow;
-use Propel\Generator\Model\PropelTypes;
 
 /**
  * Baseclass for SQL data dump SQL building classes.
  *
- * @author     Hans Lellelid <hans@xmpl.org>
+ * @author Hans Lellelid <hans@xmpl.org>
  */
 abstract class DataSQLBuilder extends DataModelBuilder
 {
-
     /**
-     * Perform any reset between runs of this builder.
+     * Performs any reset between runs of this builder.
      *
      * This can be used, for example, to clear any stored start/end SQL.
      */
@@ -34,9 +32,9 @@ abstract class DataSQLBuilder extends DataModelBuilder
     }
 
     /**
-     * Gets any SQL to place at the start of all the row inserts.
+     * Returns any SQL to place at the start of all the row inserts.
      *
-     * @return     string
+     * @return string
      */
     static public function getDatabaseStartSql()
     {
@@ -44,9 +42,9 @@ abstract class DataSQLBuilder extends DataModelBuilder
     }
 
     /**
-     * Gets any SQL to place at the end of all the row inserts.
+     * Returns any SQL to place at the end of all the row inserts.
      *
-     * @return     string
+     * @return string
      */
     static public function getDatabaseEndSql()
     {
@@ -54,9 +52,9 @@ abstract class DataSQLBuilder extends DataModelBuilder
     }
 
     /**
-     * Gets any SQL to place before row inserts for a new table.
+     * Returns any SQL to place before row inserts for a new table.
      *
-     * @return     string
+     * @return string
      */
     public function getTableStartSql()
     {
@@ -64,7 +62,7 @@ abstract class DataSQLBuilder extends DataModelBuilder
     }
 
     /**
-     * Gets any SQL to place at the end of row inserts for a table.
+     * Returns any SQL to place at the end of row inserts for a table.
      *
      * @return     string
      */
@@ -74,9 +72,11 @@ abstract class DataSQLBuilder extends DataModelBuilder
     }
 
     /**
-     * The main method in this class, returns the SQL for INSERTing data into a row.
-     * @param      DataRow $row The row to process.
-     * @return     string
+     * The main method in this class, returns the SQL for INSERTing data into a
+     * row.
+     *
+     * @param DataRow $row
+     * @return string
      */
     public function buildRowSql(DataRow $row)
     {
@@ -102,9 +102,10 @@ abstract class DataSQLBuilder extends DataModelBuilder
     }
 
     /**
-     * Gets the propertly escaped (and quoted) value for a column.
-     * @param      ColumnValue $colValue
-     * @return     mixed The proper value to be added to the string.
+     * Returns the propertly escaped (and quoted) value for a column.
+     *
+     * @param ColumnValue $colValue
+     * @return mixed
      */
     protected function getColumnValueSql(ColumnValue $colValue)
     {
@@ -114,24 +115,24 @@ abstract class DataSQLBuilder extends DataModelBuilder
         return $this->$method($colValue->getValue());
     }
 
-
-
     /**
-     * Gets a representation of a binary value suitable for use in a SQL statement.
-     * Default behavior is true = 1, false = 0.
-     * @param      boolean $value
-     * @return     int
+     * Returns a representation of a binary value suitable for use in a SQL
+     * statement. Default behavior is true = 1, false = 0.
+     *
+     * @param Boolean $value
+     * @return integer
      */
     protected function getBooleanSql($value)
     {
         return (int) $value;
     }
 
-
     /**
-     * Gets a representation of a BLOB/LONGVARBINARY value suitable for use in a SQL statement.
-     * @param      mixed $blob Blob object or string data.
-     * @return     string
+     * Returns a representation of a BLOB/LONGVARBINARY value suitable for use
+     * in a SQL statement.
+     *
+     * @param mixed $blob
+     * @return string
      */
     protected function getBlobSql($blob)
     {
@@ -144,9 +145,11 @@ abstract class DataSQLBuilder extends DataModelBuilder
     }
 
     /**
-     * Gets a representation of a CLOB/LONGVARCHAR value suitable for use in a SQL statement.
-     * @param      mixed $clob Clob object or string data.
-     * @return     string
+     * Returns a representation of a CLOB/LONGVARCHAR value suitable for use
+     * in a SQL statement.
+     *
+     * @param mixed $clob
+     * @return string
      */
     protected function getClobSql($clob)
     {
@@ -159,19 +162,23 @@ abstract class DataSQLBuilder extends DataModelBuilder
     }
 
     /**
-     * Gets a representation of a date value suitable for use in a SQL statement.
-     * @param      string $value
-     * @return     string
+     * Returns a representation of a date value suitable for use in a SQL
+     * statement.
+     *
+     * @param string $value
+     * @return string
      */
     protected function getDateSql($value)
     {
-        return "'" . date('Y-m-d', strtotime($value)) . "'";
+        return sprintf("'%s'", date('Y-m-d', strtotime($value)));
     }
 
     /**
-     * Gets a representation of a decimal value suitable for use in a SQL statement.
-     * @param      double $value
-     * @return     float
+     * Returns a representation of a decimal value suitable for use in a SQL
+     * statement.
+     *
+     * @param double $value
+     * @return float
      */
     protected function getDecimalSql($value)
     {
@@ -179,9 +186,11 @@ abstract class DataSQLBuilder extends DataModelBuilder
     }
 
     /**
-     * Gets a representation of a double value suitable for use in a SQL statement.
-     * @param      double $value
-     * @return     double
+     * Returns a representation of a double value suitable for use in a SQL
+     * statement.
+     *
+     * @param double $value
+     * @return double
      */
     protected function getDoubleSql($value)
     {
@@ -189,9 +198,11 @@ abstract class DataSQLBuilder extends DataModelBuilder
     }
 
     /**
-     * Gets a representation of a float value suitable for use in a SQL statement.
-     * @param      float $value
-     * @return     float
+     * Returns a representation of a float value suitable for use in a SQL
+     * statement.
+     *
+     * @param float $value
+     * @return float
      */
     protected function getFloatSql($value)
     {
@@ -199,9 +210,11 @@ abstract class DataSQLBuilder extends DataModelBuilder
     }
 
     /**
-     * Gets a representation of an integer value suitable for use in a SQL statement.
-     * @param      int $value
-     * @return     int
+     * Returns a representation of an integer value suitable for use in a SQL
+     * statement.
+     *
+     * @param integer $value
+     * @return integer
      */
     protected function getIntSql($value)
     {
@@ -209,8 +222,10 @@ abstract class DataSQLBuilder extends DataModelBuilder
     }
 
     /**
-     * Gets a representation of a NULL value suitable for use in a SQL statement.
-     * @return     null
+     * Returns a representation of a NULL value suitable for use in a SQL
+     * statement.
+     *
+     * @return string
      */
     protected function getNullSql()
     {
@@ -218,9 +233,11 @@ abstract class DataSQLBuilder extends DataModelBuilder
     }
 
     /**
-     * Gets a representation of a string value suitable for use in a SQL statement.
-     * @param      string $value
-     * @return     string
+     * Returns a representation of a string value suitable for use in a SQL
+     * statement.
+     *
+     * @param string $value
+     * @return string
      */
     protected function getStringSql($value)
     {
@@ -228,22 +245,26 @@ abstract class DataSQLBuilder extends DataModelBuilder
     }
 
     /**
-     * Gets a representation of a time value suitable for use in a SQL statement.
-     * @param      string $value
-     * @return     string
+     * Returns a representation of a time value suitable for use in a SQL
+     * statement.
+     *
+     * @param string $value
+     * @return string
      */
     protected function getTimeSql($paramIndex, $value)
     {
-        return "'" . date('H:i:s', strtotime($value)) . "'";
+        return sprintf("'%s'", date('H:i:s', strtotime($value)));
     }
 
     /**
-     * Gets a representation of a timestamp value suitable for use in a SQL statement.
-     * @param      string $value
-     * @return     string
+     * Returns a representation of a timestamp value suitable for use in a SQL
+     * statement.
+     *
+     * @param string $value
+     * @return string
      */
-    function getTimestampSql($value)
+    public function getTimestampSql($value)
     {
-        return "'" . date('Y-m-d H:i:s', strtotime($value)) . "'";
+        return sprintf("'%s'", date('Y-m-d H:i:s', strtotime($value)));
     }
 }

@@ -129,7 +129,7 @@ class SqlManager extends AbstractManager
     }
 
     /**
-     * @param string $datasource    A datasource name.
+     * @param string $datasource A datasource name.
      */
     public function insertSql($datasource = null)
     {
@@ -184,7 +184,7 @@ class SqlManager extends AbstractManager
     }
 
     /**
-     * Gets a PDO connection for a given datasource.
+     * Returns a PDO connection for a given datasource.
      *
      * @return PDO
      */

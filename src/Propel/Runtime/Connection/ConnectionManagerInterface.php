@@ -25,14 +25,14 @@ interface ConnectionManagerInterface
     function getName();
 
     /**
-     * @param  \Propel\Runtime\Adapter\AdapterInterface $adapter
+     * @param \Propel\Runtime\Adapter\AdapterInterface $adapter
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface
      */
     function getWriteConnection(AdapterInterface $adapter = null);
 
     /**
-     * @param  \Propel\Runtime\Adapter\AdapterInterface $adapter
+     * @param \Propel\Runtime\Adapter\AdapterInterface $adapter
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface
      */

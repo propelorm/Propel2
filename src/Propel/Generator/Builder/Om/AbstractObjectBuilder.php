@@ -11,7 +11,6 @@
 namespace Propel\Generator\Builder\Om;
 
 use Propel\Generator\Model\PropelTypes;
-use Propel\Generator\Model\Table;
 
 /**
  * Base class for Peer-building classes.

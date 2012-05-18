@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license     MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Model\Diff;
@@ -19,7 +19,6 @@ use Propel\Generator\Model\Table;
  * Value object for storing Table object diffs
  * Heavily inspired by Doctrine2's Migrations
  * (see http://github.com/doctrine/dbal/tree/master/lib/Doctrine/DBAL/Schema/)
- *
  */
 class TableDiff
 {
@@ -44,7 +43,7 @@ class TableDiff
     protected $modifiedFks = array();
 
     /**
-     * Setter for the fromTable property
+     * Sets the fromTable property.
      *
      * @param Table $fromTable
      */
@@ -54,7 +53,7 @@ class TableDiff
     }
 
     /**
-     * Getter for the fromTable property
+     * Returns the fromTable property.
      *
      * @return Table
      */
@@ -64,7 +63,7 @@ class TableDiff
     }
 
     /**
-     * Setter for the toTable property
+     * Sets the toTable property.
      *
      * @param Table $toTable
      */
@@ -74,7 +73,7 @@ class TableDiff
     }
 
     /**
-     * Getter for the toTable property
+     * Returns the toTable property.
      *
      * @return Table
      */
@@ -84,38 +83,38 @@ class TableDiff
     }
 
     /**
-     * Setter for the addedColumns property
+     * Sets the added columns.
      *
-     * @param array $addedColumns
+     * @param array $columns
      */
-    public function setAddedColumns($addedColumns)
+    public function setAddedColumns($columns)
     {
-        $this->addedColumns = $addedColumns;
+        $this->addedColumns = $columns;
     }
 
     /**
-     * Add an added column
+     * Adds an added column.
      *
-     * @param string $columnName
-     * @param Column $addedColumn
+     * @param string $name
+     * @param Column $column
      */
-    public function addAddedColumn($columnName, Column $addedColumn)
+    public function addAddedColumn($name, Column $column)
     {
-        $this->addedColumns[$columnName] = $addedColumn;
+        $this->addedColumns[$name] = $column;
     }
 
     /**
-     * Remove an added column
+     * Removes an added column.
      *
-     * @param string $columnName
+     * @param string $name
      */
-    public function removeAddedColumn($columnName)
+    public function removeAddedColumn($name)
     {
-        unset($this->addedColumns[$columnName]);
+        unset($this->addedColumns[$name]);
     }
 
     /**
-     * Getter for the addedColumns property
+     * Returns the list of added columns
      *
      * @return array
      */
@@ -125,15 +124,14 @@ class TableDiff
     }
 
     /**
-     * Get an added column
+     * Returns an added column.
      *
-     * @param string $columnName
-     *
+     * @param string $name
      * @param Column
      */
-    public function getAddedColumn($columnName)
+    public function getAddedColumn($name)
     {
-        return $this->addedColumns[$columnName];
+        return $this->addedColumns[$name];
     }
 
     /**
@@ -202,7 +200,7 @@ class TableDiff
     /**
      * Add a column difference
      *
-     * @param string $columnName
+     * @param string     $columnName
      * @param ColumnDiff $modifiedColumn
      */
     public function addModifiedColumn($columnName, ColumnDiff $modifiedColumn)
@@ -388,7 +386,7 @@ class TableDiff
      * Add an added Index
      *
      * @param string $indexName
-     * @param Index $addedIndex
+     * @param Index  $addedIndex
      */
     public function addAddedIndex($indexName, Index $addedIndex)
     {
@@ -419,7 +417,7 @@ class TableDiff
      * Add a removed Index
      *
      * @param string $indexName
-     * @param Index $removedIndex
+     * @param Index  $removedIndex
      */
     public function addRemovedIndex($indexName, Index $removedIndex)
     {
@@ -450,8 +448,8 @@ class TableDiff
      * Add a modified Index
      *
      * @param string $indexName
-     * @param Index $fromIndex
-     * @param Index $toIndex
+     * @param Index  $fromIndex
+     * @param Index  $toIndex
      */
     public function addModifiedIndex($indexName, Index $fromIndex, Index $toIndex)
     {
@@ -481,7 +479,7 @@ class TableDiff
     /**
      * Add an added Fk column
      *
-     * @param string $fkName
+     * @param string     $fkName
      * @param ForeignKey $addedFk
      */
     public function addAddedFk($fkName, ForeignKey $addedFk)
@@ -522,7 +520,7 @@ class TableDiff
     /**
      * Add a removed Fk column
      *
-     * @param string $fkName
+     * @param string     $fkName
      * @param ForeignKey $removedColumn
      */
     public function addRemovedFk($fkName, ForeignKey $removedFk)
@@ -563,7 +561,7 @@ class TableDiff
     /**
      * Add a modified Fk
      *
-     * @param string $fkName
+     * @param string     $fkName
      * @param ForeignKey $fromFk
      * @param ForeignKey $toFk
      */

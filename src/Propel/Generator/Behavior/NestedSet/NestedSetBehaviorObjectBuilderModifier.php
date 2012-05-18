@@ -1043,8 +1043,7 @@ public function insertAsFirstChildOf(\$parent)
     \$this->setLeftValue(\$left);
     \$this->setRightValue(\$left + 1);
     \$this->setLevel(\$parent->getLevel() + 1);";
-        if ($useScope)
-        {
+        if ($useScope) {
             $script .= "
     \$scope = \$parent->getScopeValue();
     \$this->setScopeValue(\$scope);";
@@ -1089,8 +1088,7 @@ public function insertAsLastChildOf(\$parent)
     \$this->setLeftValue(\$left);
     \$this->setRightValue(\$left + 1);
     \$this->setLevel(\$parent->getLevel() + 1);";
-        if ($useScope)
-        {
+        if ($useScope) {
             $script .= "
     \$scope = \$parent->getScopeValue();
     \$this->setScopeValue(\$scope);";
@@ -1135,8 +1133,7 @@ public function insertAsPrevSiblingOf(\$sibling)
     \$this->setLeftValue(\$left);
     \$this->setRightValue(\$left + 1);
     \$this->setLevel(\$sibling->getLevel());";
-        if ($useScope)
-        {
+        if ($useScope) {
             $script .= "
     \$scope = \$sibling->getScopeValue();
     \$this->setScopeValue(\$scope);";
@@ -1178,8 +1175,7 @@ public function insertAsNextSiblingOf(\$sibling)
     \$this->setLeftValue(\$left);
     \$this->setRightValue(\$left + 1);
     \$this->setLevel(\$sibling->getLevel());";
-        if ($useScope)
-        {
+        if ($useScope) {
             $script .= "
     \$scope = \$sibling->getScopeValue();
     \$this->setScopeValue(\$scope);";

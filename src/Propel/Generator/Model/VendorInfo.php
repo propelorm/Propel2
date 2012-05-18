@@ -10,7 +10,6 @@
 
 namespace Propel\Generator\Model;
 
-use Propel\Generator\Exception\EngineException;
 
 /**
  * Object to hold vendor specific information.
@@ -73,7 +72,7 @@ class VendorInfo extends MappingModel
     /**
      * Returns a parameter value.
      *
-     * @param  string $name The parameter name
+     * @param string $name The parameter name
      * @return mixed
      */
     public function getParameter($name)
@@ -126,7 +125,7 @@ class VendorInfo extends MappingModel
     /**
      * Returns a new VendorInfo object that combines two VendorInfo objects.
      *
-     * @param  VendorInfo $info
+     * @param VendorInfo $info
      * @return VendorInfo
      */
     public function getMergedVendorInfo(VendorInfo $info)

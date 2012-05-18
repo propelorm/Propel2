@@ -123,7 +123,7 @@ abstract class DataModelBuilder
 
     /**
      * Creates new instance of DataModelBuilder subclass.
-     * @param      Table $table The Table which we are using to build [OM, DDL, etc.].
+     * @param Table $table The Table which we are using to build [OM, DDL, etc.].
      */
     public function __construct(Table $table)
     {
@@ -276,8 +276,8 @@ abstract class DataModelBuilder
     /**
      * Gets a new data model builder class for specified table and classname.
      *
-     * @param      Table $table
-     * @param      string $classname The class of builder
+     * @param Table  $table
+     * @param string $classname The class of builder
      * @return     DataModelBuilder
      */
     public function getNewBuilder(Table $table, $classname)
@@ -294,7 +294,7 @@ abstract class DataModelBuilder
      * This is used very frequently from the peer and object builders to get
      * a peer builder for a RELATED table.
      *
-     * @param      Table $table
+     * @param Table $table
      * @return     PeerBuilder
      */
     public function getNewPeerBuilder(Table $table)
@@ -308,7 +308,7 @@ abstract class DataModelBuilder
      * This is used from the peer and object builders to get
      * a peer builder for a RELATED table.
      *
-     * @param      Table $table
+     * @param Table $table
      * @return     PeerBuilder
      */
     public function getNewStubPeerBuilder(Table $table)
@@ -322,7 +322,7 @@ abstract class DataModelBuilder
      * This is used very frequently from the peer and object builders to get
      * an object builder for a RELATED table.
      *
-     * @param      Table $table
+     * @param Table $table
      * @return     ObjectBuilder
      */
     public function getNewObjectBuilder(Table $table)
@@ -336,7 +336,7 @@ abstract class DataModelBuilder
      * This is used from the query builders to get
      * an object builder for a RELATED table.
      *
-     * @param      Table $table
+     * @param Table $table
      * @return     ObjectBuilder
      */
     public function getNewStubObjectBuilder(Table $table)
@@ -350,7 +350,7 @@ abstract class DataModelBuilder
      * This is used from the query builders to get
      * a query builder for a RELATED table.
      *
-     * @param      Table $table
+     * @param Table $table
      * @return     QueryBuilder
      */
     public function getNewQueryBuilder(Table $table)
@@ -364,7 +364,7 @@ abstract class DataModelBuilder
      * This is used from the query builders to get
      * a query builder for a RELATED table.
      *
-     * @param      Table $table
+     * @param Table $table
      * @return     QueryBuilder
      */
     public function getNewStubQueryBuilder(Table $table)
@@ -409,7 +409,7 @@ abstract class DataModelBuilder
     /**
      * Get a specific [name transformed] build property.
      *
-     * @param      string $name
+     * @param string $name
      * @return     string
      */
     public function getBuildProperty($name)
@@ -424,7 +424,7 @@ abstract class DataModelBuilder
     /**
      * Sets the GeneratorConfig object.
      *
-     * @param      GeneratorConfig $v
+     * @param GeneratorConfig $v
      */
     public function setGeneratorConfig(GeneratorConfigInterface $v)
     {
@@ -433,7 +433,7 @@ abstract class DataModelBuilder
 
     /**
      * Sets the table for this builder.
-     * @param      Table $table
+     * @param Table $table
      */
     public function setTable(Table $table)
     {
@@ -489,7 +489,7 @@ abstract class DataModelBuilder
 
     /**
      * Pushes a message onto the stack of warnings.
-     * @param      string $msg The warning message.
+     * @param string $msg The warning message.
      */
     protected function warn($msg)
     {
@@ -512,7 +512,7 @@ abstract class DataModelBuilder
      * method directly.  This method is used by both DataSQLBuilder and DDLBuilder, and potentially
      * in the OM builders also, which is why it is defined in this class.
      *
-     * @param      string $text The text to quote.
+     * @param string $text The text to quote.
      * @return     string Quoted text.
      */
     public function quoteIdentifier($text)

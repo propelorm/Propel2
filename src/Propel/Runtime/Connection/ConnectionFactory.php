@@ -22,9 +22,9 @@ class ConnectionFactory
     /**
      * Open a database connection based on a configuration.
      *
-     * @param array $configuration array('dsn' => '...', 'user' => '...', 'password' => '...')
-     * @param \Propel\Runtime\Adapter\AdapterInterface $adapter The adapter to use to build the connection
-     * @param string $defaultConnectionClass
+     * @param array                                    $configuration          array('dsn' => '...', 'user' => '...', 'password' => '...')
+     * @param \Propel\Runtime\Adapter\AdapterInterface $adapter                The adapter to use to build the connection
+     * @param string                                   $defaultConnectionClass
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface
      */

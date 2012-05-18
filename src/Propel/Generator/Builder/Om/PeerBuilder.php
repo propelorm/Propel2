@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Builder\Om;
@@ -18,7 +18,7 @@ use Propel\Generator\Model\ForeignKey;
  * This class produces the base peer class (e.g. BaseMyPeer) which contains all
  * the custom-built query and manipulator methods.
  *
- * @author     Hans Lellelid <hans@xmpl.org>
+ * @author Hans Lellelid <hans@xmpl.org>
  */
 class PeerBuilder extends AbstractPeerBuilder
 {
@@ -53,7 +53,8 @@ class PeerBuilder extends AbstractPeerBuilder
 
     /**
      * Returns the name of the current class being built.
-     * @return     string
+     *
+     * @return string
      */
     public function getUnprefixedClassName()
     {
@@ -61,14 +62,20 @@ class PeerBuilder extends AbstractPeerBuilder
     }
 
     /**
-     * Gets the package for the [base] peer classes.
-     * @return     string
+     * Returns the package for the [base] peer classes.
+     *
+     * @return string
      */
     public function getPackage()
     {
         return parent::getPackage() . ".Base";
     }
 
+    /**
+     * Returns the namespace for the [base] peer classes.
+     *
+     * @return string
+     */
     public function getNamespace()
     {
         if ($namespace = parent::getNamespace()) {
@@ -80,7 +87,8 @@ class PeerBuilder extends AbstractPeerBuilder
 
     /**
      * Adds class phpdoc comment and openning of class.
-     * @param      string &$script The script will be modified in this method.
+     *
+     * @param string &$script
      */
     protected function addClassOpen(&$script)
     {
@@ -506,8 +514,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
     static public function buildTableMap()
     {
       \$dbMap = Propel::getServiceContainer()->getDatabaseMap(static::DATABASE_NAME);
-      if (!\$dbMap->hasTable(static::TABLE_NAME))
-      {
+      if (!\$dbMap->hasTable(static::TABLE_NAME)) {
         \$dbMap->addTableObject(new ".$this->getTableMapClass()."());
       }
     }
@@ -777,7 +784,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
     /**
      * Adds the PHP code to return a instance pool key for the passed-in primary key variable names.
      *
-     * @param      array $pkphp An array of PHP var names / method calls representing complete pk.
+     * @param array $pkphp An array of PHP var names / method calls representing complete pk.
      */
     public function getInstancePoolKeySnippet($pkphp)
     {
@@ -1903,11 +1910,11 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
             $clo = strtolower($col->getName());
             $cptype = $col->getPhpType();
             $script .= "
-     * @param      $cptype $".$clo;
+     * @param $cptype $".$clo;
         }
         $script .= "
-     * @param      ConnectionInterface \$con
-     * @return     ".$this->getObjectClassName()."
+     * @param ConnectionInterface \$con
+     * @return ".$this->getObjectClassName()."
      */
     static public function ".$this->getRetrieveMethodName()."(";
 
@@ -1952,8 +1959,8 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
     /**
      * Returns the TableMap related to this peer.
      * This method is not needed for general use but a specific application could have a need.
-     * @return     TableMap
-     * @throws     PropelException Any exceptions caught during processing will be
+     * @return TableMap
+     * @throws PropelException Any exceptions caught during processing will be
      *         rethrown wrapped into a PropelException.
      */
     static public function getTableMap()
@@ -2004,7 +2011,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
     /**
      * Get the column offsets of the primary key(s) for specified table.
      *
-     * @param      Table $tbl
+     * @param Table $tbl
      * @return     array int[] The column offsets of the primary key(s).
      */
     protected function getPrimaryKeyColOffsets(Table $tbl)

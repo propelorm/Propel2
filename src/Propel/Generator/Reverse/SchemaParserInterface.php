@@ -30,21 +30,21 @@ interface SchemaParserInterface
     /**
      * Sets the database connection.
      *
-     * @param      ConnectionInterface $dbh
+     * @param ConnectionInterface $dbh
      */
     function setConnection(ConnectionInterface $dbh);
 
     /**
      * Sets the GeneratorConfig to use in the parsing.
      *
-     * @param      GeneratorConfigInterface $config
+     * @param GeneratorConfigInterface $config
      */
     function setGeneratorConfig(GeneratorConfigInterface $config);
 
     /**
      * Gets a specific propel (renamed) property from the build.
      *
-     * @param      string $name
+     * @param string $name
      * @return     mixed
      */
     function getBuildProperty($name);
@@ -58,7 +58,7 @@ interface SchemaParserInterface
     /**
      * Parse the schema and populate passed-in Database model object.
      *
-     * @param      Database $database
+     * @param Database $database
      * @return     int number of generated tables
      */
     function parse(Database $database);

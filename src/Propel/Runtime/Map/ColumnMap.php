@@ -100,7 +100,7 @@ class ColumnMap
     /**
      * Constructor.
      *
-     * @param      string $name The name of the column.
+     * @param string $name The name of the column.
      * @param      \Propel\Runtime\Map\TableMap containingTable TableMap of the table this column is in.
      */
     public function __construct($name, TableMap $containingTable)
@@ -152,7 +152,7 @@ class ColumnMap
     /**
      * Set the php name of this column.
      *
-     * @param      string $phpName A string representing the PHP name.
+     * @param string $phpName A string representing the PHP name.
      */
     public function setPhpName($phpName)
     {
@@ -172,7 +172,7 @@ class ColumnMap
     /**
      * Set the Propel type of this column.
      *
-     * @param      string $type A string representing the Propel type (e.g. PropelColumnTypes::DATE).
+     * @param string $type A string representing the Propel type (e.g. PropelColumnTypes::DATE).
      */
     public function setType($type)
     {
@@ -266,7 +266,7 @@ class ColumnMap
     /**
      * Set the size of this column.
      *
-     * @param      int $size An int specifying the size.
+     * @param int $size An int specifying the size.
      */
     public function setSize($size)
     {
@@ -286,7 +286,7 @@ class ColumnMap
     /**
      * Set if this column is a primary key or not.
      *
-     * @param      Boolean $pk True if column is a primary key.
+     * @param Boolean $pk True if column is a primary key.
      */
     public function setPrimaryKey($pk)
     {
@@ -326,7 +326,7 @@ class ColumnMap
     /**
      * Sets the default value for this column.
      *
-     * @param      mixed $defaultValue the default value for the column
+     * @param mixed $defaultValue the default value for the column
      */
     public function setDefaultValue($defaultValue)
     {
@@ -448,7 +448,7 @@ class ColumnMap
     /**
      * Set the valueSet of this column (only valid for ENUM columns).
      *
-     * @param      array $values A list of allowed values
+     * @param array $values A list of allowed values
      */
     public function setValueSet($values)
     {
@@ -478,8 +478,8 @@ class ColumnMap
     /**
      * Performs DB-specific ignore case, but only if the column type necessitates it.
      *
-     * @param      string $str The expression we want to apply the ignore case formatting to (e.g. the column name).
-     * @param      \Propel\Runtime\Adapter\AdapterInterface $db
+     * @param string                                   $str The expression we want to apply the ignore case formatting to (e.g. the column name).
+     * @param \Propel\Runtime\Adapter\AdapterInterface $db
      */
     public function ignoreCase($str, AdapterInterface $db)
     {
@@ -495,7 +495,7 @@ class ColumnMap
      *
      * article.first_name becomes FIRST_NAME
      *
-     * @param      string $name
+     * @param string $name
      * @return     string Normalized column name.
      */
     static public function normalizeName($name)
@@ -510,7 +510,7 @@ class ColumnMap
     /**
      * Set this column to be a primaryString column.
      *
-     * @param      Boolean $pkString
+     * @param Boolean $pkString
      */
     public function setPrimaryString($pkString)
     {

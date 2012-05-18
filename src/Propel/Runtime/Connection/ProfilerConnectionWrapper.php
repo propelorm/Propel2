@@ -79,8 +79,8 @@ class ProfilerConnectionWrapper extends ConnectionWrapper
      *  - Add logging and query counting if logging is true.
      *  - Add query caching support if the PropelPDO::PROPEL_ATTR_CACHE_PREPARES was set to true.
      *
-     * @param     string  $sql  This must be a valid SQL statement for the target database server.
-     * @param     array   $driver_options  One $array or more key => value pairs to set attribute values
+     * @param string $sql            This must be a valid SQL statement for the target database server.
+     * @param array  $driver_options One $array or more key => value pairs to set attribute values
      *                                      for the PDOStatement object that this method returns.
      *
      * @return    \Propel\Runtime\Connection\StatementInterface
@@ -111,7 +111,7 @@ class ProfilerConnectionWrapper extends ConnectionWrapper
      * Execute an SQL statement and return the number of affected rows.
      * Overrides PDO::exec() to log queries when required
      *
-     * @param     string  $sql
+     * @param string $sql
      * @return    integer
      */
     public function exec($sql)
@@ -145,10 +145,10 @@ class ProfilerConnectionWrapper extends ConnectionWrapper
      * @uses      self::getLogPrefix()
      * @see       self::setLogger()
      *
-     * @param     string   $msg  Message to log.
-     * @param     integer  $level  Log level to use; will use self::setLogLevel() specified level by default.
-     * @param     string   $methodName  Name of the method whose execution is being logged.
-     * @param     array    $debugSnapshot  Previous return value from self::getDebugSnapshot().
+     * @param string  $msg           Message to log.
+     * @param integer $level         Log level to use; will use self::setLogLevel() specified level by default.
+     * @param string  $methodName    Name of the method whose execution is being logged.
+     * @param array   $debugSnapshot Previous return value from self::getDebugSnapshot().
      */
     public function log($msg, $level = null, $methodName = null)
     {

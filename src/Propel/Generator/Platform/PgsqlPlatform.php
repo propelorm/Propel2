@@ -71,7 +71,7 @@ class PgsqlPlatform extends DefaultPlatform
 
     /**
      * Escape the string for RDBMS.
-     * @param      string $text
+     * @param string $text
      * @return     string
      */
     public function disconnectedEscapeText($text)
@@ -101,7 +101,7 @@ class PgsqlPlatform extends DefaultPlatform
      * Override to provide sequence names that conform to postgres' standard when
      * no id-method-parameter specified.
      *
-     * @param      Table $table
+     * @param Table $table
      *
      * @return     string
      */

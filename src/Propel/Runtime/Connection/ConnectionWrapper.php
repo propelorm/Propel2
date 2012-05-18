@@ -161,7 +161,7 @@ class ConnectionWrapper implements ConnectionInterface
 
     /**
      * Set the current transaction depth.
-     * @param     int $v The new depth.
+     * @param int $v The new depth.
      */
     protected function setNestedTransactionCount($v)
     {
@@ -327,7 +327,7 @@ class ConnectionWrapper implements ConnectionInterface
      * Set an attribute.
      *
      * @param string $attribute The attribute name, or the constant name containing the attribute name (e.g. 'PDO::ATTR_CASE')
-     * @param mixed $value
+     * @param mixed  $value
      *
      * @return bool TRUE on success or FALSE on failure.
      */
@@ -355,8 +355,8 @@ class ConnectionWrapper implements ConnectionInterface
      *  - Add logging and query counting if logging is true.
      *  - Add query caching support if the PropelPDO::PROPEL_ATTR_CACHE_PREPARES was set to true.
      *
-     * @param     string  $sql  This must be a valid SQL statement for the target database server.
-     * @param     array   $driver_options  One $array or more key => value pairs to set attribute values
+     * @param string $sql            This must be a valid SQL statement for the target database server.
+     * @param array  $driver_options One $array or more key => value pairs to set attribute values
      *                                      for the PDOStatement object that this method returns.
      *
      * @return    \Propel\Runtime\Connection\StatementInterface
@@ -385,7 +385,7 @@ class ConnectionWrapper implements ConnectionInterface
      * Execute an SQL statement and return the number of affected rows.
      * Overrides PDO::exec() to log queries when required
      *
-     * @param     string  $sql
+     * @param string $sql
      * @return    integer
      */
     public function exec($sql)
@@ -433,7 +433,7 @@ class ConnectionWrapper implements ConnectionInterface
      * characters within the input string, using a quoting style appropriate to
      * the underlying driver.
      *
-     * @param string $string The string to be quoted.
+     * @param string $string         The string to be quoted.
      * @param int    $parameter_type Provides a data type hint for drivers that
      *                               have alternate quoting styles.
      *
@@ -514,7 +514,7 @@ class ConnectionWrapper implements ConnectionInterface
     /**
      * Set the SQL code for the latest query executed by Propel
      *
-     * @param     string  $query  Executable SQL code
+     * @param string $query Executable SQL code
      */
     public function setLastExecutedQuery($query)
     {
@@ -524,7 +524,7 @@ class ConnectionWrapper implements ConnectionInterface
     /**
      * Enable or disable the query debug features
      *
-     * @param     Boolean  $value  True to enable debug (default), false to disable it
+     * @param Boolean $value True to enable debug (default), false to disable it
      */
     public function useDebug($value = true)
     {
@@ -597,7 +597,7 @@ class ConnectionWrapper implements ConnectionInterface
     /**
      * Logs the method call or the executed SQL statement.
      *
-     * @param     string   $msg  Message to log.
+     * @param string $msg Message to log.
      */
     public function log($msg)
     {

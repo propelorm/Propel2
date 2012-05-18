@@ -17,7 +17,6 @@ use Preopl\Runtime\Exception\UnexpectedValueException;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\ConnectionManagerInterface;
 use Propel\Runtime\Connection\ConnectionManagerSingle;
-use Propel\Runtime\Connection\ConnectionFactory;
 use Propel\Runtime\Map\DatabaseMap;
 use Monolog\Logger;
 
@@ -115,7 +114,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      *
      * This allows for lazy-loading adapter objects in getAdapter().
      *
-     * @param string $name The datasource name
+     * @param string $name         The datasource name
      * @param string $adapterClass
      */
     public function setAdapterClass($name, $adapterClass)
@@ -162,7 +161,7 @@ class StandardServiceContainer implements ServiceContainerInterface
     /**
      * Set the adapter for a given datasource.
      *
-     * @param string $name The datasource name
+     * @param string                                   $name    The datasource name
      * @param \Propel\Runtime\Adapter\AdapterInterface $adapter
      */
     public function setAdapter($name, AdapterInterface $adapter)
@@ -218,7 +217,7 @@ class StandardServiceContainer implements ServiceContainerInterface
     /**
      * Set the database map object to use for a given datasource.
      *
-     * @param string $name The datasource name
+     * @param string                          $name        The datasource name
      * @param \Propel\Runtime\Map\DatabaseMap $databaseMap
      */
     public function setDatabaseMap($name, DatabaseMap $databaseMap)
@@ -227,7 +226,7 @@ class StandardServiceContainer implements ServiceContainerInterface
     }
 
     /**
-     * @param string $name The datasource name
+     * @param string                                                $name    The datasource name
      * @param \Propel\Runtime\Connection\ConnectionManagerInterface $manager
      */
     public function setConnectionManager($name, ConnectionManagerInterface $manager)
@@ -278,8 +277,8 @@ class StandardServiceContainer implements ServiceContainerInterface
      * If the connection has not been opened, open it using the related
      * connectionSettings. If the connection has already been opened, return it.
      *
-     * @param      string $name The datasource name
-     * @param      string $mode The connection mode (this applies to replication systems).
+     * @param string $name The datasource name
+     * @param string $mode The connection mode (this applies to replication systems).
      *
      * @return     \Propel\Runtime\Connection\ConnectionInterface A database connection
      */
@@ -302,7 +301,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      * If the connection has not been opened, open it using the related
      * connectionSettings. If the connection has already been opened, return it.
      *
-     * @param      string $name The datasource name that is used to look up the DSN
+     * @param string $name The datasource name that is used to look up the DSN
      *                          from the runtime configuration file. Empty name not allowed.
      *
      * @return     ConnectionInterface A database connection
@@ -321,7 +320,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      * setting for the related datasource. If no read connection setting exist, return the master
      * connection. If the slave connection has already been opened, return it.
      *
-     * @param      string $name The datasource name that is used to look up the DSN
+     * @param string $name The datasource name that is used to look up the DSN
      *                          from the runtime configuration file. Empty name not allowed.
      *
      * @return     ConnectionInterface A database connection
@@ -424,7 +423,7 @@ class StandardServiceContainer implements ServiceContainerInterface
     }
 
     /**
-     * @param string $name the name of the logger to be set
+     * @param string          $name   the name of the logger to be set
      * @param \Monolog\Logger $logger A logger instance
      */
     public function setLogger($name, Logger $logger)
@@ -475,7 +474,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      * </code>
      *
      * @param string $name
-     * @param array $loggerConfiguration
+     * @param array  $loggerConfiguration
      */
     public function setLoggerConfiguration($name, $loggerConfiguration)
     {

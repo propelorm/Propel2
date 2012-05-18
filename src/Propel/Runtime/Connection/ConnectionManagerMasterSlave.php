@@ -76,7 +76,7 @@ class ConnectionManagerMasterSlave implements ConnectionManagerInterface
     /**
      * For replication, set whether to always force the use of a master connection.
      *
-     * @param      boolean $isForceMasterConnection
+     * @param boolean $isForceMasterConnection
      */
     public function setForceMasterConnection($isForceMasterConnection)
     {
@@ -133,7 +133,7 @@ class ConnectionManagerMasterSlave implements ConnectionManagerInterface
      *
      * If no master connection exist yet, open it using the write configuration.
      *
-     * @param  \Propel\Runtime\Adapter\AdapterInterface $adapter
+     * @param \Propel\Runtime\Adapter\AdapterInterface $adapter
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface
      */
@@ -153,7 +153,7 @@ class ConnectionManagerMasterSlave implements ConnectionManagerInterface
      * If no slave connection exist yet, choose one configuration randomly in the
      * read configuration to open it.
      *
-     * @param  \Propel\Runtime\Adapter\AdapterInterface $adapter
+     * @param \Propel\Runtime\Adapter\AdapterInterface $adapter
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface
      */

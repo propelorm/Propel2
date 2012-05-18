@@ -5,60 +5,66 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license     MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Model\Diff;
 
-use Propel\Generator\Model\Column;
 use Propel\Generator\Model\Table;
 
 /**
  * Value object for storing Database object diffs
  * Heavily inspired by Doctrine2's Migrations
  * (see http://github.com/doctrine/dbal/tree/master/lib/Doctrine/DBAL/Schema/)
- *
  */
 class DatabaseDiff
 {
-    protected $addedTables = array();
-    protected $removedTables = array();
-    protected $modifiedTables = array();
-    protected $renamedTables = array();
+    protected $addedTables;
+    protected $removedTables;
+    protected $modifiedTables;
+    protected $renamedTables;
 
-    /**
-     * Setter for the addedTables property
-     *
-     * @param array $addedTables
-     */
-    public function setAddedTables($addedTables)
+    public function __construct()
     {
-        $this->addedTables = $addedTables;
+        $this->addedTables = array();
+        $this->removedTables = array();
+        $this->modifiedTables = array();
+        $this->renamedTables = array();
     }
 
     /**
-     * Add an added table
+     * Sets the added tables.
      *
-     * @param string $tableName
-     * @param Table $addedTable
+     * @param array $tables
      */
-    public function addAddedTable($tableName, Table $addedTable)
+    public function setAddedTables($tables)
     {
-        $this->addedTables[$tableName] = $addedTable;
+        $this->addedTables = $tables;
     }
 
     /**
-     * Remove an added table
+     * Adds an added table.
      *
-     * @param string $tableName
+     * @param string $name
+     * @param Table  $table
      */
-    public function removeAddedTable($tableName)
+    public function addAddedTable($name, Table $table)
     {
-        unset($this->addedTables[$tableName]);
+        $this->addedTables[$name] = $table;
     }
 
     /**
-     * Getter for the addedTables property
+     * Removes an added table.
+     *
+     * @param string $name
+     */
+    public function removeAddedTable($name)
+    {
+        unset($this->addedTables[$name]);
+    }
+
+    /**
+     * Returns the list of added tables.
      *
      * @return array
      */
@@ -68,7 +74,7 @@ class DatabaseDiff
     }
 
     /**
-     * Get the number of added tables
+     * Returns the number of added tables.
      *
      * @return integer
      */
@@ -78,50 +84,49 @@ class DatabaseDiff
     }
 
     /**
-     * Get an added table
+     * Returns an added table by its name.
      *
-     * @param string $tableName
-     *
+     * @param string $name
      * @param Table
      */
-    public function getAddedTable($tableName)
+    public function getAddedTable($name)
     {
-        return $this->addedTables[$tableName];
+        return $this->addedTables[$name];
     }
 
     /**
-     * Setter for the removedTables property
+     * Sets the removes tables.
      *
-     * @param array $removedTables
+     * @param array $tables
      */
-    public function setRemovedTables($removedTables)
+    public function setRemovedTables($tables)
     {
-        $this->removedTables = $removedTables;
+        $this->removedTables = $tables;
     }
 
     /**
-     * Add a removed table
+     * Adds a table to remove.
      *
-     * @param string $tableName
-     * @param Table $removedTable
+     * @param string $name
+     * @param Table  $table
      */
-    public function addRemovedTable($tableName, Table $removedTable)
+    public function addRemovedTable($name, Table $table)
     {
-        $this->removedTables[$tableName] = $removedTable;
+        $this->removedTables[$name] = $table;
     }
 
     /**
-     * Remove a removed table
+     * Removes a removed table.
      *
-     * @param string $tableName
+     * @param string $name
      */
-    public function removeRemovedTable($tableName)
+    public function removeRemovedTable($name)
     {
-        unset($this->removedTables[$tableName]);
+        unset($this->removedTables[$name]);
     }
 
     /**
-     * Getter for the removedTables property
+     * Returns the list of removed tables.
      *
      * @return array
      */
@@ -131,7 +136,7 @@ class DatabaseDiff
     }
 
     /**
-     * Get the number of removed tables
+     * Retuns the number of removed tables.
      *
      * @return integer
      */
@@ -141,40 +146,39 @@ class DatabaseDiff
     }
 
     /**
-     * Get a removed table
+     * Returns a removed table.
      *
-     * @param string $tableName
-     *
+     * @param string $name
      * @param Table
      */
-    public function getRemovedTable($tableName)
+    public function getRemovedTable($name)
     {
-        return $this->removedTables[$tableName];
+        return $this->removedTables[$name];
     }
 
     /**
-     * Setter for the modifiedTables property
+     * Sets the modified tables
      *
-     * @param array $modifiedTables
+     * @param array $tables
      */
-    public function setModifiedTables($modifiedTables)
+    public function setModifiedTables($tables)
     {
-        $this->modifiedTables = $modifiedTables;
+        $this->modifiedTables = $tables;
     }
 
     /**
-     * Add a table difference
+     * Adds a table difference.
      *
-     * @param string $tableName
-     * @param TableDiff $modifiedTable
+     * @param string    $name
+     * @param TableDiff $difference
      */
-    public function addModifiedTable($tableName, TableDiff $modifiedTable)
+    public function addModifiedTable($name, TableDiff $difference)
     {
-        $this->modifiedTables[$tableName] = $modifiedTable;
+        $this->modifiedTables[$name] = $difference;
     }
 
     /**
-     * Get the number of modified tables
+     * Returns the number of modified tables.
      *
      * @return integer
      */
@@ -184,7 +188,7 @@ class DatabaseDiff
     }
 
     /**
-     * Getter for the modifiedTables property
+     * Returns the modified tables.
      *
      * @return array
      */
@@ -194,17 +198,17 @@ class DatabaseDiff
     }
 
     /**
-     * Setter for the renamedTables property
+     * Sets the renamed tables.
      *
-     * @param array $renamedTables
+     * @param array $tables
      */
-    public function setRenamedTables($renamedTables)
+    public function setRenamedTables($tables)
     {
-        $this->renamedTables = $renamedTables;
+        $this->renamedTables = $tables;
     }
 
     /**
-     * Add a renamed table
+     * Adds a renamed table.
      *
      * @param string $fromName
      * @param string $toName
@@ -215,7 +219,7 @@ class DatabaseDiff
     }
 
     /**
-     * Getter for the renamedTables property
+     * Returns the list of renamed tables.
      *
      * @return array
      */
@@ -225,7 +229,7 @@ class DatabaseDiff
     }
 
     /**
-     * Get the number of renamed tables
+     * Returns the number of renamed tables.
      *
      * @return integer
      */
@@ -235,7 +239,7 @@ class DatabaseDiff
     }
 
     /**
-     * Get the reverse diff for this diff
+     * Returns the reverse diff for this diff.
      *
      * @return DatabaseDiff
      */
@@ -262,7 +266,7 @@ class DatabaseDiff
     }
 
     /**
-     * Get a description of the database modifications
+     * Returns a description of the database modifications.
      *
      * @return string
      */

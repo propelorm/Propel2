@@ -10,7 +10,6 @@
 
 namespace Propel\Generator\Model;
 
-use Propel\Generator\Exception\EngineException;
 use Propel\Generator\Builder\Util\PropelTemplate;
 
 /**
@@ -53,7 +52,7 @@ class Behavior extends MappingModel
     /**
      * Sets the table this behavior is applied to
      *
-     * @param Table $table the table this behavior is applied to
+     * @param Table $table
      */
     public function setTable(Table $table)
     {
@@ -73,7 +72,7 @@ class Behavior extends MappingModel
     /**
      * Sets the database this behavior is applied to
      *
-     * @param Database $database the database this behavior is applied to
+     * @param Database $database
      */
     public function setDatabase(Database $database)
     {
@@ -81,7 +80,8 @@ class Behavior extends MappingModel
     }
 
     /**
-     * Returns the table this behavior is applied to if behavior is applied to <database> element.
+     * Returns the table this behavior is applied to if behavior is applied to
+     * a database element.
      *
      * @return Database
      */
@@ -93,7 +93,8 @@ class Behavior extends MappingModel
     /**
      * Adds a single parameter.
      *
-     * Expects an associative array looking like array('name' => 'foo', 'value' => bar)
+     * Expects an associative array looking like
+     * array('name' => 'foo', 'value' => bar)
      *
      * @param array $parameters
      */
@@ -138,7 +139,7 @@ class Behavior extends MappingModel
 
     /**
      * Defines when this behavior must execute its modifyTable() method
-     * relative to other behaviors. The bigger the value is, the later the 
+     * relative to other behaviors. The bigger the value is, the later the
      * behavior is executed.
      *
      * Default is 50.
@@ -168,7 +169,7 @@ class Behavior extends MappingModel
      * This method is automatically called on database behaviors when the
      * database model is finished.
      *
-     * Propagates the behavior to the tables of the database and override this 
+     * Propagates the behavior to the tables of the database and override this
      * method to have a database behavior do something special.
      */
     public function modifyDatabase()
@@ -190,7 +191,7 @@ class Behavior extends MappingModel
      */
     public function modifyTable()
     {
-        
+
     }
 
     /**
@@ -215,7 +216,7 @@ class Behavior extends MappingModel
 
     /**
      * Use Propel simple templating system to render a PHP file using variables
-     * passed as arguments. The template file name is relative to the behavior's 
+     * passed as arguments. The template file name is relative to the behavior's
      * directory name.
      *
      * @param string $filename

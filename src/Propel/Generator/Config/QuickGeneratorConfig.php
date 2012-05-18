@@ -5,20 +5,16 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license         MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Config;
 
-use PDO;
-use Exception;
 use Propel\Common\Pluralizer\StandardEnglishPluralizer;
 use Propel\Generator\Config\GeneratorConfigInterface;
+use Propel\Generator\Exception\RuntimeException;
 use Propel\Generator\Model\Table;
 
-/**
- *
- */
 class QuickGeneratorConfig implements GeneratorConfigInterface
 {
     protected $builders = array(
@@ -50,7 +46,7 @@ class QuickGeneratorConfig implements GeneratorConfigInterface
     {
         $properties = array();
         if (false === ($lines = @file($filepath))) {
-            throw new Exception(sprintf('Unable to parse contents of %s.', $filepath));
+            throw new RuntimeException(sprintf('Unable to parse contents of %s.', $filepath));
         }
 
         foreach ($lines as $line) {
@@ -76,11 +72,12 @@ class QuickGeneratorConfig implements GeneratorConfigInterface
     }
 
     /**
-     * Gets a configured data model builder class for specified table and based on type.
+     * Gets a configured data model builder class for specified table and based
+     * on type ('ddl', 'sql', etc.).
      *
-     * @param             Table $table
-     * @param             string $type The type of builder ('ddl', 'sql', etc.)
-     * @return         DataModelBuilder
+     * @param Table  $table
+     * @param string $type
+     * @return DataModelBuilder
      */
     public function getConfiguredBuilder(Table $table, $type)
     {
@@ -92,22 +89,23 @@ class QuickGeneratorConfig implements GeneratorConfigInterface
     }
 
     /**
-    * Gets a configured Pluralizer class.
-    *
-    * @return     \Propel\Common\Pluralizer\PluralizerInterface
-    */
+     * Returns a configured Pluralizer class.
+     *
+     * @return PluralizerInterface
+     */
     public function getConfiguredPluralizer()
     {
         return new StandardEnglishPluralizer();
     }
 
     /**
-     * Parses the passed-in properties, renaming and saving eligible properties in this object.
+     * Parses the passed-in properties, renaming and saving eligible properties
+     * in this object.
      *
-     * Renames the propel.xxx properties to just xxx and renames any xxx.yyy properties
-     * to xxxYyy as PHP doesn't like the xxx.yyy syntax.
+     * Renames the propel.xxx properties to just xxx and renames any xxx.yyy
+     * properties to xxxYyy as PHP doesn't like the xxx.yyy syntax.
      *
-     * @param             mixed $props Array or Iterator
+     * @param array|Traversable $props
      */
     public function setBuildProperties($props)
     {
@@ -127,10 +125,10 @@ class QuickGeneratorConfig implements GeneratorConfigInterface
     }
 
     /**
-     * Gets a specific propel (renamed) property from the build.
+     * Returns a specific propel (renamed) property from the build.
      *
-     * @param             string $name
-     * @return         mixed
+     * @param string $name
+     * @return mixed
      */
     public function getBuildProperty($name)
     {
@@ -140,8 +138,8 @@ class QuickGeneratorConfig implements GeneratorConfigInterface
     /**
      * Sets a specific propel (renamed) property from the build.
      *
-     * @param      string $name
-     * @param      mixed $value
+     * @param string $name
+     * @param mixed  $value
      */
     public function setBuildProperty($name, $value)
     {
@@ -151,7 +149,7 @@ class QuickGeneratorConfig implements GeneratorConfigInterface
     /**
      * {@inheritdoc}
      */
-    public function getConfiguredPlatform(PDO $con = null, $database = null)
+    public function getConfiguredPlatform(\PDO $con = null, $database = null)
     {
         return null;
     }

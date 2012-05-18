@@ -166,8 +166,8 @@ class Profiler
      *
      * @see       self::getSnapshot()
      *
-     * @param     array   $startSnapshot  A snapshot, as returned by self::getSnapshot().
-     * @param     array   $endSnapshot    A snapshot, as returned by self::getSnapshot().
+     * @param array $startSnapshot A snapshot, as returned by self::getSnapshot().
+     * @param array $endSnapshot   A snapshot, as returned by self::getSnapshot().
      *
      * @return    string
      */
@@ -227,8 +227,8 @@ class Profiler
     /**
      * Format a byte count into a human-readable representation.
      *
-     * @param     integer  $bytes  Byte count to convert. Can be negative.
-     * @param     integer  $precision  How many decimals to include.
+     * @param integer $bytes     Byte count to convert. Can be negative.
+     * @param integer $precision How many decimals to include.
      *
      * @return    string
      */
@@ -249,8 +249,8 @@ class Profiler
     /**
      * Format a duration into a human-readable representation.
      *
-     * @param     double   $duration   Duration to format, in seconds.
-     * @param     integer  $precision  How many decimals to include.
+     * @param double  $duration  Duration to format, in seconds.
+     * @param integer $precision How many decimals to include.
      *
      * @return    string
      */

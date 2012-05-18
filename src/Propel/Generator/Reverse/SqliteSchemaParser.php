@@ -111,9 +111,9 @@ class SqliteSchemaParser extends AbstractSchemaParser
     /**
      * Adds Columns to the specified table.
      *
-     * @param      Table $table The Table model class to add columns to.
-     * @param      int $oid The table OID
-     * @param      string $version The database version.
+     * @param Table  $table   The Table model class to add columns to.
+     * @param int    $oid     The table OID
+     * @param string $version The database version.
      */
     protected function addColumns(Table $table)
     {

@@ -89,9 +89,9 @@ class ModelCriteria extends Criteria
      * Creates a new instance with the default capacity which corresponds to
      * the specified database.
      *
-     * @param     string $dbName The dabase name
-     * @param     string $modelName The phpName of a model, e.g. 'Book'
-     * @param     string $modelAlias The alias for the model in this query, e.g. 'b'
+     * @param string $dbName     The dabase name
+     * @param string $modelName  The phpName of a model, e.g. 'Book'
+     * @param string $modelAlias The alias for the model in this query, e.g. 'b'
      */
     public function __construct($dbName = null, $modelName = null, $modelAlias = null)
     {
@@ -126,8 +126,8 @@ class ModelCriteria extends Criteria
     /**
      * Sets the alias for the model in this query
      *
-     * @param    string $modelAlias The model alias
-     * @param    boolean $useAliasInSQL Whether to use the alias in the SQL code (false by default)
+     * @param string  $modelAlias    The model alias
+     * @param boolean $useAliasInSQL Whether to use the alias in the SQL code (false by default)
      *
      * @return ModelCriteria The current object, for fluid interface
      */
@@ -201,7 +201,7 @@ class ModelCriteria extends Criteria
      * $c->setFormatter(ModelCriteria::FORMAT_ARRAY);
      * </code>
      *
-     * @param     string|AbstractFormatter $formatter a formatter class name, or a formatter instance
+     * @param string|AbstractFormatter $formatter a formatter class name, or a formatter instance
      * @return    ModelCriteria The current object, for fluid interface
      */
     public function setFormatter($formatter)
@@ -246,10 +246,10 @@ class ModelCriteria extends Criteria
      *
      * @see        Criteria::add()
      *
-     * @param      string $conditionName A name to store the condition for a later combination with combine()
-     * @param      string $clause The pseudo SQL clause, e.g. 'AuthorId = ?'
-     * @param      mixed  $value A value for the condition
-     * @param      mixed  $bindingType A value for the condition
+     * @param string $conditionName A name to store the condition for a later combination with combine()
+     * @param string $clause        The pseudo SQL clause, e.g. 'AuthorId = ?'
+     * @param mixed  $value         A value for the condition
+     * @param mixed  $bindingType   A value for the condition
      *
      * @return     ModelCriteria The current object, for fluid interface
      */
@@ -270,9 +270,9 @@ class ModelCriteria extends Criteria
      *
      * @see        Criteria::add()
      *
-     * @param      string $column     A string representing thecolumn phpName, e.g. 'AuthorId'
-     * @param      mixed  $value      A value for the condition
-     * @param      string $comparison What to use for the column comparison, defaults to Criteria::EQUAL
+     * @param string $column     A string representing thecolumn phpName, e.g. 'AuthorId'
+     * @param mixed  $value      A value for the condition
+     * @param string $comparison What to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return     ModelCriteria The current object, for fluid interface
      */
@@ -294,7 +294,7 @@ class ModelCriteria extends Criteria
      *
      * @see        filterBy()
      *
-     * @param      mixed $conditions An array of conditions, using column phpNames as key
+     * @param mixed $conditions An array of conditions, using column phpNames as key
      *
      * @return     ModelCriteria The current object, for fluid interface
      */
@@ -321,9 +321,9 @@ class ModelCriteria extends Criteria
      *
      * @see Criteria::add()
      *
-     * @param      mixed $clause A string representing the pseudo SQL clause, e.g. 'Book.AuthorId = ?'
+     * @param mixed $clause A string representing the pseudo SQL clause, e.g. 'Book.AuthorId = ?'
      *                           Or an array of condition names
-     * @param      mixed  $value A value for the condition
+     * @param mixed $value A value for the condition
      *
      * @return     ModelCriteria The current object, for fluid interface
      */
@@ -356,9 +356,9 @@ class ModelCriteria extends Criteria
      *
      * @see Criteria::addHaving()
      *
-     * @param      mixed $clause A string representing the pseudo SQL clause, e.g. 'Book.AuthorId = ?'
+     * @param mixed $clause A string representing the pseudo SQL clause, e.g. 'Book.AuthorId = ?'
      *                           Or an array of condition names
-     * @param      mixed  $value A value for the condition
+     * @param mixed $value A value for the condition
      *
      * @return     ModelCriteria The current object, for fluid interface
      */
@@ -418,7 +418,7 @@ class ModelCriteria extends Criteria
      *   $c->groupBy('Book.AuthorId')
      *    => $c->addGroupByColumn(BookPeer::AUTHOR_ID)
      *
-     * @param      string $columnName The column to group by
+     * @param string $columnName The column to group by
      *
      * @return     ModelCriteria The current object, for fluid interface
      */
@@ -439,7 +439,7 @@ class ModelCriteria extends Criteria
      *    => $c->addGroupByColumn(BookPeer::AUTHOR_ID);
      *    => $c->addGroupByColumn(BookPeer::PUBLISHER_ID);
      *
-     * @param      string $class The class name or alias
+     * @param string $class The class name or alias
      *
      * @return     ModelCriteria The current object, for fluid interface
      */
@@ -483,7 +483,7 @@ class ModelCriteria extends Criteria
      * Adds a LIMIT clause (or its subselect equivalent) to the query
      * Alias for Criteria:::setLimit()
      *
-     * @param      int $limit Maximum number of results to return by the query
+     * @param int $limit Maximum number of results to return by the query
      *
      * @return     ModelCriteria The current object, for fluid interface
      */
@@ -498,7 +498,7 @@ class ModelCriteria extends Criteria
      * Adds an OFFSET clause (or its subselect equivalent) to the query
      * Alias for of Criteria::setOffset()
      *
-     * @param      int $offset Offset of the first result to return
+     * @param int $offset Offset of the first result to return
      *
      * @return     ModelCriteria The current object, for fluid interface
      */
@@ -527,7 +527,7 @@ class ModelCriteria extends Criteria
      *   ArticleQuery::create()->select(array('Id', 'Name'))->findOne();
      *   => array('Id' => 1, 'Name' => 'Foo')
      *
-     * @param     mixed $columnArray A list of column names (e.g. array('Title', 'Category.Name', 'c.Content')) or a single column name (e.g. 'Name')
+     * @param mixed $columnArray A list of column names (e.g. array('Title', 'Category.Name', 'c.Content')) or a single column name (e.g. 'Name')
      *
      * @return    ModelCriteria The current object, for fluid interface
      */
@@ -619,7 +619,7 @@ class ModelCriteria extends Criteria
     /**
      * This method returns an already defined join clause from the query
      *
-     * @param      string $name    The name of the join clause
+     * @param string $name The name of the join clause
      *
      * @return Join A join object
      */
@@ -644,8 +644,8 @@ class ModelCriteria extends Criteria
      *    => $c->addJoin(BookPeer::AUTHOR_ID, 'a.ID', Criteria::RIGHT_JOIN);
      * </code>
      *
-     * @param      string $relation Relation to use for the join
-     * @param      string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     * @param string $relation Relation to use for the join
+     * @param string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
      * @return     ModelCriteria The current object, for fluid interface
      */
@@ -711,9 +711,9 @@ class ModelCriteria extends Criteria
      * $query->addJoinCondition('Author', 'Book.Title LIKE ?', 'foo%');
      * </code>
      *
-     * @param string $name The relation name or alias on which the join was created
-     * @param string $clause SQL clause, may contain column and table phpNames
-     * @param mixed  $value An optional value to bind to the clause
+     * @param string $name     The relation name or alias on which the join was created
+     * @param string $clause   SQL clause, may contain column and table phpNames
+     * @param mixed  $value    An optional value to bind to the clause
      * @param string $operator The operator to use to add the condition. Defaults to 'AND'
      *
      * @return ModelCriteria The current object, for fluid interface
@@ -745,8 +745,8 @@ class ModelCriteria extends Criteria
      * $query->setJoinCondition('Author', 'cond3');
      * </code>
      *
-     * @param string $name The relation name or alias on which the join was created
-     * @param mixed $condition A Criterion object, or a condition name
+     * @param string $name      The relation name or alias on which the join was created
+     * @param mixed  $condition A Criterion object, or a condition name
      *
      * @return ModelCriteria The current object, for fluid interface
      */
@@ -799,8 +799,8 @@ class ModelCriteria extends Criteria
      *    => $c->with('a');
      * </code>
      *
-     * @param      string $relation Relation to use for the join
-     * @param      string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     * @param string $relation Relation to use for the join
+     * @param string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
      * @return     ModelCriteria The current object, for fluid interface
      */
@@ -826,7 +826,7 @@ class ModelCriteria extends Criteria
      * WARNING: on a one-to-many relationship, the use of with() combined with limit()
      * will return a wrong number of results for the related objects
      *
-     * @param      string $relation Relation to use for the join
+     * @param string $relation Relation to use for the join
      *
      * @return     ModelCriteria The current object, for fluid interface
      */
@@ -893,9 +893,9 @@ class ModelCriteria extends Criteria
      * Adds a supplementary column to the select clause
      * These columns can later be retrieved from the hydrated objects using getVirtualColumn()
      *
-     * @param     string $clause The SQL clause with object model column names
+     * @param string $clause The SQL clause with object model column names
      *                           e.g. 'UPPER(Author.FirstName)'
-     * @param     string $name   Optional alias for the added column
+     * @param string $name Optional alias for the added column
      *                           If no alias is provided, the clause is used as a column alias
      *                           This alias is used for retrieving the column via BaseObject::getVirtualColumn($alias)
      *
@@ -922,8 +922,8 @@ class ModelCriteria extends Criteria
      * Initializes a secondary ModelCriteria object, to be later merged with the current object
      *
      * @see       ModelCriteria::endUse()
-     * @param     string $relationName Relation name or alias
-     * @param     string $secondCriteriaClass ClassName for the ModelCriteria to be used
+     * @param string $relationName        Relation name or alias
+     * @param string $secondCriteriaClass ClassName for the ModelCriteria to be used
      *
      * @return    ModelCriteria The secondary criteria object
      */
@@ -973,8 +973,8 @@ class ModelCriteria extends Criteria
      * In case of conflict, the current Criteria keeps its properties
      * @see Criteria::mergeWith()
      *
-     * @param     Criteria $criteria The criteria to read properties from
-     * @param     string $operator The logical operator used to combine conditions
+     * @param Criteria $criteria The criteria to read properties from
+     * @param string   $operator The logical operator used to combine conditions
      *              Defaults to Criteria::LOGICAL_AND, also accapts Criteria::LOGICAL_OR
      *
      * @return    ModelCriteria The primary criteria object
@@ -1010,8 +1010,8 @@ class ModelCriteria extends Criteria
     /**
      * Sets the primary Criteria for this secondary Criteria
      *
-     * @param     ModelCriteria $criteria The primary criteria
-     * @param Join $previousJoin The previousJoin for this ModelCriteria
+     * @param ModelCriteria $criteria     The primary criteria
+     * @param Join          $previousJoin The previousJoin for this ModelCriteria
      */
     public function setPrimaryCriteria(ModelCriteria $criteria, Join $previousJoin)
     {
@@ -1034,9 +1034,9 @@ class ModelCriteria extends Criteria
      *
      * @see Criteria::addSelectQuery()
      *
-     * @param     Criteria $subQueryCriteria Criteria to build the subquery from
-     * @param     string   $alias            alias for the subQuery
-     * @param     boolean  $addAliasAndSelectColumns Set to false if you want to manually add the aliased select columns
+     * @param Criteria $subQueryCriteria         Criteria to build the subquery from
+     * @param string   $alias                    alias for the subQuery
+     * @param boolean  $addAliasAndSelectColumns Set to false if you want to manually add the aliased select columns
      *
      * @return ModelCriteria The current object, for fluid interface
      */
@@ -1077,7 +1077,7 @@ class ModelCriteria extends Criteria
     /**
      * Adds the select columns for a relation
      *
-     * @param     string $relation The relation name or alias, as defined in join()
+     * @param string $relation The relation name or alias, as defined in join()
      *
      * @return    ModelCriteria The current object, for fluid interface
      */
@@ -1094,7 +1094,7 @@ class ModelCriteria extends Criteria
      * e.g. 'Book b' => array('Book', 'b')
      * e.g. 'Book'   => array('Book', null)
      *
-     * @param      string $class The classname to explode
+     * @param string $class The classname to explode
      *
      * @return     array  list($className, $aliasName)
      */
@@ -1116,7 +1116,7 @@ class ModelCriteria extends Criteria
      * Returns the name of a relation from a string.
      * The input looks like '$leftName.$relationName $relationAlias'
      *
-     * @param      string $relation Relation to use for the join
+     * @param string $relation Relation to use for the join
      * @return     string the relationName used in the join
      */
     static public function getRelationName($relation)
@@ -1140,7 +1140,7 @@ class ModelCriteria extends Criteria
      * even though they modify it. If the query must be reused after termination,
      * you must call this method prior to temrination.
      *
-     * @param     boolean $isKeepQuery
+     * @param boolean $isKeepQuery
      *
      * @return     ModelCriteria The current object, for fluid interface
      */
@@ -1164,7 +1164,7 @@ class ModelCriteria extends Criteria
     /**
      * Code to execute before every SELECT statement
      *
-     * @param     ConnectionInterface $con The connection object used by the query
+     * @param ConnectionInterface $con The connection object used by the query
      */
     protected function basePreSelect(ConnectionInterface $con)
     {
@@ -1180,7 +1180,7 @@ class ModelCriteria extends Criteria
      * and format the list of results with the current formatter
      * By default, returns an array of model objects
      *
-     * @param     ConnectionInterface $con an optional connection object
+     * @param ConnectionInterface $con an optional connection object
      *
      * @return     ObjectCollection|array|mixed the list of results, formatted by the current formatter
      */
@@ -1202,7 +1202,7 @@ class ModelCriteria extends Criteria
      * and format the result with the current formatter
      * By default, returns a model object
      *
-     * @param     ConnectionInterface $con an optional connection object
+     * @param ConnectionInterface $con an optional connection object
      *
      * @return    mixed the result, formatted by the current formatter
      */
@@ -1225,7 +1225,7 @@ class ModelCriteria extends Criteria
      * and format the result with the current formatter
      * By default, returns a model object
      *
-     * @param     ConnectionInterface $con an optional connection object
+     * @param ConnectionInterface $con an optional connection object
      *
      * @return    mixed the result, formatted by the current formatter
      */
@@ -1256,8 +1256,8 @@ class ModelCriteria extends Criteria
      * // composite primary key
      * $bookOpinion = $c->findPk(array(34, 634), $con);
      * </code>
-     * @param     mixed $key Primary key to use for the query
-     * @param     ConnectionInterface $con an optional connection object
+     * @param mixed               $key Primary key to use for the query
+     * @param ConnectionInterface $con an optional connection object
      *
      * @return    mixed the result, formatted by the current formatter
      */
@@ -1296,8 +1296,8 @@ class ModelCriteria extends Criteria
      * // composite primary key
      * $bookOpinion = $c->findPks(array(array(34, 634), array(45, 518), array(34, 765)), $con);
      * </code>
-     * @param     array $keys Primary keys to use for the query
-     * @param     ConnectionInterface $con an optional connection object
+     * @param array               $keys Primary keys to use for the query
+     * @param ConnectionInterface $con  an optional connection object
      *
      * @return    mixed the list of results, formatted by the current formatter
      */
@@ -1326,7 +1326,7 @@ class ModelCriteria extends Criteria
     /**
      * Builds, binds and executes a SELECT query based on the current object.
      *
-     * @param  ConnectionInterface $con A connection object
+     * @param ConnectionInterface $con A connection object
      *
      * @return \PDOStatement A PDO statement executed using the connection, ready to be fetched
      */
@@ -1362,9 +1362,9 @@ class ModelCriteria extends Criteria
      * @see       filterBy()
      * @see       find()
      *
-     * @param     string    $column A string representing the column phpName, e.g. 'AuthorId'
-     * @param     mixed     $value  A value for the condition
-     * @param     ConnectionInterface $con    An optional connection object
+     * @param string              $column A string representing the column phpName, e.g. 'AuthorId'
+     * @param mixed               $value  A value for the condition
+     * @param ConnectionInterface $con    An optional connection object
      *
      * @return    mixed the list of results, formatted by the current formatter
      */
@@ -1388,8 +1388,8 @@ class ModelCriteria extends Criteria
      * @see       filterByArray()
      * @see       find()
      *
-     * @param     mixed $conditions An array of conditions, using column phpNames as key
-     * @param     ConnectionInterface $con an optional connection object
+     * @param mixed               $conditions An array of conditions, using column phpNames as key
+     * @param ConnectionInterface $con        an optional connection object
      *
      * @return    mixed the list of results, formatted by the current formatter
      */
@@ -1406,9 +1406,9 @@ class ModelCriteria extends Criteria
      * @see       filterBy()
      * @see       findOne()
      *
-     * @param     mixed $column A string representing thecolumn phpName, e.g. 'AuthorId'
-     * @param     mixed  $value A value for the condition
-     * @param     ConnectionInterface $con an optional connection object
+     * @param mixed               $column A string representing thecolumn phpName, e.g. 'AuthorId'
+     * @param mixed               $value  A value for the condition
+     * @param ConnectionInterface $con    an optional connection object
      *
      * @return    mixed the result, formatted by the current formatter
      */
@@ -1432,8 +1432,8 @@ class ModelCriteria extends Criteria
      * @see       filterByArray()
      * @see       findOne()
      *
-     * @param     mixed $conditions An array of conditions, using column phpNames as key
-     * @param     ConnectionInterface $con an optional connection object
+     * @param mixed               $conditions An array of conditions, using column phpNames as key
+     * @param ConnectionInterface $con        an optional connection object
      *
      * @return    mixed the list of results, formatted by the current formatter
      */
@@ -1530,9 +1530,9 @@ class ModelCriteria extends Criteria
      * and uses a page and a maximum number of results per page
      * to compute an offet and a limit.
      *
-     * @param     int $page number of the page to start the pager on. Page 1 means no offset
-     * @param     int $maxPerPage maximum number of results per page. Determines the limit
-     * @param     ConnectionInterface $con an optional connection object
+     * @param int                 $page       number of the page to start the pager on. Page 1 means no offset
+     * @param int                 $maxPerPage maximum number of results per page. Determines the limit
+     * @param ConnectionInterface $con        an optional connection object
      *
      * @return    PropelModelPager a pager object, supporting iteration
      */
@@ -1549,7 +1549,7 @@ class ModelCriteria extends Criteria
     /**
      * Code to execute before every DELETE statement
      *
-     * @param     ConnectionInterface $con The connection object used by the query
+     * @param ConnectionInterface $con The connection object used by the query
      */
     protected function basePreDelete(ConnectionInterface $con)
     {
@@ -1563,8 +1563,8 @@ class ModelCriteria extends Criteria
     /**
      * Code to execute after every DELETE statement
      *
-     * @param     int $affectedRows the number of deleted rows
-     * @param     ConnectionInterface $con The connection object used by the query
+     * @param int                 $affectedRows the number of deleted rows
+     * @param ConnectionInterface $con          The connection object used by the query
      */
     protected function basePostDelete($affectedRows, ConnectionInterface $con)
     {
@@ -1674,9 +1674,9 @@ class ModelCriteria extends Criteria
     /**
      * Code to execute before every UPDATE statement
      *
-     * @param     array $values The associatiove array of columns and values for the update
-     * @param     ConnectionInterface $con The connection object used by the query
-     * @param      boolean $forceIndividualSaves If false (default), the resulting call is a BasePeer::doUpdate(), ortherwise it is a series of save() calls on all the found objects
+     * @param array               $values               The associatiove array of columns and values for the update
+     * @param ConnectionInterface $con                  The connection object used by the query
+     * @param boolean             $forceIndividualSaves If false (default), the resulting call is a BasePeer::doUpdate(), ortherwise it is a series of save() calls on all the found objects
      */
     protected function basePreUpdate(&$values, ConnectionInterface $con, $forceIndividualSaves = false)
     {
@@ -1690,8 +1690,8 @@ class ModelCriteria extends Criteria
     /**
      * Code to execute after every UPDATE statement
      *
-     * @param     int $affectedRows the number of updated rows
-     * @param     ConnectionInterface $con The connection object used by the query
+     * @param int                 $affectedRows the number of updated rows
+     * @param ConnectionInterface $con          The connection object used by the query
      */
     protected function basePostUpdate($affectedRows, ConnectionInterface $con)
     {
@@ -1708,9 +1708,9 @@ class ModelCriteria extends Criteria
      * Beware that behaviors based on hooks in the object's save() method
      * will only be triggered if you force individual saves, i.e. if you pass true as second argument.
      *
-     * @param      array $values Associative array of keys and values to replace
-     * @param      ConnectionInterface $con an optional connection object
-     * @param      boolean $forceIndividualSaves If false (default), the resulting call is a BasePeer::doUpdate(), ortherwise it is a series of save() calls on all the found objects
+     * @param array               $values               Associative array of keys and values to replace
+     * @param ConnectionInterface $con                  an optional connection object
+     * @param boolean             $forceIndividualSaves If false (default), the resulting call is a BasePeer::doUpdate(), ortherwise it is a series of save() calls on all the found objects
      *
      * @return     Integer Number of updated rows
      */
@@ -1752,9 +1752,9 @@ class ModelCriteria extends Criteria
      * Issue an UPDATE query based the current ModelCriteria and a list of changes.
      * This method is called by ModelCriteria::update() inside a transaction.
      *
-     * @param      array $values Associative array of keys and values to replace
-     * @param      ConnectionInterface $con a connection object
-     * @param      boolean $forceIndividualSaves If false (default), the resulting call is a BasePeer::doUpdate(), ortherwise it is a series of save() calls on all the found objects
+     * @param array               $values               Associative array of keys and values to replace
+     * @param ConnectionInterface $con                  a connection object
+     * @param boolean             $forceIndividualSaves If false (default), the resulting call is a BasePeer::doUpdate(), ortherwise it is a series of save() calls on all the found objects
      *
      * @return     Integer Number of updated rows
      */
@@ -1791,8 +1791,8 @@ class ModelCriteria extends Criteria
     /**
      * Creates a Criterion object based on a list of existing condition names and a comparator
      *
-     * @param      array $conditions The list of condition names, e.g. array('cond1', 'cond2')
-     * @param      string  $operator An operator, Criteria::LOGICAL_AND (default) or Criteria::LOGICAL_OR
+     * @param array  $conditions The list of condition names, e.g. array('cond1', 'cond2')
+     * @param string $operator   An operator, Criteria::LOGICAL_AND (default) or Criteria::LOGICAL_OR
      *
      * @return     Criterion a Criterion or ModelCriterion object
      */
@@ -1810,8 +1810,8 @@ class ModelCriteria extends Criteria
      * Creates a Criterion object based on a SQL clause and a value
      * Uses introspection to translate the column phpName into a fully qualified name
      *
-     * @param      string $clause The pseudo SQL clause, e.g. 'AuthorId = ?'
-     * @param      mixed  $value A value for the condition
+     * @param string $clause The pseudo SQL clause, e.g. 'AuthorId = ?'
+     * @param mixed  $value  A value for the condition
      *
      * @return     Criterion a Criterion or ModelCriterion object
      */
@@ -1858,8 +1858,8 @@ class ModelCriteria extends Criteria
     /**
      * Converts value for some column types
      *
-     * @param  mixed     $value  The value to convert
-     * @param  ColumnMap $colMap The ColumnMap object
+     * @param mixed     $value  The value to convert
+     * @param ColumnMap $colMap The ColumnMap object
      * @return mixed             The converted value
      */
     protected function convertValueForColumn($value, ColumnMap $colMap)
@@ -1986,7 +1986,7 @@ class ModelCriteria extends Criteria
      *   => array($authorFirstNameColumnMap, 'a.FIRST_NAME')
      * </code>
      *
-     * @param      string $phpName String representing the column name in a pseudo SQL clause, e.g. 'Book.Title'
+     * @param string $phpName String representing the column name in a pseudo SQL clause, e.g. 'Book.Title'
      *
      * @return     array List($columnMap, $realColumnName)
      */
@@ -2105,7 +2105,7 @@ class ModelCriteria extends Criteria
      * e.g. => 'book.TITLE' => 'b.TITLE'
      * This is for use as first argument of Criteria::add()
      *
-     * @param     string $colName the fully qualified column name, e.g 'book.TITLE' or BookPeer::TITLE
+     * @param string $colName the fully qualified column name, e.g 'book.TITLE' or BookPeer::TITLE
      *
      * @return    string the fully qualified column name, using table alias if applicatble
      */
@@ -2136,9 +2136,9 @@ class ModelCriteria extends Criteria
      * Overrides Criteria::add() to force the use of a true table alias if it exists
      *
      * @see        Criteria::add()
-     * @param      string $column The colName of column to run the condition on (e.g. BookPeer::ID)
-     * @param      mixed $value
-     * @param      string $operator A String, like Criteria::EQUAL.
+     * @param string $column   The colName of column to run the condition on (e.g. BookPeer::ID)
+     * @param mixed  $value
+     * @param string $operator A String, like Criteria::EQUAL.
      *
      * @return     ModelCriteria A modified Criteria object.
      */
@@ -2200,10 +2200,8 @@ class ModelCriteria extends Criteria
     {
         // Maybe it's a magic call to one of the methods supporting it, e.g. 'findByTitle'
         static $methods = array('findBy', 'findOneBy', 'filterBy', 'orderBy', 'groupBy');
-        foreach ($methods as $method)
-        {
-            if (0 === strpos($name, $method))
-            {
+        foreach ($methods as $method) {
+            if (0 === strpos($name, $method)) {
                 $columns = substr($name, strlen($method));
                 if (in_array($method, array('findBy', 'findOneBy')) && strpos($columns, 'And') !== false) {
                     $method = $method . 'Array';
@@ -2238,11 +2236,9 @@ class ModelCriteria extends Criteria
         }
 
         // Maybe it's a magic call to a qualified join method, e.g. 'leftJoin'
-        if (($pos = strpos($name, 'Join')) > 0)
-        {
+        if (($pos = strpos($name, 'Join')) > 0) {
             $type = substr($name, 0, $pos);
-            if (in_array($type, array('left', 'right', 'inner')))
-            {
+            if (in_array($type, array('left', 'right', 'inner'))) {
                 $joinType = strtoupper($type) . ' JOIN';
                 // Test if first argument is suplied, else don't provide an alias to joinXXX (default value)
                 if (!isset($arguments[0])) {

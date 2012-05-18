@@ -29,7 +29,7 @@ interface AdapterInterface
     /**
      * Build database connection
      *
-     * @param array    $conparams connection parameters
+     * @param array $conparams connection parameters
      *
      * @return Propel\Runtime\Connection\ConnectionInterface
      */
@@ -43,15 +43,15 @@ interface AdapterInterface
      *
      * @see       initConnection()
      *
-     * @param     Propel\Runtime\Connection\ConnectionInterface $con
-     * @param     string  $charset  The $string charset encoding.
+     * @param Propel\Runtime\Connection\ConnectionInterface $con
+     * @param string                                        $charset The $string charset encoding.
      */
     function setCharset(ConnectionInterface $con, $charset);
 
     /**
      * This method is used to ignore case.
      *
-     * @param     string  $in The string to transform to upper case.
+     * @param string $in The string to transform to upper case.
      * @return    string  The upper case string.
      */
     function toUpperCase($in);
@@ -59,7 +59,7 @@ interface AdapterInterface
     /**
      * This method is used to ignore case.
      *
-     * @param     string  $in The string whose case to ignore.
+     * @param string $in The string whose case to ignore.
      * @return    string  The string in a case that can be ignored.
      */
     function ignoreCase($in);
@@ -70,7 +70,7 @@ interface AdapterInterface
      * (Interbase for example) does not use the same SQL in ORDER BY
      * and other clauses.
      *
-     * @param     string  $in  The string whose case to ignore.
+     * @param string $in The string whose case to ignore.
      * @return    string  The string in a case that can be ignored.
      */
     function ignoreCaseInOrderBy($in);
@@ -87,8 +87,8 @@ interface AdapterInterface
     /**
      * Returns SQL which concatenates the second string to the first.
      *
-     * @param     string  $s1  String to concatenate.
-     * @param     string  $s2  String to append.
+     * @param string $s1 String to concatenate.
+     * @param string $s2 String to append.
      *
      * @return    string
      */
@@ -97,9 +97,9 @@ interface AdapterInterface
     /**
      * Returns SQL which extracts a substring.
      *
-     * @param     string   $s  String to extract from.
-     * @param     integer  $pos  Offset to start from.
-     * @param     integer  $len  Number of characters to extract.
+     * @param string  $s   String to extract from.
+     * @param integer $pos Offset to start from.
+     * @param integer $len Number of characters to extract.
      *
      * @return    string
      */
@@ -108,14 +108,14 @@ interface AdapterInterface
     /**
      * Returns SQL which calculates the length (in chars) of a string.
      *
-     * @param     string  $s  String to calculate length of.
+     * @param string $s String to calculate length of.
      * @return    string
      */
     function strLength($s);
 
     /**
      * Quotes database objec identifiers (table names, col names, sequences, etc.).
-     * @param     string  $text  The identifier to quote.
+     * @param string $text The identifier to quote.
      * @return    string  The quoted identifier.
      */
     function quoteIdentifier($text);
@@ -126,7 +126,7 @@ interface AdapterInterface
      * separate schema names from table names. Adapters for RDBMs which support
      * schemas have to implement that in the platform-specific way.
      *
-     * @param     string  $table  The table name to quo
+     * @param string $table The table name to quo
      * @return    string  The quoted table name
      **/
     function quoteIdentifierTable($table);
@@ -148,8 +148,8 @@ interface AdapterInterface
     /**
      * Gets the generated ID (either last ID for autoincrement or next sequence ID).
      *
-     * @param     Propel\Runtime\Connection\ConnectionInterface $con
-     * @param     string  $name
+     * @param Propel\Runtime\Connection\ConnectionInterface $con
+     * @param string                                        $name
      *
      * @return    mixed
      */
@@ -158,8 +158,8 @@ interface AdapterInterface
     /**
      * Formats a temporal value before binding, given a ColumnMap object
      *
-     * @param     mixed      $value  The temporal value
-     * @param     Propel\Runtime\Map\ColumnMap  $cMap
+     * @param mixed                        $value The temporal value
+     * @param Propel\Runtime\Map\ColumnMap $cMap
      *
      * @return    string  The formatted temporal value
      */
@@ -202,34 +202,34 @@ interface AdapterInterface
     /**
      * Allows manipulation of the query string before StatementPdo is instantiated.
      *
-     * @param     string       $sql  The sql statement
-     * @param     array        $params  array('column' => ..., 'table' => ..., 'value' => ...)
-     * @param     Propel\Runtime\Map\Criteria     $values
-     * @param     Propel\Runtime\Map\DatabaseMap  $dbMap
+     * @param string                         $sql    The sql statement
+     * @param array                          $params array('column' => ..., 'table' => ..., 'value' => ...)
+     * @param Propel\Runtime\Map\Criteria    $values
+     * @param Propel\Runtime\Map\DatabaseMap $dbMap
      */
     function cleanupSQL(&$sql, array &$params, Criteria $values, DatabaseMap $dbMap);
 
     /**
      * Modifies the passed-in SQL to add LIMIT and/or OFFSET.
      *
-     * @param     string   $sql
-     * @param     integer  $offset
-     * @param     integer  $limit
+     * @param string  $sql
+     * @param integer $offset
+     * @param integer $limit
      */
     function applyLimit(&$sql, $offset, $limit);
 
     /**
      * Gets the SQL string that this adapter uses for getting a random number.
      *
-     * @param     mixed $seed (optional) seed value for databases that support this
+     * @param mixed $seed (optional) seed value for databases that support this
      */
     function random($seed = null);
 
     /**
      * Returns the "DELETE FROM <table> [AS <alias>]" part of DELETE query.
      *
-     * @param     Propel\Runtime\Map\Criteria  $criteria
-     * @param     string    $tableName
+     * @param Propel\Runtime\Map\Criteria $criteria
+     * @param string                      $tableName
      *
      * @return    string
      */
@@ -240,9 +240,9 @@ interface AdapterInterface
      * taking into account select columns and 'as' columns (i.e. columns aliases)
      * Move from BasePeer to AdapterInterface and turn from static to non static
      *
-     * @param     Propel\Runtime\Map\Criteria  $criteria
-     * @param     array     $fromClause
-     * @param     Boolean   $aliasAll
+     * @param Propel\Runtime\Map\Criteria $criteria
+     * @param array                       $fromClause
+     * @param Boolean                     $aliasAll
      *
      * @return    string
      */
@@ -255,7 +255,7 @@ interface AdapterInterface
      *
      * @see http://propel.phpdb.org/trac/ticket/795
      *
-     * @param     Propel\Runtime\Map\Criteria  $criteria
+     * @param Propel\Runtime\Map\Criteria $criteria
      * @return    Propel\Runtime\Map\Criteria  The input, with Select columns replaced by aliases
      */
     function turnSelectColumnsToAliases(Criteria $criteria);
@@ -276,9 +276,9 @@ interface AdapterInterface
      * $stmt->execute();
      * </code>
      *
-     * @param     Propel\Runtime\Connection\StatementInterface $stmt
-     * @param     array         $params  array('column' => ..., 'table' => ..., 'value' => ...)
-     * @param     Propel\Runtime\Map\DatabaseMap   $dbMap
+     * @param Propel\Runtime\Connection\StatementInterface $stmt
+     * @param array                                        $params array('column' => ..., 'table' => ..., 'value' => ...)
+     * @param Propel\Runtime\Map\DatabaseMap               $dbMap
      */
     function bindValues(StatementInterface $stmt, array $params, DatabaseMap $dbMap);
 
@@ -286,11 +286,11 @@ interface AdapterInterface
      * Binds a value to a positioned parameted in a statement,
      * given a ColumnMap object to infer the binding type.
      *
-     * @param     Propel\Runtime\Connection\StatementInterface $stmt  The statement to bind
-     * @param     string        $parameter  Parameter identifier
-     * @param     mixed         $value  The value to bind
-     * @param     Propel\Runtime\Map\ColumnMap     $cMap  The ColumnMap of the column to bind
-     * @param     null|integer  $position  The position of the parameter to bind
+     * @param Propel\Runtime\Connection\StatementInterface $stmt      The statement to bind
+     * @param string                                       $parameter Parameter identifier
+     * @param mixed                                        $value     The value to bind
+     * @param Propel\Runtime\Map\ColumnMap                 $cMap      The ColumnMap of the column to bind
+     * @param null|integer                                 $position  The position of the parameter to bind
      *
      * @return    Boolean
      */

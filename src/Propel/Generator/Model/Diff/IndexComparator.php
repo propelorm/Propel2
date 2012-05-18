@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license     MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Model\Diff;
@@ -16,19 +16,16 @@ use Propel\Generator\Model\Index;
  * Service class for comparing Index objects
  * Heavily inspired by Doctrine2's Migrations
  * (see http://github.com/doctrine/dbal/tree/master/lib/Doctrine/DBAL/Schema/)
- *
  */
 class IndexComparator
 {
     /**
-     * Compute the difference between two index objects
+     * Computes the difference between two index objects.
      *
-     * @param Index $fromIndex
-     * @param Index $toIndex
-     * @param boolean $caseInsensitive Whether the comparison is case insensitive.
-     *                                 False by default.
-     *
-     * @return boolean false if the two indices are similar, true if they have differences
+     * @param Index   $fromIndex
+     * @param Index   $toIndex
+     * @param Boolean $caseInsensitive
+     * @return Boolean
      */
     static public function computeDiff(Index $fromIndex, Index $toIndex, $caseInsensitive = false)
     {

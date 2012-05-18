@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Builder\Util;
@@ -70,9 +70,9 @@ class SchemaReader
     /**
      * Creates a new instance for the specified database type.
      *
-     * @param      PlatformInterface $defaultPlatform The default database platform for the application.
-     * @param      string $defaultPackage the default PHP package used for the om
-     * @param      string $encoding The database encoding.
+     * @param PlatformInterface $defaultPlatform The default database platform for the application.
+     * @param string            $defaultPackage  the default PHP package used for the om
+     * @param string            $encoding        The database encoding.
      */
     public function __construct(PlatformInterface $defaultPlatform = null, $defaultPackage = null, $encoding = 'iso-8859-1')
     {
@@ -96,7 +96,7 @@ class SchemaReader
      * Parses a XML input file and returns a newly created and
      * populated Schema structure.
      *
-     * @param      string $xmlFile The input file to parse.
+     * @param string $xmlFile The input file to parse.
      * @return     Schema populated by <code>xmlFile</code>.
      */
     public function parseFile($xmlFile)
@@ -113,9 +113,9 @@ class SchemaReader
      * Parses a XML input string and returns a newly created and
      * populated Schema structure.
      *
-     * @param      string $xmlString The input string to parse.
-     * @param      string $xmlFile The input file name.
-     * @return     Schema populated by <code>xmlFile</code>.
+     * @param string $xmlString The input string to parse.
+     * @param string $xmlFile   The input file name.
+     * @return Schema
      */
     public function parseString($xmlString, $xmlFile = null)
     {
@@ -144,16 +144,6 @@ class SchemaReader
         return $this->schema;
     }
 
-    /**
-     * Handles opening elements of the xml file.
-     *
-     * @param      string $uri
-     * @param      string $localName The local name (without prefix), or the empty string if
-     *         Namespace processing is not being performed.
-     * @param      string $rawName The qualified name (with prefix), or the empty string if
-     *         qualified names are not available.
-     * @param      string $attributes The specified or defaulted attributes
-     */
     public function startElement($parser, $name, $attributes)
     {
         $parentTag = $this->peekCurrentSchemaTag();
@@ -355,15 +345,6 @@ class SchemaReader
         throw new SchemaException(sprintf('Unexpected tag <%s> in %s', $tag_name, $location));
     }
 
-    /**
-     * Handles closing elements of the xml file.
-     *
-     * @param      uri
-     * @param      localName The local name (without prefix), or the empty string if
-     *         Namespace processing is not being performed.
-     * @param      rawName The qualified name (with prefix), or the empty string if
-     *         qualified names are not available.
-     */
     public function endElement($parser, $name)
     {
         if (self::DEBUG) {

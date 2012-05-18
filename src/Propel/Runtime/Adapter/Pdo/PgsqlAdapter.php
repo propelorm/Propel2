@@ -30,8 +30,8 @@ class PgsqlAdapter extends PdoAdapter implements AdapterInterface
     /**
      * Returns SQL which concatenates the second string to the first.
      *
-     * @param     string  $s1  String to concatenate.
-     * @param     string  $s2  String to append.
+     * @param string $s1 String to concatenate.
+     * @param string $s2 String to append.
      *
      * @return    string
      */
@@ -43,9 +43,9 @@ class PgsqlAdapter extends PdoAdapter implements AdapterInterface
     /**
      * Returns SQL which extracts a substring.
      *
-     * @param     string   $s  String to extract from.
-     * @param     integer  $pos  Offset to start from.
-     * @param     integer  $len  Number of characters to extract.
+     * @param string  $s   String to extract from.
+     * @param integer $pos Offset to start from.
+     * @param integer $len Number of characters to extract.
      *
      * @return    string
      */
@@ -57,7 +57,7 @@ class PgsqlAdapter extends PdoAdapter implements AdapterInterface
     /**
      * Returns SQL which calculates the length (in chars) of a string.
      *
-     * @param     string  $s  String to calculate length of.
+     * @param string $s String to calculate length of.
      * @return    string
      */
     public function strLength($s)
@@ -78,8 +78,8 @@ class PgsqlAdapter extends PdoAdapter implements AdapterInterface
     /**
      * Gets ID for specified sequence name.
      *
-     * @param     ConnectionInterface $con
-     * @param     string  $name
+     * @param ConnectionInterface $con
+     * @param string              $name
      *
      * @return    integer
      */
@@ -116,9 +116,9 @@ class PgsqlAdapter extends PdoAdapter implements AdapterInterface
     /**
      * @see       AdapterInterface::applyLimit()
      *
-     * @param     string   $sql
-     * @param     integer  $offset
-     * @param     integer  $limit
+     * @param string  $sql
+     * @param integer $offset
+     * @param integer $limit
      */
     public function applyLimit(&$sql, $offset, $limit)
     {
@@ -133,7 +133,7 @@ class PgsqlAdapter extends PdoAdapter implements AdapterInterface
     /**
      * @see       AdapterInterface::random()
      *
-     * @param     string  $seed
+     * @param string $seed
      * @return    string
      */
     public function random($seed=NULL)
@@ -144,8 +144,8 @@ class PgsqlAdapter extends PdoAdapter implements AdapterInterface
     /**
      * @see       PdoAdapter::getDeleteFromClause()
      *
-     * @param     Propel\Runtime\Query\Criteria  $criteria
-     * @param     string    $tableName
+     * @param Propel\Runtime\Query\Criteria $criteria
+     * @param string                        $tableName
      *
      * @return    string
      */
@@ -173,7 +173,7 @@ class PgsqlAdapter extends PdoAdapter implements AdapterInterface
     /**
      * @see        AdapterInterface::quoteIdentifierTable()
      *
-     * @param     string  $table
+     * @param string $table
      * @return    string
      */
     public function quoteIdentifierTable($table)
@@ -185,8 +185,8 @@ class PgsqlAdapter extends PdoAdapter implements AdapterInterface
     /**
      * Do Explain Plan for query object or query string
      *
-     * @param ConnectionInterface $con    propel connection
-     * @param Criteria|string     $query  query the criteria or the query string
+     * @param ConnectionInterface $con   propel connection
+     * @param Criteria|string     $query query the criteria or the query string
      *
      * @throws PropelException
      * @return PDOStatement A PDO statement executed using the connection, ready to be fetched

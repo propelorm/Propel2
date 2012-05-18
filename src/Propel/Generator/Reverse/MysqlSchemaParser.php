@@ -134,7 +134,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
     /**
      * Adds Columns to the specified table.
      *
-     * @param      Table $table The Table model class to add columns to.
+     * @param Table $table The Table model class to add columns to.
      */
     protected function addColumns(Table $table)
     {
@@ -150,7 +150,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
      * Factory method creating a Column object
      * based on a row from the 'show columns from ' MySQL query result.
      *
-     * @param     array $row An associative array with the following keys:
+     * @param array $row An associative array with the following keys:
      *                       Field, Type, Null, Key, Default, Extra.
      * @return    Column
      */
@@ -396,7 +396,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
     /**
      * Adds vendor-specific info for table.
      *
-     * @param      Table $table
+     * @param Table $table
      */
     protected function addTableVendorInfo(Table $table)
     {

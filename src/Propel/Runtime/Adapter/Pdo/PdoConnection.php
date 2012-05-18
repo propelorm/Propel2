@@ -55,8 +55,8 @@ class PdoConnection extends \PDO implements ConnectionInterface
      *
      * This is overridden here to allow names corresponding to PDO constant names.
      *
-     * @param     integer  $attribute  The attribute to set (e.g. 'PDO::ATTR_CASE', or more simply 'ATTR_CASE').
-     * @param     mixed    $value  The attribute value.
+     * @param integer $attribute The attribute to set (e.g. 'PDO::ATTR_CASE', or more simply 'ATTR_CASE').
+     * @param mixed   $value     The attribute value.
      */
     public function setAttribute($attribute, $value)
     {
