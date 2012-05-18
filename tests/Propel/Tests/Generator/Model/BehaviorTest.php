@@ -26,7 +26,7 @@ class BehaviorTest extends \PHPUnit_Framework_TestCase
     public function testSetupObject()
     {
         $b = new Behavior();
-        $b->loadFromXML(array('name' => 'foo'));
+        $b->loadMapping(array('name' => 'foo'));
         $this->assertEquals($b->getName(), 'foo', 'setupObject() sets the Behavior name from XML attributes');
     }
 

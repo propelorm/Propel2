@@ -44,7 +44,7 @@ class DatabaseTest extends ModelTestCase
     public function testSetupObject()
     {
         $database = new Database();
-        $database->loadFromXml(array(
+        $database->loadMapping(array(
             'name'                   => 'bookstore',
             'baseClass'              => 'CustomBaseObject',
             'basePeer'               => 'CustomBasePeer',

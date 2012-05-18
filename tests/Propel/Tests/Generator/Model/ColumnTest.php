@@ -53,7 +53,7 @@ class ColumnTest extends ModelTestCase
 
         $column = new Column();
         $column->setTable($table);
-        $column->loadFromXml(array('name' => 'title'));
+        $column->loadMapping(array('name' => 'title'));
 
         $this->assertSame('title', $column->getName());
         $this->assertSame('VARCHAR', $column->getDomain()->getType());
@@ -90,7 +90,7 @@ class ColumnTest extends ModelTestCase
         $column = new Column();
         $column->setTable($table);
         $column->setDomain($domain);
-        $column->loadFromXml(array('name' => 'title'));
+        $column->loadMapping(array('name' => 'title'));
 
         $this->assertSame('title', $column->getName());
     }
@@ -114,7 +114,7 @@ class ColumnTest extends ModelTestCase
         $column = new Column();
         $column->setTable($table);
         $column->setDomain($this->getDomainMock('VARCHAR'));
-        $column->loadFromXml(array(
+        $column->loadMapping(array(
             'type'        => 'date',
             'name'        => 'created_at',
             'defaultExpr' => 'NOW()',
@@ -138,7 +138,7 @@ class ColumnTest extends ModelTestCase
         $column = new Column();
         $column->setTable($table);
         $column->setDomain($this->getDomainMock('BOOLEAN'));
-        $column->loadFromXml(array(
+        $column->loadMapping(array(
             'domain'             => 'BOOLEAN',
             'name'               => 'is_published',
             'phpName'            => 'IsPublished',

@@ -36,7 +36,7 @@ class IndexTest extends ModelTestCase
     {
         $index = new Index();
         $index->setTable($this->getTableMock('books'));
-        $index->loadFromXML(array('name' => 'foo_idx'));
+        $index->loadMapping(array('name' => 'foo_idx'));
 
         $this->assertEquals('foo_idx', $index->getName());
     }
