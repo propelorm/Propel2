@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Model;
@@ -25,7 +25,7 @@ use Propel\Generator\Platform\PlatformInterface;
  * @author Bernd Goldschmidt <bgoldschmidt@rapidsoft.de>
  * @author Hugo Hamon <webmaster@apprendre-php.com>
  */
-class Column extends XmlElement
+class Column extends MappingModel
 {
     const DEFAULT_TYPE       = 'VARCHAR';
     const DEFAULT_VISIBILITY = 'public';
@@ -88,10 +88,12 @@ class Column extends XmlElement
     /**
      * Creates a new column and set the name.
      *
-     * @param name column name
+     * @param string $name
      */
     public function __construct($name = null)
     {
+        parent::__construct();
+
         if (null !== $name) {
             $this->setName($name);
         }
@@ -111,11 +113,6 @@ class Column extends XmlElement
         $this->valueSet = array();
     }
 
-    /**
-     * Sets up the Column object based on the attributes that were passed to loadFromXML().
-     *
-     * @see parent::loadFromXML()
-     */
     protected function setupObject()
     {
         try {
@@ -596,7 +593,7 @@ class Column extends XmlElement
         }
 
         $inh = new Inheritance();
-        $inh->loadFromXML($inheritance);
+        $inh->loadMapping($inheritance);
 
         return $this->addInheritance($inh);
     }
@@ -1084,9 +1081,6 @@ class Column extends XmlElement
         return $this->valueSet;
     }
 
-    /**
-     * @see XmlElement::appendXml(DOMNode)
-     */
     public function appendXml(\DOMNode $node)
     {
         $doc = ($node instanceof \DOMDocument) ? $node : $node->ownerDocument;

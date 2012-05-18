@@ -25,7 +25,7 @@ use Propel\Generator\Platform\PlatformInterface;
  * @author Byron Foster <byron_foster@yahoo.com> (Torque)
  * @author Hugo Hamon <webmaster@apprendre-php.com> (Torque)
  */
-class Database extends ScopedElement
+class Database extends ScopedMappingModel
 {
     const DEFAULT_STRING_FORMAT = 'YAML';
 
@@ -74,12 +74,6 @@ class Database extends ScopedElement
         $this->tablesByLowercaseName = array();
     }
 
-    /**
-     * Sets up the Database object based on the attributes that were passed
-     * to loadFromXML().
-     *
-     * @see parent::loadFromXML()
-     */
     protected function setupObject()
     {
         parent::setupObject();
@@ -417,7 +411,7 @@ class Database extends ScopedElement
             $tbl = new Table();
             $tbl->setDatabase($this);
             $tbl->setSchema($this->getSchema());
-            $tbl->loadFromXML($table);
+            $tbl->loadMapping($table);
 
             return $this->addTable($tbl);
         }
@@ -511,7 +505,7 @@ class Database extends ScopedElement
 
         $domain = new Domain();
         $domain->setDatabase($this);
-        $domain->loadFromXML($data);
+        $domain->loadMapping($data);
 
         return $this->addDomain($domain); // call self w/ different param
     }
@@ -578,7 +572,7 @@ class Database extends ScopedElement
 
         $class = $this->getConfiguredBehavior($bdata['name']);
         $behavior = new $class();
-        $behavior->loadFromXML($bdata);
+        $behavior->loadMapping($bdata);
 
         return $this->addBehavior($behavior);
     }
@@ -704,9 +698,6 @@ class Database extends ScopedElement
         }
     }
 
-    /**
-     * @see XmlElement::appendXml(DOMNode)
-     */
     public function appendXml(\DOMNode $node)
     {
         $doc = ($node instanceof \DOMDocument) ? $node : $node->ownerDocument;

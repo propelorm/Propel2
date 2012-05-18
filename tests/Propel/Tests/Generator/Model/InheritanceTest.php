@@ -44,7 +44,7 @@ class InheritanceTest extends \PHPUnit_Framework_TestCase
     public function testSetupObject()
     {
         $inheritance = new Inheritance();
-        $inheritance->loadFromXml(array(
+        $inheritance->loadMapping(array(
             'key' => 'baz',
             'extends' => 'BaseObject',
             'class' => 'Foo\Bar',

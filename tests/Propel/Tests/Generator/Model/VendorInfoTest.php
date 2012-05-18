@@ -22,7 +22,7 @@ class VendorInfoTest extends \PHPUnit_Framework_TestCase
     public function testSetupObject()
     {
         $info = new VendorInfo();
-        $info->loadFromXml(array('type' => 'foo'));
+        $info->loadMapping(array('type' => 'foo'));
 
         $this->assertSame('foo', $info->getType());
     }

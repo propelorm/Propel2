@@ -19,7 +19,7 @@ use Propel\Generator\Exception\EngineException;
  * @author Daniel Rall <dlr@finemaltcoding.com>
  * @author Hugo Hamon <webmaster@apprendre-php.com>
  */
-class Index extends XmlElement
+class Index extends MappingModel
 {
     protected $name;
     protected $table;
@@ -33,6 +33,8 @@ class Index extends XmlElement
      */
     public function __construct($name = null)
     {
+        parent::__construct();
+
         $this->columns = array();
         $this->columnsSize = array();
 
@@ -249,18 +251,11 @@ class Index extends XmlElement
         return $this->columns;
     }
 
-    /**
-     * Sets up the Index object based on the attributes that were passed to loadFromXML().
-     * @see parent::loadFromXML()
-     */
     protected function setupObject()
     {
         $this->name = $this->getAttribute('name');
     }
 
-    /**
-     * @see XmlElement::appendXml(DOMNode)
-     */
     public function appendXml(\DOMNode $node)
     {
         $doc = ($node instanceof \DOMDocument) ? $node : $node->ownerDocument;

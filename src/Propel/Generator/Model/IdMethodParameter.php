@@ -11,24 +11,19 @@
 namespace Propel\Generator\Model;
 
 /**
- * Information related to an ID method.
+ * Information related to an ID method strategy.
  *
- * @author     Hans Lellelid <hans@xmpl.org> (Propel)
- * @author     John McNally <jmcnally@collab.net> (Torque)
- * @author     Daniel Rall <dlr@collab.net> (Torque)
+ * @author Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author John McNally <jmcnally@collab.net> (Torque)
+ * @author Daniel Rall <dlr@collab.net> (Torque)
+ * @author Hugo Hamon <webmaster@apprendre-php.com>
  */
-class IdMethodParameter extends XmlElement
+class IdMethodParameter extends MappingModel
 {
     private $name;
-
     private $value;
-
     private $parentTable;
 
-    /**
-     * Sets up the IdMethodParameter object based on the attributes that were passed to loadFromXML().
-     * @see        parent::loadFromXML()
-     */
     protected function setupObject()
     {
         $this->name = $this->getAttribute('name');
@@ -36,7 +31,9 @@ class IdMethodParameter extends XmlElement
     }
 
     /**
-     * Get the parameter name
+     * Returns the parameter name.
+     *
+     * @param string
      */
     public function getName()
     {
@@ -44,7 +41,9 @@ class IdMethodParameter extends XmlElement
     }
 
     /**
-     * Set the parameter name
+     * Sets the parameter name.
+     *
+     * @param string $name
      */
     public function setName($name)
     {
@@ -52,7 +51,9 @@ class IdMethodParameter extends XmlElement
     }
 
     /**
-     * Get the parameter value
+     * Returns the parameter value.
+     *
+     * @param mixed
      */
     public function getValue()
     {
@@ -60,7 +61,9 @@ class IdMethodParameter extends XmlElement
     }
 
     /**
-     * Set the parameter value
+     * Sets the parameter value.
+     *
+     * @param mixed $name
      */
     public function setValue($value)
     {
@@ -68,7 +71,9 @@ class IdMethodParameter extends XmlElement
     }
 
     /**
-     * Set the parent Table of the id method
+     * Sets the parent table.
+     *
+     * @param Table $table
      */
     public function setTable(Table $parent)
     {
@@ -76,7 +81,9 @@ class IdMethodParameter extends XmlElement
     }
 
     /**
-     * Get the parent Table of the id method
+     * Returns the parent table.
+     *
+     * @return Table
      */
     public function getTable()
     {
@@ -84,16 +91,15 @@ class IdMethodParameter extends XmlElement
     }
 
     /**
-     * Returns the Name of the table the id method is in
+     * Returns the parent table name.
+     *
+     * @return string
      */
     public function getTableName()
     {
         return $this->parentTable->getName();
     }
 
-    /**
-     * @see        XmlElement::appendXml(DOMNode)
-     */
     public function appendXml(\DOMNode $node)
     {
         $doc = ($node instanceof \DOMDocument) ? $node : $node->ownerDocument;

@@ -126,3 +126,9 @@ After:
 ## `Propel\Generator\Model\Table::printList` method has been removed.
 
 ## `Propel\Generator\Model\PropelTypes::getCreoleTypes` method has been removed.
+
+## `Propel\Generator\Model\ScopedElement` class has been renamed to `Propel\Generator\Model\ScopedMappingModel`.
+
+## `Propel\Generator\Model\XmlElement` class has been renamed to `Propel\Generator\Model\MappingModel`.
+
+## `Propel\Generator\Model\XmlElement::loadFromXml` method has been renamed to `Propel\Generator\Model\MappingModel::loadMapping`.

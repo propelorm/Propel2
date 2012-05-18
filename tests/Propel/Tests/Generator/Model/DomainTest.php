@@ -46,7 +46,7 @@ class DomainTest extends ModelTestCase
         $domain->setDatabase($this->getDatabaseMock('bookstore', array(
             'platform' => $platform
         )));
-        $domain->loadFromXML(array(
+        $domain->loadMapping(array(
             'type' => 'BOOLEAN',
             'name' => 'foo',
             'default' => $default,

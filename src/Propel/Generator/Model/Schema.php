@@ -224,7 +224,7 @@ class Schema
         // XML attributes array / hash
         $db = new Database();
         $db->setParentSchema($this);
-        $db->loadFromXML($database);
+        $db->loadMapping($database);
 
         return $this->addDatabase($db);
     }
