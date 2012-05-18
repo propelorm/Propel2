@@ -68,5 +68,5 @@ interface NameGenerator
      * @return     The generated name.
      * @throws     EngineException
      */
-    public function generateName($inputs);
+    function generateName($inputs);
 }

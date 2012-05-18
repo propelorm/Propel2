@@ -5,66 +5,58 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Model;
 
 /**
- * Data about an element with a name and optional namespace/schema/package attributes
+ * Data about an element with a name and optional namespace, schema and package
+ * attributes.
  *
- * @author     Ulf Hermann <ulfhermann@kulturserver.de>
+ * @author Ulf Hermann <ulfhermann@kulturserver.de>
+ * @author Hugo Hamon <webmaster@apprendre-php.com>
  */
 abstract class ScopedElement extends XmlElement
 {
-    /**
-     * The package for the generated OM.
-     *
-     * @var       string
-     */
-    protected $pkg;
-
-    /**
-     * Whether the package was automatically overridden.
-     * If propel.schema.autoPackage or propel.namespace.AutoPackage is true.
-     */
-    protected $pkgOverridden = false;
-
-    /**
-     * Namespace for the generated OM.
-     *
-     * @var       string
-     */
+    protected $package;
+    protected $pkgOverridden;
     protected $namespace;
-
-    /**
-     * Schema this element belongs to.
-     *
-     * @var       string
-     */
     protected $schema;
 
     /**
-     * retrieves a build property.
+     * Constructs a new ScopedElement object.
      *
-     * @param unknown_type $name
+     */
+    public function __construct()
+    {
+        $this->pkgOverridden = false;
+    }
+
+    /**
+     * Returns a build property by its name.
+     *
+     * @param string $name
      */
     abstract protected function getBuildProperty($name);
 
     /**
-     * Sets up the Rule object based on the attributes that were passed to loadFromXML().
-     * @see       parent::loadFromXML()
+     * Sets up the object based on the attributes that were passed
+     * to loadFromXML().
+     *
+     * @see parent::loadFromXML()
      */
     protected function setupObject()
     {
-        $this->setPackage($this->getAttribute('package', $this->pkg));
+        $this->setPackage($this->getAttribute('package', $this->package));
         $this->setSchema($this->getAttribute('schema', $this->schema));
         $this->setNamespace($this->getAttribute('namespace', $this->namespace));
     }
 
     /**
-     * Get the value of the namespace.
-     * @return     value of namespace.
+     * Returns the namespace.
+     *
+     * @return string
      */
     public function getNamespace()
     {
@@ -72,48 +64,67 @@ abstract class ScopedElement extends XmlElement
     }
 
     /**
-     * Set the value of the namespace.
-     * @param      v  Value to assign to namespace.
+     * Sets the namespace.
+     *
+     * @param string $namespace
      */
-    public function setNamespace($v)
+    public function setNamespace($namespace)
     {
-        if ($v === $this->namespace) {
+        $namespace = rtrim(trim($namespace), '\\');
+
+        if ($namespace === $this->namespace) {
             return;
         }
 
-        $this->namespace = $v;
-        if ($v && (!$this->pkg || $this->pkgOverridden) && $this->getBuildProperty('namespaceAutoPackage')) {
-            $this->pkg = str_replace('\\', '.', $v);
+        $this->namespace = $namespace;
+        if ($namespace && (!$this->package || $this->pkgOverridden) && $this->getBuildProperty('namespaceAutoPackage')) {
+            $this->package = str_replace('\\', '.', $namespace);
             $this->pkgOverridden = true;
         }
     }
 
     /**
-     * Get the value of package.
-     * @return     value of package.
+     * Returns whether or not the namespace is absolute.
+     *
+     * A namespace is absolute if it starts with a "\".
+     *
+     * @param string $namespace
+     * @return Boolean
      */
-    public function getPackage()
+    public function isAbsoluteNamespace($namespace)
     {
-        return $this->pkg;
+        return 0 === strpos($namespace, '\\');
     }
 
     /**
-     * Set the value of package.
-     * @param      v  Value to assign to package.
+     * Returns the package name.
+     *
+     * @return string
      */
-    public function setPackage($v)
+    public function getPackage()
     {
-        if ($v === $this->pkg) {
+        return $this->package;
+    }
+
+    /**
+     * Sets the package name.
+     *
+     * @param string $package
+     */
+    public function setPackage($package)
+    {
+        if ($package === $this->package) {
             return;
         }
 
-        $this->pkg = $v;
+        $this->package = $package;
         $this->pkgOverridden = false;
     }
 
     /**
-     * Get the value of schema.
-     * @return     value of schema.
+     * Returns the schema name.
+     *
+     * @return string
      */
     public function getSchema()
     {
@@ -121,23 +132,24 @@ abstract class ScopedElement extends XmlElement
     }
 
     /**
-     * Set the value of schema.
-     * @param      v  Value to assign to schema.
+     * Sets the schema name.
+     *
+     * @param string $schema
      */
-    public function setSchema($v)
+    public function setSchema($schema)
     {
-        if ($v === $this->schema) {
+        if ($schema === $this->schema) {
             return;
         }
 
-        $this->schema = $v;
-        if ($v && !$this->pkg && $this->getBuildProperty('schemaAutoPackage')) {
-            $this->pkg = $v;
+        $this->schema = $schema;
+        if ($schema && !$this->package && $this->getBuildProperty('schemaAutoPackage')) {
+            $this->package = $schema;
             $this->pkgOverridden = true;
         }
 
-        if ($v && !$this->namespace && $this->getBuildProperty('schemaAutoNamespace')) {
-            $this->namespace = $v;
+        if ($schema && !$this->namespace && $this->getBuildProperty('schemaAutoNamespace')) {
+            $this->namespace = $schema;
         }
     }
 }

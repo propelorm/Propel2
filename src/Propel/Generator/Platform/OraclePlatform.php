@@ -340,7 +340,7 @@ CREATE %sINDEX %s ON %s (%s)%s;
 ";
 
         return sprintf($pattern,
-            $index->getIsUnique() ? 'UNIQUE ' : '',
+            $index->isUnique() ? 'UNIQUE ' : '',
             $this->quoteIdentifier($index->getName()),
             $this->quoteIdentifier($index->getTable()->getName()),
             $this->getColumnListDDL($index->getColumns()),

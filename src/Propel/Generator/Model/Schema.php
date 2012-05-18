@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Model;
@@ -17,70 +17,51 @@ use Propel\Generator\Platform\PlatformInterface;
 /**
  * A class for holding application data structures.
  *
- * @author     Hans Lellelid <hans@xmpl.org> (Propel)
- * @author     Leon Messerschmidt <leon@opticode.co.za> (Torque)
- * @author     John McNally <jmcnally@collab.net> (Torque)
- * @author     Daniel Rall <dlr@finemaltcoding.com> (Torque)
+ * @author Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author Leon Messerschmidt <leon@opticode.co.za> (Torque)
+ * @author John McNally <jmcnally@collab.net> (Torque)
+ * @author Daniel Rall <dlr@finemaltcoding.com> (Torque)
+ * @author Hugo Hamon <webmaster@apprendre-php.com>
  */
 class Schema
 {
-
-    /**
-     * The list of databases for this application.
-     * @var        array Database[]
-     */
-    private $databases = array();
-
-    /**
-     * The platform class for our database(s).
-     * @var        string
-     */
+    private $databases;
     private $platform;
-
-    /**
-     * The generator configuration
-     * @var        GeneratorConfigInterface
-     */
-    protected $generatorConfig;
-
-    /**
-     * Name of the database. Only one database definition
-     * is allowed in one XML descriptor.
-     */
     private $name;
-
-    /**
-     * Flag to ensure that initialization is performed only once.
-     * @var        boolean
-     */
-    private $isInitialized = false;
+    private $isInitialized;
+    protected $generatorConfig;
 
     /**
      * Creates a new instance for the specified database type.
      *
-     * @param      PlatformInterface $platform The default platform object to use for any databases added to this application model.
+     * @param PlatformInterface $platform
      */
-    public function __construct(PlatformInterface $defaultPlatform = null)
+    public function __construct(PlatformInterface $platform = null)
     {
-        if (null !== $defaultPlatform) {
-            $this->platform = $defaultPlatform;
+        if (null !== $platform) {
+            $this->setPlatform($platform);
         }
+
+        $this->isInitialized = false;
+        $this->databases = array();
     }
 
     /**
-     * Sets the platform object to use for any databases added to this application model.
+     * Sets the platform object to use for any databases added to this
+     * application schema.
      *
-     * @param PlatformInterface $defaultPlatform
+     * @param PlatformInterface $platform
      */
-    public function setPlatform(PlatformInterface $defaultPlatform)
+    public function setPlatform(PlatformInterface $platform)
     {
-        $this->platform = $defaultPlatform;
+        $this->platform = $platform;
     }
 
     /**
-     * Gets the platform object to use for any databases added to this application model.
+     * Returns the platform object to use for any databases added to this
+     * application schema.
      *
-     * @return Platform
+     * @return PlatformInterface
      */
     public function getPlatform()
     {
@@ -88,7 +69,7 @@ class Schema
     }
 
     /**
-     * Set the generator configuration
+     * Sets the generator configuration
      *
      * @param GeneratorConfigInterface $generatorConfig
      */
@@ -98,7 +79,7 @@ class Schema
     }
 
     /**
-     * Get the generator configuration
+     * Returns the generator configuration
      *
      * @return GeneratorConfigInterface
      */
@@ -108,9 +89,9 @@ class Schema
     }
 
     /**
-     * Set the name of the database.
+     * Sets the schema name.
      *
-     * @param      name of the database.
+     * @param string $name
      */
     public function setName($name)
     {
@@ -118,9 +99,9 @@ class Schema
     }
 
     /**
-     * Get the name of the database.
+     * Returns the schema name.
      *
-     * @return     String name
+     * @return string
      */
     public function getName()
     {
@@ -128,25 +109,29 @@ class Schema
     }
 
     /**
-     * Get the short name of the database (without the '-schema' postfix).
+     * Returns the schema short name (without the '-schema' postfix).
      *
-     * @return     String name
+     * @return string
      */
     public function getShortName()
     {
-        return str_replace("-schema", "", $this->name);
+        return str_replace('-schema', '', $this->name);
     }
 
     /**
-     * Return an array of all databases
+     * Returns an array of all databases.
      *
-     * @return     Array of Database objects
+     * The first boolean parameter tells whether or not to run the
+     * final initialization process.
+     *
+     * @param Boolean $doFinalInitialization
+     * @return array
      */
-    public function getDatabases($doFinalInit = true)
+    public function getDatabases($doFinalInitialization = true)
     {
         // this is temporary until we'll have a clean solution
         // for packaging datamodels/requiring schemas
-        if ($doFinalInit) {
+        if ($doFinalInitialization) {
             $this->doFinalInitialization();
         }
 
@@ -154,9 +139,9 @@ class Schema
     }
 
     /**
-     * Returns whether this application has multiple databases.
+     * Returns whether or not this schema has multiple databases.
      *
-     * @return     boolean True if the application has multiple databases
+     * @return Boolean
      */
     public function hasMultipleDatabases()
     {
@@ -164,16 +149,17 @@ class Schema
     }
 
     /**
-     * Return the database with the specified name.
+     * Returns the database according to the specified name.
      *
-     * @param      name database name
-     * @return     A Database object.  If it does not exist it returns null
+     * @param string $name
+     * @param Boolean $doFinalInitialization
+     * @return Database
      */
-    public function getDatabase($name = null, $doFinalInit = true)
+    public function getDatabase($name = null, $doFinalInitialization = true)
     {
         // this is temporary until we'll have a clean solution
         // for packaging datamodels/requiring schemas
-        if ($doFinalInit) {
+        if ($doFinalInitialization) {
             $this->doFinalInitialization();
         }
 
@@ -181,26 +167,28 @@ class Schema
             return $this->databases[0];
         }
 
-        for ($i = 0, $size = count($this->databases); $i < $size; $i++) {
-            $db = $this->databases[$i];
-            if ($db->getName() === $name) {
-                return $db;
+        $db = null;
+        foreach ($this->databases as $database) {
+            if ($database->getName() === $name) {
+                $db = $database;
+                break;
             }
         }
 
-        return null;
+        return $db;
     }
 
     /**
-     * Checks whether a database with the specified nam exists in this Schema
+     * Returns whether or not a database with the specified name exists in this
+     * schema.
      *
-     * @param      name database name
-     * @return     boolean
+     * @param string $name
+     * @return Boolean
      */
     public function hasDatabase($name)
     {
-        foreach ($this->databases as $db) {
-            if ($db->getName() === $name) {
+        foreach ($this->databases as $database) {
+            if ($database->getName() === $name) {
                 return true;
             }
         }
@@ -209,52 +197,58 @@ class Schema
     }
 
     /**
-     * Add a database to the list and sets the Schema property to this
-     * Schema
+     * Adds a database to the list and sets the Schema property to this
+     * Schema. The database can be specified as a Database object or a
+     * DOMNode object.
      *
-     * @param      db the database to add
+     * @param Database|array $database
+     * @return Database
      */
-    public function addDatabase($db)
+    public function addDatabase($database)
     {
-        if ($db instanceof Database) {
-            $db->setParentSchema($this);
-            if (null === $db->getPlatform()) {
+        if ($database instanceof Database) {
+            $platform = null;
+            $database->setParentSchema($this);
+            if (null === $database->getPlatform()) {
                 if ($config = $this->getGeneratorConfig()) {
-                    $pf = $config->getConfiguredPlatform(null, $db->getName());
-                    $db->setPlatform($pf ? $pf : $this->platform);
-                } else {
-                    $db->setPlatform($this->platform);
+                    $platform = $config->getConfiguredPlatform(null, $database->getName());
                 }
-            }
-            $this->databases[] = $db;
 
-            return $db;
+                $database->setPlatform($platform ? $platform : $this->platform);
+            }
+            $this->databases[] = $database;
+
+            return $database;
         }
 
         // XML attributes array / hash
-        $d = new Database();
-        $d->setParentSchema($this);
-        $d->loadFromXML($db);
+        $db = new Database();
+        $db->setParentSchema($this);
+        $db->loadFromXML($database);
 
-        return $this->addDatabase($d); // calls self w/ different param type
+        return $this->addDatabase($db);
     }
 
+    /**
+     * Finalizes the databases initialization.
+     *
+     */
     public function doFinalInitialization()
     {
         if (!$this->isInitialized) {
-            for ($i = 0, $size = count($this->databases); $i < $size; $i++) {
-                $this->databases[$i]->doFinalInitialization();
+            foreach ($this->databases as $database) {
+                $database->doFinalInitialization();
             }
             $this->isInitialized = true;
         }
     }
 
     /**
-     * Merge other Schema objects together into this Schema object
+     * Merge other Schema objects together into this Schema object.
      *
-     * @param array[Schema] $schemas
+     * @param array $schemas
      */
-    public function joinSchemas($schemas)
+    public function joinSchemas(array $schemas)
     {
         foreach ($schemas as $schema) {
             foreach ($schema->getDatabases(false) as $addDb) {
@@ -267,7 +261,7 @@ class Schema
                     // join tables
                     foreach ($addDb->getTables() as $addTable) {
                         if ($db->getTable($addTable->getName())) {
-                            throw new Exception(sprintf('Duplicate table found: %s.', $addTable->getName()));
+                            throw new EngineException(sprintf('Duplicate table found: %s.', $addTable->getName()));
                         }
                         $db->addTable($addTable);
                     }
@@ -287,7 +281,7 @@ class Schema
     }
 
     /**
-     * Returns the number of tables in all the databases of this Schema object
+     * Returns the number of tables in all the databases of this Schema object.
      *
      * @return integer
      */
@@ -305,7 +299,7 @@ class Schema
      * Creates a string representation of this Schema.
      * The representation is given in xml format.
      *
-     * @return     string Representation in xml format
+     * @return string Representation in xml format
      */
     public function toString()
     {
@@ -325,6 +319,7 @@ class Schema
 
     /**
      * Magic string method
+     *
      * @see toString()
      */
     public function __toString()

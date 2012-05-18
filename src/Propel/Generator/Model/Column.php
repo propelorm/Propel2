@@ -14,145 +14,134 @@ use Propel\Generator\Exception\EngineException;
 use Propel\Generator\Platform\PlatformInterface;
 
 /**
- * A Class for holding data about a column used in an Application.
+ * A class for holding data about a column used in an application.
  *
- * @author     Hans Lellelid <hans@xmpl.org> (Propel)
- * @author     Leon Messerschmidt <leon@opticode.co.za> (Torque)
- * @author     Jason van Zyl <jvanzyl@apache.org> (Torque)
- * @author     Jon S. Stevens <jon@latchkey.com> (Torque)
- * @author     Daniel Rall <dlr@finemaltcoding.com> (Torque)
- * @author     Byron Foster <byron_foster@yahoo.com> (Torque)
- * @author     Bernd Goldschmidt <bgoldschmidt@rapidsoft.de>
+ * @author Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author Leon Messerschmidt <leon@opticode.co.za> (Torque)
+ * @author Jason van Zyl <jvanzyl@apache.org> (Torque)
+ * @author Jon S. Stevens <jon@latchkey.com> (Torque)
+ * @author Daniel Rall <dlr@finemaltcoding.com> (Torque)
+ * @author Byron Foster <byron_foster@yahoo.com> (Torque)
+ * @author Bernd Goldschmidt <bgoldschmidt@rapidsoft.de>
+ * @author Hugo Hamon <webmaster@apprendre-php.com>
  */
 class Column extends XmlElement
 {
-    const DEFAULT_TYPE = 'VARCHAR';
-
+    const DEFAULT_TYPE       = 'VARCHAR';
     const DEFAULT_VISIBILITY = 'public';
 
     static public $validVisibilities = array('public', 'protected', 'private');
 
     private $name;
-
     private $description;
-
-    private $phpName = null;
-
+    private $phpName;
     private $phpNamingMethod;
-
-    private $isNotNull = false;
-
-    private $size;
-
+    private $isNotNull;
     private $namePrefix;
-
     private $accessorVisibility;
-
     private $mutatorVisibility;
 
     /**
      * The name to use for the Peer constant that identifies this column.
      * (Will be converted to all-uppercase in the templates.)
-     * @var                 string
+     * @var string
      */
     private $peerName;
 
     /**
      * Native PHP type (scalar or class name)
-     * @var                 string "string", "boolean", "int", "double"
+     * @var string "string", "boolean", "int", "double"
      */
     private $phpType;
 
-    /**
-     * @var                 Table
-     */
+    private $domain;
     private $parentTable;
 
     private $position;
-    private $isPrimaryKey = false;
-    private $isNodeKey = false;
+    private $isPrimaryKey;
+    private $isNodeKey;
     private $nodeKeySep;
-    private $isNestedSetLeftKey = false;
-    private $isNestedSetRightKey = false;
-    private $isTreeScopeKey = false;
-    private $isUnique = false;
-    private $isAutoIncrement = false;
-    private $isLazyLoad = false;
+    private $isNestedSetLeftKey;
+    private $isNestedSetRightKey;
+    private $isTreeScopeKey;
+    private $isUnique;
+    private $isAutoIncrement;
+    private $isLazyLoad;
     private $referrers;
-    private $isPrimaryString = false;
+    private $isPrimaryString;
 
     // only one type is supported currently, which assumes the
     // column either contains the classnames or a key to
     // classnames specified in the schema.    Others may be
     // supported later.
+
     private $inheritanceType;
     private $isInheritance;
     private $isEnumeratedClasses;
     private $inheritanceList;
-    private $needsTransactionInPostgres; //maybe this can be retrieved from vendorSpecificInfo
+
+    // maybe this can be retrieved from vendor specific information
+    private $needsTransactionInPostgres;
+
+    protected $valueSet;
 
     /**
-     * @var stores the possible values of an ENUM column
-     */
-    protected $valueSet = array();
-
-    /**
-     * @var                 Domain The domain object associated with this Column.
-     */
-    private $domain;
-
-    /**
-     * Creates a new column and set the name
+     * Creates a new column and set the name.
      *
-     * @param             name column name
+     * @param name column name
      */
     public function __construct($name = null)
     {
-        $this->name = $name;
-    }
-
-    /**
-     * Return a comma delimited string listing the specified columns.
-     *
-     * @param             columns Either a list of <code>Column</code> objects, or
-     * a list of <code>String</code> objects with column names.
-     * @deprecated Use the Platform::getColumnListDDL() method instead
-     */
-    static public function makeList($columns, PlatformInterface $platform)
-    {
-        $list = array();
-        foreach ($columns as $col) {
-            if ($col instanceof Column) {
-                $col = $col->getName();
-            }
-            $list[] = $platform->quoteIdentifier($col);
+        if (null !== $name) {
+            $this->setName($name);
         }
 
-        return implode(', ', $list);
+        $this->isAutoIncrement = false;
+        $this->isEnumeratedClasses = false;
+        $this->isLazyLoad = false;
+        $this->isNestedSetLeftKey = false;
+        $this->isNestedSetRightKey = false;
+        $this->isNodeKey = false;
+        $this->isNotNull = false;
+        $this->isPrimaryKey = false;
+        $this->isPrimaryString = false;
+        $this->isTreeScopeKey = false;
+        $this->isUnique = false;
+        $this->needsTransactionInPostgres = false;
+        $this->valueSet = array();
     }
 
     /**
      * Sets up the Column object based on the attributes that were passed to loadFromXML().
-     * @see                 parent::loadFromXML()
+     *
+     * @see parent::loadFromXML()
      */
     protected function setupObject()
     {
         try {
+            $database = $this->getDatabase();
+            $domain   = $this->getDomain();
+
+            $platform = null;
+            if ($this->hasPlatform()) {
+                $platform = $this->getPlatform();
+            }
+
             $dom = $this->getAttribute('domain');
             if ($dom) {
-                $this->getDomain()->copy($this->getTable()->getDatabase()->getDomain($dom));
+                $domain->copy($database->getDomain($dom));
             } else {
                 $type = strtoupper($this->getAttribute('type'));
                 if ($type) {
-                    if ($platform = $this->getPlatform()) {
-                        $this->getDomain()->copy($this->getPlatform()->getDomainForType($type));
+                    if ($platform) {
+                        $domain->copy($platform->getDomainForType($type));
                     } else {
                         // no platform - probably during tests
                         $this->setDomain(new Domain($type));
                     }
                 } else {
-                    if ($platform = $this->getPlatform()) {
-                        $this->getDomain()->copy($this->getPlatform()->getDomainForType(self::DEFAULT_TYPE));
+                    if ($platform) {
+                        $domain->copy($platform->getDomainForType(self::DEFAULT_TYPE));
                     } else {
                         // no platform - probably during tests
                         $this->setDomain(new Domain(self::DEFAULT_TYPE));
@@ -163,44 +152,27 @@ class Column extends XmlElement
             $this->name = $this->getAttribute('name');
             $this->phpName = $this->getAttribute('phpName');
             $this->phpType = $this->getAttribute('phpType');
+            $this->peerName = $this->getAttribute('peerName');
+            $this->description = $this->getAttribute('description');
 
-            if ($this->getAttribute('prefix', null) !== null) {
-                $this->namePrefix = $this->getAttribute('prefix');
-            } elseif ($this->getTable()->getAttribute('columnPrefix', null) !== null) {
-                $this->namePrefix = $this->getTable()->getAttribute('columnPrefix');
-            } else {
-                $this->namePrefix = '';
-            }
+            /*
+                Retrieves the method for converting from specified name
+                to a PHP name, defaulting to parent tables default method.
+            */
+            $this->phpNamingMethod = $this->getAttribute('phpNamingMethod', $database->getDefaultPhpNamingMethod());
 
-            $table = $this->getTable();
-            $database = $table->getDatabase();
+            $this->namePrefix = $this->getAttribute(
+                'prefix',
+                $this->parentTable->getAttribute('columnPrefix')
+            );
 
             // Accessor visibility
-            if (null !== $this->getAttribute('accessorVisibility', null)) {
-                $this->setAccessorVisibility($this->getAttribute('accessorVisibility'));
-            } elseif (null !== $table->getAttribute('defaultAccessorVisibility', null)) {
-                $this->setAccessorVisibility($table->getAttribute('defaultAccessorVisibility'));
-            } elseif (null !== $database->getAttribute('defaultAccessorVisibility', null)) {
-                $this->setAccessorVisibility($database->getAttribute('defaultAccessorVisibility'));
-            } else {
-                $this->setAccessorVisibility(self::DEFAULT_VISIBILITY);
-            }
+            $visibility = $this->getMethodVisibility('accessorVisibility', 'defaultAccessorVisibility');
+            $this->setAccessorVisibility($visibility);
 
             // Mutator visibility
-            if (null !== $this->getAttribute('mutatorVisibility', null)) {
-                $this->setMutatorVisibility($this->getAttribute('mutatorVisibility'));
-            } elseif (null !== $table->getAttribute('defaultMutatorVisibility', null)) {
-                $this->setMutatorVisibility($table->getAttribute('defaultMutatorVisibility'));
-            } elseif (null !== $database->getAttribute('defaultMutatorVisibility', null)) {
-                $this->setMutatorVisibility($database->getAttribute('defaultMutatorVisibility'));
-            } else {
-                $this->setMutatorVisibility(self::DEFAULT_VISIBILITY);
-            }
-
-            $this->peerName = $this->getAttribute('peerName');
-
-            // retrieves the method for converting from specified name to a PHP name, defaulting to parent tables default method
-            $this->phpNamingMethod = $this->getAttribute('phpNamingMethod', $this->parentTable->getDatabase()->getDefaultPhpNamingMethod());
+            $visibility = $this->getMethodVisibility('mutatorVisibility', 'defaultMutatorVisibility');
+            $this->setMutatorVisibility($visibility);
 
             $this->isPrimaryString = $this->booleanValue($this->getAttribute('primaryString'));
 
@@ -220,41 +192,87 @@ class Column extends XmlElement
             $this->isLazyLoad = $this->booleanValue($this->getAttribute('lazyLoad'));
 
             // Add type, size information to associated Domain object
-            $this->getDomain()->replaceSqlType($this->getAttribute('sqlType'));
-            if (!$this->getAttribute('size') && $this->getDomain()->getType() == 'VARCHAR' && $this->hasPlatform() && !$this->getAttribute('sqlType') && !$this->getPlatform()->supportsVarcharWithoutSize()) {
+            $domain->replaceSqlType($this->getAttribute('sqlType'));
+            if (!$this->getAttribute('size')
+                && $domain->getType() === 'VARCHAR'
+                && !$this->getAttribute('sqlType')
+                && $platform
+                && !$platform->supportsVarcharWithoutSize()) {
                 $size = 255;
             } else {
                 $size = $this->getAttribute('size');
             }
-            $this->getDomain()->replaceSize($size);
-            $this->getDomain()->replaceScale($this->getAttribute('scale'));
+
+            $domain->replaceSize($size);
+            $domain->replaceScale($this->getAttribute('scale'));
 
             $defval = $this->getAttribute('defaultValue', $this->getAttribute('default'));
             if (null !== $defval && 'null' !== strtolower($defval)) {
-                $this->getDomain()->setDefaultValue(new ColumnDefaultValue($defval, ColumnDefaultValue::TYPE_VALUE));
+                $domain->setDefaultValue(new ColumnDefaultValue($defval, ColumnDefaultValue::TYPE_VALUE));
             } elseif (null !== $this->getAttribute('defaultExpr')) {
-                $this->getDomain()->setDefaultValue(new ColumnDefaultValue($this->getAttribute('defaultExpr'), ColumnDefaultValue::TYPE_EXPR));
+                $domain->setDefaultValue(new ColumnDefaultValue($this->getAttribute('defaultExpr'), ColumnDefaultValue::TYPE_EXPR));
             }
 
-            if (null !== $this->getAttribute('valueSet', null)) {
-                $valueSet = explode(',', $this->getAttribute('valueSet'));
-                $valueSet = array_map('trim', $valueSet);
-                $this->valueSet = $valueSet;
+            if ($this->getAttribute('valueSet')) {
+                $this->setValueSet($this->getAttribute('valueSet'));
             }
 
             $this->inheritanceType = $this->getAttribute('inheritance');
-            $this->isInheritance = (null !== $this->inheritanceType && 'false' !== $this->inheritanceType); // here we are only checking for 'false', so don't
-            // use boleanValue()
 
-            $this->description = $this->getAttribute('description');
+            /*
+                here we are only checking for 'false', so don't
+                use boleanValue()
+            */
+            $this->isInheritance = (null !== $this->inheritanceType && 'false' !== $this->inheritanceType);
         } catch (Exception $e) {
-            throw new EngineException('Error setting up column ' . var_export($this->getAttribute('name'), true) . ': ' . $e->getMessage());
+            throw new EngineException(sprintf(
+                'Error setting up column %s: %s',
+                $this->getAttribute('name'),
+                $e->getMessage()
+            ));
         }
     }
 
     /**
+     * Returns the generated methods visibility by looking for the
+     * attribute value in the column, parent table or parent database.
+     * Finally, it defaults to the default visibility (public).
+     *
+     * @param string $attribute Local column attribute
+     * @param string $parentAttribute Parent (table or database) attribute
+     * @return string
+     */
+    private function getMethodVisibility($attribute, $parentAttribute)
+    {
+        $database = $this->getDatabase();
+
+        $visibility = $this->getAttribute(
+            $attribute,
+            $this->parentTable->getAttribute(
+                $parentAttribute,
+                $database->getAttribute(
+                    $parentAttribute,
+                    self::DEFAULT_VISIBILITY
+                )
+            )
+        );
+
+        return $visibility;
+    }
+
+    /**
+     * Returns the database object the current column is in.
+     *
+     * @return Database
+     */
+    private function getDatabase()
+    {
+        return $this->parentTable->getDatabase();
+    }
+
+    /**
      * Gets domain for this column, creating a new empty domain object if none is set.
-     * @return         Domain
+     * @return Domain
      */
     public function getDomain()
     {
@@ -266,8 +284,9 @@ class Column extends XmlElement
     }
 
     /**
-     * Sets domain for this column
-     * @param         Domain $domain
+     * Sets the domain for this column.
+     *
+     * @param Domain $domain
      */
     public function setDomain(Domain $domain)
     {
@@ -275,7 +294,9 @@ class Column extends XmlElement
     }
 
     /**
-     * Returns table.column
+     * Returns the fully qualified column name (table.column).
+     *
+     * @return string
      */
     public function getFullyQualifiedName()
     {
@@ -283,7 +304,9 @@ class Column extends XmlElement
     }
 
     /**
-     * Get the name of the column
+     * Returns the column name.
+     *
+     * @return string
      */
     public function getName()
     {
@@ -291,15 +314,19 @@ class Column extends XmlElement
     }
 
     /**
-     * Set the name of the column
+     * Sets the column name.
+     *
+     * @param string $name
      */
-    public function setName($newName)
+    public function setName($name)
     {
-        $this->name = $newName;
+        $this->name = $name;
     }
 
     /**
-     * Determines whether a column name is plural
+     * Returns whether or not the column name is plural.
+     *
+     * @return Boolean
      */
     public function isNamePlural()
     {
@@ -307,7 +334,9 @@ class Column extends XmlElement
     }
 
     /**
-     * Gets the singular name for the column
+     * Returns the column singular name.
+     *
+     * @return string
      */
     public function getSingularName()
     {
@@ -315,7 +344,9 @@ class Column extends XmlElement
     }
 
     /**
-     * Get the description for the Table
+     * Returns the column description.
+     *
+     * @return string
      */
     public function getDescription()
     {
@@ -323,20 +354,20 @@ class Column extends XmlElement
     }
 
     /**
-     * Set the description for the Table
+     * Sets the column description.
      *
-     * @param             newDescription description for the Table
+     * @param string $description
      */
-    public function setDescription($newDescription)
+    public function setDescription($description)
     {
-        $this->description = $newDescription;
+        $this->description = $description;
     }
 
     /**
-     * Get name to use in PHP sources. It will set & return
-     * a self-generated phpName from it's name if it's
-     * not already set.
-     * @return         string
+     * Returns the name to use in PHP sources. It will set & return
+     * a self-generated phpName from it's name if it's not already set.
+     *
+     * @return string
      */
     public function getPhpName()
     {
@@ -348,12 +379,12 @@ class Column extends XmlElement
     }
 
     /**
-     * Set name to use in PHP sources.
+     * Sets the name to use in PHP sources.
      *
      * It will generate a phpName from it's name if no
      * $phpName is passed.
      *
-     * @param        String $phpName PhpName to be set
+     * @param string $phpName
      */
     public function setPhpName($phpName = null)
     {
@@ -365,26 +396,21 @@ class Column extends XmlElement
     }
 
     /**
-     * Get studly version of PHP name.
+     * Returns the studly version of the PHP name.
      *
      * The studly name is the PHP name with the first character lowercase.
      *
-     * @return         string
+     * @return string
      */
     public function getStudlyPhpName()
     {
-        $phpname = $this->getPhpName();
-        if (strlen($phpname) > 1) {
-            return strtolower(substr($phpname, 0, 1)) . substr($phpname, 1);
-        }
-
-        // 0 or 1 chars (I suppose that's rare)
-        return strtolower($phpname);
+        return lcfirst($this->getPhpName());
     }
 
     /**
-     * Get the visibility of the accessors of this column / attribute
-     * @return         string
+     * Returns the accessor methods visibility of this column / attribute.
+     *
+     * @return string
      */
     public function getAccessorVisibility()
     {
@@ -396,21 +422,24 @@ class Column extends XmlElement
     }
 
     /**
-     * Set the visibility of the accessor methods for this column / attribute
-     * @param             $newVisibility string
+     * Sets the accessor methods visibility for this column / attribute.
+     *
+     * @param string $visibility
      */
-    public function setAccessorVisibility($newVisibility)
+    public function setAccessorVisibility($visibility)
     {
-        if (in_array($newVisibility, self::$validVisibilities)) {
-            $this->accessorVisibility = $newVisibility;
-        } else {
-            $this->accessorVisibility = self::DEFAULT_VISIBILITY;
+        $visibility = strtolower($visibility);
+        if (!in_array($visibility, self::$validVisibilities)) {
+            $visibility = self::DEFAULT_VISIBILITY;
         }
+
+        $this->accessorVisibility = $visibility;
     }
 
     /**
-     * Get the visibility of the mutator of this column / attribute
-     * @return         string
+     * Returns the mutator methods visibility for this current column.
+     *
+     * @return string
      */
     public function getMutatorVisibility()
     {
@@ -422,31 +451,38 @@ class Column extends XmlElement
     }
 
     /**
-     * Set the visibility of the mutator methods for this column / attribute
-     * @param             $newVisibility string
+     * Sets the mutator methods visibility for this column / attribute.
+     *
+     * @param string $visibility
      */
-    public function setMutatorVisibility($newVisibility)
+    public function setMutatorVisibility($visibility)
     {
-        if (in_array($newVisibility, self::$validVisibilities)) {
-            $this->mutatorVisibility = $newVisibility;
-        } else {
-            $this->mutatorVisibility = self::DEFAULT_VISIBILITY;
+        $visibility = strtolower($visibility);
+        if (!in_array($visibility, self::$validVisibilities)) {
+            $visibility = self::DEFAULT_VISIBILITY;
         }
+
+        $this->mutatorVisibility = $visibility;
     }
 
     /**
-     * Get the column constant name (e.g. PeerName::COLUMN_NAME).
+     * Returns the full column constant name (e.g. PeerName::COLUMN_NAME).
      *
-     * @return         string A column constant name for insertion into PHP code
+     * @return string A column constant name for insertion into PHP code
      */
     public function getConstantName()
     {
-        $classname = $this->getTable()->getPhpName() . 'Peer';
+        $classname = $this->parentTable->getPhpName() . 'Peer';
         $const = $this->getConstantColumnName();
 
         return $classname.'::'.$const;
     }
 
+    /**
+     * Returns the column constant name.
+     *
+     * @return string
+     */
     public function getConstantColumnName()
     {
         // was it overridden in schema.xml ?
@@ -458,8 +494,9 @@ class Column extends XmlElement
     }
 
     /**
-     * Get the Peer constant name that will identify this column.
-     * @return         string
+     * Returns the Peer constant name that will identify this column.
+     *
+     * @return string
      */
     public function getPeerName()
     {
@@ -467,8 +504,9 @@ class Column extends XmlElement
     }
 
     /**
-     * Set the Peer constant name that will identify this column.
-     * @param             $name string
+     * Sets the Peer constant name that will identify this column.
+     *
+     * @param string $name
      */
     public function setPeerName($name)
     {
@@ -476,25 +514,21 @@ class Column extends XmlElement
     }
 
     /**
-     * Get type to use in PHP sources.
+     * Returns the type to use in PHP sources.
      *
-     * If no type has been specified, then uses results of getPhpNative().
+     * If no types has been specified, then use result of getPhpNative().
      *
-     * @return         string The type name.
-     * @see                 getPhpNative()
+     * @return string
      */
     public function getPhpType()
     {
-        if (null !== $this->phpType) {
-            return $this->phpType;
-        }
-
-        return $this->getPhpNative();
+        return $this->phpType ? $this->phpType : $this->getPhpNative();
     }
 
     /**
-     * Get the location of this column within the table (one-based).
-     * @return         int value of position.
+     * Returns the location of this column within the table (one-based).
+     *
+     * @return integer
      */
     public function getPosition()
     {
@@ -502,24 +536,29 @@ class Column extends XmlElement
     }
 
     /**
-     * Get the location of this column within the table (one-based).
-     * @param             int $v Value to assign to position.
+     * Returns the location of this column within the table (one-based).
+     *
+     * @param integer $position
      */
-    public function setPosition($v)
+    public function setPosition($position)
     {
-        $this->position = $v;
+        $this->position = (int) $position;
     }
 
     /**
-     * Set the parent Table of the column
+     * Sets the parent table.
+     *
+     * @param Table $table
      */
-    public function setTable(Table $parent)
+    public function setTable(Table $table)
     {
-        $this->parentTable = $parent;
+        $this->parentTable = $table;
     }
 
     /**
-     * Get the parent Table of the column
+     * Returns the parent table.
+     *
+     * @return Table
      */
     public function getTable()
     {
@@ -527,7 +566,9 @@ class Column extends XmlElement
     }
 
     /**
-     * Returns the Name of the table the column is in
+     * Returns the parent table name.
+     *
+     * @return string
      */
     public function getTableName()
     {
@@ -535,32 +576,35 @@ class Column extends XmlElement
     }
 
     /**
-     * Adds a new inheritance definition to the inheritance list and set the
-     * parent column of the inheritance to the current column
-     * @param             mixed $inhdata Inheritance or XML data.
+     * Adds a new inheritance definition to the inheritance list and sets the
+     * parent column of the inheritance to the current column.
+     *
+     * @param Inheritance|array $inheritance
+     * @return Inheritance
      */
-    public function addInheritance($inhdata)
+    public function addInheritance($inheritance)
     {
-        if ($inhdata instanceof Inheritance) {
-            $inh = $inhdata;
-            $inh->setColumn($this);
+        if ($inheritance instanceof Inheritance) {
+            $inheritance->setColumn($this);
             if (null === $this->inheritanceList) {
                 $this->inheritanceList = array();
                 $this->isEnumeratedClasses = true;
             }
-            $this->inheritanceList[] = $inh;
+            $this->inheritanceList[] = $inheritance;
 
-            return $inh;
+            return $inheritance;
         }
 
         $inh = new Inheritance();
-        $inh->loadFromXML($inhdata);
+        $inh->loadFromXML($inheritance);
 
         return $this->addInheritance($inh);
     }
 
     /**
-     * Get the inheritance definitions.
+     * Returns the inheritance definitions.
+     *
+     * @return array
      */
     public function getChildren()
     {
@@ -568,8 +612,10 @@ class Column extends XmlElement
     }
 
     /**
-     * Determine if this column is a normal property or specifies a
+     * Returns whether or not this column is a normal property or specifies a
      * the classes that are represented in the table containing this column.
+     *
+     * @return Boolean
      */
     public function isInheritance()
     {
@@ -577,7 +623,10 @@ class Column extends XmlElement
     }
 
     /**
-     * Determine if possible classes have been enumerated in the xml file.
+     * Returns whether or not possible classes have been enumerated in the
+     * schema file.
+     *
+     * @return Boolean
      */
     public function isEnumeratedClasses()
     {
@@ -585,7 +634,9 @@ class Column extends XmlElement
     }
 
     /**
-     * Return the isNotNull property of the column
+     * Returns whether or not the column is not null.
+     *
+     * @return Boolean
      */
     public function isNotNull()
     {
@@ -593,36 +644,43 @@ class Column extends XmlElement
     }
 
     /**
-     * Set the isNotNull property of the column
+     * Sets whether or not the column is not null.
+     *
+     * @param Boolean $notNull
      */
-    public function setNotNull($status)
+    public function setNotNull($notNull)
     {
-        $this->isNotNull = (Boolean) $status;
+        $this->isNotNull = (Boolean) $notNull;
     }
 
     /**
-     * Return NOT NULL String for this column
+     * Returns NOT NULL string for this column.
      *
-     * @return         "NOT NULL" if null values are not allowed or an empty string.
+     * @return string.
      */
     public function getNotNullString()
     {
-        return $this->getTable()->getDatabase()->getPlatform()->getNullString($this->isNotNull());
+        return $this->parentTable->getPlatform()->getNullString($this->isNotNull);
     }
 
     /**
-     * Set whether the column is the primary string,
-     * i.e. whether its value is the default string representation of the table
-     * @param   Boolean $v
+     * Sets whether or not the column is used as the primary string.
+     *
+     * The primary string is the value used by default in the magic
+     * __toString method of an active record object.
+     *
+     * @param Boolean $isPrimaryString
      */
-    public function setPrimaryString($v)
+    public function setPrimaryString($isPrimaryString)
     {
-        $this->isPrimaryString = (Boolean) $v;
+        $this->isPrimaryString = (Boolean) $isPrimaryString;
     }
 
     /**
-     * Return true if the column is the primary string,
-     * i.e. if its value is the default string representation of the table
+     * Returns true if the column is the primary string (used for the magic
+     * __toString() method).
+     *
+     * @return Boolean
      */
     public function isPrimaryString()
     {
@@ -630,16 +688,19 @@ class Column extends XmlElement
     }
 
     /**
-     * Set whether the column is a primary key or not.
-     * @param   Boolean $v
+     * Sets whether or not the column is a primary key.
+     *
+     * @param Boolean $primary
      */
-    public function setPrimaryKey($v)
+    public function setPrimaryKey($primary)
     {
-        $this->isPrimaryKey = (Boolean) $v;
+        $this->isPrimaryKey = (Boolean) $primary;
     }
 
     /**
-     * Return true if the column is a primary key
+     * Returns whether or not the column is the primary key.
+     *
+     * @return Boolean
      */
     public function isPrimaryKey()
     {
@@ -647,15 +708,19 @@ class Column extends XmlElement
     }
 
     /**
-     * Set if the column is the node key of a tree
+     * Sets whether or not the column is a node key of a tree.
+     *
+     * @param Boolean $isNodeKey
      */
-    public function setNodeKey($nk)
+    public function setNodeKey($isNodeKey)
     {
-        $this->isNodeKey = (Boolean) $nk;
+        $this->isNodeKey = (Boolean) $isNodeKey;
     }
 
     /**
-     * Return true if the column is a node key of a tree
+     * Returns whether or not the column is a node key of a tree.
+     *
+     * @return Boolean
      */
     public function isNodeKey()
     {
@@ -663,7 +728,9 @@ class Column extends XmlElement
     }
 
     /**
-     * Set if the column is the node key of a tree
+     * Sets the separator for the node key column in a tree.
+     *
+     * @param string $sep
      */
     public function setNodeKeySep($sep)
     {
@@ -671,7 +738,9 @@ class Column extends XmlElement
     }
 
     /**
-     * Return true if the column is a node key of a tree
+     * Returns the node key column separator for a tree.
+     *
+     * @return string
      */
     public function getNodeKeySep()
     {
@@ -679,15 +748,19 @@ class Column extends XmlElement
     }
 
     /**
-     * Set if the column is the nested set left key of a tree
+     * Sets whether or not the column is the nested set left key of a tree.
+     *
+     * @param Boolean $isNestedSetLeftKey
      */
-    public function setNestedSetLeftKey($nslk)
+    public function setNestedSetLeftKey($isNestedSetLeftKey)
     {
-        $this->isNestedSetLeftKey = (Boolean) $nslk;
+        $this->isNestedSetLeftKey = (Boolean) $isNestedSetLeftKey;
     }
 
     /**
-     * Return true if the column is a nested set key of a tree
+     * Returns whether or not the column is a nested set key of a tree.
+     *
+     * @return Boolean
      */
     public function isNestedSetLeftKey()
     {
@@ -695,15 +768,19 @@ class Column extends XmlElement
     }
 
     /**
-     * Set if the column is the nested set right key of a tree
+     * Set if the column is the nested set right key of a tree.
+     *
+     * @param Boolean $isNestedSetRightKey
      */
-    public function setNestedSetRightKey($nsrk)
+    public function setNestedSetRightKey($isNestedSetRightKey)
     {
-        $this->isNestedSetRightKey = (Boolean) $nsrk;
+        $this->isNestedSetRightKey = (Boolean) $isNestedSetRightKey;
     }
 
     /**
-     * Return true if the column is a nested set right key of a tree
+     * Return whether or not the column is a nested set right key of a tree.
+     *
+     * @return Boolean
      */
     public function isNestedSetRightKey()
     {
@@ -711,16 +788,19 @@ class Column extends XmlElement
     }
 
     /**
-     * Set if the column is the scope key of a tree
+     * Sets whether or not the column is the scope key of a tree.
+     *
+     * @param Boolean $isTreeScopeKey
      */
-    public function setTreeScopeKey($tsk)
+    public function setTreeScopeKey($isTreeScopeKey)
     {
-        $this->isTreeScopeKey = (Boolean) $tsk;
+        $this->isTreeScopeKey = (Boolean) $isTreeScopeKey;
     }
 
     /**
-     * Return true if the column is a scope key of a tree
-     * @return  Boolean
+     * Returns whether or not the column is a scope key of a tree.
+     *
+     * @return Boolean
      */
     public function isTreeScopeKey()
     {
@@ -728,17 +808,19 @@ class Column extends XmlElement
     }
 
     /**
-     * Set true if the column is UNIQUE
-     * @param   Boolean $u
+     * Sets whether or not the column must have a unique index on it.
+     *
+     * @param Boolean $isUnique
      */
-    public function setUnique($u)
+    public function setUnique($isUnique)
     {
-        $this->isUnique = $u;
+        $this->isUnique = (Boolean) $isUnique;
     }
 
     /**
-     * Get the UNIQUE property.
-     * @return  Boolean
+     * Returns whether or not the column must have a unique index.
+     *
+     * @return Boolean
      */
     public function isUnique()
     {
@@ -746,7 +828,8 @@ class Column extends XmlElement
     }
 
     /**
-     * Return true if the column requires a transaction in Postgres
+     * Returns true if the column requires a transaction in PostGreSQL.
+     *
      * @return  Boolean
      */
     public function requiresTransactionInPostgres()
@@ -755,7 +838,8 @@ class Column extends XmlElement
     }
 
     /**
-     * Utility method to determine if this column is a foreign key.
+     * Returns whether or not this column is a foreign key.
+     *
      * @return  Boolean
      */
     public function isForeignKey()
@@ -764,7 +848,8 @@ class Column extends XmlElement
     }
 
     /**
-     * Whether this column is a part of more than one foreign key.
+     * Returns whether or not this column is part of more than one foreign key.
+     *
      * @return  Boolean
      */
     public function hasMultipleFK()
@@ -773,8 +858,11 @@ class Column extends XmlElement
     }
 
     /**
-     * Get the foreign key objects for this column (if it is a foreign key or part of a foreign key)
-     * @return         array
+     * Returns the foreign key objects for this column.
+     *
+     * Only if it is a foreign key or part of a foreign key.
+     *
+     * @return array
      */
     public function getForeignKeys()
     {
@@ -783,6 +871,8 @@ class Column extends XmlElement
 
     /**
      * Adds the foreign key from another table that refers to this column.
+     *
+     * @param ForeignKey $fk
      */
     public function addReferrer(ForeignKey $fk)
     {
@@ -794,7 +884,9 @@ class Column extends XmlElement
     }
 
     /**
-     * Get list of references to this column.
+     * Returns the list of references to this column.
+     *
+     * @return array
      */
     public function getReferrers()
     {
@@ -805,57 +897,79 @@ class Column extends XmlElement
         return $this->referrers;
     }
 
+    /**
+     * Returns whether or not this column has referers.
+     *
+     * @return Boolean
+     */
     public function hasReferrers()
     {
-        return null !== $this->referrers;
+        return is_array($this->referrers) && count($this->referrers) > 0;
     }
 
+    /**
+     * Returns whether or not this column has a specific referrer for a
+     * specific foreign key object.
+     *
+     * @param ForeignKey $fk
+     * @return Boolean
+     */
     public function hasReferrer(ForeignKey $fk)
     {
         return $this->hasReferrers() && in_array($fk, $this->referrers, true);
     }
 
+    /**
+     * Clears all referrers.
+     *
+     */
     public function clearReferrers()
     {
         $this->referrers = null;
     }
 
+    /**
+     * Clears all inheritance children.
+     *
+     */
     public function clearInheritanceList()
     {
         $this->inheritanceList = array();
     }
 
     /**
-     * Sets the domain up for specified Propel type.
+     * Sets the domain up for specified mapping type.
      *
      * Calling this method will implicitly overwrite any previously set type,
      * size, scale (or other domain attributes).
      *
-     * @param             string $propelType
+     * @param string $mappingType
      */
-    public function setDomainForType($propelType)
+    public function setDomainForType($mappingType)
     {
-        $this->getDomain()->copy($this->getPlatform()->getDomainForType($propelType));
+        $this->getDomain()->copy($this->getPlatform()->getDomainForType($mappingType));
     }
 
     /**
-     * Sets the propel colunm type.
-     * @param             string $propelType
-     * @see                 Domain::setType()
+     * Sets the mapping column type.
+     *
+     * @param string $mappingType
+     * @see Domain::setType()
      */
-    public function setType($propelType)
+    public function setType($mappingType)
     {
-        $this->getDomain()->setType($propelType);
+        $this->getDomain()->setType($mappingType);
 
-        if (in_array($propelType, array(PropelTypes::VARBINARY, PropelTypes::LONGVARBINARY, PropelTypes::BLOB))) {
+        if (in_array($mappingType, array(PropelTypes::VARBINARY, PropelTypes::LONGVARBINARY, PropelTypes::BLOB))) {
             $this->needsTransactionInPostgres = true;
         }
     }
 
     /**
      * Returns the Propel column type as a string.
-     * @return         string The constant representing Propel type: e.g. "VARCHAR".
-     * @see                 Domain::getType()
+     *
+     * @return string
+     * @see Domain::getType()
      */
     public function getType()
     {
@@ -863,20 +977,13 @@ class Column extends XmlElement
     }
 
     /**
-     * Returns the column PDO type integer for this column's Propel type.
-     * @return         int The integer value representing PDO type param: e.g. PDO::PARAM_INT
+     * Returns the column PDO type integer for this column's mapping type.
+     *
+     * @return integer
      */
     public function getPDOType()
     {
         return PropelTypes::getPDOType($this->getType());
-    }
-
-    /**
-     * Returns the column type as given in the schema as an object
-     */
-    public function getPropelType()
-    {
-        return $this->getType();
     }
 
     public function isDefaultSqlType(PlatformInterface $platform = null)
@@ -893,8 +1000,9 @@ class Column extends XmlElement
     }
 
     /**
-     * Utility method to know whether column needs Blob/Lob handling.
-     * @return         Boolean
+     * Returns whether or not this column is a blob/lob type.
+     *
+     * @return Boolean
      */
     public function isLobType()
     {
@@ -902,7 +1010,9 @@ class Column extends XmlElement
     }
 
     /**
-     * Utility method to see if the column is text type.
+     * Returns whether or not this column is a text type.
+     *
+     * @return Boolean
      */
     public function isTextType()
     {
@@ -910,8 +1020,9 @@ class Column extends XmlElement
     }
 
     /**
-     * Utility method to see if the column is numeric type.
-     * @return         Boolean
+     * Returns whether or not this column is a numeric type.
+     *
+     * @return Boolean
      */
     public function isNumericType()
     {
@@ -919,8 +1030,9 @@ class Column extends XmlElement
     }
 
     /**
-     * Utility method to see if the column is Boolean type.
-     * @return         Boolean
+     * Returns whether or not this column is a boolean type.
+     *
+     * @return Boolean
      */
     public function isBooleanType()
     {
@@ -928,8 +1040,9 @@ class Column extends XmlElement
     }
 
     /**
-     * Utility method to know whether column is a temporal column.
-     * @return         Boolean
+     * Returns whether or not this column is a temporal type.
+     *
+     * @return Boolean
      */
     public function isTemporalType()
     {
@@ -937,8 +1050,9 @@ class Column extends XmlElement
     }
 
     /**
-     * Utility method to know whether column is an ENUM column.
-     * @return         Boolean
+     * Returns whether or not this colum is an ENUM column.
+     *
+     * @return Boolean
      */
     public function isEnumType()
     {
@@ -946,16 +1060,23 @@ class Column extends XmlElement
     }
 
     /**
-     * Sets the list of possible values for an ENUM column
-     * @param array
+     * Sets the list of possible values for an ENUM column.
+     *
+     * @param array|string
      */
     public function setValueSet($valueSet)
     {
+        if (is_string($valueSet)) {
+            $valueSet = explode(',', $valueSet);
+            $valueSet = array_map('trim', $valueSet);
+        }
+
         $this->valueSet = $valueSet;
     }
 
     /**
-     * Returns the list of possible values for an ENUM column
+     * Returns the list of possible values for an ENUM column.
+     *
      * @return array
      */
     public function getValueSet()
@@ -964,7 +1085,7 @@ class Column extends XmlElement
     }
 
     /**
-     * @see                 XmlElement::appendXml(DOMNode)
+     * @see XmlElement::appendXml(DOMNode)
      */
     public function appendXml(\DOMNode $node)
     {
@@ -1040,8 +1161,9 @@ class Column extends XmlElement
     }
 
     /**
-     * Returns the size of the column
-     * @return         string
+     * Returns the column size.
+     *
+     * @return integer
      */
     public function getSize()
     {
@@ -1049,17 +1171,19 @@ class Column extends XmlElement
     }
 
     /**
-     * Set the size of the column
-     * @param             string $newSize
+     * Sets the column size.
+     *
+     * @param integer $size
      */
-    public function setSize($newSize)
+    public function setSize($size)
     {
-        $this->domain->setSize($newSize);
+        $this->domain->setSize($size);
     }
 
     /**
-     * Returns the scale of the column
-     * @return         string
+     * Returns the column scale.
+     *
+     * @return integer
      */
     public function getScale()
     {
@@ -1067,61 +1191,60 @@ class Column extends XmlElement
     }
 
     /**
-     * Set the scale of the column
-     * @param             string $newScale
+     * Sets the column scale.
+     *
+     * @param integer $scale
      */
-    public function setScale($newScale)
+    public function setScale($scale)
     {
-        $this->domain->setScale($newScale);
+        $this->domain->setScale($scale);
     }
 
     /**
-     * Return the size in brackets for use in an sql
-     * schema if the type is String.    Otherwise return an empty string
+     * Returns the size and precision in brackets for use in an SQL DLL.
+     *
+     * Example: (size[,scale]) <-> (10) or (10,2)
+     *
+     * return string
      */
-    public function printSize()
+    public function getSizeDefinition()
     {
-        return $this->domain->printSize();
+        return $this->domain->getSizeDefinition();
     }
 
     /**
-     * Return a string that will give this column a default value in SQL
-     * @deprecated use Platform::getColumnDefaultValueDDL() instead
-     * @return         string
-     */
-    public function getDefaultSetting()
-    {
-        return $this->getPlatform()->getColumnDefaultValueDDL($this);
-    }
-
-    /**
-     * Return a string that will give this column a default value in PHP
-     * @return         string
+     * Returns a string that will give this column a default value in PHP.
+     *
+     * @return string
      */
     public function getDefaultValueString()
     {
         $defaultValue = $this->getDefaultValue();
-        if (null !== $defaultValue) {
-            if ($this->isNumericType()) {
-                $dflt = (float) $defaultValue->getValue();
-            } elseif ($this->isTextType() || $this->getDefaultValue()->isExpression()) {
-                $dflt = "'" . str_replace("'", "\'", $defaultValue->getValue()) . "'";
-            } elseif ($this->getType() == PropelTypes::BOOLEAN) {
-                $dflt = $this->booleanValue($defaultValue->getValue()) ? 'true' : 'false';
-            } else {
-                $dflt = "'" . $defaultValue->getValue() . "'";
-            }
-        } else {
-            $dflt = 'null';
+
+        if (null === $defaultValue) {
+            return 'null';
         }
 
-        return $dflt;
+        if ($this->isNumericType()) {
+            return (float) $defaultValue->getValue();
+        }
+
+        if ($this->isTextType() || $this->getDefaultValue()->isExpression()) {
+            return sprintf("'%s'", str_replace("'", "\'", $defaultValue->getValue()));
+        }
+
+        if ($this->getType() === PropelTypes::BOOLEAN) {
+            return $this->booleanValue($defaultValue->getValue()) ? 'true' : 'false';
+        }
+
+        return sprintf("'%s'", $defaultValue->getValue());
     }
 
     /**
-     * Set a string that will give this column a default value.
+     * Sets a string that will give this column a default value.
      *
      * @param ColumnDefaultValue|scalar column default value
+     * @return Column
      */
     public function setDefaultValue($def)
     {
@@ -1135,9 +1258,10 @@ class Column extends XmlElement
     }
 
     /**
-     * Get the default value object for this column.
-     * @return  ColumnDefaultValue
-     * @see     Domain::getDefaultValue()
+     * Returns the default value object for this column.
+     *
+     * @return ColumnDefaultValue
+     * @see Domain::getDefaultValue()
      */
     public function getDefaultValue()
     {
@@ -1145,9 +1269,10 @@ class Column extends XmlElement
     }
 
     /**
-     * Get the default value suitable for use in PHP.
-     * @return  mixed
-     * @see     Domain::getPhpDefaultValue()
+     * Returns the default value suitable for use in PHP.
+     *
+     * @return mixed
+     * @see Domain::getPhpDefaultValue()
      */
     public function getPhpDefaultValue()
     {
@@ -1155,8 +1280,11 @@ class Column extends XmlElement
     }
 
     /**
-     * Return auto increment/sequence string for the target database. We need to
-     * pass in the props for the target database!
+     * Returns whether or the column is an auto increment/sequence value for
+     * the target database. We need to pass in the properties for the target
+     * database!
+     *
+     * @return Boolean
      */
     public function isAutoIncrement()
     {
@@ -1164,8 +1292,12 @@ class Column extends XmlElement
     }
 
     /**
-     * Return true if the columns has to be lazy loaded, i.e. if a runtime query
-     * on the table doesn't hydrate this column, but a getter does.
+     * Return whether or not the column has to be lazy loaded.
+     *
+     * For example, if a runtime query on the table doesn't hydrate this column
+     * but a getter does.
+     *
+     * @return Boolean
      */
     public function isLazyLoad()
     {
@@ -1173,21 +1305,21 @@ class Column extends XmlElement
     }
 
     /**
-     * Gets the auto-increment string.
-     * @return         string
+     * Returns the auto-increment string.
+     *
+     * @return string
      */
     public function getAutoIncrementString()
     {
-        $table = $this->getTable();
-
-        if ($this->isAutoIncrement()
-            && IdMethod::NATIVE === $table->getIdMethod()) {
+        if ($this->isAutoIncrement() && IdMethod::NATIVE === $this->parentTable->getIdMethod()) {
             return $this->getPlatform()->getAutoIncrement();
         }
 
         if ($this->isAutoIncrement()) {
             throw new EngineException(sprintf(
-                'You have specified autoIncrement for column "%s", but you have not specified idMethod="native" for table "%s".', $this->name, $table->getName()
+                'You have specified autoIncrement for column "%s", but you have not specified idMethod="native" for table "%s".',
+                $this->name,
+                $this->parentTable->getName()
             ));
         }
 
@@ -1195,51 +1327,23 @@ class Column extends XmlElement
     }
 
     /**
-     * Set the auto increment value.
+     * Sets whether or not this column is an auto incremented value.
+     *
      * Use isAutoIncrement() to find out if it is set or not.
+     *
+     * @param Boolean $isAutoIncrement
      */
-    public function setAutoIncrement($value)
+    public function setAutoIncrement($isAutoIncrement)
     {
-        $this->isAutoIncrement = (Boolean) $value;
+        $this->isAutoIncrement = (Boolean) $isAutoIncrement;
     }
 
     /**
-     * Set the column type from a string property
-     * (normally a string from an sql input file)
+     * Returns a string representation of the native PHP type which corresponds
+     * to the Propel type of this column. Used in the generation of Base
+     * objects.
      *
-     * @deprecated Do not use; this will be removed in next release.
-     */
-    public function setTypeFromString($typeName, $size)
-    {
-        $tn = strtoupper($typeName);
-        $this->setType($tn);
-
-        if (null !== $size) {
-            $this->size = $size;
-        }
-
-        if (false !== strpos($tn, 'CHAR')) {
-            $this->domain->setType(PropelTypes::VARCHAR);
-        } elseif (false !== strpos($tn, 'INT')) {
-            $this->domain->setType(PropelTypes::INTEGER);
-        } elseif (false !== strpos($tn, 'FLOAT')) {
-            $this->domain->setType(PropelTypes::FLOAT);
-        } elseif (false !== strpos($tn, 'DATE')) {
-            $this->domain->setType(PropelTypes::DATE);
-        } elseif (false !== strpos($tn, 'TIME')) {
-            $this->domain->setType(PropelTypes::TIMESTAMP);
-        } elseif (false !== strpos($tn, 'BINARY')) {
-            $this->domain->setType(PropelTypes::LONGVARBINARY);
-        } else {
-            $this->domain->setType(PropelTypes::VARCHAR);
-        }
-    }
-
-    /**
-     * Return a string representation of the native PHP type which corresponds
-     * to the propel type of this column. Use in the generation of Base objects.
-     *
-     * @return         string PHP datatype used by propel.
+     * @return string
      */
     public function getPhpNative()
     {
@@ -1247,9 +1351,11 @@ class Column extends XmlElement
     }
 
     /**
-     * Returns true if the column's PHP native type is an boolean, int, long, float, double, string.
-     * @return         Boolean
-     * @see                 PropelTypes::isPhpPrimitiveType()
+     * Returns whether or not the column PHP native type is primitive type (aka
+     * a boolean, an integer, a long, a float, a double or a string).
+     *
+     * @return Boolean
+     * @see PropelTypes::isPhpPrimitiveType()
      */
     public function isPhpPrimitiveType()
     {
@@ -1257,9 +1363,11 @@ class Column extends XmlElement
     }
 
     /**
-     * Return true if column's PHP native type is an boolean, int, long, float, double.
+     * Returns whether or not the column PHP native type is a primitive numeric
+     * type (aka an integer, a long, a float or a double).
+     *
      * @return  Boolean
-     * @see     PropelTypes::isPhpPrimitiveNumericType()
+     * @see PropelTypes::isPhpPrimitiveNumericType()
      */
     public function isPhpPrimitiveNumericType()
     {
@@ -1267,9 +1375,10 @@ class Column extends XmlElement
     }
 
     /**
-     * Returns true if the column's PHP native type is a class name.
-     * @return  Boolean
-     * @see     PropelTypes::isPhpObjectType()
+     * Returns whether or not the column PHP native type is an object.
+     *
+     * @return Boolean
+     * @see PropelTypes::isPhpObjectType()
      */
     public function isPhpObjectType()
     {
@@ -1277,33 +1386,46 @@ class Column extends XmlElement
     }
 
     /**
-     * Get the platform/adapter impl.
+     * Returns an instance of PlateformInterface interface.
      *
-     * @return         Platform
+     * @return PlatformInterface
      */
     public function getPlatform()
     {
-        return $this->getTable()->getDatabase()->getPlatform();
+        return $this->parentTable->getPlatform();
     }
 
+    /**
+     * Returns whether or not this column has a platform adapter.
+     *
+     * @return Boolean
+     */
     public function hasPlatform()
     {
-        if (null === $table = $this->getTable()) {
+        if (null === $this->parentTable) {
             return false;
         }
 
-        if (null === $database = $table->getDatabase()) {
-            return false;
-        }
-
-        return null !== $database->getPlatform();
+        return $this->parentTable->getPlatform() ? true : false;
     }
 
+    /**
+     * Clones the current object.
+     *
+     */
     public function __clone()
     {
         $this->referrers = null;
     }
 
+    /**
+     * Returns a generated PHP name.
+     *
+     * @param string $name
+     * @param string $phpNamingMethod
+     * @param string $namePrefix
+     * @return string
+     */
     static public function generatePhpName($name, $phpNamingMethod = PhpNameGenerator::CONV_METHOD_CLEAN, $namePrefix = null)
     {
         return NameFactory::generateName(NameFactory::PHP_GENERATOR, array($name, $phpNamingMethod, $namePrefix));

@@ -5,79 +5,62 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Model;
 
+use Propel\Generator\Exception\EngineException;
+
 /**
  * A class for holding data about a domain used in the schema.
  *
- * @author     Hans Lellelid <hans@xmpl.org> (Propel)
- * @author     Martin Poeschl <mpoeschl@marmot.at> (Torque)
+ * @author Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author Martin Poeschl <mpoeschl@marmot.at> (Torque)
+ * @author Hugo Hamon <webmaster@apprendre-php.com>
  */
 class Domain extends XmlElement
 {
-    /**
-     * @var        string The name of this domain
-     */
     private $name;
-
-    /**
-     * @var        string Description for this domain.
-     */
     private $description;
-
-    /**
-     * @var        int Size
-     */
     private $size;
-
-    /**
-     * @var        int Scale
-     */
     private $scale;
-
-    /**
-     * @var        int Propel type from schema
-     */
-    private $propelType;
-
-    /**
-     * @var        string The SQL type to use for this column
-     */
+    private $mappingType;
     private $sqlType;
-
-    /**
-     * @var        ColumnDefaultValue A default value
-     */
     private $defaultValue;
-
-    /**
-     * @var        Database
-     */
     private $database;
 
     /**
      * Creates a new Domain object.
+     *
      * If this domain needs a name, it must be specified manually.
      *
-     * @param      string $type Propel type.
-     * @param      string $sqlType SQL type.
-     * @param      string $size
-     * @param      string $scale
+     * @param string $type Propel type.
+     * @param string $sqlType SQL type.
+     * @param string $size
+     * @param string $scale
      */
     public function __construct($type = null, $sqlType = null, $size = null, $scale = null)
     {
-        $this->propelType = $type;
-        $this->sqlType = (null !== $sqlType ? $sqlType : $type);
-        $this->size = $size;
-        $this->scale = $scale;
+        if (null !== $type) {
+            $this->setType($type);
+        }
+
+        if (null !== $size) {
+            $this->setSize($size);
+        }
+
+        if (null !== $scale) {
+            $this->setScale($scale);
+        }
+
+        $this->setSqlType(null !== $sqlType ? $sqlType : $type);
     }
 
     /**
-     * Copy the values from current object into passed-in Domain.
-     * @param      Domain $domain Domain to copy values into.
+     * Copies the values from current object into passed-in Domain.
+     *
+     * @param Domain $domain Domain to copy values into.
      */
     public function copy(Domain $domain)
     {
@@ -87,17 +70,19 @@ class Domain extends XmlElement
         $this->scale = $domain->getScale();
         $this->size = $domain->getSize();
         $this->sqlType = $domain->getSqlType();
-        $this->propelType = $domain->getType();
+        $this->mappingType = $domain->getType();
     }
 
     /**
-     * Sets up the Domain object based on the attributes that were passed to loadFromXML().
-     * @see        parent::loadFromXML()
+     * Sets up the Domain object based on the attributes that were passed
+     * to loadFromXML().
+     *
+     * @see parent::loadFromXML()
      */
     protected function setupObject()
     {
         $schemaType = strtoupper($this->getAttribute('type'));
-        $this->copy($this->getDatabase()->getPlatform()->getDomainForType($schemaType));
+        $this->copy($this->database->getPlatform()->getDomainForType($schemaType));
 
         //Name
         $this->name = $this->getAttribute('name');
@@ -117,7 +102,8 @@ class Domain extends XmlElement
 
     /**
      * Sets the owning database object (if this domain is being setup via XML).
-     * @param      Database $database
+     *
+     * @param Database $database
      */
     public function setDatabase(Database $database)
     {
@@ -125,8 +111,9 @@ class Domain extends XmlElement
     }
 
     /**
-     * Gets the owning database object (if this domain was setup via XML).
-     * @return     Database
+     * Returns the owning database object (if this domain was setup via XML).
+     *
+     * @return Database
      */
     public function getDatabase()
     {
@@ -134,7 +121,9 @@ class Domain extends XmlElement
     }
 
     /**
-     * @return     string Returns the description.
+     * Returns the domain description.
+     *
+     * @return string
      */
     public function getDescription()
     {
@@ -142,7 +131,9 @@ class Domain extends XmlElement
     }
 
     /**
-     * @param      string $description The description to set.
+     * Sets the domain description.
+     *
+     * @param string $description
      */
     public function setDescription($description)
     {
@@ -150,7 +141,9 @@ class Domain extends XmlElement
     }
 
     /**
-     * @return     string Returns the name.
+     * Returns the domain description.
+     *
+     * @return string
      */
     public function getName()
     {
@@ -158,7 +151,9 @@ class Domain extends XmlElement
     }
 
     /**
-     * @param      string $name The name to set.
+     * Sets the domain name.
+     *
+     * @param string $name
      */
     public function setName($name)
     {
@@ -166,7 +161,9 @@ class Domain extends XmlElement
     }
 
     /**
-     * @return     string Returns the scale.
+     * Returns the scale value.
+     *
+     * @return integer
      */
     public function getScale()
     {
@@ -174,27 +171,31 @@ class Domain extends XmlElement
     }
 
     /**
-     * @param      string $scale The scale to set.
+     * Sets the scale value.
+     *
+     * @param integer $scale
      */
     public function setScale($scale)
     {
-        $this->scale = $scale;
+        $this->scale = (int) $scale;
     }
 
     /**
      * Replaces the size if the new value is not null.
      *
-     * @param      string $value The size to set.
+     * @param integer $scale
      */
-    public function replaceScale($value)
+    public function replaceScale($scale)
     {
-        if (null !== $value) {
-            $this->scale = $value;
+        if (null !== $scale) {
+            $this->scale = (int) $scale;
         }
     }
 
     /**
-     * @return     int Returns the size.
+     * Returns the size.
+     *
+     * @return integer
      */
     public function getSize()
     {
@@ -202,56 +203,63 @@ class Domain extends XmlElement
     }
 
     /**
-     * @param      int $size The size to set.
+     * Sets the size.
+     *
+     * @param integer $size
      */
     public function setSize($size)
     {
-        $this->size = $size;
+        $this->size = (int) $size;
     }
 
     /**
      * Replaces the size if the new value is not null.
      *
-     * @param      int $value The size to set.
+     * @param integer $size
      */
-    public function replaceSize($value)
+    public function replaceSize($size)
     {
-        if (null !== $value) {
-            $this->size = $value;
+        if (null !== $size) {
+            $this->size = $size;
         }
     }
 
     /**
-     * @return     string Returns the propelType.
+     * Returns the mapping type.
+     *
+     * @return string
      */
     public function getType()
     {
-        return $this->propelType;
+        return $this->mappingType;
     }
 
     /**
-     * @param      string $propelType The PropelTypes type to set.
-     */
-    public function setType($propelType)
-    {
-        $this->propelType = $propelType;
-    }
-
-    /**
-     * Replaces the type if the new value is not null.
+     * Sets the mapping type.
      *
-     * @param      string $value The tyep to set.
+     * @param string $mappingType
      */
-    public function replaceType($value)
+    public function setType($mappingType)
     {
-        if (null !== $value) {
-            $this->propelType = $value;
+        $this->mappingType = $mappingType;
+    }
+
+    /**
+     * Replaces the mapping type if the new value is not null.
+     *
+     * @param string $mappingType
+     */
+    public function replaceType($mappingType)
+    {
+        if (null !== $mappingType) {
+            $this->mappingType = $mappingType;
         }
     }
 
     /**
-     * Gets the default value object.
-     * @return     ColumnDefaultValue The default value object for this domain.
+     * Returns the default value object.
+     *
+     * @return ColumnDefaultValue
      */
     public function getDefaultValue()
     {
@@ -259,9 +267,9 @@ class Domain extends XmlElement
     }
 
     /**
-     * Gets the default value, type-casted for use in PHP OM.
-     * @return     mixed
-     * @see        getDefaultValue()
+     * Returns the default value, type-casted for use in PHP OM.
+     *
+     * @return mixed
      */
     public function getPhpDefaultValue()
     {
@@ -273,7 +281,7 @@ class Domain extends XmlElement
             throw new EngineException('Cannot get PHP version of default value for default value EXPRESSION.');
         }
 
-        if (in_array($this->propelType, array(PropelTypes::BOOLEAN, PropelTypes::BOOLEAN_EMU))) {
+        if (in_array($this->mappingType, array(PropelTypes::BOOLEAN, PropelTypes::BOOLEAN_EMU))) {
             return $this->booleanValue($this->defaultValue->getValue());
         }
 
@@ -281,7 +289,9 @@ class Domain extends XmlElement
     }
 
     /**
-     * @param      ColumnDefaultValue $value The column default value to set.
+     * Sets the default value.
+     *
+     * @param ColumnDefaultValue $value
      */
     public function setDefaultValue(ColumnDefaultValue $value)
     {
@@ -291,7 +301,7 @@ class Domain extends XmlElement
     /**
      * Replaces the default value if the new value is not null.
      *
-     * @param      ColumnDefaultValue $value The defualt value object
+     * @param ColumnDefaultValue $value
      */
     public function replaceDefaultValue(ColumnDefaultValue $value = null)
     {
@@ -301,7 +311,9 @@ class Domain extends XmlElement
     }
 
     /**
-     * @return     string Returns the sqlType.
+     * Returns the SQL type.
+     *
+     * @return string
      */
     public function getSqlType()
     {
@@ -309,7 +321,9 @@ class Domain extends XmlElement
     }
 
     /**
-     * @param      string $sqlType The sqlType to set.
+     * Sets the SQL type.
+     *
+     * @param string $sqlType
      */
     public function setSqlType($sqlType)
     {
@@ -318,7 +332,8 @@ class Domain extends XmlElement
 
     /**
      * Replaces the SQL type if the new value is not null.
-     * @param      string $sqlType The native SQL type to use for this domain.
+     *
+     * @param string $sqlType
      */
     public function replaceSqlType($sqlType)
     {
@@ -328,22 +343,25 @@ class Domain extends XmlElement
     }
 
     /**
-     * Return the size and scale in brackets for use in an sql schema.
+     * Returns the size and scale in brackets for use in an sql schema.
      *
-     * @return     string Size and scale or an empty String if there are no values
-     *         available.
+     * @return string
      */
-    public function printSize()
+    public function getSizeDefinition()
     {
-        if (null !== $this->size && null !== $this->scale) {
-            return '(' . $this->size . ',' . $this->scale . ')';
+        if (null !== $this->size) {
+            if (null !== $this->scale) {
+                return sprintf('(%u,%u)', $this->size, $this->scale);
+            }
+
+            return sprintf('(%u)', $this->size);
         }
 
-        return null !== $this->size ? '(' . $this->size . ')' : '';
+        return '';
     }
 
     /**
-     * @see        XmlElement::appendXml(DOMNode)
+     * @see XmlElement::appendXml(DOMNode)
      */
     public function appendXml(\DOMNode $node)
     {

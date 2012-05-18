@@ -69,7 +69,7 @@ class SchemaReaderTest extends \PHPUnit_Framework_TestCase
         $database = $schema->getDatabase();
         $table = $database->getTable('bar');
         $expectedTable = <<<EOF
-<table name="bar" phpName="Bar" idMethod="false" readOnly="false" reloadOnInsert="false" reloadOnUpdate="false" abstract="false">
+<table name="bar" phpName="Bar" idMethod="native">
   <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
 </table>
 EOF;
@@ -84,7 +84,7 @@ EOF;
         $expectedSchema = <<<EOF
 <app-data>
 <database name="foo" defaultIdMethod="native" defaultPhpNamingMethod="underscore">
-  <table name="bar" phpName="Bar" idMethod="false" readOnly="false" reloadOnInsert="false" reloadOnUpdate="false" abstract="false">
+  <table name="bar" phpName="Bar" idMethod="native">
     <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
   </table>
 </database>
@@ -101,10 +101,10 @@ EOF;
         $expectedSchema = <<<EOF
 <app-data>
 <database name="foo" defaultIdMethod="native" defaultPhpNamingMethod="underscore">
-  <table name="bar1" phpName="Bar1" idMethod="false" readOnly="false" reloadOnInsert="false" reloadOnUpdate="false" abstract="false">
+  <table name="bar1" phpName="Bar1" idMethod="native">
     <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
   </table>
-  <table name="bar2" phpName="Bar2" idMethod="false" readOnly="false" reloadOnInsert="false" reloadOnUpdate="false" forReferenceOnly="true" abstract="false">
+  <table name="bar2" phpName="Bar2" idMethod="native" forReferenceOnly="true">
     <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
   </table>
 </database>

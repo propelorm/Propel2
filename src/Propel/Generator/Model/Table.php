@@ -5,286 +5,106 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Model;
 
 use Propel\Generator\Exception\BuildException;
 use Propel\Generator\Exception\EngineException;
+use Propel\Generator\Exception\InvalidArgumentException;
 use Propel\Generator\Platform\MysqlPlatform;
 
 /**
  * Data about a table used in an application.
  *
- * @author     Hans Lellelid <hans@xmpl.org> (Propel)
- * @author     Leon Messerschmidt <leon@opticode.co.za> (Torque)
- * @author     Jason van Zyl <jvanzyl@apache.org> (Torque)
- * @author     Martin Poeschl <mpoeschl@marmot.at> (Torque)
- * @author     John McNally <jmcnally@collab.net> (Torque)
- * @author     Daniel Rall <dlr@collab.net> (Torque)
- * @author     Byron Foster <byron_foster@yahoo.com> (Torque)
+ * @author Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author Leon Messerschmidt <leon@opticode.co.za> (Torque)
+ * @author Jason van Zyl <jvanzyl@apache.org> (Torque)
+ * @author Martin Poeschl <mpoeschl@marmot.at> (Torque)
+ * @author John McNally <jmcnally@collab.net> (Torque)
+ * @author Daniel Rall <dlr@collab.net> (Torque)
+ * @author Byron Foster <byron_foster@yahoo.com> (Torque)
+ * @author Hugo Hamon <webmaster@apprendre-php.com>
  */
 class Table extends ScopedElement implements IdMethod
 {
-    /**
-     * Enables some debug printing.
-     */
-    const DEBUG = false;
-
-    /**
-     * Columns for this table.
-     *
-     * @var       array Column[]
-     */
-    private $columns = array();
-
-    /**
-     * Foreign keys for this table.
-     *
-     * @var       array ForeignKey[]
-     */
-    private $foreignKeys = array();
-
-    /**
-     * Indexes for this table.
-     *
-     * @var       array Index[]
-     */
-    private $indices = array();
-
-    /**
-     * Unique indexes for this table.
-     *
-     * @var       array Unique[]
-     */
-    private $unices = array();
-
-    /**
-     * Any parameters for the ID method (currently supports changing sequence name).
-     *
-     * @var       array
-     */
-    private $idMethodParameters = array();
-
-    /**
-     * Table name.
-     *
-     * @var       string
-     */
-    private $commonName;
-
-    /**
-     * Table description.
-     *
-     * @var       string
-     */
-    private $description;
-
-    /**
-     * phpName for the table.
-     *
-     * @var       string
-     */
-    private $phpName;
-
-    /**
-     * ID method for the table (e.g. IdMethod::NATIVE, IdMethod::NONE).
-     *
-     * @var       string
-     */
-    private $idMethod;
-
-    /**
-     * Wether an INSERT with set PK is allowed on tables with IdMethod::NATIVE
-     *
-     * @var       Boolean
-     */
-    private $allowPkInsert;
-
-    /**
-     * Strategry to use for converting column name to phpName.
-     *
-     * @var       string
-     */
-    private $phpNamingMethod;
-
-    /**
-     * The Database that this table belongs to.
-     *
-     * @var       Database
-     */
-    private $database;
-
-    /**
-     * Foreign Keys that refer to this table.
-     *
-     * @var       array ForeignKey[]
-     */
-    private $referrers = array();
-
-    /**
-     * Names of foreign tables.
-     *
-     * @var       array string[]
-     */
+    private $columns;
+    private $foreignKeys;
     private $foreignTableNames;
-
-    /**
-     * Whether this table contains a foreign primary key.
-     *
-     * @var       Boolean
-     */
+    private $indices;
+    private $unices;
+    private $idMethodParameters;
+    private $commonName;
+    private $description;
+    private $phpName;
+    private $idMethod;
+    private $allowPkInsert;
+    private $phpNamingMethod;
+    private $database;
+    private $referrers;
     private $containsForeignPK;
-
-    /**
-     * The inheritance column for this table (if any).
-     *
-     * @var       Column
-     */
     private $inheritanceColumn;
-
-    /**
-     * Whether to skip generation of SQL for this table.
-     *
-     * @var       Boolean
-     */
     private $skipSql;
-
-    /**
-     * Whether this table is "read-only".
-     *
-     * @var       Boolean
-     */
     private $readOnly;
-
-    /**
-     * Whether this table should result in abstract OM classes.
-     *
-     * @var       Boolean
-     */
-    private $abstractValue;
-
-    /**
-     * Whether this table is an alias for another table.
-     *
-     * @var       string
-     */
+    private $isAbstract;
     private $alias;
-
-    /**
-     * The interface that the generated "object" class should implement.
-     *
-     * @var       string
-     */
     private $interface;
-
-    /**
-     * The base class to extend for the generated "object" class.
-     *
-     * @var       string
-     */
     private $baseClass;
-
-    /**
-     * The base peer class to extend for generated "peer" class.
-     *
-     * @var       string
-     */
     private $basePeer;
-
-    /**
-     * Map of columns by name.
-     *
-     * @var       array
-     */
-    private $columnsByName = array();
-
-    /**
-     * Map of columns by lowercase name.
-     *
-     * @var       array
-     */
-    private $columnsByLowercaseName = array();
-
-    /**
-     * Map of columns by phpName.
-     *
-     * @var       array
-     */
-    private $columnsByPhpName = array();
-
-    /**
-     * Whether this table needs to use transactions in Postgres.
-     *
-     * @var       string
-     * @deprecated
-     */
+    private $columnsByName;
+    private $columnsByLowercaseName;
+    private $columnsByPhpName;
     private $needsTransactionInPostgres;
-
-    /**
-     * Whether to perform additional indexing on this table.
-     *
-     * @var       Boolean
-     */
     private $heavyIndexing;
-
-    /**
-     * Whether this table is for reference only.
-     *
-     * @var       Boolean
-     */
     private $forReferenceOnly;
-
-    /**
-     * Whether to reload the rows in this table after insert.
-     *
-     * @var       Boolean
-     */
     private $reloadOnInsert;
-
-    /**
-     * Whether to reload the rows in this table after update.
-     *
-     * @var       Boolean
-     */
     private $reloadOnUpdate;
-
-    /**
-     * List of behaviors registered for this table
-     *
-     * @var array
-     */
-    protected $behaviors = array();
-
-    /**
-     * Whether this table is a cross-reference table for a many-to-many relationship
-     *
-     * @var       Boolean
-     */
-    protected $isCrossRef = false;
-
-    /**
-     * The default string format for objects based on this table
-     * (e.g. 'XML', 'YAML', 'CSV', 'JSON')
-     *
-     * @var       string
-     */
+    protected $behaviors;
+    protected $isCrossRef;
     protected $defaultStringFormat;
 
     /**
      * Constructs a table object with a name
      *
-     * @param     string $name table name
+     * @param string $name table name
      */
     public function __construct($name = null)
     {
-        $this->commonName = $name;
+        parent::__construct();
+
+        if (null !== $name) {
+            $this->setCommonName($name);
+        }
+
+        $this->idMethod  = IdMethod::NO_ID_METHOD;
+        $this->allowPkInsert = false;
+        $this->isAbstract = false;
+        $this->isCrossRef = false;
+        $this->readOnly = false;
+        $this->reloadOnInsert = false;
+        $this->reloadOnUpdate = false;
+        $this->skipSql = false;
+
+        $this->behaviors = array();
+        $this->columns = array();
+        $this->columnsByName = array();
+        $this->columnsByPhpName = array();
+        $this->columnsByLowercaseName = array();
+        $this->foreignKeys = array();
+        $this->foreignTableNames = array();
+        $this->idMethodParameters = array();
+        $this->indices = array();
+        $this->referrers = array();
+        $this->unices = array();
     }
 
     /**
-     * get a qualified name of this table with scheme and common name separated by '_'
-     * if schemaAutoPrefix is set. Otherwise get the common name.
+     * Returns a qualified name of this table with scheme and common name
+     * separated by '_'.
+     *
+     * If schemaAutoPrefix is set. Otherwise get the common name.
+     *
      * @return string
      */
     private function getStdSeparatedName()
@@ -297,28 +117,30 @@ class Table extends ScopedElement implements IdMethod
     }
 
     /**
-     * Sets up the Rule object based on the attributes that were passed to loadFromXML().
-     * @see       parent::loadFromXML()
+     * Sets up the Rule object based on the attributes that were passed
+     * to loadFromXML().
+     *
+     * @see parent::loadFromXML()
      */
     public function setupObject()
     {
         parent::setupObject();
 
-        $this->commonName = $this->getDatabase()->getTablePrefix() . $this->getAttribute('name');
+        $this->commonName = $this->database->getTablePrefix() . $this->getAttribute('name');
 
         // retrieves the method for converting from specified name to a PHP name.
-        $this->phpNamingMethod = $this->getAttribute('phpNamingMethod', $this->getDatabase()->getDefaultPhpNamingMethod());
+        $this->phpNamingMethod = $this->getAttribute('phpNamingMethod', $this->database->getDefaultPhpNamingMethod());
 
         $this->phpName = $this->getAttribute('phpName', $this->buildPhpName($this->getStdSeparatedName()));
 
-        $this->idMethod = $this->getAttribute('idMethod', $this->getDatabase()->getDefaultIdMethod());
+        $this->idMethod = $this->getAttribute('idMethod', $this->database->getDefaultIdMethod());
         $this->allowPkInsert = $this->booleanValue($this->getAttribute('allowPkInsert'));
 
 
         $this->skipSql = $this->booleanValue($this->getAttribute('skipSql'));
         $this->readOnly = $this->booleanValue($this->getAttribute('readOnly'));
 
-        $this->abstractValue = $this->booleanValue($this->getAttribute('abstract'));
+        $this->isAbstract = $this->booleanValue($this->getAttribute('abstract'));
         $this->baseClass = $this->getAttribute('baseClass');
         $this->basePeer = $this->getAttribute('basePeer');
         $this->alias = $this->getAttribute('alias');
@@ -327,7 +149,7 @@ class Table extends ScopedElement implements IdMethod
             $this->booleanValue($this->getAttribute('heavyIndexing'))
             || (
                 'false' !== $this->getAttribute('heavyIndexing')
-                && $this->getDatabase()->isHeavyIndexing()
+                && $this->database->isHeavyIndexing()
             )
         );
 
@@ -341,22 +163,23 @@ class Table extends ScopedElement implements IdMethod
     }
 
     /**
-     * get a build property for the database this table belongs to
+     * Returns a build property value for the database this table belongs to.
      *
-     * @param string $key key of the build property
-     * @return string value of the property
+     * @param string $key
+     * @return string
      */
     public function getBuildProperty($key)
     {
-        return $this->getDatabase() ? $this->getDatabase()->getBuildProperty($key) : '';
+        return $this->database ? $this->database->getBuildProperty($key) : '';
     }
 
     /**
-     * Execute behavior table modifiers
+     * Executes behavior table modifiers.
+     *
      */
     public function applyBehaviors()
     {
-        foreach ($this->getBehaviors() as $behavior) {
+        foreach ($this->behaviors as $behavior) {
             if (!$behavior->isTableModified()) {
                 $behavior->getTableModifier()->modifyTable();
                 $behavior->setTableModified(true);
@@ -387,12 +210,12 @@ class Table extends ScopedElement implements IdMethod
         // if idMethod is "native" and in fact there are no autoIncrement
         // columns in the table, then change it to "none"
         $anyAutoInc = false;
-        foreach ($this->getColumns() as $col) {
-            if ($col->isAutoIncrement()) {
+        foreach ($this->columns as $column) {
+            if ($column->isAutoIncrement()) {
                 $anyAutoInc = true;
             }
         }
-        if ( IdMethod::NATIVE === $this->getIdMethod() && !$anyAutoInc) {
+        if (IdMethod::NATIVE === $this->getIdMethod() && !$anyAutoInc) {
             $this->setIdMethod(IdMethod::NO_ID_METHOD);
         }
     }
@@ -416,11 +239,6 @@ class Table extends ScopedElement implements IdMethod
      */
     private function doHeavyIndexing()
     {
-        if (self::DEBUG) {
-            // @TODO remove hardcoded print statements
-            print("doHeavyIndex() called on table " . $this->getName()."\n");
-        }
-
         $pk = $this->getPrimaryKey();
         $size = count($pk);
 
@@ -463,7 +281,7 @@ class Table extends ScopedElement implements IdMethod
         // since MySQL needs an index on any column that is referenced by another table
         // (yep, MySQL _is_ a PITA)
         $counter = 0;
-        foreach ($this->getReferrers() as $foreignKey) {
+        foreach ($this->referrers as $foreignKey) {
             $referencedColumns = $foreignKey->getForeignColumnObjects();
             $referencedColumnsHash = $this->getColumnList($referencedColumns);
             if (!isset($_indices[$referencedColumnsHash])) {
@@ -471,7 +289,7 @@ class Table extends ScopedElement implements IdMethod
                 $index = new Index();
                 $index->setName(sprintf('I_referenced_%s_%s', $foreignKey->getName(), ++$counter));
                 $index->setColumns($referencedColumns);
-                $index->resetColumnSize();
+                $index->resetColumnsSize();
                 $this->addIndex($index);
                 // Add this new index to our collection, otherwise we might add it again (bug #725)
                 $this->collectIndexedColumns($index->getName(), $referencedColumns, $_indices);
@@ -479,7 +297,7 @@ class Table extends ScopedElement implements IdMethod
         }
 
         // we're adding indices for this table foreign keys
-        foreach ($this->getForeignKeys() as $foreignKey) {
+        foreach ($this->foreignKeys as $foreignKey) {
             $localColumns = $foreignKey->getLocalColumnObjects();
             $localColumnsHash = $this->getColumnList($localColumns);
             if (!isset($_indices[$localColumnsHash])) {
@@ -487,7 +305,7 @@ class Table extends ScopedElement implements IdMethod
                 $index = new Index();
                 $index->setName(substr_replace($foreignKey->getName(), 'FI_', strrpos($foreignKey->getName(), 'FK_'), 3));
                 $index->setColumns($localColumns);
-                $index->resetColumnSize();
+                $index->resetColumnsSize();
                 $this->addIndex($index);
                 $this->collectIndexedColumns($index->getName(), $localColumns, $_indices);
             }
@@ -522,14 +340,14 @@ class Table extends ScopedElement implements IdMethod
     }
 
     /**
-     * Creates a delimiter-delimited string list of column names
+     * Returns a delimiter-delimited string list of column names.
      *
-     * @see        Platform::getColumnList() if quoting is required
-     * @param      array Column[] or string[]
-     * @param      string $delim The delimiter to use in separating the column names.
-     * @return     string
+     * @see Platform::getColumnList() if quoting is required
+     * @param array
+     * @param string $delimiter
+     * @return string
      */
-    public function getColumnList($columns, $delim = ',')
+    public function getColumnList($columns, $delimiter = ',')
     {
         $list = array();
         foreach ($columns as $col) {
@@ -539,7 +357,7 @@ class Table extends ScopedElement implements IdMethod
             $list[] = $col;
         }
 
-        return implode($delim, $list);
+        return implode($delimiter, $list);
     }
 
     /**
@@ -554,7 +372,7 @@ class Table extends ScopedElement implements IdMethod
                 $fk = $this->foreignKeys[$i];
                 $name = $fk->getName();
                 if (empty($name)) {
-                    $name = $this->acquireConstraintName("FK", $i + 1);
+                    $name = $this->acquireConstraintName('FK', $i + 1);
                     $fk->setName($name);
                 }
             }
@@ -563,7 +381,7 @@ class Table extends ScopedElement implements IdMethod
                 $index = $this->indices[$i];
                 $name = $index->getName();
                 if (empty($name)) {
-                    $name = $this->acquireConstraintName("I", $i + 1);
+                    $name = $this->acquireConstraintName('I', $i + 1);
                     $index->setName($name);
                 }
             }
@@ -572,7 +390,7 @@ class Table extends ScopedElement implements IdMethod
                 $index = $this->unices[$i];
                 $name = $index->getName();
                 if (empty($name)) {
-                    $name = $this->acquireConstraintName("U", $i + 1);
+                    $name = $this->acquireConstraintName('U', $i + 1);
                     $index->setName($name);
                 }
             }
@@ -591,15 +409,15 @@ class Table extends ScopedElement implements IdMethod
     /**
      * Macro to a constraint name.
      *
-     * @param     nameType constraint type
-     * @param     nbr unique number for this constraint type
-     * @return    unique name for constraint
-     * @throws		 EngineException
+     * @param  string $nameType Constraint type
+     * @param  integer $nbr Unique number for this constraint type
+     * @return string Unique name for constraint
+     * @throws EngineException
      */
     private function acquireConstraintName($nameType, $nbr)
     {
         $inputs   = array();
-        $inputs[] = $this->getDatabase();
+        $inputs[] = $this->database;
         $inputs[] = $this->getCommonName();
         $inputs[] = $nameType;
         $inputs[] = $nbr;
@@ -608,9 +426,10 @@ class Table extends ScopedElement implements IdMethod
     }
 
     /**
-     * Gets the value of base class for classes produced from this table.
+     * Returns the name of the base class used for superclass of all objects
+     * of this table.
      *
-     * @return    The base class for classes produced from this table.
+     * @return string
      */
     public function getBaseClass()
     {
@@ -619,24 +438,26 @@ class Table extends ScopedElement implements IdMethod
         }
 
         if (null === $this->baseClass) {
-            return $this->getDatabase()->getBaseClass();
+            return $this->database->getBaseClass();
         }
 
         return $this->baseClass;
     }
 
     /**
-     * Set the value of baseClass.
-     * @param     v Value to assign to baseClass.
+     * Sets the peer base class name.
+     *
+     * @param string $class
      */
-    public function setBaseClass($v)
+    public function setBaseClass($class)
     {
-        $this->baseClass = $v;
+        $this->baseClass = $class;
     }
 
     /**
-     * Get the value of basePeer.
-     * @return    value of basePeer.
+     * Returns the peer base class name.
+     *
+     * @return string
      */
     public function getBasePeer()
     {
@@ -645,80 +466,98 @@ class Table extends ScopedElement implements IdMethod
         }
 
         if (null === $this->basePeer) {
-            return $this->getDatabase()->getBasePeer();
+            return $this->database->getBasePeer();
         }
 
         return $this->basePeer;
     }
 
     /**
-     * Set the value of basePeer.
-     * @param     v    Value to assign to basePeer.
+     * Sets the base peer class name.
+     *
+     * @param string $class
      */
-    public function setBasePeer($v)
+    public function setBasePeer($class)
     {
-        $this->basePeer = $v;
+        $this->basePeer = $class;
     }
 
     /**
-     * A utility function to create a new column from attrib and add it to this
-     * table.
+     * Adds a new column to the table.
      *
-     * @param     $coldata xml attributes or Column class for the column to add
-     * @return    the added column
+     * @param Column $col
+     * @return Column
      */
-    public function addColumn($data)
+    public function addColumn($col)
     {
-        if ($data instanceof Column) {
-            $col = $data;
+        if ($col instanceof Column) {
+
             if (isset($this->columnsByName[$col->getName()])) {
                 throw new EngineException(sprintf('Column "%s" declared twice in table "%s"', $col->getName(), $this->getName()));
             }
+
             $col->setTable($this);
+
             if ($col->isInheritance()) {
                 $this->inheritanceColumn = $col;
             }
-            if (isset($this->columnsByName[$col->getName()])) {
-                throw new EngineException('Duplicate column declared: ' . $col->getName());
-            }
+
             $this->columns[] = $col;
             $this->columnsByName[$col->getName()] = $col;
             $this->columnsByLowercaseName[strtolower($col->getName())] = $col;
             $this->columnsByPhpName[$col->getPhpName()] = $col;
             $col->setPosition(count($this->columns));
-            $this->needsTransactionInPostgres |= $col->requiresTransactionInPostgres();
+
+            if ($col->requiresTransactionInPostgres()) {
+                $this->needsTransactionInPostgres = true;
+            }
 
             return $col;
         }
 
-        $col = new Column();
-        $col->setTable($this);
-        $col->loadFromXML($data);
+        $column = new Column();
+        $column->setTable($this);
+        $column->loadFromXML($col);
 
-        return $this->addColumn($col); // call self w/ different param
+        return $this->addColumn($column); // call self w/ different param
     }
 
     /**
-     * Removed a column from the table
-     * @param Column|string $col the column to remove
+     * Removes a column from the table.
+     *
+     * @param Column|string $column The Column or its name
      */
-    public function removeColumn($col)
+    public function removeColumn($column)
     {
-        if (is_string($col)) {
-            $col = $this->getColumn($col);
+        if (is_string($column)) {
+            $column = $this->getColumn($column);
         }
 
-        $pos = array_search($col, $this->columns);
+        $pos = $this->getColumnPosition($column);
         if (false === $pos) {
-            throw new EngineException(sprintf('No column named %s found in table %s', $col->getName(), $col->getTableName()));
+            throw new EngineException(sprintf('No column named %s found in table %s.', $column->getName(), $this->getName()));
         }
 
         unset($this->columns[$pos]);
-        unset($this->columnsByName[$col->getName()]);
-        unset($this->columnsByLowercaseName[strtolower($col->getName())]);
-        unset($this->columnsByPhpName[$col->getPhpName()]);
+        unset($this->columnsByName[$column->getName()]);
+        unset($this->columnsByLowercaseName[strtolower($column->getName())]);
+        unset($this->columnsByPhpName[$column->getPhpName()]);
+
         $this->adjustColumnPositions();
+
         // @FIXME: also remove indexes and validators on this column?
+    }
+
+    private function getColumnPosition(Column $column)
+    {
+        $position = false;
+        for ($pos = 0; $pos < $this->getNumColumns(); $pos++) {
+            if ($this->columns[$pos] === $column) {
+                $position = $pos;
+            }
+        }
+
+        return $position;
     }
 
     public function adjustColumnPositions()
@@ -731,8 +570,10 @@ class Table extends ScopedElement implements IdMethod
     }
 
     /**
-     * A utility function to create a new foreign key
-     * from attrib and add it to this table.
+     * Adds a new foreign key to this table.
+     *
+     * @param ForeignKey|array
+     * @return ForeignKey
      */
     public function addForeignKey($fkdata)
     {
@@ -740,10 +581,6 @@ class Table extends ScopedElement implements IdMethod
             $fk = $fkdata;
             $fk->setTable($this);
             $this->foreignKeys[] = $fk;
-
-            if (null === $this->foreignTableNames) {
-                $this->foreignTableNames = array();
-            }
 
             if (!in_array($fk->getForeignTableName(), $this->foreignTableNames)) {
                 $this->foreignTableNames[] = $fk->getForeignTableName();
@@ -760,9 +597,10 @@ class Table extends ScopedElement implements IdMethod
     }
 
     /**
-     * Gets the column that subclasses of the class representing this
+     * Returns the column that subclasses the class representing this
      * table can be produced from.
-     * @return    Column
+     *
+     * @return Column
      */
     public function getChildrenColumn()
     {
@@ -770,8 +608,9 @@ class Table extends ScopedElement implements IdMethod
     }
 
     /**
-     * Get the subclasses that can be created from this table.
-     * @return    array string[] Class names
+     * Returns the subclasses that can be created from this table.
+     *
+     * @return array
      */
     public function getChildrenNames()
     {
@@ -780,10 +619,9 @@ class Table extends ScopedElement implements IdMethod
             return null;
         }
 
-        $children = $this->inheritanceColumn->getChildren();
         $names = array();
-        for ($i = 0, $size = count($children); $i < $size; $i++) {
-            $names[] = get_class($children[$i]);
+        foreach ($this->inheritanceColumn->getChildren() as $child) {
+            $names[] = get_class($child);
         }
 
         return $names;
@@ -791,18 +629,18 @@ class Table extends ScopedElement implements IdMethod
 
     /**
      * Adds the foreign key from another table that refers to this table.
+     *
+     * @param ForeignKey $fk
      */
     public function addReferrer(ForeignKey $fk)
     {
-        if (null === $this->referrers) {
-            $this->referrers = array();
-        }
-
         $this->referrers[] = $fk;
     }
 
     /**
-     * Get list of references to this table.
+     * Returns the list of references to this table.
+     *
+     * @return array
      */
     public function getReferrers()
     {
@@ -814,13 +652,15 @@ class Table extends ScopedElement implements IdMethod
      * This method can be called several times on the same table. It only
      * adds the missing referrers and is non-destructive.
      * Warning: only use when all the tables were created.
+     *
+     * @param Boolean $throwErrors
      */
     public function setupReferrers($throwErrors = false)
     {
-        foreach ($this->getForeignKeys() as $foreignKey) {
+        foreach ($this->foreignKeys as $foreignKey) {
 
             // table referrers
-            $foreignTable = $this->getDatabase()->getTable($foreignKey->getForeignTableName());
+            $foreignTable = $this->database->getTable($foreignKey->getForeignTableName());
             if (null !== $foreignTable) {
                 $referrers = $foreignTable->getReferrers();
                 if (null === $referrers || !in_array($foreignKey, $referrers, true) ) {
@@ -877,19 +717,24 @@ class Table extends ScopedElement implements IdMethod
                 }
             }
 
-            if ($this->getDatabase()->getPlatform() instanceof MysqlPlatform) {
+            if ($this->getPlatform() instanceof MysqlPlatform) {
                 $this->addExtraIndices();
             }
         }
     }
 
+    /**
+     * Returns the list of cross foreign keys.
+     *
+     * @return array
+     */
     public function getCrossFks()
     {
         $crossFks = array();
-        foreach ($this->getReferrers() as $refFK) {
-            if ($refFK->getTable()->getIsCrossRef()) {
+        foreach ($this->referrers as $refFK) {
+            if ($refFK->getTable()->isCrossRef()) {
                 foreach ($refFK->getOtherFks() as $crossFK) {
-                    $crossFks[]= array($refFK, $crossFK);
+                    $crossFks[] = array($refFK, $crossFK);
                 }
             }
         }
@@ -898,7 +743,9 @@ class Table extends ScopedElement implements IdMethod
     }
 
     /**
-     * Set whether this table contains a foreign PK
+     * Sets whether or not this table contains a foreign primary key.
+     *
+     * @return Boolean
      */
     public function setContainsForeignPK($b)
     {
@@ -906,7 +753,9 @@ class Table extends ScopedElement implements IdMethod
     }
 
     /**
-     * Determine if this table contains a foreign PK
+     * Returns whether or not this table contains a foreign primary key.
+     *
+     * @return Boolean
      */
     public function getContainsForeignPK()
     {
@@ -914,19 +763,19 @@ class Table extends ScopedElement implements IdMethod
     }
 
     /**
-     * A list of tables referenced by foreign keys in this table
+     * Returns the list of tables referenced by foreign keys in this table.
+     *
+     * @return array
      */
     public function getForeignTableNames()
     {
-        if (null === $this->foreignTableNames) {
-            $this->foreignTableNames = array();
-        }
-
         return $this->foreignTableNames;
     }
 
     /**
-     * Return true if the column requires a transaction in Postgres
+     * Return true if the column requires a transaction in Postgres.
+     *
+     * @return Boolean
      */
     public function requiresTransactionInPostgres()
     {
@@ -934,57 +783,60 @@ class Table extends ScopedElement implements IdMethod
     }
 
     /**
-     * A utility function to create a new id method parameter
-     * from attrib or object and add it to this table.
+     * Adds a new parameter for the strategy that generates primary keys.
+     *
+     * @param IdMethodParameter $idMethodParameter
      */
-    public function addIdMethodParameter($impdata)
+    public function addIdMethodParameter($idMethodParameter)
     {
-        if ($impdata instanceof IdMethodParameter) {
-            $imp = $impdata;
-            $imp->setTable($this);
-            if (null === $this->idMethodParameters) {
-                $this->idMethodParameters = array();
-            }
-            $this->idMethodParameters[] = $imp;
+        if ($idMethodParameter instanceof IdMethodParameter) {
+            $idMethodParameter->setTable($this);
+            $this->idMethodParameters[] = $idMethodParameter;
 
-            return $imp;
+            return $idMethodParameter;
         }
 
         $imp = new IdMethodParameter();
-        $imp->loadFromXML($impdata);
+        $imp->setTable($this);
+        $imp->loadFromXML($idMethodParameter);
 
-        return $this->addIdMethodParameter($imp); // call self w/ diff param
+        return $this->addIdMethodParameter($imp);
     }
 
     /**
-     * Adds a new index to the index list and set the
-     * parent table of the column to the current table
+     * Adds a new index to the indices list and set the
+     * parent table of the column to the current table.
+     *
+     * @param Index $index
+     * @return Index
      */
-    public function addIndex($idxdata)
+    public function addIndex($index)
     {
-        if ($idxdata instanceof Index) {
-            $index = $idxdata;
+        if ($index instanceof Index) {
             $index->setTable($this);
-            $index->getName(); // we call this method so that the name is created now if it doesn't already exist.
+            // force the name to be created if empty.
+            $index->getName();
             $this->indices[] = $index;
 
             return $index;
         }
 
-        $index = new Index($this);
-        $index->loadFromXML($idxdata);
+        $idx = new Index();
+        $idx->loadFromXML($index);
 
-        return $this->addIndex($index);
+        return $this->addIndex($idx);
     }
 
     /**
-     * Adds a new Unique to the Unique list and set the
-     * parent table of the column to the current table
+     * Adds a new Unique index to the list of unique indices and set the
+     * parent table of the column to the current table.
+     *
+     * @param Unique $unique
+     * @return Unique
      */
-    public function addUnique($unqdata)
+    public function addUnique($unique)
     {
-        if ($unqdata instanceof Unique) {
-            $unique = $unqdata;
+        if ($unique instanceof Unique) {
             $unique->setTable($this);
             $unique->getName(); // we call this method so that the name is created now if it doesn't already exist.
             $this->unices[] = $unique;
@@ -992,25 +844,26 @@ class Table extends ScopedElement implements IdMethod
             return $unique;
         }
 
-        $unique = new Unique($this);
-        $unique->loadFromXML($unqdata);
+        $unik = new Unique();
+        $unik->loadFromXML($unique);
 
-        return $this->addUnique($unique);
+        return $this->addUnique($unik);
     }
 
     /**
      * Retrieves the configuration object, filled by build.properties
      *
-     * @return    GeneratorConfig
+     * @return GeneratorConfig
      */
     public function getGeneratorConfig()
     {
-        return $this->getDatabase()->getParentSchema()->getGeneratorConfig();
+        return $this->database->getParentSchema()->getGeneratorConfig();
     }
 
     /**
-     * Adds a new Behavior to the table
-     * @return    Behavior A behavior instance
+     * Adds a new Behavior to the table.
+     *
+     * @return Behavior $bdata
      */
     public function addBehavior($bdata)
     {
@@ -1030,28 +883,13 @@ class Table extends ScopedElement implements IdMethod
     }
 
     /**
-     * Get the table behaviors
-     * @return    Array of Behavior objects
+     * Returns the list of table behaviors.
+     *
+     * @return array
      */
     public function getBehaviors()
     {
         return $this->behaviors;
-    }
-
-    /**
-     * Get the early table behaviors
-     * @return    Array of Behavior objects
-     */
-    public function getEarlyBehaviors()
-    {
-        $behaviors = array();
-        foreach ($this->behaviors as $name => $behavior) {
-            if ($behavior->isEarly()) {
-                $behaviors[$name] = $behavior;
-            }
-        }
-
-        return $behaviors;
     }
 
     /**
@@ -1077,14 +915,13 @@ class Table extends ScopedElement implements IdMethod
     }
 
     /**
-     * Check whether one of the table behaviors offer an additional builder
+     * Returns whether or not the table behaviors offer additional builders.
      *
-     * @return Boolean true in the table has at least one behavior
-     *                with an additional builder, false otherwise
+     * @return Boolean
      */
     public function hasAdditionalBuilders()
     {
-        foreach ($this->getBehaviors() as $behavior) {
+        foreach ($this->behaviors as $behavior) {
             if ($behavior->hasAdditionalBuilders()) {
                 return true;
             }
@@ -1094,14 +931,30 @@ class Table extends ScopedElement implements IdMethod
     }
 
     /**
-     * Get the additional builders provided by the table behaviors
+     * Get the early table behaviors
+     * @return    Array of Behavior objects
+     */
+    public function getEarlyBehaviors()
+    {
+        $behaviors = array();
+        foreach ($this->behaviors as $name => $behavior) {
+            if ($behavior->isEarly()) {
+                $behaviors[$name] = $behavior;
+            }
+        }
+
+        return $behaviors;
+    }
+
+    /**
+     * Returns the list of additional builders provided by the table behaviors.
      *
-     * @return array list of builder class names
+     * @return array
      */
     public function getAdditionalBuilders()
     {
         $additionalBuilders = array();
-        foreach ($this->getBehaviors() as $behavior) {
+        foreach ($this->behaviors as $behavior) {
             $additionalBuilders = array_merge($additionalBuilders, $behavior->getAdditionalBuilders());
         }
 
@@ -1109,7 +962,9 @@ class Table extends ScopedElement implements IdMethod
     }
 
     /**
-     * Get the name of the Table
+     * Returns the full table name (including schema name when possible).
+     *
+     * @return string
      */
     public function getName()
     {
@@ -1125,7 +980,9 @@ class Table extends ScopedElement implements IdMethod
     }
 
     /**
-     * Get the description for the Table
+     * Returns the table description.
+     *
+     * @return string
      */
     public function getDescription()
     {
@@ -1133,26 +990,30 @@ class Table extends ScopedElement implements IdMethod
     }
 
     /**
-     * Whether the Table has a description
+     * Returns whether or not the table has a description.
+     *
+     * @return Boolean
      */
     public function hasDescription()
     {
-        return (bool) $this->description;
+        return !empty($this->description);
     }
 
     /**
-     * Set the description for the Table
+     * Sets the table description.
      *
-     * @param     newDescription description for the Table
+     * @param string $description
      */
-    public function setDescription($newDescription)
+    public function setDescription($description)
     {
-        $this->description = $newDescription;
+        $this->description = $description;
     }
 
     /**
-     * Get name to use in PHP sources
-     * @return    string
+     * Returns the name to use in PHP sources.
+     *
+     * @return string
+     * @throws EngineException
      */
     public function getPhpName()
     {
@@ -1160,52 +1021,49 @@ class Table extends ScopedElement implements IdMethod
             $inputs = array();
             $inputs[] = $this->getStdSeparatedName();
             $inputs[] = $this->phpNamingMethod;
-            try {
-                $this->phpName = NameFactory::generateName(NameFactory::PHP_GENERATOR, $inputs);
-            } catch (EngineException $e) {
-                // @TODO remove these print statements?
-                print $e->getMessage() . "\n";
-                print $e->getTraceAsString();
-            }
+
+            $this->phpName = NameFactory::generateName(NameFactory::PHP_GENERATOR, $inputs);
         }
 
         return $this->phpName;
     }
 
     /**
-     * Set name to use in PHP sources
-     * @param     string $phpName
+     * Sets the name to use in PHP sources.
+     *
+     * @param string $phpName
      */
     public function setPhpName($phpName)
     {
         $this->phpName = $phpName;
     }
 
-    public function buildPhpName($name)
+    /**
+     * Returns the auto generated PHP name value for a given name.
+     *
+     * @param string $name
+     */
+    private function buildPhpName($name)
     {
         return NameFactory::generateName(NameFactory::PHP_GENERATOR, array($name, $this->phpNamingMethod));
     }
 
     /**
-     * Get studly version of PHP name.
+     * Returns the studly version of PHP name.
      *
      * The studly name is the PHP name with the first character lowercase.
      *
-     * @return    string
+     * @return string
      */
     public function getStudlyPhpName()
     {
-        $phpname = $this->getPhpName();
-        if (strlen($phpname) > 1) {
-            return strtolower(substr($phpname, 0, 1)) . substr($phpname, 1);
-        }
-
-        // 0 or 1 chars (I suppose that's rare)
-        return strtolower($phpname);
+        return lcfirst($this->getPhpName());
     }
 
     /**
-     * Get the name without schema
+     * Returns the common name (without schema name).
+     *
+     * @return string
      */
     public function getCommonName()
     {
@@ -1213,67 +1071,78 @@ class Table extends ScopedElement implements IdMethod
     }
 
     /**
-     * Set the common name of the table (without schema)
-     */
-    public function setCommonName($v)
-    {
-        $this->commonName = $v;
-    }
-
-    /**
-     * Set the default string format for ActiveRecord objects in this Table.
+     * Sets the table common name (without schema name).
      *
-     * @param      string $defaultStringFormat Any of 'XML', 'YAML', 'JSON', or 'CSV'
+     * @param string $name
      */
-    public function setDefaultStringFormat($defaultStringFormat)
+    public function setCommonName($name)
     {
-        $this->defaultStringFormat = $defaultStringFormat;
+        $this->commonName = $name;
     }
 
     /**
-     * Get the default string format for ActiveRecord objects in this Table,
+     * Sets the default string format for ActiveRecord objects in this table.
+     *
+     * Any of 'XML', 'YAML', 'JSON', or 'CSV'.
+     *
+     * @param string $format
+     * @throws InvalidArgumentException
+     */
+    public function setDefaultStringFormat($format)
+    {
+        $formats = Database::getSupportedStringFormats();
+
+        $format = strtoupper($format);
+        if (!in_array($format, $formats)) {
+            throw new InvalidArgumentException(sprintf('Given "%s" default string format is not supported. Only "%s" are valid string formats.', $format, implode(', ', $formats)));
+        }
+
+        $this->defaultStringFormat = $format;
+    }
+
+    /**
+     * Returns the default string format for ActiveRecord objects in this table,
      * or the one for the whole database if not set.
      *
-     * @return     string The default string representation
+     * @return string
      */
     public function getDefaultStringFormat()
     {
-        if (!$this->defaultStringFormat
-            && $this->getDatabase()
-            && $this->getDatabase()->getDefaultStringFormat()
-        ) {
-            return $this->getDatabase()->getDefaultStringFormat();
+        if (null !== $this->defaultStringFormat) {
+            return $this->defaultStringFormat;
         }
 
-        return $this->defaultStringFormat;
+        return $this->database->getDefaultStringFormat();
     }
 
     /**
-     * Get the method for generating pk's
+     * Returns the method strateg for generating primary keys.
+     *
      * [HL] changing behavior so that Database default method is returned
      * if no method has been specified for the table.
      *
-     * @return    string
+     * @return string
      */
     public function getIdMethod()
     {
-        return null === $this->idMethod ? IdMethod::NO_ID_METHOD : $this->idMethod;
+        return $this->idMethod;
     }
 
     /**
-     * Whether we allow to insert primary keys on tables with
-     * idMethod=native
+     * Returns whether we allow to insert primary keys on tables with
+     * native id method.
      *
-     * @return    Boolean
+     * @return Boolean
      */
     public function isAllowPkInsert()
     {
         return $this->allowPkInsert;
     }
 
-
     /**
-     * Set the method for generating pk's
+     * Sets the method strategy for generating primary keys.
+     *
+     * @param string $idMethod
      */
     public function setIdMethod($idMethod)
     {
@@ -1281,9 +1150,10 @@ class Table extends ScopedElement implements IdMethod
     }
 
     /**
-     * Skip generating sql for this table (in the event it should
-     * not be created from scratch).
-     * @return    Boolean Value of skipSql.
+     * Returns whether or not Propel has to skip DDL SQL generation for this
+     * table (in the event it should not be created from scratch).
+     *
+     * @return Boolean
      */
     public function isSkipSql()
     {
@@ -1291,22 +1161,24 @@ class Table extends ScopedElement implements IdMethod
     }
 
     /**
-     * Is table read-only, in which case only accessors (and relationship setters)
-     * will be created.
-     * @return    boolan Value of readOnly.
+     * Sets whether or not this table should have its SQL DDL code generated.
+     *
+     * @param Boolean $skip
+     */
+    public function setSkipSql($skip)
+    {
+        $this->skipSql = (Boolean) $skip;
+    }
+
+    /**
+     * Returns whether or not this table is read-only. If yes, only only
+     * accessors and relationship accessors and mutators will be generated.
+     *
+     * @return Boolan
      */
     public function isReadOnly()
     {
         return $this->readOnly;
-    }
-
-    /**
-     * Set whether this table should have its creation sql generated.
-     * @param     Boolean $v Value to assign to skipSql.
-     */
-    public function setSkipSql($v)
-    {
-        $this->skipSql = (Boolean) $v;
     }
 
     /**
@@ -1319,8 +1191,9 @@ class Table extends ScopedElement implements IdMethod
     }
 
     /**
-     * Whether to force object to reload on UPDATE.
-     * @return    Boolean
+     * Returns whether or not to force object to reload on UPDATE.
+     *
+     * @return Boolean
      */
     public function isReloadOnUpdate()
     {
@@ -1328,8 +1201,9 @@ class Table extends ScopedElement implements IdMethod
     }
 
     /**
-     * PhpName of om object this entry references.
-     * @return    value of external.
+     * Returns the PHP name of an active record object this entry references.
+     *
+     * @return string
      */
     public function getAlias()
     {
@@ -1337,9 +1211,10 @@ class Table extends ScopedElement implements IdMethod
     }
 
     /**
-     * Is this table specified in the schema or is there just
-     * a foreign key reference to it.
-     * @return    value of external.
+     * Returns whether or not this table is specified in the schema or if there
+     * is just a foreign key reference to it.
+     *
+     * @return Boolean
      */
     public function isAlias()
     {
@@ -1347,19 +1222,20 @@ class Table extends ScopedElement implements IdMethod
     }
 
     /**
-     * Set whether this table specified in the schema or is there just
-     * a foreign key reference to it.
-     * @param     v	Value to assign to alias.
+     * Sets whether or not this table is specified in the schema or if there is
+     * just a foreign key reference to it.
+     *
+     * @param string $alias
      */
-    public function setAlias($v)
+    public function setAlias($alias)
     {
-        $this->alias = $v;
+        $this->alias = $alias;
     }
 
-
     /**
-     * Interface which objects for this table will implement
-     * @return    value of interface.
+     * Returns the interface objects of this table will implement.
+     *
+     * @return string
      */
     public function getInterface()
     {
@@ -1367,44 +1243,45 @@ class Table extends ScopedElement implements IdMethod
     }
 
     /**
-     * Interface which objects for this table will implement
-     * @param     v	Value to assign to interface.
+     * Sets the interface objects of this table will implement.
+     *
+     * @param string $interface
      */
-    public function setInterface($v)
+    public function setInterface($interface)
     {
-        $this->interface = $v;
+        $this->interface = $interface;
     }
 
     /**
-     * When a table is abstract, it marks the business object class that is
-     * generated as being abstract. If you have a table called "FOO", then the
-     * Foo BO will be <code>public abstract class Foo</code>
-     * This helps support class hierarchies
+     * Returns whether or not a table is abstract, it marks the business object
+     * class that is generated as being abstract. If you have a table called
+     * "FOO", then the Foo business object class will be declared abstract. This
+     * helps support class hierarchies
      *
-     * @return    value of abstractValue.
+     * @return Boolean
      */
     public function isAbstract()
     {
-        return $this->abstractValue;
+        return $this->isAbstract;
     }
 
     /**
-     * When a table is abstract, it marks the business object
+     * Sets whether or not a table is abstract, it marks the business object
      * class that is generated as being abstract. If you have a
-     * table called "FOO", then the Foo BO will be
-     * <code>public abstract class Foo</code>
-     * This helps support class hierarchies
+     * table called "FOO", then the Foo business object class will be
+     * declared abstract. This helps support class hierarchies
      *
-     * @param     v	Value to assign to abstractValue.
+     * @param Boolean $isAbstract
      */
-    public function setAbstract($v)
+    public function setAbstract($isAbstract)
     {
-        $this->abstractValue = (Boolean) $v;
+        $this->isAbstract = (Boolean) $isAbstract;
     }
 
     /**
-     * Returns an Array containing all the columns in the table
-     * @return    array Column[]
+     * Returns an array containing all Column objects in the table.
+     *
+     * @return array
      */
     public function getColumns()
     {
@@ -1412,7 +1289,9 @@ class Table extends ScopedElement implements IdMethod
     }
 
     /**
-     * Utility method to get the number of columns in this table
+     * Returns the number of columns in this table.
+     *
+     * @return integer
      */
     public function getNumColumns()
     {
@@ -1420,7 +1299,9 @@ class Table extends ScopedElement implements IdMethod
     }
 
     /**
-     * Utility method to get the number of columns in this table
+     * Returns the number of lazy loaded columns in this table.
+     *
+     * @return integer
      */
     public function getNumLazyLoadColumns()
     {
@@ -1435,12 +1316,13 @@ class Table extends ScopedElement implements IdMethod
     }
 
     /**
-     * Checks whether one of the columns is of type ENUM
+     * Returns whether or not one of the columns is of type ENUM.
+     *
      * @return Boolean
      */
     public function hasEnumColumns()
     {
-        foreach ($this->getColumns() as $col) {
+        foreach ($this->columns as $col) {
             if ($col->isEnumType()) {
                 return true;
             }
@@ -1450,8 +1332,9 @@ class Table extends ScopedElement implements IdMethod
     }
 
     /**
-     * Returns an Array containing all the FKs in the table.
-     * @return    array ForeignKey[]
+     * Returns the list of all foreign keys.
+     *
+     * @return array
      */
     public function getForeignKeys()
     {
@@ -1468,8 +1351,9 @@ class Table extends ScopedElement implements IdMethod
     }
 
     /**
-     * Returns an Array containing all the FKs in the table
-     * @return    array Index[]
+     * Returns the list of all indices of this table.
+     *
+     * @return array
      */
     public function getIndices()
     {
@@ -1477,8 +1361,9 @@ class Table extends ScopedElement implements IdMethod
     }
 
     /**
-     * Returns an Array containing all the UKs in the table
-     * @return    array Unique[]
+     * Returns the list of all unique indices of this table.
+     *
+     * @return array
      */
     public function getUnices()
     {
@@ -1486,31 +1371,31 @@ class Table extends ScopedElement implements IdMethod
     }
 
     /**
-     * Check whether the table has a column.
-     * @param      Column|string $col the column object or name (e.g. 'my_column')
-     * @param      Boolean $caseInsensitive Whether the check is case insensitive. False by default.
+     * Returns whether or not the table has a column.
      *
-     * @return     Boolean
+     * @param  Column|string $column The Column object or its name
+     * @param  Boolean $caseInsensitive Whether the check is case insensitive.
+     * @return Boolean
      */
-    public function hasColumn($col, $caseInsensitive = false)
+    public function hasColumn($column, $caseInsensitive = false)
     {
-        if ($col instanceof Column) {
-            $col = $col->getName();
+        if ($column instanceof Column) {
+            $column = $column->getName();
         }
 
         if ($caseInsensitive) {
-            return isset($this->columnsByLowercaseName[strtolower($col)]);
+            return isset($this->columnsByLowercaseName[strtolower($column)]);
         }
 
-        return isset($this->columnsByName[$col]);
+        return isset($this->columnsByName[$column]);
     }
 
     /**
-     * Return the column with the specified name.
-     * @param      string $name The name of the column (e.g. 'my_column')
-     * @param      Boolean $caseInsensitive Whether the check is case insensitive. False by default.
+     * Returns the Column object with the specified name.
      *
-     * @return     Column a Column object or null if it doesn't exist
+     * @param  string $name The name of the column (e.g. 'my_column')
+     * @param  Boolean $caseInsensitive Whether the check is case insensitive.
+     * @return Column
      */
     public function getColumn($name, $caseInsensitive = false)
     {
@@ -1526,8 +1411,10 @@ class Table extends ScopedElement implements IdMethod
     }
 
     /**
-     * Returns a specified column.
-     * @return    Column Return a Column object or null if it does not exist.
+     * Returns a specified column by its php name.
+     *
+     * @param string $phpName
+     * @return Column
      */
     public function getColumnByPhpName($phpName)
     {
@@ -1535,19 +1422,21 @@ class Table extends ScopedElement implements IdMethod
             return $this->columnsByPhpName[$phpName];
         }
 
-        return null; // just to be explicit
+        return null;
     }
 
     /**
-     * Get all the foreign keys from this table to the specified table.
-     * @return    array ForeignKey[]
+     * Returns all foreign keys from this table that reference the table passed
+     * in argument.
+     *
+     * @param string $tableName
+     * @return array
      */
-    public function getForeignKeysReferencingTable($tablename)
+    public function getForeignKeysReferencingTable($tableName)
     {
         $matches = array();
-        $keys = $this->getForeignKeys();
-        foreach ($keys as $fk) {
-            if ($fk->getForeignTableName() === $tablename) {
+        foreach ($this->foreignKeys as $fk) {
+            if ($fk->getForeignTableName() === $tableName) {
                 $matches[] = $fk;
             }
         }
@@ -1556,16 +1445,20 @@ class Table extends ScopedElement implements IdMethod
     }
 
     /**
-     * Return the foreign keys that includes col in it's list of local columns.
-     * Eg. Foreign key (a,b,c) refrences tbl(x,y,z) will be returned of col is either a,b or c.
-     * @param     string $col
-     * @return    array ForeignKey[] or null if there is no FK for specified column.
+     * Returns the foreign keys that include column in it's list of local
+     * columns.
+     * 
+     * Eg. Foreign key (a, b, c) refrences tbl(x, y, z) will be returned of col
+     * is either a, b or c.
+     *
+     * @param string $column Name of the column
+     * @return array
      */
-    public function getColumnForeignKeys($colname)
+    public function getColumnForeignKeys($column)
     {
         $matches = array();
         foreach ($this->foreignKeys as $fk) {
-            if (in_array($colname, $fk->getLocalColumns())) {
+            if (in_array($column, $fk->getLocalColumns())) {
                 $matches[] = $fk;
             }
         }
@@ -1576,17 +1469,17 @@ class Table extends ScopedElement implements IdMethod
     /**
      * Set the database that contains this table.
      *
-     * @param     Database $db
+     * @param Database $database
      */
-    public function setDatabase(Database $db)
+    public function setDatabase(Database $database)
     {
-        $this->database = $db;
+        $this->database = $database;
     }
 
     /**
      * Get the database that contains this table.
      *
-     * @return    Database
+     * @return Database
      */
     public function getDatabase()
     {
@@ -1594,9 +1487,21 @@ class Table extends ScopedElement implements IdMethod
     }
 
     /**
-     * Flag to determine if code/sql gets created for this table.
+     * Returns the Database platform.
+     *
+     * @return PlatformInterface
+     */
+    public function getPlatform()
+    {
+        return $this->database ? $this->database->getPlatform() : null;
+    }
+
+    /**
+     * Returns whether or not code and SQL must be created for this table.
+     *
      * Table will be skipped, if return true.
-     * @return    Boolean
+     *
+     * @return Boolean
      */
     public function isForReferenceOnly()
     {
@@ -1604,7 +1509,7 @@ class Table extends ScopedElement implements IdMethod
     }
 
     /**
-     * Flag to determine if code/sql gets created for this table.
+     * Returns whether or not to determine if code/sql gets created for this table.
      * Table will be skipped, if set to true.
      * @param     Boolean $v
      */
@@ -1616,7 +1521,7 @@ class Table extends ScopedElement implements IdMethod
     /**
      * Appends XML nodes to passed-in DOMNode.
      *
-     * @param     DOMNode $node
+     * @param \DOMNode $node
      */
     public function appendXml(\DOMNode $node)
     {
@@ -1625,70 +1530,69 @@ class Table extends ScopedElement implements IdMethod
         $tableNode = $node->appendChild($doc->createElement('table'));
         $tableNode->setAttribute('name', $this->getCommonName());
 
-        if (null !== $this->getSchema()) {
+        if ($this->getSchema()) {
             $tableNode->setAttribute('schema', $this->getSchema());
         }
 
-        if (null !== $this->phpName) {
+        if (null !== $this->getPhpName()) {
             $tableNode->setAttribute('phpName', $this->phpName);
         }
 
-        if (null !== $this->idMethod) {
+        if (IdMethod::NO_ID_METHOD !== $this->idMethod) {
             $tableNode->setAttribute('idMethod', $this->idMethod);
         }
 
-        if (null !== $this->skipSql) {
-            $tableNode->setAttribute('idMethod', var_export($this->skipSql, true));
+        if ($this->skipSql) {
+            $tableNode->setAttribute('skipSql', 'true');
         }
 
-        if (null !== $this->readOnly) {
-            $tableNode->setAttribute('readOnly', var_export($this->readOnly, true));
+        if ($this->readOnly) {
+            $tableNode->setAttribute('readOnly', 'true');
         }
 
-        if (null !== $this->reloadOnInsert) {
-            $tableNode->setAttribute('reloadOnInsert', var_export($this->reloadOnInsert, true));
+        if ($this->reloadOnInsert) {
+            $tableNode->setAttribute('reloadOnInsert', 'true');
         }
 
-        if (null !== $this->reloadOnUpdate) {
-            $tableNode->setAttribute('reloadOnUpdate', var_export($this->reloadOnUpdate, true));
+        if ($this->reloadOnUpdate) {
+            $tableNode->setAttribute('reloadOnUpdate', 'true');
         }
 
         if (null !== $this->forReferenceOnly) {
-            $tableNode->setAttribute('forReferenceOnly', var_export($this->forReferenceOnly, true));
+            $tableNode->setAttribute('forReferenceOnly', $this->forReferenceOnly ? 'true' : 'false');
         }
 
-        if (null !== $this->abstractValue) {
-            $tableNode->setAttribute('abstract', var_export($this->abstractValue, true));
+        if ($this->isAbstract) {
+            $tableNode->setAttribute('abstract', 'true');
         }
 
-        if (null !== $this->interface) {
+        if ($this->interface) {
             $tableNode->setAttribute('interface', $this->interface);
         }
 
-        if (null !== $this->description) {
+        if ($this->description) {
             $tableNode->setAttribute('description', $this->description);
         }
 
-        if (null !== $this->namespace) {
+        if ($this->namespace) {
             $tableNode->setAttribute('namespace', $this->namespace);
         }
 
-        if (null !== $this->pkg && !$this->pkgOverridden) {
-            $tableNode->setAttribute('package', $this->pkg);
+        if ($this->package && !$this->pkgOverridden) {
+            $tableNode->setAttribute('package', $this->package);
         }
 
-        if (null !== $this->baseClass) {
+        if ($this->baseClass) {
             $tableNode->setAttribute('baseClass', $this->baseClass);
         }
 
-        if (null !== $this->basePeer) {
+        if ($this->basePeer) {
             $tableNode->setAttribute('basePeer', $this->basePeer);
         }
 
-        if ($this->getIsCrossRef()) {
-            $tableNode->setAttribute('isCrossRef', $this->getIsCrossRef());
+        if ($this->isCrossRef) {
+            $tableNode->setAttribute('isCrossRef', 'true');
         }
-
 
         foreach ($this->columns as $col) {
             $col->appendXml($tableNode);
@@ -1719,7 +1623,7 @@ class Table extends ScopedElement implements IdMethod
      * Returns the collection of Columns which make up the single primary
      * key for this table.
      *
-     * @return    array Column[] A list of the primary key parts.
+     * @return array
      */
     public function getPrimaryKey()
     {
@@ -1734,9 +1638,9 @@ class Table extends ScopedElement implements IdMethod
     }
 
     /**
-     * Determine whether this table has a primary key.
+     * Returns whether or not this table has a primary key.
      *
-     * @return    Boolean Whether this table has any primary key parts.
+     * @return Boolean
      */
     public function hasPrimaryKey()
     {
@@ -1744,9 +1648,9 @@ class Table extends ScopedElement implements IdMethod
     }
 
     /**
-     * Determine whether this table has a composite primary key.
+     * Returns whether or not this table has a composite primary key.
      *
-     * @return    Boolean Whether this table has more than one primary key parts.
+     * @return Boolean
      */
     public function hasCompositePrimaryKey()
     {
@@ -1754,8 +1658,11 @@ class Table extends ScopedElement implements IdMethod
     }
 
     /**
-     * Get the first column of the primary key.
+     * Returns the first primary key column.
+     * 
      * Useful for tables with a PK using a single column.
+     *
+     * @return Column
      */
     public function getFirstPrimaryKeyColumn()
     {
@@ -1767,27 +1674,19 @@ class Table extends ScopedElement implements IdMethod
     }
 
     /**
-     * Determine whether this table has any auto-increment primary key(s).
+     * Returns whether or not this table has any auto-increment primary keys.
      *
-     * @return    Boolean Whether this table has a non-"none" id method and has a primary key column that is auto-increment.
+     * @return Boolean
      */
     public function hasAutoIncrementPrimaryKey()
     {
-        if (IdMethod::NO_ID_METHOD !== $this->getIdMethod()) {
-            foreach ($this->getPrimaryKey() as $pk) {
-                if ($pk->isAutoIncrement()) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
+        return null !== $this->getAutoIncrementPrimaryKey();
     }
 
     /**
-     * Gets the auto increment PK
+     * Returns the auto incremented primary key.
      *
-     * @return   Column if any auto increment PK column
+     * @return Column
      */
     public function getAutoIncrementPrimaryKey()
     {
@@ -1798,24 +1697,13 @@ class Table extends ScopedElement implements IdMethod
                 }
             }
         }
-
-        return null;
     }
 
     /**
-     * Returns all parts of the primary key, separated by commas.
+     * Returns whether or not there is a cross reference status for this foreign
+     * key.
      *
-     * @return    A CSV list of primary key parts.
-     * @deprecated Use the Platform::getColumnListDDL() with the #getPrimaryKey() method.
-     */
-    public function printPrimaryKey()
-    {
-        return $this->printList($this->columns);
-    }
-
-    /**
-     * Gets the crossRef status for this foreign key
-     * @return    Boolean
+     * @return Boolean
      */
     public function getIsCrossRef()
     {
@@ -1823,8 +1711,19 @@ class Table extends ScopedElement implements IdMethod
     }
 
     /**
-     * Sets a crossref status for this foreign key.
-     * @param     Boolean $isCrossRef
+     * Alias for Table::getIsCrossRef.
+     *
+     * @return Boolean
+     */
+    public function isCrossRef()
+    {
+        return $this->isCrossRef;
+    }
+
+    /**
+     * Sets a cross reference status for this foreign key.
+     *
+     * @param Boolean $isCrossRef
      */
     public function setIsCrossRef($isCrossRef)
     {
@@ -1832,36 +1731,18 @@ class Table extends ScopedElement implements IdMethod
     }
 
     /**
-     * Returns the elements of the list, separated by commas.
-     * @param     array $list
-     * @return    A CSV list.
-     * @deprecated Use the Platform::getColumnListDDL() method.
-     */
-    private function printList($list)
-    {
-        $result = '';
-        $comma  = 0;
-        for ($i = 0, $_i = count($list); $i < $_i; $i++) {
-            $col = $list[$i];
-            if ($col->isPrimaryKey()) {
-                $result .= ($comma++ ? ',' : '') . $this->getDatabase()->getPlatform()->quoteIdentifier($col->getName());
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * Returns whether the table has foreign keys or not.
+     * Returns whether or not the table has foreign keys.
+     *
      * @return Boolean
      */
     public function hasForeignKeys()
     {
-        return 0 !== count($this->getForeignKeys());
+        return 0 !== count($this->foreignKeys);
     }
 
     /**
      * Returns whether the table has cross foreign keys or not.
+     *
      * @return Boolean
      */
     public function hasCrossForeignKeys()
