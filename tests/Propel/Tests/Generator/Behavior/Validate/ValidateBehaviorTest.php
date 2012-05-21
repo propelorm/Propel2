@@ -12,7 +12,6 @@ namespace Propel\Tests\Generator\Behavior\Validate;
 
 use Propel\Generator\Behavior\Validate\ValidateBehavior;
 use Propel\Generator\Util\QuickBuilder;
-use Propel\Runtime\Propel;
 use Propel\Tests\Bookstore\Behavior\ValidateAuthor;
 use Propel\Tests\Bookstore\Behavior\ValidateBook;
 use Propel\Tests\Bookstore\Behavior\ValidateBookReader;

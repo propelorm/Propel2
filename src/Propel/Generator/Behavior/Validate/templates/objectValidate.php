@@ -20,7 +20,7 @@ public function validate(Validator $validator = null)
 
 <?php if ($hasForeignKeys) : ?>
         // We call the validate method on the following object(s) if they
-        // were passed to this object by their coresponding set
+        // were passed to this object by their corresponding set
         // method.  This object relates to these object(s) by a
         // foreign key reference.
 

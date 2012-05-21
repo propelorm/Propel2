@@ -17,6 +17,10 @@ class UniqueValidator extends ConstraintValidator
 {
     public function isValid($value, Constraint $constraint)
     {
+        if (null === $value) {
+            return false;
+        }
+
         $object     = $this->context->getRoot();
         $peer       = $object->getPeer();
         $className  = get_class($object);

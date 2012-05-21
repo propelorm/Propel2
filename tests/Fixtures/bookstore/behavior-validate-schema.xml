@@ -4,7 +4,7 @@
     <table name="validate_book" description="Book Table">
         <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" description="Book Id" />
         <column name="title" type="VARCHAR" required="true" description="Book Title" primaryString="true" />
-        <column name="isbn" type="VARCHAR" size="24" phpName="ISBN" description="ISBN Number" primaryString="false" />
+        <column name="isbn" type="VARCHAR" size="24" description="ISBN Number" primaryString="false" />
         <column name="price" required="false" type="FLOAT" description="Price of the book." />
         <column name="publisher_id" required="false" type="INTEGER" description="Foreign Key Publisher" />
         <column name="author_id" required="false" type="INTEGER" description="Foreign Key Author" />
@@ -17,6 +17,7 @@
         <behavior name="validate">
             <parameter name="rule1" value="{column: title, validator: NotNull}" />
             <parameter name="rule2" value="{column: isbn, validator: Regex, options: {pattern: &quot;/[^\d-]+/&quot;, match: false, message: Please enter a valid ISBN }}" />
+            <parameter name="rule3" value="{column: isbn, validator: Unique, options: {message: Column isbn must be unique}}" />
         </behavior>
     </table>
 
@@ -26,8 +27,8 @@
         <column name="website" type="VARCHAR" description="Publisher's web site" />
         <behavior name="validate">
             <parameter name="rule1" value="{column: name, validator: NotNull}" />
-            <parameter name="rule2" value="{column: website, validator: Url}" />
-            <parameter name="rule3" value="{column: name, validator: Unique}" />
+            <parameter name="rule2" value="{column: name, validator: Unique}" />
+            <parameter name="rule3" value="{column: website, validator: Url}" />
         </behavior>
     </table>
 
