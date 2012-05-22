@@ -19,7 +19,7 @@ use Propel\Runtime\Util\BasePeer;
 /**
  * Class for iterating over a statement and returning one Propel object at a time
  *
- * @author     Francois Zaninotto
+ * @author Francois Zaninotto
  */
 class OnDemandCollection extends Collection
 {

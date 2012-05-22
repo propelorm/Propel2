@@ -15,7 +15,7 @@ use Symfony\Component\Yaml\Yaml;
 /**
  * YAML parser. Converts data between associative array and YAML formats
  *
- * @author     Francois Zaninotto
+ * @author Francois Zaninotto
  */
 class YamlParser extends AbstractParser
 {

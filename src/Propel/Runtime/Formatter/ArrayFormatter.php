@@ -17,7 +17,7 @@ use Propel\Runtime\Connection\StatementInterface;
  * Array formatter for Propel query
  * format() returns a ArrayCollection of associative arrays
  *
- * @author     Francois Zaninotto
+ * @author Francois Zaninotto
  */
 class ArrayFormatter extends AbstractFormatter
 {

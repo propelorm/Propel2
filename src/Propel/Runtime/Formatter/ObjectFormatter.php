@@ -17,7 +17,7 @@ use Propel\Runtime\Connection\StatementInterface;
  * Object formatter for Propel query
  * format() returns a ObjectCollection of Propel model objects
  *
- * @author     Francois Zaninotto
+ * @author Francois Zaninotto
  */
 class ObjectFormatter extends AbstractFormatter
 {

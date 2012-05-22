@@ -18,7 +18,7 @@ use Propel\Generator\Behavior\Validate\ValidateBehavior;
 /**
  * Allows translation of text columns through transparent one-to-many relationship
  *
- * @author    Francois Zaninotto
+ * @author Francois Zaninotto
  * @version        $Revision$
  */
 class I18nBehavior extends Behavior

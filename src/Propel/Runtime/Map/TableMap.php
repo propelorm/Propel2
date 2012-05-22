@@ -23,9 +23,9 @@ use Propel\Runtime\Map\Exception\RelationNotFoundException;
  * propel.engine.database.model classes, which are build-time modeling classes.
  * These classes in themselves do not do any database metadata lookups.
  *
- * @author     Hans Lellelid <hans@xmpl.org> (Propel)
- * @author     John D. McNally <jmcnally@collab.net> (Torque)
- * @author     Daniel Rall <dlr@finemaltcoding.com> (Torque)
+ * @author Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author John D. McNally <jmcnally@collab.net> (Torque)
+ * @author Daniel Rall <dlr@finemaltcoding.com> (Torque)
  */
 class TableMap
 {

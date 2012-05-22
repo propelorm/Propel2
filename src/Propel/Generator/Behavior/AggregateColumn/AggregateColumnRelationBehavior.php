@@ -15,7 +15,7 @@ use Propel\Generator\Model\Behavior;
 /**
  * Keeps an aggregate column updated with related table
  *
- * @author     François Zaninotto
+ * @author François Zaninotto
  */
 class AggregateColumnRelationBehavior extends Behavior
 {

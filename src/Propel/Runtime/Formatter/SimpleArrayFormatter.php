@@ -18,7 +18,7 @@ use Propel\Runtime\Exception\PropelException;
  * format() returns a ArrayCollection of associative arrays, a string,
  * or an array
  *
- * @author     Benjamin Runnels
+ * @author Benjamin Runnels
  */
 class SimpleArrayFormatter extends AbstractFormatter
 {

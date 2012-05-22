@@ -16,7 +16,7 @@ use Propel\Generator\Model\ForeignKey;
 /**
  * Gives a model class the ability to delegate methods to a relationship.
  *
- * @author     François Zaninotto
+ * @author François Zaninotto
  */
 class DelegateBehavior extends Behavior
 {

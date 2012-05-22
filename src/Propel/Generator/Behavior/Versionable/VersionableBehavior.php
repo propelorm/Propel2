@@ -16,7 +16,7 @@ use Propel\Generator\Model\ForeignKey;
 /**
  * Keeps tracks of all the modifications in an ActiveRecord object
  *
- * @author    Francois Zaninotto
+ * @author Francois Zaninotto
  * @version   $Revision$
  * @package   propel.generator.behavior.versionable
  */

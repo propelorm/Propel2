@@ -16,7 +16,7 @@ use Propel\Runtime\Map\TableMap;
 /**
  * A ModelJoin is a Join object tied to a RelationMap object
  *
- * @author     Francois Zaninotto (Propel)
+ * @author Francois Zaninotto (Propel)
  */
 class ModelJoin extends Join
 {

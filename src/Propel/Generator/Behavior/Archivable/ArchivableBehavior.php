@@ -17,7 +17,7 @@ use Propel\Generator\Model\Index;
 /**
  * Keeps tracks of an ActiveRecord object, even after deletion
  *
- * @author    Francois Zaninotto
+ * @author Francois Zaninotto
  */
 class ArchivableBehavior extends Behavior
 {

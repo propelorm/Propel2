@@ -19,7 +19,7 @@ use Propel\Generator\Reverse\AbstractSchemaParser;
 /**
  * SQLite database schema parser.
  *
- * @author     Hans Lellelid <hans@xmpl.org>
+ * @author Hans Lellelid <hans@xmpl.org>
  */
 class SqliteSchemaParser extends AbstractSchemaParser
 {

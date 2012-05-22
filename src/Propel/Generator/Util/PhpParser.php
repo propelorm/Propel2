@@ -27,7 +27,7 @@ if (!defined('T_ML_COMMENT')) {
  * file_put_contents($fileName, $parser->getCode());
  * </code>
  *
- * @author     François Zaninotto
+ * @author François Zaninotto
  */
 class PhpParser
 {

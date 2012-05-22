@@ -33,7 +33,7 @@ use Propel\Runtime\Util\BasePeer;
  * @method     string toJSON(Boolean $usePrefix, Boolean $includeLazyLoadColumns) Export the collection to a JSON string
  * @method     string toCSV(Boolean $usePrefix, Boolean $includeLazyLoadColumns) Export the collection to a CSV string
  *
- * @author     Francois Zaninotto
+ * @author Francois Zaninotto
  */
 class Collection extends \ArrayObject implements \Serializable
 {

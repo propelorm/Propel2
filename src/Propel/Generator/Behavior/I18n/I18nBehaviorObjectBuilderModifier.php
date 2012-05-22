@@ -17,7 +17,7 @@ use Propel\Generator\Model\PropelTypes;
  * Allows translation of text columns through transparent one-to-many relationship.
  * Modifier for the object builder.
  *
- * @author     François Zaninotto
+ * @author François Zaninotto
  */
 class I18nBehaviorObjectBuilderModifier
 {

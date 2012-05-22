@@ -23,7 +23,7 @@ use Propel\Generator\Reverse\AbstractSchemaParser;
 /**
  * Postgresql database schema parser.
  *
- * @author     Hans Lellelid <hans@xmpl.org>
+ * @author Hans Lellelid <hans@xmpl.org>
  */
 class PgsqlSchemaParser extends AbstractSchemaParser
 {

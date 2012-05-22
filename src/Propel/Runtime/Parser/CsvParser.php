@@ -15,7 +15,7 @@ namespace Propel\Runtime\Parser;
  * CSV parsing code borrowed from php-csv-utils by Luke Visinoni
  * http://code.google.com/p/php-csv-utils/
  *
- * @author     Francois Zaninotto
+ * @author Francois Zaninotto
  */
 class CsvParser extends AbstractParser
 {

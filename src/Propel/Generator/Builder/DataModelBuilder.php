@@ -25,7 +25,7 @@ use Propel\Generator\Platform\PlatformInterface;
  * safe if you always use the GeneratorConfig to get a configured builder class
  * anyway.
  *
- * @author     Hans Lellelid <hans@xmpl.org>
+ * @author Hans Lellelid <hans@xmpl.org>
  */
 abstract class DataModelBuilder
 {

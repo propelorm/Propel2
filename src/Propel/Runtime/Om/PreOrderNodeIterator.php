@@ -13,7 +13,7 @@ namespace Propel\Runtime\Om;
 /**
  * Pre-order node iterator for Node objects.
  *
- * @author     Dave Lawson <dlawson@masterytech.com>
+ * @author Dave Lawson <dlawson@masterytech.com>
  */
 class PreOrderNodeIterator implements \Iterator
 {

@@ -13,7 +13,7 @@ namespace Propel\Generator\Behavior\Versionable;
 /**
  * Behavior to add versionable columns and abilities
  *
- * @author     François Zaninotto
+ * @author François Zaninotto
  */
 class VersionableBehaviorQueryBuilderModifier
 {

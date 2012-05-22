@@ -22,7 +22,7 @@ use Propel\Generator\Model\Table;
  * a single table.  This includes Peer classes, Entity classes, Map classes,
  * Node classes, Nested Set classes, etc.
  *
- * @author     Hans Lellelid <hans@xmpl.org>
+ * @author Hans Lellelid <hans@xmpl.org>
  */
 abstract class AbstractOMBuilder extends DataModelBuilder
 {

@@ -15,7 +15,7 @@ use Propel\Generator\Exception\InvalidArgumentException;
 /**
  * Simple templating system to ease behavior writing
  *
- * @author     François Zaninotto
+ * @author François Zaninotto
  */
 class PropelTemplate
 {

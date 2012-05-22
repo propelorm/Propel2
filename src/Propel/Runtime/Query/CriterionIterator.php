@@ -15,7 +15,7 @@ namespace Propel\Runtime\Query;
  * be used w/ Criteria objects.  Probably there is no performance advantage
  * to doing it this way, but it makes sense -- and simpler code.
  *
- * @author     Hans Lellelid <hans@xmpl.org>
+ * @author Hans Lellelid <hans@xmpl.org>
  */
 class CriterionIterator implements \Iterator
 {

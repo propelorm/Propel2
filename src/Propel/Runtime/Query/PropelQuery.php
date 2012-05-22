@@ -15,7 +15,7 @@ use Propel\Runtime\Exception\ClassNotFoundException;
 /**
  * Factory for model queries
  *
- * @author     François Zaninotto
+ * @author François Zaninotto
  */
 class PropelQuery
 {

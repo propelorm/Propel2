@@ -23,9 +23,9 @@ use Propel\Generator\Model\Diff\ColumnDiff;
 /**
  * Postgresql PlatformInterface implementation.
  *
- * @author     Hans Lellelid <hans@xmpl.org> (Propel)
- * @author     Martin Poeschl <mpoeschl@marmot.at> (Torque)
- * @author     Niklas Närhinen <niklas@narhinen.net>
+ * @author Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author Martin Poeschl <mpoeschl@marmot.at> (Torque)
+ * @author Niklas Närhinen <niklas@narhinen.net>
  */
 class PgsqlPlatform extends DefaultPlatform
 {

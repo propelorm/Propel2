@@ -24,8 +24,8 @@ use Propel\Runtime\Util\PropelColumnTypes;
  * propel.engine.database.model classes, which are build-time modeling classes.
  * These classes in themselves do not do any database metadata lookups.
  *
- * @author     Hans Lellelid <hans@xmpl.org> (Propel)
- * @author     John D. McNally <jmcnally@collab.net> (Torque)
+ * @author Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author John D. McNally <jmcnally@collab.net> (Torque)
  */
 class ColumnMap
 {

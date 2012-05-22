@@ -13,7 +13,7 @@ namespace Propel\Generator\Util;
 /**
  * Service class for parsing a large SQL string into an array of SQL statements
  *
- * @author     François Zaninotto
+ * @author François Zaninotto
  */
 class SqlParser
 {

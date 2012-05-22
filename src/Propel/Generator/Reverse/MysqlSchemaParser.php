@@ -22,7 +22,7 @@ use Propel\Generator\Model\ColumnDefaultValue;
 /**
  * Mysql database schema parser.
  *
- * @author     Hans Lellelid <hans@xmpl.org>
+ * @author Hans Lellelid <hans@xmpl.org>
  */
 class MysqlSchemaParser extends AbstractSchemaParser
 {

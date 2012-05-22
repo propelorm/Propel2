@@ -16,7 +16,7 @@ use Propel\Runtime\Connection\ConnectionInterface;
 /**
  * Base class for reverse engineering a database schema.
  *
- * @author     Hans Lellelid <hans@xmpl.org>
+ * @author Hans Lellelid <hans@xmpl.org>
  */
 abstract class AbstractSchemaParser implements SchemaParserInterface
 {

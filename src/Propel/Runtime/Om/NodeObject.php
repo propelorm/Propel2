@@ -16,7 +16,7 @@ use Propel\Runtime\Connection\ConnectionInterface;
  * This interface defines methods that must be implemented by all
  * business objects within the system to handle Node object.
  *
- * @author     Heltem <heltem@o2php.com> (Propel)
+ * @author Heltem <heltem@o2php.com> (Propel)
  */
 interface NodeObject extends \IteratorAggregate
 {

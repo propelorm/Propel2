@@ -13,8 +13,8 @@ namespace Propel\Generator\Behavior\Sortable;
 /**
  * Behavior to add sortable peer methods
  *
- * @author     François Zaninotto
- * @author     heltem <heltem@o2php.com>
+ * @author François Zaninotto
+ * @author heltem <heltem@o2php.com>
  */
 class SortableBehaviorPeerBuilderModifier
 {

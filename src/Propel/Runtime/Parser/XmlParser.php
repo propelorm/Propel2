@@ -13,7 +13,7 @@ namespace Propel\Runtime\Parser;
 /**
  * XML parser. Converts data between associative array and XML formats
  *
- * @author     Francois Zaninotto
+ * @author Francois Zaninotto
  */
 class XmlParser extends AbstractParser
 {

@@ -20,7 +20,7 @@ namespace Propel\Runtime\Map;
  * propel.engine.database.model classes, which are build-time modeling classes.
  * These classes in themselves do not do any database metadata lookups.
  *
- * @author     Francois Zaninotto
+ * @author Francois Zaninotto
  */
 class RelationMap
 {

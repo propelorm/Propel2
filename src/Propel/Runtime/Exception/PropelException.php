@@ -11,7 +11,7 @@
 namespace Propel\Runtime\Exception;
 
 /**
- * @author     Hans Lellelid <hans@xmpl.org>
+ * @author Hans Lellelid <hans@xmpl.org>
  */
 class PropelException extends \Exception implements ExceptionInterface
 {

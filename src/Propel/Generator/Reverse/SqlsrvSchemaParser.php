@@ -13,7 +13,7 @@ namespace Propel\Generator\Reverse;
 /**
  * Microsoft SQL Server database schema parser.
  *
- * @author     Benjamin Runnels <kraven@kraven.org>
+ * @author Benjamin Runnels <kraven@kraven.org>
  */
 class SqlsrvSchemaParser extends MssqlSchemaParser
 {

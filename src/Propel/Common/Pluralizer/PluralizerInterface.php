@@ -13,7 +13,7 @@ namespace Propel\Common\Pluralizer;
 /**
  * The generic interface to create a plural form of a name.
  *
- * @author     Hans Lellelid <hans@xmpl.org>
+ * @author Hans Lellelid <hans@xmpl.org>
  */
 interface PluralizerInterface
 {

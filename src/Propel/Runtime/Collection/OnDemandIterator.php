@@ -18,7 +18,7 @@ use Propel\Runtime\Connection\StatementInterface;
 /**
  * Class for iterating over a statement and returning one Propel object at a time
  *
- * @author     Francois Zaninotto
+ * @author Francois Zaninotto
  */
 class OnDemandIterator implements \Iterator
 {

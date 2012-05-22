@@ -21,7 +21,7 @@ use Propel\Runtime\Query\Criteria;
 /**
  * This is used to connect to a MSSQL database.
  *
- * @author     Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author Hans Lellelid <hans@xmpl.org> (Propel)
  */
 class MssqlAdapter extends PdoAdapter implements AdapterInterface
 {

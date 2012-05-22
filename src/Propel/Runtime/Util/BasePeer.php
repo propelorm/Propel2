@@ -24,13 +24,13 @@ use Propel\Runtime\Query\Criteria;
  * utility methods which ease execution of cross-database queries and
  * the implementation of concrete Peers.
  *
- * @author     Hans Lellelid <hans@xmpl.org> (Propel)
- * @author     Kaspars Jaudzems <kaspars.jaudzems@inbox.lv> (Propel)
- * @author     Heltem <heltem@o2php.com> (Propel)
- * @author     Frank Y. Kim <frank.kim@clearink.com> (Torque)
- * @author     John D. McNally <jmcnally@collab.net> (Torque)
- * @author     Brett McLaughlin <bmclaugh@algx.net> (Torque)
- * @author     Stephen Haberman <stephenh@chase3000.com> (Torque)
+ * @author Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author Kaspars Jaudzems <kaspars.jaudzems@inbox.lv> (Propel)
+ * @author Heltem <heltem@o2php.com> (Propel)
+ * @author Frank Y. Kim <frank.kim@clearink.com> (Torque)
+ * @author John D. McNally <jmcnally@collab.net> (Torque)
+ * @author Brett McLaughlin <bmclaugh@algx.net> (Torque)
+ * @author Stephen Haberman <stephenh@chase3000.com> (Torque)
  */
 class BasePeer
 {

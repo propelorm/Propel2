@@ -14,7 +14,7 @@ namespace Propel\Common\Pluralizer;
  * The Propel 1.6 default English pluralizer class
  * for compatibility only.
  *
- * @author     Hans Lellelid <hans@xmpl.org>
+ * @author Hans Lellelid <hans@xmpl.org>
  */
 class SimpleEnglishPluralizer implements PluralizerInterface
 {

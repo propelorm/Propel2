@@ -13,7 +13,7 @@ namespace Propel\Generator\Behavior\Archivable;
 /**
  * Keeps tracks of an ActiveRecord object, even after deletion
  *
- * @author     François Zaninotto
+ * @author François Zaninotto
  */
 class ArchivableBehaviorObjectBuilderModifier
 {

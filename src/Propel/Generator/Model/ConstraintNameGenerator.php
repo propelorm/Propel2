@@ -15,8 +15,8 @@ namespace Propel\Generator\Model;
  * constraints.  Conforms to the maximum column name length for the
  * type of database in use.
  *
- * @author     Hans Lellelid <hans@xmpl.org> (Propel)
- * @author     Daniel Rall <dlr@finemaltcoding.com> (Torque)
+ * @author Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author Daniel Rall <dlr@finemaltcoding.com> (Torque)
  */
 class ConstraintNameGenerator implements NameGenerator
 {

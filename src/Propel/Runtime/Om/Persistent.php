@@ -15,9 +15,9 @@ use Propel\Runtime\Connection\ConnectionInterface;
 /**
  * This interface defines methods related to saving an object
  *
- * @author     Hans Lellelid <hans@xmpl.org> (Propel)
- * @author     John D. McNally <jmcnally@collab.net> (Torque)
- * @author     Fedor K. <fedor@apache.org> (Torque)
+ * @author Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author John D. McNally <jmcnally@collab.net> (Torque)
+ * @author Fedor K. <fedor@apache.org> (Torque)
  */
 interface Persistent
 {

@@ -21,7 +21,7 @@ use Propel\Generator\Reverse\AbstractSchemaParser;
 /**
  * Microsoft SQL Server database schema parser.
  *
- * @author     Hans Lellelid <hans@xmpl.org>
+ * @author Hans Lellelid <hans@xmpl.org>
  */
 class MssqlSchemaParser extends AbstractSchemaParser
 {

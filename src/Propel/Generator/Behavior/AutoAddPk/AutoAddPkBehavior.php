@@ -15,7 +15,7 @@ use Propel\Generator\Model\Behavior;
 /**
  * Adds a primary key to models defined without one
  *
- * @author     François Zaninotto
+ * @author François Zaninotto
  */
 class AutoAddPkBehavior extends Behavior
 {

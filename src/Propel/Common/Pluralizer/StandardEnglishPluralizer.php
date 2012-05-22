@@ -17,7 +17,7 @@ namespace Propel\Common\Pluralizer;
  * @link http://blogs.msdn.com/dmitryr/archive/2007/01/11/simple-english-noun-pluralizer-in-c.aspx
  * @link http://api.cakephp.org/view_source/inflector/
  *
- * @author     paul.hanssen
+ * @author paul.hanssen
  */
 class StandardEnglishPluralizer implements PluralizerInterface
 {

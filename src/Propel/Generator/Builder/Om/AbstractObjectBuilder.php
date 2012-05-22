@@ -19,7 +19,7 @@ use Propel\Generator\Model\PropelTypes;
  * and ComplexOMPeerBuilder.  Hence, this class should not have any actual
  * template code in it -- simply basic logic & utility methods.
  *
- * @author     Hans Lellelid <hans@xmpl.org>
+ * @author Hans Lellelid <hans@xmpl.org>
  */
 abstract class AbstractObjectBuilder extends AbstractOMBuilder
 {

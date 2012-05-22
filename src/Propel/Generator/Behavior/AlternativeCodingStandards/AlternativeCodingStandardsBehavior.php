@@ -36,7 +36,7 @@ use Propel\Generator\Model\Behavior;
  *   - tabs are replaced by 2 whitespaces
  *   - comments are stripped (optional)
  *
- * @author     François Zaninotto
+ * @author François Zaninotto
  */
 class AlternativeCodingStandardsBehavior extends Behavior
 {

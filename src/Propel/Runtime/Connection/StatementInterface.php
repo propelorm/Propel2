@@ -15,7 +15,7 @@ namespace Propel\Runtime\Connection;
  * Based on the PDOStatement interface.
  * @see http://www.php.net/manual/en/class.pdostatement.php
  *
- * @author     Francois Zaninotto
+ * @author Francois Zaninotto
  */
 interface StatementInterface
 {

@@ -21,7 +21,7 @@ use Propel\Runtime\Map\DatabaseMap;
 /**
  * This is used to connect to a MSSQL database using pdo_sqlsrv driver.
  *
- * @author     Benjamin Runnels
+ * @author Benjamin Runnels
  */
 class SqlsrvAdapter extends MssqlAdapter implements AdapterInterface
 {

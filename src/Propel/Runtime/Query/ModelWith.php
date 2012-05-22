@@ -16,7 +16,7 @@ use Propel\Runtime\Map\RelationMap;
  * Data object to describe a joined hydration in a Model Query
  * ModelWith objects are used by formatters to hydrate related objects
  *
- * @author     Francois Zaninotto (Propel)
+ * @author Francois Zaninotto (Propel)
  */
 class ModelWith
 {

@@ -41,7 +41,7 @@ use Propel\Runtime\Query\Exception\UnknownRelationException;
  * @method     ModelCriteria rightJoin($relation) Adds a RIGHT JOIN clause to the query
  * @method     ModelCriteria innerJoin($relation) Adds a INNER JOIN clause to the query
  *
- * @author     François Zaninotto
+ * @author François Zaninotto
  */
 class ModelCriteria extends Criteria
 {

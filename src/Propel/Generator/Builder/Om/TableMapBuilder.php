@@ -16,7 +16,7 @@ use Propel\Generator\Platform\PlatformInterface;
 /**
  * Generates the PHP5 table map class for user object model (OM).
  *
- * @author     Hans Lellelid <hans@xmpl.org>
+ * @author Hans Lellelid <hans@xmpl.org>
  */
 class TableMapBuilder extends AbstractOMBuilder
 {

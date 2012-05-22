@@ -17,7 +17,7 @@ use Propel\Runtime\Exception\PropelException;
  * statement formatter for Propel query
  * format() returns a PDO statement
  *
- * @author     Francois Zaninotto
+ * @author Francois Zaninotto
  */
 class StatementFormatter extends AbstractFormatter
 {

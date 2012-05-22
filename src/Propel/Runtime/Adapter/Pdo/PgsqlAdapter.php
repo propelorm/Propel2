@@ -22,8 +22,8 @@ use Propel\Runtime\Util\BasePeer;
  *
  * <a href="http://www.pgsql.org">http://www.pgsql.org</a>
  *
- * @author     Hans Lellelid <hans@xmpl.org> (Propel)
- * @author     Hakan Tandogan <hakan42@gmx.de> (Torque)
+ * @author Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author Hakan Tandogan <hakan42@gmx.de> (Torque)
  */
 class PgsqlAdapter extends PdoAdapter implements AdapterInterface
 {

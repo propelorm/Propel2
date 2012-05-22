@@ -16,8 +16,8 @@ use Propel\Runtime\Query\ModelCriteria;
  * Implements a pager based on a ModelCriteria
  * The code from this class heavily borrows from symfony's sfPager class
  *
- * @author         Fabien Potencier <fabien.potencier@symfony-project.com>
- * @author         François Zaninotto
+ * @author Fabien Potencier <fabien.potencier@symfony-project.com>
+ * @author François Zaninotto
  * @version        $Revision$
  */
 class PropelModelPager implements \IteratorAggregate, \Countable

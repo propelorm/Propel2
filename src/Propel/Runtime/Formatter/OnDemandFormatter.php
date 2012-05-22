@@ -19,7 +19,7 @@ use Propel\Runtime\Connection\StatementInterface;
  * format() returns a OnDemandCollection that hydrates objects as the use iterates on the collection
  * This formatter consumes less memory than the ObjectFormatter, but doesn't use Instance Pool
  *
- * @author     Francois Zaninotto
+ * @author Francois Zaninotto
  */
 class OnDemandFormatter extends ObjectFormatter
 {

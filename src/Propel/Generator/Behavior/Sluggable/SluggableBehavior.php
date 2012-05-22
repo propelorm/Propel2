@@ -16,8 +16,8 @@ use Propel\Generator\Model\Unique;
 /**
  * Adds a slug column
  *
- * @author    Francois Zaninotto
- * @author    Massimiliano Arione
+ * @author Francois Zaninotto
+ * @author Massimiliano Arione
  * @version        $Revision$
  */
 class SluggableBehavior extends Behavior

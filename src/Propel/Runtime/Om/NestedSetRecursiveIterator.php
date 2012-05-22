@@ -13,7 +13,7 @@ namespace Propel\Runtime\Om;
 /**
  * Pre-order node iterator for Node objects.
  *
- * @author     Heltem <heltem@o2php.com>
+ * @author Heltem <heltem@o2php.com>
  */
 class NestedSetRecursiveIterator implements \RecursiveIterator
 {

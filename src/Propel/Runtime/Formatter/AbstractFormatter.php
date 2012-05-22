@@ -18,7 +18,7 @@ use Propel\Runtime\Query\ModelCriteria;
 /**
  * Abstract class for query formatter
  *
- * @author     Francois Zaninotto
+ * @author Francois Zaninotto
  */
 abstract class AbstractFormatter
 {

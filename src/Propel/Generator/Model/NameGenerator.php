@@ -13,9 +13,9 @@ namespace Propel\Generator\Model;
 /**
  * The generic interface to a name generation algorithm.
  *
- * @author     Hans Lellelid <hans@xmpl.org> (Propel)
- * @author     Daniel Rall <dlr@finemaltcoding.com> (Torque)
- * @author     Byron Foster <byron_foster@yahoo.com> (Torque)
+ * @author Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author Daniel Rall <dlr@finemaltcoding.com> (Torque)
+ * @author Byron Foster <byron_foster@yahoo.com> (Torque)
  */
 interface NameGenerator
 {

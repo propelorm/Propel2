@@ -15,8 +15,8 @@ use Propel\Runtime\Exception\FileNotFoundException;
 /**
  * Base class for all parsers. A parser converts data from and to an associative array.
  *
- * @author     Francois Zaninotto (Propel)
- * @author     Jonathan H. Wage <jwage@mac.com> (Doctrine_Parser)
+ * @author Francois Zaninotto (Propel)
+ * @author Jonathan H. Wage <jwage@mac.com> (Doctrine_Parser)
  */
 abstract class AbstractParser
 {

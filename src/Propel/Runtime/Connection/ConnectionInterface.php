@@ -15,7 +15,7 @@ namespace Propel\Runtime\Connection;
  * Based on the PDO interface.
  * @see http://php.net/manual/en/book.pdo.php
  *
- * @author     Francois Zaninotto
+ * @author Francois Zaninotto
  */
 interface ConnectionInterface
 {

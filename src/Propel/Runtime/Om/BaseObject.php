@@ -29,9 +29,9 @@ use Propel\Runtime\Util\BasePeer;
  * @method     string toJSON(boolean $includeLazyLoadColumns) Export the object to a JSON string
  * @method     string toCSV(boolean $includeLazyLoadColumns) Export the object to a CSV string
  *
- * @author     Hans Lellelid <hans@xmpl.org> (Propel)
- * @author     Frank Y. Kim <frank.kim@clearink.com> (Torque)
- * @author     John D. McNally <jmcnally@collab.net> (Torque)
+ * @author Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author Frank Y. Kim <frank.kim@clearink.com> (Torque)
+ * @author John D. McNally <jmcnally@collab.net> (Torque)
  */
 abstract class BaseObject
 {

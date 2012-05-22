@@ -13,8 +13,8 @@ namespace Propel\Generator\Behavior\NestedSet;
 /**
  * Behavior to adds nested set tree structure columns and abilities
  *
- * @author     François Zaninotto
- * @author     heltem <heltem@o2php.com>
+ * @author François Zaninotto
+ * @author heltem <heltem@o2php.com>
  */
 class NestedSetBehaviorPeerBuilderModifier
 {

@@ -15,7 +15,7 @@ use Propel\Runtime\Map\ColumnMap;
 /**
  * This is an "inner" class that describes an object in the criteria.
  *
- * @author     Francois
+ * @author Francois
  */
 class ModelCriterion extends Criterion
 {

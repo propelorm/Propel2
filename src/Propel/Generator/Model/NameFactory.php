@@ -15,8 +15,8 @@ use Propel\Generator\Exception\EngineException;
 /**
  * A name generation factory.
  *
- * @author     Hans Lellelid <hans@xmpl.org> (Propel)
- * @author     Daniel Rall <dlr@finemaltcoding.com> (Torque)
+ * @author Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author Daniel Rall <dlr@finemaltcoding.com> (Torque)
  */
 class NameFactory
 {

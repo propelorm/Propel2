@@ -13,7 +13,7 @@ namespace Propel\Runtime\Parser;
 /**
  * JSON parser. Converts data between associative array and JSON formats
  *
- * @author     Francois Zaninotto
+ * @author Francois Zaninotto
  */
 class JsonParser extends AbstractParser
 {

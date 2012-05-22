@@ -20,14 +20,14 @@ use Propel\Runtime\Util\PropelConditionalProxy;
  *
  * BasePeer constructs SQL statements based on the values in this class.
  *
- * @author     Hans Lellelid <hans@xmpl.org> (Propel)
- * @author     Kaspars Jaudzems <kaspars.jaudzems@inbox.lv> (Propel)
- * @author     Frank Y. Kim <frank.kim@clearink.com> (Torque)
- * @author     John D. McNally <jmcnally@collab.net> (Torque)
- * @author     Brett McLaughlin <bmclaugh@algx.net> (Torque)
- * @author     Eric Dobbs <eric@dobbse.net> (Torque)
- * @author     Henning P. Schmiedehausen <hps@intermeta.de> (Torque)
- * @author     Sam Joseph <sam@neurogrid.com> (Torque)
+ * @author Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author Kaspars Jaudzems <kaspars.jaudzems@inbox.lv> (Propel)
+ * @author Frank Y. Kim <frank.kim@clearink.com> (Torque)
+ * @author John D. McNally <jmcnally@collab.net> (Torque)
+ * @author Brett McLaughlin <bmclaugh@algx.net> (Torque)
+ * @author Eric Dobbs <eric@dobbse.net> (Torque)
+ * @author Henning P. Schmiedehausen <hps@intermeta.de> (Torque)
+ * @author Sam Joseph <sam@neurogrid.com> (Torque)
  */
 class Criteria implements \IteratorAggregate
 {

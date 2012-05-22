@@ -18,7 +18,7 @@ use Propel\Generator\Model\Table;
 /**
  * SQLite PlatformInterface implementation.
  *
- * @author     Hans Lellelid <hans@xmpl.org>
+ * @author Hans Lellelid <hans@xmpl.org>
  */
 class SqlitePlatform extends DefaultPlatform
 {

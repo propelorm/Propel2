@@ -29,7 +29,7 @@ namespace Propel\Runtime\Util;
  *   ->_endif();        // returns $c
  * @see Criteria
  *
- * @author     Francois Zaninotto
+ * @author Francois Zaninotto
  */
 class PropelConditionalProxy
 {
