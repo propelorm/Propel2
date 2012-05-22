@@ -1261,7 +1261,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
             // PDO_OCI returns a stream for CLOB objects, while other PDO adapters return a string...
             $script .= "
             \$this->$clo = stream_get_contents(\$row[0]);";
-        }    elseif ($column->isLobType() && !$platform->hasStreamBlobImpl()) {
+        } elseif ($column->isLobType() && !$platform->hasStreamBlobImpl()) {
             $script .= "
             if (\$row[0] !== null) {
                 \$this->$clo = fopen('php://memory', 'r+');
@@ -1805,7 +1805,8 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * @param      string &$script The script will be modified in this method.
      * @see        addHasOnlyDefaultValues
      **/
-    protected function addHasOnlyDefaultValuesComment(&$script) {
+    protected function addHasOnlyDefaultValuesComment(&$script)
+    {
         $script .= "
     /**
      * Indicates whether the columns in this object are only set to default values.
@@ -1822,7 +1823,8 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * @param      string &$script The script will be modified in this method.
      * @see        addHasOnlyDefaultValues
      **/
-    protected function addHasOnlyDefaultValuesOpen(&$script) {
+    protected function addHasOnlyDefaultValuesOpen(&$script)
+    {
         $script .= "
     public function hasOnlyDefaultValues()
     {";
@@ -1943,7 +1945,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
                     // PDO_OCI returns a stream for CLOB objects, while other PDO adapters return a string...
                     $script .= "
             \$this->$clo = stream_get_contents(\$row[\$startcol + $n]);";
-                }    elseif ($col->isLobType() && !$platform->hasStreamBlobImpl()) {
+                } elseif ($col->isLobType() && !$platform->hasStreamBlobImpl()) {
                     $script .= "
             if (\$row[\$startcol + $n] !== null) {
                 \$this->$clo = fopen('php://memory', 'r+');
@@ -2372,7 +2374,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     {
         $table = $this->getTable();
         $script .= "
-        switch(\$pos) {";
+        switch (\$pos) {";
         $i = 0;
         foreach ($table->getColumns() as $col) {
             $cfc = $col->getPhpName();
@@ -2439,7 +2441,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      */
     public function setByPosition(\$pos, \$value)
     {
-        switch(\$pos) {";
+        switch (\$pos) {";
         $i = 0;
         foreach ($table->getColumns() as $col) {
             $cfc = $col->getPhpName();
@@ -3392,8 +3394,8 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * Adds the method that clears the referrer fkey collection.
      * @param      string &$script The script will be modified in this method.
      */
-    protected function addRefFKClear(&$script, ForeignKey $refFK) {
-
+    protected function addRefFKClear(&$script, ForeignKey $refFK)
+    {
         $relCol = $this->getRefFKPhpNameAffix($refFK, true);
         $collName = $this->getRefFKCollVarName($refFK);
 
@@ -3418,8 +3420,8 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * Adds the method that initializes the referrer fkey collection.
      * @param      string &$script The script will be modified in this method.
      */
-    protected function addRefFKInit(&$script, ForeignKey $refFK) {
-
+    protected function addRefFKInit(&$script, ForeignKey $refFK)
+    {
         $relCol = $this->getRefFKPhpNameAffix($refFK, true);
         $collName = $this->getRefFKCollVarName($refFK);
 
@@ -4944,7 +4946,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
                 $script .= "
         \$this->".$clo."_isLoaded = false;";
             }
-            if($col->getType() == PropelTypes::OBJECT || $col->getType() == PropelTypes::PHP_ARRAY) {
+            if ($col->getType() == PropelTypes::OBJECT || $col->getType() == PropelTypes::PHP_ARRAY) {
                 $cloUnserialized = $clo.'_unserialized';
 
                 $script .="

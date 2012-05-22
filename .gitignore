@@ -3,6 +3,7 @@ composer.phar
 composer.lock
 pom.xml
 check_cs
+php-cs-fixer.phar
 
 tests/Fixtures/namespaced/build/
 tests/Fixtures/nestedset/build/

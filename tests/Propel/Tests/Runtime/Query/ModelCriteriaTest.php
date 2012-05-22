@@ -28,9 +28,7 @@ use Propel\Tests\Bookstore\ReviewPeer;
 
 use Propel\Runtime\Propel;
 use Propel\Runtime\Collection\Collection;
-use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Exception\InvalidArgumentException;
-use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Exception\UnexpectedValueException;
 use Propel\Runtime\Formatter\AbstractFormatter;
@@ -40,7 +38,6 @@ use Propel\Runtime\Util\BasePeer;
 use Propel\Runtime\Util\PropelModelPager;
 use Propel\Runtime\Query\Criteria;
 use Propel\Runtime\Query\Exception\UnknownColumnException;
-use Propel\Runtime\Query\Exception\UnknownModelException;
 use Propel\Runtime\Query\Exception\UnknownRelationException;
 use Propel\Runtime\Query\ModelCriteria;
 
@@ -102,7 +99,7 @@ class ModelCriteriaTest extends BookstoreTestBase
         try {
             $c->setFormatter('Propel\Tests\Bookstore\Book');
             $this->fail('setFormatter() throws an exception when passed the name of a class not extending AbstractFormatter');
-        } catch(InvalidArgumentException $e) {
+        } catch (InvalidArgumentException $e) {
             $this->assertTrue(true, 'setFormatter() throws an exception when passed the name of a class not extending AbstractFormatter');
         }
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
@@ -114,7 +111,7 @@ class ModelCriteriaTest extends BookstoreTestBase
             $formatter = new Book();
             $c->setFormatter($formatter);
             $this->fail('setFormatter() throws an exception when passed an object not extending AbstractFormatter');
-        } catch(InvalidArgumentException $e) {
+        } catch (InvalidArgumentException $e) {
             $this->assertTrue(true, 'setFormatter() throws an exception when passed an object not extending AbstractFormatter');
         }
 

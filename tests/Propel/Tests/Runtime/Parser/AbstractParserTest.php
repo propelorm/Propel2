@@ -10,7 +10,6 @@
 
 namespace Propel\Tests\Runtime\Parser;
 
-use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Parser\AbstractParser;
 use Propel\Runtime\Parser\XmlParser;
 

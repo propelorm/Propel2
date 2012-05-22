@@ -60,7 +60,7 @@ class GeneratedObjectLobTest extends BookstoreEmptyTestBase
     /**
      * Gets a LOB filename.
      *
-     * @param      string $basename Basename of LOB filename to return (if left blank, will choose random file).
+     * @param string $basename Basename of LOB filename to return (if left blank, will choose random file).
      * @return     string
      * @throws     Exception - if specified basename doesn't correspond to a registered LOB filename
      */

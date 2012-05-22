@@ -39,11 +39,11 @@ $manager->setConfiguration(array (
   'dsn' => 'mysql:host=localhost;dbname=bookstore',
   'user' => 'testuser',
   'password' => 'password',
-  'options' => 
+  'options' =>
   array (
     'ATTR_PERSISTENT' => false,
   ),
-  'attributes' => 
+  'attributes' =>
   array (
     'ATTR_EMULATE_PREPARES' => true,
   ),
@@ -74,13 +74,13 @@ $serviceContainer = \Propel\Runtime\Propel::getServiceContainer();
 $serviceContainer->setAdapterClass('bookstore-cms', 'mysql');
 $manager = new \Propel\Runtime\Connection\ConnectionManagerMasterSlave();
 $manager->setReadConfiguration(array (
-  'connection' => 
+  'connection' =>
   array (
-    0 => 
+    0 =>
     array (
       'dsn' => 'mysql:host=slave-server1; dbname=bookstore',
     ),
-    1 => 
+    1 =>
     array (
       'dsn' => 'mysql:host=slave-server2; dbname=bookstore',
     ),
@@ -113,15 +113,15 @@ $serviceContainer = \Propel\Runtime\Propel::getServiceContainer();
 $serviceContainer->setProfilerClass('\Runtime\Runtime\Util\Profiler');
 $serviceContainer->setProfilerConfiguration(array (
   'slowTreshold' => 0.2,
-  'details' => 
+  'details' =>
   array (
-    'time' => 
+    'time' =>
     array (
       'name' => 'Time',
       'precision' => 3,
       'pad' => '8',
     ),
-    'mem' => 
+    'mem' =>
     array (
       'name' => 'Memory',
       'precision' => 3,
@@ -236,15 +236,15 @@ $manager->setConfiguration(array (
   'dsn' => 'mysql:host=127.0.0.1;dbname=test',
   'user' => 'root',
   'password' => '',
-  'options' => 
+  'options' =>
   array (
     'ATTR_PERSISTENT' => false,
   ),
-  'attributes' => 
+  'attributes' =>
   array (
     'ATTR_EMULATE_PREPARES' => true,
   ),
-  'settings' => 
+  'settings' =>
   array (
     'charset' => 'utf8',
   ),
@@ -254,13 +254,13 @@ $serviceContainer->setConnectionManager('bookstore', $manager);
 $serviceContainer->setAdapterClass('bookstore-cms', 'mysql');
 $manager = new \Propel\Runtime\Connection\ConnectionManagerMasterSlave();
 $manager->setReadConfiguration(array (
-  'connection' => 
+  'connection' =>
   array (
-    0 => 
+    0 =>
     array (
       'dsn' => 'mysql:host=slave-server1; dbname=bookstore',
     ),
-    1 => 
+    1 =>
     array (
       'dsn' => 'mysql:host=slave-server2; dbname=bookstore',
     ),

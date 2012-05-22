@@ -96,7 +96,7 @@ class ArrayToPhpConverter
             unset($c['log']);
         }
 
-        return $conf;
+        return preg_replace('/[ \t]*$/m', '', $conf);
     }
 
     protected static function getLoggerCode($conf)

@@ -14,7 +14,6 @@ use Propel\Generator\Builder\Util\SchemaReader;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\ColumnDefaultValue;
 use Propel\Generator\Model\Table;
-use Propel\Generator\Model\VendorInfo;
 use Propel\Generator\Model\Diff\ColumnComparator;
 use Propel\Generator\Platform\PgsqlPlatform;
 

@@ -13,7 +13,6 @@ namespace Propel\Tests\Runtime\Query;
 use Propel\Tests\Helpers\BaseTestCase;
 
 use Propel\Runtime\Query\Criteria;
-use Propel\Runtime\Util\PropelConditionalProxy;
 
 /**
  * Test class for Criteria fluid conditions.

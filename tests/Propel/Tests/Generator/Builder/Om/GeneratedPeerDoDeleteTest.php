@@ -61,8 +61,8 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
     /**
      * Test ability to delete multiple rows via single Criteria object.
      */
-    public function testDoDelete_MultiTable() {
-
+    public function testDoDelete_MultiTable()
+    {
         $selc = new Criteria();
         $selc->add(BookPeer::TITLE, "Harry Potter and the Order of the Phoenix");
         $hp = BookPeer::doSelectOne($selc);
@@ -89,8 +89,8 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
     /**
      * Test using a complex criteria to delete multiple rows from a single table.
      */
-    public function testDoDelete_ComplexCriteria() {
-
+    public function testDoDelete_ComplexCriteria()
+    {
         //print "Attempting to delete books by complex criteria: ";
         $c = new Criteria();
         $cn = $c->getNewCriterion(BookPeer::ISBN, "043935806X");
@@ -204,8 +204,8 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
     /**
      * Test that onDelete="SETNULL" is happening correctly (whether emulated or native).
      */
-    public function testDoDelete_SetNull() {
-
+    public function testDoDelete_SetNull()
+    {
         // The 'author_id' column in 'book' table will be set to null when author is deleted.
 
         // 1) Get an arbitrary book
@@ -228,8 +228,8 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
     /**
      * Test deleting a row by passing in the primary key to the doDelete() method.
      */
-    public function testDoDelete_ByPK() {
-
+    public function testDoDelete_ByPK()
+    {
         // 1) get an arbitrary book
         $book = BookPeer::doSelectOne(new Criteria());
         $bookId = $book->getId();
@@ -243,7 +243,8 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
 
     }
 
-    public function testDoDelete_ByPks() {
+    public function testDoDelete_ByPks()
+    {
         // 1) get all of the books
         $books = BookPeer::doSelect(new Criteria());
         $bookCount = count($books);
@@ -265,8 +266,8 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
     /**
      * Test deleting a row by passing the generated object to doDelete().
      */
-    public function testDoDelete_ByObj() {
-
+    public function testDoDelete_ByObj()
+    {
         // 1) get an arbitrary book
         $book = BookPeer::doSelectOne(new Criteria());
         $bookId = $book->getId();
@@ -284,8 +285,8 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
     /**
      * Test the doDeleteAll() method for single table.
      */
-    public function testDoDeleteAll() {
-
+    public function testDoDeleteAll()
+    {
         BookPeer::doDeleteAll();
         $this->assertEquals(0, count(BookPeer::doSelect(new Criteria())), "Expect all book rows to have been deleted.");
     }
@@ -305,8 +306,8 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
     /**
      * Test the doDeleteAll() method when onDelete="CASCADE".
      */
-    public function testDoDeleteAll_Cascade() {
-
+    public function testDoDeleteAll_Cascade()
+    {
         BookPeer::doDeleteAll();
         $this->assertEquals(0, count(MediaPeer::doSelect(new Criteria())), "Expect all media rows to have been cascade deleted.");
         $this->assertEquals(0, count(ReviewPeer::doSelect(new Criteria())), "Expect all review rows to have been cascade deleted.");
@@ -315,8 +316,8 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
     /**
      * Test the doDeleteAll() method when onDelete="SETNULL".
      */
-    public function testDoDeleteAll_SetNull() {
-
+    public function testDoDeleteAll_SetNull()
+    {
         $c = new Criteria();
         $c->add(BookPeer::AUTHOR_ID, null, Criteria::NOT_EQUAL);
 
@@ -394,8 +395,8 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
     /**
      * Test the doInsert() method when passed a Criteria object.
      */
-    public function testDoInsert_Criteria() {
-
+    public function testDoInsert_Criteria()
+    {
         $name = "A Sample Publisher - " . time();
 
         $values = new Criteria();
@@ -414,8 +415,8 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
     /**
      * Test the doInsert() method when passed a generated object.
      */
-    public function testDoInsert_Obj() {
-
+    public function testDoInsert_Obj()
+    {
         $name = "A Sample Publisher - " . time();
 
         $values = new Publisher();

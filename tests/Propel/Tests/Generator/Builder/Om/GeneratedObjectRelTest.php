@@ -24,8 +24,6 @@ use Propel\Tests\Bookstore\BookClubListQuery;
 use Propel\Tests\Bookstore\BookListRel;
 use Propel\Tests\Bookstore\BookListRelPeer;
 use Propel\Tests\Bookstore\BookListRelQuery;
-use Propel\Tests\Bookstore\BookListFavorite;
-use Propel\Tests\Bookstore\BookListFavoritePeer;
 use Propel\Tests\Bookstore\BookListFavoriteQuery;
 use Propel\Tests\Bookstore\BookstoreContest;
 use Propel\Tests\Bookstore\BookstoreContestEntry;

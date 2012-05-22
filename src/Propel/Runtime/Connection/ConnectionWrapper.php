@@ -339,7 +339,7 @@ class ConnectionWrapper implements ConnectionInterface
             }
             $attribute = constant($attribute);
         }
-        switch($attribute) {
+        switch ($attribute) {
             case self::PROPEL_ATTR_CACHE_PREPARES:
                 $this->isCachePreparedStatements = $value;
                 break;

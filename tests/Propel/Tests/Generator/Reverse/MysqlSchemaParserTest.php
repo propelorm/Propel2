@@ -12,7 +12,6 @@ namespace Propel\Tests\Generator\Reverse;
 
 use Propel\Generator\Config\QuickGeneratorConfig;
 use Propel\Generator\Model\Database;
-use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Platform\DefaultPlatform;
 use Propel\Generator\Reverse\MysqlSchemaParser;
 

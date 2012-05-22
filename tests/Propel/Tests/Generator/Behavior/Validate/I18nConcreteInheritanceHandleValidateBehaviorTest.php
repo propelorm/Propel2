@@ -115,8 +115,7 @@ class I18nConcreteInheritanceHandleValidateBehaviorTest extends BookstoreTestBas
     {
         $classes = array('ValidateTriggerFictionI18n', 'ValidateTriggerComicI18n');
 
-        foreach ($classes as $class)
-        {
+        foreach ($classes as $class) {
             $this->checkClassHasValidateBehavior('Propel\Tests\Bookstore\Behavior\\'.$class);
 
             $classMetadata = $this->metadataFactory->getClassMetadata('Propel\Tests\Bookstore\Behavior\\'.$class);

@@ -12,7 +12,6 @@ namespace Propel\Tests\Generator\Builder\Om;
 
 use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
 use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
-use Propel\Tests\Helpers\Bookstore\Behavior\TestAuthor;
 
 use Propel\Tests\Bookstore\Author;
 use Propel\Tests\Bookstore\AuthorPeer;

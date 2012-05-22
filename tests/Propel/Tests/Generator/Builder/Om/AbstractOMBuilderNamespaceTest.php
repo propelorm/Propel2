@@ -14,7 +14,6 @@ use Propel\Generator\Model\Database;
 use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Builder\Om\AbstractOMBuilder;
-use Propel\Generator\Platform\MysqlPlatform;
 
 /**
  * Test class for OMBuilder.

@@ -38,7 +38,7 @@
         local="author_id"
         foreign="id"/>
     </foreign-key>
-    
+
   </table>
 
 </database>

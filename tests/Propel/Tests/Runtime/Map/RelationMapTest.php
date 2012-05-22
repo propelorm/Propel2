@@ -12,7 +12,6 @@ namespace Propel\Tests\Runtime\Map;
 
 use Propel\Runtime\Map\DatabaseMap;
 use Propel\Runtime\Map\RelationMap;
-use Propel\Runtime\Map\ColumnMap;
 use Propel\Runtime\Map\TableMap;
 
 /**
@@ -57,8 +56,7 @@ class RelationMapTest extends \PHPUnit_Framework_TestCase
   public function testProperties()
   {
     $properties = array('type', 'onUpdate', 'onDelete');
-    foreach ($properties as $property)
-    {
+    foreach ($properties as $property) {
       $getter = 'get' . ucfirst($property);
       $setter = 'set' . ucfirst($property);
       $this->assertNull($this->rmap->$getter(), "A new relation has no $property");

@@ -137,8 +137,7 @@ class BasePeerTest extends BookstoreTestBase
     public function testMssqlApplyLimitNoOffset()
     {
         $db = Propel::getServiceContainer()->getAdapter(BookPeer::DATABASE_NAME);
-        if(! ($db instanceof MssqlAdapter))
-        {
+        if (! ($db instanceof MssqlAdapter)) {
             $this->markTestSkipped('Configured database vendor is not MsSQL');
         }
 
@@ -163,8 +162,7 @@ class BasePeerTest extends BookstoreTestBase
     public function testMssqlApplyLimitWithOffset()
     {
         $db = Propel::getServiceContainer()->getAdapter(BookPeer::DATABASE_NAME);
-        if(! ($db instanceof MssqlAdapter))
-        {
+        if (! ($db instanceof MssqlAdapter)) {
             $this->markTestSkipped('Configured database vendor is not MsSQL');
         }
 
@@ -187,8 +185,7 @@ class BasePeerTest extends BookstoreTestBase
     public function testMssqlApplyLimitWithOffsetOrderByAggregate()
     {
         $db = Propel::getServiceContainer()->getAdapter(BookPeer::DATABASE_NAME);
-        if(! ($db instanceof MssqlAdapter))
-        {
+        if (! ($db instanceof MssqlAdapter)) {
             $this->markTestSkipped('Configured database vendor is not MsSQL');
         }
 
@@ -212,8 +209,7 @@ class BasePeerTest extends BookstoreTestBase
     public function testMssqlApplyLimitWithOffsetMultipleOrderBy()
     {
         $db = Propel::getServiceContainer()->getAdapter(BookPeer::DATABASE_NAME);
-        if(! ($db instanceof MssqlAdapter))
-        {
+        if (! ($db instanceof MssqlAdapter)) {
             $this->markTestSkipped('Configured database vendor is not MsSQL');
         }
 

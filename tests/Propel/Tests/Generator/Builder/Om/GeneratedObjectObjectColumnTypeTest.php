@@ -76,7 +76,7 @@ EOF;
             ->find();
 
         $objects = array();
-        foreach($q as $e) {
+        foreach ($q as $e) {
             $objects[] = $e->getBar();
         }
         $this->assertNotEquals($objects[0], $objects[1]);

@@ -166,7 +166,7 @@ class SchemaTest extends ModelTestCase
             ->method('getConfiguredPlatform')
             ->with($this->equalTo(null), $this->equalTo('bookstore'))
             ->will($this->returnValue($this->getPlatformMock()))
-        ;        
+        ;
 
         $schema = new Schema($this->getPlatformMock());
         $schema->setGeneratorConfig($config);
@@ -179,7 +179,7 @@ class SchemaTest extends ModelTestCase
     }
 
     public function testAddArrayDatabaseWithDefaultPlatform()
-    {     
+    {
         $schema = new Schema($this->getPlatformMock());
         $schema->addDatabase(array('name' => 'bookstore'));
 

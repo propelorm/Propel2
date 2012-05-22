@@ -10,7 +10,6 @@
 
 namespace Propel\Tests\Generator\Builder\Om;
 
-use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
 use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Builder\Om\AbstractOMBuilder;

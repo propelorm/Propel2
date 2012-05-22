@@ -47,7 +47,7 @@
             <parameter name="rule6" value="{column: birthday, validator: Date}" />
         </behavior>
     </table>
-    
+
     <table name="validate_reader" description="Reader Table">
         <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" description="Author Id" />
         <column name="first_name" required="true" type="VARCHAR" size="128" description="First Name" />
@@ -63,7 +63,7 @@
             <parameter name="rule6" value="{column: birthday, validator: Date}" />
         </behavior>
     </table>
-    
+
     <table name="validate_reader_book" isCrossRef="true">
          <column name="reader_id" type="INTEGER" primaryKey="true"/>
          <column name="book_id" type="INTEGER" primaryKey="true"/>
@@ -80,5 +80,5 @@
             <parameter name="rule4" value="{column: book_id, validator: Type, options: {type: integer}}" />
         </behavior>
      </table>
-    
+
 </database>

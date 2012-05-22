@@ -149,7 +149,7 @@ EOF;
             ->find();
 
         $tags = array();
-        foreach($q as $e) {
+        foreach ($q as $e) {
             $tags[] = $e->getTags();
         }
         $this->assertNotEquals($tags[0], $tags[1]);

@@ -16,14 +16,14 @@
              <parameter name="i18n_columns" value="title" />
         </behavior>
     </table>
-    
+
     <table name="validate_trigger_fiction">
         <behavior name="concrete_inheritance">
             <parameter name="extends" value="validate_trigger_book" />
         </behavior>
         <column name="foo" type="VARCHAR" size="100"/>
     </table>
-    
+
     <table name="validate_trigger_comic">
         <behavior name="concrete_inheritance">
             <parameter name="extends" value="validate_trigger_book" />
@@ -34,5 +34,5 @@
             <parameter name="rule2" value="{column: bar, validator: Type, options: {type: string }}" />
         </behavior>
     </table>
-    
+
 </database>

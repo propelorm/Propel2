@@ -217,7 +217,8 @@ class Ticket520Test extends BookstoreTestBase
         $a's $colBooks field. */
     }
 
-    public function testNewObjectsGetLostOnJoin() {
+    public function testNewObjectsGetLostOnJoin()
+    {
         /* While testNewObjectsAvailableWhenSaveNotCalled passed as of
         revision 851, in this case we call getBooksJoinPublisher() instead
         of just getBooks(). get...Join...() does not contain the check whether

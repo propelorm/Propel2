@@ -13,7 +13,6 @@ namespace Propel\Tests\Generator\Behavior\NestedSet;
 
 use Propel\Tests\Helpers\Bookstore\Behavior\BookstoreNestedSetTestBase;
 
-use Propel\Tests\Bookstore\Behavior\Table9;
 use Propel\Tests\Bookstore\Behavior\Table9Peer;
 use Propel\Tests\Bookstore\Behavior\Table10;
 use Propel\Tests\Bookstore\Behavior\Table10Peer;

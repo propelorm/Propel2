@@ -17,7 +17,6 @@ use Propel\Generator\Model\IdMethod;
 use Propel\Generator\Model\IdMethodParameter;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Model\Table;
-use Propel\Generator\Model\VendorInfo;
 use Propel\Generator\Platform\PgsqlPlatform;
 
 /**

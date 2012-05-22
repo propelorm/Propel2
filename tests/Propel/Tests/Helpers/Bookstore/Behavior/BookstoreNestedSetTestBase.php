@@ -11,9 +11,7 @@
 namespace Propel\Tests\Helpers\Bookstore\Behavior;
 
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
-use Propel\Tests\Bookstore\Behavior\Table9;
 use Propel\Tests\Bookstore\Behavior\Table9Peer;
-use Propel\Tests\Bookstore\Behavior\Table10;
 use Propel\Tests\Bookstore\Behavior\Table10Peer;
 
 use Propel\Runtime\Query\Criteria;

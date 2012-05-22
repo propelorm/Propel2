@@ -11,7 +11,6 @@
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Platform\DefaultPlatform;
-use Propel\Generator\Util\QuickBuilder;
 use Propel\Runtime\Propel;
 
 class DefaultPlatformTest extends \PHPUnit_Framework_TestCase

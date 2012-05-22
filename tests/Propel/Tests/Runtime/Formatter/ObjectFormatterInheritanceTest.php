@@ -12,7 +12,6 @@ namespace Propel\Tests\Runtime\Formatter;
 
 use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
 
-use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\BookPeer;
 use Propel\Tests\Bookstore\BookstoreEmployee;
 use Propel\Tests\Bookstore\BookstoreEmployeePeer;

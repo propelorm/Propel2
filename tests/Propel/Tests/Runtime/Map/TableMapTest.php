@@ -10,7 +10,6 @@
 
 namespace Propel\Tests\Runtime\Map;
 
-use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\DatabaseMap;
 use Propel\Runtime\Map\RelationMap;
 use Propel\Runtime\Map\ColumnMap;
@@ -82,16 +81,15 @@ class TableMapTest extends \PHPUnit_Framework_TestCase
     {
         $column = $this->tmap->addColumn('BAR', 'Bar', 'INTEGER');
         $this->assertEquals($column, $this->tmap->getColumn('BAR'), 'getColumn returns a ColumnMap according to a column name');
-        try
-        {
+        try {
             $this->tmap->getColumn('FOO');
             $this->fail('getColumn throws an exception when called on an inexistent column');
-        } catch(ColumnNotFoundException $e) {}
+        } catch (ColumnNotFoundException $e) {}
             $this->assertEquals($column, $this->tmap->getColumn('foo.bar'), 'getColumn accepts a denormalized column name');
         try {
             $this->tmap->getColumn('foo.bar', false);
             $this->fail('getColumn accepts a $normalize parameter to skip name normalization');
-        } catch(ColumnNotFoundException $e) {
+        } catch (ColumnNotFoundException $e) {
         }
     }
 
@@ -102,7 +100,7 @@ class TableMapTest extends \PHPUnit_Framework_TestCase
         try {
             $this->tmap->getColumn('Foo');
             $this->fail('getColumnByPhpName() throws an exception when called on an inexistent column');
-        } catch(ColumnNotFoundException $e) {
+        } catch (ColumnNotFoundException $e) {
         }
     }
 

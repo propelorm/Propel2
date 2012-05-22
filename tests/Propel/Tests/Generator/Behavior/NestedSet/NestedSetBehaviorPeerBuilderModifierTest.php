@@ -325,8 +325,7 @@ class NestedSetBehaviorPeerBuilderModifierTest extends BookstoreNestedSetTestBas
             't7' => array(12, 13, 3),
         );
         $this->assertEquals($expected, $this->dumpTree(), 'makeRoomForLeaf() shifts the other nodes correctly');
-        foreach ($expected as $key => $values)
-        {
+        foreach ($expected as $key => $values) {
             $this->assertEquals($values, array($$key->getLeftValue(), $$key->getRightValue(), $$key->getLevel()), 'makeRoomForLeaf() updates nodes already in memory');
         }
     }

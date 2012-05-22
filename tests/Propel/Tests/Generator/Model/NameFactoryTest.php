@@ -65,8 +65,8 @@ class NameFactoryTest extends BaseTestCase
      * Creates a new instance.
      *
      */
-    public function __construct() {
-
+    public function __construct()
+    {
         self::$INPUTS = array(
                 array( array(self::makeString(61), "I", 1),
                         array(self::makeString(61), "I", 2),
@@ -99,7 +99,7 @@ class NameFactoryTest extends BaseTestCase
      * the character <code>A</code>.  Useful for simulating table
      * names, etc.
      *
-     * @param      int $len the number of characters to include in the string
+     * @param int $len the number of characters to include in the string
      * @return     a string of length <code>len</code> with every character an 'A'
      */
     static private function makeString($len)

@@ -11,7 +11,6 @@
 namespace Propel\Tests\Runtime\Om;
 
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
-use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
 use Propel\Tests\Bookstore\Author;
 use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\BookPeer;

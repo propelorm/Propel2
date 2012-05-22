@@ -14,7 +14,6 @@ use Propel\Generator\Model\ColumnDefaultValue;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Model\Diff\TableComparator;
 use Propel\Generator\Model\Diff\TableDiff;
-use Propel\Generator\Model\Diff\ColumnComparator;
 use Propel\Generator\Platform\MysqlPlatform;
 
 /**

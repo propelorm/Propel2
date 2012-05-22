@@ -13,13 +13,11 @@ namespace Propel\Tests\Generator\Reverse;
 use Propel\Generator\Config\QuickGeneratorConfig;
 use Propel\Generator\Model\ColumnDefaultValue;
 use Propel\Generator\Model\Database;
-use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Platform\DefaultPlatform;
 use Propel\Generator\Reverse\PgsqlSchemaParser;
 use Propel\Runtime\Propel;
 use Propel\Tests\TestCase;
 
-use \DOMDocument;
 
 /**
  * Tests for Pgsql database schema parser.

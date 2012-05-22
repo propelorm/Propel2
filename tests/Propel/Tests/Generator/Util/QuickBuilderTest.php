@@ -20,7 +20,6 @@ use MyNameSpace\QuickBuildFoo1Peer;
 use MyNameSpace\QuickBuildFoo1Query;
 
 use MyNameSpace2\QuickBuildFoo2;
-use MyNameSpace2\QuickBuildFoo2Peer;
 use MyNameSpace2\QuickBuildFoo2Query;
 
 /**

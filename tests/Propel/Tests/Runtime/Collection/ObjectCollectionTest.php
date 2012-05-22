@@ -19,7 +19,6 @@ use Propel\Tests\Bookstore\BookPeer;
 use Propel\Tests\Bookstore\ContestView;
 
 use Propel\Runtime\Collection\ObjectCollection;
-use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Formatter\ObjectFormatter;
 use Propel\Runtime\Query\ModelCriteria;
 

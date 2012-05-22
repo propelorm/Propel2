@@ -61,7 +61,7 @@ class BookstoreDataPopulator
 
     static public function populate($con = null)
     {
-        if($con === null) {
+        if ($con === null) {
             $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
         }
         $con->beginTransaction();
@@ -269,7 +269,7 @@ class BookstoreDataPopulator
 
     static public function populateOpinionFavorite($con = null)
     {
-        if($con === null) {
+        if ($con === null) {
             $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
         }
         $con->beginTransaction();

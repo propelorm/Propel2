@@ -609,7 +609,7 @@ class TableTest extends ModelTestCase
         $table->addColumn($column2);
         $table->addColumn($column3);
 
-        $this->assertCount(1, $table->getPrimaryKey());        
+        $this->assertCount(1, $table->getPrimaryKey());
         $this->assertTrue($table->hasPrimaryKey());
         $this->assertTrue($table->hasAutoIncrementPrimaryKey());
         $this->assertSame($column1, $table->getAutoIncrementPrimaryKey());
@@ -679,7 +679,7 @@ class TableTest extends ModelTestCase
         $this->assertInstanceOf('Propel\Generator\Model\ForeignKey', $fk);
         $this->assertCount(1, $table->getForeignKeys());
         $this->assertTrue($table->hasForeignKeys());
-        
+
         $this->assertContains('authors', $table->getForeignTableNames());
     }
 
@@ -835,8 +835,8 @@ class TableTest extends ModelTestCase
     /**
      * Returns a dummy Column object.
      *
-     * @param string $name The column name
-     * @param array $options An array of options
+     * @param string $name    The column name
+     * @param array  $options An array of options
      * @return Column
      */
     protected function getColumnMock($name, array $options = array())

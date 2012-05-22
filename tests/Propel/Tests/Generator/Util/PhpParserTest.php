@@ -19,8 +19,8 @@ class PhpParserTest extends \PHPUnit_Framework_TestCase
     {
         $code = <<<EOF
 <?php
-class Foo {
-
+class Foo
+{
     public function bar1()
     {
         // this is bar1
@@ -68,7 +68,6 @@ EOF;
     {
         $parser = new PhpParser($code);
         $expected = <<<EOF
-
 
     public function bar1()
     {
@@ -150,7 +149,6 @@ EOF;
         $parser = new PhpParser($code);
         $expected = <<<EOF
 
-
     public function bar1()
     {
         // this is bar1
@@ -168,7 +166,8 @@ EOF;
         $parser->removeMethod('bar1');
         $expected = <<<EOF
 <?php
-class Foo {
+class Foo
+{
 
     protected \$bar2;
 
@@ -212,7 +211,6 @@ EOF;
         $parser = new PhpParser($code);
         $expected = <<<EOF
 
-
     public function bar1()
     {
         // this is bar1
@@ -229,7 +227,6 @@ EOF;
         $parser = new PhpParser($code);
         $newCode = <<<EOF
 
-
     public function bar1prime()
     {
         // yep, I've been replaced
@@ -239,8 +236,8 @@ EOF;
         $parser->replaceMethod('bar1', $newCode);
         $expected = <<<EOF
 <?php
-class Foo {
-
+class Foo
+{
     public function bar1prime()
     {
         // yep, I've been replaced

@@ -42,7 +42,7 @@ class ConcreteInheritanceBehaviorTest extends BookstoreTestBase
     public function setUp()
     {
         parent::setUp();
-        
+
         if (!class_exists('ConcreteContentSetPkQuery')) {
             $schema = <<<EOF
 <database name="concrete_content_set_pk">
@@ -67,7 +67,7 @@ EOF;
             QuickBuilder::buildSchema($schema);
         }
     }
-    
+
     public function testParentBehavior()
     {
         $behaviors = ConcreteContentPeer::getTableMap()->getBehaviors();
@@ -274,7 +274,7 @@ EOF;
         $this->assertEquals(5,$content->getId(), 'getParentOrCreate() returns a instance of the parent class with pk set');
         $this->assertEquals('ConcreteArticleSetPk', $content->getDescendantClass(), 'getParentOrCreate() correctly sets the descendant_class of the parent object');
     }
-    
+
     public function testSetPKOnNewObject()
     {
         \ConcreteContentSetPkQuery::create()->deleteAll();
@@ -287,7 +287,7 @@ EOF;
         $articledb = \ConcreteArticleSetPkQuery::create()->findOneById(2);
         $this->assertEquals(2, $articledb->getId(), 'getParentOrCreate() keeps manually set pk after save and reload from db');
     }
-    
+
     public function testSetPKOnNewObjectWithPkAlreadyInParentTable()
     {
         \ConcreteContentSetPkQuery::create()->deleteAll();
@@ -304,7 +304,7 @@ EOF;
             $this->assertTrue(true, 'getParentOrCreate() returns a new parent object on new child objects with pk set');
         }
     }
-    
+
     public function testSetPkAllowPkInsertIsFalse()
     {
         ConcreteContentQuery::create()->deleteAll();
@@ -318,5 +318,5 @@ EOF;
             $this->assertTrue(true, 'SetPk fails when allowPkInsert is false');
         }
     }
-    
+
 }

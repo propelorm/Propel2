@@ -11,7 +11,6 @@
 use Propel\Generator\Builder\Util\SchemaReader;
 use Propel\Generator\Model\Behavior;
 use Propel\Generator\Model\Table;
-use Propel\Generator\Model\Behavior\TimestampableBehavior;
 
 /**
  * Tests for Behavior class

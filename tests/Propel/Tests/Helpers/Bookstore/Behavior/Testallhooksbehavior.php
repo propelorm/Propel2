@@ -18,8 +18,7 @@ class TestAllHooksBehavior extends Behavior
 
     public function getTableModifier()
     {
-        if (is_null($this->tableModifier))
-        {
+        if (is_null($this->tableModifier)) {
             $this->tableModifier = new TestAllHooksTableModifier($this);
         }
 
@@ -28,8 +27,7 @@ class TestAllHooksBehavior extends Behavior
 
     public function getObjectBuilderModifier()
     {
-        if (is_null($this->objectBuilderModifier))
-        {
+        if (is_null($this->objectBuilderModifier)) {
             $this->objectBuilderModifier = new TestAllHooksObjectBuilderModifier($this);
         }
 
@@ -38,8 +36,7 @@ class TestAllHooksBehavior extends Behavior
 
     public function getPeerBuilderModifier()
     {
-        if (is_null($this->peerBuilderModifier))
-        {
+        if (is_null($this->peerBuilderModifier)) {
             $this->peerBuilderModifier = new TestAllHooksPeerBuilderModifier($this);
         }
 
@@ -48,8 +45,7 @@ class TestAllHooksBehavior extends Behavior
 
     public function getQueryBuilderModifier()
     {
-        if (is_null($this->queryBuilderModifier))
-        {
+        if (is_null($this->queryBuilderModifier)) {
             $this->queryBuilderModifier = new TestAllHooksQueryBuilderModifier($this);
         }
 

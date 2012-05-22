@@ -15,15 +15,8 @@ use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
 use Propel\Tests\Bookstore\Behavior\ConcreteArticle;
 use Propel\Tests\Bookstore\Behavior\ConcreteArticleQuery;
-use Propel\Tests\Bookstore\Behavior\ConcreteArticlePeer;
-use Propel\Tests\Bookstore\Behavior\ConcreteAuthorPeer;
-use Propel\Tests\Bookstore\Behavior\ConcreteCategory;
-use Propel\Tests\Bookstore\Behavior\ConcreteCategoryQuery;
 use Propel\Tests\Bookstore\Behavior\ConcreteContent;
 use Propel\Tests\Bookstore\Behavior\ConcreteContentQuery;
-use Propel\Tests\Bookstore\Behavior\ConcreteContentPeer;
-use Propel\Tests\Bookstore\Behavior\ConcreteQuizz;
-use Propel\Tests\Bookstore\Behavior\ConcreteQuizzPeer;
 use Propel\Tests\Bookstore\Behavior\ConcreteQuizzQuery;
 
 /**

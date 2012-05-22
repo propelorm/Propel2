@@ -11,7 +11,6 @@
 namespace Propel\Tests\Generator\Platform;
 
 use Propel\Generator\Model\Column;
-use Propel\Generator\Model\VendorInfo;
 use Propel\Generator\Platform\MysqlPlatform;
 
 /**
