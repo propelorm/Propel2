@@ -25,7 +25,7 @@ abstract class AbstractParser
      *
      * Override in the parser driver.
      *
-     * @param array $array Source data to convert
+     * @param  array $array Source data to convert
      * @return mixed Converted data, depending on the parser format
      */
     abstract public function fromArray($array);
@@ -35,7 +35,7 @@ abstract class AbstractParser
      *
      * Override in the parser driver.
      *
-     * @param mixed $data Source data to convert, depending on the parser format
+     * @param  mixed $data Source data to convert, depending on the parser format
      * @return array Converted data
      */
     abstract public function toArray($data);

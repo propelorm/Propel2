@@ -30,7 +30,7 @@ class ValidateBehavior extends Behavior
     /**
      * Add behavior methods to model class
      *
-     * @return  string
+     * @return string
      */
     public function objectMethods($builder)
     {
@@ -213,7 +213,7 @@ class ValidateBehavior extends Behavior
 
     /**
      * Adds the validate() method.
-     * @return    string  The code to be added to model class
+     * @return string The code to be added to model class
      */
     protected function addValidateMethod()
     {

@@ -111,7 +111,7 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
     /**
      * Gets the baseClass path if specified for table/db.
      * If not, will return 'propel.om.BaseObject'
-     * @return     string
+     * @return string
      */
     protected function getBaseClass()
     {
@@ -126,7 +126,7 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
     /**
      * Gets the interface path if specified for current table.
      * If not, will return 'propel.om.Persistent'.
-     * @return     string
+     * @return string
      */
     protected function getInterface()
     {
@@ -175,7 +175,7 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
 
     /**
      * Checks whether any registered behavior on that table has a modifier for a hook
-     * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
+     * @param  string  $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
      * @return Boolean
      */
     public function hasBehaviorModifier($hookName, $modifier = null)

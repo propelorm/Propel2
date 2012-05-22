@@ -22,8 +22,8 @@ class MssqlDataSQLBuilder extends DataSQLBuilder
 
     /**
      *
-     * @param mixed $blob Blob object or string containing data.
-     * @return     string
+     * @param  mixed  $blob Blob object or string containing data.
+     * @return string
      */
     protected function getBlobSql($blob)
     {

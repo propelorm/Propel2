@@ -112,7 +112,7 @@ class ColumnMap
     /**
      * Get the name of a column.
      *
-     * @return     string A String with the column name.
+     * @return string A String with the column name.
      */
     public function getName()
     {
@@ -122,7 +122,7 @@ class ColumnMap
     /**
      * Get the table map this column belongs to.
      *
-     * @return     \Propel\Runtime\Map\TableMap
+     * @return \Propel\Runtime\Map\TableMap
      */
     public function getTable()
     {
@@ -132,7 +132,7 @@ class ColumnMap
     /**
      * Get the name of the table this column is in.
      *
-     * @return     string A String with the table name.
+     * @return string A String with the table name.
      */
     public function getTableName()
     {
@@ -142,7 +142,7 @@ class ColumnMap
     /**
      * Get the table name + column name.
      *
-     * @return     string A String with the full column name.
+     * @return string A String with the full column name.
      */
     public function getFullyQualifiedName()
     {
@@ -162,7 +162,7 @@ class ColumnMap
     /**
      * Get the name of a column.
      *
-     * @return     string A String with the column name.
+     * @return string A String with the column name.
      */
     public function getPhpName()
     {
@@ -182,7 +182,7 @@ class ColumnMap
     /**
      * Get the Propel type of this column.
      *
-     * @return     string A string representing the Propel type (e.g. PropelColumnTypes::DATE).
+     * @return string A string representing the Propel type (e.g. PropelColumnTypes::DATE).
      */
     public function getType()
     {
@@ -192,7 +192,7 @@ class ColumnMap
     /**
      * Get the PDO type of this column.
      *
-     * @return     int The PDO::PARMA_* value
+     * @return int The PDO::PARMA_* value
      */
     public function getPdoType()
     {
@@ -202,7 +202,7 @@ class ColumnMap
     /**
      * Whether this is a BLOB, LONGVARBINARY, or VARBINARY.
      *
-     * @return     Boolean
+     * @return Boolean
      */
     public function isLob()
     {
@@ -216,7 +216,7 @@ class ColumnMap
     /**
      * Whether this is a DATE/TIME/TIMESTAMP column.
      *
-     * @return     Boolean
+     * @return Boolean
      */
     public function isTemporal()
     {
@@ -232,7 +232,7 @@ class ColumnMap
     /**
      * Whether this column is numeric (int, decimal, bigint etc).
      *
-     * @return     Boolean
+     * @return Boolean
      */
     public function isNumeric()
     {
@@ -252,7 +252,7 @@ class ColumnMap
     /**
      * Whether this column is a text column (varchar, char, longvarchar).
      *
-     * @return     Boolean
+     * @return Boolean
      */
     public function isText()
     {
@@ -276,7 +276,7 @@ class ColumnMap
     /**
      * Get the size of this column.
      *
-     * @return     int An int specifying the size.
+     * @return int An int specifying the size.
      */
     public function getSize()
     {
@@ -296,7 +296,7 @@ class ColumnMap
     /**
      * Is this column a primary key?
      *
-     * @return     Boolean True if column is a primary key.
+     * @return Boolean True if column is a primary key.
      */
     public function isPrimaryKey()
     {
@@ -316,7 +316,7 @@ class ColumnMap
     /**
      * Is null value allowed ?
      *
-     * @return     Boolean True if column may not be null.
+     * @return Boolean True if column may not be null.
      */
     public function isNotNull()
     {
@@ -335,7 +335,7 @@ class ColumnMap
 
     /**
      * Gets the default value for this column.
-     * @return     mixed String or NULL
+     * @return mixed String or NULL
      */
     public function getDefaultValue()
     {
@@ -363,7 +363,7 @@ class ColumnMap
     /**
      * Is this column a foreign key?
      *
-     * @return     Boolean True if column is a foreign key.
+     * @return Boolean True if column is a foreign key.
      */
     public function isForeignKey()
     {
@@ -392,7 +392,7 @@ class ColumnMap
     /**
      * Get the table.column that this column is related to.
      *
-     * @return     string A String with the full name for the related column.
+     * @return string A String with the full name for the related column.
      */
     public function getRelatedName()
     {
@@ -402,7 +402,7 @@ class ColumnMap
     /**
      * Get the table name that this column is related to.
      *
-     * @return     string A String with the name for the related table.
+     * @return string A String with the name for the related table.
      */
     public function getRelatedTableName()
     {
@@ -412,7 +412,7 @@ class ColumnMap
     /**
      * Get the column name that this column is related to.
      *
-     * @return     string A String with the name for the related column.
+     * @return string A String with the name for the related column.
      */
     public function getRelatedColumnName()
     {
@@ -422,8 +422,8 @@ class ColumnMap
     /**
      * Get the TableMap object that this column is related to.
      *
-     * @return     \Propel\Runtime\Map\TableMap The related TableMap object
-     * @throws     \Propel\Runtime\Map\Exception\ForeignKeyNotFoundException when called on a column with no foreign key
+     * @return \Propel\Runtime\Map\TableMap                              The related TableMap object
+     * @throws \Propel\Runtime\Map\Exception\ForeignKeyNotFoundException when called on a column with no foreign key
      */
     public function getRelatedTable()
     {
@@ -437,8 +437,8 @@ class ColumnMap
     /**
      * Get the TableMap object that this column is related to.
      *
-     * @return     \Propel\Runtime\Map\ColumnMap The related ColumnMap object
-     * @throws     \Propel\Runtime\Map\Exception\ForeignKeyNotFoundException when called on a column with no foreign key
+     * @return \Propel\Runtime\Map\ColumnMap                             The related ColumnMap object
+     * @throws \Propel\Runtime\Map\Exception\ForeignKeyNotFoundException when called on a column with no foreign key
      */
     public function getRelatedColumn()
     {
@@ -458,7 +458,7 @@ class ColumnMap
     /**
      * Get the valueSet of this column (only valid for ENUM columns).
      *
-     * @return     array A list of allowed values
+     * @return array A list of allowed values
      */
     public function getValueSet()
     {
@@ -495,8 +495,8 @@ class ColumnMap
      *
      * article.first_name becomes FIRST_NAME
      *
-     * @param string $name
-     * @return     string Normalized column name.
+     * @param  string $name
+     * @return string Normalized column name.
      */
     static public function normalizeName($name)
     {
@@ -520,7 +520,7 @@ class ColumnMap
     /**
      * Is this column a primaryString column?
      *
-     * @return     Boolean True, if this column is the primaryString column.
+     * @return Boolean True, if this column is the primaryString column.
      */
     public function isPrimaryString()
     {

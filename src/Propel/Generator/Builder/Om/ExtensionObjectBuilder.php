@@ -23,7 +23,7 @@ class ExtensionObjectBuilder extends AbstractObjectBuilder
 
     /**
      * Returns the name of the current class being built.
-     * @return     string
+     * @return string
      */
     public function getUnprefixedClassName()
     {

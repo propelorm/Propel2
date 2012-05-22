@@ -26,7 +26,7 @@ class MssqlPropelPDO extends PropelPDO
      * It is necessary to override the abstract PDO transaction functions here, as
      * the PDO driver for MSSQL does not support transactions.
      *
-     * @return    integer
+     * @return integer
      */
     public function beginTransaction()
     {
@@ -50,7 +50,7 @@ class MssqlPropelPDO extends PropelPDO
      * It is necessary to override the abstract PDO transaction functions here, as
      * the PDO driver for MSSQL does not support transactions.
      *
-     * @return    integer
+     * @return integer
      */
     public function commit()
     {
@@ -80,7 +80,7 @@ class MssqlPropelPDO extends PropelPDO
      * It is necessary to override the abstract PDO transaction functions here, as
      * the PDO driver for MSSQL does not support transactions.
      *
-     * @return    integer
+     * @return integer
      */
     public function rollBack()
     {
@@ -108,7 +108,7 @@ class MssqlPropelPDO extends PropelPDO
      * It is necessary to override the abstract PDO transaction functions here, as
      * the PDO driver for MSSQL does not support transactions.
      *
-     * @return    integer
+     * @return integer
      */
     public function forceRollBack()
     {
@@ -132,8 +132,8 @@ class MssqlPropelPDO extends PropelPDO
     }
 
     /**
-     * @param string $seqname
-     * @return     integer
+     * @param  string  $seqname
+     * @return integer
      */
     public function lastInsertId($seqname = null)
     {
@@ -143,8 +143,8 @@ class MssqlPropelPDO extends PropelPDO
     }
 
     /**
-     * @param string $text
-     * @return     string
+     * @param  string $text
+     * @return string
      */
     public function quoteIdentifier($text)
     {
@@ -152,7 +152,7 @@ class MssqlPropelPDO extends PropelPDO
     }
 
     /**
-     * @return    Boolean
+     * @return Boolean
      */
     public function useQuoteIdentifier()
     {

@@ -23,12 +23,12 @@ use Propel\Runtime\Connection\StatementInterface;
 class OnDemandIterator implements \Iterator
 {
     /**
-     * @var       ObjectFormatter
+     * @var ObjectFormatter
      */
     protected $formatter;
 
     /**
-     * @var       PDOStatement
+     * @var PDOStatement
      */
     protected $stmt;
 
@@ -61,7 +61,7 @@ class OnDemandIterator implements \Iterator
      * Returns the number of rows in the resultset
      * Warning: this number is inaccurate for most databases. Do not rely on it for a portable application.
      *
-     * @return    integer  Number of results
+     * @return integer Number of results
      */
     public function count()
     {
@@ -76,7 +76,7 @@ class OnDemandIterator implements \Iterator
      *
      * @see ObjectFormatter::getAllObjectsFromRow()
      *
-     * @return    BaseObject
+     * @return BaseObject
      */
     public function current()
     {
@@ -86,7 +86,7 @@ class OnDemandIterator implements \Iterator
     /**
      * Gets the current key in the iterator
      *
-     * @return    string
+     * @return string
      */
     public function key()
     {
@@ -132,7 +132,7 @@ class OnDemandIterator implements \Iterator
     }
 
     /**
-     * @return    Boolean
+     * @return Boolean
      */
     public function valid()
     {

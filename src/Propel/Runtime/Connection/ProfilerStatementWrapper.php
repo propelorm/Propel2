@@ -28,7 +28,7 @@ class ProfilerStatementWrapper extends StatementWrapper
      * @param integer $length         Length of the data type. To indicate that a parameter is an OUT parameter from a stored procedure, you must explicitly set the length.
      * @param mixed   $driver_options
      *
-     * @return    boolean
+     * @return Boolean
      */
     public function bindParam($pos, &$value, $type = \PDO::PARAM_STR, $length = 0, $driver_options = null)
     {
@@ -45,7 +45,7 @@ class ProfilerStatementWrapper extends StatementWrapper
      * @param mixed   $value The value to bind to the parameter.
      * @param integer $type  Explicit data type for the parameter using the PDO::PARAM_* constants. Defaults to PDO::PARAM_STR.
      *
-     * @return    boolean
+     * @return Boolean
      */
     public function bindValue($pos, $value, $type = \PDO::PARAM_STR)
     {
@@ -59,8 +59,8 @@ class ProfilerStatementWrapper extends StatementWrapper
      * Executes a prepared statement.  Returns a boolean value indicating success.
      * Overridden for query counting and logging.
      *
-     * @param string $input_parameters
-     * @return    boolean
+     * @param  string  $input_parameters
+     * @return Boolean
      */
     public function execute($input_parameters = null)
     {

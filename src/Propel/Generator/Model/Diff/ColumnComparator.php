@@ -22,8 +22,8 @@ class ColumnComparator
     /**
      * Compute and return the difference between two column objects
      *
-     * @param Column $fromColumn
-     * @param Column $toColumn
+     * @param  Column             $fromColumn
+     * @param  Column             $toColumn
      * @return ColumnDiff|boolean return false if the two columns are similar
      */
     static public function computeDiff(Column $fromColumn, Column $toColumn)

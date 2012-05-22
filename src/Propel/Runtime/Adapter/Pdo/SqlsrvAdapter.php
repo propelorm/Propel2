@@ -45,7 +45,7 @@ class SqlsrvAdapter extends MssqlAdapter implements AdapterInterface
      * @param PDO    $con
      * @param string $charset
      *
-     * @throws    \Propel\Runtime\Exception\UnsupportedEncodingException
+     * @throws \Propel\Runtime\Exception\UnsupportedEncodingException
      */
     public function setCharset(ConnectionInterface $con, $charset)
     {
@@ -98,7 +98,7 @@ class SqlsrvAdapter extends MssqlAdapter implements AdapterInterface
      * @param ColumnMap    $cMap
      * @param null|integer $position
      *
-     * @return    boolean
+     * @return Boolean
      */
     public function bindValue(StatementInterface $stmt, $parameter, $value, ColumnMap $cMap, $position = null)
     {

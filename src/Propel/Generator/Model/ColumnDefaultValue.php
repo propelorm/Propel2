@@ -21,12 +21,12 @@ class ColumnDefaultValue
     const TYPE_EXPR  = 'expr';
 
     /**
-     * @var        string The default value, as specified in the schema.
+     * @var string The default value, as specified in the schema.
      */
     private $value;
 
     /**
-     * @var        string The type of value represented by this object (DefaultValue::TYPE_VALUE or DefaultValue::TYPE_EXPR).
+     * @var string The type of value represented by this object (DefaultValue::TYPE_VALUE or DefaultValue::TYPE_EXPR).
      */
     private $type = ColumnDefaultValue::TYPE_VALUE;
 
@@ -46,7 +46,7 @@ class ColumnDefaultValue
     }
 
     /**
-     * @return     string The type of default value (DefaultValue::TYPE_VALUE or DefaultValue::TYPE_EXPR)
+     * @return string The type of default value (DefaultValue::TYPE_VALUE or DefaultValue::TYPE_EXPR)
      */
     public function getType()
     {
@@ -64,7 +64,7 @@ class ColumnDefaultValue
     /**
      * Convenience method to indicate whether the value in this object is an expression (as opposed to simple value).
      *
-     * @return     boolean Whether value this object holds is an expression.
+     * @return Boolean Whether value this object holds is an expression.
      */
     public function isExpression()
     {
@@ -72,7 +72,7 @@ class ColumnDefaultValue
     }
 
     /**
-     * @return     string The value, as specified in the schema.
+     * @return string The value, as specified in the schema.
      */
     public function getValue()
     {
@@ -90,8 +90,8 @@ class ColumnDefaultValue
     /**
      * A method to compare if two Default values match
      *
-     * @param ColumnDefaultValue $other The value to compare to
-     * @return     boolean Wheter this object represents same default value as $other
+     * @param  ColumnDefaultValue $other The value to compare to
+     * @return boolean            Wheter this object represents same default value as $other
      * @author     Niklas Närhinen <niklas@narhinen.net>
      */
     public function equals(ColumnDefaultValue $other)

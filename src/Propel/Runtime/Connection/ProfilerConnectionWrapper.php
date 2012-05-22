@@ -21,7 +21,7 @@ class ProfilerConnectionWrapper extends ConnectionWrapper
     /**
      * Whether or not the debug is enabled
      *
-     * @var       boolean
+     * @var Boolean
      */
     public $useDebug = true;
 
@@ -83,7 +83,7 @@ class ProfilerConnectionWrapper extends ConnectionWrapper
      * @param array  $driver_options One $array or more key => value pairs to set attribute values
      *                                      for the PDOStatement object that this method returns.
      *
-     * @return    \Propel\Runtime\Connection\StatementInterface
+     * @return \Propel\Runtime\Connection\StatementInterface
      */
     public function prepare($sql, $driver_options = array())
     {
@@ -111,8 +111,8 @@ class ProfilerConnectionWrapper extends ConnectionWrapper
      * Execute an SQL statement and return the number of affected rows.
      * Overrides PDO::exec() to log queries when required
      *
-     * @param string $sql
-     * @return    integer
+     * @param  string  $sql
+     * @return integer
      */
     public function exec($sql)
     {
@@ -129,7 +129,7 @@ class ProfilerConnectionWrapper extends ConnectionWrapper
      *
      * @see http://php.net/manual/en/pdo.query.php for a description of the possible parameters.
      *
-     * @return    PDOStatement
+     * @return PDOStatement
      */
     public function query()
     {

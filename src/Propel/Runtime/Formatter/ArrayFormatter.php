@@ -91,7 +91,7 @@ class ArrayFormatter extends AbstractFormatter
      *  @param    array  $row associative array indexed by column number,
      *                   as returned by PDOStatement::fetch(PDO::FETCH_NUM)
      *
-     * @return    Array
+     * @return Array
      */
     public function &getStructuredArrayFromRow($row)
     {

@@ -66,7 +66,7 @@ class ConnectionManagerMasterSlave implements ConnectionManagerInterface
     /**
      * For replication, whether to always force the use of a master connection.
      *
-     * @return     boolean
+     * @return Boolean
      */
     public function isForceMasterConnection()
     {

@@ -38,7 +38,7 @@ class OracleSchemaParser extends AbstractSchemaParser
      *   DECIMAL (NUMBER with scale),
      *   DOUBLE (FLOAT with precision = 126)
      *
-     * @var        array
+     * @var array
      */
     private static $oracleTypeMap = array(
         'BLOB'      => PropelTypes::BLOB,
@@ -61,7 +61,7 @@ class OracleSchemaParser extends AbstractSchemaParser
     /**
      * Gets a type mapping from native types to Propel types
      *
-     * @return     array
+     * @return array
      */
     protected function getTypeMapping()
     {

@@ -188,7 +188,7 @@ class "  .$this->getUnqualifiedClassName() . " extends " . $baseClassName . " {
      * @param     string \$modelAlias The alias of a model in the query
      * @param     Criteria \$criteria Optional Criteria to build the query from
      *
-     * @return    " . $classname . "
+     * @return " . $classname . "
      */
     static public function create(\$modelAlias = null, \$criteria = null)
     {

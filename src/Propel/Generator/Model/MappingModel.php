@@ -66,8 +66,8 @@ abstract class MappingModel implements MappingModelInterface
      * If the attribute is not set, then the second default value is
      * returned instead.
      *
-     * @param string $name
-     * @param mixed  $default
+     * @param  string $name
+     * @param  mixed  $default
      * @return mixed
      */
     public function getAttribute($name, $default = null)
@@ -85,7 +85,7 @@ abstract class MappingModel implements MappingModelInterface
      *
      * This is to support the default value when used with a boolean column.
      *
-     * @param mixed $value
+     * @param  mixed   $value
      * @return Boolean
      */
     protected function booleanValue($value)
@@ -111,7 +111,7 @@ abstract class MappingModel implements MappingModelInterface
     /**
      * Adds a new VendorInfo instance to this current model object.
      *
-     * @param VendorInfo|array $data
+     * @param  VendorInfo|array $data
      * @return VendorInfo
      */
     public function addVendorInfo($vendor)
@@ -131,7 +131,7 @@ abstract class MappingModel implements MappingModelInterface
     /**
      * Returns a VendorInfo object by its type.
      *
-     * @param string $type
+     * @param  string     $type
      * @return VendorInfo
      */
     public function getVendorInfoForType($type)
@@ -148,8 +148,8 @@ abstract class MappingModel implements MappingModelInterface
      *
      * If not found, the method tries to autoload \Propel\Generator\Behavior\[Bname]\[Bname]Behavior
      *
-     * @param string $behavior The behavior name (ie: timestampable)
-     * @return string $class The behavior fully qualified class name
+     * @param  string                    $behavior The behavior name (ie: timestampable)
+     * @return string                    $class The behavior fully qualified class name
      * @throws BehaviorNotFoundException
      */
     public function getConfiguredBehavior($behavior)

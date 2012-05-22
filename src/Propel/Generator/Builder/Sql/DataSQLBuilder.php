@@ -64,7 +64,7 @@ abstract class DataSQLBuilder extends DataModelBuilder
     /**
      * Returns any SQL to place at the end of row inserts for a table.
      *
-     * @return     string
+     * @return string
      */
     public function getTableEndSql()
     {
@@ -75,7 +75,7 @@ abstract class DataSQLBuilder extends DataModelBuilder
      * The main method in this class, returns the SQL for INSERTing data into a
      * row.
      *
-     * @param DataRow $row
+     * @param  DataRow $row
      * @return string
      */
     public function buildRowSql(DataRow $row)
@@ -104,7 +104,7 @@ abstract class DataSQLBuilder extends DataModelBuilder
     /**
      * Returns the propertly escaped (and quoted) value for a column.
      *
-     * @param ColumnValue $colValue
+     * @param  ColumnValue $colValue
      * @return mixed
      */
     protected function getColumnValueSql(ColumnValue $colValue)
@@ -119,7 +119,7 @@ abstract class DataSQLBuilder extends DataModelBuilder
      * Returns a representation of a binary value suitable for use in a SQL
      * statement. Default behavior is true = 1, false = 0.
      *
-     * @param Boolean $value
+     * @param  Boolean $value
      * @return integer
      */
     protected function getBooleanSql($value)
@@ -131,7 +131,7 @@ abstract class DataSQLBuilder extends DataModelBuilder
      * Returns a representation of a BLOB/LONGVARBINARY value suitable for use
      * in a SQL statement.
      *
-     * @param mixed $blob
+     * @param  mixed  $blob
      * @return string
      */
     protected function getBlobSql($blob)
@@ -148,7 +148,7 @@ abstract class DataSQLBuilder extends DataModelBuilder
      * Returns a representation of a CLOB/LONGVARCHAR value suitable for use
      * in a SQL statement.
      *
-     * @param mixed $clob
+     * @param  mixed  $clob
      * @return string
      */
     protected function getClobSql($clob)
@@ -165,7 +165,7 @@ abstract class DataSQLBuilder extends DataModelBuilder
      * Returns a representation of a date value suitable for use in a SQL
      * statement.
      *
-     * @param string $value
+     * @param  string $value
      * @return string
      */
     protected function getDateSql($value)
@@ -177,7 +177,7 @@ abstract class DataSQLBuilder extends DataModelBuilder
      * Returns a representation of a decimal value suitable for use in a SQL
      * statement.
      *
-     * @param double $value
+     * @param  double $value
      * @return float
      */
     protected function getDecimalSql($value)
@@ -189,7 +189,7 @@ abstract class DataSQLBuilder extends DataModelBuilder
      * Returns a representation of a double value suitable for use in a SQL
      * statement.
      *
-     * @param double $value
+     * @param  double $value
      * @return double
      */
     protected function getDoubleSql($value)
@@ -201,7 +201,7 @@ abstract class DataSQLBuilder extends DataModelBuilder
      * Returns a representation of a float value suitable for use in a SQL
      * statement.
      *
-     * @param float $value
+     * @param  float $value
      * @return float
      */
     protected function getFloatSql($value)
@@ -213,7 +213,7 @@ abstract class DataSQLBuilder extends DataModelBuilder
      * Returns a representation of an integer value suitable for use in a SQL
      * statement.
      *
-     * @param integer $value
+     * @param  integer $value
      * @return integer
      */
     protected function getIntSql($value)
@@ -236,7 +236,7 @@ abstract class DataSQLBuilder extends DataModelBuilder
      * Returns a representation of a string value suitable for use in a SQL
      * statement.
      *
-     * @param string $value
+     * @param  string $value
      * @return string
      */
     protected function getStringSql($value)
@@ -248,7 +248,7 @@ abstract class DataSQLBuilder extends DataModelBuilder
      * Returns a representation of a time value suitable for use in a SQL
      * statement.
      *
-     * @param string $value
+     * @param  string $value
      * @return string
      */
     protected function getTimeSql($paramIndex, $value)
@@ -260,7 +260,7 @@ abstract class DataSQLBuilder extends DataModelBuilder
      * Returns a representation of a timestamp value suitable for use in a SQL
      * statement.
      *
-     * @param string $value
+     * @param  string $value
      * @return string
      */
     public function getTimestampSql($value)

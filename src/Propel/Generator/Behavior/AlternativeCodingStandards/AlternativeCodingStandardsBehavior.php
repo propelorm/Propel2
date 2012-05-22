@@ -115,8 +115,8 @@ $1{";
 
     /**
      * Remove inline and codeblock comments from a PHP code string
-     * @param string $code The input code
-     * @return string       The input code, without comments
+     * @param  string $code The input code
+     * @return string The input code, without comments
      */
     static public function stripComments($code)
     {

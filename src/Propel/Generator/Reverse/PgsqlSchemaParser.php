@@ -72,7 +72,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
     /**
      * Gets a type mapping from native types to Propel types
      *
-     * @return     array
+     * @return array
      */
     protected function getTypeMapping()
     {
@@ -539,8 +539,8 @@ class PgsqlSchemaParser extends AbstractSchemaParser
     /**
      * Adds the sequences for this database.
      *
-     * @return     void
-     * @throws     SQLException
+     * @return void
+     * @throws SQLException
      */
     protected function addSequences(Database $database)
     {

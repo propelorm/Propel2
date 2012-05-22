@@ -79,7 +79,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
     /**
      * Gets a type mapping from native types to Propel types
      *
-     * @return     array
+     * @return array
      */
     protected function getTypeMapping()
     {
@@ -152,7 +152,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
      *
      * @param array $row An associative array with the following keys:
      *                       Field, Type, Null, Key, Default, Extra.
-     * @return    Column
+     * @return Column
      */
     public function getColumnFromRow($row, Table $table)
     {

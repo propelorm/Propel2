@@ -96,8 +96,8 @@ class SchemaReader
      * Parses a XML input file and returns a newly created and
      * populated Schema structure.
      *
-     * @param string $xmlFile The input file to parse.
-     * @return     Schema populated by <code>xmlFile</code>.
+     * @param  string $xmlFile The input file to parse.
+     * @return Schema populated by <code>xmlFile</code>.
      */
     public function parseFile($xmlFile)
     {
@@ -113,8 +113,8 @@ class SchemaReader
      * Parses a XML input string and returns a newly created and
      * populated Schema structure.
      *
-     * @param string $xmlString The input string to parse.
-     * @param string $xmlFile   The input file name.
+     * @param  string $xmlString The input string to parse.
+     * @param  string $xmlFile   The input file name.
      * @return Schema
      */
     public function parseString($xmlString, $xmlFile = null)

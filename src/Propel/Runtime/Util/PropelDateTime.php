@@ -27,13 +27,13 @@ class PropelDateTime extends \DateTime
 {
     /**
      * A string representation of the date, for serialization.
-     * @var        string
+     * @var string
      */
     private $dateString;
 
     /**
      * A string representation of the time zone, for serialization.
-     * @var        string
+     * @var string
      */
     private $tzString;
 
@@ -104,7 +104,7 @@ class PropelDateTime extends \DateTime
      * PHP "magic" function called when object is serialized.
      * Sets an internal property with the date string and returns properties
      * of class that should be serialized.
-     * @return     array string[]
+     * @return array string[]
      */
     function __sleep()
     {

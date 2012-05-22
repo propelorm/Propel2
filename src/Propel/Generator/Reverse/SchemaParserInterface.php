@@ -23,7 +23,7 @@ interface SchemaParserInterface
 {
     /**
      * Gets the database connection.
-     * @return     ConnectionInterface
+     * @return ConnectionInterface
      */
     function getConnection();
 
@@ -44,22 +44,22 @@ interface SchemaParserInterface
     /**
      * Gets a specific propel (renamed) property from the build.
      *
-     * @param string $name
-     * @return     mixed
+     * @param  string $name
+     * @return mixed
      */
     function getBuildProperty($name);
 
     /**
      * Gets array of warning messages.
-     * @return     array string[]
+     * @return array string[]
      */
     function getWarnings();
 
     /**
      * Parse the schema and populate passed-in Database model object.
      *
-     * @param Database $database
-     * @return     int number of generated tables
+     * @param  Database $database
+     * @return int      number of generated tables
      */
     function parse(Database $database);
 }

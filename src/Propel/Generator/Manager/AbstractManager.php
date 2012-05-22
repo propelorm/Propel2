@@ -340,7 +340,7 @@ abstract class AbstractManager
      * We need to join the datamodels in this case to allow for foreign keys
      * that point to tables in different packages.
      *
-     * @param array $schemas
+     * @param  array  $schemas
      * @return Schema
      */
     protected function joinDataModels(array $schemas)
@@ -392,7 +392,7 @@ abstract class AbstractManager
     /**
      * Returns an array of properties as key/value pairs from an input file.
      *
-     * @param string $file
+     * @param  string $file
      * @return array
      */
     protected function getProperties($file)

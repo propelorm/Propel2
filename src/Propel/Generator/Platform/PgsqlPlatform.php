@@ -71,8 +71,8 @@ class PgsqlPlatform extends DefaultPlatform
 
     /**
      * Escape the string for RDBMS.
-     * @param string $text
-     * @return     string
+     * @param  string $text
+     * @return string
      */
     public function disconnectedEscapeText($text)
     {
@@ -103,7 +103,7 @@ class PgsqlPlatform extends DefaultPlatform
      *
      * @param Table $table
      *
-     * @return     string
+     * @return string
      */
     public function getSequenceName(Table $table)
     {
@@ -381,7 +381,7 @@ DROP TABLE IF EXISTS %s CASCADE;
      * Overrides the implementation from DefaultPlatform
      *
      * @author     Niklas Närhinen <niklas@narhinen.net>
-     * @return     string
+     * @return string
      * @see DefaultPlatform::getModifyColumnDDL
      */
     public function getModifyColumnDDL(ColumnDiff $columnDiff)
@@ -438,7 +438,7 @@ ALTER TABLE %s ALTER COLUMN %s;
      * Overrides the implementation from DefaultPlatform
      *
      * @author     Niklas Närhinen <niklas@narhinen.net>
-     * @return     string
+     * @return string
      * @see DefaultPlatform::getModifyColumnsDDL
      */
     public function getModifyColumnsDDL($columnDiffs)
@@ -455,7 +455,7 @@ ALTER TABLE %s ALTER COLUMN %s;
      * Overrides the implementation from DefaultPlatform
      *
      * @author     Niklas Närhinen <niklas@narhinen.net>
-     * @return     string
+     * @return string
      * @see DefaultPlatform::getAddColumnsDLL
      */
     public function getAddColumnsDDL($columns)
@@ -472,7 +472,7 @@ ALTER TABLE %s ALTER COLUMN %s;
      * Overrides the implementation from DefaultPlatform
      *
      * @author     Niklas Närhinen <niklas@narhinen.net>
-     * @return     string
+     * @return string
      * @see DefaultPlatform::getDropIndexDDL
      */
     public function getDropIndexDDL(Index $index)

@@ -43,7 +43,7 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
      * @param string $s1 String to concatenate.
      * @param string $s2 String to append.
      *
-     * @return    string
+     * @return string
      */
     public function concatString($s1, $s2)
     {
@@ -57,7 +57,7 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
      * @param integer $pos Offset to start from.
      * @param integer $len Number of characters to extract.
      *
-     * @return    string
+     * @return string
      */
     public function subString($s, $pos, $len)
     {
@@ -67,8 +67,8 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
     /**
      * Returns SQL which calculates the length (in chars) of a string.
      *
-     * @param string $s String to calculate length of.
-     * @return    string
+     * @param  string $s String to calculate length of.
+     * @return string
      */
     public function strLength($s)
     {
@@ -78,8 +78,8 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
     /**
      * @see AdapterInterface::quoteIdentifier()
      *
-     * @param string $text
-     * @return    string
+     * @param  string $text
+     * @return string
      */
     public function quoteIdentifier($text)
     {
@@ -89,8 +89,8 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
     /**
      * @see AdapterInterface::quoteIdentifierTable()
      *
-     * @param string $table
-     * @return    string
+     * @param  string $table
+     * @return string
      */
     public function quoteIdentifierTable($table)
     {
@@ -101,8 +101,8 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
     /**
      * @see AdapterInterface::random()
      *
-     * @param string $seed
-     * @return    string
+     * @param  string $seed
+     * @return string
      */
     public function random($seed = null)
     {
@@ -122,7 +122,7 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
      * @param integer $offset
      * @param integer $limit
      *
-     * @return    void
+     * @return void
      */
     public function applyLimit(&$sql, $offset, $limit)
     {

@@ -33,7 +33,7 @@ class ConstraintNameGenerator implements NameGenerator
      * of this contraint.
      *
      * @see NameGenerator
-     * @throws     EngineException
+     * @throws EngineException
      */
     public function generateName($inputs)
     {

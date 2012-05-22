@@ -20,7 +20,7 @@ class JsonParser extends AbstractParser
     /**
      * Converts data from an associative array to JSON.
      *
-     * @param array $array Source data to convert
+     * @param  array  $array Source data to convert
      * @return string Converted data, as a JSON string
      */
     public function fromArray($array)
@@ -31,7 +31,7 @@ class JsonParser extends AbstractParser
     /**
      * Alias for JsonParser::fromArray()
      *
-     * @param array $array Source data to convert
+     * @param  array  $array Source data to convert
      * @return string Converted data, as a JSON string
      */
     public function toJSON($array)
@@ -42,8 +42,8 @@ class JsonParser extends AbstractParser
     /**
      * Converts data from JSON to an associative array.
      *
-     * @param string $data Source data to convert, as a JSON string
-     * @return array Converted data
+     * @param  string $data Source data to convert, as a JSON string
+     * @return array  Converted data
      */
     public function toArray($data)
     {
@@ -53,8 +53,8 @@ class JsonParser extends AbstractParser
     /**
      * Alias for JsonParser::toArray()
      *
-     * @param string $data Source data to convert, as a JSON string
-     * @return array Converted data
+     * @param  string $data Source data to convert, as a JSON string
+     * @return array  Converted data
      */
     public function fromJSON($data)
     {

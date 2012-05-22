@@ -52,7 +52,7 @@ class XmlToArrayConverter
      * @author     Christophe VG (based on code form php.net manual comment)
      *
      * @param      object SimpleXML object.
-     * @return     array Array representation of SimpleXML object.
+     * @return array Array representation of SimpleXML object.
      */
     protected static function simpleXmlToArray($xml)
     {
@@ -103,7 +103,7 @@ class XmlToArrayConverter
     /**
      * Process XML value, handling boolean, if appropriate.
      * @param      object The simplexml value object.
-     * @return     mixed string or boolean value
+     * @return mixed string or boolean value
      */
     private static function getConvertedXmlValue($value)
     {

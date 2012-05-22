@@ -22,35 +22,35 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
 {
     /**
      * The database connection.
-     * @var        ConnectionInterface
+     * @var ConnectionInterface
      */
     protected $dbh;
 
     /**
      * Stack of warnings.
      *
-     * @var        array string[]
+     * @var array string[]
      */
     protected $warnings = array();
 
     /**
      * GeneratorConfig object holding build properties.
      *
-     * @var        GeneratorConfig
+     * @var GeneratorConfig
      */
     private $generatorConfig;
 
     /**
      * Map native DB types to Propel types.
      * (Override in subclasses.)
-     * @var        array
+     * @var array
      */
     protected $nativeToPropelTypeMap;
 
     /**
      * Map to hold reverse type mapping (initialized on-demand).
      *
-     * @var        array
+     * @var array
      */
     protected $reverseTypeMap;
 
@@ -85,7 +85,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
 
     /**
      * Gets the database connection.
-     * @return     ConnectionInterface
+     * @return ConnectionInterface
      */
     public function getConnection()
     {
@@ -126,7 +126,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
     /**
      * Gets array of warning messages.
      *
-     * @return     array string[]
+     * @return array string[]
      */
     public function getWarnings()
     {
@@ -146,7 +146,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
     /**
      * Gets the GeneratorConfig option.
      *
-     * @return     GeneratorConfig
+     * @return GeneratorConfig
      */
     public function getGeneratorConfig()
     {
@@ -156,8 +156,8 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
     /**
      * Gets a specific propel (renamed) property from the build.
      *
-     * @param string $name
-     * @return     mixed
+     * @param  string $name
+     * @return mixed
      */
     public function getBuildProperty($name)
     {
@@ -171,15 +171,15 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
     /**
      * Gets a type mapping from native type to Propel type.
      *
-     * @return     array The mapped Propel type.
+     * @return array The mapped Propel type.
      */
     abstract protected function getTypeMapping();
 
     /**
      * Gets a mapped Propel type for specified native type.
      *
-     * @param string $nativeType
-     * @return     string The mapped Propel type.
+     * @param  string $nativeType
+     * @return string The mapped Propel type.
      */
     protected function getMappedPropelType($nativeType)
     {
@@ -197,8 +197,8 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
     /**
      * Give a best guess at the native type.
      *
-     * @param string $propelType
-     * @return     string The native SQL type that best matches the specified Propel type.
+     * @param  string $propelType
+     * @return string The native SQL type that best matches the specified Propel type.
      */
     protected function getMappedNativeType($propelType)
     {

@@ -33,7 +33,7 @@ class PgsqlAdapter extends PdoAdapter implements AdapterInterface
      * @param string $s1 String to concatenate.
      * @param string $s2 String to append.
      *
-     * @return    string
+     * @return string
      */
     public function concatString($s1, $s2)
     {
@@ -47,7 +47,7 @@ class PgsqlAdapter extends PdoAdapter implements AdapterInterface
      * @param integer $pos Offset to start from.
      * @param integer $len Number of characters to extract.
      *
-     * @return    string
+     * @return string
      */
     public function subString($s, $pos, $len)
     {
@@ -57,8 +57,8 @@ class PgsqlAdapter extends PdoAdapter implements AdapterInterface
     /**
      * Returns SQL which calculates the length (in chars) of a string.
      *
-     * @param string $s String to calculate length of.
-     * @return    string
+     * @param  string $s String to calculate length of.
+     * @return string
      */
     public function strLength($s)
     {
@@ -68,7 +68,7 @@ class PgsqlAdapter extends PdoAdapter implements AdapterInterface
     /**
      * @see AdapterInterface::getIdMethod()
      *
-     * @return    integer
+     * @return integer
      */
     protected function getIdMethod()
     {
@@ -81,7 +81,7 @@ class PgsqlAdapter extends PdoAdapter implements AdapterInterface
      * @param ConnectionInterface $con
      * @param string              $name
      *
-     * @return    integer
+     * @return integer
      */
     public function getId(ConnectionInterface $con, $name = null)
     {
@@ -96,7 +96,7 @@ class PgsqlAdapter extends PdoAdapter implements AdapterInterface
 
     /**
      * Returns timestamp formatter string for use in date() function.
-     * @return    string
+     * @return string
      */
     public function getTimestampFormatter()
     {
@@ -106,7 +106,7 @@ class PgsqlAdapter extends PdoAdapter implements AdapterInterface
     /**
      * Returns timestamp formatter string for use in date() function.
      *
-     * @return    string
+     * @return string
      */
     public function getTimeFormatter()
     {
@@ -133,8 +133,8 @@ class PgsqlAdapter extends PdoAdapter implements AdapterInterface
     /**
      * @see AdapterInterface::random()
      *
-     * @param string $seed
-     * @return    string
+     * @param  string $seed
+     * @return string
      */
     public function random($seed=NULL)
     {
@@ -147,7 +147,7 @@ class PgsqlAdapter extends PdoAdapter implements AdapterInterface
      * @param Propel\Runtime\Query\Criteria $criteria
      * @param string                        $tableName
      *
-     * @return    string
+     * @return string
      */
     public function getDeleteFromClause(Criteria $criteria, $tableName)
     {
@@ -173,8 +173,8 @@ class PgsqlAdapter extends PdoAdapter implements AdapterInterface
     /**
      * @see AdapterInterface::quoteIdentifierTable()
      *
-     * @param string $table
-     * @return    string
+     * @param  string $table
+     * @return string
      */
     public function quoteIdentifierTable($table)
     {
@@ -189,7 +189,7 @@ class PgsqlAdapter extends PdoAdapter implements AdapterInterface
      * @param Criteria|string     $query query the criteria or the query string
      *
      * @throws PropelException
-     * @return PDOStatement A PDO statement executed using the connection, ready to be fetched
+     * @return PDOStatement    A PDO statement executed using the connection, ready to be fetched
      */
     public function doExplainPlan(ConnectionInterface $con, $query)
     {

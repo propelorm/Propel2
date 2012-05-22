@@ -175,7 +175,7 @@ abstract class AbstractPeerBuilder extends AbstractOMBuilder
 
     /**
      * Whether the platform in use requires ON DELETE CASCADE emulation and whether there are references to this table.
-     * @return     boolean
+     * @return Boolean
      */
     protected function isDeleteCascadeEmulationNeeded()
     {
@@ -193,7 +193,7 @@ abstract class AbstractPeerBuilder extends AbstractOMBuilder
 
     /**
      * Whether the platform in use requires ON DELETE SETNULL emulation and whether there are references to this table.
-     * @return     boolean
+     * @return Boolean
      */
     protected function isDeleteSetNullEmulationNeeded()
     {
@@ -213,7 +213,7 @@ abstract class AbstractPeerBuilder extends AbstractOMBuilder
      * Whether to add the generic mutator methods (setByName(), setByPosition(), fromArray()).
      * This is based on the build property propel.addGenericMutators, and also whether the
      * table is read-only or an alias.
-     * @return     boolean
+     * @return Boolean
      */
     protected function isAddGenericMutators()
     {
@@ -226,7 +226,7 @@ abstract class AbstractPeerBuilder extends AbstractOMBuilder
      * Whether to add the generic accessor methods (getByName(), getByPosition(), toArray()).
      * This is based on the build property propel.addGenericAccessors, and also whether the
      * table is an alias.
-     * @return     boolean
+     * @return Boolean
      */
     protected function isAddGenericAccessors()
     {
@@ -239,7 +239,7 @@ abstract class AbstractPeerBuilder extends AbstractOMBuilder
      * Returns the retrieveByPK method name to use for this table.
      * If the table is an alias then the method name looks like "retrieveTablenameByPK"
      * otherwise simply "retrieveByPK".
-     * @return     string
+     * @return string
      */
     public function getRetrieveMethodName()
     {
@@ -263,7 +263,7 @@ abstract class AbstractPeerBuilder extends AbstractOMBuilder
      * @param Column $col     The column we need a name for.
      * @param string $phpName The PHP Name of the peer class. The 'Peer' is appended automatically.
      *
-     * @return     string If $phpName is provided, then will return {$phpName}Peer::COLUMN_NAME; if not, just COLUMN_NAME.
+     * @return string If $phpName is provided, then will return {$phpName}Peer::COLUMN_NAME; if not, just COLUMN_NAME.
      * @deprecated
      */
     static public function getColumnName(Column $col, $phpName = null)
@@ -284,7 +284,7 @@ abstract class AbstractPeerBuilder extends AbstractOMBuilder
 
     /**
      * Checks whether any registered behavior on that table has a modifier for a hook
-     * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
+     * @param  string  $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
      * @return Boolean
      */
     public function hasBehaviorModifier($hookName, $modifier = null)

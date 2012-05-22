@@ -74,9 +74,9 @@ class TableComparator
     /**
      * Returns the computed difference between two table objects.
      *
-     * @param Column  $fromTable
-     * @param Column  $toTable
-     * @param Boolean $caseInsensitive
+     * @param  Column            $fromTable
+     * @param  Column            $toTable
+     * @param  Boolean           $caseInsensitive
      * @return TableDiff|Boolean
      */
     static public function computeDiff(Table $fromTable, Table $toTable, $caseInsensitive = false)
@@ -99,7 +99,7 @@ class TableComparator
      * Compares the columns of the fromTable and the toTable,
      * and modifies the inner tableDiff if necessary.
      *
-     * @param Boolean $caseInsensitive
+     * @param  Boolean $caseInsensitive
      * @return integer
      */
     public function compareColumns($caseInsensitive = false)
@@ -158,7 +158,7 @@ class TableComparator
      * Compares the primary keys of the fromTable and the toTable,
      * and modifies the inner tableDiff if necessary.
      *
-     * @param Boolean $caseInsensitive
+     * @param  Boolean $caseInsensitive
      * @return integer
      */
     public function comparePrimaryKeys($caseInsensitive = false)
@@ -207,7 +207,7 @@ class TableComparator
      * Compare the indices and unique indices of the fromTable and the toTable,
      * and modifies the inner tableDiff if necessary.
      *
-     * @param Boolean $caseInsensitive
+     * @param  Boolean $caseInsensitive
      * @return integer
      */
     public function compareIndices($caseInsensitive = false)
@@ -255,7 +255,7 @@ class TableComparator
      * Compare the foreign keys of the fromTable and the toTable,
      * and modifies the inner tableDiff if necessary.
      *
-     * @param Boolean $caseInsensitive
+     * @param  Boolean $caseInsensitive
      * @return integer
      */
     public function compareForeignKeys($caseInsensitive = false)

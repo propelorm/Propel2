@@ -144,8 +144,8 @@ class SqlitePlatform extends DefaultPlatform
 
     /**
      * Escape the string for RDBMS.
-     * @param string $text
-     * @return     string
+     * @param  string $text
+     * @return string
      */
     public function disconnectedEscapeText($text)
     {

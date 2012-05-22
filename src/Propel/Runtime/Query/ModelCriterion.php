@@ -216,7 +216,7 @@ class ModelCriterion extends Criterion
     /**
      * This method checks another Criteria to see if they contain
      * the same attributes and hashtable entries.
-     * @return     boolean
+     * @return Boolean
      */
     public function equals($obj)
     {

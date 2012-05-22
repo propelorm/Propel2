@@ -278,7 +278,7 @@ class QuickBuilder
     /**
      * Prevent generated class without namespace to fail.
      *
-     * @param string $code
+     * @param  string $code
      * @return string
      */
     protected function forceNamespace($code)

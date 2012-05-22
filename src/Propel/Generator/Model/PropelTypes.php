@@ -206,7 +206,7 @@ class PropelTypes
      * Returns the native PHP type which corresponds to the
      * mapping type provided. Use in the base object class generation.
      *
-     * @param string $mappingType
+     * @param  string $mappingType
      * @return string
      */
     static public function getPhpNative($mappingType)
@@ -247,7 +247,7 @@ class PropelTypes
     /**
      * Returns whether or not the given type is a temporal type.
      *
-     * @param string $mappingType
+     * @param  string  $mappingType
      * @return Boolean
      */
     static public function isTemporalType($type)
@@ -264,7 +264,7 @@ class PropelTypes
     /**
      * Returns whether or not the given type is a text type.
      *
-     * @param string $mappingType
+     * @param  string  $mappingType
      * @return Boolean
      */
     static public function isTextType($mappingType)
@@ -285,7 +285,7 @@ class PropelTypes
     /**
      * Returns whether or not the given type is a numeric type.
      *
-     * @param string $mappingType
+     * @param  string  $mappingType
      * @return Boolean
      */
     static public function isNumericType($mappingType)
@@ -306,7 +306,7 @@ class PropelTypes
     /**
      * Returns whether or not this column is a boolean type.
      *
-     * @param string $mappingType
+     * @param  string  $mappingType
      * @return Boolean
      */
     static public function isBooleanType($mappingType)
@@ -320,7 +320,7 @@ class PropelTypes
     /**
      * Returns whether or not this column is a lob/blob type.
      *
-     * @param string $mappingType
+     * @param  string  $mappingType
      * @return Boolean
      */
     static public function isLobType($mappingType)
@@ -335,7 +335,7 @@ class PropelTypes
     /**
      * Returns whether or not a passed-in PHP type is a primitive type.
      *
-     * @param string $phpType
+     * @param  string  $phpType
      * @return Boolean
      */
     static public function isPhpPrimitiveType($phpType)
@@ -346,7 +346,7 @@ class PropelTypes
     /**
      * Returns whether or not a passed-in PHP type is a primitive numeric type.
      *
-     * @param string $phpType
+     * @param  string  $phpType
      * @return Boolean
      */
     static public function isPhpPrimitiveNumericType($phpType)
@@ -357,7 +357,7 @@ class PropelTypes
     /**
      * Returns whether or not a passed-in PHP type is an object.
      *
-     * @param string $phpType
+     * @param  string  $phpType
      * @return Boolean
      */
     static public function isPhpObjectType($phpType)

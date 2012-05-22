@@ -50,8 +50,8 @@ class TimestampableBehavior extends Behavior
     /**
      * Get the setter of one of the columns of the behavior
      *
-     * @param string $column One of the behavior colums, 'create_column' or 'update_column'
-     * @return    string The related setter, 'setCreatedOn' or 'setUpdatedOn'
+     * @param  string $column One of the behavior colums, 'create_column' or 'update_column'
+     * @return string The related setter, 'setCreatedOn' or 'setUpdatedOn'
      */
     protected function getColumnSetter($column)
     {
@@ -66,7 +66,7 @@ class TimestampableBehavior extends Behavior
     /**
      * Add code in ObjectBuilder::preUpdate
      *
-     * @return    string The code to put at the hook
+     * @return string The code to put at the hook
      */
     public function preUpdate($builder)
     {
@@ -78,7 +78,7 @@ class TimestampableBehavior extends Behavior
     /**
      * Add code in ObjectBuilder::preInsert
      *
-     * @return    string The code to put at the hook
+     * @return string The code to put at the hook
      */
     public function preInsert($builder)
     {

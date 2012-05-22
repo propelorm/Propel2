@@ -129,8 +129,8 @@ class XmlParser extends AbstractParser
     /**
      * Converts data from XML to an associative array.
      *
-     * @param string $data Source data to convert, as an XML string
-     * @return array Converted data
+     * @param  string $data Source data to convert, as an XML string
+     * @return array  Converted data
      */
     public function toArray($data)
     {
@@ -144,8 +144,8 @@ class XmlParser extends AbstractParser
     /**
      * Alias for XmlParser::toArray()
      *
-     * @param string $data Source data to convert, as an XML string
-     * @return array Converted data
+     * @param  string $data Source data to convert, as an XML string
+     * @return array  Converted data
      */
     public function fromXML($data)
     {
@@ -153,7 +153,7 @@ class XmlParser extends AbstractParser
     }
 
     /**
-     * @param DOMNode $data
+     * @param  DOMNode $data
      * @return array
      */
     protected function convertDOMElementToArray(\DOMNode $data)
@@ -192,7 +192,7 @@ class XmlParser extends AbstractParser
     }
 
     /**
-     * @param DOMNode $node
+     * @param  DOMNode $node
      * @return Boolean
      */
     protected function hasOnlyTextNodes(\DOMNode $node)

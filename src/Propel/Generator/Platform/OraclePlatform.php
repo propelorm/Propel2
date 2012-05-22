@@ -234,7 +234,7 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
 
     /**
      * Whether the underlying PDO driver for this platform returns BLOB columns as streams (instead of strings).
-     * @return     boolean
+     * @return Boolean
      */
     public function hasStreamBlobImpl()
     {
@@ -266,9 +266,9 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
      * Generate oracle block storage
      *
      * @param Table|Index $object       object with vendor parameters
-     * @param bool        $isPrimaryKey is a primary key vendor part
+     * @param Boolean     $isPrimaryKey is a primary key vendor part
      *
-     * @return    string      oracle vendor sql part
+     * @return string oracle vendor sql part
      */
     public function generateBlockStorage($object, $isPrimaryKey = false)
     {
@@ -324,8 +324,8 @@ USING INDEX
     /**
      * Builds the DDL SQL to add an Index.
      *
-     * @param Index $index
-     * @return     string
+     * @param  Index  $index
+     * @return string
      */
     public function getAddIndexDDL(Index $index)
     {

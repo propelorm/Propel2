@@ -30,7 +30,7 @@ class Criterion
     protected $value;
 
     /** Comparison value.
-     * @var        SqlEnum
+     * @var SqlEnum
      */
     protected $comparison;
 
@@ -118,7 +118,7 @@ class Criterion
     /**
      * Get the column name.
      *
-     * @return     string A String with the column name.
+     * @return string A String with the column name.
      */
     public function getColumn()
     {
@@ -129,7 +129,7 @@ class Criterion
      * Set the table name.
      *
      * @param      name A String with the table name.
-     * @return     void
+     * @return void
      */
     public function setTable($name)
     {
@@ -139,7 +139,7 @@ class Criterion
     /**
      * Get the table name.
      *
-     * @return     string A String with the table name.
+     * @return string A String with the table name.
      */
     public function getTable()
     {
@@ -149,7 +149,7 @@ class Criterion
     /**
      * Get the comparison.
      *
-     * @return     string A String with the comparison.
+     * @return string A String with the comparison.
      */
     public function getComparison()
     {
@@ -159,7 +159,7 @@ class Criterion
     /**
      * Get the value.
      *
-     * @return     mixed An Object with the value.
+     * @return mixed An Object with the value.
      */
     public function getValue()
     {
@@ -171,7 +171,7 @@ class Criterion
      *
      * The AdapterInterface which might be used to get db specific
      * variations of sql.
-     * @return     AdapterInterface value of db.
+     * @return AdapterInterface value of db.
      */
     public function getAdapter()
     {
@@ -182,8 +182,8 @@ class Criterion
      * Set the adapter.
      *
      * The AdapterInterface might be used to get db specific variations of sql.
-     * @param AdapterInterface $v Value to assign to db.
-     * @return     void
+     * @param  AdapterInterface $v Value to assign to db.
+     * @return void
      */
     public function setAdapter(AdapterInterface $v)
     {
@@ -196,8 +196,8 @@ class Criterion
     /**
      * Sets ignore case.
      *
-     * @param Boolean $b True if case should be ignored.
-     * @return     Criterion A modified Criterion object.
+     * @param  Boolean   $b True if case should be ignored.
+     * @return Criterion A modified Criterion object.
      */
     public function setIgnoreCase($b)
     {
@@ -209,7 +209,7 @@ class Criterion
     /**
      * Is ignore case on or off?
      *
-     * @return     Boolean True if case is ignored.
+     * @return Boolean True if case is ignored.
      */
     public function isIgnoreCase()
     {
@@ -218,7 +218,7 @@ class Criterion
 
     /**
      * Get the list of clauses in this Criterion.
-     * @return     array
+     * @return array
      */
     private function getClauses()
     {
@@ -227,7 +227,7 @@ class Criterion
 
     /**
      * Get the list of conjunctions in this Criterion
-     * @return     array
+     * @return array
      */
     public function getConjunctions()
     {
@@ -247,7 +247,7 @@ class Criterion
 
     /**
      * Append an OR Criterion onto this Criterion's list.
-     * @return     Criterion
+     * @return Criterion
      */
     public function addOr(Criterion $criterion)
     {
@@ -262,9 +262,9 @@ class Criterion
      * onto the buffer.
      *
      * @param      string &$sb The string that will receive the Prepared Statement
-     * @param array $params A list to which Prepared Statement parameters will be appended
-     * @return     void
-     * @throws     PropelException - if the expression builder cannot figure out how to turn a specified
+     * @param  array           $params A list to which Prepared Statement parameters will be appended
+     * @return void
+     * @throws PropelException - if the expression builder cannot figure out how to turn a specified
      *                           expression into proper SQL.
      */
     public function appendPsTo(&$sb, array &$params)
@@ -460,7 +460,7 @@ class Criterion
     /**
      * This method checks another Criteria to see if they contain
      * the same attributes and hashtable entries.
-     * @return     Boolean
+     * @return Boolean
      */
     public function equals($obj)
     {
@@ -531,7 +531,7 @@ class Criterion
 
     /**
      * Get all tables from nested criterion objects
-     * @return     array
+     * @return array
      */
     public function getAllTables()
     {
@@ -544,7 +544,7 @@ class Criterion
     /**
      * method supporting recursion through all criterions to give
      * us a string array of tables from each criterion
-     * @return     void
+     * @return void
      */
     private function addCriterionTable(Criterion $c, array &$s)
     {
@@ -557,7 +557,7 @@ class Criterion
     /**
      * get an array of all criterion attached to this
      * recursing through all sub criterion
-     * @return     array Criterion[]
+     * @return array Criterion[]
      */
     public function getAttachedCriterion()
     {

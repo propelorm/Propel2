@@ -39,7 +39,7 @@ class CsvParser extends AbstractParser
      * @param Boolean $isList         Whether the input data contains more than one row
      * @param Boolean $includeHeading Whether the output should contain a heading line
      *
-     * @return string  Converted data, as a CSV string
+     * @return string Converted data, as a CSV string
      */
     public function fromArray($array, $isList = false, $includeHeading = true)
     {
@@ -69,8 +69,8 @@ class CsvParser extends AbstractParser
     /**
      * Accepts a row of data and returns it formatted
      *
-     * @param array $row An array of data to be formatted for output to the file
-     * @return array    The formatted array
+     * @param  array $row An array of data to be formatted for output to the file
+     * @return array The formatted array
      */
     protected function formatRow($row)
     {
@@ -120,8 +120,8 @@ class CsvParser extends AbstractParser
     /**
      * Quotes a column with quotechar
      *
-     * @param string $input A single value to be quoted for output
-     * @return string    Quoted input value
+     * @param  string $input A single value to be quoted for output
+     * @return string Quoted input value
      */
     protected function quote($input)
     {
@@ -131,8 +131,8 @@ class CsvParser extends AbstractParser
     /**
      * Returns true if input contains quotechar, delimiter or any of the characters in lineTerminator
      *
-     * @param string $input A single value to be checked for special characters
-     * @return Boolean    True if contains any special characters
+     * @param  string  $input A single value to be checked for special characters
+     * @return Boolean True if contains any special characters
      */
     protected function containsSpecialChars($input)
     {
@@ -149,7 +149,7 @@ class CsvParser extends AbstractParser
     /**
      * Serializes a value to place it into a CSV output
      *
-     * @param mixed $input
+     * @param  mixed  $input
      * @return string
      */
     protected function serialize($input)
@@ -164,7 +164,7 @@ class CsvParser extends AbstractParser
      * @param Boolean $isList         Whether the input data contains more than one row
      * @param Boolean $includeHeading Whether the output should contain a heading line
      *
-     * @return string  Converted data, as a CSV string
+     * @return string Converted data, as a CSV string
      */
     public function toCSV($array, $isList = false, $includeHeading = true)
     {
@@ -178,7 +178,7 @@ class CsvParser extends AbstractParser
      * @param Boolean $isList         Whether the input data contains more than one row
      * @param Boolean $includeHeading Whether the input contains a heading line
      *
-     * @return array   Converted data
+     * @return array Converted data
      */
     public function toArray($data, $isList = false, $includeHeading = true)
     {
@@ -282,7 +282,7 @@ class CsvParser extends AbstractParser
     /**
      * Unserializes a value from CSV output
      *
-     * @param string $input
+     * @param  string $input
      * @return mixed
      */
     protected function unserialize($input)
@@ -297,7 +297,7 @@ class CsvParser extends AbstractParser
      * @param Boolean $isList         Whether the input data contains more than one row
      * @param Boolean $includeHeading Whether the input contains a heading line
      *
-     * @return array   Converted data
+     * @return array Converted data
      */
     public function fromCSV($data, $isList = false, $includeHeading = true)
     {

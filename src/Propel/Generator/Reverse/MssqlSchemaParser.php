@@ -27,7 +27,7 @@ class MssqlSchemaParser extends AbstractSchemaParser
 {
     /**
      * Map MSSQL native types to Propel types.
-     * @var        array
+     * @var array
      */
     private static $mssqlTypeMap = array(
         'binary'             => PropelTypes::BINARY,
@@ -242,7 +242,7 @@ class MssqlSchemaParser extends AbstractSchemaParser
      * returns by mssql
      * @see http://msdn.microsoft.com/library/ms175874.aspx
      *
-     * @param string $identifier
+     * @param  string $identifier
      * @return string
      */
     protected function cleanDelimitedIdentifiers($identifier)

@@ -125,7 +125,7 @@ class ObjectBuilder extends AbstractObjectBuilder
     /**
      * Returns the appropriate formatter (from platform) for a date/time column.
      *
-     * @param Column $column
+     * @param  Column $column
      * @return string
      */
     protected function getTemporalFormatter(Column $column)
@@ -146,7 +146,7 @@ class ObjectBuilder extends AbstractObjectBuilder
      * Returns the type-casted and stringified default value for the specified
      * Column. This only works for scalar default values currently.
      *
-     * @param Column $column
+     * @param  Column $column
      * @return string
      */
     protected function getDefaultValueString(Column $column)
@@ -483,7 +483,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     /**
      * Whether the lazy-loaded \$$clo value has been loaded from database.
      * This is necessary to avoid repeated lookups if \$$clo column is NULL in the db.
-     * @var        boolean
+     * @var Boolean
      */";
     }
 
@@ -515,7 +515,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     /**
      * The unserialized \$$clo value - i.e. the persisted object.
      * This is necessary to avoid repeated calls to unserialize() at runtime.
-     * @var        object
+     * @var object
      */";
     }
 
@@ -564,7 +564,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * same instance for all member of this class. The method could therefore
      * be static, but this would prevent one from overriding the behavior.
      *
-     * @return     ".$this->getPeerClassName()."
+     * @return   ".$this->getPeerClassName()."
      */";
     }
 
@@ -814,9 +814,9 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * @param      string \$format The date/time format string (either date()-style or strftime()-style).
      *                            If format is NULL, then the raw \DateTime object will be returned.
      *
-     * @return     mixed Formatted date/time value as string or $dateTimeClass object (if format is NULL), NULL if column is NULL" .($handleMysqlDate ? ', and 0 if column value is ' . $mysqlInvalidDateString : '')."
+     * @return mixed Formatted date/time value as string or $dateTimeClass object (if format is NULL), NULL if column is NULL" .($handleMysqlDate ? ', and 0 if column value is ' . $mysqlInvalidDateString : '')."
      *
-     * @throws     PropelException - if unable to parse/validate the date/time value.
+     * @throws PropelException - if unable to parse/validate the date/time value.
      */";
     }
 
@@ -1066,7 +1066,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * @param      ConnectionInterface An optional ConnectionInterface connection to use for fetching this lazy-loaded column.";
         }
         $script .= "
-     * @return     Boolean
+     * @return Boolean
      */
     $visibility function has$singularPhpName(\$value";
         if ($column->isLazyLoad()) {
@@ -1118,7 +1118,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * @param      ConnectionInterface An optional ConnectionInterface connection to use for fetching this lazy-loaded column.";
         }
         $script .= "
-     * @return     ".$column->getPhpType()."
+     * @return   ".$column->getPhpType()."
      */";
     }
 
@@ -1206,8 +1206,8 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * the hydrate() method.
      *
      * @param      \$con ConnectionInterface (optional) The ConnectionInterface connection to use.
-     * @return     void
-     * @throws     PropelException - any underlying error will be wrapped and re-thrown.
+     * @return void
+     * @throws PropelException - any underlying error will be wrapped and re-thrown.
      */";
     }
 
@@ -1326,7 +1326,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * Set the value of [$clo] column.
      * ".$column->getDescription()."
      * @param      ".$column->getPhpType()." \$v new value
-     * @return     ".$this->getObjectClassName(true)." The current object (for fluent API support)
+     * @return   ".$this->getObjectClassName(true)." The current object (for fluent API support)
      */";
     }
 
@@ -1540,7 +1540,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * ".$col->getDescription()."
      * @param      mixed \$v string, integer (timestamp), or \DateTime value.
      *               Empty strings are treated as NULL.
-     * @return     ".$this->getObjectClassName(true)." The current object (for fluent API support)
+     * @return   ".$this->getObjectClassName(true)." The current object (for fluent API support)
      */";
     }
 
@@ -1609,7 +1609,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * @param      ConnectionInterface An optional ConnectionInterface connection to use for fetching this lazy-loaded column.";
         }
         $script .= "
-     * @return     ".$this->getObjectClassName(true)." The current object (for fluent API support)
+     * @return   ".$this->getObjectClassName(true)." The current object (for fluent API support)
      */
     $visibility function add$singularPhpName(\$value";
         if ($col->isLazyLoad()) {
@@ -1653,7 +1653,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * @param      ConnectionInterface An optional ConnectionInterface connection to use for fetching this lazy-loaded column.";
         }
         $script .= "
-     * @return     ".$this->getObjectClassName(true)." The current object (for fluent API support)
+     * @return   ".$this->getObjectClassName(true)." The current object (for fluent API support)
      */
     $visibility function remove$singularPhpName(\$value";
         if ($col->isLazyLoad()) {
@@ -1753,7 +1753,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
      * ".$col->getDescription()."
      * @param      boolean|integer|string \$v The new value
-     * @return     ".$this->getObjectClassName(true)." The current object (for fluent API support)
+     * @return   ".$this->getObjectClassName(true)." The current object (for fluent API support)
      */";
     }
 
@@ -1814,7 +1814,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * This method can be used in conjunction with isModified() to indicate whether an object is both
      * modified _and_ has some values set which are non-default.
      *
-     * @return     boolean Whether the columns in this object are only been set with default values.
+     * @return Boolean Whether the columns in this object are only been set with default values.
      */";
     }
 
@@ -1908,8 +1908,8 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * @param      array \$row The row returned by Statement->fetch(PDO::FETCH_NUM)
      * @param      int \$startcol 0-based offset column which indicates which restultset column to start with.
      * @param      boolean \$rehydrate Whether this object is being re-hydrated from the database.
-     * @return     int next starting column
-     * @throws     PropelException  - Any caught Exception will be rewrapped as a PropelException.
+     * @return int             next starting column
+     * @throws PropelException - Any caught Exception will be rewrapped as a PropelException.
      */";
     }
 
@@ -2053,7 +2053,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * Unlike buildCriteria() this method includes the primary key values regardless
      * of whether or not they have been modified.
      *
-     * @return     Criteria The Criteria object containing value(s) for primary key(s).
+     * @return Criteria The Criteria object containing value(s) for primary key(s).
      */";
     }
 
@@ -2122,7 +2122,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     /**
      * Build a Criteria object containing the values of all modified columns in this object.
      *
-     * @return     Criteria The Criteria object containing all modified values.
+     * @return Criteria The Criteria object containing all modified values.
      */";
     }
 
@@ -2199,7 +2199,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
         }
         $script .= "
      *
-     * @return    array an associative array containing the field names (as keys) and field values
+     * @return array an associative array containing the field names (as keys) and field values
      */
     public function toArray(\$keyType = BasePeer::$defaultKeyType, \$includeLazyLoadColumns = true, \$alreadyDumpedObjects = array()" . ($hasFks ? ", \$includeForeignObjects = false" : '') . ")
     {
@@ -2281,7 +2281,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      *                     one of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
      *                     BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM.
      *                     Defaults to BasePeer::$defaultKeyType.
-     * @return     mixed Value of field.
+     * @return mixed Value of field.
      */";
     }
 
@@ -2349,7 +2349,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * Zero-based.
      *
      * @param      int \$pos position in xml schema
-     * @return     mixed Value of field at \$pos
+     * @return mixed Value of field at \$pos
      */";
     }
 
@@ -2416,7 +2416,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      *                     one of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
      *                     BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM.
      *                     Defaults to BasePeer::$defaultKeyType.
-     * @return     void
+     * @return void
      */
     public function setByName(\$name, \$value, \$type = BasePeer::$defaultKeyType)
     {
@@ -2437,7 +2437,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      *
      * @param      int \$pos position in xml schema
      * @param      mixed \$value field value
-     * @return     void
+     * @return void
      */
     public function setByPosition(\$pos, \$value)
     {
@@ -2494,7 +2494,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      *
      * @param      array  \$arr     An array to populate the object from.
      * @param      string \$keyType The type of keys the array uses.
-     * @return     void
+     * @return void
      */
     public function fromArray(\$arr, \$keyType = BasePeer::$defaultKeyType)
     {
@@ -2534,8 +2534,8 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * Removes this object from datastore and sets delete attribute.
      *
      * @param      ConnectionInterface \$con
-     * @return     void
-     * @throws     PropelException
+     * @return void
+     * @throws PropelException
      * @see BaseObject::setDeleted()
      * @see BaseObject::isDeleted()
      */";
@@ -2636,8 +2636,8 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      *
      * @param      boolean \$deep (optional) Whether to also de-associated any related objects.
      * @param      ConnectionInterface \$con (optional) The ConnectionInterface connection to use.
-     * @return     void
-     * @throws     PropelException - if this object is deleted, unsaved or doesn't have pk match in db
+     * @return void
+     * @throws PropelException - if this object is deleted, unsaved or doesn't have pk match in db
      */
     public function reload(\$deep = false, ConnectionInterface \$con = null)
     {
@@ -2755,7 +2755,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
         $script .= "
     /**
      * Returns the primary key for this object (row).
-     * @return     $cptype
+     * @return   $cptype
      */
     public function getPrimaryKey()
     {
@@ -2775,7 +2775,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     /**
      * Returns the composite primary key for this object.
      * The array elements will be in same order as specified in XML.
-     * @return     array
+     * @return array
      */
     public function getPrimaryKey()
     {
@@ -2807,7 +2807,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     /**
      * Returns NULL since this table doesn't have a primary key.
      * This method exists only for BC and is deprecated!
-     * @return     null
+     * @return null
      */
     public function getPrimaryKey()
     {
@@ -2849,8 +2849,8 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     /**
      * Generic method to set the primary key ($clo column).
      *
-     * @param   $ctype \$key Primary key.
-     * @return     void
+     * @param       $ctype \$key Primary key.
+     * @return void
      */
     public function setPrimaryKey(\$key)
     {
@@ -2871,7 +2871,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * Set the [composite] primary key.
      *
      * @param      array \$keys The elements of the composite key (order must match the order in XML file).
-     * @return     void
+     * @return void
      */
     public function setPrimaryKey(\$keys)
     {";
@@ -2925,7 +2925,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
         $script .= "
     /**
      * Returns true if the primary key for this object is null.
-     * @return     boolean
+     * @return Boolean
      */
     public function isPrimaryKeyNull()
     {";
@@ -2949,8 +2949,8 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
 
     /**
      * Constructs variable name for fkey-related objects.
-     * @param ForeignKey $fk
-     * @return     string
+     * @param  ForeignKey $fk
+     * @return string
      */
     public function getFKVarName(ForeignKey $fk)
     {
@@ -2959,8 +2959,8 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
 
     /**
      * Constructs variable name for objects which referencing current table by specified foreign key.
-     * @param ForeignKey $fk
-     * @return     string
+     * @param  ForeignKey $fk
+     * @return string
      */
     public function getRefFKCollVarName(ForeignKey $fk)
     {
@@ -2970,8 +2970,8 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     /**
      * Constructs variable name for single object which references current table by specified foreign key
      * which is ALSO a primary key (hence one-to-one relationship).
-     * @param ForeignKey $fk
-     * @return     string
+     * @param  ForeignKey $fk
+     * @return string
      */
     public function getPKRefFKVarName(ForeignKey $fk)
     {
@@ -3027,9 +3027,9 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     /**
      * Declares an association between this object and a $className object.
      *
-     * @param   $className \$v
-     * @return     ".$this->getObjectClassName(true)." The current object (for fluent API support)
-     * @throws     PropelException
+     * @param                  $className \$v
+     * @return                 ".$this->getObjectClassName(true)." The current object (for fluent API support)
+     * @throws PropelException
      */
     public function set".$this->getFKPhpNameAffix($fk, false)."($className \$v = null)
     {";
@@ -3135,8 +3135,8 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * Get the associated $className object
      *
      * @param      ConnectionInterface Optional Connection object.
-     * @return     $className The associated $className object.
-     * @throws     PropelException
+     * @return                 $className The associated $className object.
+     * @throws PropelException
      */
     public function get".$this->getFKPhpNameAffix($fk, false)."(ConnectionInterface \$con = null)
     {";
@@ -3202,8 +3202,8 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * overridden in <code>".$table->getPhpName()."</code>.";
         }
         $script .= "
-     * @return     ".$this->getObjectClassName(true)." The current object (for fluent API support)
-     * @throws     PropelException
+     * @return                 ".$this->getObjectClassName(true)." The current object (for fluent API support)
+     * @throws PropelException
      */
     public function set".$methodAffix."Key(\$key)
     {
@@ -3287,7 +3287,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * @param      Criteria \$criteria optional Criteria object to narrow the query
      * @param      ConnectionInterface \$con optional connection object
      * @param      string \$joinBehavior optional join type to use (defaults to $joinBehavior)
-     * @return     Collection|array {$className}[] List of $className objects
+     * @return Collection|array {$className}[] List of $className objects
      */
     public function get".$relCol."Join".$relCol2."(\$criteria = null, \$con = null, \$joinBehavior = $joinBehavior)
     {";
@@ -3371,7 +3371,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * that wouldn't work when StandardEnglishPluralizer is used.
      *
      * @param      string \$relationName The name of the relation to initialize
-     * @return     void
+     * @return void
      */
     public function initRelation(\$relationName)
     {";
@@ -3406,7 +3406,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * This does not modify the database; however, it will remove any associated objects, causing
      * them to be refetched by subsequent calls to accessor method.
      *
-     * @return     void
+     * @return void
      * @see        add$relCol()
      */
     public function clear$relCol()
@@ -3436,7 +3436,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * @param      boolean \$overrideExisting If set to true, the method call initializes
      *                                        the collection even if it is not empty
      *
-     * @return     void
+     * @return void
      */
     public function init$relCol(\$overrideExisting = true)
     {
@@ -3471,8 +3471,8 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * Method called to associate a $className object to this object
      * through the $className foreign key attribute.
      *
-     * @param   $className \$l $className
-     * @return     ".$this->getObjectClassName(true)." The current object (for fluent API support)
+     * @param    $className \$l $className
+     * @return   ".$this->getObjectClassName(true)." The current object (for fluent API support)
      */
     public function add".$this->getRefFKPhpNameAffix($refFK, false)."($className \$l)
     {
@@ -3512,8 +3512,8 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * @param      Criteria \$criteria
      * @param      boolean \$distinct
      * @param      ConnectionInterface \$con
-     * @return     int Count of related $className objects.
-     * @throws     PropelException
+     * @return int             Count of related $className objects.
+     * @throws PropelException
      */
     public function count$relCol(Criteria \$criteria = null, \$distinct = false, ConnectionInterface \$con = null)
     {
@@ -3566,8 +3566,8 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      *
      * @param      Criteria \$criteria optional Criteria object to narrow the query
      * @param      ConnectionInterface \$con optional connection object
-     * @return     Collection|array {$className}[] List of $className objects
-     * @throws     PropelException
+     * @return Collection|array {$className}[] List of $className objects
+     * @throws PropelException
      */
     public function get$relCol(\$criteria = null, ConnectionInterface \$con = null)
     {
@@ -3679,8 +3679,8 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * Gets a single $className object, which is related to this object by a one-to-one relationship.
      *
      * @param      ConnectionInterface \$con optional connection object
-     * @return     $className
-     * @throws     PropelException
+     * @return                 $className
+     * @throws PropelException
      */
     public function get".$this->getRefFKPhpNameAffix($refFK, false)."(ConnectionInterface \$con = null)
     {
@@ -3712,9 +3712,9 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     /**
      * Sets a single $className object as related to this object by a one-to-one relationship.
      *
-     * @param   $className \$v $className
-     * @return     ".$this->getObjectClassName(true)." The current object (for fluent API support)
-     * @throws     PropelException
+     * @param                  $className \$v $className
+     * @return                 ".$this->getObjectClassName(true)." The current object (for fluent API support)
+     * @throws PropelException
      */
     public function set".$this->getRefFKPhpNameAffix($refFK, false)."($className \$v = null)
     {
@@ -3750,7 +3750,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
         $script .= "
     /**
      * An array of objects scheduled for deletion.
-     * @var        array
+     * @var array
      */
     protected \${$fkName}ScheduledForDeletion = null;
 ";
@@ -3848,7 +3848,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * This does not modify the database; however, it will remove any associated objects, causing
      * them to be refetched by subsequent calls to accessor method.
      *
-     * @return     void
+     * @return void
      * @see        add$relCol()
      */
     public function clear$relCol()
@@ -3876,7 +3876,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * however, you may wish to override this method in your stub class to provide setting appropriate
      * to your application -- for example, setting the initial array to the values stored in database.
      *
-     * @return     void
+     * @return void
      */
     public function init$relCol()
     {
@@ -3909,7 +3909,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * @param      Criteria \$criteria Optional query object to filter the query
      * @param      ConnectionInterface \$con Optional connection object
      *
-     * @return     Collection|array {$relatedObjectClassName}[] List of {$relatedObjectClassName} objects
+     * @return Collection|array {$relatedObjectClassName}[] List of {$relatedObjectClassName} objects
      */
     public function get{$relatedName}(\$criteria = null, ConnectionInterface \$con = null)
     {
@@ -4020,7 +4020,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * @param      boolean \$distinct Set to true to force count distinct
      * @param      ConnectionInterface \$con Optional connection object
      *
-     * @return     int the number of related $relatedObjectClassName objects
+     * @return int the number of related $relatedObjectClassName objects
      */
     public function count{$relatedName}(\$criteria = null, \$distinct = false, ConnectionInterface \$con = null)
     {
@@ -4068,8 +4068,8 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * Associate a " . $crossObjectClassName . " object to this object
      * through the " . $tblFK->getName() . " cross reference table.
      *
-     * @param " . $crossObjectClassName . " " . $crossObjectName . " The $className object to relate
-     * @return     void
+     * @param  " .  $crossObjectClassName . " " . $crossObjectName . " The $className object to relate
+     * @return void
      */
     public function add{$relatedObjectClassName}($crossObjectClassName $crossObjectName)
     {
@@ -4142,8 +4142,8 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * @param      boolean \$skipReload Whether to skip the reload for this object from database.";
         }
         $script .= "
-     * @return     int The number of rows affected by this insert/update and any referring fk objects' save() operations.
-     * @throws     PropelException
+     * @return int             The number of rows affected by this insert/update and any referring fk objects' save() operations.
+     * @throws PropelException
      * @see save()
      */
     protected function doSave(ConnectionInterface \$con".($reloadOnUpdate || $reloadOnInsert ? ", \$skipReload = false" : "").")
@@ -4289,7 +4289,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      *
      * @param      ConnectionInterface \$con
      *
-     * @throws     PropelException
+     * @throws PropelException
      * @see doSave()
      */
     protected function doInsert(ConnectionInterface \$con)
@@ -4542,7 +4542,8 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
-     * @var        boolean
+     *
+     * @var Boolean
      */
     protected \$alreadyInSave = false;
 ";
@@ -4601,8 +4602,8 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * @param      boolean \$skipReload Whether to skip the reload for this object from database.";
         }
         $script .= "
-     * @return     int The number of rows affected by this insert/update and any referring fk objects' save() operations.
-     * @throws     PropelException
+     * @return int             The number of rows affected by this insert/update and any referring fk objects' save() operations.
+     * @throws PropelException
      * @see doSave()
      */";
     }
@@ -4762,7 +4763,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * the base method from the overridden method (i.e. parent::ensureConsistency()),
      * in case your model changes.
      *
-     * @throws     PropelException
+     * @throws PropelException
      */
     public function ensureConsistency()
     {
@@ -4810,8 +4811,8 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * objects.
      *
      * @param      boolean \$deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-     * @return     ".$this->getObjectClassName(true)." Clone of current object.
-     * @throws     PropelException
+     * @return                 ".$this->getObjectClassName(true)." Clone of current object.
+     * @throws PropelException
      */
     public function copy(\$deepCopy = false)
     {
@@ -4844,7 +4845,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * @param      object \$copyObj An object of ".$this->getObjectClassName(true)." (or compatible) type.
      * @param      boolean \$deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
      * @param      boolean \$makeNew Whether to reset autoincrement PKs and make the object new.
-     * @throws     PropelException
+     * @throws PropelException
      */
     public function copyInto(\$copyObj, \$deepCopy = false, \$makeNew = true)
     {";

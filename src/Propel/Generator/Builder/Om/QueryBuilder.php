@@ -48,7 +48,7 @@ class QueryBuilder extends AbstractOMBuilder
 
     /**
      * Returns the name of the current class being built.
-     * @return     string
+     * @return string
      */
     public function getUnprefixedClassName()
     {
@@ -310,7 +310,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
      * @param     string \$modelAlias The alias of a model in the query
      * @param     Criteria \$criteria Optional Criteria to build the query from
      *
-     * @return    " . $classname . "
+     * @return " . $classname . "
      */";
     }
 
@@ -469,7 +469,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
      * @param     mixed \$key Primary key to use for the query
      * @param     ConnectionInterface \$con A connection object
      *
-     * @return    $ARClassName A model object, or null if the key is not found
+     * @return   $ARClassName A model object, or null if the key is not found
      */
     protected function findPkSimple(\$key, \$con)
     {
@@ -529,7 +529,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
      * @param     mixed \$key Primary key to use for the query
      * @param     ConnectionInterface \$con A connection object
      *
-     * @return    " . $class . "|array|mixed the result, formatted by the current formatter
+     * @return " . $class . "|array|mixed the result, formatted by the current formatter
      */
     protected function findPkComplex(\$key, \$con)
     {
@@ -573,7 +573,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
      * @param     array \$keys Primary keys to use for the query
      * @param     ConnectionInterface \$con an optional connection object
      *
-     * @return    ObjectCollection|array|mixed the list of results, formatted by the current formatter
+     * @return ObjectCollection|array|mixed the list of results, formatted by the current formatter
      */
     public function findPks(\$keys, \$con = null)
     {
@@ -603,7 +603,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
      *
      * @param     mixed \$key Primary key to use for the query
      *
-     * @return    " . $this->getQueryClassName() . " The current query, for fluid interface
+     * @return " . $this->getQueryClassName() . " The current query, for fluid interface
      */
     public function filterByPrimaryKey(\$key)
     {";
@@ -646,7 +646,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
      *
      * @param     array \$keys The list of primary key to use for the query
      *
-     * @return    " . $this->getQueryClassName() . " The current query, for fluid interface
+     * @return " . $this->getQueryClassName() . " The current query, for fluid interface
      */
     public function filterByPrimaryKeys(\$keys)
     {";
@@ -772,7 +772,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
         $script .= "
      * @param     string \$comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return    " . $this->getQueryClassName() . " The current query, for fluid interface
+     * @return " . $this->getQueryClassName() . " The current query, for fluid interface
      */
     public function filterBy$colPhpName(\$$variableName = null, \$comparison = null)
     {";
@@ -904,7 +904,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
      * @param     mixed \$$variableName The value to use as filter
      * @param     string \$comparison Operator to use for the column comparison, defaults to Criteria::CONTAINS_ALL
      *
-     * @return    " . $this->getQueryClassName() . " The current query, for fluid interface
+     * @return " . $this->getQueryClassName() . " The current query, for fluid interface
      */
     public function filterBy$singularPhpName(\$$variableName = null, \$comparison = null)
     {
@@ -1105,7 +1105,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
      * @param     string \$relationAlias optional alias for the relation
      * @param     string \$joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
-     * @return    ". $queryClass . " The current query, for fluid interface
+     * @return ". $queryClass . " The current query, for fluid interface
      */
     public function join" . $relationName . "(\$relationAlias = null, \$joinType = " . $joinType . ")
     {
@@ -1179,7 +1179,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
      *                                   to be used as main alias in the secondary query
      * @param     string \$joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
-     * @return    $queryClass A secondary query class using the current class as primary query
+     * @return   $queryClass A secondary query class using the current class as primary query
      */
     public function use" . $relationName . "Query(\$relationAlias = null, \$joinType = " . $joinType . ")
     {
@@ -1235,7 +1235,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
      *
      * @param   $class $objectName Object to remove from the list of results
      *
-     * @return    " . $this->getQueryClassName() . " The current query, for fluid interface
+     * @return " . $this->getQueryClassName() . " The current query, for fluid interface
      */
     public function prune($objectName = null)
     {
@@ -1400,7 +1400,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
 
     /**
      * Checks whether any registered behavior on that table has a modifier for a hook
-     * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
+     * @param  string  $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
      * @return Boolean
      */
     public function hasBehaviorModifier($hookName, $modifier = null)

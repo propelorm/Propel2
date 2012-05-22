@@ -207,7 +207,7 @@ class Join
     }
 
     /**
-     * @return     the comparison operator for the join condition
+     * @return the comparison operator for the join condition
      */
     public function getOperator($index = 0)
     {
@@ -265,8 +265,8 @@ class Join
      * $join->addCondition('book.AUTHOR_ID', 'author.ID');
      * echo $join->getLeftColumn(); // 'book.AUTHOR_ID'
      * </code>
-     * @param integer $index The number of the condition to use
-     * @return     string
+     * @param  integer $index The number of the condition to use
+     * @return string
      */
     public function getLeftColumn($index = 0)
     {
@@ -283,8 +283,8 @@ class Join
      * $join->addCondition('book.AUTHOR_ID', 'author.ID');
      * echo $join->getLeftColumnName(); // 'AUTHOR_ID'
      * </code>
-     * @param integer $index The number of the condition to use
-     * @return     string
+     * @param  integer $index The number of the condition to use
+     * @return string
      */
     public function getLeftColumnName($index = 0)
     {
@@ -293,7 +293,7 @@ class Join
 
     /**
      * Get the list of all the names of left columns of the join condition
-     * @return     array
+     * @return array
      */
     public function getLeftColumns()
     {
@@ -367,8 +367,8 @@ class Join
      * $join->addCondition('book.AUTHOR_ID', 'author.ID');
      * echo $join->getLeftColumn(); // 'author.ID'
      * </code>
-     * @param integer $index The number of the condition to use
-     * @return     string
+     * @param  integer $index The number of the condition to use
+     * @return string
      */
     public function getRightColumn($index = 0)
     {
@@ -385,8 +385,8 @@ class Join
      * $join->addCondition('book.AUTHOR_ID', 'author.ID');
      * echo $join->getLeftColumn(); // 'ID'
      * </code>
-     * @param integer $index The number of the condition to use
-     * @return     string
+     * @param  integer $index The number of the condition to use
+     * @return string
      */
     public function getRightColumnName($index = 0)
     {
@@ -394,7 +394,7 @@ class Join
     }
 
     /**
-     * @return     all right columns of the join condition
+     * @return all right columns of the join condition
      */
     public function getRightColumns()
     {
@@ -450,7 +450,7 @@ class Join
      *
      * The AdapterInterface which might be used to get db specific
      * variations of sql.
-     * @return     AdapterInterface value of db.
+     * @return AdapterInterface value of db.
      */
     public function getAdapter()
     {
@@ -461,8 +461,8 @@ class Join
      * Set the adapter.
      *
      * The AdapterInterface might be used to get db specific variations of sql.
-     * @param AdapterInterface $db Value to assign to db.
-     * @return     void
+     * @param  AdapterInterface $db Value to assign to db.
+     * @return void
      */
     public function setAdapter(AdapterInterface $db)
     {
@@ -563,7 +563,7 @@ class Join
     /**
      * Returns a string representation of the class,
      *
-     * @return string     A string representation of the object
+     * @return string A string representation of the object
      */
     public function toString()
     {

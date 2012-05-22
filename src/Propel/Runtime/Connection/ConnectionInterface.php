@@ -60,7 +60,7 @@ interface ConnectionInterface
      * If the database was set to autocommit mode, this function will restore
      * autocommit mode after it has rolled back the transaction.
      *
-     * @return bool TRUE on success or FALSE on failure.
+     * @return Boolean TRUE on success or FALSE on failure.
      */
     function rollBack();
 
@@ -81,7 +81,7 @@ interface ConnectionInterface
      * @param string $attribute
      * @param mixec  $value
      *
-     * @return bool TRUE on success or FALSE on failure.
+     * @return Boolean TRUE on success or FALSE on failure.
      */
     function setAttribute($attribute, $value);
 
@@ -91,7 +91,7 @@ interface ConnectionInterface
      * @param string $statement The SQL statement to prepare and execute.
      *                          Data inside the query should be properly escaped.
      *
-     * @return int   The number of rows that were modified or deleted by the SQL
+     * @return int The number of rows that were modified or deleted by the SQL
      *               statement you issued. If no rows were affected, returns 0.
      */
     function exec($statement);

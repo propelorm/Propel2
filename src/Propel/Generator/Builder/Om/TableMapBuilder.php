@@ -22,7 +22,7 @@ class TableMapBuilder extends AbstractOMBuilder
 {
     /**
      * Gets the package for the map builder classes.
-     * @return     string
+     * @return string
      */
     public function getPackage()
     {
@@ -45,7 +45,7 @@ class TableMapBuilder extends AbstractOMBuilder
 
     /**
      * Returns the name of the current class being built.
-     * @return     string
+     * @return string
      */
     public function getUnprefixedClassName()
     {
@@ -153,8 +153,8 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
      * Initialize the table attributes and columns
      * Relations are not initialized by this method since they are lazy loaded
      *
-     * @return     void
-     * @throws     PropelException
+     * @return void
+     * @throws PropelException
      */
     public function initialize()
     {
@@ -336,7 +336,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
 
     /**
      * Checks whether any registered behavior on that table has a modifier for a hook
-     * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
+     * @param  string  $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
      * @return Boolean
      */
     public function hasBehaviorModifier($hookName, $modifier = null)

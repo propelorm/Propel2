@@ -85,7 +85,7 @@ class GeneratorConfig implements GeneratorConfigInterface
     /**
      * Returns a specific Propel (renamed) property from the build.
      *
-     * @param string $name
+     * @param  string $name
      * @return mixed
      */
     public function getBuildProperty($name)
@@ -109,7 +109,7 @@ class GeneratorConfig implements GeneratorConfigInterface
      * value. The name of the property holds the class path as a dot-path
      * notation.
      *
-     * @param string $propname
+     * @param  string         $propname
      * @return string
      * @throws BuildException
      */
@@ -143,7 +143,7 @@ class GeneratorConfig implements GeneratorConfigInterface
     /**
      * Resolves and returns the builder class name.
      *
-     * @param string $type
+     * @param  string $type
      * @return string
      */
     public function getBuilderClassName($type)
@@ -156,7 +156,7 @@ class GeneratorConfig implements GeneratorConfigInterface
     /**
      * Creates and configures a new Platform class.
      *
-     * @param \PDO $con
+     * @param  \PDO              $con
      * @return PlatformInterface
      */
     public function getConfiguredPlatform(\PDO $con = null, $database = null)
@@ -188,7 +188,7 @@ class GeneratorConfig implements GeneratorConfigInterface
 
     /**
      * Creates and configures a new SchemaParser class for specified platform.
-     * @param \PDO $con
+     * @param  \PDO                  $con
      * @return SchemaParserInterface
      */
     public function getConfiguredSchemaParser(\PDO $con = null)
@@ -211,8 +211,8 @@ class GeneratorConfig implements GeneratorConfigInterface
      * Returns a configured data model builder class for specified table and
      * based on type ('ddl', 'sql', etc.).
      *
-     * @param Table  $table
-     * @param string $type
+     * @param  Table            $table
+     * @param  string           $type
      * @return DataModelBuilder
      */
     public function getConfiguredBuilder(Table $table, $type)

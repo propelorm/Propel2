@@ -33,7 +33,7 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
      * @param string $s1 String to concatenate.
      * @param string $s2 String to append.
      *
-     * @return    string
+     * @return string
      */
     public function concatString($s1, $s2)
     {
@@ -47,7 +47,7 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
      * @param integer $pos Offset to start from.
      * @param integer $len Number of characters to extract.
      *
-     * @return    string
+     * @return string
      */
     public function subString($s, $pos, $len)
     {
@@ -57,8 +57,8 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
     /**
      * Returns SQL which calculates the length (in chars) of a string.
      *
-     * @param string $s String to calculate length of.
-     * @return    string
+     * @param  string $s String to calculate length of.
+     * @return string
      */
     public function strLength($s)
     {
@@ -71,7 +71,7 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
      * @param ConnectionInterface $con   The Propel connection to use.
      * @param string              $table The name of the table to lock.
      *
-     * @throws    \PDOException  No Statement could be created or executed.
+     * @throws \PDOException No Statement could be created or executed.
      */
     public function lockTable($con, $table)
     {
@@ -84,7 +84,7 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
      * @param ConnectionInterface $con   The Propel connection to use.
      * @param string              $table The name of the table to unlock.
      *
-     * @throws    \PDOException  No Statement could be created or executed.
+     * @throws \PDOException No Statement could be created or executed.
      */
     public function unlockTable($con, $table)
     {
@@ -94,8 +94,8 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
     /**
      * @see AdapterInterface::quoteIdentifier()
      *
-     * @param string $text
-     * @return    string
+     * @param  string $text
+     * @return string
      */
     public function quoteIdentifier($text)
     {
@@ -105,8 +105,8 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
     /**
      * @see AdapterInterface::quoteIdentifierTable()
      *
-     * @param string $table
-     * @return    string
+     * @param  string $table
+     * @return string
      */
     public function quoteIdentifierTable($table)
     {
@@ -117,7 +117,7 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
     /**
      * @see AdapterInterface::useQuoteIdentifier()
      *
-     * @return    boolean
+     * @return Boolean
      */
     public function useQuoteIdentifier()
     {
@@ -143,8 +143,8 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
     /**
      * @see AdapterInterface::random()
      *
-     * @param string $seed
-     * @return    string
+     * @param  string $seed
+     * @return string
      */
     public function random($seed = null)
     {
@@ -160,7 +160,7 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
      * @param ColumnMap          $cMap
      * @param null|integer       $position
      *
-     * @return    boolean
+     * @return Boolean
      */
     public function bindValue(StatementInterface $stmt, $parameter, $value, ColumnMap $cMap, $position = null)
     {

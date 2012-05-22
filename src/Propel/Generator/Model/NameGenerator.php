@@ -65,8 +65,8 @@ interface NameGenerator
      * algorithm which produces a name.
      *
      * @param      inputs Inputs used to generate a name.
-     * @return     The generated name.
-     * @throws     EngineException
+     * @return The             generated name.
+     * @throws EngineException
      */
     function generateName($inputs);
 }
