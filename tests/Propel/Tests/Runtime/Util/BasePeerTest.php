@@ -24,14 +24,14 @@ use Propel\Runtime\Util\BasePeer;
 /**
  * Tests the BasePeer classes.
  *
- * @see        BookstoreDataPopulator
+ * @see BookstoreDataPopulator
  * @author Hans Lellelid <hans@xmpl.org>
  */
 class BasePeerTest extends BookstoreTestBase
 {
 
     /**
-     * @link       http://propel.phpdb.org/trac/ticket/425
+     * @link http://propel.phpdb.org/trac/ticket/425
      */
     public function testMultipleFunctionInCriteria()
     {

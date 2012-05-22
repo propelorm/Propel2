@@ -21,8 +21,6 @@ use Propel\Runtime\Query\Criteria;
  * Tests for SortableBehavior class
  *
  * @author Massimiliano Arione
- * @version		$Revision$
- * @package		generator.behavior.sortable
  */
 class SortableBehaviorObjectBuilderModifierTest extends BookstoreSortableTestBase
 {

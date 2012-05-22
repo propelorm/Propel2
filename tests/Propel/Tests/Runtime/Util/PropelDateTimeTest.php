@@ -20,7 +20,6 @@ use \DateTimeZone;
  *
  * @author Alan Pinstein
  * @author Soenke Ruempler
- * @package		runtime.util
  */
 class PropelDateTimeTest extends \PHPUnit_Framework_TestCase
 {

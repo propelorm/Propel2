@@ -41,13 +41,10 @@ use Propel\Runtime\Query\Exception\UnknownColumnException;
 use Propel\Runtime\Query\Exception\UnknownRelationException;
 use Propel\Runtime\Query\ModelCriteria;
 
-use \PDO;
-
 /**
  * Test class for ModelCriteria.
  *
  * @author Francois Zaninotto
- * @version    $Id$
  */
 class ModelCriteriaTest extends BookstoreTestBase
 {
@@ -260,7 +257,7 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $c->withColumn('SUBSTRING(Book.Title, 1, 4)', 'title_start');
         $c->condition('cond1', 'Book.Title <> ?', 'foo');
-        $c->condition('cond2', 'title_start like ?', '%bar%', PDO::PARAM_STR);
+        $c->condition('cond2', 'title_start like ?', '%bar%', \PDO::PARAM_STR);
         $c->combine(array('cond1', 'cond2'), 'or');
 
         if (in_array($this->getDriver(), array('mysql'))) {
@@ -271,7 +268,7 @@ class ModelCriteriaTest extends BookstoreTestBase
 
         $params = array(
             array('table' => 'book', 'column' => 'TITLE', 'value' => 'foo'),
-            array('table' => null, 'type' => PDO::PARAM_STR, 'value' => '%bar%'),
+            array('table' => null, 'type' => \PDO::PARAM_STR, 'value' => '%bar%'),
         );
         $this->assertCriteriaTranslation($c, $sql, $params, 'condition() accepts RAW sql parameters');
     }
@@ -430,7 +427,7 @@ class ModelCriteriaTest extends BookstoreTestBase
     public function testWhereTypeValue()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book', 'b');
-        $c->where('LOCATE(\'foo\', b.Title) = ?', true, PDO::PARAM_BOOL);
+        $c->where('LOCATE(\'foo\', b.Title) = ?', true, \PDO::PARAM_BOOL);
 
         if (in_array($this->getDriver(), array('mysql'))) {
             $sql = "SELECT  FROM `book` WHERE LOCATE('foo', book.TITLE) = :p1";
@@ -439,7 +436,7 @@ class ModelCriteriaTest extends BookstoreTestBase
         }
 
         $params = array(
-            array('table' => null, 'type' => PDO::PARAM_BOOL, 'value' => true),
+            array('table' => null, 'type' => \PDO::PARAM_BOOL, 'value' => true),
         );
         $this->assertCriteriaTranslation($c, $sql, $params, 'where() accepts a complex calculation');
         $c->find($this->con);
@@ -612,7 +609,7 @@ class ModelCriteriaTest extends BookstoreTestBase
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $c->withColumn('SUBSTRING(Book.Title, 1, 4)', 'title_start');
-        $c->having('title_start = ?', 'foo', PDO::PARAM_STR);
+        $c->having('title_start = ?', 'foo', \PDO::PARAM_STR);
 
         if (in_array($this->getDriver(), array('mysql'))) {
             $sql = 'SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID, SUBSTRING(book.TITLE, 1, 4) AS title_start FROM `book` HAVING title_start = :p1';

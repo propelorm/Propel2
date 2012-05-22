@@ -21,7 +21,7 @@ use Propel\Runtime\Util\BasePeer;
 /**
  * Tests the exceptions thrown by the BasePeer classes.
  *
- * @see        BookstoreDataPopulator
+ * @see BookstoreDataPopulator
  * @author Francois Zaninotto
  */
 class BasePeerExceptionsTest extends BookstoreTestBase

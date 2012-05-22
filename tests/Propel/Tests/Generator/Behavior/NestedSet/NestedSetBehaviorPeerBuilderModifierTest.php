@@ -21,8 +21,6 @@ use Propel\Runtime\Query\Criteria;
  * Tests for NestedSetBehaviorPeerBuilderModifier class
  *
  * @author François Zaninotto
- * @version		$Revision$
- * @package		generator.behavior.nestedset
  */
 class NestedSetBehaviorPeerBuilderModifierTest extends BookstoreNestedSetTestBase
 {
