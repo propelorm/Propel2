@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Behavior\NestedSet;
@@ -13,7 +13,7 @@ namespace Propel\Generator\Behavior\NestedSet;
 /**
  * Behavior to adds nested set tree structure columns and abilities
  *
- * @author     François Zaninotto
+ * @author François Zaninotto
  */
 class NestedSetBehaviorQueryBuilderModifier
 {

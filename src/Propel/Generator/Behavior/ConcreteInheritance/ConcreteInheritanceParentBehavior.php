@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Behavior\ConcreteInheritance;
@@ -17,7 +17,7 @@ use Propel\Generator\Model\Behavior;
  * model A gets the concrete_inheritance behavior, and model B gets the
  * concrete_inheritance_parent
  *
- * @author     François Zaninotto
+ * @author François Zaninotto
  */
 class ConcreteInheritanceParentBehavior extends Behavior
 {

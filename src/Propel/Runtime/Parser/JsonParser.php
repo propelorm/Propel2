@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Runtime\Parser;
@@ -13,14 +13,14 @@ namespace Propel\Runtime\Parser;
 /**
  * JSON parser. Converts data between associative array and JSON formats
  *
- * @author     Francois Zaninotto
+ * @author Francois Zaninotto
  */
 class JsonParser extends AbstractParser
 {
     /**
      * Converts data from an associative array to JSON.
      *
-     * @param array $array Source data to convert
+     * @param  array  $array Source data to convert
      * @return string Converted data, as a JSON string
      */
     public function fromArray($array)
@@ -31,7 +31,7 @@ class JsonParser extends AbstractParser
     /**
      * Alias for JsonParser::fromArray()
      *
-     * @param array $array Source data to convert
+     * @param  array  $array Source data to convert
      * @return string Converted data, as a JSON string
      */
     public function toJSON($array)
@@ -42,8 +42,8 @@ class JsonParser extends AbstractParser
     /**
      * Converts data from JSON to an associative array.
      *
-     * @param string $data Source data to convert, as a JSON string
-     * @return array Converted data
+     * @param  string $data Source data to convert, as a JSON string
+     * @return array  Converted data
      */
     public function toArray($data)
     {
@@ -53,8 +53,8 @@ class JsonParser extends AbstractParser
     /**
      * Alias for JsonParser::toArray()
      *
-     * @param string $data Source data to convert, as a JSON string
-     * @return array Converted data
+     * @param  string $data Source data to convert, as a JSON string
+     * @return array  Converted data
      */
     public function fromJSON($data)
     {

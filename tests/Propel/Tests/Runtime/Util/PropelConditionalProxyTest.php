@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Tests\Runtime\Util;
@@ -18,7 +18,7 @@ use Propel\Runtime\Query\Criteria;
 /**
  * Test class for PropelConditionalProxy.
  *
- * @author     Julien Muetton <julien_muetton@carpe-hora.com>
+ * @author Julien Muetton <julien_muetton@carpe-hora.com>
  * @version    $Id: CriteriaCombineTest.php 1347 2009-12-03 21:06:36Z francois $
  */
 class PropelConditionalProxyTest extends BaseTestCase

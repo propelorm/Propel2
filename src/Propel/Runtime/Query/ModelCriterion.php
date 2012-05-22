@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Runtime\Query;
@@ -15,7 +15,7 @@ use Propel\Runtime\Map\ColumnMap;
 /**
  * This is an "inner" class that describes an object in the criteria.
  *
- * @author     Francois
+ * @author Francois
  */
 class ModelCriterion extends Criterion
 {
@@ -216,7 +216,7 @@ class ModelCriterion extends Criterion
     /**
      * This method checks another Criteria to see if they contain
      * the same attributes and hashtable entries.
-     * @return     boolean
+     * @return Boolean
      */
     public function equals($obj)
     {

@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Platform;
@@ -13,12 +13,12 @@ namespace Propel\Generator\Platform;
 /**
  * MS SQL Server using pdo_sqlsrv implementation.
  *
- * @author     Benjamin Runnels
+ * @author Benjamin Runnels
  */
 class SqlsrvPlatform extends MssqlPlatform
 {
     /**
-     * @see        Platform#getMaxColumnNameLength()
+     * @see Platform#getMaxColumnNameLength()
      */
     public function getMaxColumnNameLength()
     {

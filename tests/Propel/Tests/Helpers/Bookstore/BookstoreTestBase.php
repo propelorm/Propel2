@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Tests\Helpers\Bookstore;
@@ -22,13 +22,13 @@ abstract class BookstoreTestBase extends \PHPUnit_Framework_TestCase
     /**
      * @var Boolean
      */
-    static private $isInitialized = false;
+    private static $isInitialized = false;
     /**
      * @var \PDO
      */
     protected $con;
 
-    static public function setUpBeforeClass()
+    public static function setUpBeforeClass()
     {
         if (true !== self::$isInitialized) {
             Propel::init(__DIR__ . '/../../../../Fixtures/bookstore/build/conf/bookstore-conf.php');
@@ -66,7 +66,7 @@ abstract class BookstoreTestBase extends \PHPUnit_Framework_TestCase
         return $this->con->getAttribute(\PDO::ATTR_DRIVER_NAME);
     }
 
-    static public function tearDownAfterClass()
+    public static function tearDownAfterClass()
     {
         Propel::getServiceContainer()->closeConnections();
     }

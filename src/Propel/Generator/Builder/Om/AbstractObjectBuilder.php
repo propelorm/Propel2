@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Builder\Om;
@@ -19,7 +19,7 @@ use Propel\Generator\Model\PropelTypes;
  * and ComplexOMPeerBuilder.  Hence, this class should not have any actual
  * template code in it -- simply basic logic & utility methods.
  *
- * @author     Hans Lellelid <hans@xmpl.org>
+ * @author Hans Lellelid <hans@xmpl.org>
  */
 abstract class AbstractObjectBuilder extends AbstractOMBuilder
 {
@@ -111,7 +111,7 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
     /**
      * Gets the baseClass path if specified for table/db.
      * If not, will return 'propel.om.BaseObject'
-     * @return     string
+     * @return string
      */
     protected function getBaseClass()
     {
@@ -126,7 +126,7 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
     /**
      * Gets the interface path if specified for current table.
      * If not, will return 'propel.om.Persistent'.
-     * @return     string
+     * @return string
      */
     protected function getInterface()
     {
@@ -175,8 +175,8 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
 
     /**
      * Checks whether any registered behavior on that table has a modifier for a hook
-     * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
-     * @return boolean
+     * @param  string  $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
+     * @return Boolean
      */
     public function hasBehaviorModifier($hookName, $modifier = null)
     {

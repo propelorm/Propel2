@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Behavior\AutoAddPk;
@@ -15,7 +15,7 @@ use Propel\Generator\Model\Behavior;
 /**
  * Adds a primary key to models defined without one
  *
- * @author     François Zaninotto
+ * @author François Zaninotto
  */
 class AutoAddPkBehavior extends Behavior
 {

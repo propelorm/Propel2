@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Runtime\Connection;
@@ -15,7 +15,7 @@ namespace Propel\Runtime\Connection;
  * Based on the PDOStatement interface.
  * @see http://www.php.net/manual/en/class.pdostatement.php
  *
- * @author     Francois Zaninotto
+ * @author Francois Zaninotto
  */
 interface StatementInterface
 {
@@ -41,7 +41,7 @@ interface StatementInterface
      * @param integer $type Explicit data type for the parameter using the PDO::PARAM_* constants. To return
      *                              an INOUT parameter from a stored procedure, use the bitwise OR operator to set the
      *                              PDO::PARAM_INPUT_OUTPUT bits for the data_type parameter.
-     * @return boolean              Returns TRUE on success or FALSE on failure.
+     * @return Boolean Returns TRUE on success or FALSE on failure.
      */
     function bindParam($column, &$variable, $type = null);
 
@@ -58,7 +58,7 @@ interface StatementInterface
      * @param mixed   $value The value to bind to the parameter.
      * @param integer $type  Explicit data type for the parameter using the PDO::PARAM_* constants.
      *
-     * @return boolean              Returns TRUE on success or FALSE on failure.
+     * @return Boolean Returns TRUE on success or FALSE on failure.
      */
     function bindValue($param, $value, $type = null);
 
@@ -74,7 +74,7 @@ interface StatementInterface
      * has unfetched rows. If your database driver suffers from this limitation,
      * the problem may manifest itself in an out-of-sequence error.
      *
-     * @return boolean              Returns TRUE on success or FALSE on failure.
+     * @return Boolean Returns TRUE on success or FALSE on failure.
      */
     function closeCursor();
 
@@ -91,7 +91,7 @@ interface StatementInterface
      * column count will not be available until you invoke Statement::execute().
      * Returns the number of columns in the result set
      *
-     * @return integer              Returns the number of columns in the result set represented
+     * @return integer Returns the number of columns in the result set represented
      *                              by the PDOStatement object. If there is no result set,
      *                              this method should return 0.
      */
@@ -109,7 +109,7 @@ interface StatementInterface
      *
      * @param array $params An array of values with as many elements as there are
      *                                  bound parameters in the SQL statement being executed.
-     * @return boolean                  Returns TRUE on success or FALSE on failure.
+     * @return Boolean Returns TRUE on success or FALSE on failure.
      */
     function execute($params = null);
 
@@ -155,7 +155,7 @@ interface StatementInterface
      *                                      value is supplied, PDOStatement->fetchColumn()
      *                                      fetches the first column.
      *
-     * @return string                       A single column in the next row of a result set.
+     * @return string A single column in the next row of a result set.
      */
     function fetchColumn($columnIndex = 0);
 
@@ -170,7 +170,7 @@ interface StatementInterface
      * this behaviour is not guaranteed for all databases and should not be
      * relied on for portable applications.
      *
-     * @return integer                      The number of rows.
+     * @return integer The number of rows.
      */
     function rowCount();
 }

@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Tests\Runtime\Query;
@@ -18,7 +18,7 @@ use Propel\Runtime\Util\BasePeer;
 /**
  * Test class for Criteria fluid operators.
  *
- * @author     Francois Zaninotto
+ * @author Francois Zaninotto
  * @version    $Id: CriteriaCombineTest.php 1347 2009-12-03 21:06:36Z francois $
  */
 class CriteriaFluidOperatorTest extends BookstoreTestBase

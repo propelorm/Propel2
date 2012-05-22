@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Reverse;
@@ -19,7 +19,7 @@ use Propel\Generator\Reverse\AbstractSchemaParser;
 /**
  * SQLite database schema parser.
  *
- * @author     Hans Lellelid <hans@xmpl.org>
+ * @author Hans Lellelid <hans@xmpl.org>
  */
 class SqliteSchemaParser extends AbstractSchemaParser
 {
@@ -67,7 +67,7 @@ class SqliteSchemaParser extends AbstractSchemaParser
     /**
      * Gets a type mapping from native types to Propel types
      *
-     * @return     array
+     * @return array
      */
     protected function getTypeMapping()
     {

@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Behavior\Sortable;
@@ -16,7 +16,7 @@ use Propel\Generator\Model\Behavior;
  * Gives a model class the ability to be ordered
  * Uses one additional column storing the rank
  *
- * @author      Massimiliano Arione
+ * @author Massimiliano Arione
  * @version     $Revision$
  */
 class SortableBehavior extends Behavior

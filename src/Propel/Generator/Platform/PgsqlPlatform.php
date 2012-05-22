@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Platform;
@@ -23,9 +23,9 @@ use Propel\Generator\Model\Diff\ColumnDiff;
 /**
  * Postgresql PlatformInterface implementation.
  *
- * @author     Hans Lellelid <hans@xmpl.org> (Propel)
- * @author     Martin Poeschl <mpoeschl@marmot.at> (Torque)
- * @author     Niklas Närhinen <niklas@narhinen.net>
+ * @author Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author Martin Poeschl <mpoeschl@marmot.at> (Torque)
+ * @author Niklas Närhinen <niklas@narhinen.net>
  */
 class PgsqlPlatform extends DefaultPlatform
 {
@@ -71,8 +71,8 @@ class PgsqlPlatform extends DefaultPlatform
 
     /**
      * Escape the string for RDBMS.
-     * @param string $text
-     * @return     string
+     * @param  string $text
+     * @return string
      */
     public function disconnectedEscapeText($text)
     {
@@ -103,7 +103,7 @@ class PgsqlPlatform extends DefaultPlatform
      *
      * @param Table $table
      *
-     * @return     string
+     * @return string
      */
     public function getSequenceName(Table $table)
     {
@@ -355,7 +355,7 @@ DROP TABLE IF EXISTS %s CASCADE;
     }
 
     /**
-     * @see        Platform::supportsSchemas()
+     * @see Platform::supportsSchemas()
      */
     public function supportsSchemas()
     {
@@ -381,8 +381,8 @@ DROP TABLE IF EXISTS %s CASCADE;
      * Overrides the implementation from DefaultPlatform
      *
      * @author     Niklas Närhinen <niklas@narhinen.net>
-     * @return     string
-     * @see        DefaultPlatform::getModifyColumnDDL
+     * @return string
+     * @see DefaultPlatform::getModifyColumnDDL
      */
     public function getModifyColumnDDL(ColumnDiff $columnDiff)
     {
@@ -438,8 +438,8 @@ ALTER TABLE %s ALTER COLUMN %s;
      * Overrides the implementation from DefaultPlatform
      *
      * @author     Niklas Närhinen <niklas@narhinen.net>
-     * @return     string
-     * @see        DefaultPlatform::getModifyColumnsDDL
+     * @return string
+     * @see DefaultPlatform::getModifyColumnsDDL
      */
     public function getModifyColumnsDDL($columnDiffs)
     {
@@ -455,8 +455,8 @@ ALTER TABLE %s ALTER COLUMN %s;
      * Overrides the implementation from DefaultPlatform
      *
      * @author     Niklas Närhinen <niklas@narhinen.net>
-     * @return     string
-     * @see        DefaultPlatform::getAddColumnsDLL
+     * @return string
+     * @see DefaultPlatform::getAddColumnsDLL
      */
     public function getAddColumnsDDL($columns)
     {
@@ -472,8 +472,8 @@ ALTER TABLE %s ALTER COLUMN %s;
      * Overrides the implementation from DefaultPlatform
      *
      * @author     Niklas Närhinen <niklas@narhinen.net>
-     * @return     string
-     * @see        DefaultPlatform::getDropIndexDDL
+     * @return string
+     * @see DefaultPlatform::getDropIndexDDL
      */
     public function getDropIndexDDL(Index $index)
     {

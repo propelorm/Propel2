@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Runtime;
@@ -24,14 +24,14 @@ use Propel\Runtime\ServiceContainer\StandardServiceContainer;
  * This static class is used to handle Propel initialization and to maintain all of the
  * open database connections and instantiated database maps.
  *
- * @author     Hans Lellelid <hans@xmpl.rg> (Propel)
- * @author     Daniel Rall <dlr@finemaltcoding.com> (Torque)
- * @author     Magnús Þór Torfason <magnus@handtolvur.is> (Torque)
- * @author     Jason van Zyl <jvanzyl@apache.org> (Torque)
- * @author     Rafal Krzewski <Rafal.Krzewski@e-point.pl> (Torque)
- * @author     Martin Poeschl <mpoeschl@marmot.at> (Torque)
- * @author     Henning P. Schmiedehausen <hps@intermeta.de> (Torque)
- * @author     Kurt Schrader <kschrader@karmalab.org> (Torque)
+ * @author Hans Lellelid <hans@xmpl.rg> (Propel)
+ * @author Daniel Rall <dlr@finemaltcoding.com> (Torque)
+ * @author Magnús Þór Torfason <magnus@handtolvur.is> (Torque)
+ * @author Jason van Zyl <jvanzyl@apache.org> (Torque)
+ * @author Rafal Krzewski <Rafal.Krzewski@e-point.pl> (Torque)
+ * @author Martin Poeschl <mpoeschl@marmot.at> (Torque)
+ * @author Henning P. Schmiedehausen <hps@intermeta.de> (Torque)
+ * @author Kurt Schrader <kschrader@karmalab.org> (Torque)
  */
 class Propel
 {
@@ -91,7 +91,7 @@ class Propel
     private static $serviceContainer;
 
     /**
-     * @var        bool Whether the object instance pooling is enabled
+     * @var Boolean Whether the object instance pooling is enabled
      */
     private static $isInstancePoolingEnabled = true;
 
@@ -198,7 +198,7 @@ class Propel
      * @param string $name The datasource name
      * @param string $mode The connection mode (this applies to replication systems).
      *
-     * @return     \Propel\Runtime\Connection\ConnectionInterface A database connection
+     * @return \Propel\Runtime\Connection\ConnectionInterface A database connection
      */
     static public function getConnection($name = null, $mode = ServiceContainerInterface::CONNECTION_WRITE)
     {
@@ -214,9 +214,9 @@ class Propel
      * @param string $name The datasource name that is used to look up the DSN
      *                          from the runtime configuration file. Empty name not allowed.
      *
-     * @return     ConnectionInterface A database connection
+     * @return ConnectionInterface A database connection
      *
-     * @throws     PropelException - if connection is not properly configured
+     * @throws PropelException - if connection is not properly configured
      */
     static public function getWriteConnection($name)
     {
@@ -233,7 +233,7 @@ class Propel
      * @param string $name The datasource name that is used to look up the DSN
      *                          from the runtime configuration file. Empty name not allowed.
      *
-     * @return     ConnectionInterface A database connection
+     * @return ConnectionInterface A database connection
      */
     static public function getReadConnection($name)
     {
@@ -253,7 +253,7 @@ class Propel
     /**
      * Returns true if a logger has been configured, otherwise false.
      *
-     * @return     bool True if Propel uses logging
+     * @return Boolean True if Propel uses logging
      */
     static public function hasLogger()
     {
@@ -263,7 +263,7 @@ class Propel
     /**
      * Get the configured logger.
      *
-     * @return     \Monolog\Logger Configured log class
+     * @return \Monolog\Logger Configured log class
      */
     static public function getLogger()
     {
@@ -278,7 +278,7 @@ class Propel
      * @param      string The message that will be logged.
      * @param      string The logging level.
      *
-     * @return     bool True if the message was logged successfully or no logger was used.
+     * @return Boolean True if the message was logged successfully or no logger was used.
      */
     static public function log($message, $level = self::LOG_DEBUG)
     {
@@ -308,7 +308,7 @@ class Propel
     /**
      * Disable instance pooling.
      *
-     * @return boolean true if the method changed the instance pooling state,
+     * @return Boolean true if the method changed the instance pooling state,
      *                 false if it was already disabled
      */
     static public function disableInstancePooling()
@@ -324,7 +324,7 @@ class Propel
     /**
      * Enable instance pooling (enabled by default).
      *
-     * @return boolean true if the method changed the instance pooling state,
+     * @return Boolean true if the method changed the instance pooling state,
      *                 false if it was already enabled
      */
     static public function enableInstancePooling()
@@ -340,7 +340,7 @@ class Propel
     /**
      *  the instance pooling behaviour. True by default.
      *
-     * @return     boolean Whether the pooling is enabled or not.
+     * @return Boolean Whether the pooling is enabled or not.
      */
     static public function isInstancePoolingEnabled()
     {

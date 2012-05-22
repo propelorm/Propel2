@@ -167,7 +167,7 @@ class Index extends MappingModel
     /**
      * Returns whether or not there is a size for the specified column.
      *
-     * @param string $name
+     * @param  string  $name
      * @return Boolean
      */
     public function hasColumnSize($name)
@@ -178,7 +178,7 @@ class Index extends MappingModel
     /**
      * Returns the size for the specified column.
      *
-     * @param string $name
+     * @param  string  $name
      * @return integer
      */
     public function getColumnSize($name)
@@ -199,10 +199,10 @@ class Index extends MappingModel
     /**
      * Returns whether or not this index has a given column at a given position.
      *
-     * @param integer $pos             Position in the column list
-     * @param string  $name            Column name
-     * @param integer $size            Optional size check
-     * @param Boolean $caseInsensitive Whether or not the comparison is case insensitive (false by default)
+     * @param  integer $pos             Position in the column list
+     * @param  string  $name            Column name
+     * @param  integer $size            Optional size check
+     * @param  Boolean $caseInsensitive Whether or not the comparison is case insensitive (false by default)
      * @return Boolean
      */
     public function hasColumnAtPosition($pos, $name, $size = null, $caseInsensitive = false)

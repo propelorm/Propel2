@@ -20,8 +20,8 @@ abstract class ModelTestCase extends \PHPUnit_Framework_TestCase
     /**
      * Returns a dummy Behavior object.
      *
-     * @param string $name    The behavior name
-     * @param array  $options An array of options
+     * @param  string   $name    The behavior name
+     * @param  array    $options An array of options
      * @return Behavior
      */
     protected function getBehaviorMock($name, array $options = array())
@@ -81,8 +81,8 @@ abstract class ModelTestCase extends \PHPUnit_Framework_TestCase
     /**
      * Returns a dummy ForeignKey object.
      *
-     * @param string $name    The foreign key name
-     * @param array  $options An array of options
+     * @param  string     $name    The foreign key name
+     * @param  array      $options An array of options
      * @return ForeignKey
      */
     protected function getForeignKeyMock($name = null, array $options = array())
@@ -145,8 +145,8 @@ abstract class ModelTestCase extends \PHPUnit_Framework_TestCase
     /**
      * Returns a dummy Index object.
      *
-     * @param string $name    The index name
-     * @param array  $options An array of options
+     * @param  string $name    The index name
+     * @param  array  $options An array of options
      * @return Index
      */
     protected function getIndexMock($name = null, array $options = array())
@@ -178,8 +178,8 @@ abstract class ModelTestCase extends \PHPUnit_Framework_TestCase
     /**
      * Returns a dummy Unique object.
      *
-     * @param string $name    The unique index name
-     * @param array  $options An array of options
+     * @param  string $name    The unique index name
+     * @param  array  $options An array of options
      * @return Unique
      */
     protected function getUniqueIndexMock($name = null, array $options = array())
@@ -205,8 +205,8 @@ abstract class ModelTestCase extends \PHPUnit_Framework_TestCase
     /**
      * Returns a dummy Schema object.
      *
-     * @param string $name    The schema name
-     * @param array  $options An array of options
+     * @param  string $name    The schema name
+     * @param  array  $options An array of options
      * @return Schema
      */
     protected function getSchemaMock($name = null, array $options = array())
@@ -239,8 +239,8 @@ abstract class ModelTestCase extends \PHPUnit_Framework_TestCase
     /**
      * Returns a dummy Platform object.
      *
-     * @param Boolean $supportsSchemas Whether or not the platform supports schemas
-     * @param array   $options         An array of options
+     * @param  Boolean           $supportsSchemas Whether or not the platform supports schemas
+     * @param  array             $options         An array of options
      * @return PlatformInterface
      */
     protected function getPlatformMock($supportsSchemas = true, array $options = array())
@@ -275,8 +275,8 @@ abstract class ModelTestCase extends \PHPUnit_Framework_TestCase
     /**
      * Returns a dummy Domain object.
      *
-     * @param string $name
-     * @param array  $options An array of options
+     * @param  string $name
+     * @param  array  $options An array of options
      * @return Domain
      */
     protected function getDomainMock($name = null, array $options = array())
@@ -303,8 +303,8 @@ abstract class ModelTestCase extends \PHPUnit_Framework_TestCase
     /**
      * Returns a dummy Table object.
      *
-     * @param string $name    The table name
-     * @param array  $options An array of options
+     * @param  string $name    The table name
+     * @param  array  $options An array of options
      * @return Table
      */
     protected function getTableMock($name, array $options = array())
@@ -388,8 +388,8 @@ abstract class ModelTestCase extends \PHPUnit_Framework_TestCase
     /**
      * Returns a dummy Database object.
      *
-     * @param string $name    The database name
-     * @param array  $options An array of options
+     * @param  string   $name    The database name
+     * @param  array    $options An array of options
      * @return Database
      */
     protected function getDatabaseMock($name, array $options = array())
@@ -422,8 +422,8 @@ abstract class ModelTestCase extends \PHPUnit_Framework_TestCase
     /**
      * Returns a dummy Column object.
      *
-     * @param string $name    The column name
-     * @param array  $options An array of options
+     * @param  string $name    The column name
+     * @param  array  $options An array of options
      * @return Column
      */
     protected function getColumnMock($name, array $options = array())

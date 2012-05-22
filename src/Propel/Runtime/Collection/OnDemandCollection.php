@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Runtime\Collection;
@@ -19,12 +19,12 @@ use Propel\Runtime\Util\BasePeer;
 /**
  * Class for iterating over a statement and returning one Propel object at a time
  *
- * @author     Francois Zaninotto
+ * @author Francois Zaninotto
  */
 class OnDemandCollection extends Collection
 {
     /**
-     * @var       OnDemandIterator
+     * @var OnDemandIterator
      */
     protected $iterator;
 
@@ -76,7 +76,7 @@ class OnDemandCollection extends Collection
      * )
      * </code>
      *
-     * @return    array
+     * @return array
      */
     public function toArray($keyColumn = null, $usePrefix = false, $keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array())
     {
@@ -108,7 +108,7 @@ class OnDemandCollection extends Collection
     // IteratorAggregate Interface
 
     /**
-     * @return    OnDemandIterator
+     * @return OnDemandIterator
      */
     public function getIterator()
     {
@@ -118,10 +118,10 @@ class OnDemandCollection extends Collection
     // ArrayAccess Interface
 
     /**
-     * @throws    \Propel\Runtime\Exception\PropelException
-     * @param integer $offset
+     * @throws \Propel\Runtime\Exception\PropelException
+     * @param  integer                                   $offset
      *
-     * @return    Boolean
+     * @return Boolean
      */
     public function offsetExists($offset)
     {
@@ -133,10 +133,10 @@ class OnDemandCollection extends Collection
     }
 
     /**
-     * @throws    \Propel\Runtime\Exception\PropelException
-     * @param integer $offset
+     * @throws \Propel\Runtime\Exception\PropelException
+     * @param  integer                                   $offset
      *
-     * @return    mixed
+     * @return mixed
      */
     public function offsetGet($offset)
     {
@@ -148,7 +148,7 @@ class OnDemandCollection extends Collection
     }
 
     /**
-     * @throws    \Propel\Runtime\Collection\Exception\ReadOnlyModelException
+     * @throws \Propel\Runtime\Collection\Exception\ReadOnlyModelException
      *
      * @param integer $offset
      * @param mixed   $value
@@ -159,8 +159,8 @@ class OnDemandCollection extends Collection
     }
 
     /**
-     * @throws    \Propel\Runtime\Collection\Exception\ReadOnlyModelException
-     * @param integer $offset
+     * @throws \Propel\Runtime\Collection\Exception\ReadOnlyModelException
+     * @param  integer                                                     $offset
      */
     public function offsetUnset($offset)
     {
@@ -170,7 +170,7 @@ class OnDemandCollection extends Collection
     // Serializable Interface
 
     /**
-     * @throws    \Propel\Runtime\Exception\PropelException
+     * @throws \Propel\Runtime\Exception\PropelException
      */
     public function serialize()
     {
@@ -178,8 +178,8 @@ class OnDemandCollection extends Collection
     }
 
     /**
-     * @throws    \Propel\Runtime\Exception\PropelException
-     * @param string $data
+     * @throws \Propel\Runtime\Exception\PropelException
+     * @param  string                                    $data
      */
     public function unserialize($data)
     {
@@ -192,7 +192,7 @@ class OnDemandCollection extends Collection
      * Returns the number of rows in the resultset
      * Warning: this number is inaccurate for most databases. Do not rely on it for a portable application.
      *
-     * @return    integer  Number of results
+     * @return integer Number of results
      */
     public function count()
     {

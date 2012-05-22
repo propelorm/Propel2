@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Runtime\Formatter;
@@ -17,7 +17,7 @@ use Propel\Runtime\Connection\StatementInterface;
  * Object formatter for Propel query
  * format() returns a ObjectCollection of Propel model objects
  *
- * @author     Francois Zaninotto
+ * @author Francois Zaninotto
  */
 class ObjectFormatter extends AbstractFormatter
 {
@@ -81,7 +81,7 @@ class ObjectFormatter extends AbstractFormatter
      *  @param    array  $row associative array indexed by column number,
      *                   as returned by PDOStatement::fetch(PDO::FETCH_NUM)
      *
-     * @return    BaseObject
+     * @return BaseObject
      */
     public function getAllObjectsFromRow($row)
     {

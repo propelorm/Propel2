@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Platform;
@@ -33,7 +33,7 @@ class MysqlPlatform extends DefaultPlatform
 {
 
     /**
-     * @var        boolean whether the identifier quoting is enabled
+     * @var Boolean whether the identifier quoting is enabled
      */
     protected $isIdentifierQuotingEnabled = true;
 
@@ -352,8 +352,8 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
      * Creates a comma-separated list of column names for the index.
      * For MySQL unique indexes there is the option of specifying size, so we cannot simply use
      * the getColumnsList() method.
-     * @param Index $index
-     * @return     string
+     * @param  Index  $index
+     * @return string
      */
     protected function getIndexColumnListDDL(Index $index)
     {
@@ -368,8 +368,8 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
     /**
      * Builds the DDL SQL to drop the primary key of a table.
      *
-     * @param Table $table
-     * @return     string
+     * @param  Table  $table
+     * @return string
      */
     public function getDropPrimaryKeyDDL(Table $table)
     {
@@ -385,8 +385,8 @@ ALTER TABLE %s DROP PRIMARY KEY;
     /**
      * Builds the DDL SQL to add an Index.
      *
-     * @param Index $index
-     * @return     string
+     * @param  Index  $index
+     * @return string
      */
     public function getAddIndexDDL(Index $index)
     {
@@ -405,8 +405,8 @@ CREATE %sINDEX %s ON %s (%s);
     /**
      * Builds the DDL SQL to drop an Index.
      *
-     * @param Index $index
-     * @return     string
+     * @param  Index  $index
+     * @return string
      */
     public function getDropIndexDDL(Index $index)
     {
@@ -422,7 +422,7 @@ DROP INDEX %s ON %s;
 
     /**
      * Builds the DDL SQL for an Index object.
-     * @return     string
+     * @return string
      */
     public function getIndexDDL(Index $index)
     {
@@ -484,7 +484,7 @@ ALTER TABLE %s DROP FOREIGN KEY %s;
      * Builds the DDL SQL to modify a database
      * based on a DatabaseDiff instance
      *
-     * @return     string
+     * @return string
      */
     public function getModifyDatabaseDDL(DatabaseDiff $databaseDiff)
     {
@@ -513,7 +513,7 @@ ALTER TABLE %s DROP FOREIGN KEY %s;
 
     /**
      * Builds the DDL SQL to rename a table
-     * @return     string
+     * @return string
      */
     public function getRenameTableDDL($fromTableName, $toTableName)
     {
@@ -530,7 +530,7 @@ RENAME TABLE %s TO %s;
     /**
      * Builds the DDL SQL to remove a column
      *
-     * @return     string
+     * @return string
      */
     public function getRemoveColumnDDL(Column $column)
     {
@@ -546,7 +546,7 @@ ALTER TABLE %s DROP %s;
 
     /**
      * Builds the DDL SQL to rename a column
-     * @return     string
+     * @return string
      */
     public function getRenameColumnDDL($fromColumn, $toColumn)
     {
@@ -556,7 +556,7 @@ ALTER TABLE %s DROP %s;
     /**
      * Builds the DDL SQL to modify a column
      *
-     * @return     string
+     * @return string
      */
     public function getModifyColumnDDL(ColumnDiff $columnDiff)
     {
@@ -565,7 +565,7 @@ ALTER TABLE %s DROP %s;
 
     /**
      * Builds the DDL SQL to change a column
-     * @return     string
+     * @return string
      */
     public function getChangeColumnDDL($fromColumn, $toColumn)
     {
@@ -582,7 +582,7 @@ ALTER TABLE %s CHANGE %s %s;
     /**
      * Builds the DDL SQL to modify a list of columns
      *
-     * @return     string
+     * @return string
      */
     public function getModifyColumnsDDL($columnDiffs)
     {
@@ -596,7 +596,7 @@ ALTER TABLE %s CHANGE %s %s;
 
 
     /**
-     * @see        Platform::supportsSchemas()
+     * @see Platform::supportsSchemas()
      */
     public function supportsSchemas()
     {
@@ -616,8 +616,8 @@ ALTER TABLE %s CHANGE %s %s;
 
     /**
      * Escape the string for RDBMS.
-     * @param string $text
-     * @return     string
+     * @param  string $text
+     * @return string
      */
     public function disconnectedEscapeText($text)
     {
@@ -634,8 +634,8 @@ ALTER TABLE %s CHANGE %s %s;
      * should be safe to split the string by '.' and quote each part individually
      * to allow for a <schema>.<table> or <table>.<column> syntax.
      *
-     * @param string $text the identifier
-     * @return      string the quoted identifier
+     * @param  string $text the identifier
+     * @return string the quoted identifier
      */
     public function quoteIdentifier($text)
     {

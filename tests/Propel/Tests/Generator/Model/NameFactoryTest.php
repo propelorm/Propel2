@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Model;
@@ -30,7 +30,7 @@ use Propel\Tests\Helpers\BaseTestCase;
  * adapter, <code>DBMM</code>.  MySQL has a column length limit of 64
  * characters.</p>
  *
- * @author     <a href="mailto:dlr@collab.net">Daniel Rall</a>
+ * @author <a href="mailto:dlr@collab.net">Daniel Rall</a>
  * @version    $Id$
  */
 class NameFactoryTest extends BaseTestCase
@@ -99,10 +99,10 @@ class NameFactoryTest extends BaseTestCase
      * the character <code>A</code>.  Useful for simulating table
      * names, etc.
      *
-     * @param int $len the number of characters to include in the string
-     * @return     a string of length <code>len</code> with every character an 'A'
+     * @param  int $len the number of characters to include in the string
+     * @return a   string of length <code>len</code> with every character an 'A'
      */
-    static private function makeString($len)
+    private static function makeString($len)
     {
         $buf = '';
         for ($i = 0; $i < $len; $i++) {
@@ -121,7 +121,7 @@ class NameFactoryTest extends BaseTestCase
     }
 
     /**
-     * @throws     Exception on fail
+     * @throws Exception on fail
      */
     public function testNames()
     {
@@ -147,7 +147,7 @@ class NameFactoryTest extends BaseTestCase
      * create an argument list for.
      * @param      inputs The (possibly partial) list inputs from which to
      * generate the final list.
-     * @return     the list of arguments to pass to the <code>NameGenerator</code>
+     * @return the list of arguments to pass to the <code>NameGenerator</code>
      */
     private function makeInputs($algo, $inputs)
     {

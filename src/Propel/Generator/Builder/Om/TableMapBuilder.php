@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Builder\Om;
@@ -16,13 +16,13 @@ use Propel\Generator\Platform\PlatformInterface;
 /**
  * Generates the PHP5 table map class for user object model (OM).
  *
- * @author     Hans Lellelid <hans@xmpl.org>
+ * @author Hans Lellelid <hans@xmpl.org>
  */
 class TableMapBuilder extends AbstractOMBuilder
 {
     /**
      * Gets the package for the map builder classes.
-     * @return     string
+     * @return string
      */
     public function getPackage()
     {
@@ -45,7 +45,7 @@ class TableMapBuilder extends AbstractOMBuilder
 
     /**
      * Returns the name of the current class being built.
-     * @return     string
+     * @return string
      */
     public function getUnprefixedClassName()
     {
@@ -89,7 +89,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
     /**
      * Specifies the methods that are added as part of the map builder class.
      * This can be overridden by subclasses that wish to add more methods.
-     * @see        ObjectBuilder::addClassBody()
+     * @see ObjectBuilder::addClassBody()
      */
     protected function addClassBody(&$script)
     {
@@ -153,8 +153,8 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
      * Initialize the table attributes and columns
      * Relations are not initialized by this method since they are lazy loaded
      *
-     * @return     void
-     * @throws     PropelException
+     * @return void
+     * @throws PropelException
      */
     public function initialize()
     {
@@ -336,8 +336,8 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
 
     /**
      * Checks whether any registered behavior on that table has a modifier for a hook
-     * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
-     * @return boolean
+     * @param  string  $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
+     * @return Boolean
      */
     public function hasBehaviorModifier($hookName, $modifier = null)
     {

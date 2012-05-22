@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Util;
@@ -13,7 +13,7 @@ namespace Propel\Generator\Util;
 /**
  * Service class for parsing a large SQL string into an array of SQL statements
  *
- * @author     François Zaninotto
+ * @author François Zaninotto
  */
 class SqlParser
 {

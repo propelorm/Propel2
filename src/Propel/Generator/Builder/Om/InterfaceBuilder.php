@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Builder\Om;
@@ -16,14 +16,14 @@ namespace Propel\Generator\Builder\Om;
  * This class produces the empty stub interface when the interface="" attribute is used
  * in the the schema xml.
  *
- * @author     Hans Lellelid <hans@xmpl.org>
+ * @author Hans Lellelid <hans@xmpl.org>
  */
 class InterfaceBuilder extends AbstractObjectBuilder
 {
 
     /**
      * Returns the name of the current class being built.
-     * @return     string
+     * @return string
      */
     public function getUnprefixedClassName()
     {
@@ -71,7 +71,7 @@ interface ".$this->getUnqualifiedClassName()." {
      * By default there are no methods for the empty stub classes; override this method
      * if you want to change that behavior.
      *
-     * @see        ObjectBuilder::addClassBody()
+     * @see ObjectBuilder::addClassBody()
      */
     protected function addClassBody(&$script)
     {

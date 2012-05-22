@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Runtime\Om;
@@ -20,44 +20,44 @@ use Propel\Runtime\Util\BasePeer;
  * This class contains attributes and methods that are used by all
  * business objects within the system.
  *
- * @method     BaseObject fromXML(string $data) Populate the object from an XML string
- * @method     BaseObject fromYAML(string $data) Populate the object from a YAML string
- * @method     BaseObject fromJSON(string $data) Populate the object from a JSON string
- * @method     BaseObject fromCSV(string $data) Populate the object from a CSV string
- * @method     string toXML(boolean $includeLazyLoadColumns) Export the object to an XML string
- * @method     string toYAML(boolean $includeLazyLoadColumns) Export the object to a YAML string
- * @method     string toJSON(boolean $includeLazyLoadColumns) Export the object to a JSON string
- * @method     string toCSV(boolean $includeLazyLoadColumns) Export the object to a CSV string
+ * @method BaseObject fromXML(string $data) Populate the object from an XML string
+ * @method BaseObject fromYAML(string $data) Populate the object from a YAML string
+ * @method BaseObject fromJSON(string $data) Populate the object from a JSON string
+ * @method BaseObject fromCSV(string $data) Populate the object from a CSV string
+ * @method string toXML(boolean $includeLazyLoadColumns) Export the object to an XML string
+ * @method string toYAML(boolean $includeLazyLoadColumns) Export the object to a YAML string
+ * @method string toJSON(boolean $includeLazyLoadColumns) Export the object to a JSON string
+ * @method string toCSV(boolean $includeLazyLoadColumns) Export the object to a CSV string
  *
- * @author     Hans Lellelid <hans@xmpl.org> (Propel)
- * @author     Frank Y. Kim <frank.kim@clearink.com> (Torque)
- * @author     John D. McNally <jmcnally@collab.net> (Torque)
+ * @author Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author Frank Y. Kim <frank.kim@clearink.com> (Torque)
+ * @author John D. McNally <jmcnally@collab.net> (Torque)
  */
 abstract class BaseObject
 {
     /**
      * attribute to determine if this object has previously been saved.
-     * @var        boolean
+     * @var Boolean
      */
     protected $new = true;
 
     /**
      * attribute to determine whether this object has been deleted.
-     * @var        boolean
+     * @var Boolean
      */
     protected $deleted = false;
 
     /**
      * The columns that have been modified in current object.
      * Tracking modified columns allows us to only update modified columns.
-     * @var        array
+     * @var array
      */
     protected $modifiedColumns = array();
 
     /**
      * The (virtual) columns that are added at runtime
      * The formatters can add supplementary columns based on a resultset
-     * @var        array
+     * @var array
      */
     protected $virtualColumns = array();
 
@@ -71,7 +71,7 @@ abstract class BaseObject
     /**
      * Returns whether the object has been modified.
      *
-     * @return     boolean True if the object has been modified.
+     * @return Boolean True if the object has been modified.
      */
     public function isModified()
     {
@@ -81,8 +81,8 @@ abstract class BaseObject
     /**
      * Has specified column been modified?
      *
-     * @param string $col column fully qualified name (BasePeer::TYPE_COLNAME), e.g. Book::AUTHOR_ID
-     * @return     boolean True if $col has been modified.
+     * @param  string  $col column fully qualified name (BasePeer::TYPE_COLNAME), e.g. Book::AUTHOR_ID
+     * @return boolean True if $col has been modified.
      */
     public function isColumnModified($col)
     {
@@ -91,7 +91,7 @@ abstract class BaseObject
 
     /**
      * Get the columns that have been modified in this object.
-     * @return     array A unique list of the modified column names for this object.
+     * @return array A unique list of the modified column names for this object.
      */
     public function getModifiedColumns()
     {
@@ -103,7 +103,7 @@ abstract class BaseObject
      * be false, if the object was retrieved from storage or was created
      * and then saved.
      *
-     * @return     true, if the object has never been persisted.
+     * @return true, if the object has never been persisted.
      */
     public function isNew()
     {
@@ -114,7 +114,7 @@ abstract class BaseObject
      * Setter for the isNew attribute.  This method will be called
      * by Propel-generated children and Peers.
      *
-     * @param boolean $b the state of the object.
+     * @param Boolean $b the state of the object.
      */
     public function setNew($b)
     {
@@ -123,7 +123,7 @@ abstract class BaseObject
 
     /**
      * Whether this object has been deleted.
-     * @return     boolean The deleted state of this object.
+     * @return Boolean The deleted state of this object.
      */
     public function isDeleted()
     {
@@ -132,8 +132,8 @@ abstract class BaseObject
 
     /**
      * Specify whether this object has been deleted.
-     * @param boolean $b The deleted state of this object.
-     * @return     void
+     * @param  Boolean $b The deleted state of this object.
+     * @return void
      */
     public function setDeleted($b)
     {
@@ -142,7 +142,7 @@ abstract class BaseObject
 
     /**
      * Code to be run before persisting the object
-     * @param ConnectionInterface $con
+     * @param  ConnectionInterface $con
      * @return bloolean
      */
     public function preSave(ConnectionInterface $con = null)
@@ -161,8 +161,8 @@ abstract class BaseObject
 
     /**
      * Code to be run before inserting to database
-     * @param ConnectionInterface $con
-     * @return boolean
+     * @param  ConnectionInterface $con
+     * @return Boolean
      */
     public function preInsert(ConnectionInterface $con = null)
     {
@@ -180,8 +180,8 @@ abstract class BaseObject
 
     /**
      * Code to be run before updating the object in database
-     * @param ConnectionInterface $con
-     * @return boolean
+     * @param  ConnectionInterface $con
+     * @return Boolean
      */
     public function preUpdate(ConnectionInterface $con = null)
     {
@@ -199,8 +199,8 @@ abstract class BaseObject
 
     /**
      * Code to be run before deleting the object in database
-     * @param ConnectionInterface $con
-     * @return boolean
+     * @param  ConnectionInterface $con
+     * @return Boolean
      */
     public function preDelete(ConnectionInterface $con = null)
     {
@@ -218,7 +218,7 @@ abstract class BaseObject
 
     /**
      * Sets the modified state for the object to be false.
-     * @param string $col If supplied, only the specified column is reset.
+     * @param  string $col If supplied, only the specified column is reset.
      * @return void
      */
     public function resetModified($col = null)
@@ -238,7 +238,7 @@ abstract class BaseObject
      * <code>equals(BaseObject)</code>.  Otherwise, returns <code>false</code>.
      *
      * @param      obj The object to compare to.
-     * @return     Whether equal to the object specified.
+     * @return Whether equal to the object specified.
      */
     public function equals($obj)
     {
@@ -263,7 +263,7 @@ abstract class BaseObject
      * If the primary key is not <code>null</code>, return the hashcode of the
      * primary key.  Otherwise calls <code>Object.hashCode()</code>.
      *
-     * @return     int Hashcode
+     * @return int Hashcode
      */
     public function hashCode()
     {
@@ -280,7 +280,7 @@ abstract class BaseObject
      *
      * @param string $name The virtual column name
      *
-     * @return     array
+     * @return array
      */
     public function getVirtualColumns()
     {
@@ -290,7 +290,7 @@ abstract class BaseObject
     /**
      * Checks the existence of a virtual column in this object
      *
-     * @return     boolean
+     * @return Boolean
      */
     public function hasVirtualColumn($name)
     {
@@ -300,7 +300,7 @@ abstract class BaseObject
     /**
      * Get the value of a virtual column in this object
      *
-     * @return     mixed
+     * @return mixed
      */
     public function getVirtualColumn($name)
     {
@@ -317,7 +317,7 @@ abstract class BaseObject
      * @param string $name  The virtual column name
      * @param mixed  $value The value to give to the virtual column
      *
-     * @return     BaseObject The current object, for fluid interface
+     * @return BaseObject The current object, for fluid interface
      */
     public function setVirtualColumn($name, $value)
     {
@@ -329,9 +329,9 @@ abstract class BaseObject
     /**
      * Logs a message using Propel::log().
      *
-     * @param string $msg
-     * @param int    $priority One of the Propel::LOG_* logging levels
-     * @return     boolean
+     * @param  string  $msg
+     * @param  int     $priority One of the Propel::LOG_* logging levels
+     * @return Boolean
      */
     protected function log($msg, $priority = Propel::LOG_INFO)
     {
@@ -349,7 +349,7 @@ abstract class BaseObject
      *                       or a format name ('XML', 'YAML', 'JSON', 'CSV')
      * @param string $data The source data to import from
      *
-     * @return BaseObject    The current object, for fluid interface
+     * @return BaseObject The current object, for fluid interface
      */
     public function importFrom($parser, $data)
     {
@@ -368,9 +368,9 @@ abstract class BaseObject
      *  => {"Id":9012,"Title":"Don Juan","ISBN":"0140422161","Price":12.99,"PublisherId":1234,"AuthorId":5678}');
      * </code>
      *
-     * @param mixed   $parser                 A AbstractParser instance, or a format name ('XML', 'YAML', 'JSON', 'CSV')
-     * @param boolean $includeLazyLoadColumns (optional) Whether to include lazy load(ed) columns. Defaults to TRUE.
-     * @return    string                          The exported data
+     * @param  mixed   $parser                 A AbstractParser instance, or a format name ('XML', 'YAML', 'JSON', 'CSV')
+     * @param  Boolean $includeLazyLoadColumns (optional) Whether to include lazy load(ed) columns. Defaults to TRUE.
+     * @return string  The exported data
      */
     public function exportTo($parser, $includeLazyLoadColumns = true)
     {
@@ -401,7 +401,7 @@ abstract class BaseObject
      * @param string $name
      * @param mixed  $params
      *
-     * @return    array|string
+     * @return array|string
      */
     public function __call($name, $params)
     {

@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Platform;
@@ -18,7 +18,7 @@ use Propel\Generator\Model\Table;
 /**
  * SQLite PlatformInterface implementation.
  *
- * @author     Hans Lellelid <hans@xmpl.org>
+ * @author Hans Lellelid <hans@xmpl.org>
  */
 class SqlitePlatform extends DefaultPlatform
 {
@@ -144,8 +144,8 @@ class SqlitePlatform extends DefaultPlatform
 
     /**
      * Escape the string for RDBMS.
-     * @param string $text
-     * @return     string
+     * @param  string $text
+     * @return string
      */
     public function disconnectedEscapeText($text)
     {
@@ -162,7 +162,7 @@ class SqlitePlatform extends DefaultPlatform
     }
 
     /**
-     * @see        Platform::supportsMigrations()
+     * @see Platform::supportsMigrations()
      */
     public function supportsMigrations()
     {

@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Tests\Runtime\Collection;
@@ -20,7 +20,7 @@ use Propel\Tests\Bookstore\Publisher;
 /**
  * Test class for Collection.
  *
- * @author     Francois Zaninotto
+ * @author Francois Zaninotto
  * @version    $Id: CollectionTest.php 1348 2009-12-03 21:49:00Z francois $
  */
 class CollectionConvertTest extends BookstoreTestBase

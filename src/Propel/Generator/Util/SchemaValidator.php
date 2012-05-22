@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Util;
@@ -26,7 +26,7 @@ use Propel\Generator\Model\Table;
  * }
  * </code>
  *
- * @author     François Zaninotto
+ * @author François Zaninotto
  */
 class SchemaValidator
 {
@@ -39,7 +39,7 @@ class SchemaValidator
     }
 
     /**
-     * @return boolean true if valid, false otherwise
+     * @return Boolean true if valid, false otherwise
      */
     public function validate()
     {

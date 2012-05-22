@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Runtime\Query;
@@ -16,7 +16,7 @@ use Propel\Runtime\Map\TableMap;
 /**
  * A ModelJoin is a Join object tied to a RelationMap object
  *
- * @author     Francois Zaninotto (Propel)
+ * @author Francois Zaninotto (Propel)
  */
 class ModelJoin extends Join
 {
@@ -113,7 +113,7 @@ class ModelJoin extends Join
      * This method only works if PreviousJoin has been defined,
      * which only happens when you provide dotted relations when calling join
      *
-     * @param Object $startObject the start object all joins originate from and which has already hydrated
+     * @param  Object $startObject the start object all joins originate from and which has already hydrated
      * @return Object the base Object of this join
      */
     public function getObjectToRelate($startObject)

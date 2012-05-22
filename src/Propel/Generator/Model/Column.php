@@ -235,8 +235,8 @@ class Column extends MappingModel
      * attribute value in the column, parent table or parent database.
      * Finally, it defaults to the default visibility (public).
      *
-     * @param string $attribute       Local column attribute
-     * @param string $parentAttribute Parent (table or database) attribute
+     * @param  string $attribute       Local column attribute
+     * @param  string $parentAttribute Parent (table or database) attribute
      * @return string
      */
     private function getMethodVisibility($attribute, $parentAttribute)
@@ -576,7 +576,7 @@ class Column extends MappingModel
      * Adds a new inheritance definition to the inheritance list and sets the
      * parent column of the inheritance to the current column.
      *
-     * @param Inheritance|array $inheritance
+     * @param  Inheritance|array $inheritance
      * @return Inheritance
      */
     public function addInheritance($inheritance)
@@ -827,7 +827,7 @@ class Column extends MappingModel
     /**
      * Returns true if the column requires a transaction in PostGreSQL.
      *
-     * @return  Boolean
+     * @return Boolean
      */
     public function requiresTransactionInPostgres()
     {
@@ -837,7 +837,7 @@ class Column extends MappingModel
     /**
      * Returns whether or not this column is a foreign key.
      *
-     * @return  Boolean
+     * @return Boolean
      */
     public function isForeignKey()
     {
@@ -847,7 +847,7 @@ class Column extends MappingModel
     /**
      * Returns whether or not this column is part of more than one foreign key.
      *
-     * @return  Boolean
+     * @return Boolean
      */
     public function hasMultipleFK()
     {
@@ -908,7 +908,7 @@ class Column extends MappingModel
      * Returns whether or not this column has a specific referrer for a
      * specific foreign key object.
      *
-     * @param ForeignKey $fk
+     * @param  ForeignKey $fk
      * @return Boolean
      */
     public function hasReferrer(ForeignKey $fk)
@@ -1360,7 +1360,7 @@ class Column extends MappingModel
      * Returns whether or not the column PHP native type is a primitive numeric
      * type (aka an integer, a long, a float or a double).
      *
-     * @return  Boolean
+     * @return Boolean
      * @see PropelTypes::isPhpPrimitiveNumericType()
      */
     public function isPhpPrimitiveNumericType()
@@ -1415,9 +1415,9 @@ class Column extends MappingModel
     /**
      * Returns a generated PHP name.
      *
-     * @param string $name
-     * @param string $phpNamingMethod
-     * @param string $namePrefix
+     * @param  string $name
+     * @param  string $phpNamingMethod
+     * @param  string $namePrefix
      * @return string
      */
     static public function generatePhpName($name, $phpNamingMethod = PhpNameGenerator::CONV_METHOD_CLEAN, $namePrefix = null)

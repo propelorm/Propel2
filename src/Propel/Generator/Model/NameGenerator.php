@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Model;
@@ -13,9 +13,9 @@ namespace Propel\Generator\Model;
 /**
  * The generic interface to a name generation algorithm.
  *
- * @author     Hans Lellelid <hans@xmpl.org> (Propel)
- * @author     Daniel Rall <dlr@finemaltcoding.com> (Torque)
- * @author     Byron Foster <byron_foster@yahoo.com> (Torque)
+ * @author Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author Daniel Rall <dlr@finemaltcoding.com> (Torque)
+ * @author Byron Foster <byron_foster@yahoo.com> (Torque)
  */
 interface NameGenerator
 {
@@ -31,7 +31,7 @@ interface NameGenerator
      * define how names for columns and tables in the database schema
      * will be converted to PHP source names.
      *
-     * @see        PhpNameGenerator::underscoreMethod()
+     * @see PhpNameGenerator::underscoreMethod()
      */
     const CONV_METHOD_UNDERSCORE = 'underscore';
 
@@ -50,7 +50,7 @@ interface NameGenerator
      * Similar to {@link #CONV_METHOD_UNDERSCORE} except nothing is
      * converted to lowercase.
      *
-     * @see        PhpNameGenerator::phpnameMethod()
+     * @see PhpNameGenerator::phpnameMethod()
      */
     const CONV_METHOD_PHPNAME = 'phpname';
 
@@ -65,8 +65,8 @@ interface NameGenerator
      * algorithm which produces a name.
      *
      * @param      inputs Inputs used to generate a name.
-     * @return     The generated name.
-     * @throws     EngineException
+     * @return The             generated name.
+     * @throws EngineException
      */
     function generateName($inputs);
 }

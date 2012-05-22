@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Tests\Runtime\Query;
@@ -19,7 +19,7 @@ use Propel\Runtime\Query\ModelCriteria;
 /**
  * Test class for ModelCriteria withs schemas.
  *
- * @author     Francois Zaninotto
+ * @author Francois Zaninotto
  * @version    $Id: ModelCriteriaTest.php 2090 2010-12-13 22:37:03Z francois $
  */
 class ModelCriteriaWithSchemaTest extends SchemasTestBase
@@ -34,7 +34,7 @@ class ModelCriteriaWithSchemaTest extends SchemasTestBase
         $this->assertEquals($expectedParams, $params, $message);
     }
 
-    static public function conditionsForTestReplaceNamesWithSchemas()
+    public static function conditionsForTestReplaceNamesWithSchemas()
     {
         return array(
             array('BookstoreContest.PrizeBookId = ?', 'PrizeBookId', 'contest.bookstore_contest.PRIZE_BOOK_ID = ?'), // basic case

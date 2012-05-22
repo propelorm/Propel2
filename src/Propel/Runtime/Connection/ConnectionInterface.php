@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Runtime\Connection;
@@ -15,7 +15,7 @@ namespace Propel\Runtime\Connection;
  * Based on the PDO interface.
  * @see http://php.net/manual/en/book.pdo.php
  *
- * @author     Francois Zaninotto
+ * @author Francois Zaninotto
  */
 interface ConnectionInterface
 {
@@ -38,7 +38,7 @@ interface ConnectionInterface
      * Calling Conneciton::rollBack() will roll back all changes to the database
      * and return the connection to autocommit mode.
      *
-     * @return boolean TRUE on success or FALSE on failure.
+     * @return Boolean TRUE on success or FALSE on failure.
      */
     function beginTransaction();
 
@@ -48,7 +48,7 @@ interface ConnectionInterface
      * commit() returns the database connection to autocommit mode until the
      * next call to connection::beginTransaction() starts a new transaction.
      *
-     * @return boolean TRUE on success or FALSE on failure.
+     * @return Boolean TRUE on success or FALSE on failure.
      */
     function commit();
 
@@ -60,7 +60,7 @@ interface ConnectionInterface
      * If the database was set to autocommit mode, this function will restore
      * autocommit mode after it has rolled back the transaction.
      *
-     * @return bool TRUE on success or FALSE on failure.
+     * @return Boolean TRUE on success or FALSE on failure.
      */
     function rollBack();
 
@@ -81,7 +81,7 @@ interface ConnectionInterface
      * @param string $attribute
      * @param mixec  $value
      *
-     * @return bool TRUE on success or FALSE on failure.
+     * @return Boolean TRUE on success or FALSE on failure.
      */
     function setAttribute($attribute, $value);
 
@@ -91,7 +91,7 @@ interface ConnectionInterface
      * @param string $statement The SQL statement to prepare and execute.
      *                          Data inside the query should be properly escaped.
      *
-     * @return int   The number of rows that were modified or deleted by the SQL
+     * @return int The number of rows that were modified or deleted by the SQL
      *               statement you issued. If no rows were affected, returns 0.
      */
     function exec($statement);

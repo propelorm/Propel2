@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Common\Pluralizer;
@@ -17,7 +17,7 @@ namespace Propel\Common\Pluralizer;
  * @link http://blogs.msdn.com/dmitryr/archive/2007/01/11/simple-english-noun-pluralizer-in-c.aspx
  * @link http://api.cakephp.org/view_source/inflector/
  *
- * @author     paul.hanssen
+ * @author paul.hanssen
  */
 class StandardEnglishPluralizer implements PluralizerInterface
 {
@@ -112,8 +112,8 @@ class StandardEnglishPluralizer implements PluralizerInterface
 
     /**
      * Generate a plural name based on the passed in root.
-     * @param string $root The root that needs to be pluralized (e.g. Author)
-     * @return     string The plural form of $root (e.g. Authors).
+     * @param  string $root The root that needs to be pluralized (e.g. Author)
+     * @return string The plural form of $root (e.g. Authors).
      */
     public function getPluralForm($root)
     {

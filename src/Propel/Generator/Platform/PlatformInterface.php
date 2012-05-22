@@ -17,8 +17,8 @@ use Propel\Generator\Model\Table;
 /**
  * Interface for RDBMS platform specific behaviour.
  *
- * @author     Hans Lellelid <hans@xmpl.org> (Propel)
- * @author     Martin Poeschl <mpoeschl@marmot.at> (Torque)
+ * @author Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author Martin Poeschl <mpoeschl@marmot.at> (Torque)
  */
 interface PlatformInterface
 {
@@ -46,7 +46,7 @@ interface PlatformInterface
 
     /**
      * Returns the database connection to use for this Platform class.
-     * @return     PDO The database connection or NULL if none has been set.
+     * @return PDO The database connection or NULL if none has been set.
      */
     public function getConnection();
 
@@ -60,52 +60,52 @@ interface PlatformInterface
     /**
      * Returns the short name of the database type that this platform represents.
      * For example MysqlPlatform->getDatabaseType() returns 'mysql'.
-     * @return     string
+     * @return string
      */
     public function getDatabaseType();
 
     /**
      * Returns the native IdMethod (sequence|identity)
      *
-     * @return     string The native IdMethod (PlatformInterface:IDENTITY, PlatformInterface::SEQUENCE).
+     * @return string The native IdMethod (PlatformInterface:IDENTITY, PlatformInterface::SEQUENCE).
      */
     public function getNativeIdMethod();
 
     /**
      * Returns the max column length supported by the db.
      *
-     * @return     int The max column length
+     * @return int The max column length
      */
     public function getMaxColumnNameLength();
 
     /**
      * Returns the db specific domain for a propelType.
      *
-     * @param string $propelType the Propel type name.
-     * @return     Domain The db specific domain.
+     * @param  string $propelType the Propel type name.
+     * @return Domain The db specific domain.
      */
     public function getDomainForType($propelType);
 
     /**
-     * @return     string The RDBMS-specific SQL fragment for <code>NULL</code>
+     * @return string The RDBMS-specific SQL fragment for <code>NULL</code>
      * or <code>NOT NULL</code>.
      */
     public function getNullString($notNull);
 
     /**
-     * @return     The RDBMS-specific SQL fragment for autoincrement.
+     * @return The RDBMS-specific SQL fragment for autoincrement.
      */
     public function getAutoIncrement();
 
     /**
      * Returns the DDL SQL for a Column object.
-     * @return     string
+     * @return string
      */
     public function getColumnDDL(Column $col);
 
     /**
      * Returns the SQL for the default value of a Column object.
-     * @return     string
+     * @return string
      */
     public function getColumnDefaultValueDDL(Column $col);
 
@@ -119,73 +119,73 @@ interface PlatformInterface
      * @param      array Column[] or string[]
      * @param string $delim The delimiter to use in separating the column names.
      *
-     * @return     string
+     * @return string
      */
     public function getColumnListDDL($columns, $delimiter = ',');
 
     /**
      * Returns the SQL for the primary key of a Table object
-     * @return     string
+     * @return string
      */
     public function getPrimaryKeyDDL(Table $table);
 
     /**
      * Returns if the RDBMS-specific SQL type has a size attribute.
      *
-     * @param string $sqlType the SQL type
-     * @return     boolean True if the type has a size attribute
+     * @param  string  $sqlType the SQL type
+     * @return Boolean True if the type has a size attribute
      */
     public function hasSize($sqlType);
 
     /**
      * Returns if the RDBMS-specific SQL type has a scale attribute.
      *
-     * @param string $sqlType the SQL type
-     * @return     boolean True if the type has a scale attribute
+     * @param  string  $sqlType the SQL type
+     * @return Boolean True if the type has a scale attribute
      */
     public function hasScale($sqlType);
 
     /**
      * Quote and escape needed characters in the string for unerlying RDBMS.
-     * @param string $text
-     * @return     string
+     * @param  string $text
+     * @return string
      */
     public function quote($text);
 
     /**
      * Quotes identifiers used in database SQL.
-     * @param string $text
-     * @return     string Quoted identifier.
+     * @param  string $text
+     * @return string Quoted identifier.
      */
     public function quoteIdentifier($text);
 
     /**
      * Whether RDBMS supports native ON DELETE triggers (e.g. ON DELETE CASCADE).
-     * @return     boolean
+     * @return Boolean
      */
     public function supportsNativeDeleteTrigger();
 
     /**
      * Whether RDBMS supports INSERT null values in autoincremented primary keys
-     * @return     boolean
+     * @return Boolean
      */
     public function supportsInsertNullPk();
 
     /**
      * Whether RDBMS supports native schemas for table layout.
-     * @return boolean
+     * @return Boolean
      */
     public function supportsSchemas();
 
     /**
      * Whether RDBMS supports migrations.
-     * @return boolean
+     * @return Boolean
      */
     public function supportsMigrations();
 
     /**
      * Wether RDBMS supports VARCHAR without explicit size
-     * @return boolean
+     * @return Boolean
      */
     public function supportsVarcharWithoutSize();
 
@@ -198,32 +198,32 @@ interface PlatformInterface
      * This function is used to set default column values when building
      * SQL.
      *
-     * @param mixed $tf A boolean or string representation of boolean ('y', 'true').
-     * @return     mixed
+     * @param  mixed $tf A boolean or string representation of boolean ('y', 'true').
+     * @return mixed
      */
     public function getBooleanString($tf);
 
     /**
      * Whether the underlying PDO driver for this platform returns BLOB columns as streams (instead of strings).
-     * @return     boolean
+     * @return Boolean
      */
     public function hasStreamBlobImpl();
 
     /**
      * Gets the preferred timestamp formatter for setting date/time values.
-     * @return     string
+     * @return string
      */
     public function getTimestampFormatter();
 
     /**
      * Gets the preferred date formatter for setting time values.
-     * @return     string
+     * @return string
      */
     public function getDateFormatter();
 
     /**
      * Gets the preferred time formatter for setting time values.
-     * @return     string
+     * @return string
      */
     public function getTimeFormatter();
 }

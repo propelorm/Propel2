@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Runtime\Parser;
@@ -15,8 +15,8 @@ use Propel\Runtime\Exception\FileNotFoundException;
 /**
  * Base class for all parsers. A parser converts data from and to an associative array.
  *
- * @author     Francois Zaninotto (Propel)
- * @author     Jonathan H. Wage <jwage@mac.com> (Doctrine_Parser)
+ * @author Francois Zaninotto (Propel)
+ * @author Jonathan H. Wage <jwage@mac.com> (Doctrine_Parser)
  */
 abstract class AbstractParser
 {
@@ -25,7 +25,7 @@ abstract class AbstractParser
      *
      * Override in the parser driver.
      *
-     * @param array $array Source data to convert
+     * @param  array $array Source data to convert
      * @return mixed Converted data, depending on the parser format
      */
     abstract public function fromArray($array);
@@ -35,7 +35,7 @@ abstract class AbstractParser
      *
      * Override in the parser driver.
      *
-     * @param mixed $data Source data to convert, depending on the parser format
+     * @param  mixed $data Source data to convert, depending on the parser format
      * @return array Converted data
      */
     abstract public function toArray($data);

@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Builder;
@@ -25,99 +25,99 @@ use Propel\Generator\Platform\PlatformInterface;
  * safe if you always use the GeneratorConfig to get a configured builder class
  * anyway.
  *
- * @author     Hans Lellelid <hans@xmpl.org>
+ * @author Hans Lellelid <hans@xmpl.org>
  */
 abstract class DataModelBuilder
 {
 
     /**
      * The current table.
-     * @var        Table
+     * @var Table
      */
     private $table;
 
     /**
      * The generator config object holding build properties, etc.
      *
-     * @var        GeneratorConfigInterface
+     * @var GeneratorConfigInterface
      */
     private $generatorConfig;
 
     /**
      * An array of warning messages that can be retrieved for display (e.g. as part of phing build process).
-     * @var        array string[]
+     * @var array string[]
      */
     private $warnings = array();
 
     /**
      * Peer builder class for current table.
-     * @var        DataModelBuilder
+     * @var DataModelBuilder
      */
     private $peerBuilder;
 
     /**
      * Stub Peer builder class for current table.
-     * @var        DataModelBuilder
+     * @var DataModelBuilder
      */
     private $stubPeerBuilder;
 
     /**
      * Object builder class for current table.
-     * @var        DataModelBuilder
+     * @var DataModelBuilder
      */
     private $objectBuilder;
 
     /**
      * Stub Object builder class for current table.
-     * @var        DataModelBuilder
+     * @var DataModelBuilder
      */
     private $stubObjectBuilder;
 
     /**
      * Query builder class for current table.
-     * @var        DataModelBuilder
+     * @var DataModelBuilder
      */
     private $queryBuilder;
 
     /**
      * Stub Query builder class for current table.
-     * @var        DataModelBuilder
+     * @var DataModelBuilder
      */
     private $stubQueryBuilder;
 
     /**
      * TableMap builder class for current table.
-     * @var        DataModelBuilder
+     * @var DataModelBuilder
      */
     protected $tablemapBuilder;
 
     /**
      * Stub Interface builder class for current table.
-     * @var        DataModelBuilder
+     * @var DataModelBuilder
      */
     private $interfaceBuilder;
 
     /**
      * Stub child object for current table.
-     * @var        DataModelBuilder
+     * @var DataModelBuilder
      */
     private $multiExtendObjectBuilder;
 
     /**
      * The Data-SQL builder for current table.
-     * @var        DataSQLBuilder
+     * @var DataSQLBuilder
      */
     private $dataSqlBuilder;
 
     /**
      * The Pluralizer class to use.
-     * @var        Pluralizer
+     * @var Pluralizer
      */
     private $pluralizer;
 
     /**
      * The platform class
-     * @var             PlatformInterface
+     * @var PlatformInterface
      */
     protected $platform;
 
@@ -132,7 +132,7 @@ abstract class DataModelBuilder
 
     /**
      * Returns new or existing Peer builder class for this table.
-     * @return     PeerBuilder
+     * @return PeerBuilder
      */
     public function getPeerBuilder()
     {
@@ -145,7 +145,7 @@ abstract class DataModelBuilder
 
     /**
      * Returns new or existing Pluralizer class.
-     * @return     Pluralizer
+     * @return Pluralizer
      */
     public function getPluralizer()
     {
@@ -158,7 +158,7 @@ abstract class DataModelBuilder
 
     /**
      * Returns new or existing stub Peer builder class for this table.
-     * @return     PeerBuilder
+     * @return PeerBuilder
      */
     public function getStubPeerBuilder()
     {
@@ -171,7 +171,7 @@ abstract class DataModelBuilder
 
     /**
      * Returns new or existing Object builder class for this table.
-     * @return     ObjectBuilder
+     * @return ObjectBuilder
      */
     public function getObjectBuilder()
     {
@@ -184,7 +184,7 @@ abstract class DataModelBuilder
 
     /**
      * Returns new or existing stub Object builder class for this table.
-     * @return     ObjectBuilder
+     * @return ObjectBuilder
      */
     public function getStubObjectBuilder()
     {
@@ -197,7 +197,7 @@ abstract class DataModelBuilder
 
     /**
      * Returns new or existing Query builder class for this table.
-     * @return     ObjectBuilder
+     * @return ObjectBuilder
      */
     public function getQueryBuilder()
     {
@@ -210,7 +210,7 @@ abstract class DataModelBuilder
 
     /**
      * Returns new or existing stub Query builder class for this table.
-     * @return     ObjectBuilder
+     * @return ObjectBuilder
      */
     public function getStubQueryBuilder()
     {
@@ -223,7 +223,7 @@ abstract class DataModelBuilder
 
     /**
      * Returns new or existing Object builder class for this table.
-     * @return     ObjectBuilder
+     * @return ObjectBuilder
      */
     public function getTableMapBuilder()
     {
@@ -236,7 +236,7 @@ abstract class DataModelBuilder
 
     /**
      * Returns new or existing stub Interface builder class for this table.
-     * @return     ObjectBuilder
+     * @return ObjectBuilder
      */
     public function getInterfaceBuilder()
     {
@@ -249,7 +249,7 @@ abstract class DataModelBuilder
 
     /**
      * Returns new or existing stub child object builder class for this table.
-     * @return     ObjectBuilder
+     * @return ObjectBuilder
      */
     public function getMultiExtendObjectBuilder()
     {
@@ -262,7 +262,7 @@ abstract class DataModelBuilder
 
     /**
      * Returns new or existing data sql builder class for this table.
-     * @return     DataSQLBuilder
+     * @return DataSQLBuilder
      */
     public function getDataSQLBuilder()
     {
@@ -276,9 +276,9 @@ abstract class DataModelBuilder
     /**
      * Gets a new data model builder class for specified table and classname.
      *
-     * @param Table  $table
-     * @param string $classname The class of builder
-     * @return     DataModelBuilder
+     * @param  Table            $table
+     * @param  string           $classname The class of builder
+     * @return DataModelBuilder
      */
     public function getNewBuilder(Table $table, $classname)
     {
@@ -294,8 +294,8 @@ abstract class DataModelBuilder
      * This is used very frequently from the peer and object builders to get
      * a peer builder for a RELATED table.
      *
-     * @param Table $table
-     * @return     PeerBuilder
+     * @param  Table       $table
+     * @return PeerBuilder
      */
     public function getNewPeerBuilder(Table $table)
     {
@@ -308,8 +308,8 @@ abstract class DataModelBuilder
      * This is used from the peer and object builders to get
      * a peer builder for a RELATED table.
      *
-     * @param Table $table
-     * @return     PeerBuilder
+     * @param  Table       $table
+     * @return PeerBuilder
      */
     public function getNewStubPeerBuilder(Table $table)
     {
@@ -322,8 +322,8 @@ abstract class DataModelBuilder
      * This is used very frequently from the peer and object builders to get
      * an object builder for a RELATED table.
      *
-     * @param Table $table
-     * @return     ObjectBuilder
+     * @param  Table         $table
+     * @return ObjectBuilder
      */
     public function getNewObjectBuilder(Table $table)
     {
@@ -336,8 +336,8 @@ abstract class DataModelBuilder
      * This is used from the query builders to get
      * an object builder for a RELATED table.
      *
-     * @param Table $table
-     * @return     ObjectBuilder
+     * @param  Table         $table
+     * @return ObjectBuilder
      */
     public function getNewStubObjectBuilder(Table $table)
     {
@@ -350,8 +350,8 @@ abstract class DataModelBuilder
      * This is used from the query builders to get
      * a query builder for a RELATED table.
      *
-     * @param Table $table
-     * @return     QueryBuilder
+     * @param  Table        $table
+     * @return QueryBuilder
      */
     public function getNewQueryBuilder(Table $table)
     {
@@ -364,8 +364,8 @@ abstract class DataModelBuilder
      * This is used from the query builders to get
      * a query builder for a RELATED table.
      *
-     * @param Table $table
-     * @return     QueryBuilder
+     * @param  Table        $table
+     * @return QueryBuilder
      */
     public function getNewStubQueryBuilder(Table $table)
     {
@@ -374,7 +374,7 @@ abstract class DataModelBuilder
 
     /**
      * Returns new Query Inheritance builder class for this table.
-     * @return     ObjectBuilder
+     * @return ObjectBuilder
      */
     public function getNewQueryInheritanceBuilder($child)
     {
@@ -386,7 +386,7 @@ abstract class DataModelBuilder
 
     /**
      * Returns new stub Query Inheritance builder class for this table.
-     * @return     ObjectBuilder
+     * @return ObjectBuilder
      */
     public function getNewStubQueryInheritanceBuilder($child)
     {
@@ -399,7 +399,7 @@ abstract class DataModelBuilder
     /**
      * Gets the GeneratorConfig object.
      *
-     * @return     GeneratorConfig
+     * @return GeneratorConfig
      */
     public function getGeneratorConfig()
     {
@@ -409,8 +409,8 @@ abstract class DataModelBuilder
     /**
      * Get a specific [name transformed] build property.
      *
-     * @param string $name
-     * @return     string
+     * @param  string $name
+     * @return string
      */
     public function getBuildProperty($name)
     {
@@ -442,7 +442,7 @@ abstract class DataModelBuilder
 
     /**
      * Returns the current Table object.
-     * @return     Table
+     * @return Table
      */
     public function getTable()
     {
@@ -451,7 +451,7 @@ abstract class DataModelBuilder
 
     /**
      * Convenience method to returns the Platform class for this table (database).
-     * @return     PlatformInterface
+     * @return PlatformInterface
      */
     public function getPlatform()
     {
@@ -478,7 +478,7 @@ abstract class DataModelBuilder
 
     /**
      * Convenience method to returns the database for current table.
-     * @return     Database
+     * @return Database
      */
     public function getDatabase()
     {
@@ -498,7 +498,7 @@ abstract class DataModelBuilder
 
     /**
      * Gets array of warning messages.
-     * @return     array string[]
+     * @return array string[]
      */
     public function getWarnings()
     {
@@ -512,8 +512,8 @@ abstract class DataModelBuilder
      * method directly.  This method is used by both DataSQLBuilder and DDLBuilder, and potentially
      * in the OM builders also, which is why it is defined in this class.
      *
-     * @param string $text The text to quote.
-     * @return     string Quoted text.
+     * @param  string $text The text to quote.
+     * @return string Quoted text.
      */
     public function quoteIdentifier($text)
     {
@@ -526,8 +526,8 @@ abstract class DataModelBuilder
 
     /**
      * Returns the name of the current class being built, with a possible prefix.
-     * @return     string
-     * @see        OMBuilder#getClassName()
+     * @return string
+     * @see OMBuilder#getClassName()
      */
     public function prefixClassName($identifier)
     {

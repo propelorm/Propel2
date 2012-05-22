@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Runtime\Map;
@@ -23,9 +23,9 @@ use Propel\Runtime\Propel;
  * propel.engine.database.model classes, which are build-time modeling classes.
  * These classes in themselves do not do any database metadata lookups.
  *
- * @author     Hans Lellelid <hans@xmpl.org> (Propel)
- * @author     John D. McNally <jmcnally@collab.net> (Torque)
- * @author     Daniel Rall <dlr@collab.net> (Torque)
+ * @author Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author John D. McNally <jmcnally@collab.net> (Torque)
+ * @author Daniel Rall <dlr@collab.net> (Torque)
  */
 class DatabaseMap
 {
@@ -63,7 +63,7 @@ class DatabaseMap
     /**
      * Get the name of this database.
      *
-     * @return     string The name of the database.
+     * @return string The name of the database.
      */
     public function getName()
     {
@@ -73,8 +73,8 @@ class DatabaseMap
     /**
      * Add a new table to the database by name.
      *
-     * @param string $tableName The name of the table.
-     * @return     \Propel\Runtime\Map\TableMap The newly created TableMap.
+     * @param  string                       $tableName The name of the table.
+     * @return \Propel\Runtime\Map\TableMap The newly created TableMap.
      */
     public function addTable($tableName)
     {
@@ -98,8 +98,8 @@ class DatabaseMap
     /**
      * Add a new table to the database, using the tablemap class name.
      *
-     * @param string $tableMapClass The name of the table map to add
-     * @return     \Propel\Runtime\Map\TableMap The TableMap object
+     * @param  string                       $tableMapClass The name of the table map to add
+     * @return \Propel\Runtime\Map\TableMap The TableMap object
      */
     public function addTableFromMapClass($tableMapClass)
     {
@@ -116,8 +116,8 @@ class DatabaseMap
     /**
      * Does this database contain this specific table?
      *
-     * @param string $name The String representation of the table.
-     * @return     boolean True if the database contains the table.
+     * @param  string  $name The String representation of the table.
+     * @return Boolean True if the database contains the table.
      */
     public function hasTable($name)
     {
@@ -131,9 +131,9 @@ class DatabaseMap
     /**
      * Get a TableMap for the table by name.
      *
-     * @param string $name Name of the table.
-     * @return     \Propel\Runtime\Map\TableMap	A TableMap
-     * @throws     \Propel\Runtime\Map\Exception\TableNotFoundException	If the table is undefined
+     * @param  string                                               $name Name of the table.
+     * @return \Propel\Runtime\Map\TableMap                         A TableMap
+     * @throws \Propel\Runtime\Map\Exception\TableNotFoundException If the table is undefined
      */
     public function getTable($name)
     {
@@ -147,7 +147,7 @@ class DatabaseMap
     /**
      * Get a TableMap[] of all of the tables in the database.
      *
-     * @return     array[\Propel\Runtime\Map\TableMap].
+     * @return array[\Propel\Runtime\Map\TableMap].
      */
     public function getTables()
     {
@@ -158,9 +158,9 @@ class DatabaseMap
      * Get a ColumnMap for the column by name.
      * Name must be fully qualified, e.g. book.AUTHOR_ID
      *
-     * @param   $qualifiedColumnName Name of the column.
-     * @return     \Propel\Runtime\Map\ColumnMap	A TableMap
-     * @throws     \Propel\Runtime\Map\TableNotFoundException	If the table is undefined, or if the table is undefined
+     * @param                                             $qualifiedColumnName Name of the column.
+     * @return \Propel\Runtime\Map\ColumnMap              A TableMap
+     * @throws \Propel\Runtime\Map\TableNotFoundException If the table is undefined, or if the table is undefined
      */
     public function getColumn($qualifiedColumnName)
     {
@@ -200,9 +200,9 @@ class DatabaseMap
 
     /**
      * Convenience method to get the AdapterInterface registered with Propel for this database.
-     * @see     Propel::getServiceContainer()->getAdapter(string).
+     * @see Propel::getServiceContainer()->getAdapter(string).
      *
-     * @return  \Propel\Runtime\Adapter\AdapterInterface
+     * @return \Propel\Runtime\Adapter\AdapterInterface
      */
     public function getAbstractAdapter()
     {

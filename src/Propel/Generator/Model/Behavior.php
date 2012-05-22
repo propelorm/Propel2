@@ -129,7 +129,7 @@ class Behavior extends MappingModel
     /**
      * Returns a single parameter by its name.
      *
-     * @param string $name
+     * @param  string $name
      * @return array
      */
     public function getParameter($name)
@@ -219,9 +219,9 @@ class Behavior extends MappingModel
      * passed as arguments. The template file name is relative to the behavior's
      * directory name.
      *
-     * @param string $filename
-     * @param array  $vars
-     * @param string $templateDir
+     * @param  string $filename
+     * @param  array  $vars
+     * @param  string $templateDir
      * @return string
      */
     public function renderTemplate($filename, $vars = array(), $templateDir = '/templates/')
@@ -264,7 +264,7 @@ class Behavior extends MappingModel
      * Returns a column object using a name stored in the behavior parameters.
      * Useful for table behaviors.
      *
-     * @param string $name
+     * @param  string $name
      * @return Column
      */
     public function getColumnForParameter($name)

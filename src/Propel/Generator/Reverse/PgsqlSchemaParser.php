@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Reverse;
@@ -23,7 +23,7 @@ use Propel\Generator\Reverse\AbstractSchemaParser;
 /**
  * Postgresql database schema parser.
  *
- * @author     Hans Lellelid <hans@xmpl.org>
+ * @author Hans Lellelid <hans@xmpl.org>
  */
 class PgsqlSchemaParser extends AbstractSchemaParser
 {
@@ -72,7 +72,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
     /**
      * Gets a type mapping from native types to Propel types
      *
-     * @return     array
+     * @return array
      */
     protected function getTypeMapping()
     {
@@ -539,8 +539,8 @@ class PgsqlSchemaParser extends AbstractSchemaParser
     /**
      * Adds the sequences for this database.
      *
-     * @return     void
-     * @throws     SQLException
+     * @return void
+     * @throws SQLException
      */
     protected function addSequences(Database $database)
     {

@@ -87,7 +87,7 @@ class ForeignKey extends MappingModel
     /**
      * Returns the normalized input of onDelete and onUpdate behaviors.
      *
-     * @param string $behavior
+     * @param  string $behavior
      * @return string
      */
     public function normalizeFKey($behavior)
@@ -427,7 +427,7 @@ class ForeignKey extends MappingModel
     /**
      * Returns a local column name identified by a position.
      *
-     * @param integer $index
+     * @param  integer $index
      * @return string
      */
     public function getLocalColumnName($index = 0)
@@ -438,7 +438,7 @@ class ForeignKey extends MappingModel
     /**
      * Returns a local Column object identified by a position.
      *
-     * @param integer $index
+     * @param  integer $index
      * @return Column
      */
     public function getLocalColumn($index = 0)
@@ -501,7 +501,7 @@ class ForeignKey extends MappingModel
     /**
      * Returns the foreign column name mapped to a specified local column.
      *
-     * @param string $local
+     * @param  string $local
      * @return string
      */
     public function getMappedForeignColumn($local)
@@ -514,7 +514,7 @@ class ForeignKey extends MappingModel
     /**
      * Returns the local column name mapped to a specified foreign column.
      *
-     * @param string $foreign
+     * @param  string $foreign
      * @return string
      */
     public function getMappedLocalColumn($foreign)
@@ -553,7 +553,7 @@ class ForeignKey extends MappingModel
     /**
      * Returns a foreign column name.
      *
-     * @param integer $index
+     * @param  integer $index
      * @return string
      */
     public function getForeignColumnName($index = 0)

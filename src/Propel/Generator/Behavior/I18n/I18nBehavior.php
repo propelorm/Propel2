@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Behavior\I18n;
@@ -18,7 +18,7 @@ use Propel\Generator\Behavior\Validate\ValidateBehavior;
 /**
  * Allows translation of text columns through transparent one-to-many relationship
  *
- * @author    Francois Zaninotto
+ * @author Francois Zaninotto
  * @version        $Revision$
  */
 class I18nBehavior extends Behavior

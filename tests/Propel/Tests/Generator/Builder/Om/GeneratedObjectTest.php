@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Builder\Om;
@@ -68,7 +68,7 @@ use MyNameSpace\TestKeyTypeTable;
  * method for the exact contents of the database.
  *
  * @see        BookstoreDataPopulator
- * @author     Hans Lellelid <hans@xmpl.org>
+ * @author Hans Lellelid <hans@xmpl.org>
  */
 class GeneratedObjectTest extends BookstoreTestBase
 {
@@ -604,7 +604,7 @@ class GeneratedObjectTest extends BookstoreTestBase
 
     /**
      * Test checking for non-default values.
-     * @see        http://propel.phpdb.org/trac/ticket/331
+     * @see http://propel.phpdb.org/trac/ticket/331
      */
     public function testHasOnlyDefaultValues()
     {
@@ -1053,7 +1053,7 @@ EOF;
         $book->fooMethodName();
     }
 
-    static public function conditionsForTestReadOnly()
+    public static function conditionsForTestReadOnly()
     {
         return array(
             array('reload'),

@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Behavior\I18n;
@@ -18,7 +18,7 @@ use Propel\Runtime\Propel;
 /**
  * Tests for I18nBehavior class
  *
- * @author     François Zaninotto
+ * @author François Zaninotto
  */
 class I18nBehaviorTest extends \PHPUnit_Framework_TestCase
 {

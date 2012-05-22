@@ -15,7 +15,7 @@ class AddClassBehaviorBuilder extends AbstractOMBuilder
 
     /**
      * Returns the name of the current class being built.
-     * @return     string
+     * @return string
      */
     public function getUnprefixedClassName()
     {
@@ -43,7 +43,7 @@ class ".$this->getUnqualifiedClassName()."
     /**
      * Specifies the methods that are added as part of the basic OM class.
      * This can be overridden by subclasses that wish to add more methods.
-     * @see        ObjectBuilder::addClassBody()
+     * @see ObjectBuilder::addClassBody()
      */
     protected function addClassBody(&$script)
     {

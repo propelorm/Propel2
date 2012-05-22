@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Tests\Runtime\Parser;
@@ -15,11 +15,11 @@ use Propel\Runtime\Parser\YamlParser;
 /**
  * Test for YamlParser class
  *
- * @author     Francois Zaninotto
+ * @author Francois Zaninotto
  */
 class YamlParserTest extends \PHPUnit_Framework_TestCase
 {
-    static public function arrayYAMLConversionDataProvider()
+    public static function arrayYAMLConversionDataProvider()
     {
         return array(
             array(array(), '{  }', 'empty array'),
@@ -112,7 +112,7 @@ b2: 2
         $this->assertEquals($arrayData, $parser->fromYAML($YAMLData), 'YamlParser::fromYAML() converts to ' . $type . ' correctly');
     }
 
-    static public function listToYAMLDataProvider()
+    public static function listToYAMLDataProvider()
     {
         $list = array(
             'book0' => array('Id' => 123, 'Title' => 'Pride and Prejudice', 'AuthorId' => 456, 'ISBN' => '0553213105', 'Author' => array('Id' => 456, 'FirstName' => 'Jane', 'LastName' => 'Austen')),

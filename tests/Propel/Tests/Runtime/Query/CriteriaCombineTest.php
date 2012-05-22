@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Tests\Runtime\Query;
@@ -20,7 +20,7 @@ use Propel\Runtime\Adapter\Pdo\SqliteAdapter;
 /**
  * Test class for Criteria combinations.
  *
- * @author     Francois Zaninotto
+ * @author Francois Zaninotto
  * @version    $Id$
  */
 class CriteriaCombineTest extends BaseTestCase
@@ -28,14 +28,14 @@ class CriteriaCombineTest extends BaseTestCase
 
     /**
      * The criteria to use in the test.
-     * @var        Criteria
+     * @var Criteria
      */
     private $c;
 
     /**
      * DB adapter saved for later.
      *
-     * @var        AbstractAdapter
+     * @var AbstractAdapter
      */
     private $savedAdapter;
 

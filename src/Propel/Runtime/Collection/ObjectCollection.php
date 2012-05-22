@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Runtime\Collection;
@@ -23,7 +23,7 @@ use Propel\Runtime\Util\BasePeer;
 /**
  * Class for iterating over a list of Propel objects
  *
- * @author     Francois Zaninotto
+ * @author Francois Zaninotto
  */
 class ObjectCollection extends Collection
 {
@@ -82,8 +82,8 @@ class ObjectCollection extends Collection
     /**
      * Get an array of the primary keys of all the objects in the collection
      *
-     * @param Boolean $usePrefix
-     * @return    array  The list of the primary keys of the collection
+     * @param  Boolean $usePrefix
+     * @return array   The list of the primary keys of the collection
      */
     public function getPrimaryKeys($usePrefix = true)
     {
@@ -148,7 +148,7 @@ class ObjectCollection extends Collection
      * )
      * </code>
      *
-     * @return    array
+     * @return array
      */
     public function toArray($keyColumn = null, $usePrefix = false, $keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array())
     {
@@ -191,7 +191,7 @@ class ObjectCollection extends Collection
      *   )
      * </code>
      *
-     * @return    array
+     * @return array
      */
     public function getArrayCopy($keyColumn = null, $usePrefix = false)
     {
@@ -221,7 +221,7 @@ class ObjectCollection extends Collection
      * @param string $keyColumn
      * @param string $valueColumn
      *
-     * @return    array
+     * @return array
      */
     public function toKeyValue($keyColumn = 'PrimaryKey', $valueColumn = null)
     {
@@ -243,7 +243,7 @@ class ObjectCollection extends Collection
      * @param Criteria            $criteria Optional Criteria object to filter the related object collection
      * @param ConnectionInterface $con      Optional connection object
      *
-     * @return    ObjectCollection  The list of related objects
+     * @return ObjectCollection The list of related objects
      */
     public function populateRelation($relation, $criteria = null, $con = null)
     {

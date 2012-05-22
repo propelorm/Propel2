@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Tests\Runtime\Formatter;
@@ -38,7 +38,7 @@ use Propel\Runtime\Query\ModelCriteria;
 /**
  * Test class for ObjectFormatter when Criteria uses with().
  *
- * @author     Francois Zaninotto
+ * @author Francois Zaninotto
  * @version    $Id: ObjectFormatterWithTest.php 1348 2009-12-03 21:49:00Z francois $
  */
 class ObjectFormatterWithTest extends BookstoreEmptyTestBase

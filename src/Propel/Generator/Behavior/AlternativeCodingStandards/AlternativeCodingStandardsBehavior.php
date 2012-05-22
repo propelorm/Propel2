@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Behavior\AlternativeCodingStandards;
@@ -36,7 +36,7 @@ use Propel\Generator\Model\Behavior;
  *   - tabs are replaced by 2 whitespaces
  *   - comments are stripped (optional)
  *
- * @author     François Zaninotto
+ * @author François Zaninotto
  */
 class AlternativeCodingStandardsBehavior extends Behavior
 {
@@ -115,8 +115,8 @@ $1{";
 
     /**
      * Remove inline and codeblock comments from a PHP code string
-     * @param string $code The input code
-     * @return string       The input code, without comments
+     * @param  string $code The input code
+     * @return string The input code, without comments
      */
     static public function stripComments($code)
     {

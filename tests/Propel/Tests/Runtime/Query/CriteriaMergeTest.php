@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Tests\Runtime\Query;
@@ -21,9 +21,8 @@ use Propel\Runtime\Util\BasePeer;
 /**
  * Test class for Criteria.
  *
- * @author     <a href="mailto:celkins@scardini.com">Christopher Elkins</a>
- * @author     <a href="mailto:sam@neurogrid.com">Sam Joseph</a>
- * @version    $Id: CriteriaTest.php 1347 2009-12-03 21:06:36Z francois $
+ * @author Christopher Elkins <celkins@scardini.com>
+ * @author Sam Joseph <sam@neurogrid.com>
  */
 class CriteriaMergeTest extends BookstoreTestBase
 {

@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Tests\Runtime\Parser;
@@ -15,11 +15,11 @@ use Propel\Runtime\Parser\CsvParser;
 /**
  * Test for CsvParser class
  *
- * @author     Francois Zaninotto
+ * @author Francois Zaninotto
  */
 class CsvParserTest extends \PHPUnit_Framework_TestCase
 {
-    static public function arrayCsvConversionDataProvider()
+    public static function arrayCsvConversionDataProvider()
     {
         return array(
             array(array(), "\r\n\r\n", 'empty array'),
@@ -68,7 +68,7 @@ class CsvParserTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($arrayData, $parser->fromCSV($csvData), 'CsvParser::fromCSV() converts to ' . $type . ' correctly');
     }
 
-    static public function listToCSVDataProvider()
+    public static function listToCSVDataProvider()
     {
         $list = array(
             array('Id' => 123, 'Title' => 'Pride and Prejudice', 'AuthorId' => 456, 'ISBN' => '0553213105', 'Author' => array('Id' => 456, 'FirstName' => 'Jane', 'LastName' => 'Austen')),

@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Platform;
@@ -22,9 +22,9 @@ use Propel\Generator\Model\Unique;
 /**
  * Oracle PlatformInterface implementation.
  *
- * @author     Hans Lellelid <hans@xmpl.org> (Propel)
- * @author     Martin Poeschl <mpoeschl@marmot.at> (Torque)
- * @author     Denis Dalmais
+ * @author Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author Martin Poeschl <mpoeschl@marmot.at> (Torque)
+ * @author Denis Dalmais
  */
 class OraclePlatform extends DefaultPlatform
 {
@@ -234,7 +234,7 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
 
     /**
      * Whether the underlying PDO driver for this platform returns BLOB columns as streams (instead of strings).
-     * @return     boolean
+     * @return Boolean
      */
     public function hasStreamBlobImpl()
     {
@@ -255,7 +255,7 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
      * @note       While Oracle supports schemas, they're user-based and
      *             are really only good for creating a database layout in
      *             one fell swoop.
-     * @see        Platform::supportsSchemas()
+     * @see Platform::supportsSchemas()
      */
     public function supportsSchemas()
     {
@@ -266,9 +266,9 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
      * Generate oracle block storage
      *
      * @param Table|Index $object       object with vendor parameters
-     * @param bool        $isPrimaryKey is a primary key vendor part
+     * @param Boolean     $isPrimaryKey is a primary key vendor part
      *
-     * @return    string      oracle vendor sql part
+     * @return string oracle vendor sql part
      */
     public function generateBlockStorage($object, $isPrimaryKey = false)
     {
@@ -324,8 +324,8 @@ USING INDEX
     /**
      * Builds the DDL SQL to add an Index.
      *
-     * @param Index $index
-     * @return     string
+     * @param  Index  $index
+     * @return string
      */
     public function getAddIndexDDL(Index $index)
     {

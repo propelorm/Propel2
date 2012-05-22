@@ -159,7 +159,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Returns a build property value for the database this table belongs to.
      *
-     * @param string $key
+     * @param  string $key
      * @return string
      */
     public function getBuildProperty($key)
@@ -338,7 +338,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @see Platform::getColumnList() if quoting is required
      * @param array
-     * @param string $delimiter
+     * @param  string $delimiter
      * @return string
      */
     public function getColumnList($columns, $delimiter = ',')
@@ -403,9 +403,9 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Macro to a constraint name.
      *
-     * @param string  $nameType Constraint type
-     * @param integer $nbr      Unique number for this constraint type
-     * @return string Unique name for constraint
+     * @param  string          $nameType Constraint type
+     * @param  integer         $nbr      Unique number for this constraint type
+     * @return string          Unique name for constraint
      * @throws EngineException
      */
     private function acquireConstraintName($nameType, $nbr)
@@ -479,7 +479,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Adds a new column to the table.
      *
-     * @param Column $col
+     * @param  Column $col
      * @return Column
      */
     public function addColumn($col)
@@ -801,7 +801,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * Adds a new index to the indices list and set the
      * parent table of the column to the current table.
      *
-     * @param Index $index
+     * @param  Index $index
      * @return Index
      */
     public function addIndex($index)
@@ -825,7 +825,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * Adds a new Unique index to the list of unique indices and set the
      * parent table of the column to the current table.
      *
-     * @param Unique $unique
+     * @param  Unique $unique
      * @return Unique
      */
     public function addUnique($unique)
@@ -889,8 +889,8 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * check if the table has a behavior by name
      *
-     * @param string $name the behavior name
-     * @return    Boolean True if the behavior exists
+     * @param  string  $name the behavior name
+     * @return Boolean True if the behavior exists
      */
     public function hasBehavior($name)
     {
@@ -900,8 +900,8 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Get one table behavior by name
      *
-     * @param string $name the behavior name
-     * @return    Behavior a behavior object
+     * @param  string   $name the behavior name
+     * @return Behavior a behavior object
      */
     public function getBehavior($name)
     {
@@ -926,7 +926,7 @@ class Table extends ScopedMappingModel implements IdMethod
 
     /**
      * Get the early table behaviors
-     * @return    Array of Behavior objects
+     * @return Array of Behavior objects
      */
     public function getEarlyBehaviors()
     {
@@ -1079,7 +1079,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * Any of 'XML', 'YAML', 'JSON', or 'CSV'.
      *
-     * @param string $format
+     * @param  string                   $format
      * @throws InvalidArgumentException
      */
     public function setDefaultStringFormat($format)
@@ -1177,7 +1177,7 @@ class Table extends ScopedMappingModel implements IdMethod
 
     /**
      * Whether to force object to reload on INSERT.
-     * @return    Boolean
+     * @return Boolean
      */
     public function isReloadOnInsert()
     {
@@ -1367,8 +1367,8 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Returns whether or not the table has a column.
      *
-     * @param Column|string $column          The Column object or its name
-     * @param Boolean       $caseInsensitive Whether the check is case insensitive.
+     * @param  Column|string $column          The Column object or its name
+     * @param  Boolean       $caseInsensitive Whether the check is case insensitive.
      * @return Boolean
      */
     public function hasColumn($column, $caseInsensitive = false)
@@ -1387,8 +1387,8 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Returns the Column object with the specified name.
      *
-     * @param string  $name            The name of the column (e.g. 'my_column')
-     * @param Boolean $caseInsensitive Whether the check is case insensitive.
+     * @param  string  $name            The name of the column (e.g. 'my_column')
+     * @param  Boolean $caseInsensitive Whether the check is case insensitive.
      * @return Column
      */
     public function getColumn($name, $caseInsensitive = false)
@@ -1407,7 +1407,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Returns a specified column by its php name.
      *
-     * @param string $phpName
+     * @param  string $phpName
      * @return Column
      */
     public function getColumnByPhpName($phpName)
@@ -1423,7 +1423,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * Returns all foreign keys from this table that reference the table passed
      * in argument.
      *
-     * @param string $tableName
+     * @param  string $tableName
      * @return array
      */
     public function getForeignKeysReferencingTable($tableName)
@@ -1445,7 +1445,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * Eg. Foreign key (a, b, c) refrences tbl(x, y, z) will be returned of col
      * is either a, b or c.
      *
-     * @param string $column Name of the column
+     * @param  string $column Name of the column
      * @return array
      */
     public function getColumnForeignKeys($column)

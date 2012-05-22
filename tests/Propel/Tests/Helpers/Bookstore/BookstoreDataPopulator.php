@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Tests\Helpers\Bookstore;
@@ -54,12 +54,12 @@ define('_LOB_SAMPLE_FILE_PATH', __DIR__ . '/../../../../Fixtures/etc/lob');
  * inserting directly into the database.  This will have a performance hit, but will
  * benefit from increased flexibility (as does anything using Propel).
  *
- * @author     Hans Lellelid <hans@xmpl.org>
+ * @author Hans Lellelid <hans@xmpl.org>
  */
 class BookstoreDataPopulator
 {
 
-    static public function populate($con = null)
+    public static function populate($con = null)
     {
         if ($con === null) {
             $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
@@ -267,7 +267,7 @@ class BookstoreDataPopulator
         $con->commit();
     }
 
-    static public function populateOpinionFavorite($con = null)
+    public static function populateOpinionFavorite($con = null)
     {
         if ($con === null) {
             $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
@@ -290,7 +290,7 @@ class BookstoreDataPopulator
         $con->commit();
     }
 
-    static public function depopulate($con = null)
+    public static function depopulate($con = null)
     {
         $peerClasses = array(
             '\Propel\Tests\Bookstore\AuthorPeer',

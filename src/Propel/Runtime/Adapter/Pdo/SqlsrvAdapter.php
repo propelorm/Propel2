@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Runtime\Adapter\Pdo;
@@ -21,12 +21,12 @@ use Propel\Runtime\Map\DatabaseMap;
 /**
  * This is used to connect to a MSSQL database using pdo_sqlsrv driver.
  *
- * @author     Benjamin Runnels
+ * @author Benjamin Runnels
  */
 class SqlsrvAdapter extends MssqlAdapter implements AdapterInterface
 {
     /**
-     * @see       parent::initConnection()
+     * @see parent::initConnection()
      *
      * @param Propel\Runtime\Connection\ConnectionInterface $con
      * @param array                                         $settings An array of settings.
@@ -40,12 +40,12 @@ class SqlsrvAdapter extends MssqlAdapter implements AdapterInterface
     }
 
     /**
-     * @see       parent::setCharset()
+     * @see parent::setCharset()
      *
      * @param PDO    $con
      * @param string $charset
      *
-     * @throws    \Propel\Runtime\Exception\UnsupportedEncodingException
+     * @throws \Propel\Runtime\Exception\UnsupportedEncodingException
      */
     public function setCharset(ConnectionInterface $con, $charset)
     {
@@ -62,7 +62,7 @@ class SqlsrvAdapter extends MssqlAdapter implements AdapterInterface
     }
 
     /**
-     * @see       parent::cleanupSQL()
+     * @see parent::cleanupSQL()
      *
      * @param string      $sql
      * @param array       $params
@@ -90,7 +90,7 @@ class SqlsrvAdapter extends MssqlAdapter implements AdapterInterface
     }
 
     /**
-     * @see       AdapterInterface::bindValue()
+     * @see AdapterInterface::bindValue()
      *
      * @param PDOStatement $stmt
      * @param string       $parameter
@@ -98,7 +98,7 @@ class SqlsrvAdapter extends MssqlAdapter implements AdapterInterface
      * @param ColumnMap    $cMap
      * @param null|integer $position
      *
-     * @return    boolean
+     * @return Boolean
      */
     public function bindValue(StatementInterface $stmt, $parameter, $value, ColumnMap $cMap, $position = null)
     {

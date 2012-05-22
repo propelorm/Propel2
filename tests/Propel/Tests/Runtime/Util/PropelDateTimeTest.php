@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license		MIT License
+ * @license MIT License
  */
 
 namespace Propel\Tests\Runtime\Util;
@@ -18,9 +18,8 @@ use \DateTimeZone;
 /**
  * Test for DateTime subclass to support serialization.
  *
- * @author		 Alan Pinstein
- * @author		 Soenke Ruempler
- * @package		runtime.util
+ * @author Alan Pinstein
+ * @author Soenke Ruempler
  */
 class PropelDateTimeTest extends \PHPUnit_Framework_TestCase
 {
@@ -210,7 +209,7 @@ class PropelDateTimeTest extends \PHPUnit_Framework_TestCase
 
 class TestPropelDateTime extends PropelDateTime
 {
-    static public function isTimestamp($value)
+    public static function isTimestamp($value)
     {
         return parent::isTimestamp($value);
     }

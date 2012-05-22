@@ -72,7 +72,7 @@ class VendorInfo extends MappingModel
     /**
      * Returns a parameter value.
      *
-     * @param string $name The parameter name
+     * @param  string $name The parameter name
      * @return mixed
      */
     public function getParameter($name)
@@ -83,7 +83,7 @@ class VendorInfo extends MappingModel
     /**
      * Returns whether or not a parameter exists.
      *
-     * @param string $name
+     * @param  string  $name
      * @return Boolean
      */
     public function hasParameter($name)
@@ -125,7 +125,7 @@ class VendorInfo extends MappingModel
     /**
      * Returns a new VendorInfo object that combines two VendorInfo objects.
      *
-     * @param VendorInfo $info
+     * @param  VendorInfo $info
      * @return VendorInfo
      */
     public function getMergedVendorInfo(VendorInfo $info)

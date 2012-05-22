@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Builder\Om;
@@ -18,7 +18,7 @@ use Propel\Runtime\Query\ModelCriteria;
 /**
  * Tests the generated objects for object column types accessor & mutator
  *
- * @author     Francois Zaninotto
+ * @author Francois Zaninotto
  */
 class GeneratedObjectObjectColumnTypeTest extends \PHPUnit_Framework_TestCase
 {
