@@ -135,11 +135,11 @@ class ValidateBehavior extends Behavior
             $parameters = $this->getParameters();
             $out = array();
             $i = 1;
-            foreach($parameters as $key => $parameter) {
+            foreach ($parameters as $key => $parameter) {
                 $out["rule$i"] = $parameter;
                 $i++;
             }
-            foreach($params as $key => $param) {
+            foreach ($params as $key => $param) {
                 $out["rule$i"] = $param;
                 $i++;
             }
