@@ -21,7 +21,7 @@ class AdapterFactory
      * Creates a new instance of the database adapter associated
      * with the specified Propel driver.
      *
-     * @param     string  $driver The name of the Propel driver to create a new adapter instance
+     * @param string $driver The name of the Propel driver to create a new adapter instance
      *                            for or a shorter form adapter key.
      *
      * @throws    \Propel\Runtime\Exception\InvalidArgumentException	If the adapter could not be instantiated.

@@ -16,7 +16,7 @@ namespace Propel\Runtime\Exception;
 class FileNotFoundException extends RuntimeException implements ExceptionInterface
 {
     /**
-     * @param string $path  The path to the file that was not found
+     * @param string $path The path to the file that was not found
      */
     public function __construct($path)
     {

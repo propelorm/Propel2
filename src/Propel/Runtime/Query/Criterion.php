@@ -71,10 +71,10 @@ class Criterion
     /**
      * Create a new instance.
      *
-     * @param      Criteria $parent The outer class (this is an "inner" class).
-     * @param      string $column TABLE.COLUMN format.
-     * @param      mixed $value
-     * @param      string $comparison
+     * @param Criteria $parent     The outer class (this is an "inner" class).
+     * @param string   $column     TABLE.COLUMN format.
+     * @param mixed    $value
+     * @param string   $comparison
      */
     public function __construct(Criteria $outer, $column, $value, $comparison = null, $type = null)
     {
@@ -182,7 +182,7 @@ class Criterion
      * Set the adapter.
      *
      * The AdapterInterface might be used to get db specific variations of sql.
-     * @param      AdapterInterface $v Value to assign to db.
+     * @param AdapterInterface $v Value to assign to db.
      * @return     void
      */
     public function setAdapter(AdapterInterface $v)
@@ -196,7 +196,7 @@ class Criterion
     /**
      * Sets ignore case.
      *
-     * @param      Boolean $b True if case should be ignored.
+     * @param Boolean $b True if case should be ignored.
      * @return     Criterion A modified Criterion object.
      */
     public function setIgnoreCase($b)
@@ -262,7 +262,7 @@ class Criterion
      * onto the buffer.
      *
      * @param      string &$sb The string that will receive the Prepared Statement
-     * @param      array $params A list to which Prepared Statement parameters will be appended
+     * @param array $params A list to which Prepared Statement parameters will be appended
      * @return     void
      * @throws     PropelException - if the expression builder cannot figure out how to turn a specified
      *                           expression into proper SQL.
@@ -286,7 +286,7 @@ class Criterion
      * and call it to append the prepared statement and the parameters of the current clause
      *
      * @param      string &$sb The string that will receive the Prepared Statement
-     * @param      array $params A list to which Prepared Statement parameters will be appended
+     * @param array $params A list to which Prepared Statement parameters will be appended
      */
     protected function dispatchPsHandling(&$sb, array &$params)
     {
@@ -322,7 +322,7 @@ class Criterion
      * For custom expressions with no binding, e.g. 'NOW() = 1'
      *
      * @param      string &$sb The string that will receive the Prepared Statement
-     * @param      array $params A list to which Prepared Statement parameters will be appended
+     * @param array $params A list to which Prepared Statement parameters will be appended
      */
     protected function appendCustomToPs(&$sb, array &$params)
     {
@@ -336,7 +336,7 @@ class Criterion
      * For custom expressions with a typed binding, e.g. 'foobar = ?'
      *
      * @param      string &$sb The string that will receive the Prepared Statement
-     * @param      array $params A list to which Prepared Statement parameters will be appended
+     * @param array $params A list to which Prepared Statement parameters will be appended
      */
     protected function appendRawToPs(&$sb, array &$params)
     {
@@ -353,7 +353,7 @@ class Criterion
      * For IN expressions, e.g. table.column IN (?, ?) or table.column NOT IN (?, ?)
      *
      * @param      string &$sb The string that will receive the Prepared Statement
-     * @param      array $params A list to which Prepared Statement parameters will be appended
+     * @param array $params A list to which Prepared Statement parameters will be appended
      */
     protected function appendInToPs(&$sb, array &$params)
     {
@@ -379,7 +379,7 @@ class Criterion
      * For LIKE expressions, e.g. table.column LIKE ? or table.column NOT LIKE ?  (or ILIKE for Postgres)
      *
      * @param      string &$sb The string that will receive the Prepared Statement
-     * @param      array $params A list to which Prepared Statement parameters will be appended
+     * @param array $params A list to which Prepared Statement parameters will be appended
      */
     protected function appendLikeToPs(&$sb, array &$params)
     {
@@ -417,7 +417,7 @@ class Criterion
      * For traditional expressions, e.g. table.column = ? or table.column >= ? etc.
      *
      * @param      string &$sb The string that will receive the Prepared Statement
-     * @param      array $params A list to which Prepared Statement parameters will be appended
+     * @param array $params A list to which Prepared Statement parameters will be appended
      */
     protected function appendBasicToPs(&$sb, array &$params)
     {

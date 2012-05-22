@@ -30,8 +30,8 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
     /**
      * Returns SQL which concatenates the second string to the first.
      *
-     * @param     string  $s1  String to concatenate.
-     * @param     string  $s2  String to append.
+     * @param string $s1 String to concatenate.
+     * @param string $s2 String to append.
      *
      * @return    string
      */
@@ -43,9 +43,9 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
     /**
      * Returns SQL which extracts a substring.
      *
-     * @param     string   $s  String to extract from.
-     * @param     integer  $pos  Offset to start from.
-     * @param     integer  $len  Number of characters to extract.
+     * @param string  $s   String to extract from.
+     * @param integer $pos Offset to start from.
+     * @param integer $len Number of characters to extract.
      *
      * @return    string
      */
@@ -57,7 +57,7 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
     /**
      * Returns SQL which calculates the length (in chars) of a string.
      *
-     * @param     string  $s  String to calculate length of.
+     * @param string $s String to calculate length of.
      * @return    string
      */
     public function strLength($s)
@@ -68,8 +68,8 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
     /**
      * Locks the specified table.
      *
-     * @param     ConnectionInterface $con  The Propel connection to use.
-     * @param     string  $table  The name of the table to lock.
+     * @param ConnectionInterface $con   The Propel connection to use.
+     * @param string              $table The name of the table to lock.
      *
      * @throws    \PDOException  No Statement could be created or executed.
      */
@@ -81,8 +81,8 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
     /**
      * Unlocks the specified table.
      *
-     * @param     ConnectionInterface $con  The Propel connection to use.
-     * @param     string  $table  The name of the table to unlock.
+     * @param ConnectionInterface $con   The Propel connection to use.
+     * @param string              $table The name of the table to unlock.
      *
      * @throws    \PDOException  No Statement could be created or executed.
      */
@@ -94,7 +94,7 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
     /**
      * @see       AdapterInterface::quoteIdentifier()
      *
-     * @param     string  $text
+     * @param string $text
      * @return    string
      */
     public function quoteIdentifier($text)
@@ -105,7 +105,7 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
     /**
      * @see       AdapterInterface::quoteIdentifierTable()
      *
-     * @param     string  $table
+     * @param string $table
      * @return    string
      */
     public function quoteIdentifierTable($table)
@@ -127,9 +127,9 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
     /**
      * @see       AdapterInterface::applyLimit()
      *
-     * @param     string   $sql
-     * @param     integer  $offset
-     * @param     integer  $limit
+     * @param string  $sql
+     * @param integer $offset
+     * @param integer $limit
      */
     public function applyLimit(&$sql, $offset, $limit)
     {
@@ -143,7 +143,7 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
     /**
      * @see       AdapterInterface::random()
      *
-     * @param     string  $seed
+     * @param string $seed
      * @return    string
      */
     public function random($seed = null)
@@ -154,11 +154,11 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
     /**
      * @see       AdapterInterface::bindValue()
      *
-     * @param     StatementInterface $stmt
-     * @param     string        $parameter
-     * @param     mixed         $value
-     * @param     ColumnMap     $cMap
-     * @param     null|integer  $position
+     * @param StatementInterface $stmt
+     * @param string             $parameter
+     * @param mixed              $value
+     * @param ColumnMap          $cMap
+     * @param null|integer       $position
      *
      * @return    boolean
      */

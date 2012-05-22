@@ -28,8 +28,8 @@ class SqlsrvAdapter extends MssqlAdapter implements AdapterInterface
     /**
      * @see       parent::initConnection()
      *
-     * @param     Propel\Runtime\Connection\ConnectionInterface    $con
-     * @param     array  $settings  An array of settings.
+     * @param Propel\Runtime\Connection\ConnectionInterface $con
+     * @param array                                         $settings An array of settings.
      */
     public function initConnection(ConnectionInterface $con, array $settings)
     {
@@ -42,8 +42,8 @@ class SqlsrvAdapter extends MssqlAdapter implements AdapterInterface
     /**
      * @see       parent::setCharset()
      *
-     * @param     PDO     $con
-     * @param     string  $charset
+     * @param PDO    $con
+     * @param string $charset
      *
      * @throws    \Propel\Runtime\Exception\UnsupportedEncodingException
      */
@@ -64,10 +64,10 @@ class SqlsrvAdapter extends MssqlAdapter implements AdapterInterface
     /**
      * @see       parent::cleanupSQL()
      *
-     * @param     string       $sql
-     * @param     array        $params
-     * @param     Criteria     $values
-     * @param     DatabaseMap  $dbMap
+     * @param string      $sql
+     * @param array       $params
+     * @param Criteria    $values
+     * @param DatabaseMap $dbMap
      */
     public function cleanupSQL(&$sql, array &$params, Criteria $values, DatabaseMap $dbMap)
     {
@@ -92,11 +92,11 @@ class SqlsrvAdapter extends MssqlAdapter implements AdapterInterface
     /**
      * @see       AdapterInterface::bindValue()
      *
-     * @param     PDOStatement  $stmt
-     * @param     string        $parameter
-     * @param     mixed         $value
-     * @param     ColumnMap     $cMap
-     * @param     null|integer  $position
+     * @param PDOStatement $stmt
+     * @param string       $parameter
+     * @param mixed        $value
+     * @param ColumnMap    $cMap
+     * @param null|integer $position
      *
      * @return    boolean
      */

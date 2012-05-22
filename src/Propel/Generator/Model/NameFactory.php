@@ -56,9 +56,9 @@ class NameFactory
      * Given a list of <code>String</code> objects, implements an
      * algorithm which produces a name.
      *
-     * @param      string $algorithmName The fully qualified class name of the {@link NameGenerator}
+     * @param string $algorithmName The fully qualified class name of the {@link NameGenerator}
      *             implementation to use to generate names.
-     * @param      array $inputs Inputs used to generate a name.
+     * @param array $inputs Inputs used to generate a name.
      * @return     The generated name.
      * @throws     EngineException
      */

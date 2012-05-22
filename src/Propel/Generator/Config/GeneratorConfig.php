@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Config;
@@ -16,9 +16,10 @@ use Propel\Generator\Platform\PlatformInterface;
 use Propel\Generator\Reverse\SchemaParserInterface;
 
 /**
- * A class that holds build properties and provide a class loading mechanism for the generator.
+ * A class that holds build properties and provide a class loading mechanism for
+ * the generator.
  *
- * @author     Hans Lellelid <hans@xmpl.org>
+ * @author Hans Lellelid <hans@xmpl.org>
  */
 class GeneratorConfig implements GeneratorConfigInterface
 {
@@ -36,7 +37,8 @@ class GeneratorConfig implements GeneratorConfigInterface
 
     /**
      * Construct a new GeneratorConfig.
-     * @param      mixed $props Array or Iterator
+     *
+     * @param array|Traversable $props
      */
     public function __construct($props = null)
     {
@@ -46,8 +48,9 @@ class GeneratorConfig implements GeneratorConfigInterface
     }
 
     /**
-     * Gets the build properties.
-     * @return     array
+     * Returns the build properties.
+     *
+     * @return array
      */
     public function getBuildProperties()
     {
@@ -60,7 +63,7 @@ class GeneratorConfig implements GeneratorConfigInterface
      * Renames the propel.xxx properties to just xxx and renames any xxx.yyy properties
      * to xxxYyy as PHP doesn't like the xxx.yyy syntax.
      *
-     * @param      mixed $props Array or Iterator
+     * @param array|Traversable $props
      */
     public function setBuildProperties($props)
     {
@@ -80,10 +83,10 @@ class GeneratorConfig implements GeneratorConfigInterface
     }
 
     /**
-     * Gets a specific propel (renamed) property from the build.
+     * Returns a specific Propel (renamed) property from the build.
      *
-     * @param      string $name
-     * @return     mixed
+     * @param string $name
+     * @return mixed
      */
     public function getBuildProperty($name)
     {
@@ -93,8 +96,8 @@ class GeneratorConfig implements GeneratorConfigInterface
     /**
      * Sets a specific propel (renamed) property from the build.
      *
-     * @param      string $name
-     * @param      mixed $value
+     * @param string $name
+     * @param mixed  $value
      */
     public function setBuildProperty($name, $value)
     {
@@ -102,11 +105,13 @@ class GeneratorConfig implements GeneratorConfigInterface
     }
 
     /**
-     * Resolves and returns the class name based on the specified property value.
+     * Resolves and returns the class name based on the specified property
+     * value. The name of the property holds the class path as a dot-path
+     * notation.
      *
-     * @param      string $propname The name of the property that holds the class path (dot-path notation).
-     * @return     string The class name.
-     * @throws     BuildException If the classname cannot be determined or class cannot be loaded.
+     * @param string $propname
+     * @return string
+     * @throws BuildException
      */
     public function getClassName($propname)
     {
@@ -138,8 +143,8 @@ class GeneratorConfig implements GeneratorConfigInterface
     /**
      * Resolves and returns the builder class name.
      *
-     * @param      string $type
-     * @return     string The class name.
+     * @param string $type
+     * @return string
      */
     public function getBuilderClassName($type)
     {
@@ -151,8 +156,8 @@ class GeneratorConfig implements GeneratorConfigInterface
     /**
      * Creates and configures a new Platform class.
      *
-     * @param      \PDO $con
-     * @return     Platform
+     * @param \PDO $con
+     * @return PlatformInterface
      */
     public function getConfiguredPlatform(\PDO $con = null, $database = null)
     {
@@ -183,8 +188,8 @@ class GeneratorConfig implements GeneratorConfigInterface
 
     /**
      * Creates and configures a new SchemaParser class for specified platform.
-     * @param      \PDO $con
-     * @return     SchemaParserInterface
+     * @param \PDO $con
+     * @return SchemaParserInterface
      */
     public function getConfiguredSchemaParser(\PDO $con = null)
     {
@@ -203,11 +208,12 @@ class GeneratorConfig implements GeneratorConfigInterface
     }
 
     /**
-     * Gets a configured data model builder class for specified table and based on type.
+     * Returns a configured data model builder class for specified table and
+     * based on type ('ddl', 'sql', etc.).
      *
-     * @param      Table $table
-     * @param      string $type The type of builder ('ddl', 'sql', etc.)
-     * @return     DataModelBuilder
+     * @param Table  $table
+     * @param string $type
+     * @return DataModelBuilder
      */
     public function getConfiguredBuilder(Table $table, $type)
     {
@@ -219,9 +225,9 @@ class GeneratorConfig implements GeneratorConfigInterface
     }
 
     /**
-     * Gets a configured Pluralizer class.
+     * Returns a configured Pluralizer class.
      *
-     * @return     Pluralizer
+     * @return Pluralizer
      */
     public function getConfiguredPluralizer()
     {

@@ -37,8 +37,8 @@ class OracleAdapter extends PdoAdapter implements AdapterInterface
      *
      * @see       parent::initConnection()
      *
-     * @param     \PDO   $con
-     * @param     array  $settings
+     * @param \PDO  $con
+     * @param array $settings
      */
     public function initConnection(ConnectionInterface $con, array $settings)
     {
@@ -56,8 +56,8 @@ class OracleAdapter extends PdoAdapter implements AdapterInterface
     /**
      * Returns SQL which concatenates the second string to the first.
      *
-     * @param     string  $s1  String to concatenate.
-     * @param     string  $s2  String to append.
+     * @param string $s1 String to concatenate.
+     * @param string $s2 String to append.
      *
      * @return    string
      */
@@ -69,9 +69,9 @@ class OracleAdapter extends PdoAdapter implements AdapterInterface
     /**
      * Returns SQL which extracts a substring.
      *
-     * @param     string   $s  String to extract from.
-     * @param     integer  $pos  Offset to start from.
-     * @param     integer  $len  Number of characters to extract.
+     * @param string  $s   String to extract from.
+     * @param integer $pos Offset to start from.
+     * @param integer $len Number of characters to extract.
      *
      * @return    string
      */
@@ -83,7 +83,7 @@ class OracleAdapter extends PdoAdapter implements AdapterInterface
     /**
      * Returns SQL which calculates the length (in chars) of a string.
      *
-     * @param     string  $s  String to calculate length of.
+     * @param string $s String to calculate length of.
      * @return    string
      */
     public function strLength($s)
@@ -94,10 +94,10 @@ class OracleAdapter extends PdoAdapter implements AdapterInterface
     /**
      * @see       AdapterInterface::applyLimit()
      *
-     * @param     string   $sql
-     * @param     integer  $offset
-     * @param     integer  $limit
-     * @param     null|Criteria  $criteria
+     * @param string        $sql
+     * @param integer       $offset
+     * @param integer       $limit
+     * @param null|Criteria $criteria
      */
     public function applyLimit(&$sql, $offset, $limit, $criteria = null)
     {
@@ -130,8 +130,8 @@ class OracleAdapter extends PdoAdapter implements AdapterInterface
     }
 
     /**
-     * @param     ConnectionInterface $con
-     * @param     string  $name
+     * @param ConnectionInterface $con
+     * @param string              $name
      *
      * @throws    \Propel\Runtime\Exception\InvalidArgumentException
      * @return    integer
@@ -149,7 +149,7 @@ class OracleAdapter extends PdoAdapter implements AdapterInterface
     }
 
     /**
-     * @param     string  $seed
+     * @param string $seed
      * @return    string
      */
     public function random($seed=NULL)
@@ -163,7 +163,7 @@ class OracleAdapter extends PdoAdapter implements AdapterInterface
      *
      * @see http://propel.phpdb.org/trac/ticket/795
      *
-     * @param     Criteria  $criteria
+     * @param Criteria $criteria
      * @return    Criteria  The input, with Select columns replaced by aliases
      */
     public function turnSelectColumnsToAliases(Criteria $criteria)
@@ -199,11 +199,11 @@ class OracleAdapter extends PdoAdapter implements AdapterInterface
     /**
      * @see       AdapterInterface::bindValue()
      *
-     * @param     StatementInterface $stmt
-     * @param     string        $parameter
-     * @param     mixed         $value
-     * @param     ColumnMap     $cMap
-     * @param     null|integer  $position
+     * @param StatementInterface $stmt
+     * @param string             $parameter
+     * @param mixed              $value
+     * @param ColumnMap          $cMap
+     * @param null|integer       $position
      *
      * @return    boolean
      */

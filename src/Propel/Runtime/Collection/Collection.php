@@ -74,7 +74,7 @@ class Collection extends \ArrayObject implements \Serializable
     /**
      * Set the data in the collection
      *
-     * @param     array $data
+     * @param array $data
      */
     public function setData($data)
     {
@@ -223,7 +223,7 @@ class Collection extends \ArrayObject implements \Serializable
      * Get an element from its key
      * Alias for ArrayObject::offsetGet()
      *
-     * @param     mixed  $key
+     * @param mixed $key
      * @return    mixed  The element
      */
     public function get($key)
@@ -272,7 +272,7 @@ class Collection extends \ArrayObject implements \Serializable
     /**
      * Prepend one or more elements to the beginning of the collection
      *
-     * @param     mixed  $value the element to prepend
+     * @param mixed $value the element to prepend
      * @return    integer  The number of new elements in the array
      */
     public function prepend($value)
@@ -290,8 +290,8 @@ class Collection extends \ArrayObject implements \Serializable
      * Add an element to the collection with the given key
      * Alias for ArrayObject::offsetSet()
      *
-     * @param     mixed  $key
-     * @param     mixed  $value
+     * @param mixed $key
+     * @param mixed $value
      */
     public function set($key, $value)
     {
@@ -302,7 +302,7 @@ class Collection extends \ArrayObject implements \Serializable
      * Removes a specified collection element
      * Alias for ArrayObject::offsetUnset()
      *
-     * @param     mixed  $key
+     * @param mixed $key
      * @return    mixed  The removed element
      */
     public function remove($key)
@@ -327,7 +327,7 @@ class Collection extends \ArrayObject implements \Serializable
     /**
      * Whether or not this collection contains a specified element
      *
-     * @param     mixed  $element
+     * @param mixed $element
      * @return    Boolean
      */
     public function contains($element)
@@ -338,7 +338,7 @@ class Collection extends \ArrayObject implements \Serializable
     /**
      * Search an element in the collection
      *
-     * @param     mixed  $element
+     * @param mixed $element
      * @return    mixed  Returns the key for the element if it is found in the collection, FALSE otherwise
      */
     public function search($element)
@@ -350,7 +350,7 @@ class Collection extends \ArrayObject implements \Serializable
      * Returns an array of objects present in the collection that
      * are not presents in the given collection.
      *
-     * @param Collection $collection	A Propel collection.
+     * @param Collection $collection A Propel collection.
      * @return Collection				An array of Propel objects from the collection that are not presents in the given collection.
      */
     public function diff(Collection $collection)
@@ -383,7 +383,7 @@ class Collection extends \ArrayObject implements \Serializable
     }
 
     /**
-     * @param     string  $data
+     * @param string $data
      */
     public function unserialize($data)
     {
@@ -435,7 +435,7 @@ class Collection extends \ArrayObject implements \Serializable
     /**
      * Set the model of the elements in the collection
      *
-     * @param     string  $model  Name of the Propel object classes stored in the collection
+     * @param string $model Name of the Propel object classes stored in the collection
      */
     public function setModel($model)
     {
@@ -484,7 +484,7 @@ class Collection extends \ArrayObject implements \Serializable
     }
 
     /**
-     * @param     AbstractFormatter  $formatter
+     * @param AbstractFormatter $formatter
      */
     public function setFormatter(AbstractFormatter $formatter)
     {
@@ -519,8 +519,8 @@ class Collection extends \ArrayObject implements \Serializable
      * $coll->importFrom('JSON', '{{"Id":9012,"Title":"Don Juan","ISBN":"0140422161","Price":12.99,"PublisherId":1234,"AuthorId":5678}}');
      * </code>
      *
-     * @param     mixed   $parser  A AbstractParser instance, or a format name ('XML', 'YAML', 'JSON', 'CSV')
-     * @param     string  $data    The source data to import from
+     * @param mixed  $parser A AbstractParser instance, or a format name ('XML', 'YAML', 'JSON', 'CSV')
+     * @param string $data   The source data to import from
      *
      * @return    BaseObject  The current object, for fluid interface
      */
@@ -543,12 +543,12 @@ class Collection extends \ArrayObject implements \Serializable
      *
      * A OnDemandCollection cannot be exported. Any attempt will result in a PropelExecption being thrown.
      *
-     * @param     mixed   $parser                 A AbstractParser instance, or a format name ('XML', 'YAML', 'JSON', 'CSV')
-     * @param     Boolean $usePrefix              (optional) If true, the returned element keys will be prefixed with the
+     * @param mixed   $parser    A AbstractParser instance, or a format name ('XML', 'YAML', 'JSON', 'CSV')
+     * @param Boolean $usePrefix (optional) If true, the returned element keys will be prefixed with the
      *                                            model class name ('Article_0', 'Article_1', etc). Defaults to TRUE.
      *                                            Not supported by ArrayCollection, as ArrayFormatter has
      *                                            already created the array used here with integers as keys.
-     * @param     Boolean $includeLazyLoadColumns (optional) Whether to include lazy load(ed) columns. Defaults to TRUE.
+     * @param Boolean $includeLazyLoadColumns (optional) Whether to include lazy load(ed) columns. Defaults to TRUE.
      *                                            Not supported by ArrayCollection, as ArrayFormatter has
      *                                            already included lazy-load columns in the array used here.
      * @return    string                          The exported data
@@ -568,8 +568,8 @@ class Collection extends \ArrayObject implements \Serializable
      * Provides magic import/export method support (fromXML()/toXML(), fromYAML()/toYAML(), etc.).
      * Allows to define default __call() behavior if you use a custom BaseObject
      *
-     * @param     string  $name
-     * @param     mixed   $params
+     * @param string $name
+     * @param mixed  $params
      *
      * @return    array|string
      */

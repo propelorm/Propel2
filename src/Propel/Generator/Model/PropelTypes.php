@@ -154,7 +154,7 @@ class PropelTypes
     );
 
     /**
-     * Mapping between mapping types and PDO type contants (for prepared 
+     * Mapping between mapping types and PDO type contants (for prepared
      * statement settings).
      *
      * @var array
@@ -206,7 +206,7 @@ class PropelTypes
      * Returns the native PHP type which corresponds to the
      * mapping type provided. Use in the base object class generation.
      *
-     * @param  string $mappingType
+     * @param string $mappingType
      * @return string
      */
     static public function getPhpNative($mappingType)
@@ -306,7 +306,7 @@ class PropelTypes
     /**
      * Returns whether or not this column is a boolean type.
      *
-     * @param  string $mappingType
+     * @param string $mappingType
      * @return Boolean
      */
     static public function isBooleanType($mappingType)
@@ -320,7 +320,7 @@ class PropelTypes
     /**
      * Returns whether or not this column is a lob/blob type.
      *
-     * @param  string $mappingType
+     * @param string $mappingType
      * @return Boolean
      */
     static public function isLobType($mappingType)

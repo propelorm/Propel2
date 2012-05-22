@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license     MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Model\Diff;
@@ -16,7 +16,6 @@ use Propel\Generator\Model\Column;
  * Service class for comparing Column objects.
  * Heavily inspired by Doctrine2's Migrations
  * (see http://github.com/doctrine/dbal/tree/master/lib/Doctrine/DBAL/Schema/)
- *
  */
 class ColumnComparator
 {
@@ -25,7 +24,6 @@ class ColumnComparator
      *
      * @param Column $fromColumn
      * @param Column $toColumn
-     *
      * @return ColumnDiff|boolean return false if the two columns are similar
      */
     static public function computeDiff(Column $fromColumn, Column $toColumn)

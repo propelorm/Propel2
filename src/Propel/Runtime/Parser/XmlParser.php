@@ -20,9 +20,9 @@ class XmlParser extends AbstractParser
     /**
      * Converts data from an associative array to XML.
      *
-     * @param  array   $array Source data to convert
-     * @param  string  $rootElementName Name of the root element of the XML document
-     * @param  string  $charset Character set of the input data. Defaults to UTF-8.
+     * @param array  $array           Source data to convert
+     * @param string $rootElementName Name of the root element of the XML document
+     * @param string $charset         Character set of the input data. Defaults to UTF-8.
      *
      * @return string Converted data, as an XML string
      */
@@ -45,7 +45,7 @@ class XmlParser extends AbstractParser
     /**
      * Create a DOMDocument and get the root DOMNode using a root element name
      *
-     * @param  string $rootElementName The Root Element Name
+     * @param string $rootElementName The Root Element Name
      *
      * @return DOMNode The root DOMNode
      */
@@ -63,9 +63,9 @@ class XmlParser extends AbstractParser
     /**
      * Alias for XmlParser::fromArray()
      *
-     * @param  array   $array Source data to convert
-     * @param  string  $rootElementName Name of the root element of the XML document
-     * @param  string  $charset Character set of the input data. Defaults to UTF-8.
+     * @param array  $array           Source data to convert
+     * @param string $rootElementName Name of the root element of the XML document
+     * @param string $charset         Character set of the input data. Defaults to UTF-8.
      *
      * @return string Converted data, as an XML string
      */
@@ -77,9 +77,9 @@ class XmlParser extends AbstractParser
     /**
      * Alias for XmlParser::listFromArray()
      *
-     * @param  array   $array Source data to convert
-     * @param  string  $rootElementName Name of the root element of the XML document
-     * @param  string  $charset Character set of the input data. Defaults to UTF-8.
+     * @param array  $array           Source data to convert
+     * @param string $rootElementName Name of the root element of the XML document
+     * @param string $charset         Character set of the input data. Defaults to UTF-8.
      *
      * @return string Converted data, as an XML string
      */
@@ -91,9 +91,9 @@ class XmlParser extends AbstractParser
 
     /**
       * @param  array $array
-     * @param  DOMElement $rootElement
-     * @param  string $charset
-     * @param  boolean $removeNumbersFromKeys
+     * @param DOMElement $rootElement
+     * @param string     $charset
+     * @param boolean    $removeNumbersFromKeys
      *
      * @return DOMElement
      */
@@ -129,7 +129,7 @@ class XmlParser extends AbstractParser
     /**
      * Converts data from XML to an associative array.
      *
-     * @param  string $data Source data to convert, as an XML string
+     * @param string $data Source data to convert, as an XML string
      * @return array Converted data
      */
     public function toArray($data)
@@ -144,7 +144,7 @@ class XmlParser extends AbstractParser
     /**
      * Alias for XmlParser::toArray()
      *
-     * @param  string $data Source data to convert, as an XML string
+     * @param string $data Source data to convert, as an XML string
      * @return array Converted data
      */
     public function fromXML($data)
@@ -153,7 +153,7 @@ class XmlParser extends AbstractParser
     }
 
     /**
-     * @param  DOMNode $data
+     * @param DOMNode $data
      * @return array
      */
     protected function convertDOMElementToArray(\DOMNode $data)
@@ -192,7 +192,7 @@ class XmlParser extends AbstractParser
     }
 
     /**
-     * @param  DOMNode $node
+     * @param DOMNode $node
      * @return boolean
      */
     protected function hasOnlyTextNodes(\DOMNode $node)

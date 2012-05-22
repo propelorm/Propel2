@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license     MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Model\Diff;
@@ -16,26 +16,30 @@ use Propel\Generator\Model\Column;
  * Value object for storing Column object diffs.
  * Heavily inspired by Doctrine2's Migrations
  * (see http://github.com/doctrine/dbal/tree/master/lib/Doctrine/DBAL/Schema/)
- *
  */
 class ColumnDiff
 {
-    protected $changedProperties = array();
+    protected $changedProperties;
     protected $fromColumn;
     protected $toColumn;
 
-    /**
-     * Setter for the changedProperties property
-     *
-     * @param array $changedProperties
-     */
-    public function setChangedProperties($changedProperties)
+    public function __construct()
     {
-        $this->changedProperties = $changedProperties;
+        $this->changedProperties = array();
     }
 
     /**
-     * Getter for the changedProperties property
+     * Sets for the changed properties.
+     *
+     * @param array $properties
+     */
+    public function setChangedProperties($properties)
+    {
+        $this->changedProperties = $properties;
+    }
+
+    /**
+     * Returns the changed properties.
      *
      * @return array
      */
@@ -45,7 +49,7 @@ class ColumnDiff
     }
 
     /**
-     * Setter for the fromColumn property
+     * Sets the fromColumn property.
      *
      * @param Column $fromColumn
      */
@@ -55,7 +59,7 @@ class ColumnDiff
     }
 
     /**
-     * Getter for the fromColumn property
+     * Returns the fromColumn property.
      *
      * @return Column
      */
@@ -65,7 +69,7 @@ class ColumnDiff
     }
 
     /**
-     * Setter for the toColumn property
+     * Sets the toColumn property.
      *
      * @param Column $toColumn
      */
@@ -75,7 +79,7 @@ class ColumnDiff
     }
 
     /**
-     * Getter for the toColumn property
+     * Returns the toColumn property.
      *
      * @return Column
      */
@@ -85,7 +89,7 @@ class ColumnDiff
     }
 
     /**
-     * Get the reverse diff for this diff
+     * Returns the reverse diff for this diff.
      *
      * @return ColumnDiff
      */

@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Manager;
@@ -97,7 +97,8 @@ class ReverseManager extends AbstractManager
 
     /**
      * Sets the datasource name.
-     * This will be used as the <database name=""> value in the generated schema.xml
+     * This will be used as the <database name=""> value in the generated
+     * schema.xml
      *
      * @param string $databaseName
      */
@@ -107,7 +108,7 @@ class ReverseManager extends AbstractManager
     }
 
     /**
-     * Set whether to use the column name as phpName without any translation.
+     * Sets whether to use the column name as phpName without any translation.
      *
      * @param Boolean $samePhpName
      */
@@ -117,7 +118,7 @@ class ReverseManager extends AbstractManager
     }
 
     /**
-     * Set whether to add vendor info to the schema.
+     * Sets whether to add vendor info to the schema.
      *
      * @param Boolean $addVendorInfo
      */
@@ -127,7 +128,8 @@ class ReverseManager extends AbstractManager
     }
 
     /**
-     * Whether to use the column name as phpName without any translation.
+     * Returns whether to use the column name as phpName without any
+     * translation.
      *
      * @return Boolean
      */
@@ -136,9 +138,6 @@ class ReverseManager extends AbstractManager
         return $this->samePhpName;
     }
 
-    /**
-     * The aim of this manager.
-     */
     public function reverse()
     {
         if (!$this->getDatabaseName()) {

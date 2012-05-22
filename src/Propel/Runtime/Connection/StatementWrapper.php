@@ -54,9 +54,9 @@ class StatementWrapper implements StatementInterface
     /**
      * Creates a Statement instance
      *
-     * @param string $sql The SQL query for this statement
-     * @param ConnectionWrapper $connection The parent connection
-     * @param array $driver_options Optional driver options
+     * @param string            $sql            The SQL query for this statement
+     * @param ConnectionWrapper $connection     The parent connection
+     * @param array             $driver_options Optional driver options
      */
     public function __construct($sql, ConnectionWrapper $connection, $driver_options = array())
     {
@@ -70,11 +70,11 @@ class StatementWrapper implements StatementInterface
      * as a reference and will only be evaluated at the time that PDOStatement::execute() is called.
      * Returns a boolean value indicating success.
      *
-     * @param     integer  $pos  Parameter identifier (for determining what to replace in the query).
-     * @param     mixed    $value  The value to bind to the parameter.
-     * @param     integer  $type  Explicit data type for the parameter using the PDO::PARAM_* constants. Defaults to PDO::PARAM_STR.
-     * @param     integer  $length  Length of the data type. To indicate that a parameter is an OUT parameter from a stored procedure, you must explicitly set the length.
-     * @param     mixed    $driver_options
+     * @param integer $pos            Parameter identifier (for determining what to replace in the query).
+     * @param mixed   $value          The value to bind to the parameter.
+     * @param integer $type           Explicit data type for the parameter using the PDO::PARAM_* constants. Defaults to PDO::PARAM_STR.
+     * @param integer $length         Length of the data type. To indicate that a parameter is an OUT parameter from a stored procedure, you must explicitly set the length.
+     * @param mixed   $driver_options
      *
      * @return    boolean
      */
@@ -96,9 +96,9 @@ class StatementWrapper implements StatementInterface
      * Binds a value to a corresponding named or question mark placeholder in the SQL statement
      * that was use to prepare the statement. Returns a boolean value indicating success.
      *
-     * @param     integer  $pos  Parameter identifier (for determining what to replace in the query).
-     * @param     mixed    $value  The value to bind to the parameter.
-     * @param     integer  $type  Explicit data type for the parameter using the PDO::PARAM_* constants. Defaults to PDO::PARAM_STR.
+     * @param integer $pos   Parameter identifier (for determining what to replace in the query).
+     * @param mixed   $value The value to bind to the parameter.
+     * @param integer $type  Explicit data type for the parameter using the PDO::PARAM_* constants. Defaults to PDO::PARAM_STR.
      *
      * @return    boolean
      */
@@ -161,7 +161,7 @@ class StatementWrapper implements StatementInterface
      * Executes a prepared statement.  Returns a boolean value indicating success.
      * Overridden for query counting and logging.
      *
-     * @param     string  $input_parameters
+     * @param string $input_parameters
      * @return    boolean
      */
     public function execute($input_parameters = null)
@@ -201,10 +201,10 @@ class StatementWrapper implements StatementInterface
      * Fetches a row from a result set associated with a Statement object.
      * The fetch_style parameter determines how the Connection returns the row.
      *
-     * @param integer $fetchStyle           Controls how the next row will be returned to the caller.
-     * @param integer $cursorOrientation    For a PDOStatement object representing a scrollable cursor,
+     * @param integer $fetchStyle        Controls how the next row will be returned to the caller.
+     * @param integer $cursorOrientation For a PDOStatement object representing a scrollable cursor,
      *                                      This value determines which row will be returned to the caller.
-     * @param integer $cursorOffset         For a PDOStatement object representing a
+     * @param integer $cursorOffset For a PDOStatement object representing a
      *                                      scrollable cursor for which the cursor_orientation
      *                                      parameter is set to PDO::FETCH_ORI_ABS, this value
      *                                      specifies the absolute number of the row in the
@@ -226,8 +226,8 @@ class StatementWrapper implements StatementInterface
     /**
      * Returns an array containing all of the result set rows.
      *
-     * @param integer $fetchStyle           Controls the contents of the returned array as documented in fetch()
-     * @param integer $columnIndex          This argument have a different meaning depending
+     * @param integer $fetchStyle  Controls the contents of the returned array as documented in fetch()
+     * @param integer $columnIndex This argument have a different meaning depending
      *                                      on the value of the fetch_style parameter.
      * @return array
      */
@@ -239,7 +239,7 @@ class StatementWrapper implements StatementInterface
     /**
      * Returns a single column from the next row of a result set.
      *
-     * @param integer $columnIndex          0-indexed number of the column you wish to retrieve from the row. If no
+     * @param integer $columnIndex 0-indexed number of the column you wish to retrieve from the row. If no
      *                                      value is supplied, PDOStatement->fetchColumn()
      *                                      fetches the first column.
      *

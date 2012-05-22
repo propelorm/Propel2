@@ -52,7 +52,7 @@ class DefaultPlatform implements PlatformInterface
 
     /**
      * Default constructor.
-     * @param      PDO $con Optional database connection to use in this platform.
+     * @param PDO $con Optional database connection to use in this platform.
      */
     public function __construct(\PDO $con = null)
     {
@@ -65,7 +65,7 @@ class DefaultPlatform implements PlatformInterface
 
     /**
      * Set the database connection to use for this Platform class.
-     * @param      PDO $con Database connection to use in this platform.
+     * @param PDO $con Database connection to use in this platform.
      */
     public function setConnection(\PDO $con = null)
     {
@@ -84,7 +84,7 @@ class DefaultPlatform implements PlatformInterface
     /**
      * Sets the GeneratorConfigInterface to use in the parsing.
      *
-     * @param      GeneratorConfigInterface $config
+     * @param GeneratorConfigInterface $config
      */
     public function setGeneratorConfig(GeneratorConfigInterface $config)
     {
@@ -94,7 +94,7 @@ class DefaultPlatform implements PlatformInterface
     /**
      * Gets a specific propel (renamed) property from the build.
      *
-     * @param      string $name
+     * @param string $name
      * @return     mixed
      */
     protected function getBuildProperty($name)
@@ -125,7 +125,7 @@ class DefaultPlatform implements PlatformInterface
 
     /**
      * Adds a mapping entry for specified Domain.
-     * @param      Domain $domain
+     * @param Domain $domain
      */
     protected function setSchemaDomainMapping(Domain $domain)
     {
@@ -475,7 +475,7 @@ ALTER TABLE %s ADD %s;
     /**
      * Returns the DDL SQL to add the indices of a table.
      *
-     * @param  Table $table
+     * @param Table $table
      * @return string
      */
     public function getAddIndicesDDL(Table $table)
@@ -491,7 +491,7 @@ ALTER TABLE %s ADD %s;
     /**
      * Returns the DDL SQL to add an Index.
      *
-     * @param  Index $index
+     * @param Index $index
      * @return string
      */
     public function getAddIndexDDL(Index $index)
@@ -511,7 +511,7 @@ CREATE %sINDEX %s ON %s (%s);
     /**
      * Builds the DDL SQL to drop an Index.
      *
-     * @param      Index $index
+     * @param Index $index
      * @return     string
      */
     public function getDropIndexDDL(Index $index)
@@ -528,7 +528,7 @@ DROP INDEX %s;
     /**
      * Builds the DDL SQL for an Index object.
      *
-     * @param      Index $index
+     * @param Index $index
      * @return     string
      */
     public function getIndexDDL(Index $index)
@@ -543,7 +543,7 @@ DROP INDEX %s;
     /**
      * Builds the DDL SQL for a Unique constraint object.
      *
-     * @param      Unique $unique
+     * @param Unique $unique
      * @return     string
      */
     public function getUniqueDDL(Unique $unique)
@@ -554,7 +554,7 @@ DROP INDEX %s;
     /**
      * Builds the DDL SQL to add the foreign keys of a table.
      *
-     * @param      Table $table
+     * @param Table $table
      * @return     string
      */
     public function getAddForeignKeysDDL(Table $table)
@@ -570,7 +570,7 @@ DROP INDEX %s;
     /**
      * Builds the DDL SQL to add a foreign key.
      *
-     * @param      ForeignKey $fk
+     * @param ForeignKey $fk
      * @return     string
      */
     public function getAddForeignKeyDDL(ForeignKey $fk)
@@ -591,7 +591,7 @@ ALTER TABLE %s ADD %s;
     /**
      * Builds the DDL SQL to drop a foreign key.
      *
-     * @param      ForeignKey $fk
+     * @param ForeignKey $fk
      * @return     string
      */
     public function getDropForeignKeyDDL(ForeignKey $fk)
@@ -1013,7 +1013,7 @@ ALTER TABLE %s ADD
     /**
      * Returns if the RDBMS-specific SQL type has a size attribute.
      *
-     * @param      string $sqlType the SQL type
+     * @param string $sqlType the SQL type
      * @return     Boolean True if the type has a size attribute
      */
     public function hasSize($sqlType)
@@ -1024,7 +1024,7 @@ ALTER TABLE %s ADD
     /**
      * Returns if the RDBMS-specific SQL type has a scale attribute.
      *
-     * @param      string $sqlType the SQL type
+     * @param string $sqlType the SQL type
      * @return     Boolean True if the type has a scale attribute
      */
     public function hasScale($sqlType)
@@ -1034,7 +1034,7 @@ ALTER TABLE %s ADD
 
     /**
      * Quote and escape needed characters in the string for unerlying RDBMS.
-     * @param      string $text
+     * @param string $text
      * @return     string
      */
     public function quote($text)
@@ -1052,7 +1052,7 @@ ALTER TABLE %s ADD
      * The subclasses can implement this using string replacement functions
      * or native DB methods.
      *
-     * @param      string $text Text that needs to be escaped.
+     * @param string $text Text that needs to be escaped.
      * @return     string
      */
     protected function disconnectedEscapeText($text)
@@ -1062,7 +1062,7 @@ ALTER TABLE %s ADD
 
     /**
      * Quotes identifiers used in database SQL.
-     * @param      string $text
+     * @param string $text
      * @return     string Quoted identifier.
      */
     public function quoteIdentifier($text)
@@ -1137,7 +1137,7 @@ ALTER TABLE %s ADD
      * This function is used to set default column values when building
      * SQL.
      *
-     * @param      mixed $tf A Boolean or string representation of Boolean ('y', 'true').
+     * @param mixed $tf A Boolean or string representation of Boolean ('y', 'true').
      * @return     mixed
      */
     public function getBooleanString($b)

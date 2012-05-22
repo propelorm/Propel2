@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Builder\Om;
@@ -13,23 +13,26 @@ namespace Propel\Generator\Builder\Om;
 use Propel\Generator\Model\Inheritance;
 
 /**
- * Generates the empty PHP5 stub object class for use with inheritance in the user object model (OM).
+ * Generates the empty PHP5 stub object class for use with inheritance in the
+ * user object model (OM).
  *
- * This class produces the empty stub class that can be customized with application
- * business logic, custom behavior, etc.
+ * This class produces the empty stub class that can be customized with
+ * application business logic, custom behavior, etc.
  *
- * @author     Hans Lellelid <hans@xmpl.org>
+ * @author Hans Lellelid <hans@xmpl.org>
  */
 class MultiExtendObjectBuilder extends AbstractObjectBuilder
 {
     /**
      * The current child "object" we are operating on.
+     *
      */
     private $child;
 
     /**
      * Returns the name of the current class being built.
-     * @return     string
+     *
+     * @return string
      */
     public function getUnprefixedClassName()
     {
@@ -37,8 +40,9 @@ class MultiExtendObjectBuilder extends AbstractObjectBuilder
     }
 
     /**
-     * Override method to return child package, if specified.
-     * @return     string
+     * Overrides method to return child package, if specified.
+     *
+     * @return string
      */
     public function getPackage()
     {
@@ -46,8 +50,9 @@ class MultiExtendObjectBuilder extends AbstractObjectBuilder
     }
 
     /**
-     * Set the child object that we're operating on currrently.
-     * @param      $child Inheritance
+     * Sets the child object that we're operating on currrently.
+     *
+     * @param Inheritance $child Inheritance
      */
     public function setChild(Inheritance $child)
     {
@@ -56,8 +61,9 @@ class MultiExtendObjectBuilder extends AbstractObjectBuilder
 
     /**
      * Returns the child object we're operating on currently.
-     * @return     Inheritance
-     * @throws     BuildException - if child was not set.
+     *
+     * @return Inheritance
+     * @throws BuildException
      */
     public function getChild()
     {
@@ -70,7 +76,8 @@ class MultiExtendObjectBuilder extends AbstractObjectBuilder
 
     /**
      * Returns classpath to parent class.
-     * @return     string
+     *
+     * @return string
      */
     protected function getParentClasspath()
     {
@@ -83,7 +90,8 @@ class MultiExtendObjectBuilder extends AbstractObjectBuilder
 
     /**
      * Returns classname of parent class.
-     * @return     string
+     *
+     * @return string
      */
     protected function getParentClassName()
     {
@@ -91,8 +99,9 @@ class MultiExtendObjectBuilder extends AbstractObjectBuilder
     }
 
     /**
-     * Gets the file path to the parent class.
-     * @return     string
+     * Returns the file path to the parent class.
+     *
+     * @return string
      */
     protected function getParentClassFilePath()
     {
@@ -101,7 +110,8 @@ class MultiExtendObjectBuilder extends AbstractObjectBuilder
 
     /**
      * Adds class phpdoc comment and openning of class.
-     * @param      string &$script The script will be modified in this method.
+     *
+     * @param string &$script
      */
     protected function addClassOpen(&$script)
     {
@@ -147,10 +157,11 @@ class ".$this->getUnqualifiedClassName()." extends ".$this->getParentClassName()
     /**
      * Specifies the methods that are added as part of the stub object class.
      *
-     * By default there are no methods for the empty stub classes; override this method
-     * if you want to change that behavior.
+     * By default there are no methods for the empty stub classes; override this
+     * method if you want to change that behavior.
      *
-     * @see        ObjectBuilder::addClassBody()
+     * @param string &$script
+     * @see ObjectBuilder::addClassBody()
      */
     protected function addClassBody(&$script)
     {
@@ -176,7 +187,8 @@ class ".$this->getUnqualifiedClassName()." extends ".$this->getParentClassName()
 
     /**
      * Closes class.
-     * @param      string &$script The script will be modified in this method.
+     *
+     * @param string &$script
      */
     protected function addClassClose(&$script)
     {

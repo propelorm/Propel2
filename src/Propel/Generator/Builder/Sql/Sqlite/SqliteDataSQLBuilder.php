@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Builder\Sql\Sqlite;
@@ -15,15 +15,16 @@ use Propel\Generator\Builder\Sql\DataSQLBuilder;
 /**
  * SQLite class for building data dump SQL.
  *
- * @author     Hans Lellelid <hans@xmpl.org>
+ * @author Hans Lellelid <hans@xmpl.org>
  */
 class SqliteDataSQLBuilder extends DataSQLBuilder
 {
-
     /**
-     * Returns string processed by sqlite_udf_encode_binary() to ensure that binary contents will be handled correctly by sqlite.
-     * @param      mixed $blob Blob or string
-     * @return     string encoded text
+     * Returns string processed by sqlite_udf_encode_binary() to ensure that
+     * binary contents will be handled correctly by sqlite.
+     *
+     * @param mixed $blob
+     * @return string
      */
     protected function getBlobSql($blob)
     {
@@ -32,7 +33,6 @@ class SqliteDataSQLBuilder extends DataSQLBuilder
             $blob = $blob->__toString();
         }
 
-        return "'" . sqlite_udf_encode_binary($blob) . "'";
+        return sprintf("'%s'", sqlite_udf_encode_binary($blob));
     }
-
 }

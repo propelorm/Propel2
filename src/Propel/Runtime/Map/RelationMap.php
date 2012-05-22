@@ -65,8 +65,8 @@ class RelationMap
     /**
      * Constructor.
      *
-     * @param      string $name Name of the relation.
-     * @param      string $pluralName Plural Name of the relation.
+     * @param string $name       Name of the relation.
+     * @param string $pluralName Plural Name of the relation.
      *                                Defaults to the Name of the relation concatenated with 's'.
      */
     public function __construct($name)
@@ -102,7 +102,7 @@ class RelationMap
     /**
      * Set the type
      *
-     * @param      int $type The relation type (either self::MANY_TO_ONE, self::ONE_TO_MANY, or self::ONE_TO_ONE)
+     * @param int $type The relation type (either self::MANY_TO_ONE, self::ONE_TO_MANY, or self::ONE_TO_ONE)
      */
     public function setType($type)
     {
@@ -122,7 +122,7 @@ class RelationMap
     /**
      * Set the local table
      *
-     * @param      \Propel\Runtime\Map\TableMap $table The local table for this relationship
+     * @param \Propel\Runtime\Map\TableMap $table The local table for this relationship
      */
     public function setLocalTable(TableMap $table)
     {
@@ -142,7 +142,7 @@ class RelationMap
     /**
      * Set the foreign table
      *
-     * @param      \Propel\Runtime\Map\TableMap $table The foreign table for this relationship
+     * @param \Propel\Runtime\Map\TableMap $table The foreign table for this relationship
      */
     public function setForeignTable($table)
     {
@@ -182,8 +182,8 @@ class RelationMap
     /**
      * Add a column mapping
      *
-     * @param   \Propel\Runtime\Map\ColumnMap $local The local column
-     * @param   \Propel\Runtime\Map\ColumnMap $foreign The foreign column
+     * @param \Propel\Runtime\Map\ColumnMap $local   The local column
+     * @param \Propel\Runtime\Map\ColumnMap $foreign The foreign column
      */
     public function addColumnMapping(ColumnMap $local, ColumnMap $foreign)
     {
@@ -197,7 +197,7 @@ class RelationMap
      *  - If the value is RelationMap::LOCAL_TO_FOREIGN, then the returned array is local => foreign
      *  - If the value is RelationMap::LEFT_TO_RIGHT, then the returned array is left => right
      *
-     * @param     int $direction How the associative array must return columns
+     * @param int $direction How the associative array must return columns
      * @return    array Associative array (local => foreign) of fully qualified column names
      */
     public function getColumnMappings($direction = RelationMap::LOCAL_TO_FOREIGN)
@@ -282,7 +282,7 @@ class RelationMap
     /**
      * Set the onUpdate behavior
      *
-     * @param      string $onUpdate
+     * @param string $onUpdate
      */
     public function setOnUpdate($onUpdate)
     {
@@ -302,7 +302,7 @@ class RelationMap
     /**
      * Set the onDelete behavior
      *
-     * @param      string $onDelete
+     * @param string $onDelete
      */
     public function setOnDelete($onDelete)
     {

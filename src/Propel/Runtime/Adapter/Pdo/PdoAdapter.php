@@ -30,7 +30,7 @@ abstract class PdoAdapter
     /**
      * Build database connection
      *
-     * @param array    $conparams connection parameters
+     * @param array $conparams connection parameters
      *
      * @return Propel\Runtime\Adapter\Pdo\PdoConnection
      */
@@ -95,8 +95,8 @@ abstract class PdoAdapter
      *
      * @see       setCharset()
      *
-     * @param     Propel\Runtime\Connection\ConnectionInterface    $con
-     * @param     array  $settings  An array of settings.
+     * @param Propel\Runtime\Connection\ConnectionInterface $con
+     * @param array                                         $settings An array of settings.
      */
     public function initConnection(ConnectionInterface $con, array $settings)
     {
@@ -121,8 +121,8 @@ abstract class PdoAdapter
      *
      * @see       initConnection()
      *
-     * @param     Propel\Runtime\Connection\ConnectionInterface $con
-     * @param     string  $charset  The $string charset encoding.
+     * @param Propel\Runtime\Connection\ConnectionInterface $con
+     * @param string                                        $charset The $string charset encoding.
      */
     public function setCharset(ConnectionInterface $con, $charset)
     {
@@ -132,7 +132,7 @@ abstract class PdoAdapter
     /**
      * This method is used to ignore case.
      *
-     * @param     string  $in  The string to transform to upper case.
+     * @param string $in The string to transform to upper case.
      * @return    string  The upper case string.
      */
     public function toUpperCase($in)
@@ -143,7 +143,7 @@ abstract class PdoAdapter
     /**
      * This method is used to ignore case.
      *
-     * @param     string  $in The string whose case to ignore.
+     * @param string $in The string whose case to ignore.
      * @return    string  The string in a case that can be ignored.
      */
     public function ignoreCase($in)
@@ -157,7 +157,7 @@ abstract class PdoAdapter
      * (Interbase for example) does not use the same SQL in ORDER BY
      * and other clauses.
      *
-     * @param     string  $in  The string whose case to ignore.
+     * @param string $in The string whose case to ignore.
      * @return    string  The string in a case that can be ignored.
      */
     public function ignoreCaseInOrderBy($in)
@@ -179,7 +179,7 @@ abstract class PdoAdapter
 
     /**
      * Quotes database objec identifiers (table names, col names, sequences, etc.).
-     * @param     string  $text  The identifier to quote.
+     * @param string $text The identifier to quote.
      * @return    string  The quoted identifier.
      */
     public function quoteIdentifier($text)
@@ -193,7 +193,7 @@ abstract class PdoAdapter
      * separate schema names from table names. Adapters for RDBMs which support
      * schemas have to implement that in the platform-specific way.
      *
-     * @param     string  $table  The table name to quo
+     * @param string $table The table name to quo
      * @return    string  The quoted table name
      **/
     public function quoteIdentifierTable($table)
@@ -234,8 +234,8 @@ abstract class PdoAdapter
     /**
      * Gets the generated ID (either last ID for autoincrement or next sequence ID).
      *
-     * @param     Propel\Runtime\Connection\ConnectionInterface $con
-     * @param     string  $name
+     * @param Propel\Runtime\Connection\ConnectionInterface $con
+     * @param string                                        $name
      *
      * @return    mixed
      */
@@ -247,8 +247,8 @@ abstract class PdoAdapter
     /**
      * Formats a temporal value before binding, given a ColumnMap object
      *
-     * @param     mixed      $value  The temporal value
-     * @param     Propel\Runtime\Map\ColumnMap  $cMap
+     * @param mixed                        $value The temporal value
+     * @param Propel\Runtime\Map\ColumnMap $cMap
      *
      * @return    string  The formatted temporal value
      */
@@ -322,10 +322,10 @@ abstract class PdoAdapter
     /**
      * Allows manipulation of the query string before StatementPdo is instantiated.
      *
-     * @param     string       $sql  The sql statement
-     * @param     array        $params  array('column' => ..., 'table' => ..., 'value' => ...)
-     * @param     Propel\Runtime\Query\Criteria     $values
-     * @param     Propel\Runtime\Map\DatabaseMap  $dbMap
+     * @param string                         $sql    The sql statement
+     * @param array                          $params array('column' => ..., 'table' => ..., 'value' => ...)
+     * @param Propel\Runtime\Query\Criteria  $values
+     * @param Propel\Runtime\Map\DatabaseMap $dbMap
      */
     public function cleanupSQL(&$sql, array &$params, Criteria $values, DatabaseMap $dbMap)
     {
@@ -334,8 +334,8 @@ abstract class PdoAdapter
     /**
      * Returns the "DELETE FROM <table> [AS <alias>]" part of DELETE query.
      *
-     * @param     Propel\Runtime\Query\Criteria  $criteria
-     * @param     string    $tableName
+     * @param Propel\Runtime\Query\Criteria $criteria
+     * @param string                        $tableName
      *
      * @return    string
      */
@@ -366,9 +366,9 @@ abstract class PdoAdapter
      * taking into account select columns and 'as' columns (i.e. columns aliases)
      * Move from BasePeer to PdoAdapter and turn from static to non static
      *
-     * @param     Propel\Runtime\Query\Criteria  $criteria
-     * @param     array     $fromClause
-     * @param     Boolean   $aliasAll
+     * @param Propel\Runtime\Query\Criteria $criteria
+     * @param array                         $fromClause
+     * @param Boolean                       $aliasAll
      *
      * @return    string
      */
@@ -441,7 +441,7 @@ abstract class PdoAdapter
      *
      * @see http://propel.phpdb.org/trac/ticket/795
      *
-     * @param     Propel\Runtime\Query\Criteria  $criteria
+     * @param Propel\Runtime\Query\Criteria $criteria
      * @return    Propel\Runtime\Query\Criteria  The input, with Select columns replaced by aliases
      */
     public function turnSelectColumnsToAliases(Criteria $criteria)
@@ -490,9 +490,9 @@ abstract class PdoAdapter
      * $stmt->execute();
      * </code>
      *
-     * @param     Propel\Runtime\Connection\StatementInterface $stmt
-     * @param     array         $params  array('column' => ..., 'table' => ..., 'value' => ...)
-     * @param     Propel\Runtime\Map\DatabaseMap   $dbMap
+     * @param Propel\Runtime\Connection\StatementInterface $stmt
+     * @param array                                        $params array('column' => ..., 'table' => ..., 'value' => ...)
+     * @param Propel\Runtime\Map\DatabaseMap               $dbMap
      */
     public function bindValues(StatementInterface $stmt, array $params, DatabaseMap $dbMap)
     {
@@ -520,11 +520,11 @@ abstract class PdoAdapter
      * Binds a value to a positioned parameted in a statement,
      * given a ColumnMap object to infer the binding type.
      *
-     * @param     Propel\Runtime\Connection\StatementInterface $stmt  The statement to bind
-     * @param     string        $parameter  Parameter identifier
-     * @param     mixed         $value  The value to bind
-     * @param     Propel\Runtime\Map\ColumnMap     $cMap  The ColumnMap of the column to bind
-     * @param     null|integer  $position  The position of the parameter to bind
+     * @param Propel\Runtime\Connection\StatementInterface $stmt      The statement to bind
+     * @param string                                       $parameter Parameter identifier
+     * @param mixed                                        $value     The value to bind
+     * @param Propel\Runtime\Map\ColumnMap                 $cMap      The ColumnMap of the column to bind
+     * @param null|integer                                 $position  The position of the parameter to bind
      *
      * @return    Boolean
      */

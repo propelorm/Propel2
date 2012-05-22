@@ -260,8 +260,8 @@ abstract class AbstractPeerBuilder extends AbstractOMBuilder
      * class is replacing (because of name conflict more than actual functionality overlap).
      * When the new builder model is finished this method will be removed.
      *
-     * @param      Column $col The column we need a name for.
-     * @param      string $phpName The PHP Name of the peer class. The 'Peer' is appended automatically.
+     * @param Column $col     The column we need a name for.
+     * @param string $phpName The PHP Name of the peer class. The 'Peer' is appended automatically.
      *
      * @return     string If $phpName is provided, then will return {$phpName}Peer::COLUMN_NAME; if not, just COLUMN_NAME.
      * @deprecated

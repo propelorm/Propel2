@@ -30,8 +30,8 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
      *
      * @see       AdapterInterface::setCharset()
      *
-     * @param     ConnectionInterface $con
-     * @param     string  $charset
+     * @param ConnectionInterface $con
+     * @param string              $charset
      */
     public function setCharset(ConnectionInterface $con, $charset)
     {
@@ -40,8 +40,8 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
     /**
      * Returns SQL which concatenates the second string to the first.
      *
-     * @param     string  $s1  String to concatenate.
-     * @param     string  $s2  String to append.
+     * @param string $s1 String to concatenate.
+     * @param string $s2 String to append.
      *
      * @return    string
      */
@@ -53,9 +53,9 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
     /**
      * Returns SQL which extracts a substring.
      *
-     * @param     string   $s  String to extract from.
-     * @param     integer  $pos  Offset to start from.
-     * @param     integer  $len  Number of characters to extract.
+     * @param string  $s   String to extract from.
+     * @param integer $pos Offset to start from.
+     * @param integer $len Number of characters to extract.
      *
      * @return    string
      */
@@ -67,7 +67,7 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
     /**
      * Returns SQL which calculates the length (in chars) of a string.
      *
-     * @param     string  $s  String to calculate length of.
+     * @param string $s String to calculate length of.
      * @return    string
      */
     public function strLength($s)
@@ -78,7 +78,7 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
     /**
      * @see       AdapterInterface::quoteIdentifier()
      *
-     * @param     string  $text
+     * @param string $text
      * @return    string
      */
     public function quoteIdentifier($text)
@@ -89,7 +89,7 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
     /**
      * @see       AdapterInterface::quoteIdentifierTable()
      *
-     * @param     string  $table
+     * @param string $table
      * @return    string
      */
     public function quoteIdentifierTable($table)
@@ -101,7 +101,7 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
     /**
      * @see       AdapterInterface::random()
      *
-     * @param     string  $seed
+     * @param string $seed
      * @return    string
      */
     public function random($seed = null)
@@ -118,9 +118,9 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
      * @see       AdapterInterface::applyLimit()
      * @author    Benjamin Runnels <kraven@kraven.org>
      *
-     * @param     string   $sql
-     * @param     integer  $offset
-     * @param     integer  $limit
+     * @param string  $sql
+     * @param integer $offset
+     * @param integer $limit
      *
      * @return    void
      */
@@ -250,10 +250,10 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
     /**
      * @see       parent::cleanupSQL()
      *
-     * @param     string       $sql
-     * @param     array        $params
-     * @param     Criteria     $values
-     * @param     DatabaseMap  $dbMap
+     * @param string      $sql
+     * @param array       $params
+     * @param Criteria    $values
+     * @param DatabaseMap $dbMap
      */
     public function cleanupSQL(&$sql, array &$params, Criteria $values, DatabaseMap $dbMap)
     {

@@ -364,12 +364,14 @@ class ForeignKey extends MappingModel
         if (is_array($ref1)) {
             $this->localColumns[] = $ref1['local'] ? $ref1['local'] : null;
             $this->foreignColumns[] = $ref1['foreign'] ? $ref1['foreign'] : null;
+
             return;
         }
 
         if (is_string($ref1)) {
             $this->localColumns[] = $ref1;
             $this->foreignColumns[] = is_string($ref2) ? $ref2 : null;
+
             return;
         }
 

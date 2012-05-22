@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Builder\Om;
@@ -15,22 +15,28 @@ use Propel\Generator\Model\PropelTypes;
 /**
  * Generates a PHP5 base Query class for user object model (OM).
  *
- * This class produces the base query class (e.g. BaseBookQuery) which contains all
- * the custom-built query methods.
+ * This class produces the base query class (e.g. BaseBookQuery) which contains
+ * all the custom-built query methods.
  *
- * @author     Francois Zaninotto
+ * @author Francois Zaninotto
  */
 class QueryBuilder extends AbstractOMBuilder
 {
     /**
-     * Gets the package for the [base] object classes.
-     * @return     string
+     * Returns the package for the [base] object classes.
+     *
+     * @return string
      */
     public function getPackage()
     {
         return parent::getPackage() . '.Base';
     }
 
+    /**
+     * Returns the namepace for the query object classes.
+     *
+     * @return string
+     */
     public function getNamespace()
     {
         if ($namespace = parent::getNamespace()) {
@@ -383,10 +389,10 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
         $script .= "
      * </code>
      *
-     * @param     " . $pkType . " \$key Primary key to use for the query
-     * @param     ConnectionInterface \$con an optional connection object
+     * @param " . $pkType . " \$key Primary key to use for the query
+     * @param ConnectionInterface \$con an optional connection object
      *
-     * @return    $class|array|mixed the result, formatted by the current formatter
+     * @return $class|array|mixed the result, formatted by the current formatter
      */
     public function findPk(\$key, \$con = null)
     {
@@ -950,15 +956,15 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
      *";
         if ($fk->isComposite()) {
             $script .= "
-     * @param     $fkPhpName $objectName The related object to use as filter";
+     * @param $fkPhpName $objectName The related object to use as filter";
         } else {
             $script .= "
-     * @param     $fkPhpName|Collection $objectName The related object(s) to use as filter";
+     * @param $fkPhpName|Collection $objectName The related object(s) to use as filter";
         }
         $script .= "
-     * @param     string \$comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     * @param string \$comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return    $queryClass The current query, for fluid interface
+     * @return $queryClass The current query, for fluid interface
      */
     public function filterBy$relationName($objectName, \$comparison = null)
     {
@@ -1021,10 +1027,10 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     /**
      * Filter the query by a related $fkPhpName object
      *
-     * @param     $fkPhpName $objectName  the related object to use as filter
-     * @param     string \$comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     * @param $fkPhpName $objectName  the related object to use as filter
+     * @param string \$comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return    $queryClass The current query, for fluid interface
+     * @return $queryClass The current query, for fluid interface
      */
     public function filterBy$relationName($objectName, \$comparison = null)
     {
@@ -1199,10 +1205,10 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
      * Filter the query by a related $fkPhpName object
      * using the $crossTableName table as cross reference
      *
-     * @param     $fkPhpName $objectName the related object to use as filter
-     * @param     string \$comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     * @param $fkPhpName $objectName the related object to use as filter
+     * @param string \$comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return    $queryClass The current query, for fluid interface
+     * @return $queryClass The current query, for fluid interface
      */
     public function filterBy{$relName}($objectName, \$comparison = Criteria::EQUAL)
     {
@@ -1227,7 +1233,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     /**
      * Exclude object from result
      *
-     * @param     $class $objectName Object to remove from the list of results
+     * @param   $class $objectName Object to remove from the list of results
      *
      * @return    " . $this->getQueryClassName() . " The current query, for fluid interface
      */

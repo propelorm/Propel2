@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license     MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Model\Diff;
@@ -16,7 +16,6 @@ use Propel\Generator\Model\Database;
  * Service class for comparing Database objects
  * Heavily inspired by Doctrine2's Migrations
  * (see http://github.com/doctrine/dbal/tree/master/lib/Doctrine/DBAL/Schema/)
- *
  */
 class DatabaseComparator
 {
@@ -35,7 +34,7 @@ class DatabaseComparator
     }
 
     /**
-     * Setter for the fromDatabase property
+     * Sets the fromDatabase property.
      *
      * @param Database $fromDatabase
      */
@@ -45,7 +44,7 @@ class DatabaseComparator
     }
 
     /**
-     * Getter for the fromDatabase property
+     * Returns the fromDatabase property.
      *
      * @return Database
      */
@@ -55,7 +54,7 @@ class DatabaseComparator
     }
 
     /**
-     * Setter for the toDatabase property
+     * Sets the toDatabase property.
      *
      * @param Database $toDatabase
      */
@@ -65,7 +64,7 @@ class DatabaseComparator
     }
 
     /**
-     * Getter for the toDatabase property
+     * Returns the toDatabase property.
      *
      * @return Database
      */
@@ -75,14 +74,12 @@ class DatabaseComparator
     }
 
     /**
-     * Compute and return the difference between two database objects
+     * Returns the computed difference between two database objects.
      *
      * @param Database $fromDatabase
      * @param Database $toDatabase
-     * @param Boolean $caseInsensitive Whether the comparison is case insensitive.
-     *                                  False by default.
-     *
-     * @return DatabaseDiff|boolean return false if the two databases are similar
+     * @param Boolean  $caseInsensitive
+     * @return DatabaseDiff|Boolean
      */
     static public function computeDiff(Database $fromDatabase, Database $toDatabase, $caseInsensitive = false)
     {
@@ -97,14 +94,13 @@ class DatabaseComparator
     }
 
     /**
-     * Compare the tables of the fromDatabase and the toDatabase,
-     * and modifies the inner databaseDiff if necessary.
      * Returns the number of differences.
      *
-     * @param  boolean $caseInsensitive Whether the comparison is case insensitive.
-     *                                  False by default.
+     * Compares the tables of the fromDatabase and the toDatabase, and modifies
+     * the inner databaseDiff if necessary.
      *
-     * @return integer The number of table differences
+     * @param Boolean $caseInsensitive
+     * @return integer
      */
     public function compareTables($caseInsensitive = false)
     {

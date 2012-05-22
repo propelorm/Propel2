@@ -10,7 +10,6 @@
 
 namespace Propel\Generator\Platform;
 
-use Propel\Generator\Model\Column;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\Domain;
 use Propel\Generator\Model\ForeignKey;
@@ -266,8 +265,8 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
     /**
      * Generate oracle block storage
      *
-     * @param     Table|Index $object object with vendor parameters
-     * @param     bool        $isPrimaryKey is a primary key vendor part
+     * @param Table|Index $object       object with vendor parameters
+     * @param bool        $isPrimaryKey is a primary key vendor part
      *
      * @return    string      oracle vendor sql part
      */
@@ -325,7 +324,7 @@ USING INDEX
     /**
      * Builds the DDL SQL to add an Index.
      *
-     * @param      Index $index
+     * @param Index $index
      * @return     string
      */
     public function getAddIndexDDL(Index $index)

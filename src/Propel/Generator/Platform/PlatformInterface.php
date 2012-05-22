@@ -40,7 +40,7 @@ interface PlatformInterface
 
     /**
      * Sets a database connection to use (for quoting, etc.).
-     * @param      PDO $con The database connection to use in this Platform class.
+     * @param PDO $con The database connection to use in this Platform class.
      */
     public function setConnection(\PDO $con = null);
 
@@ -53,7 +53,7 @@ interface PlatformInterface
     /**
      * Sets the GeneratorConfigInterface which contains any generator build properties.
      *
-     * @param      GeneratorConfigInterface $config
+     * @param GeneratorConfigInterface $config
      */
     public function setGeneratorConfig(GeneratorConfigInterface $config);
 
@@ -81,7 +81,7 @@ interface PlatformInterface
     /**
      * Returns the db specific domain for a propelType.
      *
-     * @param      string $propelType the Propel type name.
+     * @param string $propelType the Propel type name.
      * @return     Domain The db specific domain.
      */
     public function getDomainForType($propelType);
@@ -117,7 +117,7 @@ interface PlatformInterface
      * // '"foo","bar"'
      * </code>
      * @param      array Column[] or string[]
-     * @param      string $delim The delimiter to use in separating the column names.
+     * @param string $delim The delimiter to use in separating the column names.
      *
      * @return     string
      */
@@ -132,7 +132,7 @@ interface PlatformInterface
     /**
      * Returns if the RDBMS-specific SQL type has a size attribute.
      *
-     * @param      string $sqlType the SQL type
+     * @param string $sqlType the SQL type
      * @return     boolean True if the type has a size attribute
      */
     public function hasSize($sqlType);
@@ -140,21 +140,21 @@ interface PlatformInterface
     /**
      * Returns if the RDBMS-specific SQL type has a scale attribute.
      *
-     * @param      string $sqlType the SQL type
+     * @param string $sqlType the SQL type
      * @return     boolean True if the type has a scale attribute
      */
     public function hasScale($sqlType);
 
     /**
      * Quote and escape needed characters in the string for unerlying RDBMS.
-     * @param      string $text
+     * @param string $text
      * @return     string
      */
     public function quote($text);
 
     /**
      * Quotes identifiers used in database SQL.
-     * @param      string $text
+     * @param string $text
      * @return     string Quoted identifier.
      */
     public function quoteIdentifier($text);
@@ -198,7 +198,7 @@ interface PlatformInterface
      * This function is used to set default column values when building
      * SQL.
      *
-     * @param      mixed $tf A boolean or string representation of boolean ('y', 'true').
+     * @param mixed $tf A boolean or string representation of boolean ('y', 'true').
      * @return     mixed
      */
     public function getBooleanString($tf);

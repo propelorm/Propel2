@@ -31,7 +31,7 @@ interface Persistent
     /**
      * Sets the PrimaryKey for the object.
      *
-     * @param      mixed $primaryKey The new PrimaryKey object or string (result of PrimaryKey.toString()).
+     * @param mixed $primaryKey The new PrimaryKey object or string (result of PrimaryKey.toString()).
      * @return     void
      * @throws     Exception, This method might throw an exceptions
      */
@@ -49,7 +49,7 @@ interface Persistent
     /**
      * Has specified column been modified?
      *
-     * @param      string $col
+     * @param string $col
      * @return     boolean True if $col has been modified.
      */
     public function isColumnModified($col);
@@ -67,7 +67,7 @@ interface Persistent
      * Setter for the isNew attribute.  This method will be called
      * by Propel-generated children and Peers.
      *
-     * @param      boolean $b the state of the object.
+     * @param boolean $b the state of the object.
      */
     public function setNew($b);
 
@@ -86,14 +86,14 @@ interface Persistent
 
     /**
      * Specify whether this object has been deleted.
-     * @param      boolean $b The deleted state of this object.
+     * @param boolean $b The deleted state of this object.
      * @return     void
      */
     public function setDeleted($b);
 
     /**
      * Deletes the object.
-     * @param      ConnectionInterface $con
+     * @param ConnectionInterface $con
      * @return     void
      * @throws     Exception
      */
@@ -101,7 +101,7 @@ interface Persistent
 
     /**
      * Saves the object.
-     * @param      ConnectionInterface $con
+     * @param ConnectionInterface $con
      * @return     void
      * @throws     Exception
      */

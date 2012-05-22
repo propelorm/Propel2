@@ -95,6 +95,7 @@ class ArrayToPhpConverter
             }
             unset($c['log']);
         }
+
         return $conf;
     }
 

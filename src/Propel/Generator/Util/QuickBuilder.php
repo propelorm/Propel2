@@ -18,7 +18,6 @@ use Propel\Runtime\Propel;
 use Propel\Runtime\Adapter\Pdo\PdoConnection;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\ConnectionWrapper;
-use Propel\Runtime\Connection\ConnectionManagerSingle;
 use Propel\Runtime\Connection\StatementInterface;
 
 use \PDO;

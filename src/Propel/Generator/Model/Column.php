@@ -235,7 +235,7 @@ class Column extends MappingModel
      * attribute value in the column, parent table or parent database.
      * Finally, it defaults to the default visibility (public).
      *
-     * @param string $attribute Local column attribute
+     * @param string $attribute       Local column attribute
      * @param string $parentAttribute Parent (table or database) attribute
      * @return string
      */
