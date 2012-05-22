@@ -365,7 +365,7 @@ class TableDiff
     /**
      * Whether the primary key was modified
      *
-     * @return boolean
+     * @return Boolean
      */
     public function hasModifiedPk()
     {

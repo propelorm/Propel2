@@ -127,7 +127,7 @@ class ModelCriteria extends Criteria
      * Sets the alias for the model in this query
      *
      * @param string  $modelAlias    The model alias
-     * @param boolean $useAliasInSQL Whether to use the alias in the SQL code (false by default)
+     * @param Boolean $useAliasInSQL Whether to use the alias in the SQL code (false by default)
      *
      * @return ModelCriteria The current object, for fluid interface
      */
@@ -1036,7 +1036,7 @@ class ModelCriteria extends Criteria
      *
      * @param Criteria $subQueryCriteria         Criteria to build the subquery from
      * @param string   $alias                    alias for the subQuery
-     * @param boolean  $addAliasAndSelectColumns Set to false if you want to manually add the aliased select columns
+     * @param Boolean  $addAliasAndSelectColumns Set to false if you want to manually add the aliased select columns
      *
      * @return ModelCriteria The current object, for fluid interface
      */
@@ -1140,7 +1140,7 @@ class ModelCriteria extends Criteria
      * even though they modify it. If the query must be reused after termination,
      * you must call this method prior to temrination.
      *
-     * @param boolean $isKeepQuery
+     * @param Boolean $isKeepQuery
      *
      * @return     ModelCriteria The current object, for fluid interface
      */
@@ -1676,7 +1676,7 @@ class ModelCriteria extends Criteria
      *
      * @param array               $values               The associatiove array of columns and values for the update
      * @param ConnectionInterface $con                  The connection object used by the query
-     * @param boolean             $forceIndividualSaves If false (default), the resulting call is a BasePeer::doUpdate(), ortherwise it is a series of save() calls on all the found objects
+     * @param Boolean             $forceIndividualSaves If false (default), the resulting call is a BasePeer::doUpdate(), ortherwise it is a series of save() calls on all the found objects
      */
     protected function basePreUpdate(&$values, ConnectionInterface $con, $forceIndividualSaves = false)
     {
@@ -1710,7 +1710,7 @@ class ModelCriteria extends Criteria
      *
      * @param array               $values               Associative array of keys and values to replace
      * @param ConnectionInterface $con                  an optional connection object
-     * @param boolean             $forceIndividualSaves If false (default), the resulting call is a BasePeer::doUpdate(), ortherwise it is a series of save() calls on all the found objects
+     * @param Boolean             $forceIndividualSaves If false (default), the resulting call is a BasePeer::doUpdate(), ortherwise it is a series of save() calls on all the found objects
      *
      * @return     Integer Number of updated rows
      */
@@ -1754,7 +1754,7 @@ class ModelCriteria extends Criteria
      *
      * @param array               $values               Associative array of keys and values to replace
      * @param ConnectionInterface $con                  a connection object
-     * @param boolean             $forceIndividualSaves If false (default), the resulting call is a BasePeer::doUpdate(), ortherwise it is a series of save() calls on all the found objects
+     * @param Boolean             $forceIndividualSaves If false (default), the resulting call is a BasePeer::doUpdate(), ortherwise it is a series of save() calls on all the found objects
      *
      * @return     Integer Number of updated rows
      */
@@ -1892,7 +1892,7 @@ class ModelCriteria extends Criteria
      *
      * @param string $clause SQL clause to inspect (modified by the method)
      *
-     * @return boolean Whether the method managed to find and replace at least one column name
+     * @return Boolean Whether the method managed to find and replace at least one column name
      */
     protected function replaceNames(&$clause)
     {

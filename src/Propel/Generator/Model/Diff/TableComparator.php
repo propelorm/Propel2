@@ -76,7 +76,7 @@ class TableComparator
      *
      * @param Column  $fromTable
      * @param Column  $toTable
-     * @param boolean $caseInsensitive
+     * @param Boolean $caseInsensitive
      * @return TableDiff|Boolean
      */
     static public function computeDiff(Table $fromTable, Table $toTable, $caseInsensitive = false)

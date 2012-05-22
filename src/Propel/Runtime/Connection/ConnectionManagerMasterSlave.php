@@ -43,7 +43,7 @@ class ConnectionManagerMasterSlave implements ConnectionManagerInterface
     protected $readConnection;
 
     /**
-     * @var boolean Whether a call to getReadConnection() alsways returns a write connection.
+     * @var Boolean Whether a call to getReadConnection() alsways returns a write connection.
      */
     protected $isForceMasterConnection = false;
 
@@ -76,7 +76,7 @@ class ConnectionManagerMasterSlave implements ConnectionManagerInterface
     /**
      * For replication, set whether to always force the use of a master connection.
      *
-     * @param boolean $isForceMasterConnection
+     * @param Boolean $isForceMasterConnection
      */
     public function setForceMasterConnection($isForceMasterConnection)
     {

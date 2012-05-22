@@ -39,7 +39,7 @@ class PhpParser
      * Parser constructor
      *
      * @param string  $code     PHP code to parse
-     * @param boolean $isAddPhp Whether the supplied code needs a supplementary '<?php '
+     * @param Boolean $isAddPhp Whether the supplied code needs a supplementary '<?php '
      *                          to be seen as code by the tokenizer.
      */
     public function __construct($code, $isAddPhp = false)

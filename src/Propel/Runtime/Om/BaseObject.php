@@ -114,7 +114,7 @@ abstract class BaseObject
      * Setter for the isNew attribute.  This method will be called
      * by Propel-generated children and Peers.
      *
-     * @param boolean $b the state of the object.
+     * @param Boolean $b the state of the object.
      */
     public function setNew($b)
     {
@@ -132,7 +132,7 @@ abstract class BaseObject
 
     /**
      * Specify whether this object has been deleted.
-     * @param boolean $b The deleted state of this object.
+     * @param Boolean $b The deleted state of this object.
      * @return     void
      */
     public function setDeleted($b)
@@ -162,7 +162,7 @@ abstract class BaseObject
     /**
      * Code to be run before inserting to database
      * @param ConnectionInterface $con
-     * @return boolean
+     * @return Boolean
      */
     public function preInsert(ConnectionInterface $con = null)
     {
@@ -181,7 +181,7 @@ abstract class BaseObject
     /**
      * Code to be run before updating the object in database
      * @param ConnectionInterface $con
-     * @return boolean
+     * @return Boolean
      */
     public function preUpdate(ConnectionInterface $con = null)
     {
@@ -200,7 +200,7 @@ abstract class BaseObject
     /**
      * Code to be run before deleting the object in database
      * @param ConnectionInterface $con
-     * @return boolean
+     * @return Boolean
      */
     public function preDelete(ConnectionInterface $con = null)
     {
@@ -369,7 +369,7 @@ abstract class BaseObject
      * </code>
      *
      * @param mixed   $parser                 A AbstractParser instance, or a format name ('XML', 'YAML', 'JSON', 'CSV')
-     * @param boolean $includeLazyLoadColumns (optional) Whether to include lazy load(ed) columns. Defaults to TRUE.
+     * @param Boolean $includeLazyLoadColumns (optional) Whether to include lazy load(ed) columns. Defaults to TRUE.
      * @return    string                          The exported data
      */
     public function exportTo($parser, $includeLazyLoadColumns = true)

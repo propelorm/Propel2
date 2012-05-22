@@ -67,7 +67,7 @@ interface Persistent
      * Setter for the isNew attribute.  This method will be called
      * by Propel-generated children and Peers.
      *
-     * @param boolean $b the state of the object.
+     * @param Boolean $b the state of the object.
      */
     public function setNew($b);
 
@@ -86,7 +86,7 @@ interface Persistent
 
     /**
      * Specify whether this object has been deleted.
-     * @param boolean $b The deleted state of this object.
+     * @param Boolean $b The deleted state of this object.
      * @return     void
      */
     public function setDeleted($b);

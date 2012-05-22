@@ -128,7 +128,7 @@ class StatementWrapper implements StatementInterface
      * has unfetched rows. If your database driver suffers from this limitation,
      * the problem may manifest itself in an out-of-sequence error.
      *
-     * @return boolean              Returns TRUE on success or FALSE on failure.
+     * @return Boolean              Returns TRUE on success or FALSE on failure.
      */
     public function closeCursor()
     {

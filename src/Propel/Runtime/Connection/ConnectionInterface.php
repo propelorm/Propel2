@@ -38,7 +38,7 @@ interface ConnectionInterface
      * Calling Conneciton::rollBack() will roll back all changes to the database
      * and return the connection to autocommit mode.
      *
-     * @return boolean TRUE on success or FALSE on failure.
+     * @return Boolean TRUE on success or FALSE on failure.
      */
     function beginTransaction();
 
@@ -48,7 +48,7 @@ interface ConnectionInterface
      * commit() returns the database connection to autocommit mode until the
      * next call to connection::beginTransaction() starts a new transaction.
      *
-     * @return boolean TRUE on success or FALSE on failure.
+     * @return Boolean TRUE on success or FALSE on failure.
      */
     function commit();
 

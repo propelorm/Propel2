@@ -173,19 +173,19 @@ interface PlatformInterface
 
     /**
      * Whether RDBMS supports native schemas for table layout.
-     * @return boolean
+     * @return Boolean
      */
     public function supportsSchemas();
 
     /**
      * Whether RDBMS supports migrations.
-     * @return boolean
+     * @return Boolean
      */
     public function supportsMigrations();
 
     /**
      * Wether RDBMS supports VARCHAR without explicit size
-     * @return boolean
+     * @return Boolean
      */
     public function supportsVarcharWithoutSize();
 

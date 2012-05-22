@@ -1401,7 +1401,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     /**
      * Checks whether any registered behavior on that table has a modifier for a hook
      * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
-     * @return boolean
+     * @return Boolean
      */
     public function hasBehaviorModifier($hookName, $modifier = null)
     {

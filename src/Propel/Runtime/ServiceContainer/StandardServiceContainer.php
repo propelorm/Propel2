@@ -401,7 +401,7 @@ class StandardServiceContainer implements ServiceContainerInterface
     }
 
     /**
-     * @return boolean
+     * @return Boolean
      */
     public function hasLogger($name = 'defaultLogger')
     {

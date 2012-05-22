@@ -308,7 +308,7 @@ class Propel
     /**
      * Disable instance pooling.
      *
-     * @return boolean true if the method changed the instance pooling state,
+     * @return Boolean true if the method changed the instance pooling state,
      *                 false if it was already disabled
      */
     static public function disableInstancePooling()
@@ -324,7 +324,7 @@ class Propel
     /**
      * Enable instance pooling (enabled by default).
      *
-     * @return boolean true if the method changed the instance pooling state,
+     * @return Boolean true if the method changed the instance pooling state,
      *                 false if it was already enabled
      */
     static public function enableInstancePooling()

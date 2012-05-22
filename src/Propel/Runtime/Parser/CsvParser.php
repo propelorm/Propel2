@@ -36,8 +36,8 @@ class CsvParser extends AbstractParser
      * Converts data from an associative array to CSV.
      *
      * @param array   $array          Source data to convert
-     * @param boolean $isList         Whether the input data contains more than one row
-     * @param boolean $includeHeading Whether the output should contain a heading line
+     * @param Boolean $isList         Whether the input data contains more than one row
+     * @param Boolean $includeHeading Whether the output should contain a heading line
      *
      * @return string  Converted data, as a CSV string
      */
@@ -132,7 +132,7 @@ class CsvParser extends AbstractParser
      * Returns true if input contains quotechar, delimiter or any of the characters in lineTerminator
      *
      * @param string $input A single value to be checked for special characters
-     * @return boolean    True if contains any special characters
+     * @return Boolean    True if contains any special characters
      */
     protected function containsSpecialChars($input)
     {
@@ -161,8 +161,8 @@ class CsvParser extends AbstractParser
      * Alias for CsvParser::fromArray()
      *
      * @param array   $array          Source data to convert
-     * @param boolean $isList         Whether the input data contains more than one row
-     * @param boolean $includeHeading Whether the output should contain a heading line
+     * @param Boolean $isList         Whether the input data contains more than one row
+     * @param Boolean $includeHeading Whether the output should contain a heading line
      *
      * @return string  Converted data, as a CSV string
      */
@@ -175,8 +175,8 @@ class CsvParser extends AbstractParser
      * Converts data from CSV to an associative array.
      *
      * @param string  $data           Source data to convert, as a CSV string
-     * @param boolean $isList         Whether the input data contains more than one row
-     * @param boolean $includeHeading Whether the input contains a heading line
+     * @param Boolean $isList         Whether the input data contains more than one row
+     * @param Boolean $includeHeading Whether the input contains a heading line
      *
      * @return array   Converted data
      */
@@ -294,8 +294,8 @@ class CsvParser extends AbstractParser
      * Alias for CsvParser::toArray()
      *
      * @param string  $data           Source data to convert, as a CSV string
-     * @param boolean $isList         Whether the input data contains more than one row
-     * @param boolean $includeHeading Whether the input contains a heading line
+     * @param Boolean $isList         Whether the input data contains more than one row
+     * @param Boolean $includeHeading Whether the input contains a heading line
      *
      * @return array   Converted data
      */

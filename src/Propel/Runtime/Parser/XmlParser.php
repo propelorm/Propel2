@@ -93,7 +93,7 @@ class XmlParser extends AbstractParser
       * @param  array $array
      * @param DOMElement $rootElement
      * @param string     $charset
-     * @param boolean    $removeNumbersFromKeys
+     * @param Boolean    $removeNumbersFromKeys
      *
      * @return DOMElement
      */
@@ -193,7 +193,7 @@ class XmlParser extends AbstractParser
 
     /**
      * @param DOMNode $node
-     * @return boolean
+     * @return Boolean
      */
     protected function hasOnlyTextNodes(\DOMNode $node)
     {
