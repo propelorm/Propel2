@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Runtime\Util;
@@ -29,7 +29,7 @@ namespace Propel\Runtime\Util;
  *   ->_endif();        // returns $c
  * @see Criteria
  *
- * @author     Francois Zaninotto
+ * @author Francois Zaninotto
  */
 class PropelConditionalProxy
 {
@@ -63,7 +63,7 @@ class PropelConditionalProxy
      *
      * @param Boolean $cond
      *
-     * @return     PropelConditionalProxy
+     * @return PropelConditionalProxy
      */
     public function _if($cond)
     {
@@ -73,9 +73,9 @@ class PropelConditionalProxy
     /**
      * Allows for conditional statements in a fluid interface.
      *
-     * @param bool $cond ignored
+     * @param Boolean $cond ignored
      *
-     * @return     PropelConditionalProxy
+     * @return PropelConditionalProxy
      */
     public function _elseif($cond)
     {
@@ -85,7 +85,7 @@ class PropelConditionalProxy
     /**
      * Allows for conditional statements in a fluid interface.
      *
-     * @return     PropelConditionalProxy
+     * @return PropelConditionalProxy
      */
     public function _else()
     {
@@ -96,7 +96,7 @@ class PropelConditionalProxy
      * Returns the parent object
      * Allows for conditional statements in a fluid interface.
      *
-     * @return     PropelConditionalProxy|Criteria
+     * @return PropelConditionalProxy|Criteria
      */
     public function _endif()
     {

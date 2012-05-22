@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Runtime\Formatter;
@@ -17,7 +17,7 @@ use Propel\Runtime\Exception\PropelException;
  * statement formatter for Propel query
  * format() returns a PDO statement
  *
- * @author     Francois Zaninotto
+ * @author Francois Zaninotto
  */
 class StatementFormatter extends AbstractFormatter
 {

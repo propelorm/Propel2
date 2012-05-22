@@ -232,7 +232,7 @@ class Database extends ScopedMappingModel
      *
      * Any of 'XML', 'YAML', 'JSON', or 'CSV'.
      *
-     * @param string $format
+     * @param  string                   $format
      * @throws InvalidArgumentException
      */
     public function setDefaultStringFormat($format)
@@ -339,8 +339,8 @@ class Database extends ScopedMappingModel
     /**
      * Returns whether or not the database has a table.
      *
-     * @param string  $name
-     * @param Boolean $caseInsensitive
+     * @param  string  $name
+     * @param  Boolean $caseInsensitive
      * @return Boolean
      */
     public function hasTable($name, $caseInsensitive = false)
@@ -355,8 +355,8 @@ class Database extends ScopedMappingModel
     /**
      * Returns the table with the specified name.
      *
-     * @param string  $name
-     * @param Boolean $caseInsensitive
+     * @param  string  $name
+     * @param  Boolean $caseInsensitive
      * @return Table
      */
     public function getTable($name, $caseInsensitive = false)
@@ -376,7 +376,7 @@ class Database extends ScopedMappingModel
      * Returns whether or not the database has a table identified by its
      * PHP name.
      *
-     * @param string $phpName
+     * @param  string  $phpName
      * @return Boolean
      */
     public function hasTableByPhpName($phpName)
@@ -387,7 +387,7 @@ class Database extends ScopedMappingModel
     /**
      * Returns the table object with the specified PHP name.
      *
-     * @param string $phpName
+     * @param  string $phpName
      * @return Table
      */
     public function getTableByPhpName($phpName)
@@ -402,7 +402,7 @@ class Database extends ScopedMappingModel
     /**
      * Adds a new table to this database.
      *
-     * @param Table|array $table
+     * @param  Table|array $table
      * @return Table
      */
     public function addTable($table)
@@ -443,7 +443,7 @@ class Database extends ScopedMappingModel
      * Computes the table namespace based on the current relative or
      * absolute table namespace and the database namespace.
      *
-     * @param Table $table
+     * @param  Table  $table
      * @return string
      */
     private function computeTableNamespace(Table $table)
@@ -490,7 +490,7 @@ class Database extends ScopedMappingModel
     /**
      * Adds a domain object to this database.
      *
-     * @param Domain|array $data
+     * @param  Domain|array $data
      * @return Domain
      */
     public function addDomain($data)
@@ -513,7 +513,7 @@ class Database extends ScopedMappingModel
     /**
      * Returns the already configured domain object by its name.
      *
-     * @param string $name
+     * @param  string $name
      * @return Domain
      */
     public function getDomain($name)
@@ -542,7 +542,7 @@ class Database extends ScopedMappingModel
     /**
      * Returns the build property identified by its name.
      *
-     * @param string $name
+     * @param  string $name
      * @return string
      */
     public function getBuildProperty($name)
@@ -557,7 +557,7 @@ class Database extends ScopedMappingModel
     /**
      * Adds a new behavior to the database*
      *
-     * @param Behavior|array $bdata
+     * @param  Behavior|array $bdata
      * @return Behavior
      */
     public function addBehavior($bdata)
@@ -590,7 +590,7 @@ class Database extends ScopedMappingModel
     /**
      * Returns whether or not the database has a specific behavior.
      *
-     * @param string $name
+     * @param  string  $name
      * @return Boolean
      */
     public function hasBehavior($name)
@@ -601,7 +601,7 @@ class Database extends ScopedMappingModel
     /**
      * Returns the corresponding behavior identified by its name.
      *
-     * @param string $name
+     * @param  string   $name
      * @return Behavior
      */
     public function getBehavior($name)

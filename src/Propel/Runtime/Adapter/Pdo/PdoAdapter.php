@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Runtime\Adapter\Pdo;
@@ -93,7 +93,7 @@ abstract class PdoAdapter
      *
      * This base method runs queries specified using the "query" setting.
      *
-     * @see       setCharset()
+     * @see setCharset()
      *
      * @param Propel\Runtime\Connection\ConnectionInterface $con
      * @param array                                         $settings An array of settings.
@@ -119,7 +119,7 @@ abstract class PdoAdapter
      * This method is invoked from the default initConnection() method and must
      * be overridden for an RDMBS which does _not_ support this SQL standard.
      *
-     * @see       initConnection()
+     * @see initConnection()
      *
      * @param Propel\Runtime\Connection\ConnectionInterface $con
      * @param string                                        $charset The $string charset encoding.
@@ -132,8 +132,8 @@ abstract class PdoAdapter
     /**
      * This method is used to ignore case.
      *
-     * @param string $in The string to transform to upper case.
-     * @return    string  The upper case string.
+     * @param  string $in The string to transform to upper case.
+     * @return string The upper case string.
      */
     public function toUpperCase($in)
     {
@@ -143,8 +143,8 @@ abstract class PdoAdapter
     /**
      * This method is used to ignore case.
      *
-     * @param string $in The string whose case to ignore.
-     * @return    string  The string in a case that can be ignored.
+     * @param  string $in The string whose case to ignore.
+     * @return string The string in a case that can be ignored.
      */
     public function ignoreCase($in)
     {
@@ -157,8 +157,8 @@ abstract class PdoAdapter
      * (Interbase for example) does not use the same SQL in ORDER BY
      * and other clauses.
      *
-     * @param string $in The string whose case to ignore.
-     * @return    string  The string in a case that can be ignored.
+     * @param  string $in The string whose case to ignore.
+     * @return string The string in a case that can be ignored.
      */
     public function ignoreCaseInOrderBy($in)
     {
@@ -170,7 +170,7 @@ abstract class PdoAdapter
      * a piece of text used in a SQL statement (generally a single
      * quote).
      *
-     * @return    string  The text delimeter.
+     * @return string The text delimeter.
      */
     public function getStringDelimiter()
     {
@@ -179,8 +179,8 @@ abstract class PdoAdapter
 
     /**
      * Quotes database objec identifiers (table names, col names, sequences, etc.).
-     * @param string $text The identifier to quote.
-     * @return    string  The quoted identifier.
+     * @param  string $text The identifier to quote.
+     * @return string The quoted identifier.
      */
     public function quoteIdentifier($text)
     {
@@ -193,8 +193,8 @@ abstract class PdoAdapter
      * separate schema names from table names. Adapters for RDBMs which support
      * schemas have to implement that in the platform-specific way.
      *
-     * @param string $table The table name to quo
-     * @return    string  The quoted table name
+     * @param  string $table The table name to quo
+     * @return string The quoted table name
      **/
     public function quoteIdentifierTable($table)
     {
@@ -204,7 +204,7 @@ abstract class PdoAdapter
     /**
      * Returns the native ID method for this RDBMS.
      *
-     * @return    integer  One of AdapterInterface:ID_METHOD_SEQUENCE, AdapterInterface::ID_METHOD_AUTOINCREMENT.
+     * @return integer One of AdapterInterface:ID_METHOD_SEQUENCE, AdapterInterface::ID_METHOD_AUTOINCREMENT.
      */
     protected function getIdMethod()
     {
@@ -214,7 +214,7 @@ abstract class PdoAdapter
     /**
      * Whether this adapter uses an ID generation system that requires getting ID _before_ performing INSERT.
      *
-     * @return    Boolean
+     * @return Boolean
      */
     public function isGetIdBeforeInsert()
     {
@@ -224,7 +224,7 @@ abstract class PdoAdapter
     /**
      * Whether this adapter uses an ID generation system that requires getting ID _before_ performing INSERT.
      *
-     * @return    Boolean
+     * @return Boolean
      */
     public function isGetIdAfterInsert()
     {
@@ -237,7 +237,7 @@ abstract class PdoAdapter
      * @param Propel\Runtime\Connection\ConnectionInterface $con
      * @param string                                        $name
      *
-     * @return    mixed
+     * @return mixed
      */
     public function getId(ConnectionInterface $con, $name = null)
     {
@@ -250,7 +250,7 @@ abstract class PdoAdapter
      * @param mixed                        $value The temporal value
      * @param Propel\Runtime\Map\ColumnMap $cMap
      *
-     * @return    string  The formatted temporal value
+     * @return string The formatted temporal value
      */
     public function formatTemporalValue($value, ColumnMap $cMap)
     {
@@ -277,7 +277,7 @@ abstract class PdoAdapter
     /**
      * Returns timestamp formatter string for use in date() function.
      *
-     * @return    string
+     * @return string
      */
     public function getTimestampFormatter()
     {
@@ -287,7 +287,7 @@ abstract class PdoAdapter
     /**
      * Returns date formatter string for use in date() function.
      *
-     * @return    string
+     * @return string
      */
     public function getDateFormatter()
     {
@@ -297,7 +297,7 @@ abstract class PdoAdapter
     /**
      * Returns time formatter string for use in date() function.
      *
-     * @return    string
+     * @return string
      */
     public function getTimeFormatter()
     {
@@ -312,7 +312,7 @@ abstract class PdoAdapter
      *
      * @deprecated
      *
-     * @return    Boolean
+     * @return Boolean
      */
     public function useQuoteIdentifier()
     {
@@ -337,7 +337,7 @@ abstract class PdoAdapter
      * @param Propel\Runtime\Query\Criteria $criteria
      * @param string                        $tableName
      *
-     * @return    string
+     * @return string
      */
     public function getDeleteFromClause(Criteria $criteria, $tableName)
     {
@@ -370,7 +370,7 @@ abstract class PdoAdapter
      * @param array                         $fromClause
      * @param Boolean                       $aliasAll
      *
-     * @return    string
+     * @return string
      */
     public function createSelectSqlPart(Criteria $criteria, &$fromClause, $aliasAll = false)
     {
@@ -441,8 +441,8 @@ abstract class PdoAdapter
      *
      * @see http://propel.phpdb.org/trac/ticket/795
      *
-     * @param Propel\Runtime\Query\Criteria $criteria
-     * @return    Propel\Runtime\Query\Criteria  The input, with Select columns replaced by aliases
+     * @param  Propel\Runtime\Query\Criteria $criteria
+     * @return Propel\Runtime\Query\Criteria The input, with Select columns replaced by aliases
      */
     public function turnSelectColumnsToAliases(Criteria $criteria)
     {
@@ -526,7 +526,7 @@ abstract class PdoAdapter
      * @param Propel\Runtime\Map\ColumnMap                 $cMap      The ColumnMap of the column to bind
      * @param null|integer                                 $position  The position of the parameter to bind
      *
-     * @return    Boolean
+     * @return Boolean
      */
     public function bindValue(StatementInterface $stmt, $parameter, $value, ColumnMap $cMap, $position = null)
     {

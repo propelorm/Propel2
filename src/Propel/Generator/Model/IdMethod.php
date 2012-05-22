@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Model;
@@ -14,8 +14,8 @@ namespace Propel\Generator\Model;
  * Interface for various ID retrieval method types
  * (i.e. auto-increment, sequence, ID broker, etc.).
  *
- * @author     Hans Lellelid <hans@xmpl.org> (Propel)
- * @author     Daniel Rall <dlr@collab.net> (Torque)
+ * @author Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author Daniel Rall <dlr@collab.net> (Torque)
  */
 interface IdMethod
 {

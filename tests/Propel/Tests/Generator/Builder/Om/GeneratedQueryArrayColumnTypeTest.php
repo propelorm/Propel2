@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Builder\Om;
@@ -18,7 +18,7 @@ use Propel\Runtime\Query\Criteria;
 /**
  * Tests the generated queries for array column types filters
  *
- * @author     Francois Zaninotto
+ * @author Francois Zaninotto
  */
 class GeneratedQueryArrayColumnTypeTest extends \PHPUnit_Framework_TestCase
 {

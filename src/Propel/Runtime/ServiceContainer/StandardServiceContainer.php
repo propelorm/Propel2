@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Runtime\ServiceContainer;
@@ -280,7 +280,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      * @param string $name The datasource name
      * @param string $mode The connection mode (this applies to replication systems).
      *
-     * @return     \Propel\Runtime\Connection\ConnectionInterface A database connection
+     * @return \Propel\Runtime\Connection\ConnectionInterface A database connection
      */
     public function getConnection($name = null, $mode = ServiceContainerInterface::CONNECTION_WRITE)
     {
@@ -304,9 +304,9 @@ class StandardServiceContainer implements ServiceContainerInterface
      * @param string $name The datasource name that is used to look up the DSN
      *                          from the runtime configuration file. Empty name not allowed.
      *
-     * @return     ConnectionInterface A database connection
+     * @return ConnectionInterface A database connection
      *
-     * @throws     \Propel\Runtime\Adapter\Exception\AdapterException - if connection is not properly configured
+     * @throws \Propel\Runtime\Adapter\Exception\AdapterException - if connection is not properly configured
      */
     public function getWriteConnection($name)
     {
@@ -323,7 +323,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      * @param string $name The datasource name that is used to look up the DSN
      *                          from the runtime configuration file. Empty name not allowed.
      *
-     * @return     ConnectionInterface A database connection
+     * @return ConnectionInterface A database connection
      */
     public function getReadConnection($name)
     {
@@ -401,7 +401,7 @@ class StandardServiceContainer implements ServiceContainerInterface
     }
 
     /**
-     * @return boolean
+     * @return Boolean
      */
     public function hasLogger($name = 'defaultLogger')
     {

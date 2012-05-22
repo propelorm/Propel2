@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Runtime\Connection;
@@ -35,8 +35,8 @@ class StatementWrapper implements StatementInterface
      * Hashmap for resolving the PDO::PARAM_* class constants to their human-readable names.
      * This is only used in logging the binding of variables.
      *
-     * @see       self::bindValue()
-     * @var       array
+     * @see self::bindValue()
+     * @var array
      */
     protected static $typeMap = array(
         0  => 'PDO::PARAM_NULL',
@@ -47,7 +47,7 @@ class StatementWrapper implements StatementInterface
     );
 
     /**
-     * @var       array  The values that have been bound
+     * @var array  The values that have been bound
      */
     protected $boundValues = array();
 
@@ -76,7 +76,7 @@ class StatementWrapper implements StatementInterface
      * @param integer $length         Length of the data type. To indicate that a parameter is an OUT parameter from a stored procedure, you must explicitly set the length.
      * @param mixed   $driver_options
      *
-     * @return    boolean
+     * @return Boolean
      */
     public function bindParam($pos, &$value, $type = \PDO::PARAM_STR, $length = 0, $driver_options = null)
     {
@@ -100,7 +100,7 @@ class StatementWrapper implements StatementInterface
      * @param mixed   $value The value to bind to the parameter.
      * @param integer $type  Explicit data type for the parameter using the PDO::PARAM_* constants. Defaults to PDO::PARAM_STR.
      *
-     * @return    boolean
+     * @return Boolean
      */
     public function bindValue($pos, $value, $type = \PDO::PARAM_STR)
     {
@@ -128,7 +128,7 @@ class StatementWrapper implements StatementInterface
      * has unfetched rows. If your database driver suffers from this limitation,
      * the problem may manifest itself in an out-of-sequence error.
      *
-     * @return boolean              Returns TRUE on success or FALSE on failure.
+     * @return Boolean Returns TRUE on success or FALSE on failure.
      */
     public function closeCursor()
     {
@@ -148,7 +148,7 @@ class StatementWrapper implements StatementInterface
      * column count will not be available until you invoke Statement::execute().
      * Returns the number of columns in the result set
      *
-     * @return integer              Returns the number of columns in the result set represented
+     * @return integer Returns the number of columns in the result set represented
      *                              by the PDOStatement object. If there is no result set,
      *                              this method should return 0.
      */
@@ -161,8 +161,8 @@ class StatementWrapper implements StatementInterface
      * Executes a prepared statement.  Returns a boolean value indicating success.
      * Overridden for query counting and logging.
      *
-     * @param string $input_parameters
-     * @return    boolean
+     * @param  string  $input_parameters
+     * @return Boolean
      */
     public function execute($input_parameters = null)
     {
@@ -178,7 +178,7 @@ class StatementWrapper implements StatementInterface
     }
 
     /**
-     * @return    string
+     * @return string
      */
     public function getExecutedQueryString()
     {
@@ -243,7 +243,7 @@ class StatementWrapper implements StatementInterface
      *                                      value is supplied, PDOStatement->fetchColumn()
      *                                      fetches the first column.
      *
-     * @return string                       A single column in the next row of a result set.
+     * @return string A single column in the next row of a result set.
      */
     public function fetchColumn($columnIndex = 0)
     {
@@ -261,7 +261,7 @@ class StatementWrapper implements StatementInterface
      * this behaviour is not guaranteed for all databases and should not be
      * relied on for portable applications.
      *
-     * @return integer                      The number of rows.
+     * @return integer The number of rows.
      */
     public function rowCount()
     {

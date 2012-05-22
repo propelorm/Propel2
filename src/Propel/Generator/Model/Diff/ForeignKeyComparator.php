@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license     MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Model\Diff;
@@ -26,10 +26,10 @@ class ForeignKeyComparator
      * @param ForeignKey $fromFk
      * @param ForeignKey $toFk
      *
-     * @param boolean $caseInsensitive Whether the comparison is case insensitive.
+     * @param Boolean $caseInsensitive Whether the comparison is case insensitive.
      *                                 False by default.
      *
-     * @return boolean false if the two fks are similar, true if they have differences
+     * @return Boolean false if the two fks are similar, true if they have differences
      */
     static public function computeDiff(ForeignKey $fromFk, ForeignKey $toFk, $caseInsensitive = false)
     {

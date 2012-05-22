@@ -835,8 +835,8 @@ class TableTest extends ModelTestCase
     /**
      * Returns a dummy Column object.
      *
-     * @param string $name    The column name
-     * @param array  $options An array of options
+     * @param  string $name    The column name
+     * @param  array  $options An array of options
      * @return Column
      */
     protected function getColumnMock($name, array $options = array())

@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Runtime\Om;
@@ -15,25 +15,25 @@ use Propel\Runtime\Connection\ConnectionInterface;
 /**
  * This interface defines methods related to saving an object
  *
- * @author     Hans Lellelid <hans@xmpl.org> (Propel)
- * @author     John D. McNally <jmcnally@collab.net> (Torque)
- * @author     Fedor K. <fedor@apache.org> (Torque)
+ * @author Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author John D. McNally <jmcnally@collab.net> (Torque)
+ * @author Fedor K. <fedor@apache.org> (Torque)
  */
 interface Persistent
 {
     /**
      * getter for the object primaryKey.
      *
-     * @return     ObjectKey the object primaryKey as an Object
+     * @return ObjectKey the object primaryKey as an Object
      */
     public function getPrimaryKey();
 
     /**
      * Sets the PrimaryKey for the object.
      *
-     * @param mixed $primaryKey The new PrimaryKey object or string (result of PrimaryKey.toString()).
-     * @return     void
-     * @throws     Exception, This method might throw an exceptions
+     * @param  mixed      $primaryKey The new PrimaryKey object or string (result of PrimaryKey.toString()).
+     * @return void
+     * @throws Exception, This method might throw an exceptions
      */
     public function setPrimaryKey($primaryKey);
 
@@ -42,15 +42,15 @@ interface Persistent
      * Returns whether the object has been modified, since it was
      * last retrieved from storage.
      *
-     * @return     boolean True if the object has been modified.
+     * @return Boolean True if the object has been modified.
      */
     public function isModified();
 
     /**
      * Has specified column been modified?
      *
-     * @param string $col
-     * @return     boolean True if $col has been modified.
+     * @param  string  $col
+     * @return boolean True if $col has been modified.
      */
     public function isColumnModified($col);
 
@@ -59,7 +59,7 @@ interface Persistent
      * be false, if the object was retrieved from storage or was created
      * and then saved.
      *
-     * @return     boolean True, if the object has never been persisted.
+     * @return Boolean True, if the object has never been persisted.
      */
     public function isNew();
 
@@ -67,43 +67,43 @@ interface Persistent
      * Setter for the isNew attribute.  This method will be called
      * by Propel-generated children and Peers.
      *
-     * @param boolean $b the state of the object.
+     * @param Boolean $b the state of the object.
      */
     public function setNew($b);
 
     /**
      * Resets (to false) the "modified" state for this object.
      *
-     * @return     void
+     * @return void
      */
     public function resetModified();
 
     /**
      * Whether this object has been deleted.
-     * @return     boolean The deleted state of this object.
+     * @return Boolean The deleted state of this object.
      */
     public function isDeleted();
 
     /**
      * Specify whether this object has been deleted.
-     * @param boolean $b The deleted state of this object.
-     * @return     void
+     * @param  Boolean $b The deleted state of this object.
+     * @return void
      */
     public function setDeleted($b);
 
     /**
      * Deletes the object.
-     * @param ConnectionInterface $con
-     * @return     void
-     * @throws     Exception
+     * @param  ConnectionInterface $con
+     * @return void
+     * @throws Exception
      */
     public function delete(ConnectionInterface $con = null);
 
     /**
      * Saves the object.
-     * @param ConnectionInterface $con
-     * @return     void
-     * @throws     Exception
+     * @param  ConnectionInterface $con
+     * @return void
+     * @throws Exception
      */
     public function save(ConnectionInterface $con = null);
 }

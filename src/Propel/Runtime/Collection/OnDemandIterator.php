@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Runtime\Collection;
@@ -18,17 +18,17 @@ use Propel\Runtime\Connection\StatementInterface;
 /**
  * Class for iterating over a statement and returning one Propel object at a time
  *
- * @author     Francois Zaninotto
+ * @author Francois Zaninotto
  */
 class OnDemandIterator implements \Iterator
 {
     /**
-     * @var       ObjectFormatter
+     * @var ObjectFormatter
      */
     protected $formatter;
 
     /**
-     * @var       PDOStatement
+     * @var PDOStatement
      */
     protected $stmt;
 
@@ -61,7 +61,7 @@ class OnDemandIterator implements \Iterator
      * Returns the number of rows in the resultset
      * Warning: this number is inaccurate for most databases. Do not rely on it for a portable application.
      *
-     * @return    integer  Number of results
+     * @return integer Number of results
      */
     public function count()
     {
@@ -74,9 +74,9 @@ class OnDemandIterator implements \Iterator
      * Gets the current Model object in the collection
      * This is where the hydration takes place.
      *
-     * @see       ObjectFormatter::getAllObjectsFromRow()
+     * @see ObjectFormatter::getAllObjectsFromRow()
      *
-     * @return    BaseObject
+     * @return BaseObject
      */
     public function current()
     {
@@ -86,7 +86,7 @@ class OnDemandIterator implements \Iterator
     /**
      * Gets the current key in the iterator
      *
-     * @return    string
+     * @return string
      */
     public function key()
     {
@@ -132,7 +132,7 @@ class OnDemandIterator implements \Iterator
     }
 
     /**
-     * @return    Boolean
+     * @return Boolean
      */
     public function valid()
     {

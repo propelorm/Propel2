@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Builder\Om;
@@ -17,7 +17,7 @@ use Propel\Runtime\Propel;
 /**
  * Tests the generated objects for enum column types accessor & mutator
  *
- * @author     Francois Zaninotto
+ * @author Francois Zaninotto
  */
 class GeneratedObjectEnumColumnTypeTest extends \PHPUnit_Framework_TestCase
 {

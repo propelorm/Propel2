@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Behavior\AggregateColumn;
@@ -28,7 +28,7 @@ use Propel\Runtime\Connection\ConnectionInterface;
 /**
  * Tests for AggregateColumnBehavior class
  *
- * @author  François Zaninotto
+ * @author François Zaninotto
  */
 class AggregateColumnBehaviorTest extends BookstoreTestBase
 {
@@ -249,7 +249,7 @@ class TestableComment extends AggregateComment
 
 class TestableAggregateCommentQuery extends AggregateCommentQuery
 {
-    static public function create($modelAlias = null, $criteria = null)
+    public static function create($modelAlias = null, $criteria = null)
     {
         return new TestableAggregateCommentQuery();
     }

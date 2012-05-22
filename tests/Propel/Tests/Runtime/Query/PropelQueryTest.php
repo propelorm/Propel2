@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Tests\Runtime\Query;
@@ -26,7 +26,7 @@ use Propel\Tests\Bookstore\Behavior\Table6Peer;
 /**
  * Test class for PropelQuery
  *
- * @author     Francois Zaninotto
+ * @author Francois Zaninotto
  * @version    $Id: PropelQueryTest.php 1351 2009-12-04 22:05:01Z francois $
  */
 class PropelQueryTest extends BookstoreTestBase

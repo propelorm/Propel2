@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Runtime\Formatter;
@@ -18,7 +18,7 @@ use Propel\Runtime\Exception\PropelException;
  * format() returns a ArrayCollection of associative arrays, a string,
  * or an array
  *
- * @author     Benjamin Runnels
+ * @author Benjamin Runnels
  */
 class SimpleArrayFormatter extends AbstractFormatter
 {

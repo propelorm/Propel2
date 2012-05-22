@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Tests\Runtime\Util;
@@ -24,14 +24,14 @@ use Propel\Runtime\Util\BasePeer;
 /**
  * Tests the BasePeer classes.
  *
- * @see        BookstoreDataPopulator
- * @author     Hans Lellelid <hans@xmpl.org>
+ * @see BookstoreDataPopulator
+ * @author Hans Lellelid <hans@xmpl.org>
  */
 class BasePeerTest extends BookstoreTestBase
 {
 
     /**
-     * @link       http://propel.phpdb.org/trac/ticket/425
+     * @link http://propel.phpdb.org/trac/ticket/425
      */
     public function testMultipleFunctionInCriteria()
     {

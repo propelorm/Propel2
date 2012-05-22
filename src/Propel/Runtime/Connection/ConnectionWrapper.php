@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Runtime\Connection;
@@ -44,7 +44,7 @@ class ConnectionWrapper implements ConnectionInterface
     /**
      * Whether or not the debug is enabled
      *
-     * @var       Boolean
+     * @var Boolean
      */
     public $useDebug = false;
 
@@ -56,7 +56,7 @@ class ConnectionWrapper implements ConnectionInterface
 
     /**
      * The current transaction depth.
-     * @var       integer
+     * @var integer
      */
     protected $nestedTransactionCount = 0;
 
@@ -69,28 +69,28 @@ class ConnectionWrapper implements ConnectionInterface
     /**
      * Count of queries performed.
      *
-     * @var       integer
+     * @var integer
      */
     protected $queryCount = 0;
 
     /**
      * SQL code of the latest performed query.
      *
-     * @var       string
+     * @var string
      */
     protected $lastExecutedQuery;
 
     /**
      * Cache of prepared statements (StatementWrapper) keyed by SQL.
      *
-     * @var       array  [sql => StatementWrapper]
+     * @var array  [sql => StatementWrapper]
      */
     protected $cachedPreparedStatements = array();
 
     /**
      * Whether to cache prepared statements.
      *
-     * @var       Boolean
+     * @var Boolean
      */
     protected $isCachePreparedStatements = false;
 
@@ -108,7 +108,7 @@ class ConnectionWrapper implements ConnectionInterface
     /**
      * Configured logger.
      *
-     * @var       \Monolog\Logger
+     * @var \Monolog\Logger
      */
     protected $logger;
 
@@ -152,7 +152,7 @@ class ConnectionWrapper implements ConnectionInterface
     /**
      * Gets the current transaction depth.
      *
-     * @return    integer
+     * @return integer
      */
     public function getNestedTransactionCount()
     {
@@ -172,7 +172,7 @@ class ConnectionWrapper implements ConnectionInterface
      * Is this PDO connection currently in-transaction?
      * This is equivalent to asking whether the current nested transaction count is greater than 0.
      *
-     * @return    Boolean
+     * @return Boolean
      */
     public function isInTransaction()
     {
@@ -183,7 +183,7 @@ class ConnectionWrapper implements ConnectionInterface
      * Check whether the connection contains a transaction that can be committed.
      * To be used in an evironment where Propelexceptions are caught.
      *
-     * @return    Boolean  True if the connection is in a committable transaction
+     * @return Boolean True if the connection is in a committable transaction
      */
     public function isCommitable()
     {
@@ -193,7 +193,7 @@ class ConnectionWrapper implements ConnectionInterface
     /**
      * Overrides PDO::beginTransaction() to prevent errors due to already-in-progress transaction.
      *
-     * @return    Boolean
+     * @return Boolean
      */
     public function beginTransaction()
     {
@@ -214,7 +214,7 @@ class ConnectionWrapper implements ConnectionInterface
      * Overrides PDO::commit() to only commit the transaction if we are in the outermost
      * transaction nesting level.
      *
-     * @return    Boolean
+     * @return Boolean
      */
     public function commit()
     {
@@ -243,7 +243,7 @@ class ConnectionWrapper implements ConnectionInterface
      * Overrides PDO::rollBack() to only rollback the transaction if we are in the outermost
      * transaction nesting level
      *
-     * @return    Boolean  Whether operation was successful.
+     * @return Boolean Whether operation was successful.
      */
     public function rollBack()
     {
@@ -270,7 +270,7 @@ class ConnectionWrapper implements ConnectionInterface
      * Rollback the whole transaction, even if this is a nested rollback
      * and reset the nested transaction count to 0.
      *
-     * @return    Boolean  Whether operation was successful.
+     * @return Boolean Whether operation was successful.
      */
     public function forceRollBack()
     {
@@ -296,7 +296,7 @@ class ConnectionWrapper implements ConnectionInterface
     /**
      * Checks if inside a transaction.
      *
-     * @return bool TRUE if a transaction is currently active, and FALSE if not.
+     * @return Boolean TRUE if a transaction is currently active, and FALSE if not.
      */
     public function inTransaction()
     {
@@ -329,7 +329,7 @@ class ConnectionWrapper implements ConnectionInterface
      * @param string $attribute The attribute name, or the constant name containing the attribute name (e.g. 'PDO::ATTR_CASE')
      * @param mixed  $value
      *
-     * @return bool TRUE on success or FALSE on failure.
+     * @return Boolean TRUE on success or FALSE on failure.
      */
     public function setAttribute($attribute, $value)
     {
@@ -359,7 +359,7 @@ class ConnectionWrapper implements ConnectionInterface
      * @param array  $driver_options One $array or more key => value pairs to set attribute values
      *                                      for the PDOStatement object that this method returns.
      *
-     * @return    \Propel\Runtime\Connection\StatementInterface
+     * @return \Propel\Runtime\Connection\StatementInterface
      */
     public function prepare($sql, $driver_options = array())
     {
@@ -385,8 +385,8 @@ class ConnectionWrapper implements ConnectionInterface
      * Execute an SQL statement and return the number of affected rows.
      * Overrides PDO::exec() to log queries when required
      *
-     * @param string $sql
-     * @return    integer
+     * @param  string  $sql
+     * @return integer
      */
     public function exec($sql)
     {
@@ -407,9 +407,9 @@ class ConnectionWrapper implements ConnectionInterface
      *
      * Overrides PDO::query() to log queries when required
      *
-     * @see       http://php.net/manual/en/pdo.query.php for a description of the possible parameters.
+     * @see http://php.net/manual/en/pdo.query.php for a description of the possible parameters.
      *
-     * @return    PDOStatement
+     * @return PDOStatement
      */
     public function query()
     {
@@ -482,7 +482,7 @@ class ConnectionWrapper implements ConnectionInterface
      * When using DebugPDOStatement as the statement class, any queries by DebugPDOStatement instances
      * are counted as well.
      *
-     * @return     integer
+     * @return integer
      */
     public function getQueryCount()
     {
@@ -494,7 +494,7 @@ class ConnectionWrapper implements ConnectionInterface
      *
      * Returns the original number of queries (ie the value of $this->queryCount before calling this method).
      *
-     * @return    integer
+     * @return integer
      */
     public function incrementQueryCount()
     {
@@ -573,7 +573,7 @@ class ConnectionWrapper implements ConnectionInterface
      *
      * If no logger was set, returns the default logger from the Service Container.
      *
-     * @return    \Monolog\Logger  A Monolog logger, or null.
+     * @return \Monolog\Logger A Monolog logger, or null.
      */
     public function getLogger()
     {
@@ -624,7 +624,7 @@ class ConnectionWrapper implements ConnectionInterface
     /**
      * If so configured, makes an entry to the log of the state of this object just prior to its destruction.
      *
-     * @see       self::log()
+     * @see self::log()
      */
     public function __destruct()
     {

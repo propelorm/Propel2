@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Runtime\Adapter\Pdo;
@@ -21,14 +21,14 @@ use Propel\Runtime\Query\Criteria;
 /**
  * This is used to connect to a MSSQL database.
  *
- * @author     Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author Hans Lellelid <hans@xmpl.org> (Propel)
  */
 class MssqlAdapter extends PdoAdapter implements AdapterInterface
 {
     /**
      * MS SQL Server does not support SET NAMES
      *
-     * @see       AdapterInterface::setCharset()
+     * @see AdapterInterface::setCharset()
      *
      * @param ConnectionInterface $con
      * @param string              $charset
@@ -43,7 +43,7 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
      * @param string $s1 String to concatenate.
      * @param string $s2 String to append.
      *
-     * @return    string
+     * @return string
      */
     public function concatString($s1, $s2)
     {
@@ -57,7 +57,7 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
      * @param integer $pos Offset to start from.
      * @param integer $len Number of characters to extract.
      *
-     * @return    string
+     * @return string
      */
     public function subString($s, $pos, $len)
     {
@@ -67,8 +67,8 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
     /**
      * Returns SQL which calculates the length (in chars) of a string.
      *
-     * @param string $s String to calculate length of.
-     * @return    string
+     * @param  string $s String to calculate length of.
+     * @return string
      */
     public function strLength($s)
     {
@@ -76,10 +76,10 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
     }
 
     /**
-     * @see       AdapterInterface::quoteIdentifier()
+     * @see AdapterInterface::quoteIdentifier()
      *
-     * @param string $text
-     * @return    string
+     * @param  string $text
+     * @return string
      */
     public function quoteIdentifier($text)
     {
@@ -87,10 +87,10 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
     }
 
     /**
-     * @see       AdapterInterface::quoteIdentifierTable()
+     * @see AdapterInterface::quoteIdentifierTable()
      *
-     * @param string $table
-     * @return    string
+     * @param  string $table
+     * @return string
      */
     public function quoteIdentifierTable($table)
     {
@@ -99,10 +99,10 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
     }
 
     /**
-     * @see       AdapterInterface::random()
+     * @see AdapterInterface::random()
      *
-     * @param string $seed
-     * @return    string
+     * @param  string $seed
+     * @return string
      */
     public function random($seed = null)
     {
@@ -115,14 +115,14 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
      * This rewrites the $sql query to apply the offset and limit.
      * some of the ORDER BY logic borrowed from Doctrine MsSqlPlatform
      *
-     * @see       AdapterInterface::applyLimit()
+     * @see AdapterInterface::applyLimit()
      * @author    Benjamin Runnels <kraven@kraven.org>
      *
      * @param string  $sql
      * @param integer $offset
      * @param integer $limit
      *
-     * @return    void
+     * @return void
      */
     public function applyLimit(&$sql, $offset, $limit)
     {
@@ -248,7 +248,7 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
     }
 
     /**
-     * @see       parent::cleanupSQL()
+     * @see parent::cleanupSQL()
      *
      * @param string      $sql
      * @param array       $params

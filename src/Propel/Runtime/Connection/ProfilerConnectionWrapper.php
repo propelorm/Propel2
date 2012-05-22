@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Runtime\Connection;
@@ -21,7 +21,7 @@ class ProfilerConnectionWrapper extends ConnectionWrapper
     /**
      * Whether or not the debug is enabled
      *
-     * @var       boolean
+     * @var Boolean
      */
     public $useDebug = true;
 
@@ -83,7 +83,7 @@ class ProfilerConnectionWrapper extends ConnectionWrapper
      * @param array  $driver_options One $array or more key => value pairs to set attribute values
      *                                      for the PDOStatement object that this method returns.
      *
-     * @return    \Propel\Runtime\Connection\StatementInterface
+     * @return \Propel\Runtime\Connection\StatementInterface
      */
     public function prepare($sql, $driver_options = array())
     {
@@ -111,8 +111,8 @@ class ProfilerConnectionWrapper extends ConnectionWrapper
      * Execute an SQL statement and return the number of affected rows.
      * Overrides PDO::exec() to log queries when required
      *
-     * @param string $sql
-     * @return    integer
+     * @param  string  $sql
+     * @return integer
      */
     public function exec($sql)
     {
@@ -127,9 +127,9 @@ class ProfilerConnectionWrapper extends ConnectionWrapper
      *
      * Overrides PDO::query() to log queries when required
      *
-     * @see       http://php.net/manual/en/pdo.query.php for a description of the possible parameters.
+     * @see http://php.net/manual/en/pdo.query.php for a description of the possible parameters.
      *
-     * @return    PDOStatement
+     * @return PDOStatement
      */
     public function query()
     {
@@ -143,7 +143,7 @@ class ProfilerConnectionWrapper extends ConnectionWrapper
      * Logs the method call or SQL using the Propel::log() method or a registered logger class.
      *
      * @uses      self::getLogPrefix()
-     * @see       self::setLogger()
+     * @see self::setLogger()
      *
      * @param string  $msg           Message to log.
      * @param integer $level         Log level to use; will use self::setLogLevel() specified level by default.

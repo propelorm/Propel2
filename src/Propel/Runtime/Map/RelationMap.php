@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Runtime\Map;
@@ -20,7 +20,7 @@ namespace Propel\Runtime\Map;
  * propel.engine.database.model classes, which are build-time modeling classes.
  * These classes in themselves do not do any database metadata lookups.
  *
- * @author     Francois Zaninotto
+ * @author Francois Zaninotto
  */
 class RelationMap
 {
@@ -77,7 +77,7 @@ class RelationMap
     /**
      * Get the name of this relation.
      *
-     * @return     string The name of the relation.
+     * @return string The name of the relation.
      */
     public function getName()
     {
@@ -92,7 +92,7 @@ class RelationMap
     /**
      * Get the plural name of this relation.
      *
-     * @return     string The plural name of the relation.
+     * @return string The plural name of the relation.
      */
     public function getPluralName()
     {
@@ -112,7 +112,7 @@ class RelationMap
     /**
      * Get the type
      *
-     * @return      int the relation type
+     * @return int the relation type
      */
     public function getType()
     {
@@ -132,7 +132,7 @@ class RelationMap
     /**
      * Get the local table
      *
-     * @return      \Propel\Runtime\Map\TableMap The local table for this relationship
+     * @return \Propel\Runtime\Map\TableMap The local table for this relationship
      */
     public function getLocalTable()
     {
@@ -152,7 +152,7 @@ class RelationMap
     /**
      * Get the foreign table
      *
-     * @return    \Propel\Runtime\Map\TableMap The foreign table for this relationship
+     * @return \Propel\Runtime\Map\TableMap The foreign table for this relationship
      */
     public function getForeignTable()
     {
@@ -162,7 +162,7 @@ class RelationMap
     /**
      * Get the left table of the relation
      *
-     * @return    \Propel\Runtime\Map\TableMap The left table for this relationship
+     * @return \Propel\Runtime\Map\TableMap The left table for this relationship
      */
     public function getLeftTable()
     {
@@ -172,7 +172,7 @@ class RelationMap
     /**
      * Get the right table of the relation
      *
-     * @return    \Propel\Runtime\Map\TableMap The right table for this relationship
+     * @return \Propel\Runtime\Map\TableMap The right table for this relationship
      */
     public function getRightTable()
     {
@@ -197,8 +197,8 @@ class RelationMap
      *  - If the value is RelationMap::LOCAL_TO_FOREIGN, then the returned array is local => foreign
      *  - If the value is RelationMap::LEFT_TO_RIGHT, then the returned array is left => right
      *
-     * @param int $direction How the associative array must return columns
-     * @return    array Associative array (local => foreign) of fully qualified column names
+     * @param  int   $direction How the associative array must return columns
+     * @return array Associative array (local => foreign) of fully qualified column names
      */
     public function getColumnMappings($direction = RelationMap::LOCAL_TO_FOREIGN)
     {
@@ -242,7 +242,7 @@ class RelationMap
     /**
      * Get the local columns
      *
-     * @return      array list of ColumnMap objects
+     * @return array list of ColumnMap objects
      */
     public function getLocalColumns()
     {
@@ -252,7 +252,7 @@ class RelationMap
     /**
      * Get the foreign columns
      *
-     * @return      array list of ColumnMap objects
+     * @return array list of ColumnMap objects
      */
     public function getForeignColumns()
     {
@@ -262,7 +262,7 @@ class RelationMap
     /**
      * Get the left columns of the relation
      *
-     * @return    array[\Propel\Runtime\Map\ColumnMap]
+     * @return array[\Propel\Runtime\Map\ColumnMap]
      */
     public function getLeftColumns()
     {
@@ -272,7 +272,7 @@ class RelationMap
     /**
      * Get the right columns of the relation
      *
-     * @return    array[\Propel\Runtime\Map\ColumnMap]
+     * @return array[\Propel\Runtime\Map\ColumnMap]
      */
     public function getRightColumns()
     {
@@ -292,7 +292,7 @@ class RelationMap
     /**
      * Get the onUpdate behavior
      *
-     * @return      integer the relation type
+     * @return integer the relation type
      */
     public function getOnUpdate()
     {
@@ -312,7 +312,7 @@ class RelationMap
     /**
      * Get the onDelete behavior
      *
-     * @return      int the relation type
+     * @return int the relation type
      */
     public function getOnDelete()
     {
@@ -322,7 +322,7 @@ class RelationMap
     /**
      * Gets the symmetrical relation
      *
-     * @return    \Propel\Runtime\Map\RelationMap
+     * @return \Propel\Runtime\Map\RelationMap
      */
     public function getSymmetricalRelation()
     {

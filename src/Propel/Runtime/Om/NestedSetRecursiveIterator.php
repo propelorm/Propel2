@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Runtime\Om;
@@ -13,7 +13,7 @@ namespace Propel\Runtime\Om;
 /**
  * Pre-order node iterator for Node objects.
  *
- * @author     Heltem <heltem@o2php.com>
+ * @author Heltem <heltem@o2php.com>
  */
 class NestedSetRecursiveIterator implements \RecursiveIterator
 {

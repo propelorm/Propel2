@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Builder\Om;
@@ -36,7 +36,7 @@ if (!defined('TESTS_BASE_DIR')) {
  * method for the exact contents of the database.
  *
  * @see        BookstoreDataPopulator
- * @author     Hans Lellelid <hans@xmpl.org>
+ * @author Hans Lellelid <hans@xmpl.org>
  */
 class GeneratedObjectLobTest extends BookstoreEmptyTestBase
 {
@@ -44,7 +44,7 @@ class GeneratedObjectLobTest extends BookstoreEmptyTestBase
     /**
      * Array of filenames pointing to blob/clob files indexed by the basename.
      *
-     * @var        array string[]
+     * @var array string[]
      */
     protected $sampleLobFiles = array();
 
@@ -60,9 +60,9 @@ class GeneratedObjectLobTest extends BookstoreEmptyTestBase
     /**
      * Gets a LOB filename.
      *
-     * @param string $basename Basename of LOB filename to return (if left blank, will choose random file).
-     * @return     string
-     * @throws     Exception - if specified basename doesn't correspond to a registered LOB filename
+     * @param  string    $basename Basename of LOB filename to return (if left blank, will choose random file).
+     * @return string
+     * @throws Exception - if specified basename doesn't correspond to a registered LOB filename
      */
     protected function getLobFile($basename = null)
     {

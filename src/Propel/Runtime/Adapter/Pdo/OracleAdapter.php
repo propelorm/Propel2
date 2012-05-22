@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Runtime\Adapter\Pdo;
@@ -21,12 +21,12 @@ use Propel\Runtime\Query\Criteria;
 /**
  * Oracle adapter.
  *
- * @author     David Giffin <david@giffin.org> (Propel)
- * @author     Hans Lellelid <hans@xmpl.org> (Propel)
- * @author     Jon S. Stevens <jon@clearink.com> (Torque)
- * @author     Brett McLaughlin <bmclaugh@algx.net> (Torque)
- * @author     Bill Schneider <bschneider@vecna.com> (Torque)
- * @author     Daniel Rall <dlr@finemaltcoding.com> (Torque)
+ * @author David Giffin <david@giffin.org> (Propel)
+ * @author Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author Jon S. Stevens <jon@clearink.com> (Torque)
+ * @author Brett McLaughlin <bmclaugh@algx.net> (Torque)
+ * @author Bill Schneider <bschneider@vecna.com> (Torque)
+ * @author Daniel Rall <dlr@finemaltcoding.com> (Torque)
  */
 class OracleAdapter extends PdoAdapter implements AdapterInterface
 {
@@ -35,7 +35,7 @@ class OracleAdapter extends PdoAdapter implements AdapterInterface
      * post-initialization queries or code.
      * Removes the charset query and adds the date queries
      *
-     * @see       parent::initConnection()
+     * @see parent::initConnection()
      *
      * @param \PDO  $con
      * @param array $settings
@@ -59,7 +59,7 @@ class OracleAdapter extends PdoAdapter implements AdapterInterface
      * @param string $s1 String to concatenate.
      * @param string $s2 String to append.
      *
-     * @return    string
+     * @return string
      */
     public function concatString($s1, $s2)
     {
@@ -73,7 +73,7 @@ class OracleAdapter extends PdoAdapter implements AdapterInterface
      * @param integer $pos Offset to start from.
      * @param integer $len Number of characters to extract.
      *
-     * @return    string
+     * @return string
      */
     public function subString($s, $pos, $len)
     {
@@ -83,8 +83,8 @@ class OracleAdapter extends PdoAdapter implements AdapterInterface
     /**
      * Returns SQL which calculates the length (in chars) of a string.
      *
-     * @param string $s String to calculate length of.
-     * @return    string
+     * @param  string $s String to calculate length of.
+     * @return string
      */
     public function strLength($s)
     {
@@ -92,7 +92,7 @@ class OracleAdapter extends PdoAdapter implements AdapterInterface
     }
 
     /**
-     * @see       AdapterInterface::applyLimit()
+     * @see AdapterInterface::applyLimit()
      *
      * @param string        $sql
      * @param integer       $offset
@@ -133,8 +133,8 @@ class OracleAdapter extends PdoAdapter implements AdapterInterface
      * @param ConnectionInterface $con
      * @param string              $name
      *
-     * @throws    \Propel\Runtime\Exception\InvalidArgumentException
-     * @return    integer
+     * @throws \Propel\Runtime\Exception\InvalidArgumentException
+     * @return integer
      */
     public function getId(ConnectionInterface $con, $name = null)
     {
@@ -149,8 +149,8 @@ class OracleAdapter extends PdoAdapter implements AdapterInterface
     }
 
     /**
-     * @param string $seed
-     * @return    string
+     * @param  string $seed
+     * @return string
      */
     public function random($seed=NULL)
     {
@@ -163,8 +163,8 @@ class OracleAdapter extends PdoAdapter implements AdapterInterface
      *
      * @see http://propel.phpdb.org/trac/ticket/795
      *
-     * @param Criteria $criteria
-     * @return    Criteria  The input, with Select columns replaced by aliases
+     * @param  Criteria $criteria
+     * @return Criteria The input, with Select columns replaced by aliases
      */
     public function turnSelectColumnsToAliases(Criteria $criteria)
     {
@@ -197,7 +197,7 @@ class OracleAdapter extends PdoAdapter implements AdapterInterface
     }
 
     /**
-     * @see       AdapterInterface::bindValue()
+     * @see AdapterInterface::bindValue()
      *
      * @param StatementInterface $stmt
      * @param string             $parameter
@@ -205,7 +205,7 @@ class OracleAdapter extends PdoAdapter implements AdapterInterface
      * @param ColumnMap          $cMap
      * @param null|integer       $position
      *
-     * @return    boolean
+     * @return Boolean
      */
     public function bindValue(StatementInterface $stmt, $parameter, $value, ColumnMap $cMap, $position = null)
     {

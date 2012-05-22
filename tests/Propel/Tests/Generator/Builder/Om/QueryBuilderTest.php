@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Builder\Om;
@@ -48,7 +48,7 @@ use \ReflectionMethod;
 /**
  * Test class for QueryBuilder.
  *
- * @author     François Zaninotto
+ * @author François Zaninotto
  * @version    $Id: QueryBuilderTest.php 1347 2009-12-03 21:06:36Z francois $
  */
 class QueryBuilderTest extends BookstoreTestBase
@@ -1093,7 +1093,7 @@ class QueryBuilderTest extends BookstoreTestBase
 
 class myCustomBookQuery extends BookQuery
 {
-    static public function create($modelAlias = null, $criteria = null)
+    public static function create($modelAlias = null, $criteria = null)
     {
         if ($criteria instanceof myCustomBookQuery) {
             return $criteria;
@@ -1113,7 +1113,7 @@ class myCustomBookQuery extends BookQuery
 
 class mySecondBookQuery extends BookQuery
 {
-    static public $preSelectWasCalled = false;
+    public static $preSelectWasCalled = false;
 
     public function __construct($dbName = 'bookstore', $modelName = '\Propel\Tests\Bookstore\Book', $modelAlias = null)
     {

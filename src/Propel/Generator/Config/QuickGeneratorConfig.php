@@ -75,8 +75,8 @@ class QuickGeneratorConfig implements GeneratorConfigInterface
      * Gets a configured data model builder class for specified table and based
      * on type ('ddl', 'sql', etc.).
      *
-     * @param Table  $table
-     * @param string $type
+     * @param  Table            $table
+     * @param  string           $type
      * @return DataModelBuilder
      */
     public function getConfiguredBuilder(Table $table, $type)
@@ -127,7 +127,7 @@ class QuickGeneratorConfig implements GeneratorConfigInterface
     /**
      * Returns a specific propel (renamed) property from the build.
      *
-     * @param string $name
+     * @param  string $name
      * @return mixed
      */
     public function getBuildProperty($name)

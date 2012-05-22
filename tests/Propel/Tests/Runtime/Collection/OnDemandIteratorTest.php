@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Tests\Runtime\collection;
@@ -20,7 +20,7 @@ use Propel\Runtime\Query\PropelQuery;
 /**
  * Test class for OnDemandIterator.
  *
- * @author     Francois Zaninotto
+ * @author Francois Zaninotto
  * @version    $Id: ObjectCollectionTest.php 1348 2009-12-03 21:49:00Z francois $
  */
 class OnDemandIteratorTest extends BookstoreEmptyTestBase

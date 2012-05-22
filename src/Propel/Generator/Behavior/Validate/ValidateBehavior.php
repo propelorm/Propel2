@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Behavior\Validate;
@@ -30,7 +30,7 @@ class ValidateBehavior extends Behavior
     /**
      * Add behavior methods to model class
      *
-     * @return  string
+     * @return string
      */
     public function objectMethods($builder)
     {
@@ -213,7 +213,7 @@ class ValidateBehavior extends Behavior
 
     /**
      * Adds the validate() method.
-     * @return    string  The code to be added to model class
+     * @return string The code to be added to model class
      */
     protected function addValidateMethod()
     {

@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Model;
@@ -15,8 +15,8 @@ use Propel\Generator\Exception\EngineException;
 /**
  * A name generation factory.
  *
- * @author     Hans Lellelid <hans@xmpl.org> (Propel)
- * @author     Daniel Rall <dlr@finemaltcoding.com> (Torque)
+ * @author Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author Daniel Rall <dlr@finemaltcoding.com> (Torque)
  */
 class NameFactory
 {
@@ -58,9 +58,9 @@ class NameFactory
      *
      * @param string $algorithmName The fully qualified class name of the {@link NameGenerator}
      *             implementation to use to generate names.
-     * @param array $inputs Inputs used to generate a name.
-     * @return     The generated name.
-     * @throws     EngineException
+     * @param  array           $inputs Inputs used to generate a name.
+     * @return The             generated name.
+     * @throws EngineException
      */
     static public function generateName($algorithmName, $inputs)
     {

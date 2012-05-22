@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Runtime\Util;
@@ -19,21 +19,21 @@ use Propel\Runtime\Exception\PropelException;
  * within model objeects; however, we are keeping it in the repository
  * because it is useful if you want to store a DateTime object in a session.
  *
- * @author     Alan Pinstein
- * @author     Soenke Ruempler
- * @author     Hans Lellelid
+ * @author Alan Pinstein
+ * @author Soenke Ruempler
+ * @author Hans Lellelid
  */
 class PropelDateTime extends \DateTime
 {
     /**
      * A string representation of the date, for serialization.
-     * @var        string
+     * @var string
      */
     private $dateString;
 
     /**
      * A string representation of the time zone, for serialization.
-     * @var        string
+     * @var string
      */
     private $tzString;
 
@@ -104,7 +104,7 @@ class PropelDateTime extends \DateTime
      * PHP "magic" function called when object is serialized.
      * Sets an internal property with the date string and returns properties
      * of class that should be serialized.
-     * @return     array string[]
+     * @return array string[]
      */
     function __sleep()
     {

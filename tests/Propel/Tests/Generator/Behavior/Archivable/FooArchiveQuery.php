@@ -6,7 +6,7 @@ class FooArchiveQuery
 {
     protected $pk;
 
-    static public function create()
+    public static function create()
     {
         return new self();
     }

@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Tests\Runtime\Om;
@@ -19,7 +19,7 @@ use Propel\Tests\Bookstore\BookQuery;
 /**
  * Test class for BaseObject serialization.
  *
- * @author     Francois Zaninotto
+ * @author Francois Zaninotto
  * @version    $Id: CollectionTest.php 1348 2009-12-03 21:49:00Z francois $
  */
 class BaseObjectSerializeTest extends BookstoreTestBase

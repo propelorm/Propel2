@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Runtime\Collection;
@@ -17,7 +17,7 @@ use Propel\Runtime\Exception\PropelException;
 /**
  * Class for iterating over a list of Propel objects stored as arrays
  *
- * @author     Francois Zaninotto
+ * @author Francois Zaninotto
  */
 class ArrayCollection extends Collection
 {
@@ -82,8 +82,8 @@ class ArrayCollection extends Collection
     /**
      * Get an array of the primary keys of all the objects in the collection
      *
-     * @param Boolean $usePrefix
-     * @return    array  The list of the primary keys of the collection
+     * @param  Boolean $usePrefix
+     * @return array   The list of the primary keys of the collection
      */
     public function getPrimaryKeys($usePrefix = true)
     {
@@ -141,7 +141,7 @@ class ArrayCollection extends Collection
      * )
      * </code>
      *
-     * @return    array
+     * @return array
      */
     public function toArray($keyColumn = null, $usePrefix = false)
     {
@@ -161,7 +161,7 @@ class ArrayCollection extends Collection
      * @param string  $keyColumn
      * @param Boolean $usePrefix
      *
-     * @return    array
+     * @return array
      */
     public function getArrayCopy($keyColumn = null, $usePrefix = false)
     {
@@ -183,7 +183,7 @@ class ArrayCollection extends Collection
      * @param string $keyColumn
      * @param string $valueColumn
      *
-     * @return    array
+     * @return array
      */
     public function toKeyValue($keyColumn, $valueColumn)
     {
@@ -196,8 +196,8 @@ class ArrayCollection extends Collection
     }
 
     /**
-     * @throws    PropelException
-     * @return    BaseObject
+     * @throws PropelException
+     * @return BaseObject
      */
     protected function getWorkerObject()
     {

@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Runtime\Adapter\Pdo;
@@ -16,7 +16,7 @@ use Propel\Runtime\Connection\ConnectionInterface;
 /**
  * This is used in order to connect to a SQLite database.
  *
- * @author     Hans Lellelid <hans@xmpl.org>
+ * @author Hans Lellelid <hans@xmpl.org>
  */
 class SqliteAdapter extends PdoAdapter implements AdapterInterface
 {
@@ -28,7 +28,7 @@ class SqliteAdapter extends PdoAdapter implements AdapterInterface
      * @param PDO    $con     A PDO connection instance.
      * @param string $charset The charset encoding.
      *
-     * @throws    \Propel\Runtime\Exception\PropelException If the specified charset doesn't match sqlite_libencoding()
+     * @throws \Propel\Runtime\Exception\PropelException If the specified charset doesn't match sqlite_libencoding()
      */
     public function setCharset(ConnectionInterface $con, $charset)
     {
@@ -40,7 +40,7 @@ class SqliteAdapter extends PdoAdapter implements AdapterInterface
      * @param string $s1 String to concatenate.
      * @param string $s2 String to append.
      *
-     * @return    string
+     * @return string
      */
     public function concatString($s1, $s2)
     {
@@ -54,7 +54,7 @@ class SqliteAdapter extends PdoAdapter implements AdapterInterface
      * @param integer $pos Offset to start from.
      * @param integer $len Number of characters to extract.
      *
-     * @return    string
+     * @return string
      */
     public function subString($s, $pos, $len)
     {
@@ -64,8 +64,8 @@ class SqliteAdapter extends PdoAdapter implements AdapterInterface
     /**
      * Returns SQL which calculates the length (in chars) of a string.
      *
-     * @param string $s String to calculate length of.
-     * @return    string
+     * @param  string $s String to calculate length of.
+     * @return string
      */
     public function strLength($s)
     {
@@ -73,10 +73,10 @@ class SqliteAdapter extends PdoAdapter implements AdapterInterface
     }
 
     /**
-     * @see        AdapterInterface::quoteIdentifier()
+     * @see AdapterInterface::quoteIdentifier()
      *
-     * @param string $text
-     * @return    string
+     * @param  string $text
+     * @return string
      */
     public function quoteIdentifier($text)
     {
@@ -84,7 +84,7 @@ class SqliteAdapter extends PdoAdapter implements AdapterInterface
     }
 
     /**
-     * @see        AdapterInterface::applyLimit()
+     * @see AdapterInterface::applyLimit()
      *
      * @param string  $sql
      * @param integer $offset
@@ -100,8 +100,8 @@ class SqliteAdapter extends PdoAdapter implements AdapterInterface
     }
 
     /**
-     * @param string $seed
-     * @return    string
+     * @param  string $seed
+     * @return string
      */
     public function random($seed = null)
     {

@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Tests\Helpers\Schemas;
@@ -17,7 +17,7 @@ use Propel\Runtime\Propel;
  */
 abstract class SchemasTestBase extends \PHPUnit_Framework_TestCase
 {
-    static public function setUpBeforeClass()
+    public static function setUpBeforeClass()
     {
         if (file_exists(dirname(__FILE__) . '/../../../../Fixtures/schemas/build/conf/bookstore-conf.php')) {
             Propel::init(dirname(__FILE__) . '/../../../../Fixtures/schemas/build/conf/bookstore-conf.php');
@@ -35,7 +35,7 @@ abstract class SchemasTestBase extends \PHPUnit_Framework_TestCase
     {
     }
 
-    static public function tearDownAfterClass()
+    public static function tearDownAfterClass()
     {
         Propel::getServiceContainer()->closeConnections();
         Propel::init(dirname(__FILE__) . '/../../../../Fixtures/bookstore/build/conf/bookstore-conf.php');

@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Reverse;
@@ -21,13 +21,13 @@ use Propel\Generator\Reverse\AbstractSchemaParser;
 /**
  * Microsoft SQL Server database schema parser.
  *
- * @author     Hans Lellelid <hans@xmpl.org>
+ * @author Hans Lellelid <hans@xmpl.org>
  */
 class MssqlSchemaParser extends AbstractSchemaParser
 {
     /**
      * Map MSSQL native types to Propel types.
-     * @var        array
+     * @var array
      */
     private static $mssqlTypeMap = array(
         'binary'             => PropelTypes::BINARY,
@@ -242,7 +242,7 @@ class MssqlSchemaParser extends AbstractSchemaParser
      * returns by mssql
      * @see http://msdn.microsoft.com/library/ms175874.aspx
      *
-     * @param string $identifier
+     * @param  string $identifier
      * @return string
      */
     protected function cleanDelimitedIdentifiers($identifier)

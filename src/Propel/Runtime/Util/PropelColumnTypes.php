@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Runtime\Util;
@@ -15,7 +15,7 @@ namespace Propel\Runtime\Util;
  *
  * THIS CLASS MUST BE KEPT UP-TO-DATE WITH THE MORE EXTENSIVE GENERATOR VERSION OF THIS CLASS.
  *
- * @author     Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author Hans Lellelid <hans@xmpl.org> (Propel)
  */
 class PropelColumnTypes
 {
@@ -81,8 +81,8 @@ class PropelColumnTypes
 
     /**
      * Resturns the PDO type (PDO::PARAM_* constant) value for the Propel type provided.
-     * @param string $propelType
-     * @return     int
+     * @param  string $propelType
+     * @return int
      */
     static public function getPdoType($propelType)
     {

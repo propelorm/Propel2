@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Reverse;
@@ -22,7 +22,7 @@ use Propel\Tests\TestCase;
 /**
  * Tests for Pgsql database schema parser.
  *
- * @author      Alan Pinstein
+ * @author Alan Pinstein
  */
 class PgsqlSchemaParserTest extends TestCase
 {
@@ -47,7 +47,7 @@ class PgsqlSchemaParserTest extends TestCase
         Propel::init(__DIR__ . '/../../../../Fixtures/bookstore/build/conf/bookstore-conf.php');
     }
 
-    function parseDataProvider()
+    public function parseDataProvider()
     {
         return array(
             // columnDDL, expectedColumnPhpName, expectedColumnDefaultType, expectedColumnDefaultValue

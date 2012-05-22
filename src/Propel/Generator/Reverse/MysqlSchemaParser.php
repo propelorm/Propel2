@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Reverse;
@@ -22,7 +22,7 @@ use Propel\Generator\Model\ColumnDefaultValue;
 /**
  * Mysql database schema parser.
  *
- * @author     Hans Lellelid <hans@xmpl.org>
+ * @author Hans Lellelid <hans@xmpl.org>
  */
 class MysqlSchemaParser extends AbstractSchemaParser
 {
@@ -79,7 +79,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
     /**
      * Gets a type mapping from native types to Propel types
      *
-     * @return     array
+     * @return array
      */
     protected function getTypeMapping()
     {
@@ -152,7 +152,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
      *
      * @param array $row An associative array with the following keys:
      *                       Field, Type, Null, Key, Default, Extra.
-     * @return    Column
+     * @return Column
      */
     public function getColumnFromRow($row, Table $table)
     {

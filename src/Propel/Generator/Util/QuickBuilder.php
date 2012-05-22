@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Util;
@@ -278,7 +278,7 @@ class QuickBuilder
     /**
      * Prevent generated class without namespace to fail.
      *
-     * @param string $code
+     * @param  string $code
      * @return string
      */
     protected function forceNamespace($code)

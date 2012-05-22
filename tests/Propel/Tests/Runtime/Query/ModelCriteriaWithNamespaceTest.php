@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Tests\Runtime\Query;
@@ -17,11 +17,11 @@ use Propel\Runtime\Query\ModelCriteria;
 /**
  * Test class for ModelCriteria with namespaces.
  *
- * @author     Pierre-Yves LEBECQ <py.lebecq@gmail.com>
+ * @author Pierre-Yves LEBECQ <py.lebecq@gmail.com>
  */
 class ModelCriteriaWithNamespaceTest extends NamespacesTestBase
 {
-    static public function conditionsForTestReplaceNamesWithNamespaces()
+    public static function conditionsForTestReplaceNamesWithNamespaces()
     {
         return array(
             array('Foo\\Bar\\NamespacedBook.Title = ?', 'Title', 'book.TITLE = ?'), // basic case

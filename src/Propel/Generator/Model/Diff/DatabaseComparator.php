@@ -76,9 +76,9 @@ class DatabaseComparator
     /**
      * Returns the computed difference between two database objects.
      *
-     * @param Database $fromDatabase
-     * @param Database $toDatabase
-     * @param Boolean  $caseInsensitive
+     * @param  Database             $fromDatabase
+     * @param  Database             $toDatabase
+     * @param  Boolean              $caseInsensitive
      * @return DatabaseDiff|Boolean
      */
     static public function computeDiff(Database $fromDatabase, Database $toDatabase, $caseInsensitive = false)
@@ -99,7 +99,7 @@ class DatabaseComparator
      * Compares the tables of the fromDatabase and the toDatabase, and modifies
      * the inner databaseDiff if necessary.
      *
-     * @param Boolean $caseInsensitive
+     * @param  Boolean $caseInsensitive
      * @return integer
      */
     public function compareTables($caseInsensitive = false)

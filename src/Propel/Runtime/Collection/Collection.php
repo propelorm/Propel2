@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Runtime\Collection;
@@ -23,39 +23,39 @@ use Propel\Runtime\Util\BasePeer;
  * Class for iterating over a list of Propel elements
  * The collection keys must be integers - no associative array accepted
  *
- * @method     Collection fromXML(string $data) Populate the collection from an XML string
- * @method     Collection fromYAML(string $data) Populate the collection from a YAML string
- * @method     Collection fromJSON(string $data) Populate the collection from a JSON string
- * @method     Collection fromCSV(string $data) Populate the collection from a CSV string
+ * @method Collection fromXML(string $data) Populate the collection from an XML string
+ * @method Collection fromYAML(string $data) Populate the collection from a YAML string
+ * @method Collection fromJSON(string $data) Populate the collection from a JSON string
+ * @method Collection fromCSV(string $data) Populate the collection from a CSV string
  *
- * @method     string toXML(Boolean $usePrefix, Boolean $includeLazyLoadColumns) Export the collection to an XML string
- * @method     string toYAML(Boolean $usePrefix, Boolean $includeLazyLoadColumns) Export the collection to a YAML string
- * @method     string toJSON(Boolean $usePrefix, Boolean $includeLazyLoadColumns) Export the collection to a JSON string
- * @method     string toCSV(Boolean $usePrefix, Boolean $includeLazyLoadColumns) Export the collection to a CSV string
+ * @method string toXML(Boolean $usePrefix, Boolean $includeLazyLoadColumns) Export the collection to an XML string
+ * @method string toYAML(Boolean $usePrefix, Boolean $includeLazyLoadColumns) Export the collection to a YAML string
+ * @method string toJSON(Boolean $usePrefix, Boolean $includeLazyLoadColumns) Export the collection to a JSON string
+ * @method string toCSV(Boolean $usePrefix, Boolean $includeLazyLoadColumns) Export the collection to a CSV string
  *
- * @author     Francois Zaninotto
+ * @author Francois Zaninotto
  */
 class Collection extends \ArrayObject implements \Serializable
 {
     /**
-     * @var       string
+     * @var string
      */
     protected $model = '';
 
     /**
      * The fully qualified classname of the model
      *
-     * @var       string
+     * @var string
      */
     protected $fullyQualifiedModel = '';
 
     /**
-     * @var       ArrayIterator
+     * @var ArrayIterator
      */
     protected $iterator;
 
     /**
-     * @var       AbstractFormatter
+     * @var AbstractFormatter
      */
     protected $formatter;
 
@@ -64,7 +64,7 @@ class Collection extends \ArrayObject implements \Serializable
     /**
      * Get the data in the collection
      *
-     * @return    array
+     * @return array
      */
     public function getData()
     {
@@ -85,7 +85,7 @@ class Collection extends \ArrayObject implements \Serializable
      * Gets the position of the internal pointer
      * This position can be later used in seek()
      *
-     * @return    integer
+     * @return integer
      */
     public function getPosition()
     {
@@ -96,7 +96,7 @@ class Collection extends \ArrayObject implements \Serializable
      * Move the internal pointer to the beginning of the list
      * And get the first element in the collection
      *
-     * @return    mixed
+     * @return mixed
      */
     public function getFirst()
     {
@@ -108,7 +108,7 @@ class Collection extends \ArrayObject implements \Serializable
     /**
      * Check whether the internal pointer is at the beginning of the list
      *
-     * @return    Boolean
+     * @return Boolean
      */
     public function isFirst()
     {
@@ -119,7 +119,7 @@ class Collection extends \ArrayObject implements \Serializable
      * Move the internal pointer backward
      * And get the previous element in the collection
      *
-     * @return    mixed
+     * @return mixed
      */
     public function getPrevious()
     {
@@ -135,7 +135,7 @@ class Collection extends \ArrayObject implements \Serializable
     /**
      * Get the current element in the collection
      *
-     * @return    mixed
+     * @return mixed
      */
     public function getCurrent()
     {
@@ -146,7 +146,7 @@ class Collection extends \ArrayObject implements \Serializable
      * Move the internal pointer forward
      * And get the next element in the collection
      *
-     * @return    mixed
+     * @return mixed
      */
     public function getNext()
     {
@@ -159,7 +159,7 @@ class Collection extends \ArrayObject implements \Serializable
      * Move the internal pointer to the end of the list
      * And get the last element in the collection
      *
-     * @return    mixed
+     * @return mixed
      */
     public function getLast()
     {
@@ -175,7 +175,7 @@ class Collection extends \ArrayObject implements \Serializable
     /**
      * Check whether the internal pointer is at the end of the list
      *
-     * @return    Boolean
+     * @return Boolean
      */
     public function isLast()
     {
@@ -192,7 +192,7 @@ class Collection extends \ArrayObject implements \Serializable
     /**
      * Check if the collection is empty
      *
-     * @return    Boolean
+     * @return Boolean
      */
     public function isEmpty()
     {
@@ -202,7 +202,7 @@ class Collection extends \ArrayObject implements \Serializable
     /**
      * Check if the current index is an odd integer
      *
-     * @return    Boolean
+     * @return Boolean
      */
     public function isOdd()
     {
@@ -212,7 +212,7 @@ class Collection extends \ArrayObject implements \Serializable
     /**
      * Check if the current index is an even integer
      *
-     * @return    Boolean
+     * @return Boolean
      */
     public function isEven()
     {
@@ -223,8 +223,8 @@ class Collection extends \ArrayObject implements \Serializable
      * Get an element from its key
      * Alias for ArrayObject::offsetGet()
      *
-     * @param mixed $key
-     * @return    mixed  The element
+     * @param  mixed $key
+     * @return mixed The element
      */
     public function get($key)
     {
@@ -238,7 +238,7 @@ class Collection extends \ArrayObject implements \Serializable
     /**
      * Pops an element off the end of the collection
      *
-     * @return    mixed  The popped element
+     * @return mixed The popped element
      */
     public function pop()
     {
@@ -256,7 +256,7 @@ class Collection extends \ArrayObject implements \Serializable
     /**
      * Pops an element off the beginning of the collection
      *
-     * @return    mixed  The popped element
+     * @return mixed The popped element
      */
     public function shift()
     {
@@ -272,8 +272,8 @@ class Collection extends \ArrayObject implements \Serializable
     /**
      * Prepend one or more elements to the beginning of the collection
      *
-     * @param mixed $value the element to prepend
-     * @return    integer  The number of new elements in the array
+     * @param  mixed   $value the element to prepend
+     * @return integer The number of new elements in the array
      */
     public function prepend($value)
     {
@@ -302,8 +302,8 @@ class Collection extends \ArrayObject implements \Serializable
      * Removes a specified collection element
      * Alias for ArrayObject::offsetUnset()
      *
-     * @param mixed $key
-     * @return    mixed  The removed element
+     * @param  mixed $key
+     * @return mixed The removed element
      */
     public function remove($key)
     {
@@ -317,7 +317,7 @@ class Collection extends \ArrayObject implements \Serializable
     /**
      * Clears the collection
      *
-     * @return    array  The previous collection
+     * @return array The previous collection
      */
     public function clear()
     {
@@ -327,8 +327,8 @@ class Collection extends \ArrayObject implements \Serializable
     /**
      * Whether or not this collection contains a specified element
      *
-     * @param mixed $element
-     * @return    Boolean
+     * @param  mixed   $element
+     * @return Boolean
      */
     public function contains($element)
     {
@@ -338,8 +338,8 @@ class Collection extends \ArrayObject implements \Serializable
     /**
      * Search an element in the collection
      *
-     * @param mixed $element
-     * @return    mixed  Returns the key for the element if it is found in the collection, FALSE otherwise
+     * @param  mixed $element
+     * @return mixed Returns the key for the element if it is found in the collection, FALSE otherwise
      */
     public function search($element)
     {
@@ -350,8 +350,8 @@ class Collection extends \ArrayObject implements \Serializable
      * Returns an array of objects present in the collection that
      * are not presents in the given collection.
      *
-     * @param Collection $collection A Propel collection.
-     * @return Collection				An array of Propel objects from the collection that are not presents in the given collection.
+     * @param  Collection $collection A Propel collection.
+     * @return Collection An array of Propel objects from the collection that are not presents in the given collection.
      */
     public function diff(Collection $collection)
     {
@@ -398,7 +398,7 @@ class Collection extends \ArrayObject implements \Serializable
      * Overrides ArrayObject::getIterator() to save the iterator object
      * for internal use e.g. getNext(), isOdd(), etc.
      *
-     * @return    ArrayIterator
+     * @return ArrayIterator
      */
     public function getIterator()
     {
@@ -408,7 +408,7 @@ class Collection extends \ArrayObject implements \Serializable
     }
 
     /**
-     * @return    ArrayIterator
+     * @return ArrayIterator
      */
     public function getInternalIterator()
     {
@@ -450,7 +450,7 @@ class Collection extends \ArrayObject implements \Serializable
     /**
      * Get the model of the elements in the collection
      *
-     * @return    string  Name of the Propel object class stored in the collection
+     * @return string Name of the Propel object class stored in the collection
      */
     public function getModel()
     {
@@ -470,7 +470,7 @@ class Collection extends \ArrayObject implements \Serializable
     /**
      * Get the peer class of the elements in the collection
      *
-     * @return    string  Name of the Propel peer class stored in the collection
+     * @return string Name of the Propel peer class stored in the collection
      */
     public function getPeerClass()
     {
@@ -492,7 +492,7 @@ class Collection extends \ArrayObject implements \Serializable
     }
 
     /**
-     * @return    AbstractFormatter
+     * @return AbstractFormatter
      */
     public function getFormatter()
     {
@@ -502,7 +502,7 @@ class Collection extends \ArrayObject implements \Serializable
     /**
      * Get a write connection object for the database containing the elements of the collection
      *
-     * @return    ConnectionInterface  A ConnectionInterface connection object
+     * @return ConnectionInterface A ConnectionInterface connection object
      */
     public function getWriteConnection()
     {
@@ -522,7 +522,7 @@ class Collection extends \ArrayObject implements \Serializable
      * @param mixed  $parser A AbstractParser instance, or a format name ('XML', 'YAML', 'JSON', 'CSV')
      * @param string $data   The source data to import from
      *
-     * @return    BaseObject  The current object, for fluid interface
+     * @return BaseObject The current object, for fluid interface
      */
     public function importFrom($parser, $data)
     {
@@ -551,7 +551,7 @@ class Collection extends \ArrayObject implements \Serializable
      * @param Boolean $includeLazyLoadColumns (optional) Whether to include lazy load(ed) columns. Defaults to TRUE.
      *                                            Not supported by ArrayCollection, as ArrayFormatter has
      *                                            already included lazy-load columns in the array used here.
-     * @return    string                          The exported data
+     * @return string The exported data
      */
     public function exportTo($parser, $usePrefix = true, $includeLazyLoadColumns = true)
     {
@@ -571,7 +571,7 @@ class Collection extends \ArrayObject implements \Serializable
      * @param string $name
      * @param mixed  $params
      *
-     * @return    array|string
+     * @return array|string
      */
     public function __call($name, $params)
     {
@@ -592,7 +592,7 @@ class Collection extends \ArrayObject implements \Serializable
      * Based on the string representation of the underlying objects, defined in
      * the Peer::DEFAULT_STRING_FORMAT constant
      *
-     * @return    string
+     * @return string
      */
     public function __toString()
     {

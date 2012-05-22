@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Runtime\Formatter;
@@ -18,7 +18,7 @@ use Propel\Runtime\Query\ModelCriteria;
 /**
  * Abstract class for query formatter
  *
- * @author     Francois Zaninotto
+ * @author Francois Zaninotto
  */
 abstract class AbstractFormatter
 {
@@ -206,7 +206,7 @@ abstract class AbstractFormatter
      * @param int    $col   Offset of the object in the list of objects to hydrate
      * @param string $class Propel model object class
      *
-     * @return    BaseObject
+     * @return BaseObject
      */
     protected function getWorkerObject($col, $class)
     {
@@ -227,7 +227,7 @@ abstract class AbstractFormatter
      * @param string $class The classname of the object to create
      * @param int    $col   The start column for the hydration (modified)
      *
-     * @return    BaseObject
+     * @return BaseObject
      */
     public function getSingleObjectFromRow($row, $class, &$col = 0)
     {

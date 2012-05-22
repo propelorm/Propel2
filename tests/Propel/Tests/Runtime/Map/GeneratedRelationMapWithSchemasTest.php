@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Tests\Runtime\Map;
@@ -18,7 +18,7 @@ use Propel\Runtime\Map\RelationMap;
 /**
  * Test class for PHP5TableMapBuilder with schemas.
  *
- * @author     Ulf Hermann
+ * @author Ulf Hermann
  * @version    $Id$
  */
 class GeneratedRelationMapWithSchemasTest extends SchemasTestBase

@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Reverse;
@@ -18,8 +18,8 @@ use Propel\Generator\Reverse\AbstractSchemaParser;
 /**
  * Oracle database schema parser.
  *
- * @author     Hans Lellelid <hans@xmpl.org>
- * @author     Guillermo Gutierrez <ggutierrez@dailycosas.net> (Adaptation)
+ * @author Hans Lellelid <hans@xmpl.org>
+ * @author Guillermo Gutierrez <ggutierrez@dailycosas.net> (Adaptation)
  */
 class OracleSchemaParser extends AbstractSchemaParser
 {
@@ -38,7 +38,7 @@ class OracleSchemaParser extends AbstractSchemaParser
      *   DECIMAL (NUMBER with scale),
      *   DOUBLE (FLOAT with precision = 126)
      *
-     * @var        array
+     * @var array
      */
     private static $oracleTypeMap = array(
         'BLOB'      => PropelTypes::BLOB,
@@ -61,7 +61,7 @@ class OracleSchemaParser extends AbstractSchemaParser
     /**
      * Gets a type mapping from native types to Propel types
      *
-     * @return     array
+     * @return array
      */
     protected function getTypeMapping()
     {

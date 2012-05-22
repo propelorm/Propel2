@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Runtime\Util;
@@ -16,8 +16,8 @@ use Propel\Runtime\Query\ModelCriteria;
  * Implements a pager based on a ModelCriteria
  * The code from this class heavily borrows from symfony's sfPager class
  *
- * @author         Fabien Potencier <fabien.potencier@symfony-project.com>
- * @author         François Zaninotto
+ * @author Fabien Potencier <fabien.potencier@symfony-project.com>
+ * @author François Zaninotto
  * @version        $Revision$
  */
 class PropelModelPager implements \IteratorAggregate, \Countable
@@ -161,7 +161,7 @@ class PropelModelPager implements \IteratorAggregate, \Countable
     /**
      * Test whether the number of results exceeds the max number of results per page
      *
-     * @return     Boolean true if the pager displays only a subset of the results
+     * @return Boolean true if the pager displays only a subset of the results
      */
     public function haveToPaginate()
     {
@@ -172,7 +172,7 @@ class PropelModelPager implements \IteratorAggregate, \Countable
      * Get the index of the first element in the page
      * Returns 1 on the first page, $maxPerPage +1 on the second page, etc
      *
-     * @return     int
+     * @return int
      */
     public function getFirstIndex()
     {
@@ -187,7 +187,7 @@ class PropelModelPager implements \IteratorAggregate, \Countable
      * Get the index of the last element in the page
      * Always less than or eaqual to $maxPerPage
      *
-     * @return     int
+     * @return int
      */
     public function getLastIndex()
     {
@@ -206,7 +206,7 @@ class PropelModelPager implements \IteratorAggregate, \Countable
      * Get the total number of results of the query
      * This can be greater than $maxPerPage
      *
-     * @return     int
+     * @return int
      */
     public function getNbResults()
     {
@@ -226,7 +226,7 @@ class PropelModelPager implements \IteratorAggregate, \Countable
     /**
      * Check whether the current page is the first page
      *
-     * @return     Boolean true if the current page is the first page
+     * @return Boolean true if the current page is the first page
      */
     public function isFirstPage()
     {
@@ -236,7 +236,7 @@ class PropelModelPager implements \IteratorAggregate, \Countable
     /**
      * Get the number of the first page
      *
-     * @return     int Always 1
+     * @return int Always 1
      */
     public function getFirstPage()
     {
@@ -246,7 +246,7 @@ class PropelModelPager implements \IteratorAggregate, \Countable
     /**
      * Check whether the current page is the last page
      *
-     * @return     Boolean true if the current page is the last page
+     * @return Boolean true if the current page is the last page
      */
     public function isLastPage()
     {
@@ -256,7 +256,7 @@ class PropelModelPager implements \IteratorAggregate, \Countable
     /**
      * Get the number of the last page
      *
-     * @return     int
+     * @return int
      */
     public function getLastPage()
     {
@@ -279,7 +279,7 @@ class PropelModelPager implements \IteratorAggregate, \Countable
     /**
      * Get the number of the current page
      *
-     * @return     int
+     * @return int
      */
     public function getPage()
     {
@@ -303,7 +303,7 @@ class PropelModelPager implements \IteratorAggregate, \Countable
     /**
      * Get the number of the next page
      *
-     * @return     int
+     * @return int
      */
     public function getNextPage()
     {
@@ -313,7 +313,7 @@ class PropelModelPager implements \IteratorAggregate, \Countable
     /**
      * Get the number of the previous page
      *
-     * @return     int
+     * @return int
      */
     public function getPreviousPage()
     {
@@ -323,7 +323,7 @@ class PropelModelPager implements \IteratorAggregate, \Countable
     /**
      * Get the maximum number results per page
      *
-     * @return     int
+     * @return int
      */
     public function getMaxPerPage()
     {
@@ -355,9 +355,9 @@ class PropelModelPager implements \IteratorAggregate, \Countable
 
     /**
      * Check whether the internal pointer is at the beginning of the list
-     * @see       Collection
+     * @see Collection
      *
-     * @return    Boolean
+     * @return Boolean
      */
     public function isFirst()
     {
@@ -366,9 +366,9 @@ class PropelModelPager implements \IteratorAggregate, \Countable
 
     /**
      * Check whether the internal pointer is at the end of the list
-     * @see       Collection
+     * @see Collection
      *
-     * @return    Boolean
+     * @return Boolean
      */
     public function isLast()
     {
@@ -377,9 +377,9 @@ class PropelModelPager implements \IteratorAggregate, \Countable
 
     /**
      * Check if the collection is empty
-     * @see       Collection
+     * @see Collection
      *
-     * @return    Boolean
+     * @return Boolean
      */
     public function isEmpty()
     {
@@ -388,9 +388,9 @@ class PropelModelPager implements \IteratorAggregate, \Countable
 
     /**
      * Check if the current index is an odd integer
-     * @see       Collection
+     * @see Collection
      *
-     * @return    Boolean
+     * @return Boolean
      */
     public function isOdd()
     {
@@ -399,9 +399,9 @@ class PropelModelPager implements \IteratorAggregate, \Countable
 
     /**
      * Check if the current index is an even integer
-     * @see       Collection
+     * @see Collection
      *
-     * @return    Boolean
+     * @return Boolean
      */
     public function isEven()
     {
@@ -416,8 +416,8 @@ class PropelModelPager implements \IteratorAggregate, \Countable
     /**
      * Returns the total number of results.
      *
-     * @see        Countable
-     * @return     int
+     * @see Countable
+     * @return int
      */
     public function count()
     {

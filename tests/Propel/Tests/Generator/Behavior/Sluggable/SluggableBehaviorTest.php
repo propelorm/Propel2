@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Behavior\Sluggable;
@@ -22,7 +22,7 @@ use Propel\Tests\Bookstore\Behavior\Table14Query;
 /**
  * Tests for SluggableBehavior class
  *
- * @author     François Zaninotto
+ * @author François Zaninotto
  */
 class SluggableBehaviorTest extends BookstoreTestBase
 {
@@ -74,7 +74,7 @@ class SluggableBehaviorTest extends BookstoreTestBase
         $this->assertEquals('/foo/hello-world/bar', $t->createRawSlug(), 'createRawSlug() returns a slug based on a pattern');
     }
 
-    static public function cleanupSlugProvider()
+    public static function cleanupSlugProvider()
     {
         return array(
             array('', 'n-a'),
@@ -98,7 +98,7 @@ class SluggableBehaviorTest extends BookstoreTestBase
         $this->assertEquals($out, $t->cleanupSlugPart($in), 'cleanupSlugPart() cleans up the slug part');
     }
 
-    static public function limitSlugSizeProvider()
+    public static function limitSlugSizeProvider()
     {
         return array(
             array('123', '123'),
@@ -275,7 +275,7 @@ class TestableTable13 extends Table13
         return parent::createRawSlug();
     }
 
-    static public function cleanupSlugPart($slug, $separator = '-')
+    public static function cleanupSlugPart($slug, $separator = '-')
     {
         return parent::cleanupSlugPart($slug, $separator);
     }
@@ -298,7 +298,7 @@ class TestableTable14 extends Table14
         return parent::createRawSlug();
     }
 
-    static public function limitSlugSize($slug, $incrementReservedSpace = 3)
+    public static function limitSlugSize($slug, $incrementReservedSpace = 3)
     {
         return parent::limitSlugSize($slug, $incrementReservedSpace);
     }

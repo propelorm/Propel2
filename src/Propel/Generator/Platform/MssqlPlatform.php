@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Platform;
@@ -18,8 +18,8 @@ use Propel\Generator\Model\Table;
 /**
  * MS SQL PlatformInterface implementation.
  *
- * @author     Hans Lellelid <hans@xmpl.org> (Propel)
- * @author     Martin Poeschl <mpoeschl@marmot.at> (Torque)
+ * @author Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author Martin Poeschl <mpoeschl@marmot.at> (Torque)
  */
 class MssqlPlatform extends DefaultPlatform
 {
@@ -166,7 +166,7 @@ END
     }
 
     /**
-     * @see        Platform::supportsSchemas()
+     * @see Platform::supportsSchemas()
      */
     public function supportsSchemas()
     {

@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Platform;
@@ -36,23 +36,24 @@ class DefaultPlatform implements PlatformInterface
     /**
      * Mapping from Propel types to Domain objects.
      *
-     * @var        array
+     * @var array
      */
     protected $schemaDomainMap;
 
     /**
-     * @var        PDO Database connection.
+     * @var \PDO Database connection.
      */
     protected $con;
 
     /**
-     * @var        Boolean whether the identifier quoting is enabled
+     * @var Boolean whether the identifier quoting is enabled
      */
     protected $isIdentifierQuotingEnabled = false;
 
     /**
      * Default constructor.
-     * @param PDO $con Optional database connection to use in this platform.
+     *
+     * @param \PDO $con Optional database connection to use in this platform.
      */
     public function __construct(\PDO $con = null)
     {
@@ -64,8 +65,9 @@ class DefaultPlatform implements PlatformInterface
     }
 
     /**
-     * Set the database connection to use for this Platform class.
-     * @param PDO $con Database connection to use in this platform.
+     * Sets the database connection to use for this Platform class.
+     *
+     * @param \PDO $con Database connection to use in this platform.
      */
     public function setConnection(\PDO $con = null)
     {
@@ -74,7 +76,8 @@ class DefaultPlatform implements PlatformInterface
 
     /**
      * Returns the database connection to use for this Platform class.
-     * @return     PDO The database connection or NULL if none has been set.
+     *
+     * @return \PDO
      */
     public function getConnection()
     {
@@ -94,8 +97,8 @@ class DefaultPlatform implements PlatformInterface
     /**
      * Gets a specific propel (renamed) property from the build.
      *
-     * @param string $name
-     * @return     mixed
+     * @param  string $name
+     * @return mixed
      */
     protected function getBuildProperty($name)
     {
@@ -135,7 +138,7 @@ class DefaultPlatform implements PlatformInterface
     /**
      * Returns the short name of the database type that this platform represents.
      * For example MysqlPlatform->getDatabaseType() returns 'mysql'.
-     * @return     string
+     * @return string
      */
     public function getDatabaseType()
     {
@@ -149,7 +152,7 @@ class DefaultPlatform implements PlatformInterface
     /**
      * Returns the max column length supported by the db.
      *
-     * @return     int The max column length
+     * @return int The max column length
      */
     public function getMaxColumnNameLength()
     {
@@ -159,7 +162,7 @@ class DefaultPlatform implements PlatformInterface
     /**
      * Returns the native IdMethod (sequence|identity)
      *
-     * @return     string The native IdMethod (PlatformInterface:IDENTITY, PlatformInterface::SEQUENCE).
+     * @return string The native IdMethod (PlatformInterface:IDENTITY, PlatformInterface::SEQUENCE).
      */
     public function getNativeIdMethod()
     {
@@ -439,7 +442,7 @@ DROP TABLE " . $this->quoteIdentifier($table->getName()) . ";
     /**
      * Returns the DDL SQL to drop the primary key of a table.
      *
-     * @param Table $table
+     * @param  Table  $table
      * @return string
      */
     public function getDropPrimaryKeyDDL(Table $table)
@@ -457,7 +460,7 @@ ALTER TABLE %s DROP CONSTRAINT %s;
     /**
      * Returns the DDL SQL to add the primary key of a table.
      *
-     * @param Table $table
+     * @param  Table  $table
      * @return string
      */
     public function getAddPrimaryKeyDDL(Table $table)
@@ -475,7 +478,7 @@ ALTER TABLE %s ADD %s;
     /**
      * Returns the DDL SQL to add the indices of a table.
      *
-     * @param Table $table
+     * @param  Table  $table
      * @return string
      */
     public function getAddIndicesDDL(Table $table)
@@ -491,7 +494,7 @@ ALTER TABLE %s ADD %s;
     /**
      * Returns the DDL SQL to add an Index.
      *
-     * @param Index $index
+     * @param  Index  $index
      * @return string
      */
     public function getAddIndexDDL(Index $index)
@@ -511,8 +514,8 @@ CREATE %sINDEX %s ON %s (%s);
     /**
      * Builds the DDL SQL to drop an Index.
      *
-     * @param Index $index
-     * @return     string
+     * @param  Index  $index
+     * @return string
      */
     public function getDropIndexDDL(Index $index)
     {
@@ -528,8 +531,8 @@ DROP INDEX %s;
     /**
      * Builds the DDL SQL for an Index object.
      *
-     * @param Index $index
-     * @return     string
+     * @param  Index  $index
+     * @return string
      */
     public function getIndexDDL(Index $index)
     {
@@ -543,8 +546,8 @@ DROP INDEX %s;
     /**
      * Builds the DDL SQL for a Unique constraint object.
      *
-     * @param Unique $unique
-     * @return     string
+     * @param  Unique $unique
+     * @return string
      */
     public function getUniqueDDL(Unique $unique)
     {
@@ -554,8 +557,8 @@ DROP INDEX %s;
     /**
      * Builds the DDL SQL to add the foreign keys of a table.
      *
-     * @param Table $table
-     * @return     string
+     * @param  Table  $table
+     * @return string
      */
     public function getAddForeignKeysDDL(Table $table)
     {
@@ -570,8 +573,8 @@ DROP INDEX %s;
     /**
      * Builds the DDL SQL to add a foreign key.
      *
-     * @param ForeignKey $fk
-     * @return     string
+     * @param  ForeignKey $fk
+     * @return string
      */
     public function getAddForeignKeyDDL(ForeignKey $fk)
     {
@@ -591,8 +594,8 @@ ALTER TABLE %s ADD %s;
     /**
      * Builds the DDL SQL to drop a foreign key.
      *
-     * @param ForeignKey $fk
-     * @return     string
+     * @param  ForeignKey $fk
+     * @return string
      */
     public function getDropForeignKeyDDL(ForeignKey $fk)
     {
@@ -611,7 +614,7 @@ ALTER TABLE %s DROP CONSTRAINT %s;
 
     /**
      * Builds the DDL SQL for a ForeignKey object.
-     * @return     string
+     * @return string
      */
     public function getForeignKeyDDL(ForeignKey $fk)
     {
@@ -662,7 +665,7 @@ ALTER TABLE %s DROP CONSTRAINT %s;
      * Builds the DDL SQL to modify a database
      * based on a DatabaseDiff instance
      *
-     * @return     string
+     * @return string
      */
     public function getModifyDatabaseDDL(DatabaseDiff $databaseDiff)
     {
@@ -696,7 +699,7 @@ ALTER TABLE %s DROP CONSTRAINT %s;
 
     /**
      * Builds the DDL SQL to rename a table
-     * @return     string
+     * @return string
      */
     public function getRenameTableDDL($fromTableName, $toTableName)
     {
@@ -714,7 +717,7 @@ ALTER TABLE %s RENAME TO %s;
      * Builds the DDL SQL to alter a table
      * based on a TableDiff instance
      *
-     * @return     string
+     * @return string
      */
     public function getModifyTableDDL(TableDiff $tableDiff)
     {
@@ -779,7 +782,7 @@ ALTER TABLE %s RENAME TO %s;
      * Builds the DDL SQL to alter a table
      * based on a TableDiff instance
      *
-     * @return     string
+     * @return string
      */
     public function getModifyTableColumnsDDL(TableDiff $tableDiff)
     {
@@ -808,7 +811,7 @@ ALTER TABLE %s RENAME TO %s;
      * Builds the DDL SQL to alter a table's primary key
      * based on a TableDiff instance
      *
-     * @return     string
+     * @return string
      */
     public function getModifyTablePrimaryKeyDDL(TableDiff $tableDiff)
     {
@@ -826,7 +829,7 @@ ALTER TABLE %s RENAME TO %s;
      * Builds the DDL SQL to alter a table's indices
      * based on a TableDiff instance
      *
-     * @return     string
+     * @return string
      */
     public function getModifyTableIndicesDDL(TableDiff $tableDiff)
     {
@@ -853,7 +856,7 @@ ALTER TABLE %s RENAME TO %s;
      * Builds the DDL SQL to alter a table's foreign keys
      * based on a TableDiff instance
      *
-     * @return     string
+     * @return string
      */
     public function getModifyTableForeignKeysDDL(TableDiff $tableDiff)
     {
@@ -879,7 +882,7 @@ ALTER TABLE %s RENAME TO %s;
     /**
      * Builds the DDL SQL to remove a column
      *
-     * @return     string
+     * @return string
      */
     public function getRemoveColumnDDL(Column $column)
     {
@@ -895,7 +898,8 @@ ALTER TABLE %s DROP COLUMN %s;
 
     /**
      * Builds the DDL SQL to rename a column
-     * @return     string
+     *
+     * @return string
      */
     public function getRenameColumnDDL($fromColumn, $toColumn)
     {
@@ -913,7 +917,7 @@ ALTER TABLE %s RENAME COLUMN %s TO %s;
     /**
      * Builds the DDL SQL to modify a column
      *
-     * @return     string
+     * @return string
      */
     public function getModifyColumnDDL(ColumnDiff $columnDiff)
     {
@@ -931,7 +935,7 @@ ALTER TABLE %s MODIFY %s;
     /**
      * Builds the DDL SQL to modify a list of columns
      *
-     * @return     string
+     * @return string
      */
     public function getModifyColumnsDDL($columnDiffs)
     {
@@ -964,7 +968,7 @@ ALTER TABLE %s MODIFY
     /**
      * Builds the DDL SQL to remove a column
      *
-     * @return     string
+     * @return string
      */
     public function getAddColumnDDL(Column $column)
     {
@@ -981,7 +985,7 @@ ALTER TABLE %s ADD %s;
     /**
      * Builds the DDL SQL to remove a list of columns
      *
-     * @return     string
+     * @return string
      */
     public function getAddColumnsDDL($columns)
     {
@@ -1013,8 +1017,8 @@ ALTER TABLE %s ADD
     /**
      * Returns if the RDBMS-specific SQL type has a size attribute.
      *
-     * @param string $sqlType the SQL type
-     * @return     Boolean True if the type has a size attribute
+     * @param  string  $sqlType the SQL type
+     * @return Boolean True if the type has a size attribute
      */
     public function hasSize($sqlType)
     {
@@ -1024,8 +1028,8 @@ ALTER TABLE %s ADD
     /**
      * Returns if the RDBMS-specific SQL type has a scale attribute.
      *
-     * @param string $sqlType the SQL type
-     * @return     Boolean True if the type has a scale attribute
+     * @param  string  $sqlType the SQL type
+     * @return Boolean True if the type has a scale attribute
      */
     public function hasScale($sqlType)
     {
@@ -1034,8 +1038,8 @@ ALTER TABLE %s ADD
 
     /**
      * Quote and escape needed characters in the string for unerlying RDBMS.
-     * @param string $text
-     * @return     string
+     * @param  string $text
+     * @return string
      */
     public function quote($text)
     {
@@ -1052,8 +1056,8 @@ ALTER TABLE %s ADD
      * The subclasses can implement this using string replacement functions
      * or native DB methods.
      *
-     * @param string $text Text that needs to be escaped.
-     * @return     string
+     * @param  string $text Text that needs to be escaped.
+     * @return string
      */
     protected function disconnectedEscapeText($text)
     {
@@ -1062,8 +1066,8 @@ ALTER TABLE %s ADD
 
     /**
      * Quotes identifiers used in database SQL.
-     * @param string $text
-     * @return     string Quoted identifier.
+     * @param  string $text
+     * @return string Quoted identifier.
      */
     public function quoteIdentifier($text)
     {
@@ -1082,7 +1086,7 @@ ALTER TABLE %s ADD
 
     /**
      * Whether RDBMS supports native ON DELETE triggers (e.g. ON DELETE CASCADE).
-     * @return     Boolean
+     * @return Boolean
      */
     public function supportsNativeDeleteTrigger()
     {
@@ -1091,7 +1095,7 @@ ALTER TABLE %s ADD
 
     /**
      * Whether RDBMS supports INSERT null values in autoincremented primary keys
-     * @return     Boolean
+     * @return Boolean
      */
     public function supportsInsertNullPk()
     {
@@ -1100,7 +1104,8 @@ ALTER TABLE %s ADD
 
     /**
      * Whether the underlying PDO driver for this platform returns BLOB columns as streams (instead of strings).
-     * @return     Boolean
+     *
+     * @return Boolean
      */
     public function hasStreamBlobImpl()
     {
@@ -1108,7 +1113,7 @@ ALTER TABLE %s ADD
     }
 
     /**
-     * @see        Platform::supportsSchemas()
+     * @see Platform::supportsSchemas()
      */
     public function supportsSchemas()
     {
@@ -1116,7 +1121,7 @@ ALTER TABLE %s ADD
     }
 
     /**
-     * @see        Platform::supportsMigrations()
+     * @see Platform::supportsMigrations()
      */
     public function supportsMigrations()
     {
@@ -1137,8 +1142,8 @@ ALTER TABLE %s ADD
      * This function is used to set default column values when building
      * SQL.
      *
-     * @param mixed $tf A Boolean or string representation of Boolean ('y', 'true').
-     * @return     mixed
+     * @param  mixed $tf A Boolean or string representation of Boolean ('y', 'true').
+     * @return mixed
      */
     public function getBooleanString($b)
     {
@@ -1160,7 +1165,7 @@ ALTER TABLE %s ADD
 
     /**
      * Gets the preferred timestamp formatter for setting date/time values.
-     * @return     string
+     * @return string
      */
     public function getTimestampFormatter()
     {
@@ -1169,7 +1174,7 @@ ALTER TABLE %s ADD
 
     /**
      * Gets the preferred time formatter for setting date/time values.
-     * @return     string
+     * @return string
      */
     public function getTimeFormatter()
     {
@@ -1178,7 +1183,7 @@ ALTER TABLE %s ADD
 
     /**
      * Gets the preferred date formatter for setting date/time values.
-     * @return     string
+     * @return string
      */
     public function getDateFormatter()
     {

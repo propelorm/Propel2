@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Runtime\Adapter\Pdo;
@@ -19,10 +19,10 @@ use Propel\Runtime\Exception\PropelException;
 /**
  * This is used in order to connect to a MySQL database.
  *
- * @author     Hans Lellelid <hans@xmpl.org> (Propel)
- * @author     Jon S. Stevens <jon@clearink.com> (Torque)
- * @author     Brett McLaughlin <bmclaugh@algx.net> (Torque)
- * @author     Daniel Rall <dlr@finemaltcoding.com> (Torque)
+ * @author Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author Jon S. Stevens <jon@clearink.com> (Torque)
+ * @author Brett McLaughlin <bmclaugh@algx.net> (Torque)
+ * @author Daniel Rall <dlr@finemaltcoding.com> (Torque)
  */
 class MysqlAdapter extends PdoAdapter implements AdapterInterface
 {
@@ -33,7 +33,7 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
      * @param string $s1 String to concatenate.
      * @param string $s2 String to append.
      *
-     * @return    string
+     * @return string
      */
     public function concatString($s1, $s2)
     {
@@ -47,7 +47,7 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
      * @param integer $pos Offset to start from.
      * @param integer $len Number of characters to extract.
      *
-     * @return    string
+     * @return string
      */
     public function subString($s, $pos, $len)
     {
@@ -57,8 +57,8 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
     /**
      * Returns SQL which calculates the length (in chars) of a string.
      *
-     * @param string $s String to calculate length of.
-     * @return    string
+     * @param  string $s String to calculate length of.
+     * @return string
      */
     public function strLength($s)
     {
@@ -71,7 +71,7 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
      * @param ConnectionInterface $con   The Propel connection to use.
      * @param string              $table The name of the table to lock.
      *
-     * @throws    \PDOException  No Statement could be created or executed.
+     * @throws \PDOException No Statement could be created or executed.
      */
     public function lockTable($con, $table)
     {
@@ -84,7 +84,7 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
      * @param ConnectionInterface $con   The Propel connection to use.
      * @param string              $table The name of the table to unlock.
      *
-     * @throws    \PDOException  No Statement could be created or executed.
+     * @throws \PDOException No Statement could be created or executed.
      */
     public function unlockTable($con, $table)
     {
@@ -92,10 +92,10 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
     }
 
     /**
-     * @see       AdapterInterface::quoteIdentifier()
+     * @see AdapterInterface::quoteIdentifier()
      *
-     * @param string $text
-     * @return    string
+     * @param  string $text
+     * @return string
      */
     public function quoteIdentifier($text)
     {
@@ -103,10 +103,10 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
     }
 
     /**
-     * @see       AdapterInterface::quoteIdentifierTable()
+     * @see AdapterInterface::quoteIdentifierTable()
      *
-     * @param string $table
-     * @return    string
+     * @param  string $table
+     * @return string
      */
     public function quoteIdentifierTable($table)
     {
@@ -115,9 +115,9 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
     }
 
     /**
-     * @see       AdapterInterface::useQuoteIdentifier()
+     * @see AdapterInterface::useQuoteIdentifier()
      *
-     * @return    boolean
+     * @return Boolean
      */
     public function useQuoteIdentifier()
     {
@@ -125,7 +125,7 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
     }
 
     /**
-     * @see       AdapterInterface::applyLimit()
+     * @see AdapterInterface::applyLimit()
      *
      * @param string  $sql
      * @param integer $offset
@@ -141,10 +141,10 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
     }
 
     /**
-     * @see       AdapterInterface::random()
+     * @see AdapterInterface::random()
      *
-     * @param string $seed
-     * @return    string
+     * @param  string $seed
+     * @return string
      */
     public function random($seed = null)
     {
@@ -152,7 +152,7 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
     }
 
     /**
-     * @see       AdapterInterface::bindValue()
+     * @see AdapterInterface::bindValue()
      *
      * @param StatementInterface $stmt
      * @param string             $parameter
@@ -160,7 +160,7 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
      * @param ColumnMap          $cMap
      * @param null|integer       $position
      *
-     * @return    boolean
+     * @return Boolean
      */
     public function bindValue(StatementInterface $stmt, $parameter, $value, ColumnMap $cMap, $position = null)
     {
@@ -188,7 +188,7 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
     /**
      * Prepare the parameters for a PDO connection.
      * Protects MySQL from charset injection risk.
-     * @see   http://www.propelorm.org/ticket/1360
+     * @see http://www.propelorm.org/ticket/1360
      *
      * @param array the connection parameters from the configuration
      *

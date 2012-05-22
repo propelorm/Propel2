@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Runtime\Parser;
@@ -13,7 +13,7 @@ namespace Propel\Runtime\Parser;
 /**
  * XML parser. Converts data between associative array and XML formats
  *
- * @author     Francois Zaninotto
+ * @author Francois Zaninotto
  */
 class XmlParser extends AbstractParser
 {
@@ -93,7 +93,7 @@ class XmlParser extends AbstractParser
       * @param  array $array
      * @param DOMElement $rootElement
      * @param string     $charset
-     * @param boolean    $removeNumbersFromKeys
+     * @param Boolean    $removeNumbersFromKeys
      *
      * @return DOMElement
      */
@@ -129,8 +129,8 @@ class XmlParser extends AbstractParser
     /**
      * Converts data from XML to an associative array.
      *
-     * @param string $data Source data to convert, as an XML string
-     * @return array Converted data
+     * @param  string $data Source data to convert, as an XML string
+     * @return array  Converted data
      */
     public function toArray($data)
     {
@@ -144,8 +144,8 @@ class XmlParser extends AbstractParser
     /**
      * Alias for XmlParser::toArray()
      *
-     * @param string $data Source data to convert, as an XML string
-     * @return array Converted data
+     * @param  string $data Source data to convert, as an XML string
+     * @return array  Converted data
      */
     public function fromXML($data)
     {
@@ -153,7 +153,7 @@ class XmlParser extends AbstractParser
     }
 
     /**
-     * @param DOMNode $data
+     * @param  DOMNode $data
      * @return array
      */
     protected function convertDOMElementToArray(\DOMNode $data)
@@ -192,8 +192,8 @@ class XmlParser extends AbstractParser
     }
 
     /**
-     * @param DOMNode $node
-     * @return boolean
+     * @param  DOMNode $node
+     * @return Boolean
      */
     protected function hasOnlyTextNodes(\DOMNode $node)
     {

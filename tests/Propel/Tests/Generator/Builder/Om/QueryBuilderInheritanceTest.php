@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Builder\Om;
@@ -30,7 +30,7 @@ use Propel\Runtime\Propel;
 /**
  * Test class for MultiExtensionQueryBuilder.
  *
- * @author     François Zaninotto
+ * @author François Zaninotto
  * @version    $Id: QueryBuilderTest.php 1347 2009-12-03 21:06:36Z francois $
  */
 class QueryBuilderInheritanceTest extends BookstoreTestBase

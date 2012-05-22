@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Behavior\Sortable;
@@ -13,8 +13,8 @@ namespace Propel\Generator\Behavior\Sortable;
 /**
  * Behavior to add sortable columns and abilities
  *
- * @author     François Zaninotto
- * @author     heltem <heltem@o2php.com>
+ * @author François Zaninotto
+ * @author heltem <heltem@o2php.com>
  */
 class SortableBehaviorObjectBuilderModifier
 {

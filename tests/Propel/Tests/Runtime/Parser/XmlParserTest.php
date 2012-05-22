@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Tests\Runtime\Parser;
@@ -15,11 +15,11 @@ use Propel\Runtime\Parser\XmlParser;
 /**
  * Test for XmlParser class
  *
- * @author     Francois Zaninotto
+ * @author Francois Zaninotto
  */
 class XmlParserTest extends \PHPUnit_Framework_TestCase
 {
-    static public function arrayXmlConversionDataProvider()
+    public static function arrayXmlConversionDataProvider()
     {
         return array(
             array(array(), "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
@@ -128,7 +128,7 @@ class XmlParserTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('', $data['Title']);
     }
 
-    static public function listToXMLDataProvider()
+    public static function listToXMLDataProvider()
     {
         $list = array(
             'book0' => array('Id' => 123, 'Title' => 'Pride and Prejudice', 'AuthorId' => 456, 'ISBN' => '0553213105', 'Author' => array('Id' => 456, 'FirstName' => 'Jane', 'LastName' => 'Austen')),

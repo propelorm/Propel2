@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Model;
@@ -13,10 +13,10 @@ namespace Propel\Generator\Model;
 /**
  * A <code>NameGenerator</code> implementation for PHP-esque names.
  *
- * @author     Hans Lellelid <hans@xmpl.org> (Propel)
- * @author     Daniel Rall <dlr@finemaltcoding.com> (Torque)
- * @author     Byron Foster <byron_foster@yahoo.com> (Torque)
- * @author     Bernd Goldschmidt <bgoldschmidt@rapidsoft.de>
+ * @author Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author Daniel Rall <dlr@finemaltcoding.com> (Torque)
+ * @author Byron Foster <byron_foster@yahoo.com> (Torque)
+ * @author Bernd Goldschmidt <bgoldschmidt@rapidsoft.de>
  */
 class PhpNameGenerator implements NameGenerator
 {
@@ -39,8 +39,8 @@ class PhpNameGenerator implements NameGenerator
      * @param      inputs list expected to contain two (optional: three) parameters,
      * element 0 contains name to convert, element 1 contains method for conversion,
      * optional element 2 contains prefix to be striped from name
-     * @return     The generated name.
-     * @see        NameGenerator
+     * @return The generated name.
+     * @see NameGenerator
      */
     public function generateName($inputs)
     {
@@ -84,10 +84,10 @@ class PhpNameGenerator implements NameGenerator
      *
      * my_CLASS_name -> MyClassName
      *
-     * @param string $schemaName name to be converted.
-     * @return     string Converted name.
-     * @see        NameGenerator
-     * @see        #underscoreMethod()
+     * @param  string $schemaName name to be converted.
+     * @return string Converted name.
+     * @see NameGenerator
+     * @see #underscoreMethod()
      */
     protected function underscoreMethod($schemaName)
     {
@@ -109,10 +109,10 @@ class PhpNameGenerator implements NameGenerator
      *
      * T$NAMA$RFO_max => TNamaRfoMax
      *
-     * @param string $schemaName name to be converted.
-     * @return     string Converted name.
-     * @see        NameGenerator
-     * @see        #underscoreMethod()
+     * @param  string $schemaName name to be converted.
+     * @return string Converted name.
+     * @see NameGenerator
+     * @see #underscoreMethod()
      */
     protected function cleanMethod($schemaName)
     {
@@ -137,10 +137,10 @@ class PhpNameGenerator implements NameGenerator
      *
      * my_CLASS_name -> MyCLASSName
      *
-     * @param string $schemaName name to be converted.
-     * @return     string Converted name.
-     * @see        NameGenerator
-     * @see        #underscoreMethod(String)
+     * @param  string $schemaName name to be converted.
+     * @return string Converted name.
+     * @see NameGenerator
+     * @see #underscoreMethod(String)
      */
     protected function phpnameMethod($schemaName)
     {
@@ -158,8 +158,8 @@ class PhpNameGenerator implements NameGenerator
      * Converts a database schema name to PHP object name.  In this
      * case no conversion is made.
      *
-     * @param string $name name to be converted.
-     * @return     string The <code>name</code> parameter, unchanged.
+     * @param  string $name name to be converted.
+     * @return string The <code>name</code> parameter, unchanged.
      */
     protected function nochangeMethod($name)
     {

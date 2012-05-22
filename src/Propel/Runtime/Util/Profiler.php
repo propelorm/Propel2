@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Runtime\Util;
@@ -164,12 +164,12 @@ class Profiler
      * Uses two debug snapshots to calculate how much time has passed since the call to
      * self::start(), how much the memory consumption by PHP has changed etc.
      *
-     * @see       self::getSnapshot()
+     * @see self::getSnapshot()
      *
      * @param array $startSnapshot A snapshot, as returned by self::getSnapshot().
      * @param array $endSnapshot   A snapshot, as returned by self::getSnapshot().
      *
-     * @return    string
+     * @return string
      */
     public function getProfileBetween($startSnapshot, $endSnapshot)
     {
@@ -213,7 +213,7 @@ class Profiler
     /**
      * Get a snapshot of the current time and memory consumption.
      *
-     * @return    array
+     * @return array
      */
     static public function getSnapshot()
     {
@@ -230,7 +230,7 @@ class Profiler
      * @param integer $bytes     Byte count to convert. Can be negative.
      * @param integer $precision How many decimals to include.
      *
-     * @return    string
+     * @return string
      */
     static public function formatMemory($bytes, $precision = 3)
     {
@@ -252,7 +252,7 @@ class Profiler
      * @param double  $duration  Duration to format, in seconds.
      * @param integer $precision How many decimals to include.
      *
-     * @return    string
+     * @return string
      */
     static public function formatDuration($duration, $precision = 3)
     {

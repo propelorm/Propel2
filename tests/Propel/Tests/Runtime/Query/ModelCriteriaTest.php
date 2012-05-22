@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Tests\Runtime\Query;
@@ -41,13 +41,10 @@ use Propel\Runtime\Query\Exception\UnknownColumnException;
 use Propel\Runtime\Query\Exception\UnknownRelationException;
 use Propel\Runtime\Query\ModelCriteria;
 
-use \PDO;
-
 /**
  * Test class for ModelCriteria.
  *
- * @author     Francois Zaninotto
- * @version    $Id$
+ * @author Francois Zaninotto
  */
 class ModelCriteriaTest extends BookstoreTestBase
 {
@@ -117,7 +114,7 @@ class ModelCriteriaTest extends BookstoreTestBase
 
     }
 
-    static public function conditionsForTestReplaceNames()
+    public static function conditionsForTestReplaceNames()
     {
         return array(
             array('Propel\Tests\Bookstore\Book.Title = ?', 'Title', 'book.TITLE = ?'), // basic case
@@ -167,7 +164,7 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals($modifiedClause, $origClause);
     }
 
-    static public function conditionsForTestReplaceMultipleNames()
+    public static function conditionsForTestReplaceMultipleNames()
     {
         return array(
             array('(Propel\Tests\Bookstore\Book.Id+Book.Id)=1', array('Id', 'Id'), '(book.ID+book.ID)=1'), // match multiple names
@@ -260,7 +257,7 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $c->withColumn('SUBSTRING(Book.Title, 1, 4)', 'title_start');
         $c->condition('cond1', 'Book.Title <> ?', 'foo');
-        $c->condition('cond2', 'title_start like ?', '%bar%', PDO::PARAM_STR);
+        $c->condition('cond2', 'title_start like ?', '%bar%', \PDO::PARAM_STR);
         $c->combine(array('cond1', 'cond2'), 'or');
 
         if (in_array($this->getDriver(), array('mysql'))) {
@@ -271,12 +268,12 @@ class ModelCriteriaTest extends BookstoreTestBase
 
         $params = array(
             array('table' => 'book', 'column' => 'TITLE', 'value' => 'foo'),
-            array('table' => null, 'type' => PDO::PARAM_STR, 'value' => '%bar%'),
+            array('table' => null, 'type' => \PDO::PARAM_STR, 'value' => '%bar%'),
         );
         $this->assertCriteriaTranslation($c, $sql, $params, 'condition() accepts RAW sql parameters');
     }
 
-    static public function conditionsForTestWhere()
+    public static function conditionsForTestWhere()
     {
         return array(
             array('Propel\Tests\Bookstore\Book.Title = ?', 'foo', 'book.TITLE = :p1', array(array('table' => 'book', 'column' => 'TITLE', 'value' => 'foo'))),
@@ -430,7 +427,7 @@ class ModelCriteriaTest extends BookstoreTestBase
     public function testWhereTypeValue()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book', 'b');
-        $c->where('LOCATE(\'foo\', b.Title) = ?', true, PDO::PARAM_BOOL);
+        $c->where('LOCATE(\'foo\', b.Title) = ?', true, \PDO::PARAM_BOOL);
 
         if (in_array($this->getDriver(), array('mysql'))) {
             $sql = "SELECT  FROM `book` WHERE LOCATE('foo', book.TITLE) = :p1";
@@ -439,7 +436,7 @@ class ModelCriteriaTest extends BookstoreTestBase
         }
 
         $params = array(
-            array('table' => null, 'type' => PDO::PARAM_BOOL, 'value' => true),
+            array('table' => null, 'type' => \PDO::PARAM_BOOL, 'value' => true),
         );
         $this->assertCriteriaTranslation($c, $sql, $params, 'where() accepts a complex calculation');
         $c->find($this->con);
@@ -612,7 +609,7 @@ class ModelCriteriaTest extends BookstoreTestBase
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $c->withColumn('SUBSTRING(Book.Title, 1, 4)', 'title_start');
-        $c->having('title_start = ?', 'foo', PDO::PARAM_STR);
+        $c->having('title_start = ?', 'foo', \PDO::PARAM_STR);
 
         if (in_array($this->getDriver(), array('mysql'))) {
             $sql = 'SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID, SUBSTRING(book.TITLE, 1, 4) AS title_start FROM `book` HAVING title_start = :p1';
@@ -1430,7 +1427,7 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals($expectedJoinKeys, array_keys($joins), 'joinWith() adds the join');
     }
 
-    static public function conditionsForTestWithColumn()
+    public static function conditionsForTestWithColumn()
     {
         return array(
             array('Propel\Tests\Bookstore\Book.Title', 'BookTitle', 'book.TITLE AS BookTitle'),
@@ -1452,7 +1449,7 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertCriteriaTranslation($c, $sql, $params, 'withColumn() adds a calculated column to the select clause');
     }
 
-    static public function conditionsForTestWithColumnAndQuotes()
+    public static function conditionsForTestWithColumnAndQuotes()
     {
         return array(
             // Examples for simple string concatenation needed for MSSQL.
@@ -2096,7 +2093,7 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals('3456', $book->getISBN(), 'update() updates only the records matching the criteria');
     }
 
-    static public function conditionsForTestGetRelationName()
+    public static function conditionsForTestGetRelationName()
     {
         return array(
             array('Author', 'Author'),

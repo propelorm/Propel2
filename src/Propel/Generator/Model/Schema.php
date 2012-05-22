@@ -124,7 +124,7 @@ class Schema
      * The first boolean parameter tells whether or not to run the
      * final initialization process.
      *
-     * @param Boolean $doFinalInitialization
+     * @param  Boolean $doFinalInitialization
      * @return array
      */
     public function getDatabases($doFinalInitialization = true)
@@ -151,8 +151,8 @@ class Schema
     /**
      * Returns the database according to the specified name.
      *
-     * @param string  $name
-     * @param Boolean $doFinalInitialization
+     * @param  string   $name
+     * @param  Boolean  $doFinalInitialization
      * @return Database
      */
     public function getDatabase($name = null, $doFinalInitialization = true)
@@ -182,7 +182,7 @@ class Schema
      * Returns whether or not a database with the specified name exists in this
      * schema.
      *
-     * @param string $name
+     * @param  string  $name
      * @return Boolean
      */
     public function hasDatabase($name)
@@ -201,7 +201,7 @@ class Schema
      * Schema. The database can be specified as a Database object or a
      * DOMNode object.
      *
-     * @param Database|array $database
+     * @param  Database|array $database
      * @return Database
      */
     public function addDatabase($database)

@@ -6,7 +6,7 @@ class FooArchiveCollection
 {
     protected static $instance;
 
-    static public function getArchiveSingleton()
+    public static function getArchiveSingleton()
     {
         if (null === self::$instance) {
             self::$instance = new FooArchive();

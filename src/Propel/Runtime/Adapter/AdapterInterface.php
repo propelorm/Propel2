@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Runtime\Adapter;
@@ -41,7 +41,7 @@ interface AdapterInterface
      * This method is invoked from the default initConnection() method and must
      * be overridden for an RDMBS which does _not_ support this SQL standard.
      *
-     * @see       initConnection()
+     * @see initConnection()
      *
      * @param Propel\Runtime\Connection\ConnectionInterface $con
      * @param string                                        $charset The $string charset encoding.
@@ -51,16 +51,16 @@ interface AdapterInterface
     /**
      * This method is used to ignore case.
      *
-     * @param string $in The string to transform to upper case.
-     * @return    string  The upper case string.
+     * @param  string $in The string to transform to upper case.
+     * @return string The upper case string.
      */
     function toUpperCase($in);
 
     /**
      * This method is used to ignore case.
      *
-     * @param string $in The string whose case to ignore.
-     * @return    string  The string in a case that can be ignored.
+     * @param  string $in The string whose case to ignore.
+     * @return string The string in a case that can be ignored.
      */
     function ignoreCase($in);
 
@@ -70,8 +70,8 @@ interface AdapterInterface
      * (Interbase for example) does not use the same SQL in ORDER BY
      * and other clauses.
      *
-     * @param string $in The string whose case to ignore.
-     * @return    string  The string in a case that can be ignored.
+     * @param  string $in The string whose case to ignore.
+     * @return string The string in a case that can be ignored.
      */
     function ignoreCaseInOrderBy($in);
 
@@ -80,7 +80,7 @@ interface AdapterInterface
      * a piece of text used in a SQL statement (generally a single
      * quote).
      *
-     * @return    string  The text delimeter.
+     * @return string The text delimeter.
      */
     function getStringDelimiter();
 
@@ -90,7 +90,7 @@ interface AdapterInterface
      * @param string $s1 String to concatenate.
      * @param string $s2 String to append.
      *
-     * @return    string
+     * @return string
      */
     function concatString($s1, $s2);
 
@@ -101,22 +101,22 @@ interface AdapterInterface
      * @param integer $pos Offset to start from.
      * @param integer $len Number of characters to extract.
      *
-     * @return    string
+     * @return string
      */
     function subString($s, $pos, $len);
 
     /**
      * Returns SQL which calculates the length (in chars) of a string.
      *
-     * @param string $s String to calculate length of.
-     * @return    string
+     * @param  string $s String to calculate length of.
+     * @return string
      */
     function strLength($s);
 
     /**
      * Quotes database objec identifiers (table names, col names, sequences, etc.).
-     * @param string $text The identifier to quote.
-     * @return    string  The quoted identifier.
+     * @param  string $text The identifier to quote.
+     * @return string The quoted identifier.
      */
     function quoteIdentifier($text);
 
@@ -126,22 +126,22 @@ interface AdapterInterface
      * separate schema names from table names. Adapters for RDBMs which support
      * schemas have to implement that in the platform-specific way.
      *
-     * @param string $table The table name to quo
-     * @return    string  The quoted table name
+     * @param  string $table The table name to quo
+     * @return string The quoted table name
      **/
     function quoteIdentifierTable($table);
 
     /**
      * Whether this adapter uses an ID generation system that requires getting ID _before_ performing INSERT.
      *
-     * @return    Boolean
+     * @return Boolean
      */
     function isGetIdBeforeInsert();
 
     /**
      * Whether this adapter uses an ID generation system that requires getting ID _before_ performing INSERT.
      *
-     * @return    Boolean
+     * @return Boolean
      */
     function isGetIdAfterInsert();
 
@@ -151,7 +151,7 @@ interface AdapterInterface
      * @param Propel\Runtime\Connection\ConnectionInterface $con
      * @param string                                        $name
      *
-     * @return    mixed
+     * @return mixed
      */
     function getId(ConnectionInterface $con, $name = null);
 
@@ -161,28 +161,28 @@ interface AdapterInterface
      * @param mixed                        $value The temporal value
      * @param Propel\Runtime\Map\ColumnMap $cMap
      *
-     * @return    string  The formatted temporal value
+     * @return string The formatted temporal value
      */
     function formatTemporalValue($value, ColumnMap $cMap);
 
     /**
      * Returns timestamp formatter string for use in date() function.
      *
-     * @return    string
+     * @return string
      */
     function getTimestampFormatter();
 
     /**
      * Returns date formatter string for use in date() function.
      *
-     * @return    string
+     * @return string
      */
     function getDateFormatter();
 
     /**
      * Returns time formatter string for use in date() function.
      *
-     * @return    string
+     * @return string
      */
     function getTimeFormatter();
 
@@ -195,7 +195,7 @@ interface AdapterInterface
      * @todo       should be abstract
      * @deprecated
      *
-     * @return    Boolean
+     * @return Boolean
      */
     function useQuoteIdentifier();
 
@@ -231,7 +231,7 @@ interface AdapterInterface
      * @param Propel\Runtime\Map\Criteria $criteria
      * @param string                      $tableName
      *
-     * @return    string
+     * @return string
      */
     function getDeleteFromClause(Criteria $criteria, $tableName);
 
@@ -244,7 +244,7 @@ interface AdapterInterface
      * @param array                       $fromClause
      * @param Boolean                     $aliasAll
      *
-     * @return    string
+     * @return string
      */
     function createSelectSqlPart(Criteria $criteria, &$fromClause, $aliasAll = false);
 
@@ -255,8 +255,8 @@ interface AdapterInterface
      *
      * @see http://propel.phpdb.org/trac/ticket/795
      *
-     * @param Propel\Runtime\Map\Criteria $criteria
-     * @return    Propel\Runtime\Map\Criteria  The input, with Select columns replaced by aliases
+     * @param  Propel\Runtime\Map\Criteria $criteria
+     * @return Propel\Runtime\Map\Criteria The input, with Select columns replaced by aliases
      */
     function turnSelectColumnsToAliases(Criteria $criteria);
 
@@ -292,7 +292,7 @@ interface AdapterInterface
      * @param Propel\Runtime\Map\ColumnMap                 $cMap      The ColumnMap of the column to bind
      * @param null|integer                                 $position  The position of the parameter to bind
      *
-     * @return    Boolean
+     * @return Boolean
      */
     function bindValue(StatementInterface $stmt, $parameter, $value, ColumnMap $cMap, $position = null);
 }

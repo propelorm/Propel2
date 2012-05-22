@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Runtime\Formatter;
@@ -19,7 +19,7 @@ use Propel\Runtime\Connection\StatementInterface;
  * format() returns a OnDemandCollection that hydrates objects as the use iterates on the collection
  * This formatter consumes less memory than the ObjectFormatter, but doesn't use Instance Pool
  *
- * @author     Francois Zaninotto
+ * @author Francois Zaninotto
  */
 class OnDemandFormatter extends ObjectFormatter
 {
@@ -70,7 +70,7 @@ class OnDemandFormatter extends ObjectFormatter
      *  @param    array  $row associative array indexed by column number,
      *                   as returned by PDOStatement::fetch(PDO::FETCH_NUM)
      *
-     * @return    BaseObject
+     * @return BaseObject
      */
     public function getAllObjectsFromRow($row)
     {

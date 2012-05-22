@@ -18,8 +18,8 @@ interface GeneratorConfigInterface
      * Returns a configured data model builder class for specified table and
      * based on type ('ddl', 'sql', etc.).
      *
-     * @param Table  $table
-     * @param string $type
+     * @param  Table            $table
+     * @param  string           $type
      * @return DataModelBuilder
      */
     function getConfiguredBuilder(Table $table, $type);
@@ -34,7 +34,7 @@ interface GeneratorConfigInterface
     /**
      * Returns a specific propel (renamed) property from the build.
      *
-     * @param string $name
+     * @param  string $name
      * @return mixed
      */
     function getBuildProperty($name);
@@ -50,7 +50,7 @@ interface GeneratorConfigInterface
     /**
      * Creates and configures a new Platform class.
      *
-     * @param \PDO $con
+     * @param  \PDO              $con
      * @return PlatformInterface
      */
     function getConfiguredPlatform(\PDO $con = null, $database = null);

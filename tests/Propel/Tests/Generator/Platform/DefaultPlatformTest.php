@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 use Propel\Generator\Model\Column;
@@ -20,7 +20,7 @@ class DefaultPlatformTest extends \PHPUnit_Framework_TestCase
     /**
      * Get the Platform object for this class
      *
-     * @return     Platform
+     * @return Platform
      */
     protected function getPlatform()
     {

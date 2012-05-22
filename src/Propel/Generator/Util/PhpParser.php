@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Util;
@@ -27,7 +27,7 @@ if (!defined('T_ML_COMMENT')) {
  * file_put_contents($fileName, $parser->getCode());
  * </code>
  *
- * @author     François Zaninotto
+ * @author François Zaninotto
  */
 class PhpParser
 {
@@ -39,7 +39,7 @@ class PhpParser
      * Parser constructor
      *
      * @param string  $code     PHP code to parse
-     * @param boolean $isAddPhp Whether the supplied code needs a supplementary '<?php '
+     * @param Boolean $isAddPhp Whether the supplied code needs a supplementary '<?php '
      *                          to be seen as code by the tokenizer.
      */
     public function __construct($code, $isAddPhp = false)

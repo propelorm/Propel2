@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Builder\Om;
@@ -16,14 +16,14 @@ namespace Propel\Generator\Builder\Om;
  * This class produces the empty stub class that can be customized with application
  * business logic, custom behavior, etc.
  *
- * @author     Francois Zaninotto
+ * @author Francois Zaninotto
  */
 class ExtensionQueryBuilder extends AbstractOMBuilder
 {
 
     /**
      * Returns the name of the current class being built.
-     * @return     string
+     * @return string
      */
     public function getUnprefixedClassName()
     {
@@ -72,7 +72,7 @@ class ".$this->getUnqualifiedClassName()." extends $baseClassName {
      * By default there are no methods for the empty stub classes; override this method
      * if you want to change that behavior.
      *
-     * @see        QueryBuilder::addClassBody()
+     * @see QueryBuilder::addClassBody()
      */
 
     protected function addClassBody(&$script)
@@ -93,8 +93,8 @@ class ".$this->getUnqualifiedClassName()." extends $baseClassName {
 
     /**
      * Checks whether any registered behavior on that table has a modifier for a hook
-     * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
-     * @return boolean
+     * @param  string  $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
+     * @return Boolean
      */
     public function hasBehaviorModifier($hookName, $modifier = null)
     {
