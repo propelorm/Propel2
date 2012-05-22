@@ -43,7 +43,7 @@ class ValidateBehavior extends Behavior
         $this->builder = $builder;
 
         $this->builder->declareClasses('Symfony\\Component\\Validator\\Mapping\\ClassMetadata', 'Symfony\\Component\\Validator\\Validator',
-'Symfony\\Component\\Validator\\Mapping\\Loader\\StaticMethodLoader', 'Symfony\\Component\\Validator\\ConstraintValidatorFactory', 
+'Symfony\\Component\\Validator\\Mapping\\Loader\\StaticMethodLoader', 'Symfony\\Component\\Validator\\ConstraintValidatorFactory',
 'Symfony\\Component\\Validator\\Mapping\\ClassMetadataFactory', 'Symfony\\Component\\Validator\\ConstraintViolationList');
 
         $script = $this->addLoadValidatorMetadataMethod();
@@ -233,8 +233,7 @@ class ValidateBehavior extends Behavior
         foreach ($table->getReferrers() as $refFK) {
             if ($refFK->isLocalPrimaryKey()) {
                 $refFkVarNames[] = $this->builder->getPKRefFKVarName($refFK);
-            }
-            else {
+            } else {
                 $collVarNames[] = $this->builder->getRefFKCollVarName($refFK);
             }
         }

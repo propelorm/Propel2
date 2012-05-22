@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Manager;
@@ -15,14 +15,14 @@ use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Exception\BuildException;
 use Propel\Generator\Exception\EngineException;
 use Propel\Generator\Model\Schema;
-use Propel\Generator\Model\Database;
 
 /**
- * An abstract base Propel manager to perform work related to the XML schema file.
+ * An abstract base Propel manager to perform work related to the XML schema
+ * file.
  *
- * @author     Hans Lellelid <hans@xmpl.org> (Propel)
- * @author     Jason van Zyl <jvanzyl@zenplex.com> (Torque)
- * @author     Daniel Rall <dlr@finemaltcoding.com> (Torque)
+ * @author Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author Jason van Zyl <jvanzyl@zenplex.com> (Torque)
+ * @author Daniel Rall <dlr@finemaltcoding.com> (Torque)
  */
 abstract class AbstractManager
 {
@@ -46,19 +46,19 @@ abstract class AbstractManager
 
     /**
      * Whether to perform validation (XSD) on the schema.xml file(s).
-     * @var        boolean
+     * @var boolean
      */
     protected $validate;
 
     /**
      * The XSD schema file to use for validation.
-     * @var        string
+     * @var string
      */
     protected $xsd;
 
     /**
      * XSL file to use to normalize (or otherwise transform) schema before validation.
-     * @var        string
+     * @var string
      */
     protected $xsl;
 
@@ -75,24 +75,26 @@ abstract class AbstractManager
     protected $workingDirectory;
 
     /**
-     * @var \closure
+     * @var \Closure
      */
     private $loggerClosure = null;
 
     /**
      * Have datamodels been initialized?
-     * @var        boolean
+     * @var boolean
      */
     private $dataModelsLoaded = false;
 
     /**
      * An initialized GeneratorConfig object.
      *
-     * @var     \Propel\Generator\Config\GeneratorConfig
+     * @var GeneratorConfigInterface
      */
     private $generatorConfig;
 
     /**
+     * Returns the list of schemas.
+     *
      * @return array
      */
     public function getSchemas()
@@ -101,7 +103,9 @@ abstract class AbstractManager
     }
 
     /**
-     * @param  array
+     * Sets the schemas list.
+     *
+     * @param array
      */
     public function setSchemas($schemas)
     {
@@ -109,6 +113,8 @@ abstract class AbstractManager
     }
 
     /**
+     * Sets the working directory path.
+     *
      * @param string $workingDirectory
      */
     public function setWorkingDirectory($workingDirectory)
@@ -117,7 +123,9 @@ abstract class AbstractManager
     }
 
     /**
-     * return string
+     * Returns the working directory path.
+     *
+     * @return string
      */
     public function getWorkingDirectory()
     {
@@ -126,10 +134,10 @@ abstract class AbstractManager
 
 
     /**
-     * Return the data models that have been
+     * Returns the data models that have been
      * processed.
      *
-     * @return     List data models
+     * @return array
      */
     public function getDataModels()
     {
@@ -141,9 +149,9 @@ abstract class AbstractManager
     }
 
     /**
-     * Return the data model to database name map.
+     * Returns the data model to database name map.
      *
-     * @return     Hashtable data model name to database name map.
+     * @return array
      */
     public function getDataModelDbMap()
     {
@@ -155,9 +163,9 @@ abstract class AbstractManager
     }
 
     /**
-     * Set whether to perform validation on the datamodel schema.xml file(s).
+     * Sets whether to perform validation on the datamodel schema.xml file(s).
      *
-     * @param      boolean $validate
+     * @param Boolean $validate
      */
     public function setValidate($validate)
     {
@@ -165,9 +173,10 @@ abstract class AbstractManager
     }
 
     /**
-     * Set the XSD schema to use for validation of any datamodel schema.xml file(s).
+     * Sets the XSD schema to use for validation of any datamodel schema.xml
+     * file(s).
      *
-     * @param      string $xsd
+     * @param string $xsd
      */
     public function setXsd($xsd)
     {
@@ -175,9 +184,10 @@ abstract class AbstractManager
     }
 
     /**
-     * Set the normalization XSLT to use to transform datamodel schema.xml file(s) before validation and parsing.
+     * Sets the normalization XSLT to use to transform datamodel schema.xml
+     * file(s) before validation and parsing.
      *
-     * @param      string $xsl
+     * @param string $xsl
      */
     public function setXsl($xsl)
     {
@@ -185,9 +195,9 @@ abstract class AbstractManager
     }
 
     /**
-     * Set the current target database encoding.
+     * Sets the current target database encoding.
      *
-     * @param      string $encoding Target database encoding
+     * @param string $encoding Target database encoding
      */
     public function setDbEncoding($encoding)
     {
@@ -195,16 +205,18 @@ abstract class AbstractManager
     }
 
     /**
-     * @var \closure $logger	A logger closure
+     * Sets a logger closure.
+     *
+     * @param \Closure $logger
      */
-    public function setLoggerClosure(\closure $logger)
+    public function setLoggerClosure(\Closure $logger)
     {
         $this->loggerClosure = $logger;
     }
 
     /**
-     * Gets all matching XML schema files and loads them into data models for class.
-     * @return     void
+     * Returns all matching XML schema files and loads them into data models for
+     * class.
      */
     protected function loadDataModels()
     {
@@ -292,8 +304,8 @@ abstract class AbstractManager
      * Note: this function very much assumes at least a reasonable XML schema, maybe it'll proof
      * users don't have those and adding some more informative exceptions would be better
      *
-     * @param      \DOMDocument $dom
-     * @param      string $srcDir
+     * @param \DOMDocument $dom
+     * @param string       $srcDir
      */
     protected function includeExternalSchemas(\DOMDocument $dom, $srcDir)
     {
@@ -328,10 +340,10 @@ abstract class AbstractManager
      * We need to join the datamodels in this case to allow for foreign keys
      * that point to tables in different packages.
      *
-     * @param      array[\Propel\Generator\Model\Schema] $schemas The datamodels to join
-     * @return     \Propel\Generator\Model\Schema        The single datamodel with all other datamodels joined in
+     * @param array $schemas
+     * @return Schema
      */
-    protected function joinDataModels($schemas)
+    protected function joinDataModels(array $schemas)
     {
         $mainSchema = array_shift($schemas);
         $mainSchema->joinSchemas($schemas);
@@ -340,9 +352,10 @@ abstract class AbstractManager
     }
 
     /**
-     * Gets the GeneratorConfig object for this manager or creates it on-demand.
+     * Returns the GeneratorConfig object for this manager or creates it
+     * on-demand.
      *
-     * @return     \Propel\Generator\Config\GeneratorConfigInterface
+     * @return GeneratorConfigInterface
      */
     protected function getGeneratorConfig()
     {
@@ -350,6 +363,8 @@ abstract class AbstractManager
     }
 
     /**
+     * Sets the GeneratorConfigInterface implementation.
+     *
      * @param GeneratorConfigInterface $generatorConfig
      */
     public function setGeneratorConfig(GeneratorConfigInterface $generatorConfig)
@@ -371,17 +386,14 @@ abstract class AbstractManager
         if (null !== $this->loggerClosure) {
             $closure = $this->loggerClosure;
             $closure($message);
-        } else {
-            // @TODO to remove?
-            var_dump($message);
         }
     }
 
     /**
      * Returns an array of properties as key/value pairs from an input file.
      *
-     * @param string $file  A file properties.
-     * @return array        An array of properties as key/value pairs.
+     * @param string $file
+     * @return array
      */
     protected function getProperties($file)
     {

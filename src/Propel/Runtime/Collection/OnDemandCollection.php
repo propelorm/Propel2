@@ -35,8 +35,8 @@ class OnDemandCollection extends Collection
     protected $isValid;
 
     /**
-     * @param     AbstractFormatter $formatter
-     * @param     StatementInterface $stmt
+     * @param AbstractFormatter  $formatter
+     * @param StatementInterface $stmt
      */
     public function initIterator(AbstractFormatter $formatter, StatementInterface $stmt)
     {
@@ -48,15 +48,15 @@ class OnDemandCollection extends Collection
      * Get an array representation of the collection
      * Each object is turned into an array and the result is returned
      *
-     * @param     string  $keyColumn If null, the returned array uses an incremental index.
+     * @param string $keyColumn If null, the returned array uses an incremental index.
      *                               Otherwise, the array is indexed using the specified column
-     * @param     Boolean $usePrefix If true, the returned array prefixes keys
+     * @param Boolean $usePrefix If true, the returned array prefixes keys
      *                               with the model class name ('Article_0', 'Article_1', etc).
-     * @param     string  $keyType   (optional) One of the class type constants BasePeer::TYPE_PHPNAME,
+     * @param string $keyType (optional) One of the class type constants BasePeer::TYPE_PHPNAME,
      *                               BasePeer::TYPE_STUDLYPHPNAME, BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME,
      *                               BasePeer::TYPE_NUM. Defaults to BasePeer::TYPE_PHPNAME.
-     * @param     Boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
-     * @param     array   $alreadyDumpedObjects List of objects to skip to avoid recursion
+     * @param Boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
+     * @param array   $alreadyDumpedObjects   List of objects to skip to avoid recursion
      *
      * <code>
      * $bookCollection->toArray();
@@ -98,7 +98,7 @@ class OnDemandCollection extends Collection
      * Each object is populated from an array and the result is stored
      * Does not empty the collection before adding the data from the array
      *
-     * @param    array  $arr
+     * @param array $arr
      */
     public function fromArray($arr)
     {
@@ -119,7 +119,7 @@ class OnDemandCollection extends Collection
 
     /**
      * @throws    \Propel\Runtime\Exception\PropelException
-     * @param     integer  $offset
+     * @param integer $offset
      *
      * @return    Boolean
      */
@@ -134,7 +134,7 @@ class OnDemandCollection extends Collection
 
     /**
      * @throws    \Propel\Runtime\Exception\PropelException
-     * @param     integer  $offset
+     * @param integer $offset
      *
      * @return    mixed
      */
@@ -150,8 +150,8 @@ class OnDemandCollection extends Collection
     /**
      * @throws    \Propel\Runtime\Collection\Exception\ReadOnlyModelException
      *
-     * @param     integer  $offset
-     * @param     mixed    $value
+     * @param integer $offset
+     * @param mixed   $value
      */
     public function offsetSet($offset, $value)
     {
@@ -160,7 +160,7 @@ class OnDemandCollection extends Collection
 
     /**
      * @throws    \Propel\Runtime\Collection\Exception\ReadOnlyModelException
-     * @param     integer  $offset
+     * @param integer $offset
      */
     public function offsetUnset($offset)
     {
@@ -179,7 +179,7 @@ class OnDemandCollection extends Collection
 
     /**
      * @throws    \Propel\Runtime\Exception\PropelException
-     * @param     string  $data
+     * @param string $data
      */
     public function unserialize($data)
     {

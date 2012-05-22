@@ -33,8 +33,8 @@ class ColumnDefaultValue
     /**
      * Creates a new DefaultValue object.
      *
-     * @param      string $value The default value, as specified in the schema.
-     * @param      string $type The type of default value (DefaultValue::TYPE_VALUE or DefaultValue::TYPE_EXPR)
+     * @param string $value The default value, as specified in the schema.
+     * @param string $type  The type of default value (DefaultValue::TYPE_VALUE or DefaultValue::TYPE_EXPR)
      */
     public function __construct($value, $type = null)
     {
@@ -54,7 +54,7 @@ class ColumnDefaultValue
     }
 
     /**
-     * @param      string $type The type of default value (DefaultValue::TYPE_VALUE or DefaultValue::TYPE_EXPR)
+     * @param string $type The type of default value (DefaultValue::TYPE_VALUE or DefaultValue::TYPE_EXPR)
      */
     public function setType($type)
     {
@@ -80,7 +80,7 @@ class ColumnDefaultValue
     }
 
     /**
-     * @param      string $value The value, as specified in the schema.
+     * @param string $value The value, as specified in the schema.
      */
     public function setValue($value)
     {
@@ -90,7 +90,7 @@ class ColumnDefaultValue
     /**
      * A method to compare if two Default values match
      *
-     * @param      ColumnDefaultValue $other The value to compare to
+     * @param ColumnDefaultValue $other The value to compare to
      * @return     boolean Wheter this object represents same default value as $other
      * @author     Niklas Närhinen <niklas@narhinen.net>
      */

@@ -11,7 +11,6 @@
 namespace Propel\Generator\Builder\Om;
 
 use Propel\Generator\Builder\DataModelBuilder;
-use Propel\Generator\Exception\EngineException;
 use Propel\Generator\Exception\LogicException;
 use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\Table;
@@ -230,7 +229,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * This decare the class use and get the correct name to use (short classname, Alias, or FQCN)
      *
      * @param AbstractOMBuilder $builder
-     * @param boolean $fqcn true to return the $fqcn classname
+     * @param boolean           $fqcn    true to return the $fqcn classname
      * @return string ClassName, Alias or FQCN
      */
     public function getClassNameFromBuilder($builder, $fqcn = false)
@@ -253,9 +252,9 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     /**
      * Declare a class to be use and return it's name or it's alias
      *
-     * @param string $class the class name
-     * @param string $namespace the namespace
-     * @param string|boolean $alias the alias wanted, if set to True, it automaticaly add an alias when needed
+     * @param string         $class     the class name
+     * @param string         $namespace the namespace
+     * @param string|boolean $alias     the alias wanted, if set to True, it automaticaly add an alias when needed
      * @return string the class name or it's alias
      */
     public function declareClassNamespace($class, $namespace = '', $alias = false)
@@ -342,9 +341,9 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * Declare a use statement for a $class with a $namespace and an $aliasPrefix
      * This return the short ClassName or an alias
      *
-     * @param string $class the class
-     * @param string $namespace the namespace
-     * @param mixed $aliasPrefix optionaly an alias or True to force an automatic alias prefix (Base or Child)
+     * @param string $class       the class
+     * @param string $namespace   the namespace
+     * @param mixed  $aliasPrefix optionaly an alias or True to force an automatic alias prefix (Base or Child)
      * @return string the short ClassName or an alias
      */
     public function declareClassNamespacePrefix($class, $namespace = '', $aliasPrefix = false)
@@ -363,7 +362,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * This return the short ClassName to use or an alias
      *
      * @param string $fullyQualifiedClassName the fully qualified classname
-     * @param mixed $aliasPrefix optionaly an alias or True to force an automatic alias prefix (Base or Child)
+     * @param mixed  $aliasPrefix             optionaly an alias or True to force an automatic alias prefix (Base or Child)
      * @return string the short ClassName or an alias
      */
     public function declareClass($fullyQualifiedClassName, $aliasPrefix = false)
@@ -462,7 +461,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * Shortcut method to return the [stub] peer classname for current table.
      * This is the classname that is used whenever object or peer classes want
      * to invoke methods of the peer classes.
-     * @param      boolean $fqcn
+     * @param boolean $fqcn
      * @return     string (e.g. 'MyPeer')
      */
     public function getPeerClassName($fqcn = false)
@@ -474,7 +473,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * Shortcut method to return the [stub] query classname for current table.
      * This is the classname that is used whenever object or peer classes want
      * to invoke methods of the query classes.
-     * @param      boolean $fqcn
+     * @param boolean $fqcn
      * @return     string (e.g. 'Myquery')
      */
     public function getQueryClassName($fqcn = false)
@@ -486,7 +485,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * Returns the object classname for current table.
      * This is the classname that is used whenever object or peer classes want
      * to invoke methods of the object classes.
-     * @param      boolean $fqcn
+     * @param boolean $fqcn
      * @return     string (e.g. 'My')
      */
     public function getObjectClassName($fqcn = false)
@@ -497,8 +496,8 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     /**
      * Get the column constant name (e.g. PeerName::COLUMN_NAME).
      *
-     * @param      Column $col The column we need a name for.
-     * @param      string $classname The Peer classname to use.
+     * @param Column $col       The column we need a name for.
+     * @param string $classname The Peer classname to use.
      *
      * @return     string If $classname is provided, then will return $classname::COLUMN_NAME; if not, then the peername is looked up for current table to yield $currTablePeer::COLUMN_NAME.
      */
@@ -574,8 +573,8 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * The difference between this method and the getRefFKPhpNameAffix() method is that in this method the
      * classname in the affix is the foreign table classname.
      *
-     * @param      ForeignKey $fk The local FK that we need a name for.
-     * @param      boolean $plural Whether the php name should be plural (e.g. initRelatedObjs() vs. addRelatedObj()
+     * @param ForeignKey $fk     The local FK that we need a name for.
+     * @param boolean    $plural Whether the php name should be plural (e.g. initRelatedObjs() vs. addRelatedObj()
      * @return     string
      */
     public function getFKPhpNameAffix(ForeignKey $fk, $plural = false)
@@ -636,8 +635,8 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * The difference between this method and the getFKPhpNameAffix() method is that in this method the
      * classname in the affix is the classname of the local fkey table.
      *
-     * @param      ForeignKey $fk The referrer FK that we need a name for.
-     * @param      boolean $plural Whether the php name should be plural (e.g. initRelatedObjs() vs. addRelatedObj()
+     * @param ForeignKey $fk     The referrer FK that we need a name for.
+     * @param boolean    $plural Whether the php name should be plural (e.g. initRelatedObjs() vs. addRelatedObj()
      * @return     string
      */
     public function getRefFKPhpNameAffix(ForeignKey $fk, $plural = false)
@@ -735,7 +734,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     /**
      * Checks whether any registered behavior content creator on that table exists a contentName
      * @param string $contentName The name of the content as called from one of this class methods, e.g. "parentClassName"
-     * @param string $modifier The name of the modifier object providing the method in the behavior
+     * @param string $modifier    The name of the modifier object providing the method in the behavior
      */
     public function getBehaviorContentBase($contentName, $modifier)
     {

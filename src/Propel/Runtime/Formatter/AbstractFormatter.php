@@ -203,8 +203,8 @@ abstract class AbstractFormatter
      * The column offset in the row is used to index the array of classes
      * As there may be more than one object of the same class in the chain
      *
-     * @param     int    $col    Offset of the object in the list of objects to hydrate
-     * @param     string $class  Propel model object class
+     * @param int    $col   Offset of the object in the list of objects to hydrate
+     * @param string $class Propel model object class
      *
      * @return    BaseObject
      */
@@ -222,10 +222,10 @@ abstract class AbstractFormatter
     /**
      * Gets a Propel object hydrated from a selection of columns in statement row
      *
-     * @param     array  $row associative array indexed by column number,
+     * @param array $row associative array indexed by column number,
      *                   as returned by PDOStatement::fetch(PDO::FETCH_NUM)
-     * @param     string $class The classname of the object to create
-     * @param     int    $col The start column for the hydration (modified)
+     * @param string $class The classname of the object to create
+     * @param int    $col   The start column for the hydration (modified)
      *
      * @return    BaseObject
      */

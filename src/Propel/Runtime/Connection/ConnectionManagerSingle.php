@@ -62,7 +62,7 @@ class ConnectionManagerSingle implements ConnectionManagerInterface
     }
 
     /**
-     * @param  \Propel\Runtime\Adapter\AdapterInterface $adapter
+     * @param \Propel\Runtime\Adapter\AdapterInterface $adapter
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface
      */
@@ -77,7 +77,7 @@ class ConnectionManagerSingle implements ConnectionManagerInterface
     }
 
     /**
-     * @param  \Propel\Runtime\Adapter\AdapterInterface $adapter
+     * @param \Propel\Runtime\Adapter\AdapterInterface $adapter
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface
      */

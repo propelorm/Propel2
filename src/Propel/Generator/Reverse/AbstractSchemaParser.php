@@ -64,7 +64,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
     protected $platform;
 
     /**
-     * @param      ConnectionInterface $dbh Optional database connection
+     * @param ConnectionInterface $dbh Optional database connection
      */
     public function __construct(ConnectionInterface $dbh = null)
     {
@@ -76,7 +76,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
     /**
      * Sets the database connection.
      *
-     * @param      ConnectionInterface $dbh
+     * @param ConnectionInterface $dbh
      */
     public function setConnection(ConnectionInterface $dbh)
     {
@@ -116,7 +116,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
     /**
      * Pushes a message onto the stack of warnings.
      *
-     * @param      string $msg The warning message.
+     * @param string $msg The warning message.
      */
     protected function warn($msg)
     {
@@ -136,7 +136,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
     /**
      * Sets the GeneratorConfig to use in the parsing.
      *
-     * @param      GeneratorConfigInterface $config
+     * @param GeneratorConfigInterface $config
      */
     public function setGeneratorConfig(GeneratorConfigInterface $config)
     {
@@ -156,7 +156,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
     /**
      * Gets a specific propel (renamed) property from the build.
      *
-     * @param      string $name
+     * @param string $name
      * @return     mixed
      */
     public function getBuildProperty($name)
@@ -178,7 +178,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
     /**
      * Gets a mapped Propel type for specified native type.
      *
-     * @param      string $nativeType
+     * @param string $nativeType
      * @return     string The mapped Propel type.
      */
     protected function getMappedPropelType($nativeType)
@@ -197,7 +197,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
     /**
      * Give a best guess at the native type.
      *
-     * @param      string $propelType
+     * @param string $propelType
      * @return     string The native SQL type that best matches the specified Propel type.
      */
     protected function getMappedNativeType($propelType)
@@ -212,7 +212,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
     /**
      * Gets a new VendorInfo object for this platform with specified params.
      *
-     * @param      array $params
+     * @param array $params
      */
     protected function getNewVendorInfoObject(array $params)
     {

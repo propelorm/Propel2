@@ -24,11 +24,11 @@ class ModelCriterion extends Criterion
     /**
      * Create a new instance.
      *
-     * @param      Criteria $parent The outer class (this is an "inner" class).
-     * @param      ColumnMap $column A Column object to help escaping the value
-     * @param      mixed $value
-     * @param      string $comparison, among ModelCriteria::MODEL_CLAUSE
-     * @param      string $clause A simple pseudo-SQL clause, e.g. 'foo.BAR LIKE ?'
+     * @param Criteria  $parent      The outer class (this is an "inner" class).
+     * @param ColumnMap $column      A Column object to help escaping the value
+     * @param mixed     $value
+     * @param string    $comparison, among ModelCriteria::MODEL_CLAUSE
+     * @param string    $clause      A simple pseudo-SQL clause, e.g. 'foo.BAR LIKE ?'
      */
     public function __construct(Criteria $outer, $column, $value = null, $comparison = ModelCriteria::MODEL_CLAUSE, $clause = null, $type = null)
     {
@@ -67,7 +67,7 @@ class ModelCriterion extends Criterion
      * code is duplicated here.
      *
      * @param      string &$sb The string that will receive the Prepared Statement
-     * @param      array $params A list to which Prepared Statement parameters will be appended
+     * @param array $params A list to which Prepared Statement parameters will be appended
      */
     protected function dispatchPsHandling(&$sb, array &$params)
     {
@@ -120,7 +120,7 @@ class ModelCriterion extends Criterion
      * For regular model clauses, e.g. 'book.TITLE = ?'
      *
      * @param      string &$sb The string that will receive the Prepared Statement
-     * @param      array $params A list to which Prepared Statement parameters will be appended
+     * @param array $params A list to which Prepared Statement parameters will be appended
      */
     public function appendModelClauseToPs(&$sb, array &$params)
     {
@@ -138,7 +138,7 @@ class ModelCriterion extends Criterion
      * Handles case insensitivity for VARCHAR columns
      *
      * @param      string &$sb The string that will receive the Prepared Statement
-     * @param      array $params A list to which Prepared Statement parameters will be appended
+     * @param array $params A list to which Prepared Statement parameters will be appended
      */
     public function appendModelClauseLikeToPs(&$sb, array &$params)
     {
@@ -155,7 +155,7 @@ class ModelCriterion extends Criterion
      * For ternary model clauses, e.G 'book.ID BETWEEN ? AND ?'
      *
      * @param      string &$sb The string that will receive the Prepared Statement
-     * @param      array $params A list to which Prepared Statement parameters will be appended
+     * @param array $params A list to which Prepared Statement parameters will be appended
      */
     public function appendModelClauseSeveralToPs(&$sb, array &$params)
     {
@@ -178,7 +178,7 @@ class ModelCriterion extends Criterion
      * For IN or NOT IN model clauses, e.g. 'book.TITLE NOT IN ?'
      *
      * @param      string &$sb The string that will receive the Prepared Statement
-     * @param      array $params A list to which Prepared Statement parameters will be appended
+     * @param array $params A list to which Prepared Statement parameters will be appended
      */
     public function appendModelClauseArrayToPs(&$sb, array &$params)
     {
@@ -202,7 +202,7 @@ class ModelCriterion extends Criterion
      * For custom expressions with a typed binding, e.g. 'foobar = ?'
      *
      * @param      string &$sb The string that will receive the Prepared Statement
-     * @param      array $params A list to which Prepared Statement parameters will be appended
+     * @param array $params A list to which Prepared Statement parameters will be appended
      */
     protected function appendModelClauseRawToPs(&$sb, array &$params)
     {

@@ -30,7 +30,7 @@ class ObjectCollection extends Collection
     /**
      * Save all the elements in the collection
      *
-     * @param     ConnectionInterface  $con
+     * @param ConnectionInterface $con
      */
     public function save($con = null)
     {
@@ -56,7 +56,7 @@ class ObjectCollection extends Collection
     /**
      * Delete all the elements in the collection
      *
-     * @param     ConnectionInterface  $con
+     * @param ConnectionInterface $con
      */
     public function delete($con = null)
     {
@@ -82,7 +82,7 @@ class ObjectCollection extends Collection
     /**
      * Get an array of the primary keys of all the objects in the collection
      *
-     * @param     Boolean  $usePrefix
+     * @param Boolean $usePrefix
      * @return    array  The list of the primary keys of the collection
      */
     public function getPrimaryKeys($usePrefix = true)
@@ -103,7 +103,7 @@ class ObjectCollection extends Collection
      * Each object is populated from an array and the result is stored
      * Does not empty the collection before adding the data from the array
      *
-     * @param    array  $arr
+     * @param array $arr
      */
     public function fromArray($arr)
     {
@@ -120,15 +120,15 @@ class ObjectCollection extends Collection
      * Get an array representation of the collection
      * Each object is turned into an array and the result is returned
      *
-     * @param     string  $keyColumn If null, the returned array uses an incremental index.
+     * @param string $keyColumn If null, the returned array uses an incremental index.
      *                               Otherwise, the array is indexed using the specified column
-     * @param     Boolean $usePrefix If true, the returned array prefixes keys
+     * @param Boolean $usePrefix If true, the returned array prefixes keys
      *                               with the model class name ('Article_0', 'Article_1', etc).
-     * @param     string  $keyType   (optional) One of the class type constants BasePeer::TYPE_PHPNAME,
+     * @param string $keyType (optional) One of the class type constants BasePeer::TYPE_PHPNAME,
      *                               BasePeer::TYPE_STUDLYPHPNAME, BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME,
      *                               BasePeer::TYPE_NUM. Defaults to BasePeer::TYPE_PHPNAME.
-     * @param     Boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
-     * @param     array   $alreadyDumpedObjects List of objects to skip to avoid recursion
+     * @param Boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
+     * @param array   $alreadyDumpedObjects   List of objects to skip to avoid recursion
      *
      * <code>
      * $bookCollection->toArray();
@@ -168,9 +168,9 @@ class ObjectCollection extends Collection
     /**
      * Get an array representation of the collection
      *
-     * @param     string   $keyColumn  If null, the returned array uses an incremental index.
+     * @param string $keyColumn If null, the returned array uses an incremental index.
      *                                 Otherwise, the array is indexed using the specified column
-     * @param     Boolean  $usePrefix  If true, the returned array prefixes keys
+     * @param Boolean $usePrefix If true, the returned array prefixes keys
      *                                 with the model class name ('Article_0', 'Article_1', etc).
      *
      * <code>
@@ -218,8 +218,8 @@ class ObjectCollection extends Collection
      *   $res = $coll->toKeyValue('Id', 'Name');
      * </code>
      *
-     * @param     string  $keyColumn
-     * @param     string  $valueColumn
+     * @param string $keyColumn
+     * @param string $valueColumn
      *
      * @return    array
      */
@@ -239,9 +239,9 @@ class ObjectCollection extends Collection
      * Makes an additional query to populate the objects related to the collection objects
      * by a certain relation
      *
-     * @param     string     $relation  Relation name (e.g. 'Book')
-     * @param     Criteria   $criteria  Optional Criteria object to filter the related object collection
-     * @param     ConnectionInterface  $con       Optional connection object
+     * @param string              $relation Relation name (e.g. 'Book')
+     * @param Criteria            $criteria Optional Criteria object to filter the related object collection
+     * @param ConnectionInterface $con      Optional connection object
      *
      * @return    ObjectCollection  The list of related objects
      */

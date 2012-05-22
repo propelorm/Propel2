@@ -339,7 +339,7 @@ class Database extends ScopedMappingModel
     /**
      * Returns whether or not the database has a table.
      *
-     * @param string $name
+     * @param string  $name
      * @param Boolean $caseInsensitive
      * @return Boolean
      */
@@ -355,7 +355,7 @@ class Database extends ScopedMappingModel
     /**
      * Returns the table with the specified name.
      *
-     * @param string $name
+     * @param string  $name
      * @param Boolean $caseInsensitive
      * @return Table
      */
@@ -645,7 +645,8 @@ class Database extends ScopedMappingModel
         if (count($behaviors)) {
             $nextBehavior = $behaviors[key($behaviors)][0];
         }
-        
+
+
         return $nextBehavior;
     }
 

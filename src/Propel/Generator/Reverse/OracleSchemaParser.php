@@ -70,7 +70,7 @@ class OracleSchemaParser extends AbstractSchemaParser
 
     /**
      * Searches for tables in the database. Maybe we want to search also the views.
-     * @param    Database $database The Database model class to add tables to.
+     * @param Database $database The Database model class to add tables to.
      */
     public function parse(Database $database)
     {
@@ -127,7 +127,7 @@ class OracleSchemaParser extends AbstractSchemaParser
     /**
      * Adds Columns to the specified table.
      *
-     * @param      Table $table The Table model class to add columns to.
+     * @param Table $table The Table model class to add columns to.
      */
     protected function addColumns(Table $table)
     {
@@ -189,7 +189,7 @@ class OracleSchemaParser extends AbstractSchemaParser
     /**
      * Adds Indexes to the specified table.
      *
-     * @param      Table $table The Table model class to add columns to.
+     * @param Table $table The Table model class to add columns to.
      */
     protected function addIndexes(Table $table)
     {
@@ -220,7 +220,7 @@ class OracleSchemaParser extends AbstractSchemaParser
     /**
      * Load foreign keys for this table.
      *
-     * @param      Table $table The Table model class to add FKs to
+     * @param Table $table The Table model class to add FKs to
      */
     protected function addForeignKeys(Table $table)
     {
@@ -255,7 +255,7 @@ class OracleSchemaParser extends AbstractSchemaParser
     /**
      * Loads the primary key for this table.
      *
-     * @param      Table $table The Table model class to add PK to.
+     * @param Table $table The Table model class to add PK to.
      */
     protected function addPrimaryKey(Table $table)
     {

@@ -61,7 +61,7 @@ class PropelConditionalProxy
      * Returns a new level PropelConditionalProxy instance.
      * Allows for conditional statements in a fluid interface.
      *
-     * @param      Boolean $cond
+     * @param Boolean $cond
      *
      * @return     PropelConditionalProxy
      */
@@ -73,7 +73,7 @@ class PropelConditionalProxy
     /**
      * Allows for conditional statements in a fluid interface.
      *
-     * @param      bool $cond ignored
+     * @param bool $cond ignored
      *
      * @return     PropelConditionalProxy
      */

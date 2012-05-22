@@ -96,8 +96,8 @@ class BasePeer
      * Method to perform deletes based on values and keys in a
      * Criteria.
      *
-     * @param      Criteria $criteria The criteria to use.
-     * @param      ConnectionInterface $con A ConnectionInterface connection object.
+     * @param Criteria            $criteria The criteria to use.
+     * @param ConnectionInterface $con      A ConnectionInterface connection object.
      * @return     int    The number of rows affected by last statement execution.  For most
      *                 uses there is only one delete statement executed, so this number
      *                 will correspond to the number of rows affected by the call to this
@@ -166,9 +166,9 @@ class BasePeer
      * }
      * </code>
      *
-     * @param      string $tableName The name of the table to empty.
-     * @param      ConnectionInterface $con A ConnectionInterface connection object.
-     * @param      string $databaseName the name of the database.
+     * @param string              $tableName    The name of the table to empty.
+     * @param ConnectionInterface $con          A ConnectionInterface connection object.
+     * @param string              $databaseName the name of the database.
      * @return     int      The number of rows affected by the statement. Note
      *                      that the return value does require that this information
      *                      is returned (supported) by the Propel db driver.
@@ -211,8 +211,8 @@ class BasePeer
      * If no primary key is defined for the table the values will be
      * inserted as specified in Criteria and null will be returned.
      *
-     * @param      Criteria $criteria Object containing values to insert.
-     * @param      ConnectionInterface $con A ConnectionInterface connection.
+     * @param Criteria            $criteria Object containing values to insert.
+     * @param ConnectionInterface $con      A ConnectionInterface connection.
      * @return     mixed The primary key for the new row if (and only if!) the primary key
      *                is auto-generated.  Otherwise will return <code>null</code>.
      * @throws     \Propel\Runtime\Exception\RuntimeException
@@ -318,11 +318,11 @@ class BasePeer
      * WHERE some_column = some value AND could_have_another_column =
      * another value AND so on.
      *
-     * @param      $selectCriteria A Criteria object containing values used in where
+     * @param   $selectCriteria A Criteria object containing values used in where
      *        clause.
-     * @param      $updateValues A Criteria object containing values used in set
+     * @param   $updateValues A Criteria object containing values used in set
      *        clause.
-     * @param      ConnectionInterface $con The ConnectionInterface connection object to use.
+     * @param ConnectionInterface $con The ConnectionInterface connection object to use.
      * @return     int    The number of rows affected by last update statement.  For most
      *                 uses there is only one update statement executed, so this number
      *                 will correspond to the number of rows affected by the call to this
@@ -458,8 +458,8 @@ class BasePeer
     /**
      * Executes query build by createSelectSql() and returns the resultset statement.
      *
-     * @param      Criteria $criteria A Criteria.
-     * @param      ConnectionInterface $con A ConnectionInterface connection to use.
+     * @param Criteria            $criteria A Criteria.
+     * @param ConnectionInterface $con      A ConnectionInterface connection to use.
      * @return     Propel\Runtime\Connection\StatementInterface The resultset.
      * @throws     \Propel\Runtime\Exception\RuntimeException
      * @see        createSelectSql()
@@ -500,8 +500,8 @@ class BasePeer
      * Executes a COUNT query using either a simple SQL rewrite or, for more complex queries, a
      * sub-select of the SQL created by createSelectSql() and returns the statement.
      *
-     * @param      Criteria $criteria A Criteria.
-     * @param      ConnectionInterface $con A ConnectionInterface connection to use.
+     * @param Criteria            $criteria A Criteria.
+     * @param ConnectionInterface $con      A ConnectionInterface connection to use.
      * @return     Propel\Runtime\Connection\StatementInterface The resultset statement.
      * @throws     \Propel\Runtime\Exception\RuntimeException
      * @see        createSelectSql()
@@ -562,7 +562,7 @@ class BasePeer
      * Helper method which returns the primary key contained
      * in the given Criteria object.
      *
-     * @param      Criteria $criteria A Criteria.
+     * @param Criteria $criteria A Criteria.
      * @return     ColumnMap If the Criteria object contains a primary
      *          key, or null if it doesn't.
      * @throws     \Propel\Runtime\Exception\RuntimeException
@@ -618,7 +618,7 @@ class BasePeer
      * to be set before the statement is executed.  The reason we do it this way
      * is to let the PDO layer handle all escaping & value formatting.
      *
-     * @param      Criteria $criteria Criteria for the SELECT query.
+     * @param Criteria $criteria Criteria for the SELECT query.
      * @param      array &$params Parameters that are to be replaced in prepared statement.
      * @return     string
      * @throws     \Propel\Runtime\Exception\RuntimeException    Trouble creating the query string.
@@ -823,8 +823,8 @@ class BasePeer
     /**
      * Builds a params array, like the kind populated by Criterion::appendPsTo().
      * This is useful for building an array even when it is not using the appendPsTo() method.
-     * @param      array $columns
-     * @param      Criteria $values
+     * @param array    $columns
+     * @param Criteria $values
      * @return     array params array('column' => ..., 'table' => ..., 'value' => ...)
      */
     static private function buildParams($columns, Criteria $values)

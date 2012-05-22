@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Builder\Om;
@@ -15,23 +15,23 @@ use Propel\Generator\Model\Inheritance;
 /**
  * Generates the empty PHP5 stub query class for use with single table inheritance.
  *
- * This class produces the empty stub class that can be customized with application
- * business logic, custom behavior, etc.
+ * This class produces the empty stub class that can be customized with
+ * application business logic, custom behavior, etc.
  *
- *
- * @author     François Zaninotto
+ * @author François Zaninotto
  */
 class ExtensionQueryInheritanceBuilder extends AbstractOMBuilder
 {
-
     /**
      * The current child "object" we are operating on.
+     *
      */
     protected $child;
 
     /**
      * Returns the name of the current class being built.
-     * @return     string
+     *
+     * @return string
      */
     public function getUnprefixedClassName()
     {
@@ -40,7 +40,8 @@ class ExtensionQueryInheritanceBuilder extends AbstractOMBuilder
 
     /**
      * Gets the package for the [base] object classes.
-     * @return     string
+     *
+     * @return string
      */
     public function getPackage()
     {
@@ -49,7 +50,8 @@ class ExtensionQueryInheritanceBuilder extends AbstractOMBuilder
 
     /**
      * Set the child object that we're operating on currrently.
-     * @param      $child Inheritance
+     *
+     * @param Inheritance $child Inheritance
      */
     public function setChild(Inheritance $child)
     {
@@ -58,8 +60,9 @@ class ExtensionQueryInheritanceBuilder extends AbstractOMBuilder
 
     /**
      * Returns the child object we're operating on currently.
-     * @return     Inheritance
-     * @throws     BuildException - if child was not set.
+     *
+     * @return Inheritance
+     * @throws BuildException
      */
     public function getChild()
     {
@@ -72,7 +75,8 @@ class ExtensionQueryInheritanceBuilder extends AbstractOMBuilder
 
     /**
      * Adds class phpdoc comment and openning of class.
-     * @param      string &$script The script will be modified in this method.
+     *
+     * @param string $script
      */
     protected function addClassOpen(&$script)
     {
@@ -114,15 +118,18 @@ class "  .$this->getUnqualifiedClassName() . " extends " . $baseClassName . " {
      * By default there are no methods for the empty stub classes; override this method
      * if you want to change that behavior.
      *
-     * @see        ObjectBuilder::addClassBody()
+     * @param string $script
+     * @see ObjectBuilder::addClassBody()
      */
     protected function addClassBody(&$script)
     {
+
     }
 
     /**
      * Closes class.
-     * @param      string &$script The script will be modified in this method.
+     *
+     * @param string $script
      */
     protected function addClassClose(&$script)
     {
@@ -130,5 +137,4 @@ class "  .$this->getUnqualifiedClassName() . " extends " . $baseClassName . " {
 } // " . $this->getUnqualifiedClassName() . "
 ";
     }
-
-} // MultiExtensionQueryBuilder
+}

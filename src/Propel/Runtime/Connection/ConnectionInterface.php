@@ -79,7 +79,7 @@ interface ConnectionInterface
      * Set an attribute.
      *
      * @param string $attribute
-     * @param mixec $value
+     * @param mixec  $value
      *
      * @return bool TRUE on success or FALSE on failure.
      */
@@ -136,7 +136,7 @@ interface ConnectionInterface
      * characters within the input string, using a quoting style appropriate to
      * the underlying driver.
      *
-     * @param string $string The string to be quoted.
+     * @param string $string         The string to be quoted.
      * @param int    $parameter_type Provides a data type hint for drivers that
      *                               have alternate quoting styles.
      *

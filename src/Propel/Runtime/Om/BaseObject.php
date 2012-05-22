@@ -81,7 +81,7 @@ abstract class BaseObject
     /**
      * Has specified column been modified?
      *
-     * @param      string $col column fully qualified name (BasePeer::TYPE_COLNAME), e.g. Book::AUTHOR_ID
+     * @param string $col column fully qualified name (BasePeer::TYPE_COLNAME), e.g. Book::AUTHOR_ID
      * @return     boolean True if $col has been modified.
      */
     public function isColumnModified($col)
@@ -114,7 +114,7 @@ abstract class BaseObject
      * Setter for the isNew attribute.  This method will be called
      * by Propel-generated children and Peers.
      *
-     * @param      boolean $b the state of the object.
+     * @param boolean $b the state of the object.
      */
     public function setNew($b)
     {
@@ -132,7 +132,7 @@ abstract class BaseObject
 
     /**
      * Specify whether this object has been deleted.
-     * @param      boolean $b The deleted state of this object.
+     * @param boolean $b The deleted state of this object.
      * @return     void
      */
     public function setDeleted($b)
@@ -278,7 +278,7 @@ abstract class BaseObject
     /**
      * Get the associative array of the virtual columns in this object
      *
-     * @param      string $name The virtual column name
+     * @param string $name The virtual column name
      *
      * @return     array
      */
@@ -314,8 +314,8 @@ abstract class BaseObject
     /**
      * Set the value of a virtual column in this object
      *
-     * @param      string $name The virtual column name
-     * @param      mixed  $value The value to give to the virtual column
+     * @param string $name  The virtual column name
+     * @param mixed  $value The value to give to the virtual column
      *
      * @return     BaseObject The current object, for fluid interface
      */
@@ -329,8 +329,8 @@ abstract class BaseObject
     /**
      * Logs a message using Propel::log().
      *
-     * @param      string $msg
-     * @param      int $priority One of the Propel::LOG_* logging levels
+     * @param string $msg
+     * @param int    $priority One of the Propel::LOG_* logging levels
      * @return     boolean
      */
     protected function log($msg, $priority = Propel::LOG_INFO)
@@ -345,9 +345,9 @@ abstract class BaseObject
      * $book->importFrom('JSON', '{"Id":9012,"Title":"Don Juan","ISBN":"0140422161","Price":12.99,"PublisherId":1234,"AuthorId":5678}');
      * </code>
      *
-     * @param mixed  $parser A AbstractParser instance,
+     * @param mixed $parser A AbstractParser instance,
      *                       or a format name ('XML', 'YAML', 'JSON', 'CSV')
-     * @param string $data   The source data to import from
+     * @param string $data The source data to import from
      *
      * @return BaseObject    The current object, for fluid interface
      */
@@ -368,8 +368,8 @@ abstract class BaseObject
      *  => {"Id":9012,"Title":"Don Juan","ISBN":"0140422161","Price":12.99,"PublisherId":1234,"AuthorId":5678}');
      * </code>
      *
-     * @param     mixed   $parser                 A AbstractParser instance, or a format name ('XML', 'YAML', 'JSON', 'CSV')
-     * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy load(ed) columns. Defaults to TRUE.
+     * @param mixed   $parser                 A AbstractParser instance, or a format name ('XML', 'YAML', 'JSON', 'CSV')
+     * @param boolean $includeLazyLoadColumns (optional) Whether to include lazy load(ed) columns. Defaults to TRUE.
      * @return    string                          The exported data
      */
     public function exportTo($parser, $includeLazyLoadColumns = true)
@@ -398,8 +398,8 @@ abstract class BaseObject
      * Provides magic import/export method support (fromXML()/toXML(), fromYAML()/toYAML(), etc.).
      * Allows to define default __call() behavior if you use a custom BaseObject
      *
-     * @param    string  $name
-     * @param   mixed   $params
+     * @param string $name
+     * @param mixed  $params
      *
      * @return    array|string
      */

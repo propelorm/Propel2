@@ -151,7 +151,7 @@ class Schema
     /**
      * Returns the database according to the specified name.
      *
-     * @param string $name
+     * @param string  $name
      * @param Boolean $doFinalInitialization
      * @return Database
      */

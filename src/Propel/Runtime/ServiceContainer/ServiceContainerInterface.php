@@ -85,8 +85,8 @@ interface ServiceContainerInterface
      * If the connection has not been opened, open it using the related
      * connectionSettings. If the connection has already been opened, return it.
      *
-     * @param      string $name The datasource name
-     * @param      string $mode The connection mode (this applies to replication systems).
+     * @param string $name The datasource name
+     * @param string $mode The connection mode (this applies to replication systems).
      *
      * @return     \Propel\Runtime\Connection\ConnectionInterface A database connection
      */
@@ -98,7 +98,7 @@ interface ServiceContainerInterface
      * If the connection has not been opened, open it using the related
      * connectionSettings. If the connection has already been opened, return it.
      *
-     * @param      string $name The datasource name that is used to look up the DSN
+     * @param string $name The datasource name that is used to look up the DSN
      *                          from the runtime configuration file. Empty name not allowed.
      *
      * @return     ConnectionInterface A database connection
@@ -114,7 +114,7 @@ interface ServiceContainerInterface
      * setting for the related datasource. If no read connection setting exist, return the master
      * connection. If the slave connection has already been opened, return it.
      *
-     * @param      string $name The datasource name that is used to look up the DSN
+     * @param string $name The datasource name that is used to look up the DSN
      *                          from the runtime configuration file. Empty name not allowed.
      *
      * @return     ConnectionInterface A database connection

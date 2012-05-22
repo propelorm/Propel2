@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license     MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Model\Diff;
@@ -16,7 +16,6 @@ use Propel\Generator\Model\Table;
  * Service class for comparing Table objects
  * Heavily inspired by Doctrine2's Migrations
  * (see http://github.com/doctrine/dbal/tree/master/lib/Doctrine/DBAL/Schema/)
- *
  */
 class TableComparator
 {
@@ -33,7 +32,7 @@ class TableComparator
     }
 
     /**
-     * Set the table the comparator starts from
+     * Sets the table the comparator starts from.
      *
      * @param Table $fromTable
      */
@@ -43,7 +42,7 @@ class TableComparator
     }
 
     /**
-     * Get the table the comparator starts from
+     * Returns the table the comparator starts from.
      *
      * @return Table
      */
@@ -53,7 +52,7 @@ class TableComparator
     }
 
     /**
-     * Set the table the comparator goes to
+     * Sets the table the comparator goes to.
      *
      * @param Table $toTable
      */
@@ -63,7 +62,7 @@ class TableComparator
     }
 
     /**
-     * Get the table the comparator goes to
+     * Returns the table the comparator goes to.
      *
      * @return Table
      */
@@ -73,14 +72,12 @@ class TableComparator
     }
 
     /**
-     * Compute and return the difference between two table objects
+     * Returns the computed difference between two table objects.
      *
-     * @param Column $fromTable
-     * @param Column $toTable
-     * @param boolean $caseInsensitive Whether the comparison is case insensitive.
-     *                                 False by default.
-     *
-     * @return TableDiff|boolean return false if the two tables are similar
+     * @param Column  $fromTable
+     * @param Column  $toTable
+     * @param boolean $caseInsensitive
+     * @return TableDiff|Boolean
      */
     static public function computeDiff(Table $fromTable, Table $toTable, $caseInsensitive = false)
     {
@@ -97,14 +94,13 @@ class TableComparator
     }
 
     /**
-     * Compare the columns of the fromTable and the toTable,
-     * and modifies the inner tableDiff if necessary.
      * Returns the number of differences.
      *
-     * @param boolean $caseInsensitive Whether the comparison is case insensitive.
-     *                                 False by default.
+     * Compares the columns of the fromTable and the toTable,
+     * and modifies the inner tableDiff if necessary.
      *
-     * @return integer The number of column differences
+     * @param Boolean $caseInsensitive
+     * @return integer
      */
     public function compareColumns($caseInsensitive = false)
     {
@@ -157,14 +153,13 @@ class TableComparator
     }
 
     /**
-     * Compare the primary keys of the fromTable and the toTable,
-     * and modifies the inner tableDiff if necessary.
      * Returns the number of differences.
      *
-     * @param boolean $caseInsensitive Whether the comparison is case insensitive.
-     *                                 False by default.
+     * Compares the primary keys of the fromTable and the toTable,
+     * and modifies the inner tableDiff if necessary.
      *
-     * @return integer The number of primary key differences
+     * @param Boolean $caseInsensitive
+     * @return integer
      */
     public function comparePrimaryKeys($caseInsensitive = false)
     {
@@ -207,14 +202,13 @@ class TableComparator
     }
 
     /**
-     * Compare the indices and unique indices of the fromTable and the toTable,
-     * and modifies the inner tableDiff if necessary.
      * Returns the number of differences.
      *
-     * @param boolean $caseInsensitive Whether the comparison is case insensitive.
-     *                                 False by default.
+     * Compare the indices and unique indices of the fromTable and the toTable,
+     * and modifies the inner tableDiff if necessary.
      *
-     * @return integer The number of index differences
+     * @param Boolean $caseInsensitive
+     * @return integer
      */
     public function compareIndices($caseInsensitive = false)
     {
@@ -256,14 +250,13 @@ class TableComparator
     }
 
     /**
-     * Compare the foreign keys of the fromTable and the toTable,
-     * and modifies the inner tableDiff if necessary.
      * Returns the number of differences.
      *
-     * @param boolean $caseInsensitive Whether the comparison is case insensitive.
-     *                                 False by default.
+     * Compare the foreign keys of the fromTable and the toTable,
+     * and modifies the inner tableDiff if necessary.
      *
-     * @return integer The number of foreign key differences
+     * @param Boolean $caseInsensitive
+     * @return integer
      */
     public function compareForeignKeys($caseInsensitive = false)
     {

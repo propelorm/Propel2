@@ -10,7 +10,6 @@
 
 namespace Propel\Generator\Manager;
 
-use Propel\Generator\Builder\Om\ClassTools;
 use Propel\Generator\Builder\Om\AbstractOMBuilder;
 use Propel\Generator\Util\Filesystem;
 
@@ -130,10 +129,11 @@ class ModelManager extends AbstractManager
 
     /**
      * Uses a builder class to create the output class.
-     * This method assumes that the DataModelBuilder class has been initialized with the build properties.
+     * This method assumes that the DataModelBuilder class has been initialized
+     * with the build properties.
      *
-     * @param      \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
-     * @param      boolean $overwrite Whether to overwrite existing files with te new ones (default is YES).
+     * @param AbstractOMBuilder $builder
+     * @param Boolean           $overwrite
      */
     protected function doBuild(AbstractOMBuilder $builder, $overwrite = true)
     {

@@ -35,7 +35,7 @@ class Domain extends MappingModel
      *
      * If this domain needs a name, it must be specified manually.
      *
-     * @param string $type Propel type.
+     * @param string $type    Propel type.
      * @param string $sqlType SQL type.
      * @param string $size
      * @param string $scale

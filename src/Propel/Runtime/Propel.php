@@ -12,8 +12,6 @@ namespace Propel\Runtime;
 
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
-use Propel\Runtime\Connection\ConnectionManagerSingle;
-use Propel\Runtime\Connection\ConnectionManagerMasterSlave;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Propel;
 use Propel\Runtime\Map\DatabaseMap;
@@ -100,7 +98,7 @@ class Propel
     /**
      * Configure Propel a PHP (array) config file.
      *
-     * @param      string $configFile Path (absolute or relative to include_path) to config file.
+     * @param string $configFile Path (absolute or relative to include_path) to config file.
      * @deprecated Why don't you just include the configuration file?
      */
     static public function init($configFile)
@@ -197,8 +195,8 @@ class Propel
      * If the connection has not been opened, open it using the related
      * connectionSettings. If the connection has already been opened, return it.
      *
-     * @param      string $name The datasource name
-     * @param      string $mode The connection mode (this applies to replication systems).
+     * @param string $name The datasource name
+     * @param string $mode The connection mode (this applies to replication systems).
      *
      * @return     \Propel\Runtime\Connection\ConnectionInterface A database connection
      */
@@ -213,7 +211,7 @@ class Propel
      * If the connection has not been opened, open it using the related
      * connectionSettings. If the connection has already been opened, return it.
      *
-     * @param      string $name The datasource name that is used to look up the DSN
+     * @param string $name The datasource name that is used to look up the DSN
      *                          from the runtime configuration file. Empty name not allowed.
      *
      * @return     ConnectionInterface A database connection
@@ -232,7 +230,7 @@ class Propel
      * setting for the related datasource. If no read connection setting exist, return the master
      * connection. If the slave connection has already been opened, return it.
      *
-     * @param      string $name The datasource name that is used to look up the DSN
+     * @param string $name The datasource name that is used to look up the DSN
      *                          from the runtime configuration file. Empty name not allowed.
      *
      * @return     ConnectionInterface A database connection

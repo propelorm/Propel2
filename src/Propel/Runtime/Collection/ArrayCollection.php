@@ -26,7 +26,7 @@ class ArrayCollection extends Collection
     /**
      * Save all the elements in the collection
      *
-     * @param     ConnectionInterface  $con
+     * @param ConnectionInterface $con
      */
     public function save($con = null)
     {
@@ -54,7 +54,7 @@ class ArrayCollection extends Collection
     /**
      * Delete all the elements in the collection
      *
-     * @param     ConnectionInterface  $con
+     * @param ConnectionInterface $con
      */
     public function delete($con = null)
     {
@@ -82,7 +82,7 @@ class ArrayCollection extends Collection
     /**
      * Get an array of the primary keys of all the objects in the collection
      *
-     * @param     Boolean  $usePrefix
+     * @param Boolean $usePrefix
      * @return    array  The list of the primary keys of the collection
      */
     public function getPrimaryKeys($usePrefix = true)
@@ -102,7 +102,7 @@ class ArrayCollection extends Collection
      * Uses the object model to force the column types
      * Does not empty the collection before adding the data from the array
      *
-     * @param     array  $arr
+     * @param array $arr
      */
     public function fromArray($arr)
     {
@@ -118,9 +118,9 @@ class ArrayCollection extends Collection
      * Get an array representation of the collection
      * This is not an alias for getData(), since it returns a copy of the data
      *
-     * @param     string   $keyColumn  If null, the returned array uses an incremental index.
+     * @param string $keyColumn If null, the returned array uses an incremental index.
      *                                 Otherwise, the array is indexed using the specified column
-     * @param     Boolean  $usePrefix  If true, the returned array prefixes keys
+     * @param Boolean $usePrefix If true, the returned array prefixes keys
      *                                 with the model class name ('Article_0', 'Article_1', etc).
      *
      * <code>
@@ -158,8 +158,8 @@ class ArrayCollection extends Collection
     /**
      * Synonym for toArray(), to provide a similar interface to PopelObjectCollection
      *
-     * @param     string   $keyColumn
-     * @param     Boolean  $usePrefix
+     * @param string  $keyColumn
+     * @param Boolean $usePrefix
      *
      * @return    array
      */
@@ -180,8 +180,8 @@ class ArrayCollection extends Collection
      * $res = $coll->toKeyValue('Id', 'Name');
      * </code>
      *
-     * @param     string  $keyColumn
-     * @param     string  $valueColumn
+     * @param string $keyColumn
+     * @param string $valueColumn
      *
      * @return    array
      */

@@ -10,7 +10,6 @@
 
 namespace Propel\Runtime\Connection;
 
-use Propel\Runtime\Util\Profiler;
 
 /**
  * Statement class with profiling abilities.
@@ -23,11 +22,11 @@ class ProfilerStatementWrapper extends StatementWrapper
      * as a reference and will only be evaluated at the time that PDOStatement::execute() is called.
      * Returns a boolean value indicating success.
      *
-     * @param     integer  $pos  Parameter identifier (for determining what to replace in the query).
-     * @param     mixed    $value  The value to bind to the parameter.
-     * @param     integer  $type  Explicit data type for the parameter using the PDO::PARAM_* constants. Defaults to PDO::PARAM_STR.
-     * @param     integer  $length  Length of the data type. To indicate that a parameter is an OUT parameter from a stored procedure, you must explicitly set the length.
-     * @param     mixed    $driver_options
+     * @param integer $pos            Parameter identifier (for determining what to replace in the query).
+     * @param mixed   $value          The value to bind to the parameter.
+     * @param integer $type           Explicit data type for the parameter using the PDO::PARAM_* constants. Defaults to PDO::PARAM_STR.
+     * @param integer $length         Length of the data type. To indicate that a parameter is an OUT parameter from a stored procedure, you must explicitly set the length.
+     * @param mixed   $driver_options
      *
      * @return    boolean
      */
@@ -42,9 +41,9 @@ class ProfilerStatementWrapper extends StatementWrapper
      * Binds a value to a corresponding named or question mark placeholder in the SQL statement
      * that was use to prepare the statement. Returns a boolean value indicating success.
      *
-     * @param     integer  $pos  Parameter identifier (for determining what to replace in the query).
-     * @param     mixed    $value  The value to bind to the parameter.
-     * @param     integer  $type  Explicit data type for the parameter using the PDO::PARAM_* constants. Defaults to PDO::PARAM_STR.
+     * @param integer $pos   Parameter identifier (for determining what to replace in the query).
+     * @param mixed   $value The value to bind to the parameter.
+     * @param integer $type  Explicit data type for the parameter using the PDO::PARAM_* constants. Defaults to PDO::PARAM_STR.
      *
      * @return    boolean
      */
@@ -60,7 +59,7 @@ class ProfilerStatementWrapper extends StatementWrapper
      * Executes a prepared statement.  Returns a boolean value indicating success.
      * Overridden for query counting and logging.
      *
-     * @param     string  $input_parameters
+     * @param string $input_parameters
      * @return    boolean
      */
     public function execute($input_parameters = null)

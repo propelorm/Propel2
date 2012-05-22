@@ -145,7 +145,7 @@ class TableMap
     /**
      * Set the DatabaseMap containing this TableMap.
      *
-     * @param     DatabaseMap $dbMap A DatabaseMap.
+     * @param DatabaseMap $dbMap A DatabaseMap.
      */
     public function setDatabaseMap(DatabaseMap $dbMap)
     {
@@ -165,7 +165,7 @@ class TableMap
     /**
      * Set the name of the Table.
      *
-     * @param      string $name The name of the table.
+     * @param string $name The name of the table.
      */
     public function setName($name)
     {
@@ -185,7 +185,7 @@ class TableMap
     /**
      * Set the PHP name of the Table.
      *
-     * @param      string $phpName The PHP Name for this table
+     * @param string $phpName The PHP Name for this table
      */
     public function setPhpName($phpName)
     {
@@ -206,7 +206,7 @@ class TableMap
      * Set the ClassName of the Table. Could be useful for calling
      * Peer and Object methods dynamically.
      *
-     * @param      string $classname The ClassName
+     * @param string $classname The ClassName
      */
     public function setClassName($classname)
     {
@@ -236,7 +236,7 @@ class TableMap
     /**
      * Set the Package of the Table
      *
-     * @param      string $package The Package
+     * @param string $package The Package
      */
     public function setPackage($package)
     {
@@ -256,7 +256,7 @@ class TableMap
     /**
      * Set whether or not to use Id generator for primary key.
      *
-     * @param      Boolean $bit
+     * @param Boolean $bit
      */
     public function setUseIdGenerator($bit)
     {
@@ -276,7 +276,7 @@ class TableMap
     /**
      * Set whether or not to this table uses single table inheritance
      *
-     * @param      Boolean $bit
+     * @param Boolean $bit
      */
     public function setSingleTableInheritance($bit)
     {
@@ -296,7 +296,7 @@ class TableMap
     /**
      * Sets the name of the sequencxe used to generate a key
      *
-     * @param      $pkInfo information needed to generate a key
+     * @param   $pkInfo information needed to generate a key
      */
     public function setPrimaryKeyMethodInfo($pkInfo)
     {
@@ -317,13 +317,13 @@ class TableMap
      * Add a column to the table.
      *
      * @param      string name A String with the column name.
-     * @param      string $type A string specifying the Propel type.
-     * @param      Boolean $isNotNull Whether column does not allow NULL values.
-     * @param      int $size An int specifying the size.
-     * @param      Boolean $pk True if column is a primary key.
-     * @param      string $fkTable A String with the foreign key table name.
-     * @param      string $fkColumn A String with the foreign key column name.
-     * @param      string $defaultValue The default value for this column.
+     * @param string  $type         A string specifying the Propel type.
+     * @param Boolean $isNotNull    Whether column does not allow NULL values.
+     * @param int     $size         An int specifying the size.
+     * @param Boolean $pk           True if column is a primary key.
+     * @param string  $fkTable      A String with the foreign key table name.
+     * @param string  $fkColumn     A String with the foreign key column name.
+     * @param string  $defaultValue The default value for this column.
      * @return     \Propel\Runtime\Map\ColumnMap The newly created column.
      */
     public function addColumn($name, $phpName, $type, $isNotNull = false, $size = null, $defaultValue = null, $pk = false, $fkTable = null, $fkColumn = null)
@@ -355,7 +355,7 @@ class TableMap
      * Add a pre-created column to this table. It will replace any
      * existing column.
      *
-     * @param      \Propel\Runtime\Map\ColumnMap $cmap A ColumnMap.
+     * @param \Propel\Runtime\Map\ColumnMap $cmap A ColumnMap.
      * @return     \Propel\Runtime\Map\ColumnMap The added column map.
      */
     public function addConfiguredColumn(ColumnMap $cmap)
@@ -368,8 +368,8 @@ class TableMap
     /**
      * Does this table contain the specified column?
      *
-     * @param      mixed   $name name of the column or ColumnMap instance
-     * @param      Boolean $normalize Normalize the column name (if column name not like FIRST_NAME)
+     * @param mixed   $name      name of the column or ColumnMap instance
+     * @param Boolean $normalize Normalize the column name (if column name not like FIRST_NAME)
      * @return     Boolean True if the table contains the column.
      */
     public function hasColumn($name, $normalize = true)
@@ -386,8 +386,8 @@ class TableMap
     /**
      * Get a ColumnMap for the table.
      *
-     * @param      string    $name A String with the name of the table.
-     * @param      Boolean   $normalize Normalize the column name (if column name not like FIRST_NAME)
+     * @param string  $name      A String with the name of the table.
+     * @param Boolean $normalize Normalize the column name (if column name not like FIRST_NAME)
      * @return     \Propel\Runtime\Map\ColumnMap A ColumnMap.
      * @throws     \Propel\Runtime\Map\Exception\ColumnNotFoundException	If the column is undefined
      */
@@ -406,7 +406,7 @@ class TableMap
     /**
      * Does this table contain the specified column?
      *
-     * @param      mixed   $phpName name of the column
+     * @param mixed $phpName name of the column
      * @return     Boolean True if the table contains the column.
      */
     public function hasColumnByPhpName($phpName)
@@ -417,7 +417,7 @@ class TableMap
     /**
      * Get a ColumnMap for the table.
      *
-     * @param      string    $phpName A String with the name of the table.
+     * @param string $phpName A String with the name of the table.
      * @return     \Propel\Runtime\Map\ColumnMap	A ColumnMap.
      * @throws     \Propel\Runtime\Map\Exception\ColumnNotFoundException	If the column is undefined
      */
@@ -443,10 +443,10 @@ class TableMap
     /**
      * Add a primary key column to this Table.
      *
-     * @param      string $columnName A String with the column name.
-     * @param      string $type A string specifying the Propel type.
-     * @param      Boolean $isNotNull Whether column does not allow NULL values.
-     * @param      $size An int specifying the size.
+     * @param string  $columnName A String with the column name.
+     * @param string  $type       A string specifying the Propel type.
+     * @param Boolean $isNotNull  Whether column does not allow NULL values.
+     * @param         $size       An int specifying the size.
      * @return     \Propel\Runtime\Map\ColumnMap Newly added PrimaryKey column.
      */
     public function addPrimaryKey($columnName, $phpName, $type, $isNotNull = false, $size = null, $defaultValue = null)
@@ -457,13 +457,13 @@ class TableMap
     /**
      * Add a foreign key column to the table.
      *
-     * @param      string $columnName A String with the column name.
-     * @param      string $type A string specifying the Propel type.
-     * @param      string $fkTable A String with the foreign key table name.
-     * @param      string $fkColumn A String with the foreign key column name.
-     * @param      Boolean $isNotNull Whether column does not allow NULL values.
-     * @param      int $size An int specifying the size.
-     * @param      string $defaultValue The default value for this column.
+     * @param string  $columnName   A String with the column name.
+     * @param string  $type         A string specifying the Propel type.
+     * @param string  $fkTable      A String with the foreign key table name.
+     * @param string  $fkColumn     A String with the foreign key column name.
+     * @param Boolean $isNotNull    Whether column does not allow NULL values.
+     * @param int     $size         An int specifying the size.
+     * @param string  $defaultValue The default value for this column.
      * @return     \Propel\Runtime\Map\ColumnMap Newly added ForeignKey column.
      */
     public function addForeignKey($columnName, $phpName, $type, $fkTable, $fkColumn, $isNotNull = false, $size = 0, $defaultValue = null)
@@ -474,13 +474,13 @@ class TableMap
     /**
      * Add a foreign primary key column to the table.
      *
-     * @param      string $columnName A String with the column name.
-     * @param      string $type A string specifying the Propel type.
-     * @param      string $fkTable A String with the foreign key table name.
-     * @param      string $fkColumn A String with the foreign key column name.
-     * @param      Boolean $isNotNull Whether column does not allow NULL values.
-     * @param      int $size An int specifying the size.
-     * @param      string $defaultValue The default value for this column.
+     * @param string  $columnName   A String with the column name.
+     * @param string  $type         A string specifying the Propel type.
+     * @param string  $fkTable      A String with the foreign key table name.
+     * @param string  $fkColumn     A String with the foreign key column name.
+     * @param Boolean $isNotNull    Whether column does not allow NULL values.
+     * @param int     $size         An int specifying the size.
+     * @param string  $defaultValue The default value for this column.
      * @return     \Propel\Runtime\Map\ColumnMap Newly created foreign pkey column.
      */
     public function addForeignPrimaryKey($columnName, $phpName, $type, $fkTable, $fkColumn, $isNotNull = false, $size = 0, $defaultValue = null)
@@ -539,13 +539,13 @@ class TableMap
     /**
      * Adds a RelationMap to the table
      *
-     * @param      string $name The relation name
-     * @param      string $tablePhpName The related table name
-     * @param      integer $type The relation type (either RelationMap::MANY_TO_ONE, RelationMap::ONE_TO_MANY, or RelationMAp::ONE_TO_ONE)
-     * @param      array $columnMapping An associative array mapping column names (local => foreign)
-     * @param      string $onDelete SQL behavior upon deletion ('SET NULL', 'CASCADE', ...)
-     * @param      string $onUpdate SQL behavior upon update ('SET NULL', 'CASCADE', ...)
-     * @param      string $pluralName Optional plural name for *_TO_MANY relationships
+     * @param string  $name          The relation name
+     * @param string  $tablePhpName  The related table name
+     * @param integer $type          The relation type (either RelationMap::MANY_TO_ONE, RelationMap::ONE_TO_MANY, or RelationMAp::ONE_TO_ONE)
+     * @param array   $columnMapping An associative array mapping column names (local => foreign)
+     * @param string  $onDelete      SQL behavior upon deletion ('SET NULL', 'CASCADE', ...)
+     * @param string  $onUpdate      SQL behavior upon update ('SET NULL', 'CASCADE', ...)
+     * @param string  $pluralName    Optional plural name for *_TO_MANY relationships
      * @return     \Propel\Runtime\Map\RelationMap the built RelationMap object
      */
     public function addRelation($name, $tablePhpName, $type, $columnMapping = array(), $onDelete = null, $onUpdate = null, $pluralName = null)
@@ -584,7 +584,7 @@ class TableMap
      * Gets a RelationMap of the table by relation name
      * This method will build the relations if they are not built yet
      *
-     * @param       string $name The relation name
+     * @param string $name The relation name
      * @return      Boolean true if the relation exists
      */
     public function hasRelation($name)
@@ -596,7 +596,7 @@ class TableMap
      * Gets a RelationMap of the table by relation name
      * This method will build the relations if they are not built yet
      *
-     * @param       string	$name The relation name
+     * @param string $name The relation name
      * @return      \Propel\Runtime\Map\RelationMap	The relation object
      * @throws      \Propel\Runtime\Map\Exception\RelationNotFoundException	When called on an inexistent relation
      */

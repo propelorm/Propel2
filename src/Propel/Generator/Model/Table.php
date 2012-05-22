@@ -309,9 +309,9 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Helper function to collect indexed columns.
      *
-     * @param string $indexName The name of the index
-     * @param array $columns The column names or objects
-     * @param array $collectedIndexes The collected indexes
+     * @param string $indexName        The name of the index
+     * @param array  $columns          The column names or objects
+     * @param array  $collectedIndexes The collected indexes
      */
     protected function collectIndexedColumns($indexName, $columns, &$collectedIndexes)
     {
@@ -403,8 +403,8 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Macro to a constraint name.
      *
-     * @param  string $nameType Constraint type
-     * @param  integer $nbr Unique number for this constraint type
+     * @param string  $nameType Constraint type
+     * @param integer $nbr      Unique number for this constraint type
      * @return string Unique name for constraint
      * @throws EngineException
      */
@@ -889,7 +889,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * check if the table has a behavior by name
      *
-     * @param     string $name the behavior name
+     * @param string $name the behavior name
      * @return    Boolean True if the behavior exists
      */
     public function hasBehavior($name)
@@ -900,7 +900,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Get one table behavior by name
      *
-     * @param     string $name the behavior name
+     * @param string $name the behavior name
      * @return    Behavior a behavior object
      */
     public function getBehavior($name)
@@ -1367,8 +1367,8 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Returns whether or not the table has a column.
      *
-     * @param  Column|string $column The Column object or its name
-     * @param  Boolean $caseInsensitive Whether the check is case insensitive.
+     * @param Column|string $column          The Column object or its name
+     * @param Boolean       $caseInsensitive Whether the check is case insensitive.
      * @return Boolean
      */
     public function hasColumn($column, $caseInsensitive = false)
@@ -1387,8 +1387,8 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Returns the Column object with the specified name.
      *
-     * @param  string $name The name of the column (e.g. 'my_column')
-     * @param  Boolean $caseInsensitive Whether the check is case insensitive.
+     * @param string  $name            The name of the column (e.g. 'my_column')
+     * @param Boolean $caseInsensitive Whether the check is case insensitive.
      * @return Column
      */
     public function getColumn($name, $caseInsensitive = false)
@@ -1441,7 +1441,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Returns the foreign keys that include column in it's list of local
      * columns.
-     * 
+     *
      * Eg. Foreign key (a, b, c) refrences tbl(x, y, z) will be returned of col
      * is either a, b or c.
      *
@@ -1505,7 +1505,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Returns whether or not to determine if code/sql gets created for this table.
      * Table will be skipped, if set to true.
-     * @param     Boolean $v
+     * @param Boolean $v
      */
     public function setForReferenceOnly($v)
     {
@@ -1653,7 +1653,7 @@ class Table extends ScopedMappingModel implements IdMethod
 
     /**
      * Returns the first primary key column.
-     * 
+     *
      * Useful for tables with a PK using a single column.
      *
      * @return Column

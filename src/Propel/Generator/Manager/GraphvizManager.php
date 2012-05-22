@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Generator\Manager;
@@ -13,7 +13,9 @@ namespace Propel\Generator\Manager;
 use Propel\Generator\Exception\BuildException;
 
 /**
- * @author  William Durand <william.durand1@gmail.com>
+ * Manager for Graphviz representation.
+ *
+ * @author William Durand <william.durand1@gmail.com>
  */
 class GraphvizManager extends AbstractManager
 {
@@ -31,7 +33,7 @@ class GraphvizManager extends AbstractManager
             foreach ($dataModel->getDatabases() as $database) {
                 $this->log("db: " . $database->getName());
 
-                //print the tables
+                // print the tables
                 foreach ($database->getTables() as $tbl) {
                     $this->log("\t+ " . $tbl->getName());
                     $dotSyntax .= 'node'.$tbl->getName().' [label="{<table>'.$tbl->getName().'|<cols>';
@@ -51,7 +53,7 @@ class GraphvizManager extends AbstractManager
                     $count++;
                 }
 
-                //print the relations
+                // print the relations
                 $count = 0;
                 $dotSyntax .= "\n";
                 foreach ($database->getTables() as $tbl) {
