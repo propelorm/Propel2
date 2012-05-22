@@ -1123,7 +1123,7 @@ class ModelCriteria extends Criteria
     {
         // get the relationName
         list($fullName, $relationAlias) = self::getClassAndAlias($relation);
-        if ($relationAlias)  {
+        if ($relationAlias) {
             $relationName = $relationAlias;
         } elseif (false === strpos($fullName, '.')) {
             $relationName = $fullName;

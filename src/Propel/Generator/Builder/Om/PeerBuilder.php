@@ -1234,7 +1234,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
             \$omClass = null;
             \$classKey = \$row[\$colnum + " . ($col->getPosition() - 1) . "];
 
-            switch(\$classKey) {
+            switch (\$classKey) {
 ";
             foreach ($col->getChildren() as $child) {
                 $script .= "
@@ -1383,7 +1383,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
             \$con->beginTransaction();
             \$pk = ".$this->basePeerClassName."::doInsert(\$criteria, \$con);
             \$con->commit();
-        } catch(PropelException \$e) {
+        } catch (PropelException \$e) {
             \$con->rollBack();
             throw \$e;
         }

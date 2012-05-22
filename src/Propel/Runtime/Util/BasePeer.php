@@ -217,7 +217,8 @@ class BasePeer
      *                is auto-generated.  Otherwise will return <code>null</code>.
      * @throws     \Propel\Runtime\Exception\RuntimeException
      */
-    static public function doInsert(Criteria $criteria, ConnectionInterface $con) {
+    static public function doInsert(Criteria $criteria, ConnectionInterface $con)
+    {
         // The primary key
         $id = null;
         $db = Propel::getServiceContainer()->getAdapter($criteria->getDbName());
@@ -330,8 +331,8 @@ class BasePeer
      *                 is returned (supported) by the Propel db driver.
      * @throws     \Propel\Runtime\Exception\RuntimeException
      */
-    static public function doUpdate(Criteria $selectCriteria, Criteria $updateValues, ConnectionInterface $con) {
-
+    static public function doUpdate(Criteria $selectCriteria, Criteria $updateValues, ConnectionInterface $con)
+    {
         $db = Propel::getServiceContainer()->getAdapter($selectCriteria->getDbName());
         $dbMap = Propel::getServiceContainer()->getDatabaseMap($selectCriteria->getDbName());
 
@@ -738,7 +739,7 @@ class BasePeer
                 if ($spacePos !== false) {
                     $direction = substr($columnName, $spacePos);
                     $columnName = substr($columnName, 0, $spacePos);
-                }    else {
+                } else {
                     $direction = '';
                 }
 

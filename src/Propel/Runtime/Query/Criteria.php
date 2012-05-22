@@ -1543,7 +1543,7 @@ class Criteria implements \IteratorAggregate
 
         // merge select modifiers
         $selectModifiers = $criteria->getSelectModifiers();
-        if ($selectModifiers && ! $this->selectModifiers){
+        if ($selectModifiers && ! $this->selectModifiers) {
             $this->selectModifiers = $selectModifiers;
         }
 

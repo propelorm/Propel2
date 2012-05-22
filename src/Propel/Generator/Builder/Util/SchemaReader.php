@@ -209,7 +209,7 @@ class SchemaReader
                     $this->_throwInvalidTagException($parser, $name);
             }
 
-        } elseif  ('table' === $parentTag) {
+        } elseif ('table' === $parentTag) {
             switch ($name) {
                 case 'column':
                     $this->currColumn = $this->currTable->addColumn($attributes);
@@ -243,7 +243,7 @@ class SchemaReader
                     $this->_throwInvalidTagException($parser, $name);
             }
 
-        } elseif  ('column' === $parentTag) {
+        } elseif ('column' === $parentTag) {
 
             switch ($name) {
                 case 'inheritance':
@@ -290,7 +290,7 @@ class SchemaReader
 
         } elseif ('unique' === $parentTag) {
 
-            switch($name) {
+            switch ($name) {
                 case 'unique-column':
                     $this->currUnique->addColumn($attributes);
                     break;

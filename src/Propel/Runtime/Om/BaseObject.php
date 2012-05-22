@@ -64,8 +64,8 @@ abstract class BaseObject
     /**
      * Empty constructor (this allows people with their own BaseObject implementation to use its constructor)
      */
-    public function __construct() {
-
+    public function __construct()
+    {
     }
 
     /**
