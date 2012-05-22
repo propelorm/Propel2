@@ -1108,7 +1108,7 @@ ALTER TABLE %s ADD
     }
 
     /**
-     * @see        Platform::supportsSchemas()
+     * @see Platform::supportsSchemas()
      */
     public function supportsSchemas()
     {
@@ -1116,7 +1116,7 @@ ALTER TABLE %s ADD
     }
 
     /**
-     * @see        Platform::supportsMigrations()
+     * @see Platform::supportsMigrations()
      */
     public function supportsMigrations()
     {

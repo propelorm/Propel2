@@ -35,7 +35,7 @@ class StatementWrapper implements StatementInterface
      * Hashmap for resolving the PDO::PARAM_* class constants to their human-readable names.
      * This is only used in logging the binding of variables.
      *
-     * @see       self::bindValue()
+     * @see self::bindValue()
      * @var       array
      */
     protected static $typeMap = array(

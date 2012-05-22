@@ -527,7 +527,7 @@ abstract class DataModelBuilder
     /**
      * Returns the name of the current class being built, with a possible prefix.
      * @return     string
-     * @see        OMBuilder#getClassName()
+     * @see OMBuilder#getClassName()
      */
     public function prefixClassName($identifier)
     {

@@ -166,7 +166,7 @@ END
     }
 
     /**
-     * @see        Platform::supportsSchemas()
+     * @see Platform::supportsSchemas()
      */
     public function supportsSchemas()
     {

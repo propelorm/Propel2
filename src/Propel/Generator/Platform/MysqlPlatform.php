@@ -596,7 +596,7 @@ ALTER TABLE %s CHANGE %s %s;
 
 
     /**
-     * @see        Platform::supportsSchemas()
+     * @see Platform::supportsSchemas()
      */
     public function supportsSchemas()
     {

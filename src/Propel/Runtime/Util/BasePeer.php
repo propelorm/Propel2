@@ -463,7 +463,7 @@ class BasePeer
      * @param ConnectionInterface $con      A ConnectionInterface connection to use.
      * @return     Propel\Runtime\Connection\StatementInterface The resultset.
      * @throws     \Propel\Runtime\Exception\RuntimeException
-     * @see        createSelectSql()
+     * @see createSelectSql()
      */
     static public function doSelect(Criteria $criteria, ConnectionInterface $con = null)
     {
@@ -505,7 +505,7 @@ class BasePeer
      * @param ConnectionInterface $con      A ConnectionInterface connection to use.
      * @return     Propel\Runtime\Connection\StatementInterface The resultset statement.
      * @throws     \Propel\Runtime\Exception\RuntimeException
-     * @see        createSelectSql()
+     * @see createSelectSql()
      */
     static public function doCount(Criteria $criteria, ConnectionInterface $con = null)
     {

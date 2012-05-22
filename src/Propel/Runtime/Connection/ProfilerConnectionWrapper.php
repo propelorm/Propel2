@@ -127,7 +127,7 @@ class ProfilerConnectionWrapper extends ConnectionWrapper
      *
      * Overrides PDO::query() to log queries when required
      *
-     * @see       http://php.net/manual/en/pdo.query.php for a description of the possible parameters.
+     * @see http://php.net/manual/en/pdo.query.php for a description of the possible parameters.
      *
      * @return    PDOStatement
      */
@@ -143,7 +143,7 @@ class ProfilerConnectionWrapper extends ConnectionWrapper
      * Logs the method call or SQL using the Propel::log() method or a registered logger class.
      *
      * @uses      self::getLogPrefix()
-     * @see       self::setLogger()
+     * @see self::setLogger()
      *
      * @param string  $msg           Message to log.
      * @param integer $level         Log level to use; will use self::setLogLevel() specified level by default.

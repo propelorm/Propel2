@@ -162,7 +162,7 @@ class SqlitePlatform extends DefaultPlatform
     }
 
     /**
-     * @see        Platform::supportsMigrations()
+     * @see Platform::supportsMigrations()
      */
     public function supportsMigrations()
     {

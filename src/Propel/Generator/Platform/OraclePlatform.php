@@ -255,7 +255,7 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
      * @note       While Oracle supports schemas, they're user-based and
      *             are really only good for creating a database layout in
      *             one fell swoop.
-     * @see        Platform::supportsSchemas()
+     * @see Platform::supportsSchemas()
      */
     public function supportsSchemas()
     {

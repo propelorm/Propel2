@@ -74,7 +74,7 @@ class OnDemandIterator implements \Iterator
      * Gets the current Model object in the collection
      * This is where the hydration takes place.
      *
-     * @see       ObjectFormatter::getAllObjectsFromRow()
+     * @see ObjectFormatter::getAllObjectsFromRow()
      *
      * @return    BaseObject
      */

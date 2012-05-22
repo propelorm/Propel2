@@ -89,7 +89,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
     /**
      * Specifies the methods that are added as part of the map builder class.
      * This can be overridden by subclasses that wish to add more methods.
-     * @see        ObjectBuilder::addClassBody()
+     * @see ObjectBuilder::addClassBody()
      */
     protected function addClassBody(&$script)
     {

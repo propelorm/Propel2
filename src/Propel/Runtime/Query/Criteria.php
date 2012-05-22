@@ -241,7 +241,7 @@ class Criteria implements \IteratorAggregate
 
     /**
      * Default operator for combination of criterions
-     * @see        addUsingOperator
+     * @see addUsingOperator
      * @var        string Criteria::LOGICAL_AND or Criteria::LOGICAL_OR
      */
     protected $defaultCombineOperator = Criteria::LOGICAL_AND;
@@ -471,7 +471,7 @@ class Criteria implements \IteratorAggregate
      * This counts conditions added with the add() method.
      *
      * @return     Boolean
-     * @see        add()
+     * @see add()
      */
     public function hasWhereClause()
     {
@@ -896,7 +896,7 @@ class Criteria implements \IteratorAggregate
      *   Criteria::LEFT_JOIN
       * );
      *
-     * @see        addJoin()
+     * @see addJoin()
      * @param array  $conditions An array of conditions, each condition being an array (left, right, operator)
      * @param string $joinType   A String with the join operator. Defaults to an implicit join.
      *
@@ -1261,8 +1261,8 @@ class Criteria implements \IteratorAggregate
      * This will include columns added with addAsColumn() method.
      *
      * @return     Boolean
-     * @see        addAsColumn()
-     * @see        addSelectColumn()
+     * @see addAsColumn()
+     * @see addSelectColumn()
      */
     public function hasSelectClause()
     {
@@ -1738,7 +1738,7 @@ class Criteria implements \IteratorAggregate
 
     /**
      * Overrides Criteria::add() to use the default combine operator
-     * @see        Criteria::add()
+     * @see Criteria::add()
      *
      * @param string|Criterion $p1                    The column to run the comparison on (e.g. BookPeer::ID), or Criterion object
      * @param mixed            $value

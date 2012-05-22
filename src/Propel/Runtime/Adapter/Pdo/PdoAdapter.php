@@ -93,7 +93,7 @@ abstract class PdoAdapter
      *
      * This base method runs queries specified using the "query" setting.
      *
-     * @see       setCharset()
+     * @see setCharset()
      *
      * @param Propel\Runtime\Connection\ConnectionInterface $con
      * @param array                                         $settings An array of settings.
@@ -119,7 +119,7 @@ abstract class PdoAdapter
      * This method is invoked from the default initConnection() method and must
      * be overridden for an RDMBS which does _not_ support this SQL standard.
      *
-     * @see       initConnection()
+     * @see initConnection()
      *
      * @param Propel\Runtime\Connection\ConnectionInterface $con
      * @param string                                        $charset The $string charset encoding.

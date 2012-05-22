@@ -41,7 +41,7 @@ interface AdapterInterface
      * This method is invoked from the default initConnection() method and must
      * be overridden for an RDMBS which does _not_ support this SQL standard.
      *
-     * @see       initConnection()
+     * @see initConnection()
      *
      * @param Propel\Runtime\Connection\ConnectionInterface $con
      * @param string                                        $charset The $string charset encoding.

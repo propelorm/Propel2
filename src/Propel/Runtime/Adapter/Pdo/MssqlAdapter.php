@@ -28,7 +28,7 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
     /**
      * MS SQL Server does not support SET NAMES
      *
-     * @see       AdapterInterface::setCharset()
+     * @see AdapterInterface::setCharset()
      *
      * @param ConnectionInterface $con
      * @param string              $charset
@@ -76,7 +76,7 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
     }
 
     /**
-     * @see       AdapterInterface::quoteIdentifier()
+     * @see AdapterInterface::quoteIdentifier()
      *
      * @param string $text
      * @return    string
@@ -87,7 +87,7 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
     }
 
     /**
-     * @see       AdapterInterface::quoteIdentifierTable()
+     * @see AdapterInterface::quoteIdentifierTable()
      *
      * @param string $table
      * @return    string
@@ -99,7 +99,7 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
     }
 
     /**
-     * @see       AdapterInterface::random()
+     * @see AdapterInterface::random()
      *
      * @param string $seed
      * @return    string
@@ -115,7 +115,7 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
      * This rewrites the $sql query to apply the offset and limit.
      * some of the ORDER BY logic borrowed from Doctrine MsSqlPlatform
      *
-     * @see       AdapterInterface::applyLimit()
+     * @see AdapterInterface::applyLimit()
      * @author    Benjamin Runnels <kraven@kraven.org>
      *
      * @param string  $sql
@@ -248,7 +248,7 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
     }
 
     /**
-     * @see       parent::cleanupSQL()
+     * @see parent::cleanupSQL()
      *
      * @param string      $sql
      * @param array       $params

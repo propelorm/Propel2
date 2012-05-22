@@ -164,7 +164,7 @@ class Profiler
      * Uses two debug snapshots to calculate how much time has passed since the call to
      * self::start(), how much the memory consumption by PHP has changed etc.
      *
-     * @see       self::getSnapshot()
+     * @see self::getSnapshot()
      *
      * @param array $startSnapshot A snapshot, as returned by self::getSnapshot().
      * @param array $endSnapshot   A snapshot, as returned by self::getSnapshot().

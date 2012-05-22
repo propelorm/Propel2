@@ -73,7 +73,7 @@ class SqliteAdapter extends PdoAdapter implements AdapterInterface
     }
 
     /**
-     * @see        AdapterInterface::quoteIdentifier()
+     * @see AdapterInterface::quoteIdentifier()
      *
      * @param string $text
      * @return    string
@@ -84,7 +84,7 @@ class SqliteAdapter extends PdoAdapter implements AdapterInterface
     }
 
     /**
-     * @see        AdapterInterface::applyLimit()
+     * @see AdapterInterface::applyLimit()
      *
      * @param string  $sql
      * @param integer $offset

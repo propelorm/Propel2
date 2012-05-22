@@ -244,7 +244,7 @@ class ModelCriteria extends Criteria
      * $c->condition('cond1', 'b.Title = ?', 'foo');
      * </code>
      *
-     * @see        Criteria::add()
+     * @see Criteria::add()
      *
      * @param string $conditionName A name to store the condition for a later combination with combine()
      * @param string $clause        The pseudo SQL clause, e.g. 'AuthorId = ?'
@@ -268,7 +268,7 @@ class ModelCriteria extends Criteria
      * $c->filterBy('Title', 'foo');
      * </code>
      *
-     * @see        Criteria::add()
+     * @see Criteria::add()
      *
      * @param string $column     A string representing thecolumn phpName, e.g. 'AuthorId'
      * @param mixed  $value      A value for the condition
@@ -292,7 +292,7 @@ class ModelCriteria extends Criteria
      * ));
      * </code>
      *
-     * @see        filterBy()
+     * @see filterBy()
      *
      * @param mixed $conditions An array of conditions, using column phpNames as key
      *
@@ -551,7 +551,7 @@ class ModelCriteria extends Criteria
 
     /**
      * Retrieves the columns defined by a previous call to select().
-     * @see       select()
+     * @see select()
      *
      * @return    array|string A list of column names (e.g. array('Title', 'Category.Name', 'c.Content')) or a single column name (e.g. 'Name')
      */
@@ -769,7 +769,7 @@ class ModelCriteria extends Criteria
 
     /**
      * Add a join object to the Criteria
-     * @see   Criteria::addJoinObject()
+     * @see Criteria::addJoinObject()
      * @param Join $join A join object
      *
      * @return  ModelCriteria The current object, for fluid interface
@@ -861,7 +861,7 @@ class ModelCriteria extends Criteria
      * Gets the array of ModelWith specifying which objects must be hydrated
      * together with the main object.
      *
-     * @see       with()
+     * @see with()
      * @return    array
      */
     public function getWith()
@@ -921,7 +921,7 @@ class ModelCriteria extends Criteria
     /**
      * Initializes a secondary ModelCriteria object, to be later merged with the current object
      *
-     * @see       ModelCriteria::endUse()
+     * @see ModelCriteria::endUse()
      * @param string $relationName        Relation name or alias
      * @param string $secondCriteriaClass ClassName for the ModelCriteria to be used
      *
@@ -952,7 +952,7 @@ class ModelCriteria extends Criteria
     /**
      * Finalizes a secondary criteria and merges it with its primary Criteria
      *
-     * @see       Criteria::mergeWith()
+     * @see Criteria::mergeWith()
      *
      * @return    ModelCriteria The primary criteria object
      */
@@ -1359,8 +1359,8 @@ class ModelCriteria extends Criteria
     /**
      * Apply a condition on a column and issues the SELECT query
      *
-     * @see       filterBy()
-     * @see       find()
+     * @see filterBy()
+     * @see find()
      *
      * @param string              $column A string representing the column phpName, e.g. 'AuthorId'
      * @param mixed               $value  A value for the condition
@@ -1385,8 +1385,8 @@ class ModelCriteria extends Criteria
      * ), $con);
      * </code>
      *
-     * @see       filterByArray()
-     * @see       find()
+     * @see filterByArray()
+     * @see find()
      *
      * @param mixed               $conditions An array of conditions, using column phpNames as key
      * @param ConnectionInterface $con        an optional connection object
@@ -1403,8 +1403,8 @@ class ModelCriteria extends Criteria
     /**
      * Apply a condition on a column and issues the SELECT ... LIMIT 1 query
      *
-     * @see       filterBy()
-     * @see       findOne()
+     * @see filterBy()
+     * @see findOne()
      *
      * @param mixed               $column A string representing thecolumn phpName, e.g. 'AuthorId'
      * @param mixed               $value  A value for the condition
@@ -1429,8 +1429,8 @@ class ModelCriteria extends Criteria
      * ), $con);
      * </code>
      *
-     * @see       filterByArray()
-     * @see       findOne()
+     * @see filterByArray()
+     * @see findOne()
      *
      * @param mixed               $conditions An array of conditions, using column phpNames as key
      * @param ConnectionInterface $con        an optional connection object
@@ -2135,7 +2135,7 @@ class ModelCriteria extends Criteria
     /**
      * Overrides Criteria::add() to force the use of a true table alias if it exists
      *
-     * @see        Criteria::add()
+     * @see Criteria::add()
      * @param string $column   The colName of column to run the condition on (e.g. BookPeer::ID)
      * @param mixed  $value
      * @param string $operator A String, like Criteria::EQUAL.

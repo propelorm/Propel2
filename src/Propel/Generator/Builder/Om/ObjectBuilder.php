@@ -634,7 +634,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
         $script .= "
     /**
      * Initializes internal state of ".$this->getQualifiedClassName()." object.
-     * @see        applyDefaults()
+     * @see applyDefaults()
      */";
     }
 
@@ -699,7 +699,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * Applies default values to this object.
      * This method should be called from the object's constructor (or
      * equivalent initialization method).
-     * @see        __construct()
+     * @see __construct()
      */";
     }
 
@@ -1446,7 +1446,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * Adds the close for the mutator close
      * @param      string &$script The script will be modified in this method.
      * @param Column $col The current column.
-     * @see        addMutatorClose()
+     * @see addMutatorClose()
      **/
     protected function addMutatorCloseClose(&$script, Column $col)
     {
@@ -1462,7 +1462,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * Adds a setter for BLOB columns.
      * @param      string &$script The script will be modified in this method.
      * @param Column $col The current column.
-     * @see        parent::addColumnMutators()
+     * @see parent::addColumnMutators()
      */
     protected function addLobMutator(&$script, Column $col)
     {
@@ -1488,7 +1488,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * Adds a setter method for date/time/timestamp columns.
      * @param      string &$script The script will be modified in this method.
      * @param Column $col The current column.
-     * @see        parent::addColumnMutators()
+     * @see parent::addColumnMutators()
      */
     protected function addTemporalMutator(&$script, Column $col)
     {
@@ -1548,7 +1548,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * Adds a setter for Object columns.
      * @param      string &$script The script will be modified in this method.
      * @param Column $col The current column.
-     * @see        parent::addColumnMutators()
+     * @see parent::addColumnMutators()
      */
     protected function addObjectMutator(&$script, Column $col)
     {
@@ -1570,7 +1570,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * Adds a setter for Array columns.
      * @param      string &$script The script will be modified in this method.
      * @param Column $col The current column.
-     * @see        parent::addColumnMutators()
+     * @see parent::addColumnMutators()
      */
     protected function addArrayMutator(&$script, Column $col)
     {
@@ -1683,7 +1683,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * Adds a setter for Enum columns.
      * @param      string &$script The script will be modified in this method.
      * @param Column $col The current column.
-     * @see        parent::addColumnMutators()
+     * @see parent::addColumnMutators()
      */
     protected function addEnumMutator(&$script, Column $col)
     {
@@ -1711,7 +1711,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * Adds setter method for boolean columns.
      * @param      string &$script The script will be modified in this method.
      * @param Column $col The current column.
-     * @see        parent::addColumnMutators()
+     * @see parent::addColumnMutators()
      */
     protected function addBooleanMutator(&$script, Column $col)
     {
@@ -1761,7 +1761,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * Adds setter method for "normal" columns.
      * @param      string &$script The script will be modified in this method.
      * @param Column $col The current column.
-     * @see        parent::addColumnMutators()
+     * @see parent::addColumnMutators()
      */
     protected function addDefaultMutator(&$script, Column $col)
     {
@@ -1803,7 +1803,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     /**
      * Adds the comment for the hasOnlyDefaultValues method
      * @param      string &$script The script will be modified in this method.
-     * @see        addHasOnlyDefaultValues
+     * @see addHasOnlyDefaultValues
      **/
     protected function addHasOnlyDefaultValuesComment(&$script)
     {
@@ -1821,7 +1821,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     /**
      * Adds the function declaration for the hasOnlyDefaultValues method
      * @param      string &$script The script will be modified in this method.
-     * @see        addHasOnlyDefaultValues
+     * @see addHasOnlyDefaultValues
      **/
     protected function addHasOnlyDefaultValuesOpen(&$script)
     {
@@ -1833,7 +1833,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     /**
      * Adds the function body for the hasOnlyDefaultValues method
      * @param      string &$script The script will be modified in this method.
-     * @see        addHasOnlyDefaultValues
+     * @see addHasOnlyDefaultValues
      **/
     protected function addHasOnlyDefaultValuesBody(&$script)
     {
@@ -1865,7 +1865,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     /**
      * Adds the function close for the hasOnlyDefaultValues method
      * @param      string &$script The script will be modified in this method.
-     * @see        addHasOnlyDefaultValues
+     * @see addHasOnlyDefaultValues
      **/
     protected function addHasOnlyDefaultValuesClose(&$script)
     {
@@ -1892,7 +1892,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     /**
      * Adds the comment for the hydrate method
      * @param      string &$script The script will be modified in this method.
-     * @see        addHydrate()
+     * @see addHydrate()
      */
     protected function addHydrateComment(&$script)
     {
@@ -1916,7 +1916,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     /**
      * Adds the function declaration for the hydrate method
      * @param      string &$script The script will be modified in this method.
-     * @see        addHydrate()
+     * @see addHydrate()
      */
     protected function addHydrateOpen(&$script)
     {
@@ -1928,7 +1928,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     /**
      * Adds the function body for the hydrate method
      * @param      string &$script The script will be modified in this method.
-     * @see        addHydrate()
+     * @see addHydrate()
      */
     protected function addHydrateBody(&$script)
     {
@@ -2018,7 +2018,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     /**
      * Adds the function close for the hydrate method
      * @param      string &$script The script will be modified in this method.
-     * @see        addHydrate()
+     * @see addHydrate()
      */
     protected function addHydrateClose(&$script)
     {
@@ -2042,7 +2042,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     /**
      * Adds the comment for the buildPkeyCriteria method
      * @param      string &$script The script will be modified in this method.
-     * @see        addBuildPkeyCriteria()
+     * @see addBuildPkeyCriteria()
      **/
     protected function addBuildPkeyCriteriaComment(&$script)
     {
@@ -2060,7 +2060,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     /**
      * Adds the function declaration for the buildPkeyCriteria method
      * @param      string &$script The script will be modified in this method.
-     * @see        addBuildPkeyCriteria()
+     * @see addBuildPkeyCriteria()
      **/
     protected function addBuildPkeyCriteriaOpen(&$script)
     {
@@ -2072,7 +2072,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     /**
      * Adds the function body for the buildPkeyCriteria method
      * @param      string &$script The script will be modified in this method.
-     * @see        addBuildPkeyCriteria()
+     * @see addBuildPkeyCriteria()
      **/
     protected function addBuildPkeyCriteriaBody(&$script)
     {
@@ -2088,7 +2088,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     /**
      * Adds the function close for the buildPkeyCriteria method
      * @param      string &$script The script will be modified in this method.
-     * @see        addBuildPkeyCriteria()
+     * @see addBuildPkeyCriteria()
      **/
     protected function addBuildPkeyCriteriaClose(&$script)
     {
@@ -2114,7 +2114,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     /**
      * Adds comment for the buildCriteria method
      * @param      string &$script The script will be modified in this method.
-     * @see        addBuildCriteria()
+     * @see addBuildCriteria()
      **/
     protected function addBuildCriteriaComment(&$script)
     {
@@ -2129,7 +2129,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     /**
      * Adds the function declaration of the buildCriteria method
      * @param      string &$script The script will be modified in this method.
-     * @see        addBuildCriteria()
+     * @see addBuildCriteria()
      **/
     protected function addBuildCriteriaOpen(&$script)
     {
@@ -2141,7 +2141,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     /**
      * Adds the function body of the buildCriteria method
      * @param      string &$script The script will be modified in this method.
-     * @see        addBuildCriteria()
+     * @see addBuildCriteria()
      **/
     protected function addBuildCriteriaBody(&$script)
     {
@@ -2158,7 +2158,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     /**
      * Adds the function close of the buildCriteria method
      * @param      string &$script The script will be modified in this method.
-     * @see        addBuildCriteria()
+     * @see addBuildCriteria()
      **/
     protected function addBuildCriteriaClose(&$script)
     {
@@ -2267,7 +2267,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     /**
      * Adds the comment for the getByName method
      * @param      string &$script The script will be modified in this method.
-     * @see        addGetByName
+     * @see addGetByName
      **/
     protected function addGetByNameComment(&$script)
     {
@@ -2288,7 +2288,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     /**
      * Adds the function declaration for the getByName method
      * @param      string &$script The script will be modified in this method.
-     * @see        addGetByName
+     * @see addGetByName
      **/
     protected function addGetByNameOpen(&$script)
     {
@@ -2301,7 +2301,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     /**
      * Adds the function body for the getByName method
      * @param      string &$script The script will be modified in this method.
-     * @see        addGetByName
+     * @see addGetByName
      **/
     protected function addGetByNameBody(&$script)
     {
@@ -2313,7 +2313,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     /**
      * Adds the function close for the getByName method
      * @param      string &$script The script will be modified in this method.
-     * @see        addGetByName
+     * @see addGetByName
      **/
     protected function addGetByNameClose(&$script)
     {
@@ -2339,7 +2339,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     /**
      * Adds comment for the getByPosition method
      * @param      string &$script The script will be modified in this method.
-     * @see        addGetByPosition
+     * @see addGetByPosition
      **/
     protected function addGetByPositionComment(&$script)
     {
@@ -2356,7 +2356,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     /**
      * Adds the function declaration for the getByPosition method
      * @param      string &$script The script will be modified in this method.
-     * @see        addGetByPosition
+     * @see addGetByPosition
      **/
     protected function addGetByPositionOpen(&$script)
     {
@@ -2368,7 +2368,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     /**
      * Adds the function body for the getByPosition method
      * @param      string &$script The script will be modified in this method.
-     * @see        addGetByPosition
+     * @see addGetByPosition
      **/
     protected function addGetByPositionBody(&$script)
     {
@@ -2394,7 +2394,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     /**
      * Adds the function close for the getByPosition method
      * @param      string &$script The script will be modified in this method.
-     * @see        addGetByPosition
+     * @see addGetByPosition
      **/
     protected function addGetByPositionClose(&$script)
     {
@@ -2525,7 +2525,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     /**
      * Adds the comment for the delete function
      * @param      string &$script The script will be modified in this method.
-     * @see        addDelete()
+     * @see addDelete()
      **/
     protected function addDeleteComment(&$script)
     {
@@ -2536,15 +2536,15 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * @param      ConnectionInterface \$con
      * @return     void
      * @throws     PropelException
-     * @see        BaseObject::setDeleted()
-     * @see        BaseObject::isDeleted()
+     * @see BaseObject::setDeleted()
+     * @see BaseObject::isDeleted()
      */";
     }
 
     /**
      * Adds the function declaration for the delete function
      * @param      string &$script The script will be modified in this method.
-     * @see        addDelete()
+     * @see addDelete()
      **/
     protected function addDeleteOpen(&$script)
     {
@@ -2556,7 +2556,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     /**
      * Adds the function body for the delete function
      * @param      string &$script The script will be modified in this method.
-     * @see        addDelete()
+     * @see addDelete()
      **/
     protected function addDeleteBody(&$script)
     {
@@ -2612,7 +2612,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     /**
      * Adds the function close for the delete function
      * @param      string &$script The script will be modified in this method.
-     * @see        addDelete()
+     * @see addDelete()
      **/
     protected function addDeleteClose(&$script)
     {
@@ -4144,7 +4144,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
         $script .= "
      * @return     int The number of rows affected by this insert/update and any referring fk objects' save() operations.
      * @throws     PropelException
-     * @see        save()
+     * @see save()
      */
     protected function doSave(ConnectionInterface \$con".($reloadOnUpdate || $reloadOnInsert ? ", \$skipReload = false" : "").")
     {
@@ -4290,7 +4290,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * @param      ConnectionInterface \$con
      *
      * @throws     PropelException
-     * @see        doSave()
+     * @see doSave()
      */
     protected function doInsert(ConnectionInterface \$con)
     {";
@@ -4520,7 +4520,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      *
      * @param      ConnectionInterface \$con
      *
-     * @see        doSave()
+     * @see doSave()
      */
     protected function doUpdate(ConnectionInterface \$con)
     {
@@ -4563,7 +4563,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     /**
      * Adds the comment for the save method
      * @param      string &$script The script will be modified in this method.
-     * @see        addSave()
+     * @see addSave()
      **/
     protected function addSaveComment(&$script)
     {
@@ -4603,14 +4603,14 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
         $script .= "
      * @return     int The number of rows affected by this insert/update and any referring fk objects' save() operations.
      * @throws     PropelException
-     * @see        doSave()
+     * @see doSave()
      */";
     }
 
     /**
      * Adds the function declaration for the save method
      * @param      string &$script The script will be modified in this method.
-     * @see        addSave()
+     * @see addSave()
      **/
     protected function addSaveOpen(&$script)
     {
@@ -4625,7 +4625,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     /**
      * Adds the function body for the save method
      * @param      string &$script The script will be modified in this method.
-     * @see        addSave()
+     * @see addSave()
      **/
     protected function addSaveBody(&$script)
     {
@@ -4733,7 +4733,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     /**
      * Adds the function close for the save method
      * @param      string &$script The script will be modified in this method.
-     * @see        addSave()
+     * @see addSave()
      **/
     protected function addSaveClose(&$script)
     {

@@ -407,7 +407,7 @@ class ConnectionWrapper implements ConnectionInterface
      *
      * Overrides PDO::query() to log queries when required
      *
-     * @see       http://php.net/manual/en/pdo.query.php for a description of the possible parameters.
+     * @see http://php.net/manual/en/pdo.query.php for a description of the possible parameters.
      *
      * @return    PDOStatement
      */
@@ -624,7 +624,7 @@ class ConnectionWrapper implements ConnectionInterface
     /**
      * If so configured, makes an entry to the log of the state of this object just prior to its destruction.
      *
-     * @see       self::log()
+     * @see self::log()
      */
     public function __destruct()
     {

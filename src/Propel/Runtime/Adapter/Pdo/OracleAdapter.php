@@ -35,7 +35,7 @@ class OracleAdapter extends PdoAdapter implements AdapterInterface
      * post-initialization queries or code.
      * Removes the charset query and adds the date queries
      *
-     * @see       parent::initConnection()
+     * @see parent::initConnection()
      *
      * @param \PDO  $con
      * @param array $settings
@@ -92,7 +92,7 @@ class OracleAdapter extends PdoAdapter implements AdapterInterface
     }
 
     /**
-     * @see       AdapterInterface::applyLimit()
+     * @see AdapterInterface::applyLimit()
      *
      * @param string        $sql
      * @param integer       $offset
@@ -197,7 +197,7 @@ class OracleAdapter extends PdoAdapter implements AdapterInterface
     }
 
     /**
-     * @see       AdapterInterface::bindValue()
+     * @see AdapterInterface::bindValue()
      *
      * @param StatementInterface $stmt
      * @param string             $parameter

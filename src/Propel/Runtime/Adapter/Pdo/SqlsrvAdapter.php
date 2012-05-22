@@ -26,7 +26,7 @@ use Propel\Runtime\Map\DatabaseMap;
 class SqlsrvAdapter extends MssqlAdapter implements AdapterInterface
 {
     /**
-     * @see       parent::initConnection()
+     * @see parent::initConnection()
      *
      * @param Propel\Runtime\Connection\ConnectionInterface $con
      * @param array                                         $settings An array of settings.
@@ -40,7 +40,7 @@ class SqlsrvAdapter extends MssqlAdapter implements AdapterInterface
     }
 
     /**
-     * @see       parent::setCharset()
+     * @see parent::setCharset()
      *
      * @param PDO    $con
      * @param string $charset
@@ -62,7 +62,7 @@ class SqlsrvAdapter extends MssqlAdapter implements AdapterInterface
     }
 
     /**
-     * @see       parent::cleanupSQL()
+     * @see parent::cleanupSQL()
      *
      * @param string      $sql
      * @param array       $params
@@ -90,7 +90,7 @@ class SqlsrvAdapter extends MssqlAdapter implements AdapterInterface
     }
 
     /**
-     * @see       AdapterInterface::bindValue()
+     * @see AdapterInterface::bindValue()
      *
      * @param PDOStatement $stmt
      * @param string       $parameter

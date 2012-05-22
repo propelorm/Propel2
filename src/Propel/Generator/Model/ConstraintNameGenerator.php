@@ -32,7 +32,7 @@ class ConstraintNameGenerator implements NameGenerator
      * and the fourth is a <code>Integer</code> indicating the number
      * of this contraint.
      *
-     * @see        NameGenerator
+     * @see NameGenerator
      * @throws     EngineException
      */
     public function generateName($inputs)

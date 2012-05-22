@@ -92,7 +92,7 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
     }
 
     /**
-     * @see       AdapterInterface::quoteIdentifier()
+     * @see AdapterInterface::quoteIdentifier()
      *
      * @param string $text
      * @return    string
@@ -103,7 +103,7 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
     }
 
     /**
-     * @see       AdapterInterface::quoteIdentifierTable()
+     * @see AdapterInterface::quoteIdentifierTable()
      *
      * @param string $table
      * @return    string
@@ -115,7 +115,7 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
     }
 
     /**
-     * @see       AdapterInterface::useQuoteIdentifier()
+     * @see AdapterInterface::useQuoteIdentifier()
      *
      * @return    boolean
      */
@@ -125,7 +125,7 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
     }
 
     /**
-     * @see       AdapterInterface::applyLimit()
+     * @see AdapterInterface::applyLimit()
      *
      * @param string  $sql
      * @param integer $offset
@@ -141,7 +141,7 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
     }
 
     /**
-     * @see       AdapterInterface::random()
+     * @see AdapterInterface::random()
      *
      * @param string $seed
      * @return    string
@@ -152,7 +152,7 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
     }
 
     /**
-     * @see       AdapterInterface::bindValue()
+     * @see AdapterInterface::bindValue()
      *
      * @param StatementInterface $stmt
      * @param string             $parameter
@@ -188,7 +188,7 @@ class MysqlAdapter extends PdoAdapter implements AdapterInterface
     /**
      * Prepare the parameters for a PDO connection.
      * Protects MySQL from charset injection risk.
-     * @see   http://www.propelorm.org/ticket/1360
+     * @see http://www.propelorm.org/ticket/1360
      *
      * @param array the connection parameters from the configuration
      *

@@ -157,7 +157,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
      * By default there are no methods for the empty stub classes; override this method
      * if you want to change that behavior.
      *
-     * @see        ObjectBuilder::addClassBody()
+     * @see ObjectBuilder::addClassBody()
      */
     protected function addClassBody(&$script)
     {
@@ -225,7 +225,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     /**
      * Adds the constructor for this object.
      * @param      string &$script The script will be modified in this method.
-     * @see        addConstructor()
+     * @see addConstructor()
      */
     protected function addConstructor(&$script)
     {
@@ -1173,7 +1173,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     /**
      * Use the $relationName relation " . $fkTable->getPhpName() . " object
      *
-     * @see       useQuery()
+     * @see useQuery()
      *
      * @param     string \$relationAlias optional alias for the relation,
      *                                   to be used as main alias in the secondary query

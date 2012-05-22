@@ -147,7 +147,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      * Adds closing brace at end of class and the static
      * map builder registration code.
      * @param      string &$script The script will be modified in this method.
-     * @see        addStaticTableMapRegistration()
+     * @see addStaticTableMapRegistration()
      */
     protected function addClassClose(&$script)
     {
@@ -187,7 +187,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
     /**
      * Adds constant and variable declarations that go at the top of the class.
      * @param      string &$script The script will be modified in this method.
-     * @see        addColumnNameConstants()
+     * @see addColumnNameConstants()
      */
     protected function addConstantsAndAttributes(&$script)
     {
@@ -979,7 +979,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      *
      * @param      string \$key The key (@see getPrimaryKeyHash()) for this instance.
      * @return     ".$this->getObjectClassName()." Found object or NULL if 1) no instance exists for specified key or 2) instance pooling has been disabled.
-     * @see        getPrimaryKeyHash()
+     * @see getPrimaryKeyHash()
      */
     static public function getInstanceFromPool(\$key)
     {
@@ -1973,7 +1973,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
     /**
      * Adds the complex OM methods to the base addSelectMethods() function.
      * @param      string &$script The script will be modified in this method.
-     * @see        PeerBuilder::addSelectMethods()
+     * @see PeerBuilder::addSelectMethods()
      */
     protected function addSelectMethods(&$script)
     {

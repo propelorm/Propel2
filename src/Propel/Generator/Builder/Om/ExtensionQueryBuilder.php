@@ -72,7 +72,7 @@ class ".$this->getUnqualifiedClassName()." extends $baseClassName {
      * By default there are no methods for the empty stub classes; override this method
      * if you want to change that behavior.
      *
-     * @see        QueryBuilder::addClassBody()
+     * @see QueryBuilder::addClassBody()
      */
 
     protected function addClassBody(&$script)

@@ -31,7 +31,7 @@ interface NameGenerator
      * define how names for columns and tables in the database schema
      * will be converted to PHP source names.
      *
-     * @see        PhpNameGenerator::underscoreMethod()
+     * @see PhpNameGenerator::underscoreMethod()
      */
     const CONV_METHOD_UNDERSCORE = 'underscore';
 
@@ -50,7 +50,7 @@ interface NameGenerator
      * Similar to {@link #CONV_METHOD_UNDERSCORE} except nothing is
      * converted to lowercase.
      *
-     * @see        PhpNameGenerator::phpnameMethod()
+     * @see PhpNameGenerator::phpnameMethod()
      */
     const CONV_METHOD_PHPNAME = 'phpname';
 

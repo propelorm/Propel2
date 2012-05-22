@@ -355,7 +355,7 @@ DROP TABLE IF EXISTS %s CASCADE;
     }
 
     /**
-     * @see        Platform::supportsSchemas()
+     * @see Platform::supportsSchemas()
      */
     public function supportsSchemas()
     {
@@ -382,7 +382,7 @@ DROP TABLE IF EXISTS %s CASCADE;
      *
      * @author     Niklas Närhinen <niklas@narhinen.net>
      * @return     string
-     * @see        DefaultPlatform::getModifyColumnDDL
+     * @see DefaultPlatform::getModifyColumnDDL
      */
     public function getModifyColumnDDL(ColumnDiff $columnDiff)
     {
@@ -439,7 +439,7 @@ ALTER TABLE %s ALTER COLUMN %s;
      *
      * @author     Niklas Närhinen <niklas@narhinen.net>
      * @return     string
-     * @see        DefaultPlatform::getModifyColumnsDDL
+     * @see DefaultPlatform::getModifyColumnsDDL
      */
     public function getModifyColumnsDDL($columnDiffs)
     {
@@ -456,7 +456,7 @@ ALTER TABLE %s ALTER COLUMN %s;
      *
      * @author     Niklas Närhinen <niklas@narhinen.net>
      * @return     string
-     * @see        DefaultPlatform::getAddColumnsDLL
+     * @see DefaultPlatform::getAddColumnsDLL
      */
     public function getAddColumnsDDL($columns)
     {
@@ -473,7 +473,7 @@ ALTER TABLE %s ALTER COLUMN %s;
      *
      * @author     Niklas Närhinen <niklas@narhinen.net>
      * @return     string
-     * @see        DefaultPlatform::getDropIndexDDL
+     * @see DefaultPlatform::getDropIndexDDL
      */
     public function getDropIndexDDL(Index $index)
     {

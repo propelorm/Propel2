@@ -40,7 +40,7 @@ class PhpNameGenerator implements NameGenerator
      * element 0 contains name to convert, element 1 contains method for conversion,
      * optional element 2 contains prefix to be striped from name
      * @return     The generated name.
-     * @see        NameGenerator
+     * @see NameGenerator
      */
     public function generateName($inputs)
     {
@@ -86,8 +86,8 @@ class PhpNameGenerator implements NameGenerator
      *
      * @param string $schemaName name to be converted.
      * @return     string Converted name.
-     * @see        NameGenerator
-     * @see        #underscoreMethod()
+     * @see NameGenerator
+     * @see #underscoreMethod()
      */
     protected function underscoreMethod($schemaName)
     {
@@ -111,8 +111,8 @@ class PhpNameGenerator implements NameGenerator
      *
      * @param string $schemaName name to be converted.
      * @return     string Converted name.
-     * @see        NameGenerator
-     * @see        #underscoreMethod()
+     * @see NameGenerator
+     * @see #underscoreMethod()
      */
     protected function cleanMethod($schemaName)
     {
@@ -139,8 +139,8 @@ class PhpNameGenerator implements NameGenerator
      *
      * @param string $schemaName name to be converted.
      * @return     string Converted name.
-     * @see        NameGenerator
-     * @see        #underscoreMethod(String)
+     * @see NameGenerator
+     * @see #underscoreMethod(String)
      */
     protected function phpnameMethod($schemaName)
     {
