@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Tests\Runtime\Util;
@@ -22,7 +22,7 @@ use Propel\Runtime\Util\BasePeer;
  * Tests the exceptions thrown by the BasePeer classes.
  *
  * @see        BookstoreDataPopulator
- * @author     Francois Zaninotto
+ * @author Francois Zaninotto
  */
 class BasePeerExceptionsTest extends BookstoreTestBase
 {

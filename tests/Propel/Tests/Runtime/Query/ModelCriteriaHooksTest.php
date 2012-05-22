@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Tests\Runtime\Query;
@@ -19,7 +19,7 @@ use Propel\Runtime\Connection\ConnectionInterface;
 /**
  * Test class for ModelCriteria.
  *
- * @author     Francois Zaninotto
+ * @author Francois Zaninotto
  * @version    $Id: ModelCriteriaTest.php 1662 2010-04-10 22:02:49Z francois $
  */
 class ModelCriteriaHooksTest extends BookstoreTestBase

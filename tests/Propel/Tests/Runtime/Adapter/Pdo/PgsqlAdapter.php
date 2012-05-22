@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Tests\Runtime\Adapter\Pdo;
@@ -15,7 +15,7 @@ use Propel\Runtime\Adapter\Pdo\PgsqlAdapter;
 /**
  * Tests the Pgsql adapter
  *
- * @author     Kévin Gomez <contact@kevingomez.fr>
+ * @author Kévin Gomez <contact@kevingomez.fr>
  */
 class PgsqlAdapterTest extends \PHPUnit_Framework_TestCase
 {

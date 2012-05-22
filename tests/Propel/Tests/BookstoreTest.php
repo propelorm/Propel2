@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Tests;
@@ -39,8 +39,8 @@ use \DateTime;
 /**
  * Tests a functional scenario using the Bookstore model
  *
- * @author     Francois Zaninotto
- * @author     Hans Lellelid <hans@xmpl.org>
+ * @author Francois Zaninotto
+ * @author Hans Lellelid <hans@xmpl.org>
  */
 class BookstoreTest extends BookstoreEmptyTestBase
 {

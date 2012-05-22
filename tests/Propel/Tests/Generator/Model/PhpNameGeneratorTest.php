@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 use Propel\Generator\Model\PhpNameGenerator;
@@ -13,11 +13,11 @@ use Propel\Generator\Model\PhpNameGenerator;
 /**
  * Tests for PhpNameGenerator
  *
- * @author     <a href="mailto:mpoeschl@marmot.at>Martin Poeschl</a>
+ * @author <a href="mailto:mpoeschl@marmot.at>Martin Poeschl</a>
  */
 class PhpNameGeneratorTest extends \PHPUnit_Framework_TestCase
 {
-    static public function phpnameMethodDataProvider()
+    public static function phpnameMethodDataProvider()
     {
         return array(
             array('foo', 'Foo'),
@@ -40,7 +40,7 @@ class PhpNameGeneratorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($output, $generator->phpnameMethod($input));
     }
 
-    static public function underscoreMethodDataProvider()
+    public static function underscoreMethodDataProvider()
     {
         return array(
             array('foo', 'Foo'),

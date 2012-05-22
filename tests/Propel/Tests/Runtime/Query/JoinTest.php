@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Tests\Runtime\Query;
@@ -20,7 +20,7 @@ use Propel\Runtime\Query\Join;
 /**
  * Test class for Join.
  *
- * @author     François Zaninotto
+ * @author François Zaninotto
  * @version    $Id$
  */
 class JoinTest extends BaseTestCase
@@ -28,7 +28,7 @@ class JoinTest extends BaseTestCase
     /**
      * DB adapter saved for later.
      *
-     * @var        AbstractAdapter
+     * @var AbstractAdapter
      */
     private $savedAdapter;
 

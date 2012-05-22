@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Builder\Om;
@@ -51,7 +51,7 @@ use \DateTime;
  * method for the exact contents of the database.
  *
  * @see        BookstoreDataPopulator
- * @author     Hans Lellelid <hans@xmpl.org>
+ * @author Hans Lellelid <hans@xmpl.org>
  */
 class GeneratedObjectRelTest extends BookstoreEmptyTestBase
 {

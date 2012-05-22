@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Tests\Runtime\Adapter\Pdo;
@@ -19,11 +19,11 @@ use Propel\Runtime\Adapter\Pdo\MysqlAdapter;
  * Tests the DbMySQL adapter
  *
  * @see        BookstoreDataPopulator
- * @author     William Durand
+ * @author William Durand
  */
 class MysqlAdapterTest extends BookstoreTestBase
 {
-    static public function getConParams()
+    public static function getConParams()
     {
         return array(
             array(

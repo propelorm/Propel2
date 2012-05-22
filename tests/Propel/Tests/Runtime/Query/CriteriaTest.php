@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Tests\Runtime\Query;
@@ -26,8 +26,8 @@ use \PDO;
 /**
  * Test class for Criteria.
  *
- * @author     <a href="mailto:celkins@scardini.com">Christopher Elkins</a>
- * @author     <a href="mailto:sam@neurogrid.com">Sam Joseph</a>
+ * @author <a href="mailto:celkins@scardini.com">Christopher Elkins</a>
+ * @author <a href="mailto:sam@neurogrid.com">Sam Joseph</a>
  * @version    $Id$
  */
 class CriteriaTest extends BookstoreTestBase
@@ -35,14 +35,14 @@ class CriteriaTest extends BookstoreTestBase
 
     /**
      * The criteria to use in the test.
-     * @var        Criteria
+     * @var Criteria
      */
     private $c;
 
     /**
      * DB adapter saved for later.
      *
-     * @var        AbstractAdapter
+     * @var AbstractAdapter
      */
     private $savedAdapter;
 

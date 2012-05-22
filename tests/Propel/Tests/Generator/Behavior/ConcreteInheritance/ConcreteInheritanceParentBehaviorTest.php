@@ -6,7 +6,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Behavior\ConcreteInheritance;
@@ -22,7 +22,7 @@ use Propel\Tests\Bookstore\Behavior\ConcreteQuizzQuery;
 /**
  * Tests for ConcreteInheritanceParentBehavior class
  *
- * @author    François Zaniontto
+ * @author François Zaniontto
  * @version   $Revision$
  */
 class ConcreteInheritanceParentBehaviorTest extends BookstoreTestBase

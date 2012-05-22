@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Platform;
@@ -27,7 +27,7 @@ class PgsqlPlatformTest extends PlatformTestProvider
     /**
      * Get the Platform object for this class
      *
-     * @return     Platform
+     * @return Platform
      */
     protected function getPlatform()
     {

@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Tests\Runtime\Parser;
@@ -15,11 +15,11 @@ use Propel\Runtime\Parser\JsonParser;
 /**
  * Test for JsonParser class
  *
- * @author     Francois Zaninotto
+ * @author Francois Zaninotto
  */
 class JsonParserTest extends \PHPUnit_Framework_TestCase
 {
-    static public function arrayJsonConversionDataProvider()
+    public static function arrayJsonConversionDataProvider()
     {
         return array(
             array(array(), '[]', 'empty array'),
@@ -72,7 +72,7 @@ class JsonParserTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($arrayData, $parser->fromJSON($jsonData), 'JsonParser::fromJSON() converts to ' . $type . ' correctly');
     }
 
-    static public function listToJSONDataProvider()
+    public static function listToJSONDataProvider()
     {
         $list = array(
             'book0' => array('Id' => 123, 'Title' => 'Pride and Prejudice', 'AuthorId' => 456, 'ISBN' => '0553213105', 'Author' => array('Id' => 456, 'FirstName' => 'Jane', 'LastName' => 'Austen')),

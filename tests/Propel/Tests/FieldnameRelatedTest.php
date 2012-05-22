@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Tests;
@@ -32,15 +32,15 @@ use Propel\Tests\Bookstore\Bookstore;
  * need the BookstoreTestBase's setUp and tearDown (database de/population)
  * behaviour. The tests will run faster this way.
  *
- * @author     Sven Fuchs <svenfuchs@artweb-design.de>
+ * @author Sven Fuchs <svenfuchs@artweb-design.de>
  */
 class FieldnameRelatedTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Tests if fieldname type constants are defined
      */
-    public function testFieldNameTypeConstants () {
-
+    public function testFieldNameTypeConstants ()
+    {
         $result = defined('\Propel\Runtime\Util\BasePeer::TYPE_PHPNAME');
         $this->assertTrue($result);
     }
@@ -113,8 +113,8 @@ class FieldnameRelatedTest extends \PHPUnit_Framework_TestCase
     /**
      * Tests the Base[Object]Peer::translateFieldName() method
      */
-    public function testTranslateFieldName () {
-
+    public function testTranslateFieldName ()
+    {
         $types = array(
             BasePeer::TYPE_PHPNAME,
             BasePeer::TYPE_STUDLYPHPNAME,
@@ -142,8 +142,8 @@ class FieldnameRelatedTest extends \PHPUnit_Framework_TestCase
     /**
      * Tests the BasePeer::getFieldNames() method
      */
-    public function testGetFieldNamesStatic () {
-
+    public function testGetFieldNamesStatic ()
+    {
         $types = array(
             BasePeer::TYPE_PHPNAME,
             BasePeer::TYPE_STUDLYPHPNAME,
@@ -208,8 +208,8 @@ class FieldnameRelatedTest extends \PHPUnit_Framework_TestCase
     /**
      * Tests the BasePeer::translateFieldName() method
      */
-    public function testTranslateFieldNameStatic () {
-
+    public function testTranslateFieldNameStatic ()
+    {
         $types = array(
             BasePeer::TYPE_PHPNAME,
             BasePeer::TYPE_STUDLYPHPNAME,
@@ -237,8 +237,8 @@ class FieldnameRelatedTest extends \PHPUnit_Framework_TestCase
     /**
      * Tests the Base[Object]::getByName() method
      */
-    public function testGetByName() {
-
+    public function testGetByName()
+    {
         $types = array(
             BasePeer::TYPE_PHPNAME => 'Title',
             BasePeer::TYPE_STUDLYPHPNAME => 'title',
@@ -260,8 +260,8 @@ class FieldnameRelatedTest extends \PHPUnit_Framework_TestCase
     /**
      * Tests the Base[Object]::setByName() method
      */
-    public function testSetByName() {
-
+    public function testSetByName()
+    {
         $book = new Book();
         $types = array(
             BasePeer::TYPE_PHPNAME => 'Title',
@@ -284,8 +284,8 @@ class FieldnameRelatedTest extends \PHPUnit_Framework_TestCase
      *
      * this also tests populateFromArray() because that's an alias
      */
-    public function testFromArray(){
-
+    public function testFromArray()
+    {
         $types = array(
             BasePeer::TYPE_PHPNAME,
             BasePeer::TYPE_STUDLYPHPNAME,
@@ -337,8 +337,8 @@ class FieldnameRelatedTest extends \PHPUnit_Framework_TestCase
     /**
      * Tests the Base[Object]::toArray() method
      */
-    public function testToArray(){
-
+    public function testToArray()
+    {
         $types = array(
             BasePeer::TYPE_PHPNAME,
             BasePeer::TYPE_STUDLYPHPNAME,

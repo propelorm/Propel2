@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Tests\Runtime\Query;
@@ -20,7 +20,7 @@ use Propel\Runtime\Query\ModelCriteria;
 /**
  * Test class for ModelCriteria select() method.
  *
- * @author     Francois Zaninotto
+ * @author Francois Zaninotto
  * @version    $Id: ModelCriteriaTest.php 1842 2010-07-22 22:39:40Z KRavEN $
  */
 class ModelCriteriaSelectTest extends BookstoreTestBase

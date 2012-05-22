@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 use Propel\Generator\Util\QuickBuilder;
@@ -19,7 +19,7 @@ use MyNameSpace\ComplexColumnTypeEntity2Query;
 /**
  * Tests the generated objects for array column types accessor & mutator
  *
- * @author     Francois Zaninotto
+ * @author Francois Zaninotto
  */
 class GeneratedObjectArrayColumnTypeTest extends \PHPUnit_Framework_TestCase
 {
