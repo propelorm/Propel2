@@ -1,8 +1,9 @@
 vendor/
 composer.phar
 composer.lock
+autoload.php
+phpunit.xml
 pom.xml
-check_cs
 php-cs-fixer.phar
 
 tests/Fixtures/namespaced/build/
