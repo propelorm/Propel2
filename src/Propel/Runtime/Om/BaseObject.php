@@ -405,8 +405,8 @@ abstract class BaseObject
      */
     public function __call($name, $params)
     {
-        if (preg_match('/get(\w+)/', $name, $matches)) {
-            $virtualColumn = $matches[1];
+        if (0 === strpos($name, 'get')) {
+            $virtualColumn = substr($name, 3);
             if ($this->hasVirtualColumn($virtualColumn)) {
                 return $this->getVirtualColumn($virtualColumn);
             }
@@ -418,14 +418,17 @@ abstract class BaseObject
             }
         }
 
-        if (preg_match('/^from(\w+)$/', $name, $matches)) {
-            return $this->importFrom($matches[1], reset($params));
+        if (0 === strpos($name, 'from')) {
+            $format = substr($name, 4);
+
+            return $this->importFrom($format, reset($params));
         }
 
-        if (preg_match('/^to(\w+)$/', $name, $matches)) {
+        if (0 === strpos($name, 'to')) {
+            $format = substr($name, 2);
             $includeLazyLoadColumns = isset($params[0]) ? $params[0] : true;
 
-            return $this->exportTo($matches[1], $includeLazyLoadColumns);
+            return $this->exportTo($format, $includeLazyLoadColumns);
         }
 
         throw new BadMethodCallException(sprintf('Call to undefined method: %s.', $name));
