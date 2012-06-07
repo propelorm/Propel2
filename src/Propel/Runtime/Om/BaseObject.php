@@ -411,8 +411,7 @@ abstract class BaseObject
                 return $this->getVirtualColumn($virtualColumn);
             }
 
-            // no lcfirst in php<5.3...
-            $virtualColumn[0] = strtolower($virtualColumn[0]);
+            $virtualColumn = lcfirst($virtualColumn);
             if ($this->hasVirtualColumn($virtualColumn)) {
                 return $this->getVirtualColumn($virtualColumn);
             }

@@ -3596,13 +3596,8 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
         $relatedName = $this->getRefFKPhpNameAffix($refFK, true);
         $relatedObjectClassName = $this->getRefFKPhpNameAffix($refFK, false);
 
-        // No lcfirst() in PHP < 5.3
-        $inputCollection = $relatedName;
-        $inputCollection[0] = strtolower($inputCollection[0]);
-
-        // No lcfirst() in PHP < 5.3
-        $inputCollectionEntry = $this->getRefFKPhpNameAffix($refFK, false);
-        $inputCollectionEntry[0] = strtolower($inputCollectionEntry[0]);
+        $inputCollection = lcfirst($relatedName);
+        $inputCollectionEntry = lcfirst($this->getRefFKPhpNameAffix($refFK, false));
 
         $collName = $this->getRefFKCollVarName($refFK);
 
@@ -3641,11 +3636,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     protected function addRefFKDoAdd(&$script, $refFK)
     {
         $relatedObjectClassName = $this->getRefFKPhpNameAffix($refFK, false);
-
-        // lcfirst() doesn't exist in PHP < 5.3
-        $lowerRelatedObjectClassName = $relatedObjectClassName;
-        $lowerRelatedObjectClassName[0] = strtolower($lowerRelatedObjectClassName[0]);
-
+        $lowerRelatedObjectClassName = lcfirst($relatedObjectClassName);
         $collName = $this->getRefFKCollVarName($refFK);
 
         $script .= "
@@ -3744,8 +3735,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
 
     protected function addScheduledForDeletionAttribute(&$script, $fkName)
     {
-        // No lcfirst() in PHP < 5.3
-        $fkName[0] = strtolower($fkName[0]);
+        $fkName = lcfirst($fkName);
 
         $script .= "
     /**
@@ -3760,12 +3750,8 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     {
         $queryClassName = $this->getRefFKPhpNameAffix($refFK, false) . 'Query';
         $relatedName = $this->getFKPhpNameAffix($crossFK, true);
-        // No lcfirst() in PHP < 5.3
-        $lowerRelatedName = $relatedName;
-        $lowerRelatedName[0] = strtolower($lowerRelatedName[0]);
-        // No lcfirst() in PHP < 5.3
-        $lowerSingleRelatedName = $this->getFKPhpNameAffix($crossFK, false);
-        $lowerSingleRelatedName[0] = strtolower($lowerSingleRelatedName[0]);
+        $lowerRelatedName = lcfirst($relatedName);
+        $lowerSingleRelatedName = lcfirst($this->getFKPhpNameAffix($crossFK, false));
 
         $script .= "
             if (\$this->{$lowerRelatedName}ScheduledForDeletion !== null) {
@@ -3788,14 +3774,8 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     protected function addRefFkScheduledForDeletion(&$script, $refFK)
     {
         $relatedName = $this->getRefFKPhpNameAffix($refFK, true);
-
-        // No lcfirst() in PHP < 5.3
-        $lowerRelatedName = $relatedName;
-        $lowerRelatedName[0] = strtolower($lowerRelatedName[0]);
-        // No lcfirst() in PHP < 5.3
-        $lowerSingleRelatedName = $this->getRefFKPhpNameAffix($refFK, false);
-        $lowerSingleRelatedName[0] = strtolower($lowerSingleRelatedName[0]);
-
+        $lowerRelatedName = lcfirst($relatedName);
+        $lowerSingleRelatedName = lcfirst($this->getRefFKPhpNameAffix($refFK, false));
         $queryClassName = $this->getClassNameFromBuilder($this->getNewStubQueryBuilder($refFK->getTable()));
 
         $script .= "
@@ -3944,11 +3924,8 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
         $collName = $this->getCrossFKVarName($crossFK);
         $joinedTableObjectBuilder = $this->getNewObjectBuilder($refFK->getTable());
         $className = $joinedTableObjectBuilder->getStubObjectBuilder()->getUnqualifiedClassName();
-
         $crossRefObjectClassName = '$' . lcfirst($className);
-
         $inputCollection = lcfirst($relatedNamePlural);
-
         $inputCollectionEntry = lcfirst($this->getFKPhpNameAffix($crossFK, false));
 
         $relCol = $this->getRefFKPhpNameAffix($refFK, true);
@@ -4093,11 +4070,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     protected function addCrossFKDoAdd(&$script, ForeignKey $refFK, ForeignKey $crossFK)
     {
         $relatedObjectClassName = $this->getFKPhpNameAffix($crossFK, false);
-
-        // lcfirst() doesn't exist in PHP < 5.3
-        $lowerRelatedObjectClassName = $relatedObjectClassName;
-        $lowerRelatedObjectClassName[0] = strtolower($lowerRelatedObjectClassName[0]);
-
+        $lowerRelatedObjectClassName = lcfirst($relatedObjectClassName);
         $joinedTableObjectBuilder = $this->getNewObjectBuilder($refFK->getTable());
         $className = $joinedTableObjectBuilder->getObjectClassName();
         $unqualifiedClassName = $joinedTableObjectBuilder->getStubObjectBuilder()->getUnqualifiedClassName();
