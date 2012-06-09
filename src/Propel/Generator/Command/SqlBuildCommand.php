@@ -23,9 +23,11 @@ use Propel\Generator\Util\Filesystem;
  */
 class SqlBuildCommand extends AbstractCommand
 {
-    const DEFAULT_OUTPUT_DIRECTORY  = 'generated-sql';
+    const DEFAULT_OUTPUT_DIRECTORY   = 'generated-sql';
 
-    const DEFAULT_MYSQL_ENGINE      = 'InnoDB';
+    const DEFAULT_MYSQL_ENGINE       = 'InnoDB';
+    
+    const DEFAULT_DATABASE_ENCODING  = 'UTF-8'; 
 
     /**
      * {@inheritdoc}
@@ -39,7 +41,7 @@ class SqlBuildCommand extends AbstractCommand
             ->addOption('output-dir',   null, InputOption::VALUE_REQUIRED,  'The output directory', self::DEFAULT_OUTPUT_DIRECTORY)
             ->addOption('validate',     null, InputOption::VALUE_NONE,      '')
             ->addOption('schema-name',  null, InputOption::VALUE_REQUIRED,  'The schema name for RDBMS supporting them', '')
-            ->addOption('encoding',     null, InputOption::VALUE_REQUIRED,  'The encoding to use for the database', '')
+            ->addOption('encoding',     null, InputOption::VALUE_REQUIRED,  'The encoding to use for the database', self::DEFAULT_DATABASE_ENCODING)
             ->addOption('table-prefix', null, InputOption::VALUE_REQUIRED,  'Add a prefix to all the table names in the database', '')
             ->setName('sql:build')
             ->setDescription('Build SQL files')
