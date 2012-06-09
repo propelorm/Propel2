@@ -42,7 +42,7 @@ abstract class AbstractManager
     /**
      * DB encoding to use for SchemaReader object
      */
-    protected $dbEncoding = 'iso-8859-1';
+    protected $dbEncoding = 'UTF-8';
 
     /**
      * Whether to perform validation (XSD) on the schema.xml file(s).
