@@ -40,19 +40,21 @@ abstract class AbstractCommand extends Command
     {
         $properties = array();
 
-        if (false === $lines = @file($file)) {
-            throw new RuntimeException(sprintf('Unable to parse contents of "%s".', $file));
-        }
-
-        foreach ($lines as $line) {
-            $line = trim($line);
-
-            if (empty($line) || in_array($line[0], array('#', ';'))) {
-                continue;
+        if (file_exists($file)) {
+            if (false === $lines = @file($file)) {
+                throw new RuntimeException(sprintf('Unable to parse contents of "%s".', $file));
             }
 
-            $pos = strpos($line, '=');
-            $properties[trim(substr($line, 0, $pos))] = trim(substr($line, $pos + 1));
+            foreach ($lines as $line) {
+                $line = trim($line);
+
+                if (empty($line) || in_array($line[0], array('#', ';'))) {
+                    continue;
+                }
+
+                $pos = strpos($line, '=');
+                $properties[trim(substr($line, 0, $pos))] = trim(substr($line, $pos + 1));
+            }
         }
 
         return $properties;
