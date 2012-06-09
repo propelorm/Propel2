@@ -23,6 +23,9 @@
         "symfony/finder": ">=2.0",
         "symfony/validator": ">=2.0"
     },
+    "require-dev": {
+        "behat/behat": "2.4@stable"
+    },
     "autoload": {
         "psr-0": {
             "Propel": "src/"
