@@ -575,14 +575,17 @@ class Collection extends \ArrayObject implements \Serializable
      */
     public function __call($name, $params)
     {
-        if (preg_match('/^from(\w+)$/', $name, $matches)) {
-            return $this->importFrom($matches[1], reset($params));
+        if (0 === strpos($name, 'from')) {
+            $format = substr($name, 4);
+
+            return $this->importFrom($format, reset($params));
         }
-        if (preg_match('/^to(\w+)$/', $name, $matches)) {
+        if (0 === strpos($name, 'to')) {
+            $format = substr($name, 2);
             $usePrefix = isset($params[0]) ? $params[0] : true;
             $includeLazyLoadColumns = isset($params[1]) ? $params[1] : true;
 
-            return $this->exportTo($matches[1], $usePrefix, $includeLazyLoadColumns);
+            return $this->exportTo($format, $usePrefix, $includeLazyLoadColumns);
         }
         throw new BadMethodCallException('Call to undefined method: ' . $name);
     }
