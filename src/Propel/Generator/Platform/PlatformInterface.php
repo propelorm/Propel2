@@ -133,7 +133,7 @@ interface PlatformInterface
      * Returns if the RDBMS-specific SQL type has a size attribute.
      *
      * @param  string  $sqlType the SQL type
-     * @return Boolean True if the type has a size attribute
+     * @return boolean True if the type has a size attribute
      */
     public function hasSize($sqlType);
 
@@ -141,7 +141,7 @@ interface PlatformInterface
      * Returns if the RDBMS-specific SQL type has a scale attribute.
      *
      * @param  string  $sqlType the SQL type
-     * @return Boolean True if the type has a scale attribute
+     * @return boolean True if the type has a scale attribute
      */
     public function hasScale($sqlType);
 
@@ -161,31 +161,31 @@ interface PlatformInterface
 
     /**
      * Whether RDBMS supports native ON DELETE triggers (e.g. ON DELETE CASCADE).
-     * @return Boolean
+     * @return boolean
      */
     public function supportsNativeDeleteTrigger();
 
     /**
      * Whether RDBMS supports INSERT null values in autoincremented primary keys
-     * @return Boolean
+     * @return boolean
      */
     public function supportsInsertNullPk();
 
     /**
      * Whether RDBMS supports native schemas for table layout.
-     * @return Boolean
+     * @return boolean
      */
     public function supportsSchemas();
 
     /**
      * Whether RDBMS supports migrations.
-     * @return Boolean
+     * @return boolean
      */
     public function supportsMigrations();
 
     /**
      * Wether RDBMS supports VARCHAR without explicit size
-     * @return Boolean
+     * @return boolean
      */
     public function supportsVarcharWithoutSize();
 
@@ -205,7 +205,7 @@ interface PlatformInterface
 
     /**
      * Whether the underlying PDO driver for this platform returns BLOB columns as streams (instead of strings).
-     * @return Boolean
+     * @return boolean
      */
     public function hasStreamBlobImpl();
 

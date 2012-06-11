@@ -49,12 +49,12 @@ class RelationMap
     protected $foreignTable;
 
     /**
-     * @var array
+     * @var ColumnMap[]
      */
     protected $localColumns = array();
 
     /**
-     * @var array
+     * @var ColumnMap[]
      */
     protected $foreignColumns = array();
 
@@ -222,7 +222,7 @@ class RelationMap
     /**
      * Returns true if the relation has more than one column mapping
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isComposite()
     {
@@ -242,7 +242,7 @@ class RelationMap
     /**
      * Get the local columns
      *
-     * @return array list of ColumnMap objects
+     * @return ColumnMap[]
      */
     public function getLocalColumns()
     {
@@ -252,7 +252,7 @@ class RelationMap
     /**
      * Get the foreign columns
      *
-     * @return array list of ColumnMap objects
+     * @return ColumnMap[]
      */
     public function getForeignColumns()
     {
@@ -262,7 +262,7 @@ class RelationMap
     /**
      * Get the left columns of the relation
      *
-     * @return array[\Propel\Runtime\Map\ColumnMap]
+     * @return ColumnMap[]
      */
     public function getLeftColumns()
     {
@@ -272,7 +272,7 @@ class RelationMap
     /**
      * Get the right columns of the relation
      *
-     * @return array[\Propel\Runtime\Map\ColumnMap]
+     * @return ColumnMap[]
      */
     public function getRightColumns()
     {

@@ -46,7 +46,7 @@ class Index extends MappingModel
     /**
      * Returns the uniqueness of this index.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isUnique()
     {
@@ -168,7 +168,7 @@ class Index extends MappingModel
      * Returns whether or not there is a size for the specified column.
      *
      * @param  string  $name
-     * @return Boolean
+     * @return boolean
      */
     public function hasColumnSize($name)
     {
@@ -202,8 +202,8 @@ class Index extends MappingModel
      * @param  integer $pos             Position in the column list
      * @param  string  $name            Column name
      * @param  integer $size            Optional size check
-     * @param  Boolean $caseInsensitive Whether or not the comparison is case insensitive (false by default)
-     * @return Boolean
+     * @param  boolean $caseInsensitive Whether or not the comparison is case insensitive (false by default)
+     * @return boolean
      */
     public function hasColumnAtPosition($pos, $name, $size = null, $caseInsensitive = false)
     {
@@ -232,7 +232,7 @@ class Index extends MappingModel
     /**
      * Returns whether or not the index has columns.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function hasColumns()
     {

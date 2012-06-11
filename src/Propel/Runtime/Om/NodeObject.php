@@ -137,14 +137,14 @@ interface NodeObject extends \IteratorAggregate
     /**
      * Determines if the node is the root node
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isRoot();
 
     /**
      * Determines if the node is a leaf node
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isLeaf();
 
@@ -152,7 +152,7 @@ interface NodeObject extends \IteratorAggregate
      * Tests if object is equal to $node
      *
      * @param  object  $node Propel object for node to compare to
-     * @return Boolean
+     * @return boolean
      */
     public function isEqualTo(NodeObject $node);
 
@@ -160,14 +160,14 @@ interface NodeObject extends \IteratorAggregate
      * Tests if object has an ancestor
      *
      * @param  ConnectionInterface $con Connection to use.
-     * @return Boolean
+     * @return boolean
      */
     public function hasParent(ConnectionInterface $con = null);
 
     /**
      * Determines if the node has children / descendants
      *
-     * @return Boolean
+     * @return boolean
      */
     public function hasChildren();
 
@@ -175,7 +175,7 @@ interface NodeObject extends \IteratorAggregate
      * Determines if the node has previous sibling
      *
      * @param  ConnectionInterface $con Connection to use.
-     * @return Boolean
+     * @return boolean
      */
     public function hasPrevSibling(ConnectionInterface $con = null);
 
@@ -183,7 +183,7 @@ interface NodeObject extends \IteratorAggregate
      * Determines if the node has next sibling
      *
      * @param  ConnectionInterface $con Connection to use.
-     * @return Boolean
+     * @return boolean
      */
     public function hasNextSibling(ConnectionInterface $con = null);
 

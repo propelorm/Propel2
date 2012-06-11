@@ -11,6 +11,7 @@
 namespace Propel\Generator\Builder\Om;
 
 use Propel\Generator\Model\Inheritance;
+use Propel\Generator\Exception\BuildException;
 
 /**
  * Generates the empty PHP5 stub query class for use with single table inheritance.

@@ -39,7 +39,7 @@ class SchemaValidator
     }
 
     /**
-     * @return Boolean true if valid, false otherwise
+     * @return boolean true if valid, false otherwise
      */
     public function validate()
     {

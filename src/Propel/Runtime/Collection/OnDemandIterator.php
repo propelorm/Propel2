@@ -132,7 +132,7 @@ class OnDemandIterator implements \Iterator
     }
 
     /**
-     * @return Boolean
+     * @return boolean
      */
     public function valid()
     {

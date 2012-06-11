@@ -21,7 +21,7 @@ class ProfilerConnectionWrapper extends ConnectionWrapper
     /**
      * Whether or not the debug is enabled
      *
-     * @var Boolean
+     * @var boolean
      */
     public $useDebug = true;
 

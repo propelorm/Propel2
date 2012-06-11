@@ -33,7 +33,7 @@ class MysqlPlatform extends DefaultPlatform
 {
 
     /**
-     * @var Boolean whether the identifier quoting is enabled
+     * @var boolean whether the identifier quoting is enabled
      */
     protected $isIdentifierQuotingEnabled = true;
 

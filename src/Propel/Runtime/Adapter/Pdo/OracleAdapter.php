@@ -205,7 +205,7 @@ class OracleAdapter extends PdoAdapter implements AdapterInterface
      * @param ColumnMap          $cMap
      * @param null|integer       $position
      *
-     * @return Boolean
+     * @return boolean
      */
     public function bindValue(StatementInterface $stmt, $parameter, $value, ColumnMap $cMap, $position = null)
     {

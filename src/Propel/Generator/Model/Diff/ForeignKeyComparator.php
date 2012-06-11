@@ -26,10 +26,10 @@ class ForeignKeyComparator
      * @param ForeignKey $fromFk
      * @param ForeignKey $toFk
      *
-     * @param Boolean $caseInsensitive Whether the comparison is case insensitive.
+     * @param boolean $caseInsensitive Whether the comparison is case insensitive.
      *                                 False by default.
      *
-     * @return Boolean false if the two fks are similar, true if they have differences
+     * @return boolean false if the two fks are similar, true if they have differences
      */
     public static function computeDiff(ForeignKey $fromFk, ForeignKey $toFk, $caseInsensitive = false)
     {

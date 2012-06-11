@@ -161,7 +161,7 @@ class PropelModelPager implements \IteratorAggregate, \Countable
     /**
      * Test whether the number of results exceeds the max number of results per page
      *
-     * @return Boolean true if the pager displays only a subset of the results
+     * @return boolean true if the pager displays only a subset of the results
      */
     public function haveToPaginate()
     {
@@ -226,7 +226,7 @@ class PropelModelPager implements \IteratorAggregate, \Countable
     /**
      * Check whether the current page is the first page
      *
-     * @return Boolean true if the current page is the first page
+     * @return boolean true if the current page is the first page
      */
     public function isFirstPage()
     {
@@ -246,7 +246,7 @@ class PropelModelPager implements \IteratorAggregate, \Countable
     /**
      * Check whether the current page is the last page
      *
-     * @return Boolean true if the current page is the last page
+     * @return boolean true if the current page is the last page
      */
     public function isLastPage()
     {
@@ -357,7 +357,7 @@ class PropelModelPager implements \IteratorAggregate, \Countable
      * Check whether the internal pointer is at the beginning of the list
      * @see Collection
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isFirst()
     {
@@ -368,7 +368,7 @@ class PropelModelPager implements \IteratorAggregate, \Countable
      * Check whether the internal pointer is at the end of the list
      * @see Collection
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isLast()
     {
@@ -379,7 +379,7 @@ class PropelModelPager implements \IteratorAggregate, \Countable
      * Check if the collection is empty
      * @see Collection
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isEmpty()
     {
@@ -390,7 +390,7 @@ class PropelModelPager implements \IteratorAggregate, \Countable
      * Check if the current index is an odd integer
      * @see Collection
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isOdd()
     {
@@ -401,7 +401,7 @@ class PropelModelPager implements \IteratorAggregate, \Countable
      * Check if the current index is an even integer
      * @see Collection
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isEven()
     {

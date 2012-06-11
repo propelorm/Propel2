@@ -46,7 +46,7 @@ abstract class AbstractManager
 
     /**
      * Whether to perform validation (XSD) on the schema.xml file(s).
-     * @var Boolean
+     * @var boolean
      */
     protected $validate;
 
@@ -81,7 +81,7 @@ abstract class AbstractManager
 
     /**
      * Have datamodels been initialized?
-     * @var Boolean
+     * @var boolean
      */
     private $dataModelsLoaded = false;
 
@@ -165,7 +165,7 @@ abstract class AbstractManager
     /**
      * Sets whether to perform validation on the datamodel schema.xml file(s).
      *
-     * @param Boolean $validate
+     * @param boolean $validate
      */
     public function setValidate($validate)
     {

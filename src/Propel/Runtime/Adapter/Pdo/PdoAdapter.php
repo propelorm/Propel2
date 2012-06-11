@@ -214,7 +214,7 @@ abstract class PdoAdapter
     /**
      * Whether this adapter uses an ID generation system that requires getting ID _before_ performing INSERT.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isGetIdBeforeInsert()
     {
@@ -224,7 +224,7 @@ abstract class PdoAdapter
     /**
      * Whether this adapter uses an ID generation system that requires getting ID _before_ performing INSERT.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isGetIdAfterInsert()
     {
@@ -312,7 +312,7 @@ abstract class PdoAdapter
      *
      * @deprecated
      *
-     * @return Boolean
+     * @return boolean
      */
     public function useQuoteIdentifier()
     {
@@ -368,7 +368,7 @@ abstract class PdoAdapter
      *
      * @param Propel\Runtime\Query\Criteria $criteria
      * @param array                         $fromClause
-     * @param Boolean                       $aliasAll
+     * @param boolean                       $aliasAll
      *
      * @return string
      */
@@ -526,7 +526,7 @@ abstract class PdoAdapter
      * @param Propel\Runtime\Map\ColumnMap                 $cMap      The ColumnMap of the column to bind
      * @param null|integer                                 $position  The position of the parameter to bind
      *
-     * @return Boolean
+     * @return boolean
      */
     public function bindValue(StatementInterface $stmt, $parameter, $value, ColumnMap $cMap, $position = null)
     {

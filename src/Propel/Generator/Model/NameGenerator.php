@@ -10,6 +10,8 @@
 
 namespace Propel\Generator\Model;
 
+use Propel\Generator\Exception\EngineException;
+
 /**
  * The generic interface to a name generation algorithm.
  *
@@ -64,8 +66,8 @@ interface NameGenerator
      * Given a list of <code>String</code> objects, implements an
      * algorithm which produces a name.
      *
-     * @param      inputs Inputs used to generate a name.
-     * @return The             generated name.
+     * @param string[] $inputs Inputs used to generate a name.
+     * @return string          The generated name.
      * @throws EngineException
      */
     public function generateName($inputs);

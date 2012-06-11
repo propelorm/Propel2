@@ -11,7 +11,10 @@
 namespace Propel\Generator\Builder\Om;
 
 use Propel\Generator\Builder\DataModelBuilder;
+use Propel\Generator\Exception\InvalidArgumentException;
 use Propel\Generator\Exception\LogicException;
+use Propel\Generator\Exception\RuntimeException;
+use Propel\Generator\Model\Column;
 use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\Table;
 
@@ -229,7 +232,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * This decare the class use and get the correct name to use (short classname, Alias, or FQCN)
      *
      * @param  AbstractOMBuilder $builder
-     * @param  Boolean           $fqcn    true to return the $fqcn classname
+     * @param  boolean           $fqcn    true to return the $fqcn classname
      * @return string            ClassName, Alias or FQCN
      */
     public function getClassNameFromBuilder($builder, $fqcn = false)
@@ -377,16 +380,13 @@ abstract class AbstractOMBuilder extends DataModelBuilder
 
     /**
      * @param $builder
-     * @param Boolean|string $aliasPrefix the prefix for the Alias or True for auto generation of the Alias
+     * @param boolean|string $aliasPrefix the prefix for the Alias or True for auto generation of the Alias
      */
     public function declareClassFromBuilder($builder, $aliasPrefix = false)
     {
         return $this->declareClassNamespacePrefix($builder->getUnqualifiedClassName(), $builder->getNamespace(), $aliasPrefix);
     }
 
-    /**
-     * @param string classname
-     */
     public function declareClasses()
     {
         $args = func_get_args();
@@ -461,7 +461,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * Shortcut method to return the [stub] peer classname for current table.
      * This is the classname that is used whenever object or peer classes want
      * to invoke methods of the peer classes.
-     * @param  Boolean $fqcn
+     * @param  boolean $fqcn
      * @return string  (e.g. 'MyPeer')
      */
     public function getPeerClassName($fqcn = false)
@@ -473,7 +473,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * Shortcut method to return the [stub] query classname for current table.
      * This is the classname that is used whenever object or peer classes want
      * to invoke methods of the query classes.
-     * @param  Boolean $fqcn
+     * @param  boolean $fqcn
      * @return string  (e.g. 'Myquery')
      */
     public function getQueryClassName($fqcn = false)
@@ -485,7 +485,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * Returns the object classname for current table.
      * This is the classname that is used whenever object or peer classes want
      * to invoke methods of the object classes.
-     * @param  Boolean $fqcn
+     * @param  boolean $fqcn
      * @return string  (e.g. 'My')
      */
     public function getObjectClassName($fqcn = false)
@@ -504,7 +504,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     public function getColumnConstant($col, $classname = null)
     {
         if (null === $col) {
-            throw new Exception('No columns were specified.');
+            throw new InvalidArgumentException('No columns were specified.');
         }
 
         if (null === $classname) {
@@ -574,7 +574,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * classname in the affix is the foreign table classname.
      *
      * @param  ForeignKey $fk     The local FK that we need a name for.
-     * @param  Boolean    $plural Whether the php name should be plural (e.g. initRelatedObjs() vs. addRelatedObj()
+     * @param  boolean    $plural Whether the php name should be plural (e.g. initRelatedObjs() vs. addRelatedObj()
      * @return string
      */
     public function getFKPhpNameAffix(ForeignKey $fk, $plural = false)
@@ -611,7 +611,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
             $localTable  = $fk->getTable();
             $localColumn = $localTable->getColumn($localColumnName);
             if (!$localColumn) {
-                throw new Exception(sprintf('Could not fetch column: %s in table %s.', $localColumnName, $localTable->getName()));
+                throw new RuntimeException(sprintf('Could not fetch column: %s in table %s.', $localColumnName, $localTable->getName()));
             }
 
             if (count($localTable->getForeignKeysReferencingTable($fk->getForeignTableName())) > 1
@@ -636,7 +636,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * classname in the affix is the classname of the local fkey table.
      *
      * @param  ForeignKey $fk     The referrer FK that we need a name for.
-     * @param  Boolean    $plural Whether the php name should be plural (e.g. initRelatedObjs() vs. addRelatedObj()
+     * @param  boolean    $plural Whether the php name should be plural (e.g. initRelatedObjs() vs. addRelatedObj()
      * @return string
      */
     public function getRefFKPhpNameAffix(ForeignKey $fk, $plural = false)
@@ -661,7 +661,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
             $localTable = $fk->getTable();
             $localColumn = $localTable->getColumn($localColumnName);
             if (!$localColumn) {
-                throw new Exception(sprintf('Could not fetch column: %s in table %s.', $localColumnName, $localTable->getName()));
+                throw new RuntimeException(sprintf('Could not fetch column: %s in table %s.', $localColumnName, $localTable->getName()));
             }
             $foreignKeysToForeignTable = $localTable->getForeignKeysReferencingTable($fk->getForeignTableName());
             if ($fk->getForeignTableName() == $fk->getTableName()) {
@@ -688,7 +688,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * Checks whether any registered behavior on that table has a modifier for a hook
      * @param  string  $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
      * @param  string  $modifier The name of the modifier object providing the method in the behavior
-     * @return Boolean
+     * @return boolean
      */
     public function hasBehaviorModifier($hookName, $modifier)
     {

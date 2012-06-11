@@ -46,7 +46,7 @@ class DefaultPlatform implements PlatformInterface
     protected $con;
 
     /**
-     * @var Boolean whether the identifier quoting is enabled
+     * @var boolean whether the identifier quoting is enabled
      */
     protected $isIdentifierQuotingEnabled = false;
 
@@ -1018,7 +1018,7 @@ ALTER TABLE %s ADD
      * Returns if the RDBMS-specific SQL type has a size attribute.
      *
      * @param  string  $sqlType the SQL type
-     * @return Boolean True if the type has a size attribute
+     * @return boolean True if the type has a size attribute
      */
     public function hasSize($sqlType)
     {
@@ -1029,7 +1029,7 @@ ALTER TABLE %s ADD
      * Returns if the RDBMS-specific SQL type has a scale attribute.
      *
      * @param  string  $sqlType the SQL type
-     * @return Boolean True if the type has a scale attribute
+     * @return boolean True if the type has a scale attribute
      */
     public function hasScale($sqlType)
     {
@@ -1086,7 +1086,7 @@ ALTER TABLE %s ADD
 
     /**
      * Whether RDBMS supports native ON DELETE triggers (e.g. ON DELETE CASCADE).
-     * @return Boolean
+     * @return boolean
      */
     public function supportsNativeDeleteTrigger()
     {
@@ -1095,7 +1095,7 @@ ALTER TABLE %s ADD
 
     /**
      * Whether RDBMS supports INSERT null values in autoincremented primary keys
-     * @return Boolean
+     * @return boolean
      */
     public function supportsInsertNullPk()
     {
@@ -1105,7 +1105,7 @@ ALTER TABLE %s ADD
     /**
      * Whether the underlying PDO driver for this platform returns BLOB columns as streams (instead of strings).
      *
-     * @return Boolean
+     * @return boolean
      */
     public function hasStreamBlobImpl()
     {

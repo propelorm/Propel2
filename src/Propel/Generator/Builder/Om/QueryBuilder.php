@@ -166,7 +166,8 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
             '\Propel\Runtime\Propel',
             '\Propel\Runtime\Query\ModelCriteria',
             '\Propel\Runtime\Query\Criteria',
-            '\Propel\Runtime\Query\ModelJoin'
+            '\Propel\Runtime\Query\ModelJoin',
+            '\Exception'
         );
         $this->declareClassFromBuilder($this->getStubQueryBuilder(), 'Child');
         $this->declareClassFromBuilder($this->getStubPeerBuilder());
@@ -940,6 +941,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     {
         $this->declareClasses(
             '\Propel\Runtime\Collection\Collection',
+            '\Propel\Runtime\Collection\ObjectCollection',
             '\Propel\Runtime\Exception\PropelException'
         );
         $table = $this->getTable();
@@ -959,7 +961,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
      * @param $fkPhpName $objectName The related object to use as filter";
         } else {
             $script .= "
-     * @param $fkPhpName|Collection $objectName The related object(s) to use as filter";
+     * @param $fkPhpName|ObjectCollection $objectName The related object(s) to use as filter";
         }
         $script .= "
      * @param string \$comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
@@ -982,7 +984,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
             $foreignColumnName = $fk->getForeignColumn()->getPhpName();
             $keyColumn = $fk->getForeignTable()->hasCompositePrimaryKey() ? $foreignColumnName : 'PrimaryKey';
             $script .= "
-        } elseif ($objectName instanceof Collection) {
+        } elseif ($objectName instanceof ObjectCollection) {
             if (null === \$comparison) {
                 \$comparison = Criteria::IN;
             }
@@ -1013,6 +1015,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     {
         $this->declareClasses(
             '\Propel\Runtime\Collection\Collection',
+            '\Propel\Runtime\Collection\ObjectCollection',
             '\Propel\Runtime\Exception\PropelException'
         );
         $table = $this->getTable();
@@ -1027,7 +1030,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     /**
      * Filter the query by a related $fkPhpName object
      *
-     * @param $fkPhpName $objectName  the related object to use as filter
+     * @param $fkPhpName|ObjectCollection $objectName  the related object to use as filter
      * @param string \$comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $queryClass The current query, for fluid interface
@@ -1045,7 +1048,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
         $script .= ";";
         if (!$fk->isComposite()) {
             $script .= "
-        } elseif ($objectName instanceof Collection) {
+        } elseif ($objectName instanceof ObjectCollection) {
             return \$this
                 ->use{$relationName}Query()
                 ->filterByPrimaryKeys({$objectName}->getPrimaryKeys())
@@ -1401,7 +1404,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     /**
      * Checks whether any registered behavior on that table has a modifier for a hook
      * @param  string  $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
-     * @return Boolean
+     * @return boolean
      */
     public function hasBehaviorModifier($hookName, $modifier = null)
     {

@@ -124,7 +124,7 @@ class Schema
      * The first boolean parameter tells whether or not to run the
      * final initialization process.
      *
-     * @param  Boolean $doFinalInitialization
+     * @param  boolean $doFinalInitialization
      * @return array
      */
     public function getDatabases($doFinalInitialization = true)
@@ -141,7 +141,7 @@ class Schema
     /**
      * Returns whether or not this schema has multiple databases.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function hasMultipleDatabases()
     {
@@ -152,7 +152,7 @@ class Schema
      * Returns the database according to the specified name.
      *
      * @param  string   $name
-     * @param  Boolean  $doFinalInitialization
+     * @param  boolean  $doFinalInitialization
      * @return Database
      */
     public function getDatabase($name = null, $doFinalInitialization = true)
@@ -183,7 +183,7 @@ class Schema
      * schema.
      *
      * @param  string  $name
-     * @return Boolean
+     * @return boolean
      */
     public function hasDatabase($name)
     {

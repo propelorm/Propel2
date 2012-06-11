@@ -478,7 +478,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Adds a new column to the table.
      *
-     * @param  Column $col
+     * @param  Column|array $col
      * @return Column
      */
     public function addColumn($col)
@@ -646,7 +646,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * adds the missing referrers and is non-destructive.
      * Warning: only use when all the tables were created.
      *
-     * @param Boolean $throwErrors
+     * @param boolean $throwErrors
      */
     public function setupReferrers($throwErrors = false)
     {
@@ -738,7 +738,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Sets whether or not this table contains a foreign primary key.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function setContainsForeignPK($b)
     {
@@ -748,7 +748,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Returns whether or not this table contains a foreign primary key.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function getContainsForeignPK()
     {
@@ -768,7 +768,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Return true if the column requires a transaction in Postgres.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function requiresTransactionInPostgres()
     {
@@ -889,7 +889,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * check if the table has a behavior by name
      *
      * @param  string  $name the behavior name
-     * @return Boolean True if the behavior exists
+     * @return boolean True if the behavior exists
      */
     public function hasBehavior($name)
     {
@@ -910,7 +910,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Returns whether or not the table behaviors offer additional builders.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function hasAdditionalBuilders()
     {
@@ -985,7 +985,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Returns whether or not the table has a description.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function hasDescription()
     {
@@ -1125,7 +1125,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * Returns whether we allow to insert primary keys on tables with
      * native id method.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isAllowPkInsert()
     {
@@ -1146,7 +1146,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * Returns whether or not Propel has to skip DDL SQL generation for this
      * table (in the event it should not be created from scratch).
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isSkipSql()
     {
@@ -1156,7 +1156,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Sets whether or not this table should have its SQL DDL code generated.
      *
-     * @param Boolean $skip
+     * @param boolean $skip
      */
     public function setSkipSql($skip)
     {
@@ -1167,7 +1167,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * Returns whether or not this table is read-only. If yes, only only
      * accessors and relationship accessors and mutators will be generated.
      *
-     * @return Boolan
+     * @return boolean
      */
     public function isReadOnly()
     {
@@ -1176,7 +1176,7 @@ class Table extends ScopedMappingModel implements IdMethod
 
     /**
      * Whether to force object to reload on INSERT.
-     * @return Boolean
+     * @return boolean
      */
     public function isReloadOnInsert()
     {
@@ -1186,7 +1186,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Returns whether or not to force object to reload on UPDATE.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isReloadOnUpdate()
     {
@@ -1207,7 +1207,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * Returns whether or not this table is specified in the schema or if there
      * is just a foreign key reference to it.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isAlias()
     {
@@ -1251,7 +1251,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * "FOO", then the Foo business object class will be declared abstract. This
      * helps support class hierarchies
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isAbstract()
     {
@@ -1264,7 +1264,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * table called "FOO", then the Foo business object class will be
      * declared abstract. This helps support class hierarchies
      *
-     * @param Boolean $isAbstract
+     * @param boolean $isAbstract
      */
     public function setAbstract($isAbstract)
     {
@@ -1311,7 +1311,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Returns whether or not one of the columns is of type ENUM.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function hasEnumColumns()
     {
@@ -1367,8 +1367,8 @@ class Table extends ScopedMappingModel implements IdMethod
      * Returns whether or not the table has a column.
      *
      * @param  Column|string $column          The Column object or its name
-     * @param  Boolean       $caseInsensitive Whether the check is case insensitive.
-     * @return Boolean
+     * @param  boolean       $caseInsensitive Whether the check is case insensitive.
+     * @return boolean
      */
     public function hasColumn($column, $caseInsensitive = false)
     {
@@ -1387,7 +1387,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * Returns the Column object with the specified name.
      *
      * @param  string  $name            The name of the column (e.g. 'my_column')
-     * @param  Boolean $caseInsensitive Whether the check is case insensitive.
+     * @param  boolean $caseInsensitive Whether the check is case insensitive.
      * @return Column
      */
     public function getColumn($name, $caseInsensitive = false)
@@ -1494,7 +1494,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * Table will be skipped, if return true.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isForReferenceOnly()
     {
@@ -1504,7 +1504,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Returns whether or not to determine if code/sql gets created for this table.
      * Table will be skipped, if set to true.
-     * @param Boolean $v
+     * @param boolean $v
      */
     public function setForReferenceOnly($v)
     {
@@ -1633,7 +1633,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Returns whether or not this table has a primary key.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function hasPrimaryKey()
     {
@@ -1643,7 +1643,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Returns whether or not this table has a composite primary key.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function hasCompositePrimaryKey()
     {
@@ -1669,7 +1669,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Returns whether or not this table has any auto-increment primary keys.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function hasAutoIncrementPrimaryKey()
     {
@@ -1696,7 +1696,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * Returns whether or not there is a cross reference status for this foreign
      * key.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function getIsCrossRef()
     {
@@ -1706,7 +1706,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Alias for Table::getIsCrossRef.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isCrossRef()
     {
@@ -1716,7 +1716,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Sets a cross reference status for this foreign key.
      *
-     * @param Boolean $isCrossRef
+     * @param boolean $isCrossRef
      */
     public function setIsCrossRef($isCrossRef)
     {
@@ -1726,7 +1726,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Returns whether or not the table has foreign keys.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function hasForeignKeys()
     {
@@ -1736,7 +1736,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Returns whether the table has cross foreign keys or not.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function hasCrossForeignKeys()
     {

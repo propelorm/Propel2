@@ -10,6 +10,8 @@
 
 namespace Propel\Runtime\Collection;
 
+use ArrayIterator;
+
 use Propel\Runtime\Propel;
 use Propel\Runtime\Collection\Exception\ModelNotFoundException;
 use Propel\Runtime\Exception\BadMethodCallException;
@@ -28,10 +30,10 @@ use Propel\Runtime\Util\BasePeer;
  * @method Collection fromJSON(string $data) Populate the collection from a JSON string
  * @method Collection fromCSV(string $data) Populate the collection from a CSV string
  *
- * @method string toXML(Boolean $usePrefix, Boolean $includeLazyLoadColumns) Export the collection to an XML string
- * @method string toYAML(Boolean $usePrefix, Boolean $includeLazyLoadColumns) Export the collection to a YAML string
- * @method string toJSON(Boolean $usePrefix, Boolean $includeLazyLoadColumns) Export the collection to a JSON string
- * @method string toCSV(Boolean $usePrefix, Boolean $includeLazyLoadColumns) Export the collection to a CSV string
+ * @method string toXML(boolean $usePrefix, boolean $includeLazyLoadColumns) Export the collection to an XML string
+ * @method string toYAML(boolean $usePrefix, boolean $includeLazyLoadColumns) Export the collection to a YAML string
+ * @method string toJSON(boolean $usePrefix, boolean $includeLazyLoadColumns) Export the collection to a JSON string
+ * @method string toCSV(boolean $usePrefix, boolean $includeLazyLoadColumns) Export the collection to a CSV string
  *
  * @author Francois Zaninotto
  */
@@ -108,7 +110,7 @@ class Collection extends \ArrayObject implements \Serializable
     /**
      * Check whether the internal pointer is at the beginning of the list
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isFirst()
     {
@@ -175,7 +177,7 @@ class Collection extends \ArrayObject implements \Serializable
     /**
      * Check whether the internal pointer is at the end of the list
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isLast()
     {
@@ -192,7 +194,7 @@ class Collection extends \ArrayObject implements \Serializable
     /**
      * Check if the collection is empty
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isEmpty()
     {
@@ -202,7 +204,7 @@ class Collection extends \ArrayObject implements \Serializable
     /**
      * Check if the current index is an odd integer
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isOdd()
     {
@@ -212,7 +214,7 @@ class Collection extends \ArrayObject implements \Serializable
     /**
      * Check if the current index is an even integer
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isEven()
     {
@@ -328,7 +330,7 @@ class Collection extends \ArrayObject implements \Serializable
      * Whether or not this collection contains a specified element
      *
      * @param  mixed   $element
-     * @return Boolean
+     * @return boolean
      */
     public function contains($element)
     {
@@ -544,11 +546,11 @@ class Collection extends \ArrayObject implements \Serializable
      * A OnDemandCollection cannot be exported. Any attempt will result in a PropelExecption being thrown.
      *
      * @param mixed   $parser    A AbstractParser instance, or a format name ('XML', 'YAML', 'JSON', 'CSV')
-     * @param Boolean $usePrefix (optional) If true, the returned element keys will be prefixed with the
+     * @param boolean $usePrefix (optional) If true, the returned element keys will be prefixed with the
      *                                            model class name ('Article_0', 'Article_1', etc). Defaults to TRUE.
      *                                            Not supported by ArrayCollection, as ArrayFormatter has
      *                                            already created the array used here with integers as keys.
-     * @param Boolean $includeLazyLoadColumns (optional) Whether to include lazy load(ed) columns. Defaults to TRUE.
+     * @param boolean $includeLazyLoadColumns (optional) Whether to include lazy load(ed) columns. Defaults to TRUE.
      *                                            Not supported by ArrayCollection, as ArrayFormatter has
      *                                            already included lazy-load columns in the array used here.
      * @return string The exported data

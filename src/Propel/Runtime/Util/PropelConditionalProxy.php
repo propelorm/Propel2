@@ -61,7 +61,7 @@ class PropelConditionalProxy
      * Returns a new level PropelConditionalProxy instance.
      * Allows for conditional statements in a fluid interface.
      *
-     * @param Boolean $cond
+     * @param boolean $cond
      *
      * @return PropelConditionalProxy
      */
@@ -73,7 +73,7 @@ class PropelConditionalProxy
     /**
      * Allows for conditional statements in a fluid interface.
      *
-     * @param Boolean $cond ignored
+     * @param boolean $cond ignored
      *
      * @return PropelConditionalProxy
      */
@@ -106,7 +106,7 @@ class PropelConditionalProxy
     /**
      * return the current conditionnal status
      *
-     * @return Boolean
+     * @return boolean
      */
     protected function getConditionalState()
     {

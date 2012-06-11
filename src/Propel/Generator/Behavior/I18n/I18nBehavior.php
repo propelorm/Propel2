@@ -10,6 +10,7 @@
 
 namespace Propel\Generator\Behavior\I18n;
 
+use Propel\Generator\Exception\EngineException;
 use Propel\Generator\Model\Behavior;
 use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\PropelTypes;

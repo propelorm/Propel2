@@ -13,6 +13,7 @@ namespace Propel\Generator\Util;
 use Propel\Generator\Builder\Util\SchemaReader;
 use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Model\Table;
+use Propel\Generator\Platform\PlatformInterface;
 
 use Propel\Runtime\Propel;
 use Propel\Runtime\Adapter\Pdo\PdoConnection;

@@ -197,7 +197,7 @@ class Behavior extends MappingModel
     /**
      * Sets whether or not the table has been modified.
      *
-     * @param Boolean $modified
+     * @param boolean $modified
      */
     public function setTableModified($modified)
     {
@@ -207,7 +207,7 @@ class Behavior extends MappingModel
     /**
      * Returns whether or not the table has been modified.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isTableModified()
     {
@@ -354,7 +354,7 @@ class Behavior extends MappingModel
     /**
      * Returns whether or not this behavior has additional builders.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function hasAdditionalBuilders()
     {
