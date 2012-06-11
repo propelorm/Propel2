@@ -357,6 +357,91 @@ And if you want to specify an error message:
 >**Tip**<br />`Date`, `Time` and `DateTime` constraints are useful if you store a date-time value inside a string. If you use a php `DateTime` object, if a value isn't valid, the `DateTime` object itself raises an exception, before performing any validations.
 
 
+## Custom validation constraints ##
+
+Propel and Symfony 2 Validator component come with many bundled constraints and that gives the possibility to perform almost all validations you could need.
+But sometimes, you could think that a custom validation constraint is a better choice for you.
+
+Adding a custom validation constraint to your project is very easy and it can be considered a two-step process:
+
+1.    Write your custom constraint: please refer to [this document](http://symfony.com/doc/current/cookbook/validation/custom_constraint.html) and see the example below.
+2.    Set up Propel to work with it: symply adjust your autoload class or function, to correctly map `Propel\Runtime\Validator\Constraints` namespace to the directory in which your constraint scripts reside.
+
+>**Tip**<br /> Propel expects to find custom constraints under `Propel\Runtime\Validator\Constraints` namespace.
+
+
+For example, let's suppose we want to write a custom constraint, called *PropelDomain*, that checks if an url belongs to *propelorm.org* domain.
+Let's also suppose to put our files in a subdir of our project root, called `/myConstraints`, and to manage the dependencies of our project via [Composer](http://getcomposer.org).
+
+Under `/myConstraints` dir, let's create the subdir `Propel/Runtime/Validator/Constraints`, in which we'll put the two following scripts:
+
+`PropelDomain.php`
+{% highlight php %}
+<?php
+// /myConstraints/Propel/Runtime/Validator/Constraints/PropelDomain.php
+
+namespace Propel\Runtime\Validator\Constraints;
+
+use Symfony\Component\Validator\Constraint;
+
+
+class PropelDomain extends Constraint
+{
+    public $message = 'This url does not belong to propelorm.org domain';
+    public $column = '';
+}
+{% endhighlight %}
+
+`PropelDomainValidator.php`
+{% highlight php %}
+<?php
+ // /myConstraints/Propel/Runtime/Validator/Constraints/PropelDomainValidator.php
+
+ namespace Propel\Runtime\Validator\Constraints;
+
+ use Symfony\Component\Validator\Constraint;
+ use Symfony\Component\Validator\ConstraintValidator;
+
+ class PropelDomainValidator extends ConstraintValidator
+ {
+     public function isValid($value, Constraint $constraint)
+     {
+         if ('propelorm.org' === strstr($value, 'propelorm.org')) {
+             return false;
+         } else {
+             $this->setMessage($constraint->message);
+
+             return true;
+         }
+     }
+ }
+{% endhighlight %}
+
+Now, open `composer.json` file, in your project root and add the namespace `Propel\Runtime\Validator\Constraints` to the autoload directive:
+
+{% highlight duel %}
+"autoload": {
+        "psr-0": {
+            "Propel\\Runtime\\Validator\\Constraints": "myConstraints/"
+        }
+    }
+{% endhighlight %}
+
+Done! Now you can use your custom validator constraint in your `schema.xml` file, as usual:
+
+{% highlight xml %}
+
+<!-- your schema -->
+  <behavior name="validate">
+      <parameter name="rule1" value="{column: website, validator: PropelDomain, options: {message: Your custom message}}" />
+  </behavior>
+
+<!-- end of your schema -->
+{% endhighlight %}
+
+**Note**: if you think your custom constraint could be generic enough to be useful for the community, please submit it to Propel team,
+to include it in Propel bundled constraints (see [http://dotheweb.posterous.com/open-source-is-a-gift](http://dotheweb.posterous.com/open-source-is-a-gift)).
+
 ## Inside Symfony2 ##
 
 The behavior adds to ActiveRecord objects the static `loadValidatorMetadata()` method, which contains all validation rules. So, inside your Symfony projects, you can perform "usual" Symfony validations:
