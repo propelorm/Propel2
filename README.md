@@ -49,7 +49,7 @@ If you don't have an available `composer.phar` command, just download it:
 
     wget http://getcomposer.org/composer.phar
 
-If you haven't wget on your computer, use `curl` instead :
+If you haven't wget on your computer, use `curl` instead:
 
     curl -s http://getcomposer.org/install | php
 
@@ -63,7 +63,7 @@ Then, install dependencies:
 The Propel test suite requires a database (`test` for instance, but feel free to choose the name you want), and
 three database schemas: `bookstore_schemas`, `contest`, and `second_hand_books`.
 
-Here is the set of commands to run in your shell in order to setup requirements if you want to use MySQL:
+Here is the set of commands to run in order to setup MySQL:
 
     mysql -uroot -e 'create database test'
     mysql -uroot -e 'create schema bookstore_schemas'
@@ -91,7 +91,6 @@ Now you can run the test suite by running:
 
     phpunit
 
-You can also pass a `--verbose` argument if you want to know where tests fail. It's useful if you want to contribute.
 
 ## License ##
 
