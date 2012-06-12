@@ -35,11 +35,11 @@ You just need to install [Finder](http://github.com/symfony/Finder) and the scri
 
     git clone git://github.com/symfony/Finder.git vendor/Symfony/Component/Finder
 
-    wget https://raw.github.com/symfony/symfony/master/check_cs
+    wget http://cs.sensiolabs.org/get/php-cs-fixer.phar
 
 Then use it:
 
-    php check_cs fix
+    php php-cs-fixer.phar fix .
 
 
 ## Unit Tests ##
@@ -48,6 +48,10 @@ To run unit tests, you'll have to install vendors by using [**Composer**](https:
 If you don't have an available `composer.phar` command, just download it:
 
     wget http://getcomposer.org/composer.phar
+
+If you haven't wget on your computer, use `curl` instead:
+
+    curl -s http://getcomposer.org/install | php
 
 Then, install dependencies:
 
@@ -86,6 +90,7 @@ There is nothing to setup, just run:
 Now you can run the test suite by running:
 
     phpunit
+
 
 ## License ##
 
