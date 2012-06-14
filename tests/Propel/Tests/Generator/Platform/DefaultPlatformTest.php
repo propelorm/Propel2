@@ -98,7 +98,6 @@ class DefaultPlatformTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals("'$unquoted'", $quoted);
 
-
         $unquoted = "Naughty ' string";
         $quoted = $p->quote($unquoted);
         $expected = "'Naughty '' string'";

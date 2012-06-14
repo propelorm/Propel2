@@ -183,7 +183,6 @@ CREATE SCHEMA %s;
         };
     }
 
-
     public function getUseSchemaDDL(Table $table)
     {
         $vi = $table->getVendorInfoForType('pgsql');

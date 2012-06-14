@@ -92,7 +92,7 @@ abstract class AbstractParser
      *
      * @return AbstractParser A PropelParser subclass instance
      */
-    static public function getParser($type = 'XML')
+    public static function getParser($type = 'XML')
     {
         $class = sprintf('\Propel\Runtime\Parser\%sParser', ucfirst(strtolower($type)));
 

@@ -321,7 +321,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     protected function addFactoryOpen(&$script)
     {
         $script .= "
-    static public function create(\$modelAlias = null, \$criteria = null)
+    public static function create(\$modelAlias = null, \$criteria = null)
     {";
     }
 

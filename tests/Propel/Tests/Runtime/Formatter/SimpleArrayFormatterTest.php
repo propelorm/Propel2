@@ -18,7 +18,6 @@ use Propel\Runtime\Formatter\SimpleArrayFormatter;
 use Propel\Runtime\Propel;
 use Propel\Runtime\Query\ModelCriteria;
 
-
 class SimpleArrayFormatterTest extends BookstoreEmptyTestBase
 {
     protected function setUp()

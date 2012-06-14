@@ -19,7 +19,6 @@ use Propel\Runtime\Map\DatabaseMap;
 use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Map\Exception\ForeignKeyNotFoundException;
 
-
 /**
  * Test class for TableMap.
  *

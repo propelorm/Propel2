@@ -1,7 +1,7 @@
 <?php
 
 /*
- *	$Id: TimestampableBehaviorTest.php 2035 2010-11-14 17:54:27Z francois $
+ *  $Id: TimestampableBehaviorTest.php 2035 2010-11-14 17:54:27Z francois $
  * This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.

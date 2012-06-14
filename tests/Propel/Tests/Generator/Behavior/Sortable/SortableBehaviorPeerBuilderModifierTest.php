@@ -84,5 +84,4 @@ class SortableBehaviorPeerBuilderModifierTest extends BookstoreSortableTestBase
         }
     }
 
-
 }

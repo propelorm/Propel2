@@ -101,7 +101,7 @@ class Propel
      * @param string $configFile Path (absolute or relative to include_path) to config file.
      * @deprecated Why don't you just include the configuration file?
      */
-    static public function init($configFile)
+    public static function init($configFile)
     {
         $serviceContainer = self::getServiceContainer();
         $serviceContainer->closeConnections();
@@ -113,7 +113,7 @@ class Propel
      *
      * @return \Propel\Runtime\ServiceContainer\ServiceContainerInterface
      */
-    static public function getServiceContainer()
+    public static function getServiceContainer()
     {
         if (null === self::$serviceContainer) {
             self::$serviceContainer = new StandardServiceContainer();
@@ -127,7 +127,7 @@ class Propel
      *
      * @param \Propel\Runtime\ServiceContainer\ServiceContainerInterface
      */
-    static public function setServiceContainer(ServiceContainerInterface $serviceContainer)
+    public static function setServiceContainer(ServiceContainerInterface $serviceContainer)
     {
         self::$serviceContainer = $serviceContainer;
     }
@@ -135,7 +135,7 @@ class Propel
     /**
      * @return string
      */
-    static public function getDefaultDatasource()
+    public static function getDefaultDatasource()
     {
         return self::$serviceContainer->getDefaultDatasource();
     }
@@ -149,7 +149,7 @@ class Propel
      *
      * @return Propel\Runtime\Adapter\AdapterInterface
      */
-    static public function getAdapter($name = null)
+    public static function getAdapter($name = null)
     {
         return self::$serviceContainer->getAdapter($name);
     }
@@ -163,7 +163,7 @@ class Propel
      *
      * @return \Propel\Runtime\Map\DatabaseMap
      */
-    static public function getDatabaseMap($name = null)
+    public static function getDatabaseMap($name = null)
     {
         return self::$serviceContainer->getDatabaseMap($name);
     }
@@ -173,7 +173,7 @@ class Propel
      *
      * @return \Propel\Runtime\Connection\ConnectionManagerInterface
      */
-    static public function getConnectionManager($name)
+    public static function getConnectionManager($name)
     {
         return self::$serviceContainer->getConnectionManager($name);
     }
@@ -184,7 +184,7 @@ class Propel
      * This method frees any database connection handles that have been
      * opened by the getConnection() method.
      */
-    static public function closeConnections()
+    public static function closeConnections()
     {
         return self::$serviceContainer->closeConnections();
     }
@@ -200,7 +200,7 @@ class Propel
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface A database connection
      */
-    static public function getConnection($name = null, $mode = ServiceContainerInterface::CONNECTION_WRITE)
+    public static function getConnection($name = null, $mode = ServiceContainerInterface::CONNECTION_WRITE)
     {
         return self::$serviceContainer->getConnection($name, $mode);
     }
@@ -218,7 +218,7 @@ class Propel
      *
      * @throws PropelException - if connection is not properly configured
      */
-    static public function getWriteConnection($name)
+    public static function getWriteConnection($name)
     {
         return self::$serviceContainer->getWriteConnection($name);
     }
@@ -235,7 +235,7 @@ class Propel
      *
      * @return ConnectionInterface A database connection
      */
-    static public function getReadConnection($name)
+    public static function getReadConnection($name)
     {
         return self::$serviceContainer->getReadConnection($name);
     }
@@ -245,7 +245,7 @@ class Propel
      *
      * @return \Propel\Runtime\Util\Profiler
      */
-    static public function getProfiler()
+    public static function getProfiler()
     {
         return self::$serviceContainer->getProfiler();
     }
@@ -255,7 +255,7 @@ class Propel
      *
      * @return Boolean True if Propel uses logging
      */
-    static public function hasLogger()
+    public static function hasLogger()
     {
         return self::$serviceContainer->hasLogger();
     }
@@ -265,7 +265,7 @@ class Propel
      *
      * @return \Monolog\Logger Configured log class
      */
-    static public function getLogger()
+    public static function getLogger()
     {
         return self::$serviceContainer->getLogger();
     }
@@ -280,7 +280,7 @@ class Propel
      *
      * @return Boolean True if the message was logged successfully or no logger was used.
      */
-    static public function log($message, $level = self::LOG_DEBUG)
+    public static function log($message, $level = self::LOG_DEBUG)
     {
         if (self::$serviceContainer->hasLogger()) {
             $logger = self::$serviceContainer->getLogger();
@@ -311,7 +311,7 @@ class Propel
      * @return Boolean true if the method changed the instance pooling state,
      *                 false if it was already disabled
      */
-    static public function disableInstancePooling()
+    public static function disableInstancePooling()
     {
         if (!self::$isInstancePoolingEnabled) {
             return false;
@@ -327,7 +327,7 @@ class Propel
      * @return Boolean true if the method changed the instance pooling state,
      *                 false if it was already enabled
      */
-    static public function enableInstancePooling()
+    public static function enableInstancePooling()
     {
         if (self::$isInstancePoolingEnabled) {
             return false;
@@ -342,7 +342,7 @@ class Propel
      *
      * @return Boolean Whether the pooling is enabled or not.
      */
-    static public function isInstancePoolingEnabled()
+    public static function isInstancePoolingEnabled()
     {
         return self::$isInstancePoolingEnabled;
     }

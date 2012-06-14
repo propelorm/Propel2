@@ -22,12 +22,12 @@ interface ConnectionInterface
     /**
      * @param string $name The datasource name associated to this connection
      */
-    function setName($name);
+    public function setName($name);
 
     /**
      * @return string The datasource name associated to this connection
      */
-    function getName();
+    public function getName();
 
     /**
      * Turns off autocommit mode.
@@ -40,7 +40,7 @@ interface ConnectionInterface
      *
      * @return Boolean TRUE on success or FALSE on failure.
      */
-    function beginTransaction();
+    public function beginTransaction();
 
     /**
      * Commits a transaction.
@@ -50,7 +50,7 @@ interface ConnectionInterface
      *
      * @return Boolean TRUE on success or FALSE on failure.
      */
-    function commit();
+    public function commit();
 
     /**
      * Rolls back a transaction.
@@ -62,7 +62,7 @@ interface ConnectionInterface
      *
      * @return Boolean TRUE on success or FALSE on failure.
      */
-    function rollBack();
+    public function rollBack();
 
     /**
      * Retrieve a database connection attribute.
@@ -73,7 +73,7 @@ interface ConnectionInterface
      * @return mixed A successful call returns the value of the requested attribute.
      *               An unsuccessful call returns null.
      */
-    function getAttribute($attribute);
+    public function getAttribute($attribute);
 
     /**
      * Set an attribute.
@@ -83,7 +83,7 @@ interface ConnectionInterface
      *
      * @return Boolean TRUE on success or FALSE on failure.
      */
-    function setAttribute($attribute, $value);
+    public function setAttribute($attribute, $value);
 
     /**
      * Execute an SQL statement and return the number of affected rows.
@@ -94,7 +94,7 @@ interface ConnectionInterface
      * @return int The number of rows that were modified or deleted by the SQL
      *               statement you issued. If no rows were affected, returns 0.
      */
-    function exec($statement);
+    public function exec($statement);
 
     /**
      * Prepares a statement for execution and returns a statement object.
@@ -115,7 +115,7 @@ interface ConnectionInterface
      *                                 successfully prepares, FALSE otherwise.
      * @throws \Propel\Runtime\Connection\ConnectionException depending on error handling.
      */
-    function prepare($statement, $driver_options = array());
+    public function prepare($statement, $driver_options = array());
 
     /**
      * Executes an SQL statement, returning a result set as a Statement object.
@@ -127,7 +127,7 @@ interface ConnectionInterface
      *                                 successfully prepares, FALSE otherwise.
      * @throws \Propel\Runtime\Connection\ConnectionException depending on error handling.
      */
-    function query();
+    public function query();
 
     /**
      * Quotes a string for use in a query.
@@ -144,7 +144,7 @@ interface ConnectionInterface
      *                SQL statement. Returns FALSE if the driver does not support
      *                quoting in this way.
      */
-    function quote($string, $parameter_type = 2);
+    public function quote($string, $parameter_type = 2);
 
     /**
      * Returns the ID of the last inserted row or sequence value.
@@ -163,5 +163,5 @@ interface ConnectionInterface
      *                a string representing the last value retrieved from the specified
      *                sequence object.
      */
-    function lastInsertId($name = null);
+    public function lastInsertId($name = null);
 }

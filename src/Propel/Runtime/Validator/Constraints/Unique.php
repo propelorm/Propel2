@@ -11,7 +11,6 @@ namespace Propel\Runtime\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
-
 class Unique extends Constraint
 {
     public $message = 'This value is already stored in your database';

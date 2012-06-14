@@ -254,7 +254,6 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         $this->assertEquals(1, $list->countBookListRels());
     }
 
-
     /**
      * Test behavior of columns that are implicated in multiple foreign keys.
      * @link       http://propel.phpdb.org/trac/ticket/228

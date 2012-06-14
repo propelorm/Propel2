@@ -75,7 +75,7 @@ class MysqlPlatform extends DefaultPlatform
      *
      * @param string $tableEngineKeyword
      */
-    function setTableEngineKeyword($tableEngineKeyword)
+    public function setTableEngineKeyword($tableEngineKeyword)
     {
         $this->tableEngineKeyword = $tableEngineKeyword;
     }
@@ -85,7 +85,7 @@ class MysqlPlatform extends DefaultPlatform
      *
      * @return string
      */
-    function getTableEngineKeyword()
+    public function getTableEngineKeyword()
     {
         return $this->tableEngineKeyword;
     }
@@ -95,7 +95,7 @@ class MysqlPlatform extends DefaultPlatform
      *
      * @param string $defaultTableEngine
      */
-    function setDefaultTableEngine($defaultTableEngine)
+    public function setDefaultTableEngine($defaultTableEngine)
     {
         $this->defaultTableEngine = $defaultTableEngine;
     }
@@ -105,7 +105,7 @@ class MysqlPlatform extends DefaultPlatform
      *
      * @return string
      */
-    function getDefaultTableEngine()
+    public function getDefaultTableEngine()
     {
         return $this->defaultTableEngine;
     }
@@ -593,7 +593,6 @@ ALTER TABLE %s CHANGE %s %s;
 
         return $ret;
     }
-
 
     /**
      * @see Platform::supportsSchemas()

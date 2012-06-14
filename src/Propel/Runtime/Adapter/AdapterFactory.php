@@ -27,7 +27,7 @@ class AdapterFactory
      * @throws \Propel\Runtime\Exception\InvalidArgumentException If the adapter could not be instantiated.
      * @return \Propel\Runtime\Adapter\AdapterInterface           An instance of a Propel database adapter.
      */
-    static public function create($driver)
+    public static function create($driver)
     {
         if (!$driver) {
             $adapterClass = '\Propel\Runtime\Adapter\NoneAdapter';

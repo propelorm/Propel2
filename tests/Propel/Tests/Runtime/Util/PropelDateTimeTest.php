@@ -32,7 +32,6 @@ class PropelDateTimeTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($dt1->format('Y-m-d H:i:s'), $dt1->format('Y-m-d H:i:s'), sprintf($msg, "Dates w/ no timezone resolution were not the same."));
         $this->assertEquals($dt1->getTimeZone()->getName(), $dt2->getTimeZone()->getName(), sprintf($msg, "timezones were not the same."));
 
-
         // We do this last, because a PHP bug will make this true while the dates
         // may not truly be equal.
         // See: http://bugs.php.net/bug.php?id=40743

@@ -81,7 +81,7 @@ class DatabaseComparator
      * @param  Boolean              $caseInsensitive
      * @return DatabaseDiff|Boolean
      */
-    static public function computeDiff(Database $fromDatabase, Database $toDatabase, $caseInsensitive = false)
+    public static function computeDiff(Database $fromDatabase, Database $toDatabase, $caseInsensitive = false)
     {
         $dc = new self();
         $dc->setFromDatabase($fromDatabase);

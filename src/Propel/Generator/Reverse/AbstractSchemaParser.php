@@ -112,7 +112,6 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
         return $this->migrationTable;
     }
 
-
     /**
      * Pushes a message onto the stack of warnings.
      *

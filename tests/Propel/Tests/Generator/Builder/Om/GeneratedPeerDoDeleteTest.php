@@ -281,7 +281,6 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
 
     }
 
-
     /**
      * Test the doDeleteAll() method for single table.
      */

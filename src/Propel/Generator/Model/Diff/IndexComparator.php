@@ -27,7 +27,7 @@ class IndexComparator
      * @param  Boolean $caseInsensitive
      * @return Boolean
      */
-    static public function computeDiff(Index $fromIndex, Index $toIndex, $caseInsensitive = false)
+    public static function computeDiff(Index $fromIndex, Index $toIndex, $caseInsensitive = false)
     {
         // Check for removed index columns in $toIndex
         $fromIndexColumns = $fromIndex->getColumns();

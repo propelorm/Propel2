@@ -10,7 +10,6 @@
 
 namespace Propel\Generator\Model;
 
-
 /**
  * Object to hold vendor specific information.
  *

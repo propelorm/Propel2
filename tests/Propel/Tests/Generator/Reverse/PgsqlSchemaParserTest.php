@@ -18,7 +18,6 @@ use Propel\Generator\Reverse\PgsqlSchemaParser;
 use Propel\Runtime\Propel;
 use Propel\Tests\TestCase;
 
-
 /**
  * Tests for Pgsql database schema parser.
  *

@@ -81,7 +81,7 @@ class QuickBuilder
         return $this->config;
     }
 
-    static public function buildSchema($schema, $dsn = null, $user = null, $pass = null, $adapter = null)
+    public static function buildSchema($schema, $dsn = null, $user = null, $pass = null, $adapter = null)
     {
         $builder = new self;
         $builder->setSchema($schema);
@@ -213,7 +213,7 @@ class QuickBuilder
         return $script;
     }
 
-    static public function debugClassesForTable($schema, $tableName)
+    public static function debugClassesForTable($schema, $tableName)
     {
         $builder = new self;
         $builder->setSchema($schema);

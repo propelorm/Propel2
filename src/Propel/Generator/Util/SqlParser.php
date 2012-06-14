@@ -55,7 +55,7 @@ class SqlParser
      *
      * @return integer the number of executed statements
      */
-    static public function executeString($input, $connection)
+    public static function executeString($input, $connection)
     {
         return self::executeStatements(self::parseString($input), $connection);
     }
@@ -69,7 +69,7 @@ class SqlParser
      *
      * @return integer the number of executed statements
      */
-    static public function executeFile($file, $connection)
+    public static function executeFile($file, $connection)
     {
         return self::executeStatements(self::parseFile($file), $connection);
     }
@@ -121,7 +121,7 @@ class SqlParser
      *
      * @return array A list of SQL statement strings
      */
-    static public function parseString($input)
+    public static function parseString($input)
     {
         $parser = new self();
         $parser->setSQL($input);
@@ -150,7 +150,7 @@ class SqlParser
      *
      * @return array A list of SQL statement strings
      */
-    static public function parseFile($file)
+    public static function parseFile($file)
     {
         if (!file_exists($file)) {
             return array();

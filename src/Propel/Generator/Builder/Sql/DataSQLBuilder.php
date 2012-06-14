@@ -26,7 +26,7 @@ abstract class DataSQLBuilder extends DataModelBuilder
      *
      * This can be used, for example, to clear any stored start/end SQL.
      */
-    static public function reset()
+    public static function reset()
     {
         // does nothing by default
     }
@@ -36,7 +36,7 @@ abstract class DataSQLBuilder extends DataModelBuilder
      *
      * @return string
      */
-    static public function getDatabaseStartSql()
+    public static function getDatabaseStartSql()
     {
         return '';
     }
@@ -46,7 +46,7 @@ abstract class DataSQLBuilder extends DataModelBuilder
      *
      * @return string
      */
-    static public function getDatabaseEndSql()
+    public static function getDatabaseEndSql()
     {
         return '';
     }

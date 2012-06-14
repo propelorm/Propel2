@@ -10,7 +10,6 @@
 
 namespace Propel\Runtime\Connection;
 
-
 /**
  * Statement class with profiling abilities.
  */
@@ -53,7 +52,6 @@ class ProfilerStatementWrapper extends StatementWrapper
 
         return parent::bindValue($pos, $value, $type);
     }
-
 
     /**
      * Executes a prepared statement.  Returns a boolean value indicating success.
