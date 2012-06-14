@@ -51,7 +51,7 @@ If you don't have an available `composer.phar` command, just download it:
 
 If you haven't wget on your computer, use `curl` instead:
 
-    curl -s http://getcomposer.org/install | php
+    curl -s http://getcomposer.org/installer | php
 
 Then, install dependencies:
 
