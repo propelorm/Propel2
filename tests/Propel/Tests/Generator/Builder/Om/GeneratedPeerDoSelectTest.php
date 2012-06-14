@@ -244,7 +244,6 @@ class GeneratedPeerDoSelectTest extends BookstoreEmptyTestBase
             }
         }
 
-
         // 5) test creating a new object, saving it, and then retrieving that object (should all be same instance)
         $b = new BookstoreEmployee();
         $b->setName("Testing");
@@ -454,7 +453,6 @@ class GeneratedPeerDoSelectTest extends BookstoreEmptyTestBase
         $entry->setCustomerId($cmr2Id);
         $entry->save();
         */
-
 
         $c = new Criteria();
         $c->addJoin(array(BookstoreContestEntryPeer::BOOKSTORE_ID, BookstoreContestEntryPeer::CONTEST_ID), array(BookstoreContestPeer::BOOKSTORE_ID, BookstoreContestPeer::CONTEST_ID) );

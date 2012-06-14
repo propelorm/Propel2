@@ -291,7 +291,7 @@ class ModelCriterion extends Criterion
      * taken from http://www.php.net/manual/en/function.str-replace.php
      *
      */
-    static protected function strReplaceOnce($search, $replace, $subject)
+    protected static function strReplaceOnce($search, $replace, $subject)
     {
         $firstChar = strpos($subject, $search);
         if (false !== $firstChar) {

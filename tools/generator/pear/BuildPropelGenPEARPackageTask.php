@@ -108,7 +108,7 @@ class BuildPropelGenPEARPackageTask extends MatchingTask
 
     /**
      * Main entry point.
-     * @return     void
+     * @return void
      */
     public function main()
     {
@@ -187,7 +187,7 @@ class BuildPropelGenPEARPackageTask extends MatchingTask
 
     /**
      * Used by the PEAR_PackageFileManager_PhingFileSet lister.
-     * @return     array FileSet[]
+     * @return array FileSet[]
      */
     public function getFileSets()
     {
@@ -201,18 +201,19 @@ class BuildPropelGenPEARPackageTask extends MatchingTask
     /**
      * Nested creator, creates a FileSet for this task
      *
-     * @return     FileSet The created fileset object
+     * @return FileSet The created fileset object
      */
-    function createFileSet()
+    public function createFileSet()
     {
         $num = array_push($this->filesets, new FileSet());
+
         return $this->filesets[$num-1];
     }
 
     /**
      * Set the version we are building.
-     * @param      string $v
-     * @return     void
+     * @param  string $v
+     * @return void
      */
     public function setVersion($v)
     {
@@ -221,8 +222,8 @@ class BuildPropelGenPEARPackageTask extends MatchingTask
 
     /**
      * Set the state we are building.
-     * @param      string $v
-     * @return     void
+     * @param  string $v
+     * @return void
      */
     public function setState($v)
     {
@@ -231,8 +232,8 @@ class BuildPropelGenPEARPackageTask extends MatchingTask
 
     /**
      * Sets release notes field.
-     * @param      string $v
-     * @return     void
+     * @param  string $v
+     * @return void
      */
     public function setNotes($v)
     {
@@ -240,8 +241,8 @@ class BuildPropelGenPEARPackageTask extends MatchingTask
     }
     /**
      * Sets "dir" property from XML.
-     * @param      PhingFile $f
-     * @return     void
+     * @param  PhingFile $f
+     * @return void
      */
     public function setDir(PhingFile $f)
     {

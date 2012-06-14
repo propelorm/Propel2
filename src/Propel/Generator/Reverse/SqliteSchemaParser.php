@@ -107,7 +107,6 @@ class SqliteSchemaParser extends AbstractSchemaParser
         return count($tables);
     }
 
-
     /**
      * Adds Columns to the specified table.
      *

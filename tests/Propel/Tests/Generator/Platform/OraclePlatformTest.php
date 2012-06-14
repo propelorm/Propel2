@@ -590,5 +590,4 @@ EOF;
         $this->assertEquals($expected, $this->getPlatform()->getAddTablesDDL($database));
     }
 
-
 }

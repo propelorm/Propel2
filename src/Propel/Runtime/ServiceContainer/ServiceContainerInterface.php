@@ -40,7 +40,7 @@ interface ServiceContainerInterface
     /**
      * @return string
      */
-    function getDefaultDatasource();
+    public function getDefaultDatasource();
 
     /**
      * Get the adapter for a given datasource.
@@ -51,7 +51,7 @@ interface ServiceContainerInterface
      *
      * @return Propel\Runtime\Adapter\AdapterInterface
      */
-    function getAdapter($name = null);
+    public function getAdapter($name = null);
 
     /**
      * Get the database map for a given datasource.
@@ -62,14 +62,14 @@ interface ServiceContainerInterface
      *
      * @return \Propel\Runtime\Map\DatabaseMap
      */
-    function getDatabaseMap($name = null);
+    public function getDatabaseMap($name = null);
 
     /**
      * @param string $name The datasource name
      *
      * @return \Propel\Runtime\Connection\ConnectionManagerInterface
      */
-    function getConnectionManager($name);
+    public function getConnectionManager($name);
 
     /**
      * Close any associated resource handles.
@@ -77,7 +77,7 @@ interface ServiceContainerInterface
      * This method frees any database connection handles that have been
      * opened by the getConnection() method.
      */
-    function closeConnections();
+    public function closeConnections();
 
     /**
      * Get a connection for a given datasource.
@@ -90,7 +90,7 @@ interface ServiceContainerInterface
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface A database connection
      */
-    function getConnection($name = null, $mode = self::CONNECTION_WRITE);
+    public function getConnection($name = null, $mode = self::CONNECTION_WRITE);
 
     /**
      * Get a write connection for a given datasource.
@@ -105,7 +105,7 @@ interface ServiceContainerInterface
      *
      * @throws \Propel\Runtime\Adapter\Exception\AdapterException - if connection is not properly configured
      */
-    function getWriteConnection($name);
+    public function getWriteConnection($name);
 
     /**
      * Get a read connection for a given datasource.
@@ -119,26 +119,26 @@ interface ServiceContainerInterface
      *
      * @return ConnectionInterface A database connection
      */
-    function getReadConnection($name);
+    public function getReadConnection($name);
 
     /**
      * Get a profiler instance.
      *
      * @return \Propel\Runtime\Util\Profiler.
      */
-    function getProfiler();
+    public function getProfiler();
 
     /**
      * Check if a logger is available for a given datasource.
      *
      * @return Boolean
      */
-    function hasLogger($name = 'defaultLogger');
+    public function hasLogger($name = 'defaultLogger');
 
     /**
      * Get a logger for a given datasource, or the default logger.
      *
      * @return \Monolog\Logger
      */
-    function getLogger($name = 'defaultLogger');
+    public function getLogger($name = 'defaultLogger');
 }

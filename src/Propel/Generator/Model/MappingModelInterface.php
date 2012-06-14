@@ -22,5 +22,5 @@ interface MappingModelInterface
      *
      * @param array $attributes
      */
-    function loadMapping(array $attributes);
+    public function loadMapping(array $attributes);
 }

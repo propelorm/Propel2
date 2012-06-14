@@ -209,7 +209,7 @@ class PropelTypes
      * @param  string $mappingType
      * @return string
      */
-    static public function getPhpNative($mappingType)
+    public static function getPhpNative($mappingType)
     {
         return self::$mappingToPHPNativeMap[$mappingType];
     }
@@ -219,7 +219,7 @@ class PropelTypes
      *
      * @return integer
      */
-    static public function getPDOType($type)
+    public static function getPDOType($type)
     {
         return self::$mappingTypeToPDOTypeMap[$type];
     }
@@ -229,7 +229,7 @@ class PropelTypes
      *
      * @return string
      */
-    static public function getPdoTypeString($type)
+    public static function getPdoTypeString($type)
     {
         return self::$pdoTypeNames[self::$mappingTypeToPDOTypeMap[$type]];
     }
@@ -239,7 +239,7 @@ class PropelTypes
      *
      * @return array
      */
-    static public function getPropelTypes()
+    public static function getPropelTypes()
     {
         return self::$mappingTypes;
     }
@@ -250,7 +250,7 @@ class PropelTypes
      * @param  string  $mappingType
      * @return Boolean
      */
-    static public function isTemporalType($type)
+    public static function isTemporalType($type)
     {
         return in_array($type, array(
             self::DATE,
@@ -267,7 +267,7 @@ class PropelTypes
      * @param  string  $mappingType
      * @return Boolean
      */
-    static public function isTextType($mappingType)
+    public static function isTextType($mappingType)
     {
         return in_array($mappingType, array(
             self::CHAR,
@@ -288,7 +288,7 @@ class PropelTypes
      * @param  string  $mappingType
      * @return Boolean
      */
-    static public function isNumericType($mappingType)
+    public static function isNumericType($mappingType)
     {
         return in_array($mappingType, array(
             self::SMALLINT,
@@ -309,7 +309,7 @@ class PropelTypes
      * @param  string  $mappingType
      * @return Boolean
      */
-    static public function isBooleanType($mappingType)
+    public static function isBooleanType($mappingType)
     {
         return in_array($mappingType, array(
             self::BOOLEAN,
@@ -323,7 +323,7 @@ class PropelTypes
      * @param  string  $mappingType
      * @return Boolean
      */
-    static public function isLobType($mappingType)
+    public static function isLobType($mappingType)
     {
         return in_array($mappingType, array(
             self::VARBINARY,
@@ -338,7 +338,7 @@ class PropelTypes
      * @param  string  $phpType
      * @return Boolean
      */
-    static public function isPhpPrimitiveType($phpType)
+    public static function isPhpPrimitiveType($phpType)
     {
         return in_array($phpType, array('boolean', 'int', 'double', 'float', 'string'));
     }
@@ -349,7 +349,7 @@ class PropelTypes
      * @param  string  $phpType
      * @return Boolean
      */
-    static public function isPhpPrimitiveNumericType($phpType)
+    public static function isPhpPrimitiveNumericType($phpType)
     {
         return in_array($phpType, array('boolean', 'int', 'double', 'float'));
     }
@@ -360,7 +360,7 @@ class PropelTypes
      * @param  string  $phpType
      * @return Boolean
      */
-    static public function isPhpObjectType($phpType)
+    public static function isPhpObjectType($phpType)
     {
         return !self::isPhpPrimitiveType($phpType) && !in_array($phpType, array('resource', 'array'));
     }

@@ -234,5 +234,4 @@ EOF;
         $this->assertEquals($this->book, $book);
     }
 
-
 }

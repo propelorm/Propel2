@@ -118,7 +118,7 @@ $1{";
      * @param  string $code The input code
      * @return string The input code, without comments
      */
-    static public function stripComments($code)
+    public static function stripComments($code)
     {
         $output  = '';
         $commentTokens = array(T_COMMENT, T_DOC_COMMENT);

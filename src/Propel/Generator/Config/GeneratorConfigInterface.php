@@ -22,14 +22,14 @@ interface GeneratorConfigInterface
      * @param  string           $type
      * @return DataModelBuilder
      */
-    function getConfiguredBuilder(Table $table, $type);
+    public function getConfiguredBuilder(Table $table, $type);
 
     /**
      * Returns a configured Pluralizer class.
      *
      * @return PluralizerInterface
      */
-    function getConfiguredPluralizer();
+    public function getConfiguredPluralizer();
 
     /**
      * Returns a specific propel (renamed) property from the build.
@@ -37,7 +37,7 @@ interface GeneratorConfigInterface
      * @param  string $name
      * @return mixed
      */
-    function getBuildProperty($name);
+    public function getBuildProperty($name);
 
     /**
      * Sets a specific propel (renamed) property from the build.
@@ -45,7 +45,7 @@ interface GeneratorConfigInterface
      * @param string $name
      * @param mixed  $value
      */
-    function setBuildProperty($name, $value);
+    public function setBuildProperty($name, $value);
 
     /**
      * Creates and configures a new Platform class.
@@ -53,5 +53,5 @@ interface GeneratorConfigInterface
      * @param  \PDO              $con
      * @return PlatformInterface
      */
-    function getConfiguredPlatform(\PDO $con = null, $database = null);
+    public function getConfiguredPlatform(\PDO $con = null, $database = null);
 }

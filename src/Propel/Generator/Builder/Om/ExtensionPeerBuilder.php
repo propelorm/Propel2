@@ -92,5 +92,4 @@ class ".$this->getUnqualifiedClassName()." extends $baseClassName {
         $this->applyBehaviorModifier('extensionPeerFilter', $script, "");
     }
 
-
 } // ExtensionPeerBuilder

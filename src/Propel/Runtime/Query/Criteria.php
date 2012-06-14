@@ -970,7 +970,6 @@ class Criteria implements \IteratorAggregate
         return $this;
     }
 
-
     /**
      * Get the array of Joins.
      * @return array Join[]

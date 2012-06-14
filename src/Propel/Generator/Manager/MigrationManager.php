@@ -266,7 +266,7 @@ class MigrationManager extends AbstractManager
         return $this->getOldestDatabaseVersion();
     }
 
-    static public function getMigrationClassName($timestamp)
+    public static function getMigrationClassName($timestamp)
     {
         return sprintf('PropelMigration_%d', $timestamp);
     }
@@ -348,12 +348,12 @@ EOP;
         return $migrationClassBody;
     }
 
-    static public function getMigrationFileName($timestamp)
+    public static function getMigrationFileName($timestamp)
     {
         return sprintf('%s.php', self::getMigrationClassName($timestamp));
     }
 
-    static public function getUser()
+    public static function getUser()
     {
         if (function_exists('posix_getuid')) {
             $currentUser = posix_getpwuid(posix_getuid());

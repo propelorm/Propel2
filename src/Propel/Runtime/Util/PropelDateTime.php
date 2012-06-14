@@ -69,7 +69,7 @@ class PropelDateTime extends \DateTime
      *
      * @return mixed null, or an instance of $dateTimeClass
      */
-    static public function newInstance($value, DateTimeZone $timeZone = null, $dateTimeClass = 'DateTime')
+    public static function newInstance($value, DateTimeZone $timeZone = null, $dateTimeClass = 'DateTime')
     {
         if ($value instanceof \DateTime) {
             return $value;
@@ -106,7 +106,7 @@ class PropelDateTime extends \DateTime
      * of class that should be serialized.
      * @return array string[]
      */
-    function __sleep()
+    public function __sleep()
     {
         // We need to use a string without a time zone, due to
         // PHP bug: http://bugs.php.net/bug.php?id=40743
@@ -120,7 +120,7 @@ class PropelDateTime extends \DateTime
      * PHP "magic" function called when object is restored from serialized state.
      * Calls DateTime constructor with previously stored string value of date.
      */
-    function __wakeup()
+    public function __wakeup()
     {
         // @TODO I don't think we can call the constructor from within this method
         parent::__construct($this->dateString, new \DateTimeZone($this->tzString));

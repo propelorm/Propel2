@@ -488,7 +488,6 @@ class TableMap
         return $this->addColumn($columnName, $phpName, $type, $isNotNull, $size, $defaultValue, true, $fkTable, $fkColumn);
     }
 
-
     /**
      * @return Boolean true if the table is a many to many
      */

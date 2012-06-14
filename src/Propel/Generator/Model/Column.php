@@ -30,7 +30,7 @@ class Column extends MappingModel
     const DEFAULT_TYPE       = 'VARCHAR';
     const DEFAULT_VISIBILITY = 'public';
 
-    static public $validVisibilities = array('public', 'protected', 'private');
+    public static $validVisibilities = array('public', 'protected', 'private');
 
     private $name;
     private $description;
@@ -1420,7 +1420,7 @@ class Column extends MappingModel
      * @param  string $namePrefix
      * @return string
      */
-    static public function generatePhpName($name, $phpNamingMethod = PhpNameGenerator::CONV_METHOD_CLEAN, $namePrefix = null)
+    public static function generatePhpName($name, $phpNamingMethod = PhpNameGenerator::CONV_METHOD_CLEAN, $namePrefix = null)
     {
         return NameFactory::generateName(NameFactory::PHP_GENERATOR, array($name, $phpNamingMethod, $namePrefix));
     }

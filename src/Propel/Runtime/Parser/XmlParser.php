@@ -88,7 +88,6 @@ class XmlParser extends AbstractParser
         return $this->listFromArray($array, $rootElementName, $charset);
     }
 
-
     /**
       * @param  array $array
      * @param DOMElement $rootElement

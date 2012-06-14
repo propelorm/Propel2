@@ -18,7 +18,6 @@ use Propel\Tests\Bookstore\Behavior\ValidatePublisher;
 use Propel\Tests\Bookstore\Behavior\ValidateReader;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
-
 /**
  * Tests for ValidateBehavior class
  *
@@ -31,7 +30,6 @@ class ValidateBehaviorTest extends BookstoreTestBase
      *                 This classes are created by test:prepare command
      */
     private $classes;
-
 
     public function assertPreConditions()
     {

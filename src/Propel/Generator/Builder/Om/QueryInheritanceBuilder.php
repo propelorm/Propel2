@@ -190,7 +190,7 @@ class "  .$this->getUnqualifiedClassName() . " extends " . $baseClassName . " {
      *
      * @return " . $classname . "
      */
-    static public function create(\$modelAlias = null, \$criteria = null)
+    public static function create(\$modelAlias = null, \$criteria = null)
     {
         if (\$criteria instanceof " . $classname . ") {
             return \$criteria;

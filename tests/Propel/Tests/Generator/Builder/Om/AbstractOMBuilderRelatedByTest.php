@@ -10,7 +10,6 @@
 
 namespace Propel\Tests\Generator\Builder\Om;
 
-
 use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Builder\Om\AbstractOMBuilder;
 use Propel\Generator\Builder\Util\SchemaReader;

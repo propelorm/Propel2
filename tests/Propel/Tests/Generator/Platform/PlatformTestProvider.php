@@ -183,7 +183,6 @@ EOF;
         return array(array($schema));
     }
 
-
     public function providerForTestGetUniqueDDL()
     {
         $table = new Table('foo');

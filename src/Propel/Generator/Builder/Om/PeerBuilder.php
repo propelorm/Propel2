@@ -424,7 +424,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      * @return array A list of field names
      */
 
-    static public function getFieldNames(\$type = BasePeer::TYPE_PHPNAME)
+    public static function getFieldNames(\$type = BasePeer::TYPE_PHPNAME)
     {
         if (!array_key_exists(\$type, self::\$fieldNames)) {
             throw new PropelException('Method getFieldNames() expects the parameter \$type to be one of the class constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME, BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM. ' . \$type . ' was given.');
@@ -449,7 +449,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      * @return string          translated name of the field.
      * @throws PropelException - if the specified name could not be found in the fieldname mappings.
      */
-    static public function translateFieldName(\$name, \$fromType, \$toType)
+    public static function translateFieldName(\$name, \$fromType, \$toType)
     {
         \$toNames = self::getFieldNames(\$toType);
         \$key = isset(self::\$fieldKeys[\$fromType][\$name]) ? self::\$fieldKeys[\$fromType][\$name] : null;
@@ -473,7 +473,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      * Gets the list of values for all ENUM columns
      * @return array
      */
-    static public function getValueSets()
+    public static function getValueSets()
     {
       return static::\$enumValueSets;
     }
@@ -491,7 +491,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      * Gets the list of values for an ENUM column
      * @return array list of possible values for the column
      */
-    static public function getValueSet(\$colname)
+    public static function getValueSet(\$colname)
     {
         \$valueSets = self::getValueSets();
 
@@ -511,7 +511,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
     /**
      * Add a TableMap instance to the database for this peer class.
      */
-    static public function buildTableMap()
+    public static function buildTableMap()
     {
       \$dbMap = Propel::getServiceContainer()->getDatabaseMap(static::DATABASE_NAME);
       if (!\$dbMap->hasTable(static::TABLE_NAME)) {
@@ -578,7 +578,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      * @param      string \$column The column name for current table. (i.e. ".$this->getPeerClassName(true)."::COLUMN_NAME).
      * @return string
      */
-    static public function alias(\$alias, \$column)
+    public static function alias(\$alias, \$column)
     {
         return str_replace(static::TABLE_NAME.'.', \$alias.'.', \$column);
     }
@@ -604,7 +604,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      * @throws PropelException Any exceptions caught during processing will be
      *         rethrown wrapped into a PropelException.
      */
-    static public function addSelectColumns(Criteria \$criteria, \$alias = null)
+    public static function addSelectColumns(Criteria \$criteria, \$alias = null)
     {
         if (null === \$alias) {";
         foreach ($this->getTable()->getColumns() as $col) {
@@ -643,7 +643,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      * @param      ConnectionInterface \$con
      * @return int Number of matching rows.
      */
-    static public function doCount(Criteria \$criteria, \$distinct = false, ConnectionInterface \$con = null)
+    public static function doCount(Criteria \$criteria, \$distinct = false, ConnectionInterface \$con = null)
     {
         // we may modify criteria, so copy it first
         \$criteria = clone \$criteria;
@@ -702,7 +702,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      * @throws PropelException Any exceptions caught during processing will be
      *         rethrown wrapped into a PropelException.
      */
-    static public function doSelectOne(Criteria \$criteria, ConnectionInterface \$con = null)
+    public static function doSelectOne(Criteria \$criteria, ConnectionInterface \$con = null)
     {
         \$critcopy = clone \$criteria;
         \$critcopy->setLimit(1);
@@ -731,7 +731,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      * @throws PropelException Any exceptions caught during processing will be
      *         rethrown wrapped into a PropelException.
      */
-    static public function doSelect(Criteria \$criteria, ConnectionInterface \$con = null)
+    public static function doSelect(Criteria \$criteria, ConnectionInterface \$con = null)
     {
         return static::populateObjects(static::doSelectStmt(\$criteria, \$con));
     }";
@@ -757,7 +757,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      * @return StatementInterface The executed Statement object.
      * @see        ".$this->basePeerClassName."::doSelect()
      */
-    static public function doSelectStmt(Criteria \$criteria, ConnectionInterface \$con = null)
+    public static function doSelectStmt(Criteria \$criteria, ConnectionInterface \$con = null)
     {
         if (null === \$con) {
             \$con = Propel::getServiceContainer()->getReadConnection(static::DATABASE_NAME);
@@ -823,7 +823,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      * @param      ".$this->getObjectClassName()." \$value A ".$this->getObjectClassName()." object.
      * @param      string \$key (optional) key to use for instance map (for performance boost if key was already calculated externally).
      */
-    static public function addInstanceToPool(\$obj, \$key = null)
+    public static function addInstanceToPool(\$obj, \$key = null)
     {
         if (Propel::isInstancePoolingEnabled()) {
             if (null === \$key) {";
@@ -862,7 +862,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      *
      * @param      mixed \$value A ".$this->getObjectClassName()." object or a primary key value.
      */
-    static public function removeInstanceFromPool(\$value)
+    public static function removeInstanceFromPool(\$value)
     {";
         $script .= "
         if (Propel::isInstancePoolingEnabled() && null !== \$value) {";
@@ -916,7 +916,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      *
      * @return void
      */
-    static public function clearInstancePool()
+    public static function clearInstancePool()
     {
         self::\$instances = array();
     }
@@ -935,7 +935,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      * Method to invalidate the instance pool of all tables related to " . $table->getName() . "
      * by a foreign key with ON DELETE CASCADE
      */
-    static public function clearRelatedInstancePool()
+    public static function clearRelatedInstancePool()
     {";
         // Handle ON DELETE CASCADE for updating instance pool
         foreach ($table->getReferrers() as $fk) {
@@ -981,7 +981,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      * @return   ".$this->getObjectClassName()." Found object or NULL if 1) no instance exists for specified key or 2) instance pooling has been disabled.
      * @see getPrimaryKeyHash()
      */
-    static public function getInstanceFromPool(\$key)
+    public static function getInstanceFromPool(\$key)
     {
         if (Propel::isInstancePoolingEnabled()) {
             if (isset(self::\$instances[\$key])) {
@@ -1011,7 +1011,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      * @param      int \$startcol The 0-based offset for reading from the resultset row.
      * @return string A string version of PK or NULL if the components of primary key in result array are all null.
      */
-    static public function getPrimaryKeyHashFromRow(\$row, \$startcol = 0)
+    public static function getPrimaryKeyHashFromRow(\$row, \$startcol = 0)
     {";
 
         // We have to iterate through all the columns so that we know the offset of the primary
@@ -1057,7 +1057,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      * @param      int \$startcol The 0-based offset for reading from the resultset row.
      * @return mixed The primary key of the row
      */
-    static public function getPrimaryKeyFromRow(\$row, \$startcol = 0)
+    public static function getPrimaryKeyFromRow(\$row, \$startcol = 0)
     {";
 
         // We have to iterate through all the columns so that we
@@ -1107,7 +1107,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      * @throws PropelException Any exceptions caught during processing will be
      *         rethrown wrapped into a PropelException.
      */
-    static public function populateObjects(StatementInterface \$stmt)
+    public static function populateObjects(StatementInterface \$stmt)
     {
         \$results = array();
     ";
@@ -1171,7 +1171,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      *         rethrown wrapped into a PropelException.
      * @return array (" . $this->getObjectClassName(). " object, last column rank)
      */
-    static public function populateObject(\$row, \$startcol = 0)
+    public static function populateObject(\$row, \$startcol = 0)
     {
         \$key = static::getPrimaryKeyHashFromRow(\$row, \$startcol);
         if (null !== (\$obj = static::getInstanceFromPool(\$key))) {
@@ -1225,7 +1225,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      * @throws PropelException Any exceptions caught during processing will be
      *         rethrown wrapped into a PropelException.
      */
-    static public function getOMClass(\$row, \$colnum, \$withPrefix = true)
+    public static function getOMClass(\$row, \$colnum, \$withPrefix = true)
     {
         try {
 ";
@@ -1287,7 +1287,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      * @param      boolean \$withPrefix Whether or not to return the path with the class name
      * @return string path.to.ClassName
      */
-    static public function getOMClass(\$withPrefix = true)
+    public static function getOMClass(\$withPrefix = true)
     {
         return \$withPrefix ? static::CLASS_DEFAULT : static::OM_CLASS;
     }
@@ -1307,7 +1307,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      * This method must be overridden by the stub subclass, because
      * ".$this->getObjectClassName()." is declared abstract in the schema.
      */
-    abstract static public function getOMClass(\$withPrefix = true);
+    abstract public static function getOMClass(\$withPrefix = true);
 ";
     }
 
@@ -1328,7 +1328,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      * @throws PropelException Any exceptions caught during processing will be
      *         rethrown wrapped into a PropelException.
      */
-    static public function doInsert(\$values, ConnectionInterface \$con = null)
+    public static function doInsert(\$values, ConnectionInterface \$con = null)
     {
         if (null === \$con) {
             \$con = Propel::getServiceContainer()->getWriteConnection(static::DATABASE_NAME);
@@ -1410,7 +1410,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      * @throws PropelException Any exceptions caught during processing will be
      *         rethrown wrapped into a PropelException.
      */
-    static public function doUpdate(\$values, ConnectionInterface \$con = null)
+    public static function doUpdate(\$values, ConnectionInterface \$con = null)
     {
         if (null === \$con) {
             \$con = Propel::getServiceContainer()->getWriteConnection(static::DATABASE_NAME);
@@ -1463,7 +1463,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      * @param      ConnectionInterface \$con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).
      */
-    static public function doDeleteAll(ConnectionInterface \$con = null)
+    public static function doDeleteAll(ConnectionInterface \$con = null)
     {
         if (null === \$con) {
             \$con = Propel::getServiceContainer()->getWriteConnection(static::DATABASE_NAME);
@@ -1963,7 +1963,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      * @throws PropelException Any exceptions caught during processing will be
      *         rethrown wrapped into a PropelException.
      */
-    static public function getTableMap()
+    public static function getTableMap()
     {
         return Propel::getServiceContainer()->getDatabaseMap(self::DATABASE_NAME)->getTable(self::TABLE_NAME);
     }
@@ -2103,7 +2103,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      * @throws PropelException Any exceptions caught during processing will be
      *         rethrown wrapped into a PropelException.
      */
-    static public function doSelectJoin".$thisTableObjectBuilder->getFKPhpNameAffix($fk, false)."(Criteria \$criteria, \$con = null, \$joinBehavior = $joinBehavior)
+    public static function doSelectJoin".$thisTableObjectBuilder->getFKPhpNameAffix($fk, false)."(Criteria \$criteria, \$con = null, \$joinBehavior = $joinBehavior)
     {
         \$criteria = clone \$criteria;
 
@@ -2233,7 +2233,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      * @param      String    \$joinBehavior the type of joins to use, defaults to $joinBehavior
      * @return int Number of matching rows.
      */
-    static public function doCountJoin".$thisTableObjectBuilder->getFKPhpNameAffix($fk, false)."(Criteria \$criteria, \$distinct = false, ConnectionInterface \$con = null, \$joinBehavior = $joinBehavior)
+    public static function doCountJoin".$thisTableObjectBuilder->getFKPhpNameAffix($fk, false)."(Criteria \$criteria, \$distinct = false, ConnectionInterface \$con = null, \$joinBehavior = $joinBehavior)
     {
         // we're going to modify criteria, so copy it first
         \$criteria = clone \$criteria;
@@ -2306,7 +2306,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      * @throws PropelException Any exceptions caught during processing will be
      *         rethrown wrapped into a PropelException.
      */
-    static public function doSelectJoinAll(Criteria \$criteria, \$con = null, \$joinBehavior = $joinBehavior)
+    public static function doSelectJoinAll(Criteria \$criteria, \$con = null, \$joinBehavior = $joinBehavior)
     {
         \$criteria = clone \$criteria;
 
@@ -2472,7 +2472,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      * @param      String    \$joinBehavior the type of joins to use, defaults to $joinBehavior
      * @return int Number of matching rows.
      */
-    static public function doCountJoinAll(Criteria \$criteria, \$distinct = false, ConnectionInterface \$con = null, \$joinBehavior = $joinBehavior)
+    public static function doCountJoinAll(Criteria \$criteria, \$distinct = false, ConnectionInterface \$con = null, \$joinBehavior = $joinBehavior)
     {
         // we're going to modify criteria, so copy it first
         \$criteria = clone \$criteria;
@@ -2564,7 +2564,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      * @throws PropelException Any exceptions caught during processing will be
      *         rethrown wrapped into a PropelException.
      */
-    static public function doSelectJoinAllExcept".$thisTableObjectBuilder->getFKPhpNameAffix($fk, false)."(Criteria \$criteria, \$con = null, \$joinBehavior = $joinBehavior)
+    public static function doSelectJoinAllExcept".$thisTableObjectBuilder->getFKPhpNameAffix($fk, false)."(Criteria \$criteria, \$con = null, \$joinBehavior = $joinBehavior)
     {
         \$criteria = clone \$criteria;
 
@@ -2743,7 +2743,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      * @param      String    \$joinBehavior the type of joins to use, defaults to $joinBehavior
      * @return int Number of matching rows.
      */
-    static public function doCountJoinAllExcept".$thisTableObjectBuilder->getFKPhpNameAffix($fk, false)."(Criteria \$criteria, \$distinct = false, ConnectionInterface \$con = null, \$joinBehavior = $joinBehavior)
+    public static function doCountJoinAllExcept".$thisTableObjectBuilder->getFKPhpNameAffix($fk, false)."(Criteria \$criteria, \$distinct = false, ConnectionInterface \$con = null, \$joinBehavior = $joinBehavior)
     {
         // we're going to modify criteria, so copy it first
         \$criteria = clone \$criteria;

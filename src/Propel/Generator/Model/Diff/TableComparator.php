@@ -79,7 +79,7 @@ class TableComparator
      * @param  Boolean           $caseInsensitive
      * @return TableDiff|Boolean
      */
-    static public function computeDiff(Table $fromTable, Table $toTable, $caseInsensitive = false)
+    public static function computeDiff(Table $fromTable, Table $toTable, $caseInsensitive = false)
     {
         $tc = new self();
         $tc->setFromTable($fromTable);
