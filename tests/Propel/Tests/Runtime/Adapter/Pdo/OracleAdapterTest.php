@@ -81,5 +81,4 @@ class OracleAdapterTest extends BookstoreTestBase
         $this->assertEquals(array('book'), $fromClause, 'createSelectSqlPart() adds the tables from the select columns to the from clause');
     }
 
-
 }

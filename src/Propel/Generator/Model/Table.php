@@ -130,7 +130,6 @@ class Table extends ScopedMappingModel implements IdMethod
         $this->idMethod = $this->getAttribute('idMethod', $this->database->getDefaultIdMethod());
         $this->allowPkInsert = $this->booleanValue($this->getAttribute('allowPkInsert'));
 
-
         $this->skipSql = $this->booleanValue($this->getAttribute('skipSql'));
         $this->readOnly = $this->booleanValue($this->getAttribute('readOnly'));
 

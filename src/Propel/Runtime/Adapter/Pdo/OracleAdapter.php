@@ -46,7 +46,7 @@ class OracleAdapter extends PdoAdapter implements AdapterInterface
         $con->exec("ALTER SESSION SET NLS_TIMESTAMP_FORMAT='YYYY-MM-DD HH24:MI:SS'");
         if (isset($settings['queries']) && is_array($settings['queries'])) {
             foreach ($settings['queries'] as $queries) {
-                foreach ((array)$queries as $query) {
+                foreach ((array) $queries as $query) {
                     $con->exec($query);
                 }
             }

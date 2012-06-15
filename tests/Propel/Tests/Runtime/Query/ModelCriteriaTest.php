@@ -813,9 +813,6 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertCriteriaTranslation($c, $sql, $params, 'offset() adds an OFFSET clause');
     }
 
-
-
-
     public function testAddJoin()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');

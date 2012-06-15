@@ -36,7 +36,6 @@ class PropelConditionalProxyTest extends BaseTestCase
 
     $this->assertEquals($p->_else(), $p, '_else returns fluid interface');
 
-
     $criteria = new ProxyTestCriteria();
 
     $p = new TestPropelConditionalProxy($criteria, true);

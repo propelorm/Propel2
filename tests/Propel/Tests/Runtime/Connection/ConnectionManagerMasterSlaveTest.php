@@ -90,7 +90,6 @@ class ConnectionManagerMasterSlaveTest extends BaseTestCase
         $this->assertEquals(PDO::CASE_LOWER, $pdo->getAttribute(PDO::ATTR_CASE));
     }
 
-
     public function testGetReadConnectionReturnsWriteConnectionIfNoReadConnectionIsSet()
     {
         $manager = new ConnectionManagerMasterSlave();

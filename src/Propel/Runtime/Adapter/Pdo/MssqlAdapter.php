@@ -106,7 +106,7 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
      */
     public function random($seed = null)
     {
-        return 'RAND(' . ((int)$seed) . ')';
+        return 'RAND(' . ((int) $seed) . ')';
     }
 
     /**

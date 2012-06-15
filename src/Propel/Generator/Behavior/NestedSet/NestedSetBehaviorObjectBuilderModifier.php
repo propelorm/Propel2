@@ -535,7 +535,6 @@ public function setParent(\$parent = null)
 ";
     }
 
-
     protected function addGetParent(&$script)
     {
         $script .= "

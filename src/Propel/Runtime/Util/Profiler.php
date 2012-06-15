@@ -215,7 +215,7 @@ class Profiler
      *
      * @return array
      */
-    static public function getSnapshot()
+    public static function getSnapshot()
     {
         return array(
             'microtime'       => microtime(true),
@@ -232,7 +232,7 @@ class Profiler
      *
      * @return string
      */
-    static public function formatMemory($bytes, $precision = 3)
+    public static function formatMemory($bytes, $precision = 3)
     {
         $absBytes = abs($bytes);
         $sign = ($bytes == $absBytes) ? 1 : -1;
@@ -254,7 +254,7 @@ class Profiler
      *
      * @return string
      */
-    static public function formatDuration($duration, $precision = 3)
+    public static function formatDuration($duration, $precision = 3)
     {
         if ($duration < 1) {
             $duration *= 1000;
@@ -275,7 +275,7 @@ class Profiler
      *
      * @return float
      */
-    static public function toPrecision($number, $significantFigures = 3)
+    public static function toPrecision($number, $significantFigures = 3)
     {
         if (0 === $number) {
             return 0;

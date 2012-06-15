@@ -25,21 +25,21 @@ interface SchemaParserInterface
      * Gets the database connection.
      * @return ConnectionInterface
      */
-    function getConnection();
+    public function getConnection();
 
     /**
      * Sets the database connection.
      *
      * @param ConnectionInterface $dbh
      */
-    function setConnection(ConnectionInterface $dbh);
+    public function setConnection(ConnectionInterface $dbh);
 
     /**
      * Sets the GeneratorConfig to use in the parsing.
      *
      * @param GeneratorConfigInterface $config
      */
-    function setGeneratorConfig(GeneratorConfigInterface $config);
+    public function setGeneratorConfig(GeneratorConfigInterface $config);
 
     /**
      * Gets a specific propel (renamed) property from the build.
@@ -47,13 +47,13 @@ interface SchemaParserInterface
      * @param  string $name
      * @return mixed
      */
-    function getBuildProperty($name);
+    public function getBuildProperty($name);
 
     /**
      * Gets array of warning messages.
      * @return array string[]
      */
-    function getWarnings();
+    public function getWarnings();
 
     /**
      * Parse the schema and populate passed-in Database model object.
@@ -61,5 +61,5 @@ interface SchemaParserInterface
      * @param  Database $database
      * @return int      number of generated tables
      */
-    function parse(Database $database);
+    public function parse(Database $database);
 }

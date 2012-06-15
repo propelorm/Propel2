@@ -751,7 +751,6 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
         }
     }
 
-
     /**
      * Adds the function close for the applyDefaults method.
      *
@@ -777,7 +776,6 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
         $this->addTemporalAccessorBody($script, $column);
         $this->addTemporalAccessorClose($script);
     }
-
 
     /**
      * Adds the comment for a temporal accessor.
@@ -915,7 +913,6 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
             return \$this->$clo !== null ? \$this->{$clo}->format(\$format) : null;
         }";
     }
-
 
     /**
      * Adds the body of the temporal accessor.
@@ -4503,7 +4500,6 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     }
 ";
     }
-
 
     /**
      * Adds the $alreadyInSave attribute, which prevents attempting to re-save the same object.

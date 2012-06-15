@@ -43,7 +43,7 @@ interface StatementInterface
      *                              PDO::PARAM_INPUT_OUTPUT bits for the data_type parameter.
      * @return Boolean Returns TRUE on success or FALSE on failure.
      */
-    function bindParam($column, &$variable, $type = null);
+    public function bindParam($column, &$variable, $type = null);
 
     /**
      * Binds a value to a parameter.
@@ -60,7 +60,7 @@ interface StatementInterface
      *
      * @return Boolean Returns TRUE on success or FALSE on failure.
      */
-    function bindValue($param, $value, $type = null);
+    public function bindValue($param, $value, $type = null);
 
     /**
      * Closes the cursor, enabling the statement to be executed again.
@@ -76,7 +76,7 @@ interface StatementInterface
      *
      * @return Boolean Returns TRUE on success or FALSE on failure.
      */
-    function closeCursor();
+    public function closeCursor();
 
     /**
      * Returns the number of columns in the result set.
@@ -95,7 +95,7 @@ interface StatementInterface
      *                              by the PDOStatement object. If there is no result set,
      *                              this method should return 0.
      */
-    function columnCount();
+    public function columnCount();
 
     /**
      * Executes a prepared statement.
@@ -111,7 +111,7 @@ interface StatementInterface
      *                                  bound parameters in the SQL statement being executed.
      * @return Boolean Returns TRUE on success or FALSE on failure.
      */
-    function execute($params = null);
+    public function execute($params = null);
 
     /**
      * Fetches the next row from a result set.
@@ -136,7 +136,7 @@ interface StatementInterface
      *
      * @return mixed
      */
-    function fetch($fetchStyle = 4);
+    public function fetch($fetchStyle = 4);
 
     /**
      * Returns an array containing all of the result set rows.
@@ -146,7 +146,7 @@ interface StatementInterface
      *                                      on the value of the fetch_style parameter.
      * @return array
      */
-    function fetchAll($fetchStyle = 4);
+    public function fetchAll($fetchStyle = 4);
 
     /**
      * Returns a single column from the next row of a result set.
@@ -157,7 +157,7 @@ interface StatementInterface
      *
      * @return string A single column in the next row of a result set.
      */
-    function fetchColumn($columnIndex = 0);
+    public function fetchColumn($columnIndex = 0);
 
     /**
      * Returns the number of rows affected by the last SQL statement
@@ -172,5 +172,5 @@ interface StatementInterface
      *
      * @return integer The number of rows.
      */
-    function rowCount();
+    public function rowCount();
 }

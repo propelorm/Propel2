@@ -33,7 +33,7 @@ interface AdapterInterface
      *
      * @return Propel\Runtime\Connection\ConnectionInterface
      */
-    function getConnection($conparams);
+    public function getConnection($conparams);
 
     /**
      * Sets the character encoding using SQL standard SET NAMES statement.
@@ -46,7 +46,7 @@ interface AdapterInterface
      * @param Propel\Runtime\Connection\ConnectionInterface $con
      * @param string                                        $charset The $string charset encoding.
      */
-    function setCharset(ConnectionInterface $con, $charset);
+    public function setCharset(ConnectionInterface $con, $charset);
 
     /**
      * This method is used to ignore case.
@@ -54,7 +54,7 @@ interface AdapterInterface
      * @param  string $in The string to transform to upper case.
      * @return string The upper case string.
      */
-    function toUpperCase($in);
+    public function toUpperCase($in);
 
     /**
      * This method is used to ignore case.
@@ -62,7 +62,7 @@ interface AdapterInterface
      * @param  string $in The string whose case to ignore.
      * @return string The string in a case that can be ignored.
      */
-    function ignoreCase($in);
+    public function ignoreCase($in);
 
     /**
      * This method is used to ignore case in an ORDER BY clause.
@@ -73,7 +73,7 @@ interface AdapterInterface
      * @param  string $in The string whose case to ignore.
      * @return string The string in a case that can be ignored.
      */
-    function ignoreCaseInOrderBy($in);
+    public function ignoreCaseInOrderBy($in);
 
     /**
      * Returns the character used to indicate the beginning and end of
@@ -82,7 +82,7 @@ interface AdapterInterface
      *
      * @return string The text delimeter.
      */
-    function getStringDelimiter();
+    public function getStringDelimiter();
 
     /**
      * Returns SQL which concatenates the second string to the first.
@@ -92,7 +92,7 @@ interface AdapterInterface
      *
      * @return string
      */
-    function concatString($s1, $s2);
+    public function concatString($s1, $s2);
 
     /**
      * Returns SQL which extracts a substring.
@@ -103,7 +103,7 @@ interface AdapterInterface
      *
      * @return string
      */
-    function subString($s, $pos, $len);
+    public function subString($s, $pos, $len);
 
     /**
      * Returns SQL which calculates the length (in chars) of a string.
@@ -111,14 +111,14 @@ interface AdapterInterface
      * @param  string $s String to calculate length of.
      * @return string
      */
-    function strLength($s);
+    public function strLength($s);
 
     /**
      * Quotes database objec identifiers (table names, col names, sequences, etc.).
      * @param  string $text The identifier to quote.
      * @return string The quoted identifier.
      */
-    function quoteIdentifier($text);
+    public function quoteIdentifier($text);
 
     /**
      * Quotes a database table which could have space seperating it from an alias,
@@ -129,21 +129,21 @@ interface AdapterInterface
      * @param  string $table The table name to quo
      * @return string The quoted table name
      **/
-    function quoteIdentifierTable($table);
+    public function quoteIdentifierTable($table);
 
     /**
      * Whether this adapter uses an ID generation system that requires getting ID _before_ performing INSERT.
      *
      * @return Boolean
      */
-    function isGetIdBeforeInsert();
+    public function isGetIdBeforeInsert();
 
     /**
      * Whether this adapter uses an ID generation system that requires getting ID _before_ performing INSERT.
      *
      * @return Boolean
      */
-    function isGetIdAfterInsert();
+    public function isGetIdAfterInsert();
 
     /**
      * Gets the generated ID (either last ID for autoincrement or next sequence ID).
@@ -153,7 +153,7 @@ interface AdapterInterface
      *
      * @return mixed
      */
-    function getId(ConnectionInterface $con, $name = null);
+    public function getId(ConnectionInterface $con, $name = null);
 
     /**
      * Formats a temporal value before binding, given a ColumnMap object
@@ -163,28 +163,28 @@ interface AdapterInterface
      *
      * @return string The formatted temporal value
      */
-    function formatTemporalValue($value, ColumnMap $cMap);
+    public function formatTemporalValue($value, ColumnMap $cMap);
 
     /**
      * Returns timestamp formatter string for use in date() function.
      *
      * @return string
      */
-    function getTimestampFormatter();
+    public function getTimestampFormatter();
 
     /**
      * Returns date formatter string for use in date() function.
      *
      * @return string
      */
-    function getDateFormatter();
+    public function getDateFormatter();
 
     /**
      * Returns time formatter string for use in date() function.
      *
      * @return string
      */
-    function getTimeFormatter();
+    public function getTimeFormatter();
 
     /**
      * Should Column-Names get identifiers for inserts or updates.
@@ -197,7 +197,7 @@ interface AdapterInterface
      *
      * @return Boolean
      */
-    function useQuoteIdentifier();
+    public function useQuoteIdentifier();
 
     /**
      * Allows manipulation of the query string before StatementPdo is instantiated.
@@ -207,7 +207,7 @@ interface AdapterInterface
      * @param Propel\Runtime\Map\Criteria    $values
      * @param Propel\Runtime\Map\DatabaseMap $dbMap
      */
-    function cleanupSQL(&$sql, array &$params, Criteria $values, DatabaseMap $dbMap);
+    public function cleanupSQL(&$sql, array &$params, Criteria $values, DatabaseMap $dbMap);
 
     /**
      * Modifies the passed-in SQL to add LIMIT and/or OFFSET.
@@ -216,14 +216,14 @@ interface AdapterInterface
      * @param integer $offset
      * @param integer $limit
      */
-    function applyLimit(&$sql, $offset, $limit);
+    public function applyLimit(&$sql, $offset, $limit);
 
     /**
      * Gets the SQL string that this adapter uses for getting a random number.
      *
      * @param mixed $seed (optional) seed value for databases that support this
      */
-    function random($seed = null);
+    public function random($seed = null);
 
     /**
      * Returns the "DELETE FROM <table> [AS <alias>]" part of DELETE query.
@@ -233,7 +233,7 @@ interface AdapterInterface
      *
      * @return string
      */
-    function getDeleteFromClause(Criteria $criteria, $tableName);
+    public function getDeleteFromClause(Criteria $criteria, $tableName);
 
     /**
      * Builds the SELECT part of a SQL statement based on a Criteria
@@ -246,7 +246,7 @@ interface AdapterInterface
      *
      * @return string
      */
-    function createSelectSqlPart(Criteria $criteria, &$fromClause, $aliasAll = false);
+    public function createSelectSqlPart(Criteria $criteria, &$fromClause, $aliasAll = false);
 
     /**
      * Ensures uniqueness of select column names by turning them all into aliases
@@ -258,7 +258,7 @@ interface AdapterInterface
      * @param  Propel\Runtime\Map\Criteria $criteria
      * @return Propel\Runtime\Map\Criteria The input, with Select columns replaced by aliases
      */
-    function turnSelectColumnsToAliases(Criteria $criteria);
+    public function turnSelectColumnsToAliases(Criteria $criteria);
 
     /**
      * Binds values in a prepared statement.
@@ -280,7 +280,7 @@ interface AdapterInterface
      * @param array                                        $params array('column' => ..., 'table' => ..., 'value' => ...)
      * @param Propel\Runtime\Map\DatabaseMap               $dbMap
      */
-    function bindValues(StatementInterface $stmt, array $params, DatabaseMap $dbMap);
+    public function bindValues(StatementInterface $stmt, array $params, DatabaseMap $dbMap);
 
     /**
      * Binds a value to a positioned parameted in a statement,
@@ -294,5 +294,5 @@ interface AdapterInterface
      *
      * @return Boolean
      */
-    function bindValue(StatementInterface $stmt, $parameter, $value, ColumnMap $cMap, $position = null);
+    public function bindValue(StatementInterface $stmt, $parameter, $value, ColumnMap $cMap, $position = null);
 }

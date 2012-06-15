@@ -75,7 +75,7 @@ class BasePeer
      */
     const TYPE_NUM = 'num';
 
-    static public function getFieldnames($classname, $type = self::TYPE_PHPNAME)
+    public static function getFieldnames($classname, $type = self::TYPE_PHPNAME)
     {
         $peerclass  = $classname . 'Peer';
         $callable   = array($peerclass, 'getFieldnames');
@@ -83,7 +83,7 @@ class BasePeer
         return call_user_func($callable, $type);
     }
 
-    static public function translateFieldname($classname, $fieldname, $fromType, $toType)
+    public static function translateFieldname($classname, $fieldname, $fromType, $toType)
     {
         $peerclass  = $classname . 'Peer';
         $callable   = array($peerclass, 'translateFieldname');
@@ -102,7 +102,7 @@ class BasePeer
      *
      * @throws \Propel\Runtime\Exception\RuntimeException
      */
-    static public function doDelete(Criteria $criteria, ConnectionInterface $con)
+    public static function doDelete(Criteria $criteria, ConnectionInterface $con)
     {
         $db = Propel::getServiceContainer()->getAdapter($criteria->getDbName());
         $dbMap = Propel::getServiceContainer()->getDatabaseMap($criteria->getDbName());
@@ -170,7 +170,7 @@ class BasePeer
      *
      * @throws \Propel\Runtime\Exception\RuntimeException
      */
-    static public function doDeleteAll($tableName, ConnectionInterface $con, $databaseName = null)
+    public static function doDeleteAll($tableName, ConnectionInterface $con, $databaseName = null)
     {
 
         try {
@@ -213,7 +213,7 @@ class BasePeer
      *
      * @throws \Propel\Runtime\Exception\RuntimeException
      */
-    static public function doInsert(Criteria $criteria, ConnectionInterface $con)
+    public static function doInsert(Criteria $criteria, ConnectionInterface $con)
     {
         // The primary key
         $id = null;
@@ -315,14 +315,14 @@ class BasePeer
      * WHERE some_column = some value AND could_have_another_column =
      * another value AND so on.
      *
-     * @param   $selectCriteria A Criteria object containing values used in where clause.
-     * @param   $updateValues A Criteria object containing values used in set clause.
-     * @param  ConnectionInterface $con The ConnectionInterface connection object to use.
+     * @param                      $selectCriteria A Criteria object containing values used in where clause.
+     * @param                      $updateValues   A Criteria object containing values used in set clause.
+     * @param  ConnectionInterface $con            The ConnectionInterface connection object to use.
      * @return int                 The number of rows affected by last update statement.  For most uses there is only one update statement executed, so this number will correspond to the number of rows affected by the call to this method.  Note that the return value does require that this information is returned (supported) by the Propel db driver.
      *
      * @throws \Propel\Runtime\Exception\RuntimeException
      */
-    static public function doUpdate(Criteria $selectCriteria, Criteria $updateValues, ConnectionInterface $con)
+    public static function doUpdate(Criteria $selectCriteria, Criteria $updateValues, ConnectionInterface $con)
     {
         $db = Propel::getServiceContainer()->getAdapter($selectCriteria->getDbName());
         $dbMap = Propel::getServiceContainer()->getDatabaseMap($selectCriteria->getDbName());
@@ -458,7 +458,7 @@ class BasePeer
      *
      * @see createSelectSql()
      */
-    static public function doSelect(Criteria $criteria, ConnectionInterface $con = null)
+    public static function doSelect(Criteria $criteria, ConnectionInterface $con = null)
     {
         $dbMap = Propel::getServiceContainer()->getDatabaseMap($criteria->getDbName());
         $db = Propel::getServiceContainer()->getAdapter($criteria->getDbName());
@@ -500,7 +500,7 @@ class BasePeer
      * @throws \Propel\Runtime\Exception\RuntimeException
      * @see createSelectSql()
      */
-    static public function doCount(Criteria $criteria, ConnectionInterface $con = null)
+    public static function doCount(Criteria $criteria, ConnectionInterface $con = null)
     {
         $dbMap = Propel::getServiceContainer()->getDatabaseMap($criteria->getDbName());
         $db = Propel::getServiceContainer()->getAdapter($criteria->getDbName());
@@ -561,7 +561,7 @@ class BasePeer
      *
      * @throws \Propel\Runtime\Exception\RuntimeException
      */
-    static private function getPrimaryKey(Criteria $criteria)
+    private static function getPrimaryKey(Criteria $criteria)
     {
         // Assume all the keys are for the same table.
         $keys = $criteria->keys();
@@ -587,7 +587,7 @@ class BasePeer
      * This is implemented in a service class rather than in Criteria itself
      * in order to avoid doing the tests when it's not necessary (e.g. for SELECTs)
      */
-    static public function needsSelectAliases(Criteria $criteria)
+    public static function needsSelectAliases(Criteria $criteria)
     {
         $columnNames = array();
         foreach ($criteria->getSelectColumns() as $fullyQualifiedColumnName) {
@@ -618,7 +618,7 @@ class BasePeer
      *
      * @throws \Propel\Runtime\Exception\RuntimeException Trouble creating the query string.
      */
-    static public function createSelectSql(Criteria $criteria, &$params)
+    public static function createSelectSql(Criteria $criteria, &$params)
     {
         $db = Propel::getServiceContainer()->getAdapter($criteria->getDbName());
         $dbMap = Propel::getServiceContainer()->getDatabaseMap($criteria->getDbName());
@@ -818,12 +818,12 @@ class BasePeer
     /**
      * Builds a params array, like the kind populated by Criterion::appendPsTo().
      * This is useful for building an array even when it is not using the appendPsTo() method.
-     * @param  array    $columns
-     * @param  Criteria $values
+     * @param array    $columns
+     * @param Criteria $values
      *
-     * @return array    params array('column' => ..., 'table' => ..., 'value' => ...)
+     * @return array params array('column' => ..., 'table' => ..., 'value' => ...)
      */
-    static private function buildParams($columns, Criteria $values)
+    private static function buildParams($columns, Criteria $values)
     {
         $params = array();
         foreach ($columns as $key) {

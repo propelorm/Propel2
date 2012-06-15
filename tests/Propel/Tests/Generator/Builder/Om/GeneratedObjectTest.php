@@ -361,7 +361,6 @@ class GeneratedObjectTest extends BookstoreTestBase
             . " publisher_id = " . $pub2->getId()
             . " WHERE id = " . $book->getId());
 
-
         $book2 = BookPeer::retrieveByPK($book->getId());
         $this->assertSame($book, $book2, "Expected same book object instance");
 
@@ -402,8 +401,8 @@ class GeneratedObjectTest extends BookstoreTestBase
         $bookId = $book->getId();
 
         $opinion = new BookOpinion();
-        $opinion->setBookId((string)$bookId);
-        $opinion->setReaderId((string)$readerId);
+        $opinion->setBookId((string) $bookId);
+        $opinion->setReaderId((string) $readerId);
         $opinion->setRating(5);
         $opinion->setRecommendToFriend(false);
         $opinion->save();
@@ -702,7 +701,6 @@ class GeneratedObjectTest extends BookstoreTestBase
         $op->setRating(10);
         $op->setRecommendToFriend(true);
         $op->save();
-
 
         $br2 = $br->copy(true);
 

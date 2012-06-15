@@ -231,7 +231,6 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
         return $script;
     }
 
-
     /**
      * Whether the underlying PDO driver for this platform returns BLOB columns as streams (instead of strings).
      * @return Boolean

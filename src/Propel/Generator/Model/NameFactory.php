@@ -62,7 +62,7 @@ class NameFactory
      * @return The             generated name.
      * @throws EngineException
      */
-    static public function generateName($algorithmName, $inputs)
+    public static function generateName($algorithmName, $inputs)
     {
         $algorithm = self::getAlgorithm($algorithmName);
 

@@ -201,8 +201,6 @@ class ModelCriteriaSelectTest extends BookstoreTestBase
         $this->assertEquals(array('Propel\Tests\Bookstore\Book.Id', 'Propel\Tests\Bookstore\Book.Title', 'Propel\Tests\Bookstore\Book.ISBN', 'Propel\Tests\Bookstore\Book.Price', 'Propel\Tests\Bookstore\Book.PublisherId', 'Propel\Tests\Bookstore\Book.AuthorId'), array_keys($book), 'select(\'*\') returns all the columns from the main object, in complete form');
     }
 
-
-
     public function testSelectArrayFind()
     {
         BookstoreDataPopulator::depopulate($this->con);

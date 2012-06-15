@@ -1098,7 +1098,7 @@ class ModelCriteria extends Criteria
      *
      * @return array list($className, $aliasName)
      */
-    static public function getClassAndAlias($class)
+    public static function getClassAndAlias($class)
     {
         if (false !== strpos($class, ' ')) {
             list($class, $alias) = explode(' ', $class);
@@ -1119,7 +1119,7 @@ class ModelCriteria extends Criteria
      * @param  string $relation Relation to use for the join
      * @return string the relationName used in the join
      */
-    static public function getRelationName($relation)
+    public static function getRelationName($relation)
     {
         // get the relationName
         list($fullName, $relationAlias) = self::getClassAndAlias($relation);
@@ -2125,7 +2125,7 @@ class ModelCriteria extends Criteria
      *
      * @return string The short class name
      */
-    static public function getShortName($fullyQualifiedClassName)
+    public static function getShortName($fullyQualifiedClassName)
     {
         $namespaceParts = explode('\\', $fullyQualifiedClassName);
 

@@ -236,7 +236,6 @@ class MssqlSchemaParser extends AbstractSchemaParser
         }
     }
 
-
     /**
      * according to the identifier definition, we have to clean simple quote (') around the identifier name
      * returns by mssql

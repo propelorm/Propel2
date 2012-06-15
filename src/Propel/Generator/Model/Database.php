@@ -221,7 +221,7 @@ class Database extends ScopedMappingModel
      *
      * @return array
      */
-    static public function getSupportedStringFormats()
+    public static function getSupportedStringFormats()
     {
         return array('XML', 'YAML', 'JSON', 'CSV');
     }
@@ -645,7 +645,6 @@ class Database extends ScopedMappingModel
         if (count($behaviors)) {
             $nextBehavior = $behaviors[key($behaviors)][0];
         }
-
 
         return $nextBehavior;
     }
