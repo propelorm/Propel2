@@ -221,12 +221,13 @@ class ObjectBuilder extends AbstractObjectBuilder
  */
 abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
 
-        $interface = ClassTools::getInterface($table);
-        if ($interface) {
-            $script .= " implements " . ClassTools::classname($interface);
-        }
-        if ($this->getTable()->getInterface()) {
-            $this->declareClassFromBuilder($this->getInterfaceBuilder());
+        if ($interface = $this->getTable()->getInterface()) {
+            $script .= "implements " . "Child" . ClassTools::classname($interface);
+            if ($interface !== ClassTools::classname($interface)) {
+               $this->declareClass($interface);
+            } else {
+                $this->declareClassFromBuilder($this->getInterfaceBuilder());
+            }
         }
 
         $script .= "
