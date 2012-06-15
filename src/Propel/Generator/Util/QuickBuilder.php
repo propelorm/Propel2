@@ -196,7 +196,7 @@ class QuickBuilder
         }
 
         if ($table->getInterface()) {
-            $interface = $this->getConfig()->getConfiguredBuilder('interface', $target)->build();
+            $interface = $this->getConfig()->getConfiguredBuilder($table, 'interface')->build();
             $script .= $this->fixNamespaceDeclarations($interface);
         }
 
