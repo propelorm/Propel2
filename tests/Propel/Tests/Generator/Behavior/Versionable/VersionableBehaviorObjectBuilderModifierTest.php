@@ -869,4 +869,20 @@ EOF;
         $object = $b1->getOneVersion($b1->getVersion());
         $this->assertTrue($object instanceof \Versionablebehaviortest8Version);
     }
+
+    public function testEnforceVersioning()
+    {
+        $bar = new \VersionableBehaviorTest10();
+        $bar->setBar(42);
+        $bar->save();
+
+        $this->assertEquals(1, $bar->getVersion());
+        $this->assertFalse($bar->isVersioningNecessary());
+
+        $bar->enforceVersioning();
+        $this->assertTrue($bar->isVersioningNecessary());
+
+        $bar->save();
+        $this->assertEquals(2, $bar->getVersion());
+    }
 }
