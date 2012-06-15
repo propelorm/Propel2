@@ -1978,9 +1978,14 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
                 } elseif ($col->isPhpPrimitiveType()) {
                     $script .= "
             \$this->$clo = (\$row[\$startcol + $n] !== null) ? (".$col->getPhpType().") \$row[\$startcol + $n] : null;";
-                } elseif ($col->getType() == PropelTypes::OBJECT) {
+                } elseif ($col->getType() === PropelTypes::OBJECT) {
                     $script .= "
             \$this->$clo = \$row[\$startcol + $n];";
+                } elseif ($col->getType() === PropelTypes::PHP_ARRAY) {
+                    $cloUnserialized = $clo . '_unserialized';
+                    $script .= "
+            \$this->$clo = \$row[\$startcol + $n];
+            \$this->$cloUnserialized = null;";
                 } elseif ($col->isPhpObjectType()) {
                     $script .= "
             \$this->$clo = (\$row[\$startcol + $n] !== null) ? new ".$col->getPhpType()."(\$row[\$startcol + $n]) : null;";
