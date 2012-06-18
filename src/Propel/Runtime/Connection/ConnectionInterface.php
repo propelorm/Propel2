@@ -65,6 +65,13 @@ interface ConnectionInterface
     public function rollBack();
 
     /**
+     * Checks if inside a transaction.
+     *
+     * @return bool TRUE if a transaction is currently active, and FALSE if not.
+     */
+    function inTransaction();
+
+    /**
      * Retrieve a database connection attribute.
      *
      * @param string $attribute The name of the attribute to retrieve,
