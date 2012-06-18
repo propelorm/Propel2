@@ -134,7 +134,6 @@ class SqlManager extends AbstractManager
     public function insertSql($datasource = null)
     {
         $statementsToInsert = array();
-
         foreach ($this->getProperties($this->getSqlDbMapFilename()) as $sqlFile => $database) {
             if (null !== $datasource && $database !== $datasource) {
                 // skip
@@ -161,6 +160,7 @@ class SqlManager extends AbstractManager
 
         foreach ($statementsToInsert as $database => $sqls) {
             if (!$this->hasConnection($database)) {
+                $this->log(sprintf("No connection available for %s database", $database));
                 continue;
             }
 
