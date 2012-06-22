@@ -295,9 +295,9 @@ class SubQueryTest extends BookstoreTestBase
         $query = Propel::getConnection()->getLastExecutedQuery();
 
         if (in_array($this->getDriver(), array('mysql'))) {
-            $sql = "SELECT COUNT(*) FROM (SELECT subCriteriaAlias.ID, subCriteriaAlias.TITLE, subCriteriaAlias.ISBN, subCriteriaAlias.PRICE, subCriteriaAlias.PUBLISHER_ID, subCriteriaAlias.AUTHOR_ID FROM (SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book`) AS subCriteriaAlias WHERE subCriteriaAlias.PRICE<20) propelmatch4cnt";
+            $sql = "SELECT COUNT(1) FROM (SELECT subCriteriaAlias.ID, subCriteriaAlias.TITLE, subCriteriaAlias.ISBN, subCriteriaAlias.PRICE, subCriteriaAlias.PUBLISHER_ID, subCriteriaAlias.AUTHOR_ID FROM (SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book`) AS subCriteriaAlias WHERE subCriteriaAlias.PRICE<20) propelmatch4cnt";
         } else {
-            $sql = "SELECT COUNT(*) FROM (SELECT subCriteriaAlias.ID, subCriteriaAlias.TITLE, subCriteriaAlias.ISBN, subCriteriaAlias.PRICE, subCriteriaAlias.PUBLISHER_ID, subCriteriaAlias.AUTHOR_ID FROM (SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM book) AS subCriteriaAlias WHERE subCriteriaAlias.PRICE<20) propelmatch4cnt";
+            $sql = "SELECT COUNT(1) FROM (SELECT subCriteriaAlias.ID, subCriteriaAlias.TITLE, subCriteriaAlias.ISBN, subCriteriaAlias.PRICE, subCriteriaAlias.PUBLISHER_ID, subCriteriaAlias.AUTHOR_ID FROM (SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM book) AS subCriteriaAlias WHERE subCriteriaAlias.PRICE<20) propelmatch4cnt";
         }
 
         $this->assertEquals($sql, $query, 'addSelectQuery() doCount is defined as complexQuery');
