@@ -15,6 +15,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\Output;
 use Propel\Generator\Manager\SqlManager;
+use Propel\Generator\Exception\InvalidArgumentException;
 
 /**
  * @author William Durand <william.durand1@gmail.com>
@@ -42,6 +43,10 @@ class SqlInsertCommand extends AbstractCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $manager = new SqlManager();
+
+        if (!$input->hasOption('connection')) {
+            throw new InvalidArgumentException(sprintf('At least one connection is required'));
+        }
 
         $connections = array();
         foreach ($input->getOption('connection') as $connection) {
