@@ -1509,7 +1509,7 @@ class ModelCriteria extends Criteria
             $selectSql = BasePeer::createSelectSql($this, $params);
             $sql = 'SELECT COUNT(1) FROM (' . $selectSql . ') propelmatch4cnt';
         } else {
-            // Replace SELECT columns with COUNT(*)
+            // Replace SELECT columns with COUNT(1)
             $this->clearSelectColumns()->addSelectColumn('COUNT(1)');
             $sql = BasePeer::createSelectSql($this, $params);
         }
