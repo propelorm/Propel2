@@ -1445,7 +1445,7 @@ class ModelCriteria extends Criteria
     }
 
     /**
-     * Issue a SELECT COUNT(*) query based on the current ModelCriteria
+     * Issue a SELECT COUNT(1) query based on the current ModelCriteria
      *
      * @param ConnectionInterface $con an optional connection object
      *
@@ -1507,10 +1507,10 @@ class ModelCriteria extends Criteria
                 $db->turnSelectColumnsToAliases($this);
             }
             $selectSql = BasePeer::createSelectSql($this, $params);
-            $sql = 'SELECT COUNT(*) FROM (' . $selectSql . ') propelmatch4cnt';
+            $sql = 'SELECT COUNT(1) FROM (' . $selectSql . ') propelmatch4cnt';
         } else {
-            // Replace SELECT columns with COUNT(*)
-            $this->clearSelectColumns()->addSelectColumn('COUNT(*)');
+            // Replace SELECT columns with COUNT(1)
+            $this->clearSelectColumns()->addSelectColumn('COUNT(1)');
             $sql = BasePeer::createSelectSql($this, $params);
         }
         try {
