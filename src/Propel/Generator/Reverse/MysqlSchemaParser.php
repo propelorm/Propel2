@@ -378,7 +378,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
      */
     protected function addPrimaryKey(Table $table)
     {
-        $stmt = $this->dbh->query(sprintf('SHOW KEYS FROM `%s``', $table->getName()));
+        $stmt = $this->dbh->query(sprintf('SHOW KEYS FROM `%s`', $table->getName()));
 
         // Loop through the returned results, grouping the same key_name together
         // adding each column for that key.
