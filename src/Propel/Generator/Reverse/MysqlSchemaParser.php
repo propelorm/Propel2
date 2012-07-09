@@ -27,7 +27,7 @@ use Propel\Generator\Model\ColumnDefaultValue;
 class MysqlSchemaParser extends AbstractSchemaParser
 {
     /**
-     * @var Boolean
+     * @var boolean
      */
     private $addVendorInfo = false;
 

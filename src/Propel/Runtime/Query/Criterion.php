@@ -10,7 +10,10 @@
 
 namespace Propel\Runtime\Query;
 
+use \Exception;
+
 use Propel\Runtime\Propel;
+use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Adapter\Pdo\PgsqlAdapter;
 
@@ -29,8 +32,9 @@ class Criterion
     /** Value of the CO. */
     protected $value;
 
-    /** Comparison value.
-     * @var SqlEnum
+    /**
+     * Comparison value.
+     * @var string
      */
     protected $comparison;
 
@@ -128,7 +132,7 @@ class Criterion
     /**
      * Set the table name.
      *
-     * @param      name A String with the table name.
+     * @param string $name A String with the table name.
      * @return void
      */
     public function setTable($name)
@@ -196,7 +200,7 @@ class Criterion
     /**
      * Sets ignore case.
      *
-     * @param  Boolean   $b True if case should be ignored.
+     * @param  boolean   $b True if case should be ignored.
      * @return Criterion A modified Criterion object.
      */
     public function setIgnoreCase($b)
@@ -209,7 +213,7 @@ class Criterion
     /**
      * Is ignore case on or off?
      *
-     * @return Boolean True if case is ignored.
+     * @return boolean True if case is ignored.
      */
     public function isIgnoreCase()
     {
@@ -460,7 +464,7 @@ class Criterion
     /**
      * This method checks another Criteria to see if they contain
      * the same attributes and hashtable entries.
-     * @return Boolean
+     * @return boolean
      */
     public function equals($obj)
     {
@@ -557,7 +561,7 @@ class Criterion
     /**
      * get an array of all criterion attached to this
      * recursing through all sub criterion
-     * @return array Criterion[]
+     * @return Criterion[]
      */
     public function getAttachedCriterion()
     {

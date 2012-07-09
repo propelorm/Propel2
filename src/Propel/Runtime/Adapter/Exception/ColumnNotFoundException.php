@@ -8,7 +8,7 @@
  * @license MIT License
  */
 
-namespace Propel\Runtime\Exception;
+namespace Propel\Runtime\Adapter\Exception;
 
 use Propel\Runtime\Exception\RuntimeException;
 

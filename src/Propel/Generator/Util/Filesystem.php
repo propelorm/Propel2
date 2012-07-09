@@ -50,7 +50,7 @@ class Filesystem
      * @param string|array|\Traversable $dirs The directory path
      * @param int                       $mode The directory mode
      *
-     * @return Boolean true if the directory has been created, false otherwise
+     * @return boolean true if the directory has been created, false otherwise
      */
     public function mkdir($dirs, $mode = 0777)
     {
@@ -144,7 +144,7 @@ class Filesystem
      *
      * @param string  $originDir     The origin directory path
      * @param string  $targetDir     The symbolic link name
-     * @param Boolean $copyOnWindows Whether to copy files if on Windows
+     * @param boolean $copyOnWindows Whether to copy files if on Windows
      */
     public function symlink($originDir, $targetDir, $copyOnWindows = false)
     {
@@ -247,7 +247,7 @@ class Filesystem
      *
      * @param string $file A file path
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isAbsolutePath($file)
     {

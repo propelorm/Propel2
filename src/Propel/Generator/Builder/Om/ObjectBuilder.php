@@ -10,6 +10,7 @@
 
 namespace Propel\Generator\Builder\Om;
 
+use Propel\Generator\Exception\EngineException;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\IdMethod;
@@ -244,6 +245,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      */
     protected function addClassBody(&$script)
     {
+        $this->declareClassFromBuilder($this->getStubObjectBuilder());
         $this->declareClassFromBuilder($this->getStubPeerBuilder());
         $this->declareClassFromBuilder($this->getStubQueryBuilder());
         $this->declareClasses(
@@ -484,7 +486,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     /**
      * Whether the lazy-loaded \$$clo value has been loaded from database.
      * This is necessary to avoid repeated lookups if \$$clo column is NULL in the db.
-     * @var Boolean
+     * @var boolean
      */";
     }
 
@@ -1064,7 +1066,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * @param      ConnectionInterface An optional ConnectionInterface connection to use for fetching this lazy-loaded column.";
         }
         $script .= "
-     * @return Boolean
+     * @return boolean
      */
     $visibility function has$singularPhpName(\$value";
         if ($column->isLazyLoad()) {
@@ -1812,7 +1814,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * This method can be used in conjunction with isModified() to indicate whether an object is both
      * modified _and_ has some values set which are non-default.
      *
-     * @return Boolean Whether the columns in this object are only been set with default values.
+     * @return boolean Whether the columns in this object are only been set with default values.
      */";
     }
 
@@ -2928,7 +2930,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
         $script .= "
     /**
      * Returns true if the primary key for this object is null.
-     * @return Boolean
+     * @return boolean
      */
     public function isPrimaryKeyNull()
     {";
@@ -3137,7 +3139,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     /**
      * Get the associated $className object
      *
-     * @param      ConnectionInterface Optional Connection object.
+     * @param      ConnectionInterface \$con Optional Connection object.
      * @return                 $className The associated $className object.
      * @throws PropelException
      */
@@ -3290,7 +3292,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * @param      Criteria \$criteria optional Criteria object to narrow the query
      * @param      ConnectionInterface \$con optional connection object
      * @param      string \$joinBehavior optional join type to use (defaults to $joinBehavior)
-     * @return Collection|array {$className}[] List of $className objects
+     * @return Collection|{$className}[] List of $className objects
      */
     public function get".$relCol."Join".$relCol2."(\$criteria = null, \$con = null, \$joinBehavior = $joinBehavior)
     {";
@@ -3328,7 +3330,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
         } else {
             $script .= "
     /**
-     * @var        array {$className}[] Collection to store aggregation of $className objects.
+     * @var        ObjectCollection|{$className}[] Collection to store aggregation of $className objects.
      */
     protected $".$this->getRefFKCollVarName($refFK).";
 ";
@@ -3569,7 +3571,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      *
      * @param      Criteria \$criteria optional Criteria object to narrow the query
      * @param      ConnectionInterface \$con optional connection object
-     * @return Collection|array {$className}[] List of $className objects
+     * @return Collection|{$className}[] List of $className objects
      * @throws PropelException
      */
     public function get$relCol(\$criteria = null, ConnectionInterface \$con = null)
@@ -3730,7 +3732,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
         $className = $joinedTableObjectBuilder->getObjectClassName();
         $script .= "
     /**
-     * @var        array {$className}[] Collection to store aggregation of $className objects.
+     * @var        {$className}[] Collection to store aggregation of $className objects.
      */
     protected $" . $this->getCrossFKVarName($crossFK) . ";
 ";
@@ -3743,7 +3745,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
         $script .= "
     /**
      * An array of objects scheduled for deletion.
-     * @var array
+     * @var ObjectCollection
      */
     protected \${$fkName}ScheduledForDeletion = null;
 ";
@@ -3892,7 +3894,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * @param      Criteria \$criteria Optional query object to filter the query
      * @param      ConnectionInterface \$con Optional connection object
      *
-     * @return Collection|array {$relatedObjectClassName}[] List of {$relatedObjectClassName} objects
+     * @return ObjectCollection|{$relatedObjectClassName}[] List of {$relatedObjectClassName} objects
      */
     public function get{$relatedName}(\$criteria = null, ConnectionInterface \$con = null)
     {
@@ -4518,7 +4520,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      *
-     * @var Boolean
+     * @var boolean
      */
     protected \$alreadyInSave = false;
 ";

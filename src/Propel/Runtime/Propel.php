@@ -13,7 +13,6 @@ namespace Propel\Runtime;
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\PropelException;
-use Propel\Runtime\Propel;
 use Propel\Runtime\Map\DatabaseMap;
 use Propel\Runtime\ServiceContainer\ServiceContainerInterface;
 use Propel\Runtime\ServiceContainer\StandardServiceContainer;
@@ -91,7 +90,7 @@ class Propel
     private static $serviceContainer;
 
     /**
-     * @var Boolean Whether the object instance pooling is enabled
+     * @var boolean Whether the object instance pooling is enabled
      */
     private static $isInstancePoolingEnabled = true;
 
@@ -253,7 +252,7 @@ class Propel
     /**
      * Returns true if a logger has been configured, otherwise false.
      *
-     * @return Boolean True if Propel uses logging
+     * @return boolean True if Propel uses logging
      */
     public static function hasLogger()
     {
@@ -278,7 +277,7 @@ class Propel
      * @param      string The message that will be logged.
      * @param      string The logging level.
      *
-     * @return Boolean True if the message was logged successfully or no logger was used.
+     * @return boolean True if the message was logged successfully or no logger was used.
      */
     public static function log($message, $level = self::LOG_DEBUG)
     {
@@ -308,7 +307,7 @@ class Propel
     /**
      * Disable instance pooling.
      *
-     * @return Boolean true if the method changed the instance pooling state,
+     * @return boolean true if the method changed the instance pooling state,
      *                 false if it was already disabled
      */
     public static function disableInstancePooling()
@@ -324,7 +323,7 @@ class Propel
     /**
      * Enable instance pooling (enabled by default).
      *
-     * @return Boolean true if the method changed the instance pooling state,
+     * @return boolean true if the method changed the instance pooling state,
      *                 false if it was already enabled
      */
     public static function enableInstancePooling()
@@ -340,7 +339,7 @@ class Propel
     /**
      *  the instance pooling behaviour. True by default.
      *
-     * @return Boolean Whether the pooling is enabled or not.
+     * @return boolean Whether the pooling is enabled or not.
      */
     public static function isInstancePoolingEnabled()
     {

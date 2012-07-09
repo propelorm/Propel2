@@ -31,7 +31,7 @@ class PeerBuilder extends AbstractPeerBuilder
      * This method may emit warnings for code which may cause problems
      * and will throw exceptions for errors that will definitely cause
      * problems.
-     * 
+     *
      * @throws EngineException
      */
     protected function validateModel()
@@ -1134,7 +1134,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
     /**
      * The returned array will contain objects of the default type or
      * objects that inherit from the default.
-     * 
+     *
      * @param StatementInterface \$stmt
      * @return array
      * @throws PropelException Any exceptions caught during processing will be

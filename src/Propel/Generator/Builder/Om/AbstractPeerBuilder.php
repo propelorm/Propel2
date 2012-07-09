@@ -175,7 +175,7 @@ abstract class AbstractPeerBuilder extends AbstractOMBuilder
 
     /**
      * Whether the platform in use requires ON DELETE CASCADE emulation and whether there are references to this table.
-     * @return Boolean
+     * @return boolean
      */
     protected function isDeleteCascadeEmulationNeeded()
     {
@@ -193,7 +193,7 @@ abstract class AbstractPeerBuilder extends AbstractOMBuilder
 
     /**
      * Whether the platform in use requires ON DELETE SETNULL emulation and whether there are references to this table.
-     * @return Boolean
+     * @return boolean
      */
     protected function isDeleteSetNullEmulationNeeded()
     {
@@ -213,7 +213,7 @@ abstract class AbstractPeerBuilder extends AbstractOMBuilder
      * Whether to add the generic mutator methods (setByName(), setByPosition(), fromArray()).
      * This is based on the build property propel.addGenericMutators, and also whether the
      * table is read-only or an alias.
-     * @return Boolean
+     * @return boolean
      */
     protected function isAddGenericMutators()
     {
@@ -226,7 +226,7 @@ abstract class AbstractPeerBuilder extends AbstractOMBuilder
      * Whether to add the generic accessor methods (getByName(), getByPosition(), toArray()).
      * This is based on the build property propel.addGenericAccessors, and also whether the
      * table is an alias.
-     * @return Boolean
+     * @return boolean
      */
     protected function isAddGenericAccessors()
     {
@@ -284,7 +284,7 @@ abstract class AbstractPeerBuilder extends AbstractOMBuilder
     /**
      * Checks whether any registered behavior on that table has a modifier for a hook
      * @param  string  $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
-     * @return Boolean
+     * @return boolean
      */
     public function hasBehaviorModifier($hookName, $modifier = null)
     {

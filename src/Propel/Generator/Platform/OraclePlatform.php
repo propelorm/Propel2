@@ -10,6 +10,7 @@
 
 namespace Propel\Generator\Platform;
 
+use Propel\Generator\Exception\EngineException;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\Domain;
 use Propel\Generator\Model\ForeignKey;
@@ -233,7 +234,7 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
 
     /**
      * Whether the underlying PDO driver for this platform returns BLOB columns as streams (instead of strings).
-     * @return Boolean
+     * @return boolean
      */
     public function hasStreamBlobImpl()
     {
@@ -265,7 +266,7 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
      * Generate oracle block storage
      *
      * @param Table|Index $object       object with vendor parameters
-     * @param Boolean     $isPrimaryKey is a primary key vendor part
+     * @param boolean     $isPrimaryKey is a primary key vendor part
      *
      * @return string oracle vendor sql part
      */

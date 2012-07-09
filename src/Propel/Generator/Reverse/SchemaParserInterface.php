@@ -51,7 +51,7 @@ interface SchemaParserInterface
 
     /**
      * Gets array of warning messages.
-     * @return array string[]
+     * @return string[]
      */
     public function getWarnings();
 

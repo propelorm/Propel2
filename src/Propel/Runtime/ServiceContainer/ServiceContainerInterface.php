@@ -131,7 +131,7 @@ interface ServiceContainerInterface
     /**
      * Check if a logger is available for a given datasource.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function hasLogger($name = 'defaultLogger');
 

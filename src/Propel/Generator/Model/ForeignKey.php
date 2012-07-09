@@ -112,7 +112,7 @@ class ForeignKey extends MappingModel
     /**
      * Returns whether or not the onUpdate behavior is set.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function hasOnUpdate()
     {
@@ -122,7 +122,7 @@ class ForeignKey extends MappingModel
     /**
      * Returns whether or not the onDelete behavior is set.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function hasOnDelete()
     {
@@ -575,7 +575,7 @@ class ForeignKey extends MappingModel
      * Returns whether this foreign key uses a required column, or a list of
      * required columns.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isLocalColumnsRequired()
     {
@@ -592,7 +592,7 @@ class ForeignKey extends MappingModel
      * Returns whether this foreign key is also the primary key of the foreign
      * table.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isForeignPrimaryKey()
     {
@@ -618,7 +618,7 @@ class ForeignKey extends MappingModel
      * Returns whether or not this foreign key relies on more than one
      * column binding.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isComposite()
     {
@@ -629,7 +629,7 @@ class ForeignKey extends MappingModel
      * Returns whether or not this foreign key is also the primary key of
      * the local table.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isLocalPrimaryKey()
     {
@@ -645,7 +645,7 @@ class ForeignKey extends MappingModel
      * Sets whether or not this foreign key should have its creation SQL
      * generated.
      *
-     * @param Boolean $skip
+     * @param boolean $skip
      */
     public function setSkipSql($skip)
     {
@@ -656,7 +656,7 @@ class ForeignKey extends MappingModel
      * Returns whether or not the SQL generation must be skipped for this
      * foreign key.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isSkipSql()
     {
@@ -670,7 +670,7 @@ class ForeignKey extends MappingModel
      * by foreign keys on both tables.  I don't know if that's good practice ... but hell, why not
      * support it.
      *
-     * @return Boolean
+     * @return boolean
      * @link http://propel.phpdb.org/trac/ticket/549
      */
     public function isMatchedByInverseFK()

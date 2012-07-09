@@ -69,7 +69,7 @@ class PgsqlDataSQLBuilder extends DataSQLBuilder
     /**
      * Returns the SQL value to insert for PostGres BOOLEAN column.
      *
-     * @param  Boolean $value
+     * @param  boolean $value
      * @return string
      */
     protected function getBooleanSql($value)

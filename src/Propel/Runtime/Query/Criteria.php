@@ -443,7 +443,7 @@ class Criteria implements \IteratorAggregate
      * Does this Criteria object contain the specified key?
      *
      * @param  string  $column [table.]column
-     * @return Boolean True if this Criteria object contain the specified key.
+     * @return boolean True if this Criteria object contain the specified key.
      */
     public function containsKey($column)
     {
@@ -456,7 +456,7 @@ class Criteria implements \IteratorAggregate
      * Does this Criteria object contain the specified key and does it have a value set for the key
      *
      * @param  string  $column [table.]column
-     * @return Boolean True if this Criteria object contain the specified key and a value for that key
+     * @return boolean True if this Criteria object contain the specified key and a value for that key
      */
     public function keyContainsValue($column)
     {
@@ -470,7 +470,7 @@ class Criteria implements \IteratorAggregate
      *
      * This counts conditions added with the add() method.
      *
-     * @return Boolean
+     * @return boolean
      * @see add()
      */
     public function hasWhereClause()
@@ -494,7 +494,7 @@ class Criteria implements \IteratorAggregate
      * Whether the sql command specified by this criteria must be wrapped
      * in a transaction.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isUseTransaction()
     {
@@ -1000,7 +1000,7 @@ class Criteria implements \IteratorAggregate
     /**
      * Checks whether this Criteria has a subquery.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function hasSelectQueries()
     {
@@ -1032,7 +1032,7 @@ class Criteria implements \IteratorAggregate
      * checks if the Criteria for a specific subQuery is set.
      *
      * @param  string  $alias alias for the subQuery
-     * @return Boolean
+     * @return boolean
      */
     public function hasSelectQuery($alias)
     {
@@ -1111,7 +1111,7 @@ class Criteria implements \IteratorAggregate
      *
      * @param string $modifier The modifier to add
      *
-     * @return Boolean
+     * @return boolean
      */
     public function hasSelectModifier($modifier)
     {
@@ -1121,7 +1121,7 @@ class Criteria implements \IteratorAggregate
     /**
      * Sets ignore case.
      *
-     * @param  Boolean  $b True if case should be ignored.
+     * @param  boolean  $b True if case should be ignored.
      * @return Criteria Modified Criteria object (for fluent API)
      */
     public function setIgnoreCase($b)
@@ -1134,7 +1134,7 @@ class Criteria implements \IteratorAggregate
     /**
      * Is ignore case on or off?
      *
-     * @return Boolean True if case is ignored.
+     * @return boolean True if case is ignored.
      */
     public function isIgnoreCase()
     {
@@ -1150,7 +1150,7 @@ class Criteria implements \IteratorAggregate
      * multiple records but you are only interested in the first one then you
      * should be using setLimit(1).
      *
-     * @param  Boolean  $b Set to TRUE if you expect the query to select just one record.
+     * @param  boolean  $b Set to TRUE if you expect the query to select just one record.
      * @return Criteria Modified Criteria object (for fluent API)
      */
     public function setSingleRecord($b)
@@ -1163,7 +1163,7 @@ class Criteria implements \IteratorAggregate
     /**
      * Is single record?
      *
-     * @return Boolean True if a single record is being returned.
+     * @return boolean True if a single record is being returned.
      */
     public function isSingleRecord()
     {
@@ -1173,7 +1173,7 @@ class Criteria implements \IteratorAggregate
     /**
      * Set limit.
      *
-     * @param      limit An int with the value for limit.
+     * @param int $limit An int with the value for limit.
      * @return Criteria Modified Criteria object (for fluent API)
      */
     public function setLimit($limit)
@@ -1211,7 +1211,7 @@ class Criteria implements \IteratorAggregate
     /**
      * Get offset.
      *
-     * @return An int with the value for offset.
+     * @return int An int with the value for offset.
      */
     public function getOffset()
     {
@@ -1259,7 +1259,7 @@ class Criteria implements \IteratorAggregate
      *
      * This will include columns added with addAsColumn() method.
      *
-     * @return Boolean
+     * @return boolean
      * @see addAsColumn()
      * @see addSelectColumn()
      */
@@ -1452,7 +1452,7 @@ class Criteria implements \IteratorAggregate
     /**
      * This method checks another Criteria to see if they contain
      * the same attributes and hashtable entries.
-     * @return Boolean
+     * @return boolean
      */
     public function equals($crit)
     {
@@ -1742,7 +1742,7 @@ class Criteria implements \IteratorAggregate
      * @param string|Criterion $p1                    The column to run the comparison on (e.g. BookPeer::ID), or Criterion object
      * @param mixed            $value
      * @param string           $operator              A String, like Criteria::EQUAL.
-     * @param Boolean          $preferColumnCondition If true, the condition is combined with an existing condition on the same column
+     * @param boolean          $preferColumnCondition If true, the condition is combined with an existing condition on the same column
     *                      (necessary for Propel 1.4 compatibility).
      *                     If false, the condition is combined with the last existing condition.
      *
@@ -1782,7 +1782,7 @@ class Criteria implements \IteratorAggregate
      * or a PropelConditionalProxy instance otherwise.
      * Allows for conditional statements in a fluid interface.
      *
-     * @param Boolean $cond
+     * @param boolean $cond
      *
      * @return PropelConditionalProxy|Criteria
      */
@@ -1797,7 +1797,7 @@ class Criteria implements \IteratorAggregate
      * Returns a PropelConditionalProxy instance.
      * Allows for conditional statements in a fluid interface.
      *
-     * @param Boolean $cond ignored
+     * @param boolean $cond ignored
      *
      * @return PropelConditionalProxy|Criteria
      */

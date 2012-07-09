@@ -86,7 +86,7 @@ abstract class MappingModel implements MappingModelInterface
      * This is to support the default value when used with a boolean column.
      *
      * @param  mixed   $value
-     * @return Boolean
+     * @return boolean
      */
     protected function booleanValue($value)
     {

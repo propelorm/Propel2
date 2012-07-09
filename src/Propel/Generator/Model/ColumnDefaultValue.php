@@ -64,7 +64,7 @@ class ColumnDefaultValue
     /**
      * Convenience method to indicate whether the value in this object is an expression (as opposed to simple value).
      *
-     * @return Boolean Whether value this object holds is an expression.
+     * @return boolean Whether value this object holds is an expression.
      */
     public function isExpression()
     {

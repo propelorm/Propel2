@@ -10,7 +10,13 @@
 
 namespace Propel\Generator\Builder;
 
+use Propel\Common\Pluralizer\PluralizerInterface;
+use Propel\Generator\Builder\Om\ObjectBuilder;
+use Propel\Generator\Builder\Om\PeerBuilder;
+use Propel\Generator\Builder\Om\QueryBuilder;
+use Propel\Generator\Builder\Sql\DataSQLBuilder;
 use Propel\Generator\Config\GeneratorConfigInterface;
+use Propel\Generator\Model\Database;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Platform\PlatformInterface;
 
@@ -111,7 +117,7 @@ abstract class DataModelBuilder
 
     /**
      * The Pluralizer class to use.
-     * @var Pluralizer
+     * @var PluralizerInterface
      */
     private $pluralizer;
 
@@ -145,7 +151,7 @@ abstract class DataModelBuilder
 
     /**
      * Returns new or existing Pluralizer class.
-     * @return Pluralizer
+     * @return PluralizerInterface
      */
     public function getPluralizer()
     {
@@ -399,7 +405,7 @@ abstract class DataModelBuilder
     /**
      * Gets the GeneratorConfig object.
      *
-     * @return GeneratorConfig
+     * @return GeneratorConfigInterface
      */
     public function getGeneratorConfig()
     {
@@ -424,7 +430,7 @@ abstract class DataModelBuilder
     /**
      * Sets the GeneratorConfig object.
      *
-     * @param GeneratorConfig $v
+     * @param GeneratorConfigInterface $v
      */
     public function setGeneratorConfig(GeneratorConfigInterface $v)
     {
@@ -498,7 +504,7 @@ abstract class DataModelBuilder
 
     /**
      * Gets array of warning messages.
-     * @return array string[]
+     * @return string[]
      */
     public function getWarnings()
     {

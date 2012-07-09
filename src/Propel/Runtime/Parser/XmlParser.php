@@ -47,7 +47,7 @@ class XmlParser extends AbstractParser
      *
      * @param string $rootElementName The Root Element Name
      *
-     * @return DOMNode The root DOMNode
+     * @return \DOMElement The root DOMNode
      */
     protected function getRootNode($rootElementName = 'data')
     {
@@ -89,12 +89,12 @@ class XmlParser extends AbstractParser
     }
 
     /**
-      * @param  array $array
-     * @param DOMElement $rootElement
+     * @param array $array
+     * @param \DOMElement $rootElement
      * @param string     $charset
-     * @param Boolean    $removeNumbersFromKeys
+     * @param boolean    $removeNumbersFromKeys
      *
-     * @return DOMElement
+     * @return \DOMElement
      */
     protected function arrayToDOM($array, $rootElement, $charset = null, $removeNumbersFromKeys = false)
     {
@@ -152,7 +152,7 @@ class XmlParser extends AbstractParser
     }
 
     /**
-     * @param  DOMNode $data
+     * @param  \DOMNode $data
      * @return array
      */
     protected function convertDOMElementToArray(\DOMNode $data)
@@ -191,8 +191,8 @@ class XmlParser extends AbstractParser
     }
 
     /**
-     * @param  DOMNode $node
-     * @return Boolean
+     * @param  \DOMNode $node
+     * @return boolean
      */
     protected function hasOnlyTextNodes(\DOMNode $node)
     {

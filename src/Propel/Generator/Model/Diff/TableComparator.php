@@ -76,7 +76,7 @@ class TableComparator
      *
      * @param  Column            $fromTable
      * @param  Column            $toTable
-     * @param  Boolean           $caseInsensitive
+     * @param  boolean           $caseInsensitive
      * @return TableDiff|Boolean
      */
     public static function computeDiff(Table $fromTable, Table $toTable, $caseInsensitive = false)
@@ -99,7 +99,7 @@ class TableComparator
      * Compares the columns of the fromTable and the toTable,
      * and modifies the inner tableDiff if necessary.
      *
-     * @param  Boolean $caseInsensitive
+     * @param  boolean $caseInsensitive
      * @return integer
      */
     public function compareColumns($caseInsensitive = false)
@@ -158,7 +158,7 @@ class TableComparator
      * Compares the primary keys of the fromTable and the toTable,
      * and modifies the inner tableDiff if necessary.
      *
-     * @param  Boolean $caseInsensitive
+     * @param  boolean $caseInsensitive
      * @return integer
      */
     public function comparePrimaryKeys($caseInsensitive = false)
@@ -207,7 +207,7 @@ class TableComparator
      * Compare the indices and unique indices of the fromTable and the toTable,
      * and modifies the inner tableDiff if necessary.
      *
-     * @param  Boolean $caseInsensitive
+     * @param  boolean $caseInsensitive
      * @return integer
      */
     public function compareIndices($caseInsensitive = false)
@@ -255,7 +255,7 @@ class TableComparator
      * Compare the foreign keys of the fromTable and the toTable,
      * and modifies the inner tableDiff if necessary.
      *
-     * @param  Boolean $caseInsensitive
+     * @param  boolean $caseInsensitive
      * @return integer
      */
     public function compareForeignKeys($caseInsensitive = false)

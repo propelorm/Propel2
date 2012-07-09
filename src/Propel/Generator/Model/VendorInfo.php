@@ -83,7 +83,7 @@ class VendorInfo extends MappingModel
      * Returns whether or not a parameter exists.
      *
      * @param  string  $name
-     * @return Boolean
+     * @return boolean
      */
     public function hasParameter($name)
     {
@@ -114,7 +114,7 @@ class VendorInfo extends MappingModel
     /**
      * Returns whether or not this vendor info is empty.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isEmpty()
     {

@@ -13,7 +13,7 @@ namespace Propel\Runtime\ServiceContainer;
 use Propel\Runtime\Adapter\AdapterFactory;
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Adapter\Exception\AdapterException;
-use Preopl\Runtime\Exception\UnexpectedValueException;
+use Propel\Runtime\Exception\UnexpectedValueException;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\ConnectionManagerInterface;
 use Propel\Runtime\Connection\ConnectionManagerSingle;
@@ -401,7 +401,7 @@ class StandardServiceContainer implements ServiceContainerInterface
     }
 
     /**
-     * @return Boolean
+     * @return boolean
      */
     public function hasLogger($name = 'defaultLogger')
     {

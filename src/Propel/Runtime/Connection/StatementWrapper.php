@@ -76,7 +76,7 @@ class StatementWrapper implements StatementInterface
      * @param integer $length         Length of the data type. To indicate that a parameter is an OUT parameter from a stored procedure, you must explicitly set the length.
      * @param mixed   $driver_options
      *
-     * @return Boolean
+     * @return boolean
      */
     public function bindParam($pos, &$value, $type = \PDO::PARAM_STR, $length = 0, $driver_options = null)
     {
@@ -100,7 +100,7 @@ class StatementWrapper implements StatementInterface
      * @param mixed   $value The value to bind to the parameter.
      * @param integer $type  Explicit data type for the parameter using the PDO::PARAM_* constants. Defaults to PDO::PARAM_STR.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function bindValue($pos, $value, $type = \PDO::PARAM_STR)
     {
@@ -128,7 +128,7 @@ class StatementWrapper implements StatementInterface
      * has unfetched rows. If your database driver suffers from this limitation,
      * the problem may manifest itself in an out-of-sequence error.
      *
-     * @return Boolean Returns TRUE on success or FALSE on failure.
+     * @return boolean Returns TRUE on success or FALSE on failure.
      */
     public function closeCursor()
     {
@@ -162,7 +162,7 @@ class StatementWrapper implements StatementInterface
      * Overridden for query counting and logging.
      *
      * @param  string  $input_parameters
-     * @return Boolean
+     * @return boolean
      */
     public function execute($input_parameters = null)
     {
