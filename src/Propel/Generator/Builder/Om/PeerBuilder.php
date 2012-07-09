@@ -10,7 +10,9 @@
 
 namespace Propel\Generator\Builder\Om;
 
+use Propel\Generator\Model\Table;
 use Propel\Generator\Model\ForeignKey;
+use Propel\Generator\Exception\EngineException;
 
 /**
  * Generates a PHP5 base Peer class for user object model (OM).
@@ -29,6 +31,8 @@ class PeerBuilder extends AbstractPeerBuilder
      * This method may emit warnings for code which may cause problems
      * and will throw exceptions for errors that will definitely cause
      * problems.
+     * 
+     * @throws EngineException
      */
     protected function validateModel()
     {
@@ -125,6 +129,9 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 ";
     }
 
+    /**
+     * @param string &$script
+     */
     protected function addClassBody(&$script)
     {
         $this->declareClassFromBuilder($this->getStubObjectBuilder());
@@ -146,7 +153,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      * Closes class.
      * Adds closing brace at end of class and the static
      * map builder registration code.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      * @see addStaticTableMapRegistration()
      */
     protected function addClassClose(&$script)
@@ -161,7 +168,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 
     /**
      * Adds the static map builder registration code.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addStaticTableMapRegistration(&$script)
     {
@@ -174,11 +181,17 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
         $this->applyBehaviorModifier('peerFilter', $script, '');
     }
 
+    /**
+     * @return string
+     */
     public function getTableMapClass()
     {
         return $this->getStubObjectBuilder()->getUnqualifiedClassName() . 'TableMap';
     }
 
+    /**
+     * @return string
+     */
     public function getTablePhpName()
     {
         return ($this->getTable()->isAbstract() ? '' : $this->getClassNameFromBuilder($this->getStubObjectBuilder()));
@@ -186,7 +199,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 
     /**
      * Adds constant and variable declarations that go at the top of the class.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      * @see addColumnNameConstants()
      */
     protected function addConstantsAndAttributes(&$script)
@@ -233,7 +246,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      * An identiy map to hold any loaded instances of ".$this->getObjectClassName()." objects.
      * This must be public so that other peer classes can access this when hydrating from JOIN
      * queries.
-     * @var        array ".$this->getObjectClassName()."[]
+     * @var array ".$this->getObjectClassName()."[]
      */
     static public \$instances = array();
 
@@ -253,7 +266,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 
     /**
      * Adds the COLUMN_NAME contants to the class definition.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addColumnNameConstants(&$script)
     {
@@ -267,7 +280,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 
     /**
      * Adds the valueSet constants for ENUM columns.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addEnumColumnConstants(&$script)
     {
@@ -285,11 +298,18 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
         }
     }
 
+    /**
+     * @param string $value
+     * @return string
+     */
     protected function getEnumValueConstant($value)
     {
         return strtoupper(preg_replace('/[^a-zA-Z0-9_\x7f-\xff]/', '_', $value));
     }
 
+    /**
+     * @param string &$script
+     */
     protected function addFieldNamesAttribute(&$script)
     {
         $table = $this->getTable();
@@ -338,6 +358,9 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 ";
     }
 
+    /**
+     * @param string &$script
+     */
     protected function addFieldKeysAttribute(&$script)
     {
         $table = $this->getTable();
@@ -388,7 +411,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 
     /**
      * Adds the valueSet attributes for ENUM columns.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addEnumColumnAttributes(&$script)
     {
@@ -412,18 +435,21 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 ";
     }
 
+    /**
+     * @param string &$script
+     */
     protected function addGetFieldNames(&$script)
     {
         $script .= "
     /**
      * Returns an array of field names.
      *
-     * @param      string \$type The type of fieldnames to return:
+     * @param string \$type The type of fieldnames to return:
      *                      One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
      *                      BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
      * @return array A list of field names
+     * @throws PropelException
      */
-
     public static function getFieldNames(\$type = BasePeer::TYPE_PHPNAME)
     {
         if (!array_key_exists(\$type, self::\$fieldNames)) {
@@ -436,17 +462,20 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 
     } // addGetFieldNames()
 
+    /**
+     * @param string &$script
+     */
     protected function addTranslateFieldName(&$script)
     {
         $script .= "
     /**
      * Translates a fieldname to another type
      *
-     * @param      string \$name field name
-     * @param      string \$fromType One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+     * @param string \$name field name
+     * @param string \$fromType One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
      *                         BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
-     * @param      string \$toType   One of the class type constants
-     * @return string          translated name of the field.
+     * @param string \$toType   One of the class type constants
+     * @return string translated name of the field.
      * @throws PropelException - if the specified name could not be found in the fieldname mappings.
      */
     public static function translateFieldName(\$name, \$fromType, \$toType)
@@ -464,7 +493,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 
     /**
      * Adds the getValueSets() method.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addGetValueSets(&$script)
     {
@@ -482,13 +511,14 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 
     /**
      * Adds the getValueSet() method.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addGetValueSet(&$script)
     {
         $script .= "
     /**
      * Gets the list of values for an ENUM column
+     * @param string \$colname
      * @return array list of possible values for the column
      */
     public static function getValueSet(\$colname)
@@ -502,7 +532,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 
     /**
      * Adds the buildTableMap() method.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addBuildTableMap(&$script)
     {
@@ -523,7 +553,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 
     /**
      * Adds the CLASSKEY_* and CLASSNAME_* constants used for inheritance.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     public function addInheritanceColumnConstants(&$script)
     {
@@ -561,7 +591,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 
     /**
      * Adds the alias() utility method.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addAlias(&$script)
     {
@@ -574,8 +604,8 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      *        \$c->addAlias(\"alias1\", TablePeer::TABLE_NAME);
      *        \$c->addJoin(TablePeer::alias(\"alias1\", TablePeer::PRIMARY_KEY_COLUMN), TablePeer::PRIMARY_KEY_COLUMN);
      * </code>
-     * @param      string \$alias The alias for the current table.
-     * @param      string \$column The column name for current table. (i.e. ".$this->getPeerClassName(true)."::COLUMN_NAME).
+     * @param string \$alias The alias for the current table.
+     * @param string \$column The column name for current table. (i.e. ".$this->getPeerClassName(true)."::COLUMN_NAME).
      * @return string
      */
     public static function alias(\$alias, \$column)
@@ -587,7 +617,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 
     /**
      * Adds the addSelectColumns() method.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addAddSelectColumns(&$script)
     {
@@ -599,8 +629,8 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      * XML schema will not be added to the select list and only loaded
      * on demand.
      *
-     * @param      Criteria \$criteria object containing the columns to add.
-     * @param      string   \$alias    optional table alias
+     * @param Criteria \$criteria object containing the columns to add.
+     * @param string   \$alias    optional table alias
      * @throws PropelException Any exceptions caught during processing will be
      *         rethrown wrapped into a PropelException.
      */
@@ -630,7 +660,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 
     /**
      * Adds the doCount() method.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addDoCount(&$script)
     {
@@ -638,9 +668,9 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
     /**
      * Returns the number of rows matching criteria.
      *
-     * @param      Criteria \$criteria
-     * @param      boolean \$distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-     * @param      ConnectionInterface \$con
+     * @param Criteria            \$criteria
+     * @param boolean             \$distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+     * @param ConnectionInterface \$con
      * @return int Number of matching rows.
      */
     public static function doCount(Criteria \$criteria, \$distinct = false, ConnectionInterface \$con = null)
@@ -688,7 +718,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 
     /**
      * Adds the doSelectOne() method.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addDoSelectOne(&$script)
     {
@@ -696,9 +726,9 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
     /**
      * Selects one object from the DB.
      *
-     * @param      Criteria \$criteria object used to create the SELECT statement.
-     * @param      ConnectionInterface \$con
-     * @return                 ".$this->getObjectClassName()."
+     * @param Criteria            \$criteria object used to create the SELECT statement.
+     * @param ConnectionInterface \$con
+     * @return ".$this->getObjectClassName()."
      * @throws PropelException Any exceptions caught during processing will be
      *         rethrown wrapped into a PropelException.
      */
@@ -717,7 +747,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 
     /**
      * Adds the doSelect() method.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addDoSelect(&$script)
     {
@@ -725,9 +755,9 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
     /**
      * Selects several row from the DB.
      *
-     * @param      Criteria \$criteria The Criteria object used to build the SELECT statement.
-     * @param      ConnectionInterface \$con
-     * @return array           Array of selected Objects
+     * @param Criteria            \$criteria The Criteria object used to build the SELECT statement.
+     * @param ConnectionInterface \$con
+     * @return array Array of selected Objects
      * @throws PropelException Any exceptions caught during processing will be
      *         rethrown wrapped into a PropelException.
      */
@@ -739,7 +769,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 
     /**
      * Adds the doSelectStmt() method.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addDoSelectStmt(&$script)
     {
@@ -750,12 +780,12 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      * Use this method directly if you want to work with an executed statement durirectly (for example
      * to perform your own object hydration).
      *
-     * @param      Criteria \$criteria The Criteria object used to build the SELECT statement.
-     * @param      ConnectionInterface \$con The connection to use
+     * @param Criteria            \$criteria The Criteria object used to build the SELECT statement.
+     * @param ConnectionInterface \$con The connection to use
      * @throws PropelException Any exceptions caught during processing will be
      *         rethrown wrapped into a PropelException.
      * @return StatementInterface The executed Statement object.
-     * @see        ".$this->basePeerClassName."::doSelect()
+     * @see ".$this->basePeerClassName."::doSelect()
      */
     public static function doSelectStmt(Criteria \$criteria, ConnectionInterface \$con = null)
     {
@@ -785,6 +815,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      * Adds the PHP code to return a instance pool key for the passed-in primary key variable names.
      *
      * @param array $pkphp An array of PHP var names / method calls representing complete pk.
+     * @return string
      */
     public function getInstancePoolKeySnippet($pkphp)
     {
@@ -806,7 +837,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 
     /**
      * Creates a convenience method to add objects to an instance pool.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addAddInstanceToPool(&$script)
     {
@@ -820,8 +851,8 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      * to the cache in order to ensure that the same objects are always returned by doSelect*()
      * and retrieveByPK*() calls.
      *
-     * @param      ".$this->getObjectClassName()." \$value A ".$this->getObjectClassName()." object.
-     * @param      string \$key (optional) key to use for instance map (for performance boost if key was already calculated externally).
+     * @param ".$this->getObjectClassName()." \$obj A ".$this->getObjectClassName()." object.
+     * @param string \$key (optional) key to use for instance map (for performance boost if key was already calculated externally).
      */
     public static function addInstanceToPool(\$obj, \$key = null)
     {
@@ -845,8 +876,8 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
     } // addAddInstanceToPool()
 
     /**
-     *  Creates a convenience method to remove objects form an instance pool.
-     * @param      string &$script The script will be modified in this method.
+     * Creates a convenience method to remove objects form an instance pool.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addRemoveInstanceFromPool(&$script)
     {
@@ -860,7 +891,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      * methods in your stub classes -- you may need to explicitly remove objects
      * from the cache in order to prevent returning objects that no longer exist.
      *
-     * @param      mixed \$value A ".$this->getObjectClassName()." object or a primary key value.
+     * @param mixed \$value A ".$this->getObjectClassName()." object or a primary key value.
      */
     public static function removeInstanceFromPool(\$value)
     {";
@@ -906,7 +937,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 
     /**
      * Adds method to clear the instance pool.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addClearInstancePool(&$script)
     {
@@ -925,7 +956,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 
     /**
      * Adds method to clear the instance pool of related tables.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addClearRelatedInstancePool(&$script)
     {
@@ -966,7 +997,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 
     /**
      * Adds method to get an the instance from the pool, given a key.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addGetInstanceFromPool(&$script)
     {
@@ -977,8 +1008,8 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
      * a multi-column primary key, a serialize()d version of the primary key will be returned.
      *
-     * @param      string \$key The key (@see getPrimaryKeyHash()) for this instance.
-     * @return   ".$this->getObjectClassName()." Found object or NULL if 1) no instance exists for specified key or 2) instance pooling has been disabled.
+     * @param string \$key The key (@see getPrimaryKeyHash()) for this instance.
+     * @return ".$this->getObjectClassName()." Found object or NULL if 1) no instance exists for specified key or 2) instance pooling has been disabled.
      * @see getPrimaryKeyHash()
      */
     public static function getInstanceFromPool(\$key)
@@ -996,7 +1027,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 
     /**
      * Adds method to get a version of the primary key that can be used as a unique key for identifier map.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addGetPrimaryKeyHash(&$script)
     {
@@ -1007,8 +1038,8 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
      * a multi-column primary key, a serialize()d version of the primary key will be returned.
      *
-     * @param      array \$row ConnectionInterface resultset row.
-     * @param      int \$startcol The 0-based offset for reading from the resultset row.
+     * @param array \$row ConnectionInterface resultset row.
+     * @param int   \$startcol The 0-based offset for reading from the resultset row.
      * @return string A string version of PK or NULL if the components of primary key in result array are all null.
      */
     public static function getPrimaryKeyHashFromRow(\$row, \$startcol = 0)
@@ -1053,8 +1084,8 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
      * a multi-column primary key, an array of the primary key columns will be returned.
      *
-     * @param      array \$row ConnectionInterface resultset row.
-     * @param      int \$startcol The 0-based offset for reading from the resultset row.
+     * @param array \$row ConnectionInterface resultset row.
+     * @param int   \$startcol The 0-based offset for reading from the resultset row.
      * @return mixed The primary key of the row
      */
     public static function getPrimaryKeyFromRow(\$row, \$startcol = 0)
@@ -1094,7 +1125,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 
     /**
      * Adds the populateObjects() method.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addPopulateObjects(&$script)
     {
@@ -1103,7 +1134,9 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
     /**
      * The returned array will contain objects of the default type or
      * objects that inherit from the default.
-     *
+     * 
+     * @param StatementInterface \$stmt
+     * @return array
      * @throws PropelException Any exceptions caught during processing will be
      *         rethrown wrapped into a PropelException.
      */
@@ -1156,7 +1189,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 
     /**
      * Adds the populateObject() method.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addPopulateObject(&$script)
     {
@@ -1165,8 +1198,8 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
     /**
      * Populates an object of the default type or an object that inherit from the default.
      *
-     * @param      array \$row ConnectionInterface resultset row.
-     * @param      int \$startcol The 0-based offset for reading from the resultset row.
+     * @param array \$row ConnectionInterface resultset row.
+     * @param int   \$startcol The 0-based offset for reading from the resultset row.
      * @throws PropelException Any exceptions caught during processing will be
      *         rethrown wrapped into a PropelException.
      * @return array (" . $this->getObjectClassName(). " object, last column rank)
@@ -1209,7 +1242,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 
     /**
      * Adds a getOMClass() for non-abstract tables that have inheritance.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addGetOMClass_Inheritance(&$script)
     {
@@ -1219,9 +1252,9 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      * The returned Class will contain objects of the default type or
      * objects that inherit from the default.
      *
-     * @param      array \$row ConnectionInterface result row.
-     * @param      int \$colnum Column to examine for OM class information (first is 0).
-     * @param      boolean \$withPrefix Whether or not to return the path with the class name
+     * @param array   \$row ConnectionInterface result row.
+     * @param int     \$colnum Column to examine for OM class information (first is 0).
+     * @param boolean \$withPrefix Whether or not to return the path with the class name
      * @throws PropelException Any exceptions caught during processing will be
      *         rethrown wrapped into a PropelException.
      */
@@ -1271,7 +1304,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 
     /**
      * Adds a getOMClass() for non-abstract tables that do note use inheritance.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addGetOMClass_NoInheritance(&$script)
     {
@@ -1284,7 +1317,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      * relative to a location on the PHP include_path.
      * (e.g. path.to.MyClass -> 'path/to/MyClass.php')
      *
-     * @param      boolean \$withPrefix Whether or not to return the path with the class name
+     * @param boolean \$withPrefix Whether or not to return the path with the class name
      * @return string path.to.ClassName
      */
     public static function getOMClass(\$withPrefix = true)
@@ -1296,7 +1329,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 
     /**
      * Adds a getOMClass() signature for abstract tables that do not have inheritance.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addGetOMClass_NoInheritance_Abstract(&$script)
     {
@@ -1306,6 +1339,8 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      *
      * This method must be overridden by the stub subclass, because
      * ".$this->getObjectClassName()." is declared abstract in the schema.
+     *
+     * @param boolean \$withPrefix
      */
     abstract public static function getOMClass(\$withPrefix = true);
 ";
@@ -1313,7 +1348,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 
     /**
      * Adds the doInsert() method.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addDoInsert(&$script)
     {
@@ -1322,9 +1357,9 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
     /**
      * Performs an INSERT on the database, given a ".$this->getObjectClassName()." or Criteria object.
      *
-     * @param      mixed \$values Criteria or ".$this->getObjectClassName()." object containing data that is used to create the INSERT statement.
-     * @param      ConnectionInterface \$con the ConnectionInterface connection to use
-     * @return mixed           The new primary key.
+     * @param mixed               \$values Criteria or ".$this->getObjectClassName()." object containing data that is used to create the INSERT statement.
+     * @param ConnectionInterface \$con the ConnectionInterface connection to use
+     * @return mixed The new primary key.
      * @throws PropelException Any exceptions caught during processing will be
      *         rethrown wrapped into a PropelException.
      */
@@ -1395,7 +1430,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 
     /**
      * Adds the doUpdate() method.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addDoUpdate(&$script)
     {
@@ -1404,9 +1439,9 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
     /**
      * Performs an UPDATE on the database, given a ".$this->getObjectClassName()." or Criteria object.
      *
-     * @param      mixed \$values Criteria or ".$this->getObjectClassName()." object containing data that is used to create the UPDATE statement.
-     * @param      ConnectionInterface \$con The connection to use (specify ConnectionInterface connection object to exert more control over transactions).
-     * @return int             The number of affected rows (if supported by underlying database driver).
+     * @param mixed               \$values Criteria or ".$this->getObjectClassName()." object containing data that is used to create the UPDATE statement.
+     * @param ConnectionInterface \$con The connection to use (specify ConnectionInterface connection object to exert more control over transactions).
+     * @return int The number of affected rows (if supported by underlying database driver).
      * @throws PropelException Any exceptions caught during processing will be
      *         rethrown wrapped into a PropelException.
      */
@@ -1451,7 +1486,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 
     /**
      * Adds the doDeleteAll() method.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addDoDeleteAll(&$script)
     {
@@ -1460,7 +1495,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
     /**
      * Deletes all rows from the ".$table->getName()." table.
      *
-     * @param      ConnectionInterface \$con the connection to use
+     * @param ConnectionInterface \$con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).
      */
     public static function doDeleteAll(ConnectionInterface \$con = null)
@@ -1501,7 +1536,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 
     /**
      * Adds the doDelete() method.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addDoDelete(&$script)
     {
@@ -1511,9 +1546,9 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
     /**
      * Performs a DELETE on the database, given a ".$this->getObjectClassName()." or Criteria object OR a primary key value.
      *
-     * @param      mixed \$values Criteria or ".$this->getObjectClassName()." object or primary key or array of primary keys
+     * @param mixed               \$values Criteria or ".$this->getObjectClassName()." object or primary key or array of primary keys
      *              which is used to create the DELETE statement
-     * @param      ConnectionInterface \$con the connection to use
+     * @param ConnectionInterface \$con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
      *                if supported by native driver or if emulated using Propel.
      * @throws PropelException Any exceptions caught during processing will be
@@ -1663,7 +1698,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 
     /**
      * Adds the doOnDeleteCascade() method, which provides ON DELETE CASCADE emulation.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addDoOnDeleteCascade(&$script)
     {
@@ -1678,8 +1713,8 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      *
      * This method should be used within a transaction if possible.
      *
-     * @param      Criteria \$criteria
-     * @param      ConnectionInterface \$con
+     * @param Criteria            \$criteria
+     * @param ConnectionInterface \$con
      * @return int The number of affected rows (if supported by underlying database driver).
      */
     protected static function doOnDeleteCascade(Criteria \$criteria, ConnectionInterface \$con)
@@ -1742,7 +1777,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 
     /**
      * Adds the doOnDeleteSetNull() method, which provides ON DELETE SET NULL emulation.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addDoOnDeleteSetNull(&$script)
     {
@@ -1757,8 +1792,8 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      *
      * This method should be used within a transaction if possible.
      *
-     * @param      Criteria \$criteria
-     * @param      ConnectionInterface \$con
+     * @param Criteria            \$criteria
+     * @param ConnectionInterface \$con
      * @return void
      */
     protected static function doOnDeleteSetNull(Criteria \$criteria, ConnectionInterface \$con)
@@ -1772,7 +1807,6 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
         // This logic is almost exactly the same as that in doOnDeleteCascade()
         // it may make sense to refactor this, provided that thigns don't
         // get too complicated.
-
         foreach ($table->getReferrers() as $fk) {
 
             // $fk is the foreign key in the other table, so localTableName will
@@ -1820,7 +1854,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 
     /**
      * Adds the retrieveByPK method for tables with single-column primary key.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addRetrieveByPK_SinglePK(&$script)
     {
@@ -1832,9 +1866,9 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
     /**
      * Retrieve a single object by pkey.
      *
-     * @param      ".$col->getPhpType()." \$pk the primary key.
-     * @param      ConnectionInterface \$con the connection to use
-     * @return " .$this->getObjectClassName(). "
+     * @param ".$col->getPhpType()." \$pk the primary key.
+     * @param ConnectionInterface \$con the connection to use
+     * @return ".$this->getObjectClassName()."
      */
     static public function ".$this->getRetrieveMethodName()."(\$pk, ConnectionInterface \$con = null)
     {
@@ -1859,7 +1893,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 
     /**
      * Adds the retrieveByPKs method for tables with single-column primary key.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addRetrieveByPKs_SinglePK(&$script)
     {
@@ -1868,8 +1902,8 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
     /**
      * Retrieve multiple objects by pkey.
      *
-     * @param      array \$pks List of primary keys
-     * @param      ConnectionInterface \$con the connection to use
+     * @param array               \$pks List of primary keys
+     * @param ConnectionInterface \$con the connection to use
      * @throws PropelException Any exceptions caught during processing will be
      *         rethrown wrapped into a PropelException.
      */
@@ -1898,7 +1932,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 
     /**
      * Adds the retrieveByPK method for tables with multi-column primary key.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addRetrieveByPK_MultiPK(&$script)
     {
@@ -1951,7 +1985,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 
     /**
      * Adds the getTableMap() method which is a convenience method for apps to get DB metadata.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addGetTableMap(&$script)
     {
@@ -1972,7 +2006,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 
     /**
      * Adds the complex OM methods to the base addSelectMethods() function.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      * @see PeerBuilder::addSelectMethods()
      */
     protected function addSelectMethods(&$script)
@@ -2011,7 +2045,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
     /**
      * Get the column offsets of the primary key(s) for specified table.
      *
-     * @param  Table $tbl
+     * @param Table $tbl
      * @return array int[] The column offsets of the primary key(s).
      */
     protected function getPrimaryKeyColOffsets(Table $tbl)
@@ -2028,6 +2062,13 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
         return $offsets;
     }
 
+    /**
+     * @param ForeignKey  $fk
+     * @param Table       $table
+     * @param Table       $joinTable
+     * @param PeerBuilder $joinedTablePeerBuilder
+     * @return string
+     */
     public function addCriteriaJoin($fk, $table, $joinTable, $joinedTablePeerBuilder)
     {
         $script = '';
@@ -2065,7 +2106,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 
     /**
      * Adds the doSelectJoin*() methods.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addDoSelectJoin(&$script)
     {
@@ -2096,10 +2137,10 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 
     /**
      * Selects a collection of $className objects pre-filled with their $joinClassName objects.
-     * @param      Criteria  \$criteria
-     * @param      ConnectionInterface \$con
-     * @param      String    \$joinBehavior the type of joins to use, defaults to $joinBehavior
-     * @return array           Array of $className objects.
+     * @param Criteria            \$criteria
+     * @param ConnectionInterface \$con
+     * @param String              \$joinBehavior the type of joins to use, defaults to $joinBehavior
+     * @return array Array of $className objects.
      * @throws PropelException Any exceptions caught during processing will be
      *         rethrown wrapped into a PropelException.
      */
@@ -2201,7 +2242,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 
     /**
      * Adds the doCountJoin*() methods.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addDoCountJoin(&$script)
     {
@@ -2227,10 +2268,10 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
     /**
      * Returns the number of rows matching criteria, joining the related ".$thisTableObjectBuilder->getFKPhpNameAffix($fk, false)." table
      *
-     * @param      Criteria \$criteria
-     * @param      boolean \$distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-     * @param      ConnectionInterface \$con
-     * @param      String    \$joinBehavior the type of joins to use, defaults to $joinBehavior
+     * @param Criteria            \$criteria
+     * @param boolean             \$distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+     * @param ConnectionInterface \$con
+     * @param string              \$joinBehavior the type of joins to use, defaults to $joinBehavior
      * @return int Number of matching rows.
      */
     public static function doCountJoin".$thisTableObjectBuilder->getFKPhpNameAffix($fk, false)."(Criteria \$criteria, \$distinct = false, ConnectionInterface \$con = null, \$joinBehavior = $joinBehavior)
@@ -2286,7 +2327,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 
     /**
      * Adds the doSelectJoinAll() method.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addDoSelectJoinAll(&$script)
     {
@@ -2299,10 +2340,10 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
     /**
      * Selects a collection of $className objects pre-filled with all related objects.
      *
-     * @param      Criteria  \$criteria
-     * @param      ConnectionInterface \$con
-     * @param      String    \$joinBehavior the type of joins to use, defaults to $joinBehavior
-     * @return array           Array of $className objects.
+     * @param Criteria            \$criteria
+     * @param ConnectionInterface \$con
+     * @param string              \$joinBehavior the type of joins to use, defaults to $joinBehavior
+     * @return array Array of $className objects.
      * @throws PropelException Any exceptions caught during processing will be
      *         rethrown wrapped into a PropelException.
      */
@@ -2454,7 +2495,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 
     /**
      * Adds the doCountJoinAll() method.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addDoCountJoinAll(&$script)
     {
@@ -2466,10 +2507,10 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
     /**
      * Returns the number of rows matching criteria, joining all related tables
      *
-     * @param      Criteria \$criteria
-     * @param      boolean \$distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-     * @param      ConnectionInterface \$con
-     * @param      String    \$joinBehavior the type of joins to use, defaults to $joinBehavior
+     * @param Criteria            \$criteria
+     * @param boolean             \$distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+     * @param ConnectionInterface \$con
+     * @param string              \$joinBehavior the type of joins to use, defaults to $joinBehavior
      * @return int Number of matching rows.
      */
     public static function doCountJoinAll(Criteria \$criteria, \$distinct = false, ConnectionInterface \$con = null, \$joinBehavior = $joinBehavior)
@@ -2528,7 +2569,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 
     /**
      * Adds the doSelectJoinAllExcept*() methods.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addDoSelectJoinAllExcept(&$script)
     {
@@ -2557,10 +2598,10 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
     /**
      * Selects a collection of ".$this->getObjectClassName()." objects pre-filled with all related objects except ".$thisTableObjectBuilder->getFKPhpNameAffix($fk).".
      *
-     * @param      Criteria  \$criteria
-     * @param      ConnectionInterface \$con
-     * @param      String    \$joinBehavior the type of joins to use, defaults to $joinBehavior
-     * @return array           Array of ".$this->getObjectClassName()." objects.
+     * @param Criteria            \$criteria
+     * @param ConnectionInterface \$con
+     * @param string              \$joinBehavior the type of joins to use, defaults to $joinBehavior
+     * @return array Array of ".$this->getObjectClassName()." objects.
      * @throws PropelException Any exceptions caught during processing will be
      *         rethrown wrapped into a PropelException.
      */
@@ -2717,7 +2758,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 
     /**
      * Adds the doCountJoinAllExcept*() methods.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addDoCountJoinAllExcept(&$script)
     {
@@ -2737,10 +2778,10 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
     /**
      * Returns the number of rows matching criteria, joining the related ".$thisTableObjectBuilder->getFKPhpNameAffix($fk, false)." table
      *
-     * @param      Criteria \$criteria
-     * @param      boolean \$distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-     * @param      ConnectionInterface \$con
-     * @param      String    \$joinBehavior the type of joins to use, defaults to $joinBehavior
+     * @param Criteria            \$criteria
+     * @param boolean             \$distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+     * @param ConnectionInterface \$con
+     * @param string              \$joinBehavior the type of joins to use, defaults to $joinBehavior
      * @return int Number of matching rows.
      */
     public static function doCountJoinAllExcept".$thisTableObjectBuilder->getFKPhpNameAffix($fk, false)."(Criteria \$criteria, \$distinct = false, ConnectionInterface \$con = null, \$joinBehavior = $joinBehavior)
@@ -2807,7 +2848,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
     /**
      * returns the desired join behavior as set in the build properties
      * see trac ticket #588, #491
-     *
+     * @return string
      */
     protected function getJoinBehavior()
     {
