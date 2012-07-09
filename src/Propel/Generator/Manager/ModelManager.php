@@ -133,7 +133,7 @@ class ModelManager extends AbstractManager
      * with the build properties.
      *
      * @param AbstractOMBuilder $builder
-     * @param Boolean           $overwrite
+     * @param boolean           $overwrite
      */
     protected function doBuild(AbstractOMBuilder $builder, $overwrite = true)
     {

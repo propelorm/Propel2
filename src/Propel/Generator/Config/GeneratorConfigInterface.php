@@ -10,7 +10,10 @@
 
 namespace Propel\Generator\Config;
 
+use Propel\Common\Pluralizer\PluralizerInterface;
+use Propel\Generator\Builder\DataModelBuilder;
 use Propel\Generator\Model\Table;
+use Propel\Generator\Platform\PlatformInterface;
 
 interface GeneratorConfigInterface
 {

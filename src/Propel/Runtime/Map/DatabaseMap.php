@@ -39,14 +39,14 @@ class DatabaseMap
     /**
      * Tables in the database, using table name as key
      *
-     * @var array[\Propel\Runtime\Map\TableMap]
+     * @var TableMap[]
      */
     protected $tables = array();
 
     /**
      * Tables in the database, using table phpName as key
      *
-     * @var array[\Propel\Runtime\Map\TableMap]
+     * @var TableMap[]
      */
     protected $tablesByPhpName = array();
 
@@ -117,7 +117,7 @@ class DatabaseMap
      * Does this database contain this specific table?
      *
      * @param  string  $name The String representation of the table.
-     * @return Boolean True if the database contains the table.
+     * @return boolean True if the database contains the table.
      */
     public function hasTable($name)
     {
@@ -147,7 +147,7 @@ class DatabaseMap
     /**
      * Get a TableMap[] of all of the tables in the database.
      *
-     * @return array[\Propel\Runtime\Map\TableMap].
+     * @return TableMap[]
      */
     public function getTables()
     {

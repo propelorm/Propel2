@@ -85,7 +85,7 @@ abstract class ScopedMappingModel extends MappingModel
      * A namespace is absolute if it starts with a "\".
      *
      * @param  string  $namespace
-     * @return Boolean
+     * @return boolean
      */
     public function isAbsoluteNamespace($namespace)
     {

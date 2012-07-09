@@ -37,13 +37,13 @@ abstract class BaseObject
 {
     /**
      * attribute to determine if this object has previously been saved.
-     * @var Boolean
+     * @var boolean
      */
     protected $new = true;
 
     /**
      * attribute to determine whether this object has been deleted.
-     * @var Boolean
+     * @var boolean
      */
     protected $deleted = false;
 
@@ -71,7 +71,7 @@ abstract class BaseObject
     /**
      * Returns whether the object has been modified.
      *
-     * @return Boolean True if the object has been modified.
+     * @return boolean True if the object has been modified.
      */
     public function isModified()
     {
@@ -114,7 +114,7 @@ abstract class BaseObject
      * Setter for the isNew attribute.  This method will be called
      * by Propel-generated children and Peers.
      *
-     * @param Boolean $b the state of the object.
+     * @param boolean $b the state of the object.
      */
     public function setNew($b)
     {
@@ -123,7 +123,7 @@ abstract class BaseObject
 
     /**
      * Whether this object has been deleted.
-     * @return Boolean The deleted state of this object.
+     * @return boolean The deleted state of this object.
      */
     public function isDeleted()
     {
@@ -132,7 +132,7 @@ abstract class BaseObject
 
     /**
      * Specify whether this object has been deleted.
-     * @param  Boolean $b The deleted state of this object.
+     * @param  boolean $b The deleted state of this object.
      * @return void
      */
     public function setDeleted($b)
@@ -162,7 +162,7 @@ abstract class BaseObject
     /**
      * Code to be run before inserting to database
      * @param  ConnectionInterface $con
-     * @return Boolean
+     * @return boolean
      */
     public function preInsert(ConnectionInterface $con = null)
     {
@@ -181,7 +181,7 @@ abstract class BaseObject
     /**
      * Code to be run before updating the object in database
      * @param  ConnectionInterface $con
-     * @return Boolean
+     * @return boolean
      */
     public function preUpdate(ConnectionInterface $con = null)
     {
@@ -200,7 +200,7 @@ abstract class BaseObject
     /**
      * Code to be run before deleting the object in database
      * @param  ConnectionInterface $con
-     * @return Boolean
+     * @return boolean
      */
     public function preDelete(ConnectionInterface $con = null)
     {
@@ -290,7 +290,7 @@ abstract class BaseObject
     /**
      * Checks the existence of a virtual column in this object
      *
-     * @return Boolean
+     * @return boolean
      */
     public function hasVirtualColumn($name)
     {
@@ -331,7 +331,7 @@ abstract class BaseObject
      *
      * @param  string  $msg
      * @param  int     $priority One of the Propel::LOG_* logging levels
-     * @return Boolean
+     * @return boolean
      */
     protected function log($msg, $priority = Propel::LOG_INFO)
     {
@@ -369,7 +369,7 @@ abstract class BaseObject
      * </code>
      *
      * @param  mixed   $parser                 A AbstractParser instance, or a format name ('XML', 'YAML', 'JSON', 'CSV')
-     * @param  Boolean $includeLazyLoadColumns (optional) Whether to include lazy load(ed) columns. Defaults to TRUE.
+     * @param  boolean $includeLazyLoadColumns (optional) Whether to include lazy load(ed) columns. Defaults to TRUE.
      * @return string  The exported data
      */
     public function exportTo($parser, $includeLazyLoadColumns = true)

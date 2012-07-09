@@ -10,6 +10,7 @@
 
 namespace Propel\Runtime\Util;
 
+use \DateTimeZone;
 use Propel\Runtime\Exception\PropelException;
 
 /**
@@ -104,7 +105,7 @@ class PropelDateTime extends \DateTime
      * PHP "magic" function called when object is serialized.
      * Sets an internal property with the date string and returns properties
      * of class that should be serialized.
-     * @return array string[]
+     * @return string[]
      */
     public function __sleep()
     {

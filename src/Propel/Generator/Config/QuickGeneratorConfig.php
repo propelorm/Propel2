@@ -10,7 +10,9 @@
 
 namespace Propel\Generator\Config;
 
+use Propel\Common\Pluralizer\PluralizerInterface;
 use Propel\Common\Pluralizer\StandardEnglishPluralizer;
+use Propel\Generator\Builder\DataModelBuilder;
 use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Exception\RuntimeException;
 use Propel\Generator\Model\Table;
@@ -105,7 +107,7 @@ class QuickGeneratorConfig implements GeneratorConfigInterface
      * Renames the propel.xxx properties to just xxx and renames any xxx.yyy
      * properties to xxxYyy as PHP doesn't like the xxx.yyy syntax.
      *
-     * @param array|Traversable $props
+     * @param array|\Traversable $props
      */
     public function setBuildProperties($props)
     {

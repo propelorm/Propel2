@@ -44,7 +44,7 @@ class ConnectionWrapper implements ConnectionInterface
     /**
      * Whether or not the debug is enabled
      *
-     * @var Boolean
+     * @var boolean
      */
     public $useDebug = false;
 
@@ -90,7 +90,7 @@ class ConnectionWrapper implements ConnectionInterface
     /**
      * Whether to cache prepared statements.
      *
-     * @var Boolean
+     * @var boolean
      */
     protected $isCachePreparedStatements = false;
 
@@ -172,7 +172,7 @@ class ConnectionWrapper implements ConnectionInterface
      * Is this PDO connection currently in-transaction?
      * This is equivalent to asking whether the current nested transaction count is greater than 0.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isInTransaction()
     {
@@ -183,7 +183,7 @@ class ConnectionWrapper implements ConnectionInterface
      * Check whether the connection contains a transaction that can be committed.
      * To be used in an evironment where Propelexceptions are caught.
      *
-     * @return Boolean True if the connection is in a committable transaction
+     * @return boolean True if the connection is in a committable transaction
      */
     public function isCommitable()
     {
@@ -193,7 +193,7 @@ class ConnectionWrapper implements ConnectionInterface
     /**
      * Overrides PDO::beginTransaction() to prevent errors due to already-in-progress transaction.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function beginTransaction()
     {
@@ -214,7 +214,7 @@ class ConnectionWrapper implements ConnectionInterface
      * Overrides PDO::commit() to only commit the transaction if we are in the outermost
      * transaction nesting level.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function commit()
     {
@@ -243,7 +243,7 @@ class ConnectionWrapper implements ConnectionInterface
      * Overrides PDO::rollBack() to only rollback the transaction if we are in the outermost
      * transaction nesting level
      *
-     * @return Boolean Whether operation was successful.
+     * @return boolean Whether operation was successful.
      */
     public function rollBack()
     {
@@ -270,7 +270,7 @@ class ConnectionWrapper implements ConnectionInterface
      * Rollback the whole transaction, even if this is a nested rollback
      * and reset the nested transaction count to 0.
      *
-     * @return Boolean Whether operation was successful.
+     * @return boolean Whether operation was successful.
      */
     public function forceRollBack()
     {
@@ -296,7 +296,7 @@ class ConnectionWrapper implements ConnectionInterface
     /**
      * Checks if inside a transaction.
      *
-     * @return Boolean TRUE if a transaction is currently active, and FALSE if not.
+     * @return boolean TRUE if a transaction is currently active, and FALSE if not.
      */
     public function inTransaction()
     {
@@ -329,7 +329,7 @@ class ConnectionWrapper implements ConnectionInterface
      * @param string $attribute The attribute name, or the constant name containing the attribute name (e.g. 'PDO::ATTR_CASE')
      * @param mixed  $value
      *
-     * @return Boolean TRUE on success or FALSE on failure.
+     * @return boolean TRUE on success or FALSE on failure.
      */
     public function setAttribute($attribute, $value)
     {
@@ -524,7 +524,7 @@ class ConnectionWrapper implements ConnectionInterface
     /**
      * Enable or disable the query debug features
      *
-     * @param Boolean $value True to enable debug (default), false to disable it
+     * @param boolean $value True to enable debug (default), false to disable it
      */
     public function useDebug($value = true)
     {
@@ -587,7 +587,7 @@ class ConnectionWrapper implements ConnectionInterface
     /**
      * Check if this connection has a configured logger.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function hasLogger()
     {

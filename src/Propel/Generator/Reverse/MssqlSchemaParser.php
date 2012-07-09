@@ -62,7 +62,6 @@ class MssqlSchemaParser extends AbstractSchemaParser
         'varbinary(max)'     => PropelTypes::CLOB,
         'varchar'            => PropelTypes::VARCHAR,
         'varchar(max)'       => PropelTypes::CLOB,
-        'uniqueidentifier'   => PropelTypes::CHAR,
         // SQL Server 2000 only
         'bigint identity'    => PropelTypes::BIGINT,
         'bigint'             => PropelTypes::BIGINT,

@@ -10,6 +10,7 @@
 
 namespace Propel\Generator\Platform;
 
+use Propel\Generator\Exception\EngineException;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\Domain;

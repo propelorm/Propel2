@@ -248,7 +248,7 @@ class PropelTypes
      * Returns whether or not the given type is a temporal type.
      *
      * @param  string  $mappingType
-     * @return Boolean
+     * @return boolean
      */
     public static function isTemporalType($type)
     {
@@ -265,7 +265,7 @@ class PropelTypes
      * Returns whether or not the given type is a text type.
      *
      * @param  string  $mappingType
-     * @return Boolean
+     * @return boolean
      */
     public static function isTextType($mappingType)
     {
@@ -286,7 +286,7 @@ class PropelTypes
      * Returns whether or not the given type is a numeric type.
      *
      * @param  string  $mappingType
-     * @return Boolean
+     * @return boolean
      */
     public static function isNumericType($mappingType)
     {
@@ -307,7 +307,7 @@ class PropelTypes
      * Returns whether or not this column is a boolean type.
      *
      * @param  string  $mappingType
-     * @return Boolean
+     * @return boolean
      */
     public static function isBooleanType($mappingType)
     {
@@ -321,7 +321,7 @@ class PropelTypes
      * Returns whether or not this column is a lob/blob type.
      *
      * @param  string  $mappingType
-     * @return Boolean
+     * @return boolean
      */
     public static function isLobType($mappingType)
     {
@@ -336,7 +336,7 @@ class PropelTypes
      * Returns whether or not a passed-in PHP type is a primitive type.
      *
      * @param  string  $phpType
-     * @return Boolean
+     * @return boolean
      */
     public static function isPhpPrimitiveType($phpType)
     {
@@ -347,7 +347,7 @@ class PropelTypes
      * Returns whether or not a passed-in PHP type is a primitive numeric type.
      *
      * @param  string  $phpType
-     * @return Boolean
+     * @return boolean
      */
     public static function isPhpPrimitiveNumericType($phpType)
     {
@@ -358,7 +358,7 @@ class PropelTypes
      * Returns whether or not a passed-in PHP type is an object.
      *
      * @param  string  $phpType
-     * @return Boolean
+     * @return boolean
      */
     public static function isPhpObjectType($phpType)
     {

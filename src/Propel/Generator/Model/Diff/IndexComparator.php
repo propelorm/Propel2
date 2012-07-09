@@ -24,8 +24,8 @@ class IndexComparator
      *
      * @param  Index   $fromIndex
      * @param  Index   $toIndex
-     * @param  Boolean $caseInsensitive
-     * @return Boolean
+     * @param  boolean $caseInsensitive
+     * @return boolean
      */
     public static function computeDiff(Index $fromIndex, Index $toIndex, $caseInsensitive = false)
     {

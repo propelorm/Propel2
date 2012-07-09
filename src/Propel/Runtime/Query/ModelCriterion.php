@@ -10,6 +10,7 @@
 
 namespace Propel\Runtime\Query;
 
+use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\ColumnMap;
 
 /**
@@ -216,7 +217,7 @@ class ModelCriterion extends Criterion
     /**
      * This method checks another Criteria to see if they contain
      * the same attributes and hashtable entries.
-     * @return Boolean
+     * @return boolean
      */
     public function equals($obj)
     {

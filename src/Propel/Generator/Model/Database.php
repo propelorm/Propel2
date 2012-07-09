@@ -263,7 +263,7 @@ class Database extends ScopedMappingModel
      *
      * This is an alias for getHeavyIndexing().
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isHeavyIndexing()
     {
@@ -275,7 +275,7 @@ class Database extends ScopedMappingModel
      *
      * This is an alias for isHeavyIndexing().
      *
-     * @return Boolean
+     * @return boolean
      */
     public function getHeavyIndexing()
     {
@@ -285,7 +285,7 @@ class Database extends ScopedMappingModel
     /**
      * Sets whether or not heavy indexing is enabled.
      *
-     * @param Boolean $heavyIndexing
+     * @param boolean $heavyIndexing
      */
     public function setHeavyIndexing($heavyIndexing)
     {
@@ -340,8 +340,8 @@ class Database extends ScopedMappingModel
      * Returns whether or not the database has a table.
      *
      * @param  string  $name
-     * @param  Boolean $caseInsensitive
-     * @return Boolean
+     * @param  boolean $caseInsensitive
+     * @return boolean
      */
     public function hasTable($name, $caseInsensitive = false)
     {
@@ -356,7 +356,7 @@ class Database extends ScopedMappingModel
      * Returns the table with the specified name.
      *
      * @param  string  $name
-     * @param  Boolean $caseInsensitive
+     * @param  boolean $caseInsensitive
      * @return Table
      */
     public function getTable($name, $caseInsensitive = false)
@@ -377,7 +377,7 @@ class Database extends ScopedMappingModel
      * PHP name.
      *
      * @param  string  $phpName
-     * @return Boolean
+     * @return boolean
      */
     public function hasTableByPhpName($phpName)
     {
@@ -591,7 +591,7 @@ class Database extends ScopedMappingModel
      * Returns whether or not the database has a specific behavior.
      *
      * @param  string  $name
-     * @return Boolean
+     * @return boolean
      */
     public function hasBehavior($name)
     {

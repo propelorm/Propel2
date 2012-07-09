@@ -323,7 +323,7 @@ class Column extends MappingModel
     /**
      * Returns whether or not the column name is plural.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isNamePlural()
     {
@@ -612,7 +612,7 @@ class Column extends MappingModel
      * Returns whether or not this column is a normal property or specifies a
      * the classes that are represented in the table containing this column.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isInheritance()
     {
@@ -623,7 +623,7 @@ class Column extends MappingModel
      * Returns whether or not possible classes have been enumerated in the
      * schema file.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isEnumeratedClasses()
     {
@@ -633,7 +633,7 @@ class Column extends MappingModel
     /**
      * Returns whether or not the column is not null.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isNotNull()
     {
@@ -643,7 +643,7 @@ class Column extends MappingModel
     /**
      * Sets whether or not the column is not null.
      *
-     * @param Boolean $notNull
+     * @param boolean $notNull
      */
     public function setNotNull($notNull)
     {
@@ -666,7 +666,7 @@ class Column extends MappingModel
      * The primary string is the value used by default in the magic
      * __toString method of an active record object.
      *
-     * @param Boolean $isPrimaryString
+     * @param boolean $isPrimaryString
      */
     public function setPrimaryString($isPrimaryString)
     {
@@ -677,7 +677,7 @@ class Column extends MappingModel
      * Returns true if the column is the primary string (used for the magic
      * __toString() method).
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isPrimaryString()
     {
@@ -687,7 +687,7 @@ class Column extends MappingModel
     /**
      * Sets whether or not the column is a primary key.
      *
-     * @param Boolean $primary
+     * @param boolean $primary
      */
     public function setPrimaryKey($primary)
     {
@@ -697,7 +697,7 @@ class Column extends MappingModel
     /**
      * Returns whether or not the column is the primary key.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isPrimaryKey()
     {
@@ -707,7 +707,7 @@ class Column extends MappingModel
     /**
      * Sets whether or not the column is a node key of a tree.
      *
-     * @param Boolean $isNodeKey
+     * @param boolean $isNodeKey
      */
     public function setNodeKey($isNodeKey)
     {
@@ -717,7 +717,7 @@ class Column extends MappingModel
     /**
      * Returns whether or not the column is a node key of a tree.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isNodeKey()
     {
@@ -747,7 +747,7 @@ class Column extends MappingModel
     /**
      * Sets whether or not the column is the nested set left key of a tree.
      *
-     * @param Boolean $isNestedSetLeftKey
+     * @param boolean $isNestedSetLeftKey
      */
     public function setNestedSetLeftKey($isNestedSetLeftKey)
     {
@@ -757,7 +757,7 @@ class Column extends MappingModel
     /**
      * Returns whether or not the column is a nested set key of a tree.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isNestedSetLeftKey()
     {
@@ -767,7 +767,7 @@ class Column extends MappingModel
     /**
      * Set if the column is the nested set right key of a tree.
      *
-     * @param Boolean $isNestedSetRightKey
+     * @param boolean $isNestedSetRightKey
      */
     public function setNestedSetRightKey($isNestedSetRightKey)
     {
@@ -777,7 +777,7 @@ class Column extends MappingModel
     /**
      * Return whether or not the column is a nested set right key of a tree.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isNestedSetRightKey()
     {
@@ -787,7 +787,7 @@ class Column extends MappingModel
     /**
      * Sets whether or not the column is the scope key of a tree.
      *
-     * @param Boolean $isTreeScopeKey
+     * @param boolean $isTreeScopeKey
      */
     public function setTreeScopeKey($isTreeScopeKey)
     {
@@ -797,7 +797,7 @@ class Column extends MappingModel
     /**
      * Returns whether or not the column is a scope key of a tree.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isTreeScopeKey()
     {
@@ -807,7 +807,7 @@ class Column extends MappingModel
     /**
      * Sets whether or not the column must have a unique index on it.
      *
-     * @param Boolean $isUnique
+     * @param boolean $isUnique
      */
     public function setUnique($isUnique)
     {
@@ -817,7 +817,7 @@ class Column extends MappingModel
     /**
      * Returns whether or not the column must have a unique index.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isUnique()
     {
@@ -827,7 +827,7 @@ class Column extends MappingModel
     /**
      * Returns true if the column requires a transaction in PostGreSQL.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function requiresTransactionInPostgres()
     {
@@ -837,7 +837,7 @@ class Column extends MappingModel
     /**
      * Returns whether or not this column is a foreign key.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isForeignKey()
     {
@@ -847,7 +847,7 @@ class Column extends MappingModel
     /**
      * Returns whether or not this column is part of more than one foreign key.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function hasMultipleFK()
     {
@@ -897,7 +897,7 @@ class Column extends MappingModel
     /**
      * Returns whether or not this column has referers.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function hasReferrers()
     {
@@ -909,7 +909,7 @@ class Column extends MappingModel
      * specific foreign key object.
      *
      * @param  ForeignKey $fk
-     * @return Boolean
+     * @return boolean
      */
     public function hasReferrer(ForeignKey $fk)
     {
@@ -999,7 +999,7 @@ class Column extends MappingModel
     /**
      * Returns whether or not this column is a blob/lob type.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isLobType()
     {
@@ -1009,7 +1009,7 @@ class Column extends MappingModel
     /**
      * Returns whether or not this column is a text type.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isTextType()
     {
@@ -1019,7 +1019,7 @@ class Column extends MappingModel
     /**
      * Returns whether or not this column is a numeric type.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isNumericType()
     {
@@ -1029,7 +1029,7 @@ class Column extends MappingModel
     /**
      * Returns whether or not this column is a boolean type.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isBooleanType()
     {
@@ -1039,7 +1039,7 @@ class Column extends MappingModel
     /**
      * Returns whether or not this column is a temporal type.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isTemporalType()
     {
@@ -1049,7 +1049,7 @@ class Column extends MappingModel
     /**
      * Returns whether or not this colum is an ENUM column.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isEnumType()
     {
@@ -1278,7 +1278,7 @@ class Column extends MappingModel
      * the target database. We need to pass in the properties for the target
      * database!
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isAutoIncrement()
     {
@@ -1291,7 +1291,7 @@ class Column extends MappingModel
      * For example, if a runtime query on the table doesn't hydrate this column
      * but a getter does.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isLazyLoad()
     {
@@ -1325,7 +1325,7 @@ class Column extends MappingModel
      *
      * Use isAutoIncrement() to find out if it is set or not.
      *
-     * @param Boolean $isAutoIncrement
+     * @param boolean $isAutoIncrement
      */
     public function setAutoIncrement($isAutoIncrement)
     {
@@ -1348,7 +1348,7 @@ class Column extends MappingModel
      * Returns whether or not the column PHP native type is primitive type (aka
      * a boolean, an integer, a long, a float, a double or a string).
      *
-     * @return Boolean
+     * @return boolean
      * @see PropelTypes::isPhpPrimitiveType()
      */
     public function isPhpPrimitiveType()
@@ -1360,7 +1360,7 @@ class Column extends MappingModel
      * Returns whether or not the column PHP native type is a primitive numeric
      * type (aka an integer, a long, a float or a double).
      *
-     * @return Boolean
+     * @return boolean
      * @see PropelTypes::isPhpPrimitiveNumericType()
      */
     public function isPhpPrimitiveNumericType()
@@ -1371,7 +1371,7 @@ class Column extends MappingModel
     /**
      * Returns whether or not the column PHP native type is an object.
      *
-     * @return Boolean
+     * @return boolean
      * @see PropelTypes::isPhpObjectType()
      */
     public function isPhpObjectType()
@@ -1392,7 +1392,7 @@ class Column extends MappingModel
     /**
      * Returns whether or not this column has a platform adapter.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function hasPlatform()
     {

@@ -42,14 +42,14 @@ class ColumnMap
     /**
      * Is it a primary key?
      *
-     * @var Boolean
+     * @var boolean
      */
     protected $pk = false;
 
     /**
      * Is null value allowed?
      *
-     * @var Boolean
+     * @var boolean
      */
     protected $notNull = false;
 
@@ -93,7 +93,7 @@ class ColumnMap
     /**
      * Is this a primaryString column?
      *
-     * @var Boolean
+     * @var boolean
      */
     protected $isPkString = false;
 
@@ -202,7 +202,7 @@ class ColumnMap
     /**
      * Whether this is a BLOB, LONGVARBINARY, or VARBINARY.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isLob()
     {
@@ -216,7 +216,7 @@ class ColumnMap
     /**
      * Whether this is a DATE/TIME/TIMESTAMP column.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isTemporal()
     {
@@ -232,7 +232,7 @@ class ColumnMap
     /**
      * Whether this column is numeric (int, decimal, bigint etc).
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isNumeric()
     {
@@ -252,7 +252,7 @@ class ColumnMap
     /**
      * Whether this column is a text column (varchar, char, longvarchar).
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isText()
     {
@@ -286,7 +286,7 @@ class ColumnMap
     /**
      * Set if this column is a primary key or not.
      *
-     * @param Boolean $pk True if column is a primary key.
+     * @param boolean $pk True if column is a primary key.
      */
     public function setPrimaryKey($pk)
     {
@@ -296,7 +296,7 @@ class ColumnMap
     /**
      * Is this column a primary key?
      *
-     * @return Boolean True if column is a primary key.
+     * @return boolean True if column is a primary key.
      */
     public function isPrimaryKey()
     {
@@ -316,7 +316,7 @@ class ColumnMap
     /**
      * Is null value allowed ?
      *
-     * @return Boolean True if column may not be null.
+     * @return boolean True if column may not be null.
      */
     public function isNotNull()
     {
@@ -363,7 +363,7 @@ class ColumnMap
     /**
      * Is this column a foreign key?
      *
-     * @return Boolean True if column is a foreign key.
+     * @return boolean True if column is a foreign key.
      */
     public function isForeignKey()
     {
@@ -510,7 +510,7 @@ class ColumnMap
     /**
      * Set this column to be a primaryString column.
      *
-     * @param Boolean $pkString
+     * @param boolean $pkString
      */
     public function setPrimaryString($pkString)
     {
@@ -520,7 +520,7 @@ class ColumnMap
     /**
      * Is this column a primaryString column?
      *
-     * @return Boolean True, if this column is the primaryString column.
+     * @return boolean True, if this column is the primaryString column.
      */
     public function isPrimaryString()
     {

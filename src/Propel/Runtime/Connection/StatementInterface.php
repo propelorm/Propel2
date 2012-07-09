@@ -41,7 +41,7 @@ interface StatementInterface
      * @param integer $type Explicit data type for the parameter using the PDO::PARAM_* constants. To return
      *                              an INOUT parameter from a stored procedure, use the bitwise OR operator to set the
      *                              PDO::PARAM_INPUT_OUTPUT bits for the data_type parameter.
-     * @return Boolean Returns TRUE on success or FALSE on failure.
+     * @return boolean Returns TRUE on success or FALSE on failure.
      */
     public function bindParam($column, &$variable, $type = null);
 
@@ -58,7 +58,7 @@ interface StatementInterface
      * @param mixed   $value The value to bind to the parameter.
      * @param integer $type  Explicit data type for the parameter using the PDO::PARAM_* constants.
      *
-     * @return Boolean Returns TRUE on success or FALSE on failure.
+     * @return boolean Returns TRUE on success or FALSE on failure.
      */
     public function bindValue($param, $value, $type = null);
 
@@ -74,7 +74,7 @@ interface StatementInterface
      * has unfetched rows. If your database driver suffers from this limitation,
      * the problem may manifest itself in an out-of-sequence error.
      *
-     * @return Boolean Returns TRUE on success or FALSE on failure.
+     * @return boolean Returns TRUE on success or FALSE on failure.
      */
     public function closeCursor();
 
@@ -109,7 +109,7 @@ interface StatementInterface
      *
      * @param array $params An array of values with as many elements as there are
      *                                  bound parameters in the SQL statement being executed.
-     * @return Boolean Returns TRUE on success or FALSE on failure.
+     * @return boolean Returns TRUE on success or FALSE on failure.
      */
     public function execute($params = null);
 

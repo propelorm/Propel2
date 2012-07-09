@@ -134,14 +134,14 @@ interface AdapterInterface
     /**
      * Whether this adapter uses an ID generation system that requires getting ID _before_ performing INSERT.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isGetIdBeforeInsert();
 
     /**
      * Whether this adapter uses an ID generation system that requires getting ID _before_ performing INSERT.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function isGetIdAfterInsert();
 
@@ -195,7 +195,7 @@ interface AdapterInterface
      * @todo       should be abstract
      * @deprecated
      *
-     * @return Boolean
+     * @return boolean
      */
     public function useQuoteIdentifier();
 
@@ -242,7 +242,7 @@ interface AdapterInterface
      *
      * @param Propel\Runtime\Map\Criteria $criteria
      * @param array                       $fromClause
-     * @param Boolean                     $aliasAll
+     * @param boolean                     $aliasAll
      *
      * @return string
      */
@@ -292,7 +292,7 @@ interface AdapterInterface
      * @param Propel\Runtime\Map\ColumnMap                 $cMap      The ColumnMap of the column to bind
      * @param null|integer                                 $position  The position of the parameter to bind
      *
-     * @return Boolean
+     * @return boolean
      */
     public function bindValue(StatementInterface $stmt, $parameter, $value, ColumnMap $cMap, $position = null);
 }

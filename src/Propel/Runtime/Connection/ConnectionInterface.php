@@ -38,7 +38,7 @@ interface ConnectionInterface
      * Calling Conneciton::rollBack() will roll back all changes to the database
      * and return the connection to autocommit mode.
      *
-     * @return Boolean TRUE on success or FALSE on failure.
+     * @return boolean TRUE on success or FALSE on failure.
      */
     public function beginTransaction();
 
@@ -48,7 +48,7 @@ interface ConnectionInterface
      * commit() returns the database connection to autocommit mode until the
      * next call to connection::beginTransaction() starts a new transaction.
      *
-     * @return Boolean TRUE on success or FALSE on failure.
+     * @return boolean TRUE on success or FALSE on failure.
      */
     public function commit();
 
@@ -60,7 +60,7 @@ interface ConnectionInterface
      * If the database was set to autocommit mode, this function will restore
      * autocommit mode after it has rolled back the transaction.
      *
-     * @return Boolean TRUE on success or FALSE on failure.
+     * @return boolean TRUE on success or FALSE on failure.
      */
     public function rollBack();
 
@@ -86,9 +86,9 @@ interface ConnectionInterface
      * Set an attribute.
      *
      * @param string $attribute
-     * @param mixec  $value
+     * @param mixed  $value
      *
-     * @return Boolean TRUE on success or FALSE on failure.
+     * @return boolean TRUE on success or FALSE on failure.
      */
     public function setAttribute($attribute, $value);
 
@@ -120,7 +120,7 @@ interface ConnectionInterface
      *
      * @return \Propel\Runtime\Connection\StatementInterface|bool A Statement object if the database server
      *                                 successfully prepares, FALSE otherwise.
-     * @throws \Propel\Runtime\Connection\ConnectionException depending on error handling.
+     * @throws \Propel\Runtime\Connection\Exception\ConnectionException depending on error handling.
      */
     public function prepare($statement, $driver_options = array());
 
@@ -132,7 +132,7 @@ interface ConnectionInterface
      *
      * @return \Propel\Runtime\Connection\StatementInterface|bool A Statement object if the database server
      *                                 successfully prepares, FALSE otherwise.
-     * @throws \Propel\Runtime\Connection\ConnectionException depending on error handling.
+     * @throws \Propel\Runtime\Connection\Exception\ConnectionException depending on error handling.
      */
     public function query();
 

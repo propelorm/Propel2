@@ -94,7 +94,7 @@ class ".$this->getUnqualifiedClassName()." extends $baseClassName {
     /**
      * Checks whether any registered behavior on that table has a modifier for a hook
      * @param  string  $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
-     * @return Boolean
+     * @return boolean
      */
     public function hasBehaviorModifier($hookName, $modifier = null)
     {
