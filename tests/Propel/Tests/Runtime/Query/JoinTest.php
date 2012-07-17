@@ -159,7 +159,7 @@ class JoinTest extends BaseTestCase
         $this->assertEquals('LEFT JOIN', $j->getJoinType());
     }
 
-    public function testCompositeeConstructor()
+    public function testCompositeConstructor()
     {
         $j = new Join(array('foo1', 'foo2'), array('bar1', 'bar2'), 'LEFT JOIN');
         $expect = array(

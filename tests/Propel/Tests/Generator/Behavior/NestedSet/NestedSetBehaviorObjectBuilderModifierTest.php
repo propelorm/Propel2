@@ -342,7 +342,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
         $this->assertFalse($t0->hasPrevSibling(), 'empty node has no previous sibling');
         $this->assertFalse($t1->hasPrevSibling(), 'root node has no previous sibling');
         $this->assertFalse($t2->hasPrevSibling(), 'first sibling has no previous sibling');
-        $this->assertTrue($t3->hasPrevSibling(), 'not first sibling has a previous siblingt');
+        $this->assertTrue($t3->hasPrevSibling(), 'not first sibling has a previous sibling');
     }
 
     public function testGetPrevSibling()
@@ -670,7 +670,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
             't6' => array(8, 9, 3),
             't7' => array(10, 11, 3),
         );
-        $this->assertEquals($expected, $this->dumpNodes($descendants), 'getBranch() returns an array of descendants, uncluding the current node');
+        $this->assertEquals($expected, $this->dumpNodes($descendants), 'getBranch() returns an array of descendants, including the current node');
         $c = new Criteria();
         $c->add(Table9Peer::TITLE, 't3', Criteria::NOT_EQUAL);
         $descendants = $t3->getBranch($c);

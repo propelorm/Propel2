@@ -173,7 +173,7 @@ class SluggableBehaviorTest extends BookstoreTestBase
         $t = new Table14();
         $t->setTitle('Hello, World');
         $t->save();
-        $this->assertEquals('/foo/hello-world/bar', $t->getSlug(), 'preSave() sets a cleanued up slug for objects');
+        $this->assertEquals('/foo/hello-world/bar', $t->getSlug(), 'preSave() sets a cleaned up slug for objects');
         $t = new Table14();
         $t->setTitle('Hello, World');
         $t->save();
@@ -249,7 +249,7 @@ class SluggableBehaviorTest extends BookstoreTestBase
     public function testQueryFindOneBySlug()
     {
         $this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table13Query', 'findOneBySlug'), 'The generated query provides a findOneBySlug() method');
-        $this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table14Query', 'findOneBySlug'), 'The generated query provides a findOneBySlug() method even if the slug column doesnt have the default name');
+        $this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table14Query', 'findOneBySlug'), 'The generated query provides a findOneBySlug() method even if the slug column doesn\'t have the default name');
 
         Table14Query::create()->deleteAll();
         $t1 = new Table14();

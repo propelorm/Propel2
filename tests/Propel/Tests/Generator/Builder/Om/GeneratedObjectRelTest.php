@@ -45,7 +45,7 @@ use \DateTime;
  * object operations.  The _idea_ here is to test every possible generated method
  * from Object.tpl; if necessary, bookstore will be expanded to accommodate this.
  *
- * The database is relaoded before every test and flushed after every test.  This
+ * The database is reloaded before every test and flushed after every test.  This
  * means that you can always rely on the contents of the databases being the same
  * for each test method in this class.  See the BookstoreDataPopulator::populate()
  * method for the exact contents of the database.
@@ -166,8 +166,8 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
 
     public function testManyToManyGetterExists()
     {
-        $this->assertTrue(method_exists('Propel\Tests\Bookstore\BookClubList', 'getBooks'), 'Object generator correcly adds getter for the crossRefFk');
-        $this->assertFalse(method_exists('Propel\Tests\Bookstore\BookClubList', 'getBookClubLists'), 'Object generator correcly adds getter for the crossRefFk');
+        $this->assertTrue(method_exists('Propel\Tests\Bookstore\BookClubList', 'getBooks'), 'Object generator correctly adds getter for the crossRefFk');
+        $this->assertFalse(method_exists('Propel\Tests\Bookstore\BookClubList', 'getBookClubLists'), 'Object generator correctly adds getter for the crossRefFk');
     }
 
     public function testManyToManyGetterNewObject()
@@ -199,8 +199,8 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
 
     public function testManyToManyCounterExists()
     {
-        $this->assertTrue(method_exists('Propel\Tests\Bookstore\BookClubList', 'countBooks'), 'Object generator correcly adds counter for the crossRefFk');
-        $this->assertFalse(method_exists('Propel\Tests\Bookstore\BookClubList', 'countBookClubLists'), 'Object generator correcly adds counter for the crossRefFk');
+        $this->assertTrue(method_exists('Propel\Tests\Bookstore\BookClubList', 'countBooks'), 'Object generator correctly adds counter for the crossRefFk');
+        $this->assertFalse(method_exists('Propel\Tests\Bookstore\BookClubList', 'countBookClubLists'), 'Object generator correctly adds counter for the crossRefFk');
     }
 
     public function testManyToManyCounterNewObject()

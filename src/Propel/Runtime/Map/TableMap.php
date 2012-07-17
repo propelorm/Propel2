@@ -150,7 +150,7 @@ class TableMap
 
     /**
      * Initialize the TableMap to build columns, relations, etc
-     * This method should be overridden by descendents
+     * This method should be overridden by descendants
      */
     public function initialize()
     {
@@ -543,7 +543,7 @@ class TableMap
     /**
      * Build relations
      * Relations are lazy loaded for performance reasons
-     * This method should be overridden by descendents
+     * This method should be overridden by descendants
      */
     public function buildRelations()
     {

@@ -205,7 +205,7 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
                 $innerSelect .= $selColArr[0] . ' AS ' . $alias . ', ';
                 $outerSelect .= $alias . ', ';
             } else {
-                //agregate columns must always have an alias clause
+                //aggregate columns must always have an alias clause
                 if (!stristr($selCol, ' AS ')) {
                     throw new MalformedClauseException('MssqlAdapter::applyLimit() requires aggregate columns to have an Alias clause');
                 }

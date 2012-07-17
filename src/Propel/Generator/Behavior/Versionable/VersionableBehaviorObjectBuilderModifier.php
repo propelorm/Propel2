@@ -325,7 +325,7 @@ public function addVersion(\$con = null)
         $ARclassName = $this->getActiveRecordClassName();
         $script .= "
 /**
- * Sets the properties of the curent object to the value they had at a specific version
+ * Sets the properties of the current object to the value they had at a specific version
  *
  * @param   integer \$versionNumber The version number to read
  * @param   ConnectionInterface \$con the connection to use
@@ -355,7 +355,7 @@ public function toVersion(\$versionNumber, \$con = null)
         $primaryKeyName = $tablePKs[0]->getPhpName();
         $script .= "
 /**
- * Sets the properties of the curent object to the value they had at a specific version
+ * Sets the properties of the current object to the value they had at a specific version
  *
  * @param   {$versionARClassName} \$version The version object to use
  * @param   ConnectionInterface \$con the connection to use

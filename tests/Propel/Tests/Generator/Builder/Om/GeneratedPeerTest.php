@@ -26,7 +26,7 @@ use Propel\Runtime\Query\Criteria;
  * This test uses generated Bookstore classes to test the behavior of various
  * peer operations.
  *
- * The database is relaoded before every test and flushed after every test.  This
+ * The database is reloaded before every test and flushed after every test.  This
  * means that you can always rely on the contents of the databases being the same
  * for each test method in this class.  See the BookstoreDataPopulator::populate()
  * method for the exact contents of the database.

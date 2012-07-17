@@ -53,7 +53,7 @@ class SubQueryTest extends BookstoreTestBase
         }
 
         $params = array();
-        $this->assertCriteriaTranslation($c, $sql, $params, 'addSubQueryCriteriaInFrom() combines two queries succesfully');
+        $this->assertCriteriaTranslation($c, $sql, $params, 'addSubQueryCriteriaInFrom() combines two queries successfully');
     }
 
     public function testSubQueryWithoutSelect()
@@ -215,7 +215,7 @@ class SubQueryTest extends BookstoreTestBase
             array('table' => 'book', 'column' => 'PRICE', 'value' => 20),
             array('table' => 'book', 'column' => 'AUTHOR_ID', 'value' => 123),
         );
-        $this->assertCriteriaTranslation($c, $sql, $params, 'addSubQueryCriteriaInFrom() combines two queries succesfully');
+        $this->assertCriteriaTranslation($c, $sql, $params, 'addSubQueryCriteriaInFrom() combines two queries successfully');
     }
 
     public function testSubQueryRecursive()
@@ -261,7 +261,7 @@ class SubQueryTest extends BookstoreTestBase
             array('table' => 'book', 'column' => 'PRICE', 'value' => 12),
             array('table' => 'book', 'column' => 'PUBLISHER_ID', 'value' => 123),
         );
-        $this->assertCriteriaTranslation($c, $sql, $params, 'addSubQueryCriteriaInFrom() combines two queries succesfully');
+        $this->assertCriteriaTranslation($c, $sql, $params, 'addSubQueryCriteriaInFrom() combines two queries successfully');
     }
 
     public function testSubQueryWithSelectColumns()

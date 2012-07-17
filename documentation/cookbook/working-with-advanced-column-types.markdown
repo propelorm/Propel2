@@ -89,7 +89,7 @@ echo $book->getStyle(); // novel
 // Trying to set a value not in the valueSet throws an exception
 
 // ENUM columns are also searchable, using the generated filterByXXX() method
-// or other ModelCritera methods (like where(), condition())
+// or other ModelCriteria methods (like where(), condition())
 $books = BookQuery::create()
   ->filterByStyle('novel')
   ->find();

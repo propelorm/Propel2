@@ -80,7 +80,7 @@ interface AdapterInterface
      * a piece of text used in a SQL statement (generally a single
      * quote).
      *
-     * @return string The text delimeter.
+     * @return string The text delimiter.
      */
     public function getStringDelimiter();
 
@@ -114,14 +114,14 @@ interface AdapterInterface
     public function strLength($s);
 
     /**
-     * Quotes database objec identifiers (table names, col names, sequences, etc.).
+     * Quotes database object identifiers (table names, col names, sequences, etc.).
      * @param  string $text The identifier to quote.
      * @return string The quoted identifier.
      */
     public function quoteIdentifier($text);
 
     /**
-     * Quotes a database table which could have space seperating it from an alias,
+     * Quotes a database table which could have space separating it from an alias,
      * both should be identified separately. This doesn't take care of dots which
      * separate schema names from table names. Adapters for RDBMs which support
      * schemas have to implement that in the platform-specific way.
@@ -188,7 +188,7 @@ interface AdapterInterface
 
     /**
      * Should Column-Names get identifiers for inserts or updates.
-     * By default false is returned -> backwards compability.
+     * By default false is returned -> backwards compatibility.
      *
      * it`s a workaround...!!!
      *
@@ -272,7 +272,7 @@ interface AdapterInterface
      * $sql = BasePeer::createSelectSql($criteria, $params);
      * $stmt = $con->prepare($sql);
      * $params = array();
-     * $adapter->populateStmtValues($stmt, $params, Propel::getServiceContainer()->getDatabaseMap($critera->getDbName()));
+     * $adapter->populateStmtValues($stmt, $params, Propel::getServiceContainer()->getDatabaseMap($criteria->getDbName()));
      * $stmt->execute();
      * </code>
      *
@@ -283,7 +283,7 @@ interface AdapterInterface
     public function bindValues(StatementInterface $stmt, array $params, DatabaseMap $dbMap);
 
     /**
-     * Binds a value to a positioned parameted in a statement,
+     * Binds a value to a positioned parameter in a statement,
      * given a ColumnMap object to infer the binding type.
      *
      * @param Propel\Runtime\Connection\StatementInterface $stmt      The statement to bind

@@ -1037,7 +1037,7 @@ ALTER TABLE %s ADD
     }
 
     /**
-     * Quote and escape needed characters in the string for unerlying RDBMS.
+     * Quote and escape needed characters in the string for underlying RDBMS.
      * @param  string $text
      * @return string
      */

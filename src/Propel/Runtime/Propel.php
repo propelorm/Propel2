@@ -45,7 +45,7 @@ class Propel
     const DEFAULT_NAME = "default";
 
     /**
-     * A constant defining 'System is unusuable' logging level
+     * A constant defining 'System is unusable' logging level
      */
     const LOG_EMERG = 550;
 
@@ -271,7 +271,7 @@ class Propel
 
     /**
      * Logs a message
-     * If a logger has been configured, the logger will be used, otherwrise the
+     * If a logger has been configured, the logger will be used, otherwise the
      * logging message will be discarded without any further action
      *
      * @param      string The message that will be logged.

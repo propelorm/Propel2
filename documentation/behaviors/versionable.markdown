@@ -254,7 +254,7 @@ The audit log abilities need to be enabled in the schema as well:
 * `string getVersionCreatedBy()`: Gets the author name for the revision
 * `mixed getVersionCreatedAt()`: Gets the creation date for the revision (the behavior takes care of setting it)
 * `BaseObject setVersionComment(string $comment)`: Defines the comment for the revision
-* `string getVersioneComment()`: Gets the comment for the revision
+* `string getVersionComment()`: Gets the comment for the revision
 
 ### Peer class ###
 

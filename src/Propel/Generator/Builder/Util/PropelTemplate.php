@@ -68,7 +68,7 @@ class PropelTemplate
      * // This is Mike
      * </code>
      *
-     * @param array $vars An associative array of argumens to be rendered
+     * @param array $vars An associative array of arguments to be rendered
      *
      * @return string The rendered template
      */

@@ -66,7 +66,7 @@ class XmlToArrayConverter
                 $child = self::getConvertedXmlValue($v);
             }
 
-            // add the childs attributes as if they where children
+            // add the children attributes as if they where children
             foreach ($v->attributes() as $ak => $av) {
                 if ($ak == 'id') {
                     // special exception: if there is a key named 'id'

@@ -878,7 +878,7 @@ class CriteriaTest extends BookstoreTestBase
 
         $c->addJoin("tbl.COL1", "tbl.COL2", Criteria::LEFT_JOIN);
         $c->addJoin("tbl.COL1", "tbl.COL2", Criteria::LEFT_JOIN);
-        $this->assertEquals(1, count($c->getJoins()), "Expected not to have duplciate LJOIN added.");
+        $this->assertEquals(1, count($c->getJoins()), "Expected not to have duplicate LJOIN added.");
 
         $c->addJoin("tbl.COL1", "tbl.COL2", Criteria::RIGHT_JOIN);
         $c->addJoin("tbl.COL1", "tbl.COL2", Criteria::RIGHT_JOIN);

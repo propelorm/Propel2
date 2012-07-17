@@ -94,7 +94,7 @@ class OnDemandIterator implements \Iterator
     }
 
     /**
-     * Advances the curesor in the statement
+     * Advances the cursor in the statement
      * Closes the cursor if the end of the statement is reached
      */
     public function next()

@@ -52,7 +52,7 @@ class TableMapBuilderTest extends BookstoreTestBase
   public function testSimpleRelationName()
   {
     $bookTable = $this->databaseMap->getTableByPhpName('Propel\Tests\Bookstore\Book');
-    $this->assertTrue($bookTable->hasRelation('Publisher'), 'The map builder creates relations based on the foreign table name, calemized');
+    $this->assertTrue($bookTable->hasRelation('Publisher'), 'The map builder creates relations based on the foreign table name, camelized');
     $this->assertTrue($bookTable->hasRelation('BookListRel'), 'The map builder creates relations based on the foreign table phpName, if provided');
   }
 
