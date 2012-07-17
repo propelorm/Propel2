@@ -143,7 +143,7 @@ abstract class BaseObject
     /**
      * Code to be run before persisting the object
      * @param  ConnectionInterface $con
-     * @return bloolean
+     * @return boolean
      */
     public function preSave(ConnectionInterface $con = null)
     {

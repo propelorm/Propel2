@@ -56,7 +56,7 @@ class QueryBuilder extends AbstractOMBuilder
     }
 
     /**
-     * Adds class phpdoc comment and openning of class.
+     * Adds class phpdoc comment and opening of class.
      * @param      string &$script The script will be modified in this method.
      */
     protected function addClassOpen(&$script)
@@ -246,7 +246,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     /**
      * Initializes internal state of ".$this->getClassName()." object.
      *
-     * @param     string \$dbName The dabase name
+     * @param     string \$dbName The database name
      * @param     string \$modelName The phpName of a model, e.g. 'Book'
      * @param     string \$modelAlias The alias for the model in this query, e.g. 'b'
      */";
@@ -411,7 +411,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
         $pkHash = $this->getPeerBuilder()->getInstancePoolKeySnippet($pks);
         $script .= "
         if ((null !== (\$obj = {$peerClassName}::getInstanceFromPool({$pkHash}))) && !\$this->formatter) {
-            // the object is alredy in the instance pool
+            // the object is already in the instance pool
             return \$obj;
         }
         if (\$con === null) {
@@ -889,7 +889,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     }
 
     /**
-     * Adds the singular filterByCol method for an Arry column.
+     * Adds the singular filterByCol method for an Array column.
      * @param      string &$script The script will be modified in this method.
      */
     protected function addFilterByArrayCol(&$script, $col)
@@ -1363,9 +1363,9 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     /**
      * Code to execute before every UPDATE statement
      *
-     * @param     array \$values The associatiove array of columns and values for the update
+     * @param     array \$values The associative array of columns and values for the update
      * @param     ConnectionInterface \$con The connection object used by the query
-     * @param     boolean \$forceIndividualSaves If false (default), the resulting call is a BasePeer::doUpdate(), ortherwise it is a series of save() calls on all the found objects
+     * @param     boolean \$forceIndividualSaves If false (default), the resulting call is a BasePeer::doUpdate(), otherwise it is a series of save() calls on all the found objects
      */
     protected function basePreUpdate(&\$values, ConnectionInterface \$con, \$forceIndividualSaves = false)
     {" . $behaviorCode . "
@@ -1390,7 +1390,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     /**
      * Code to execute after every UPDATE statement
      *
-     * @param     int \$affectedRows the number of udated rows
+     * @param     int \$affectedRows the number of updated rows
      * @param     ConnectionInterface \$con The connection object used by the query
      */
     protected function basePostUpdate(\$affectedRows, ConnectionInterface \$con)

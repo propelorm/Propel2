@@ -95,8 +95,8 @@ class NamespaceTest extends \PHPUnit_Framework_TestCase
         \Baz\NamespacedPublisherQuery::create()->deleteAll();
         $noNamespacedBook = \Foo\Bar\NamespacedBookQuery::create()->findOne();
         $this->assertNull($noNamespacedBook);
-        $noPublihser = \Baz\NamespacedPublisherQuery::create()->findOne();
-        $this->assertNull($noPublihser);
+        $noPublisher = \Baz\NamespacedPublisherQuery::create()->findOne();
+        $this->assertNull($noPublisher);
     }
 
     public function testFind()

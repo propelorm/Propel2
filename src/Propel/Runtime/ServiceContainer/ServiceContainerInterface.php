@@ -33,7 +33,7 @@ interface ServiceContainerInterface
     const DEFAULT_DATASOURCE_NAME = 'default';
 
     /**
-     * The name of the defautl Profiler class created by getProfiler()
+     * The name of the default Profiler class created by getProfiler()
      */
     const DEFAULT_PROFILER_CLASS = '\Propel\Runtime\Util\Profiler';
 

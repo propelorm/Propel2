@@ -664,7 +664,7 @@ class ForeignKey extends MappingModel
     }
 
     /**
-     * Whether this foreign key is matched by an invertes foreign key (on foreign table).
+     * Whether this foreign key is matched by an inverted foreign key (on foreign table).
      *
      * This is to prevent duplicate columns being generated for a 1:1 relationship that is represented
      * by foreign keys on both tables.  I don't know if that's good practice ... but hell, why not

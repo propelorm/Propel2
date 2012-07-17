@@ -90,7 +90,7 @@ class PeerBuilder extends AbstractPeerBuilder
     }
 
     /**
-     * Adds class phpdoc comment and openning of class.
+     * Adds class phpdoc comment and opening of class.
      *
      * @param string &$script
      */
@@ -243,7 +243,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
     const DEFAULT_STRING_FORMAT = '" . $this->getTable()->getDefaultStringFormat() . "';
 
     /**
-     * An identiy map to hold any loaded instances of ".$this->getObjectClassName()." objects.
+     * An identity map to hold any loaded instances of ".$this->getObjectClassName()." objects.
      * This must be public so that other peer classes can access this when hydrating from JOIN
      * queries.
      * @var array ".$this->getObjectClassName()."[]
@@ -265,7 +265,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
     }
 
     /**
-     * Adds the COLUMN_NAME contants to the class definition.
+     * Adds the COLUMN_NAME constant to the class definition.
      * @param string &$script The script will be modified in this method.
      */
     protected function addColumnNameConstants(&$script)
@@ -407,7 +407,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
         $script .= ")
     );
 ";
-    } // addFielKeysAttribute
+    } // addFieldKeysAttribute
 
     /**
      * Adds the valueSet attributes for ENUM columns.
@@ -777,7 +777,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
     /**
      * Prepares the Criteria object and uses the parent doSelect() method to execute a Statement.
      *
-     * Use this method directly if you want to work with an executed statement durirectly (for example
+     * Use this method directly if you want to work with an executed statement directly (for example
      * to perform your own object hydration).
      *
      * @param Criteria            \$criteria The Criteria object used to build the SELECT statement.
@@ -1313,7 +1313,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      * The class that the Peer will make instances of.
      *
      * If \$withPrefix is true, the returned path
-     * uses a dot-path notation which is tranalted into a path
+     * uses a dot-path notation which is translated into a path
      * relative to a location on the PHP include_path.
      * (e.g. path.to.MyClass -> 'path/to/MyClass.php')
      *
@@ -1805,7 +1805,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 ";
 
         // This logic is almost exactly the same as that in doOnDeleteCascade()
-        // it may make sense to refactor this, provided that thigns don't
+        // it may make sense to refactor this, provided that things don't
         // get too complicated.
         foreach ($table->getReferrers() as $fk) {
 

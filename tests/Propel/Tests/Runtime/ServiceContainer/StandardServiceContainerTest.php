@@ -200,7 +200,7 @@ class StandardServiceContainerTest extends BaseTestCase
         $this->assertSame($manager2, $this->sc->getConnectionManager('foo2'));
     }
 
-    public function testSetConnectionManagerClosesExistingConnectionMAnagerForTheSameDatasource()
+    public function testSetConnectionManagerClosesExistingConnectionManagerForTheSameDatasource()
     {
         $manager = new TestableConnectionManagerSingle();
         $manager->setConnection(new PdoConnection('sqlite::memory:'));
@@ -243,14 +243,14 @@ class StandardServiceContainerTest extends BaseTestCase
         $this->assertEquals('write', $this->sc->getConnection('foo'));
     }
 
-    public function testGetConnectionReturnsWriteConnectionWhenAskedExplicitely()
+    public function testGetConnectionReturnsWriteConnectionWhenAskedExplicitly()
     {
         $this->sc->setConnectionManager('foo', new TestableConnectionManagerSingle());
         $this->sc->setAdapter('foo', new SqliteAdapter());
         $this->assertEquals('write', $this->sc->getConnection('foo', ServiceContainerInterface::CONNECTION_WRITE));
     }
 
-    public function testGetConnectionReturnsReadConnectionWhenAskedExplicitely()
+    public function testGetConnectionReturnsReadConnectionWhenAskedExplicitly()
     {
         $this->sc->setConnectionManager('foo', new TestableConnectionManagerSingle());
         $this->sc->setAdapter('foo', new SqliteAdapter());
@@ -284,7 +284,7 @@ class StandardServiceContainerTest extends BaseTestCase
         $this->assertInstanceOf('Propel\Runtime\Connection\ConnectionManagerSingle', $this->sc->getConnectionManager('foo'));
     }
 
-    public function testSetConnectionAddsAConnectionWhichCanBeRetrivedByGetConnection()
+    public function testSetConnectionAddsAConnectionWhichCanBeRetrievedByGetConnection()
     {
         $con = new PdoConnection('sqlite::memory:');
         $this->sc->setAdapter('foo', new SqliteAdapter());

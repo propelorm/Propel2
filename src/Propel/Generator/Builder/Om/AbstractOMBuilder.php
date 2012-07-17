@@ -229,7 +229,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     }
 
     /**
-     * This decare the class use and get the correct name to use (short classname, Alias, or FQCN)
+     * This declare the class use and get the correct name to use (short classname, Alias, or FQCN)
      *
      * @param  AbstractOMBuilder $builder
      * @param  boolean           $fqcn    true to return the $fqcn classname
@@ -257,7 +257,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      *
      * @param  string         $class     the class name
      * @param  string         $namespace the namespace
-     * @param  string|boolean $alias     the alias wanted, if set to True, it automaticaly add an alias when needed
+     * @param  string|boolean $alias     the alias wanted, if set to True, it automatically adds an alias when needed
      * @return string         the class name or it's alias
      */
     public function declareClassNamespace($class, $namespace = '', $alias = false)
@@ -346,7 +346,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      *
      * @param  string $class       the class
      * @param  string $namespace   the namespace
-     * @param  mixed  $aliasPrefix optionaly an alias or True to force an automatic alias prefix (Base or Child)
+     * @param  mixed  $aliasPrefix optionally an alias or True to force an automatic alias prefix (Base or Child)
      * @return string the short ClassName or an alias
      */
     public function declareClassNamespacePrefix($class, $namespace = '', $aliasPrefix = false)
@@ -365,7 +365,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * This return the short ClassName to use or an alias
      *
      * @param  string $fullyQualifiedClassName the fully qualified classname
-     * @param  mixed  $aliasPrefix             optionaly an alias or True to force an automatic alias prefix (Base or Child)
+     * @param  mixed  $aliasPrefix             optionally an alias or True to force an automatic alias prefix (Base or Child)
      * @return string the short ClassName or an alias
      */
     public function declareClass($fullyQualifiedClassName, $aliasPrefix = false)

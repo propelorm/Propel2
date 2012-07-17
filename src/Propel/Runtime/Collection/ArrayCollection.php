@@ -156,7 +156,7 @@ class ArrayCollection extends Collection
     }
 
     /**
-     * Synonym for toArray(), to provide a similar interface to PopelObjectCollection
+     * Synonym for toArray(), to provide a similar interface to PropelObjectCollection
      *
      * @param string  $keyColumn
      * @param boolean $usePrefix
@@ -175,7 +175,7 @@ class ArrayCollection extends Collection
     /**
      * Get an associative array representation of the collection
      * The first parameter specifies the column to be used for the key,
-     * And the seconf for the value.
+     * And the second for the value.
      * <code>
      * $res = $coll->toKeyValue('Id', 'Name');
      * </code>

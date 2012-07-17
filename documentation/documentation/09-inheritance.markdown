@@ -120,7 +120,7 @@ If you wish to enforce using subclasses of an entity, you may declare a table "a
   ...
 {% endhighlight %}
 
-That way users will only be able to instanciate `Essay` or `Comic` books, but not `Book`.
+That way users will only be able to instantiate `Essay` or `Comic` books, but not `Book`.
 
 ## Class Table Inheritance ##
 

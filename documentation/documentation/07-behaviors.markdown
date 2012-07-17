@@ -114,7 +114,7 @@ Propel offers three ways to achieve the refactoring of the common behavior. The 
 
 Behaviors are special objects that use events called during the build process to enhance the generated model classes. Behaviors can add attributes and methods to both the Peer and model classes, they can modify the course of some of the generated methods, and they can even modify the structure of a database by adding columns or tables.
 
-For instance, Propel bundles a behavior called `timestampable`, which does exatcly the same thing as described above. But instead of adding columns and methods by hand, all you have to do is to declare it in a `<behavior>` tag in your `schema.xml`, as follows:
+For instance, Propel bundles a behavior called `timestampable`, which does exactly the same thing as described above. But instead of adding columns and methods by hand, all you have to do is to declare it in a `<behavior>` tag in your `schema.xml`, as follows:
 
 {% highlight xml %}
 <table name="book">
@@ -189,7 +189,7 @@ As a Propel behavior can be packaged into a single class, behaviors are quite ea
 # ----------------------------------
 
 propel.behavior.timestampable.class = propel.engine.behavior.timestampable.TimestampableBehavior
-# Add your custom behavior pathes here
+# Add your custom behavior paths here
 propel.behavior.formidable.class = path.to.FormidableBehavior
 {% endhighlight %}
 

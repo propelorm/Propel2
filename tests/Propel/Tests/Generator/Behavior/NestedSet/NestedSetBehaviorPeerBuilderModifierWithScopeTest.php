@@ -213,7 +213,7 @@ class NestedSetBehaviorPeerBuilderModifierWithScopeTest extends BookstoreNestedS
             't6' => array(8, 9, 4),
             't7' => array(10, 11, 4),
         );
-        $this->assertEquals($this->dumpTreeWithScope(1), $expected, 'shiftLevel can shift level whith a scope');
+        $this->assertEquals($this->dumpTreeWithScope(1), $expected, 'shiftLevel can shift level with a scope');
         $expected = array(
             't8' => array(1, 6, 0),
             't9' => array(2, 3, 1),

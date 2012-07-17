@@ -199,7 +199,7 @@ class ModelCriteriaTest extends BookstoreTestBase
         $params = array(
             array('table' => 'book', 'column' => 'TITLE', 'value' => 'foo'),
         );
-        $this->assertCriteriaTranslation($c, $sql, $params, 'setModelAlias() allows the definition of the alias after constrution');
+        $this->assertCriteriaTranslation($c, $sql, $params, 'setModelAlias() allows the definition of the alias after construction');
 
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book', 'b');
         $c->where('b.Title = ?', 'foo');
@@ -229,7 +229,7 @@ class ModelCriteriaTest extends BookstoreTestBase
             array('table' => 'book', 'column' => 'TITLE', 'value' => 'foo'),
             array('table' => 'author', 'column' => 'FIRST_NAME', 'value' => 'john'),
         );
-        $this->assertCriteriaTranslation($c, $sql, $params, 'setModelAlias() allows the definition of a true SQL alias after constrution');
+        $this->assertCriteriaTranslation($c, $sql, $params, 'setModelAlias() allows the definition of a true SQL alias after construction');
     }
 
     public function testCondition()
@@ -650,16 +650,16 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         try {
             $c->orderBy('Propel\Tests\Bookstore\Book.Foo');
-            $this->fail('orderBy() throws an exception when called with an unkown column name');
+            $this->fail('orderBy() throws an exception when called with an unknown column name');
         } catch (UnknownColumnException $e) {
-            $this->assertTrue(true, 'orderBy() throws an exception when called with an unkown column name');
+            $this->assertTrue(true, 'orderBy() throws an exception when called with an unknown column name');
         }
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         try {
             $c->orderBy('Propel\Tests\Bookstore\Book.Title', 'foo');
-            $this->fail('orderBy() throws an exception when called with an unkown order');
+            $this->fail('orderBy() throws an exception when called with an unknown order');
         } catch (UnexpectedValueException $e) {
-            $this->assertTrue(true, 'orderBy() throws an exception when called with an unkown order');
+            $this->assertTrue(true, 'orderBy() throws an exception when called with an unknown order');
         }
     }
 
@@ -696,9 +696,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         try {
             $c->groupBy('Book.Foo');
-            $this->fail('groupBy() throws an exception when called with an unkown column name');
+            $this->fail('groupBy() throws an exception when called with an unknown column name');
         } catch (UnknownColumnException $e) {
-            $this->assertTrue(true, 'groupBy() throws an exception when called with an unkown column name');
+            $this->assertTrue(true, 'groupBy() throws an exception when called with an unknown column name');
         }
     }
 
@@ -1503,7 +1503,7 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c->withColumn('UPPER(Propel\Tests\Bookstore\Book.ISBN)', 'isbn');
         $sql = 'SELECT book.ID, UPPER(book.TITLE) AS foo, UPPER(book.ISBN) AS isbn FROM `book`';
         $params = array();
-        $this->assertCriteriaTranslation($c, $sql, $params, 'withColumn() called repeatedly adds several as colums');
+        $this->assertCriteriaTranslation($c, $sql, $params, 'withColumn() called repeatedly adds several as columns');
     }
 
     public function testKeepQuery()

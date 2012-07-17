@@ -121,7 +121,7 @@ class ArrayCollectionTest extends BookstoreEmptyTestBase
         $author->save();
         $books = array(
             array('Title' => 'Mansfield Park', 'AuthorId' => $author->getId()),
-            array('Title' => 'Pride And PRejudice', 'AuthorId' => $author->getId())
+            array('Title' => 'Pride And Prejudice', 'AuthorId' => $author->getId())
         );
         $col = new ArrayCollection();
         $col->setModel('\Propel\Tests\Bookstore\Book');

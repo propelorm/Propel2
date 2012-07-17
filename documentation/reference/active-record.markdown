@@ -82,8 +82,8 @@ abstract class BaseBook extends BaseObject implements Persistent
 
 // BaseObject and Persistent are classes bundled by Propel
 
-// Do not alter the code of the Base- classes, as your modifications will be overriden
-// each time you rebuild the model. Instead, add your cutom code to the stub slass
+// Do not alter the code of the Base- classes, as your modifications will be overridden
+// each time you rebuild the model. Instead, add your custom code to the stub class
 class Book extends BaseBook
 {
   public function getCapitalTitle()

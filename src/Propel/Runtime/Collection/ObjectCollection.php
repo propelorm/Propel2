@@ -212,7 +212,7 @@ class ObjectCollection extends Collection
     /**
      * Get an associative array representation of the collection
      * The first parameter specifies the column to be used for the key,
-     * And the seconf for the value.
+     * And the second for the value.
      *
      * <code>
      *   $res = $coll->toKeyValue('Id', 'Name');

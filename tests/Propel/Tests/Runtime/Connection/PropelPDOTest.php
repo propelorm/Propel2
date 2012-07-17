@@ -376,7 +376,7 @@ class PropelPDOTest extends BookstoreTestBase
         $stmt = $con->prepare('DELETE FROM book WHERE 1=:p1');
         $stmt->bindValue(':p1', '2');
         $stmt->execute();
-        $this->assertEquals("DELETE FROM book WHERE 1='2'", $con->getLastExecutedQuery(), 'PropelPDO updates the last executed query on prapared statements');
+        $this->assertEquals("DELETE FROM book WHERE 1='2'", $con->getLastExecutedQuery(), 'PropelPDO updates the last executed query on prepared statements');
 
         $con->useDebug(false);
         $this->assertEquals('', $con->getLastExecutedQuery(), 'PropelPDO reinitializes the latest query when debug is set to false');
@@ -414,7 +414,7 @@ class PropelPDOTest extends BookstoreTestBase
         $stmt = $con->prepare('DELETE FROM book WHERE 1=:p1');
         $stmt->bindValue(':p1', '2');
         $stmt->execute();
-        $this->assertEquals(5, $con->getQueryCount(), 'PropelPDO updates the query count on prapared statements');
+        $this->assertEquals(5, $con->getQueryCount(), 'PropelPDO updates the query count on prepared statements');
 
         $con->useDebug(false);
         $this->assertEquals(0, $con->getQueryCount(), 'PropelPDO reinitializes the query count when debug is set to false');
@@ -446,24 +446,24 @@ class PropelPDOTest extends BookstoreTestBase
 
         $con->beginTransaction();
         // test transaction log
-        $this->assertEquals('Begin transaction', $handler->latestMessage, 'PropelPDO logs begin transation in debug mode');
+        $this->assertEquals('Begin transaction', $handler->latestMessage, 'PropelPDO logs begin transaction in debug mode');
 
         $con->commit();
-        $this->assertEquals('Commit transaction', $handler->latestMessage, 'PropelPDO logs commit transation in debug mode');
+        $this->assertEquals('Commit transaction', $handler->latestMessage, 'PropelPDO logs commit transaction in debug mode');
 
         $con->beginTransaction();
         $con->rollBack();
-        $this->assertEquals('Rollback transaction', $handler->latestMessage, 'PropelPDO logs rollback transation in debug mode');
+        $this->assertEquals('Rollback transaction', $handler->latestMessage, 'PropelPDO logs rollback transaction in debug mode');
 
         $con->beginTransaction();
         $handler->latestMessage = '';
         $con->beginTransaction();
-        $this->assertEquals('', $handler->latestMessage, 'PropelPDO does not log nested begin transation in debug mode');
+        $this->assertEquals('', $handler->latestMessage, 'PropelPDO does not log nested begin transaction in debug mode');
         $con->commit();
-        $this->assertEquals('', $handler->latestMessage, 'PropelPDO does not log nested commit transation in debug mode');
+        $this->assertEquals('', $handler->latestMessage, 'PropelPDO does not log nested commit transaction in debug mode');
         $con->beginTransaction();
         $con->rollBack();
-        $this->assertEquals('', $handler->latestMessage, 'PropelPDO does not log nested rollback transation in debug mode');
+        $this->assertEquals('', $handler->latestMessage, 'PropelPDO does not log nested rollback transaction in debug mode');
         $con->rollback();
 
         // test query log

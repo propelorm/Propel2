@@ -43,13 +43,13 @@ class NestedSetBehaviorQueryBuilderModifierTest extends BookstoreNestedSetTestBa
             ->orderByBranch()
             ->find();
         $coll = $this->buildCollection(array());
-        $this->assertEquals($coll, $objs, 'decendantsOf() filters by descendants');
+        $this->assertEquals($coll, $objs, 'descendantsOf() filters by descendants');
         $objs = Table9Query::create()
             ->descendantsOf($t3)
             ->orderByBranch()
             ->find();
         $coll = $this->buildCollection(array($t4, $t5, $t6, $t7));
-        $this->assertEquals($coll, $objs, 'decendantsOf() filters by descendants');
+        $this->assertEquals($coll, $objs, 'descendantsOf() filters by descendants');
     }
 
     public function testBranchOf()

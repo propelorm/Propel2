@@ -53,7 +53,7 @@ class TableMapBuilder extends AbstractOMBuilder
     }
 
     /**
-     * Adds class phpdoc comment and openning of class.
+     * Adds class phpdoc comment and opening of class.
      * @param      string &$script The script will be modified in this method.
      */
     protected function addClassOpen(&$script)

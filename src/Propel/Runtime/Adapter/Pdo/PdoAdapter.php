@@ -178,7 +178,7 @@ abstract class PdoAdapter
     }
 
     /**
-     * Quotes database objec identifiers (table names, col names, sequences, etc.).
+     * Quotes database object identifiers (table names, col names, sequences, etc.).
      * @param  string $text The identifier to quote.
      * @return string The quoted identifier.
      */
@@ -188,8 +188,8 @@ abstract class PdoAdapter
     }
 
     /**
-     * Quotes a database table which could have space seperating it from an alias,
-     * both should be identified seperately. This doesn't take care of dots which
+     * Quotes a database table which could have space separating it from an alias,
+     * both should be identified separately. This doesn't take care of dots which
      * separate schema names from table names. Adapters for RDBMs which support
      * schemas have to implement that in the platform-specific way.
      *
@@ -306,7 +306,7 @@ abstract class PdoAdapter
 
     /**
      * Should Column-Names get identifiers for inserts or updates.
-     * By default false is returned -> backwards compability.
+     * By default false is returned -> backwards compatibility.
      *
      * it`s a workaround...!!!
      *
@@ -517,7 +517,7 @@ abstract class PdoAdapter
     }
 
     /**
-     * Binds a value to a positioned parameted in a statement,
+     * Binds a value to a positioned parameter in a statement,
      * given a ColumnMap object to infer the binding type.
      *
      * @param Propel\Runtime\Connection\StatementInterface $stmt      The statement to bind

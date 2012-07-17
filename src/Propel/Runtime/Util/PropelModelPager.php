@@ -185,7 +185,7 @@ class PropelModelPager implements \IteratorAggregate, \Countable
 
     /**
      * Get the index of the last element in the page
-     * Always less than or eaqual to $maxPerPage
+     * Always less than or equal to $maxPerPage
      *
      * @return int
      */

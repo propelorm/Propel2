@@ -129,7 +129,7 @@ class OnDemandCollection extends Collection
             return true;
         }
 
-        throw new PropelException('The On Demand Collection does not allow acces by offset');
+        throw new PropelException('The On Demand Collection does not allow access by offset');
     }
 
     /**
@@ -144,7 +144,7 @@ class OnDemandCollection extends Collection
             return $this->currentRow;
         }
 
-        throw new PropelException('The On Demand Collection does not allow acces by offset');
+        throw new PropelException('The On Demand Collection does not allow access by offset');
     }
 
     /**
@@ -223,12 +223,12 @@ class OnDemandCollection extends Collection
 
     public function getArrayCopy()
     {
-        throw new PropelException('The On Demand Collection does not allow acces by offset');
+        throw new PropelException('The On Demand Collection does not allow access by offset');
     }
 
     public function getFlags()
     {
-        throw new PropelException('The On Demand Collection does not allow acces by offset');
+        throw new PropelException('The On Demand Collection does not allow access by offset');
     }
 
     public function ksort()

@@ -346,7 +346,7 @@ class StandardServiceContainer implements ServiceContainerInterface
     /**
      * Override the default profiler class.
      *
-     * The service container uses this class to instanctiate a new profiler when
+     * The service container uses this class to instantiate a new profiler when
      * getProfiler() is called.
      *
      * @param string $profilerClass

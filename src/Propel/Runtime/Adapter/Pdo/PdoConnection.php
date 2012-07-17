@@ -14,7 +14,7 @@ use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\InvalidArgumentException;
 
 /**
- * PDO extension that implements ConnectionInterface and builds statements implementting StatementInterface.
+ * PDO extension that implements ConnectionInterface and builds statements implementing StatementInterface.
  */
 class PdoConnection extends \PDO implements ConnectionInterface
 {

@@ -53,16 +53,16 @@ class BasePeerTest extends BookstoreTestBase
     public function testNeedsSelectAliases()
     {
         $c = new Criteria();
-        $this->assertFalse(BasePeer::needsSelectAliases($c), 'Empty Criterias dont need aliases');
+        $this->assertFalse(BasePeer::needsSelectAliases($c), 'Empty Criterias don\'t need aliases');
 
         $c = new Criteria();
         $c->addSelectColumn(BookPeer::ID);
         $c->addSelectColumn(BookPeer::TITLE);
-        $this->assertFalse(BasePeer::needsSelectAliases($c), 'Criterias with distinct column names dont need aliases');
+        $this->assertFalse(BasePeer::needsSelectAliases($c), 'Criterias with distinct column names don\'t need aliases');
 
         $c = new Criteria();
         BookPeer::addSelectColumns($c);
-        $this->assertFalse(BasePeer::needsSelectAliases($c), 'Criterias with only the columns of a model dont need aliases');
+        $this->assertFalse(BasePeer::needsSelectAliases($c), 'Criterias with only the columns of a model don\'t need aliases');
 
         $c = new Criteria();
         $c->addSelectColumn(BookPeer::ID);
@@ -260,7 +260,7 @@ class BasePeerTest extends BookstoreTestBase
         $c->add(BookPeer::TITLE, 'War And Peace');
         BasePeer::doDelete($c, $con);
         $expectedSQL = "DELETE FROM `book` WHERE book.TITLE='War And Peace'";
-        $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'doDelete() translates a contition into a WHERE');
+        $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'doDelete() translates a condition into a WHERE');
     }
 
     public function testDoDeleteSeveralConditions()
@@ -271,7 +271,7 @@ class BasePeerTest extends BookstoreTestBase
         $c->add(BookPeer::ID, 12);
         BasePeer::doDelete($c, $con);
         $expectedSQL = "DELETE FROM `book` WHERE book.TITLE='War And Peace' AND book.ID=12";
-        $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'doDelete() combines conditions in WHERE whith an AND');
+        $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'doDelete() combines conditions in WHERE with an AND');
     }
 
     public function testDoDeleteTableAlias()

@@ -50,7 +50,7 @@ class ExtensionQueryInheritanceBuilder extends AbstractOMBuilder
     }
 
     /**
-     * Set the child object that we're operating on currrently.
+     * Set the child object that we're operating on currently.
      *
      * @param Inheritance $child Inheritance
      */
@@ -75,7 +75,7 @@ class ExtensionQueryInheritanceBuilder extends AbstractOMBuilder
     }
 
     /**
-     * Adds class phpdoc comment and openning of class.
+     * Adds class phpdoc comment and opening of class.
      *
      * @param string $script
      */

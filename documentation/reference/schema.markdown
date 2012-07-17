@@ -354,7 +354,7 @@ For example:
 
 ### Adding Vendor Info ###
 
-Propel supports database-specific elements in the schema (currently only for MySQL). This "vendor" parameters affect the generated SQL. To add vendor data, add a `<vendor>` tag with a `type` attribute specifying the target database vendor. In the `<vendor>` tag, add `<parameter>` tags with a `name` and a `value` attribue. For instance:
+Propel supports database-specific elements in the schema (currently only for MySQL). This "vendor" parameters affect the generated SQL. To add vendor data, add a `<vendor>` tag with a `type` attribute specifying the target database vendor. In the `<vendor>` tag, add `<parameter>` tags with a `name` and a `value` attribute. For instance:
 
 {% highlight xml %}
 <table name="book">
