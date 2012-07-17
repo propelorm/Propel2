@@ -35,7 +35,7 @@ Starting with Propel 1.6, the `sql`-`insert-sql` sequence is replaced by the `di
 
 Migrations are a fantastic way to work on complex projects with always evolving models ; they are also a great tool for team work, since migration classes can be shared among all developers. That way, when a developer adds a table to the model, a second developer just needs to run the related migration to have the table added to the table.
 
-Propel migrations can also be executed incrementally - the new `up` and `down` tasks are there for that. And when you're lost in migration, call the `status` task to chack which migrations were already executed, and which ones should be executed to update the database structure.
+Propel migrations can also be executed incrementally - the new `up` and `down` tasks are there for that. And when you're lost in migration, call the `status` task to check which migrations were already executed, and which ones should be executed to update the database structure.
 
 The Propel documentation offers [an entire chapter on Migrations](10-migrations.html) to explain how to use them and how they work.
 
@@ -556,7 +556,7 @@ echo BookPeer::STYLE_POETRY; // 'poetry'
 print_r(BookPeer::getValueSet(BookPeer::STYLE)); // array('novel', 'essay', 'poetry')
 
 // ENUM columns are also searchable, using the generated filterByXXX() method
-// or other ModelCritera methods (like where(), orWhere(), condition())
+// or other ModelCriteria methods (like where(), orWhere(), condition())
 $books = BookQuery::create()
   ->filterByStyle('novel')
   ->find();

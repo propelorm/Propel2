@@ -102,7 +102,7 @@ abstract class DataSQLBuilder extends DataModelBuilder
     }
 
     /**
-     * Returns the propertly escaped (and quoted) value for a column.
+     * Returns the property escaped (and quoted) value for a column.
      *
      * @param  ColumnValue $colValue
      * @return mixed

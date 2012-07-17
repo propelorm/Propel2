@@ -34,7 +34,7 @@ class OracleSchemaParser extends AbstractSchemaParser
      *   RAW,
      *   ROWID
      *
-     * Supported but non existant as a specific type in Oracle:
+     * Supported but non existent as a specific type in Oracle:
      *   DECIMAL (NUMBER with scale),
      *   DOUBLE (FLOAT with precision = 126)
      *

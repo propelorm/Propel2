@@ -62,7 +62,7 @@ use MyNameSpace\TestKeyTypeTable;
  * object operations.  The _idea_ here is to test every possible generated method
  * from Object.tpl; if necessary, bookstore will be expanded to accommodate this.
  *
- * The database is relaoded before every test and flushed after every test.  This
+ * The database is reloaded before every test and flushed after every test.  This
  * means that you can always rely on the contents of the databases being the same
  * for each test method in this class.  See the BookstoreDataPopulator::populate()
  * method for the exact contents of the database.
@@ -144,7 +144,7 @@ class GeneratedObjectTest extends BookstoreTestBase
      * @link       http://propel.phpdb.org/trac/ticket/378
      * @link       http://propel.phpdb.org/trac/ticket/555
      */
-    public function testDefaultExpresions()
+    public function testDefaultExpressions()
     {
         if (Propel::getServiceContainer()->getAdapter(BookstoreEmployeePeer::DATABASE_NAME) instanceof DBSqlite) {
             $this->markTestSkipped("Cannot test default expressions with SQLite");
@@ -189,7 +189,7 @@ class GeneratedObjectTest extends BookstoreTestBase
      * @link       http://propel.phpdb.org/trac/ticket/378
      * @link       http://propel.phpdb.org/trac/ticket/555
      */
-    public function testDefaultExpresions_ReloadOnInsert()
+    public function testDefaultExpressions_ReloadOnInsert()
     {
         if (Propel::getServiceContainer()->getAdapter(BookstoreEmployeePeer::DATABASE_NAME) instanceof DBSqlite) {
             $this->markTestSkipped("Cannot test default date expressions with SQLite");
@@ -229,7 +229,7 @@ class GeneratedObjectTest extends BookstoreTestBase
      * @link       http://propel.phpdb.org/trac/ticket/378
      * @link       http://propel.phpdb.org/trac/ticket/555
      */
-    public function testDefaultExpresions_ReloadOnInsert_Override()
+    public function testDefaultExpressions_ReloadOnInsert_Override()
     {
         if (Propel::getServiceContainer()->getAdapter(BookstoreEmployeePeer::DATABASE_NAME) instanceof DBSqlite) {
             $this->markTestSkipped("Cannot test default date expressions with SQLite");
@@ -267,7 +267,7 @@ class GeneratedObjectTest extends BookstoreTestBase
      *
      * @link       http://propel.phpdb.org/trac/ticket/555
      */
-    public function testDefaultExpresions_ReloadOnUpdate()
+    public function testDefaultExpressions_ReloadOnUpdate()
     {
         $b = new Bookstore();
         $b->setStoreName("Foo!");
@@ -294,7 +294,7 @@ class GeneratedObjectTest extends BookstoreTestBase
      * @link       http://propel.phpdb.org/trac/ticket/378
      * @link       http://propel.phpdb.org/trac/ticket/555
      */
-    public function testDefaultExpresions_ReloadOnUpdate_Override()
+    public function testDefaultExpressions_ReloadOnUpdate_Override()
     {
         $b = new Bookstore();
         $b->setStoreName("Foo!");
@@ -809,7 +809,7 @@ EOF;
     }
 
     /**
-     * Checks wether we are allowed to specify the primary key on a
+     * Checks whether we are allowed to specify the primary key on a
      * table with allowPkInsert=true set
      *
      * saves the object, gets it from data-source again and then compares
@@ -887,7 +887,7 @@ EOF;
         $this->assertTrue($b->isPrimaryKeyNull());
     }
 
-    public function testIsPrimaryKeyNullCompmosite()
+    public function testIsPrimaryKeyNullComposite()
     {
         $b = new BookOpinion();
         $this->assertTrue($b->isPrimaryKeyNull());

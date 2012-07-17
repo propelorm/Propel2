@@ -79,7 +79,7 @@ class ObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
         $author->save();
         $books = array(
             array('Title' => 'Mansfield Park', 'AuthorId' => $author->getId()),
-            array('Title' => 'Pride And PRejudice', 'AuthorId' => $author->getId())
+            array('Title' => 'Pride And Prejudice', 'AuthorId' => $author->getId())
         );
         $col = new ObjectCollection();
         $col->setModel('\Propel\Tests\Bookstore\Book');
@@ -234,7 +234,7 @@ class ObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
         $this->assertEquals('Book', $books->getModel(), 'populateRelation() returns a collection of the related objects');
         $this->assertEquals('\Propel\Tests\Bookstore\Book', $books->getFullyQualifiedModel(), 'populateRelation() returns a collection of the related objects');
         $this->assertEquals(0, count($books), 'populateRelation() the list of related objects');
-        $this->assertEquals($count, $this->con->getQueryCount(), 'populateRelation() doesn\'t issue a new query on empy collections');
+        $this->assertEquals($count, $this->con->getQueryCount(), 'populateRelation() doesn\'t issue a new query on empty collections');
     }
 
     public function testPopulateRelationOneToMany()

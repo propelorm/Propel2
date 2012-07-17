@@ -136,7 +136,7 @@ EOF;
         $this->assertContains('Table "TABLE_NAME" uses a reserved keyword as name', $validator->getErrors());
     }
 
-    public function testValidateReturnsFalseWhenTwoColumnssHaveSamePhpName()
+    public function testValidateReturnsFalseWhenTwoColumnsHaveSamePhpName()
     {
         $column1 = new Column('foo');
         $column2 = new Column('bar');

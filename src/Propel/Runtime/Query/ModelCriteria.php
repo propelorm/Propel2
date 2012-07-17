@@ -166,7 +166,7 @@ class ModelCriteria extends Criteria
     }
 
     /**
-     * Return The short model name (the short ClassName for classe with namespace)
+     * Return The short model name (the short ClassName for class with namespace)
      *
      * @return string The short model name
      */
@@ -413,7 +413,7 @@ class ModelCriteria extends Criteria
     }
 
     /**
-     * Adds a GROUB BY clause to the query
+     * Adds a GROUP BY clause to the query
      * Usability layer on top of Criteria::addGroupByColumn()
      * Infers $column $columnName
      * Examples:
@@ -433,7 +433,7 @@ class ModelCriteria extends Criteria
     }
 
     /**
-     * Adds a GROUB BY clause for all columns of a model to the query
+     * Adds a GROUP BY clause for all columns of a model to the query
      * Examples:
      *   $c->groupBy('Book');
      *    => $c->addGroupByColumn(BookPeer::ID);
@@ -977,7 +977,7 @@ class ModelCriteria extends Criteria
      *
      * @param Criteria $criteria The criteria to read properties from
      * @param string   $operator The logical operator used to combine conditions
-     *              Defaults to Criteria::LOGICAL_AND, also accapts Criteria::LOGICAL_OR
+     *              Defaults to Criteria::LOGICAL_AND, also accepts Criteria::LOGICAL_OR
      *
      * @return ModelCriteria The primary criteria object
      */
@@ -1138,9 +1138,9 @@ class ModelCriteria extends Criteria
 
     /**
      * Triggers the automated cloning on termination.
-     * By default, temrination methods don't clone the current object,
+     * By default, termination methods don't clone the current object,
      * even though they modify it. If the query must be reused after termination,
-     * you must call this method prior to temrination.
+     * you must call this method prior to termination.
      *
      * @param boolean $isKeepQuery
      *
@@ -1675,9 +1675,9 @@ class ModelCriteria extends Criteria
     /**
      * Code to execute before every UPDATE statement
      *
-     * @param array               $values               The associatiove array of columns and values for the update
+     * @param array               $values               The associative array of columns and values for the update
      * @param ConnectionInterface $con                  The connection object used by the query
-     * @param boolean             $forceIndividualSaves If false (default), the resulting call is a BasePeer::doUpdate(), ortherwise it is a series of save() calls on all the found objects
+     * @param boolean             $forceIndividualSaves If false (default), the resulting call is a BasePeer::doUpdate(), otherwise it is a series of save() calls on all the found objects
      */
     protected function basePreUpdate(&$values, ConnectionInterface $con, $forceIndividualSaves = false)
     {
@@ -1711,7 +1711,7 @@ class ModelCriteria extends Criteria
      *
      * @param array               $values               Associative array of keys and values to replace
      * @param ConnectionInterface $con                  an optional connection object
-     * @param boolean             $forceIndividualSaves If false (default), the resulting call is a BasePeer::doUpdate(), ortherwise it is a series of save() calls on all the found objects
+     * @param boolean             $forceIndividualSaves If false (default), the resulting call is a BasePeer::doUpdate(), otherwise it is a series of save() calls on all the found objects
      *
      * @return integer Number of updated rows
      */
@@ -1755,7 +1755,7 @@ class ModelCriteria extends Criteria
      *
      * @param array               $values               Associative array of keys and values to replace
      * @param ConnectionInterface $con                  a connection object
-     * @param boolean             $forceIndividualSaves If false (default), the resulting call is a BasePeer::doUpdate(), ortherwise it is a series of save() calls on all the found objects
+     * @param boolean             $forceIndividualSaves If false (default), the resulting call is a BasePeer::doUpdate(), otherwise it is a series of save() calls on all the found objects
      *
      * @return integer Number of updated rows
      */
@@ -2087,7 +2087,7 @@ class ModelCriteria extends Criteria
     protected function getRealColumnName($columnName)
     {
         if (!$this->getTableMap()->hasColumnByPhpName($columnName)) {
-            throw new UnknownColumnException('Unkown column ' . $columnName . ' in model ' . $this->modelName);
+            throw new UnknownColumnException('Unknown column ' . $columnName . ' in model ' . $this->modelName);
         }
 
         if ($this->useAliasInSQL) {
@@ -2108,7 +2108,7 @@ class ModelCriteria extends Criteria
      *
      * @param string $colName the fully qualified column name, e.g 'book.TITLE' or BookPeer::TITLE
      *
-     * @return string the fully qualified column name, using table alias if applicatble
+     * @return string the fully qualified column name, using table alias if applicable
      */
     public function getAliasedColName($colName)
     {
@@ -2120,7 +2120,7 @@ class ModelCriteria extends Criteria
     }
 
     /**
-     * Return the short ClassName for classe with namespace
+     * Return the short ClassName for class with namespace
      *
      * @param string $fullyQualifiedClassName The fully qualified class name
      *
@@ -2241,7 +2241,7 @@ class ModelCriteria extends Criteria
             $type = substr($name, 0, $pos);
             if (in_array($type, array('left', 'right', 'inner'))) {
                 $joinType = strtoupper($type) . ' JOIN';
-                // Test if first argument is suplied, else don't provide an alias to joinXXX (default value)
+                // Test if first argument is supplied, else don't provide an alias to joinXXX (default value)
                 if (!isset($arguments[0])) {
                     $arguments[0] = null;
                 }

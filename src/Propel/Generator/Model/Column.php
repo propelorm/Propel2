@@ -1047,7 +1047,7 @@ class Column extends MappingModel
     }
 
     /**
-     * Returns whether or not this colum is an ENUM column.
+     * Returns whether or not this column is an ENUM column.
      *
      * @return boolean
      */
@@ -1380,7 +1380,7 @@ class Column extends MappingModel
     }
 
     /**
-     * Returns an instance of PlateformInterface interface.
+     * Returns an instance of PlatformInterface interface.
      *
      * @return PlatformInterface
      */

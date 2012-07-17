@@ -415,7 +415,7 @@ public function makeRoot()
     {
         $script .= "
 /**
- * Tests if onbject is a node, i.e. if it is inserted in the tree
+ * Tests if object is a node, i.e. if it is inserted in the tree
  *
  * @return     bool
  */

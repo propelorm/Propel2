@@ -35,7 +35,7 @@ interface ConnectionInterface
      * While autocommit mode is turned off, changes made to the database via
      * the Connection object instance are not committed until you end the
      * transaction by calling Connection::commit().
-     * Calling Conneciton::rollBack() will roll back all changes to the database
+     * Calling Connection::rollBack() will roll back all changes to the database
      * and return the connection to autocommit mode.
      *
      * @return boolean TRUE on success or FALSE on failure.

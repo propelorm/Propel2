@@ -13,7 +13,7 @@ You can use as many `schema.xml` files as you want. Schema files have to be name
 
 Each schema file has to contain a `<database>` element with a `name` attribute. This name references the connection settings to be used for this database (and configured in the `runtime-conf.xml`), so separated schemas can share a common database name.
 
-Whenever you call a propel build taks, Propel will consider all these schema files and build the classes (or the SQL) for all the tables.
+Whenever you call a propel build tasks, Propel will consider all these schema files and build the classes (or the SQL) for all the tables.
 
 ## Understanding Packages ##
 

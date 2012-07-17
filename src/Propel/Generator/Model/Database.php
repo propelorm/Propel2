@@ -130,7 +130,7 @@ class Database extends ScopedMappingModel
 
     /**
      * Returns the name of the base super class inherited by active record
-     * objects. This parameter is overriden at the table level.
+     * objects. This parameter is overridden at the table level.
      *
      * @return string
      */
@@ -141,7 +141,7 @@ class Database extends ScopedMappingModel
 
     /**
      * Sets the name of the base super class inherited by active record objects.
-     * This parameter is overriden at the table level.
+     * This parameter is overridden at the table level.
      *
      * @param string $class.
      */
@@ -152,7 +152,7 @@ class Database extends ScopedMappingModel
 
     /**
      * Returns the name of the base peer super class inherited by Peer classes.
-     * This parameter is overriden at the table level.
+     * This parameter is overridden at the table level.
      *
      * @return string
      */
@@ -163,7 +163,7 @@ class Database extends ScopedMappingModel
 
     /**
      * Sets the name of the base peer super class inherited by Peer classes.
-     * This parameter is overriden at the table level.
+     * This parameter is overridden at the table level.
      *
      * @param string $class
      */
@@ -174,7 +174,7 @@ class Database extends ScopedMappingModel
 
     /**
      * Returns the name of the default ID method strategy.
-     * This parameter can be overriden at the table level.
+     * This parameter can be overridden at the table level.
      *
      * @return string
      */
@@ -185,7 +185,7 @@ class Database extends ScopedMappingModel
 
     /**
      * Sets the name of the default ID method strategy.
-     * This parameter can be overriden at the table level.
+     * This parameter can be overridden at the table level.
      *
      * @param string $strategy
      */
@@ -197,7 +197,7 @@ class Database extends ScopedMappingModel
     /**
      * Returns the name of the default PHP naming method strategy, which
      * specifies the method for converting schema names for table and column to
-     * PHP names. This parameter can be overriden at the table layer.
+     * PHP names. This parameter can be overridden at the table layer.
      *
      * @return string
      */
@@ -228,7 +228,7 @@ class Database extends ScopedMappingModel
 
     /**
      * Sets the default string format for ActiveRecord objects in this table.
-     * This parameter can be overriden at the table level.
+     * This parameter can be overridden at the table level.
      *
      * Any of 'XML', 'YAML', 'JSON', or 'CSV'.
      *
@@ -249,7 +249,7 @@ class Database extends ScopedMappingModel
 
     /**
      * Returns the default string format for ActiveRecord objects in this table.
-     * This parameter can be overriden at the table level.
+     * This parameter can be overridden at the table level.
      *
      * @return string
      */

@@ -47,9 +47,9 @@ class TableMapTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($this->databaseMap, $this->tmap->getDatabaseMap(), 'Constructor can set the database map');
         try {
             $tmap = new TableMap();
-            $this->assertTrue(true, 'A table map can be instanciated with no parameters');
+            $this->assertTrue(true, 'A table map can be instantiated with no parameters');
         } catch (Exception $e) {
-            $this->fail('A table map can be instanciated with no parameters');
+            $this->fail('A table map can be instantiated with no parameters');
         }
     }
 

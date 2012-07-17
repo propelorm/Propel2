@@ -80,7 +80,7 @@ class PropelColumnTypes
     );
 
     /**
-     * Resturns the PDO type (PDO::PARAM_* constant) value for the Propel type provided.
+     * Returns the PDO type (PDO::PARAM_* constant) value for the Propel type provided.
      * @param  string $propelType
      * @return int
      */

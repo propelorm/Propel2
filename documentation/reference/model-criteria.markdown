@@ -43,7 +43,7 @@ $stmt->bind(':p1', time() - 30 * 24 * 60 * 60, PDO::PARAM_INT);
 $res = $stmt->execute();
 {% endhighlight %}
 
-The final `find()` doesn't just execute the SQL query above, it also instanciates `Book` objects and populates them with the results of the query. Eventually, it returns a `PropelCollection` object with these `Book` objects inside. For the sake of clarity, you can consider this collection object as an array. In fact, you can use it as if it were a true PHP array and iterate over the result list the usual way:
+The final `find()` doesn't just execute the SQL query above, it also instantiates `Book` objects and populates them with the results of the query. Eventually, it returns a `PropelCollection` object with these `Book` objects inside. For the sake of clarity, you can consider this collection object as an array. In fact, you can use it as if it were a true PHP array and iterate over the result list the usual way:
 
 {% highlight php %}
 <?php
@@ -778,7 +778,7 @@ $author = $book->getAuthor();       // No additional query needed
 $publisher = $book->getPublisher(); // No additional query needed
 {% endhighlight %}
 
-So `joinWith()` is very useful to minimize the number of database queries. As soon as you see that the number of queries necessary to perform an action is proportional to the number of results, adding `With` after `join()` calls is the trick to get down to a more reasonnable query count.
+So `joinWith()` is very useful to minimize the number of database queries. As soon as you see that the number of queries necessary to perform an action is proportional to the number of results, adding `With` after `join()` calls is the trick to get down to a more reasonable query count.
 
 ### Adding Columns ###
 

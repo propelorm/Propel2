@@ -215,7 +215,7 @@ class PropelTypes
     }
 
     /**
-     * Resturns the PDO type (PDO::PARAM_* constant) value.
+     * Returns the PDO type (PDO::PARAM_* constant) value.
      *
      * @return integer
      */
@@ -225,7 +225,7 @@ class PropelTypes
     }
 
     /**
-     * Resturns the PDO type ('PDO::PARAM_*' constant) name.
+     * Returns the PDO type ('PDO::PARAM_*' constant) name.
      *
      * @return string
      */

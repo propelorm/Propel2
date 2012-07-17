@@ -103,7 +103,7 @@ class NestedSetBehaviorQueryBuilderModifierWithScopeTest extends BookstoreNested
             ->orderByBranch()
             ->find();
         $coll = $this->buildCollection(array($t2, $t3, $t4, $t5, $t6, $t7));
-        $this->assertEquals($coll, $objs, 'decendantsOf() filters by descendants of the same scope');
+        $this->assertEquals($coll, $objs, 'descendantsOf() filters by descendants of the same scope');
     }
 
     public function testBranchOf()

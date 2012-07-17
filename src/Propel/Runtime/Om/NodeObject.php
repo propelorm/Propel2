@@ -71,7 +71,7 @@ interface NodeObject extends \IteratorAggregate
     public function getNumberOfChildren(ConnectionInterface $con = null);
 
     /**
-     * Gets the total number of desceandants for the node
+     * Gets the total number of descendants for the node
      *
      * @param  ConnectionInterface $con Connection to use.
      * @return int

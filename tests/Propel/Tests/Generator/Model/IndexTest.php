@@ -75,7 +75,7 @@ class IndexTest extends ModelTestCase
      * @dataProvider provideColumnDefinitions
      *
      */
-    public function testAddIndexedColums($columns)
+    public function testAddIndexedColumns($columns)
     {
         $index = new Index();
         $index->setColumns($columns);

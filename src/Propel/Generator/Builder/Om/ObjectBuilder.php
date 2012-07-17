@@ -192,7 +192,7 @@ class ObjectBuilder extends AbstractObjectBuilder
     }
 
     /**
-     * Adds class phpdoc comment and openning of class.
+     * Adds class phpdoc comment and opening of class.
      *
      * @param string &$script
      */
@@ -602,7 +602,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * Adds the function close for the getPeer method.
      *
      * Note: this is just a } and the body ends with a return statement, so it's
-     * quite useless. But it's here anyway for consisency, cause there's a close
+     * quite useless. But it's here anyway for consistency, cause there's a close
      * function for all functions and in some other instances, they are useful.
      *
      * @param string &$script
@@ -2800,7 +2800,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
 
     /**
      * Adds the getPrimaryKey() method for objects that have no primary key.
-     * This "feature" is dreprecated, since the getPrimaryKey() method is not required
+     * This "feature" is deprecated, since the getPrimaryKey() method is not required
      * by the Persistent interface (or used by the templates).  Hence, this method is also
      * deprecated.
      * @param      string &$script The script will be modified in this method.
@@ -2893,7 +2893,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
 
     /**
      * Adds the setPrimaryKey() method for objects that have no primary key.
-     * This "feature" is dreprecated, since the setPrimaryKey() method is not required
+     * This "feature" is deprecated, since the setPrimaryKey() method is not required
      * by the Persistent interface (or used by the templates).  Hence, this method is also
      * deprecated.
      * @param      string &$script The script will be modified in this method.
@@ -3262,7 +3262,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
             $tblFK2 = $this->getForeignTable($fk2);
             $doJoinGet = !$tblFK2->isForReferenceOnly();
 
-            // it doesn't make sense to join in rows from the curent table, since we are fetching
+            // it doesn't make sense to join in rows from the current table, since we are fetching
             // objects related to *this* table (i.e. the joined rows will all be the same row as current object)
             if ($this->getTable()->getPhpName() == $tblFK2->getPhpName()) {
                 $doJoinGet = false;
@@ -4140,7 +4140,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
 
             $script .= "
             // We call the save method on the following object(s) if they
-            // were passed to this object by their coresponding set
+            // were passed to this object by their corresponding set
             // method.  This object relates to these object(s) by a
             // foreign key reference.
 ";
@@ -4625,7 +4625,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
         try {";
 
         if ($this->getGeneratorConfig()->getBuildProperty('addHooks')) {
-            // save with runtime hools
+            // save with runtime hooks
             $script .= "
             \$ret = \$this->preSave(\$con);";
             $this->applyBehaviorModifier('preSave', $script, "            ");
@@ -4760,7 +4760,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
         if (\$this->".$varName." !== null && \$this->$clo !== \$this->".$varName."->get".$colFK->getPhpName()."()) {
             \$this->$varName = null;
         }";
-                } // foraech
+                } // foreach
             } /* if col is foreign key */
 
         } // foreach
@@ -4853,8 +4853,8 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
             \$copyObj->setNew(false);
 ";
             foreach ($table->getReferrers() as $fk) {
-                //HL: commenting out self-referrential check below
-                //        it seems to work as expected and is probably desireable to have those referrers from same table deep-copied.
+                //HL: commenting out self-referential check below
+                //        it seems to work as expected and is probably desirable to have those referrers from same table deep-copied.
                 //if ( $fk->getTable()->getName() != $table->getName() ) {
 
                 if ($fk->isLocalPrimaryKey()) {
@@ -4964,7 +4964,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      *
      * This method is a user-space workaround for PHP's inability to garbage collect
      * objects with circular references (even in PHP 5.3). This is currently necessary
-     * when using Propel in certain daemon or large-volumne/high-memory operations.
+     * when using Propel in certain daemon or large-volume/high-memory operations.
      *
      * @param      boolean \$deep Whether to also clear the references on all referrer objects.
      */

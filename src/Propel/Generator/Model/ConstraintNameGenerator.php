@@ -30,7 +30,7 @@ class ConstraintNameGenerator implements NameGenerator
      * should be a table name, third is the type identifier (spared if
      * trimming is necessary due to database type length constraints),
      * and the fourth is a <code>Integer</code> indicating the number
-     * of this contraint.
+     * of this constraint.
      *
      * @see NameGenerator
      * @throws EngineException

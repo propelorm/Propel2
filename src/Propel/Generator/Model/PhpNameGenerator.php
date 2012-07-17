@@ -26,7 +26,7 @@ class PhpNameGenerator implements NameGenerator
      * original name of the database element and the method for
      * generating the name.
      * The optional third element may contain a prefix that will be
-     * stript from name prior to generate the resulting name.
+     * script from name prior to generate the resulting name.
      * There are currently three methods:
      * <code>CONV_METHOD_NOCHANGE</code> - xml names are converted
      * directly to php names without modification.
@@ -76,7 +76,7 @@ class PhpNameGenerator implements NameGenerator
 
     /**
      * Converts a database schema name to php object name by Camelization.
-     * Removes <code>STD_SEPARATOR_CHAR</code>, capitilizes first letter
+     * Removes <code>STD_SEPARATOR_CHAR</code>, capitalizes first letter
      * of name and each letter after the <code>STD_SEPERATOR</code>,
      * converts the rest of the letters to lowercase.
      *
@@ -103,7 +103,7 @@ class PhpNameGenerator implements NameGenerator
 
     /**
      * Converts a database schema name to php object name.  Removes
-     * any character that is not a letter or a number and capitilizes
+     * any character that is not a letter or a number and capitalizes
      * first letter of the name, the first letter of each alphanumeric
      * block and converts the rest of the letters to lowercase.
      *

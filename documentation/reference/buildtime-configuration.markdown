@@ -90,7 +90,7 @@ propel.schema.transform = true|{false}
 # the SQL DDL, the PHP classes, etc.
 propel.database = pgsql|mysql|sqlite|mssql|oracle
 
-# The database PDO connection settings at builtime.
+# The database PDO connection settings at buildtime.
 # This setting is required for the sql, reverse, and datasql tasks.
 # Note that some drivers (e.g. mysql, oracle) require that you specify the
 # username and password separately from the DSN, which is why they are

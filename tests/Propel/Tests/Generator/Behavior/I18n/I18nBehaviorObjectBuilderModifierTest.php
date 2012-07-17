@@ -310,7 +310,7 @@ EOF;
         $this->assertEquals(2, $count);
     }
 
-    public function testClearRemovesExistingTranlsations()
+    public function testClearRemovesExistingTranslations()
     {
         $o = new \I18nBehaviorTest1();
         $translation1 = new \I18nBehaviorTest1I18n();

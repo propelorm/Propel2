@@ -104,7 +104,7 @@ class PropelConditionalProxy
     }
 
     /**
-     * return the current conditionnal status
+     * return the current conditional status
      *
      * @return boolean
      */

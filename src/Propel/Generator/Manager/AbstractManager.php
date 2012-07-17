@@ -323,7 +323,7 @@ abstract class AbstractManager
             $externalSchemaDom = new \DOMDocument('1.0', 'UTF-8');
             $externalSchemaDom->load(realpath($include));
 
-            // The external schema may have external schemas of its own ; recurse
+            // The external schema may have external schemas of its own ; recurs
             $this->includeExternalSchemas($externalSchemaDom, $srcDir);
             foreach ($externalSchemaDom->getElementsByTagName('table') as $tableNode) {
                 $databaseNode->appendChild($dom->importNode($tableNode, true));
