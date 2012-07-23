@@ -29,7 +29,8 @@ class SluggableBehavior extends Behavior
         'replace_pattern' => '/\W+/', // Tip: use '/[^\\pL\\d]+/u' instead if you're in PHP5.3
         'replacement'     => '-',
         'separator'       => '-',
-        'permanent'       => 'false'
+        'permanent'       => 'false',
+        'scope_column'    => ''
     );
 
     /**
@@ -49,6 +50,9 @@ class SluggableBehavior extends Behavior
             $unique = new Unique($this->getColumnForParameter('slug_column'));
             $unique->setName($table->getCommonName() . '_slug');
             $unique->addColumn($table->getColumn($this->getParameter('slug_column')));
+            if ($this->getParameter('scope_column')) {
+                $unique->addColumn($table->getColumn($this->getParameter('scope_column')));
+            }
             $table->addUnique($unique);
         }
     }
@@ -197,9 +201,9 @@ protected function createRawSlug()
  * Cleanup a string to make a slug of it
  * Removes special characters, replaces blanks with a separator, and trim it
  *
- * @param     string \$text      the text to slugify
- * @param     string \$separator the separator used by slug
- * @return    string             the slugified text
+ * @param     string \$slug        the text to slugify
+ * @param     string \$replacement the separator used by slug
+ * @return    string               the slugified text
  */
 protected static function cleanupSlugPart(\$slug, \$replacement = '" . $this->getParameter('replacement') . "')
 {
@@ -273,7 +277,19 @@ protected function makeSlugUnique(\$slug, \$separator = '" . $this->getParameter
     \$slug2 = empty(\$increment) ? \$slug : \$slug . \$separator . \$increment;
     \$slugAlreadyExists = " . $this->builder->getQueryClassName() . "::create()
         ->filterBySlug(\$slug2)
-        ->prune(\$this)
+        ->prune(\$this)";
+
+        if ($this->getParameter('scope_column')) {
+            $getter = 'get' . $this->getColumnForParameter('scope_column')->getPhpName();
+            $script .="
+            ->filterBy('{$this->getColumnForParameter('scope_column')->getPhpName()}', \$this->{$getter}())";
+        }
+        // watch out: some of the columns may be hidden by the soft_delete behavior
+        if ($this->table->hasBehavior('soft_delete')) {
+            $script .= "
+        ->includeDeleted()";
+        }
+        $script .= "
         ->count();
     if (\$slugAlreadyExists) {
         return \$this->makeSlugUnique(\$slug, \$separator, ++\$increment);
