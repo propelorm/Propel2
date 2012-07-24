@@ -37,16 +37,18 @@ class MysqlAdapterTest extends BookstoreTestBase
         );
     }
 
+    protected function setUp() {
+        parent::setUp();
+        if (version_compare(PHP_VERSION, '5.3.6', '<')) {
+            $this->setExpectedException('Propel\Runtime\Exception\PropelException');
+        }
+    }
+
     /**
      * @dataProvider getConParams
-     * @expectedException PropelException
      */
     public function testPrepareParamsThrowsException($conparams)
     {
-        if (version_compare(PHP_VERSION, '5.3.6', '>=')) {
-            $this->markTestSkipped('PHP_VERSION >= 5.3.6, no need to throw an exception.');
-        }
-
         $db = new TestableMysqlAdapter();
         $db->prepareParams($conparams);
     }
@@ -56,10 +58,6 @@ class MysqlAdapterTest extends BookstoreTestBase
      */
     public function testPrepareParams($conparams)
     {
-        if (version_compare(PHP_VERSION, '5.3.6', '<')) {
-            $this->markTestSkipped('PHP_VERSION < 5.3.6 will throw an exception.');
-        }
-
         $db = new TestableMysqlAdapter();
         $params = $db->prepareParams($conparams);
 
@@ -73,10 +71,6 @@ class MysqlAdapterTest extends BookstoreTestBase
      */
     public function testNoSetNameQueryExecuted($conparams)
     {
-        if (version_compare(PHP_VERSION, '5.3.6', '<')) {
-            $this->markTestSkipped('PHP_VERSION < 5.3.6 will throw an exception.');
-        }
-
         $db = new TestableMysqlAdapter();
         $params = $db->prepareParams($conparams);
 
