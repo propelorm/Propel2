@@ -18,6 +18,8 @@ use Propel\Tests\Bookstore\Behavior\Table13Query;
 use Propel\Tests\Bookstore\Behavior\Table14;
 use Propel\Tests\Bookstore\Behavior\Table14Peer;
 use Propel\Tests\Bookstore\Behavior\Table14Query;
+use Propel\Tests\Bookstore\Behavior\TableWithScope;
+use Propel\Tests\Bookstore\Behavior\TableWithScopeQuery;
 
 /**
  * Tests for SluggableBehavior class
@@ -260,6 +262,40 @@ class SluggableBehaviorTest extends BookstoreTestBase
         $t2->save();
         $t = Table14Query::create()->findOneBySlug('/foo/hello-world/bar');
         $this->assertEquals($t1, $t, 'findOneBySlug() returns a single object matching the slug');
+    }
+
+    public function testUniqueViolationWithoutScope()
+    {
+        TableWithScopeQuery::create()->deleteAll();
+        $t = new TableWithScope();
+        $t->setTitle('Hello, World');
+        $t->save();
+        $this->assertEquals('hello-world', $t->getSlug());
+
+        $this->setExpectedException('Propel\Runtime\Exception\PropelException');
+        $t = new TableWithScope();
+        $t->setTitle('Hello, World');
+        $t->save();
+    }
+
+    public function testNoUniqueViolationWithScope()
+    {
+        TableWithScopeQuery::create()->deleteAll();
+        $t = new TableWithScope();
+        $t->setTitle('Hello, World');
+        $t->save();
+        $this->assertEquals('hello-world', $t->getSlug());
+
+        try {
+            $t = new TableWithScope();
+            $t->setTitle('Hello, World');
+            $t->setScope(1);
+            $t->save();
+
+            $this->assertEquals('hello-world', $t->getSlug());
+        } catch (Exception $e) {
+            $this->fail($e->getMessage());
+        }
     }
 }
 
