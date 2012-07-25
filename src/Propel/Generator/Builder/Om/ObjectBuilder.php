@@ -908,9 +908,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
         }
 
         $script .= "
-        if (\$format === null) {";
-        $script .= "
-
+        if (\$format === null) {
             return \$this->$clo;
         } else {
             return \$this->$clo !== null ? \$this->{$clo}->format(\$format) : null;
@@ -1157,7 +1155,6 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
         }
 
         $script .= "
-
         return \$this->$clo;";
     }
 
@@ -1452,7 +1449,6 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     {
         $cfc = $col->getPhpName();
         $script .= "
-
         return \$this;
     } // set$cfc()
 ";
@@ -1721,7 +1717,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
         $this->addMutatorOpenOpen($script, $col);
         $this->addMutatorOpenBody($script, $col);
 
-            $script .= "
+        $script .= "
         if (\$v !== null) {
             if (is_string(\$v)) {
                 \$v = in_array(strtolower(\$v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
@@ -1729,9 +1725,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
                 \$v = (boolean) \$v;
             }
         }
-";
 
-        $script .= "
         if (\$this->$clo !== \$v) {
             \$this->$clo = \$v;
             \$this->modifiedColumns[] = ".$this->getColumnConstant($col).";
@@ -4743,8 +4737,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      * @throws PropelException
      */
     public function ensureConsistency()
-    {
-";
+    {";
         foreach ($table->getColumns() as $col) {
 
             $clo=strtolower($col->getName());
