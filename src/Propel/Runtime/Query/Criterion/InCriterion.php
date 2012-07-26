@@ -29,18 +29,7 @@ class InCriterion extends Criterion
      */
     public function __construct(Criteria $outer, $column, $value, $comparison = Criteria::IN)
     {
-        $this->value = $value;
-        $dotPos = strrpos($column, '.');
-        if (false === $dotPos) {
-            // no dot => aliased column
-            $this->table = null;
-            $this->column = $column;
-        } else {
-            $this->table = substr($column, 0, $dotPos);
-            $this->column = substr($column, $dotPos + 1);
-        }
-        $this->comparison = $comparison;
-        $this->init($outer);
+        return parent::__construct($outer, $column, $value, $comparison);
     }
 
     /**

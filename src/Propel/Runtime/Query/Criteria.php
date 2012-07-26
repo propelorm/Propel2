@@ -16,6 +16,7 @@ use Propel\Runtime\Util\BasePeer;
 use Propel\Runtime\Util\PropelConditionalProxy;
 use Propel\Runtime\Query\Criterion\InCriterion;
 use Propel\Runtime\Query\Criterion\CustomCriterion;
+use Propel\Runtime\Query\Criterion\RawCriterion;
 
 /**
  * This is a utility class for holding criteria information for a query.
@@ -540,21 +541,26 @@ class Criteria implements \IteratorAggregate
      *
      * @param  string    $column     Full name of column (for example TABLE.COLUMN).
      * @param  mixed     $value
-     * @param  string    $comparison
+     * @param  string    $comparison Criteria comparison constant or PDO binding type
      * @return Criterion
      */
     public function getNewCriterion($column, $value = null, $comparison = self::EQUAL)
     {
+        if (is_int($comparison)) {
+            // $comparison is a PDO::PARAM_* constant value
+            // something like $c->add('foo like ?', '%bar%', PDO::PARAM_STR);
+            return new RawCriterion($this, $column, $value, $comparison);
+        }
         switch ($comparison) {
             case Criteria::CUSTOM:
                 // custom expression with no parameter binding
+                // something like $c->add(BookPeer::TITLE, "CONCAT(book.TITLE, 'bar') = 'foobar'", Criteria::CUSTOM);
                 return new CustomCriterion($this, $column, $value);
-                break;
             case Criteria::IN:
             case Criteria::NOT_IN:
                 // table.column IN (?, ?) or table.column NOT IN (?, ?)
+                // something like $c->add(BookPeer::TITLE, array('foo', 'bar'), Criteria::IN);
                 return new InCriterion($this, $column, $value);
-                break;
             default:
                 // $comparison is one of Criteria's constants
                 // something like $c->add(BookPeer::TITLE, 'War%', Criteria::LIKE);
@@ -1668,13 +1674,7 @@ class Criteria implements \IteratorAggregate
             return $p1;
         }
 
-        if (is_int($comparison)) {
-            // $comparison is a PDO::PARAM_* constant value
-            // something like $c->add('foo like ?', '%bar%', PDO::PARAM_STR);
-            return new Criterion($this, $p1, $value, Criteria::RAW, $comparison);
-        }
-
-        // $comparison is one of Criteria's constants
+        // $comparison is one of Criteria's constants, or a PDO binding type
         // something like $c->add(BookPeer::TITLE, 'War%', Criteria::LIKE);
         return $this->getNewCriterion($p1, $value, $comparison);
     }

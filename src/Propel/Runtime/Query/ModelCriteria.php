@@ -27,6 +27,7 @@ use Propel\Runtime\Util\BasePeer;
 use Propel\Runtime\Util\PropelModelPager;
 use Propel\Runtime\Query\Criteria;
 use Propel\Runtime\Query\Criterion\CustomCriterion;
+use Propel\Runtime\Query\Criterion\RawCriterion;
 use Propel\Runtime\Query\Exception\UnknownColumnException;
 use Propel\Runtime\Query\Exception\UnknownModelException;
 use Propel\Runtime\Query\Exception\UnknownRelationException;
@@ -1848,7 +1849,7 @@ class ModelCriteria extends Criteria
                 if (null === $bindingType) {
                     throw new PropelException(sprintf('Cannot determine the column to bind to the parameter in clause "%s".', $clause));
                 }
-                $criterion = new Criterion($this, $clause, $value, Criteria::RAW, $bindingType);
+                $criterion = new RawCriterion($this, $clause, $value, $bindingType);
             } else {
                 $criterion = new CustomCriterion($this, null, $clause);
             }

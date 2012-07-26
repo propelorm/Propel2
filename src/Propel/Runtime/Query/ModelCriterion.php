@@ -192,7 +192,7 @@ class ModelCriterion extends Criterion
     protected function appendModelClauseRawToPs(&$sb, array &$params)
     {
         if (1 !== substr_count($this->clause, '?')) {
-            throw new PropelException(sprintf('Could not build SQL for expression "%s" because Criteria::RAW works only with a clause containing a single question mark placeholder', $this->column));
+            throw new PropelException(sprintf('Could not build SQL for expression "%s" because Criteria::MODEL_CLAUSE_RAW works only with a clause containing a single question mark placeholder', $this->column));
         }
         $params[] = array('table' => null, 'type' => $this->type, 'value' => $this->value);
         $sb .= str_replace('?', ':p' . count($params), $this->clause);

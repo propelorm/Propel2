@@ -16,7 +16,7 @@ use Propel\Runtime\Query\Criteria;
 use Propel\Runtime\Query\Criterion\InCriterion;
 
 /**
- * Test class for CriterionCustom.
+ * Test class for InCriterion.
  *
  * @author François Zaninotto
  */
