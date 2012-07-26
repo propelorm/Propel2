@@ -26,6 +26,7 @@ use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Util\BasePeer;
 use Propel\Runtime\Util\PropelModelPager;
 use Propel\Runtime\Query\Criteria;
+use Propel\Runtime\Query\Criterion\CustomCriterion;
 use Propel\Runtime\Query\Exception\UnknownColumnException;
 use Propel\Runtime\Query\Exception\UnknownModelException;
 use Propel\Runtime\Query\Exception\UnknownRelationException;
@@ -1849,7 +1850,7 @@ class ModelCriteria extends Criteria
                 }
                 $criterion = new Criterion($this, $clause, $value, Criteria::RAW, $bindingType);
             } else {
-                $criterion = new CriterionCustom($this, null, $clause);
+                $criterion = new CustomCriterion($this, null, $clause);
             }
         }
 

@@ -8,24 +8,24 @@
  * @license MIT License
  */
 
-namespace Propel\Tests\Runtime\Query;
+namespace Propel\Tests\Runtime\Query\Criterion;
 
 use Propel\Tests\Helpers\BaseTestCase;
 
 use Propel\Runtime\Query\Criteria;
-use Propel\Runtime\Query\CriterionIn;
+use Propel\Runtime\Query\Criterion\InCriterion;
 
 /**
  * Test class for CriterionCustom.
  *
  * @author François Zaninotto
  */
-class CriterionInTest extends BaseTestCase
+class InCriterionTest extends BaseTestCase
 {
 
     public function testAppendPsToCreatesAnInConditionByDefault()
     {
-        $cton = new CriterionIn(new Criteria(), 'A.COL', array('foo'));
+        $cton = new InCriterion(new Criteria(), 'A.COL', array('foo'));
 
         $params = array();
         $ps = '';
@@ -40,7 +40,7 @@ class CriterionInTest extends BaseTestCase
 
     public function testAppendPsToCreatesANotInConditionWhenSpecified()
     {
-        $cton = new CriterionIn(new Criteria(), 'A.COL', array('foo'), Criteria::NOT_IN);
+        $cton = new InCriterion(new Criteria(), 'A.COL', array('foo'), Criteria::NOT_IN);
 
         $params = array();
         $ps = '';
@@ -55,7 +55,7 @@ class CriterionInTest extends BaseTestCase
 
     public function testAppendPsToCreatesAnInConditionUsingAColumnAlias()
     {
-        $cton = new CriterionIn(new Criteria(), 'my_alias', array('foo'));
+        $cton = new InCriterion(new Criteria(), 'my_alias', array('foo'));
 
         $params = array();
         $ps = '';
@@ -72,7 +72,7 @@ class CriterionInTest extends BaseTestCase
     {
         $c = new Criteria();
         $c->addAlias('bar_alias', 'bar');
-        $cton = new CriterionIn($c, 'bar_alias.COL', array('foo'));
+        $cton = new InCriterion($c, 'bar_alias.COL', array('foo'));
 
         $params = array();
         $ps = '';
@@ -87,7 +87,7 @@ class CriterionInTest extends BaseTestCase
 
     public function testAppendPsToWithArrayValueCreatesAnInCondition()
     {
-        $cton = new CriterionIn(new Criteria(), 'A.COL', array('foo', 'bar'));
+        $cton = new InCriterion(new Criteria(), 'A.COL', array('foo', 'bar'));
 
         $params = array();
         $ps = '';
@@ -103,7 +103,7 @@ class CriterionInTest extends BaseTestCase
 
     public function testAppendPsToWithScalarValueCreatesAnInCondition()
     {
-        $cton = new CriterionIn(new Criteria(), 'A.COL', 'foo');
+        $cton = new InCriterion(new Criteria(), 'A.COL', 'foo');
 
         $params = array();
         $ps = '';
@@ -131,7 +131,7 @@ class CriterionInTest extends BaseTestCase
      */
     public function testAppendPsToWithNotEmptyValueCreatesAnInCondition($notEmptyValue)
     {
-        $cton = new CriterionIn(new Criteria(), 'A.COL', $notEmptyValue);
+        $cton = new InCriterion(new Criteria(), 'A.COL', $notEmptyValue);
 
         $params = array();
         $ps = '';
@@ -157,7 +157,7 @@ class CriterionInTest extends BaseTestCase
      */
     public function testAppendPsToWithInAndEmptyValueCreatesAnAlwaysFalseCondition($emptyValue)
     {
-        $cton = new CriterionIn(new Criteria(), 'A.COL', $emptyValue);
+        $cton = new InCriterion(new Criteria(), 'A.COL', $emptyValue);
 
         $params = array();
         $ps = '';
@@ -173,7 +173,7 @@ class CriterionInTest extends BaseTestCase
      */
     public function testAppendPsToWithNotInAndEmptyValueCreatesAnAlwaysTrueCondition($emptyValue)
     {
-        $cton = new CriterionIn(new Criteria(), 'A.COL', $emptyValue, Criteria::NOT_IN);
+        $cton = new InCriterion(new Criteria(), 'A.COL', $emptyValue, Criteria::NOT_IN);
 
         $params = array();
         $ps = '';

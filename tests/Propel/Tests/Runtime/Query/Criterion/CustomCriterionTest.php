@@ -8,23 +8,23 @@
  * @license MIT License
  */
 
-namespace Propel\Tests\Runtime\Query;
+namespace Propel\Tests\Runtime\Query\Criterion;
 
 use Propel\Tests\Helpers\BaseTestCase;
 
 use Propel\Runtime\Query\Criteria;
-use Propel\Runtime\Query\CriterionCustom;
+use Propel\Runtime\Query\Criterion\CustomCriterion;
 
 /**
  * Test class for CriterionCustom.
  *
  * @author François Zaninotto
  */
-class CriterionCustomTest extends BaseTestCase
+class CustomCriterionTest extends BaseTestCase
 {
     public function testAppendPsToConcatenatesTheValue()
     {
-        $cton = new CriterionCustom(new Criteria(), 'A.COL', 'date_part(\'YYYY\', A.COL) = \'2007\'');
+        $cton = new CustomCriterion(new Criteria(), 'A.COL', 'date_part(\'YYYY\', A.COL) = \'2007\'');
 
         $params = array();
         $ps = '';

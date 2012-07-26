@@ -8,12 +8,15 @@
  * @license MIT License
  */
 
-namespace Propel\Runtime\Query;
+namespace Propel\Runtime\Query\Criterion;
+
+use Propel\Runtime\Query\Criteria;
+use Propel\Runtime\Query\Criterion;
 
 /**
  * Specialized Criterion used for custom expressions with no binding, e.g. 'NOW() = 1'
  */
-class CriterionCustom extends Criterion
+class CustomCriterion extends Criterion
 {
 
     /**

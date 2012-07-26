@@ -14,6 +14,8 @@ use Propel\Runtime\Propel;
 use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\Util\BasePeer;
 use Propel\Runtime\Util\PropelConditionalProxy;
+use Propel\Runtime\Query\Criterion\InCriterion;
+use Propel\Runtime\Query\Criterion\CustomCriterion;
 
 /**
  * This is a utility class for holding criteria information for a query.
@@ -546,12 +548,12 @@ class Criteria implements \IteratorAggregate
         switch ($comparison) {
             case Criteria::CUSTOM:
                 // custom expression with no parameter binding
-                return new CriterionCustom($this, $column, $value);
+                return new CustomCriterion($this, $column, $value);
                 break;
             case Criteria::IN:
             case Criteria::NOT_IN:
                 // table.column IN (?, ?) or table.column NOT IN (?, ?)
-                return new CriterionIn($this, $column, $value);
+                return new InCriterion($this, $column, $value);
                 break;
             default:
                 // $comparison is one of Criteria's constants
