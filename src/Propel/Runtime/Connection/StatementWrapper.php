@@ -16,7 +16,7 @@ use Propel\Runtime\Connection\StatementInterface;
  * Wraps a Statement class, providing logging.
  *
  */
-class StatementWrapper implements StatementInterface
+class StatementWrapper implements StatementInterface, \IteratorAggregate
 {
 
     /**
@@ -266,6 +266,16 @@ class StatementWrapper implements StatementInterface
     public function rowCount()
     {
         return $this->statement->rowCount();
+    }
+
+    /**
+     * Return the internal statement, which is traversable
+     *
+     * @return Traversable
+     */
+    public function getIterator()
+    {
+        return $this->statement;
     }
 
     public function __call($method, $args)
