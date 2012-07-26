@@ -60,7 +60,7 @@ class ModelCriterion extends Criterion
     }
 
     /**
-     * Figure out which MocelCriterion method to use
+     * Figure out which ModelCriterion method to use
      * to build the prepared statement and parameters using to the Criterion comparison
      * and call it to append the prepared statement and the parameters of the current clause.
      * For performance reasons, this method tests the cases of parent::dispatchPsHandling()
@@ -73,22 +73,6 @@ class ModelCriterion extends Criterion
     protected function dispatchPsHandling(&$sb, array &$params)
     {
         switch ($this->comparison) {
-            case Criteria::CUSTOM:
-                // custom expression with no parameter binding
-                $this->appendCustomToPs($sb, $params);
-                break;
-            case Criteria::IN:
-            case Criteria::NOT_IN:
-                // table.column IN (?, ?) or table.column NOT IN (?, ?)
-                $this->appendInToPs($sb, $params);
-                break;
-            case Criteria::LIKE:
-            case Criteria::NOT_LIKE:
-            case Criteria::ILIKE:
-            case Criteria::NOT_ILIKE:
-                // table.column LIKE ? or table.column NOT LIKE ?  (or ILIKE for Postgres)
-                $this->appendLikeToPs($sb, $params);
-                break;
             case ModelCriteria::MODEL_CLAUSE:
                 // regular model clause, e.g. 'book.TITLE = ?'
                 $this->appendModelClauseToPs($sb, $params);

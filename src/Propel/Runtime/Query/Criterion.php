@@ -275,13 +275,18 @@ class Criterion
     {
         $sb .= str_repeat ( '(', count($this->clauses) );
 
-        $this->dispatchPsHandling($sb, $params);
+        $this->appendPsForUniqueClauseTo($sb, $params);
 
         foreach ($this->clauses as $key => $clause) {
             $sb .= $this->conjunctions[$key];
             $clause->appendPsTo($sb, $params);
             $sb .= ')';
         }
+    }
+
+    protected function appendPsForUniqueClauseTo(&$sb, array &$params)
+    {
+        $this->dispatchPsHandling($sb, $params);
     }
 
     /**
@@ -295,10 +300,6 @@ class Criterion
     protected function dispatchPsHandling(&$sb, array &$params)
     {
         switch ($this->comparison) {
-            case Criteria::CUSTOM:
-                // custom expression with no parameter binding
-                $this->appendCustomToPs($sb, $params);
-                break;
             case Criteria::RAW:
                 // custom expression with a typed parameter binding
                 $this->appendRawToPs($sb, $params);
@@ -318,20 +319,6 @@ class Criterion
             default:
                 // table.column = ? or table.column >= ? etc. (traditional expressions, the default)
                 $this->appendBasicToPs($sb, $params);
-        }
-    }
-
-    /**
-     * Appends a Prepared Statement representation of the Criterion onto the buffer
-     * For custom expressions with no binding, e.g. 'NOW() = 1'
-     *
-     * @param      string &$sb The string that will receive the Prepared Statement
-     * @param array $params A list to which Prepared Statement parameters will be appended
-     */
-    protected function appendCustomToPs(&$sb, array &$params)
-    {
-        if ('' !== $this->value) {
-            $sb .= (string) $this->value;
         }
     }
 

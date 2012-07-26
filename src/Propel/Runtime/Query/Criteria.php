@@ -543,7 +543,16 @@ class Criteria implements \IteratorAggregate
      */
     public function getNewCriterion($column, $value = null, $comparison = self::EQUAL)
     {
-        return new Criterion($this, $column, $value, $comparison);
+        switch ($comparison) {
+            case Criteria::CUSTOM:
+                // custom expression with no parameter binding
+                return new CriterionCustom($this, $column, $value);
+                break;
+            default:
+                // $comparison is one of Criteria's constants
+                // something like $c->add(BookPeer::TITLE, 'War%', Criteria::LIKE);
+                return new Criterion($this, $column, $value, $comparison);
+        }
     }
 
     /**
@@ -757,11 +766,10 @@ class Criteria implements \IteratorAggregate
      */
     public function add($p1, $value = null, $comparison = null)
     {
-        $criterion = $this->getCriterionForCondition($p1, $value, $comparison);
         if ($p1 instanceof Criterion) {
-            $this->map[$p1->getTable() . '.' . $p1->getColumn()] = $criterion;
+            $this->map[$p1->getTable() . '.' . $p1->getColumn()] = $p1;
         } else {
-            $this->map[$p1] = $criterion;
+            $this->map[$p1] = $this->getCriterionForCondition($p1, $value, $comparison);
         }
 
         return $this;
@@ -1522,7 +1530,6 @@ class Criteria implements \IteratorAggregate
      * @param string   $operator The logical operator used to combine conditions
      *            Defaults to Criteria::LOGICAL_AND, also accepts Criteria::LOGICAL_OR
      *            This parameter is deprecated, use _or() instead
-
      *
      * @return Criteria The current criteria object
      */
@@ -1662,7 +1669,7 @@ class Criteria implements \IteratorAggregate
 
         // $comparison is one of Criteria's constants
         // something like $c->add(BookPeer::TITLE, 'War%', Criteria::LIKE);
-        return new Criterion($this, $p1, $value, $comparison);
+        return $this->getNewCriterion($p1, $value, $comparison);
     }
 
     /**
