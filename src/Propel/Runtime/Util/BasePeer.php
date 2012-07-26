@@ -668,10 +668,10 @@ class BasePeer
                     $table = $tableName;
                 }
 
-                if (($criteria->isIgnoreCase() || $attachedCriterion->isIgnoreCase())
-                    && $dbMap->getTable($table)->getColumn($attachedCriterion->getColumn())->isText()) {
-                        $attachedCriterion->setIgnoreCase(true);
-                    }
+                if ($criteria->isIgnoreCase() && method_exists($attachedCriterion, 'setIgnoreCase')
+                 && $dbMap->getTable($table)->getColumn($attachedCriterion->getColumn())->isText()) {
+                    $attachedCriterion->setIgnoreCase(true);
+                }
             }
 
             $criterion->setAdapter($db);

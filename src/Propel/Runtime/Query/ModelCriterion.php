@@ -21,6 +21,9 @@ use Propel\Runtime\Map\ColumnMap;
 class ModelCriterion extends Criterion
 {
     protected $clause = '';
+    
+    /** flag to ignore case in comparison */
+    protected $ignoreStringCase = false;
 
     /**
      * Create a new instance.
@@ -60,6 +63,29 @@ class ModelCriterion extends Criterion
     }
 
     /**
+     * Sets ignore case.
+     *
+     * @param  boolean   $b True if case should be ignored.
+     * @return Criterion A modified Criterion object.
+     */
+    public function setIgnoreCase($b)
+    {
+        $this->ignoreStringCase = (Boolean) $b;
+
+        return $this;
+    }
+
+    /**
+     * Is ignore case on or off?
+     *
+     * @return boolean True if case is ignored.
+     */
+    public function isIgnoreCase()
+    {
+        return $this->ignoreStringCase;
+    }
+
+    /**
      * Figure out which ModelCriterion method to use
      * to build the prepared statement and parameters using to the Criterion comparison
      * and call it to append the prepared statement and the parameters of the current clause.
@@ -70,7 +96,7 @@ class ModelCriterion extends Criterion
      * @param      string &$sb The string that will receive the Prepared Statement
      * @param array $params A list to which Prepared Statement parameters will be appended
      */
-    protected function dispatchPsHandling(&$sb, array &$params)
+    protected function appendPsForUniqueClauseTo(&$sb, array &$params)
     {
         switch ($this->comparison) {
             case ModelCriteria::MODEL_CLAUSE:

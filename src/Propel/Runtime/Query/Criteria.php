@@ -14,6 +14,7 @@ use Propel\Runtime\Propel;
 use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\Util\BasePeer;
 use Propel\Runtime\Util\PropelConditionalProxy;
+use Propel\Runtime\Query\Criterion\BasicCriterion;
 use Propel\Runtime\Query\Criterion\InCriterion;
 use Propel\Runtime\Query\Criterion\CustomCriterion;
 use Propel\Runtime\Query\Criterion\LikeCriterion;
@@ -567,12 +568,13 @@ class Criteria implements \IteratorAggregate
             case Criteria::ILIKE:
             case Criteria::NOT_ILIKE:
                 // table.column LIKE ? or table.column NOT LIKE ?  (or ILIKE for Postgres)
+                // something like $c->add(BookPeer::TITLE, 'foo%', Criteria::LIKE);
                 return new LikeCriterion($this, $column, $value, $comparison);
                 break;
             default:
-                // $comparison is one of Criteria's constants
-                // something like $c->add(BookPeer::TITLE, 'War%', Criteria::LIKE);
-                return new Criterion($this, $column, $value, $comparison);
+                // simple comparison
+                // something like $c->add(BookPeer::PRICE, 12, Criteria::GREATER_THAN);
+                return new BasicCriterion($this, $column, $value, $comparison);
         }
     }
 
