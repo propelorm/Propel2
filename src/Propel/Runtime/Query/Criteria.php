@@ -16,6 +16,7 @@ use Propel\Runtime\Util\BasePeer;
 use Propel\Runtime\Util\PropelConditionalProxy;
 use Propel\Runtime\Query\Criterion\InCriterion;
 use Propel\Runtime\Query\Criterion\CustomCriterion;
+use Propel\Runtime\Query\Criterion\LikeCriterion;
 use Propel\Runtime\Query\Criterion\RawCriterion;
 
 /**
@@ -560,7 +561,14 @@ class Criteria implements \IteratorAggregate
             case Criteria::NOT_IN:
                 // table.column IN (?, ?) or table.column NOT IN (?, ?)
                 // something like $c->add(BookPeer::TITLE, array('foo', 'bar'), Criteria::IN);
-                return new InCriterion($this, $column, $value);
+                return new InCriterion($this, $column, $value, $comparison);
+            case Criteria::LIKE:
+            case Criteria::NOT_LIKE:
+            case Criteria::ILIKE:
+            case Criteria::NOT_ILIKE:
+                // table.column LIKE ? or table.column NOT LIKE ?  (or ILIKE for Postgres)
+                return new LikeCriterion($this, $column, $value, $comparison);
+                break;
             default:
                 // $comparison is one of Criteria's constants
                 // something like $c->add(BookPeer::TITLE, 'War%', Criteria::LIKE);

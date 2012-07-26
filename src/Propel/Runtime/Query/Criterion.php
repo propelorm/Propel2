@@ -15,7 +15,6 @@ use \Exception;
 use Propel\Runtime\Propel;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Adapter\AdapterInterface;
-use Propel\Runtime\Adapter\Pdo\PgsqlAdapter;
 
 /**
  * This is an "inner" class that describes an object in the criteria.
@@ -293,54 +292,9 @@ class Criterion
     protected function dispatchPsHandling(&$sb, array &$params)
     {
         switch ($this->comparison) {
-            case Criteria::LIKE:
-            case Criteria::NOT_LIKE:
-            case Criteria::ILIKE:
-            case Criteria::NOT_ILIKE:
-                // table.column LIKE ? or table.column NOT LIKE ?  (or ILIKE for Postgres)
-                $this->appendLikeToPs($sb, $params);
-                break;
             default:
                 // table.column = ? or table.column >= ? etc. (traditional expressions, the default)
                 $this->appendBasicToPs($sb, $params);
-        }
-    }
-
-    /**
-     * Appends a Prepared Statement representation of the Criterion onto the buffer
-     * For LIKE expressions, e.g. table.column LIKE ? or table.column NOT LIKE ?  (or ILIKE for Postgres)
-     *
-     * @param      string &$sb The string that will receive the Prepared Statement
-     * @param array $params A list to which Prepared Statement parameters will be appended
-     */
-    protected function appendLikeToPs(&$sb, array &$params)
-    {
-        $field = (null === $this->table) ? $this->column : $this->table . '.' . $this->column;
-        $db = $this->getAdapter();
-        // If selection is case insensitive use ILIKE for PostgreSQL or SQL
-        // UPPER() function on column name for other databases.
-        if ($this->ignoreStringCase) {
-            if ($db instanceof PgsqlAdapter) {
-                if (Criteria::LIKE === $this->comparison) {
-                    $this->comparison = Criteria::ILIKE;
-                } elseif (Criteria::NOT_LIKE === $this->comparison) {
-                    $this->comparison = Criteria::NOT_ILIKE;
-                }
-            } else {
-                $field = $db->ignoreCase($field);
-            }
-        }
-
-        $params[] = array('table' => $this->realtable, 'column' => $this->column, 'value' => $this->value);
-
-        $sb .= $field . $this->comparison;
-
-        // If selection is case insensitive use SQL UPPER() function
-        // on criteria or, if Postgres we are using ILIKE, so not necessary.
-        if ($this->ignoreStringCase && !($db instanceof PgsqlAdapter)) {
-            $sb .= $db->ignoreCase(':p'.count($params));
-        } else {
-            $sb .= ':p'.count($params);
         }
     }
 
