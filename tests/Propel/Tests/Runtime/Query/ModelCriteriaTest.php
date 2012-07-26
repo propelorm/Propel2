@@ -1936,7 +1936,9 @@ class ModelCriteriaTest extends BookstoreTestBase
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $c->setFormatter(ModelCriteria::FORMAT_ON_DEMAND);
-        $this->assertInstanceOf('Traversable', $c->getIterator());
+        $it = $c->getIterator();
+        $this->assertInstanceOf('Traversable', $it);
+        $it->closeCursor();
     }
 
     public function testGetIteratorAllowsTraversingQueryObjectsWithOnDemandFormatter()
