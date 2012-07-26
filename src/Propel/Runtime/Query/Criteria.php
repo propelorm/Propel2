@@ -548,6 +548,11 @@ class Criteria implements \IteratorAggregate
                 // custom expression with no parameter binding
                 return new CriterionCustom($this, $column, $value);
                 break;
+            case Criteria::IN:
+            case Criteria::NOT_IN:
+                // table.column IN (?, ?) or table.column NOT IN (?, ?)
+                return new CriterionIn($this, $column, $value);
+                break;
             default:
                 // $comparison is one of Criteria's constants
                 // something like $c->add(BookPeer::TITLE, 'War%', Criteria::LIKE);

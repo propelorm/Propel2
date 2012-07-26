@@ -304,11 +304,6 @@ class Criterion
                 // custom expression with a typed parameter binding
                 $this->appendRawToPs($sb, $params);
                 break;
-            case Criteria::IN:
-            case Criteria::NOT_IN:
-                // table.column IN (?, ?) or table.column NOT IN (?, ?)
-                $this->appendInToPs($sb, $params);
-                break;
             case Criteria::LIKE:
             case Criteria::NOT_LIKE:
             case Criteria::ILIKE:
@@ -336,33 +331,6 @@ class Criterion
         }
         $params[] = array('table' => null, 'type' => $this->type, 'value' => $this->value);
         $sb .= str_replace('?', ':p' . count($params), $this->column);
-    }
-
-     /**
-      * Appends a Prepared Statement representation of the Criterion onto the buffer
-     *
-     * For IN expressions, e.g. table.column IN (?, ?) or table.column NOT IN (?, ?)
-     *
-     * @param      string &$sb The string that will receive the Prepared Statement
-     * @param array $params A list to which Prepared Statement parameters will be appended
-     */
-    protected function appendInToPs(&$sb, array &$params)
-    {
-        if ('' !== $this->value) {
-            $bindParams = array();
-            $index = count($params); // to avoid counting the number of parameters for each element in the array
-            foreach ((array) $this->value as $value) {
-                $params[] = array('table' => $this->realtable, 'column' => $this->column, 'value' => $value);
-                $index++; // increment this first to correct for wanting bind params to start with :p1
-                $bindParams[] = ':p' . $index;
-            }
-            if (count($bindParams)) {
-                $field = ($this->table === null) ? $this->column : $this->table . '.' . $this->column;
-                $sb .= $field . $this->comparison . '(' . implode(',', $bindParams) . ')';
-            } else {
-                $sb .= (Criteria::IN === $this->comparison) ? '1<>1' : '1=1';
-            }
-        }
     }
 
     /**
