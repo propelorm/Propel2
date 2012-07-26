@@ -14,6 +14,7 @@ use Propel\Runtime\Propel;
 use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\Util\BasePeer;
 use Propel\Runtime\Util\PropelConditionalProxy;
+use Propel\Runtime\Query\Criterion\AbstractCriterion;
 use Propel\Runtime\Query\Criterion\BasicCriterion;
 use Propel\Runtime\Query\Criterion\InCriterion;
 use Propel\Runtime\Query\Criterion\CustomCriterion;
@@ -187,7 +188,7 @@ class Criteria implements \IteratorAggregate
 
     /**
      * Storage of having data.
-     * @var Criterion
+     * @var AbstractCriterion
      */
     protected $having = null;
 
@@ -513,7 +514,7 @@ class Criteria implements \IteratorAggregate
      * since no check on the existence of the $column is made in this method.
      *
      * @param  string    $column Column name.
-     * @return Criterion A Criterion object.
+     * @return AbstractCriterion A Criterion object.
      */
     public function getCriterion($column)
     {
@@ -523,7 +524,7 @@ class Criteria implements \IteratorAggregate
     /**
      * Method to return the latest Criterion in a table.
      *
-     * @return Criterion A Criterion or null no Criterion is added.
+     * @return AbstractCriterion A Criterion or null no Criterion is added.
      */
     public function getLastCriterion()
     {
@@ -537,14 +538,14 @@ class Criteria implements \IteratorAggregate
     }
 
     /**
-     * Method to return criterion that is not added automatically
+     * Method to return a Criterion that is not added automatically
      * to this Criteria.  This can be used to chain the
      * Criterions to form a more complex where clause.
      *
      * @param  string    $column     Full name of column (for example TABLE.COLUMN).
      * @param  mixed     $value
      * @param  string    $comparison Criteria comparison constant or PDO binding type
-     * @return Criterion
+     * @return AbstractCriterion
      */
     public function getNewCriterion($column, $value = null, $comparison = self::EQUAL)
     {
@@ -755,7 +756,7 @@ class Criteria implements \IteratorAggregate
     {
         if (is_array($t)) {
             foreach ($t as $key => $value) {
-                if ($value instanceof Criterion) {
+                if ($value instanceof AbstractCriterion) {
                     $this->map[$key] = $value;
                 } else {
                     $this->put($key, $value);
@@ -781,7 +782,7 @@ class Criteria implements \IteratorAggregate
      * The name of the table must be used implicitly in the column name,
      * so the Column name must be something like 'TABLE.id'.
      *
-     * @param string $critOrColumn The column to run the comparison on, or Criterion object.
+     * @param string $critOrColumn The column to run the comparison on, or a Criterion object.
      * @param mixed  $value
      * @param string $comparison   A String.
      *
@@ -789,7 +790,7 @@ class Criteria implements \IteratorAggregate
      */
     public function add($p1, $value = null, $comparison = null)
     {
-        if ($p1 instanceof Criterion) {
+        if ($p1 instanceof AbstractCriterion) {
             $this->map[$p1->getTable() . '.' . $p1->getColumn()] = $p1;
         } else {
             $this->map[$p1] = $this->getCriterionForCondition($p1, $value, $comparison);
@@ -815,7 +816,7 @@ class Criteria implements \IteratorAggregate
      * so the Column name must be something like 'TABLE.id'.
      *
      * @param string $name       name to combine the criterion later
-     * @param string $p1         The column to run the comparison on, or Criterion object.
+     * @param string $p1         The column to run the comparison on, or AbstractCriterion object.
      * @param mixed  $value
      * @param string $comparison A String.
      *
@@ -1417,7 +1418,7 @@ class Criteria implements \IteratorAggregate
     /**
      * Get Having Criterion.
      *
-     * @return Criterion A Criterion object that is the having clause.
+     * @return AbstractCriterion A Criterion object that is the having clause.
      */
     public function getHaving()
     {
@@ -1435,7 +1436,7 @@ class Criteria implements \IteratorAggregate
         if (isset($this->map[$key])) {
             $removed = $this->map[$key];
             unset($this->map[$key]);
-            if ($removed instanceof Criterion) {
+            if ($removed instanceof AbstractCriterion) {
                 return $removed->getValue();
             }
 
@@ -1645,7 +1646,9 @@ class Criteria implements \IteratorAggregate
      * $crit->addHaving($c);
      * </code>
      *
-     * @param      having A Criterion object
+     * @param mixed $p1         A Criterion, or a SQL clause with a question mark placeholder, or a column name
+     * @param mixed $value      The value to bind in the condition
+     * @param mixed $comparison A PDO::PARAM_ class constant
      *
      * @return A modified Criteria object.
      */
@@ -1679,7 +1682,7 @@ class Criteria implements \IteratorAggregate
      */
     protected function getCriterionForCondition($p1, $value = null, $comparison = null)
     {
-        if ($p1 instanceof Criterion) {
+        if ($p1 instanceof AbstractCriterion) {
             // it's already a Criterion, so ignore $value and $comparison
             return $p1;
         }
@@ -1763,7 +1766,7 @@ class Criteria implements \IteratorAggregate
      * Overrides Criteria::add() to use the default combine operator
      * @see Criteria::add()
      *
-     * @param string|Criterion $p1                    The column to run the comparison on (e.g. BookPeer::ID), or Criterion object
+     * @param string|AbstractCriterion $p1                    The column to run the comparison on (e.g. BookPeer::ID), or Criterion object
      * @param mixed            $value
      * @param string           $operator              A String, like Criteria::EQUAL.
      * @param boolean          $preferColumnCondition If true, the condition is combined with an existing condition on the same column

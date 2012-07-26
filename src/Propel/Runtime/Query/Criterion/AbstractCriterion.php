@@ -8,11 +8,12 @@
  * @license MIT License
  */
 
-namespace Propel\Runtime\Query;
+namespace Propel\Runtime\Query\Criterion;
 
 use \Exception;
 
 use Propel\Runtime\Propel;
+use Propel\Runtime\Query\Criteria;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Adapter\AdapterInterface;
 
@@ -23,7 +24,7 @@ use Propel\Runtime\Adapter\AdapterInterface;
  *
  * @author Hans Lellelid <hans@xmpl.org> (Propel)
  */
-class Criterion
+abstract class AbstractCriterion
 {
     const UND = " AND ";
     const ODER = " OR ";
@@ -207,7 +208,7 @@ class Criterion
     /**
      * Append an AND Criterion onto this Criterion's list.
      */
-    public function addAnd(Criterion $criterion)
+    public function addAnd(AbstractCriterion $criterion)
     {
         $this->clauses[] = $criterion;
         $this->conjunctions[] = self::UND;
@@ -219,7 +220,7 @@ class Criterion
      * Append an OR Criterion onto this Criterion's list.
      * @return Criterion
      */
-    public function addOr(Criterion $criterion)
+    public function addOr(AbstractCriterion $criterion)
     {
         $this->clauses[] = $criterion;
         $this->conjunctions[] = self::ODER;
@@ -250,10 +251,7 @@ class Criterion
         }
     }
 
-    protected function appendPsForUniqueClauseTo(&$sb, array &$params)
-    {
-        // overridden by subclasses
-    }
+    abstract protected function appendPsForUniqueClauseTo(&$sb, array &$params);
 
     /**
      * This method checks another Criteria to see if they contain
@@ -267,7 +265,7 @@ class Criterion
             return true;
         }
 
-        if ((null === $obj) || !($obj instanceof Criterion)) {
+        if ((null === $obj) || !($obj instanceof AbstractCriterion)) {
             return false;
         }
 
@@ -344,7 +342,7 @@ class Criterion
      * us a string array of tables from each criterion
      * @return void
      */
-    private function addCriterionTable(Criterion $c, array &$s)
+    private function addCriterionTable(AbstractCriterion $c, array &$s)
     {
         $s[] = $c->getTable();
         foreach ($c->getClauses() as $clause) {

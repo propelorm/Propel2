@@ -12,14 +12,13 @@ namespace Propel\Runtime\Query\Criterion;
 
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Query\Criteria;
-use Propel\Runtime\Query\Criterion;
 
 use \PDO;
 
 /**
  * Specialized Criterion used for custom expressions with a typed binding, e.g. 'foobar = ?'
  */
-class RawCriterion extends Criterion
+class RawCriterion extends AbstractCriterion
 {
 
     /**

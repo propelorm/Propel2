@@ -11,14 +11,13 @@
 namespace Propel\Runtime\Query\Criterion;
 
 use Propel\Runtime\Query\Criteria;
-use Propel\Runtime\Query\Criterion;
 use Propel\Runtime\Adapter\Pdo\PgsqlAdapter;
 
 /**
  * Specialized Criterion used for LIKE expressions
  * e.g. table.column LIKE ? or table.column NOT LIKE ?  (or ILIKE for Postgres)
  */
-class LikeCriterion extends Criterion
+class LikeCriterion extends AbstractCriterion
 {
     /** flag to ignore case in comparison */
     protected $ignoreStringCase = false;

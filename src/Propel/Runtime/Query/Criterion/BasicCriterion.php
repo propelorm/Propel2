@@ -12,14 +12,13 @@ namespace Propel\Runtime\Query\Criterion;
 
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Query\Criteria;
-use Propel\Runtime\Query\Criterion;
 
 
 /**
  * Specialized Criterion used for traditional expressions,
  * e.g. table.column = ? or table.column >= ? etc.
  */
-class BasicCriterion extends Criterion
+class BasicCriterion extends AbstractCriterion
 {
     /** flag to ignore case in comparison */
     protected $ignoreStringCase = false;

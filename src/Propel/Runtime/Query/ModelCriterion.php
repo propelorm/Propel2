@@ -10,6 +10,7 @@
 
 namespace Propel\Runtime\Query;
 
+use Propel\Runtime\Query\Criterion\AbstractCriterion;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\ColumnMap;
 
@@ -18,7 +19,7 @@ use Propel\Runtime\Map\ColumnMap;
  *
  * @author Francois
  */
-class ModelCriterion extends Criterion
+class ModelCriterion extends AbstractCriterion
 {
     protected $clause = '';
     
@@ -66,7 +67,7 @@ class ModelCriterion extends Criterion
      * Sets ignore case.
      *
      * @param  boolean   $b True if case should be ignored.
-     * @return Criterion A modified Criterion object.
+     * @return ModelCriterion A modified Criterion object.
      */
     public function setIgnoreCase($b)
     {

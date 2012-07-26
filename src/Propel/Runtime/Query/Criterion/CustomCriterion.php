@@ -11,12 +11,11 @@
 namespace Propel\Runtime\Query\Criterion;
 
 use Propel\Runtime\Query\Criteria;
-use Propel\Runtime\Query\Criterion;
 
 /**
  * Specialized Criterion used for custom expressions with no binding, e.g. 'NOW() = 1'
  */
-class CustomCriterion extends Criterion
+class CustomCriterion extends AbstractCriterion
 {
 
     /**

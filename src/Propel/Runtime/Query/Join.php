@@ -10,6 +10,7 @@
 
 namespace Propel\Runtime\Query;
 
+use Propel\Runtime\Query\Criterion\AbstractCriterion;
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Exception\LogicException;
 
@@ -472,9 +473,9 @@ class Join
     /**
      * Set a custom join condition
      *
-     * @param Criterion $joinCondition a Join condition
+     * @param AbstractCriterion $joinCondition a Join condition
      */
-    public function setJoinCondition(Criterion $joinCondition)
+    public function setJoinCondition(AbstractCriterion $joinCondition)
     {
         $this->joinCondition = $joinCondition;
     }
@@ -482,7 +483,7 @@ class Join
     /**
      * Get the custom join condition, if previously set
      *
-     * @return Criterion
+     * @return AbstractCriterion
      */
     public function getJoinCondition()
     {

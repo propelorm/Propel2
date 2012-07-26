@@ -26,6 +26,7 @@ use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Util\BasePeer;
 use Propel\Runtime\Util\PropelModelPager;
 use Propel\Runtime\Query\Criteria;
+use Propel\Runtime\Query\Criterion\AbstractCriterion;
 use Propel\Runtime\Query\Criterion\CustomCriterion;
 use Propel\Runtime\Query\Criterion\RawCriterion;
 use Propel\Runtime\Query\Exception\UnknownColumnException;
@@ -728,7 +729,7 @@ class ModelCriteria extends Criteria
             throw new PropelException(sprintf('Adding a condition to a nonexistent join, %s. Try calling join() first.', $name));
         }
         $join = $this->joins[$name];
-        if (!$join->getJoinCondition() instanceof Criterion) {
+        if (!$join->getJoinCondition() instanceof AbstractCriterion) {
             $join->buildJoinCondition($this);
         }
         $criterion = $this->getCriterionForClause($clause, $value, $bindingType);
@@ -760,7 +761,7 @@ class ModelCriteria extends Criteria
             throw new PropelException(sprintf('Setting a condition to a nonexistent join, %s. Try calling join() first.', $name));
         }
 
-        if ($condition instanceof Criterion) {
+        if ($condition instanceof AbstractCriterion) {
             $this->getJoin($name)->setJoinCondition($condition);
         } elseif (isset($this->namedCriterions[$condition])) {
             $this->getJoin($name)->setJoinCondition($this->namedCriterions[$condition]);
@@ -1816,7 +1817,7 @@ class ModelCriteria extends Criteria
      * @param string $clause The pseudo SQL clause, e.g. 'AuthorId = ?'
      * @param mixed  $value  A value for the condition
      *
-     * @return Criterion a Criterion or ModelCriterion object
+     * @return AbstractCriterion a Criterion object
      */
     protected function getCriterionForClause($clause, $value, $bindingType = null)
     {
