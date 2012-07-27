@@ -30,10 +30,9 @@ class BaseModelCriterion extends AbstractCriterion
      * @param Criteria  $parent      The outer class (this is an "inner" class).
      * @param ColumnMap $column      A Column object to help escaping the value
      * @param mixed     $value
-     * @param string    $comparison, among ModelCriteria::MODEL_CLAUSE
      * @param string    $clause      A simple pseudo-SQL clause, e.g. 'foo.BAR LIKE ?'
      */
-    public function __construct(Criteria $outer, $column, $value = null, $comparison = ModelCriteria::MODEL_CLAUSE, $clause = null, $type = null)
+    public function __construct(Criteria $outer, $column, $value = null, $clause = null)
     {
         $this->value = $value;
         if ($column instanceof ColumnMap) {
@@ -50,9 +49,7 @@ class BaseModelCriterion extends AbstractCriterion
                 $this->column = substr($column, $dotPos+1, strlen($column));
             }
         }
-        $this->comparison = ($comparison === null ? Criteria::EQUAL : $comparison);
         $this->clause = $clause;
-        $this->type = $type;
         $this->init($outer);
     }
 
@@ -74,60 +71,7 @@ class BaseModelCriterion extends AbstractCriterion
      */
     protected function appendPsForUniqueClauseTo(&$sb, array &$params)
     {
-        switch ($this->comparison) {
-            case ModelCriteria::MODEL_CLAUSE_ARRAY:
-                // IN or NOT IN model clause, e.g. 'book.TITLE NOT IN ?'
-                $this->appendModelClauseArrayToPs($sb, $params);
-                break;
-            case ModelCriteria::MODEL_CLAUSE_RAW:
-                // raw model clause, with type, e.g. 'foobar = ?'
-                $this->appendModelClauseRawToPs($sb, $params);
-                break;
-            default:
-                // table.column = ? or table.column >= ? etc. (traditional expressions, the default)
-                $this->appendBasicToPs($sb, $params);
-
-        }
-    }
-
-    /**
-     * Appends a Prepared Statement representation of the ModelCriterion onto the buffer
-     * For IN or NOT IN model clauses, e.g. 'book.TITLE NOT IN ?'
-     *
-     * @param      string &$sb The string that will receive the Prepared Statement
-     * @param array $params A list to which Prepared Statement parameters will be appended
-     */
-    public function appendModelClauseArrayToPs(&$sb, array &$params)
-    {
-        $bindParams = array(); // the param names used in query building
-        $idxstart = count($params);
-        $valuesLength = 0;
-        foreach ((array) $this->value as $value) {
-            $valuesLength++; // increment this first to correct for wanting bind params to start with :p1
-            $params[] = array('table' => $this->realtable, 'column' => $this->column, 'value' => $value);
-            $bindParams[] = ':p'.($idxstart + $valuesLength);
-        }
-        if (0 !== $valuesLength) {
-            $sb .= str_replace('?', '(' . implode(',', $bindParams) . ')', $this->clause);
-        } else {
-            $sb .= (stripos($this->clause, ' NOT IN ') === false) ? "1<>1" : "1=1";
-        }
-        unset($value, $valuesLength);
-    }
-
-    /**
-     * For custom expressions with a typed binding, e.g. 'foobar = ?'
-     *
-     * @param      string &$sb The string that will receive the Prepared Statement
-     * @param array $params A list to which Prepared Statement parameters will be appended
-     */
-    protected function appendModelClauseRawToPs(&$sb, array &$params)
-    {
-        if (1 !== substr_count($this->clause, '?')) {
-            throw new PropelException(sprintf('Could not build SQL for expression "%s" because Criteria::MODEL_CLAUSE_RAW works only with a clause containing a single question mark placeholder', $this->column));
-        }
-        $params[] = array('table' => null, 'type' => $this->type, 'value' => $this->value);
-        $sb .= str_replace('?', ':p' . count($params), $this->clause);
+        // overridden by parent
     }
 
     /**

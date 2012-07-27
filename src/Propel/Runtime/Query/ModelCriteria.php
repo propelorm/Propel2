@@ -27,11 +27,13 @@ use Propel\Runtime\Util\BasePeer;
 use Propel\Runtime\Util\PropelModelPager;
 use Propel\Runtime\Query\Criteria;
 use Propel\Runtime\Query\Criterion\AbstractCriterion;
+use Propel\Runtime\Query\Criterion\ArrayModelCriterion;
 use Propel\Runtime\Query\Criterion\BaseModelCriterion;
 use Propel\Runtime\Query\Criterion\BasicModelCriterion;
 use Propel\Runtime\Query\Criterion\CustomCriterion;
 use Propel\Runtime\Query\Criterion\LikeModelCriterion;
 use Propel\Runtime\Query\Criterion\RawCriterion;
+use Propel\Runtime\Query\Criterion\RawModelCriterion;
 use Propel\Runtime\Query\Criterion\SeveralModelCriterion;
 use Propel\Runtime\Query\Exception\UnknownColumnException;
 use Propel\Runtime\Query\Exception\UnknownModelException;
@@ -1868,17 +1870,20 @@ class ModelCriteria extends Criteria implements \IteratorAggregate
             $colMap = $this->replacedColumns[0];
             $value = $this->convertValueForColumn($value, $colMap);
             switch ($operator) {
-                case ModelCriteria::MODEL_CLAUSE:
-                    $criterion = new BasicModelCriterion($this, $colMap, $value, $clause, $bindingType);
-                    break;
                 case ModelCriteria::MODEL_CLAUSE_LIKE:
                     $criterion = new LikeModelCriterion($this, $colMap, $value, $clause, $bindingType);
                     break;
                 case ModelCriteria::MODEL_CLAUSE_SEVERAL:
                     $criterion = new SeveralModelCriterion($this, $colMap, $value, $clause, $bindingType);
                     break;
+                case ModelCriteria::MODEL_CLAUSE_ARRAY:
+                    $criterion = new ArrayModelCriterion($this, $colMap, $value, $clause, $bindingType);
+                    break;
+                case ModelCriteria::MODEL_CLAUSE_RAW:
+                    $criterion = new RawModelCriterion($this, $colMap, $value, $clause, $bindingType);
+                    break;
                 default:
-                    $criterion = new BaseModelCriterion($this, $colMap, $value, $operator, $clause, $bindingType);
+                    $criterion = new BasicModelCriterion($this, $colMap, $value, $clause, $bindingType);
                     break;
             }
 
