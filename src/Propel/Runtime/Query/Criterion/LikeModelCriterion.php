@@ -25,7 +25,7 @@ class LikeModelCriterion extends BasicModelCriterion
      * Sets ignore case.
      *
      * @param  boolean        $b True if case should be ignored.
-     * @return ModelCriterion A modified Criterion object.
+     * @return LikeModelCriterion A modified Criterion object.
      */
     public function setIgnoreCase($b)
     {
