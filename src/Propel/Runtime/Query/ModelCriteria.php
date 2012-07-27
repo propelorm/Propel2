@@ -32,6 +32,7 @@ use Propel\Runtime\Query\Criterion\BasicModelCriterion;
 use Propel\Runtime\Query\Criterion\CustomCriterion;
 use Propel\Runtime\Query\Criterion\LikeModelCriterion;
 use Propel\Runtime\Query\Criterion\RawCriterion;
+use Propel\Runtime\Query\Criterion\SeveralModelCriterion;
 use Propel\Runtime\Query\Exception\UnknownColumnException;
 use Propel\Runtime\Query\Exception\UnknownModelException;
 use Propel\Runtime\Query\Exception\UnknownRelationException;
@@ -1872,6 +1873,9 @@ class ModelCriteria extends Criteria implements \IteratorAggregate
                     break;
                 case ModelCriteria::MODEL_CLAUSE_LIKE:
                     $criterion = new LikeModelCriterion($this, $colMap, $value, $clause, $bindingType);
+                    break;
+                case ModelCriteria::MODEL_CLAUSE_SEVERAL:
+                    $criterion = new SeveralModelCriterion($this, $colMap, $value, $clause, $bindingType);
                     break;
                 default:
                     $criterion = new BaseModelCriterion($this, $colMap, $value, $operator, $clause, $bindingType);
