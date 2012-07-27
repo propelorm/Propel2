@@ -95,7 +95,7 @@ EOF;
         $this->assertContains('class QuickBuildFoo1 extends BaseQuickBuildFoo1', $script);
         $this->assertContains('class QuickBuildFoo1Peer extends BaseQuickBuildFoo1Peer', $script);
         $this->assertContains('class QuickBuildFoo1Query extends BaseQuickBuildFoo1Query', $script);
-        $this->assertContains('class QuickBuildFoo1 extends BaseObject', $script);
+        $this->assertContains('class QuickBuildFoo1', $script); //BaseObject
         $this->assertContains('class QuickBuildFoo1Peer', $script);
         $this->assertContains('class QuickBuildFoo1Query extends ModelCriteria', $script);
     }
@@ -109,7 +109,7 @@ EOF;
         $this->assertNotContains('class QuickBuildFoo1 extends BaseQuickBuildFoo1', $script);
         $this->assertNotContains('class QuickBuildFoo1Peer extends BaseQuickBuildFoo1Peer', $script);
         $this->assertNotContains('class QuickBuildFoo1Query extends BaseQuickBuildFoo1Query', $script);
-        $this->assertContains('class QuickBuildFoo1 extends BaseObject', $script);
+        $this->assertContains('class QuickBuildFoo1', $script); //BaseObject
         $this->assertContains('class QuickBuildFoo1Peer', $script);
         $this->assertContains('class QuickBuildFoo1Query extends ModelCriteria', $script);
     }
@@ -121,8 +121,10 @@ EOF;
     {
         $builder->buildClasses();
         $foo = new QuickBuildFoo1();
-        $this->assertTrue($foo instanceof BaseObject);
         $this->assertTrue(QuickBuildFoo1Peer::getTableMap() instanceof \MyNameSpace\Map\QuickBuildFoo1TableMap);
+
+        $this->markTestIncomplete('need a new Interface for BaseObject');
+//        $this->assertTrue($foo instanceof BaseObject);
     }
 
     public function testBuild()
