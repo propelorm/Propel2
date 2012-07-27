@@ -27,6 +27,7 @@ use Propel\Runtime\Util\BasePeer;
 use Propel\Runtime\Util\PropelModelPager;
 use Propel\Runtime\Query\Criteria;
 use Propel\Runtime\Query\Criterion\AbstractCriterion;
+use Propel\Runtime\Query\Criterion\BaseModelCriterion;
 use Propel\Runtime\Query\Criterion\CustomCriterion;
 use Propel\Runtime\Query\Criterion\RawCriterion;
 use Propel\Runtime\Query\Exception\UnknownColumnException;
@@ -1863,7 +1864,7 @@ class ModelCriteria extends Criteria implements \IteratorAggregate
 
             $colMap = $this->replacedColumns[0];
             $value = $this->convertValueForColumn($value, $colMap);
-            $criterion = new ModelCriterion($this, $colMap, $value, $operator, $clause, $bindingType);
+            $criterion = new BaseModelCriterion($this, $colMap, $value, $operator, $clause, $bindingType);
 
             if (!empty($this->currentAlias)) {
                 $criterion->setTable($this->currentAlias);

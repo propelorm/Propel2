@@ -8,10 +8,11 @@
  * @license MIT License
  */
 
-namespace Propel\Runtime\Query;
+namespace Propel\Runtime\Query\Criterion;
 
-use Propel\Runtime\Query\Criterion\AbstractCriterion;
 use Propel\Runtime\Exception\PropelException;
+use Propel\Runtime\Query\Criteria;
+use Propel\Runtime\Query\ModelCriteria;
 use Propel\Runtime\Map\ColumnMap;
 
 /**
@@ -19,7 +20,7 @@ use Propel\Runtime\Map\ColumnMap;
  *
  * @author Francois
  */
-class ModelCriterion extends AbstractCriterion
+class BaseModelCriterion extends AbstractCriterion
 {
     protected $clause = '';
 
@@ -237,7 +238,7 @@ class ModelCriterion extends AbstractCriterion
             return true;
         }
 
-        if (null === $obj || !($obj instanceof ModelCriterion)) {
+        if (null === $obj || !($obj instanceof BaseModelCriterion)) {
             return false;
         }
 
