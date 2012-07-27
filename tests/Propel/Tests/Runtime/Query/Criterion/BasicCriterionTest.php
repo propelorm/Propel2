@@ -120,7 +120,7 @@ class BasicCriterionTest extends BaseTestCase
     }
 
     /**
-     * @expectedException Propel\Runtime\Exception\PropelException
+     * @expectedException Propel\Runtime\Query\Criterion\Exception\InvalidValueException
      */
     public function testAppendPsThrowsExceptionWhenValueIsNullAndComparisonIsComplex()
     {

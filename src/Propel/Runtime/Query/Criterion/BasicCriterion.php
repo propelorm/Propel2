@@ -10,7 +10,7 @@
 
 namespace Propel\Runtime\Query\Criterion;
 
-use Propel\Runtime\Exception\PropelException;
+use Propel\Runtime\Query\Criterion\Exception\InvalidValueException;
 use Propel\Runtime\Query\Criteria;
 
 /**
@@ -97,7 +97,7 @@ class BasicCriterion extends AbstractCriterion
                 $sb .= $field . Criteria::ISNOTNULL;
             } else {
                 // for now throw an exception, because not sure how to interpret this
-                throw new PropelException(sprintf('Could not build SQL for expression: %s %s NULL', $field, $this->comparison));
+                throw new InvalidValueException(sprintf('Could not build SQL for expression: %s %s NULL', $field, $this->comparison));
             }
         }
     }

@@ -25,7 +25,7 @@ use \PDO;
 class RawCriterionTest extends BaseTestCase
 {
     /**
-     * @expectedException Propel\Runtime\Exception\PropelException
+     * @expectedException Propel\Runtime\Query\Criterion\Exception\InvalidClauseException
      */
     public function testAppendPsToThrowsExceptionWhenClauseHasNoQuestionMark()
     {

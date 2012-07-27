@@ -10,7 +10,7 @@
 
 namespace Propel\Runtime\Query\Criterion;
 
-use Propel\Runtime\Exception\PropelException;
+use Propel\Runtime\Query\Criterion\Exception\InvalidClauseException;
 use Propel\Runtime\Query\Criteria;
 
 use \PDO;
@@ -52,7 +52,7 @@ class RawCriterion extends AbstractCriterion
     protected function appendPsForUniqueClauseTo(&$sb, array &$params)
     {
         if (1 !== substr_count($this->column, '?')) {
-            throw new PropelException(sprintf('Could not build SQL for expression "%s" because Criteria::RAW works only with a clause containing a single question mark placeholder', $this->column));
+            throw new InvalidClauseException(sprintf('Could not build SQL for expression "%s" because Criteria::RAW works only with a clause containing a single question mark placeholder', $this->column));
         }
         $params[] = array('table' => null, 'type' => $this->type, 'value' => $this->value);
         $sb .= str_replace('?', ':p' . count($params), $this->column);
