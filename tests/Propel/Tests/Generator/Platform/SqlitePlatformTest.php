@@ -147,8 +147,7 @@ CREATE TABLE foo
 CREATE TABLE foo
 (
     foo VARCHAR(255) NOT NULL,
-    bar VARCHAR(255) NOT NULL,
-    PRIMARY KEY (foo)
+    bar VARCHAR(255) NOT NULL
 );
 ";
         $this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
@@ -166,7 +165,7 @@ CREATE TABLE foo
     foo INTEGER NOT NULL,
     bar INTEGER NOT NULL,
     baz VARCHAR(255) NOT NULL,
-    PRIMARY KEY (foo,bar)
+    UNIQUE (foo,bar)
 );
 ";
         $this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
@@ -229,7 +228,7 @@ DROP TABLE IF EXISTS foo;
         $column = new Column('bar');
         $column->setPrimaryKey(true);
         $table->addColumn($column);
-        $expected = 'PRIMARY KEY (bar)';
+        $expected = 'UNIQUE (bar)';
         $this->assertEquals($expected, $this->getPlatform()->getPrimaryKeyDDL($table));
     }
 
@@ -242,7 +241,7 @@ DROP TABLE IF EXISTS foo;
         $column2 = new Column('bar2');
         $column2->setPrimaryKey(true);
         $table->addColumn($column2);
-        $expected = 'PRIMARY KEY (bar1,bar2)';
+        $expected = 'UNIQUE (bar1,bar2)';
         $this->assertEquals($expected, $this->getPlatform()->getPrimaryKeyDDL($table));
     }
 

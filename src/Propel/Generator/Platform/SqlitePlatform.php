@@ -67,8 +67,7 @@ class SqlitePlatform extends DefaultPlatform
         }
 
         if ($table->hasPrimaryKey()) {
-            $pk = $table->getPrimaryKey();
-            if (count($pk) > 1 || !$pk[0]->isAutoIncrement()) {
+            if (1 < count($table->getPrimaryKey())) {
                 $lines[] = $this->getPrimaryKeyDDL($table);
             }
         }
@@ -92,6 +91,19 @@ class SqlitePlatform extends DefaultPlatform
             $this->quoteIdentifier($table->getName()),
             implode($sep, $lines)
         );
+    }
+
+    /**
+     * Returns the SQL for the primary key of a Table object.
+     *
+     * @return string
+     */
+    public function getPrimaryKeyDDL(Table $table)
+    {
+        if ($table->hasPrimaryKey()) {
+            // SQLite doesn't support multiple PRIMARY KEYS
+            return 'UNIQUE (' . $this->getColumnListDDL($table->getPrimaryKey()) . ')';
+        }
     }
 
     public function getDropPrimaryKeyDDL(Table $table)

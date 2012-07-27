@@ -48,7 +48,7 @@ CREATE TABLE i18n_behavior_test_0_i18n
 (
     id INTEGER NOT NULL,
     locale VARCHAR(5) DEFAULT 'fr_FR' NOT NULL,
-    PRIMARY KEY (id,locale)
+    UNIQUE (id,locale)
 );
 EOF;
         $this->assertContains($expected, $builder->getSQL());
@@ -82,7 +82,7 @@ CREATE TABLE i18n_behavior_test_0_i18n
 (
     id INTEGER NOT NULL,
     locale VARCHAR(5) DEFAULT 'pt_PT' NOT NULL,
-    PRIMARY KEY (id,locale)
+    UNIQUE (id,locale)
 );
 EOF;
         $this->assertContains($expected, $builder->getSQL());
@@ -184,7 +184,7 @@ CREATE TABLE i18n_behavior_test_0_i18n
     id INTEGER NOT NULL,
     locale VARCHAR(5) DEFAULT 'en_EN' NOT NULL,
     bar VARCHAR(100),
-    PRIMARY KEY (id,locale)
+    UNIQUE (id,locale)
 );
 EOF;
         $this->assertContains($expected, $builder->getSQL());
@@ -232,7 +232,7 @@ CREATE TABLE foo_table
 (
     id INTEGER NOT NULL,
     locale VARCHAR(5) DEFAULT 'en_EN' NOT NULL,
-    PRIMARY KEY (id,locale)
+    UNIQUE (id,locale)
 );
 EOF;
         $this->assertContains($expected, $builder->getSQL());
@@ -263,7 +263,7 @@ CREATE TABLE i18n_behavior_test_0_i18n
 (
     id INTEGER NOT NULL,
     culture VARCHAR(5) DEFAULT 'en_EN' NOT NULL,
-    PRIMARY KEY (id,culture)
+    UNIQUE (id,culture)
 );
 EOF;
         $this->assertContains($expected, $builder->getSQL());
@@ -294,7 +294,7 @@ CREATE TABLE i18n_behavior_test_0_i18n
 (
     id INTEGER NOT NULL,
     locale VARCHAR(5) DEFAULT 'fr_FR' NOT NULL,
-    PRIMARY KEY (id,locale)
+    UNIQUE (id,locale)
 );
 EOF;
         $this->assertContains($expected, $builder->getSQL());
