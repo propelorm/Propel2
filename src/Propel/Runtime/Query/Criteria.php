@@ -29,7 +29,7 @@ use Propel\Runtime\Util\PropelConditionalProxy;
  * @author Henning P. Schmiedehausen <hps@intermeta.de> (Torque)
  * @author Sam Joseph <sam@neurogrid.com> (Torque)
  */
-class Criteria implements \IteratorAggregate
+class Criteria
 {
 
     /** Comparison type. */
@@ -259,15 +259,6 @@ class Criteria implements \IteratorAggregate
     {
         $this->setDbName($dbName);
         $this->originalDbName = $dbName;
-    }
-
-    /**
-     * Implementing SPL IteratorAggregate interface.  This allows
-     * you to foreach () over a Criteria object.
-     */
-    public function getIterator()
-    {
-        return new CriterionIterator($this);
     }
 
     /**

@@ -1894,6 +1894,106 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'findOneBy() adds multiple column conditions');
     }
 
+    public function testGetIteratorReturnsATraversable()
+    {
+        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
+        $this->assertInstanceOf('Traversable', $c->getIterator());
+    }
+
+    public function testGetIteratorAllowsTraversingQueryObjects()
+    {
+        BookstoreDataPopulator::depopulate();
+        BookstoreDataPopulator::populate();
+        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
+        $nbResults = 0;
+        foreach ($c as $book) {
+            $nbResults++;
+        }
+        $this->assertEquals(4, $nbResults);
+    }
+
+    public function testGetIteratorReturnsATraversableWithArrayFormatter()
+    {
+        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
+        $c->setFormatter(ModelCriteria::FORMAT_ARRAY);
+        $this->assertInstanceOf('Traversable', $c->getIterator());
+    }
+
+    public function testGetIteratorAllowsTraversingQueryObjectsWithArrayFormatter()
+    {
+        BookstoreDataPopulator::depopulate();
+        BookstoreDataPopulator::populate();
+        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
+        $c->setFormatter(ModelCriteria::FORMAT_ARRAY);
+        $nbResults = 0;
+        foreach ($c as $book) {
+            $nbResults++;
+        }
+        $this->assertEquals(4, $nbResults);
+    }
+
+    public function testGetIteratorReturnsATraversableWithOnDemandFormatter()
+    {
+        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
+        $c->setFormatter(ModelCriteria::FORMAT_ON_DEMAND);
+        $it = $c->getIterator();
+        $this->assertInstanceOf('Traversable', $it);
+        $it->closeCursor();
+    }
+
+    public function testGetIteratorAllowsTraversingQueryObjectsWithOnDemandFormatter()
+    {
+        BookstoreDataPopulator::depopulate();
+        BookstoreDataPopulator::populate();
+        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
+        $c->setFormatter(ModelCriteria::FORMAT_ON_DEMAND);
+        $nbResults = 0;
+        foreach ($c as $book) {
+            $nbResults++;
+        }
+        $this->assertEquals(4, $nbResults);
+    }
+
+    public function testGetIteratorReturnsATraversableWithStatementFormatter()
+    {
+        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
+        $c->setFormatter(ModelCriteria::FORMAT_STATEMENT);
+        $this->assertInstanceOf('Traversable', $c->getIterator());
+    }
+
+    public function testGetIteratorAllowsTraversingQueryObjectsWithStatementFormatter()
+    {
+        BookstoreDataPopulator::depopulate();
+        BookstoreDataPopulator::populate();
+        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
+        $c->setFormatter(ModelCriteria::FORMAT_STATEMENT);
+        $nbResults = 0;
+        foreach ($c as $book) {
+            $nbResults++;
+        }
+        $this->assertEquals(4, $nbResults);
+    }
+
+    public function testGetIteratorReturnsATraversableWithSimpleArrayFormatter()
+    {
+        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
+        $c->select('Id');
+        $this->assertInstanceOf('Traversable', $c->getIterator());
+    }
+
+    public function testGetIteratorAllowsTraversingQueryObjectsWithSimpleArrayFormatter()
+    {
+        BookstoreDataPopulator::depopulate();
+        BookstoreDataPopulator::populate();
+        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
+        $c->select('Id');
+        $nbResults = 0;
+        foreach ($c as $book) {
+            $nbResults++;
+        }
+        $this->assertEquals(4, $nbResults);
+    }
+
     public function testCount()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book', 'b');
