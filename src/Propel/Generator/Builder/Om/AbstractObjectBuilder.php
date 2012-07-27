@@ -115,12 +115,7 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
      */
     protected function getBaseClass()
     {
-        $class = $this->getTable()->getBaseClass();
-        if (null === $class) {
-            $class = 'propel.om.BaseObject';
-        }
-
-        return $class;
+        return $this->getTable()->getBaseClass();
     }
 
     /**

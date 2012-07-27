@@ -202,8 +202,11 @@ class ObjectBuilder extends AbstractObjectBuilder
         $tableName = $table->getName();
         $tableDesc = $table->getDescription();
         $interface = $this->getInterface();
-        $parentClass = $this->getBehaviorContent('parentClass');
-        $parentClass = (null !== $parentClass) ? $parentClass : ClassTools::classname($this->getBaseClass());
+
+        if (null !== ($parentClass = $this->getBehaviorContent('parentClass')) ||
+            null !== ($parentClass = ClassTools::classname($this->getBaseClass()))) {
+            $parentClass = ' extends '.$parentClass;
+        }
         $script .= "
 /**
  * Base class that represents a row from the '$tableName' table.
@@ -220,10 +223,10 @@ class ObjectBuilder extends AbstractObjectBuilder
         }
         $script .= "
  */
-abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
+abstract class ".$this->getUnqualifiedClassName().$parentClass." ";
 
         if ($interface = $this->getTable()->getInterface()) {
-            $script .= "implements " . "Child" . ClassTools::classname($interface);
+            $script .= "implements Child" . ClassTools::classname($interface);
             if ($interface !== ClassTools::classname($interface)) {
                $this->declareClass($interface);
             } else {
@@ -249,17 +252,20 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
         $this->declareClassFromBuilder($this->getStubPeerBuilder());
         $this->declareClassFromBuilder($this->getStubQueryBuilder());
         $this->declareClasses(
-            '\Propel\Runtime\Propel',
-            '\Propel\Runtime\Exception\PropelException',
+            '\Exception',
             '\PDO',
+            '\Propel\Runtime\Exception\PropelException',
             '\Propel\Runtime\Connection\ConnectionInterface',
+            '\Propel\Runtime\Collection\Collection',
+            '\Propel\Runtime\Collection\ObjectCollection',
+            '\Propel\Runtime\Exception\BadMethodCallException',
+            '\Propel\Runtime\Exception\PropelException',
             '\Propel\Runtime\Query\Criteria',
             '\Propel\Runtime\Om\BaseObject',
             '\Propel\Runtime\Om\Persistent',
-            '\Propel\Runtime\Util\BasePeer',
-            '\Propel\Runtime\Collection\Collection',
-            '\Propel\Runtime\Collection\ObjectCollection',
-            '\Exception'
+            '\Propel\Runtime\Parser\AbstractParser',
+            '\Propel\Runtime\Propel',
+            '\Propel\Runtime\Util\BasePeer'
         );
 
         $table = $this->getTable();
@@ -283,8 +289,10 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
 
         if ($this->hasDefaultValues()) {
             $this->addApplyDefaultValues($script);
-            $this->addConstructor($script);
         }
+        $this->addConstructor($script);
+
+        $this->addBaseObjectMethods($script);
 
         $this->addColumnAccessorMethods($script);
         $this->addColumnMutatorMethods($script);
@@ -332,6 +340,10 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
 
         // apply behaviors
         $this->applyBehaviorModifier('objectMethods', $script, "    ");
+
+        if ($this->getGeneratorConfig()->getBuildProperty('addHooks')) {
+            $this->addHookMethods($script);
+        }
 
         $this->addMagicCall($script);
     }
@@ -382,6 +394,9 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
      */
     protected static \$peer;
 ";
+
+        $script .= $this->renderTemplate('baseObjectAttributes');
+
         if (!$table->isAlias()) {
             $this->addColumnAttributes($script);
         }
@@ -623,7 +638,9 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     {
         $this->addConstructorComment($script);
         $this->addConstructorOpen($script);
-        $this->addConstructorBody($script);
+        if ($this->hasDefaultValues()) {
+            $this->addConstructorBody($script);
+        }
         $this->addConstructorClose($script);
     }
 
@@ -636,8 +653,12 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     {
         $script .= "
     /**
-     * Initializes internal state of ".$this->getQualifiedClassName()." object.
-     * @see applyDefaults()
+     * Initializes internal state of ".$this->getQualifiedClassName()." object.";
+        if ($this->hasDefaultValues()) {
+            $script .= "
+     * @see applyDefaults()";
+        }
+        $script .= "
      */";
     }
 
@@ -661,7 +682,6 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     protected function addConstructorBody(&$script)
     {
         $script .= "
-        parent::__construct();
         \$this->applyDefaultValues();";
     }
 
@@ -675,6 +695,32 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
         $script .= "
     }
 ";
+    }
+
+    /**
+     * Adds the base object functions.
+     *
+     * @param string &$script
+     */
+    protected function addBaseObjectMethods(&$script)
+    {
+        $script .= $this->renderTemplate('baseObjectMethods');
+    }
+
+    /**
+     * Adds the base object hook functions.
+     *
+     * @param string &$script
+     */
+    protected function addHookMethods(&$script)
+    {
+        $hooks = array();
+        foreach (array('pre', 'post') as $hook) {
+            foreach (array('Insert', 'Update', 'Save', 'Delete') as $action) {
+                $hooks[$hook.$action] = false !== strpos($script, "function $hook.$action(");
+            }
+        }
+        $script .= $this->renderTemplate('baseObjectMethodHook', $hooks);
     }
 
     /**
@@ -5065,19 +5111,10 @@ abstract class ".$this->getUnqualifiedClassName()." extends ".$parentClass." ";
     protected function addMagicCall(&$script)
     {
         $behaviorCallScript = '';
-        $this->applyBehaviorModifier('objectCall', $behaviorCallScript, "        ");
-        if ($behaviorCallScript) {
-            $script .= "
-    /**
-     * Catches calls to virtual methods
-     */
-    public function __call(\$name, \$params)
-    {
-        $behaviorCallScript
+        $this->applyBehaviorModifier('objectCall', $behaviorCallScript, "    ");
 
-        return parent::__call(\$name, \$params);
-    }
-";
-        }
+        $script .= $this->renderTemplate('baseObjectMethodMagicCall', array(
+                'behaviorCallScript' => $behaviorCallScript
+                ));
     }
 }
