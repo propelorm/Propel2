@@ -10,14 +10,11 @@
 
 namespace Propel\Runtime\Query\Criterion;
 
-use Propel\Runtime\Query\Criteria;
-use Propel\Runtime\Map\ColumnMap;
-
 /**
  * Specialized ModelCriterion used for IN or NOT IN model clauses,
  * e.g. 'book.TITLE NOT IN ?'
  */
-class ArrayModelCriterion extends BaseModelCriterion
+class ArrayModelCriterion extends AbstractModelCriterion
 {
     /**
      * Appends a Prepared Statement representation of the ModelCriterion onto the buffer

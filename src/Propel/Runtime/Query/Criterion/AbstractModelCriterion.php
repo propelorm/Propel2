@@ -20,7 +20,7 @@ use Propel\Runtime\Map\ColumnMap;
  *
  * @author Francois
  */
-class BaseModelCriterion extends AbstractCriterion
+Abstract class AbstractModelCriterion extends AbstractCriterion
 {
     protected $clause = '';
 
@@ -56,22 +56,6 @@ class BaseModelCriterion extends AbstractCriterion
     public function getClause()
     {
         return $this->clause;
-    }
-
-    /**
-     * Figure out which ModelCriterion method to use
-     * to build the prepared statement and parameters using to the Criterion comparison
-     * and call it to append the prepared statement and the parameters of the current clause.
-     * For performance reasons, this method tests the cases of parent::dispatchPsHandling()
-     * first, and that is not possible through inheritance ; that's why the parent
-     * code is duplicated here.
-     *
-     * @param      string &$sb The string that will receive the Prepared Statement
-     * @param array $params A list to which Prepared Statement parameters will be appended
-     */
-    protected function appendPsForUniqueClauseTo(&$sb, array &$params)
-    {
-        // overridden by parent
     }
 
     /**
