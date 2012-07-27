@@ -45,7 +45,7 @@ use Propel\Runtime\Query\Exception\UnknownRelationException;
  *
  * @author François Zaninotto
  */
-class ModelCriteria extends Criteria
+class ModelCriteria extends Criteria implements \IteratorAggregate
 {
     const MODEL_CLAUSE          = 'MODEL CLAUSE';
     const MODEL_CLAUSE_ARRAY    = 'MODEL CLAUSE ARRAY';
@@ -1444,6 +1444,30 @@ class ModelCriteria extends Criteria
         $this->filterByArray($conditions);
 
         return $this->findOne($con);
+    }
+
+    /**
+     * Execute the query with a find(), and return a Traversable object.
+     *
+     * The return value depends on the query formatter. By default, this returns an ArrayIterator
+     * constructed on a Propel\Runtime\Collection\PropelCollection.
+     * Compulsory for implementation of \IteratorAggregate.
+     *
+     * @return Traversable
+     */
+    public function getIterator()
+    {
+        $res = $this->find(null); // use the default connection
+        if ($res instanceof \IteratorAggregate) {
+            return $res->getIterator();
+        }
+        if ($res instanceof \Traversable) {
+            return $res;
+        }
+        if (is_array($res)) {
+            return new \ArrayIterator($res);
+        }
+        throw new LogicException('The current formatter doesn\'t return an iterable result');
     }
 
     /**

@@ -55,6 +55,9 @@ class OnDemandIterator implements \Iterator
     public function closeCursor()
     {
         $this->stmt->closeCursor();
+        if ($this->enableInstancePoolingOnFinish) {
+            Propel::enableInstancePooling();
+        }
     }
 
     /**
@@ -104,9 +107,6 @@ class OnDemandIterator implements \Iterator
         $this->isValid = (Boolean) $this->currentRow;
         if (!$this->isValid) {
             $this->closeCursor();
-            if ($this->enableInstancePoolingOnFinish) {
-                Propel::enableInstancePooling();
-            }
         }
     }
 

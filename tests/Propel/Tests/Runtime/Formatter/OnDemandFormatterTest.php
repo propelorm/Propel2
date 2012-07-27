@@ -31,6 +31,54 @@ use Propel\Runtime\Query\ModelCriteria;
  */
 class OnDemandFormatterTest extends BookstoreEmptyTestBase
 {
+    public function testFormatterReenablesInstancePoolAfterIteration()
+    {
+        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
+        BookstoreDataPopulator::depopulate($con);
+        BookstoreDataPopulator::populate($con);
+
+        $stmt = $con->query('SELECT * FROM book');
+        $formatter = new OnDemandFormatter();
+        $formatter->init(new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book'));
+        $this->assertTrue(Propel::isInstancePoolingEnabled());
+        $books = $formatter->format($stmt);
+        $this->assertFalse(Propel::isInstancePoolingEnabled());
+        foreach ($books as $book) {
+            $this->assertFalse(Propel::isInstancePoolingEnabled());
+        }
+        $this->assertTrue(Propel::isInstancePoolingEnabled());
+    }
+
+    public function testFormatterReenablesInstancePoolAfterClosingCursor()
+    {
+        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
+        BookstoreDataPopulator::depopulate($con);
+
+        $stmt = $con->query('SELECT * FROM book');
+        $formatter = new OnDemandFormatter();
+        $formatter->init(new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book'));
+        $this->assertTrue(Propel::isInstancePoolingEnabled());
+        $books = $formatter->format($stmt);
+        $this->assertFalse(Propel::isInstancePoolingEnabled());
+        $books->getIterator()->closeCursor();
+        $this->assertTrue(Propel::isInstancePoolingEnabled());
+    }
+
+    public function testFormatterDoesNotReenableInstancePoolIfItWasInitiallyDisabled()
+    {
+        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
+        BookstoreDataPopulator::depopulate($con);
+        Propel::disableInstancePooling();
+        $stmt = $con->query('SELECT * FROM book');
+        $formatter = new OnDemandFormatter();
+        $formatter->init(new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book'));
+        $this->assertFalse(Propel::isInstancePoolingEnabled());
+        $books = $formatter->format($stmt);
+        $this->assertFalse(Propel::isInstancePoolingEnabled());
+        $books->getIterator()->closeCursor();
+        $this->assertFalse(Propel::isInstancePoolingEnabled());
+        Propel::enableInstancePooling();
+    }
 
     public function testFormatNoCriteria()
     {
