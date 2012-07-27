@@ -513,7 +513,7 @@ class Criteria implements \IteratorAggregate
      * Make sure you call containsKey($column) prior to calling this method,
      * since no check on the existence of the $column is made in this method.
      *
-     * @param  string    $column Column name.
+     * @param  string            $column Column name.
      * @return AbstractCriterion A Criterion object.
      */
     public function getCriterion($column)
@@ -542,9 +542,9 @@ class Criteria implements \IteratorAggregate
      * to this Criteria.  This can be used to chain the
      * Criterions to form a more complex where clause.
      *
-     * @param  string    $column     Full name of column (for example TABLE.COLUMN).
-     * @param  mixed     $value
-     * @param  string    $comparison Criteria comparison constant or PDO binding type
+     * @param  string            $column     Full name of column (for example TABLE.COLUMN).
+     * @param  mixed             $value
+     * @param  string            $comparison Criteria comparison constant or PDO binding type
      * @return AbstractCriterion
      */
     public function getNewCriterion($column, $value = null, $comparison = self::EQUAL)
@@ -1205,7 +1205,7 @@ class Criteria implements \IteratorAggregate
     /**
      * Set limit.
      *
-     * @param int $limit An int with the value for limit.
+     * @param  int      $limit An int with the value for limit.
      * @return Criteria Modified Criteria object (for fluent API)
      */
     public function setLimit($limit)
@@ -1767,9 +1767,9 @@ class Criteria implements \IteratorAggregate
      * @see Criteria::add()
      *
      * @param string|AbstractCriterion $p1                    The column to run the comparison on (e.g. BookPeer::ID), or Criterion object
-     * @param mixed            $value
-     * @param string           $operator              A String, like Criteria::EQUAL.
-     * @param boolean          $preferColumnCondition If true, the condition is combined with an existing condition on the same column
+     * @param mixed                    $value
+     * @param string                   $operator              A String, like Criteria::EQUAL.
+     * @param boolean                  $preferColumnCondition If true, the condition is combined with an existing condition on the same column
     *                      (necessary for Propel 1.4 compatibility).
      *                     If false, the condition is combined with the last existing condition.
      *

@@ -122,7 +122,7 @@ abstract class AbstractCriterion
     /**
      * Set the table name.
      *
-     * @param string $name A String with the table name.
+     * @param  string $name A String with the table name.
      * @return void
      */
     public function setTable($name)

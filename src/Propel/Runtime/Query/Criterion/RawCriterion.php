@@ -30,10 +30,10 @@ class RawCriterion extends AbstractCriterion
     /**
      * Create a new instance.
      *
-     * @param Criteria $parent     The outer class (this is an "inner" class).
-     * @param string   $column     ignored
-     * @param string   $value      The condition to be added to the query string
-     * @param string   $typ        A PDO type constant, e.g. PDO::PARAM_STR
+     * @param Criteria $parent The outer class (this is an "inner" class).
+     * @param string   $column ignored
+     * @param string   $value  The condition to be added to the query string
+     * @param string   $typ    A PDO type constant, e.g. PDO::PARAM_STR
      */
     public function __construct(Criteria $outer, $column, $value, $type = PDO::PARAM_STR)
     {

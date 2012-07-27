@@ -13,7 +13,6 @@ namespace Propel\Runtime\Query\Criterion;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Query\Criteria;
 
-
 /**
  * Specialized Criterion used for traditional expressions,
  * e.g. table.column = ? or table.column >= ? etc.

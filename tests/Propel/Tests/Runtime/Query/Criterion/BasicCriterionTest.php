@@ -71,7 +71,7 @@ class BasicCriterionTest extends BaseTestCase
         $this->assertEquals($expected, $params);
     }
 
-    static public function supportedANSIFunctions()
+    public static function supportedANSIFunctions()
     {
         return array(
             array(Criteria::CURRENT_DATE),

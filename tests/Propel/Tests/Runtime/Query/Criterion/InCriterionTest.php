@@ -116,7 +116,7 @@ class InCriterionTest extends BaseTestCase
         $this->assertEquals($expected, $params);
     }
 
-    static public function providerForNotEmptyValues()
+    public static function providerForNotEmptyValues()
     {
         return array(
             array(''),
@@ -144,7 +144,7 @@ class InCriterionTest extends BaseTestCase
         $this->assertEquals($expected, $params);
     }
 
-    static public function providerForEmptyValues()
+    public static function providerForEmptyValues()
     {
         return array(
             array(array()),

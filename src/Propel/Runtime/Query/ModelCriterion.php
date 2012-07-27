@@ -22,7 +22,7 @@ use Propel\Runtime\Map\ColumnMap;
 class ModelCriterion extends AbstractCriterion
 {
     protected $clause = '';
-    
+
     /** flag to ignore case in comparison */
     protected $ignoreStringCase = false;
 
@@ -66,7 +66,7 @@ class ModelCriterion extends AbstractCriterion
     /**
      * Sets ignore case.
      *
-     * @param  boolean   $b True if case should be ignored.
+     * @param  boolean        $b True if case should be ignored.
      * @return ModelCriterion A modified Criterion object.
      */
     public function setIgnoreCase($b)

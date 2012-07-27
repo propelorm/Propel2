@@ -21,9 +21,9 @@ class CustomCriterion extends AbstractCriterion
     /**
      * Create a new instance.
      *
-     * @param Criteria $parent     The outer class (this is an "inner" class).
-     * @param string   $column     ignored
-     * @param string   $value      The condition to be added to the query string
+     * @param Criteria $parent The outer class (this is an "inner" class).
+     * @param string   $column ignored
+     * @param string   $value  The condition to be added to the query string
      */
     public function __construct(Criteria $outer, $column = null, $value)
     {
