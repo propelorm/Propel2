@@ -68,7 +68,7 @@
     }
 
 <?php endif?>
-<?php if ($postSave):?>
+<?php if ($preDelete):?>
     /**
      * Code to be run before deleting the object in database
      * @param  ConnectionInterface $con
@@ -80,7 +80,7 @@
     }
 
 <?php endif?>
-<?php if ($postSave):?>
+<?php if ($postDelete):?>
     /**
      * Code to be run after deleting the object in database
      * @param ConnectionInterface $con
