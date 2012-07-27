@@ -15,7 +15,7 @@
     {
         <?php echo $behaviorCallScript?>
 
-        return $this->__parentCall($name, $param);
+        return $this->__parentCall($name, $params);
     }
 
 <?php endif?>
