@@ -70,7 +70,7 @@ Abstract class AbstractModelCriterion extends AbstractCriterion
             return true;
         }
 
-        if (null === $obj || !($obj instanceof BaseModelCriterion)) {
+        if (null === $obj || !($obj instanceof AbstractModelCriterion)) {
             return false;
         }
 
