@@ -39,7 +39,6 @@ class SeveralModelCriterion extends AbstractModelCriterion
         $sb .= $clause;
     }
 
-
     /**
      * Replace only once
      * taken from http://www.php.net/manual/en/function.str-replace.php

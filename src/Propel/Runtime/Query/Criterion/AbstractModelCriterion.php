@@ -10,9 +10,7 @@
 
 namespace Propel\Runtime\Query\Criterion;
 
-use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Query\Criteria;
-use Propel\Runtime\Query\ModelCriteria;
 use Propel\Runtime\Map\ColumnMap;
 
 /**
@@ -27,10 +25,10 @@ Abstract class AbstractModelCriterion extends AbstractCriterion
     /**
      * Create a new instance.
      *
-     * @param Criteria  $parent      The outer class (this is an "inner" class).
-     * @param ColumnMap $column      A Column object to help escaping the value
+     * @param Criteria  $parent The outer class (this is an "inner" class).
+     * @param ColumnMap $column A Column object to help escaping the value
      * @param mixed     $value
-     * @param string    $clause      A simple pseudo-SQL clause, e.g. 'foo.BAR LIKE ?'
+     * @param string    $clause A simple pseudo-SQL clause, e.g. 'foo.BAR LIKE ?'
      */
     public function __construct(Criteria $outer, $column, $value = null, $clause = null)
     {
