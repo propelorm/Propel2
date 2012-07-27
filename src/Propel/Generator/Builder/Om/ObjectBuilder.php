@@ -717,7 +717,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." ";
         $hooks = array();
         foreach (array('pre', 'post') as $hook) {
             foreach (array('Insert', 'Update', 'Save', 'Delete') as $action) {
-                $hooks[$hook.$action] = false !== strpos($script, "function $hook.$action(");
+                $hooks[$hook.$action] = false === strpos($script, "function $hook.$action(");
             }
         }
         $script .= $this->renderTemplate('baseObjectMethodHook', $hooks);
