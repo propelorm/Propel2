@@ -39,5 +39,5 @@ class ArrayModelCriterion extends AbstractModelCriterion
         }
         unset($value, $valuesLength);
     }
-   
+
 }
