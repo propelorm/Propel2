@@ -75,10 +75,6 @@ class BaseModelCriterion extends AbstractCriterion
     protected function appendPsForUniqueClauseTo(&$sb, array &$params)
     {
         switch ($this->comparison) {
-            case ModelCriteria::MODEL_CLAUSE_SEVERAL:
-                // Ternary model clause, e.G 'book.ID BETWEEN ? AND ?'
-                $this->appendModelClauseSeveralToPs($sb, $params);
-                break;
             case ModelCriteria::MODEL_CLAUSE_ARRAY:
                 // IN or NOT IN model clause, e.g. 'book.TITLE NOT IN ?'
                 $this->appendModelClauseArrayToPs($sb, $params);
@@ -92,29 +88,6 @@ class BaseModelCriterion extends AbstractCriterion
                 $this->appendBasicToPs($sb, $params);
 
         }
-    }
-
-    /**
-     * Appends a Prepared Statement representation of the ModelCriterion onto the buffer
-     * For ternary model clauses, e.G 'book.ID BETWEEN ? AND ?'
-     *
-     * @param      string &$sb The string that will receive the Prepared Statement
-     * @param array $params A list to which Prepared Statement parameters will be appended
-     */
-    public function appendModelClauseSeveralToPs(&$sb, array &$params)
-    {
-        $clause = $this->clause;
-        foreach ((array) $this->value as $value) {
-            if (null === $value) {
-                // FIXME we eventually need to translate a BETWEEN to
-                // something like WHERE (col < :p1 OR :p1 IS NULL) AND (col < :p2 OR :p2 IS NULL)
-                // in order to support null values
-                throw new PropelException('Null values are not supported inside BETWEEN clauses');
-            }
-            $params[] = array('table' => $this->realtable, 'column' => $this->column, 'value' => $value);
-            $clause = self::strReplaceOnce('?', ':p'.count($params), $clause);
-        }
-        $sb .= $clause;
     }
 
     /**
@@ -230,21 +203,4 @@ class BaseModelCriterion extends AbstractCriterion
         return $h;
     }
 
-    /**
-     * Replace only once
-     * taken from http://www.php.net/manual/en/function.str-replace.php
-     *
-     */
-    protected static function strReplaceOnce($search, $replace, $subject)
-    {
-        $firstChar = strpos($subject, $search);
-        if (false !== $firstChar) {
-            $beforeStr = substr($subject, 0, $firstChar);
-            $afterStr = substr($subject, $firstChar + strlen($search));
-
-            return $beforeStr.$replace.$afterStr;
-        }
-
-        return $subject;
-    }
 }

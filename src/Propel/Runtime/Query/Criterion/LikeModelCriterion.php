@@ -10,9 +10,7 @@
 
 namespace Propel\Runtime\Query\Criterion;
 
-use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Query\Criteria;
-use Propel\Runtime\Query\ModelCriteria;
 use Propel\Runtime\Map\ColumnMap;
 
 /**
@@ -23,7 +21,7 @@ class LikeModelCriterion extends BasicModelCriterion
 {
     /** flag to ignore case in comparison */
     protected $ignoreStringCase = false;
-    
+
     /**
      * Create a new instance.
      *
@@ -78,7 +76,6 @@ class LikeModelCriterion extends BasicModelCriterion
 
     /**
      * Appends a Prepared Statement representation of the ModelCriterion onto the buffer
-     * For LIKE model clauses, e.g. 'book.TITLE LIKE ?'
      * Handles case insensitivity for VARCHAR columns
      *
      * @param string &$sb The string that will receive the Prepared Statement
