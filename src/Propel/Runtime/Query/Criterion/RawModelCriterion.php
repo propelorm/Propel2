@@ -10,14 +10,14 @@
 
 namespace Propel\Runtime\Query\Criterion;
 
+use Propel\Runtime\Query\Criterion\Exception\InvalidClauseException;
 use Propel\Runtime\Query\Criteria;
-use Propel\Runtime\Map\ColumnMap;
 
 /**
  * Specialized ModelCriterion used for custom expressions with a typed binding,
  * e.g. 'foobar = ?'
  */
-class RawModelCriterion extends BaseModelCriterion
+class RawModelCriterion extends AbstractModelCriterion
 {
     /**
      * Binding type to be used for Criteria::RAW comparison
@@ -48,7 +48,7 @@ class RawModelCriterion extends BaseModelCriterion
     protected function appendPsForUniqueClauseTo(&$sb, array &$params)
     {
         if (1 !== substr_count($this->clause, '?')) {
-            throw new PropelException(sprintf('Could not build SQL for expression "%s" because Criteria::MODEL_CLAUSE_RAW works only with a clause containing a single question mark placeholder', $this->column));
+            throw new InvalidClauseException(sprintf('Could not build SQL for expression "%s" because Criteria::MODEL_CLAUSE_RAW works only with a clause containing a single question mark placeholder', $this->column));
         }
         $params[] = array('table' => null, 'type' => $this->type, 'value' => $this->value);
         $sb .= str_replace('?', ':p' . count($params), $this->clause);

@@ -10,8 +10,7 @@
 
 namespace Propel\Runtime\Query\Criterion;
 
-use Propel\Runtime\Query\Criteria;
-use Propel\Runtime\Map\ColumnMap;
+use Propel\Runtime\Adapter\Pdo\PgsqlAdapter;
 
 /**
  * Specialized ModelCriterion used for LIKE expressions
