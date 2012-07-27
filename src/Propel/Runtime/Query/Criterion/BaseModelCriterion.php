@@ -24,9 +24,6 @@ class BaseModelCriterion extends AbstractCriterion
 {
     protected $clause = '';
 
-    /** flag to ignore case in comparison */
-    protected $ignoreStringCase = false;
-
     /**
      * Create a new instance.
      *
@@ -65,29 +62,6 @@ class BaseModelCriterion extends AbstractCriterion
     }
 
     /**
-     * Sets ignore case.
-     *
-     * @param  boolean        $b True if case should be ignored.
-     * @return ModelCriterion A modified Criterion object.
-     */
-    public function setIgnoreCase($b)
-    {
-        $this->ignoreStringCase = (Boolean) $b;
-
-        return $this;
-    }
-
-    /**
-     * Is ignore case on or off?
-     *
-     * @return boolean True if case is ignored.
-     */
-    public function isIgnoreCase()
-    {
-        return $this->ignoreStringCase;
-    }
-
-    /**
      * Figure out which ModelCriterion method to use
      * to build the prepared statement and parameters using to the Criterion comparison
      * and call it to append the prepared statement and the parameters of the current clause.
@@ -101,14 +75,6 @@ class BaseModelCriterion extends AbstractCriterion
     protected function appendPsForUniqueClauseTo(&$sb, array &$params)
     {
         switch ($this->comparison) {
-            case ModelCriteria::MODEL_CLAUSE:
-                // regular model clause, e.g. 'book.TITLE = ?'
-                $this->appendModelClauseToPs($sb, $params);
-                break;
-            case ModelCriteria::MODEL_CLAUSE_LIKE:
-                // regular model clause, e.g. 'book.TITLE = ?'
-                $this->appendModelClauseLikeToPs($sb, $params);
-                break;
             case ModelCriteria::MODEL_CLAUSE_SEVERAL:
                 // Ternary model clause, e.G 'book.ID BETWEEN ? AND ?'
                 $this->appendModelClauseSeveralToPs($sb, $params);
@@ -126,41 +92,6 @@ class BaseModelCriterion extends AbstractCriterion
                 $this->appendBasicToPs($sb, $params);
 
         }
-    }
-
-    /**
-     * Appends a Prepared Statement representation of the ModelCriterion onto the buffer
-     * For regular model clauses, e.g. 'book.TITLE = ?'
-     *
-     * @param      string &$sb The string that will receive the Prepared Statement
-     * @param array $params A list to which Prepared Statement parameters will be appended
-     */
-    public function appendModelClauseToPs(&$sb, array &$params)
-    {
-        if (null !== $this->value) {
-            $params[] = array('table' => $this->realtable, 'column' => $this->column, 'value' => $this->value);
-            $sb .= str_replace('?', ':p'.count($params), $this->clause);
-        } else {
-            $sb .= $this->clause;
-        }
-    }
-
-    /**
-     * Appends a Prepared Statement representation of the ModelCriterion onto the buffer
-     * For LIKE model clauses, e.g. 'book.TITLE LIKE ?'
-     * Handles case insensitivity for VARCHAR columns
-     *
-     * @param      string &$sb The string that will receive the Prepared Statement
-     * @param array $params A list to which Prepared Statement parameters will be appended
-     */
-    public function appendModelClauseLikeToPs(&$sb, array &$params)
-    {
-        // LIKE is case insensitive in mySQL and SQLite, but not in PostGres
-        // If the column is case insensitive, use ILIKE / NOT ILIKE instead of LIKE / NOT LIKE
-        if ($this->ignoreStringCase && $this->getDb() instanceof PgsqlAdapter) {
-            $this->clause = preg_replace('/LIKE \?$/i', 'ILIKE ?', $this->clause);
-        }
-        $this->appendModelClauseToPs($sb, $params);
     }
 
     /**
