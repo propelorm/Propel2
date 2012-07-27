@@ -20,36 +20,6 @@ use Propel\Runtime\Map\ColumnMap;
 class SeveralModelCriterion extends BaseModelCriterion
 {
     /**
-     * Create a new instance.
-     *
-     * @param Criteria  $parent      The outer class (this is an "inner" class).
-     * @param ColumnMap $column      A Column object to help escaping the value
-     * @param mixed     $value
-     * @param string    $comparison, among ModelCriteria::MODEL_CLAUSE
-     * @param string    $clause      A simple pseudo-SQL clause, e.g. 'foo.BAR LIKE ?'
-     */
-    public function __construct(Criteria $outer, $column, $value = null, $clause = null)
-    {
-        $this->value = $value;
-        if ($column instanceof ColumnMap) {
-            $this->column = $column->getName();
-            $this->table = $column->getTable()->getName();
-        } else {
-            $dotPos = strrpos($column,'.');
-            if ($dotPos === false) {
-                // no dot => aliased column
-                $this->table = null;
-                $this->column = $column;
-            } else {
-                $this->table = substr($column, 0, $dotPos);
-                $this->column = substr($column, $dotPos+1, strlen($column));
-            }
-        }
-        $this->clause = $clause;
-        $this->init($outer);
-    }
-
-    /**
      * Appends a Prepared Statement representation of the ModelCriterion onto the buffer
      *
      * @param      string &$sb The string that will receive the Prepared Statement
