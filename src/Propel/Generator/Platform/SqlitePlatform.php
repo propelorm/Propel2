@@ -66,10 +66,8 @@ class SqlitePlatform extends DefaultPlatform
             $lines[] = $this->getColumnDDL($column);
         }
 
-        if ($table->hasPrimaryKey()) {
-            if (1 < count($table->getPrimaryKey())) {
-                $lines[] = $this->getPrimaryKeyDDL($table);
-            }
+        if (null !== $primaryKeyDDL = $this->getPrimaryKeyDDL($table)) {
+            $lines[] = $primaryKeyDDL;
         }
 
         foreach ($table->getUnices() as $unique) {
@@ -100,9 +98,12 @@ class SqlitePlatform extends DefaultPlatform
      */
     public function getPrimaryKeyDDL(Table $table)
     {
-        if ($table->hasPrimaryKey()) {
-            // SQLite doesn't support multiple PRIMARY KEYS
-            return 'UNIQUE (' . $this->getColumnListDDL($table->getPrimaryKey()) . ')';
+        if ($table->hasPrimaryKey() && 1 < count($table->getPrimaryKey())) {
+            if ($table->hasAutoIncrementPrimaryKey()) {
+                return 'UNIQUE (' . $this->getColumnListDDL($table->getPrimaryKey()) . ')';
+            }
+
+            return 'PRIMARY KEY (' . $this->getColumnListDDL($table->getPrimaryKey()) . ')';
         }
     }
 
