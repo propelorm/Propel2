@@ -14,6 +14,12 @@ use Propel\Runtime\Propel;
 use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\Util\BasePeer;
 use Propel\Runtime\Util\PropelConditionalProxy;
+use Propel\Runtime\Query\Criterion\AbstractCriterion;
+use Propel\Runtime\Query\Criterion\BasicCriterion;
+use Propel\Runtime\Query\Criterion\InCriterion;
+use Propel\Runtime\Query\Criterion\CustomCriterion;
+use Propel\Runtime\Query\Criterion\LikeCriterion;
+use Propel\Runtime\Query\Criterion\RawCriterion;
 
 /**
  * This is a utility class for holding criteria information for a query.
@@ -182,7 +188,7 @@ class Criteria
 
     /**
      * Storage of having data.
-     * @var Criterion
+     * @var AbstractCriterion
      */
     protected $having = null;
 
@@ -498,8 +504,8 @@ class Criteria
      * Make sure you call containsKey($column) prior to calling this method,
      * since no check on the existence of the $column is made in this method.
      *
-     * @param  string    $column Column name.
-     * @return Criterion A Criterion object.
+     * @param  string            $column Column name.
+     * @return AbstractCriterion A Criterion object.
      */
     public function getCriterion($column)
     {
@@ -509,7 +515,7 @@ class Criteria
     /**
      * Method to return the latest Criterion in a table.
      *
-     * @return Criterion A Criterion or null no Criterion is added.
+     * @return AbstractCriterion A Criterion or null no Criterion is added.
      */
     public function getLastCriterion()
     {
@@ -523,18 +529,45 @@ class Criteria
     }
 
     /**
-     * Method to return criterion that is not added automatically
+     * Method to return a Criterion that is not added automatically
      * to this Criteria.  This can be used to chain the
      * Criterions to form a more complex where clause.
      *
-     * @param  string    $column     Full name of column (for example TABLE.COLUMN).
-     * @param  mixed     $value
-     * @param  string    $comparison
-     * @return Criterion
+     * @param  string            $column     Full name of column (for example TABLE.COLUMN).
+     * @param  mixed             $value
+     * @param  string            $comparison Criteria comparison constant or PDO binding type
+     * @return AbstractCriterion
      */
     public function getNewCriterion($column, $value = null, $comparison = self::EQUAL)
     {
-        return new Criterion($this, $column, $value, $comparison);
+        if (is_int($comparison)) {
+            // $comparison is a PDO::PARAM_* constant value
+            // something like $c->add('foo like ?', '%bar%', PDO::PARAM_STR);
+            return new RawCriterion($this, $column, $value, $comparison);
+        }
+        switch ($comparison) {
+            case Criteria::CUSTOM:
+                // custom expression with no parameter binding
+                // something like $c->add(BookPeer::TITLE, "CONCAT(book.TITLE, 'bar') = 'foobar'", Criteria::CUSTOM);
+                return new CustomCriterion($this, $column, $value);
+            case Criteria::IN:
+            case Criteria::NOT_IN:
+                // table.column IN (?, ?) or table.column NOT IN (?, ?)
+                // something like $c->add(BookPeer::TITLE, array('foo', 'bar'), Criteria::IN);
+                return new InCriterion($this, $column, $value, $comparison);
+            case Criteria::LIKE:
+            case Criteria::NOT_LIKE:
+            case Criteria::ILIKE:
+            case Criteria::NOT_ILIKE:
+                // table.column LIKE ? or table.column NOT LIKE ?  (or ILIKE for Postgres)
+                // something like $c->add(BookPeer::TITLE, 'foo%', Criteria::LIKE);
+                return new LikeCriterion($this, $column, $value, $comparison);
+                break;
+            default:
+                // simple comparison
+                // something like $c->add(BookPeer::PRICE, 12, Criteria::GREATER_THAN);
+                return new BasicCriterion($this, $column, $value, $comparison);
+        }
     }
 
     /**
@@ -714,7 +747,7 @@ class Criteria
     {
         if (is_array($t)) {
             foreach ($t as $key => $value) {
-                if ($value instanceof Criterion) {
+                if ($value instanceof AbstractCriterion) {
                     $this->map[$key] = $value;
                 } else {
                     $this->put($key, $value);
@@ -740,7 +773,7 @@ class Criteria
      * The name of the table must be used implicitly in the column name,
      * so the Column name must be something like 'TABLE.id'.
      *
-     * @param string $critOrColumn The column to run the comparison on, or Criterion object.
+     * @param string $critOrColumn The column to run the comparison on, or a Criterion object.
      * @param mixed  $value
      * @param string $comparison   A String.
      *
@@ -748,11 +781,10 @@ class Criteria
      */
     public function add($p1, $value = null, $comparison = null)
     {
-        $criterion = $this->getCriterionForCondition($p1, $value, $comparison);
-        if ($p1 instanceof Criterion) {
-            $this->map[$p1->getTable() . '.' . $p1->getColumn()] = $criterion;
+        if ($p1 instanceof AbstractCriterion) {
+            $this->map[$p1->getTable() . '.' . $p1->getColumn()] = $p1;
         } else {
-            $this->map[$p1] = $criterion;
+            $this->map[$p1] = $this->getCriterionForCondition($p1, $value, $comparison);
         }
 
         return $this;
@@ -775,7 +807,7 @@ class Criteria
      * so the Column name must be something like 'TABLE.id'.
      *
      * @param string $name       name to combine the criterion later
-     * @param string $p1         The column to run the comparison on, or Criterion object.
+     * @param string $p1         The column to run the comparison on, or AbstractCriterion object.
      * @param mixed  $value
      * @param string $comparison A String.
      *
@@ -1164,7 +1196,7 @@ class Criteria
     /**
      * Set limit.
      *
-     * @param int $limit An int with the value for limit.
+     * @param  int      $limit An int with the value for limit.
      * @return Criteria Modified Criteria object (for fluent API)
      */
     public function setLimit($limit)
@@ -1377,7 +1409,7 @@ class Criteria
     /**
      * Get Having Criterion.
      *
-     * @return Criterion A Criterion object that is the having clause.
+     * @return AbstractCriterion A Criterion object that is the having clause.
      */
     public function getHaving()
     {
@@ -1395,7 +1427,7 @@ class Criteria
         if (isset($this->map[$key])) {
             $removed = $this->map[$key];
             unset($this->map[$key]);
-            if ($removed instanceof Criterion) {
+            if ($removed instanceof AbstractCriterion) {
                 return $removed->getValue();
             }
 
@@ -1513,7 +1545,6 @@ class Criteria
      * @param string   $operator The logical operator used to combine conditions
      *            Defaults to Criteria::LOGICAL_AND, also accepts Criteria::LOGICAL_OR
      *            This parameter is deprecated, use _or() instead
-
      *
      * @return Criteria The current criteria object
      */
@@ -1606,7 +1637,9 @@ class Criteria
      * $crit->addHaving($c);
      * </code>
      *
-     * @param      having A Criterion object
+     * @param mixed $p1         A Criterion, or a SQL clause with a question mark placeholder, or a column name
+     * @param mixed $value      The value to bind in the condition
+     * @param mixed $comparison A PDO::PARAM_ class constant
      *
      * @return A modified Criteria object.
      */
@@ -1640,20 +1673,14 @@ class Criteria
      */
     protected function getCriterionForCondition($p1, $value = null, $comparison = null)
     {
-        if ($p1 instanceof Criterion) {
+        if ($p1 instanceof AbstractCriterion) {
             // it's already a Criterion, so ignore $value and $comparison
             return $p1;
         }
 
-        if (is_int($comparison)) {
-            // $comparison is a PDO::PARAM_* constant value
-            // something like $c->add('foo like ?', '%bar%', PDO::PARAM_STR);
-            return new Criterion($this, $p1, $value, Criteria::RAW, $comparison);
-        }
-
-        // $comparison is one of Criteria's constants
+        // $comparison is one of Criteria's constants, or a PDO binding type
         // something like $c->add(BookPeer::TITLE, 'War%', Criteria::LIKE);
-        return new Criterion($this, $p1, $value, $comparison);
+        return $this->getNewCriterion($p1, $value, $comparison);
     }
 
     /**
@@ -1730,10 +1757,10 @@ class Criteria
      * Overrides Criteria::add() to use the default combine operator
      * @see Criteria::add()
      *
-     * @param string|Criterion $p1                    The column to run the comparison on (e.g. BookPeer::ID), or Criterion object
-     * @param mixed            $value
-     * @param string           $operator              A String, like Criteria::EQUAL.
-     * @param boolean          $preferColumnCondition If true, the condition is combined with an existing condition on the same column
+     * @param string|AbstractCriterion $p1                    The column to run the comparison on (e.g. BookPeer::ID), or Criterion object
+     * @param mixed                    $value
+     * @param string                   $operator              A String, like Criteria::EQUAL.
+     * @param boolean                  $preferColumnCondition If true, the condition is combined with an existing condition on the same column
     *                      (necessary for Propel 1.4 compatibility).
      *                     If false, the condition is combined with the last existing condition.
      *
