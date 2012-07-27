@@ -10,6 +10,7 @@
 
 namespace Propel\Runtime\Query;
 
+use Propel\Runtime\Query\Criterion\AbstractCriterion;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\ColumnMap;
 
@@ -18,9 +19,12 @@ use Propel\Runtime\Map\ColumnMap;
  *
  * @author Francois
  */
-class ModelCriterion extends Criterion
+class ModelCriterion extends AbstractCriterion
 {
     protected $clause = '';
+
+    /** flag to ignore case in comparison */
+    protected $ignoreStringCase = false;
 
     /**
      * Create a new instance.
@@ -60,7 +64,30 @@ class ModelCriterion extends Criterion
     }
 
     /**
-     * Figure out which MocelCriterion method to use
+     * Sets ignore case.
+     *
+     * @param  boolean        $b True if case should be ignored.
+     * @return ModelCriterion A modified Criterion object.
+     */
+    public function setIgnoreCase($b)
+    {
+        $this->ignoreStringCase = (Boolean) $b;
+
+        return $this;
+    }
+
+    /**
+     * Is ignore case on or off?
+     *
+     * @return boolean True if case is ignored.
+     */
+    public function isIgnoreCase()
+    {
+        return $this->ignoreStringCase;
+    }
+
+    /**
+     * Figure out which ModelCriterion method to use
      * to build the prepared statement and parameters using to the Criterion comparison
      * and call it to append the prepared statement and the parameters of the current clause.
      * For performance reasons, this method tests the cases of parent::dispatchPsHandling()
@@ -70,25 +97,9 @@ class ModelCriterion extends Criterion
      * @param      string &$sb The string that will receive the Prepared Statement
      * @param array $params A list to which Prepared Statement parameters will be appended
      */
-    protected function dispatchPsHandling(&$sb, array &$params)
+    protected function appendPsForUniqueClauseTo(&$sb, array &$params)
     {
         switch ($this->comparison) {
-            case Criteria::CUSTOM:
-                // custom expression with no parameter binding
-                $this->appendCustomToPs($sb, $params);
-                break;
-            case Criteria::IN:
-            case Criteria::NOT_IN:
-                // table.column IN (?, ?) or table.column NOT IN (?, ?)
-                $this->appendInToPs($sb, $params);
-                break;
-            case Criteria::LIKE:
-            case Criteria::NOT_LIKE:
-            case Criteria::ILIKE:
-            case Criteria::NOT_ILIKE:
-                // table.column LIKE ? or table.column NOT LIKE ?  (or ILIKE for Postgres)
-                $this->appendLikeToPs($sb, $params);
-                break;
             case ModelCriteria::MODEL_CLAUSE:
                 // regular model clause, e.g. 'book.TITLE = ?'
                 $this->appendModelClauseToPs($sb, $params);
@@ -208,7 +219,7 @@ class ModelCriterion extends Criterion
     protected function appendModelClauseRawToPs(&$sb, array &$params)
     {
         if (1 !== substr_count($this->clause, '?')) {
-            throw new PropelException(sprintf('Could not build SQL for expression "%s" because Criteria::RAW works only with a clause containing a single question mark placeholder', $this->column));
+            throw new PropelException(sprintf('Could not build SQL for expression "%s" because Criteria::MODEL_CLAUSE_RAW works only with a clause containing a single question mark placeholder', $this->column));
         }
         $params[] = array('table' => null, 'type' => $this->type, 'value' => $this->value);
         $sb .= str_replace('?', ':p' . count($params), $this->clause);

@@ -8,10 +8,13 @@
  * @license MIT License
  */
 
-namespace Propel\Runtime\Adapter\Exception;
+namespace Propel\Runtime\Query\Criterion\Exception;
 
-use Propel\Runtime\Exception\RuntimeException;
+use Propel\Runtime\Exception\InvalidArgumentException;
 
-class AdapterException extends RuntimeException
+/**
+ * @author François Zaninotto
+ */
+class InvalidValueException extends InvalidArgumentException
 {
 }
