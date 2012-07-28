@@ -24,7 +24,7 @@ class BasicModelCriterionTest extends BaseTestCase
 {
     public function testAppendPsToAddsBindingInfoForNotNullValues()
     {
-        $cton = new BasicModelCriterion(new Criteria(), 'A.COL', 'foo', 'A.COL = ?');
+        $cton = new BasicModelCriterion(new Criteria(), 'A.COL = ?', 'A.COL', 'foo');
 
         $params = array();
         $ps = '';
@@ -42,7 +42,7 @@ class BasicModelCriterionTest extends BaseTestCase
      */
     public function testAppendPsToThrowsExceptionWhenBindingAValueToAClauseWithNoQuestionMark()
     {
-        $cton = new BasicModelCriterion(new Criteria(), 'A.COL', 'foo', 'A.COL = B.COL');
+        $cton = new BasicModelCriterion(new Criteria(), 'A.COL = B.COL', 'A.COL', 'foo');
 
         $params = array();
         $ps = '';
@@ -51,7 +51,7 @@ class BasicModelCriterionTest extends BaseTestCase
 
     public function testAppendPsToAddsClauseWithoutBindingForNullValues()
     {
-        $cton = new BasicModelCriterion(new Criteria(), 'A.COL', null, 'A.COL IS NULL');
+        $cton = new BasicModelCriterion(new Criteria(), 'A.COL IS NULL', 'A.COL', null);
 
         $params = array();
         $ps = '';

@@ -24,7 +24,7 @@ class InModelCriterionTest extends BaseTestCase
 {
     public function testAppendPsToCreatesAnInConditionByDefault()
     {
-        $cton = new InModelCriterion(new Criteria(), 'A.COL', array('foo'), 'A.COL IN ?');
+        $cton = new InModelCriterion(new Criteria(), 'A.COL IN ?', 'A.COL', array('foo'));
 
         $params = array();
         $ps = '';
@@ -39,7 +39,7 @@ class InModelCriterionTest extends BaseTestCase
 
     public function testAppendPsToCreatesANotInConditionWhenSpecified()
     {
-        $cton = new InModelCriterion(new Criteria(), 'A.COL', array('foo'), 'A.COL NOT IN ?');
+        $cton = new InModelCriterion(new Criteria(), 'A.COL NOT IN ?', 'A.COL', array('foo'));
 
         $params = array();
         $ps = '';
@@ -54,7 +54,7 @@ class InModelCriterionTest extends BaseTestCase
 
     public function testAppendPsToWithArrayValueCreatesAnInCondition()
     {
-        $cton = new InModelCriterion(new Criteria(), 'A.COL', array('foo', 'bar'), 'A.COL IN ?');
+        $cton = new InModelCriterion(new Criteria(), 'A.COL IN ?', 'A.COL', array('foo', 'bar'));
 
         $params = array();
         $ps = '';
@@ -70,7 +70,7 @@ class InModelCriterionTest extends BaseTestCase
 
     public function testAppendPsToWithScalarValueCreatesAnInCondition()
     {
-        $cton = new InModelCriterion(new Criteria(), 'A.COL', 'foo', 'A.COL IN ?');
+        $cton = new InModelCriterion(new Criteria(), 'A.COL IN ?', 'A.COL', 'foo');
 
         $params = array();
         $ps = '';
@@ -98,7 +98,7 @@ class InModelCriterionTest extends BaseTestCase
      */
     public function testAppendPsToWithNotEmptyValueCreatesAnInCondition($notEmptyValue)
     {
-        $cton = new InModelCriterion(new Criteria(), 'A.COL', $notEmptyValue, 'A.COL IN ?');
+        $cton = new InModelCriterion(new Criteria(), 'A.COL IN ?', 'A.COL', $notEmptyValue);
 
         $params = array();
         $ps = '';
@@ -124,7 +124,7 @@ class InModelCriterionTest extends BaseTestCase
      */
     public function testAppendPsToWithInAndEmptyValueCreatesAnAlwaysFalseCondition($emptyValue)
     {
-        $cton = new InModelCriterion(new Criteria(), 'A.COL', $emptyValue, 'A.COL IN ?');
+        $cton = new InModelCriterion(new Criteria(), 'A.COL IN ?', 'A.COL', $emptyValue);
 
         $params = array();
         $ps = '';
@@ -140,7 +140,7 @@ class InModelCriterionTest extends BaseTestCase
      */
     public function testAppendPsToWithNotInAndEmptyValueCreatesAnAlwaysTrueCondition($emptyValue)
     {
-        $cton = new InModelCriterion(new Criteria(), 'A.COL', $emptyValue, 'A.COL NOT IN ?');
+        $cton = new InModelCriterion(new Criteria(), 'A.COL NOT IN ?', 'A.COL', $emptyValue);
 
         $params = array();
         $ps = '';
@@ -156,7 +156,7 @@ class InModelCriterionTest extends BaseTestCase
      */
     public function testAppendPsToWithNotInAndEmptyValueIsCaseInsensitive($emptyValue)
     {
-        $cton = new InModelCriterion(new Criteria(), 'A.COL', $emptyValue, 'A.COL not in ?');
+        $cton = new InModelCriterion(new Criteria(), 'A.COL not in ?', 'A.COL', $emptyValue);
 
         $params = array();
         $ps = '';

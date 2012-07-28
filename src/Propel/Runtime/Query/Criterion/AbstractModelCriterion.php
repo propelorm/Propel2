@@ -24,12 +24,12 @@ Abstract class AbstractModelCriterion extends AbstractCriterion
     /**
      * Create a new instance.
      *
-     * @param Criteria  $parent The outer class (this is an "inner" class).
+     * @param Criteria  $outer The outer class (this is an "inner" class).
+     * @param string    $clause A simple pseudo-SQL clause, e.g. 'foo.BAR LIKE ?'
      * @param ColumnMap $column A Column object to help escaping the value
      * @param mixed     $value
-     * @param string    $clause A simple pseudo-SQL clause, e.g. 'foo.BAR LIKE ?'
      */
-    public function __construct(Criteria $outer, $column, $value = null, $clause = null)
+    public function __construct(Criteria $outer, $clause, $column, $value = null)
     {
         $this->value = $value;
         $this->setColumn($column);

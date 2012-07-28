@@ -1859,15 +1859,15 @@ class ModelCriteria extends Criteria implements \IteratorAggregate
             $value = $this->convertValueForColumn($value, $colMap);
             $clauseLen = strlen($clause);
             if (null !== $bindingType) {
-                $criterion = new RawModelCriterion($this, $colMap, $value, $clause, $bindingType);
+                $criterion = new RawModelCriterion($this, $clause, $colMap, $value, $bindingType);
             } elseif (stripos($clause, 'IN ?') == $clauseLen - 4) {
-                $criterion = new InModelCriterion($this, $colMap, $value, $clause, $bindingType);
+                $criterion = new InModelCriterion($this, $clause, $colMap, $value);
             } elseif (stripos($clause, 'LIKE ?') == $clauseLen - 6) {
-                $criterion = new LikeModelCriterion($this, $colMap, $value, $clause, $bindingType);
+                $criterion = new LikeModelCriterion($this, $clause, $colMap, $value);
             } elseif (substr_count($clause, '?') > 1) {
-                $criterion = new SeveralModelCriterion($this, $colMap, $value, $clause, $bindingType);
+                $criterion = new SeveralModelCriterion($this, $clause, $colMap, $value);
             } else {
-                $criterion = new BasicModelCriterion($this, $colMap, $value, $clause, $bindingType);
+                $criterion = new BasicModelCriterion($this, $clause, $colMap, $value);
             }
 
             if (!empty($this->currentAlias)) {

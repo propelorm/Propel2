@@ -24,7 +24,7 @@ class SeveralModelCriterionTest extends BaseTestCase
 {
     public function testAppendPsToAddsBindingInfoForNotNullValues()
     {
-        $cton = new SeveralModelCriterion(new Criteria(), 'A.COL', array('foo', 'bar'), 'A.COL BETWEEN ? AND ?');
+        $cton = new SeveralModelCriterion(new Criteria(), 'A.COL BETWEEN ? AND ?', 'A.COL', array('foo', 'bar'));
 
         $params = array();
         $ps = '';
@@ -43,7 +43,7 @@ class SeveralModelCriterionTest extends BaseTestCase
      */
     public function testAppendPsToThrowsExceptionWhenOneOfTheValuesIsNull()
     {
-        $cton = new SeveralModelCriterion(new Criteria(), 'A.COL', array('foo', null), 'A.COL BETWEEN ? AND ?');
+        $cton = new SeveralModelCriterion(new Criteria(), 'A.COL BETWEEN ? AND ?', 'A.COL', array('foo', null));
 
         $params = array();
         $ps = '';
@@ -55,7 +55,7 @@ class SeveralModelCriterionTest extends BaseTestCase
      */
     public function testAppendPsToThrowsExceptionWhenTheValueIsNull()
     {
-        $cton = new SeveralModelCriterion(new Criteria(), 'A.COL', null, 'A.COL BETWEEN ? AND ?');
+        $cton = new SeveralModelCriterion(new Criteria(), 'A.COL BETWEEN ? AND ?', 'A.COL', null);
 
         $params = array();
         $ps = '';
