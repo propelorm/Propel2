@@ -16,6 +16,7 @@ use Propel\Runtime\Propel;
 use Propel\Runtime\Query\Criteria;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Adapter\AdapterInterface;
+use Propel\Runtime\Map\ColumnMap;
 
 /**
  * This is an "inner" class that describes an object in the criteria.
@@ -74,15 +75,7 @@ abstract class AbstractCriterion
     public function __construct(Criteria $outer, $column, $value, $comparison = null)
     {
         $this->value = $value;
-        $dotPos = strrpos($column, '.');
-        if (false === $dotPos) {
-            // no dot => aliased column
-            $this->table = null;
-            $this->column = $column;
-        } else {
-            $this->table = substr($column, 0, $dotPos);
-            $this->column = substr($column, $dotPos + 1);
-        }
+        $this->setColumn($column);
         $this->comparison = (null === $comparison) ? Criteria::EQUAL : $comparison;
         $this->init($outer);
     }
@@ -93,7 +86,6 @@ abstract class AbstractCriterion
     */
     public function init(Criteria $criteria)
     {
-        // init $this->db
         try {
             $db = Propel::getServiceContainer()->getAdapter($criteria->getDbName());
             $this->setAdapter($db);
@@ -106,7 +98,27 @@ abstract class AbstractCriterion
         // init $this->realtable
         $realtable = $criteria->getTableForAlias($this->table);
         $this->realtable = $realtable ? $realtable : $this->table;
+    }
 
+    /**
+     * Set the $column and $table properties based on a column name or object
+     */
+    protected function setColumn($column)
+    {
+        if ($column instanceof ColumnMap) {
+            $this->column = $column->getName();
+            $this->table = $column->getTable()->getName();
+        } else {
+            $dotPos = strrpos($column,'.');
+            if ($dotPos === false) {
+                // no dot => aliased column
+                $this->table = null;
+                $this->column = $column;
+            } else {
+                $this->table = substr($column, 0, $dotPos);
+                $this->column = substr($column, $dotPos+1, strlen($column));
+            }
+        }
     }
 
     /**
