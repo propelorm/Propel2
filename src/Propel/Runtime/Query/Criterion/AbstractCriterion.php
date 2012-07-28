@@ -30,7 +30,7 @@ abstract class AbstractCriterion
     const UND = " AND ";
     const ODER = " OR ";
 
-    /** Value of the CO. */
+    /** Value of the criterion */
     protected $value;
 
     /**
@@ -39,30 +39,42 @@ abstract class AbstractCriterion
      */
     protected $comparison;
 
-    /** Table name. */
+    /**
+     * Table name
+     * @var string
+     */
     protected $table;
 
-    /** Real table name */
+    /**
+     * Real table name
+     * @var string
+     */
     protected $realtable;
 
-    /** Column name. */
+    /**
+     * Column name
+     * @var string
+     */
     protected $column;
 
     /**
-     * The DBAdaptor which might be used to get db specific
+     * The DBAdapter which might be used to get db specific
      * variations of sql.
      */
     protected $db;
 
     /**
-     * other connected criteria and their conjunctions.
+     * Other connected criterons
+     * @var [AbstractCriterion]
      */
     protected $clauses = array();
 
+    /**
+     * Operators for connected criterions
+     * Only self::UND and self::ODER are accepted
+     * @var [String]
+     */
     protected $conjunctions = array();
-
-    /** "Parent" Criteria class */
-    protected $parent;
 
     /**
      * Create a new instance.
@@ -252,10 +264,12 @@ abstract class AbstractCriterion
      */
     public function appendPsTo(&$sb, array &$params)
     {
+        if (!$this->clauses) {
+            return $this->appendPsForUniqueClauseTo($sb, $params);
+        }
+        // if there are sub criterions, they must be combined to this criterion
         $sb .= str_repeat ( '(', count($this->clauses) );
-
         $this->appendPsForUniqueClauseTo($sb, $params);
-
         foreach ($this->clauses as $key => $clause) {
             $sb .= $this->conjunctions[$key];
             $clause->appendPsTo($sb, $params);

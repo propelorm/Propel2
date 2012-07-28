@@ -28,7 +28,6 @@ use Propel\Runtime\Util\PropelModelPager;
 use Propel\Runtime\Query\Criteria;
 use Propel\Runtime\Query\Criterion\AbstractCriterion;
 use Propel\Runtime\Query\Criterion\InModelCriterion;
-use Propel\Runtime\Query\Criterion\BaseModelCriterion;
 use Propel\Runtime\Query\Criterion\BasicModelCriterion;
 use Propel\Runtime\Query\Criterion\CustomCriterion;
 use Propel\Runtime\Query\Criterion\LikeModelCriterion;
@@ -92,7 +91,7 @@ class ModelCriteria extends Criteria implements \IteratorAggregate
 
     // temporary property used in replaceNames
     protected $currentAlias;
-    
+
     /**
      * Creates a new instance with the default capacity which corresponds to
      * the specified database.
@@ -1867,6 +1866,7 @@ class ModelCriteria extends Criteria implements \IteratorAggregate
             if (substr_count($clause, '?') > 1) {
                 return new SeveralModelCriterion($this, $clause, $colMap, $value, $this->currentAlias);
             }
+
             return new BasicModelCriterion($this, $clause, $colMap, $value, $this->currentAlias);
         } else {
             // no column match in clause, must be an expression like '1=1'
@@ -1874,8 +1874,10 @@ class ModelCriteria extends Criteria implements \IteratorAggregate
                 if (null === $bindingType) {
                     throw new PropelException(sprintf('Cannot determine the column to bind to the parameter in clause "%s".', $clause));
                 }
+
                 return new RawCriterion($this, $clause, $value, $bindingType);
             }
+
             return new CustomCriterion($this, null, $clause);
         }
     }

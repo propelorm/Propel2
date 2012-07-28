@@ -24,9 +24,9 @@ Abstract class AbstractModelCriterion extends AbstractCriterion
     /**
      * Create a new instance.
      *
-     * @param Criteria  $outer The outer class (this is an "inner" class).
-     * @param string    $clause A simple pseudo-SQL clause, e.g. 'foo.BAR LIKE ?'
-     * @param ColumnMap $column A Column object to help escaping the value
+     * @param Criteria  $outer      The outer class (this is an "inner" class).
+     * @param string    $clause     A simple pseudo-SQL clause, e.g. 'foo.BAR LIKE ?'
+     * @param ColumnMap $column     A Column object to help escaping the value
      * @param mixed     $value
      * @param string    $tableAlias optional table alias
      */
