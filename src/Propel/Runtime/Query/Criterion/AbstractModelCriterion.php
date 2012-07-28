@@ -28,11 +28,15 @@ Abstract class AbstractModelCriterion extends AbstractCriterion
      * @param string    $clause A simple pseudo-SQL clause, e.g. 'foo.BAR LIKE ?'
      * @param ColumnMap $column A Column object to help escaping the value
      * @param mixed     $value
+     * @param string    $tableAlias optional table alias
      */
-    public function __construct(Criteria $outer, $clause, $column, $value = null)
+    public function __construct(Criteria $outer, $clause, $column, $value = null, $tableAlias = null)
     {
         $this->value = $value;
         $this->setColumn($column);
+        if ($tableAlias) {
+            $this->table = $tableAlias;
+        }
         $this->clause = $clause;
         $this->init($outer);
     }

@@ -29,7 +29,7 @@ class RawModelCriterionTest extends BaseTestCase
      */
     public function testAppendPsToThrowsExceptionWhenClauseHasNoQuestionMark()
     {
-        $cton = new RawModelCriterion(new Criteria(), 'A.COL = BAR', 'A.COL', 1, PDO::PARAM_INT);
+        $cton = new RawModelCriterion(new Criteria(), 'A.COL = BAR', 'A.COL', 1, null, PDO::PARAM_INT);
 
         $params = array();
         $ps = '';
@@ -38,7 +38,7 @@ class RawModelCriterionTest extends BaseTestCase
 
     public function testAppendPsToCreatesAPDOClauseByDefault()
     {
-        $cton = new RawModelCriterion(new Criteria(), 'A.COL = ?', 'A.COL', 1, PDO::PARAM_INT);
+        $cton = new RawModelCriterion(new Criteria(), 'A.COL = ?', 'A.COL', 1, null, PDO::PARAM_INT);
 
         $params = array();
         $ps = '';
