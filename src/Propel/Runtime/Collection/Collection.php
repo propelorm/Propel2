@@ -17,7 +17,6 @@ use Propel\Runtime\Collection\Exception\ModelNotFoundException;
 use Propel\Runtime\Exception\BadMethodCallException;
 use Propel\Runtime\Exception\UnexpectedValueException;
 use Propel\Runtime\Formatter\AbstractFormatter;
-use Propel\Runtime\Om\BaseObject;
 use Propel\Runtime\Parser\AbstractParser;
 use Propel\Runtime\Util\BasePeer;
 

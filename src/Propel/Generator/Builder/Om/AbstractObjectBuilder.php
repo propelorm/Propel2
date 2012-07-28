@@ -110,7 +110,7 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
 
     /**
      * Gets the baseClass path if specified for table/db.
-     * If not, will return 'propel.om.BaseObject'
+     *
      * @return string
      */
     protected function getBaseClass()
@@ -120,17 +120,12 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
 
     /**
      * Gets the interface path if specified for current table.
-     * If not, will return 'propel.om.Persistent'.
+     *
      * @return string
      */
     protected function getInterface()
     {
-        $interface = $this->getTable()->getInterface();
-        if (null === $interface && !$this->getTable()->isReadOnly()) {
-            $interface = 'propel.om.Persistent';
-        }
-
-        return $interface;
+        return $this->getTable()->getInterface();
     }
 
     /**

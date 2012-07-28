@@ -88,9 +88,9 @@
     }
 
     /**
-     * Compares this with another <code>BaseObject</code> instance.  If
-     * <code>obj</code> is an instance of <code>BaseObject</code>, delegates to
-     * <code>equals(BaseObject)</code>.  Otherwise, returns <code>false</code>.
+     * Compares this with another <code><?php echo $className ?></code> instance.  If
+     * <code>obj</code> is an instance of <code><?php echo $className ?></code>, delegates to
+     * <code>equals(<?php echo $className ?>)</code>.  Otherwise, returns <code>false</code>.
      *
      * @param      obj The object to compare to.
      * @return Whether equal to the object specified.
@@ -172,7 +172,7 @@
      * @param string $name  The virtual column name
      * @param mixed  $value The value to give to the virtual column
      *
-     * @return BaseObject The current object, for fluid interface
+     * @return <?php echo $className ?> The current object, for fluid interface
      */
     public function setVirtualColumn($name, $value)
     {
@@ -204,7 +204,7 @@
      *                       or a format name ('XML', 'YAML', 'JSON', 'CSV')
      * @param string $data The source data to import from
      *
-     * @return BaseObject The current object, for fluid interface
+     * @return <?php echo $className ?> The current object, for fluid interface
      */
     public function importFrom($parser, $data)
     {
