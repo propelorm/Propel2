@@ -11,7 +11,6 @@
 namespace Propel\Runtime\Query\Criterion;
 
 use Propel\Runtime\Query\Criteria;
-use Propel\Runtime\Map\ColumnMap;
 
 /**
  * This is an "inner" class that describes an object in the criteria.
@@ -33,20 +32,7 @@ Abstract class AbstractModelCriterion extends AbstractCriterion
     public function __construct(Criteria $outer, $column, $value = null, $clause = null)
     {
         $this->value = $value;
-        if ($column instanceof ColumnMap) {
-            $this->column = $column->getName();
-            $this->table = $column->getTable()->getName();
-        } else {
-            $dotPos = strrpos($column,'.');
-            if ($dotPos === false) {
-                // no dot => aliased column
-                $this->table = null;
-                $this->column = $column;
-            } else {
-                $this->table = substr($column, 0, $dotPos);
-                $this->column = substr($column, $dotPos+1, strlen($column));
-            }
-        }
+        $this->setColumn($column);
         $this->clause = $clause;
         $this->init($outer);
     }

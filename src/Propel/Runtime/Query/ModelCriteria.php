@@ -1855,36 +1855,19 @@ class ModelCriteria extends Criteria implements \IteratorAggregate
         if ($this->replaceNames($clause)) {
             // at least one column name was found and replaced in the clause
             // this is enough to determine the type to bind the parameter to
-            if (null !== $bindingType) {
-                $operator = ModelCriteria::MODEL_CLAUSE_RAW;
-            } elseif (0 !== preg_match('/IN \?$/i', $clause)) {
-                $operator = ModelCriteria::MODEL_CLAUSE_ARRAY;
-            } elseif (0 !== preg_match('/LIKE \?$/i', $clause)) {
-                $operator = ModelCriteria::MODEL_CLAUSE_LIKE;
-            } elseif (substr_count($clause, '?') > 1) {
-                $operator = ModelCriteria::MODEL_CLAUSE_SEVERAL;
-            } else {
-                $operator = ModelCriteria::MODEL_CLAUSE;
-            }
-
             $colMap = $this->replacedColumns[0];
             $value = $this->convertValueForColumn($value, $colMap);
-            switch ($operator) {
-                case ModelCriteria::MODEL_CLAUSE_LIKE:
-                    $criterion = new LikeModelCriterion($this, $colMap, $value, $clause, $bindingType);
-                    break;
-                case ModelCriteria::MODEL_CLAUSE_SEVERAL:
-                    $criterion = new SeveralModelCriterion($this, $colMap, $value, $clause, $bindingType);
-                    break;
-                case ModelCriteria::MODEL_CLAUSE_ARRAY:
-                    $criterion = new InModelCriterion($this, $colMap, $value, $clause, $bindingType);
-                    break;
-                case ModelCriteria::MODEL_CLAUSE_RAW:
-                    $criterion = new RawModelCriterion($this, $colMap, $value, $clause, $bindingType);
-                    break;
-                default:
-                    $criterion = new BasicModelCriterion($this, $colMap, $value, $clause, $bindingType);
-                    break;
+            $clauseLen = strlen($clause);
+            if (null !== $bindingType) {
+                $criterion = new RawModelCriterion($this, $colMap, $value, $clause, $bindingType);
+            } elseif (stripos($clause, 'IN ?') == $clauseLen - 4) {
+                $criterion = new InModelCriterion($this, $colMap, $value, $clause, $bindingType);
+            } elseif (stripos($clause, 'LIKE ?') == $clauseLen - 6) {
+                $criterion = new LikeModelCriterion($this, $colMap, $value, $clause, $bindingType);
+            } elseif (substr_count($clause, '?') > 1) {
+                $criterion = new SeveralModelCriterion($this, $colMap, $value, $clause, $bindingType);
+            } else {
+                $criterion = new BasicModelCriterion($this, $colMap, $value, $clause, $bindingType);
             }
 
             if (!empty($this->currentAlias)) {
