@@ -13,23 +13,23 @@ namespace Propel\Tests\Runtime\Query\Criterion;
 use Propel\Tests\Helpers\BaseTestCase;
 
 use Propel\Runtime\Query\Criteria;
-use Propel\Runtime\Query\Criterion\RawCriterion;
+use Propel\Runtime\Query\Criterion\RawModelCriterion;
 
 use \PDO;
 
 /**
- * Test class for RawCriterion.
+ * Test class for RawModelCriterion.
  *
  * @author François Zaninotto
  */
-class RawCriterionTest extends BaseTestCase
+class RawModelCriterionTest extends BaseTestCase
 {
     /**
      * @expectedException Propel\Runtime\Query\Criterion\Exception\InvalidClauseException
      */
     public function testAppendPsToThrowsExceptionWhenClauseHasNoQuestionMark()
     {
-        $cton = new RawCriterion(new Criteria(), 'A.COL = BAR', 1, PDO::PARAM_INT);
+        $cton = new RawModelCriterion(new Criteria(), 'A.COL', 1, 'A.COL = BAR', PDO::PARAM_INT);
 
         $params = array();
         $ps = '';
@@ -38,7 +38,7 @@ class RawCriterionTest extends BaseTestCase
 
     public function testAppendPsToCreatesAPDOClauseyDefault()
     {
-        $cton = new RawCriterion(new Criteria(), 'A.COL = ?', 1, PDO::PARAM_INT);
+        $cton = new RawModelCriterion(new Criteria(), 'A.COL', 1, 'A.COL = ?', PDO::PARAM_INT);
 
         $params = array();
         $ps = '';
@@ -53,7 +53,7 @@ class RawCriterionTest extends BaseTestCase
 
     public function testAppendPsToUsesParamStrByDefault()
     {
-        $cton = new RawCriterion(new Criteria(), 'A.COL = ?', 1);
+        $cton = new RawModelCriterion(new Criteria(), 'A.COL', 1, 'A.COL = ?');
 
         $params = array();
         $ps = '';

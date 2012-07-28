@@ -25,15 +25,22 @@ class SeveralModelCriterion extends AbstractModelCriterion
      */
     protected function appendPsForUniqueClauseTo(&$sb, array &$params)
     {
+        if (!is_array($this->value)) {
+            throw new InvalidValueException('Only array values are supported by this Criterion');
+        }
         $clause = $this->clause;
-        foreach ((array) $this->value as $value) {
+        foreach ($this->value as $value) {
             if (null === $value) {
                 // FIXME we eventually need to translate a BETWEEN to
                 // something like WHERE (col < :p1 OR :p1 IS NULL) AND (col < :p2 OR :p2 IS NULL)
                 // in order to support null values
                 throw new InvalidValueException('Null values are not supported inside BETWEEN clauses');
             }
-            $params[] = array('table' => $this->realtable, 'column' => $this->column, 'value' => $value);
+            $params[] = array(
+                'table'  => $this->realtable,
+                'column' => $this->column,
+                'value'  => $value
+            );
             $clause = self::strReplaceOnce('?', ':p'.count($params), $clause);
         }
         $sb .= $clause;
@@ -42,7 +49,6 @@ class SeveralModelCriterion extends AbstractModelCriterion
     /**
      * Replace only once
      * taken from http://www.php.net/manual/en/function.str-replace.php
-     *
      */
     protected static function strReplaceOnce($search, $replace, $subject)
     {

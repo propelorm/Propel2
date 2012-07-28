@@ -27,7 +27,7 @@ use Propel\Runtime\Util\BasePeer;
 use Propel\Runtime\Util\PropelModelPager;
 use Propel\Runtime\Query\Criteria;
 use Propel\Runtime\Query\Criterion\AbstractCriterion;
-use Propel\Runtime\Query\Criterion\ArrayModelCriterion;
+use Propel\Runtime\Query\Criterion\InModelCriterion;
 use Propel\Runtime\Query\Criterion\BaseModelCriterion;
 use Propel\Runtime\Query\Criterion\BasicModelCriterion;
 use Propel\Runtime\Query\Criterion\CustomCriterion;
@@ -1877,7 +1877,7 @@ class ModelCriteria extends Criteria implements \IteratorAggregate
                     $criterion = new SeveralModelCriterion($this, $colMap, $value, $clause, $bindingType);
                     break;
                 case ModelCriteria::MODEL_CLAUSE_ARRAY:
-                    $criterion = new ArrayModelCriterion($this, $colMap, $value, $clause, $bindingType);
+                    $criterion = new InModelCriterion($this, $colMap, $value, $clause, $bindingType);
                     break;
                 case ModelCriteria::MODEL_CLAUSE_RAW:
                     $criterion = new RawModelCriterion($this, $colMap, $value, $clause, $bindingType);
