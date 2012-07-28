@@ -13,6 +13,8 @@ namespace Propel\Runtime\Query\Criterion;
 use Propel\Runtime\Query\Criterion\Exception\InvalidClauseException;
 use Propel\Runtime\Query\Criteria;
 
+use \PDO;
+
 /**
  * Specialized ModelCriterion used for custom expressions with a typed binding,
  * e.g. 'foobar = ?'
@@ -33,7 +35,7 @@ class RawModelCriterion extends AbstractModelCriterion
      * @param mixed     $value
      * @param string    $clause A simple pseudo-SQL clause, e.g. 'foo.BAR LIKE ?'
      */
-    public function __construct(Criteria $outer, $column, $value = null, $clause = null, $type = null)
+    public function __construct(Criteria $outer, $column, $value = null, $clause = null, $type = PDO::PARAM_STR)
     {
         $this->type = $type;
         parent::__construct($outer, $column, $value, $clause);
@@ -50,7 +52,11 @@ class RawModelCriterion extends AbstractModelCriterion
         if (1 !== substr_count($this->clause, '?')) {
             throw new InvalidClauseException(sprintf('Could not build SQL for expression "%s" because Criteria::MODEL_CLAUSE_RAW works only with a clause containing a single question mark placeholder', $this->column));
         }
-        $params[] = array('table' => null, 'type' => $this->type, 'value' => $this->value);
+        $params[] = array(
+            'table' => null,
+            'type'  => $this->type,
+            'value' => $this->value
+        );
         $sb .= str_replace('?', ':p' . count($params), $this->clause);
     }
 
