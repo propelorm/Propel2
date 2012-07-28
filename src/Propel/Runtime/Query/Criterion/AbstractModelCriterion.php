@@ -88,35 +88,4 @@ Abstract class AbstractModelCriterion extends AbstractCriterion
 
         return $isEquiv;
     }
-
-    /**
-     * Returns a hash code value for the object.
-     */
-    public function hashCode()
-    {
-        $h = crc32(serialize($this->value)) ^ crc32($this->comparison) ^ crc32($this->clause);
-
-        if (null !== $this->table) {
-            $h ^= crc32($this->table);
-        }
-
-        if (null !== $this->column) {
-            $h ^= crc32($this->column);
-        }
-
-        foreach ($this->clauses as $clause) {
-            // TODO: i KNOW there is a php incompatibility with the following line
-            // but i don't remember what it is, someone care to look it up and
-            // replace it if it doesn't bother us?
-            // $clause->appendPsTo($sb='',$params=array());
-            $sb = '';
-            $params = array();
-            $clause->appendPsTo($sb,$params);
-            $h ^= crc32(serialize(array($sb,$params)));
-            unset($sb, $params);
-        }
-
-        return $h;
-    }
-
 }

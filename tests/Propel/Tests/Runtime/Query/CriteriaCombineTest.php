@@ -141,9 +141,6 @@ class CriteriaCombineTest extends BaseTestCase
         $this->assertEquals($crit3->getTable(), $tables[1]);
         $this->assertEquals($crit4->getTable(), $tables[2]);
         $this->assertEquals($crit5->getTable(), $tables[3]);
-
-        // simple confirmations that equality operations work
-        $this->assertTrue($crit2->hashCode() === $crit2->hashCode());
     }
 
     /**
