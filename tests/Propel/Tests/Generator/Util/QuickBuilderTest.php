@@ -12,8 +12,8 @@ use Propel\Generator\Platform\MysqlPlatform;
 use Propel\Generator\Platform\SqlitePlatform;
 use Propel\Generator\Util\QuickBuilder;
 
+use Propel\Runtime\Om\ActiveRecordInterface;
 use Propel\Runtime\Propel;
-use Propel\Runtime\Om\BaseObject;
 
 use MyNameSpace\QuickBuildFoo1;
 use MyNameSpace\QuickBuildFoo1Peer;
@@ -95,7 +95,7 @@ EOF;
         $this->assertContains('class QuickBuildFoo1 extends BaseQuickBuildFoo1', $script);
         $this->assertContains('class QuickBuildFoo1Peer extends BaseQuickBuildFoo1Peer', $script);
         $this->assertContains('class QuickBuildFoo1Query extends BaseQuickBuildFoo1Query', $script);
-        $this->assertContains('class QuickBuildFoo1', $script); //BaseObject
+        $this->assertContains('class QuickBuildFoo1 implements ActiveRecordInterface', $script);
         $this->assertContains('class QuickBuildFoo1Peer', $script);
         $this->assertContains('class QuickBuildFoo1Query extends ModelCriteria', $script);
     }
@@ -109,7 +109,7 @@ EOF;
         $this->assertNotContains('class QuickBuildFoo1 extends BaseQuickBuildFoo1', $script);
         $this->assertNotContains('class QuickBuildFoo1Peer extends BaseQuickBuildFoo1Peer', $script);
         $this->assertNotContains('class QuickBuildFoo1Query extends BaseQuickBuildFoo1Query', $script);
-        $this->assertContains('class QuickBuildFoo1', $script); //BaseObject
+        $this->assertContains('class QuickBuildFoo1 implements ActiveRecordInterface', $script);
         $this->assertContains('class QuickBuildFoo1Peer', $script);
         $this->assertContains('class QuickBuildFoo1Query extends ModelCriteria', $script);
     }
@@ -121,10 +121,8 @@ EOF;
     {
         $builder->buildClasses();
         $foo = new QuickBuildFoo1();
+        $this->assertTrue($foo instanceof ActiveRecordInterface);
         $this->assertTrue(QuickBuildFoo1Peer::getTableMap() instanceof \MyNameSpace\Map\QuickBuildFoo1TableMap);
-
-        $this->markTestIncomplete('need a new Interface for BaseObject');
-//        $this->assertTrue($foo instanceof BaseObject);
     }
 
     public function testBuild()

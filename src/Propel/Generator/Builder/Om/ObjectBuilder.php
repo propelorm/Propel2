@@ -223,10 +223,10 @@ class ObjectBuilder extends AbstractObjectBuilder
         }
         $script .= "
  */
-abstract class ".$this->getUnqualifiedClassName().$parentClass." ";
+abstract class ".$this->getUnqualifiedClassName().$parentClass." implements ActiveRecordInterface ";
 
-        if ($interface = $this->getTable()->getInterface()) {
-            $script .= "implements Child" . ClassTools::classname($interface);
+        if ($interface = $this->getInterface()) {
+            $script .= ", Child" . ClassTools::classname($interface);
             if ($interface !== ClassTools::classname($interface)) {
                $this->declareClass($interface);
             } else {
@@ -261,8 +261,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." ";
             '\Propel\Runtime\Exception\BadMethodCallException',
             '\Propel\Runtime\Exception\PropelException',
             '\Propel\Runtime\Query\Criteria',
-            '\Propel\Runtime\Om\BaseObject',
-            '\Propel\Runtime\Om\Persistent',
+            '\Propel\Runtime\Om\ActiveRecordInterface',
             '\Propel\Runtime\Parser\AbstractParser',
             '\Propel\Runtime\Propel',
             '\Propel\Runtime\Util\BasePeer'
@@ -704,7 +703,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." ";
      */
     protected function addBaseObjectMethods(&$script)
     {
-        $script .= $this->renderTemplate('baseObjectMethods');
+        $script .= $this->renderTemplate('baseObjectMethods', array('className' => $this->getObjectClassName()));
     }
 
     /**
@@ -2574,6 +2573,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." ";
      **/
     protected function addDeleteComment(&$script)
     {
+        $className = $this->getObjectClassName();
         $script .= "
     /**
      * Removes this object from datastore and sets delete attribute.
@@ -2581,8 +2581,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." ";
      * @param      ConnectionInterface \$con
      * @return void
      * @throws PropelException
-     * @see BaseObject::setDeleted()
-     * @see BaseObject::isDeleted()
+     * @see $className::setDeleted()
+     * @see $className::isDeleted()
      */";
     }
 
