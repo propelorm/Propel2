@@ -16,6 +16,7 @@ use Propel\Runtime\Propel;
 use Propel\Runtime\Query\Criteria;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Adapter\AdapterInterface;
+use Propel\Runtime\Map\ColumnMap;
 
 /**
  * This is an "inner" class that describes an object in the criteria.
@@ -29,7 +30,7 @@ abstract class AbstractCriterion
     const UND = " AND ";
     const ODER = " OR ";
 
-    /** Value of the CO. */
+    /** Value of the criterion */
     protected $value;
 
     /**
@@ -38,30 +39,42 @@ abstract class AbstractCriterion
      */
     protected $comparison;
 
-    /** Table name. */
+    /**
+     * Table name
+     * @var string
+     */
     protected $table;
 
-    /** Real table name */
+    /**
+     * Real table name
+     * @var string
+     */
     protected $realtable;
 
-    /** Column name. */
+    /**
+     * Column name
+     * @var string
+     */
     protected $column;
 
     /**
-     * The DBAdaptor which might be used to get db specific
+     * The DBAdapter which might be used to get db specific
      * variations of sql.
      */
     protected $db;
 
     /**
-     * other connected criteria and their conjunctions.
+     * Other connected criterons
+     * @var [AbstractCriterion]
      */
     protected $clauses = array();
 
+    /**
+     * Operators for connected criterions
+     * Only self::UND and self::ODER are accepted
+     * @var [String]
+     */
     protected $conjunctions = array();
-
-    /** "Parent" Criteria class */
-    protected $parent;
 
     /**
      * Create a new instance.
@@ -74,15 +87,7 @@ abstract class AbstractCriterion
     public function __construct(Criteria $outer, $column, $value, $comparison = null)
     {
         $this->value = $value;
-        $dotPos = strrpos($column, '.');
-        if (false === $dotPos) {
-            // no dot => aliased column
-            $this->table = null;
-            $this->column = $column;
-        } else {
-            $this->table = substr($column, 0, $dotPos);
-            $this->column = substr($column, $dotPos + 1);
-        }
+        $this->setColumn($column);
         $this->comparison = (null === $comparison) ? Criteria::EQUAL : $comparison;
         $this->init($outer);
     }
@@ -93,7 +98,6 @@ abstract class AbstractCriterion
     */
     public function init(Criteria $criteria)
     {
-        // init $this->db
         try {
             $db = Propel::getServiceContainer()->getAdapter($criteria->getDbName());
             $this->setAdapter($db);
@@ -106,7 +110,27 @@ abstract class AbstractCriterion
         // init $this->realtable
         $realtable = $criteria->getTableForAlias($this->table);
         $this->realtable = $realtable ? $realtable : $this->table;
+    }
 
+    /**
+     * Set the $column and $table properties based on a column name or object
+     */
+    protected function setColumn($column)
+    {
+        if ($column instanceof ColumnMap) {
+            $this->column = $column->getName();
+            $this->table = $column->getTable()->getName();
+        } else {
+            $dotPos = strrpos($column,'.');
+            if ($dotPos === false) {
+                // no dot => aliased column
+                $this->table = null;
+                $this->column = $column;
+            } else {
+                $this->table = substr($column, 0, $dotPos);
+                $this->column = substr($column, $dotPos+1, strlen($column));
+            }
+        }
     }
 
     /**
@@ -240,10 +264,12 @@ abstract class AbstractCriterion
      */
     public function appendPsTo(&$sb, array &$params)
     {
+        if (!$this->clauses) {
+            return $this->appendPsForUniqueClauseTo($sb, $params);
+        }
+        // if there are sub criterions, they must be combined to this criterion
         $sb .= str_repeat ( '(', count($this->clauses) );
-
         $this->appendPsForUniqueClauseTo($sb, $params);
-
         foreach ($this->clauses as $key => $clause) {
             $sb .= $this->conjunctions[$key];
             $clause->appendPsTo($sb, $params);
@@ -299,36 +325,6 @@ abstract class AbstractCriterion
         }
 
         return $isEquiv;
-    }
-
-    /**
-     * Returns a hash code value for the object.
-     */
-    public function hashCode()
-    {
-        $h = crc32(serialize($this->value)) ^ crc32($this->comparison);
-
-        if (null !== $this->table) {
-            $h ^= crc32($this->table);
-        }
-
-        if (null !== $this->column) {
-            $h ^= crc32($this->column);
-        }
-
-        foreach ($this->clauses as $clause) {
-            // TODO: i KNOW there is a php incompatibility with the following line
-            // but i don't remember what it is, someone care to look it up and
-            // replace it if it doesn't bother us?
-            // $clause->appendPsTo($sb='',$params=array());
-            $sb = '';
-            $params = array();
-            $clause->appendPsTo($sb,$params);
-            $h ^= crc32(serialize(array($sb,$params)));
-            unset ($sb, $params);
-        }
-
-        return $h;
     }
 
     /**
