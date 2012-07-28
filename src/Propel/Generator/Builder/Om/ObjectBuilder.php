@@ -703,7 +703,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      */
     protected function addBaseObjectMethods(&$script)
     {
-        $script .= $this->renderTemplate('baseObjectMethods', array('className' => $this->getObjectClassName()));
+        $script .= $this->renderTemplate('baseObjectMethods', array('className' => $this->getUnqualifiedClassName()));
     }
 
     /**
@@ -2573,7 +2573,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      **/
     protected function addDeleteComment(&$script)
     {
-        $className = $this->getObjectClassName();
+        $className = $this->getUnqualifiedClassName();
         $script .= "
     /**
      * Removes this object from datastore and sets delete attribute.
