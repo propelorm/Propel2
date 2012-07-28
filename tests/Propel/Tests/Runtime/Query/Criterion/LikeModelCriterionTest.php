@@ -26,7 +26,7 @@ class LikeModelCriterionTest extends BaseTestCase
 {
     public function testAppendPsToCreatesALikeConditionByDefault()
     {
-        $cton = new LikeModelCriterion(new Criteria(), 'A.COL', 'foo%', 'A.COL LIKE ?');
+        $cton = new LikeModelCriterion(new Criteria(), 'A.COL LIKE ?', 'A.COL', 'foo%');
 
         $params = array();
         $ps = '';
@@ -41,7 +41,7 @@ class LikeModelCriterionTest extends BaseTestCase
 
     public function testAppendPsToCreatesANotLikeConditionIfSpecified()
     {
-        $cton = new LikeModelCriterion(new Criteria(), 'A.COL', 'foo%', 'A.COL NOT LIKE ?');
+        $cton = new LikeModelCriterion(new Criteria(), 'A.COL NOT LIKE ?', 'A.COL', 'foo%');
 
         $params = array();
         $ps = '';
@@ -59,7 +59,7 @@ class LikeModelCriterionTest extends BaseTestCase
      */
     public function testAppendPsToWithACaseInsensitiveLikeConditionThrowsAnException()
     {
-        $cton = new LikeModelCriterion(new Criteria(), 'A.COL', 'foo%', 'A.COL LIKE ?');
+        $cton = new LikeModelCriterion(new Criteria(), 'A.COL LIKE ?', 'A.COL', 'foo%');
         $cton->setAdapter(new SqliteAdapter());
         $cton->setIgnoreCase(true);
         $params = array();
@@ -69,7 +69,7 @@ class LikeModelCriterionTest extends BaseTestCase
 
     public function testAppendPsToCreatesACaseInsensitiveLikeConditionIfSpecifiedOnPgSQL()
     {
-        $cton = new LikeModelCriterion(new Criteria(), 'A.COL', 'foo%', 'A.COL LIKE ?');
+        $cton = new LikeModelCriterion(new Criteria(), 'A.COL LIKE ?', 'A.COL', 'foo%');
         $cton->setAdapter(new PgsqlAdapter());
         $cton->setIgnoreCase(true);
         $params = array();
@@ -85,7 +85,7 @@ class LikeModelCriterionTest extends BaseTestCase
 
     public function testAppendPsToWithCaseInsensitiveAndPostgreSQLUsesNOTILIKE()
     {
-        $cton = new LikeModelCriterion(new Criteria(), 'A.COL', 'foo%', 'A.COL NOT LIKE ?');
+        $cton = new LikeModelCriterion(new Criteria(), 'A.COL NOT LIKE ?', 'A.COL', 'foo%');
         $cton->setAdapter(new PgsqlAdapter());
         $cton->setIgnoreCase(true);
         $params = array();
