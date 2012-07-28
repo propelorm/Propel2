@@ -10,7 +10,7 @@
 
 namespace Propel\Tests\Runtime\Om;
 
-use Propel\Runtime\Om\BaseObject;
+use Propel\Tests\Bookstore\Book;
 
 /**
  * Test class for BaseObject.
@@ -63,7 +63,7 @@ class BaseObjectTest extends \PHPUnit_Framework_TestCase
     }
 }
 
-class TestableBaseObject extends BaseObject
+class TestableBaseObject extends Book
 {
     public $virtualColumns = array();
 }
