@@ -1,72 +1,3 @@
-<?php
-
-/**
- * This file is part of the Propel package.
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- *
- * @license MIT License
- */
-
-namespace Propel\Runtime\Om;
-
-use Propel\Runtime\Connection\ConnectionInterface;
-use Propel\Runtime\Exception\BadMethodCallException;
-use Propel\Runtime\Exception\PropelException;
-use Propel\Runtime\Parser\AbstractParser;
-use Propel\Runtime\Util\BasePeer;
-
-/**
- * This class contains attributes and methods that are used by all
- * business objects within the system.
- *
- * @method BaseObject fromXML(string $data) Populate the object from an XML string
- * @method BaseObject fromYAML(string $data) Populate the object from a YAML string
- * @method BaseObject fromJSON(string $data) Populate the object from a JSON string
- * @method BaseObject fromCSV(string $data) Populate the object from a CSV string
- * @method string toXML(boolean $includeLazyLoadColumns) Export the object to an XML string
- * @method string toYAML(boolean $includeLazyLoadColumns) Export the object to a YAML string
- * @method string toJSON(boolean $includeLazyLoadColumns) Export the object to a JSON string
- * @method string toCSV(boolean $includeLazyLoadColumns) Export the object to a CSV string
- *
- * @author Hans Lellelid <hans@xmpl.org> (Propel)
- * @author Frank Y. Kim <frank.kim@clearink.com> (Torque)
- * @author John D. McNally <jmcnally@collab.net> (Torque)
- */
-abstract class BaseObject
-{
-    /**
-     * attribute to determine if this object has previously been saved.
-     * @var boolean
-     */
-    protected $new = true;
-
-    /**
-     * attribute to determine whether this object has been deleted.
-     * @var boolean
-     */
-    protected $deleted = false;
-
-    /**
-     * The columns that have been modified in current object.
-     * Tracking modified columns allows us to only update modified columns.
-     * @var array
-     */
-    protected $modifiedColumns = array();
-
-    /**
-     * The (virtual) columns that are added at runtime
-     * The formatters can add supplementary columns based on a resultset
-     * @var array
-     */
-    protected $virtualColumns = array();
-
-    /**
-     * Empty constructor (this allows people with their own BaseObject implementation to use its constructor)
-     */
-    public function __construct()
-    {
-    }
 
     /**
      * Returns whether the object has been modified.
@@ -141,82 +72,6 @@ abstract class BaseObject
     }
 
     /**
-     * Code to be run before persisting the object
-     * @param  ConnectionInterface $con
-     * @return boolean
-     */
-    public function preSave(ConnectionInterface $con = null)
-    {
-        return true;
-    }
-
-    /**
-     * Code to be run after persisting the object
-     * @param ConnectionInterface $con
-     */
-    public function postSave(ConnectionInterface $con = null)
-    {
-
-    }
-
-    /**
-     * Code to be run before inserting to database
-     * @param  ConnectionInterface $con
-     * @return boolean
-     */
-    public function preInsert(ConnectionInterface $con = null)
-    {
-        return true;
-    }
-
-    /**
-     * Code to be run after inserting to database
-     * @param ConnectionInterface $con
-     */
-    public function postInsert(ConnectionInterface $con = null)
-    {
-
-    }
-
-    /**
-     * Code to be run before updating the object in database
-     * @param  ConnectionInterface $con
-     * @return boolean
-     */
-    public function preUpdate(ConnectionInterface $con = null)
-    {
-        return true;
-    }
-
-    /**
-     * Code to be run after updating the object in database
-     * @param ConnectionInterface $con
-     */
-    public function postUpdate(ConnectionInterface $con = null)
-    {
-
-    }
-
-    /**
-     * Code to be run before deleting the object in database
-     * @param  ConnectionInterface $con
-     * @return boolean
-     */
-    public function preDelete(ConnectionInterface $con = null)
-    {
-        return true;
-    }
-
-    /**
-     * Code to be run after deleting the object in database
-     * @param ConnectionInterface $con
-     */
-    public function postDelete(ConnectionInterface $con = null)
-    {
-
-    }
-
-    /**
      * Sets the modified state for the object to be false.
      * @param  string $col If supplied, only the specified column is reset.
      * @return void
@@ -233,9 +88,9 @@ abstract class BaseObject
     }
 
     /**
-     * Compares this with another <code>BaseObject</code> instance.  If
-     * <code>obj</code> is an instance of <code>BaseObject</code>, delegates to
-     * <code>equals(BaseObject)</code>.  Otherwise, returns <code>false</code>.
+     * Compares this with another <code><?php echo $className ?></code> instance.  If
+     * <code>obj</code> is an instance of <code><?php echo $className ?></code>, delegates to
+     * <code>equals(<?php echo $className ?>)</code>.  Otherwise, returns <code>false</code>.
      *
      * @param      obj The object to compare to.
      * @return Whether equal to the object specified.
@@ -317,7 +172,7 @@ abstract class BaseObject
      * @param string $name  The virtual column name
      * @param mixed  $value The value to give to the virtual column
      *
-     * @return BaseObject The current object, for fluid interface
+     * @return <?php echo $className ?> The current object, for fluid interface
      */
     public function setVirtualColumn($name, $value)
     {
@@ -349,7 +204,7 @@ abstract class BaseObject
      *                       or a format name ('XML', 'YAML', 'JSON', 'CSV')
      * @param string $data The source data to import from
      *
-     * @return BaseObject The current object, for fluid interface
+     * @return <?php echo $className ?> The current object, for fluid interface
      */
     public function importFrom($parser, $data)
     {
@@ -391,45 +246,3 @@ abstract class BaseObject
 
         return array_keys(get_object_vars($this));
     }
-
-    /**
-     * Catches calls to undefined methods.
-     *
-     * Provides magic import/export method support (fromXML()/toXML(), fromYAML()/toYAML(), etc.).
-     * Allows to define default __call() behavior if you use a custom BaseObject
-     *
-     * @param string $name
-     * @param mixed  $params
-     *
-     * @return array|string
-     */
-    public function __call($name, $params)
-    {
-        if (0 === strpos($name, 'get')) {
-            $virtualColumn = substr($name, 3);
-            if ($this->hasVirtualColumn($virtualColumn)) {
-                return $this->getVirtualColumn($virtualColumn);
-            }
-
-            $virtualColumn = lcfirst($virtualColumn);
-            if ($this->hasVirtualColumn($virtualColumn)) {
-                return $this->getVirtualColumn($virtualColumn);
-            }
-        }
-
-        if (0 === strpos($name, 'from')) {
-            $format = substr($name, 4);
-
-            return $this->importFrom($format, reset($params));
-        }
-
-        if (0 === strpos($name, 'to')) {
-            $format = substr($name, 2);
-            $includeLazyLoadColumns = isset($params[0]) ? $params[0] : true;
-
-            return $this->exportTo($format, $includeLazyLoadColumns);
-        }
-
-        throw new BadMethodCallException(sprintf('Call to undefined method: %s.', $name));
-    }
-}

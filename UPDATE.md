@@ -132,3 +132,13 @@ After:
 ## `Propel\Generator\Model\XmlElement` class has been renamed to `Propel\Generator\Model\MappingModel`.
 
 ## `Propel\Generator\Model\XmlElement::loadFromXml` method has been renamed to `Propel\Generator\Model\MappingModel::loadMapping`.
+
+## `Propel\Runtime\Om\BaseObject` class has been removed.
+
+All base object methods have been merged in generated Base Object classes.
+This could break, behaviors that call `parent` methods
+
+## `Propel\Runtime\Om\Persistent` Interface replaced by `Propel\Runtime\Om\ActiveRecordInterface`
+
+All methods from `Propel\Runtime\Om\Persistent` Interface have been removed
+All Base Object classes now implements `Propel\Runtime\Om\ActiveRecordInterface` this could be use to identify a Propel Object 

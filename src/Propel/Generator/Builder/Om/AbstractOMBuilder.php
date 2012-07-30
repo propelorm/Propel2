@@ -11,6 +11,7 @@
 namespace Propel\Generator\Builder\Om;
 
 use Propel\Generator\Builder\DataModelBuilder;
+use Propel\Generator\Builder\Util\PropelTemplate;
 use Propel\Generator\Exception\InvalidArgumentException;
 use Propel\Generator\Exception\LogicException;
 use Propel\Generator\Exception\RuntimeException;
@@ -745,5 +746,35 @@ abstract class AbstractOMBuilder extends DataModelBuilder
                 return $modifier->$contentName($this);
             }
         }
+    }
+
+    /**
+     * Use Propel simple templating system to render a PHP file using variables
+     * passed as arguments. The template file name is relative to the behavior's
+     * directory name.
+     *
+     * @param  string $filename
+     * @param  array  $vars
+     * @param  string $templateDir
+     * @return string
+     */
+    public function renderTemplate($filename, $vars = array(), $templateDir = '/templates/')
+    {
+        $filePath = __DIR__ . $templateDir . $filename;
+        if (!file_exists($filePath)) {
+            // try with '.php' at the end
+            $filePath = $filePath . '.php';
+            if (!file_exists($filePath)) {
+                throw new \InvalidArgumentException(sprintf('Template "%s" not found in "%s" directory',
+                        $filename,
+                        __DIR__ . $templateDir
+                ));
+            }
+        }
+        $template = new PropelTemplate();
+        $template->setTemplateFile($filePath);
+        $vars = array_merge($vars, array('behavior' => $this));
+
+        return $template->render($vars);
     }
 }

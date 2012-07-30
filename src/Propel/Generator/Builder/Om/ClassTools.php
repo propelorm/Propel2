@@ -97,31 +97,22 @@ class ClassTools
 
     /**
      * Gets the baseClass path if specified for table/db.
-     * If not, will return 'propel.om.BaseObject'
+     *
      * @return string
      */
     public static function getBaseClass(Table $table)
     {
-        if (null === $class = $table->getBaseClass()) {
-            $class = 'propel.om.BaseObject';
-        }
-
-        return $class;
+        return $table->getBaseClass();
     }
 
     /**
      * Gets the interface path if specified for table.
-     * If not, will return 'propel.om.Persistent'.
+     *
      * @return string
      */
     public static function getInterface(Table $table)
     {
-        $interface = $table->getInterface();
-        if (null === $interface && !$table->isReadOnly()) {
-            $interface = 'propel.om.Persistent';
-        }
-
-        return $interface;
+        return $table->getInterface();
     }
 
     /**
