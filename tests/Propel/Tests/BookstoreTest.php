@@ -10,7 +10,7 @@
 
 namespace Propel\Tests;
 
-use Propel\Runtime\Query\Criteria;
+use Propel\Runtime\ActiveQuery\Criteria;
 
 use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
 

@@ -15,7 +15,7 @@ use Propel\Tests\Helpers\Bookstore\Behavior\BookstoreSortableTestBase;
 use Propel\Tests\Bookstore\Behavior\Table11;
 use Propel\Tests\Bookstore\Behavior\Table11Peer;
 
-use Propel\Runtime\Query\Criteria;
+use Propel\Runtime\ActiveQuery\Criteria;
 
 /**
  * Tests for SortableBehavior class

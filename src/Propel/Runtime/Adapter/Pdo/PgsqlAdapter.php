@@ -14,7 +14,7 @@ use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\InvalidArgumentException;
 use Propel\Runtime\Propel;
-use Propel\Runtime\Query\Criteria;
+use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Util\BasePeer;
 
 /**
@@ -144,7 +144,7 @@ class PgsqlAdapter extends PdoAdapter implements AdapterInterface
     /**
      * @see PdoAdapter::getDeleteFromClause()
      *
-     * @param Propel\Runtime\Query\Criteria $criteria
+     * @param Propel\Runtime\ActiveQuery\Criteria $criteria
      * @param string                        $tableName
      *
      * @return string

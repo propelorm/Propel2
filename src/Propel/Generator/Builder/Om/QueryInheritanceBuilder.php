@@ -163,7 +163,7 @@ class "  .$this->getUnqualifiedClassName() . " extends " . $baseClassName . " {
         $this->declareClassFromBuilder($this->getStubPeerBuilder());
         $this->declareClasses(
             '\Propel\Runtime\Connection\ConnectionInterface',
-            '\Propel\Runtime\Query\Criteria'
+            '\Propel\Runtime\ActiveQuery\Criteria'
         );
         $this->addFactory($script);
         $this->addPreSelect($script);

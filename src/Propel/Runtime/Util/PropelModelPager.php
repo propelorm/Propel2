@@ -10,7 +10,7 @@
 
 namespace Propel\Runtime\Util;
 
-use Propel\Runtime\Query\ModelCriteria;
+use Propel\Runtime\ActiveQuery\ModelCriteria;
 
 /**
  * Implements a pager based on a ModelCriteria

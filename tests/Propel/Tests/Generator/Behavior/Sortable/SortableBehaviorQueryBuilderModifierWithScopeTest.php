@@ -16,7 +16,7 @@ use Propel\Tests\Bookstore\Behavior\Table12;
 use Propel\Tests\Bookstore\Behavior\Table12Peer;
 use Propel\Tests\Bookstore\Behavior\Table12Query;
 
-use Propel\Runtime\Query\Criteria;
+use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Collection\ObjectCollection;
 
 /**

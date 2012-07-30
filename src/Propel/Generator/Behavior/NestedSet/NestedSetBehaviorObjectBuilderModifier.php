@@ -232,7 +232,7 @@ if (\$this->isInTree()) {
         $this->addDeleteDescendants($script);
 
         $this->builder->declareClass(
-            '\Propel\Runtime\Om\NestedSetRecursiveIterator'
+            '\Propel\Runtime\ActiveRecord\NestedSetRecursiveIterator'
         );
         $this->addGetIterator($script);
 

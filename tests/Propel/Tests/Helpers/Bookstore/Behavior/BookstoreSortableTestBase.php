@@ -16,7 +16,7 @@ use Propel\Tests\Bookstore\Behavior\Table11Peer;
 use Propel\Tests\Bookstore\Behavior\Table12;
 use Propel\Tests\Bookstore\Behavior\Table12Peer;
 
-use Propel\Runtime\Query\Criteria;
+use Propel\Runtime\ActiveQuery\Criteria;
 
 abstract class BookstoreSortableTestBase extends BookstoreTestBase
 {

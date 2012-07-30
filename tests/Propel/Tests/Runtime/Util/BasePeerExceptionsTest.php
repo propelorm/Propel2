@@ -15,7 +15,7 @@ use Propel\Tests\Bookstore\BookPeer;
 
 use Propel\Runtime\Propel;
 use Propel\Runtime\Exception\RuntimeException;
-use Propel\Runtime\Query\Criteria;
+use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Util\BasePeer;
 
 /**

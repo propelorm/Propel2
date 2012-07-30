@@ -19,7 +19,7 @@ use Propel\Tests\Bookstore\BookPeer;
 use Propel\Runtime\Propel;
 use Propel\Runtime\Connection\Exception\RollbackException;
 use Propel\Runtime\Connection\PropelPDO;
-use Propel\Runtime\Query\Criteria;
+use Propel\Runtime\ActiveQuery\Criteria;
 
 use \PDO;
 use \PDOException;

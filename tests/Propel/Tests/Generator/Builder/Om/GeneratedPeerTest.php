@@ -18,7 +18,7 @@ use Propel\Tests\Bookstore\EssayPeer;
 use Propel\Tests\Bookstore\MediaPeer;
 use Propel\Tests\Bookstore\PublisherPeer;
 
-use Propel\Runtime\Query\Criteria;
+use Propel\Runtime\ActiveQuery\Criteria;
 
 /**
  * Tests the generated Peer classes.
