@@ -21,7 +21,7 @@ use Propel\Tests\Bookstore\Behavior\Table10;
 use Propel\Runtime\Propel;
 use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Exception\PropelException;
-use Propel\Runtime\Query\Criteria;
+use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveRecord\NestedSetRecursiveIterator;
 
 /**

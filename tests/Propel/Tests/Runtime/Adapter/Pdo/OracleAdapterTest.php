@@ -12,7 +12,7 @@ namespace Propel\Tests\Runtime\Adapter\Pdo;
 
 use Propel\Runtime\Propel;
 use Propel\Runtime\Adapter\Pdo\OracleAdapter;
-use Propel\Runtime\Query\Criteria;
+use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Util\BasePeer;
 
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;

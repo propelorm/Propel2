@@ -11,7 +11,7 @@
 namespace Propel\Tests\Runtime\Adapter;
 
 use Propel\Runtime\Propel;
-use Propel\Runtime\Query\Criteria;
+use Propel\Runtime\ActiveQuery\Criteria;
 
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 use Propel\Tests\Bookstore\BookPeer;

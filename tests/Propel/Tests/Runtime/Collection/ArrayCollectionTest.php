@@ -21,8 +21,8 @@ use Propel\Tests\Bookstore\ContestView;
 use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Collection\ArrayCollection;
 use Propel\Runtime\Exception\PropelException;
-use Propel\Runtime\Query\ModelCriteria;
-use Propel\Runtime\Query\PropelQuery;
+use Propel\Runtime\ActiveQuery\ModelCriteria;
+use Propel\Runtime\ActiveQuery\PropelQuery;
 use Propel\Runtime\Util\BasePeer;
 
 /**

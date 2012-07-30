@@ -16,7 +16,7 @@ use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
 
 use Propel\Runtime\Formatter\SimpleArrayFormatter;
 use Propel\Runtime\Propel;
-use Propel\Runtime\Query\ModelCriteria;
+use Propel\Runtime\ActiveQuery\ModelCriteria;
 
 class SimpleArrayFormatterTest extends BookstoreEmptyTestBase
 {

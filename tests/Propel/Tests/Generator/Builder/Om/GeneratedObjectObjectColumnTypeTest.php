@@ -13,7 +13,7 @@ namespace Propel\Tests\Generator\Builder\Om;
 use Propel\Generator\Util\QuickBuilder;
 
 use Propel\Runtime\Propel;
-use Propel\Runtime\Query\ModelCriteria;
+use Propel\Runtime\ActiveQuery\ModelCriteria;
 
 /**
  * Tests the generated objects for object column types accessor & mutator

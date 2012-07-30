@@ -14,8 +14,8 @@ use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
 use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
 
 use Propel\Runtime\Propel;
-use Propel\Runtime\Query\ModelCriteria;
-use Propel\Runtime\Query\PropelQuery;
+use Propel\Runtime\ActiveQuery\ModelCriteria;
+use Propel\Runtime\ActiveQuery\PropelQuery;
 
 /**
  * Test class for OnDemandIterator.

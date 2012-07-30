@@ -20,7 +20,7 @@ use Propel\Tests\Bookstore\BookstoreManager;
 
 use Propel\Runtime\Propel;
 use Propel\Runtime\Formatter\ObjectFormatter;
-use Propel\Runtime\Query\ModelCriteria;
+use Propel\Runtime\ActiveQuery\ModelCriteria;
 
 /**
  * Test class for ObjectFormatter.

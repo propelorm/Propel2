@@ -32,8 +32,8 @@ use Propel\Tests\Bookstore\Review;
 use Propel\Tests\Bookstore\ReviewPeer;
 
 use Propel\Runtime\Propel;
-use Propel\Runtime\Query\Criteria;
-use Propel\Runtime\Query\ModelCriteria;
+use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\ActiveQuery\ModelCriteria;
 
 /**
  * Test class for ObjectFormatter when Criteria uses with().

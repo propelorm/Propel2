@@ -30,7 +30,7 @@ use Propel\Tests\Bookstore\Review;
 use Propel\Tests\Bookstore\ReviewPeer;
 
 use Propel\Runtime\Exception\PropelException;
-use Propel\Runtime\Query\Criteria;
+use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Util\BasePeer;
 
 /**

@@ -17,7 +17,7 @@ use Propel\Tests\Bookstore\Behavior\Table10;
 use Propel\Tests\Bookstore\Behavior\Table10Peer;
 use Propel\Tests\Bookstore\Behavior\Table10Query;
 
-use Propel\Runtime\Query\Criteria;
+use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Exception\PropelException;
 
 /**
