@@ -1866,20 +1866,17 @@ class ModelCriteria extends Criteria implements \IteratorAggregate
             if (substr_count($clause, '?') > 1) {
                 return new SeveralModelCriterion($this, $clause, $colMap, $value, $this->currentAlias);
             }
-
             return new BasicModelCriterion($this, $clause, $colMap, $value, $this->currentAlias);
-        } else {
-            // no column match in clause, must be an expression like '1=1'
-            if (false !== strpos($clause, '?')) {
-                if (null === $bindingType) {
-                    throw new PropelException(sprintf('Cannot determine the column to bind to the parameter in clause "%s".', $clause));
-                }
-
-                return new RawCriterion($this, $clause, $value, $bindingType);
-            }
-
-            return new CustomCriterion($this, null, $clause);
         }
+        // no column match in clause, must be an expression like '1=1'
+        if (false !== strpos($clause, '?')) {
+            if (null === $bindingType) {
+                throw new PropelException(sprintf('Cannot determine the column to bind to the parameter in clause "%s".', $clause));
+            }
+            return new RawCriterion($this, $clause, $value, $bindingType);
+        }
+
+        return new CustomCriterion($this, null, $clause);
     }
 
     /**
