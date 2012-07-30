@@ -9,7 +9,6 @@
         <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
         <column name="title" type="VARCHAR" size="100" primaryString="true" />
         <behavior name="\Propel\Tests\Helpers\Bookstore\Behavior\Testallhooksbehavior" />
-        <behavior name="alternative_coding_standards" />
     </table>
 
 </database>
