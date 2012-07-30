@@ -8,14 +8,13 @@
  * @license MIT License
  */
 
-namespace Propel\Runtime\Om;
+namespace Propel\Runtime\ActiveRecord;
 
 /**
- * This ActiveRecord interface help to find Propel Object
+ * This ActiveRecord interface helps to find Propel Object
  *
  * @author jaugustin
  */
 interface ActiveRecordInterface
 {
-
 }

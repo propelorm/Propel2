@@ -8,7 +8,7 @@
  * @license MIT License
  */
 
-namespace Propel\Runtime\Om;
+namespace Propel\Runtime\ActiveRecord;
 
 /**
  * Pre-order node iterator for Node objects.

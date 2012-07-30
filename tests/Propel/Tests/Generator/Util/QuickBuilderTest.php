@@ -12,7 +12,7 @@ use Propel\Generator\Platform\MysqlPlatform;
 use Propel\Generator\Platform\SqlitePlatform;
 use Propel\Generator\Util\QuickBuilder;
 
-use Propel\Runtime\Om\ActiveRecordInterface;
+use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\Propel;
 
 use MyNameSpace\QuickBuildFoo1;
