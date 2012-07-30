@@ -18,7 +18,7 @@ use Propel\Runtime\Connection\StatementInterface;
 use Propel\Runtime\Exception\InvalidArgumentException;
 use Propel\Runtime\Map\ColumnMap;
 use Propel\Runtime\Map\DatabaseMap;
-use Propel\Runtime\Query\Criteria;
+use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Util\PropelDateTime;
 use Propel\Runtime\Util\PropelColumnTypes;
 
@@ -324,7 +324,7 @@ abstract class PdoAdapter
      *
      * @param string                         $sql    The sql statement
      * @param array                          $params array('column' => ..., 'table' => ..., 'value' => ...)
-     * @param Propel\Runtime\Query\Criteria  $values
+     * @param Propel\Runtime\ActiveQuery\Criteria  $values
      * @param Propel\Runtime\Map\DatabaseMap $dbMap
      */
     public function cleanupSQL(&$sql, array &$params, Criteria $values, DatabaseMap $dbMap)
@@ -334,7 +334,7 @@ abstract class PdoAdapter
     /**
      * Returns the "DELETE FROM <table> [AS <alias>]" part of DELETE query.
      *
-     * @param Propel\Runtime\Query\Criteria $criteria
+     * @param Propel\Runtime\ActiveQuery\Criteria $criteria
      * @param string                        $tableName
      *
      * @return string
@@ -366,7 +366,7 @@ abstract class PdoAdapter
      * taking into account select columns and 'as' columns (i.e. columns aliases)
      * Move from BasePeer to PdoAdapter and turn from static to non static
      *
-     * @param Propel\Runtime\Query\Criteria $criteria
+     * @param Propel\Runtime\ActiveQuery\Criteria $criteria
      * @param array                         $fromClause
      * @param boolean                       $aliasAll
      *
@@ -441,8 +441,8 @@ abstract class PdoAdapter
      *
      * @see http://propel.phpdb.org/trac/ticket/795
      *
-     * @param  Propel\Runtime\Query\Criteria $criteria
-     * @return Propel\Runtime\Query\Criteria The input, with Select columns replaced by aliases
+     * @param  Propel\Runtime\ActiveQuery\Criteria $criteria
+     * @return Propel\Runtime\ActiveQuery\Criteria The input, with Select columns replaced by aliases
      */
     public function turnSelectColumnsToAliases(Criteria $criteria)
     {

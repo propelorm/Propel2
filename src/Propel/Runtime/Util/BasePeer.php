@@ -13,7 +13,7 @@ namespace Propel\Runtime\Util;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\RuntimeException;
 use Propel\Runtime\Propel;
-use Propel\Runtime\Query\Criteria;
+use Propel\Runtime\ActiveQuery\Criteria;
 
 /**
  * This is a utility class for all generated Peer classes in the system.

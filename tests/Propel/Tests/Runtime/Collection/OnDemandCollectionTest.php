@@ -16,8 +16,8 @@ use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
 use Propel\Runtime\Propel;
 use Propel\Runtime\Collection\OnDemandCollection;
 use Propel\Runtime\Exception\PropelException;
-use Propel\Runtime\Query\ModelCriteria;
-use Propel\Runtime\Query\PropelQuery;
+use Propel\Runtime\ActiveQuery\ModelCriteria;
+use Propel\Runtime\ActiveQuery\PropelQuery;
 
 /**
  * Test class for OnDemandCollection.

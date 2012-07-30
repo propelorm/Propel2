@@ -19,7 +19,7 @@ use Propel\Tests\Bookstore\BookPeer;
 use Propel\Runtime\Propel;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Formatter\StatementFormatter;
-use Propel\Runtime\Query\ModelCriteria;
+use Propel\Runtime\ActiveQuery\ModelCriteria;
 
 use \PDO;
 use \PDOStatement;

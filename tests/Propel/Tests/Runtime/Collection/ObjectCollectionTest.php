@@ -20,7 +20,7 @@ use Propel\Tests\Bookstore\ContestView;
 
 use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Formatter\ObjectFormatter;
-use Propel\Runtime\Query\ModelCriteria;
+use Propel\Runtime\ActiveQuery\ModelCriteria;
 
 /**
  * Test class for ObjectCollection.

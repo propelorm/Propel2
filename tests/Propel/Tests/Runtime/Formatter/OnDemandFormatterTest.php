@@ -21,7 +21,7 @@ use Propel\Runtime\Collection\Collection;
 use Propel\Runtime\Collection\OnDemandCollection;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Formatter\OnDemandFormatter;
-use Propel\Runtime\Query\ModelCriteria;
+use Propel\Runtime\ActiveQuery\ModelCriteria;
 
 /**
  * Test class for OnDemandFormatter.
