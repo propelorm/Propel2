@@ -174,4 +174,3 @@ class QueryBuilderInheritanceTest extends BookstoreTestBase
         Propel::enableInstancePooling();
     }
 }
-

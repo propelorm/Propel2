@@ -322,10 +322,10 @@ abstract class PdoAdapter
     /**
      * Allows manipulation of the query string before StatementPdo is instantiated.
      *
-     * @param string                         $sql    The sql statement
-     * @param array                          $params array('column' => ..., 'table' => ..., 'value' => ...)
-     * @param Propel\Runtime\ActiveQuery\Criteria  $values
-     * @param Propel\Runtime\Map\DatabaseMap $dbMap
+     * @param string                              $sql    The sql statement
+     * @param array                               $params array('column' => ..., 'table' => ..., 'value' => ...)
+     * @param Propel\Runtime\ActiveQuery\Criteria $values
+     * @param Propel\Runtime\Map\DatabaseMap      $dbMap
      */
     public function cleanupSQL(&$sql, array &$params, Criteria $values, DatabaseMap $dbMap)
     {
@@ -335,7 +335,7 @@ abstract class PdoAdapter
      * Returns the "DELETE FROM <table> [AS <alias>]" part of DELETE query.
      *
      * @param Propel\Runtime\ActiveQuery\Criteria $criteria
-     * @param string                        $tableName
+     * @param string                              $tableName
      *
      * @return string
      */
@@ -367,8 +367,8 @@ abstract class PdoAdapter
      * Move from BasePeer to PdoAdapter and turn from static to non static
      *
      * @param Propel\Runtime\ActiveQuery\Criteria $criteria
-     * @param array                         $fromClause
-     * @param boolean                       $aliasAll
+     * @param array                               $fromClause
+     * @param boolean                             $aliasAll
      *
      * @return string
      */
