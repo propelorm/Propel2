@@ -8,7 +8,7 @@
  * @license MIT License
  */
 
-namespace Propel\Runtime\Query;
+namespace Propel\Runtime\ActiveQuery;
 
 use Propel\Runtime\Map\RelationMap;
 use Propel\Runtime\Map\TableMap;

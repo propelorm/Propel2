@@ -164,9 +164,9 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
         // namespaces
         $this->declareClasses(
             '\Propel\Runtime\Propel',
-            '\Propel\Runtime\Query\ModelCriteria',
-            '\Propel\Runtime\Query\Criteria',
-            '\Propel\Runtime\Query\ModelJoin',
+            '\Propel\Runtime\ActiveQuery\ModelCriteria',
+            '\Propel\Runtime\ActiveQuery\Criteria',
+            '\Propel\Runtime\ActiveQuery\ModelJoin',
             '\Exception'
         );
         $this->declareClassFromBuilder($this->getStubQueryBuilder(), 'Child');

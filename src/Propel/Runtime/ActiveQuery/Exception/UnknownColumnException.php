@@ -8,13 +8,13 @@
  * @license MIT License
  */
 
-namespace Propel\Runtime\Query\Exception;
+namespace Propel\Runtime\ActiveQuery\Exception;
 
 use Propel\Runtime\Exception\RuntimeException;
 
 /**
  * @author William Durand <william.durand1@gmail.com>
  */
-class UnknownModelException extends RuntimeException
+class UnknownColumnException extends RuntimeException
 {
 }

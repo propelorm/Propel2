@@ -8,7 +8,7 @@
  * @license MIT License
  */
 
-namespace Propel\Runtime\Query;
+namespace Propel\Runtime\ActiveQuery;
 
 use Propel\Runtime\Propel;
 use Propel\Runtime\Collection\ObjectCollection;
@@ -25,18 +25,18 @@ use Propel\Runtime\Map\RelationMap;
 use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Util\BasePeer;
 use Propel\Runtime\Util\PropelModelPager;
-use Propel\Runtime\Query\Criteria;
-use Propel\Runtime\Query\Criterion\AbstractCriterion;
-use Propel\Runtime\Query\Criterion\InModelCriterion;
-use Propel\Runtime\Query\Criterion\BasicModelCriterion;
-use Propel\Runtime\Query\Criterion\CustomCriterion;
-use Propel\Runtime\Query\Criterion\LikeModelCriterion;
-use Propel\Runtime\Query\Criterion\RawCriterion;
-use Propel\Runtime\Query\Criterion\RawModelCriterion;
-use Propel\Runtime\Query\Criterion\SeveralModelCriterion;
-use Propel\Runtime\Query\Exception\UnknownColumnException;
-use Propel\Runtime\Query\Exception\UnknownModelException;
-use Propel\Runtime\Query\Exception\UnknownRelationException;
+use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion;
+use Propel\Runtime\ActiveQuery\Criterion\InModelCriterion;
+use Propel\Runtime\ActiveQuery\Criterion\BasicModelCriterion;
+use Propel\Runtime\ActiveQuery\Criterion\CustomCriterion;
+use Propel\Runtime\ActiveQuery\Criterion\LikeModelCriterion;
+use Propel\Runtime\ActiveQuery\Criterion\RawCriterion;
+use Propel\Runtime\ActiveQuery\Criterion\RawModelCriterion;
+use Propel\Runtime\ActiveQuery\Criterion\SeveralModelCriterion;
+use Propel\Runtime\ActiveQuery\Exception\UnknownColumnException;
+use Propel\Runtime\ActiveQuery\Exception\UnknownModelException;
+use Propel\Runtime\ActiveQuery\Exception\UnknownRelationException;
 
 /**
  * This class extends the Criteria by adding runtime introspection abilities

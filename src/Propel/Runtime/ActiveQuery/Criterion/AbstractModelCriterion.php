@@ -8,9 +8,9 @@
  * @license MIT License
  */
 
-namespace Propel\Runtime\Query\Criterion;
+namespace Propel\Runtime\ActiveQuery\Criterion;
 
-use Propel\Runtime\Query\Criteria;
+use Propel\Runtime\ActiveQuery\Criteria;
 
 /**
  * This is an "inner" class that describes an object in the criteria.

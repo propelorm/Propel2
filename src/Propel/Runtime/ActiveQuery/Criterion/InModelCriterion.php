@@ -8,7 +8,7 @@
  * @license MIT License
  */
 
-namespace Propel\Runtime\Query\Criterion;
+namespace Propel\Runtime\ActiveQuery\Criterion;
 
 /**
  * Specialized ModelCriterion used for IN or NOT IN model clauses,

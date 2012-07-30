@@ -8,12 +8,12 @@
  * @license MIT License
  */
 
-namespace Propel\Runtime\Query\Criterion;
+namespace Propel\Runtime\ActiveQuery\Criterion;
 
 use \Exception;
 
 use Propel\Runtime\Propel;
-use Propel\Runtime\Query\Criteria;
+use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Map\ColumnMap;

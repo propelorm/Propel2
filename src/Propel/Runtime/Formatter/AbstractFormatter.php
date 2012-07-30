@@ -13,7 +13,7 @@ namespace Propel\Runtime\Formatter;
 use Propel\Runtime\Propel;
 use Propel\Runtime\Connection\StatementInterface;
 use Propel\Runtime\Exception\PropelException;
-use Propel\Runtime\Query\ModelCriteria;
+use Propel\Runtime\ActiveQuery\ModelCriteria;
 
 /**
  * Abstract class for query formatter

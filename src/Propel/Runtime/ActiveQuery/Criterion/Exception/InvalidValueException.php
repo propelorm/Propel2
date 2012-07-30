@@ -8,7 +8,7 @@
  * @license MIT License
  */
 
-namespace Propel\Runtime\Query\Criterion\Exception;
+namespace Propel\Runtime\ActiveQuery\Criterion\Exception;
 
 use Propel\Runtime\Exception\InvalidArgumentException;
 

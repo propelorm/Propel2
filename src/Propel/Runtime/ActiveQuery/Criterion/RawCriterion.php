@@ -8,10 +8,10 @@
  * @license MIT License
  */
 
-namespace Propel\Runtime\Query\Criterion;
+namespace Propel\Runtime\ActiveQuery\Criterion;
 
-use Propel\Runtime\Query\Criterion\Exception\InvalidClauseException;
-use Propel\Runtime\Query\Criteria;
+use Propel\Runtime\ActiveQuery\Criterion\Exception\InvalidClauseException;
+use Propel\Runtime\ActiveQuery\Criteria;
 
 use \PDO;
 
