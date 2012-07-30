@@ -32,7 +32,7 @@ class MssqlPropelPDO extends PropelPDO
     {
         $return = true;
         $opcount = $this->getNestedTransactionCount();
-        if ( $opcount === 0 ) {
+        if ($opcount === 0) {
             $return = self::exec('BEGIN TRANSACTION');
             if ($this->useDebug) {
                 $this->log('Begin transaction', null, __METHOD__);

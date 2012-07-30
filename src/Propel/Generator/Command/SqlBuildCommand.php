@@ -26,8 +26,8 @@ class SqlBuildCommand extends AbstractCommand
     const DEFAULT_OUTPUT_DIRECTORY   = 'generated-sql';
 
     const DEFAULT_MYSQL_ENGINE       = 'InnoDB';
-    
-    const DEFAULT_DATABASE_ENCODING  = 'UTF-8'; 
+
+    const DEFAULT_DATABASE_ENCODING  = 'UTF-8';
 
     /**
      * {@inheritdoc}

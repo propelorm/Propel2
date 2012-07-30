@@ -48,7 +48,7 @@ class ConnectionManagerSingle implements ConnectionManagerInterface
     {
         return $this->name;
     }
-    
+
     public function getConfiguration()
     {
         return $this->configuration;

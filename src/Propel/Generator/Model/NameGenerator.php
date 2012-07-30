@@ -66,7 +66,7 @@ interface NameGenerator
      * Given a list of <code>String</code> objects, implements an
      * algorithm which produces a name.
      *
-     * @param string[] $inputs Inputs used to generate a name.
+     * @param  string[]        $inputs Inputs used to generate a name.
      * @return string          The generated name.
      * @throws EngineException
      */
