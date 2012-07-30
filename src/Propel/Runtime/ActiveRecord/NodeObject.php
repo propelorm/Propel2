@@ -8,7 +8,7 @@
  * @license MIT License
  */
 
-namespace Propel\Runtime\Om;
+namespace Propel\Runtime\ActiveRecord;
 
 use Propel\Runtime\Connection\ConnectionInterface;
 

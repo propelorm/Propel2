@@ -261,7 +261,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             '\Propel\Runtime\Exception\BadMethodCallException',
             '\Propel\Runtime\Exception\PropelException',
             '\Propel\Runtime\Query\Criteria',
-            '\Propel\Runtime\Om\ActiveRecordInterface',
+            '\Propel\Runtime\ActiveRecord\ActiveRecordInterface',
             '\Propel\Runtime\Parser\AbstractParser',
             '\Propel\Runtime\Propel',
             '\Propel\Runtime\Util\BasePeer'
