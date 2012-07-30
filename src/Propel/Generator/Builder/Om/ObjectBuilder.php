@@ -1200,6 +1200,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         }
 
         $script .= "
+
         return \$this->$clo;";
     }
 
@@ -1494,6 +1495,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     {
         $cfc = $col->getPhpName();
         $script .= "
+
         return \$this;
     } // set$cfc()
 ";

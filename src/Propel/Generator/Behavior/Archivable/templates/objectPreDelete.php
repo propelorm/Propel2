@@ -14,4 +14,4 @@ if ($this->archiveOnDelete) {
     $deleteQuery->setArchiveOnDelete(false);
     $this->archiveOnDelete = true;
 }
-<?php endif; ?>
+<?php endif;

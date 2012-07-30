@@ -69,7 +69,7 @@ interface ConnectionInterface
      *
      * @return bool TRUE if a transaction is currently active, and FALSE if not.
      */
-    function inTransaction();
+    public function inTransaction();
 
     /**
      * Retrieve a database connection attribute.

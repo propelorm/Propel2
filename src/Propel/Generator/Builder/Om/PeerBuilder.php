@@ -299,7 +299,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
     }
 
     /**
-     * @param string $value
+     * @param  string $value
      * @return string
      */
     protected function getEnumValueConstant($value)
@@ -447,7 +447,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      * @param string \$type The type of fieldnames to return:
      *                      One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
      *                      BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
-     * @return array A list of field names
+     * @return array           A list of field names
      * @throws PropelException
      */
     public static function getFieldNames(\$type = BasePeer::TYPE_PHPNAME)
@@ -475,7 +475,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      * @param string \$fromType One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
      *                         BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
      * @param string \$toType   One of the class type constants
-     * @return string translated name of the field.
+     * @return string          translated name of the field.
      * @throws PropelException - if the specified name could not be found in the fieldname mappings.
      */
     public static function translateFieldName(\$name, \$fromType, \$toType)
@@ -757,7 +757,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      *
      * @param Criteria            \$criteria The Criteria object used to build the SELECT statement.
      * @param ConnectionInterface \$con
-     * @return array Array of selected Objects
+     * @return array           Array of selected Objects
      * @throws PropelException Any exceptions caught during processing will be
      *         rethrown wrapped into a PropelException.
      */
@@ -814,7 +814,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
     /**
      * Adds the PHP code to return a instance pool key for the passed-in primary key variable names.
      *
-     * @param array $pkphp An array of PHP var names / method calls representing complete pk.
+     * @param  array  $pkphp An array of PHP var names / method calls representing complete pk.
      * @return string
      */
     public function getInstancePoolKeySnippet($pkphp)
@@ -1359,7 +1359,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      *
      * @param mixed               \$values Criteria or ".$this->getObjectClassName()." object containing data that is used to create the INSERT statement.
      * @param ConnectionInterface \$con the ConnectionInterface connection to use
-     * @return mixed The new primary key.
+     * @return mixed           The new primary key.
      * @throws PropelException Any exceptions caught during processing will be
      *         rethrown wrapped into a PropelException.
      */
@@ -1441,7 +1441,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      *
      * @param mixed               \$values Criteria or ".$this->getObjectClassName()." object containing data that is used to create the UPDATE statement.
      * @param ConnectionInterface \$con The connection to use (specify ConnectionInterface connection object to exert more control over transactions).
-     * @return int The number of affected rows (if supported by underlying database driver).
+     * @return int             The number of affected rows (if supported by underlying database driver).
      * @throws PropelException Any exceptions caught during processing will be
      *         rethrown wrapped into a PropelException.
      */
@@ -2045,7 +2045,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
     /**
      * Get the column offsets of the primary key(s) for specified table.
      *
-     * @param Table $tbl
+     * @param  Table $tbl
      * @return array int[] The column offsets of the primary key(s).
      */
     protected function getPrimaryKeyColOffsets(Table $tbl)
@@ -2063,10 +2063,10 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
     }
 
     /**
-     * @param ForeignKey  $fk
-     * @param Table       $table
-     * @param Table       $joinTable
-     * @param PeerBuilder $joinedTablePeerBuilder
+     * @param  ForeignKey  $fk
+     * @param  Table       $table
+     * @param  Table       $joinTable
+     * @param  PeerBuilder $joinedTablePeerBuilder
      * @return string
      */
     public function addCriteriaJoin($fk, $table, $joinTable, $joinedTablePeerBuilder)
@@ -2140,7 +2140,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      * @param Criteria            \$criteria
      * @param ConnectionInterface \$con
      * @param String              \$joinBehavior the type of joins to use, defaults to $joinBehavior
-     * @return array Array of $className objects.
+     * @return array           Array of $className objects.
      * @throws PropelException Any exceptions caught during processing will be
      *         rethrown wrapped into a PropelException.
      */
@@ -2343,7 +2343,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      * @param Criteria            \$criteria
      * @param ConnectionInterface \$con
      * @param string              \$joinBehavior the type of joins to use, defaults to $joinBehavior
-     * @return array Array of $className objects.
+     * @return array           Array of $className objects.
      * @throws PropelException Any exceptions caught during processing will be
      *         rethrown wrapped into a PropelException.
      */
@@ -2601,7 +2601,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      * @param Criteria            \$criteria
      * @param ConnectionInterface \$con
      * @param string              \$joinBehavior the type of joins to use, defaults to $joinBehavior
-     * @return array Array of ".$this->getObjectClassName()." objects.
+     * @return array           Array of ".$this->getObjectClassName()." objects.
      * @throws PropelException Any exceptions caught during processing will be
      *         rethrown wrapped into a PropelException.
      */

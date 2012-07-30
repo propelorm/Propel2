@@ -89,10 +89,10 @@ class XmlParser extends AbstractParser
     }
 
     /**
-     * @param array $array
+     * @param array       $array
      * @param \DOMElement $rootElement
-     * @param string     $charset
-     * @param boolean    $removeNumbersFromKeys
+     * @param string      $charset
+     * @param boolean     $removeNumbersFromKeys
      *
      * @return \DOMElement
      */

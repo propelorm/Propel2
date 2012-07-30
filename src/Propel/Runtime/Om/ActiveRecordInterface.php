@@ -10,8 +10,6 @@
 
 namespace Propel\Runtime\Om;
 
-use Propel\Runtime\Connection\ConnectionInterface;
-
 /**
  * This ActiveRecord interface help to find Propel Object
  *
