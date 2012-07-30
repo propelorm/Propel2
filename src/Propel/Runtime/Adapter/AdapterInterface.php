@@ -14,7 +14,7 @@ use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\StatementInterface;
 use Propel\Runtime\Map\ColumnMap;
 use Propel\Runtime\Map\DatabaseMap;
-use Propel\Runtime\Query\Criteria;
+use Propel\Runtime\ActiveQuery\Criteria;
 
 /**
  * Interface for adapters.

@@ -8,18 +8,18 @@
  * @license MIT License
  */
 
-namespace Propel\Runtime\Query;
+namespace Propel\Runtime\ActiveQuery;
 
 use Propel\Runtime\Propel;
 use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\Util\BasePeer;
 use Propel\Runtime\Util\PropelConditionalProxy;
-use Propel\Runtime\Query\Criterion\AbstractCriterion;
-use Propel\Runtime\Query\Criterion\BasicCriterion;
-use Propel\Runtime\Query\Criterion\InCriterion;
-use Propel\Runtime\Query\Criterion\CustomCriterion;
-use Propel\Runtime\Query\Criterion\LikeCriterion;
-use Propel\Runtime\Query\Criterion\RawCriterion;
+use Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion;
+use Propel\Runtime\ActiveQuery\Criterion\BasicCriterion;
+use Propel\Runtime\ActiveQuery\Criterion\InCriterion;
+use Propel\Runtime\ActiveQuery\Criterion\CustomCriterion;
+use Propel\Runtime\ActiveQuery\Criterion\LikeCriterion;
+use Propel\Runtime\ActiveQuery\Criterion\RawCriterion;
 
 /**
  * This is a utility class for holding criteria information for a query.

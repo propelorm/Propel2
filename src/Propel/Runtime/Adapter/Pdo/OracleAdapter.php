@@ -16,7 +16,7 @@ use Propel\Runtime\Connection\StatementInterface;
 use Propel\Runtime\Exception\InvalidArgumentException;
 use Propel\Runtime\Map\ColumnMap;
 use Propel\Runtime\Util\BasePeer;
-use Propel\Runtime\Query\Criteria;
+use Propel\Runtime\ActiveQuery\Criteria;
 
 /**
  * Oracle adapter.

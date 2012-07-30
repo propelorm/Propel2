@@ -8,9 +8,9 @@
  * @license MIT License
  */
 
-namespace Propel\Runtime\Query\Criterion;
+namespace Propel\Runtime\ActiveQuery\Criterion;
 
-use Propel\Runtime\Query\Criteria;
+use Propel\Runtime\ActiveQuery\Criteria;
 
 /**
  * Specialized Criterion used for IN expressions, e.g. table.column IN (?, ?) or table.column NOT IN (?, ?)

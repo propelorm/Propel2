@@ -8,9 +8,9 @@
  * @license MIT License
  */
 
-namespace Propel\Runtime\Query;
+namespace Propel\Runtime\ActiveQuery;
 
-use Propel\Runtime\Query\Criterion\AbstractCriterion;
+use Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion;
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Exception\LogicException;
 

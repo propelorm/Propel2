@@ -17,7 +17,7 @@ use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Exception\RuntimeException;
 use Propel\Runtime\Map\RelationMap;
-use Propel\Runtime\Query\PropelQuery;
+use Propel\Runtime\ActiveQuery\PropelQuery;
 use Propel\Runtime\Util\BasePeer;
 
 /**

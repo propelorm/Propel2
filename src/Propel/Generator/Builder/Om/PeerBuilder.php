@@ -144,7 +144,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
             '\Propel\Runtime\Connection\StatementInterface',
             '\Propel\Runtime\Exception\PropelException',
             '\Propel\Runtime\Util\BasePeer',
-            '\Propel\Runtime\Query\Criteria',
+            '\Propel\Runtime\ActiveQuery\Criteria',
             '\PDO'
         );
     }

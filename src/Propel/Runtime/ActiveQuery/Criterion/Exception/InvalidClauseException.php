@@ -8,13 +8,13 @@
  * @license MIT License
  */
 
-namespace Propel\Runtime\Query\Exception;
+namespace Propel\Runtime\ActiveQuery\Criterion\Exception;
 
-use Propel\Runtime\Exception\RuntimeException;
+use Propel\Runtime\Exception\InvalidArgumentException;
 
 /**
- * @author William Durand <william.durand1@gmail.com>
+ * @author François Zaninotto
  */
-class UnknownColumnException extends RuntimeException
+class InvalidClauseException extends InvalidArgumentException
 {
 }
