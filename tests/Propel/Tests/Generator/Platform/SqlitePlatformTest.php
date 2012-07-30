@@ -165,7 +165,7 @@ CREATE TABLE foo
     foo INTEGER NOT NULL,
     bar INTEGER NOT NULL,
     baz VARCHAR(255) NOT NULL,
-    UNIQUE (foo,bar)
+    PRIMARY KEY (foo,bar)
 );
 ";
         $this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
@@ -222,13 +222,21 @@ DROP TABLE IF EXISTS foo;
         $this->assertEquals($expected, $this->getPlatform()->getColumnDDL($column));
     }
 
-    public function testGetPrimaryKeyDDLSimpleKey()
+    public function testGetPrimaryKeyDDLCompositeKeyWithAutoIncrement()
     {
         $table = new Table('foo');
-        $column = new Column('bar');
-        $column->setPrimaryKey(true);
-        $table->addColumn($column);
-        $expected = 'UNIQUE (bar)';
+        $table->setIdMethod(IdMethod::NATIVE);
+
+        $column1 = new Column('bar');
+        $column1->setPrimaryKey(true);
+        $table->addColumn($column1);
+
+        $column2 = new Column('baz');
+        $column2->setPrimaryKey(true);
+        $column2->setAutoIncrement(true);
+        $table->addColumn($column2);
+
+        $expected = 'UNIQUE (bar,baz)';
         $this->assertEquals($expected, $this->getPlatform()->getPrimaryKeyDDL($table));
     }
 
@@ -241,7 +249,7 @@ DROP TABLE IF EXISTS foo;
         $column2 = new Column('bar2');
         $column2->setPrimaryKey(true);
         $table->addColumn($column2);
-        $expected = 'UNIQUE (bar1,bar2)';
+        $expected = 'PRIMARY KEY (bar1,bar2)';
         $this->assertEquals($expected, $this->getPlatform()->getPrimaryKeyDDL($table));
     }
 
