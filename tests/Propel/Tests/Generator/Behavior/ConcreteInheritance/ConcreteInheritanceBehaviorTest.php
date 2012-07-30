@@ -27,7 +27,7 @@ use Propel\Tests\Bookstore\Behavior\ConcreteQuizzQuery;
 
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\RelationMap;
-use Propel\Runtime\Query\Criteria;
+use Propel\Runtime\ActiveQuery\Criteria;
 
 use Propel\Generator\Util\QuickBuilder;
 

@@ -26,7 +26,7 @@ use Propel\Tests\Bookstore\Review;
 use Propel\Tests\Bookstore\ReviewPeer;
 
 use Propel\Runtime\Propel;
-use Propel\Runtime\Query\ModelCriteria;
+use Propel\Runtime\ActiveQuery\ModelCriteria;
 
 /**
  * Test class for ArrayFormatter when Criteria uses with().

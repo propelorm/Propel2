@@ -15,7 +15,7 @@ use Propel\Tests\Helpers\Bookstore\Behavior\BookstoreNestedSetTestBase;
 use Propel\Tests\Bookstore\Behavior\Table9;
 use Propel\Tests\Bookstore\Behavior\Table9Peer;
 
-use Propel\Runtime\Query\Criteria;
+use Propel\Runtime\ActiveQuery\Criteria;
 
 /**
  * Tests for NestedSetBehaviorPeerBuilderModifier class

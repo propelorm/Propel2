@@ -46,7 +46,7 @@ use Propel\Tests\Bookstore\BookstoreSale;
 
 use Propel\Runtime\Propel;
 use Propel\Runtime\Collection\ObjectCollection;
-use Propel\Runtime\Query\Criteria;
+use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Util\BasePeer;
 
 use Propel\Generator\Util\QuickBuilder;

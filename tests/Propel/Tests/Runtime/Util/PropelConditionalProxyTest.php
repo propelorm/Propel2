@@ -13,7 +13,7 @@ namespace Propel\Tests\Runtime\Util;
 use Propel\Tests\Helpers\BaseTestCase;
 
 use Propel\Runtime\Util\PropelConditionalProxy;
-use Propel\Runtime\Query\Criteria;
+use Propel\Runtime\ActiveQuery\Criteria;
 
 /**
  * Test class for PropelConditionalProxy.

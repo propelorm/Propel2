@@ -13,7 +13,7 @@ use Propel\Generator\Util\QuickBuilder;
 use Propel\Tests\Generator\Builder\Om\Fixtures\ComplexColumnTypeEntityWithConstructor;
 
 use Propel\Runtime\Propel;
-use Propel\Runtime\Query\ModelCriteria;
+use Propel\Runtime\ActiveQuery\ModelCriteria;
 use MyNameSpace\ComplexColumnTypeEntity2;
 use MyNameSpace\ComplexColumnTypeEntity2Peer;
 use MyNameSpace\ComplexColumnTypeEntity2Query;

@@ -19,7 +19,7 @@ use Propel\Runtime\Propel;
 use Propel\Runtime\Collection\Collection;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Formatter\ArrayFormatter;
-use Propel\Runtime\Query\ModelCriteria;
+use Propel\Runtime\ActiveQuery\ModelCriteria;
 
 /**
  * Test class for ArrayFormatter.

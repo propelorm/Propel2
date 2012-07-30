@@ -34,7 +34,7 @@ use Propel\Tests\Bookstore\ReaderFavorite;
 use Propel\Tests\Bookstore\ReaderFavoritePeer;
 
 use Propel\Runtime\Propel;
-use Propel\Runtime\Query\Criteria;
+use Propel\Runtime\ActiveQuery\Criteria;
 
 /**
  * Tests the delete methods of the generated Peer classes.

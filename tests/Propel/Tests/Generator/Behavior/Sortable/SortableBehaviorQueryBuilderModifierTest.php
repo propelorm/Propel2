@@ -16,7 +16,7 @@ use Propel\Tests\Bookstore\Behavior\Table11;
 use Propel\Tests\Bookstore\Behavior\Table11Peer;
 use Propel\Tests\Bookstore\Behavior\Table11Query;
 
-use Propel\Runtime\Query\Criteria;
+use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Collection\ObjectCollection;
 
 /**
