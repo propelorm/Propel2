@@ -13,16 +13,15 @@ namespace Propel\Tests\Runtime\ActiveRecord;
 use Propel\Tests\Bookstore\Book;
 
 /**
- * Test class for BaseObject.
+ * Test class for ActiveRecord.
  *
  * @author François Zaninotto
- * @version    $Id: BaseObjectTest.php 1347 2009-12-03 21:06:36Z francois $
  */
-class BaseObjectTest extends \PHPUnit_Framework_TestCase
+class ActiveRecordTest extends \PHPUnit_Framework_TestCase
 {
     public function testGetVirtualColumns()
     {
-        $b = new TestableBaseObject();
+        $b = new TestableActiveRecord();
         $this->assertEquals(array(), $b->getVirtualColumns(), 'getVirtualColumns() returns an empty array for new objects');
         $b->virtualColumns = array('foo' => 'bar');
         $this->assertEquals(array('foo' => 'bar'), $b->getVirtualColumns(), 'getVirtualColumns() returns an associative array of virtual columns');
@@ -30,7 +29,7 @@ class BaseObjectTest extends \PHPUnit_Framework_TestCase
 
     public function testHasVirtualColumn()
     {
-        $b = new TestableBaseObject();
+        $b = new TestableActiveRecord();
         $this->assertFalse($b->hasVirtualColumn('foo'), 'hasVirtualColumn() returns false if the virtual column is not set');
         $b->virtualColumns = array('foo' => 'bar');
         $this->assertTrue($b->hasVirtualColumn('foo'), 'hasVirtualColumn() returns true if the virtual column is set');
@@ -41,20 +40,20 @@ class BaseObjectTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetVirtualColumnWrongKey()
     {
-        $b = new TestableBaseObject();
+        $b = new TestableActiveRecord();
         $b->getVirtualColumn('foo');
     }
 
     public function testGetVirtualColumn()
     {
-        $b = new TestableBaseObject();
+        $b = new TestableActiveRecord();
         $b->virtualColumns = array('foo' => 'bar');
         $this->assertEquals('bar', $b->getVirtualColumn('foo'), 'getVirtualColumn() returns a virtual column value based on its key');
     }
 
     public function testSetVirtualColumn()
     {
-        $b = new TestableBaseObject();
+        $b = new TestableActiveRecord();
         $b->setVirtualColumn('foo', 'bar');
         $this->assertEquals('bar', $b->getVirtualColumn('foo'), 'setVirtualColumn() sets a virtual column value based on its key');
         $b->setVirtualColumn('foo', 'baz');
@@ -63,7 +62,7 @@ class BaseObjectTest extends \PHPUnit_Framework_TestCase
     }
 }
 
-class TestableBaseObject extends Book
+class TestableActiveRecord extends Book
 {
     public $virtualColumns = array();
 }
