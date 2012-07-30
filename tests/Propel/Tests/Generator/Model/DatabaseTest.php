@@ -272,7 +272,6 @@ class DatabaseTest extends ModelTestCase
     {
         return array(
             array('aggregate_column', 'AggregateColumn'),
-            array('alternative_coding_standards', 'AlternativeCodingStandards'),
             array('auto_add_pk', 'AutoAddPk'),
             array('concrete_inheritance', 'ConcreteInheritance'),
             array('delegate', 'Delegate'),
