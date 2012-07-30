@@ -76,7 +76,7 @@ class PropelConditionalProxyTest extends BaseTestCase
 
 class TestPropelConditionalProxy extends PropelConditionalProxy
 {
-  function _if($cond)
+  public function _if($cond)
   {
     return new TestPropelConditionalProxy($this->criteria, $cond, $this);
   }

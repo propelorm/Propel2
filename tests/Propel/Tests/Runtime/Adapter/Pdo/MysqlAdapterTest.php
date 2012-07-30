@@ -37,7 +37,8 @@ class MysqlAdapterTest extends BookstoreTestBase
         );
     }
 
-    protected function setUp() {
+    protected function setUp()
+    {
         parent::setUp();
         if (version_compare(PHP_VERSION, '5.3.6', '<')) {
             $this->setExpectedException('Propel\Runtime\Exception\PropelException');

@@ -46,7 +46,7 @@ abstract class BookstoreTestBase extends \PHPUnit_Framework_TestCase
             $propelConfig = Propel::getServiceContainer()->getConnectionManager(BookPeer::DATABASE_NAME)->getConfiguration();
             if (('mysql' == $adapterClass) && (isset($propelConfig['settings']['charset']))) {
                 die('Connection option "charset" cannot be used for MySQL connections in PHP versions older than 5.3.6.
-Please refer to http://www.propelorm.org/ticket/1360 for instructions and details 
+Please refer to http://www.propelorm.org/ticket/1360 for instructions and details
 about the implications of using a SET NAMES statement in the "queries" setting.');
             }
         }
