@@ -16,12 +16,11 @@ use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\Publisher;
 
 /**
- * Test class for BaseObject.
+ * Test class for ActiveRecord.
  *
  * @author François Zaninotto
- * @version    $Id: BaseObjectTest.php 1347 2009-12-03 21:06:36Z francois $
  */
-class BaseObjectConvertTest extends BookstoreTestBase
+class ActiveRecordConvertTest extends BookstoreTestBase
 {
     protected function setUp()
     {

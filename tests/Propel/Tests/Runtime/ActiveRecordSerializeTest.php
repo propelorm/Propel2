@@ -17,12 +17,11 @@ use Propel\Tests\Bookstore\BookPeer;
 use Propel\Tests\Bookstore\BookQuery;
 
 /**
- * Test class for BaseObject serialization.
+ * Test class for ActiveRecord serialization.
  *
  * @author Francois Zaninotto
- * @version    $Id: CollectionTest.php 1348 2009-12-03 21:49:00Z francois $
  */
-class BaseObjectSerializeTest extends BookstoreTestBase
+class ActiveRecordSerializeTest extends BookstoreTestBase
 {
     public function testSerializeEmptyObject()
     {
