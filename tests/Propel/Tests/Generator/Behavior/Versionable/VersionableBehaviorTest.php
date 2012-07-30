@@ -186,7 +186,7 @@ CREATE TABLE versionable_behavior_test_0_version
     foreign_id INTEGER,
     version INTEGER DEFAULT 0 NOT NULL,
     foreign_id_version INTEGER DEFAULT 0,
-    UNIQUE (id,version)
+    PRIMARY KEY (id,version)
 );
 
 -- SQLite does not support foreign keys; this is just for reference
@@ -232,7 +232,7 @@ CREATE TABLE versionable_behavior_test_1_version
     version INTEGER DEFAULT 0 NOT NULL,
     versionable_behavior_test_0_ids MEDIUMTEXT,
     versionable_behavior_test_0_versions MEDIUMTEXT,
-    UNIQUE (id,version)
+    PRIMARY KEY (id,version)
 );
 
 -- SQLite does not support foreign keys; this is just for reference
@@ -260,7 +260,7 @@ CREATE TABLE versionable_behavior_test_0_version
     id INTEGER NOT NULL,
     bar INTEGER,
     version INTEGER DEFAULT 0 NOT NULL,
-    UNIQUE (id,version)
+    PRIMARY KEY (id,version)
 );
 
 -- SQLite does not support foreign keys; this is just for reference
@@ -296,7 +296,7 @@ CREATE TABLE foo_ver
     id INTEGER NOT NULL,
     bar INTEGER,
     version INTEGER DEFAULT 0 NOT NULL,
-    UNIQUE (id,version)
+    PRIMARY KEY (id,version)
 );
 
 -- SQLite does not support foreign keys; this is just for reference
@@ -421,7 +421,7 @@ CREATE TABLE versionable_behavior_test_0_version
     version_created_at TIMESTAMP,
     version_created_by VARCHAR(100),
     version_comment VARCHAR(255),
-    UNIQUE (id,version)
+    PRIMARY KEY (id,version)
 );
 
 -- SQLite does not support foreign keys; this is just for reference
@@ -453,7 +453,7 @@ CREATE TABLE versionable_behavior_test_0_version
     id INTEGER NOT NULL,
     bar INTEGER,
     version INTEGER DEFAULT 0 NOT NULL,
-    UNIQUE (id,version)
+    PRIMARY KEY (id,version)
 );
 
 -- SQLite does not support foreign keys; this is just for reference
