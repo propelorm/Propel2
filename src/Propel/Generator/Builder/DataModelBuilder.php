@@ -50,7 +50,7 @@ abstract class DataModelBuilder
     private $generatorConfig;
 
     /**
-     * An array of warning messages that can be retrieved for display (e.g. as part of phing build process).
+     * An array of warning messages that can be retrieved for display.
      * @var array string[]
      */
     private $warnings = array();
