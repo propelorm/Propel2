@@ -27,8 +27,13 @@ use Propel\Runtime\Util\BasePeer;
 use Propel\Runtime\Util\PropelModelPager;
 use Propel\Runtime\Query\Criteria;
 use Propel\Runtime\Query\Criterion\AbstractCriterion;
+use Propel\Runtime\Query\Criterion\InModelCriterion;
+use Propel\Runtime\Query\Criterion\BasicModelCriterion;
 use Propel\Runtime\Query\Criterion\CustomCriterion;
+use Propel\Runtime\Query\Criterion\LikeModelCriterion;
 use Propel\Runtime\Query\Criterion\RawCriterion;
+use Propel\Runtime\Query\Criterion\RawModelCriterion;
+use Propel\Runtime\Query\Criterion\SeveralModelCriterion;
 use Propel\Runtime\Query\Exception\UnknownColumnException;
 use Propel\Runtime\Query\Exception\UnknownModelException;
 use Propel\Runtime\Query\Exception\UnknownRelationException;
@@ -50,12 +55,6 @@ use Propel\Runtime\Query\Exception\UnknownRelationException;
  */
 class ModelCriteria extends Criteria implements \IteratorAggregate
 {
-    const MODEL_CLAUSE          = 'MODEL CLAUSE';
-    const MODEL_CLAUSE_ARRAY    = 'MODEL CLAUSE ARRAY';
-    const MODEL_CLAUSE_LIKE     = 'MODEL CLAUSE LIKE';
-    const MODEL_CLAUSE_SEVERAL  = 'MODEL CLAUSE SEVERAL';
-    const MODEL_CLAUSE_RAW      = 'MODEL CLAUSE RAW';
-
     const FORMAT_STATEMENT  = '\Propel\Runtime\Formatter\StatementFormatter';
     const FORMAT_ARRAY      = '\Propel\Runtime\Formatter\ArrayFormatter';
     const FORMAT_OBJECT     = '\Propel\Runtime\Formatter\ObjectFormatter';
@@ -89,6 +88,9 @@ class ModelCriteria extends Criteria implements \IteratorAggregate
 
     // this is for the select method
     protected $select = null;
+
+    // temporary property used in replaceNames
+    protected $currentAlias;
 
     /**
      * Creates a new instance with the default capacity which corresponds to
@@ -1849,38 +1851,35 @@ class ModelCriteria extends Criteria implements \IteratorAggregate
         if ($this->replaceNames($clause)) {
             // at least one column name was found and replaced in the clause
             // this is enough to determine the type to bind the parameter to
-            if (null !== $bindingType) {
-                $operator = ModelCriteria::MODEL_CLAUSE_RAW;
-            } elseif (0 !== preg_match('/IN \?$/i', $clause)) {
-                $operator = ModelCriteria::MODEL_CLAUSE_ARRAY;
-            } elseif (0 !== preg_match('/LIKE \?$/i', $clause)) {
-                $operator = ModelCriteria::MODEL_CLAUSE_LIKE;
-            } elseif (substr_count($clause, '?') > 1) {
-                $operator = ModelCriteria::MODEL_CLAUSE_SEVERAL;
-            } else {
-                $operator = ModelCriteria::MODEL_CLAUSE;
-            }
-
             $colMap = $this->replacedColumns[0];
             $value = $this->convertValueForColumn($value, $colMap);
-            $criterion = new ModelCriterion($this, $colMap, $value, $operator, $clause, $bindingType);
-
-            if (!empty($this->currentAlias)) {
-                $criterion->setTable($this->currentAlias);
+            $clauseLen = strlen($clause);
+            if (null !== $bindingType) {
+                return new RawModelCriterion($this, $clause, $colMap, $value, $this->currentAlias, $bindingType);
             }
+            if (stripos($clause, 'IN ?') == $clauseLen - 4) {
+                return new InModelCriterion($this, $clause, $colMap, $value, $this->currentAlias);
+            }
+            if (stripos($clause, 'LIKE ?') == $clauseLen - 6) {
+                return new LikeModelCriterion($this, $clause, $colMap, $value, $this->currentAlias);
+            }
+            if (substr_count($clause, '?') > 1) {
+                return new SeveralModelCriterion($this, $clause, $colMap, $value, $this->currentAlias);
+            }
+
+            return new BasicModelCriterion($this, $clause, $colMap, $value, $this->currentAlias);
         } else {
             // no column match in clause, must be an expression like '1=1'
             if (false !== strpos($clause, '?')) {
                 if (null === $bindingType) {
                     throw new PropelException(sprintf('Cannot determine the column to bind to the parameter in clause "%s".', $clause));
                 }
-                $criterion = new RawCriterion($this, $clause, $value, $bindingType);
-            } else {
-                $criterion = new CustomCriterion($this, null, $clause);
-            }
-        }
 
-        return $criterion;
+                return new RawCriterion($this, $clause, $value, $bindingType);
+            }
+
+            return new CustomCriterion($this, null, $clause);
+        }
     }
 
     /**
