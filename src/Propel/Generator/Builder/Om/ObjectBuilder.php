@@ -258,6 +258,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $this->declareClassFromBuilder($this->getStubObjectBuilder());
         $this->declareClassFromBuilder($this->getStubPeerBuilder());
         $this->declareClassFromBuilder($this->getStubQueryBuilder());
+        $this->declareClassFromBuilder($this->getTableMapBuilder());
+
         $this->declareClasses(
             '\Exception',
             '\PDO',
@@ -380,6 +382,11 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * Peer class name
      */
     const PEER = '" . addslashes($this->getStubPeerBuilder()->getFullyQualifiedClassName()) . "';
+
+    /**
+     * TableMap class name
+     */
+    const TABLE_MAP = '" . addslashes($this->getTableMapBuilder()->getFullyQualifiedClassName()) . "';
 ";
     }
 
@@ -2068,7 +2075,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                 \$this->ensureConsistency();
             }
 
-            return \$startcol + $n; // $n = ".$this->getPeerClassName()."::NUM_HYDRATE_COLUMNS.
+            return \$startcol + $n; // $n = ".$this->getTableMapClass()."::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception \$e) {
             throw new PropelException(\"Error populating ".$this->getStubObjectBuilder()->getClassName()." object\", 0, \$e);
@@ -2137,7 +2144,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     protected function addBuildPkeyCriteriaBody(&$script)
     {
         $script .= "
-        \$criteria = new Criteria(".$this->getPeerClassName()."::DATABASE_NAME);";
+        \$criteria = new Criteria(".$this->getTableMapClass()."::DATABASE_NAME);";
         foreach ($this->getTable()->getPrimaryKey() as $col) {
             $clo = strtolower($col->getName());
             $script .= "
@@ -2206,7 +2213,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     protected function addBuildCriteriaBody(&$script)
     {
         $script .= "
-        \$criteria = new Criteria(".$this->getPeerClassName()."::DATABASE_NAME);
+        \$criteria = new Criteria(".$this->getTableMapClass()."::DATABASE_NAME);
 ";
         foreach ($this->getTable()->getColumns() as $col) {
             $clo = strtolower($col->getName());
@@ -2627,7 +2634,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         }
 
         if (\$con === null) {
-            \$con = Propel::getServiceContainer()->getWriteConnection(".$this->getPeerClassName()."::DATABASE_NAME);
+            \$con = Propel::getServiceContainer()->getWriteConnection(".$this->getTableMapClass()."::DATABASE_NAME);
         }
 
         \$con->beginTransaction();
@@ -2711,7 +2718,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         }
 
         if (\$con === null) {
-            \$con = Propel::getServiceContainer()->getReadConnection(".$this->getPeerClassName()."::DATABASE_NAME);
+            \$con = Propel::getServiceContainer()->getReadConnection(".$this->getTableMapClass()."::DATABASE_NAME);
         }
 
         // We don't need to alter the object instance pool; we're just modifying this instance
@@ -4673,7 +4680,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         }
 
         if (\$con === null) {
-            \$con = Propel::getServiceContainer()->getWriteConnection(".$this->getPeerClassName()."::DATABASE_NAME);
+            \$con = Propel::getServiceContainer()->getWriteConnection(".$this->getTableMapClass()."::DATABASE_NAME);
         }
 
         \$con->beginTransaction();

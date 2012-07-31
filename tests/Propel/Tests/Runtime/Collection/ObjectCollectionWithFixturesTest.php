@@ -18,6 +18,7 @@ use Propel\Tests\Bookstore\AuthorPeer;
 use Propel\Tests\Bookstore\AuthorQuery;
 use Propel\Tests\Bookstore\BookPeer;
 use Propel\Tests\Bookstore\BookQuery;
+use Propel\Tests\Bookstore\Map\BookTableMap;
 
 use Propel\Runtime\Propel;
 use Propel\Runtime\Collection\ObjectCollection;
@@ -40,7 +41,7 @@ class ObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
 
     public function testSave()
     {
-        $books = PropelQuery::from('\Propel\Tests\Bookstore\Book')->find();
+        $books = PropelQuery::from('Propel\Tests\Bookstore\Book')->find();
         foreach ($books as $book) {
             $book->setTitle('foo');
         }
@@ -51,7 +52,7 @@ class ObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
         }
         // check that the modifications are persisted
         BookPeer::clearInstancePool();
-        $books = PropelQuery::from('\Propel\Tests\Bookstore\Book')->find();
+        $books = PropelQuery::from('Propel\Tests\Bookstore\Book')->find();
         foreach ($books as $book) {
             $this->assertEquals('foo', $book->getTitle('foo'));
         }
@@ -59,7 +60,7 @@ class ObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
 
     public function testDelete()
     {
-        $books = PropelQuery::from('\Propel\Tests\Bookstore\Book')->find();
+        $books = PropelQuery::from('Propel\Tests\Bookstore\Book')->find();
         $books->delete();
         // check that all the books are deleted
         foreach ($books as $book) {
@@ -67,7 +68,7 @@ class ObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
         }
         // check that the modifications are persisted
         BookPeer::clearInstancePool();
-        $books = PropelQuery::from('\Propel\Tests\Bookstore\Book')->find();
+        $books = PropelQuery::from('Propel\Tests\Bookstore\Book')->find();
         $this->assertEquals(0, count($books));
     }
 
@@ -82,14 +83,14 @@ class ObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
             array('Title' => 'Pride And Prejudice', 'ISBN' => 'FA404', 'AuthorId' => $author->getId())
         );
         $col = new ObjectCollection();
-        $col->setModel('\Propel\Tests\Bookstore\Book');
+        $col->setModel('Propel\Tests\Bookstore\Book');
         $col->fromArray($books);
         $col->save();
 
         $nbBooks = PropelQuery::from('Propel\Tests\Bookstore\Book')->count();
         $this->assertEquals(6, $nbBooks);
 
-        $booksByJane = PropelQuery::from('\Propel\Tests\Bookstore\Book b')
+        $booksByJane = PropelQuery::from('Propel\Tests\Bookstore\Book b')
             ->join('b.Author a')
             ->where('a.LastName = ?', 'Austen')
             ->count();
@@ -99,7 +100,7 @@ class ObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
     public function testToArray()
     {
         BookPeer::clearInstancePool();
-        $books = PropelQuery::from('\Propel\Tests\Bookstore\Book')->find();
+        $books = PropelQuery::from('Propel\Tests\Bookstore\Book')->find();
         $booksArray = $books->toArray();
         $this->assertEquals(4, count($booksArray));
 
@@ -136,7 +137,7 @@ class ObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
 
     public function testGetArrayCopy()
     {
-        $books = PropelQuery::from('\Propel\Tests\Bookstore\Book')->find();
+        $books = PropelQuery::from('Propel\Tests\Bookstore\Book')->find();
         $booksArray = $books->getArrayCopy();
         $this->assertEquals(4, count($booksArray));
 
@@ -173,7 +174,7 @@ class ObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
 
     public function testToKeyValue()
     {
-        $books = PropelQuery::from('\Propel\Tests\Bookstore\Book')->find();
+        $books = PropelQuery::from('Propel\Tests\Bookstore\Book')->find();
 
         $expected = array();
         foreach ($books as $book) {
@@ -254,7 +255,7 @@ class ObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
 
     public function testPopulateRelationManyToOne()
     {
-        $con = Propel::getServiceContainer()->getReadConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getReadConnection(BookTableMap::DATABASE_NAME);
         AuthorPeer::clearInstancePool();
         BookPeer::clearInstancePool();
         $books = BookQuery::create()->find($con);

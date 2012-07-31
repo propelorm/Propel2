@@ -11,8 +11,7 @@
 namespace Propel\Tests\Helpers\Bookstore;
 
 use Propel\Runtime\Propel;
-
-use Propel\Tests\Bookstore\BookPeer;
+use Propel\Tests\Bookstore\Map\BookTableMap;
 
 /**
  * Base class contains some methods shared by subclass test cases.

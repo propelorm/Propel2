@@ -39,7 +39,7 @@ EOF;
 
     public function testNumHydrateColumns()
     {
-        $this->assertEquals(3, \LazyLoadActiveRecord2Peer::NUM_HYDRATE_COLUMNS);
+        $this->assertEquals(3, \Map\LazyLoadActiveRecord2TableMap::NUM_HYDRATE_COLUMNS);
     }
 
     public function testPopulateObjectNotInPool()

@@ -17,6 +17,7 @@ use Propel\Tests\BookstoreSchemas\BookstoreContestEntryQuery;
 use Propel\Tests\BookstoreSchemas\BookstoreContestQuery;
 use Propel\Tests\BookstoreSchemas\BookstoreQuery;
 use Propel\Tests\BookstoreSchemas\BookstorePeer;
+use Propel\Tests\BookstoreSchemas\Map\BookstoreTableMap;
 use Propel\Tests\BookstoreSchemas\Customer;
 use Propel\Tests\BookstoreSchemas\CustomerQuery;
 use Propel\Tests\Helpers\Schemas\SchemasTestBase;
@@ -34,7 +35,7 @@ class AggregateColumnBehaviorWithSchemaTest extends SchemasTestBase
     {
         parent::setUp();
 
-        $this->con = Propel::getServiceContainer()->getConnection(BookstorePeer::DATABASE_NAME);
+        $this->con = Propel::getServiceContainer()->getConnection(BookstoreTableMap::DATABASE_NAME);
         $this->con->beginTransaction();
     }
 

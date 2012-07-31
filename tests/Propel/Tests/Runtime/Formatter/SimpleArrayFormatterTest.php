@@ -10,13 +10,12 @@
 
 namespace Propel\Tests\Runtime\Formatter;
 
-use Propel\Tests\Bookstore\BookPeer;
+use Propel\Runtime\Propel;
+use Propel\Runtime\Formatter\SimpleArrayFormatter;
+use Propel\Runtime\ActiveQuery\ModelCriteria;
+use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
 use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
-
-use Propel\Runtime\Formatter\SimpleArrayFormatter;
-use Propel\Runtime\Propel;
-use Propel\Runtime\ActiveQuery\ModelCriteria;
 
 class SimpleArrayFormatterTest extends BookstoreEmptyTestBase
 {
@@ -28,7 +27,7 @@ class SimpleArrayFormatterTest extends BookstoreEmptyTestBase
 
     public function testFormatWithOneRowAndValueIsNotZero()
     {
-        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         $stmt = $con->query('SELECT 1 FROM book');
 
         $formatter = new SimpleArrayFormatter();
@@ -42,7 +41,7 @@ class SimpleArrayFormatterTest extends BookstoreEmptyTestBase
 
     public function testFormatWithOneRowAndValueEqualsZero()
     {
-        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         $stmt = $con->query('SELECT 0 FROM book');
 
         $formatter = new SimpleArrayFormatter();
@@ -56,7 +55,7 @@ class SimpleArrayFormatterTest extends BookstoreEmptyTestBase
 
     public function testFormatOneWithOneRowAndValueIsNotZero()
     {
-        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         $stmt = $con->query('SELECT 1 FROM book LIMIT 0, 1');
 
         $formatter = new SimpleArrayFormatter();
@@ -68,7 +67,7 @@ class SimpleArrayFormatterTest extends BookstoreEmptyTestBase
 
     public function testFormatOneWithOneRowAndValueEqualsZero()
     {
-        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         $stmt = $con->query('SELECT 0 FROM book LIMIT 0, 1');
 
         $formatter = new SimpleArrayFormatter();
