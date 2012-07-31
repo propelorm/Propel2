@@ -97,7 +97,9 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
             '\Propel\Runtime\Map\TableMap',
             '\Propel\Runtime\Map\RelationMap'
         );
-        $this->addConstants($script);
+
+        $script .= $this->addConstants();
+
         $this->addAttributes($script);
         $this->addInitialize($script);
         $this->addBuildRelations($script);
@@ -106,16 +108,22 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
 
     /**
      * Adds any constants needed for this TableMap class.
-     * @param      string &$script The script will be modified in this method.
+     *
+     * @return string
      */
-    protected function addConstants(&$script)
+    protected function addConstants()
     {
-        $script .= "
-    /**
-     * The (dot-path) name of this class
-     */
-    const CLASS_NAME = '".$this->getClasspath()."';
-";
+        return $this->renderTemplate('tableMapConstants', array(
+            'className'         => $this->getClasspath(),
+            'dbName'            => $this->getDatabase()->getName(),
+            'tableName'         => $this->getTable()->getName(),
+            'tablePhpName'      => $this->getTable()->isAbstract() ? '' : addslashes($this->getStubObjectBuilder()->getFullyQualifiedClassName()),
+            'classPath'         => $this->getStubObjectBuilder()->getClasspath(),
+            'nbColumns'         => $this->getTable()->getNumColumns(),
+            'nbLazyLoadColumns' => $this->getTable()->getNumLazyLoadColumns(),
+            'nbHydrateColumns'  => $this->getTable()->getNumColumns() - $this->getTable()->getNumLazyLoadColumns(),
+            'peerClassName'     => $this->getStubPeerBuilder()->getFullyQualifiedClassName(),
+        ));
     }
 
     /**

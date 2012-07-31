@@ -19,9 +19,11 @@ use Propel\Runtime\Propel;
 use Propel\Runtime\Util\BasePeer;
 use Propel\Tests\Bookstore\AuthorPeer;
 use Propel\Tests\Bookstore\AuthorQuery;
+use Propel\Tests\Bookstore\Map\AuthorTableMap;
 use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\BookPeer;
 use Propel\Tests\Bookstore\BookQuery;
+use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\Bookstore\BookstoreEmployeeAccountPeer;
 use Propel\Tests\Bookstore\BookstoreEmployeeAccountQuery;
 use Propel\Tests\Bookstore\BookClubListQuery;
@@ -925,7 +927,7 @@ class QueryBuilderTest extends BookstoreTestBase
         $join->setRelationMap(BookPeer::getTableMap()->getRelation('Author'), null, 'a');
         $join->setRelationAlias('a');
         $q1 = BookQuery::create()
-            ->addAlias('a', AuthorPeer::TABLE_NAME)
+            ->addAlias('a', AuthorTableMap::TABLE_NAME)
             ->addJoinObject($join, 'a')
             ->add('a.FIRST_NAME', 'Leo', Criteria::EQUAL);
         $this->assertTrue($q->equals($q1), 'useFkQuery() uses the first argument as a table alias');
@@ -981,10 +983,10 @@ class QueryBuilderTest extends BookstoreTestBase
         $join2->setRelationMap(BookPeer::getTableMap()->getRelation('Author'), null, 'b');
         $join2->setRelationAlias('b');
         $q1 = BookQuery::create()
-            ->addAlias('a', AuthorPeer::TABLE_NAME)
+            ->addAlias('a', AuthorTableMap::TABLE_NAME)
             ->addJoinObject($join1, 'a')
             ->add('a.FIRST_NAME', 'Leo', Criteria::EQUAL)
-            ->addAlias('b', AuthorPeer::TABLE_NAME)
+            ->addAlias('b', AuthorTableMap::TABLE_NAME)
             ->addJoinObject($join2, 'b')
             ->add('b.LAST_NAME', 'Tolstoi', Criteria::EQUAL);
         $this->assertTrue($q->equals($q1), 'useFkQuery() called twice on the same relation with two aliases creates two joins');
@@ -1031,7 +1033,7 @@ class QueryBuilderTest extends BookstoreTestBase
 
     public function testUseFkQueryNoAliasThenWith()
     {
-        $con = Propel::getServiceContainer()->getReadConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getReadConnection(BookTableMap::DATABASE_NAME);
         $books = BookQuery::create()
             ->useAuthorQuery()
                 ->filterByFirstName('Leo')

@@ -64,6 +64,8 @@ class ModelCriteria extends Criteria implements \IteratorAggregate
 
     protected $modelPeerName;
 
+    protected $modelTableMapName;
+
     protected $modelAlias;
 
     protected $useAliasInSQL = false;
@@ -104,15 +106,17 @@ class ModelCriteria extends Criteria implements \IteratorAggregate
     {
         $this->setDbName($dbName);
         $this->originalDbName = $dbName;
+
         if (0 === strpos($modelName, '\\')) {
             $this->modelName = substr($modelName, 1);
         } else {
             $this->modelName = $modelName;
         }
 
-        $this->modelPeerName = constant($this->modelName . '::PEER');
-        $this->modelAlias = $modelAlias;
-        $this->tableMap = Propel::getServiceContainer()->getDatabaseMap($this->getDbName())->getTableByPhpName($this->modelName);
+        $this->modelTableMapName = constant($this->modelName . '::TABLE_MAP');
+        $this->modelPeerName     = constant($this->modelTableMapName . '::PEER_CLASS');
+        $this->modelAlias        = $modelAlias;
+        $this->tableMap          = Propel::getServiceContainer()->getDatabaseMap($this->getDbName())->getTableByPhpName($this->modelName);
     }
 
     /**
@@ -586,7 +590,7 @@ class ModelCriteria extends Criteria implements \IteratorAggregate
         // it will be impossible for the BasePeer::createSelectSql() method to determine which
         // tables go into the FROM clause.
         if (!$this->selectQueries) {
-            $this->setPrimaryTableName(constant($this->modelPeerName . '::TABLE_NAME'));
+            $this->setPrimaryTableName(constant($this->modelTableMapName . '::TABLE_NAME'));
         }
 
         // Add requested columns which are not withColumns
@@ -1496,7 +1500,7 @@ class ModelCriteria extends Criteria implements \IteratorAggregate
         // We need to set the primary table name, since in the case that there are no WHERE columns
         // it will be impossible for the BasePeer::createSelectSql() method to determine which
         // tables go into the FROM clause.
-        $criteria->setPrimaryTableName(constant($this->modelPeerName.'::TABLE_NAME'));
+        $criteria->setPrimaryTableName(constant($this->modelTableMapName . '::TABLE_NAME'));
 
         $stmt = $criteria->doCount($con);
         if ($row = $stmt->fetch(\PDO::FETCH_NUM)) {
@@ -1759,7 +1763,7 @@ class ModelCriteria extends Criteria implements \IteratorAggregate
         }
 
         $criteria = $this->isKeepQuery() ? clone $this : $this;
-        $criteria->setPrimaryTableName(constant($this->modelPeerName.'::TABLE_NAME'));
+        $criteria->setPrimaryTableName(constant($this->modelTableMapName.'::TABLE_NAME'));
 
         $con->beginTransaction();
         try {

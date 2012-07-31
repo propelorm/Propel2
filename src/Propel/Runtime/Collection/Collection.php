@@ -484,6 +484,17 @@ class Collection extends \ArrayObject implements \Serializable
         return constant($this->getFullyQualifiedModel() . '::PEER');
     }
 
+    public function getTableMapClass()
+    {
+        $model = $this->getModel();
+
+        if (empty($model)) {
+            throw new ModelNotFoundException('You must set the collection model before interacting with it');
+        }
+
+        return constant($this->getFullyQualifiedModel() . '::TABLE_MAP');
+    }
+
     /**
      * @param AbstractFormatter $formatter
      */
@@ -507,7 +518,7 @@ class Collection extends \ArrayObject implements \Serializable
      */
     public function getWriteConnection()
     {
-        $databaseName = constant($this->getPeerClass() . '::DATABASE_NAME');
+        $databaseName = constant($this->getTableMapClass() . '::DATABASE_NAME');
 
         return Propel::getServiceContainer()->getWriteConnection($databaseName);
     }

@@ -15,6 +15,7 @@ use Propel\Tests\Bookstore\Author;
 use Propel\Tests\Bookstore\AuthorPeer;
 use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\BookPeer;
+use Propel\Tests\Bookstore\Map\BookTableMap;
 
 use Propel\Runtime\Propel;
 use Propel\Runtime\Connection\Exception\RollbackException;
@@ -44,7 +45,7 @@ class PropelPDOTest extends BookstoreTestBase
 
     public function testSetAttribute()
     {
-        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         $this->assertFalse($con->getAttribute(PropelPDO::PROPEL_ATTR_CACHE_PREPARES));
         $con->setAttribute(PropelPDO::PROPEL_ATTR_CACHE_PREPARES, true);
         $this->assertTrue($con->getAttribute(PropelPDO::PROPEL_ATTR_CACHE_PREPARES));
@@ -55,7 +56,7 @@ class PropelPDOTest extends BookstoreTestBase
 
     public function testCommitBeforeFetch()
     {
-        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         AuthorPeer::doDeleteAll($con);
         $a = new Author();
         $a->setFirstName('Test');
@@ -81,7 +82,7 @@ class PropelPDOTest extends BookstoreTestBase
 
     public function testCommitAfterFetch()
     {
-        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         AuthorPeer::doDeleteAll($con);
         $a = new Author();
         $a->setFirstName('Test');
@@ -103,7 +104,7 @@ class PropelPDOTest extends BookstoreTestBase
 
     public function testNestedTransactionCommit()
     {
-        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         $driver = $con->getAttribute(PDO::ATTR_DRIVER_NAME);
 
         $this->assertEquals(0, $con->getNestedTransactionCount(), 'nested transaction is equal to 0 before transaction');
@@ -168,7 +169,7 @@ class PropelPDOTest extends BookstoreTestBase
      */
     public function testNestedTransactionRollBackRethrow()
     {
-        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         $driver = $con->getAttribute(PDO::ATTR_DRIVER_NAME);
 
         $con->beginTransaction();
@@ -214,7 +215,7 @@ class PropelPDOTest extends BookstoreTestBase
      */
     public function testNestedTransactionRollBackSwallow()
     {
-        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         $driver = $con->getAttribute(PDO::ATTR_DRIVER_NAME);
 
         $con->beginTransaction();
@@ -271,7 +272,7 @@ class PropelPDOTest extends BookstoreTestBase
 
     public function testNestedTransactionForceRollBack()
     {
-        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         $driver = $con->getAttribute(PDO::ATTR_DRIVER_NAME);
 
         // main transaction
@@ -307,14 +308,14 @@ class PropelPDOTest extends BookstoreTestBase
 
     public function testLatestQuery()
     {
-        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         $con->setLastExecutedQuery(123);
         $this->assertEquals(123, $con->getLastExecutedQuery(), 'PropelPDO has getter and setter for last executed query');
     }
 
     public function testLatestQueryMoreThanTenArgs()
     {
-        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         $c = new Criteria();
         $c->add(BookPeer::ID, array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1), Criteria::IN);
         $books = BookPeer::doSelect($c, $con);
@@ -324,7 +325,7 @@ class PropelPDOTest extends BookstoreTestBase
 
     public function testQueryCount()
     {
-        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         $count = $con->getQueryCount();
         $con->incrementQueryCount();
         $this->assertEquals($count + 1, $con->getQueryCount(), 'PropelPDO has getter and incrementer for query count');
@@ -332,7 +333,7 @@ class PropelPDOTest extends BookstoreTestBase
 
     public function testUseDebug()
     {
-        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         $con->useDebug(false);
         $stmtClass = $con->getAttribute(PDO::ATTR_STATEMENT_CLASS);
         $this->assertEquals('Propel\Runtime\Adapter\Pdo\PdoStatement', $stmtClass[0], 'Statement is Propel Statement when debug is false');
@@ -343,7 +344,7 @@ class PropelPDOTest extends BookstoreTestBase
 
     public function testDebugLatestQuery()
     {
-        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         $c = new Criteria();
         $c->add(BookPeer::TITLE, 'Harry%s', Criteria::LIKE);
 
@@ -356,7 +357,7 @@ class PropelPDOTest extends BookstoreTestBase
         $con->useDebug(true);
         $books = BookPeer::doSelect($c, $con);
         $latestExecutedQuery = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.TITLE LIKE 'Harry%s'";
-        if (!Propel::getServiceContainer()->getAdapter(BookPeer::DATABASE_NAME)->useQuoteIdentifier()) {
+        if (!Propel::getServiceContainer()->getAdapter(BookTableMap::DATABASE_NAME)->useQuoteIdentifier()) {
             $latestExecutedQuery = str_replace('`', '', $latestExecutedQuery);
         }
         $this->assertEquals($latestExecutedQuery, $con->getLastExecutedQuery(), 'PropelPDO updates the last executed query when useLogging is true');
@@ -386,7 +387,7 @@ class PropelPDOTest extends BookstoreTestBase
 
     public function testDebugQueryCount()
     {
-        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         $c = new Criteria();
         $c->add(BookPeer::TITLE, 'Harry%s', Criteria::LIKE);
 
@@ -424,7 +425,7 @@ class PropelPDOTest extends BookstoreTestBase
 
     public function testDebugLog()
     {
-        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
 
         // save data to return to normal state after test
         $logger = $con->getLogger();

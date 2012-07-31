@@ -14,10 +14,8 @@ namespace Propel\Tests\Generator\Behavior\I18n;
 use Propel\Tests\Bookstore\Behavior\Movie;
 use Propel\Tests\Bookstore\Behavior\MovieQuery;
 use Propel\Tests\Bookstore\Behavior\MovieI18nQuery;
-
 use Propel\Generator\Util\QuickBuilder;
 use Propel\Generator\Behavior\I18n\I18nBehavior;
-
 use Propel\Runtime\Propel;
 
 /**

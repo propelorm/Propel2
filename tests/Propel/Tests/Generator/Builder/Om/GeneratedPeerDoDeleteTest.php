@@ -16,9 +16,11 @@ use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
 use Propel\Tests\Bookstore\AuthorPeer;
 use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\BookPeer;
+use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\Bookstore\BookOpinion;
 use Propel\Tests\Bookstore\BookReader;
 use Propel\Tests\Bookstore\BookReaderPeer;
+use Propel\Tests\Bookstore\Map\BookReaderTableMap;
 use Propel\Tests\Bookstore\Bookstore;
 use Propel\Tests\Bookstore\BookstoreContest;
 use Propel\Tests\Bookstore\BookstoreContestPeer;
@@ -335,7 +337,7 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
      */
     public function testDoDeleteCompositePK()
     {
-        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
 
         ReaderFavoritePeer::doDeleteAll();
         // Create books with IDs 1 to 3
@@ -507,7 +509,7 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
      */
     public function testDoCountJoinWithOrderBy()
     {
-        $c = new Criteria(BookPeer::DATABASE_NAME);
+        $c = new Criteria(BookTableMap::DATABASE_NAME);
         $c->addAscendingOrderByColumn(BookPeer::ID);
 
         // None of these should not throw an exception!
@@ -534,13 +536,13 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
      */
     private function createBookWithId($id)
     {
-        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         $b = BookPeer::retrieveByPK($id);
         if (!$b) {
             $b = new Book();
             $b->setTitle("Book$id")->setISBN("BookISBN$id")->save();
             $b1Id = $b->getId();
-            $sql = "UPDATE " . BookPeer::TABLE_NAME . " SET id = ? WHERE id = ?";
+            $sql = "UPDATE " . BookTableMap::TABLE_NAME . " SET id = ? WHERE id = ?";
             $stmt = $con->prepare($sql);
             $stmt->bindValue(1, $id);
             $stmt->bindValue(2, $b1Id);
@@ -553,13 +555,13 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
      */
     private function createReaderWithId($id)
     {
-        $con = Propel::getServiceContainer()->getConnection(BookReaderPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookReaderTableMap::DATABASE_NAME);
         $r = BookReaderPeer::retrieveByPK($id);
         if (!$r) {
             $r = new BookReader();
             $r->setName('Reader'.$id)->save();
             $r1Id = $r->getId();
-            $sql = "UPDATE " . BookReaderPeer::TABLE_NAME . " SET id = ? WHERE id = ?";
+            $sql = "UPDATE " . BookReaderTableMap::TABLE_NAME . " SET id = ? WHERE id = ?";
             $stmt = $con->prepare($sql);
             $stmt->bindValue(1, $id);
             $stmt->bindValue(2, $r1Id);

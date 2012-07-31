@@ -18,6 +18,7 @@ use Propel\Tests\Bookstore\Author;
 use Propel\Tests\Bookstore\AuthorPeer;
 use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\BookPeer;
+use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\Bookstore\BookClubList;
 use Propel\Tests\Bookstore\BookClubListPeer;
 use Propel\Tests\Bookstore\BookListRel;
@@ -62,7 +63,7 @@ class BookstoreDataPopulator
     public static function populate($con = null)
     {
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         }
         $con->beginTransaction();
 
@@ -270,7 +271,7 @@ class BookstoreDataPopulator
     public static function populateOpinionFavorite($con = null)
     {
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         }
         $con->beginTransaction();
 
@@ -323,7 +324,7 @@ class BookstoreDataPopulator
         }
         // delete records from the database
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         }
         $con->beginTransaction();
         foreach ($peerClasses as $peerClass) {
