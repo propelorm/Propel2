@@ -14,6 +14,7 @@ use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\RuntimeException;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\Map\TableMap;
 
 /**
  * This is a utility class for all generated Peer classes in the system.
@@ -39,43 +40,7 @@ class BasePeer
      */
     private static $mapBuilders = array();
 
-    /**
-     * phpname type
-     * e.g. 'AuthorId'
-     */
-    const TYPE_PHPNAME = 'phpName';
-
-    /**
-     * studlyphpname type
-     * e.g. 'authorId'
-     */
-    const TYPE_STUDLYPHPNAME = 'studlyPhpName';
-
-    /**
-     * column (peer) name type
-     * e.g. 'book.AUTHOR_ID'
-     */
-    const TYPE_COLNAME = 'colName';
-
-    /**
-     * column part of the column peer name
-     * e.g. 'AUTHOR_ID'
-     */
-    const TYPE_RAW_COLNAME = 'rawColName';
-
-    /**
-     * column fieldname type
-     * e.g. 'author_id'
-     */
-    const TYPE_FIELDNAME = 'fieldName';
-
-    /**
-     * num type
-     * simply the numerical array index, e.g. 4
-     */
-    const TYPE_NUM = 'num';
-
-    public static function getFieldnames($classname, $type = self::TYPE_PHPNAME)
+    public static function getFieldnames($classname, $type = TableMap::TYPE_PHPNAME)
     {
         $peerclass  = $classname . 'Peer';
         $callable   = array($peerclass, 'getFieldnames');
@@ -158,8 +123,8 @@ class BasePeer
      * <code>
      * static public function doDeleteAll($con = null)
      * {
-     *   if ($con === null) $con = Propel::getServiceContainer()->getWriteConnection(self::DATABASE_NAME);
-     *   BasePeer::doDeleteAll(self::TABLE_NAME, $con, self::DATABASE_NAME);
+     *   if ($con === null) $con = Propel::getServiceContainer()->getWriteConnection(TableMap::DATABASE_NAME);
+     *   BasePeer::doDeleteAll(TableMap::TABLE_NAME, $con, TableMap::DATABASE_NAME);
      * }
      * </code>
      *

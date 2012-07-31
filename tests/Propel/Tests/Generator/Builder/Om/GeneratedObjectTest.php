@@ -10,11 +10,11 @@
 
 namespace Propel\Tests\Generator\Builder\Om;
 
-use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
-use Propel\Tests\Helpers\Bookstore\Behavior\TestAuthor;
-use Propel\Tests\Helpers\Bookstore\Behavior\TestAuthorDeleteFalse;
-use Propel\Tests\Helpers\Bookstore\Behavior\TestAuthorSaveFalse;
-
+use Propel\Generator\Util\QuickBuilder;
+use Propel\Runtime\Propel;
+use Propel\Runtime\Collection\ObjectCollection;
+use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\Map\TableMap;
 use Propel\Tests\Bookstore\AcctAuditLog;
 use Propel\Tests\Bookstore\AcctAuditLogPeer;
 use Propel\Tests\Bookstore\Author;
@@ -43,16 +43,12 @@ use Propel\Tests\Bookstore\BookstoreEmployeeAccount;
 use Propel\Tests\Bookstore\BookstoreEmployeeAccountPeer;
 use Propel\Tests\Bookstore\BookstoreContestEntry;
 use Propel\Tests\Bookstore\BookstoreSale;
-
-use Propel\Runtime\Propel;
-use Propel\Runtime\Collection\ObjectCollection;
-use Propel\Runtime\ActiveQuery\Criteria;
-use Propel\Runtime\Util\BasePeer;
-
-use Propel\Generator\Util\QuickBuilder;
+use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
+use Propel\Tests\Helpers\Bookstore\Behavior\TestAuthor;
+use Propel\Tests\Helpers\Bookstore\Behavior\TestAuthorDeleteFalse;
+use Propel\Tests\Helpers\Bookstore\Behavior\TestAuthorSaveFalse;
 
 use \DateTime;
-
 use MyNameSpace\TestKeyTypeTable;
 
 /**
@@ -729,7 +725,7 @@ class GeneratedObjectTest extends BookstoreTestBase
             'PublisherId',
             'AuthorId'
         );
-        $this->assertEquals($expectedKeys, array_keys($arr1), 'toArray() returns an associative array with BasePeer::TYPE_PHPNAME keys by default');
+        $this->assertEquals($expectedKeys, array_keys($arr1), 'toArray() returns an associative array with TableMap::TYPE_PHPNAME keys by default');
         $this->assertEquals('Don Juan', $arr1['Title'], 'toArray() returns an associative array representation of the object');
     }
 
@@ -738,7 +734,7 @@ class GeneratedObjectTest extends BookstoreTestBase
         $b = new Book();
         $b->setTitle('Don Juan');
 
-        $arr1 = $b->toArray(BasePeer::TYPE_COLNAME);
+        $arr1 = $b->toArray(TableMap::TYPE_COLNAME);
         $expectedKeys = array(
             BookPeer::ID,
             BookPeer::TITLE,

@@ -17,8 +17,8 @@ use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Exception\RuntimeException;
 use Propel\Runtime\Map\RelationMap;
+use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\ActiveQuery\PropelQuery;
-use Propel\Runtime\Util\BasePeer;
 
 /**
  * Class for iterating over a list of Propel objects
@@ -124,9 +124,9 @@ class ObjectCollection extends Collection
      *                               Otherwise, the array is indexed using the specified column
      * @param boolean $usePrefix If true, the returned array prefixes keys
      *                               with the model class name ('Article_0', 'Article_1', etc).
-     * @param string $keyType (optional) One of the class type constants BasePeer::TYPE_PHPNAME,
-     *                               BasePeer::TYPE_STUDLYPHPNAME, BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME,
-     *                               BasePeer::TYPE_NUM. Defaults to BasePeer::TYPE_PHPNAME.
+     * @param string $keyType (optional) One of the class type constants TableMap::TYPE_PHPNAME,
+     *                               TableMap::TYPE_STUDLYPHPNAME, TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME,
+     *                               TableMap::TYPE_NUM. Defaults to TableMap::TYPE_PHPNAME.
      * @param boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
      * @param array   $alreadyDumpedObjects   List of objects to skip to avoid recursion
      *
@@ -150,7 +150,7 @@ class ObjectCollection extends Collection
      *
      * @return array
      */
-    public function toArray($keyColumn = null, $usePrefix = false, $keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array())
+    public function toArray($keyColumn = null, $usePrefix = false, $keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array())
     {
         $ret = array();
         $keyGetterMethod = 'get' . $keyColumn;

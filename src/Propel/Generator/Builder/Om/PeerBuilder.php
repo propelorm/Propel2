@@ -144,6 +144,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
             '\Propel\Runtime\Connection\StatementInterface',
             '\Propel\Runtime\Exception\PropelException',
             '\Propel\Runtime\Util\BasePeer',
+            '\Propel\Runtime\Map\TableMap',
             '\Propel\Runtime\ActiveQuery\Criteria',
             '\PDO'
         );
@@ -324,32 +325,32 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      * e.g. self::\$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static \$fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array (";
+        TableMap::TYPE_PHPNAME => array (";
         foreach ($tableColumns as $col) {
             $script .= "'".$col->getPhpName()."', ";
         }
         $script .= "),
-        BasePeer::TYPE_STUDLYPHPNAME => array (";
+        TableMap::TYPE_STUDLYPHPNAME => array (";
         foreach ($tableColumns as $col) {
             $script .= "'".$col->getStudlyPhpName()."', ";
         }
         $script .= "),
-        BasePeer::TYPE_COLNAME => array (";
+        TableMap::TYPE_COLNAME => array (";
         foreach ($tableColumns as $col) {
             $script .= $this->getColumnConstant($col, 'self').", ";
         }
         $script .= "),
-        BasePeer::TYPE_RAW_COLNAME => array (";
+        TableMap::TYPE_RAW_COLNAME => array (";
         foreach ($tableColumns as $col) {
             $script .= "'" . $col->getConstantColumnName() . "', ";
         }
         $script .= "),
-        BasePeer::TYPE_FIELDNAME => array (";
+        TableMap::TYPE_FIELDNAME => array (";
         foreach ($tableColumns as $col) {
             $script .= "'".$col->getName()."', ";
         }
         $script .= "),
-        BasePeer::TYPE_NUM => array (";
+        TableMap::TYPE_NUM => array (";
         foreach ($tableColumns as $num => $col) {
             $script .= "$num, ";
         }
@@ -372,35 +373,35 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      * holds an array of keys for quick access to the fieldnames array
      *
      * first dimension keys are the type constants
-     * e.g. self::\$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
+     * e.g. self::\$fieldNames[TableMap::TYPE_PHPNAME]['Id'] = 0
      */
     protected static \$fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array (";
+        TableMap::TYPE_PHPNAME => array (";
         foreach ($tableColumns as $num => $col) {
             $script .= "'".$col->getPhpName()."' => $num, ";
         }
         $script .= "),
-        BasePeer::TYPE_STUDLYPHPNAME => array (";
+        TableMap::TYPE_STUDLYPHPNAME => array (";
         foreach ($tableColumns as $num => $col) {
             $script .= "'".$col->getStudlyPhpName()."' => $num, ";
         }
         $script .= "),
-        BasePeer::TYPE_COLNAME => array (";
+        TableMap::TYPE_COLNAME => array (";
         foreach ($tableColumns as $num => $col) {
             $script .= $this->getColumnConstant($col, 'self')." => $num, ";
         }
         $script .= "),
-        BasePeer::TYPE_RAW_COLNAME => array (";
+        TableMap::TYPE_RAW_COLNAME => array (";
         foreach ($tableColumns as $num => $col) {
             $script .= "'" . $col->getConstantColumnName() . "' => $num, ";
         }
         $script .= "),
-        BasePeer::TYPE_FIELDNAME => array (";
+        TableMap::TYPE_FIELDNAME => array (";
         foreach ($tableColumns as $num => $col) {
             $script .= "'".$col->getName()."' => $num, ";
         }
         $script .= "),
-        BasePeer::TYPE_NUM => array (";
+        TableMap::TYPE_NUM => array (";
         foreach ($tableColumns as $num => $col) {
             $script .= "$num, ";
         }
@@ -445,15 +446,15 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      * Returns an array of field names.
      *
      * @param string \$type The type of fieldnames to return:
-     *                      One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
-     *                      BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
+     *                      One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_STUDLYPHPNAME
+     *                      TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM
      * @return array           A list of field names
      * @throws PropelException
      */
-    public static function getFieldNames(\$type = BasePeer::TYPE_PHPNAME)
+    public static function getFieldNames(\$type = TableMap::TYPE_PHPNAME)
     {
         if (!array_key_exists(\$type, self::\$fieldNames)) {
-            throw new PropelException('Method getFieldNames() expects the parameter \$type to be one of the class constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME, BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM. ' . \$type . ' was given.');
+            throw new PropelException('Method getFieldNames() expects the parameter \$type to be one of the class constants TableMap::TYPE_PHPNAME, TableMap::TYPE_STUDLYPHPNAME, TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM. ' . \$type . ' was given.');
         }
 
         return self::\$fieldNames[\$type];
@@ -472,8 +473,8 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      * Translates a fieldname to another type
      *
      * @param string \$name field name
-     * @param string \$fromType One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
-     *                         BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
+     * @param string \$fromType One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_STUDLYPHPNAME
+     *                         TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM
      * @param string \$toType   One of the class type constants
      * @return string          translated name of the field.
      * @throws PropelException - if the specified name could not be found in the fieldname mappings.

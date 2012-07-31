@@ -16,19 +16,49 @@ use Propel\Runtime\Map\Exception\RelationNotFoundException;
 /**
  * TableMap is used to model a table in a database.
  *
- * GENERAL NOTE
- * ------------
- * The propel.map classes are abstract building-block classes for modeling
- * the database at runtime.  These classes are similar (a lite version) to the
- * propel.engine.database.model classes, which are build-time modeling classes.
- * These classes in themselves do not do any database metadata lookups.
- *
  * @author Hans Lellelid <hans@xmpl.org> (Propel)
  * @author John D. McNally <jmcnally@collab.net> (Torque)
  * @author Daniel Rall <dlr@finemaltcoding.com> (Torque)
+ * @author William Durand <william.durand1@gmail.com>
  */
 class TableMap
 {
+    /**
+     * phpname type
+     * e.g. 'AuthorId'
+     */
+    const TYPE_PHPNAME = 'phpName';
+
+    /**
+     * studlyphpname type
+     * e.g. 'authorId'
+     */
+    const TYPE_STUDLYPHPNAME = 'studlyPhpName';
+
+    /**
+     * column (peer) name type
+     * e.g. 'book.AUTHOR_ID'
+     */
+    const TYPE_COLNAME = 'colName';
+
+    /**
+     * column part of the column peer name
+     * e.g. 'AUTHOR_ID'
+     */
+    const TYPE_RAW_COLNAME = 'rawColName';
+
+    /**
+     * column fieldname type
+     * e.g. 'author_id'
+     */
+    const TYPE_FIELDNAME = 'fieldName';
+
+    /**
+     * num type
+     * simply the numerical array index, e.g. 4
+     */
+    const TYPE_NUM = 'num';
+
     /**
      * Columns in the table
      *
@@ -671,5 +701,7 @@ class TableMap
                 return $column;
             }
         }
+
+        return null;
     }
 }
