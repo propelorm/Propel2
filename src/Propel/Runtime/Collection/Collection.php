@@ -18,7 +18,7 @@ use Propel\Runtime\Exception\BadMethodCallException;
 use Propel\Runtime\Exception\UnexpectedValueException;
 use Propel\Runtime\Formatter\AbstractFormatter;
 use Propel\Runtime\Parser\AbstractParser;
-use Propel\Runtime\Util\BasePeer;
+use Propel\Runtime\Map\TableMap;
 
 /**
  * Class for iterating over a list of Propel elements
@@ -531,7 +531,7 @@ class Collection extends \ArrayObject implements \Serializable
             $parser = AbstractParser::getParser($parser);
         }
 
-        return $this->fromArray($parser->listToArray($data), BasePeer::TYPE_PHPNAME);
+        return $this->fromArray($parser->listToArray($data), TableMap::TYPE_PHPNAME);
     }
 
     /**
@@ -560,7 +560,7 @@ class Collection extends \ArrayObject implements \Serializable
             $parser = AbstractParser::getParser($parser);
         }
 
-        return $parser->listFromArray($this->toArray(null, $usePrefix, BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns));
+        return $parser->listFromArray($this->toArray(null, $usePrefix, TableMap::TYPE_PHPNAME, $includeLazyLoadColumns));
     }
 
     /**

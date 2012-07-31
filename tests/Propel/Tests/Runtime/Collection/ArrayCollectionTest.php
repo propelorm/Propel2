@@ -10,20 +10,18 @@
 
 namespace Propel\Tests\Runtime\Collection;
 
-use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
-use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
-
 use Propel\Tests\Bookstore\Author;
 use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\BookPeer;
 use Propel\Tests\Bookstore\ContestView;
-
+use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
+use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
 use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Collection\ArrayCollection;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\ActiveQuery\PropelQuery;
-use Propel\Runtime\Util\BasePeer;
+use Propel\Runtime\Map\TableMap;
 
 /**
  * Test class for ObjectCollection.
@@ -191,7 +189,7 @@ class ArrayCollectionTest extends BookstoreEmptyTestBase
 
         $coll = new ArrayCollection();
         $coll->setModel('\Propel\Tests\Bookstore\Book');
-        $coll[]= $book->toArray(BasePeer::TYPE_PHPNAME, true, array(), true);
+        $coll[]= $book->toArray(TableMap::TYPE_PHPNAME, true, array(), true);
         $expected = array(array(
             'Id' => 9012,
             'Title' => 'Don Juan',

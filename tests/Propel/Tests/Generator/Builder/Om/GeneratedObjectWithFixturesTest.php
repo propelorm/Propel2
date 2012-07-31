@@ -10,9 +10,9 @@
 
 namespace Propel\Tests\Generator\Builder\Om;
 
-use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
-use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
-
+use Propel\Runtime\Exception\PropelException;
+use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\Map\TableMap;
 use Propel\Tests\Bookstore\Author;
 use Propel\Tests\Bookstore\AuthorPeer;
 use Propel\Tests\Bookstore\Book;
@@ -28,10 +28,8 @@ use Propel\Tests\Bookstore\Publisher;
 use Propel\Tests\Bookstore\PublisherPeer;
 use Propel\Tests\Bookstore\Review;
 use Propel\Tests\Bookstore\ReviewPeer;
-
-use Propel\Runtime\Exception\PropelException;
-use Propel\Runtime\ActiveQuery\Criteria;
-use Propel\Runtime\Util\BasePeer;
+use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
+use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
 
 /**
  * Tests the generated Object classes.
@@ -302,11 +300,11 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
             $this->fail("Test requires at least one media row w/ cover_image and excerpt NOT NULL");
         }
 
-        $arr1 = $m->toArray(BasePeer::TYPE_COLNAME);
+        $arr1 = $m->toArray(TableMap::TYPE_COLNAME);
         $this->assertNotNull($arr1[MediaPeer::COVER_IMAGE]);
         $this->assertInternalType('resource', $arr1[MediaPeer::COVER_IMAGE]);
 
-        $arr2 = $m->toArray(BasePeer::TYPE_COLNAME, false);
+        $arr2 = $m->toArray(TableMap::TYPE_COLNAME, false);
         $this->assertNull($arr2[MediaPeer::COVER_IMAGE]);
         $this->assertNull($arr2[MediaPeer::EXCERPT]);
 
@@ -329,7 +327,7 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
         $books = BookPeer::doSelectJoinAuthor($c);
         $book = $books[0];
 
-        $arr1 = $book->toArray(BasePeer::TYPE_PHPNAME, null, array(), true);
+        $arr1 = $book->toArray(TableMap::TYPE_PHPNAME, null, array(), true);
         $expectedKeys = array(
             'Id',
             'Title',
@@ -347,7 +345,7 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
         $books = BookPeer::doSelectJoinAll($c);
         $book = $books[0];
 
-        $arr2 = $book->toArray(BasePeer::TYPE_PHPNAME, null, array(), true);
+        $arr2 = $book->toArray(TableMap::TYPE_PHPNAME, null, array(), true);
         $expectedKeys = array(
             'Id',
             'Title',
@@ -366,7 +364,7 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
         $a1 = new Author();
         $a1->setFirstName('Leo');
         $a1->setLastName('Tolstoi');
-        $arr = $a1->toArray(BasePeer::TYPE_PHPNAME, null, array(), true);
+        $arr = $a1->toArray(TableMap::TYPE_PHPNAME, null, array(), true);
         $this->assertFalse(array_key_exists('Books', $arr));
         $b1 = new Book();
         $b1->setTitle('War and Peace');
@@ -374,7 +372,7 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
         $b2->setTitle('Anna Karenina');
         $a1->addBook($b1);
         $a1->addBook($b2);
-        $arr = $a1->toArray(BasePeer::TYPE_PHPNAME, null, array(), true);
+        $arr = $a1->toArray(TableMap::TYPE_PHPNAME, null, array(), true);
         $this->assertTrue(array_key_exists('Books', $arr));
         $this->assertEquals(2, count($arr['Books']));
         $this->assertEquals('War and Peace', $arr['Books']['Book_0']['Title']);

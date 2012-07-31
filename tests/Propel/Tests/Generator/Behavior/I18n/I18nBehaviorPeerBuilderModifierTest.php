@@ -12,9 +12,8 @@ namespace Propel\Tests\Generator\Behavior\I18n;
 
 use Propel\Generator\Util\QuickBuilder;
 use Propel\Generator\Behavior\I18n\I18nBehavior;
-
 use Propel\Runtime\Propel;
-use Propel\Runtime\Util\BasePeer;
+use Propel\Runtime\Map\TableMap;
 
 /**
  * Tests for I18nBehavior class peer modifier
@@ -60,7 +59,7 @@ EOF;
 </database>
 EOF;
         QuickBuilder::buildSchema($schema);
-        $this->assertEquals(array(0, 1, 2), \I18nBehaviorTest03Peer::getFieldNames(BasePeer::TYPE_NUM));
+        $this->assertEquals(array(0, 1, 2), \I18nBehaviorTest03Peer::getFieldNames(TableMap::TYPE_NUM));
     }
 
 }

@@ -18,9 +18,7 @@ use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Util\BasePeer;
 
 /**
- * This is used to connect to PostgresQL databases.
- *
- * <a href="http://www.pgsql.org">http://www.pgsql.org</a>
+ * This is used to connect to PostgreSQL databases.
  *
  * @author Hans Lellelid <hans@xmpl.org> (Propel)
  * @author Hakan Tandogan <hakan42@gmx.de> (Torque)

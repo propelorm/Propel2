@@ -546,7 +546,7 @@ class ModelCriteria extends Criteria implements \IteratorAggregate
 
         if ('*' === $columnArray) {
             $columnArray = array();
-            foreach (call_user_func(array($this->modelPeerName, 'getFieldNames'), BasePeer::TYPE_PHPNAME) as $column) {
+            foreach (call_user_func(array($this->modelPeerName, 'getFieldNames'), TableMap::TYPE_PHPNAME) as $column) {
                 $columnArray []= $this->modelName . '.' . $column;
             }
         }
@@ -1246,7 +1246,7 @@ class ModelCriteria extends Criteria implements \IteratorAggregate
             $class = $this->getModelName();
             $obj = new $class();
             foreach ($this->keys() as $key) {
-                $obj->setByName($key, $this->getValue($key), BasePeer::TYPE_COLNAME);
+                $obj->setByName($key, $this->getValue($key), TableMap::TYPE_COLNAME);
             }
             $ret = $this->getFormatter()->formatRecord($obj);
         }

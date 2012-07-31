@@ -12,7 +12,7 @@
     /**
      * Has specified column been modified?
      *
-     * @param  string  $col column fully qualified name (BasePeer::TYPE_COLNAME), e.g. Book::AUTHOR_ID
+     * @param  string  $col column fully qualified name (TableMap::TYPE_COLNAME), e.g. Book::AUTHOR_ID
      * @return boolean True if $col has been modified.
      */
     public function isColumnModified($col)
@@ -212,7 +212,7 @@
             $parser = AbstractParser::getParser($parser);
         }
 
-        return $this->fromArray($parser->toArray($data), BasePeer::TYPE_PHPNAME);
+        return $this->fromArray($parser->toArray($data), TableMap::TYPE_PHPNAME);
     }
 
     /**
@@ -233,7 +233,7 @@
             $parser = AbstractParser::getParser($parser);
         }
 
-        return $parser->fromArray($this->toArray(BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns, array(), true));
+        return $parser->fromArray($this->toArray(TableMap::TYPE_PHPNAME, $includeLazyLoadColumns, array(), true));
     }
 
     /**
