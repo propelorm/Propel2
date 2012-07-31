@@ -10,9 +10,9 @@
 
 namespace Propel\Tests\Generator\Builder\Om;
 
-use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
-use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
-
+use Propel\Runtime\Propel;
+use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\Map\TableMap;
 use Propel\Tests\Bookstore\AcctAccessRole;
 use Propel\Tests\Bookstore\AcctAccessRolePeer;
 use Propel\Tests\Bookstore\Author;
@@ -36,10 +36,8 @@ use Propel\Tests\Bookstore\Contest;
 use Propel\Tests\Bookstore\Customer;
 use Propel\Tests\Bookstore\ReaderFavorite;
 use Propel\Tests\Bookstore\ReaderFavoritePeer;
-
-use Propel\Runtime\Propel;
-use Propel\Runtime\ActiveQuery\Criteria;
-use Propel\Runtime\Util\BasePeer;
+use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
+use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
 
 /**
  * Tests the generated Peer classes.
@@ -132,7 +130,7 @@ class GeneratedPeerDoSelectTest extends BookstoreEmptyTestBase
 
         $joinBooks = BookPeer::doSelectJoinAuthor($c);
         $obj2 = $joinBooks[0];
-        $obj2Array = $obj2->toArray(BasePeer::TYPE_PHPNAME, true, array(), true);
+        $obj2Array = $obj2->toArray(TableMap::TYPE_PHPNAME, true, array(), true);
         // $joinSize = strlen(serialize($obj2));
 
         $this->assertEquals(count($books), count($joinBooks), "Expected to find same number of rows in doSelectJoin*() call as doSelect() call.");

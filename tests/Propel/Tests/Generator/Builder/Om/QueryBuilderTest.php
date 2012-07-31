@@ -10,9 +10,13 @@
 
 namespace Propel\Tests\Generator\Builder\Om;
 
-use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
-use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
-
+use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\ActiveQuery\ModelCriteria;
+use Propel\Runtime\ActiveQuery\ModelJoin;
+use Propel\Runtime\Connection\ConnectionInterface;
+use Propel\Runtime\Map\TableMap;
+use Propel\Runtime\Propel;
+use Propel\Runtime\Util\BasePeer;
 use Propel\Tests\Bookstore\AuthorPeer;
 use Propel\Tests\Bookstore\AuthorQuery;
 use Propel\Tests\Bookstore\Book;
@@ -30,18 +34,12 @@ use Propel\Tests\Bookstore\ReviewPeer;
 use Propel\Tests\Bookstore\ReviewQuery;
 use Propel\Tests\Bookstore\ReaderFavoriteQuery;
 use Propel\Tests\Bookstore\PublisherPeer;
-
 use Propel\Tests\Bookstore\RecordLabelPeer;
 use Propel\Tests\Bookstore\RecordLabelQuery;
 use Propel\Tests\Bookstore\ReleasePoolPeer;
 use Propel\Tests\Bookstore\ReleasePoolQuery;
-
-use Propel\Runtime\Propel;
-use Propel\Runtime\Connection\ConnectionInterface;
-use Propel\Runtime\ActiveQuery\Criteria;
-use Propel\Runtime\ActiveQuery\ModelCriteria;
-use Propel\Runtime\ActiveQuery\ModelJoin;
-use Propel\Runtime\Util\BasePeer;
+use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
+use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
 
 use \ReflectionMethod;
 
@@ -334,7 +332,7 @@ class QueryBuilderTest extends BookstoreTestBase
 
     public function testFilterBy()
     {
-        foreach (BookPeer::getFieldNames(BasePeer::TYPE_PHPNAME) as $colName) {
+        foreach (BookPeer::getFieldNames(TableMap::TYPE_PHPNAME) as $colName) {
             $filterMethod = 'filterBy' . $colName;
             $this->assertTrue(method_exists('\Propel\Tests\Bookstore\BookQuery', $filterMethod), 'QueryBuilder adds filterByColumn() methods for every column');
             $q = BookQuery::create()->$filterMethod(1);

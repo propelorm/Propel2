@@ -10,8 +10,8 @@
 
 namespace Propel\Tests;
 
+use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Util\BasePeer;
-
 use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\BookPeer;
 use Propel\Tests\Bookstore\Bookstore;
@@ -41,7 +41,7 @@ class FieldnameRelatedTest extends \PHPUnit_Framework_TestCase
      */
     public function testFieldNameTypeConstants ()
     {
-        $result = defined('\Propel\Runtime\Util\BasePeer::TYPE_PHPNAME');
+        $result = defined('\Propel\Runtime\Map\TableMap::TYPE_PHPNAME');
         $this->assertTrue($result);
     }
 
@@ -51,13 +51,13 @@ class FieldnameRelatedTest extends \PHPUnit_Framework_TestCase
     public function testGetFieldNames ()
     {
         $types = array(
-            BasePeer::TYPE_PHPNAME,
-            BasePeer::TYPE_COLNAME,
-            BasePeer::TYPE_FIELDNAME,
-            BasePeer::TYPE_NUM
+            TableMap::TYPE_PHPNAME,
+            TableMap::TYPE_COLNAME,
+            TableMap::TYPE_FIELDNAME,
+            TableMap::TYPE_NUM
         );
         $expecteds = array (
-            BasePeer::TYPE_PHPNAME => array(
+            TableMap::TYPE_PHPNAME => array(
                 0 => 'Id',
                 1 => 'Title',
                 2 => 'ISBN',
@@ -65,7 +65,7 @@ class FieldnameRelatedTest extends \PHPUnit_Framework_TestCase
                 4 => 'PublisherId',
                 5 => 'AuthorId'
             ),
-            BasePeer::TYPE_STUDLYPHPNAME => array(
+            TableMap::TYPE_STUDLYPHPNAME => array(
                 0 => 'id',
                 1 => 'title',
                 2 => 'iSBN',
@@ -73,7 +73,7 @@ class FieldnameRelatedTest extends \PHPUnit_Framework_TestCase
                 4 => 'publisherId',
                 5 => 'authorId'
             ),
-            BasePeer::TYPE_COLNAME => array(
+            TableMap::TYPE_COLNAME => array(
                 0 => 'book.ID',
                 1 => 'book.TITLE',
                 2 => 'book.ISBN',
@@ -81,7 +81,7 @@ class FieldnameRelatedTest extends \PHPUnit_Framework_TestCase
                 4 => 'book.PUBLISHER_ID',
                 5 => 'book.AUTHOR_ID'
             ),
-            BasePeer::TYPE_FIELDNAME => array(
+            TableMap::TYPE_FIELDNAME => array(
                 0 => 'id',
                 1 => 'title',
                 2 => 'isbn',
@@ -89,7 +89,7 @@ class FieldnameRelatedTest extends \PHPUnit_Framework_TestCase
                 4 => 'publisher_id',
                 5 => 'author_id'
             ),
-            BasePeer::TYPE_NUM => array(
+            TableMap::TYPE_NUM => array(
                 0 => 0,
                 1 => 1,
                 2 => 2,
@@ -116,18 +116,18 @@ class FieldnameRelatedTest extends \PHPUnit_Framework_TestCase
     public function testTranslateFieldName ()
     {
         $types = array(
-            BasePeer::TYPE_PHPNAME,
-            BasePeer::TYPE_STUDLYPHPNAME,
-            BasePeer::TYPE_COLNAME,
-            BasePeer::TYPE_FIELDNAME,
-            BasePeer::TYPE_NUM
+            TableMap::TYPE_PHPNAME,
+            TableMap::TYPE_STUDLYPHPNAME,
+            TableMap::TYPE_COLNAME,
+            TableMap::TYPE_FIELDNAME,
+            TableMap::TYPE_NUM
         );
         $expecteds = array (
-            BasePeer::TYPE_PHPNAME => 'AuthorId',
-            BasePeer::TYPE_STUDLYPHPNAME => 'authorId',
-            BasePeer::TYPE_COLNAME => 'book.AUTHOR_ID',
-            BasePeer::TYPE_FIELDNAME => 'author_id',
-            BasePeer::TYPE_NUM => 5,
+            TableMap::TYPE_PHPNAME => 'AuthorId',
+            TableMap::TYPE_STUDLYPHPNAME => 'authorId',
+            TableMap::TYPE_COLNAME => 'book.AUTHOR_ID',
+            TableMap::TYPE_FIELDNAME => 'author_id',
+            TableMap::TYPE_NUM => 5,
         );
         foreach ($types as $fromType) {
             foreach ($types as $toType) {
@@ -145,14 +145,14 @@ class FieldnameRelatedTest extends \PHPUnit_Framework_TestCase
     public function testGetFieldNamesStatic ()
     {
         $types = array(
-            BasePeer::TYPE_PHPNAME,
-            BasePeer::TYPE_STUDLYPHPNAME,
-            BasePeer::TYPE_COLNAME,
-            BasePeer::TYPE_FIELDNAME,
-            BasePeer::TYPE_NUM
+            TableMap::TYPE_PHPNAME,
+            TableMap::TYPE_STUDLYPHPNAME,
+            TableMap::TYPE_COLNAME,
+            TableMap::TYPE_FIELDNAME,
+            TableMap::TYPE_NUM
         );
         $expecteds = array (
-            BasePeer::TYPE_PHPNAME => array(
+            TableMap::TYPE_PHPNAME => array(
                 0 => 'Id',
                 1 => 'Title',
                 2 => 'ISBN',
@@ -160,7 +160,7 @@ class FieldnameRelatedTest extends \PHPUnit_Framework_TestCase
                 4 => 'PublisherId',
                 5 => 'AuthorId'
             ),
-            BasePeer::TYPE_STUDLYPHPNAME => array(
+            TableMap::TYPE_STUDLYPHPNAME => array(
                 0 => 'id',
                 1 => 'title',
                 2 => 'iSBN',
@@ -168,7 +168,7 @@ class FieldnameRelatedTest extends \PHPUnit_Framework_TestCase
                 4 => 'publisherId',
                 5 => 'authorId'
             ),
-            BasePeer::TYPE_COLNAME => array(
+            TableMap::TYPE_COLNAME => array(
                 0 => 'book.ID',
                 1 => 'book.TITLE',
                 2 => 'book.ISBN',
@@ -176,7 +176,7 @@ class FieldnameRelatedTest extends \PHPUnit_Framework_TestCase
                 4 => 'book.PUBLISHER_ID',
                 5 => 'book.AUTHOR_ID'
             ),
-            BasePeer::TYPE_FIELDNAME => array(
+            TableMap::TYPE_FIELDNAME => array(
                 0 => 'id',
                 1 => 'title',
                 2 => 'isbn',
@@ -184,7 +184,7 @@ class FieldnameRelatedTest extends \PHPUnit_Framework_TestCase
                 4 => 'publisher_id',
                 5 => 'author_id'
             ),
-            BasePeer::TYPE_NUM => array(
+            TableMap::TYPE_NUM => array(
                 0 => 0,
                 1 => 1,
                 2 => 2,
@@ -211,18 +211,18 @@ class FieldnameRelatedTest extends \PHPUnit_Framework_TestCase
     public function testTranslateFieldNameStatic ()
     {
         $types = array(
-            BasePeer::TYPE_PHPNAME,
-            BasePeer::TYPE_STUDLYPHPNAME,
-            BasePeer::TYPE_COLNAME,
-            BasePeer::TYPE_FIELDNAME,
-            BasePeer::TYPE_NUM
+            TableMap::TYPE_PHPNAME,
+            TableMap::TYPE_STUDLYPHPNAME,
+            TableMap::TYPE_COLNAME,
+            TableMap::TYPE_FIELDNAME,
+            TableMap::TYPE_NUM
         );
         $expecteds = array (
-            BasePeer::TYPE_PHPNAME => 'AuthorId',
-            BasePeer::TYPE_STUDLYPHPNAME => 'authorId',
-            BasePeer::TYPE_COLNAME => 'book.AUTHOR_ID',
-            BasePeer::TYPE_FIELDNAME => 'author_id',
-            BasePeer::TYPE_NUM => 5,
+            TableMap::TYPE_PHPNAME => 'AuthorId',
+            TableMap::TYPE_STUDLYPHPNAME => 'authorId',
+            TableMap::TYPE_COLNAME => 'book.AUTHOR_ID',
+            TableMap::TYPE_FIELDNAME => 'author_id',
+            TableMap::TYPE_NUM => 5,
         );
         foreach ($types as $fromType) {
             foreach ($types as $toType) {
@@ -240,11 +240,11 @@ class FieldnameRelatedTest extends \PHPUnit_Framework_TestCase
     public function testGetByName()
     {
         $types = array(
-            BasePeer::TYPE_PHPNAME => 'Title',
-            BasePeer::TYPE_STUDLYPHPNAME => 'title',
-            BasePeer::TYPE_COLNAME => 'book.TITLE',
-            BasePeer::TYPE_FIELDNAME => 'title',
-            BasePeer::TYPE_NUM => 1
+            TableMap::TYPE_PHPNAME => 'Title',
+            TableMap::TYPE_STUDLYPHPNAME => 'title',
+            TableMap::TYPE_COLNAME => 'book.TITLE',
+            TableMap::TYPE_FIELDNAME => 'title',
+            TableMap::TYPE_NUM => 1
         );
 
         $book = new Book();
@@ -264,11 +264,11 @@ class FieldnameRelatedTest extends \PHPUnit_Framework_TestCase
     {
         $book = new Book();
         $types = array(
-            BasePeer::TYPE_PHPNAME => 'Title',
-            BasePeer::TYPE_STUDLYPHPNAME => 'title',
-            BasePeer::TYPE_COLNAME => 'book.TITLE',
-            BasePeer::TYPE_FIELDNAME => 'title',
-            BasePeer::TYPE_NUM => 1
+            TableMap::TYPE_PHPNAME => 'Title',
+            TableMap::TYPE_STUDLYPHPNAME => 'title',
+            TableMap::TYPE_COLNAME => 'book.TITLE',
+            TableMap::TYPE_FIELDNAME => 'title',
+            TableMap::TYPE_NUM => 1
         );
 
         $title = 'Harry Potter and the Order of the Phoenix';
@@ -287,30 +287,30 @@ class FieldnameRelatedTest extends \PHPUnit_Framework_TestCase
     public function testFromArray()
     {
         $types = array(
-            BasePeer::TYPE_PHPNAME,
-            BasePeer::TYPE_STUDLYPHPNAME,
-            BasePeer::TYPE_COLNAME,
-            BasePeer::TYPE_FIELDNAME,
-            BasePeer::TYPE_NUM
+            TableMap::TYPE_PHPNAME,
+            TableMap::TYPE_STUDLYPHPNAME,
+            TableMap::TYPE_COLNAME,
+            TableMap::TYPE_FIELDNAME,
+            TableMap::TYPE_NUM
         );
         $expecteds = array (
-            BasePeer::TYPE_PHPNAME => array (
+            TableMap::TYPE_PHPNAME => array (
                 'Title' => 'Harry Potter and the Order of the Phoenix',
                 'ISBN' => '043935806X'
             ),
-            BasePeer::TYPE_STUDLYPHPNAME => array (
+            TableMap::TYPE_STUDLYPHPNAME => array (
                 'title' => 'Harry Potter and the Order of the Phoenix',
                 'iSBN' => '043935806X'
             ),
-            BasePeer::TYPE_COLNAME => array (
+            TableMap::TYPE_COLNAME => array (
                 'book.TITLE' => 'Harry Potter and the Order of the Phoenix',
                 'book.ISBN' => '043935806X'
             ),
-            BasePeer::TYPE_FIELDNAME => array (
+            TableMap::TYPE_FIELDNAME => array (
                 'title' => 'Harry Potter and the Order of the Phoenix',
                 'isbn' => '043935806X'
             ),
-            BasePeer::TYPE_NUM => array (
+            TableMap::TYPE_NUM => array (
                 '1' => 'Harry Potter and the Order of the Phoenix',
                 '2' => '043935806X'
             )
@@ -340,11 +340,11 @@ class FieldnameRelatedTest extends \PHPUnit_Framework_TestCase
     public function testToArray()
     {
         $types = array(
-            BasePeer::TYPE_PHPNAME,
-            BasePeer::TYPE_STUDLYPHPNAME,
-            BasePeer::TYPE_COLNAME,
-            BasePeer::TYPE_FIELDNAME,
-            BasePeer::TYPE_NUM
+            TableMap::TYPE_PHPNAME,
+            TableMap::TYPE_STUDLYPHPNAME,
+            TableMap::TYPE_COLNAME,
+            TableMap::TYPE_FIELDNAME,
+            TableMap::TYPE_NUM
         );
 
         $book = new Book();
@@ -354,23 +354,23 @@ class FieldnameRelatedTest extends \PHPUnit_Framework_TestCase
         ));
 
         $expecteds = array (
-            BasePeer::TYPE_PHPNAME => array (
+            TableMap::TYPE_PHPNAME => array (
                 'Title' => 'Harry Potter and the Order of the Phoenix',
                 'ISBN' => '043935806X'
             ),
-            BasePeer::TYPE_STUDLYPHPNAME => array (
+            TableMap::TYPE_STUDLYPHPNAME => array (
                 'title' => 'Harry Potter and the Order of the Phoenix',
                 'iSBN' => '043935806X'
             ),
-            BasePeer::TYPE_COLNAME => array (
+            TableMap::TYPE_COLNAME => array (
                 'book.TITLE' => 'Harry Potter and the Order of the Phoenix',
                 'book.ISBN' => '043935806X'
             ),
-            BasePeer::TYPE_FIELDNAME => array (
+            TableMap::TYPE_FIELDNAME => array (
                 'title' => 'Harry Potter and the Order of the Phoenix',
                 'isbn' => '043935806X'
             ),
-            BasePeer::TYPE_NUM => array (
+            TableMap::TYPE_NUM => array (
                 '1' => 'Harry Potter and the Order of the Phoenix',
                 '2' => '043935806X'
             )
