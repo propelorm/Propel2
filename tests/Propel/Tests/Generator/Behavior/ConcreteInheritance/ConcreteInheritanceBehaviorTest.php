@@ -35,7 +35,6 @@ use Propel\Generator\Util\QuickBuilder;
  * Tests for ConcreteInheritanceBehavior class
  *
  * @author François Zaniontto
- * @version   $Revision$
  */
 class ConcreteInheritanceBehaviorTest extends BookstoreTestBase
 {

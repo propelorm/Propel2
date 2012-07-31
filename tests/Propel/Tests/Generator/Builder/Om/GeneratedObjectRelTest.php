@@ -18,6 +18,7 @@ use Propel\Tests\Bookstore\AuthorPeer;
 use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\BookPeer;
 use Propel\Tests\Bookstore\BookQuery;
+use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\Bookstore\Bookstore;
 use Propel\Tests\Bookstore\BookClubList;
 use Propel\Tests\Bookstore\BookClubListQuery;
@@ -366,7 +367,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         BookstoreDataPopulator::populate();
         BookPeer::clearInstancePool();
         AuthorPeer::clearInstancePool();
-        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         $author = AuthorPeer::doSelectOne(new Criteria(), $con);
         // populate book instance pool
         $books = $author->getBooks(null, $con);
@@ -381,7 +382,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         BookPeer::clearInstancePool();
         AuthorPeer::clearInstancePool();
         PublisherPeer::clearInstancePool();
-        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         $author = AuthorPeer::doSelectOne(new Criteria(), $con);
         // populate book instance pool
         $books = $author->getBooksJoinPublisher(null, $con);

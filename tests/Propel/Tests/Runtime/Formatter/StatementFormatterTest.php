@@ -14,7 +14,7 @@ use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
 use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
 
 use Propel\Tests\Bookstore\Book;
-use Propel\Tests\Bookstore\BookPeer;
+use Propel\Tests\Bookstore\Map\BookTableMap;
 
 use Propel\Runtime\Propel;
 use Propel\Runtime\Exception\PropelException;
@@ -28,7 +28,6 @@ use \PDOStatement;
  * Test class for StatementFormatter.
  *
  * @author Francois Zaninotto
- * @version    $Id$
  */
 class StatementFormatterTest extends BookstoreEmptyTestBase
 {
@@ -40,7 +39,7 @@ class StatementFormatterTest extends BookstoreEmptyTestBase
 
     public function testFormatNoCriteria()
     {
-        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
 
         $stmt = $con->query('SELECT * FROM book');
         $formatter = new StatementFormatter();
@@ -54,7 +53,7 @@ class StatementFormatterTest extends BookstoreEmptyTestBase
 
     public function testFormatManyResults()
     {
-        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
 
         $stmt = $con->query('SELECT * FROM book');
         $formatter = new StatementFormatter();
@@ -70,7 +69,7 @@ class StatementFormatterTest extends BookstoreEmptyTestBase
 
     public function testFormatOneResult()
     {
-        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
 
         $stmt = $con->query('SELECT * FROM book WHERE book.TITLE = "Quicksilver"');
         $formatter = new StatementFormatter();
@@ -85,7 +84,7 @@ class StatementFormatterTest extends BookstoreEmptyTestBase
 
     public function testFormatNoResult()
     {
-        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
 
         $stmt = $con->query('SELECT * FROM book WHERE book.TITLE = "foo"');
         $formatter = new StatementFormatter();
@@ -98,7 +97,7 @@ class StatementFormatterTest extends BookstoreEmptyTestBase
 
     public function testFormatoneNoCriteria()
     {
-        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
 
         $stmt = $con->query('SELECT * FROM book');
         $formatter = new StatementFormatter();
@@ -112,7 +111,7 @@ class StatementFormatterTest extends BookstoreEmptyTestBase
 
     public function testFormatOneManyResults()
     {
-        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
 
         $stmt = $con->query('SELECT * FROM book');
         $formatter = new StatementFormatter();
@@ -124,7 +123,7 @@ class StatementFormatterTest extends BookstoreEmptyTestBase
 
     public function testFormatOneNoResult()
     {
-        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
 
         $stmt = $con->query('SELECT * FROM book WHERE book.TITLE = "foo"');
         $formatter = new StatementFormatter();

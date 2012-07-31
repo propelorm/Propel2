@@ -10,13 +10,13 @@
 
 namespace Propel\Tests\Runtime\Util;
 
-use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
-use Propel\Tests\Bookstore\BookPeer;
-
 use Propel\Runtime\Propel;
 use Propel\Runtime\Exception\RuntimeException;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Util\BasePeer;
+use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
+use Propel\Tests\Bookstore\BookPeer;
+use Propel\Tests\Bookstore\Map\BookTableMap;
 
 /**
  * Tests the exceptions thrown by the BasePeer classes.
@@ -54,9 +54,9 @@ class BasePeerExceptionsTest extends BookstoreTestBase
     {
         try {
             $c = new Criteria();
-            $c->setPrimaryTableName(BookPeer::TABLE_NAME);
+            $c->setPrimaryTableName(BookTableMap::TABLE_NAME);
             $c->add(BookPeer::ID, 12, ' BAD SQL');
-            BasePeer::doDelete($c, Propel::getServiceContainer()->getWriteConnection(BookPeer::DATABASE_NAME));
+            BasePeer::doDelete($c, Propel::getServiceContainer()->getWriteConnection(BookTableMap::DATABASE_NAME));
         } catch (RuntimeException $e) {
             $this->assertContains('[DELETE FROM `book` WHERE book.ID BAD SQL:p1]', $e->getMessage(), 'SQL query is written in the exception message');
         }
@@ -65,7 +65,7 @@ class BasePeerExceptionsTest extends BookstoreTestBase
     public function testDoDeleteAll()
     {
         try {
-            BasePeer::doDeleteAll('BAD TABLE', Propel::getServiceContainer()->getWriteConnection(BookPeer::DATABASE_NAME));
+            BasePeer::doDeleteAll('BAD TABLE', Propel::getServiceContainer()->getWriteConnection(BookTableMap::DATABASE_NAME));
         } catch (RuntimeException $e) {
             $this->assertContains('[DELETE FROM `BAD` `TABLE`]', $e->getMessage(), 'SQL query is written in the exception message');
         }
@@ -75,11 +75,11 @@ class BasePeerExceptionsTest extends BookstoreTestBase
     {
         try {
             $c1 = new Criteria();
-            $c1->setPrimaryTableName(BookPeer::TABLE_NAME);
+            $c1->setPrimaryTableName(BookTableMap::TABLE_NAME);
             $c1->add(BookPeer::ID, 12, ' BAD SQL');
             $c2 = new Criteria();
             $c2->add(BookPeer::TITLE, 'Foo');
-            BasePeer::doUpdate($c1, $c2, Propel::getServiceContainer()->getWriteConnection(BookPeer::DATABASE_NAME));
+            BasePeer::doUpdate($c1, $c2, Propel::getServiceContainer()->getWriteConnection(BookTableMap::DATABASE_NAME));
         } catch (RuntimeException $e) {
             $this->assertContains('[UPDATE `book` SET `TITLE`=:p1 WHERE book.ID BAD SQL:p2]', $e->getMessage(), 'SQL query is written in the exception message');
         }
@@ -89,9 +89,9 @@ class BasePeerExceptionsTest extends BookstoreTestBase
     {
         try {
             $c = new Criteria();
-            $c->setPrimaryTableName(BookPeer::TABLE_NAME);
+            $c->setPrimaryTableName(BookTableMap::TABLE_NAME);
             $c->add(BookPeer::AUTHOR_ID, 'lkhlkhj');
-            BasePeer::doInsert($c, Propel::getServiceContainer()->getWriteConnection(BookPeer::DATABASE_NAME));
+            BasePeer::doInsert($c, Propel::getServiceContainer()->getWriteConnection(BookTableMap::DATABASE_NAME));
         } catch (RuntimeException $e) {
             $this->assertContains('[INSERT INTO `book` (`AUTHOR_ID`) VALUES (:p1)]', $e->getMessage(), 'SQL query is written in the exception message');
         }

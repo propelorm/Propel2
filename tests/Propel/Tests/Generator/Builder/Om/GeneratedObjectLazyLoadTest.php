@@ -40,7 +40,7 @@ EOF;
 
     public function testNormalColumnsRequireNoQueryOnGetter()
     {
-        $con = Propel::getServiceContainer()->getConnection(\LazyLoadActiveRecordPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(\Map\LazyLoadActiveRecordTableMap::DATABASE_NAME);
         $con->useDebug(true);
         $obj = new \LazyLoadActiveRecord();
         $obj->setFoo('hello');
@@ -54,7 +54,7 @@ EOF;
 
     public function testLazyLoadedColumnsRequireAnAdditionalQueryOnGetter()
     {
-        $con = Propel::getServiceContainer()->getConnection(\LazyLoadActiveRecordPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(\Map\LazyLoadActiveRecordTableMap::DATABASE_NAME);
         $con->useDebug(true);
         $obj = new \LazyLoadActiveRecord();
         $obj->setBar('hello');
@@ -68,7 +68,7 @@ EOF;
 
     public function testLazyLoadedColumnsWithDefaultRequireAnAdditionalQueryOnGetter()
     {
-        $con = Propel::getServiceContainer()->getConnection(\LazyLoadActiveRecordPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(\Map\LazyLoadActiveRecordTableMap::DATABASE_NAME);
         $con->useDebug(true);
         $obj = new \LazyLoadActiveRecord();
         $obj->setBaz('hello');

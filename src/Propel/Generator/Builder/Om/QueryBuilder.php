@@ -172,6 +172,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
         );
         $this->declareClassFromBuilder($this->getStubQueryBuilder(), 'Child');
         $this->declareClassFromBuilder($this->getStubPeerBuilder());
+        $this->declareClassFromBuilder($this->getTableMapBuilder());
 
         // apply behaviors
         $this->applyBehaviorModifier('queryAttributes', $script, "    ");
@@ -416,7 +417,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
             return \$obj;
         }
         if (\$con === null) {
-            \$con = Propel::getServiceContainer()->getReadConnection({$peerClassName}::DATABASE_NAME);
+            \$con = Propel::getServiceContainer()->getReadConnection({$this->getTableMapClass()}::DATABASE_NAME);
         }
         \$this->basePreSelect(\$con);
         if (\$this->formatter || \$this->modelAlias || \$this->with || \$this->select

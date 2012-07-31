@@ -13,8 +13,9 @@ namespace Propel\Tests\Runtime\ActiveQuery;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 use Propel\Tests\Bookstore\AuthorPeer;
 use Propel\Tests\Bookstore\BookPeer;
+use Propel\Tests\Bookstore\Map\AuthorTableMap;
+use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\Bookstore\PublisherPeer;
-
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Util\BasePeer;
 
@@ -372,21 +373,21 @@ class CriteriaMergeTest extends BookstoreTestBase
     public function testMergeWithAliases()
     {
         $c1 = new Criteria();
-        $c1->addAlias('b', BookPeer::TABLE_NAME);
+        $c1->addAlias('b', BookTableMap::TABLE_NAME);
         $c2 = new Criteria();
         $c1->mergeWith($c2);
-        $this->assertEquals(array('b' => BookPeer::TABLE_NAME), $c1->getAliases(), 'mergeWith() does not remove an existing alias');
+        $this->assertEquals(array('b' => BookTableMap::TABLE_NAME), $c1->getAliases(), 'mergeWith() does not remove an existing alias');
         $c1 = new Criteria();
         $c2 = new Criteria();
-        $c2->addAlias('a', AuthorPeer::TABLE_NAME);
+        $c2->addAlias('a', AuthorTableMap::TABLE_NAME);
         $c1->mergeWith($c2);
-        $this->assertEquals(array('a' => AuthorPeer::TABLE_NAME), $c1->getAliases(), 'mergeWith() merge aliases to an empty alias');
+        $this->assertEquals(array('a' => AuthorTableMap::TABLE_NAME), $c1->getAliases(), 'mergeWith() merge aliases to an empty alias');
         $c1 = new Criteria();
-        $c1->addAlias('b', BookPeer::TABLE_NAME);
+        $c1->addAlias('b', BookTableMap::TABLE_NAME);
         $c2 = new Criteria();
-        $c2->addAlias('a', AuthorPeer::TABLE_NAME);
+        $c2->addAlias('a', AuthorTableMap::TABLE_NAME);
         $c1->mergeWith($c2);
-        $this->assertEquals(array('b' => BookPeer::TABLE_NAME, 'a' => AuthorPeer::TABLE_NAME), $c1->getAliases(), 'mergeWith() merge aliases to an existing alias');
+        $this->assertEquals(array('b' => BookTableMap::TABLE_NAME, 'a' => AuthorTableMap::TABLE_NAME), $c1->getAliases(), 'mergeWith() merge aliases to an existing alias');
     }
 
     /**
@@ -395,9 +396,9 @@ class CriteriaMergeTest extends BookstoreTestBase
     public function testMergeWithAliasesThrowsException()
     {
         $c1 = new Criteria();
-        $c1->addAlias('b', BookPeer::TABLE_NAME);
+        $c1->addAlias('b', BookTableMap::TABLE_NAME);
         $c2 = new Criteria();
-        $c2->addAlias('b', AuthorPeer::TABLE_NAME);
+        $c2->addAlias('b', AuthorTableMap::TABLE_NAME);
         $c1->mergeWith($c2);
     }
 

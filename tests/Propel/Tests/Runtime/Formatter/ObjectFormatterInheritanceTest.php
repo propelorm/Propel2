@@ -12,7 +12,7 @@ namespace Propel\Tests\Runtime\Formatter;
 
 use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
 
-use Propel\Tests\Bookstore\BookPeer;
+use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\Bookstore\BookstoreEmployee;
 use Propel\Tests\Bookstore\BookstoreEmployeePeer;
 use Propel\Tests\Bookstore\BookstoreCashier;
@@ -46,7 +46,7 @@ class ObjectFormatterInheritanceTest extends BookstoreEmptyTestBase
 
     public function testFormat()
     {
-        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         BookstoreEmployeePeer::clearInstancePool();
 
         $stmt = $con->query('SELECT * FROM bookstore_employee');

@@ -784,6 +784,14 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     }
 
     /**
+     * @return string
+     */
+    public function getTableMapClass()
+    {
+        return $this->getStubObjectBuilder()->getUnqualifiedClassName() . 'TableMap';
+    }
+
+    /**
      * Most of the code comes from the PHP-CS-Fixer project
      */
     private function clean($content)
