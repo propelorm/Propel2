@@ -381,6 +381,13 @@ DROP TABLE " . $this->quoteIdentifier($table->getName()) . ";
                     $default .= $this->getBooleanString($defaultValue->getValue());
                 } elseif ($col->getType() == PropelTypes::ENUM) {
                     $default .= array_search($defaultValue->getValue(), $col->getValueSet());
+                } elseif ($col->isPhpArrayType()) {
+                    $value = $this->getPhpArrayString($defaultValue->getValue());
+                    if (null === $value) {
+                        $default = '';
+                    } else {
+                        $default .= $value;
+                    }
                 } else {
                     $default .= $defaultValue->getValue();
                 }
@@ -1161,6 +1168,26 @@ ALTER TABLE %s ADD
         }
 
         return '0';
+    }
+
+    public function getPhpArrayString($stringValue)
+    {
+        $stringValue = trim($stringValue);
+        if (empty($stringValue)) {
+            return null;
+        }
+
+        $values = array();
+        foreach (explode(',', $stringValue) as $v) {
+            $values[] = trim($v);
+        }
+
+        $value = implode($values, ' | ');
+        if (empty($value) || ' | ' === $value) {
+            return null;
+        }
+
+        return $this->quote(sprintf('||%s||', $value));
     }
 
     /**

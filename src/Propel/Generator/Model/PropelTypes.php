@@ -364,4 +364,15 @@ class PropelTypes
     {
         return !self::isPhpPrimitiveType($phpType) && !in_array($phpType, array('resource', 'array'));
     }
+
+    /**
+     * Convenience method to indicate whether a passed-in PHP type is an array.
+     *
+     * @param string $phpType The PHP type to check
+     * @return boolean
+     */
+    public static function isPhpArrayType($phpType)
+    {
+        return strtoupper($phpType) === self::PHP_ARRAY;
+    }
 }
