@@ -35,11 +35,15 @@ class GeneratedObjectArrayColumnTypeTest extends \PHPUnit_Framework_TestCase
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <column name="tags" type="ARRAY" />
         <column name="value_set" type="ARRAY" />
+        <column name="defaults" type="ARRAY" defaultValue="FOO" />
+        <column name="multiple_defaults" type="ARRAY" defaultValue="FOO, BAR,BAZ" />
     </table>
 </database>
 EOF;
             QuickBuilder::buildSchema($schema);
         }
+
+        ComplexColumnTypeEntity2Peer::doDeleteAll();
     }
 
     public function testActiveRecordMethods()
@@ -61,6 +65,56 @@ EOF;
     {
         $e = new ComplexColumnTypeEntity2();
         $this->assertEquals(array(), $e->getTags(), 'array columns return an empty array by default');
+    }
+
+    public function testGetterDefaultValueWithData()
+    {
+        $e = new ComplexColumnTypeEntity2();
+        $this->assertEquals(array('FOO'), $e->getDefaults());
+    }
+
+    public function testGetterDefaultValueWithMultipleData()
+    {
+        $e = new ComplexColumnTypeEntity2();
+        $this->assertEquals(array('FOO', 'BAR', 'BAZ'), $e->getMultipleDefaults());
+    }
+
+    public function testAdderAddsNewValueToExistingData()
+    {
+        $e = new ComplexColumnTypeEntity2();
+        $this->assertEquals(array('FOO'), $e->getDefaults());
+        $e->addDefault('bar');
+        $this->assertEquals(array('FOO', 'bar'), $e->getDefaults());
+    }
+
+    public function testAdderAddsNewValueToMultipleExistingData()
+    {
+        $e = new ComplexColumnTypeEntity2();
+        $this->assertEquals(array('FOO', 'BAR', 'BAZ'), $e->getMultipleDefaults());
+        $e->addMultipleDefault('bar');
+        $this->assertEquals(array('FOO', 'BAR', 'BAZ', 'bar'), $e->getMultipleDefaults());
+    }
+
+    public function testDefaultValuesAreWellPersisted()
+    {
+        $e = new ComplexColumnTypeEntity2();
+        $e->save();
+
+        ComplexColumnTypeEntity2Peer::clearInstancePool();
+        $e = ComplexColumnTypeEntity2Query::create()->findOne();
+
+        $this->assertEquals(array('FOO'), $e->getDefaults());
+    }
+
+    public function testMultipleDefaultValuesAreWellPersisted()
+    {
+        $e = new ComplexColumnTypeEntity2();
+        $e->save();
+
+        ComplexColumnTypeEntity2Peer::clearInstancePool();
+        $e = ComplexColumnTypeEntity2Query::create()->findOne();
+
+        $this->assertEquals(array('FOO', 'BAR', 'BAZ'), $e->getMultipleDefaults());
     }
 
     public function testSetterArrayValue()
