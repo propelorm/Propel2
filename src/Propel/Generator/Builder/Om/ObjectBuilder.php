@@ -184,6 +184,8 @@ class ObjectBuilder extends AbstractObjectBuilder
             $defaultValue = var_export($val, true);
         } elseif ($column->isPhpObjectType()) {
             $defaultValue = 'new '.$column->getPhpType().'(' . var_export($val, true) . ')';
+        } elseif ($column->isPhpArrayType()) {
+            $defaultValue = var_export($val, true);
         } else {
             throw new EngineException("Cannot get default value string for " . $column->getFullyQualifiedName());
         }
