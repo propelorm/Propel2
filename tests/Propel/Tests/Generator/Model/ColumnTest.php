@@ -10,6 +10,7 @@
 namespace Propel\Tests\Generator\Model;
 
 use Propel\Generator\Model\Column;
+use Propel\Generator\Model\PropelTypes;
 
 /**
  * Tests for package handling.
@@ -842,6 +843,15 @@ class ColumnTest extends ModelTestCase
 
         $this->assertTrue($column->hasPlatform());
         $this->assertInstanceOf('Propel\Generator\Platform\PlatformInterface', $column->getPlatform());
+    }
+
+    public function testIsPhpArrayType()
+    {
+        $column = new Column();
+        $this->assertFalse($column->isPhpArrayType());
+
+        $column->setType(PropelTypes::PHP_ARRAY);
+        $this->assertTrue($column->isPhpArrayType());
     }
 
     public function testSetSize()
