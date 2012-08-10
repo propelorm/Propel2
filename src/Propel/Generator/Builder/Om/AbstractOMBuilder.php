@@ -73,6 +73,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         $this->addClassClose($script);
 
         $ignoredNamespace = $this->getNamespace();
+
         if ($useStatements = $this->getUseStatements($ignoredNamespace ?: 'namespace')) {
             $script = $useStatements . $script;
         }
@@ -81,9 +82,11 @@ abstract class AbstractOMBuilder extends DataModelBuilder
             $script = $namespaceStatement . $script;
         }
 
-        return '<' . "?php
+        $script =  "<?php
 
 " . $script;
+
+        return $this->clean($script);
     }
 
     /**
@@ -776,5 +779,45 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         $vars = array_merge($vars, array('behavior' => $this));
 
         return $template->render($vars);
+    }
+
+    /**
+     * Most of the code comes from the PHP-CS-Fixer project
+     */
+    private function clean($content)
+    {
+        // trailing whitespaces
+        $content = preg_replace('/[ \t]*$/m', '', $content);
+
+        // indentation
+        $content = preg_replace_callback('/^([ \t]+)/m', function ($matches) use ($content) {
+            return str_replace("\t", '    ', $matches[0]);
+        }, $content);
+
+        // line feed
+        $content = str_replace("\r\n", "\n", $content);
+
+        // Unused "use" statements
+        preg_match_all('/^use (?P<class>[^\s;]+)(?:\s+as\s+(?P<alias>.*))?;/m', $content, $matches, PREG_SET_ORDER);
+        foreach ($matches as $match) {
+            if (isset($match['alias'])) {
+                $short = $match['alias'];
+            } else {
+                $parts = explode('\\', $match['class']);
+                $short = array_pop($parts);
+            }
+
+            preg_match_all('/\b'.$short.'\b/i', str_replace($match[0]."\n", '', $content), $m);
+            if (!count($m[0])) {
+                $content = str_replace($match[0]."\n", '', $content);
+            }
+        }
+
+        // end of line
+        if (strlen($content) && "\n" != substr($content, -1)) {
+            $content = $content."\n";
+        }
+
+        return $content;
     }
 }
