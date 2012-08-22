@@ -18,7 +18,6 @@ use Propel\Generator\Config\GeneratorConfig;
 use Propel\Generator\Exception\RuntimeException;
 use Propel\Generator\Manager\MigrationManager;
 use Propel\Generator\Model\IdMethod;
-use Propel\Generator\Util\Filesystem;
 
 /**
  * @author William Durand <william.durand1@gmail.com>
@@ -55,7 +54,7 @@ class MigrationDiffCommand extends AbstractCommand
             'propel.platform.class' => $input->getOption('platform'),
         ));
 
-        $filesystem = new Filesystem();
+        $filesystem = $this->getFilesystem();
         $filesystem->mkdir($input->getOption('output-dir'));
 
         $manager = new MigrationManager();
