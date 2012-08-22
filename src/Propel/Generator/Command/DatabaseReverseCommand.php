@@ -60,8 +60,7 @@ class DatabaseReverseCommand extends AbstractCommand
             'propel.reverse.parser.class'   => sprintf('\\Propel\\Generator\\Reverse\\%sSchemaParser', $vendor),
         ));
 
-        $filesystem = $this->getFilesystem();
-        $filesystem->mkdir($input->getOption('output-dir'));
+        $this->createDirectory($input->getOption('output-dir'));
 
         $manager = new ReverseManager();
         $manager->setGeneratorConfig($generatorConfig);
