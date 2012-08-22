@@ -16,7 +16,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\Output;
 use Propel\Generator\Config\GeneratorConfig;
 use Propel\Generator\Manager\MigrationManager;
-use Propel\Generator\Util\Filesystem;
 
 /**
  * @author William Durand <william.durand1@gmail.com>
@@ -52,7 +51,7 @@ class MigrationDownCommand extends AbstractCommand
             'propel.platform.class' => $input->getOption('platform'),
         ));
 
-        $filesystem = new Filesystem();
+        $filesystem = $this->getFilesystem();
         $filesystem->mkdir($input->getOption('output-dir'));
 
         $manager = new MigrationManager();

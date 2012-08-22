@@ -13,7 +13,7 @@ namespace Propel\Generator\Command;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Finder\Finder;
-
+use Symfony\Component\Filesystem\Filesystem;
 use Propel\Generator\Exception\RuntimeException;
 
 /**
@@ -22,8 +22,9 @@ use Propel\Generator\Exception\RuntimeException;
 abstract class AbstractCommand extends Command
 {
     const DEFAULT_INPUT_DIRECTORY   = '.';
-
     const DEFAULT_PLATFORM          = 'MysqlPlatform';
+
+    protected $filesystem;
 
     /**
      * {@inheritdoc}
@@ -70,6 +71,20 @@ abstract class AbstractCommand extends Command
             ->depth(0)
             ->files()
         );
+    }
+
+    /**
+     * Returns a Filesystem instance.
+     *
+     * @return Filesystem
+     */
+    protected function getFilesystem()
+    {
+        if (null === $this->filesystem) {
+            $this->filesystem = new Filesystem();
+        }
+
+        return $this->filesystem;
     }
 
     protected function parseConnection($connection)

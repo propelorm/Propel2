@@ -16,7 +16,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\Output;
 use Propel\Generator\Config\GeneratorConfig;
 use Propel\Generator\Manager\ModelManager;
-use Propel\Generator\Util\Filesystem;
 
 /**
  * @author Florian Klein <florian.klein@free.fr>
@@ -133,7 +132,7 @@ class ModelBuildCommand extends AbstractCommand
             'propel.mysql.tableEngineKeyword'           => 'ENGINE',
         ), $this->getBuildProperties($input->getOption('input-dir') . '/build.properties')));
 
-        $filesystem = new Filesystem();
+        $filesystem = $this->getFilesystem();
         $filesystem->mkdir($input->getOption('output-dir'));
 
         $manager = new ModelManager();

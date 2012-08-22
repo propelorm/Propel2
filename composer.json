@@ -21,7 +21,8 @@
         "symfony/console": "2.1.*",
         "monolog/monolog": "1.0.*",
         "symfony/finder": "2.1.*",
-        "symfony/validator": "2.1.*"
+        "symfony/validator": "2.1.*",
+        "symfony/filesystem": "2.1.*"
     },
     "require-dev": {
         "behat/behat": "2.4@stable"
