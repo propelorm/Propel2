@@ -10,16 +10,14 @@
 
 namespace Propel\Generator\Command;
 
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\Output;
 use Propel\Generator\Config\XmlToArrayConverter;
 use Propel\Generator\Config\ArrayToPhpConverter;
-use Propel\Generator\Util\Filesystem;
 
-class ConfigConvertXmlCommand extends Command
+class ConfigConvertXmlCommand extends AbstractCommand
 {
     const DEFAULT_INPUT_DIRECTORY   = '.';
     const DEFAULT_INPUT_FILE        = 'runtime-conf.xml';
@@ -51,7 +49,7 @@ class ConfigConvertXmlCommand extends Command
             throw new \RuntimeException(sprintf('Unable to find the "%s" configuration file', $inputFilePath));
         }
 
-        $filesystem = new Filesystem();
+        $filesystem = $this->getFilesystem();
         if (!$filesystem->mkdir($input->getOption('output-dir'))) {
             throw new \RuntimeException(sprintf('Unable to write the "%s" output directory', $input->getOption('output-dir')));
         };
