@@ -63,8 +63,7 @@ class SqlBuildCommand extends AbstractCommand
             'propel.mysql.tableEngineKeyword'       => 'ENGINE',
         ), $this->getBuildProperties($input->getOption('input-dir') . '/build.properties')));
 
-        $filesystem = $this->getFilesystem();
-        $filesystem->mkdir($input->getOption('output-dir'));
+        $this->createDirectory($input->getOption('output-dir'));
 
         $manager = new SqlManager();
         $manager->setValidate($input->getOption('validate'));

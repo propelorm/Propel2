@@ -49,10 +49,7 @@ class ConfigConvertXmlCommand extends AbstractCommand
             throw new \RuntimeException(sprintf('Unable to find the "%s" configuration file', $inputFilePath));
         }
 
-        $filesystem = $this->getFilesystem();
-        if (!$filesystem->mkdir($input->getOption('output-dir'))) {
-            throw new \RuntimeException(sprintf('Unable to write the "%s" output directory', $input->getOption('output-dir')));
-        };
+        $this->createDirectory($input->getOption('output-dir'));
 
         $outputFilePath = $input->getOption('output-dir') . DIRECTORY_SEPARATOR .$input->getOption('output-file');
         if (!is_writable(dirname($outputFilePath))) {
