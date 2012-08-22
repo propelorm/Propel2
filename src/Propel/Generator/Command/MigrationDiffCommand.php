@@ -54,8 +54,7 @@ class MigrationDiffCommand extends AbstractCommand
             'propel.platform.class' => $input->getOption('platform'),
         ));
 
-        $filesystem = $this->getFilesystem();
-        $filesystem->mkdir($input->getOption('output-dir'));
+        $this->createDirectory($input->getOption('output-dir'));
 
         $manager = new MigrationManager();
         $manager->setGeneratorConfig($generatorConfig);
