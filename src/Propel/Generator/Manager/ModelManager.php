@@ -10,8 +10,8 @@
 
 namespace Propel\Generator\Manager;
 
+use Symfony\Component\Filesystem\Filesystem;
 use Propel\Generator\Builder\Om\AbstractOMBuilder;
-use Propel\Generator\Util\Filesystem;
 
 /**
  * This manager creates the Object Model classes based on the XML schema file.
@@ -20,6 +20,13 @@ use Propel\Generator\Util\Filesystem;
  */
 class ModelManager extends AbstractManager
 {
+    private $filesystem;
+
+    public function setFilesystem(Filesystem $filesystem)
+    {
+        $this->filesystem = $filesystem;
+    }
+
     public function build()
     {
         $this->validate();
@@ -140,8 +147,7 @@ class ModelManager extends AbstractManager
         $path = $builder->getClassFilePath();
         $file = new \SplFileInfo($this->getWorkingDirectory() . DIRECTORY_SEPARATOR . $path);
 
-        $filesystem = new Filesystem();
-        $filesystem->mkdir($file->getPath());
+        $this->filesystem->mkdir($file->getPath());
 
         // skip files already created once
         if ($file->isFile() && !$overwrite) {
