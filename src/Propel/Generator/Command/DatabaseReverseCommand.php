@@ -17,7 +17,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\Output;
 use Propel\Generator\Config\GeneratorConfig;
 use Propel\Generator\Manager\ReverseManager;
-use Propel\Generator\Util\Filesystem;
 
 /**
  * @author William Durand <william.durand1@gmail.com>
@@ -61,7 +60,7 @@ class DatabaseReverseCommand extends AbstractCommand
             'propel.reverse.parser.class'   => sprintf('\\Propel\\Generator\\Reverse\\%sSchemaParser', $vendor),
         ));
 
-        $filesystem = new Filesystem();
+        $filesystem = $this->getFilesystem();
         $filesystem->mkdir($input->getOption('output-dir'));
 
         $manager = new ReverseManager();
