@@ -60,7 +60,7 @@ class Inheritance extends MappingModel
      *
      * @param Column $column
      */
-    public function setColumn(Column  $column)
+    public function setColumn(Column $column)
     {
         $this->column = $column;
     }

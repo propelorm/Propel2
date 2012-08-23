@@ -59,7 +59,7 @@ class XmlToArrayConverter
         $ar = array();
         foreach ($xml->children() as $k => $v) {
             // recurse the child
-            $child = self::simpleXmlToArray( $v );
+            $child = self::simpleXmlToArray($v);
 
             // if it's not an array, then it was empty, thus a value/string
             if (count($child) == 0) {
@@ -80,7 +80,7 @@ class XmlToArrayConverter
 
             // if the $k is already in our children list, we need to transform
             // it into an array, else we add it as a value
-            if (!in_array( $k, array_keys($ar))) {
+            if (!in_array($k, array_keys($ar))) {
                 $ar[$k] = $child;
             } else {
                 // (This only applies to nested nodes that do not have an @id attribute)

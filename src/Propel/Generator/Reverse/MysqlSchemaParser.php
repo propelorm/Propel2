@@ -263,15 +263,15 @@ class MysqlSchemaParser extends AbstractSchemaParser
         $foreignKeys = array(); // local store to avoid duplicates
 
         // Get the information on all the foreign keys
-        $regEx = '/CONSTRAINT `([^`]+)` FOREIGN KEY \((.+)\) REFERENCES `([^`]*)` \((.+)\)(.*)/';
-        if (preg_match_all($regEx,$row[1],$matches)) {
+        $pattern = '/CONSTRAINT `([^`]+)` FOREIGN KEY \((.+)\) REFERENCES `([^`]*)` \((.+)\)(.*)/';
+        if (preg_match_all($pattern, $row[1], $matches)) {
             $tmpArray = array_keys($matches[0]);
             foreach ($tmpArray as $curKey) {
-                $name = $matches[1][$curKey];
+                $name    = $matches[1][$curKey];
                 $rawlcol = $matches[2][$curKey];
-                $ftbl = $matches[3][$curKey];
+                $ftbl    = $matches[3][$curKey];
                 $rawfcol = $matches[4][$curKey];
-                $fkey = $matches[5][$curKey];
+                $fkey    = $matches[5][$curKey];
 
                 $lcols = array();
                 foreach (preg_split('/`, `/', $rawlcol) as $piece) {

@@ -25,18 +25,20 @@ class ArrayToPhpConverter
      */
     public static function convert($c)
     {
-      $conf = "\$serviceContainer = \Propel\Runtime\Propel::getServiceContainer();";
-      // set datasources
-      if (isset($c['datasources'])) {
+        $conf = "\$serviceContainer = \Propel\Runtime\Propel::getServiceContainer();";
+        // set datasources
+        if (isset($c['datasources'])) {
             foreach ($c['datasources'] as $name => $params) {
                 if (!is_array($params)) {
                     continue;
                 }
+
                 // set adapters
                 if (isset($params['adapter'])) {
                     $conf .= "
 \$serviceContainer->setAdapterClass('{$name}', '{$params['adapter']}');";
                 }
+
                 // set connection settings
                 if (isset($params['slaves'])) {
                     $conf .= "
@@ -48,15 +50,18 @@ class ArrayToPhpConverter
                 } else {
                     continue;
                 }
+
                 if (isset($params['connection'])) {
                     $masterConfigurationSetter = isset($params['slaves']) ? 'setWriteConfiguration' : 'setConfiguration';
                     $conf .= "
 \$manager->{$masterConfigurationSetter}(". var_export($params['connection'], true) . ");";
                 }
+
                 $conf .= "
 \$manager->setName('{$name}');
 \$serviceContainer->setConnectionManager('{$name}', \$manager);";
             }
+
             // set default datasource
             if (isset($c['datasources']['default'])) {
                 $defaultDatasource = $c['datasources']['default'];
@@ -65,9 +70,11 @@ class ArrayToPhpConverter
                 $datasourceNames = array_keys($c['datasources']);
                 $defaultDatasource = $datasourceNames[0];
             }
+
             $conf .= "
 \$serviceContainer->setDefaultDatasource('{$defaultDatasource}');";
         }
+
         // set profiler
         if (isset($c['profiler'])) {
             $profilerConf = $c['profiler'];
@@ -82,14 +89,15 @@ class ArrayToPhpConverter
             }
             unset($c['profiler']);
         }
+
         // set logger
         if (isset($c['log']) && isset($c['log']['logger'])) {
             $loggerConfiguration = $c['log']['logger'];
             // is it a single logger or a list of loggers?
             if (isset($loggerConfiguration[0])) {
-              foreach ($loggerConfiguration as $singleLoggerConfiguration) {
-                $conf .= self::getLoggerCode($singleLoggerConfiguration);
-              }
+                foreach ($loggerConfiguration as $singleLoggerConfiguration) {
+                    $conf .= self::getLoggerCode($singleLoggerConfiguration);
+                }
             } else {
                 $conf .= self::getLoggerCode($loggerConfiguration);
             }
@@ -110,5 +118,4 @@ class ArrayToPhpConverter
         return "
 \$serviceContainer->setLoggerConfiguration('{$name}', " . var_export($conf, true) . ");";
     }
-
 }

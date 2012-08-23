@@ -249,12 +249,12 @@ CREATE TABLE %s
         );
 
         foreach ($supportedOptions as $name => $sqlName) {
-            $parameterValue = NULL;
+            $parameterValue = null;
 
             if ($vi->hasParameter($name)) {
-                $parameterValue = $vi->getParameter( $name );
+                $parameterValue = $vi->getParameter($name);
             } elseif ($vi->hasParameter($sqlName)) {
-                $parameterValue = $vi->getParameter( $sqlName );
+                $parameterValue = $vi->getParameter($sqlName);
             }
 
             // if we have a param value, then parse it out
