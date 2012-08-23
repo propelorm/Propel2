@@ -24,7 +24,7 @@ class ArchivableBehavior extends Behavior
     // default parameters value
     protected $parameters = array(
         'archive_table'       => '',
-        'archive_phpname'     => NULL,
+        'archive_phpname'     => null,
         'archive_class'       => '',
         'log_archived_at'     => 'true',
         'archived_at_column'  => 'archived_at',

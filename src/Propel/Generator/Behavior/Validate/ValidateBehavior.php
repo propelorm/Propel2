@@ -41,10 +41,14 @@ class ValidateBehavior extends Behavior
         $this->cleanupParameters();
 
         $this->builder = $builder;
-
-        $this->builder->declareClasses('Symfony\\Component\\Validator\\Mapping\\ClassMetadata', 'Symfony\\Component\\Validator\\Validator',
-'Symfony\\Component\\Validator\\Mapping\\Loader\\StaticMethodLoader', 'Symfony\\Component\\Validator\\ConstraintValidatorFactory',
-'Symfony\\Component\\Validator\\Mapping\\ClassMetadataFactory', 'Symfony\\Component\\Validator\\ConstraintViolationList');
+        $this->builder->declareClasses(
+            'Symfony\\Component\\Validator\\Mapping\\ClassMetadata',
+            'Symfony\\Component\\Validator\\Validator',
+            'Symfony\\Component\\Validator\\Mapping\\Loader\\StaticMethodLoader',
+            'Symfony\\Component\\Validator\\ConstraintValidatorFactory',
+            'Symfony\\Component\\Validator\\Mapping\\ClassMetadataFactory',
+            'Symfony\\Component\\Validator\\ConstraintViolationList'
+        );
 
         $script = $this->addLoadValidatorMetadataMethod();
         $script .= $this->addValidateMethod();
@@ -77,7 +81,7 @@ class ValidateBehavior extends Behavior
             $this->cleanupParameters();
             foreach ($this->getParameters() as $key => $parameter) {
                 if ($parameter['column'] === $columnName) {
-                $array[$key] = $parameter;
+                    $array[$key] = $parameter;
                 }
             }
         }
@@ -114,13 +118,16 @@ class ValidateBehavior extends Behavior
      */
     public function addRuleOnPk()
     {
-        if (count($this->getParameters()) <= 0) {
-          $pk = $this->getTable()->getPrimaryKey();
-          $rule['auto_rule']['column'] = $pk[0]->getName();
-          $rule['auto_rule']['validator'] = 'Type';
-          $rule['auto_rule']['options'] = array('type' => $pk[0]->getPhpType());
-
-          $this->setParameters($rule);
+        if (!count($this->getParameters())) {
+            $pk = $this->getTable()->getPrimaryKey();
+            $parameters = array('auto_rule' => array(
+                'column'     => $pk[0]->getName(),
+                'validators' => 'Type',
+                'options'    => array(
+                    'type'   => $pk[0]->getPhpType(),
+                ),
+            ));
+            $this->setParameters($parameters);
         }
     }
 
@@ -154,14 +161,14 @@ class ValidateBehavior extends Behavior
      */
     protected function cleanupParameters()
     {
-      $parser = new Parser();
-      $params = $this->getParameters();
-      foreach ($params as $key => $value) {
-          if (is_string($value)) {
-              $params[$key] = $parser->parse($value);
-          }
-      }
-      $this->setParameters($params);
+        $parser = new Parser();
+        $params = $this->getParameters();
+        foreach ($params as $key => $value) {
+            if (is_string($value)) {
+                $params[$key] = $parser->parse($value);
+            }
+        }
+        $this->setParameters($params);
     }
 
     /**

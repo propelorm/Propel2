@@ -24,7 +24,7 @@ class CustomCriterionTest extends BaseTestCase
 {
     public function testAppendPsToConcatenatesTheValue()
     {
-        $cton = new CustomCriterion(new Criteria(), 'A.COL', 'date_part(\'YYYY\', A.COL) = \'2007\'');
+        $cton = new CustomCriterion(new Criteria(), 'date_part(\'YYYY\', A.COL) = \'2007\'');
 
         $params = array();
         $ps = '';
