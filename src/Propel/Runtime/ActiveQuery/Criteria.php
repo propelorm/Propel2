@@ -549,7 +549,7 @@ class Criteria
             case Criteria::CUSTOM:
                 // custom expression with no parameter binding
                 // something like $c->add(BookPeer::TITLE, "CONCAT(book.TITLE, 'bar') = 'foobar'", Criteria::CUSTOM);
-                return new CustomCriterion($this, $column, $value);
+                return new CustomCriterion($this, $value);
             case Criteria::IN:
             case Criteria::NOT_IN:
                 // table.column IN (?, ?) or table.column NOT IN (?, ?)
@@ -601,7 +601,7 @@ class Criteria
     {
         $tables = array();
         foreach ($this->keys() as $key) {
-            $tableName = substr($key, 0, strrpos($key, '.' ));
+            $tableName = substr($key, 0, strrpos($key, '.'));
             $tables[$tableName][] = $key;
         }
 

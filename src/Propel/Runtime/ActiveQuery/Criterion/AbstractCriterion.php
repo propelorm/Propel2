@@ -10,8 +10,6 @@
 
 namespace Propel\Runtime\ActiveQuery\Criterion;
 
-use \Exception;
-
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Exception\PropelException;
@@ -101,7 +99,7 @@ abstract class AbstractCriterion
         try {
             $db = Propel::getServiceContainer()->getAdapter($criteria->getDbName());
             $this->setAdapter($db);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // we are only doing this to allow easier debugging, so
             // no need to throw up the exception, just make note of it.
             Propel::log("Could not get a AdapterInterface, sql may be wrong", Propel::LOG_ERR);
@@ -121,14 +119,14 @@ abstract class AbstractCriterion
             $this->column = $column->getName();
             $this->table = $column->getTable()->getName();
         } else {
-            $dotPos = strrpos($column,'.');
+            $dotPos = strrpos($column, '.');
             if ($dotPos === false) {
                 // no dot => aliased column
                 $this->table = null;
                 $this->column = $column;
             } else {
                 $this->table = substr($column, 0, $dotPos);
-                $this->column = substr($column, $dotPos+1, strlen($column));
+                $this->column = substr($column, $dotPos + 1, strlen($column));
             }
         }
     }
@@ -268,7 +266,7 @@ abstract class AbstractCriterion
             return $this->appendPsForUniqueClauseTo($sb, $params);
         }
         // if there are sub criterions, they must be combined to this criterion
-        $sb .= str_repeat ( '(', count($this->clauses) );
+        $sb .= str_repeat('(', count($this->clauses));
         $this->appendPsForUniqueClauseTo($sb, $params);
         foreach ($this->clauses as $key => $clause) {
             $sb .= $this->conjunctions[$key];

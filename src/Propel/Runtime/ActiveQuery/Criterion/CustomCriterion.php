@@ -17,7 +17,6 @@ use Propel\Runtime\ActiveQuery\Criteria;
  */
 class CustomCriterion extends AbstractCriterion
 {
-
     /**
      * Create a new instance.
      *
@@ -25,7 +24,7 @@ class CustomCriterion extends AbstractCriterion
      * @param string   $column ignored
      * @param string   $value  The condition to be added to the query string
      */
-    public function __construct(Criteria $outer, $column = null, $value)
+    public function __construct(Criteria $outer, $value)
     {
         $this->value = $value;
         $this->init($outer);

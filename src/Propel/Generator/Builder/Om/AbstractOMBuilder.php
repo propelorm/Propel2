@@ -302,10 +302,11 @@ abstract class AbstractOMBuilder extends DataModelBuilder
             return $this->declareClassNamespace($class, $namespace, 'Child' . $class);
         }
 
-        throw new LogicException(
-            sprintf('The class %s duplicates the class %s and can\'t be used without alias',
-            $namespace . '\\' . $class, $this->declaredShortClassesOrAlias[$aliasWanted])
-        );
+        throw new LogicException(sprintf(
+            'The class %s duplicates the class %s and can\'t be used without alias',
+            $namespace . '\\' . $class,
+            $this->declaredShortClassesOrAlias[$aliasWanted]
+        ));
     }
 
     /**
@@ -324,18 +325,23 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         }
 
         if (empty($namespace) && 'Base' === $this->getNamespace()) {
-            if (str_replace(array('Peer','Query'), '', $class) == str_replace(array('Peer','Query'), '', $this->getUnqualifiedClassName())) {
+            if (str_replace(array('Peer', 'Query'), '', $class) == str_replace(array('Peer', 'Query'), '', $this->getUnqualifiedClassName())) {
                 return true;
-            } elseif ((false !== strpos($class,'Peer') || false !== strpos($class,'Query'))) {
-                return true;
-            } elseif (false === array_search($class, $this->whiteListOfDeclaredClasses, true)) { //force alias for model without namespace
+            }
 
+            if ((false !== strpos($class, 'Peer') || false !== strpos($class, 'Query'))) {
+                return true;
+            }
+
+            // force alias for model without namespace
+            if (false === array_search($class, $this->whiteListOfDeclaredClasses, true)) {
                 return true;
             }
         }
 
-        if ('Base' == $namespace && '' == $this->getNamespace()) {
-            if (false === array_search($class, $this->whiteListOfDeclaredClasses, true)) { //force alias for model without namespace
+        if ('Base' === $namespace && '' === $this->getNamespace()) {
+            // force alias for model without namespace
+            if (false === array_search($class, $this->whiteListOfDeclaredClasses, true)) {
 
                 return true;
             }
@@ -768,10 +774,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
             // try with '.php' at the end
             $filePath = $filePath . '.php';
             if (!file_exists($filePath)) {
-                throw new \InvalidArgumentException(sprintf('Template "%s" not found in "%s" directory',
-                        $filename,
-                        __DIR__ . $templateDir
-                ));
+                throw new \InvalidArgumentException(sprintf('Template "%s" not found in "%s" directory', $filename, __DIR__ . $templateDir));
             }
         }
         $template = new PropelTemplate();
