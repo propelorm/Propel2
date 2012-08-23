@@ -236,7 +236,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         if ($interface = $this->getInterface()) {
             $script .= ", Child" . ClassTools::classname($interface);
             if ($interface !== ClassTools::classname($interface)) {
-               $this->declareClass($interface);
+                $this->declareClass($interface);
             } else {
                 $this->declareClassFromBuilder($this->getInterfaceBuilder());
             }
@@ -894,7 +894,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         } elseif ($column->getType() === PropelTypes::TIMESTAMP) {
             $defaultfmt = $this->getBuildProperty('defaultTimeStampFormat');
         }
-        if (empty($defaultfmt)) { $defaultfmt = null; }
+
+        if (empty($defaultfmt)) {
+            $defaultfmt = null;
+        }
 
         $script .= "
     ".$visibility." function get$cfc(\$format = ".var_export($defaultfmt, true)."";
@@ -953,7 +956,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         } elseif ($column->getType() === PropelTypes::TIMESTAMP) {
             $defaultfmt = $this->getBuildProperty('defaultTimeStampFormat');
         }
-        if (empty($defaultfmt)) { $defaultfmt = null; }
+
+        if (empty($defaultfmt)) {
+            $defaultfmt = null;
+        }
 
         if ($column->isLazyLoad()) {
             $script .= $this->getAccessorLazyLoadSnippet($column);
@@ -3300,7 +3306,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
         $peerClassName = $this->getClassNameFromBuilder($this->getStubPeerBuilder());
         $fkQueryClassName = $this->getClassNameFromBuilder($this->getNewStubQueryBuilder($refFK->getTable()));
-        $relCol = $this->getRefFKPhpNameAffix($refFK, $plural=true);
+        $relCol = $this->getRefFKPhpNameAffix($refFK, $plural = true);
         $collName = $this->getRefFKCollVarName($refFK);
 
         $fkPeerBuilder = $this->getNewPeerBuilder($tblFK);
@@ -4324,7 +4330,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         if ($this->getPlatform() instanceof MssqlPlatform) {
             if ($table->hasAutoIncrementPrimaryKey() ) {
                 $script .= "
-        \$this->modifiedColumns[] = " . $this->getColumnConstant($table->getAutoIncrementPrimaryKey() ) . ";";
+        \$this->modifiedColumns[] = " . $this->getColumnConstant($table->getAutoIncrementPrimaryKey()).';';
             }
             $script .= "
         \$criteria = \$this->buildCriteria();";

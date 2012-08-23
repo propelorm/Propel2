@@ -558,7 +558,7 @@ DROP INDEX %s;
      */
     public function getUniqueDDL(Unique $unique)
     {
-        return sprintf('UNIQUE (%s)' , $this->getColumnListDDL($unique->getColumns()));
+        return sprintf('UNIQUE (%s)', $this->getColumnListDDL($unique->getColumns()));
     }
 
     /**
@@ -1240,7 +1240,7 @@ if (is_resource($columnValueAccessor)) {
             "
 \$stmt->bindValue(%s, %s, %s);",
             $identifier,
-            $columnValueAccessor ,
+            $columnValueAccessor,
             PropelTypes::getPdoTypeString($column->getType())
         );
 

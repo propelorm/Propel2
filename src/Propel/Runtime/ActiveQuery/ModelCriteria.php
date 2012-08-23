@@ -404,14 +404,14 @@ class ModelCriteria extends Criteria implements \IteratorAggregate
         list(, $realColumnName) = $this->getColumnFromName($columnName, false);
         $order = strtoupper($order);
         switch ($order) {
-        case Criteria::ASC:
-            $this->addAscendingOrderByColumn($realColumnName);
-            break;
-        case Criteria::DESC:
-            $this->addDescendingOrderByColumn($realColumnName);
-            break;
-        default:
-            throw new UnexpectedValueException('ModelCriteria::orderBy() only accepts Criteria::ASC or Criteria::DESC as argument');
+            case Criteria::ASC:
+                $this->addAscendingOrderByColumn($realColumnName);
+                break;
+            case Criteria::DESC:
+                $this->addDescendingOrderByColumn($realColumnName);
+                break;
+            default:
+                throw new UnexpectedValueException('ModelCriteria::orderBy() only accepts Criteria::ASC or Criteria::DESC as argument');
         }
 
         return $this;
@@ -1878,7 +1878,7 @@ class ModelCriteria extends Criteria implements \IteratorAggregate
             return new RawCriterion($this, $clause, $value, $bindingType);
         }
 
-        return new CustomCriterion($this, null, $clause);
+        return new CustomCriterion($this, $clause);
     }
 
     /**
@@ -1936,22 +1936,22 @@ class ModelCriteria extends Criteria implements \IteratorAggregate
             $char = $clause[$pos];
             // check flags for strings or escaper
             switch ($char) {
-            case '\\':
-                $isAfterBackslash = true;
-                break;
-            case "'":
-            case '"':
-                if ($isInString && $stringQuotes == $char) {
-                    if (!$isAfterBackslash) {
-                        $isInString = false;
+                case '\\':
+                    $isAfterBackslash = true;
+                    break;
+                case "'":
+                case '"':
+                    if ($isInString && $stringQuotes == $char) {
+                        if (!$isAfterBackslash) {
+                            $isInString = false;
+                        }
+                    } elseif (!$isInString) {
+                        $parsedString .= preg_replace_callback("/[\w\\\]+\.\w+/", array($this, 'doReplaceNameInExpression'), $stringToTransform);
+                        $stringToTransform = '';
+                        $stringQuotes = $char;
+                        $isInString = true;
                     }
-                } elseif (!$isInString) {
-                    $parsedString .= preg_replace_callback("/[\w\\\]+\.\w+/", array($this, 'doReplaceNameInExpression'), $stringToTransform);
-                    $stringToTransform = '';
-                    $stringQuotes = $char;
-                    $isInString = true;
-                }
-                break;
+                    break;
             }
 
             if ('\\' !== $char) {
@@ -2060,8 +2060,8 @@ class ModelCriteria extends Criteria implements \IteratorAggregate
             }
 
             return array($column, $realColumnName);
-        } elseif ($tableMap->hasColumn($phpName,false)) {
-            $column = $tableMap->getColumn($phpName,false);
+        } elseif ($tableMap->hasColumn($phpName, false)) {
+            $column = $tableMap->getColumn($phpName, false);
             $realColumnName = $column->getFullyQualifiedName();
 
             return array($column, $realColumnName);
@@ -2196,11 +2196,12 @@ class ModelCriteria extends Criteria implements \IteratorAggregate
                     $table = $tableName;
                 }
 
-                if (($this->isIgnoreCase()
-                    || $attachedCriterion->isIgnoreCase())
-                    && $dbMap->getTable($table)->getColumn($attachedCriterion->getColumn())->isText()) {
-                        $attachedCriterion->setIgnoreCase(true);
-                    }
+                if (
+                    ($this->isIgnoreCase() || $attachedCriterion->isIgnoreCase())
+                    && $dbMap->getTable($table)->getColumn($attachedCriterion->getColumn())->isText()
+                ) {
+                    $attachedCriterion->setIgnoreCase(true);
+                }
             }
 
             $sb = '';

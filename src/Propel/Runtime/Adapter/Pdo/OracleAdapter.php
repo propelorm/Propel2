@@ -152,7 +152,7 @@ class OracleAdapter extends PdoAdapter implements AdapterInterface
      * @param  string $seed
      * @return string
      */
-    public function random($seed=NULL)
+    public function random($seed = null)
     {
         return 'dbms_random.value';
     }

@@ -2082,7 +2082,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
         \$criteria->addJoin(%s, %s, \$joinBehavior);
 ",
                 $this->getColumnConstant($table->getColumn($lftCol)),
-                $joinedTablePeerBuilder->getColumnConstant($joinTable->getColumn($lfMap[$lftCol] ))
+                $joinedTablePeerBuilder->getColumnConstant($joinTable->getColumn($lfMap[$lftCol]))
             );
         } else {
             // composite foreign key
@@ -2094,8 +2094,8 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
                     "        array(%s, %s),
 ",
                     $this->getColumnConstant($table->getColumn($columnName)),
-                    $joinedTablePeerBuilder->getColumnConstant($joinTable->getColumn( $lfMap[$columnName])
-                ));
+                    $joinedTablePeerBuilder->getColumnConstant($joinTable->getColumn($lfMap[$columnName]))
+                );
             }
             $script .= "      ), \$joinBehavior);
 ";
@@ -2423,7 +2423,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 ";
 
         $index = 1;
-        foreach ($table->getForeignKeys() as $fk ) {
+        foreach ($table->getForeignKeys() as $fk) {
             // want to cover this case, but the code is not there yet.
             // Why not? -because we'd have to alias the tables in the JOIN
             if ($fk->getForeignTableName() != $table->getName()) {

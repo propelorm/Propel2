@@ -225,8 +225,8 @@ class PgsqlSchemaParser extends AbstractSchemaParser
             // if column has a default
             if ('t' === $boolHasDefault && (strlen(trim($default)) > 0)) {
                 if (!preg_match('/^nextval\(/', $default)) {
-                    $strDefault= preg_replace ('/::[\W\D]*/', '', $default);
-                    $default = str_replace ("'", '', $strDefault);
+                    $strDefault= preg_replace('/::[\W\D]*/', '', $default);
+                    $default = str_replace("'", '', $strDefault);
                 } else {
                     $autoincrement = true;
                     $default = null;
@@ -385,43 +385,43 @@ class PgsqlSchemaParser extends AbstractSchemaParser
 
             // On Update
             switch ($row['confupdtype']) {
-            case 'c':
-                $onupdate = ForeignKey::CASCADE;
-                break;
-            case 'd':
-                $onupdate = ForeignKey::SETDEFAULT;
-                break;
-            case 'n':
-                $onupdate = ForeignKey::SETNULL;
-                break;
-            case 'r':
-                $onupdate = ForeignKey::RESTRICT;
-                break;
-            default:
-            case 'a':
-                //NOACTION is the postgresql default
-                $onupdate = ForeignKey::NONE;
-                break;
+                case 'c':
+                    $onupdate = ForeignKey::CASCADE;
+                    break;
+                case 'd':
+                    $onupdate = ForeignKey::SETDEFAULT;
+                    break;
+                case 'n':
+                    $onupdate = ForeignKey::SETNULL;
+                    break;
+                case 'r':
+                    $onupdate = ForeignKey::RESTRICT;
+                    break;
+                default:
+                case 'a':
+                    // NOACTION is the postgresql default
+                    $onupdate = ForeignKey::NONE;
+                    break;
             }
             // On Delete
             switch ($row['confdeltype']) {
-            case 'c':
-                $ondelete = ForeignKey::CASCADE;
-                break;
-            case 'd':
-                $ondelete = ForeignKey::SETDEFAULT;
-                break;
-            case 'n':
-                $ondelete = ForeignKey::SETNULL;
-                break;
-            case 'r':
-                $ondelete = ForeignKey::RESTRICT;
-                break;
-            default:
-            case 'a':
-                //NOACTION is the postgresql default
-                $ondelete = ForeignKey::NONE;
-                break;
+                case 'c':
+                    $ondelete = ForeignKey::CASCADE;
+                    break;
+                case 'd':
+                    $ondelete = ForeignKey::SETDEFAULT;
+                    break;
+                case 'n':
+                    $ondelete = ForeignKey::SETNULL;
+                    break;
+                case 'r':
+                    $ondelete = ForeignKey::RESTRICT;
+                    break;
+                default:
+                case 'a':
+                    //NOACTION is the postgresql default
+                    $ondelete = ForeignKey::NONE;
+                    break;
             }
 
             $foreignTable = $database->getTable($foreignTable);

@@ -439,7 +439,7 @@ class TableDiff
      *
      * @param  $modifiedIndices
      */
-    public function setModifiedIndices( $modifiedIndices)
+    public function setModifiedIndices($modifiedIndices)
     {
         $this->modifiedIndices = $modifiedIndices;
     }

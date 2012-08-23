@@ -1047,13 +1047,14 @@ class Column extends MappingModel
     }
 
     /**
-     * Utility method to know whether column is an array column.
+     * Returns whether or not the column is an array column.
+     *
      * @return boolean
      */
-     public function isPhpArrayType()
-     {
-         return PropelTypes::isPhpArrayType($this->getType());
-     }
+    public function isPhpArrayType()
+    {
+        return PropelTypes::isPhpArrayType($this->getType());
+    }
 
     /**
      * Returns whether or not this column is an ENUM column.
