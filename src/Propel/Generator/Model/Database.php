@@ -416,11 +416,12 @@ class Database extends ScopedMappingModel
             return $this->addTable($tbl);
         }
 
+        $table->setDatabase($this);
+
         if (isset($this->tablesByName[$table->getName()])) {
             throw new EngineException(sprintf('Table "%s" declared twice', $table->getName()));
         }
 
-        $table->setDatabase($this);
         if (null === $table->getSchema()) {
             $table->setSchema($this->getSchema());
         }
