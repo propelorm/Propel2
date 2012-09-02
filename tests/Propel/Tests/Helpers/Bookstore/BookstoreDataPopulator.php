@@ -18,6 +18,7 @@ use Propel\Tests\Bookstore\Author;
 use Propel\Tests\Bookstore\AuthorPeer;
 use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\BookPeer;
+use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\Bookstore\BookClubList;
 use Propel\Tests\Bookstore\BookClubListPeer;
 use Propel\Tests\Bookstore\BookListRel;
@@ -62,7 +63,7 @@ class BookstoreDataPopulator
     public static function populate($con = null)
     {
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         }
         $con->beginTransaction();
 
@@ -270,7 +271,7 @@ class BookstoreDataPopulator
     public static function populateOpinionFavorite($con = null)
     {
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         }
         $con->beginTransaction();
 
@@ -293,27 +294,27 @@ class BookstoreDataPopulator
     public static function depopulate($con = null)
     {
         $peerClasses = array(
-            '\Propel\Tests\Bookstore\AuthorPeer',
-            '\Propel\Tests\Bookstore\BookstorePeer',
-            '\Propel\Tests\Bookstore\BookstoreContestPeer',
-            '\Propel\Tests\Bookstore\BookstoreContestEntryPeer',
-            '\Propel\Tests\Bookstore\BookstoreEmployeePeer',
-            '\Propel\Tests\Bookstore\BookstoreEmployeeAccountPeer',
-            '\Propel\Tests\Bookstore\BookstoreSalePeer',
-            '\Propel\Tests\Bookstore\BookClubListPeer',
-            '\Propel\Tests\Bookstore\BookOpinionPeer',
-            '\Propel\Tests\Bookstore\BookReaderPeer',
-            '\Propel\Tests\Bookstore\BookListRelPeer',
-            '\Propel\Tests\Bookstore\BookPeer',
-            '\Propel\Tests\Bookstore\ContestPeer',
-            '\Propel\Tests\Bookstore\CustomerPeer',
-            '\Propel\Tests\Bookstore\MediaPeer',
-            '\Propel\Tests\Bookstore\PublisherPeer',
-            '\Propel\Tests\Bookstore\ReaderFavoritePeer',
-            '\Propel\Tests\Bookstore\ReviewPeer',
-            '\Propel\Tests\Bookstore\BookSummaryPeer',
-            '\Propel\Tests\Bookstore\RecordLabelPeer',
-            '\Propel\Tests\Bookstore\ReleasePoolPeer',
+            'Propel\Tests\Bookstore\AuthorPeer',
+            'Propel\Tests\Bookstore\BookstorePeer',
+            'Propel\Tests\Bookstore\BookstoreContestPeer',
+            'Propel\Tests\Bookstore\BookstoreContestEntryPeer',
+            'Propel\Tests\Bookstore\BookstoreEmployeePeer',
+            'Propel\Tests\Bookstore\BookstoreEmployeeAccountPeer',
+            'Propel\Tests\Bookstore\BookstoreSalePeer',
+            'Propel\Tests\Bookstore\BookClubListPeer',
+            'Propel\Tests\Bookstore\BookOpinionPeer',
+            'Propel\Tests\Bookstore\BookReaderPeer',
+            'Propel\Tests\Bookstore\BookListRelPeer',
+            'Propel\Tests\Bookstore\BookPeer',
+            'Propel\Tests\Bookstore\ContestPeer',
+            'Propel\Tests\Bookstore\CustomerPeer',
+            'Propel\Tests\Bookstore\MediaPeer',
+            'Propel\Tests\Bookstore\PublisherPeer',
+            'Propel\Tests\Bookstore\ReaderFavoritePeer',
+            'Propel\Tests\Bookstore\ReviewPeer',
+            'Propel\Tests\Bookstore\BookSummaryPeer',
+            'Propel\Tests\Bookstore\RecordLabelPeer',
+            'Propel\Tests\Bookstore\ReleasePoolPeer',
         );
         // free the memory from existing objects
         foreach ($peerClasses as $peerClass) {
@@ -323,7 +324,7 @@ class BookstoreDataPopulator
         }
         // delete records from the database
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         }
         $con->beginTransaction();
         foreach ($peerClasses as $peerClass) {

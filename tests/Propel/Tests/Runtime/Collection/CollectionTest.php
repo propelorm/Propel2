@@ -13,7 +13,7 @@ namespace Propel\Tests\Runtime\collection;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\BookPeer;
-
+use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\Collection\Collection;
 
@@ -341,7 +341,7 @@ class CollectionTest extends BookstoreTestBase
     {
         $col = new Collection();
         $col->setModel('\Propel\Tests\Bookstore\Book');
-        $con = Propel::getServiceContainer()->getWriteConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getWriteConnection(BookTableMap::DATABASE_NAME);
         $this->assertEquals($con, $col->getWriteConnection(), 'getWriteConnection() returns a write connection for the collection model');
     }
 

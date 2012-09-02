@@ -11,8 +11,7 @@
 namespace Propel\Tests\Helpers\Bookstore;
 
 use Propel\Runtime\Propel;
-
-use Propel\Tests\Bookstore\BookPeer;
+use Propel\Tests\Bookstore\Map\BookTableMap;
 
 /**
  * Base class contains some methods shared by subclass test cases.
@@ -50,7 +49,7 @@ Please refer to http://www.propelorm.org/ticket/1360 for instructions and detail
 about the implications of using a SET NAMES statement in the "queries" setting.');
             }
         }
-        $this->con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
+        $this->con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         $this->con->beginTransaction();
     }
 

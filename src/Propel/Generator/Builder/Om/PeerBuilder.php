@@ -144,6 +144,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
             '\Propel\Runtime\Connection\StatementInterface',
             '\Propel\Runtime\Exception\PropelException',
             '\Propel\Runtime\Util\BasePeer',
+            '\Propel\Runtime\Map\TableMap',
             '\Propel\Runtime\ActiveQuery\Criteria',
             '\PDO'
         );
@@ -184,14 +185,6 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
     /**
      * @return string
      */
-    public function getTableMapClass()
-    {
-        return $this->getStubObjectBuilder()->getUnqualifiedClassName() . 'TableMap';
-    }
-
-    /**
-     * @return string
-     */
     public function getTablePhpName()
     {
         return ($this->getTable()->isAbstract() ? '' : $this->getClassNameFromBuilder($this->getStubObjectBuilder()));
@@ -204,34 +197,6 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      */
     protected function addConstantsAndAttributes(&$script)
     {
-        $dbName = $this->getDatabase()->getName();
-        $tableName = $this->getTable()->getName();
-        $tablePhpName = $this->getTable()->isAbstract() ? '' : addslashes($this->getStubObjectBuilder()->getFullyQualifiedClassName());
-        $script .= "
-    /** the default database name for this class */
-    const DATABASE_NAME = '$dbName';
-
-    /** the table name for this class */
-    const TABLE_NAME = '$tableName';
-
-    /** the related Propel class for this table */
-    const OM_CLASS = '$tablePhpName';
-
-    /** A class that can be returned by this peer. */
-    const CLASS_DEFAULT = '".$this->getStubObjectBuilder()->getClasspath()."';
-
-    /** the related TableMap class for this table */
-    const TM_CLASS = '".$this->getTableMapClass()."';
-
-    /** The total number of columns. */
-    const NUM_COLUMNS = ".$this->getTable()->getNumColumns().";
-
-    /** The number of lazy-loaded columns. */
-    const NUM_LAZY_LOAD_COLUMNS = ".$this->getTable()->getNumLazyLoadColumns().";
-
-    /** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
-    const NUM_HYDRATE_COLUMNS = ". ($this->getTable()->getNumColumns() - $this->getTable()->getNumLazyLoadColumns()) .";
-";
         $this->addColumnNameConstants($script);
         $this->addInheritanceColumnConstants($script);
         if ($this->getTable()->hasEnumColumns()) {
@@ -324,32 +289,32 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      * e.g. self::\$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static \$fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array (";
+        TableMap::TYPE_PHPNAME => array (";
         foreach ($tableColumns as $col) {
             $script .= "'".$col->getPhpName()."', ";
         }
         $script .= "),
-        BasePeer::TYPE_STUDLYPHPNAME => array (";
+        TableMap::TYPE_STUDLYPHPNAME => array (";
         foreach ($tableColumns as $col) {
             $script .= "'".$col->getStudlyPhpName()."', ";
         }
         $script .= "),
-        BasePeer::TYPE_COLNAME => array (";
+        TableMap::TYPE_COLNAME => array (";
         foreach ($tableColumns as $col) {
             $script .= $this->getColumnConstant($col, 'self').", ";
         }
         $script .= "),
-        BasePeer::TYPE_RAW_COLNAME => array (";
+        TableMap::TYPE_RAW_COLNAME => array (";
         foreach ($tableColumns as $col) {
             $script .= "'" . $col->getConstantColumnName() . "', ";
         }
         $script .= "),
-        BasePeer::TYPE_FIELDNAME => array (";
+        TableMap::TYPE_FIELDNAME => array (";
         foreach ($tableColumns as $col) {
             $script .= "'".$col->getName()."', ";
         }
         $script .= "),
-        BasePeer::TYPE_NUM => array (";
+        TableMap::TYPE_NUM => array (";
         foreach ($tableColumns as $num => $col) {
             $script .= "$num, ";
         }
@@ -372,35 +337,35 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      * holds an array of keys for quick access to the fieldnames array
      *
      * first dimension keys are the type constants
-     * e.g. self::\$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
+     * e.g. self::\$fieldNames[TableMap::TYPE_PHPNAME]['Id'] = 0
      */
     protected static \$fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array (";
+        TableMap::TYPE_PHPNAME => array (";
         foreach ($tableColumns as $num => $col) {
             $script .= "'".$col->getPhpName()."' => $num, ";
         }
         $script .= "),
-        BasePeer::TYPE_STUDLYPHPNAME => array (";
+        TableMap::TYPE_STUDLYPHPNAME => array (";
         foreach ($tableColumns as $num => $col) {
             $script .= "'".$col->getStudlyPhpName()."' => $num, ";
         }
         $script .= "),
-        BasePeer::TYPE_COLNAME => array (";
+        TableMap::TYPE_COLNAME => array (";
         foreach ($tableColumns as $num => $col) {
             $script .= $this->getColumnConstant($col, 'self')." => $num, ";
         }
         $script .= "),
-        BasePeer::TYPE_RAW_COLNAME => array (";
+        TableMap::TYPE_RAW_COLNAME => array (";
         foreach ($tableColumns as $num => $col) {
             $script .= "'" . $col->getConstantColumnName() . "' => $num, ";
         }
         $script .= "),
-        BasePeer::TYPE_FIELDNAME => array (";
+        TableMap::TYPE_FIELDNAME => array (";
         foreach ($tableColumns as $num => $col) {
             $script .= "'".$col->getName()."' => $num, ";
         }
         $script .= "),
-        BasePeer::TYPE_NUM => array (";
+        TableMap::TYPE_NUM => array (";
         foreach ($tableColumns as $num => $col) {
             $script .= "$num, ";
         }
@@ -445,15 +410,15 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      * Returns an array of field names.
      *
      * @param string \$type The type of fieldnames to return:
-     *                      One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
-     *                      BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
+     *                      One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_STUDLYPHPNAME
+     *                      TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM
      * @return array           A list of field names
      * @throws PropelException
      */
-    public static function getFieldNames(\$type = BasePeer::TYPE_PHPNAME)
+    public static function getFieldNames(\$type = TableMap::TYPE_PHPNAME)
     {
         if (!array_key_exists(\$type, self::\$fieldNames)) {
-            throw new PropelException('Method getFieldNames() expects the parameter \$type to be one of the class constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME, BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM. ' . \$type . ' was given.');
+            throw new PropelException('Method getFieldNames() expects the parameter \$type to be one of the class constants TableMap::TYPE_PHPNAME, TableMap::TYPE_STUDLYPHPNAME, TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM. ' . \$type . ' was given.');
         }
 
         return self::\$fieldNames[\$type];
@@ -472,8 +437,8 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      * Translates a fieldname to another type
      *
      * @param string \$name field name
-     * @param string \$fromType One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
-     *                         BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
+     * @param string \$fromType One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_STUDLYPHPNAME
+     *                         TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM
      * @param string \$toType   One of the class type constants
      * @return string          translated name of the field.
      * @throws PropelException - if the specified name could not be found in the fieldname mappings.
@@ -543,8 +508,8 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      */
     public static function buildTableMap()
     {
-      \$dbMap = Propel::getServiceContainer()->getDatabaseMap(static::DATABASE_NAME);
-      if (!\$dbMap->hasTable(static::TABLE_NAME)) {
+      \$dbMap = Propel::getServiceContainer()->getDatabaseMap(" . $this->getTableMapClass() . "::DATABASE_NAME);
+      if (!\$dbMap->hasTable(" . $this->getTableMapClass() . "::TABLE_NAME)) {
         \$dbMap->addTableObject(new ".$this->getTableMapClass()."());
       }
     }
@@ -605,12 +570,12 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      *        \$c->addJoin(TablePeer::alias(\"alias1\", TablePeer::PRIMARY_KEY_COLUMN), TablePeer::PRIMARY_KEY_COLUMN);
      * </code>
      * @param string \$alias The alias for the current table.
-     * @param string \$column The column name for current table. (i.e. ".$this->getPeerClassName(true)."::COLUMN_NAME).
+     * @param string \$column The column name for current table. (i.e. ".$this->getTableMapClass()."::COLUMN_NAME).
      * @return string
      */
     public static function alias(\$alias, \$column)
     {
-        return str_replace(static::TABLE_NAME.'.', \$alias.'.', \$column);
+        return str_replace(" . $this->getTableMapClass() . "::TABLE_NAME.'.', \$alias.'.', \$column);
     }
 ";
     }
@@ -681,7 +646,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
         // We need to set the primary table name, since in the case that there are no WHERE columns
         // it will be impossible for the BasePeer::createSelectSql() method to determine which
         // tables go into the FROM clause.
-        \$criteria->setPrimaryTableName(static::TABLE_NAME);
+        \$criteria->setPrimaryTableName(" . $this->getTableMapClass() . "::TABLE_NAME);
 
         if (\$distinct && !in_array(Criteria::DISTINCT, \$criteria->getSelectModifiers())) {
             \$criteria->setDistinct();
@@ -692,10 +657,10 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
         }
 
         \$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-        \$criteria->setDbName(self::DATABASE_NAME); // Set the correct dbName
+        \$criteria->setDbName(" . $this->getTableMapClass() . "::DATABASE_NAME); // Set the correct dbName
 
         if (null === \$con) {
-            \$con = Propel::getServiceContainer()->getReadConnection(static::DATABASE_NAME);
+            \$con = Propel::getServiceContainer()->getReadConnection(" . $this->getTableMapClass() . "::DATABASE_NAME);
         }";
 
         // apply behaviors
@@ -790,7 +755,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
     public static function doSelectStmt(Criteria \$criteria, ConnectionInterface \$con = null)
     {
         if (null === \$con) {
-            \$con = Propel::getServiceContainer()->getReadConnection(static::DATABASE_NAME);
+            \$con = Propel::getServiceContainer()->getReadConnection(" . $this->getTableMapClass() . "::DATABASE_NAME);
         }
 
         if (!\$criteria->hasSelectClause()) {
@@ -799,7 +764,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
         }
 
         // Set the correct dbName
-        \$criteria->setDbName(self::DATABASE_NAME);";
+        \$criteria->setDbName(" . $this->getTableMapClass() . "::DATABASE_NAME);";
         // apply behaviors
         if ($this->hasBehaviorModifier('preSelect')) {
             $this->applyBehaviorModifier('preSelect', $script);
@@ -1211,20 +1176,20 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
             // We no longer rehydrate the object, since this can cause data loss.
             // See http://www.propelorm.org/ticket/509
             // \$obj->hydrate(\$row, \$startcol, true); // rehydrate
-            \$col = \$startcol + static::NUM_HYDRATE_COLUMNS;";
+            \$col = \$startcol + " . $this->getTableMapClass() . "::NUM_HYDRATE_COLUMNS;";
         if ($table->isAbstract()) {
             $script .= "
         } elseif (null == \$key) {
             // empty resultset, probably from a left join
             // since this table is abstract, we can't hydrate an empty object
             \$obj = null;
-            \$col = \$startcol + static::NUM_HYDRATE_COLUMNS;";
+            \$col = \$startcol + " . $this->getTableMapClass() . "::NUM_HYDRATE_COLUMNS;";
         }
         $script .= "
         } else {";
         if (!$table->getChildrenColumn()) {
             $script .= "
-            \$cls = static::OM_CLASS;";
+            \$cls = " . $this->getTableMapClass() . "::OM_CLASS;";
         } else {
             $script .= "
             \$cls = static::getOMClass(\$row, \$startcol, false);";
@@ -1322,7 +1287,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      */
     public static function getOMClass(\$withPrefix = true)
     {
-        return \$withPrefix ? static::CLASS_DEFAULT : static::OM_CLASS;
+        return \$withPrefix ? " . $this->getTableMapClass() . "::CLASS_DEFAULT : " . $this->getTableMapClass() . "::OM_CLASS;
     }
 ";
     }
@@ -1353,6 +1318,8 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
     protected function addDoInsert(&$script)
     {
         $table = $this->getTable();
+        $tableMapClass = $this->getTableMapClass();
+
         $script .= "
     /**
      * Performs an INSERT on the database, given a ".$this->getObjectClassName()." or Criteria object.
@@ -1366,7 +1333,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
     public static function doInsert(\$values, ConnectionInterface \$con = null)
     {
         if (null === \$con) {
-            \$con = Propel::getServiceContainer()->getWriteConnection(static::DATABASE_NAME);
+            \$con = Propel::getServiceContainer()->getWriteConnection(" . $tableMapClass  . "::DATABASE_NAME);
         }
 
         if (\$values instanceof Criteria) {
@@ -1407,10 +1374,11 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 ";
             }
         }
+
         $script .= "
 
         // Set the correct dbName
-        \$criteria->setDbName(self::DATABASE_NAME);
+        \$criteria->setDbName(" . $this->getTableMapClass() . "::DATABASE_NAME);
 
         try {
             // use transaction because \$criteria could contain info
@@ -1448,10 +1416,10 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
     public static function doUpdate(\$values, ConnectionInterface \$con = null)
     {
         if (null === \$con) {
-            \$con = Propel::getServiceContainer()->getWriteConnection(static::DATABASE_NAME);
+            \$con = Propel::getServiceContainer()->getWriteConnection(" . $this->getTableMapClass() . "::DATABASE_NAME);
         }
 
-        \$selectCriteria = new Criteria(self::DATABASE_NAME);
+        \$selectCriteria = new Criteria(" . $this->getTableMapClass() . "::DATABASE_NAME);
 
         if (\$values instanceof Criteria) {
             \$criteria = clone \$values; // rename for clarity
@@ -1464,7 +1432,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
             if (\$value) {
                 \$selectCriteria->add(".$this->getColumnConstant($col).", \$value, \$comparison);
             } else {
-                \$selectCriteria->setPrimaryTableName(static::TABLE_NAME);
+                \$selectCriteria->setPrimaryTableName(" . $this->getTableMapClass() . "::TABLE_NAME);
             }
 ";
             }  /* if col is prim key */
@@ -1477,7 +1445,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
         }
 
         // set the correct dbName
-        \$criteria->setDbName(self::DATABASE_NAME);
+        \$criteria->setDbName(" . $this->getTableMapClass() . "::DATABASE_NAME);
 
         return {$this->basePeerClassName}::doUpdate(\$selectCriteria, \$criteria, \$con);
     }
@@ -1501,7 +1469,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
     public static function doDeleteAll(ConnectionInterface \$con = null)
     {
         if (null === \$con) {
-            \$con = Propel::getServiceContainer()->getWriteConnection(static::DATABASE_NAME);
+            \$con = Propel::getServiceContainer()->getWriteConnection(" . $this->getTableMapClass() . "::DATABASE_NAME);
         }
         \$affectedRows = 0; // initialize var to track total num of affected rows
         try {
@@ -1510,26 +1478,27 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
             \$con->beginTransaction();
             ";
         if ($this->isDeleteCascadeEmulationNeeded()) {
-            $script .="\$affectedRows += static::doOnDeleteCascade(new Criteria(static::DATABASE_NAME), \$con);
+            $script .="\$affectedRows += static::doOnDeleteCascade(new Criteria(" . $this->getTableMapClass() . "::DATABASE_NAME), \$con);
             ";
         }
         if ($this->isDeleteSetNullEmulationNeeded()) {
-            $script .= "static::doOnDeleteSetNull(new Criteria(static::DATABASE_NAME), \$con);
+            $script .= "static::doOnDeleteSetNull(new Criteria(" . $this->getTableMapClass() . "::DATABASE_NAME), \$con);
             ";
         }
-        $script .= "\$affectedRows += {$this->basePeerClassName}::doDeleteAll(static::TABLE_NAME, \$con, static::DATABASE_NAME);
+        $script .= "\$affectedRows += {$this->basePeerClassName}::doDeleteAll(" . $this->getTableMapClass() . "::TABLE_NAME, \$con, " . $this->getTableMapClass() . "::DATABASE_NAME);
             // Because this db requires some delete cascade/set null emulation, we have to
             // clear the cached instance *after* the emulation has happened (since
             // instances get re-added by the select statement contained therein).
             static::clearInstancePool();
             static::clearRelatedInstancePool();
-            \$con->commit();
 
-            return \$affectedRows;
+            \$con->commit();
         } catch (PropelException \$e) {
             \$con->rollBack();
             throw \$e;
         }
+
+        return \$affectedRows;
     }
 ";
     }
@@ -1557,7 +1526,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      static public function doDelete(\$values, ConnectionInterface \$con = null)
      {
         if (null === \$con) {
-            \$con = Propel::getServiceContainer()->getWriteConnection(static::DATABASE_NAME);
+            \$con = Propel::getServiceContainer()->getWriteConnection(" . $this->getTableMapClass() . "::DATABASE_NAME);
         }
 
         if (\$values instanceof Criteria) {";
@@ -1590,7 +1559,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
         $script .= "
         } else { // it's a primary key, or an array of pks";
         $script .= "
-            \$criteria = new Criteria(self::DATABASE_NAME);";
+            \$criteria = new Criteria(" . $this->getTableMapClass() . "::DATABASE_NAME);";
 
         if (1 === count($table->getPrimaryKey())) {
             $pkey = $table->getPrimaryKey();
@@ -1639,7 +1608,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
         }
 
         // Set the correct dbName
-        \$criteria->setDbName(self::DATABASE_NAME);
+        \$criteria->setDbName(" . $this->getTableMapClass() . "::DATABASE_NAME);
 
         \$affectedRows = 0; // initialize var to track total num of affected rows
 
@@ -1750,7 +1719,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
                     $script .= "
 
             // delete related $fkClassName objects
-            \$criteria = new Criteria(".$joinedTablePeerBuilder->getPeerClassName(true)."::DATABASE_NAME);
+            \$criteria = new Criteria(".$joinedTablePeerBuilder->getTableMapClass()."::DATABASE_NAME);
             ";
                     for ($x = 0, $xlen = count($columnNamesF); $x < $xlen; $x++) {
                         $columnFK = $tblFK->getColumn($columnNamesF[$x]);
@@ -1827,8 +1796,8 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
                     $columnNamesL = $fk->getForeignColumns(); // should be same num as foreign
                     $script .= "
             // set fkey col in related $fkClassName rows to NULL
-            \$selectCriteria = new Criteria(static::DATABASE_NAME);
-            \$updateValues = new Criteria(static::DATABASE_NAME);";
+            \$selectCriteria = new Criteria(" . $this->getTableMapClass() . "::DATABASE_NAME);
+            \$updateValues = new Criteria(" . $this->getTableMapClass() . "::DATABASE_NAME);";
 
                     for ($x = 0, $xlen = count($columnNamesF); $x < $xlen; $x++) {
                         $columnFK = $tblFK->getColumn($columnNamesF[$x]);
@@ -1878,10 +1847,10 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
         }
 
         if (null === \$con) {
-            \$con = Propel::getServiceContainer()->getReadConnection(static::DATABASE_NAME);
+            \$con = Propel::getServiceContainer()->getReadConnection(" . $this->getTableMapClass() . "::DATABASE_NAME);
         }
 
-        \$criteria = new Criteria(static::DATABASE_NAME);
+        \$criteria = new Criteria(" . $this->getTableMapClass() . "::DATABASE_NAME);
         \$criteria->add(".$this->getColumnConstant($col).", \$pk);
 
         \$v = static::doSelect(\$criteria, \$con);
@@ -1910,14 +1879,14 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
     static public function ".$this->getRetrieveMethodName()."s(\$pks, ConnectionInterface \$con = null)
     {
         if (null === \$con) {
-            \$con = Propel::getServiceContainer()->getReadConnection(static::DATABASE_NAME);
+            \$con = Propel::getServiceContainer()->getReadConnection(" . $this->getTableMapClass() . "::DATABASE_NAME);
         }
 
         \$objs = null;
         if (empty(\$pks)) {
             \$objs = array();
         } else {
-            \$criteria = new Criteria(static::DATABASE_NAME);";
+            \$criteria = new Criteria(" . $this->getTableMapClass() . "::DATABASE_NAME);";
         $k1 = $table->getPrimaryKey();
         $script .= "
             \$criteria->add(".$this->getColumnConstant($k1[0]).", \$pks, Criteria::IN);";
@@ -1968,9 +1937,9 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
         }
 
         if (null === \$con) {
-            \$con = Propel::getServiceContainer()->getReadConnection(static::DATABASE_NAME);
+            \$con = Propel::getServiceContainer()->getReadConnection(" . $this->getTableMapClass() . "::DATABASE_NAME);
         }
-        \$criteria = new Criteria(static::DATABASE_NAME);";
+        \$criteria = new Criteria(" . $this->getTableMapClass() . "::DATABASE_NAME);";
         foreach ($table->getPrimaryKey() as $col) {
             $clo = strtolower($col->getName());
             $script .= "
@@ -1999,7 +1968,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      */
     public static function getTableMap()
     {
-        return Propel::getServiceContainer()->getDatabaseMap(self::DATABASE_NAME)->getTable(self::TABLE_NAME);
+        return Propel::getServiceContainer()->getDatabaseMap(" . $this->getTableMapClass() . "::DATABASE_NAME)->getTable(" . $this->getTableMapClass() . "::TABLE_NAME);
     }
 ";
     }
@@ -2150,11 +2119,11 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 
         // Set the correct dbName if it has not been overridden
         if (\$criteria->getDbName() == Propel::getServiceContainer()->getDefaultDatasource()) {
-            \$criteria->setDbName(self::DATABASE_NAME);
+            \$criteria->setDbName(" . $this->getTableMapClass() . "::DATABASE_NAME);
         }
 
         static::addSelectColumns(\$criteria);
-        \$startcol = static::NUM_HYDRATE_COLUMNS;
+        \$startcol = " . $this->getTableMapClass() . "::NUM_HYDRATE_COLUMNS;
         ".$joinedTablePeerBuilder->getPeerClassName(true)."::addSelectColumns(\$criteria);
 ";
 
@@ -2282,7 +2251,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
         // We need to set the primary table name, since in the case that there are no WHERE columns
         // it will be impossible for the BasePeer::createSelectSql() method to determine which
         // tables go into the FROM clause.
-        \$criteria->setPrimaryTableName(static::TABLE_NAME);
+        \$criteria->setPrimaryTableName(" . $this->getTableMapClass() . "::TABLE_NAME);
 
         if (\$distinct && !in_array(Criteria::DISTINCT, \$criteria->getSelectModifiers())) {
             \$criteria->setDistinct();
@@ -2295,10 +2264,10 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
         \$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
 
         // Set the correct dbName
-        \$criteria->setDbName(self::DATABASE_NAME);
+        \$criteria->setDbName(" . $this->getTableMapClass() . "::DATABASE_NAME);
 
         if (null === \$con) {
-            \$con = Propel::getServiceContainer()->getReadConnection(static::DATABASE_NAME);
+            \$con = Propel::getServiceContainer()->getReadConnection(" . $this->getTableMapClass() . "::DATABASE_NAME);
         }
 ";
                         $script .= $this->addCriteriaJoin($fk, $table, $joinTable, $joinedTablePeerBuilder);
@@ -2353,11 +2322,11 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 
         // Set the correct dbName if it has not been overridden
         if (\$criteria->getDbName() == Propel::getServiceContainer()->getDefaultDatasource()) {
-            \$criteria->setDbName(self::DATABASE_NAME);
+            \$criteria->setDbName(" . $this->getTableMapClass() . "::DATABASE_NAME);
         }
 
         static::addSelectColumns(\$criteria);
-        \$startcol2 = static::NUM_HYDRATE_COLUMNS;
+        \$startcol2 = " . $this->getTableMapClass() . "::NUM_HYDRATE_COLUMNS;
 ";
         $index = 2;
         foreach ($table->getForeignKeys() as $fk) {
@@ -2370,10 +2339,11 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 
                 $joinedTablePeerBuilder = $this->getNewPeerBuilder($joinTable);
                 $joinClassName = $joinedTablePeerBuilder->getObjectClassName();
+                $this->declareClass($joinedTablePeerBuilder->getTableMapBuilder()->getFullyQualifiedClassName());
 
                 $script .= "
         ".$joinedTablePeerBuilder->getPeerClassName(true)."::addSelectColumns(\$criteria);
-        \$startcol$new_index = \$startcol$index + ".$joinedTablePeerBuilder->getPeerClassName(true)."::NUM_HYDRATE_COLUMNS;
+        \$startcol$new_index = \$startcol$index + ".$joinedTablePeerBuilder->getTableMapClass()."::NUM_HYDRATE_COLUMNS;
 ";
                 $index = $new_index;
 
@@ -2521,7 +2491,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
         // We need to set the primary table name, since in the case that there are no WHERE columns
         // it will be impossible for the BasePeer::createSelectSql() method to determine which
         // tables go into the FROM clause.
-        \$criteria->setPrimaryTableName(static::TABLE_NAME);
+        \$criteria->setPrimaryTableName(" . $this->getTableMapClass() . "::TABLE_NAME);
 
         if (\$distinct && !in_array(Criteria::DISTINCT, \$criteria->getSelectModifiers())) {
             \$criteria->setDistinct();
@@ -2534,10 +2504,10 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
         \$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
 
         // Set the correct dbName
-        \$criteria->setDbName(self::DATABASE_NAME);
+        \$criteria->setDbName(" . $this->getTableMapClass() . "::DATABASE_NAME);
 
         if (null === \$con) {
-            \$con = Propel::getServiceContainer()->getReadConnection(static::DATABASE_NAME);
+            \$con = Propel::getServiceContainer()->getReadConnection(" . $this->getTableMapClass() . "::DATABASE_NAME);
         }
 ";
 
@@ -2613,11 +2583,11 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
         // \$criteria->getDbName() will return the same object if not set to another value
         // so == check is okay and faster
         if (\$criteria->getDbName() == Propel::getServiceContainer()->getDefaultDatasource()) {
-            \$criteria->setDbName(self::DATABASE_NAME);
+            \$criteria->setDbName(" . $this->getTableMapClass() . "::DATABASE_NAME);
         }
 
         static::addSelectColumns(\$criteria);
-        \$startcol2 = static::NUM_HYDRATE_COLUMNS;
+        \$startcol2 = " . $this->getTableMapClass() . "::NUM_HYDRATE_COLUMNS;
 ";
             $index = 2;
             foreach ($table->getForeignKeys() as $subfk) {
@@ -2632,7 +2602,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
                         $new_index = $index + 1;
                         $script .= "
         ".$joinTablePeerBuilder->getPeerClassName(true)."::addSelectColumns(\$criteria);
-        \$startcol$new_index = \$startcol$index + ".$joinTablePeerBuilder->getPeerClassName(true)."::NUM_HYDRATE_COLUMNS;
+        \$startcol$new_index = \$startcol$index + ".$joinTablePeerBuilder->getTableMapClass()."::NUM_HYDRATE_COLUMNS;
 ";
                         $index = $new_index;
                     } // if joinClassName not excludeClassName
@@ -2792,7 +2762,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
         // We need to set the primary table name, since in the case that there are no WHERE columns
         // it will be impossible for the BasePeer::createSelectSql() method to determine which
         // tables go into the FROM clause.
-        \$criteria->setPrimaryTableName(static::TABLE_NAME);
+        \$criteria->setPrimaryTableName(" . $this->getTableMapClass() . "::TABLE_NAME);
 
         if (\$distinct && !in_array(Criteria::DISTINCT, \$criteria->getSelectModifiers())) {
             \$criteria->setDistinct();
@@ -2805,10 +2775,10 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
         \$criteria->clearOrderByColumns(); // ORDER BY should not affect count
 
         // Set the correct dbName
-        \$criteria->setDbName(self::DATABASE_NAME);
+        \$criteria->setDbName(" . $this->getTableMapClass() . "::DATABASE_NAME);
 
         if (null === \$con) {
-            \$con = Propel::getServiceContainer()->getReadConnection(static::DATABASE_NAME);
+            \$con = Propel::getServiceContainer()->getReadConnection(" . $this->getTableMapClass() . "::DATABASE_NAME);
         }
     ";
 

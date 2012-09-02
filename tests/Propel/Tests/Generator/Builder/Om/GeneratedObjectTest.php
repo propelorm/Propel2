@@ -10,19 +10,20 @@
 
 namespace Propel\Tests\Generator\Builder\Om;
 
-use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
-use Propel\Tests\Helpers\Bookstore\Behavior\TestAuthor;
-use Propel\Tests\Helpers\Bookstore\Behavior\TestAuthorDeleteFalse;
-use Propel\Tests\Helpers\Bookstore\Behavior\TestAuthorSaveFalse;
-
+use Propel\Generator\Util\QuickBuilder;
+use Propel\Runtime\Propel;
+use Propel\Runtime\Collection\ObjectCollection;
+use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\Map\TableMap;
 use Propel\Tests\Bookstore\AcctAuditLog;
 use Propel\Tests\Bookstore\AcctAuditLogPeer;
 use Propel\Tests\Bookstore\Author;
-use Propel\Tests\Bookstore\AuthorPeer;
 use Propel\Tests\Bookstore\AuthorQuery;
+use Propel\Tests\Bookstore\Map\AuthorTableMap;
 use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\BookQuery;
 use Propel\Tests\Bookstore\BookPeer;
+use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\Bookstore\BookReader;
 use Propel\Tests\Bookstore\BookOpinion;
 use Propel\Tests\Bookstore\BookOpinionPeer;
@@ -39,20 +40,18 @@ use Propel\Tests\Bookstore\Review;
 use Propel\Tests\Bookstore\ReviewPeer;
 use Propel\Tests\Bookstore\BookstoreEmployee;
 use Propel\Tests\Bookstore\BookstoreEmployeePeer;
+use Propel\Tests\Bookstore\Map\BookstoreEmployeeTableMap;
 use Propel\Tests\Bookstore\BookstoreEmployeeAccount;
 use Propel\Tests\Bookstore\BookstoreEmployeeAccountPeer;
+use Propel\Tests\Bookstore\Map\BookstoreEmployeeAccountTableMap;
 use Propel\Tests\Bookstore\BookstoreContestEntry;
 use Propel\Tests\Bookstore\BookstoreSale;
-
-use Propel\Runtime\Propel;
-use Propel\Runtime\Collection\ObjectCollection;
-use Propel\Runtime\ActiveQuery\Criteria;
-use Propel\Runtime\Util\BasePeer;
-
-use Propel\Generator\Util\QuickBuilder;
+use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
+use Propel\Tests\Helpers\Bookstore\Behavior\TestAuthor;
+use Propel\Tests\Helpers\Bookstore\Behavior\TestAuthorDeleteFalse;
+use Propel\Tests\Helpers\Bookstore\Behavior\TestAuthorSaveFalse;
 
 use \DateTime;
-
 use MyNameSpace\TestKeyTypeTable;
 
 /**
@@ -146,7 +145,7 @@ class GeneratedObjectTest extends BookstoreTestBase
      */
     public function testDefaultExpressions()
     {
-        if (Propel::getServiceContainer()->getAdapter(BookstoreEmployeePeer::DATABASE_NAME) instanceof DBSqlite) {
+        if (Propel::getServiceContainer()->getAdapter(BookstoreEmployeeTableMap::DATABASE_NAME) instanceof DBSqlite) {
             $this->markTestSkipped("Cannot test default expressions with SQLite");
         }
         BookstoreEmployeeAccountPeer::doDeleteAll();
@@ -191,7 +190,7 @@ class GeneratedObjectTest extends BookstoreTestBase
      */
     public function testDefaultExpressions_ReloadOnInsert()
     {
-        if (Propel::getServiceContainer()->getAdapter(BookstoreEmployeePeer::DATABASE_NAME) instanceof DBSqlite) {
+        if (Propel::getServiceContainer()->getAdapter(BookstoreEmployeeTableMap::DATABASE_NAME) instanceof DBSqlite) {
             $this->markTestSkipped("Cannot test default date expressions with SQLite");
         }
 
@@ -231,7 +230,7 @@ class GeneratedObjectTest extends BookstoreTestBase
      */
     public function testDefaultExpressions_ReloadOnInsert_Override()
     {
-        if (Propel::getServiceContainer()->getAdapter(BookstoreEmployeePeer::DATABASE_NAME) instanceof DBSqlite) {
+        if (Propel::getServiceContainer()->getAdapter(BookstoreEmployeeTableMap::DATABASE_NAME) instanceof DBSqlite) {
             $this->markTestSkipped("Cannot test default date expressions with SQLite");
         }
 
@@ -356,8 +355,8 @@ class GeneratedObjectTest extends BookstoreTestBase
         $this->assertSame($pub1, $book->getPublisher());
 
         // now change values behind the scenes
-        $con = Propel::getServiceContainer()->getConnection(BookstoreEmployeeAccountPeer::DATABASE_NAME);
-        $con->exec("UPDATE " . BookPeer::TABLE_NAME . " SET "
+        $con = Propel::getServiceContainer()->getConnection(BookstoreEmployeeAccountTableMap::DATABASE_NAME);
+        $con->exec("UPDATE " . BookTableMap::TABLE_NAME . " SET "
             . " publisher_id = " . $pub2->getId()
             . " WHERE id = " . $book->getId());
 
@@ -373,7 +372,7 @@ class GeneratedObjectTest extends BookstoreTestBase
 
         // Now let's set it back, just to be double sure ...
 
-        $con->exec("UPDATE " . BookPeer::TABLE_NAME . " SET "
+        $con->exec("UPDATE " . BookTableMap::TABLE_NAME . " SET "
             . " publisher_id = " . $pub1->getId()
             . " WHERE id = " . $book->getId());
 
@@ -729,7 +728,7 @@ class GeneratedObjectTest extends BookstoreTestBase
             'PublisherId',
             'AuthorId'
         );
-        $this->assertEquals($expectedKeys, array_keys($arr1), 'toArray() returns an associative array with BasePeer::TYPE_PHPNAME keys by default');
+        $this->assertEquals($expectedKeys, array_keys($arr1), 'toArray() returns an associative array with TableMap::TYPE_PHPNAME keys by default');
         $this->assertEquals('Don Juan', $arr1['Title'], 'toArray() returns an associative array representation of the object');
     }
 
@@ -738,7 +737,7 @@ class GeneratedObjectTest extends BookstoreTestBase
         $b = new Book();
         $b->setTitle('Don Juan');
 
-        $arr1 = $b->toArray(BasePeer::TYPE_COLNAME);
+        $arr1 = $b->toArray(TableMap::TYPE_COLNAME);
         $expectedKeys = array(
             BookPeer::ID,
             BookPeer::TITLE,
@@ -977,7 +976,7 @@ EOF;
 
     public function testPreSaveFalse()
     {
-        $con = Propel::getServiceContainer()->getConnection(AuthorPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(AuthorTableMap::DATABASE_NAME);
         $author = new TestAuthorSaveFalse();
         $author->setFirstName("bogus");
         $author->setLastName("Lastname");
@@ -1010,7 +1009,7 @@ EOF;
 
     public function testPreDeleteFalse()
     {
-        $con = Propel::getServiceContainer()->getConnection(AuthorPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(AuthorTableMap::DATABASE_NAME);
         $author = new TestAuthorDeleteFalse();
         $author->setFirstName("bogus");
         $author->setLastName("Lastname");

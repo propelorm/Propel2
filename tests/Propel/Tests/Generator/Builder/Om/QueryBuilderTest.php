@@ -10,14 +10,20 @@
 
 namespace Propel\Tests\Generator\Builder\Om;
 
-use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
-use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
-
+use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\ActiveQuery\ModelCriteria;
+use Propel\Runtime\ActiveQuery\ModelJoin;
+use Propel\Runtime\Connection\ConnectionInterface;
+use Propel\Runtime\Map\TableMap;
+use Propel\Runtime\Propel;
+use Propel\Runtime\Util\BasePeer;
 use Propel\Tests\Bookstore\AuthorPeer;
 use Propel\Tests\Bookstore\AuthorQuery;
+use Propel\Tests\Bookstore\Map\AuthorTableMap;
 use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\BookPeer;
 use Propel\Tests\Bookstore\BookQuery;
+use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\Bookstore\BookstoreEmployeeAccountPeer;
 use Propel\Tests\Bookstore\BookstoreEmployeeAccountQuery;
 use Propel\Tests\Bookstore\BookClubListQuery;
@@ -30,18 +36,12 @@ use Propel\Tests\Bookstore\ReviewPeer;
 use Propel\Tests\Bookstore\ReviewQuery;
 use Propel\Tests\Bookstore\ReaderFavoriteQuery;
 use Propel\Tests\Bookstore\PublisherPeer;
-
 use Propel\Tests\Bookstore\RecordLabelPeer;
 use Propel\Tests\Bookstore\RecordLabelQuery;
 use Propel\Tests\Bookstore\ReleasePoolPeer;
 use Propel\Tests\Bookstore\ReleasePoolQuery;
-
-use Propel\Runtime\Propel;
-use Propel\Runtime\Connection\ConnectionInterface;
-use Propel\Runtime\ActiveQuery\Criteria;
-use Propel\Runtime\ActiveQuery\ModelCriteria;
-use Propel\Runtime\ActiveQuery\ModelJoin;
-use Propel\Runtime\Util\BasePeer;
+use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
+use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
 
 use \ReflectionMethod;
 
@@ -329,7 +329,7 @@ class QueryBuilderTest extends BookstoreTestBase
 
     public function testFilterBy()
     {
-        foreach (BookPeer::getFieldNames(BasePeer::TYPE_PHPNAME) as $colName) {
+        foreach (BookPeer::getFieldNames(TableMap::TYPE_PHPNAME) as $colName) {
             $filterMethod = 'filterBy' . $colName;
             $this->assertTrue(method_exists('\Propel\Tests\Bookstore\BookQuery', $filterMethod), 'QueryBuilder adds filterByColumn() methods for every column');
             $q = BookQuery::create()->$filterMethod(1);
@@ -927,7 +927,7 @@ class QueryBuilderTest extends BookstoreTestBase
         $join->setRelationMap(BookPeer::getTableMap()->getRelation('Author'), null, 'a');
         $join->setRelationAlias('a');
         $q1 = BookQuery::create()
-            ->addAlias('a', AuthorPeer::TABLE_NAME)
+            ->addAlias('a', AuthorTableMap::TABLE_NAME)
             ->addJoinObject($join, 'a')
             ->add('a.FIRST_NAME', 'Leo', Criteria::EQUAL);
         $this->assertTrue($q->equals($q1), 'useFkQuery() uses the first argument as a table alias');
@@ -983,10 +983,10 @@ class QueryBuilderTest extends BookstoreTestBase
         $join2->setRelationMap(BookPeer::getTableMap()->getRelation('Author'), null, 'b');
         $join2->setRelationAlias('b');
         $q1 = BookQuery::create()
-            ->addAlias('a', AuthorPeer::TABLE_NAME)
+            ->addAlias('a', AuthorTableMap::TABLE_NAME)
             ->addJoinObject($join1, 'a')
             ->add('a.FIRST_NAME', 'Leo', Criteria::EQUAL)
-            ->addAlias('b', AuthorPeer::TABLE_NAME)
+            ->addAlias('b', AuthorTableMap::TABLE_NAME)
             ->addJoinObject($join2, 'b')
             ->add('b.LAST_NAME', 'Tolstoi', Criteria::EQUAL);
         $this->assertTrue($q->equals($q1), 'useFkQuery() called twice on the same relation with two aliases creates two joins');
@@ -1033,7 +1033,7 @@ class QueryBuilderTest extends BookstoreTestBase
 
     public function testUseFkQueryNoAliasThenWith()
     {
-        $con = Propel::getServiceContainer()->getReadConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getReadConnection(BookTableMap::DATABASE_NAME);
         $books = BookQuery::create()
             ->useAuthorQuery()
                 ->filterByFirstName('Leo')

@@ -258,6 +258,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $this->declareClassFromBuilder($this->getStubObjectBuilder());
         $this->declareClassFromBuilder($this->getStubPeerBuilder());
         $this->declareClassFromBuilder($this->getStubQueryBuilder());
+        $this->declareClassFromBuilder($this->getTableMapBuilder());
+
         $this->declareClasses(
             '\Exception',
             '\PDO',
@@ -271,7 +273,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             '\Propel\Runtime\ActiveRecord\ActiveRecordInterface',
             '\Propel\Runtime\Parser\AbstractParser',
             '\Propel\Runtime\Propel',
-            '\Propel\Runtime\Util\BasePeer'
+            '\Propel\Runtime\Util\BasePeer',
+            '\Propel\Runtime\Map\TableMap'
         );
 
         $table = $this->getTable();
@@ -379,6 +382,11 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * Peer class name
      */
     const PEER = '" . addslashes($this->getStubPeerBuilder()->getFullyQualifiedClassName()) . "';
+
+    /**
+     * TableMap class name
+     */
+    const TABLE_MAP = '" . addslashes($this->getTableMapBuilder()->getFullyQualifiedClassName()) . "';
 ";
     }
 
@@ -2067,7 +2075,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                 \$this->ensureConsistency();
             }
 
-            return \$startcol + $n; // $n = ".$this->getPeerClassName()."::NUM_HYDRATE_COLUMNS.
+            return \$startcol + $n; // $n = ".$this->getTableMapClass()."::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception \$e) {
             throw new PropelException(\"Error populating ".$this->getStubObjectBuilder()->getClassName()." object\", 0, \$e);
@@ -2136,7 +2144,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     protected function addBuildPkeyCriteriaBody(&$script)
     {
         $script .= "
-        \$criteria = new Criteria(".$this->getPeerClassName()."::DATABASE_NAME);";
+        \$criteria = new Criteria(".$this->getTableMapClass()."::DATABASE_NAME);";
         foreach ($this->getTable()->getPrimaryKey() as $col) {
             $clo = strtolower($col->getName());
             $script .= "
@@ -2205,7 +2213,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     protected function addBuildCriteriaBody(&$script)
     {
         $script .= "
-        \$criteria = new Criteria(".$this->getPeerClassName()."::DATABASE_NAME);
+        \$criteria = new Criteria(".$this->getTableMapClass()."::DATABASE_NAME);
 ";
         foreach ($this->getTable()->getColumns() as $col) {
             $clo = strtolower($col->getName());
@@ -2247,9 +2255,9 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * You can specify the key type of the array by passing one of the class
      * type constants.
      *
-     * @param     string  \$keyType (optional) One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME,
-     *                    BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM.
-     *                    Defaults to BasePeer::$defaultKeyType.
+     * @param     string  \$keyType (optional) One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_STUDLYPHPNAME,
+     *                    TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
+     *                    Defaults to TableMap::$defaultKeyType.
      * @param     boolean \$includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
      * @param     array \$alreadyDumpedObjects List of objects to skip to avoid recursion";
         if ($hasFks) {
@@ -2260,7 +2268,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      *
      * @return array an associative array containing the field names (as keys) and field values
      */
-    public function toArray(\$keyType = BasePeer::$defaultKeyType, \$includeLazyLoadColumns = true, \$alreadyDumpedObjects = array()" . ($hasFks ? ", \$includeForeignObjects = false" : '') . ")
+    public function toArray(\$keyType = TableMap::$defaultKeyType, \$includeLazyLoadColumns = true, \$alreadyDumpedObjects = array()" . ($hasFks ? ", \$includeForeignObjects = false" : '') . ")
     {
         if (isset(\$alreadyDumpedObjects['$objectClassName'][$pkGetter])) {
             return '*RECURSION*';
@@ -2337,9 +2345,9 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      *
      * @param      string \$name name
      * @param      string \$type The type of fieldname the \$name is of:
-     *                     one of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
-     *                     BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM.
-     *                     Defaults to BasePeer::$defaultKeyType.
+     *                     one of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_STUDLYPHPNAME
+     *                     TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
+     *                     Defaults to TableMap::$defaultKeyType.
      * @return mixed Value of field.
      */";
     }
@@ -2353,7 +2361,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     {
         $defaultKeyType = $this->getDefaultKeyType();
         $script .= "
-    public function getByName(\$name, \$type = BasePeer::$defaultKeyType)
+    public function getByName(\$name, \$type = TableMap::$defaultKeyType)
     {";
     }
 
@@ -2365,7 +2373,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     protected function addGetByNameBody(&$script)
     {
         $script .= "
-        \$pos = ".$this->getPeerClassName()."::translateFieldName(\$name, \$type, BasePeer::TYPE_NUM);
+        \$pos = ".$this->getPeerClassName()."::translateFieldName(\$name, \$type, TableMap::TYPE_NUM);
         \$field = \$this->getByPosition(\$pos);";
     }
 
@@ -2472,14 +2480,14 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * @param      string \$name peer name
      * @param      mixed \$value field value
      * @param      string \$type The type of fieldname the \$name is of:
-     *                     one of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
-     *                     BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM.
-     *                     Defaults to BasePeer::$defaultKeyType.
+     *                     one of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_STUDLYPHPNAME
+     *                     TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
+     *                     Defaults to TableMap::$defaultKeyType.
      * @return void
      */
-    public function setByName(\$name, \$value, \$type = BasePeer::$defaultKeyType)
+    public function setByName(\$name, \$value, \$type = TableMap::$defaultKeyType)
     {
-        \$pos = ".$this->getPeerClassName()."::translateFieldName(\$name, \$type, BasePeer::TYPE_NUM);
+        \$pos = ".$this->getPeerClassName()."::translateFieldName(\$name, \$type, TableMap::TYPE_NUM);
 
         return \$this->setByPosition(\$pos, \$value);
     }
@@ -2547,15 +2555,15 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * array. If so the setByName() method is called for that column.
      *
      * You can specify the key type of the array by additionally passing one
-     * of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME,
-     * BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM.
-     * The default key type is the column's BasePeer::$defaultKeyType.
+     * of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_STUDLYPHPNAME,
+     * TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
+     * The default key type is the column's TableMap::$defaultKeyType.
      *
      * @param      array  \$arr     An array to populate the object from.
      * @param      string \$keyType The type of keys the array uses.
      * @return void
      */
-    public function fromArray(\$arr, \$keyType = BasePeer::$defaultKeyType)
+    public function fromArray(\$arr, \$keyType = TableMap::$defaultKeyType)
     {
         \$keys = ".$this->getPeerClassName()."::getFieldNames(\$keyType);
 ";
@@ -2626,7 +2634,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         }
 
         if (\$con === null) {
-            \$con = Propel::getServiceContainer()->getWriteConnection(".$this->getPeerClassName()."::DATABASE_NAME);
+            \$con = Propel::getServiceContainer()->getWriteConnection(".$this->getTableMapClass()."::DATABASE_NAME);
         }
 
         \$con->beginTransaction();
@@ -2710,7 +2718,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         }
 
         if (\$con === null) {
-            \$con = Propel::getServiceContainer()->getReadConnection(".$this->getPeerClassName()."::DATABASE_NAME);
+            \$con = Propel::getServiceContainer()->getReadConnection(".$this->getTableMapClass()."::DATABASE_NAME);
         }
 
         // We don't need to alter the object instance pool; we're just modifying this instance
@@ -4672,7 +4680,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         }
 
         if (\$con === null) {
-            \$con = Propel::getServiceContainer()->getWriteConnection(".$this->getPeerClassName()."::DATABASE_NAME);
+            \$con = Propel::getServiceContainer()->getWriteConnection(".$this->getTableMapClass()."::DATABASE_NAME);
         }
 
         \$con->beginTransaction();

@@ -10,9 +10,9 @@
 
 namespace Propel\Runtime\Validator\Constraints;
 
+use Propel\Runtime\Map\TableMap;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
-use Propel\Runtime\Util\BasePeer;
 
 class UniqueValidator extends ConstraintValidator
 {
@@ -26,7 +26,7 @@ class UniqueValidator extends ConstraintValidator
         $peer       = $object->getPeer();
         $className  = get_class($object);
         $queryClass = $className . 'Query';
-        $filter     = sprintf('filterBy%s', $peer->translateFieldName($this->context->getCurrentProperty(), BasePeer::TYPE_STUDLYPHPNAME, BasePeer::TYPE_PHPNAME));
+        $filter     = sprintf('filterBy%s', $peer->translateFieldName($this->context->getCurrentProperty(), TableMap::TYPE_STUDLYPHPNAME, TableMap::TYPE_PHPNAME));
 
         if (0 < $queryClass::create()->$filter($value)->count()) {
             $this->setMessage($constraint->message);
