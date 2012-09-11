@@ -78,7 +78,9 @@ class ObjectCollectionTest extends BookstoreTestBase
         for ($i=0; $i < 4; $i++) {
             $book = new Book();
             $book->setTitle('Title' . $i);
+            $book->setISBN($i);
             $book->save($this->con);
+
             $books []= $book;
         }
 
@@ -142,7 +144,8 @@ class ObjectCollectionTest extends BookstoreTestBase
     public function testPopulateRelationOneToManyWithEmptyCollection()
     {
         $author = new Author();
-        $author->setLastName('I who never wrote');
+        $author->setFirstName('Chuck');
+        $author->setLastName('Norris');
         $author->save($this->con);
         AuthorPeer::clearInstancePool();
         BookPeer::clearInstancePool();

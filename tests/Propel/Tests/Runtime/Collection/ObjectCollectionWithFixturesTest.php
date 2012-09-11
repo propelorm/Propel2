@@ -78,8 +78,8 @@ class ObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
         $author->setLastName('Austen');
         $author->save();
         $books = array(
-            array('Title' => 'Mansfield Park', 'AuthorId' => $author->getId()),
-            array('Title' => 'Pride And Prejudice', 'AuthorId' => $author->getId())
+            array('Title' => 'Mansfield Park', 'ISBN' => 'FA404', 'AuthorId' => $author->getId()),
+            array('Title' => 'Pride And Prejudice', 'ISBN' => 'FA404', 'AuthorId' => $author->getId())
         );
         $col = new ObjectCollection();
         $col->setModel('\Propel\Tests\Bookstore\Book');
