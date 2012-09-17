@@ -66,14 +66,14 @@ three database schemas: `bookstore_schemas`, `contest`, and `second_hand_books`.
 
 Here is the set of commands to run in order to setup MySQL:
 
-    mysql -uroot -e 'create database test'
-    mysql -uroot -e 'create schema bookstore_schemas'
-    mysql -uroot -e 'create schema contest'
-    mysql -uroot -e 'create schema second_hand_books'
+    mysql -uroot -e 'SET FOREIGN_KEY_CHECKS = 0; DROP DATABASE IF EXISTS test; DROP SCHEMA IF EXISTS second_hand_books; DROP SCHEMA IF EXISTS contest; DROP SCHEMA IF EXISTS bookstore_schemas; SET FOREIGN_KEY_CHECKS = 1;'
+    mysql -uroot -e 'CREATE DATABASE test; CREATE SCHEMA bookstore_schemas; CREATE SCHEMA contest; CREATE SCHEMA second_hand_books;'
 
 Once done, build fixtures (default vendor is `mysql`):
 
     bin/propel test:prepare
+
+To match Travis CI MySQL configuration, you must set `@@sql_mode` to `STRICT_ALL_TABLES` in yours.
 
 #### PostgreSQL ####
 

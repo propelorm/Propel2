@@ -461,18 +461,11 @@ class GeneratedObjectTest extends BookstoreTestBase
 
     }
 
-    public function testSaveCanInsertEmptyObjects()
-    {
-        $b = new Book();
-        $b->save();
-        $this->assertFalse($b->isNew());
-        $this->assertNotNull($b->getId());
-    }
-
     public function testSaveCanInsertNonEmptyObjects()
     {
         $b = new Book();
         $b->setTitle('foo');
+        $b->setISBN('FA404');
         $b->save();
         $this->assertFalse($b->isNew());
         $this->assertNotNull($b->getId());
@@ -530,6 +523,7 @@ class GeneratedObjectTest extends BookstoreTestBase
     {
         $a = new Author();
         $a->setFirstName('Foo');
+        $a->setLastName('Bar');
         $a->save();
         $this->assertFalse($a->isModified());
     }
@@ -537,8 +531,11 @@ class GeneratedObjectTest extends BookstoreTestBase
     public function testIsModifiedIsTrueForSavedObjectsWithModifications()
     {
         $a = new Author();
-        $a->save();
         $a->setFirstName('Foo');
+        $a->setLastName('Bar');
+        $a->save();
+        $a->setFirstName('Chuck');
+        $a->setLastName('Norris');
         $this->assertTrue($a->isModified());
     }
 
@@ -582,7 +579,8 @@ class GeneratedObjectTest extends BookstoreTestBase
     public function testIsModifiedAndNullValues()
     {
         $a = new Author();
-        $a->setFirstName("");
+        $a->setFirstName('');
+        $a->setLastName('Bar');
         $a->setAge(0);
         $a->save();
 
@@ -591,8 +589,6 @@ class GeneratedObjectTest extends BookstoreTestBase
 
         $a->setAge(null);
         $this->assertTrue($a->isModified(), "Expected Author to be modified after changing 0-value int column to NULL.");
-
-        $a->save();
 
         $a->setFirstName('');
         $this->assertTrue($a->isModified(), "Expected Author to be modified after changing NULL column value to empty string.");
@@ -1080,12 +1076,18 @@ EOF;
         $coll->setModel('\Propel\Tests\Bookstore\Book');
 
         for ($i = 0; $i < 3; $i++) {
-            $coll[] = new Book();
+            $b = new Book();
+            $b->setTitle('Title ' . $i);
+            $b->setISBN($i);
+
+            $coll[] = $b;
         }
 
         $this->assertEquals(3, $coll->count());
 
         $a = new Author();
+        $a->setFirstName('Chuck');
+        $a->setLastName('Norris');
         $a->setBooks($coll);
         $a->save();
 
@@ -1159,6 +1161,8 @@ EOF;
 
         // Basic usage
         $a = new Author();
+        $a->setFirstName('Chuck');
+        $a->setLastName('Norris');
         $a->setBooks($books);
         $a->save();
 
@@ -1175,6 +1179,7 @@ EOF;
 
         $book = new Book();
         $book->setTitle('My Book');
+        $book->setISBN('FA404');
         $book->save();
 
         // Modify it but don't save it
@@ -1187,6 +1192,8 @@ EOF;
         $book = BookQuery::create()->findPk($book->getPrimaryKey());
 
         $a = new Author();
+        $a->setFirstName('Chuck');
+        $a->setLastName('Norris');
         $a->setBooks($coll);
         $a->save();
 
@@ -1210,11 +1217,17 @@ EOF;
         $coll = new ObjectCollection();
         $coll->setModel('\Propel\Tests\Bookstore\Book');
 
-        $coll[] = new Book();
-        $coll[] = new Book();
-        $coll[] = new Book();
+        for ($i = 0; $i < 3; $i++) {
+            $b = new Book();
+            $b->setTitle('Title ' . $i);
+            $b->setISBN($i);
+
+            $coll[] = $b;
+        }
 
         $a = new Author();
+        $a->setFirstName('Chuck');
+        $a->setLastName('Norris');
         $a->setBooks($coll);
         $a->save();
 
@@ -1234,6 +1247,7 @@ EOF;
         for ($i = 0; $i < 3; $i++) {
             $b = new Book();
             $b->setTitle('Book ' . $i);
+            $b->setISBN('FA404-' . $i);
             $b->save();
         }
 
@@ -1241,6 +1255,8 @@ EOF;
         $books = BookQuery::create()->find();
 
         $a = new Author();
+        $a->setFirstName('Chuck');
+        $a->setLastName('Norris');
         $a->setBooks($books);
         $a->save();
 
@@ -1261,6 +1277,8 @@ EOF;
         AuthorQuery::create()->deleteAll();
 
         $a = new Author();
+        $a->setFirstName('Chuck');
+        $a->setLastName('Norris');
         $a->setBooks(new ObjectCollection());
         $a->save();
 
@@ -1280,10 +1298,14 @@ EOF;
         foreach (array('foo', 'bar') as $title) {
             $b = new Book();
             $b->setTitle($title);
+            $b->setISBN('FA404');
+
             $books[] = $b;
         }
 
         $a = new Author();
+        $a->setFirstName('Chuck');
+        $a->setLastName('Norris');
         $a->setBooks($books);
         $a->save();
 
@@ -1295,6 +1317,8 @@ EOF;
         foreach (array('bam', 'bom') as $title) {
             $b = new Book();
             $b->setTitle($title);
+            $b->setISBN('FA404');
+
             $books[] = $b;
         }
 

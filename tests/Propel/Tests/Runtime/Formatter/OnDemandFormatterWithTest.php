@@ -118,6 +118,7 @@ class OnDemandFormatterWithTest extends BookstoreEmptyTestBase
         // save a book with no author
         $b = new Book();
         $b->setTitle('Foo');
+        $b->setISBN('FA404');
         $b->save();
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $c->setFormatter(ModelCriteria::FORMAT_ON_DEMAND);
@@ -161,9 +162,11 @@ class OnDemandFormatterWithTest extends BookstoreEmptyTestBase
         EssayPeer::doDeleteAll();
         $auth1 = new Author();
         $auth1->setFirstName('John');
+        $auth1->setLastName('Doe');
         $auth1->save();
         $auth2 = new Author();
         $auth2->setFirstName('Jack');
+        $auth2->setLastName('Sparrow');
         $auth2->save();
         $essay = new Essay();
         $essay->setTitle('Foo');
