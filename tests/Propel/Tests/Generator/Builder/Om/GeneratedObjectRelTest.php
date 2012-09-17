@@ -532,6 +532,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
 
         $book = new Book();
         $book->setTitle('My Book');
+        $book->setISBN('FA404');
         $book->save();
 
         // Modify it but don't save it
@@ -544,6 +545,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         $book = BookQuery::create()->findPk($book->getPrimaryKey());
 
         $bookClubList1 = new BookClubList();
+        $bookClubList1->setGroupLeader('fabpot');
         $bookClubList1->setBooks($coll);
         $bookClubList1->save();
 
@@ -569,11 +571,16 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         $coll = new ObjectCollection();
         $coll->setModel('Book');
 
-        $coll[] = new Book();
-        $coll[] = new Book();
-        $coll[] = new Book();
+        for ($i = 0; $i < 3; $i++) {
+            $b = new Book();
+            $b->setTitle('Title ' . $i);
+            $b->setIsbn('1245' . $i);
+
+            $coll[] = $b;
+        }
 
         $bookClubList = new BookClubList();
+        $bookClubList->setGroupLeader('fabpot');
         $bookClubList->setBooks($coll);
         $bookClubList->save();
 
@@ -595,6 +602,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         for ($i = 0; $i < 3; $i++) {
             $b = new Book();
             $b->setTitle('Book ' . $i);
+            $b->setIsbn($i);
             $b->save();
         }
 
@@ -602,6 +610,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         $books = BookQuery::create()->find();
 
         $bookClubList = new BookClubList();
+        $bookClubList->setGroupLeader('fabpot');
         $bookClubList->setBooks($books);
         $bookClubList->save();
 
@@ -624,6 +633,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         BookListRelQuery::create()->deleteAll();
 
         $bookClubList = new BookClubList();
+        $bookClubList->setGroupLeader('fabpot');
         $bookClubList->setBooks(new ObjectCollection());
         $bookClubList->save();
 
@@ -645,10 +655,13 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         foreach (array('foo', 'bar') as $title) {
             $b = new Book();
             $b->setTitle($title);
+            $b->setIsbn('FA404');
+
             $books[] = $b;
         }
 
         $bookClubList = new BookClubList();
+        $bookClubList->setGroupLeader('fabpot');
         $bookClubList->setBooks($books);
         $bookClubList->save();
 
@@ -660,6 +673,8 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         foreach (array('bam', 'bom') as $title) {
             $b = new Book();
             $b->setTitle($title);
+            $b->setIsbn('FA404');
+
             $books[] = $b;
         }
 
@@ -687,10 +702,13 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         foreach (array('foo', 'bar', 'test') as $title) {
             $b = new Book();
             $b->setTitle($title);
+            $b->setIsbn('FA404');
+
             $books[] = $b;
         }
 
         $bookClubList = new BookClubList();
+        $bookClubList->setGroupLeader('fabpot');
         $bookClubList->setFavoriteBooks($books);
         $bookClubList->save();
 

@@ -141,6 +141,7 @@ class OnDemandFormatterTest extends BookstoreEmptyTestBase
         for ($i=0; $i < $nbBooks; $i++) {
             $book->clear();
             $book->setTitle('BookTest' . $i);
+            $book->setISBN('FA404-' . $i);
             $book->save($con);
         }
 
