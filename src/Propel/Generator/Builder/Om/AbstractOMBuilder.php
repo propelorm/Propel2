@@ -342,7 +342,6 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         if ('Base' === $namespace && '' === $this->getNamespace()) {
             // force alias for model without namespace
             if (false === array_search($class, $this->whiteListOfDeclaredClasses, true)) {
-
                 return true;
             }
         }
