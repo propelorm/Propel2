@@ -151,7 +151,7 @@ class SchemaReader
             switch ($name) {
                 case 'database':
                     if ($this->isExternalSchema()) {
-                        $this->currentPackage = @$attributes['package'];
+                        $this->currentPackage = isset($attributes['package']) ? $attributes['package'] : null;
                         if (null === $this->currentPackage) {
                             $this->currentPackage = $this->defaultPackage;
                         }
@@ -166,16 +166,16 @@ class SchemaReader
         } elseif ('database' === $parentTag) {
             switch ($name) {
                 case 'external-schema':
-                    $xmlFile = @$attributes['filename'];
+                    $xmlFile = isset($attributes['filename']) ? $attributes['filename'] : null;
 
                     // 'referenceOnly' attribute is valid in the main schema XML file only,
                     // and it's ignored in the nested external-schemas
                     if (!$this->isExternalSchema()) {
-                        $isForRefOnly = @$attributes['referenceOnly'];
+                        $isForRefOnly = isset($attributes['referenceOnly']) ? $attributes['referenceOnly'] : null;
                         $this->isForReferenceOnly = (null !== $isForRefOnly ? ('true' === strtolower($isForRefOnly)) : true); // defaults to TRUE
                     }
 
-                    if ($xmlFile{0} !== '/') {
+                    if ('/' !== $xmlFile{0}) {
                         $xmlFile = realpath(dirname($this->currentXmlFile) . DIRECTORY_SEPARATOR . $xmlFile);
                         if (!file_exists($xmlFile)) {
                             throw new SchemaException(sprintf('Unknown include external "%s"', $xmlFile));

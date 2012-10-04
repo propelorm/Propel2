@@ -21,8 +21,6 @@ use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\ConnectionWrapper;
 use Propel\Runtime\Connection\StatementInterface;
 
-use \PDO;
-
 class QuickBuilder
 {
     protected $schema, $platform, $config, $database;
@@ -103,7 +101,7 @@ class QuickBuilder
         }
         $pdo = new PdoConnection($dsn, $user, $pass);
         $con = new ConnectionWrapper($pdo);
-        $con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
+        $con->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_WARNING);
         $this->buildSQL($con);
         $this->buildClasses($classTargets);
         $name = $this->getDatabase()->getName();
