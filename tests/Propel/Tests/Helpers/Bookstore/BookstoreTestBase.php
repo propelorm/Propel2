@@ -41,15 +41,6 @@ abstract class BookstoreTestBase extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        if (version_compare(PHP_VERSION, '5.3.6', '<')) {
-            $adapterClass = Propel::getServiceContainer()->getAdapterClass(BookPeer::DATABASE_NAME);
-            $propelConfig = Propel::getServiceContainer()->getConnectionManager(BookPeer::DATABASE_NAME)->getConfiguration();
-            if (('mysql' == $adapterClass) && (isset($propelConfig['settings']['charset']))) {
-                die('Connection option "charset" cannot be used for MySQL connections in PHP versions older than 5.3.6.
-Please refer to http://www.propelorm.org/ticket/1360 for instructions and details
-about the implications of using a SET NAMES statement in the "queries" setting.');
-            }
-        }
         $this->con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
         $this->con->beginTransaction();
     }
@@ -64,10 +55,12 @@ about the implications of using a SET NAMES statement in the "queries" setting.'
         // and we don't want to call ConnectionInterface::commit() in that case
         // since it will trigger an exception on its own
         // ('Cannot commit because a nested transaction was rolled back')
-        if ($this->con->isCommitable()) {
-            $this->con->commit();
+        if (null !== $this->con) {
+            if ($this->con->isCommitable()) {
+                $this->con->commit();
+            }
+            $this->con = null;
         }
-        $this->con = null;
     }
 
     protected function getDriver()
