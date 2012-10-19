@@ -24,6 +24,7 @@ use Propel\Generator\Model\Diff\ColumnDiff;
 use Propel\Generator\Model\Diff\DatabaseDiff;
 use Propel\Generator\Model\Diff\TableDiff;
 use Propel\Generator\Exception\EngineException;
+use Propel\Runtime\Connection\ConnectionInterface;
 
 /**
  * Default implementation for the PlatformInterface interface.
@@ -41,7 +42,7 @@ class DefaultPlatform implements PlatformInterface
     protected $schemaDomainMap;
 
     /**
-     * @var \PDO Database connection.
+     * @var ConnectionInterface Database connection.
      */
     protected $con;
 
@@ -53,9 +54,9 @@ class DefaultPlatform implements PlatformInterface
     /**
      * Default constructor.
      *
-     * @param \PDO $con Optional database connection to use in this platform.
+     * @param ConnectionInterface $con Optional database connection to use in this platform.
      */
-    public function __construct(\PDO $con = null)
+    public function __construct(ConnectionInterface $con = null)
     {
         if (null !== $con) {
             $this->setConnection($con);
@@ -67,9 +68,9 @@ class DefaultPlatform implements PlatformInterface
     /**
      * Sets the database connection to use for this Platform class.
      *
-     * @param \PDO $con Database connection to use in this platform.
+     * @param ConnectionInterface $con Database connection to use in this platform.
      */
-    public function setConnection(\PDO $con = null)
+    public function setConnection(ConnectionInterface $con = null)
     {
         $this->con = $con;
     }
@@ -77,7 +78,7 @@ class DefaultPlatform implements PlatformInterface
     /**
      * Returns the database connection to use for this Platform class.
      *
-     * @return \PDO
+     * @return ConnectionInterface
      */
     public function getConnection()
     {
