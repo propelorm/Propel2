@@ -14,6 +14,7 @@ use Propel\Generator\Exception\BuildException;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Platform\PlatformInterface;
 use Propel\Generator\Reverse\SchemaParserInterface;
+use Propel\Runtime\Connection\ConnectionInterface;
 
 /**
  * A class that holds build properties and provide a class loading mechanism for
@@ -159,7 +160,7 @@ class GeneratorConfig implements GeneratorConfigInterface
      * @param  \PDO              $con
      * @return PlatformInterface
      */
-    public function getConfiguredPlatform(\PDO $con = null, $database = null)
+    public function getConfiguredPlatform(ConnectionInterface $con = null, $database = null)
     {
         $buildConnection = $this->getBuildConnection($database);
 
@@ -188,10 +189,10 @@ class GeneratorConfig implements GeneratorConfigInterface
 
     /**
      * Creates and configures a new SchemaParser class for specified platform.
-     * @param  \PDO                  $con
+     * @param  ConnectionInterface $con
      * @return SchemaParserInterface
      */
-    public function getConfiguredSchemaParser(\PDO $con = null)
+    public function getConfiguredSchemaParser(ConnectionInterface $con = null)
     {
         $clazz  = $this->getClassName("reverseParserClass");
         $parser = new $clazz();

@@ -14,6 +14,7 @@ use Propel\Common\Pluralizer\PluralizerInterface;
 use Propel\Generator\Builder\DataModelBuilder;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Platform\PlatformInterface;
+use Propel\Runtime\Connection\ConnectionInterface;
 
 interface GeneratorConfigInterface
 {
@@ -56,5 +57,5 @@ interface GeneratorConfigInterface
      * @param  \PDO              $con
      * @return PlatformInterface
      */
-    public function getConfiguredPlatform(\PDO $con = null, $database = null);
+    public function getConfiguredPlatform(ConnectionInterface $con = null, $database = null);
 }

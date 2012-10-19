@@ -16,6 +16,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\Output;
 use Propel\Generator\Config\GeneratorConfig;
 use Propel\Generator\Manager\MigrationManager;
+use Propel\Generator\Util\SqlParser;
 
 /**
  * @author William Durand <william.durand1@gmail.com>
@@ -100,7 +101,7 @@ class MigrationMigrateCommand extends AbstractCommand
                     ));
                 }
 
-                $pdo = $manager->getPdoConnection($datasource);
+                $conn = $manager->getAdapterConnection($datasource);
                 $res = 0;
                 $statements = SqlParser::parseString($sql);
                 foreach ($statements as $statement) {
@@ -108,7 +109,7 @@ class MigrationMigrateCommand extends AbstractCommand
                         if ($input->getOption('verbose')) {
                             $output->writeln(sprintf('Executing statement "%s"', $statement));
                         }
-                        $stmt = $pdo->prepare($statement);
+                        $stmt = $conn->prepare($statement);
                         $stmt->execute();
                         $res++;
                     } catch (\PDOException $e) {

@@ -17,14 +17,17 @@ use Symfony\Component\Console\Output\Output;
 use Propel\Generator\Config\GeneratorConfig;
 use Propel\Generator\Exception\RuntimeException;
 use Propel\Generator\Manager\MigrationManager;
+use Propel\Generator\Model\Database;
+use Propel\Generator\Model\Diff\DatabaseComparator;
 use Propel\Generator\Model\IdMethod;
+use Propel\Generator\Model\Schema;
 
 /**
  * @author William Durand <william.durand1@gmail.com>
  */
 class MigrationDiffCommand extends AbstractCommand
 {
-    const DEFAULT_OUTPUT_DIRECTORY  = 'generated-diff-classes';
+    const DEFAULT_OUTPUT_DIRECTORY  = 'generated-migrations';
 
     const DEFAULT_MIGRATION_TABLE   = 'propel_migration';
 
@@ -51,13 +54,16 @@ class MigrationDiffCommand extends AbstractCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $generatorConfig = new GeneratorConfig(array(
-            'propel.platform.class' => $input->getOption('platform'),
+            'propel.platform.class'       => $input->getOption('platform'),
+            'propel.reverse.parser.class' => $this->getReverseClass($input),
+            'propel.migration.table'      => $input->getOption('migration-table')
         ));
 
         $this->createDirectory($input->getOption('output-dir'));
 
         $manager = new MigrationManager();
         $manager->setGeneratorConfig($generatorConfig);
+        $manager->setSchemas($this->getSchemas($input->getOption('input-dir')));
 
         $connections = array();
         foreach ($input->getOption('connection') as $connection) {
@@ -80,9 +86,9 @@ class MigrationDiffCommand extends AbstractCommand
                 $output->writeln(sprintf('Connecting to database "%s" using DSN "%s"', $name, $params['dsn']));
             }
 
-            $pdo      = $generatorConfig->getBuildPDO($name);
+            $conn      = $manager->getAdapterConnection($name);
             $database = new Database($name);
-            $platform = $generatorConfig->getConfiguredPlatform($pdo);
+            $platform = $generatorConfig->getConfiguredPlatform($conn);
 
             if (!$platform->supportsMigrations()) {
                 $output->writeln(sprintf('Skipping database "%s" since vendor "%s" does not support migrations', $name, $platform->getDatabaseType()));
@@ -92,14 +98,14 @@ class MigrationDiffCommand extends AbstractCommand
             $database->setPlatform($platform);
             $database->setDefaultIdMethod(IdMethod::NATIVE);
 
-            $parser   = $generatorConfig->getConfiguredSchemaParser($pdo);
+            $parser   = $generatorConfig->getConfiguredSchemaParser($conn);
             $nbTables = $parser->parse($database, $this);
 
             $schema->addDatabase($database);
             $totalNbTables += $nbTables;
 
             if ($input->getOption('verbose')) {
-                $output->writeln(sprintf('%d tables found in database "%s"', $nbTables, $name), Project::MSG_VERBOSE);
+                $output->writeln(sprintf('%d tables found in database "%s"', $nbTables, $name), Output::VERBOSITY_VERBOSE);
             }
         }
 
@@ -109,7 +115,7 @@ class MigrationDiffCommand extends AbstractCommand
             $output->writeln('No table found in all databases');
         }
 
-        $appDatasFromXml = $this->getDataModels();
+        $appDatasFromXml = $manager->getDataModels();
         $appDataFromXml  = array_pop($appDatasFromXml);
 
         // comparing models
@@ -129,7 +135,7 @@ class MigrationDiffCommand extends AbstractCommand
                 continue;
             }
 
-            $databaseDiff = DatabaseComparator::computeDiff($database, $appDataFromXml->getDatabase($name), $this->isCaseInsensitive());
+            $databaseDiff = DatabaseComparator::computeDiff($database, $appDataFromXml->getDatabase($name));
 
             if (!$databaseDiff) {
                 if ($input->getOption('verbose')) {
@@ -167,5 +173,16 @@ class MigrationDiffCommand extends AbstractCommand
             $output->writeln('Please review the generated SQL statements, and add data migration code if necessary.');
             $output->writeln('Once the migration class is valid, call the "migrate" task to execute it.');
         }
+    }
+
+    /**
+     * Return the name of the reverse parser class
+     */
+    protected function getReverseClass(InputInterface $input)
+    {
+        $reverse = strstr($input->getOption('platform'), 'Platform', true);
+        $reverse = 'Propel\\Generator\\Reverse\\'.$reverse.'SchemaParser';
+
+        return $reverse;
     }
 }
