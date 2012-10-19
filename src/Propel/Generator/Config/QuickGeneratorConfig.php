@@ -16,6 +16,7 @@ use Propel\Generator\Builder\DataModelBuilder;
 use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Exception\RuntimeException;
 use Propel\Generator\Model\Table;
+use \Propel\Runtime\Connection\ConnectionInterface;
 
 class QuickGeneratorConfig implements GeneratorConfigInterface
 {
@@ -151,7 +152,7 @@ class QuickGeneratorConfig implements GeneratorConfigInterface
     /**
      * {@inheritdoc}
      */
-    public function getConfiguredPlatform(\PDO $con = null, $database = null)
+    public function getConfiguredPlatform(ConnectionInterface $con = null, $database = null)
     {
         return null;
     }
