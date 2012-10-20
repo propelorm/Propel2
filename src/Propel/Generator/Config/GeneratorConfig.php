@@ -189,7 +189,7 @@ class GeneratorConfig implements GeneratorConfigInterface
 
     /**
      * Creates and configures a new SchemaParser class for specified platform.
-     * @param  ConnectionInterface $con
+     * @param  ConnectionInterface   $con
      * @return SchemaParserInterface
      */
     public function getConfiguredSchemaParser(ConnectionInterface $con = null)
