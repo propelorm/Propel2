@@ -10,6 +10,7 @@
 
 namespace Propel\Generator\Model\Diff;
 
+use Propel\Generator\Model\IdMethod;
 use Propel\Generator\Model\Table;
 
 /**
