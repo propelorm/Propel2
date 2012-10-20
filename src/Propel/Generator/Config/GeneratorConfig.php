@@ -157,7 +157,7 @@ class GeneratorConfig implements GeneratorConfigInterface
     /**
      * Creates and configures a new Platform class.
      *
-     * @param  \PDO              $con
+     * @param  ConnectionInterface $con
      * @return PlatformInterface
      */
     public function getConfiguredPlatform(ConnectionInterface $con = null, $database = null)
