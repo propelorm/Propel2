@@ -16,8 +16,8 @@ use Propel\Generator\Model\IdMethod;
 use Propel\Generator\Model\IdMethodParameter;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Platform\SqlitePlatform;
-
-use \PDO;
+use Propel\Runtime\Adapter\AdapterFactory;
+use Propel\Runtime\Connection\ConnectionFactory;
 
 /**
  *
@@ -37,7 +37,7 @@ class SqlitePlatformTest extends PlatformTestProvider
     public function testQuoteConnected()
     {
         $p = $this->getPlatform();
-        $p->setConnection(new PDO("sqlite::memory:"));
+        $p->setConnection(ConnectionFactory::create(array('dsn' => 'sqlite::memory:'), AdapterFactory::create('sqlite')));
 
         $unquoted = "Naughty ' string";
         $quoted = $p->quote($unquoted);

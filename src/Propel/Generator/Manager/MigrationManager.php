@@ -12,7 +12,11 @@ namespace Propel\Generator\Manager;
 
 use Propel\Generator\Exception\InvalidArgumentException;
 use Propel\Generator\Model\Column;
+use Propel\Generator\Model\Database;
 use Propel\Generator\Model\Table;
+use Propel\Generator\Util\SqlParser;
+use Propel\Runtime\Adapter\AdapterFactory;
+use Propel\Runtime\Connection\ConnectionFactory;
 
 /**
  * Service class for preparing and executing migrations
@@ -29,7 +33,7 @@ class MigrationManager extends AbstractManager
     /**
      * @var array
      */
-    protected $pdoConnections = array();
+    protected $adapterConnections = array();
 
     /**
      * @var string
@@ -65,23 +69,18 @@ class MigrationManager extends AbstractManager
         return $this->connections[$datasource];
     }
 
-    public function getPdoConnection($datasource)
+    public function getAdapterConnection($datasource)
     {
-        if (!isset($pdoConnections[$datasource])) {
+        if (!isset($adapterConnections[$datasource])) {
             $buildConnection = $this->getConnection($datasource);
             $dsn = str_replace("@DB@", $datasource, $buildConnection['dsn']);
 
-            // Set user + password to null if they are empty strings or missing
-            $username = isset($buildConnection['user']) && $buildConnection['user'] ? $buildConnection['user'] : null;
-            $password = isset($buildConnection['password']) && $buildConnection['password'] ? $buildConnection['password'] : null;
+            $conn = ConnectionFactory::create($buildConnection, AdapterFactory::create($buildConnection['adapter']));
 
-            $pdo = new \PDO($dsn, $username, $password);
-            $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-
-            $pdoConnections[$datasource] = $pdo;
+            $adapterConnections[$datasource] = $conn;
         }
 
-        return $pdoConnections[$datasource];
+        return $adapterConnections[$datasource];
     }
 
     public function getPlatform($datasource)
@@ -122,11 +121,11 @@ class MigrationManager extends AbstractManager
         $oldestMigrationTimestamp = null;
         $migrationTimestamps      = array();
         foreach ($connections as $name => $params) {
-            $pdo = $this->getPdoConnection($name);
+            $conn = $this->getAdapterConnection($name);
             $sql = sprintf('SELECT version FROM %s', $this->getMigrationTable());
 
             try {
-                $stmt = $pdo->prepare($sql);
+                $stmt = $conn->prepare($sql);
                 $stmt->execute();
                 if ($migrationTimestamp = $stmt->fetchColumn()) {
                     $migrationTimestamps[$name] = $migrationTimestamp;
@@ -147,9 +146,9 @@ class MigrationManager extends AbstractManager
 
     public function migrationTableExists($datasource)
     {
-        $pdo = $this->getPdoConnection($datasource);
+        $conn = $this->getAdapterConnection($datasource);
         $sql = sprintf('SELECT version FROM %s', $this->getMigrationTable());
-        $stmt = $pdo->prepare($sql);
+        $stmt = $conn->prepare($sql);
         try {
             $stmt->execute();
 
@@ -176,8 +175,8 @@ class MigrationManager extends AbstractManager
         $table->addColumn($column);
         // insert the table into the database
         $statements = $platform->getAddTableDDL($table);
-        $pdo = $this->getPdoConnection($datasource);
-        $res = SqlParser::executeString($statements, $pdo);
+        $conn = $this->getAdapterConnection($datasource);
+        $res = SqlParser::executeString($statements, $conn);
 
         if (!$res) {
             throw new \Exception(sprintf('Unable to create migration table in datasource "%s"', $datasource));
@@ -187,19 +186,19 @@ class MigrationManager extends AbstractManager
     public function updateLatestMigrationTimestamp($datasource, $timestamp)
     {
         $platform = $this->getPlatform($datasource);
-        $pdo = $this->getPdoConnection($datasource);
+        $conn = $this->getAdapterConnection($datasource);
         $sql = sprintf('DELETE FROM %s', $this->getMigrationTable());
-        $pdo->beginTransaction();
-        $stmt = $pdo->prepare($sql);
+        $conn->beginTransaction();
+        $stmt = $conn->prepare($sql);
         $stmt->execute();
         $sql = sprintf('INSERT INTO %s (%s) VALUES (?)',
             $this->getMigrationTable(),
             $platform->quoteIdentifier('version')
         );
-        $stmt = $pdo->prepare($sql);
+        $stmt = $conn->prepare($sql);
         $stmt->bindParam(1, $timestamp, \PDO::PARAM_INT);
         $stmt->execute();
-        $pdo->commit();
+        $conn->commit();
     }
 
     public function getMigrationTimestamps()

@@ -105,6 +105,9 @@ abstract class AbstractCommand extends Command
         $name = substr($connection, 0, $pos);
         $dsn  = substr($connection, $pos + 1, strlen($connection));
 
+        $pos  = strpos($dsn, ':');
+        $adapter = substr($dsn, 0, $pos);
+
         $extras = array();
         foreach (explode(';', $dsn) as $element) {
             $parts = preg_split('/=/', $element);
@@ -113,6 +116,7 @@ abstract class AbstractCommand extends Command
                 $extras[strtolower($parts[0])] = $parts[1];
             }
         }
+        $extras['adapter'] = $adapter;
 
         return array($name, $dsn, $extras);
     }
