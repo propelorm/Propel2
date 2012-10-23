@@ -66,7 +66,7 @@ abstract class PdoAdapter
             $con = new PdoConnection($dsn, $user, $password, $driver_options);
             $this->initConnection($con, isset($conparams['settings']) && is_array($conparams['settings']) ? $conparams['settings'] : array());
         } catch (\PDOException $e) {
-            throw new AdapterException("Unable to open PDO connection", $e);
+            throw new AdapterException("Unable to open PDO connection", 0, $e);
         }
 
         return $con;
