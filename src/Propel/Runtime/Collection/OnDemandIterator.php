@@ -28,7 +28,7 @@ class OnDemandIterator implements \Iterator
     protected $formatter;
 
     /**
-     * @var PDOStatement
+     * @var StatementInterface
      */
     protected $stmt;
 
