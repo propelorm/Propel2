@@ -13,7 +13,8 @@ namespace Propel\Generator\Manager;
 use Propel\Generator\Exception\BuildException;
 use Propel\Generator\Model\IdMethod;
 use Propel\Generator\Model\Database;
-use Propel\Runtime\Adapter\Pdo\PdoConnection;
+use Propel\Runtime\Adapter\AdapterFactory;
+use Propel\Runtime\Connection\ConnectionFactory;
 
 /**
  * @author William Durand <william.durand1@gmail.com>
@@ -190,7 +191,7 @@ class ReverseManager extends AbstractManager
     }
 
     /**
-     * @return PdoConnection
+     * @return ConnectionInterface
      */
     protected function getConnection()
     {
@@ -200,9 +201,8 @@ class ReverseManager extends AbstractManager
         $username = isset($buildConnection['user']) && $buildConnection['user'] ? $buildConnection['user'] : null;
         $password = isset($buildConnection['password']) && $buildConnection['password'] ? $buildConnection['password'] : null;
 
-        $pdo = new PdoConnection($buildConnection['dsn'], $username, $password);
-        $pdo->setAttribute(PdoConnection::ATTR_ERRMODE, PdoConnection::ERRMODE_EXCEPTION);
+        $con = ConnectionFactory::create(array('dsn' => $dsn, 'user' => $username, 'password' => $password), AdapterFactory::create($buildConnection['adapter']));
 
-        return $pdo;
+        return $con;
     }
 }

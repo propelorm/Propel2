@@ -14,6 +14,8 @@ use Propel\Generator\Exception\BuildException;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Platform\PlatformInterface;
 use Propel\Generator\Reverse\SchemaParserInterface;
+use Propel\Runtime\Adapter\AdapterFactory;
+use Propel\Runtime\Connection\ConnectionFactory;
 use Propel\Runtime\Connection\ConnectionInterface;
 
 /**
@@ -298,7 +300,7 @@ class GeneratorConfig implements GeneratorConfigInterface
         }
     }
 
-    public function getBuildPDO($database)
+    public function getConnection($database)
     {
         $buildConnection = $this->getBuildConnection($database);
         $dsn = str_replace("@DB@", $database, $buildConnection['dsn']);
@@ -307,9 +309,8 @@ class GeneratorConfig implements GeneratorConfigInterface
         $username = isset($buildConnection['user']) && $buildConnection['user'] ? $buildConnection['user'] : null;
         $password = isset($buildConnection['password']) && $buildConnection['password'] ? $buildConnection['password'] : null;
 
-        $pdo = new \PDO($dsn, $username, $password);
-        $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+        $con = ConnectionFactory::create(array('dsn' => $dsn, 'user' => $username, 'password' => $password), AdapterFactory::create($buildConnection['adapter']));
 
-        return $pdo;
+        return $con;
     }
 }
