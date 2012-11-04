@@ -328,7 +328,7 @@ public function addVersion(\$con = null)
  * Sets the properties of the current object to the value they had at a specific version
  *
  * @param   integer \$versionNumber The version number to read
- * @param   ConnectionInterface \$con the connection to use
+ * @param   ConnectionInterface \$con The connection to use
  *
  * @return  {$ARclassName} The current object (for fluent API support)
  */
@@ -612,10 +612,10 @@ protected function computeDiff(\$fromVersion, \$toVersion, \$keys = 'columns', \
  * );
  * </code>
  *
- * @param   integer   \$versionNumber
- * @param   string    \$keys Main key used for the result diff (versions|columns)
- * @param   PropelPDO \$con the connection to use
- * @param   array     \$ignoredColumns  The columns to exclude from the diff.
+ * @param   integer              \$versionNumber
+ * @param   string               \$keys Main key used for the result diff (versions|columns)
+ * @param   ConnectionInterfarce \$con the connection to use
+ * @param   array                \$ignoredColumns  The columns to exclude from the diff.
  *
  * @return  array A list of differences
  */
@@ -642,11 +642,11 @@ public function compareVersion(\$versionNumber, \$keys = 'columns', \$con = null
  * );
  * </code>
  *
- * @param   integer   \$fromVersionNumber
- * @param   integer   \$toVersionNumber
- * @param   string    \$keys Main key used for the result diff (versions|columns)
- * @param   PropelPDO \$con the connection to use
- * @param   array     \$ignoredColumns  The columns to exclude from the diff.
+ * @param   integer             \$fromVersionNumber
+ * @param   integer             \$toVersionNumber
+ * @param   string              \$keys Main key used for the result diff (versions|columns)
+ * @param   ConnectionInterface \$con the connection to use
+ * @param   array               \$ignoredColumns  The columns to exclude from the diff.
  *
  * @return  array A list of differences
  */
