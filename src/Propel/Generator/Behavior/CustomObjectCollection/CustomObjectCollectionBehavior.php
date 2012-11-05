@@ -32,10 +32,12 @@ class CustomObjectCollectionBehavior extends Behavior
             $className = '\\' . $this->getTable()->getNamespace() . $className;
         }
 
-        return sprintf('$formatter = new \Propel\Runtime\Formatter\ObjectFormatter();
-$formatter->setCollectionClassName("%s");
+        return sprintf('if (false === $this->hasSelectClause()) {
+    $formatter = new \Propel\Runtime\Formatter\ObjectFormatter();
+    $formatter->setCollectionClassName("%s");
 
-$this->setFormatter($formatter);', $className);
+    $this->setFormatter($formatter);
+}', $className);
     }
 
 }
