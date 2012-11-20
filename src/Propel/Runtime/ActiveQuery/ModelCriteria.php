@@ -1335,7 +1335,7 @@ class ModelCriteria extends Criteria implements \IteratorAggregate
      *
      * @param ConnectionInterface $con A connection object
      *
-     * @return \PDOStatement A PDO statement executed using the connection, ready to be fetched
+     * @return StatementInterface A statement executed using the connection, ready to be fetched
      */
     protected function doSelect($con)
     {
