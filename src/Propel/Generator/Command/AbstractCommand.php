@@ -62,6 +62,12 @@ abstract class AbstractCommand extends Command
         return $properties;
     }
 
+    /**
+     * Find every schema files.
+     *
+     * @param  string|array $directory Path to the input directory
+     * @return array        List of schema files
+     */
     protected function getSchemas($directory)
     {
         $finder = new Finder();
