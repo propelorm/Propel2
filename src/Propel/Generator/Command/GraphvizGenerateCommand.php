@@ -52,7 +52,7 @@ class GraphvizGenerateCommand extends AbstractCommand
 
         $manager = new GraphvizManager();
         $manager->setGeneratorConfig($generatorConfig);
-        $manager->setSchemas($this->getSchemas($input));
+        $manager->setSchemas($this->getSchemas($input->getOption('input-dir')));
         $manager->setLoggerClosure(function($message) use ($input, $output) {
             if ($input->getOption('verbose')) {
                 $output->writeln($message);
