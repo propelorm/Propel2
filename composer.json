@@ -17,12 +17,12 @@
     ],
     "require": {
         "php": ">=5.4",
-        "symfony/yaml": "2.1.*",
-        "symfony/console": "2.1.*",
+        "symfony/yaml": ">=2.1.0,<2.2.0-dev",
+        "symfony/console": ">=2.1.0,<2.2.0-dev",
         "monolog/monolog": "1.2.*",
-        "symfony/finder": "2.1.*",
-        "symfony/validator": "2.1.*",
-        "symfony/filesystem": "2.1.*"
+        "symfony/finder": ">=2.1.0,<2.2.0-dev",
+        "symfony/validator": ">=2.1.0,<2.2.0-dev",
+        "symfony/filesystem": ">=2.1.0,<2.2.0-dev"
     },
     "require-dev": {
         "behat/behat": "2.4@stable"
