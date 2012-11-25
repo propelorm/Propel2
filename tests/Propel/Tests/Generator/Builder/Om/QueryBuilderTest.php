@@ -563,8 +563,8 @@ class QueryBuilderTest extends BookstoreTestBase
         $this->assertEquals($q1, $q, 'filterByStringColumn() translates to a Criteria::LIKE when passed a string with a * wildcard, and turns * into %');
 
         $q = BookQuery::create()->filterByTitle('*f%o*o%');
-        $q1 = BookQuery::create()->add(BookPeer::TITLE, '%f%o%o%', Criteria::LIKE);
-        $this->assertEquals($q1, $q, 'filterByStringColumn() translates to a Criteria::LIKE when passed a string with mixed wildcards, and turns *s into %s');
+        $q1 = BookQuery::create()->add(BookPeer::TITLE, '*f%o*o%', Criteria::LIKE);
+        $this->assertEquals($q1, $q, 'filterByStringColumn() translates to a Criteria::LIKE when passed a string with mixed wildcards, and not turns *s into %s');
     }
 
     public function testFilterByBoolean()
