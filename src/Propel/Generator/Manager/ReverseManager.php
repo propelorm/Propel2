@@ -199,9 +199,9 @@ class ReverseManager extends AbstractManager
 
         // Set user + password to null if they are empty strings or missing
         $username = isset($buildConnection['user']) && $buildConnection['user'] ? $buildConnection['user'] : null;
-        $password = isset($buildConnection['password']) && $buildConnection['password'] ? $buildConnection['password'] : null;
+        $password = isset($buildConnection['password']) ? $buildConnection['password'] : null;
 
-        $con = ConnectionFactory::create(array('dsn' => $dsn, 'user' => $username, 'password' => $password), AdapterFactory::create($buildConnection['adapter']));
+        $con = ConnectionFactory::create(array('dsn' => $buildConnection['dsn'], 'user' => $username, 'password' => $password), AdapterFactory::create($buildConnection['adapter']));
 
         return $con;
     }
