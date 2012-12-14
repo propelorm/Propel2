@@ -282,23 +282,7 @@ class Propel
     public static function log($message, $level = self::LOG_DEBUG)
     {
         if (self::$serviceContainer->hasLogger()) {
-            $logger = self::$serviceContainer->getLogger();
-            switch ($level) {
-                case self::LOG_EMERG:
-                case self::LOG_ALERT:
-                    return $logger->addAlert($message);
-                case self::LOG_CRIT:
-                    return $logger->addCritical($message);
-                case self::LOG_ERR:
-                    return $logger->addError($message);
-                case self::LOG_WARNING:
-                    return $logger->addWarning($message);
-                case self::LOG_NOTICE:
-                case self::LOG_INFO:
-                    return $logger->addInfo($message);
-                default:
-                    return $logger->addDebug($message);
-            }
+            self::$serviceContainer->getLogger()->addRecord($level, $message);
         }
 
         return true;
