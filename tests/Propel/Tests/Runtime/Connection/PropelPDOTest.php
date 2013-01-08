@@ -20,17 +20,15 @@ use Propel\Runtime\Propel;
 use Propel\Runtime\Connection\Exception\RollbackException;
 use Propel\Runtime\Connection\PropelPDO;
 use Propel\Runtime\ActiveQuery\Criteria;
+use Monolog\Logger;
+use Monolog\Handler\AbstractHandler;
 
 use \PDO;
 use \PDOException;
 use \Exception;
 
-use \Monolog\Logger;
-use \Monolog\Handler\AbstractHandler;
-
 /**
  * Test for PropelPDO subclass.
- *
  */
 class PropelPDOTest extends BookstoreTestBase
 {
