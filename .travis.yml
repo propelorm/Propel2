@@ -2,6 +2,7 @@ language: php
 
 php:
   - 5.4
+  - 5.5
 
 env:
   - DB=mysql DB_USER=root
@@ -13,7 +14,7 @@ before_script:
 
   # Composer
   - wget http://getcomposer.org/composer.phar
-  - php composer.phar install
+  - php composer.phar install --dev --prefer-source
 
   - php bin/propel test:prepare --vendor="$DB" --dsn="$DB:dbname=test" --user="$DB_USER"
 
