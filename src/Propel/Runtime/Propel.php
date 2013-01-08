@@ -16,6 +16,7 @@ use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\DatabaseMap;
 use Propel\Runtime\ServiceContainer\ServiceContainerInterface;
 use Propel\Runtime\ServiceContainer\StandardServiceContainer;
+use Psr\Log\LoggerInterface;
 
 /**
  * Propel's main resource pool and initialization & configuration class.
@@ -250,19 +251,9 @@ class Propel
     }
 
     /**
-     * Returns true if a logger has been configured, otherwise false.
-     *
-     * @return boolean True if Propel uses logging
-     */
-    public static function hasLogger()
-    {
-        return self::$serviceContainer->hasLogger();
-    }
-
-    /**
      * Get the configured logger.
      *
-     * @return \Monolog\Logger Configured log class
+     * @return LoggerInterface Configured log class
      */
     public static function getLogger()
     {
@@ -281,27 +272,26 @@ class Propel
      */
     public static function log($message, $level = self::LOG_DEBUG)
     {
-        if (self::$serviceContainer->hasLogger()) {
-            $logger = self::$serviceContainer->getLogger();
-            switch ($level) {
-                case self::LOG_EMERG:
-                case self::LOG_ALERT:
-                    return $logger->addAlert($message);
-                case self::LOG_CRIT:
-                    return $logger->addCritical($message);
-                case self::LOG_ERR:
-                    return $logger->addError($message);
-                case self::LOG_WARNING:
-                    return $logger->addWarning($message);
-                case self::LOG_NOTICE:
-                case self::LOG_INFO:
-                    return $logger->addInfo($message);
-                default:
-                    return $logger->addDebug($message);
-            }
-        }
+        $logger = self::$serviceContainer->getLogger();
 
-        return true;
+        switch ($level) {
+            case self::LOG_EMERG:
+                return $logger->emergency($message);
+            case self::LOG_ALERT:
+                return $logger->alert($message);
+            case self::LOG_CRIT:
+                return $logger->critical($message);
+            case self::LOG_ERR:
+                return $logger->error($message);
+            case self::LOG_WARNING:
+                return $logger->warning($message);
+            case self::LOG_NOTICE:
+                return $logger->notice($message);
+            case self::LOG_INFO:
+                return $logger->info($message);
+            default:
+                return $logger->debug($message);
+        }
     }
 
     /**

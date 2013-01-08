@@ -337,26 +337,14 @@ class StandardServiceContainerTest extends BaseTestCase
         $this->assertEquals(22, $config['slowTreshold']);
     }
 
-    public function testHasLoggerReturnsFalseByDefault()
+    public function testGetLoggerReturnsNullLoggerByDefault()
     {
-        $this->assertFalse($this->sc->hasLogger());
+        $this->assertInstanceOf('Psr\Log\NullLogger', $this->sc->getLogger());
     }
 
-    public function testHasLoggerReturnsTrueWhenALoggerIsSet()
+    public function testGetLoggerReturnsNullLoggerForConnectionNamesByDefault()
     {
-        $logger = new Logger('defaultLogger');
-        $this->sc->setLogger('defaultLogger', $logger);
-        $this->assertTrue($this->sc->hasLogger());
-    }
-
-    public function testGetLoggerReturnsNullByDefault()
-    {
-        $this->assertNull($this->sc->getLogger());
-    }
-
-    public function testGetLoggerReturnsNullForConnectionNamesByDefault()
-    {
-        $this->assertNull($this->sc->getLogger('book'));
+        $this->assertInstanceOf('Psr\Log\NullLogger', $this->sc->getLogger('book'));
     }
 
     public function testGetLoggerReturnsLoggerPreviouslySet()
