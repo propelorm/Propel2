@@ -10,32 +10,20 @@
 
 namespace Propel\Tests\Generator\Behavior\NestedSet;
 
-use Propel\Tests\Helpers\Bookstore\Behavior\BookstoreNestedSetTestBase;
-use Propel\Tests\Helpers\Bookstore\Behavior\PublicTable9;
-
-use Propel\Tests\Bookstore\Behavior\Table9;
-use Propel\Tests\Bookstore\Behavior\Table9Peer;
-use Propel\Tests\Bookstore\Behavior\Table9Query;
-use Propel\Tests\Bookstore\Behavior\Table10;
-
 use Propel\Runtime\Propel;
 use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\ActiveQuery\Criteria;
-use Propel\Runtime\ActiveRecord\NestedSetRecursiveIterator;
+use Propel\Runtime\ActiveRecordNestedSetRecursiveIterator;
 
 /**
  * Tests for NestedSetBehaviorObjectBuilderModifier class
- *
- * @author François Zaninotto
- * @version		$Revision$
- * @package		generator.behavior.nestedset
  */
-class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestBase
+class NestedSetBehaviorObjectBuilderModifierTest extends TestCase
 {
     public function testDefault()
     {
-        $t = new Table9();
+        $t = new \NestedSetTable9();
         $t->setTreeLeft('123');
         $this->assertEquals($t->getLeftValue(), '123', 'nested_set adds a getLeftValue() method');
         $t->setTreeRight('456');
@@ -46,7 +34,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 
     public function testParameters()
     {
-        $t = new Table10();
+        $t = new \NestedSetTable10();
         $t->setMyLeftColumn('123');
         $this->assertEquals($t->getLeftValue(), '123', 'nested_set adds a getLeftValue() method');
         $t->setMyRightColumn('456');
@@ -61,14 +49,14 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
     {
         $expectedAttributes = array('nestedSetQueries');
         foreach ($expectedAttributes as $attribute) {
-            $this->assertClassHasAttribute($attribute, '\Propel\Tests\Bookstore\Behavior\Table9');
+            $this->assertClassHasAttribute($attribute, 'NestedSetTable9');
         }
     }
 
     public function testSaveOutOfTree()
     {
-        Table9Peer::doDeleteAll();
-        $t1 = new Table9();
+        \NestedSetTable9Peer::doDeleteAll();
+        $t1 = new \NestedSetTable9();
         $t1->setTitle('t1');
         try {
             $t1->save();
@@ -83,7 +71,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
             $this->fail('A saved node can be turned into root');
         }
         $t1->save();
-        $t2 = new Table9();
+        $t2 = new \NestedSetTable9();
         $t2->setTitle('t1');
         $t2->save();
         try {
@@ -105,11 +93,11 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
      */
     public function testSaveRootInTreeWithExistingRoot()
     {
-        Table9Peer::doDeleteAll();
-        $t1 = new Table9();
+        \NestedSetTable9Peer::doDeleteAll();
+        $t1 = new \NestedSetTable9();
         $t1->makeRoot();
         $t1->save();
-        $t2 = new Table9();
+        $t2 = new \NestedSetTable9();
         $t2->makeRoot();
         $t2->save();
     }
@@ -154,12 +142,12 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
         } catch (PropelException $e) {
             $this->assertTrue(true, 'delete() throws an exception when called on a root node');
         }
-        $this->assertNotEquals(array(), Table9Peer::doSelect(new Criteria()), 'delete() called on the root node does not delete the whole tree');
+        $this->assertNotEquals(array(), \NestedSetTable9Peer::doSelect(new Criteria()), 'delete() called on the root node does not delete the whole tree');
     }
 
     public function testDeleteNotInTree()
     {
-        $t1 = new Table9();
+        $t1 = new \NestedSetTable9();
         $t1->save();
         $t1->delete();
         $this->assertTrue($t1->isDeleted());
@@ -167,12 +155,12 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 
     public function testMakeRoot()
     {
-        $t = new Table9();
+        $t = new \NestedSetTable9();
         $t->makeRoot();
         $this->assertEquals($t->getLeftValue(), 1, 'makeRoot() initializes left_column to 1');
         $this->assertEquals($t->getRightValue(), 2, 'makeRoot() initializes right_column to 2');
         $this->assertEquals($t->getLevel(), 0, 'makeRoot() initializes right_column to 0');
-        $t = new Table9();
+        $t = new \NestedSetTable9();
         $t->setLeftValue(12);
         try {
             $t->makeRoot();
@@ -184,7 +172,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 
     public function testIsInTree()
     {
-        $t1 = new Table9();
+        $t1 = new \NestedSetTable9();
         $this->assertFalse($t1->isInTree(), 'inInTree() returns false for nodes with no left and right value');
         $t1->save();
         $this->assertFalse($t1->isInTree(), 'inInTree() returns false for saved nodes with no left and right value');
@@ -276,13 +264,13 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 
     public function testHasParent()
     {
-        Table9Peer::doDeleteAll();
-        $t0 = new Table9();
-        $t1 = new Table9();
+        \NestedSetTable9Peer::doDeleteAll();
+        $t0 = new \NestedSetTable9();
+        $t1 = new \NestedSetTable9();
         $t1->setTitle('t1')->setLeftValue(1)->setRightValue(6)->setLevel(0)->save();
-        $t2 = new Table9();
+        $t2 = new \NestedSetTable9();
         $t2->setTitle('t2')->setLeftValue(2)->setRightValue(5)->setLevel(1)->save();
-        $t3 = new Table9();
+        $t3 = new \NestedSetTable9();
         $t3->setTitle('t3')->setLeftValue(3)->setRightValue(4)->setLevel(2)->save();
         $this->assertFalse($t0->hasParent(), 'empty node has no parent');
         $this->assertFalse($t1->hasParent(), 'root node has no parent');
@@ -292,16 +280,16 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 
     public function testGetParent()
     {
-        Table9Peer::doDeleteAll();
-        $t0 = new Table9();
+        \NestedSetTable9Peer::doDeleteAll();
+        $t0 = new \NestedSetTable9();
         $this->assertFalse($t0->hasParent(), 'empty node has no parent');
-        $t1 = new Table9();
+        $t1 = new \NestedSetTable9();
         $t1->setTitle('t1')->setLeftValue(1)->setRightValue(8)->setLevel(0)->save();
-        $t2 = new Table9();
+        $t2 = new \NestedSetTable9();
         $t2->setTitle('t2')->setLeftValue(2)->setRightValue(7)->setLevel(1)->save();
-        $t3 = new Table9();
+        $t3 = new \NestedSetTable9();
         $t3->setTitle('t3')->setLeftValue(3)->setRightValue(4)->setLevel(2)->save();
-        $t4 = new Table9();
+        $t4 = new \NestedSetTable9();
         $t4->setTitle('t4')->setLeftValue(5)->setRightValue(6)->setLevel(2)->save();
         $this->assertNull($t1->getParent($this->con), 'getParent() return null for root nodes');
         $this->assertEquals($t2->getParent($this->con), $t1, 'getParent() correctly retrieves parent for nodes');
@@ -321,7 +309,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
                |  \
                t6 t7
         */
-        $con = Propel::getServiceContainer()->getReadConnection(Table9Peer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getReadConnection(\NestedSetTable9Peer::DATABASE_NAME);
         $count = $con->getQueryCount();
         $parent = $t5->getParent($con);
         $parent = $t5->getParent($con);
@@ -331,13 +319,13 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 
     public function testHasPrevSibling()
     {
-        Table9Peer::doDeleteAll();
-        $t0 = new Table9();
-        $t1 = new Table9();
+        \NestedSetTable9Peer::doDeleteAll();
+        $t0 = new \NestedSetTable9();
+        $t1 = new \NestedSetTable9();
         $t1->setTitle('t1')->setLeftValue(1)->setRightValue(6)->save();
-        $t2 = new Table9();
+        $t2 = new \NestedSetTable9();
         $t2->setTitle('t2')->setLeftValue(2)->setRightValue(3)->save();
-        $t3 = new Table9();
+        $t3 = new \NestedSetTable9();
         $t3->setTitle('t3')->setLeftValue(4)->setRightValue(5)->save();
         $this->assertFalse($t0->hasPrevSibling(), 'empty node has no previous sibling');
         $this->assertFalse($t1->hasPrevSibling(), 'root node has no previous sibling');
@@ -366,13 +354,13 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 
     public function testHasNextSibling()
     {
-        Table9Peer::doDeleteAll();
-        $t0 = new Table9();
-        $t1 = new Table9();
+        \NestedSetTable9Peer::doDeleteAll();
+        $t0 = new \NestedSetTable9();
+        $t1 = new \NestedSetTable9();
         $t1->setTitle('t1')->setLeftValue(1)->setRightValue(6)->save();
-        $t2 = new Table9();
+        $t2 = new \NestedSetTable9();
         $t2->setTitle('t2')->setLeftValue(2)->setRightValue(3)->save();
-        $t3 = new Table9();
+        $t3 = new \NestedSetTable9();
         $t3->setTitle('t3')->setLeftValue(4)->setRightValue(5)->save();
         $this->assertFalse($t0->hasNextSibling(), 'empty node has no next sibling');
         $this->assertFalse($t1->hasNextSibling(), 'root node has no next sibling');
@@ -401,9 +389,9 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 
     public function testAddNestedSetChildren()
     {
-        $t0 = new Table9();
-        $t1 = new Table9();
-        $t2 = new Table9();
+        $t0 = new \NestedSetTable9();
+        $t1 = new \NestedSetTable9();
+        $t2 = new \NestedSetTable9();
         $t0->addNestedSetChild($t1);
         $t0->addNestedSetChild($t2);
         $this->assertEquals(2, $t0->countChildren(), 'addNestedSetChild() adds the object to the internal children collection');
@@ -449,7 +437,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
         );
         $this->assertEquals($expected, $this->dumpNodes($children, true), 'getChildren() returns a collection of children');
         $c = new Criteria();
-        $c->add(Table9Peer::TITLE, 't5');
+        $c->add(\NestedSetTable9Peer::TITLE, 't5');
         $children = $t3->getChildren($c);
         $expected = array(
             't5' => array(7, 12, 2),
@@ -460,7 +448,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
     public function testGetChildrenCache()
     {
         list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
-        $con = Propel::getServiceContainer()->getReadConnection(Table9Peer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getReadConnection(\NestedSetTable9Peer::DATABASE_NAME);
         $count = $con->getQueryCount();
         $children = $t3->getChildren(null, $con);
         $children = $t3->getChildren(null, $con);
@@ -472,7 +460,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
         $this->assertEquals($expected, $this->dumpNodes($children, true), 'getChildren() returns a collection of children');
         // when using criteria, cache is not used
         $c = new Criteria();
-        $c->add(Table9Peer::TITLE, 't5');
+        $c->add(\NestedSetTable9Peer::TITLE, 't5');
         $children = $t3->getChildren($c, $con);
         $this->assertEquals($count + 2, $con->getQueryCount(), 'getChildren() issues a new query when âssed a non-null Criteria');
         $expected = array(
@@ -504,7 +492,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
         $this->assertEquals(0, $t2->countChildren(), 'countChildren() returns 0 for leafs');
         $this->assertEquals(2, $t3->countChildren(), 'countChildren() returns the number of children');
         $c = new Criteria();
-        $c->add(Table9Peer::TITLE, 't5');
+        $c->add(\NestedSetTable9Peer::TITLE, 't5');
         $this->assertEquals(1, $t3->countChildren($c), 'countChildren() accepts a criteria as parameter');
     }
 
@@ -520,7 +508,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
                |  \
                t6 t7
         */
-        $con = Propel::getServiceContainer()->getReadConnection(Table9Peer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getReadConnection(\NestedSetTable9Peer::DATABASE_NAME);
         $count = $con->getQueryCount();
         $children = $t3->getChildren(null, $con);
         $nbChildren = $t3->countChildren(null, $con);
@@ -622,7 +610,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
         );
         $this->assertEquals($expected, $this->dumpNodes($descendants), 'getDescendants() returns an array of descendants');
         $c = new Criteria();
-        $c->add(Table9Peer::TITLE, 't5');
+        $c->add(\NestedSetTable9Peer::TITLE, 't5');
         $descendants = $t3->getDescendants($c);
         $expected = array(
             't5' => array(7, 12, 2),
@@ -645,7 +633,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
         $this->assertEquals(0, $t2->countDescendants(), 'countDescendants() returns 0 for leafs');
         $this->assertEquals(4, $t3->countDescendants(), 'countDescendants() returns the number of descendants');
         $c = new Criteria();
-        $c->add(Table9Peer::TITLE, 't5');
+        $c->add(\NestedSetTable9Peer::TITLE, 't5');
         $this->assertEquals(1, $t3->countDescendants($c), 'countDescendants() accepts a criteria as parameter');
     }
 
@@ -672,7 +660,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
         );
         $this->assertEquals($expected, $this->dumpNodes($descendants), 'getBranch() returns an array of descendants, including the current node');
         $c = new Criteria();
-        $c->add(Table9Peer::TITLE, 't3', Criteria::NOT_EQUAL);
+        $c->add(\NestedSetTable9Peer::TITLE, 't3', Criteria::NOT_EQUAL);
         $descendants = $t3->getBranch($c);
         unset($expected['t3']);
         $this->assertEquals($expected, $this->dumpNodes($descendants), 'getBranch() accepts a criteria as first parameter');
@@ -698,7 +686,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
         );
         $this->assertEquals($expected, $this->dumpNodes($ancestors), 'getAncestors() returns an array of ancestors');
         $c = new Criteria();
-        $c->add(Table9Peer::TITLE, 't3');
+        $c->add(\NestedSetTable9Peer::TITLE, 't3');
         $ancestors = $t5->getAncestors($c);
         $expected = array(
             't3' => array(4, 13, 1),
@@ -708,20 +696,20 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 
     public function testAddChild()
     {
-        Table9Peer::doDeleteAll();
-        $t1 = new Table9();
+        \NestedSetTable9Peer::doDeleteAll();
+        $t1 = new \NestedSetTable9();
         $t1->setTitle('t1');
         $t1->makeRoot();
         $t1->save();
-        $t2 = new Table9();
+        $t2 = new \NestedSetTable9();
         $t2->setTitle('t2');
         $t1->addChild($t2);
         $t2->save();
-        $t3 = new Table9();
+        $t3 = new \NestedSetTable9();
         $t3->setTitle('t3');
         $t1->addChild($t3);
         $t3->save();
-        $t4 = new Table9();
+        $t4 = new \NestedSetTable9();
         $t4->setTitle('t4');
         $t2->addChild($t4);
         $t4->save();
@@ -736,7 +724,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 
     public function testInsertAsFirstChildOf()
     {
-        $this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table9', 'insertAsFirstChildOf'), 'nested_set adds a insertAsFirstChildOf() method');
+        $this->assertTrue(method_exists('NestedSetTable9', 'insertAsFirstChildOf'), 'nested_set adds a insertAsFirstChildOf() method');
         list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
         /* Tree used for tests
          t1
@@ -747,7 +735,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
                |  \
                t6 t7
         */
-        $t8 = new PublicTable9();
+        $t8 = new PublicNestedSetTable9();
         $t8->setTitle('t8');
         $t = $t8->insertAsFirstChildOf($t3);
         $this->assertEquals($t8, $t, 'insertAsFirstChildOf() returns the object it was called on');
@@ -777,14 +765,14 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 
     public function testInsertAsFirstChildOfExistingObject()
     {
-        Table9Query::create()->deleteAll();
-        $t = new Table9();
+        \NestedSetTable9Query::create()->deleteAll();
+        $t = new \NestedSetTable9();
         $t->makeRoot();
         $t->save();
         $this->assertEquals(1, $t->getLeftValue());
         $this->assertEquals(2, $t->getRightValue());
         $this->assertEquals(0, $t->getLevel());
-        $t1 = new Table9();
+        $t1 = new \NestedSetTable9();
         $t1->save();
         $t1->insertAsFirstChildOf($t);
         $this->assertEquals(2, $t1->getLeftValue());
@@ -801,7 +789,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 
     public function testInsertAsLastChildOf()
     {
-        $this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table9', 'insertAsLastChildOf'), 'nested_set adds a insertAsLastChildOf() method');
+        $this->assertTrue(method_exists('NestedSetTable9', 'insertAsLastChildOf'), 'nested_set adds a insertAsLastChildOf() method');
         list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
         /* Tree used for tests
          t1
@@ -812,7 +800,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
                |  \
                t6 t7
         */
-        $t8 = new PublicTable9();
+        $t8 = new PublicNestedSetTable9();
         $t8->setTitle('t8');
         $t = $t8->insertAsLastChildOf($t3);
         $this->assertEquals($t8, $t, 'insertAsLastChildOf() returns the object it was called on');
@@ -842,14 +830,14 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 
     public function testInsertAsLastChildOfExistingObject()
     {
-        Table9Query::create()->deleteAll();
-        $t = new Table9();
+        \NestedSetTable9Query::create()->deleteAll();
+        $t = new \NestedSetTable9();
         $t->makeRoot();
         $t->save();
         $this->assertEquals(1, $t->getLeftValue());
         $this->assertEquals(2, $t->getRightValue());
         $this->assertEquals(0, $t->getLevel());
-        $t1 = new Table9();
+        $t1 = new \NestedSetTable9();
         $t1->save();
         $t1->insertAsLastChildOf($t);
         $this->assertEquals(2, $t1->getLeftValue());
@@ -866,7 +854,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 
     public function testInsertAsPrevSiblingOf()
     {
-        $this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table9', 'insertAsPrevSiblingOf'), 'nested_set adds a insertAsPrevSiblingOf() method');
+        $this->assertTrue(method_exists('NestedSetTable9', 'insertAsPrevSiblingOf'), 'nested_set adds a insertAsPrevSiblingOf() method');
         list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
         /* Tree used for tests
          t1
@@ -877,7 +865,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
                |  \
                t6 t7
         */
-        $t8 = new PublicTable9();
+        $t8 = new PublicNestedSetTable9();
         $t8->setTitle('t8');
         $t = $t8->insertAsPrevSiblingOf($t3);
         $this->assertEquals($t8, $t, 'insertAsPrevSiblingOf() returns the object it was called on');
@@ -907,11 +895,11 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 
     public function testInsertAsPrevSiblingOfExistingObject()
     {
-        Table9Query::create()->deleteAll();
-        $t = new Table9();
+        \NestedSetTable9Query::create()->deleteAll();
+        $t = new \NestedSetTable9();
         $t->makeRoot();
         $t->save();
-        $t1 = new Table9();
+        $t1 = new \NestedSetTable9();
         $t1->insertAsFirstChildOf($t);
         $t1->save();
         $this->assertEquals(1, $t->getLeftValue());
@@ -920,7 +908,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
         $this->assertEquals(2, $t1->getLeftValue());
         $this->assertEquals(3, $t1->getRightValue());
         $this->assertEquals(1, $t1->getLevel());
-        $t2 = new Table9();
+        $t2 = new \NestedSetTable9();
         $t2->save();
         $t2->insertAsPrevSiblingOf($t1);
         $this->assertEquals(2, $t2->getLeftValue());
@@ -940,7 +928,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 
     public function testInsertAsNextSiblingOf()
     {
-        $this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table9', 'insertAsNextSiblingOf'), 'nested_set adds a insertAsNextSiblingOf() method');
+        $this->assertTrue(method_exists('NestedSetTable9', 'insertAsNextSiblingOf'), 'nested_set adds a insertAsNextSiblingOf() method');
         list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
         /* Tree used for tests
          t1
@@ -951,7 +939,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
                |  \
                t6 t7
         */
-        $t8 = new PublicTable9();
+        $t8 = new PublicNestedSetTable9();
         $t8->setTitle('t8');
         $t = $t8->insertAsNextSiblingOf($t3);
         $this->assertEquals($t8, $t, 'insertAsNextSiblingOf() returns the object it was called on');
@@ -981,11 +969,11 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 
     public function testInsertAsNextSiblingOfExistingObject()
     {
-        Table9Query::create()->deleteAll();
-        $t = new Table9();
+        \NestedSetTable9Query::create()->deleteAll();
+        $t = new \NestedSetTable9();
         $t->makeRoot();
         $t->save();
-        $t1 = new Table9();
+        $t1 = new \NestedSetTable9();
         $t1->insertAsFirstChildOf($t);
         $t1->save();
         $this->assertEquals(1, $t->getLeftValue());
@@ -994,7 +982,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
         $this->assertEquals(2, $t1->getLeftValue());
         $this->assertEquals(3, $t1->getRightValue());
         $this->assertEquals(1, $t1->getLevel());
-        $t2 = new Table9();
+        $t2 = new \NestedSetTable9();
         $t2->save();
         $t2->insertAsNextSiblingOf($t1);
         $this->assertEquals(4, $t2->getLeftValue());
@@ -1014,7 +1002,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 
     public function testMoveToFirstChildOf()
     {
-        $this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table9', 'moveToFirstChildOf'), 'nested_set adds a moveToFirstChildOf() method');
+        $this->assertTrue(method_exists('NestedSetTable9', 'moveToFirstChildOf'), 'nested_set adds a moveToFirstChildOf() method');
         list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
         /* Tree used for tests
          t1
@@ -1105,7 +1093,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 
     public function testMoveToLastChildOf()
     {
-        $this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table9', 'moveToLastChildOf'), 'nested_set adds a moveToLastChildOf() method');
+        $this->assertTrue(method_exists('NestedSetTable9', 'moveToLastChildOf'), 'nested_set adds a moveToLastChildOf() method');
         list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
         /* Tree used for tests
          t1
@@ -1196,7 +1184,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 
     public function testMoveToPrevSiblingOf()
     {
-        $this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table9', 'moveToPrevSiblingOf'), 'nested_set adds a moveToPrevSiblingOf() method');
+        $this->assertTrue(method_exists('NestedSetTable9', 'moveToPrevSiblingOf'), 'nested_set adds a moveToPrevSiblingOf() method');
         list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
         /* Tree used for tests
          t1
@@ -1347,7 +1335,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 
     public function testMoveToNextSiblingOf()
     {
-        $this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table9', 'moveToNextSiblingOf'), 'nested_set adds a moveToNextSiblingOf() method');
+        $this->assertTrue(method_exists('NestedSetTable9', 'moveToNextSiblingOf'), 'nested_set adds a moveToNextSiblingOf() method');
         list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
         /* Tree used for tests
          t1
@@ -1476,8 +1464,8 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
     public function testGetIterator()
     {
         $fixtures = $this->initTree();
-        $this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table9', 'getIterator'), 'nested_set adds a getIterator() method');
-        $root = Table9Peer::retrieveRoot();
+        $this->assertTrue(method_exists('NestedSetTable9', 'getIterator'), 'nested_set adds a getIterator() method');
+        $root = \NestedSetTable9Peer::retrieveRoot();
         $iterator = $root->getIterator();
         $this->assertTrue($iterator instanceof NestedSetRecursiveIterator, 'getIterator() returns a NestedSetRecursiveIterator');
         foreach ($iterator as $node) {

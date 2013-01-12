@@ -73,15 +73,6 @@ class SortableBehavior extends Behavior
         return $this->queryBuilderModifier;
     }
 
-    public function getPeerBuilderModifier()
-    {
-        if (null === $this->peerBuilderModifier) {
-            $this->peerBuilderModifier = new SortableBehaviorPeerBuilderModifier($this);
-        }
-
-        return $this->peerBuilderModifier;
-    }
-
     public function useScope()
     {
         return 'true' === $this->getParameter('use_scope');

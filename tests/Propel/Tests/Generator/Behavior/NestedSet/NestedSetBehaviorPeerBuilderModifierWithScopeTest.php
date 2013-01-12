@@ -11,23 +11,20 @@
 
 namespace Propel\Tests\Generator\Behavior\NestedSet;
 
-use Propel\Tests\Helpers\Bookstore\Behavior\BookstoreNestedSetTestBase;
-
-use Propel\Tests\Bookstore\Behavior\Table9Peer;
-use Propel\Tests\Bookstore\Behavior\Table10;
-use Propel\Tests\Bookstore\Behavior\Table10Peer;
-
 use Propel\Runtime\ActiveQuery\Criteria;
 
 /**
  * Tests for NestedSetBehaviorPeerBuilderModifier class
  *
  * @author François Zaninotto
- * @version		$Revision$
- * @package		generator.behavior.nestedset
  */
-class NestedSetBehaviorPeerBuilderModifierWithScopeTest extends BookstoreNestedSetTestBase
+class NestedSetBehaviorPeerBuilderModifierWithScopeTest extends TestCase
 {
+    public function setUp()
+    {
+        $this->markTestSkipped('These tests should move somewhere else');
+    }
+
     public function testConstants()
     {
         $this->assertEquals(Table10Peer::LEFT_COL, 'table10.MY_LEFT_COLUMN', 'nested_set adds a LEFT_COL constant using the custom left_column parameter');
