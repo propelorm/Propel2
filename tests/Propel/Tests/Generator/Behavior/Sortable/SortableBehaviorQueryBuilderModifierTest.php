@@ -10,6 +10,8 @@
 
 namespace Propel\Tests\Generator\Behavior\Sortable;
 
+use SortableTable11 as Table11;
+
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Collection\ObjectCollection;
 
@@ -40,15 +42,15 @@ class SortableBehaviorQueryBuilderModifierTest extends TestCase
         $this->assertTrue(\SortableTable11Query::create()->orderByRank() instanceof \SortableTable11Query, 'orderByRank() returns the current query object');
         // default order
         $query = \SortableTable11Query::create()->orderByRank();
-        $expectedQuery = \SortableTable11Query::create()->addAscendingOrderByColumn(\SortableTable11Peer::SORTABLE_RANK);
+        $expectedQuery = \SortableTable11Query::create()->addAscendingOrderByColumn(\Map\SortableTable11TableMap::SORTABLE_RANK);
         $this->assertEquals($expectedQuery, $query, 'orderByRank() orders the query by rank asc');
         // asc order
         $query = \SortableTable11Query::create()->orderByRank(Criteria::ASC);
-        $expectedQuery = \SortableTable11Query::create()->addAscendingOrderByColumn(\SortableTable11Peer::SORTABLE_RANK);
+        $expectedQuery = \SortableTable11Query::create()->addAscendingOrderByColumn(\Map\SortableTable11TableMap::SORTABLE_RANK);
         $this->assertEquals($expectedQuery, $query, 'orderByRank() orders the query by rank, using the argument as sort direction');
         // desc order
         $query = \SortableTable11Query::create()->orderByRank(Criteria::DESC);
-        $expectedQuery = \SortableTable11Query::create()->addDescendingOrderByColumn(\SortableTable11Peer::SORTABLE_RANK);
+        $expectedQuery = \SortableTable11Query::create()->addDescendingOrderByColumn(\Map\SortableTable11TableMap::SORTABLE_RANK);
         $this->assertEquals($expectedQuery, $query, 'orderByRank() orders the query by rank, using the argument as sort direction');
     }
 

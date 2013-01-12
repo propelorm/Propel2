@@ -10,6 +10,9 @@
 
 namespace Propel\Tests\Generator\Behavior\Sortable;
 
+use Propel\Runtime\ActiveQuery\Criteria;
+use SortableTable11 as Table11;
+
 /**
  * Tests for SortableBehavior class
  *
@@ -43,7 +46,7 @@ class SortableBehaviorObjectBuilderModifierTest extends TestCase
         $t3->delete();
         $this->assertEquals($max - 1, \SortableTable11Peer::getMaxRank(), 'Sortable rearrange subsequent rows on delete');
         $c = new Criteria();
-        $c->add(\SortableTable11Peer::TITLE, 'row4');
+        $c->add(\Map\SortableTable11TableMap::TITLE, 'row4');
         $t4 = \SortableTable11Peer::doSelectOne($c);
         $this->assertEquals(3, $t4->getRank(), 'Sortable rearrange subsequent rows on delete');
     }

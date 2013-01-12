@@ -28,7 +28,7 @@ class SortableBehaviorPeerBuilderModifierTest extends TestCase
 
     public function testStaticAttributes()
     {
-        $this->assertEquals(\SortableTable11Peer::RANK_COL, 'table11.SORTABLE_RANK');
+        $this->assertEquals('sortable_table11.SORTABLE_RANK', \Map\SortableTable11TableMap::RANK_COL);
     }
 
     public function testGetMaxRank()

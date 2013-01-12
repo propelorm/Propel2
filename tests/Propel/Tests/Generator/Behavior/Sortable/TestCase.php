@@ -10,6 +10,8 @@
 
 namespace Propel\Tests\Generator\Behavior\Sortable;
 
+use Propel\Runtime\ActiveQuery\Criteria;
+
 use Propel\Generator\Util\QuickBuilder;
 use Propel\Tests\TestCase as BaseTestCase;
 
@@ -123,7 +125,7 @@ XML;
     protected function getFixturesArray()
     {
         $c = new Criteria();
-        $c->addAscendingOrderByColumn(\SortableTable11Peer::RANK_COL);
+        $c->addAscendingOrderByColumn(\Map\SortableTable11TableMap::RANK_COL);
         $ts = \SortableTable11Peer::doSelect($c);
         $ret = array();
         foreach ($ts as $t) {
@@ -138,10 +140,10 @@ XML;
         $c = new Criteria();
 
         if ($scope !== null) {
-            $c->add(\SortableTable12Peer::SCOPE_COL, $scope);
+            $c->add(\Map\SortableTable12TableMap::SCOPE_COL, $scope);
         }
 
-        $c->addAscendingOrderByColumn(\SortableTable12Peer::RANK_COL);
+        $c->addAscendingOrderByColumn(\Map\SortableTable12TableMap::RANK_COL);
 
         $ts  = \SortableTable12Peer::doSelect($c);
         $ret = array();
