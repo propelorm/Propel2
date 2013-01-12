@@ -10,31 +10,25 @@
 
 namespace Propel\Tests\Generator\Behavior\Sortable;
 
-use Propel\Tests\Helpers\Bookstore\Behavior\BookstoreSortableTestBase;
-
-use Propel\Tests\Bookstore\Behavior\Table12;
-use Propel\Tests\Bookstore\Behavior\Table12Peer;
-
 use Propel\Runtime\ActiveQuery\Criteria;
 
 /**
  * Tests for SortableBehavior class
  *
  * @author Massimiliano Arione
- * @version		$Revision$
- * @package		generator.behavior.sortable
  */
-class SortableBehaviorObjectBuilderModifierWithScopeTest extends BookstoreSortableTestBase
+class SortableBehaviorObjectBuilderModifierWithScopeTest extends TestCase
 {
-    protected function setUp()
+    public function setUp()
     {
         parent::setUp();
+
         $this->populateTable12();
     }
 
     public function testPreInsert()
     {
-        Table12Peer::doDeleteAll();
+        \SortableTable12Peer::doDeleteAll();
         $t1 = new Table12();
         $t1->setScopeValue(1);
         $t1->save();
@@ -51,13 +45,13 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends BookstoreSortab
 
     public function testPreDelete()
     {
-        $max = Table12Peer::getMaxRank(1);
-        $t3 = Table12Peer::retrieveByRank(3, 1);
+        $max = \SortableTable12Peer::getMaxRank(1);
+        $t3 = \SortableTable12Peer::retrieveByRank(3, 1);
         $t3->delete();
-        $this->assertEquals($max - 1, Table12Peer::getMaxRank(1), 'Sortable rearrange subsequent rows on delete');
+        $this->assertEquals($max - 1, \SortableTable12Peer::getMaxRank(1), 'Sortable rearrange subsequent rows on delete');
         $c = new Criteria();
-        $c->add(Table12Peer::TITLE, 'row4');
-        $t4 = Table12Peer::doSelectOne($c);
+        $c->add(\SortableTable12Peer::TITLE, 'row4');
+        $t4 = \SortableTable12Peer::doSelectOne($c);
         $this->assertEquals(3, $t4->getRank(), 'Sortable rearrange subsequent rows on delete');
         $expected = array(1 => 'row5', 2 => 'row6');
         $this->assertEquals($expected, $this->getFixturesArrayWithScope(2), 'delete() leaves other suites unchanged');
@@ -65,57 +59,57 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends BookstoreSortab
 
     public function testIsFirst()
     {
-        $first = Table12Peer::retrieveByRank(1, 1);
-        $middle = Table12Peer::retrieveByRank(2, 1);
-        $last = Table12Peer::retrieveByRank(4, 1);
+        $first = \SortableTable12Peer::retrieveByRank(1, 1);
+        $middle = \SortableTable12Peer::retrieveByRank(2, 1);
+        $last = \SortableTable12Peer::retrieveByRank(4, 1);
         $this->assertTrue($first->isFirst(), 'isFirst() returns true for the first in the rank');
         $this->assertFalse($middle->isFirst(), 'isFirst() returns false for a middle rank');
         $this->assertFalse($last->isFirst(), 'isFirst() returns false for the last in the rank');
-        $first = Table12Peer::retrieveByRank(1, 2);
-        $last = Table12Peer::retrieveByRank(2, 2);
+        $first = \SortableTable12Peer::retrieveByRank(1, 2);
+        $last = \SortableTable12Peer::retrieveByRank(2, 2);
         $this->assertTrue($first->isFirst(), 'isFirst() returns true for the first in the rank');
         $this->assertFalse($last->isFirst(), 'isFirst() returns false for the last in the rank');
     }
 
     public function testIsLast()
     {
-        $first = Table12Peer::retrieveByRank(1, 1);
-        $middle = Table12Peer::retrieveByRank(2, 1);
-        $last = Table12Peer::retrieveByRank(4, 1);
+        $first = \SortableTable12Peer::retrieveByRank(1, 1);
+        $middle = \SortableTable12Peer::retrieveByRank(2, 1);
+        $last = \SortableTable12Peer::retrieveByRank(4, 1);
         $this->assertFalse($first->isLast(), 'isLast() returns false for the first in the rank');
         $this->assertFalse($middle->isLast(), 'isLast() returns false for a middle rank');
         $this->assertTrue($last->isLast(), 'isLast() returns true for the last in the rank');
-        $first = Table12Peer::retrieveByRank(1, 2);
-        $last = Table12Peer::retrieveByRank(2, 2);
+        $first = \SortableTable12Peer::retrieveByRank(1, 2);
+        $last = \SortableTable12Peer::retrieveByRank(2, 2);
         $this->assertFalse($first->isLast(), 'isLast() returns false for the first in the rank');
         $this->assertTrue($last->isLast(), 'isLast() returns true for the last in the rank');
     }
 
     public function testGetNext()
     {
-        $t = Table12Peer::retrieveByRank(1, 1);
+        $t = \SortableTable12Peer::retrieveByRank(1, 1);
         $this->assertEquals('row2', $t->getNext()->getTitle(), 'getNext() returns the next object in rank in the same suite');
-        $t = Table12Peer::retrieveByRank(1, 2);
+        $t = \SortableTable12Peer::retrieveByRank(1, 2);
         $this->assertEquals('row6', $t->getNext()->getTitle(), 'getNext() returns the next object in rank in the same suite');
 
-        $t = Table12Peer::retrieveByRank(3, 1);
+        $t = \SortableTable12Peer::retrieveByRank(3, 1);
         $this->assertEquals(4, $t->getNext()->getRank(), 'getNext() returns the next object in rank');
 
-        $t = Table12Peer::retrieveByRank(4, 1);
+        $t = \SortableTable12Peer::retrieveByRank(4, 1);
         $this->assertNull($t->getNext(), 'getNext() returns null for the last object');
     }
 
     public function testGetPrevious()
     {
-        $t = Table12Peer::retrieveByRank(2, 1);
+        $t = \SortableTable12Peer::retrieveByRank(2, 1);
         $this->assertEquals('row1', $t->getPrevious()->getTitle(), 'getPrevious() returns the previous object in rank in the same suite');
-        $t = Table12Peer::retrieveByRank(2, 2);
+        $t = \SortableTable12Peer::retrieveByRank(2, 2);
         $this->assertEquals('row5', $t->getPrevious()->getTitle(), 'getPrevious() returns the previous object in rank in the same suite');
 
-        $t = Table12Peer::retrieveByRank(3, 1);
+        $t = \SortableTable12Peer::retrieveByRank(3, 1);
         $this->assertEquals(2, $t->getPrevious()->getRank(), 'getPrevious() returns the previous object in rank');
 
-        $t = Table12Peer::retrieveByRank(1, 1);
+        $t = \SortableTable12Peer::retrieveByRank(1, 1);
         $this->assertNull($t->getPrevious(), 'getPrevious() returns null for the first object');
     }
 
@@ -204,7 +198,7 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends BookstoreSortab
 
     public function testMoveToRank()
     {
-        $t2 = Table12Peer::retrieveByRank(2, 1);
+        $t2 = \SortableTable12Peer::retrieveByRank(2, 1);
         $t2->moveToRank(3);
         $expected = array(1 => 'row1', 2 => 'row3', 3 => 'row2', 4 => 'row4');
         $this->assertEquals($expected, $this->getFixturesArrayWithScope(1), 'moveToRank() can move up');
@@ -235,7 +229,7 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends BookstoreSortab
      */
     public function testMoveToNegativeRank()
     {
-        $t = Table12Peer::retrieveByRank(2, 1);
+        $t = \SortableTable12Peer::retrieveByRank(2, 1);
         $t->moveToRank(0);
     }
 
@@ -244,14 +238,14 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends BookstoreSortab
      */
     public function testMoveToOverMaxRank()
     {
-        $t = Table12Peer::retrieveByRank(2, 1);
+        $t = \SortableTable12Peer::retrieveByRank(2, 1);
         $t->moveToRank(5);
     }
 
     public function testSwapWith()
     {
-        $t2 = Table12Peer::retrieveByRank(2, 1);
-        $t4 = Table12Peer::retrieveByRank(4, 1);
+        $t2 = \SortableTable12Peer::retrieveByRank(2, 1);
+        $t4 = \SortableTable12Peer::retrieveByRank(4, 1);
         $t2->swapWith($t4);
         $expected = array(1 => 'row1', 2 => 'row4', 3 => 'row3', 4 => 'row2');
         $this->assertEquals($expected, $this->getFixturesArrayWithScope(1), 'swapWith() swaps ranks of the two objects and leaves the other ranks unchanged');
@@ -261,7 +255,7 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends BookstoreSortab
 
     public function testMoveUp()
     {
-        $t3 = Table12Peer::retrieveByRank(3, 1);
+        $t3 = \SortableTable12Peer::retrieveByRank(3, 1);
         $res = $t3->moveUp();
         $this->assertEquals($t3, $res, 'moveUp() returns the current object');
         $expected = array(1 => 'row1', 2 => 'row3', 3 => 'row2', 4 => 'row4');
@@ -278,7 +272,7 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends BookstoreSortab
 
     public function testMoveDown()
     {
-        $t2 = Table12Peer::retrieveByRank(2, 1);
+        $t2 = \SortableTable12Peer::retrieveByRank(2, 1);
         $res = $t2->moveDown();
         $this->assertEquals($t2, $res, 'moveDown() returns the current object');
         $expected = array(1 => 'row1', 2 => 'row3', 3 => 'row2', 4 => 'row4');
@@ -295,7 +289,7 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends BookstoreSortab
 
     public function testMoveToTop()
     {
-        $t3 = Table12Peer::retrieveByRank(3, 1);
+        $t3 = \SortableTable12Peer::retrieveByRank(3, 1);
         $res = $t3->moveToTop();
         $this->assertEquals($t3, $res, 'moveToTop() returns the current object');
         $expected = array(1 => 'row3', 2 => 'row1', 3 => 'row2', 4 => 'row4');
@@ -309,7 +303,7 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends BookstoreSortab
 
     public function testMoveToBottom()
     {
-        $t2 = Table12Peer::retrieveByRank(2, 1);
+        $t2 = \SortableTable12Peer::retrieveByRank(2, 1);
         $res = $t2->moveToBottom();
         $this->assertEquals($t2, $res, 'moveToBottom() returns the current object');
         $expected = array(1 => 'row1', 2 => 'row3', 3 => 'row4', 4 => 'row2');
@@ -323,15 +317,15 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends BookstoreSortab
 
     public function testRemoveFromList()
     {
-        $t2 = Table12Peer::retrieveByRank(2, 1);
+        $t2 = \SortableTable12Peer::retrieveByRank(2, 1);
         $res = $t2->removeFromList();
         $this->assertTrue($res instanceof Table12, 'removeFromList() returns the current object');
         $this->assertNull($res->getRank(), 'removeFromList() resets the object\'s rank');
-        Table12Peer::clearInstancePool();
+        \SortableTable12Peer::clearInstancePool();
         $expected = array(1 => 'row1', 2 => 'row2', 3 => 'row3', 4 => 'row4');
         $this->assertEquals($expected, $this->getFixturesArrayWithScope(1), 'removeFromList() does not change the list until the object is saved');
         $t2->save();
-        Table12Peer::clearInstancePool();
+        \SortableTable12Peer::clearInstancePool();
         $expected = array(1 => 'row1', 2 => 'row3', 3 => 'row4');
         $this->assertEquals($expected, $this->getFixturesArrayWithScope(1), 'removeFromList() changes the list once the object is saved');
         $expected = array(1 => 'row5', 2 => 'row6');
