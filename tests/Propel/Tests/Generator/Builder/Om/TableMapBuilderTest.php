@@ -135,6 +135,10 @@ class TableMapBuilderTest extends BookstoreTestBase
   {
     $bookTable = $this->databaseMap->getTableByPhpName('Propel\Tests\Bookstore\Book');
     $this->assertEquals($bookTable->getBehaviors(), array(), 'getBehaviors() returns an empty array when no behaviors are registered');
+
+    //this init tableMap for class 'Propel\Tests\Bookstore\Behavior\Table1'
+    Propel::getServiceContainer()->getDatabaseMap(Table1TableMap::DATABASE_NAME)->getTableByPhpName('Propel\Tests\Bookstore\Behavior\Table1');
+
     $tmap = Propel::getServiceContainer()->getDatabaseMap(Table1TableMap::DATABASE_NAME)->getTable(Table1TableMap::TABLE_NAME);
     $expectedBehaviorParams = array('timestampable' => array('create_column' => 'created_on', 'update_column' => 'updated_on'));
     $this->assertEquals($tmap->getBehaviors(), $expectedBehaviorParams, 'The map builder creates a getBehaviors() method to retrieve behaviors parameters when behaviors are registered');
