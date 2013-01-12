@@ -27,6 +27,8 @@ class SortableBehaviorQueryBuilderModifier
 
     protected $peerClassName;
 
+    protected $tableMapClassName;
+
     public function __construct($behavior)
     {
         $this->behavior = $behavior;
@@ -49,6 +51,7 @@ class SortableBehaviorQueryBuilderModifier
         $this->objectClassName = $builder->getObjectClassName();
         $this->queryClassName = $builder->getQueryClassName();
         $this->peerClassName = $builder->getPeerClassName();
+        $this->tableMapClassName = $builder->getTableMapClassName();
     }
 
     public function queryMethods($builder)
@@ -91,7 +94,7 @@ class SortableBehaviorQueryBuilderModifier
  */
 public function inList(\$scope = null)
 {
-    return \$this->addUsingAlias({$this->peerClassName}::SCOPE_COL, \$scope, Criteria::EQUAL);
+    return \$this->addUsingAlias({$this->tableMapClassName}::SCOPE_COL, \$scope, Criteria::EQUAL);
 }
 ";
     }
@@ -99,7 +102,6 @@ public function inList(\$scope = null)
     protected function addFilterByRank(&$script)
     {
         $useScope = $this->behavior->useScope();
-        $peerClassName = $this->peerClassName;
         $script .= "
 /**
  * Filter the query based on a rank in the list
@@ -121,7 +123,7 @@ public function filterByRank(\$rank" . ($useScope ? ", \$scope = null" : "") . "
         ->inList(\$scope)";
         }
         $script .= "
-        ->addUsingAlias($peerClassName::RANK_COL, \$rank, Criteria::EQUAL);
+        ->addUsingAlias({$this->tableMapClassName}::RANK_COL, \$rank, Criteria::EQUAL);
 }
 ";
     }
@@ -142,13 +144,13 @@ public function orderByRank(\$order = Criteria::ASC)
     \$order = strtoupper(\$order);
     switch (\$order) {
         case Criteria::ASC:
-            return \$this->addAscendingOrderByColumn(\$this->getAliasedColName(" . $this->peerClassName . "::RANK_COL));
+            return \$this->addAscendingOrderByColumn(\$this->getAliasedColName({$this->tableMapClassName}::RANK_COL));
             break;
         case Criteria::DESC:
-            return \$this->addDescendingOrderByColumn(\$this->getAliasedColName(" . $this->peerClassName . "::RANK_COL));
+            return \$this->addDescendingOrderByColumn(\$this->getAliasedColName({$this->tableMapClassName}::RANK_COL));
             break;
         default:
-            throw new \Propel\Runtime\Exception\PropelException('" . $this->queryClassName . "::orderBy() only accepts \"asc\" or \"desc\" as argument');
+            throw new \Propel\Runtime\Exception\PropelException('{$this->queryClassName}::orderBy() only accepts \"asc\" or \"desc\" as argument');
     }
 }
 ";
@@ -234,13 +236,13 @@ public function findList(" . ($useScope ? "\$scope = null, " : "") . "\$con = nu
 public function getMaxRank(" . ($useScope ? "\$scope = null, " : "") . "ConnectionInterface \$con = null)
 {
     if (null === \$con) {
-        \$con = Propel::getServiceContainer()->getReadConnection({$this->peerClassName}::DATABASE_NAME);
+        \$con = Propel::getServiceContainer()->getReadConnection({$this->tableMapClassName}::DATABASE_NAME);
     }
     // shift the objects with a position lower than the one of object
-    \$this->addSelectColumn('MAX(' . {$this->peerClassName}::RANK_COL . ')');";
+    \$this->addSelectColumn('MAX(' . {$this->tableMapClassName}::RANK_COL . ')');";
         if ($useScope) {
             $script .= "
-    \$this->add({$this->peerClassName}::SCOPE_COL, \$scope, Criteria::EQUAL);";
+    \$this->add({$this->tableMapClassName}::SCOPE_COL, \$scope, Criteria::EQUAL);";
         }
         $script .= "
     \$stmt = \$this->doSelect(\$con);
@@ -253,7 +255,6 @@ public function getMaxRank(" . ($useScope ? "\$scope = null, " : "") . "Connecti
     protected function addReorder(&$script)
     {
         $this->builder->declareClasses('\Propel\Runtime\Propel');
-        $peerClassName = $this->peerClassName;
         $columnGetter = 'get' . $this->behavior->getColumnForParameter('rank_column')->getPhpName();
         $columnSetter = 'set' . $this->behavior->getColumnForParameter('rank_column')->getPhpName();
         $script .= "
@@ -270,7 +271,7 @@ public function getMaxRank(" . ($useScope ? "\$scope = null, " : "") . "Connecti
 public function reorder(array \$order, ConnectionInterface \$con = null)
 {
     if (null === \$con) {
-        \$con = Propel::getServiceContainer()->getReadConnection($peerClassName::DATABASE_NAME);
+        \$con = Propel::getServiceContainer()->getReadConnection({$this->tableMapClassName}::DATABASE_NAME);
     }
 
     \$con->beginTransaction();

@@ -31,6 +31,7 @@ class SortableBehavior extends Behavior
     protected $objectBuilderModifier;
     protected $queryBuilderModifier;
     protected $peerBuilderModifier;
+    protected $tableMapBuilderModifier;
 
     /**
      * Add the rank_column to the current table
@@ -71,6 +72,24 @@ class SortableBehavior extends Behavior
         }
 
         return $this->queryBuilderModifier;
+    }
+
+    public function getPeerBuilderModifier()
+    {
+        if (null === $this->peerBuilderModifier) {
+            $this->peerBuilderModifier = new SortableBehaviorPeerBuilderModifier($this);
+        }
+
+        return $this->peerBuilderModifier;
+    }
+
+    public function getTableMapBuilderModifier()
+    {
+        if (null === $this->tableMapBuilderModifier) {
+            $this->tableMapBuilderModifier = new SortableBehaviorTableMapBuilderModifier($this);
+        }
+
+        return $this->tableMapBuilderModifier;
     }
 
     public function useScope()
