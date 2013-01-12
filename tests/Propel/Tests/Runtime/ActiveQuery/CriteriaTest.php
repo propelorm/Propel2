@@ -12,6 +12,7 @@ namespace Propel\Tests\Runtime\ActiveQuery;
 
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 use Propel\Tests\Bookstore\BookPeer;
+use Propel\Tests\Bookstore\Map\BookTableMap;
 
 use Propel\Runtime\Propel;
 use Propel\Runtime\Adapter\Pdo\MysqlAdapter;
@@ -351,7 +352,7 @@ class CriteriaTest extends BookstoreTestBase
 
         $criteria = new Criteria();
         $criteria->setIgnoreCase(true);
-        $criteria->addAscendingOrderByColumn(BookPeer::TITLE);
+        $criteria->addAscendingOrderByColumn(BookTableMap::TITLE);
         BookPeer::addSelectColumns($criteria);
         $params=array();
         $sql = BasePeer::createSelectSql($criteria, $params);
@@ -925,8 +926,8 @@ class CriteriaTest extends BookstoreTestBase
     public function testHaving()
     {
         $c = new Criteria();
-        $c->addSelectColumn(BookPeer::TITLE);
-        $c->addAsColumn('isb_n', BookPeer::ISBN);
+        $c->addSelectColumn(BookTableMap::TITLE);
+        $c->addAsColumn('isb_n', BookTableMap::ISBN);
         $crit = $c->getNewCriterion('isb_n', '1234567890123');
         $c->addHaving($crit);
         $expected = 'SELECT book.TITLE, book.ISBN AS isb_n FROM book HAVING isb_n=:p1';
@@ -941,8 +942,8 @@ class CriteriaTest extends BookstoreTestBase
     public function testHavingRaw()
     {
         $c = new Criteria();
-        $c->addSelectColumn(BookPeer::TITLE);
-        $c->addAsColumn("isb_n", BookPeer::ISBN);
+        $c->addSelectColumn(BookTableMap::TITLE);
+        $c->addAsColumn("isb_n", BookTableMap::ISBN);
         $c->addHaving('isb_n = ?', '1234567890123', \PDO::PARAM_STR);
         $expected = 'SELECT book.TITLE, book.ISBN AS isb_n FROM book HAVING isb_n = :p1';
         $params = array();

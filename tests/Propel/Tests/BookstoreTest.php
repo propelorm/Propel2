@@ -27,6 +27,10 @@ use Propel\Tests\Bookstore\BookListRelPeer;
 use Propel\Tests\Bookstore\Publisher;
 use Propel\Tests\Bookstore\PublisherPeer;
 use Propel\Tests\Bookstore\PublisherQuery;
+use Propel\Tests\Bookstore\Map\AuthorTableMap;
+use Propel\Tests\Bookstore\Map\BookTableMap;
+use Propel\Tests\Bookstore\Map\BookClubListTableMap;
+use Propel\Tests\Bookstore\Map\PublisherTableMap;
 use Propel\Tests\Bookstore\Media;
 use Propel\Tests\Bookstore\MediaPeer;
 use Propel\Tests\Bookstore\MediaQuery;
@@ -174,12 +178,12 @@ class BookstoreTest extends BookstoreEmptyTestBase
         // --------------------------
 
         $crit = new Criteria();
-        $crit->add(BookPeer::TITLE, 'Harry%', Criteria::LIKE);
+        $crit->add(BookTableMap::TITLE, 'Harry%', Criteria::LIKE);
         $results = BookPeer::doSelect($crit);
         $this->assertEquals(1, count($results));
 
         $crit2 = new Criteria();
-        $crit2->add(BookPeer::ISBN, array("0380977427", "0140422161"), Criteria::IN);
+        $crit2->add(BookTableMap::ISBN, array("0380977427", "0140422161"), Criteria::IN);
         $results = BookPeer::doSelect($crit2);
         $this->assertEquals(2, count($results));
 
@@ -189,7 +193,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
         $crit = new Criteria();
         $crit->setLimit(2);
         $crit->setOffset(1);
-        $crit->addAscendingOrderByColumn(BookPeer::TITLE);
+        $crit->addAscendingOrderByColumn(BookTableMap::TITLE);
 
         $results = BookPeer::doSelect($crit);
         $this->assertEquals(2, count($results));
@@ -311,17 +315,17 @@ class BookstoreTest extends BookstoreEmptyTestBase
         // re-fetch books and lists from db to be sure that nothing is cached
 
         $crit = new Criteria();
-        $crit->add(BookPeer::ID, $phoenix->getId());
+        $crit->add(BookTableMap::ID, $phoenix->getId());
         $phoenix = BookPeer::doSelectOne($crit);
         $this->assertNotNull($phoenix, "book 'phoenix' has been re-fetched from db");
 
         $crit = new Criteria();
-        $crit->add(BookClubListPeer::ID, $blc1->getId());
+        $crit->add(BookClubListTableMap::ID, $blc1->getId());
         $blc1 = BookClubListPeer::doSelectOne($crit);
         $this->assertNotNull($blc1, 'BookClubList 1 has been re-fetched from db');
 
         $crit = new Criteria();
-        $crit->add(BookClubListPeer::ID, $blc2->getId());
+        $crit->add(BookClubListTableMap::ID, $blc2->getId());
         $blc2 = BookClubListPeer::doSelectOne($crit);
         $this->assertNotNull($blc2, 'BookClubList 2 has been re-fetched from db');
 
@@ -344,12 +348,12 @@ class BookstoreTest extends BookstoreEmptyTestBase
 
         // Attempting to delete [multi-table] by found pk
         $c = new Criteria();
-        $c->add(BookPeer::ID, $hp->getId());
+        $c->add(BookTableMap::ID, $hp->getId());
         // The only way for cascading to work currently
         // is to specify the author_id and publisher_id (i.e. the fkeys
         // have to be in the criteria).
-        $c->add(AuthorPeer::ID, $hp->getAuthor()->getId());
-        $c->add(PublisherPeer::ID, $hp->getPublisher()->getId());
+        $c->add(AuthorTableMap::ID, $hp->getAuthor()->getId());
+        $c->add(PublisherTableMap::ID, $hp->getPublisher()->getId());
         $c->setSingleRecord(true);
         BookPeer::doDelete($c);
 
@@ -360,9 +364,9 @@ class BookstoreTest extends BookstoreEmptyTestBase
 
         // Attempting to delete books by complex criteria
         $c = new Criteria();
-        $cn = $c->getNewCriterion(BookPeer::ISBN, "043935806X");
-        $cn->addOr($c->getNewCriterion(BookPeer::ISBN, "0380977427"));
-        $cn->addOr($c->getNewCriterion(BookPeer::ISBN, "0140422161"));
+        $cn = $c->getNewCriterion(BookTableMap::ISBN, "043935806X");
+        $cn->addOr($c->getNewCriterion(BookTableMap::ISBN, "0380977427"));
+        $cn->addOr($c->getNewCriterion(BookTableMap::ISBN, "0140422161"));
         $c->add($cn);
         BookPeer::doDelete($c);
 
@@ -664,17 +668,17 @@ class BookstoreTest extends BookstoreEmptyTestBase
         // re-fetch books and lists from db to be sure that nothing is cached
 
         $crit = new Criteria();
-        $crit->add(BookPeer::ID, $phoenix->getId());
+        $crit->add(BookTableMap::ID, $phoenix->getId());
         $phoenix = BookPeer::doSelectOne($crit);
         $this->assertNotNull($phoenix, "book 'phoenix' has been re-fetched from db");
 
         $crit = new Criteria();
-        $crit->add(BookClubListPeer::ID, $blc1->getId());
+        $crit->add(BookClubListTableMap::ID, $blc1->getId());
         $blc1 = BookClubListPeer::doSelectOne($crit);
         $this->assertNotNull($blc1, 'BookClubList 1 has been re-fetched from db');
 
         $crit = new Criteria();
-        $crit->add(BookClubListPeer::ID, $blc2->getId());
+        $crit->add(BookClubListTableMap::ID, $blc2->getId());
         $blc2 = BookClubListPeer::doSelectOne($crit);
         $this->assertNotNull($blc2, 'BookClubList 2 has been re-fetched from db');
 
@@ -697,12 +701,12 @@ class BookstoreTest extends BookstoreEmptyTestBase
 
         // Attempting to delete [multi-table] by found pk
         $c = new Criteria();
-        $c->add(BookPeer::ID, $hp->getId());
+        $c->add(BookTableMap::ID, $hp->getId());
         // The only way for cascading to work currently
         // is to specify the author_id and publisher_id (i.e. the fkeys
         // have to be in the criteria).
-        $c->add(AuthorPeer::ID, $hp->getAuthor()->getId());
-        $c->add(PublisherPeer::ID, $hp->getPublisher()->getId());
+        $c->add(AuthorTableMap::ID, $hp->getAuthor()->getId());
+        $c->add(PublisherTableMap::ID, $hp->getPublisher()->getId());
         $c->setSingleRecord(true);
         BookPeer::doDelete($c);
 

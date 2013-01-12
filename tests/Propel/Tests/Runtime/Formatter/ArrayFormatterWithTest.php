@@ -19,10 +19,11 @@ use Propel\Tests\Bookstore\AuthorQuery;
 use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\BookPeer;
 use Propel\Tests\Bookstore\BookQuery;
-use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\Bookstore\BookstoreEmployeePeer;
 use Propel\Tests\Bookstore\Essay;
 use Propel\Tests\Bookstore\EssayPeer;
+use Propel\Tests\Bookstore\Map\AuthorTableMap;
+use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\Bookstore\Review;
 use Propel\Tests\Bookstore\ReviewPeer;
 
@@ -262,7 +263,7 @@ class ArrayFormatterWithTest extends BookstoreEmptyTestBase
     {
         $c = new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book');
         $c->setFormatter(ModelCriteria::FORMAT_ARRAY);
-        $c->add(BookPeer::ISBN, '043935806X');
+        $c->add(BookTableMap::ISBN, '043935806X');
         $c->leftJoin('Propel\Tests\Bookstore\Book.Review');
         $c->with('Review');
         $c->limit(5);
@@ -277,7 +278,7 @@ class ArrayFormatterWithTest extends BookstoreEmptyTestBase
         ReviewPeer::clearInstancePool();
         $c = new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book');
         $c->setFormatter(ModelCriteria::FORMAT_ARRAY);
-        $c->add(BookPeer::ISBN, '043935806X');
+        $c->add(BookTableMap::ISBN, '043935806X');
         $c->leftJoin('Propel\Tests\Bookstore\Book.Review');
         $c->with('Review');
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
@@ -331,7 +332,7 @@ class ArrayFormatterWithTest extends BookstoreEmptyTestBase
         AuthorPeer::clearInstancePool();
         ReviewPeer::clearInstancePool();
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Author');
-        $c->add(AuthorPeer::LAST_NAME, 'Rowling');
+        $c->add(AuthorTableMap::LAST_NAME, 'Rowling');
         $c->leftJoinWith('Propel\Tests\Bookstore\Author.Book');
         $c->leftJoinWith('Book.Review');
         $c->setFormatter(ModelCriteria::FORMAT_ARRAY);
@@ -355,7 +356,7 @@ class ArrayFormatterWithTest extends BookstoreEmptyTestBase
         AuthorPeer::clearInstancePool();
         ReviewPeer::clearInstancePool();
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Author');
-        $c->add(AuthorPeer::LAST_NAME, 'Rowling');
+        $c->add(AuthorTableMap::LAST_NAME, 'Rowling');
         $c->leftJoinWith('Propel\Tests\Bookstore\Author.Book b');
         $c->leftJoinWith('b.Review r');
         $c->setFormatter(ModelCriteria::FORMAT_ARRAY);
@@ -383,7 +384,7 @@ class ArrayFormatterWithTest extends BookstoreEmptyTestBase
         $freud->save($this->con);
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Author');
         $c->setFormatter(ModelCriteria::FORMAT_ARRAY);
-        $c->add(AuthorPeer::LAST_NAME, 'Freud');
+        $c->add(AuthorTableMap::LAST_NAME, 'Freud');
         $c->leftJoinWith('Propel\Tests\Bookstore\Author.Book');
         $c->leftJoinWith('Book.Review');
         // should not raise a notice

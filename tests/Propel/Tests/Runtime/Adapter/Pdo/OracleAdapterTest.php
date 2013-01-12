@@ -18,6 +18,8 @@ use Propel\Runtime\Util\BasePeer;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 use Propel\Tests\Bookstore\AuthorPeer;
 use Propel\Tests\Bookstore\BookPeer;
+use Propel\Tests\Bookstore\Map\AuthorTableMap;
+use Propel\Tests\Bookstore\Map\BookTableMap;
 
 /**
  * Tests the DbOracle adapter
@@ -59,7 +61,7 @@ class OracleAdapterTest extends BookstoreTestBase
         $c->setDbName('oracle');
         BookPeer::addSelectColumns($c);
         AuthorPeer::addSelectColumns($c);
-        $c->addAsColumn('BOOK_PRICE', BookPeer::PRICE);
+        $c->addAsColumn('BOOK_PRICE', BookTableMap::PRICE);
         $c->setLimit(1);
         $params = array();
         $asColumns = $c->getAsColumns();
@@ -73,8 +75,8 @@ class OracleAdapterTest extends BookstoreTestBase
         Propel::getServiceContainer()->setAdapter('oracle', new OracleAdapter());
         $db = Propel::getServiceContainer()->getAdapter();
         $c = new Criteria();
-        $c->addSelectColumn(BookPeer::ID);
-        $c->addAsColumn('book_ID', BookPeer::ID);
+        $c->addSelectColumn(BookTableMap::ID);
+        $c->addAsColumn('book_ID', BookTableMap::ID);
         $fromClause = array();
         $selectSql = $db->createSelectSqlPart($c, $fromClause);
         $this->assertEquals('SELECT book.ID, book.ID AS book_ID', $selectSql, 'createSelectSqlPart() returns a SQL SELECT clause with both select and as columns');
