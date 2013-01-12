@@ -19,13 +19,15 @@ namespace Propel\Generator\Behavior\I18n;
 class I18nBehaviorQueryBuilderModifier
 {
     protected $behavior;
+
     protected $table;
+
     protected $builder;
 
     public function __construct($behavior)
     {
         $this->behavior = $behavior;
-        $this->table = $behavior->getTable();
+        $this->table    = $behavior->getTable();
     }
 
     public function queryMethods($builder)

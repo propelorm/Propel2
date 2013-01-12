@@ -3,10 +3,10 @@
  * Current locale
  * @var        string
  */
-protected $currentLocale = '<?php echo $defaultLocale ?>';
+protected $currentLocale = '<?= $defaultLocale ?>';
 
 /**
  * Current translation objects
- * @var        array[<?php echo $objectClassName ?>]
+ * @var        array[<?= $objectClassName ?>]
  */
 protected $currentTranslations;

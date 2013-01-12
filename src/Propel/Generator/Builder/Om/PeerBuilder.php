@@ -135,6 +135,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
     protected function addClassBody(&$script)
     {
         $this->declareClassFromBuilder($this->getStubObjectBuilder());
+        $this->declareClassFromBuilder($this->getTableMapBuilder());
 
         parent::addClassBody($script);
 
@@ -1715,6 +1716,8 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
                     // backwards on purpose
                     $columnNamesF = $fk->getLocalColumns();
                     $columnNamesL = $fk->getForeignColumns();
+
+                    $this->declareClassFromBuilder($joinedTablePeerBuilder->getTableMapBuilder());
 
                     $script .= "
 

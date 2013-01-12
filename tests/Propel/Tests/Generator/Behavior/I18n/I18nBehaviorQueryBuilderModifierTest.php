@@ -12,7 +12,6 @@ namespace Propel\Tests\Generator\Behavior\I18n;
 
 use Propel\Generator\Util\QuickBuilder;
 use Propel\Generator\Behavior\I18n\I18nBehavior;
-
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Util\BasePeer;
@@ -52,7 +51,6 @@ class I18nBehaviorQueryBuilderModifierTest extends \PHPUnit_Framework_TestCase
     </table>
 </database>
 EOF;
-            //QuickBuilder::debugClassesForTable($schema, 'i18n_behavior_test_11');
             QuickBuilder::buildSchema($schema);
         }
     }
@@ -103,7 +101,7 @@ EOF;
 
     public function testJoinI18nCreatesACorrectQuery()
     {
-        $con = Propel::getServiceContainer()->getConnection(\I18nBehaviorTest11Peer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(\Map\I18nBehaviorTest11TableMap::DATABASE_NAME);
         $con->useDebug(true);
         \I18nBehaviorTest11Query::create()
             ->joinI18n('fr_FR')
@@ -143,7 +141,7 @@ EOF;
 
     public function testUseI18nQueryCreatesACorrectQuery()
     {
-        $con = Propel::getServiceContainer()->getConnection(\I18nBehaviorTest11Peer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(\Map\I18nBehaviorTest11TableMap::DATABASE_NAME);
         $con->useDebug(true);
         \I18nBehaviorTest11Query::create()
             ->useI18nQuery('fr_FR')
@@ -194,7 +192,7 @@ EOF;
 
     public function testJoinWithI18nHydratesRelatedObject()
     {
-        $con = Propel::getServiceContainer()->getConnection(\I18nBehaviorTest11Peer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(\Map\I18nBehaviorTest11TableMap::DATABASE_NAME);
         $con->useDebug(true);
         \I18nBehaviorTest11Query::create()->deleteAll();
         \I18nBehaviorTest11I18nQuery::create()->deleteAll();
@@ -259,7 +257,7 @@ EOF;
     {
         $this->markTestSkipped();
 
-        $con = Propel::getServiceContainer()->getConnection(\I18nBehaviorTest11Peer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(\Map\I18nBehaviorTest11TableMap::DATABASE_NAME);
         $con->useDebug(true);
         \I18nBehaviorTest11Query::create()->deleteAll();
         \I18nBehaviorTest11I18nQuery::create()->deleteAll();
