@@ -15,6 +15,7 @@ use Propel\Tests\Bookstore\Author;
 use Propel\Tests\Bookstore\AuthorPeer;
 use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\BookPeer;
+use Propel\Tests\Bookstore\Map\AuthorTableMap;
 use Propel\Tests\Bookstore\Map\BookTableMap;
 
 use Propel\Runtime\Propel;
@@ -315,7 +316,7 @@ class PropelPDOTest extends BookstoreTestBase
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         $c = new Criteria();
-        $c->add(BookPeer::ID, array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1), Criteria::IN);
+        $c->add(BookTableMap::ID, array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1), Criteria::IN);
         $books = BookPeer::doSelect($c, $con);
         $expected = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.ID IN (1,1,1,1,1,1,1,1,1,1,1,1)";
         $this->assertEquals($expected, $con->getLastExecutedQuery(), 'PropelPDO correctly replaces arguments in queries');
@@ -344,7 +345,7 @@ class PropelPDOTest extends BookstoreTestBase
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         $c = new Criteria();
-        $c->add(BookPeer::TITLE, 'Harry%s', Criteria::LIKE);
+        $c->add(BookTableMap::TITLE, 'Harry%s', Criteria::LIKE);
 
         $con->useDebug(false);
         $this->assertEquals('', $con->getLastExecutedQuery(), 'PropelPDO reinitializes the latest query when debug is set to false');
@@ -387,7 +388,7 @@ class PropelPDOTest extends BookstoreTestBase
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         $c = new Criteria();
-        $c->add(BookPeer::TITLE, 'Harry%s', Criteria::LIKE);
+        $c->add(BookTableMap::TITLE, 'Harry%s', Criteria::LIKE);
 
         $con->useDebug(false);
         $this->assertEquals(0, $con->getQueryCount(), 'PropelPDO does not update the query count when useLogging is false');
@@ -469,7 +470,7 @@ class PropelPDOTest extends BookstoreTestBase
         $con->beginTransaction();
 
         $c = new Criteria();
-        $c->add(BookPeer::TITLE, 'Harry%s', Criteria::LIKE);
+        $c->add(BookTableMap::TITLE, 'Harry%s', Criteria::LIKE);
 
         $books = BookPeer::doSelect($c, $con);
         $latestExecutedQuery = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.TITLE LIKE 'Harry%s'";

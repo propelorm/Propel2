@@ -16,10 +16,8 @@ use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
 use Propel\Tests\Bookstore\Author;
 use Propel\Tests\Bookstore\AuthorPeer;
 use Propel\Tests\Bookstore\AuthorQuery;
-use Propel\Tests\Bookstore\Map\AuthorTableMap;
 use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\BookPeer;
-use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\Bookstore\BookQuery;
 use Propel\Tests\Bookstore\BookstoreEmployee;
 use Propel\Tests\Bookstore\BookstoreEmployeePeer;
@@ -32,6 +30,9 @@ use Propel\Tests\Bookstore\EssayPeer;
 use Propel\Tests\Bookstore\Publisher;
 use Propel\Tests\Bookstore\Review;
 use Propel\Tests\Bookstore\ReviewPeer;
+use Propel\Tests\Bookstore\Map\AuthorTableMap;
+use Propel\Tests\Bookstore\Map\BookTableMap;
+use Propel\Tests\Bookstore\Map\BookOpinionTableMap;
 
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
@@ -313,7 +314,7 @@ class ObjectFormatterWithTest extends BookstoreEmptyTestBase
     public function testFindOneWithOneToManyAndLimit()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
-        $c->add(BookPeer::ISBN, '043935806X');
+        $c->add(BookTableMap::ISBN, '043935806X');
         $c->leftJoin('Book.Review');
         $c->with('Review');
         $c->limit(5);
@@ -327,7 +328,7 @@ class ObjectFormatterWithTest extends BookstoreEmptyTestBase
         AuthorPeer::clearInstancePool();
         ReviewPeer::clearInstancePool();
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
-        $c->add(BookPeer::ISBN, '043935806X');
+        $c->add(BookTableMap::ISBN, '043935806X');
         $c->leftJoin('Propel\Tests\Bookstore\Book.Review');
         $c->with('Review');
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
@@ -384,7 +385,7 @@ class ObjectFormatterWithTest extends BookstoreEmptyTestBase
         AuthorPeer::clearInstancePool();
         ReviewPeer::clearInstancePool();
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Author');
-        $c->add(AuthorPeer::LAST_NAME, 'Rowling');
+        $c->add(AuthorTableMap::LAST_NAME, 'Rowling');
         $c->leftJoinWith('Propel\Tests\Bookstore\Author.Book');
         $c->leftJoinWith('Book.Review');
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
@@ -413,7 +414,7 @@ class ObjectFormatterWithTest extends BookstoreEmptyTestBase
         $freud->setLastName("Freud");
         $freud->save($this->con);
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Author');
-        $c->add(AuthorPeer::LAST_NAME, 'Freud');
+        $c->add(AuthorTableMap::LAST_NAME, 'Freud');
         $c->leftJoinWith('Propel\Tests\Bookstore\Author.Book');
         $c->leftJoinWith('Book.Review');
         // should not raise a notice
@@ -478,7 +479,7 @@ class ObjectFormatterWithTest extends BookstoreEmptyTestBase
         AuthorPeer::clearInstancePool();
         ReviewPeer::clearInstancePool();
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Author');
-        $c->add(AuthorPeer::LAST_NAME, 'Rowling');
+        $c->add(AuthorTableMap::LAST_NAME, 'Rowling');
         $c->leftJoinWith('Propel\Tests\Bookstore\Author.Book b');
         $c->leftJoinWith('b.Review r');
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
