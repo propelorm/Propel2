@@ -18,6 +18,12 @@ use Propel\Tests\Bookstore\EssayPeer;
 use Propel\Tests\Bookstore\MediaPeer;
 use Propel\Tests\Bookstore\PublisherPeer;
 
+use Propel\Tests\Bookstore\Map\AuthorTableMap;
+use Propel\Tests\Bookstore\Map\BookTableMap;
+use Propel\Tests\Bookstore\Map\EssayTableMap;
+use Propel\Tests\Bookstore\Map\MediaTableMap;
+use Propel\Tests\Bookstore\Map\PublisherTableMap;
+
 use Propel\Runtime\ActiveQuery\Criteria;
 
 /**
@@ -38,10 +44,10 @@ class GeneratedPeerTest extends BookstoreTestBase
 {
     public function testAlias()
     {
-        $this->assertEquals('foo.ID', BookPeer::alias('foo', BookPeer::ID), 'alias() returns a column name using the table alias');
-        $this->assertEquals('book.ID', BookPeer::alias('book', BookPeer::ID), 'alias() returns a column name using the table alias');
-        $this->assertEquals('foo.COVER_IMAGE', MediaPeer::alias('foo', MediaPeer::COVER_IMAGE), 'alias() also works for lazy-loaded columns');
-        $this->assertEquals('foo.SUBTITLE', EssayPeer::alias('foo', EssayPeer::SUBTITLE), 'alias() also works for columns with custom phpName');
+        $this->assertEquals('foo.ID', BookPeer::alias('foo', BookTableMap::ID), 'alias() returns a column name using the table alias');
+        $this->assertEquals('book.ID', BookPeer::alias('book', BookTableMap::ID), 'alias() returns a column name using the table alias');
+        $this->assertEquals('foo.COVER_IMAGE', MediaPeer::alias('foo', MediaTableMap::COVER_IMAGE), 'alias() also works for lazy-loaded columns');
+        $this->assertEquals('foo.SUBTITLE', EssayPeer::alias('foo', EssayTableMap::SUBTITLE), 'alias() also works for columns with custom phpName');
     }
 
     public function testAddSelectColumns()
@@ -49,12 +55,12 @@ class GeneratedPeerTest extends BookstoreTestBase
         $c = new Criteria();
         BookPeer::addSelectColumns($c);
         $expected = array(
-            BookPeer::ID,
-            BookPeer::TITLE,
-            BookPeer::ISBN,
-            BookPeer::PRICE,
-            BookPeer::PUBLISHER_ID,
-            BookPeer::AUTHOR_ID
+            BookTableMap::ID,
+            BookTableMap::TITLE,
+            BookTableMap::ISBN,
+            BookTableMap::PRICE,
+            BookTableMap::PUBLISHER_ID,
+            BookTableMap::AUTHOR_ID
         );
         $this->assertEquals($expected, $c->getSelectColumns(), 'addSelectColumns() adds the columns of the model to the criteria');
     }
@@ -64,8 +70,8 @@ class GeneratedPeerTest extends BookstoreTestBase
         $c = new Criteria();
         MediaPeer::addSelectColumns($c);
         $expected = array(
-            MediaPeer::ID,
-            MediaPeer::BOOK_ID
+            MediaTableMap::ID,
+            MediaTableMap::BOOK_ID
         );
         $this->assertEquals($expected, $c->getSelectColumns(), 'addSelectColumns() does not add lazy loaded columns');
     }

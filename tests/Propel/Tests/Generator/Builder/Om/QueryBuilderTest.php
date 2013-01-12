@@ -26,20 +26,26 @@ use Propel\Tests\Bookstore\BookQuery;
 use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\Bookstore\BookstoreEmployeeAccountPeer;
 use Propel\Tests\Bookstore\BookstoreEmployeeAccountQuery;
+use Propel\Tests\Bookstore\Map\BookstoreEmployeeAccountTableMap;
 use Propel\Tests\Bookstore\BookClubListQuery;
 use Propel\Tests\Bookstore\BookOpinionQuery;
 use Propel\Tests\Bookstore\BookListRelPeer;
 use Propel\Tests\Bookstore\BookListRelQuery;
+use Propel\Tests\Bookstore\Map\BookListRelTableMap;
 use Propel\Tests\Bookstore\BookSummaryQuery;
 use Propel\Tests\Bookstore\EssayQuery;
 use Propel\Tests\Bookstore\ReviewPeer;
 use Propel\Tests\Bookstore\ReviewQuery;
+use Propel\Tests\Bookstore\Map\ReviewTableMap;
 use Propel\Tests\Bookstore\ReaderFavoriteQuery;
 use Propel\Tests\Bookstore\PublisherPeer;
+use Propel\Tests\Bookstore\Map\PublisherTableMap;
 use Propel\Tests\Bookstore\RecordLabelPeer;
 use Propel\Tests\Bookstore\RecordLabelQuery;
+use Propel\Tests\Bookstore\Map\RecordLabelTableMap;
 use Propel\Tests\Bookstore\ReleasePoolPeer;
 use Propel\Tests\Bookstore\ReleasePoolQuery;
+use Propel\Tests\Bookstore\Map\ReleasePoolTableMap;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
 
@@ -345,7 +351,7 @@ class QueryBuilderTest extends BookstoreTestBase
     public function testFilterByPrimaryKeySimpleKey()
     {
         $q = BookQuery::create()->filterByPrimaryKey(12);
-        $q1 = BookQuery::create()->add(BookPeer::ID, 12, Criteria::EQUAL);
+        $q1 = BookQuery::create()->add(BookTableMap::ID, 12, Criteria::EQUAL);
         $this->assertEquals($q1, $q, 'filterByPrimaryKey() translates to a Criteria::EQUAL in the PK column');
 
         $q = BookQuery::create()->setModelAlias('b', true)->filterByPrimaryKey(12);
@@ -376,15 +382,15 @@ class QueryBuilderTest extends BookstoreTestBase
         $q->filterByPrimaryKey($pk);
 
         $q1 = BookListRelQuery::create()
-            ->add(BookListRelPeer::BOOK_ID, $pk[0], Criteria::EQUAL)
-            ->add(BookListRelPeer::BOOK_CLUB_LIST_ID, $pk[1], Criteria::EQUAL);
+            ->add(BookListRelTableMap::BOOK_ID, $pk[0], Criteria::EQUAL)
+            ->add(BookListRelTableMap::BOOK_CLUB_LIST_ID, $pk[1], Criteria::EQUAL);
         $this->assertEquals($q1, $q, 'filterByPrimaryKey() translates to a Criteria::EQUAL in the PK columns');
     }
 
     public function testFilterByPrimaryKeysSimpleKey()
     {
         $q = BookQuery::create()->filterByPrimaryKeys(array(10, 11, 12));
-        $q1 = BookQuery::create()->add(BookPeer::ID, array(10, 11, 12), Criteria::IN);
+        $q1 = BookQuery::create()->add(BookTableMap::ID, array(10, 11, 12), Criteria::IN);
         $this->assertEquals($q1, $q, 'filterByPrimaryKeys() translates to a Criteria::IN on the PK column');
 
         $q = BookQuery::create()->setModelAlias('b', true)->filterByPrimaryKeys(array(10, 11, 12));
@@ -419,8 +425,8 @@ class QueryBuilderTest extends BookstoreTestBase
 
         $q1 = BookListRelQuery::create();
         foreach ($search as $key) {
-            $cton0 = $q1->getNewCriterion(BookListRelPeer::BOOK_ID, $key[0], Criteria::EQUAL);
-            $cton1 = $q1->getNewCriterion(BookListRelPeer::BOOK_CLUB_LIST_ID, $key[1], Criteria::EQUAL);
+            $cton0 = $q1->getNewCriterion(BookListRelTableMap::BOOK_ID, $key[0], Criteria::EQUAL);
+            $cton1 = $q1->getNewCriterion(BookListRelTableMap::BOOK_CLUB_LIST_ID, $key[1], Criteria::EQUAL);
             $cton0->addAnd($cton1);
             $q1->addOr($cton0);
         }
@@ -438,11 +444,11 @@ class QueryBuilderTest extends BookstoreTestBase
     public function testFilterByIntegerPk()
     {
         $q = BookQuery::create()->filterById(12);
-        $q1 = BookQuery::create()->add(BookPeer::ID, 12, Criteria::EQUAL);
+        $q1 = BookQuery::create()->add(BookTableMap::ID, 12, Criteria::EQUAL);
         $this->assertEquals($q1, $q, 'filterByPkColumn() translates to a Criteria::EQUAL by default');
 
         $q = BookQuery::create()->filterById(12, Criteria::NOT_EQUAL);
-        $q1 = BookQuery::create()->add(BookPeer::ID, 12, Criteria::NOT_EQUAL);
+        $q1 = BookQuery::create()->add(BookTableMap::ID, 12, Criteria::NOT_EQUAL);
         $this->assertEquals($q1, $q, 'filterByPkColumn() accepts an optional comparison operator');
 
         $q = BookQuery::create()->setModelAlias('b', true)->filterById(12);
@@ -450,22 +456,22 @@ class QueryBuilderTest extends BookstoreTestBase
         $this->assertEquals($q1, $q, 'filterByPkColumn() uses true table alias if set');
 
         $q = BookQuery::create()->filterById(array(10, 11, 12));
-        $q1 = BookQuery::create()->add(BookPeer::ID, array(10, 11, 12), Criteria::IN);
+        $q1 = BookQuery::create()->add(BookTableMap::ID, array(10, 11, 12), Criteria::IN);
         $this->assertEquals($q1, $q, 'filterByPkColumn() translates to a Criteria::IN when passed a simple array key');
 
         $q = BookQuery::create()->filterById(array(10, 11, 12), Criteria::NOT_IN);
-        $q1 = BookQuery::create()->add(BookPeer::ID, array(10, 11, 12), Criteria::NOT_IN);
+        $q1 = BookQuery::create()->add(BookTableMap::ID, array(10, 11, 12), Criteria::NOT_IN);
         $this->assertEquals($q1, $q, 'filterByPkColumn() accepts a comparison when passed a simple array key');
     }
 
     public function testFilterByNumber()
     {
         $q = BookQuery::create()->filterByPrice(12);
-        $q1 = BookQuery::create()->add(BookPeer::PRICE, 12, Criteria::EQUAL);
+        $q1 = BookQuery::create()->add(BookTableMap::PRICE, 12, Criteria::EQUAL);
         $this->assertEquals($q1, $q, 'filterByNumColumn() translates to a Criteria::EQUAL by default');
 
         $q = BookQuery::create()->filterByPrice(12, Criteria::NOT_EQUAL);
-        $q1 = BookQuery::create()->add(BookPeer::PRICE, 12, Criteria::NOT_EQUAL);
+        $q1 = BookQuery::create()->add(BookTableMap::PRICE, 12, Criteria::NOT_EQUAL);
         $this->assertEquals($q1, $q, 'filterByNumColumn() accepts an optional comparison operator');
 
         $q = BookQuery::create()->setModelAlias('b', true)->filterByPrice(12);
@@ -473,36 +479,36 @@ class QueryBuilderTest extends BookstoreTestBase
         $this->assertEquals($q1, $q, 'filterByNumColumn() uses true table alias if set');
 
         $q = BookQuery::create()->filterByPrice(array(10, 11, 12));
-        $q1 = BookQuery::create()->add(BookPeer::PRICE, array(10, 11, 12), Criteria::IN);
+        $q1 = BookQuery::create()->add(BookTableMap::PRICE, array(10, 11, 12), Criteria::IN);
         $this->assertEquals($q1, $q, 'filterByNumColumn() translates to a Criteria::IN when passed a simple array key');
 
         $q = BookQuery::create()->filterByPrice(array(10, 11, 12), Criteria::NOT_IN);
-        $q1 = BookQuery::create()->add(BookPeer::PRICE, array(10, 11, 12), Criteria::NOT_IN);
+        $q1 = BookQuery::create()->add(BookTableMap::PRICE, array(10, 11, 12), Criteria::NOT_IN);
         $this->assertEquals($q1, $q, 'filterByNumColumn() accepts a comparison when passed a simple array key');
 
         $q = BookQuery::create()->filterByPrice(array('min' => 10));
-        $q1 = BookQuery::create()->add(BookPeer::PRICE, 10, Criteria::GREATER_EQUAL);
+        $q1 = BookQuery::create()->add(BookTableMap::PRICE, 10, Criteria::GREATER_EQUAL);
         $this->assertEquals($q1, $q, 'filterByNumColumn() translates to a Criteria::GREATER_EQUAL when passed a \'min\' key');
 
         $q = BookQuery::create()->filterByPrice(array('max' => 12));
-        $q1 = BookQuery::create()->add(BookPeer::PRICE, 12, Criteria::LESS_EQUAL);
+        $q1 = BookQuery::create()->add(BookTableMap::PRICE, 12, Criteria::LESS_EQUAL);
         $this->assertEquals($q1, $q, 'filterByNumColumn() translates to a Criteria::LESS_EQUAL when passed a \'max\' key');
 
         $q = BookQuery::create()->filterByPrice(array('min' => 10, 'max' => 12));
         $q1 = BookQuery::create()
-            ->add(BookPeer::PRICE, 10, Criteria::GREATER_EQUAL)
-            ->addAnd(BookPeer::PRICE, 12, Criteria::LESS_EQUAL);
+            ->add(BookTableMap::PRICE, 10, Criteria::GREATER_EQUAL)
+            ->addAnd(BookTableMap::PRICE, 12, Criteria::LESS_EQUAL);
         $this->assertEquals($q1, $q, 'filterByNumColumn() translates to a between when passed both a \'min\' and a \'max\' key');
     }
 
     public function testFilterByTimestamp()
     {
         $q = BookstoreEmployeeAccountQuery::create()->filterByCreated(12);
-        $q1 = BookstoreEmployeeAccountQuery::create()->add(BookstoreEmployeeAccountPeer::CREATED, 12, Criteria::EQUAL);
+        $q1 = BookstoreEmployeeAccountQuery::create()->add(BookstoreEmployeeAccountTableMap::CREATED, 12, Criteria::EQUAL);
         $this->assertEquals($q1, $q, 'filterByDateColumn() translates to a Criteria::EQUAL by default');
 
         $q = BookstoreEmployeeAccountQuery::create()->filterByCreated(12, Criteria::NOT_EQUAL);
-        $q1 = BookstoreEmployeeAccountQuery::create()->add(BookstoreEmployeeAccountPeer::CREATED, 12, Criteria::NOT_EQUAL);
+        $q1 = BookstoreEmployeeAccountQuery::create()->add(BookstoreEmployeeAccountTableMap::CREATED, 12, Criteria::NOT_EQUAL);
         $this->assertEquals($q1, $q, 'filterByDateColumn() accepts an optional comparison operator');
 
         $q = BookstoreEmployeeAccountQuery::create()->setModelAlias('b', true)->filterByCreated(12);
@@ -510,28 +516,28 @@ class QueryBuilderTest extends BookstoreTestBase
         $this->assertEquals($q1, $q, 'filterByDateColumn() uses true table alias if set');
 
         $q = BookstoreEmployeeAccountQuery::create()->filterByCreated(array('min' => 10));
-        $q1 = BookstoreEmployeeAccountQuery::create()->add(BookstoreEmployeeAccountPeer::CREATED, 10, Criteria::GREATER_EQUAL);
+        $q1 = BookstoreEmployeeAccountQuery::create()->add(BookstoreEmployeeAccountTableMap::CREATED, 10, Criteria::GREATER_EQUAL);
         $this->assertEquals($q1, $q, 'filterByDateColumn() translates to a Criteria::GREATER_EQUAL when passed a \'min\' key');
 
         $q = BookstoreEmployeeAccountQuery::create()->filterByCreated(array('max' => 12));
-        $q1 = BookstoreEmployeeAccountQuery::create()->add(BookstoreEmployeeAccountPeer::CREATED, 12, Criteria::LESS_EQUAL);
+        $q1 = BookstoreEmployeeAccountQuery::create()->add(BookstoreEmployeeAccountTableMap::CREATED, 12, Criteria::LESS_EQUAL);
         $this->assertEquals($q1, $q, 'filterByDateColumn() translates to a Criteria::LESS_EQUAL when passed a \'max\' key');
 
         $q = BookstoreEmployeeAccountQuery::create()->filterByCreated(array('min' => 10, 'max' => 12));
         $q1 = BookstoreEmployeeAccountQuery::create()
-            ->add(BookstoreEmployeeAccountPeer::CREATED, 10, Criteria::GREATER_EQUAL)
-            ->addAnd(BookstoreEmployeeAccountPeer::CREATED, 12, Criteria::LESS_EQUAL);
+            ->add(BookstoreEmployeeAccountTableMap::CREATED, 10, Criteria::GREATER_EQUAL)
+            ->addAnd(BookstoreEmployeeAccountTableMap::CREATED, 12, Criteria::LESS_EQUAL);
         $this->assertEquals($q1, $q, 'filterByDateColumn() translates to a between when passed both a \'min\' and a \'max\' key');
     }
 
     public function testFilterByString()
     {
         $q = BookQuery::create()->filterByTitle('foo');
-        $q1 = BookQuery::create()->add(BookPeer::TITLE, 'foo', Criteria::EQUAL);
+        $q1 = BookQuery::create()->add(BookTableMap::TITLE, 'foo', Criteria::EQUAL);
         $this->assertEquals($q1, $q, 'filterByStringColumn() translates to a Criteria::EQUAL by default');
 
         $q = BookQuery::create()->filterByTitle('foo', Criteria::NOT_EQUAL);
-        $q1 = BookQuery::create()->add(BookPeer::TITLE, 'foo', Criteria::NOT_EQUAL);
+        $q1 = BookQuery::create()->add(BookTableMap::TITLE, 'foo', Criteria::NOT_EQUAL);
         $this->assertEquals($q1, $q, 'filterByStringColumn() accepts an optional comparison operator');
 
         $q = BookQuery::create()->setModelAlias('b', true)->filterByTitle('foo');
@@ -539,46 +545,46 @@ class QueryBuilderTest extends BookstoreTestBase
         $this->assertEquals($q1, $q, 'filterByStringColumn() uses true table alias if set');
 
         $q = BookQuery::create()->filterByTitle(array('foo', 'bar'));
-        $q1 = BookQuery::create()->add(BookPeer::TITLE, array('foo', 'bar'), Criteria::IN);
+        $q1 = BookQuery::create()->add(BookTableMap::TITLE, array('foo', 'bar'), Criteria::IN);
         $this->assertEquals($q1, $q, 'filterByStringColumn() translates to a Criteria::IN when passed an array');
 
         $q = BookQuery::create()->filterByTitle(array('foo', 'bar'), Criteria::NOT_IN);
-        $q1 = BookQuery::create()->add(BookPeer::TITLE, array('foo', 'bar'), Criteria::NOT_IN);
+        $q1 = BookQuery::create()->add(BookTableMap::TITLE, array('foo', 'bar'), Criteria::NOT_IN);
         $this->assertEquals($q1, $q, 'filterByStringColumn() accepts a comparison when passed an array');
 
         $q = BookQuery::create()->filterByTitle('foo%');
-        $q1 = BookQuery::create()->add(BookPeer::TITLE, 'foo%', Criteria::LIKE);
+        $q1 = BookQuery::create()->add(BookTableMap::TITLE, 'foo%', Criteria::LIKE);
         $this->assertEquals($q1, $q, 'filterByStringColumn() translates to a Criteria::LIKE when passed a string with a % wildcard');
 
         $q = BookQuery::create()->filterByTitle('foo%', Criteria::NOT_LIKE);
-        $q1 = BookQuery::create()->add(BookPeer::TITLE, 'foo%', Criteria::NOT_LIKE);
+        $q1 = BookQuery::create()->add(BookTableMap::TITLE, 'foo%', Criteria::NOT_LIKE);
         $this->assertEquals($q1, $q, 'filterByStringColumn() accepts a comparison when passed a string with a % wildcard');
 
         $q = BookQuery::create()->filterByTitle('foo%', Criteria::EQUAL);
-        $q1 = BookQuery::create()->add(BookPeer::TITLE, 'foo%', Criteria::EQUAL);
+        $q1 = BookQuery::create()->add(BookTableMap::TITLE, 'foo%', Criteria::EQUAL);
         $this->assertEquals($q1, $q, 'filterByStringColumn() accepts a comparison when passed a string with a % wildcard');
 
         $q = BookQuery::create()->filterByTitle('*foo');
-        $q1 = BookQuery::create()->add(BookPeer::TITLE, '%foo', Criteria::LIKE);
+        $q1 = BookQuery::create()->add(BookTableMap::TITLE, '%foo', Criteria::LIKE);
         $this->assertEquals($q1, $q, 'filterByStringColumn() translates to a Criteria::LIKE when passed a string with a * wildcard, and turns * into %');
 
         $q = BookQuery::create()->filterByTitle('*f%o*o%');
-        $q1 = BookQuery::create()->add(BookPeer::TITLE, '%f%o%o%', Criteria::LIKE);
+        $q1 = BookQuery::create()->add(BookTableMap::TITLE, '%f%o%o%', Criteria::LIKE);
         $this->assertEquals($q1, $q, 'filterByStringColumn() translates to a Criteria::LIKE when passed a string with mixed wildcards, and turns *s into %s');
     }
 
     public function testFilterByBoolean()
     {
         $q = ReviewQuery::create()->filterByRecommended(true);
-        $q1 = ReviewQuery::create()->add(ReviewPeer::RECOMMENDED, true, Criteria::EQUAL);
+        $q1 = ReviewQuery::create()->add(ReviewTableMap::RECOMMENDED, true, Criteria::EQUAL);
         $this->assertEquals($q1, $q, 'filterByBooleanColumn() translates to a Criteria::EQUAL by default');
 
         $q = ReviewQuery::create()->filterByRecommended(true, Criteria::NOT_EQUAL);
-        $q1 = ReviewQuery::create()->add(ReviewPeer::RECOMMENDED, true, Criteria::NOT_EQUAL);
+        $q1 = ReviewQuery::create()->add(ReviewTableMap::RECOMMENDED, true, Criteria::NOT_EQUAL);
         $this->assertEquals($q1, $q, 'filterByBooleanColumn() accepts an optional comparison operator');
 
         $q = ReviewQuery::create()->filterByRecommended(false);
-        $q1 = ReviewQuery::create()->add(ReviewPeer::RECOMMENDED, false, Criteria::EQUAL);
+        $q1 = ReviewQuery::create()->add(ReviewTableMap::RECOMMENDED, false, Criteria::EQUAL);
         $this->assertEquals($q1, $q, 'filterByBooleanColumn() translates to a Criteria::EQUAL by default');
 
         $q = ReviewQuery::create()->setModelAlias('b', true)->filterByRecommended(true);
@@ -586,31 +592,31 @@ class QueryBuilderTest extends BookstoreTestBase
         $this->assertEquals($q1, $q, 'filterByBooleanColumn() uses true table alias if set');
 
         $q = ReviewQuery::create()->filterByRecommended('true');
-        $q1 = ReviewQuery::create()->add(ReviewPeer::RECOMMENDED, true, Criteria::EQUAL);
+        $q1 = ReviewQuery::create()->add(ReviewTableMap::RECOMMENDED, true, Criteria::EQUAL);
         $this->assertEquals($q1, $q, 'filterByBooleanColumn() translates to a = true when passed a true string');
 
         $q = ReviewQuery::create()->filterByRecommended('yes');
-        $q1 = ReviewQuery::create()->add(ReviewPeer::RECOMMENDED, true, Criteria::EQUAL);
+        $q1 = ReviewQuery::create()->add(ReviewTableMap::RECOMMENDED, true, Criteria::EQUAL);
         $this->assertEquals($q1, $q, 'filterByBooleanColumn() translates to a = true when passed a true string');
 
         $q = ReviewQuery::create()->filterByRecommended('1');
-        $q1 = ReviewQuery::create()->add(ReviewPeer::RECOMMENDED, true, Criteria::EQUAL);
+        $q1 = ReviewQuery::create()->add(ReviewTableMap::RECOMMENDED, true, Criteria::EQUAL);
         $this->assertEquals($q1, $q, 'filterByBooleanColumn() translates to a = true when passed a true string');
 
         $q = ReviewQuery::create()->filterByRecommended('false');
-        $q1 = ReviewQuery::create()->add(ReviewPeer::RECOMMENDED, false, Criteria::EQUAL);
+        $q1 = ReviewQuery::create()->add(ReviewTableMap::RECOMMENDED, false, Criteria::EQUAL);
         $this->assertEquals($q1, $q, 'filterByBooleanColumn() translates to a = false when passed a false string');
 
         $q = ReviewQuery::create()->filterByRecommended('no');
-        $q1 = ReviewQuery::create()->add(ReviewPeer::RECOMMENDED, false, Criteria::EQUAL);
+        $q1 = ReviewQuery::create()->add(ReviewTableMap::RECOMMENDED, false, Criteria::EQUAL);
         $this->assertEquals($q1, $q, 'filterByBooleanColumn() translates to a = false when passed a false string');
 
         $q = ReviewQuery::create()->filterByRecommended('0');
-        $q1 = ReviewQuery::create()->add(ReviewPeer::RECOMMENDED, false, Criteria::EQUAL);
+        $q1 = ReviewQuery::create()->add(ReviewTableMap::RECOMMENDED, false, Criteria::EQUAL);
         $this->assertEquals($q1, $q, 'filterByBooleanColumn() translates to a = false when passed a false string');
 
         $q = ReviewQuery::create()->filterByRecommended('');
-        $q1 = ReviewQuery::create()->add(ReviewPeer::RECOMMENDED, false, Criteria::EQUAL);
+        $q1 = ReviewQuery::create()->add(ReviewTableMap::RECOMMENDED, false, Criteria::EQUAL);
         $this->assertEquals($q1, $q, 'filterByBooleanColumn() translates to a = false when passed an empty string');
 
     }
@@ -641,11 +647,11 @@ class QueryBuilderTest extends BookstoreTestBase
         $this->assertEquals($testBook, $book, 'Generated query handles filterByFk() methods correctly for simple fkeys');
 
         $q = BookQuery::create()->filterByAuthor($testAuthor);
-        $q1 = BookQuery::create()->add(BookPeer::AUTHOR_ID, $testAuthor->getId(), Criteria::EQUAL);
+        $q1 = BookQuery::create()->add(BookTableMap::AUTHOR_ID, $testAuthor->getId(), Criteria::EQUAL);
         $this->assertEquals($q1, $q, 'filterByFk() translates to a Criteria::EQUAL by default');
 
         $q = BookQuery::create()->filterByAuthor($testAuthor, Criteria::NOT_EQUAL);
-        $q1 = BookQuery::create()->add(BookPeer::AUTHOR_ID, $testAuthor->getId(), Criteria::NOT_EQUAL);
+        $q1 = BookQuery::create()->add(BookTableMap::AUTHOR_ID, $testAuthor->getId(), Criteria::NOT_EQUAL);
         $this->assertEquals($q1, $q, 'filterByFk() accepts an optional comparison operator');
     }
 
@@ -683,7 +689,7 @@ class QueryBuilderTest extends BookstoreTestBase
         $q1 = $this->con->getLastExecutedQuery();
 
         $books = BookQuery::create()
-            ->add(BookPeer::AUTHOR_ID, $authors->getPrimaryKeys(), Criteria::IN)
+            ->add(BookTableMap::AUTHOR_ID, $authors->getPrimaryKeys(), Criteria::IN)
             ->find($this->con);
         $q2 = $this->con->getLastExecutedQuery();
 
@@ -716,11 +722,11 @@ class QueryBuilderTest extends BookstoreTestBase
         $this->assertEquals($testAuthor, $author, 'Generated query handles filterByRefFk() methods correctly for simple fkeys');
 
         $q = AuthorQuery::create()->filterByBook($testBook);
-        $q1 = AuthorQuery::create()->add(AuthorPeer::ID, $testBook->getAuthorId(), Criteria::EQUAL);
+        $q1 = AuthorQuery::create()->add(AuthorTableMap::ID, $testBook->getAuthorId(), Criteria::EQUAL);
         $this->assertEquals($q1, $q, 'filterByRefFk() translates to a Criteria::EQUAL by default');
 
         $q = AuthorQuery::create()->filterByBook($testBook, Criteria::NOT_EQUAL);
-        $q1 = AuthorQuery::create()->add(AuthorPeer::ID, $testBook->getAuthorId(), Criteria::NOT_EQUAL);
+        $q1 = AuthorQuery::create()->add(AuthorTableMap::ID, $testBook->getAuthorId(), Criteria::NOT_EQUAL);
         $this->assertEquals($q1, $q, 'filterByRefFk() accepts an optional comparison operator');
     }
 
@@ -734,14 +740,14 @@ class QueryBuilderTest extends BookstoreTestBase
             ->find($this->con);
 
         $testRelease = ReleasePoolQuery::create()
-            ->addJoin(ReleasePoolPeer::RECORD_LABEL_ID, RecordLabelPeer::ID)
+            ->addJoin(ReleasePoolTableMap::RECORD_LABEL_ID, RecordLabelTableMap::ID)
             ->filterByRecordLabel($testLabel)
             ->find($this->con);
         $q1 = $this->con->getLastExecutedQuery();
 
         $releasePool = ReleasePoolQuery::create()
-            ->addJoin(ReleasePoolPeer::RECORD_LABEL_ID, RecordLabelPeer::ID)
-            ->add(ReleasePoolPeer::RECORD_LABEL_ID, $testLabel->toKeyValue('Id', 'Id'), Criteria::IN)
+            ->addJoin(ReleasePoolTableMap::RECORD_LABEL_ID, RecordLabelTableMap::ID)
+            ->add(ReleasePoolTableMap::RECORD_LABEL_ID, $testLabel->toKeyValue('Id', 'Id'), Criteria::IN)
             ->find($this->con);
         $q2 = $this->con->getLastExecutedQuery();
 
@@ -783,8 +789,8 @@ class QueryBuilderTest extends BookstoreTestBase
         $q1 = $this->con->getLastExecutedQuery();
 
         $authors = AuthorQuery::create()
-            ->addJoin(AuthorPeer::ID, BookPeer::AUTHOR_ID, Criteria::LEFT_JOIN)
-            ->add(BookPeer::ID, $books->getPrimaryKeys(), Criteria::IN)
+            ->addJoin(AuthorTableMap::ID, BookTableMap::AUTHOR_ID, Criteria::LEFT_JOIN)
+            ->add(BookTableMap::ID, $books->getPrimaryKeys(), Criteria::IN)
             ->find($this->con);
         $q2 = $this->con->getLastExecutedQuery();
 
@@ -895,7 +901,7 @@ class QueryBuilderTest extends BookstoreTestBase
             ->endUse();
         $q1 = BookQuery::create()
             ->join('Book.Author', Criteria::LEFT_JOIN)
-            ->add(AuthorPeer::FIRST_NAME, 'Leo', Criteria::EQUAL);
+            ->add(AuthorTableMap::FIRST_NAME, 'Leo', Criteria::EQUAL);
         $this->assertTrue($q->equals($q1), 'useFkQuery() translates to a condition on a left join on non-required columns');
 
         $q = BookSummaryQuery::create()
@@ -904,7 +910,7 @@ class QueryBuilderTest extends BookstoreTestBase
             ->endUse();
         $q1 = BookSummaryQuery::create()
             ->join('BookSummary.SummarizedBook', Criteria::INNER_JOIN)
-            ->add(BookPeer::TITLE, 'War And Peace', Criteria::EQUAL);
+            ->add(BookTableMap::TITLE, 'War And Peace', Criteria::EQUAL);
         $this->assertTrue($q->equals($q1), 'useFkQuery() translates to a condition on an inner join on required columns');
     }
 
@@ -916,7 +922,7 @@ class QueryBuilderTest extends BookstoreTestBase
             ->endUse();
         $q1 = BookQuery::create()
             ->join('Book.Author', Criteria::LEFT_JOIN)
-            ->add(AuthorPeer::FIRST_NAME, 'Leo', Criteria::EQUAL);
+            ->add(AuthorTableMap::FIRST_NAME, 'Leo', Criteria::EQUAL);
         $this->assertTrue($q->equals($q1), 'useFkQuery() accepts a join type as second parameter');
     }
 
@@ -947,8 +953,8 @@ class QueryBuilderTest extends BookstoreTestBase
             ->filterByTitle('War And Peace');
         $q1 = BookQuery::create()
             ->join('Book.Author', Criteria::LEFT_JOIN)
-            ->add(AuthorPeer::FIRST_NAME, 'Leo', Criteria::EQUAL)
-            ->add(BookPeer::TITLE, 'War And Peace', Criteria::EQUAL);
+            ->add(AuthorTableMap::FIRST_NAME, 'Leo', Criteria::EQUAL)
+            ->add(BookTableMap::TITLE, 'War And Peace', Criteria::EQUAL);
         $this->assertTrue($q->equals($q1), 'useFkQuery() allows combining conditions on main and related query');
     }
 
@@ -963,8 +969,8 @@ class QueryBuilderTest extends BookstoreTestBase
             ->endUse();
         $q1 = BookQuery::create()
             ->join('Book.Author', Criteria::LEFT_JOIN)
-            ->add(AuthorPeer::FIRST_NAME, 'Leo', Criteria::EQUAL)
-            ->add(AuthorPeer::LAST_NAME, 'Tolstoi', Criteria::EQUAL);
+            ->add(AuthorTableMap::FIRST_NAME, 'Leo', Criteria::EQUAL)
+            ->add(AuthorTableMap::LAST_NAME, 'Tolstoi', Criteria::EQUAL);
         $this->assertTrue($q->equals($q1), 'useFkQuery() called twice on the same relation does not create two joins');
     }
 
@@ -1008,7 +1014,7 @@ class QueryBuilderTest extends BookstoreTestBase
         $q1 = ReviewQuery::create()
             ->join('Review.Book', Criteria::LEFT_JOIN)
             ->join('Book.Author', Criteria::LEFT_JOIN)
-            ->add(AuthorPeer::FIRST_NAME, 'Leo', Criteria::EQUAL);
+            ->add(AuthorTableMap::FIRST_NAME, 'Leo', Criteria::EQUAL);
         // embedded queries create joins that keep a relation to the parent
         // as this is not testable, we need to use another testing technique
         $params = array();
@@ -1030,9 +1036,9 @@ class QueryBuilderTest extends BookstoreTestBase
             ->endUse();
         $q1 = BookQuery::create()
             ->join('\Propel\Tests\Bookstore\Book.Author', Criteria::LEFT_JOIN)
-            ->add(AuthorPeer::FIRST_NAME, 'Leo', Criteria::EQUAL)
+            ->add(AuthorTableMap::FIRST_NAME, 'Leo', Criteria::EQUAL)
             ->join('\Propel\Tests\Bookstore\Book.Publisher', Criteria::LEFT_JOIN)
-            ->add(PublisherPeer::NAME, 'Penguin', Criteria::EQUAL);
+            ->add(PublisherTableMap::NAME, 'Penguin', Criteria::EQUAL);
         $this->assertTrue($q->equals($q1), 'useFkQuery() called twice on two relations creates two joins');
     }
 
@@ -1048,7 +1054,7 @@ class QueryBuilderTest extends BookstoreTestBase
         $q1 = $con->getLastExecutedQuery();
         $books = BookQuery::create()
             ->leftJoinWithAuthor()
-            ->add(AuthorPeer::FIRST_NAME, 'Leo', Criteria::EQUAL)
+            ->add(AuthorTableMap::FIRST_NAME, 'Leo', Criteria::EQUAL)
             ->find($con);
         $q2 = $con->getLastExecutedQuery();
         $this->assertEquals($q1, $q2, 'with() can be used after a call to useFkQuery() with no alias');
