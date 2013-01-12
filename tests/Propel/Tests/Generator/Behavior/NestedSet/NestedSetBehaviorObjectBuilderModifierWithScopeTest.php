@@ -10,13 +10,6 @@
 
 namespace Propel\Tests\Generator\Behavior\NestedSet;
 
-use Propel\Tests\Helpers\Bookstore\Behavior\BookstoreNestedSetTestBase;
-use Propel\Tests\Helpers\Bookstore\Behavior\PublicTable10;
-
-use Propel\Tests\Bookstore\Behavior\Table10;
-use Propel\Tests\Bookstore\Behavior\Table10Peer;
-use Propel\Tests\Bookstore\Behavior\Table10Query;
-
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Exception\PropelException;
 
@@ -24,17 +17,15 @@ use Propel\Runtime\Exception\PropelException;
  * Tests for NestedSetBehaviorObjectBuilderModifier class
  *
  * @author François Zaninotto
- * @version		$Revision$
- * @package		generator.behavior.nestedset
  */
-class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends BookstoreNestedSetTestBase
+class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
 {
     protected function getByTitle($title)
     {
         $c = new Criteria();
-        $c->add(Table10Peer::TITLE, $title);
+        $c->add(\NestedSetTable10Peer::TITLE, $title);
 
-        return Table10Peer::doSelectOne($c);
+        return \NestedSetTable10Peer::doSelectOne($c);
     }
 
     /**
@@ -42,12 +33,12 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends BookstoreNeste
      */
     public function testSaveRootInTreeWithExistingRootWithSameScope()
     {
-        Table10Peer::doDeleteAll();
-        $t1 = new Table10();
+        \NestedSetTable10Peer::doDeleteAll();
+        $t1 = new \NestedSetTable10();
         $t1->setScopeValue(1);
         $t1->makeRoot();
         $t1->save();
-        $t2 = new Table10();
+        $t2 = new \NestedSetTable10();
         $t2->setScopeValue(1);
         $t2->makeRoot();
         $t2->save();
@@ -55,12 +46,12 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends BookstoreNeste
 
     public function testSaveRootInTreeWithExistingRootWithDifferentScope()
     {
-        Table10Peer::doDeleteAll();
-        $t1 = new Table10();
+        \NestedSetTable10Peer::doDeleteAll();
+        $t1 = new \NestedSetTable10();
         $t1->setScopeValue(1);
         $t1->makeRoot();
         $t1->save();
-        $t2 = new Table10();
+        $t2 = new \NestedSetTable10();
         $t2->setScopeValue(2);
         $t2->makeRoot();
         $t2->save();
@@ -285,15 +276,15 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends BookstoreNeste
 
     public function testInsertAsFirstChildOfExistingObject()
     {
-        Table10Query::create()->deleteAll();
-        $t = new Table10();
+        \NestedSetTable10Query::create()->deleteAll();
+        $t = new \NestedSetTable10();
         $t->setScopeValue(34);
         $t->makeRoot();
         $t->save();
         $this->assertEquals(1, $t->getLeftValue());
         $this->assertEquals(2, $t->getRightValue());
         $this->assertEquals(0, $t->getLevel());
-        $t1 = new Table10();
+        $t1 = new \NestedSetTable10();
         $t1->save();
         $t1->insertAsFirstChildOf($t);
         $this->assertEquals(2, $t1->getLeftValue());
@@ -354,15 +345,15 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends BookstoreNeste
 
     public function testInsertAsLastChildOfExistingObject()
     {
-        Table10Query::create()->deleteAll();
-        $t = new Table10();
+        \NestedSetTable10Query::create()->deleteAll();
+        $t = new \NestedSetTable10();
         $t->setScopeValue(34);
         $t->makeRoot();
         $t->save();
         $this->assertEquals(1, $t->getLeftValue());
         $this->assertEquals(2, $t->getRightValue());
         $this->assertEquals(0, $t->getLevel());
-        $t1 = new Table10();
+        $t1 = new \NestedSetTable10();
         $t1->save();
         $t1->insertAsLastChildOf($t);
         $this->assertEquals(2, $t1->getLeftValue());
@@ -423,12 +414,12 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends BookstoreNeste
 
     public function testInsertAsPrevSiblingOfExistingObject()
     {
-        Table10Query::create()->deleteAll();
-        $t = new Table10();
+        \NestedSetTable10Query::create()->deleteAll();
+        $t = new \NestedSetTable10();
         $t->setScopeValue(34);
         $t->makeRoot();
         $t->save();
-        $t1 = new Table10();
+        $t1 = new \NestedSetTable10();
         $t1->insertAsFirstChildOf($t);
         $t1->save();
         $this->assertEquals(1, $t->getLeftValue());
@@ -438,7 +429,7 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends BookstoreNeste
         $this->assertEquals(3, $t1->getRightValue());
         $this->assertEquals(34, $t1->getScopeValue());
         $this->assertEquals(1, $t1->getLevel());
-        $t2 = new Table10();
+        $t2 = new \NestedSetTable10();
         $t2->save();
         $t2->insertAsPrevSiblingOf($t1);
         $this->assertEquals(2, $t2->getLeftValue());
@@ -503,12 +494,12 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends BookstoreNeste
 
     public function testInsertAsNextSiblingOfExistingObject()
     {
-        Table10Query::create()->deleteAll();
-        $t = new Table10();
+        \NestedSetTable10Query::create()->deleteAll();
+        $t = new \NestedSetTable10();
         $t->setScopeValue(34);
         $t->makeRoot();
         $t->save();
-        $t1 = new Table10();
+        $t1 = new \NestedSetTable10();
         $t1->insertAsFirstChildOf($t);
         $t1->save();
         $this->assertEquals(1, $t->getLeftValue());
@@ -518,7 +509,7 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends BookstoreNeste
         $this->assertEquals(3, $t1->getRightValue());
         $this->assertEquals(34, $t1->getScopeValue());
         $this->assertEquals(1, $t1->getLevel());
-        $t2 = new Table10();
+        $t2 = new \NestedSetTable10();
         $t2->save();
         $t2->insertAsNextSiblingOf($t1);
         $this->assertEquals(4, $t2->getLeftValue());
