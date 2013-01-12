@@ -40,7 +40,7 @@ abstract class BookstoreTestBase extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
+        $this->con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         $this->con->beginTransaction();
     }
 
