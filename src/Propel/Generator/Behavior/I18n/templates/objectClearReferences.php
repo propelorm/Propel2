@@ -1,2 +1,2 @@
-$this->currentLocale = '<?php echo $defaultLocale ?>';
+$this->currentLocale = '<?= $defaultLocale ?>';
 $this->currentTranslations = null;

@@ -17,10 +17,10 @@ use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Behavior\Validate\ValidateBehavior;
 
 /**
- * Allows translation of text columns through transparent one-to-many relationship
+ * Allows translation of text columns through transparent one-to-many
+ * relationship.
  *
  * @author Francois Zaninotto
- * @version        $Revision$
  */
 class I18nBehavior extends Behavior
 {
@@ -28,19 +28,20 @@ class I18nBehavior extends Behavior
 
     // default parameters value
     protected $parameters = array(
-        'i18n_table'    => '%TABLE%_i18n',
-        'i18n_phpname'  => '%PHPNAME%I18n',
-        'i18n_columns'  => '',
-        'locale_column' => 'locale',
-        'default_locale' => null,
-        'locale_alias'  => '',
+        'i18n_table'        => '%TABLE%_i18n',
+        'i18n_phpname'      => '%PHPNAME%I18n',
+        'i18n_columns'      => '',
+        'locale_column'     => 'locale',
+        'default_locale'    => null,
+        'locale_alias'      => '',
     );
 
     protected $tableModificationOrder = 70;
 
     protected $objectBuilderModifier;
+
     protected $queryBuilderModifier;
-    protected $peerBuilderModifier;
+
     protected $i18nTable;
 
     public function modifyDatabase()
@@ -48,158 +49,11 @@ class I18nBehavior extends Behavior
         foreach ($this->getDatabase()->getTables() as $table) {
             if ($table->hasBehavior('i18n') && !$table->getBehavior('i18n')->getParameter('default_locale')) {
                 $table->getBehavior('i18n')->addParameter(array(
-                    'name' => 'default_locale',
-                    'value' => $this->getParameter('default_locale')
+                    'name'  => 'default_locale',
+                    'value' => $this->getParameter('default_locale'),
                 ));
             }
         }
-    }
-
-    public function modifyTable()
-    {
-        $this->addI18nTable();
-        $this->relateI18nTableToMainTable();
-        $this->addLocaleColumnToI18n();
-        $this->moveI18nColumns();
-    }
-
-    protected function addI18nTable()
-    {
-        $table = $this->getTable();
-        $database = $table->getDatabase();
-        $i18nTableName = $this->getI18nTableName();
-        if ($database->hasTable($i18nTableName)) {
-            $this->i18nTable = $database->getTable($i18nTableName);
-        } else {
-            $this->i18nTable = $database->addTable(array(
-                'name'      => $i18nTableName,
-                'phpName'   => $this->getI18nTablePhpName(),
-                'package'   => $table->getPackage(),
-                'schema'    => $table->getSchema(),
-                'namespace' => $table->getNamespace() ? '\\' . $table->getNamespace() : null,
-            ));
-            // every behavior adding a table should re-execute database behaviors
-            foreach ($database->getBehaviors() as $behavior) {
-                $behavior->modifyDatabase();
-            }
-        }
-    }
-
-    protected function relateI18nTableToMainTable()
-    {
-        $table = $this->getTable();
-        $i18nTable = $this->i18nTable;
-        $pks = $this->getTable()->getPrimaryKey();
-        if (count($pks) > 1) {
-            throw new EngineException('The i18n behavior does not support tables with composite primary keys');
-        }
-        foreach ($pks as $column) {
-            if (!$i18nTable->hasColumn($column->getName())) {
-                $column = clone $column;
-                $column->setAutoIncrement(false);
-                $i18nTable->addColumn($column);
-            }
-        }
-        if (in_array($table->getName(), $i18nTable->getForeignTableNames())) {
-            return;
-        }
-        $fk = new ForeignKey();
-        $fk->setForeignTableCommonName($table->getCommonName());
-        $fk->setForeignSchemaName($table->getSchema());
-        $fk->setDefaultJoin('LEFT JOIN');
-        $fk->setOnDelete(ForeignKey::CASCADE);
-        $fk->setOnUpdate(ForeignKey::NONE);
-        foreach ($pks as $column) {
-            $fk->addReference($column->getName(), $column->getName());
-        }
-        $i18nTable->addForeignKey($fk);
-    }
-
-    protected function addLocaleColumnToI18n()
-    {
-        $localeColumnName = $this->getLocaleColumnName();
-        if (!$this->i18nTable->hasColumn($localeColumnName)) {
-            $this->i18nTable->addColumn(array(
-                'name'       => $localeColumnName,
-                'type'       => PropelTypes::VARCHAR,
-                'size'       => 5,
-                'default'    => $this->getDefaultLocale(),
-                'primaryKey' => 'true',
-            ));
-        }
-    }
-
-    /**
-     * Moves i18n columns from the main table to the i18n table
-     */
-    protected function moveI18nColumns()
-    {
-        $table = $this->getTable();
-        $i18nTable = $this->i18nTable;
-        $i18nValidateParams = array();
-        foreach ($this->getI18nColumnNamesFromConfig() as $columnName) {
-            if (!$i18nTable->hasColumn($columnName)) {
-                if (!$table->hasColumn($columnName)) {
-                    throw new EngineException(sprintf('No column named %s found in table %s', $columnName, $table->getName()));
-                }
-                $column = $table->getColumn($columnName);
-                // add the column
-                $i18nColumn = $i18nTable->addColumn(clone $column);
-
-                //validate behavior: move rules associated to the column
-                if ($table->hasBehavior('validate')) {
-                    $validateBehavior = $table->getBehavior('validate');
-                    $params = $validateBehavior->getParametersFromColumnName($columnName);
-                    $i18nValidateParams = array_merge($i18nValidateParams, $params);
-                    $validateBehavior->removeParametersFromColumnName($columnName);
-                }
-                // FIXME: also move FKs, and indices on this column
-            }
-            if ($table->hasColumn($columnName)) {
-                $table->removeColumn($columnName);
-            }
-        }
-
-        //validate behavior
-        if (count($i18nValidateParams) > 0) {
-            $i18nVbehavior = new ValidateBehavior();
-            $i18nVbehavior->setName('validate');
-            $i18nVbehavior->setParameters($i18nValidateParams);
-            $i18nTable->addBehavior($i18nVbehavior);
-
-            //current table must have almost 1 validation rule
-            $validate = $table->getBehavior('validate');
-            $validate->addRuleOnPk();
-        }
-    }
-
-    protected function getI18nTableName()
-    {
-        return $this->replaceTokens($this->getParameter('i18n_table'));
-    }
-
-    protected function getI18nTablePhpName()
-    {
-        return $this->replaceTokens($this->getParameter('i18n_phpname'));
-    }
-
-    protected function getLocaleColumnName()
-    {
-        return $this->replaceTokens($this->getParameter('locale_column'));
-    }
-
-    protected function getI18nColumnNamesFromConfig()
-    {
-        $columnNames = explode(',', $this->getParameter('i18n_columns'));
-        foreach ($columnNames as $key => $columnName) {
-            if ($columnName = trim($columnName)) {
-                $columnNames[$key] = $columnName;
-            } else {
-                unset($columnNames[$key]);
-            }
-        }
-
-        return $columnNames;
     }
 
     public function getDefaultLocale()
@@ -281,12 +135,169 @@ class I18nBehavior extends Behavior
         return $this->queryBuilderModifier;
     }
 
-    public function getPeerBuilderModifier()
+    public function staticAttributes($builder)
     {
-        if (null === $this->peerBuilderModifier) {
-            $this->peerBuilderModifier = new I18nBehaviorPeerBuilderModifier($this);
+        return $this->renderTemplate('staticAttributes', array(
+            'defaultLocale' => $this->getDefaultLocale(),
+        ));
+    }
+
+    public function modifyTable()
+    {
+        $this->addI18nTable();
+        $this->relateI18nTableToMainTable();
+        $this->addLocaleColumnToI18n();
+        $this->moveI18nColumns();
+    }
+
+    protected function addI18nTable()
+    {
+        $table         = $this->getTable();
+        $database      = $table->getDatabase();
+        $i18nTableName = $this->getI18nTableName();
+
+        if ($database->hasTable($i18nTableName)) {
+            $this->i18nTable = $database->getTable($i18nTableName);
+        } else {
+            $this->i18nTable = $database->addTable(array(
+                'name'      => $i18nTableName,
+                'phpName'   => $this->getI18nTablePhpName(),
+                'package'   => $table->getPackage(),
+                'schema'    => $table->getSchema(),
+                'namespace' => $table->getNamespace() ? '\\' . $table->getNamespace() : null,
+            ));
+
+            // every behavior adding a table should re-execute database behaviors
+            foreach ($database->getBehaviors() as $behavior) {
+                $behavior->modifyDatabase();
+            }
+        }
+    }
+
+    protected function relateI18nTableToMainTable()
+    {
+        $table     = $this->getTable();
+        $i18nTable = $this->i18nTable;
+        $pks       = $this->getTable()->getPrimaryKey();
+
+        if (count($pks) > 1) {
+            throw new EngineException('The i18n behavior does not support tables with composite primary keys');
         }
 
-        return $this->peerBuilderModifier;
+        foreach ($pks as $column) {
+            if (!$i18nTable->hasColumn($column->getName())) {
+                $column = clone $column;
+                $column->setAutoIncrement(false);
+                $i18nTable->addColumn($column);
+            }
+        }
+
+        if (in_array($table->getName(), $i18nTable->getForeignTableNames())) {
+            return;
+        }
+
+        $fk = new ForeignKey();
+        $fk->setForeignTableCommonName($table->getCommonName());
+        $fk->setForeignSchemaName($table->getSchema());
+        $fk->setDefaultJoin('LEFT JOIN');
+        $fk->setOnDelete(ForeignKey::CASCADE);
+        $fk->setOnUpdate(ForeignKey::NONE);
+
+        foreach ($pks as $column) {
+            $fk->addReference($column->getName(), $column->getName());
+        }
+
+        $i18nTable->addForeignKey($fk);
+    }
+
+    protected function addLocaleColumnToI18n()
+    {
+        $localeColumnName = $this->getLocaleColumnName();
+
+        if (! $this->i18nTable->hasColumn($localeColumnName)) {
+            $this->i18nTable->addColumn(array(
+                'name'       => $localeColumnName,
+                'type'       => PropelTypes::VARCHAR,
+                'size'       => 5,
+                'default'    => $this->getDefaultLocale(),
+                'primaryKey' => 'true',
+            ));
+        }
+    }
+
+    /**
+     * Moves i18n columns from the main table to the i18n table
+     */
+    protected function moveI18nColumns()
+    {
+        $table     = $this->getTable();
+        $i18nTable = $this->i18nTable;
+
+        $i18nValidateParams = array();
+        foreach ($this->getI18nColumnNamesFromConfig() as $columnName) {
+            if (!$i18nTable->hasColumn($columnName)) {
+                if (!$table->hasColumn($columnName)) {
+                    throw new EngineException(sprintf('No column named %s found in table %s', $columnName, $table->getName()));
+                }
+
+                $column = $table->getColumn($columnName);
+                // add the column
+                $i18nColumn = $i18nTable->addColumn(clone $column);
+
+                //validate behavior: move rules associated to the column
+                if ($table->hasBehavior('validate')) {
+                    $validateBehavior = $table->getBehavior('validate');
+                    $params = $validateBehavior->getParametersFromColumnName($columnName);
+                    $i18nValidateParams = array_merge($i18nValidateParams, $params);
+                    $validateBehavior->removeParametersFromColumnName($columnName);
+                }
+                // FIXME: also move FKs, and indices on this column
+            }
+
+            if ($table->hasColumn($columnName)) {
+                $table->removeColumn($columnName);
+            }
+        }
+
+        //validate behavior
+        if (count($i18nValidateParams) > 0) {
+            $i18nVbehavior = new ValidateBehavior();
+            $i18nVbehavior->setName('validate');
+            $i18nVbehavior->setParameters($i18nValidateParams);
+            $i18nTable->addBehavior($i18nVbehavior);
+
+            //current table must have almost 1 validation rule
+            $validate = $table->getBehavior('validate');
+            $validate->addRuleOnPk();
+        }
+    }
+
+    protected function getI18nTableName()
+    {
+        return $this->replaceTokens($this->getParameter('i18n_table'));
+    }
+
+    protected function getI18nTablePhpName()
+    {
+        return $this->replaceTokens($this->getParameter('i18n_phpname'));
+    }
+
+    protected function getLocaleColumnName()
+    {
+        return $this->replaceTokens($this->getParameter('locale_column'));
+    }
+
+    protected function getI18nColumnNamesFromConfig()
+    {
+        $columnNames = explode(',', $this->getParameter('i18n_columns'));
+        foreach ($columnNames as $key => $columnName) {
+            if ($columnName = trim($columnName)) {
+                $columnNames[$key] = $columnName;
+            } else {
+                unset($columnNames[$key]);
+            }
+        }
+
+        return $columnNames;
     }
 }
