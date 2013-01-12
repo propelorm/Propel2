@@ -161,6 +161,7 @@ class "  .$this->getUnqualifiedClassName() . " extends " . $baseClassName . " {
     protected function addClassBody(&$script)
     {
         $this->declareClassFromBuilder($this->getStubPeerBuilder());
+        $this->declareClassFromBuilder($this->getTableMapBuilder());
         $this->declareClasses(
             '\Propel\Runtime\Connection\ConnectionInterface',
             '\Propel\Runtime\ActiveQuery\Criteria'
