@@ -469,7 +469,7 @@ class Column extends MappingModel
      */
     public function getConstantName()
     {
-        $classname = $this->parentTable->getPhpName() . 'Peer';
+        $classname = $this->parentTable->getPhpName() . 'TableMap';
         $const = $this->getConstantColumnName();
 
         return $classname.'::'.$const;

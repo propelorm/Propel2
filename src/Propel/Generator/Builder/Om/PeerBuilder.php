@@ -198,7 +198,6 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      */
     protected function addConstantsAndAttributes(&$script)
     {
-        $this->addColumnNameConstants($script);
         $this->addInheritanceColumnConstants($script);
         if ($this->getTable()->hasEnumColumns()) {
             $this->addEnumColumnConstants($script);
@@ -302,7 +301,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
         $script .= "),
         TableMap::TYPE_COLNAME => array (";
         foreach ($tableColumns as $col) {
-            $script .= $this->getColumnConstant($col, 'self').", ";
+            $script .= $this->getColumnConstant($col, $this->getTableMapClass()).", ";
         }
         $script .= "),
         TableMap::TYPE_RAW_COLNAME => array (";
@@ -353,7 +352,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
         $script .= "),
         TableMap::TYPE_COLNAME => array (";
         foreach ($tableColumns as $num => $col) {
-            $script .= $this->getColumnConstant($col, 'self')." => $num, ";
+            $script .= $this->getColumnConstant($col, $this->getTableMapClass())." => $num, ";
         }
         $script .= "),
         TableMap::TYPE_RAW_COLNAME => array (";
@@ -387,7 +386,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
         foreach ($this->getTable()->getColumns() as $col) {
             if ($col->isEnumType()) {
                 $script .= "
-        self::" . $this->getColumnName($col) ." => array(
+        {$col->getConstantName()} => array(
 ";
                 foreach ($col->getValueSet() as $value) {
                     $script .= "            self::" . $this->getColumnName($col) . '_' . $this->getEnumValueConstant($value) . ",
@@ -606,7 +605,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
         foreach ($this->getTable()->getColumns() as $col) {
             if (!$col->isLazyLoad()) {
                 $script .= "
-            \$criteria->addSelectColumn(static::".$this->getColumnName($col).");";
+            \$criteria->addSelectColumn({$col->getConstantName()});";
             } // if !col->isLazyLoad
         } // foreach
         $script .= "
