@@ -100,6 +100,10 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
 
         $script .= $this->addConstants();
 
+        // apply behaviors
+        $this->applyBehaviorModifier('staticConstants', $script, "    ");
+        $this->applyBehaviorModifier('staticAttributes', $script, "    ");
+
         $this->addAttributes($script);
         $this->addInitialize($script);
         $this->addBuildRelations($script);

@@ -503,6 +503,18 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     }
 
     /**
+     * Returns the tableMap classname for current table.
+     * This is the classname that is used whenever object or peer classes want
+     * to invoke methods of the object classes.
+     * @param  boolean $fqcn
+     * @return string  (e.g. 'My')
+     */
+    public function getTableMapClassName($fqcn = false)
+    {
+        return $this->getClassNameFromBuilder($this->getTableMapBuilder(), $fqcn);
+    }
+
+    /**
      * Get the column constant name (e.g. PeerName::COLUMN_NAME).
      *
      * @param Column $col       The column we need a name for.

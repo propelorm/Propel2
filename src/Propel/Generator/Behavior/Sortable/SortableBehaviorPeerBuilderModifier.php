@@ -28,6 +28,8 @@ class SortableBehaviorPeerBuilderModifier
 
     protected $peerClassName;
 
+    protected $tableMapClassName;
+
     public function __construct($behavior)
     {
         $this->behavior = $behavior;
@@ -59,28 +61,7 @@ class SortableBehaviorPeerBuilderModifier
         $this->builder = $builder;
         $this->objectClassName = $builder->getObjectClassName();
         $this->peerClassName = $builder->getPeerClassName();
-    }
-
-    public function staticAttributes($builder)
-    {
-        $tableName = $this->table->getName();
-        $script = "
-/**
- * rank column
- */
-const RANK_COL = '" . $tableName . '.' . $this->getColumnConstant('rank_column') . "';
-";
-
-        if ($this->behavior->useScope()) {
-            $script .=     "
-/**
- * Scope column for the set
- */
-const SCOPE_COL = '" . $tableName . '.' . $this->getColumnConstant('scope_column') . "';
-";
-        }
-
-        return $script;
+        $this->tableMapClassName = $builder->getTableMapClassName();
     }
 
     /**
@@ -126,14 +107,14 @@ const SCOPE_COL = '" . $tableName . '.' . $this->getColumnConstant('scope_column
 static public function getMaxRank(" . ($useScope ? "\$scope = null, " : "") . "ConnectionInterface \$con = null)
 {
     if (null === \$con) {
-        \$con = Propel::getServiceContainer()->getReadConnection({$this->peerClassName}::DATABASE_NAME);
+        \$con = Propel::getServiceContainer()->getReadConnection({$this->tableMapClassName}::DATABASE_NAME);
     }
     // shift the objects with a position lower than the one of object
     \$c = new Criteria();
-    \$c->addSelectColumn('MAX(' . {$this->peerClassName}::RANK_COL . ')');";
+    \$c->addSelectColumn('MAX(' . {$this->tableMapClassName}::RANK_COL . ')');";
         if ($useScope) {
             $script .= "
-    \$c->add({$this->peerClassName}::SCOPE_COL, \$scope, Criteria::EQUAL);";
+    \$c->add({$this->tableMapClassName}::SCOPE_COL, \$scope, Criteria::EQUAL);";
         }
         $script .= "
     \$stmt = {$this->peerClassName}::doSelectStmt(\$c, \$con);
@@ -164,14 +145,14 @@ static public function getMaxRank(" . ($useScope ? "\$scope = null, " : "") . "C
 static public function retrieveByRank(\$rank, " . ($useScope ? "\$scope = null, " : "") . "ConnectionInterface \$con = null)
 {
     if (null === \$con) {
-        \$con = Propel::getServiceContainer()->getReadConnection($peerClassName::DATABASE_NAME);
+        \$con = Propel::getServiceContainer()->getReadConnection({$this->tableMapClassName}::DATABASE_NAME);
     }
 
     \$c = new Criteria;
-    \$c->add($peerClassName::RANK_COL, \$rank);";
+    \$c->add({$this->tableMapClassName}::RANK_COL, \$rank);";
         if ($useScope) {
             $script .= "
-    \$c->add($peerClassName::SCOPE_COL, \$scope, Criteria::EQUAL);";
+    \$c->add({$this->tableMapClassName}::SCOPE_COL, \$scope, Criteria::EQUAL);";
         }
         $script .= "
 
@@ -199,7 +180,7 @@ static public function retrieveByRank(\$rank, " . ($useScope ? "\$scope = null, 
 static public function reorder(array \$order, ConnectionInterface \$con = null)
 {
     if (null === \$con) {
-        \$con = Propel::getServiceContainer()->getWriteConnection($peerClassName::DATABASE_NAME);
+        \$con = Propel::getServiceContainer()->getWriteConnection({$this->tableMapClassName}::DATABASE_NAME);
     }
 
     \$con->beginTransaction();
@@ -240,7 +221,7 @@ static public function reorder(array \$order, ConnectionInterface \$con = null)
 static public function doSelectOrderByRank(Criteria \$criteria = null, \$order = Criteria::ASC, ConnectionInterface \$con = null)
 {
     if (null === \$con) {
-        \$con = Propel::getServiceContainer()->getReadConnection($peerClassName::DATABASE_NAME);
+        \$con = Propel::getServiceContainer()->getReadConnection({$this->tableMapClassName}::DATABASE_NAME);
     }
 
     if (null === \$criteria) {
@@ -252,9 +233,9 @@ static public function doSelectOrderByRank(Criteria \$criteria = null, \$order =
     \$criteria->clearOrderByColumns();
 
     if (Criteria::ASC == \$order) {
-        \$criteria->addAscendingOrderByColumn($peerClassName::RANK_COL);
+        \$criteria->addAscendingOrderByColumn({$this->tableMapClassName}::RANK_COL);
     } else {
-        \$criteria->addDescendingOrderByColumn($peerClassName::RANK_COL);
+        \$criteria->addDescendingOrderByColumn({$this->tableMapClassName}::RANK_COL);
     }
 
     return $peerClassName::doSelect(\$criteria, \$con);
@@ -278,7 +259,7 @@ static public function doSelectOrderByRank(Criteria \$criteria = null, \$order =
 static public function retrieveList(\$scope, \$order = Criteria::ASC, ConnectionInterface \$con = null)
 {
     \$c = new Criteria();
-    \$c->add($peerClassName::SCOPE_COL, \$scope);
+    \$c->add({$this->tableMapClassName}::SCOPE_COL, \$scope);
 
     return $peerClassName::doSelectOrderByRank(\$c, \$order, \$con);
 }
@@ -287,7 +268,6 @@ static public function retrieveList(\$scope, \$order = Criteria::ASC, Connection
 
     protected function addCountList(&$script)
     {
-        $peerClassName = $this->peerClassName;
         $script .= "
 /**
  * Return the number of sortable objects in the given scope
@@ -300,9 +280,9 @@ static public function retrieveList(\$scope, \$order = Criteria::ASC, Connection
 static public function countList(\$scope, ConnectionInterface \$con = null)
 {
     \$c = new Criteria();
-    \$c->add($peerClassName::SCOPE_COL, \$scope);
+    \$c->add({$this->tableMapClassName}::SCOPE_COL, \$scope);
 
-    return $peerClassName::doCount(\$c, \$con);
+    return {$this->peerClassName}::doCount(\$c, \$con);
 }
 ";
     }
@@ -322,7 +302,7 @@ static public function countList(\$scope, ConnectionInterface \$con = null)
 static public function deleteList(\$scope, ConnectionInterface \$con = null)
 {
     \$c = new Criteria();
-    \$c->add($peerClassName::SCOPE_COL, \$scope);
+    \$c->add({$this->tableMapClassName}::SCOPE_COL, \$scope);
 
     return $peerClassName::doDelete(\$c, \$con);
 }
@@ -350,23 +330,23 @@ static public function deleteList(\$scope, ConnectionInterface \$con = null)
 static public function shiftRank(\$delta, \$first, \$last = null, " . ($useScope ? "\$scope = null, " : "") . "ConnectionInterface \$con = null)
 {
     if (null === \$con) {
-        \$con = Propel::getServiceContainer()->getWriteConnection($peerClassName::DATABASE_NAME);
+        \$con = Propel::getServiceContainer()->getWriteConnection({$this->tableMapClassName}::DATABASE_NAME);
     }
 
-    \$whereCriteria = new Criteria($peerClassName::DATABASE_NAME);
-    \$criterion = \$whereCriteria->getNewCriterion($peerClassName::RANK_COL, \$first, Criteria::GREATER_EQUAL);
+    \$whereCriteria = new Criteria({$this->tableMapClassName}::DATABASE_NAME);
+    \$criterion = \$whereCriteria->getNewCriterion({$this->tableMapClassName}::RANK_COL, \$first, Criteria::GREATER_EQUAL);
     if (null !== \$last) {
-        \$criterion->addAnd(\$whereCriteria->getNewCriterion($peerClassName::RANK_COL, \$last, Criteria::LESS_EQUAL));
+        \$criterion->addAnd(\$whereCriteria->getNewCriterion({$this->tableMapClassName}::RANK_COL, \$last, Criteria::LESS_EQUAL));
     }
     \$whereCriteria->add(\$criterion);";
         if ($useScope) {
             $script .= "
-    \$whereCriteria->add($peerClassName::SCOPE_COL, \$scope, Criteria::EQUAL);";
+    \$whereCriteria->add({$this->tableMapClassName}::SCOPE_COL, \$scope, Criteria::EQUAL);";
         }
         $script .= "
 
-    \$valuesCriteria = new Criteria($peerClassName::DATABASE_NAME);
-    \$valuesCriteria->add($peerClassName::RANK_COL, array('raw' => $peerClassName::RANK_COL . ' + ?', 'value' => \$delta), Criteria::CUSTOM_EQUAL);
+    \$valuesCriteria = new Criteria({$this->tableMapClassName}::DATABASE_NAME);
+    \$valuesCriteria->add({$this->tableMapClassName}::RANK_COL, array('raw' => {$this->tableMapClassName}::RANK_COL . ' + ?', 'value' => \$delta), Criteria::CUSTOM_EQUAL);
 
     {$this->builder->getPeerBuilder()->getBasePeerClassName()}::doUpdate(\$whereCriteria, \$valuesCriteria, \$con);
     $peerClassName::clearInstancePool();

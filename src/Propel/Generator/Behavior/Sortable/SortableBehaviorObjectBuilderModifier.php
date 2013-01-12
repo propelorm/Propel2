@@ -30,6 +30,8 @@ class SortableBehaviorObjectBuilderModifier
 
     protected $peerFullClassName;
 
+    protected $tableMapClassName;
+
     public function __construct($behavior)
     {
         $this->behavior = $behavior;
@@ -58,6 +60,7 @@ class SortableBehaviorObjectBuilderModifier
         $this->queryClassName = $builder->getQueryClassName();
         $this->peerClassName = $builder->getPeerClassName();
         $this->peerFullClassName = $builder->getStubPeerBuilder()->getFullyQualifiedClassName();
+        $this->tableMapClassName = $builder->getTableMapClassName();
     }
 
     /**
@@ -90,7 +93,7 @@ class SortableBehaviorObjectBuilderModifier
         $useScope = $this->behavior->useScope();
         $this->setBuilder($builder);
 
-        return "if (!\$this->isColumnModified({$this->peerClassName}::RANK_COL)) {
+        return "if (!\$this->isColumnModified({$this->tableMapClassName}::RANK_COL)) {
     \$this->{$this->getColumnSetter()}({$this->queryClassName}::create()->getMaxRank(" . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con) + 1);
 }
 ";
@@ -416,7 +419,7 @@ public function moveToRank(\$newRank, ConnectionInterface \$con = null)
         throw new PropelException('New objects cannot be moved. Please use insertAtRank() instead');
     }
     if (null === \$con) {
-        \$con = Propel::getServiceContainer()->getWriteConnection($peerClassName::DATABASE_NAME);
+        \$con = Propel::getServiceContainer()->getWriteConnection({$this->tableMapClassName}::DATABASE_NAME);
     }
     if (\$newRank < 1 || \$newRank > {$this->queryClassName}::create()->getMaxRank(" . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con)) {
         throw new PropelException('Invalid rank ' . \$newRank);
@@ -464,7 +467,7 @@ public function moveToRank(\$newRank, ConnectionInterface \$con = null)
 public function swapWith(\$object, ConnectionInterface \$con = null)
 {
     if (null === \$con) {
-        \$con = Propel::getServiceContainer()->getWriteConnection({$this->peerClassName}::DATABASE_NAME);
+        \$con = Propel::getServiceContainer()->getWriteConnection({$this->tableMapClassName}::DATABASE_NAME);
     }
     \$con->beginTransaction();
     try {
@@ -501,7 +504,7 @@ public function moveUp(ConnectionInterface \$con = null)
         return \$this;
     }
     if (null === \$con) {
-        \$con = Propel::getServiceContainer()->getWriteConnection({$this->peerClassName}::DATABASE_NAME);
+        \$con = Propel::getServiceContainer()->getWriteConnection({$this->tableMapClassName}::DATABASE_NAME);
     }
     \$con->beginTransaction();
     try {
@@ -534,7 +537,7 @@ public function moveDown(ConnectionInterface \$con = null)
         return \$this;
     }
     if (null === \$con) {
-        \$con = Propel::getServiceContainer()->getWriteConnection({$this->peerClassName}::DATABASE_NAME);
+        \$con = Propel::getServiceContainer()->getWriteConnection({$this->tableMapClassName}::DATABASE_NAME);
     }
     \$con->beginTransaction();
     try {
@@ -589,7 +592,7 @@ public function moveToBottom(ConnectionInterface \$con = null)
         return false;
     }
     if (null === \$con) {
-        \$con = Propel::getServiceContainer()->getWriteConnection({$this->peerClassName}::DATABASE_NAME);
+        \$con = Propel::getServiceContainer()->getWriteConnection({$this->tableMapClassName}::DATABASE_NAME);
     }
     \$con->beginTransaction();
     try {
