@@ -14,6 +14,7 @@ use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
 use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
 
 use Propel\Tests\Bookstore\AuthorPeer;
+use Propel\Tests\Bookstore\Map\AuthorTableMap;
 use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\BookPeer;
 use Propel\Tests\Bookstore\Map\BookTableMap;
@@ -24,6 +25,7 @@ use Propel\Tests\Bookstore\Map\BookReaderTableMap;
 use Propel\Tests\Bookstore\Bookstore;
 use Propel\Tests\Bookstore\BookstoreContest;
 use Propel\Tests\Bookstore\BookstoreContestPeer;
+use Propel\Tests\Bookstore\Map\BookstoreContestTableMap;
 use Propel\Tests\Bookstore\BookstoreContestEntry;
 use Propel\Tests\Bookstore\Customer;
 use Propel\Tests\Bookstore\Contest;
@@ -31,6 +33,7 @@ use Propel\Tests\Bookstore\BookstoreContestEntryPeer;
 use Propel\Tests\Bookstore\MediaPeer;
 use Propel\Tests\Bookstore\Publisher;
 use Propel\Tests\Bookstore\PublisherPeer;
+use Propel\Tests\Bookstore\Map\PublisherTableMap;
 use Propel\Tests\Bookstore\ReviewPeer;
 use Propel\Tests\Bookstore\ReaderFavorite;
 use Propel\Tests\Bookstore\ReaderFavoritePeer;
@@ -66,17 +69,17 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
     public function testDoDelete_MultiTable()
     {
         $selc = new Criteria();
-        $selc->add(BookPeer::TITLE, "Harry Potter and the Order of the Phoenix");
+        $selc->add(BookTableMap::TITLE, "Harry Potter and the Order of the Phoenix");
         $hp = BookPeer::doSelectOne($selc);
 
         // print "Attempting to delete [multi-table] by found pk: ";
         $c = new Criteria();
-        $c->add(BookPeer::ID, $hp->getId());
+        $c->add(BookTableMap::ID, $hp->getId());
         // The only way for multi-delete to work currently
         // is to specify the author_id and publisher_id (i.e. the fkeys
         // have to be in the criteria).
-        $c->add(AuthorPeer::ID, $hp->getAuthorId());
-        $c->add(PublisherPeer::ID, $hp->getPublisherId());
+        $c->add(AuthorTableMap::ID, $hp->getAuthorId());
+        $c->add(PublisherTableMap::ID, $hp->getPublisherId());
         $c->setSingleRecord(true);
         BookPeer::doDelete($c);
 
@@ -95,9 +98,9 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
     {
         //print "Attempting to delete books by complex criteria: ";
         $c = new Criteria();
-        $cn = $c->getNewCriterion(BookPeer::ISBN, "043935806X");
-        $cn->addOr($c->getNewCriterion(BookPeer::ISBN, "0380977427"));
-        $cn->addOr($c->getNewCriterion(BookPeer::ISBN, "0140422161"));
+        $cn = $c->getNewCriterion(BookTableMap::ISBN, "043935806X");
+        $cn->addOr($c->getNewCriterion(BookTableMap::ISBN, "0380977427"));
+        $cn->addOr($c->getNewCriterion(BookTableMap::ISBN, "0140422161"));
         $c->add($cn);
         BookPeer::doDelete($c);
 
@@ -320,7 +323,7 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
     public function testDoDeleteAll_SetNull()
     {
         $c = new Criteria();
-        $c->add(BookPeer::AUTHOR_ID, null, Criteria::NOT_EQUAL);
+        $c->add(BookTableMap::AUTHOR_ID, null, Criteria::NOT_EQUAL);
 
         // 1) make sure there are some books with valid authors
         $this->assertTrue(count(BookPeer::doSelect($c)) > 0, "Expect some book.author_id columns that are not NULL.");
@@ -401,11 +404,11 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
         $name = "A Sample Publisher - " . time();
 
         $values = new Criteria();
-        $values->add(PublisherPeer::NAME, $name);
+        $values->add(PublisherTableMap::NAME, $name);
         PublisherPeer::doInsert($values);
 
         $c = new Criteria();
-        $c->add(PublisherPeer::NAME, $name);
+        $c->add(PublisherTableMap::NAME, $name);
 
         $matches = PublisherPeer::doSelect($c);
         $this->assertEquals(1, count($matches), "Expect there to be exactly 1 publisher just-inserted.");
@@ -425,7 +428,7 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
         PublisherPeer::doInsert($values);
 
         $c = new Criteria();
-        $c->add(PublisherPeer::NAME, $name);
+        $c->add(PublisherTableMap::NAME, $name);
 
         $matches = PublisherPeer::doSelect($c);
         $this->assertEquals(1, count($matches), "Expect there to be exactly 1 publisher just-inserted.");
@@ -510,7 +513,7 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
     public function testDoCountJoinWithOrderBy()
     {
         $c = new Criteria(BookTableMap::DATABASE_NAME);
-        $c->addAscendingOrderByColumn(BookPeer::ID);
+        $c->addAscendingOrderByColumn(BookTableMap::ID);
 
         // None of these should not throw an exception!
         BookPeer::doCountJoinAll($c);

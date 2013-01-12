@@ -729,7 +729,7 @@ class ColumnTest extends ModelTestCase
 
         $this->assertSame('created_at', $column->getPeerName());
         $this->assertSame('CREATED_AT', $column->getConstantColumnName());
-        $this->assertSame('ArticlePeer::CREATED_AT', $column->getConstantName());
+        $this->assertSame('ArticleTableMap::CREATED_AT', $column->getConstantName());
     }
 
     public function testSetDefaultPhpName()

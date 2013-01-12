@@ -38,6 +38,7 @@ use Propel\Tests\Bookstore\Publisher;
 use Propel\Tests\Bookstore\PublisherPeer;
 use Propel\Tests\Bookstore\Review;
 use Propel\Tests\Bookstore\ReviewPeer;
+use Propel\Tests\Bookstore\Map\ReviewTableMap;
 use Propel\Tests\Bookstore\BookstoreEmployee;
 use Propel\Tests\Bookstore\BookstoreEmployeePeer;
 use Propel\Tests\Bookstore\Map\BookstoreEmployeeTableMap;
@@ -663,12 +664,12 @@ class GeneratedObjectTest extends BookstoreTestBase
 
         // Now set different criteria and expect different results
         $c = new Criteria();
-        $c->add(ReviewPeer::RECOMMENDED, false);
+        $c->add(ReviewTableMap::RECOMMENDED, false);
         $this->assertEquals(floor($num/2), $book->countReviews($c), "Expected " . floor($num/2) . " results from countReviews(recomm=false)");
 
         // Change Criteria, run again -- expect different.
         $c = new Criteria();
-        $c->add(ReviewPeer::RECOMMENDED, true);
+        $c->add(ReviewTableMap::RECOMMENDED, true);
         $this->assertEquals(ceil($num/2), count($book->getReviews($c)), "Expected " . ceil($num/2) . " results from getReviews(recomm=true)");
 
         $this->assertEquals($num, $book->countReviews(), "Expected countReviews to return $num with new empty Criteria");
@@ -735,15 +736,15 @@ class GeneratedObjectTest extends BookstoreTestBase
 
         $arr1 = $b->toArray(TableMap::TYPE_COLNAME);
         $expectedKeys = array(
-            BookPeer::ID,
-            BookPeer::TITLE,
-            BookPeer::ISBN,
-            BookPeer::PRICE,
-            BookPeer::PUBLISHER_ID,
-            BookPeer::AUTHOR_ID
+            BookTableMap::ID,
+            BookTableMap::TITLE,
+            BookTableMap::ISBN,
+            BookTableMap::PRICE,
+            BookTableMap::PUBLISHER_ID,
+            BookTableMap::AUTHOR_ID
         );
         $this->assertEquals($expectedKeys, array_keys($arr1), 'toArray() accepts a $keyType parameter to change the result keys');
-        $this->assertEquals('Don Juan', $arr1[BookPeer::TITLE], 'toArray() returns an associative array representation of the object');
+        $this->assertEquals('Don Juan', $arr1[BookTableMap::TITLE], 'toArray() returns an associative array representation of the object');
     }
 
     public function testToArrayKeyTypePreDefined()

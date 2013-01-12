@@ -23,6 +23,11 @@ use Propel\Tests\Bookstore\BookstoreSale;
 use Propel\Tests\Bookstore\BookstoreEmployee;
 use Propel\Tests\Bookstore\BookstoreEmployeeAccount;
 use Propel\Tests\Bookstore\BookstoreEmployeePeer;
+use Propel\Tests\Bookstore\Map\AuthorTableMap;
+use Propel\Tests\Bookstore\Map\BookTableMap;
+use Propel\Tests\Bookstore\Map\BookstoreTableMap;
+use Propel\Tests\Bookstore\Map\BookstoreEmployeeTableMap;
+use Propel\Tests\Bookstore\Map\MediaTableMap;
 use Propel\Tests\Bookstore\MediaPeer;
 use Propel\Tests\Bookstore\Publisher;
 use Propel\Tests\Bookstore\PublisherPeer;
@@ -78,7 +83,7 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
 
         // arbitrary, different author
         $c = new Criteria();
-        $c->add(AuthorPeer::ID, $b->getAuthorId(), Criteria::NOT_EQUAL);
+        $c->add(AuthorTableMap::ID, $b->getAuthorId(), Criteria::NOT_EQUAL);
         $a = AuthorPeer::doSelectOne($c);
 
         $origAuthor = $b->getAuthor();
@@ -260,7 +265,7 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
 
         // Test a "normal" object
         $c = new Criteria();
-        $c->add(BookPeer::TITLE, 'Harry%', Criteria::LIKE);
+        $c->add(BookTableMap::TITLE, 'Harry%', Criteria::LIKE);
 
         $book = BookPeer::doSelectOne($c);
         $reviews = $book->getReviews();
@@ -292,8 +297,8 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
         BookstoreDataPopulator::populate();
 
         $c = new Criteria();
-        $c->add(MediaPeer::COVER_IMAGE, null, Criteria::NOT_EQUAL);
-        $c->add(MediaPeer::EXCERPT, null, Criteria::NOT_EQUAL);
+        $c->add(MediaTableMap::COVER_IMAGE, null, Criteria::NOT_EQUAL);
+        $c->add(MediaTableMap::EXCERPT, null, Criteria::NOT_EQUAL);
 
         $m = MediaPeer::doSelectOne($c);
         if ($m === null) {
@@ -301,16 +306,16 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
         }
 
         $arr1 = $m->toArray(TableMap::TYPE_COLNAME);
-        $this->assertNotNull($arr1[MediaPeer::COVER_IMAGE]);
-        $this->assertInternalType('resource', $arr1[MediaPeer::COVER_IMAGE]);
+        $this->assertNotNull($arr1[MediaTableMap::COVER_IMAGE]);
+        $this->assertInternalType('resource', $arr1[MediaTableMap::COVER_IMAGE]);
 
         $arr2 = $m->toArray(TableMap::TYPE_COLNAME, false);
-        $this->assertNull($arr2[MediaPeer::COVER_IMAGE]);
-        $this->assertNull($arr2[MediaPeer::EXCERPT]);
+        $this->assertNull($arr2[MediaTableMap::COVER_IMAGE]);
+        $this->assertNull($arr2[MediaTableMap::EXCERPT]);
 
         $diffKeys = array_keys(array_diff($arr1, $arr2));
 
-        $expectedDiff = array(MediaPeer::COVER_IMAGE, MediaPeer::EXCERPT);
+        $expectedDiff = array(MediaTableMap::COVER_IMAGE, MediaTableMap::EXCERPT);
 
         $this->assertEquals($expectedDiff, $diffKeys);
     }
@@ -323,7 +328,7 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
         PublisherPeer::clearInstancePool();
 
         $c = new Criteria();
-        $c->add(BookPeer::TITLE, 'Don Juan');
+        $c->add(BookTableMap::TITLE, 'Don Juan');
         $books = BookPeer::doSelectJoinAuthor($c);
         $book = $books[0];
 
@@ -341,7 +346,7 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
         $this->assertEquals('George', $arr1['Author']['FirstName'], 'toArray() can return sub arrays for hydrated related objects');
 
         $c = new Criteria();
-        $c->add(BookPeer::TITLE, 'Don Juan');
+        $c->add(BookTableMap::TITLE, 'Don Juan');
         $books = BookPeer::doSelectJoinAll($c);
         $book = $books[0];
 

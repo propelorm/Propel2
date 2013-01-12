@@ -23,6 +23,7 @@ use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\Bookstore\Bookstore;
 use Propel\Tests\Bookstore\BookstoreEmployee;
 use Propel\Tests\Bookstore\BookstoreEmployeePeer;
+use Propel\Tests\Bookstore\Map\BookstoreEmployeeTableMap;
 use Propel\Tests\Bookstore\BookstoreEmployeeAccount;
 use Propel\Tests\Bookstore\BookstoreEmployeeAccountPeer;
 use Propel\Tests\Bookstore\Map\BookstoreEmployeeAccountTableMap;
@@ -32,8 +33,10 @@ use Propel\Tests\Bookstore\BookOpinion;
 use Propel\Tests\Bookstore\BookReader;
 use Propel\Tests\Bookstore\BookstoreContest;
 use Propel\Tests\Bookstore\BookstoreContestPeer;
+use Propel\Tests\Bookstore\Map\BookstoreContestTableMap;
 use Propel\Tests\Bookstore\BookstoreContestEntry;
 use Propel\Tests\Bookstore\BookstoreContestEntryPeer;
+use Propel\Tests\Bookstore\Map\BookstoreContestEntryTableMap;
 use Propel\Tests\Bookstore\Contest;
 use Propel\Tests\Bookstore\Customer;
 use Propel\Tests\Bookstore\ReaderFavorite;
@@ -71,18 +74,18 @@ class GeneratedPeerDoSelectTest extends BookstoreEmptyTestBase
         $book1 = $books[0];
 
         $c = new Criteria();
-        $c->add(BookPeer::ID, $book1->getId());
+        $c->add(BookTableMap::ID, $book1->getId());
         $res = BookPeer::doSelect($c);
         $this->assertEquals(array($book1), $res, 'doSelect() accepts a Criteria object with a condition');
 
         $c = new Criteria();
-        $c->add(BookPeer::ID, $book1->getId());
-        $c->add(BookPeer::TITLE, $book1->getTitle());
+        $c->add(BookTableMap::ID, $book1->getId());
+        $c->add(BookTableMap::TITLE, $book1->getTitle());
         $res = BookPeer::doSelect($c);
         $this->assertEquals(array($book1), $res, 'doSelect() accepts a Criteria object with several condition');
 
         $c = new Criteria();
-        $c->add(BookPeer::ID, 'foo');
+        $c->add(BookTableMap::ID, 'foo');
         $res = BookPeer::doSelect($c);
         $this->assertEquals(array(), $res, 'doSelect() accepts an incorrect Criteria');
     }
@@ -164,8 +167,8 @@ class GeneratedPeerDoSelectTest extends BookstoreEmptyTestBase
         AuthorPeer::clearInstancePool();
 
         $c = new Criteria();
-        $c->add(BookPeer::ISBN, 'NULLFK-%', Criteria::LIKE);
-        $c->addAscendingOrderByColumn(BookPeer::ISBN);
+        $c->add(BookTableMap::ISBN, 'NULLFK-%', Criteria::LIKE);
+        $c->addAscendingOrderByColumn(BookTableMap::ISBN);
 
         $matches = BookPeer::doSelectJoinAuthor($c);
         $this->assertEquals(2, count($matches), "Expected 2 matches back from new books; got back " . count($matches));
@@ -191,12 +194,12 @@ class GeneratedPeerDoSelectTest extends BookstoreEmptyTestBase
         $book1 = $books[0];
 
         $c = new Criteria();
-        $c->add(BookPeer::ID, $book1->getId());
+        $c->add(BookTableMap::ID, $book1->getId());
         $res = BookPeer::doSelectOne($c);
         $this->assertEquals($book1, $res, 'doSelectOne() returns a single object');
 
         $c = new Criteria();
-        $c->add(BookPeer::ID, 'foo');
+        $c->add(BookTableMap::ID, 'foo');
         $res = BookPeer::doSelectOne($c);
         $this->assertNull($res, 'doSelectOne() returns null if the Criteria matches no record');
     }
@@ -283,8 +286,8 @@ class GeneratedPeerDoSelectTest extends BookstoreEmptyTestBase
 
         // 1) test the pooled instances'
         $c = new Criteria();
-        $c->add(BookstoreEmployeePeer::ID, array($managerId, $empId, $cashierId), Criteria::IN);
-        $c->addAscendingOrderByColumn(BookstoreEmployeePeer::ID);
+        $c->add(BookstoreEmployeeTableMap::ID, array($managerId, $empId, $cashierId), Criteria::IN);
+        $c->addAscendingOrderByColumn(BookstoreEmployeeTableMap::ID);
 
         $objects = BookstoreEmployeePeer::doSelect($c);
 
@@ -371,8 +374,8 @@ class GeneratedPeerDoSelectTest extends BookstoreEmptyTestBase
         $rf1->save();
 
         $c = new Criteria(ReaderFavoriteTableMap::DATABASE_NAME);
-        $c->add(ReaderFavoritePeer::BOOK_ID, $b1->getId());
-        $c->add(ReaderFavoritePeer::READER_ID, $r1->getId());
+        $c->add(ReaderFavoriteTableMap::BOOK_ID, $b1->getId());
+        $c->add(ReaderFavoriteTableMap::READER_ID, $r1->getId());
 
         $results = ReaderFavoritePeer::doSelectJoinBookOpinion($c);
         $this->assertEquals(1, count($results), "Expected 1 result");
@@ -456,7 +459,7 @@ class GeneratedPeerDoSelectTest extends BookstoreEmptyTestBase
         */
 
         $c = new Criteria();
-        $c->addJoin(array(BookstoreContestEntryPeer::BOOKSTORE_ID, BookstoreContestEntryPeer::CONTEST_ID), array(BookstoreContestPeer::BOOKSTORE_ID, BookstoreContestPeer::CONTEST_ID) );
+        $c->addJoin(array(BookstoreContestEntryTableMap::BOOKSTORE_ID, BookstoreContestEntryTableMap::CONTEST_ID), array(BookstoreContestTableMap::BOOKSTORE_ID, BookstoreContestTableMap::CONTEST_ID) );
 
         $results = BookstoreContestEntryPeer::doSelect($c);
         $this->assertEquals(2, count($results) );
