@@ -28,8 +28,8 @@ class SortableBehaviorPeerBuilderModifierWithScopeTest extends TestCase
 
     public function testStaticAttributes()
     {
-        $this->assertEquals(\SortableTable12Peer::RANK_COL, 'table12.POSITION');
-        $this->assertEquals(\SortableTable12Peer::SCOPE_COL, 'table12.MY_SCOPE_COLUMN');
+        $this->assertEquals('sortable_table12.POSITION', \Map\SortableTable12TableMap::RANK_COL);
+        $this->assertEquals('sortable_table12.MY_SCOPE_COLUMN', \Map\SortableTable12TableMap::SCOPE_COL);
     }
 
     public function testGetMaxRank()
@@ -57,7 +57,7 @@ class SortableBehaviorPeerBuilderModifierWithScopeTest extends TestCase
     public function testReorder()
     {
         $c = new Criteria();
-        $c->add(\SortableTable12Peer::SCOPE_COL, 1);
+        $c->add(\Map\SortableTable12TableMap::SCOPE_COL, 1);
         $objects = \SortableTable12Peer::doSelectOrderByRank($c);
         $ids = array();
         foreach ($objects as $object) {
@@ -75,7 +75,7 @@ class SortableBehaviorPeerBuilderModifierWithScopeTest extends TestCase
     public function testDoSelectOrderByRank()
     {
         $c = new Criteria();
-        $c->add(\SortableTable12Peer::SCOPE_COL, 1);
+        $c->add(\Map\SortableTable12TableMap::SCOPE_COL, 1);
         $objects = \SortableTable12Peer::doSelectOrderByRank($c);
         $oldRank = 0;
         while ($object = array_shift($objects)) {
@@ -83,7 +83,7 @@ class SortableBehaviorPeerBuilderModifierWithScopeTest extends TestCase
             $oldRank = $object->getRank();
         }
         $c = new Criteria();
-        $c->add(\SortableTable12Peer::SCOPE_COL, 1);
+        $c->add(\Map\SortableTable12TableMap::SCOPE_COL, 1);
         $objects = \SortableTable12Peer::doSelectOrderByRank($c, Criteria::DESC);
         $oldRank = 10;
         while ($object = array_shift($objects)) {

@@ -11,6 +11,7 @@
 namespace Propel\Tests\Generator\Behavior\Sortable;
 
 use Propel\Runtime\ActiveQuery\Criteria;
+use SortableTable12 as Table12;
 
 /**
  * Tests for SortableBehavior class
@@ -50,7 +51,7 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $t3->delete();
         $this->assertEquals($max - 1, \SortableTable12Peer::getMaxRank(1), 'Sortable rearrange subsequent rows on delete');
         $c = new Criteria();
-        $c->add(\SortableTable12Peer::TITLE, 'row4');
+        $c->add(\Map\SortableTable12TableMap::TITLE, 'row4');
         $t4 = \SortableTable12Peer::doSelectOne($c);
         $this->assertEquals(3, $t4->getRank(), 'Sortable rearrange subsequent rows on delete');
         $expected = array(1 => 'row5', 2 => 'row6');

@@ -37,11 +37,11 @@ class SortableBehaviorQueryBuilderModifierWithScopeTest extends TestCase
          row4
         */
         $query = \SortableTable12Query::create()->inList(1);
-        $expectedQuery = \SortableTable12Query::create()->add(\SortableTable12Peer::MY_SCOPE_COLUMN, 1, Criteria::EQUAL);
+        $expectedQuery = \SortableTable12Query::create()->add(\Map\SortableTable12TableMap::MY_SCOPE_COLUMN, 1, Criteria::EQUAL);
         $this->assertEquals($expectedQuery, $query, 'inList() filters the query by scope');
         $this->assertEquals(4, $query->count(), 'inList() filters the query by scope');
         $query = \SortableTable12Query::create()->inList(2);
-        $expectedQuery = \SortableTable12Query::create()->add(\SortableTable12Peer::MY_SCOPE_COLUMN, 2, Criteria::EQUAL);
+        $expectedQuery = \SortableTable12Query::create()->add(\Map\SortableTable12TableMap::MY_SCOPE_COLUMN, 2, Criteria::EQUAL);
         $this->assertEquals($expectedQuery, $query, 'inList() filters the query by scope');
         $this->assertEquals(2, $query->count(), 'inList() filters the query by scope');
     }
@@ -66,15 +66,15 @@ class SortableBehaviorQueryBuilderModifierWithScopeTest extends TestCase
         $this->assertTrue(\SortableTable12Query::create()->orderByRank() instanceof \SortableTable12Query, 'orderByRank() returns the current query object');
         // default order
         $query = \SortableTable12Query::create()->orderByRank();
-        $expectedQuery = \SortableTable12Query::create()->addAscendingOrderByColumn(\SortableTable12Peer::POSITION);
+        $expectedQuery = \SortableTable12Query::create()->addAscendingOrderByColumn(\Map\SortableTable12TableMap::POSITION);
         $this->assertEquals($expectedQuery, $query, 'orderByRank() orders the query by rank asc');
         // asc order
         $query = \SortableTable12Query::create()->orderByRank(Criteria::ASC);
-        $expectedQuery = \SortableTable12Query::create()->addAscendingOrderByColumn(\SortableTable12Peer::POSITION);
+        $expectedQuery = \SortableTable12Query::create()->addAscendingOrderByColumn(\Map\SortableTable12TableMap::POSITION);
         $this->assertEquals($expectedQuery, $query, 'orderByRank() orders the query by rank, using the argument as sort direction');
         // desc order
         $query = \SortableTable12Query::create()->orderByRank(Criteria::DESC);
-        $expectedQuery = \SortableTable12Query::create()->addDescendingOrderByColumn(\SortableTable12Peer::POSITION);
+        $expectedQuery = \SortableTable12Query::create()->addDescendingOrderByColumn(\Map\SortableTable12TableMap::POSITION);
         $this->assertEquals($expectedQuery, $query, 'orderByRank() orders the query by rank, using the argument as sort direction');
     }
 
