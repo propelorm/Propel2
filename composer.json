@@ -17,11 +17,11 @@
     ],
     "require": {
         "php": ">=5.4",
-        "symfony/yaml": ">=2.1.0,<2.2.0-dev",
-        "symfony/console": ">=2.1.0,<2.2.0-dev",
-        "symfony/finder": ">=2.1.0,<2.2.0-dev",
-        "symfony/validator": ">=2.1.0,<2.2.0-dev",
-        "symfony/filesystem": ">=2.1.0,<2.2.0-dev",
+        "symfony/yaml": "~2.1.0",
+        "symfony/console": "~2.1.0",
+        "symfony/finder": "~2.1.0",
+        "symfony/validator": "~2.1.0",
+        "symfony/filesystem": "~2.1.0",
         "psr/log": "~1.0"
     },
     "require-dev": {
@@ -38,6 +38,5 @@
     },
     "bin": [
         "bin/propel"
-    ],
-    "minimum-stability": "dev"
+    ]
 }
