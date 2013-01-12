@@ -10,29 +10,22 @@
 
 namespace Propel\Tests\Generator\Behavior\Sortable;
 
-use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
-
-use Propel\Tests\Bookstore\Behavior\Table11Peer;
-use Propel\Tests\Bookstore\Behavior\Table12Peer;
-
 /**
  * Tests for SortableBehavior class
  *
  * @author Massimiliano Arione
- * @version		$Revision$
- * @package		generator.behavior.sortable
+ * @author William Durand <william.durand1@gmail.com>
  */
-class SortableBehaviorTest extends BookstoreTestBase
+class SortableBehaviorTest extends TestCase
 {
-
     public function testParameters()
     {
-        $table11 = Table11Peer::getTableMap();
+        $table11 = \SortableTable11Peer::getTableMap();
         $this->assertEquals(count($table11->getColumns()), 3, 'Sortable adds one columns by default');
-        $this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table11', 'getRank'), 'Sortable adds a rank column by default');
-        $table12 = Table12Peer::getTableMap();
-        $this->assertEquals(count($table12->getColumns()), 4, 'Sortable does not add a column when it already exists');
-        $this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table12', 'getPosition'), 'Sortable allows customization of rank_column name');
-    }
+        $this->assertTrue(method_exists('SortableTable11', 'getRank'), 'Sortable adds a rank column by default');
 
+        $table12 = \SortableTable12Peer::getTableMap();
+        $this->assertEquals(count($table12->getColumns()), 4, 'Sortable does not add a column when it already exists');
+        $this->assertTrue(method_exists('SortableTable12', 'getPosition'), 'Sortable allows customization of rank_column name');
+    }
 }
