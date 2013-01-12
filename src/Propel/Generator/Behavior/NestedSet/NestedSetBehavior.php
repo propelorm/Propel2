@@ -96,37 +96,4 @@ class NestedSetBehavior extends Behavior
     {
         return $builder->getColumnConstant($this->getColumnForParameter($columnName));
     }
-
-    public function staticAttributes($builder)
-    {
-        $tableName = $this->table->getName();
-
-        $script = "
-/**
- * Left column for the set
- */
-const LEFT_COL = '" . $tableName . '.' . $this->getColumnConstant('left_column', $builder) . "';
-
-/**
- * Right column for the set
- */
-const RIGHT_COL = '" . $tableName . '.' . $this->getColumnConstant('right_column', $builder) . "';
-
-/**
- * Level column for the set
- */
-const LEVEL_COL = '" . $tableName . '.' . $this->getColumnConstant('level_column', $builder) . "';
-";
-
-        if ($this->useScope()) {
-            $script .=     "
-/**
- * Scope column for the set
- */
-const SCOPE_COL = '" . $tableName . '.' . $this->getColumnConstant('scope_column', $builder) . "';
-";
-        }
-
-        return $script;
-    }
 }

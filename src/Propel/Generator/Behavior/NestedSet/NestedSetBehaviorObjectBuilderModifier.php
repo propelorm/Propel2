@@ -52,32 +52,6 @@ class NestedSetBehaviorObjectBuilderModifier
         $this->builder = $builder;
     }
 
-    public function objectAttributes($builder)
-    {
-        $objectClassName = $builder->getObjectClassName();
-
-        return "
-/**
- * Queries to be executed in the save transaction
- * @var        array
- */
-protected \$nestedSetQueries = array();
-
-/**
- * Internal cache for children nodes
- * @var        null|ObjectCollection
- */
-protected \$collNestedSetChildren = null;
-
-/**
- * Internal cache for parent node
- * @var        null|$objectClassName
- */
-protected \$aNestedSetParent = null;
-
-";
-    }
-
     public function preSave($builder)
     {
         $queryClassName  = $builder->getQueryClassName();
@@ -165,7 +139,7 @@ if (\$this->isInTree()) {
         }
 
         if ('LeftValue' !== $this->getColumnPhpName('left_column')) {
-            $script += $this->addSetLeft();
+            $script .= $this->addSetLeft();
         }
         if ('RightValue' !== $this->getColumnPhpName('right_column')) {
             $this->addSetRight($script);
@@ -215,7 +189,7 @@ if (\$this->isInTree()) {
         $this->addAddChild($script);
         $this->addInsertAsFirstChildOf($script);
 
-        $script += $this->addInsertAsLastChildOf();
+        $script .= $this->addInsertAsLastChildOf();
 
         $this->addInsertAsPrevSiblingOf($script);
         $this->addInsertAsNextSiblingOf($script);
@@ -232,7 +206,7 @@ if (\$this->isInTree()) {
             '\Propel\Runtime\ActiveRecord\NestedSetRecursiveIterator'
         );
 
-        $script += $this->addGetIterator();
+        $script .= $this->addGetIterator();
 
         return $script;
     }
@@ -1054,11 +1028,13 @@ public function insertAsFirstChildOf(\$parent)
     \$this->setLeftValue(\$left);
     \$this->setRightValue(\$left + 1);
     \$this->setLevel(\$parent->getLevel() + 1);";
+
         if ($useScope) {
             $script .= "
     \$scope = \$parent->getScopeValue();
     \$this->setScopeValue(\$scope);";
         }
+
         $script .= "
     // update the children collection of the parent
     \$parent->addNestedSetChild(\$this);
@@ -1447,6 +1423,58 @@ public function deleteDescendants(ConnectionInterface \$con = null)
     return \$ret;
 }
 ";
+    }
+
+    public function objectAttributes($builder)
+    {
+        $tableName = $this->table->getName();
+        $objectClassName = $builder->getObjectClassName();
+
+        $script = "
+/**
+ * Queries to be executed in the save transaction
+ * @var        array
+ */
+protected \$nestedSetQueries = array();
+
+/**
+ * Internal cache for children nodes
+ * @var        null|ObjectCollection
+ */
+protected \$collNestedSetChildren = null;
+
+/**
+ * Internal cache for parent node
+ * @var        null|$objectClassName
+ */
+protected \$aNestedSetParent = null;
+
+/**
+ * Left column for the set
+ */
+const LEFT_COL = '" . $tableName . '.' . $this->behavior->getColumnConstant('left_column', $builder) . "';
+
+/**
+ * Right column for the set
+ */
+const RIGHT_COL = '" . $tableName . '.' . $this->behavior->getColumnConstant('right_column', $builder) . "';
+
+/**
+ * Level column for the set
+ */
+const LEVEL_COL = '" . $tableName . '.' . $this->behavior->getColumnConstant('level_column', $builder) . "';
+";
+
+        if ($this->behavior->useScope()) {
+            $script .=     "
+/**
+ * Scope column for the set
+ */
+const SCOPE_COL = '" . $tableName . '.' . $this->behavior->getColumnConstant('scope_column', $builder) . "';
+";
+        }
+
+        return $script;
     }
 
     protected function addGetIterator()

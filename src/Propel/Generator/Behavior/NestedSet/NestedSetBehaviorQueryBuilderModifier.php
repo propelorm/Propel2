@@ -61,6 +61,7 @@ class NestedSetBehaviorQueryBuilderModifier
             $this->addTreeRoots($script);
             $this->addInTree($script);
         }
+
         $this->addDescendantsOf($script);
         $this->addBranchOf($script);
         $this->addChildrenOf($script);
@@ -77,6 +78,20 @@ class NestedSetBehaviorQueryBuilderModifier
         }
         $this->addFindTree($script);
 
+        if ($this->behavior->useScope()) {
+            $this->addRetrieveRoots($script);
+        }
+
+        $this->addRetrieveRoot($script);
+        $this->addRetrieveTree($script);
+        $this->addIsValid($script);
+        $this->addDeleteTree($script);
+        $this->addShiftRLValues($script);
+        $this->addShiftLevel($script);
+        $this->addUpdateLoadedNodes($script);
+        $this->addMakeRoomForLeaf($script);
+        $this->addFixLevels($script);
+
         return $script;
     }
 
@@ -90,7 +105,7 @@ class NestedSetBehaviorQueryBuilderModifier
  */
 public function treeRoots()
 {
-    return \$this->addUsingAlias({$this->peerClassName}::LEFT_COL, 1, Criteria::EQUAL);
+    return \$this->addUsingAlias({$this->objectClassName}::LEFT_COL, 1, Criteria::EQUAL);
 }
 ";
     }
@@ -107,7 +122,7 @@ public function treeRoots()
  */
 public function inTree(\$scope = null)
 {
-    return \$this->addUsingAlias({$this->peerClassName}::SCOPE_COL, \$scope, Criteria::EQUAL);
+    return \$this->addUsingAlias({$this->objectClassName}::SCOPE_COL, \$scope, Criteria::EQUAL);
 }
 ";
     }
@@ -131,8 +146,8 @@ public function descendantsOf($objectName)
         ->inTree({$objectName}->getScopeValue())";
         }
         $script .= "
-        ->addUsingAlias({$this->peerClassName}::LEFT_COL, {$objectName}->getLeftValue(), Criteria::GREATER_THAN)
-        ->addUsingAlias({$this->peerClassName}::LEFT_COL, {$objectName}->getRightValue(), Criteria::LESS_THAN);
+        ->addUsingAlias({$this->objectClassName}::LEFT_COL, {$objectName}->getLeftValue(), Criteria::GREATER_THAN)
+        ->addUsingAlias({$this->objectClassName}::LEFT_COL, {$objectName}->getRightValue(), Criteria::LESS_THAN);
 }
 ";
     }
@@ -157,8 +172,8 @@ public function branchOf($objectName)
         ->inTree({$objectName}->getScopeValue())";
         }
         $script .= "
-        ->addUsingAlias({$this->peerClassName}::LEFT_COL, {$objectName}->getLeftValue(), Criteria::GREATER_EQUAL)
-        ->addUsingAlias({$this->peerClassName}::LEFT_COL, {$objectName}->getRightValue(), Criteria::LESS_EQUAL);
+        ->addUsingAlias({$this->objectClassName}::LEFT_COL, {$objectName}->getLeftValue(), Criteria::GREATER_EQUAL)
+        ->addUsingAlias({$this->objectClassName}::LEFT_COL, {$objectName}->getRightValue(), Criteria::LESS_EQUAL);
 }
 ";
     }
@@ -178,7 +193,7 @@ public function childrenOf($objectName)
 {
     return \$this
         ->descendantsOf($objectName)
-        ->addUsingAlias({$this->peerClassName}::LEVEL_COL, {$objectName}->getLevel() + 1, Criteria::EQUAL);
+        ->addUsingAlias({$this->objectClassName}::LEVEL_COL, {$objectName}->getLevel() + 1, Criteria::EQUAL);
 }
 ";
     }
@@ -200,7 +215,7 @@ public function siblingsOf($objectName, ConnectionInterface \$con = null)
 {
     if ({$objectName}->isRoot()) {
         return \$this->
-            add({$this->peerClassName}::LEVEL_COL, '1<>1', Criteria::CUSTOM);
+            add({$this->objectClassName}::LEVEL_COL, '1<>1', Criteria::CUSTOM);
     } else {
         return \$this
             ->childrenOf({$objectName}->getParent(\$con))
@@ -229,8 +244,8 @@ public function ancestorsOf($objectName)
         ->inTree({$objectName}->getScopeValue())";
         }
         $script .= "
-        ->addUsingAlias({$this->peerClassName}::LEFT_COL, {$objectName}->getLeftValue(), Criteria::LESS_THAN)
-        ->addUsingAlias({$this->peerClassName}::RIGHT_COL, {$objectName}->getRightValue(), Criteria::GREATER_THAN);
+        ->addUsingAlias({$this->objectClassName}::LEFT_COL, {$objectName}->getLeftValue(), Criteria::LESS_THAN)
+        ->addUsingAlias({$this->objectClassName}::RIGHT_COL, {$objectName}->getRightValue(), Criteria::GREATER_THAN);
 }
 ";
     }
@@ -255,8 +270,8 @@ public function rootsOf($objectName)
         ->inTree({$objectName}->getScopeValue())";
         }
         $script .= "
-        ->addUsingAlias({$this->peerClassName}::LEFT_COL, {$objectName}->getLeftValue(), Criteria::LESS_EQUAL)
-        ->addUsingAlias({$this->peerClassName}::RIGHT_COL, {$objectName}->getRightValue(), Criteria::GREATER_EQUAL);
+        ->addUsingAlias({$this->objectClassName}::LEFT_COL, {$objectName}->getLeftValue(), Criteria::LESS_EQUAL)
+        ->addUsingAlias({$this->objectClassName}::RIGHT_COL, {$objectName}->getRightValue(), Criteria::GREATER_EQUAL);
 }
 ";
     }
@@ -275,10 +290,10 @@ public function orderByBranch(\$reverse = false)
 {
     if (\$reverse) {
         return \$this
-            ->addDescendingOrderByColumn({$this->peerClassName}::LEFT_COL);
+            ->addDescendingOrderByColumn({$this->objectClassName}::LEFT_COL);
     } else {
         return \$this
-            ->addAscendingOrderByColumn({$this->peerClassName}::LEFT_COL);
+            ->addAscendingOrderByColumn({$this->objectClassName}::LEFT_COL);
     }
 }
 ";
@@ -298,10 +313,10 @@ public function orderByLevel(\$reverse = false)
 {
     if (\$reverse) {
         return \$this
-            ->addAscendingOrderByColumn({$this->peerClassName}::RIGHT_COL);
+            ->addAscendingOrderByColumn({$this->objectClassName}::RIGHT_COL);
     } else {
         return \$this
-            ->addDescendingOrderByColumn({$this->peerClassName}::RIGHT_COL);
+            ->addDescendingOrderByColumn({$this->objectClassName}::RIGHT_COL);
     }
 }
 ";
@@ -327,7 +342,7 @@ public function orderByLevel(\$reverse = false)
 public function findRoot(" . ($useScope ? "\$scope = null, " : "") . "\$con = null)
 {
     return \$this
-        ->addUsingAlias({$this->peerClassName}::LEFT_COL, 1, Criteria::EQUAL)";
+        ->addUsingAlias({$this->objectClassName}::LEFT_COL, 1, Criteria::EQUAL)";
         if ($useScope) {
             $script .= "
         ->inTree(\$scope)";
@@ -388,31 +403,11 @@ public function findTree(" . ($useScope ? "\$scope = null, " : "") . "\$con = nu
 ";
     }
 
-    public function staticMethods($builder)
-    {
-        $this->setBuilder($builder);
-        $script = '';
-
-        if ('true' === $this->getParameter('use_scope')) {
-            $this->addRetrieveRoots($script);
-        }
-
-        $this->addRetrieveRoot($script);
-        $this->addRetrieveTree($script);
-        $this->addIsValid($script);
-        $this->addDeleteTree($script);
-        $this->addShiftRLValues($script);
-        $this->addShiftLevel($script);
-        $this->addUpdateLoadedNodes($script);
-        $this->addMakeRoomForLeaf($script);
-        $this->addFixLevels($script);
-
-        return $script;
-    }
-
     protected function addRetrieveRoots(&$script)
     {
         $peerClassName = $this->peerClassName;
+        $objectClassName = $this->objectClassName;
+
         $script .= "
 /**
  * Returns the root nodes for the tree
@@ -425,7 +420,7 @@ static public function retrieveRoots(Criteria \$criteria = null, ConnectionInter
     if (null === \$criteria) {
         \$criteria = new Criteria($peerClassName::DATABASE_NAME);
     }
-    \$criteria->add($peerClassName::LEFT_COL, 1, Criteria::EQUAL);
+    \$criteria->add($objectClassName::LEFT_COL, 1, Criteria::EQUAL);
 
     return $peerClassName::doSelect(\$criteria, \$con);
 }
@@ -435,7 +430,9 @@ static public function retrieveRoots(Criteria \$criteria = null, ConnectionInter
     protected function addRetrieveRoot(&$script)
     {
         $peerClassName = $this->peerClassName;
+        $objectClassName = $this->objectClassName;
         $useScope = $this->behavior->useScope();
+
         $script .= "
 /**
  * Returns the root node for a given scope
@@ -451,10 +448,10 @@ static public function retrieveRoots(Criteria \$criteria = null, ConnectionInter
 static public function retrieveRoot(" . ($useScope ? "\$scope = null, " : "") . "ConnectionInterface \$con = null)
 {
     \$c = new Criteria($peerClassName::DATABASE_NAME);
-    \$c->add($peerClassName::LEFT_COL, 1, Criteria::EQUAL);";
+    \$c->add($objectClassName::LEFT_COL, 1, Criteria::EQUAL);";
         if ($useScope) {
             $script .= "
-    \$c->add($peerClassName::SCOPE_COL, \$scope, Criteria::EQUAL);";
+    \$c->add($objectClassName::SCOPE_COL, \$scope, Criteria::EQUAL);";
         }
         $script .= "
 
@@ -466,7 +463,9 @@ static public function retrieveRoot(" . ($useScope ? "\$scope = null, " : "") . 
     protected function addRetrieveTree(&$script)
     {
         $peerClassName = $this->peerClassName;
+        $objectClassName = $this->objectClassName;
         $useScope = $this->behavior->useScope();
+
         $script .= "
 /**
  * Returns the whole tree node for a given scope
@@ -485,10 +484,10 @@ static public function retrieveTree(" . ($useScope ? "\$scope = null, " : "") . 
     if (null === \$criteria) {
         \$criteria = new Criteria($peerClassName::DATABASE_NAME);
     }
-    \$criteria->addAscendingOrderByColumn($peerClassName::LEFT_COL);";
+    \$criteria->addAscendingOrderByColumn($objectClassName::LEFT_COL);";
         if ($useScope) {
             $script .= "
-    \$criteria->add($peerClassName::SCOPE_COL, \$scope, Criteria::EQUAL);";
+    \$criteria->add($objectClassName::SCOPE_COL, \$scope, Criteria::EQUAL);";
         }
         $script .= "
 
@@ -500,6 +499,7 @@ static public function retrieveTree(" . ($useScope ? "\$scope = null, " : "") . 
     protected function addIsValid(&$script)
     {
         $objectClassName = $this->objectClassName;
+
         $script .= "
 /**
  * Tests if node is valid
@@ -521,7 +521,9 @@ static public function isValid($objectClassName \$node = null)
     protected function addDeleteTree(&$script)
     {
         $peerClassName = $this->peerClassName;
+        $objectClassName = $this->objectClassName;
         $useScope = $this->behavior->useScope();
+
         $script .= "
 /**
  * Delete an entire tree
@@ -540,7 +542,7 @@ static public function deleteTree(" . ($useScope ? "\$scope = null, " : "") . "C
         if ($useScope) {
             $script .= "
     \$c = new Criteria($peerClassName::DATABASE_NAME);
-    \$c->add($peerClassName::SCOPE_COL, \$scope, Criteria::EQUAL);
+    \$c->add($objectClassName::SCOPE_COL, \$scope, Criteria::EQUAL);
 
     return $peerClassName::doDelete(\$c, \$con);";
         } else {
@@ -556,7 +558,9 @@ static public function deleteTree(" . ($useScope ? "\$scope = null, " : "") . "C
     protected function addShiftRLValues(&$script)
     {
         $peerClassName = $this->peerClassName;
+        $objectClassName = $this->objectClassName;
         $useScope = $this->behavior->useScope();
+
         $script .= "
 /**
  * Adds \$delta to all L and R values that are >= \$first and <= \$last.
@@ -580,39 +584,39 @@ static public function shiftRLValues(\$delta, \$first, \$last = null" . ($useSco
 
     // Shift left column values
     \$whereCriteria = new Criteria($peerClassName::DATABASE_NAME);
-    \$criterion = \$whereCriteria->getNewCriterion($peerClassName::LEFT_COL, \$first, Criteria::GREATER_EQUAL);
+    \$criterion = \$whereCriteria->getNewCriterion($objectClassName::LEFT_COL, \$first, Criteria::GREATER_EQUAL);
     if (null !== \$last) {
-        \$criterion->addAnd(\$whereCriteria->getNewCriterion($peerClassName::LEFT_COL, \$last, Criteria::LESS_EQUAL));
+        \$criterion->addAnd(\$whereCriteria->getNewCriterion($objectClassName::LEFT_COL, \$last, Criteria::LESS_EQUAL));
     }
     \$whereCriteria->add(\$criterion);";
         if ($useScope) {
             $script .= "
-    \$whereCriteria->add($peerClassName::SCOPE_COL, \$scope, Criteria::EQUAL);";
+    \$whereCriteria->add($objectClassName::SCOPE_COL, \$scope, Criteria::EQUAL);";
         }
         $script .= "
 
     \$valuesCriteria = new Criteria($peerClassName::DATABASE_NAME);
-    \$valuesCriteria->add($peerClassName::LEFT_COL, array('raw' => $peerClassName::LEFT_COL . ' + ?', 'value' => \$delta), Criteria::CUSTOM_EQUAL);
+    \$valuesCriteria->add($objectClassName::LEFT_COL, array('raw' => $objectClassName::LEFT_COL . ' + ?', 'value' => \$delta), Criteria::CUSTOM_EQUAL);
 
-    {$this->builder->getBasePeerClassName()}::doUpdate(\$whereCriteria, \$valuesCriteria, \$con);
+    BasePeer::doUpdate(\$whereCriteria, \$valuesCriteria, \$con);
 
     // Shift right column values
     \$whereCriteria = new Criteria($peerClassName::DATABASE_NAME);
-    \$criterion = \$whereCriteria->getNewCriterion($peerClassName::RIGHT_COL, \$first, Criteria::GREATER_EQUAL);
+    \$criterion = \$whereCriteria->getNewCriterion($objectClassName::RIGHT_COL, \$first, Criteria::GREATER_EQUAL);
     if (null !== \$last) {
-        \$criterion->addAnd(\$whereCriteria->getNewCriterion($peerClassName::RIGHT_COL, \$last, Criteria::LESS_EQUAL));
+        \$criterion->addAnd(\$whereCriteria->getNewCriterion($objectClassName::RIGHT_COL, \$last, Criteria::LESS_EQUAL));
     }
     \$whereCriteria->add(\$criterion);";
         if ($useScope) {
             $script .= "
-    \$whereCriteria->add($peerClassName::SCOPE_COL, \$scope, Criteria::EQUAL);";
+    \$whereCriteria->add($objectClassName::SCOPE_COL, \$scope, Criteria::EQUAL);";
         }
         $script .= "
 
     \$valuesCriteria = new Criteria($peerClassName::DATABASE_NAME);
-    \$valuesCriteria->add($peerClassName::RIGHT_COL, array('raw' => $peerClassName::RIGHT_COL . ' + ?', 'value' => \$delta), Criteria::CUSTOM_EQUAL);
+    \$valuesCriteria->add($objectClassName::RIGHT_COL, array('raw' => $objectClassName::RIGHT_COL . ' + ?', 'value' => \$delta), Criteria::CUSTOM_EQUAL);
 
-    {$this->builder->getBasePeerClassName()}::doUpdate(\$whereCriteria, \$valuesCriteria, \$con);
+    BasePeer::doUpdate(\$whereCriteria, \$valuesCriteria, \$con);
 }
 ";
     }
@@ -620,7 +624,9 @@ static public function shiftRLValues(\$delta, \$first, \$last = null" . ($useSco
     protected function addShiftLevel(&$script)
     {
         $peerClassName = $this->peerClassName;
+        $objectClassName = $this->objectClassName;
         $useScope = $this->behavior->useScope();
+
         $script .= "
 /**
  * Adds \$delta to level for nodes having left value >= \$first and right value <= \$last.
@@ -643,26 +649,27 @@ static public function shiftLevel(\$delta, \$first, \$last" . ($useScope ? ", \$
     }
 
     \$whereCriteria = new Criteria($peerClassName::DATABASE_NAME);
-    \$whereCriteria->add($peerClassName::LEFT_COL, \$first, Criteria::GREATER_EQUAL);
-    \$whereCriteria->add($peerClassName::RIGHT_COL, \$last, Criteria::LESS_EQUAL);";
+    \$whereCriteria->add($objectClassName::LEFT_COL, \$first, Criteria::GREATER_EQUAL);
+    \$whereCriteria->add($objectClassName::RIGHT_COL, \$last, Criteria::LESS_EQUAL);";
         if ($useScope) {
             $script .= "
-    \$whereCriteria->add($peerClassName::SCOPE_COL, \$scope, Criteria::EQUAL);";
+    \$whereCriteria->add($objectClassName::SCOPE_COL, \$scope, Criteria::EQUAL);";
         }
         $script .= "
 
     \$valuesCriteria = new Criteria($peerClassName::DATABASE_NAME);
-    \$valuesCriteria->add($peerClassName::LEVEL_COL, array('raw' => $peerClassName::LEVEL_COL . ' + ?', 'value' => \$delta), Criteria::CUSTOM_EQUAL);
+    \$valuesCriteria->add($objectClassName::LEVEL_COL, array('raw' => $objectClassName::LEVEL_COL . ' + ?', 'value' => \$delta), Criteria::CUSTOM_EQUAL);
 
-    {$this->builder->getBasePeerClassName()}::doUpdate(\$whereCriteria, \$valuesCriteria, \$con);
+    BasePeer::doUpdate(\$whereCriteria, \$valuesCriteria, \$con);
 }
 ";
     }
 
     protected function addUpdateLoadedNodes(&$script)
     {
-        $peerClassName = $this->peerClassName;
+        $peerClassName   = $this->peerClassName;
         $objectClassName = $this->objectClassName;
+
         $script .= "
 /**
  * Reload all already loaded nodes to sync them with updated db
@@ -780,7 +787,9 @@ static public function makeRoomForLeaf(\$left" . ($useScope ? ", \$scope" : "").
     protected function addFixLevels(&$script)
     {
         $peerClassName = $this->peerClassName;
+        $objectClassName = $this->objectClassName;
         $useScope = $this->behavior->useScope();
+
         $script .= "
 /**
  * Update the tree to allow insertion of a leaf at the specified position
@@ -797,10 +806,10 @@ static public function fixLevels(" . ($useScope ? "\$scope, " : ""). "Connection
     \$c = new Criteria();";
         if ($useScope) {
             $script .= "
-    \$c->add($peerClassName::SCOPE_COL, \$scope, Criteria::EQUAL);";
+    \$c->add($objectClassName::SCOPE_COL, \$scope, Criteria::EQUAL);";
         }
         $script .= "
-    \$c->addAscendingOrderByColumn($peerClassName::LEFT_COL);
+    \$c->addAscendingOrderByColumn($objectClassName::LEFT_COL);
     \$stmt = $peerClassName::doSelectStmt(\$c, \$con);
     ";
         if (!$this->table->getChildrenColumn()) {
@@ -860,4 +869,8 @@ static public function fixLevels(" . ($useScope ? "\$scope, " : ""). "Connection
 ";
     }
 
+    protected function getColumnPhpName($columnName)
+    {
+        return $this->behavior->getColumnForParameter($columnName)->getPhpName();
+    }
 }

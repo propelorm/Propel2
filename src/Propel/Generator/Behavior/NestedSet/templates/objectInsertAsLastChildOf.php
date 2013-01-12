@@ -19,7 +19,7 @@ public function insertAsLastChildOf($parent)
     // Update node properties
     $this->setLeftValue($left);
     $this->setRightValue($left + 1);
-    $this->setLevel($parent->getLevel() + 1);";
+    $this->setLevel($parent->getLevel() + 1);
 
 <?php if ($useScope) : ?>
     $scope = $parent->getScopeValue();
@@ -32,7 +32,7 @@ public function insertAsLastChildOf($parent)
     // Keep the tree modification query for the save() transaction
     $this->nestedSetQueries []= array(
         'callable'  => array('<?= $queryClassName ?>', 'makeRoomForLeaf'),
-        'arguments' => array($left . <?= $useScope ? '$scope' : '' ?>, $this->isNew() ? null : $this)
+        'arguments' => array($left<?= $useScope ? ', $scope' : '' ?>, $this->isNew() ? null : $this)
     );
 
     return $this;
