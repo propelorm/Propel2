@@ -14,7 +14,7 @@ use Propel\Runtime\Propel;
 use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\ActiveQuery\Criteria;
-use Propel\Runtime\ActiveRecordNestedSetRecursiveIterator;
+use Propel\Runtime\ActiveRecord\NestedSetRecursiveIterator;
 
 /**
  * Tests for NestedSetBehaviorObjectBuilderModifier class
@@ -309,10 +309,11 @@ class NestedSetBehaviorObjectBuilderModifierTest extends TestCase
                |  \
                t6 t7
         */
-        $con = Propel::getServiceContainer()->getReadConnection(\NestedSetTable9Peer::DATABASE_NAME);
-        $count = $con->getQueryCount();
+        $con    = Propel::getServiceContainer()->getReadConnection(\Map\NestedSetTable9TableMap::DATABASE_NAME);
+        $count  = $con->getQueryCount();
         $parent = $t5->getParent($con);
         $parent = $t5->getParent($con);
+
         $this->assertEquals($count + 1, $con->getQueryCount(), 'getParent() only issues a query once');
         $this->assertEquals('t3', $parent->getTitle(), 'getParent() returns the parent Node');
     }
@@ -437,7 +438,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends TestCase
         );
         $this->assertEquals($expected, $this->dumpNodes($children, true), 'getChildren() returns a collection of children');
         $c = new Criteria();
-        $c->add(\NestedSetTable9Peer::TITLE, 't5');
+        $c->add(\Map\NestedSetTable9TableMap::TITLE, 't5');
         $children = $t3->getChildren($c);
         $expected = array(
             't5' => array(7, 12, 2),
@@ -448,7 +449,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends TestCase
     public function testGetChildrenCache()
     {
         list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
-        $con = Propel::getServiceContainer()->getReadConnection(\NestedSetTable9Peer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getReadConnection(\Map\NestedSetTable9TableMap::DATABASE_NAME);
         $count = $con->getQueryCount();
         $children = $t3->getChildren(null, $con);
         $children = $t3->getChildren(null, $con);
@@ -460,7 +461,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends TestCase
         $this->assertEquals($expected, $this->dumpNodes($children, true), 'getChildren() returns a collection of children');
         // when using criteria, cache is not used
         $c = new Criteria();
-        $c->add(\NestedSetTable9Peer::TITLE, 't5');
+        $c->add(\Map\NestedSetTable9TableMap::TITLE, 't5');
         $children = $t3->getChildren($c, $con);
         $this->assertEquals($count + 2, $con->getQueryCount(), 'getChildren() issues a new query when âssed a non-null Criteria');
         $expected = array(
@@ -492,7 +493,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends TestCase
         $this->assertEquals(0, $t2->countChildren(), 'countChildren() returns 0 for leafs');
         $this->assertEquals(2, $t3->countChildren(), 'countChildren() returns the number of children');
         $c = new Criteria();
-        $c->add(\NestedSetTable9Peer::TITLE, 't5');
+        $c->add(\Map\NestedSetTable9TableMap::TITLE, 't5');
         $this->assertEquals(1, $t3->countChildren($c), 'countChildren() accepts a criteria as parameter');
     }
 
@@ -508,7 +509,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends TestCase
                |  \
                t6 t7
         */
-        $con = Propel::getServiceContainer()->getReadConnection(\NestedSetTable9Peer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getReadConnection(\Map\NestedSetTable9TableMap::DATABASE_NAME);
         $count = $con->getQueryCount();
         $children = $t3->getChildren(null, $con);
         $nbChildren = $t3->countChildren(null, $con);
@@ -610,7 +611,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends TestCase
         );
         $this->assertEquals($expected, $this->dumpNodes($descendants), 'getDescendants() returns an array of descendants');
         $c = new Criteria();
-        $c->add(\NestedSetTable9Peer::TITLE, 't5');
+        $c->add(\Map\NestedSetTable9TableMap::TITLE, 't5');
         $descendants = $t3->getDescendants($c);
         $expected = array(
             't5' => array(7, 12, 2),
@@ -633,7 +634,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends TestCase
         $this->assertEquals(0, $t2->countDescendants(), 'countDescendants() returns 0 for leafs');
         $this->assertEquals(4, $t3->countDescendants(), 'countDescendants() returns the number of descendants');
         $c = new Criteria();
-        $c->add(\NestedSetTable9Peer::TITLE, 't5');
+        $c->add(\Map\NestedSetTable9TableMap::TITLE, 't5');
         $this->assertEquals(1, $t3->countDescendants($c), 'countDescendants() accepts a criteria as parameter');
     }
 
@@ -660,7 +661,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends TestCase
         );
         $this->assertEquals($expected, $this->dumpNodes($descendants), 'getBranch() returns an array of descendants, including the current node');
         $c = new Criteria();
-        $c->add(\NestedSetTable9Peer::TITLE, 't3', Criteria::NOT_EQUAL);
+        $c->add(\Map\NestedSetTable9TableMap::TITLE, 't3', Criteria::NOT_EQUAL);
         $descendants = $t3->getBranch($c);
         unset($expected['t3']);
         $this->assertEquals($expected, $this->dumpNodes($descendants), 'getBranch() accepts a criteria as first parameter');
@@ -686,7 +687,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends TestCase
         );
         $this->assertEquals($expected, $this->dumpNodes($ancestors), 'getAncestors() returns an array of ancestors');
         $c = new Criteria();
-        $c->add(\NestedSetTable9Peer::TITLE, 't3');
+        $c->add(\Map\NestedSetTable9TableMap::TITLE, 't3');
         $ancestors = $t5->getAncestors($c);
         $expected = array(
             't3' => array(4, 13, 1),
@@ -735,7 +736,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends TestCase
                |  \
                t6 t7
         */
-        $t8 = new PublicNestedSetTable9();
+        $t8 = new Fixtures\PublicTable9();
         $t8->setTitle('t8');
         $t = $t8->insertAsFirstChildOf($t3);
         $this->assertEquals($t8, $t, 'insertAsFirstChildOf() returns the object it was called on');
@@ -800,7 +801,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends TestCase
                |  \
                t6 t7
         */
-        $t8 = new PublicNestedSetTable9();
+        $t8 = new Fixtures\PublicTable9();
         $t8->setTitle('t8');
         $t = $t8->insertAsLastChildOf($t3);
         $this->assertEquals($t8, $t, 'insertAsLastChildOf() returns the object it was called on');
@@ -865,7 +866,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends TestCase
                |  \
                t6 t7
         */
-        $t8 = new PublicNestedSetTable9();
+        $t8 = new Fixtures\PublicTable9();
         $t8->setTitle('t8');
         $t = $t8->insertAsPrevSiblingOf($t3);
         $this->assertEquals($t8, $t, 'insertAsPrevSiblingOf() returns the object it was called on');
@@ -939,7 +940,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends TestCase
                |  \
                t6 t7
         */
-        $t8 = new PublicNestedSetTable9();
+        $t8 = new Fixtures\PublicTable9();
         $t8->setTitle('t8');
         $t = $t8->insertAsNextSiblingOf($t3);
         $this->assertEquals($t8, $t, 'insertAsNextSiblingOf() returns the object it was called on');
@@ -1465,7 +1466,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends TestCase
     {
         $fixtures = $this->initTree();
         $this->assertTrue(method_exists('NestedSetTable9', 'getIterator'), 'nested_set adds a getIterator() method');
-        $root = \NestedSetTable9Peer::retrieveRoot();
+        $root = \NestedSetTable9Query::retrieveRoot();
         $iterator = $root->getIterator();
         $this->assertTrue($iterator instanceof NestedSetRecursiveIterator, 'getIterator() returns a NestedSetRecursiveIterator');
         foreach ($iterator as $node) {

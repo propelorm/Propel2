@@ -3,10 +3,13 @@
 namespace Propel\Tests\Generator\Behavior\NestedSet;
 
 use Propel\Generator\Util\QuickBuilder;
+use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Tests\TestCase as BaseTestCase;
 
 class TestCase extends BaseTestCase
 {
+    protected $con;
+
     public function setUp()
     {
         if (!class_exists('NestedSetTable9')) {
@@ -38,7 +41,7 @@ class TestCase extends BaseTestCase
     </table>
 </database>
 XML;
-            QuickBuilder::buildSchema($schema);
+            $this->con = QuickBuilder::buildSchema($schema);
         }
     }
 
@@ -61,7 +64,7 @@ XML;
         );
 
         foreach ($fixtures as $key => $data) {
-            $t = new PublicTable10();
+            $t = new Fixtures\PublicTable10();
             $t->setTitle($key);
             $t->setLeftValue($data[0]);
             $t->setRightValue($data[1]);
@@ -109,7 +112,7 @@ XML;
             't7' => array(10, 11, 3),
          */
         foreach ($fixtures as $key => $data) {
-            $t = new PublicTable9();
+            $t = new Fixtures\PublicTable9();
             $t->setTitle($key);
             $t->setLeftValue($data[0]);
             $t->setRightValue($data[1]);
@@ -121,5 +124,36 @@ XML;
         ksort($ret);
 
         return array_values($ret);
+    }
+
+    protected function dumpTree()
+    {
+        $c = new Criteria();
+        $c->addAscendingOrderBycolumn(\Map\NestedSetTable9TableMap::TITLE);
+
+        return $this->dumpNodes(\NestedSetTable9Peer::doSelect($c));
+    }
+
+    protected function dumpNodes($nodes)
+    {
+        $tree = array();
+        foreach ($nodes as $node) {
+            $tree[$node->getTitle()] = array(
+                $node->getLeftValue(),
+                $node->getRightValue(),
+                $node->getLevel(),
+            );
+        }
+
+        return $tree;
+    }
+
+    protected function dumpTreeWithScope($scope)
+    {
+        $c = new Criteria();
+        $c->add(\NestedSetTable10::SCOPE_COL, $scope);
+        $c->addAscendingOrderBycolumn(\Map\NestedSetTable10TableMap::TITLE);
+
+        return $this->dumpNodes(\NestedSetTable10Peer::doSelect($c));
     }
 }

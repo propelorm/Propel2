@@ -24,8 +24,8 @@ public function insertAsLastChildOf($parent)
 <?php if ($useScope) : ?>
     $scope = $parent->getScopeValue();
     $this->setScopeValue($scope);
-<?php endif; ?>
 
+<?php endif; ?>
     // update the children collection of the parent
     $parent->addNestedSetChild($this);
 
