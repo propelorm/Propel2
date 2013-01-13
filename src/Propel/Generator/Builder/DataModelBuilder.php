@@ -14,6 +14,7 @@ use Propel\Common\Pluralizer\PluralizerInterface;
 use Propel\Generator\Builder\Om\ObjectBuilder;
 use Propel\Generator\Builder\Om\PeerBuilder;
 use Propel\Generator\Builder\Om\QueryBuilder;
+use Propel\Generator\Builder\Om\TableMapBuilder;
 use Propel\Generator\Builder\Sql\DataSQLBuilder;
 use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Model\Database;
@@ -400,6 +401,15 @@ abstract class DataModelBuilder
         $stubQueryInheritanceBuilder->setChild($child);
 
         return $stubQueryInheritanceBuilder;
+    }
+
+    /**
+     * Returns new stub Query Inheritance builder class for this table.
+     * @return TableMapBuilder
+     */
+    public function getNewTableMapBuilder(Table $table)
+    {
+        return $this->getGeneratorConfig()->getConfiguredBuilder($table, 'tablemap');
     }
 
     /**
