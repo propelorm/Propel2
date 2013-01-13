@@ -1005,7 +1005,7 @@ public function addChild($objectClassName \$child)
     protected function addInsertAsFirstChildOf(&$script)
     {
         $objectClassName = $this->builder->getObjectClassName();
-        $queryClassName  = $this->builder->getQueryClassName();
+        $queryClassName  = $this->builder->getQueryClassName(true);
         $useScope        = $this->behavior->useScope();
 
         $script .= "
@@ -1054,7 +1054,7 @@ public function insertAsFirstChildOf(\$parent)
     {
         return $this->behavior->renderTemplate('objectInsertAsLastChildOf', array(
             'objectClassName' => $this->builder->getObjectClassName(),
-            'queryClassName'  => $this->builder->getQueryClassName(),
+            'queryClassName'  => $this->builder->getQueryClassName(true),
             'useScope'        => $this->behavior->useScope(),
         ));
     }
@@ -1062,7 +1062,7 @@ public function insertAsFirstChildOf(\$parent)
     protected function addInsertAsPrevSiblingOf(&$script)
     {
         $objectClassName = $this->builder->getObjectClassName();
-        $queryClassName  = $this->builder->getQueryClassName();
+        $queryClassName  = $this->builder->getQueryClassName(true);
         $useScope        = $this->behavior->useScope();
 
         $script .= "
@@ -1105,7 +1105,7 @@ public function insertAsPrevSiblingOf(\$sibling)
     protected function addInsertAsNextSiblingOf(&$script)
     {
         $objectClassName = $this->builder->getObjectClassName();
-        $queryClassName  = $this->builder->getQueryClassName();
+        $queryClassName  = $this->builder->getQueryClassName(true);
         $useScope        = $this->behavior->useScope();
 
         $script .= "
@@ -1373,6 +1373,7 @@ protected function moveSubtreeTo(\$destLeft, \$levelDelta, ConnectionInterface \
     {
         $objectClassName = $this->builder->getObjectClassName();
         $queryClassName  = $this->builder->getQueryClassName();
+        $tableMapClass   = $this->builder->getTableMapClass();
         $useScope        = $this->behavior->useScope();
 
         $script .= "
@@ -1392,7 +1393,7 @@ public function deleteDescendants(ConnectionInterface \$con = null)
         return;
     }
     if (null === \$con) {
-        \$con = Propel::getServiceContainer()->getReadConnection($queryClassName::DATABASE_NAME);
+        \$con = Propel::getServiceContainer()->getReadConnection($tableMapClass::DATABASE_NAME);
     }
     \$left = \$this->getLeftValue();
     \$right = \$this->getRightValue();";
@@ -1452,17 +1453,17 @@ protected \$aNestedSetParent = null;
 /**
  * Left column for the set
  */
-const LEFT_COL = '" . $tableName . '.' . $this->behavior->getColumnConstant('left_column', $builder) . "';
+const LEFT_COL = '" . $tableName . '.' . $this->behavior->getColumnConstant('left_column') . "';
 
 /**
  * Right column for the set
  */
-const RIGHT_COL = '" . $tableName . '.' . $this->behavior->getColumnConstant('right_column', $builder) . "';
+const RIGHT_COL = '" . $tableName . '.' . $this->behavior->getColumnConstant('right_column') . "';
 
 /**
  * Level column for the set
  */
-const LEVEL_COL = '" . $tableName . '.' . $this->behavior->getColumnConstant('level_column', $builder) . "';
+const LEVEL_COL = '" . $tableName . '.' . $this->behavior->getColumnConstant('level_column') . "';
 ";
 
         if ($this->behavior->useScope()) {
@@ -1470,7 +1471,7 @@ const LEVEL_COL = '" . $tableName . '.' . $this->behavior->getColumnConstant('le
 /**
  * Scope column for the set
  */
-const SCOPE_COL = '" . $tableName . '.' . $this->behavior->getColumnConstant('scope_column', $builder) . "';
+const SCOPE_COL = '" . $tableName . '.' . $this->behavior->getColumnConstant('scope_column') . "';
 ";
         }
 

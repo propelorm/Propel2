@@ -23,7 +23,7 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
     protected function getByTitle($title)
     {
         $c = new Criteria();
-        $c->add(\NestedSetTable10Peer::TITLE, $title);
+        $c->add(\Map\NestedSetTable10TableMap::TITLE, $title);
 
         return \NestedSetTable10Peer::doSelectOne($c);
     }
@@ -250,7 +250,7 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
          | \
          t9 t10
         */
-        $t11 = new PublicTable10();
+        $t11 = new Fixtures\PublicTable10();
         $t11->setTitle('t11');
         $t11->insertAsFirstChildOf($fixtures[2]); // first child of t3
         $this->assertEquals(1, $t11->getScopeValue(), 'insertAsFirstChildOf() sets the scope value correctly');
@@ -319,7 +319,7 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
          | \
          t9 t10
         */
-        $t11 = new PublicTable10();
+        $t11 = new Fixtures\PublicTable10();
         $t11->setTitle('t11');
         $t11->insertAsLastChildOf($fixtures[2]); // last child of t3
         $this->assertEquals(1, $t11->getScopeValue(), 'insertAsLastChildOf() sets the scope value correctly');
@@ -388,7 +388,7 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
          | \
          t9 t10
         */
-        $t11 = new PublicTable10();
+        $t11 = new Fixtures\PublicTable10();
         $t11->setTitle('t11');
         $t11->insertAsPrevSiblingOf($fixtures[2]); // prev sibling of t3
         $this->assertEquals(1, $t11->getScopeValue(), 'insertAsPrevSiblingOf() sets the scope value correctly');
@@ -468,7 +468,7 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
          | \
          t9 t10
         */
-        $t11 = new PublicTable10();
+        $t11 = new Fixtures\PublicTable10();
         $t11->setTitle('t11');
         $t11->insertAsNextSiblingOf($fixtures[2]); // next sibling of t3
         $this->assertEquals(1, $t11->getScopeValue(), 'insertAsNextSiblingOf() sets the scope value correctly');

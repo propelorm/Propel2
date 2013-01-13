@@ -92,8 +92,13 @@ class NestedSetBehavior extends Behavior
         return 'true' === $this->getParameter('use_scope');
     }
 
-    public function getColumnConstant($columnName, $builder)
+    public function getColumnConstant($columnName)
     {
-        return $builder->getColumnConstant($this->getColumnForParameter($columnName));
+        return $this->getColumn($columnName)->getName();
+    }
+
+    public function getColumn($columnName)
+    {
+        return $this->getColumnForParameter($columnName);
     }
 }
