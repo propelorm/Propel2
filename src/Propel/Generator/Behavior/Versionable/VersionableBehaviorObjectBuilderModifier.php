@@ -406,7 +406,7 @@ public function populateFromVersion(\$version, \$con = null, &\$loadedObjects = 
             $fkColumnIds = $this->behavior->getReferrerIdsColumn($fk);
             $fkColumnVersions = $this->behavior->getReferrerVersionsColumn($fk);
             $relatedVersionQueryClassName = $this->builder->getClassNameFromBuilder($this->builder->getNewStubQueryBuilder($foreignVersionTable));
-            $relatedVersionTableMapClassName = $this->builder->getTableMapClassName();
+            $relatedVersionTableMapClassName = $this->builder->getClassNameFromBuilder($this->builder->getNewTableMapBuilder($foreignVersionTable));
             $relatedClassName = $this->builder->getClassNameFromBuilder($this->builder->getNewStubObjectBuilder($foreignTable));
             $fkColumn = $fk->getForeignColumn();
             $fkVersionColumn = $foreignVersionTable->getColumn($this->behavior->getParameter('version_column'));
@@ -509,6 +509,8 @@ public function getOneVersion(\$versionNumber, \$con = null)
     {
         $versionTable = $this->behavior->getVersionTable();
         $versionARClassName = $this->builder->getClassNameFromBuilder($this->builder->getNewStubObjectBuilder($versionTable));
+        //this force the use statment for  VersionTableMap
+        $this->builder->getClassNameFromBuilder($this->builder->getNewTableMapBuilder($versionTable));
         $versionForeignColumn = $versionTable->getColumn($this->behavior->getParameter('version_column'));
         $fks = $versionTable->getForeignKeysReferencingTable($this->table->getName());
         $relCol = $this->builder->getRefFKPhpNameAffix($fks[0], true);
@@ -664,6 +666,7 @@ public function compareVersions(\$fromVersionNumber, \$toVersionNumber, \$keys =
     {
         $versionTable = $this->behavior->getVersionTable();
         $versionARClassName = $this->builder->getNewStubObjectBuilder($versionTable)->getClassName();
+        $versionTableMapClassName = $this->builder->getClassNameFromBuilder($this->builder->getNewTableMapBuilder($versionTable));
         $versionForeignColumn = $versionTable->getColumn($this->behavior->getParameter('version_column'));
         $fks = $versionTable->getForeignKeysReferencingTable($this->table->getName());
         $relCol = $this->builder->getRefFKPhpNameAffix($fks[0], $plural = true);
@@ -679,7 +682,7 @@ public function compareVersions(\$fromVersionNumber, \$toVersionNumber, \$keys =
 public function getLastVersions(\$number = 10, \$criteria = null, \$con = null)
 {
     \$criteria = {$this->getVersionQueryClassName()}::create(null, \$criteria);
-    \$criteria->addDescendingOrderByColumn({$versionARClassName}::VERSION);
+    \$criteria->addDescendingOrderByColumn({$versionTableMapClassName}::VERSION);
     \$criteria->limit(\$number);
 
     return \$this->{$versionGetter}(\$criteria, \$con);
