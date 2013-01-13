@@ -25,8 +25,6 @@ class VersionableBehaviorObjectBuilderModifier
 
     protected $objectClassName;
 
-    protected $peerClassName;
-
     public function __construct($behavior)
     {
         $this->behavior = $behavior;
@@ -60,10 +58,9 @@ class VersionableBehaviorObjectBuilderModifier
 
     protected function setBuilder($builder)
     {
-        $this->builder = $builder;
+        $this->builder         = $builder;
         $this->objectClassName = $builder->getObjectClassName();
-        $this->queryClassName = $builder->getQueryClassName();
-        $this->peerClassName = $builder->getPeerClassName();
+        $this->queryClassName  = $builder->getQueryClassName();
     }
 
     /**
@@ -220,7 +217,8 @@ public function enforceVersioning()
 
     protected function addIsVersioningNecessary(&$script)
     {
-        $peerClass = $this->builder->getPeerClassName();
+        $queryClassName = $this->builder->getQueryClassName();
+
         $script .= "
 /**
  * Checks whether the current state must be recorded as a version
@@ -237,7 +235,7 @@ public function isVersioningNecessary(\$con = null)
         return true;
     }
 
-    if ({$peerClass}::isVersioningEnabled() && (\$this->isNew() || \$this->isModified()) || \$this->isDeleted()) {
+    if ({$queryClassName}::isVersioningEnabled() && (\$this->isNew() || \$this->isModified()) || \$this->isDeleted()) {
         return true;
     }";
         foreach ($this->behavior->getVersionableFks() as $fk) {
@@ -272,8 +270,9 @@ public function isVersioningNecessary(\$con = null)
 
     protected function addAddVersion(&$script)
     {
-        $versionTable = $this->behavior->getVersionTable();
+        $versionTable       = $this->behavior->getVersionTable();
         $versionARClassName = $this->builder->getClassNameFromBuilder($this->builder->getNewStubObjectBuilder($versionTable));
+
         $script .= "
 /**
  * Creates a version of the current object and saves it.
@@ -357,11 +356,11 @@ public function toVersion(\$versionNumber, \$con = null)
 /**
  * Sets the properties of the current object to the value they had at a specific version
  *
- * @param   {$versionARClassName} \$version The version object to use
- * @param   ConnectionInterface \$con the connection to use
- * @param   array \$loadedObjects objects thats been loaded in a chain of populateFromVersion calls on referrer or fk objects.
+ * @param {$versionARClassName} \$version The version object to use
+ * @param ConnectionInterface   \$con the connection to use
+ * @param array                 \$loadedObjects objects thats been loaded in a chain of populateFromVersion calls on referrer or fk objects.
  *
- * @return  {$ARclassName} The current object (for fluent API support)
+ * @return {$ARclassName} The current object (for fluent API support)
  */
 public function populateFromVersion(\$version, \$con = null, &\$loadedObjects = array())
 {";
@@ -407,18 +406,19 @@ public function populateFromVersion(\$version, \$con = null, &\$loadedObjects = 
             $fkColumnIds = $this->behavior->getReferrerIdsColumn($fk);
             $fkColumnVersions = $this->behavior->getReferrerVersionsColumn($fk);
             $relatedVersionQueryClassName = $this->builder->getClassNameFromBuilder($this->builder->getNewStubQueryBuilder($foreignVersionTable));
-            $relatedVersionPeerClassName =  $this->builder->getClassNameFromBuilder($this->builder->getNewStubPeerBuilder($foreignVersionTable));
+            $relatedVersionTableMapClassName = $this->builder->getTableMapClassName();
             $relatedClassName = $this->builder->getClassNameFromBuilder($this->builder->getNewStubObjectBuilder($foreignTable));
             $fkColumn = $fk->getForeignColumn();
             $fkVersionColumn = $foreignVersionTable->getColumn($this->behavior->getParameter('version_column'));
+
             $script .= "
     if (\$fkValues = \$version->get{$fkColumnIds->getPhpName()}()) {
         \$this->clear{$fkPhpNames}();
         \$fkVersions = \$version->get{$fkColumnVersions->getPhpName()}();
         \$query = {$relatedVersionQueryClassName}::create();
         foreach (\$fkValues as \$key => \$value) {
-            \$c1 = \$query->getNewCriterion({$this->builder->getColumnConstant($fkColumn, $relatedVersionPeerClassName)}, \$value);
-            \$c2 = \$query->getNewCriterion({$this->builder->getColumnConstant($fkVersionColumn, $relatedVersionPeerClassName)}, \$fkVersions[\$key]);
+            \$c1 = \$query->getNewCriterion({$this->builder->getColumnConstant($fkColumn, $relatedVersionTableMapClassName)}, \$value);
+            \$c2 = \$query->getNewCriterion({$this->builder->getColumnConstant($fkVersionColumn, $relatedVersionTableMapClassName)}, \$fkVersions[\$key]);
             \$c1->addAnd(\$c2);
             \$query->addOr(\$c1);
         }
@@ -668,7 +668,6 @@ public function compareVersions(\$fromVersionNumber, \$toVersionNumber, \$keys =
         $fks = $versionTable->getForeignKeysReferencingTable($this->table->getName());
         $relCol = $this->builder->getRefFKPhpNameAffix($fks[0], $plural = true);
         $versionGetter = 'get'.$relCol;
-        $versionPeer = $this->builder->getNewStubPeerBuilder($versionTable)->getClassName();
 
         $script .= <<<EOF
 /**
@@ -680,7 +679,7 @@ public function compareVersions(\$fromVersionNumber, \$toVersionNumber, \$keys =
 public function getLastVersions(\$number = 10, \$criteria = null, \$con = null)
 {
     \$criteria = {$this->getVersionQueryClassName()}::create(null, \$criteria);
-    \$criteria->addDescendingOrderByColumn({$versionPeer}::VERSION);
+    \$criteria->addDescendingOrderByColumn({$versionARClassName}::VERSION);
     \$criteria->limit(\$number);
 
     return \$this->{$versionGetter}(\$criteria, \$con);
