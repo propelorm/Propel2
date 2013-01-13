@@ -11,16 +11,13 @@
 namespace Propel\Tests\Generator\Behavior\Versionable;
 
 use Propel\Generator\Util\QuickBuilder;
-use Propel\Generator\Behavior\Versionable\VersionableBehavior;
-
-use Propel\Runtime\Propel;
 
 /**
  * Tests for VersionableBehavior class
  *
  * @author François Zaninotto
  */
-class VersionableBehaviorTest extends \PHPUnit_Framework_TestCase
+class VersionableBehaviorTest extends TestCase
 {
     public function basicSchemaDataProvider()
     {

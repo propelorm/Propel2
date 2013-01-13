@@ -17,21 +17,19 @@ use Propel\Generator\Model\ForeignKey;
  * Keeps tracks of all the modifications in an ActiveRecord object
  *
  * @author Francois Zaninotto
- * @version   $Revision$
- * @package   propel.generator.behavior.versionable
  */
 class VersionableBehavior extends Behavior
 {
     // default parameters value
     protected $parameters = array(
-        'version_column' => 'version',
-        'version_table'  => '',
-        'log_created_at' => 'false',
-        'log_created_by' => 'false',
-        'log_comment'    => 'false',
+        'version_column'            => 'version',
+        'version_table'             => '',
+        'log_created_at'            => 'false',
+        'log_created_by'            => 'false',
+        'log_comment'               => 'false',
         'version_created_at_column' => 'version_created_at',
         'version_created_by_column' => 'version_created_by',
-        'version_comment_column' => 'version_comment'
+        'version_comment_column'    => 'version_comment'
     );
 
     protected $versionTable;
@@ -263,14 +261,5 @@ class VersionableBehavior extends Behavior
         }
 
         return $this->queryBuilderModifier;
-    }
-
-    public function getPeerBuilderModifier()
-    {
-        if (null === $this->peerBuilderModifier) {
-            $this->peerBuilderModifier = new VersionableBehaviorPeerBuilderModifier($this);
-        }
-
-        return $this->peerBuilderModifier;
     }
 }

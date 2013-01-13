@@ -11,21 +11,17 @@
 namespace Propel\Tests\Generator\Behavior\Versionable;
 
 use Propel\Generator\Util\QuickBuilder;
-use Propel\Generator\Behavior\Versionable\VersionableBehavior;
-
-use Propel\Runtime\Propel;
 
 /**
  * Tests for VersionableBehavior class
  *
  * @author François Zaninotto
  */
-class VersionableBehaviorPeerBuilderModifierTest extends \PHPUnit_Framework_TestCase
+class VersionableBehaviorQueryBuilderModifierTest extends TestCase
 {
-
     public function setUp()
     {
-        if (!class_exists('\VersionableBehaviorTest10')) {
+        if (!class_exists('VersionableBehaviorTest10')) {
             $schema = <<<EOF
 <database name="versionable_behavior_test_10">
     <table name="versionable_behavior_test_10">
@@ -41,11 +37,10 @@ EOF;
 
     public function testIsVersioningEnabled()
     {
-        $this->assertTrue(\VersionableBehaviorTest10Peer::isVersioningEnabled());
-        \VersionableBehaviorTest10Peer::disableVersioning();
-        $this->assertFalse(\VersionableBehaviorTest10Peer::isVersioningEnabled());
-        \VersionableBehaviorTest10Peer::enableVersioning();
-        $this->assertTrue(\VersionableBehaviorTest10Peer::isVersioningEnabled());
+        $this->assertTrue(\VersionableBehaviorTest10Query::isVersioningEnabled());
+        \VersionableBehaviorTest10Query::disableVersioning();
+        $this->assertFalse(\VersionableBehaviorTest10Query::isVersioningEnabled());
+        \VersionableBehaviorTest10Query::enableVersioning();
+        $this->assertTrue(\VersionableBehaviorTest10Query::isVersioningEnabled());
     }
-
 }
