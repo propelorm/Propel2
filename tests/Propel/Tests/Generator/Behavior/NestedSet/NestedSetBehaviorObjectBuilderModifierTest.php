@@ -309,7 +309,9 @@ class NestedSetBehaviorObjectBuilderModifierTest extends TestCase
                |  \
                t6 t7
         */
-        $con    = Propel::getServiceContainer()->getReadConnection(\Map\NestedSetTable9TableMap::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getReadConnection(\Map\NestedSetTable9TableMap::DATABASE_NAME);
+        $con->useDebug();
+
         $count  = $con->getQueryCount();
         $parent = $t5->getParent($con);
         $parent = $t5->getParent($con);
