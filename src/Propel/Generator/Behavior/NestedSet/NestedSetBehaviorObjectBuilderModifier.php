@@ -477,10 +477,9 @@ public function isAncestorOf(\$child)
 /**
  * Tests if object has an ancestor
  *
- * @param      ConnectionInterface \$con Connection to use.
- * @return     bool
+ * @return boolean
  */
-public function hasParent(ConnectionInterface \$con = null)
+public function hasParent()
 {
     return \$this->getLevel() > 0;
 }
@@ -518,8 +517,8 @@ public function setParent(\$parent = null)
  * Gets parent node for the current object if it exists
  * The result is cached so further calls to the same method don't issue any queries
  *
- * @param      ConnectionInterface \$con Connection to use.
- * @return     mixed         Propel object if exists else false
+ * @param  ConnectionInterface \$con Connection to use.
+ * @return mixed Propel object if exists else false
  */
 public function getParent(ConnectionInterface \$con = null)
 {
@@ -847,11 +846,11 @@ public function getLastChild(\$query = null, ConnectionInterface \$con = null)
 /**
  * Gets the siblings of the given node
  *
- * @param      bool            \$includeNode Whether to include the current node or not
- * @param      Criteria \$query Criteria to filter results.
- * @param      ConnectionInterface \$con Connection to use.
+ * @param boolean             \$includeNode Whether to include the current node or not
+ * @param Criteria            \$query Criteria to filter results.
+ * @param ConnectionInterface \$con Connection to use.
  *
- * @return     array         List of $objectClassName objects
+ * @return array List of $objectClassName objects
  */
 public function getSiblings(\$includeNode = false, \$query = null, ConnectionInterface \$con = null)
 {

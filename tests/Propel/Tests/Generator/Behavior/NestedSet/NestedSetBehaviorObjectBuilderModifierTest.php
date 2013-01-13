@@ -509,11 +509,13 @@ class NestedSetBehaviorObjectBuilderModifierTest extends TestCase
                |  \
                t6 t7
         */
-        $con = Propel::getServiceContainer()->getReadConnection(\Map\NestedSetTable9TableMap::DATABASE_NAME);
+        $con   = Propel::getServiceContainer()->getReadConnection(\Map\NestedSetTable9TableMap::DATABASE_NAME);
         $count = $con->getQueryCount();
-        $children = $t3->getChildren(null, $con);
+
+        $children   = $t3->getChildren(null, $con);
         $nbChildren = $t3->countChildren(null, $con);
         $this->assertEquals($count + 1, $con->getQueryCount(), 'countChildren() uses the internal collection when passed no Criteria');
+
         $nbChildren = $t3->countChildren(new Criteria(), $con);
         $this->assertEquals($count + 2, $con->getQueryCount(), 'countChildren() issues a new query when passed a Criteria');
     }
@@ -1498,5 +1500,12 @@ class NestedSetBehaviorObjectBuilderModifierTest extends TestCase
             't3' => array(4, 13, 1),
         );
         $this->assertEquals($expected, $this->dumpNodes($path), 'getAncestors() returns path from the current scope only');
+    }
+
+    public function testConstants()
+    {
+        $this->assertEquals(\NestedSetTable9::LEFT_COL, 'nested_set_table9.tree_left', 'nested_set adds a LEFT_COL constant');
+        $this->assertEquals(\NestedSetTable9::RIGHT_COL, 'nested_set_table9.tree_right', 'nested_set adds a RIGHT_COL constant');
+        $this->assertEquals(\NestedSetTable9::LEVEL_COL, 'nested_set_table9.tree_level', 'nested_set adds a LEVEL_COL constant');
     }
 }

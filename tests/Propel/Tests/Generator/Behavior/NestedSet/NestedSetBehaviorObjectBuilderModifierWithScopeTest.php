@@ -234,7 +234,11 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
 
     public function testInsertAsFirstChildOf()
     {
-        $this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table10', 'insertAsFirstChildOf'), 'nested_set adds a insertAsFirstChildOf() method');
+        $this->assertTrue(
+            method_exists('NestedSetTable10', 'insertAsFirstChildOf'),
+            'nested_set adds a insertAsFirstChildOf() method'
+        );
+
         $fixtures = $this->initTreeWithScope();
         /* Tree used for tests
          Scope 1
@@ -303,7 +307,11 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
 
     public function testInsertAsLastChildOf()
     {
-        $this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table10', 'insertAsLastChildOf'), 'nested_set adds a insertAsLastChildOf() method');
+        $this->assertTrue(
+            method_exists('NestedSetTable10', 'insertAsLastChildOf'),
+            'nested_set adds a insertAsLastChildOf() method'
+        );
+
         $fixtures = $this->initTreeWithScope();
         /* Tree used for tests
          Scope 1
@@ -372,7 +380,11 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
 
     public function testInsertAsPrevSiblingOf()
     {
-        $this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table10', 'insertAsPrevSiblingOf'), 'nested_set adds a insertAsPrevSiblingOf() method');
+        $this->assertTrue(
+            method_exists('NestedSetTable10', 'insertAsPrevSiblingOf'),
+            'nested_set adds a insertAsPrevSiblingOf() method'
+        );
+
         $fixtures = $this->initTreeWithScope();
         /* Tree used for tests
          Scope 1
@@ -452,7 +464,11 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
 
     public function testInsertAsNextSiblingOf()
     {
-        $this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table10', 'insertAsNextSiblingOf'), 'nested_set adds a insertAsNextSiblingOf() method');
+        $this->assertTrue(
+            method_exists('NestedSetTable10', 'insertAsNextSiblingOf'),
+            'nested_set adds a insertAsNextSiblingOf() method'
+        );
+
         $fixtures = $this->initTreeWithScope();
         /* Tree used for tests
          Scope 1
@@ -708,5 +724,13 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
             't10' => array(4, 5, 1),
         );
         $this->assertEquals($expected, $this->dumpTreeWithScope(2), 'deleteDescendants() does not delete anything out of the scope');
+    }
+
+    public function testConstants()
+    {
+        $this->assertEquals(\NestedSetTable10::LEFT_COL,  'nested_set_table10.my_left_column');
+        $this->assertEquals(\NestedSetTable10::RIGHT_COL, 'nested_set_table10.my_right_column');
+        $this->assertEquals(\NestedSetTable10::LEVEL_COL, 'nested_set_table10.my_level_column');
+        $this->assertEquals(\NestedSetTable10::SCOPE_COL, 'nested_set_table10.my_scope_column');
     }
 }
