@@ -27,6 +27,12 @@ use Propel\Runtime\Collection\ObjectCollection;
  */
 class TimestampableBehaviorTest extends BookstoreTestBase
 {
+    public static function setUpBeforeClass()
+    {
+        static::$isInitialized = false;
+        parent::setUpBeforeClass();
+    }
+
     public function testParameters()
     {
         $table2 = Table2Peer::getTableMap();
