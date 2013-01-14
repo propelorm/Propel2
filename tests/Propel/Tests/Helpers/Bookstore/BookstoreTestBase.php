@@ -21,7 +21,7 @@ abstract class BookstoreTestBase extends \PHPUnit_Framework_TestCase
     /**
      * @var Boolean
      */
-    private static $isInitialized = false;
+    protected static $isInitialized = false;
     /**
      * @var \PDO
      */
