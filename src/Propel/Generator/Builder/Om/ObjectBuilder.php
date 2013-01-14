@@ -5121,7 +5121,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      */
     public function __toString()
     {
-        return (string) \$this->exportTo(" . $this->getPeerClassName() . "::DEFAULT_STRING_FORMAT);
+        return (string) \$this->exportTo(" . $this->getTableMapClassName() . "::DEFAULT_STRING_FORMAT);
     }
 ";
     }

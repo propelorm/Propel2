@@ -204,9 +204,6 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
         }
 
         $script .= "
-    /** The default string format for model objects of the related table **/
-    const DEFAULT_STRING_FORMAT = '" . $this->getTable()->getDefaultStringFormat() . "';
-
     /**
      * An identity map to hold any loaded instances of ".$this->getObjectClassName()." objects.
      * This must be public so that other peer classes can access this when hydrating from JOIN

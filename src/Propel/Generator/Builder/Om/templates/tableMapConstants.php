@@ -49,3 +49,8 @@
      */
     const <?php echo $col->getConstantColumnName() ?> = '<?php echo $tableName ?>.<?php echo strtoupper($col->getName()) ?>';
 <?php endforeach; ?>
+
+    /**
+     * The default string format for model objects of the related table
+     */
+    const DEFAULT_STRING_FORMAT = '<?php echo $stringFormat ?>';
