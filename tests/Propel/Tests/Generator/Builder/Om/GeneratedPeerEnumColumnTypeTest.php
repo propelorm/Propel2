@@ -39,13 +39,13 @@ EOF;
     public function valueSetConstantProvider()
     {
         return array(
-            array('\ComplexColumnTypeEntity103Peer::BAR_FOO', 'foo'),
-            array('\ComplexColumnTypeEntity103Peer::BAR_BAR', 'bar'),
-            array('\ComplexColumnTypeEntity103Peer::BAR_BAZ', 'baz'),
-            array('\ComplexColumnTypeEntity103Peer::BAR_1', '1'),
-            array('\ComplexColumnTypeEntity103Peer::BAR_4', '4'),
-            array('\ComplexColumnTypeEntity103Peer::BAR__', '('),
-            array('\ComplexColumnTypeEntity103Peer::BAR_FOO_BAR', 'foo bar'),
+            array('\Map\ComplexColumnTypeEntity103TableMap::BAR_FOO', 'foo'),
+            array('\Map\ComplexColumnTypeEntity103TableMap::BAR_BAR', 'bar'),
+            array('\Map\ComplexColumnTypeEntity103TableMap::BAR_BAZ', 'baz'),
+            array('\Map\ComplexColumnTypeEntity103TableMap::BAR_1', '1'),
+            array('\Map\ComplexColumnTypeEntity103TableMap::BAR_4', '4'),
+            array('\Map\ComplexColumnTypeEntity103TableMap::BAR__', '('),
+            array('\Map\ComplexColumnTypeEntity103TableMap::BAR_FOO_BAR', 'foo bar'),
         );
     }
 
@@ -61,12 +61,12 @@ EOF;
     public function testGetValueSets()
     {
         $expected = array(\Map\ComplexColumnTypeEntity103TableMap::BAR => array('foo', 'bar', 'baz', '1', '4', '(', 'foo bar'));
-        $this->assertEquals($expected, \ComplexColumnTypeEntity103Peer::getValueSets());
+        $this->assertEquals($expected, \Map\ComplexColumnTypeEntity103TableMap::getValueSets());
     }
 
     public function testGetValueSet()
     {
         $expected = array('foo', 'bar', 'baz', '1', '4', '(', 'foo bar');
-        $this->assertEquals($expected, \ComplexColumnTypeEntity103Peer::getValueSet(\Map\ComplexColumnTypeEntity103TableMap::BAR));
+        $this->assertEquals($expected, \Map\ComplexColumnTypeEntity103TableMap::getValueSet(\Map\ComplexColumnTypeEntity103TableMap::BAR));
     }
 }

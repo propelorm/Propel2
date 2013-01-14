@@ -10,11 +10,13 @@
 
 namespace Propel\Tests;
 
+
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
 use Propel\Tests\Bookstore\Author;
 use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\BookPeer;
+use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\Bookstore\Publisher;
 
 use Propel\Runtime\Propel;
@@ -57,7 +59,7 @@ class CharacterEncodingTest extends BookstoreTestBase
     {
         $this->markTestSkipped('Skipped because of weird behavior on some platforms');
 
-        $db = Propel::getServiceContainer()->getAdapter(BookPeer::DATABASE_NAME);
+        $db = Propel::getServiceContainer()->getAdapter(BookTableMap::DATABASE_NAME);
 
         $title = "Смерть на брудершафт. Младенец и черт";
         //        1234567890123456789012345678901234567
@@ -88,7 +90,7 @@ class CharacterEncodingTest extends BookstoreTestBase
     {
         $this->markTestSkipped('Skipped because of weird behavior on some platforms');
 
-        $db = Propel::getServiceContainer()->getAdapter(BookPeer::DATABASE_NAME);
+        $db = Propel::getServiceContainer()->getAdapter(BookTableMap::DATABASE_NAME);
         if ($db instanceof SqliteAdapter) {
             $this->markTestSkipped();
         }
