@@ -198,11 +198,6 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      */
     protected function addConstantsAndAttributes(&$script)
     {
-        $this->addInheritanceColumnConstants($script);
-        if ($this->getTable()->hasEnumColumns()) {
-            $this->addEnumColumnConstants($script);
-        }
-
         $script .= "
     /**
      * An identity map to hold any loaded instances of ".$this->getObjectClassName()." objects.
@@ -220,53 +215,6 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 
         $this->addFieldNamesAttribute($script);
         $this->addFieldKeysAttribute($script);
-
-        if ($this->getTable()->hasEnumColumns()) {
-            $this->addEnumColumnAttributes($script);
-        }
-    }
-
-    /**
-     * Adds the COLUMN_NAME constant to the class definition.
-     * @param string &$script The script will be modified in this method.
-     */
-    protected function addColumnNameConstants(&$script)
-    {
-        foreach ($this->getTable()->getColumns() as $col) {
-            $script .= "
-    /** the column name for the " . strtoupper($col->getName()) ." field */
-    const ".$this->getColumnName($col) ." = '" . $this->getTable()->getName() . ".".strtoupper($col->getName())."';
-";
-        } // foreach
-    }
-
-    /**
-     * Adds the valueSet constants for ENUM columns.
-     * @param string &$script The script will be modified in this method.
-     */
-    protected function addEnumColumnConstants(&$script)
-    {
-        foreach ($this->getTable()->getColumns() as $col) {
-            if ($col->isEnumType()) {
-                $script .= "
-    /** The enumerated values for the " . strtoupper($col->getName()) . " field */";
-                foreach ($col->getValueSet() as $value) {
-                    $script .= "
-    const " . $this->getColumnName($col) . '_' . $this->getEnumValueConstant($value) . " = '" . $value . "';";
-                }
-                $script .= "
-";
-            }
-        }
-    }
-
-    /**
-     * @param  string $value
-     * @return string
-     */
-    protected function getEnumValueConstant($value)
-    {
-        return strtoupper(preg_replace('/[^a-zA-Z0-9_\x7f-\xff]/', '_', $value));
     }
 
     /**
@@ -372,32 +320,6 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
     } // addFieldKeysAttribute
 
     /**
-     * Adds the valueSet attributes for ENUM columns.
-     * @param string &$script The script will be modified in this method.
-     */
-    protected function addEnumColumnAttributes(&$script)
-    {
-        $script .= "
-    /** The enumerated values for this table */
-    protected static \$enumValueSets = array(";
-        foreach ($this->getTable()->getColumns() as $col) {
-            if ($col->isEnumType()) {
-                $script .= "
-        {$col->getConstantName()} => array(
-";
-                foreach ($col->getValueSet() as $value) {
-                    $script .= "            self::" . $this->getColumnName($col) . '_' . $this->getEnumValueConstant($value) . ",
-";
-                }
-                $script .= "        ),";
-            }
-        }
-        $script .= "
-    );
-";
-    }
-
-    /**
      * @param string &$script
      */
     protected function addGetFieldNames(&$script)
@@ -454,45 +376,6 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
     } // addTranslateFieldName()
 
     /**
-     * Adds the getValueSets() method.
-     * @param string &$script The script will be modified in this method.
-     */
-    protected function addGetValueSets(&$script)
-    {
-        $script .= "
-    /**
-     * Gets the list of values for all ENUM columns
-     * @return array
-     */
-    public static function getValueSets()
-    {
-      return static::\$enumValueSets;
-    }
-";
-    }
-
-    /**
-     * Adds the getValueSet() method.
-     * @param string &$script The script will be modified in this method.
-     */
-    protected function addGetValueSet(&$script)
-    {
-        $script .= "
-    /**
-     * Gets the list of values for an ENUM column
-     * @param string \$colname
-     * @return array list of possible values for the column
-     */
-    public static function getValueSet(\$colname)
-    {
-        \$valueSets = self::getValueSets();
-
-        return \$valueSets[\$colname];
-    }
-";
-    }
-
-    /**
      * Adds the buildTableMap() method.
      * @param string &$script The script will be modified in this method.
      */
@@ -511,44 +394,6 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
       }
     }
 ";
-    }
-
-    /**
-     * Adds the CLASSKEY_* and CLASSNAME_* constants used for inheritance.
-     * @param string &$script The script will be modified in this method.
-     */
-    public function addInheritanceColumnConstants(&$script)
-    {
-        if (!$col = $this->getTable()->getChildrenColumn()) {
-            return;
-        }
-
-        if (!$col->isEnumeratedClasses()) {
-            return;
-        }
-
-        foreach ($col->getChildren() as $child) {
-            $childBuilder = $this->getMultiExtendObjectBuilder();
-            $childBuilder->setChild($child);
-            $fqcn = addslashes($childBuilder->getFullyQualifiedClassName());
-
-            $script .= "
-    /** A key representing a particular subclass */
-    const CLASSKEY_".strtoupper($child->getKey())." = '" . $child->getKey() . "';
-";
-
-            if (strtoupper($child->getClassName()) != strtoupper($child->getKey())) {
-                $script .= "
-    /** A key representing a particular subclass */
-    const CLASSKEY_".strtoupper($child->getClassname())." = '" . $fqcn . "';
-";
-            }
-
-            $script .= "
-    /** A class that can be returned by this peer. */
-    const CLASSNAME_".strtoupper($child->getKey())." = '". $fqcn . "';
-";
-        }
     }
 
     /**
@@ -1233,14 +1078,14 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 ";
             foreach ($col->getChildren() as $child) {
                 $script .= "
-                case self::CLASSKEY_".strtoupper($child->getKey()).":
-                    \$omClass = self::CLASSNAME_".strtoupper($child->getKey()).";
+                case {$this->getTableMapClassName()}::CLASSKEY_".strtoupper($child->getKey()).":
+                    \$omClass = {$this->getTableMapClassName()}::CLASSNAME_".strtoupper($child->getKey()).";
                     break;
 ";
             } /* foreach */
             $script .= "
                 default:
-                    \$omClass = self::CLASS_DEFAULT;
+                    \$omClass = {$this->getTableMapClassName()}::CLASS_DEFAULT;
 ";
             $script .= "
             } // switch

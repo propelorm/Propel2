@@ -181,7 +181,7 @@ class ".$this->getUnqualifiedClassName()." extends ".$this->getParentClassName()
     {";
         $script .= "
         parent::__construct();
-        \$this->set$cfc(".$this->getPeerClassName()."::CLASSKEY_".strtoupper($child->getKey()).");
+        \$this->set$cfc(".$this->getTableMapClassName()."::CLASSKEY_".strtoupper($child->getKey()).");
     }
 ";
     }
