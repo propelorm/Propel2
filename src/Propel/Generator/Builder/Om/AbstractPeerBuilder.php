@@ -148,11 +148,6 @@ abstract class AbstractPeerBuilder extends AbstractOMBuilder
         $this->addTranslateFieldName($script);
         $this->addGetFieldNames($script);
 
-        if ($table->hasEnumColumns()) {
-            $this->addGetValueSets($script);
-            $this->addGetValueSet($script);
-        }
-
         if (!$table->isAlias()) {
             $this->addAlias($script); // alias() utility method (deprecated?)
             $this->addSelectMethods($script);

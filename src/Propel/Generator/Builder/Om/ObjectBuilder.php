@@ -1100,7 +1100,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         if (null === \$this->$clo) {
             return null;
         }
-        \$valueSet = " . $this->getPeerClassName() . "::getValueSet(" . $this->getColumnConstant($column) . ");
+        \$valueSet = " . $this->getTableMapClassName() . "::getValueSet(" . $this->getColumnConstant($column) . ");
         if (!isset(\$valueSet[\$this->$clo])) {
             throw new PropelException('Unknown stored enum key: ' . \$this->$clo);
         }
@@ -1756,7 +1756,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
         $script .= "
         if (\$v !== null) {
-            \$valueSet = " . $this->getPeerClassName() . "::getValueSet(" . $this->getColumnConstant($col) . ");
+            \$valueSet = " . $this->getTableMapClassName() . "::getValueSet(" . $this->getColumnConstant($col) . ");
             if (!in_array(\$v, \$valueSet)) {
                 throw new PropelException(sprintf('Value \"%s\" is not accepted in this enumerated column', \$v));
             }
@@ -2518,7 +2518,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
             if (PropelTypes::ENUM === $col->getType()) {
                 $script .= "
-                \$valueSet = " . $this->getPeerClassName() . "::getValueSet(" . $this->getColumnConstant($col) . ");
+                \$valueSet = " . $this->getTableMapClassName() . "::getValueSet(" . $this->getColumnConstant($col) . ");
                 if (isset(\$valueSet[\$value])) {
                     \$value = \$valueSet[\$value];
                 }";
