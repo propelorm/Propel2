@@ -128,6 +128,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
             'nbHydrateColumns'  => $this->getTable()->getNumColumns() - $this->getTable()->getNumLazyLoadColumns(),
             'peerClassName'     => $this->getStubPeerBuilder()->getFullyQualifiedClassName(),
             'columns'           => $this->getTable()->getColumns(),
+            'stringFormat'      => $this->getTable()->getDefaultStringFormat(),
         ));
     }
 

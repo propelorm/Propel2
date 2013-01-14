@@ -605,12 +605,12 @@ class Collection extends \ArrayObject implements \Serializable
     /**
      * Returns a string representation of the current collection.
      * Based on the string representation of the underlying objects, defined in
-     * the Peer::DEFAULT_STRING_FORMAT constant
+     * the TableMap::DEFAULT_STRING_FORMAT constant
      *
      * @return string
      */
     public function __toString()
     {
-        return (string) $this->exportTo(constant($this->getPeerClass() . '::DEFAULT_STRING_FORMAT'));
+        return (string) $this->exportTo(constant($this->getTableMapClass() . '::DEFAULT_STRING_FORMAT'));
     }
 }
