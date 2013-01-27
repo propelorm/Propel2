@@ -656,7 +656,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      * from the database.  In some cases -- especially when you override doSelect*()
      * methods in your stub classes -- you may need to explicitly add objects
      * to the cache in order to ensure that the same objects are always returned by doSelect*()
-     * and retrieveByPK*() calls.
+     * and findPk*() calls.
      *
      * @param ".$this->getObjectClassName()." \$obj A ".$this->getObjectClassName()." object.
      * @param string \$key (optional) key to use for instance map (for performance boost if key was already calculated externally).
@@ -1663,137 +1663,6 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
         }
     }
 ";
-    }
-
-    /**
-     * Adds the retrieveByPK method for tables with single-column primary key.
-     * @param string &$script The script will be modified in this method.
-     */
-    protected function addRetrieveByPK_SinglePK(&$script)
-    {
-        $table = $this->getTable();
-        $pks = $table->getPrimaryKey();
-        $col = $pks[0];
-
-        $script .= "
-    /**
-     * Retrieve a single object by pkey.
-     *
-     * @param ".$col->getPhpType()." \$pk the primary key.
-     * @param ConnectionInterface \$con the connection to use
-     * @return ".$this->getObjectClassName()."
-     */
-    static public function ".$this->getRetrieveMethodName()."(\$pk, ConnectionInterface \$con = null)
-    {
-
-        if (null !== (\$obj = static::getInstanceFromPool(".$this->getInstancePoolKeySnippet('$pk')."))) {
-            return \$obj;
-        }
-
-        if (null === \$con) {
-            \$con = Propel::getServiceContainer()->getReadConnection(" . $this->getTableMapClass() . "::DATABASE_NAME);
-        }
-
-        \$criteria = new Criteria(" . $this->getTableMapClass() . "::DATABASE_NAME);
-        \$criteria->add(".$this->getColumnConstant($col).", \$pk);
-
-        \$v = static::doSelect(\$criteria, \$con);
-
-        return !empty(\$v) > 0 ? \$v[0] : null;
-    }
-";
-    }
-
-    /**
-     * Adds the retrieveByPKs method for tables with single-column primary key.
-     * @param string &$script The script will be modified in this method.
-     */
-    protected function addRetrieveByPKs_SinglePK(&$script)
-    {
-        $table = $this->getTable();
-        $script .= "
-    /**
-     * Retrieve multiple objects by pkey.
-     *
-     * @param array               \$pks List of primary keys
-     * @param ConnectionInterface \$con the connection to use
-     * @throws PropelException Any exceptions caught during processing will be
-     *         rethrown wrapped into a PropelException.
-     */
-    static public function ".$this->getRetrieveMethodName()."s(\$pks, ConnectionInterface \$con = null)
-    {
-        if (null === \$con) {
-            \$con = Propel::getServiceContainer()->getReadConnection(" . $this->getTableMapClass() . "::DATABASE_NAME);
-        }
-
-        \$objs = null;
-        if (empty(\$pks)) {
-            \$objs = array();
-        } else {
-            \$criteria = new Criteria(" . $this->getTableMapClass() . "::DATABASE_NAME);";
-        $k1 = $table->getPrimaryKey();
-        $script .= "
-            \$criteria->add(".$this->getColumnConstant($k1[0]).", \$pks, Criteria::IN);";
-        $script .= "
-            \$objs = static::doSelect(\$criteria, \$con);
-        }
-
-        return \$objs;
-    }
-";
-    }
-
-    /**
-     * Adds the retrieveByPK method for tables with multi-column primary key.
-     * @param string &$script The script will be modified in this method.
-     */
-    protected function addRetrieveByPK_MultiPK(&$script)
-    {
-        $table = $this->getTable();
-        $script .= "
-    /**
-     * Retrieve object using using composite pkey values.";
-        foreach ($table->getPrimaryKey() as $col) {
-            $clo = strtolower($col->getName());
-            $cptype = $col->getPhpType();
-            $script .= "
-     * @param $cptype $".$clo;
-        }
-        $script .= "
-     * @param ConnectionInterface \$con
-     * @return ".$this->getObjectClassName()."
-     */
-    static public function ".$this->getRetrieveMethodName()."(";
-
-        $php = array();
-        foreach ($table->getPrimaryKey() as $col) {
-            $clo = strtolower($col->getName());
-            $php[] = '$' . $clo;
-        } /* foreach */
-
-        $script .= implode(', ', $php);
-
-        $script .= ", ConnectionInterface \$con = null) {
-        \$_instancePoolKey = ".$this->getInstancePoolKeySnippet($php).";";
-         $script .= "
-         if (null !== (\$obj = static::getInstanceFromPool(\$_instancePoolKey))) {
-             return \$obj;
-        }
-
-        if (null === \$con) {
-            \$con = Propel::getServiceContainer()->getReadConnection(" . $this->getTableMapClass() . "::DATABASE_NAME);
-        }
-        \$criteria = new Criteria(" . $this->getTableMapClass() . "::DATABASE_NAME);";
-        foreach ($table->getPrimaryKey() as $col) {
-            $clo = strtolower($col->getName());
-            $script .= "
-        \$criteria->add(".$this->getColumnConstant($col).", $".$clo.");";
-        }
-        $script .= "
-        \$v = static::doSelect(\$criteria, \$con);
-
-        return !empty(\$v) ? \$v[0] : null;
-    }";
     }
 
     /**

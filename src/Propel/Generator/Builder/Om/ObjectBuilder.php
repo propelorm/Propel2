@@ -3167,9 +3167,9 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $localColumns = array(); // foreign key local attributes names
 
         // If the related columns are a primary key on the foreign table
-        // then use retrieveByPk() instead of doSelect() to take advantage
+        // then use findPk() instead of doSelect() to take advantage
         // of instance pooling
-        $useRetrieveByPk = $fk->isForeignPrimaryKey();
+        $findPk = $fk->isForeignPrimaryKey();
 
         foreach ($fk->getLocalColumns() as $columnName) {
 
@@ -3210,7 +3210,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     {";
         $script .= "
         if (\$this->$varName === null && ($conditional)) {";
-        if ($useRetrieveByPk) {
+        if ($findPk) {
             $script .= "
             \$this->$varName = ".$this->getClassNameFromBuilder($fkQueryBuilder)."::create()->findPk($localColumns, \$con);";
         } else {

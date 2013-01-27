@@ -113,20 +113,6 @@ abstract class AbstractPeerBuilder extends AbstractOMBuilder
     }
 
     /**
-     * Adds the retrieveByPK() (and possibly retrieveByPKs()) method(s) appropriate for this class.
-     * @param      string &$script The script will be modified in this method.
-     */
-    protected function addRetrieveByPKMethods(&$script)
-    {
-        if (1 === count($this->getTable()->getPrimaryKey())) {
-            $this->addRetrieveByPK_SinglePK($script);
-            $this->addRetrieveByPKs_SinglePK($script);
-        } else {
-            $this->addRetrieveByPK_MultiPK($script);
-        }
-    }
-
-    /**
      * This method adds the contents of the generated class to the script.
      *
      * This method contains the high-level logic that determines which methods
@@ -161,10 +147,6 @@ abstract class AbstractPeerBuilder extends AbstractOMBuilder
         // add the insert, update, delete, etc. methods
         if (!$table->isAlias() && !$table->isReadOnly()) {
             $this->addUpdateMethods($script);
-        }
-
-        if (count($table->getPrimaryKey()) > 0) {
-            $this->addRetrieveByPKMethods($script);
         }
     }
 
@@ -228,23 +210,6 @@ abstract class AbstractPeerBuilder extends AbstractOMBuilder
         $table = $this->getTable();
 
         return (!$table->isAlias() && $this->getBuildProperty('addGenericAccessors'));
-    }
-
-    /**
-     * Returns the retrieveByPK method name to use for this table.
-     * If the table is an alias then the method name looks like "retrieveTablenameByPK"
-     * otherwise simply "retrieveByPK".
-     * @return string
-     */
-    public function getRetrieveMethodName()
-    {
-        if ($this->getTable()->isAlias()) {
-            $retrieveMethod = sprint('retrieve%sByPK', $this->getTable()->getPhpName());
-        } else {
-            $retrieveMethod = 'retrieveByPK';
-        }
-
-        return $retrieveMethod;
     }
 
     /**

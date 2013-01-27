@@ -28,6 +28,8 @@ class SortableBehaviorPeerBuilderModifier
 
     protected $peerClassName;
 
+    protected $queryClassName;
+
     protected $tableMapClassName;
 
     public function __construct($behavior)
@@ -61,6 +63,7 @@ class SortableBehaviorPeerBuilderModifier
         $this->builder = $builder;
         $this->objectClassName = $builder->getObjectClassName();
         $this->peerClassName = $builder->getPeerClassName();
+        $this->queryClassName = $builder->getQueryClassName();
         $this->tableMapClassName = $builder->getTableMapClassName();
     }
 
@@ -163,7 +166,7 @@ static public function retrieveByRank(\$rank, " . ($useScope ? "\$scope = null, 
 
     protected function addReorder(&$script)
     {
-        $peerClassName = $this->peerClassName;
+        $queryClassName = $this->queryClassName;
         $columnGetter = 'get' . $this->behavior->getColumnForParameter('rank_column')->getPhpName();
         $columnSetter = 'set' . $this->behavior->getColumnForParameter('rank_column')->getPhpName();
         $script .= "
@@ -186,7 +189,7 @@ static public function reorder(array \$order, ConnectionInterface \$con = null)
     \$con->beginTransaction();
     try {
         \$ids = array_keys(\$order);
-        \$objects = $peerClassName::retrieveByPKs(\$ids);
+        \$objects = $queryClassName::create()->findPKs(\$ids);
         foreach (\$objects as \$object) {
             \$pk = \$object->getPrimaryKey();
             if (\$object->$columnGetter() != \$order[\$pk]) {
