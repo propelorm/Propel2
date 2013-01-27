@@ -207,7 +207,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
 
         // Updating just-created book title
         // First finding book by PK (=$qs_id) ....
-        $qs_lookup = BookPeer::retrieveByPk($qs_id);
+        $qs_lookup = BookQuery::create()->findPk($qs_id);
         $this->assertNotNull($qs_lookup, 'just-created book can be found by pk');
 
         $new_title = "Quicksilver (".crc32(uniqid(rand())).")";
@@ -216,7 +216,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
         $qs_lookup->save();
 
         // Making sure object was correctly updated: ";
-        $qs_lookup2 = BookPeer::retrieveByPk($qs_id);
+        $qs_lookup2 = BookQuery::create()->findPk($qs_id);
         $this->assertEquals($new_title, $qs_lookup2->getTitle());
 
         // Test some basic DATE / TIME stuff
@@ -231,7 +231,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
         $r->setReviewDate($control);
         $r->save();
 
-        $r2 = ReviewPeer::retrieveByPk($r_id);
+        $r2 = ReviewQuery::create()->findPk($r_id);
 
         $this->assertEquals(new DateTime('2004-02-29 00:00:00'), $r2->getReviewDate(null), 'ability to fetch DateTime');
         $this->assertEquals($control, $r2->getReviewDate('U'), 'ability to fetch native unix timestamp');
@@ -251,7 +251,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
         $m1->save();
         $m1_id = $m1->getId();
 
-        $m1_lookup = MediaPeer::retrieveByPk($m1_id);
+        $m1_lookup = MediaQuery::create()->findPk($m1_id);
 
         $this->assertNotNull($m1_lookup, 'Can find just-created media item');
         $this->assertEquals(md5(file_get_contents($blob_path)), md5(stream_get_contents($m1_lookup->getCoverImage())), 'BLOB was correctly updated');
@@ -261,7 +261,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
         $m1_lookup->setCoverImage(file_get_contents($blob2_path));
         $m1_lookup->save();
 
-        $m2_lookup = MediaPeer::retrieveByPk($m1_id);
+        $m2_lookup = MediaQuery::create()->findPk($m1_id);
         $this->assertNotNull($m2_lookup, 'Can find just-created media item');
 
         $this->assertEquals(md5(file_get_contents($blob2_path)), md5(stream_get_contents($m2_lookup->getCoverImage())), 'BLOB was correctly overwritten');
@@ -343,7 +343,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
 
         // Removing books that were just created
         // First finding book by PK (=$phoenix_id) ....
-        $hp = BookPeer::retrieveByPk($phoenix_id);
+        $hp = BookQuery::create()->findPk($phoenix_id);
         $this->assertNotNull($hp, 'Could find just-created book');
 
         // Attempting to delete [multi-table] by found pk

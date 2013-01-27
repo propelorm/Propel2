@@ -17,6 +17,7 @@ use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Map\TableMap;
 use Propel\Tests\Bookstore\AcctAuditLog;
 use Propel\Tests\Bookstore\AcctAuditLogPeer;
+use Propel\Tests\Bookstore\AcctAuditLogQuery;
 use Propel\Tests\Bookstore\Author;
 use Propel\Tests\Bookstore\AuthorQuery;
 use Propel\Tests\Bookstore\Map\AuthorTableMap;
@@ -26,27 +27,32 @@ use Propel\Tests\Bookstore\BookPeer;
 use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\Bookstore\BookReader;
 use Propel\Tests\Bookstore\BookOpinion;
+use Propel\Tests\Bookstore\BookOpinionQuery;
 use Propel\Tests\Bookstore\BookOpinionPeer;
 use Propel\Tests\Bookstore\Bookstore;
 use Propel\Tests\Bookstore\BookstorePeer;
 use Propel\Tests\Bookstore\BookstoreContest;
+use Propel\Tests\Bookstore\BookstoreEmployee;
+use Propel\Tests\Bookstore\BookstoreEmployeePeer;
+use Propel\Tests\Bookstore\BookstoreEmployeeQuery;
+use Propel\Tests\Bookstore\Map\BookstoreEmployeeTableMap;
+use Propel\Tests\Bookstore\BookstoreEmployeeAccount;
+use Propel\Tests\Bookstore\BookstoreEmployeeAccountPeer;
+use Propel\Tests\Bookstore\BookstoreEmployeeAccountQuery;
+use Propel\Tests\Bookstore\Map\BookstoreEmployeeAccountTableMap;
+use Propel\Tests\Bookstore\BookstoreContestEntry;
+use Propel\Tests\Bookstore\BookstoreSale;
 use Propel\Tests\Bookstore\Contest;
 use Propel\Tests\Bookstore\ContestView;
 use Propel\Tests\Bookstore\Customer;
 use Propel\Tests\Bookstore\CustomerPeer;
+use Propel\Tests\Bookstore\CustomerQuery;
 use Propel\Tests\Bookstore\Publisher;
 use Propel\Tests\Bookstore\PublisherPeer;
+use Propel\Tests\Bookstore\PublisherQuery;
 use Propel\Tests\Bookstore\Review;
 use Propel\Tests\Bookstore\ReviewPeer;
 use Propel\Tests\Bookstore\Map\ReviewTableMap;
-use Propel\Tests\Bookstore\BookstoreEmployee;
-use Propel\Tests\Bookstore\BookstoreEmployeePeer;
-use Propel\Tests\Bookstore\Map\BookstoreEmployeeTableMap;
-use Propel\Tests\Bookstore\BookstoreEmployeeAccount;
-use Propel\Tests\Bookstore\BookstoreEmployeeAccountPeer;
-use Propel\Tests\Bookstore\Map\BookstoreEmployeeAccountTableMap;
-use Propel\Tests\Bookstore\BookstoreContestEntry;
-use Propel\Tests\Bookstore\BookstoreSale;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 use Propel\Tests\Helpers\Bookstore\Behavior\TestAuthor;
 use Propel\Tests\Helpers\Bookstore\Behavior\TestAuthorDeleteFalse;
@@ -108,7 +114,7 @@ class GeneratedObjectTest extends BookstoreTestBase
 
         PublisherPeer::clearInstancePool();
 
-        $pub2 = PublisherPeer::retrieveByPK($pubId);
+        $pub2 = PublisherQuery::create()->findPk($pubId);
         $pub2->setName('Penguin');
         $this->assertFalse($pub2->isModified(), "Expect Publisher to be not modified after setting default value second time.");
     }
@@ -167,7 +173,7 @@ class GeneratedObjectTest extends BookstoreTestBase
 
         $acct->save();
 
-        $acct = BookstoreEmployeeAccountPeer::retrieveByPK($acct->getEmployeeId());
+        $acct = BookstoreEmployeeAccountQuery::create()->findPk($acct->getEmployeeId());
 
         $this->assertNotNull($acct->getAuthenticator(), "Expected a valid (non-NULL) authenticator column after save.");
         $this->assertEquals('Password', $acct->getAuthenticator(), "Expected authenticator='Password' after save.");
@@ -326,7 +332,7 @@ class GeneratedObjectTest extends BookstoreTestBase
         $emp->save();
         $id = $emp->getId();
 
-        $retrieved = BookstoreEmployeePeer::retrieveByPK($id);
+        $retrieved = BookstoreEmployeeQuery::create()->findPk($id);
         $this->assertSame($emp, $retrieved, "Expected same object (from instance pool)");
     }
 
@@ -361,7 +367,7 @@ class GeneratedObjectTest extends BookstoreTestBase
             . " publisher_id = " . $pub2->getId()
             . " WHERE id = " . $book->getId());
 
-        $book2 = BookPeer::retrieveByPK($book->getId());
+        $book2 = BookQuery::create()->findPk($book->getId());
         $this->assertSame($book, $book2, "Expected same book object instance");
 
         $this->assertEquals($pub1->getId(), $book->getPublisherId(), "Expected book to have OLD publisher id before reload()");
@@ -408,7 +414,7 @@ class GeneratedObjectTest extends BookstoreTestBase
         $opinion->save();
 
 
-        $opinion2 = BookOpinionPeer::retrieveByPK($bookId, $readerId);
+        $opinion2 = BookOpinionQuery::create()->findPk(array($bookId, $readerId));
 
         $this->assertSame($opinion, $opinion2, "Expected same object to be retrieved from differently type-casted primary key values.");
 
@@ -658,7 +664,7 @@ class GeneratedObjectTest extends BookstoreTestBase
         BookPeer::clearInstancePool();
         ReviewPeer::clearInstancePool();
 
-        $book = BookPeer::retrieveByPK($book->getId());
+        $book = BookQuery::create()->findPk($book->getId());
         $this->assertEquals($num, $book->countReviews(), "Expected countReviews() to return $num (after save)");
         $this->assertEquals($num, count($book->getReviews()), "Expected getReviews() to return $num (after save)");
 
@@ -820,7 +826,7 @@ EOF;
 
         $this->assertEquals(100000, $cu->getPrimaryKey());
 
-        $cu2 = CustomerPeer::retrieveByPk(100000);
+        $cu2 = CustomerQuery::create()->findPk(100000);
 
         $this->assertSame($cu, $cu2);
     }
@@ -862,10 +868,10 @@ EOF;
         BookstoreEmployeeAccountPeer::clearInstancePool();
         AcctAuditLogPeer::clearInstancePool();
 
-        $al2 = AcctAuditLogPeer::retrieveByPK($alId);
+        $al2 = AcctAuditLogQuery::create()->findPk($alId);
         /* @var $al2 AcctAuditLog */
         $mapacct = $al2->getBookstoreEmployeeAccount();
-        $lookupacct = BookstoreEmployeeAccountPeer::retrieveByPK($acctId);
+        $lookupacct = BookstoreEmployeeAccountQuery::create()->findPk($acctId);
 
         $logs = $lookupacct->getAcctAuditLogs();
 

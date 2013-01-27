@@ -13,6 +13,7 @@ namespace Propel\Tests\Runtime\Connection;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 use Propel\Tests\Bookstore\Author;
 use Propel\Tests\Bookstore\AuthorPeer;
+use Propel\Tests\Bookstore\AuthorQuery;
 use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\BookPeer;
 use Propel\Tests\Bookstore\Map\AuthorTableMap;
@@ -157,9 +158,9 @@ class PropelPDOTest extends BookstoreTestBase
         }
 
         AuthorPeer::clearInstancePool();
-        $at = AuthorPeer::retrieveByPK($authorId);
+        $at = AuthorQuery::create()->findPk($authorId);
         $this->assertNotNull($at, "Committed transaction is persisted in database");
-        $at2 = AuthorPeer::retrieveByPK($authorId2);
+        $at2 = AuthorQuery::create()->findPk($authorId2);
         $this->assertNotNull($at2, "Committed transaction is persisted in database");
     }
 
@@ -205,7 +206,7 @@ class PropelPDOTest extends BookstoreTestBase
         }
 
         AuthorPeer::clearInstancePool();
-        $at = AuthorPeer::retrieveByPK($authorId);
+        $at = AuthorQuery::create()->findPk($authorId);
         $this->assertNull($at, "Rolled back transaction is not persisted in database");
     }
 
@@ -261,11 +262,11 @@ class PropelPDOTest extends BookstoreTestBase
         }
 
         AuthorPeer::clearInstancePool();
-        $at = AuthorPeer::retrieveByPK($authorId);
+        $at = AuthorQuery::create()->findPk($authorId);
         $this->assertNull($at, "Rolled back transaction is not persisted in database");
-        $at2 = AuthorPeer::retrieveByPK($authorId2);
+        $at2 = AuthorQuery::create()->findPk($authorId2);
         $this->assertNull($at2, "Rolled back transaction is not persisted in database");
-        $at3 = AuthorPeer::retrieveByPK($authorId3);
+        $at3 = AuthorQuery::create()->findPk($authorId3);
         $this->assertNull($at3, "Rolled back nested transaction is not persisted in database");
     }
 
@@ -299,9 +300,9 @@ class PropelPDOTest extends BookstoreTestBase
         $this->assertFalse($con->isInTransaction(), 'PropelPDO is not in transaction after nested transaction force rollback');
 
         AuthorPeer::clearInstancePool();
-        $at = AuthorPeer::retrieveByPK($authorId);
+        $at = AuthorQuery::create()->findPk($authorId);
         $this->assertNull($at, "Rolled back transaction is not persisted in database");
-        $at2 = AuthorPeer::retrieveByPK($authorId2);
+        $at2 = AuthorQuery::create()->findPk($authorId2);
         $this->assertNull($at2, "Forced Rolled back nested transaction is not persisted in database");
     }
 

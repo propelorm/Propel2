@@ -17,12 +17,15 @@ use Propel\Tests\Bookstore\AcctAccessRole;
 use Propel\Tests\Bookstore\AcctAccessRolePeer;
 use Propel\Tests\Bookstore\Author;
 use Propel\Tests\Bookstore\AuthorPeer;
+use Propel\Tests\Bookstore\AuthorQuery;
 use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\BookPeer;
+use Propel\Tests\Bookstore\BookQuery;
 use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\Bookstore\Bookstore;
 use Propel\Tests\Bookstore\BookstoreEmployee;
 use Propel\Tests\Bookstore\BookstoreEmployeePeer;
+use Propel\Tests\Bookstore\BookstoreEmployeeQuery;
 use Propel\Tests\Bookstore\Map\BookstoreEmployeeTableMap;
 use Propel\Tests\Bookstore\BookstoreEmployeeAccount;
 use Propel\Tests\Bookstore\BookstoreEmployeeAccountPeer;
@@ -212,8 +215,8 @@ class GeneratedPeerDoSelectTest extends BookstoreEmptyTestBase
 
         // 1) make sure consecutive calls to retrieveByPK() return the same object.
 
-        $b1 = BookPeer::retrieveByPK($samplePk);
-        $b2 = BookPeer::retrieveByPK($samplePk);
+        $b1 = BookQuery::create()->findPk($samplePk);
+        $b2 = BookQuery::create()->findPk($samplePk);
 
         $sampleval = md5(microtime());
 
@@ -228,11 +231,11 @@ class GeneratedPeerDoSelectTest extends BookstoreEmptyTestBase
         }
 
         // 3) test fetching related objects
-        $book = BookPeer::retrieveByPK($samplePk);
+        $book = BookQuery::create()->findPk($samplePk);
 
         $bookauthor = $book->getAuthor();
 
-        $author = AuthorPeer::retrieveByPK($bookauthor->getId());
+        $author = AuthorQuery::create()->findPk($bookauthor->getId());
 
         $this->assertTrue($bookauthor === $author, "Expected same object instance when calling fk object accessor as retrieveByPK()");
 
@@ -256,7 +259,7 @@ class GeneratedPeerDoSelectTest extends BookstoreEmptyTestBase
 
         $empId = $b->getId();
 
-        $this->assertSame($b, BookstoreEmployeePeer::retrieveByPK($empId), "Expected newly saved object to be same instance as pooled.");
+        $this->assertSame($b, BookstoreEmployeeQuery::create()->findPk($empId), "Expected newly saved object to be same instance as pooled.");
 
     }
 
