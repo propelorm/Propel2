@@ -17,6 +17,7 @@ use Propel\Tests\Bookstore\Author;
 use Propel\Tests\Bookstore\AuthorPeer;
 use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\BookPeer;
+use Propel\Tests\Bookstore\BookQuery;
 use Propel\Tests\Bookstore\Bookstore;
 use Propel\Tests\Bookstore\BookstorePeer;
 use Propel\Tests\Bookstore\BookstoreSale;
@@ -29,10 +30,12 @@ use Propel\Tests\Bookstore\Map\BookstoreTableMap;
 use Propel\Tests\Bookstore\Map\BookstoreEmployeeTableMap;
 use Propel\Tests\Bookstore\Map\MediaTableMap;
 use Propel\Tests\Bookstore\MediaPeer;
+use Propel\Tests\Bookstore\MediaQuery;
 use Propel\Tests\Bookstore\Publisher;
 use Propel\Tests\Bookstore\PublisherPeer;
 use Propel\Tests\Bookstore\Review;
 use Propel\Tests\Bookstore\ReviewPeer;
+use Propel\Tests\Bookstore\ReviewQuery;
 use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
 use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
 
@@ -121,7 +124,7 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
         } catch (PropelException $e) {}
 
             // 4) make sure that it doesn't exist in db
-            $book = BookPeer::retrieveByPK($bookId);
+            $book = BookQuery::create()->findPk($bookId);
         $this->assertNull($book, "Expect NULL from retrieveByPK on deleted Book.");
 
     }
@@ -168,7 +171,7 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
         BookPeer::clearInstancePool();
 
         // reload and verify that the types are the same
-        $r2 = ReviewPeer::retrieveByPK($id);
+        $r2 = ReviewQuery::create()->findPk($id);
 
         $this->assertInternalType('integer', $r2->getId(), "Expected getId() to return an integer.");
         $this->assertInternalType('string', $r2->getReviewedBy(), "Expected getReviewedBy() to return a string.");

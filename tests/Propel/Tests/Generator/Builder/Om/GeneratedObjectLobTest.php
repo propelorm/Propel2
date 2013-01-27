@@ -16,6 +16,7 @@ use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
 use Propel\Tests\Bookstore\BookPeer;
 use Propel\Tests\Bookstore\Media;
 use Propel\Tests\Bookstore\MediaPeer;
+use Propel\Tests\Bookstore\MediaQuery;
 
 use Propel\Runtime\ActiveQuery\Criteria;
 
@@ -272,7 +273,7 @@ class GeneratedObjectLobTest extends BookstoreEmptyTestBase
         MediaPeer::clearInstancePool();
 
         // make sure we have the latest from the db:
-        $m2 = MediaPeer::retrieveByPK($m1->getId());
+        $m2 = MediaQuery::create()->findPk($m1->getId());
 
         // now attempt to assign a temporary stream, opened in 'w' mode, to the db
 

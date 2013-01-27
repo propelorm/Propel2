@@ -17,26 +17,32 @@ use Propel\Tests\Bookstore\AuthorPeer;
 use Propel\Tests\Bookstore\Map\AuthorTableMap;
 use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\BookPeer;
+use Propel\Tests\Bookstore\BookQuery;
 use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\Bookstore\BookOpinion;
 use Propel\Tests\Bookstore\BookReader;
 use Propel\Tests\Bookstore\BookReaderPeer;
+use Propel\Tests\Bookstore\BookReaderQuery;
 use Propel\Tests\Bookstore\Map\BookReaderTableMap;
 use Propel\Tests\Bookstore\Bookstore;
 use Propel\Tests\Bookstore\BookstoreContest;
 use Propel\Tests\Bookstore\BookstoreContestPeer;
 use Propel\Tests\Bookstore\Map\BookstoreContestTableMap;
 use Propel\Tests\Bookstore\BookstoreContestEntry;
+use Propel\Tests\Bookstore\BookstoreContestEntryPeer;
+use Propel\Tests\Bookstore\BookstoreContestEntryQuery;
 use Propel\Tests\Bookstore\Customer;
 use Propel\Tests\Bookstore\Contest;
-use Propel\Tests\Bookstore\BookstoreContestEntryPeer;
 use Propel\Tests\Bookstore\MediaPeer;
+use Propel\Tests\Bookstore\MediaQuery;
 use Propel\Tests\Bookstore\Publisher;
 use Propel\Tests\Bookstore\PublisherPeer;
 use Propel\Tests\Bookstore\Map\PublisherTableMap;
 use Propel\Tests\Bookstore\ReviewPeer;
+use Propel\Tests\Bookstore\ReviewQuery;
 use Propel\Tests\Bookstore\ReaderFavorite;
 use Propel\Tests\Bookstore\ReaderFavoritePeer;
+use Propel\Tests\Bookstore\ReaderFavoriteQuery;
 
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
@@ -134,7 +140,7 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
 
         // 3) Assert that the media row is now also gone
 
-        $obj = MediaPeer::retrieveByPK($mediaId);
+        $obj = MediaQuery::create()->findPk($mediaId);
         $this->assertNull($obj, "Expect NULL when retrieving on no matching Media.");
 
     }
@@ -198,10 +204,10 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
 
         $this->assertEquals($origBceCount + 1, $newCount, "Expected new number of rows in BCE to be orig + 1");
 
-        $bcetest = BookstoreContestEntryPeer::retrieveByPK($store1->getId(), $c1->getId(), $cust1->getId());
+        $bcetest = BookstoreContestEntryQuery::create()->findPk(array($store1->getId(), $c1->getId(), $cust1->getId()));
         $this->assertNull($bcetest, "Expected BCE for store1 to be cascade deleted.");
 
-        $bcetest2 = BookstoreContestEntryPeer::retrieveByPK($store1->getId(), $c2->getId(), $cust1->getId());
+        $bcetest2 = BookstoreContestEntryQuery::create()->findPk(array($store1->getId(), $c2->getId(), $cust1->getId()));
         $this->assertNotNull($bcetest2, "Expected BCE for store2 to NOT be cascade deleted.");
 
     }
@@ -225,7 +231,7 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
 
         // 3) Assert that the book.author_id column is now NULL
 
-        $book = BookPeer::retrieveByPK($bookId);
+        $book = BookQuery::create()->findPk($bookId);
         $this->assertNull($book->getAuthorId(), "Expect the book.author_id to be NULL after the author was removed.");
 
     }
@@ -243,7 +249,7 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
         BookPeer::doDelete($bookId);
 
         // 3) now make sure it's gone
-        $obj = BookPeer::retrieveByPK($bookId);
+        $obj = BookQuery::create()->findPk($bookId);
         $this->assertNull($obj, "Expect NULL when retrieving on no matching Book.");
 
     }
@@ -281,7 +287,7 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
         BookPeer::doDelete($book);
 
         // 3) now make sure it's gone
-        $obj = BookPeer::retrieveByPK($bookId);
+        $obj = BookQuery::create()->findPk($bookId);
         $this->assertNull($obj, "Expect NULL when retrieving on no matching Book.");
 
     }
@@ -303,8 +309,8 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
         $review = ReviewPeer::doSelectOne(new Criteria);
         $book = $review->getBook();
         BookPeer::doDeleteAll();
-        $this->assertNull(BookPeer::retrieveByPk($book->getId()), 'doDeleteAll invalidates instance pool');
-        $this->assertNull(ReviewPeer::retrieveByPk($review->getId()), 'doDeleteAll invalidates instance pool of related tables with ON DELETE CASCADE');
+        $this->assertNull(BookQuery::create()->findPk($book->getId()), 'doDeleteAll invalidates instance pool');
+        $this->assertNull(ReviewQuery::create()->findPk($review->getId()), 'doDeleteAll invalidates instance pool of related tables with ON DELETE CASCADE');
     }
 
     /**
@@ -374,22 +380,22 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
         $this->assertEquals(4, ReaderFavoritePeer::doCount(new Criteria()));
 
         //Note: these composite PK's are pairs of (BookId, ReaderId)
-        $this->assertNotNull(ReaderFavoritePeer::retrieveByPK(2,1));
-        $this->assertNotNull(ReaderFavoritePeer::retrieveByPK(1,2));
-        $this->assertNotNull(ReaderFavoritePeer::retrieveByPk(3,1));
-        $this->assertNotNull(ReaderFavoritePeer::retrieveByPk(3,2));
-        $this->assertNull(ReaderFavoritePeer::retrieveByPK(1,1));
-        $this->assertNull(ReaderFavoritePeer::retrieveByPK(2,2));
+        $this->assertNotNull(ReaderFavoriteQuery::create()->findPk(array(2,1)));
+        $this->assertNotNull(ReaderFavoriteQuery::create()->findPk(array(1,2)));
+        $this->assertNotNull(ReaderFavoriteQuery::create()->findPk(array(3,1)));
+        $this->assertNotNull(ReaderFavoriteQuery::create()->findPk(array(3,2)));
+        $this->assertNull(ReaderFavoriteQuery::create()->findPk(array(1,1)));
+        $this->assertNull(ReaderFavoriteQuery::create()->findPk(array(2,2)));
 
         //test deletion of a single composite PK
         ReaderFavoritePeer::doDelete(array(3,1));
         $this->assertEquals(3, ReaderFavoritePeer::doCount(new Criteria()));
-        $this->assertNotNull(ReaderFavoritePeer::retrieveByPK(2,1));
-        $this->assertNotNull(ReaderFavoritePeer::retrieveByPK(1,2));
-        $this->assertNotNull(ReaderFavoritePeer::retrieveByPk(3,2));
-        $this->assertNull(ReaderFavoritePeer::retrieveByPK(1,1));
-        $this->assertNull(ReaderFavoritePeer::retrieveByPK(2,2));
-        $this->assertNull(ReaderFavoritePeer::retrieveByPk(3,1));
+        $this->assertNotNull(ReaderFavoriteQuery::create()->findPk(array(2,1)));
+        $this->assertNotNull(ReaderFavoriteQuery::create()->findPk(array(1,2)));
+        $this->assertNotNull(ReaderFavoriteQuery::create()->findPk(array(3,2)));
+        $this->assertNull(ReaderFavoriteQuery::create()->findPk(array(1,1)));
+        $this->assertNull(ReaderFavoriteQuery::create()->findPk(array(2,2)));
+        $this->assertNull(ReaderFavoriteQuery::create()->findPk(array(3,1)));
 
         //test deleting the last three
         ReaderFavoritePeer::doDelete(array(array(2,1), array(1,2), array(3,2)));
@@ -540,7 +546,7 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
     private function createBookWithId($id)
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
-        $b = BookPeer::retrieveByPK($id);
+        $b = BookQuery::create()->findPk($id);
         if (!$b) {
             $b = new Book();
             $b->setTitle("Book$id")->setISBN("BookISBN$id")->save();
@@ -559,7 +565,7 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
     private function createReaderWithId($id)
     {
         $con = Propel::getServiceContainer()->getConnection(BookReaderTableMap::DATABASE_NAME);
-        $r = BookReaderPeer::retrieveByPK($id);
+        $r = BookReaderQuery::create()->findPk($id);
         if (!$r) {
             $r = new BookReader();
             $r->setName('Reader'.$id)->save();
