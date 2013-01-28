@@ -10,24 +10,20 @@
 
 namespace Propel\Tests\Runtime\ActiveQuery;
 
-use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
-use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
-
 use Propel\Runtime\Exception\ClassNotFoundException;
 use Propel\Runtime\ActiveQuery\PropelQuery;
-
+use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
+use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
 use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\BookQuery;
-
 use Propel\Tests\Bookstore\Behavior\Table6;
 use Propel\Tests\Bookstore\Behavior\Table6Query;
-use Propel\Tests\Bookstore\Behavior\Table6Peer;
+use Propel\Tests\Bookstore\Behavior\Map\Table6TableMap;
 
 /**
  * Test class for PropelQuery
  *
  * @author Francois Zaninotto
- * @version    $Id: PropelQueryTest.php 1351 2009-12-04 22:05:01Z francois $
  */
 class PropelQueryTest extends BookstoreTestBase
 {
@@ -75,12 +71,12 @@ class PropelQueryTest extends BookstoreTestBase
         $object->save();
         $key = $object->getId();
 
-        $this->assertSame($object, Table6Peer::getInstanceFromPool($key));
-        Table6Peer::removeInstanceFromPool($object);
-        $this->assertNull(Table6Peer::getInstanceFromPool($key));
+        $this->assertSame($object, Table6TableMap::getInstanceFromPool($key));
+        Table6TableMap::removeInstanceFromPool($object);
+        $this->assertNull(Table6TableMap::getInstanceFromPool($key));
 
         $object = Table6Query::create()->findPk($key);
-        $this->assertSame($object, Table6Peer::getInstanceFromPool($key));
+        $this->assertSame($object, Table6TableMap::getInstanceFromPool($key));
     }
 }
 

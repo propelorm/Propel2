@@ -29,9 +29,7 @@ abstract class BookstoreTestBase extends \PHPUnit_Framework_TestCase
 
     public static function setUpBeforeClass()
     {
-        // this dirty bypass, prevent dsn conflict in tests
-        // TODO : fix the tests conflict et remove the bypass ;)
-        if (true || true !== self::$isInitialized) {
+        if (true !== self::$isInitialized) {
             Propel::init(__DIR__ . '/../../../../Fixtures/bookstore/build/conf/bookstore-conf.php');
             self::$isInitialized = true;
         }

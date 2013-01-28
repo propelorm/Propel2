@@ -268,11 +268,11 @@ class SortableBehaviorObjectBuilderModifierTest extends TestCase
         $res = $t2->removeFromList();
         $this->assertTrue($res instanceof Table11, 'removeFromList() returns the current object');
         $this->assertNull($res->getRank(), 'removeFromList() resets the object\'s rank');
-        \SortableTable11Peer::clearInstancePool();
+        \Map\SortableTable11TableMap::clearInstancePool();
         $expected = array(1 => 'row1', 2 => 'row2', 3 => 'row3', 4 => 'row4');
         $this->assertEquals($expected, $this->getFixturesArray(), 'removeFromList() does not change the list until the object is saved');
         $t2->save();
-        \SortableTable11Peer::clearInstancePool();
+        \Map\SortableTable11TableMap::clearInstancePool();
         $expected = array(null => 'row2', 1 => 'row1', 2 => 'row3', 3 => 'row4');
         $this->assertEquals($expected, $this->getFixturesArray(), 'removeFromList() changes the list once the object is saved');
     }

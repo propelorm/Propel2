@@ -214,7 +214,7 @@ EOF;
     {
         $article = new ConcreteArticle();
         $article->save();
-        ConcreteContentPeer::clearInstancePool();
+        ConcreteContentTableMap::clearInstancePool();
         $content = $article->getParentOrCreate();
         $this->assertTrue($content instanceof ConcreteContent, 'getParentOrCreate() returns an instance of the parent class');
         $this->assertFalse($content->isNew(), 'getParentOrCreate() returns an existing instance of the parent class if the object is persisted');
@@ -228,7 +228,7 @@ EOF;
         $content = new ConcreteContent();
         $content->save();
         $id = $content->getId();
-        ConcreteContentPeer::clearInstancePool();
+        ConcreteContentTableMap::clearInstancePool();
         $article = new ConcreteArticle();
         $article->setId($id);
         $article->save();

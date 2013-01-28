@@ -4716,7 +4716,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                 \$this->postSave(\$con);";
                 $this->applyBehaviorModifier('postSave', $script, "                ");
                 $script .= "
-                ".$this->getPeerClassName()."::addInstanceToPool(\$this);
+                ".$this->getTableMapClassName()."::addInstanceToPool(\$this);
             } else {
                 \$affectedRows = 0;
             }

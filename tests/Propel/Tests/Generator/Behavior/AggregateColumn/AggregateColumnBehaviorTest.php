@@ -14,6 +14,7 @@ use Propel\Tests\Bookstore\Behavior\AggregateColumn;
 use Propel\Tests\Bookstore\Behavior\AggregateComment;
 use Propel\Tests\Bookstore\Behavior\AggregateCommentQuery;
 use Propel\Tests\Bookstore\Behavior\AggregateCommentPeer;
+use Propel\Tests\Bookstore\Behavior\Map\AggregateCommentTableMap;
 use Propel\Tests\Bookstore\Behavior\AggregatePost;
 use Propel\Tests\Bookstore\Behavior\AggregatePostQuery;
 use Propel\Tests\Bookstore\Behavior\AggregatePostPeer;
@@ -219,7 +220,7 @@ class TestableComment extends AggregateComment
         $con->beginTransaction();
         try {
             $affectedRows = $this->doSave($con);
-            AggregateCommentPeer::addInstanceToPool($this);
+            AggregateCommentTableMap::addInstanceToPool($this);
             $con->commit();
 
             return $affectedRows;

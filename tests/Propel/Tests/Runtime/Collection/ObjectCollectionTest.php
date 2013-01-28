@@ -10,27 +10,22 @@
 
 namespace Propel\Tests\Runtime\collection;
 
-use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
-
-use Propel\Tests\Bookstore\Author;
-use Propel\Tests\Bookstore\AuthorPeer;
-use Propel\Tests\Bookstore\Book;
-use Propel\Tests\Bookstore\BookPeer;
-use Propel\Tests\Bookstore\ContestView;
-
 use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Formatter\ObjectFormatter;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
-
+use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
+use Propel\Tests\Bookstore\Author;
+use Propel\Tests\Bookstore\Map\AuthorTableMap;
+use Propel\Tests\Bookstore\Book;
+use Propel\Tests\Bookstore\Map\BookTableMap;
+use Propel\Tests\Bookstore\ContestView;
 /**
  * Test class for ObjectCollection.
  *
  * @author Francois Zaninotto
- * @version    $Id: ObjectCollectionTest.php 1348 2009-12-03 21:49:00Z francois $
  */
 class ObjectCollectionTest extends BookstoreTestBase
 {
-
     public function testContains()
     {
         $col = new ObjectCollection();
@@ -52,7 +47,7 @@ class ObjectCollectionTest extends BookstoreTestBase
     public function testSaveOnReadOnlyEntityThrowsException()
     {
         $col = new ObjectCollection();
-        $col->setModel('\Propel\Tests\Bookstore\ContestView');
+        $col->setModel('Propel\Tests\Bookstore\ContestView');
         $cv = new ContestView();
         $col []= $cv;
         $col->save();
@@ -64,7 +59,7 @@ class ObjectCollectionTest extends BookstoreTestBase
     public function testDeleteOnReadOnlyEntityThrowsException()
     {
         $col = new ObjectCollection();
-        $col->setModel('\Propel\Tests\Bookstore\ContestView');
+        $col->setModel('Propel\Tests\Bookstore\ContestView');
         $cv = new ContestView();
         $cv->setNew(false);
         $col []= $cv;
@@ -74,7 +69,7 @@ class ObjectCollectionTest extends BookstoreTestBase
     public function testGetPrimaryKeys()
     {
         $books = new ObjectCollection();
-        $books->setModel('\Propel\Tests\Bookstore\Book');
+        $books->setModel('Propel\Tests\Bookstore\Book');
         for ($i=0; $i < 4; $i++) {
             $book = new Book();
             $book->setTitle('Title' . $i);
@@ -118,7 +113,7 @@ class ObjectCollectionTest extends BookstoreTestBase
         $book->setAuthor($author);
 
         $coll = new ObjectCollection();
-        $coll->setModel('\Propel\Tests\Bookstore\Book');
+        $coll->setModel('Propel\Tests\Bookstore\Book');
         $coll[]= $book;
         $expected = array(array(
             'Id' => 9012,
@@ -147,8 +142,8 @@ class ObjectCollectionTest extends BookstoreTestBase
         $author->setFirstName('Chuck');
         $author->setLastName('Norris');
         $author->save($this->con);
-        AuthorPeer::clearInstancePool();
-        BookPeer::clearInstancePool();
+        AuthorTableMap::clearInstancePool();
+        BookTableMap::clearInstancePool();
         $coll = new ObjectCollection();
         $coll->setFormatter(new ObjectFormatter(new ModelCriteria(null, '\Propel\Tests\Bookstore\Author')));
         $coll []= $author;

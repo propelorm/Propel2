@@ -10,11 +10,12 @@
 
 namespace Propel\Tests\Generator\Builder\Om;
 
-use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
-use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
-
+use Propel\Runtime\Propel;
+use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Tests\Bookstore\Author;
 use Propel\Tests\Bookstore\AuthorPeer;
+use Propel\Tests\Bookstore\Map\AuthorTableMap;
 use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\BookPeer;
 use Propel\Tests\Bookstore\BookQuery;
@@ -31,11 +32,10 @@ use Propel\Tests\Bookstore\BookstoreContestEntry;
 use Propel\Tests\Bookstore\Contest;
 use Propel\Tests\Bookstore\Customer;
 use Propel\Tests\Bookstore\PublisherPeer;
+use Propel\Tests\Bookstore\Map\PublisherTableMap;
 use Propel\Tests\Bookstore\Review;
-
-use Propel\Runtime\Propel;
-use Propel\Runtime\ActiveQuery\Criteria;
-use Propel\Runtime\Collection\ObjectCollection;
+use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
+use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
 
 use \DateTime;
 
@@ -51,17 +51,10 @@ use \DateTime;
  * for each test method in this class.  See the BookstoreDataPopulator::populate()
  * method for the exact contents of the database.
  *
- * @see        BookstoreDataPopulator
  * @author Hans Lellelid <hans@xmpl.org>
  */
 class GeneratedObjectRelTest extends BookstoreEmptyTestBase
 {
-
-    protected function setUp()
-    {
-        parent::setUp();
-    }
-
     /**
      * Tests one side of a bi-directional setting of many-to-many relationships.
      */
@@ -365,8 +358,8 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
     public function testFKGetterUseInstancePool()
     {
         BookstoreDataPopulator::populate();
-        BookPeer::clearInstancePool();
-        AuthorPeer::clearInstancePool();
+        BookTableMap::clearInstancePool();
+        AuthorTableMap::clearInstancePool();
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         $author = AuthorPeer::doSelectOne(new Criteria(), $con);
         // populate book instance pool
@@ -379,9 +372,9 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
     public function testRefFKGetJoin()
     {
         BookstoreDataPopulator::populate();
-        BookPeer::clearInstancePool();
-        AuthorPeer::clearInstancePool();
-        PublisherPeer::clearInstancePool();
+        BookTableMap::clearInstancePool();
+        AuthorTableMap::clearInstancePool();
+        PublisherTableMap::clearInstancePool();
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         $author = AuthorPeer::doSelectOne(new Criteria(), $con);
         // populate book instance pool
@@ -542,7 +535,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         $coll = new ObjectCollection();
         $coll[] = $book;
 
-        BookPeer::clearInstancePool();
+        BookTableMap::clearInstancePool();
         $book = BookQuery::create()->findPk($book->getPrimaryKey());
 
         $bookClubList1 = new BookClubList();
@@ -607,7 +600,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
             $b->save();
         }
 
-        BookPeer::clearInstancePool();
+        BookTableMap::clearInstancePool();
         $books = BookQuery::create()->find();
 
         $bookClubList = new BookClubList();

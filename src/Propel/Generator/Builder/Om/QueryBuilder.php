@@ -412,7 +412,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
         }
         $pkHash = $this->getPeerBuilder()->getInstancePoolKeySnippet($pks);
         $script .= "
-        if ((null !== (\$obj = {$peerClassName}::getInstanceFromPool({$pkHash}))) && !\$this->formatter) {
+        if ((null !== (\$obj = {$this->getTableMapClass()}::getInstanceFromPool({$pkHash}))) && !\$this->formatter) {
             // the object is already in the instance pool
             return \$obj;
         }
@@ -507,7 +507,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
         }
         $script .= "
             \$obj->hydrate(\$row);
-            {$peerClassName}::addInstanceToPool(\$obj, $pkHashFromRow);
+            {$this->getTableMapClassName()}::addInstanceToPool(\$obj, $pkHashFromRow);
         }
         \$stmt->closeCursor();
 

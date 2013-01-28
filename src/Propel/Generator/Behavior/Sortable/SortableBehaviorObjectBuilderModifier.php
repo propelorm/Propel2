@@ -106,7 +106,7 @@ class SortableBehaviorObjectBuilderModifier
 
         return "
 {$this->peerClassName}::shiftRank(-1, \$this->{$this->getColumnGetter()}() + 1, null, " . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con);
-{$this->peerClassName}::clearInstancePool();
+{$this->tableMapClassName}::clearInstancePool();
 ";
     }
 

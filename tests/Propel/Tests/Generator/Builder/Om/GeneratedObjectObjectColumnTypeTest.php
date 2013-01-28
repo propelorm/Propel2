@@ -49,7 +49,7 @@ EOF;
         $this->assertNull($e->getBar(), 'object columns are nullable');
         $e->setBar($c);
         $e->save();
-        \ComplexColumnTypeEntity1Peer::clearInstancePool();
+        \Map\ComplexColumnTypeEntity1TableMap::clearInstancePool();
         $e = \ComplexColumnTypeEntity1Query::create()->findOne();
         $this->assertEquals($c, $e->getBar(), 'object columns are persisted');
     }

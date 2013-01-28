@@ -352,7 +352,7 @@ static public function shiftRank(\$delta, \$first, \$last = null, " . ($useScope
     \$valuesCriteria->add({$this->tableMapClassName}::RANK_COL, array('raw' => {$this->tableMapClassName}::RANK_COL . ' + ?', 'value' => \$delta), Criteria::CUSTOM_EQUAL);
 
     {$this->builder->getPeerBuilder()->getBasePeerClassName()}::doUpdate(\$whereCriteria, \$valuesCriteria, \$con);
-    $peerClassName::clearInstancePool();
+    {$this->tableMapClassName}::clearInstancePool();
 }
 ";
     }

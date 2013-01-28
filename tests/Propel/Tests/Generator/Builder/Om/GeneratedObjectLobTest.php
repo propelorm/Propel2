@@ -10,15 +10,14 @@
 
 namespace Propel\Tests\Generator\Builder\Om;
 
+use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
 use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
-
 use Propel\Tests\Bookstore\BookPeer;
 use Propel\Tests\Bookstore\Media;
 use Propel\Tests\Bookstore\MediaPeer;
 use Propel\Tests\Bookstore\MediaQuery;
-
-use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Tests\Bookstore\Map\MediaTableMap;
 
 if (!defined('TESTS_BASE_DIR')) {
     define('TESTS_BASE_DIR', realpath(__DIR__ . '/../../../../..'));
@@ -270,7 +269,7 @@ class GeneratedObjectLobTest extends BookstoreEmptyTestBase
         $m1->setExcerpt(file_get_contents($clob_path));
         $m1->save();
 
-        MediaPeer::clearInstancePool();
+        MediaTableMap::clearInstancePool();
 
         // make sure we have the latest from the db:
         $m2 = MediaQuery::create()->findPk($m1->getId());

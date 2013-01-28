@@ -349,7 +349,7 @@ class NestedSetBehaviorQueryBuilderModifierTest extends TestCase
     {
         $this->initTree();
         \NestedSetTable9Query::shiftRLValues($delta = 1, $left = 1);
-        \NestedSetTable9Peer::clearInstancePool();
+        \Map\NestedSetTable9TableMap::clearInstancePool();
         $expected = array(
             't1' => array(2, 15, 0),
             't2' => array(3, 4, 1),
@@ -362,7 +362,7 @@ class NestedSetBehaviorQueryBuilderModifierTest extends TestCase
         $this->assertEquals($this->dumpTree(), $expected, 'shiftRLValues shifts all nodes with a positive amount');
         $this->initTree();
         \NestedSetTable9Query::shiftRLValues($delta = -1, $left = 1);
-        \NestedSetTable9Peer::clearInstancePool();
+        \Map\NestedSetTable9TableMap::clearInstancePool();
         $expected = array(
             't1' => array(0, 13, 0),
             't2' => array(1, 2, 1),
@@ -375,7 +375,7 @@ class NestedSetBehaviorQueryBuilderModifierTest extends TestCase
         $this->assertEquals($this->dumpTree(), $expected, 'shiftRLValues can shift all nodes with a negative amount');
         $this->initTree();
         \NestedSetTable9Query::shiftRLValues($delta = 3, $left = 1);
-        \NestedSetTable9Peer::clearInstancePool();
+        \Map\NestedSetTable9TableMap::clearInstancePool();
         $expected = array(
             't1'=> array(4, 17, 0),
             't2' => array(5, 6, 1),
@@ -387,7 +387,7 @@ class NestedSetBehaviorQueryBuilderModifierTest extends TestCase
         );
         $this->assertEquals($this->dumpTree(), $expected, 'shiftRLValues shifts all nodes several units to the right');
         \NestedSetTable9Query::shiftRLValues($delta = -3, $left = 1);
-        \NestedSetTable9Peer::clearInstancePool();
+        \Map\NestedSetTable9TableMap::clearInstancePool();
         $expected = array(
             't1' => array(1, 14, 0),
             't2' => array(2, 3, 1),
@@ -404,7 +404,7 @@ class NestedSetBehaviorQueryBuilderModifierTest extends TestCase
     {
         $this->initTree();
         \NestedSetTable9Query::shiftRLValues($delta = 1, $left = 15);
-        \NestedSetTable9Peer::clearInstancePool();
+        \Map\NestedSetTable9TableMap::clearInstancePool();
         $expected = array(
             't1' => array(1, 14, 0),
             't2' => array(2, 3, 1),
@@ -417,7 +417,7 @@ class NestedSetBehaviorQueryBuilderModifierTest extends TestCase
         $this->assertEquals($this->dumpTree(), $expected, 'shiftRLValues does not shift anything when the left parameter is higher than the highest right value');
         $this->initTree();
         \NestedSetTable9Query::shiftRLValues($delta = 1, $left = 5);
-        \NestedSetTable9Peer::clearInstancePool();
+        \Map\NestedSetTable9TableMap::clearInstancePool();
         $expected = array(
             't1' => array(1, 15, 0),
             't2' => array(2, 3, 1),
@@ -430,7 +430,7 @@ class NestedSetBehaviorQueryBuilderModifierTest extends TestCase
         $this->assertEquals($this->dumpTree(), $expected, 'shiftRLValues shifts only the nodes having a LR value higher than the given left parameter');
         $this->initTree();
         \NestedSetTable9Query::shiftRLValues($delta = 1, $left = 1);
-        \NestedSetTable9Peer::clearInstancePool();
+        \Map\NestedSetTable9TableMap::clearInstancePool();
         $expected = array(
             't1'=> array(2, 15, 0),
             't2' => array(3, 4, 1),
@@ -447,7 +447,7 @@ class NestedSetBehaviorQueryBuilderModifierTest extends TestCase
     {
         $this->initTree();
         \NestedSetTable9Query::shiftRLValues($delta = 1, $left = 1, $right = 0);
-        \NestedSetTable9Peer::clearInstancePool();
+        \Map\NestedSetTable9TableMap::clearInstancePool();
         $expected = array(
             't1' => array(1, 14, 0),
             't2' => array(2, 3, 1),
@@ -460,7 +460,7 @@ class NestedSetBehaviorQueryBuilderModifierTest extends TestCase
         $this->assertEquals($this->dumpTree(), $expected, 'shiftRLValues does not shift anything when the right parameter is 0');
         $this->initTree();
         \NestedSetTable9Query::shiftRLValues($delta = 1, $left = 1, $right = 5);
-        \NestedSetTable9Peer::clearInstancePool();
+        \Map\NestedSetTable9TableMap::clearInstancePool();
         $expected = array(
             't1' => array(2, 14, 0),
             't2' => array(3, 4, 1),
@@ -473,7 +473,7 @@ class NestedSetBehaviorQueryBuilderModifierTest extends TestCase
         $this->assertEquals($this->dumpTree(), $expected, 'shiftRLValues shiftRLValues shifts only the nodes having a LR value lower than the given right parameter');
         $this->initTree();
         \NestedSetTable9Query::shiftRLValues($delta = 1, $left = 1, $right = 15);
-        \NestedSetTable9Peer::clearInstancePool();
+        \Map\NestedSetTable9TableMap::clearInstancePool();
         $expected = array(
             't1'=> array(2, 15, 0),
             't2' => array(3, 4, 1),
@@ -499,7 +499,7 @@ class NestedSetBehaviorQueryBuilderModifierTest extends TestCase
         */
         $this->initTree();
         \NestedSetTable9Query::shiftLevel($delta = 1, $first = 7, $last = 12);
-        \NestedSetTable9Peer::clearInstancePool();
+        \Map\NestedSetTable9TableMap::clearInstancePool();
         $expected = array(
             't1' => array(1, 14, 0),
             't2' => array(2, 3, 1),
@@ -512,7 +512,7 @@ class NestedSetBehaviorQueryBuilderModifierTest extends TestCase
         $this->assertEquals($this->dumpTree(), $expected, 'shiftLevel shifts all nodes with a left value between the first and last');
         $this->initTree();
         \NestedSetTable9Query::shiftLevel($delta = -1, $first = 7, $last = 12);
-        \NestedSetTable9Peer::clearInstancePool();
+        \Map\NestedSetTable9TableMap::clearInstancePool();
         $expected = array(
             't1' => array(1, 14, 0),
             't2' => array(2, 3, 1),

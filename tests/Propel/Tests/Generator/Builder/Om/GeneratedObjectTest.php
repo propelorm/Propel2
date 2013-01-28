@@ -21,6 +21,7 @@ use Propel\Tests\Bookstore\AcctAuditLogQuery;
 use Propel\Tests\Bookstore\Author;
 use Propel\Tests\Bookstore\AuthorQuery;
 use Propel\Tests\Bookstore\Map\AuthorTableMap;
+use Propel\Tests\Bookstore\Map\AcctAuditLogTableMap;
 use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\BookQuery;
 use Propel\Tests\Bookstore\BookPeer;
@@ -53,6 +54,7 @@ use Propel\Tests\Bookstore\PublisherQuery;
 use Propel\Tests\Bookstore\Review;
 use Propel\Tests\Bookstore\ReviewPeer;
 use Propel\Tests\Bookstore\Map\ReviewTableMap;
+use Propel\Tests\Bookstore\Map\PublisherTableMap;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 use Propel\Tests\Helpers\Bookstore\Behavior\TestAuthor;
 use Propel\Tests\Helpers\Bookstore\Behavior\TestAuthorDeleteFalse;
@@ -73,7 +75,6 @@ use MyNameSpace\TestKeyTypeTable;
  * for each test method in this class.  See the BookstoreDataPopulator::populate()
  * method for the exact contents of the database.
  *
- * @see        BookstoreDataPopulator
  * @author Hans Lellelid <hans@xmpl.org>
  */
 class GeneratedObjectTest extends BookstoreTestBase
@@ -112,7 +113,7 @@ class GeneratedObjectTest extends BookstoreTestBase
 
         $pubId = $pub->getId();
 
-        PublisherPeer::clearInstancePool();
+        PublisherTableMap::clearInstancePool();
 
         $pub2 = PublisherQuery::create()->findPk($pubId);
         $pub2->setName('Penguin');
@@ -661,8 +662,8 @@ class GeneratedObjectTest extends BookstoreTestBase
 
         $book->save();
 
-        BookPeer::clearInstancePool();
-        ReviewPeer::clearInstancePool();
+        BookTableMap::clearInstancePool();
+        ReviewTableMap::clearInstancePool();
 
         $book = BookQuery::create()->findPk($book->getId());
         $this->assertEquals($num, $book->countReviews(), "Expected countReviews() to return $num (after save)");
@@ -864,9 +865,9 @@ EOF;
         $al->save();
         $alId = $al->getId();
 
-        BookstoreEmployeePeer::clearInstancePool();
-        BookstoreEmployeeAccountPeer::clearInstancePool();
-        AcctAuditLogPeer::clearInstancePool();
+        BookstoreEmployeeTableMap::clearInstancePool();
+        BookstoreEmployeeAccountTableMap::clearInstancePool();
+        AcctAuditLogTableMap::clearInstancePool();
 
         $al2 = AcctAuditLogQuery::create()->findPk($alId);
         /* @var $al2 AcctAuditLog */
@@ -980,6 +981,7 @@ EOF;
     public function testPreSaveFalse()
     {
         $con = Propel::getServiceContainer()->getConnection(AuthorTableMap::DATABASE_NAME);
+        $nbNestedTransactions = $con->getNestedTransactionCount();
         $author = new TestAuthorSaveFalse();
         $author->setFirstName("bogus");
         $author->setLastName("Lastname");
@@ -988,7 +990,7 @@ EOF;
         $this->assertEquals('pre@save.com', $author->getEmail());
         $this->assertNotEquals(115, $author->getAge());
         $this->assertTrue($author->isNew());
-        $this->assertEquals(1, $con->getNestedTransactionCount());
+        $this->assertEquals($nbNestedTransactions, $con->getNestedTransactionCount());
     }
 
     public function testPostSave()
@@ -1194,7 +1196,7 @@ EOF;
         $coll = new ObjectCollection();
         $coll[] = $book;
 
-        BookPeer::clearInstancePool();
+        BookTableMap::clearInstancePool();
         $book = BookQuery::create()->findPk($book->getPrimaryKey());
 
         $a = new Author();
@@ -1257,7 +1259,7 @@ EOF;
             $b->save();
         }
 
-        BookPeer::clearInstancePool();
+        BookTableMap::clearInstancePool();
         $books = BookQuery::create()->find();
 
         $a = new Author();
