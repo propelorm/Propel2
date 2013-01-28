@@ -322,11 +322,11 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $res = $t2->removeFromList();
         $this->assertTrue($res instanceof Table12, 'removeFromList() returns the current object');
         $this->assertNull($res->getRank(), 'removeFromList() resets the object\'s rank');
-        \SortableTable12Peer::clearInstancePool();
+        \Map\SortableTable12TableMap::clearInstancePool();
         $expected = array(1 => 'row1', 2 => 'row2', 3 => 'row3', 4 => 'row4');
         $this->assertEquals($expected, $this->getFixturesArrayWithScope(1), 'removeFromList() does not change the list until the object is saved');
         $t2->save();
-        \SortableTable12Peer::clearInstancePool();
+        \Map\SortableTable12TableMap::clearInstancePool();
         $expected = array(1 => 'row1', 2 => 'row3', 3 => 'row4');
         $this->assertEquals($expected, $this->getFixturesArrayWithScope(1), 'removeFromList() changes the list once the object is saved');
         $expected = array(1 => 'row5', 2 => 'row6');

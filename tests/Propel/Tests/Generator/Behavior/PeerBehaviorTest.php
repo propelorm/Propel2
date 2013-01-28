@@ -10,12 +10,11 @@
 
 namespace Propel\Tests\Generator\Behavior;
 
+use Propel\Runtime\Propel;
+use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 use Propel\Tests\Bookstore\Behavior\Table3Peer;
 use Propel\Tests\Bookstore\Behavior\Map\Table3TableMap;
-
-use Propel\Runtime\Propel;
-use Propel\Runtime\ActiveQuery\Criteria;
 
 /**
  * Tests the generated Peer behavior hooks.
@@ -27,13 +26,24 @@ class PeerBehaviorTest extends BookstoreTestBase
     public function testStaticAttributes()
     {
         $this->assertEquals(Table3Peer::$customStaticAttribute, 1, 'staticAttributes hook is called when adding attributes');
-        $this->assertEquals('Propel\Generator\Builder\Om\PeerBuilder', Table3Peer::$staticAttributeBuilder, 'staticAttributes hook is called with the peer builder as parameter');
+        $this->assertEquals(
+            'Propel\Generator\Builder\Om\PeerBuilder',
+            Table3Peer::$staticAttributeBuilder,
+            'staticAttributes hook is called with the peer builder as parameter'
+        );
     }
 
     public function testStaticMethods()
     {
-        $this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table3Peer', 'hello'), 'staticMethods hook is called when adding methods');
-        $this->assertEquals('Propel\Generator\Builder\Om\PeerBuilder', Table3Peer::hello(), 'staticMethods hook is called with the peer builder as parameter');
+        $this->assertTrue(
+            method_exists('\Propel\Tests\Bookstore\Behavior\Table3Peer', 'hello'),
+            'staticMethods hook is called when adding methods'
+        );
+        $this->assertEquals(
+            'Propel\Generator\Builder\Om\PeerBuilder',
+            Table3Peer::hello(),
+            'staticMethods hook is called with the peer builder as parameter'
+        );
     }
 
     public function testPreSelect()
@@ -55,7 +65,11 @@ class PeerBehaviorTest extends BookstoreTestBase
 
         $con->preSelect = 0;
         Table3Peer::doSelect(new Criteria, $con);
-        $this->assertEquals('Propel\Generator\Builder\Om\PeerBuilder', $con->preSelect, 'preSelect hook is called with the peer builder as parameter');
+        $this->assertEquals(
+            'Propel\Generator\Builder\Om\PeerBuilder',
+            $con->preSelect,
+            'preSelect hook is called with the peer builder as parameter'
+        );
     }
 
     public function testPeerFilter()

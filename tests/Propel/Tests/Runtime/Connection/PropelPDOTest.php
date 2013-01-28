@@ -157,7 +157,7 @@ class PropelPDOTest extends BookstoreTestBase
             $con->rollBack();
         }
 
-        AuthorPeer::clearInstancePool();
+        AuthorTableMap::clearInstancePool();
         $at = AuthorQuery::create()->findPk($authorId);
         $this->assertNotNull($at, "Committed transaction is persisted in database");
         $at2 = AuthorQuery::create()->findPk($authorId2);
@@ -205,7 +205,7 @@ class PropelPDOTest extends BookstoreTestBase
             $con->rollBack();
         }
 
-        AuthorPeer::clearInstancePool();
+        AuthorTableMap::clearInstancePool();
         $at = AuthorQuery::create()->findPk($authorId);
         $this->assertNull($at, "Rolled back transaction is not persisted in database");
     }
@@ -261,7 +261,7 @@ class PropelPDOTest extends BookstoreTestBase
             $con->rollback();
         }
 
-        AuthorPeer::clearInstancePool();
+        AuthorTableMap::clearInstancePool();
         $at = AuthorQuery::create()->findPk($authorId);
         $this->assertNull($at, "Rolled back transaction is not persisted in database");
         $at2 = AuthorQuery::create()->findPk($authorId2);
@@ -299,7 +299,7 @@ class PropelPDOTest extends BookstoreTestBase
         $this->assertEquals(0, $con->getNestedTransactionCount(), 'nested transaction is null after nested transaction forced rollback');
         $this->assertFalse($con->isInTransaction(), 'PropelPDO is not in transaction after nested transaction force rollback');
 
-        AuthorPeer::clearInstancePool();
+        AuthorTableMap::clearInstancePool();
         $at = AuthorQuery::create()->findPk($authorId);
         $this->assertNull($at, "Rolled back transaction is not persisted in database");
         $at2 = AuthorQuery::create()->findPk($authorId2);

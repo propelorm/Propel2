@@ -9,7 +9,7 @@ class TestAuthorSaveFalse extends TestAuthor
     public function preSave(ConnectionInterface $con = null)
     {
         parent::preSave($con);
-        $this->setEmail("pre@save.com");
+        $this->setEmail('pre@save.com');
 
         return false;
     }

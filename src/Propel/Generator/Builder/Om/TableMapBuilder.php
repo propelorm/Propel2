@@ -83,6 +83,7 @@ class TableMapBuilder extends AbstractOMBuilder
  */
 class ".$this->getUnqualifiedClassName()." extends TableMap
 {
+    use InstancePoolTrait;
 ";
     }
 
@@ -97,7 +98,8 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
 
         $this->declareClasses(
             '\Propel\Runtime\Map\TableMap',
-            '\Propel\Runtime\Map\RelationMap'
+            '\Propel\Runtime\Map\RelationMap',
+            '\Propel\Runtime\ActiveQuery\InstancePoolTrait'
         );
 
         $script .= $this->addConstants();

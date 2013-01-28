@@ -403,7 +403,7 @@ class NestedSetBehaviorQueryBuilderModifierWithScopeTest extends TestCase
         $this->assertTrue(method_exists('NestedSetTable10Query', 'shiftRLValues'), 'nested_set adds a shiftRLValues() method');
         $this->initTreeWithScope();
         \NestedSetTable10Query::shiftRLValues(1, 100, null, 1);
-        \NestedSetTable10Peer::clearInstancePool();
+        \Map\NestedSetTable10TableMap::clearInstancePool();
         $expected = array(
             't1' => array(1, 14, 0),
             't2' => array(2, 3, 1),
@@ -422,7 +422,7 @@ class NestedSetBehaviorQueryBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals($this->dumpTreeWithScope(2), $expected, 'shiftRLValues does not shift anything out of the scope');
         $this->initTreeWithScope();
         \NestedSetTable10Query::shiftRLValues(1, 1, null, 1);
-        \NestedSetTable10Peer::clearInstancePool();
+        \Map\NestedSetTable10TableMap::clearInstancePool();
         $expected = array(
             't1' => array(2, 15, 0),
             't2' => array(3, 4, 1),
@@ -441,7 +441,7 @@ class NestedSetBehaviorQueryBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals($this->dumpTreeWithScope(2), $expected, 'shiftRLValues does not shift anything out of the scope');
         $this->initTreeWithScope();
         \NestedSetTable10Query::shiftRLValues(-1, 1, null, 1);
-        \NestedSetTable10Peer::clearInstancePool();
+        \Map\NestedSetTable10TableMap::clearInstancePool();
         $expected = array(
             't1' => array(0, 13, 0),
             't2' => array(1, 2, 1),
@@ -460,7 +460,7 @@ class NestedSetBehaviorQueryBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals($this->dumpTreeWithScope(2), $expected, 'shiftRLValues does not shift anything out of the scope');
         $this->initTreeWithScope();
         \NestedSetTable10Query::shiftRLValues(1, 5, null, 1);
-        \NestedSetTable10Peer::clearInstancePool();
+        \Map\NestedSetTable10TableMap::clearInstancePool();
         $expected = array(
             't1' => array(1, 15, 0),
             't2' => array(2, 3, 1),
@@ -483,7 +483,7 @@ class NestedSetBehaviorQueryBuilderModifierWithScopeTest extends TestCase
     {
         $this->initTreeWithScope();
         \NestedSetTable10Query::shiftLevel($delta = 1, $first = 7, $last = 12, $scope = 1);
-        \NestedSetTable10Peer::clearInstancePool();
+        \Map\NestedSetTable10TableMap::clearInstancePool();
         $expected = array(
             't1' => array(1, 14, 0),
             't2' => array(2, 3, 1),

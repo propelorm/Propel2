@@ -203,8 +203,8 @@ EOF;
         $o->setLocale('fr_FR');
         $o->setBar('bonjour');
         $o->save();
-        \I18nBehaviorTest11Peer::clearInstancePool();
-        \I18nBehaviorTest11I18nPeer::clearInstancePool();
+        \Map\I18nBehaviorTest11TableMap::clearInstancePool();
+        \Map\I18nBehaviorTest11I18nTableMap::clearInstancePool();
         $o = \I18nBehaviorTest11Query::create()
             ->joinWithI18n('en_EN')
             ->findOne($con);

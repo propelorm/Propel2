@@ -15,13 +15,17 @@ use Propel\Runtime\Exception\RuntimeException;
 
 trait InstancePoolTrait
 {
-    private static $instances = array();
+    public static $instances = [];
 
     public static function addInstanceToPool($object, $key = null)
     {
         if (Propel::isInstancePoolingEnabled()) {
             if (null === $key) {
-                $key = (string) $object->getId();
+                if (count($pk = $object->getPrimaryKey()) > 1) {
+                    $pk = serialize($pk);
+                }
+
+                $key = (string) $pk;
             }
 
             self::$instances[$key] = $object;
@@ -32,7 +36,11 @@ trait InstancePoolTrait
     {
         if (Propel::isInstancePoolingEnabled() && null !== $value) {
             if (is_object($value)) {
-                $key = (string) $value->getId();
+                if (count($pk = $value->getPrimaryKey()) > 1) {
+                    $pk = serialize($pk);
+                }
+
+                $key = (string) $pk;
             } elseif (is_scalar($value)) {
                 // assume we've been passed a primary key
                 $key = (string) $value;
@@ -57,6 +65,6 @@ trait InstancePoolTrait
 
     public static function clearInstancePool()
     {
-        self::$instances = array();
+        self::$instances = [];
     }
 }

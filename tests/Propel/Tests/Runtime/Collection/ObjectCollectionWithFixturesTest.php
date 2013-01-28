@@ -10,26 +10,23 @@
 
 namespace Propel\Tests\Runtime\collection;
 
+use Propel\Runtime\Propel;
+use Propel\Runtime\Collection\ObjectCollection;
+use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\ActiveQuery\PropelQuery;
 use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
 use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
-
 use Propel\Tests\Bookstore\Author;
-use Propel\Tests\Bookstore\AuthorPeer;
+use Propel\Tests\Bookstore\Map\AuthorTableMap;
 use Propel\Tests\Bookstore\AuthorQuery;
 use Propel\Tests\Bookstore\BookPeer;
 use Propel\Tests\Bookstore\BookQuery;
 use Propel\Tests\Bookstore\Map\BookTableMap;
 
-use Propel\Runtime\Propel;
-use Propel\Runtime\Collection\ObjectCollection;
-use Propel\Runtime\ActiveQuery\Criteria;
-use Propel\Runtime\ActiveQuery\PropelQuery;
-
 /**
  * Test class for ObjectCollection.
  *
  * @author Francois Zaninotto
- * @version    $Id$
  */
 class ObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
 {
@@ -51,7 +48,7 @@ class ObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
             $this->assertFalse($book->isModified());
         }
         // check that the modifications are persisted
-        BookPeer::clearInstancePool();
+        BookTableMap::clearInstancePool();
         $books = PropelQuery::from('Propel\Tests\Bookstore\Book')->find();
         foreach ($books as $book) {
             $this->assertEquals('foo', $book->getTitle('foo'));
@@ -67,7 +64,7 @@ class ObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
             $this->assertTrue($book->isDeleted());
         }
         // check that the modifications are persisted
-        BookPeer::clearInstancePool();
+        BookTableMap::clearInstancePool();
         $books = PropelQuery::from('Propel\Tests\Bookstore\Book')->find();
         $this->assertEquals(0, count($books));
     }
@@ -99,7 +96,7 @@ class ObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
 
     public function testToArray()
     {
-        BookPeer::clearInstancePool();
+        BookTableMap::clearInstancePool();
         $books = PropelQuery::from('Propel\Tests\Bookstore\Book')->find();
         $booksArray = $books->toArray();
         $this->assertEquals(4, count($booksArray));
@@ -201,8 +198,8 @@ class ObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
 
     public function testPopulateRelation()
     {
-        AuthorPeer::clearInstancePool();
-        BookPeer::clearInstancePool();
+        AuthorTableMap::clearInstancePool();
+        BookTableMap::clearInstancePool();
         $authors = AuthorQuery::create()->find();
         $books = $authors->populateRelation('Book');
         $this->assertTrue($books instanceof ObjectCollection, 'populateRelation() returns a Collection instance');
@@ -213,8 +210,8 @@ class ObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
 
     public function testPopulateRelationCriteria()
     {
-        AuthorPeer::clearInstancePool();
-        BookPeer::clearInstancePool();
+        AuthorTableMap::clearInstancePool();
+        BookTableMap::clearInstancePool();
         $authors = AuthorQuery::create()->find();
         $c = new Criteria();
         $c->setLimit(3);
@@ -224,8 +221,8 @@ class ObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
 
     public function testPopulateRelationEmpty()
     {
-        AuthorPeer::clearInstancePool();
-        BookPeer::clearInstancePool();
+        AuthorTableMap::clearInstancePool();
+        BookTableMap::clearInstancePool();
         $authors = AuthorQuery::create()
             ->add(null, '1<>1', Criteria::CUSTOM)
             ->find($this->con);
@@ -240,8 +237,8 @@ class ObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
 
     public function testPopulateRelationOneToMany()
     {
-        AuthorPeer::clearInstancePool();
-        BookPeer::clearInstancePool();
+        AuthorTableMap::clearInstancePool();
+        BookTableMap::clearInstancePool();
         $authors = AuthorQuery::create()->find($this->con);
         $count = $this->con->getQueryCount();
         $books = $authors->populateRelation('Book', null, $this->con);
@@ -256,8 +253,8 @@ class ObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
     public function testPopulateRelationManyToOne()
     {
         $con = Propel::getServiceContainer()->getReadConnection(BookTableMap::DATABASE_NAME);
-        AuthorPeer::clearInstancePool();
-        BookPeer::clearInstancePool();
+        AuthorTableMap::clearInstancePool();
+        BookTableMap::clearInstancePool();
         $books = BookQuery::create()->find($con);
         $count = $con->getQueryCount();
         $books->populateRelation('Author', null, $con);

@@ -14,12 +14,11 @@ use Propel\Generator\Builder\Util\SchemaReader;
 use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Platform\PlatformInterface;
-
-use Propel\Runtime\Propel;
 use Propel\Runtime\Adapter\Pdo\PdoConnection;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\ConnectionWrapper;
 use Propel\Runtime\Connection\StatementInterface;
+use Propel\Runtime\Propel;
 
 class QuickBuilder
 {
