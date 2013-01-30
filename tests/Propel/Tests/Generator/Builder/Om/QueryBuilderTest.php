@@ -175,7 +175,7 @@ class QueryBuilderTest extends BookstoreTestBase
         $b->save($this->con);
         $count = $this->con->getQueryCount();
 
-        BookPeer::clearInstancePool();
+        BookTableMap::clearInstancePool();
 
         $book = BookQuery::create()->findPk($b->getId(), $this->con);
         $this->assertEquals($b, $book);
@@ -207,7 +207,7 @@ class QueryBuilderTest extends BookstoreTestBase
             $book->save();
         }
 
-        BookPeer::clearInstancePool();
+        BookTableMap::clearInstancePool();
 
         // retrieve the test data
         $c = new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\BookListRel');
@@ -232,7 +232,7 @@ class QueryBuilderTest extends BookstoreTestBase
         $b->setTitle('foo');
         $b->setISBN('FA404');
         $b->save($this->con);
-        BookPeer::clearInstancePool();
+        BookTableMap::clearInstancePool();
 
         BookQuery::create()->findPk($b->getId(), $this->con);
         $count = $this->con->getQueryCount();
@@ -255,7 +255,7 @@ class QueryBuilderTest extends BookstoreTestBase
         $b->setTitle('foo');
         $b->setISBN('FA404');
         $b->save($this->con);
-        BookPeer::clearInstancePool();
+        BookTableMap::clearInstancePool();
 
         BookQuery::create('b')->findPk($b->getId(), $this->con);
         $count = $this->con->getQueryCount();
@@ -297,7 +297,7 @@ class QueryBuilderTest extends BookstoreTestBase
         BookstoreDataPopulator::depopulate();
         BookstoreDataPopulator::populate();
 
-        BookPeer::clearInstancePool();
+        BookTableMap::clearInstancePool();
 
         // prepare the test data
         $c = new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book');
@@ -323,7 +323,7 @@ class QueryBuilderTest extends BookstoreTestBase
             $book->save();
         }
 
-        BookPeer::clearInstancePool();
+        BookTableMap::clearInstancePool();
 
         // retrieve the test data
         $c = new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\BookListRel');
@@ -371,7 +371,7 @@ class QueryBuilderTest extends BookstoreTestBase
             $book->save();
         }
 
-        BookPeer::clearInstancePool();
+        BookTableMap::clearInstancePool();
 
         // retrieve the test data
         $c = new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\BookListRel');
@@ -410,7 +410,7 @@ class QueryBuilderTest extends BookstoreTestBase
             $book->save();
         }
 
-        BookPeer::clearInstancePool();
+        BookTableMap::clearInstancePool();
 
         // retrieve the test data
         $c = new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\BookListRel');
@@ -1091,7 +1091,7 @@ class QueryBuilderTest extends BookstoreTestBase
             $book->save();
         }
 
-        BookPeer::clearInstancePool();
+        BookTableMap::clearInstancePool();
 
         $nbBookListRel = BookListRelQuery::create()->prune()->count();
         $this->assertEquals(2, $nbBookListRel, 'prune() does nothing when passed a null object');

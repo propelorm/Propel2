@@ -27,6 +27,8 @@ class NestedSetBehaviorQueryBuilderModifier
 
     protected $peerClassName;
 
+    protected $tableMapClassName;
+
     public function __construct($behavior)
     {
         $this->behavior = $behavior;
@@ -45,10 +47,11 @@ class NestedSetBehaviorQueryBuilderModifier
 
     protected function setBuilder($builder)
     {
-        $this->builder          = $builder;
-        $this->objectClassName  = $builder->getObjectClassName();
-        $this->queryClassName   = $builder->getQueryClassName();
-        $this->peerClassName    = $builder->getPeerClassName();
+        $this->builder           = $builder;
+        $this->objectClassName   = $builder->getObjectClassName();
+        $this->queryClassName    = $builder->getQueryClassName();
+        $this->peerClassName     = $builder->getPeerClassName();
+        $this->tableMapClassName = $builder->getTableMapClassName();
     }
 
     public function queryMethods($builder)
@@ -677,9 +680,10 @@ static public function shiftLevel(\$delta, \$first, \$last" . ($useScope ? ", \$
 
     protected function addUpdateLoadedNodes(&$script)
     {
-        $peerClassName     = $this->peerClassName;
-        $objectClassName   = $this->objectClassName;
-        $tableMapClassName = $this->builder->getTableMapClass();
+        $peerClassName   = $this->peerClassName;
+        $objectClassName = $this->objectClassName;
+        $tableMapClass   = $this->builder->getTableMapClass();
+        $tableMapClassName = $this->tableMapClassName;
 
         $script .= "
 /**
@@ -799,10 +803,10 @@ static public function makeRoomForLeaf(\$left" . ($useScope ? ", \$scope" : "").
 
     protected function addFixLevels(&$script)
     {
-        $peerClassName     = $this->peerClassName;
-        $tableMapClassName = $this->builder->getTableMapClass();
-        $objectClassName   = $this->objectClassName;
-        $useScope          = $this->behavior->useScope();
+        $peerClassName = $this->peerClassName;
+        $objectClassName = $this->objectClassName;
+        $tableMapClassName = $this->tableMapClassName;
+        $useScope = $this->behavior->useScope();
 
         $script .= "
 /**

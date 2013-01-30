@@ -16,8 +16,8 @@ use Propel\Runtime\Map\TableMap;
 use Propel\Tests\Bookstore\AcctAccessRole;
 use Propel\Tests\Bookstore\AcctAccessRolePeer;
 use Propel\Tests\Bookstore\Author;
-use Propel\Tests\Bookstore\AuthorPeer;
 use Propel\Tests\Bookstore\AuthorQuery;
+use Propel\Tests\Bookstore\Map\AuthorTableMap;
 use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\BookPeer;
 use Propel\Tests\Bookstore\BookQuery;
@@ -127,7 +127,7 @@ class GeneratedPeerDoSelectTest extends BookstoreEmptyTestBase
     public function testDoSelectJoin()
     {
 
-        BookPeer::clearInstancePool();
+        BookTableMap::clearInstancePool();
 
         $c = new Criteria();
 
@@ -135,7 +135,7 @@ class GeneratedPeerDoSelectTest extends BookstoreEmptyTestBase
         $obj = $books[0];
         // $size = strlen(serialize($obj));
 
-        BookPeer::clearInstancePool();
+        BookTableMap::clearInstancePool();
 
         $joinBooks = BookPeer::doSelectJoinAuthor($c);
         $obj2 = $joinBooks[0];
@@ -166,8 +166,8 @@ class GeneratedPeerDoSelectTest extends BookstoreEmptyTestBase
         $b2->getAuthor()->setFirstName("Hans")->setLastName("L");
         $b2->save();
 
-        BookPeer::clearInstancePool();
-        AuthorPeer::clearInstancePool();
+        BookTableMap::clearInstancePool();
+        AuthorTableMap::clearInstancePool();
 
         $c = new Criteria();
         $c->add(BookTableMap::ISBN, 'NULLFK-%', Criteria::LIKE);
@@ -303,7 +303,7 @@ class GeneratedPeerDoSelectTest extends BookstoreEmptyTestBase
         $this->assertSame($o3, $cashier);
 
         // 2) test a forced reload from database
-        BookstoreEmployeePeer::clearInstancePool();
+        BookstoreEmployeeTableMap::clearInstancePool();
 
         list($o1,$o2,$o3) = BookstoreEmployeePeer::doSelect($c);
 

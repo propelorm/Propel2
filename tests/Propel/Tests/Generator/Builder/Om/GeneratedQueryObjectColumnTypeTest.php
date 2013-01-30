@@ -20,7 +20,7 @@ use Propel\Runtime\ActiveQuery\Criteria;
  *
  * @author Francois Zaninotto
  */
-class GeneratedQueryObjectColumnTest extends \PHPUnit_Framework_TestCase
+class GeneratedQueryObjectColumnTypeTest extends \PHPUnit_Framework_TestCase
 {
     protected $c1, $c2;
 
@@ -49,7 +49,7 @@ EOF;
             $e2 = new \ComplexColumnTypeEntity10();
             $e2->setBar($this->c2);
             $e2->save();
-            \ComplexColumnTypeEntity10Peer::clearInstancePool();
+            \Map\ComplexColumnTypeEntity10TableMap::clearInstancePool();
         }
     }
 

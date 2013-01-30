@@ -44,7 +44,7 @@ EOF;
 
     public function testPopulateObjectNotInPool()
     {
-        \LazyLoadActiveRecord2Peer::clearInstancePool();
+        \Map\LazyLoadActiveRecord2TableMap::clearInstancePool();
         $values = array(123, 'fooValue', 'bazValue');
         $col = 0;
         list($obj, $col) = \LazyLoadActiveRecord2Peer::populateObject($values, $col);
@@ -57,13 +57,13 @@ EOF;
 
     public function testPopulateObjectInPool()
     {
-        \LazyLoadActiveRecord2Peer::clearInstancePool();
+        \Map\LazyLoadActiveRecord2TableMap::clearInstancePool();
         $ar = new \LazyLoadActiveRecord2();
         $ar->setId(123);
         $ar->setFoo('fooValue');
         $ar->setBaz('bazValue');
         $ar->setNew(false);
-        \LazyLoadActiveRecord2Peer::addInstanceToPool($ar, 123);
+        \Map\LazyLoadActiveRecord2TableMap::addInstanceToPool($ar, 123);
         $values = array(123, 'fooValue', 'bazValue');
         $col = 0;
         list($obj, $col) = \LazyLoadActiveRecord2Peer::populateObject($values, $col);
@@ -76,7 +76,7 @@ EOF;
 
     public function testPopulateObjectNotInPoolStartColGreaterThanOne()
     {
-        \LazyLoadActiveRecord2Peer::clearInstancePool();
+        \Map\LazyLoadActiveRecord2TableMap::clearInstancePool();
         $values = array('dummy', 'dummy', 123, 'fooValue', 'bazValue', 'dummy');
         $col = 2;
         list($obj, $col) = \LazyLoadActiveRecord2Peer::populateObject($values, $col);
@@ -89,13 +89,13 @@ EOF;
 
     public function testPopulateObjectInPoolStartColGreaterThanOne()
     {
-        \LazyLoadActiveRecord2Peer::clearInstancePool();
+        \Map\LazyLoadActiveRecord2TableMap::clearInstancePool();
         $ar = new \LazyLoadActiveRecord2();
         $ar->setId(123);
         $ar->setFoo('fooValue');
         $ar->setBaz('bazValue');
         $ar->setNew(false);
-        \LazyLoadActiveRecord2Peer::addInstanceToPool($ar, 123);
+        \Map\LazyLoadActiveRecord2TableMap::addInstanceToPool($ar, 123);
         $values = array('dummy', 'dummy', 123, 'fooValue', 'bazValue', 'dummy');
         $col = 2;
         list($obj, $col) = \LazyLoadActiveRecord2Peer::populateObject($values, $col);
