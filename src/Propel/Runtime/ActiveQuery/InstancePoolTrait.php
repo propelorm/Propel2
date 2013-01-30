@@ -67,4 +67,8 @@ trait InstancePoolTrait
     {
         self::$instances = [];
     }
+
+    public static function clearRelatedInstancePool()
+    {
+    }
 }

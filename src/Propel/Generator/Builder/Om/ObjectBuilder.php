@@ -4759,7 +4759,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             }
             $script .= "
             \$con->commit();
-            ".$this->getPeerClassName()."::addInstanceToPool(\$this);
+            ".$this->getTableMapClassName()."::addInstanceToPool(\$this);
 
             return \$affectedRows;";
         }

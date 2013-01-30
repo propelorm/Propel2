@@ -534,7 +534,7 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
     {
         // if it throws an exception, then it's broken.
         try {
-            BookPeer::removeInstanceFromPool(null);
+            BookTableMap::removeInstanceFromPool(null);
         } catch (Exception $x) {
             $this->fail("Expected to get no exception when removing an instance from the pool.");
         }

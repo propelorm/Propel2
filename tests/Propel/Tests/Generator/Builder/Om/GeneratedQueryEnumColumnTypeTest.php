@@ -20,7 +20,7 @@ use Propel\Runtime\ActiveQuery\Criteria;
  *
  * @author Francois Zaninotto
  */
-class GeneratedQueryEnumColumnTest extends \PHPUnit_Framework_TestCase
+class GeneratedQueryEnumColumnTypeTest extends \PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
@@ -43,7 +43,7 @@ EOF;
             $e2 = new \ComplexColumnTypeEntity13();
             $e2->setBar('4');
             $e2->save();
-            \ComplexColumnTypeEntity13Peer::clearInstancePool();
+            \Map\ComplexColumnTypeEntity13TableMap::clearInstancePool();
         }
     }
 

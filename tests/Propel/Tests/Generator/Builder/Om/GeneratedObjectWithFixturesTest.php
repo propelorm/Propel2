@@ -18,7 +18,6 @@ use Propel\Tests\Bookstore\AuthorPeer;
 use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\BookPeer;
 use Propel\Tests\Bookstore\BookQuery;
-use Propel\Tests\Bookstore\Bookstore;
 use Propel\Tests\Bookstore\BookstorePeer;
 use Propel\Tests\Bookstore\BookstoreSale;
 use Propel\Tests\Bookstore\BookstoreEmployee;
@@ -26,16 +25,12 @@ use Propel\Tests\Bookstore\BookstoreEmployeeAccount;
 use Propel\Tests\Bookstore\BookstoreEmployeePeer;
 use Propel\Tests\Bookstore\Map\AuthorTableMap;
 use Propel\Tests\Bookstore\Map\BookTableMap;
-use Propel\Tests\Bookstore\Map\BookstoreTableMap;
-use Propel\Tests\Bookstore\Map\BookstoreEmployeeTableMap;
 use Propel\Tests\Bookstore\Map\MediaTableMap;
 use Propel\Tests\Bookstore\MediaPeer;
-use Propel\Tests\Bookstore\MediaQuery;
-use Propel\Tests\Bookstore\Publisher;
-use Propel\Tests\Bookstore\PublisherPeer;
+use Propel\Tests\Bookstore\Map\PublisherTableMap;
 use Propel\Tests\Bookstore\Review;
-use Propel\Tests\Bookstore\ReviewPeer;
 use Propel\Tests\Bookstore\ReviewQuery;
+use Propel\Tests\Bookstore\Map\ReviewTableMap;
 use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
 use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
 
@@ -167,8 +162,8 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
         unset($r);
 
         // clear the instance cache to force reload from database.
-        ReviewPeer::clearInstancePool();
-        BookPeer::clearInstancePool();
+        ReviewTableMap::clearInstancePool();
+        BookTableMap::clearInstancePool();
 
         // reload and verify that the types are the same
         $r2 = ReviewQuery::create()->findPk($id);
@@ -326,9 +321,9 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
     public function testToArrayIncludesForeignObjects()
     {
         BookstoreDataPopulator::populate();
-        BookPeer::clearInstancePool();
-        AuthorPeer::clearInstancePool();
-        PublisherPeer::clearInstancePool();
+        BookTableMap::clearInstancePool();
+        AuthorTableMap::clearInstancePool();
+        PublisherTableMap::clearInstancePool();
 
         $c = new Criteria();
         $c->add(BookTableMap::TITLE, 'Don Juan');
