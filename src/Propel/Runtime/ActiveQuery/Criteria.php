@@ -844,7 +844,7 @@ class Criteria
             $firstCriterion->$operatorMethod($criterion);
         }
         if (null === $name) {
-            $this->add($firstCriterion, null, null);
+            $this->addAnd($firstCriterion, null, null);
         } else {
             $this->addCond($name, $firstCriterion, null, null);
         }
