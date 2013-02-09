@@ -12,6 +12,7 @@ namespace Propel\Runtime\ActiveQuery\Criterion;
 
 use Propel\Runtime\ActiveQuery\Criterion\Exception\InvalidValueException;
 use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\Adapter\Pdo\CubridAdapter;
 
 /**
  * Specialized Criterion used for traditional expressions,
@@ -67,6 +68,12 @@ class BasicCriterion extends AbstractCriterion
     protected function appendPsForUniqueClauseTo(&$sb, array &$params)
     {
         $field = (null === $this->table) ? $this->column : $this->table . '.' . $this->column;
+
+        //Cubrid requires all identifiers are quoted
+        if ($this->getAdapter() instanceof CubridAdapter) {
+            $field = $this->getAdapter()->quoteIdentifier($field);
+        }
+
         // NULL VALUES need special treatment because the SQL syntax is different
         // i.e. table.column IS NULL rather than table.column = null
         if ($this->value !== null) {

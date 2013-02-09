@@ -37,14 +37,13 @@ abstract class PdoAdapter
     public function getConnection($conparams)
     {
         $conparams = $this->prepareParams($conparams);
-
         if (!isset($conparams['dsn'])) {
             throw new InvalidArgumentException('No dsn specified in your connection parameters');
         }
 
         $dsn      = $conparams['dsn'];
         $user     = isset($conparams['user']) ? $conparams['user'] : null;
-        $password = isset($conparams['password']) ? $conparams['password'] : null;
+        $password = isset($conparams['password']) ? $conparams['password'] : '';
 
         // load any driver options from the config file
         // driver options are those PDO settings that have to be passed during the connection construction

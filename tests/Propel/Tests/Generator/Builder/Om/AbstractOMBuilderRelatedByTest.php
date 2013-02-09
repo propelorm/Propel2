@@ -30,7 +30,11 @@ class AbstractOMBuilderRelatedByTest extends \PHPUnit_Framework_TestCase
         // run only once to save execution time
         if (null == self::$database) {
             $schemaReader = new SchemaReader(new DefaultPlatform());
-            $appData = $schemaReader->parseFile(realpath(__DIR__ . '/../../../../../Fixtures/bookstore/schema.xml'));
+            if (is_file(realpath(__DIR__ . '/../../../../../Fixtures/bookstore/cubrid.schema.xml'))) {
+                $appData = $schemaReader->parseFile(realpath(__DIR__ . '/../../../../../Fixtures/bookstore/cubrid.schema.xml'));
+            } else {
+                $appData = $schemaReader->parseFile(realpath(__DIR__ . '/../../../../../Fixtures/bookstore/schema.xml'));
+            }
             self::$database = $appData->getDatabase("bookstore");
         }
     }

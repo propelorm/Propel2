@@ -45,6 +45,7 @@ use Propel\Tests\Bookstore\BookstoreContestEntry;
 use Propel\Tests\Bookstore\BookstoreSale;
 
 use Propel\Runtime\Propel;
+use Propel\Runtime\Adapter\Pdo\CubridAdapter;
 use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Util\BasePeer;
@@ -174,7 +175,12 @@ class GeneratedObjectTest extends BookstoreTestBase
         $this->assertNotNull($acct->getCreated(), "Expected a valid date after retrieving saved object.");
 
         $now = new DateTime("now");
-        $this->assertEquals($now->format("Y-m-d"), $acct->getCreated("Y-m-d"));
+
+        //With Cubrid, if we define CURRENT_TIMESTAMP as default value,
+        //this value is specified to the timestamp at the time of creating a table, not inserting a record into it
+        if (!(Propel::getServiceContainer()->getAdapter() instanceof CubridAdapter)) {
+            $this->assertEquals($now->format("Y-m-d"), $acct->getCreated("Y-m-d"));
+        }
 
         $acct->setCreated($now);
         $this->assertEquals($now->format("Y-m-d"), $acct->getCreated("Y-m-d"));
@@ -813,6 +819,11 @@ EOF;
      */
     public function testAllowPkInsertOnIdMethodNativeTable()
     {
+        //Cubrid does not support inserting a value in an auto_increment column
+        if (Propel::getAdapter() instanceof CubridAdapter) {
+            $this->markTestSkipped('Cubrid does not support inserting a value in an auto_increment column');
+        }
+
         CustomerPeer::doDeleteAll();
         $cu = new Customer;
         $cu->setPrimaryKey(100000);
@@ -854,6 +865,7 @@ EOF;
         $acctId = $acct->getEmployeeId();
 
         $al = new AcctAuditLog();
+        $al->setUid('cooluser');
         $al->setBookstoreEmployeeAccount($acct);
         $al->save();
         $alId = $al->getId();

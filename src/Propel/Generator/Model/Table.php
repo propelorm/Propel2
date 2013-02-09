@@ -14,6 +14,7 @@ use Propel\Generator\Exception\BuildException;
 use Propel\Generator\Exception\EngineException;
 use Propel\Generator\Exception\InvalidArgumentException;
 use Propel\Generator\Platform\MysqlPlatform;
+use Propel\Generator\Platform\CubridPlatform;
 
 /**
  * Data about a table used in an application.
@@ -128,7 +129,11 @@ class Table extends ScopedMappingModel implements IdMethod
         $this->phpName = $this->getAttribute('phpName', $this->buildPhpName($this->getStdSeparatedName()));
 
         $this->idMethod = $this->getAttribute('idMethod', $this->database->getDefaultIdMethod());
-        $this->allowPkInsert = $this->booleanValue($this->getAttribute('allowPkInsert'));
+
+        //Cubrid does not support insert a value in an auto_increment column
+        if (!($this->getPlatform() instanceof CubridPlatform)) {
+            $this->allowPkInsert = $this->booleanValue($this->getAttribute('allowPkInsert'));
+        }
 
         $this->skipSql = $this->booleanValue($this->getAttribute('skipSql'));
         $this->readOnly = $this->booleanValue($this->getAttribute('readOnly'));

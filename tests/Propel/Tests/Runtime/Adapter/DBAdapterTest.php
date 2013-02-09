@@ -86,7 +86,14 @@ class AbstractAdapterTest extends BookstoreTestBase
         $c->addAsColumn('book_ID', BookPeer::ID);
         $fromClause = array();
         $selectSql = $db->createSelectSqlPart($c, $fromClause);
-        $this->assertEquals('SELECT book.ID, book.ID AS book_ID', $selectSql, 'createSelectSqlPart() returns a SQL SELECT clause with both select and as columns');
+
+        if (in_array($this->getDriver(), array('cubrid'))) {
+            $expected = 'SELECT `book`.`ID`, `book`.`ID` AS book_ID';
+        } else {
+            $expected = 'SELECT book.ID, book.ID AS book_ID';
+        }
+
+        $this->assertEquals($expected, $selectSql, 'createSelectSqlPart() returns a SQL SELECT clause with both select and as columns');
         $this->assertEquals(array('book'), $fromClause, 'createSelectSqlPart() adds the tables from the select columns to the from clause');
     }
 
@@ -98,7 +105,14 @@ class AbstractAdapterTest extends BookstoreTestBase
         $c->addAsColumn('book_ID', 'IF(1, '.BookPeer::ID.', '.BookPeer::TITLE.')');
         $fromClause = array();
         $selectSql = $db->createSelectSqlPart($c, $fromClause);
-        $this->assertEquals('SELECT book.ID, IF(1, book.ID, book.TITLE) AS book_ID', $selectSql, 'createSelectSqlPart() returns a SQL SELECT clause with both select and as columns');
+
+        if (in_array($this->getDriver(), array('cubrid'))) {
+            $expected = 'SELECT `book`.`ID`, IF(1, book.ID, book.TITLE) AS book_ID';
+        } else {
+            $expected = 'SELECT book.ID, IF(1, book.ID, book.TITLE) AS book_ID';
+        }
+
+        $this->assertEquals($expected, $selectSql, 'createSelectSqlPart() returns a SQL SELECT clause with both select and as columns');
         $this->assertEquals(array('book'), $fromClause, 'createSelectSqlPart() adds the tables from the select columns to the from clause');
     }
 
@@ -111,7 +125,14 @@ class AbstractAdapterTest extends BookstoreTestBase
         $c->setDistinct();
         $fromClause = array();
         $selectSql = $db->createSelectSqlPart($c, $fromClause);
-        $this->assertEquals('SELECT DISTINCT book.ID, book.ID AS book_ID', $selectSql, 'createSelectSqlPart() includes the select modifiers in the SELECT clause');
+
+        if (in_array($this->getDriver(), array('cubrid'))) {
+            $expected = 'SELECT DISTINCT `book`.`ID`, `book`.`ID` AS book_ID';
+        } else {
+            $expected = 'SELECT DISTINCT book.ID, book.ID AS book_ID';
+        }
+
+        $this->assertEquals($expected, $selectSql, 'createSelectSqlPart() includes the select modifiers in the SELECT clause');
         $this->assertEquals(array('book'), $fromClause, 'createSelectSqlPart() adds the tables from the select columns to the from clause');
     }
 
@@ -123,7 +144,14 @@ class AbstractAdapterTest extends BookstoreTestBase
         $c->addAsColumn('book_ID', BookPeer::ID);
         $fromClause = array();
         $selectSql = $db->createSelectSqlPart($c, $fromClause, true);
-        $this->assertEquals('SELECT book.ID AS book_ID_1, book.ID AS book_ID', $selectSql, 'createSelectSqlPart() aliases all columns if passed true as last parameter');
+
+        if (in_array($this->getDriver(), array('cubrid'))) {
+            $expected = 'SELECT `book`.`ID` AS book_ID_1, `book`.`ID` AS book_ID';
+        } else {
+            $expected = 'SELECT book.ID AS book_ID_1, book.ID AS book_ID';
+        }
+
+        $this->assertEquals($expected, $selectSql, 'createSelectSqlPart() aliases all columns if passed true as last parameter');
         $this->assertEquals(array(), $fromClause, 'createSelectSqlPart() does not add the tables from an all-aliased list of select columns');
     }
 

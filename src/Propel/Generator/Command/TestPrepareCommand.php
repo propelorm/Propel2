@@ -10,6 +10,7 @@
 
 namespace Propel\Generator\Command;
 
+use Propel\Runtime\Propel;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
@@ -134,35 +135,27 @@ class TestPrepareCommand extends AbstractCommand
         }
 
         if (0 < count((array) $this->getSchemas('.')) || false === strstr($fixturesDir, 'reverse')) {
-            $in = new ArrayInput(array(
-                'command'      => 'sql:build',
-                '--input-dir'  => '.',
-                '--output-dir' => 'build/sql/',
-                '--platform'   => ucfirst($input->getOption('vendor')) . 'Platform',
-                '--verbose'    => $input->getOption('verbose'),
-            ));
-
-            $command = $this->getApplication()->find('sql:build');
-            $command->run($in, $output);
-
-            $conParams = array();
-            foreach ($connections as $con) {
-                $conParams[] = sprintf(
-                    '%s=%s;user=%s;password=%s',
-                    $con, $input->getOption('dsn'),
-                    $input->getOption('user'), $input->getOption('password')
-                );
+            if ('cubrid' == $input->getOption('vendor')) {
+                if (self::FIXTURES_DIR.'/bookstore' == $fixturesDir) {
+                    if (is_file('schema.xml')) {
+                        rename('schema.xml', 'schema.xml.dist');
+                    }
+                    if (is_file('cubrid.schema.xml.dist')) {
+                        rename('cubrid.schema.xml.dist', 'cubrid.schema.xml');
+                    }
+                    //$this->sqlBuildAndInsert($connections, $input, $output);
+                }
+            } else {
+                if (self::FIXTURES_DIR.'/bookstore' == $fixturesDir) {
+                    if (is_file('cubrid.schema.xml')) {
+                        rename('cubrid.schema.xml', 'cubrid.schema.xml.dist');
+                    }
+                    if (is_file('schema.xml.dist')) {
+                        rename('schema.xml.dist', 'schema.xml');
+                    }
+                }
+                $this->sqlBuildAndInsert($connections, $input, $output);
             }
-
-            $in = new ArrayInput(array(
-                'command'      => 'sql:insert',
-                '--output-dir' => 'build/sql/',
-                '--connection' => $conParams,
-                '--verbose'    => $input->getOption('verbose'),
-            ));
-
-            $command = $this->getApplication()->find('sql:insert');
-            $command->run($in, $output);
         }
 
         if (is_file('runtime-conf.xml')) {
@@ -191,5 +184,38 @@ class TestPrepareCommand extends AbstractCommand
         }
 
         chdir($this->root);
+    }
+
+    protected function sqlBuildAndInsert($connections, InputInterface $input, OutputInterface $output)
+    {
+        $in = new ArrayInput(array(
+            'command'      => 'sql:build',
+            '--input-dir'  => '.',
+            '--output-dir' => 'build/sql/',
+            '--platform'   => ucfirst($input->getOption('vendor')) . 'Platform',
+            '--verbose'    => $input->getOption('verbose'),
+        ));
+
+        $command = $this->getApplication()->find('sql:build');
+        $command->run($in, $output);
+
+        $conParams = array();
+        foreach ($connections as $con) {
+            $conParams[] = sprintf(
+                '%s=%s;user=%s;password=%s',
+                $con, $input->getOption('dsn'),
+                $input->getOption('user'), $input->getOption('password')
+            );
+        }
+
+        $in = new ArrayInput(array(
+            'command'      => 'sql:insert',
+            '--output-dir' => 'build/sql/',
+            '--connection' => $conParams,
+            '--verbose'    => $input->getOption('verbose'),
+        ));
+
+        $command = $this->getApplication()->find('sql:insert');
+        $command->run($in, $output);
     }
 }

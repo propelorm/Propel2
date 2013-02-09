@@ -15,6 +15,7 @@ use Propel\Generator\Model\Column;
 use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\IdMethod;
 use Propel\Generator\Model\PropelTypes;
+use Propel\Generator\Platform\CubridPlatform;
 use Propel\Generator\Platform\MssqlPlatform;
 use Propel\Generator\Platform\MysqlPlatform;
 use Propel\Generator\Platform\PlatformInterface;
@@ -1313,8 +1314,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             \$stmt->closeCursor();";
         }
 
-        if ($column->getType() === PropelTypes::CLOB && $platform instanceof OraclePlatform) {
-            // PDO_OCI returns a stream for CLOB objects, while other PDO adapters return a string...
+        if ($column->getType() === PropelTypes::CLOB && ($platform instanceof OraclePlatform || $platform instanceof CubridPlatform)) {
+            // PDO_OCI and PDO_Cubrid return a stream for CLOB objects, while other PDO adapters return a string...
             $script .= "
             \$this->$clo = stream_get_contents(\$row[0]);";
         } elseif ($column->isLobType() && !$platform->hasStreamBlobImpl()) {
@@ -4475,9 +4476,16 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         foreach ($table->getColumns() as $column) {
             $constantName = $this->getColumnConstant($column);
             $identifier = var_export($platform->quoteIdentifier(strtoupper($column->getName())), true);
+
             $script .= "
-        if (\$this->isColumnModified($constantName)) {
-            \$modifiedColumns[':p' . \$index++]  = $identifier;
+        if (\$this->isColumnModified($constantName)) {";
+            if (($platform instanceof CubridPlatform) && ($column->getType() == PropelTypes::CLOB)) {
+                //Cubrid requires an explicit conversion from text to clob, via CHAR_TO_CLOB sql function
+                $script .= "\$modifiedColumns['CHAR_TO_CLOB(:p' . \$index++ . ')']  = $identifier;";
+            } else {
+                $script .= "\$modifiedColumns[':p' . \$index++]  = $identifier;";
+            }
+            $script .= "
         }";
         }
 
@@ -4497,6 +4505,13 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             $columnNameCase = var_export($platform->quoteIdentifier(strtoupper($column->getName())), true);
             $script .= "
                     case $columnNameCase:";
+            if (($platform instanceof CubridPlatform) && ($column->getType() == PropelTypes::CLOB)) {
+                //before binding parameters, remove CHAR_TO_CLOB string from parameter name
+                $script .= "
+                        \$identifier = strstr(\$identifier, ':p');
+                        \$identifier = substr(\$identifier, 0, -1);";
+            }
+
             $script .= $platform->getColumnBindingPHP($column, "\$identifier", '$this->' . strtolower($column->getName()), '                        ');
             $script .= "
                         break;";

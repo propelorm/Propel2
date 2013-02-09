@@ -10,6 +10,7 @@
 
 namespace Propel\Tests\Generator\Behavior\Validate;
 
+use Propel\Generator\Util\QuickBuilder;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 use Symfony\Component\Validator\Mapping\ClassMetadataFactory;
 use Symfony\Component\Validator\Mapping\Loader\StaticMethodLoader;
@@ -24,6 +25,53 @@ class I18nConcreteInheritanceHandleValidateBehaviorTest extends BookstoreTestBas
 {
     protected $metadataFactory;
 
+    public function setUp()
+    {
+        if (!class_exists('\ValidateTriggerBook')) {
+            $schema = <<<EOF
+<database name="bookstore-behavior">
+
+    <table name="validate_trigger_book">
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+        <column name="title" type="VARCHAR" required="true" description="Book Title" primaryString="true" />
+        <column name="isbn" type="VARCHAR" size="24" phpName="ISBN" description="ISBN Number" />
+        <column name="price" required="false" type="FLOAT" />
+        <column name="publisher_id" required="false" type="INTEGER" />
+        <column name="author_id" required="false" type="INTEGER" />
+        <behavior name="validate">
+            <parameter name="rule1" value="{column: title, validator: NotNull}" />
+            <parameter name="rule2" value="{column: isbn, validator: Regex, options: {pattern: &quot;/[^\d-]+/&quot;, match: false, message: Please enter a valid ISBN }}" />
+        </behavior>
+        <behavior name="i18n">
+             <parameter name="i18n_columns" value="title" />
+        </behavior>
+    </table>
+
+    <table name="validate_trigger_fiction">
+        <behavior name="concrete_inheritance">
+            <parameter name="extends" value="validate_trigger_book" />
+        </behavior>
+        <column name="foo" type="VARCHAR" size="100"/>
+    </table>
+
+    <table name="validate_trigger_comic">
+        <behavior name="concrete_inheritance">
+            <parameter name="extends" value="validate_trigger_book" />
+        </behavior>
+        <column name="bar" type="VARCHAR" size="100"/>
+        <behavior name="validate">
+            <parameter name="rule1" value="{column: bar, validator: NotNull}" />
+            <parameter name="rule2" value="{column: bar, validator: Type, options: {type: string }}" />
+        </behavior>
+    </table>
+
+</database>
+EOF;
+            QuickBuilder::buildSchema($schema);
+            parent::setUp();
+        }
+    }
+
     public function assertPreConditions()
     {
         $this->metadataFactory = new ClassMetadataFactory(new StaticMethodLoader());
@@ -31,7 +79,7 @@ class I18nConcreteInheritanceHandleValidateBehaviorTest extends BookstoreTestBas
 
     public function testI18nBehaviorHandlesValidateBehavior()
     {
-        $class = 'Propel\Tests\Bookstore\Behavior\ValidateTriggerBook';
+        $class = '\ValidateTriggerBook';
         $this->checkClassHasValidateBehavior($class);
 
         $classMetadata = $this->metadataFactory->getClassMetadata($class);
@@ -46,7 +94,7 @@ class I18nConcreteInheritanceHandleValidateBehaviorTest extends BookstoreTestBas
 
         $this->assertInstanceOf('Symfony\Component\Validator\Constraints\Regex', $constraints[0]);
 
-        $i18nClass = 'Propel\Tests\Bookstore\Behavior\ValidateTriggerBookI18n';
+        $i18nClass = '\ValidateTriggerBookI18n';
         $this->checkClassHasValidateBehavior($i18nClass);
 
         $i18nClassMetadata = $this->metadataFactory->getClassMetadata($i18nClass);
@@ -64,7 +112,7 @@ class I18nConcreteInheritanceHandleValidateBehaviorTest extends BookstoreTestBas
 
     public function testConcreteInheritanceBehaviorHandlesValidateBehavior()
     {
-        $fiction = 'Propel\Tests\Bookstore\Behavior\ValidateTriggerFiction';
+        $fiction = '\ValidateTriggerFiction';
 
         $this->checkClassHasValidateBehavior($fiction);
 
@@ -83,7 +131,7 @@ class I18nConcreteInheritanceHandleValidateBehaviorTest extends BookstoreTestBas
         $this->assertInstanceOf('Symfony\Component\Validator\Constraints\Regex', $fictionConstraints[0]);
         $this->assertInstanceOf('Symfony\Component\Validator\Constraints\Regex', $fictionConstraints[1]);
 
-        $comic = 'Propel\Tests\Bookstore\Behavior\ValidateTriggerComic';
+        $comic = '\ValidateTriggerComic';
 
         $this->checkClassHasValidateBehavior($comic);
 
@@ -116,9 +164,9 @@ class I18nConcreteInheritanceHandleValidateBehaviorTest extends BookstoreTestBas
         $classes = array('ValidateTriggerFictionI18n', 'ValidateTriggerComicI18n');
 
         foreach ($classes as $class) {
-            $this->checkClassHasValidateBehavior('Propel\Tests\Bookstore\Behavior\\'.$class);
+            $this->checkClassHasValidateBehavior($class);
 
-            $classMetadata = $this->metadataFactory->getClassMetadata('Propel\Tests\Bookstore\Behavior\\'.$class);
+            $classMetadata = $this->metadataFactory->getClassMetadata($class);
             $this->assertCount(1, $classMetadata->getConstrainedProperties());
             $this->assertTrue(in_array('title', $classMetadata->getConstrainedProperties(), true));
 

@@ -18,6 +18,8 @@ use Propel\Tests\Bookstore\Media;
 use Propel\Tests\Bookstore\MediaPeer;
 
 use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\Adapter\Pdo\CubridAdapter;
+use Propel\Runtime\Propel;
 
 if (!defined('TESTS_BASE_DIR')) {
     define('TESTS_BASE_DIR', realpath(__DIR__ . '/../../../../..'));
@@ -103,8 +105,13 @@ class GeneratedObjectLobTest extends BookstoreEmptyTestBase
         $this->assertInternalType('resource', $img, "Expected results of BLOB method to be a resource.");
         $this->assertInternalType('string', $txt, "Expected results of CLOB method to be a string.");
 
-        $stat = fstat($img);
-        $size = $stat['size'];
+        //Cubrid returns a "pdo_cubrid LOB" stream, and it's not possible to apply fstat function to it
+        if (Propel::getServiceContainer()->getAdapter() instanceof CubridAdapter) {
+            $size = strlen(stream_get_contents($img));
+        } else {
+            $stat = fstat($img);
+            $size = $stat['size'];
+        }
 
         $this->assertEquals(filesize($blob_path), $size, "Expected filesize to match stat(blobrsc)");
         $this->assertEquals(filesize($clob_path), strlen($txt), "Expected filesize to match clob strlen");

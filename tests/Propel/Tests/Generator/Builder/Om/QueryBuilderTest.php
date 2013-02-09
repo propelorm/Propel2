@@ -41,6 +41,7 @@ use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\ActiveQuery\ModelJoin;
+use Propel\Runtime\Adapter\Pdo\CubridAdapter;
 use Propel\Runtime\Util\BasePeer;
 
 use \ReflectionMethod;
@@ -216,7 +217,11 @@ class QueryBuilderTest extends BookstoreTestBase
     public function testFindPkUsesFindPkSimpleOnEmptyQueries()
     {
         BookQuery::create()->findPk(123, $this->con);
-        $expected = 'SELECT ID, TITLE, ISBN, PRICE, PUBLISHER_ID, AUTHOR_ID FROM book WHERE ID = 123';
+        if (Propel::getServiceContainer()->getAdapter() instanceof CubridAdapter) {
+            $expected = 'SELECT `ID`, `TITLE`, `ISBN`, `PRICE`, `PUBLISHER_ID`, `AUTHOR_ID` FROM `book` WHERE `ID` = 123';
+        } else {
+            $expected = 'SELECT ID, TITLE, ISBN, PRICE, PUBLISHER_ID, AUTHOR_ID FROM book WHERE ID = 123';
+        }
         $this->assertEquals($expected, $this->con->getLastExecutedQuery());
     }
 
@@ -239,7 +244,11 @@ class QueryBuilderTest extends BookstoreTestBase
     public function testFindPkUsesFindPkComplexOnNonEmptyQueries()
     {
         BookQuery::create('b')->findPk(123, $this->con);
-        $expected = 'SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.ID=123';
+        if (Propel::getServiceContainer()->getAdapter() instanceof CubridAdapter) {
+            $expected = 'SELECT `book`.`ID`, `book`.`TITLE`, `book`.`ISBN`, `book`.`PRICE`, `book`.`PUBLISHER_ID`, `book`.`AUTHOR_ID` FROM `book` WHERE `book`.`ID`=123';
+        } else {
+            $expected = 'SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.ID=123';
+        }
         $this->assertEquals($expected, $this->con->getLastExecutedQuery());
     }
 

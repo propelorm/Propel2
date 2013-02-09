@@ -43,11 +43,11 @@ class CubridSchemaParser extends AbstractSchemaParser
         'DOUBLE'     => PropelTypes::DOUBLE,
         'CHAR'       => PropelTypes::CHAR,
         'VARCHAR'    => PropelTypes::VARCHAR,
-		'STRING'   	 => PropelTypes::VARCHAR,
-		'DATE'       => PropelTypes::DATE,
-		'TIME'       => PropelTypes::TIME,
-		'DATETIME'   => PropelTypes::TIMESTAMP,
-		'TIMESTAMP'  => PropelTypes::TIMESTAMP,
+        'STRING'   	 => PropelTypes::VARCHAR,
+        'DATE'       => PropelTypes::DATE,
+        'TIME'       => PropelTypes::TIME,
+        'DATETIME'   => PropelTypes::TIMESTAMP,
+        'TIMESTAMP'  => PropelTypes::TIMESTAMP,
         'BLOB'       => PropelTypes::BLOB,
     );
 
@@ -98,15 +98,14 @@ class CubridSchemaParser extends AbstractSchemaParser
         foreach ($tables as $table) {
             $this->addForeignKeys($table);
 //            $this->addConstraints($table);
-			$this->addPrimaryKey($table);
-			$this->addIndexes($table);
+            $this->addPrimaryKey($table);
+            $this->addIndexes($table);
         }
 
         // Now setup referrers.
 //        foreach ($tables as $table) {
 //            $table->setupReferrers();
 //        }
-
         return count($tables);
     }
 
@@ -136,9 +135,9 @@ class CubridSchemaParser extends AbstractSchemaParser
     public function getColumnFromRow($row, Table $table)
     {
         $name = $row['Field'];
-		$nativeType = $row['Type'];
+        $nativeType = $row['Type'];
         $isNullable = ('YES' === $row['Null']);
-		$default = $row['Default'];
+        $default = $row['Default'];
         $autoincrement = (false !== strpos($row['Extra'], 'auto_increment'));
         $size = null;
         $precision = null;
@@ -219,16 +218,15 @@ class CubridSchemaParser extends AbstractSchemaParser
         return $column;
     }
 
-	protected function getReferentialAction($value)
-	{
-		switch ($value)
-		{
-			case 0: return ForeignKey::CASCADE;
-			case 1: return ForeignKey::RESTRICT;
-			case 2: return ForeignKey::NOACTION;
-			default: return ForeignKey::SETNULL;  // case 3:
-		}
-	}
+    protected function getReferentialAction($value)
+    {
+        switch ($value) {
+            case 0: return ForeignKey::CASCADE;
+            case 1: return ForeignKey::RESTRICT;
+            case 2: return ForeignKey::NOACTION;
+            default: return ForeignKey::SETNULL;  // case 3:
+        }
+    }
     /**
      * Load foreign keys for this table.
      */
@@ -236,111 +234,107 @@ class CubridSchemaParser extends AbstractSchemaParser
     {
         $database = $table->getDatabase();
 
-		// $fks is now an array()
-		$fks = $this->dbh->cubrid_schema(\PDO::CUBRID_SCH_IMPORTED_KEYS, $table->getName());
+        // $fks is now an array()
+        $fks = $this->dbh->cubrid_schema(\PDO::CUBRID_SCH_IMPORTED_KEYS, $table->getName());
 
-		foreach ($fks as $fk)
-		{
-			$foreignTable = $database->getTable($fk['PKTABLE_NAME'], true);
+        foreach ($fks as $fk) {
+            $foreignTable = $database->getTable($fk['PKTABLE_NAME'], true);
 
-			$foreignKey = new ForeignKey($fk['FK_NAME']);
+            $foreignKey = new ForeignKey($fk['FK_NAME']);
 
-			$foreignKey->setForeignTableCommonName($foreignTable->getCommonName());
-			$foreignKey->setForeignSchemaName($foreignTable->getSchema());
+            $foreignKey->setForeignTableCommonName($foreignTable->getCommonName());
+            $foreignKey->setForeignSchemaName($foreignTable->getSchema());
 
-			$foreignKey->setOnDelete($this->getReferentialAction($fk['DELETE_RULE']));
-			$foreignKey->setOnUpdate($this->getReferentialAction($fk['UPDATE_RULE']));
+            $foreignKey->setOnDelete($this->getReferentialAction($fk['DELETE_RULE']));
+            $foreignKey->setOnUpdate($this->getReferentialAction($fk['UPDATE_RULE']));
 
-			$foreignKey->addReference($fk['FKCOLUMN_NAME'], $fk['PKCOLUMN_NAME']);
+            $foreignKey->addReference($fk['FKCOLUMN_NAME'], $fk['PKCOLUMN_NAME']);
 
-			$table->addForeignKey($foreignKey);
-		}
+            $table->addForeignKey($foreignKey);
+        }
     }
 
-	protected function getNewIndexByType($type)
-	{
-		switch ($type)
-		{
-			case 0: // unique
-			case 2: // reverse unique
-					return new Unique();
-			case 1: // index
-			default:// case 3 is reverse index
-					return new Index();
-		}
-	}
+    protected function getNewIndexByType($type)
+    {
+        switch ($type) {
+            case 0: // unique
+            case 2: // reverse unique
+
+                    return new Unique();
+            case 1: // index
+            default:// case 3 is reverse index
+
+                    return new Index();
+        }
+    }
 
     /**
      * Load constraints for this table. This function wraps the functionality
-	 * of two functions: addIndexes() and addPrimaryKey(). Should work but doesn't
-	 * because of a bug in CUBRID CCI driver.
-	 * Once fixed, this function will work with no changes.
+     * of two functions: addIndexes() and addPrimaryKey(). Should work but doesn't
+     * because of a bug in CUBRID CCI driver.
+     * Once fixed, this function will work with no changes.
      */
     protected function addConstraints(Table $table)
     {
-		// $pks is now an array()
-		$indexes = $this->dbh->cubrid_schema(\PDO::CUBRID_SCH_CONSTRAINT, $table->getName());
+        // $pks is now an array()
+        $indexes = $this->dbh->cubrid_schema(\PDO::CUBRID_SCH_CONSTRAINT, $table->getName());
 
-		foreach ($indexes as $ix)
-		{
-			if ($ix['PRIMARY_KEY'])
-			{
-				$table->getColumn($ix['ATTR_NAME'])->setPrimaryKey(true);
-			}
-			else{
-				$tIndex = $this->getNewIndexByType($ix['TYPE']);
-				$tIndex->setName($ix['NAME']);
-				$tIndex->addColumn($ix['ATTR_NAME']);
+        foreach ($indexes as $ix) {
+            if ($ix['PRIMARY_KEY']) {
+                $table->getColumn($ix['ATTR_NAME'])->setPrimaryKey(true);
+            } else {
+                $tIndex = $this->getNewIndexByType($ix['TYPE']);
+                $tIndex->setName($ix['NAME']);
+                $tIndex->addColumn($ix['ATTR_NAME']);
 
-				$table->addIndex($tIndex);
-			}
-		}
+                $table->addIndex($tIndex);
+            }
+        }
     }
 
-	/**
+    /**
      * Load indexes for this table
      */
     protected function addIndexes(Table $table)
     {
-		$stmt = $this->dbh->query(sprintf('SHOW INDEX FROM `%s`', $table->getName()));
+        $stmt = $this->dbh->query(sprintf('SHOW INDEX FROM `%s`', $table->getName()));
 
-		// Loop through the returned results, grouping the same key_name together
-		// adding each column for that key.
-		$indexes = array();
+        // Loop through the returned results, grouping the same key_name together
+        // adding each column for that key.
+        $indexes = array();
 
-		while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-			$col = $table->getColumn($row['Column_name']);
+        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            $col = $table->getColumn($row['Column_name']);
 
-			if (!$col->isPrimaryKey()) {
-				$name = $row['Key_name'];
+            if (!$col->isPrimaryKey()) {
+                $name = $row['Key_name'];
 
-				if (!isset($indexes[$name])) {
-					$isUnique = (0 == $row['Non_unique']);
-					if ($isUnique) {
-						$indexes[$name] = new Unique($name);
-					} else {
-						$indexes[$name] = new Index($name);
-					}
+                if (!isset($indexes[$name])) {
+                    $isUnique = (0 == $row['Non_unique']);
+                    if ($isUnique) {
+                        $indexes[$name] = new Unique($name);
+                    } else {
+                        $indexes[$name] = new Index($name);
+                    }
 
-					$table->addIndex($indexes[$name]);
-				}
+                    $table->addIndex($indexes[$name]);
+                }
 
-				$indexes[$name]->addColumn($col);
-			}
-		}
+                $indexes[$name]->addColumn($col);
+            }
+        }
     }
 
-	/**
-	 * Loads the primary key for this table.
-	 */
-	protected function addPrimaryKey(Table $table)
-	{
-		// $pks is now an array()
-		$pks = $this->dbh->cubrid_schema(\PDO::CUBRID_SCH_PRIMARY_KEY, $table->getName());
+    /**
+     * Loads the primary key for this table.
+     */
+    protected function addPrimaryKey(Table $table)
+    {
+        // $pks is now an array()
+        $pks = $this->dbh->cubrid_schema(\PDO::CUBRID_SCH_PRIMARY_KEY, $table->getName());
 
-		foreach ($pks as $pk)
-		{
-			$table->getColumn($pk['ATTR_NAME'])->setPrimaryKey(true);
-		}
-	}
+        foreach ($pks as $pk) {
+            $table->getColumn($pk['ATTR_NAME'])->setPrimaryKey(true);
+        }
+    }
 }

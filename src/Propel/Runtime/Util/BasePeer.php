@@ -10,10 +10,11 @@
 
 namespace Propel\Runtime\Util;
 
+use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\Adapter\Pdo\CubridAdapter;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\RuntimeException;
 use Propel\Runtime\Propel;
-use Propel\Runtime\ActiveQuery\Criteria;
 
 /**
  * This is a utility class for all generated Peer classes in the system.
@@ -395,6 +396,11 @@ class BasePeer
                                         $rawcvt .= $raw{$r};
                                     }
                                 }
+
+                                if ($db instanceof CubridAdapter) {
+                                    $rawcvt = $db->quoteRaw($rawcvt);
+                                }
+
                                 $sql .= $rawcvt . ', ';
                             } else {
                                 $sql .= ':p'.$p++.', ';
@@ -418,6 +424,7 @@ class BasePeer
                         $selectCriteria->getCriterion($colName)->appendPsTo($sb, $params);
                         $whereClause[] = $sb;
                     }
+
                     $sql .= ' WHERE ' .  implode(' AND ', $whereClause);
                 }
 
@@ -536,7 +543,6 @@ class BasePeer
                 $criteria->clearSelectColumns()->addSelectColumn('COUNT(*)');
                 $sql = self::createSelectSql($criteria, $params);
             }
-
             $stmt = $con->prepare($sql);
             $db->bindValues($stmt, $params, $dbMap);
             $stmt->execute();
@@ -706,7 +712,6 @@ class BasePeer
         }
 
         if (!empty($orderBy)) {
-
             foreach ($orderBy as $orderByColumn) {
 
                 // Add function expression as-is.
@@ -781,6 +786,12 @@ class BasePeer
         if ($db->useQuoteIdentifier()) {
             $fromClause = array_map(array($db, 'quoteIdentifierTable'), $fromClause);
             $joinClause = $joinClause ? $joinClause : array_map(array($db, 'quoteIdentifierTable'), $joinClause);
+
+            //Cubrid requires to quote also these identifiers
+            if ($db instanceof CubridAdapter) {
+                $orderByClause = array_map(array($db, 'quoteRaw'), $orderByClause);
+                $groupByClause = array_map(array($db, 'quoteIdentifier'), $groupByClause);
+            }
         }
 
         // add subQuery to From after adding quotes

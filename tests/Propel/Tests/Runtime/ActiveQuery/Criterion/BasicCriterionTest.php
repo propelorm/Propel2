@@ -14,7 +14,9 @@ use Propel\Tests\Helpers\BaseTestCase;
 
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\Criterion\BasicCriterion;
+use Propel\Runtime\Adapter\Pdo\CubridAdapter;
 use Propel\Runtime\Adapter\Pdo\SqliteAdapter;
+use Propel\Runtime\Propel;
 
 /**
  * Test class for BasicCriterion.
@@ -23,6 +25,21 @@ use Propel\Runtime\Adapter\Pdo\SqliteAdapter;
  */
 class BasicCriterionTest extends BaseTestCase
 {
+    /**
+     * @private If current adapter is Cubrid
+     */
+    private $isCubrid;
+
+    //Whithout this snippet, these tests fail, if we're using Cubrid
+    public function setUp()
+    {
+       if (count(Propel::getServiceContainer()->getConnectionManagers()) <= 0) {
+           //Propel is not initialized
+           $this->isCubrid = false;
+       } else {
+           $this->isCubrid = Propel::getServiceContainer()->getAdapter() instanceof CubridAdapter;
+       }
+    }
 
     public function testAppendPsToCreatesAnEqualConditionByDefault()
     {
@@ -32,7 +49,12 @@ class BasicCriterionTest extends BaseTestCase
         $ps = '';
         $cton->appendPsTo($ps, $params);
 
-        $this->assertEquals('A.COL=:p1', $ps);
+        if ($this->isCubrid) {
+            $this->assertEquals('`A`.`COL`=:p1', $ps);
+        } else {
+            $this->assertEquals('A.COL=:p1', $ps);
+        }
+
         $expected = array(
             array('table' => 'A', 'column' => 'COL', 'value' => 'foo')
         );
@@ -47,7 +69,11 @@ class BasicCriterionTest extends BaseTestCase
         $ps = '';
         $cton->appendPsTo($ps, $params);
 
-        $this->assertEquals('A.COL>:p1', $ps);
+        if ($this->isCubrid) {
+            $this->assertEquals('`A`.`COL`>:p1', $ps);
+        } else {
+            $this->assertEquals('A.COL>:p1', $ps);
+        }
         $expected = array(
             array('table' => 'A', 'column' => 'COL', 'value' => 'foo')
         );
@@ -91,7 +117,11 @@ class BasicCriterionTest extends BaseTestCase
         $ps = '';
         $cton->appendPsTo($ps, $params);
 
-        $this->assertEquals('A.COL=' . $ansiFunction, $ps);
+        if ($this->isCubrid) {
+            $this->assertEquals('`A`.`COL`=' . $ansiFunction, $ps);
+        } else {
+            $this->assertEquals('A.COL=' . $ansiFunction, $ps);
+        }
         $this->assertEquals(array(), $params);
     }
 
@@ -103,7 +133,11 @@ class BasicCriterionTest extends BaseTestCase
         $ps = '';
         $cton->appendPsTo($ps, $params);
 
-        $this->assertEquals('A.COL IS NULL ', $ps);
+        if ($this->isCubrid) {
+            $this->assertEquals('`A`.`COL` IS NULL ', $ps);
+        } else {
+            $this->assertEquals('A.COL IS NULL ', $ps);
+        }
         $this->assertEquals(array(), $params);
     }
 
@@ -115,7 +149,11 @@ class BasicCriterionTest extends BaseTestCase
         $ps = '';
         $cton->appendPsTo($ps, $params);
 
-        $this->assertEquals('A.COL IS NOT NULL ', $ps);
+        if ($this->isCubrid) {
+            $this->assertEquals('`A`.`COL` IS NOT NULL ', $ps);
+        } else {
+            $this->assertEquals('A.COL IS NOT NULL ', $ps);
+        }
         $this->assertEquals(array(), $params);
     }
 

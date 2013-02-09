@@ -71,5 +71,6 @@ abstract class BookstoreTestBase extends \PHPUnit_Framework_TestCase
     public static function tearDownAfterClass()
     {
         Propel::getServiceContainer()->closeConnections();
+        self::$isInitialized = false;
     }
 }

@@ -20,6 +20,7 @@ use Propel\Runtime\Propel;
 use Propel\Runtime\Connection\Exception\RollbackException;
 use Propel\Runtime\Connection\PropelPDO;
 use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\Adapter\Pdo\CubridAdapter;
 
 use \PDO;
 use \PDOException;
@@ -318,7 +319,11 @@ class PropelPDOTest extends BookstoreTestBase
         $c = new Criteria();
         $c->add(BookPeer::ID, array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1), Criteria::IN);
         $books = BookPeer::doSelect($c, $con);
-        $expected = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.ID IN (1,1,1,1,1,1,1,1,1,1,1,1)";
+        if (Propel::getServiceContainer()->getAdapter() instanceof CubridAdapter) {
+            $expected = "SELECT `book`.`ID`, `book`.`TITLE`, `book`.`ISBN`, `book`.`PRICE`, `book`.`PUBLISHER_ID`, `book`.`AUTHOR_ID` FROM `book` WHERE book.ID IN (1,1,1,1,1,1,1,1,1,1,1,1)";
+        } else {
+            $expected = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.ID IN (1,1,1,1,1,1,1,1,1,1,1,1)";
+        }
         $this->assertEquals($expected, $con->getLastExecutedQuery(), 'PropelPDO correctly replaces arguments in queries');
     }
 
@@ -355,7 +360,11 @@ class PropelPDOTest extends BookstoreTestBase
 
         $con->useDebug(true);
         $books = BookPeer::doSelect($c, $con);
-        $latestExecutedQuery = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.TITLE LIKE 'Harry%s'";
+        if (Propel::getServiceContainer()->getAdapter() instanceof CubridAdapter) {
+            $latestExecutedQuery = "SELECT `book`.`ID`, `book`.`TITLE`, `book`.`ISBN`, `book`.`PRICE`, `book`.`PUBLISHER_ID`, `book`.`AUTHOR_ID` FROM `book` WHERE book.TITLE LIKE 'Harry%s'";
+        } else {
+            $latestExecutedQuery = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.TITLE LIKE 'Harry%s'";
+        }
         if (!Propel::getServiceContainer()->getAdapter(BookPeer::DATABASE_NAME)->useQuoteIdentifier()) {
             $latestExecutedQuery = str_replace('`', '', $latestExecutedQuery);
         }
@@ -473,7 +482,12 @@ class PropelPDOTest extends BookstoreTestBase
         $c->add(BookPeer::TITLE, 'Harry%s', Criteria::LIKE);
 
         $books = BookPeer::doSelect($c, $con);
-        $latestExecutedQuery = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.TITLE LIKE 'Harry%s'";
+
+        if (Propel::getServiceContainer()->getAdapter() instanceof CubridAdapter) {
+            $latestExecutedQuery = "SELECT `book`.`ID`, `book`.`TITLE`, `book`.`ISBN`, `book`.`PRICE`, `book`.`PUBLISHER_ID`, `book`.`AUTHOR_ID` FROM `book` WHERE book.TITLE LIKE 'Harry%s'";
+        } else {
+            $latestExecutedQuery = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.TITLE LIKE 'Harry%s'";
+        }
         $this->assertEquals($latestExecutedQuery, $handler->latestMessage, 'PropelPDO logs queries and populates bound parameters in debug mode');
 
         BookPeer::doDeleteAll($con);

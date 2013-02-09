@@ -10,7 +10,6 @@
 
 namespace Propel\Tests\Generator\Platform;
 
-use Propel\Generator\Builder\Util\SchemaReader;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\ColumnDefaultValue;
 use Propel\Generator\Model\IdMethod;
@@ -32,6 +31,41 @@ class CubridPlatformTest extends PlatformTestProvider
     protected function getPlatform()
     {
         return new CubridPlatform();
+    }
+
+    public function testConstructorInitializeQuoteIdentifierToTrue()
+    {
+        $this->assertTrue($this->getPlatform()->getIdentifierQuoting());
+    }
+
+    public function testQuoteIdentifierIsAlwaysTrue()
+    {
+        $platform = $this->getPlatform();
+        $platform->setIdentifierQuoting(true);
+        $this->assertTrue($platform->getIdentifierQuoting());
+
+        $platform->setIdentifierQuoting(false);
+        $this->assertTrue($platform->getIdentifierQuoting());
+    }
+
+    public function testGetAutoincrement()
+    {
+        $this->assertEquals('AUTO_INCREMENT', $this->getPlatform()->getAutoincrement());
+    }
+
+    public function testGetMaxColumnNameLength()
+    {
+        $this->assertEquals(254, $this->getPlatform()->getMaxColumnNameLength());
+    }
+
+    public function testSupportsNativeDeleteTrigger()
+    {
+        $this->assertTrue($this->getPlatform()->supportsNativeDeleteTrigger());
+    }
+
+    public function testHasStreamBlobImpl()
+    {
+        $this->assertTrue($this->getPlatform()->hasStreamBlobImpl());
     }
 
     public function testGetSequenceNameDefault()
@@ -62,32 +96,31 @@ class CubridPlatformTest extends PlatformTestProvider
         $database = $this->getDatabaseFromSchema($schema);
         $expected = <<<EOF
 
--- ---------------------------------------------------------------------
--- x.book
--- ---------------------------------------------------------------------
+-----------------------------------------------------------------------
+-- book
+-----------------------------------------------------------------------
 
-DROP TABLE IF EXISTS `x`.`book`;
+DROP TABLE IF EXISTS `book_summary`;
 
-CREATE TABLE `x`.`book`
+DROP TABLE IF EXISTS `book`;
+
+CREATE TABLE `book`
 (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `title` VARCHAR(255) NOT NULL,
     `author_id` INTEGER,
-    PRIMARY KEY (`id`),
-    INDEX `book_I_1` (`title`),
-    INDEX `book_FI_1` (`author_id`),
-    CONSTRAINT `book_FK_1`
-        FOREIGN KEY (`author_id`)
-        REFERENCES `y`.`author` (`id`)
+    PRIMARY KEY (`id`)
 );
 
--- ---------------------------------------------------------------------
--- y.author
--- ---------------------------------------------------------------------
+CREATE INDEX `book_I_1` ON `book` (`title`);
 
-DROP TABLE IF EXISTS `y`.`author`;
+-----------------------------------------------------------------------
+-- author
+-----------------------------------------------------------------------
 
-CREATE TABLE `y`.`author`
+DROP TABLE IF EXISTS `author`;
+
+CREATE TABLE `author`
 (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `first_name` VARCHAR(100),
@@ -95,24 +128,40 @@ CREATE TABLE `y`.`author`
     PRIMARY KEY (`id`)
 );
 
--- ---------------------------------------------------------------------
--- x.book_summary
--- ---------------------------------------------------------------------
+-----------------------------------------------------------------------
+-- book_summary
+-----------------------------------------------------------------------
 
-DROP TABLE IF EXISTS `x`.`book_summary`;
+DROP TABLE IF EXISTS `book_summary`;
 
-CREATE TABLE `x`.`book_summary`
+CREATE TABLE `book_summary`
 (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `book_id` INTEGER NOT NULL,
-    `summary` TEXT NOT NULL,
-    PRIMARY KEY (`id`),
-    INDEX `book_summary_FI_1` (`book_id`),
-    CONSTRAINT `book_summary_FK_1`
-        FOREIGN KEY (`book_id`)
-        REFERENCES `x`.`book` (`id`)
-        ON DELETE CASCADE
+    `summary` STRING NOT NULL,
+    PRIMARY KEY (`id`)
 );
+
+-----------------------------------------------------------------------
+-- book Foreign Key Definition
+-----------------------------------------------------------------------
+
+ALTER TABLE `book` ADD CONSTRAINT `book_FK_1`
+    FOREIGN KEY (`author_id`)
+    REFERENCES `author` (`id`);
+
+-----------------------------------------------------------------------
+-- author Foreign Key Definition
+-----------------------------------------------------------------------
+
+-----------------------------------------------------------------------
+-- book_summary Foreign Key Definition
+-----------------------------------------------------------------------
+
+ALTER TABLE `book_summary` ADD CONSTRAINT `book_summary_FK_1`
+    FOREIGN KEY (`book_id`)
+    REFERENCES `book` (`id`)
+    ON DELETE CASCADE;
 
 EOF;
         $this->assertEquals($expected, $this->getPlatform()->getAddTablesDDL($database));
@@ -126,9 +175,9 @@ EOF;
         $database = $this->getDatabaseFromSchema($schema);
         $expected = <<<EOF
 
--- ---------------------------------------------------------------------
+-----------------------------------------------------------------------
 -- book
--- ---------------------------------------------------------------------
+-----------------------------------------------------------------------
 
 DROP TABLE IF EXISTS `book`;
 
@@ -137,17 +186,14 @@ CREATE TABLE `book`
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `title` VARCHAR(255) NOT NULL,
     `author_id` INTEGER,
-    PRIMARY KEY (`id`),
-    INDEX `book_I_1` (`title`),
-    INDEX `book_FI_1` (`author_id`),
-    CONSTRAINT `book_FK_1`
-        FOREIGN KEY (`author_id`)
-        REFERENCES `author` (`id`)
+    PRIMARY KEY (`id`)
 );
 
--- ---------------------------------------------------------------------
+CREATE INDEX `book_I_1` ON `book` (`title`);
+
+-----------------------------------------------------------------------
 -- author
--- ---------------------------------------------------------------------
+-----------------------------------------------------------------------
 
 DROP TABLE IF EXISTS `author`;
 
@@ -158,6 +204,18 @@ CREATE TABLE `author`
     `last_name` VARCHAR(100),
     PRIMARY KEY (`id`)
 );
+
+-----------------------------------------------------------------------
+-- book Foreign Key Definition
+-----------------------------------------------------------------------
+
+ALTER TABLE `book` ADD CONSTRAINT `book_FK_1`
+    FOREIGN KEY (`author_id`)
+    REFERENCES `author` (`id`);
+
+-----------------------------------------------------------------------
+-- author Foreign Key Definition
+-----------------------------------------------------------------------
 
 EOF;
         $this->assertEquals($expected, $this->getPlatform()->getAddTablesDDL($database));
@@ -180,6 +238,7 @@ EOF;
     {
         $table = $this->getTableFromSchema($schema);
         $expected = "
+-- This is foo table
 CREATE TABLE `foo`
 (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
@@ -220,7 +279,7 @@ CREATE TABLE `foo`
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `bar` INTEGER,
     PRIMARY KEY (`id`),
-    UNIQUE INDEX `foo_U_1` (`bar`)
+    UNIQUE (`bar`)
 );
 ";
         $this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
@@ -245,11 +304,13 @@ CREATE TABLE `foo`
 (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `bar` INTEGER,
-    PRIMARY KEY (`id`),
-    CONSTRAINT `foo_I_1` (`bar`)
+    PRIMARY KEY (`id`)
 );
+
+CREATE INDEX `foo_I_1` ON `foo` (`bar`);
 ";
-        $this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
+        $actual = $this->getPlatform()->getAddTableDDL($table) . $this->getPlatform()->getAddIndicesDDL($table);
+        $this->assertEquals($expected, $actual);
     }
 
     public function testGetAddTableDDLForeignKey()
@@ -274,14 +335,15 @@ CREATE TABLE `foo`
 (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `bar_id` INTEGER,
-    PRIMARY KEY (`id`),
-    CONSTRAINT `foo_FI_1` (`bar_id`),
-    CONSTRAINT `foo_FK_1`
-        FOREIGN KEY (`bar_id`)
-        REFERENCES `bar` (`id`)
+    PRIMARY KEY (`id`)
 );
+
+ALTER TABLE `foo` ADD CONSTRAINT `foo_FK_1`
+    FOREIGN KEY (`bar_id`)
+    REFERENCES `bar` (`id`);
 ";
-        $this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
+        $actual = $this->getPlatform()->getAddTableDDL($table) . $this->getPlatform()->getAddForeignKeysDDL($table);
+        $this->assertEquals($expected, $actual);
     }
 
     public function testGetAddTableDDLForeignKeySkipSql()
@@ -306,11 +368,11 @@ CREATE TABLE `foo`
 (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `bar_id` INTEGER,
-    PRIMARY KEY (`id`),
-    CONSTRAINT `foo_FI_1` (`bar_id`)
+    PRIMARY KEY (`id`)
 );
 ";
-        $this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
+        $actual = $this->getPlatform()->getAddTableDDL($table) . $this->getPlatform()->getAddForeignKeysDDL($table);
+        $this->assertEquals($expected, $actual);
     }
 
     /**
@@ -318,9 +380,9 @@ CREATE TABLE `foo`
      */
     public function testGetAddTableDDLSchema($schema)
     {
-        $table = $this->getTableFromSchema($schema, 'Woopah.foo');
+        $table = $this->getTableFromSchema($schema, 'foo');
         $expected = "
-CREATE TABLE `Woopah`.`foo`
+CREATE TABLE `foo`
 (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `bar` INTEGER,
@@ -344,9 +406,9 @@ DROP TABLE IF EXISTS `foo`;
      */
     public function testGetDropTableDDLSchema($schema)
     {
-        $table = $this->getTableFromSchema($schema, 'Woopah.foo');
+        $table = $this->getTableFromSchema($schema, 'foo');
         $expected = "
-DROP TABLE IF EXISTS `Woopah`.`foo`;
+DROP TABLE IF EXISTS `foo`;
 ";
         $this->assertEquals($expected, $this->getPlatform()->getDropTableDDL($table));
     }
@@ -359,7 +421,7 @@ DROP TABLE IF EXISTS `Woopah`.`foo`;
         $column->getDomain()->replaceSize(3);
         $column->setNotNull(true);
         $column->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_VALUE));
-        $expected = '`foo` DOUBLE(3,2) DEFAULT 123 NOT NULL';
+        $expected = '`foo` DOUBLE DEFAULT 123 NOT NULL';
         $this->assertEquals($expected, $this->getPlatform()->getColumnDDL($column));
     }
 
@@ -461,7 +523,7 @@ DROP INDEX `babar` ON `foo`;
      */
     public function testGetIndexDDL($index)
     {
-        $expected = 'INDEX `babar` (`bar1`, `bar2`)';
+        $expected = 'INDEX `babar` ON `foo`(`bar1`, `bar2`)';
         $this->assertEquals($expected, $this->getPLatform()->getIndexDDL($index));
     }
 
@@ -475,7 +537,7 @@ DROP INDEX `babar` ON `foo`;
         $index = new Index('bar_index');
         $index->addColumn($column1);
         $table->addIndex($index);
-        $expected = 'INDEX `bar_index` (`bar1`(5))';
+        $expected = 'INDEX `bar_index` ON `foo`(`bar1`(5))';
         $this->assertEquals($expected, $this->getPLatform()->getIndexDDL($index));
     }
 
@@ -484,7 +546,7 @@ DROP INDEX `babar` ON `foo`;
      */
     public function testGetUniqueDDL($index)
     {
-        $expected = 'UNIQUE INDEX `babar` (`bar1`, `bar2`)';
+        $expected = 'UNIQUE (`bar1`,`bar2`)';
         $this->assertEquals($expected, $this->getPLatform()->getUniqueDDL($index));
     }
 
@@ -574,9 +636,9 @@ ALTER TABLE `foo` DROP FOREIGN KEY `foo_bar_FK`;
     public function testGetCommentBlockDDL()
     {
         $expected = "
--- ---------------------------------------------------------------------
+-----------------------------------------------------------------------
 -- foo bar
--- ---------------------------------------------------------------------
+-----------------------------------------------------------------------
 ";
         $this->assertEquals($expected, $this->getPLatform()->getCommentBlockDDL('foo bar'));
     }

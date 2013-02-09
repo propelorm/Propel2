@@ -87,6 +87,20 @@ There is nothing to setup, just run:
 
     bin/propel test:prepare --vendor=sqlite --dsn="sqlite:/tmp/database.sqlite" --user="" --password=""
 
+### Cubrid ###
+
+Create a database named `test` then start it:
+
+    cubrid createdb test
+
+    cubrid server start test
+
+then run:
+
+    bin/propel test:prepare --user="DBA" --password="" --vendor="cubrid" --dsn="cubrid:host=localhost;port=33000;dbname=test"
+
+**Note**: every time you run `test:prepare` command, you need to delete and re-create your database.
+
 
 Now you can run the test suite by running:
 

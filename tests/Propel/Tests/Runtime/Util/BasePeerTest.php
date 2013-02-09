@@ -259,7 +259,11 @@ class BasePeerTest extends BookstoreTestBase
         $c = new Criteria(BookPeer::DATABASE_NAME);
         $c->add(BookPeer::TITLE, 'War And Peace');
         BasePeer::doDelete($c, $con);
-        $expectedSQL = "DELETE FROM `book` WHERE book.TITLE='War And Peace'";
+        if (in_array($this->getDriver(), array('cubrid'))) {
+            $expectedSQL = "DELETE FROM `book` WHERE `book`.`TITLE`='War And Peace'";
+        } else {
+            $expectedSQL = "DELETE FROM `book` WHERE book.TITLE='War And Peace'";
+        }
         $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'doDelete() translates a condition into a WHERE');
     }
 
@@ -270,7 +274,11 @@ class BasePeerTest extends BookstoreTestBase
         $c->add(BookPeer::TITLE, 'War And Peace');
         $c->add(BookPeer::ID, 12);
         BasePeer::doDelete($c, $con);
-        $expectedSQL = "DELETE FROM `book` WHERE book.TITLE='War And Peace' AND book.ID=12";
+        if (in_array($this->getDriver(), array('cubrid'))) {
+            $expectedSQL = "DELETE FROM `book` WHERE `book`.`TITLE`='War And Peace' AND `book`.`ID`=12";
+        } else {
+            $expectedSQL = "DELETE FROM `book` WHERE book.TITLE='War And Peace' AND book.ID=12";
+        }
         $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'doDelete() combines conditions in WHERE with an AND');
     }
 
@@ -281,7 +289,11 @@ class BasePeerTest extends BookstoreTestBase
         $c->addAlias('b', BookPeer::TABLE_NAME);
         $c->add('b.TITLE', 'War And Peace');
         BasePeer::doDelete($c, $con);
-        $expectedSQL = "DELETE b FROM `book` AS b WHERE b.TITLE='War And Peace'";
+        if (in_array($this->getDriver(), array('cubrid'))) {
+            $expectedSQL = "DELETE b FROM `book` AS b WHERE `b`.`TITLE`='War And Peace'";
+        } else {
+            $expectedSQL = "DELETE b FROM `book` AS b WHERE b.TITLE='War And Peace'";
+        }
         $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'doDelete() accepts a Criteria with a table alias');
     }
 
@@ -297,7 +309,11 @@ class BasePeerTest extends BookstoreTestBase
         $c->add(BookPeer::TITLE, 'War And Peace');
         $c->add(AuthorPeer::FIRST_NAME, 'Leo');
         BasePeer::doDelete($c, $con);
-        $expectedSQL = "DELETE FROM `author` WHERE author.FIRST_NAME='Leo'";
+        if (in_array($this->getDriver(), array('cubrid'))) {
+            $expectedSQL = "DELETE FROM `author` WHERE `author`.`FIRST_NAME`='Leo'";
+        } else {
+            $expectedSQL = "DELETE FROM `author` WHERE author.FIRST_NAME='Leo'";
+        }
         $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'doDelete() issues two DELETE queries when passed conditions on two tables');
         $this->assertEquals($count + 2, $con->getQueryCount(), 'doDelete() issues two DELETE queries when passed conditions on two tables');
 
@@ -305,7 +321,11 @@ class BasePeerTest extends BookstoreTestBase
         $c->add(AuthorPeer::FIRST_NAME, 'Leo');
         $c->add(BookPeer::TITLE, 'War And Peace');
         BasePeer::doDelete($c, $con);
-        $expectedSQL = "DELETE FROM `book` WHERE book.TITLE='War And Peace'";
+        if (in_array($this->getDriver(), array('cubrid'))) {
+            $expectedSQL = "DELETE FROM `book` WHERE `book`.`TITLE`='War And Peace'";
+        } else {
+            $expectedSQL = "DELETE FROM `book` WHERE book.TITLE='War And Peace'";
+        }
         $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'doDelete() issues two DELETE queries when passed conditions on two tables');
         $this->assertEquals($count + 4, $con->getQueryCount(), 'doDelete() issues two DELETE queries when passed conditions on two tables');
     }
@@ -315,7 +335,11 @@ class BasePeerTest extends BookstoreTestBase
         $c = new Criteria();
         $c->setComment('Foo');
         $c->addSelectColumn(BookPeer::ID);
-        $expected = 'SELECT /* Foo */ book.ID FROM `book`';
+        if (in_array($this->getDriver(), array('cubrid'))) {
+            $expected = 'SELECT /* Foo */ `book`.`ID` FROM `book`';
+        } else {
+            $expected = 'SELECT /* Foo */ book.ID FROM `book`';
+        }
         $params = array();
         $this->assertEquals($expected, BasePeer::createSelectSQL($c, $params), 'Criteria::setComment() adds a comment to select queries');
     }
@@ -340,7 +364,11 @@ class BasePeerTest extends BookstoreTestBase
         $c->add(BookPeer::TITLE, 'War And Peace');
         $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
         BasePeer::doDelete($c, $con);
-        $expected = 'DELETE /* Foo */ FROM `book` WHERE book.TITLE=\'War And Peace\'';
+        if (in_array($this->getDriver(), array('cubrid'))) {
+            $expected = 'DELETE /* Foo */ FROM `book` WHERE `book`.`TITLE`=\'War And Peace\'';
+        } else {
+            $expected = 'DELETE /* Foo */ FROM `book` WHERE book.TITLE=\'War And Peace\'';
+        }
         $this->assertEquals($expected, $con->getLastExecutedQuery(), 'Criteria::setComment() adds a comment to delete queries');
     }
 

@@ -26,6 +26,10 @@ abstract class SchemasTestBase extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
+        if ('cubrid' == Propel::getServiceContainer()->getAdapterClass()) {
+            $this->markTestSkipped('Cubrid do not support schemas');
+        }
+
         if (!file_exists(dirname(__FILE__) . '/../../../../Fixtures/schemas/build/conf/bookstore-schemas-conf.php')) {
             $this->markTestSkipped('You must build the schemas project for this tests to run');
         }

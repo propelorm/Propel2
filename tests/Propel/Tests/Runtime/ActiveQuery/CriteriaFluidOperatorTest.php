@@ -27,7 +27,12 @@ class CriteriaFluidOperatorTest extends BookstoreTestBase
     {
         $c = new Criteria();
         $c->addUsingOperator('foo', 'bar');
-        $expected = 'SELECT  FROM  WHERE foo=:p1';
+
+        if (in_array($this->getDriver(), array('cubrid'))) {
+            $expected = 'SELECT  FROM  WHERE `foo`=:p1';
+        } else {
+            $expected = 'SELECT  FROM  WHERE foo=:p1';
+        }
 
         $params = array();
         $result = BasePeer::createSelectSql($c, $params);
@@ -40,7 +45,12 @@ class CriteriaFluidOperatorTest extends BookstoreTestBase
         $c = new Criteria();
         $c->addUsingOperator('foo1', 'bar1');
         $c->addUsingOperator('foo2', 'bar2');
-        $expected = 'SELECT  FROM  WHERE foo1=:p1 AND foo2=:p2';
+
+        if (in_array($this->getDriver(), array('cubrid'))) {
+            $expected = 'SELECT  FROM  WHERE `foo1`=:p1 AND `foo2`=:p2';
+        } else {
+            $expected = 'SELECT  FROM  WHERE foo1=:p1 AND foo2=:p2';
+        }
 
         $params = array();
         $result = BasePeer::createSelectSql($c, $params);
@@ -54,7 +64,12 @@ class CriteriaFluidOperatorTest extends BookstoreTestBase
         $c->addUsingOperator('foo1', 'bar1');
         $c->_or();
         $c->addUsingOperator('foo2', 'bar2');
-        $expected = 'SELECT  FROM  WHERE (foo1=:p1 OR foo2=:p2)';
+
+        if (in_array($this->getDriver(), array('cubrid'))) {
+            $expected = 'SELECT  FROM  WHERE (`foo1`=:p1 OR `foo2`=:p2)';
+        } else {
+            $expected = 'SELECT  FROM  WHERE (foo1=:p1 OR foo2=:p2)';
+        }
 
         $params = array();
         $result = BasePeer::createSelectSql($c, $params);
@@ -67,7 +82,12 @@ class CriteriaFluidOperatorTest extends BookstoreTestBase
         $c = new Criteria();
         $c->_or();
         $c->addUsingOperator('foo', 'bar');
-        $expected = 'SELECT  FROM  WHERE foo=:p1';
+
+        if (in_array($this->getDriver(), array('cubrid'))) {
+            $expected = 'SELECT  FROM  WHERE `foo`=:p1';
+        } else {
+            $expected = 'SELECT  FROM  WHERE foo=:p1';
+        }
 
         $params = array();
         $result = BasePeer::createSelectSql($c, $params);
@@ -81,7 +101,12 @@ class CriteriaFluidOperatorTest extends BookstoreTestBase
         $c->_or();
         $c->addUsingOperator('foo1', 'bar');
         $c->addUsingOperator('foo2', 'bar2');
-        $expected = 'SELECT  FROM  WHERE foo1=:p1 AND foo2=:p2';
+
+        if (in_array($this->getDriver(), array('cubrid'))) {
+            $expected = 'SELECT  FROM  WHERE `foo1`=:p1 AND `foo2`=:p2';
+        } else {
+            $expected = 'SELECT  FROM  WHERE foo1=:p1 AND foo2=:p2';
+        }
 
         $params = array();
         $result = BasePeer::createSelectSql($c, $params);
@@ -97,7 +122,12 @@ class CriteriaFluidOperatorTest extends BookstoreTestBase
         $c->addUsingOperator('foo2', 'bar2');
         $c->_or();
         $c->addUsingOperator('foo3', 'bar3');
-        $expected = 'SELECT  FROM  WHERE ((foo1=:p1 OR foo2=:p2) OR foo3=:p3)';
+
+        if (in_array($this->getDriver(), array('cubrid'))) {
+            $expected = 'SELECT  FROM  WHERE ((`foo1`=:p1 OR `foo2`=:p2) OR `foo3`=:p3)';
+        } else {
+            $expected = 'SELECT  FROM  WHERE ((foo1=:p1 OR foo2=:p2) OR foo3=:p3)';
+        }
 
         $params = array();
         $result = BasePeer::createSelectSql($c, $params);
@@ -112,7 +142,12 @@ class CriteriaFluidOperatorTest extends BookstoreTestBase
         $c->_or();
         $c->addUsingOperator('foo2', 'bar2');
         $c->addUsingOperator('foo3', 'bar3');
-        $expected = 'SELECT  FROM  WHERE (foo1=:p1 OR foo2=:p2) AND foo3=:p3';
+
+        if (in_array($this->getDriver(), array('cubrid'))) {
+            $expected = 'SELECT  FROM  WHERE (`foo1`=:p1 OR `foo2`=:p2) AND `foo3`=:p3';
+        } else {
+            $expected = 'SELECT  FROM  WHERE (foo1=:p1 OR foo2=:p2) AND foo3=:p3';
+        }
 
         $params = array();
         $result = BasePeer::createSelectSql($c, $params);

@@ -34,7 +34,12 @@ class BasePeerExceptionsTest extends BookstoreTestBase
             BookPeer::addSelectColumns($c);
             BasePeer::doSelect($c);
         } catch (RuntimeException $e) {
-            $this->assertContains('[SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.ID BAD SQL:p1]', $e->getMessage(), 'SQL query is written in the exception message');
+            if (in_array($this->getDriver(), array('cubrid'))) {
+                $contains = '[SELECT `book`.`ID`, `book`.`TITLE`, `book`.`ISBN`, `book`.`PRICE`, `book`.`PUBLISHER_ID`, `book`.`AUTHOR_ID` FROM `book` WHERE `book`.`ID` BAD SQL:p1]';
+            } else {
+                $contains = '[SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.ID BAD SQL:p1]';
+            }
+            $this->assertContains($contains, $e->getMessage(), 'SQL query is written in the exception message');
         }
     }
 
@@ -46,7 +51,12 @@ class BasePeerExceptionsTest extends BookstoreTestBase
             BookPeer::addSelectColumns($c);
             BasePeer::doCount($c);
         } catch (RuntimeException $e) {
-            $this->assertContains('[SELECT COUNT(*) FROM `book` WHERE book.ID BAD SQL:p1]', $e->getMessage(), 'SQL query is written in the exception message');
+            if (in_array($this->getDriver(), array('cubrid'))) {
+                $contains = '[SELECT COUNT(*) FROM `book` WHERE `book`.`ID` BAD SQL:p1]';
+            } else {
+                $contains = '[SELECT COUNT(*) FROM `book` WHERE book.ID BAD SQL:p1]';
+            }
+            $this->assertContains($contains, $e->getMessage(), 'SQL query is written in the exception message');
         }
     }
 
@@ -58,7 +68,12 @@ class BasePeerExceptionsTest extends BookstoreTestBase
             $c->add(BookPeer::ID, 12, ' BAD SQL');
             BasePeer::doDelete($c, Propel::getServiceContainer()->getWriteConnection(BookPeer::DATABASE_NAME));
         } catch (RuntimeException $e) {
-            $this->assertContains('[DELETE FROM `book` WHERE book.ID BAD SQL:p1]', $e->getMessage(), 'SQL query is written in the exception message');
+            if (in_array($this->getDriver(), array('cubrid'))) {
+                $contains = '[DELETE FROM `book` WHERE `book`.`ID` BAD SQL:p1]';
+            } else {
+                $contains = '[DELETE FROM `book` WHERE book.ID BAD SQL:p1]';
+            }
+            $this->assertContains($contains, $e->getMessage(), 'SQL query is written in the exception message');
         }
     }
 
@@ -81,7 +96,12 @@ class BasePeerExceptionsTest extends BookstoreTestBase
             $c2->add(BookPeer::TITLE, 'Foo');
             BasePeer::doUpdate($c1, $c2, Propel::getServiceContainer()->getWriteConnection(BookPeer::DATABASE_NAME));
         } catch (RuntimeException $e) {
-            $this->assertContains('[UPDATE `book` SET `TITLE`=:p1 WHERE book.ID BAD SQL:p2]', $e->getMessage(), 'SQL query is written in the exception message');
+            if (in_array($this->getDriver(), array('cubrid'))) {
+                $contains = '[UPDATE `book` SET `TITLE`=:p1 WHERE `book`.`ID` BAD SQL:p2]';
+            } else {
+                $contains = '[UPDATE `book` SET `TITLE`=:p1 WHERE book.ID BAD SQL:p2]';
+            }
+            $this->assertContains($contains, $e->getMessage(), 'SQL query is written in the exception message');
         }
     }
 

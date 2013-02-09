@@ -933,9 +933,12 @@ class CriteriaTest extends BookstoreTestBase
         $params = array();
         $result = BasePeer::createSelectSql($c, $params);
         $this->assertEquals($expected, $result);
-        BasePEer::doSelect($c, $this->con);
-        $expected = 'SELECT book.TITLE, book.ISBN AS isb_n FROM book HAVING isb_n=\'1234567890123\'';
-        $this->assertEquals($expected, $this->con->getLastExecutedQuery());
+        //Cubrid does not allow HAVING clause without GROUP BY clause
+        if (!in_array($this->getDriver(), array('cubrid'))) {
+            BasePeer::doSelect($c, $this->con);
+            $expected = 'SELECT book.TITLE, book.ISBN AS isb_n FROM book HAVING isb_n=\'1234567890123\'';
+            $this->assertEquals($expected, $this->con->getLastExecutedQuery());
+        }
     }
 
     public function testHavingRaw()
@@ -948,9 +951,12 @@ class CriteriaTest extends BookstoreTestBase
         $params = array();
         $result = BasePeer::createSelectSql($c, $params);
         $this->assertEquals($expected, $result);
-        BasePEer::doSelect($c, $this->con);
-        $expected = 'SELECT book.TITLE, book.ISBN AS isb_n FROM book HAVING isb_n = \'1234567890123\'';
-        $this->assertEquals($expected, $this->con->getLastExecutedQuery());
+        //Cubrid does not allow HAVING clause without GROUP BY clause
+        if (!in_array($this->getDriver(), array('cubrid'))) {
+            BasePeer::doSelect($c, $this->con);
+            $expected = 'SELECT book.TITLE, book.ISBN AS isb_n FROM book HAVING isb_n = \'1234567890123\'';
+            $this->assertEquals($expected, $this->con->getLastExecutedQuery());
+        }
     }
 
     /**

@@ -12,6 +12,7 @@ namespace Propel\Runtime\ActiveQuery;
 
 use Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion;
 use Propel\Runtime\Adapter\AdapterInterface;
+use Propel\Runtime\Adapter\Pdo\CubridAdapter;
 use Propel\Runtime\Exception\LogicException;
 
 /**
@@ -272,8 +273,12 @@ class Join
     public function getLeftColumn($index = 0)
     {
         $tableName = $this->getLeftTableAliasOrName();
+        $column = $tableName ? $tableName . '.' . $this->left[$index] : $this->left[$index];
+        if ($this->getAdapter() instanceof CubridAdapter) {
+            $column = $this->getAdapter()->quoteIdentifier($column);
+        }
 
-        return $tableName ? $tableName . '.' . $this->left[$index] : $this->left[$index];
+        return $column;
     }
 
     /**
@@ -374,8 +379,12 @@ class Join
     public function getRightColumn($index = 0)
     {
         $tableName = $this->getRightTableAliasOrName();
+        $column = $tableName ? $tableName . '.' . $this->right[$index] : $this->right[$index];
+        if ($this->getAdapter() instanceof CubridAdapter) {
+            $column = $this->getAdapter()->quoteIdentifier($column);
+        }
 
-        return $tableName ? $tableName . '.' . $this->right[$index] : $this->right[$index];
+        return $column;
     }
 
     /**

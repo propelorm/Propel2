@@ -167,7 +167,12 @@ class OnDemandFormatterTest extends BookstoreEmptyTestBase
         $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
         BookstoreDataPopulator::populate($con);
 
-        $stmt = $con->query('SELECT * FROM book WHERE book.TITLE = "Quicksilver"');
+        if (in_array($this->getDriver(), array('cubrid'))) {
+            $query = "SELECT * FROM book WHERE book.TITLE = 'Quicksilver'";
+        } else {
+            $query = 'SELECT * FROM book WHERE book.TITLE = "Quicksilver"';
+        }
+        $stmt = $con->query($query);
         $formatter = new OnDemandFormatter();
         $formatter->init(new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book'));
         $books = $formatter->format($stmt);
@@ -184,7 +189,12 @@ class OnDemandFormatterTest extends BookstoreEmptyTestBase
     {
         $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
 
-        $stmt = $con->query('SELECT * FROM book WHERE book.TITLE = "foo"');
+        if (in_array($this->getDriver(), array('cubrid'))) {
+            $query = "SELECT * FROM book WHERE book.TITLE = 'foo'";
+        } else {
+            $query = 'SELECT * FROM book WHERE book.TITLE = "foo"';
+        }
+        $stmt = $con->query($query);
         $formatter = new OnDemandFormatter();
         $formatter->init(new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book'));
         $books = $formatter->format($stmt);

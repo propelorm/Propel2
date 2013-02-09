@@ -19,7 +19,6 @@ use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Exception\UnexpectedValueException;
 use Propel\Runtime\Formatter\AbstractFormatter;
-use Propel\Runtime\Formatter\ObjectFormatter;
 use Propel\Runtime\Map\ColumnMap;
 use Propel\Runtime\Map\RelationMap;
 use Propel\Runtime\Map\TableMap;
@@ -1351,6 +1350,7 @@ class ModelCriteria extends Criteria implements \IteratorAggregate
 
         $params = array();
         $sql = BasePeer::createSelectSql($this, $params);
+
         try {
             $stmt = $con->prepare($sql);
             $db->bindValues($stmt, $params, $dbMap);

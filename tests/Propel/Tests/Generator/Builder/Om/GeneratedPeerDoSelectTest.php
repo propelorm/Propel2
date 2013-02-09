@@ -39,6 +39,7 @@ use Propel\Tests\Bookstore\ReaderFavoritePeer;
 
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
+use \Propel\Runtime\Adapter\Pdo\CubridAdapter;
 use Propel\Runtime\Util\BasePeer;
 
 /**
@@ -81,7 +82,13 @@ class GeneratedPeerDoSelectTest extends BookstoreEmptyTestBase
         $this->assertEquals(array($book1), $res, 'doSelect() accepts a Criteria object with several condition');
 
         $c = new Criteria();
-        $c->add(BookPeer::ID, 'foo');
+
+        if (Propel::getServiceContainer()->getAdapter() instanceof CubridAdapter) {
+            //Cubrid does not allow a type mismatch and rises an exception
+            $c->add(BookPeer::ID, 100000);
+        } else {
+            $c->add(BookPeer::ID, 'foo');
+        }
         $res = BookPeer::doSelect($c);
         $this->assertEquals(array(), $res, 'doSelect() accepts an incorrect Criteria');
     }
@@ -195,7 +202,13 @@ class GeneratedPeerDoSelectTest extends BookstoreEmptyTestBase
         $this->assertEquals($book1, $res, 'doSelectOne() returns a single object');
 
         $c = new Criteria();
-        $c->add(BookPeer::ID, 'foo');
+
+        if (Propel::getServiceContainer()->getAdapter() instanceof CubridAdapter) {
+            //Cubrid does not allow a type mismatch and raises an exception
+            $c->add(BookPeer::ID, 500000000);
+        } else {
+            $c->add(BookPeer::ID, 'foo');
+        }
         $res = BookPeer::doSelectOne($c);
         $this->assertNull($res, 'doSelectOne() returns null if the Criteria matches no record');
     }

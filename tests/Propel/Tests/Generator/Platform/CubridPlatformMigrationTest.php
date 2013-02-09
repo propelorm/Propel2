@@ -34,20 +34,8 @@ class CubridPlatformMigrationTest extends PlatformMigrationTestProvider
     public function testGetModifyDatabaseDDL($databaseDiff)
     {
         $expected = "
-
 DROP TABLE IF EXISTS `foo1`;
-
 RENAME TABLE `foo3` TO `foo4`;
-
-ALTER TABLE `foo2` CHANGE `bar` `bar1` INTEGER;
-
-ALTER TABLE `foo2` CHANGE `baz` `baz` VARCHAR(12);
-
-ALTER TABLE `foo2` ADD
-(
-    `baz3` STRING
-);
-
 CREATE TABLE `foo5`
 (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
@@ -56,6 +44,14 @@ CREATE TABLE `foo5`
     PRIMARY KEY (`id`)
 );
 
+ALTER TABLE `foo2` RENAME COLUMN `bar` TO `bar1`;
+
+ALTER TABLE `foo2` CHANGE `baz` `baz` VARCHAR(12);
+
+ALTER TABLE `foo2` ADD
+(
+    `baz3` STRING
+);
 ";
         $this->assertEquals($expected, $this->getPlatform()->getModifyDatabaseDDL($databaseDiff));
     }
@@ -65,9 +61,7 @@ CREATE TABLE `foo5`
      */
     public function testGetRenameTableDDL($fromName, $toName)
     {
-        $expected = "
-RENAME TABLE `foo1` TO `foo2`;
-";
+        $expected = "RENAME TABLE `foo1` TO `foo2`;";
         $this->assertEquals($expected, $this->getPlatform()->getRenameTableDDL($fromName, $toName));
     }
 
@@ -83,11 +77,9 @@ ALTER TABLE `foo` DROP FOREIGN KEY `foo1_FK_1`;
 
 DROP INDEX `bar_baz_FK` ON `foo`;
 
-DROP INDEX `foo1_FI_2` ON `foo`;
-
 DROP INDEX `bar_FK` ON `foo`;
 
-ALTER TABLE `foo` CHANGE `bar` `bar1` INTEGER;
+ALTER TABLE `foo` RENAME COLUMN `bar` TO `bar1`;
 
 ALTER TABLE `foo` CHANGE `baz` `baz` VARCHAR(12);
 
@@ -113,7 +105,7 @@ ALTER TABLE `foo` ADD CONSTRAINT `foo1_FK_1`
     public function testGetModifyTableColumnsDDL($tableDiff)
     {
         $expected = "
-ALTER TABLE `foo` CHANGE `bar` `bar1` INTEGER;
+ALTER TABLE `foo` RENAME COLUMN `bar` TO `bar1`;
 
 ALTER TABLE `foo` CHANGE `baz` `baz` VARCHAR(12);
 
@@ -210,7 +202,7 @@ ALTER TABLE `foo1` ADD CONSTRAINT `foo1_FK_1`
     public function testGetRemoveColumnDDL($column)
     {
         $expected = "
-ALTER TABLE `foo` DROP `bar`;
+ALTER TABLE `foo` DROP COLUMN `bar`;
 ";
         $this->assertEquals($expected, $this->getPlatform()->getRemoveColumnDDL($column));
     }
@@ -221,7 +213,7 @@ ALTER TABLE `foo` DROP `bar`;
     public function testGetRenameColumnDDL($fromColumn, $toColumn)
     {
         $expected = "
-ALTER TABLE `foo` CHANGE `bar1` `bar2` DOUBLE(2);
+ALTER TABLE `foo` RENAME COLUMN `bar1` TO `bar2`;
 ";
         $this->assertEquals($expected, $this->getPlatform()->getRenameColumnDDL($fromColumn, $toColumn));
     }
@@ -232,7 +224,7 @@ ALTER TABLE `foo` CHANGE `bar1` `bar2` DOUBLE(2);
     public function testGetModifyColumnDDL($columnDiff)
     {
         $expected = "
-ALTER TABLE `foo` CHANGE `bar` `bar` DOUBLE(3);
+ALTER TABLE `foo` CHANGE `bar` `bar` DOUBLE;
 ";
         $this->assertEquals($expected, $this->getPlatform()->getModifyColumnDDL($columnDiff));
     }
@@ -243,7 +235,7 @@ ALTER TABLE `foo` CHANGE `bar` `bar` DOUBLE(3);
     public function testGetModifyColumnsDDL($columnDiffs)
     {
         $expected = "
-ALTER TABLE `foo` CHANGE `bar1` `bar1` DOUBLE(3);
+ALTER TABLE `foo` CHANGE `bar1` `bar1` DOUBLE;
 
 ALTER TABLE `foo` CHANGE `bar2` `bar2` INTEGER NOT NULL;
 ";
@@ -270,7 +262,7 @@ ALTER TABLE `foo` ADD `bar` INTEGER;
 ALTER TABLE `foo` ADD
 (
     `bar1` INTEGER,
-    `bar2` DOUBLE(3,2) DEFAULT -1 NOT NULL
+    `bar2` DOUBLE DEFAULT -1 NOT NULL
 );
 ";
         $this->assertEquals($expected, $this->getPlatform()->getAddColumnsDDL($columns));

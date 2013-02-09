@@ -10,18 +10,15 @@
 
 namespace Propel\Generator\Platform;
 
-use Propel\Generator\Config\GeneratorConfigInterface;
-use Propel\Generator\Exception\EngineException;
-use Propel\Generator\Model\Column;
 use Propel\Generator\Model\Database;
+use Propel\Generator\Model\Diff\ColumnDiff;
 use Propel\Generator\Model\Domain;
 use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\Index;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Model\Unique;
-use Propel\Generator\Model\Diff\ColumnDiff;
-use Propel\Generator\Model\Diff\DatabaseDiff;
+use Propel\Runtime\Connection\ConnectionInterface;
 
 /**
  * MySql PlatformInterface implementation.
@@ -32,10 +29,16 @@ use Propel\Generator\Model\Diff\DatabaseDiff;
 class CubridPlatform extends DefaultPlatform
 {
 
-	/**
-  	* @var boolean whether the identifier quoting is enabled
-  	*/
- 	protected $isIdentifierQuotingEnabled = true;
+    /**
+     * Default constructor.
+     *
+     * @param ConnectionInterface $con Optional database connection to use in this platform.
+     */
+    public function __construct(ConnectionInterface $con = null)
+    {
+        $this->isIdentifierQuotingEnabled = true;
+        parent::__construct($con);
+    }
 
     /**
      * Initializes db specific domain mapping.
@@ -43,18 +46,33 @@ class CubridPlatform extends DefaultPlatform
     protected function initialize()
     {
         parent::initialize();
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::BOOLEAN, 'SHORT'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::BOOLEAN, 'SMALLINT'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::NUMERIC, 'NUMERIC'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARCHAR, 'STRING'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::BINARY, 'BIT VARYING'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::VARBINARY, 'BIT VARYING'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARBINARY, 'BIT VARYING'));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::BLOB, 'BLOB'));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::CLOB, 'CLOB'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::TIMESTAMP, 'DATETIME'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::OBJECT, 'STRING'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::PHP_ARRAY, 'STRING'));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::ENUM, 'SHORT'));
+    }
+
+    /**
+     * The identifier quoting must always be enabled
+     */
+    public function setIdentifierQuoting($enabled = true)
+    {
+        $this->isIdentifierQuotingEnabled = true;
+    }
+
+    /**
+     * Quotes identifiers used in database SQL.
+     * @param  string $text
+     * @return string Quoted identifier.
+     */
+    public function quoteIdentifier($text)
+    {
+        return $this->isIdentifierQuotingEnabled ? '`' . strtr($text, array('.' => '`.`')) . '`' : $text;
     }
 
     public function getAutoIncrement()
@@ -64,7 +82,7 @@ class CubridPlatform extends DefaultPlatform
 
     public function getMaxColumnNameLength()
     {
-		// according to http://www.cubrid.org/wiki_tutorials/entry/cubrid-rdbms-size-limits
+        // according to http://www.cubrid.org/wiki_tutorials/entry/cubrid-rdbms-size-limits
         return 254;
     }
 
@@ -73,53 +91,62 @@ class CubridPlatform extends DefaultPlatform
         return true;
     }
 
-	/**
-	* Returns the DDL SQL to add the tables of a database
-	* together with index and foreign keys
-	*
-	* @return string
-	*/
-	public function getAddTablesDDL(Database $database)
-	{
-		$fks = '';
-		$ret = $this->getBeginDDL();
-		$definedTables = [];
+    /**
+     * Whether the underlying PDO driver for this platform returns BLOB columns as streams (instead of strings).
+     *
+     * @return boolean
+    */
+    public function hasStreamBlobImpl()
+    {
+        return true;
+    }
 
-		foreach ($database->getTablesForSql() as $table) {
-			$definedTables[] = $table->getName();
+    /**
+    * Returns the DDL SQL to add the tables of a database
+    * together with index and foreign keys
+    *
+    * @return string
+    */
+    public function getAddTablesDDL(Database $database)
+    {
+        $fks = '';
+        $ret = $this->getBeginDDL();
+        $definedTables = [];
 
-			$ret .= $this->getCommentBlockDDL($table->getName());
+        foreach ($database->getTablesForSql() as $table) {
+            $definedTables[] = $table->getName();
 
-			// before dropping the table, drop all its child tables
-			// but only if child tables haven't been defined here.
-			foreach ($table->getReferrers() as $fk) {
-				if (!in_array($fk->getTable()->getName(), $definedTables)) {
-					$ret .= $this->getDropTableDDL($fk->getTable());
-				}
-			}
+            $ret .= $this->getCommentBlockDDL($table->getName());
 
-			$ret .= $this->getDropTableDDL($table);
-			$ret .= $this->getAddTableDDL($table);
-			$ret .= $this->getAddIndicesDDL($table);
+            // before dropping the table, drop all its child tables
+            // but only if child tables haven't been defined here.
+            foreach ($table->getReferrers() as $fk) {
+                if (!in_array($fk->getTable()->getName(), $definedTables)) {
+                    $ret .= $this->getDropTableDDL($fk->getTable());
+                }
+            }
 
-			$fks .= $this->getCommentBlockDDL($table->getName() . ' Foreign Key Definition');
-			$fks .= $this->getAddForeignKeysDDL($table);
-		}
+            $ret .= $this->getDropTableDDL($table);
+            $ret .= $this->getAddTableDDL($table);
+            $ret .= $this->getAddIndicesDDL($table);
 
-		// add foreign key definition at the very end to avoid
-		// "The class 'table_name' referred by the foreign key does not exist" error
-		// since in CUBRID there is no way to turn off foreign keys which is a bad practice anyway
-		$ret .= $fks;
-		$ret .= $this->getEndDDL();
+            $fks .= $this->getCommentBlockDDL($table->getName() . ' Foreign Key Definition');
+            $fks .= $this->getAddForeignKeysDDL($table);
+        }
 
-		//echo $ret;
+        // add foreign key definition at the very end to avoid
+        // "The class 'table_name' referred by the foreign key does not exist" error
+        // since in CUBRID there is no way to turn off foreign keys which is a bad practice anyway
+        $ret .= $fks;
+        $ret .= $this->getEndDDL();
 
-		return $ret;
-	}
+        //echo $ret;
+        return $ret;
+    }
 
     public function getDropTableDDL(Table $table)
     {
-        return "DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";";
+        return "\nDROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";\n";
     }
 
     /**
@@ -136,13 +163,13 @@ class CubridPlatform extends DefaultPlatform
         );
     }
 
-	/**
-  	* Returns if the RDBMS-specific SQL type has a size attribute.
-	* The list presented below do have size attribute
-  	*
-  	* @param  string  $sqlType the SQL type
-  	* @return boolean True if the type has a size attribute
-  	*/
+    /**
+      * Returns if the RDBMS-specific SQL type has a size attribute.
+    * The list presented below do have size attribute
+      *
+      * @param  string  $sqlType the SQL type
+      * @return boolean True if the type has a size attribute
+      */
     public function hasSize($sqlType)
     {
         return in_array($sqlType, array(
@@ -155,5 +182,168 @@ class CubridPlatform extends DefaultPlatform
             'CHAR',
             'VARCHAR'
         ));
+    }
+
+    /**
+    * Returns the DDL SQL to drop the primary key of a table.
+    *
+    * @param  Table  $table
+    * @return string
+    */
+    public function getDropPrimaryKeyDDL(Table $table)
+    {
+        $pattern = "
+ALTER TABLE %s DROP PRIMARY KEY;
+";
+
+        return sprintf($pattern,
+            $this->quoteIdentifier($table->getName()),
+            $this->quoteIdentifier($this->getPrimaryKeyName($table))
+        );
+    }
+
+    /**
+     * Creates a comma-separated list of column names for the index.
+     * For Cubrid indexes there is the option of specifying size, so we cannot simply use
+     * the getColumnsList() method.
+     * @param  Index  $index
+     * @return string
+     */
+    protected function getIndexColumnListDDL(Index $index)
+    {
+        $list = array();
+        foreach ($index->getColumns() as $col) {
+            $list[] = $this->quoteIdentifier($col) . ($index->hasColumnSize($col) ? '(' . $index->getColumnSize($col) . ')' : '');
+        }
+
+        return implode(', ', $list);
+    }
+
+    /**
+     * Builds the DDL SQL for an Index object.
+     * @return string
+     */
+    public function getIndexDDL(Index $index)
+    {
+        return sprintf('%sINDEX %s ON %s(%s)',
+            $index->isUnique() ? 'UNIQUE ' : '',
+            $this->quoteIdentifier($index->getName()),
+            $this->quoteIdentifier($index->getTableName()),
+            $this->getIndexColumnListDDL($index)
+        );
+    }
+
+    /**
+     * Builds the DDL SQL to modify a column
+     *
+     * @return string
+     */
+    public function getModifyColumnDDL(ColumnDiff $columnDiff)
+    {
+        $toColumn = $columnDiff->getToColumn();
+        $fromColumn = $columnDiff->getFromColumn();
+
+        $pattern = "
+ALTER TABLE %s CHANGE %s %s;
+";
+
+        return sprintf($pattern,
+            $this->quoteIdentifier($toColumn->getTable()->getName()),
+            $this->quoteIdentifier($fromColumn->getName()),
+            $this->getColumnDDL($toColumn)
+        );
+    }
+
+    /**
+     * Builds the DDL SQL to drop a foreign key.
+     *
+     * @param  ForeignKey $fk
+     * @return string
+     */
+    public function getDropForeignKeyDDL(ForeignKey $fk)
+    {
+        if ($fk->isSkipSql()) {
+            return;
+        }
+        $pattern = "
+ALTER TABLE %s DROP FOREIGN KEY %s;
+";
+
+        return sprintf($pattern,
+            $this->quoteIdentifier($fk->getTable()->getName()),
+            $this->quoteIdentifier($fk->getName())
+        );
+    }
+
+    /**
+     * Builds the DDL SQL to modify a list of columns
+     *
+     * @return string
+     */
+    public function getModifyColumnsDDL($columnDiffs)
+    {
+        $ret = '';
+
+        foreach ($columnDiffs as $columnDiff) {
+            $ret .= $this->getModifyColumnDDL($columnDiff);
+        }
+
+        return $ret;
+    }
+
+    /**
+     * Builds the DDL SQL to drop an Index.
+     *
+     * @param  Index  $index
+     * @return string
+     */
+    public function getDropIndexDDL(Index $index)
+    {
+        $pattern = "
+DROP INDEX %s ON %s;
+";
+
+        return sprintf($pattern,
+            $this->quoteIdentifier($index->getName()),
+            $this->quoteIdentifier($index->getTableName())
+        );
+    }
+
+    /**
+     * Builds the DDL SQL for a ForeignKey object.
+     * Note: Cubrid supports CASCADE only for delete statement
+     * @return string
+     */
+    public function getForeignKeyDDL(ForeignKey $fk)
+    {
+        if ($fk::CASCADE == $fk->getOnUpdate()) {
+            $fk->setOnUpdate($fk::NONE);
+        }
+
+        return parent::getForeignKeyDDL($fk);
+    }
+
+    /**
+     * @see PlatformInterface::bindValue
+     *
+     * @param $column
+     * @param $identifier
+     * @param $columnValueAccessor
+     * @param  string       $tab
+     * @return mixed|string
+     */
+    public function getColumnBindingPHP($column, $identifier, $columnValueAccessor, $tab = "            ")
+    {
+        if ($column->getPDOType() === \PDO::PARAM_BOOL) {
+            return sprintf(
+                "
+%s\$stmt->bindValue(%s, (int) %s, PDO::PARAM_INT);",
+                $tab,
+                $identifier,
+                $columnValueAccessor
+            );
+        }
+
+        return parent::getColumnBindingPHP($column, $identifier, $columnValueAccessor, $tab);
     }
 }

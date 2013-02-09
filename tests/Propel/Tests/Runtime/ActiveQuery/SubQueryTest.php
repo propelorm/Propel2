@@ -48,6 +48,8 @@ class SubQueryTest extends BookstoreTestBase
 
         if (in_array($this->getDriver(), array('mysql'))) {
             $sql = "SELECT subCriteriaAlias.ID, subCriteriaAlias.TITLE, subCriteriaAlias.ISBN, subCriteriaAlias.PRICE, subCriteriaAlias.PUBLISHER_ID, subCriteriaAlias.AUTHOR_ID FROM (SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` ORDER BY book.TITLE ASC) AS subCriteriaAlias GROUP BY subCriteriaAlias.AUTHOR_ID";
+        } elseif (in_array($this->getDriver(), array('cubrid'))) {
+            $sql = "SELECT `subCriteriaAlias`.`ID`, `subCriteriaAlias`.`TITLE`, `subCriteriaAlias`.`ISBN`, `subCriteriaAlias`.`PRICE`, `subCriteriaAlias`.`PUBLISHER_ID`, `subCriteriaAlias`.`AUTHOR_ID` FROM (SELECT `book`.`ID`, `book`.`TITLE`, `book`.`ISBN`, `book`.`PRICE`, `book`.`PUBLISHER_ID`, `book`.`AUTHOR_ID` FROM `book` ORDER BY `book`.`TITLE` ASC) AS subCriteriaAlias GROUP BY `subCriteriaAlias`.`AUTHOR_ID`";
         } else {
             $sql = "SELECT subCriteriaAlias.ID, subCriteriaAlias.TITLE, subCriteriaAlias.ISBN, subCriteriaAlias.PRICE, subCriteriaAlias.PUBLISHER_ID, subCriteriaAlias.AUTHOR_ID FROM (SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM book ORDER BY book.TITLE ASC) AS subCriteriaAlias GROUP BY subCriteriaAlias.AUTHOR_ID";
         }
@@ -67,6 +69,8 @@ class SubQueryTest extends BookstoreTestBase
 
         if (in_array($this->getDriver(), array('mysql'))) {
             $sql = "SELECT subCriteriaAlias.ID, subCriteriaAlias.TITLE, subCriteriaAlias.ISBN, subCriteriaAlias.PRICE, subCriteriaAlias.PUBLISHER_ID, subCriteriaAlias.AUTHOR_ID FROM (SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book`) AS subCriteriaAlias WHERE subCriteriaAlias.PRICE<:p1";
+        } elseif (in_array($this->getDriver(), array('cubrid'))) {
+            $sql = "SELECT `subCriteriaAlias`.`ID`, `subCriteriaAlias`.`TITLE`, `subCriteriaAlias`.`ISBN`, `subCriteriaAlias`.`PRICE`, `subCriteriaAlias`.`PUBLISHER_ID`, `subCriteriaAlias`.`AUTHOR_ID` FROM (SELECT `book`.`ID`, `book`.`TITLE`, `book`.`ISBN`, `book`.`PRICE`, `book`.`PUBLISHER_ID`, `book`.`AUTHOR_ID` FROM `book`) AS subCriteriaAlias WHERE `subCriteriaAlias`.`PRICE`<:p1";
         } else {
             $sql = "SELECT subCriteriaAlias.ID, subCriteriaAlias.TITLE, subCriteriaAlias.ISBN, subCriteriaAlias.PRICE, subCriteriaAlias.PUBLISHER_ID, subCriteriaAlias.AUTHOR_ID FROM (SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM book) AS subCriteriaAlias WHERE subCriteriaAlias.PRICE<:p1";
         }
@@ -88,6 +92,8 @@ class SubQueryTest extends BookstoreTestBase
 
         if (in_array($this->getDriver(), array('mysql'))) {
             $sql = "SELECT alias_1.ID, alias_1.TITLE, alias_1.ISBN, alias_1.PRICE, alias_1.PUBLISHER_ID, alias_1.AUTHOR_ID FROM (SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book`) AS alias_1 WHERE alias_1.PRICE<:p1";
+        } elseif (in_array($this->getDriver(), array('cubrid'))) {
+            $sql = "SELECT `alias_1`.`ID`, `alias_1`.`TITLE`, `alias_1`.`ISBN`, `alias_1`.`PRICE`, `alias_1`.`PUBLISHER_ID`, `alias_1`.`AUTHOR_ID` FROM (SELECT `book`.`ID`, `book`.`TITLE`, `book`.`ISBN`, `book`.`PRICE`, `book`.`PUBLISHER_ID`, `book`.`AUTHOR_ID` FROM `book`) AS alias_1 WHERE `alias_1`.`PRICE`<:p1";
         } else {
             $sql = "SELECT alias_1.ID, alias_1.TITLE, alias_1.ISBN, alias_1.PRICE, alias_1.PUBLISHER_ID, alias_1.AUTHOR_ID FROM (SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM book) AS alias_1 WHERE alias_1.PRICE<:p1";
         }
@@ -109,6 +115,8 @@ class SubQueryTest extends BookstoreTestBase
 
         if (in_array($this->getDriver(), array('mysql'))) {
             $sql = "SELECT alias_1.ID, alias_1.TITLE, alias_1.ISBN, alias_1.PRICE, alias_1.PUBLISHER_ID, alias_1.AUTHOR_ID FROM (SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book`) AS alias_1 WHERE alias_1.PRICE<:p1";
+        } elseif (in_array($this->getDriver(), array('cubrid'))) {
+            $sql = "SELECT `alias_1`.`ID`, `alias_1`.`TITLE`, `alias_1`.`ISBN`, `alias_1`.`PRICE`, `alias_1`.`PUBLISHER_ID`, `alias_1`.`AUTHOR_ID` FROM (SELECT `book`.`ID`, `book`.`TITLE`, `book`.`ISBN`, `book`.`PRICE`, `book`.`PUBLISHER_ID`, `book`.`AUTHOR_ID` FROM `book`) AS alias_1 WHERE `alias_1`.`PRICE`<:p1";
         } else {
             $sql = "SELECT alias_1.ID, alias_1.TITLE, alias_1.ISBN, alias_1.PRICE, alias_1.PUBLISHER_ID, alias_1.AUTHOR_ID FROM (SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM book) AS alias_1 WHERE alias_1.PRICE<:p1";
         }
@@ -134,6 +142,8 @@ class SubQueryTest extends BookstoreTestBase
 
         if (in_array($this->getDriver(), array('mysql'))) {
             $sql = "SELECT alias_1.ID, alias_1.TITLE, alias_1.ISBN, alias_1.PRICE, alias_1.PUBLISHER_ID, alias_1.AUTHOR_ID, alias_2.ID, alias_2.TITLE, alias_2.ISBN, alias_2.PRICE, alias_2.PUBLISHER_ID, alias_2.AUTHOR_ID FROM (SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.PRICE>:p2) AS alias_1, (SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.PRICE<:p3) AS alias_2 WHERE alias_2.TITLE LIKE :p1";
+        } elseif (in_array($this->getDriver(), array('cubrid'))) {
+            $sql = "SELECT `alias_1`.`ID`, `alias_1`.`TITLE`, `alias_1`.`ISBN`, `alias_1`.`PRICE`, `alias_1`.`PUBLISHER_ID`, `alias_1`.`AUTHOR_ID`, `alias_2`.`ID`, `alias_2`.`TITLE`, `alias_2`.`ISBN`, `alias_2`.`PRICE`, `alias_2`.`PUBLISHER_ID`, `alias_2`.`AUTHOR_ID` FROM (SELECT `book`.`ID`, `book`.`TITLE`, `book`.`ISBN`, `book`.`PRICE`, `book`.`PUBLISHER_ID`, `book`.`AUTHOR_ID` FROM `book` WHERE `book`.`PRICE`>:p2) AS alias_1, (SELECT `book`.`ID`, `book`.`TITLE`, `book`.`ISBN`, `book`.`PRICE`, `book`.`PUBLISHER_ID`, `book`.`AUTHOR_ID` FROM `book` WHERE `book`.`PRICE`<:p3) AS alias_2 WHERE alias_2.TITLE LIKE :p1";
         } else {
             $sql = "SELECT alias_1.ID, alias_1.TITLE, alias_1.ISBN, alias_1.PRICE, alias_1.PUBLISHER_ID, alias_1.AUTHOR_ID, alias_2.ID, alias_2.TITLE, alias_2.ISBN, alias_2.PRICE, alias_2.PUBLISHER_ID, alias_2.AUTHOR_ID FROM (SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM book WHERE book.PRICE>:p2) AS alias_1, (SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM book WHERE book.PRICE<:p3) AS alias_2 WHERE alias_2.TITLE LIKE :p1";
         }
@@ -160,6 +170,8 @@ class SubQueryTest extends BookstoreTestBase
 
         if (in_array($this->getDriver(), array('mysql'))) {
             $sql = "SELECT alias_2.ID, alias_2.TITLE, alias_2.ISBN, alias_2.PRICE, alias_2.PUBLISHER_ID, alias_2.AUTHOR_ID FROM (SELECT alias_1.ID, alias_1.TITLE, alias_1.ISBN, alias_1.PRICE, alias_1.PUBLISHER_ID, alias_1.AUTHOR_ID FROM (SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book`) AS alias_1 WHERE alias_1.PRICE<:p2) AS alias_2 WHERE alias_2.TITLE LIKE :p1";
+        } elseif (in_array($this->getDriver(), array('cubrid'))) {
+            $sql = "SELECT `alias_2`.`ID`, `alias_2`.`TITLE`, `alias_2`.`ISBN`, `alias_2`.`PRICE`, `alias_2`.`PUBLISHER_ID`, `alias_2`.`AUTHOR_ID` FROM (SELECT `alias_1`.`ID`, `alias_1`.`TITLE`, `alias_1`.`ISBN`, `alias_1`.`PRICE`, `alias_1`.`PUBLISHER_ID`, `alias_1`.`AUTHOR_ID` FROM (SELECT `book`.`ID`, `book`.`TITLE`, `book`.`ISBN`, `book`.`PRICE`, `book`.`PUBLISHER_ID`, `book`.`AUTHOR_ID` FROM `book`) AS alias_1 WHERE `alias_1`.`PRICE`<:p2) AS alias_2 WHERE alias_2.TITLE LIKE :p1";
         } else {
             $sql = "SELECT alias_2.ID, alias_2.TITLE, alias_2.ISBN, alias_2.PRICE, alias_2.PUBLISHER_ID, alias_2.AUTHOR_ID FROM (SELECT alias_1.ID, alias_1.TITLE, alias_1.ISBN, alias_1.PRICE, alias_1.PUBLISHER_ID, alias_1.AUTHOR_ID FROM (SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM book) AS alias_1 WHERE alias_1.PRICE<:p2) AS alias_2 WHERE alias_2.TITLE LIKE :p1";
         }
@@ -184,6 +196,8 @@ class SubQueryTest extends BookstoreTestBase
 
         if (in_array($this->getDriver(), array('mysql'))) {
             $sql = "SELECT subQuery.ID, subQuery.TITLE, subQuery.ISBN, subQuery.PRICE, subQuery.PUBLISHER_ID, subQuery.AUTHOR_ID FROM (SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` LEFT JOIN `author` ON (book.AUTHOR_ID=author.ID) WHERE author.LAST_NAME=:p2) AS subQuery WHERE subQuery.PRICE<:p1";
+        } elseif (in_array($this->getDriver(), array('cubrid'))) {
+            $sql = "SELECT `subQuery`.`ID`, `subQuery`.`TITLE`, `subQuery`.`ISBN`, `subQuery`.`PRICE`, `subQuery`.`PUBLISHER_ID`, `subQuery`.`AUTHOR_ID` FROM (SELECT `book`.`ID`, `book`.`TITLE`, `book`.`ISBN`, `book`.`PRICE`, `book`.`PUBLISHER_ID`, `book`.`AUTHOR_ID` FROM `book` LEFT JOIN `author` ON (`book`.`AUTHOR_ID`=`author`.`ID`) WHERE `author`.`LAST_NAME`=:p2) AS subQuery WHERE `subQuery`.`PRICE`<:p1";
         } else {
             $sql = "SELECT subQuery.ID, subQuery.TITLE, subQuery.ISBN, subQuery.PRICE, subQuery.PUBLISHER_ID, subQuery.AUTHOR_ID FROM (SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM book LEFT JOIN author ON (book.AUTHOR_ID=author.ID) WHERE author.LAST_NAME=:p2) AS subQuery WHERE subQuery.PRICE<:p1";
         }
@@ -207,6 +221,8 @@ class SubQueryTest extends BookstoreTestBase
 
         if (in_array($this->getDriver(), array('mysql'))) {
             $sql = "SELECT subCriteriaAlias.ID, subCriteriaAlias.TITLE, subCriteriaAlias.ISBN, subCriteriaAlias.PRICE, subCriteriaAlias.PUBLISHER_ID, subCriteriaAlias.AUTHOR_ID FROM (SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.AUTHOR_ID=:p2) AS subCriteriaAlias WHERE subCriteriaAlias.PRICE<:p1";
+        } elseif (in_array($this->getDriver(), array('cubrid'))) {
+            $sql = "SELECT `subCriteriaAlias`.`ID`, `subCriteriaAlias`.`TITLE`, `subCriteriaAlias`.`ISBN`, `subCriteriaAlias`.`PRICE`, `subCriteriaAlias`.`PUBLISHER_ID`, `subCriteriaAlias`.`AUTHOR_ID` FROM (SELECT `book`.`ID`, `book`.`TITLE`, `book`.`ISBN`, `book`.`PRICE`, `book`.`PUBLISHER_ID`, `book`.`AUTHOR_ID` FROM `book` WHERE `book`.`AUTHOR_ID`=:p2) AS subCriteriaAlias WHERE `subCriteriaAlias`.`PRICE`<:p1";
         } else {
             $sql = "SELECT subCriteriaAlias.ID, subCriteriaAlias.TITLE, subCriteriaAlias.ISBN, subCriteriaAlias.PRICE, subCriteriaAlias.PUBLISHER_ID, subCriteriaAlias.AUTHOR_ID FROM (SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM book WHERE book.AUTHOR_ID=:p2) AS subCriteriaAlias WHERE subCriteriaAlias.PRICE<:p1";
         }
@@ -246,6 +262,15 @@ class SubQueryTest extends BookstoreTestBase
          "ORDER BY book.TITLE DESC,book.ID DESC) AS sortedBookQuery ".
          "GROUP BY sortedBookQuery.AUTHOR_ID) AS latestBookQuery ".
          "WHERE latestBookQuery.PRICE<:p1";
+        } elseif (in_array($this->getDriver(), array('cubrid'))) {
+            $sql = "SELECT `latestBookQuery`.`ID`, `latestBookQuery`.`TITLE`, `latestBookQuery`.`ISBN`, `latestBookQuery`.`PRICE`, `latestBookQuery`.`PUBLISHER_ID`, `latestBookQuery`.`AUTHOR_ID` ".
+         "FROM (SELECT `sortedBookQuery`.`ID`, `sortedBookQuery`.`TITLE`, `sortedBookQuery`.`ISBN`, `sortedBookQuery`.`PRICE`, `sortedBookQuery`.`PUBLISHER_ID`, `sortedBookQuery`.`AUTHOR_ID` ".
+         "FROM (SELECT `book`.`ID`, `book`.`TITLE`, `book`.`ISBN`, `book`.`PRICE`, `book`.`PUBLISHER_ID`, `book`.`AUTHOR_ID` ".
+         "FROM `book` ".
+         "WHERE `book`.`PUBLISHER_ID`=:p2 ".
+         "ORDER BY `book`.`TITLE` DESC,`book`.`ID` DESC) AS sortedBookQuery ".
+         "GROUP BY `sortedBookQuery`.`AUTHOR_ID`) AS latestBookQuery ".
+         "WHERE `latestBookQuery`.`PRICE`<:p1";
         } else {
             $sql = "SELECT latestBookQuery.ID, latestBookQuery.TITLE, latestBookQuery.ISBN, latestBookQuery.PRICE, latestBookQuery.PUBLISHER_ID, latestBookQuery.AUTHOR_ID ".
          "FROM (SELECT sortedBookQuery.ID, sortedBookQuery.TITLE, sortedBookQuery.ISBN, sortedBookQuery.PRICE, sortedBookQuery.PUBLISHER_ID, sortedBookQuery.AUTHOR_ID ".
@@ -275,6 +300,8 @@ class SubQueryTest extends BookstoreTestBase
 
         if (in_array($this->getDriver(), array('mysql'))) {
             $sql = "SELECT alias1.ID AS \"alias1.Id\" FROM (SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book`) AS alias1";
+        } elseif (in_array($this->getDriver(), array('cubrid'))) {
+            $sql = "SELECT `alias1`.`ID` AS \"alias1.Id\" FROM (SELECT `book`.`ID`, `book`.`TITLE`, `book`.`ISBN`, `book`.`PRICE`, `book`.`PUBLISHER_ID`, `book`.`AUTHOR_ID` FROM `book`) AS alias1";
         } else {
             $sql = "SELECT alias1.ID AS \"alias1.Id\" FROM (SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM book) AS alias1";
         }
@@ -296,6 +323,8 @@ class SubQueryTest extends BookstoreTestBase
 
         if (in_array($this->getDriver(), array('mysql'))) {
             $sql = "SELECT COUNT(*) FROM (SELECT subCriteriaAlias.ID, subCriteriaAlias.TITLE, subCriteriaAlias.ISBN, subCriteriaAlias.PRICE, subCriteriaAlias.PUBLISHER_ID, subCriteriaAlias.AUTHOR_ID FROM (SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book`) AS subCriteriaAlias WHERE subCriteriaAlias.PRICE<20) propelmatch4cnt";
+        } elseif (in_array($this->getDriver(), array('cubrid'))) {
+            $sql = "SELECT COUNT(*) FROM (SELECT `subCriteriaAlias`.`ID`, `subCriteriaAlias`.`TITLE`, `subCriteriaAlias`.`ISBN`, `subCriteriaAlias`.`PRICE`, `subCriteriaAlias`.`PUBLISHER_ID`, `subCriteriaAlias`.`AUTHOR_ID` FROM (SELECT `book`.`ID`, `book`.`TITLE`, `book`.`ISBN`, `book`.`PRICE`, `book`.`PUBLISHER_ID`, `book`.`AUTHOR_ID` FROM `book`) AS subCriteriaAlias WHERE `subCriteriaAlias`.`PRICE`<20) propelmatch4cnt";
         } else {
             $sql = "SELECT COUNT(*) FROM (SELECT subCriteriaAlias.ID, subCriteriaAlias.TITLE, subCriteriaAlias.ISBN, subCriteriaAlias.PRICE, subCriteriaAlias.PUBLISHER_ID, subCriteriaAlias.AUTHOR_ID FROM (SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM book) AS subCriteriaAlias WHERE subCriteriaAlias.PRICE<20) propelmatch4cnt";
         }
