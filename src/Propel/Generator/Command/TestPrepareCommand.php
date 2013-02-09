@@ -143,7 +143,7 @@ class TestPrepareCommand extends AbstractCommand
                     if (is_file('cubrid.schema.xml.dist')) {
                         rename('cubrid.schema.xml.dist', 'cubrid.schema.xml');
                     }
-                    //$this->sqlBuildAndInsert($connections, $input, $output);
+                    $this->sqlBuildAndInsert($connections, $input, $output);
                 }
             } else {
                 if (self::FIXTURES_DIR.'/bookstore' == $fixturesDir) {
