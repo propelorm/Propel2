@@ -59,6 +59,23 @@ EOF;
         $this->assertTrue($validator->validate());
     }
 
+    public function testDatabasePackageName()
+    {
+
+        $schema = <<<EOF
+<database name="bookstore" package="my.sub-directory">
+    <table name="book">
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+        <column name="title" type="VARCHAR" size="100" primaryString="true" />
+    </table>
+</database>
+EOF;
+        $dom = new \DomDocument('1.0', 'UTF-8');
+        $dom->loadXML($schema);
+
+        $this->assertTrue($dom->schemaValidate(__DIR__.'/../../../../../resources/xsd/database.xsd'));
+    }
+
     public function testValidateReturnsFalseWhenTwoTablesHaveSamePhpName()
     {
         $table1 = new Table('foo');
