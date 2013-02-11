@@ -12,8 +12,8 @@
 
     <xs:simpleType name="file">
         <xs:restriction base="xs:string">
-            <!-- Match any relative or absolute path and file containing letters, numbers and _ -->
-            <xs:pattern value="((\.{1,2}|[\w_]*)/)*([\w_]*\.?)+"/>
+            <!-- Match any relative or absolute path and file containing letters, numbers, - and _ -->
+            <xs:pattern value="((\.{1,2}|[\w_-]*)/)*([\w_-]*\.?)+"/>
         </xs:restriction>
     </xs:simpleType>
 
@@ -801,7 +801,7 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="package" type="php_class" use="optional">
+        <xs:attribute name="package" type="file" use="optional">
             <xs:annotation>
                 <xs:documentation xml:lang="en">
                     Specifies the "package" for the generated classes. Classes are created in subdirectories according to the package attribute value.
