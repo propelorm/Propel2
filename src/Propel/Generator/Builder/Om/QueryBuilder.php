@@ -365,6 +365,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     {
         $class = $this->getObjectClassName();
         $peerClassName = $this->getPeerClassName();
+        $tableMapClassName = $this->getTableMapClassName();
         $table = $this->getTable();
         $script .= "
     /**
@@ -410,9 +411,9 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
         } else {
             $pks = '$key';
         }
-        $pkHash = $this->getPeerBuilder()->getInstancePoolKeySnippet($pks);
+        $pkHash = $this->getTableMapBuilder()->getInstancePoolKeySnippet($pks);
         $script .= "
-        if ((null !== (\$obj = {$this->getTableMapClass()}::getInstanceFromPool({$pkHash}))) && !\$this->formatter) {
+        if ((null !== (\$obj = {$tableMapClassName}::getInstanceFromPool({$pkHash}))) && !\$this->formatter) {
             // the object is already in the instance pool
             return \$obj;
         }
@@ -436,6 +437,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
         $table = $this->getTable();
         $platform = $this->getPlatform();
         $peerClassName = $this->getPeerClassName();
+        $tableMapClassName = $this->getTableMapClassName();
         $ARClassName = $this->getObjectClassName();
         $this->declareClassFromBuilder($this->getStubObjectBuilder());
         $this->declareClasses('\PDO');
@@ -463,7 +465,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
         } else {
             $pks []= "\$key";
         }
-        $pkHashFromRow = $this->getPeerBuilder()->getInstancePoolKeySnippet($pks);
+        $pkHashFromRow = $this->getTableMapBuilder()->getInstancePoolKeySnippet($pks);
         $script .= "
     /**
      * Find object by primary key using raw SQL to go fast.
@@ -507,7 +509,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
         }
         $script .= "
             \$obj->hydrate(\$row);
-            {$this->getTableMapClassName()}::addInstanceToPool(\$obj, $pkHashFromRow);
+            {$tableMapClassName}::addInstanceToPool(\$obj, $pkHashFromRow);
         }
         \$stmt->closeCursor();
 

@@ -1816,7 +1816,7 @@ class ModelCriteria extends Criteria implements \IteratorAggregate
             }
             $affectedRows = BasePeer::doUpdate($this, $set, $con);
             call_user_func(array($this->modelTableMapName, 'clearInstancePool'));
-            call_user_func(array($this->modelPeerName, 'clearRelatedInstancePool'));
+            call_user_func(array($this->modelTableMapName, 'clearRelatedInstancePool'));
         }
 
         return $affectedRows;

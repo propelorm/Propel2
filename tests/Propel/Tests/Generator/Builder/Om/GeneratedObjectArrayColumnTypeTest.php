@@ -7,18 +7,18 @@
  *
  * @license MIT License
  */
+namespace Propel\Tests\Generator\Builder\Om;
 
-use Propel\Generator\Util\QuickBuilder;
-
-use Propel\Tests\Generator\Builder\Om\Fixtures\ComplexColumnTypeEntityWithConstructor;
-
-use Propel\Runtime\Propel;
-use Propel\Runtime\ActiveQuery\ModelCriteria;
 use MyNameSpace\ComplexColumnTypeEntity2;
 use MyNameSpace\ComplexColumnTypeEntity2Peer;
 use MyNameSpace\ComplexColumnTypeEntity2Query;
 use MyNameSpace\Map\ComplexColumnTypeEntity2TableMap;
 use MyNameSpace\ComplexColumnTypeEntityWithConstructorQuery;
+
+use Propel\Generator\Util\QuickBuilder;
+use Propel\Runtime\Propel;
+use Propel\Runtime\ActiveQuery\ModelCriteria;
+use Propel\Tests\Generator\Builder\Om\Fixtures\ComplexColumnTypeEntityWithConstructor;
 
 /**
  * Tests the generated objects for array column types accessor & mutator

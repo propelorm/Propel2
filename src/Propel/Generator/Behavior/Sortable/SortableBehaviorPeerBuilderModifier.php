@@ -314,7 +314,7 @@ static public function deleteList(\$scope, ConnectionInterface \$con = null)
     protected function addShiftRank(&$script)
     {
         $useScope = $this->behavior->useScope();
-        $peerClassName = $this->peerClassName;
+        $tableMapClassName = $this->tableMapClassName;
         $script .= "
 /**
  * Adds \$delta to all Rank values that are >= \$first and <= \$last.

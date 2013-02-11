@@ -28,6 +28,13 @@ use Propel\Tests\Bookstore\Behavior\TableWithScopeQuery;
  */
 class SluggableBehaviorTest extends BookstoreTestBase
 {
+    public static function setUpBeforeClass()
+    {
+        //prevent issue DSN not Found
+        self::$isInitialized = false;
+        parent::setUpBeforeClass();
+    }
+
     public function testParameters()
     {
         $table13 = Table13Peer::getTableMap();

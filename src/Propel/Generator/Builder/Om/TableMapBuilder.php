@@ -97,9 +97,10 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
         $table = $this->getTable();
 
         $this->declareClasses(
+            '\Propel\Runtime\ActiveQuery\InstancePoolTrait',
             '\Propel\Runtime\Map\TableMap',
             '\Propel\Runtime\Map\RelationMap',
-            '\Propel\Runtime\ActiveQuery\InstancePoolTrait'
+            '\Propel\Runtime\Propel'
         );
 
         $script .= $this->addConstants();
@@ -124,6 +125,8 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
         $this->addInitialize($script);
         $this->addBuildRelations($script);
         $this->addGetBehaviors($script);
+
+        $script .= $this->addInstancePool();
     }
 
     /**
@@ -510,6 +513,63 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
     } // getBehaviors()
 ";
         }
+    }
+
+    /**
+     * Adds the PHP code to return a instance pool key for the passed-in primary key variable names.
+     *
+     * @param  array  $pkphp An array of PHP var names / method calls representing complete pk.
+     * @return string
+     */
+    public function getInstancePoolKeySnippet($pkphp)
+    {
+        $pkphp = (array) $pkphp; // make it an array if it is not.
+        $script = '';
+        if (count($pkphp) > 1) {
+            $script .= "serialize(array(";
+            $i = 0;
+            foreach ($pkphp as $pkvar) {
+                $script .= ($i++ ? ', ' : '') . "(string) $pkvar";
+            }
+            $script .= "))";
+        } else {
+            $script .= "(string) " . $pkphp[0];
+        }
+
+        return $script;
+    }
+
+    public function addInstancePool()
+    {
+        //No need to overide instancePool if the PK is not composite
+        if (!$this->getTable()->hasCompositePrimaryKey()) {
+            return '';
+        }
+
+        $pks = $this->getTable()->getPrimaryKey();
+
+        $add = array();
+        $removeObjects = array();
+        foreach ($pks as $pk) {
+            $add[] = '$obj->get' . $pk->getPhpName() . '()';
+            $removeObjects[] = '$value->get' . $pk->getPhpName() . '()';
+        }
+        $addInstancePoolKeySnippet = $this->getInstancePoolKeySnippet($add);
+        $removeInstancePoolKeySnippetObjects = $this->getInstancePoolKeySnippet($removeObjects);
+
+        $removePks = array();
+        for ($i = 0; $i < count($pks); $i++) {
+            $removePks[] = "\$value[$i]";
+        }
+        $removeInstancePoolKeySnippetPks = $this->getInstancePoolKeySnippet($removePks);
+
+        return $this->renderTemplate('tableMapInstancePool', array(
+                'objectClassName'                     => $this->getStubObjectBuilder()->getClassName(),
+                'addInstancePoolKeySnippet'           => $addInstancePoolKeySnippet,
+                'removeInstancePoolKeySnippetObjects' => $removeInstancePoolKeySnippetObjects,
+                'removeInstancePoolKeySnippetPks'     => $removeInstancePoolKeySnippetPks,
+                'countPks'                            => count($pks)
+        ));
     }
 
     /**

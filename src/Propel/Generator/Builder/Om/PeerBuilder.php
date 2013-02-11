@@ -801,7 +801,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
         // populate the object(s)
         while (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
             \$key = static::getPrimaryKeyHashFromRow(\$row, 0);
-            if (null !== (\$obj = " . $this->getTableMapClass() . "::getInstanceFromPool(\$key))) {
+            if (null !== (\$obj = {$this->getTableMapClassName()}::getInstanceFromPool(\$key))) {
                 // We no longer rehydrate the object, since this can cause data loss.
                 // See http://www.propelorm.org/ticket/509
                 // \$obj->hydrate(\$row, 0, true); // rehydrate
@@ -817,13 +817,13 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
                 " . $this->buildObjectInstanceCreationCode('$obj', '$cls') . "
                 \$obj->hydrate(\$row);
                 \$results[] = \$obj;
-                " . $this->getTableMapClass() . "::addInstanceToPool(\$obj, \$key);";
+                {$this->getTableMapClassName()}::addInstanceToPool(\$obj, \$key);";
         } else {
             $script .= "
                 " . $this->buildObjectInstanceCreationCode('$obj', '$cls') . "
                 \$obj->hydrate(\$row);
                 \$results[] = \$obj;
-                " . $this->getTableMapClass() . "::addInstanceToPool(\$obj, \$key);";
+                {$this->getTableMapClassName()}::addInstanceToPool(\$obj, \$key);";
         }
         $script .= "
             } // if key exists
@@ -854,7 +854,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
     public static function populateObject(\$row, \$startcol = 0)
     {
         \$key = static::getPrimaryKeyHashFromRow(\$row, \$startcol);
-        if (null !== (\$obj = " . $this->getTableMapClass() . "::getInstanceFromPool(\$key))) {
+        if (null !== (\$obj = {$this->getTableMapClassName()}::getInstanceFromPool(\$key))) {
             // We no longer rehydrate the object, since this can cause data loss.
             // See http://www.propelorm.org/ticket/509
             // \$obj->hydrate(\$row, \$startcol, true); // rehydrate
@@ -879,7 +879,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
         $script .= "
             \$obj = new \$cls();
             \$col = \$obj->hydrate(\$row, \$startcol);
-            " . $this->getTableMapClass() . "::addInstanceToPool(\$obj, \$key);
+            {$this->getTableMapClassName()}::addInstanceToPool(\$obj, \$key);
         }
 
         return array(\$obj, \$col);
@@ -1171,8 +1171,8 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
             // Because this db requires some delete cascade/set null emulation, we have to
             // clear the cached instance *after* the emulation has happened (since
             // instances get re-added by the select statement contained therein).
-            " . $this->getTableMapClass() . "::clearInstancePool();
-            static::clearRelatedInstancePool();
+            {$this->getTableMapClassName()}::clearInstancePool();
+            {$this->getTableMapClassName()}::clearRelatedInstancePool();
 
             \$con->commit();
         } catch (PropelException \$e) {
@@ -1217,7 +1217,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
             // invalidate the cache for all objects of this type, since we have no
             // way of knowing (without running a query) what objects should be invalidated
             // from the cache based on this Criteria.
-            " . $this->getTableMapClass() . "::clearInstancePool();";
+            {$this->getTableMapClassName()}::clearInstancePool();";
         }
         $script .= "
             // rename for clarity
@@ -1226,7 +1226,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
         if (!$emulateCascade) {
             $script .= "
             // invalidate the cache for this single object
-            " . $this->getTableMapClass() . "::removeInstanceFromPool(\$values);";
+            {$this->getTableMapClassName()}::removeInstanceFromPool(\$values);";
         }
         if (count($table->getPrimaryKey()) > 0) {
             $script .= "
@@ -1252,7 +1252,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
                 $script .= "
             // invalidate the cache for this object(s)
             foreach ((array) \$values as \$singleval) {
-                " . $this->getTableMapClass() . "::removeInstanceFromPool(\$singleval);
+                {$this->getTableMapClassName()}::removeInstanceFromPool(\$singleval);
             }";
             }
         } else {
@@ -1280,7 +1280,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
             if (!$emulateCascade) {
                 $script .= "
                 // we can invalidate the cache for this single PK
-                " . $this->getTableMapClass() . "::removeInstanceFromPool(\$value);";
+                {$this->getTableMapClassName()}::removeInstanceFromPool(\$value);";
             }
             $script .= "
             }";
@@ -1322,12 +1322,12 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
             // clear the cached instance *after* the emulation has happened (since
             // instances get re-added by the select statement contained therein).
             if (\$values instanceof Criteria) {
-                " . $this->getTableMapClass() . "::clearInstancePool();
+                {$this->getTableMapClassName()}::clearInstancePool();
             } elseif (\$values instanceof \\".$this->getStubObjectBuilder()->getQualifiedClassName().") { // it's a model object
-                " . $this->getTableMapClass() . "::removeInstanceFromPool(\$values);
+                {$this->getTableMapClassName()}::removeInstanceFromPool(\$values);
             } else { // it's a primary key, or an array of pks
                 foreach ((array) \$values as \$singleval) {
-                    " . $this->getTableMapClass() . "::removeInstanceFromPool(\$singleval);
+                    {$this->getTableMapClassName()}::removeInstanceFromPool(\$singleval);
                 }
             }
             ";
@@ -1335,7 +1335,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 
         $script .= "
             \$affectedRows += {$this->basePeerClassName}::doDelete(\$criteria, \$con);
-            static::clearRelatedInstancePool();
+            {$this->getTableMapClassName()}::clearRelatedInstancePool();
             \$con->commit();
 
             return \$affectedRows;
@@ -1691,7 +1691,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 
         while (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
             \$key1 = static::getPrimaryKeyHashFromRow(\$row, 0);
-            if (null !== (\$obj1 = " . $this->getTableMapClass() . "::getInstanceFromPool(\$key1))) {
+            if (null !== (\$obj1 = {$this->getTableMapClassName()}::getInstanceFromPool(\$key1))) {
                 // We no longer rehydrate the object, since this can cause data loss.
                 // See http://www.propelorm.org/ticket/509
                 // \$obj1->hydrate(\$row, 0, true); // rehydrate
@@ -1710,12 +1710,12 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
                         $script .= "
                 " . $this->buildObjectInstanceCreationCode('$obj1', '$cls') . "
                 \$obj1->hydrate(\$row);
-                " . $this->getTableMapClass() . "::addInstanceToPool(\$obj1, \$key1);
+                {$this->getTableMapClassName()}::addInstanceToPool(\$obj1, \$key1);
             } // if \$obj1 already loaded
 
             \$key2 = ".$joinedTablePeerBuilder->getPeerClassName(true)."::getPrimaryKeyHashFromRow(\$row, \$startcol);
             if (\$key2 !== null) {
-                \$obj2 = ".$joinedTablePeerBuilder->getTableMapClassName()."::getInstanceFromPool(\$key2);
+                \$obj2 = ".$joinedTablePeerBuilder->getTableMapClassName(true)."::getInstanceFromPool(\$key2);
                 if (!\$obj2) {
 ";
                         if ($joinTable->getChildrenColumn()) {
@@ -1732,7 +1732,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
                         $script .= "
                     " . $this->buildObjectInstanceCreationCode('$obj2', '$cls') . "
                     \$obj2->hydrate(\$row, \$startcol);
-                    ".$joinedTablePeerBuilder->getTableMapClassName()."::addInstanceToPool(\$obj2, \$key2);
+                    ".$joinedTablePeerBuilder->getTableMapClassName(true)."::addInstanceToPool(\$obj2, \$key2);
                 } // if obj2 already loaded
 
                 // Add the \$obj1 (".$this->getObjectClassName().") to \$obj2 (".$joinedTablePeerBuilder->getObjectClassName().")";
@@ -1921,7 +1921,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 
         while (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
             \$key1 = static::getPrimaryKeyHashFromRow(\$row, 0);
-            if (null !== (\$obj1 = " . $this->getTableMapClass() . "::getInstanceFromPool(\$key1))) {
+            if (null !== (\$obj1 = {$this->getTableMapClassName()}::getInstanceFromPool(\$key1))) {
                 // We no longer rehydrate the object, since this can cause data loss.
                 // See http://www.propelorm.org/ticket/509
                 // \$obj1->hydrate(\$row, 0, true); // rehydrate
@@ -1941,7 +1941,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
         $script .= "
                 " . $this->buildObjectInstanceCreationCode('$obj1', '$cls') . "
                 \$obj1->hydrate(\$row);
-                " . $this->getTableMapClass() . "::addInstanceToPool(\$obj1, \$key1);
+                {$this->getTableMapClassName()}::addInstanceToPool(\$obj1, \$key1);
             } // if obj1 already loaded
 ";
 
@@ -1970,7 +1970,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 
             \$key$index = ".$joinedTablePeerBuilder->getPeerClassName(true)."::getPrimaryKeyHashFromRow(\$row, \$startcol$index);
             if (\$key$index !== null) {
-                \$obj$index = ".$joinedTablePeerBuilder->getTableMapClassName()."::getInstanceFromPool(\$key$index);
+                \$obj$index = ".$joinedTablePeerBuilder->getTableMapClassName(true)."::getInstanceFromPool(\$key$index);
                 if (!\$obj$index) {
 ";
                 if ($joinTable->getChildrenColumn()) {
@@ -1987,7 +1987,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
                 $script .= "
                     " . $this->buildObjectInstanceCreationCode('$obj' . $index, '$cls') . "
                     \$obj".$index."->hydrate(\$row, \$startcol$index);
-                    ".$joinedTablePeerBuilder->getTableMapClassName()."::addInstanceToPool(\$obj$index, \$key$index);
+                    ".$joinedTablePeerBuilder->getTableMapClassName(true)."::addInstanceToPool(\$obj$index, \$key$index);
                 } // if obj$index loaded
 
                 // Add the \$obj1 (".$this->getObjectClassName().") to the collection in \$obj".$index." (".$joinedTablePeerBuilder->getObjectClassName().")";
@@ -2185,7 +2185,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 
         while (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
             \$key1 = static::getPrimaryKeyHashFromRow(\$row, 0);
-            if (null !== (\$obj1 = " . $this->getTableMapClass() . "::getInstanceFromPool(\$key1))) {
+            if (null !== (\$obj1 = {$this->getTableMapClassName()}::getInstanceFromPool(\$key1))) {
                 // We no longer rehydrate the object, since this can cause data loss.
                 // See http://www.propelorm.org/ticket/509
                 // \$obj1->hydrate(\$row, 0, true); // rehydrate
@@ -2204,7 +2204,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
             $script .= "
                 " . $this->buildObjectInstanceCreationCode('$obj1', '$cls') . "
                 \$obj1->hydrate(\$row);
-                " . $this->getTableMapClass() . "::addInstanceToPool(\$obj1, \$key1);
+                {$this->getTableMapClassName()}::addInstanceToPool(\$obj1, \$key1);
             } // if obj1 already loaded
 ";
 
@@ -2231,7 +2231,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 
                 \$key$index = ".$joinedTablePeerBuilder->getPeerClassName(true)."::getPrimaryKeyHashFromRow(\$row, \$startcol$index);
                 if (null !== \$key$index) {
-                    \$obj$index = ".$joinedTablePeerBuilder->getTableMapClassName()."::getInstanceFromPool(\$key$index);
+                    \$obj$index = ".$joinedTablePeerBuilder->getTableMapClassName(true)."::getInstanceFromPool(\$key$index);
                     if (!\$obj$index) {
     ";
 
@@ -2249,7 +2249,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
                         $script .= "
                     " . $this->buildObjectInstanceCreationCode('$obj' . $index, '$cls') . "
                     \$obj".$index."->hydrate(\$row, \$startcol$index);
-                    ".$joinedTablePeerBuilder->getTableMapClassName()."::addInstanceToPool(\$obj$index, \$key$index);
+                    ".$joinedTablePeerBuilder->getTableMapClassName(true)."::addInstanceToPool(\$obj$index, \$key$index);
                 } // if \$obj$index already loaded
 
                 // Add the \$obj1 (".$this->getObjectClassName().") to the collection in \$obj".$index." (".$joinedTablePeerBuilder->getObjectClassName().")";
