@@ -779,12 +779,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
      */
     public function filterBy$colPhpName(\$$variableName = null, \$comparison = null)
     {";
-        if ($col->isPrimaryKey() && ($col->getType() == PropelTypes::INTEGER || $col->getType() == PropelTypes::BIGINT)) {
-            $script .= "
-        if (is_array(\$$variableName) && null === \$comparison) {
-            \$comparison = Criteria::IN;
-        }";
-        } elseif ($col->isNumericType() || $col->isTemporalType()) {
+        if ($col->isNumericType() || $col->isTemporalType()) {
             $script .= "
         if (is_array(\$$variableName)) {
             \$useMinMax = false;
