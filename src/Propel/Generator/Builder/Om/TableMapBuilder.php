@@ -10,6 +10,8 @@
 
 namespace Propel\Generator\Builder\Om;
 
+use Propel\Generator\Model\ForeignKey;
+
 use Propel\Generator\Model\IdMethod;
 use Propel\Generator\Platform\PlatformInterface;
 
@@ -127,6 +129,8 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
         $this->addGetBehaviors($script);
 
         $script .= $this->addInstancePool();
+
+        $script .= $this->addClearRelatedInstancePool();
     }
 
     /**
@@ -569,6 +573,41 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
                 'removeInstancePoolKeySnippetObjects' => $removeInstancePoolKeySnippetObjects,
                 'removeInstancePoolKeySnippetPks'     => $removeInstancePoolKeySnippetPks,
                 'countPks'                            => count($pks)
+        ));
+    }
+
+    public function addClearRelatedInstancePool()
+    {
+        $table = $this->getTable();
+        $relatedClassNames = array();
+
+        // Handle ON DELETE CASCADE for updating instance pool
+        foreach ($table->getReferrers() as $fk) {
+            // $fk is the foreign key in the other table, so localTableName will
+            // actually be the table name of other table
+            $tblFK = $fk->getTable();
+
+            $joinedTableTableMapBuilder = $this->getNewStubPeerBuilder($tblFK)->getTableMapBuilder();
+            $this->declareClassFromBuilder($joinedTableTableMapBuilder);
+
+            if (!$tblFK->isForReferenceOnly()) {
+                // we can't perform operations on tables that are
+                // not within the schema (i.e. that we have no map for, etc.)
+
+                if (ForeignKey::CASCADE === $fk->getOnDelete()  || ForeignKey::SETNULL === $fk->getOnDelete()) {
+                    $class = $this->getClassNameFromBuilder($joinedTableTableMapBuilder);
+                    $relatedClassNames[$class] = $class;
+                }
+            }
+        }
+
+        if (0 == count($relatedClassNames)) {
+            return '';
+        }
+
+        return $this->renderTemplate('tableMapClearRelatedInstancePool', array(
+                'tableName'            => $table->getName(),
+                'relatedClassNames'   => $relatedClassNames,
         ));
     }
 

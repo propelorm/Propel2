@@ -632,47 +632,6 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
     }
 
     /**
-     * Adds method to clear the instance pool of related tables.
-     * @param string &$script The script will be modified in this method.
-     */
-    protected function addClearRelatedInstancePool(&$script)
-    {
-        $table = $this->getTable();
-        $script .= "
-    /**
-     * Method to invalidate the instance pool of all tables related to " . $table->getName() . "
-     * by a foreign key with ON DELETE CASCADE
-     */
-    public static function clearRelatedInstancePool()
-    {";
-        // Handle ON DELETE CASCADE for updating instance pool
-        foreach ($table->getReferrers() as $fk) {
-
-            // $fk is the foreign key in the other table, so localTableName will
-            // actually be the table name of other table
-            $tblFK = $fk->getTable();
-
-            $joinedTableTableMapBuilder = $this->getNewStubPeerBuilder($tblFK)->getTableMapBuilder();
-            $this->declareClassFromBuilder($joinedTableTableMapBuilder);
-
-            if (!$tblFK->isForReferenceOnly()) {
-                // we can't perform operations on tables that are
-                // not within the schema (i.e. that we have no map for, etc.)
-
-                if (ForeignKey::CASCADE === $fk->getOnDelete()  || ForeignKey::SETNULL === $fk->getOnDelete()) {
-                    $script .= "
-        // Invalidate objects in ".$this->getClassNameFromBuilder($joinedTableTableMapBuilder)." instance pool,
-        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
-        ".$this->getClassNameFromBuilder($joinedTableTableMapBuilder)."::clearInstancePool();";
-                } // if fk is on delete cascade
-            } // if (! for ref only)
-        } // foreach
-        $script .= "
-    }
-";
-    }
-
-    /**
      * Adds method to get a version of the primary key that can be used as a unique key for identifier map.
      * @param string &$script The script will be modified in this method.
      */
