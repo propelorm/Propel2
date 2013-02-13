@@ -10,6 +10,7 @@
 
 namespace Propel\Generator\Platform;
 
+use Propel\Generator\Model\Column;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\Diff\ColumnDiff;
 use Propel\Generator\Model\Domain;
@@ -162,7 +163,35 @@ class CubridPlatform extends DefaultPlatform
             $this->quoteIdentifier($toTableName)
         );
     }
+    /**
+     * Builds the DDL SQL for a Column object.
+     * @return string
+     */
+    public function getColumnDDL(Column $col)
+    {
+        $domain = $col->getDomain();
 
+        $ddl = array($this->quoteIdentifier($col->getName()));
+        $sqlType = $domain->getSqlType();
+        if ($this->hasSize($sqlType) && $col->isDefaultSqlType($this)) {
+            $ddl[] = $sqlType . $domain->getSizeDefinition();
+        } else if ($col->isEnumType()) {
+            $ddl[] = $sqlType . "('" . implode($col->getValueSet(), "', '") . "')";
+        } else {
+            $ddl[] = $sqlType;
+        }
+        if ($default = $this->getColumnDefaultValueDDL($col)) {
+            $ddl[] = $default;
+        }
+        if ($notNull = $this->getNullString($col->isNotNull())) {
+            $ddl[] = $notNull;
+        }
+        if ($autoIncrement = $col->getAutoIncrementString()) {
+            $ddl[] = $autoIncrement;
+        }
+
+        return implode(' ', $ddl);
+    }
     /**
       * Returns if the RDBMS-specific SQL type has a size attribute.
     * The list presented below do have size attribute

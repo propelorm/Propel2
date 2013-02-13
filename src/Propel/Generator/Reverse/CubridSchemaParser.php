@@ -48,6 +48,7 @@ class CubridSchemaParser extends AbstractSchemaParser
         'TIME'       => PropelTypes::TIME,
         'DATETIME'   => PropelTypes::TIMESTAMP,
         'TIMESTAMP'  => PropelTypes::TIMESTAMP,
+        'ENUM'       => PropelTypes::CHAR,
         'BLOB'       => PropelTypes::BLOB,
     );
 
