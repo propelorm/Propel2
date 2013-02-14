@@ -285,7 +285,7 @@ static public function countList(\$scope, ConnectionInterface \$con = null)
     \$c = new Criteria();
     \$c->add({$this->tableMapClassName}::SCOPE_COL, \$scope);
 
-    return {$this->peerClassName}::doCount(\$c, \$con);
+    return {$this->queryClassName}::create(null, \$c)->count(\$con);
 }
 ";
     }

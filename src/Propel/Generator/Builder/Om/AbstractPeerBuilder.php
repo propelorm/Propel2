@@ -54,8 +54,6 @@ abstract class AbstractPeerBuilder extends AbstractOMBuilder
     {
         $this->addAddSelectColumns($script);
 
-        $this->addDoCount($script);
-
         // consider refactoring the doSelect stuff
         // into a top-level method
         $this->addDoSelectOne($script);

@@ -152,7 +152,7 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
     public function testDoDelete_Cascade_CompositePK()
     {
 
-        $origBceCount = BookstoreContestEntryPeer::doCount(new Criteria());
+        $origBceCount = BookstoreContestEntryQuery::create()->count();
 
         $cust1 = new Customer();
         $cust1->setName("Cust1");
@@ -200,7 +200,7 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
 
         BookstoreContestPeer::doDelete($bc1);
 
-        $newCount = BookstoreContestEntryPeer::doCount(new Criteria());
+        $newCount = BookstoreContestEntryQuery::create()->count();
 
         $this->assertEquals($origBceCount + 1, $newCount, "Expected new number of rows in BCE to be orig + 1");
 
@@ -271,7 +271,7 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
         BookPeer::doDelete(array($book1->getId(), $book2->getId()));
 
         // 5) we should have two less books than before
-        $this->assertEquals($bookCount-2, BookPeer::doCount(new Criteria()), 'Two books deleted successfully.');
+        $this->assertEquals($bookCount-2, BookQuery::create()->count(), 'Two books deleted successfully.');
     }
 
     /**
@@ -372,12 +372,12 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
             }
         }
 
-        $this->assertEquals(6, ReaderFavoritePeer::doCount(new Criteria()));
+        $this->assertEquals(6, ReaderFavoriteQuery::create()->count());
 
         // Now delete 2 of those rows (2 is special in that it is the number of rows
         // being deleted, as well as the number of things in the primary key)
         ReaderFavoritePeer::doDelete(array(array(1,1), array(2,2)));
-        $this->assertEquals(4, ReaderFavoritePeer::doCount(new Criteria()));
+        $this->assertEquals(4, ReaderFavoriteQuery::create()->count());
 
         //Note: these composite PK's are pairs of (BookId, ReaderId)
         $this->assertNotNull(ReaderFavoriteQuery::create()->findPk(array(2,1)));
@@ -389,7 +389,7 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
 
         //test deletion of a single composite PK
         ReaderFavoritePeer::doDelete(array(3,1));
-        $this->assertEquals(3, ReaderFavoritePeer::doCount(new Criteria()));
+        $this->assertEquals(3, ReaderFavoriteQuery::create()->count());
         $this->assertNotNull(ReaderFavoriteQuery::create()->findPk(array(2,1)));
         $this->assertNotNull(ReaderFavoriteQuery::create()->findPk(array(1,2)));
         $this->assertNotNull(ReaderFavoriteQuery::create()->findPk(array(3,2)));
@@ -399,7 +399,7 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
 
         //test deleting the last three
         ReaderFavoritePeer::doDelete(array(array(2,1), array(1,2), array(3,2)));
-        $this->assertEquals(0, ReaderFavoritePeer::doCount(new Criteria()));
+        $this->assertEquals(0, ReaderFavoriteQuery::create()->count());
     }
 
     /**
@@ -440,91 +440,6 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
         $this->assertEquals(1, count($matches), "Expect there to be exactly 1 publisher just-inserted.");
         $this->assertTrue( 1 != $matches[0]->getId(), "Expected to have different ID than one put in values Criteria.");
 
-    }
-
-    /**
-     * Tests the return type of doCount*() methods.
-     */
-    public function testDoCountType()
-    {
-        $c = new Criteria();
-        $this->assertInternalType('integer', BookPeer::doCount($c), "Expected doCount() to return an integer.");
-        $this->assertInternalType('integer', BookPeer::doCountJoinAll($c), "Expected doCountJoinAll() to return an integer.");
-        $this->assertInternalType('integer', BookPeer::doCountJoinAuthor($c), "Expected doCountJoinAuthor() to return an integer.");
-    }
-
-    /**
-     * Tests the doCount() method with limit/offset.
-     */
-    public function testDoCountLimitOffset()
-    {
-        BookPeer::doDeleteAll();
-
-        for ($i=0; $i < 25; $i++) {
-            $b = new Book();
-            $b->setTitle("Book $i");
-            $b->setISBN("ISBN $i");
-            $b->save();
-        }
-
-        $c = new Criteria();
-        $totalCount = BookPeer::doCount($c);
-
-        $this->assertEquals(25, $totalCount);
-
-        $c2 = new Criteria();
-        $c2->setLimit(10);
-        $this->assertEquals(10, BookPeer::doCount($c2));
-
-        $c3 = new Criteria();
-        $c3->setOffset(10);
-        $this->assertEquals(15, BookPeer::doCount($c3));
-
-        $c4 = new Criteria();
-        $c4->setOffset(5);
-        $c4->setLimit(5);
-        $this->assertEquals(5, BookPeer::doCount($c4));
-
-        $c5 = new Criteria();
-        $c5->setOffset(20);
-        $c5->setLimit(10);
-        $this->assertEquals(5, BookPeer::doCount($c5));
-    }
-
-    /**
-     * Test doCountJoin*() methods.
-     */
-    public function testDoCountJoin()
-    {
-        BookPeer::doDeleteAll();
-
-        for ($i=0; $i < 25; $i++) {
-            $b = new Book();
-            $b->setTitle("Book $i");
-            $b->setISBN("ISBN $i");
-            $b->save();
-        }
-
-        $c = new Criteria();
-        $totalCount = BookPeer::doCount($c);
-
-        $this->assertEquals($totalCount, BookPeer::doCountJoinAuthor($c));
-        $this->assertEquals($totalCount, BookPeer::doCountJoinPublisher($c));
-    }
-
-    /**
-     * Test doCountJoin*() methods with ORDER BY columns in Criteria.
-     * @link http://propel.phpdb.org/trac/ticket/627
-     */
-    public function testDoCountJoinWithOrderBy()
-    {
-        $c = new Criteria(BookTableMap::DATABASE_NAME);
-        $c->addAscendingOrderByColumn(BookTableMap::ID);
-
-        // None of these should not throw an exception!
-        BookPeer::doCountJoinAll($c);
-        BookPeer::doCountJoinAllExceptAuthor($c);
-        BookPeer::doCountJoinAuthor($c);
     }
 
     /**

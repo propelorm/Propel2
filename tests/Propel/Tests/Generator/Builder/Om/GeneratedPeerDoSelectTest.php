@@ -99,7 +99,7 @@ class GeneratedPeerDoSelectTest extends BookstoreEmptyTestBase
     public function testDoSelect_Limit()
     {
         // 1) get the total number of items in a particular table
-        $count = BookPeer::doCount(new Criteria());
+        $count = BookQuery::create()->count();
 
         $this->assertTrue($count > 1, "Need more than 1 record in books table to perform this test.");
 

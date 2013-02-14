@@ -107,8 +107,8 @@ class SortableBehaviorPeerBuilderModifierWithScopeTest extends TestCase
     public function testDeleteList()
     {
         $this->assertEquals(4, \SortableTable12Peer::deleteList(1), 'deleteList() returns the list of objects in the scope');
-        $this->assertEquals(2, \SortableTable12Peer::doCount(new Criteria()), 'deleteList() deletes the objects in the scope');
+        $this->assertEquals(2, \SortableTable12Query::create()->count(), 'deleteList() deletes the objects in the scope');
         $this->assertEquals(2, \SortableTable12Peer::deleteList(2), 'deleteList() returns the list of objects in the scope');
-        $this->assertEquals(0, \SortableTable12Peer::doCount(new Criteria()), 'deleteList() deletes the objects in the scope');
+        $this->assertEquals(0, \SortableTable12Query::create()->count(), 'deleteList() deletes the objects in the scope');
     }
 }
