@@ -13,6 +13,7 @@ namespace Propel\Tests\Runtime\ActiveQuery;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 use Propel\Tests\Bookstore\BookPeer;
 use Propel\Tests\Bookstore\Map\BookTableMap;
+use Propel\Tests\Bookstore\BookQuery;
 
 use Propel\Runtime\Propel;
 use Propel\Runtime\Adapter\Pdo\MysqlAdapter;
@@ -1092,6 +1093,29 @@ class CriteriaTest extends BookstoreTestBase
         $c2 = $c->setLimit(1);
         $this->assertEquals(1, $c->getLimit(), 'Limit is set by setLimit');
         $this->assertSame($c, $c2, 'setLimit() returns the current Criteria');
+    }
+
+    public function testCombineAndFilterBy()
+    {
+        $params = array();
+        $sql = "SELECT  FROM book WHERE ((book.TITLE LIKE :p1 OR book.ISBN LIKE :p2) AND book.TITLE LIKE :p3)";
+        $c = BookQuery::create()
+            ->condition('u1', 'book.TITLE LIKE ?', '%test1%')
+            ->condition('u2', 'book.ISBN LIKE ?', '%test2%')
+            ->combine(array('u1', 'u2'), 'or')
+            ->filterByTitle('%test3%');
+        $result = BasePeer::createSelectSql($c, $params);
+        $this->assertEquals($sql, $result);
+
+        $params = array();
+        $sql = "SELECT  FROM book WHERE (book.TITLE LIKE :p1 AND (book.TITLE LIKE :p2 OR book.ISBN LIKE :p3))";
+        $c = BookQuery::create()
+            ->filterByTitle('%test3%')
+            ->condition('u1', 'book.TITLE LIKE ?', '%test1%')
+            ->condition('u2', 'book.ISBN LIKE ?', '%test2%')
+            ->combine(array('u1', 'u2'), 'or');
+        $result = BasePeer::createSelectSql($c, $params);
+        $this->assertEquals($sql, $result);
     }
 }
 
