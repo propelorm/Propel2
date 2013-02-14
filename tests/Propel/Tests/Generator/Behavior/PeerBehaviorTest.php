@@ -13,6 +13,7 @@ namespace Propel\Tests\Generator\Behavior;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
+use Propel\Tests\Bookstore\Behavior\Table3Query;
 use Propel\Tests\Bookstore\Behavior\Table3Peer;
 use Propel\Tests\Bookstore\Behavior\Map\Table3TableMap;
 
@@ -55,9 +56,6 @@ class PeerBehaviorTest extends BookstoreTestBase
         $con->preSelect = 0;
         Table3Peer::doSelectOne(new Criteria, $con);
         $this->assertNotEquals($con->preSelect, 0, 'preSelect hook is called in doSelectOne()');
-        $con->preSelect = 0;
-        Table3Peer::doCount(new Criteria, $con);
-        $this->assertNotEquals($con->preSelect, 0, 'preSelect hook is called in doCount()');
         $con->preSelect = 0;
         Table3Peer::doSelectStmt(new Criteria, $con);
         $this->assertNotEquals($con->preSelect, 0, 'preSelect hook is called in doSelectStmt()');

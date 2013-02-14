@@ -271,7 +271,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
 
         $c = new Criteria();
         $records = BookPeer::doSelect($c);
-        $count = BookPeer::doCount($c);
+        $count = BookQuery::create()->count();
 
         $this->assertEquals($count, count($records), 'correct number of results');
 
@@ -358,9 +358,9 @@ class BookstoreTest extends BookstoreEmptyTestBase
         BookPeer::doDelete($c);
 
         // Checking to make sure correct records were removed.
-        $this->assertEquals(3, AuthorPeer::doCount(new Criteria()), 'Correct records were removed from author table');
-        $this->assertEquals(3, PublisherPeer::doCount(new Criteria()), 'Correct records were removed from publisher table');
-        $this->assertEquals(3, BookPeer::doCount(new Criteria()), 'Correct records were removed from book table');
+        $this->assertEquals(3, AuthorQuery::create()->count(), 'Correct records were removed from author table');
+        $this->assertEquals(3, PublisherQuery::create()->count(), 'Correct records were removed from publisher table');
+        $this->assertEquals(3, BookQuery::create()->count(), 'Correct records were removed from book table');
 
         // Attempting to delete books by complex criteria
         $c = new Criteria();
@@ -621,7 +621,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
         // old way
         $c = new Criteria();
         $records = BookPeer::doSelect($c);
-        $count = BookPeer::doCount($c);
+        $count = BookQuery::create()->count();
         $this->assertEquals($count, count($records), 'correct number of results');
 
         // new way
@@ -711,9 +711,9 @@ class BookstoreTest extends BookstoreEmptyTestBase
         BookPeer::doDelete($c);
 
         // Checking to make sure correct records were removed.
-        $this->assertEquals(3, AuthorPeer::doCount(new Criteria()), 'Correct records were removed from author table');
-        $this->assertEquals(3, PublisherPeer::doCount(new Criteria()), 'Correct records were removed from publisher table');
-        $this->assertEquals(3, BookPeer::doCount(new Criteria()), 'Correct records were removed from book table');
+        $this->assertEquals(3, AuthorQuery::create()->count(), 'Correct records were removed from author table');
+        $this->assertEquals(3, PublisherQuery::create()->count(), 'Correct records were removed from publisher table');
+        $this->assertEquals(3, BookQuery::create()->count(), 'Correct records were removed from book table');
 
         // Attempting to delete books by complex criteria
         BookQuery::create()

@@ -1496,7 +1496,6 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 
         parent::addSelectMethods($script);
 
-        $this->addDoCountJoin($script);
         $this->addDoSelectJoin($script);
 
         $countFK = count($table->getForeignKeys());
@@ -1513,11 +1512,9 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
 
         if ($includeJoinAll) {
             if ($countFK > 0) {
-                $this->addDoCountJoinAll($script);
                 $this->addDoSelectJoinAll($script);
             }
             if ($countFK > 1) {
-                $this->addDoCountJoinAllExcept($script);
                 $this->addDoSelectJoinAllExcept($script);
             }
         }
