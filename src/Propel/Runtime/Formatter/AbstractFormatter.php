@@ -28,6 +28,8 @@ abstract class AbstractFormatter
 
     protected $peer;
 
+    protected $tableMap;
+
     protected $with;
 
     protected $asColumns;
@@ -83,8 +85,9 @@ abstract class AbstractFormatter
 
     public function setClass($class)
     {
-        $this->class = $class;
-        $this->peer = constant($this->class . '::PEER');
+        $this->class     = $class;
+        $this->peer      = constant($this->class . '::PEER');
+        $this->tableMap  = constant($this->class . '::TABLE_MAP');
     }
 
     public function getClass()

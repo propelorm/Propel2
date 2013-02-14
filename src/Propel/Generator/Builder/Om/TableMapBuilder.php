@@ -129,8 +129,10 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
         $this->addGetBehaviors($script);
 
         $script .= $this->addInstancePool();
-
         $script .= $this->addClearRelatedInstancePool();
+
+        $this->addGetPrimaryKeyHash($script);
+        $this->addGetPrimaryKeyFromRow($script);
     }
 
     /**
@@ -629,5 +631,104 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
     public function applyBehaviorModifier($hookName, &$script, $tab = "        ")
     {
         return $this->applyBehaviorModifierBase($hookName, 'TableMapBuilderModifier', $script, $tab);
+    }
+
+    /**
+     * Adds method to get a version of the primary key that can be used as a unique key for identifier map.
+     *
+     * @param string &$script The script will be modified in this method.
+     */
+    protected function addGetPrimaryKeyHash(&$script)
+    {
+        $script .= "
+    /**
+     * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
+     *
+     * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
+     * a multi-column primary key, a serialize()d version of the primary key will be returned.
+     *
+     * @param array \$row ConnectionInterface resultset row.
+     * @param int   \$startcol The 0-based offset for reading from the resultset row.
+     * @return string A string version of PK or NULL if the components of primary key in result array are all null.
+     */
+    public static function getPrimaryKeyHashFromRow(\$row, \$startcol = 0)
+    {";
+
+        // We have to iterate through all the columns so that we know the offset of the primary
+        // key columns.
+        $n = 0;
+        $pk = array();
+        $cond = array();
+        foreach ($this->getTable()->getColumns() as $col) {
+            if (!$col->isLazyLoad()) {
+                if ($col->isPrimaryKey()) {
+                    $part = $n ? "\$row[\$startcol + $n]" : "\$row[\$startcol]";
+                    $cond[] = $part . " === null";
+                    $pk[] = $part;
+                }
+                $n++;
+            }
+        }
+
+        $script .= "
+        // If the PK cannot be derived from the row, return NULL.
+        if (".implode(' && ', $cond).") {
+            return null;
+        }
+
+        return ".$this->getInstancePoolKeySnippet($pk).";
+    }
+";
+    }
+
+    /**
+     * Adds method to get the primary key from a row
+     * @param string &$script The script will be modified in this method.
+     */
+    protected function addGetPrimaryKeyFromRow(&$script)
+    {
+        $script .= "
+    /**
+     * Retrieves the primary key from the DB resultset row
+     * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
+     * a multi-column primary key, an array of the primary key columns will be returned.
+     *
+     * @param array \$row ConnectionInterface resultset row.
+     * @param int   \$startcol The 0-based offset for reading from the resultset row.
+     * @return mixed The primary key of the row
+     */
+    public static function getPrimaryKeyFromRow(\$row, \$startcol = 0)
+    {";
+
+        // We have to iterate through all the columns so that we
+        // know the offset of the primary key columns.
+        $table = $this->getTable();
+        $n = 0;
+        $pks = array();
+        foreach ($table->getColumns() as $col) {
+            if (!$col->isLazyLoad()) {
+                if ($col->isPrimaryKey()) {
+                    $pk = '(' . $col->getPhpType() . ') ' . ($n ? "\$row[\$startcol + $n]" : "\$row[\$startcol]");
+                    if ($table->hasCompositePrimaryKey()) {
+                        $pks[] = $pk;
+                    }
+                }
+                $n++;
+            }
+        }
+
+        if ($table->hasCompositePrimaryKey()) {
+            $script .= "
+
+            return array(" . implode($pks, ', '). ");";
+        } else {
+            $script .= "
+
+            return " . $pk . ";";
+        }
+
+        $script .= "
+    }
+    ";
     }
 }

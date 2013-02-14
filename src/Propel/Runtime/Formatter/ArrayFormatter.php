@@ -22,6 +22,7 @@ use Propel\Runtime\Connection\StatementInterface;
 class ArrayFormatter extends AbstractFormatter
 {
     protected $alreadyHydratedObjects = array();
+
     protected $emptyVariable;
 
     public function format(StatementInterface $stmt)
@@ -99,10 +100,11 @@ class ArrayFormatter extends AbstractFormatter
 
         // hydrate main object or take it from registry
         $mainObjectIsNew = false;
-        $mainKey = call_user_func(array($this->peer, 'getPrimaryKeyHashFromRow'), $row);
+        $mainKey         = call_user_func(array($this->tableMap, 'getPrimaryKeyHashFromRow'), $row);
         // we hydrate the main object even in case of a one-to-many relationship
         // in order to get the $col variable increased anyway
         $obj = $this->getSingleObjectFromRow($row, $this->class, $col);
+
         if (!isset($this->alreadyHydratedObjects[$this->class][$mainKey])) {
             $this->alreadyHydratedObjects[$this->class][$mainKey] = $obj->toArray();
             $mainObjectIsNew = true;
@@ -126,7 +128,7 @@ class ArrayFormatter extends AbstractFormatter
             }
 
             // hydrate related object or take it from registry
-            $key = call_user_func(array($modelWith->getModelPeerName(), 'getPrimaryKeyHashFromRow'), $row, $col);
+            $key = call_user_func(array($modelWith->getTableMap(), 'getPrimaryKeyHashFromRow'), $row, $col);
             // we hydrate the main object even in case of a one-to-many relationship
             // in order to get the $col variable increased anyway
             $secondaryObject = $this->getSingleObjectFromRow($row, $class, $col);
