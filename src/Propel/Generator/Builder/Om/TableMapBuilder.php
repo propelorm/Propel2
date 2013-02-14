@@ -86,6 +86,7 @@ class TableMapBuilder extends AbstractOMBuilder
 class ".$this->getUnqualifiedClassName()." extends TableMap
 {
     use InstancePoolTrait;
+    use TableMapTrait;
 ";
     }
 
@@ -101,6 +102,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
         $this->declareClasses(
             '\Propel\Runtime\ActiveQuery\InstancePoolTrait',
             '\Propel\Runtime\Map\TableMap',
+            '\Propel\Runtime\Map\TableMapTrait',
             '\Propel\Runtime\Map\RelationMap',
             '\Propel\Runtime\Propel'
         );
@@ -117,6 +119,8 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
         $this->applyBehaviorModifier('staticAttributes', $script, "    ");
 
         $this->addAttributes($script);
+
+        $script .= $this->addFieldsAttributes();
 
         if ($table->hasEnumColumns()) {
             $this->addEnumColumnAttributes($script);
@@ -311,6 +315,56 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
      */
     protected function addAttributes(&$script)
     {
+    }
+
+    protected function addFieldsAttributes()
+    {
+        $tableColumns = $this->getTable()->getColumns();
+
+        $fieldNamesPhpName       = '';
+        $fieldNamesStudlyPhpName = '';
+        $fieldNamesColname       = '';
+        $fieldNamesRawColname    = '';
+        $fieldNamesFieldName     = '';
+        $fieldNamesNum           = '';
+
+        $fieldKeysPhpName        = '';
+        $fieldKeysStudlyPhpName  = '';
+        $fieldKeysColname        = '';
+        $fieldKeysRawColname     = '';
+        $fieldKeysFieldName      = '';
+        $fieldKeysNum            = '';
+
+        foreach ($tableColumns as $num => $col) {
+            $fieldNamesPhpName       .= "'" . $col->getPhpName() . "', ";
+            $fieldNamesStudlyPhpName .= "'" . $col->getStudlyPhpName() . "', ";
+            $fieldNamesColname       .= $this->getColumnConstant($col, $this->getTableMapClass()) . ", ";
+            $fieldNamesRawColname    .= "'" . $col->getConstantColumnName() . "', ";
+            $fieldNamesFieldName     .= "'" . $col->getName() . "', ";
+            $fieldNamesNum           .= "$num, ";
+
+            $fieldKeysPhpName        .= "'" . $col->getPhpName() . "' => $num, ";
+            $fieldKeysStudlyPhpName  .= "'" . $col->getStudlyPhpName() . "' => $num, ";
+            $fieldKeysColname        .= $this->getColumnConstant($col, $this->getTableMapClass())." => $num, ";
+            $fieldKeysRawColname     .= "'" . $col->getConstantColumnName() . "' => $num, ";
+            $fieldKeysFieldName      .= "'" . $col->getName() . "' => $num, ";
+            $fieldKeysNum            .= "$num, ";
+        }
+
+        return $this->renderTemplate('tableMapFields', array(
+                'fieldNamesPhpName'       => $fieldNamesPhpName,
+                'fieldNamesStudlyPhpName' => $fieldNamesStudlyPhpName,
+                'fieldNamesColname'       => $fieldNamesColname,
+                'fieldNamesRawColname'    => $fieldNamesRawColname,
+                'fieldNamesFieldName'     => $fieldNamesFieldName,
+                'fieldNamesNum'           => $fieldNamesNum,
+                'fieldKeysPhpName'        => $fieldKeysPhpName,
+                'fieldKeysStudlyPhpName'  => $fieldKeysStudlyPhpName,
+                'fieldKeysColname'        => $fieldKeysColname,
+                'fieldKeysRawColname'     => $fieldKeysRawColname,
+                'fieldKeysFieldName'      => $fieldKeysFieldName,
+                'fieldKeysNum'            => $fieldKeysNum,
+        ));
     }
 
     /**

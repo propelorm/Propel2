@@ -2274,7 +2274,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             return '*RECURSION*';
         }
         \$alreadyDumpedObjects['$objectClassName'][$pkGetter] = true;
-        \$keys = ".$this->getPeerClassName()."::getFieldNames(\$keyType);
+        \$keys = ".$this->getTableMapClassName()."::getFieldNames(\$keyType);
         \$result = array(";
         foreach ($this->getTable()->getColumns() as $num => $col) {
             if ($col->isLazyLoad()) {
@@ -2373,7 +2373,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     protected function addGetByNameBody(&$script)
     {
         $script .= "
-        \$pos = ".$this->getPeerClassName()."::translateFieldName(\$name, \$type, TableMap::TYPE_NUM);
+        \$pos = ".$this->getTableMapClassName()."::translateFieldName(\$name, \$type, TableMap::TYPE_NUM);
         \$field = \$this->getByPosition(\$pos);";
     }
 
@@ -2487,7 +2487,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      */
     public function setByName(\$name, \$value, \$type = TableMap::$defaultKeyType)
     {
-        \$pos = ".$this->getPeerClassName()."::translateFieldName(\$name, \$type, TableMap::TYPE_NUM);
+        \$pos = ".$this->getTableMapClassName()."::translateFieldName(\$name, \$type, TableMap::TYPE_NUM);
 
         return \$this->setByPosition(\$pos, \$value);
     }
@@ -2565,7 +2565,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      */
     public function fromArray(\$arr, \$keyType = TableMap::$defaultKeyType)
     {
-        \$keys = ".$this->getPeerClassName()."::getFieldNames(\$keyType);
+        \$keys = ".$this->getTableMapClassName()."::getFieldNames(\$keyType);
 ";
         foreach ($table->getColumns() as $num => $col) {
             $cfc = $col->getPhpName();

@@ -550,7 +550,7 @@ class ModelCriteria extends Criteria implements \IteratorAggregate
 
         if ('*' === $columnArray) {
             $columnArray = array();
-            foreach (call_user_func(array($this->modelPeerName, 'getFieldNames'), TableMap::TYPE_PHPNAME) as $column) {
+            foreach (call_user_func(array($this->modelTableMapName, 'getFieldNames'), TableMap::TYPE_PHPNAME) as $column) {
                 $columnArray []= $this->modelName . '.' . $column;
             }
         }

@@ -10,6 +10,8 @@
 
 namespace Propel\Tests;
 
+use Propel\Tests\Bookstore\Map\BookTableMap;
+
 use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Util\BasePeer;
 use Propel\Tests\Bookstore\Book;
@@ -19,8 +21,8 @@ use Propel\Tests\Bookstore\Bookstore;
 /**
  * Tests some of the methods of generated Object classes. These are:
  *
- * - Base[Object]Peer::getFieldNames()
- * - Base[Object]Peer::translateFieldName()
+ * - Base[Object]TableMap::getFieldNames()
+ * - Base[Object]TableMap::translateFieldName()
  * - BasePeer::getFieldNames()
  * - BasePeer::translateFieldName()
  * - Base[Object]::getByName()
@@ -46,7 +48,7 @@ class FieldnameRelatedTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Tests the Base[Object]Peer::getFieldNames() method
+     * Tests the Base[Object]TableMap::getFieldNames() method
      */
     public function testGetFieldNames ()
     {
@@ -100,7 +102,7 @@ class FieldnameRelatedTest extends \PHPUnit_Framework_TestCase
         );
 
         foreach ($types as $type) {
-            $results[$type] = BookPeer::getFieldnames($type);
+            $results[$type] = BookTableMap::getFieldnames($type);
             $this->assertEquals(
                 $expecteds[$type],
                 $results[$type],
@@ -111,7 +113,7 @@ class FieldnameRelatedTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Tests the Base[Object]Peer::translateFieldName() method
+     * Tests the Base[Object]TableMap::translateFieldName() method
      */
     public function testTranslateFieldName ()
     {
@@ -133,14 +135,14 @@ class FieldnameRelatedTest extends \PHPUnit_Framework_TestCase
             foreach ($types as $toType) {
                 $name = $expecteds[$fromType];
                 $expected = $expecteds[$toType];
-                $result = BookPeer::translateFieldName($name, $fromType, $toType);
+                $result = BookTableMap::translateFieldName($name, $fromType, $toType);
                 $this->assertEquals($expected, $result);
             }
         }
     }
 
     /**
-     * Tests the BasePeer::getFieldNames() method
+     * Tests the BaseTableMap::getFieldNames() method
      */
     public function testGetFieldNamesStatic ()
     {
@@ -206,7 +208,7 @@ class FieldnameRelatedTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Tests the BasePeer::translateFieldName() method
+     * Tests the BaseTableMap::translateFieldName() method
      */
     public function testTranslateFieldNameStatic ()
     {
