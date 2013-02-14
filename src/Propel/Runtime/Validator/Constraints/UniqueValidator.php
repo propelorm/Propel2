@@ -23,10 +23,10 @@ class UniqueValidator extends ConstraintValidator
         }
 
         $object     = $this->context->getRoot();
-        $peer       = $object->getPeer();
         $className  = get_class($object);
+        $tableMap   = $className::TABLE_MAP;
         $queryClass = $className . 'Query';
-        $filter     = sprintf('filterBy%s', $peer->translateFieldName($this->context->getCurrentProperty(), TableMap::TYPE_STUDLYPHPNAME, TableMap::TYPE_PHPNAME));
+        $filter     = sprintf('filterBy%s', $tableMap::translateFieldName($this->context->getCurrentProperty(), TableMap::TYPE_STUDLYPHPNAME, TableMap::TYPE_PHPNAME));
 
         if (0 < $queryClass::create()->$filter($value)->count()) {
             $this->setMessage($constraint->message);

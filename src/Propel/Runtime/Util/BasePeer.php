@@ -42,16 +42,14 @@ class BasePeer
 
     public static function getFieldnames($classname, $type = TableMap::TYPE_PHPNAME)
     {
-        $peerclass  = $classname . 'Peer';
-        $callable   = array($peerclass, 'getFieldnames');
+        $callable   = array($classname::TABLE_MAP, 'getFieldnames');
 
         return call_user_func($callable, $type);
     }
 
     public static function translateFieldname($classname, $fieldname, $fromType, $toType)
     {
-        $peerclass  = $classname . 'Peer';
-        $callable   = array($peerclass, 'translateFieldname');
+        $callable   = array($classname::TABLE_MAP, 'translateFieldname');
         $args       = array($fieldname, $fromType, $toType);
 
         return call_user_func_array($callable, $args);

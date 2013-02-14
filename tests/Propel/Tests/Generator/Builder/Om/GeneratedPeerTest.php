@@ -44,10 +44,10 @@ class GeneratedPeerTest extends BookstoreTestBase
 {
     public function testAlias()
     {
-        $this->assertEquals('foo.ID', BookPeer::alias('foo', BookTableMap::ID), 'alias() returns a column name using the table alias');
-        $this->assertEquals('book.ID', BookPeer::alias('book', BookTableMap::ID), 'alias() returns a column name using the table alias');
-        $this->assertEquals('foo.COVER_IMAGE', MediaPeer::alias('foo', MediaTableMap::COVER_IMAGE), 'alias() also works for lazy-loaded columns');
-        $this->assertEquals('foo.SUBTITLE', EssayPeer::alias('foo', EssayTableMap::SUBTITLE), 'alias() also works for columns with custom phpName');
+        $this->assertEquals('foo.ID', BookTableMap::alias('foo', BookTableMap::ID), 'alias() returns a column name using the table alias');
+        $this->assertEquals('book.ID', BookTableMap::alias('book', BookTableMap::ID), 'alias() returns a column name using the table alias');
+        $this->assertEquals('foo.COVER_IMAGE', MediaTableMap::alias('foo', MediaTableMap::COVER_IMAGE), 'alias() also works for lazy-loaded columns');
+        $this->assertEquals('foo.SUBTITLE', EssayTableMap::alias('foo', EssayTableMap::SUBTITLE), 'alias() also works for columns with custom phpName');
     }
 
     public function testAddSelectColumns()

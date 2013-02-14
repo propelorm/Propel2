@@ -340,7 +340,7 @@ class QueryBuilderTest extends BookstoreTestBase
 
     public function testFilterBy()
     {
-        foreach (BookPeer::getFieldNames(TableMap::TYPE_PHPNAME) as $colName) {
+        foreach (BookTableMap::getFieldNames(TableMap::TYPE_PHPNAME) as $colName) {
             $filterMethod = 'filterBy' . $colName;
             $this->assertTrue(method_exists('\Propel\Tests\Bookstore\BookQuery', $filterMethod), 'QueryBuilder adds filterByColumn() methods for every column');
             $q = BookQuery::create()->$filterMethod(1);

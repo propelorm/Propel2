@@ -121,11 +121,8 @@ abstract class AbstractPeerBuilder extends AbstractOMBuilder
             $this->addConstantsAndAttributes($script);
         }
 
-        $this->addTranslateFieldName($script);
-        $this->addGetFieldNames($script);
 
         if (!$table->isAlias()) {
-            $this->addAlias($script); // alias() utility method (deprecated?)
             $this->addSelectMethods($script);
             $this->addGetTableMap($script);
         }
