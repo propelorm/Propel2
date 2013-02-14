@@ -741,7 +741,7 @@ static public function updateLoadedNodes(\$prune = null, ConnectionInterface \$c
         $script .= "
             \$stmt = $peerClassName::doSelectStmt(\$criteria, \$con);
             while (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
-                \$key = $peerClassName::getPrimaryKeyHashFromRow(\$row, 0);
+                \$key = $tableMapClassName::getPrimaryKeyHashFromRow(\$row, 0);
                 if (null !== (\$object = $tableMapClassName::getInstanceFromPool(\$key))) {";
         $n = 0;
         foreach ($this->table->getColumns() as $col) {
@@ -842,7 +842,7 @@ static public function fixLevels(" . ($useScope ? "\$scope, " : ""). "Connection
     while (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
 
         // hydrate object
-        \$key = $peerClassName::getPrimaryKeyHashFromRow(\$row, 0);
+        \$key = $tableMapClassName::getPrimaryKeyHashFromRow(\$row, 0);
         if (null === (\$obj = $tableMapClassName::getInstanceFromPool(\$key))) {";
         if ($this->table->getChildrenColumn()) {
             $script .= "

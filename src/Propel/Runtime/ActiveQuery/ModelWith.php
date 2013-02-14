@@ -20,15 +20,26 @@ use Propel\Runtime\Map\RelationMap;
  */
 class ModelWith
 {
-    protected $modelName = '';
-    protected $modelPeerName = '';
+    protected $modelName;
+
+    protected $modelPeerName;
+
+    protected $getTableMap;
+
     protected $isSingleTableInheritance = false;
+
     protected $isAdd = false;
+
     protected $isWithOneToMany = false;
-    protected $relationName = '';
-    protected $relationMethod = '';
-    protected $initMethod = '';
+
+    protected $relationName;
+
+    protected $relationMethod;
+
+    protected $initMethod;
+
     protected $leftPhpName;
+
     protected $rightPhpName;
 
     public function __construct(ModelJoin $join = null)
@@ -49,6 +60,7 @@ class ModelWith
         $tableMap = $join->getTableMap();
         $this->setModelName($tableMap->getClassName());
         $this->setModelPeerName($tableMap->getPeerClassName());
+        $this->getTableMap = $tableMap;
         $this->isSingleTableInheritance = $tableMap->isSingleTableInheritance();
         $relation = $join->getRelationMap();
         $relationName = $relation->getName();
@@ -76,6 +88,11 @@ class ModelWith
         } else {
             $this->modelName = $modelName;
         }
+    }
+
+    public function getTableMap()
+    {
+        return $this->getTableMap;
     }
 
     public function getModelName()

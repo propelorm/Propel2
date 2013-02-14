@@ -81,7 +81,7 @@ class OnDemandFormatter extends ObjectFormatter
         // related objects using 'with'
         foreach ($this->getWith() as $modelWith) {
             if ($modelWith->isSingleTableInheritance()) {
-                $class = call_user_func(array($modelWith->getModelPeerName(), 'getOMClass'), $row, $col, false);
+                $class = call_user_func(array($modelWith->getTableMap(), 'getOMClass'), $row, $col, false);
                 $refl = new ReflectionClass($class);
                 if ($refl->isAbstract()) {
                     $col += constant($class . 'Peer::NUM_COLUMNS');

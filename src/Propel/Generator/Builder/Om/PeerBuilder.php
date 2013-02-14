@@ -574,104 +574,6 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
     }
 
     /**
-     * Adds method to get a version of the primary key that can be used as a unique key for identifier map.
-     * @param string &$script The script will be modified in this method.
-     */
-    protected function addGetPrimaryKeyHash(&$script)
-    {
-        $script .= "
-    /**
-     * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
-     *
-     * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
-     * a multi-column primary key, a serialize()d version of the primary key will be returned.
-     *
-     * @param array \$row ConnectionInterface resultset row.
-     * @param int   \$startcol The 0-based offset for reading from the resultset row.
-     * @return string A string version of PK or NULL if the components of primary key in result array are all null.
-     */
-    public static function getPrimaryKeyHashFromRow(\$row, \$startcol = 0)
-    {";
-
-        // We have to iterate through all the columns so that we know the offset of the primary
-        // key columns.
-        $n = 0;
-        $pk = array();
-        $cond = array();
-        foreach ($this->getTable()->getColumns() as $col) {
-            if (!$col->isLazyLoad()) {
-                if ($col->isPrimaryKey()) {
-                    $part = $n ? "\$row[\$startcol + $n]" : "\$row[\$startcol]";
-                    $cond[] = $part . " === null";
-                    $pk[] = $part;
-                }
-                $n++;
-            }
-        }
-
-        $script .= "
-        // If the PK cannot be derived from the row, return NULL.
-        if (".implode(' && ', $cond).") {
-            return null;
-        }
-
-        return ".$this->getInstancePoolKeySnippet($pk).";
-    }
-";
-    }
-
-    /**
-     * Adds method to get the primary key from a row
-     * @param string &$script The script will be modified in this method.
-     */
-    protected function addGetPrimaryKeyFromRow(&$script)
-    {
-        $script .= "
-    /**
-     * Retrieves the primary key from the DB resultset row
-     * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
-     * a multi-column primary key, an array of the primary key columns will be returned.
-     *
-     * @param array \$row ConnectionInterface resultset row.
-     * @param int   \$startcol The 0-based offset for reading from the resultset row.
-     * @return mixed The primary key of the row
-     */
-    public static function getPrimaryKeyFromRow(\$row, \$startcol = 0)
-    {";
-
-        // We have to iterate through all the columns so that we
-        // know the offset of the primary key columns.
-        $table = $this->getTable();
-        $n = 0;
-        $pks = array();
-        foreach ($table->getColumns() as $col) {
-            if (!$col->isLazyLoad()) {
-                if ($col->isPrimaryKey()) {
-                    $pk = '(' . $col->getPhpType() . ') ' . ($n ? "\$row[\$startcol + $n]" : "\$row[\$startcol]");
-                    if ($table->hasCompositePrimaryKey()) {
-                        $pks[] = $pk;
-                    }
-                }
-                $n++;
-            }
-        }
-
-        if ($table->hasCompositePrimaryKey()) {
-            $script .= "
-
-            return array(" . implode($pks, ', '). ");";
-        } else {
-            $script .= "
-
-            return " . $pk . ";";
-        }
-
-        $script .= "
-    }
-    ";
-    }
-
-    /**
      * Adds the populateObjects() method.
      * @param string &$script The script will be modified in this method.
      */
@@ -701,7 +603,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
         $script .= "
         // populate the object(s)
         while (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
-            \$key = static::getPrimaryKeyHashFromRow(\$row, 0);
+            \$key = {$this->getTableMapClassName()}::getPrimaryKeyHashFromRow(\$row, 0);
             if (null !== (\$obj = {$this->getTableMapClassName()}::getInstanceFromPool(\$key))) {
                 // We no longer rehydrate the object, since this can cause data loss.
                 // See http://www.propelorm.org/ticket/509
@@ -754,7 +656,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
      */
     public static function populateObject(\$row, \$startcol = 0)
     {
-        \$key = static::getPrimaryKeyHashFromRow(\$row, \$startcol);
+        \$key = {$this->getTableMapClassName()}::getPrimaryKeyHashFromRow(\$row, \$startcol);
         if (null !== (\$obj = {$this->getTableMapClassName()}::getInstanceFromPool(\$key))) {
             // We no longer rehydrate the object, since this can cause data loss.
             // See http://www.propelorm.org/ticket/509
@@ -1588,7 +1490,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
         \$results = array();
 
         while (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
-            \$key1 = static::getPrimaryKeyHashFromRow(\$row, 0);
+            \$key1 = {$this->getTableMapClassName()}::getPrimaryKeyHashFromRow(\$row, 0);
             if (null !== (\$obj1 = {$this->getTableMapClassName()}::getInstanceFromPool(\$key1))) {
                 // We no longer rehydrate the object, since this can cause data loss.
                 // See http://www.propelorm.org/ticket/509
@@ -1611,7 +1513,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
                 {$this->getTableMapClassName()}::addInstanceToPool(\$obj1, \$key1);
             } // if \$obj1 already loaded
 
-            \$key2 = ".$joinedTablePeerBuilder->getPeerClassName(true)."::getPrimaryKeyHashFromRow(\$row, \$startcol);
+            \$key2 = ".$joinedTablePeerBuilder->getTableMapClassName(true)."::getPrimaryKeyHashFromRow(\$row, \$startcol);
             if (\$key2 !== null) {
                 \$obj2 = ".$joinedTablePeerBuilder->getTableMapClassName(true)."::getInstanceFromPool(\$key2);
                 if (!\$obj2) {
@@ -1733,7 +1635,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
         \$results = array();
 
         while (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
-            \$key1 = static::getPrimaryKeyHashFromRow(\$row, 0);
+            \$key1 = {$this->getTableMapClassName()}::getPrimaryKeyHashFromRow(\$row, 0);
             if (null !== (\$obj1 = {$this->getTableMapClassName()}::getInstanceFromPool(\$key1))) {
                 // We no longer rehydrate the object, since this can cause data loss.
                 // See http://www.propelorm.org/ticket/509
@@ -1781,7 +1683,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
                 $script .= "
             // Add objects for joined $joinClassName rows
 
-            \$key$index = ".$joinedTablePeerBuilder->getPeerClassName(true)."::getPrimaryKeyHashFromRow(\$row, \$startcol$index);
+            \$key$index = ".$joinedTablePeerBuilder->getTableMapClassName(true)."::getPrimaryKeyHashFromRow(\$row, \$startcol$index);
             if (\$key$index !== null) {
                 \$obj$index = ".$joinedTablePeerBuilder->getTableMapClassName(true)."::getInstanceFromPool(\$key$index);
                 if (!\$obj$index) {
@@ -1923,7 +1825,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
         \$results = array();
 
         while (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
-            \$key1 = static::getPrimaryKeyHashFromRow(\$row, 0);
+            \$key1 = {$this->getTableMapClassName()}::getPrimaryKeyHashFromRow(\$row, 0);
             if (null !== (\$obj1 = {$this->getTableMapClassName()}::getInstanceFromPool(\$key1))) {
                 // We no longer rehydrate the object, since this can cause data loss.
                 // See http://www.propelorm.org/ticket/509
@@ -1968,7 +1870,7 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
                         $script .= "
                 // Add objects for joined $joinClassName rows
 
-                \$key$index = ".$joinedTablePeerBuilder->getPeerClassName(true)."::getPrimaryKeyHashFromRow(\$row, \$startcol$index);
+                \$key$index = ".$joinedTablePeerBuilder->getTableMapClassName(true)."::getPrimaryKeyHashFromRow(\$row, \$startcol$index);
                 if (null !== \$key$index) {
                     \$obj$index = ".$joinedTablePeerBuilder->getTableMapClassName(true)."::getInstanceFromPool(\$key$index);
                     if (!\$obj$index) {

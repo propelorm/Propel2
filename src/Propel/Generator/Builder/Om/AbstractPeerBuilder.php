@@ -60,8 +60,6 @@ abstract class AbstractPeerBuilder extends AbstractOMBuilder
         $this->addDoSelect($script);
         $this->addDoSelectStmt($script);     // <-- there's PDO code in here
 
-        $this->addGetPrimaryKeyHash($script);
-        $this->addGetPrimaryKeyFromRow($script);
         $this->addPopulateObjects($script); // <-- there's PDO code in here
         $this->addPopulateObject($script);
     }
