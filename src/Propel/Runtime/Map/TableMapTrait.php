@@ -61,8 +61,8 @@ trait TableMapTrait
      *
      * Using this method you can maintain SQL abstraction while using column aliases.
      * <code>
-     *        $c->addAlias("alias1", TablePeer::TABLE_NAME);
-     *        $c->addJoin(TablePeer::alias("alias1", TablePeer::PRIMARY_KEY_COLUMN), TablePeer::PRIMARY_KEY_COLUMN);
+     *        $c->addAlias("alias1", TableTableMap::TABLE_NAME);
+     *        $c->addJoin(TableTableMap::alias("alias1", TableTableMap::PRIMARY_KEY_COLUMN), TableTableMap::PRIMARY_KEY_COLUMN);
      * </code>
      * @param string $alias The alias for the current table.
      * @param string $column The column name for current table. (i.e. BookTableMap::COLUMN_NAME).
@@ -72,17 +72,4 @@ trait TableMapTrait
     {
         return str_replace(static::TABLE_NAME.'.', $alias.'.', $column);
     }
-
-//     /**
-//      * Add a TableMap instance to the database for this peer class.
-//      */
-//     public static function buildTableMap()
-//     {
-//         $dbMap = Propel::getServiceContainer()->getDatabaseMap(static::DATABASE_NAME);
-//         if (!$dbMap->hasTable(static::TABLE_NAME)) {
-//             $class = get_called_class();
-//             $dbMap->addTableObject(new $class);
-//         }
-//     }
-
 }
