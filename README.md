@@ -56,7 +56,7 @@ If you haven't wget on your computer, use `curl` instead:
 
 Then, install dependencies:
 
-    php composer.phar install
+    php composer.phar install --dev
 
 
 #### MySQL ####
