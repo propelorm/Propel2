@@ -25,7 +25,12 @@ class ArrayToPhpConverter
      */
     public static function convert($c)
     {
-        $conf = "\$serviceContainer = \Propel\Runtime\Propel::getServiceContainer();";
+        $runtimeVersion = \Propel\Runtime\Propel::VERSION;
+
+        $conf = '';
+        $conf .= "\$serviceContainer = \Propel\Runtime\Propel::getServiceContainer();";
+        $conf .= "
+\$serviceContainer->checkVersion('{$runtimeVersion}');";
         // set datasources
         if (isset($c['datasources'])) {
             foreach ($c['datasources'] as $name => $params) {

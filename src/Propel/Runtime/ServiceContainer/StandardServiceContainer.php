@@ -18,6 +18,7 @@ use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\ConnectionManagerInterface;
 use Propel\Runtime\Connection\ConnectionManagerSingle;
 use Propel\Runtime\Map\DatabaseMap;
+use Propel\Runtime\Propel;
 use Monolog\Logger;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -158,6 +159,26 @@ class StandardServiceContainer implements ServiceContainerInterface
         }
 
         return $this->adapters[$name];
+    }
+
+    /**
+     * check whether the given propel generator version has the same version as
+     * the propel runtime.
+     *
+     * @param unknown $generatorVersion
+     */
+    public function checkVersion ($generatorVersion)
+    {
+        if ($generatorVersion != Propel::VERSION) {
+            $warning = "Version mismatch: The generated model was build using propel '" . self::$configuration['generator_version'] . "' while the current runtime is at version '" . self::VERSION . "'";
+
+            $logger = $this->getLogger();
+            if ($logger) {
+                $logger->warning($warning);
+            } else {
+                trigger_error($warning, E_USER_WARNING);
+            }
+        }
     }
 
     /**

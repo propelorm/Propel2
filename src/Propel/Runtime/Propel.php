@@ -10,10 +10,8 @@
 
 namespace Propel\Runtime;
 
-use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\PropelException;
-use Propel\Runtime\Map\DatabaseMap;
 use Propel\Runtime\ServiceContainer\ServiceContainerInterface;
 use Propel\Runtime\ServiceContainer\StandardServiceContainer;
 use Psr\Log\LoggerInterface;
@@ -96,7 +94,7 @@ class Propel
     private static $isInstancePoolingEnabled = true;
 
     /**
-     * Configure Propel a PHP (array) config file.
+     * Configure Propel using the given config file.
      *
      * @param string $configFile Path (absolute or relative to include_path) to config file.
      * @deprecated Why don't you just include the configuration file?
@@ -105,6 +103,7 @@ class Propel
     {
         $serviceContainer = self::getServiceContainer();
         $serviceContainer->closeConnections();
+
         include $configFile;
     }
 
