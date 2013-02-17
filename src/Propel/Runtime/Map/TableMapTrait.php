@@ -11,7 +11,6 @@
 namespace Propel\Runtime\Map;
 
 use Propel\Runtime\Exception\PropelException;
-use Propel\Runtime\Exception\RuntimeException;
 use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Propel;
 
@@ -23,7 +22,7 @@ trait TableMapTrait
      * @param string $type The type of fieldnames to return:
      *                     One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_STUDLYPHPNAME
      *                     TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM
-     * @return array       A list of field names
+     * @return array           A list of field names
      * @throws PropelException
      */
     public static function getFieldNames($type = TableMap::TYPE_PHPNAME)
@@ -38,10 +37,10 @@ trait TableMapTrait
     /**
      * Translates a fieldname to another type
      *
-     * @param string $name field name
+     * @param string $name     field name
      * @param string $fromType One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_STUDLYPHPNAME
      *                         TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM
-     * @param string $toType   One of the class type constants
+     * @param  string          $toType One of the class type constants
      * @return string          translated name of the field.
      * @throws PropelException - if the specified name could not be found in the fieldname mappings.
      */
@@ -64,8 +63,8 @@ trait TableMapTrait
      *        $c->addAlias("alias1", TableTableMap::TABLE_NAME);
      *        $c->addJoin(TableTableMap::alias("alias1", TableTableMap::PRIMARY_KEY_COLUMN), TableTableMap::PRIMARY_KEY_COLUMN);
      * </code>
-     * @param string $alias The alias for the current table.
-     * @param string $column The column name for current table. (i.e. BookTableMap::COLUMN_NAME).
+     * @param  string $alias  The alias for the current table.
+     * @param  string $column The column name for current table. (i.e. BookTableMap::COLUMN_NAME).
      * @return string
      */
     public static function alias($alias, $column)

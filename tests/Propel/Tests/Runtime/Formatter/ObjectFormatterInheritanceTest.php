@@ -16,7 +16,6 @@ use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
 use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\Bookstore\BookstoreEmployee;
-use Propel\Tests\Bookstore\BookstoreEmployeePeer;
 use Propel\Tests\Bookstore\BookstoreCashier;
 use Propel\Tests\Bookstore\BookstoreManager;
 use Propel\Tests\Bookstore\Map\BookstoreEmployeeTableMap;

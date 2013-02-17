@@ -23,8 +23,6 @@ use Propel\Tests\Bookstore\Book2;
 use Propel\Tests\Bookstore\Book2Query;
 use Propel\Tests\Bookstore\BookstoreEmployeePeer;
 use Propel\Tests\Bookstore\Publisher;
-use Propel\Tests\Bookstore\PublisherPeer;
-use Propel\Tests\Bookstore\ReviewPeer;
 use Propel\Tests\Bookstore\Map\AuthorTableMap;
 use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\Bookstore\Map\PublisherTableMap;

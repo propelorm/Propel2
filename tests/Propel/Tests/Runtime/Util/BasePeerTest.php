@@ -11,7 +11,6 @@
 namespace Propel\Tests\Runtime\Util;
 
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
-use Propel\Tests\Bookstore\AuthorPeer;
 use Propel\Tests\Bookstore\BookPeer;
 use Propel\Tests\Bookstore\Bookstore;
 use Propel\Tests\Bookstore\BookstorePeer;

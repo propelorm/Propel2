@@ -15,7 +15,6 @@ use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
 use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
 use Propel\Tests\Bookstore\BookPeer;
 use Propel\Tests\Bookstore\Media;
-use Propel\Tests\Bookstore\MediaPeer;
 use Propel\Tests\Bookstore\MediaQuery;
 use Propel\Tests\Bookstore\Map\MediaTableMap;
 

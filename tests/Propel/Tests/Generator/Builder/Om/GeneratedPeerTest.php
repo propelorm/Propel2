@@ -12,11 +12,8 @@ namespace Propel\Tests\Generator\Builder\Om;
 
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
-use Propel\Tests\Bookstore\AuthorPeer;
 use Propel\Tests\Bookstore\BookPeer;
-use Propel\Tests\Bookstore\EssayPeer;
 use Propel\Tests\Bookstore\MediaPeer;
-use Propel\Tests\Bookstore\PublisherPeer;
 
 use Propel\Tests\Bookstore\Map\AuthorTableMap;
 use Propel\Tests\Bookstore\Map\BookTableMap;

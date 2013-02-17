@@ -15,7 +15,6 @@ use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Util\BasePeer;
 use Propel\Tests\Bookstore\Book;
-use Propel\Tests\Bookstore\BookPeer;
 use Propel\Tests\Bookstore\Bookstore;
 
 /**

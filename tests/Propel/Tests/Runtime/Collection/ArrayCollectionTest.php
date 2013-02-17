@@ -12,7 +12,6 @@ namespace Propel\Tests\Runtime\Collection;
 
 use Propel\Tests\Bookstore\Author;
 use Propel\Tests\Bookstore\Book;
-use Propel\Tests\Bookstore\BookPeer;
 use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\Bookstore\ContestView;
 use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;

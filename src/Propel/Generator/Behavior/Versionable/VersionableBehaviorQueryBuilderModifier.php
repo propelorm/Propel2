@@ -101,7 +101,6 @@ static \$isVersioningEnabled = true;
         $script .= $this->addEnableVersioning();
         $script .= $this->addDisableVersioning();
 
-
         return $script;
     }
 

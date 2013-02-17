@@ -13,7 +13,6 @@ namespace Propel\Tests\Generator\Behavior\AggregateColumn;
 use Propel\Tests\Bookstore\Behavior\AggregateColumn;
 use Propel\Tests\Bookstore\Behavior\AggregateComment;
 use Propel\Tests\Bookstore\Behavior\AggregateCommentQuery;
-use Propel\Tests\Bookstore\Behavior\AggregateCommentPeer;
 use Propel\Tests\Bookstore\Behavior\Map\AggregateCommentTableMap;
 use Propel\Tests\Bookstore\Behavior\AggregatePost;
 use Propel\Tests\Bookstore\Behavior\AggregatePostQuery;

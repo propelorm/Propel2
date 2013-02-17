@@ -10,10 +10,8 @@
 
 namespace Propel\Tests\Generator\Behavior;
 
-
 use Propel\Tests\Bookstore\Behavior\Table3;
 use Propel\Tests\Bookstore\Behavior\Table3Peer;
-use Propel\Tests\Bookstore\Behavior\Map\Table3TableMap;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
 /**

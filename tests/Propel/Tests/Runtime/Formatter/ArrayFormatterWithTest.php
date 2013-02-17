@@ -29,7 +29,6 @@ use Propel\Tests\Bookstore\Map\BookstoreEmployeeTableMap;
 use Propel\Tests\Bookstore\Map\EssayTableMap;
 use Propel\Tests\Bookstore\Map\ReviewTableMap;
 
-
 /**
  * Test class for ArrayFormatter when Criteria uses with().
  *

@@ -13,7 +13,6 @@ namespace Propel\Tests\Generator\Behavior;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
-use Propel\Tests\Bookstore\Behavior\Table3Query;
 use Propel\Tests\Bookstore\Behavior\Table3Peer;
 use Propel\Tests\Bookstore\Behavior\Map\Table3TableMap;
 

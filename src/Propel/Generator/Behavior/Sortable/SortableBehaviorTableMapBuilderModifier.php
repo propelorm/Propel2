@@ -21,7 +21,6 @@ class SortableBehaviorTableMapBuilderModifier
 
     protected $table;
 
-
     public function __construct($behavior)
     {
         $this->behavior = $behavior;

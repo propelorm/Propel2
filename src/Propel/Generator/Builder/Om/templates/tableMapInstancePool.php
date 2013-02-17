@@ -7,8 +7,8 @@
      * to the cache in order to ensure that the same objects are always returned by find*()
      * and findPk*() calls.
      *
-     * @param <?= $objectClassName ?> $obj A <?= $objectClassName ?> object.
-     * @param string $key (optional) key to use for instance map (for performance boost if key was already calculated externally).
+     * @param <?=    $objectClassName ?> $obj A <?= $objectClassName ?> object.
+     * @param string $key             (optional) key to use for instance map (for performance boost if key was already calculated externally).
      */
     public static function addInstanceToPool($obj, $key = null)
     {

@@ -17,7 +17,6 @@ use Propel\Tests\Bookstore\Behavior\ConcreteArticleQuery;
 use Propel\Tests\Bookstore\Behavior\ConcreteArticlePeer;
 use Propel\Tests\Bookstore\Behavior\Map\ConcreteArticleTableMap;
 use Propel\Tests\Bookstore\Behavior\ConcreteAuthorPeer;
-use Propel\Tests\Bookstore\Behavior\Map\ConcreteAuthorTableMap;
 use Propel\Tests\Bookstore\Behavior\ConcreteCategory;
 use Propel\Tests\Bookstore\Behavior\ConcreteCategoryQuery;
 use Propel\Tests\Bookstore\Behavior\ConcreteContent;
