@@ -22,6 +22,7 @@ use Propel\Runtime\Connection\ConnectionManagerSingle;
 use Propel\Runtime\Adapter\Pdo\PdoConnection;
 use Propel\Runtime\Util\Profiler;
 use Monolog\Logger;
+use Propel\Runtime\Propel;
 
 class StandardServiceContainerTest extends BaseTestCase
 {
@@ -141,6 +142,24 @@ class StandardServiceContainerTest extends BaseTestCase
             'foo1' => new SqliteAdapter(),
             'foo2' => new MysqlAdapter()
         ), $sc->adapters);
+    }
+
+    public function testCheckInvalidVersion()
+    {
+        $logger = $this->getMock('Monolog\Logger', array('warning'), array('mylogger'));
+        $logger->expects($this->once())->method('warning');
+
+        $this->sc->setLogger('defaultLogger', $logger);
+        $this->sc->checkVersion('1.0.0-invalid');
+    }
+
+    public function testCheckValidVersion()
+    {
+        $logger = $this->getMock('Monolog\Logger', array('warning'), array('mylogger'));
+        $logger->expects($this->never())->method('warning');
+
+        $this->sc->setLogger('defaultLogger', $logger);
+        $this->sc->checkVersion(Propel::VERSION);
     }
 
     public function testGetDatabaseMapReturnsADatabaseMap()
