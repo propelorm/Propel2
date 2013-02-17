@@ -162,26 +162,6 @@ class StandardServiceContainer implements ServiceContainerInterface
     }
 
     /**
-     * check whether the given propel generator version has the same version as
-     * the propel runtime.
-     *
-     * @param unknown $generatorVersion
-     */
-    public function checkVersion ($generatorVersion)
-    {
-        if ($generatorVersion != Propel::VERSION) {
-            $warning = "Version mismatch: The generated model was build using propel '" . self::$configuration['generator_version'] . "' while the current runtime is at version '" . self::VERSION . "'";
-
-            $logger = $this->getLogger();
-            if ($logger) {
-                $logger->warning($warning);
-            } else {
-                trigger_error($warning, E_USER_WARNING);
-            }
-        }
-    }
-
-    /**
      * Set the adapter for a given datasource.
      *
      * @param string                                   $name    The datasource name
@@ -204,6 +184,26 @@ class StandardServiceContainer implements ServiceContainerInterface
         $this->adapters = array();
         foreach ($adapters as $name => $adapter) {
             $this->setAdapter($name, $adapter);
+        }
+    }
+
+    /**
+     * check whether the given propel generator version has the same version as
+     * the propel runtime.
+     *
+     * @param string $generatorVersion
+     */
+    public function checkVersion ($generatorVersion)
+    {
+        if ($generatorVersion != Propel::VERSION) {
+            $warning = "Version mismatch: The generated model was build using propel '" . $generatorVersion . "' while the current runtime is at version '" . Propel::VERSION . "'";
+
+            $logger = $this->getLogger();
+            if ($logger) {
+                $logger->warning($warning);
+            } else {
+                trigger_error($warning, E_USER_WARNING);
+            }
         }
     }
 

@@ -6,8 +6,6 @@ phpunit.xml
 pom.xml
 php-cs-fixer.phar
 
-generated-classes/
-
 tests/Fixtures/namespaced/build/
 tests/Fixtures/nestedset/build/
 tests/Fixtures/schemas/build/
@@ -33,3 +31,5 @@ tests/Fixtures/reverse/mysql/runtime-conf.xml
 
 tests/Fixtures/reverse/pgsql/build/
 tests/Fixtures/reverse/pgsql/runtime-conf.xml
+
+.idea
