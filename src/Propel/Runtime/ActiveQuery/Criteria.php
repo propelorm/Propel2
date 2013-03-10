@@ -259,7 +259,7 @@ class Criteria
      * Creates a new instance with the default capacity which corresponds to
      * the specified database.
      *
-     * @param      dbName The database name.
+     * @param string $dbName The database name.
      */
     public function __construct($dbName = null)
     {

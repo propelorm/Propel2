@@ -97,7 +97,7 @@ propel.database.url = sybase:host=localhost:1433;dbname=propel
 
 ### pdo_mssql ###
 
-When built against MS SQL Server dblib the driver will be called `pdo_mssql`. It is not recommeneded to use the `pdo_mssql` driver because it strips blobs of single quotes when retreiving from the database and will not return blobs or clobs longer that 8192 characters. The dsn differs from `pdo_sybase` in that it uses a comma between the server and port number instead of a colon and mssql instead of sybase for the driver name.
+When built against MS SQL Server dblib the driver will be called `pdo_mssql`. It is not recommended to use the `pdo_mssql` driver because it strips blobs of single quotes when retrieving from the database and will not return blobs or clobs longer that 8192 characters. The dsn differs from `pdo_sybase` in that it uses a comma between the server and port number instead of a colon and mssql instead of sybase for the driver name.
 
 Sample dsn's for `pdo_mssql`:
 

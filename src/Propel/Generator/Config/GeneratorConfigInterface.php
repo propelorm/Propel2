@@ -55,6 +55,7 @@ interface GeneratorConfigInterface
      * Creates and configures a new Platform class.
      *
      * @param  ConnectionInterface $con
+     * @param  string              $database
      * @return PlatformInterface
      */
     public function getConfiguredPlatform(ConnectionInterface $con = null, $database = null);

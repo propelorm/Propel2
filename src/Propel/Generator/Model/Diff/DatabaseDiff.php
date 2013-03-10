@@ -137,7 +137,7 @@ class DatabaseDiff
     }
 
     /**
-     * Retuns the number of removed tables.
+     * Returns the number of removed tables.
      *
      * @return integer
      */

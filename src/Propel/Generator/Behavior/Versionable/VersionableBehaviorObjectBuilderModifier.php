@@ -358,7 +358,7 @@ public function toVersion(\$versionNumber, \$con = null)
  *
  * @param {$versionARClassName} \$version The version object to use
  * @param ConnectionInterface   \$con the connection to use
- * @param array                 \$loadedObjects objects thats been loaded in a chain of populateFromVersion calls on referrer or fk objects.
+ * @param array                 \$loadedObjects objects that been loaded in a chain of populateFromVersion calls on referrer or fk objects.
  *
  * @return {$ARclassName} The current object (for fluent API support)
  */
@@ -509,7 +509,7 @@ public function getOneVersion(\$versionNumber, \$con = null)
     {
         $versionTable = $this->behavior->getVersionTable();
         $versionARClassName = $this->builder->getClassNameFromBuilder($this->builder->getNewStubObjectBuilder($versionTable));
-        //this force the use statment for  VersionTableMap
+        //this force the use statement for  VersionTableMap
         $this->builder->getClassNameFromBuilder($this->builder->getNewTableMapBuilder($versionTable));
         $versionForeignColumn = $versionTable->getColumn($this->behavior->getParameter('version_column'));
         $fks = $versionTable->getForeignKeysReferencingTable($this->table->getName());
@@ -614,10 +614,10 @@ protected function computeDiff(\$fromVersion, \$toVersion, \$keys = 'columns', \
  * );
  * </code>
  *
- * @param   integer              \$versionNumber
- * @param   string               \$keys Main key used for the result diff (versions|columns)
- * @param   ConnectionInterfarce \$con the connection to use
- * @param   array                \$ignoredColumns  The columns to exclude from the diff.
+ * @param   integer             \$versionNumber
+ * @param   string              \$keys Main key used for the result diff (versions|columns)
+ * @param   ConnectionInterface \$con the connection to use
+ * @param   array               \$ignoredColumns  The columns to exclude from the diff.
  *
  * @return  array A list of differences
  */

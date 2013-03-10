@@ -43,7 +43,7 @@ public function transferMoney($fromAccountNumber, $toAccountNumber, $amount)
 }
 {% endhighlight %}
 
-The transaction statements are `beginTransaction()`, `commit()` and `rollback()`, which are methods of the PDO connection object. Transaction methods are typically used inside a `try/catch` block. The exception is rethrown after rolling back the transaction: That ensures that the user knows that something wrong happenned.
+The transaction statements are `beginTransaction()`, `commit()` and `rollback()`, which are methods of the PDO connection object. Transaction methods are typically used inside a `try/catch` block. The exception is rethrown after rolling back the transaction: That ensures that the user knows that something wrong happened.
 
 In this example, if something wrong happens while saving either one of the two accounts, an `Exception` is thrown, and the whole operation is rolled back. That means that the transfer is cancelled, with an insurance that the money hasn't vanished (that's the A in ACID, which stands for "Atomicity"). If both account modifications work as expected, the whole transaction is committed, meaning that the data changes enclosed in the transaction are persisted in the database.
 
@@ -260,7 +260,7 @@ $fromAccount->setValue($fromAccount->getValue() - $amount);
 $fromAccount->save($con);
 {% endhighlight %}
 
-The same code works without explicitely passing the connection object, because Propel knows how to get the right connection from a Model:
+The same code works without explicitly passing the connection object, because Propel knows how to get the right connection from a Model:
 
 {% highlight php %}
 <?php
@@ -269,7 +269,7 @@ $fromAccount->setValue($fromAccount->getValue() - $amount);
 $fromAccount->save();
 {% endhighlight %}
 
-However, it's a good practice to pass the connection explicitely, and for three reasons:
+However, it's a good practice to pass the connection explicitly, and for three reasons:
 
 * Propel doesn't need to look for a connection object, and this results in a tiny boost in performance.
 * You can use a specific connection, which is required in distributed (master/slave) environments, in order to distinguish read and write operations.

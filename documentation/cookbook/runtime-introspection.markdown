@@ -7,7 +7,7 @@ title: Model Introspection At Runtime
 
 In addition to the object and peer classes used to do C.R.U.D. operations, Propel generates an object mapping for your tables to allow runtime introspection.
 
-The intospection objects are instances of the map classes. Propel maps databases, tables, columns and relations into objects that you can easily use.
+The introspection objects are instances of the map classes. Propel maps databases, tables, columns and relations into objects that you can easily use.
 
 ## Retrieving a TableMap ##
 
@@ -154,4 +154,4 @@ print_r($reviewRelation->getColumnMappings());
 
 To retrieve all the relations of a table, call `TableMap::getRelations()`. You can then iterate over an array of `RelationMap` objects.
 
->**Tip**<br />RelationMap objects are lazy-loaded, which means that the `TableMap` will not instanciate any relation object until you call `getRelations()`. This allows the `TableMap` to remain lightweight for when you don't use relationship introspection.
+>**Tip**<br />RelationMap objects are lazy-loaded, which means that the `TableMap` will not instantiate any relation object until you call `getRelations()`. This allows the `TableMap` to remain lightweight for when you don't use relationship introspection.

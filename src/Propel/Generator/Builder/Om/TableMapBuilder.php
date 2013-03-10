@@ -601,7 +601,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
 
     public function addInstancePool()
     {
-        //No need to overide instancePool if the PK is not composite
+        //No need to override instancePool if the PK is not composite
         if (!$this->getTable()->hasCompositePrimaryKey()) {
             return '';
         }

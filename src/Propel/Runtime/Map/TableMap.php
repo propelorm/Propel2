@@ -361,6 +361,7 @@ class TableMap
      * Add a column to the table.
      *
      * @param  string                        $name         A String with the column name.
+     * @param  string                        $phpName      A string representing the PHP name.
      * @param  string                        $type         A string specifying the Propel type.
      * @param  boolean                       $isNotNull    Whether column does not allow NULL values.
      * @param  int                           $size         An int specifying the size.
