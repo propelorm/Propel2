@@ -182,7 +182,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
 
     /**
      * Check whether the connection contains a transaction that can be committed.
-     * To be used in an evironment where Propelexceptions are caught.
+     * To be used in an environment where Propelexceptions are caught.
      *
      * @return boolean True if the connection is in a committable transaction
      */

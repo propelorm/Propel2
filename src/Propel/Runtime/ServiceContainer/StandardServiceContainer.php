@@ -129,7 +129,7 @@ class StandardServiceContainer implements ServiceContainerInterface
     /**
      * Reset existing adapters classes and set new classes for all datasources.
      *
-     * @param array $adapters A list of adapters
+     * @param array $adapterClasses A list of adapters
      */
     public function setAdapterClasses($adapterClasses)
     {

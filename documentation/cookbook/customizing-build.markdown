@@ -49,7 +49,7 @@ propel.database.url = sqlite://localhost/./test/bookstore.db
 propel.targetPackage = bookstore
 
 # directories
-prope.output.dir = /var/www/bookstore
+propel.output.dir = /var/www/bookstore
 propel.php.dir = ${propel.output.dir}/classes
 propel.phpconf.dir = ${propel.output.dir}/conf
 propel.sql.dir = ${propel.output.dir}/db/sql

@@ -202,19 +202,6 @@ class StatementWrapper implements StatementInterface, \IteratorAggregate
      * The fetch_style parameter determines how the Connection returns the row.
      *
      * @param integer $fetchStyle        Controls how the next row will be returned to the caller.
-     * @param integer $cursorOrientation For a PDOStatement object representing a scrollable cursor,
-     *                                      This value determines which row will be returned to the caller.
-     * @param integer $cursorOffset For a PDOStatement object representing a
-     *                                      scrollable cursor for which the cursor_orientation
-     *                                      parameter is set to PDO::FETCH_ORI_ABS, this value
-     *                                      specifies the absolute number of the row in the
-     *                                      result set that shall be fetched.
-     *
-     *                                      For a PDOStatement object representing a
-     *                                      scrollable cursor for which the cursor_orientation
-     *                                      parameter is set to PDO::FETCH_ORI_REL, this value
-     *                                      specifies the row to fetch relative to the cursor
-     *                                      position before PDOStatement::fetch() was called.
      *
      * @return mixed
      */
@@ -227,8 +214,7 @@ class StatementWrapper implements StatementInterface, \IteratorAggregate
      * Returns an array containing all of the result set rows.
      *
      * @param integer $fetchStyle  Controls the contents of the returned array as documented in fetch()
-     * @param integer $columnIndex This argument have a different meaning depending
-     *                                      on the value of the fetch_style parameter.
+     *
      * @return array
      */
     public function fetchAll($fetchStyle = 4)

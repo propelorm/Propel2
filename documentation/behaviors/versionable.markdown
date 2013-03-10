@@ -22,7 +22,7 @@ In the `schema.xml`, use the `<behavior>` tag to add the `versionable` behavior 
 </table>
 {% endhighlight %}
 
-Rebuild your model, insert the table creation sql again, and you're ready to go. The model now has one new column, `version`, which stores the version number. It also has a new table, `book_version`, which stores all the versions of all `Book` objects, past and present. You won't need to interact with this second table, since the behavior offers an easy-to-use API that takes care of all verisoning actions from the main ActiveRecord object.
+Rebuild your model, insert the table creation sql again, and you're ready to go. The model now has one new column, `version`, which stores the version number. It also has a new table, `book_version`, which stores all the versions of all `Book` objects, past and present. You won't need to interact with this second table, since the behavior offers an easy-to-use API that takes care of all versioning actions from the main ActiveRecord object.
 
 {% highlight php %}
 <?php
@@ -243,7 +243,7 @@ The audit log abilities need to be enabled in the schema as well:
 * `BaseObject toVersion(integer $version_number)`: Populates the properties of the current object with values from the requested version. Beware that saving the object afterwards will create a new version (and not update the previous version).
 * `integer getLastVersionNumber(PropelPDO $con)`: Queries the database for the highest version number recorded for this object
 * `boolean isLastVersion()`: Returns true if the current object is the last available version
-* `Version addVersion(PropelPDO $con)`: Creates a new Version record and saves it. To be used when isVersioningNecessary() is false. Beware that it doesn't take care of incrementinhg the version number of the main object, and that the main object must be saved prior to calling this method.
+* `Version addVersion(PropelPDO $con)`: Creates a new Version record and saves it. To be used when isVersioningNecessary() is false. Beware that it doesn't take care of incrementing the version number of the main object, and that the main object must be saved prior to calling this method.
 * `array getAllVersions(PropelPDO $con)`: Returns all Version objects related to the main object in a collection
 * `Version getOneVersion(integer $versionNumber PropelPDO $con)`: Returns a given version object
 * `array compareVersions(integer $version1, integer $version2)`: Returns an array of differences showing which parts of a resource changed between two versions

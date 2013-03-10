@@ -354,4 +354,4 @@ class PropelMigration_1286483354
 }
 {% endhighlight %}
 
-Of coure, you can add code to the `preDown()` and `postDown()` methods to execute a data migration when reverting migrations.
+Of course, you can add code to the `preDown()` and `postDown()` methods to execute a data migration when reverting migrations.

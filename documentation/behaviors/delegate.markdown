@@ -44,7 +44,7 @@ Rebuild your model, insert the table creation sql again, and you're ready to go.
 </table>
 {% endhighlight %}
 
->**Tip**<br />If the delegate table already has a foreign key to the main table, the behavior doesn't recreate it. It allows you to have full control over the relatiosnhip between the two tables.
+>**Tip**<br />If the delegate table already has a foreign key to the main table, the behavior doesn't recreate it. It allows you to have full control over the relationship between the two tables.
 
 In addition, the ActiveRecord `Account` class now provides integrated delegation capabilities. That means that it offers to handle directly the columns of the `Profile` model, while in reality it finds or create a related `Profile` object and calls the methods on this delegate:
 
@@ -184,7 +184,7 @@ $account->setMaxSize('200');
 $account->save();
 {% endhighlight %}
 
-On the other hand, it is not possible to cascade delegation to yet another model. So even if the `profile` table delegates to another `detail` table, the methods of the `Detail` model won't be accessibe to the `Profile` objects.
+On the other hand, it is not possible to cascade delegation to yet another model. So even if the `profile` table delegates to another `detail` table, the methods of the `Detail` model won't be accessible to the `Profile` objects.
 
 ## Parameters ##
 

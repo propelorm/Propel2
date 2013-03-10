@@ -242,7 +242,7 @@ echo $author->getFirstName(); // 'Jane'
 
 ## Query Termination Methods ##
 
-The Query methods that don't return the current query object are called "Termination Methods". You've alread seen come of them: `find()`, `findOne()`, `update()`, `delete()`. There are two more termination methods that you should know about:
+The Query methods that don't return the current query object are called "Termination Methods". You've already seen come of them: `find()`, `findOne()`, `update()`, `delete()`. There are two more termination methods that you should know about:
 
 {% highlight php %}
 <?php

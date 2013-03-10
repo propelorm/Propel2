@@ -63,7 +63,7 @@ class IdMethodParameter extends MappingModel
     /**
      * Sets the parameter value.
      *
-     * @param mixed $name
+     * @param mixed $value
      */
     public function setValue($value)
     {
@@ -73,7 +73,7 @@ class IdMethodParameter extends MappingModel
     /**
      * Sets the parent table.
      *
-     * @param Table $table
+     * @param Table $parent
      */
     public function setTable(Table $parent)
     {
