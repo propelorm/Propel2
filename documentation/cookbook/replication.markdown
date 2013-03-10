@@ -16,7 +16,7 @@ Propel can be used in a master-slave replication environment. These environments
 
 You can configure Propel to support replication by adding a `<slaves>` element with nested `<connection>` element(s) to your `runtime-conf.xml`.
 
-The `<slaves>` section is at the same level as the master `<connection>` and contains multiple nested `<connection>` elements with the same information as the top-level (master) `<connection>`. It is recommended that they are numbered. The follwing example shows a slaves section with a several slave connections configured where "localhost" is the master and "slave-server1" and "slave-server2" are the slave-database connections.
+The `<slaves>` section is at the same level as the master `<connection>` and contains multiple nested `<connection>` elements with the same information as the top-level (master) `<connection>`. It is recommended that they are numbered. The following example shows a slaves section with a several slave connections configured where "localhost" is the master and "slave-server1" and "slave-server2" are the slave-database connections.
 
 {% highlight xml %}
 <?xml version="1.0"?>

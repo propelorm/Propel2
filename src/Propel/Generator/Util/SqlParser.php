@@ -152,7 +152,7 @@ class SqlParser
      * //   ) ENGINE=InnoDB;"
      * // )
      * </code>
-     * @param string $input The absolute path to the file to parse
+     * @param string $file The absolute path to the file to parse
      *
      * @return array A list of SQL statement strings
      */

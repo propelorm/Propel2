@@ -9,7 +9,7 @@ The `aggregate_column` behavior keeps a column updated using an aggregate functi
 
 ## Basic Usage ##
 
-In the `schema.xml`, use the `<behavior>` tag to add the `aggregate_column` behavior to a table. You must provide parameters for the aggregate column `name`, the foreign table name, and the aggegate `expression`. For instance, to add an aggregate column keeping the comment count in a `post` table:
+In the `schema.xml`, use the `<behavior>` tag to add the `aggregate_column` behavior to a table. You must provide parameters for the aggregate column `name`, the foreign table name, and the aggregate `expression`. For instance, to add an aggregate column keeping the comment count in a `post` table:
 
 {% highlight xml %}
 <table name="post">

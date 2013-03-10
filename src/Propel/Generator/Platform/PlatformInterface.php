@@ -117,8 +117,8 @@ interface PlatformInterface
      * echo $platform->getColumnListDDL(array('foo', 'bar');
      * // '"foo","bar"'
      * </code>
-     * @param      array Column[] or string[]
-     * @param string $delim The delimiter to use in separating the column names.
+     * @param Column[]|string[] $columns
+     * @param string            $delimiter The delimiter to use in separating the column names.
      *
      * @return string
      */
@@ -185,7 +185,7 @@ interface PlatformInterface
     public function supportsMigrations();
 
     /**
-     * Wether RDBMS supports VARCHAR without explicit size
+     * Whether RDBMS supports VARCHAR without explicit size
      * @return boolean
      */
     public function supportsVarcharWithoutSize();

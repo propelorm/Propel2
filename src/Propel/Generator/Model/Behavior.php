@@ -96,7 +96,7 @@ class Behavior extends MappingModel
      * Expects an associative array looking like
      * array('name' => 'foo', 'value' => bar)
      *
-     * @param array $parameters
+     * @param array $parameter
      */
     public function addParameter(array $parameter)
     {

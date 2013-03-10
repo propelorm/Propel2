@@ -248,7 +248,7 @@ class OnDemandCollection extends Collection
 
     public function setFlags($flags)
     {
-        throw new PropelException('The On Demand Collection does not allow acces by offset');
+        throw new PropelException('The On Demand Collection does not allow access by offset');
     }
 
     public function uasort($cmp_function)

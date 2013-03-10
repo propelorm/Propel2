@@ -177,6 +177,7 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
      * Checks whether any registered behavior on that table has a modifier for a hook
      * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
      * @param string &$script The script will be modified in this method.
+     * @param string $tab
      */
     public function applyBehaviorModifier($hookName, &$script, $tab = "        ")
     {

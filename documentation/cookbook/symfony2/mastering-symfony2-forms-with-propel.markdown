@@ -158,13 +158,13 @@ $book = $form->getData();
 {% endhighlight %}
 
 As you can see, this is really easy to manage basic forms with both Symfony2
-and Propel. But, in real life, this kind of forms is not enought and you'll probably
+and Propel. But, in real life, this kind of forms is not enough and you'll probably
 manage objects with relations, this is the next part of this chapter.
 
 
 ## One-To-Many relations ##
 
-A `Book` has an `Author`, this is a **One-To-Many** relation. Let's modifing your
+A `Book` has an `Author`, this is a **One-To-Many** relation. Let's modifying your
 `BookType` to handle this relation:
 
 {% highlight php %}
@@ -324,7 +324,7 @@ linked to this author without any effort thanks to Propel and specific methods t
 Now, imagine you want to add your books to some lists for book clubs. A `BookClubList` can have many
 `Book` objects and a `Book` can be in many lists (`BookClubList`). This is a **Many-To-Many** relation.
 
-Add the following defintion to your `schema.xml ` and rebuild your model classes:
+Add the following definition to your `schema.xml ` and rebuild your model classes:
 
 {% highlight xml %}
 <table name="book_club_list" description="Reading list for a book club.">

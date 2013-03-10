@@ -110,7 +110,7 @@ protected function createSlug()
 {
   // create the slug based on the `slug_pattern` and the object properties
   $slug = $this->createRawSlug();
-  // truncate the slug to accomodate the size of the slug column
+  // truncate the slug to accommodate the size of the slug column
   $slug = $this->limitSlugSize($slug);
   // add an incremental index to make sure the slug is unique
   $slug = $this->makeSlugUnique($slug);

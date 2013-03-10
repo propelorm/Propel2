@@ -1079,7 +1079,7 @@ class Table extends ScopedMappingModel implements IdMethod
     }
 
     /**
-     * Returns the method strateg for generating primary keys.
+     * Returns the method strategy for generating primary keys.
      *
      * [HL] changing behavior so that Database default method is returned
      * if no method has been specified for the table.
@@ -1411,7 +1411,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * Returns the foreign keys that include column in it's list of local
      * columns.
      *
-     * Eg. Foreign key (a, b, c) refrences tbl(x, y, z) will be returned of col
+     * Eg. Foreign key (a, b, c) references tbl(x, y, z) will be returned of col
      * is either a, b or c.
      *
      * @param  string $column Name of the column

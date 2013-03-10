@@ -19,7 +19,7 @@ class ArrayToPhpConverter
     /**
      * Create a PHP configuration from an array
      *
-     * @param array $configuration The array configuration
+     * @param array $c The array configuration
      *
      * @return string
      */

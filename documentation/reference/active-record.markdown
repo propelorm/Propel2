@@ -104,7 +104,7 @@ class Book extends BaseBook
 }
 {% endhighlight %}
 
->**Tip**<br />See the [PHP 5.3 Namespaces](../cookbook/namespaces) chepter for more information on namespace usage in Propel.
+>**Tip**<br />See the [PHP 5.3 Namespaces](../cookbook/namespaces) chapter for more information on namespace usage in Propel.
 
 ## Generated Getter and Setter ##
 

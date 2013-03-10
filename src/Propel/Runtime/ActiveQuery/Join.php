@@ -208,7 +208,7 @@ class Join
     }
 
     /**
-     * @return the comparison operator for the join condition
+     * @return string[] the comparison operator for the join condition
      */
     public function getOperator($index = 0)
     {

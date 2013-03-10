@@ -192,7 +192,7 @@ class ColumnMap
     /**
      * Get the PDO type of this column.
      *
-     * @return int The PDO::PARMA_* value
+     * @return int The PDO::PARAM_* value
      */
     public function getPdoType()
     {

@@ -168,7 +168,7 @@ And consider to perform a validation on a book object:
 
 $book = new Book();
 
-// some operations by wich we add to the book object some related objects:
+// some operations by which we add to the book object some related objects:
 // we add a publisher object, an author object and some reader objects
 
 $book->validate();
@@ -247,7 +247,7 @@ In the following example, only the third and the fourth rules will be considered
 
 ## Parameter tag: value ##
 
-As we mentioned earlier, the `value` property contains a string, representing an array in YAML format. We've choosen this format because, in YAML array definition, there is no special xml character, so we have no need to escape anything and no need to change standard Propel xsd and xsl files.      
+As we mentioned earlier, the `value` property contains a string, representing an array in YAML format. We've chosen this format because, in YAML array definition, there is no special xml character, so we have no need to escape anything and no need to change standard Propel xsd and xsl files.
 `options` key, inside the value array, is an array too, and it can contain other arrays (i.e. see [Choice constraint](http://symfony.com/doc/current/reference/constraints/Choice.html), in wich the `choices` option is an array, too) and with YAML there's no problem. 
 
 Only in one case we suggest to be careful.     
@@ -289,7 +289,7 @@ But inside an xml string the double-quote characters should be escaped, so repla
 ## Automatic validation ##
 
 You can automatic validate an ActiveRecord, before saving it into your database, thanks to `preSave()` hook (see [behaviors documentation](/documentation/07-behaviors.html)).     
-For example, let's suppose we whish to add automatic validation capability to our `Book` class. Open `Book.php`, in your model path, and add the following code:
+For example, let's suppose we wish to add automatic validation capability to our `Book` class. Open `Book.php`, in your model path, and add the following code:
 
 {% highlight php %}
 <?php
@@ -365,7 +365,7 @@ But sometimes, you could think that a custom validation constraint is a better c
 Adding a custom validation constraint to your project is very easy and it can be considered a two-step process:
 
 1.    Write your custom constraint: please refer to [this document](http://symfony.com/doc/current/cookbook/validation/custom_constraint.html) and see the example below.
-2.    Set up Propel to work with it: symply adjust your autoload class or function, to correctly map `Propel\Runtime\Validator\Constraints` namespace to the directory in which your constraint scripts reside.
+2.    Set up Propel to work with it: simply adjust your autoload class or function, to correctly map `Propel\Runtime\Validator\Constraints` namespace to the directory in which your constraint scripts reside.
 
 >**Tip**<br /> Propel expects to find custom constraints under `Propel\Runtime\Validator\Constraints` namespace.
 
