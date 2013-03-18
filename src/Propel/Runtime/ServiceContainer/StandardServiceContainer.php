@@ -441,7 +441,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      * @param string          $name   the name of the logger to be set
      * @param LoggerInterface $logger A logger instance
      */
-    public function setLogger($name, Logger $logger)
+    public function setLogger($name, LoggerInterface $logger)
     {
         $this->loggers[$name] = $logger;
     }
