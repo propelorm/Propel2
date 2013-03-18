@@ -40,9 +40,9 @@
         <column name="birthday" type="DATE" description="The authors birthday" />
         <behavior name="validate">
             <parameter name="rule1" value="{column: first_name, validator: NotNull}" />
-            <parameter name="rule2" value="{column: first_name, validator: MaxLength, options: {limit: 128}}" />
+            <parameter name="rule2" value="{column: first_name, validator: Length, options: {max: 128}}" />
             <parameter name="rule3" value="{column: last_name, validator: NotNull}" />
-            <parameter name="rule4" value="{column: last_name, validator: MaxLength, options: {limit: 128}}" />
+            <parameter name="rule4" value="{column: last_name, validator: Length, options: {max: 128}}" />
             <parameter name="rule5" value="{column: email, validator: Email}" />
             <parameter name="rule6" value="{column: birthday, validator: Date}" />
         </behavior>
@@ -56,9 +56,9 @@
         <column name="birthday" type="DATE" description="The authors birthday" />
         <behavior name="validate">
             <parameter name="rule1" value="{column: first_name, validator: NotNull}" />
-            <parameter name="rule2" value="{column: first_name, validator: MinLength, options: {limit: 4}}" />
+            <parameter name="rule2" value="{column: first_name, validator: Length, options: {min: 4}}" />
             <parameter name="rule3" value="{column: last_name, validator: NotNull}" />
-            <parameter name="rule4" value="{column: last_name, validator: MaxLength, options: {limit: 128}}" />
+            <parameter name="rule4" value="{column: last_name, validator: Length, options: {max: 128}}" />
             <parameter name="rule5" value="{column: email, validator: Email}" />
             <parameter name="rule6" value="{column: birthday, validator: Date}" />
         </behavior>
