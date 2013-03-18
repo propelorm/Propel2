@@ -9,7 +9,7 @@
 public function validate(Validator $validator = null)
 {
     if (null === $validator) {
-        $validator = new Validator(new ClassMetadataFactory(new StaticMethodLoader()), new ConstraintValidatorFactory());
+        $validator = new Validator(new ClassMetadataFactory(new StaticMethodLoader()), new ConstraintValidatorFactory(), new DefaultTranslator());
     }
 
     $failureMap = new ConstraintViolationList();

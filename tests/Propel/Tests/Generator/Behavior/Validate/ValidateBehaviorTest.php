@@ -111,7 +111,7 @@ EOF;
      <column name="first_name" required="true" type="VARCHAR" size="128" description="First Name" />
      <behavior name="validate">
        <parameter name="rule1" value="{validator: NotNull}" />
-       <parameter name="rule2" value="{column: first_name, validator: MaxLength, options: {limit: 128}}" />
+       <parameter name="rule2" value="{column: first_name, validator: Length, options: {max: 128}}" />
       </behavior>
   </table>
   </database>
@@ -132,7 +132,7 @@ EOF;
      <column name="first_name" required="true" type="VARCHAR" size="128" description="First Name" />
      <behavior name="validate">
        <parameter name="rule1" value="{column: first_name}" />
-       <parameter name="rule2" value="{column: first_name, validator: MaxLength, options: {limit: 128}}" />
+       <parameter name="rule2" value="{column: first_name, validator: Length, options: {max: 128}}" />
       </behavior>
   </table>
   </database>
@@ -174,7 +174,7 @@ EOF;
      <column name="first_name" required="true" type="VARCHAR" size="128" description="First Name" />
      <behavior name="validate">
        <parameter name="rule1" value="{column: first_name, validator: NotNull, foo: bar}" />
-       <parameter name="rule2" value="{column: first_name, validator: MaxLength, options: 128}" />
+       <parameter name="rule2" value="{column: first_name, validator: Length, options: 128}" />
       </behavior>
   </table>
   </database>
