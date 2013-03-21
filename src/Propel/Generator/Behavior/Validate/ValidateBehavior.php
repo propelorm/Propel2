@@ -44,6 +44,7 @@ class ValidateBehavior extends Behavior
         $this->builder->declareClasses(
             'Symfony\\Component\\Validator\\Mapping\\ClassMetadata',
             'Symfony\\Component\\Validator\\Validator',
+            'Symfony\\Component\\Validator\\DefaultTranslator',
             'Symfony\\Component\\Validator\\Mapping\\Loader\\StaticMethodLoader',
             'Symfony\\Component\\Validator\\ConstraintValidatorFactory',
             'Symfony\\Component\\Validator\\Mapping\\ClassMetadataFactory',

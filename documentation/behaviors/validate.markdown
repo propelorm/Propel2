@@ -24,9 +24,9 @@ Then add validation rules via `<parameter>` tag.
 
   <behavior name="validate">
     <parameter name="rule1" value="{column: first_name, validator: NotNull}" />
-    <parameter name="rule2" value="{column: first_name, validator: MaxLength, options: {limit: 128}}" />
+    <parameter name="rule2" value="{column: first_name, validator: Length, options: {max: 128}}" />
     <parameter name="rule3" value="{column: last_name, validator: NotNull}" />
-    <parameter name="rule4" value="{column: last_name, validator: MaxLength, options: {limit: 128}}" />
+    <parameter name="rule4" value="{column: last_name, validator: Length, options: {max: 128}}" />
     <parameter name="rule5" value="{column: email, validator: Email}" />
   </behavior>
 </table>
@@ -126,9 +126,9 @@ Consider the following model:
         <column name="email" type="VARCHAR" size="128" />
         <behavior name="validate">
             <parameter name="rule1" value="{column: first_name, validator: NotNull}" />
-            <parameter name="rule2" value="{column: first_name, validator: MaxLength, options: {limit: 128}}" />
+            <parameter name="rule2" value="{column: first_name, validator: Length, options: {max: 128}}" />
             <parameter name="rule3" value="{column: last_name, validator: NotNull}" />
-            <parameter name="rule4" value="{column: last_name, validator: MaxLength, options: {limit: 128}}" />
+            <parameter name="rule4" value="{column: last_name, validator: Length, options: {max: 128}}" />
             <parameter name="rule5" value="{column: email, validator: Email}" />
         </behavior>
     </table>
@@ -140,9 +140,9 @@ Consider the following model:
         <column name="email" type="VARCHAR" size="128" />
         <behavior name="validate">
             <parameter name="rule1" value="{column: first_name, validator: NotNull}" />
-            <parameter name="rule2" value="{column: first_name, validator: MinLength, options: {limit: 4}}" />
+            <parameter name="rule2" value="{column: first_name, validator: Length, options: {min: 4}}" />
             <parameter name="rule3" value="{column: last_name, validator: NotNull}" />
-            <parameter name="rule4" value="{column: last_name, validator: MaxLength, options: {limit: 128}}" />
+            <parameter name="rule4" value="{column: last_name, validator: Length, options: {max: 128}}" />
             <parameter name="rule5" value="{column: email, validator: Email}" />
         </behavior>
     </table>
