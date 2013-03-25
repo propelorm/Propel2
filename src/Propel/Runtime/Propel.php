@@ -264,8 +264,8 @@ class Propel
      * If a logger has been configured, the logger will be used, otherwise the
      * logging message will be discarded without any further action
      *
-     * @param      string The message that will be logged.
-     * @param      string The logging level.
+     * @param      string $message The message that will be logged.
+     * @param      int    $level The logging level.
      *
      * @return boolean True if the message was logged successfully or no logger was used.
      */

@@ -218,7 +218,7 @@ class Column extends MappingModel
 
             /*
                 here we are only checking for 'false', so don't
-                use boleanValue()
+                use booleanValue()
             */
             $this->isInheritance = (null !== $this->inheritanceType && 'false' !== $this->inheritanceType);
         } catch (Exception $e) {

@@ -170,7 +170,7 @@ abstract class PdoAdapter
      * a piece of text used in a SQL statement (generally a single
      * quote).
      *
-     * @return string The text delimeter.
+     * @return string The text delimiter.
      */
     public function getStringDelimiter()
     {

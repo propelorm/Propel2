@@ -91,9 +91,9 @@ class VendorInfo extends MappingModel
     }
 
     /**
-     * Sets an associative array of parameters for venfor specific information.
+     * Sets an associative array of parameters for vendor specific information.
      *
-     * @param array $params Parameter data.
+     * @param array $parameters Parameter data.
      */
     public function setParameters(array $parameters = array())
     {

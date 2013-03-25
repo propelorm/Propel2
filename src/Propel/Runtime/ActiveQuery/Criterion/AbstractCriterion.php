@@ -62,7 +62,7 @@ abstract class AbstractCriterion
     protected $db;
 
     /**
-     * Other connected criterons
+     * Other connected criterions
      * @var [AbstractCriterion]
      */
     protected $clauses = array();
@@ -77,7 +77,7 @@ abstract class AbstractCriterion
     /**
      * Create a new instance.
      *
-     * @param Criteria $parent     The outer class (this is an "inner" class).
+     * @param Criteria $outer      The outer class (this is an "inner" class).
      * @param string   $column     TABLE.COLUMN format.
      * @param mixed    $value
      * @param string   $comparison

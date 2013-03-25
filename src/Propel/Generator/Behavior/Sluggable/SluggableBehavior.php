@@ -244,7 +244,7 @@ protected static function cleanupSlugPart(\$slug, \$replacement = '" . $this->ge
         $script .= "
 
 /**
- * Make sure the slug is short enough to accomodate the column size
+ * Make sure the slug is short enough to accommodate the column size
  *
  * @param    string \$slug            the slug to check
  *

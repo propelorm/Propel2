@@ -132,7 +132,7 @@ abstract class MappingModel implements MappingModelInterface
     /**
      * Adds a new VendorInfo instance to this current model object.
      *
-     * @param  VendorInfo|array $data
+     * @param  VendorInfo|array $vendor
      * @return VendorInfo
      */
     public function addVendorInfo($vendor)

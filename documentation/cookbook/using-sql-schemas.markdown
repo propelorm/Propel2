@@ -54,7 +54,7 @@ You can create foreign keys between tables assigned to different schemas, provid
 
 ## Schemas in Generated SQL ##
 
-When generating the SQL for table creation, Propel correclty adds the schema prefix (example for MySQL):
+When generating the SQL for table creation, Propel correctly adds the schema prefix (example for MySQL):
 
 {% highlight sql %}
 CREATE TABLE `bookstore`.`book`

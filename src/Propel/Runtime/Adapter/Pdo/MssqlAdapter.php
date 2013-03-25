@@ -149,7 +149,7 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
             $selectStatement = str_ireplace('distinct ', '', $selectStatement);
         }
 
-        // if we're starting at offset 0 then theres no need to simulate limit,
+        // if we're starting at offset 0 then there's no need to simulate limit,
         // just grab the top $limit number of rows
         if (0 === $offset) {
             $sql = $selectText . 'TOP ' . $limit . ' ' . $selectStatement . ' FROM ' . $fromStatement;

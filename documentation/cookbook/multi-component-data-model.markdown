@@ -7,7 +7,7 @@ title: Multi-Component Data Model
 
 Propel comes along with packaging capabilities that allow you to more easily integrate Propel into a packaged or modularized application.
 
-## Muliple Schemas ##
+## Multiple Schemas ##
 
 You can use as many `schema.xml` files as you want. Schema files have to be named `(*.)schema.xml`, so names like `schema.xml`, `package1.schema.xml`, `core.package1.schema.xml` are all acceptable. These files _have_ to be located in your project directory.
 
@@ -189,7 +189,7 @@ build/
     book.schema.sql   // contains CREATE TABLE book and CREATE TABLE review
 {% endhighlight %}
 
-And, as you probably expect it, a package overridden at the table level also acocunts for an independent SQL file:
+And, as you probably expect it, a package overridden at the table level also accounts for an independent SQL file:
 
 {% highlight text %}
 build/

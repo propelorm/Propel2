@@ -35,7 +35,7 @@ class RawModelCriterion extends AbstractModelCriterion
      * @param ColumnMap $column     A Column object to help escaping the value
      * @param mixed     $value
      * @param string    $tableAlias optional table alias
-     * @param string    $type       A PDO type constant, e.g. PDO::PARAM_STR
+     * @param int       $type       A PDO type constant, e.g. PDO::PARAM_STR
      */
     public function __construct(Criteria $outer, $clause, $column, $value = null, $tableAlias = null, $type = PDO::PARAM_STR)
     {
