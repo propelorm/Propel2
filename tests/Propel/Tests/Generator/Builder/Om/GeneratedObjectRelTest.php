@@ -15,6 +15,7 @@ use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Tests\Bookstore\Author;
 use Propel\Tests\Bookstore\AuthorPeer;
+use Propel\Tests\Bookstore\AuthorQuery;
 use Propel\Tests\Bookstore\Map\AuthorTableMap;
 use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\BookQuery;
@@ -359,7 +360,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         BookTableMap::clearInstancePool();
         AuthorTableMap::clearInstancePool();
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
-        $author = AuthorPeer::doSelectOne(new Criteria(), $con);
+        $author = AuthorQuery::create()->findOne($con);
         // populate book instance pool
         $books = $author->getBooks(null, $con);
         $sql = $con->getLastExecutedQuery();
@@ -374,7 +375,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         AuthorTableMap::clearInstancePool();
         PublisherTableMap::clearInstancePool();
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
-        $author = AuthorPeer::doSelectOne(new Criteria(), $con);
+        $author = AuthorQuery::create()->findOne($con);
         // populate book instance pool
         $books = $author->getBooksJoinPublisher(null, $con);
         $sql = $con->getLastExecutedQuery();

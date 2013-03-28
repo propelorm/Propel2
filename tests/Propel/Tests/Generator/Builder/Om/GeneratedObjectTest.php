@@ -10,6 +10,8 @@
 
 namespace Propel\Tests\Generator\Builder\Om;
 
+use Propel\Tests\Bookstore\BookstoreQuery;
+
 use Propel\Generator\Util\QuickBuilder;
 use Propel\Runtime\Propel;
 use Propel\Runtime\Collection\ObjectCollection;
@@ -275,7 +277,7 @@ class GeneratedObjectTest extends BookstoreTestBase
         $b->save();
 
         $sale = new BookstoreSale();
-        $sale->setBookstore(BookstorePeer::doSelectOne(new Criteria()));
+        $sale->setBookstore(BookstoreQuery::create()->findOne());
         $sale->setSaleName("Spring Sale");
         $sale->save();
 
@@ -302,7 +304,7 @@ class GeneratedObjectTest extends BookstoreTestBase
         $b->save();
 
         $sale = new BookstoreSale();
-        $sale->setBookstore(BookstorePeer::doSelectOne(new Criteria()));
+        $sale->setBookstore(BookstoreQuery::create()->findOne());
         $sale->setSaleName("Spring Sale");
         $sale->save();
 

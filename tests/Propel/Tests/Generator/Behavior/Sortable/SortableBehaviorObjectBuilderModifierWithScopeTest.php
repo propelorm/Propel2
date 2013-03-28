@@ -50,9 +50,7 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $t3 = \SortableTable12Peer::retrieveByRank(3, 1);
         $t3->delete();
         $this->assertEquals($max - 1, \SortableTable12Peer::getMaxRank(1), 'Sortable rearrange subsequent rows on delete');
-        $c = new Criteria();
-        $c->add(\Map\SortableTable12TableMap::TITLE, 'row4');
-        $t4 = \SortableTable12Peer::doSelectOne($c);
+        $t4 = \SortableTable12Query::create()->filterByTitle('row4')->findOne();
         $this->assertEquals(3, $t4->getRank(), 'Sortable rearrange subsequent rows on delete');
         $expected = array(1 => 'row5', 2 => 'row6');
         $this->assertEquals($expected, $this->getFixturesArrayWithScope(2), 'delete() leaves other suites unchanged');

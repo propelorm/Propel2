@@ -10,6 +10,8 @@
 
 namespace Propel\Tests;
 
+use Propel\Tests\Bookstore\BookClubListQuery;
+
 use Propel\Runtime\ActiveQuery\Criteria;
 
 use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
@@ -226,7 +228,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
         $control = strtotime('2004-02-29 00:00:00');
 
         // should be two in the db
-        $r = ReviewPeer::doSelectOne(new Criteria());
+        $r = ReviewQuery::create()->findOne();
         $r_id = $r->getId();
         $r->setReviewDate($control);
         $r->save();
@@ -316,17 +318,17 @@ class BookstoreTest extends BookstoreEmptyTestBase
 
         $crit = new Criteria();
         $crit->add(BookTableMap::ID, $phoenix->getId());
-        $phoenix = BookPeer::doSelectOne($crit);
+        $phoenix = BookQuery::create(null, $crit)->findOne();
         $this->assertNotNull($phoenix, "book 'phoenix' has been re-fetched from db");
 
         $crit = new Criteria();
         $crit->add(BookClubListTableMap::ID, $blc1->getId());
-        $blc1 = BookClubListPeer::doSelectOne($crit);
+        $blc1 = BookClubListQuery::create(null, $crit)->findOne();
         $this->assertNotNull($blc1, 'BookClubList 1 has been re-fetched from db');
 
         $crit = new Criteria();
         $crit->add(BookClubListTableMap::ID, $blc2->getId());
-        $blc2 = BookClubListPeer::doSelectOne($crit);
+        $blc2 = BookClubListQuery::create(null, $crit)->findOne();
         $this->assertNotNull($blc2, 'BookClubList 2 has been re-fetched from db');
 
         $relCount = $phoenix->countBookListRels();
@@ -669,17 +671,17 @@ class BookstoreTest extends BookstoreEmptyTestBase
 
         $crit = new Criteria();
         $crit->add(BookTableMap::ID, $phoenix->getId());
-        $phoenix = BookPeer::doSelectOne($crit);
+        $phoenix = BookQuery::create(null, $crit)->findOne();
         $this->assertNotNull($phoenix, "book 'phoenix' has been re-fetched from db");
 
         $crit = new Criteria();
         $crit->add(BookClubListTableMap::ID, $blc1->getId());
-        $blc1 = BookClubListPeer::doSelectOne($crit);
+        $blc1 = BookClubListQuery::create(null, $crit)->findOne();
         $this->assertNotNull($blc1, 'BookClubList 1 has been re-fetched from db');
 
         $crit = new Criteria();
         $crit->add(BookClubListTableMap::ID, $blc2->getId());
-        $blc2 = BookClubListPeer::doSelectOne($crit);
+        $blc2 = BookClubListQuery::create(null, $crit)->findOne();
         $this->assertNotNull($blc2, 'BookClubList 2 has been re-fetched from db');
 
         $relCount = $phoenix->countBookListRels();
