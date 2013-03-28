@@ -18,6 +18,7 @@ use Propel\Tests\Bookstore\Author;
 use Propel\Tests\Bookstore\AuthorPeer;
 use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\BookPeer;
+use Propel\Tests\Bookstore\BookQuery;
 use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\Bookstore\BookClubList;
 use Propel\Tests\Bookstore\BookClubListPeer;
@@ -275,7 +276,7 @@ class BookstoreDataPopulator
         }
         $con->beginTransaction();
 
-        $book1 = BookPeer::doSelectOne(new Criteria(), $con);
+        $book1 = BookQuery::create()->findOne($con);
         $reader1 = new BookReader();
         $reader1->save($con);
 

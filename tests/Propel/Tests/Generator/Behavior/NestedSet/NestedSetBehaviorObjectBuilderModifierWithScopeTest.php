@@ -22,10 +22,7 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
 {
     protected function getByTitle($title)
     {
-        $c = new Criteria();
-        $c->add(\Map\NestedSetTable10TableMap::TITLE, $title);
-
-        return \NestedSetTable10Peer::doSelectOne($c);
+        return \NestedSetTable10Query::create()->filterByTitle($title)->findOne();
     }
 
     /**

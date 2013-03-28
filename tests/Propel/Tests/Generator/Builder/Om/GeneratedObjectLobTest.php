@@ -14,6 +14,7 @@ use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
 use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
 use Propel\Tests\Bookstore\BookPeer;
+use Propel\Tests\Bookstore\BookQuery;
 use Propel\Tests\Bookstore\Media;
 use Propel\Tests\Bookstore\MediaQuery;
 use Propel\Tests\Bookstore\Map\MediaTableMap;
@@ -85,7 +86,7 @@ class GeneratedObjectLobTest extends BookstoreEmptyTestBase
         $blob_path = $this->getLobFile('tin_drum.gif');
         $clob_path = $this->getLobFile('tin_drum.txt');
 
-        $book = BookPeer::doSelectOne(new Criteria());
+        $book = BookQuery::create()->findOne();
 
         $m1 = new Media();
         $m1->setBook($book);
@@ -125,7 +126,7 @@ class GeneratedObjectLobTest extends BookstoreEmptyTestBase
         $blob_path = $this->getLobFile('tin_drum.gif');
         $clob_path = $this->getLobFile('tin_drum.txt');
 
-        $book = BookPeer::doSelectOne(new Criteria());
+        $book = BookQuery::create()->findOne();
 
         $m1 = new Media();
         $m1->setBook($book);
@@ -160,7 +161,7 @@ class GeneratedObjectLobTest extends BookstoreEmptyTestBase
      */
     public function testLobNulls()
     {
-        $book = BookPeer::doSelectOne(new Criteria());
+        $book = BookQuery::create()->findOne();
 
         $m1 = new Media();
         $m1->setBook($book);
@@ -193,7 +194,7 @@ class GeneratedObjectLobTest extends BookstoreEmptyTestBase
         $blob2_path = $this->getLobFile('propel.gif');
 
         $clob_path = $this->getLobFile('tin_drum.txt');
-        $book = BookPeer::doSelectOne(new Criteria());
+        $book = BookQuery::create()->findOne();
 
         $m1 = new Media();
         $m1->setBook($book);
@@ -260,7 +261,7 @@ class GeneratedObjectLobTest extends BookstoreEmptyTestBase
         $blob2_path = $this->getLobFile('propel.gif');
 
         $clob_path = $this->getLobFile('tin_drum.txt');
-        $book = BookPeer::doSelectOne(new Criteria());
+        $book = BookQuery::create()->findOne();
 
         $m1 = new Media();
         $m1->setBook($book);

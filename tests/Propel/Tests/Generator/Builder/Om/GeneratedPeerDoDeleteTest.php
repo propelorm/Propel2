@@ -71,9 +71,7 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
      */
     public function testDoDelete_MultiTable()
     {
-        $selc = new Criteria();
-        $selc->add(BookTableMap::TITLE, "Harry Potter and the Order of the Phoenix");
-        $hp = BookPeer::doSelectOne($selc);
+        $hp = BookQuery::create()->filterByTitle("Harry Potter and the Order of the Phoenix")->findOne();
 
         // print "Attempting to delete [multi-table] by found pk: ";
         $c = new Criteria();
@@ -217,8 +215,7 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
         // The 'author_id' column in 'book' table will be set to null when author is deleted.
 
         // 1) Get an arbitrary book
-        $c = new Criteria();
-        $book = BookPeer::doSelectOne($c);
+        $book = BookQuery::create()->findOne();
         $bookId = $book->getId();
         $authorId = $book->getAuthorId();
         unset($book);
@@ -239,7 +236,7 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
     public function testDoDelete_ByPK()
     {
         // 1) get an arbitrary book
-        $book = BookPeer::doSelectOne(new Criteria());
+        $book = BookQuery::create()->findOne();
         $bookId = $book->getId();
 
         // 2) now delete that book
@@ -277,7 +274,7 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
     public function testDoDelete_ByObj()
     {
         // 1) get an arbitrary book
-        $book = BookPeer::doSelectOne(new Criteria());
+        $book = BookQuery::create()->findOne();
         $bookId = $book->getId();
 
         // 2) now delete that book
@@ -303,7 +300,7 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
      */
     public function testDoDeleteAllInstancePool()
     {
-        $review = ReviewPeer::doSelectOne(new Criteria);
+        $review = ReviewQuery::create()->findOne();
         $book = $review->getBook();
         BookPeer::doDeleteAll();
         $this->assertNull(BookQuery::create()->findPk($book->getId()), 'doDeleteAll invalidates instance pool');

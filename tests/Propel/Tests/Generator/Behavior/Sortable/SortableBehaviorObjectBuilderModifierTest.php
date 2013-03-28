@@ -45,9 +45,7 @@ class SortableBehaviorObjectBuilderModifierTest extends TestCase
         $t3 = \SortableTable11Peer::retrieveByRank(3);
         $t3->delete();
         $this->assertEquals($max - 1, \SortableTable11Peer::getMaxRank(), 'Sortable rearrange subsequent rows on delete');
-        $c = new Criteria();
-        $c->add(\Map\SortableTable11TableMap::TITLE, 'row4');
-        $t4 = \SortableTable11Peer::doSelectOne($c);
+        $t4 = \SortableTable11Query::create()->filterByTitle('row4')->findOne();
         $this->assertEquals(3, $t4->getRank(), 'Sortable rearrange subsequent rows on delete');
     }
 

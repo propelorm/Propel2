@@ -12,6 +12,7 @@ namespace Propel\Tests\Runtime\Util;
 
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 use Propel\Tests\Bookstore\BookPeer;
+use Propel\Tests\Bookstore\BookQuery;
 use Propel\Tests\Bookstore\Bookstore;
 use Propel\Tests\Bookstore\BookstorePeer;
 use Propel\Tests\Bookstore\Map\AuthorTableMap;
@@ -348,8 +349,7 @@ class BasePeerTest extends BookstoreTestBase
     public function testIneffectualUpdateUsingBookObject()
     {
         $con = Propel::getConnection(BookTableMap::DATABASE_NAME);
-        $c = new Criteria();
-        $book = BookPeer::doSelectOne($c, $con);
+        $book = BookQuery::create()->findOne($con);
         $count = $con->getQueryCount();
         $book->setTitle($book->getTitle());
         $book->setISBN($book->getISBN());

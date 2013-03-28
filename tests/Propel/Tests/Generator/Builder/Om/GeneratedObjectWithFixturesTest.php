@@ -10,23 +10,28 @@
 
 namespace Propel\Tests\Generator\Builder\Om;
 
+
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Map\TableMap;
 use Propel\Tests\Bookstore\Author;
 use Propel\Tests\Bookstore\AuthorPeer;
+use Propel\Tests\Bookstore\AuthorQuery;
 use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\BookPeer;
 use Propel\Tests\Bookstore\BookQuery;
 use Propel\Tests\Bookstore\BookstorePeer;
+use Propel\Tests\Bookstore\BookstoreQuery;
 use Propel\Tests\Bookstore\BookstoreSale;
 use Propel\Tests\Bookstore\BookstoreEmployee;
 use Propel\Tests\Bookstore\BookstoreEmployeeAccount;
 use Propel\Tests\Bookstore\BookstoreEmployeePeer;
+use Propel\Tests\Bookstore\BookstoreEmployeeQuery;
 use Propel\Tests\Bookstore\Map\AuthorTableMap;
 use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\Bookstore\Map\MediaTableMap;
 use Propel\Tests\Bookstore\MediaPeer;
+use Propel\Tests\Bookstore\MediaQuery;
 use Propel\Tests\Bookstore\Map\PublisherTableMap;
 use Propel\Tests\Bookstore\Review;
 use Propel\Tests\Bookstore\ReviewQuery;
@@ -53,7 +58,7 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
     public function testReload()
     {
         BookstoreDataPopulator::populate();
-        $a = AuthorPeer::doSelectOne(new Criteria());
+        $a = AuthorQuery::create()->findOne();
 
         $origName = $a->getFirstName();
 
@@ -77,12 +82,10 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
         BookstoreDataPopulator::populate();
 
         // arbitrary book
-        $b = BookPeer::doSelectOne(new Criteria());
+        $b = BookQuery::create()->findOne();
 
         // arbitrary, different author
-        $c = new Criteria();
-        $c->add(AuthorTableMap::ID, $b->getAuthorId(), Criteria::NOT_EQUAL);
-        $a = AuthorPeer::doSelectOne($c);
+        $a = AuthorQuery::create()->filterById($b->getAuthorId(), Criteria::NOT_EQUAL)->findOne();
 
         $origAuthor = $b->getAuthor();
 
@@ -105,7 +108,7 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
         BookstoreDataPopulator::populate();
 
         // 1) grab an arbitrary object
-        $book = BookPeer::doSelectOne(new Criteria());
+        $book = BookQuery::create()->findOne();
         $bookId = $book->getId();
 
         // 2) delete it
@@ -131,7 +134,7 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
     {
         BookstoreDataPopulator::populate();
 
-        $emp = BookstoreEmployeePeer::doSelectOne(new Criteria());
+        $emp = BookstoreEmployeeQuery::create()->findOne();
 
         $acct = new BookstoreEmployeeAccount();
         $acct->setBookstoreEmployee($emp);
@@ -149,7 +152,7 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
     {
         BookstoreDataPopulator::populate();
 
-        $book = BookPeer::doSelectOne(new Criteria());
+        $book = BookQuery::create()->findOne();
 
         $r = new Review();
         $r->setReviewedBy("testTypeSensitive Tester");
@@ -225,7 +228,7 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
     {
         BookstoreDataPopulator::populate();
 
-        $b = BookPeer::doSelectOne(new Criteria());
+        $b = BookQuery::create()->findOne();
         $c = new Book();
         $c->setId($b->getId());
         $this->assertTrue($b->equals($c), "Expected Book objects to be equal()");
@@ -242,7 +245,7 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
         $sale = new BookstoreSale();
         $this->assertEquals(1, $sale->getBookstoreId(), "Expected BookstoreSale object to have a default bookstore_id of 1.");
 
-        $bookstore = BookstorePeer::doSelectOne(new Criteria());
+        $bookstore = BookstoreQuery::create()->findOne();
 
         $sale->setBookstore($bookstore);
         $this->assertEquals($bookstore->getId(), $sale->getBookstoreId(), "Expected FK id to have changed when assigned a valid FK.");
@@ -262,10 +265,7 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
         BookstoreDataPopulator::populate();
 
         // Test a "normal" object
-        $c = new Criteria();
-        $c->add(BookTableMap::TITLE, 'Harry%', Criteria::LIKE);
-
-        $book = BookPeer::doSelectOne($c);
+        $book = BookQuery::create()->filterByTitle('Harry%', Criteria::LIKE)->findOne();
         $reviews = $book->getReviews();
 
         $b2 = $book->copy(true);
@@ -277,7 +277,7 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
         $this->assertEquals(count($reviews), count($r2));
 
         // Test a one-to-one object
-        $emp = BookstoreEmployeePeer::doSelectOne(new Criteria());
+        $emp = BookstoreEmployeeQuery::create()->findOne();
         $e2 = $emp->copy(true);
 
         $this->assertInstanceOf('\Propel\Tests\Bookstore\BookstoreEmployee', $e2);
@@ -294,11 +294,11 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
     {
         BookstoreDataPopulator::populate();
 
-        $c = new Criteria();
-        $c->add(MediaTableMap::COVER_IMAGE, null, Criteria::NOT_EQUAL);
-        $c->add(MediaTableMap::EXCERPT, null, Criteria::NOT_EQUAL);
-
-        $m = MediaPeer::doSelectOne($c);
+        $m = MediaQuery::create()
+            ->filterByCoverImage(null, Criteria::NOT_EQUAL)
+            ->filterByExcerpt(null, Criteria::NOT_EQUAL)
+            ->findOne()
+        ;
         if ($m === null) {
             $this->fail("Test requires at least one media row w/ cover_image and excerpt NOT NULL");
         }
@@ -327,7 +327,7 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
 
         $c = new Criteria();
         $c->add(BookTableMap::TITLE, 'Don Juan');
-        $books = BookPeer::doSelectJoinAuthor($c);
+        $books = BookQuery::create(null, $c)->joinWith('Author')->find();
         $book = $books[0];
 
         $arr1 = $book->toArray(TableMap::TYPE_PHPNAME, null, array(), true);
@@ -342,24 +342,6 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
         );
         $this->assertEquals($expectedKeys, array_keys($arr1), 'toArray() can return sub arrays for hydrated related objects');
         $this->assertEquals('George', $arr1['Author']['FirstName'], 'toArray() can return sub arrays for hydrated related objects');
-
-        $c = new Criteria();
-        $c->add(BookTableMap::TITLE, 'Don Juan');
-        $books = BookPeer::doSelectJoinAll($c);
-        $book = $books[0];
-
-        $arr2 = $book->toArray(TableMap::TYPE_PHPNAME, null, array(), true);
-        $expectedKeys = array(
-            'Id',
-            'Title',
-            'ISBN',
-            'Price',
-            'PublisherId',
-            'AuthorId',
-            'Publisher',
-            'Author'
-        );
-        $this->assertEquals($expectedKeys, array_keys($arr2), 'toArray() can return sub arrays for hydrated related objects');
     }
 
     public function testToArrayIncludesForeignReferrers()

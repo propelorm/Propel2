@@ -10,6 +10,8 @@
 
 namespace Propel\Tests\Generator\Builder\Om;
 
+use Propel\Tests\Bookstore\BookstoreEmployeeAccountQuery;
+
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Map\TableMap;
@@ -36,14 +38,17 @@ use Propel\Tests\Bookstore\BookOpinion;
 use Propel\Tests\Bookstore\BookReader;
 use Propel\Tests\Bookstore\BookstoreContest;
 use Propel\Tests\Bookstore\BookstoreContestPeer;
+use Propel\Tests\Bookstore\BookstoreContestQuery;
 use Propel\Tests\Bookstore\Map\BookstoreContestTableMap;
 use Propel\Tests\Bookstore\BookstoreContestEntry;
 use Propel\Tests\Bookstore\BookstoreContestEntryPeer;
+use Propel\Tests\Bookstore\BookstoreContestEntryQuery;
 use Propel\Tests\Bookstore\Map\BookstoreContestEntryTableMap;
 use Propel\Tests\Bookstore\Contest;
 use Propel\Tests\Bookstore\Customer;
 use Propel\Tests\Bookstore\ReaderFavorite;
 use Propel\Tests\Bookstore\ReaderFavoritePeer;
+use Propel\Tests\Bookstore\ReaderFavoriteQuery;
 use Propel\Tests\Bookstore\Map\ReaderFavoriteTableMap;
 use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
 use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
@@ -108,14 +113,14 @@ class GeneratedPeerDoSelectTest extends BookstoreEmptyTestBase
         $lc = new Criteria();
         $lc->setLimit($limitcount);
 
-        $results = BookPeer::doSelect($lc);
+        $results = BookQuery::create(null, $lc)->find();
 
         $this->assertEquals($limitcount, count($results), "Expected $limitcount results from BookPeer::doSelect()");
 
         // re-create it just to avoid side-effects
         $lc2 = new Criteria();
         $lc2->setLimit($limitcount);
-        $results2 = BookPeer::doSelectJoinAuthor($lc2);
+        $results2 = BookQuery::create(null, $lc2)->joinWith('Author')->find();
 
         $this->assertEquals($limitcount, count($results2), "Expected $limitcount results from BookPeer::doSelectJoinAuthor()");
 
@@ -137,7 +142,7 @@ class GeneratedPeerDoSelectTest extends BookstoreEmptyTestBase
 
         BookTableMap::clearInstancePool();
 
-        $joinBooks = BookPeer::doSelectJoinAuthor($c);
+        $joinBooks = BookQuery::create()->joinWith('Author')->find();
         $obj2 = $joinBooks[0];
         $obj2Array = $obj2->toArray(TableMap::TYPE_PHPNAME, true, array(), true);
         // $joinSize = strlen(serialize($obj2));
@@ -149,68 +154,9 @@ class GeneratedPeerDoSelectTest extends BookstoreEmptyTestBase
         $this->assertTrue(array_key_exists('Author', $obj2Array));
     }
 
-    /**
-     * Test the doSelectJoin*() methods when the related object is NULL.
-     */
-    public function testDoSelectJoin_NullFk()
-    {
-        $b1 = new Book();
-        $b1->setTitle("Test NULLFK 1");
-        $b1->setISBN("NULLFK-1");
-        $b1->save();
-
-        $b2 = new Book();
-        $b2->setTitle("Test NULLFK 2");
-        $b2->setISBN("NULLFK-2");
-        $b2->setAuthor(new Author());
-        $b2->getAuthor()->setFirstName("Hans")->setLastName("L");
-        $b2->save();
-
-        BookTableMap::clearInstancePool();
-        AuthorTableMap::clearInstancePool();
-
-        $c = new Criteria();
-        $c->add(BookTableMap::ISBN, 'NULLFK-%', Criteria::LIKE);
-        $c->addAscendingOrderByColumn(BookTableMap::ISBN);
-
-        $matches = BookPeer::doSelectJoinAuthor($c);
-        $this->assertEquals(2, count($matches), "Expected 2 matches back from new books; got back " . count($matches));
-
-        $this->assertNull($matches[0]->getAuthor(), "Expected first book author to be null");
-        $this->assertInstanceOf('Propel\Tests\Bookstore\Author', $matches[1]->getAuthor(), "Expected valid Author object for second book.");
-    }
-
-    public function testDoSelectJoinOneToOne()
-    {
-        $con = Propel::getServiceContainer()->getReadConnection(BookstoreEmployeeAccountTableMap::DATABASE_NAME);
-        $count = $con->getQueryCount();
-        Propel::disableInstancePooling();
-        $c = new Criteria();
-        $accs = BookstoreEmployeeAccountPeer::doSelectJoinBookstoreEmployee($c, $con);
-        Propel::enableInstancePooling();
-        $this->assertEquals(1, $con->getQueryCount() - $count, 'doSelectJoin() makes only one query in a one-to-one relationship');
-    }
-
-    public function testDoSelectOne()
-    {
-        $books = BookPeer::doSelect(new Criteria());
-        $book1 = $books[0];
-
-        $c = new Criteria();
-        $c->add(BookTableMap::ID, $book1->getId());
-        $res = BookPeer::doSelectOne($c);
-        $this->assertEquals($book1, $res, 'doSelectOne() returns a single object');
-
-        $c = new Criteria();
-        $c->add(BookTableMap::ID, 'foo');
-        $res = BookPeer::doSelectOne($c);
-        $this->assertNull($res, 'doSelectOne() returns null if the Criteria matches no record');
-    }
-
     public function testObjectInstances()
     {
-
-        $sample = BookPeer::doSelectOne(new Criteria());
+        $sample = BookQuery::create()->findOne();
         $samplePk = $sample->getPrimaryKey();
 
         // 1) make sure consecutive calls to retrieveByPK() return the same object.
@@ -240,7 +186,7 @@ class GeneratedPeerDoSelectTest extends BookstoreEmptyTestBase
         $this->assertTrue($bookauthor === $author, "Expected same object instance when calling fk object accessor as retrieveByPK()");
 
         // 4) test a doSelectJoin()
-        $morebooks = BookPeer::doSelectJoinAuthor(new Criteria());
+        $morebooks = BookQuery::create()->joinWith('Author')->find();
         for ($i=0,$j=0; $j < count($morebooks); $i++, $j++) {
             $testb1 = $allbooks[$i];
             $testb2 = $allbooks[$j];
@@ -338,8 +284,7 @@ class GeneratedPeerDoSelectTest extends BookstoreEmptyTestBase
         $bempacct->setPassword("johnp4ss");
         $bempacct->save();
 
-        $c = new Criteria();
-        $results = BookstoreEmployeeAccountPeer::doSelectJoinAll($c);
+        $results = BookstoreEmployeeAccountQuery::create()->find();
         $o = $results[0];
 
         $this->assertEquals('Admin', $o->getAcctAccessRole()->getName());
@@ -380,7 +325,7 @@ class GeneratedPeerDoSelectTest extends BookstoreEmptyTestBase
         $c->add(ReaderFavoriteTableMap::BOOK_ID, $b1->getId());
         $c->add(ReaderFavoriteTableMap::READER_ID, $r1->getId());
 
-        $results = ReaderFavoritePeer::doSelectJoinBookOpinion($c);
+        $results = ReaderFavoriteQuery::create(null, $c)->joinWith('BookOpinion')->find();
         $this->assertEquals(1, count($results), "Expected 1 result");
     }
 
@@ -464,7 +409,7 @@ class GeneratedPeerDoSelectTest extends BookstoreEmptyTestBase
         $c = new Criteria();
         $c->addJoin(array(BookstoreContestEntryTableMap::BOOKSTORE_ID, BookstoreContestEntryTableMap::CONTEST_ID), array(BookstoreContestTableMap::BOOKSTORE_ID, BookstoreContestTableMap::CONTEST_ID) );
 
-        $results = BookstoreContestEntryPeer::doSelect($c);
+        $results = BookstoreContestEntryQuery::create(null, $c)->find();
         $this->assertEquals(2, count($results) );
         foreach ($results as $result) {
             $this->assertEquals($bs1Id, $result->getBookstoreId() );
