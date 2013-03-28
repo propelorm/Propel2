@@ -1143,41 +1143,6 @@ abstract class ".$this->getUnqualifiedClassName(). $extendingPeerClass . " {
     }
 
     /**
-     * Adds the complex OM methods to the base addSelectMethods() function.
-     * @param string &$script The script will be modified in this method.
-     * @see PeerBuilder::addSelectMethods()
-     */
-    protected function addSelectMethods(&$script)
-    {
-        $table = $this->getTable();
-
-        parent::addSelectMethods($script);
-
-        $this->addDoSelectJoin($script);
-
-        $countFK = count($table->getForeignKeys());
-
-        $includeJoinAll = true;
-
-        foreach ($this->getTable()->getForeignKeys() as $fk) {
-            $tblFK = $table->getDatabase()->getTable($fk->getForeignTableName());
-            $this->declareClassFromBuilder($this->getNewStubPeerBuilder($tblFK));
-            if ($tblFK->isForReferenceOnly()) {
-                $includeJoinAll = false;
-            }
-        }
-
-        if ($includeJoinAll) {
-            if ($countFK > 0) {
-                $this->addDoSelectJoinAll($script);
-            }
-            if ($countFK > 1) {
-                $this->addDoSelectJoinAllExcept($script);
-            }
-        }
-    }
-
-    /**
      * Get the column offsets of the primary key(s) for specified table.
      *
      * @param  Table $tbl

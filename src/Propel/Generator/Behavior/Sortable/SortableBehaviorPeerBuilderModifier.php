@@ -129,7 +129,7 @@ static public function getMaxRank(" . ($useScope ? "\$scope = null, " : "") . "C
 
     protected function addRetrieveByRank(&$script)
     {
-        $peerClassName = $this->peerClassName;
+        $queryClassName = $this->queryClassName;
         $useScope = $this->behavior->useScope();
         $script .= "
 /**
@@ -159,7 +159,7 @@ static public function retrieveByRank(\$rank, " . ($useScope ? "\$scope = null, 
         }
         $script .= "
 
-    return $peerClassName::doSelectOne(\$c, \$con);
+    return $queryClassName::create(null, \$c)->findOne(\$con);
 }
 ";
     }
