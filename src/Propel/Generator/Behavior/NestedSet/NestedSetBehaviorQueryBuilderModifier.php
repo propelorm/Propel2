@@ -27,6 +27,8 @@ class NestedSetBehaviorQueryBuilderModifier
 
     protected $peerClassName;
 
+    protected $queryClassName;
+
     protected $tableMapClassName;
 
     public function __construct($behavior)
@@ -434,6 +436,7 @@ static public function retrieveRoots(Criteria \$criteria = null, ConnectionInter
     protected function addRetrieveRoot(&$script)
     {
         $peerClassName     = $this->peerClassName;
+        $queryClassName    = $this->queryClassName;
         $objectClassName   = $this->objectClassName;
         $useScope          = $this->behavior->useScope();
         $tableMapClassName = $this->builder->getTableMapClass();
@@ -460,7 +463,7 @@ static public function retrieveRoot(" . ($useScope ? "\$scope = null, " : "") . 
         }
         $script .= "
 
-    return $peerClassName::doSelectOne(\$c, \$con);
+    return $queryClassName::create(null, \$c)->findOne(\$con);
 }
 ";
     }
