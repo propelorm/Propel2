@@ -109,20 +109,7 @@ class SortableBehaviorPeerBuilderModifier
  */
 static public function getMaxRank(" . ($useScope ? "\$scope = null, " : "") . "ConnectionInterface \$con = null)
 {
-    if (null === \$con) {
-        \$con = Propel::getServiceContainer()->getReadConnection({$this->tableMapClassName}::DATABASE_NAME);
-    }
-    // shift the objects with a position lower than the one of object
-    \$c = new Criteria();
-    \$c->addSelectColumn('MAX(' . {$this->tableMapClassName}::RANK_COL . ')');";
-        if ($useScope) {
-            $script .= "
-    \$c->add({$this->tableMapClassName}::SCOPE_COL, \$scope, Criteria::EQUAL);";
-        }
-        $script .= "
-    \$stmt = {$this->peerClassName}::doSelectStmt(\$c, \$con);
-
-    return \$stmt->fetchColumn();
+    return {$this->queryClassName}::create()->getMaxRank(" . ($useScope ? "\$scope, " : "") . "\$con);
 }
 ";
     }
@@ -210,7 +197,7 @@ static public function reorder(array \$order, ConnectionInterface \$con = null)
 
     protected function addDoSelectOrderByRank(&$script)
     {
-        $peerClassName = $this->peerClassName;
+        $queryClassName = $this->queryClassName;
         $script .= "
 /**
  * Return an array of sortable objects ordered by position
@@ -241,7 +228,7 @@ static public function doSelectOrderByRank(Criteria \$criteria = null, \$order =
         \$criteria->addDescendingOrderByColumn({$this->tableMapClassName}::RANK_COL);
     }
 
-    return $peerClassName::doSelect(\$criteria, \$con);
+    return $queryClassName::create(null, \$criteria)->find(\$con);
 }
 ";
     }

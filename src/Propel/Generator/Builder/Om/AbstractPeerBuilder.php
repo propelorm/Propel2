@@ -54,11 +54,6 @@ abstract class AbstractPeerBuilder extends AbstractOMBuilder
     {
         $this->addAddSelectColumns($script);
 
-        // consider refactoring the doSelect stuff
-        // into a top-level method
-        $this->addDoSelect($script);
-        $this->addDoSelectStmt($script);     // <-- there's PDO code in here
-
         $this->addPopulateObjects($script); // <-- there's PDO code in here
         $this->addPopulateObject($script);
     }
