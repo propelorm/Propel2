@@ -68,23 +68,23 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         $book->setISBN('TEST');
         // No save ...
 
-        $this->assertEquals(0, count($list->getBookListRels()) );
-        $this->assertEquals(0, count($book->getBookListRels()) );
-        $this->assertEquals(0, count(BookListRelPeer::doSelect(new Criteria())) );
+        $this->assertCount(0, $list->getBookListRels());
+        $this->assertCount(0, $book->getBookListRels());
+        $this->assertCount(0, BookListRelQuery::create()->find());
 
         $xref = new BookListRel();
         $xref->setBook($book);
         $list->addBookListRel($xref);
 
-        $this->assertEquals(1, count($list->getBookListRels()));
-        $this->assertEquals(1, count($book->getBookListRels()) );
-        $this->assertEquals(0, count(BookListRelPeer::doSelect(new Criteria())) );
+        $this->assertCount(1, $list->getBookListRels());
+        $this->assertCount(1, $book->getBookListRels());
+        $this->assertCount(0, BookListRelQuery::create()->find());
 
         $list->save();
 
-        $this->assertEquals(1, count($list->getBookListRels()) );
-        $this->assertEquals(1, count($book->getBookListRels()) );
-        $this->assertEquals(1, count(BookListRelPeer::doSelect(new Criteria())) );
+        $this->assertCount(1, $list->getBookListRels());
+        $this->assertCount(1, $book->getBookListRels());
+        $this->assertCount(1, BookListRelQuery::create()->find());
 
     }
 
@@ -102,23 +102,22 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         $book->setISBN('TEST');
         // No save (yet) ...
 
-        $this->assertEquals(0, count($list->getBookListRels()) );
-        $this->assertEquals(0, count($book->getBookListRels()) );
-        $this->assertEquals(0, count(BookListRelPeer::doSelect(new Criteria())) );
+        $this->assertCount(0, $list->getBookListRels());
+        $this->assertCount(0, $book->getBookListRels());
+        $this->assertCount(0, BookListRelQuery::create()->find());
 
         $xref = new BookListRel();
         $xref->setBookClubList($list);
         $book->addBookListRel($xref);
 
-        $this->assertEquals(1, count($list->getBookListRels()) );
-        $this->assertEquals(1, count($book->getBookListRels()) );
-        $this->assertEquals(0, count(BookListRelPeer::doSelect(new Criteria())) );
+        $this->assertCount(1, $list->getBookListRels());
+        $this->assertCount(1, $book->getBookListRels());
+        $this->assertCount(0, BookListRelQuery::create()->find());
         $book->save();
 
-        $this->assertEquals(1, count($list->getBookListRels()) );
-        $this->assertEquals(1, count($book->getBookListRels()) );
-        $this->assertEquals(1, count(BookListRelPeer::doSelect(new Criteria())) );
-
+        $this->assertCount(1, $list->getBookListRels());
+        $this->assertCount(1, $book->getBookListRels());
+        $this->assertCount(1, BookListRelQuery::create()->find());
     }
 
     /**
@@ -136,9 +135,9 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         $book->setISBN('TEST');
         // No save (yet) ...
 
-        $this->assertEquals(0, count($list->getBookListRels()) );
-        $this->assertEquals(0, count($book->getBookListRels()) );
-        $this->assertEquals(0, count(BookListRelPeer::doSelect(new Criteria())) );
+        $this->assertCount(0, $list->getBookListRels());
+        $this->assertCount(0, $book->getBookListRels());
+        $this->assertCount(0, BookListRelQuery::create()->find());
 
         // Now set the relationship from the opposite direction.
 
@@ -146,14 +145,14 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         $xref->setBookClubList($list);
         $book->addBookListRel($xref);
 
-        $this->assertEquals(1, count($list->getBookListRels()) );
-        $this->assertEquals(1, count($book->getBookListRels()) );
-        $this->assertEquals(0, count(BookListRelPeer::doSelect(new Criteria())) );
+        $this->assertCount(1, $list->getBookListRels());
+        $this->assertCount(1, $book->getBookListRels());
+        $this->assertCount(0, BookListRelQuery::create()->find());
         $book->save();
 
-        $this->assertEquals(1, count($list->getBookListRels()) );
-        $this->assertEquals(1, count($book->getBookListRels()) );
-        $this->assertEquals(1, count(BookListRelPeer::doSelect(new Criteria())) );
+        $this->assertCount(1, $list->getBookListRels());
+        $this->assertCount(1, $book->getBookListRels());
+        $this->assertCount(1, BookListRelQuery::create()->find());
 
     }
 

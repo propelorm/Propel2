@@ -331,10 +331,10 @@ class NestedSetBehaviorQueryBuilderModifierWithScopeTest extends TestCase
          | \
          t9 t10
          */
-        $this->assertEquals(array($t1, $t8), \NestedSetTable10Query::retrieveRoots(), 'retrieveRoots() returns the tree roots');
+        $this->assertEquals(array($t1, $t8), \NestedSetTable10Query::retrieveRoots()->getArrayCopy(), 'retrieveRoots() returns the tree roots');
         $c = new Criteria();
         $c->add(\Map\NestedSetTable10TableMap::TITLE, 't1');
-        $this->assertEquals(array($t1), \NestedSetTable10Query::retrieveRoots($c), 'retrieveRoots() accepts a Criteria as first parameter');
+        $this->assertEquals(array($t1), \NestedSetTable10Query::retrieveRoots($c)->getArrayCopy(), 'retrieveRoots() accepts a Criteria as first parameter');
     }
 
     public function testRetrieveRoot()
@@ -377,13 +377,13 @@ class NestedSetBehaviorQueryBuilderModifierWithScopeTest extends TestCase
          t9 t10
          */
         $tree = \NestedSetTable10Query::retrieveTree(1);
-        $this->assertEquals(array($t1, $t2, $t3, $t4, $t5, $t6, $t7), $tree, 'retrieveTree() retrieves the scoped tree');
+        $this->assertEquals(array($t1, $t2, $t3, $t4, $t5, $t6, $t7), $tree->getArrayCopy(), 'retrieveTree() retrieves the scoped tree');
         $tree = \NestedSetTable10Query::retrieveTree(2);
-        $this->assertEquals(array($t8, $t9, $t10), $tree, 'retrieveTree() retrieves the scoped tree');
+        $this->assertEquals(array($t8, $t9, $t10), $tree->getArrayCopy(), 'retrieveTree() retrieves the scoped tree');
         $c = new Criteria();
         $c->add(\NestedSetTable10::LEFT_COL, 4, Criteria::GREATER_EQUAL);
         $tree = \NestedSetTable10Query::retrieveTree(1, $c);
-        $this->assertEquals(array($t3, $t4, $t5, $t6, $t7), $tree, 'retrieveTree() accepts a Criteria as first parameter');
+        $this->assertEquals(array($t3, $t4, $t5, $t6, $t7), $tree->getArrayCopy(), 'retrieveTree() accepts a Criteria as first parameter');
     }
 
     public function testDeleteTree()
@@ -395,7 +395,7 @@ class NestedSetBehaviorQueryBuilderModifierWithScopeTest extends TestCase
             't9' => array(2, 3, 1),
             't10' => array(4, 5, 1),
         );
-        $this->assertEquals($this->dumpTreeWithScope(2), $expected, 'deleteTree() does not delete anything out of the scope');
+        $this->assertEquals($expected, $this->dumpTreeWithScope(2), 'deleteTree() does not delete anything out of the scope');
     }
 
     public function testShiftRLValues()
@@ -413,13 +413,13 @@ class NestedSetBehaviorQueryBuilderModifierWithScopeTest extends TestCase
             't6' => array(8, 9, 3),
             't7' => array(10, 11, 3),
         );
-        $this->assertEquals($this->dumpTreeWithScope(1), $expected, 'shiftRLValues does not shift anything when the first parameter is higher than the highest right value');
+        $this->assertEquals($expected, $this->dumpTreeWithScope(1), 'shiftRLValues does not shift anything when the first parameter is higher than the highest right value');
         $expected = array(
             't8' => array(1, 6, 0),
             't9' => array(2, 3, 1),
             't10' => array(4, 5, 1),
         );
-        $this->assertEquals($this->dumpTreeWithScope(2), $expected, 'shiftRLValues does not shift anything out of the scope');
+        $this->assertEquals($expected, $this->dumpTreeWithScope(2), 'shiftRLValues does not shift anything out of the scope');
         $this->initTreeWithScope();
         \NestedSetTable10Query::shiftRLValues(1, 1, null, 1);
         \Map\NestedSetTable10TableMap::clearInstancePool();
@@ -432,13 +432,13 @@ class NestedSetBehaviorQueryBuilderModifierWithScopeTest extends TestCase
             't6' => array(9, 10, 3),
             't7' => array(11, 12, 3),
         );
-        $this->assertEquals($this->dumpTreeWithScope(1), $expected, 'shiftRLValues can shift all nodes to the right');
+        $this->assertEquals($expected, $this->dumpTreeWithScope(1), 'shiftRLValues can shift all nodes to the right');
         $expected = array(
             't8' => array(1, 6, 0),
             't9' => array(2, 3, 1),
             't10' => array(4, 5, 1),
         );
-        $this->assertEquals($this->dumpTreeWithScope(2), $expected, 'shiftRLValues does not shift anything out of the scope');
+        $this->assertEquals($expected, $this->dumpTreeWithScope(2), 'shiftRLValues does not shift anything out of the scope');
         $this->initTreeWithScope();
         \NestedSetTable10Query::shiftRLValues(-1, 1, null, 1);
         \Map\NestedSetTable10TableMap::clearInstancePool();
@@ -451,13 +451,13 @@ class NestedSetBehaviorQueryBuilderModifierWithScopeTest extends TestCase
             't6' => array(7, 8, 3),
             't7' => array(9, 10, 3),
         );
-        $this->assertEquals($this->dumpTreeWithScope(1), $expected, 'shiftRLValues can shift all nodes to the left');
+        $this->assertEquals($expected, $this->dumpTreeWithScope(1),'shiftRLValues can shift all nodes to the left');
         $expected = array(
             't8' => array(1, 6, 0),
             't9' => array(2, 3, 1),
             't10' => array(4, 5, 1),
         );
-        $this->assertEquals($this->dumpTreeWithScope(2), $expected, 'shiftRLValues does not shift anything out of the scope');
+        $this->assertEquals($expected, $this->dumpTreeWithScope(2), 'shiftRLValues does not shift anything out of the scope');
         $this->initTreeWithScope();
         \NestedSetTable10Query::shiftRLValues(1, 5, null, 1);
         \Map\NestedSetTable10TableMap::clearInstancePool();
@@ -470,13 +470,13 @@ class NestedSetBehaviorQueryBuilderModifierWithScopeTest extends TestCase
             't6' => array(9, 10, 3),
             't7' => array(11, 12, 3),
         );
-        $this->assertEquals($this->dumpTreeWithScope(1), $expected, 'shiftRLValues can shift some nodes to the right');
+        $this->assertEquals($expected, $this->dumpTreeWithScope(1), 'shiftRLValues can shift some nodes to the right');
         $expected = array(
             't8' => array(1, 6, 0),
             't9' => array(2, 3, 1),
             't10' => array(4, 5, 1),
         );
-        $this->assertEquals($this->dumpTreeWithScope(2), $expected, 'shiftRLValues does not shift anything out of the scope');
+        $this->assertEquals($expected, $this->dumpTreeWithScope(2), 'shiftRLValues does not shift anything out of the scope');
     }
 
     public function testShiftLevel()
@@ -493,13 +493,13 @@ class NestedSetBehaviorQueryBuilderModifierWithScopeTest extends TestCase
             't6' => array(8, 9, 4),
             't7' => array(10, 11, 4),
         );
-        $this->assertEquals($this->dumpTreeWithScope(1), $expected, 'shiftLevel can shift level with a scope');
+        $this->assertEquals($expected, $this->dumpTreeWithScope(1), 'shiftLevel can shift level with a scope');
         $expected = array(
             't8' => array(1, 6, 0),
             't9' => array(2, 3, 1),
             't10' => array(4, 5, 1),
         );
-        $this->assertEquals($this->dumpTreeWithScope(2), $expected, 'shiftLevel does not shift anything out of the scope');
+        $this->assertEquals($expected, $this->dumpTreeWithScope(2), 'shiftLevel does not shift anything out of the scope');
     }
 
     public function testMakeRoomForLeaf()

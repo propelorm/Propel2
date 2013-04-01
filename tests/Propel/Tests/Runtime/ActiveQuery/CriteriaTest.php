@@ -935,7 +935,7 @@ class CriteriaTest extends BookstoreTestBase
         $params = array();
         $result = BasePeer::createSelectSql($c, $params);
         $this->assertEquals($expected, $result);
-        BasePEer::doSelect($c, $this->con);
+        BasePeer::doSelect($c, $this->con);
         $expected = 'SELECT book.TITLE, book.ISBN AS isb_n FROM book HAVING isb_n=\'1234567890123\'';
         $this->assertEquals($expected, $this->con->getLastExecutedQuery());
     }
@@ -950,7 +950,7 @@ class CriteriaTest extends BookstoreTestBase
         $params = array();
         $result = BasePeer::createSelectSql($c, $params);
         $this->assertEquals($expected, $result);
-        BasePEer::doSelect($c, $this->con);
+        BasePeer::doSelect($c, $this->con);
         $expected = 'SELECT book.TITLE, book.ISBN AS isb_n FROM book HAVING isb_n = \'1234567890123\'';
         $this->assertEquals($expected, $this->con->getLastExecutedQuery());
     }

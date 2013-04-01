@@ -76,7 +76,7 @@ class SortableBehaviorPeerBuilderModifierWithScopeTest extends TestCase
     {
         $c = new Criteria();
         $c->add(\Map\SortableTable12TableMap::SCOPE_COL, 1);
-        $objects = \SortableTable12Peer::doSelectOrderByRank($c);
+        $objects = \SortableTable12Peer::doSelectOrderByRank($c)->getArrayCopy();
         $oldRank = 0;
         while ($object = array_shift($objects)) {
             $this->assertTrue($object->getRank() > $oldRank);
@@ -84,7 +84,7 @@ class SortableBehaviorPeerBuilderModifierWithScopeTest extends TestCase
         }
         $c = new Criteria();
         $c->add(\Map\SortableTable12TableMap::SCOPE_COL, 1);
-        $objects = \SortableTable12Peer::doSelectOrderByRank($c, Criteria::DESC);
+        $objects = \SortableTable12Peer::doSelectOrderByRank($c, Criteria::DESC)->getArrayCopy();
         $oldRank = 10;
         while ($object = array_shift($objects)) {
             $this->assertTrue($object->getRank() < $oldRank);

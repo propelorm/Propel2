@@ -51,7 +51,7 @@ class SortableBehaviorPeerBuilderModifierTest extends TestCase
 
     public function testReorder()
     {
-        $objects = \SortableTable11Peer::doSelect(new Criteria());
+        $objects = \SortableTable11Query::create()->find();
         $ids = array();
         foreach ($objects as $object) {
             $ids[]= $object->getPrimaryKey();
@@ -65,13 +65,13 @@ class SortableBehaviorPeerBuilderModifierTest extends TestCase
 
     public function testDoSelectOrderByRank()
     {
-        $objects = \SortableTable11Peer::doSelectOrderByRank();
+        $objects = \SortableTable11Peer::doSelectOrderByRank()->getArrayCopy();
         $oldRank = 0;
         while ($object = array_shift($objects)) {
             $this->assertTrue($object->getRank() > $oldRank);
             $oldRank = $object->getRank();
         }
-        $objects = \SortableTable11Peer::doSelectOrderByRank(null, Criteria::DESC);
+        $objects = \SortableTable11Peer::doSelectOrderByRank(null, Criteria::DESC)->getArrayCopy();
         $oldRank = 10;
         while ($object = array_shift($objects)) {
             $this->assertTrue($object->getRank() < $oldRank);

@@ -15,6 +15,7 @@ use Propel\Tests\Bookstore\BookPeer;
 use Propel\Tests\Bookstore\BookQuery;
 use Propel\Tests\Bookstore\Bookstore;
 use Propel\Tests\Bookstore\BookstorePeer;
+use Propel\Tests\Bookstore\BookstoreQuery;
 use Propel\Tests\Bookstore\Map\AuthorTableMap;
 use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\Bookstore\Map\BookstoreTableMap;
@@ -46,7 +47,7 @@ class BasePeerTest extends BookstoreTestBase
             } else {
                 $this->markTestSkipped('Configured database vendor is not PostgreSQL');
             }
-            $stmt = BookPeer::doSelectStmt( $c );
+            $obj = BookQuery::create(null, $c)->find();
         } catch (PropelException $x) {
             $this->fail("Paring of nested functions failed: " . $x->getMessage());
         }
@@ -109,7 +110,7 @@ class BasePeerTest extends BookstoreTestBase
         $c->add(BookstoreTableMap::STORE_NAME, 'SortTest%', Criteria::LIKE);
         $c->addAscendingOrderByColumn(BookstoreTableMap::POPULATION_SERVED);
 
-        $rows = BookstorePeer::doSelect($c);
+        $rows = BookstoreQuery::create(null, $c)->find();
         $this->assertEquals('SortTest2', $rows[0]->getStoreName());
         $this->assertEquals('SortTest3', $rows[1]->getStoreName());
         $this->assertEquals('SortTest1', $rows[2]->getStoreName());

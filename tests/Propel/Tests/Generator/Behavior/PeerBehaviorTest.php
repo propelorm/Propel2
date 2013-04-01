@@ -46,26 +46,6 @@ class PeerBehaviorTest extends BookstoreTestBase
         );
     }
 
-    public function testPreSelect()
-    {
-        $con = Propel::getServiceContainer()->getReadConnection(Table3TableMap::DATABASE_NAME);
-        $con->preSelect = 0;
-        Table3Peer::doSelect(new Criteria, $con);
-        $this->assertNotEquals($con->preSelect, 0, 'preSelect hook is called in doSelect()');
-        $con->preSelect = 0;
-        Table3Peer::doSelectStmt(new Criteria, $con);
-        $this->assertNotEquals($con->preSelect, 0, 'preSelect hook is called in doSelectStmt()');
-        // and for the doSelectJoin and doCountJoin methods, well just believe my word
-
-        $con->preSelect = 0;
-        Table3Peer::doSelect(new Criteria, $con);
-        $this->assertEquals(
-            'Propel\Generator\Builder\Om\PeerBuilder',
-            $con->preSelect,
-            'preSelect hook is called with the peer builder as parameter'
-        );
-    }
-
     public function testPeerFilter()
     {
         Table3TableMap::TABLE_NAME;

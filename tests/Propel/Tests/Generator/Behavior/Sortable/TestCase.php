@@ -124,9 +124,7 @@ XML;
 
     protected function getFixturesArray()
     {
-        $c = new Criteria();
-        $c->addAscendingOrderByColumn(\Map\SortableTable11TableMap::RANK_COL);
-        $ts = \SortableTable11Peer::doSelect($c);
+        $ts = \SortableTable11Query::create()->orderByRank()->find();
         $ret = array();
         foreach ($ts as $t) {
             $ret[$t->getRank()] = $t->getTitle();
@@ -143,9 +141,7 @@ XML;
             $c->add(\Map\SortableTable12TableMap::SCOPE_COL, $scope);
         }
 
-        $c->addAscendingOrderByColumn(\Map\SortableTable12TableMap::RANK_COL);
-
-        $ts  = \SortableTable12Peer::doSelect($c);
+        $ts  = \SortableTable12Query::create(null, $c)->orderByPosition()->find();
         $ret = array();
 
         foreach ($ts as $t) {

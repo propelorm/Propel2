@@ -313,11 +313,11 @@ class NestedSetBehaviorQueryBuilderModifierTest extends TestCase
     public function testRetrieveTree()
     {
         list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
-        $tree = \NestedSetTable9Query::retrieveTree();
+        $tree = \NestedSetTable9Query::retrieveTree()->getArrayCopy();
         $this->assertEquals(array($t1, $t2, $t3, $t4, $t5, $t6, $t7), $tree, 'retrieveTree() retrieves the whole tree');
         $c = new Criteria();
         $c->add(\NestedSetTable9::LEFT_COL, 4, Criteria::GREATER_EQUAL);
-        $tree = \NestedSetTable9Query::retrieveTree($c);
+        $tree = \NestedSetTable9Query::retrieveTree($c)->getArrayCopy();
         $this->assertEquals(array($t3, $t4, $t5, $t6, $t7), $tree, 'retrieveTree() accepts a Criteria as first parameter');
     }
 
@@ -342,7 +342,7 @@ class NestedSetBehaviorQueryBuilderModifierTest extends TestCase
     {
         $this->initTree();
         \NestedSetTable9Query::deleteTree();
-        $this->assertEquals(array(), \NestedSetTable9Peer::doSelect(new Criteria()), 'deleteTree() deletes the whole tree');
+        $this->assertCount(0, \NestedSetTable9Query::create()->find(), 'deleteTree() deletes the whole tree');
     }
 
     public function testShiftRLValuesDelta()
