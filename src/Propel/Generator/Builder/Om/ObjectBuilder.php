@@ -270,6 +270,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             '\Propel\Runtime\Exception\BadMethodCallException',
             '\Propel\Runtime\Exception\PropelException',
             '\Propel\Runtime\ActiveQuery\Criteria',
+            '\Propel\Runtime\ActiveQuery\ModelCriteria',
             '\Propel\Runtime\ActiveRecord\ActiveRecordInterface',
             '\Propel\Runtime\Parser\AbstractParser',
             '\Propel\Runtime\Propel',
@@ -1307,7 +1308,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         \$c->addSelectColumn(".$this->getColumnConstant($column).");
         try {
             \$row = array(0 => null);
-            \$stmt = ".$this->getPeerClassName()."::doSelectStmt(\$c, \$con);
+            \$stmt = ".$this->getQueryClassName()."::create(null, \$c)->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find(\$con);
             \$stmt->bindColumn(1, \$row[0], PDO::PARAM_LOB, 0, PDO::SQLSRV_ENCODING_BINARY);
             \$stmt->fetch(PDO::FETCH_BOUND);
             \$stmt->closeCursor();";
@@ -1316,7 +1317,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         \$c = \$this->buildPkeyCriteria();
         \$c->addSelectColumn(".$this->getColumnConstant($column).");
         try {
-            \$stmt = ".$this->getPeerClassName()."::doSelectStmt(\$c, \$con);
+            \$stmt = ".$this->getQueryClassName()."::create(null, \$c)->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find(\$con);
             \$row = \$stmt->fetch(PDO::FETCH_NUM);
             \$stmt->closeCursor();";
         }
@@ -2724,7 +2725,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         // We don't need to alter the object instance pool; we're just modifying this instance
         // already in the pool.
 
-        \$stmt = ".$this->getPeerClassName()."::doSelectStmt(\$this->buildPkeyCriteria(), \$con);
+        \$stmt = ".$this->getQueryClassName()."::create(null, \$this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find(\$con);
         \$row = \$stmt->fetch(PDO::FETCH_NUM);
         \$stmt->closeCursor();
         if (!\$row) {

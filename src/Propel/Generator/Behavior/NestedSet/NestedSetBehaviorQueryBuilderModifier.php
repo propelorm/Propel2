@@ -410,7 +410,7 @@ public function findTree(" . ($useScope ? "\$scope = null, " : "") . "\$con = nu
 
     protected function addRetrieveRoots(&$script)
     {
-        $peerClassName     = $this->peerClassName;
+        $queryClassName     = $this->queryClassName;
         $objectClassName   = $this->objectClassName;
         $tableMapClassName = $this->builder->getTableMapClass();
 
@@ -428,7 +428,7 @@ static public function retrieveRoots(Criteria \$criteria = null, ConnectionInter
     }
     \$criteria->add($objectClassName::LEFT_COL, 1, Criteria::EQUAL);
 
-    return $peerClassName::doSelect(\$criteria, \$con);
+    return $queryClassName::create(null, \$criteria)->find(\$con);
 }
 ";
     }
@@ -470,7 +470,7 @@ static public function retrieveRoot(" . ($useScope ? "\$scope = null, " : "") . 
 
     protected function addRetrieveTree(&$script)
     {
-        $peerClassName     = $this->peerClassName;
+        $queryClassName     = $this->queryClassName;
         $objectClassName   = $this->objectClassName;
         $useScope          = $this->behavior->useScope();
         $tableMapClassName = $this->builder->getTableMapClass();
@@ -500,7 +500,7 @@ static public function retrieveTree(" . ($useScope ? "\$scope = null, " : "") . 
         }
         $script .= "
 
-    return $peerClassName::doSelect(\$criteria, \$con);
+    return $queryClassName::create(null, \$criteria)->find(\$con);
 }
 ";
     }
@@ -683,9 +683,8 @@ static public function shiftLevel(\$delta, \$first, \$last" . ($useScope ? ", \$
 
     protected function addUpdateLoadedNodes(&$script)
     {
-        $peerClassName   = $this->peerClassName;
+        $queryClassName  = $this->queryClassName;
         $objectClassName = $this->objectClassName;
-        $tableMapClass   = $this->builder->getTableMapClass();
         $tableMapClassName = $this->tableMapClassName;
 
         $script .= "
@@ -742,7 +741,7 @@ static public function updateLoadedNodes(\$prune = null, ConnectionInterface \$c
         }
 
         $script .= "
-            \$stmt = $peerClassName::doSelectStmt(\$criteria, \$con);
+            \$stmt = $queryClassName::create(null, \$criteria)->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find(\$con);
             while (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
                 \$key = $tableMapClassName::getPrimaryKeyHashFromRow(\$row, 0);
                 if (null !== (\$object = $tableMapClassName::getInstanceFromPool(\$key))) {";
@@ -806,10 +805,11 @@ static public function makeRoomForLeaf(\$left" . ($useScope ? ", \$scope" : "").
 
     protected function addFixLevels(&$script)
     {
-        $peerClassName = $this->peerClassName;
-        $objectClassName = $this->objectClassName;
+        $objectClassName   = $this->objectClassName;
+        $peerClassName     = $this->peerClassName;
+        $queryClassName    = $this->queryClassName;
         $tableMapClassName = $this->tableMapClassName;
-        $useScope = $this->behavior->useScope();
+        $useScope          = $this->behavior->useScope();
 
         $script .= "
 /**
@@ -831,7 +831,7 @@ static public function fixLevels(" . ($useScope ? "\$scope, " : ""). "Connection
         }
         $script .= "
     \$c->addAscendingOrderByColumn($objectClassName::LEFT_COL);
-    \$stmt = $peerClassName::doSelectStmt(\$c, \$con);
+    \$stmt = $queryClassName::create(null, \$c)->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find(\$con);
     ";
         if (!$this->table->getChildrenColumn()) {
             $script .= "
