@@ -14,8 +14,8 @@ use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 use Propel\Tests\Bookstore\Author;
 use Propel\Tests\Bookstore\AuthorPeer;
 use Propel\Tests\Bookstore\AuthorQuery;
-use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\BookPeer;
+use Propel\Tests\Bookstore\BookQuery;
 use Propel\Tests\Bookstore\Map\AuthorTableMap;
 use Propel\Tests\Bookstore\Map\BookTableMap;
 
@@ -318,7 +318,7 @@ class PropelPDOTest extends BookstoreTestBase
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         $c = new Criteria();
         $c->add(BookTableMap::ID, array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1), Criteria::IN);
-        $books = BookPeer::doSelect($c, $con);
+        $books = BookQuery::create(null, $c)->find($con);
         $expected = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.ID IN (1,1,1,1,1,1,1,1,1,1,1,1)";
         $this->assertEquals($expected, $con->getLastExecutedQuery(), 'PropelPDO correctly replaces arguments in queries');
     }
@@ -351,11 +351,11 @@ class PropelPDOTest extends BookstoreTestBase
         $con->useDebug(false);
         $this->assertEquals('', $con->getLastExecutedQuery(), 'PropelPDO reinitializes the latest query when debug is set to false');
 
-        $books = BookPeer::doSelect($c, $con);
+        $books = BookQuery::create(null, $c)->find($con);
         $this->assertEquals('', $con->getLastExecutedQuery(), 'PropelPDO does not update the last executed query when useLogging is false');
 
         $con->useDebug(true);
-        $books = BookPeer::doSelect($c, $con);
+        $books = BookQuery::create(null, $c)->find($con);
         $latestExecutedQuery = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.TITLE LIKE 'Harry%s'";
         if (!Propel::getServiceContainer()->getAdapter(BookTableMap::DATABASE_NAME)->useQuoteIdentifier()) {
             $latestExecutedQuery = str_replace('`', '', $latestExecutedQuery);
@@ -394,11 +394,11 @@ class PropelPDOTest extends BookstoreTestBase
         $con->useDebug(false);
         $this->assertEquals(0, $con->getQueryCount(), 'PropelPDO does not update the query count when useLogging is false');
 
-        $books = BookPeer::doSelect($c, $con);
+        $books = BookQuery::create(null, $c)->find($con);
         $this->assertEquals(0, $con->getQueryCount(), 'PropelPDO does not update the query count when useLogging is false');
 
         $con->useDebug(true);
-        $books = BookPeer::doSelect($c, $con);
+        $books = BookQuery::create(null, $c)->find($con);
         $this->assertEquals(1, $con->getQueryCount(), 'PropelPDO updates the query count when useLogging is true');
 
         BookPeer::doDeleteAll($con);
@@ -473,7 +473,7 @@ class PropelPDOTest extends BookstoreTestBase
         $c = new Criteria();
         $c->add(BookTableMap::TITLE, 'Harry%s', Criteria::LIKE);
 
-        $books = BookPeer::doSelect($c, $con);
+        $books = BookQuery::create(null, $c)->find($con);
         $latestExecutedQuery = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.TITLE LIKE 'Harry%s'";
         $this->assertEquals($latestExecutedQuery, $handler->latestMessage, 'PropelPDO logs queries and populates bound parameters in debug mode');
 

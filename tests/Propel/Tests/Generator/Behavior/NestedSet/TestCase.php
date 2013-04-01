@@ -139,10 +139,7 @@ XML;
 
     protected function dumpTree()
     {
-        $c = new Criteria();
-        $c->addAscendingOrderBycolumn(\Map\NestedSetTable9TableMap::TITLE);
-
-        return $this->dumpNodes(\NestedSetTable9Peer::doSelect($c));
+        return $this->dumpNodes(\NestedSetTable9Query::create()->orderByTitle()->find());
     }
 
     protected function dumpNodes($nodes)
@@ -161,10 +158,6 @@ XML;
 
     protected function dumpTreeWithScope($scope)
     {
-        $c = new Criteria();
-        $c->add(\NestedSetTable10::SCOPE_COL, $scope);
-        $c->addAscendingOrderBycolumn(\Map\NestedSetTable10TableMap::TITLE);
-
-        return $this->dumpNodes(\NestedSetTable10Peer::doSelect($c));
+        return $this->dumpNodes(\NestedSetTable10Query::create()->filterByMyScopeColumn($scope)->orderByTitle()->find());
     }
 }

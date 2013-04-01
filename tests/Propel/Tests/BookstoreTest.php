@@ -10,11 +10,7 @@
 
 namespace Propel\Tests;
 
-use Propel\Tests\Bookstore\BookClubListQuery;
-
 use Propel\Runtime\ActiveQuery\Criteria;
-
-use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
 
 use Propel\Tests\Bookstore\Author;
 use Propel\Tests\Bookstore\AuthorPeer;
@@ -23,9 +19,9 @@ use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\BookPeer;
 use Propel\Tests\Bookstore\BookQuery;
 use Propel\Tests\Bookstore\BookClubList;
-use Propel\Tests\Bookstore\BookClubListPeer;
+use Propel\Tests\Bookstore\BookListRelQuery;
+use Propel\Tests\Bookstore\BookClubListQuery;
 use Propel\Tests\Bookstore\BookListRel;
-use Propel\Tests\Bookstore\BookListRelPeer;
 use Propel\Tests\Bookstore\Publisher;
 use Propel\Tests\Bookstore\PublisherPeer;
 use Propel\Tests\Bookstore\PublisherQuery;
@@ -34,11 +30,10 @@ use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\Bookstore\Map\BookClubListTableMap;
 use Propel\Tests\Bookstore\Map\PublisherTableMap;
 use Propel\Tests\Bookstore\Media;
-use Propel\Tests\Bookstore\MediaPeer;
 use Propel\Tests\Bookstore\MediaQuery;
 use Propel\Tests\Bookstore\Review;
-use Propel\Tests\Bookstore\ReviewPeer;
 use Propel\Tests\Bookstore\ReviewQuery;
+use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
 
 use \DateTime;
 
@@ -179,25 +174,16 @@ class BookstoreTest extends BookstoreEmptyTestBase
         // Perform a "complex" search
         // --------------------------
 
-        $crit = new Criteria();
-        $crit->add(BookTableMap::TITLE, 'Harry%', Criteria::LIKE);
-        $results = BookPeer::doSelect($crit);
+        $results = BookQuery::create()->filterByTitle('Harry%', Criteria::LIKE)->find();
         $this->assertEquals(1, count($results));
 
-        $crit2 = new Criteria();
-        $crit2->add(BookTableMap::ISBN, array("0380977427", "0140422161"), Criteria::IN);
-        $results = BookPeer::doSelect($crit2);
+        $results = BookQuery::create()->filterByISBN(array("0380977427", "0140422161"), Criteria::IN)->find();
         $this->assertEquals(2, count($results));
 
         // Perform a "limit" search
         // ------------------------
 
-        $crit = new Criteria();
-        $crit->setLimit(2);
-        $crit->setOffset(1);
-        $crit->addAscendingOrderByColumn(BookTableMap::TITLE);
-
-        $results = BookPeer::doSelect($crit);
+        $results = BookQuery::create()->limit(2)->offset(1)->orderByTitle()->find();
         $this->assertEquals(2, count($results));
 
         // we ordered on book title, so we expect to get
@@ -271,8 +257,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
         // Testing doCount() functionality
         // -------------------------------
 
-        $c = new Criteria();
-        $records = BookPeer::doSelect($c);
+        $records = BookQuery::create()->find();
         $count = BookQuery::create()->count();
 
         $this->assertEquals($count, count($records), 'correct number of results');
@@ -392,14 +377,13 @@ class BookstoreTest extends BookstoreEmptyTestBase
         $blc1->delete();
         $blc2->delete();
 
-        $this->assertEquals(array(), AuthorPeer::doSelect(new Criteria()), 'no records in [author] table');
-        $this->assertEquals(array(), PublisherPeer::doSelect(new Criteria()), 'no records in [publisher] table');
-        $this->assertEquals(array(), BookPeer::doSelect(new Criteria()), 'no records in [book] table');
-        $this->assertEquals(array(), ReviewPeer::doSelect(new Criteria()), 'no records in [review] table');
-        $this->assertEquals(array(), MediaPeer::doSelect(new Criteria()), 'no records in [media] table');
-        $this->assertEquals(array(), BookClubListPeer::doSelect(new Criteria()), 'no records in [book_club_list] table');
-        $this->assertEquals(array(), BookListRelPeer::doSelect(new Criteria()), 'no records in [book_x_list] table');
-
+        $this->assertCount(0, AuthorQuery::create()->find(), 'no records in [author] table');
+        $this->assertCount(0, PublisherQuery::create()->find(), 'no records in [publisher] table');
+        $this->assertCount(0, BookQuery::create()->find(), 'no records in [book] table');
+        $this->assertCount(0, ReviewQuery::create()->find(), 'no records in [review] table');
+        $this->assertCount(0, MediaQuery::create()->find(), 'no records in [media] table');
+        $this->assertCount(0, BookClubListQuery::create()->find(), 'no records in [book_club_list] table');
+        $this->assertCount(0, BookListRelQuery::create()->find(), 'no records in [book_x_list] table');
     }
 
     public function testScenarioUsingQuery()
@@ -617,16 +601,10 @@ class BookstoreTest extends BookstoreEmptyTestBase
 
         $this->assertEquals(md5(file_get_contents($blob2_path)), md5(stream_get_contents($m2_lookup->getCoverImage())), 'BLOB was correctly overwritten');
 
-        // Testing doCount() functionality
+        // Testing count() functionality
         // -------------------------------
 
-        // old way
-        $c = new Criteria();
-        $records = BookPeer::doSelect($c);
-        $count = BookQuery::create()->count();
-        $this->assertEquals($count, count($records), 'correct number of results');
-
-        // new way
+        $records = BookQuery::create()->find();
         $count = BookQuery::create()->count();
         $this->assertEquals($count, count($records), 'correct number of results');
 
@@ -744,12 +722,12 @@ class BookstoreTest extends BookstoreEmptyTestBase
         $blc1->delete();
         $blc2->delete();
 
-        $this->assertEquals(array(), AuthorPeer::doSelect(new Criteria()), 'no records in [author] table');
-        $this->assertEquals(array(), PublisherPeer::doSelect(new Criteria()), 'no records in [publisher] table');
-        $this->assertEquals(array(), BookPeer::doSelect(new Criteria()), 'no records in [book] table');
-        $this->assertEquals(array(), ReviewPeer::doSelect(new Criteria()), 'no records in [review] table');
-        $this->assertEquals(array(), MediaPeer::doSelect(new Criteria()), 'no records in [media] table');
-        $this->assertEquals(array(), BookClubListPeer::doSelect(new Criteria()), 'no records in [book_club_list] table');
-        $this->assertEquals(array(), BookListRelPeer::doSelect(new Criteria()), 'no records in [book_x_list] table');
+        $this->assertCount(0, AuthorQuery::create()->find(), 'no records in [author] table');
+        $this->assertCount(0, PublisherQuery::create()->find(), 'no records in [publisher] table');
+        $this->assertCount(0, BookQuery::create()->find(), 'no records in [book] table');
+        $this->assertCount(0, ReviewQuery::create()->find(), 'no records in [review] table');
+        $this->assertCount(0, MediaQuery::create()->find(), 'no records in [media] table');
+        $this->assertCount(0, BookClubListQuery::create()->find(), 'no records in [book_club_list] table');
+        $this->assertCount(0, BookListRelQuery::create()->find(), 'no records in [book_x_list] table');
     }
 }

@@ -71,6 +71,7 @@ class GeneratedPeerDoSelectTest extends BookstoreEmptyTestBase
 {
     protected function setUp()
     {
+        $this->markTestSkipped('not used anymore look if all tests are present in Query');
         parent::setUp();
         BookstoreDataPopulator::populate();
     }

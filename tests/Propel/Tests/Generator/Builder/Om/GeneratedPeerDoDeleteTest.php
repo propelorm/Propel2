@@ -10,10 +10,11 @@
 
 namespace Propel\Tests\Generator\Builder\Om;
 
-use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
-use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
+use Propel\Runtime\Propel;
+use Propel\Runtime\ActiveQuery\Criteria;
 
 use Propel\Tests\Bookstore\AuthorPeer;
+use Propel\Tests\Bookstore\AuthorQuery;
 use Propel\Tests\Bookstore\Map\AuthorTableMap;
 use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\BookPeer;
@@ -30,19 +31,17 @@ use Propel\Tests\Bookstore\BookstoreContestEntry;
 use Propel\Tests\Bookstore\BookstoreContestEntryQuery;
 use Propel\Tests\Bookstore\Customer;
 use Propel\Tests\Bookstore\Contest;
-use Propel\Tests\Bookstore\MediaPeer;
 use Propel\Tests\Bookstore\MediaQuery;
 use Propel\Tests\Bookstore\Publisher;
 use Propel\Tests\Bookstore\PublisherPeer;
+use Propel\Tests\Bookstore\PublisherQuery;
 use Propel\Tests\Bookstore\Map\PublisherTableMap;
-use Propel\Tests\Bookstore\ReviewPeer;
 use Propel\Tests\Bookstore\ReviewQuery;
 use Propel\Tests\Bookstore\ReaderFavorite;
 use Propel\Tests\Bookstore\ReaderFavoritePeer;
 use Propel\Tests\Bookstore\ReaderFavoriteQuery;
-
-use Propel\Runtime\Propel;
-use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
+use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
 
 /**
  * Tests the delete methods of the generated Peer classes.
@@ -84,12 +83,10 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
         $c->setSingleRecord(true);
         BookPeer::doDelete($c);
 
-        //print_r(AuthorPeer::doSelect(new Criteria()));
-
         // check to make sure the right # of records was removed
-        $this->assertEquals(3, count(AuthorPeer::doSelect(new Criteria())), "Expected 3 authors after deleting.");
-        $this->assertEquals(3, count(PublisherPeer::doSelect(new Criteria())), "Expected 3 publishers after deleting.");
-        $this->assertEquals(3, count(BookPeer::doSelect(new Criteria())), "Expected 3 books after deleting.");
+        $this->assertCount(3, AuthorQuery::create()->find(), "Expected 3 authors after deleting.");
+        $this->assertCount(3, PublisherQuery::create()->find(), "Expected 3 publishers after deleting.");
+        $this->assertCount(3, BookQuery::create()->find(), "Expected 3 books after deleting.");
     }
 
     /**
@@ -107,7 +104,7 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
 
         // now there should only be one book left; "The Tin Drum"
 
-        $books = BookPeer::doSelect(new Criteria());
+        $books = BookQuery::create()->find();
 
         $this->assertEquals(1, count($books), "Expected 1 book remaining after deleting.");
         $this->assertEquals("The Tin Drum", $books[0]->getTitle(), "Expect the only remaining book to be 'The Tin Drum'");
@@ -123,7 +120,7 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
 
         // 1) Assert the row exists right now
 
-        $medias = MediaPeer::doSelect(new Criteria());
+        $medias = MediaQuery::create()->find();
         $this->assertTrue(count($medias) > 0, "Expected to find at least one row in 'media' table.");
         $media = $medias[0];
         $mediaId = $media->getId();
@@ -251,7 +248,7 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
     public function testDoDelete_ByPks()
     {
         // 1) get all of the books
-        $books = BookPeer::doSelect(new Criteria());
+        $books = BookQuery::create()->find();
         $bookCount = count($books);
 
         // 2) we have enough books to do this test
@@ -292,7 +289,7 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
     public function testDoDeleteAll()
     {
         BookPeer::doDeleteAll();
-        $this->assertEquals(0, count(BookPeer::doSelect(new Criteria())), "Expect all book rows to have been deleted.");
+        $this->assertCount(0, BookQuery::create()->find(), "Expect all book rows to have been deleted.");
     }
 
     /**
@@ -313,8 +310,8 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
     public function testDoDeleteAll_Cascade()
     {
         BookPeer::doDeleteAll();
-        $this->assertEquals(0, count(MediaPeer::doSelect(new Criteria())), "Expect all media rows to have been cascade deleted.");
-        $this->assertEquals(0, count(ReviewPeer::doSelect(new Criteria())), "Expect all review rows to have been cascade deleted.");
+        $this->assertCount(0, MediaQuery::create()->find(), "Expect all media rows to have been cascade deleted.");
+        $this->assertCount(0, ReviewQuery::create()->find(), "Expect all review rows to have been cascade deleted.");
     }
 
     /**
@@ -326,13 +323,13 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
         $c->add(BookTableMap::AUTHOR_ID, null, Criteria::NOT_EQUAL);
 
         // 1) make sure there are some books with valid authors
-        $this->assertTrue(count(BookPeer::doSelect($c)) > 0, "Expect some book.author_id columns that are not NULL.");
+        $this->assertGreaterThan(0, count(BookQuery::create()->filterByAuthorId(null, Criteria::NOT_EQUAL)->find()) > 0, "Expect some book.author_id columns that are not NULL.");
 
         // 2) delete all the authors
         AuthorPeer::doDeleteAll();
 
-        // 3) now verify that the book.author_id columns are all nul
-        $this->assertEquals(0, count(BookPeer::doSelect($c)), "Expect all book.author_id columns to be NULL.");
+        // 3) now verify that the book.author_id columns are all null
+        $this->assertCount(0, BookQuery::create()->filterByAuthorId(null, Criteria::NOT_EQUAL)->find(), "Expect all book.author_id columns to be NULL.");
     }
 
     /**
@@ -407,13 +404,9 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
         $values->add(PublisherTableMap::NAME, $name);
         PublisherPeer::doInsert($values);
 
-        $c = new Criteria();
-        $c->add(PublisherTableMap::NAME, $name);
-
-        $matches = PublisherPeer::doSelect($c);
-        $this->assertEquals(1, count($matches), "Expect there to be exactly 1 publisher just-inserted.");
+        $matches = PublisherQuery::create()->filterByName($name)->find();
+        $this->assertCount(1, $matches, "Expect there to be exactly 1 publisher just-inserted.");
         $this->assertTrue( 1 != $matches[0]->getId(), "Expected to have different ID than one put in values Criteria.");
-
     }
 
     /**
@@ -427,13 +420,9 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
         $values->setName($name);
         PublisherPeer::doInsert($values);
 
-        $c = new Criteria();
-        $c->add(PublisherTableMap::NAME, $name);
-
-        $matches = PublisherPeer::doSelect($c);
-        $this->assertEquals(1, count($matches), "Expect there to be exactly 1 publisher just-inserted.");
+        $matches = PublisherQuery::create()->filterByName($name)->find();
+        $this->assertCount(1, $matches, "Expect there to be exactly 1 publisher just-inserted.");
         $this->assertTrue( 1 != $matches[0]->getId(), "Expected to have different ID than one put in values Criteria.");
-
     }
 
     /**

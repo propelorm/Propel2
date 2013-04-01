@@ -142,7 +142,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends TestCase
         } catch (PropelException $e) {
             $this->assertTrue(true, 'delete() throws an exception when called on a root node');
         }
-        $this->assertNotEquals(array(), \NestedSetTable9Peer::doSelect(new Criteria()), 'delete() called on the root node does not delete the whole tree');
+        $this->assertNotEquals(array(), \NestedSetTable9Query::create()->find(), 'delete() called on the root node does not delete the whole tree');
     }
 
     public function testDeleteNotInTree()
