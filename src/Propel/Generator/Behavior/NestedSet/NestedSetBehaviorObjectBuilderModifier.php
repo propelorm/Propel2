@@ -443,7 +443,7 @@ public function isDescendantOf(\$parent)
         if ($this->behavior->useScope()) {
             $script .= "
     if (\$this->getScopeValue() !== \$parent->getScopeValue()) {
-        throw new PropelException('Comparing two nodes of different trees');
+        return false; //since the `this` and \$parent are in different scopes, there's no way that `this` is be a descendant of \$parent.
     }";
         }
         $script .= "
@@ -1163,19 +1163,12 @@ public function moveToFirstChildOf(\$parent, ConnectionInterface \$con = null)
         throw new PropelException('A $objectClassName object must be already in the tree to be moved. Use the insertAsFirstChildOf() instead.');
     }";
 
-        if ($this->behavior->useScope()) {
-            $script .= "
-    if (\$parent->getScopeValue() != \$this->getScopeValue()) {
-        throw new PropelException('Moving nodes across trees is not supported');
-    }";
-        }
-
         $script .= "
     if (\$parent->isDescendantOf(\$this)) {
         throw new PropelException('Cannot move a node as child of one of its subtree nodes.');
     }
 
-    \$this->moveSubtreeTo(\$parent->getLeftValue() + 1, \$parent->getLevel() - \$this->getLevel() + 1, \$con);
+    \$this->moveSubtreeTo(\$parent->getLeftValue() + 1, \$parent->getLevel() - \$this->getLevel() + 1" . ($this->behavior->useScope() ? ", \$parent->getScopeValue()" : "") . ", \$con);
 
     return \$this;
 }
@@ -1202,19 +1195,12 @@ public function moveToLastChildOf(\$parent, ConnectionInterface \$con = null)
         throw new PropelException('A $objectClassName object must be already in the tree to be moved. Use the insertAsLastChildOf() instead.');
     }";
 
-        if ($this->behavior->useScope()) {
-            $script .= "
-    if (\$parent->getScopeValue() != \$this->getScopeValue()) {
-        throw new PropelException('Moving nodes across trees is not supported');
-    }";
-        }
-
         $script .= "
     if (\$parent->isDescendantOf(\$this)) {
         throw new PropelException('Cannot move a node as child of one of its subtree nodes.');
     }
 
-    \$this->moveSubtreeTo(\$parent->getRightValue(), \$parent->getLevel() - \$this->getLevel() + 1, \$con);
+    \$this->moveSubtreeTo(\$parent->getRightValue(), \$parent->getLevel() - \$this->getLevel() + 1" . ($this->behavior->useScope() ? ", \$parent->getScopeValue()" : "") . ", \$con);
 
     return \$this;
 }
@@ -1244,19 +1230,12 @@ public function moveToPrevSiblingOf(\$sibling, ConnectionInterface \$con = null)
         throw new PropelException('Cannot move to previous sibling of a root node.');
     }";
 
-        if ($this->behavior->useScope()) {
-            $script .= "
-    if (\$sibling->getScopeValue() != \$this->getScopeValue()) {
-        throw new PropelException('Moving nodes across trees is not supported');
-    }";
-        }
-
         $script .= "
     if (\$sibling->isDescendantOf(\$this)) {
         throw new PropelException('Cannot move a node as sibling of one of its subtree nodes.');
     }
 
-    \$this->moveSubtreeTo(\$sibling->getLeftValue(), \$sibling->getLevel() - \$this->getLevel(), \$con);
+    \$this->moveSubtreeTo(\$sibling->getLeftValue(), \$sibling->getLevel() - \$this->getLevel()" . ($this->behavior->useScope() ? ", \$sibling->getScopeValue()" : "") . ", \$con);
 
     return \$this;
 }
@@ -1286,19 +1265,12 @@ public function moveToNextSiblingOf(\$sibling, ConnectionInterface \$con = null)
         throw new PropelException('Cannot move to next sibling of a root node.');
     }";
 
-        if ($this->behavior->useScope()) {
-            $script .= "
-    if (\$sibling->getScopeValue() != \$this->getScopeValue()) {
-        throw new PropelException('Moving nodes across trees is not supported');
-    }";
-        }
-
         $script .= "
     if (\$sibling->isDescendantOf(\$this)) {
         throw new PropelException('Cannot move a node as sibling of one of its subtree nodes.');
     }
 
-    \$this->moveSubtreeTo(\$sibling->getRightValue() + 1, \$sibling->getLevel() - \$this->getLevel(), \$con);
+    \$this->moveSubtreeTo(\$sibling->getRightValue() + 1, \$sibling->getLevel() - \$this->getLevel()" . ($this->behavior->useScope() ? ", \$sibling->getScopeValue()" : "") . ", \$con);
 
     return \$this;
 }
@@ -1319,15 +1291,25 @@ public function moveToNextSiblingOf(\$sibling, ConnectionInterface \$con = null)
  * @param      int    \$levelDelta Delta to add to the levels
  * @param      ConnectionInterface \$con        Connection to use.
  */
-protected function moveSubtreeTo(\$destLeft, \$levelDelta, ConnectionInterface \$con = null)
+protected function moveSubtreeTo(\$destLeft, \$levelDelta" . ($this->behavior->useScope() ? ", \$targetScope = null" : "") . ", PropelPDO \$con = null)
 {
+    \$preventDefault = false;
     \$left  = \$this->getLeftValue();
     \$right = \$this->getRightValue();";
+
+
         if ($useScope) {
             $script .= "
-    \$scope = \$this->getScopeValue();";
+    \$scope = \$this->getScopeValue();
+
+    if (\$targetScope === null){
+        \$targetScope = \$scope;
+    }";
         }
+
+
         $script .= "
+
 
     \$treeSize = \$right - \$left +1;
 
@@ -1338,21 +1320,54 @@ protected function moveSubtreeTo(\$destLeft, \$levelDelta, ConnectionInterface \
     \$con->beginTransaction();
     try {
         // make room next to the target for the subtree
-        $queryClassName::shiftRLValues(\$treeSize, \$destLeft, null" . ($useScope ? ", \$scope" : "") . ", \$con);
+        $queryClassName::shiftRLValues(\$treeSize, \$destLeft, null" . ($useScope ? ", \$targetScope" : "") . ", \$con);
 
-        if (\$left >= \$destLeft) { // src was shifted too?
-            \$left += \$treeSize;
-            \$right += \$treeSize;
+";
+
+        if ($useScope) {
+            $script .= "
+
+        if (\$targetScope != \$scope){
+
+            //move subtree to < 0, so the items are out of scope.
+            $queryClassName::shiftRLValues(-\$right, \$left, \$right" . ($useScope ? ", \$scope" : "") . ", \$con);
+
+            //update scopes
+            $queryClassName::setNegativeScope(\$targetScope, \$con);
+
+            //update levels
+            $queryClassName::shiftLevel(\$levelDelta, \$left - \$right, 0" . ($useScope ? ", \$targetScope" : "") . ", \$con);
+
+            //move the subtree to the target
+            $queryClassName::shiftRLValues((\$right - \$left) + \$destLeft, \$left - \$right, 0" . ($useScope ? ", \$targetScope" : "") . ", \$con);
+
+
+            \$preventDefault = true;
         }
+";
+    }
 
-        if (\$levelDelta) {
-            // update the levels of the subtree
-            $queryClassName::shiftLevel(\$levelDelta, \$left, \$right" . ($useScope ? ", \$scope" : "") . ", \$con);
+        $script .= "
+
+        if (!\$preventDefault){
+
+
+            if (\$left >= \$destLeft) { // src was shifted too?
+                \$left += \$treeSize;
+                \$right += \$treeSize;
+            }
+
+            if (\$levelDelta) {
+                // update the levels of the subtree
+                $queryClassName::shiftLevel(\$levelDelta, \$left, \$right" . ($useScope ? ", \$scope" : "") . ", \$con);
+            }
+
+            // move the subtree to the target
+            $queryClassName::shiftRLValues(\$destLeft - \$left, \$left, \$right" . ($useScope ? ", \$scope" : "") . ", \$con);
         }
+";
 
-        // move the subtree to the target
-        $queryClassName::shiftRLValues(\$destLeft - \$left, \$left, \$right" . ($useScope ? ", \$scope" : "") . ", \$con);
-
+        $script .= "
         // remove the empty room at the previous location of the subtree
         $queryClassName::shiftRLValues(-\$treeSize, \$right + 1, null" . ($useScope ? ", \$scope" : "") . ", \$con);
 

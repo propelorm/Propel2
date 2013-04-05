@@ -96,6 +96,7 @@ class NestedSetBehaviorQueryBuilderModifier
         $this->addUpdateLoadedNodes($script);
         $this->addMakeRoomForLeaf($script);
         $this->addFixLevels($script);
+        $this->addSetNegativeScope($script);
 
         return $script;
     }
@@ -756,6 +757,9 @@ static public function updateLoadedNodes(\$prune = null, ConnectionInterface \$c
             } elseif ($col->getPhpName() == $this->getColumnPhpName('right_column')) {
                 $script .= "
                     \$object->setRightValue(\$row[$n]);";
+            } elseif ($this->getParameter('use_scope') == 'true' && $col->getPhpName() == $this->getColumnPhpName('scope_column')) {
+                $script .= "
+                    \$object->setScopeValue(\$row[$n]);";
             } elseif ($col->getPhpName() == $this->getColumnPhpName('level_column')) {
                 $script .= "
                     \$object->setLevel(\$row[$n]);
@@ -886,6 +890,31 @@ static public function fixLevels(" . ($useScope ? "\$scope, " : ""). "Connection
         }
     }
     \$stmt->closeCursor();
+}
+";
+    }
+
+    protected function addSetNegativeScope(&$script)
+    {
+        $objectClassName   = $this->objectClassName;
+        $tableMapClassName = $this->tableMapClassName;
+        $script .= "
+/**
+ * Updates all scope values for items that has negative left (<=0) values.
+ *
+ * @param      mixed     \$scope
+ * @param      ConnectionInterface \$con  Connection to use.
+ */
+public static function setNegativeScope(\$scope, ConnectionInterface \$con = null)
+{
+    //adjust scope value to \$scope
+    \$whereCriteria = new Criteria($tableMapClassName::DATABASE_NAME);
+    \$whereCriteria->add($objectClassName::LEFT_COL, 0, Criteria::LESS_EQUAL);
+
+    \$valuesCriteria = new Criteria($tableMapClassName::DATABASE_NAME);
+    \$valuesCriteria->add($objectClassName::SCOPE_COL, \$scope, Criteria::EQUAL);
+
+    BasePeer::doUpdate(\$whereCriteria, \$valuesCriteria, \$con);
 }
 ";
     }
