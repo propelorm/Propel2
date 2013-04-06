@@ -107,12 +107,8 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         */
         $this->assertFalse($t8->isDescendantOf($t9), 'root is not seen as a child of root');
         $this->assertTrue($t9->isDescendantOf($t8), 'direct child is seen as a child of root');
-        try {
-            $t2->isDescendantOf($t8);
-            $this->fail('isDescendantOf() throws an exception when comparing two nodes of different trees');
-        } catch (PropelException $e) {
-            $this->assertTrue(true, 'isDescendantOf() throws an exception when comparing two nodes of different trees');
-        }
+
+        $this->assertFalse($t2->isDescendantOf($t8), 'is false, since both are in different scopes');
     }
 
     public function testGetParent()
@@ -560,24 +556,51 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
          | \
          t9 t10
         */
-        try {
-            $t8->moveToFirstChildOf($t3);
-            $this->fail('moveToFirstChildOf() throws an exception when the target is in a different tree');
-        } catch (PropelException $e) {
-            $this->assertTrue(true, 'moveToFirstChildOf() throws an exception when the target is in a different tree');
-        }
-        try {
-            $t5->moveToLastChildOf($t2);
-            $this->assertTrue(true, 'moveToFirstChildOf() does not throw an exception when the target is in the same tree');
-        } catch (PropelException $e) {
-            $this->fail('moveToFirstChildOf() does not throw an exception when the target is in the same tree');
-        }
+        $this->assertEquals(13, $t3->getRightValue(), 't3 left has 13 per init');
+        $this->assertEquals(1, $t10->getLevel(), 'Init level is 1');
+
+        $t10->moveToFirstChildOf($t2);
+
+        $this->assertEquals(2, $t2->getLeftValue(), 'As before');
+        $this->assertEquals(5, $t2->getRightValue(), 'Extended by 2');
+
+        $this->assertEquals(3, $t10->getLeftValue(), 'Moved into t2');
+        $this->assertEquals(4, $t10->getRightValue(), 'Moved into t2');
+
+        $this->assertEquals(2, $t10->getLevel(), 'New level is 2');
+
+        $this->assertEquals($t2->getScopeValue(), $t10->getScopeValue(), 'Should have now the same scope');
+
         $expected = array(
-            't8' => array(1, 6, 0),
+            't8' => array(1, 4, 0),
             't9' => array(2, 3, 1),
-            't10' => array(4, 5, 1),
         );
-        $this->assertEquals($expected, $this->dumpTreeWithScope(2), 'moveToFirstChildOf() does not shift anything out of the scope');
+
+        $this->assertEquals($expected, $this->dumpTreeWithScope(2), 't10 removed from scope 2, therefore t8 `right` has been changed');
+        $this->assertEquals(15, $t3->getRightValue(), 't3 has shifted by one item, so from 13 to 15');
+
+
+        //move t7 into t9, from scope 1 to scope 2
+        $t7->moveToFirstChildOf($t9);
+
+        $this->assertEquals(13, $t3->getRightValue(), 't3 `right` has now 15-2 => 13');
+        $this->assertEquals(2, $t7->getScopeValue(), 't7 is now in scope 2');
+        $this->assertEquals(6, $t8->getRightValue(), 't8 extended by 1 item, 4+2 => 6');
+        $this->assertEquals(2, $t7->getLevel(), 'New level is 2');
+
+
+        //dispose scope 2
+        $oldt4Left = $t4->getLeftValue();
+
+        $t8->moveToFirstChildOf($t3);
+
+        $this->assertEquals($t3->getLeftValue()+1, $t8->getLeftValue(), 't8 has been moved to first children of t3');
+        $this->assertEquals(19, $t3->getRightValue(), 't3 was extended for 3 more children, from 13+(3*2) to 19');
+        $this->assertEquals($oldt4Left+(2*3), $t4->getLeftValue(), 't4 was moved by 3 items before it');
+        $this->assertEquals(3, $t9->getLevel(), 'New level is 3');
+
+        $expected = array();
+        $this->assertEquals($expected, $this->dumpTreeWithScope(2), 'root of scope 2 to scope 1, therefore scope 2 is empty');
     }
 
     public function testMoveToLastChildOf()
@@ -597,24 +620,46 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
          | \
          t9 t10
         */
-        try {
-            $t8->moveToLastChildOf($t3);
-            $this->fail('moveToLastChildOf() throws an exception when the target is in a different tree');
-        } catch (PropelException $e) {
-            $this->assertTrue(true, 'moveToLastChildOf() throws an exception when the target is in a different tree');
-        }
-        try {
-            $t5->moveToLastChildOf($t2);
-            $this->assertTrue(true, 'moveToLastChildOf() does not throw an exception when the target is in the same tree');
-        } catch (PropelException $e) {
-            $this->fail('moveToLastChildOf() does not throw an exception when the target is in the same tree');
-        }
+        $this->assertEquals(13, $t3->getRightValue(), 't3 left has 13 per init');
+
+        $t10->moveToLastChildOf($t2);
+
+        $this->assertEquals(2, $t2->getLeftValue(), 'As before');
+        $this->assertEquals(5, $t2->getRightValue(), 'Extended by 2');
+
+        $this->assertEquals(3, $t10->getLeftValue(), 'Moved into t2');
+        $this->assertEquals(4, $t10->getRightValue(), 'Moved into t2');
+        $this->assertEquals(2, $t10->getLevel(), 'New level is 2');
+
+        $this->assertEquals($t2->getScopeValue(), $t10->getScopeValue(), 'Should have now the same scope');
+
         $expected = array(
-            't8' => array(1, 6, 0),
+            't8' => array(1, 4, 0),
             't9' => array(2, 3, 1),
-            't10' => array(4, 5, 1),
         );
-        $this->assertEquals($expected, $this->dumpTreeWithScope(2), 'moveToLastChildOf() does not shift anything out of the scope');
+
+        $this->assertEquals($expected, $this->dumpTreeWithScope(2), 't10 removed from scope 2, therefore t8 `right` has been changed');
+        $this->assertEquals(15, $t3->getRightValue(), 't3 has shifted by one item, so from 13 to 15');
+
+
+        //move t7 into t9, from scope 1 to scope 2
+        $t7->moveToLastChildOf($t9);
+
+        $this->assertEquals(13, $t3->getRightValue(), 't3 `right` has now 15-2 => 13');
+        $this->assertEquals(2, $t7->getScopeValue(), 't7 is now in scope 2');
+        $this->assertEquals(6, $t8->getRightValue(), 't8 extended by 1 item, 4+2 => 6');
+        $this->assertEquals(2, $t7->getLevel(), 'New level is 2');
+
+
+        //dispose scope 2
+        $t8->moveToLastChildOf($t3);
+
+        $this->assertEquals(13, $t8->getLeftValue(), 't8 has been moved to last children of t3');
+        $this->assertEquals(19, $t3->getRightValue(), 't3 was extended for 3 more children, from 13+(3*2) to 19');
+        $this->assertEquals(3, $t9->getLevel(), 'New level is 3');
+
+        $expected = array();
+        $this->assertEquals($expected, $this->dumpTreeWithScope(2), 'root of scope 2 to scope 1, therefore scope 2 is empty');
     }
 
     public function testMoveToPrevSiblingOf()
@@ -634,24 +679,49 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
          | \
          t9 t10
         */
-        try {
-            $t8->moveToPrevSiblingOf($t3);
-            $this->fail('moveToPrevSiblingOf() throws an exception when the target is in a different tree');
-        } catch (PropelException $e) {
-            $this->assertTrue(true, 'moveToPrevSiblingOf() throws an exception when the target is in a different tree');
-        }
-        try {
-            $t5->moveToPrevSiblingOf($t2);
-            $this->assertTrue(true, 'moveToPrevSiblingOf() does not throw an exception when the target is in the same tree');
-        } catch (PropelException $e) {
-            $this->fail('moveToPrevSiblingOf() does not throw an exception when the target is in the same tree');
-        }
+        $this->assertEquals(13, $t3->getRightValue(), 't3 left has 13 per init');
+        $this->assertEquals(2, $t2->getLeftValue(), 'Init');
+        $this->assertEquals(3, $t2->getRightValue(), 'Init');
+
+        $t10->moveToPrevSiblingOf($t2);
+
+        $this->assertEquals(4, $t2->getLeftValue(), 'Move by one item, +2');
+        $this->assertEquals(5, $t2->getRightValue(), 'Move by one item, +2');
+        $this->assertEquals(1, $t10->getLevel(), 'Level is 1 as old');
+
+
+        $this->assertEquals(2, $t10->getLeftValue(), 'Moved before t2');
+        $this->assertEquals(3, $t10->getRightValue(), 'Moved before t2');
+
+        $this->assertEquals($t2->getScopeValue(), $t10->getScopeValue(), 'Should have now the same scope');
+
         $expected = array(
-            't8' => array(1, 6, 0),
+            't8' => array(1, 4, 0),
             't9' => array(2, 3, 1),
-            't10' => array(4, 5, 1),
         );
-        $this->assertEquals($expected, $this->dumpTreeWithScope(2), 'moveToPrevSiblingOf() does not shift anything out of the scope');
+
+        $this->assertEquals($expected, $this->dumpTreeWithScope(2), 't10 removed from scope 2, therefore t8 `right` has been changed');
+        $this->assertEquals(15, $t3->getRightValue(), 't3 has shifted by one item, so from 13 to 15');
+
+
+        //move t7 before t9, from scope 1 to scope 2
+        $t7->moveToPrevSiblingOf($t9);
+
+        $this->assertEquals(13, $t3->getRightValue(), 't3 `right` has now 15-2 => 13');
+        $this->assertEquals(2, $t7->getScopeValue(), 't7 is now in scope 2');
+        $this->assertEquals(6, $t8->getRightValue(), 't8 extended by 1 item, 4+2 => 6');
+        $this->assertEquals(1, $t7->getLevel(), 'New level is 1');
+
+        //dispose scope 2
+        $t8->moveToPrevSiblingOf($t3);
+
+        $this->assertEquals(6, $t8->getLeftValue(), 't8 has been moved to last children of t3');
+        $this->assertEquals(19, $t3->getRightValue(), 't3 was moved for 3 item before it, so from 13+(3*2) to 19');
+        $this->assertEquals(2, $t9->getLevel(), 'New level is 2');
+        $this->assertEquals(1, $t8->getLevel(), 'New level is 1');
+
+        $expected = array();
+        $this->assertEquals($expected, $this->dumpTreeWithScope(2), 'root of scope 2 to scope 1, therefore scope 2 is empty');
     }
 
     public function testMoveToNextSiblingOf()
@@ -671,25 +741,55 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
          | \
          t9 t10
         */
-        try {
-            $t8->moveToNextSiblingOf($t3);
-            $this->fail('moveToNextSiblingOf() throws an exception when the target is in a different tree');
-        } catch (PropelException $e) {
-            $this->assertTrue(true, 'moveToNextSiblingOf() throws an exception when the target is in a different tree');
-        }
-        try {
-            $t5->moveToNextSiblingOf($t2);
-            $this->assertTrue(true, 'moveToNextSiblingOf() does not throw an exception when the target is in the same tree');
-        } catch (PropelException $e) {
-            $this->fail('moveToNextSiblingOf() does not throw an exception when the target is in the same tree');
-        }
+        $this->assertEquals(13, $t3->getRightValue(), 't3 left has 13 per init');
+        $this->assertEquals(2, $t2->getLeftValue(), 'Init');
+        $this->assertEquals(3, $t2->getRightValue(), 'Init');
+
+        $t10->moveToNextSiblingOf($t2);
+
+        $this->assertEquals(2, $t2->getLeftValue(), 'Same as before');
+        $this->assertEquals(3, $t2->getRightValue(), 'Same as before');
+        $this->assertEquals(1, $t10->getLevel(), 'Level is 1 as before');
+
+        $this->assertEquals(6, $t3->getLeftValue(), 'Move by one item, +2');
+        $this->assertEquals(15, $t3->getRightValue(), 'Move by one item, +2');
+
+        $this->assertEquals(4, $t10->getLeftValue(), 'Moved after t2');
+        $this->assertEquals(5, $t10->getRightValue(), 'Moved after t2');
+
+        $this->assertEquals($t2->getScopeValue(), $t10->getScopeValue(), 'Should have now the same scope');
+
         $expected = array(
-            't8' => array(1, 6, 0),
+            't8' => array(1, 4, 0),
             't9' => array(2, 3, 1),
-            't10' => array(4, 5, 1),
         );
-        $this->assertEquals($expected, $this->dumpTreeWithScope(2), 'moveToNextSiblingOf() does not shift anything out of the scope');
-    }
+
+        $this->assertEquals($expected, $this->dumpTreeWithScope(2), 't10 removed from scope 2, therefore t8 `right` has been changed');
+        $this->assertEquals(15, $t3->getRightValue(), 't3 has shifted by one item, so from 13 to 15');
+
+
+        //move t7 after t9, from scope 1 to scope 2
+        $t7->moveToNextSiblingOf($t9);
+
+        $this->assertEquals(13, $t3->getRightValue(), 't3 `right` has now 15-2 => 13');
+        $this->assertEquals(2, $t7->getScopeValue(), 't7 is now in scope 2');
+        $this->assertEquals(6, $t8->getRightValue(), 't8 extended by 1 item, 4+2 => 6');
+        $this->assertEquals(1, $t7->getLevel(), 'New level is 1');
+
+        $this->assertEquals($t9->getRightValue()+1, $t7->getLeftValue(), 'Moved after t9, so we have t9.right+1 as left');
+
+        //dispose scope 2
+        $oldT1Right = $t1->getRightValue();
+        $t8->moveToNextSiblingOf($t3);
+
+        $this->assertEquals($oldT1Right+(2*3), $t1->getRightValue(), 't1 has been extended by 3 items');
+        $this->assertEquals(13, $t3->getRightValue(), 't3 has no change.');
+        $this->assertEquals(1, $t8->getLevel(), 'New level is 1');
+        $this->assertEquals(2, $t9->getLevel(), 'New level is 2');
+
+        $expected = array();
+        $this->assertEquals($expected, $this->dumpTreeWithScope(2), 'root of scope 2 to scope 1, therefore scope 2 is empty');
+}
 
     public function testDeleteDescendants()
     {
