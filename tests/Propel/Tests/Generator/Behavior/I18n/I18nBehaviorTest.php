@@ -299,5 +299,35 @@ CREATE TABLE i18n_behavior_test_0_i18n
 EOF;
         $this->assertContains($expected, $builder->getSQL());
     }
+    
+    public function testModiFyTableUsesCustomI18nLocaleLength()
+    {
+        $schema = <<<EOF
+<database name="i18n_behavior_test_0">
+    <table name="i18n_behavior_test_0">
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <behavior name="i18n">
+            <parameter name="locale_length" value="6" />
+        </behavior>
+    </table>
+</database>
+EOF;
+        $builder = new QuickBuilder();
+        $builder->setSchema($schema);
+        $expected = <<<EOF
+-----------------------------------------------------------------------
+-- i18n_behavior_test_0_i18n
+-----------------------------------------------------------------------
 
+DROP TABLE IF EXISTS i18n_behavior_test_0_i18n;
+
+CREATE TABLE i18n_behavior_test_0_i18n
+(
+    id INTEGER NOT NULL,
+    locale VARCHAR(6) DEFAULT 'en_EN' NOT NULL,
+    PRIMARY KEY (id,locale)
+);
+EOF;
+        $this->assertContains($expected, $builder->getSQL());
+    }
 }
