@@ -32,6 +32,7 @@ class I18nBehavior extends Behavior
         'i18n_phpname'      => '%PHPNAME%I18n',
         'i18n_columns'      => '',
         'locale_column'     => 'locale',
+        'locale_length'     => 5,
         'default_locale'    => null,
         'locale_alias'      => '',
     );
@@ -218,7 +219,7 @@ class I18nBehavior extends Behavior
             $this->i18nTable->addColumn(array(
                 'name'       => $localeColumnName,
                 'type'       => PropelTypes::VARCHAR,
-                'size'       => 5,
+                'size'       => $this->getParameter('locale_length') ? (int) $this->getParameter('locale_length') : 5,
                 'default'    => $this->getDefaultLocale(),
                 'primaryKey' => 'true',
             ));
