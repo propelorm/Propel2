@@ -11,6 +11,7 @@
 namespace Propel\Runtime\Formatter;
 
 use Propel\Runtime\Exception\LogicException;
+use Propel\Runtime\Exception\RuntimeException;
 use Propel\Runtime\Connection\StatementInterface;
 
 /**
@@ -18,9 +19,13 @@ use Propel\Runtime\Connection\StatementInterface;
  * format() returns a ObjectCollection of Propel model objects
  *
  * @author Francois Zaninotto
+ * @author Lee Leathers
+ * @author Marius Ghita
  */
 class ObjectFormatter extends AbstractFormatter
 {
+    protected $collectionClassName = '\Propel\Runtime\Collection\ObjectCollection';
+
     public function format(StatementInterface $stmt)
     {
         $this->checkInit();
@@ -51,9 +56,30 @@ class ObjectFormatter extends AbstractFormatter
         return $collection;
     }
 
+    public function setCollectionClassName($collectionClassName)
+    {
+        $this->collectionClassName = $collectionClassName;
+
+        if (false === class_exists($this->collectionClassName)) {
+            throw new RuntimeException(sprintf(
+                "Could not find %s class. Please ensure you rebuild the model and loaded the class.",
+                $this->collectionClassName)
+            );
+        }
+
+        if (false === is_subclass_of(new $this->collectionClassName(), "\Propel\Runtime\Collection\ObjectCollection")) {
+            throw new LogicException(sprintf(
+                "%s class must be a subclass of \Propel\Runtime\Collection\ObjectCollection",
+                $this->collectionClassName)
+            );
+        }
+
+        return $this;
+    }
+
     public function getCollectionClassName()
     {
-        return '\Propel\Runtime\Collection\ObjectCollection';
+        return $this->collectionClassName;
     }
 
     public function formatOne(StatementInterface $stmt)
