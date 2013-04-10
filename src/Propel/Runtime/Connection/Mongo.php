@@ -10,6 +10,8 @@
 
 namespace Propel\Runtime\Connection;
 
+use \MongoCollection;
+
 class Mongo extends \MongoClient implements ConnectionInterface
 {
     /**
@@ -22,12 +24,12 @@ class Mongo extends \MongoClient implements ConnectionInterface
      */
     private $db;
 
-    public function __construct($server = "mongodb://localhost:27017", $options = array("database" => "", "connect" => true))
+    public function __construct($server = "mongodb://localhost:27017", $database, $options = array("database" => "", "connect" => true))
     {
-        parent::__construct($server, $options);
+        parent::__construct($server, $options ?: array());
 
-        if ($options['database']) {
-            $this->db = $this->selectDB($options['database']);
+        if ($database) {
+            $this->db = $this->selectDB($database);
         }
 
         $this->connection = $this;

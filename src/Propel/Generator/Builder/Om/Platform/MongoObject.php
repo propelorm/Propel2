@@ -31,5 +31,39 @@ use Propel\Generator\Platform\PlatformInterface;
 class MongoObject extends ObjectBuilder
 {
 
+    /**
+     * get the doInsert() method code
+     *
+     * @return string the doInsert() method code
+     */
+    protected function addDoInsert()
+    {
+        $table = $this->getTable();
+        $tableMapClassName = $this->getTableMapClassName();
+
+        $script = "
+    /**
+     * Insert the row in the database.
+     *
+     * @param      ConnectionInterface \$con
+     *
+     * @throws PropelException
+     * @see doSave()
+     */
+    protected function doInsert(ConnectionInterface \$con)
+    {";
+        $script .= "
+
+        \$array = \$this->toArray();
+
+        \$con->getCollection($tableMapClassName::TABLE_NAME)->insert(\$array);
+
+        \$this->setNew(false);
+    }
+";
+
+        return $script;
+    }
+
 
 }

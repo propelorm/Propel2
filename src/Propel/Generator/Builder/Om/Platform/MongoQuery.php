@@ -24,7 +24,69 @@ use Propel\Generator\Model\PropelTypes;
 class MongoQuery extends QueryBuilder
 {
 
-    protected function addFindPk(&$script)
+    public function getParentClass()
+    {
+        return 'DocumentModelCriteria';
+    }
+
+
+    protected function addClassBody(&$script)
+    {
+        // namespaces
+        $this->declareClasses(
+            '\Propel\Runtime\Propel',
+            '\Propel\Runtime\ActiveQuery\ModelCriteria',
+            '\Propel\Runtime\ActiveQuery\DocumentModelCriteria',
+            '\Propel\Runtime\ActiveQuery\Criteria',
+            '\Propel\Runtime\ActiveQuery\ModelJoin',
+            '\Exception',
+            '\Propel\Runtime\Exception\PropelException'
+        );
+        $this->declareClassFromBuilder($this->getStubQueryBuilder(), 'Child');
+        $this->declareClassFromBuilder($this->getStubPeerBuilder());
+        $this->declareClassFromBuilder($this->getTableMapBuilder());
+
+        // apply behaviors
+        $this->applyBehaviorModifier('queryAttributes', $script, "    ");
+        $this->addConstructor($script);
+        $this->addFactory($script);
+        $this->addFindPk($script);
+        $this->addFindPkSimple($script);
+        $this->addFindPkComplex($script);
+        $this->addFindPks($script);
+        $this->addFilterByPrimaryKey($script);
+        $this->addFilterByPrimaryKeys($script);
+        foreach ($this->getTable()->getColumns() as $col) {
+            $this->addFilterByCol($script, $col);
+            if ($col->getType() === PropelTypes::PHP_ARRAY && $col->isNamePlural()) {
+                $this->addFilterByArrayCol($script, $col);
+            }
+        }
+        foreach ($this->getTable()->getForeignKeys() as $fk) {
+            $this->addFilterByFK($script, $fk);
+            $this->addJoinFk($script, $fk);
+            $this->addUseFKQuery($script, $fk);
+        }
+        foreach ($this->getTable()->getReferrers() as $refFK) {
+            $this->addFilterByRefFK($script, $refFK);
+            $this->addJoinRefFk($script, $refFK);
+            $this->addUseRefFKQuery($script, $refFK);
+        }
+        foreach ($this->getTable()->getCrossFks() as $fkList) {
+            list($refFK, $crossFK) = $fkList;
+            $this->addFilterByCrossFK($script, $refFK, $crossFK);
+        }
+        $this->addPrune($script);
+        $this->addBasePreSelect($script);
+        $this->addBasePreDelete($script);
+        $this->addBasePostDelete($script);
+        $this->addBasePreUpdate($script);
+        $this->addBasePostUpdate($script);
+        // apply behaviors
+        $this->applyBehaviorModifier('queryMethods', $script, "    ");
+    }
+
+    protected function addFindPkSimple(&$script)
     {
 
         $table = $this->getTable();
@@ -57,9 +119,14 @@ class MongoQuery extends QueryBuilder
 
         $script .= "
 
-    public function findPk(\$key, \$con = null)
+    public function findPkSimple(\$key, \$con = null)
     {
-        \$row = \$con->getCollection($tableMapClassName::TABLE_NAME)->find(array($find));
+
+        if (\$con === null) {
+            \$con = Propel::getServiceContainer()->getReadConnection({$this->getTableMapClass()}::DATABASE_NAME);
+        }
+
+        \$row = \$con->getCollection($tableMapClassName::TABLE_NAME)->findOne(array($find));
 
 ";
 

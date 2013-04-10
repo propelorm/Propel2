@@ -35,9 +35,8 @@ class MongoAdapter implements AdapterInterface
     public function getConnection($conparams)
     {
         $client = new Mongo('mongodb://'.$conparams['server'],
-            array(
-                 'database' => $conparams['database']
-            )
+            $conparams['database'],
+            $conparams['options']
         );
 
         return $client;

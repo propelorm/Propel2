@@ -55,6 +55,12 @@ class QueryBuilder extends AbstractOMBuilder
         return $this->getStubQueryBuilder()->getUnprefixedClassName();
     }
 
+    public function getParentClass()
+    {
+        $parentClass = $this->getBehaviorContent('parentClass');
+        return null === $parentClass ? 'ModelCriteria' : $parentClass;
+    }
+
     /**
      * Adds class phpdoc comment and opening of class.
      * @param      string &$script The script will be modified in this method.
@@ -66,8 +72,7 @@ class QueryBuilder extends AbstractOMBuilder
         $tableDesc = $table->getDescription();
         $queryClass = $this->getQueryClassName();
         $modelClass = $this->getObjectClassName();
-        $parentClass = $this->getBehaviorContent('parentClass');
-        $parentClass = null === $parentClass ? 'ModelCriteria' : $parentClass;
+        $parentClass = $this->getParentClass();
         $script .= "
 /**
  * Base class that represents a query for the '$tableName' table.
