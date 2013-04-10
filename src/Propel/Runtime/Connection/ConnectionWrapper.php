@@ -30,7 +30,7 @@ use Psr\Log\LoggerAwareInterface;
  * in-progress.
  *
  */
-class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
+class ConnectionWrapper implements SqlConnectionInterface, LoggerAwareInterface
 {
     /**
      * Attribute to use to set whether to cache prepared statements.

@@ -10,7 +10,7 @@
 
 namespace Propel\Runtime\Adapter\Pdo;
 
-use Propel\Runtime\Adapter\AdapterInterface;
+use Propel\Runtime\Adapter\SqlAdapterInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\InvalidArgumentException;
 use Propel\Runtime\Propel;
@@ -23,7 +23,7 @@ use Propel\Runtime\Util\BasePeer;
  * @author Hans Lellelid <hans@xmpl.org> (Propel)
  * @author Hakan Tandogan <hakan42@gmx.de> (Torque)
  */
-class PgsqlAdapter extends PdoAdapter implements AdapterInterface
+class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
 {
     /**
      * Returns SQL which concatenates the second string to the first.

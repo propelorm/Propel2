@@ -1616,7 +1616,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * Returns the collection of Columns which make up the single primary
      * key for this table.
      *
-     * @return array
+     * @return Column[]
      */
     public function getPrimaryKey()
     {

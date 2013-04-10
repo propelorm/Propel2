@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<config>
+    <propel>
+        <datasources default="nosql">
+            <datasource id="nosql">
+                <adapter>Propel\Runtime\Adapter\MongoAdapter</adapter>
+                <connection>
+                    <server>localhost:27017</server>
+                    <database>test</database>
+                </connection>
+            </datasource>
+        </datasources>
+    </propel>
+</config>

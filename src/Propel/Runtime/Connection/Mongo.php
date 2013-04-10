@@ -10,24 +10,51 @@
 
 namespace Propel\Runtime\Connection;
 
-/**
- * Interface for Propel Connection object.
- * Based on the PDO interface.
- * @see http://php.net/manual/en/book.pdo.php
- *
- * @author Francois Zaninotto
- */
-interface ConnectionInterface
+class Mongo extends \MongoClient implements ConnectionInterface
 {
+    /**
+     * @var MongoCollection
+     */
+    private $collection;
+
+    /**
+     * @var MongoDB
+     */
+    private $db;
+
+    public function __construct($server = "mongodb://localhost:27017", $options = array("database" => "", "connect" => true))
+    {
+        parent::__construct($server, $options);
+
+        if ($options['database']) {
+            $this->db = $this->selectDB($options['database']);
+        }
+
+        $this->connection = $this;
+    }
+
+    public function getCollection($entity){
+        if (null === $this->collection) {
+            $this->collection = new MongoCollection($this->db, $entity);
+        }
+        return $this->collection;
+    }
+
     /**
      * @param string $name The datasource name associated to this connection
      */
-    public function setName($name);
+    public function setName($name)
+    {
+        // TODO: Implement setName() method.
+    }
 
     /**
      * @return string The datasource name associated to this connection
      */
-    public function getName();
+    public function getName()
+    {
+        // TODO: Implement getName() method.
+    }
 
     /**
      * Turns off autocommit mode.
@@ -40,7 +67,10 @@ interface ConnectionInterface
      *
      * @return boolean TRUE on success or FALSE on failure.
      */
-    public function beginTransaction();
+    public function beginTransaction()
+    {
+        // TODO: Implement beginTransaction() method.
+    }
 
     /**
      * Commits a transaction.
@@ -50,7 +80,10 @@ interface ConnectionInterface
      *
      * @return boolean TRUE on success or FALSE on failure.
      */
-    public function commit();
+    public function commit()
+    {
+        // TODO: Implement commit() method.
+    }
 
     /**
      * Rolls back a transaction.
@@ -62,14 +95,20 @@ interface ConnectionInterface
      *
      * @return boolean TRUE on success or FALSE on failure.
      */
-    public function rollBack();
+    public function rollBack()
+    {
+        // TODO: Implement rollBack() method.
+    }
 
     /**
      * Checks if inside a transaction.
      *
      * @return bool TRUE if a transaction is currently active, and FALSE if not.
      */
-    public function inTransaction();
+    public function inTransaction()
+    {
+        // TODO: Implement inTransaction() method.
+    }
 
     /**
      * Retrieve a database connection attribute.
@@ -80,17 +119,23 @@ interface ConnectionInterface
      * @return mixed A successful call returns the value of the requested attribute.
      *               An unsuccessful call returns null.
      */
-    public function getAttribute($attribute);
+    public function getAttribute($attribute)
+    {
+        // TODO: Implement getAttribute() method.
+    }
 
     /**
      * Set an attribute.
      *
      * @param string $attribute
-     * @param mixed  $value
+     * @param mixed $value
      *
      * @return boolean TRUE on success or FALSE on failure.
      */
-    public function setAttribute($attribute, $value);
+    public function setAttribute($attribute, $value)
+    {
+        // TODO: Implement setAttribute() method.
+    }
 
     /**
      * Returns the ID of the last inserted row or sequence value.
@@ -109,5 +154,10 @@ interface ConnectionInterface
      *                a string representing the last value retrieved from the specified
      *                sequence object.
      */
-    public function lastInsertId($name = null);
+    public function lastInsertId($name = null)
+    {
+        // TODO: Implement lastInsertId() method.
+    }
+
+
 }

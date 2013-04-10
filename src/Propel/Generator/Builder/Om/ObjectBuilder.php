@@ -12,6 +12,7 @@ namespace Propel\Generator\Builder\Om;
 
 use Propel\Generator\Exception\EngineException;
 use Propel\Generator\Model\Column;
+use Propel\Generator\Model\Table;
 use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\IdMethod;
 use Propel\Generator\Model\PropelTypes;
@@ -29,6 +30,10 @@ use Propel\Generator\Platform\PlatformInterface;
  */
 class ObjectBuilder extends AbstractObjectBuilder
 {
+    public function __construct(Table $table){
+        parent::__construct($table);
+    }
+
     /**
      * Returns the package for the base object classes.
      *

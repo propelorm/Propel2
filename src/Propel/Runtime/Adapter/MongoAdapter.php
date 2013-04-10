@@ -10,17 +10,20 @@
 
 namespace Propel\Runtime\Adapter;
 
+use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
-use Propel\Runtime\Connection\StatementInterface;
+use Propel\Runtime\Connection\Mongo;
 use Propel\Runtime\Map\ColumnMap;
-use Propel\Runtime\Map\DatabaseMap;
-use Propel\Runtime\ActiveQuery\Criteria;
 
 /**
- * Interface for adapters.
+ * This is used in order to connect to a MySQL database.
  *
+ * @author Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author Jon S. Stevens <jon@clearink.com> (Torque)
+ * @author Brett McLaughlin <bmclaugh@algx.net> (Torque)
+ * @author Daniel Rall <dlr@finemaltcoding.com> (Torque)
  */
-interface AdapterInterface
+class MongoAdapter implements AdapterInterface
 {
     /**
      * Build database connection
@@ -29,7 +32,16 @@ interface AdapterInterface
      *
      * @return Propel\Runtime\Connection\ConnectionInterface
      */
-    public function getConnection($conparams);
+    public function getConnection($conparams)
+    {
+        $client = new Mongo('mongodb://'.$conparams['server'],
+            array(
+                 'database' => $conparams['database']
+            )
+        );
+
+        return $client;
+    }
 
     /**
      * Sets the character encoding using SQL standard SET NAMES statement.
@@ -40,10 +52,34 @@ interface AdapterInterface
      * @see initConnection()
      *
      * @param Propel\Runtime\Connection\ConnectionInterface $con
-     * @param string                                        $charset The $string charset encoding.
+     * @param string $charset The $string charset encoding.
      */
-    public function setCharset(ConnectionInterface $con, $charset);
+    public function setCharset(ConnectionInterface $con, $charset)
+    {
+        // TODO: Implement setCharset() method.
+    }
 
+    /**
+     * This method is used to ignore case.
+     *
+     * @param  string $in The string to transform to upper case.
+     * @return string The upper case string.
+     */
+    public function toUpperCase($in)
+    {
+        // TODO: Implement toUpperCase() method.
+    }
+
+    /**
+     * This method is used to ignore case.
+     *
+     * @param  string $in The string whose case to ignore.
+     * @return string The string in a case that can be ignored.
+     */
+    public function ignoreCase($in)
+    {
+        // TODO: Implement ignoreCase() method.
+    }
 
     /**
      * This method is used to ignore case in an ORDER BY clause.
@@ -54,7 +90,10 @@ interface AdapterInterface
      * @param  string $in The string whose case to ignore.
      * @return string The string in a case that can be ignored.
      */
-    public function ignoreCaseInOrderBy($in);
+    public function ignoreCaseInOrderBy($in)
+    {
+        // TODO: Implement ignoreCaseInOrderBy() method.
+    }
 
     /**
      * Returns the character used to indicate the beginning and end of
@@ -63,7 +102,10 @@ interface AdapterInterface
      *
      * @return string The text delimiter.
      */
-    public function getStringDelimiter();
+    public function getStringDelimiter()
+    {
+        // TODO: Implement getStringDelimiter() method.
+    }
 
     /**
      * Returns SQL which concatenates the second string to the first.
@@ -73,18 +115,24 @@ interface AdapterInterface
      *
      * @return string
      */
-    public function concatString($s1, $s2);
+    public function concatString($s1, $s2)
+    {
+        // TODO: Implement concatString() method.
+    }
 
     /**
      * Returns SQL which extracts a substring.
      *
-     * @param string  $s   String to extract from.
+     * @param string $s   String to extract from.
      * @param integer $pos Offset to start from.
      * @param integer $len Number of characters to extract.
      *
      * @return string
      */
-    public function subString($s, $pos, $len);
+    public function subString($s, $pos, $len)
+    {
+        // TODO: Implement subString() method.
+    }
 
     /**
      * Returns SQL which calculates the length (in chars) of a string.
@@ -92,14 +140,20 @@ interface AdapterInterface
      * @param  string $s String to calculate length of.
      * @return string
      */
-    public function strLength($s);
+    public function strLength($s)
+    {
+        // TODO: Implement strLength() method.
+    }
 
     /**
      * Quotes database object identifiers (table names, col names, sequences, etc.).
      * @param  string $text The identifier to quote.
      * @return string The quoted identifier.
      */
-    public function quoteIdentifier($text);
+    public function quoteIdentifier($text)
+    {
+        // TODO: Implement quoteIdentifier() method.
+    }
 
     /**
      * Quotes a database table which could have space separating it from an alias,
@@ -110,62 +164,86 @@ interface AdapterInterface
      * @param  string $table The table name to quo
      * @return string The quoted table name
      **/
-    public function quoteIdentifierTable($table);
+    public function quoteIdentifierTable($table)
+    {
+        // TODO: Implement quoteIdentifierTable() method.
+    }
 
     /**
      * Whether this adapter uses an ID generation system that requires getting ID _before_ performing INSERT.
      *
      * @return boolean
      */
-    public function isGetIdBeforeInsert();
+    public function isGetIdBeforeInsert()
+    {
+        // TODO: Implement isGetIdBeforeInsert() method.
+    }
 
     /**
      * Whether this adapter uses an ID generation system that requires getting ID _before_ performing INSERT.
      *
      * @return boolean
      */
-    public function isGetIdAfterInsert();
+    public function isGetIdAfterInsert()
+    {
+        // TODO: Implement isGetIdAfterInsert() method.
+    }
 
     /**
      * Gets the generated ID (either last ID for autoincrement or next sequence ID).
      *
      * @param Propel\Runtime\Connection\ConnectionInterface $con
-     * @param string                                        $name
+     * @param string $name
      *
      * @return mixed
      */
-    public function getId(ConnectionInterface $con, $name = null);
+    public function getId(ConnectionInterface $con, $name = null)
+    {
+        // TODO: Implement getId() method.
+    }
 
     /**
      * Formats a temporal value before binding, given a ColumnMap object
      *
-     * @param mixed                        $value The temporal value
+     * @param mixed $value The temporal value
      * @param Propel\Runtime\Map\ColumnMap $cMap
      *
      * @return string The formatted temporal value
      */
-    public function formatTemporalValue($value, ColumnMap $cMap);
+    public function formatTemporalValue($value, ColumnMap $cMap)
+    {
+        // TODO: Implement formatTemporalValue() method.
+    }
 
     /**
      * Returns timestamp formatter string for use in date() function.
      *
      * @return string
      */
-    public function getTimestampFormatter();
+    public function getTimestampFormatter()
+    {
+        // TODO: Implement getTimestampFormatter() method.
+    }
 
     /**
      * Returns date formatter string for use in date() function.
      *
      * @return string
      */
-    public function getDateFormatter();
+    public function getDateFormatter()
+    {
+        // TODO: Implement getDateFormatter() method.
+    }
 
     /**
      * Returns time formatter string for use in date() function.
      *
      * @return string
      */
-    public function getTimeFormatter();
+    public function getTimeFormatter()
+    {
+        // TODO: Implement getTimeFormatter() method.
+    }
 
     /**
      * Should Column-Names get identifiers for inserts or updates.
@@ -178,6 +256,9 @@ interface AdapterInterface
      *
      * @return boolean
      */
-    public function useQuoteIdentifier();
+    public function useQuoteIdentifier()
+    {
+        // TODO: Implement useQuoteIdentifier() method.
+    }
 
 }

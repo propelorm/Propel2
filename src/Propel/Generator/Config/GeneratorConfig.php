@@ -151,7 +151,7 @@ class GeneratorConfig implements GeneratorConfigInterface
      */
     public function getBuilderClassName($type)
     {
-        $propname = 'builder' . ucfirst(strtolower($type)) . 'Class';
+        $propname = 'builder' . ucfirst(strtolower($type)). 'Class';
 
         return $this->getClassName($propname);
     }
@@ -220,7 +220,10 @@ class GeneratorConfig implements GeneratorConfigInterface
      */
     public function getConfiguredBuilder(Table $table, $type)
     {
-        $classname = $this->getBuilderClassName($type);
+        $classname = $table->getDatabase()->getPlatform()->getBuilderClass($type);
+        if (!$classname) {
+            $classname = $this->getBuilderClassName($type);
+        }
         $builder   = new $classname($table);
         $builder->setGeneratorConfig($this);
 

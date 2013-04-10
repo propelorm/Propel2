@@ -65,6 +65,11 @@ class DefaultPlatform implements PlatformInterface
         $this->initialize();
     }
 
+    public function getObjectBuilderClass($type)
+    {
+        return '';
+    }
+
     /**
      * Sets the database connection to use for this Platform class.
      *
@@ -83,6 +88,18 @@ class DefaultPlatform implements PlatformInterface
     public function getConnection()
     {
         return $this->con;
+    }
+
+
+    public function getBuilderClass($type)
+    {
+        $class = get_called_class();
+        $class = substr($class, strrpos($class, '\\') + 1, -(strlen('Platform')));
+        $class = 'Propel\Generator\Builder\Om\Platform\\' . $class . ucfirst($type);
+
+        if (class_exists($class)) {
+            return $class;
+        }
     }
 
     /**
