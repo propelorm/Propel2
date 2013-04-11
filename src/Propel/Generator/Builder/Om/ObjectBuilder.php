@@ -1973,9 +1973,12 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * for results of JOIN queries where the resultset row includes columns from two or
      * more tables.
      *
-     * @param      array \$row The row returned by Statement->fetch(PDO::FETCH_NUM)
-     * @param      int \$startcol 0-based offset column which indicates which restultset column to start with.
-     * @param      boolean \$rehydrate Whether this object is being re-hydrated from the database.
+     * @param array   \$row The   row returned by Statement->fetch(PDO::FETCH_NUM)
+     * @param int     \$startcol  0-based offset column which indicates which restultset column to start with.
+     * @param boolean \$rehydrate Whether this object is being re-hydrated from the database.
+     * @param string  \$indexType One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_STUDLYPHPNAME
+     *                            TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM
+     *
      * @return int             next starting column
      * @throws PropelException - Any caught Exception will be rewrapped as a PropelException.
      */";
@@ -1989,7 +1992,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     protected function addHydrateOpen(&$script)
     {
         $script .= "
-    public function hydrate(\$row, \$startcol = 0, \$rehydrate = false)
+    public function hydrate(\$row, \$startcol = 0, \$rehydrate = false, \$indexType = TableMap::TYPE_NUM)
     {";
     }
 
@@ -2002,22 +2005,31 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     {
         $table = $this->getTable();
         $platform = $this->getPlatform();
+
+        $tableMap= $this->getTableMapClassName();
+
         $script .= "
         try {
 ";
         $n = 0;
         foreach ($table->getColumns() as $col) {
             if (!$col->isLazyLoad()) {
+
+                $indexName = "\$indexType == TableMap::TYPE_NUM ? $n + \$startcol : $tableMap::translateFieldName('{$col->getPhpName()}', TableMap::TYPE_PHPNAME, \$indexType)";
+
+                $script .= "
+
+            \$col = \$row[$indexName];";
                 $clo = strtolower($col->getName());
                 if ($col->getType() === PropelTypes::CLOB_EMU && $this->getPlatform() instanceof OraclePlatform) {
                     // PDO_OCI returns a stream for CLOB objects, while other PDO adapters return a string...
                     $script .= "
-            \$this->$clo = stream_get_contents(\$row[\$startcol + $n]);";
+            \$this->$clo = stream_get_contents(\$col);";
                 } elseif ($col->isLobType() && !$platform->hasStreamBlobImpl()) {
                     $script .= "
-            if (\$row[\$startcol + $n] !== null) {
+            if (\$col !== null) {
                 \$this->$clo = fopen('php://memory', 'r+');
-                fwrite(\$this->$clo, \$row[\$startcol + $n]);
+                fwrite(\$this->$clo, \$col);
                 rewind(\$this->$clo);
             } else {
                 \$this->$clo = null;
@@ -2040,29 +2052,29 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                     }
                     if ($handleMysqlDate) {
                         $script .= "
-            if (\$row[\$startcol + $n] === '$mysqlInvalidDateString') {
-                \$row[\$startcol + $n] = null;
+            if (\$col === '$mysqlInvalidDateString') {
+                \$col = null;
             }";
                     }
                     $script .= "
-            \$this->$clo = (\$row[\$startcol + $n] !== null) ? PropelDateTime::newInstance(\$row[\$startcol + $n], null, '$dateTimeClass') : null;";
+            \$this->$clo = (\$col] !== null) ? PropelDateTime::newInstance(\$col, null, '$dateTimeClass') : null;";
                 } elseif ($col->isPhpPrimitiveType()) {
                     $script .= "
-            \$this->$clo = (\$row[\$startcol + $n] !== null) ? (".$col->getPhpType().") \$row[\$startcol + $n] : null;";
+            \$this->$clo = (\$col !== null) ? (".$col->getPhpType().") \$col : null;";
                 } elseif ($col->getType() === PropelTypes::OBJECT) {
                     $script .= "
-            \$this->$clo = \$row[\$startcol + $n];";
+            \$this->$clo = \$col;";
                 } elseif ($col->getType() === PropelTypes::PHP_ARRAY) {
                     $cloUnserialized = $clo . '_unserialized';
                     $script .= "
-            \$this->$clo = \$row[\$startcol + $n];
+            \$this->$clo = \$col;
             \$this->$cloUnserialized = null;";
                 } elseif ($col->isPhpObjectType()) {
                     $script .= "
-            \$this->$clo = (\$row[\$startcol + $n] !== null) ? new ".$col->getPhpType()."(\$row[\$startcol + $n]) : null;";
+            \$this->$clo = (\$col !== null) ? new ".$col->getPhpType()."(\$col) : null;";
                 } else {
                     $script .= "
-            \$this->$clo = \$row[\$startcol + $n];";
+            \$this->$clo = \$col;";
                 }
                 $n++;
             } // if col->isLazyLoad()

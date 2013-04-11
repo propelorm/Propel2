@@ -22,9 +22,10 @@ use Propel\Runtime\Exception\PropelException;
  */
 class SimpleArrayFormatter extends AbstractFormatter
 {
-    public function format(StatementInterface $stmt)
+    public function format()
     {
         $this->checkInit();
+        $dataFetcher = $this->getDataObject();
 
         $collection = $this->getCollection();
 
@@ -32,12 +33,12 @@ class SimpleArrayFormatter extends AbstractFormatter
             throw new PropelException('Cannot use limit() in conjunction with with() on a one-to-many relationship. Please remove the with() call, or the limit() call.');
         }
 
-        while ($row = $stmt->fetch(\PDO::FETCH_NUM)) {
+        while ($row = $dataFetcher->fetch(\PDO::FETCH_NUM)) {
             if (false !== $rowArray = $this->getStructuredArrayFromRow($row)) {
                 $collection[] = $rowArray;
             }
         }
-        $stmt->closeCursor();
+        $dataFetcher->close();
 
         return $collection;
     }
@@ -47,16 +48,17 @@ class SimpleArrayFormatter extends AbstractFormatter
         return '\Propel\Runtime\Collection\ArrayCollection';
     }
 
-    public function formatOne(StatementInterface $stmt)
+    public function formatOne()
     {
         $this->checkInit();
         $result = null;
-        while ($row = $stmt->fetch(\PDO::FETCH_NUM)) {
+        $dataFetcher = $this->getDataFetcher();
+        if ($row = $dataFetcher->fetch(\PDO::FETCH_NUM)) {
             if (false !== $rowArray = $this->getStructuredArrayFromRow($row)) {
                 $result = $rowArray;
             }
         }
-        $stmt->closeCursor();
+        $dataFetcher->close();
 
         return $result;
     }

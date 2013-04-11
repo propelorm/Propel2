@@ -39,6 +39,7 @@ class SqlBuildCommand extends AbstractCommand
             ->addOption('mysql-engine', null, InputOption::VALUE_REQUIRED,  'MySQL engine (MyISAM, InnoDB, ...)', self::DEFAULT_MYSQL_ENGINE)
             ->addOption('output-dir',   null, InputOption::VALUE_REQUIRED,  'The output directory', self::DEFAULT_OUTPUT_DIRECTORY)
             ->addOption('validate',     null, InputOption::VALUE_NONE,      '')
+            ->addOption('connection', null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Connection to use', array())
             ->addOption('schema-name',  null, InputOption::VALUE_REQUIRED,  'The schema name for RDBMS supporting them', '')
             ->addOption('encoding',     null, InputOption::VALUE_REQUIRED,  'The encoding to use for the database', self::DEFAULT_DATABASE_ENCODING)
             ->addOption('table-prefix', null, InputOption::VALUE_REQUIRED,  'Add a prefix to all the table names in the database', '')
@@ -66,6 +67,16 @@ class SqlBuildCommand extends AbstractCommand
         $this->createDirectory($input->getOption('output-dir'));
 
         $manager = new SqlManager();
+
+
+        $connections = array();
+        foreach ($input->getOption('connection') as $connection) {
+            //list($name, $dsn, $infos) = $this->parseConnection($connection);
+            //$connections[$name] = array_merge(array('dsn' => $dsn), $infos);
+            $connections[$connection] = $generatorConfig->getBuildConnection($connection);
+        }
+        $manager->setConnections($connections);
+
         $manager->setValidate($input->getOption('validate'));
         $manager->setGeneratorConfig($generatorConfig);
         $manager->setSchemas($this->getSchemas($input->getOption('input-dir')));

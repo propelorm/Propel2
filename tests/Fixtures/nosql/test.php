@@ -3,20 +3,29 @@
 $loader = include(__DIR__.'/../../../vendor/autoload.php');
 //$loader->add('Propel\Tests\Bookstore', __DIR__ . '/build/classes/Propel/Tests/Bookstore');
 $loader->add('Propel\Tests', array(
-      __DIR__ . '/build/classes'
+      __DIR__ . '/generated-classes'
  ));
 $loader->register();
 
-use Propel\Tests\Bookstore\BookQuery;
-use Propel\Tests\Bookstore\Book;
-
 include('generated-conf/config.php');
 
-$book = new Book();
-$book->setTitle('Testbook');
-$book->save();
+//$book = new Propel\Tests\Bookstore\Book();
+//$book->setTitle('Testbook');
+//$book->save(); exit;
+
 
 $query = Propel\Tests\Bookstore\BookQuery::create();
-$rows = $query->find();
+$object = $query->findOne();
+$object->setTitle('Test Mod 2');
+$object->save();
+var_dump($object); exit;
 
-var_dump($rows);
+/*$o = new Propel\Tests\Bookstore\BookLite();
+$o->setId(1);
+$o->setTitle('Test');
+$o->save();*/
+
+$query = Propel\Tests\Bookstore\BookLiteQuery::create();
+$object = $query->findOne();
+
+var_dump($object);

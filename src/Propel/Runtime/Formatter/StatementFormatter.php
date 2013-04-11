@@ -21,13 +21,15 @@ use Propel\Runtime\Exception\PropelException;
  */
 class StatementFormatter extends AbstractFormatter
 {
-    public function format(StatementInterface $stmt)
+    public function format()
     {
+        $stmt = $this->getDataObject();
         return $stmt;
     }
 
-    public function formatOne(StatementInterface $stmt)
+    public function formatOne()
     {
+        $stmt = $this->getDataObject();
         return $stmt->rowCount() > 0 ? $stmt : null;
     }
 

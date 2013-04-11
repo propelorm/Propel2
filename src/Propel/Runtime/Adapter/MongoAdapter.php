@@ -12,7 +12,7 @@ namespace Propel\Runtime\Adapter;
 
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
-use Propel\Runtime\Connection\Mongo;
+use Propel\Runtime\Connection\MongoConnection;
 use Propel\Runtime\Map\ColumnMap;
 
 /**
@@ -34,7 +34,7 @@ class MongoAdapter implements AdapterInterface
      */
     public function getConnection($conparams)
     {
-        $client = new Mongo('mongodb://'.$conparams['server'],
+        $client = new MongoConnection('mongodb://'.$conparams['server'],
             $conparams['database'],
             $conparams['options']
         );

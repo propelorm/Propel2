@@ -8,10 +8,11 @@
  * @license MIT License
  */
 
-namespace Propel\Runtime\Adapter\Pdo;
+namespace Propel\Runtime\Connection;
 
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\InvalidArgumentException;
+use Propel\Runtime\Formatter\PdoDataFetcher;
 
 /**
  * PDO extension that implements ConnectionInterface and builds statements implementing StatementInterface.
@@ -69,5 +70,23 @@ class PdoConnection extends \PDO implements ConnectionInterface
         }
 
         parent::setAttribute($attribute, $value);
+    }
+
+    /**
+     * @param $data
+     *
+     * @return MongoDataFetcher
+     */
+    public function getDataFetcher($data){
+        return new PdoDataFetcher($data);
+    }
+
+    /**
+     * @param $data
+     *
+     * @return MongoDataFetcher
+     */
+    public function getSingleDataFetcher($data){
+        return $this->getDataFetcher($data);
     }
 }

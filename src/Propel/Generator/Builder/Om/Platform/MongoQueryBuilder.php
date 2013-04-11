@@ -21,7 +21,7 @@ use Propel\Generator\Model\PropelTypes;
  *
  * @author Francois Zaninotto
  */
-class MongoQuery extends QueryBuilder
+class MongoQueryBuilder extends QueryBuilder
 {
 
     public function getParentClass()

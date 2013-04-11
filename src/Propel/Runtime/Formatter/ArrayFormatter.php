@@ -25,23 +25,24 @@ class ArrayFormatter extends AbstractFormatter
 
     protected $emptyVariable;
 
-    public function format(StatementInterface $stmt)
+    public function format()
     {
         $this->checkInit();
+        $dataFetcher = $this->getDataFetcher();
 
         $collection = $this->getCollection();
 
         if ($this->isWithOneToMany() && $this->hasLimit) {
             throw new LogicException('Cannot use limit() in conjunction with with() on a one-to-many relationship. Please remove the with() call, or the limit() call.');
         }
-        while ($row = $stmt->fetch(\PDO::FETCH_NUM)) {
+        while ($row = $dataFetcher->fetch(\PDO::FETCH_NUM)) {
             if ($object = &$this->getStructuredArrayFromRow($row)) {
                 $collection[] = $object;
             }
         }
         $this->currentObjects = array();
         $this->alreadyHydratedObjects = array();
-        $stmt->closeCursor();
+        $dataFetcher->close();
 
         return $collection;
     }
@@ -51,18 +52,20 @@ class ArrayFormatter extends AbstractFormatter
         return '\Propel\Runtime\Collection\ArrayCollection';
     }
 
-    public function formatOne(StatementInterface $stmt)
+    public function formatOne()
     {
         $this->checkInit();
         $result = null;
-        while ($row = $stmt->fetch(\PDO::FETCH_NUM)) {
+        $dataFetcher = $this->getDataFetcher();
+
+        if ($row = $dataFetcher->fetch(\PDO::FETCH_NUM)) {
             if ($object = &$this->getStructuredArrayFromRow($row)) {
                 $result = &$object;
             }
         }
         $this->currentObjects = array();
         $this->alreadyHydratedObjects = array();
-        $stmt->closeCursor();
+        $dataFetcher->close();
 
         return $result;
     }

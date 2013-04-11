@@ -66,9 +66,14 @@ class MigrationDiffCommand extends AbstractCommand
         $manager->setSchemas($this->getSchemas($input->getOption('input-dir')));
 
         $connections = array();
-        foreach ($input->getOption('connection') as $connection) {
-            list($name, $dsn, $infos) = $this->parseConnection($connection);
-            $connections[$name] = array_merge(array('dsn' => $dsn), $infos);
+        $optionConnections = $input->getOption('connection');
+        if (!$optionConnections) {
+            $connections = $generatorConfig->getBuildConnections();
+        } else {
+            foreach ($optionConnections as $connection) {
+                list($name, $dsn, $infos) = $this->parseConnection($connection);
+                $connections[$name] = array_merge(array('dsn' => $dsn), $infos);
+            }
         }
 
         $manager->setConnections($connections);
@@ -86,15 +91,15 @@ class MigrationDiffCommand extends AbstractCommand
                 $output->writeln(sprintf('Connecting to database "%s" using DSN "%s"', $name, $params['dsn']));
             }
 
-            $conn      = $manager->getAdapterConnection($name);
-            $database = new Database($name);
-            $platform = $generatorConfig->getConfiguredPlatform($conn);
+            $conn     = $manager->getAdapterConnection($name);
+            $platform = $generatorConfig->getConfiguredPlatform($conn, $name);
 
             if (!$platform->supportsMigrations()) {
                 $output->writeln(sprintf('Skipping database "%s" since vendor "%s" does not support migrations', $name, $platform->getDatabaseType()));
                 continue;
             }
 
+            $database = new Database($name);
             $database->setPlatform($platform);
             $database->setDefaultIdMethod(IdMethod::NATIVE);
 

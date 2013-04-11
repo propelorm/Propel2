@@ -1274,7 +1274,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Returns an array containing all Column objects in the table.
      *
-     * @return array
+     * @return Column[]
      */
     public function getColumns()
     {

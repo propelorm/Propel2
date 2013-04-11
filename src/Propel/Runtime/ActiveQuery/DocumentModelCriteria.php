@@ -12,25 +12,18 @@ namespace Propel\Runtime\ActiveQuery;
 
 use Propel\Runtime\Propel;
 use Propel\Runtime\Exception\LogicException;
+use Propel\Runtime\Connection\MongoConnection;
 use Propel\Runtime\Util\BasePeer;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion;
 use Propel\Runtime\ActiveQuery\Criterion\SeveralModelCriterion;
+use Propel\Runtime\Formatter\MongoDataFetcher;
+use Propel\Runtime\Formatter\ArrayDataFetcher;
 
 /**
  */
-class DocumentModelCriteria implements \IteratorAggregate
+class DocumentModelCriteria extends BaseModelCriteria
 {
-
-    private $dbName;
-    private $originalDbName;
-    private $modelName;
-    private $modelTableMapName;
-    private $modelPeerName;
-    private $modelAlias;
-    private $tableMap;
-    private $formatter;
-    protected $defaultFormatterClass = ModelCriteria::FORMAT_OBJECT;
 
     /**
      * Initializes internal state of \Propel\Tests\Bookstore\Base\BookQuery object.
@@ -56,64 +49,38 @@ class DocumentModelCriteria implements \IteratorAggregate
         $this->tableMap          = Propel::getServiceContainer()->getDatabaseMap($this->getDbName())->getTableByPhpName($this->modelName);
     }
 
-
-    public function setDbName($dbName = null)
+    public function find($query = null, MongoConnection $con = null)
     {
-        $this->dbName = (null === $dbName ? Propel::getServiceContainer()->getDefaultDatasource() : $dbName);
-    }
-
-    public function getDbName()
-    {
-        return $this->dbName;
-    }
-
-    public function getFormatter()
-    {
-        if (null === $this->formatter) {
-            $formatterClass = $this->defaultFormatterClass;
-            $this->formatter = new $formatterClass();
-        }
-
-        return $this->formatter;
-    }
-
-    public function find($query, $con)
-    {
-
         if (null === $con) {
             $con = Propel::getServiceContainer()->getReadConnection($this->getDbName());
         }
 
-        $dbName = $this->getDbName();
+        $cursor = $con
+            ->getCollection(constant($this->modelTableMapName.'::TABLE_NAME'))
+            ->find($query ?: array());
 
-        $row = $con->getCollection($dbName::TABLE_NAME)->findOne($query);
-
-        //todo, use a FormatFactory that retursn the correct (non-pdo) formatter.
-        return $this->getFormatter()->init($this)->format($stmt);
-
+        return $this
+            ->getFormatter()
+            ->init($this, new $con->getDataFetcher($cursor))
+            ->format();
     }
 
-    /**
-     * Execute the query with a find(), and return a Traversable object.
-     *
-     * The return value depends on the query formatter. By default, this returns an ArrayIterator
-     * constructed on a Propel\Runtime\Collection\PropelCollection.
-     * Compulsory for implementation of \IteratorAggregate.
-     *
-     * @return Traversable
-     */
-    public function getIterator()
+    public function findOne($query = null, MongoConnection $con = null)
     {
-        $res = $this->find(null); // use the default connection
-        if ($res instanceof \IteratorAggregate) {
-            return $res->getIterator();
+        if (null === $con) {
+            $con = Propel::getServiceContainer()->getReadConnection($this->getDbName());
         }
-        if ($res instanceof \Traversable) {
-            return $res;
+
+        $document = $con
+            ->getCollection(constant($this->modelTableMapName.'::TABLE_NAME'))
+            ->findOne($query ?: array());
+
+        if ($document) {
+            return $this
+                ->getFormatter()
+                ->init($this, $con->getSingleDataFetcher(array($document)))
+                ->formatOne();
         }
-        if (is_array($res)) {
-            return new \ArrayIterator($res);
-        }
-        throw new LogicException('The current formatter doesn\'t return an iterable result');
     }
+
 }

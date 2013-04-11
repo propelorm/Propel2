@@ -95,7 +95,7 @@ class DefaultPlatform implements PlatformInterface
     {
         $class = get_called_class();
         $class = substr($class, strrpos($class, '\\') + 1, -(strlen('Platform')));
-        $class = 'Propel\Generator\Builder\Om\Platform\\' . $class . ucfirst($type);
+        $class = 'Propel\Generator\Builder\Om\Platform\\' . $class . ucfirst($type) . 'Builder';
 
         if (class_exists($class)) {
             return $class;

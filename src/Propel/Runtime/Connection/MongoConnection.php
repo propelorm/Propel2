@@ -11,8 +11,9 @@
 namespace Propel\Runtime\Connection;
 
 use \MongoCollection;
+use Propel\Runtime\Formatter\MongoDataFetcher;
 
-class Mongo extends \MongoClient implements ConnectionInterface
+class MongoConnection extends \MongoClient implements ConnectionInterface
 {
     /**
      * @var MongoCollection
@@ -40,6 +41,24 @@ class Mongo extends \MongoClient implements ConnectionInterface
             $this->collection = new MongoCollection($this->db, $entity);
         }
         return $this->collection;
+    }
+
+    /**
+     * @param $data
+     *
+     * @return MongoDataFetcher
+     */
+    public function getDataFetcher($data){
+        return new MongoDataFetcher($data);
+    }
+
+    /**
+     * @param $data
+     *
+     * @return MongoDataFetcher
+     */
+    public function getSingleDataFetcher($data){
+        return $this->getDataFetcher($data);
     }
 
     /**

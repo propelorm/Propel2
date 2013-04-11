@@ -37,9 +37,6 @@ class MongoPlatform extends DefaultPlatform
      */
     protected $isIdentifierQuotingEnabled = true;
 
-    protected $tableEngineKeyword = 'ENGINE';  // overwritten in build.properties
-    protected $defaultTableEngine = 'MyISAM';  // overwritten in build.properties
-
     /**
      * Initializes db specific domain mapping.
      */
@@ -97,6 +94,12 @@ class MongoPlatform extends DefaultPlatform
     public function getTimestampFormatter()
     {
         return 'Y-m-d H:i:s';
+    }
+
+
+    public function supportsMigrations()
+    {
+        return false;
     }
 
     public function getColumnBindingPHP($column, $identifier, $columnValueAccessor, $tab = "            ")

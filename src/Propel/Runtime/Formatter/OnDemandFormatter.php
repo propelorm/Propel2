@@ -25,24 +25,25 @@ class OnDemandFormatter extends ObjectFormatter
 {
     protected $isSingleTableInheritance = false;
 
-    public function init(ModelCriteria $criteria)
+    public function init(BaseModelCriteria $criteria, DataFetcher $dataFetcher = null)
     {
-        parent::init($criteria);
+        parent::init($criteria, $dataFetcher);
 
         $this->isSingleTableInheritance = $criteria->getTableMap()->isSingleTableInheritance();
 
         return $this;
     }
 
-    public function format(StatementInterface $stmt)
+    public function format()
     {
         $this->checkInit();
+        $dataFetcher = $this->getDataFetcher();
         if ($this->isWithOneToMany()) {
             throw new LogicException('OnDemandFormatter cannot hydrate related objects using a one-to-many relationship. Try removing with() from your query.');
         }
 
         $collection = $this->getCollection();
-        $collection->initIterator($this, $stmt);
+        $collection->initIterator($this, $dataFetcher);
 
         return $collection;
     }
