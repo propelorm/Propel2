@@ -292,8 +292,8 @@ class BasePeer
 
         // Get list of required tables, containing all columns
         $tablesColumns = $selectCriteria->getTablesColumns();
-        if (empty($tablesColumns)) {
-            $tablesColumns = array($selectCriteria->getPrimaryTableName() => array());
+        if (empty($tablesColumns) && ($table = $selectCriteria->getPrimaryTableName())) {
+            $tablesColumns = array($table => array());
         }
 
         // we also need the columns for the update SQL
