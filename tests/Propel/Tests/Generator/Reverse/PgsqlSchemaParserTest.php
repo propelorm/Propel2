@@ -40,7 +40,9 @@ class PgsqlSchemaParserTest extends TestCase
 
     protected function tearDown()
     {
-        $this->con->rollback();
+        if ($this->con) {
+            $this->con->rollback();
+        }
 
         parent::tearDown();
         Propel::init(__DIR__ . '/../../../../Fixtures/bookstore/build/conf/bookstore-conf.php');
