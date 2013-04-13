@@ -147,7 +147,12 @@ class QuickBuilder
 
     public function buildClasses(array $classTargets = null)
     {
-        eval($this->getClasses($classTargets));
+        $code = "<?php\n".$this->getClasses($classTargets);
+        $name = $classTargets ? '_' . implode($classTargets, '_') : '';
+        $tempFile = tempnam(sys_get_temp_dir(), 'propelQuickBuilder'.$name).'.php';
+
+        file_put_contents($tempFile, $code);
+        include($tempFile);
     }
 
     public function getClasses(array $classTargets = null)

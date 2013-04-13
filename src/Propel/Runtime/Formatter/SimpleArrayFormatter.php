@@ -22,10 +22,15 @@ use Propel\Runtime\Exception\PropelException;
  */
 class SimpleArrayFormatter extends AbstractFormatter
 {
-    public function format()
+    public function format(DataFetcher $dataFetcher = null)
     {
         $this->checkInit();
-        $dataFetcher = $this->getDataObject();
+
+        if ($dataFetcher) {
+            $this->setDataFetcher($dataFetcher);
+        } else {
+            $dataFetcher = $this->getDataFetcher();
+        }
 
         $collection = $this->getCollection();
 
@@ -48,12 +53,16 @@ class SimpleArrayFormatter extends AbstractFormatter
         return '\Propel\Runtime\Collection\ArrayCollection';
     }
 
-    public function formatOne()
+    public function formatOne(DataFetcher $dataFetcher = null)
     {
         $this->checkInit();
         $result = null;
-        $dataFetcher = $this->getDataFetcher();
-        if ($row = $dataFetcher->fetch(\PDO::FETCH_NUM)) {
+        if ($dataFetcher) {
+            $this->setDataFetcher($dataFetcher);
+        } else {
+            $dataFetcher = $this->getDataFetcher();
+        }
+        while ($row = $dataFetcher->fetch(\PDO::FETCH_NUM)) {
             if (false !== $rowArray = $this->getStructuredArrayFromRow($row)) {
                 $result = $rowArray;
             }

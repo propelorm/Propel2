@@ -38,6 +38,7 @@ use Propel\Runtime\ActiveQuery\Exception\UnknownColumnException;
 use Propel\Runtime\ActiveQuery\Exception\UnknownModelException;
 use Propel\Runtime\ActiveQuery\Exception\UnknownRelationException;
 
+use Propel\Runtime\Formatter\DataFetcher;
 /**
  * This class extends the Criteria by adding runtime introspection abilities
  * in order to ease the building of queries.
@@ -1008,11 +1009,11 @@ class ModelCriteria extends BaseModelCriteria
 
         $this->basePreSelect($con);
         $criteria = $this->isKeepQuery() ? clone $this : $this;
-        $stmt = $criteria->doSelect($con);
+        $dataFetcher = $criteria->doSelect($con);
 
         return $criteria
             ->getFormatter()
-            ->init($criteria, $con->getDataFetcher($stmt))->format();
+            ->init($criteria)->format($dataFetcher);
     }
 
     /**
@@ -1033,12 +1034,12 @@ class ModelCriteria extends BaseModelCriteria
         $this->basePreSelect($con);
         $criteria = $this->isKeepQuery() ? clone $this : $this;
         $criteria->limit(1);
-        $stmt = $criteria->doSelect($con);
+        $dataFetcher = $criteria->doSelect($con);
 
         return $criteria
             ->getFormatter()
-            ->init($criteria, $con->getDataFetcher($stmt))
-            ->formatOne();
+            ->init($criteria)
+            ->formatOne($dataFetcher);
     }
 
     /**
@@ -1103,9 +1104,9 @@ class ModelCriteria extends BaseModelCriteria
                 $criteria->add($pkCol->getFullyQualifiedName(), $keyPart);
             }
         }
-        $stmt = $criteria->doSelect($con);
+        $dataFetcher = $criteria->doSelect($con);
 
-        return $criteria->getFormatter()->init($criteria)->formatOne($stmt);
+        return $criteria->getFormatter()->init($criteria)->formatOne($dataFetcher);
     }
 
     /**
@@ -1139,9 +1140,9 @@ class ModelCriteria extends BaseModelCriteria
             // composite primary key
             throw new PropelException('Multiple object retrieval is not implemented for composite primary keys');
         }
-        $stmt = $criteria->doSelect($con);
+        $dataFetcher = $criteria->doSelect($con);
 
-        return $criteria->getFormatter()->init($criteria)->format($stmt);
+        return $criteria->getFormatter()->init($criteria)->format($dataFetcher);
     }
 
     /**
@@ -1149,7 +1150,7 @@ class ModelCriteria extends BaseModelCriteria
      *
      * @param ConnectionInterface $con A connection object
      *
-     * @return StatementInterface A statement executed using the connection, ready to be fetched
+     * @return DataFetcher A dataFetcher using the connection, ready to be fetched
      */
     protected function doSelect($con)
     {
@@ -1174,7 +1175,7 @@ class ModelCriteria extends BaseModelCriteria
             throw new PropelException(sprintf('Unable to execute SELECT statement [%s]', $sql), 0, $e);
         }
 
-        return $stmt;
+        return $con->getDataFetcher($stmt);
     }
 
     /**
@@ -1288,13 +1289,13 @@ class ModelCriteria extends BaseModelCriteria
         // tables go into the FROM clause.
         $criteria->setPrimaryTableName(constant($this->modelTableMapName . '::TABLE_NAME'));
 
-        $stmt = $criteria->doCount($con);
-        if ($row = $stmt->fetch(\PDO::FETCH_NUM)) {
-            $count = (int) $row[0];
+        $dataFetcher = $criteria->doCount($con);
+        if ($row = $dataFetcher->fetch()) {
+            $count = (int) current($row);
         } else {
             $count = 0; // no rows returned; we infer that means 0 matches.
         }
-        $stmt->closeCursor();
+        $dataFetcher->close();
 
         return $count;
     }
@@ -1343,7 +1344,7 @@ class ModelCriteria extends BaseModelCriteria
             throw new PropelException(sprintf('Unable to execute COUNT statement [%s]', $sql), 0, $e);
         }
 
-        return $stmt;
+        return $con->getDataFetcher($stmt);
     }
 
     /**

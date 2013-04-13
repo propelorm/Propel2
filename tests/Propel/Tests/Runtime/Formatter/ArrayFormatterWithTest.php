@@ -452,6 +452,9 @@ class ArrayFormatterWithTest extends BookstoreEmptyTestBase
         $this->assertEquals('Grass', $book['AuthorName2'], 'ArrayFormatter correctly hydrates all as columns');
     }
 
+    /**
+     * @group test
+     */
     public function testFindPkWithOneToMany()
     {
         BookstoreDataPopulator::populate();
@@ -468,6 +471,7 @@ class ArrayFormatterWithTest extends BookstoreEmptyTestBase
             ->joinWith('Review')
             ->findPk($pk, $con);
         $reviews = $book['Reviews'];
+        //var_dump($book);
         $this->assertEquals(2, count($reviews), 'Related objects are correctly hydrated');
     }
 }

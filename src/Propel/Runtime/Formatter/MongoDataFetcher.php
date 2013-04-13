@@ -37,4 +37,8 @@ class MongoDataFetcher extends DataFetcher {
     public function getIndexType(){
         return TableMap::TYPE_PHPNAME;
     }
+
+    public function count(){
+        return -1; //todo
+    }
 }

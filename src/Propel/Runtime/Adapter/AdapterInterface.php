@@ -22,6 +22,10 @@ use Propel\Runtime\ActiveQuery\Criteria;
  */
 interface AdapterInterface
 {
+    const ID_METHOD_NONE = 0;
+    const ID_METHOD_AUTOINCREMENT = 1;
+    const ID_METHOD_SEQUENCE = 2;
+
     /**
      * Build database connection
      *

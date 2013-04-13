@@ -25,7 +25,7 @@ class ConnectionManagerMasterSlave implements ConnectionManagerInterface
     /**
      * @var array
      */
-    protected $writeConfiguration;
+    protected $writeConfiguration = array();
 
     /**
      * @var \Propel\Runtime\Connection\ConnectionInterface

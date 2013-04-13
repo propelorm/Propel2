@@ -742,8 +742,8 @@ static public function updateLoadedNodes(\$prune = null, ConnectionInterface \$c
         }
 
         $script .= "
-            \$stmt = $queryClassName::create(null, \$criteria)->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find(\$con);
-            while (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
+            \$dataFetcher = $queryClassName::create(null, \$criteria)->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find(\$con);
+            while (\$row = \$dataFetcher->fetch()) {
                 \$key = $tableMapClassName::getPrimaryKeyHashFromRow(\$row, 0);
                 if (null !== (\$object = $tableMapClassName::getInstanceFromPool(\$key))) {";
         $n = 0;
@@ -770,7 +770,7 @@ static public function updateLoadedNodes(\$prune = null, ConnectionInterface \$c
         $script .= "
                 }
             }
-            \$stmt->closeCursor();
+            \$dataFetcher->close();
         }
     }
 }
@@ -835,7 +835,7 @@ static public function fixLevels(" . ($useScope ? "\$scope, " : ""). "Connection
         }
         $script .= "
     \$c->addAscendingOrderByColumn($objectClassName::LEFT_COL);
-    \$stmt = $queryClassName::create(null, \$c)->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find(\$con);
+    \$dataFetcher = $queryClassName::create(null, \$c)->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find(\$con);
     ";
         if (!$this->table->getChildrenColumn()) {
             $script .= "
@@ -846,7 +846,7 @@ static public function fixLevels(" . ($useScope ? "\$scope, " : ""). "Connection
         $script .= "
     \$level = null;
     // iterate over the statement
-    while (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
+    while (\$row = \$dataFetcher->fetch()) {
 
         // hydrate object
         \$key = $tableMapClassName::getPrimaryKeyHashFromRow(\$row, 0);
@@ -889,7 +889,7 @@ static public function fixLevels(" . ($useScope ? "\$scope, " : ""). "Connection
             \$obj->save(\$con);
         }
     }
-    \$stmt->closeCursor();
+    \$dataFetcher->close();
 }
 ";
     }

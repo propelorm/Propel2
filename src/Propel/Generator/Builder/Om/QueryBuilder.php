@@ -502,7 +502,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
             throw new PropelException(sprintf('Unable to execute SELECT statement [%s]', \$sql), 0, \$e);
         }
         \$obj = null;
-        if (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {";
+        if (\$row = \$stmt->fetch()) {";
 
         if ($table->getChildrenColumn()) {
             $script .="
@@ -545,11 +545,11 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     {
         // As the query uses a PK condition, no limit(1) is necessary.
         \$criteria = \$this->isKeepQuery() ? clone \$this : \$this;
-        \$stmt = \$criteria
+        \$dataFetcher = \$criteria
             ->filterByPrimaryKey(\$key)
             ->doSelect(\$con);
 
-        return \$criteria->getFormatter()->init(\$criteria)->formatOne(\$stmt);
+        return \$criteria->getFormatter()->init(\$criteria)->formatOne(\$dataFetcher);
     }
 ";
     }
@@ -592,11 +592,11 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
         }
         \$this->basePreSelect(\$con);
         \$criteria = \$this->isKeepQuery() ? clone \$this : \$this;
-        \$stmt = \$criteria
+        \$dataFetcher = \$criteria
             ->filterByPrimaryKeys(\$keys)
             ->doSelect(\$con);
 
-        return \$criteria->getFormatter()->init(\$criteria)->format(\$stmt);
+        return \$criteria->getFormatter()->init(\$criteria)->format(\$dataFetcher);
     }
 ";
     }

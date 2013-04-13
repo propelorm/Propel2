@@ -13,7 +13,7 @@ namespace Propel\Tests\Runtime\Connection;
 use Propel\Tests\Helpers\BaseTestCase;
 
 use Propel\Runtime\Connection\ConnectionManagerSingle;
-use Propel\Runtime\Adapter\Pdo\PdoConnection;
+use Propel\Runtime\Connection\PdoConnection;
 use Propel\Runtime\Adapter\Pdo\SqliteAdapter;
 
 class ConnectionManagerSingleTest extends BaseTestCase
@@ -47,7 +47,7 @@ class ConnectionManagerSingleTest extends BaseTestCase
         $con = $manager->getWriteConnection(new SqliteAdapter());
         $this->assertInstanceOf('Propel\Runtime\Connection\ConnectionWrapper', $con);
         $pdo = $con->getWrappedConnection();
-        $this->assertInstanceOf('Propel\Runtime\Adapter\Pdo\PdoConnection', $pdo);
+        $this->assertInstanceOf('Propel\Runtime\Connection\PdoConnection', $pdo);
     }
 
     public function testGetWriteConnectionReturnsAConnectionNamedAfterTheManager()

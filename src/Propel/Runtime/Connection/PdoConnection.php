@@ -89,4 +89,18 @@ class PdoConnection extends \PDO implements ConnectionInterface
     public function getSingleDataFetcher($data){
         return $this->getDataFetcher($data);
     }
+
+    public function query($statement)
+    {
+        $stmt = parent::query($statement);
+        return $this->getDataFetcher($stmt);
+    }
+
+    public function exec($statement)
+    {
+        $stmt = parent::exec($statement);
+        return $this->getDataFetcher($stmt);
+    }
+
+
 }

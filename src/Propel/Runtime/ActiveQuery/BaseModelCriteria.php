@@ -3,6 +3,32 @@
 namespace Propel\Runtime\ActiveQuery;
 
 use Propel\Runtime\Propel;
+use Propel\Runtime\Collection\ObjectCollection;
+use Propel\Runtime\Connection\ConnectionInterface;
+use Propel\Runtime\Exception\ClassNotFoundException;
+use Propel\Runtime\Exception\InvalidArgumentException;
+use Propel\Runtime\Exception\LogicException;
+use Propel\Runtime\Exception\PropelException;
+use Propel\Runtime\Exception\UnexpectedValueException;
+use Propel\Runtime\Formatter\AbstractFormatter;
+use Propel\Runtime\Formatter\ObjectFormatter;
+use Propel\Runtime\Map\ColumnMap;
+use Propel\Runtime\Map\RelationMap;
+use Propel\Runtime\Map\TableMap;
+use Propel\Runtime\Util\BasePeer;
+use Propel\Runtime\Util\PropelModelPager;
+use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion;
+use Propel\Runtime\ActiveQuery\Criterion\InModelCriterion;
+use Propel\Runtime\ActiveQuery\Criterion\BasicModelCriterion;
+use Propel\Runtime\ActiveQuery\Criterion\CustomCriterion;
+use Propel\Runtime\ActiveQuery\Criterion\LikeModelCriterion;
+use Propel\Runtime\ActiveQuery\Criterion\RawCriterion;
+use Propel\Runtime\ActiveQuery\Criterion\RawModelCriterion;
+use Propel\Runtime\ActiveQuery\Criterion\SeveralModelCriterion;
+use Propel\Runtime\ActiveQuery\Exception\UnknownColumnException;
+use Propel\Runtime\ActiveQuery\Exception\UnknownModelException;
+use Propel\Runtime\ActiveQuery\Exception\UnknownRelationException;
 
 class BaseModelCriteria extends Criteria implements \IteratorAggregate {
 
@@ -91,7 +117,7 @@ class BaseModelCriteria extends Criteria implements \IteratorAggregate {
     public function setFormatter($formatter)
     {
         if (is_string($formatter)) {
-            $formatter = new $formatter();
+            $formatter = new $formatter($this);
         }
 
         if (!$formatter instanceof AbstractFormatter) {
@@ -183,7 +209,7 @@ class BaseModelCriteria extends Criteria implements \IteratorAggregate {
      */
     public function getModelShortName()
     {
-        return self::getShortName($this->modelName);
+        return static::getShortName($this->modelName);
     }
 
     /**

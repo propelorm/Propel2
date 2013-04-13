@@ -1313,42 +1313,52 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         \$c->addSelectColumn(".$this->getColumnConstant($column).");
         try {
             \$row = array(0 => null);
-            \$stmt = ".$this->getQueryClassName()."::create(null, \$c)->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find(\$con);
-            \$stmt->bindColumn(1, \$row[0], PDO::PARAM_LOB, 0, PDO::SQLSRV_ENCODING_BINARY);
-            \$stmt->fetch(PDO::FETCH_BOUND);
-            \$stmt->closeCursor();";
+            \$dataFetcher = ".$this->getQueryClassName()."::create(null, \$c)->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find(\$con);
+            if (\$dataFetcher instanceof PDODataFetcher) {
+                \$dataFetcher->bindColumn(1, \$row[0], PDO::PARAM_LOB, 0, PDO::SQLSRV_ENCODING_BINARY);
+            }
+            \$row = \$dataFetcher->fetch(PDO::FETCH_BOUND);
+            \$dataFetcher->close();";
         } else {
             $script .= "
         \$c = \$this->buildPkeyCriteria();
         \$c->addSelectColumn(".$this->getColumnConstant($column).");
         try {
-            \$stmt = ".$this->getQueryClassName()."::create(null, \$c)->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find(\$con);
-            \$row = \$stmt->fetch(PDO::FETCH_NUM);
-            \$stmt->closeCursor();";
+            \$dataFetcher = ".$this->getQueryClassName()."::create(null, \$c)->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find(\$con);
+            \$row = \$dataFetcher->fetch();
+            \$dataFetcher->close();";
         }
+
+        $script .= "
+
+        \$firstColumn = null;
+        if (\$row) {
+            \$firstColumn = current(\$row);
+        }
+";
 
         if ($column->getType() === PropelTypes::CLOB && $platform instanceof OraclePlatform) {
             // PDO_OCI returns a stream for CLOB objects, while other PDO adapters return a string...
             $script .= "
-            \$this->$clo = stream_get_contents(\$row[0]);";
+            \$this->$clo = stream_get_contents(\$firstColumn);";
         } elseif ($column->isLobType() && !$platform->hasStreamBlobImpl()) {
             $script .= "
-            if (\$row[0] !== null) {
+            if (\$firstColumn !== null) {
                 \$this->$clo = fopen('php://memory', 'r+');
-                fwrite(\$this->$clo, \$row[0]);
+                fwrite(\$this->$clo, \$firstColumn);
                 rewind(\$this->$clo);
             } else {
                 \$this->$clo = null;
             }";
         } elseif ($column->isPhpPrimitiveType()) {
             $script .= "
-            \$this->$clo = (\$row[0] !== null) ? (".$column->getPhpType().") \$row[0] : null;";
+            \$this->$clo = (\$firstColumn !== null) ? (".$column->getPhpType().") \$firstColumn : null;";
         } elseif ($column->isPhpObjectType()) {
             $script .= "
-            \$this->$clo = (\$row[0] !== null) ? new ".$column->getPhpType()."(\$row[0]) : null;";
+            \$this->$clo = (\$firstColumn !== null) ? new ".$column->getPhpType()."(\$firstColumn) : null;";
         } else {
             $script .= "
-            \$this->$clo = \$row[0];";
+            \$this->$clo = \$firstColumn;";
         }
 
         $script .= "
@@ -2057,7 +2067,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             }";
                     }
                     $script .= "
-            \$this->$clo = (\$col] !== null) ? PropelDateTime::newInstance(\$col, null, '$dateTimeClass') : null;";
+            \$this->$clo = (\$col !== null) ? PropelDateTime::newInstance(\$col, null, '$dateTimeClass') : null;";
                 } elseif ($col->isPhpPrimitiveType()) {
                     $script .= "
             \$this->$clo = (\$col !== null) ? (".$col->getPhpType().") \$col : null;";
@@ -2742,13 +2752,13 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         // We don't need to alter the object instance pool; we're just modifying this instance
         // already in the pool.
 
-        \$stmt = ".$this->getQueryClassName()."::create(null, \$this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find(\$con);
-        \$row = \$stmt->fetch(PDO::FETCH_NUM);
-        \$stmt->closeCursor();
+        \$dataFetcher = ".$this->getQueryClassName()."::create(null, \$this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find(\$con);
+        \$row = \$dataFetcher->fetch();
+        \$dataFetcher->close();
         if (!\$row) {
             throw new PropelException('Cannot find matching row in the database to reload object values.');
         }
-        \$this->hydrate(\$row, 0, true); // rehydrate
+        \$this->hydrate(\$row, 0, true, \$dataFetcher->getIndexType()); // rehydrate
 ";
 
         // support for lazy load columns

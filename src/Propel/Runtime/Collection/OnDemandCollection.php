@@ -14,6 +14,7 @@ use Propel\Runtime\Collection\Exception\ReadOnlyModelException;
 use Propel\Runtime\Connection\StatementInterface;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Formatter\AbstractFormatter;
+use Propel\Runtime\Formatter\DataFetcher;
 use Propel\Runtime\Map\TableMap;
 
 /**
@@ -36,12 +37,12 @@ class OnDemandCollection extends Collection
 
     /**
      * @param AbstractFormatter  $formatter
-     * @param StatementInterface $stmt
+     * @param DataFetcher        $dataFetcher
      */
-    public function initIterator(AbstractFormatter $formatter, StatementInterface $stmt)
+    public function initIterator(AbstractFormatter $formatter, DataFetcher $dataFetcher)
     {
         $this->currentKey = -1;
-        $this->iterator = new OnDemandIterator($formatter, $stmt);
+        $this->iterator = new OnDemandIterator($formatter, $dataFetcher);
     }
 
     /**

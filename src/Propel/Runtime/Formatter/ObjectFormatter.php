@@ -22,10 +22,14 @@ use Propel\Runtime\Map\TableMap;
  */
 class ObjectFormatter extends AbstractFormatter
 {
-    public function format()
+    public function format(DataFetcher $dataFetcher = null)
     {
         $this->checkInit();
-        $dataFetcher = $this->getDataFetcher();
+        if ($dataFetcher) {
+            $this->setDataFetcher($dataFetcher);
+        } else {
+            $dataFetcher = $this->getDataFetcher();
+        }
 
         $collection = $this->getCollection();
 
@@ -34,7 +38,7 @@ class ObjectFormatter extends AbstractFormatter
                 throw new LogicException('Cannot use limit() in conjunction with with() on a one-to-many relationship. Please remove the with() call, or the limit() call.');
             }
             $pks = array();
-            while ($row = $dataFetcher->fetch(\PDO::FETCH_NUM)) {
+            while ($row = $dataFetcher->fetch()) {
                 $object = $this->getAllObjectsFromRow($row);
                 $pk = $object->getPrimaryKey();
                 if (!in_array($pk, $pks)) {
@@ -58,13 +62,17 @@ class ObjectFormatter extends AbstractFormatter
         return '\Propel\Runtime\Collection\ObjectCollection';
     }
 
-    public function formatOne()
+    public function formatOne(DataFetcher $dataFetcher = null)
     {
         $this->checkInit();
         $result = null;
-        $dataFetcher = $this->getDataFetcher();
+        if ($dataFetcher) {
+            $this->setDataFetcher($dataFetcher);
+        } else {
+            $dataFetcher = $this->getDataFetcher();
+        }
 
-        if ($row = $dataFetcher->fetch()) {
+        while ($row = $dataFetcher->fetch()) {
             $result = $this->getAllObjectsFromRow($row);
         }
         $dataFetcher->close();

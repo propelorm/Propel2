@@ -19,6 +19,10 @@ class ArrayDataFetcher extends DataFetcher {
         return $this->indexType;
     }
 
+    public function count(){
+        return count($this->indexType);
+    }
+
     public function setIndexType($indexType){
         $this->indexType = $indexType;
     }

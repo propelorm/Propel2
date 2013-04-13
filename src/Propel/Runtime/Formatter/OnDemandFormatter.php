@@ -11,7 +11,7 @@
 namespace Propel\Runtime\Formatter;
 
 use Propel\Runtime\Exception\LogicException;
-use Propel\Runtime\ActiveQuery\ModelCriteria;
+use Propel\Runtime\ActiveQuery\BaseModelCriteria;
 use Propel\Runtime\Connection\StatementInterface;
 
 /**
@@ -25,7 +25,7 @@ class OnDemandFormatter extends ObjectFormatter
 {
     protected $isSingleTableInheritance = false;
 
-    public function init(BaseModelCriteria $criteria, DataFetcher $dataFetcher = null)
+    public function init(BaseModelCriteria $criteria = null, DataFetcher $dataFetcher = null)
     {
         parent::init($criteria, $dataFetcher);
 
@@ -34,10 +34,15 @@ class OnDemandFormatter extends ObjectFormatter
         return $this;
     }
 
-    public function format()
+    public function format(DataFetcher $dataFetcher = null)
     {
         $this->checkInit();
-        $dataFetcher = $this->getDataFetcher();
+        if ($dataFetcher) {
+            $this->setDataFetcher($dataFetcher);
+        } else {
+            $dataFetcher = $this->getDataFetcher();
+        }
+
         if ($this->isWithOneToMany()) {
             throw new LogicException('OnDemandFormatter cannot hydrate related objects using a one-to-many relationship. Try removing with() from your query.');
         }
@@ -53,6 +58,9 @@ class OnDemandFormatter extends ObjectFormatter
         return '\Propel\Runtime\Collection\OnDemandCollection';
     }
 
+    /**
+     * @return Collection
+     */
     public function getCollection()
     {
         $class = $this->getCollectionClassName();
@@ -68,14 +76,14 @@ class OnDemandFormatter extends ObjectFormatter
      * The first object to hydrate is the model of the Criteria
      * The following objects (the ones added by way of ModelCriteria::with()) are linked to the first one
      *
-     *  @param    array  $row associative array indexed by column number,
-     *                   as returned by PDOStatement::fetch(PDO::FETCH_NUM)
+     *  @param    array  $row associative array with data
      *
      * @return BaseObject
      */
     public function getAllObjectsFromRow($row)
     {
         $col = 0;
+
         // main object
         $class = $this->isSingleTableInheritance ? call_user_func(array($this->peer, 'getOMClass'), $row, $col, false) : $this->class;
         $obj = $this->getSingleObjectFromRow($row, $class, $col);

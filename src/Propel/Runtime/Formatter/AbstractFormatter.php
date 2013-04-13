@@ -46,7 +46,7 @@ abstract class AbstractFormatter
      */
     protected $dataFetcher;
 
-    public function __construct(ModelCriteria $criteria = null, DataFetcher $dataFetcher = null)
+    public function __construct(BaseModelCriteria $criteria = null, DataFetcher $dataFetcher = null)
     {
         $this->with = array();
         $this->asColumns = array();
@@ -77,7 +77,7 @@ abstract class AbstractFormatter
      *
      * @return AbstractFormatter The current formatter object
      */
-    public function init(BaseModelCriteria $criteria, DataFetcher $dataFetcher)
+    public function init(BaseModelCriteria $criteria, DataFetcher $dataFetcher = null)
     {
         $this->dbName = $criteria->getDbName();
         $this->setClass($criteria->getModelName());
@@ -195,9 +195,9 @@ abstract class AbstractFormatter
         return $record;
     }
 
-    abstract public function format();
+    abstract public function format(DataFetcher $dataFetcher = null);
 
-    abstract public function formatOne();
+    abstract public function formatOne(DataFetcher $dataFetcher = null);
 
     abstract public function isObjectFormatter();
 
@@ -260,7 +260,7 @@ abstract class AbstractFormatter
     public function getSingleObjectFromRow($row, $class, &$col = 0)
     {
         $obj = $this->getWorkerObject($col, $class);
-        $col = $obj->hydrate($row, $col);
+        $col = $obj->hydrate($row, $col, false, $this->getDataFetcher()->getIndexType());
 
         return $obj;
     }

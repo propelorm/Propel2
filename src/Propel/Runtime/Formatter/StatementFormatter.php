@@ -21,16 +21,24 @@ use Propel\Runtime\Exception\PropelException;
  */
 class StatementFormatter extends AbstractFormatter
 {
-    public function format()
+    public function format(DataFetcher $dataFetcher = null)
     {
-        $stmt = $this->getDataObject();
-        return $stmt;
+        if ($dataFetcher) {
+            $this->setDataFetcher($dataFetcher);
+        } else {
+            $dataFetcher = $this->getDataFetcher();
+        }
+        return $dataFetcher;
     }
 
-    public function formatOne()
+    public function formatOne(DataFetcher $dataFetcher = null)
     {
-        $stmt = $this->getDataObject();
-        return $stmt->rowCount() > 0 ? $stmt : null;
+        if ($dataFetcher) {
+            $this->setDataFetcher($dataFetcher);
+        } else {
+            $dataFetcher = $this->getDataFetcher();
+        }
+        return $dataFetcher->count() > 0 ? $dataFetcher : null;
     }
 
     public function formatRecord($record = null)

@@ -48,7 +48,7 @@ class ConnectionManagerMasterSlaveTest extends BaseTestCase
         $con = $manager->getWriteConnection(new SqliteAdapter());
         $this->assertInstanceOf('Propel\Runtime\Connection\ConnectionWrapper', $con);
         $pdo = $con->getWrappedConnection();
-        $this->assertInstanceOf('Propel\Runtime\Adapter\Pdo\PdoConnection', $pdo);
+        $this->assertInstanceOf('Propel\Runtime\Connection\PdoConnection', $pdo);
     }
 
     public function testGetWriteConnectionBuildsConnectionNotBasedOnReadConfiguration()
@@ -77,7 +77,7 @@ class ConnectionManagerMasterSlaveTest extends BaseTestCase
         $con = $manager->getReadConnection(new SqliteAdapter());
         $this->assertInstanceOf('Propel\Runtime\Connection\ConnectionWrapper', $con);
         $pdo = $con->getWrappedConnection();
-        $this->assertInstanceOf('Propel\Runtime\Adapter\Pdo\PdoConnection', $pdo);
+        $this->assertInstanceOf('Propel\Runtime\Connection\PdoConnection', $pdo);
     }
 
     public function testGetReadConnectionBuildsConnectionNotBasedOnWriteConfiguration()

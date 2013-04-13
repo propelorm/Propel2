@@ -19,7 +19,7 @@ use Propel\Runtime\Adapter\Pdo\SqliteAdapter;
 use Propel\Runtime\Adapter\Pdo\MysqlAdapter;
 use Propel\Runtime\Map\DatabaseMap;
 use Propel\Runtime\Connection\ConnectionManagerSingle;
-use Propel\Runtime\Adapter\Pdo\PdoConnection;
+use Propel\Runtime\Connection\PdoConnection;
 use Propel\Runtime\Util\Profiler;
 use Monolog\Logger;
 use Propel\Runtime\Propel;

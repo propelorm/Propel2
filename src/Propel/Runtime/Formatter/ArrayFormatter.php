@@ -25,9 +25,16 @@ class ArrayFormatter extends AbstractFormatter
 
     protected $emptyVariable;
 
-    public function format()
+    public function format(DataFetcher $dataFetcher = null)
     {
         $this->checkInit();
+
+        if ($dataFetcher) {
+            $this->setDataFetcher($dataFetcher);
+        } else {
+            $dataFetcher = $this->getDataFetcher();
+        }
+
         $dataFetcher = $this->getDataFetcher();
 
         $collection = $this->getCollection();
@@ -35,7 +42,7 @@ class ArrayFormatter extends AbstractFormatter
         if ($this->isWithOneToMany() && $this->hasLimit) {
             throw new LogicException('Cannot use limit() in conjunction with with() on a one-to-many relationship. Please remove the with() call, or the limit() call.');
         }
-        while ($row = $dataFetcher->fetch(\PDO::FETCH_NUM)) {
+        while ($row = $dataFetcher->fetch()) {
             if ($object = &$this->getStructuredArrayFromRow($row)) {
                 $collection[] = $object;
             }
@@ -52,13 +59,17 @@ class ArrayFormatter extends AbstractFormatter
         return '\Propel\Runtime\Collection\ArrayCollection';
     }
 
-    public function formatOne()
+    public function formatOne(DataFetcher $dataFetcher = null)
     {
         $this->checkInit();
         $result = null;
-        $dataFetcher = $this->getDataFetcher();
+        if ($dataFetcher) {
+            $this->setDataFetcher($dataFetcher);
+        } else {
+            $dataFetcher = $this->getDataFetcher();
+        }
 
-        if ($row = $dataFetcher->fetch(\PDO::FETCH_NUM)) {
+        while ($row = $dataFetcher->fetch()) {
             if ($object = &$this->getStructuredArrayFromRow($row)) {
                 $result = &$object;
             }
@@ -103,7 +114,7 @@ class ArrayFormatter extends AbstractFormatter
 
         // hydrate main object or take it from registry
         $mainObjectIsNew = false;
-        $mainKey         = call_user_func(array($this->tableMap, 'getPrimaryKeyHashFromRow'), $row);
+        $mainKey         = call_user_func(array($this->tableMap, 'getPrimaryKeyHashFromRow'), $row, 0, $this->getDataFetcher()->getIndexType());
         // we hydrate the main object even in case of a one-to-many relationship
         // in order to get the $col variable increased anyway
         $obj = $this->getSingleObjectFromRow($row, $this->class, $col);
@@ -131,7 +142,12 @@ class ArrayFormatter extends AbstractFormatter
             }
 
             // hydrate related object or take it from registry
-            $key = call_user_func(array($modelWith->getTableMap(), 'getPrimaryKeyHashFromRow'), $row, $col);
+            $key = call_user_func(
+                array($modelWith->getTableMap(), 'getPrimaryKeyHashFromRow'),
+                $row,
+                $col,
+                $this->getDataFetcher()->getIndexType()
+            );
             // we hydrate the main object even in case of a one-to-many relationship
             // in order to get the $col variable increased anyway
             $secondaryObject = $this->getSingleObjectFromRow($row, $class, $col);
@@ -151,11 +167,16 @@ class ArrayFormatter extends AbstractFormatter
             }
 
             if ($modelWith->isAdd()) {
-                if (!isset($arrayToAugment[$modelWith->getRelationName()]) || !in_array($this->alreadyHydratedObjects[$relAlias][$key], $arrayToAugment[$modelWith->getRelationName()])) {
-                    $arrayToAugment[$modelWith->getRelationName()][] = &$this->alreadyHydratedObjects[$relAlias][$key];
+                if (!isset($arrayToAugment[$modelWith->getRelationName()]) ||
+                    !in_array(
+                        $this->alreadyHydratedObjects[$relAlias][$key],
+                        $arrayToAugment[$modelWith->getRelationName()]
+                    )
+                ) {
+                    $arrayToAugment[$modelWith->getRelationName()][] = & $this->alreadyHydratedObjects[$relAlias][$key];
                 }
             } else {
-                $arrayToAugment[$modelWith->getRelationName()] = &$this->alreadyHydratedObjects[$relAlias][$key];
+                $arrayToAugment[$modelWith->getRelationName()] = & $this->alreadyHydratedObjects[$relAlias][$key];
             }
 
             $hydrationChain[$modelWith->getRightPhpName()] = &$this->alreadyHydratedObjects[$relAlias][$key];
