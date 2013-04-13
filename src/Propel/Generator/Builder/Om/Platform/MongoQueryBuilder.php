@@ -132,7 +132,7 @@ class MongoQueryBuilder extends QueryBuilder
 
         if ($table->getChildrenColumn()) {
             $script .="
-            \$cls = {$peerClassName}::getOMClass(\$row, 0, false);
+            \$cls = {$tableMapClassName}::getOMClass(\$row, 0, false);
             \$obj = new \$cls();";
         } else {
             $script .="

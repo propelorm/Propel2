@@ -85,7 +85,7 @@ class OnDemandFormatter extends ObjectFormatter
         $col = 0;
 
         // main object
-        $class = $this->isSingleTableInheritance ? call_user_func(array($this->peer, 'getOMClass'), $row, $col, false) : $this->class;
+        $class = $this->isSingleTableInheritance ? call_user_func(array($this->tableMap, 'getOMClass'), $row, $col, false) : $this->class;
         $obj = $this->getSingleObjectFromRow($row, $class, $col);
         // related objects using 'with'
         foreach ($this->getWith() as $modelWith) {

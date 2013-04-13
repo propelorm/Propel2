@@ -840,7 +840,7 @@ static public function fixLevels(" . ($useScope ? "\$scope, " : ""). "Connection
         if (!$this->table->getChildrenColumn()) {
             $script .= "
     // set the class once to avoid overhead in the loop
-    \$cls = $peerClassName::getOMClass(false);";
+    \$cls = $tableMapClassName::getOMClass(false);";
         }
 
         $script .= "
@@ -854,7 +854,7 @@ static public function fixLevels(" . ($useScope ? "\$scope, " : ""). "Connection
         if ($this->table->getChildrenColumn()) {
             $script .= "
             // class must be set each time from the record row
-            \$cls = $peerClassName::getOMClass(\$row, 0);
+            \$cls = $tableMapClassName::getOMClass(\$row, 0);
             \$cls = substr('.'.\$cls, strrpos('.'.\$cls, '.') + 1);
             " . $this->builder->buildObjectInstanceCreationCode('$obj', '$cls') . "
             \$obj->hydrate(\$row);

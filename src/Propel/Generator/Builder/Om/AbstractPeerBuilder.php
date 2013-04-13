@@ -56,24 +56,6 @@ abstract class AbstractPeerBuilder extends AbstractOMBuilder
     }
 
     /**
-     * Adds the correct getOMClass() method, depending on whether this table uses inheritance.
-     * @param      string &$script The script will be modified in this method.
-     */
-    protected function addGetOMClassMethod(&$script)
-    {
-        $table = $this->getTable();
-        if ($table->getChildrenColumn()) {
-            $this->addGetOMClass_Inheritance($script);
-        } else {
-            if ($table->isAbstract()) {
-                $this->addGetOMClass_NoInheritance_Abstract($script);
-            } else {
-                $this->addGetOMClass_NoInheritance($script);
-            }
-        }
-    }
-
-    /**
      * Adds the doInsert(), doUpdate(), doDeleteAll(), etc. methods.
      * @param      string &$script The script will be modified in this method.
      */
@@ -118,8 +100,6 @@ abstract class AbstractPeerBuilder extends AbstractOMBuilder
         }
 
         $this->addBuildTableMap($script);
-
-        $this->addGetOMClassMethod($script);
 
         // add the insert, update, delete, etc. methods
         if (!$table->isAlias() && !$table->isReadOnly()) {
