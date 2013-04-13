@@ -141,6 +141,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
 
         $this->addGetOMClassMethod($script);
         $this->addPopulateObject($script);
+        $this->addPopulateObjects($script);
     }
 
     /**
@@ -990,5 +991,70 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
     }
 ";
     }
+
+    /**
+     * Adds the populateObjects() method.
+     * @param string &$script The script will be modified in this method.
+     */
+    protected function addPopulateObjects(&$script)
+    {
+        $table = $this->getTable();
+        $script .= "
+    /**
+     * The returned array will contain objects of the default type or
+     * objects that inherit from the default.
+     *
+     * @param DataFetcher \$dataFetcher
+     * @return array
+     * @throws PropelException Any exceptions caught during processing will be
+     *         rethrown wrapped into a PropelException.
+     */
+    public static function populateObjects(DataFetcher \$dataFetcher)
+    {
+        \$results = array();
+    ";
+        if (!$table->getChildrenColumn()) {
+            $script .= "
+        // set the class once to avoid overhead in the loop
+        \$cls = static::getOMClass(false);";
+        }
+
+        $script .= "
+        // populate the object(s)
+        while (\$row = \$dataFetcher->fetch()) {
+            \$key = {$this->getTableMapClassName()}::getPrimaryKeyHashFromRow(\$row, 0, \$dataFetcher->getIndexType());
+            if (null !== (\$obj = {$this->getTableMapClassName()}::getInstanceFromPool(\$key))) {
+                // We no longer rehydrate the object, since this can cause data loss.
+                // See http://www.propelorm.org/ticket/509
+                // \$obj->hydrate(\$row, 0, true); // rehydrate
+                \$results[] = \$obj;
+            } else {"
+        ;
+
+        if ($table->getChildrenColumn()) {
+            $script .= "
+                // class must be set each time from the record row
+                \$cls = static::getOMClass(\$row, 0);
+                \$cls = preg_replace('#\.#', '\\\\', \$cls);
+                " . $this->buildObjectInstanceCreationCode('$obj', '$cls') . "
+                \$obj->hydrate(\$row);
+                \$results[] = \$obj;
+                {$this->getTableMapClassName()}::addInstanceToPool(\$obj, \$key);";
+        } else {
+            $script .= "
+                " . $this->buildObjectInstanceCreationCode('$obj', '$cls') . "
+                \$obj->hydrate(\$row);
+                \$results[] = \$obj;
+                {$this->getTableMapClassName()}::addInstanceToPool(\$obj, \$key);";
+        }
+        $script .= "
+            } // if key exists
+        }
+        \$dataFetcher->close();
+
+        return \$results;
+    }";
+    }
+
 
 }

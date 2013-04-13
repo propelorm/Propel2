@@ -53,9 +53,6 @@ abstract class AbstractPeerBuilder extends AbstractOMBuilder
     protected function addSelectMethods(&$script)
     {
         $this->addAddSelectColumns($script);
-
-        $this->addPopulateObjects($script); // <-- there's PDO code in here
-        $this->addPopulateObject($script);
     }
 
     /**

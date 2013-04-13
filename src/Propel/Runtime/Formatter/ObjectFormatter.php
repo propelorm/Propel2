@@ -107,7 +107,12 @@ class ObjectFormatter extends AbstractFormatter
 
         // related objects added using with()
         foreach ($this->getWith() as $modelWith) {
-            list($endObject, $col) = call_user_func(array($modelWith->getModelPeerName(), 'populateObject'), $row, $col);
+            list($endObject, $col) = call_user_func(
+                array($modelWith->getTableMap(), 'populateObject'),
+                $row,
+                $col,
+                $this->getDataFetcher()->getIndexType()
+            );
 
             if (null !== $modelWith->getLeftPhpName() && !isset($hydrationChain[$modelWith->getLeftPhpName()])) {
                 continue;
