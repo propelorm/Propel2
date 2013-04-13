@@ -112,7 +112,7 @@ EOF;
         $c = new Criteria;
         $c->add(ConcreteArticleTableMap::ID, $content->getId());
         try {
-            ConcreteArticlePeer::doInsert($c);
+            ConcreteArticleTableMap::doInsert($c);
             $this->assertTrue(true, 'modifyTable() removed autoIncrement from copied Primary keys');
         } catch (PropelException $e) {
             $this->fail('modifyTable() removed autoIncrement from copied Primary keys');
@@ -126,7 +126,7 @@ EOF;
         $content->save();
         $c = new Criteria;
         $c->add(ConcreteQuizzTableMap::ID, $content->getId());
-        ConcreteQuizzPeer::doInsert($c);
+        ConcreteQuizzTableMap::doInsert($c);
     }
 
     public function testModifyTableAddsForeignKeys()

@@ -61,7 +61,6 @@ abstract class AbstractPeerBuilder extends AbstractOMBuilder
      */
     protected function addUpdateMethods(&$script)
     {
-        $this->addDoInsert($script);
         $this->addDoUpdate($script);
         $this->addDoDeleteAll($script);
         $this->addDoDelete($script);

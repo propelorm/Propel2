@@ -4389,7 +4389,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     protected function addDoInsertBodyStandard()
     {
         return "
-        \$pk = " . $this->getNewPeerBuilder($this->getTable())->getBasePeerClassName() . "::doInsert(\$criteria, \$con);";
+        \$pk = " . $this->getTableMapClass() . "::doInsert(\$criteria, \$con);";
     }
 
     protected function addDoInsertBodyWithIdMethod()

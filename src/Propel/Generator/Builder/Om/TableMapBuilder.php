@@ -45,6 +45,10 @@ class TableMapBuilder extends AbstractOMBuilder
         return $namespace .'Map';
     }
 
+    public function getBaseTableMapClassName(){
+        return "TableMap";
+    }
+
     /**
      * Returns the name of the current class being built.
      * @return string
@@ -104,6 +108,9 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
             '\Propel\Runtime\Map\TableMap',
             '\Propel\Runtime\Map\TableMapTrait',
             '\Propel\Runtime\Map\RelationMap',
+            '\Propel\Runtime\ActiveQuery\Criteria',
+            '\Propel\Runtime\Connection\ConnectionInterface',
+            '\Propel\Runtime\Exception\PropelException',
             '\Propel\Runtime\Propel'
         );
 
@@ -142,6 +149,8 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
         $this->addGetOMClassMethod($script);
         $this->addPopulateObject($script);
         $this->addPopulateObjects($script);
+
+        $this->addDoInsert($script);
     }
 
     /**
@@ -1055,6 +1064,94 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
         return \$results;
     }";
     }
+
+
+
+    /**
+     * Adds the doInsert() method.
+     * @param string &$script The script will be modified in this method.
+     */
+    protected function addDoInsert(&$script)
+    {
+        $table = $this->getTable();
+        $tableMapClass = $this->getTableMapClass();
+
+        $script .= "
+    /**
+     * Performs an INSERT on the database, given a ".$this->getObjectClassName()." or Criteria object.
+     *
+     * @param mixed               \$criteria Criteria or ".$this->getObjectClassName()." object containing data that is used to create the INSERT statement.
+     * @param ConnectionInterface \$con the ConnectionInterface connection to use
+     * @return mixed           The new primary key.
+     * @throws PropelException Any exceptions caught during processing will be
+     *         rethrown wrapped into a PropelException.
+     */
+    public static function doInsert(\$criteria, ConnectionInterface \$con = null)
+    {
+        if (null === \$con) {
+            \$con = Propel::getServiceContainer()->getWriteConnection(" . $tableMapClass  . "::DATABASE_NAME);
+        }
+
+        if (\$criteria instanceof Criteria) {
+            \$criteria = clone \$criteria; // rename for clarity
+        } else {
+            \$criteria = \$criteria->buildCriteria(); // build Criteria from ".$this->getObjectClassName()." object
+        }
+";
+
+        foreach ($table->getColumns() as $col) {
+            if ($col->isPrimaryKey()
+                && $col->isAutoIncrement()
+                && 'none' !== $table->getIdMethod()
+                && !$table->isAllowPkInsert()
+            ) {
+                $script .= "
+        if (\$criteria->containsKey(".$this->getColumnConstant($col).") && \$criteria->keyContainsValue(" . $this->getColumnConstant($col) . ") ) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key ('.".$this->getColumnConstant($col).".')');
+        }
+";
+                if (!$this->getPlatform()->supportsInsertNullPk()) {
+                    $script .= "
+        // remove pkey col since this table uses auto-increment and passing a null value for it is not valid
+        \$criteria->remove(".$this->getColumnConstant($col).");
+";
+                }
+            } elseif ($col->isPrimaryKey()
+                && $col->isAutoIncrement()
+                && 'none' !== $table->getIdMethod()
+                && $table->isAllowPkInsert()
+                && !$this->getPlatform()->supportsInsertNullPk()
+            ) {
+                $script .= "
+        // remove pkey col if it is null since this table does not accept that
+        if (\$criteria->containsKey(".$this->getColumnConstant($col).") && !\$criteria->keyContainsValue(" . $this->getColumnConstant($col) . ") ) {
+            \$criteria->remove(".$this->getColumnConstant($col).");
+        }
+";
+            }
+        }
+
+        $script .= "
+
+        // Set the correct dbName
+        \$criteria->setDbName(" . $this->getTableMapClass() . "::DATABASE_NAME);
+
+        try {
+            // use transaction because \$criteria could contain info
+            // for more than one table (I guess, conceivably)
+            \$con->beginTransaction();
+            \$pk = ".$this->getBaseTableMapClassName()."::doInsert(\$criteria, \$con);
+            \$con->commit();
+        } catch (PropelException \$e) {
+            \$con->rollBack();
+            throw \$e;
+        }
+
+        return \$pk;
+    }
+";
+    }
+
 
 
 }

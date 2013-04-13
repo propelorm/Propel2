@@ -13,6 +13,7 @@ namespace Propel\Tests\Runtime\Util;
 use Propel\Runtime\Propel;
 use Propel\Runtime\Exception\RuntimeException;
 use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Util\BasePeer;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 use Propel\Tests\Bookstore\BookPeer;
@@ -91,7 +92,7 @@ class BasePeerExceptionsTest extends BookstoreTestBase
             $c = new Criteria();
             $c->setPrimaryTableName(BookTableMap::TABLE_NAME);
             $c->add(BookTableMap::AUTHOR_ID, 'lkhlkhj');
-            BasePeer::doInsert($c, Propel::getServiceContainer()->getWriteConnection(BookTableMap::DATABASE_NAME));
+            TableMap::doInsert($c, Propel::getServiceContainer()->getWriteConnection(BookTableMap::DATABASE_NAME));
         } catch (RuntimeException $e) {
             $this->assertContains('[INSERT INTO `book` (`AUTHOR_ID`) VALUES (:p1)]', $e->getMessage(), 'SQL query is written in the exception message');
         }

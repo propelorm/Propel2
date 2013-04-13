@@ -402,7 +402,7 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
 
         $values = new Criteria();
         $values->add(PublisherTableMap::NAME, $name);
-        PublisherPeer::doInsert($values);
+        PublisherTableMap::doInsert($values);
 
         $matches = PublisherQuery::create()->filterByName($name)->find();
         $this->assertCount(1, $matches, "Expect there to be exactly 1 publisher just-inserted.");
@@ -418,7 +418,7 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
 
         $values = new Publisher();
         $values->setName($name);
-        PublisherPeer::doInsert($values);
+        PublisherTableMap::doInsert($values);
 
         $matches = PublisherQuery::create()->filterByName($name)->find();
         $this->assertCount(1, $matches, "Expect there to be exactly 1 publisher just-inserted.");
