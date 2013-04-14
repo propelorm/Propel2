@@ -27,8 +27,6 @@ abstract class AbstractFormatter
 
     protected $class;
 
-    protected $peer;
-
     protected $tableMap;
 
     protected $with;
@@ -104,23 +102,12 @@ abstract class AbstractFormatter
     public function setClass($class)
     {
         $this->class     = $class;
-        $this->peer      = constant($this->class . '::PEER');
         $this->tableMap  = constant($this->class . '::TABLE_MAP');
     }
 
     public function getClass()
     {
         return $this->class;
-    }
-
-    public function setPeer($peer)
-    {
-        $this->peer = $peer;
-    }
-
-    public function getPeer()
-    {
-        return $this->peer;
     }
 
     public function setWith($withs = array())
@@ -203,7 +190,7 @@ abstract class AbstractFormatter
 
     public function checkInit()
     {
-        if (null === $this->peer) {
+        if (null === $this->tableMap) {
             throw new PropelException('You must initialize a formatter object before calling format() or formatOne()');
         }
     }

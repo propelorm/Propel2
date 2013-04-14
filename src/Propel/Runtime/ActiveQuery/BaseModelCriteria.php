@@ -15,7 +15,6 @@ use Propel\Runtime\Formatter\ObjectFormatter;
 use Propel\Runtime\Map\ColumnMap;
 use Propel\Runtime\Map\RelationMap;
 use Propel\Runtime\Map\TableMap;
-use Propel\Runtime\Util\BasePeer;
 use Propel\Runtime\Util\PropelModelPager;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion;
@@ -34,8 +33,6 @@ class BaseModelCriteria extends Criteria implements \IteratorAggregate {
 
 
     protected $modelName;
-
-    protected $modelPeerName;
 
     protected $modelTableMapName;
 
@@ -61,17 +58,8 @@ class BaseModelCriteria extends Criteria implements \IteratorAggregate {
     {
         $this->setDbName($dbName);
         $this->originalDbName = $dbName;
-
-        if (0 === strpos($modelName, '\\')) {
-            $this->modelName = substr($modelName, 1);
-        } else {
-            $this->modelName = $modelName;
-        }
-
-        $this->modelTableMapName = constant($this->modelName . '::TABLE_MAP');
-        $this->modelPeerName     = constant($this->modelTableMapName . '::PEER_CLASS');
+        $this->setModelName($modelName);
         $this->modelAlias        = $modelAlias;
-        $this->tableMap          = Propel::getServiceContainer()->getDatabaseMap($this->getDbName())->getTableByPhpName($this->modelName);
     }
 
 
@@ -157,6 +145,21 @@ class BaseModelCriteria extends Criteria implements \IteratorAggregate {
         return $this->modelName;
     }
 
+    public function setModelName($modelName)
+    {
+        if (0 === strpos($modelName, '\\')) {
+            $this->modelName = substr($modelName, 1);
+        } else {
+            $this->modelName = $modelName;
+        }
+        if ($this->modelName && !$this->modelTableMapName) {
+            $this->modelTableMapName = constant($this->modelName . '::TABLE_MAP');
+        }
+        if (!$this->tableMap && $this->modelName){
+            $this->tableMap = Propel::getServiceContainer()->getDatabaseMap($this->getDbName())->getTableByPhpName($this->modelName);
+        }
+    }
+
     public function getFullyQualifiedModelName()
     {
         return '\\' . $this->getModelName();
@@ -210,16 +213,6 @@ class BaseModelCriteria extends Criteria implements \IteratorAggregate {
     public function getModelShortName()
     {
         return static::getShortName($this->modelName);
-    }
-
-    /**
-     * Returns the name of the Peer class for this model criteria
-     *
-     * @return string
-     */
-    public function getModelPeerName()
-    {
-        return $this->modelPeerName;
     }
 
     /**

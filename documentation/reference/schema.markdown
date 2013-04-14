@@ -67,7 +67,6 @@ Starting with the `<database>` element. The _attributes_ and _elements_ availabl
   [schema="/SQLSchema/"]
   [namespace="/ClassNamespace/"]
   [baseClass="/baseClassName/"]
-  [basePeer="/baseClassPeerName/"]
   [defaultPhpNamingMethod="nochange|{underscore}|phpname|clean"
   [heavyIndexing="true|false"]
   [tablePrefix="/tablePrefix/"]
@@ -89,7 +88,6 @@ A Database element may include an `<external-schema>` element, or multiple `<tab
 * `schema` specifies the default SQL schema containing the tables. Ignored on RDBMS not supporting database schemas.
 * `namespace` specifies the default namespace that generated model classes will use (PHP 5.3 only). This attribute can be completed or overridden at the table level.
 * `baseClass` allows you to specify a default base class that all generated Propel objects should extend (in place of `propel.om.BaseObject`).
-* `basePeer` instructs Propel to use a different SQL-generating `BasePeer` class (or sub-class of `BasePeer`) for all generated objects.
 * `defaultPhpNamingMethod` the default naming method to use for tables of this database. Defaults to `underscore`, which transforms table names into CamelCase phpNames.
 * `heavyIndexing` adds indexes for each component of the primary key (when using composite primary keys).
 * `tablePrefix` adds a prefix to all the SQL table names.
@@ -110,7 +108,6 @@ The `<table>` element is the most complicated of the usable elements. Its defini
   [abstract = "true|false"]
   [phpNamingMethod = "nochange|{underscore}|phpname|clean"]
   [baseClass = "/baseClassName/"]
-  [basePeer = "/baseClassPeerName/"]
   [description="/A text description of the table/"]
   [heavyIndexing = "true|false"]
   [readOnly = "true|false"]
@@ -133,7 +130,7 @@ The `<table>` element is the most complicated of the usable elements. Its defini
 </table>
 {% endhighlight %}
 
-According to the schema, `name` is the only required attribute.  Also, the `idMethod`, `package`, `schema`, `namespace`, `phpNamingMethod`, `baseClass`, `basePeer`, and `heavyIndexing` attributes all default to what is specified by the `<database>` element.
+According to the schema, `name` is the only required attribute.  Also, the `idMethod`, `package`, `schema`, `namespace`, `phpNamingMethod`, `baseClass`, and `heavyIndexing` attributes all default to what is specified by the `<database>` element.
 
 #### Table Attributes ####
 
@@ -146,7 +143,6 @@ According to the schema, `name` is the only required attribute.  Also, the `idMe
 * `abstract` Whether the generated _stub_ class will be abstract (e.g. if you're using inheritance)
 * `phpNamingMethod` the naming method to use. Defaults to `underscore`, which transforms the table name into a CamelCase phpName.
 * `baseClass` allows you to specify a class that the generated Propel objects should extend (in place of `propel.om.BaseObject`).
-* `basePeer` instructs Propel to use a different SQL-generating `BasePeer` class (or sub-class of `BasePeer`).
 * `heavyIndexing` adds indexes for each component of the primary key (when using composite primary keys).
 * `readOnly` suppresses the mutator/setter methods, save() and delete() methods.
 * `treeMode` is used to indicate that this table is part of a node tree. Currently the only supported values are `NestedSet` (see the [NestedSet behavior section](../behaviors/nested-set.html)) and `MaterializedPath` (deprecated).
@@ -160,7 +156,7 @@ According to the schema, `name` is the only required attribute.  Also, the `idMe
 <column
   name = "/ColumnName/"
   [phpName = "/PHPColumnName/"]
-  [peerName = "/PEERNAME/"]
+  [tableMapName = "/TABLEMAPNAME/"]
   [primaryKey = "true|{false}"]
   [required = "true|{false}"]
   [type = "BOOLEAN|TINYINT|SMALLINT|INTEGER|BIGINT|DOUBLE|FLOAT|REAL|DECIMAL|CHAR|{VARCHAR}|LONGVARCHAR|DATE|TIME|TIMESTAMP|BLOB|CLOB|OBJECT|ARRAY"]

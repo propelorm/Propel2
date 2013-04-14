@@ -15,7 +15,6 @@ use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\InvalidArgumentException;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
-use Propel\Runtime\Util\BasePeer;
 
 /**
  * This is used to connect to PostgreSQL databases.
@@ -194,7 +193,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
         if ($query instanceof Criteria) {
             $params = array();
             $dbMap = Propel::getServiceContainer()->getDatabaseMap($query->getDbName());
-            $sql = BasePeer::createSelectSql($query, $params);
+            $sql = $query->createSelectSql($params);
         } else {
             $sql = $query;
         }

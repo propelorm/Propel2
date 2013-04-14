@@ -261,7 +261,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     protected function addClassBody(&$script)
     {
         $this->declareClassFromBuilder($this->getStubObjectBuilder());
-        $this->declareClassFromBuilder($this->getStubPeerBuilder());
         $this->declareClassFromBuilder($this->getStubQueryBuilder());
         $this->declareClassFromBuilder($this->getTableMapBuilder());
 
@@ -279,7 +278,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             '\Propel\Runtime\ActiveRecord\ActiveRecordInterface',
             '\Propel\Runtime\Parser\AbstractParser',
             '\Propel\Runtime\Propel',
-            '\Propel\Runtime\Util\BasePeer',
             '\Propel\Runtime\Map\TableMap'
         );
 
@@ -341,10 +339,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
         $this->addCopy($script);
 
-        if (!$table->isAlias()) {
-            $this->addGetPeer($script);
-        }
-
         $this->addFKMethods($script);
         $this->addRefFKMethods($script);
         $this->addCrossFKMethods($script);
@@ -385,11 +379,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     {
         $script .= "
     /**
-     * Peer class name
-     */
-    const PEER = '" . addslashes($this->getStubPeerBuilder()->getFullyQualifiedClassName()) . "';
-
-    /**
      * TableMap class name
      */
     const TABLE_MAP = '" . addslashes($this->getTableMapBuilder()->getFullyQualifiedClassName()) . "';
@@ -406,13 +395,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $table = $this->getTable();
 
         $script .= "
-    /**
-     * The Peer class.
-     * Instance provides a convenient way of calling static methods on a class
-     * that calling code may not be able to identify.
-     * @var        ".$this->getPeerClassName()."
-     */
-    protected static \$peer;
 ";
 
         $script .= $this->renderTemplate('baseObjectAttributes');
@@ -568,84 +550,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $clo = strtolower($column->getName()) . "_unserialized";
         $script .= "
     protected \$" . $clo . ";
-";
-    }
-
-    /**
-     * Adds the getPeer() method.
-     *
-     * This is a convenient, non introspective way of getting the Peer class for
-     * a particular object.
-     *
-     * @param string &$script
-     */
-    protected function addGetPeer(&$script)
-    {
-        $this->addGetPeerComment($script);
-        $this->addGetPeerFunctionOpen($script);
-        $this->addGetPeerFunctionBody($script);
-        $this->addGetPeerFunctionClose($script);
-    }
-
-    /**
-     * Adds the comment for the getPeer method.
-     *
-     * @param string &$script
-     */
-    protected function addGetPeerComment(&$script)
-    {
-        $script .= "
-    /**
-     * Returns a peer instance associated with this om.
-     *
-     * Since Peer classes are not to have any instance attributes, this method returns the
-     * same instance for all member of this class. The method could therefore
-     * be static, but this would prevent one from overriding the behavior.
-     *
-     * @return   ".$this->getPeerClassName()."
-     */";
-    }
-
-    /**
-     * Adds the function declaration (function opening) for the getPeer method.
-     *
-     * @param string &$script
-     */
-    protected function addGetPeerFunctionOpen(&$script)
-    {
-        $script .= "
-    public function getPeer()
-    {";
-    }
-
-    /**
-     * Adds the body of the getPeer method.
-     *
-     * @param string &$script
-     */
-    protected function addGetPeerFunctionBody(&$script)
-    {
-        $script .= "
-        if (self::\$peer === null) {
-            " . $this->buildObjectInstanceCreationCode('self::$peer', $this->getPeerClassName()) . "
-        }
-
-        return self::\$peer;";
-    }
-
-    /**
-     * Adds the function close for the getPeer method.
-     *
-     * Note: this is just a } and the body ends with a return statement, so it's
-     * quite useless. But it's here anyway for consistency, cause there's a close
-     * function for all functions and in some other instances, they are useful.
-     *
-     * @param string &$script
-     */
-    protected function addGetPeerFunctionClose(&$script)
-    {
-        $script .= "
-    }
 ";
     }
 
@@ -2505,8 +2409,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Sets a field from the object by name passed in as a string.
      *
-     * @param      string \$name peer name
-     * @param      mixed \$value field value
+     * @param      string \$name
+     * @param      mixed  \$value field value
      * @param      string \$type The type of fieldname the \$name is of:
      *                     one of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_STUDLYPHPNAME
      *                     TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
@@ -3340,13 +3244,12 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $tblFK = $refFK->getTable();
         $joinBehavior = $this->getGeneratorConfig()->getBuildProperty('useLeftJoinsInDoJoinMethods') ? 'Criteria::LEFT_JOIN' : 'Criteria::INNER_JOIN';
 
-        $peerClassName = $this->getClassNameFromBuilder($this->getStubPeerBuilder());
         $fkQueryClassName = $this->getClassNameFromBuilder($this->getNewStubQueryBuilder($refFK->getTable()));
         $relCol = $this->getRefFKPhpNameAffix($refFK, $plural = true);
         $collName = $this->getRefFKCollVarName($refFK);
 
-        $fkPeerBuilder = $this->getNewPeerBuilder($tblFK);
-        $className = $fkPeerBuilder->getObjectClassName();
+        $fkObjectBuilder = $this->getNewObjectBuilder($tblFK);
+        $className = $fkObjectBuilder->getObjectClassName();
 
         foreach ($tblFK->getForeignKeys() as $fk2) {
 
@@ -3593,7 +3496,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $table = $this->getTable();
         $tblFK = $refFK->getTable();
 
-        $peerClassName = $this->getPeerClassName();
         $fkQueryClassName = $this->getClassNameFromBuilder($this->getNewStubQueryBuilder($refFK->getTable()));
         $relCol = $this->getRefFKPhpNameAffix($refFK, $plural = true);
         $collName = $this->getRefFKCollVarName($refFK);
@@ -3642,7 +3544,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $table = $this->getTable();
         $tblFK = $refFK->getTable();
 
-        $peerClassName = $this->getPeerClassName();
         $fkQueryClassName = $this->getClassNameFromBuilder($this->getNewStubQueryBuilder($refFK->getTable()));
         $relCol = $this->getRefFKPhpNameAffix($refFK, $plural = true);
         $collName = $this->getRefFKCollVarName($refFK);
@@ -4389,7 +4290,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     protected function addDoInsertBodyStandard()
     {
         return "
-        \$pk = " . $this->getTableMapClass() . "::doInsert(\$criteria, \$con);";
+        \$pk = \$criteria->insert(\$con);";
     }
 
     protected function addDoInsertBodyWithIdMethod()
@@ -4581,21 +4482,20 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      */
     protected function addDoUpdate()
     {
-        $basePeerClassName = $this->getNewPeerBuilder($this->getTable())->getBasePeerClassName();
-
         return "
     /**
      * Update the row in the database.
      *
      * @param      ConnectionInterface \$con
      *
+     * @return Integer Number of updated rows
      * @see doSave()
      */
-    protected function doUpdate(ConnectionInterface \$con)
+    public function doUpdate(ConnectionInterface \$con)
     {
         \$selectCriteria = \$this->buildPkeyCriteria();
         \$valuesCriteria = \$this->buildCriteria();
-        {$basePeerClassName}::doUpdate(\$selectCriteria, \$valuesCriteria, \$con);
+        return \$selectCriteria->doUpdate(\$valuesCriteria, \$con);
     }
 ";
     }

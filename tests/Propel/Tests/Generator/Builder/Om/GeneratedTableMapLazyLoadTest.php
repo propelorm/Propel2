@@ -15,10 +15,10 @@ use Propel\Generator\Util\QuickBuilder;
 use Propel\Runtime\Propel;
 
 /**
- * Tests the generated Peer classes for lazy load columns.
+ * Tests the generated TableMap classes for lazy load columns.
  *
  */
-class GeneratedPeerLazyLoadTest extends \PHPUnit_Framework_TestCase
+class GeneratedTableMapLazyLoadTest extends \PHPUnit_Framework_TestCase
 {
     public function setUp()
     {

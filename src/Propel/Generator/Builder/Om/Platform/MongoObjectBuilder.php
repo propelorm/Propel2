@@ -73,7 +73,6 @@ class MongoObjectBuilder extends ObjectBuilder
      */
     protected function addDoUpdate()
     {
-        $basePeerClassName = $this->getNewPeerBuilder($this->getTable())->getBasePeerClassName();
         $tableMapClassName = $this->getTableMapClassName();
 
         return "

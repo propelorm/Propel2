@@ -43,7 +43,6 @@ class MongoQueryBuilder extends QueryBuilder
             '\Propel\Runtime\Exception\PropelException'
         );
         $this->declareClassFromBuilder($this->getStubQueryBuilder(), 'Child');
-        $this->declareClassFromBuilder($this->getStubPeerBuilder());
         $this->declareClassFromBuilder($this->getTableMapBuilder());
 
         // apply behaviors
@@ -90,8 +89,6 @@ class MongoQueryBuilder extends QueryBuilder
     {
 
         $table = $this->getTable();
-        $platform = $this->getPlatform();
-        $peerClassName = $this->getPeerClassName();
         $tableMapClassName = $this->getTableMapClassName();
         $ARClassName = $this->getObjectClassName();
         $this->declareClassFromBuilder($this->getStubObjectBuilder());

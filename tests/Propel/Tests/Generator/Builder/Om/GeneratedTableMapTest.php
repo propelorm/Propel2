@@ -12,9 +12,6 @@ namespace Propel\Tests\Generator\Builder\Om;
 
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
-use Propel\Tests\Bookstore\BookPeer;
-use Propel\Tests\Bookstore\MediaPeer;
-
 use Propel\Tests\Bookstore\Map\AuthorTableMap;
 use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\Bookstore\Map\EssayTableMap;
@@ -24,10 +21,10 @@ use Propel\Tests\Bookstore\Map\PublisherTableMap;
 use Propel\Runtime\ActiveQuery\Criteria;
 
 /**
- * Tests the generated Peer classes.
+ * Tests the generated TableMap classes.
  *
  * This test uses generated Bookstore classes to test the behavior of various
- * peer operations.
+ * TableMap operations.
  *
  * The database is reloaded before every test and flushed after every test.  This
  * means that you can always rely on the contents of the databases being the same
@@ -37,7 +34,7 @@ use Propel\Runtime\ActiveQuery\Criteria;
  * @see        BookstoreDataPopulator
  * @author Hans Lellelid <hans@xmpl.org>
  */
-class GeneratedPeerTest extends BookstoreTestBase
+class GeneratedTableMapTest extends BookstoreTestBase
 {
     public function testAlias()
     {
@@ -50,7 +47,7 @@ class GeneratedPeerTest extends BookstoreTestBase
     public function testAddSelectColumns()
     {
         $c = new Criteria();
-        BookPeer::addSelectColumns($c);
+        BookTableMap::addSelectColumns($c);
         $expected = array(
             BookTableMap::ID,
             BookTableMap::TITLE,
@@ -65,7 +62,7 @@ class GeneratedPeerTest extends BookstoreTestBase
     public function testAddSelectColumnsLazyLoad()
     {
         $c = new Criteria();
-        MediaPeer::addSelectColumns($c);
+        MediaTableMap::addSelectColumns($c);
         $expected = array(
             MediaTableMap::ID,
             MediaTableMap::BOOK_ID
@@ -76,7 +73,7 @@ class GeneratedPeerTest extends BookstoreTestBase
     public function testAddSelectColumnsAlias()
     {
         $c = new Criteria();
-        BookPeer::addSelectColumns($c, 'foo');
+        BookTableMap::addSelectColumns($c, 'foo');
         $expected = array(
             'foo.ID',
             'foo.TITLE',
@@ -91,7 +88,7 @@ class GeneratedPeerTest extends BookstoreTestBase
     public function testAddSelectColumnsAliasLazyLoad()
     {
         $c = new Criteria();
-        MediaPeer::addSelectColumns($c, 'bar');
+        MediaTableMap::addSelectColumns($c, 'bar');
         $expected = array(
             'bar.ID',
             'bar.BOOK_ID'
@@ -101,7 +98,7 @@ class GeneratedPeerTest extends BookstoreTestBase
 
     public function testDefaultStringFormatConstant()
     {
-        $this->assertTrue(defined('Propel\Tests\Bookstore\Map\BookTableMap::DEFAULT_STRING_FORMAT'), 'every Peer class has the DEFAULT_STRING_FORMAT constant');
+        $this->assertTrue(defined('Propel\Tests\Bookstore\Map\BookTableMap::DEFAULT_STRING_FORMAT'), 'every TableMap class has the DEFAULT_STRING_FORMAT constant');
         $this->assertEquals('YAML', AuthorTableMap::DEFAULT_STRING_FORMAT, 'default string format is YAML by default');
         $this->assertEquals('XML', PublisherTableMap::DEFAULT_STRING_FORMAT, 'default string format can be customized using the defaultStringFormat attribute in the schema');
     }

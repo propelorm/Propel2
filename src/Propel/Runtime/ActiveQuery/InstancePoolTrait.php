@@ -21,34 +21,35 @@ trait InstancePoolTrait
     {
         if (Propel::isInstancePoolingEnabled()) {
             if (null === $key) {
-                if (count($pk = $object->getPrimaryKey()) > 1) {
-                    $pk = serialize($pk);
-                }
-
-                $key = (string) $pk;
+                $key = static::getInstanceKey($object);
             }
 
             self::$instances[$key] = $object;
         }
     }
 
+    public static function getInstanceKey($value)
+    {
+        if (!($value instanceof Criteria) && is_object($value)) {
+            if (count($pk = $value->getPrimaryKey()) > 1) {
+                $pk = serialize($pk);
+            }
+            return (string) $pk;
+        } else if (is_scalar($value)) {
+            // assume we've been passed a primary key
+            return (string) $value;
+        }
+    }
+
     public static function removeInstanceFromPool($value)
     {
         if (Propel::isInstancePoolingEnabled() && null !== $value) {
-            if (is_object($value)) {
-                if (count($pk = $value->getPrimaryKey()) > 1) {
-                    $pk = serialize($pk);
-                }
-
-                $key = (string) $pk;
-            } elseif (is_scalar($value)) {
-                // assume we've been passed a primary key
-                $key = (string) $value;
+            $key = static::getInstanceKey($value);
+            if ($key) {
+                unset(self::$instances[$key]);
             } else {
-                throw new RuntimeException('Invalid value passed to removeInstanceFromPool()');
+                self::clearInstancePool();
             }
-
-            unset(self::$instances[$key]);
         }
     }
 

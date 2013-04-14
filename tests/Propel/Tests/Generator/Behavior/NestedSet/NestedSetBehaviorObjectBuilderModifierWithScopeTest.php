@@ -30,7 +30,7 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
      */
     public function testSaveRootInTreeWithExistingRootWithSameScope()
     {
-        \NestedSetTable10Peer::doDeleteAll();
+        \Map\NestedSetTable10TableMap::doDeleteAll();
         $t1 = new \NestedSetTable10();
         $t1->setScopeValue(1);
         $t1->makeRoot();
@@ -43,7 +43,7 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
 
     public function testSaveRootInTreeWithExistingRootWithDifferentScope()
     {
-        \NestedSetTable10Peer::doDeleteAll();
+        \Map\NestedSetTable10TableMap::doDeleteAll();
         $t1 = new \NestedSetTable10();
         $t1->setScopeValue(1);
         $t1->makeRoot();

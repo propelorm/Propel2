@@ -10,6 +10,7 @@
 
 namespace Propel\Generator\Builder\Om;
 
+use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\PropelTypes;
 
 /**
@@ -166,6 +167,8 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
      */
     protected function addClassBody(&$script)
     {
+        $table = $this->getTable();
+
         // namespaces
         $this->declareClasses(
             '\Propel\Runtime\Propel',
@@ -176,7 +179,6 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
             '\Propel\Runtime\Exception\PropelException'
         );
         $this->declareClassFromBuilder($this->getStubQueryBuilder(), 'Child');
-        $this->declareClassFromBuilder($this->getStubPeerBuilder());
         $this->declareClassFromBuilder($this->getTableMapBuilder());
 
         // apply behaviors
@@ -215,8 +217,71 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
         $this->addBasePostDelete($script);
         $this->addBasePreUpdate($script);
         $this->addBasePostUpdate($script);
+
+        // add the insert, update, delete, etc. methods
+        if (!$table->isAlias() && !$table->isReadOnly()) {
+            $this->addDeleteMethods($script);
+        }
+
         // apply behaviors
+        $this->applyBehaviorModifier('staticConstants', $script, "    ");
+        $this->applyBehaviorModifier('staticAttributes', $script, "    ");
+        $this->applyBehaviorModifier('staticMethods', $script, "    ");
         $this->applyBehaviorModifier('queryMethods', $script, "    ");
+    }
+
+    /**
+     * Adds the doDeleteAll(), etc. methods.
+     * @param      string &$script The script will be modified in this method.
+     */
+    protected function addDeleteMethods(&$script)
+    {
+        $this->addDoDeleteAll($script);
+        $this->addDelete($script);
+
+        if ($this->isDeleteCascadeEmulationNeeded()) {
+            $this->addDoOnDeleteCascade($script);
+        }
+
+        if ($this->isDeleteSetNullEmulationNeeded()) {
+            $this->addDoOnDeleteSetNull($script);
+        }
+    }
+
+    /**
+     * Whether the platform in use requires ON DELETE CASCADE emulation and whether there are references to this table.
+     * @return boolean
+     */
+    protected function isDeleteCascadeEmulationNeeded()
+    {
+        $table = $this->getTable();
+        if ((!$this->getPlatform()->supportsNativeDeleteTrigger() || $this->getBuildProperty('emulateForeignKeyConstraints')) && count($table->getReferrers()) > 0) {
+            foreach ($table->getReferrers() as $fk) {
+                if ( ForeignKey::CASCADE === $fk->getOnDelete()) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Whether the platform in use requires ON DELETE SETNULL emulation and whether there are references to this table.
+     * @return boolean
+     */
+    protected function isDeleteSetNullEmulationNeeded()
+    {
+        $table = $this->getTable();
+        if ((!$this->getPlatform()->supportsNativeDeleteTrigger() || $this->getBuildProperty('emulateForeignKeyConstraints')) && count($table->getReferrers()) > 0) {
+            foreach ($table->getReferrers() as $fk) {
+                if (ForeignKey::SETNULL === $fk->getOnDelete()) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -226,7 +291,8 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     protected function addClassClose(&$script)
     {
         $script .= "
-} // " . $this->getUnqualifiedClassName() . "";
+} // " . $this->getUnqualifiedClassName() . "
+";
         $this->applyBehaviorModifier('queryFilter', $script, "");
     }
 
@@ -369,7 +435,6 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     protected function addFindPk(&$script)
     {
         $class = $this->getObjectClassName();
-        $peerClassName = $this->getPeerClassName();
         $tableMapClassName = $this->getTableMapClassName();
         $table = $this->getTable();
         $script .= "
@@ -441,7 +506,6 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     {
         $table = $this->getTable();
         $platform = $this->getPlatform();
-        $peerClassName = $this->getPeerClassName();
         $tableMapClassName = $this->getTableMapClassName();
         $ARClassName = $this->getObjectClassName();
         $this->declareClassFromBuilder($this->getStubObjectBuilder());
@@ -1369,7 +1433,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
      *
      * @param     array \$values The associative array of columns and values for the update
      * @param     ConnectionInterface \$con The connection object used by the query
-     * @param     boolean \$forceIndividualSaves If false (default), the resulting call is a BasePeer::doUpdate(), otherwise it is a series of save() calls on all the found objects
+     * @param     boolean \$forceIndividualSaves If false (default), the resulting call is a Criteria::doUpdate(), otherwise it is a series of save() calls on all the found objects
      */
     protected function basePreUpdate(&\$values, ConnectionInterface \$con, \$forceIndividualSaves = false)
     {" . $behaviorCode . "
@@ -1433,4 +1497,286 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     {
         return $this->getBehaviorContentBase($contentName, 'QueryBuilderModifier');
     }
+
+    /**
+     * Adds the doDelete() method.
+     * @param string &$script The script will be modified in this method.
+     */
+    protected function addDelete(&$script)
+    {
+        $table = $this->getTable();
+        $emulateCascade = $this->isDeleteCascadeEmulationNeeded() || $this->isDeleteSetNullEmulationNeeded();
+        $script .= "
+    /**
+     * Performs a DELETE on the database, given a ".$this->getObjectClassName()." or Criteria object OR a primary key value.
+     *
+     * @param mixed               \$values Criteria or ".$this->getObjectClassName()." object or primary key or array of primary keys
+     *              which is used to create the DELETE statement
+     * @param ConnectionInterface \$con the connection to use
+     * @return int The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
+     *                if supported by native driver or if emulated using Propel.
+     * @throws PropelException Any exceptions caught during processing will be
+     *         rethrown wrapped into a PropelException.
+     */
+     public function delete(ConnectionInterface \$con = null)
+     {
+        if (null === \$con) {
+            \$con = Propel::getServiceContainer()->getWriteConnection(" . $this->getTableMapClass() . "::DATABASE_NAME);
+        }
+
+        \$criteria = \$this;
+
+        // Set the correct dbName
+        \$criteria->setDbName(" . $this->getTableMapClass() . "::DATABASE_NAME);
+
+        \$affectedRows = 0; // initialize var to track total num of affected rows
+
+        try {
+            // use transaction because \$criteria could contain info
+            // for more than one table or we could emulating ON DELETE CASCADE, etc.
+            \$con->beginTransaction();
+            ";
+
+        if ($this->isDeleteCascadeEmulationNeeded()) {
+            $script .= "
+            // cloning the Criteria in case it's modified by doSelect() or doSelectStmt()
+            \$c = clone \$criteria;
+            \$affectedRows += \$c->doOnDeleteCascade(\$con);
+            ";
+        }
+
+        if ($this->isDeleteSetNullEmulationNeeded()) {
+            $script .= "
+            // cloning the Criteria in case it's modified by doSelect() or doSelectStmt()
+            \$c = clone \$criteria;
+            \$c->doOnDeleteSetNull(\$con);
+            ";
+        }
+
+        $script .= "
+
+        {$this->getTableMapClassName()}::removeInstanceFromPool(\$criteria);
+        ";
+
+        $script .= "
+            \$affectedRows += ModelCriteria::delete(\$con);
+            {$this->getTableMapClassName()}::clearRelatedInstancePool();
+            \$con->commit();
+
+            return \$affectedRows;
+        } catch (PropelException \$e) {
+            \$con->rollBack();
+            throw \$e;
+        }
+    }
+";
+    }
+
+    /**
+     * Adds the doOnDeleteCascade() method, which provides ON DELETE CASCADE emulation.
+     * @param string &$script The script will be modified in this method.
+     */
+    protected function addDoOnDeleteCascade(&$script)
+    {
+        $table = $this->getTable();
+        $script .= "
+    /**
+     * This is a method for emulating ON DELETE CASCADE for DBs that don't support this
+     * feature (like MySQL or SQLite).
+     *
+     * This method is not very speedy because it must perform a query first to get
+     * the implicated records and then perform the deletes by calling those Query classes.
+     *
+     * This method should be used within a transaction if possible.
+     *
+     * @param ConnectionInterface \$con
+     * @return int The number of affected rows (if supported by underlying database driver).
+     */
+    protected function doOnDeleteCascade(ConnectionInterface \$con)
+    {
+        // initialize var to track total num of affected rows
+        \$affectedRows = 0;
+
+        // first find the objects that are implicated by the \$this
+        \$objects = {$this->getQueryClassName()}::create(null, \$this)->find(\$con);
+        foreach (\$objects as \$obj) {
+";
+
+        foreach ($table->getReferrers() as $fk) {
+
+            // $fk is the foreign key in the other table, so localTableName will
+            // actually be the table name of other table
+            $tblFK = $fk->getTable();
+
+            $joinedTableTableMapBuilder = $this->getNewTableMapBuilder($tblFK);
+
+            if (!$tblFK->isForReferenceOnly()) {
+                // we can't perform operations on tables that are
+                // not within the schema (i.e. that we have no map for, etc.)
+
+                $fkClassName = $joinedTableTableMapBuilder->getObjectClassName();
+
+                if (ForeignKey::CASCADE === $fk->getOnDelete()) {
+
+                    // backwards on purpose
+                    $columnNamesF = $fk->getLocalColumns();
+                    $columnNamesL = $fk->getForeignColumns();
+
+                    $this->declareClassFromBuilder($joinedTableTableMapBuilder->getTableMapBuilder());
+
+                    $script .= "
+
+            // delete related $fkClassName objects
+            \$query = new ".$joinedTableTableMapBuilder->getQueryClassName(true).";
+            ";
+                    for ($x = 0, $xlen = count($columnNamesF); $x < $xlen; $x++) {
+                        $columnFK = $tblFK->getColumn($columnNamesF[$x]);
+                        $columnL = $table->getColumn($columnNamesL[$x]);
+
+                        $script .= "
+            \$query->add(".$joinedTableTableMapBuilder->getColumnConstant($columnFK) .", \$obj->get".$columnL->getPhpName()."());";
+                    }
+
+                    $script .= "
+            \$affectedRows += \$query->delete(\$con);";
+
+                } // if cascade && fkey table name != curr table name
+
+            } // if not for ref only
+        } // foreach foreign keys
+        $script .= "
+        }
+
+        return \$affectedRows;
+    }
+";
+    } // end addDoOnDeleteCascade
+
+
+    /**
+     * Adds the doOnDeleteSetNull() method, which provides ON DELETE SET NULL emulation.
+     * @param string &$script The script will be modified in this method.
+     */
+    protected function addDoOnDeleteSetNull(&$script)
+    {
+        $table = $this->getTable();
+        $script .= "
+    /**
+     * This is a method for emulating ON DELETE SET NULL DBs that don't support this
+     * feature (like MySQL or SQLite).
+     *
+     * This method is not very speedy because it must perform a query first to get
+     * the implicated records and then perform the deletes by calling those query classes.
+     *
+     * This method should be used within a transaction if possible.
+     *
+     * @param ConnectionInterface \$con
+     * @return void
+     */
+    protected function doOnDeleteSetNull(ConnectionInterface \$con)
+    {
+        // first find the objects that are implicated by the \$this
+        \$objects = {$this->getQueryClassName()}::create(null, \$this)->find(\$con);
+        foreach (\$objects as \$obj) {
+";
+
+        // This logic is almost exactly the same as that in doOnDeleteCascade()
+        // it may make sense to refactor this, provided that things don't
+        // get too complicated.
+        foreach ($table->getReferrers() as $fk) {
+
+            // $fk is the foreign key in the other table, so localTableName will
+            // actually be the table name of other table
+            $tblFK = $fk->getTable();
+            $refTableTableMapBuilder = $this->getNewTableMapBuilder($tblFK);
+
+            if (!$tblFK->isForReferenceOnly()) {
+                // we can't perform operations on tables that are
+                // not within the schema (i.e. that we have no map for, etc.)
+
+                $fkClassName = $refTableTableMapBuilder->getObjectClassName();
+
+                if (ForeignKey::SETNULL === $fk->getOnDelete()) {
+
+                    // backwards on purpose
+                    $columnNamesF = $fk->getLocalColumns();
+                    $columnNamesL = $fk->getForeignColumns(); // should be same num as foreign
+                    $script .= "
+            // set fkey col in related $fkClassName rows to NULL
+            \$query = new " . $refTableTableMapBuilder->getQueryClassName(true) . "
+            \$updateValues = new Criteria();";
+
+                    for ($x = 0, $xlen = count($columnNamesF); $x < $xlen; $x++) {
+                        $columnFK = $tblFK->getColumn($columnNamesF[$x]);
+                        $columnL = $table->getColumn($columnNamesL[$x]);
+                        $script .= "
+            \$query->add(".$refTableTableMapBuilder->getColumnConstant($columnFK).", \$obj->get".$columnL->getPhpName()."());
+            \$updateValues->add(".$refTableTableMapBuilder->getColumnConstant($columnFK).", null);
+";
+                    }
+
+                    $script .= "\$query->update(\$updateValues, \$con);
+";
+                } // if setnull && fkey table name != curr table name
+            } // if not for ref only
+        } // foreach foreign keys
+
+        $script .= "
+        }
+    }
+";
+    }
+
+
+    /**
+     * Adds the doDeleteAll() method.
+     * @param string &$script The script will be modified in this method.
+     */
+    protected function addDoDeleteAll(&$script)
+    {
+        $table = $this->getTable();
+        $script .= "
+    /**
+     * Deletes all rows from the ".$table->getName()." table.
+     *
+     * @param ConnectionInterface \$con the connection to use
+     * @return int The number of affected rows (if supported by underlying database driver).
+     */
+    public function doDeleteAll(ConnectionInterface \$con = null)
+    {
+        if (null === \$con) {
+            \$con = Propel::getServiceContainer()->getWriteConnection(" . $this->getTableMapClass() . "::DATABASE_NAME);
+        }
+        \$affectedRows = 0; // initialize var to track total num of affected rows
+        try {
+            // use transaction because \$criteria could contain info
+            // for more than one table or we could emulating ON DELETE CASCADE, etc.
+            \$con->beginTransaction();
+            ";
+        if ($this->isDeleteCascadeEmulationNeeded()) {
+            $script .="\$affectedRows += \$this->doOnDeleteCascade(\$con);
+            ";
+        }
+        if ($this->isDeleteSetNullEmulationNeeded()) {
+            $script .= "\$this->doOnDeleteSetNull(\$con);
+            ";
+        }
+        $script .= "\$affectedRows += parent::doDeleteAll(\$con);
+            // Because this db requires some delete cascade/set null emulation, we have to
+            // clear the cached instance *after* the emulation has happened (since
+            // instances get re-added by the select statement contained therein).
+            {$this->getTableMapClassName()}::clearInstancePool();
+            {$this->getTableMapClassName()}::clearRelatedInstancePool();
+
+            \$con->commit();
+        } catch (PropelException \$e) {
+            \$con->rollBack();
+            throw \$e;
+        }
+
+        return \$affectedRows;
+    }
+";
+    }
+
 }

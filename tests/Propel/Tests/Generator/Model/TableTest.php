@@ -747,10 +747,8 @@ class TableTest extends ModelTestCase
     public function testSetBaseClasses()
     {
         $table = new Table();
-        $table->setBasePeer('BasePeer');
         $table->setBaseClass('BaseObject');
 
-        $this->assertSame('BasePeer', $table->getBasePeer());
         $this->assertSame('BaseObject', $table->getBaseClass());
     }
 
@@ -763,16 +761,9 @@ class TableTest extends ModelTestCase
             ->will($this->returnValue('BaseObject'))
         ;
 
-        $database
-            ->expects($this->once())
-            ->method('getBasePeer')
-            ->will($this->returnValue('BasePeer'))
-        ;
-
         $table = new Table();
         $table->setDatabase($database);
 
-        $this->assertSame('BasePeer', $table->getBasePeer());
         $this->assertSame('BaseObject', $table->getBaseClass());
     }
 
@@ -782,7 +773,6 @@ class TableTest extends ModelTestCase
         $table->setAlias('Book');
 
         $this->assertSame('Book', $table->getBaseClass());
-        $this->assertSame('BookPeer', $table->getBasePeer());
     }
 
     public function testSetAlias()

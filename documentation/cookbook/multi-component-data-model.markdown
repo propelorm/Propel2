@@ -101,13 +101,10 @@ build/
       om/
       map/
       Author.php
-      AuthorPeer.php
       AuthorQuery.php
       Book.php
-      BookPeer.php
       BookQuery.php
       Review.php
-      ReviewPeer.php
       ReviewQuery.php
 {% endhighlight %}
 
@@ -129,16 +126,13 @@ build/
         om/
         map/
         Author.php
-        AuthorPeer.php
         AuthorQuery.php
       book/
         om/
         map/
         Book.php
-        BookPeer.php
         BookQuery.php
         Review.php
-        ReviewPeer.php
         ReviewQuery.php
 {% endhighlight %}
 
@@ -152,19 +146,16 @@ build/
         om/
         map/
         Author.php
-        AuthorPeer.php
         AuthorQuery.php
       book/
         om/
         map/
         Book.php
-        BookPeer.php
         BookQuery.php
       review/
         om/
         map/
         Review.php
-        ReviewPeer.php
         ReviewQuery.php
 {% endhighlight %}
 
@@ -246,29 +237,21 @@ This should run without any complaints. When you have a look at the projects/boo
 addon/
    club/
       BookClubList.php
-      BookClubListPeer.php
       BookListRel.php
-      BookListRelPeer.php
 core/
    author/
       Author.php
-      AuthorPeer.php
    book/
       Book.php
-      BookPeer.php
 
       Media.php
-      MediaPeer.php
    publisher/
       Publisher.php
-      PublisherPeer.php
    review/
       Review.php
-      ReviewPeer.php
 util/
    log/
       BookstoreLog.php
-      BookstoreLogPeer.php
 {% endhighlight %}
 
 (The additional subdirectories map/ and om/ in each of these directories have been omitted for clarity.)

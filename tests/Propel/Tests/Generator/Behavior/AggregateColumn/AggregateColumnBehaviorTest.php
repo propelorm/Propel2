@@ -16,7 +16,7 @@ use Propel\Tests\Bookstore\Behavior\AggregateCommentQuery;
 use Propel\Tests\Bookstore\Behavior\Map\AggregateCommentTableMap;
 use Propel\Tests\Bookstore\Behavior\AggregatePost;
 use Propel\Tests\Bookstore\Behavior\AggregatePostQuery;
-use Propel\Tests\Bookstore\Behavior\AggregatePostPeer;
+use Propel\Tests\Bookstore\Behavior\Map\AggregatePostTableMap;
 use Propel\Tests\Bookstore\Behavior\AggregateItem;
 use Propel\Tests\Bookstore\Behavior\AggregateItemQuery;
 use Propel\Tests\Bookstore\Behavior\AggregatePoll;
@@ -35,7 +35,7 @@ class AggregateColumnBehaviorTest extends BookstoreTestBase
 
     public function testParameters()
     {
-        $postTable = AggregatePostPeer::getTableMap();
+        $postTable = AggregatePostTableMap::getTableMap();
         $this->assertEquals(count($postTable->getColumns()), 2, 'AggregateColumn adds one column by default');
         $this->assertTrue(method_exists('Propel\Tests\Bookstore\Behavior\AggregatePost', 'getNbComments'));
     }

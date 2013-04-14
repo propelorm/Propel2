@@ -23,7 +23,7 @@ use Propel\Generator\Model\Table;
  * Baseclass for OM-building classes.
  *
  * OM-building classes are those that build a PHP (or other) class to service
- * a single table.  This includes Peer classes, Entity classes, Map classes,
+ * a single table.  This includes Entity classes, Map classes,
  * Node classes, Nested Set classes, etc.
  *
  * @author Hans Lellelid <hans@xmpl.org>
@@ -325,11 +325,11 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         }
 
         if (empty($namespace) && 'Base' === $this->getNamespace()) {
-            if (str_replace(array('Peer', 'Query'), '', $class) == str_replace(array('Peer', 'Query'), '', $this->getUnqualifiedClassName())) {
+            if (str_replace(array('Query'), '', $class) == str_replace(array('Query'), '', $this->getUnqualifiedClassName())) {
                 return true;
             }
 
-            if ((false !== strpos($class, 'Peer') || false !== strpos($class, 'Query'))) {
+            if ((false !== strpos($class, 'Query'))) {
                 return true;
             }
 
@@ -467,20 +467,8 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     }
 
     /**
-     * Shortcut method to return the [stub] peer classname for current table.
-     * This is the classname that is used whenever object or peer classes want
-     * to invoke methods of the peer classes.
-     * @param  boolean $fqcn
-     * @return string  (e.g. 'MyPeer')
-     */
-    public function getPeerClassName($fqcn = false)
-    {
-        return $this->getClassNameFromBuilder($this->getStubPeerBuilder(), $fqcn);
-    }
-
-    /**
      * Shortcut method to return the [stub] query classname for current table.
-     * This is the classname that is used whenever object or peer classes want
+     * This is the classname that is used whenever object or tablemap classes want
      * to invoke methods of the query classes.
      * @param  boolean $fqcn
      * @return string  (e.g. 'Myquery')
@@ -492,7 +480,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
 
     /**
      * Returns the object classname for current table.
-     * This is the classname that is used whenever object or peer classes want
+     * This is the classname that is used whenever object or tablemap classes want
      * to invoke methods of the object classes.
      * @param  boolean $fqcn
      * @return string  (e.g. 'My')
@@ -504,7 +492,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
 
     /**
      * Returns the tableMap classname for current table.
-     * This is the classname that is used whenever object or peer classes want
+     * This is the classname that is used whenever object or tablemap classes want
      * to invoke methods of the object classes.
      * @param  boolean $fqcn
      * @return string  (e.g. 'My')
@@ -515,12 +503,12 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     }
 
     /**
-     * Get the column constant name (e.g. PeerName::COLUMN_NAME).
+     * Get the column constant name (e.g. TableMapName::COLUMN_NAME).
      *
      * @param Column $col       The column we need a name for.
-     * @param string $classname The Peer classname to use.
+     * @param string $classname The TableMap classname to use.
      *
-     * @return string If $classname is provided, then will return $classname::COLUMN_NAME; if not, then the peername is looked up for current table to yield $currTablePeer::COLUMN_NAME.
+     * @return string If $classname is provided, then will return $classname::COLUMN_NAME; if not, then the TableMapName is looked up for current table to yield $currTableTableMap::COLUMN_NAME.
      */
     public function getColumnConstant($col, $classname = null)
     {
@@ -533,28 +521,13 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         }
 
         // was it overridden in schema.xml ?
-        if ($col->getPeerName()) {
-            $const = strtoupper($col->getPeerName());
+        if ($col->getTableMapName()) {
+            $const = strtoupper($col->getTableMapName());
         } else {
             $const = strtoupper($col->getName());
         }
 
         return $classname.'::'.$const;
-    }
-
-    /**
-     * Gets the basePeer path if specified for table/db.
-     * If not, will return 'propel.util.BasePeer'
-     * @return string
-     */
-    public function getBasePeer(Table $table)
-    {
-        $class = $table->getBasePeer();
-        if (null === $class) {
-            $class = 'propel.util.BasePeer';
-        }
-
-        return $class;
     }
 
     /**

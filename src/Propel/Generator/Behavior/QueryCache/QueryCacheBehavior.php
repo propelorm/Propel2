@@ -25,6 +25,8 @@ class QueryCacheBehavior extends Behavior
         'lifetime'    => 3600,
     );
 
+    private $tableClassName;
+
     public function queryAttributes($builder)
     {
         $script = "protected \$queryKey = '';
@@ -48,8 +50,8 @@ class QueryCacheBehavior extends Behavior
 
     public function queryMethods($builder)
     {
-        $builder->declareClasses('\Propel\Runtime\Propel', '\Propel\Runtime\Util\BasePeer');
-        $this->peerClassName = $builder->getPeerClassName();
+        $builder->declareClasses('\Propel\Runtime\Propel');
+        $this->tableClassName = $builder->getTableMapClassName();
         $script = '';
         $this->addSetQueryKey($script);
         $this->addGetQueryKey($script);
@@ -175,8 +177,8 @@ protected function doSelect(\$con)
     }
     \$this->configureSelectColumns();
 
-    \$dbMap = Propel::getServiceContainer()->getDatabaseMap(" . $this->peerClassName ."::DATABASE_NAME);
-    \$db = Propel::getServiceContainer()->getAdapter(" . $this->peerClassName ."::DATABASE_NAME);
+    \$dbMap = Propel::getServiceContainer()->getDatabaseMap(" . $this->tableClassName ."::DATABASE_NAME);
+    \$db = Propel::getServiceContainer()->getAdapter(" . $this->tableClassName ."::DATABASE_NAME);
 
     \$key = \$this->getQueryKey();
     if (\$key && \$this->cacheContains(\$key)) {
@@ -184,7 +186,7 @@ protected function doSelect(\$con)
         \$sql = \$this->cacheFetch(\$key);
     } else {
         \$params = array();
-        \$sql = BasePeer::createSelectSql(\$this, \$params);
+        \$sql = \$this->createSelectSql(\$params);
         if (\$key) {
             \$this->cacheStore(\$key, \$sql);
         }
@@ -232,18 +234,18 @@ protected function doCount(\$con)
 
         \$params = array();
         if (\$needsComplexCount) {
-            if (BasePeer::needsSelectAliases(\$this)) {
+            if (\$this->needsSelectAliases()) {
                 if (\$this->getHaving()) {
                     throw new PropelException('Propel cannot create a COUNT query when using HAVING and  duplicate column names in the SELECT part');
                 }
                 \$db->turnSelectColumnsToAliases(\$this);
             }
-            \$selectSql = BasePeer::createSelectSql(\$this, \$params);
+            \$selectSql = \$this->createSelectSql(\$params);
             \$sql = 'SELECT COUNT(*) FROM (' . \$selectSql . ') propelmatch4cnt';
         } else {
             // Replace SELECT columns with COUNT(*)
             \$this->clearSelectColumns()->addSelectColumn('COUNT(*)');
-            \$sql = BasePeer::createSelectSql(\$this, \$params);
+            \$sql = \$this->createSelectSql(\$params);
         }
 
         if (\$key) {

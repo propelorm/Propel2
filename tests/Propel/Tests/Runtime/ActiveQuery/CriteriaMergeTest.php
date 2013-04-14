@@ -15,7 +15,7 @@ use Propel\Tests\Bookstore\Map\AuthorTableMap;
 use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\Bookstore\Map\PublisherTableMap;
 use Propel\Runtime\ActiveQuery\Criteria;
-use Propel\Runtime\Util\BasePeer;
+use Propel\Runtime\Map\TableMap;
 
 /**
  * Test class for Criteria.
@@ -29,7 +29,7 @@ class CriteriaMergeTest extends BookstoreTestBase
     protected function assertCriteriaTranslation($criteria, $expectedSql, $message = '')
     {
         $params = array();
-        $result = BasePeer::createSelectSql($criteria, $params);
+        $result = $criteria->createSelectSql($params);
         $this->assertEquals($expectedSql, $result, $message);
     }
 

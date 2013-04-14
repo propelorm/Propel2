@@ -25,8 +25,6 @@ class NestedSetBehaviorQueryBuilderModifier
 
     protected $objectClassName;
 
-    protected $peerClassName;
-
     protected $queryClassName;
 
     protected $tableMapClassName;
@@ -52,7 +50,6 @@ class NestedSetBehaviorQueryBuilderModifier
         $this->builder           = $builder;
         $this->objectClassName   = $builder->getObjectClassName();
         $this->queryClassName    = $builder->getQueryClassName();
-        $this->peerClassName     = $builder->getPeerClassName();
         $this->tableMapClassName = $builder->getTableMapClassName();
     }
 
@@ -436,7 +433,6 @@ static public function retrieveRoots(Criteria \$criteria = null, ConnectionInter
 
     protected function addRetrieveRoot(&$script)
     {
-        $peerClassName     = $this->peerClassName;
         $queryClassName    = $this->queryClassName;
         $objectClassName   = $this->objectClassName;
         $useScope          = $this->behavior->useScope();
@@ -530,7 +526,6 @@ static public function isValid($objectClassName \$node = null)
 
     protected function addDeleteTree(&$script)
     {
-        $peerClassName     = $this->peerClassName;
         $objectClassName   = $this->objectClassName;
         $useScope          = $this->behavior->useScope();
         $tableMapClassName = $this->builder->getTableMapClass();
@@ -555,11 +550,11 @@ static public function deleteTree(" . ($useScope ? "\$scope = null, " : "") . "C
     \$c = new Criteria($tableMapClassName::DATABASE_NAME);
     \$c->add($objectClassName::SCOPE_COL, \$scope, Criteria::EQUAL);
 
-    return $peerClassName::doDelete(\$c, \$con);";
+    return $tableMapClassName::doDelete(\$c, \$con);";
         } else {
             $script .= "
 
-    return $peerClassName::doDeleteAll(\$con);";
+    return $tableMapClassName::doDeleteAll(\$con);";
         }
         $script .= "
 }
@@ -568,12 +563,11 @@ static public function deleteTree(" . ($useScope ? "\$scope = null, " : "") . "C
 
     protected function addShiftRLValues(&$script)
     {
-        $peerClassName     = $this->peerClassName;
         $objectClassName   = $this->objectClassName;
         $useScope          = $this->behavior->useScope();
         $tableMapClassName = $this->builder->getTableMapClass();
 
-        $this->builder->declareClass('Propel\Runtime\Util\BasePeer');
+        $this->builder->declareClass('Propel\\Runtime\Map\\TableMap');
 
         $script .= "
 /**
@@ -612,7 +606,7 @@ static public function shiftRLValues(\$delta, \$first, \$last = null" . ($useSco
     \$valuesCriteria = new Criteria($tableMapClassName::DATABASE_NAME);
     \$valuesCriteria->add($objectClassName::LEFT_COL, array('raw' => $objectClassName::LEFT_COL . ' + ?', 'value' => \$delta), Criteria::CUSTOM_EQUAL);
 
-    BasePeer::doUpdate(\$whereCriteria, \$valuesCriteria, \$con);
+    \$whereCriteria->doUpdate(\$valuesCriteria, \$con);
 
     // Shift right column values
     \$whereCriteria = new Criteria($tableMapClassName::DATABASE_NAME);
@@ -630,19 +624,18 @@ static public function shiftRLValues(\$delta, \$first, \$last = null" . ($useSco
     \$valuesCriteria = new Criteria($tableMapClassName::DATABASE_NAME);
     \$valuesCriteria->add($objectClassName::RIGHT_COL, array('raw' => $objectClassName::RIGHT_COL . ' + ?', 'value' => \$delta), Criteria::CUSTOM_EQUAL);
 
-    BasePeer::doUpdate(\$whereCriteria, \$valuesCriteria, \$con);
+    \$whereCriteria->doUpdate(\$valuesCriteria, \$con);
 }
 ";
     }
 
     protected function addShiftLevel(&$script)
     {
-        $peerClassName     = $this->peerClassName;
         $objectClassName   = $this->objectClassName;
         $useScope          = $this->behavior->useScope();
         $tableMapClassName = $this->builder->getTableMapClass();
 
-        $this->builder->declareClass('Propel\Runtime\Util\BasePeer');
+        $this->builder->declareClass('Propel\\Runtime\Map\\TableMap');
 
         $script .= "
 /**
@@ -677,7 +670,7 @@ static public function shiftLevel(\$delta, \$first, \$last" . ($useScope ? ", \$
     \$valuesCriteria = new Criteria($tableMapClassName::DATABASE_NAME);
     \$valuesCriteria->add($objectClassName::LEVEL_COL, array('raw' => $objectClassName::LEVEL_COL . ' + ?', 'value' => \$delta), Criteria::CUSTOM_EQUAL);
 
-    BasePeer::doUpdate(\$whereCriteria, \$valuesCriteria, \$con);
+    \$whereCriteria->doUpdate(\$valuesCriteria, \$con);
 }
 ";
     }
@@ -779,7 +772,6 @@ static public function updateLoadedNodes(\$prune = null, ConnectionInterface \$c
 
     protected function addMakeRoomForLeaf(&$script)
     {
-        $peerClassName  = $this->peerClassName;
         $queryClassName = $this->queryClassName;
         $useScope       = $this->behavior->useScope();
 
@@ -810,7 +802,6 @@ static public function makeRoomForLeaf(\$left" . ($useScope ? ", \$scope" : "").
     protected function addFixLevels(&$script)
     {
         $objectClassName   = $this->objectClassName;
-        $peerClassName     = $this->peerClassName;
         $queryClassName    = $this->queryClassName;
         $tableMapClassName = $this->tableMapClassName;
         $useScope          = $this->behavior->useScope();
@@ -914,7 +905,7 @@ public static function setNegativeScope(\$scope, ConnectionInterface \$con = nul
     \$valuesCriteria = new Criteria($tableMapClassName::DATABASE_NAME);
     \$valuesCriteria->add($objectClassName::SCOPE_COL, \$scope, Criteria::EQUAL);
 
-    BasePeer::doUpdate(\$whereCriteria, \$valuesCriteria, \$con);
+    \$whereCriteria->doUpdate(\$valuesCriteria, \$con);
 }
 ";
     }

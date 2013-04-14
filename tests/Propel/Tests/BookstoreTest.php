@@ -13,17 +13,14 @@ namespace Propel\Tests;
 use Propel\Runtime\ActiveQuery\Criteria;
 
 use Propel\Tests\Bookstore\Author;
-use Propel\Tests\Bookstore\AuthorPeer;
 use Propel\Tests\Bookstore\AuthorQuery;
 use Propel\Tests\Bookstore\Book;
-use Propel\Tests\Bookstore\BookPeer;
 use Propel\Tests\Bookstore\BookQuery;
 use Propel\Tests\Bookstore\BookClubList;
 use Propel\Tests\Bookstore\BookListRelQuery;
 use Propel\Tests\Bookstore\BookClubListQuery;
 use Propel\Tests\Bookstore\BookListRel;
 use Propel\Tests\Bookstore\Publisher;
-use Propel\Tests\Bookstore\PublisherPeer;
 use Propel\Tests\Bookstore\PublisherQuery;
 use Propel\Tests\Bookstore\Map\AuthorTableMap;
 use Propel\Tests\Bookstore\Map\BookTableMap;
@@ -342,7 +339,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
         $c->add(AuthorTableMap::ID, $hp->getAuthor()->getId());
         $c->add(PublisherTableMap::ID, $hp->getPublisher()->getId());
         $c->setSingleRecord(true);
-        BookPeer::doDelete($c);
+        BookTableMap::doDelete($c);
 
         // Checking to make sure correct records were removed.
         $this->assertEquals(3, AuthorQuery::create()->count(), 'Correct records were removed from author table');
@@ -355,19 +352,19 @@ class BookstoreTest extends BookstoreEmptyTestBase
         $cn->addOr($c->getNewCriterion(BookTableMap::ISBN, "0380977427"));
         $cn->addOr($c->getNewCriterion(BookTableMap::ISBN, "0140422161"));
         $c->add($cn);
-        BookPeer::doDelete($c);
+        BookTableMap::doDelete($c);
 
         // Attempting to delete book [id = $td_id]
         $td->delete();
 
         // Attempting to delete authors
-        AuthorPeer::doDelete($stephenson_id);
-        AuthorPeer::doDelete($byron_id);
+        AuthorTableMap::doDelete($stephenson_id);
+        AuthorTableMap::doDelete($byron_id);
         $grass->delete();
 
         // Attempting to delete publishers
-        PublisherPeer::doDelete($morrow_id);
-        PublisherPeer::doDelete($penguin_id);
+        PublisherTableMap::doDelete($morrow_id);
+        PublisherTableMap::doDelete($penguin_id);
         $vintage->delete();
 
         // These have to be deleted manually also since we have onDelete
@@ -688,7 +685,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
         $c->add(AuthorTableMap::ID, $hp->getAuthor()->getId());
         $c->add(PublisherTableMap::ID, $hp->getPublisher()->getId());
         $c->setSingleRecord(true);
-        BookPeer::doDelete($c);
+        BookTableMap::doDelete($c);
 
         // Checking to make sure correct records were removed.
         $this->assertEquals(3, AuthorQuery::create()->count(), 'Correct records were removed from author table');

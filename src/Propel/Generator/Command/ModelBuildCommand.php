@@ -27,10 +27,6 @@ class ModelBuildCommand extends AbstractCommand
 
     const DEFAULT_MYSQL_ENGINE                      = 'InnoDB';
 
-    const DEFAULT_PEER_BUILDER                      = '\Propel\Generator\Builder\Om\PeerBuilder';
-
-    const DEFAULT_PEER_STUB_BUILDER                 = '\Propel\Generator\Builder\Om\ExtensionPeerBuilder';
-
     const DEFAULT_OBJECT_BUILDER                    = '\Propel\Generator\Builder\Om\ObjectBuilder';
 
     const DEFAULT_OBJECT_STUB_BUILDER               = '\Propel\Generator\Builder\Om\ExtensionObjectBuilder';
@@ -59,10 +55,6 @@ class ModelBuildCommand extends AbstractCommand
         $this
             ->addOption('mysql-engine', null, InputOption::VALUE_REQUIRED,  'MySQL engine (MyISAM, InnoDB, ...)', self::DEFAULT_MYSQL_ENGINE)
             ->addOption('output-dir', null, InputOption::VALUE_REQUIRED, 'The output directory', self::DEFAULT_OUTPUT_DIRECTORY)
-            ->addOption('peer-class', null, InputOption::VALUE_REQUIRED,
-                'The peer class generator name', self::DEFAULT_PEER_BUILDER)
-            ->addOption('peer-stub-class', null, InputOption::VALUE_REQUIRED,
-                'The peer stub class generator name', self::DEFAULT_PEER_STUB_BUILDER)
             ->addOption('object-class', null, InputOption::VALUE_REQUIRED,
                 'The object class generator name', self::DEFAULT_OBJECT_BUILDER)
             ->addOption('object-stub-class', null, InputOption::VALUE_REQUIRED,
@@ -101,8 +93,6 @@ class ModelBuildCommand extends AbstractCommand
     {
         $generatorConfig = new GeneratorConfig(array_merge(array(
             'propel.platform.class'                     => $input->getOption('platform'),
-            'propel.builder.peer.class'                 => $input->getOption('peer-class'),
-            'propel.builder.peerstub.class'             => $input->getOption('peer-stub-class'),
             'propel.builder.object.class'               => $input->getOption('object-class'),
             'propel.builder.objectstub.class'           => $input->getOption('object-stub-class'),
             'propel.builder.objectmultiextend.class'    => $input->getOption('object-multiextend-class'),

@@ -24,7 +24,7 @@ class QuickBuilder
 {
     protected $schema, $platform, $config, $database;
 
-    protected $classTargets = array('tablemap', 'peer', 'object', 'query', 'peerstub', 'objectstub', 'querystub');
+    protected $classTargets = array('tablemap', 'object', 'query', 'objectstub', 'querystub');
 
     public function setSchema($schema)
     {
@@ -145,11 +145,27 @@ class QuickBuilder
         return $this->getPlatform()->getAddTablesDDL($this->getDatabase());
     }
 
+    public function getBuildName($classTargets = null)
+    {
+        $tables = [];
+        foreach ($this->getDatabase()->getTables() as $table){
+            if (count($tables) > 3) break;
+            $tables[] = $table->getName();
+        }
+        $name = implode('_', $tables);
+        if (!$classTargets || count($classTargets) == 5) {
+            $name .= '-all';
+        } else {
+            $name .= '-' . implode('_', $classTargets);
+        }
+        return $name;
+    }
+
     public function buildClasses(array $classTargets = null)
     {
         $code = "<?php\n".$this->getClasses($classTargets);
-        $name = $classTargets ? '_' . implode($classTargets, '_') : '';
-        $tempFile = tempnam(sys_get_temp_dir(), 'propelQuickBuilder'.$name).'.php';
+        $name = $this->getBuildName($classTargets);
+        $tempFile = sys_get_temp_dir() . '/propelQuickBuilder'.$name.'.php';
 
         file_put_contents($tempFile, $code);
         include($tempFile);

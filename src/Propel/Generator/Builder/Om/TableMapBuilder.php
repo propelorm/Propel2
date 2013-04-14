@@ -124,6 +124,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
         // apply behaviors
         $this->applyBehaviorModifier('staticConstants', $script, "    ");
         $this->applyBehaviorModifier('staticAttributes', $script, "    ");
+        $this->applyBehaviorModifier('staticMethods', $script, "    ");
 
         $this->addAttributes($script);
 
@@ -150,7 +151,26 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
         $this->addPopulateObject($script);
         $this->addPopulateObjects($script);
 
+        if (!$table->isAlias()) {
+            $this->addSelectMethods($script);
+            $this->addGetTableMap($script);
+        }
+
+        $this->addBuildTableMap($script);
+
+        $this->addDoDelete($script);
+        $this->addDoDeleteAll($script);
+
         $this->addDoInsert($script);
+    }
+
+    /**
+     * Adds the addSelectColumns(), doCount(), etc. methods.
+     * @param      string &$script The script will be modified in this method.
+     */
+    protected function addSelectMethods(&$script)
+    {
+        $this->addAddSelectColumns($script);
     }
 
     /**
@@ -169,7 +189,6 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
             'nbColumns'         => $this->getTable()->getNumColumns(),
             'nbLazyLoadColumns' => $this->getTable()->getNumLazyLoadColumns(),
             'nbHydrateColumns'  => $this->getTable()->getNumColumns() - $this->getTable()->getNumLazyLoadColumns(),
-            'peerClassName'     => $this->getStubPeerBuilder()->getFullyQualifiedClassName(),
             'columns'           => $this->getTable()->getColumns(),
             'stringFormat'      => $this->getTable()->getDefaultStringFormat(),
         ));
@@ -308,7 +327,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
             }
 
             $script .= "
-    /** A class that can be returned by this peer. */
+    /** A class that can be returned by this tableMap. */
     const CLASSNAME_".strtoupper($child->getKey())." = '". $fqcn . "';
 ";
         }
@@ -389,8 +408,32 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
     {
         $script .= "
 } // " . $this->getUnqualifiedClassName() . "
+// This is the static code needed to register the TableMap for this table with the main Propel class.
+//
+".$this->getUnqualifiedClassName()."::buildTableMap();
 ";
         $this->applyBehaviorModifier('tableMapFilter', $script, "");
+    }
+
+    /**
+     * Adds the buildTableMap() method.
+     * @param string &$script The script will be modified in this method.
+     */
+    protected function addBuildTableMap(&$script)
+    {
+        $this->declareClassFromBuilder($this->getTableMapBuilder());
+        $script .= "
+    /**
+     * Add a TableMap instance to the database for this tableMap class.
+     */
+    public static function buildTableMap()
+    {
+      \$dbMap = Propel::getServiceContainer()->getDatabaseMap(" . $this->getTableMapClass() . "::DATABASE_NAME);
+      if (!\$dbMap->hasTable(" . $this->getTableMapClass() . "::TABLE_NAME)) {
+        \$dbMap->addTableObject(new ".$this->getTableMapClass()."());
+      }
+    }
+";
     }
 
     /**
@@ -657,7 +700,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
             // actually be the table name of other table
             $tblFK = $fk->getTable();
 
-            $joinedTableTableMapBuilder = $this->getNewStubPeerBuilder($tblFK)->getTableMapBuilder();
+            $joinedTableTableMapBuilder = $this->getNewTableMapBuilder($tblFK)->getTableMapBuilder();
             $this->declareClassFromBuilder($joinedTableTableMapBuilder);
 
             if (!$tblFK->isForReferenceOnly()) {
@@ -907,7 +950,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
     {
         $script .= "
     /**
-     * The class that the Peer will make instances of.
+     * The class that the tableMap will make instances of.
      *
      * If \$withPrefix is true, the returned path
      * uses a dot-path notation which is translated into a path
@@ -932,7 +975,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
     {
         $script .= "
     /**
-     * The class that the Peer will make instances of.
+     * The class that the tableMap will make instances of.
      *
      * This method must be overridden by the stub subclass, because
      * ".$this->getObjectClassName()." is declared abstract in the schema.
@@ -1065,6 +1108,189 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
     }";
     }
 
+    /**
+     * Adds the addSelectColumns() method.
+     * @param string &$script The script will be modified in this method.
+     */
+    protected function addAddSelectColumns(&$script)
+    {
+        $script .= "
+    /**
+     * Add all the columns needed to create a new object.
+     *
+     * Note: any columns that were marked with lazyLoad=\"true\" in the
+     * XML schema will not be added to the select list and only loaded
+     * on demand.
+     *
+     * @param Criteria \$criteria object containing the columns to add.
+     * @param string   \$alias    optional table alias
+     * @throws PropelException Any exceptions caught during processing will be
+     *         rethrown wrapped into a PropelException.
+     */
+    public static function addSelectColumns(Criteria \$criteria, \$alias = null)
+    {
+        if (null === \$alias) {";
+        foreach ($this->getTable()->getColumns() as $col) {
+            if (!$col->isLazyLoad()) {
+                $script .= "
+            \$criteria->addSelectColumn({$col->getConstantName()});";
+            } // if !col->isLazyLoad
+        } // foreach
+        $script .= "
+        } else {";
+        foreach ($this->getTable()->getColumns() as $col) {
+            if (!$col->isLazyLoad()) {
+                $script .= "
+            \$criteria->addSelectColumn(\$alias . '." . $col->getConstantColumnName()."');";
+            } // if !col->isLazyLoad
+        } // foreach
+        $script .= "
+        }";
+        $script .="
+    }
+";
+    } // addAddSelectColumns()
+
+
+
+
+    /**
+     * Adds the getTableMap() method which is a convenience method for apps to get DB metadata.
+     * @param string &$script The script will be modified in this method.
+     */
+    protected function addGetTableMap(&$script)
+    {
+        $script .= "
+    /**
+     * Returns the TableMap related to this object.
+     * This method is not needed for general use but a specific application could have a need.
+     * @return TableMap
+     * @throws PropelException Any exceptions caught during processing will be
+     *         rethrown wrapped into a PropelException.
+     */
+    public static function getTableMap()
+    {
+        return Propel::getServiceContainer()->getDatabaseMap(" . $this->getTableMapClass() . "::DATABASE_NAME)->getTable(" . $this->getTableMapClass() . "::TABLE_NAME);
+    }
+";
+    }
+
+    /**
+     * Adds the doDeleteAll() method.
+     * @param string &$script The script will be modified in this method.
+     */
+    protected function addDoDeleteAll(&$script)
+    {
+        $table = $this->getTable();
+        $script .= "
+    /**
+     * Deletes all rows from the ".$table->getName()." table.
+     *
+     * @param ConnectionInterface \$con the connection to use
+     * @return int The number of affected rows (if supported by underlying database driver).
+     */
+    public static function doDeleteAll(ConnectionInterface \$con = null)
+    {
+        return " . $this->getQueryClassName() . "::create()->doDeleteAll(\$con);
+    }
+";
+    }
+
+
+    /**
+     * Adds the doDelete() method.
+     * @param string &$script The script will be modified in this method.
+     */
+    protected function addDoDelete(&$script)
+    {
+        $table = $this->getTable();
+        $script .= "
+    /**
+     * Performs a DELETE on the database, given a ".$this->getObjectClassName()." or Criteria object OR a primary key value.
+     *
+     * @param mixed               \$values Criteria or ".$this->getObjectClassName()." object or primary key or array of primary keys
+     *              which is used to create the DELETE statement
+     * @param ConnectionInterface \$con the connection to use
+     * @return int The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
+     *                if supported by native driver or if emulated using Propel.
+     * @throws PropelException Any exceptions caught during processing will be
+     *         rethrown wrapped into a PropelException.
+     */
+     public static function doDelete(\$values, ConnectionInterface \$con = null)
+     {
+        if (null === \$con) {
+            \$con = Propel::getServiceContainer()->getWriteConnection(" . $this->getTableMapClass() . "::DATABASE_NAME);
+        }
+
+        if (\$values instanceof Criteria) {";
+        $script .= "
+            // rename for clarity
+            \$criteria = \$values;
+        } elseif (\$values instanceof \\".$this->getStubObjectBuilder()->getQualifiedClassName().") { // it's a model object";
+        if (count($table->getPrimaryKey()) > 0) {
+            $script .= "
+            // create criteria based on pk values
+            \$criteria = \$values->buildPkeyCriteria();";
+        } else {
+            $script .= "
+            // create criteria based on pk value
+            \$criteria = \$values->buildCriteria();";
+        }
+
+        $script .= "
+        } else { // it's a primary key, or an array of pks";
+        $script .= "
+            \$criteria = new Criteria(" . $this->getTableMapClass() . "::DATABASE_NAME);";
+
+        if (1 === count($table->getPrimaryKey())) {
+            $pkey = $table->getPrimaryKey();
+            $col = array_shift($pkey);
+            $script .= "
+            \$criteria->add(".$this->getColumnConstant($col).", (array) \$values, Criteria::IN);";
+        } else {
+            $script .= "
+            // primary key is composite; we therefore, expect
+            // the primary key passed to be an array of pkey values
+            if (count(\$values) == count(\$values, COUNT_RECURSIVE)) {
+                // array is not multi-dimensional
+                \$values = array(\$values);
+            }
+            foreach (\$values as \$value) {";
+            $i = 0;
+            foreach ($table->getPrimaryKey() as $col) {
+                if (0 === $i) {
+                    $script .= "
+                \$criterion = \$criteria->getNewCriterion(".$this->getColumnConstant($col).", \$value[$i]);";
+                } else {
+                    $script .= "
+                \$criterion->addAnd(\$criteria->getNewCriterion(".$this->getColumnConstant($col).", \$value[$i]));";
+                }
+                $i++;
+            }
+            $script .= "
+                \$criteria->addOr(\$criterion);";
+            $script .= "
+            }";
+        } /* if count(table->getPrimaryKeys()) */
+
+        $script .= "
+        }
+
+        \$query = " . $this->getQueryClassName() . "::create()->mergeWith(\$criteria);
+
+        if (\$values instanceof Criteria) {
+            {$this->getTableMapClassName()}::clearInstancePool();
+        } else if (!is_object(\$values)) { // it's a primary key, or an array of pks
+            foreach ((array) \$values as \$singleval) {
+                {$this->getTableMapClassName()}::removeInstanceFromPool(\$singleval);
+            }
+        }
+
+        return \$query->delete(\$con);
+    }
+";
+    }
+
 
 
     /**
@@ -1134,13 +1360,13 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
         $script .= "
 
         // Set the correct dbName
-        \$criteria->setDbName(" . $this->getTableMapClass() . "::DATABASE_NAME);
+        \$query = " . $this->getQueryClassName() . "::create()->mergeWith(\$criteria);
 
         try {
             // use transaction because \$criteria could contain info
             // for more than one table (I guess, conceivably)
             \$con->beginTransaction();
-            \$pk = ".$this->getBaseTableMapClassName()."::doInsert(\$criteria, \$con);
+            \$pk = \$query->doInsert(\$con);
             \$con->commit();
         } catch (PropelException \$e) {
             \$con->rollBack();
@@ -1151,6 +1377,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
     }
 ";
     }
+
 
 
 

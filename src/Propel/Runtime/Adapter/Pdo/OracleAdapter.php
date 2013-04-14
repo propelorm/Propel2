@@ -16,7 +16,7 @@ use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\StatementInterface;
 use Propel\Runtime\Exception\InvalidArgumentException;
 use Propel\Runtime\Map\ColumnMap;
-use Propel\Runtime\Util\BasePeer;
+use Propel\Runtime\Map\TableMap;
 
 /**
  * Oracle adapter.
@@ -102,7 +102,7 @@ class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
     public function applyLimit(&$sql, $offset, $limit, $criteria = null)
     {
         $params = array();
-        if (BasePeer::needsSelectAliases($criteria)) {
+        if ($criteria && $criteria->needsSelectAliases()) {
             $crit = clone $criteria;
             $selectSql = $this->createSelectSqlPart($crit, $params, true);
             $sql = $selectSql . substr($sql, strpos($sql, 'FROM') - 1);

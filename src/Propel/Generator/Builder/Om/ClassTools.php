@@ -82,20 +82,6 @@ class ClassTools
     }
 
     /**
-     * Gets the basePeer path if specified for table/db.
-     * If not, will return 'propel.util.BasePeer'
-     * @return string
-     */
-    public static function getBasePeer(Table $table)
-    {
-        if (null === $class = $table->getBasePeer()) {
-            $class = 'propel.util.BasePeer';
-        }
-
-        return $class;
-    }
-
-    /**
      * Gets the baseClass path if specified for table/db.
      *
      * @return string

@@ -275,6 +275,14 @@ abstract class AbstractCriterion
         }
     }
 
+    public function __toString()
+    {
+        $sb = '';
+        $params = [];
+        $this->appendPsTo($sb, $params);
+        return "" . $sb;
+    }
+
     /**
      * Appends a Prepared Statement representation of the Criterion onto the buffer
      *

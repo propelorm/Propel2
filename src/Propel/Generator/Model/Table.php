@@ -51,7 +51,6 @@ class Table extends ScopedMappingModel implements IdMethod
     private $alias;
     private $interface;
     private $baseClass;
-    private $basePeer;
     private $columnsByName;
     private $columnsByLowercaseName;
     private $columnsByPhpName;
@@ -135,7 +134,6 @@ class Table extends ScopedMappingModel implements IdMethod
 
         $this->isAbstract = $this->booleanValue($this->getAttribute('abstract'));
         $this->baseClass = $this->getAttribute('baseClass');
-        $this->basePeer = $this->getAttribute('basePeer');
         $this->alias = $this->getAttribute('alias');
 
         $this->heavyIndexing = (
@@ -438,41 +436,13 @@ class Table extends ScopedMappingModel implements IdMethod
     }
 
     /**
-     * Sets the peer base class name.
+     * Sets the base class name.
      *
      * @param string $class
      */
     public function setBaseClass($class)
     {
         $this->baseClass = $class;
-    }
-
-    /**
-     * Returns the peer base class name.
-     *
-     * @return string
-     */
-    public function getBasePeer()
-    {
-        if ($this->isAlias() && null === $this->basePeer) {
-            return $this->alias . 'Peer';
-        }
-
-        if (null === $this->basePeer) {
-            return $this->database->getBasePeer();
-        }
-
-        return $this->basePeer;
-    }
-
-    /**
-     * Sets the base peer class name.
-     *
-     * @param string $class
-     */
-    public function setBasePeer($class)
-    {
-        $this->basePeer = $class;
     }
 
     /**
@@ -1577,10 +1547,6 @@ class Table extends ScopedMappingModel implements IdMethod
 
         if ($this->baseClass) {
             $tableNode->setAttribute('baseClass', $this->baseClass);
-        }
-
-        if ($this->basePeer) {
-            $tableNode->setAttribute('basePeer', $this->basePeer);
         }
 
         if ($this->isCrossRef) {

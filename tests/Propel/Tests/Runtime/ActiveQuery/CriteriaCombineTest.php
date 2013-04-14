@@ -14,7 +14,8 @@ use Propel\Tests\Helpers\BaseTestCase;
 
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
-use Propel\Runtime\Util\BasePeer;
+use Propel\Runtime\ActiveQuery\ModelCriteria;
+use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Adapter\Pdo\SqliteAdapter;
 
 /**
@@ -43,7 +44,7 @@ class CriteriaCombineTest extends BaseTestCase
     {
         Propel::init(__DIR__ . '/../../../../Fixtures/bookstore/build/conf/bookstore-conf.php');
         parent::setUp();
-        $this->c = new Criteria();
+        $this->c = new ModelCriteria();
         $defaultDatasource = Propel::getServiceContainer()->getDefaultDatasource();
         $this->savedAdapter = Propel::getServiceContainer()->getAdapter($defaultDatasource);
         Propel::getServiceContainer()->setAdapter($defaultDatasource, new SqliteAdapter());
@@ -160,9 +161,9 @@ class CriteriaCombineTest extends BaseTestCase
 
         try {
             $params = array();
-            $result = BasePeer::createSelectSql($this->c, $params);
+            $result = $this->c->createSelectSql($params);
         } catch (PropelException $e) {
-            $this->fail("PropelException thrown in BasePeer.createSelectSql(): ".$e->getMessage());
+            $this->fail("PropelException thrown in Criteria->createSelectSql(): ".$e->getMessage());
         }
 
         $this->assertEquals($expect, $result);
@@ -193,9 +194,9 @@ class CriteriaCombineTest extends BaseTestCase
 
         try {
             $params=array();
-            $result = BasePeer::createSelectSql($this->c, $params);
+            $result = $this->c->createSelectSql($params);
         } catch (PropelException $e) {
-            $this->fail("PropelException thrown in BasePeer::createSelectSql()");
+            $this->fail("PropelException thrown in Criteria::createSelectSql()");
         }
 
         $this->assertEquals($expect, $result);
@@ -215,7 +216,7 @@ class CriteriaCombineTest extends BaseTestCase
         );
 
         $params = array();
-        $result = BasePeer::createSelectSql($this->c, $params);
+        $result = $this->c->createSelectSql($params);
 
         $this->assertEquals($expect, $result);
         $this->assertEquals($expect_params, $params);
@@ -238,7 +239,7 @@ class CriteriaCombineTest extends BaseTestCase
         );
 
         $params = array();
-        $result = BasePeer::createSelectSql($this->c, $params);
+        $result = $this->c->createSelectSql($params);
 
         $this->assertEquals($expect, $result);
         $this->assertEquals($expect_params, $params);
@@ -261,7 +262,7 @@ class CriteriaCombineTest extends BaseTestCase
         );
 
         $params = array();
-        $result = BasePeer::createSelectSql($this->c, $params);
+        $result = $this->c->createSelectSql($params);
 
         $this->assertEquals($expect, $result);
         $this->assertEquals($expect_params, $params);
@@ -280,7 +281,7 @@ class CriteriaCombineTest extends BaseTestCase
         );
 
         $params = array();
-        $result = BasePeer::createSelectSql($this->c, $params);
+        $result = $this->c->createSelectSql($params);
 
         $this->assertEquals($expect, $result);
         $this->assertEquals($expect_params, $params);
@@ -303,7 +304,7 @@ class CriteriaCombineTest extends BaseTestCase
         );
 
         $params = array();
-        $result = BasePeer::createSelectSql($this->c, $params);
+        $result = $this->c->createSelectSql($params);
 
         $this->assertEquals($expect, $result);
         $this->assertEquals($expect_params, $params);
@@ -326,7 +327,7 @@ class CriteriaCombineTest extends BaseTestCase
         );
 
         $params = array();
-        $result = BasePeer::createSelectSql($this->c, $params);
+        $result = $this->c->createSelectSql($params);
 
         $this->assertEquals($expect, $result);
         $this->assertEquals($expect_params, $params);
@@ -351,7 +352,7 @@ class CriteriaCombineTest extends BaseTestCase
         );
 
         $params = array();
-        $result = BasePeer::createSelectSql($this->c, $params);
+        $result = $this->c->createSelectSql($params);
 
         $this->assertEquals($expect, $result);
         $this->assertEquals($expect_params, $params);
@@ -376,7 +377,7 @@ class CriteriaCombineTest extends BaseTestCase
         );
 
         $params = array();
-        $result = BasePeer::createSelectSql($this->c, $params);
+        $result = $this->c->createSelectSql($params);
 
         $this->assertEquals($expect, $result);
         $this->assertEquals($expect_params, $params);

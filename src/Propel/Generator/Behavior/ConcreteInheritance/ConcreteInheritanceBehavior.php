@@ -139,8 +139,6 @@ class ConcreteInheritanceBehavior extends Behavior
                 return $builder->declareClassFromBuilder($builder->getNewStubObjectBuilder($parentTable), true);
             case 'Propel\Generator\Builder\Om\QueryBuilder':
                 return $builder->declareClassFromBuilder($builder->getNewStubQueryBuilder($parentTable), true);
-            case 'Propel\Generator\Builder\Om\PeerBuilder':
-                return $builder->declareClassFromBuilder($builder->getNewStubPeerBuilder($parentTable), true);
         }
 
         return null;

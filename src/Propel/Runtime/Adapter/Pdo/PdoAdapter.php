@@ -364,7 +364,6 @@ abstract class PdoAdapter
     /**
      * Builds the SELECT part of a SQL statement based on a Criteria
      * taking into account select columns and 'as' columns (i.e. columns aliases)
-     * Move from BasePeer to PdoAdapter and turn from static to non static
      *
      * @param Criteria $criteria
      * @param array    $fromClause
@@ -437,7 +436,6 @@ abstract class PdoAdapter
     /**
      * Ensures uniqueness of select column names by turning them all into aliases
      * This is necessary for queries on more than one table when the tables share a column name
-     * Moved from BasePeer to PdoAdapter and turned from static to non static
      *
      * @see http://propel.phpdb.org/trac/ticket/795
      *
@@ -477,13 +475,13 @@ abstract class PdoAdapter
     /**
      * Binds values in a prepared statement.
      *
-     * This method is designed to work with the BasePeer::createSelectSql() method, which creates
+     * This method is designed to work with the Criteria::createSelectSql() method, which creates
      * both the SELECT SQL statement and populates a passed-in array of parameter
      * values that should be substituted.
      *
      * <code>
      * $adapter = Propel::getServiceContainer()->getAdapter($criteria->getDbName());
-     * $sql = BasePeer::createSelectSql($criteria, $params);
+     * $sql = $criteria->createSelectSql($params);
      * $stmt = $con->prepare($sql);
      * $params = array();
      * $adapter->populateStmtValues($stmt, $params, Propel::getServiceContainer()->getDatabaseMap($critera->getDbName()));

@@ -84,7 +84,6 @@ interface SqlAdapterInterface extends AdapterInterface
     /**
      * Builds the SELECT part of a SQL statement based on a Criteria
      * taking into account select columns and 'as' columns (i.e. columns aliases)
-     * Move from BasePeer to AdapterInterface and turn from static to non static
      *
      * @param Propel\Runtime\Map\Criteria $criteria
      * @param array                       $fromClause
@@ -97,7 +96,6 @@ interface SqlAdapterInterface extends AdapterInterface
     /**
      * Ensures uniqueness of select column names by turning them all into aliases
      * This is necessary for queries on more than one table when the tables share a column name
-     * Moved from BasePeer to AdapterInterface and turned from static to non static
      *
      * @see http://propel.phpdb.org/trac/ticket/795
      *
@@ -109,13 +107,13 @@ interface SqlAdapterInterface extends AdapterInterface
     /**
      * Binds values in a prepared statement.
      *
-     * This method is designed to work with the BasePeer::createSelectSql() method, which creates
+     * This method is designed to work with the Criteria::createSelectSql() method, which creates
      * both the SELECT SQL statement and populates a passed-in array of parameter
      * values that should be substituted.
      *
      * <code>
      * $adapter = Propel::getServiceContainer()->getAdapter($criteria->getDbName());
-     * $sql = BasePeer::createSelectSql($criteria, $params);
+     * $sql = $criteria->createSelectSql($params);
      * $stmt = $con->prepare($sql);
      * $params = array();
      * $adapter->populateStmtValues($stmt, $params, Propel::getServiceContainer()->getDatabaseMap($criteria->getDbName()));

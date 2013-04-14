@@ -58,7 +58,7 @@ XML;
 
     protected function initTreeWithScope()
     {
-        \NestedSetTable10Peer::doDeleteAll();
+        \Map\NestedSetTable10TableMap::doDeleteAll();
 
         $ret = array();
         $fixtures = array(
@@ -100,7 +100,7 @@ XML;
      */
     protected function initTree()
     {
-        \NestedSetTable9Peer::doDeleteAll();
+        \Map\NestedSetTable9TableMap::doDeleteAll();
 
         $ret = array();
         // shuffling the results so the db order is not the natural one

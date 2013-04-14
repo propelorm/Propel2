@@ -13,7 +13,6 @@ namespace Propel\Runtime\ActiveQuery;
 use Propel\Runtime\Propel;
 use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\Connection\MongoConnection;
-use Propel\Runtime\Util\BasePeer;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion;
 use Propel\Runtime\ActiveQuery\Criterion\SeveralModelCriterion;
@@ -44,7 +43,6 @@ class DocumentModelCriteria extends BaseModelCriteria
         }
 
         $this->modelTableMapName = constant($this->modelName . '::TABLE_MAP');
-        $this->modelPeerName     = constant($this->modelTableMapName . '::PEER_CLASS');
         $this->modelAlias        = $modelAlias;
         $this->tableMap          = Propel::getServiceContainer()->getDatabaseMap($this->getDbName())->getTableByPhpName($this->modelName);
     }

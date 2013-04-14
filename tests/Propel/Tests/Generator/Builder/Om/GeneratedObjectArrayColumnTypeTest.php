@@ -10,7 +10,6 @@
 namespace Propel\Tests\Generator\Builder\Om;
 
 use MyNameSpace\ComplexColumnTypeEntity2;
-use MyNameSpace\ComplexColumnTypeEntity2Peer;
 use MyNameSpace\ComplexColumnTypeEntity2Query;
 use MyNameSpace\Map\ComplexColumnTypeEntity2TableMap;
 use MyNameSpace\ComplexColumnTypeEntityWithConstructorQuery;
@@ -44,7 +43,7 @@ EOF;
             QuickBuilder::buildSchema($schema);
         }
 
-        ComplexColumnTypeEntity2Peer::doDeleteAll();
+        ComplexColumnTypeEntity2TableMap::doDeleteAll();
     }
 
     public function testActiveRecordMethods()

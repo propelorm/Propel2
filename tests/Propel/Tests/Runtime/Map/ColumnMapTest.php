@@ -11,8 +11,8 @@
 namespace Propel\Tests\Runtime\Map;
 
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
-use Propel\Tests\Bookstore\BookPeer;
-use Propel\Tests\Bookstore\BookstoreEmployeePeer;
+use Propel\Tests\Bookstore\Map\BookTableMap;
+use Propel\Tests\Bookstore\Map\BookstoreEmployeeTableMap;
 
 use Propel\Runtime\Map\ColumnMap;
 use Propel\Runtime\Map\DatabaseMap;
@@ -119,12 +119,12 @@ class ColumnMapTest extends BookstoreTestBase
 
     public function testGetRelation()
     {
-        $bookTable = BookPeer::getTableMap();
+        $bookTable = BookTableMap::getTableMap();
         $titleColumn = $bookTable->getColumn('TITLE');
         $this->assertNull($titleColumn->getRelation(), 'getRelation() returns null for non-foreign key columns');
         $publisherColumn = $bookTable->getColumn('PUBLISHER_ID');
         $this->assertEquals($publisherColumn->getRelation(), $bookTable->getRelation('Publisher'), 'getRelation() returns the RelationMap object for this foreign key');
-        $bookstoreTable = BookstoreEmployeePeer::getTableMap();
+        $bookstoreTable = BookstoreEmployeeTableMap::getTableMap();
         $supervisorColumn = $bookstoreTable->getColumn('SUPERVISOR_ID');
         $this->assertEquals($supervisorColumn->getRelation(), $supervisorColumn->getRelation('Supervisor'), 'getRelation() returns the RelationMap object even whit ha specific refPhpName');
 
@@ -142,7 +142,7 @@ class ColumnMapTest extends BookstoreTestBase
 
     public function testIsPrimaryString()
     {
-        $bookTable = BookPeer::getTableMap();
+        $bookTable = BookTableMap::getTableMap();
         $idColumn = $bookTable->getColumn('ID');
         $titleColumn = $bookTable->getColumn('TITLE');
         $isbnColumn = $bookTable->getColumn('ISBN');

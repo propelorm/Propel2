@@ -21,10 +21,8 @@ use \Propel\Runtime\Connection\ConnectionInterface;
 class QuickGeneratorConfig implements GeneratorConfigInterface
 {
     protected $builders = array(
-        'peer'                  => '\Propel\Generator\Builder\Om\PeerBuilder',
         'object'                => '\Propel\Generator\Builder\Om\ObjectBuilder',
         'objectstub'            => '\Propel\Generator\Builder\Om\ExtensionObjectBuilder',
-        'peerstub'              => '\Propel\Generator\Builder\Om\ExtensionPeerBuilder',
         'objectmultiextend'     => '\Propel\Generator\Builder\Om\MultiExtendObjectBuilder',
         'tablemap'              => '\Propel\Generator\Builder\Om\TableMapBuilder',
         'query'                 => '\Propel\Generator\Builder\Om\QueryBuilder',

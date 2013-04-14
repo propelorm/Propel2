@@ -12,10 +12,8 @@ namespace Propel\Tests\Runtime\ActiveQuery;
 
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 use Propel\Tests\Bookstore\Author;
-use Propel\Tests\Bookstore\AuthorPeer;
 use Propel\Tests\Bookstore\AuthorQuery;
 use Propel\Tests\Bookstore\Book;
-use Propel\Tests\Bookstore\BookPeer;
 use Propel\Tests\Bookstore\BookQuery;
 use Propel\Tests\Bookstore\BookstoreEmployeeQuery;
 use Propel\Tests\Bookstore\BookstoreEmployeeAccount;
@@ -42,7 +40,6 @@ class ModelWithTest extends BookstoreTestBase
         $join = $joins['Author'];
         $with = new ModelWith($join);
         $this->assertEquals('Propel\Tests\Bookstore\Author', $with->getModelName(), 'A ModelWith computes the model name from the join');
-        $this->assertEquals('\Propel\Tests\Bookstore\AuthorPeer', $with->getModelPeerName(), 'A ModelWith computes the model peer name from the join');
     }
 
     public function testModelNameOneToMany()
@@ -52,8 +49,7 @@ class ModelWithTest extends BookstoreTestBase
         $joins = $q->getJoins();
         $join = $joins['Book'];
         $with = new ModelWith($join);
-        $this->assertEquals('Propel\Tests\Bookstore\Book', $with->getModelName(), 'A ModelWith computes the model peer name from the join');
-        $this->assertEquals('\Propel\Tests\Bookstore\BookPeer', $with->getModelPeerName(), 'A ModelWith computes the model peer name from the join');
+        $this->assertEquals('Propel\Tests\Bookstore\Book', $with->getModelName(), 'A ModelWith computes the model name from the join');
     }
 
     public function testModelNameAlias()
@@ -63,8 +59,7 @@ class ModelWithTest extends BookstoreTestBase
         $joins = $q->getJoins();
         $join = $joins['a'];
         $with = new ModelWith($join);
-        $this->assertEquals('Propel\Tests\Bookstore\Author', $with->getModelName(), 'A ModelWith computes the model peer name from the join');
-        $this->assertEquals('\Propel\Tests\Bookstore\AuthorPeer', $with->getModelPeerName(), 'A ModelWith computes the model peer name from the join');
+        $this->assertEquals('Propel\Tests\Bookstore\Author', $with->getModelName(), 'A ModelWith computes the model name from the join');
     }
 
     public function testRelationManyToOne()

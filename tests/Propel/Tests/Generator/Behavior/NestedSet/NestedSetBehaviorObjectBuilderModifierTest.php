@@ -55,7 +55,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends TestCase
 
     public function testSaveOutOfTree()
     {
-        \NestedSetTable9Peer::doDeleteAll();
+        \Map\NestedSetTable9TableMap::doDeleteAll();
         $t1 = new \NestedSetTable9();
         $t1->setTitle('t1');
         try {
@@ -93,7 +93,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends TestCase
      */
     public function testSaveRootInTreeWithExistingRoot()
     {
-        \NestedSetTable9Peer::doDeleteAll();
+        \Map\NestedSetTable9TableMap::doDeleteAll();
         $t1 = new \NestedSetTable9();
         $t1->makeRoot();
         $t1->save();
@@ -264,7 +264,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends TestCase
 
     public function testHasParent()
     {
-        \NestedSetTable9Peer::doDeleteAll();
+        \Map\NestedSetTable9TableMap::doDeleteAll();
         $t0 = new \NestedSetTable9();
         $t1 = new \NestedSetTable9();
         $t1->setTitle('t1')->setLeftValue(1)->setRightValue(6)->setLevel(0)->save();
@@ -280,7 +280,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends TestCase
 
     public function testGetParent()
     {
-        \NestedSetTable9Peer::doDeleteAll();
+        \Map\NestedSetTable9TableMap::doDeleteAll();
         $t0 = new \NestedSetTable9();
         $this->assertFalse($t0->hasParent(), 'empty node has no parent');
         $t1 = new \NestedSetTable9();
@@ -322,7 +322,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends TestCase
 
     public function testHasPrevSibling()
     {
-        \NestedSetTable9Peer::doDeleteAll();
+        \Map\NestedSetTable9TableMap::doDeleteAll();
         $t0 = new \NestedSetTable9();
         $t1 = new \NestedSetTable9();
         $t1->setTitle('t1')->setLeftValue(1)->setRightValue(6)->save();
@@ -357,7 +357,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends TestCase
 
     public function testHasNextSibling()
     {
-        \NestedSetTable9Peer::doDeleteAll();
+        \Map\NestedSetTable9TableMap::doDeleteAll();
         $t0 = new \NestedSetTable9();
         $t1 = new \NestedSetTable9();
         $t1->setTitle('t1')->setLeftValue(1)->setRightValue(6)->save();
@@ -701,7 +701,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends TestCase
 
     public function testAddChild()
     {
-        \NestedSetTable9Peer::doDeleteAll();
+        \Map\NestedSetTable9TableMap::doDeleteAll();
         $t1 = new \NestedSetTable9();
         $t1->setTitle('t1');
         $t1->makeRoot();

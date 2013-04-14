@@ -10,6 +10,7 @@
 
 namespace Propel\Runtime\ActiveQuery;
 
+use Propel\Runtime\Exception\RuntimeException;
 use Propel\Runtime\Propel;
 use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Connection\ConnectionInterface;
@@ -23,7 +24,6 @@ use Propel\Runtime\Formatter\ObjectFormatter;
 use Propel\Runtime\Map\ColumnMap;
 use Propel\Runtime\Map\RelationMap;
 use Propel\Runtime\Map\TableMap;
-use Propel\Runtime\Util\BasePeer;
 use Propel\Runtime\Util\PropelModelPager;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion;
@@ -227,9 +227,9 @@ class ModelCriteria extends BaseModelCriteria
      * Infers $column and $order from $columnName and some optional arguments
      * Examples:
      *   $c->orderBy('Book.CreatedAt')
-     *    => $c->addAscendingOrderByColumn(BookPeer::CREATED_AT)
+     *    => $c->addAscendingOrderByColumn(BookTableMap::CREATED_AT)
      *   $c->orderBy('Book.CategoryId', 'desc')
-     *    => $c->addDescendingOrderByColumn(BookPeer::CATEGORY_ID)
+     *    => $c->addDescendingOrderByColumn(BookTableMap::CATEGORY_ID)
      *
      * @param string $columnName The column to order by
      * @param string $order      The sorting order. Criteria::ASC by default, also accepts Criteria::DESC
@@ -260,7 +260,7 @@ class ModelCriteria extends BaseModelCriteria
      * Infers $column $columnName
      * Examples:
      *   $c->groupBy('Book.AuthorId')
-     *    => $c->addGroupByColumn(BookPeer::AUTHOR_ID)
+     *    => $c->addGroupByColumn(BookTableMap::AUTHOR_ID)
      *
      * @param string $columnName The column to group by
      *
@@ -278,10 +278,10 @@ class ModelCriteria extends BaseModelCriteria
      * Adds a GROUP BY clause for all columns of a model to the query
      * Examples:
      *   $c->groupBy('Book');
-     *    => $c->addGroupByColumn(BookPeer::ID);
-     *    => $c->addGroupByColumn(BookPeer::TITLE);
-     *    => $c->addGroupByColumn(BookPeer::AUTHOR_ID);
-     *    => $c->addGroupByColumn(BookPeer::PUBLISHER_ID);
+     *    => $c->addGroupByColumn(BookTableMap::ID);
+     *    => $c->addGroupByColumn(BookTableMap::TITLE);
+     *    => $c->addGroupByColumn(BookTableMap::AUTHOR_ID);
+     *    => $c->addGroupByColumn(BookTableMap::PUBLISHER_ID);
      *
      * @param string $class The class name or alias
      *
@@ -404,40 +404,6 @@ class ModelCriteria extends BaseModelCriteria
         return $this->select;
     }
 
-    protected function configureSelectColumns()
-    {
-        if (is_null($this->select)) {
-            // leave early
-            return;
-        }
-
-        // select() needs the PropelSimpleArrayFormatter if no formatter given
-        if (is_null($this->formatter)) {
-            $this->setFormatter('\Propel\Runtime\Formatter\SimpleArrayFormatter');
-        }
-
-        // clear only the selectColumns, clearSelectColumns() clears asColumns too
-        $this->selectColumns = array();
-
-        // We need to set the primary table name, since in the case that there are no WHERE columns
-        // it will be impossible for the BasePeer::createSelectSql() method to determine which
-        // tables go into the FROM clause.
-        if (!$this->selectQueries) {
-            $this->setPrimaryTableName(constant($this->modelTableMapName . '::TABLE_NAME'));
-        }
-
-        // Add requested columns which are not withColumns
-        $columnNames = is_array($this->select) ? $this->select : array($this->select);
-        foreach ($columnNames as $columnName) {
-            // check if the column was added by a withColumn, if not add it
-            if (!array_key_exists($columnName, $this->getAsColumns())) {
-                $column = $this->getColumnFromName($columnName);
-                // always put quotes around the columnName to be safe, we strip them in the formatter
-                $this->addAsColumn('"'.$columnName.'"', $column[1]);
-            }
-        }
-    }
-
     /**
      * This method returns the previousJoin for this ModelCriteria,
      * by default this is null, but after useQuery this is set the to the join of that use
@@ -480,12 +446,12 @@ class ModelCriteria extends BaseModelCriteria
      * Examples:
      * <code>
      *   $c->join('Book.Author');
-     *    => $c->addJoin(BookPeer::AUTHOR_ID, AuthorPeer::ID, Criteria::INNER_JOIN);
+     *    => $c->addJoin(BookTableMap::AUTHOR_ID, AuthorTableMap::ID, Criteria::INNER_JOIN);
      *   $c->join('Book.Author', Criteria::RIGHT_JOIN);
-     *    => $c->addJoin(BookPeer::AUTHOR_ID, AuthorPeer::ID, Criteria::RIGHT_JOIN);
+     *    => $c->addJoin(BookTableMap::AUTHOR_ID, AuthorTableMap::ID, Criteria::RIGHT_JOIN);
      *   $c->join('Book.Author a', Criteria::RIGHT_JOIN);
-     *    => $c->addAlias('a', AuthorPeer::TABLE_NAME);
-     *    => $c->addJoin(BookPeer::AUTHOR_ID, 'a.ID', Criteria::RIGHT_JOIN);
+     *    => $c->addAlias('a', AuthorTableMap::TABLE_NAME);
+     *    => $c->addJoin(BookTableMap::AUTHOR_ID, 'a.ID', Criteria::RIGHT_JOIN);
      * </code>
      *
      * @param string $relation Relation to use for the join
@@ -886,7 +852,7 @@ class ModelCriteria extends BaseModelCriteria
      */
     public function addSelfSelectColumns()
     {
-        call_user_func(array($this->modelPeerName, 'addSelectColumns'), $this, $this->useAliasInSQL ? $this->modelAlias : null);
+        call_user_func(array($this->modelTableMapName, 'addSelectColumns'), $this, $this->useAliasInSQL ? $this->modelAlias : null);
 
         return $this;
     }
@@ -901,7 +867,7 @@ class ModelCriteria extends BaseModelCriteria
     public function addRelationSelectColumns($relation)
     {
         $join = $this->joins[$relation];
-        call_user_func(array($join->getTableMap()->getPeerClassName(), 'addSelectColumns'), $this, $join->getRelationAlias());
+        call_user_func(array($join->getTableMap(), 'addSelectColumns'), $this, $join->getRelationAlias());
 
         return $this;
     }
@@ -1145,38 +1111,6 @@ class ModelCriteria extends BaseModelCriteria
         return $criteria->getFormatter()->init($criteria)->format($dataFetcher);
     }
 
-    /**
-     * Builds, binds and executes a SELECT query based on the current object.
-     *
-     * @param ConnectionInterface $con A connection object
-     *
-     * @return DataFetcher A dataFetcher using the connection, ready to be fetched
-     */
-    protected function doSelect($con)
-    {
-        // check that the columns of the main class are already added (if this is the primary ModelCriteria)
-        if (!$this->hasSelectClause() && !$this->getPrimaryCriteria()) {
-            $this->addSelfSelectColumns();
-        }
-
-        $this->configureSelectColumns();
-
-        $dbMap = Propel::getServiceContainer()->getDatabaseMap($this->getDbName());
-        $db = Propel::getServiceContainer()->getAdapter($this->getDbName());
-
-        $params = array();
-        $sql = BasePeer::createSelectSql($this, $params);
-        try {
-            $stmt = $con->prepare($sql);
-            $db->bindValues($stmt, $params, $dbMap);
-            $stmt->execute();
-        } catch (Exception $e) {
-            Propel::log($e->getMessage(), Propel::LOG_ERR);
-            throw new PropelException(sprintf('Unable to execute SELECT statement [%s]', $sql), 0, $e);
-        }
-
-        return $con->getDataFetcher($stmt);
-    }
 
     /**
      * Apply a condition on a column and issues the SELECT query
@@ -1285,7 +1219,7 @@ class ModelCriteria extends BaseModelCriteria
         $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
 
         // We need to set the primary table name, since in the case that there are no WHERE columns
-        // it will be impossible for the BasePeer::createSelectSql() method to determine which
+        // it will be impossible for the createSelectSql() method to determine which
         // tables go into the FROM clause.
         $criteria->setPrimaryTableName(constant($this->modelTableMapName . '::TABLE_NAME'));
 
@@ -1300,51 +1234,16 @@ class ModelCriteria extends BaseModelCriteria
         return $count;
     }
 
-    protected function doCount($con)
+    public function doCount($con = null)
     {
-        $dbMap = Propel::getServiceContainer()->getDatabaseMap($this->getDbName());
-        $db = Propel::getServiceContainer()->getAdapter($this->getDbName());
+        $this->configureSelectColumns();
 
         // check that the columns of the main class are already added (if this is the primary ModelCriteria)
         if (!$this->hasSelectClause() && !$this->getPrimaryCriteria()) {
             $this->addSelfSelectColumns();
         }
 
-        $this->configureSelectColumns();
-
-        $needsComplexCount = $this->getGroupByColumns()
-            || $this->getOffset()
-            || $this->getLimit()
-            || $this->getHaving()
-            || in_array(Criteria::DISTINCT, $this->getSelectModifiers())
-            || count($this->selectQueries) > 0
-            ;
-
-        $params = array();
-        if ($needsComplexCount) {
-            if (BasePeer::needsSelectAliases($this)) {
-                if ($this->getHaving()) {
-                    throw new LogicException('Propel cannot create a COUNT query when using HAVING and  duplicate column names in the SELECT part');
-                }
-                $db->turnSelectColumnsToAliases($this);
-            }
-            $selectSql = BasePeer::createSelectSql($this, $params);
-            $sql = 'SELECT COUNT(*) FROM (' . $selectSql . ') propelmatch4cnt';
-        } else {
-            // Replace SELECT columns with COUNT(*)
-            $this->clearSelectColumns()->addSelectColumn('COUNT(*)');
-            $sql = BasePeer::createSelectSql($this, $params);
-        }
-        try {
-            $stmt = $con->prepare($sql);
-            $db->bindValues($stmt, $params, $dbMap);
-            $stmt->execute();
-        } catch (Exception $e) {
-            Propel::log($e->getMessage(), Propel::LOG_ERR);
-            throw new PropelException(sprintf('Unable to execute COUNT statement [%s]', $sql), 0, $e);
-        }
-
-        return $con->getDataFetcher($stmt);
+        return parent::doCount($con = null);
     }
 
     /**
@@ -1405,7 +1304,7 @@ class ModelCriteria extends BaseModelCriteria
      *
      * @return integer the number of deleted rows
      */
-    public function delete($con = null)
+    public function delete(ConnectionInterface $con = null)
     {
         if (0 === count($this->getMap())) {
             throw new PropelException('delete() expects a Criteria with at least one condition. Use deleteAll() to delete all the rows of a table');
@@ -1434,21 +1333,6 @@ class ModelCriteria extends BaseModelCriteria
     }
 
     /**
-     * Issue a DELETE query based on the current ModelCriteria
-     * This method is called by ModelCriteria::delete() inside a transaction
-     *
-     * @param ConnectionInterface $con a connection object
-     *
-     * @return integer the number of deleted rows
-     */
-    public function doDelete($con)
-    {
-        $affectedRows = call_user_func(array($this->modelPeerName, 'doDelete'), $this, $con);
-
-        return $affectedRows;
-    }
-
-    /**
      * Issue a DELETE query based on the current ModelCriteria deleting all rows in the table
      * An optional hook on basePreDelete() can prevent the actual deletion
      *
@@ -1456,7 +1340,7 @@ class ModelCriteria extends BaseModelCriteria
      *
      * @return integer the number of deleted rows
      */
-    public function deleteAll($con = null)
+    public function deleteAll(ConnectionInterface $con = null)
     {
         if (null === $con) {
             $con = Propel::getServiceContainer()->getWriteConnection($this->getDbName());
@@ -1485,9 +1369,39 @@ class ModelCriteria extends BaseModelCriteria
      *
      * @return integer the number of deleted rows
      */
-    public function doDeleteAll($con)
+    public function doDeleteAll(ConnectionInterface $con = null)
     {
-        $affectedRows = call_user_func(array($this->modelPeerName, 'doDeleteAll'), $con);
+        $databaseName = $this->getDbName();
+
+        if (null === $con) {
+            $con = Propel::getServiceContainer()->getWriteConnection($databaseName);
+        }
+
+        //join are not supported with DELETE statement
+        if (count($this->getJoins())) {
+            throw new RuntimeException('Delete does not support join');
+        }
+
+        $this->setPrimaryTableName(constant($this->modelTableMapName.'::TABLE_NAME'));
+        $tableName = $this->getPrimaryTableName();
+
+        $affectedRows = 0; // initialize this in case the next loop has no iterations.
+
+        try {
+            $db = Propel::getServiceContainer()->getAdapter($databaseName);
+            if ($db->useQuoteIdentifier()) {
+                $tableName = $db->quoteIdentifierTable($tableName);
+            }
+            $sql = "DELETE FROM " . $tableName;
+            $stmt = $con->prepare($sql);
+
+            $stmt->execute();
+
+            $affectedRows += $stmt->rowCount();
+        } catch (\Exception $e) {
+            Propel::log($e->getMessage(), Propel::LOG_ERR);
+            throw new RuntimeException(sprintf('Unable to execute DELETE ALL statement [%s]', $sql), 0, $e);
+        }
 
         return $affectedRows;
     }
@@ -1497,7 +1411,7 @@ class ModelCriteria extends BaseModelCriteria
      *
      * @param array               $values               The associative array of columns and values for the update
      * @param ConnectionInterface $con                  The connection object used by the query
-     * @param boolean             $forceIndividualSaves If false (default), the resulting call is a BasePeer::doUpdate(), otherwise it is a series of save() calls on all the found objects
+     * @param boolean             $forceIndividualSaves If false (default), the resulting call is a Criteria::doUpdate(), otherwise it is a series of save() calls on all the found objects
      */
     protected function basePreUpdate(&$values, ConnectionInterface $con, $forceIndividualSaves = false)
     {
@@ -1529,16 +1443,16 @@ class ModelCriteria extends BaseModelCriteria
      * Beware that behaviors based on hooks in the object's save() method
      * will only be triggered if you force individual saves, i.e. if you pass true as second argument.
      *
-     * @param array               $values               Associative array of keys and values to replace
+     * @param mixed               $values               Associative array of keys and values to replace
      * @param ConnectionInterface $con                  an optional connection object
-     * @param boolean             $forceIndividualSaves If false (default), the resulting call is a BasePeer::doUpdate(), otherwise it is a series of save() calls on all the found objects
+     * @param boolean             $forceIndividualSaves If false (default), the resulting call is a Criteria::doUpdate(), otherwise it is a series of save() calls on all the found objects
      *
      * @return integer Number of updated rows
      */
     public function update($values, $con = null, $forceIndividualSaves = false)
     {
-        if (!is_array($values)) {
-            throw new PropelException('set() expects an array as first argument');
+        if (!is_array($values) && !($values instanceof Criteria)) {
+            throw new PropelException('set() expects an array or Criteria as first argument');
         }
 
         if (count($this->getJoins())) {
@@ -1550,7 +1464,9 @@ class ModelCriteria extends BaseModelCriteria
         }
 
         $criteria = $this->isKeepQuery() ? clone $this : $this;
-        $criteria->setPrimaryTableName(constant($this->modelTableMapName.'::TABLE_NAME'));
+        if ($this->modelTableMapName) {
+            $criteria->setPrimaryTableName(constant($this->modelTableMapName.'::TABLE_NAME'));
+        }
 
         $con->beginTransaction();
         try {
@@ -1575,7 +1491,7 @@ class ModelCriteria extends BaseModelCriteria
      *
      * @param array               $values               Associative array of keys and values to replace
      * @param ConnectionInterface $con                  a connection object
-     * @param boolean             $forceIndividualSaves If false (default), the resulting call is a BasePeer::doUpdate(), otherwise it is a series of save() calls on all the found objects
+     * @param boolean             $forceIndividualSaves If false (default), the resulting call is a Criteria::doUpdate(), otherwise it is a series of save() calls on all the found objects
      *
      * @return integer Number of updated rows
      */
@@ -1596,12 +1512,16 @@ class ModelCriteria extends BaseModelCriteria
         } else {
 
             // update rows in a single query
-            $set = new Criteria($this->getDbName());
-            foreach ($values as $columnName => $value) {
-                $realColumnName = $this->getTableMap()->getColumnByPhpName($columnName)->getFullyQualifiedName();
-                $set->add($realColumnName, $value);
+            if ($values instanceof Criteria){
+                $set = $values;
+            } else {
+                $set = new Criteria($this->getDbName());
+                foreach ($values as $columnName => $value) {
+                    $realColumnName = $this->getTableMap()->getColumnByPhpName($columnName)->getFullyQualifiedName();
+                    $set->add($realColumnName, $value);
+                }
             }
-            $affectedRows = BasePeer::doUpdate($this, $set, $con);
+            $affectedRows = parent::doUpdate($set, $con);
             call_user_func(array($this->modelTableMapName, 'clearInstancePool'));
             call_user_func(array($this->modelTableMapName, 'clearRelatedInstancePool'));
         }
@@ -1825,7 +1745,7 @@ class ModelCriteria extends BaseModelCriteria
             // column of the Criteria's model
             $tableMap = $this->getTableMap();
         } elseif ($prefix == $this->getTableMap()->getName()) {
-            // column name from Criteria's peer
+            // column name from Criteria's tableMap
             $tableMap = $this->getTableMap();
         } elseif (isset($this->joins[$prefix])) {
             // column of a relations's model
@@ -1865,6 +1785,66 @@ class ModelCriteria extends BaseModelCriteria
             throw new UnknownColumnException(sprintf('Unknown column "%s" on model, alias or table "%s"', $phpName, $prefix));
         }
     }
+
+
+    /**
+     * Builds, binds and executes a SELECT query based on the current object.
+     * @param $con A connection object
+     *
+     * @return DataFetcher A dataFetcher using the connection, ready to be fetched
+     * @throws \Propel\Runtime\Exception\PropelException
+     */
+    public function doSelect($con = null)
+    {
+
+        // check that the columns of the main class are already added (if this is the primary ModelCriteria)
+        if (!$this->hasSelectClause() && !$this->getPrimaryCriteria()) {
+            $this->addSelfSelectColumns();
+        }
+
+        if (null === $con) {
+            $con = Propel::getServiceContainer()->getReadConnection($this->getDbName());
+        }
+
+        $this->configureSelectColumns();
+        return parent::doSelect($con);
+    }
+
+    public function configureSelectColumns()
+    {
+        if (is_null($this->select)) {
+            // leave early
+            return;
+        }
+
+        // select() needs the PropelSimpleArrayFormatter if no formatter given
+        if (is_null($this->formatter)) {
+            $this->setFormatter('\Propel\Runtime\Formatter\SimpleArrayFormatter');
+        }
+
+        // clear only the selectColumns, clearSelectColumns() clears asColumns too
+        $this->selectColumns = array();
+
+        // We need to set the primary table name, since in the case that there are no WHERE columns
+        // it will be impossible for the createSelectSql() method to determine which
+        // tables go into the FROM clause.
+        if (!$this->selectQueries) {
+            $this->setPrimaryTableName(constant($this->modelTableMapName . '::TABLE_NAME'));
+        }
+
+        // Add requested columns which are not withColumns
+        $columnNames = is_array($this->select) ? $this->select : array($this->select);
+        foreach ($columnNames as $columnName) {
+            // check if the column was added by a withColumn, if not add it
+            if (!array_key_exists($columnName, $this->getAsColumns())) {
+                $column = $this->getColumnFromName($columnName);
+                // always put quotes around the columnName to be safe, we strip them in the formatter
+                $this->addAsColumn('"'.$columnName.'"', $column[1]);
+            }
+        }
+    }
+
+
 
     /**
      * Special case for subquery columns
@@ -1922,7 +1902,7 @@ class ModelCriteria extends BaseModelCriteria
      * e.g. => 'book.TITLE' => 'b.TITLE'
      * This is for use as first argument of Criteria::add()
      *
-     * @param string $colName the fully qualified column name, e.g 'book.TITLE' or BookPeer::TITLE
+     * @param string $colName the fully qualified column name, e.g 'book.TITLE' or BookTableMap::TITLE
      *
      * @return string the fully qualified column name, using table alias if applicable
      */
@@ -1953,7 +1933,7 @@ class ModelCriteria extends BaseModelCriteria
      * Overrides Criteria::add() to force the use of a true table alias if it exists
      *
      * @see Criteria::add()
-     * @param string $column   The colName of column to run the condition on (e.g. BookPeer::ID)
+     * @param string $column   The colName of column to run the condition on (e.g. BookTableMap::ID)
      * @param mixed  $value
      * @param string $operator A String, like Criteria::EQUAL.
      *
@@ -1966,7 +1946,7 @@ class ModelCriteria extends BaseModelCriteria
 
     /**
      * Get all the parameters to bind to this criteria
-     * Does part of the job of BasePeer::createSelectSql() for the cache
+     * Does part of the job of createSelectSql() for the cache
      *
      * @return array list of parameters, each parameter being an array like
      *                  array('table' => $realtable, 'column' => $column, 'value' => $value)

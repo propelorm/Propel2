@@ -16,48 +16,41 @@ use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Map\TableMap;
 use Propel\Tests\Bookstore\AcctAccessRole;
-use Propel\Tests\Bookstore\AcctAccessRolePeer;
 use Propel\Tests\Bookstore\Author;
 use Propel\Tests\Bookstore\AuthorQuery;
 use Propel\Tests\Bookstore\Map\AuthorTableMap;
 use Propel\Tests\Bookstore\Book;
-use Propel\Tests\Bookstore\BookPeer;
 use Propel\Tests\Bookstore\BookQuery;
 use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\Bookstore\Bookstore;
 use Propel\Tests\Bookstore\BookstoreEmployee;
-use Propel\Tests\Bookstore\BookstoreEmployeePeer;
 use Propel\Tests\Bookstore\BookstoreEmployeeQuery;
 use Propel\Tests\Bookstore\Map\BookstoreEmployeeTableMap;
 use Propel\Tests\Bookstore\BookstoreEmployeeAccount;
-use Propel\Tests\Bookstore\BookstoreEmployeeAccountPeer;
 use Propel\Tests\Bookstore\Map\BookstoreEmployeeAccountTableMap;
 use Propel\Tests\Bookstore\BookstoreCashier;
 use Propel\Tests\Bookstore\BookstoreManager;
 use Propel\Tests\Bookstore\BookOpinion;
 use Propel\Tests\Bookstore\BookReader;
 use Propel\Tests\Bookstore\BookstoreContest;
-use Propel\Tests\Bookstore\BookstoreContestPeer;
 use Propel\Tests\Bookstore\BookstoreContestQuery;
 use Propel\Tests\Bookstore\Map\BookstoreContestTableMap;
 use Propel\Tests\Bookstore\BookstoreContestEntry;
-use Propel\Tests\Bookstore\BookstoreContestEntryPeer;
 use Propel\Tests\Bookstore\BookstoreContestEntryQuery;
 use Propel\Tests\Bookstore\Map\BookstoreContestEntryTableMap;
 use Propel\Tests\Bookstore\Contest;
 use Propel\Tests\Bookstore\Customer;
 use Propel\Tests\Bookstore\ReaderFavorite;
-use Propel\Tests\Bookstore\ReaderFavoritePeer;
 use Propel\Tests\Bookstore\ReaderFavoriteQuery;
 use Propel\Tests\Bookstore\Map\ReaderFavoriteTableMap;
 use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
 use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
 
 /**
- * Tests the generated Peer classes.
+ * Tests the generated Query classes.
  *
  * This test uses generated Bookstore classes to test the behavior of various
- * peer operations.
+ * query operations.
  *
  * The database is reloaded before every test and flushed after every test.  This
  * means that you can always rely on the contents of the databases being the same
@@ -67,7 +60,7 @@ use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
  * @see        BookstoreDataPopulator
  * @author Hans Lellelid <hans@xmpl.org>
  */
-class GeneratedPeerDoSelectTest extends BookstoreEmptyTestBase
+class GeneratedQueryDoSelectTest extends BookstoreEmptyTestBase
 {
     protected function setUp()
     {
@@ -78,24 +71,24 @@ class GeneratedPeerDoSelectTest extends BookstoreEmptyTestBase
 
     public function testDoSelect()
     {
-        $books = BookPeer::doSelect(new Criteria());
+        $books = BookQuery::create()->doSelect(new Criteria());
         $this->assertEquals(4, count($books), 'doSelect() with an empty Criteria returns all results');
         $book1 = $books[0];
 
         $c = new Criteria();
         $c->add(BookTableMap::ID, $book1->getId());
-        $res = BookPeer::doSelect($c);
+        $res = BookQuery::create()->doSelect($c);
         $this->assertEquals(array($book1), $res, 'doSelect() accepts a Criteria object with a condition');
 
         $c = new Criteria();
         $c->add(BookTableMap::ID, $book1->getId());
         $c->add(BookTableMap::TITLE, $book1->getTitle());
-        $res = BookPeer::doSelect($c);
+        $res = BookQuery::create()->doSelect($c);
         $this->assertEquals(array($book1), $res, 'doSelect() accepts a Criteria object with several condition');
 
         $c = new Criteria();
         $c->add(BookTableMap::ID, 'foo');
-        $res = BookPeer::doSelect($c);
+        $res = BookQuery::create()->doSelect($c);
         $this->assertEquals(array(), $res, 'doSelect() accepts an incorrect Criteria');
     }
 
@@ -116,14 +109,14 @@ class GeneratedPeerDoSelectTest extends BookstoreEmptyTestBase
 
         $results = BookQuery::create(null, $lc)->find();
 
-        $this->assertEquals($limitcount, count($results), "Expected $limitcount results from BookPeer::doSelect()");
+        $this->assertEquals($limitcount, count($results), "Expected $limitcount results from BookQuery::doSelect()");
 
         // re-create it just to avoid side-effects
         $lc2 = new Criteria();
         $lc2->setLimit($limitcount);
         $results2 = BookQuery::create(null, $lc2)->joinWith('Author')->find();
 
-        $this->assertEquals($limitcount, count($results2), "Expected $limitcount results from BookPeer::doSelectJoinAuthor()");
+        $this->assertEquals($limitcount, count($results2), "Expected $limitcount results from BookQuery::doSelectJoinAuthor()");
 
     }
 
@@ -137,7 +130,7 @@ class GeneratedPeerDoSelectTest extends BookstoreEmptyTestBase
 
         $c = new Criteria();
 
-        $books = BookPeer::doSelect($c);
+        $books = BookQuery::create()->doSelect($c);
         $obj = $books[0];
         // $size = strlen(serialize($obj));
 
@@ -170,7 +163,7 @@ class GeneratedPeerDoSelectTest extends BookstoreEmptyTestBase
         $this->assertTrue($b1 === $b2, "Expected object instances to match for calls with same retrieveByPK() method signature.");
 
         // 2) make sure that calls to doSelect also return references to the same objects.
-        $allbooks = BookPeer::doSelect(new Criteria());
+        $allbooks = BookQuery::create()->doSelect(new Criteria());
         foreach ($allbooks as $testb) {
             if ($testb->getPrimaryKey() == $b1->getPrimaryKey()) {
                 $this->assertTrue($testb === $b1, "Expected same object instance from doSelect() as from retrieveByPK()");
@@ -239,7 +232,7 @@ class GeneratedPeerDoSelectTest extends BookstoreEmptyTestBase
         $c->add(BookstoreEmployeeTableMap::ID, array($managerId, $empId, $cashierId), Criteria::IN);
         $c->addAscendingOrderByColumn(BookstoreEmployeeTableMap::ID);
 
-        $objects = BookstoreEmployeePeer::doSelect($c);
+        $objects = BookstoreEmployeeQuery::create()->doSelect($c);
 
         $this->assertEquals(3, count($objects), "Expected 3 objects to be returned.");
 
@@ -252,7 +245,7 @@ class GeneratedPeerDoSelectTest extends BookstoreEmptyTestBase
         // 2) test a forced reload from database
         BookstoreEmployeeTableMap::clearInstancePool();
 
-        list($o1,$o2,$o3) = BookstoreEmployeePeer::doSelect($c);
+        list($o1,$o2,$o3) = BookstoreEmployeeQuery::create()->doSelect($c);
 
         $this->assertTrue($o1 instanceof BookstoreManager, "Expected BookstoreManager object, got " . get_class($o1));
         $this->assertTrue($o2 instanceof BookstoreEmployee, "Expected BookstoreEmployee object, got " . get_class($o2));
@@ -266,9 +259,9 @@ class GeneratedPeerDoSelectTest extends BookstoreEmptyTestBase
      */
     public function testHydrationJoinLazyLoad()
     {
-        BookstoreEmployeeAccountPeer::doDeleteAll();
-        BookstoreEmployeePeer::doDeleteAll();
-        AcctAccessRolePeer::doDeleteAll();
+        BookstoreEmployeeAccountTableMap::doDeleteAll();
+        BookstoreEmployeeTableMap::doDeleteAll();
+        AcctAccessRoleTableMap::doDeleteAll();
 
         $bemp2 = new BookstoreEmployee();
         $bemp2->setName("Pieter");
@@ -299,7 +292,7 @@ class GeneratedPeerDoSelectTest extends BookstoreEmptyTestBase
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
 
-        ReaderFavoritePeer::doDeleteAll();
+        ReaderFavoriteTableMap::doDeleteAll();
 
         $b1 = new Book();
         $b1->setTitle("Book1");
@@ -336,8 +329,8 @@ class GeneratedPeerDoSelectTest extends BookstoreEmptyTestBase
      */
     public function testMultiColJoin()
     {
-        BookstoreContestPeer::doDeleteAll();
-        BookstoreContestEntryPeer::doDeleteAll();
+        BookstoreContestTableMap::doDeleteAll();
+        BookstoreContestEntryTableMap::doDeleteAll();
 
         $bs = new Bookstore();
         $bs->setStoreName("Test1");

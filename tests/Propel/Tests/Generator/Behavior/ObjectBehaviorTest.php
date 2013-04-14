@@ -11,7 +11,7 @@
 namespace Propel\Tests\Generator\Behavior;
 
 use Propel\Tests\Bookstore\Behavior\Table3;
-use Propel\Tests\Bookstore\Behavior\Table3Peer;
+use Propel\Tests\Bookstore\Behavior\Map\Table3TableMap;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
 /**
@@ -36,8 +36,6 @@ class ObjectBehaviorTest extends BookstoreTestBase
 
     public function testPreSave()
     {
-        // need to find a fix for that
-        Table3Peer::buildTableMap();
         $t = new Table3();
         $t->preSave = 0;
         $t->save();

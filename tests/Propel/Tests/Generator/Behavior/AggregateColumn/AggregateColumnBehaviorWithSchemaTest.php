@@ -16,7 +16,6 @@ use Propel\Tests\BookstoreSchemas\BookstoreContestEntry;
 use Propel\Tests\BookstoreSchemas\BookstoreContestEntryQuery;
 use Propel\Tests\BookstoreSchemas\BookstoreContestQuery;
 use Propel\Tests\BookstoreSchemas\BookstoreQuery;
-use Propel\Tests\BookstoreSchemas\BookstorePeer;
 use Propel\Tests\BookstoreSchemas\Map\BookstoreTableMap;
 use Propel\Tests\BookstoreSchemas\Customer;
 use Propel\Tests\BookstoreSchemas\CustomerQuery;
@@ -47,7 +46,7 @@ class AggregateColumnBehaviorWithSchemaTest extends SchemasTestBase
 
     public function testParametersWithSchema()
     {
-        $storeTable = BookstorePeer::getTableMap();
+        $storeTable = BookstoreTableMap::getTableMap();
         $this->assertEquals(count($storeTable->getColumns()), 8, 'AggregateColumn adds one column by default');
         $this->assertTrue(method_exists('Propel\Tests\BookstoreSchemas\Bookstore', 'getTotalContestEntries'));
     }
