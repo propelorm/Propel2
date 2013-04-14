@@ -12,7 +12,7 @@ namespace Propel\Runtime\Connection;
 
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\InvalidArgumentException;
-use Propel\Runtime\Formatter\PdoDataFetcher;
+use Propel\Runtime\Formatter\PDODataFetcher;
 
 /**
  * PDO extension that implements ConnectionInterface and builds statements implementing StatementInterface.
@@ -75,17 +75,17 @@ class PdoConnection extends \PDO implements ConnectionInterface
     /**
      * @param $data
      *
-     * @return PdoDataFetcher
+     * @return PDODataFetcher
      */
     public function getDataFetcher($data)
     {
-        return new PdoDataFetcher($data);
+        return new PDODataFetcher($data);
     }
 
     /**
      * @param $data
      *
-     * @return PdoDataFetcher
+     * @return PDODataFetcher
      */
     public function getSingleDataFetcher($data)
     {
