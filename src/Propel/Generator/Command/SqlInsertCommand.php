@@ -43,6 +43,7 @@ class SqlInsertCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+
         $manager = new SqlManager();
         $generatorConfig = new GeneratorConfig();
 
@@ -52,9 +53,8 @@ class SqlInsertCommand extends AbstractCommand
 
         $connections = array();
         foreach ($input->getOption('connection') as $connection) {
-            //list($name, $dsn, $infos) = $this->parseConnection($connection);
-            //$connections[$name] = array_merge(array('dsn' => $dsn), $infos);
-            $connections[$connection] = $generatorConfig->getBuildConnection($connection);
+            list($name, $dsn, $infos) = $this->parseConnection($connection);
+            $connections[$name] = array_merge(array('dsn' => $dsn), $infos);
         }
 
         $manager->setConnections($connections);
