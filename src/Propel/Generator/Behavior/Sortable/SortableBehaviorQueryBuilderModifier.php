@@ -25,7 +25,7 @@ class SortableBehaviorQueryBuilderModifier
 
     protected $objectClassName;
 
-    protected $peerClassName;
+    protected $queryClassName;
 
     protected $tableMapClassName;
 
@@ -50,7 +50,6 @@ class SortableBehaviorQueryBuilderModifier
         $this->builder = $builder;
         $this->objectClassName = $builder->getObjectClassName();
         $this->queryClassName = $builder->getQueryClassName();
-        $this->peerClassName = $builder->getPeerClassName();
         $this->tableMapClassName = $builder->getTableMapClassName();
     }
 
@@ -77,7 +76,16 @@ class SortableBehaviorQueryBuilderModifier
 
         // utilities
         $this->addGetMaxRank($script);
+        $this->addRetrieveByRank($script);
         $this->addReorder($script);
+        $this->addDoSelectOrderByRank($script);
+        if ($this->behavior->useScope()) {
+            $this->addRetrieveList($script);
+            $this->addCountList($script);
+            $this->addDeleteList($script);
+        }
+        $this->addShiftRank($script);
+
 
         return $script;
     }
@@ -292,6 +300,191 @@ public function reorder(array \$order, ConnectionInterface \$con = null)
         \$con->rollback();
         throw \$e;
     }
+}
+";
+    }
+
+
+    protected function addRetrieveByRank(&$script)
+    {
+        $queryClassName = $this->queryClassName;
+        $useScope = $this->behavior->useScope();
+        $script .= "
+/**
+ * Get an item from the list based on its rank
+ *
+ * @param     integer   \$rank rank";
+        if ($useScope) {
+            $script .= "
+ * @param      int \$scope        Scope to determine which suite to consider";
+        }
+        $script .= "
+ * @param     ConnectionInterface \$con optional connection
+ *
+ * @return {$this->objectClassName}
+ */
+static public function retrieveByRank(\$rank, " . ($useScope ? "\$scope = null, " : "") . "ConnectionInterface \$con = null)
+{
+    if (null === \$con) {
+        \$con = Propel::getServiceContainer()->getReadConnection({$this->tableMapClassName}::DATABASE_NAME);
+    }
+
+    \$c = new Criteria;
+    \$c->add({$this->tableMapClassName}::RANK_COL, \$rank);";
+        if ($useScope) {
+            $script .= "
+    \$c->add({$this->tableMapClassName}::SCOPE_COL, \$scope, Criteria::EQUAL);";
+        }
+        $script .= "
+
+    return $queryClassName::create(null, \$c)->findOne(\$con);
+}
+";
+    }
+
+
+    protected function addDoSelectOrderByRank(&$script)
+    {
+        $queryClassName = $this->queryClassName;
+        $script .= "
+/**
+ * Return an array of sortable objects ordered by position
+ *
+ * @param     Criteria  \$criteria  optional criteria object
+ * @param     string    \$order     sorting order, to be chosen between Criteria::ASC (default) and Criteria::DESC
+ * @param     ConnectionInterface \$con       optional connection
+ *
+ * @return    array list of sortable objects
+ */
+static public function doSelectOrderByRank(Criteria \$criteria = null, \$order = Criteria::ASC, ConnectionInterface \$con = null)
+{
+    if (null === \$con) {
+        \$con = Propel::getServiceContainer()->getReadConnection({$this->tableMapClassName}::DATABASE_NAME);
+    }
+
+    if (null === \$criteria) {
+        \$criteria = new Criteria();
+    } elseif (\$criteria instanceof Criteria) {
+        \$criteria = clone \$criteria;
+    }
+
+    \$criteria->clearOrderByColumns();
+
+    if (Criteria::ASC == \$order) {
+        \$criteria->addAscendingOrderByColumn({$this->tableMapClassName}::RANK_COL);
+    } else {
+        \$criteria->addDescendingOrderByColumn({$this->tableMapClassName}::RANK_COL);
+    }
+
+    return $queryClassName::create(null, \$criteria)->find(\$con);
+}
+";
+    }
+
+    protected function addRetrieveList(&$script)
+    {
+        $script .= "
+/**
+ * Return an array of sortable objects in the given scope ordered by position
+ *
+ * @param     int       \$scope  the scope of the list
+ * @param     string    \$order  sorting order, to be chosen between Criteria::ASC (default) and Criteria::DESC
+ * @param     ConnectionInterface \$con    optional connection
+ *
+ * @return    array list of sortable objects
+ */
+static public function retrieveList(\$scope, \$order = Criteria::ASC, ConnectionInterface \$con = null)
+{
+    \$c = new Criteria();
+    \$c->add({$this->tableMapClassName}::SCOPE_COL, \$scope);
+
+    return {$this->queryClassName}::doSelectOrderByRank(\$c, \$order, \$con);
+}
+";
+    }
+
+    protected function addCountList(&$script)
+    {
+        $script .= "
+/**
+ * Return the number of sortable objects in the given scope
+ *
+ * @param     int       \$scope  the scope of the list
+ * @param     ConnectionInterface \$con    optional connection
+ *
+ * @return    array list of sortable objects
+ */
+static public function countList(\$scope, ConnectionInterface \$con = null)
+{
+    \$c = new Criteria();
+    \$c->add({$this->tableMapClassName}::SCOPE_COL, \$scope);
+
+    return {$this->queryClassName}::create(null, \$c)->count(\$con);
+}
+";
+    }
+
+    protected function addDeleteList(&$script)
+    {
+        $script .= "
+/**
+ * Deletes the sortable objects in the given scope
+ *
+ * @param     int       \$scope  the scope of the list
+ * @param     ConnectionInterface \$con    optional connection
+ *
+ * @return    int number of deleted objects
+ */
+static public function deleteList(\$scope, ConnectionInterface \$con = null)
+{
+    \$c = new Criteria();
+    \$c->add({$this->tableMapClassName}::SCOPE_COL, \$scope);
+
+    return {$this->tableMapClassName}::doDelete(\$c, \$con);
+}
+";
+    }
+    protected function addShiftRank(&$script)
+    {
+        $useScope = $this->behavior->useScope();
+        $script .= "
+/**
+ * Adds \$delta to all Rank values that are >= \$first and <= \$last.
+ * '\$delta' can also be negative.
+ *
+ * @param      int \$delta Value to be shifted by, can be negative
+ * @param      int \$first First node to be shifted
+ * @param      int \$last  Last node to be shifted";
+        if ($useScope) {
+            $script .= "
+ * @param      int \$scope Scope to use for the shift";
+        }
+        $script .= "
+ * @param      ConnectionInterface \$con Connection to use.
+ */
+static public function sortableShiftRank(\$delta, \$first, \$last = null, " . ($useScope ? "\$scope = null, " : "") . "ConnectionInterface \$con = null)
+{
+    if (null === \$con) {
+        \$con = Propel::getServiceContainer()->getWriteConnection({$this->tableMapClassName}::DATABASE_NAME);
+    }
+
+    \$whereCriteria = new Criteria({$this->tableMapClassName}::DATABASE_NAME);
+    \$criterion = \$whereCriteria->getNewCriterion({$this->tableMapClassName}::RANK_COL, \$first, Criteria::GREATER_EQUAL);
+    if (null !== \$last) {
+        \$criterion->addAnd(\$whereCriteria->getNewCriterion({$this->tableMapClassName}::RANK_COL, \$last, Criteria::LESS_EQUAL));
+    }
+    \$whereCriteria->add(\$criterion);";
+        if ($useScope) {
+            $script .= "
+    \$whereCriteria->add({$this->tableMapClassName}::SCOPE_COL, \$scope, Criteria::EQUAL);";
+        }
+        $script .= "
+
+    \$valuesCriteria = new Criteria({$this->tableMapClassName}::DATABASE_NAME);
+    \$valuesCriteria->add({$this->tableMapClassName}::RANK_COL, array('raw' => {$this->tableMapClassName}::RANK_COL . ' + ?', 'value' => \$delta), Criteria::CUSTOM_EQUAL);
+
+    \$whereCriteria->doUpdate(\$valuesCriteria, \$con);
+    {$this->tableMapClassName}::clearInstancePool();
 }
 ";
     }
