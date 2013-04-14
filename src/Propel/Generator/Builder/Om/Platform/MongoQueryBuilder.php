@@ -29,7 +29,6 @@ class MongoQueryBuilder extends QueryBuilder
         return 'DocumentModelCriteria';
     }
 
-
     protected function addClassBody(&$script)
     {
         // namespaces

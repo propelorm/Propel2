@@ -11,7 +11,6 @@
 namespace Propel\Runtime\Formatter;
 
 use Propel\Runtime\Exception\LogicException;
-use Propel\Runtime\Connection\StatementInterface;
 
 /**
  * Array formatter for Propel query

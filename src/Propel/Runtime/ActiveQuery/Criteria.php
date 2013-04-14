@@ -12,7 +12,6 @@ namespace Propel\Runtime\ActiveQuery;
 
 use Behat\Gherkin\Exception\Exception;
 use Propel\Runtime\Connection\ConnectionInterface;
-use Propel\Runtime\Connection\Exception\ConnectionException;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Formatter\DataFetcher;
 use Propel\Runtime\Map\TableMap;
@@ -1785,8 +1784,6 @@ class Criteria
         return $this->addAnd($p1, $value, $operator, $preferColumnCondition);
     }
 
-
-
     /**
      * Method to create an SQL query based on values in a Criteria.
      *
@@ -2015,7 +2012,7 @@ class Criteria
      * If no primary key is defined for the table the values will be
      * inserted as specified in Criteria and null will be returned.
      *
-     * @param  ConnectionInterface $con      A ConnectionInterface connection.
+     * @param  ConnectionInterface $con A ConnectionInterface connection.
      * @return mixed               The primary key for the new row if the primary key is auto-generated. Otherwise will return null.
      *
      * @throws \Propel\Runtime\Exception\PropelException
@@ -2149,10 +2146,10 @@ class Criteria
      * WHERE some_column = some value AND could_have_another_column =
      * another value AND so on.
      *
-     * @param  Criteria            $updateValues   A Criteria object containing values used in set clause.
-     * @param  ConnectionInterface $con            The ConnectionInterface connection object to use.
+     * @param Criteria            $updateValues A Criteria object containing values used in set clause.
+     * @param ConnectionInterface $con          The ConnectionInterface connection object to use.
      *
-     * @return int                 The number of rows affected by last update statement.
+     * @return int The number of rows affected by last update statement.
      *                             For most uses there is only one update statement executed, so this number will
      *                             correspond to the number of rows affected by the call to this method.
      *                             Note that the return value does require that this information is returned
@@ -2349,7 +2346,6 @@ class Criteria
         return $con->getDataFetcher($stmt);
     }
 
-
     /**
      * Checks whether the Criteria needs to use column aliasing
      * This is implemented in a service class rather than in Criteria itself
@@ -2378,7 +2374,7 @@ class Criteria
      *
      * @param ConnectionInterface $con a connection object
      *
-     * @return int the number of deleted rows
+     * @return int             the number of deleted rows
      * @throws PropelException
      */
     public function doDelete(ConnectionInterface $con = null)
@@ -2438,7 +2434,7 @@ class Criteria
      * Builds, binds and executes a SELECT query based on the current object.
      * @param $con A connection object
      *
-     * @return DataFetcher A dataFetcher using the connection, ready to be fetched
+     * @return DataFetcher                               A dataFetcher using the connection, ready to be fetched
      * @throws \Propel\Runtime\Exception\PropelException
      */
     public function doSelect($con = null)

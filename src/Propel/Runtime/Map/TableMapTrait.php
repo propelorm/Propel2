@@ -66,6 +66,7 @@ trait TableMapTrait
                 $newRow[$name] = $field;
             }
         }
+
         return $newRow;
     }
 

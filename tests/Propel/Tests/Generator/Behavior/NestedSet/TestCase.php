@@ -11,7 +11,6 @@
 namespace Propel\Tests\Generator\Behavior\NestedSet;
 
 use Propel\Generator\Util\QuickBuilder;
-use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Tests\TestCase as BaseTestCase;
 
 /**

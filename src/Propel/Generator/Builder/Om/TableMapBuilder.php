@@ -45,7 +45,8 @@ class TableMapBuilder extends AbstractOMBuilder
         return $namespace .'Map';
     }
 
-    public function getBaseTableMapClassName(){
+    public function getBaseTableMapClassName()
+    {
         return "TableMap";
     }
 
@@ -145,7 +146,6 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
 
         $this->addGetPrimaryKeyHash($script);
         $this->addGetPrimaryKeyFromRow($script);
-
 
         $this->addGetOMClassMethod($script);
         $this->addPopulateObject($script);
@@ -1151,9 +1151,6 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
 ";
     } // addAddSelectColumns()
 
-
-
-
     /**
      * Adds the getTableMap() method which is a convenience method for apps to get DB metadata.
      * @param string &$script The script will be modified in this method.
@@ -1195,7 +1192,6 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
     }
 ";
     }
-
 
     /**
      * Adds the doDelete() method.
@@ -1278,11 +1274,9 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
 
         \$query = " . $this->getQueryClassName() . "::create()->mergeWith(\$criteria);
 
-        if (\$values instanceof Criteria) {
-            {$this->getTableMapClassName()}::clearInstancePool();
-        } else if (!is_object(\$values)) { // it's a primary key, or an array of pks
-            foreach ((array) \$values as \$singleval) {
-                {$this->getTableMapClassName()}::removeInstanceFromPool(\$singleval);
+        if (\$values instanceof Criteria) { {$this->getTableMapClassName()}::clearInstancePool();
+        } elseif (!is_object(\$values)) { // it's a primary key, or an array of pks
+            foreach ((array) \$values as \$singleval) { {$this->getTableMapClassName()}::removeInstanceFromPool(\$singleval);
             }
         }
 
@@ -1290,8 +1284,6 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
     }
 ";
     }
-
-
 
     /**
      * Adds the doInsert() method.
@@ -1377,8 +1369,5 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
     }
 ";
     }
-
-
-
 
 }

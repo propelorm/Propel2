@@ -12,7 +12,6 @@ namespace Propel\Runtime\Formatter;
 
 use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\ActiveQuery\BaseModelCriteria;
-use Propel\Runtime\Connection\StatementInterface;
 
 /**
  * Object formatter for Propel query

@@ -148,7 +148,7 @@ class QuickBuilder
     public function getBuildName($classTargets = null)
     {
         $tables = [];
-        foreach ($this->getDatabase()->getTables() as $table){
+        foreach ($this->getDatabase()->getTables() as $table) {
             if (count($tables) > 3) break;
             $tables[] = $table->getName();
         }
@@ -158,6 +158,7 @@ class QuickBuilder
         } else {
             $name .= '-' . implode('_', $classTargets);
         }
+
         return $name;
     }
 

@@ -14,7 +14,6 @@ use Propel\Generator\Util\QuickBuilder;
 use Propel\Generator\Behavior\I18n\I18nBehavior;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
-use Propel\Runtime\Map\TableMap;
 
 /**
  * Tests for I18nBehavior class query modifier

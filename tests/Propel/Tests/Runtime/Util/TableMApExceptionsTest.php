@@ -43,7 +43,7 @@ class TableMapExceptionsTest extends BookstoreTestBase
             $c = new Criteria();
             $c->add(BookTableMap::ID, 12, ' BAD SQL');
             BookTableMap::addSelectColumns($c);
-			$c->doCount();
+            $c->doCount();
         } catch (PropelException $e) {
             $this->assertContains('[SELECT COUNT(*) FROM `book` WHERE book.ID BAD SQL:p1]', $e->getMessage(), 'SQL query is written in the exception message');
         }
@@ -55,7 +55,7 @@ class TableMapExceptionsTest extends BookstoreTestBase
             $c = new Criteria();
             $c->setPrimaryTableName(BookTableMap::TABLE_NAME);
             $c->add(BookTableMap::ID, 12, ' BAD SQL');
-			$c->doDelete(Propel::getServiceContainer()->getWriteConnection(BookTableMap::DATABASE_NAME));
+            $c->doDelete(Propel::getServiceContainer()->getWriteConnection(BookTableMap::DATABASE_NAME));
         } catch (PropelException $e) {
             $this->assertContains('[DELETE FROM `book` WHERE book.ID BAD SQL:p1]', $e->getMessage(), 'SQL query is written in the exception message');
         }

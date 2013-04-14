@@ -51,7 +51,7 @@ class MongoAdapter implements AdapterInterface
      * @see initConnection()
      *
      * @param Propel\Runtime\Connection\ConnectionInterface $con
-     * @param string $charset The $string charset encoding.
+     * @param string                                        $charset The $string charset encoding.
      */
     public function setCharset(ConnectionInterface $con, $charset)
     {
@@ -122,7 +122,7 @@ class MongoAdapter implements AdapterInterface
     /**
      * Returns SQL which extracts a substring.
      *
-     * @param string $s   String to extract from.
+     * @param string  $s   String to extract from.
      * @param integer $pos Offset to start from.
      * @param integer $len Number of characters to extract.
      *
@@ -192,7 +192,7 @@ class MongoAdapter implements AdapterInterface
      * Gets the generated ID (either last ID for autoincrement or next sequence ID).
      *
      * @param Propel\Runtime\Connection\ConnectionInterface $con
-     * @param string $name
+     * @param string                                        $name
      *
      * @return mixed
      */
@@ -204,7 +204,7 @@ class MongoAdapter implements AdapterInterface
     /**
      * Formats a temporal value before binding, given a ColumnMap object
      *
-     * @param mixed $value The temporal value
+     * @param mixed                        $value The temporal value
      * @param Propel\Runtime\Map\ColumnMap $cMap
      *
      * @return string The formatted temporal value

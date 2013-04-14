@@ -11,10 +11,7 @@
 namespace Propel\Runtime\Adapter;
 
 use Propel\Runtime\Connection\ConnectionInterface;
-use Propel\Runtime\Connection\StatementInterface;
 use Propel\Runtime\Map\ColumnMap;
-use Propel\Runtime\Map\DatabaseMap;
-use Propel\Runtime\ActiveQuery\Criteria;
 
 /**
  * Interface for adapters.
@@ -47,7 +44,6 @@ interface AdapterInterface
      * @param string                                        $charset The $string charset encoding.
      */
     public function setCharset(ConnectionInterface $con, $charset);
-
 
     /**
      * This method is used to ignore case in an ORDER BY clause.

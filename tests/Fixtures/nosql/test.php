@@ -7,12 +7,11 @@ $loader->add('Propel\Tests', array(
  ));
 $loader->register();
 
-include('generated-conf/config.php');
+include 'generated-conf/config.php';
 
 //$book = new Propel\Tests\Bookstore\Book();
 //$book->setTitle('Testbook');
 //$book->save(); exit;
-
 
 $query = Propel\Tests\Bookstore\BookQuery::create();
 $object = $query->findOne();

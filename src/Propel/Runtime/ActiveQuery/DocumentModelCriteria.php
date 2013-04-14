@@ -11,13 +11,7 @@
 namespace Propel\Runtime\ActiveQuery;
 
 use Propel\Runtime\Propel;
-use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\Connection\MongoConnection;
-use Propel\Runtime\ActiveQuery\Criteria;
-use Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion;
-use Propel\Runtime\ActiveQuery\Criterion\SeveralModelCriterion;
-use Propel\Runtime\Formatter\MongoDataFetcher;
-use Propel\Runtime\Formatter\ArrayDataFetcher;
 
 /**
  */
@@ -27,9 +21,9 @@ class DocumentModelCriteria extends BaseModelCriteria
     /**
      * Initializes internal state of \Propel\Tests\Bookstore\Base\BookQuery object.
      *
-     * @param     string $dbName The database name
-     * @param     string $modelName The phpName of a model, e.g. 'Book'
-     * @param     string $modelAlias The alias for the model in this query, e.g. 'b'
+     * @param string $dbName     The database name
+     * @param string $modelName  The phpName of a model, e.g. 'Book'
+     * @param string $modelAlias The alias for the model in this query, e.g. 'b'
      */
     public function __construct($dbName = null, $modelName = null, $modelAlias = null)
     {

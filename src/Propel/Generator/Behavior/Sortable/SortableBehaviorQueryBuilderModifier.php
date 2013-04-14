@@ -86,7 +86,6 @@ class SortableBehaviorQueryBuilderModifier
         }
         $this->addShiftRank($script);
 
-
         return $script;
     }
 
@@ -304,7 +303,6 @@ public function reorder(array \$order, ConnectionInterface \$con = null)
 ";
     }
 
-
     protected function addRetrieveByRank(&$script)
     {
         $queryClassName = $this->queryClassName;
@@ -341,7 +339,6 @@ static public function retrieveByRank(\$rank, " . ($useScope ? "\$scope = null, 
 }
 ";
     }
-
 
     protected function addDoSelectOrderByRank(&$script)
     {

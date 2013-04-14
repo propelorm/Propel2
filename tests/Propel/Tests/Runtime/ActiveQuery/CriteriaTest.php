@@ -21,7 +21,6 @@ use Propel\Runtime\Adapter\Pdo\SqliteAdapter;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\ActiveQuery\Join;
-use Propel\Runtime\Map\TableMap;
 
 /**
  * Test class for Criteria.

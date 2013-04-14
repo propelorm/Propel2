@@ -10,7 +10,6 @@
 
 namespace Propel\Tests\Generator\Builder\Om;
 
-
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Map\TableMap;

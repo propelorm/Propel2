@@ -11,9 +11,7 @@
 namespace Propel\Runtime\Formatter;
 
 use Propel\Runtime\Propel;
-use Propel\Runtime\Connection\StatementInterface;
 use Propel\Runtime\Exception\PropelException;
-use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\ActiveQuery\BaseModelCriteria;
 
 /**
@@ -161,8 +159,8 @@ abstract class AbstractFormatter
     /**
      *
      */
-    public function getNextEntry(){
-
+    public function getNextEntry()
+    {
     }
 
     public function getCollectionClassName()

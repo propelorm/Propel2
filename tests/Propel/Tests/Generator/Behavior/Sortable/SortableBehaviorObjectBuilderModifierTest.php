@@ -10,7 +10,6 @@
 
 namespace Propel\Tests\Generator\Behavior\Sortable;
 
-use Propel\Runtime\ActiveQuery\Criteria;
 use SortableTable11 as Table11;
 
 /**

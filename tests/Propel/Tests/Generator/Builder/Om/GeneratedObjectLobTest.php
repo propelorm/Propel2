@@ -10,7 +10,6 @@
 
 namespace Propel\Tests\Generator\Builder\Om;
 
-use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
 use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
 use Propel\Tests\Bookstore\BookQuery;

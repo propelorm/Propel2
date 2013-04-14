@@ -15,11 +15,8 @@ use Propel\Runtime\Propel;
 use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\ClassNotFoundException;
-use Propel\Runtime\Exception\InvalidArgumentException;
-use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Exception\UnexpectedValueException;
-use Propel\Runtime\Formatter\AbstractFormatter;
 use Propel\Runtime\Formatter\ObjectFormatter;
 use Propel\Runtime\Map\ColumnMap;
 use Propel\Runtime\Map\RelationMap;
@@ -1111,7 +1108,6 @@ class ModelCriteria extends BaseModelCriteria
         return $criteria->getFormatter()->init($criteria)->format($dataFetcher);
     }
 
-
     /**
      * Apply a condition on a column and issues the SELECT query
      *
@@ -1512,7 +1508,7 @@ class ModelCriteria extends BaseModelCriteria
         } else {
 
             // update rows in a single query
-            if ($values instanceof Criteria){
+            if ($values instanceof Criteria) {
                 $set = $values;
             } else {
                 $set = new Criteria($this->getDbName());
@@ -1791,7 +1787,7 @@ class ModelCriteria extends BaseModelCriteria
      * Builds, binds and executes a SELECT query based on the current object.
      * @param $con A connection object
      *
-     * @return DataFetcher A dataFetcher using the connection, ready to be fetched
+     * @return DataFetcher                               A dataFetcher using the connection, ready to be fetched
      * @throws \Propel\Runtime\Exception\PropelException
      */
     public function doSelect($con = null)
@@ -1807,6 +1803,7 @@ class ModelCriteria extends BaseModelCriteria
         }
 
         $this->configureSelectColumns();
+
         return parent::doSelect($con);
     }
 

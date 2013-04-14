@@ -11,7 +11,6 @@
 namespace Propel\Tests\Generator\Builder\Om;
 
 use Propel\Runtime\Propel;
-use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Tests\Bookstore\Author;
 use Propel\Tests\Bookstore\AuthorQuery;

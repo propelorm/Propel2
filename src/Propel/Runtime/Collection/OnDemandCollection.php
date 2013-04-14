@@ -11,7 +11,6 @@
 namespace Propel\Runtime\Collection;
 
 use Propel\Runtime\Collection\Exception\ReadOnlyModelException;
-use Propel\Runtime\Connection\StatementInterface;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Formatter\AbstractFormatter;
 use Propel\Runtime\Formatter\DataFetcher;
@@ -36,8 +35,8 @@ class OnDemandCollection extends Collection
     protected $isValid;
 
     /**
-     * @param AbstractFormatter  $formatter
-     * @param DataFetcher        $dataFetcher
+     * @param AbstractFormatter $formatter
+     * @param DataFetcher       $dataFetcher
      */
     public function initIterator(AbstractFormatter $formatter, DataFetcher $dataFetcher)
     {

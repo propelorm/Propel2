@@ -2,11 +2,12 @@
 
 namespace Propel\Runtime\Formatter;
 
-abstract class DataFetcher implements \IteratorAggregate {
-
+abstract class DataFetcher implements \IteratorAggregate
+{
     protected $dataObject;
 
-    public function __construct($dataObject){
+    public function __construct($dataObject)
+    {
         $this->setDataObject($dataObject);
     }
 
@@ -15,7 +16,8 @@ abstract class DataFetcher implements \IteratorAggregate {
         $this->dataObject = $dataObject;
     }
 
-    public function getIterator() {
+    public function getIterator()
+    {
         return $this->dataObject;
     }
 
@@ -24,8 +26,10 @@ abstract class DataFetcher implements \IteratorAggregate {
         return $this->dataObject;
     }
 
-    public function fetchColumn(){
+    public function fetchColumn()
+    {
         $next = $this->fetch();
+
         return $next ? current($next) : null;
     }
 

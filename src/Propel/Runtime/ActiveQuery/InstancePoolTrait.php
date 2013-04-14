@@ -11,7 +11,6 @@
 namespace Propel\Runtime\ActiveQuery;
 
 use Propel\Runtime\Propel;
-use Propel\Runtime\Exception\RuntimeException;
 
 trait InstancePoolTrait
 {
@@ -34,8 +33,9 @@ trait InstancePoolTrait
             if (count($pk = $value->getPrimaryKey()) > 1) {
                 $pk = serialize($pk);
             }
+
             return (string) $pk;
-        } else if (is_scalar($value)) {
+        } elseif (is_scalar($value)) {
             // assume we've been passed a primary key
             return (string) $value;
         }

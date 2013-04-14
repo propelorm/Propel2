@@ -87,6 +87,7 @@ class MigrationManager extends AbstractManager
     {
         $params       = $this->getConnection($datasource);
         $adapter      = $params['adapter'];
+
         return AdapterFactory::create($adapter);
     }
 

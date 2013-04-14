@@ -68,7 +68,6 @@ class SqlBuildCommand extends AbstractCommand
 
         $manager = new SqlManager();
 
-
         $connections = array();
         foreach ($input->getOption('connection') as $connection) {
             //list($name, $dsn, $infos) = $this->parseConnection($connection);

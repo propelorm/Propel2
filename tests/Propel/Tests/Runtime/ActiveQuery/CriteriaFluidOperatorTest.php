@@ -13,7 +13,6 @@ namespace Propel\Tests\Runtime\ActiveQuery;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
 use Propel\Runtime\ActiveQuery\Criteria;
-use Propel\Runtime\Map\TableMap;
 
 /**
  * Test class for Criteria fluid operators.

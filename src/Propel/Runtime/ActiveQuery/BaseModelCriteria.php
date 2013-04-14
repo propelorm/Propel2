@@ -3,35 +3,14 @@
 namespace Propel\Runtime\ActiveQuery;
 
 use Propel\Runtime\Propel;
-use Propel\Runtime\Collection\ObjectCollection;
-use Propel\Runtime\Connection\ConnectionInterface;
-use Propel\Runtime\Exception\ClassNotFoundException;
 use Propel\Runtime\Exception\InvalidArgumentException;
 use Propel\Runtime\Exception\LogicException;
-use Propel\Runtime\Exception\PropelException;
-use Propel\Runtime\Exception\UnexpectedValueException;
 use Propel\Runtime\Formatter\AbstractFormatter;
-use Propel\Runtime\Formatter\ObjectFormatter;
-use Propel\Runtime\Map\ColumnMap;
-use Propel\Runtime\Map\RelationMap;
 use Propel\Runtime\Map\TableMap;
-use Propel\Runtime\Util\PropelModelPager;
 use Propel\Runtime\ActiveQuery\Criteria;
-use Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion;
-use Propel\Runtime\ActiveQuery\Criterion\InModelCriterion;
-use Propel\Runtime\ActiveQuery\Criterion\BasicModelCriterion;
-use Propel\Runtime\ActiveQuery\Criterion\CustomCriterion;
-use Propel\Runtime\ActiveQuery\Criterion\LikeModelCriterion;
-use Propel\Runtime\ActiveQuery\Criterion\RawCriterion;
-use Propel\Runtime\ActiveQuery\Criterion\RawModelCriterion;
-use Propel\Runtime\ActiveQuery\Criterion\SeveralModelCriterion;
-use Propel\Runtime\ActiveQuery\Exception\UnknownColumnException;
-use Propel\Runtime\ActiveQuery\Exception\UnknownModelException;
-use Propel\Runtime\ActiveQuery\Exception\UnknownRelationException;
 
-class BaseModelCriteria extends Criteria implements \IteratorAggregate {
-
-
+class BaseModelCriteria extends Criteria implements \IteratorAggregate
+{
     protected $modelName;
 
     protected $modelTableMapName;
@@ -44,7 +23,6 @@ class BaseModelCriteria extends Criteria implements \IteratorAggregate {
     protected $with = array();
 
     protected $defaultFormatterClass = ModelCriteria::FORMAT_OBJECT;
-
 
     /**
      * Creates a new instance with the default capacity which corresponds to
@@ -61,7 +39,6 @@ class BaseModelCriteria extends Criteria implements \IteratorAggregate {
         $this->setModelName($modelName);
         $this->modelAlias        = $modelAlias;
     }
-
 
     /**
      * Gets the array of ModelWith specifying which objects must be hydrated
@@ -89,7 +66,6 @@ class BaseModelCriteria extends Criteria implements \IteratorAggregate {
 
         return $this;
     }
-
 
     /**
      * Sets the formatter to use for the find() output
@@ -133,8 +109,6 @@ class BaseModelCriteria extends Criteria implements \IteratorAggregate {
         return $this->formatter;
     }
 
-
-
     /**
      * Returns the name of the class for this model criteria
      *
@@ -155,7 +129,7 @@ class BaseModelCriteria extends Criteria implements \IteratorAggregate {
         if ($this->modelName && !$this->modelTableMapName) {
             $this->modelTableMapName = constant($this->modelName . '::TABLE_MAP');
         }
-        if (!$this->tableMap && $this->modelName){
+        if (!$this->tableMap && $this->modelName) {
             $this->tableMap = Propel::getServiceContainer()->getDatabaseMap($this->getDbName())->getTableByPhpName($this->modelName);
         }
     }
@@ -224,7 +198,6 @@ class BaseModelCriteria extends Criteria implements \IteratorAggregate {
     {
         return $this->tableMap;
     }
-
 
     /**
      * Execute the query with a find(), and return a Traversable object.

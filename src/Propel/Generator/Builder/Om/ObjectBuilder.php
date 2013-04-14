@@ -30,7 +30,8 @@ use Propel\Generator\Platform\PlatformInterface;
  */
 class ObjectBuilder extends AbstractObjectBuilder
 {
-    public function __construct(Table $table){
+    public function __construct(Table $table)
+    {
         parent::__construct($table);
     }
 
@@ -4495,6 +4496,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     {
         \$selectCriteria = \$this->buildPkeyCriteria();
         \$valuesCriteria = \$this->buildCriteria();
+
         return \$selectCriteria->doUpdate(\$valuesCriteria, \$con);
     }
 ";

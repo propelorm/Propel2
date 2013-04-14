@@ -10,7 +10,6 @@
 
 namespace Propel\Runtime\Map;
 
-use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\Map\Exception\ColumnNotFoundException;
 use Propel\Runtime\Map\Exception\RelationNotFoundException;
 use Propel\Runtime\Propel;

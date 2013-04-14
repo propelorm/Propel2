@@ -37,11 +37,12 @@
             if (is_object($value) && $value instanceof <?= $objectClassName ?>) {
                 $key = <?= $removeInstancePoolKeySnippetObjects ?>;
 
-            } else if (is_array($value) && count($value) === <?= $countPks ?>) {
+            } elseif (is_array($value) && count($value) === <?= $countPks ?>) {
                 // assume we've been passed a primary key";
                 $key = <?= $removeInstancePoolKeySnippetPks ?>;
-            } else if ($value instanceof Criteria) {
+            } elseif ($value instanceof Criteria) {
                 self::$instances = [];
+
                 return;
             } else {
                 $e = new PropelException("Invalid value passed to removeInstanceFromPool().  Expected primary key or <?= $objectClassName ?> object; got " . (is_object($value) ? get_class($value) . ' object.' : var_export($value, true)));

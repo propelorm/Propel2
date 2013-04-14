@@ -36,10 +36,12 @@ class MongoConnection extends \MongoClient implements ConnectionInterface
         $this->connection = $this;
     }
 
-    public function getCollection($entity){
+    public function getCollection($entity)
+    {
         if (null === $this->collection) {
             $this->collection = new MongoCollection($this->db, $entity);
         }
+
         return $this->collection;
     }
 
@@ -48,7 +50,8 @@ class MongoConnection extends \MongoClient implements ConnectionInterface
      *
      * @return MongoDataFetcher
      */
-    public function getDataFetcher($data){
+    public function getDataFetcher($data)
+    {
         return new MongoDataFetcher($data);
     }
 
@@ -57,7 +60,8 @@ class MongoConnection extends \MongoClient implements ConnectionInterface
      *
      * @return MongoDataFetcher
      */
-    public function getSingleDataFetcher($data){
+    public function getSingleDataFetcher($data)
+    {
         return $this->getDataFetcher($data);
     }
 
@@ -149,7 +153,7 @@ class MongoConnection extends \MongoClient implements ConnectionInterface
      * Set an attribute.
      *
      * @param string $attribute
-     * @param mixed $value
+     * @param mixed  $value
      *
      * @return boolean TRUE on success or FALSE on failure.
      */
@@ -179,6 +183,5 @@ class MongoConnection extends \MongoClient implements ConnectionInterface
     {
         // TODO: Implement lastInsertId() method.
     }
-
 
 }

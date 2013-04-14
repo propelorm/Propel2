@@ -101,7 +101,7 @@ class TestPrepareCommand extends AbstractCommand
     /**
      * @param $fixturesDir
      * @param $connections
-     * @param InputInterface $input
+     * @param InputInterface  $input
      * @param OutputInterface $output
      */
     protected function buildFixtures($fixturesDir, $connections, InputInterface $input, OutputInterface $output)

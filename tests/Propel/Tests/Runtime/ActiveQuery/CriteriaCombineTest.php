@@ -15,7 +15,6 @@ use Propel\Tests\Helpers\BaseTestCase;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
-use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Adapter\Pdo\SqliteAdapter;
 
 /**

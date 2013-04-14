@@ -280,7 +280,7 @@ class GeneratorConfig implements GeneratorConfigInterface
             $buildConnections[$id] = array(
                 'adapter'  => (string) $datasource->adapter
             );
-            foreach ((array)$datasource->connection as $key => $connection){
+            foreach ((array) $datasource->connection as $key => $connection) {
                 $buildConnections[$id][$key] = $connection;
             }
         }

@@ -10,7 +10,6 @@
 
 namespace Propel\Runtime\Formatter;
 
-use Propel\Runtime\Connection\StatementInterface;
 use Propel\Runtime\Exception\PropelException;
 
 /**
@@ -28,6 +27,7 @@ class StatementFormatter extends AbstractFormatter
         } else {
             $dataFetcher = $this->getDataFetcher();
         }
+
         return $dataFetcher;
     }
 
@@ -38,6 +38,7 @@ class StatementFormatter extends AbstractFormatter
         } else {
             $dataFetcher = $this->getDataFetcher();
         }
+
         return $dataFetcher->count() > 0 ? $dataFetcher : null;
     }
 

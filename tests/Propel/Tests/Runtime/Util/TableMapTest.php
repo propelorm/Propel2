@@ -239,7 +239,7 @@ class TableMapTest extends BookstoreTestBase
     {
         $con = Propel::getServiceContainer()->getWriteConnection(BookTableMap::DATABASE_NAME);
         $c = new Criteria(BookTableMap::DATABASE_NAME);
-		$c->doDelete($con);
+        $c->doDelete($con);
     }
 
     /**
@@ -270,7 +270,7 @@ class TableMapTest extends BookstoreTestBase
         $c = new Criteria(BookTableMap::DATABASE_NAME);
         $c->add(BookTableMap::TITLE, 'War And Peace');
         $c->add(BookTableMap::ID, 12);
-		$c->doDelete($con);
+        $c->doDelete($con);
         $expectedSQL = "DELETE FROM `book` WHERE book.TITLE='War And Peace' AND book.ID=12";
         $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'doDelete() combines conditions in WHERE with an AND');
     }

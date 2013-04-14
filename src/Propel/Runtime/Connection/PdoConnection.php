@@ -77,7 +77,8 @@ class PdoConnection extends \PDO implements ConnectionInterface
      *
      * @return MongoDataFetcher
      */
-    public function getDataFetcher($data){
+    public function getDataFetcher($data)
+    {
         return new PdoDataFetcher($data);
     }
 
@@ -86,21 +87,23 @@ class PdoConnection extends \PDO implements ConnectionInterface
      *
      * @return MongoDataFetcher
      */
-    public function getSingleDataFetcher($data){
+    public function getSingleDataFetcher($data)
+    {
         return $this->getDataFetcher($data);
     }
 
     public function query($statement)
     {
         $stmt = parent::query($statement);
+
         return $this->getDataFetcher($stmt);
     }
 
     public function exec($statement)
     {
         $stmt = parent::exec($statement);
+
         return $this->getDataFetcher($stmt);
     }
-
 
 }

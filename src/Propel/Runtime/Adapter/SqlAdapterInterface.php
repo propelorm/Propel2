@@ -10,7 +10,6 @@
 
 namespace Propel\Runtime\Adapter;
 
-use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\StatementInterface;
 use Propel\Runtime\Map\ColumnMap;
 use Propel\Runtime\Map\DatabaseMap;
@@ -38,12 +37,6 @@ interface SqlAdapterInterface extends AdapterInterface
      * @return string The string in a case that can be ignored.
      */
     public function ignoreCase($in);
-
-
-
-
-
-
 
     /**
      * Allows manipulation of the query string before StatementPdo is instantiated.

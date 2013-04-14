@@ -90,7 +90,6 @@ class DefaultPlatform implements PlatformInterface
         return $this->con;
     }
 
-
     public function getBuilderClass($type)
     {
         $class = get_called_class();
