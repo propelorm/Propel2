@@ -33,7 +33,6 @@ class Database extends ScopedMappingModel
     private $tables;
     private $name;
     private $baseClass;
-    private $basePeer;
     private $defaultIdMethod;
     private $defaultPhpNamingMethod;
     private $defaultTranslateMethod;
@@ -80,7 +79,6 @@ class Database extends ScopedMappingModel
 
         $this->name = $this->getAttribute('name');
         $this->baseClass = $this->getAttribute('baseClass');
-        $this->basePeer = $this->getAttribute('basePeer');
         $this->defaultIdMethod = $this->getAttribute('defaultIdMethod', IdMethod::NATIVE);
         $this->defaultPhpNamingMethod = $this->getAttribute('defaultPhpNamingMethod', NameGenerator::CONV_METHOD_UNDERSCORE);
         $this->heavyIndexing = $this->booleanValue($this->getAttribute('heavyIndexing'));
@@ -148,28 +146,6 @@ class Database extends ScopedMappingModel
     public function setBaseClass($class)
     {
         $this->baseClass = $class;
-    }
-
-    /**
-     * Returns the name of the base peer super class inherited by Peer classes.
-     * This parameter is overridden at the table level.
-     *
-     * @return string
-     */
-    public function getBasePeer()
-    {
-        return $this->basePeer;
-    }
-
-    /**
-     * Sets the name of the base peer super class inherited by Peer classes.
-     * This parameter is overridden at the table level.
-     *
-     * @param string $class
-     */
-    public function setBasePeer($class)
-    {
-        $this->basePeer = $class;
     }
 
     /**
@@ -717,10 +693,6 @@ class Database extends ScopedMappingModel
 
         if ($this->baseClass) {
             $dbNode->setAttribute('baseClass', $this->baseClass);
-        }
-
-        if ($this->basePeer) {
-            $dbNode->setAttribute('basePeer', $this->basePeer);
         }
 
         if ($this->defaultPhpNamingMethod) {

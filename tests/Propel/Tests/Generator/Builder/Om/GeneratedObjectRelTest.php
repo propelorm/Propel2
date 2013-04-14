@@ -11,10 +11,8 @@
 namespace Propel\Tests\Generator\Builder\Om;
 
 use Propel\Runtime\Propel;
-use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Tests\Bookstore\Author;
-use Propel\Tests\Bookstore\AuthorPeer;
 use Propel\Tests\Bookstore\AuthorQuery;
 use Propel\Tests\Bookstore\Map\AuthorTableMap;
 use Propel\Tests\Bookstore\Book;
@@ -24,7 +22,6 @@ use Propel\Tests\Bookstore\Bookstore;
 use Propel\Tests\Bookstore\BookClubList;
 use Propel\Tests\Bookstore\BookClubListQuery;
 use Propel\Tests\Bookstore\BookListRel;
-use Propel\Tests\Bookstore\BookListRelPeer;
 use Propel\Tests\Bookstore\BookListRelQuery;
 use Propel\Tests\Bookstore\BookListFavoriteQuery;
 use Propel\Tests\Bookstore\BookstoreContest;

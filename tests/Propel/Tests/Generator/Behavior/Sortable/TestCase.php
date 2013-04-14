@@ -51,7 +51,7 @@ XML;
 
     protected function populateTable11()
     {
-        \SortableTable11Peer::doDeleteAll();
+        \Map\SortableTable11TableMap::doDeleteAll();
 
         $t1 = new \SortableTable11();
         $t1->setRank(1);
@@ -83,7 +83,7 @@ XML;
          row3
          row4
          */
-        \SortableTable12Peer::doDeleteAll();
+        \Map\SortableTable12TableMap::doDeleteAll();
 
         $t1 = new \SortableTable12();
         $t1->setRank(1);

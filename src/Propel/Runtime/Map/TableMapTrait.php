@@ -55,6 +55,21 @@ trait TableMapTrait
         return $toNames[$key];
     }
 
+    public static function translateFieldNames($row, $fromType, $toType)
+    {
+        $toNames = static::getFieldNames($toType);
+        $newRow = array();
+        foreach ($row as $name => $field) {
+            if ($key = static::$fieldKeys[$fromType][$name]) {
+                $newRow[$toNames[$key]] = $field;
+            } else {
+                $newRow[$name] = $field;
+            }
+        }
+
+        return $newRow;
+    }
+
     /**
      * Convenience method which changes table.column to alias.column.
      *

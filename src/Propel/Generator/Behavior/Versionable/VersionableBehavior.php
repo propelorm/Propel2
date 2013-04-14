@@ -38,8 +38,6 @@ class VersionableBehavior extends Behavior
 
     protected $queryBuilderModifier;
 
-    protected $peerBuilderModifier;
-
     protected $tableModificationOrder = 80;
 
     public function modifyDatabase()

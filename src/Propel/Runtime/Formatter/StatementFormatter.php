@@ -10,7 +10,6 @@
 
 namespace Propel\Runtime\Formatter;
 
-use Propel\Runtime\Connection\StatementInterface;
 use Propel\Runtime\Exception\PropelException;
 
 /**
@@ -21,14 +20,26 @@ use Propel\Runtime\Exception\PropelException;
  */
 class StatementFormatter extends AbstractFormatter
 {
-    public function format(StatementInterface $stmt)
+    public function format(DataFetcher $dataFetcher = null)
     {
-        return $stmt;
+        if ($dataFetcher) {
+            $this->setDataFetcher($dataFetcher);
+        } else {
+            $dataFetcher = $this->getDataFetcher();
+        }
+
+        return $dataFetcher;
     }
 
-    public function formatOne(StatementInterface $stmt)
+    public function formatOne(DataFetcher $dataFetcher = null)
     {
-        return $stmt->rowCount() > 0 ? $stmt : null;
+        if ($dataFetcher) {
+            $this->setDataFetcher($dataFetcher);
+        } else {
+            $dataFetcher = $this->getDataFetcher();
+        }
+
+        return $dataFetcher->count() > 0 ? $dataFetcher : null;
     }
 
     public function formatRecord($record = null)

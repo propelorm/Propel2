@@ -10,7 +10,7 @@
 
 namespace Propel\Runtime\Adapter\Pdo;
 
-use Propel\Runtime\Adapter\AdapterInterface;
+use Propel\Runtime\Adapter\SqlAdapterInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
 
 /**
@@ -18,7 +18,7 @@ use Propel\Runtime\Connection\ConnectionInterface;
  *
  * @author Hans Lellelid <hans@xmpl.org>
  */
-class SqliteAdapter extends PdoAdapter implements AdapterInterface
+class SqliteAdapter extends PdoAdapter implements SqlAdapterInterface
 {
 
     /**

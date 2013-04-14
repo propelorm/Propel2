@@ -11,12 +11,11 @@
 namespace Propel\Runtime\Adapter\Pdo;
 
 use Propel\Runtime\ActiveQuery\Criteria;
-use Propel\Runtime\Adapter\AdapterInterface;
+use Propel\Runtime\Adapter\SqlAdapterInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\StatementInterface;
 use Propel\Runtime\Exception\InvalidArgumentException;
 use Propel\Runtime\Map\ColumnMap;
-use Propel\Runtime\Util\BasePeer;
 
 /**
  * Oracle adapter.
@@ -28,7 +27,7 @@ use Propel\Runtime\Util\BasePeer;
  * @author Bill Schneider <bschneider@vecna.com> (Torque)
  * @author Daniel Rall <dlr@finemaltcoding.com> (Torque)
  */
-class OracleAdapter extends PdoAdapter implements AdapterInterface
+class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
 {
     /**
      * This method is called after a connection was created to run necessary
@@ -102,7 +101,7 @@ class OracleAdapter extends PdoAdapter implements AdapterInterface
     public function applyLimit(&$sql, $offset, $limit, $criteria = null)
     {
         $params = array();
-        if (BasePeer::needsSelectAliases($criteria)) {
+        if ($criteria && $criteria->needsSelectAliases()) {
             $crit = clone $criteria;
             $selectSql = $this->createSelectSqlPart($crit, $params, true);
             $sql = $selectSql . substr($sql, strpos($sql, 'FROM') - 1);

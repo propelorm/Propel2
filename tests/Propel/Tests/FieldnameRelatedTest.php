@@ -13,17 +13,15 @@ namespace Propel\Tests;
 use Propel\Tests\Bookstore\Map\BookTableMap;
 
 use Propel\Runtime\Map\TableMap;
-use Propel\Runtime\Util\BasePeer;
 use Propel\Tests\Bookstore\Book;
-use Propel\Tests\Bookstore\Bookstore;
 
 /**
  * Tests some of the methods of generated Object classes. These are:
  *
  * - Base[Object]TableMap::getFieldNames()
  * - Base[Object]TableMap::translateFieldName()
- * - BasePeer::getFieldNames()
- * - BasePeer::translateFieldName()
+ * - TableMap::getFieldNames()
+ * - TableMap::translateFieldName()
  * - Base[Object]::getByName()
  * - Base[Object]::setByName()
  * - Base[Object]::fromArray()
@@ -196,7 +194,7 @@ class FieldnameRelatedTest extends \PHPUnit_Framework_TestCase
         );
 
         foreach ($types as $type) {
-            $results[$type] = BasePeer::getFieldnames('\Propel\Tests\Bookstore\Book', $type);
+            $results[$type] = TableMap::getFieldnamesForClass('\Propel\Tests\Bookstore\Book', $type);
             $this->assertEquals(
                 $expecteds[$type],
                 $results[$type],
@@ -229,7 +227,7 @@ class FieldnameRelatedTest extends \PHPUnit_Framework_TestCase
             foreach ($types as $toType) {
                 $name = $expecteds[$fromType];
                 $expected = $expecteds[$toType];
-                $result = BasePeer::translateFieldName('\Propel\Tests\Bookstore\Book', $name, $fromType, $toType);
+                $result = TableMap::translateFieldNameForClass('\Propel\Tests\Bookstore\Book', $name, $fromType, $toType);
                 $this->assertEquals($expected, $result);
             }
         }

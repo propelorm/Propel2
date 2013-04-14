@@ -11,8 +11,7 @@
 namespace Propel\Runtime\Formatter;
 
 use Propel\Runtime\Exception\LogicException;
-use Propel\Runtime\ActiveQuery\ModelCriteria;
-use Propel\Runtime\Connection\StatementInterface;
+use Propel\Runtime\ActiveQuery\BaseModelCriteria;
 
 /**
  * Object formatter for Propel query
@@ -25,24 +24,30 @@ class OnDemandFormatter extends ObjectFormatter
 {
     protected $isSingleTableInheritance = false;
 
-    public function init(ModelCriteria $criteria)
+    public function init(BaseModelCriteria $criteria = null, DataFetcher $dataFetcher = null)
     {
-        parent::init($criteria);
+        parent::init($criteria, $dataFetcher);
 
         $this->isSingleTableInheritance = $criteria->getTableMap()->isSingleTableInheritance();
 
         return $this;
     }
 
-    public function format(StatementInterface $stmt)
+    public function format(DataFetcher $dataFetcher = null)
     {
         $this->checkInit();
+        if ($dataFetcher) {
+            $this->setDataFetcher($dataFetcher);
+        } else {
+            $dataFetcher = $this->getDataFetcher();
+        }
+
         if ($this->isWithOneToMany()) {
             throw new LogicException('OnDemandFormatter cannot hydrate related objects using a one-to-many relationship. Try removing with() from your query.');
         }
 
         $collection = $this->getCollection();
-        $collection->initIterator($this, $stmt);
+        $collection->initIterator($this, $dataFetcher);
 
         return $collection;
     }
@@ -52,6 +57,9 @@ class OnDemandFormatter extends ObjectFormatter
         return '\Propel\Runtime\Collection\OnDemandCollection';
     }
 
+    /**
+     * @return Collection
+     */
     public function getCollection()
     {
         $class = $this->getCollectionClassName();
@@ -67,16 +75,16 @@ class OnDemandFormatter extends ObjectFormatter
      * The first object to hydrate is the model of the Criteria
      * The following objects (the ones added by way of ModelCriteria::with()) are linked to the first one
      *
-     *  @param    array  $row associative array indexed by column number,
-     *                   as returned by PDOStatement::fetch(PDO::FETCH_NUM)
+     *  @param    array  $row associative array with data
      *
      * @return BaseObject
      */
     public function getAllObjectsFromRow($row)
     {
         $col = 0;
+
         // main object
-        $class = $this->isSingleTableInheritance ? call_user_func(array($this->peer, 'getOMClass'), $row, $col, false) : $this->class;
+        $class = $this->isSingleTableInheritance ? call_user_func(array($this->tableMap, 'getOMClass'), $row, $col, false) : $this->class;
         $obj = $this->getSingleObjectFromRow($row, $class, $col);
         // related objects using 'with'
         foreach ($this->getWith() as $modelWith) {
@@ -84,7 +92,7 @@ class OnDemandFormatter extends ObjectFormatter
                 $class = call_user_func(array($modelWith->getTableMap(), 'getOMClass'), $row, $col, false);
                 $refl = new ReflectionClass($class);
                 if ($refl->isAbstract()) {
-                    $col += constant($class . 'Peer::NUM_COLUMNS');
+                    $col += constant('Map\\' . $class . 'TableMap::NUM_COLUMNS');
                     continue;
                 }
             } else {

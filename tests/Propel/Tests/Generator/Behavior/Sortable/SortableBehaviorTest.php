@@ -20,11 +20,11 @@ class SortableBehaviorTest extends TestCase
 {
     public function testParameters()
     {
-        $table11 = \SortableTable11Peer::getTableMap();
+        $table11 = \Map\SortableTable11TableMap::getTableMap();
         $this->assertEquals(count($table11->getColumns()), 3, 'Sortable adds one columns by default');
         $this->assertTrue(method_exists('SortableTable11', 'getRank'), 'Sortable adds a rank column by default');
 
-        $table12 = \SortableTable12Peer::getTableMap();
+        $table12 = \Map\SortableTable12TableMap::getTableMap();
         $this->assertEquals(count($table12->getColumns()), 4, 'Sortable does not add a column when it already exists');
         $this->assertTrue(method_exists('SortableTable12', 'getPosition'), 'Sortable allows customization of rank_column name');
     }

@@ -10,12 +10,11 @@
 
 namespace Propel\Runtime\Adapter\Pdo;
 
-use Propel\Runtime\Adapter\AdapterInterface;
+use Propel\Runtime\Adapter\SqlAdapterInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\InvalidArgumentException;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
-use Propel\Runtime\Util\BasePeer;
 
 /**
  * This is used to connect to PostgreSQL databases.
@@ -23,7 +22,7 @@ use Propel\Runtime\Util\BasePeer;
  * @author Hans Lellelid <hans@xmpl.org> (Propel)
  * @author Hakan Tandogan <hakan42@gmx.de> (Torque)
  */
-class PgsqlAdapter extends PdoAdapter implements AdapterInterface
+class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
 {
     /**
      * Returns SQL which concatenates the second string to the first.
@@ -194,7 +193,7 @@ class PgsqlAdapter extends PdoAdapter implements AdapterInterface
         if ($query instanceof Criteria) {
             $params = array();
             $dbMap = Propel::getServiceContainer()->getDatabaseMap($query->getDbName());
-            $sql = BasePeer::createSelectSql($query, $params);
+            $sql = $query->createSelectSql($params);
         } else {
             $sql = $query;
         }

@@ -13,7 +13,6 @@ namespace Propel\Tests\Runtime\ActiveQuery;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
 use Propel\Runtime\ActiveQuery\Criteria;
-use Propel\Runtime\Util\BasePeer;
 
 /**
  * Test class for Criteria fluid operators.
@@ -30,7 +29,7 @@ class CriteriaFluidOperatorTest extends BookstoreTestBase
         $expected = 'SELECT  FROM  WHERE foo=:p1';
 
         $params = array();
-        $result = BasePeer::createSelectSql($c, $params);
+        $result = $c->createSelectSql($params);
 
         $this->assertEquals($expected, $result);
     }
@@ -43,7 +42,7 @@ class CriteriaFluidOperatorTest extends BookstoreTestBase
         $expected = 'SELECT  FROM  WHERE foo1=:p1 AND foo2=:p2';
 
         $params = array();
-        $result = BasePeer::createSelectSql($c, $params);
+        $result = $c->createSelectSql($params);
 
         $this->assertEquals($expected, $result);
     }
@@ -57,7 +56,7 @@ class CriteriaFluidOperatorTest extends BookstoreTestBase
         $expected = 'SELECT  FROM  WHERE (foo1=:p1 OR foo2=:p2)';
 
         $params = array();
-        $result = BasePeer::createSelectSql($c, $params);
+        $result = $c->createSelectSql($params);
 
         $this->assertEquals($expected, $result);
     }
@@ -70,7 +69,7 @@ class CriteriaFluidOperatorTest extends BookstoreTestBase
         $expected = 'SELECT  FROM  WHERE foo=:p1';
 
         $params = array();
-        $result = BasePeer::createSelectSql($c, $params);
+        $result = $c->createSelectSql($params);
 
         $this->assertEquals($expected, $result);
     }
@@ -84,7 +83,7 @@ class CriteriaFluidOperatorTest extends BookstoreTestBase
         $expected = 'SELECT  FROM  WHERE foo1=:p1 AND foo2=:p2';
 
         $params = array();
-        $result = BasePeer::createSelectSql($c, $params);
+        $result = $c->createSelectSql($params);
 
         $this->assertEquals($expected, $result);
     }
@@ -100,7 +99,7 @@ class CriteriaFluidOperatorTest extends BookstoreTestBase
         $expected = 'SELECT  FROM  WHERE ((foo1=:p1 OR foo2=:p2) OR foo3=:p3)';
 
         $params = array();
-        $result = BasePeer::createSelectSql($c, $params);
+        $result = $c->createSelectSql($params);
 
         $this->assertEquals($expected, $result);
     }
@@ -115,7 +114,7 @@ class CriteriaFluidOperatorTest extends BookstoreTestBase
         $expected = 'SELECT  FROM  WHERE (foo1=:p1 OR foo2=:p2) AND foo3=:p3';
 
         $params = array();
-        $result = BasePeer::createSelectSql($c, $params);
+        $result = $c->createSelectSql($params);
 
         $this->assertEquals($expected, $result);
     }

@@ -328,18 +328,6 @@ class Behavior extends MappingModel
     }
 
     /**
-     * Returns the peer builder modifier object.
-     *
-     * The current object is returned by default.
-     *
-     * @return Behavior
-     */
-    public function getPeerBuilderModifier()
-    {
-        return $this;
-    }
-
-    /**
      * Returns the table map builder modifier object.
      *
      * The current object is returned by default.

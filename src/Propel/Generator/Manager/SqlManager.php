@@ -178,6 +178,7 @@ class SqlManager extends AbstractManager
                 $con->commit();
             } catch (\PDOException $e) {
                 $con->rollback();
+                var_dump($sql);
                 throw $e;
             }
         }

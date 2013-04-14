@@ -11,7 +11,6 @@
 namespace Propel\Runtime\Formatter;
 
 use Propel\Runtime\Exception\LogicException;
-use Propel\Runtime\Connection\StatementInterface;
 
 /**
  * Object formatter for Propel query
@@ -21,9 +20,14 @@ use Propel\Runtime\Connection\StatementInterface;
  */
 class ObjectFormatter extends AbstractFormatter
 {
-    public function format(StatementInterface $stmt)
+    public function format(DataFetcher $dataFetcher = null)
     {
         $this->checkInit();
+        if ($dataFetcher) {
+            $this->setDataFetcher($dataFetcher);
+        } else {
+            $dataFetcher = $this->getDataFetcher();
+        }
 
         $collection = $this->getCollection();
 
@@ -32,7 +36,7 @@ class ObjectFormatter extends AbstractFormatter
                 throw new LogicException('Cannot use limit() in conjunction with with() on a one-to-many relationship. Please remove the with() call, or the limit() call.');
             }
             $pks = array();
-            while ($row = $stmt->fetch(\PDO::FETCH_NUM)) {
+            while ($row = $dataFetcher->fetch()) {
                 $object = $this->getAllObjectsFromRow($row);
                 $pk = $object->getPrimaryKey();
                 if (!in_array($pk, $pks)) {
@@ -42,11 +46,11 @@ class ObjectFormatter extends AbstractFormatter
             }
         } else {
             // only many-to-one relationships
-            while ($row = $stmt->fetch(\PDO::FETCH_NUM)) {
+            while ($row = $dataFetcher->fetch()) {
                 $collection[] =  $this->getAllObjectsFromRow($row);
             }
         }
-        $stmt->closeCursor();
+        $dataFetcher->close();
 
         return $collection;
     }
@@ -56,14 +60,20 @@ class ObjectFormatter extends AbstractFormatter
         return '\Propel\Runtime\Collection\ObjectCollection';
     }
 
-    public function formatOne(StatementInterface $stmt)
+    public function formatOne(DataFetcher $dataFetcher = null)
     {
         $this->checkInit();
         $result = null;
-        while ($row = $stmt->fetch(\PDO::FETCH_NUM)) {
+        if ($dataFetcher) {
+            $this->setDataFetcher($dataFetcher);
+        } else {
+            $dataFetcher = $this->getDataFetcher();
+        }
+
+        while ($row = $dataFetcher->fetch()) {
             $result = $this->getAllObjectsFromRow($row);
         }
-        $stmt->closeCursor();
+        $dataFetcher->close();
 
         return $result;
     }
@@ -86,11 +96,21 @@ class ObjectFormatter extends AbstractFormatter
     public function getAllObjectsFromRow($row)
     {
         // main object
-        list($obj, $col) = call_user_func(array($this->peer, 'populateObject'), $row);
+        list($obj, $col) = call_user_func(
+            array($this->getTableMap(), 'populateObject'),
+            $row,
+            0,
+            $this->getDataFetcher()->getIndexType()
+        );
 
         // related objects added using with()
         foreach ($this->getWith() as $modelWith) {
-            list($endObject, $col) = call_user_func(array($modelWith->getModelPeerName(), 'populateObject'), $row, $col);
+            list($endObject, $col) = call_user_func(
+                array($modelWith->getTableMap(), 'populateObject'),
+                $row,
+                $col,
+                $this->getDataFetcher()->getIndexType()
+            );
 
             if (null !== $modelWith->getLeftPhpName() && !isset($hydrationChain[$modelWith->getLeftPhpName()])) {
                 continue;

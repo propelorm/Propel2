@@ -11,10 +11,8 @@
 namespace Propel\Tests\Runtime\Util;
 
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
-use Propel\Tests\Bookstore\BookPeer;
 use Propel\Tests\Bookstore\BookQuery;
 use Propel\Tests\Bookstore\Bookstore;
-use Propel\Tests\Bookstore\BookstorePeer;
 use Propel\Tests\Bookstore\BookstoreQuery;
 use Propel\Tests\Bookstore\Map\AuthorTableMap;
 use Propel\Tests\Bookstore\Map\BookTableMap;
@@ -22,15 +20,15 @@ use Propel\Tests\Bookstore\Map\BookstoreTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Exception\PropelException;
-use Propel\Runtime\Util\BasePeer;
+use Propel\Runtime\Map\TableMap;
 
 /**
- * Tests the BasePeer classes.
+ * Tests the TableMap classes.
  *
  * @see BookstoreDataPopulator
  * @author Hans Lellelid <hans@xmpl.org>
  */
-class BasePeerTest extends BookstoreTestBase
+class TableMapTest extends BookstoreTestBase
 {
 
     /**
@@ -56,21 +54,21 @@ class BasePeerTest extends BookstoreTestBase
     public function testNeedsSelectAliases()
     {
         $c = new Criteria();
-        $this->assertFalse(BasePeer::needsSelectAliases($c), 'Empty Criterias don\'t need aliases');
+        $this->assertFalse($c->needsSelectAliases(), 'Empty Criterias don\'t need aliases');
 
         $c = new Criteria();
         $c->addSelectColumn(BookTableMap::ID);
         $c->addSelectColumn(BookTableMap::TITLE);
-        $this->assertFalse(BasePeer::needsSelectAliases($c), 'Criterias with distinct column names don\'t need aliases');
+        $this->assertFalse($c->needsSelectAliases(), 'Criterias with distinct column names don\'t need aliases');
 
         $c = new Criteria();
-        BookPeer::addSelectColumns($c);
-        $this->assertFalse(BasePeer::needsSelectAliases($c), 'Criterias with only the columns of a model don\'t need aliases');
+        BookTableMap::addSelectColumns($c);
+        $this->assertFalse($c->needsSelectAliases(), 'Criterias with only the columns of a model don\'t need aliases');
 
         $c = new Criteria();
         $c->addSelectColumn(BookTableMap::ID);
         $c->addSelectColumn(AuthorTableMap::ID);
-        $this->assertTrue(BasePeer::needsSelectAliases($c), 'Criterias with common column names do need aliases');
+        $this->assertTrue($c->needsSelectAliases(), 'Criterias with common column names do need aliases');
     }
 
     public function testDoCountDuplicateColumnName()
@@ -82,7 +80,7 @@ class BasePeerTest extends BookstoreTestBase
         $c->addSelectColumn(AuthorTableMap::ID);
         $c->setLimit(3);
         try {
-            $count = BasePeer::doCount($c, $con);
+            $count = $c->doCount($con);
         } catch (Exception $e) {
             $this->fail('doCount() cannot deal with a criteria selecting duplicate column names ');
         }
@@ -90,7 +88,7 @@ class BasePeerTest extends BookstoreTestBase
 
     public function testBigIntIgnoreCaseOrderBy()
     {
-        BookstorePeer::doDeleteAll();
+        BookstoreTableMap::doDeleteAll();
 
         // Some sample data
         $b = new Bookstore();
@@ -131,7 +129,7 @@ class BasePeerTest extends BookstoreTestBase
         $c->addJoin(BookTableMap::AUTHOR_ID, AuthorTableMap::ID);
 
         $params = array();
-        $sql = BasePeer::createSelectSql($c, $params);
+        $sql = $c->createSelectSql($params);
 
         $expectedSql = "SELECT book.ID, book.TITLE FROM book LEFT JOIN publisher ON (book.PUBLISHER_ID=publisher.ID), author WHERE book.AUTHOR_ID=author.ID";
         $this->assertEquals($expectedSql, $sql);
@@ -156,7 +154,7 @@ class BasePeerTest extends BookstoreTestBase
         $c->setLimit(20);
 
         $params = array();
-        $sql = BasePeer::createSelectSql($c, $params);
+        $sql = $c->createSelectSql($params);
 
         $expectedSql = "SELECT TOP 20 book.ID, book.TITLE, publisher.NAME, (SELECT MAX(publisher.NAME) FROM publisher WHERE publisher.ID = book.PUBLISHER_ID) AS PublisherName FROM book LEFT JOIN publisher ON (book.PUBLISHER_ID=publisher.ID)";
         $this->assertEquals($expectedSql, $sql);
@@ -181,7 +179,7 @@ class BasePeerTest extends BookstoreTestBase
         $params = array();
 
         $expectedSql = "SELECT [book.ID], [book.TITLE], [publisher.NAME], [PublisherName] FROM (SELECT ROW_NUMBER() OVER(ORDER BY book.ID) AS [RowNumber], book.ID AS [book.ID], book.TITLE AS [book.TITLE], publisher.NAME AS [publisher.NAME], (SELECT MAX(publisher.NAME) FROM publisher WHERE publisher.ID = book.PUBLISHER_ID) AS [PublisherName] FROM book LEFT JOIN publisher ON (book.PUBLISHER_ID=publisher.ID)) AS derivedb WHERE RowNumber BETWEEN 21 AND 40";
-        $sql = BasePeer::createSelectSql($c, $params);
+        $sql = $c->createSelectSql($params);
         $this->assertEquals($expectedSql, $sql);
     }
 
@@ -205,7 +203,7 @@ class BasePeerTest extends BookstoreTestBase
         $params = array();
 
         $expectedSql = "SELECT [book.ID], [book.TITLE], [publisher.NAME], [PublisherName] FROM (SELECT ROW_NUMBER() OVER(ORDER BY (SELECT MAX(publisher.NAME) FROM publisher WHERE publisher.ID = book.PUBLISHER_ID) DESC) AS [RowNumber], book.ID AS [book.ID], book.TITLE AS [book.TITLE], publisher.NAME AS [publisher.NAME], (SELECT MAX(publisher.NAME) FROM publisher WHERE publisher.ID = book.PUBLISHER_ID) AS [PublisherName] FROM book LEFT JOIN publisher ON (book.PUBLISHER_ID=publisher.ID)) AS derivedb WHERE RowNumber BETWEEN 21 AND 40";
-        $sql = BasePeer::createSelectSql($c, $params);
+        $sql = $c->createSelectSql($params);
         $this->assertEquals($expectedSql, $sql);
     }
 
@@ -230,22 +228,22 @@ class BasePeerTest extends BookstoreTestBase
         $params = array();
 
         $expectedSql = "SELECT [book.ID], [book.TITLE], [publisher.NAME], [PublisherName] FROM (SELECT ROW_NUMBER() OVER(ORDER BY (SELECT MAX(publisher.NAME) FROM publisher WHERE publisher.ID = book.PUBLISHER_ID) DESC, book.TITLE ASC) AS [RowNumber], book.ID AS [book.ID], book.TITLE AS [book.TITLE], publisher.NAME AS [publisher.NAME], (SELECT MAX(publisher.NAME) FROM publisher WHERE publisher.ID = book.PUBLISHER_ID) AS [PublisherName] FROM book LEFT JOIN publisher ON (book.PUBLISHER_ID=publisher.ID)) AS derivedb WHERE RowNumber BETWEEN 21 AND 40";
-        $sql = BasePeer::createSelectSql($c, $params);
+        $sql = $c->createSelectSql($params);
         $this->assertEquals($expectedSql, $sql);
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\RuntimeException
+     * @expectedException \Propel\Runtime\Exception\PropelException
      */
     public function testDoDeleteNoCondition()
     {
         $con = Propel::getServiceContainer()->getWriteConnection(BookTableMap::DATABASE_NAME);
         $c = new Criteria(BookTableMap::DATABASE_NAME);
-        BasePeer::doDelete($c, $con);
+        $c->doDelete($con);
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\RuntimeException
+     * @expectedException \Propel\Runtime\Exception\PropelException
      */
     public function testDoDeleteJoin()
     {
@@ -253,7 +251,7 @@ class BasePeerTest extends BookstoreTestBase
         $c = new Criteria(BookTableMap::DATABASE_NAME);
         $c->add(BookTableMap::TITLE, 'War And Peace');
         $c->addJoin(BookTableMap::AUTHOR_ID, AuthorTableMap::ID);
-        BasePeer::doDelete($c, $con);
+        $c->doDelete($con);
     }
 
     public function testDoDeleteSimpleCondition()
@@ -261,7 +259,7 @@ class BasePeerTest extends BookstoreTestBase
         $con = Propel::getServiceContainer()->getWriteConnection(BookTableMap::DATABASE_NAME);
         $c = new Criteria(BookTableMap::DATABASE_NAME);
         $c->add(BookTableMap::TITLE, 'War And Peace');
-        BasePeer::doDelete($c, $con);
+        $c->doDelete($con);
         $expectedSQL = "DELETE FROM `book` WHERE book.TITLE='War And Peace'";
         $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'doDelete() translates a condition into a WHERE');
     }
@@ -272,7 +270,7 @@ class BasePeerTest extends BookstoreTestBase
         $c = new Criteria(BookTableMap::DATABASE_NAME);
         $c->add(BookTableMap::TITLE, 'War And Peace');
         $c->add(BookTableMap::ID, 12);
-        BasePeer::doDelete($c, $con);
+        $c->doDelete($con);
         $expectedSQL = "DELETE FROM `book` WHERE book.TITLE='War And Peace' AND book.ID=12";
         $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'doDelete() combines conditions in WHERE with an AND');
     }
@@ -283,7 +281,7 @@ class BasePeerTest extends BookstoreTestBase
         $c = new Criteria(BookTableMap::DATABASE_NAME);
         $c->addAlias('b', BookTableMap::TABLE_NAME);
         $c->add('b.TITLE', 'War And Peace');
-        BasePeer::doDelete($c, $con);
+        $c->doDelete($con);
         $expectedSQL = "DELETE b FROM `book` AS b WHERE b.TITLE='War And Peace'";
         $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'doDelete() accepts a Criteria with a table alias');
     }
@@ -299,7 +297,7 @@ class BasePeerTest extends BookstoreTestBase
         $c = new Criteria(BookTableMap::DATABASE_NAME);
         $c->add(BookTableMap::TITLE, 'War And Peace');
         $c->add(AuthorTableMap::FIRST_NAME, 'Leo');
-        BasePeer::doDelete($c, $con);
+        $c->doDelete($con);
         $expectedSQL = "DELETE FROM `author` WHERE author.FIRST_NAME='Leo'";
         $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'doDelete() issues two DELETE queries when passed conditions on two tables');
         $this->assertEquals($count + 2, $con->getQueryCount(), 'doDelete() issues two DELETE queries when passed conditions on two tables');
@@ -307,7 +305,7 @@ class BasePeerTest extends BookstoreTestBase
         $c = new Criteria(BookTableMap::DATABASE_NAME);
         $c->add(AuthorTableMap::FIRST_NAME, 'Leo');
         $c->add(BookTableMap::TITLE, 'War And Peace');
-        BasePeer::doDelete($c, $con);
+        $c->doDelete($con);
         $expectedSQL = "DELETE FROM `book` WHERE book.TITLE='War And Peace'";
         $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'doDelete() issues two DELETE queries when passed conditions on two tables');
         $this->assertEquals($count + 4, $con->getQueryCount(), 'doDelete() issues two DELETE queries when passed conditions on two tables');
@@ -320,7 +318,7 @@ class BasePeerTest extends BookstoreTestBase
         $c->addSelectColumn(BookTableMap::ID);
         $expected = 'SELECT /* Foo */ book.ID FROM `book`';
         $params = array();
-        $this->assertEquals($expected, BasePeer::createSelectSQL($c, $params), 'Criteria::setComment() adds a comment to select queries');
+        $this->assertEquals($expected, $c->createSelectSQL($params), 'Criteria::setComment() adds a comment to select queries');
     }
 
     public function testCommentDoUpdate()
@@ -331,7 +329,7 @@ class BasePeerTest extends BookstoreTestBase
         $c2 = new Criteria();
         $c2->add(BookTableMap::TITLE, 'Updated Title');
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
-        BasePeer::doUpdate($c1, $c2, $con);
+        $c1->doUpdate($c2, $con);
         $expected = 'UPDATE /* Foo */ `book` SET `TITLE`=\'Updated Title\'';
         $this->assertEquals($expected, $con->getLastExecutedQuery(), 'Criteria::setComment() adds a comment to update queries');
     }
@@ -342,7 +340,7 @@ class BasePeerTest extends BookstoreTestBase
         $c->setComment('Foo');
         $c->add(BookTableMap::TITLE, 'War And Peace');
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
-        BasePeer::doDelete($c, $con);
+        $c->doDelete($con);
         $expected = 'DELETE /* Foo */ FROM `book` WHERE book.TITLE=\'War And Peace\'';
         $this->assertEquals($expected, $con->getLastExecutedQuery(), 'Criteria::setComment() adds a comment to delete queries');
     }
@@ -356,12 +354,12 @@ class BasePeerTest extends BookstoreTestBase
         $book->setISBN($book->getISBN());
 
         try {
-            $rowCount = BookPeer::doUpdate($book, $con);
-            $this->assertEquals(0, $rowCount, 'BookPeer::doUpdate() should indicate zero rows updated');
+            $rowCount = $book->doUpdate($con);
+            $this->assertEquals(0, $rowCount, 'Criteria::doUpdate() should indicate zero rows updated');
         } catch (Exception $ex) {
-            $this->fail('BookPeer::doUpdate() threw an exception');
+            $this->fail('Criteria::doUpdate() threw an exception');
         }
 
-        $this->assertEquals($count, $con->getQueryCount(), 'BookPeer::doUpdate(0 does not execute any queries when there are no changes');
+        $this->assertEquals($count, $con->getQueryCount(), 'Criteria::doUpdate(0 does not execute any queries when there are no changes');
     }
 }

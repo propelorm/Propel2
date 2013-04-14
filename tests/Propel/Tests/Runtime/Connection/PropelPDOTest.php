@@ -12,9 +12,7 @@ namespace Propel\Tests\Runtime\Connection;
 
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 use Propel\Tests\Bookstore\Author;
-use Propel\Tests\Bookstore\AuthorPeer;
 use Propel\Tests\Bookstore\AuthorQuery;
-use Propel\Tests\Bookstore\BookPeer;
 use Propel\Tests\Bookstore\BookQuery;
 use Propel\Tests\Bookstore\Map\AuthorTableMap;
 use Propel\Tests\Bookstore\Map\BookTableMap;
@@ -57,7 +55,7 @@ class PropelPDOTest extends BookstoreTestBase
     public function testCommitBeforeFetch()
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
-        AuthorPeer::doDeleteAll($con);
+        AuthorTableMap::doDeleteAll($con);
         $a = new Author();
         $a->setFirstName('Test');
         $a->setLastName('User');
@@ -83,7 +81,7 @@ class PropelPDOTest extends BookstoreTestBase
     public function testCommitAfterFetch()
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
-        AuthorPeer::doDeleteAll($con);
+        AuthorTableMap::doDeleteAll($con);
         $a = new Author();
         $a->setFirstName('Test');
         $a->setLastName('User');
@@ -362,7 +360,7 @@ class PropelPDOTest extends BookstoreTestBase
         }
         $this->assertEquals($latestExecutedQuery, $con->getLastExecutedQuery(), 'PropelPDO updates the last executed query when useLogging is true');
 
-        BookPeer::doDeleteAll($con);
+        BookTableMap::doDeleteAll($con);
         $latestExecutedQuery = "DELETE FROM `book`";
         $this->assertEquals($latestExecutedQuery, $con->getLastExecutedQuery(), 'PropelPDO updates the last executed query on delete operations');
 
@@ -401,7 +399,7 @@ class PropelPDOTest extends BookstoreTestBase
         $books = BookQuery::create(null, $c)->find($con);
         $this->assertEquals(1, $con->getQueryCount(), 'PropelPDO updates the query count when useLogging is true');
 
-        BookPeer::doDeleteAll($con);
+        BookTableMap::doDeleteAll($con);
         $this->assertEquals(2, $con->getQueryCount(), 'PropelPDO updates the query count on delete operations');
 
         $sql = 'DELETE FROM book WHERE 1=1';
@@ -477,7 +475,7 @@ class PropelPDOTest extends BookstoreTestBase
         $latestExecutedQuery = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.TITLE LIKE 'Harry%s'";
         $this->assertEquals($latestExecutedQuery, $handler->latestMessage, 'PropelPDO logs queries and populates bound parameters in debug mode');
 
-        BookPeer::doDeleteAll($con);
+        BookTableMap::doDeleteAll($con);
         $latestExecutedQuery = "DELETE FROM `book`";
         $this->assertEquals($latestExecutedQuery, $handler->latestMessage, 'PropelPDO logs deletion queries in debug mode');
 

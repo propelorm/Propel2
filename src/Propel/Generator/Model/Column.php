@@ -42,11 +42,11 @@ class Column extends MappingModel
     private $mutatorVisibility;
 
     /**
-     * The name to use for the Peer constant that identifies this column.
+     * The name to use for the tableMap constant that identifies this column.
      * (Will be converted to all-uppercase in the templates.)
      * @var string
      */
-    private $peerName;
+    private $tableMapName;
 
     /**
      * Native PHP type (scalar or class name)
@@ -149,7 +149,7 @@ class Column extends MappingModel
             $this->name = $this->getAttribute('name');
             $this->phpName = $this->getAttribute('phpName');
             $this->phpType = $this->getAttribute('phpType');
-            $this->peerName = $this->getAttribute('peerName');
+            $this->tableMapName = $this->getAttribute('tableMapName');
             $this->description = $this->getAttribute('description');
 
             /*
@@ -463,7 +463,7 @@ class Column extends MappingModel
     }
 
     /**
-     * Returns the full column constant name (e.g. PeerName::COLUMN_NAME).
+     * Returns the full column constant name (e.g. TableMapName::COLUMN_NAME).
      *
      * @return string A column constant name for insertion into PHP code
      */
@@ -483,31 +483,31 @@ class Column extends MappingModel
     public function getConstantColumnName()
     {
         // was it overridden in schema.xml ?
-        if ($this->getPeerName()) {
-            return strtoupper($this->getPeerName());
+        if ($this->getTableMapName()) {
+            return strtoupper($this->getTableMapName());
         }
 
         return strtoupper($this->getName());
     }
 
     /**
-     * Returns the Peer constant name that will identify this column.
+     * Returns the TableMap constant name that will identify this column.
      *
      * @return string
      */
-    public function getPeerName()
+    public function getTableMapName()
     {
-        return $this->peerName;
+        return $this->tableMapName;
     }
 
     /**
-     * Sets the Peer constant name that will identify this column.
+     * Sets the TableMap constant name that will identify this column.
      *
      * @param string $name
      */
-    public function setPeerName($name)
+    public function setTableMapName($name)
     {
-        $this->peerName = $name;
+        $this->tableMapName = $name;
     }
 
     /**

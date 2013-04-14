@@ -166,7 +166,6 @@ class ".$this->getUnqualifiedClassName()." extends ".$this->getParentClassName()
      */
     protected function addClassBody(&$script)
     {
-        $this->declareClassFromBuilder($this->getStubPeerBuilder());
         $child = $this->getChild();
         $col = $child->getColumn();
         $cfc = $col->getPhpName();
@@ -175,7 +174,7 @@ class ".$this->getUnqualifiedClassName()." extends ".$this->getParentClassName()
 
         $script .= "
     /**
-     * Constructs a new ".$this->getChild()->getClassName()." class, setting the ".$col->getName()." column to ".$this->getPeerClassName()."::$const.
+     * Constructs a new ".$this->getChild()->getClassName()." class, setting the ".$col->getName()." column to ".$this->getTableMapClassName()."::$const.
      */
     public function __construct()
     {";

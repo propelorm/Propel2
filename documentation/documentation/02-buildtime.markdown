@@ -170,21 +170,21 @@ The "om" command added a new directory in the `bookstore/` project, called `buil
 > ls
     om/
     map/
+        AuthorTableMap.php
+        BookTableMap.php
+        PublisherTableMap.php
     Author.php
-    AuthorPeer.php
     AuthorQuery.php
     Book.php
-    BookPeer.php
     BookQuery.php
     Publisher.php
-    PublisherPeer.php
     PublisherQuery.php
 {% endhighlight %}
 
 For every table in the database, Propel creates 3 PHP classes:
 
 * a _model_ class (e.g. `Book`), which represents a row in the database;
-* a _peer_ class (e.g. `BookPeer`), offering static constants and methods mostly for compatibility with previous Propel versions;
+* a _tablemap_ class (e.g. `Map\BookTableMap`), offering static constants and methods mostly for compatibility with previous Propel versions;
 * a _query_ class (e.g. `BookQuery`), used to operate on a table to retrieve and update rows
 
 Propel uses the `phpName` attribute of each table as the base for the PHP class names.

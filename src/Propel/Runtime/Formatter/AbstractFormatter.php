@@ -11,9 +11,8 @@
 namespace Propel\Runtime\Formatter;
 
 use Propel\Runtime\Propel;
-use Propel\Runtime\Connection\StatementInterface;
 use Propel\Runtime\Exception\PropelException;
-use Propel\Runtime\ActiveQuery\ModelCriteria;
+use Propel\Runtime\ActiveQuery\BaseModelCriteria;
 
 /**
  * Abstract class for query formatter
@@ -25,8 +24,6 @@ abstract class AbstractFormatter
     protected $dbName;
 
     protected $class;
-
-    protected $peer;
 
     protected $tableMap;
 
@@ -40,7 +37,12 @@ abstract class AbstractFormatter
 
     protected $collectionName;
 
-    public function __construct(ModelCriteria $criteria = null)
+    /**
+     * @var DataFetcher
+     */
+    protected $dataFetcher;
+
+    public function __construct(BaseModelCriteria $criteria = null, DataFetcher $dataFetcher = null)
     {
         $this->with = array();
         $this->asColumns = array();
@@ -48,25 +50,37 @@ abstract class AbstractFormatter
         $this->hasLimit = false;
 
         if (null !== $criteria) {
-            $this->init($criteria);
+            $this->init($criteria, $dataFetcher);
         }
+    }
+
+    public function setDataFetcher($dataFetcher)
+    {
+        $this->dataFetcher = $dataFetcher;
+    }
+
+    public function getDataFetcher()
+    {
+        return $this->dataFetcher;
     }
 
     /**
      * Define the hydration schema based on a query object.
      * Fills the Formatter's properties using a Criteria as source
      *
-     * @param ModelCriteria $criteria
+     * @param BaseModelCriteria $criteria
+     * @param DataFetcher       $dataFetcher
      *
      * @return AbstractFormatter The current formatter object
      */
-    public function init(ModelCriteria $criteria)
+    public function init(BaseModelCriteria $criteria, DataFetcher $dataFetcher = null)
     {
         $this->dbName = $criteria->getDbName();
         $this->setClass($criteria->getModelName());
         $this->setWith($criteria->getWith());
         $this->asColumns = $criteria->getAsColumns();
         $this->hasLimit = $criteria->getLimit() != 0;
+        $this->setDataFetcher($dataFetcher);
 
         return $this;
     }
@@ -86,23 +100,12 @@ abstract class AbstractFormatter
     public function setClass($class)
     {
         $this->class     = $class;
-        $this->peer      = constant($this->class . '::PEER');
         $this->tableMap  = constant($this->class . '::TABLE_MAP');
     }
 
     public function getClass()
     {
         return $this->class;
-    }
-
-    public function setPeer($peer)
-    {
-        $this->peer = $peer;
-    }
-
-    public function getPeer()
-    {
-        return $this->peer;
     }
 
     public function setWith($withs = array())
@@ -153,6 +156,13 @@ abstract class AbstractFormatter
         return $collection;
     }
 
+    /**
+     *
+     */
+    public function getNextEntry()
+    {
+    }
+
     public function getCollectionClassName()
     {
 
@@ -170,15 +180,15 @@ abstract class AbstractFormatter
         return $record;
     }
 
-    abstract public function format(StatementInterface $stmt);
+    abstract public function format(DataFetcher $dataFetcher = null);
 
-    abstract public function formatOne(StatementInterface $stmt);
+    abstract public function formatOne(DataFetcher $dataFetcher = null);
 
     abstract public function isObjectFormatter();
 
     public function checkInit()
     {
-        if (null === $this->peer) {
+        if (null === $this->tableMap) {
             throw new PropelException('You must initialize a formatter object before calling format() or formatOne()');
         }
     }
@@ -235,7 +245,7 @@ abstract class AbstractFormatter
     public function getSingleObjectFromRow($row, $class, &$col = 0)
     {
         $obj = $this->getWorkerObject($col, $class);
-        $col = $obj->hydrate($row, $col);
+        $col = $obj->hydrate($row, $col, false, $this->getDataFetcher()->getIndexType());
 
         return $obj;
     }

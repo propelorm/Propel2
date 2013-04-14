@@ -13,10 +13,10 @@ namespace Propel\Generator\Builder\Om;
 use Propel\Generator\Model\PropelTypes;
 
 /**
- * Base class for Peer-building classes.
+ * Base class for object-building classes.
  *
- * This class is designed so that it can be extended the "standard" PeerBuilder
- * and ComplexOMPeerBuilder.  Hence, this class should not have any actual
+ * This class is designed so that it can be extended the "standard" ObjectBuilder
+ * and ComplexOMObjectBuilder.  Hence, this class should not have any actual
  * template code in it -- simply basic logic & utility methods.
  *
  * @author Hans Lellelid <hans@xmpl.org>
@@ -29,7 +29,7 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
      * This method is abstract and should be overridden by the subclasses.
      *
      * Hint: Override this method in your subclass if you want to reorganize or
-     * drastically change the contents of the generated peer class.
+     * drastically change the contents of the generated object class.
      *
      * @param      string &$script The script will be modified in this method.
      */

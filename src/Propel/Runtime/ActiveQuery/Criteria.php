@@ -10,9 +10,13 @@
 
 namespace Propel\Runtime\ActiveQuery;
 
+use Behat\Gherkin\Exception\Exception;
+use Propel\Runtime\Connection\ConnectionInterface;
+use Propel\Runtime\Exception\PropelException;
+use Propel\Runtime\Formatter\DataFetcher;
+use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\Exception\LogicException;
-use Propel\Runtime\Util\BasePeer;
 use Propel\Runtime\Util\PropelConditionalProxy;
 use Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion;
 use Propel\Runtime\ActiveQuery\Criterion\BasicCriterion;
@@ -23,8 +27,6 @@ use Propel\Runtime\ActiveQuery\Criterion\RawCriterion;
 
 /**
  * This is a utility class for holding criteria information for a query.
- *
- * BasePeer constructs SQL statements based on the values in this class.
  *
  * @author Hans Lellelid <hans@xmpl.org> (Propel)
  * @author Kaspars Jaudzems <kaspars.jaudzems@inbox.lv> (Propel)
@@ -259,7 +261,7 @@ class Criteria
      * Creates a new instance with the default capacity which corresponds to
      * the specified database.
      *
-     * @param      dbName The database name.
+     * @param String $dbName The database name.
      */
     public function __construct($dbName = null)
     {
@@ -311,7 +313,7 @@ class Criteria
      *
      * <code>
      * Criteria myCrit = new Criteria();
-     * myCrit->addAsColumn('alias', 'ALIAS('.MyPeer::ID.')');
+     * myCrit->addAsColumn('alias', 'ALIAS('.MyTableMap::ID.')');
      * </code>
      *
      * @param string $name   Wanted Name of the column (alias).
@@ -548,24 +550,24 @@ class Criteria
         switch ($comparison) {
             case Criteria::CUSTOM:
                 // custom expression with no parameter binding
-                // something like $c->add(BookPeer::TITLE, "CONCAT(book.TITLE, 'bar') = 'foobar'", Criteria::CUSTOM);
+                // something like $c->add(BookTableMap::TITLE, "CONCAT(book.TITLE, 'bar') = 'foobar'", Criteria::CUSTOM);
                 return new CustomCriterion($this, $value);
             case Criteria::IN:
             case Criteria::NOT_IN:
                 // table.column IN (?, ?) or table.column NOT IN (?, ?)
-                // something like $c->add(BookPeer::TITLE, array('foo', 'bar'), Criteria::IN);
+                // something like $c->add(BookTableMap::TITLE, array('foo', 'bar'), Criteria::IN);
                 return new InCriterion($this, $column, $value, $comparison);
             case Criteria::LIKE:
             case Criteria::NOT_LIKE:
             case Criteria::ILIKE:
             case Criteria::NOT_ILIKE:
                 // table.column LIKE ? or table.column NOT LIKE ?  (or ILIKE for Postgres)
-                // something like $c->add(BookPeer::TITLE, 'foo%', Criteria::LIKE);
+                // something like $c->add(BookTableMap::TITLE, 'foo%', Criteria::LIKE);
                 return new LikeCriterion($this, $column, $value, $comparison);
                 break;
             default:
                 // simple comparison
-                // something like $c->add(BookPeer::PRICE, 12, Criteria::GREATER_THAN);
+                // something like $c->add(BookTableMap::PRICE, 12, Criteria::GREATER_THAN);
                 return new BasicCriterion($this, $column, $value, $comparison);
         }
     }
@@ -790,6 +792,11 @@ class Criteria
         return $this;
     }
 
+    public function __toString()
+    {
+        return "" . implode(', ', $this->map) . "\n";
+    }
+
     /**
      * This method creates a new criterion but keeps it for later use with combine()
      * Until combine() is called, the condition is not added to the query
@@ -856,7 +863,7 @@ class Criteria
      * This is the way that you should add a join of two tables.
      * Example usage:
      * <code>
-     * $c->addJoin(ProjectPeer::ID, FooPeer::PROJECT_ID, Criteria::LEFT_JOIN);
+     * $c->addJoin(ProjectTableMap::ID, FooTableMap::PROJECT_ID, Criteria::LEFT_JOIN);
      * // LEFT JOIN FOO ON (PROJECT.ID = FOO.PROJECT_ID)
      * </code>
      *
@@ -913,8 +920,8 @@ class Criteria
      *
      * Example usage:
      * $c->addMultipleJoin(array(
-     *     array(LeftPeer::LEFT_COLUMN, RightPeer::RIGHT_COLUMN),  // if no third argument, defaults to Criteria::EQUAL
-     *     array(FoldersPeer::alias( 'fo', FoldersPeer::LFT ), FoldersPeer::alias( 'parent', FoldersPeer::RGT ), Criteria::LESS_EQUAL )
+     *     array(LeftTableMap::LEFT_COLUMN, RightTableMap::RIGHT_COLUMN),  // if no third argument, defaults to Criteria::EQUAL
+     *     array(FoldersTableMap::alias( 'fo', FoldersTableMap::LFT ), FoldersTableMap::alias( 'parent', FoldersTableMap::RGT ), Criteria::LESS_EQUAL )
      *   ),
      *   Criteria::LEFT_JOIN
       * );
@@ -1447,7 +1454,7 @@ class Criteria
         try {
 
             $params = array();
-            $sb .= "\nSQL (may not be complete): ".BasePeer::createSelectSql($this, $params);
+            $sb .= "\nSQL (may not be complete): ".$this->createSelectSql($params);
 
             $sb .= "\nParams: ";
             $paramstr = array();
@@ -1633,7 +1640,7 @@ class Criteria
      * <p>
      * <code>
      * $crit = new Criteria();
-     * $c = $crit->getNewCriterion(BasePeer::ID, 5, Criteria::LESS_THAN);
+     * $c = $crit->getNewCriterion(BaseTableMap::ID, 5, Criteria::LESS_THAN);
      * $crit->addHaving($c);
      * </code>
      *
@@ -1663,7 +1670,7 @@ class Criteria
      *    <code>$c->getCriterionForCondition('foo like ?', '%bar%', PDO::PARAM_STR);</code>
      *
      *  - Otherwise, create a classic Criterion based on a column name and a comparison.
-     *    <code>$c->getCriterionForCondition(BookPeer::TITLE, 'War%', Criteria::LIKE);</code>
+     *    <code>$c->getCriterionForCondition(BookTableMap::TITLE, 'War%', Criteria::LIKE);</code>
      *
      * @param mixed $p1         A Criterion, or a SQL clause with a question mark placeholder, or a column name
      * @param mixed $value      The value to bind in the condition
@@ -1679,7 +1686,7 @@ class Criteria
         }
 
         // $comparison is one of Criteria's constants, or a PDO binding type
-        // something like $c->add(BookPeer::TITLE, 'War%', Criteria::LIKE);
+        // something like $c->add(BookTableMap::TITLE, 'War%', Criteria::LIKE);
         return $this->getNewCriterion($p1, $value, $comparison);
     }
 
@@ -1757,7 +1764,7 @@ class Criteria
      * Overrides Criteria::add() to use the default combine operator
      * @see Criteria::add()
      *
-     * @param string|AbstractCriterion $p1                    The column to run the comparison on (e.g. BookPeer::ID), or Criterion object
+     * @param string|AbstractCriterion $p1                    The column to run the comparison on (e.g. BookTableMap::ID), or Criterion object
      * @param mixed                    $value
      * @param string                   $operator              A String, like Criteria::EQUAL.
      * @param boolean                  $preferColumnCondition If true, the condition is combined with an existing condition on the same column
@@ -1775,6 +1782,684 @@ class Criteria
         }
 
         return $this->addAnd($p1, $value, $operator, $preferColumnCondition);
+    }
+
+    /**
+     * Method to create an SQL query based on values in a Criteria.
+     *
+     * This method creates only prepared statement SQL (using ? where values
+     * will go).  The second parameter ($params) stores the values that need
+     * to be set before the statement is executed.  The reason we do it this way
+     * is to let the PDO layer handle all escaping & value formatting.
+     *
+     * @param      array &$params Parameters that are to be replaced in prepared statement.
+     * @return string
+     *
+     * @throws \Propel\Runtime\Exception\PropelException Trouble creating the query string.
+     */
+    public function createSelectSql(&$params)
+    {
+        $db = Propel::getServiceContainer()->getAdapter($this->getDbName());
+        $dbMap = Propel::getServiceContainer()->getDatabaseMap($this->getDbName());
+
+        $fromClause = array();
+        $joinClause = array();
+        $joinTables = array();
+        $whereClause = array();
+        $orderByClause = array();
+
+        $orderBy = $this->getOrderByColumns();
+        $groupBy = $this->getGroupByColumns();
+
+        // get the first part of the SQL statement, the SELECT part
+        $selectSql = $db->createSelectSqlPart($this, $fromClause);
+
+        // Handle joins
+        // joins with a null join type will be added to the FROM clause and the condition added to the WHERE clause.
+        // joins of a specified type: the LEFT side will be added to the fromClause and the RIGHT to the joinClause
+        foreach ($this->getJoins() as $join) {
+
+            $join->setAdapter($db);
+
+            // add 'em to the queues..
+            if (!$fromClause) {
+                $fromClause[] = $join->getLeftTableWithAlias();
+            }
+            $joinTables[] = $join->getRightTableWithAlias();
+            $joinClause[] = $join->getClause($params);
+        }
+
+        // add the criteria to WHERE clause
+        // this will also add the table names to the FROM clause if they are not already
+        // included via a LEFT JOIN
+        foreach ($this->keys() as $key) {
+
+            $criterion = $this->getCriterion($key);
+            $table = null;
+            foreach ($criterion->getAttachedCriterion() as $attachedCriterion) {
+                $tableName = $attachedCriterion->getTable();
+
+                $table = $this->getTableForAlias($tableName);
+                if ($table !== null) {
+                    $fromClause[] = $table . ' ' . $tableName;
+                } else {
+                    $fromClause[] = $tableName;
+                    $table = $tableName;
+                }
+
+                if ($this->isIgnoreCase() && method_exists($attachedCriterion, 'setIgnoreCase')
+                    && $dbMap->getTable($table)->getColumn($attachedCriterion->getColumn())->isText()) {
+                    $attachedCriterion->setIgnoreCase(true);
+                }
+            }
+
+            $criterion->setAdapter($db);
+
+            $sb = '';
+            $criterion->appendPsTo($sb, $params);
+            $whereClause[] = $sb;
+        }
+
+        // Unique from clause elements
+        $fromClause = array_unique($fromClause);
+        $fromClause = array_diff($fromClause, array(''));
+
+        // tables should not exist in both the from and join clauses
+        if ($joinTables && $fromClause) {
+            foreach ($fromClause as $fi => $ftable) {
+                if (in_array($ftable, $joinTables)) {
+                    unset($fromClause[$fi]);
+                }
+            }
+        }
+
+        // Add the GROUP BY columns
+        $groupByClause = $groupBy;
+
+        $having = $this->getHaving();
+        $havingString = null;
+        if (null !== $having) {
+            $sb = '';
+            $having->appendPsTo($sb, $params);
+            $havingString = $sb;
+        }
+
+        if (!empty($orderBy)) {
+
+            foreach ($orderBy as $orderByColumn) {
+
+                // Add function expression as-is.
+
+                if (strpos($orderByColumn, '(') !== false) {
+                    $orderByClause[] = $orderByColumn;
+                    continue;
+                }
+
+                // Split orderByColumn (i.e. "table.column DESC")
+
+                $dotPos = strrpos($orderByColumn, '.');
+
+                if ($dotPos !== false) {
+                    $tableName = substr($orderByColumn, 0, $dotPos);
+                    $columnName = substr($orderByColumn, $dotPos + 1);
+                } else {
+                    $tableName = '';
+                    $columnName = $orderByColumn;
+                }
+
+                $spacePos = strpos($columnName, ' ');
+
+                if ($spacePos !== false) {
+                    $direction = substr($columnName, $spacePos);
+                    $columnName = substr($columnName, 0, $spacePos);
+                } else {
+                    $direction = '';
+                }
+
+                $tableAlias = $tableName;
+                if ($aliasTableName = $this->getTableForAlias($tableName)) {
+                    $tableName = $aliasTableName;
+                }
+
+                $columnAlias = $columnName;
+                if ($asColumnName = $this->getColumnForAs($columnName)) {
+                    $columnName = $asColumnName;
+                }
+
+                $column = $tableName ? $dbMap->getTable($tableName)->getColumn($columnName) : null;
+
+                if ($this->isIgnoreCase() && $column && $column->isText()) {
+                    $ignoreCaseColumn = $db->ignoreCaseInOrderBy("$tableAlias.$columnAlias");
+                    $orderByClause[] =  $ignoreCaseColumn . $direction;
+                    $selectSql .= ', ' . $ignoreCaseColumn;
+                } else {
+                    $orderByClause[] = $orderByColumn;
+                }
+            }
+        }
+
+        if (empty($fromClause) && $this->getPrimaryTableName()) {
+            $fromClause[] = $this->getPrimaryTableName();
+        }
+
+        // tables should not exist as alias of subQuery
+        if ($this->hasSelectQueries()) {
+            foreach ($fromClause as $key => $ftable) {
+                if (false !== strpos($ftable, ' ')) {
+                    list(, $tableName) = explode(' ', $ftable);
+                } else {
+                    $tableName = $ftable;
+                }
+                if ($this->hasSelectQuery($tableName)) {
+                    unset($fromClause[$key]);
+                }
+            }
+        }
+
+        // from / join tables quoted if it is necessary
+        if ($db->useQuoteIdentifier()) {
+            $fromClause = array_map(array($db, 'quoteIdentifierTable'), $fromClause);
+            $joinClause = $joinClause ? $joinClause : array_map(array($db, 'quoteIdentifierTable'), $joinClause);
+        }
+
+        // add subQuery to From after adding quotes
+        foreach ($this->getSelectQueries() as $subQueryAlias => $subQueryCriteria) {
+            $fromClause[] = '(' . $subQueryCriteria->createSelectSql($params) . ') AS ' . $subQueryAlias;
+        }
+
+        // build from-clause
+        $from = '';
+        if (!empty($joinClause) && count($fromClause) > 1) {
+            $from .= implode(" CROSS JOIN ", $fromClause);
+        } else {
+            $from .= implode(", ", $fromClause);
+        }
+
+        $from .= $joinClause ? ' ' . implode(' ', $joinClause) : '';
+
+        // Build the SQL from the arrays we compiled
+        $sql =  $selectSql
+            .' FROM '  . $from
+            .($whereClause ? ' WHERE '.implode(' AND ', $whereClause) : '')
+            .($groupByClause ? ' GROUP BY '.implode(',', $groupByClause) : '')
+            .($havingString ? ' HAVING '.$havingString : '')
+            .($orderByClause ? ' ORDER BY '.implode(',', $orderByClause) : '')
+        ;
+
+        // APPLY OFFSET & LIMIT to the query.
+        if ($this->getLimit() || $this->getOffset()) {
+            $db->applyLimit($sql, $this->getOffset(), $this->getLimit(), $this);
+        }
+
+        return $sql;
+    }
+
+
+    /**
+     * Method to perform inserts based on values and keys in a
+     * Criteria.
+     * <p>
+     * If the primary key is auto incremented the data in Criteria
+     * will be inserted and the auto increment value will be returned.
+     * <p>
+     * If the primary key is included in Criteria then that value will
+     * be used to insert the row.
+     * <p>
+     * If no primary key is included in Criteria then we will try to
+     * figure out the primary key from the database map and insert the
+     * row with the next available id using util.db.IDBroker.
+     * <p>
+     * If no primary key is defined for the table the values will be
+     * inserted as specified in Criteria and null will be returned.
+     *
+     * @param  ConnectionInterface $con A ConnectionInterface connection.
+     * @return mixed               The primary key for the new row if the primary key is auto-generated. Otherwise will return null.
+     *
+     * @throws \Propel\Runtime\Exception\PropelException
+     */
+    public function doInsert(ConnectionInterface $con = null)
+    {
+        // The primary key
+        $id = null;
+        if (null === $con) {
+            $con = Propel::getServiceContainer()->getWriteConnection($this->getDbName());
+        }
+        $db = Propel::getServiceContainer()->getAdapter($this->getDbName());
+
+        // Get the table name and method for determining the primary
+        // key value.
+        $keys = $this->keys();
+        if (!empty($keys)) {
+            $tableName = $this->getTableName($keys[0]);
+        } else {
+            throw new PropelException('Database insert attempted without anything specified to insert.');
+        }
+
+        $tableName = $this->getTableName($keys[0]);
+        $dbMap = Propel::getServiceContainer()->getDatabaseMap($this->getDbName());
+        $tableMap = $dbMap->getTable($tableName);
+        $keyInfo = $tableMap->getPrimaryKeyMethodInfo();
+        $useIdGen = $tableMap->isUseIdGenerator();
+        //$keyGen = $con->getIdGenerator();
+
+        $pk = $this->getPrimaryKey();
+
+        // only get a new key value if you need to
+        // the reason is that a primary key might be defined
+        // but you are still going to set its value. for example:
+        // a join table where both keys are primary and you are
+        // setting both columns with your own values
+
+        // pk will be null if there is no primary key defined for the table
+        // we're inserting into.
+        if (null !== $pk && $useIdGen && !$this->keyContainsValue($pk->getFullyQualifiedName()) && $db->isGetIdBeforeInsert()) {
+            try {
+                $id = $db->getId($con, $keyInfo);
+            } catch (\Exception $e) {
+                throw new PropelException('Unable to get sequence id.', 0, $e);
+            }
+            $this->add($pk->getFullyQualifiedName(), $id);
+        }
+
+        try {
+            $adapter = Propel::getServiceContainer()->getAdapter($this->getDBName());
+
+            $qualifiedCols = $this->keys(); // we need table.column cols when populating values
+            $columns = array(); // but just 'column' cols for the SQL
+            foreach ($qualifiedCols as $qualifiedCol) {
+                $columns[] = substr($qualifiedCol, strrpos($qualifiedCol, '.') + 1);
+            }
+
+            // add identifiers
+            if ($adapter->useQuoteIdentifier()) {
+                $columns = array_map(array($adapter, 'quoteIdentifier'), $columns);
+                $tableName = $adapter->quoteIdentifierTable($tableName);
+            }
+
+            $sql = 'INSERT INTO ' . $tableName
+                . ' (' . implode(',', $columns) . ')'
+                . ' VALUES (';
+            // . substr(str_repeat("?,", count($columns)), 0, -1) .
+            for ($p = 1, $cnt = count($columns); $p <= $cnt; $p++) {
+                $sql .= ':p'.$p;
+                if ($p !== $cnt) {
+                    $sql .= ',';
+                }
+            }
+            $sql .= ')';
+
+            $params = $this->buildParams($qualifiedCols);
+
+            $db->cleanupSQL($sql, $params, $this, $dbMap);
+
+            $stmt = $con->prepare($sql);
+            $db->bindValues($stmt, $params, $dbMap, $db);
+            $stmt->execute();
+
+        } catch (\Exception $e) {
+            Propel::log($e->getMessage(), Propel::LOG_ERR);
+            throw new PropelException(sprintf('Unable to execute INSERT statement [%s]', $sql), 0, $e);
+        }
+
+        // If the primary key column is auto-incremented, get the id now.
+        if (null !== $pk && $useIdGen && $db->isGetIdAfterInsert()) {
+            try {
+                $id = $db->getId($con, $keyInfo);
+            } catch (\Exception $e) {
+                throw new PropelException("Unable to get autoincrement id.", 0, $e);
+            }
+        }
+
+        return $id;
+    }
+
+    public function getPrimaryKey(Criteria $criteria = null)
+    {
+        if (!$criteria) {
+            $criteria = $this;
+        }
+        // Assume all the keys are for the same table.
+        $keys = $criteria->keys();
+        $key = $keys[0];
+        $table = $criteria->getTableName($key);
+
+        $pk = null;
+
+        if (!empty($table)) {
+            $dbMap = Propel::getServiceContainer()->getDatabaseMap($criteria->getDbName());
+
+            $pks = $dbMap->getTable($table)->getPrimaryKeys();
+            if (!empty($pks)) {
+                $pk = array_shift($pks);
+            }
+        }
+
+        return $pk;
+    }
+
+    /**
+     * Method used to update rows in the DB.  Rows are selected based
+     * on selectCriteria and updated using values in updateValues.
+     * <p>
+     * Use this method for performing an update of the kind:
+     * <p>
+     * WHERE some_column = some value AND could_have_another_column =
+     * another value AND so on.
+     *
+     * @param Criteria            $updateValues A Criteria object containing values used in set clause.
+     * @param ConnectionInterface $con          The ConnectionInterface connection object to use.
+     *
+     * @return int The number of rows affected by last update statement.
+     *                             For most uses there is only one update statement executed, so this number will
+     *                             correspond to the number of rows affected by the call to this method.
+     *                             Note that the return value does require that this information is returned
+     *                             (supported) by the Propel db driver.
+     *
+     * @throws PropelException
+     */
+    public function doUpdate($updateValues, $con)
+    {
+        $db = Propel::getServiceContainer()->getAdapter($this->getDbName());
+        $dbMap = Propel::getServiceContainer()->getDatabaseMap($this->getDbName());
+
+        // Get list of required tables, containing all columns
+        $tablesColumns = $this->getTablesColumns();
+        if (empty($tablesColumns)) {
+            $tablesColumns = array($this->getPrimaryTableName() => array());
+        }
+
+        // we also need the columns for the update SQL
+        $updateTablesColumns = $updateValues->getTablesColumns();
+
+        // If no columns are changing values, we may get here with
+        // an empty array in $updateTablesColumns.  In that case,
+        // there is nothing to do, so we return the rows affected,
+        // which is 0.  Fixes a bug in which an UPDATE statement
+        // would fail in this instance.
+
+        if (empty($updateTablesColumns)) {
+            return 0;
+        }
+
+        $affectedRows = 0; // initialize this in case the next loop has no iterations.
+
+        foreach ($tablesColumns as $tableName => $columns) {
+
+            $whereClause = array();
+            $params = array();
+            $stmt = null;
+            try {
+                $sql = 'UPDATE ';
+                if ($queryComment = $this->getComment()) {
+                    $sql .= '/* ' . $queryComment . ' */ ';
+                }
+                // is it a table alias?
+                if ($tableName2 = $this->getTableForAlias($tableName)) {
+                    $updateTable = $tableName2 . ' ' . $tableName;
+                    $tableName = $tableName2;
+                } else {
+                    $updateTable = $tableName;
+                }
+                if ($db->useQuoteIdentifier()) {
+                    $sql .= $db->quoteIdentifierTable($updateTable);
+                } else {
+                    $sql .= $updateTable;
+                }
+                $sql .= " SET ";
+                $p = 1;
+                foreach ($updateTablesColumns[$tableName] as $col) {
+                    $updateColumnName = substr($col, strrpos($col, '.') + 1);
+                    // add identifiers for the actual database?
+                    if ($db->useQuoteIdentifier()) {
+                        $updateColumnName = $db->quoteIdentifier($updateColumnName);
+                    }
+                    if ($updateValues->getComparison($col) != Criteria::CUSTOM_EQUAL) {
+                        $sql .= $updateColumnName . '=:p'.$p++.', ';
+                    } else {
+                        $param = $updateValues->get($col);
+                        $sql .= $updateColumnName . ' = ';
+                        if (is_array($param)) {
+                            if (isset($param['raw'])) {
+                                $raw = $param['raw'];
+                                $rawcvt = '';
+                                // parse the $params['raw'] for ? chars
+                                for ($r = 0, $len = strlen($raw); $r < $len; $r++) {
+                                    if ($raw{$r} == '?') {
+                                        $rawcvt .= ':p'.$p++;
+                                    } else {
+                                        $rawcvt .= $raw{$r};
+                                    }
+                                }
+                                $sql .= $rawcvt . ', ';
+                            } else {
+                                $sql .= ':p'.$p++.', ';
+                            }
+                            if (isset($param['value'])) {
+                                $updateValues->put($col, $param['value']);
+                            }
+                        } else {
+                            $updateValues->remove($col);
+                            $sql .= $param . ', ';
+                        }
+                    }
+                }
+
+                $params = $this->buildParams($updateTablesColumns[$tableName], $updateValues);
+
+                $sql = substr($sql, 0, -2);
+                if (!empty($columns)) {
+                    foreach ($columns as $colName) {
+                        $sb = '';
+                        $this->getCriterion($colName)->appendPsTo($sb, $params);
+                        $whereClause[] = $sb;
+                    }
+                    $sql .= ' WHERE ' .  implode(' AND ', $whereClause);
+                }
+
+                $db->cleanupSQL($sql, $params, $updateValues, $dbMap);
+
+                $stmt = $con->prepare($sql);
+
+                // Replace ':p?' with the actual values
+                $db->bindValues($stmt, $params, $dbMap, $db);
+
+                $stmt->execute();
+
+                $affectedRows = $stmt->rowCount();
+
+                $stmt = null; // close
+
+            } catch (\Exception $e) {
+                if ($stmt) {
+                    $stmt = null; // close
+                }
+                Propel::log($e->getMessage(), Propel::LOG_ERR);
+                throw new PropelException(sprintf('Unable to execute UPDATE statement [%s]', $sql), 0, $e);
+            }
+
+        } // foreach table in the criteria
+
+        return $affectedRows;
+    }
+
+    public function buildParams($columns, Criteria $values = null)
+    {
+        if (!$values) {
+            $values = $this;
+        }
+        $params = array();
+        foreach ($columns as $key) {
+            if ($values->containsKey($key)) {
+                $crit = $values->getCriterion($key);
+                $params[] = array(
+                    'column' => $crit->getColumn(),
+                    'table' => $crit->getTable(),
+                    'value' => $crit->getValue()
+                );
+            }
+        }
+
+        return $params;
+    }
+
+    public function doCount($con = null)
+    {
+        $dbMap = Propel::getServiceContainer()->getDatabaseMap($this->getDbName());
+        $db = Propel::getServiceContainer()->getAdapter($this->getDbName());
+
+        if (null === $con) {
+            $con = Propel::getServiceContainer()->getReadConnection($this->getDbName());
+        }
+
+        $needsComplexCount = $this->getGroupByColumns()
+            || $this->getOffset()
+            || $this->getLimit()
+            || $this->getHaving()
+            || in_array(Criteria::DISTINCT, $this->getSelectModifiers())
+            || count($this->selectQueries) > 0
+        ;
+
+        $params = array();
+        if ($needsComplexCount) {
+            if ($this->needsSelectAliases()) {
+                if ($this->getHaving()) {
+                    throw new LogicException('Propel cannot create a COUNT query when using HAVING and  duplicate column names in the SELECT part');
+                }
+                $db->turnSelectColumnsToAliases($this);
+            }
+            $selectSql = $this->createSelectSql($params);
+            $sql = 'SELECT COUNT(*) FROM (' . $selectSql . ') propelmatch4cnt';
+        } else {
+            // Replace SELECT columns with COUNT(*)
+            $this->clearSelectColumns()->addSelectColumn('COUNT(*)');
+            $sql = $this->createSelectSql($params);
+        }
+        try {
+            $stmt = $con->prepare($sql);
+            $db->bindValues($stmt, $params, $dbMap);
+            $stmt->execute();
+        } catch (\Exception $e) {
+            Propel::log($e->getMessage(), Propel::LOG_ERR);
+            throw new PropelException(sprintf('Unable to execute COUNT statement [%s]', $sql));
+        }
+
+        return $con->getDataFetcher($stmt);
+    }
+
+    /**
+     * Checks whether the Criteria needs to use column aliasing
+     * This is implemented in a service class rather than in Criteria itself
+     * in order to avoid doing the tests when it's not necessary (e.g. for SELECTs)
+     */
+    public function needsSelectAliases()
+    {
+        $columnNames = array();
+        foreach ($this->getSelectColumns() as $fullyQualifiedColumnName) {
+            if ($pos = strrpos($fullyQualifiedColumnName, '.')) {
+                $columnName = substr($fullyQualifiedColumnName, $pos);
+                if (isset($columnNames[$columnName])) {
+                    // more than one column with the same name, so aliasing is required
+                    return true;
+                }
+                $columnNames[$columnName] = true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Issue a DELETE query based on the current ModelCriteria
+     * This method is called by ModelCriteria::delete() inside a transaction
+     *
+     * @param ConnectionInterface $con a connection object
+     *
+     * @return int             the number of deleted rows
+     * @throws PropelException
+     */
+    public function doDelete(ConnectionInterface $con = null)
+    {
+        if (null === $con) {
+            $con = Propel::getServiceContainer()->getWriteConnection($this->getDbName());
+        }
+
+        $db = Propel::getServiceContainer()->getAdapter($this->getDbName());
+        $dbMap = Propel::getServiceContainer()->getDatabaseMap($this->getDbName());
+
+        //join are not supported with DELETE statement
+        if (count($this->getJoins())) {
+            throw new PropelException('Delete does not support join');
+        }
+
+        // Set up a list of required tables (one DELETE statement will
+        // be executed per table)
+        $tables = $this->getTablesColumns();
+        if (empty($tables)) {
+            throw new PropelException("Cannot delete from an empty Criteria");
+        }
+
+        $affectedRows = 0; // initialize this in case the next loop has no iterations.
+
+        foreach ($tables as $tableName => $columns) {
+
+            $whereClause = array();
+            $params = array();
+            $stmt = null;
+            try {
+                $sql = $db->getDeleteFromClause($this, $tableName);
+
+                foreach ($columns as $colName) {
+                    $sb = '';
+                    $this->getCriterion($colName)->appendPsTo($sb, $params);
+                    $whereClause[] = $sb;
+                }
+                $sql .= ' WHERE ' .  implode(' AND ', $whereClause);
+
+                $stmt = $con->prepare($sql);
+
+                $db->bindValues($stmt, $params, $dbMap);
+                $stmt->execute();
+                $affectedRows = $stmt->rowCount();
+            } catch (\Exception $e) {
+                Propel::log($e->getMessage(), Propel::LOG_ERR);
+                throw new PropelException(sprintf('Unable to execute DELETE statement [%s]', $sql));
+            }
+
+        } // for each table
+
+        return $affectedRows;
+    }
+
+    /**
+     * Builds, binds and executes a SELECT query based on the current object.
+     * @param $con A connection object
+     *
+     * @return DataFetcher                               A dataFetcher using the connection, ready to be fetched
+     * @throws \Propel\Runtime\Exception\PropelException
+     */
+    public function doSelect($con = null)
+    {
+        if (null === $con) {
+            $con = Propel::getServiceContainer()->getReadConnection($this->getDbName());
+        }
+        $dbMap = Propel::getServiceContainer()->getDatabaseMap($this->getDbName());
+        $db = Propel::getServiceContainer()->getAdapter($this->getDbName());
+
+        $params = array();
+        $sql = $this->createSelectSql($params);
+        try {
+            $stmt = $con->prepare($sql);
+            $db->bindValues($stmt, $params, $dbMap);
+            $stmt->execute();
+        } catch (\Exception $e) {
+            if ($stmt) {
+                $stmt = null; // close
+            }
+            Propel::log($e->getMessage(), Propel::LOG_ERR);
+            throw new PropelException(sprintf('Unable to execute SELECT statement [%s]', $sql));
+        }
+
+        return $con->getDataFetcher($stmt);
     }
 
     // Fluid operators

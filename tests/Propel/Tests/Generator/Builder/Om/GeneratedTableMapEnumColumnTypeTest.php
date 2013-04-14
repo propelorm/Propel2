@@ -15,15 +15,15 @@ use Propel\Generator\Util\QuickBuilder;
 use Propel\Runtime\Propel;
 
 /**
- * Tests the generated Peer classes for enum column type constants
+ * Tests the generated TableMap classes for enum column type constants
  *
  * @author Francois Zaninotto
  */
-class GeneratedPeerEnumColumnTypeTest extends \PHPUnit_Framework_TestCase
+class GeneratedTableMapEnumColumnTypeTest extends \PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
-        if (!class_exists('ComplexColumnTypeEntity103Peer')) {
+        if (!class_exists('ComplexColumnTypeEntity103')) {
             $schema = <<<EOF
 <database name="generated_object_complex_type_test_103">
     <table name="complex_column_type_entity_103">

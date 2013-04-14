@@ -340,7 +340,7 @@ class NestedSetBehaviorQueryBuilderModifierWithScopeTest extends TestCase
     public function testRetrieveRoot()
     {
         $this->assertTrue(method_exists('NestedSetTable10Query', 'retrieveRoot'), 'nested_set adds a retrieveRoot() method');
-        \NestedSetTable10Peer::doDeleteAll();
+        \Map\NestedSetTable10TableMap::doDeleteAll();
 
         $t1 = new \NestedSetTable10();
         $t1->setLeftValue(1);

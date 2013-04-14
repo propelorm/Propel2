@@ -11,10 +11,7 @@
 namespace Propel\Runtime\Adapter;
 
 use Propel\Runtime\Connection\ConnectionInterface;
-use Propel\Runtime\Connection\StatementInterface;
 use Propel\Runtime\Map\ColumnMap;
-use Propel\Runtime\Map\DatabaseMap;
-use Propel\Runtime\ActiveQuery\Criteria;
 
 /**
  * Interface for adapters.
@@ -22,9 +19,9 @@ use Propel\Runtime\ActiveQuery\Criteria;
  */
 interface AdapterInterface
 {
-    const ID_METHOD_NONE          = 0;
+    const ID_METHOD_NONE = 0;
     const ID_METHOD_AUTOINCREMENT = 1;
-    const ID_METHOD_SEQUENCE      = 2;
+    const ID_METHOD_SEQUENCE = 2;
 
     /**
      * Build database connection
@@ -47,22 +44,6 @@ interface AdapterInterface
      * @param string                                        $charset The $string charset encoding.
      */
     public function setCharset(ConnectionInterface $con, $charset);
-
-    /**
-     * This method is used to ignore case.
-     *
-     * @param  string $in The string to transform to upper case.
-     * @return string The upper case string.
-     */
-    public function toUpperCase($in);
-
-    /**
-     * This method is used to ignore case.
-     *
-     * @param  string $in The string whose case to ignore.
-     * @return string The string in a case that can be ignored.
-     */
-    public function ignoreCase($in);
 
     /**
      * This method is used to ignore case in an ORDER BY clause.
@@ -199,100 +180,4 @@ interface AdapterInterface
      */
     public function useQuoteIdentifier();
 
-    /**
-     * Allows manipulation of the query string before StatementPdo is instantiated.
-     *
-     * @param string                         $sql    The sql statement
-     * @param array                          $params array('column' => ..., 'table' => ..., 'value' => ...)
-     * @param Propel\Runtime\Map\Criteria    $values
-     * @param Propel\Runtime\Map\DatabaseMap $dbMap
-     */
-    public function cleanupSQL(&$sql, array &$params, Criteria $values, DatabaseMap $dbMap);
-
-    /**
-     * Modifies the passed-in SQL to add LIMIT and/or OFFSET.
-     *
-     * @param string  $sql
-     * @param integer $offset
-     * @param integer $limit
-     */
-    public function applyLimit(&$sql, $offset, $limit);
-
-    /**
-     * Gets the SQL string that this adapter uses for getting a random number.
-     *
-     * @param mixed $seed (optional) seed value for databases that support this
-     */
-    public function random($seed = null);
-
-    /**
-     * Returns the "DELETE FROM <table> [AS <alias>]" part of DELETE query.
-     *
-     * @param Propel\Runtime\Map\Criteria $criteria
-     * @param string                      $tableName
-     *
-     * @return string
-     */
-    public function getDeleteFromClause(Criteria $criteria, $tableName);
-
-    /**
-     * Builds the SELECT part of a SQL statement based on a Criteria
-     * taking into account select columns and 'as' columns (i.e. columns aliases)
-     * Move from BasePeer to AdapterInterface and turn from static to non static
-     *
-     * @param Propel\Runtime\Map\Criteria $criteria
-     * @param array                       $fromClause
-     * @param boolean                     $aliasAll
-     *
-     * @return string
-     */
-    public function createSelectSqlPart(Criteria $criteria, &$fromClause, $aliasAll = false);
-
-    /**
-     * Ensures uniqueness of select column names by turning them all into aliases
-     * This is necessary for queries on more than one table when the tables share a column name
-     * Moved from BasePeer to AdapterInterface and turned from static to non static
-     *
-     * @see http://propel.phpdb.org/trac/ticket/795
-     *
-     * @param  Propel\Runtime\Map\Criteria $criteria
-     * @return Propel\Runtime\Map\Criteria The input, with Select columns replaced by aliases
-     */
-    public function turnSelectColumnsToAliases(Criteria $criteria);
-
-    /**
-     * Binds values in a prepared statement.
-     *
-     * This method is designed to work with the BasePeer::createSelectSql() method, which creates
-     * both the SELECT SQL statement and populates a passed-in array of parameter
-     * values that should be substituted.
-     *
-     * <code>
-     * $adapter = Propel::getServiceContainer()->getAdapter($criteria->getDbName());
-     * $sql = BasePeer::createSelectSql($criteria, $params);
-     * $stmt = $con->prepare($sql);
-     * $params = array();
-     * $adapter->populateStmtValues($stmt, $params, Propel::getServiceContainer()->getDatabaseMap($criteria->getDbName()));
-     * $stmt->execute();
-     * </code>
-     *
-     * @param Propel\Runtime\Connection\StatementInterface $stmt
-     * @param array                                        $params array('column' => ..., 'table' => ..., 'value' => ...)
-     * @param Propel\Runtime\Map\DatabaseMap               $dbMap
-     */
-    public function bindValues(StatementInterface $stmt, array $params, DatabaseMap $dbMap);
-
-    /**
-     * Binds a value to a positioned parameter in a statement,
-     * given a ColumnMap object to infer the binding type.
-     *
-     * @param Propel\Runtime\Connection\StatementInterface $stmt      The statement to bind
-     * @param string                                       $parameter Parameter identifier
-     * @param mixed                                        $value     The value to bind
-     * @param Propel\Runtime\Map\ColumnMap                 $cMap      The ColumnMap of the column to bind
-     * @param null|integer                                 $position  The position of the parameter to bind
-     *
-     * @return boolean
-     */
-    public function bindValue(StatementInterface $stmt, $parameter, $value, ColumnMap $cMap, $position = null);
 }

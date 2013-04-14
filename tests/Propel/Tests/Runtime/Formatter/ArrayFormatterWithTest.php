@@ -15,13 +15,10 @@ use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
 use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
 use Propel\Tests\Bookstore\Author;
-use Propel\Tests\Bookstore\AuthorPeer;
 use Propel\Tests\Bookstore\AuthorQuery;
 use Propel\Tests\Bookstore\Book;
-use Propel\Tests\Bookstore\BookPeer;
 use Propel\Tests\Bookstore\BookQuery;
 use Propel\Tests\Bookstore\Essay;
-use Propel\Tests\Bookstore\EssayPeer;
 use Propel\Tests\Bookstore\Review;
 use Propel\Tests\Bookstore\Map\AuthorTableMap;
 use Propel\Tests\Bookstore\Map\BookTableMap;
@@ -147,8 +144,8 @@ class ArrayFormatterWithTest extends BookstoreEmptyTestBase
      */
     public function testFindOneWithSameRelatedObject()
     {
-        BookPeer::doDeleteAll();
-        AuthorPeer::doDeleteAll();
+        BookTableMap::doDeleteAll();
+        AuthorTableMap::doDeleteAll();
         $auth = new Author();
         $auth->setFirstName('John');
         $auth->setLastName('Doe');
@@ -181,7 +178,7 @@ class ArrayFormatterWithTest extends BookstoreEmptyTestBase
 
     public function testFindOneWithDuplicateRelation()
     {
-        EssayPeer::doDeleteAll();
+        EssayTableMap::doDeleteAll();
         $auth1 = new Author();
         $auth1->setFirstName('John');
         $auth1->setLastName('Doe');
@@ -452,6 +449,9 @@ class ArrayFormatterWithTest extends BookstoreEmptyTestBase
         $this->assertEquals('Grass', $book['AuthorName2'], 'ArrayFormatter correctly hydrates all as columns');
     }
 
+    /**
+     * @group test
+     */
     public function testFindPkWithOneToMany()
     {
         BookstoreDataPopulator::populate();
@@ -468,6 +468,7 @@ class ArrayFormatterWithTest extends BookstoreEmptyTestBase
             ->joinWith('Review')
             ->findPk($pk, $con);
         $reviews = $book['Reviews'];
+        //var_dump($book);
         $this->assertEquals(2, count($reviews), 'Related objects are correctly hydrated');
     }
 }

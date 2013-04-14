@@ -112,7 +112,7 @@ Even if the code of this example is very simple, the repetition of code is alrea
 
 Propel offers three ways to achieve the refactoring of the common behavior. The first one is to use a custom builder during the build process. This can work if all of your models share one single behavior. The second way is to use table inheritance. The inherited methods then offer limited capabilities. And the third way is to use Propel behaviors. This is the right way to refactor common model logic.
 
-Behaviors are special objects that use events called during the build process to enhance the generated model classes. Behaviors can add attributes and methods to both the Peer and model classes, they can modify the course of some of the generated methods, and they can even modify the structure of a database by adding columns or tables.
+Behaviors are special objects that use events called during the build process to enhance the generated model classes. Behaviors can add attributes and methods to both the tableMap and model classes, they can modify the course of some of the generated methods, and they can even modify the structure of a database by adding columns or tables.
 
 For instance, Propel bundles a behavior called `timestampable`, which does exactly the same thing as described above. But instead of adding columns and methods by hand, all you have to do is to declare it in a `<behavior>` tag in your `schema.xml`, as follows:
 
@@ -297,15 +297,14 @@ postDeleteQuery()     // add code to be executed after  deletion of a existing o
 queryFilter(&$script) // do whatever you want with the generated code, passed as reference
 {% endhighlight %}
 
-### Modifying the Peer Classes ###
+### Modifying the TableMap Classes ###
 
-Behaviors can also add code to the generated peer objects by implementing one of the following methods:
+Behaviors can also add code to the generated TableMap objects by implementing one of the following methods:
 
 {% highlight php %}
-staticAttributes()   // add static attributes to the peer class
-staticMethods()      // add static methods to the peer class
-preSelect()          // adds code before every select query
-peerFilter(&$script) // do whatever you want with the generated code, passed as reference
+staticAttributes()   // add static attributes to the TableMap class
+staticMethods()      // add static methods to the TableMap class
+tableMapFilter(&$script) // do whatever you want with the generated code, passed as reference
 {% endhighlight %}
 
 ### Adding New Classes ###
@@ -384,7 +383,7 @@ public function findPk(\$key, \$con = null)
 {
   \$query = 'SELECT * from `%s` WHERE id = ?';
   if (null === \$con) {
-    \$con = Propel::getReadConnection(%sPeer::DATABASE_NAME);
+    \$con = Propel::getReadConnection(%sTableMap::DATABASE_NAME);
   }
   \$stmt = \$con->prepare(\$query);
   \$stmt->bindValue(1, \$key);

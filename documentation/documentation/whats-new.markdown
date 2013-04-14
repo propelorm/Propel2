@@ -547,13 +547,13 @@ $book->setStyle('novel');
 echo $book->getStyle(); // novel
 // Trying to set a value not in the valueSet throws an exception
 
-// Each value in an ENUM column has a related constant in the Peer class
+// Each value in an ENUM column has a related constant in the TableMap class
 // Your IDE with code completion should love this
-echo BookPeer::STYLE_NOVEL;  // 'novel'
-echo BookPeer::STYLE_ESSAY;  // 'essay'
-echo BookPeer::STYLE_POETRY; // 'poetry'
-// The Peer class also gives access to list of available values
-print_r(BookPeer::getValueSet(BookPeer::STYLE)); // array('novel', 'essay', 'poetry')
+echo BookTableMap::STYLE_NOVEL;  // 'novel'
+echo BookTableMap::STYLE_ESSAY;  // 'essay'
+echo BookTableMap::STYLE_POETRY; // 'poetry'
+// The TableMap class also gives access to list of available values
+print_r(BookTableMap::getValueSet(BookTableMap::STYLE)); // array('novel', 'essay', 'poetry')
 
 // ENUM columns are also searchable, using the generated filterByXXX() method
 // or other ModelCriteria methods (like where(), orWhere(), condition())

@@ -1297,16 +1297,14 @@ protected function moveSubtreeTo(\$destLeft, \$levelDelta" . ($this->behavior->u
     \$left  = \$this->getLeftValue();
     \$right = \$this->getRightValue();";
 
-
         if ($useScope) {
             $script .= "
     \$scope = \$this->getScopeValue();
 
-    if (\$targetScope === null){
+    if (\$targetScope === null) {
         \$targetScope = \$scope;
     }";
         }
-
 
         $script .= "
 
@@ -1327,7 +1325,7 @@ protected function moveSubtreeTo(\$destLeft, \$levelDelta" . ($this->behavior->u
         if ($useScope) {
             $script .= "
 
-        if (\$targetScope != \$scope){
+        if (\$targetScope != \$scope) {
 
             //move subtree to < 0, so the items are out of scope.
             $queryClassName::shiftRLValues(-\$right, \$left, \$right" . ($useScope ? ", \$scope" : "") . ", \$con);
@@ -1349,7 +1347,7 @@ protected function moveSubtreeTo(\$destLeft, \$levelDelta" . ($this->behavior->u
 
         $script .= "
 
-        if (!\$preventDefault){
+        if (!\$preventDefault) {
 
 
             if (\$left >= \$destLeft) { // src was shifted too?

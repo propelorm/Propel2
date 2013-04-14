@@ -342,7 +342,7 @@ $node findRoot($scope = null)
 coll findTree($scope = null)
 {% endhighlight %}
 
-Lastly, the behavior adds a few methods to the Peer classes:
+Lastly, the behavior adds a few methods to the Query classes:
 
 {% highlight php %}
 <?php
