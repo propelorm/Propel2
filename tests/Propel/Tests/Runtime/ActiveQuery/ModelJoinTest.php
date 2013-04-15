@@ -12,8 +12,6 @@ namespace Propel\Tests\Runtime\ActiveQuery;
 
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
-use Propel\Tests\Bookstore\BookPeer;
-use Propel\Tests\Bookstore\ReaderFavoritePeer;
 use Propel\Tests\Bookstore\Map\AuthorTableMap;
 use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\Bookstore\Map\BookOpinionTableMap;
@@ -46,7 +44,7 @@ class ModelJoinTest extends BookstoreTestBase
     {
         $join = new ModelJoin();
         $this->assertNull($join->getRelationMap(), 'getRelationMap() returns null as long as no relation map is set');
-        $bookTable = BookPeer::getTableMap();
+        $bookTable = BookTableMap::getTableMap();
         $relationMap = $bookTable->getRelation('Author');
         $join->setRelationMap($relationMap);
         $this->assertEquals($relationMap, $join->getRelationMap(), 'getRelationMap() returns the RelationMap previously set by setRelationMap()');
@@ -54,7 +52,7 @@ class ModelJoinTest extends BookstoreTestBase
 
     public function testSetRelationMapDefinesJoinColumns()
     {
-        $bookTable = BookPeer::getTableMap();
+        $bookTable = BookTableMap::getTableMap();
         $join = new ModelJoin();
         $join->setTableMap($bookTable);
         $join->setRelationMap($bookTable->getRelation('Author'));
@@ -64,7 +62,7 @@ class ModelJoinTest extends BookstoreTestBase
 
     public function testSetRelationMapLeftAlias()
     {
-        $bookTable = BookPeer::getTableMap();
+        $bookTable = BookTableMap::getTableMap();
         $join = new ModelJoin();
         $join->setTableMap($bookTable);
         $join->setRelationMap($bookTable->getRelation('Author'), 'b');
@@ -74,7 +72,7 @@ class ModelJoinTest extends BookstoreTestBase
 
     public function testSetRelationMapRightAlias()
     {
-        $bookTable = BookPeer::getTableMap();
+        $bookTable = BookTableMap::getTableMap();
         $join = new ModelJoin();
         $join->setTableMap($bookTable);
         $join->setRelationMap($bookTable->getRelation('Author'), null, 'a');
@@ -84,7 +82,7 @@ class ModelJoinTest extends BookstoreTestBase
 
     public function testSetRelationMapComposite()
     {
-        $table = ReaderFavoritePeer::getTableMap();
+        $table = ReaderFavoriteTableMap::getTableMap();
         $join = new ModelJoin();
         $join->setTableMap($table);
         $join->setRelationMap($table->getRelation('BookOpinion'));

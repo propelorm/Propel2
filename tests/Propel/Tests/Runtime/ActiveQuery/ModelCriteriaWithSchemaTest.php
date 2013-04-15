@@ -11,9 +11,9 @@
 namespace Propel\Tests\Runtime\ActiveQuery;
 
 use Propel\Tests\Helpers\Schemas\SchemasTestBase;
-use Propel\Tests\BookstoreSchemas\BookstoreContestPeer;
+use Propel\Tests\BookstoreSchemas\Map\BookstoreContestTableMap;
 
-use Propel\Runtime\Util\BasePeer;
+use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
 
 /**
@@ -28,7 +28,7 @@ class ModelCriteriaWithSchemaTest extends SchemasTestBase
     protected function assertCriteriaTranslation($criteria, $expectedSql, $expectedParams, $message = '')
     {
         $params = array();
-        $result = BasePeer::createSelectSql($criteria, $params);
+        $result = $criteria->createSelectSql($params);
 
         $this->assertEquals($expectedSql, $result, $message);
         $this->assertEquals($expectedParams, $params, $message);
@@ -52,7 +52,7 @@ class ModelCriteriaWithSchemaTest extends SchemasTestBase
     public function testReplaceNamesWithSchemas($origClause, $columnPhpName = false, $modifiedClause)
     {
         $c = new TestableModelCriteriaWithSchema('bookstore-schemas', '\Propel\Tests\BookstoreSchemas\BookstoreContest');
-        $this->doTestReplaceNames($c, BookstoreContestPeer::getTableMap(),  $origClause, $columnPhpName = false, $modifiedClause);
+        $this->doTestReplaceNames($c, BookstoreContestTableMap::getTableMap(),  $origClause, $columnPhpName = false, $modifiedClause);
     }
 
     public function doTestReplaceNames($c, $tableMap, $origClause, $columnPhpName = false, $modifiedClause)

@@ -78,11 +78,11 @@ class MssqlSchemaParser extends AbstractSchemaParser
 
     public function parse(Database $database, Task $task = null)
     {
-        $stmt = $this->dbh->query("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME <> 'dtproperties'");
+        $dataFetcher = $this->dbh->query("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME <> 'dtproperties'");
 
         // First load the tables (important that this happen before filling out details of tables)
         $tables = array();
-        while ($row = $stmt->fetch(\PDO::FETCH_NUM)) {
+        foreach ($dataFetcher as $row){
             $name = $this->cleanDelimitedIdentifiers($row[0]);
             if ($name === $this->getMigrationTable()) {
                 continue;
@@ -115,9 +115,9 @@ class MssqlSchemaParser extends AbstractSchemaParser
      */
     protected function addColumns(Table $table)
     {
-        $stmt = $this->dbh->query("sp_columns '" . $table->getName() . "'");
+        $dataFetcher = $this->dbh->query("sp_columns '" . $table->getName() . "'");
 
-        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+        foreach ($dataFetcher as $row){
 
             $name = $this->cleanDelimitedIdentifiers($row['COLUMN_NAME']);
             $type = $row['TYPE_NAME'];
@@ -160,7 +160,7 @@ class MssqlSchemaParser extends AbstractSchemaParser
     {
         $database = $table->getDatabase();
 
-        $stmt = $this->dbh->query("SELECT ccu1.TABLE_NAME, ccu1.COLUMN_NAME, ccu2.TABLE_NAME AS FK_TABLE_NAME, ccu2.COLUMN_NAME AS FK_COLUMN_NAME
+        $dataFetcher = $this->dbh->query("SELECT ccu1.TABLE_NAME, ccu1.COLUMN_NAME, ccu2.TABLE_NAME AS FK_TABLE_NAME, ccu2.COLUMN_NAME AS FK_COLUMN_NAME
             FROM INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE ccu1 INNER JOIN
             INFORMATION_SCHEMA.TABLE_CONSTRAINTS tc1 ON tc1.CONSTRAINT_NAME = ccu1.CONSTRAINT_NAME AND
             CONSTRAINT_TYPE = 'Foreign Key' INNER JOIN
@@ -169,7 +169,7 @@ class MssqlSchemaParser extends AbstractSchemaParser
             WHERE (ccu1.table_name = '".$table->getName()."')");
 
         $foreignKeys = array(); // local store to avoid duplicates
-        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+        foreach ($dataFetcher as $row){
 
             $lcol = $this->cleanDelimitedIdentifiers($row['COLUMN_NAME']);
             $ftbl = $this->cleanDelimitedIdentifiers($row['FK_TABLE_NAME']);
@@ -198,10 +198,10 @@ class MssqlSchemaParser extends AbstractSchemaParser
      */
     protected function addIndexes(Table $table)
     {
-        $stmt = $this->dbh->query("sp_indexes_rowset '" . $table->getName() . "'");
+        $dataFetcher = $this->dbh->query("sp_indexes_rowset '" . $table->getName() . "'");
 
         $indexes = array();
-        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+        foreach ($dataFetcher as $row){
             $colName = $this->cleanDelimitedIdentifiers($row["COLUMN_NAME"]);
             $name = $this->cleanDelimitedIdentifiers($row['INDEX_NAME']);
 
@@ -220,7 +220,7 @@ class MssqlSchemaParser extends AbstractSchemaParser
      */
     protected function addPrimaryKey(Table $table)
     {
-        $stmt = $this->dbh->query("SELECT COLUMN_NAME
+        $dataFetcher = $this->dbh->query("SELECT COLUMN_NAME
             FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS
             INNER JOIN INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE ON
             INFORMATION_SCHEMA.TABLE_CONSTRAINTS.CONSTRAINT_NAME = INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE.constraint_name
@@ -229,7 +229,7 @@ class MssqlSchemaParser extends AbstractSchemaParser
 
         // Loop through the returned results, grouping the same key_name together
         // adding each column for that key.
-        while ($row = $stmt->fetch(\PDO::FETCH_NUM)) {
+        foreach ($dataFetcher as $row){
             $name = $this->cleanDelimitedIdentifiers($row[0]);
             $table->getColumn($name)->setPrimaryKey(true);
         }

@@ -22,13 +22,15 @@ class ConnectionFactory
     /**
      * Open a database connection based on a configuration.
      *
-     * @param array                                    $configuration          array('dsn' => '...', 'user' => '...', 'password' => '...')
-     * @param \Propel\Runtime\Adapter\AdapterInterface $adapter                The adapter to use to build the connection
-     * @param string                                   $defaultConnectionClass
+     * @param array            $configuration
+     * @param AdapterInterface $adapter
+     * @param string           $defaultConnectionClass
      *
-     * @return \Propel\Runtime\Connection\ConnectionInterface
+     * @return ConnectionInterface
+     * @throws \Propel\Runtime\Exception\InvalidArgumentException
+     * @throws Exception\ConnectionException
      */
-    public static function create($configuration, AdapterInterface $adapter, $defaultConnectionClass = self::DEFAULT_CONNECTION_CLASS)
+    public static function create(array $configuration = array(), AdapterInterface $adapter, $defaultConnectionClass = self::DEFAULT_CONNECTION_CLASS)
     {
         if (isset($configuration['classname'])) {
             $connectionClass = $configuration['classname'];

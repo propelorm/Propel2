@@ -13,11 +13,9 @@ namespace Propel\Tests\Generator\Builder\Om;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 
-use Propel\Tests\Bookstore\AuthorPeer;
 use Propel\Tests\Bookstore\AuthorQuery;
 use Propel\Tests\Bookstore\Map\AuthorTableMap;
 use Propel\Tests\Bookstore\Book;
-use Propel\Tests\Bookstore\BookPeer;
 use Propel\Tests\Bookstore\BookQuery;
 use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\Bookstore\BookOpinion;
@@ -26,28 +24,27 @@ use Propel\Tests\Bookstore\BookReaderQuery;
 use Propel\Tests\Bookstore\Map\BookReaderTableMap;
 use Propel\Tests\Bookstore\Bookstore;
 use Propel\Tests\Bookstore\BookstoreContest;
-use Propel\Tests\Bookstore\BookstoreContestPeer;
+use Propel\Tests\Bookstore\Map\BookstoreContestTableMap;
 use Propel\Tests\Bookstore\BookstoreContestEntry;
 use Propel\Tests\Bookstore\BookstoreContestEntryQuery;
 use Propel\Tests\Bookstore\Customer;
 use Propel\Tests\Bookstore\Contest;
 use Propel\Tests\Bookstore\MediaQuery;
 use Propel\Tests\Bookstore\Publisher;
-use Propel\Tests\Bookstore\PublisherPeer;
 use Propel\Tests\Bookstore\PublisherQuery;
 use Propel\Tests\Bookstore\Map\PublisherTableMap;
 use Propel\Tests\Bookstore\ReviewQuery;
 use Propel\Tests\Bookstore\ReaderFavorite;
-use Propel\Tests\Bookstore\ReaderFavoritePeer;
 use Propel\Tests\Bookstore\ReaderFavoriteQuery;
+use Propel\Tests\Bookstore\Map\ReaderFavoriteTableMap;
 use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
 use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
 
 /**
- * Tests the delete methods of the generated Peer classes.
+ * Tests the delete methods of the generated Query classes.
  *
  * This test uses generated Bookstore classes to test the behavior of various
- * peer operations.
+ * query operations.
  *
  * The database is reloaded before every test and flushed after every test.  This
  * means that you can always rely on the contents of the databases being the same
@@ -57,7 +54,7 @@ use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
  * @see        BookstoreDataPopulator
  * @author Hans Lellelid <hans@xmpl.org>
  */
-class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
+class GeneratedQueryDoDeleteTest extends BookstoreEmptyTestBase
 {
     protected function setUp()
     {
@@ -81,7 +78,7 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
         $c->add(AuthorTableMap::ID, $hp->getAuthorId());
         $c->add(PublisherTableMap::ID, $hp->getPublisherId());
         $c->setSingleRecord(true);
-        BookPeer::doDelete($c);
+        BookTableMap::doDelete($c);
 
         // check to make sure the right # of records was removed
         $this->assertCount(3, AuthorQuery::create()->find(), "Expected 3 authors after deleting.");
@@ -100,7 +97,7 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
         $cn->addOr($c->getNewCriterion(BookTableMap::ISBN, "0380977427"));
         $cn->addOr($c->getNewCriterion(BookTableMap::ISBN, "0140422161"));
         $c->add($cn);
-        BookPeer::doDelete($c);
+        BookTableMap::doDelete($c);
 
         // now there should only be one book left; "The Tin Drum"
 
@@ -128,7 +125,7 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
         // 2) Delete the owning book
 
         $owningBookId = $media->getBookId();
-        BookPeer::doDelete($owningBookId);
+        BookTableMap::doDelete($owningBookId);
 
         // 3) Assert that the media row is now also gone
 
@@ -190,7 +187,7 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
 
         // Now, if we remove $bc1, we expect *only* bce1 to be no longer valid.
 
-        BookstoreContestPeer::doDelete($bc1);
+        BookstoreContestTableMap::doDelete($bc1);
 
         $newCount = BookstoreContestEntryQuery::create()->count();
 
@@ -218,7 +215,7 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
         unset($book);
 
         // 2) Delete the author for that book
-        AuthorPeer::doDelete($authorId);
+        AuthorTableMap::doDelete($authorId);
 
         // 3) Assert that the book.author_id column is now NULL
 
@@ -237,7 +234,7 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
         $bookId = $book->getId();
 
         // 2) now delete that book
-        BookPeer::doDelete($bookId);
+        BookTableMap::doDelete($bookId);
 
         // 3) now make sure it's gone
         $obj = BookQuery::create()->findPk($bookId);
@@ -259,7 +256,7 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
         $book2 = $books[1];
 
         // 4) delete the books
-        BookPeer::doDelete(array($book1->getId(), $book2->getId()));
+        BookTableMap::doDelete(array($book1->getId(), $book2->getId()));
 
         // 5) we should have two less books than before
         $this->assertEquals($bookCount-2, BookQuery::create()->count(), 'Two books deleted successfully.');
@@ -275,7 +272,7 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
         $bookId = $book->getId();
 
         // 2) now delete that book
-        BookPeer::doDelete($book);
+        BookTableMap::doDelete($book);
 
         // 3) now make sure it's gone
         $obj = BookQuery::create()->findPk($bookId);
@@ -288,7 +285,7 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
      */
     public function testDoDeleteAll()
     {
-        BookPeer::doDeleteAll();
+        BookTableMap::doDeleteAll();
         $this->assertCount(0, BookQuery::create()->find(), "Expect all book rows to have been deleted.");
     }
 
@@ -299,7 +296,7 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
     {
         $review = ReviewQuery::create()->findOne();
         $book = $review->getBook();
-        BookPeer::doDeleteAll();
+        BookTableMap::doDeleteAll();
         $this->assertNull(BookQuery::create()->findPk($book->getId()), 'doDeleteAll invalidates instance pool');
         $this->assertNull(ReviewQuery::create()->findPk($review->getId()), 'doDeleteAll invalidates instance pool of related tables with ON DELETE CASCADE');
     }
@@ -309,7 +306,7 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
      */
     public function testDoDeleteAll_Cascade()
     {
-        BookPeer::doDeleteAll();
+        BookTableMap::doDeleteAll();
         $this->assertCount(0, MediaQuery::create()->find(), "Expect all media rows to have been cascade deleted.");
         $this->assertCount(0, ReviewQuery::create()->find(), "Expect all review rows to have been cascade deleted.");
     }
@@ -326,7 +323,7 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
         $this->assertGreaterThan(0, count(BookQuery::create()->filterByAuthorId(null, Criteria::NOT_EQUAL)->find()) > 0, "Expect some book.author_id columns that are not NULL.");
 
         // 2) delete all the authors
-        AuthorPeer::doDeleteAll();
+        AuthorTableMap::doDeleteAll();
 
         // 3) now verify that the book.author_id columns are all null
         $this->assertCount(0, BookQuery::create()->filterByAuthorId(null, Criteria::NOT_EQUAL)->find(), "Expect all book.author_id columns to be NULL.");
@@ -339,7 +336,7 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
 
-        ReaderFavoritePeer::doDeleteAll();
+        ReaderFavoriteTableMap::doDeleteAll();
         // Create books with IDs 1 to 3
         // Create readers with IDs 1 and 2
 
@@ -367,7 +364,7 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
 
         // Now delete 2 of those rows (2 is special in that it is the number of rows
         // being deleted, as well as the number of things in the primary key)
-        ReaderFavoritePeer::doDelete(array(array(1,1), array(2,2)));
+        ReaderFavoriteTableMap::doDelete(array(array(1,1), array(2,2)));
         $this->assertEquals(4, ReaderFavoriteQuery::create()->count());
 
         //Note: these composite PK's are pairs of (BookId, ReaderId)
@@ -379,7 +376,7 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
         $this->assertNull(ReaderFavoriteQuery::create()->findPk(array(2,2)));
 
         //test deletion of a single composite PK
-        ReaderFavoritePeer::doDelete(array(3,1));
+        ReaderFavoriteTableMap::doDelete(array(3,1));
         $this->assertEquals(3, ReaderFavoriteQuery::create()->count());
         $this->assertNotNull(ReaderFavoriteQuery::create()->findPk(array(2,1)));
         $this->assertNotNull(ReaderFavoriteQuery::create()->findPk(array(1,2)));
@@ -389,7 +386,7 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
         $this->assertNull(ReaderFavoriteQuery::create()->findPk(array(3,1)));
 
         //test deleting the last three
-        ReaderFavoritePeer::doDelete(array(array(2,1), array(1,2), array(3,2)));
+        ReaderFavoriteTableMap::doDelete(array(array(2,1), array(1,2), array(3,2)));
         $this->assertEquals(0, ReaderFavoriteQuery::create()->count());
     }
 
@@ -402,7 +399,7 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
 
         $values = new Criteria();
         $values->add(PublisherTableMap::NAME, $name);
-        PublisherPeer::doInsert($values);
+        PublisherTableMap::doInsert($values);
 
         $matches = PublisherQuery::create()->filterByName($name)->find();
         $this->assertCount(1, $matches, "Expect there to be exactly 1 publisher just-inserted.");
@@ -418,7 +415,7 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
 
         $values = new Publisher();
         $values->setName($name);
-        PublisherPeer::doInsert($values);
+        PublisherTableMap::doInsert($values);
 
         $matches = PublisherQuery::create()->filterByName($name)->find();
         $this->assertCount(1, $matches, "Expect there to be exactly 1 publisher just-inserted.");

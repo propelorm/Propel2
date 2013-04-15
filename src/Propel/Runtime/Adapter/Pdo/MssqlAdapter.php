@@ -10,7 +10,7 @@
 
 namespace Propel\Runtime\Adapter\Pdo;
 
-use Propel\Runtime\Adapter\AdapterInterface;
+use Propel\Runtime\Adapter\SqlAdapterInterface;
 use Propel\Runtime\Adapter\Exception\MalformedClauseException;
 use Propel\Runtime\Adapter\Exception\ColumnNotFoundException;
 use Propel\Runtime\Connection\ConnectionInterface;
@@ -23,7 +23,7 @@ use Propel\Runtime\ActiveQuery\Criteria;
  *
  * @author Hans Lellelid <hans@xmpl.org> (Propel)
  */
-class MssqlAdapter extends PdoAdapter implements AdapterInterface
+class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
 {
     /**
      * MS SQL Server does not support SET NAMES

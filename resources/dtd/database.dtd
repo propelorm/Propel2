@@ -30,7 +30,6 @@ PHP class or method name.
   schema CDATA #IMPLIED
   namespace CDATA #IMPLIED
   baseClass CDATA #IMPLIED
-  basePeer CDATA #IMPLIED
   defaultPhpNamingMethod (nochange|underscore|phpname) "underscore"
   heavyIndexing (true|false) "false"
   tablePrefix CDATA #IMPLIED
@@ -61,7 +60,6 @@ PHP class or method name.
   schema CDATA #IMPLIED
   namespace CDATA #IMPLIED
   baseClass CDATA #IMPLIED
-  basePeer CDATA #IMPLIED
   alias CDATA #IMPLIED
   interface CDATA #IMPLIED
   phpNamingMethod (nochange|underscore|phpname) #IMPLIED
@@ -80,7 +78,7 @@ PHP class or method name.
 <!ATTLIST column
   name CDATA #REQUIRED
   phpName CDATA #IMPLIED
-  peerName CDATA #IMPLIED
+  tableMapName CDATA #IMPLIED
   primaryKey (true|false) "false"
   required (true|false) "false"
   type

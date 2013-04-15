@@ -299,7 +299,7 @@ CREATE TABLE i18n_behavior_test_0_i18n
 EOF;
         $this->assertContains($expected, $builder->getSQL());
     }
-    
+
     public function testModiFyTableUsesCustomI18nLocaleLength()
     {
         $schema = <<<EOF

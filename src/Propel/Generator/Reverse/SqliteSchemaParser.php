@@ -80,11 +80,11 @@ class SqliteSchemaParser extends AbstractSchemaParser
      */
     public function parse(Database $database)
     {
-        $stmt = $this->dbh->query("SELECT name FROM sqlite_master WHERE type='table' UNION ALL SELECT name FROM sqlite_temp_master WHERE type='table' ORDER BY name;");
+        $dataFetcher = $this->dbh->query("SELECT name FROM sqlite_master WHERE type='table' UNION ALL SELECT name FROM sqlite_temp_master WHERE type='table' ORDER BY name;");
 
         // First load the tables (important that this happen before filling out details of tables)
         $tables = array();
-        while ($row = $stmt->fetch(\PDO::FETCH_NUM)) {
+		foreach ($dataFetcher as $row) {
             $name = $row[0];
             if ($name === $this->getMigrationTable()) {
                 continue;

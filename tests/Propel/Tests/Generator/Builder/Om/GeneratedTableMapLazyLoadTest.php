@@ -15,10 +15,10 @@ use Propel\Generator\Util\QuickBuilder;
 use Propel\Runtime\Propel;
 
 /**
- * Tests the generated Peer classes for lazy load columns.
+ * Tests the generated TableMap classes for lazy load columns.
  *
  */
-class GeneratedPeerLazyLoadTest extends \PHPUnit_Framework_TestCase
+class GeneratedTableMapLazyLoadTest extends \PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
@@ -47,7 +47,7 @@ EOF;
         \Map\LazyLoadActiveRecord2TableMap::clearInstancePool();
         $values = array(123, 'fooValue', 'bazValue');
         $col = 0;
-        list($obj, $col) = \LazyLoadActiveRecord2Peer::populateObject($values, $col);
+        list($obj, $col) = \Map\LazyLoadActiveRecord2TableMap::populateObject($values, $col);
         $this->assertEquals(3, $col);
         $this->assertEquals(123, $obj->getId());
         $this->assertEquals('fooValue', $obj->getFoo());
@@ -66,7 +66,7 @@ EOF;
         \Map\LazyLoadActiveRecord2TableMap::addInstanceToPool($ar, 123);
         $values = array(123, 'fooValue', 'bazValue');
         $col = 0;
-        list($obj, $col) = \LazyLoadActiveRecord2Peer::populateObject($values, $col);
+        list($obj, $col) = \Map\LazyLoadActiveRecord2TableMap::populateObject($values, $col);
         $this->assertEquals(3, $col);
         $this->assertEquals(123, $obj->getId());
         $this->assertEquals('fooValue', $obj->getFoo());
@@ -79,7 +79,7 @@ EOF;
         \Map\LazyLoadActiveRecord2TableMap::clearInstancePool();
         $values = array('dummy', 'dummy', 123, 'fooValue', 'bazValue', 'dummy');
         $col = 2;
-        list($obj, $col) = \LazyLoadActiveRecord2Peer::populateObject($values, $col);
+        list($obj, $col) = \Map\LazyLoadActiveRecord2TableMap::populateObject($values, $col);
         $this->assertEquals(5, $col);
         $this->assertEquals(123, $obj->getId());
         $this->assertEquals('fooValue', $obj->getFoo());
@@ -98,7 +98,7 @@ EOF;
         \Map\LazyLoadActiveRecord2TableMap::addInstanceToPool($ar, 123);
         $values = array('dummy', 'dummy', 123, 'fooValue', 'bazValue', 'dummy');
         $col = 2;
-        list($obj, $col) = \LazyLoadActiveRecord2Peer::populateObject($values, $col);
+        list($obj, $col) = \Map\LazyLoadActiveRecord2TableMap::populateObject($values, $col);
         $this->assertEquals(5, $col);
         $this->assertEquals(123, $obj->getId());
         $this->assertEquals('fooValue', $obj->getFoo());

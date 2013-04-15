@@ -210,7 +210,7 @@ class BasePollQuestion extends BaseObject
 }
 {% endhighlight %}
 
-Behaviors offer similar hook methods to allow the addition of methods to the query classes (`queryMethods()`) and to the peer classes (`peerMethods()`). And if you need to add attributes, just implement one of the `objectAttributes()`, `queryAttributes()`, or `peerAttributes()` methods.
+Behaviors offer similar hook methods to allow the addition of methods to the query classes (`queryMethods()`) and to the object classes (`objectMethods()`). And if you need to add attributes, just implement one of the `objectAttributes()` or `queryAttributes()` methods.
 
 ## Using a Template For Generated Code ##
 
@@ -425,7 +425,7 @@ class BehaviorB extends Behavior
 
 ## What's Left ##
 
-These are the basics of behavior writing: implement one of the methods documented in the [behaviors chapter](../documentation/07-behaviors.html#writing-a-behavior) of the Propel guide, and return strings containing the code to be added to the ActiveRecord, Query, and Peer classes. In addition to the behavior code, you should always write unit tests - all the behaviors bundled with Propel have full unit test coverage. And to make your behavior usable by others, documentation is highly recommended. Once again, Propel core behaviors are fully documented, to let users understand the behavior usage without having to peek into the code.
+These are the basics of behavior writing: implement one of the methods documented in the [behaviors chapter](../documentation/07-behaviors.html#writing-a-behavior) of the Propel guide, and return strings containing the code to be added to the ActiveRecord, Query, and TableMap classes. In addition to the behavior code, you should always write unit tests - all the behaviors bundled with Propel have full unit test coverage. And to make your behavior usable by others, documentation is highly recommended. Once again, Propel core behaviors are fully documented, to let users understand the behavior usage without having to peek into the code.
 
 As for the `AggregateColumnBehavior`, the job is not finished. The [blog post](http://propel.posterous.com/getting-to-know-propel-15-keeping-an-aggregat) emphasized the need for hooks in the Query class, and these are not yet implemented in the above code. Besides, the  post kept quiet about one use case that left the aggregate column not up to date (when a question is detached from a poll without deleting it). Lastly, the parameters required for this behavior are currently a bit verbose, especially concerning the need to define the foreign table and the foreign key - this could be simplified thanks to the knowledge of the object model that behaviors have.
 

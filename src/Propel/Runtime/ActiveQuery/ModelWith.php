@@ -22,8 +22,6 @@ class ModelWith
 {
     protected $modelName;
 
-    protected $modelPeerName;
-
     protected $getTableMap;
 
     protected $isSingleTableInheritance = false;
@@ -59,7 +57,6 @@ class ModelWith
     {
         $tableMap = $join->getTableMap();
         $this->setModelName($tableMap->getClassName());
-        $this->setModelPeerName($tableMap->getPeerClassName());
         $this->getTableMap = $tableMap;
         $this->isSingleTableInheritance = $tableMap->isSingleTableInheritance();
         $relation = $join->getRelationMap();
@@ -98,16 +95,6 @@ class ModelWith
     public function getModelName()
     {
         return $this->modelName;
-    }
-
-    public function setModelPeerName($modelPeerName)
-    {
-        $this->modelPeerName = $modelPeerName;
-    }
-
-    public function getModelPeerName()
-    {
-        return $this->modelPeerName;
     }
 
     public function setIsSingleTableInheritance($isSingleTableInheritance)

@@ -11,29 +11,28 @@
 namespace Propel\Tests\Runtime\Util;
 
 use Propel\Runtime\Propel;
-use Propel\Runtime\Exception\RuntimeException;
+use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\ActiveQuery\Criteria;
-use Propel\Runtime\Util\BasePeer;
+use Propel\Runtime\Map\TableMap;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
-use Propel\Tests\Bookstore\BookPeer;
 use Propel\Tests\Bookstore\Map\BookTableMap;
 
 /**
- * Tests the exceptions thrown by the BasePeer classes.
+ * Tests the exceptions thrown by the TableMap classes.
  *
  * @see BookstoreDataPopulator
  * @author Francois Zaninotto
  */
-class BasePeerExceptionsTest extends BookstoreTestBase
+class TableMapExceptionsTest extends BookstoreTestBase
 {
     public function testDoSelect()
     {
         try {
             $c = new Criteria();
             $c->add(BookTableMap::ID, 12, ' BAD SQL');
-            BookPeer::addSelectColumns($c);
-            BasePeer::doSelect($c);
-        } catch (RuntimeException $e) {
+            BookTableMap::addSelectColumns($c);
+            $c->doSelect();
+        } catch (PropelException $e) {
             $this->assertContains('[SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.ID BAD SQL:p1]', $e->getMessage(), 'SQL query is written in the exception message');
         }
     }
@@ -43,9 +42,9 @@ class BasePeerExceptionsTest extends BookstoreTestBase
         try {
             $c = new Criteria();
             $c->add(BookTableMap::ID, 12, ' BAD SQL');
-            BookPeer::addSelectColumns($c);
-            BasePeer::doCount($c);
-        } catch (RuntimeException $e) {
+            BookTableMap::addSelectColumns($c);
+            $c->doCount();
+        } catch (PropelException $e) {
             $this->assertContains('[SELECT COUNT(*) FROM `book` WHERE book.ID BAD SQL:p1]', $e->getMessage(), 'SQL query is written in the exception message');
         }
     }
@@ -56,18 +55,9 @@ class BasePeerExceptionsTest extends BookstoreTestBase
             $c = new Criteria();
             $c->setPrimaryTableName(BookTableMap::TABLE_NAME);
             $c->add(BookTableMap::ID, 12, ' BAD SQL');
-            BasePeer::doDelete($c, Propel::getServiceContainer()->getWriteConnection(BookTableMap::DATABASE_NAME));
-        } catch (RuntimeException $e) {
+            $c->doDelete(Propel::getServiceContainer()->getWriteConnection(BookTableMap::DATABASE_NAME));
+        } catch (PropelException $e) {
             $this->assertContains('[DELETE FROM `book` WHERE book.ID BAD SQL:p1]', $e->getMessage(), 'SQL query is written in the exception message');
-        }
-    }
-
-    public function testDoDeleteAll()
-    {
-        try {
-            BasePeer::doDeleteAll('BAD TABLE', Propel::getServiceContainer()->getWriteConnection(BookTableMap::DATABASE_NAME));
-        } catch (RuntimeException $e) {
-            $this->assertContains('[DELETE FROM `BAD` `TABLE`]', $e->getMessage(), 'SQL query is written in the exception message');
         }
     }
 
@@ -79,8 +69,9 @@ class BasePeerExceptionsTest extends BookstoreTestBase
             $c1->add(BookTableMap::ID, 12, ' BAD SQL');
             $c2 = new Criteria();
             $c2->add(BookTableMap::TITLE, 'Foo');
-            BasePeer::doUpdate($c1, $c2, Propel::getServiceContainer()->getWriteConnection(BookTableMap::DATABASE_NAME));
-        } catch (RuntimeException $e) {
+
+            $c1->doUpdate($c2, Propel::getServiceContainer()->getWriteConnection(BookTableMap::DATABASE_NAME));
+        } catch (PropelException $e) {
             $this->assertContains('[UPDATE `book` SET `TITLE`=:p1 WHERE book.ID BAD SQL:p2]', $e->getMessage(), 'SQL query is written in the exception message');
         }
     }
@@ -91,8 +82,8 @@ class BasePeerExceptionsTest extends BookstoreTestBase
             $c = new Criteria();
             $c->setPrimaryTableName(BookTableMap::TABLE_NAME);
             $c->add(BookTableMap::AUTHOR_ID, 'lkhlkhj');
-            BasePeer::doInsert($c, Propel::getServiceContainer()->getWriteConnection(BookTableMap::DATABASE_NAME));
-        } catch (RuntimeException $e) {
+            $c->doInsert(Propel::getServiceContainer()->getWriteConnection(BookTableMap::DATABASE_NAME));
+        } catch (PropelException $e) {
             $this->assertContains('[INSERT INTO `book` (`AUTHOR_ID`) VALUES (:p1)]', $e->getMessage(), 'SQL query is written in the exception message');
         }
     }

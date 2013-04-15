@@ -12,6 +12,10 @@ namespace Propel\Runtime\Map;
 
 use Propel\Runtime\Map\Exception\ColumnNotFoundException;
 use Propel\Runtime\Map\Exception\RelationNotFoundException;
+use Propel\Runtime\Propel;
+use Propel\Runtime\Connection\ConnectionInterface;
+use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\Exception\RuntimeException;
 
 /**
  * TableMap is used to model a table in a database.
@@ -36,13 +40,13 @@ class TableMap
     const TYPE_STUDLYPHPNAME = 'studlyPhpName';
 
     /**
-     * column (peer) name type
+     * column (tableMap) name type
      * e.g. 'book.AUTHOR_ID'
      */
     const TYPE_COLNAME = 'colName';
 
     /**
-     * column part of the column peer name
+     * column part of the column tableMap name
      * e.g. 'AUTHOR_ID'
      */
     const TYPE_RAW_COLNAME = 'rawColName';
@@ -248,7 +252,7 @@ class TableMap
 
     /**
      * Set the ClassName of the Table. Could be useful for calling
-     * Peer and Object methods dynamically.
+     * tableMap and Object methods dynamically.
      *
      * @param string $classname The ClassName
      */
@@ -265,16 +269,6 @@ class TableMap
     public function getClassName()
     {
         return $this->classname;
-    }
-
-    /**
-     * Get the Peer ClassName of the Propel Class belonging to this table.
-     *
-     * @return string
-     */
-    public function getPeerClassName()
-    {
-        return constant($this->classname . '::PEER');
     }
 
     /**
@@ -355,6 +349,36 @@ class TableMap
     public function getPrimaryKeyMethodInfo()
     {
         return $this->pkInfo;
+    }
+
+    /**
+     * Helper method which returns the primary key contained
+     * in the given Criteria object.
+     *
+     * @param  Criteria  $criteria A Criteria.
+     * @return ColumnMap If the Criteria object contains a primary key, or null if it doesn't.
+     *
+     * @throws \Propel\Runtime\Exception\RuntimeException
+     */
+    private static function getPrimaryKey(Criteria $criteria)
+    {
+        // Assume all the keys are for the same table.
+        $keys = $criteria->keys();
+        $key = $keys[0];
+        $table = $criteria->getTableName($key);
+
+        $pk = null;
+
+        if (!empty($table)) {
+            $dbMap = Propel::getServiceContainer()->getDatabaseMap($criteria->getDbName());
+
+            $pks = $dbMap->getTable($table)->getPrimaryKeys();
+            if (!empty($pks)) {
+                $pk = array_shift($pks);
+            }
+        }
+
+        return $pk;
     }
 
     /**
@@ -703,5 +727,139 @@ class TableMap
         }
 
         return null;
+    }
+
+    /**
+     * Method to perform inserts based on values and keys in a
+     * Criteria.
+     * <p>
+     * If the primary key is auto incremented the data in Criteria
+     * will be inserted and the auto increment value will be returned.
+     * <p>
+     * If the primary key is included in Criteria then that value will
+     * be used to insert the row.
+     * <p>
+     * If no primary key is included in Criteria then we will try to
+     * figure out the primary key from the database map and insert the
+     * row with the next available id using util.db.IDBroker.
+     * <p>
+     * If no primary key is defined for the table the values will be
+     * inserted as specified in Criteria and null will be returned.
+     *
+     * @param  Criteria            $criteria Object containing values to insert.
+     * @param  ConnectionInterface $con      A ConnectionInterface connection.
+     * @return mixed               The primary key for the new row if the primary key is auto-generated. Otherwise will return null.
+     *
+     * @throws \Propel\Runtime\Exception\RuntimeException
+     */
+    public static function doInsert($criteria, ConnectionInterface $con = null)
+    {
+        // The primary key
+        $id = null;
+        if (null === $con) {
+            $con = Propel::getServiceContainer()->getWriteConnection($criteria->getDbName());
+        }
+        $db = Propel::getServiceContainer()->getAdapter($criteria->getDbName());
+
+        // Get the table name and method for determining the primary
+        // key value.
+        $keys = $criteria->keys();
+        if (!empty($keys)) {
+            $tableName = $criteria->getTableName($keys[0]);
+        } else {
+            throw new RuntimeException('Database insert attempted without anything specified to insert.');
+        }
+
+        $tableName = $criteria->getTableName($keys[0]);
+        $dbMap = Propel::getServiceContainer()->getDatabaseMap($criteria->getDbName());
+        $tableMap = $dbMap->getTable($tableName);
+        $keyInfo = $tableMap->getPrimaryKeyMethodInfo();
+        $useIdGen = $tableMap->isUseIdGenerator();
+        //$keyGen = $con->getIdGenerator();
+
+        $pk = static::getPrimaryKey($criteria);
+
+        // only get a new key value if you need to
+        // the reason is that a primary key might be defined
+        // but you are still going to set its value. for example:
+        // a join table where both keys are primary and you are
+        // setting both columns with your own values
+
+        // pk will be null if there is no primary key defined for the table
+        // we're inserting into.
+        if (null !== $pk && $useIdGen && !$criteria->keyContainsValue($pk->getFullyQualifiedName()) && $db->isGetIdBeforeInsert()) {
+            try {
+                $id = $db->getId($con, $keyInfo);
+            } catch (\Exception $e) {
+                throw new RuntimeException('Unable to get sequence id.', 0, $e);
+            }
+            $criteria->add($pk->getFullyQualifiedName(), $id);
+        }
+
+        try {
+            $adapter = Propel::getServiceContainer()->getAdapter($criteria->getDBName());
+
+            $qualifiedCols = $criteria->keys(); // we need table.column cols when populating values
+            $columns = array(); // but just 'column' cols for the SQL
+            foreach ($qualifiedCols as $qualifiedCol) {
+                $columns[] = substr($qualifiedCol, strrpos($qualifiedCol, '.') + 1);
+            }
+
+            // add identifiers
+            if ($adapter->useQuoteIdentifier()) {
+                $columns = array_map(array($adapter, 'quoteIdentifier'), $columns);
+                $tableName = $adapter->quoteIdentifierTable($tableName);
+            }
+
+            $sql = 'INSERT INTO ' . $tableName
+                . ' (' . implode(',', $columns) . ')'
+                . ' VALUES (';
+            // . substr(str_repeat("?,", count($columns)), 0, -1) .
+            for ($p = 1, $cnt = count($columns); $p <= $cnt; $p++) {
+                $sql .= ':p'.$p;
+                if ($p !== $cnt) {
+                    $sql .= ',';
+                }
+            }
+            $sql .= ')';
+
+            $params = static::buildParams($qualifiedCols, $criteria);
+
+            $db->cleanupSQL($sql, $params, $criteria, $dbMap);
+
+            $stmt = $con->prepare($sql);
+            $db->bindValues($stmt, $params, $dbMap, $db);
+            $stmt->execute();
+
+        } catch (\Exception $e) {
+            Propel::log($e->getMessage(), Propel::LOG_ERR);
+            throw new RuntimeException(sprintf('Unable to execute INSERT statement [%s]', $sql), 0, $e);
+        }
+
+        // If the primary key column is auto-incremented, get the id now.
+        if (null !== $pk && $useIdGen && $db->isGetIdAfterInsert()) {
+            try {
+                $id = $db->getId($con, $keyInfo);
+            } catch (\Exception $e) {
+                throw new RuntimeException("Unable to get autoincrement id.", 0, $e);
+            }
+        }
+
+        return $id;
+    }
+
+    public static function getFieldnamesForClass($classname, $type = TableMap::TYPE_PHPNAME)
+    {
+        $callable   = array($classname::TABLE_MAP, 'getFieldnames');
+
+        return call_user_func($callable, $type);
+    }
+
+    public static function translateFieldnameForClass($classname, $fieldname, $fromType, $toType)
+    {
+        $callable   = array($classname::TABLE_MAP, 'translateFieldname');
+        $args       = array($fieldname, $fromType, $toType);
+
+        return call_user_func_array($callable, $args);
     }
 }

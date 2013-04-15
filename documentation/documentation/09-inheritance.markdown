@@ -109,7 +109,7 @@ echo get_class($comic) . ': ' . $comic->getTitle() . "\n";
 // Comic: Little Nemo In Slumberland
 {% endhighlight %}
 
->**Tip**<br />You can override the base peer's `getOMClass()` to return the classname to use based on more complex logic (or query).
+>**Tip**<br />You can override the base TableMap's `getOMClass()` to return the classname to use based on more complex logic (or query).
 
 ### Abstract Entities ###
 

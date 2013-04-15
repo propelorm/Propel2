@@ -46,7 +46,7 @@ class NamespaceTest extends \PHPUnit_Framework_TestCase
 
     public function testUpdate()
     {
-        \Foo\Bar\NamespacedBookPeer::getTableMap();
+        \Foo\Bar\Map\NamespacedBookTableMap::getTableMap();
         $book = new \Foo\Bar\NamespacedBook();
         $book->setTitle('foo');
         $book->setISBN('something');

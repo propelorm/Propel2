@@ -5,7 +5,7 @@ title: Model Introspection At Runtime
 
 # Model Introspection At Runtime #
 
-In addition to the object and peer classes used to do C.R.U.D. operations, Propel generates an object mapping for your tables to allow runtime introspection.
+In addition to the object classes used to do C.R.U.D. operations, Propel generates an object mapping for your tables to allow runtime introspection.
 
 The intospection objects are instances of the map classes. Propel maps databases, tables, columns and relations into objects that you can easily use.
 
@@ -13,11 +13,11 @@ The intospection objects are instances of the map classes. Propel maps databases
 
 The starting point for runtime introspection is usually a table map. This objects stores every possible property of a table, as defined in the `schema.xml`, but accessible at runtime.
 
-To retrieve a table map for a table, use the `getTableMap()` static method of the related peer class. For instance, to retrieve the table map for the `book` table, just call:
+To retrieve a table map for a table, use the `getTableMap()` static method of the related TableMap class. For instance, to retrieve the table map for the `book` table, just call:
 
 {% highlight php %}
 <?php
-$bookTable = BookPeer::getTableMap();
+$bookTable = BookTableMap::getTableMap();
 {% endhighlight %}
 
 ## TableMap properties ##
