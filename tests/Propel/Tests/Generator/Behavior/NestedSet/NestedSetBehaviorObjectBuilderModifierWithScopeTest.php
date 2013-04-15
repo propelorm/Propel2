@@ -10,7 +10,6 @@
 
 namespace Propel\Tests\Generator\Behavior\NestedSet;
 
-use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Exception\PropelException;
 
 /**
@@ -30,7 +29,7 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
      */
     public function testSaveRootInTreeWithExistingRootWithSameScope()
     {
-        \NestedSetTable10Peer::doDeleteAll();
+        \Map\NestedSetTable10TableMap::doDeleteAll();
         $t1 = new \NestedSetTable10();
         $t1->setScopeValue(1);
         $t1->makeRoot();
@@ -43,7 +42,7 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
 
     public function testSaveRootInTreeWithExistingRootWithDifferentScope()
     {
-        \NestedSetTable10Peer::doDeleteAll();
+        \Map\NestedSetTable10TableMap::doDeleteAll();
         $t1 = new \NestedSetTable10();
         $t1->setScopeValue(1);
         $t1->makeRoot();
@@ -579,7 +578,6 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals($expected, $this->dumpTreeWithScope(2), 't10 removed from scope 2, therefore t8 `right` has been changed');
         $this->assertEquals(15, $t3->getRightValue(), 't3 has shifted by one item, so from 13 to 15');
 
-
         //move t7 into t9, from scope 1 to scope 2
         $t7->moveToFirstChildOf($t9);
 
@@ -587,7 +585,6 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals(2, $t7->getScopeValue(), 't7 is now in scope 2');
         $this->assertEquals(6, $t8->getRightValue(), 't8 extended by 1 item, 4+2 => 6');
         $this->assertEquals(2, $t7->getLevel(), 'New level is 2');
-
 
         //dispose scope 2
         $oldt4Left = $t4->getLeftValue();
@@ -641,7 +638,6 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals($expected, $this->dumpTreeWithScope(2), 't10 removed from scope 2, therefore t8 `right` has been changed');
         $this->assertEquals(15, $t3->getRightValue(), 't3 has shifted by one item, so from 13 to 15');
 
-
         //move t7 into t9, from scope 1 to scope 2
         $t7->moveToLastChildOf($t9);
 
@@ -649,7 +645,6 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals(2, $t7->getScopeValue(), 't7 is now in scope 2');
         $this->assertEquals(6, $t8->getRightValue(), 't8 extended by 1 item, 4+2 => 6');
         $this->assertEquals(2, $t7->getLevel(), 'New level is 2');
-
 
         //dispose scope 2
         $t8->moveToLastChildOf($t3);
@@ -689,7 +684,6 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals(5, $t2->getRightValue(), 'Move by one item, +2');
         $this->assertEquals(1, $t10->getLevel(), 'Level is 1 as old');
 
-
         $this->assertEquals(2, $t10->getLeftValue(), 'Moved before t2');
         $this->assertEquals(3, $t10->getRightValue(), 'Moved before t2');
 
@@ -702,7 +696,6 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
 
         $this->assertEquals($expected, $this->dumpTreeWithScope(2), 't10 removed from scope 2, therefore t8 `right` has been changed');
         $this->assertEquals(15, $t3->getRightValue(), 't3 has shifted by one item, so from 13 to 15');
-
 
         //move t7 before t9, from scope 1 to scope 2
         $t7->moveToPrevSiblingOf($t9);
@@ -766,7 +759,6 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
 
         $this->assertEquals($expected, $this->dumpTreeWithScope(2), 't10 removed from scope 2, therefore t8 `right` has been changed');
         $this->assertEquals(15, $t3->getRightValue(), 't3 has shifted by one item, so from 13 to 15');
-
 
         //move t7 after t9, from scope 1 to scope 2
         $t7->moveToNextSiblingOf($t9);

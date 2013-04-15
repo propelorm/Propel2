@@ -13,7 +13,7 @@ namespace Propel\Runtime\Adapter\Pdo;
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Adapter\Exception\AdapterException;
 use Propel\Runtime\Connection\ConnectionInterface;
-use Propel\Runtime\Adapter\Pdo\PdoConnection;
+use Propel\Runtime\Connection\PdoConnection;
 use Propel\Runtime\Connection\StatementInterface;
 use Propel\Runtime\Exception\InvalidArgumentException;
 use Propel\Runtime\Map\ColumnMap;
@@ -32,7 +32,10 @@ abstract class PdoAdapter
      *
      * @param array $conparams connection parameters
      *
-     * @return Propel\Runtime\Adapter\Pdo\PdoConnection
+     * @return PdoConnection
+     *
+     * @throws InvalidArgumentException
+     * @throws AdapterException
      */
     public function getConnection($conparams)
     {
@@ -95,8 +98,8 @@ abstract class PdoAdapter
      *
      * @see setCharset()
      *
-     * @param Propel\Runtime\Connection\ConnectionInterface $con
-     * @param array                                         $settings An array of settings.
+     * @param ConnectionInterface $con
+     * @param array               $settings An array of settings.
      */
     public function initConnection(ConnectionInterface $con, array $settings)
     {
@@ -121,8 +124,8 @@ abstract class PdoAdapter
      *
      * @see initConnection()
      *
-     * @param Propel\Runtime\Connection\ConnectionInterface $con
-     * @param string                                        $charset The $string charset encoding.
+     * @param ConnectionInterface $con
+     * @param string              $charset The $string charset encoding.
      */
     public function setCharset(ConnectionInterface $con, $charset)
     {
@@ -234,8 +237,8 @@ abstract class PdoAdapter
     /**
      * Gets the generated ID (either last ID for autoincrement or next sequence ID).
      *
-     * @param Propel\Runtime\Connection\ConnectionInterface $con
-     * @param string                                        $name
+     * @param ConnectionInterface $con
+     * @param string              $name
      *
      * @return mixed
      */
@@ -247,8 +250,8 @@ abstract class PdoAdapter
     /**
      * Formats a temporal value before binding, given a ColumnMap object
      *
-     * @param mixed                        $value The temporal value
-     * @param Propel\Runtime\Map\ColumnMap $cMap
+     * @param mixed     $value The temporal value
+     * @param ColumnMap $cMap
      *
      * @return string The formatted temporal value
      */
@@ -322,10 +325,10 @@ abstract class PdoAdapter
     /**
      * Allows manipulation of the query string before StatementPdo is instantiated.
      *
-     * @param string                              $sql    The sql statement
-     * @param array                               $params array('column' => ..., 'table' => ..., 'value' => ...)
-     * @param Propel\Runtime\ActiveQuery\Criteria $values
-     * @param Propel\Runtime\Map\DatabaseMap      $dbMap
+     * @param string      $sql    The sql statement
+     * @param array       $params array('column' => ..., 'table' => ..., 'value' => ...)
+     * @param Criteria    $values
+     * @param DatabaseMap $dbMap
      */
     public function cleanupSQL(&$sql, array &$params, Criteria $values, DatabaseMap $dbMap)
     {
@@ -334,8 +337,8 @@ abstract class PdoAdapter
     /**
      * Returns the "DELETE FROM <table> [AS <alias>]" part of DELETE query.
      *
-     * @param Propel\Runtime\ActiveQuery\Criteria $criteria
-     * @param string                              $tableName
+     * @param Criteria $criteria
+     * @param string   $tableName
      *
      * @return string
      */
@@ -364,11 +367,10 @@ abstract class PdoAdapter
     /**
      * Builds the SELECT part of a SQL statement based on a Criteria
      * taking into account select columns and 'as' columns (i.e. columns aliases)
-     * Move from BasePeer to PdoAdapter and turn from static to non static
      *
-     * @param Propel\Runtime\ActiveQuery\Criteria $criteria
-     * @param array                               $fromClause
-     * @param boolean                             $aliasAll
+     * @param Criteria $criteria
+     * @param array    $fromClause
+     * @param boolean  $aliasAll
      *
      * @return string
      */
@@ -437,12 +439,11 @@ abstract class PdoAdapter
     /**
      * Ensures uniqueness of select column names by turning them all into aliases
      * This is necessary for queries on more than one table when the tables share a column name
-     * Moved from BasePeer to PdoAdapter and turned from static to non static
      *
      * @see http://propel.phpdb.org/trac/ticket/795
      *
-     * @param  Propel\Runtime\ActiveQuery\Criteria $criteria
-     * @return Propel\Runtime\ActiveQuery\Criteria The input, with Select columns replaced by aliases
+     * @param  Criteria $criteria
+     * @return Criteria The input, with Select columns replaced by aliases
      */
     public function turnSelectColumnsToAliases(Criteria $criteria)
     {
@@ -477,22 +478,22 @@ abstract class PdoAdapter
     /**
      * Binds values in a prepared statement.
      *
-     * This method is designed to work with the BasePeer::createSelectSql() method, which creates
+     * This method is designed to work with the Criteria::createSelectSql() method, which creates
      * both the SELECT SQL statement and populates a passed-in array of parameter
      * values that should be substituted.
      *
      * <code>
      * $adapter = Propel::getServiceContainer()->getAdapter($criteria->getDbName());
-     * $sql = BasePeer::createSelectSql($criteria, $params);
+     * $sql = $criteria->createSelectSql($params);
      * $stmt = $con->prepare($sql);
      * $params = array();
      * $adapter->populateStmtValues($stmt, $params, Propel::getServiceContainer()->getDatabaseMap($critera->getDbName()));
      * $stmt->execute();
      * </code>
      *
-     * @param Propel\Runtime\Connection\StatementInterface $stmt
-     * @param array                                        $params array('column' => ..., 'table' => ..., 'value' => ...)
-     * @param Propel\Runtime\Map\DatabaseMap               $dbMap
+     * @param StatementInterface $stmt
+     * @param array              $params array('column' => ..., 'table' => ..., 'value' => ...)
+     * @param DatabaseMap        $dbMap
      */
     public function bindValues(StatementInterface $stmt, array $params, DatabaseMap $dbMap)
     {
@@ -520,11 +521,11 @@ abstract class PdoAdapter
      * Binds a value to a positioned parameter in a statement,
      * given a ColumnMap object to infer the binding type.
      *
-     * @param Propel\Runtime\Connection\StatementInterface $stmt      The statement to bind
-     * @param string                                       $parameter Parameter identifier
-     * @param mixed                                        $value     The value to bind
-     * @param Propel\Runtime\Map\ColumnMap                 $cMap      The ColumnMap of the column to bind
-     * @param null|integer                                 $position  The position of the parameter to bind
+     * @param StatementInterface $stmt      The statement to bind
+     * @param string             $parameter Parameter identifier
+     * @param mixed              $value     The value to bind
+     * @param ColumnMap          $cMap      The ColumnMap of the column to bind
+     * @param null|integer       $position  The position of the parameter to bind
      *
      * @return boolean
      */

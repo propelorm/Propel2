@@ -32,7 +32,9 @@ class AdapterFactory
         if (!$driver) {
             $adapterClass = '\Propel\Runtime\Adapter\NoneAdapter';
         } elseif (false === strpos($driver, '\\')) {
-            $adapterClass = '\Propel\Runtime\Adapter\Pdo\\' . ucfirst($driver) . 'Adapter';
+            if (!class_exists($adapterClass = '\Propel\Runtime\Adapter\Pdo\\' . ucfirst($driver) . 'Adapter')) {
+                $adapterClass = '\Propel\Runtime\Adapter\\' . ucfirst($driver) . 'Adapter';
+            }
         } else {
             $adapterClass = $driver;
         }

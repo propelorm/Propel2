@@ -132,19 +132,19 @@ $book->setISBN('0553213105');
 $book->save(): // book is saved, and a new version is created
 {% endhighlight %}
 
-Alternatively, you can choose to disable the automated creation of a new version at each save for all objects of a given model by calling the `disableVersioning()` method on the Peer class. In this case, you still have the ability to manually create a new version of an object, using the `addVersion()` method on a saved object:
+Alternatively, you can choose to disable the automated creation of a new version at each save for all objects of a given model by calling the `disableVersioning()` method on the Query class. In this case, you still have the ability to manually create a new version of an object, using the `addVersion()` method on a saved object:
 
 {% highlight php %}
 <?php
-BookPeer::disableVersioning();
+BookQuery::disableVersioning();
 $book = new Book();
 $book->setTitle('Pride and Prejudice');
 $book->setVersion(1);
 $book->save(); // book is saved, no new version is created
 $book->addVersion(); // a new version is created
 
-// you can reenable versioning using the Peer static method enableVersioning()
-BookPeer::enableVersioning();
+// you can reenable versioning using the Query static method enableVersioning()
+BookQuery::enableVersioning();
 {% endhighlight %}
 
 ## Versioning Related objects ##
@@ -256,7 +256,7 @@ The audit log abilities need to be enabled in the schema as well:
 * `BaseObject setVersionComment(string $comment)`: Defines the comment for the revision
 * `string getVersionComment()`: Gets the comment for the revision
 
-### Peer class ###
+### Query static methods ###
 
 * `void enableVersioning()`: Enables versionning for all instances of the related ActiveRecord class
 * `void disableVersioning()`: Disables versionning for all instances of the related ActiveRecord class

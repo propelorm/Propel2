@@ -15,14 +15,11 @@ use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
 
 use Propel\Tests\Bookstore\Author;
-use Propel\Tests\Bookstore\AuthorPeer;
 use Propel\Tests\Bookstore\AuthorQuery;
 use Propel\Tests\Bookstore\Book;
-use Propel\Tests\Bookstore\BookPeer;
 use Propel\Tests\Bookstore\BookQuery;
 use Propel\Tests\Bookstore\Book2;
 use Propel\Tests\Bookstore\Book2Query;
-use Propel\Tests\Bookstore\BookstoreEmployeePeer;
 use Propel\Tests\Bookstore\Publisher;
 use Propel\Tests\Bookstore\Map\AuthorTableMap;
 use Propel\Tests\Bookstore\Map\BookTableMap;
@@ -37,7 +34,7 @@ use Propel\Runtime\Exception\UnexpectedValueException;
 use Propel\Runtime\Formatter\AbstractFormatter;
 use Propel\Runtime\Formatter\StatementFormatter;
 use Propel\Runtime\Formatter\ArrayFormatter;
-use Propel\Runtime\Util\BasePeer;
+use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Util\PropelModelPager;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\Exception\UnknownColumnException;
@@ -54,7 +51,7 @@ class ModelCriteriaTest extends BookstoreTestBase
     protected function assertCriteriaTranslation($criteria, $expectedSql, $expectedParams, $message = '')
     {
         $params = array();
-        $result = BasePeer::createSelectSql($criteria, $params);
+        $result = $criteria->createSelectSql($params);
 
         $this->assertEquals($expectedSql, $result, $message);
         $this->assertEquals($expectedParams, $params, $message);
@@ -76,15 +73,6 @@ class ModelCriteriaTest extends BookstoreTestBase
 
         $c = new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book');
         $this->assertEquals('\Propel\Tests\Bookstore\Book', $c->getFullyQualifiedModelName(), 'getFullyQualifiedModelName() returns the name of the class associated to the model class');
-    }
-
-    public function testGetModelPeerName()
-    {
-        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
-        $this->assertEquals('\Propel\Tests\Bookstore\BookPeer', $c->getModelPeerName(), 'getModelPeerName() returns the name of the Peer class associated to the model class');
-
-        $c = new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book');
-        $this->assertEquals('\Propel\Tests\Bookstore\BookPeer', $c->getModelPeerName(), 'getModelPeerName() returns the name of the Peer class associated to the model class');
     }
 
     public function testFormatter()
@@ -154,7 +142,7 @@ class ModelCriteriaTest extends BookstoreTestBase
     public function testReplaceNames($origClause, $columnPhpName = false, $modifiedClause)
     {
         $c = new TestableModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
-        $this->doTestReplaceNames($c, BookPeer::getTableMap(), $origClause, $columnPhpName = false, $modifiedClause);
+        $this->doTestReplaceNames($c, BookTableMap::getTableMap(), $origClause, $columnPhpName = false, $modifiedClause);
     }
 
     public function doTestReplaceNames($c, $tableMap, $origClause, $columnPhpName = false, $modifiedClause)
@@ -186,7 +174,7 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c->replaceNames($origClause);
         $foundColumns = $c->replacedColumns;
         foreach ($foundColumns as $column) {
-            $expectedColumn = BookPeer::getTableMap()->getColumnByPhpName(array_shift($expectedColumns));
+            $expectedColumn = BookTableMap::getTableMap()->getColumnByPhpName(array_shift($expectedColumns));
             $this->assertEquals($expectedColumn, $column);
         }
         $this->assertEquals($modifiedClause, $origClause);
@@ -1205,7 +1193,7 @@ class ModelCriteriaTest extends BookstoreTestBase
     public function testWithAddsSelectColumns()
     {
         $c = new TestableModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
-        BookPeer::addSelectColumns($c);
+        BookTableMap::addSelectColumns($c);
         $c->join('Propel\Tests\Bookstore\Book.Author');
         $c->with('Author');
         $expectedColumns = array(
@@ -1227,7 +1215,7 @@ class ModelCriteriaTest extends BookstoreTestBase
     public function testWithAliasAddsSelectColumns()
     {
         $c = new TestableModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
-        BookPeer::addSelectColumns($c);
+        BookTableMap::addSelectColumns($c);
         $c->join('Propel\Tests\Bookstore\Book.Author a');
         $c->with('a');
         $expectedColumns = array(
@@ -1292,7 +1280,7 @@ class ModelCriteriaTest extends BookstoreTestBase
     public function testWithOneToManyAddsSelectColumns()
     {
         $c = new TestableModelCriteria('bookstore', 'Propel\Tests\Bookstore\Author');
-        AuthorPeer::addSelectColumns($c);
+        AuthorTableMap::addSelectColumns($c);
         $c->leftJoin('Propel\Tests\Bookstore\Author.Book');
         $c->with('Book');
         $expectedColumns = array(
@@ -2684,7 +2672,7 @@ class ModelCriteriaTest extends BookstoreTestBase
         $bookQuery2
             ->filterByPrice(2);
         $params = array();
-        $sql = BasePeer::createSelectSql($bookQuery1, $params);
+        $sql = $bookQuery1->createSelectSql($params);
 
         if (in_array($this->getDriver(), array('mysql'))) {
             $expected = 'SELECT  FROM `book` WHERE book.PRICE=:p1';

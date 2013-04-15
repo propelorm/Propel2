@@ -13,6 +13,7 @@ namespace Propel\Runtime\Collection;
 use Propel\Runtime\Propel;
 use Propel\Runtime\Collection\Exception\ReadOnlyModelException;
 use Propel\Runtime\Exception\PropelException;
+use Propel\Runtime\Connection\ConnectionInterface;
 
 /**
  * Class for iterating over a list of Propel objects stored as arrays
@@ -21,12 +22,18 @@ use Propel\Runtime\Exception\PropelException;
  */
 class ArrayCollection extends Collection
 {
+    /**
+     * @var
+     */
     protected $workerObject;
 
     /**
      * Save all the elements in the collection
      *
      * @param ConnectionInterface $con
+     *
+     * @throws ReadOnlyModelException
+     * @throws PropelException
      */
     public function save($con = null)
     {
@@ -55,6 +62,9 @@ class ArrayCollection extends Collection
      * Delete all the elements in the collection
      *
      * @param ConnectionInterface $con
+     *
+     * @throws ReadOnlyModelException
+     * @throws PropelException
      */
     public function delete($con = null)
     {

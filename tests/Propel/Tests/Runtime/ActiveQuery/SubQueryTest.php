@@ -12,11 +12,10 @@ namespace Propel\Tests\Runtime\ActiveQuery;
 
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 use Propel\Tests\Bookstore\BookQuery;
-use Propel\Tests\Bookstore\BookPeer;
+use Propel\Tests\Bookstore\Map\BookTableMap;
 
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
-use Propel\Runtime\Util\BasePeer;
 
 /**
  * Test class for SubQueryTest.
@@ -29,7 +28,7 @@ class SubQueryTest extends BookstoreTestBase
     protected function assertCriteriaTranslation($criteria, $expectedSql, $expectedParams, $message = '')
     {
         $params = array();
-        $result = BasePeer::createSelectSql($criteria, $params);
+        $result = $criteria->createSelectSql($params);
 
         $this->assertEquals($expectedSql, $result, $message);
         $this->assertEquals($expectedParams, $params, $message);
@@ -38,11 +37,11 @@ class SubQueryTest extends BookstoreTestBase
     public function testSubQueryExplicit()
     {
         $subCriteria = new BookQuery();
-        BookPeer::addSelectColumns($subCriteria);
+        BookTableMap::addSelectColumns($subCriteria);
         $subCriteria->orderByTitle(Criteria::ASC);
 
         $c = new BookQuery();
-        BookPeer::addSelectColumns($c, 'subCriteriaAlias');
+        BookTableMap::addSelectColumns($c, 'subCriteriaAlias');
         $c->addSelectQuery($subCriteria, 'subCriteriaAlias', false);
         $c->groupBy('subCriteriaAlias.AuthorId');
 

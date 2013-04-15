@@ -380,9 +380,8 @@ CREATE %sINDEX %s ON %s (%s)%s;
             throw new EngineException('Oracle needs a sequence name to fetch primary keys');
         }
         $snippet = "
-\$stmt = %s->query('SELECT %s.nextval FROM dual');
-\$row = \$stmt->fetch(PDO::FETCH_NUM);
-%s = \$row[0];";
+\$dataFetcher = %s->query('SELECT %s.nextval FROM dual');
+%s = \$dataFetcher->fetchColumn();";
         $script = sprintf($snippet,
             $connectionVariableName,
             $sequenceName,

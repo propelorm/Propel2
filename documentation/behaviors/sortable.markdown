@@ -154,14 +154,14 @@ The generated methods now accept a `$scope` parameter to restrict the query to a
 <?php
 $firstPaulTask = TaskQuery::create()->findOneByRank($rank = 1, $scope = $paul->getId()); // $t1
 $lastPaulTask = $firstTask->getNext();      // $t2
-$firstJohnTask = TaskPeer::create()->findOneByRank($rank = 1, $scope = $john->getId()); // $t1
+$firstJohnTask = TaskQuery::create()->findOneByRank($rank = 1, $scope = $john->getId()); // $t1
 {% endhighlight %}
 
 Models using the sortable behavior with scope benefit from one additional Query methods named `inList()`:
 
 {% highlight php %}
 <?php
-$allPaulsTasks = TaskPeer::create()->inList($scope = $paul->getId())->find();
+$allPaulsTasks = TaskQuery::create()->inList($scope = $paul->getId())->find();
 {% endhighlight %}
 
 ## Parameters ##
@@ -258,7 +258,7 @@ bool    reorder($newOrder) // $newOrder is a $id => $rank associative array
 array   inList($scope)
 {% endhighlight %}
 
-The behavior also adds a few methods to the Peer classes:
+The behavior also adds a few methods to the Query classes:
 
 {% highlight php %}
 <?php

@@ -502,9 +502,8 @@ ALTER TABLE %s ALTER COLUMN %s;
             throw new EngineException('PostgreSQL needs a sequence name to fetch primary keys');
         }
         $snippet = "
-\$stmt = %s->query(\"SELECT nextval('%s')\");
-\$row = \$stmt->fetch(\\PDO::FETCH_NUM);
-%s = \$row[0];";
+\$dataFetcher = %s->query(\"SELECT nextval('%s')\");
+%s = \$dataFetcher->fetchColumn();";
         $script = sprintf($snippet,
             $connectionVariableName,
             $this->quoteIdentifier($sequenceName),

@@ -21,7 +21,6 @@ use Propel\Tests\Bookstore\BookstoreEmployee;
 use Propel\Tests\Bookstore\BookOpinion;
 use Propel\Tests\Bookstore\BookReader;
 use Propel\Tests\Bookstore\Essay;
-use Propel\Tests\Bookstore\EssayPeer;
 use Propel\Tests\Bookstore\Publisher;
 use Propel\Tests\Bookstore\Review;
 use Propel\Tests\Bookstore\Map\AuthorTableMap;
@@ -202,7 +201,7 @@ class ObjectFormatterWithTest extends BookstoreEmptyTestBase
 
     public function testFindOneWithDuplicateRelation()
     {
-        EssayPeer::doDeleteAll();
+        EssayTableMap::doDeleteAll();
         $auth1 = new Author();
         $auth1->setFirstName('John');
         $auth1->setLastName('Doe');
@@ -236,7 +235,7 @@ class ObjectFormatterWithTest extends BookstoreEmptyTestBase
 
     public function testFindOneWithEmptyDuplicateRelation()
     {
-        EssayPeer::doDeleteAll();
+        EssayTableMap::doDeleteAll();
 
         $author = new Author();
         $author->setFirstName('Piet');

@@ -22,7 +22,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
 {
     /**
      * The database connection.
-     * @var ConnectionInterface
+     * @var SqlConnectionInterface
      */
     protected $dbh;
 

@@ -468,22 +468,6 @@ class Collection extends \ArrayObject implements \Serializable
         return $this->fullyQualifiedModel;
     }
 
-    /**
-     * Get the peer class of the elements in the collection
-     *
-     * @return string Name of the Propel peer class stored in the collection
-     */
-    public function getPeerClass()
-    {
-        $model = $this->getModel();
-
-        if (empty($model)) {
-            throw new ModelNotFoundException('You must set the collection model before interacting with it');
-        }
-
-        return constant($this->getFullyQualifiedModel() . '::PEER');
-    }
-
     public function getTableMapClass()
     {
         $model = $this->getModel();

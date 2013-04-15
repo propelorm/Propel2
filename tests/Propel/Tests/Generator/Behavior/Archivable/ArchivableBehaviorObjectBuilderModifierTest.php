@@ -359,6 +359,7 @@ EOF;
         $a->save();
         $a->setTitle('bar');
         \MyOldArchivableTest30Query::create()->deleteAll();
+        $this->assertEquals(0, \MyOldArchivableTest30Query::create()->count());
         $a->saveWithoutArchive();
         $this->assertEquals(0, \MyOldArchivableTest30Query::create()->count());
     }

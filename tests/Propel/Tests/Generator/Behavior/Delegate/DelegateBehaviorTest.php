@@ -106,7 +106,7 @@ EOF;
 
     public function testModifyTableRelatesOneToOneDelegate()
     {
-        $delegateTable = \DelegateDelegatePeer::getTableMap();
+        $delegateTable = \Map\DelegateDelegateTableMap::getTableMap();
         $this->assertEquals(2, count($delegateTable->getColumns()));
         $this->assertEquals(1, count($delegateTable->getRelations()));
         $this->assertTrue(method_exists('DelegateMain', 'getDelegateDelegate'));

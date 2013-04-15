@@ -220,7 +220,10 @@ class GeneratorConfig implements GeneratorConfigInterface
      */
     public function getConfiguredBuilder(Table $table, $type)
     {
-        $classname = $this->getBuilderClassName($type);
+        $classname = $table->getDatabase()->getPlatform()->getBuilderClass($type);
+        if (!$classname) {
+            $classname = $this->getBuilderClassName($type);
+        }
         $builder   = new $classname($table);
         $builder->setGeneratorConfig($this);
 
@@ -248,7 +251,9 @@ class GeneratorConfig implements GeneratorConfigInterface
     public function getBuildConnections()
     {
         if (null === $this->buildConnections) {
-            $buildTimeConfigPath = $this->getBuildProperty('buildtimeConfFile') ? $this->getBuildProperty('projectDir') . DIRECTORY_SEPARATOR .  $this->getBuildProperty('buildtimeConfFile') : null;
+            $buildTimeConfigPath = $this->getBuildProperty('buildtimeConfFile')
+                ? $this->getBuildProperty('projectDir') . DIRECTORY_SEPARATOR . $this->getBuildProperty('buildtimeConfFile')
+                : 'buildtime-conf.xml';
             if ($buildTimeConfigString = $this->getBuildProperty('buildtimeConf')) {
                 // configuration passed as propel.buildtimeConf string
                 // probably using the command line, which doesn't accept whitespace
@@ -271,12 +276,13 @@ class GeneratorConfig implements GeneratorConfigInterface
         $this->defaultBuildConnection = (string) $conf->propel->datasources['default'];
         $buildConnections = array();
         foreach ($conf->propel->datasources->datasource as $datasource) {
-            $buildConnections[(string) $datasource['id']] = array(
-                'adapter'  => (string) $datasource->adapter,
-                'dsn'      => (string) $datasource->connection->dsn,
-                'user'     => (string) $datasource->connection->user,
-                'password' => (string) $datasource->connection->password,
+            $id = (string) $datasource['id'];
+            $buildConnections[$id] = array(
+                'adapter'  => (string) $datasource->adapter
             );
+            foreach ((array) $datasource->connection as $key => $connection) {
+                $buildConnections[$id][$key] = $connection;
+            }
         }
         $this->buildConnections = $buildConnections;
     }

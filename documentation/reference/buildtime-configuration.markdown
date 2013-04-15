@@ -173,7 +173,7 @@ propel.addHooks = {true}|false
 propel.basePrefix = {Base}|string
 
 # Some sort of "namespacing": All Propel classes with get the Prefix
-# "My_ORM_Prefix_" just like "My_ORM_Prefix_BookPeer".
+# "My_ORM_Prefix_" just like "My_ORM_Prefix_BookTableMap".
 propel.classPrefix = {empty}|string
 
 # Identifier quoting may result in undesired behavior (especially in Postgres),
@@ -265,10 +265,8 @@ propel.sql.dir = ${propel.output.dir}/sql
 
 {% highlight ini %}
 # Object Model builders
-propel.builder.peer.class = builder.om.PeerBuilder
 propel.builder.object.class = builder.om.ObjectBuilder
 propel.builder.objectstub.class = builder.om.ExtensionObjectBuilder
-propel.builder.peerstub.class = builder.om.ExtensionPeerBuilder
 
 propel.builder.objectmultiextend.class = builder.om.MultiExtendObjectBuilder
 

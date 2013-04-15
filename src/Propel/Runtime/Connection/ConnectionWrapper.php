@@ -410,7 +410,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      *
      * @see http://php.net/manual/en/pdo.query.php for a description of the possible parameters.
      *
-     * @return PDOStatement
+     * @return StatementInterface
      */
     public function query()
     {
@@ -445,6 +445,22 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
     public function quote($string, $parameter_type = 2)
     {
         return $this->connection->quote($string, $parameter_type);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getSingleDataFetcher($data)
+    {
+        return $this->connection->getSingleDataFetcher($data);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getDataFetcher($data)
+    {
+        return $this->connection->getDataFetcher($data);
     }
 
     /**

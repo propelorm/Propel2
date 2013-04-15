@@ -29,6 +29,7 @@ use Propel\Generator\Platform\PlatformInterface;
  */
 class ObjectBuilder extends AbstractObjectBuilder
 {
+
     /**
      * Returns the package for the base object classes.
      *
@@ -256,7 +257,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     protected function addClassBody(&$script)
     {
         $this->declareClassFromBuilder($this->getStubObjectBuilder());
-        $this->declareClassFromBuilder($this->getStubPeerBuilder());
         $this->declareClassFromBuilder($this->getStubQueryBuilder());
         $this->declareClassFromBuilder($this->getTableMapBuilder());
 
@@ -274,7 +274,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             '\Propel\Runtime\ActiveRecord\ActiveRecordInterface',
             '\Propel\Runtime\Parser\AbstractParser',
             '\Propel\Runtime\Propel',
-            '\Propel\Runtime\Util\BasePeer',
             '\Propel\Runtime\Map\TableMap'
         );
 
@@ -336,10 +335,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
         $this->addCopy($script);
 
-        if (!$table->isAlias()) {
-            $this->addGetPeer($script);
-        }
-
         $this->addFKMethods($script);
         $this->addRefFKMethods($script);
         $this->addCrossFKMethods($script);
@@ -380,11 +375,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     {
         $script .= "
     /**
-     * Peer class name
-     */
-    const PEER = '" . addslashes($this->getStubPeerBuilder()->getFullyQualifiedClassName()) . "';
-
-    /**
      * TableMap class name
      */
     const TABLE_MAP = '" . addslashes($this->getTableMapBuilder()->getFullyQualifiedClassName()) . "';
@@ -401,13 +391,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $table = $this->getTable();
 
         $script .= "
-    /**
-     * The Peer class.
-     * Instance provides a convenient way of calling static methods on a class
-     * that calling code may not be able to identify.
-     * @var        ".$this->getPeerClassName()."
-     */
-    protected static \$peer;
 ";
 
         $script .= $this->renderTemplate('baseObjectAttributes');
@@ -563,84 +546,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $clo = strtolower($column->getName()) . "_unserialized";
         $script .= "
     protected \$" . $clo . ";
-";
-    }
-
-    /**
-     * Adds the getPeer() method.
-     *
-     * This is a convenient, non introspective way of getting the Peer class for
-     * a particular object.
-     *
-     * @param string &$script
-     */
-    protected function addGetPeer(&$script)
-    {
-        $this->addGetPeerComment($script);
-        $this->addGetPeerFunctionOpen($script);
-        $this->addGetPeerFunctionBody($script);
-        $this->addGetPeerFunctionClose($script);
-    }
-
-    /**
-     * Adds the comment for the getPeer method.
-     *
-     * @param string &$script
-     */
-    protected function addGetPeerComment(&$script)
-    {
-        $script .= "
-    /**
-     * Returns a peer instance associated with this om.
-     *
-     * Since Peer classes are not to have any instance attributes, this method returns the
-     * same instance for all member of this class. The method could therefore
-     * be static, but this would prevent one from overriding the behavior.
-     *
-     * @return   ".$this->getPeerClassName()."
-     */";
-    }
-
-    /**
-     * Adds the function declaration (function opening) for the getPeer method.
-     *
-     * @param string &$script
-     */
-    protected function addGetPeerFunctionOpen(&$script)
-    {
-        $script .= "
-    public function getPeer()
-    {";
-    }
-
-    /**
-     * Adds the body of the getPeer method.
-     *
-     * @param string &$script
-     */
-    protected function addGetPeerFunctionBody(&$script)
-    {
-        $script .= "
-        if (self::\$peer === null) {
-            " . $this->buildObjectInstanceCreationCode('self::$peer', $this->getPeerClassName()) . "
-        }
-
-        return self::\$peer;";
-    }
-
-    /**
-     * Adds the function close for the getPeer method.
-     *
-     * Note: this is just a } and the body ends with a return statement, so it's
-     * quite useless. But it's here anyway for consistency, cause there's a close
-     * function for all functions and in some other instances, they are useful.
-     *
-     * @param string &$script
-     */
-    protected function addGetPeerFunctionClose(&$script)
-    {
-        $script .= "
-    }
 ";
     }
 
@@ -1308,42 +1213,51 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         \$c->addSelectColumn(".$this->getColumnConstant($column).");
         try {
             \$row = array(0 => null);
-            \$stmt = ".$this->getQueryClassName()."::create(null, \$c)->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find(\$con);
-            \$stmt->bindColumn(1, \$row[0], PDO::PARAM_LOB, 0, PDO::SQLSRV_ENCODING_BINARY);
-            \$stmt->fetch(PDO::FETCH_BOUND);
-            \$stmt->closeCursor();";
+            \$dataFetcher = ".$this->getQueryClassName()."::create(null, \$c)->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find(\$con);
+            if (\$dataFetcher instanceof PDODataFetcher) {
+                \$dataFetcher->bindColumn(1, \$row[0], PDO::PARAM_LOB, 0, PDO::SQLSRV_ENCODING_BINARY);
+            }
+            \$row = \$dataFetcher->fetch(PDO::FETCH_BOUND);
+            \$dataFetcher->close();";
         } else {
             $script .= "
         \$c = \$this->buildPkeyCriteria();
         \$c->addSelectColumn(".$this->getColumnConstant($column).");
         try {
-            \$stmt = ".$this->getQueryClassName()."::create(null, \$c)->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find(\$con);
-            \$row = \$stmt->fetch(PDO::FETCH_NUM);
-            \$stmt->closeCursor();";
+            \$dataFetcher = ".$this->getQueryClassName()."::create(null, \$c)->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find(\$con);
+            \$row = \$dataFetcher->fetch();
+            \$dataFetcher->close();";
         }
+
+        $script .= "
+
+        \$firstColumn = \$row ? current(\$row) : null;
+";
 
         if ($column->getType() === PropelTypes::CLOB && $platform instanceof OraclePlatform) {
             // PDO_OCI returns a stream for CLOB objects, while other PDO adapters return a string...
             $script .= "
-            \$this->$clo = stream_get_contents(\$row[0]);";
+            if (\$firstColumn) {
+                \$this->$clo = stream_get_contents(\$firstColumn);
+            }";
         } elseif ($column->isLobType() && !$platform->hasStreamBlobImpl()) {
             $script .= "
-            if (\$row[0] !== null) {
+            if (\$firstColumn !== null) {
                 \$this->$clo = fopen('php://memory', 'r+');
-                fwrite(\$this->$clo, \$row[0]);
+                fwrite(\$this->$clo, \$firstColumn);
                 rewind(\$this->$clo);
             } else {
                 \$this->$clo = null;
             }";
         } elseif ($column->isPhpPrimitiveType()) {
             $script .= "
-            \$this->$clo = (\$row[0] !== null) ? (".$column->getPhpType().") \$row[0] : null;";
+            \$this->$clo = (\$firstColumn !== null) ? (".$column->getPhpType().") \$firstColumn : null;";
         } elseif ($column->isPhpObjectType()) {
             $script .= "
-            \$this->$clo = (\$row[0] !== null) ? new ".$column->getPhpType()."(\$row[0]) : null;";
+            \$this->$clo = (\$firstColumn !== null) ? new ".$column->getPhpType()."(\$firstColumn) : null;";
         } else {
             $script .= "
-            \$this->$clo = \$row[0];";
+            \$this->$clo = \$firstColumn;";
         }
 
         $script .= "
@@ -1968,10 +1882,14 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * for results of JOIN queries where the resultset row includes columns from two or
      * more tables.
      *
-     * @param      array \$row The row returned by Statement->fetch(PDO::FETCH_NUM)
-     * @param      int \$startcol 0-based offset column which indicates which restultset column to start with.
-     * @param      boolean \$rehydrate Whether this object is being re-hydrated from the database.
-     * @return int             next starting column
+     * @param array   \$row       The row returned by DataFetcher->fetch().
+     * @param int     \$startcol  0-based offset column which indicates which restultset column to start with.
+     * @param boolean \$rehydrate Whether this object is being re-hydrated from the database.
+     * @param string  \$indexType The index type of \$row. Mostly DataFetcher->getIndexType().
+                                  One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_STUDLYPHPNAME
+     *                            TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
+     *
+     * @return int next starting column
      * @throws PropelException - Any caught Exception will be rewrapped as a PropelException.
      */";
     }
@@ -1984,7 +1902,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     protected function addHydrateOpen(&$script)
     {
         $script .= "
-    public function hydrate(\$row, \$startcol = 0, \$rehydrate = false)
+    public function hydrate(\$row, \$startcol = 0, \$rehydrate = false, \$indexType = TableMap::TYPE_NUM)
     {";
     }
 
@@ -1997,22 +1915,30 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     {
         $table = $this->getTable();
         $platform = $this->getPlatform();
+
+        $tableMap = $this->getTableMapClassName();
+
         $script .= "
         try {
 ";
         $n = 0;
         foreach ($table->getColumns() as $col) {
             if (!$col->isLazyLoad()) {
+                $indexName = "TableMap::TYPE_NUM == \$indexType ? $n + \$startcol : $tableMap::translateFieldName('{$col->getPhpName()}', TableMap::TYPE_PHPNAME, \$indexType)";
+
+                $script .= "
+
+            \$col = \$row[$indexName];";
                 $clo = strtolower($col->getName());
                 if ($col->getType() === PropelTypes::CLOB_EMU && $this->getPlatform() instanceof OraclePlatform) {
                     // PDO_OCI returns a stream for CLOB objects, while other PDO adapters return a string...
                     $script .= "
-            \$this->$clo = stream_get_contents(\$row[\$startcol + $n]);";
+            \$this->$clo = stream_get_contents(\$col);";
                 } elseif ($col->isLobType() && !$platform->hasStreamBlobImpl()) {
                     $script .= "
-            if (\$row[\$startcol + $n] !== null) {
+            if (null !== \$col) {
                 \$this->$clo = fopen('php://memory', 'r+');
-                fwrite(\$this->$clo, \$row[\$startcol + $n]);
+                fwrite(\$this->$clo, \$col);
                 rewind(\$this->$clo);
             } else {
                 \$this->$clo = null;
@@ -2035,29 +1961,29 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                     }
                     if ($handleMysqlDate) {
                         $script .= "
-            if (\$row[\$startcol + $n] === '$mysqlInvalidDateString') {
-                \$row[\$startcol + $n] = null;
+            if (\$col === '$mysqlInvalidDateString') {
+                \$col = null;
             }";
                     }
                     $script .= "
-            \$this->$clo = (\$row[\$startcol + $n] !== null) ? PropelDateTime::newInstance(\$row[\$startcol + $n], null, '$dateTimeClass') : null;";
+            \$this->$clo = (null !== \$col) ? PropelDateTime::newInstance(\$col, null, '$dateTimeClass') : null;";
                 } elseif ($col->isPhpPrimitiveType()) {
                     $script .= "
-            \$this->$clo = (\$row[\$startcol + $n] !== null) ? (".$col->getPhpType().") \$row[\$startcol + $n] : null;";
+            \$this->$clo = (null !== \$col) ? (".$col->getPhpType().") \$col : null;";
                 } elseif ($col->getType() === PropelTypes::OBJECT) {
                     $script .= "
-            \$this->$clo = \$row[\$startcol + $n];";
+            \$this->$clo = \$col;";
                 } elseif ($col->getType() === PropelTypes::PHP_ARRAY) {
                     $cloUnserialized = $clo . '_unserialized';
                     $script .= "
-            \$this->$clo = \$row[\$startcol + $n];
+            \$this->$clo = \$col;
             \$this->$cloUnserialized = null;";
                 } elseif ($col->isPhpObjectType()) {
                     $script .= "
-            \$this->$clo = (\$row[\$startcol + $n] !== null) ? new ".$col->getPhpType()."(\$row[\$startcol + $n]) : null;";
+            \$this->$clo = (null !== \$col) ? new ".$col->getPhpType()."(\$col) : null;";
                 } else {
                     $script .= "
-            \$this->$clo = \$row[\$startcol + $n];";
+            \$this->$clo = \$col;";
                 }
                 $n++;
             } // if col->isLazyLoad()
@@ -2478,8 +2404,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Sets a field from the object by name passed in as a string.
      *
-     * @param      string \$name peer name
-     * @param      mixed \$value field value
+     * @param      string \$name
+     * @param      mixed  \$value field value
      * @param      string \$type The type of fieldname the \$name is of:
      *                     one of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_STUDLYPHPNAME
      *                     TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
@@ -2725,13 +2651,13 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         // We don't need to alter the object instance pool; we're just modifying this instance
         // already in the pool.
 
-        \$stmt = ".$this->getQueryClassName()."::create(null, \$this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find(\$con);
-        \$row = \$stmt->fetch(PDO::FETCH_NUM);
-        \$stmt->closeCursor();
+        \$dataFetcher = ".$this->getQueryClassName()."::create(null, \$this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find(\$con);
+        \$row = \$dataFetcher->fetch();
+        \$dataFetcher->close();
         if (!\$row) {
             throw new PropelException('Cannot find matching row in the database to reload object values.');
         }
-        \$this->hydrate(\$row, 0, true); // rehydrate
+        \$this->hydrate(\$row, 0, true, \$dataFetcher->getIndexType()); // rehydrate
 ";
 
         // support for lazy load columns
@@ -3313,13 +3239,12 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $tblFK = $refFK->getTable();
         $joinBehavior = $this->getGeneratorConfig()->getBuildProperty('useLeftJoinsInDoJoinMethods') ? 'Criteria::LEFT_JOIN' : 'Criteria::INNER_JOIN';
 
-        $peerClassName = $this->getClassNameFromBuilder($this->getStubPeerBuilder());
         $fkQueryClassName = $this->getClassNameFromBuilder($this->getNewStubQueryBuilder($refFK->getTable()));
         $relCol = $this->getRefFKPhpNameAffix($refFK, $plural = true);
         $collName = $this->getRefFKCollVarName($refFK);
 
-        $fkPeerBuilder = $this->getNewPeerBuilder($tblFK);
-        $className = $fkPeerBuilder->getObjectClassName();
+        $fkObjectBuilder = $this->getNewObjectBuilder($tblFK);
+        $className = $fkObjectBuilder->getObjectClassName();
 
         foreach ($tblFK->getForeignKeys() as $fk2) {
 
@@ -3566,7 +3491,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $table = $this->getTable();
         $tblFK = $refFK->getTable();
 
-        $peerClassName = $this->getPeerClassName();
         $fkQueryClassName = $this->getClassNameFromBuilder($this->getNewStubQueryBuilder($refFK->getTable()));
         $relCol = $this->getRefFKPhpNameAffix($refFK, $plural = true);
         $collName = $this->getRefFKCollVarName($refFK);
@@ -3615,7 +3539,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $table = $this->getTable();
         $tblFK = $refFK->getTable();
 
-        $peerClassName = $this->getPeerClassName();
         $fkQueryClassName = $this->getClassNameFromBuilder($this->getNewStubQueryBuilder($refFK->getTable()));
         $relCol = $this->getRefFKPhpNameAffix($refFK, $plural = true);
         $collName = $this->getRefFKCollVarName($refFK);
@@ -4362,7 +4285,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     protected function addDoInsertBodyStandard()
     {
         return "
-        \$pk = " . $this->getNewPeerBuilder($this->getTable())->getBasePeerClassName() . "::doInsert(\$criteria, \$con);";
+        \$pk = \$criteria->insert(\$con);";
     }
 
     protected function addDoInsertBodyWithIdMethod()
@@ -4554,21 +4477,21 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      */
     protected function addDoUpdate()
     {
-        $basePeerClassName = $this->getNewPeerBuilder($this->getTable())->getBasePeerClassName();
-
         return "
     /**
      * Update the row in the database.
      *
      * @param      ConnectionInterface \$con
      *
+     * @return Integer Number of updated rows
      * @see doSave()
      */
     protected function doUpdate(ConnectionInterface \$con)
     {
         \$selectCriteria = \$this->buildPkeyCriteria();
         \$valuesCriteria = \$this->buildCriteria();
-        {$basePeerClassName}::doUpdate(\$selectCriteria, \$valuesCriteria, \$con);
+
+        return \$selectCriteria->doUpdate(\$valuesCriteria, \$con);
     }
 ";
     }
