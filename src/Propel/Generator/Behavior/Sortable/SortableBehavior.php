@@ -30,7 +30,6 @@ class SortableBehavior extends Behavior
 
     protected $objectBuilderModifier;
     protected $queryBuilderModifier;
-    protected $peerBuilderModifier;
     protected $tableMapBuilderModifier;
 
     /**
@@ -72,15 +71,6 @@ class SortableBehavior extends Behavior
         }
 
         return $this->queryBuilderModifier;
-    }
-
-    public function getPeerBuilderModifier()
-    {
-        if (null === $this->peerBuilderModifier) {
-            $this->peerBuilderModifier = new SortableBehaviorPeerBuilderModifier($this);
-        }
-
-        return $this->peerBuilderModifier;
     }
 
     public function getTableMapBuilderModifier()

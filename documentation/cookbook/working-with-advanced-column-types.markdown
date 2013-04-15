@@ -19,7 +19,7 @@ BLOB values will be returned as PHP stream resources from the accessor methods. 
 
 {% highlight php %}
 <?php
-$media = MediaPeer::retrieveByPK(1);
+$media = MediaQuery::create()->findPk(1);
 $fp = $media->getCoverImage();
 if ($fp !== null) {
   echo stream_get_contents($fp);
@@ -62,7 +62,7 @@ For example:
 {% highlight php %}
 <?php
 
-$media = MediaPeer::retrieveByPK(1);
+$media = MediaQuery::create()->findPk(1);
 $fp = $media->getCoverImage();
 $media->setCoverImage($fp);
 

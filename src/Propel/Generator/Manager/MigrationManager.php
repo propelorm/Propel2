@@ -87,9 +87,8 @@ class MigrationManager extends AbstractManager
     {
         $params       = $this->getConnection($datasource);
         $adapter      = $params['adapter'];
-        $adapterClass = '\\Propel\\Generator\\Platform\\' . ucfirst($adapter) . 'Platform';
 
-        return new $adapterClass();
+        return AdapterFactory::create($adapter);
     }
 
     /**
@@ -122,6 +121,11 @@ class MigrationManager extends AbstractManager
         $migrationTimestamps      = array();
         foreach ($connections as $name => $params) {
             $conn = $this->getAdapterConnection($name);
+            $platform = $this->getGeneratorConfig()->getConfiguredPlatform($conn);
+            if (!$platform->supportsMigrations()) {
+                continue;
+            }
+
             $sql = sprintf('SELECT version FROM %s', $this->getMigrationTable());
 
             try {

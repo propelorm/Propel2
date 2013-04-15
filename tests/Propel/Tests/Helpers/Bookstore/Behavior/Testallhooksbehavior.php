@@ -14,7 +14,7 @@ use Propel\Generator\Model\Behavior;
 
 class TestAllHooksBehavior extends Behavior
 {
-    protected $tableModifier, $objectBuilderModifier, $peerBuilderModifier, $queryBuilderModifier;
+    protected $tableModifier, $objectBuilderModifier, $queryBuilderModifier;
 
     public function getTableModifier()
     {
@@ -32,15 +32,6 @@ class TestAllHooksBehavior extends Behavior
         }
 
         return $this->objectBuilderModifier;
-    }
-
-    public function getPeerBuilderModifier()
-    {
-        if (is_null($this->peerBuilderModifier)) {
-            $this->peerBuilderModifier = new TestAllHooksPeerBuilderModifier($this);
-        }
-
-        return $this->peerBuilderModifier;
     }
 
     public function getQueryBuilderModifier()
@@ -135,8 +126,9 @@ class TestAllHooksObjectBuilderModifier
     }
 }
 
-class TestAllHooksPeerBuilderModifier
+class TestAllHooksQueryBuilderModifier
 {
+
     public function staticAttributes($builder)
     {
         return 'static public $customStaticAttribute = 1;public static $staticAttributeBuilder = "' . get_class($builder) . '";';
@@ -147,19 +139,11 @@ class TestAllHooksPeerBuilderModifier
         return 'static public function hello() { return "' . get_class($builder) . '"; }';
     }
 
-    public function preSelect($builder)
+    public function queryFilter(&$string, $builder)
     {
-        return '$con->preSelect = "' . get_class($builder) . '";';
+        $string .= 'class testQueryFilter { const FOO = "' . get_class($builder) . '"; }';
     }
 
-    public function peerFilter(&$string, $builder)
-    {
-        $string .= 'class testPeerFilter { const FOO = "' . get_class($builder) . '"; }';
-    }
-}
-
-class TestAllHooksQueryBuilderModifier
-{
     public function preSelectQuery($builder)
     {
         return '// foo';

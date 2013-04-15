@@ -39,7 +39,7 @@ Rebuild your model, and you're ready to go. The code of the model classes now us
   	if ($this->title !== $v)
   	{
   		$this->title = $v;
-  		$this->modifiedColumns[] = BookPeer::TITLE;
+		$this->modifiedColumns[] = BookTableMap::TITLE;
   	}
 
   	return $this;
@@ -61,7 +61,7 @@ Rebuild your model, and you're ready to go. The code of the model classes now us
 
 		if ($this->title !== $v) {
 			$this->title = $v;
-			$this->modifiedColumns[] = BookPeer::TITLE;
+			$this->modifiedColumns[] = BookTableMap::TITLE;
 		}
 
 		return $this;

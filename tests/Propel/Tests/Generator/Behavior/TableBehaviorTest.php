@@ -10,7 +10,7 @@
 
 namespace Propel\Tests\Generator\Behavior;
 
-use Propel\Tests\Bookstore\Behavior\Table3Peer;
+use Propel\Tests\Bookstore\Behavior\Map\Table3TableMap;
 
 /**
  * Tests the table structure behavior hooks.
@@ -26,7 +26,7 @@ class TableBehaviorTest extends \PHPUnit_Framework_TestCase
 
     public function testModifyTable()
     {
-        $t = Table3Peer::getTableMap();
+        $t = Table3TableMap::getTableMap();
         $this->assertTrue($t->hasColumn('test'), 'modifyTable hook is called when building the model structure');
     }
 }

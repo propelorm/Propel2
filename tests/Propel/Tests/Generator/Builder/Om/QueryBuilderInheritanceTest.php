@@ -19,11 +19,11 @@ use Propel\Tests\Bookstore\BookstoreEmployee;
 use Propel\Tests\Bookstore\BookstoreEmployeeQuery;
 use Propel\Tests\Bookstore\BookstoreManager;
 use Propel\Tests\Bookstore\BookstoreManagerQuery;
-use Propel\Tests\Bookstore\DistributionPeer;
 use Propel\Tests\Bookstore\DistributionManager;
 use Propel\Tests\Bookstore\DistributionStore;
 use Propel\Tests\Bookstore\DistributionVirtualStore;
 use Propel\Tests\Bookstore\DistributionQuery;
+use Propel\Tests\Bookstore\Map\DistributionTableMap;
 
 use Propel\Runtime\Propel;
 
@@ -134,7 +134,7 @@ class QueryBuilderInheritanceTest extends BookstoreTestBase
 
     public function testGetCorrectTableMapClassWithAbstractSingleTableInheritance()
     {
-        $this->assertInstanceOf('\Propel\Tests\Bookstore\Map\DistributionTableMap', DistributionPeer::getTableMap(), 'getTableMap should return the right table map');
+        $this->assertInstanceOf('\Propel\Tests\Bookstore\Map\DistributionTableMap', DistributionTableMap::getTableMap(), 'getTableMap should return the right table map');
     }
 
     /**

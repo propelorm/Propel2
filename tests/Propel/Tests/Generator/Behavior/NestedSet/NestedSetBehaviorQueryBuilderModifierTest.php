@@ -292,7 +292,7 @@ class NestedSetBehaviorQueryBuilderModifierTest extends TestCase
             'nested_set adds a retrieveRoot() method'
         );
 
-        \NestedSetTable9Peer::doDeleteAll();
+        \Map\NestedSetTable9TableMap::doDeleteAll();
         $this->assertNull(\NestedSetTable9Query::retrieveRoot(), 'retrieveRoot() returns null as long as no root node is defined');
 
         $t1 = new \NestedSetTable9();

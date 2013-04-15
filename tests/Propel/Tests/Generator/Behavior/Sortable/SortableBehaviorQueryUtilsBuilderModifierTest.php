@@ -17,7 +17,7 @@ use Propel\Runtime\ActiveQuery\Criteria;
  *
  * @author Massimiliano Arione
  */
-class SortableBehaviorPeerBuilderModifierTest extends TestCase
+class SortableBehaviorQueryUtilsBuilderModifierTest extends TestCase
 {
     public function setUp()
     {
@@ -33,18 +33,18 @@ class SortableBehaviorPeerBuilderModifierTest extends TestCase
 
     public function testGetMaxRank()
     {
-        $this->assertEquals(4, \SortableTable11Peer::getMaxRank(), 'getMaxRank() returns the maximum rank');
-        $t4 = \SortableTable11Peer::retrieveByRank(4);
+        $this->assertEquals(4, \SortableTable11Query::create()->getMaxRank(), 'getMaxRank() returns the maximum rank');
+        $t4 = \SortableTable11Query::retrieveByRank(4);
         $t4->delete();
-        $this->assertEquals(3, \SortableTable11Peer::getMaxRank(), 'getMaxRank() returns the maximum rank');
-        \SortableTable11Peer::doDeleteAll();
-        $this->assertNull(\SortableTable11Peer::getMaxRank(), 'getMaxRank() returns null for empty tables');
+        $this->assertEquals(3, \SortableTable11Query::create()->getMaxRank(), 'getMaxRank() returns the maximum rank');
+        \Map\SortableTable11TableMap::doDeleteAll();
+        $this->assertNull(\SortableTable11Query::create()->getMaxRank(), 'getMaxRank() returns null for empty tables');
     }
     public function testRetrieveByRank()
     {
-        $t = \SortableTable11Peer::retrieveByRank(5);
+        $t = \SortableTable11Query::retrieveByRank(5);
         $this->assertNull($t, 'retrieveByRank() returns null for an unknown rank');
-        $t3 = \SortableTable11Peer::retrieveByRank(3);
+        $t3 = \SortableTable11Query::retrieveByRank(3);
         $this->assertEquals(3, $t3->getRank(), 'retrieveByRank() returns the object with the required rank');
         $this->assertEquals('row3', $t3->getTitle(), 'retrieveByRank() returns the object with the required rank');
     }
@@ -58,20 +58,20 @@ class SortableBehaviorPeerBuilderModifierTest extends TestCase
         }
         $ranks = array(4, 3, 2, 1);
         $order = array_combine($ids, $ranks);
-        \SortableTable11Peer::reorder($order);
+        \SortableTable11Query::create()->reorder($order);
         $expected = array(1 => 'row3', 2 => 'row2', 3 => 'row4', 4 => 'row1');
         $this->assertEquals($expected, $this->getFixturesArray(), 'reorder() reorders the suite');
     }
 
     public function testDoSelectOrderByRank()
     {
-        $objects = \SortableTable11Peer::doSelectOrderByRank()->getArrayCopy();
+        $objects = \SortableTable11Query::doSelectOrderByRank()->getArrayCopy();
         $oldRank = 0;
         while ($object = array_shift($objects)) {
             $this->assertTrue($object->getRank() > $oldRank);
             $oldRank = $object->getRank();
         }
-        $objects = \SortableTable11Peer::doSelectOrderByRank(null, Criteria::DESC)->getArrayCopy();
+        $objects = \SortableTable11Query::doSelectOrderByRank(null, Criteria::DESC)->getArrayCopy();
         $oldRank = 10;
         while ($object = array_shift($objects)) {
             $this->assertTrue($object->getRank() < $oldRank);

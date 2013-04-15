@@ -53,21 +53,21 @@ class ModelManager extends AbstractManager
                         $this->log('  + Table: ' . $table->getName());
 
                         // -----------------------------------------------------------------------------------------
-                        // Create Peer, Object, and TableMap classes
+                        // Create Object, and TableMap classes
                         // -----------------------------------------------------------------------------------------
 
                         // these files are always created / overwrite any existing files
-                        foreach (array('peer', 'object', 'tablemap', 'query') as $target) {
+                        foreach (array('object', 'tablemap', 'query') as $target) {
                             $builder = $generatorConfig->getConfiguredBuilder($table, $target);
                             $nbWrittenFiles += $this->doBuild($builder);
                         }
 
                         // -----------------------------------------------------------------------------------------
-                        // Create [empty] stub Peer and Object classes if they don't exist
+                        // Create [empty] stub Object classes if they don't exist
                         // -----------------------------------------------------------------------------------------
 
                         // these classes are only generated if they don't already exist
-                        foreach (array('peerstub', 'objectstub', 'querystub') as $target) {
+                        foreach (array('objectstub', 'querystub') as $target) {
                             $builder = $generatorConfig->getConfiguredBuilder($table, $target);
                             $nbWrittenFiles += $this->doBuild($builder, $overwrite = false);
                         }

@@ -129,7 +129,7 @@ class DatabaseMapTest extends BookstoreTestBase
 
     public function testGetTableByPhpNameNotLoaded()
     {
-        $this->assertEquals('book', Propel::getServiceContainer()->getDatabaseMap('bookstore')->getTableByPhpName('Propel\Tests\Bookstore\Book')->getName(), 'getTableByPhpName() can autoload a TableMap when the Peer class is generated and autoloaded');
+        $this->assertEquals('book', Propel::getServiceContainer()->getDatabaseMap('bookstore')->getTableByPhpName('Propel\Tests\Bookstore\Book')->getName(), 'getTableByPhpName() can autoload a TableMap when the class is generated and autoloaded');
     }
 
 }

@@ -40,13 +40,13 @@ The classes used by Propel internally to build the object model were renamed. Th
     Replace...                       With...
     OMBuilder.php                    AbstractOMBuilder.php
     ObjectBuilder.php                AbstractObjectBuilder.php
-    PeerBuilder.php                  AbstractPeerBuilder.php
+    PeerBuilder.php                  __removed__
     PHP5ExtensionObjectBuilder.php   ExtensionObjectBuilder.php
-    PHP5ExtensionPeerBuilder.php     ExtensionPeerBuilder.php
+    PHP5ExtensionPeerBuilder.php     __removed__
     PHP5InterfaceBuilder.php         InterfaceBuilder.php
     PHP5MultiExtendObjectBuilder.php MultiExtendObjectBuilder.php
     PHP5ObjectBuilder.php            ObjectBuilder.php
-    PHP5PeerBuilder.php              PeerBuilder.php
+    PHP5PeerBuilder.php              __removed__
     PHP5TableMapBuilder.php          TableMapBuilder.php
 
 ## Base classes reorganized

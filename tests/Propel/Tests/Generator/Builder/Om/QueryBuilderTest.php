@@ -16,12 +16,9 @@ use Propel\Runtime\ActiveQuery\ModelJoin;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Propel;
-use Propel\Runtime\Util\BasePeer;
-use Propel\Tests\Bookstore\AuthorPeer;
 use Propel\Tests\Bookstore\AuthorQuery;
 use Propel\Tests\Bookstore\Map\AuthorTableMap;
 use Propel\Tests\Bookstore\Book;
-use Propel\Tests\Bookstore\BookPeer;
 use Propel\Tests\Bookstore\BookQuery;
 use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\Bookstore\BookstoreEmployeeAccountQuery;
@@ -928,8 +925,8 @@ class QueryBuilderTest extends BookstoreTestBase
             ->endUse();
         $join = new ModelJoin();
         $join->setJoinType(Criteria::LEFT_JOIN);
-        $join->setTableMap(AuthorPeer::getTableMap());
-        $join->setRelationMap(BookPeer::getTableMap()->getRelation('Author'), null, 'a');
+        $join->setTableMap(AuthorTableMap::getTableMap());
+        $join->setRelationMap(BookTableMap::getTableMap()->getRelation('Author'), null, 'a');
         $join->setRelationAlias('a');
         $q1 = BookQuery::create()
             ->addAlias('a', AuthorTableMap::TABLE_NAME)
@@ -979,13 +976,13 @@ class QueryBuilderTest extends BookstoreTestBase
             ->endUse();
         $join1 = new ModelJoin();
         $join1->setJoinType(Criteria::LEFT_JOIN);
-        $join1->setTableMap(AuthorPeer::getTableMap());
-        $join1->setRelationMap(BookPeer::getTableMap()->getRelation('Author'), null, 'a');
+        $join1->setTableMap(AuthorTableMap::getTableMap());
+        $join1->setRelationMap(BookTableMap::getTableMap()->getRelation('Author'), null, 'a');
         $join1->setRelationAlias('a');
         $join2 = new ModelJoin();
         $join2->setJoinType(Criteria::LEFT_JOIN);
-        $join2->setTableMap(AuthorPeer::getTableMap());
-        $join2->setRelationMap(BookPeer::getTableMap()->getRelation('Author'), null, 'b');
+        $join2->setTableMap(AuthorTableMap::getTableMap());
+        $join2->setRelationMap(BookTableMap::getTableMap()->getRelation('Author'), null, 'b');
         $join2->setRelationAlias('b');
         $q1 = BookQuery::create()
             ->addAlias('a', AuthorTableMap::TABLE_NAME)
@@ -1012,9 +1009,9 @@ class QueryBuilderTest extends BookstoreTestBase
         // embedded queries create joins that keep a relation to the parent
         // as this is not testable, we need to use another testing technique
         $params = array();
-        $result = BasePeer::createSelectSql($q, $params);
+        $result = $q->createSelectSql($params);
         $expectedParams = array();
-        $expectedResult = BasePeer::createSelectSql($q1, $expectedParams);
+        $expectedResult = $q1->createSelectSql($expectedParams);
         $this->assertEquals($expectedParams, $params, 'useFkQuery() called nested creates two joins');
         $this->assertEquals($expectedResult, $result, 'useFkQuery() called nested creates two joins');
     }

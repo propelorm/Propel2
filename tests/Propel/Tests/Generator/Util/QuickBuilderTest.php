@@ -16,8 +16,8 @@ use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\Propel;
 
 use MyNameSpace\QuickBuildFoo1;
-use MyNameSpace\QuickBuildFoo1Peer;
 use MyNameSpace\QuickBuildFoo1Query;
+use MyNameSpace\Map\QuickBuildFoo1TableMap;
 
 use MyNameSpace2\QuickBuildFoo2;
 use MyNameSpace2\QuickBuildFoo2Query;
@@ -93,10 +93,8 @@ EOF;
     {
         $script = $builder->getClasses();
         $this->assertContains('class QuickBuildFoo1 extends BaseQuickBuildFoo1', $script);
-        $this->assertContains('class QuickBuildFoo1Peer extends BaseQuickBuildFoo1Peer', $script);
         $this->assertContains('class QuickBuildFoo1Query extends BaseQuickBuildFoo1Query', $script);
         $this->assertContains('class QuickBuildFoo1 implements ActiveRecordInterface', $script);
-        $this->assertContains('class QuickBuildFoo1Peer', $script);
         $this->assertContains('class QuickBuildFoo1Query extends ModelCriteria', $script);
     }
 
@@ -105,12 +103,10 @@ EOF;
      */
     public function testGetClassesLimitedClassTargets($builder)
     {
-        $script = $builder->getClasses(array('tablemap', 'peer', 'object', 'query'));
+        $script = $builder->getClasses(array('tablemap', 'object', 'query'));
         $this->assertNotContains('class QuickBuildFoo1 extends BaseQuickBuildFoo1', $script);
-        $this->assertNotContains('class QuickBuildFoo1Peer extends BaseQuickBuildFoo1Peer', $script);
         $this->assertNotContains('class QuickBuildFoo1Query extends BaseQuickBuildFoo1Query', $script);
         $this->assertContains('class QuickBuildFoo1 implements ActiveRecordInterface', $script);
-        $this->assertContains('class QuickBuildFoo1Peer', $script);
         $this->assertContains('class QuickBuildFoo1Query extends ModelCriteria', $script);
     }
 
@@ -122,7 +118,7 @@ EOF;
         $builder->buildClasses();
         $foo = new QuickBuildFoo1();
         $this->assertTrue($foo instanceof ActiveRecordInterface);
-        $this->assertTrue(QuickBuildFoo1Peer::getTableMap() instanceof \MyNameSpace\Map\QuickBuildFoo1TableMap);
+        $this->assertTrue(QuickBuildFoo1TableMap::getTableMap() instanceof \MyNameSpace\Map\QuickBuildFoo1TableMap);
     }
 
     public function testBuild()

@@ -19,14 +19,9 @@
     const OM_CLASS = '<?php echo $tablePhpName ?>';
 
     /**
-     * A class that can be returned by this peer
+     * A class that can be returned by this tableMap
      */
     const CLASS_DEFAULT = '<?php echo $classPath ?>';
-
-    /**
-     * The related TableMap class for this table
-     */
-    const PEER_CLASS = '<?php echo $peerClassName ?>';
 
     /**
      * The total number of columns

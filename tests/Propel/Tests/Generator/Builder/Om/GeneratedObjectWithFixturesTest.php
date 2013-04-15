@@ -10,27 +10,21 @@
 
 namespace Propel\Tests\Generator\Builder\Om;
 
-
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Map\TableMap;
 use Propel\Tests\Bookstore\Author;
-use Propel\Tests\Bookstore\AuthorPeer;
 use Propel\Tests\Bookstore\AuthorQuery;
 use Propel\Tests\Bookstore\Book;
-use Propel\Tests\Bookstore\BookPeer;
 use Propel\Tests\Bookstore\BookQuery;
-use Propel\Tests\Bookstore\BookstorePeer;
 use Propel\Tests\Bookstore\BookstoreQuery;
 use Propel\Tests\Bookstore\BookstoreSale;
 use Propel\Tests\Bookstore\BookstoreEmployee;
 use Propel\Tests\Bookstore\BookstoreEmployeeAccount;
-use Propel\Tests\Bookstore\BookstoreEmployeePeer;
 use Propel\Tests\Bookstore\BookstoreEmployeeQuery;
 use Propel\Tests\Bookstore\Map\AuthorTableMap;
 use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\Bookstore\Map\MediaTableMap;
-use Propel\Tests\Bookstore\MediaPeer;
 use Propel\Tests\Bookstore\MediaQuery;
 use Propel\Tests\Bookstore\Map\PublisherTableMap;
 use Propel\Tests\Bookstore\Review;

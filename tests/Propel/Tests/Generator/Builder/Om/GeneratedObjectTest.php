@@ -30,13 +30,11 @@ use Propel\Tests\Bookstore\BookReader;
 use Propel\Tests\Bookstore\BookOpinion;
 use Propel\Tests\Bookstore\BookOpinionQuery;
 use Propel\Tests\Bookstore\Bookstore;
-use Propel\Tests\Bookstore\BookstorePeer;
 use Propel\Tests\Bookstore\BookstoreContest;
 use Propel\Tests\Bookstore\BookstoreEmployee;
 use Propel\Tests\Bookstore\BookstoreEmployeeQuery;
 use Propel\Tests\Bookstore\Map\BookstoreEmployeeTableMap;
 use Propel\Tests\Bookstore\BookstoreEmployeeAccount;
-use Propel\Tests\Bookstore\BookstoreEmployeeAccountPeer;
 use Propel\Tests\Bookstore\BookstoreEmployeeAccountQuery;
 use Propel\Tests\Bookstore\Map\BookstoreEmployeeAccountTableMap;
 use Propel\Tests\Bookstore\BookstoreContestEntry;
@@ -44,7 +42,7 @@ use Propel\Tests\Bookstore\BookstoreSale;
 use Propel\Tests\Bookstore\Contest;
 use Propel\Tests\Bookstore\ContestView;
 use Propel\Tests\Bookstore\Customer;
-use Propel\Tests\Bookstore\CustomerPeer;
+use Propel\Tests\Bookstore\Map\CustomerTableMap;
 use Propel\Tests\Bookstore\CustomerQuery;
 use Propel\Tests\Bookstore\Publisher;
 use Propel\Tests\Bookstore\PublisherQuery;
@@ -152,7 +150,7 @@ class GeneratedObjectTest extends BookstoreTestBase
         if (Propel::getServiceContainer()->getAdapter(BookstoreEmployeeTableMap::DATABASE_NAME) instanceof DBSqlite) {
             $this->markTestSkipped("Cannot test default expressions with SQLite");
         }
-        BookstoreEmployeeAccountPeer::doDeleteAll();
+        BookstoreEmployeeAccountTableMap::doDeleteAll();
 
         $b = new Bookstore();
         $b->setStoreName("Foo!");
@@ -816,7 +814,7 @@ EOF;
      */
     public function testAllowPkInsertOnIdMethodNativeTable()
     {
-        CustomerPeer::doDeleteAll();
+        CustomerTableMap::doDeleteAll();
         $cu = new Customer;
         $cu->setPrimaryKey(100000);
         $cu->save();
@@ -845,7 +843,7 @@ EOF;
      */
     public function testUniqueFkRel()
     {
-        BookstoreEmployeeAccountPeer::doDeleteAll();
+        BookstoreEmployeeAccountTableMap::doDeleteAll();
 
         $employee = new BookstoreEmployee();
         $employee->setName("Johnny Walker");

@@ -10,10 +10,10 @@
 
 namespace Propel\Runtime\Collection;
 
+use Propel\Runtime\DataFetcher\DataFetcherInterface;
 use Propel\Runtime\Propel;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Formatter\AbstractFormatter;
-use Propel\Runtime\Connection\StatementInterface;
 
 /**
  * Class for iterating over a statement and returning one Propel object at a time
@@ -28,9 +28,9 @@ class OnDemandIterator implements \Iterator
     protected $formatter;
 
     /**
-     * @var StatementInterface
+     * @var DataFetcherInterface
      */
-    protected $stmt;
+    protected $dataFetcher;
 
     protected $currentRow;
 
@@ -41,20 +41,20 @@ class OnDemandIterator implements \Iterator
     protected $enableInstancePoolingOnFinish;
 
     /**
-     * @param AbstractFormatter  $formatter
-     * @param StatementInterface $stmt
+     * @param AbstractFormatter    $formatter
+     * @param DataFetcherInterface $dataFetcher
      */
-    public function __construct(AbstractFormatter $formatter, StatementInterface $stmt)
+    public function __construct(AbstractFormatter $formatter, DataFetcherInterface $dataFetcher)
     {
         $this->currentKey = -1;
         $this->formatter = $formatter;
-        $this->stmt = $stmt;
+        $this->dataFetcher = $dataFetcher;
         $this->enableInstancePoolingOnFinish = Propel::disableInstancePooling();
     }
 
     public function closeCursor()
     {
-        $this->stmt->closeCursor();
+        $this->dataFetcher->close();
         if ($this->enableInstancePoolingOnFinish) {
             Propel::enableInstancePooling();
         }
@@ -68,7 +68,7 @@ class OnDemandIterator implements \Iterator
      */
     public function count()
     {
-        return $this->stmt->rowCount();
+        return $this->dataFetcher->count();
     }
 
     // Iterator Interface
@@ -102,7 +102,7 @@ class OnDemandIterator implements \Iterator
      */
     public function next()
     {
-        $this->currentRow = $this->stmt->fetch(\PDO::FETCH_NUM);
+        $this->currentRow = $this->dataFetcher->fetch();
         $this->currentKey++;
         $this->isValid = (Boolean) $this->currentRow;
         if (!$this->isValid) {
@@ -120,8 +120,8 @@ class OnDemandIterator implements \Iterator
         if (null === $this->formatter) {
             throw new PropelException('The On Demand collection requires a formatter. Add it by calling setFormatter()');
         }
-        if (null === $this->stmt) {
-            throw new PropelException('The On Demand collection requires a statement. Add it by calling setStatement()');
+        if (null === $this->dataFetcher) {
+            throw new PropelException('The On Demand collection requires a dataFetcher. Add it by calling setDataFetcher()');
         }
         if (null !== $this->isValid) {
             throw new PropelException('The On Demand collection can only be iterated once');

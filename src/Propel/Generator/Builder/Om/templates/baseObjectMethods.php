@@ -43,7 +43,7 @@
 
     /**
      * Setter for the isNew attribute.  This method will be called
-     * by Propel-generated children and Peers.
+     * by Propel-generated children and objects.
      *
      * @param boolean $b the state of the object.
      */

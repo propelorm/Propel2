@@ -39,6 +39,10 @@
             } elseif (is_array($value) && count($value) === <?= $countPks ?>) {
                 // assume we've been passed a primary key";
                 $key = <?= $removeInstancePoolKeySnippetPks ?>;
+            } elseif ($value instanceof Criteria) {
+                self::$instances = [];
+
+                return;
             } else {
                 $e = new PropelException("Invalid value passed to removeInstanceFromPool().  Expected primary key or <?= $objectClassName ?> object; got " . (is_object($value) ? get_class($value) . ' object.' : var_export($value, true)));
                 throw $e;

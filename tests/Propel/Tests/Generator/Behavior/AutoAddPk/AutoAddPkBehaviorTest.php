@@ -13,11 +13,11 @@ namespace Propel\Tests\Generator\Behavior\AutoAddPk;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
 use Propel\Tests\Bookstore\Behavior\Table6;
-use Propel\Tests\Bookstore\Behavior\Table6Peer;
+use Propel\Tests\Bookstore\Behavior\Map\Table6TableMap;
 use Propel\Tests\Bookstore\Behavior\Table7;
-use Propel\Tests\Bookstore\Behavior\Table7Peer;
+use Propel\Tests\Bookstore\Behavior\Map\Table7TableMap;
 use Propel\Tests\Bookstore\Behavior\Table8;
-use Propel\Tests\Bookstore\Behavior\Table8Peer;
+use Propel\Tests\Bookstore\Behavior\Map\Table8TableMap;
 
 /**
  * Tests for AutoAddPkBehavior class
@@ -30,7 +30,7 @@ class AutoAddPkBehaviorTest extends BookstoreTestBase
 {
     public function testDefault()
     {
-        $table6 = Table6Peer::getTableMap();
+        $table6 = Table6TableMap::getTableMap();
         $this->assertEquals(count($table6->getColumns()), 2, 'auto_add_pk adds one column by default');
         $pks = $table6->getPrimaryKeys();
         $this->assertEquals(count($pks), 1, 'auto_add_pk adds a simple primary key by default');
@@ -43,7 +43,7 @@ class AutoAddPkBehaviorTest extends BookstoreTestBase
 
     public function testNoTrigger()
     {
-        $table7 = Table7Peer::getTableMap();
+        $table7 = Table7TableMap::getTableMap();
         $this->assertEquals(count($table7->getColumns()), 2, 'auto_add_pk does not add a column when the table already has a primary key');
         $this->assertFalse(method_exists('Table7', 'getId'), 'auto_add_pk does not add an id column when the table already has a primary key');
         $pks = $table7->getPrimaryKeys();
@@ -53,7 +53,7 @@ class AutoAddPkBehaviorTest extends BookstoreTestBase
 
     public function testParameters()
     {
-        $table8 = Table8Peer::getTableMap();
+        $table8 = Table8TableMap::getTableMap();
         $this->assertEquals(count($table8->getColumns()), 3, 'auto_add_pk adds one column with custom parameters');
         $pks = $table8->getPrimaryKeys();
         $pk = array_pop($pks);

@@ -13,7 +13,7 @@ namespace Propel\Tests\Generator\Behavior;
 
 use Propel\Tests\BookstoreSchemas\Book;
 use Propel\Tests\BookstoreSchemas\SecondHandBook;
-use Propel\Tests\BookstoreSchemas\BookPeer;
+use Propel\Tests\BookstoreSchemas\Map\BookTableMap;
 use Propel\Tests\Helpers\Schemas\SchemasTestBase;
 
 /**
@@ -26,7 +26,7 @@ class ConcreteInheritanceBehaviorWithSchemaTest extends SchemasTestBase
 {
     public function testParentBehaviorWithSchemas()
     {
-        $behaviors = BookPeer::getTableMap()->getBehaviors();
+        $behaviors = BookTableMap::getTableMap()->getBehaviors();
         $this->assertTrue(array_key_exists('concrete_inheritance_parent', $behaviors), 'modifyTable() gives the parent table the concrete_inheritance_parent behavior');
         $this->assertEquals('descendant_class', $behaviors['concrete_inheritance_parent']['descendant_column'], 'modifyTable() passed the descendant_column parameter to the parent behavior');
     }

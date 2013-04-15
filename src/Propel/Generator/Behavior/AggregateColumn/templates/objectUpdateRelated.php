@@ -1,16 +1,16 @@
 
 /**
- * Update the aggregate column in the related <?php echo $relationName ?> object
+ * Update the aggregate column in the related <?=$relationName?> object
  *
  * @param ConnectionInterface $con A connection object
  */
-protected function updateRelated<?php echo $relationName ?>(ConnectionInterface $con)
+protected function updateRelated<?=$relationName?>(ConnectionInterface $con)
 {
-    if ($<?php echo $variableName ?> = $this->get<?php echo $relationName ?>()) {
-        $<?php echo $variableName ?>-><?php echo $updateMethodName ?>($con);
+    if ($<?=$variableName?> = $this->get<?=$relationName?>()) {
+        $<?=$variableName?>-><?=$updateMethodName?>($con);
     }
-    if ($this->old<?php echo $relationName ?>) {
-        $this->old<?php echo $relationName ?>-><?php echo $updateMethodName ?>($con);
-        $this->old<?php echo $relationName ?> = null;
+    if ($this->old<?=$relationName?>) {
+        $this->old<?=$relationName?>-><?=$updateMethodName?>($con);
+        $this->old<?=$relationName?> = null;
     }
 }

@@ -49,7 +49,6 @@ class DatabaseTest extends ModelTestCase
         $database->loadMapping(array(
             'name'                   => 'bookstore',
             'baseClass'              => 'CustomBaseObject',
-            'basePeer'               => 'CustomBasePeer',
             'defaultIdMethod'        => 'native',
             'defaultPhpNamingMethod' => 'underscore',
             'heavyIndexing'          => 'true',
@@ -59,7 +58,6 @@ class DatabaseTest extends ModelTestCase
 
         $this->assertSame('bookstore', $database->getName());
         $this->assertSame('CustomBaseObject', $database->getBaseClass());
-        $this->assertSame('CustomBasePeer', $database->getBasePeer());
         $this->assertSame('XML', $database->getDefaultStringFormat());
         $this->assertSame('native', $database->getDefaultIdMethod());
         $this->assertSame('underscore', $database->getDefaultPhpNamingMethod());
@@ -399,10 +397,8 @@ class DatabaseTest extends ModelTestCase
     {
         $database = new Database();
         $database->setBaseClass('CustomBaseObject');
-        $database->setBasePeer('CustomPeer');
 
         $this->assertSame('CustomBaseObject', $database->getBaseClass());
-        $this->assertSame('CustomPeer', $database->getBasePeer());
     }
 
     public function testSetDefaultIdMethod()

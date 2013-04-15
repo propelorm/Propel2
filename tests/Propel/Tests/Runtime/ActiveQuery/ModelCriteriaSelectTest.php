@@ -130,14 +130,14 @@ class ModelCriteriaSelectTest extends BookstoreTestBase
         $c->select(AuthorTableMap::FIRST_NAME);
         $author = $c->find($this->con);
         $expectedSQL = "SELECT author.FIRST_NAME AS \"author.FIRST_NAME\" FROM `author`";
-        $this->assertEquals($expectedSQL, $this->con->getLastExecutedQuery(), 'select(string) accepts model Peer Constants');
+        $this->assertEquals($expectedSQL, $this->con->getLastExecutedQuery(), 'select(string) accepts model TableMap Constants');
     }
 
     /**
      * As $failSilently is `true` by default, it doesn't throw any exception, just returns null.
      * So, we check the query fails here.
      *
-     * @expectedException \PDOException
+     * @expectedException \Propel\Runtime\Exception\PropelException
      */
     public function testSelectStringFindCalledWithNonExistingColumn()
     {

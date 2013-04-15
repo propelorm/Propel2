@@ -144,7 +144,9 @@ class StandardServiceContainer implements ServiceContainerInterface
      *
      * @param string $name The datasource name
      *
-     * @return Propel\Runtime\Adapter\AdapterInterface
+     * @return AdapterInterface
+     *
+     * @throws AdapterException
      */
     public function getAdapter($name = null)
     {
@@ -196,7 +198,8 @@ class StandardServiceContainer implements ServiceContainerInterface
     public function checkVersion ($generatorVersion)
     {
         if ($generatorVersion != Propel::VERSION) {
-            $warning = "Version mismatch: The generated model was build using propel '" . $generatorVersion . "' while the current runtime is at version '" . Propel::VERSION . "'";
+            $warning  = "Version mismatch: The generated model was build using propel '" . $generatorVersion;
+            $warning .= " while the current runtime is at version '" . Propel::VERSION . "'";
 
             $logger = $this->getLogger();
             if ($logger) {
@@ -452,20 +455,37 @@ class StandardServiceContainer implements ServiceContainerInterface
             return 'defaultLogger' !== $name ? $this->getLogger() : new NullLogger();
         }
 
-        $logger = new Logger($name);
+        $logger        = new Logger($name);
         $configuration = $this->loggerConfigurations[$name];
         switch ($configuration['type']) {
             case 'stream':
-                $handler = new \Monolog\Handler\StreamHandler($configuration['path'], isset($configuration['level']) ? $configuration['level'] : null, isset($configuration['bubble']) ? $configuration['bubble'] : null);
+                $handler = new \Monolog\Handler\StreamHandler(
+                    $configuration['path'],
+                    isset($configuration['level']) ? $configuration['level'] : null,
+                    isset($configuration['bubble']) ? $configuration['bubble'] : null
+                );
                 break;
             case 'rotating_file':
-                $handler = new \Monolog\Handler\RotatingFileHandler($configuration['path'], isset($configuration['max_files']) ? $configuration['max_files'] : null, isset($configuration['level']) ? $configuration['level'] : null, isset($configuration['bubble']) ? $configuration['bubble'] : null);
+                $handler = new \Monolog\Handler\RotatingFileHandler(
+                    $configuration['path'],
+                    isset($configuration['max_files']) ? $configuration['max_files'] : null,
+                    isset($configuration['level']) ? $configuration['level'] : null,
+                    isset($configuration['bubble']) ? $configuration['bubble'] : null
+                );
                 break;
             case 'syslog':
-                $handler = new \Monolog\Handler\SyslogHandler($configuration['ident'], isset($configuration['facility']) ? $configuration['facility'] : null, isset($configuration['level']) ? $configuration['level'] : null, isset($configuration['bubble']) ? $configuration['bubble'] : null);
+                $handler = new \Monolog\Handler\SyslogHandler(
+                    $configuration['ident'],
+                    isset($configuration['facility']) ? $configuration['facility'] : null,
+                    isset($configuration['level']) ? $configuration['level'] : null,
+                    isset($configuration['bubble']) ? $configuration['bubble'] : null
+                );
                 break;
             default:
-                throw new UnexpectedValueException(sprintf('Handler type "%s" not supported by StandardServiceContainer. Try setting the Logger manually, or use another ServiceContainer.', $configuration['type']));
+                throw new UnexpectedValueException(sprintf(
+                    'Handler type "%s" not supported by StandardServiceContainer. Try setting the Logger manually, or use another ServiceContainer.',
+                    $configuration['type']
+                ));
                 break;
         }
         $logger->pushHandler($handler);

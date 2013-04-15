@@ -11,7 +11,7 @@
 namespace Propel\Generator\Behavior\Sortable;
 
 /**
- * Behavior to add sortable peer methods
+ * Behavior to add sortable methods
  *
  * @author Jérémie Augustin
  */

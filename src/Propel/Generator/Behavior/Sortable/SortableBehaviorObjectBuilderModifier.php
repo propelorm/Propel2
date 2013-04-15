@@ -26,11 +26,9 @@ class SortableBehaviorObjectBuilderModifier
 
     protected $objectClassName;
 
-    protected $peerClassName;
-
-    protected $peerFullClassName;
-
     protected $tableMapClassName;
+    protected $queryClassName;
+    protected $queryFullClassName;
 
     public function __construct($behavior)
     {
@@ -58,8 +56,7 @@ class SortableBehaviorObjectBuilderModifier
         $this->builder = $builder;
         $this->objectClassName = $builder->getObjectClassName();
         $this->queryClassName = $builder->getQueryClassName();
-        $this->peerClassName = $builder->getPeerClassName();
-        $this->peerFullClassName = $builder->getStubPeerBuilder()->getFullyQualifiedClassName();
+        $this->queryFullClassName = $builder->getStubQueryBuilder()->getFullyQualifiedClassName();
         $this->tableMapClassName = $builder->getTableMapClassName();
     }
 
@@ -105,7 +102,7 @@ class SortableBehaviorObjectBuilderModifier
         $this->setBuilder($builder);
 
         return "
-{$this->peerClassName}::shiftRank(-1, \$this->{$this->getColumnGetter()}() + 1, null, " . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con);
+{$this->queryClassName}::sortableShiftRank(-1, \$this->{$this->getColumnGetter()}() + 1, null, " . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con);
 {$this->tableMapClassName}::clearInstancePool();
 ";
     }
@@ -310,7 +307,7 @@ public function getPrevious(ConnectionInterface \$con = null)
     protected function addInsertAtRank(&$script)
     {
         $useScope = $this->behavior->useScope();
-        $peerClassName = $this->peerFullClassName;
+        $queryClassName = $this->queryFullClassName;
         $script .= "
 /**
  * Insert at specified rank
@@ -341,7 +338,7 @@ public function insertAtRank(\$rank, ConnectionInterface \$con = null)
     if (\$rank != \$maxRank + 1) {
         // Keep the list modification query for the save() transaction
         \$this->sortableQueries []= array(
-            'callable'  => array('$peerClassName', 'shiftRank'),
+            'callable'  => array('{$queryClassName}', 'sortableShiftRank'),
             'arguments' => array(1, \$rank, null, " . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}()" : '') . ")
         );
     }
@@ -400,7 +397,6 @@ public function insertAtTop()
     protected function addMoveToRank(&$script)
     {
         $useScope = $this->behavior->useScope();
-        $peerClassName = $this->peerClassName;
         $script .= "
 /**
  * Move the object to a new rank, and shifts the rank
@@ -434,7 +430,7 @@ public function moveToRank(\$newRank, ConnectionInterface \$con = null)
     try {
         // shift the objects between the old and the new rank
         \$delta = (\$oldRank < \$newRank) ? -1 : 1;
-        $peerClassName::shiftRank(\$delta, min(\$oldRank, \$newRank), max(\$oldRank, \$newRank), " . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con);
+        {$this->queryClassName}::sortableShiftRank(\$delta, min(\$oldRank, \$newRank), max(\$oldRank, \$newRank), " . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con);
 
         // move the object to its new rank
         \$this->{$this->getColumnSetter()}(\$newRank);
@@ -612,7 +608,6 @@ public function moveToBottom(ConnectionInterface \$con = null)
     protected function addRemoveFromList(&$script)
     {
         $useScope = $this->behavior->useScope();
-        $peerClassName = $this->peerFullClassName;
         $script .= "
 /**
  * Removes the current object from the list.
@@ -624,7 +619,7 @@ public function removeFromList()
 {
     // Keep the list modification query for the save() transaction
     \$this->sortableQueries []= array(
-        'callable'  => array('$peerClassName', 'shiftRank'),
+        'callable'  => array('{$this->queryFullClassName}', 'sortableShiftRank'),
         'arguments' => array(-1, \$this->{$this->getColumnGetter()}() + 1, null" . ($useScope ? ", \$this->{$this->getColumnGetter('scope_column')}()" : '') . ")
     );
     // remove the object from the list
