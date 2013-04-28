@@ -159,14 +159,15 @@ class MssqlSchemaParser extends AbstractSchemaParser
     protected function addForeignKeys(Table $table)
     {
         $database = $table->getDatabase();
-
+        $name = $table->getName();
+        
         $stmt = $this->dbh->query("SELECT ccu1.TABLE_NAME, ccu1.COLUMN_NAME, ccu2.TABLE_NAME AS FK_TABLE_NAME, ccu2.COLUMN_NAME AS FK_COLUMN_NAME
             FROM INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE ccu1 INNER JOIN
             INFORMATION_SCHEMA.TABLE_CONSTRAINTS tc1 ON tc1.CONSTRAINT_NAME = ccu1.CONSTRAINT_NAME AND
             CONSTRAINT_TYPE = 'Foreign Key' INNER JOIN
             INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS rc1 ON rc1.CONSTRAINT_NAME = tc1.CONSTRAINT_NAME INNER JOIN
             INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE ccu2 ON ccu2.CONSTRAINT_NAME = rc1.UNIQUE_CONSTRAINT_NAME
-            WHERE (ccu1.table_name = '".$table->getName()."')");
+            WHERE (ccu1.table_name = '$name')");
 
         $foreignKeys = array(); // local store to avoid duplicates
         while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
