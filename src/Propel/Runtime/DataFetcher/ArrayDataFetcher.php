@@ -41,6 +41,7 @@ class ArrayDataFetcher extends AbstractDataFetcher
     {
         $row = $this->valid() ? $this->current() : null;
         $this->next();
+
         return $row;
     }
 

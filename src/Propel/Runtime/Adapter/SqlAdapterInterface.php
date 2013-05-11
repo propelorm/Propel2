@@ -41,8 +41,8 @@ interface SqlAdapterInterface extends AdapterInterface
     /**
      * Allows manipulation of the query string before StatementPdo is instantiated.
      *
-     * @param string                         $sql    The sql statement
-     * @param array                          $params array('column' => ..., 'table' => ..., 'value' => ...)
+     * @param string      $sql    The sql statement
+     * @param array       $params array('column' => ..., 'table' => ..., 'value' => ...)
      * @param Criteria    $values
      * @param DatabaseMap $dbMap
      */
@@ -114,8 +114,8 @@ interface SqlAdapterInterface extends AdapterInterface
      * </code>
      *
      * @param StatementInterface $stmt
-     * @param array                                        $params array('column' => ..., 'table' => ..., 'value' => ...)
-     * @param DatabaseMap               $dbMap
+     * @param array              $params array('column' => ..., 'table' => ..., 'value' => ...)
+     * @param DatabaseMap        $dbMap
      */
     public function bindValues(StatementInterface $stmt, array $params, DatabaseMap $dbMap);
 

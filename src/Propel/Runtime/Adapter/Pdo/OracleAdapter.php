@@ -142,7 +142,8 @@ class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
         }
 
         $dataFetcher = $con->query(sprintf('SELECT %s.nextval FROM dual', $name));
-		return $dataFetcher->fetchColumn();
+
+        return $dataFetcher->fetchColumn();
     }
 
     /**

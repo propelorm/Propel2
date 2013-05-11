@@ -16,7 +16,6 @@ use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
 use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Propel;
-use Propel\Runtime\ActiveQuery\ModelCriteria;
 
 /**
  * Test class for DataFetcher.

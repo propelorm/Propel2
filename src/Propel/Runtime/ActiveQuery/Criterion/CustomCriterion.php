@@ -21,7 +21,7 @@ class CustomCriterion extends AbstractCriterion
      * Create a new instance.
      *
      * @param Criteria $outer The outer class (this is an "inner" class).
-     * @param string   $value  The condition to be added to the query string
+     * @param string   $value The condition to be added to the query string
      */
     public function __construct(Criteria $outer, $value)
     {
@@ -32,8 +32,8 @@ class CustomCriterion extends AbstractCriterion
     /**
      * Appends a Prepared Statement representation of the Criterion onto the buffer
      *
-     * @param      string &$sb The string that will receive the Prepared Statement
-     * @param array $params A list to which Prepared Statement parameters will be appended
+     * @param string &$sb    The string that will receive the Prepared Statement
+     * @param array  $params A list to which Prepared Statement parameters will be appended
      */
     protected function appendPsForUniqueClauseTo(&$sb, array &$params)
     {

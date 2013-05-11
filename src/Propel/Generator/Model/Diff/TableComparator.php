@@ -74,9 +74,9 @@ class TableComparator
     /**
      * Returns the computed difference between two table objects.
      *
-     * @param  Table            $fromTable
-     * @param  Table            $toTable
-     * @param  boolean          $caseInsensitive
+     * @param  Table             $fromTable
+     * @param  Table             $toTable
+     * @param  boolean           $caseInsensitive
      * @return TableDiff|Boolean
      */
     public static function computeDiff(Table $fromTable, Table $toTable, $caseInsensitive = false)
