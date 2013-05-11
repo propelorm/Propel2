@@ -61,7 +61,7 @@ class TableMapBuilder extends AbstractOMBuilder
 
     /**
      * Adds class phpdoc comment and opening of class.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addClassOpen(&$script)
     {
@@ -166,7 +166,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
 
     /**
      * Adds the addSelectColumns(), doCount(), etc. methods.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addSelectMethods(&$script)
     {
@@ -344,7 +344,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
 
     /**
      * Adds any attributes needed for this TableMap class.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addAttributes(&$script)
     {
@@ -402,7 +402,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
 
     /**
      * Closes class.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addClassClose(&$script)
     {
@@ -438,7 +438,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
 
     /**
      * Adds the addInitialize() method to the  table map class.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addInitialize(&$script)
     {
@@ -540,7 +540,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
 
     /**
      * Adds the method that build the RelationMap objects
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addBuildRelations(&$script)
     {
@@ -594,7 +594,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
 
     /**
      * Adds the behaviors getter
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addGetBehaviors(&$script)
     {
@@ -737,7 +737,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
     /**
      * Checks whether any registered behavior on that table has a modifier for a hook
      * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
-     * @param string &$script The script will be modified in this method.
+     * @param string &$script  The script will be modified in this method.
      */
     public function applyBehaviorModifier($hookName, &$script, $tab = "        ")
     {
@@ -864,7 +864,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
 
     /**
      * Adds the correct getOMClass() method, depending on whether this table uses inheritance.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addGetOMClassMethod(&$script)
     {

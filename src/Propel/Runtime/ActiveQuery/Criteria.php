@@ -1793,7 +1793,7 @@ class Criteria
      * to be set before the statement is executed.  The reason we do it this way
      * is to let the PDO layer handle all escaping & value formatting.
      *
-     * @param      array &$params Parameters that are to be replaced in prepared statement.
+     * @param  array  &$params Parameters that are to be replaced in prepared statement.
      * @return string
      *
      * @throws \Propel\Runtime\Exception\PropelException Trouble creating the query string.

@@ -84,7 +84,7 @@ class SqliteSchemaParser extends AbstractSchemaParser
 
         // First load the tables (important that this happen before filling out details of tables)
         $tables = array();
-		foreach ($dataFetcher as $row) {
+        foreach ($dataFetcher as $row) {
             $name = $row[0];
             if ($name === $this->getMigrationTable()) {
                 continue;
@@ -111,7 +111,7 @@ class SqliteSchemaParser extends AbstractSchemaParser
     /**
      * Adds Columns to the specified table.
      *
-     * @param Table  $table   The Table model class to add columns to.
+     * @param Table $table The Table model class to add columns to.
      */
     protected function addColumns(Table $table)
     {

@@ -145,9 +145,9 @@ class ProfilerConnectionWrapper extends ConnectionWrapper
      * @uses      self::getLogPrefix()
      * @see self::setLogger()
      *
-     * @param string  $msg           Message to log.
-     * @param integer $level         Log level to use; will use self::setLogLevel() specified level by default.
-     * @param string  $methodName    Name of the method whose execution is being logged.
+     * @param string  $msg        Message to log.
+     * @param integer $level      Log level to use; will use self::setLogLevel() specified level by default.
+     * @param string  $methodName Name of the method whose execution is being logged.
      */
     public function log($msg, $level = null, $methodName = null)
     {

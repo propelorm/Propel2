@@ -201,7 +201,7 @@ class StatementWrapper implements StatementInterface, \IteratorAggregate
      * Fetches a row from a result set associated with a Statement object.
      * The fetch_style parameter determines how the Connection returns the row.
      *
-     * @param integer $fetchStyle        Controls how the next row will be returned to the caller.
+     * @param integer $fetchStyle Controls how the next row will be returned to the caller.
      *
      * @return mixed
      */
@@ -213,7 +213,7 @@ class StatementWrapper implements StatementInterface, \IteratorAggregate
     /**
      * Returns an array containing all of the result set rows.
      *
-     * @param integer $fetchStyle  Controls the contents of the returned array as documented in fetch()
+     * @param integer $fetchStyle Controls the contents of the returned array as documented in fetch()
      *
      * @return array
      */

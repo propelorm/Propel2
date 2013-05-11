@@ -82,7 +82,7 @@ class MssqlSchemaParser extends AbstractSchemaParser
 
         // First load the tables (important that this happen before filling out details of tables)
         $tables = array();
-        foreach ($dataFetcher as $row){
+        foreach ($dataFetcher as $row) {
             $name = $this->cleanDelimitedIdentifiers($row[0]);
             if ($name === $this->getMigrationTable()) {
                 continue;
@@ -117,7 +117,7 @@ class MssqlSchemaParser extends AbstractSchemaParser
     {
         $dataFetcher = $this->dbh->query("sp_columns '" . $table->getName() . "'");
 
-        foreach ($dataFetcher as $row){
+        foreach ($dataFetcher as $row) {
 
             $name = $this->cleanDelimitedIdentifiers($row['COLUMN_NAME']);
             $type = $row['TYPE_NAME'];
@@ -169,7 +169,7 @@ class MssqlSchemaParser extends AbstractSchemaParser
             WHERE (ccu1.table_name = '".$table->getName()."')");
 
         $foreignKeys = array(); // local store to avoid duplicates
-        foreach ($dataFetcher as $row){
+        foreach ($dataFetcher as $row) {
 
             $lcol = $this->cleanDelimitedIdentifiers($row['COLUMN_NAME']);
             $ftbl = $this->cleanDelimitedIdentifiers($row['FK_TABLE_NAME']);
@@ -201,7 +201,7 @@ class MssqlSchemaParser extends AbstractSchemaParser
         $dataFetcher = $this->dbh->query("sp_indexes_rowset '" . $table->getName() . "'");
 
         $indexes = array();
-        foreach ($dataFetcher as $row){
+        foreach ($dataFetcher as $row) {
             $colName = $this->cleanDelimitedIdentifiers($row["COLUMN_NAME"]);
             $name = $this->cleanDelimitedIdentifiers($row['INDEX_NAME']);
 
@@ -229,7 +229,7 @@ class MssqlSchemaParser extends AbstractSchemaParser
 
         // Loop through the returned results, grouping the same key_name together
         // adding each column for that key.
-        foreach ($dataFetcher as $row){
+        foreach ($dataFetcher as $row) {
             $name = $this->cleanDelimitedIdentifiers($row[0]);
             $table->getColumn($name)->setPrimaryKey(true);
         }

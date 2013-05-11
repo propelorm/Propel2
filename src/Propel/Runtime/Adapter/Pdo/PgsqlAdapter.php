@@ -86,7 +86,8 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
             throw new InvalidArgumentException("Unable to fetch next sequence ID without sequence name.");
         }
         $dataFetcher = $con->query(sprintf('SELECT nextval(%s)', $con->quote($name)));
-		return $dataFetcher->fetchColumn();
+
+        return $dataFetcher->fetchColumn();
     }
 
     /**
