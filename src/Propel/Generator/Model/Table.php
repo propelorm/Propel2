@@ -357,44 +357,37 @@ class Table extends ScopedMappingModel implements IdMethod
      */
     public function doNaming()
     {
-        // Assure names are unique across all databases.
-        try {
-            for ($i = 0, $size = count($this->foreignKeys); $i < $size; $i++) {
-                $fk = $this->foreignKeys[$i];
-                $name = $fk->getName();
-                if (empty($name)) {
-                    $name = $this->acquireConstraintName('FK', $i + 1);
-                    $fk->setName($name);
-                }
+        for ($i = 0, $size = count($this->foreignKeys); $i < $size; $i++) {
+            $fk = $this->foreignKeys[$i];
+            $name = $fk->getName();
+            if (empty($name)) {
+                $name = $this->acquireConstraintName('FK', $i + 1);
+                $fk->setName($name);
             }
-
-            for ($i = 0, $size = count($this->indices); $i < $size; $i++) {
-                $index = $this->indices[$i];
-                $name = $index->getName();
-                if (empty($name)) {
-                    $name = $this->acquireConstraintName('I', $i + 1);
-                    $index->setName($name);
-                }
-            }
-
-            for ($i = 0, $size = count($this->unices); $i < $size; $i++) {
-                $index = $this->unices[$i];
-                $name = $index->getName();
-                if (empty($name)) {
-                    $name = $this->acquireConstraintName('U', $i + 1);
-                    $index->setName($name);
-                }
-            }
-
-            // NOTE: Most RDBMSes can apparently name unique column
-            // constraints/indices themselves (using MySQL and Oracle
-            // as test cases), so we'll assume that we needn't add an
-            // entry to the system name list for these.
-        } catch (EngineException $nameAlreadyInUse) {
-            // @TODO remove hardcoded print statements
-            print $nameAlreadyInUse->getMessage() . "\n";
-            print $nameAlreadyInUse->getTraceAsString();
         }
+
+        for ($i = 0, $size = count($this->indices); $i < $size; $i++) {
+            $index = $this->indices[$i];
+            $name = $index->getName();
+            if (empty($name)) {
+                $name = $this->acquireConstraintName('I', $i + 1);
+                $index->setName($name);
+            }
+        }
+
+        for ($i = 0, $size = count($this->unices); $i < $size; $i++) {
+            $index = $this->unices[$i];
+            $name = $index->getName();
+            if (empty($name)) {
+                $name = $this->acquireConstraintName('U', $i + 1);
+                $index->setName($name);
+            }
+        }
+
+        // NOTE: Most RDBMSes can apparently name unique column
+        // constraints/indices themselves (using MySQL and Oracle
+        // as test cases), so we'll assume that we needn't add an
+        // entry to the system name list for these.
     }
 
     /**
