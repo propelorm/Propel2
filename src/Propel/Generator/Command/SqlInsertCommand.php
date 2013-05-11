@@ -34,6 +34,7 @@ class SqlInsertCommand extends AbstractCommand
             ->addOption('output-dir', null, InputOption::VALUE_REQUIRED,  'The output directory', self::DEFAULT_OUTPUT_DIRECTORY)
             ->addOption('connection', null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Connection to use', array())
             ->setName('sql:insert')
+            ->setAliases(array('insert-sql'))
             ->setDescription('Insert SQL statements')
         ;
     }
