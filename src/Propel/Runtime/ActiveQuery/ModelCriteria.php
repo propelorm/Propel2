@@ -1327,7 +1327,7 @@ class ModelCriteria extends BaseModelCriteria
             $con->commit();
         } catch (PropelException $e) {
             $con->rollback();
-            throw PropelException(__METHOD__  . ' is unable to delete. ', 0, $e);
+            throw new PropelException(__METHOD__  . ' is unable to delete. ', 0, $e);
         }
 
         return $affectedRows;
@@ -1359,7 +1359,7 @@ class ModelCriteria extends BaseModelCriteria
             return $affectedRows;
         } catch (PropelException $e) {
             $con->rollBack();
-            throw PropelException(__METHOD__  . ' is unable to delete all. ', 0, $e);
+            throw new PropelException(__METHOD__  . ' is unable to delete all. ', 0, $e);
         }
     }
 

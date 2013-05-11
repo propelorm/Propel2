@@ -249,12 +249,19 @@ class GeneratorConfig implements GeneratorConfigInterface
         $this->buildConnections = $buildConnections;
     }
 
-    public function getBuildConnections()
+    /**
+     * Returns all connections from the buildtime config.
+     *
+     * @param string $directory Relative to current working directory or absolute.
+     *
+     * @return array|null
+     */
+    public function getBuildConnections($directory = '.')
     {
         if (null === $this->buildConnections) {
             $buildTimeConfigPath = $this->getBuildProperty('buildtimeConfFile')
                 ? $this->getBuildProperty('projectDir') . DIRECTORY_SEPARATOR . $this->getBuildProperty('buildtimeConfFile')
-                : 'buildtime-conf.xml';
+                : $directory . '/buildtime-conf.xml';
             if ($buildTimeConfigString = $this->getBuildProperty('buildtimeConf')) {
                 // configuration passed as propel.buildtimeConf string
                 // probably using the command line, which doesn't accept whitespace
