@@ -38,6 +38,7 @@ class MigrationStatusCommand extends AbstractCommand
             ->addOption('migration-table',  null, InputOption::VALUE_REQUIRED,  'Migration table name', self::DEFAULT_MIGRATION_TABLE)
             ->addOption('connection',       null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Connection to use', array())
             ->setName('migration:status')
+            ->setAliases(array('status'))
             ->setDescription('Get migration status')
         ;
     }

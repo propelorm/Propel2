@@ -82,6 +82,7 @@ class ModelBuildCommand extends AbstractCommand
             ->addOption('disable-namespace-auto-package', null, InputOption::VALUE_NONE,
                 'Disable namespace auto-packaging')
             ->setName('model:build')
+            ->setAliases(array('build'))
             ->setDescription('Build the model classes based on Propel XML schemas')
         ;
     }
