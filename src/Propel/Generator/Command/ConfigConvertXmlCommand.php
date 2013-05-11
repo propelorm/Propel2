@@ -35,6 +35,7 @@ class ConfigConvertXmlCommand extends AbstractCommand
             ->addOption('output-dir',  null, InputOption::VALUE_REQUIRED,  'The output directory',  self::DEFAULT_OUTPUT_DIRECTORY)
             ->addOption('output-file', null, InputOption::VALUE_REQUIRED,  'The output file',       self::DEFAULT_OUTPUT_FILE)
             ->setName('config:convert-xml')
+            ->setAliases(array('convert-conf'))
             ->setDescription('Transform the XML configuration to PHP code leveraging the ServiceContainer')
         ;
     }

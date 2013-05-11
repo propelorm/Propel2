@@ -39,6 +39,7 @@ class MigrationMigrateCommand extends AbstractCommand
             ->addOption('migration-table',  null, InputOption::VALUE_REQUIRED,  'Migration table name', self::DEFAULT_MIGRATION_TABLE)
             ->addOption('connection',       null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Connection to use', array())
             ->setName('migration:migrate')
+            ->setAliases(array('migrate'))
             ->setDescription('Execute all pending migrations')
         ;
     }

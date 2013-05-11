@@ -44,6 +44,7 @@ class MigrationDiffCommand extends AbstractCommand
             ->addOption('connection',       null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Connection to use', array())
             ->addOption('editor',           null, InputOption::VALUE_OPTIONAL,  'The text editor to use to open diff files', null)
             ->setName('migration:diff')
+            ->setAliases(array('diff'))
             ->setDescription('Generate diff classes')
             ;
     }

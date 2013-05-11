@@ -39,6 +39,7 @@ class MigrationDownCommand extends AbstractCommand
             ->addOption('migration-table',  null, InputOption::VALUE_REQUIRED,  'Migration table name', self::DEFAULT_MIGRATION_TABLE)
             ->addOption('connection',       null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Connection to use', array())
             ->setName('migration:down')
+            ->setAliases(array('down'))
             ->setDescription('Execute migrations down')
         ;
     }
