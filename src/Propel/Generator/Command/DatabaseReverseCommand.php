@@ -42,6 +42,7 @@ class DatabaseReverseCommand extends AbstractCommand
             ->addOption('schema-name',   null, InputOption::VALUE_REQUIRED, 'The schema name to generate', self::DEFAULT_SCHEMA_NAME)
             ->addArgument('connection',  null, InputArgument::REQUIRED,     'Connection to use')
             ->setName('database:reverse')
+            ->setAliases(array('reverse'))
             ->setDescription('Reverse-engineer a XML schema file based on given database')
             ;
     }
