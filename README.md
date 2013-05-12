@@ -31,10 +31,8 @@ Read the [Propel documentation](http://www.propelorm.org/).
 Everybody can contribute to Propel2. Just fork it, and send Pull Requests.
 You have to follow [Propel2 Coding Standards](https://github.com/propelorm/Propel2/wiki/Coding-Standards) and provides unit tests as much as possible.
 
-**Note:** you can fix checkstyle before to submit a Pull Request by using the Symfony2 `check_cs` script.
-You just need to install [Finder](http://github.com/symfony/Finder) and the script:
-
-    git clone git://github.com/symfony/Finder.git vendor/Symfony/Component/Finder
+**Note:** you can fix checkstyle before to submit a Pull Request by using the Symfony2 [php-cs-fixer](http://cs.sensiolabs.org/) script.
+You just need to install the script:
 
     wget http://cs.sensiolabs.org/get/php-cs-fixer.phar
 
