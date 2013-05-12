@@ -88,7 +88,13 @@ class MigrationManager extends AbstractManager
         $params       = $this->getConnection($datasource);
         $adapter      = $params['adapter'];
 
-        return AdapterFactory::create($adapter);
+        if (false !== strpos($adapter, '\\')) {
+            $class = $adapter;
+        } else {
+            $class = '\\Propel\\Generator\\Platform\\' . ucfirst($adapter) . 'Platform';
+        }
+
+        return new $class();
     }
 
     /**
