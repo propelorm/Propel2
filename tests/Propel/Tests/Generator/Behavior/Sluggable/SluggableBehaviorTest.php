@@ -258,7 +258,7 @@ class SluggableBehaviorTest extends BookstoreTestBase
 
     public function testQueryFindOneBySlug()
     {
-        $this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table13Query', 'findOneBySlug'), 'The generated query provides a findOneBySlug() method');
+        $this->assertFalse(method_exists('\Propel\Tests\Bookstore\Behavior\Table13Query', 'findOneBySlug'), 'The generated query does not provide a findOneBySlug() method if the slug column is "slug".');
         $this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table14Query', 'findOneBySlug'), 'The generated query provides a findOneBySlug() method even if the slug column doesn\'t have the default name');
 
         Table14Query::create()->deleteAll();
