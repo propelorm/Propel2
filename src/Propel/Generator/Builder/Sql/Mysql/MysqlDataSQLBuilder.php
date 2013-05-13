@@ -19,5 +19,4 @@ use Propel\Generator\Builder\Sql\DataSQLBuilder;
  */
 class MysqlDataSQLBuilder extends DataSQLBuilder
 {
-
 }

@@ -19,7 +19,6 @@ use Propel\Generator\Builder\Sql\DataSQLBuilder;
  */
 class MssqlDataSQLBuilder extends DataSQLBuilder
 {
-
     /**
      *
      * @param  mixed  $blob Blob object or string containing data.
@@ -35,5 +34,4 @@ class MssqlDataSQLBuilder extends DataSQLBuilder
 
         return '0x'.$data['hex']; // no surrounding quotes!
     }
-
 }

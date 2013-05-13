@@ -70,20 +70,6 @@ class PgsqlPlatform extends DefaultPlatform
         return 32;
     }
 
-    /**
-     * Escape the string for RDBMS.
-     * @param  string $text
-     * @return string
-     */
-    public function disconnectedEscapeText($text)
-    {
-        if (function_exists('pg_escape_string')) {
-            return pg_escape_string($text);
-        } else {
-            return parent::disconnectedEscapeText($text);
-        }
-    }
-
     public function getBooleanString($b)
     {
         // parent method does the checking for allows string
