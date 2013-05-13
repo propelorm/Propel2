@@ -20,19 +20,15 @@ use Propel\Generator\Builder\Sql\DataSQLBuilder;
 class SqliteDataSQLBuilder extends DataSQLBuilder
 {
     /**
-     * Returns string processed by sqlite_udf_encode_binary() to ensure that
-     * binary contents will be handled correctly by sqlite.
-     *
      * @param  mixed  $blob
      * @return string
      */
     protected function getBlobSql($blob)
     {
-        // they took magic __toString() out of PHP5.0.0; this sucks
-        if (is_object($blob)) {
-            $blob = $blob->__toString();
+        if (is_resource($blob)) {
+            return fopen($blob, "rb")
         }
 
-        return sprintf("'%s'", sqlite_udf_encode_binary($blob));
+        return (string) $blob;
     }
 }

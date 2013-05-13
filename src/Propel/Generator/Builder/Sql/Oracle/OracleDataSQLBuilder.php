@@ -19,5 +19,4 @@ use Propel\Generator\Builder\Sql\DataSQLBuilder;
  */
 class OracleDataSQLBuilder extends DataSQLBuilder
 {
-
 }
