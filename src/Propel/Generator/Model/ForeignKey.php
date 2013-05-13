@@ -592,7 +592,7 @@ class ForeignKey extends MappingModel
      * Returns whether this foreign key is also the primary key of the foreign
      * table.
      *
-     * @return boolean
+     * @return boolean Returns true if all columns inside this foreign key are primary keys of the foreign table
      */
     public function isForeignPrimaryKey()
     {
@@ -629,7 +629,7 @@ class ForeignKey extends MappingModel
      * Returns whether or not this foreign key is also the primary key of
      * the local table.
      *
-     * @return boolean
+     * @return boolean True if all local columns are at the same time a primary key
      */
     public function isLocalPrimaryKey()
     {
@@ -751,5 +751,61 @@ class ForeignKey extends MappingModel
         foreach ($this->vendorInfos as $vi) {
             $vi->appendXml($fkNode);
         }
+    }
+
+    /**
+     * Whether at least one foreign column is also the primary key of the foreign table.
+     *
+     * @return boolean True if there is at least one column that is a primary key of the foreign table
+     */
+    public function isAtLeastOneForeignPrimaryKey()
+    {
+        $cols = $this->getForeignPrimaryKeys();
+
+        return count($cols) !== 0;
+    }
+
+    /**
+     * Returns all foreign columns which are also a primary key of the foreign table.
+     *
+     * @return array Column[]
+     */
+    public function getForeignPrimaryKeys()
+    {
+
+        $lfmap = $this->getLocalForeignMapping();
+        $foreignTable = $this->getForeignTable();
+
+        $foreignPKCols = array();
+        foreach ($foreignTable->getPrimaryKey() as $fPKCol) {
+            $foreignPKCols[$fPKCol->getName()] = true;
+        }
+
+        $foreignCols = array();
+        foreach ($this->getLocalColumns() as $colName) {
+            if ($foreignPKCols[$lfmap[$colName]]) {
+                $foreignCols[] = $foreignTable->getColumn($lfmap[$colName]);
+            }
+        }
+
+        return $foreignCols;
+    }
+
+    /**
+     * Whether at least one local column is also a primary key.
+     *
+     * @return boolean True if there is at least one column that is a primary key
+     */
+    public function isAtLeastOneLocalPrimaryKey()
+    {
+        $localCols = $this->getLocalColumnObjects();
+
+        foreach ($localCols as $localCol) {
+            if ($this->getTable()->getColumn($localCol->getName())->isPrimaryKey()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

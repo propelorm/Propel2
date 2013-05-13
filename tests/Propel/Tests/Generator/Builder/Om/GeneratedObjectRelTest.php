@@ -17,6 +17,8 @@ use Propel\Tests\Bookstore\AuthorQuery;
 use Propel\Tests\Bookstore\Map\AuthorTableMap;
 use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\BookQuery;
+use Propel\Tests\Bookstore\BookSummary;
+use Propel\Tests\Bookstore\BookSummaryQuery;
 use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\Bookstore\Bookstore;
 use Propel\Tests\Bookstore\BookClubList;
@@ -676,6 +678,19 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
 
         $this->assertEquals(1, BookClubListQuery::create()->count());
         $this->assertEquals(2, BookListRelQuery::create()->count());
+
+        // ensure we have valid "association" objects
+        $this->assertEquals(1, BookListRelQuery::create()
+            ->filterByBookClubList($bookClubList)
+            ->filterByBook($books[0])
+            ->count()
+        );
+        $this->assertEquals(1, BookListRelQuery::create()
+            ->filterByBookClubList($bookClubList)
+            ->filterByBook($books[1])
+            ->count()
+        );
+
         $this->assertEquals(4, BookQuery::create()->count());
     }
 
@@ -715,5 +730,203 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         $bookClubList->reload(true);
 
         $this->assertCount(2, $bookClubList->getFavoriteBooks());
+    }
+
+    public function testSetterCollectionWithManyToManyModifiedByReferenceWithANewObject()
+    {
+        // Ensure no data
+        BookQuery::create()->deleteAll();
+        BookClubListQuery::create()->deleteAll();
+        BookListRelQuery::create()->deleteAll();
+
+        $book = new Book();
+        $book->setTitle('foo');
+
+        // The object is "new"
+        $this->assertTrue($book->isNew());
+
+        $bookClubList = new BookClubList();
+        $books = $bookClubList->getBooks();
+        // Add the object by reference
+        $books[] = $book;
+
+        $bookClubList->setBooks($books);
+        $bookClubList->save();
+
+        $this->assertEquals(1, BookQuery::create()->count());
+        $this->assertEquals(1, BookListRelQuery::create()->count());
+        $this->assertEquals(1, BookClubListQuery::create()->count());
+    }
+
+    public function testSetterCollectionWithManyToManyModifiedByReferenceWithAnExistingObject()
+    {
+        // Ensure no data
+        BookQuery::create()->deleteAll();
+        BookClubListQuery::create()->deleteAll();
+        BookListRelQuery::create()->deleteAll();
+
+        $book = new Book();
+        $book->setTitle('foo');
+        $book->save();
+
+        // The object isn't "new"
+        $this->assertFalse($book->isNew());
+
+        $bookClubList = new BookClubList();
+        $books = $bookClubList->getBooks();
+        // Add the object by reference
+        $books[] = $book;
+
+        $bookClubList->setBooks($books);
+        $bookClubList->save();
+
+        $this->assertEquals(1, BookQuery::create()->count());
+        $this->assertEquals(1, BookListRelQuery::create()->count());
+        $this->assertEquals(1, BookClubListQuery::create()->count());
+    }
+
+    public function testRemoveObjectFromCollection()
+    {
+        $list = new BookClubList();
+        $list->setGroupLeader('Archimedes Q. Porter');
+
+        $list2 = new BookClubList();
+        $list2->setGroupLeader('FooBar group');
+        // No save ...
+
+        $book = new Book();
+        $book->setTitle( "Jungle Expedition Handbook" );
+        $book->setISBN('TEST');
+        // No save ...
+        $this->assertCount(0, $book->getBookClubLists(), 'No BookClubList');
+
+        $book->addBookClubList($list);
+        $book->addBookClubList($list2);
+        $this->assertCount(2, $book->getBookClubLists(), 'Two BookClubList');
+
+        $book->removeBookClubList($list);
+        $this->assertCount(1, $book->getBookClubLists(), 'One BookClubList has been remove');
+    }
+
+    public function testRemoveObjectStoredInDBFromCollection()
+    {
+        BookQuery::create()->deleteAll();
+        BookClubListQuery::create()->deleteAll();
+
+        $list = new BookClubList();
+        $list->setGroupLeader('Archimedes Q. Porter');
+
+        $list2 = new BookClubList();
+        $list2->setGroupLeader('FooBar group');
+        // No save ...
+
+        $book = new Book();
+        $book->setTitle( "Jungle Expedition Handbook" );
+        $book->setISBN('TEST');
+        $book->addBookClubList($list);
+        $book->addBookClubList($list2);
+        $book->save();
+
+        $this->assertEquals(2, BookClubListQuery::create()->count(), 'Two BookClubList');
+        $this->assertEquals(2, BookListRelQuery::create()->count(), 'Two BookClubList');
+
+        $book->removeBookClubList($list);
+        $this->assertEquals(2, BookListRelQuery::create()->count(), 'still Two BookClubList in db before save()');
+        $this->assertCount(1, $book->getBookClubLists(), 'One BookClubList has been remove');
+        $book->save();
+
+        $this->assertCount(1, $book->getBookClubLists(), 'One BookClubList has been remove');
+        $this->assertEquals(1, BookListRelQuery::create()->count(), 'One BookClubList has been remove');
+    }
+
+    public function testRemoveObjectOneToMany()
+    {
+        BookQuery::create()->deleteAll();
+        AuthorQuery::create()->deleteAll();
+
+        $book = new Book();
+        $book->setTitle('Propel Book');
+
+        $book2 = new Book();
+        $book2->setTitle('Propel2 Book');
+
+        $author = new Author();
+        $author->setFirstName('François');
+        $author->setLastName('Z');
+
+        $author->addBook($book);
+        $author->addBook($book2);
+
+        $this->assertCount(2, $author->getBooks());
+
+        $author->removeBook($book);
+
+        $books = $author->getBooks();
+        $this->assertCount(1, $books);
+        $this->assertEquals('Propel2 Book', reset($books)->getTitle());
+
+        $author->save();
+        $book->save();
+        $book2->save();
+
+        $this->assertEquals(2, BookQuery::create()->count(), 'Two Book');
+        $this->assertEquals(1, AuthorQuery::create()->count(), 'One Author');
+        $this->assertEquals(1, BookQuery::create()->filterByAuthor($author)->count());
+
+        $author->addBook($book);
+        $author->save();
+
+        $this->assertEquals(2, BookQuery::create()->filterByAuthor($author)->count());
+
+        $author->removeBook($book2);
+        $author->save();
+
+        $this->assertEquals(1, BookQuery::create()->filterByAuthor($author)->count());
+        $this->assertEquals(2, BookQuery::create()->count(), 'Two Book because FK is not required so book is not delete when removed from author\'s book collection');
+    }
+
+    public function testRemoveObjectOneToManyWithFkRequired()
+    {
+        BookSummaryQuery::create()->deleteAll();
+        BookQuery::create()->deleteAll();
+
+        $bookSummary = new BookSummary();
+        $bookSummary->setSummary('summary Propel Book');
+
+        $bookSummary2 = new BookSummary();
+        $bookSummary2->setSummary('summary2 Propel Book');
+
+        $book = new Book();
+        $book->setTitle('Propel Book');
+
+        $book->addBookSummary($bookSummary);
+        $book->addBookSummary($bookSummary2);
+
+        $this->assertCount(2, $book->getBookSummaries());
+
+        $book->removeBookSummary($bookSummary);
+
+        $bookSummaries = $book->getBookSummaries();
+        $this->assertCount(1, $bookSummaries);
+        $this->assertEquals('summary2 Propel Book', reset($bookSummaries)->getSummary());
+
+        $book->save();
+        $bookSummary2->save();
+
+        $this->assertEquals(1, BookQuery::create()->count(), 'One Book');
+        $this->assertEquals(1, BookSummaryQuery::create()->count(), 'One Summary');
+        $this->assertEquals(1, BookSummaryQuery::create()->filterBySummarizedBook($book)->count());
+
+        $book->addBookSummary($bookSummary);
+        $bookSummary->save();
+        $book->save();
+
+        $this->assertEquals(2, BookSummaryQuery::create()->filterBySummarizedBook($book)->count());
+
+        $book->removeBookSummary($bookSummary2);
+        $book->save();
+
+        $this->assertEquals(1, BookSummaryQuery::create()->filterBySummarizedBook($book)->count());
+        $this->assertEquals(1, BookSummaryQuery::create()->count(), 'One Book summary because FK is required so book summary is deleted when book is saved');
     }
 }

@@ -1698,13 +1698,15 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
                 $fkClassName = $refTableTableMapBuilder->getObjectClassName();
 
                 if (ForeignKey::SETNULL === $fk->getOnDelete()) {
-
                     // backwards on purpose
                     $columnNamesF = $fk->getLocalColumns();
                     $columnNamesL = $fk->getForeignColumns(); // should be same num as foreign
+
+                    $this->declareClassFromBuilder($refTableTableMapBuilder);
+
                     $script .= "
             // set fkey col in related $fkClassName rows to NULL
-            \$query = new " . $refTableTableMapBuilder->getQueryClassName(true) . "
+            \$query = new " . $refTableTableMapBuilder->getQueryClassName(true) . "();
             \$updateValues = new Criteria();";
 
                     for ($x = 0, $xlen = count($columnNamesF); $x < $xlen; $x++) {
