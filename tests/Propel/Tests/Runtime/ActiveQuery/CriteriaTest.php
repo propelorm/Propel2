@@ -220,42 +220,6 @@ class CriteriaTest extends BookstoreTestBase
         $this->assertEquals($expect_params, $params, 'addOr() called on an existing column creates a combined criterion');
     }
 
-    public function testAddAndOrColumnsPropel14Compatibility()
-    {
-        $table1 = "myTable1";
-        $column1 = "myColumn1";
-        $value1 = "myValue1";
-        $key1 = "$table1.$column1";
-
-        $table2 = "myTable1";
-        $column2 = "myColumn1";
-        $value2 = "myValue2";
-        $key2 = "$table2.$column2";
-
-        $table3 = "myTable3";
-        $column3 = "myColumn3";
-        $value3 = "myValue3";
-        $key3 = "$table3.$column3";
-
-        $this->c->add($key1, $value1, Criteria::EQUAL);
-        $this->c->add($key3, $value3, Criteria::EQUAL);
-        $this->c->addOr($key2, $value2, Criteria::EQUAL);
-
-        $expect = "SELECT  FROM myTable1, myTable3 WHERE (myTable1.myColumn1=:p1 OR myTable1.myColumn1=:p2) AND myTable3.myColumn3=:p3";
-
-        $params = array();
-        $result = $this->c->createSelectSql($params);
-
-        $expect_params = array(
-            array('table' => 'myTable1', 'column' => 'myColumn1', 'value' => 'myValue1'),
-            array('table' => 'myTable1', 'column' => 'myColumn1', 'value' => 'myValue2'),
-            array('table' => 'myTable3', 'column' => 'myColumn3', 'value' => 'myValue3'),
-        );
-
-        $this->assertEquals($expect, $result, 'addOr() called on an existing column creates a combined criterion');
-        $this->assertEquals($expect_params, $params, 'addOr() called on an existing column creates a combined criterion');
-    }
-
     public function testAddOrDistinctColumns()
     {
         $table1 = "myTable1";
