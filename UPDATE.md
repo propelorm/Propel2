@@ -135,6 +135,16 @@ After:
 
 ## `Propel\Runtime\Om\BaseObject` class has been removed.
 
+## `Propel\Runtime\ActiveQuery\Criteria::addOr` operates only on existing conditions, where prior it would `OR` to a condition to
+on the same column (if it existed).
+
+E.g.
+```php
+$criteria->add('column1', 'value');
+$criteria->add('column2', 'value');
+$criteria->addOr('column1', 'value'); // this used to be OR`ed to the first add (matched by name)
+```
+
 All base object methods have been merged in generated Base Object classes.
 This could break, behaviors that call `parent` methods
 
