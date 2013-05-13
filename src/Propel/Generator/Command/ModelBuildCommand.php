@@ -14,7 +14,6 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\Output;
-use Propel\Generator\Config\GeneratorConfig;
 use Propel\Generator\Manager\ModelManager;
 
 /**
@@ -92,7 +91,7 @@ class ModelBuildCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $generatorConfig = new GeneratorConfig(array_merge(array(
+        $generatorConfig = $this->getGeneratorConfig(array(
             'propel.platform.class'                     => $input->getOption('platform'),
             'propel.builder.object.class'               => $input->getOption('object-class'),
             'propel.builder.objectstub.class'           => $input->getOption('object-stub-class'),
@@ -121,7 +120,7 @@ class ModelBuildCommand extends AbstractCommand
             // MySQL specific
             'propel.mysql.tableType'                    => $input->getOption('mysql-engine'),
             'propel.mysql.tableEngineKeyword'           => 'ENGINE',
-        ), $this->getBuildProperties($input->getOption('input-dir') . '/build.properties')));
+        ), $input);
 
         $this->createDirectory($input->getOption('output-dir'));
 

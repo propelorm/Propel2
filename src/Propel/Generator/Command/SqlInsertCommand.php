@@ -10,7 +10,6 @@
 
 namespace Propel\Generator\Command;
 
-use Propel\Generator\Config\GeneratorConfig;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -45,7 +44,6 @@ class SqlInsertCommand extends AbstractCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $manager = new SqlManager();
-        $generatorConfig = new GeneratorConfig();
 
         if (!$input->hasOption('connection')) {
             throw new InvalidArgumentException(sprintf('At least one connection is required'));
