@@ -11,7 +11,6 @@
 namespace Propel\Tests\Generator\Builder\Om;
 
 use Propel\Tests\Bookstore\BookstoreQuery;
-
 use Propel\Generator\Util\QuickBuilder;
 use Propel\Runtime\Propel;
 use Propel\Runtime\Collection\ObjectCollection;
@@ -24,6 +23,7 @@ use Propel\Tests\Bookstore\AuthorQuery;
 use Propel\Tests\Bookstore\Map\AuthorTableMap;
 use Propel\Tests\Bookstore\Map\AcctAuditLogTableMap;
 use Propel\Tests\Bookstore\Book;
+use Propel\Tests\Bookstore\BookSummary;
 use Propel\Tests\Bookstore\BookQuery;
 use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\Bookstore\BookReader;
@@ -39,6 +39,7 @@ use Propel\Tests\Bookstore\BookstoreEmployeeAccountQuery;
 use Propel\Tests\Bookstore\Map\BookstoreEmployeeAccountTableMap;
 use Propel\Tests\Bookstore\BookstoreContestEntry;
 use Propel\Tests\Bookstore\BookstoreSale;
+use Propel\Tests\Bookstore\BookSummaryQuery;
 use Propel\Tests\Bookstore\Contest;
 use Propel\Tests\Bookstore\ContestView;
 use Propel\Tests\Bookstore\Customer;
@@ -1106,7 +1107,8 @@ EOF;
 
         $this->assertEquals(2, $a->getBooks()->count());
         $this->assertEquals(1, AuthorQuery::create()->count());
-        $this->assertEquals(2, BookQuery::create()->count());
+        //The book is not deleted because his fk is not required
+        $this->assertEquals(3, BookQuery::create()->count());
 
         $newBook = new Book();
         $newBook->setTitle('My New Book');
@@ -1122,7 +1124,7 @@ EOF;
         $this->assertEquals(3, $coll->count());
         $this->assertEquals(3, $a->getBooks()->count());
         $this->assertEquals(1, AuthorQuery::create()->count());
-        $this->assertEquals(3, BookQuery::create()->count());
+        $this->assertEquals(4, BookQuery::create()->count());
 
         // Add a new object
         $newBook1 = new Book();
@@ -1138,7 +1140,7 @@ EOF;
         $this->assertEquals(4, $coll->count());
         $this->assertEquals(4, $a->getBooks()->count());
         $this->assertEquals(1, AuthorQuery::create()->count());
-        $this->assertEquals(4, BookQuery::create()->count());
+        $this->assertEquals(5, BookQuery::create()->count());
 
         // Add the same collection
         $books = $a->getBooks();
@@ -1148,8 +1150,8 @@ EOF;
 
         $this->assertEquals(4, $books->count());
         $this->assertEquals(4, $a->getBooks()->count());
-        $this->assertEquals(1,  AuthorQuery::create()->count());
-        $this->assertEquals(4, BookQuery::create()->count());
+        $this->assertEquals(1, AuthorQuery::create()->count());
+        $this->assertEquals(5, BookQuery::create()->count());
     }
 
     public function testSetterOneToManyWithNoData()
@@ -1332,6 +1334,124 @@ EOF;
         $this->assertEquals('bom', $books[1]->getTitle());
 
         $this->assertEquals(1, AuthorQuery::create()->count());
-        $this->assertEquals(2, BookQuery::create()->count());
+        // the replaced book are still there because the PK is not required
+        $this->assertEquals(4, BookQuery::create()->count());
+    }
+
+    public function testSetterOneToManyWithFkRequired()
+    {
+        // Ensure no data
+        BookSummaryQuery::create()->deleteAll();
+        BookQuery::create()->deleteAll();
+
+        $coll = new ObjectCollection();
+        $coll->setModel('BookSummary');
+
+        for ($i = 0; $i < 3; $i++) {
+            $coll[] = new BookSummary();
+        }
+
+        $this->assertEquals(3, $coll->count());
+
+        $b = new Book();
+        $b->setTitle('myBook');
+        $b->setBookSummaries($coll);
+        $b->save();
+
+        $this->assertInstanceOf('Propel\Runtime\Collection\ObjectCollection', $b->getBookSummaries());
+        $this->assertEquals(3, $b->getBookSummaries()->count());
+        $this->assertEquals(1, BookQuery::create()->count());
+        $this->assertEquals(3, BookSummaryQuery::create()->count());
+
+        $coll->shift();
+        $this->assertEquals(2, $coll->count());
+
+        $b->setBookSummaries($coll);
+        $b->save();
+
+        $this->assertEquals(2, $b->getBookSummaries()->count());
+        $this->assertEquals(1, BookQuery::create()->count());
+        $this->assertEquals(2, BookSummaryQuery::create()->count());
+
+        $newBookSammary = new BookSummary();
+        $newBookSammary->setSummary('My sammary');
+
+        // Kind of new collection
+        $coll = clone $coll;
+        $coll[] = $newBookSammary;
+
+        $b->setBookSummaries($coll);
+        $b->save();
+
+        $this->assertEquals(3, $coll->count());
+        $this->assertEquals(3, $b->getBookSummaries()->count());
+        $this->assertEquals(1, BookQuery::create()->count());
+        $this->assertEquals(3, BookSummaryQuery::create()->count());
+
+        // Add a new object
+        $newBookSammary1 = new BookSummary();
+        $newBookSammary1->setSummary('My sammary 1');
+
+        // Existing collection - The fix around reference is tested here.
+        $coll[] = $newBookSammary1;
+
+        $b->setBookSummaries($coll);
+        $b->save();
+
+        $this->assertEquals(4, $coll->count());
+        $this->assertEquals(4, $b->getBookSummaries()->count());
+        $this->assertEquals(1, BookQuery::create()->count());
+        $this->assertEquals(4, BookSummaryQuery::create()->count());
+
+        // Add the same collection
+        $bookSummaries = $b->getBookSummaries();
+
+        $b->setBookSummaries($bookSummaries);
+        $b->save();
+
+        $this->assertEquals(4, $coll->count());
+        $this->assertEquals(4, $b->getBookSummaries()->count());
+        $this->assertEquals(1, BookQuery::create()->count());
+        $this->assertEquals(4, BookSummaryQuery::create()->count());
+    }
+
+    public function testSetterOneToManyReplacesOldObjectsByNewObjectsWithFkRequired()
+    {
+        // Ensure no data
+        BookSummaryQuery::create()->deleteAll();
+        BookQuery::create()->deleteAll();
+
+        $bookSummaries = new ObjectCollection();
+        foreach (array('foo', 'bar') as $summary) {
+            $s = new BookSummary();
+            $s->setSummary($summary);
+            $bookSummaries[] = $s;
+        }
+
+        $b = new Book();
+        $b->setTitle('Hello');
+        $b->setBookSummaries($bookSummaries);
+        $b->save();
+
+        $bookSummaries = $b->getBookSummaries();
+        $this->assertEquals('foo', $bookSummaries[0]->getSummary());
+        $this->assertEquals('bar', $bookSummaries[1]->getSummary());
+
+        $bookSummaries = new ObjectCollection();
+        foreach (array('bam', 'bom') as $summary) {
+            $s = new BookSummary();
+            $s->setSummary($summary);
+            $bookSummaries[] = $s;
+        }
+
+        $b->setBookSummaries($bookSummaries);
+        $b->save();
+
+        $bookSummaries = $b->getBookSummaries();
+        $this->assertEquals('bam', $bookSummaries[0]->getSummary());
+        $this->assertEquals('bom', $bookSummaries[1]->getSummary());
+
+        $this->assertEquals(1, BookQuery::create()->count());
+        $this->assertEquals(2, BookSummaryQuery::create()->count());
     }
 }

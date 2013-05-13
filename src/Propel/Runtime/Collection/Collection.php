@@ -597,4 +597,14 @@ class Collection extends \ArrayObject implements \Serializable
     {
         return (string) $this->exportTo(constant($this->getTableMapClass() . '::DEFAULT_STRING_FORMAT'));
     }
+
+    /**
+     * Creates clones of the containing data.
+     */
+    public function __clone()
+    {
+        foreach ($this as $key => $obj) {
+            $this[$key] = clone $obj;
+        }
+    }
 }

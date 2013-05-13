@@ -139,6 +139,10 @@ class ObjectFormatter extends AbstractFormatter
             }
 
             call_user_func(array($startObject, $modelWith->getRelationMethod()), $endObject);
+
+            if ($modelWith->isAdd()) {
+                call_user_func(array($startObject, $modelWith->getResetPartialMethod()), false);
+            }
         }
 
         // columns added using withColumn()
