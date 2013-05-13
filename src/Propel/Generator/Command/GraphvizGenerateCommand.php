@@ -14,7 +14,6 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\Output;
-use Propel\Generator\Config\GeneratorConfig;
 use Propel\Generator\Manager\GraphvizManager;
 
 /**
@@ -44,10 +43,10 @@ class GraphvizGenerateCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $generatorConfig = new GeneratorConfig(array(
+        $generatorConfig = $this->getGeneratorConfig(array(
             'propel.platform.class'     => $input->getOption('platform'),
             'propel.packageObjectModel' => true,
-        ));
+        ), $input);
 
         $this->createDirectory($input->getOption('output-dir'));
 
