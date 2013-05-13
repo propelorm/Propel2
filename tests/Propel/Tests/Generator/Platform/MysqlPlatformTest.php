@@ -28,7 +28,7 @@ class MysqlPlatformTest extends PlatformTestProvider
     /**
      * Get the Platform object for this class
      *
-     * @return Platform
+     * @return MysqlPlatform
      */
     protected function getPlatform()
     {
@@ -554,7 +554,7 @@ CREATE INDEX `babar` ON `foo` (`bar1`,`bar2`);
 
 CREATE INDEX `foo_index` ON `foo` (`bar1`);
 ";
-        $this->assertEquals($expected, $this->getPLatform()->getAddIndicesDDL($table));
+        $this->assertEquals($expected, $this->getPlatform()->getAddIndicesDDL($table));
     }
 
     /**
@@ -565,7 +565,7 @@ CREATE INDEX `foo_index` ON `foo` (`bar1`);
         $expected = "
 CREATE INDEX `babar` ON `foo` (`bar1`,`bar2`);
 ";
-        $this->assertEquals($expected, $this->getPLatform()->getAddIndexDDL($index));
+        $this->assertEquals($expected, $this->getPlatform()->getAddIndexDDL($index));
     }
 
     /**
@@ -576,7 +576,7 @@ CREATE INDEX `babar` ON `foo` (`bar1`,`bar2`);
         $expected = "
 DROP INDEX `babar` ON `foo`;
 ";
-        $this->assertEquals($expected, $this->getPLatform()->getDropIndexDDL($index));
+        $this->assertEquals($expected, $this->getPlatform()->getDropIndexDDL($index));
     }
 
     /**
@@ -585,7 +585,7 @@ DROP INDEX `babar` ON `foo`;
     public function testGetIndexDDL($index)
     {
         $expected = 'INDEX `babar` (`bar1`, `bar2`)';
-        $this->assertEquals($expected, $this->getPLatform()->getIndexDDL($index));
+        $this->assertEquals($expected, $this->getPlatform()->getIndexDDL($index));
     }
 
     public function testGetIndexDDLKeySize()
@@ -599,7 +599,7 @@ DROP INDEX `babar` ON `foo`;
         $index->addColumn($column1);
         $table->addIndex($index);
         $expected = 'INDEX `bar_index` (`bar1`(5))';
-        $this->assertEquals($expected, $this->getPLatform()->getIndexDDL($index));
+        $this->assertEquals($expected, $this->getPlatform()->getIndexDDL($index));
     }
 
     public function testGetIndexDDLFulltext()
@@ -615,7 +615,7 @@ DROP INDEX `babar` ON `foo`;
         $index->addVendorInfo($vendor);
         $table->addIndex($index);
         $expected = 'FULLTEXT INDEX `bar_index` (`bar1`)';
-        $this->assertEquals($expected, $this->getPLatform()->getIndexDDL($index));
+        $this->assertEquals($expected, $this->getPlatform()->getIndexDDL($index));
     }
 
     /**
@@ -624,7 +624,7 @@ DROP INDEX `babar` ON `foo`;
     public function testGetUniqueDDL($index)
     {
         $expected = 'UNIQUE INDEX `babar` (`bar1`, `bar2`)';
-        $this->assertEquals($expected, $this->getPLatform()->getUniqueDDL($index));
+        $this->assertEquals($expected, $this->getPlatform()->getUniqueDDL($index));
     }
 
     /**
@@ -677,7 +677,7 @@ ALTER TABLE `foo` ADD CONSTRAINT `foo_bar_FK`
         $expected = "
 ALTER TABLE `foo` DROP FOREIGN KEY `foo_bar_FK`;
 ";
-        $this->assertEquals($expected, $this->getPLatform()->getDropForeignKeyDDL($fk));
+        $this->assertEquals($expected, $this->getPlatform()->getDropForeignKeyDDL($fk));
     }
 
     /**
@@ -698,7 +698,7 @@ ALTER TABLE `foo` DROP FOREIGN KEY `foo_bar_FK`;
     FOREIGN KEY (`bar_id`)
     REFERENCES `bar` (`id`)
     ON DELETE CASCADE";
-        $this->assertEquals($expected, $this->getPLatform()->getForeignKeyDDL($fk));
+        $this->assertEquals($expected, $this->getPlatform()->getForeignKeyDDL($fk));
     }
 
     /**
@@ -717,7 +717,50 @@ ALTER TABLE `foo` DROP FOREIGN KEY `foo_bar_FK`;
 -- foo bar
 -- ---------------------------------------------------------------------
 ";
-        $this->assertEquals($expected, $this->getPLatform()->getCommentBlockDDL('foo bar'));
+        $this->assertEquals($expected, $this->getPlatform()->getCommentBlockDDL('foo bar'));
+    }
+
+    public function testAddExtraIndicesForeignKeys()
+    {
+        $schema = '
+<database name="test1">
+  <table name="foo">
+    <behavior name="AutoAddPK"/>
+    <column name="name" type="VARCHAR"/>
+    <column name="subid" type="INTEGER"/>
+  </table>
+  <table name="bar">
+    <behavior name="AutoAddPK"/>
+
+    <column name="name" type="VARCHAR"/>
+    <column name="subid" type="INTEGER"/>
+
+    <foreign-key foreignTable="foo">
+      <reference local="id" foreign="id"/>
+      <reference local="subid" foreign="subid"/>
+    </foreign-key>
+  </table>
+</database>
+';
+
+        $expectedRelationSql = "
+CREATE TABLE `bar`
+(
+    `name` VARCHAR(255),
+    `subid` INTEGER,
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY (`id`),
+    INDEX `bar_FI_1` (`id`, `subid`),
+    CONSTRAINT `bar_FK_1`
+        FOREIGN KEY (`id`,`subid`)
+        REFERENCES `foo` (`id`,`subid`)
+) ENGINE=MyISAM;
+";
+
+        $table = $this->getDatabaseFromSchema($schema)->getTable('bar');
+        $relationTableSql = $this->getPlatform()->getAddTableDDL($table);
+
+        $this->assertEquals($expectedRelationSql, $relationTableSql);
     }
 
 }
