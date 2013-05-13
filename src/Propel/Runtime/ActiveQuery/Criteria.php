@@ -1723,8 +1723,7 @@ class Criteria
     }
 
     /**
-     * If a criterion for the requested column already exists, the condition is "OR"ed to the existing criterion (necessary for Propel 1.4 compatibility).
-     * If no criterion for the requested column already exists, the condition is "OR"ed to the latest criterion.
+     * If a prior criterion exists, the condition is "OR"ed to it.
      * If no criterion exist, the condition is added a new criterion
      *
      * Any comparison can be used.
