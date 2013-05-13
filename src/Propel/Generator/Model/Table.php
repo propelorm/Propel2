@@ -275,10 +275,19 @@ class Table extends ScopedMappingModel implements IdMethod
         foreach ($this->referrers as $foreignKey) {
             $referencedColumns = $foreignKey->getForeignColumnObjects();
             $referencedColumnsHash = $this->getColumnList($referencedColumns);
-            if (!isset($_indices[$referencedColumnsHash])) {
+            if (!empty($referencedColumns) && !isset($_indices[$referencedColumnsHash])) {
                 // no matching index defined in the schema, so we have to create one
+
+                $name = sprintf('I_referenced_%s_%s', $foreignKey->getName(), ++$counter);
+                if ($this->hasIndex($name)) {
+                    //if we have already a index with this name, then it looks like the columns of this index have just
+                    //been changed, so remove it and inject it again. This is the case if a referenced table is handled
+                    //later than the referencing table.
+                    $this->removeIndex($name);
+                }
+
                 $index = new Index();
-                $index->setName(sprintf('I_referenced_%s_%s', $foreignKey->getName(), ++$counter));
+                $index->setName($name);
                 $index->setColumns($referencedColumns);
                 $index->resetColumnsSize();
                 $this->addIndex($index);
@@ -291,10 +300,21 @@ class Table extends ScopedMappingModel implements IdMethod
         foreach ($this->foreignKeys as $foreignKey) {
             $localColumns = $foreignKey->getLocalColumnObjects();
             $localColumnsHash = $this->getColumnList($localColumns);
-            if (!isset($_indices[$localColumnsHash])) {
-                // no matching index defined in the schema, so we have to create one. MySQL needs indices on any columns that serve as foreign keys. these are not auto-created prior to 4.1.2
+            if (!empty($localColumns) && !isset($_indices[$localColumnsHash])) {
+                // no matching index defined in the schema, so we have to create one.
+                // MySQL needs indices on any columns that serve as foreign keys. these are not auto-created prior to
+                // 4.1.2
+
+                $name = substr_replace($foreignKey->getName(), 'FI_',  strrpos($foreignKey->getName(), 'FK_'), 3);
+                if ($this->hasIndex($name)) {
+                    //if we have already a index with this name, then it looks like the columns of this index have just
+                    //been changed, so remove it and inject it again. This is the case if a referenced table is handled
+                    //later than the referencing table.
+                    $this->removeIndex($name);
+                }
+
                 $index = new Index();
-                $index->setName(substr_replace($foreignKey->getName(), 'FI_', strrpos($foreignKey->getName(), 'FK_'), 3));
+                $index->setName($name);
                 $index->setColumns($localColumns);
                 $index->resetColumnsSize();
                 $this->addIndex($index);
@@ -757,6 +777,38 @@ class Table extends ScopedMappingModel implements IdMethod
         $imp->loadMapping($idMethodParameter);
 
         return $this->addIdMethodParameter($imp);
+    }
+
+    /**
+     * Removes a index from the table.
+     *
+     * @param string $name
+     */
+    public function removeIndex($name)
+    {
+        //check if we have a index with this name already, then delete it
+        foreach ($this->indices as $n => $idx) {
+            if ($idx->getName() == $name) {
+                unset($this->indices[$n]);
+                return;
+            }
+        }
+    }
+
+    /**
+     * Checks if the table has a index by name.
+     *
+     * @param string $name
+     * @return bool
+     */
+    public function hasIndex($name)
+    {
+        foreach ($this->indices as $idx) {
+            if ($idx->getName() == $name){
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
