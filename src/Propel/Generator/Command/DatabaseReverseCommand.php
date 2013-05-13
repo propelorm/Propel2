@@ -15,7 +15,6 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\Output;
-use Propel\Generator\Config\GeneratorConfig;
 use Propel\Generator\Manager\ReverseManager;
 
 /**
@@ -56,10 +55,10 @@ class DatabaseReverseCommand extends AbstractCommand
         $vendor = preg_split('{:}', $vendor);
         $vendor = ucfirst($vendor[0]);
 
-        $generatorConfig = new GeneratorConfig(array(
+        $generatorConfig = $this->getGeneratorConfig(array(
             'propel.platform.class'         => $input->getOption('platform'),
             'propel.reverse.parser.class'   => sprintf('\\Propel\\Generator\\Reverse\\%sSchemaParser', $vendor),
-        ));
+        ), $input);
 
         $this->createDirectory($input->getOption('output-dir'));
 
