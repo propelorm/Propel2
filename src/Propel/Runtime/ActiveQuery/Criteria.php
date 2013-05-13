@@ -1740,15 +1740,7 @@ class Criteria
     {
         $rightCriterion = $this->getCriterionForCondition($p1, $p2, $p3);
 
-        $key = $rightCriterion->getTable() . '.' . $rightCriterion->getColumn();
-        if ($preferColumnCondition && $this->containsKey($key)) {
-            // FIXME: addOr() operates preferably on existing conditions on the same column
-            // this may cause unexpected results, but it's there for BC with Propel 14
-            $leftCriterion = $this->getCriterion($key);
-        } else {
-            // fallback to the latest condition - this is the expected behavior
-            $leftCriterion = $this->getLastCriterion();
-        }
+        $leftCriterion = $this->getLastCriterion();
 
         if (null !== $leftCriterion) {
             // combine the given criterion with the existing one with an 'OR'
