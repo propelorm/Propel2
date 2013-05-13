@@ -10,7 +10,9 @@
 
 namespace Propel\Generator\Command;
 
+use Propel\Generator\Config\GeneratorConfig;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Filesystem\Exception\IOException;
@@ -36,6 +38,28 @@ abstract class AbstractCommand extends Command
             ->addOption('platform',  null, InputOption::VALUE_REQUIRED,  'The platform', self::DEFAULT_PLATFORM)
             ->addOption('input-dir', null, InputOption::VALUE_REQUIRED,  'The input directory', self::DEFAULT_INPUT_DIRECTORY)
         ;
+    }
+
+    /**
+     * Returns a new `GeneratorConfig` object with your `$properties` merged with
+     * the build.properties in the `input-dir` folder.
+     *
+     * @param array $properties
+     * @param       $input
+     *
+     * @return GeneratorConfig
+     */
+    protected function getGeneratorConfig(array $properties, InputInterface $input = null)
+    {
+        $options = $properties;
+        if ($input && $input->hasOption('input-dir')) {
+            $options = array_merge(
+                $properties,
+                $this->getBuildProperties($input->getOption('input-dir') . '/build.properties')
+            );
+        }
+
+        return new GeneratorConfig($options);
     }
 
     protected function getBuildProperties($file)

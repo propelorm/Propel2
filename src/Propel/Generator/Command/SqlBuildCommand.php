@@ -14,7 +14,6 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\Output;
-use Propel\Generator\Config\GeneratorConfig;
 use Propel\Generator\Manager\SqlManager;
 
 /**
@@ -54,7 +53,7 @@ class SqlBuildCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $generatorConfig = new GeneratorConfig(array_merge(array(
+        $generatorConfig = $this->getGeneratorConfig(array(
             'propel.platform.class'                 => $input->getOption('platform'),
             'propel.database.schema'                => $input->getOption('schema-name'),
             'propel.database.encoding'              => $input->getOption('encoding'),
@@ -63,7 +62,7 @@ class SqlBuildCommand extends AbstractCommand
             // MySQL specific
             'propel.mysql.tableType'                => $input->getOption('mysql-engine'),
             'propel.mysql.tableEngineKeyword'       => 'ENGINE',
-        ), $this->getBuildProperties($input->getOption('input-dir') . '/build.properties')));
+        ), $input);
 
         $this->createDirectory($input->getOption('output-dir'));
 
