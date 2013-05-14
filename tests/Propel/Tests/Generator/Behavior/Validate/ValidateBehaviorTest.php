@@ -407,7 +407,7 @@ EOF;
         $book->addValidateReader($reader1);
 
         $reader2 = new ValidateReader();
-        $reader2->setId(1);
+        $reader2->setId(2);
         $reader2->setFirstName('Hans');
         $reader2->setLastName(null); //failed
         $reader2->setEmail('hwukert@klein.com');
