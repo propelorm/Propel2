@@ -155,6 +155,35 @@ SET FOREIGN_KEY_CHECKS = 1;
 ";
     }
 
+    /**
+     * Returns the SQL for the primary key of a Table object
+     *
+     * @param Table $table
+     *
+     * @return string
+     */
+    public function getPrimaryKeyDDL(Table $table)
+    {
+        if ($table->hasPrimaryKey()) {
+
+            $keys = $table->getPrimaryKey();
+
+            //MySQL throws an 'Incorrect table definition; there can be only one auto column and it must be defined as a key'
+            //if the primary key consists of multiple columns and if the first is not the autoIncrement one. So
+            //this push the autoIncrement column to the first position if its not already.
+            $autoIncrement = $table->getAutoIncrementPrimaryKey();
+            if ($autoIncrement && $keys[0] != $autoIncrement){
+                $idx = array_search($autoIncrement, $keys);
+                if ($idx !== false){
+                    unset($keys[$idx]);
+                    array_unshift($keys, $autoIncrement);
+                }
+            }
+
+            return 'PRIMARY KEY (' . $this->getColumnListDDL($keys) . ')';
+        }
+    }
+
     public function getAddTableDDL(Table $table)
     {
         $lines = array();
