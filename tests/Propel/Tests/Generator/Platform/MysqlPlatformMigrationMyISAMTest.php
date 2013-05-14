@@ -17,7 +17,7 @@ use Propel\Generator\Platform\MysqlPlatform;
 /**
  *
  */
-class MysqlPlatformMigrationTest extends PlatformMigrationTestProvider
+class MysqlPlatformMigrationMyISAMTest extends PlatformMigrationTestProvider
 {
     /**
      * Get the Platform object for this class
@@ -32,7 +32,7 @@ class MysqlPlatformMigrationTest extends PlatformMigrationTestProvider
             $platform = new MysqlPlatform();
             $config = new GeneratorConfig();
             $config->setBuildProperties(array(
-                 'propel.mysql.tableType' => 'InnoDB'
+                 'propel.mysql.tableType' => 'MyISAM'
             ));
             $platform->setGeneratorConfig($config);
         }
@@ -68,7 +68,7 @@ CREATE TABLE `foo5`
     `lkdjfsh` INTEGER,
     `dfgdsgf` TEXT,
     PRIMARY KEY (`id`)
-) ENGINE=InnoDB;
+) ENGINE=MyISAM;
 
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;
@@ -93,10 +93,6 @@ RENAME TABLE `foo1` TO `foo2`;
     public function testGetModifyTableDDL($tableDiff)
     {
         $expected = "
-ALTER TABLE `foo` DROP FOREIGN KEY `foo1_FK_2`;
-
-ALTER TABLE `foo` DROP FOREIGN KEY `foo1_FK_1`;
-
 DROP INDEX `bar_baz_FK` ON `foo`;
 
 DROP INDEX `foo1_FI_2` ON `foo`;
@@ -115,10 +111,6 @@ ALTER TABLE `foo` ADD
 CREATE INDEX `bar_FK` ON `foo` (`bar1`);
 
 CREATE INDEX `baz_FK` ON `foo` (`baz3`);
-
-ALTER TABLE `foo` ADD CONSTRAINT `foo1_FK_1`
-    FOREIGN KEY (`bar1`)
-    REFERENCES `foo2` (`bar`);
 ";
         $this->assertEquals($expected, $this->getPlatform()->getModifyTableDDL($tableDiff));
     }
@@ -176,19 +168,7 @@ CREATE INDEX `bar_baz_FK` ON `foo` (`id`,`bar`,`baz`);
      */
     public function testGetModifyTableForeignKeysDDL($tableDiff)
     {
-        $expected = "
-ALTER TABLE `foo1` DROP FOREIGN KEY `foo1_FK_1`;
-
-ALTER TABLE `foo1` ADD CONSTRAINT `foo1_FK_3`
-    FOREIGN KEY (`baz`)
-    REFERENCES `foo2` (`baz`);
-
-ALTER TABLE `foo1` DROP FOREIGN KEY `foo1_FK_2`;
-
-ALTER TABLE `foo1` ADD CONSTRAINT `foo1_FK_2`
-    FOREIGN KEY (`bar`,`id`)
-    REFERENCES `foo2` (`bar`,`id`);
-";
+        $expected = "";
         $this->assertEquals($expected, $this->getPlatform()->getModifyTableForeignKeysDDL($tableDiff));
     }
 
@@ -197,15 +177,9 @@ ALTER TABLE `foo1` ADD CONSTRAINT `foo1_FK_2`
      */
     public function testGetModifyTableForeignKeysSkipSqlDDL($tableDiff)
     {
-        $expected = "
-ALTER TABLE `foo1` DROP FOREIGN KEY `foo1_FK_1`;
-";
+        $expected = "";
         $this->assertEquals($expected, $this->getPlatform()->getModifyTableForeignKeysDDL($tableDiff));
-        $expected = "
-ALTER TABLE `foo1` ADD CONSTRAINT `foo1_FK_1`
-    FOREIGN KEY (`bar`)
-    REFERENCES `foo2` (`bar`);
-";
+        $expected = "";
         $this->assertEquals($expected, $this->getPlatform()->getModifyTableForeignKeysDDL($tableDiff->getReverseDiff()));
     }
 
