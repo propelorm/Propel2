@@ -3698,7 +3698,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
         $script .= "
     /**
-     * @param    {$relatedObjectClassName} \${$lowerRelatedObjectClassName} The $lowerRelatedObjectClassName object to add.
+     * @param {$relatedObjectClassName} \${$lowerRelatedObjectClassName} The $lowerRelatedObjectClassName object to add.
      */
     protected function doAdd{$relatedObjectClassName}(\${$lowerRelatedObjectClassName})
     {
@@ -3816,8 +3816,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         \$this->$varName = \$v;
 
         // Make sure that that the passed-in $className isn't already associated with this object
-        if (\$v !== null && \$v->get".$this->getFKPhpNameAffix($refFK, false)."() === null) {
-            \$v->set".$this->getFKPhpNameAffix($refFK, false)."(\$this);
+        if (\$v !== null && \$v->get" . $this->getFKPhpNameAffix($refFK, $plural = false) . "(null, false) === null) {
+            \$v->set" . $this->getFKPhpNameAffix($refFK, $plural = false) . "(\$this);
         }
 
         return \$this;
@@ -4260,17 +4260,22 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * through the {$tblFK->getName()} cross reference table.
      *
      * @param {$crossObjectClassName} {$crossObjectName} The $className object to relate
+     * @return " . $this->getObjectClassname() . " The current object (for fluent API support)
      */
     public function remove{$relatedObjectClassName}($crossObjectClassName $crossObjectName)
     {
         if (\$this->get{$relCol}()->contains({$crossObjectName})) {
             \$this->{$collName}->remove(\$this->{$collName}->search({$crossObjectName}));
+
             if (null === \$this->{$M2MScheduledForDeletion}) {
                 \$this->{$M2MScheduledForDeletion} = clone \$this->{$collName};
                 \$this->{$M2MScheduledForDeletion}->clear();
             }
-            \$this->{$M2MScheduledForDeletion}[]= {$crossObjectName};
+
+            \$this->{$M2MScheduledForDeletion}[] = {$crossObjectName};
         }
+
+        return \$this;
     }
 ";
     }

@@ -115,19 +115,18 @@
     }
 
     /**
-     * If the primary key is not <code>null</code>, return the hashcode of the
-     * primary key.  Otherwise calls <code>Object.hashCode()</code>.
+     * If the primary key is not null, return the hashcode of the
+     * primary key. Otherwise, return the hash code of the object.
      *
      * @return int Hashcode
      */
     public function hashCode()
     {
-        $ok = $this->getPrimaryKey();
-        if (null === $ok) {
-            return crc32(serialize($this));
+        if (null !== $this->getPrimaryKey()) {
+            return crc32(serialize($this->getPrimaryKey()));
         }
 
-        return crc32(serialize($this));
+        return crc32(serialize(clone $this));
     }
 
     /**

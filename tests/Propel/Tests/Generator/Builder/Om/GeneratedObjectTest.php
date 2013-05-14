@@ -1454,4 +1454,82 @@ EOF;
         $this->assertEquals(1, BookQuery::create()->count());
         $this->assertEquals(2, BookSummaryQuery::create()->count());
     }
+
+    public function testUnsavedObjectCallingHashCodeIsNotChangingObject()
+    {
+        $book1 = new Book();
+        $book1->setTitle('Foo5');
+        $book1->setISBN('1234');
+
+        $author = new Author();
+        $author->setFirstName('JAne');
+        $author->setLastName('JAne');
+        $author->addBook($book1);
+
+        $a = clone $author;
+        $a->hashCode();
+
+        $this->assertEquals($author, $a);
+    }
+
+    public function testSavedObjectCallingHashCodeIsNotChangingObject()
+    {
+        $book1 = new Book();
+        $book1->setTitle('Foo5');
+        $book1->setISBN('1234');
+
+        $author = new Author();
+        $author->setFirstName('JAne');
+        $author->setLastName('JAne');
+        $author->addBook($book1);
+        $author->save();
+
+        $a = clone $author;
+        $a->hashCode();
+
+        $this->assertEquals($author, $a);
+    }
+
+    public function testUnsavedObjectCreatesSameHashForIdenticalObjects()
+    {
+        $book1 = new Book();
+        $book1->setTitle('Foo5');
+        $book1->setISBN('1234');
+
+        $author1 = new Author();
+        $author1->setFirstName('JAne');
+        $author1->setLastName('JAne');
+        $author1->addBook($book1);
+
+        $author2 = new Author();
+        $author2->setFirstName('JAne');
+        $author2->setLastName('JAne');
+        $author2->addBook($book1);
+
+        $this->assertEquals($author1->hashCode(), $author2->hashCode());
+    }
+
+    /**
+     * Primary key should differ
+     */
+    public function testSavedObjectCreatesDifferentHashForIdenticalObjects()
+    {
+        $book1 = new Book();
+        $book1->setTitle('Foo5');
+        $book1->setISBN('1234');
+
+        $author1 = new Author();
+        $author1->setFirstName('JAne');
+        $author1->setLastName('JAne');
+        $author1->addBook($book1);
+        $author1->save();
+
+        $author2 = new Author();
+        $author2->setFirstName('JAne');
+        $author2->setLastName('JAne');
+        $author2->addBook($book1);
+        $author2->save();
+
+        $this->assertNotEquals($author1->hashCode(), $author2->hashCode());
+    }
 }
