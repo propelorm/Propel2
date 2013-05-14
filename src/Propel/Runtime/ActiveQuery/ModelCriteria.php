@@ -1778,8 +1778,8 @@ class ModelCriteria extends BaseModelCriteria
             }
 
             return array($column, $realColumnName);
-        } elseif ($tableMap->hasColumn($phpName, false)) {
-            $column = $tableMap->getColumn($phpName, false);
+        } elseif ($tableMap->hasColumn($phpName)) {
+            $column = $tableMap->getColumn($phpName);
             $realColumnName = $column->getFullyQualifiedName();
 
             return array($column, $realColumnName);
