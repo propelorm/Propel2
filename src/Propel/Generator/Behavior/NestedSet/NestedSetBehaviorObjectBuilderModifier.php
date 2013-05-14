@@ -696,7 +696,7 @@ public function addNestedSetChild($objectName)
     if (null === \$this->collNestedSetChildren) {
         \$this->initNestedSetChildren();
     }
-    if (!\$this->collNestedSetChildren->contains($objectName)) { // only add it if the **same** object is not already associated
+    if (!in_array($objectName, \$this->collNestedSetChildren->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
         \$this->collNestedSetChildren[]= $objectName;
         {$objectName}->setParent(\$this);
     }

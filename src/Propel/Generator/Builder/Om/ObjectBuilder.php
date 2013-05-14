@@ -4097,7 +4097,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * @param  ConnectionInterface \$con Optional connection object
      * @return " . $this->getObjectClassname() . " The current object (for fluent API support)
      */
-            public function set{$relatedNamePlural}(Collection \${$inputCollection}, ConnectionInterface \$con = null)
+    public function set{$relatedNamePlural}(Collection \${$inputCollection}, ConnectionInterface \$con = null)
     {
         \$this->clear{$relatedNamePlural}();
         \$current{$relatedNamePlural} = \$this->get{$relatedNamePlural}();

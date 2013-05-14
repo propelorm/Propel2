@@ -19,6 +19,7 @@ use Propel\Runtime\Exception\RuntimeException;
 use Propel\Runtime\Map\RelationMap;
 use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\ActiveQuery\PropelQuery;
+use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 
 /**
  * Class for iterating over a list of Propel objects
@@ -42,7 +43,7 @@ class ObjectCollection extends Collection
         }
         $con->beginTransaction();
         try {
-            /** @var $element BaseObject */
+            /** @var $element ActiveRecordInterface */
             foreach ($this as $element) {
                 $element->save($con);
             }
@@ -68,7 +69,7 @@ class ObjectCollection extends Collection
         }
         $con->beginTransaction();
         try {
-            /** @var $element BaseObject */
+            /** @var $element ActiveRecordInterface */
             foreach ($this as $element) {
                 $element->delete($con);
             }
@@ -89,7 +90,7 @@ class ObjectCollection extends Collection
     {
         $ret = array();
 
-        /** @var $obj BaseObject */
+        /** @var $obj ActiveRecordInterface */
         foreach ($this as $key => $obj) {
             $key = $usePrefix ? ($this->getModel() . '_' . $key) : $key;
             $ret[$key]= $obj->getPrimaryKey();
@@ -109,7 +110,7 @@ class ObjectCollection extends Collection
     {
         $class = $this->getFullyQualifiedModel();
         foreach ($arr as $element) {
-            /** @var $obj BaseObject */
+            /** @var $obj ActiveRecordInterface */
             $obj = new $class();
             $obj->fromArray($element);
             $this->append($obj);
@@ -155,7 +156,7 @@ class ObjectCollection extends Collection
         $ret = array();
         $keyGetterMethod = 'get' . $keyColumn;
 
-        /** @var $obj BaseObject */
+        /** @var $obj ActiveRecordInterface */
         foreach ($this as $key => $obj) {
             $key = null === $keyColumn ? $key : $obj->$keyGetterMethod();
             $key = $usePrefix ? ($this->getModel() . '_' . $key) : $key;
@@ -292,5 +293,44 @@ class ObjectCollection extends Collection
         }
 
         return $relatedObjects;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function search($element)
+    {
+        if ($element instanceof ActiveRecordInterface) {
+            if (null !== $elt = $this->getIdenticalObject($element)) {
+                $element = $elt;
+            }
+        }
+
+        return parent::search($element);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function contains($element)
+    {
+        if ($element instanceof ActiveRecordInterface) {
+            if (null !== $elt = $this->getIdenticalObject($element)) {
+                $element = $elt;
+            }
+        }
+
+        return parent::contains($element);
+    }
+
+    private function getIdenticalObject(ActiveRecordInterface $object)
+    {
+        foreach ($this as $obj) {
+            if ($obj instanceof ActiveRecordInterface && $obj->hashCode() === $object->hashCode()) {
+                return $obj;
+            }
+        }
+
+        return null;
     }
 }

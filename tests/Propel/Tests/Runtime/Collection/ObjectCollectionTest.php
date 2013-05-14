@@ -8,7 +8,7 @@
  * @license MIT License
  */
 
-namespace Propel\Tests\Runtime\collection;
+namespace Propel\Tests\Runtime\Collection;
 
 use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Formatter\ObjectFormatter;
@@ -152,5 +152,118 @@ class ObjectCollectionTest extends BookstoreTestBase
         $count = $this->con->getQueryCount();
         $this->assertEquals(0, $author->countBooks());
         $this->assertEquals($count, $this->con->getQueryCount());
+    }
+
+    public function testContainsWithNoPersistentElements()
+    {
+        $col = new ObjectCollection();
+        $this->assertFalse($col->contains('foo_1'), 'contains() returns false on an empty collection');
+        $data = array('bar1', 'bar2', 'bar3');
+        $col = new ObjectCollection($data);
+        $this->assertTrue($col->contains('bar1'), 'contains() returns true when the key exists');
+        $this->assertFalse($col->contains('bar4'), 'contains() returns false when the key does not exist');
+    }
+
+    public function testSearchWithNoPersistentElements()
+    {
+        $col = new ObjectCollection();
+        $this->assertFalse($col->search('bar1'), 'search() returns false on an empty collection');
+        $data = array('bar1', 'bar2', 'bar3');
+        $col = new ObjectCollection($data);
+        $this->assertEquals(1, $col->search('bar2'), 'search() returns the key when the element exists');
+        $this->assertFalse($col->search('bar4'), 'search() returns false when the element does not exist');
+    }
+
+    public function testContainsWithClassicBehavior()
+    {
+        $col = new ObjectCollection();
+        $b1  = new Book();
+        $b1->setTitle('Bar');
+        $b2  = new Book();
+        $b2->setTitle('Foo');
+
+        $this->assertFalse($col->contains($b1), 'contains() returns false on an empty collection');
+
+        $col = new ObjectCollection(array($b1));
+
+        $this->assertTrue($col->contains($b1), 'contains() returns true when the key exists');
+        $this->assertFalse($col->contains($b2), 'contains() returns false when the key does not exist');
+    }
+
+    public function testSearchWithClassicBehavior()
+    {
+        $col = new ObjectCollection();
+        $b1  = new Book();
+        $b1->setTitle('Bar');
+        $b2  = new Book();
+        $b2->setTitle('Foo');
+
+        $this->assertFalse($col->search($b1), 'search() returns false on an empty collection');
+
+        $col = new ObjectCollection(array($b1));
+        $this->assertEquals(0, $col->search($b1), 'search() returns the key when the element exists');
+        $this->assertFalse($col->search($b2), 'search() returns false when the element does not exist');
+    }
+
+    public function testContainsMatchesSimilarObjects()
+    {
+        $col = new ObjectCollection();
+        $b1  = new Book();
+        $b1->setTitle('Bar');
+        $b1->save();
+
+        $b2  = clone $b1;
+
+        $this->assertFalse($col->contains($b1), 'contains() returns false on an empty collection');
+
+        $col = new ObjectCollection(array($b1));
+
+        $this->assertTrue($col->contains($b1));
+        $this->assertTrue($col->contains($b2));
+    }
+
+    public function testSearchMatchesSimilarObjects()
+    {
+        $col = new ObjectCollection();
+        $b1  = new Book();
+        $b1->setTitle('Bar');
+        $b1->save();
+
+        $b2  = clone $b1;
+
+        $this->assertFalse($col->search($b1), 'search() returns false on an empty collection');
+
+        $col = new ObjectCollection(array($b1));
+        $this->assertTrue(0 === $col->search($b1));
+        $this->assertTrue(0 === $col->search($b2));
+    }
+
+    public function testContainsMatchesSimilarNewObjects()
+    {
+        $col = new ObjectCollection();
+        $b1  = new Book();
+        $b1->setTitle('Bar');
+        $b2  = clone $b1;
+
+        $this->assertFalse($col->contains($b1), 'contains() returns false on an empty collection');
+
+        $col = new ObjectCollection(array($b1));
+
+        $this->assertTrue($col->contains($b1));
+        $this->assertTrue($col->contains($b2));
+    }
+
+    public function testSearchMatchesSimilarNewObjects()
+    {
+        $col = new ObjectCollection();
+        $b1  = new Book();
+        $b1->setTitle('Bar');
+        $b2  = clone $b1;
+
+        $this->assertFalse($col->search($b1), 'search() returns false on an empty collection');
+
+        $col = new ObjectCollection(array($b1));
+        $this->assertTrue(0 === $col->search($b1));
+        $this->assertTrue(0 === $col->search($b2));
     }
 }

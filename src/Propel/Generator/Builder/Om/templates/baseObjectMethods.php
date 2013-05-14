@@ -127,7 +127,7 @@
             return crc32(serialize($this));
         }
 
-        return crc32(serialize($ok)); // serialize because it could be an array ("ComboKey")
+        return crc32(serialize($this));
     }
 
     /**
