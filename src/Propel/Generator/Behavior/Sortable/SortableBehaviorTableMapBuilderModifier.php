@@ -17,6 +17,9 @@ namespace Propel\Generator\Behavior\Sortable;
  */
 class SortableBehaviorTableMapBuilderModifier
 {
+    /**
+     * @var SortableBehavior
+     */
     protected $behavior;
 
     protected $table;
@@ -30,12 +33,28 @@ class SortableBehaviorTableMapBuilderModifier
     public function staticAttributes($builder)
     {
         $tableName = $this->table->getName();
+        $col = '';
+
+        if ($this->behavior->useScope()) {
+
+            if ($this->behavior->hasMultipleScopes()) {
+                foreach ($this->behavior->getScopes() as $scope) {
+                    $col[] = "$tableName.".strtoupper($scope);
+                }
+                $col = json_encode($col);
+                $col = "'$col'";
+            } else {
+                $colNames = $this->getColumnConstant('scope_column');
+                $col =  "'$tableName.$colNames'";
+            }
+        }
 
         return $this->behavior->renderTemplate('tableMapSortable', array(
-                'rankColumn'     => $this->getColumnConstant('rank_column'),
-                'scopeColumn'    => $this->behavior->useScope()? $this->getColumnConstant('scope_column') : '',
-                'tableName'      => $this->table->getName(),
-                'useScope'       => $this->behavior->useScope(),
+            'rankColumn' => $this->getColumnConstant('rank_column'),
+            'multiScope' => $this->behavior->hasMultipleScopes(),
+            'scope'      => $col,
+            'tableName'      => $this->table->getName(),
+            'useScope'   => $this->behavior->useScope(),
         ));
     }
 

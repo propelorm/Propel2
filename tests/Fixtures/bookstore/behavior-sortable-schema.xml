@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<database name="bookstore-behavior" defaultIdMethod="native" package="behavior.sortable" namespace="Propel\Tests\Bookstore\Behavior">
+
+    <table name="sortable_table11">
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+        <column name="title" type="VARCHAR" size="100" primaryString="true" />
+
+        <behavior name="sortable" />
+    </table>
+
+    <table name="sortable_table12">
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+        <column name="title" type="VARCHAR" size="100" primaryString="true" />
+        <column name="position" type="INTEGER" />
+
+        <behavior name="sortable">
+            <parameter name="rank_column" value="position" />
+            <parameter name="use_scope" value="true" />
+            <parameter name="scope_column" value="my_scope_column" />
+        </behavior>
+    </table>
+
+    <table name="sortable_multi_scopes">
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+        <column name="category_id" required="true" type="INTEGER" />
+        <column name="sub_category_id" type="INTEGER" />
+        <column name="title" type="VARCHAR" size="100" primaryString="true" />
+        <column name="position" type="INTEGER" />
+        <behavior name="sortable">
+            <parameter name="rank_column" value="position" />
+            <parameter name="use_scope" value="true" />
+            <parameter name="scope_column" value="category_id" />
+            <parameter name="scope_column" value="sub_category_id" />
+        </behavior>
+    </table>
+
+    <table name="sortable_multi_comma_scopes">
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+        <column name="category_id" required="true" type="INTEGER" />
+        <column name="sub_category_id" type="INTEGER" />
+        <column name="title" type="VARCHAR" size="100" primaryString="true" />
+        <column name="position" type="INTEGER" />
+        <behavior name="sortable">
+            <parameter name="rank_column" value="position" />
+            <parameter name="use_scope" value="true" />
+            <parameter name="scope_column" value="category_id, sub_category_id" />
+        </behavior>
+    </table>
+
+</database>
