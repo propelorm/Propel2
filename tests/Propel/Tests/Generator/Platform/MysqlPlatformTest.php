@@ -795,7 +795,7 @@ CREATE TABLE `foo`
     `third_id` INTEGER NOT NULL,
     `bar` VARCHAR(255),
     PRIMARY KEY (`second_id`,`id`,`third_id`)
-) ENGINE=MyISAM;
+) ENGINE=InnoDB;
 ";
         $this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
     }
