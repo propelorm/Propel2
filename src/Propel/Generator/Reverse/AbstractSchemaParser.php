@@ -11,6 +11,7 @@
 namespace Propel\Generator\Reverse;
 
 use Propel\Generator\Config\GeneratorConfigInterface;
+use Propel\Generator\Model\VendorInfo;
 use Propel\Runtime\Connection\ConnectionInterface;
 
 /**

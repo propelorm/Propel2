@@ -125,6 +125,19 @@ class MysqlPlatform extends DefaultPlatform
         return strtolower($this->getDefaultTableEngine()) == 'innodb';
     }
 
+    public function supportsForeignKeys(Table $table)
+    {
+        $vendorSpecific = $table->getVendorInfoForType('mysql');
+        if ($vendorSpecific->hasParameter('Type')) {
+            $mysqlTableType = $vendorSpecific->getParameter('Type');
+        } elseif ($vendorSpecific->hasParameter('Engine')) {
+            $mysqlTableType = $vendorSpecific->getParameter('Engine');
+        } else {
+            $mysqlTableType = $this->getDefaultTableEngine();
+        }
+        return strtolower($mysqlTableType) == 'innodb';
+    }
+
     public function getAddTablesDDL(Database $database)
     {
         $ret = $this->getBeginDDL();
@@ -175,13 +188,15 @@ SET FOREIGN_KEY_CHECKS = 1;
             $lines[] = $this->getIndexDDL($index);
         }
 
-        foreach ($table->getForeignKeys() as $foreignKey) {
-            if ($foreignKey->isSkipSql()) {
-                continue;
-            }
-            $lines[] = str_replace("
+        if ($this->supportsForeignKeys($table)){
+            foreach ($table->getForeignKeys() as $foreignKey) {
+                if ($foreignKey->isSkipSql()) {
+                    continue;
+                }
+                $lines[] = str_replace("
     ", "
         ", $this->getForeignKeyDDL($foreignKey));
+            }
         }
 
         $vendorSpecific = $table->getVendorInfoForType('mysql');
@@ -454,8 +469,30 @@ DROP INDEX %s ON %s;
         );
     }
 
+    public function getAddForeignKeyDDL(ForeignKey $fk){
+        if ($this->supportsForeignKeys($fk->getTable())){
+            return parent::getAddForeignKeyDDL($fk);
+        }
+        return '';
+    }
+
+    /**
+     * Builds the DDL SQL for a ForeignKey object.
+     *
+     * @param ForeignKey $fk
+     *
+     * @return string
+     */
+    public function getForeignKeyDDL(ForeignKey $fk){
+        if ($this->supportsForeignKeys($fk->getTable())) {
+            return parent::getForeignKeyDDL($fk);
+        }
+        return '';
+    }
+
     public function getDropForeignKeyDDL(ForeignKey $fk)
     {
+        if (!$this->supportsForeignKeys($fk->getTable())) return '';
         if ($fk->isSkipSql()) {
             return;
         }
