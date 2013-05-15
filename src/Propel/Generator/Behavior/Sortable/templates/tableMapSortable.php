@@ -4,9 +4,19 @@
 const RANK_COL = "<?php echo $tableName ?>.<?php echo $rankColumn ?>";
 
 <?php if ($useScope) :?>
+
+    <?php if ($multiScope) :?>
 /**
- * Scope column for the set
- */
-const SCOPE_COL = "<?php echo $tableName ?>.<?php echo $scopeColumn ?>";
+* If defined, the `SCOPE_COL` contains a json_encoded array with all columns.
+* @var boolean
+*/
+const MULTI_SCOPE_COL = true;
+
+    <?php endif?>
+
+/**
+* Scope column for the set
+*/
+const SCOPE_COL = <?php echo $scope ?>;
 
 <?php endif ?>
