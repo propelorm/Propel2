@@ -278,7 +278,7 @@ class ObjectCollection extends Collection
     public function populateRelation($relation, $criteria = null, $con = null)
     {
         if (!Propel::isInstancePoolingEnabled()) {
-            throw new RuntimeException('populateRelation() needs instance pooling to be enabled prior to populating the collection');
+            throw new RuntimeException(__METHOD__ .' needs instance pooling to be enabled prior to populating the collection');
         }
         $relationMap = $this->getFormatter()->getTableMap()->getRelation($relation);
         if ($this->isEmpty()) {
@@ -318,7 +318,7 @@ class ObjectCollection extends Collection
             // nothing to do; the instance pool will catch all calls to getRelatedObject()
             // and return the object in memory
         } else {
-            throw new UnsupportedRelationException('populateRelation() does not support this relation type');
+            throw new UnsupportedRelationException(__METHOD__ .' does not support this relation type');
         }
 
         return $relatedObjects;

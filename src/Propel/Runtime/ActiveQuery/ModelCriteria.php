@@ -644,7 +644,7 @@ class ModelCriteria extends BaseModelCriteria
 
         $join = $this->joins[$relation];
         if (RelationMap::MANY_TO_MANY === $join->getRelationMap()->getType()) {
-            throw new PropelException('with() does not allow hydration for many-to-many relationships');
+            throw new PropelException(__METHOD__ .' does not allow hydration for many-to-many relationships');
         } elseif (RelationMap::ONE_TO_MANY === $join->getRelationMap()->getType()) {
             // For performance reasons, the formatters will use a special routine in this case
             $this->isWithOneToMany = true;
@@ -1018,7 +1018,7 @@ class ModelCriteria extends BaseModelCriteria
     public function findOneOrCreate($con = null)
     {
         if ($this->joins) {
-            throw new PropelException('findOneOrCreate() cannot be used on a query with a join, because Propel cannot transform a SQL JOIN into a subquery. You should split the query in two queries to avoid joins.');
+            throw new PropelException(__METHOD__ .' cannot be used on a query with a join, because Propel cannot transform a SQL JOIN into a subquery. You should split the query in two queries to avoid joins.');
         }
 
         if (!$ret = $this->findOne($con)) {
@@ -1308,7 +1308,7 @@ class ModelCriteria extends BaseModelCriteria
     public function delete(ConnectionInterface $con = null)
     {
         if (0 === count($this->getMap())) {
-            throw new PropelException('delete() expects a Criteria with at least one condition. Use deleteAll() to delete all the rows of a table');
+            throw new PropelException(__METHOD__ .' expects a Criteria with at least one condition. Use deleteAll() to delete all the rows of a table');
         }
 
         if (null === $con) {
@@ -1459,11 +1459,11 @@ class ModelCriteria extends BaseModelCriteria
     public function update($values, $con = null, $forceIndividualSaves = false)
     {
         if (!is_array($values) && !($values instanceof Criteria)) {
-            throw new PropelException('set() expects an array or Criteria as first argument');
+            throw new PropelException(__METHOD__ .' expects an array or Criteria as first argument');
         }
 
         if (count($this->getJoins())) {
-            throw new PropelException('set() does not support multitable updates, please do not use join()');
+            throw new PropelException(__METHOD__ .' does not support multitable updates, please do not use join()');
         }
 
         if (null === $con) {
