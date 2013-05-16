@@ -310,13 +310,13 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      * 
      * In case you want the transaction to rollback just throw an Exception of any type.
      *
-     * @param Closure $callable A callable to be wrapped in a transaction
+     * @param callable $callable A callable to be wrapped in a transaction
      * 
      * @return bool|mixed Returns the result of the callable on success, or <code>true</code> when the callable doesn't return anything.
      * 
      * @throws Exception Re-throws a possible <code>Exception</code> triggered by the callable.
      */
-    public function transaction($callable)
+    public function transaction(callable $callable)
     {
         return $this->connection->transaction($callable);
     }

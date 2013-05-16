@@ -1358,7 +1358,6 @@ class ModelCriteria extends BaseModelCriteria
                 return $affectedRows;
             });
         } catch (PropelException $e) {
-            $con->rollBack();
             throw new PropelException(__METHOD__  . ' is unable to delete all. ', 0, $e);
         }
     }
