@@ -232,9 +232,6 @@ class Criteria
      */
     protected $queryComment;
 
-    // flag to note that the criteria involves a blob.
-    protected $blobFlag = null;
-
     protected $aliases = array();
 
     protected $useTransaction = false;
@@ -299,7 +296,6 @@ class Criteria
         $this->dbName = $this->originalDbName;
         $this->offset = 0;
         $this->limit = 0;
-        $this->blobFlag = null;
         $this->aliases = array();
         $this->useTransaction = false;
         $this->ifLvlCount = false;

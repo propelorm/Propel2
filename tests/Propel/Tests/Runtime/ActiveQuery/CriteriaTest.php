@@ -1077,8 +1077,6 @@ class CriteriaTest extends BookstoreTestBase
 
         $this->assertEquals(0, $c->getLimit(), 'limit is 0 by default');
 
-        $this->assertNull($c->getBlobFlag(), 'blobFlag is null by default');
-
         $this->assertTrue(is_array($c->getAliases()), 'aliases is an array');
         $this->assertEquals(0, count($c->getAliases()), 'aliases is empty by default');
 
@@ -1139,10 +1137,5 @@ class CriteriaForClearTest extends Criteria
     public function getUseTransaction()
     {
         return $this->useTransaction;
-    }
-
-    public function getBlobFlag()
-    {
-        return $this->blobFlag;
     }
 }
