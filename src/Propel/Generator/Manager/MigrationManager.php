@@ -193,18 +193,20 @@ class MigrationManager extends AbstractManager
     {
         $platform = $this->getPlatform($datasource);
         $conn = $this->getAdapterConnection($datasource);
-        $sql = sprintf('DELETE FROM %s', $this->getMigrationTable());
-        $conn->beginTransaction();
-        $stmt = $conn->prepare($sql);
-        $stmt->execute();
-        $sql = sprintf('INSERT INTO %s (%s) VALUES (?)',
-            $this->getMigrationTable(),
-            $platform->quoteIdentifier('version')
-        );
-        $stmt = $conn->prepare($sql);
-        $stmt->bindParam(1, $timestamp, \PDO::PARAM_INT);
-        $stmt->execute();
-        $conn->commit();
+        
+        $conn->transaction(function() use ($platform, $conn) {
+            $sql = sprintf('DELETE FROM %s', $this->getMigrationTable());
+            $stmt = $conn->prepare($sql);
+            $stmt->execute();
+            
+            $sql = sprintf('INSERT INTO %s (%s) VALUES (?)',
+                $this->getMigrationTable(),
+                $platform->quoteIdentifier('version')
+            );
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(1, $timestamp, \PDO::PARAM_INT);
+            $stmt->execute();
+        });
     }
 
     public function getMigrationTimestamps()
