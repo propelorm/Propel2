@@ -158,13 +158,13 @@ class Criteria
 
     /**
      * Storage of aliased select data. Collection of column names.
-     * @var array
+     * @var string[]
      */
     protected $asColumns = array();
 
     /**
      * Storage of select modifiers data. Collection of modifier names.
-     * @var array
+     * @var string[]
      */
     protected $selectModifiers = array();
 
@@ -249,7 +249,9 @@ class Criteria
      */
     protected $defaultCombineOperator = Criteria::LOGICAL_AND;
 
-    // flags for Boolean functions
+    /**
+     * @var PropelConditionalProxy
+     */
     protected $conditionalProxy = null;
 
     /**
@@ -310,10 +312,10 @@ class Criteria
      * myCrit->addAsColumn('alias', 'ALIAS('.MyTableMap::ID.')');
      * </code>
      *
+     * If the name already exists, it is replaced by the new clause.
+     * 
      * @param string $name   Wanted Name of the column (alias).
      * @param string $clause SQL clause to select from the table
-     *
-     * If the name already exists, it is replaced by the new clause.
      *
      * @return Criteria A modified Criteria object.
      */
@@ -2495,7 +2497,7 @@ class Criteria
     public function _elseif($cond)
     {
         if (!$this->conditionalProxy) {
-            throw new LogicException('_elseif() must be called after _if()');
+            throw new LogicException(__METHOD__ .' must be called after _if()');
         }
 
         return $this->conditionalProxy->_elseif($cond);
@@ -2510,7 +2512,7 @@ class Criteria
     public function _else()
     {
         if (!$this->conditionalProxy) {
-            throw new LogicException('_else() must be called after _if()');
+            throw new LogicException(__METHOD__ .' must be called after _if()');
         }
 
         return $this->conditionalProxy->_else();
@@ -2525,7 +2527,7 @@ class Criteria
     public function _endif()
     {
         if (!$this->conditionalProxy) {
-            throw new LogicException('_endif() must be called after _if()');
+            throw new LogicException(__METHOD__ .' must be called after _if()');
         }
 
         $this->conditionalProxy = $this->conditionalProxy->getParentProxy();
