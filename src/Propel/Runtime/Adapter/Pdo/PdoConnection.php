@@ -70,4 +70,37 @@ class PdoConnection extends \PDO implements ConnectionInterface
 
         parent::setAttribute($attribute, $value);
     }
+    
+   /**
+     * Executes the given callable within a transaction.
+     * This helper method takes care to commit or rollback the transaction.
+     * 
+     * In case you want the transaction to rollback just throw an Exception of any type.
+     *
+     * @param Closure $callable A callable to be wrapped in a transaction
+     * 
+     * @return bool|mixed Returns the result of the callable on success, or <code>true</code> when the callable doesn't return anything.
+     * 
+     * @throws Exception Re-throws a possible <code>Exception</code> triggered by the callable.
+     */
+    public function transaction(Closure $callable)
+    {
+        $this->beginTransaction();
+        
+        try {
+            $result = call_user_func($callable);
+
+            $this->commit();
+
+            if ($result) {
+                return $result;
+            }
+            return true;
+        } catch (\Exception $e) {
+            $this->rollBack();
+
+            throw $e;
+        }
+    }
+
 }
