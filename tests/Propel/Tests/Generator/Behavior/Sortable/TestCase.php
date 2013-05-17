@@ -12,7 +12,6 @@ namespace Propel\Tests\Generator\Behavior\Sortable;
 
 use Propel\Runtime\ActiveQuery\Criteria;
 
-use Propel\Generator\Util\QuickBuilder;
 use Propel\Tests\TestCase as BaseTestCase;
 use Propel\Tests\Bookstore\Behavior\SortableTable11;
 use Propel\Tests\Bookstore\Behavior\SortableTable11Query;

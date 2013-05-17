@@ -1980,7 +1980,6 @@ class Criteria
         return $sql;
     }
 
-
     /**
      * Method to perform inserts based on values and keys in a
      * Criteria.

@@ -18,7 +18,6 @@ use Propel\Tests\Bookstore\Behavior\Map\SortableMultiCommaScopesTableMap;
 use Propel\Tests\Bookstore\Behavior\SortableTable12 as Table12;
 use Propel\Tests\Bookstore\Behavior\SortableTable12Query;
 use Propel\Tests\Bookstore\Behavior\Map\SortableTable12TableMap;
-use Propel\Tests\Bookstore\Behavior\Map\SortableTable11TableMap;
 
 /**
  * Tests for SortableBehavior class
@@ -337,7 +336,6 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $expected = array(1 => 'row5', 2 => 'row6');
         $this->assertEquals($expected, $this->getFixturesArrayWithScope(2), 'removeFromList() leaves other suites unchanged');
     }
-
 
     /**
      * @return SortableMultiScopes[]

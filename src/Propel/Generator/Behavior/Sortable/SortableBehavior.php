@@ -136,7 +136,7 @@ class SortableBehavior extends Behavior
             $buildScope      = "\n".implode('', $buildScope)."\n";
             $buildScopeVars  = "\n".implode('', $buildScopeVars)."\n";
 
-        } else if ($this->useScope()){
+        } elseif ($this->useScope()) {
             $methodSignature = '$scope';
             if ($column = $this->table->getColumn($this->getParameter('scope_column'))) {
                 if (!$column->isNotNull()) {

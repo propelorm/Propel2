@@ -45,8 +45,8 @@ class Issue617Test extends PlatformDatabaseBuildTimeBase
     /**
      * Setups the initial schema.
      */
-    private function setupInitSchema(){
-
+    private function setupInitSchema()
+    {
         /*
          * Create issue617 tables with foreign keys
          */
@@ -116,7 +116,8 @@ CREATE TABLE `issue617_group`
      * Drop the foreign key in the `_user` table and check whether it generates
      * the correct `DROP` SQL.
      */
-    private function dropForeignKey(){
+    private function dropForeignKey()
+    {
         $this->readDatabase();
         $updatedSchema = '
 <database name="reverse-bookstore">
@@ -162,7 +163,8 @@ ALTER TABLE `issue617_user` DROP `group_id`;
     /*
      * Checks if FKs are really deleted.
      */
-    private function checkDeletedFk(){
+    private function checkDeletedFk()
+    {
         $this->readDatabase();
         $diff = DatabaseComparator::computeDiff($this->database, $this->updatedBuilder->getDatabase());
         $sql = $this->database->getPlatform()->getModifyDatabaseDDL($diff);

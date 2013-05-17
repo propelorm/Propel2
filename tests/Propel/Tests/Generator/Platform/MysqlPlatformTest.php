@@ -35,7 +35,7 @@ class MysqlPlatformTest extends PlatformTestProvider
     {
         static $platform;
 
-        if (!$platform){
+        if (!$platform) {
             $platform = new MysqlPlatform();
             $config = new GeneratorConfig();
             $config->setBuildProperties(array(
@@ -43,6 +43,7 @@ class MysqlPlatformTest extends PlatformTestProvider
             ));
             $platform->setGeneratorConfig($config);
         }
+
         return $platform;
     }
 

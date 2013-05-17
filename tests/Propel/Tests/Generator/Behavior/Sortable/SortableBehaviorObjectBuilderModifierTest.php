@@ -14,7 +14,6 @@ use Propel\Tests\Bookstore\Behavior\SortableTable11Query;
 use Propel\Tests\Bookstore\Behavior\Map\SortableTable11TableMap;
 use Propel\Tests\Bookstore\Behavior\SortableTable11 as Table11;
 
-
 /**
  * Tests for SortableBehavior class
  *

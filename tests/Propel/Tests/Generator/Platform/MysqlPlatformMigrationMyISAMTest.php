@@ -28,7 +28,7 @@ class MysqlPlatformMigrationMyISAMTest extends PlatformMigrationTestProvider
     {
         static $platform;
 
-        if (!$platform){
+        if (!$platform) {
             $platform = new MysqlPlatform();
             $config = new GeneratorConfig();
             $config->setBuildProperties(array(
@@ -36,6 +36,7 @@ class MysqlPlatformMigrationMyISAMTest extends PlatformMigrationTestProvider
             ));
             $platform->setGeneratorConfig($config);
         }
+
         return $platform;
     }
 

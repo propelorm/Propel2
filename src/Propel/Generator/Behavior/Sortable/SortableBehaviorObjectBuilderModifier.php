@@ -28,7 +28,6 @@ class SortableBehaviorObjectBuilderModifier
      */
     protected $table;
 
-
     /**
      * @var Builder
      */
@@ -142,8 +141,7 @@ class SortableBehaviorObjectBuilderModifier
 
             $script = "// if scope has changed and rank was not modified (if yes, assuming superior action)
 // insert object to the end of new scope and cleanup old one
-if (($condition) && !\$this->isColumnModified({$this->tableMapClassName}::RANK_COL)) {
-    {$this->queryClassName}::sortableShiftRank(-1, \$this->{$this->getColumnGetter()}() + 1, null, \$this->oldScope, \$con);
+if (($condition) && !\$this->isColumnModified({$this->tableMapClassName}::RANK_COL)) { {$this->queryClassName}::sortableShiftRank(-1, \$this->{$this->getColumnGetter()}() + 1, null, \$this->oldScope, \$con);
     \$this->insertAtBottom(\$con);
 }
 ";
@@ -351,7 +349,6 @@ public function setScopeValue(\$v)
 ";
     }
 
-
     protected function addIsFirst(&$script)
     {
         $script .= "
@@ -421,6 +418,7 @@ public function getNext(ConnectionInterface \$con = null)
         }
 
         $script .= "
+
     return \$query->findOne(\$con);
 }
 ";
@@ -463,6 +461,7 @@ public function getPrevious(ConnectionInterface \$con = null)
         }
 
         $script .= "
+
     return \$query->findOne(\$con);
 }
 ";
@@ -818,6 +817,7 @@ public function removeFromList()
         }
 
         $script .= "
+
     return \$this;
 }
 ";

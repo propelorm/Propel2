@@ -135,6 +135,7 @@ class MysqlPlatform extends DefaultPlatform
         } else {
             $mysqlTableType = $this->getDefaultTableEngine();
         }
+
         return strtolower($mysqlTableType) == 'innodb';
     }
 
@@ -185,9 +186,9 @@ SET FOREIGN_KEY_CHECKS = 1;
             //if the primary key consists of multiple columns and if the first is not the autoIncrement one. So
             //this push the autoIncrement column to the first position if its not already.
             $autoIncrement = $table->getAutoIncrementPrimaryKey();
-            if ($autoIncrement && $keys[0] != $autoIncrement){
+            if ($autoIncrement && $keys[0] != $autoIncrement) {
                 $idx = array_search($autoIncrement, $keys);
-                if ($idx !== false){
+                if ($idx !== false) {
                     unset($keys[$idx]);
                     array_unshift($keys, $autoIncrement);
                 }
@@ -217,7 +218,7 @@ SET FOREIGN_KEY_CHECKS = 1;
             $lines[] = $this->getIndexDDL($index);
         }
 
-        if ($this->supportsForeignKeys($table)){
+        if ($this->supportsForeignKeys($table)) {
             foreach ($table->getForeignKeys() as $foreignKey) {
                 if ($foreignKey->isSkipSql()) {
                     continue;
@@ -498,10 +499,12 @@ DROP INDEX %s ON %s;
         );
     }
 
-    public function getAddForeignKeyDDL(ForeignKey $fk){
-        if ($this->supportsForeignKeys($fk->getTable())){
+    public function getAddForeignKeyDDL(ForeignKey $fk)
+    {
+        if ($this->supportsForeignKeys($fk->getTable())) {
             return parent::getAddForeignKeyDDL($fk);
         }
+
         return '';
     }
 
@@ -512,10 +515,12 @@ DROP INDEX %s ON %s;
      *
      * @return string
      */
-    public function getForeignKeyDDL(ForeignKey $fk){
+    public function getForeignKeyDDL(ForeignKey $fk)
+    {
         if ($this->supportsForeignKeys($fk->getTable())) {
             return parent::getForeignKeyDDL($fk);
         }
+
         return '';
     }
 

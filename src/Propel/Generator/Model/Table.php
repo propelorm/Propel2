@@ -790,6 +790,7 @@ class Table extends ScopedMappingModel implements IdMethod
         foreach ($this->indices as $n => $idx) {
             if ($idx->getName() == $name) {
                 unset($this->indices[$n]);
+
                 return;
             }
         }
@@ -798,16 +799,17 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Checks if the table has a index by name.
      *
-     * @param string $name
+     * @param  string $name
      * @return bool
      */
     public function hasIndex($name)
     {
         foreach ($this->indices as $idx) {
-            if ($idx->getName() == $name){
+            if ($idx->getName() == $name) {
                 return true;
             }
         }
+
         return false;
     }
 
