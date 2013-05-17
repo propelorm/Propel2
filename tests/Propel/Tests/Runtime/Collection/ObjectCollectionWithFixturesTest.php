@@ -195,6 +195,37 @@ class ObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
         $this->assertEquals($expected, $booksArray, 'toKeyValue() uses primary key for the key and __toString() for the value if no field name is passed');
     }
 
+    public function testToKeyIndex()
+    {
+        $books = PropelQuery::from('Propel\Tests\Bookstore\Book')->find();
+
+        $expected = array();
+        foreach ($books as $book) {
+            $expected[$book->getTitle()] = $book;
+        }
+        $booksArray = $books->toKeyIndex('Title');
+        $this->assertEquals(4, count($booksArray));
+        $this->assertEquals($expected, $booksArray, 'toKeyIndex() turns the collection to `Title` indexed array');
+
+        $this->assertEquals($booksArray, $books->toKeyIndex('title'));
+
+        $expected = array();
+        foreach ($books as $book) {
+            $expected[$book->getISBN()] = $book;
+        }
+        $this->assertEquals(4, count($booksArray));
+        $booksArray = $books->toKeyIndex('ISBN');
+        $this->assertEquals($expected, $booksArray, 'toKeyIndex() uses `ISBN` for the key');
+
+        $expected = array();
+        foreach ($books as $book) {
+            $expected[$book->getId()] = $book;
+        }
+        $this->assertEquals(4, count($booksArray));
+        $booksArray = $books->toKeyIndex();
+        $this->assertEquals($expected, $booksArray, 'toKeyIndex() uses primary key for the key');
+    }
+
     public function testPopulateRelation()
     {
         AuthorTableMap::clearInstancePool();
