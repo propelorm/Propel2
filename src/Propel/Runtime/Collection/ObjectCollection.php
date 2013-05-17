@@ -237,6 +237,35 @@ class ObjectCollection extends Collection
     }
 
     /**
+     * Get an associative array representation of the collection.
+     * The first parameter specifies the column to be used for the key.
+     *
+     * <code>
+     *   $res = $userCollection->toKeyIndex('Name');
+     *
+     *   $res = array(
+     *       'peter' => class User #1 {$name => 'peter', ...},
+     *       'hans' => class User #2 {$name => 'hans', ...},
+     *       ...
+     *   )
+     * </code>
+     *
+     * @param string $keyColumn
+     *
+     * @return array
+     */
+    public function toKeyIndex($keyColumn = 'PrimaryKey')
+    {
+        $ret = array();
+        $keyGetterMethod = 'get' . ucfirst($keyColumn);
+        foreach ($this as $obj) {
+            $ret[$obj->$keyGetterMethod()] = $obj;
+        }
+
+        return $ret;
+    }
+
+    /**
      * Makes an additional query to populate the objects related to the collection objects
      * by a certain relation
      *
