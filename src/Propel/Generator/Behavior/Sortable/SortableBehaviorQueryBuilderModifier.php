@@ -393,8 +393,7 @@ public function reorder(\$order, ConnectionInterface \$con = null)
         \$con = Propel::getServiceContainer()->getReadConnection({$this->tableMapClassName}::DATABASE_NAME);
     }
 
-    \$con->beginTransaction();
-    try {
+    return \$con->transaction(function() use (\$order, \$con) {
         \$ids = array_keys(\$order);
         \$objects = \$this->findPks(\$ids, \$con);
         foreach (\$objects as \$object) {
@@ -404,13 +403,9 @@ public function reorder(\$order, ConnectionInterface \$con = null)
                 \$object->save(\$con);
             }
         }
-        \$con->commit();
 
         return true;
-    } catch (\Propel\Runtime\Exception\PropelException \$e) {
-        \$con->rollback();
-        throw \$e;
-    }
+    });
 }
 ";
     }

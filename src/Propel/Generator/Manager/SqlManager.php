@@ -167,19 +167,13 @@ class SqlManager extends AbstractManager
             }
 
             $con = $this->getConnectionInstance($database);
-            $con->beginTransaction();
-
-            try {
+            $con->transaction(function() use ($sqls, $con) {
                 foreach ($sqls as $sql) {
                     $stmt = $con->prepare($sql);
                     $stmt->execute();
                 }
+            });
 
-                $con->commit();
-            } catch (\PDOException $e) {
-                $con->rollback();
-                throw $e;
-            }
         }
 
         return true;
