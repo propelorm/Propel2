@@ -153,6 +153,7 @@ class PropelPDOTest extends BookstoreTestBase
 
         } catch (Exception $e) {
             $con->rollBack();
+            throw $e;
         }
 
         AuthorTableMap::clearInstancePool();
@@ -199,10 +200,15 @@ class PropelPDOTest extends BookstoreTestBase
             }
 
             $con->commit();
+            $this->fail("Commit should never been reached, because of invalid nested SQL!");
         } catch (Exception $x) {
             $con->rollBack();
+            // do not re-throw... we are already at the toplevel
         }
 
+        $this->assertEquals(0, $con->getNestedTransactionCount(), 'nested transaction decremented after transaction rollback');
+        $this->assertFalse($con->isInTransaction(), 'PropelPDO is no longer in transaction after transaction rollback');
+                
         AuthorTableMap::clearInstancePool();
         $at = AuthorQuery::create()->findPk($authorId);
         $this->assertNull($at, "Rolled back transaction is not persisted in database");
