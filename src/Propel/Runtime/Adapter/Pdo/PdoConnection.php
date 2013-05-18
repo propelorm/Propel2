@@ -24,6 +24,17 @@ class PdoConnection extends \PDO implements ConnectionInterface
     protected $name;
 
     /**
+     * Creates a PDO instance representing a connection to a database.
+     */
+    public function __construct($dsn, $user = null, $password = null, array $options = null)
+    {
+        parent::__construct($dsn, $user, $password, $options);
+
+        $this->setAttribute(\PDO::ATTR_STATEMENT_CLASS, array('\Propel\Runtime\Adapter\Pdo\PdoStatement', array()));
+        $this->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+    }
+
+    /**
      * @param string $name The datasource name associated to this connection
      */
     public function setName($name)
@@ -37,17 +48,6 @@ class PdoConnection extends \PDO implements ConnectionInterface
     public function getName()
     {
         return $this->name;
-    }
-
-    /**
-     * Creates a PDO instance representing a connection to a database.
-     */
-    public function __construct($dsn, $user = null, $password = null, array $options = null)
-    {
-        parent::__construct($dsn, $user, $password, $options);
-
-        $this->setAttribute(\PDO::ATTR_STATEMENT_CLASS, array('\Propel\Runtime\Adapter\Pdo\PdoStatement', array()));
-        $this->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
     }
 
     /**
