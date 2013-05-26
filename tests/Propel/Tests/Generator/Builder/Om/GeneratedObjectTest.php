@@ -731,6 +731,13 @@ class GeneratedObjectTest extends BookstoreTestBase
         $this->assertEquals('Don Juan', $arr1['Title'], 'toArray() returns an associative array representation of the object');
     }
 
+    public function testWithColumn()
+    {
+        $book = BookQuery::create()->withColumn('Title', 'TitleCopy')->findOne();
+        $bookArray = $book->toArray();
+        $this->assertEquals($book->getTitleCopy(), $bookArray['TitleCopy']);
+    }
+
     public function testToArrayKeyType()
     {
         $b = new Book();
