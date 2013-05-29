@@ -56,12 +56,12 @@ class StatementWrapper implements StatementInterface, \IteratorAggregate
      *
      * @param string            $sql            The SQL query for this statement
      * @param ConnectionWrapper $connection     The parent connection
-     * @param array             $driver_options Optional driver options
+     * @param array             $options        Optional driver options
      */
-    public function __construct($sql, ConnectionWrapper $connection, $driver_options = array())
+    public function __construct($sql, ConnectionWrapper $connection, $options = array())
     {
         $this->connection = $connection;
-        $this->statement = $connection->getWrappedConnection()->prepare($sql, $driver_options);
+        $this->statement = $connection->getWrappedConnection()->prepare($sql, $options);
     }
 
     /**
@@ -158,15 +158,17 @@ class StatementWrapper implements StatementInterface, \IteratorAggregate
     }
 
     /**
-     * Executes a prepared statement.  Returns a boolean value indicating success.
+     * Executes a prepared statement.
+     *
+     * Returns a boolean value indicating success.
      * Overridden for query counting and logging.
      *
-     * @param  string  $input_parameters
+     * @param  string  $parameters
      * @return boolean
      */
-    public function execute($input_parameters = null)
+    public function execute($parameters = null)
     {
-        $return = $this->statement->execute($input_parameters);
+        $return = $this->statement->execute($parameters);
         if ($this->connection->useDebug) {
             $sql = $this->getExecutedQueryString();
             $this->connection->log($sql);
