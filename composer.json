@@ -17,11 +17,11 @@
     ],
     "require": {
         "php": ">=5.4",
-        "symfony/yaml": "2.2.*",
-        "symfony/console": "2.2.*",
-        "symfony/finder": "2.2.*",
-        "symfony/validator": "2.2.*",
-        "symfony/filesystem": "2.2.*",
+        "symfony/yaml": "2.3.*",
+        "symfony/console": "2.3.*",
+        "symfony/finder": "2.3.*",
+        "symfony/validator": "2.3.*",
+        "symfony/filesystem": "2.3.*",
         "psr/log": "~1.0"
     },
     "require-dev": {
