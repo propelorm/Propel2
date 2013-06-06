@@ -151,7 +151,8 @@ class MultiExtendObjectBuilder extends AbstractObjectBuilder
  * long as it does not already exist in the output directory.
  *
  */
-class ".$this->getUnqualifiedClassName()." extends ".$this->getParentClassName()." {
+class ".$this->getUnqualifiedClassName()." extends ".$this->getParentClassName()."
+{
 ";
     }
 
