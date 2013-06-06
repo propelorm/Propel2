@@ -11,9 +11,6 @@
 namespace Propel\Tests\Generator\Behavior\Versionable;
 
 use Propel\Generator\Util\QuickBuilder;
-use Propel\Generator\Behavior\Versionable\VersionableBehavior;
-
-use Propel\Runtime\Propel;
 use Propel\Runtime\Collection\ObjectCollection;
 
 /**
@@ -21,12 +18,12 @@ use Propel\Runtime\Collection\ObjectCollection;
  *
  * @author François Zaninotto
  */
-class VersionableBehaviorObjectBuilderModifierTest extends \PHPUnit_Framework_TestCase
+class VersionableBehaviorObjectBuilderModifierTest extends TestCase
 {
 
     public function setUp()
     {
-        if (!class_exists('\VersionableBehaviorTest1')) {
+        if (!class_exists('VersionableBehaviorTest1')) {
             $schema = <<<EOF
 <database name="versionable_behavior_test_1">
     <table name="versionable_behavior_test_1">
@@ -71,7 +68,7 @@ class VersionableBehaviorObjectBuilderModifierTest extends \PHPUnit_Framework_Te
 EOF;
             QuickBuilder::buildSchema($schema);
         }
-        if (!class_exists('\VersionableBehaviorTest6')) {
+        if (!class_exists('VersionableBehaviorTest6')) {
             $schema2 = <<<EOF
 <database name="versionable_behavior_test_2" defaultPhpNamingMethod="nochange">
     <table name="VersionableBehaviorTest6">
@@ -104,7 +101,7 @@ EOF;
             QuickBuilder::buildSchema($schema2);
         }
 
-        if (!class_exists('\VersionableBehaviorTest8')) {
+        if (!class_exists('VersionableBehaviorTest8')) {
             $schema2 = <<<EOF
 <database name="versionable_behavior_test_3" defaultPhpNamingMethod="nochange">
     <table name="VersionableBehaviorTest8">
@@ -123,7 +120,7 @@ EOF;
         }
 
 
-        if (!class_exists('\VersionableBehaviorTest10')) {
+        if (!class_exists('VersionableBehaviorTest10')) {
             $schema4 = <<<EOF
 <database name="versionable_behavior_test_4">
     <table name="VersionableBehaviorTest10">
@@ -161,13 +158,13 @@ EOF;
 
     public function testGetVersionExists()
     {
-        $this->assertTrue(method_exists('\VersionableBehaviorTest1', 'getVersion'));
-        $this->assertTrue(method_exists('\VersionableBehaviorTest2', 'getVersion'));
+        $this->assertTrue(method_exists('VersionableBehaviorTest1', 'getVersion'));
+        $this->assertTrue(method_exists('VersionableBehaviorTest2', 'getVersion'));
     }
 
     public function testSetVersionExists()
     {
-        $this->assertTrue(method_exists('\VersionableBehaviorTest1', 'setVersion'));
+        $this->assertTrue(method_exists('VersionableBehaviorTest1', 'setVersion'));
         $this->assertTrue(method_exists('VersionableBehaviorTest2', 'setVersion'));
     }
 
@@ -287,16 +284,16 @@ EOF;
     public function testVersionDoesNotIncrementWhenVersioningIsDisabled($class)
     {
         $o = new $class;
-        \VersionableBehaviorTest1Peer::disableVersioning();
-        \VersionableBehaviorTest2Peer::disableVersioning();
+        \VersionableBehaviorTest1Query::disableVersioning();
+        \VersionableBehaviorTest2Query::disableVersioning();
         $o->setBar(12);
         $o->save();
         $this->assertEquals(0, $o->getVersion());
         $o->setBar(13);
         $o->save();
         $this->assertEquals(0, $o->getVersion());
-        \VersionableBehaviorTest1Peer::enableVersioning();
-        \VersionableBehaviorTest2Peer::enableVersioning();
+        \VersionableBehaviorTest1Query::enableVersioning();
+        \VersionableBehaviorTest1Query::enableVersioning();
 
     }
 
@@ -348,12 +345,12 @@ EOF;
     {
         \VersionableBehaviorTest1Query::create()->deleteAll();
         \VersionableBehaviorTest1VersionQuery::create()->deleteAll();
-        \VersionableBehaviorTest1Peer::disableVersioning();
+        \VersionableBehaviorTest1Query::disableVersioning();
         $o = new \VersionableBehaviorTest1();
         $o->save();
         $versions = \VersionableBehaviorTest1VersionQuery::create()->find();
         $this->assertEquals(0, $versions->count());
-        \VersionableBehaviorTest1Peer::enableVersioning();
+        \VersionableBehaviorTest1Query::enableVersioning();
     }
 
     public function testDeleteObjectDeletesRecordInVersionTable()
@@ -527,7 +524,7 @@ EOF;
         $o->save();
         $this->assertFalse($o->isVersioningNecessary());
 
-        \VersionableBehaviorTest1Peer::disableVersioning();
+        \VersionableBehaviorTest1Query::disableVersioning();
         $o = new \VersionableBehaviorTest1();
         $this->assertFalse($o->isVersioningNecessary());
         $o->save();
@@ -536,7 +533,7 @@ EOF;
         $this->assertFalse($o->isVersioningNecessary());
         $o->save();
         $this->assertFalse($o->isVersioningNecessary());
-        \VersionableBehaviorTest1Peer::enableVersioning();
+        \VersionableBehaviorTest1Query::enableVersioning();
 
         $b1 = new \VersionableBehaviorTest5();
         $b1->setFoo('Hello');
@@ -580,7 +577,7 @@ EOF;
 
     public function testAddVersionNewObject()
     {
-        \VersionableBehaviorTest1Peer::disableVersioning();
+        \VersionableBehaviorTest1Query::disableVersioning();
         \VersionableBehaviorTest1Query::create()->deleteAll();
         \VersionableBehaviorTest1VersionQuery::create()->deleteAll();
         $o = new \VersionableBehaviorTest1();
@@ -589,7 +586,7 @@ EOF;
         $versions = \VersionableBehaviorTest1VersionQuery::create()->find();
         $this->assertEquals(1, $versions->count());
         $this->assertEquals($o, $versions[0]->getVersionableBehaviorTest1());
-        \VersionableBehaviorTest1Peer::enableVersioning();
+        \VersionableBehaviorTest1Query::enableVersioning();
     }
 
     public function testVersionCreatedAt()

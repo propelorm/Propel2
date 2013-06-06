@@ -10,7 +10,9 @@
 
 namespace Propel\Generator\Command;
 
+use Propel\Generator\Config\GeneratorConfig;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Filesystem\Exception\IOException;
@@ -38,6 +40,28 @@ abstract class AbstractCommand extends Command
         ;
     }
 
+    /**
+     * Returns a new `GeneratorConfig` object with your `$properties` merged with
+     * the build.properties in the `input-dir` folder.
+     *
+     * @param array $properties
+     * @param       $input
+     *
+     * @return GeneratorConfig
+     */
+    protected function getGeneratorConfig(array $properties, InputInterface $input = null)
+    {
+        $options = $properties;
+        if ($input && $input->hasOption('input-dir')) {
+            $options = array_merge(
+                $properties,
+                $this->getBuildProperties($input->getOption('input-dir') . '/build.properties')
+            );
+        }
+
+        return new GeneratorConfig($options);
+    }
+
     protected function getBuildProperties($file)
     {
         $properties = array();
@@ -62,6 +86,12 @@ abstract class AbstractCommand extends Command
         return $properties;
     }
 
+    /**
+     * Find every schema files.
+     *
+     * @param  string|array $directory Path to the input directory
+     * @return array        List of schema files
+     */
     protected function getSchemas($directory)
     {
         $finder = new Finder();
@@ -105,6 +135,9 @@ abstract class AbstractCommand extends Command
         $name = substr($connection, 0, $pos);
         $dsn  = substr($connection, $pos + 1, strlen($connection));
 
+        $pos  = strpos($dsn, ':');
+        $adapter = substr($dsn, 0, $pos);
+
         $extras = array();
         foreach (explode(';', $dsn) as $element) {
             $parts = preg_split('/=/', $element);
@@ -113,6 +146,7 @@ abstract class AbstractCommand extends Command
                 $extras[strtolower($parts[0])] = $parts[1];
             }
         }
+        $extras['adapter'] = $adapter;
 
         return array($name, $dsn, $extras);
     }

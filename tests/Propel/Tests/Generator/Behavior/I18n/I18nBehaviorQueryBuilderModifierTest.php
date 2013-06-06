@@ -12,10 +12,8 @@ namespace Propel\Tests\Generator\Behavior\I18n;
 
 use Propel\Generator\Util\QuickBuilder;
 use Propel\Generator\Behavior\I18n\I18nBehavior;
-
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
-use Propel\Runtime\Util\BasePeer;
 
 /**
  * Tests for I18nBehavior class query modifier
@@ -52,7 +50,6 @@ class I18nBehaviorQueryBuilderModifierTest extends \PHPUnit_Framework_TestCase
     </table>
 </database>
 EOF;
-            //QuickBuilder::debugClassesForTable($schema, 'i18n_behavior_test_11');
             QuickBuilder::buildSchema($schema);
         }
     }
@@ -62,7 +59,7 @@ EOF;
         $q = \I18nBehaviorTest11Query::create()
             ->joinI18n();
         $params = array();
-        $sql = BasePeer::createSelectSQL($q, $params);
+        $sql = $q->createSelectSQL($params);
         $expectedSQL = 'SELECT  FROM i18n_behavior_test_11 LEFT JOIN i18n_behavior_test_11_i18n ON (i18n_behavior_test_11.ID=i18n_behavior_test_11_i18n.ID AND i18n_behavior_test_11_i18n.LOCALE = :p1)';
         $this->assertEquals($expectedSQL, $sql);
         $this->assertEquals('en_EN', $params[0]['value']);
@@ -73,7 +70,7 @@ EOF;
         $q = \I18nBehaviorTest11Query::create()
             ->joinI18n('fr_FR');
         $params = array();
-        $sql = BasePeer::createSelectSQL($q, $params);
+        $sql = $q->createSelectSQL($params);
         $expectedSQL = 'SELECT  FROM i18n_behavior_test_11 LEFT JOIN i18n_behavior_test_11_i18n ON (i18n_behavior_test_11.ID=i18n_behavior_test_11_i18n.ID AND i18n_behavior_test_11_i18n.LOCALE = :p1)';
         $this->assertEquals($expectedSQL, $sql);
         $this->assertEquals('fr_FR', $params[0]['value']);
@@ -84,7 +81,7 @@ EOF;
         $q = \I18nBehaviorTest11Query::create()
             ->joinI18n('en_EN', 'I18n');
         $params = array();
-        $sql = BasePeer::createSelectSQL($q, $params);
+        $sql = $q->createSelectSQL($params);
         $expectedSQL = 'SELECT  FROM i18n_behavior_test_11 LEFT JOIN i18n_behavior_test_11_i18n I18n ON (i18n_behavior_test_11.ID=I18n.ID AND I18n.LOCALE = :p1)';
         $this->assertEquals($expectedSQL, $sql);
         $this->assertEquals('en_EN', $params[0]['value']);
@@ -95,7 +92,7 @@ EOF;
         $q = \I18nBehaviorTest11Query::create()
             ->joinI18n('en_EN', null, Criteria::INNER_JOIN);
         $params = array();
-        $sql = BasePeer::createSelectSQL($q, $params);
+        $sql = $q->createSelectSQL($params);
         $expectedSQL = 'SELECT  FROM i18n_behavior_test_11 INNER JOIN i18n_behavior_test_11_i18n ON (i18n_behavior_test_11.ID=i18n_behavior_test_11_i18n.ID AND i18n_behavior_test_11_i18n.LOCALE = :p1)';
         $this->assertEquals($expectedSQL, $sql);
         $this->assertEquals('en_EN', $params[0]['value']);
@@ -103,7 +100,7 @@ EOF;
 
     public function testJoinI18nCreatesACorrectQuery()
     {
-        $con = Propel::getServiceContainer()->getConnection(\I18nBehaviorTest11Peer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(\Map\I18nBehaviorTest11TableMap::DATABASE_NAME);
         $con->useDebug(true);
         \I18nBehaviorTest11Query::create()
             ->joinI18n('fr_FR')
@@ -120,7 +117,7 @@ EOF;
                 ->filterByBar('bar')
             ->endUse();
         $params = array();
-        $sql = BasePeer::createSelectSQL($q, $params);
+        $sql = $q->createSelectSQL($params);
         $expectedSQL = 'SELECT  FROM i18n_behavior_test_11 LEFT JOIN i18n_behavior_test_11_i18n ON (i18n_behavior_test_11.ID=i18n_behavior_test_11_i18n.ID AND i18n_behavior_test_11_i18n.LOCALE = :p1) WHERE i18n_behavior_test_11_i18n.BAR=:p2';
         $this->assertEquals($expectedSQL, $sql);
         $this->assertEquals('fr_FR', $params[0]['value']);
@@ -134,7 +131,7 @@ EOF;
                 ->filterByBar('bar')
             ->endUse();
         $params = array();
-        $sql = BasePeer::createSelectSQL($q, $params);
+        $sql = $q->createSelectSQL($params);
         $expectedSQL = 'SELECT  FROM i18n_behavior_test_11 LEFT JOIN i18n_behavior_test_11_i18n I18n ON (i18n_behavior_test_11.ID=I18n.ID AND I18n.LOCALE = :p1) WHERE I18n.BAR=:p2';
         $this->assertEquals($expectedSQL, $sql);
         $this->assertEquals('fr_FR', $params[0]['value']);
@@ -143,7 +140,7 @@ EOF;
 
     public function testUseI18nQueryCreatesACorrectQuery()
     {
-        $con = Propel::getServiceContainer()->getConnection(\I18nBehaviorTest11Peer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(\Map\I18nBehaviorTest11TableMap::DATABASE_NAME);
         $con->useDebug(true);
         \I18nBehaviorTest11Query::create()
             ->useI18nQuery('fr_FR')
@@ -160,7 +157,7 @@ EOF;
         $q = \I18nBehaviorTest11Query::create()
             ->joinWithI18n();
         $params = array();
-        $sql = BasePeer::createSelectSQL($q, $params);
+        $sql = $q->createSelectSQL($params);
         $expectedSQL = 'SELECT i18n_behavior_test_11.ID, i18n_behavior_test_11.FOO, i18n_behavior_test_11_i18n.ID, i18n_behavior_test_11_i18n.LOCALE, i18n_behavior_test_11_i18n.BAR FROM i18n_behavior_test_11 LEFT JOIN i18n_behavior_test_11_i18n ON (i18n_behavior_test_11.ID=i18n_behavior_test_11_i18n.ID AND i18n_behavior_test_11_i18n.LOCALE = :p1)';
         $this->assertEquals($expectedSQL, $sql);
         $this->assertEquals('en_EN', $params[0]['value']);
@@ -194,7 +191,7 @@ EOF;
 
     public function testJoinWithI18nHydratesRelatedObject()
     {
-        $con = Propel::getServiceContainer()->getConnection(\I18nBehaviorTest11Peer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(\Map\I18nBehaviorTest11TableMap::DATABASE_NAME);
         $con->useDebug(true);
         \I18nBehaviorTest11Query::create()->deleteAll();
         \I18nBehaviorTest11I18nQuery::create()->deleteAll();
@@ -205,8 +202,8 @@ EOF;
         $o->setLocale('fr_FR');
         $o->setBar('bonjour');
         $o->save();
-        \I18nBehaviorTest11Peer::clearInstancePool();
-        \I18nBehaviorTest11I18nPeer::clearInstancePool();
+        \Map\I18nBehaviorTest11TableMap::clearInstancePool();
+        \Map\I18nBehaviorTest11I18nTableMap::clearInstancePool();
         $o = \I18nBehaviorTest11Query::create()
             ->joinWithI18n('en_EN')
             ->findOne($con);
@@ -259,7 +256,7 @@ EOF;
     {
         $this->markTestSkipped();
 
-        $con = Propel::getServiceContainer()->getConnection(\I18nBehaviorTest11Peer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(\Map\I18nBehaviorTest11TableMap::DATABASE_NAME);
         $con->useDebug(true);
         \I18nBehaviorTest11Query::create()->deleteAll();
         \I18nBehaviorTest11I18nQuery::create()->deleteAll();

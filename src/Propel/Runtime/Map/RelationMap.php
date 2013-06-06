@@ -65,9 +65,7 @@ class RelationMap
     /**
      * Constructor.
      *
-     * @param string $name       Name of the relation.
-     * @param string $pluralName Plural Name of the relation.
-     *                                Defaults to the Name of the relation concatenated with 's'.
+     * @param string $name Name of the relation.
      */
     public function __construct($name)
     {

@@ -21,7 +21,7 @@ use Propel\Generator\Builder\Util\DataRow;
 class PgsqlDataSQLBuilder extends DataSQLBuilder
 {
     /**
-     * The largets serial value encountered this far.
+     * The largest serial value encountered this far.
      *
      * @var int
      */
@@ -89,11 +89,10 @@ class PgsqlDataSQLBuilder extends DataSQLBuilder
      */
     protected function getBlobSql($blob)
     {
-        // they took magic __toString() out of PHP5.0.0; this sucks
-        if (is_object($blob)) {
-            $blob = $blob->__toString();
+       if (is_resource($blob)) {
+            return fopen($blob, "rb")
         }
 
-        return "'" . pg_escape_bytea($blob) . "'";
+        return (string) $blob;
     }
 }

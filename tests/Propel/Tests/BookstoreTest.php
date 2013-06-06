@@ -12,27 +12,25 @@ namespace Propel\Tests;
 
 use Propel\Runtime\ActiveQuery\Criteria;
 
-use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
-
 use Propel\Tests\Bookstore\Author;
-use Propel\Tests\Bookstore\AuthorPeer;
 use Propel\Tests\Bookstore\AuthorQuery;
 use Propel\Tests\Bookstore\Book;
-use Propel\Tests\Bookstore\BookPeer;
 use Propel\Tests\Bookstore\BookQuery;
 use Propel\Tests\Bookstore\BookClubList;
-use Propel\Tests\Bookstore\BookClubListPeer;
+use Propel\Tests\Bookstore\BookListRelQuery;
+use Propel\Tests\Bookstore\BookClubListQuery;
 use Propel\Tests\Bookstore\BookListRel;
-use Propel\Tests\Bookstore\BookListRelPeer;
 use Propel\Tests\Bookstore\Publisher;
-use Propel\Tests\Bookstore\PublisherPeer;
 use Propel\Tests\Bookstore\PublisherQuery;
+use Propel\Tests\Bookstore\Map\AuthorTableMap;
+use Propel\Tests\Bookstore\Map\BookTableMap;
+use Propel\Tests\Bookstore\Map\BookClubListTableMap;
+use Propel\Tests\Bookstore\Map\PublisherTableMap;
 use Propel\Tests\Bookstore\Media;
-use Propel\Tests\Bookstore\MediaPeer;
 use Propel\Tests\Bookstore\MediaQuery;
 use Propel\Tests\Bookstore\Review;
-use Propel\Tests\Bookstore\ReviewPeer;
 use Propel\Tests\Bookstore\ReviewQuery;
+use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
 
 use \DateTime;
 
@@ -173,25 +171,16 @@ class BookstoreTest extends BookstoreEmptyTestBase
         // Perform a "complex" search
         // --------------------------
 
-        $crit = new Criteria();
-        $crit->add(BookPeer::TITLE, 'Harry%', Criteria::LIKE);
-        $results = BookPeer::doSelect($crit);
+        $results = BookQuery::create()->filterByTitle('Harry%', Criteria::LIKE)->find();
         $this->assertEquals(1, count($results));
 
-        $crit2 = new Criteria();
-        $crit2->add(BookPeer::ISBN, array("0380977427", "0140422161"), Criteria::IN);
-        $results = BookPeer::doSelect($crit2);
+        $results = BookQuery::create()->filterByISBN(array("0380977427", "0140422161"), Criteria::IN)->find();
         $this->assertEquals(2, count($results));
 
         // Perform a "limit" search
         // ------------------------
 
-        $crit = new Criteria();
-        $crit->setLimit(2);
-        $crit->setOffset(1);
-        $crit->addAscendingOrderByColumn(BookPeer::TITLE);
-
-        $results = BookPeer::doSelect($crit);
+        $results = BookQuery::create()->limit(2)->offset(1)->orderByTitle()->find();
         $this->assertEquals(2, count($results));
 
         // we ordered on book title, so we expect to get
@@ -203,7 +192,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
 
         // Updating just-created book title
         // First finding book by PK (=$qs_id) ....
-        $qs_lookup = BookPeer::retrieveByPk($qs_id);
+        $qs_lookup = BookQuery::create()->findPk($qs_id);
         $this->assertNotNull($qs_lookup, 'just-created book can be found by pk');
 
         $new_title = "Quicksilver (".crc32(uniqid(rand())).")";
@@ -212,7 +201,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
         $qs_lookup->save();
 
         // Making sure object was correctly updated: ";
-        $qs_lookup2 = BookPeer::retrieveByPk($qs_id);
+        $qs_lookup2 = BookQuery::create()->findPk($qs_id);
         $this->assertEquals($new_title, $qs_lookup2->getTitle());
 
         // Test some basic DATE / TIME stuff
@@ -222,12 +211,12 @@ class BookstoreTest extends BookstoreEmptyTestBase
         $control = strtotime('2004-02-29 00:00:00');
 
         // should be two in the db
-        $r = ReviewPeer::doSelectOne(new Criteria());
+        $r = ReviewQuery::create()->findOne();
         $r_id = $r->getId();
         $r->setReviewDate($control);
         $r->save();
 
-        $r2 = ReviewPeer::retrieveByPk($r_id);
+        $r2 = ReviewQuery::create()->findPk($r_id);
 
         $this->assertEquals(new DateTime('2004-02-29 00:00:00'), $r2->getReviewDate(null), 'ability to fetch DateTime');
         $this->assertEquals($control, $r2->getReviewDate('U'), 'ability to fetch native unix timestamp');
@@ -247,7 +236,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
         $m1->save();
         $m1_id = $m1->getId();
 
-        $m1_lookup = MediaPeer::retrieveByPk($m1_id);
+        $m1_lookup = MediaQuery::create()->findPk($m1_id);
 
         $this->assertNotNull($m1_lookup, 'Can find just-created media item');
         $this->assertEquals(md5(file_get_contents($blob_path)), md5(stream_get_contents($m1_lookup->getCoverImage())), 'BLOB was correctly updated');
@@ -257,7 +246,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
         $m1_lookup->setCoverImage(file_get_contents($blob2_path));
         $m1_lookup->save();
 
-        $m2_lookup = MediaPeer::retrieveByPk($m1_id);
+        $m2_lookup = MediaQuery::create()->findPk($m1_id);
         $this->assertNotNull($m2_lookup, 'Can find just-created media item');
 
         $this->assertEquals(md5(file_get_contents($blob2_path)), md5(stream_get_contents($m2_lookup->getCoverImage())), 'BLOB was correctly overwritten');
@@ -265,9 +254,8 @@ class BookstoreTest extends BookstoreEmptyTestBase
         // Testing doCount() functionality
         // -------------------------------
 
-        $c = new Criteria();
-        $records = BookPeer::doSelect($c);
-        $count = BookPeer::doCount($c);
+        $records = BookQuery::create()->find();
+        $count = BookQuery::create()->count();
 
         $this->assertEquals($count, count($records), 'correct number of results');
 
@@ -311,18 +299,18 @@ class BookstoreTest extends BookstoreEmptyTestBase
         // re-fetch books and lists from db to be sure that nothing is cached
 
         $crit = new Criteria();
-        $crit->add(BookPeer::ID, $phoenix->getId());
-        $phoenix = BookPeer::doSelectOne($crit);
+        $crit->add(BookTableMap::ID, $phoenix->getId());
+        $phoenix = BookQuery::create(null, $crit)->findOne();
         $this->assertNotNull($phoenix, "book 'phoenix' has been re-fetched from db");
 
         $crit = new Criteria();
-        $crit->add(BookClubListPeer::ID, $blc1->getId());
-        $blc1 = BookClubListPeer::doSelectOne($crit);
+        $crit->add(BookClubListTableMap::ID, $blc1->getId());
+        $blc1 = BookClubListQuery::create(null, $crit)->findOne();
         $this->assertNotNull($blc1, 'BookClubList 1 has been re-fetched from db');
 
         $crit = new Criteria();
-        $crit->add(BookClubListPeer::ID, $blc2->getId());
-        $blc2 = BookClubListPeer::doSelectOne($crit);
+        $crit->add(BookClubListTableMap::ID, $blc2->getId());
+        $blc2 = BookClubListQuery::create(null, $crit)->findOne();
         $this->assertNotNull($blc2, 'BookClubList 2 has been re-fetched from db');
 
         $relCount = $phoenix->countBookListRels();
@@ -339,44 +327,44 @@ class BookstoreTest extends BookstoreEmptyTestBase
 
         // Removing books that were just created
         // First finding book by PK (=$phoenix_id) ....
-        $hp = BookPeer::retrieveByPk($phoenix_id);
+        $hp = BookQuery::create()->findPk($phoenix_id);
         $this->assertNotNull($hp, 'Could find just-created book');
 
         // Attempting to delete [multi-table] by found pk
         $c = new Criteria();
-        $c->add(BookPeer::ID, $hp->getId());
+        $c->add(BookTableMap::ID, $hp->getId());
         // The only way for cascading to work currently
         // is to specify the author_id and publisher_id (i.e. the fkeys
         // have to be in the criteria).
-        $c->add(AuthorPeer::ID, $hp->getAuthor()->getId());
-        $c->add(PublisherPeer::ID, $hp->getPublisher()->getId());
+        $c->add(AuthorTableMap::ID, $hp->getAuthor()->getId());
+        $c->add(PublisherTableMap::ID, $hp->getPublisher()->getId());
         $c->setSingleRecord(true);
-        BookPeer::doDelete($c);
+        BookTableMap::doDelete($c);
 
         // Checking to make sure correct records were removed.
-        $this->assertEquals(3, AuthorPeer::doCount(new Criteria()), 'Correct records were removed from author table');
-        $this->assertEquals(3, PublisherPeer::doCount(new Criteria()), 'Correct records were removed from publisher table');
-        $this->assertEquals(3, BookPeer::doCount(new Criteria()), 'Correct records were removed from book table');
+        $this->assertEquals(3, AuthorQuery::create()->count(), 'Correct records were removed from author table');
+        $this->assertEquals(3, PublisherQuery::create()->count(), 'Correct records were removed from publisher table');
+        $this->assertEquals(3, BookQuery::create()->count(), 'Correct records were removed from book table');
 
         // Attempting to delete books by complex criteria
         $c = new Criteria();
-        $cn = $c->getNewCriterion(BookPeer::ISBN, "043935806X");
-        $cn->addOr($c->getNewCriterion(BookPeer::ISBN, "0380977427"));
-        $cn->addOr($c->getNewCriterion(BookPeer::ISBN, "0140422161"));
+        $cn = $c->getNewCriterion(BookTableMap::ISBN, "043935806X");
+        $cn->addOr($c->getNewCriterion(BookTableMap::ISBN, "0380977427"));
+        $cn->addOr($c->getNewCriterion(BookTableMap::ISBN, "0140422161"));
         $c->add($cn);
-        BookPeer::doDelete($c);
+        BookTableMap::doDelete($c);
 
         // Attempting to delete book [id = $td_id]
         $td->delete();
 
         // Attempting to delete authors
-        AuthorPeer::doDelete($stephenson_id);
-        AuthorPeer::doDelete($byron_id);
+        AuthorTableMap::doDelete($stephenson_id);
+        AuthorTableMap::doDelete($byron_id);
         $grass->delete();
 
         // Attempting to delete publishers
-        PublisherPeer::doDelete($morrow_id);
-        PublisherPeer::doDelete($penguin_id);
+        PublisherTableMap::doDelete($morrow_id);
+        PublisherTableMap::doDelete($penguin_id);
         $vintage->delete();
 
         // These have to be deleted manually also since we have onDelete
@@ -386,14 +374,13 @@ class BookstoreTest extends BookstoreEmptyTestBase
         $blc1->delete();
         $blc2->delete();
 
-        $this->assertEquals(array(), AuthorPeer::doSelect(new Criteria()), 'no records in [author] table');
-        $this->assertEquals(array(), PublisherPeer::doSelect(new Criteria()), 'no records in [publisher] table');
-        $this->assertEquals(array(), BookPeer::doSelect(new Criteria()), 'no records in [book] table');
-        $this->assertEquals(array(), ReviewPeer::doSelect(new Criteria()), 'no records in [review] table');
-        $this->assertEquals(array(), MediaPeer::doSelect(new Criteria()), 'no records in [media] table');
-        $this->assertEquals(array(), BookClubListPeer::doSelect(new Criteria()), 'no records in [book_club_list] table');
-        $this->assertEquals(array(), BookListRelPeer::doSelect(new Criteria()), 'no records in [book_x_list] table');
-
+        $this->assertCount(0, AuthorQuery::create()->find(), 'no records in [author] table');
+        $this->assertCount(0, PublisherQuery::create()->find(), 'no records in [publisher] table');
+        $this->assertCount(0, BookQuery::create()->find(), 'no records in [book] table');
+        $this->assertCount(0, ReviewQuery::create()->find(), 'no records in [review] table');
+        $this->assertCount(0, MediaQuery::create()->find(), 'no records in [media] table');
+        $this->assertCount(0, BookClubListQuery::create()->find(), 'no records in [book_club_list] table');
+        $this->assertCount(0, BookListRelQuery::create()->find(), 'no records in [book_x_list] table');
     }
 
     public function testScenarioUsingQuery()
@@ -611,16 +598,10 @@ class BookstoreTest extends BookstoreEmptyTestBase
 
         $this->assertEquals(md5(file_get_contents($blob2_path)), md5(stream_get_contents($m2_lookup->getCoverImage())), 'BLOB was correctly overwritten');
 
-        // Testing doCount() functionality
+        // Testing count() functionality
         // -------------------------------
 
-        // old way
-        $c = new Criteria();
-        $records = BookPeer::doSelect($c);
-        $count = BookPeer::doCount($c);
-        $this->assertEquals($count, count($records), 'correct number of results');
-
-        // new way
+        $records = BookQuery::create()->find();
         $count = BookQuery::create()->count();
         $this->assertEquals($count, count($records), 'correct number of results');
 
@@ -664,18 +645,18 @@ class BookstoreTest extends BookstoreEmptyTestBase
         // re-fetch books and lists from db to be sure that nothing is cached
 
         $crit = new Criteria();
-        $crit->add(BookPeer::ID, $phoenix->getId());
-        $phoenix = BookPeer::doSelectOne($crit);
+        $crit->add(BookTableMap::ID, $phoenix->getId());
+        $phoenix = BookQuery::create(null, $crit)->findOne();
         $this->assertNotNull($phoenix, "book 'phoenix' has been re-fetched from db");
 
         $crit = new Criteria();
-        $crit->add(BookClubListPeer::ID, $blc1->getId());
-        $blc1 = BookClubListPeer::doSelectOne($crit);
+        $crit->add(BookClubListTableMap::ID, $blc1->getId());
+        $blc1 = BookClubListQuery::create(null, $crit)->findOne();
         $this->assertNotNull($blc1, 'BookClubList 1 has been re-fetched from db');
 
         $crit = new Criteria();
-        $crit->add(BookClubListPeer::ID, $blc2->getId());
-        $blc2 = BookClubListPeer::doSelectOne($crit);
+        $crit->add(BookClubListTableMap::ID, $blc2->getId());
+        $blc2 = BookClubListQuery::create(null, $crit)->findOne();
         $this->assertNotNull($blc2, 'BookClubList 2 has been re-fetched from db');
 
         $relCount = $phoenix->countBookListRels();
@@ -697,19 +678,19 @@ class BookstoreTest extends BookstoreEmptyTestBase
 
         // Attempting to delete [multi-table] by found pk
         $c = new Criteria();
-        $c->add(BookPeer::ID, $hp->getId());
+        $c->add(BookTableMap::ID, $hp->getId());
         // The only way for cascading to work currently
         // is to specify the author_id and publisher_id (i.e. the fkeys
         // have to be in the criteria).
-        $c->add(AuthorPeer::ID, $hp->getAuthor()->getId());
-        $c->add(PublisherPeer::ID, $hp->getPublisher()->getId());
+        $c->add(AuthorTableMap::ID, $hp->getAuthor()->getId());
+        $c->add(PublisherTableMap::ID, $hp->getPublisher()->getId());
         $c->setSingleRecord(true);
-        BookPeer::doDelete($c);
+        BookTableMap::doDelete($c);
 
         // Checking to make sure correct records were removed.
-        $this->assertEquals(3, AuthorPeer::doCount(new Criteria()), 'Correct records were removed from author table');
-        $this->assertEquals(3, PublisherPeer::doCount(new Criteria()), 'Correct records were removed from publisher table');
-        $this->assertEquals(3, BookPeer::doCount(new Criteria()), 'Correct records were removed from book table');
+        $this->assertEquals(3, AuthorQuery::create()->count(), 'Correct records were removed from author table');
+        $this->assertEquals(3, PublisherQuery::create()->count(), 'Correct records were removed from publisher table');
+        $this->assertEquals(3, BookQuery::create()->count(), 'Correct records were removed from book table');
 
         // Attempting to delete books by complex criteria
         BookQuery::create()
@@ -738,12 +719,12 @@ class BookstoreTest extends BookstoreEmptyTestBase
         $blc1->delete();
         $blc2->delete();
 
-        $this->assertEquals(array(), AuthorPeer::doSelect(new Criteria()), 'no records in [author] table');
-        $this->assertEquals(array(), PublisherPeer::doSelect(new Criteria()), 'no records in [publisher] table');
-        $this->assertEquals(array(), BookPeer::doSelect(new Criteria()), 'no records in [book] table');
-        $this->assertEquals(array(), ReviewPeer::doSelect(new Criteria()), 'no records in [review] table');
-        $this->assertEquals(array(), MediaPeer::doSelect(new Criteria()), 'no records in [media] table');
-        $this->assertEquals(array(), BookClubListPeer::doSelect(new Criteria()), 'no records in [book_club_list] table');
-        $this->assertEquals(array(), BookListRelPeer::doSelect(new Criteria()), 'no records in [book_x_list] table');
+        $this->assertCount(0, AuthorQuery::create()->find(), 'no records in [author] table');
+        $this->assertCount(0, PublisherQuery::create()->find(), 'no records in [publisher] table');
+        $this->assertCount(0, BookQuery::create()->find(), 'no records in [book] table');
+        $this->assertCount(0, ReviewQuery::create()->find(), 'no records in [review] table');
+        $this->assertCount(0, MediaQuery::create()->find(), 'no records in [media] table');
+        $this->assertCount(0, BookClubListQuery::create()->find(), 'no records in [book_club_list] table');
+        $this->assertCount(0, BookListRelQuery::create()->find(), 'no records in [book_x_list] table');
     }
 }

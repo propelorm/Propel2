@@ -51,7 +51,6 @@ class Table extends ScopedMappingModel implements IdMethod
     private $alias;
     private $interface;
     private $baseClass;
-    private $basePeer;
     private $columnsByName;
     private $columnsByLowercaseName;
     private $columnsByPhpName;
@@ -135,7 +134,6 @@ class Table extends ScopedMappingModel implements IdMethod
 
         $this->isAbstract = $this->booleanValue($this->getAttribute('abstract'));
         $this->baseClass = $this->getAttribute('baseClass');
-        $this->basePeer = $this->getAttribute('basePeer');
         $this->alias = $this->getAttribute('alias');
 
         $this->heavyIndexing = (
@@ -277,10 +275,19 @@ class Table extends ScopedMappingModel implements IdMethod
         foreach ($this->referrers as $foreignKey) {
             $referencedColumns = $foreignKey->getForeignColumnObjects();
             $referencedColumnsHash = $this->getColumnList($referencedColumns);
-            if (!isset($_indices[$referencedColumnsHash])) {
+            if (!empty($referencedColumns) && !isset($_indices[$referencedColumnsHash])) {
                 // no matching index defined in the schema, so we have to create one
+
+                $name = sprintf('I_referenced_%s_%s', $foreignKey->getName(), ++$counter);
+                if ($this->hasIndex($name)) {
+                    //if we have already a index with this name, then it looks like the columns of this index have just
+                    //been changed, so remove it and inject it again. This is the case if a referenced table is handled
+                    //later than the referencing table.
+                    $this->removeIndex($name);
+                }
+
                 $index = new Index();
-                $index->setName(sprintf('I_referenced_%s_%s', $foreignKey->getName(), ++$counter));
+                $index->setName($name);
                 $index->setColumns($referencedColumns);
                 $index->resetColumnsSize();
                 $this->addIndex($index);
@@ -293,10 +300,21 @@ class Table extends ScopedMappingModel implements IdMethod
         foreach ($this->foreignKeys as $foreignKey) {
             $localColumns = $foreignKey->getLocalColumnObjects();
             $localColumnsHash = $this->getColumnList($localColumns);
-            if (!isset($_indices[$localColumnsHash])) {
-                // no matching index defined in the schema, so we have to create one. MySQL needs indices on any columns that serve as foreign keys. these are not auto-created prior to 4.1.2
+            if (!empty($localColumns) && !isset($_indices[$localColumnsHash])) {
+                // no matching index defined in the schema, so we have to create one.
+                // MySQL needs indices on any columns that serve as foreign keys. these are not auto-created prior to
+                // 4.1.2
+
+                $name = substr_replace($foreignKey->getName(), 'FI_',  strrpos($foreignKey->getName(), 'FK_'), 3);
+                if ($this->hasIndex($name)) {
+                    //if we have already a index with this name, then it looks like the columns of this index have just
+                    //been changed, so remove it and inject it again. This is the case if a referenced table is handled
+                    //later than the referencing table.
+                    $this->removeIndex($name);
+                }
+
                 $index = new Index();
-                $index->setName(substr_replace($foreignKey->getName(), 'FI_', strrpos($foreignKey->getName(), 'FK_'), 3));
+                $index->setName($name);
                 $index->setColumns($localColumns);
                 $index->resetColumnsSize();
                 $this->addIndex($index);
@@ -359,44 +377,37 @@ class Table extends ScopedMappingModel implements IdMethod
      */
     public function doNaming()
     {
-        // Assure names are unique across all databases.
-        try {
-            for ($i = 0, $size = count($this->foreignKeys); $i < $size; $i++) {
-                $fk = $this->foreignKeys[$i];
-                $name = $fk->getName();
-                if (empty($name)) {
-                    $name = $this->acquireConstraintName('FK', $i + 1);
-                    $fk->setName($name);
-                }
+        for ($i = 0, $size = count($this->foreignKeys); $i < $size; $i++) {
+            $fk = $this->foreignKeys[$i];
+            $name = $fk->getName();
+            if (empty($name)) {
+                $name = $this->acquireConstraintName('FK', $i + 1);
+                $fk->setName($name);
             }
-
-            for ($i = 0, $size = count($this->indices); $i < $size; $i++) {
-                $index = $this->indices[$i];
-                $name = $index->getName();
-                if (empty($name)) {
-                    $name = $this->acquireConstraintName('I', $i + 1);
-                    $index->setName($name);
-                }
-            }
-
-            for ($i = 0, $size = count($this->unices); $i < $size; $i++) {
-                $index = $this->unices[$i];
-                $name = $index->getName();
-                if (empty($name)) {
-                    $name = $this->acquireConstraintName('U', $i + 1);
-                    $index->setName($name);
-                }
-            }
-
-            // NOTE: Most RDBMSes can apparently name unique column
-            // constraints/indices themselves (using MySQL and Oracle
-            // as test cases), so we'll assume that we needn't add an
-            // entry to the system name list for these.
-        } catch (EngineException $nameAlreadyInUse) {
-            // @TODO remove hardcoded print statements
-            print $nameAlreadyInUse->getMessage() . "\n";
-            print $nameAlreadyInUse->getTraceAsString();
         }
+
+        for ($i = 0, $size = count($this->indices); $i < $size; $i++) {
+            $index = $this->indices[$i];
+            $name = $index->getName();
+            if (empty($name)) {
+                $name = $this->acquireConstraintName('I', $i + 1);
+                $index->setName($name);
+            }
+        }
+
+        for ($i = 0, $size = count($this->unices); $i < $size; $i++) {
+            $index = $this->unices[$i];
+            $name = $index->getName();
+            if (empty($name)) {
+                $name = $this->acquireConstraintName('U', $i + 1);
+                $index->setName($name);
+            }
+        }
+
+        // NOTE: Most RDBMSes can apparently name unique column
+        // constraints/indices themselves (using MySQL and Oracle
+        // as test cases), so we'll assume that we needn't add an
+        // entry to the system name list for these.
     }
 
     /**
@@ -438,41 +449,13 @@ class Table extends ScopedMappingModel implements IdMethod
     }
 
     /**
-     * Sets the peer base class name.
+     * Sets the base class name.
      *
      * @param string $class
      */
     public function setBaseClass($class)
     {
         $this->baseClass = $class;
-    }
-
-    /**
-     * Returns the peer base class name.
-     *
-     * @return string
-     */
-    public function getBasePeer()
-    {
-        if ($this->isAlias() && null === $this->basePeer) {
-            return $this->alias . 'Peer';
-        }
-
-        if (null === $this->basePeer) {
-            return $this->database->getBasePeer();
-        }
-
-        return $this->basePeer;
-    }
-
-    /**
-     * Sets the base peer class name.
-     *
-     * @param string $class
-     */
-    public function setBasePeer($class)
-    {
-        $this->basePeer = $class;
     }
 
     /**
@@ -797,6 +780,40 @@ class Table extends ScopedMappingModel implements IdMethod
     }
 
     /**
+     * Removes a index from the table.
+     *
+     * @param string $name
+     */
+    public function removeIndex($name)
+    {
+        //check if we have a index with this name already, then delete it
+        foreach ($this->indices as $n => $idx) {
+            if ($idx->getName() == $name) {
+                unset($this->indices[$n]);
+
+                return;
+            }
+        }
+    }
+
+    /**
+     * Checks if the table has a index by name.
+     *
+     * @param  string $name
+     * @return bool
+     */
+    public function hasIndex($name)
+    {
+        foreach ($this->indices as $idx) {
+            if ($idx->getName() == $name) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Adds a new index to the indices list and set the
      * parent table of the column to the current table.
      *
@@ -1109,7 +1126,7 @@ class Table extends ScopedMappingModel implements IdMethod
     }
 
     /**
-     * Returns the method strateg for generating primary keys.
+     * Returns the method strategy for generating primary keys.
      *
      * [HL] changing behavior so that Database default method is returned
      * if no method has been specified for the table.
@@ -1274,7 +1291,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Returns an array containing all Column objects in the table.
      *
-     * @return array
+     * @return Column[]
      */
     public function getColumns()
     {
@@ -1441,7 +1458,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * Returns the foreign keys that include column in it's list of local
      * columns.
      *
-     * Eg. Foreign key (a, b, c) refrences tbl(x, y, z) will be returned of col
+     * Eg. Foreign key (a, b, c) references tbl(x, y, z) will be returned of col
      * is either a, b or c.
      *
      * @param  string $column Name of the column
@@ -1579,10 +1596,6 @@ class Table extends ScopedMappingModel implements IdMethod
             $tableNode->setAttribute('baseClass', $this->baseClass);
         }
 
-        if ($this->basePeer) {
-            $tableNode->setAttribute('basePeer', $this->basePeer);
-        }
-
         if ($this->isCrossRef) {
             $tableNode->setAttribute('isCrossRef', 'true');
         }
@@ -1616,7 +1629,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * Returns the collection of Columns which make up the single primary
      * key for this table.
      *
-     * @return array
+     * @return Column[]
      */
     public function getPrimaryKey()
     {

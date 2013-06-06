@@ -125,6 +125,20 @@ class MysqlPlatform extends DefaultPlatform
         return strtolower($this->getDefaultTableEngine()) == 'innodb';
     }
 
+    public function supportsForeignKeys(Table $table)
+    {
+        $vendorSpecific = $table->getVendorInfoForType('mysql');
+        if ($vendorSpecific->hasParameter('Type')) {
+            $mysqlTableType = $vendorSpecific->getParameter('Type');
+        } elseif ($vendorSpecific->hasParameter('Engine')) {
+            $mysqlTableType = $vendorSpecific->getParameter('Engine');
+        } else {
+            $mysqlTableType = $this->getDefaultTableEngine();
+        }
+
+        return strtolower($mysqlTableType) == 'innodb';
+    }
+
     public function getAddTablesDDL(Database $database)
     {
         $ret = $this->getBeginDDL();
@@ -155,6 +169,35 @@ SET FOREIGN_KEY_CHECKS = 1;
 ";
     }
 
+    /**
+     * Returns the SQL for the primary key of a Table object
+     *
+     * @param Table $table
+     *
+     * @return string
+     */
+    public function getPrimaryKeyDDL(Table $table)
+    {
+        if ($table->hasPrimaryKey()) {
+
+            $keys = $table->getPrimaryKey();
+
+            //MySQL throws an 'Incorrect table definition; there can be only one auto column and it must be defined as a key'
+            //if the primary key consists of multiple columns and if the first is not the autoIncrement one. So
+            //this push the autoIncrement column to the first position if its not already.
+            $autoIncrement = $table->getAutoIncrementPrimaryKey();
+            if ($autoIncrement && $keys[0] != $autoIncrement) {
+                $idx = array_search($autoIncrement, $keys);
+                if ($idx !== false) {
+                    unset($keys[$idx]);
+                    array_unshift($keys, $autoIncrement);
+                }
+            }
+
+            return 'PRIMARY KEY (' . $this->getColumnListDDL($keys) . ')';
+        }
+    }
+
     public function getAddTableDDL(Table $table)
     {
         $lines = array();
@@ -175,13 +218,15 @@ SET FOREIGN_KEY_CHECKS = 1;
             $lines[] = $this->getIndexDDL($index);
         }
 
-        foreach ($table->getForeignKeys() as $foreignKey) {
-            if ($foreignKey->isSkipSql()) {
-                continue;
-            }
-            $lines[] = str_replace("
+        if ($this->supportsForeignKeys($table)) {
+            foreach ($table->getForeignKeys() as $foreignKey) {
+                if ($foreignKey->isSkipSql()) {
+                    continue;
+                }
+                $lines[] = str_replace("
     ", "
         ", $this->getForeignKeyDDL($foreignKey));
+            }
         }
 
         $vendorSpecific = $table->getVendorInfoForType('mysql');
@@ -454,8 +499,34 @@ DROP INDEX %s ON %s;
         );
     }
 
+    public function getAddForeignKeyDDL(ForeignKey $fk)
+    {
+        if ($this->supportsForeignKeys($fk->getTable())) {
+            return parent::getAddForeignKeyDDL($fk);
+        }
+
+        return '';
+    }
+
+    /**
+     * Builds the DDL SQL for a ForeignKey object.
+     *
+     * @param ForeignKey $fk
+     *
+     * @return string
+     */
+    public function getForeignKeyDDL(ForeignKey $fk)
+    {
+        if ($this->supportsForeignKeys($fk->getTable())) {
+            return parent::getForeignKeyDDL($fk);
+        }
+
+        return '';
+    }
+
     public function getDropForeignKeyDDL(ForeignKey $fk)
     {
+        if (!$this->supportsForeignKeys($fk->getTable())) return '';
         if ($fk->isSkipSql()) {
             return;
         }
@@ -620,11 +691,6 @@ ALTER TABLE %s CHANGE %s %s;
      */
     public function disconnectedEscapeText($text)
     {
-        // mysql_escape_string doesn't work in PHP >= 5.4
-        if (version_compare(PHP_VERSION, '5.4', '<') && function_exists('mysql_escape_string')) {
-            return mysql_escape_string($text);
-        }
-
         return addslashes($text);
     }
 

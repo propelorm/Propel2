@@ -14,7 +14,6 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\Output;
-use Propel\Generator\Config\GeneratorConfig;
 use Propel\Generator\Manager\ModelManager;
 
 /**
@@ -26,10 +25,6 @@ class ModelBuildCommand extends AbstractCommand
     const DEFAULT_OUTPUT_DIRECTORY                  = 'generated-classes';
 
     const DEFAULT_MYSQL_ENGINE                      = 'InnoDB';
-
-    const DEFAULT_PEER_BUILDER                      = '\Propel\Generator\Builder\Om\PeerBuilder';
-
-    const DEFAULT_PEER_STUB_BUILDER                 = '\Propel\Generator\Builder\Om\ExtensionPeerBuilder';
 
     const DEFAULT_OBJECT_BUILDER                    = '\Propel\Generator\Builder\Om\ObjectBuilder';
 
@@ -59,10 +54,6 @@ class ModelBuildCommand extends AbstractCommand
         $this
             ->addOption('mysql-engine', null, InputOption::VALUE_REQUIRED,  'MySQL engine (MyISAM, InnoDB, ...)', self::DEFAULT_MYSQL_ENGINE)
             ->addOption('output-dir', null, InputOption::VALUE_REQUIRED, 'The output directory', self::DEFAULT_OUTPUT_DIRECTORY)
-            ->addOption('peer-class', null, InputOption::VALUE_REQUIRED,
-                'The peer class generator name', self::DEFAULT_PEER_BUILDER)
-            ->addOption('peer-stub-class', null, InputOption::VALUE_REQUIRED,
-                'The peer stub class generator name', self::DEFAULT_PEER_STUB_BUILDER)
             ->addOption('object-class', null, InputOption::VALUE_REQUIRED,
                 'The object class generator name', self::DEFAULT_OBJECT_BUILDER)
             ->addOption('object-stub-class', null, InputOption::VALUE_REQUIRED,
@@ -90,6 +81,7 @@ class ModelBuildCommand extends AbstractCommand
             ->addOption('disable-namespace-auto-package', null, InputOption::VALUE_NONE,
                 'Disable namespace auto-packaging')
             ->setName('model:build')
+            ->setAliases(array('build'))
             ->setDescription('Build the model classes based on Propel XML schemas')
         ;
     }
@@ -99,10 +91,8 @@ class ModelBuildCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $generatorConfig = new GeneratorConfig(array_merge(array(
+        $generatorConfig = $this->getGeneratorConfig(array(
             'propel.platform.class'                     => $input->getOption('platform'),
-            'propel.builder.peer.class'                 => $input->getOption('peer-class'),
-            'propel.builder.peerstub.class'             => $input->getOption('peer-stub-class'),
             'propel.builder.object.class'               => $input->getOption('object-class'),
             'propel.builder.objectstub.class'           => $input->getOption('object-stub-class'),
             'propel.builder.objectmultiextend.class'    => $input->getOption('object-multiextend-class'),
@@ -130,7 +120,7 @@ class ModelBuildCommand extends AbstractCommand
             // MySQL specific
             'propel.mysql.tableType'                    => $input->getOption('mysql-engine'),
             'propel.mysql.tableEngineKeyword'           => 'ENGINE',
-        ), $this->getBuildProperties($input->getOption('input-dir') . '/build.properties')));
+        ), $input);
 
         $this->createDirectory($input->getOption('output-dir'));
 

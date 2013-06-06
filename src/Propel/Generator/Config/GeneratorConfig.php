@@ -14,6 +14,9 @@ use Propel\Generator\Exception\BuildException;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Platform\PlatformInterface;
 use Propel\Generator\Reverse\SchemaParserInterface;
+use Propel\Runtime\Adapter\AdapterFactory;
+use Propel\Runtime\Connection\ConnectionFactory;
+use Propel\Runtime\Connection\ConnectionInterface;
 
 /**
  * A class that holds build properties and provide a class loading mechanism for
@@ -156,10 +159,11 @@ class GeneratorConfig implements GeneratorConfigInterface
     /**
      * Creates and configures a new Platform class.
      *
-     * @param  \PDO              $con
+     * @param  ConnectionInterface $con
+     * @param  string              $database
      * @return PlatformInterface
      */
-    public function getConfiguredPlatform(\PDO $con = null, $database = null)
+    public function getConfiguredPlatform(ConnectionInterface $con = null, $database = null)
     {
         $buildConnection = $this->getBuildConnection($database);
 
@@ -188,10 +192,10 @@ class GeneratorConfig implements GeneratorConfigInterface
 
     /**
      * Creates and configures a new SchemaParser class for specified platform.
-     * @param  \PDO                  $con
+     * @param  ConnectionInterface   $con
      * @return SchemaParserInterface
      */
-    public function getConfiguredSchemaParser(\PDO $con = null)
+    public function getConfiguredSchemaParser(ConnectionInterface $con = null)
     {
         $clazz  = $this->getClassName("reverseParserClass");
         $parser = new $clazz();
@@ -217,7 +221,10 @@ class GeneratorConfig implements GeneratorConfigInterface
      */
     public function getConfiguredBuilder(Table $table, $type)
     {
-        $classname = $this->getBuilderClassName($type);
+        $classname = $table->getDatabase()->getPlatform()->getBuilderClass($type);
+        if (!$classname) {
+            $classname = $this->getBuilderClassName($type);
+        }
         $builder   = new $classname($table);
         $builder->setGeneratorConfig($this);
 
@@ -242,10 +249,19 @@ class GeneratorConfig implements GeneratorConfigInterface
         $this->buildConnections = $buildConnections;
     }
 
-    public function getBuildConnections()
+    /**
+     * Returns all connections from the buildtime config.
+     *
+     * @param string $directory Relative to current working directory or absolute.
+     *
+     * @return array|null
+     */
+    public function getBuildConnections($directory = '.')
     {
         if (null === $this->buildConnections) {
-            $buildTimeConfigPath = $this->getBuildProperty('buildtimeConfFile') ? $this->getBuildProperty('projectDir') . DIRECTORY_SEPARATOR .  $this->getBuildProperty('buildtimeConfFile') : null;
+            $buildTimeConfigPath = $this->getBuildProperty('buildtimeConfFile')
+                ? $this->getBuildProperty('projectDir') . DIRECTORY_SEPARATOR . $this->getBuildProperty('buildtimeConfFile')
+                : $directory . '/buildtime-conf.xml';
             if ($buildTimeConfigString = $this->getBuildProperty('buildtimeConf')) {
                 // configuration passed as propel.buildtimeConf string
                 // probably using the command line, which doesn't accept whitespace
@@ -268,12 +284,13 @@ class GeneratorConfig implements GeneratorConfigInterface
         $this->defaultBuildConnection = (string) $conf->propel->datasources['default'];
         $buildConnections = array();
         foreach ($conf->propel->datasources->datasource as $datasource) {
-            $buildConnections[(string) $datasource['id']] = array(
-                'adapter'  => (string) $datasource->adapter,
-                'dsn'      => (string) $datasource->connection->dsn,
-                'user'     => (string) $datasource->connection->user,
-                'password' => (string) $datasource->connection->password,
+            $id = (string) $datasource['id'];
+            $buildConnections[$id] = array(
+                'adapter'  => (string) $datasource->adapter
             );
+            foreach ((array) $datasource->connection as $key => $connection) {
+                $buildConnections[$id][$key] = $connection;
+            }
         }
         $this->buildConnections = $buildConnections;
     }
@@ -297,7 +314,7 @@ class GeneratorConfig implements GeneratorConfigInterface
         }
     }
 
-    public function getBuildPDO($database)
+    public function getConnection($database)
     {
         $buildConnection = $this->getBuildConnection($database);
         $dsn = str_replace("@DB@", $database, $buildConnection['dsn']);
@@ -306,9 +323,8 @@ class GeneratorConfig implements GeneratorConfigInterface
         $username = isset($buildConnection['user']) && $buildConnection['user'] ? $buildConnection['user'] : null;
         $password = isset($buildConnection['password']) && $buildConnection['password'] ? $buildConnection['password'] : null;
 
-        $pdo = new \PDO($dsn, $username, $password);
-        $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+        $con = ConnectionFactory::create(array('dsn' => $dsn, 'user' => $username, 'password' => $password), AdapterFactory::create($buildConnection['adapter']));
 
-        return $pdo;
+        return $con;
     }
 }

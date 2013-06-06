@@ -104,7 +104,7 @@ class Book extends BaseBook
 }
 {% endhighlight %}
 
->**Tip**<br />See the [PHP 5.3 Namespaces](../cookbook/namespaces) chepter for more information on namespace usage in Propel.
+>**Tip**<br />See the [PHP 5.3 Namespaces](../cookbook/namespaces) chapter for more information on namespace usage in Propel.
 
 ## Generated Getter and Setter ##
 
@@ -191,7 +191,7 @@ $book->delete();
 // DELETE FROM book WHERE id = 1234
 
 // All persistence methods accept a connection object
-$con = Propel::getWriteConnection(BookPeer::DATABASE_NAME);
+$con = Propel::getWriteConnection(BookTableMap::DATABASE_NAME);
 $book->delete($con);
 {% endhighlight %}
 
@@ -382,13 +382,13 @@ $book->setStyle('novel');
 echo $book->getStyle(); // novel
 // An enum is stored as a TINYINT in the database
 
-// Each value in an ENUM column has a related constant in the Peer class
+// Each value in an ENUM column has a related constant in the TableMap class
 // Your IDE with code completion should love this
-echo BookPeer::STYLE_NOVEL;  // 'novel'
-echo BookPeer::STYLE_ESSAY;  // 'essay'
-echo BookPeer::STYLE_POETRY; // 'poetry'
-// The Peer class also gives access to list of available values
-print_r(BookPeer::getValueSet(BookPeer::STYLE)); // array('novel', 'essay', 'poetry')
+echo BookTableMap::STYLE_NOVEL;  // 'novel'
+echo BookTableMap::STYLE_ESSAY;  // 'essay'
+echo BookTableMap::STYLE_POETRY; // 'poetry'
+// The TableMap class also gives access to list of available values
+print_r(BookTableMap::getValueSet(BookTableMap::STYLE)); // array('novel', 'essay', 'poetry')
 {% endhighlight %}
 
 ### OBJECT columns ###
@@ -461,8 +461,8 @@ $book->setByName('Title', 'War and Peace');
 echo $book->getByName('Title'); // War and Peace
 // The name used is the column phpName - the same name used in generated getters and setters.
 // You can also use the table column name by adding a converter argument
-$book->setByName('title', 'War and Peace', BookPeer::TYPE_FIELDNAME);
-echo $book->getByName('title', BookPeer::TYPE_FIELDNAME); // War and Peace
+$book->setByName('title', 'War and Peace', BookTableMap::TYPE_FIELDNAME);
+echo $book->getByName('title', BookTableMap::TYPE_FIELDNAME); // War and Peace
 
 // Each Active Record class also offers generic getter and setter by position
 $book->setByPosition(2, 'War and Peace'); // 'title' is the second column of the table
@@ -486,7 +486,7 @@ print_r($book->toArray());
 // )
 
 // As with getByName() and setByName(), you can use the table column names by adding a converter argument
-print_r($book->toArray(BookPeer::TYPE_FIELDNAME));
+print_r($book->toArray(BookTableMap::TYPE_FIELDNAME));
 // array(
 //  'id'        => null
 //  'title'     => 'War and Peace',
@@ -499,7 +499,7 @@ print_r($book->toArray(BookPeer::TYPE_FIELDNAME));
 
 // If the class has related objects, they are not included by default in the output of toArray().
 // To include them, set the third argument to true.
-print_r($book->toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $includeForeignObjects = true));
+print_r($book->toArray($keyType = BaseTableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $includeForeignObjects = true));
 // array(
 //  'Id'       => null
 //  'Title'    => 'War and Peace',
@@ -696,7 +696,7 @@ $book->delete();
 echo $book->isDeleted(); // true
 
 // You can test and list the modified columns using isColumnModified() and getModifiedColumns()
-// The function uses fully qualified column names (i.e. of type BasePeer::TYPE_COLNAME)
+// The function uses fully qualified column names (i.e. of type BaseTableMap::TYPE_COLNAME)
 $book = new Book();
 $book->setTitle('War and Peace');
 echo $book->isColumnModified('book.ISBN'); // false
@@ -704,7 +704,7 @@ echo $book->isColumnModified('book.TITLE'); // true
 print_r($book->getModifiedColumns());
 // array('book.TITLE')
 // To use column phpNames, just convert the parameter using translateFieldName()
-$colName = BookPeer::translateFieldName('Title', BasePeer::TYPE_PHPNAME, BasePeer::TYPE_COLNAME);
+$colName = BookTableMap::translateFieldName('Title', TableMap::TYPE_PHPNAME, TableMap::TYPE_COLNAME);
 echo $book->isColumnModified($colname); // true
 {% endhighlight %}
 

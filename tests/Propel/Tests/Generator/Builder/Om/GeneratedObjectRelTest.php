@@ -10,31 +10,30 @@
 
 namespace Propel\Tests\Generator\Builder\Om;
 
-use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
-use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
-
+use Propel\Runtime\Propel;
+use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Tests\Bookstore\Author;
-use Propel\Tests\Bookstore\AuthorPeer;
+use Propel\Tests\Bookstore\AuthorQuery;
+use Propel\Tests\Bookstore\Map\AuthorTableMap;
 use Propel\Tests\Bookstore\Book;
-use Propel\Tests\Bookstore\BookPeer;
 use Propel\Tests\Bookstore\BookQuery;
+use Propel\Tests\Bookstore\BookSummary;
+use Propel\Tests\Bookstore\BookSummaryQuery;
+use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\Bookstore\Bookstore;
 use Propel\Tests\Bookstore\BookClubList;
 use Propel\Tests\Bookstore\BookClubListQuery;
 use Propel\Tests\Bookstore\BookListRel;
-use Propel\Tests\Bookstore\BookListRelPeer;
 use Propel\Tests\Bookstore\BookListRelQuery;
 use Propel\Tests\Bookstore\BookListFavoriteQuery;
 use Propel\Tests\Bookstore\BookstoreContest;
 use Propel\Tests\Bookstore\BookstoreContestEntry;
 use Propel\Tests\Bookstore\Contest;
 use Propel\Tests\Bookstore\Customer;
-use Propel\Tests\Bookstore\PublisherPeer;
+use Propel\Tests\Bookstore\Map\PublisherTableMap;
 use Propel\Tests\Bookstore\Review;
-
-use Propel\Runtime\Propel;
-use Propel\Runtime\ActiveQuery\Criteria;
-use Propel\Runtime\Collection\ObjectCollection;
+use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
+use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
 
 use \DateTime;
 
@@ -50,17 +49,10 @@ use \DateTime;
  * for each test method in this class.  See the BookstoreDataPopulator::populate()
  * method for the exact contents of the database.
  *
- * @see        BookstoreDataPopulator
  * @author Hans Lellelid <hans@xmpl.org>
  */
 class GeneratedObjectRelTest extends BookstoreEmptyTestBase
 {
-
-    protected function setUp()
-    {
-        parent::setUp();
-    }
-
     /**
      * Tests one side of a bi-directional setting of many-to-many relationships.
      */
@@ -75,23 +67,23 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         $book->setISBN('TEST');
         // No save ...
 
-        $this->assertEquals(0, count($list->getBookListRels()) );
-        $this->assertEquals(0, count($book->getBookListRels()) );
-        $this->assertEquals(0, count(BookListRelPeer::doSelect(new Criteria())) );
+        $this->assertCount(0, $list->getBookListRels());
+        $this->assertCount(0, $book->getBookListRels());
+        $this->assertCount(0, BookListRelQuery::create()->find());
 
         $xref = new BookListRel();
         $xref->setBook($book);
         $list->addBookListRel($xref);
 
-        $this->assertEquals(1, count($list->getBookListRels()));
-        $this->assertEquals(1, count($book->getBookListRels()) );
-        $this->assertEquals(0, count(BookListRelPeer::doSelect(new Criteria())) );
+        $this->assertCount(1, $list->getBookListRels());
+        $this->assertCount(1, $book->getBookListRels());
+        $this->assertCount(0, BookListRelQuery::create()->find());
 
         $list->save();
 
-        $this->assertEquals(1, count($list->getBookListRels()) );
-        $this->assertEquals(1, count($book->getBookListRels()) );
-        $this->assertEquals(1, count(BookListRelPeer::doSelect(new Criteria())) );
+        $this->assertCount(1, $list->getBookListRels());
+        $this->assertCount(1, $book->getBookListRels());
+        $this->assertCount(1, BookListRelQuery::create()->find());
 
     }
 
@@ -109,23 +101,22 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         $book->setISBN('TEST');
         // No save (yet) ...
 
-        $this->assertEquals(0, count($list->getBookListRels()) );
-        $this->assertEquals(0, count($book->getBookListRels()) );
-        $this->assertEquals(0, count(BookListRelPeer::doSelect(new Criteria())) );
+        $this->assertCount(0, $list->getBookListRels());
+        $this->assertCount(0, $book->getBookListRels());
+        $this->assertCount(0, BookListRelQuery::create()->find());
 
         $xref = new BookListRel();
         $xref->setBookClubList($list);
         $book->addBookListRel($xref);
 
-        $this->assertEquals(1, count($list->getBookListRels()) );
-        $this->assertEquals(1, count($book->getBookListRels()) );
-        $this->assertEquals(0, count(BookListRelPeer::doSelect(new Criteria())) );
+        $this->assertCount(1, $list->getBookListRels());
+        $this->assertCount(1, $book->getBookListRels());
+        $this->assertCount(0, BookListRelQuery::create()->find());
         $book->save();
 
-        $this->assertEquals(1, count($list->getBookListRels()) );
-        $this->assertEquals(1, count($book->getBookListRels()) );
-        $this->assertEquals(1, count(BookListRelPeer::doSelect(new Criteria())) );
-
+        $this->assertCount(1, $list->getBookListRels());
+        $this->assertCount(1, $book->getBookListRels());
+        $this->assertCount(1, BookListRelQuery::create()->find());
     }
 
     /**
@@ -143,9 +134,9 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         $book->setISBN('TEST');
         // No save (yet) ...
 
-        $this->assertEquals(0, count($list->getBookListRels()) );
-        $this->assertEquals(0, count($book->getBookListRels()) );
-        $this->assertEquals(0, count(BookListRelPeer::doSelect(new Criteria())) );
+        $this->assertCount(0, $list->getBookListRels());
+        $this->assertCount(0, $book->getBookListRels());
+        $this->assertCount(0, BookListRelQuery::create()->find());
 
         // Now set the relationship from the opposite direction.
 
@@ -153,14 +144,14 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         $xref->setBookClubList($list);
         $book->addBookListRel($xref);
 
-        $this->assertEquals(1, count($list->getBookListRels()) );
-        $this->assertEquals(1, count($book->getBookListRels()) );
-        $this->assertEquals(0, count(BookListRelPeer::doSelect(new Criteria())) );
+        $this->assertCount(1, $list->getBookListRels());
+        $this->assertCount(1, $book->getBookListRels());
+        $this->assertCount(0, BookListRelQuery::create()->find());
         $book->save();
 
-        $this->assertEquals(1, count($list->getBookListRels()) );
-        $this->assertEquals(1, count($book->getBookListRels()) );
-        $this->assertEquals(1, count(BookListRelPeer::doSelect(new Criteria())) );
+        $this->assertCount(1, $list->getBookListRels());
+        $this->assertCount(1, $book->getBookListRels());
+        $this->assertCount(1, BookListRelQuery::create()->find());
 
     }
 
@@ -364,10 +355,10 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
     public function testFKGetterUseInstancePool()
     {
         BookstoreDataPopulator::populate();
-        BookPeer::clearInstancePool();
-        AuthorPeer::clearInstancePool();
-        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
-        $author = AuthorPeer::doSelectOne(new Criteria(), $con);
+        BookTableMap::clearInstancePool();
+        AuthorTableMap::clearInstancePool();
+        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
+        $author = AuthorQuery::create()->findOne($con);
         // populate book instance pool
         $books = $author->getBooks(null, $con);
         $sql = $con->getLastExecutedQuery();
@@ -378,11 +369,11 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
     public function testRefFKGetJoin()
     {
         BookstoreDataPopulator::populate();
-        BookPeer::clearInstancePool();
-        AuthorPeer::clearInstancePool();
-        PublisherPeer::clearInstancePool();
-        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
-        $author = AuthorPeer::doSelectOne(new Criteria(), $con);
+        BookTableMap::clearInstancePool();
+        AuthorTableMap::clearInstancePool();
+        PublisherTableMap::clearInstancePool();
+        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
+        $author = AuthorQuery::create()->findOne($con);
         // populate book instance pool
         $books = $author->getBooksJoinPublisher(null, $con);
         $sql = $con->getLastExecutedQuery();
@@ -532,6 +523,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
 
         $book = new Book();
         $book->setTitle('My Book');
+        $book->setISBN('FA404');
         $book->save();
 
         // Modify it but don't save it
@@ -540,10 +532,11 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         $coll = new ObjectCollection();
         $coll[] = $book;
 
-        BookPeer::clearInstancePool();
+        BookTableMap::clearInstancePool();
         $book = BookQuery::create()->findPk($book->getPrimaryKey());
 
         $bookClubList1 = new BookClubList();
+        $bookClubList1->setGroupLeader('fabpot');
         $bookClubList1->setBooks($coll);
         $bookClubList1->save();
 
@@ -569,11 +562,16 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         $coll = new ObjectCollection();
         $coll->setModel('Book');
 
-        $coll[] = new Book();
-        $coll[] = new Book();
-        $coll[] = new Book();
+        for ($i = 0; $i < 3; $i++) {
+            $b = new Book();
+            $b->setTitle('Title ' . $i);
+            $b->setIsbn('1245' . $i);
+
+            $coll[] = $b;
+        }
 
         $bookClubList = new BookClubList();
+        $bookClubList->setGroupLeader('fabpot');
         $bookClubList->setBooks($coll);
         $bookClubList->save();
 
@@ -595,13 +593,15 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         for ($i = 0; $i < 3; $i++) {
             $b = new Book();
             $b->setTitle('Book ' . $i);
+            $b->setIsbn($i);
             $b->save();
         }
 
-        BookPeer::clearInstancePool();
+        BookTableMap::clearInstancePool();
         $books = BookQuery::create()->find();
 
         $bookClubList = new BookClubList();
+        $bookClubList->setGroupLeader('fabpot');
         $bookClubList->setBooks($books);
         $bookClubList->save();
 
@@ -624,6 +624,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         BookListRelQuery::create()->deleteAll();
 
         $bookClubList = new BookClubList();
+        $bookClubList->setGroupLeader('fabpot');
         $bookClubList->setBooks(new ObjectCollection());
         $bookClubList->save();
 
@@ -645,10 +646,13 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         foreach (array('foo', 'bar') as $title) {
             $b = new Book();
             $b->setTitle($title);
+            $b->setIsbn('FA404');
+
             $books[] = $b;
         }
 
         $bookClubList = new BookClubList();
+        $bookClubList->setGroupLeader('fabpot');
         $bookClubList->setBooks($books);
         $bookClubList->save();
 
@@ -660,6 +664,8 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         foreach (array('bam', 'bom') as $title) {
             $b = new Book();
             $b->setTitle($title);
+            $b->setIsbn('FA404');
+
             $books[] = $b;
         }
 
@@ -672,6 +678,19 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
 
         $this->assertEquals(1, BookClubListQuery::create()->count());
         $this->assertEquals(2, BookListRelQuery::create()->count());
+
+        // ensure we have valid "association" objects
+        $this->assertEquals(1, BookListRelQuery::create()
+            ->filterByBookClubList($bookClubList)
+            ->filterByBook($books[0])
+            ->count()
+        );
+        $this->assertEquals(1, BookListRelQuery::create()
+            ->filterByBookClubList($bookClubList)
+            ->filterByBook($books[1])
+            ->count()
+        );
+
         $this->assertEquals(4, BookQuery::create()->count());
     }
 
@@ -687,10 +706,13 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         foreach (array('foo', 'bar', 'test') as $title) {
             $b = new Book();
             $b->setTitle($title);
+            $b->setIsbn('FA404');
+
             $books[] = $b;
         }
 
         $bookClubList = new BookClubList();
+        $bookClubList->setGroupLeader('fabpot');
         $bookClubList->setFavoriteBooks($books);
         $bookClubList->save();
 
@@ -708,5 +730,228 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         $bookClubList->reload(true);
 
         $this->assertCount(2, $bookClubList->getFavoriteBooks());
+    }
+
+    public function testSetterCollectionWithManyToManyModifiedByReferenceWithANewObject()
+    {
+        // Ensure no data
+        BookQuery::create()->deleteAll();
+        BookClubListQuery::create()->deleteAll();
+        BookListRelQuery::create()->deleteAll();
+
+        $book = new Book();
+        $book->setTitle('foo');
+
+        // The object is "new"
+        $this->assertTrue($book->isNew());
+
+        $bookClubList = new BookClubList();
+        $books = $bookClubList->getBooks();
+        // Add the object by reference
+        $books[] = $book;
+
+        $bookClubList->setBooks($books);
+        $bookClubList->save();
+
+        $this->assertEquals(1, BookQuery::create()->count());
+        $this->assertEquals(1, BookListRelQuery::create()->count());
+        $this->assertEquals(1, BookClubListQuery::create()->count());
+    }
+
+    public function testSetterCollectionWithManyToManyModifiedByReferenceWithAnExistingObject()
+    {
+        // Ensure no data
+        BookQuery::create()->deleteAll();
+        BookClubListQuery::create()->deleteAll();
+        BookListRelQuery::create()->deleteAll();
+
+        $book = new Book();
+        $book->setTitle('foo');
+        $book->save();
+
+        // The object isn't "new"
+        $this->assertFalse($book->isNew());
+
+        $bookClubList = new BookClubList();
+        $books = $bookClubList->getBooks();
+        // Add the object by reference
+        $books[] = $book;
+
+        $bookClubList->setBooks($books);
+        $bookClubList->save();
+
+        $this->assertEquals(1, BookQuery::create()->count());
+        $this->assertEquals(1, BookListRelQuery::create()->count());
+        $this->assertEquals(1, BookClubListQuery::create()->count());
+    }
+
+    public function testRemoveObjectFromCollection()
+    {
+        $list = new BookClubList();
+        $list->setGroupLeader('Archimedes Q. Porter');
+
+        $list2 = new BookClubList();
+        $list2->setGroupLeader('FooBar group');
+        // No save ...
+
+        $book = new Book();
+        $book->setTitle( "Jungle Expedition Handbook" );
+        $book->setISBN('TEST');
+        // No save ...
+        $this->assertCount(0, $book->getBookClubLists(), 'No BookClubList');
+
+        $book->addBookClubList($list);
+        $book->addBookClubList($list2);
+        $this->assertCount(2, $book->getBookClubLists(), 'Two BookClubList');
+
+        $book->removeBookClubList($list);
+        $this->assertCount(1, $book->getBookClubLists(), 'One BookClubList has been remove');
+    }
+
+    public function testRemoveObjectStoredInDBFromCollection()
+    {
+        BookQuery::create()->deleteAll();
+        BookClubListQuery::create()->deleteAll();
+
+        $list = new BookClubList();
+        $list->setGroupLeader('Archimedes Q. Porter');
+
+        $list2 = new BookClubList();
+        $list2->setGroupLeader('FooBar group');
+        // No save ...
+
+        $book = new Book();
+        $book->setTitle( "Jungle Expedition Handbook" );
+        $book->setISBN('TEST');
+        $book->addBookClubList($list);
+        $book->addBookClubList($list2);
+        $book->save();
+
+        $this->assertEquals(2, BookClubListQuery::create()->count(), 'Two BookClubList');
+        $this->assertEquals(2, BookListRelQuery::create()->count(), 'Two BookClubList');
+
+        $book->removeBookClubList($list);
+        $this->assertEquals(2, BookListRelQuery::create()->count(), 'still Two BookClubList in db before save()');
+        $this->assertCount(1, $book->getBookClubLists(), 'One BookClubList has been remove');
+        $book->save();
+
+        $this->assertCount(1, $book->getBookClubLists(), 'One BookClubList has been remove');
+        $this->assertEquals(1, BookListRelQuery::create()->count(), 'One BookClubList has been remove');
+    }
+
+    public function testRemoveObjectOneToMany()
+    {
+        BookQuery::create()->deleteAll();
+        AuthorQuery::create()->deleteAll();
+
+        $book = new Book();
+        $book->setTitle('Propel Book');
+
+        $book2 = new Book();
+        $book2->setTitle('Propel2 Book');
+
+        $author = new Author();
+        $author->setFirstName('François');
+        $author->setLastName('Z');
+
+        $author->addBook($book);
+        $author->addBook($book2);
+
+        $this->assertCount(2, $author->getBooks());
+
+        $author->removeBook($book);
+
+        $books = $author->getBooks();
+        $this->assertCount(1, $books);
+        $this->assertEquals('Propel2 Book', reset($books)->getTitle());
+
+        $author->save();
+        $book->save();
+        $book2->save();
+
+        $this->assertEquals(2, BookQuery::create()->count(), 'Two Book');
+        $this->assertEquals(1, AuthorQuery::create()->count(), 'One Author');
+        $this->assertEquals(1, BookQuery::create()->filterByAuthor($author)->count());
+
+        $author->addBook($book);
+        $author->save();
+
+        $this->assertEquals(2, BookQuery::create()->filterByAuthor($author)->count());
+
+        $author->removeBook($book2);
+        $author->save();
+
+        $this->assertEquals(1, BookQuery::create()->filterByAuthor($author)->count());
+        $this->assertEquals(2, BookQuery::create()->count(), 'Two Book because FK is not required so book is not delete when removed from author\'s book collection');
+    }
+
+    public function testRemoveObjectOneToManyWithFkRequired()
+    {
+        BookSummaryQuery::create()->deleteAll();
+        BookQuery::create()->deleteAll();
+
+        $bookSummary = new BookSummary();
+        $bookSummary->setSummary('summary Propel Book');
+
+        $bookSummary2 = new BookSummary();
+        $bookSummary2->setSummary('summary2 Propel Book');
+
+        $book = new Book();
+        $book->setTitle('Propel Book');
+
+        $book->addBookSummary($bookSummary);
+        $book->addBookSummary($bookSummary2);
+
+        $this->assertCount(2, $book->getBookSummaries());
+
+        $book->removeBookSummary($bookSummary);
+
+        $bookSummaries = $book->getBookSummaries();
+        $this->assertCount(1, $bookSummaries);
+        $this->assertEquals('summary2 Propel Book', reset($bookSummaries)->getSummary());
+
+        $book->save();
+        $bookSummary2->save();
+
+        $this->assertEquals(1, BookQuery::create()->count(), 'One Book');
+        $this->assertEquals(1, BookSummaryQuery::create()->count(), 'One Summary');
+        $this->assertEquals(1, BookSummaryQuery::create()->filterBySummarizedBook($book)->count());
+
+        $book->addBookSummary($bookSummary);
+        $bookSummary->save();
+        $book->save();
+
+        $this->assertEquals(2, BookSummaryQuery::create()->filterBySummarizedBook($book)->count());
+
+        $book->removeBookSummary($bookSummary2);
+        $book->save();
+
+        $this->assertEquals(1, BookSummaryQuery::create()->filterBySummarizedBook($book)->count());
+        $this->assertEquals(1, BookSummaryQuery::create()->count(), 'One Book summary because FK is required so book summary is deleted when book is saved');
+    }
+
+    public function testManyToManySetterIsNotLoosingAnyReference()
+    {
+        $list1 = new BookClubList();
+        $list2 = new BookClubList();
+        $book = new Book();
+
+        $book->addBookClubList($list1);
+        $book->addBookClubList($list2);
+
+        $lists = $book->getBookClubLists();
+        $this->assertCount(2, $lists, 'setRelCol is losing references to referenced object');
+
+        $rels = $book->getBookListRels();
+        $this->assertCount(2, $rels, 'setRelCol is losing references to relation object');
+
+        foreach ($rels as $rel) {
+            $this->assertNotNull($rel->getBook(), 'setRelCol is losing backreference on set relation to local object');
+            $this->assertNotNull($rel->getBookClubList(), 'setRelCol is losing backreference on set relation to referenced object');
+        }
+
+        foreach ($lists as $list) {
+            $this->assertCount(1, $list->getBooks(), 'setRelCol is losing backreference on set objects');
+        }
     }
 }

@@ -10,27 +10,24 @@
 
 namespace Propel\Tests\Generator\Behavior\Sortable;
 
-use Propel\Tests\Helpers\Bookstore\Behavior\BookstoreSortableTestBase;
-
-use Propel\Tests\Bookstore\Behavior\Table12;
-use Propel\Tests\Bookstore\Behavior\Table12Peer;
-use Propel\Tests\Bookstore\Behavior\Table12Query;
-
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Collection\ObjectCollection;
+
+use Propel\Tests\Bookstore\Behavior\SortableTable12Query;
+use Propel\Tests\Bookstore\Behavior\SortableTable12;
+use Propel\Tests\Bookstore\Behavior\Map\SortableTable12TableMap;
 
 /**
  * Tests for SortableBehavior class query modifier when the scope is enabled
  *
  * @author Francois Zaninotto
- * @version		$Revision$
- * @package		generator.behavior.sortable
  */
-class SortableBehaviorQueryBuilderModifierWithScopeTest extends BookstoreSortableTestBase
+class SortableBehaviorQueryBuilderModifierWithScopeTest extends TestCase
 {
-    protected function setUp()
+    public function setUp()
     {
         parent::setUp();
+
         $this->populateTable12();
     }
 
@@ -43,12 +40,12 @@ class SortableBehaviorQueryBuilderModifierWithScopeTest extends BookstoreSortabl
          row3
          row4
         */
-        $query = Table12Query::create()->inList(1);
-        $expectedQuery = Table12Query::create()->add(Table12Peer::MY_SCOPE_COLUMN, 1, Criteria::EQUAL);
+        $query = SortableTable12Query::create()->inList(1);
+        $expectedQuery = SortableTable12Query::create()->add(SortableTable12TableMap::MY_SCOPE_COLUMN, 1, Criteria::EQUAL);
         $this->assertEquals($expectedQuery, $query, 'inList() filters the query by scope');
         $this->assertEquals(4, $query->count(), 'inList() filters the query by scope');
-        $query = Table12Query::create()->inList(2);
-        $expectedQuery = Table12Query::create()->add(Table12Peer::MY_SCOPE_COLUMN, 2, Criteria::EQUAL);
+        $query = SortableTable12Query::create()->inList(2);
+        $expectedQuery = SortableTable12Query::create()->add(SortableTable12TableMap::MY_SCOPE_COLUMN, 2, Criteria::EQUAL);
         $this->assertEquals($expectedQuery, $query, 'inList() filters the query by scope');
         $this->assertEquals(2, $query->count(), 'inList() filters the query by scope');
     }
@@ -62,39 +59,39 @@ class SortableBehaviorQueryBuilderModifierWithScopeTest extends BookstoreSortabl
          row3
          row4
         */
-        $this->assertEquals('row1', Table12Query::create()->filterByRank(1, 1)->findOne()->getTitle(), 'filterByRank() filters on the rank and the scope');
-        $this->assertEquals('row5', Table12Query::create()->filterByRank(1, 2)->findOne()->getTitle(), 'filterByRank() filters on the rank and the scope');
-        $this->assertEquals('row4', Table12Query::create()->filterByRank(4, 1)->findOne()->getTitle(), 'filterByRank() filters on the rank and the scope');
-        $this->assertNull(Table12Query::create()->filterByRank(4, 2)->findOne(), 'filterByRank() filters on the rank and the scope, which makes the query return no result on a non-existent rank');
+        $this->assertEquals('row1', SortableTable12Query::create()->filterByRank(1, 1)->findOne()->getTitle(), 'filterByRank() filters on the rank and the scope');
+        $this->assertEquals('row5', SortableTable12Query::create()->filterByRank(1, 2)->findOne()->getTitle(), 'filterByRank() filters on the rank and the scope');
+        $this->assertEquals('row4', SortableTable12Query::create()->filterByRank(4, 1)->findOne()->getTitle(), 'filterByRank() filters on the rank and the scope');
+        $this->assertNull(SortableTable12Query::create()->filterByRank(4, 2)->findOne(), 'filterByRank() filters on the rank and the scope, which makes the query return no result on a non-existent rank');
     }
 
     public function testOrderByRank()
     {
-        $this->assertTrue(Table12Query::create()->orderByRank() instanceof Table12Query, 'orderByRank() returns the current query object');
+        $this->assertTrue(SortableTable12Query::create()->orderByRank() instanceof SortableTable12Query, 'orderByRank() returns the current query object');
         // default order
-        $query = Table12Query::create()->orderByRank();
-        $expectedQuery = Table12Query::create()->addAscendingOrderByColumn(Table12Peer::POSITION);
+        $query = SortableTable12Query::create()->orderByRank();
+        $expectedQuery = SortableTable12Query::create()->addAscendingOrderByColumn(SortableTable12TableMap::POSITION);
         $this->assertEquals($expectedQuery, $query, 'orderByRank() orders the query by rank asc');
         // asc order
-        $query = Table12Query::create()->orderByRank(Criteria::ASC);
-        $expectedQuery = Table12Query::create()->addAscendingOrderByColumn(Table12Peer::POSITION);
+        $query = SortableTable12Query::create()->orderByRank(Criteria::ASC);
+        $expectedQuery = SortableTable12Query::create()->addAscendingOrderByColumn(SortableTable12TableMap::POSITION);
         $this->assertEquals($expectedQuery, $query, 'orderByRank() orders the query by rank, using the argument as sort direction');
         // desc order
-        $query = Table12Query::create()->orderByRank(Criteria::DESC);
-        $expectedQuery = Table12Query::create()->addDescendingOrderByColumn(Table12Peer::POSITION);
+        $query = SortableTable12Query::create()->orderByRank(Criteria::DESC);
+        $expectedQuery = SortableTable12Query::create()->addDescendingOrderByColumn(SortableTable12TableMap::POSITION);
         $this->assertEquals($expectedQuery, $query, 'orderByRank() orders the query by rank, using the argument as sort direction');
     }
 
     public function testFindList()
     {
-        $ts = Table12Query::create()->findList(1);
+        $ts = SortableTable12Query::create()->findList(1);
         $this->assertTrue($ts instanceof ObjectCollection, 'findList() returns a collection of objects');
         $this->assertEquals(4, count($ts), 'findList() filters the query by scope');
         $this->assertEquals('row1', $ts[0]->getTitle(), 'findList() returns an ordered scoped list');
         $this->assertEquals('row2', $ts[1]->getTitle(), 'findList() returns an ordered scoped list');
         $this->assertEquals('row3', $ts[2]->getTitle(), 'findList() returns an ordered scoped list');
         $this->assertEquals('row4', $ts[3]->getTitle(), 'findList() returns an ordered scoped list');
-        $ts = Table12Query::create()->findList(2);
+        $ts = SortableTable12Query::create()->findList(2);
         $this->assertEquals(2, count($ts), 'findList() filters the query by scope');
         $this->assertEquals('row5', $ts[0]->getTitle(), 'findList() returns an ordered scoped list');
         $this->assertEquals('row6', $ts[1]->getTitle(), 'findList() returns an ordered scoped list');
@@ -102,46 +99,46 @@ class SortableBehaviorQueryBuilderModifierWithScopeTest extends BookstoreSortabl
 
     public function testFindOneByRank()
     {
-        $this->assertTrue(Table12Query::create()->findOneByRank(1, 1) instanceof Table12, 'findOneByRank() returns an instance of the model object');
-        $this->assertEquals('row1', Table12Query::create()->findOneByRank(1, 1)->getTitle(), 'findOneByRank() returns a single item based on the rank and the scope');
-        $this->assertEquals('row5', Table12Query::create()->findOneByRank(1, 2)->getTitle(), 'findOneByRank() returns a single item based on the rank and the scope');
-        $this->assertEquals('row4', Table12Query::create()->findOneByRank(4, 1)->getTitle(), 'findOneByRank() returns a single item based on the rank a,d the scope');
-        $this->assertNull(Table12Query::create()->findOneByRank(4, 2), 'findOneByRank() returns no result on a non-existent rank and scope');
+        $this->assertTrue(SortableTable12Query::create()->findOneByRank(1, 1) instanceof SortableTable12, 'findOneByRank() returns an instance of the model object');
+        $this->assertEquals('row1', SortableTable12Query::create()->findOneByRank(1, 1)->getTitle(), 'findOneByRank() returns a single item based on the rank and the scope');
+        $this->assertEquals('row5', SortableTable12Query::create()->findOneByRank(1, 2)->getTitle(), 'findOneByRank() returns a single item based on the rank and the scope');
+        $this->assertEquals('row4', SortableTable12Query::create()->findOneByRank(4, 1)->getTitle(), 'findOneByRank() returns a single item based on the rank a,d the scope');
+        $this->assertNull(SortableTable12Query::create()->findOneByRank(4, 2), 'findOneByRank() returns no result on a non-existent rank and scope');
     }
 
     public function testGetMaxRank()
     {
-        $this->assertEquals(4, Table12Query::create()->getMaxRank(1), 'getMaxRank() returns the maximum rank in the scope');
-        $this->assertEquals(2, Table12Query::create()->getMaxRank(2), 'getMaxRank() returns the maximum rank in the scope');
+        $this->assertEquals(4, SortableTable12Query::create()->getMaxRank(1), 'getMaxRank() returns the maximum rank in the scope');
+        $this->assertEquals(2, SortableTable12Query::create()->getMaxRank(2), 'getMaxRank() returns the maximum rank in the scope');
         // delete one
-        $t4 = Table12Query::create()->findOneByRank(4, 1);
+        $t4 = SortableTable12Query::create()->findOneByRank(4, 1);
         $t4->delete();
-        $this->assertEquals(3, Table12Query::create()->getMaxRank(1), 'getMaxRank() returns the maximum rank');
+        $this->assertEquals(3, SortableTable12Query::create()->getMaxRank(1), 'getMaxRank() returns the maximum rank');
         // add one
-        $t = new Table12();
+        $t = new SortableTable12();
         $t->setMyScopeColumn(1);
         $t->save();
-        $this->assertEquals(4, Table12Query::create()->getMaxRank(1), 'getMaxRank() returns the maximum rank');
+        $this->assertEquals(4, SortableTable12Query::create()->getMaxRank(1), 'getMaxRank() returns the maximum rank');
         // delete all
-        Table12Query::create()->deleteAll();
-        $this->assertNull(Table12Query::create()->getMaxRank(1), 'getMaxRank() returns null for empty tables');
+        SortableTable12Query::create()->deleteAll();
+        $this->assertNull(SortableTable12Query::create()->getMaxRank(1), 'getMaxRank() returns null for empty tables');
         // add one
-        $t = new Table12();
+        $t = new SortableTable12();
         $t->setMyScopeColumn(1);
         $t->save();
-        $this->assertEquals(1, Table12Query::create()->getMaxRank(1), 'getMaxRank() returns the maximum rank');
+        $this->assertEquals(1, SortableTable12Query::create()->getMaxRank(1), 'getMaxRank() returns the maximum rank');
     }
 
     public function testReorder()
     {
-        $objects = Table12Query::create()->findList(1);
+        $objects = SortableTable12Query::create()->findList(1);
         $ids = array();
         foreach ($objects as $object) {
             $ids[]= $object->getPrimaryKey();
         }
         $ranks = array(4, 3, 2, 1);
         $order = array_combine($ids, $ranks);
-        Table12Query::create()->reorder($order);
+        SortableTable12Query::create()->reorder($order);
         $expected = array(1 => 'row4', 2 => 'row3', 3 => 'row2', 4 => 'row1');
         $this->assertEquals($expected, $this->getFixturesArrayWithScope(1), 'reorder() reorders the suite');
         $expected = array(1 => 'row5', 2 => 'row6');

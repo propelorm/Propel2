@@ -25,7 +25,9 @@ class NestedSetBehaviorQueryBuilderModifier
 
     protected $objectClassName;
 
-    protected $peerClassName;
+    protected $queryClassName;
+
+    protected $tableMapClassName;
 
     public function __construct($behavior)
     {
@@ -45,10 +47,10 @@ class NestedSetBehaviorQueryBuilderModifier
 
     protected function setBuilder($builder)
     {
-        $this->builder = $builder;
-        $this->objectClassName = $builder->getObjectClassName();
-        $this->queryClassName = $builder->getQueryClassName();
-        $this->peerClassName = $builder->getPeerClassName();
+        $this->builder           = $builder;
+        $this->objectClassName   = $builder->getObjectClassName();
+        $this->queryClassName    = $builder->getQueryClassName();
+        $this->tableMapClassName = $builder->getTableMapClassName();
     }
 
     public function queryMethods($builder)
@@ -61,6 +63,7 @@ class NestedSetBehaviorQueryBuilderModifier
             $this->addTreeRoots($script);
             $this->addInTree($script);
         }
+
         $this->addDescendantsOf($script);
         $this->addBranchOf($script);
         $this->addChildrenOf($script);
@@ -77,6 +80,21 @@ class NestedSetBehaviorQueryBuilderModifier
         }
         $this->addFindTree($script);
 
+        if ($this->behavior->useScope()) {
+            $this->addRetrieveRoots($script);
+        }
+
+        $this->addRetrieveRoot($script);
+        $this->addRetrieveTree($script);
+        $this->addIsValid($script);
+        $this->addDeleteTree($script);
+        $this->addShiftRLValues($script);
+        $this->addShiftLevel($script);
+        $this->addUpdateLoadedNodes($script);
+        $this->addMakeRoomForLeaf($script);
+        $this->addFixLevels($script);
+        $this->addSetNegativeScope($script);
+
         return $script;
     }
 
@@ -90,7 +108,7 @@ class NestedSetBehaviorQueryBuilderModifier
  */
 public function treeRoots()
 {
-    return \$this->addUsingAlias({$this->peerClassName}::LEFT_COL, 1, Criteria::EQUAL);
+    return \$this->addUsingAlias({$this->objectClassName}::LEFT_COL, 1, Criteria::EQUAL);
 }
 ";
     }
@@ -107,7 +125,7 @@ public function treeRoots()
  */
 public function inTree(\$scope = null)
 {
-    return \$this->addUsingAlias({$this->peerClassName}::SCOPE_COL, \$scope, Criteria::EQUAL);
+    return \$this->addUsingAlias({$this->objectClassName}::SCOPE_COL, \$scope, Criteria::EQUAL);
 }
 ";
     }
@@ -131,8 +149,8 @@ public function descendantsOf($objectName)
         ->inTree({$objectName}->getScopeValue())";
         }
         $script .= "
-        ->addUsingAlias({$this->peerClassName}::LEFT_COL, {$objectName}->getLeftValue(), Criteria::GREATER_THAN)
-        ->addUsingAlias({$this->peerClassName}::LEFT_COL, {$objectName}->getRightValue(), Criteria::LESS_THAN);
+        ->addUsingAlias({$this->objectClassName}::LEFT_COL, {$objectName}->getLeftValue(), Criteria::GREATER_THAN)
+        ->addUsingAlias({$this->objectClassName}::LEFT_COL, {$objectName}->getRightValue(), Criteria::LESS_THAN);
 }
 ";
     }
@@ -157,8 +175,8 @@ public function branchOf($objectName)
         ->inTree({$objectName}->getScopeValue())";
         }
         $script .= "
-        ->addUsingAlias({$this->peerClassName}::LEFT_COL, {$objectName}->getLeftValue(), Criteria::GREATER_EQUAL)
-        ->addUsingAlias({$this->peerClassName}::LEFT_COL, {$objectName}->getRightValue(), Criteria::LESS_EQUAL);
+        ->addUsingAlias({$this->objectClassName}::LEFT_COL, {$objectName}->getLeftValue(), Criteria::GREATER_EQUAL)
+        ->addUsingAlias({$this->objectClassName}::LEFT_COL, {$objectName}->getRightValue(), Criteria::LESS_EQUAL);
 }
 ";
     }
@@ -178,7 +196,7 @@ public function childrenOf($objectName)
 {
     return \$this
         ->descendantsOf($objectName)
-        ->addUsingAlias({$this->peerClassName}::LEVEL_COL, {$objectName}->getLevel() + 1, Criteria::EQUAL);
+        ->addUsingAlias({$this->objectClassName}::LEVEL_COL, {$objectName}->getLevel() + 1, Criteria::EQUAL);
 }
 ";
     }
@@ -200,7 +218,7 @@ public function siblingsOf($objectName, ConnectionInterface \$con = null)
 {
     if ({$objectName}->isRoot()) {
         return \$this->
-            add({$this->peerClassName}::LEVEL_COL, '1<>1', Criteria::CUSTOM);
+            add({$this->objectClassName}::LEVEL_COL, '1<>1', Criteria::CUSTOM);
     } else {
         return \$this
             ->childrenOf({$objectName}->getParent(\$con))
@@ -229,8 +247,8 @@ public function ancestorsOf($objectName)
         ->inTree({$objectName}->getScopeValue())";
         }
         $script .= "
-        ->addUsingAlias({$this->peerClassName}::LEFT_COL, {$objectName}->getLeftValue(), Criteria::LESS_THAN)
-        ->addUsingAlias({$this->peerClassName}::RIGHT_COL, {$objectName}->getRightValue(), Criteria::GREATER_THAN);
+        ->addUsingAlias({$this->objectClassName}::LEFT_COL, {$objectName}->getLeftValue(), Criteria::LESS_THAN)
+        ->addUsingAlias({$this->objectClassName}::RIGHT_COL, {$objectName}->getRightValue(), Criteria::GREATER_THAN);
 }
 ";
     }
@@ -255,8 +273,8 @@ public function rootsOf($objectName)
         ->inTree({$objectName}->getScopeValue())";
         }
         $script .= "
-        ->addUsingAlias({$this->peerClassName}::LEFT_COL, {$objectName}->getLeftValue(), Criteria::LESS_EQUAL)
-        ->addUsingAlias({$this->peerClassName}::RIGHT_COL, {$objectName}->getRightValue(), Criteria::GREATER_EQUAL);
+        ->addUsingAlias({$this->objectClassName}::LEFT_COL, {$objectName}->getLeftValue(), Criteria::LESS_EQUAL)
+        ->addUsingAlias({$this->objectClassName}::RIGHT_COL, {$objectName}->getRightValue(), Criteria::GREATER_EQUAL);
 }
 ";
     }
@@ -275,10 +293,10 @@ public function orderByBranch(\$reverse = false)
 {
     if (\$reverse) {
         return \$this
-            ->addDescendingOrderByColumn({$this->peerClassName}::LEFT_COL);
+            ->addDescendingOrderByColumn({$this->objectClassName}::LEFT_COL);
     } else {
         return \$this
-            ->addAscendingOrderByColumn({$this->peerClassName}::LEFT_COL);
+            ->addAscendingOrderByColumn({$this->objectClassName}::LEFT_COL);
     }
 }
 ";
@@ -298,10 +316,10 @@ public function orderByLevel(\$reverse = false)
 {
     if (\$reverse) {
         return \$this
-            ->addAscendingOrderByColumn({$this->peerClassName}::RIGHT_COL);
+            ->addAscendingOrderByColumn({$this->objectClassName}::RIGHT_COL);
     } else {
         return \$this
-            ->addDescendingOrderByColumn({$this->peerClassName}::RIGHT_COL);
+            ->addDescendingOrderByColumn({$this->objectClassName}::RIGHT_COL);
     }
 }
 ";
@@ -327,7 +345,7 @@ public function orderByLevel(\$reverse = false)
 public function findRoot(" . ($useScope ? "\$scope = null, " : "") . "\$con = null)
 {
     return \$this
-        ->addUsingAlias({$this->peerClassName}::LEFT_COL, 1, Criteria::EQUAL)";
+        ->addUsingAlias({$this->objectClassName}::LEFT_COL, 1, Criteria::EQUAL)";
         if ($useScope) {
             $script .= "
         ->inTree(\$scope)";
@@ -386,5 +404,514 @@ public function findTree(" . ($useScope ? "\$scope = null, " : "") . "\$con = nu
         ->find(\$con);
 }
 ";
+    }
+
+    protected function addRetrieveRoots(&$script)
+    {
+        $queryClassName     = $this->queryClassName;
+        $objectClassName   = $this->objectClassName;
+        $tableMapClassName = $this->builder->getTableMapClass();
+
+        $script .= "
+/**
+ * Returns the root nodes for the tree
+ *
+ * @param      ConnectionInterface \$con    Connection to use.
+ * @return     {$this->objectClassName}            Propel object for root node
+ */
+static public function retrieveRoots(Criteria \$criteria = null, ConnectionInterface \$con = null)
+{
+    if (null === \$criteria) {
+        \$criteria = new Criteria($tableMapClassName::DATABASE_NAME);
+    }
+    \$criteria->add($objectClassName::LEFT_COL, 1, Criteria::EQUAL);
+
+    return $queryClassName::create(null, \$criteria)->find(\$con);
+}
+";
+    }
+
+    protected function addRetrieveRoot(&$script)
+    {
+        $queryClassName    = $this->queryClassName;
+        $objectClassName   = $this->objectClassName;
+        $useScope          = $this->behavior->useScope();
+        $tableMapClassName = $this->builder->getTableMapClass();
+
+        $script .= "
+/**
+ * Returns the root node for a given scope
+ *";
+        if ($useScope) {
+            $script .= "
+ * @param      int \$scope        Scope to determine which root node to return";
+        }
+        $script .= "
+ * @param      ConnectionInterface \$con    Connection to use.
+ * @return     {$this->objectClassName}            Propel object for root node
+ */
+static public function retrieveRoot(" . ($useScope ? "\$scope = null, " : "") . "ConnectionInterface \$con = null)
+{
+    \$c = new Criteria($tableMapClassName::DATABASE_NAME);
+    \$c->add($objectClassName::LEFT_COL, 1, Criteria::EQUAL);";
+        if ($useScope) {
+            $script .= "
+    \$c->add($objectClassName::SCOPE_COL, \$scope, Criteria::EQUAL);";
+        }
+        $script .= "
+
+    return $queryClassName::create(null, \$c)->findOne(\$con);
+}
+";
+    }
+
+    protected function addRetrieveTree(&$script)
+    {
+        $queryClassName     = $this->queryClassName;
+        $objectClassName   = $this->objectClassName;
+        $useScope          = $this->behavior->useScope();
+        $tableMapClassName = $this->builder->getTableMapClass();
+
+        $script .= "
+/**
+ * Returns the whole tree node for a given scope
+ *";
+        if ($useScope) {
+            $script .= "
+ * @param      int \$scope        Scope to determine which root node to return";
+        }
+        $script .= "
+ * @param      Criteria \$criteria    Optional Criteria to filter the query
+ * @param      ConnectionInterface \$con    Connection to use.
+ * @return     {$this->objectClassName}            Propel object for root node
+ */
+static public function retrieveTree(" . ($useScope ? "\$scope = null, " : "") . "Criteria \$criteria = null, ConnectionInterface \$con = null)
+{
+    if (null === \$criteria) {
+        \$criteria = new Criteria($tableMapClassName::DATABASE_NAME);
+    }
+    \$criteria->addAscendingOrderByColumn($objectClassName::LEFT_COL);";
+        if ($useScope) {
+            $script .= "
+    \$criteria->add($objectClassName::SCOPE_COL, \$scope, Criteria::EQUAL);";
+        }
+        $script .= "
+
+    return $queryClassName::create(null, \$criteria)->find(\$con);
+}
+";
+    }
+
+    protected function addIsValid(&$script)
+    {
+        $objectClassName = $this->objectClassName;
+
+        $script .= "
+/**
+ * Tests if node is valid
+ *
+ * @param      $objectClassName \$node    Propel object for src node
+ * @return     bool
+ */
+static public function isValid($objectClassName \$node = null)
+{
+    if (is_object(\$node) && \$node->getRightValue() > \$node->getLeftValue()) {
+        return true;
+    } else {
+        return false;
+    }
+}
+";
+    }
+
+    protected function addDeleteTree(&$script)
+    {
+        $objectClassName   = $this->objectClassName;
+        $useScope          = $this->behavior->useScope();
+        $tableMapClassName = $this->builder->getTableMapClass();
+
+        $script .= "
+/**
+ * Delete an entire tree
+ * ";
+        if ($useScope) {
+            $script .= "
+ * @param      int \$scope        Scope to determine which tree to delete";
+        }
+        $script .= "
+ * @param      ConnectionInterface \$con    Connection to use.
+ *
+ * @return     int  The number of deleted nodes
+ */
+static public function deleteTree(" . ($useScope ? "\$scope = null, " : "") . "ConnectionInterface \$con = null)
+{";
+        if ($useScope) {
+            $script .= "
+    \$c = new Criteria($tableMapClassName::DATABASE_NAME);
+    \$c->add($objectClassName::SCOPE_COL, \$scope, Criteria::EQUAL);
+
+    return $tableMapClassName::doDelete(\$c, \$con);";
+        } else {
+            $script .= "
+
+    return $tableMapClassName::doDeleteAll(\$con);";
+        }
+        $script .= "
+}
+";
+    }
+
+    protected function addShiftRLValues(&$script)
+    {
+        $objectClassName   = $this->objectClassName;
+        $useScope          = $this->behavior->useScope();
+        $tableMapClassName = $this->builder->getTableMapClass();
+
+        $this->builder->declareClass('Propel\\Runtime\Map\\TableMap');
+
+        $script .= "
+/**
+ * Adds \$delta to all L and R values that are >= \$first and <= \$last.
+ * '\$delta' can also be negative.
+ *
+ * @param int \$delta               Value to be shifted by, can be negative
+ * @param int \$first               First node to be shifted
+ * @param int \$last                Last node to be shifted (optional)";
+        if ($useScope) {
+            $script .= "
+ * @param int \$scope               Scope to use for the shift";
+        }
+        $script .= "
+ * @param ConnectionInterface \$con Connection to use.
+ */
+static public function shiftRLValues(\$delta, \$first, \$last = null" . ($useScope ? ", \$scope = null" : ""). ", ConnectionInterface \$con = null)
+{
+    if (\$con === null) {
+        \$con = Propel::getServiceContainer()->getWriteConnection($tableMapClassName::DATABASE_NAME);
+    }
+
+    // Shift left column values
+    \$whereCriteria = new Criteria($tableMapClassName::DATABASE_NAME);
+    \$criterion = \$whereCriteria->getNewCriterion($objectClassName::LEFT_COL, \$first, Criteria::GREATER_EQUAL);
+    if (null !== \$last) {
+        \$criterion->addAnd(\$whereCriteria->getNewCriterion($objectClassName::LEFT_COL, \$last, Criteria::LESS_EQUAL));
+    }
+    \$whereCriteria->add(\$criterion);";
+        if ($useScope) {
+            $script .= "
+    \$whereCriteria->add($objectClassName::SCOPE_COL, \$scope, Criteria::EQUAL);";
+        }
+        $script .= "
+
+    \$valuesCriteria = new Criteria($tableMapClassName::DATABASE_NAME);
+    \$valuesCriteria->add($objectClassName::LEFT_COL, array('raw' => $objectClassName::LEFT_COL . ' + ?', 'value' => \$delta), Criteria::CUSTOM_EQUAL);
+
+    \$whereCriteria->doUpdate(\$valuesCriteria, \$con);
+
+    // Shift right column values
+    \$whereCriteria = new Criteria($tableMapClassName::DATABASE_NAME);
+    \$criterion = \$whereCriteria->getNewCriterion($objectClassName::RIGHT_COL, \$first, Criteria::GREATER_EQUAL);
+    if (null !== \$last) {
+        \$criterion->addAnd(\$whereCriteria->getNewCriterion($objectClassName::RIGHT_COL, \$last, Criteria::LESS_EQUAL));
+    }
+    \$whereCriteria->add(\$criterion);";
+        if ($useScope) {
+            $script .= "
+    \$whereCriteria->add($objectClassName::SCOPE_COL, \$scope, Criteria::EQUAL);";
+        }
+        $script .= "
+
+    \$valuesCriteria = new Criteria($tableMapClassName::DATABASE_NAME);
+    \$valuesCriteria->add($objectClassName::RIGHT_COL, array('raw' => $objectClassName::RIGHT_COL . ' + ?', 'value' => \$delta), Criteria::CUSTOM_EQUAL);
+
+    \$whereCriteria->doUpdate(\$valuesCriteria, \$con);
+}
+";
+    }
+
+    protected function addShiftLevel(&$script)
+    {
+        $objectClassName   = $this->objectClassName;
+        $useScope          = $this->behavior->useScope();
+        $tableMapClassName = $this->builder->getTableMapClass();
+
+        $this->builder->declareClass('Propel\\Runtime\Map\\TableMap');
+
+        $script .= "
+/**
+ * Adds \$delta to level for nodes having left value >= \$first and right value <= \$last.
+ * '\$delta' can also be negative.
+ *
+ * @param      int \$delta        Value to be shifted by, can be negative
+ * @param      int \$first        First node to be shifted
+ * @param      int \$last            Last node to be shifted";
+        if ($useScope) {
+            $script .= "
+ * @param      int \$scope        Scope to use for the shift";
+        }
+        $script .= "
+ * @param      ConnectionInterface \$con        Connection to use.
+ */
+static public function shiftLevel(\$delta, \$first, \$last" . ($useScope ? ", \$scope = null" : ""). ", ConnectionInterface \$con = null)
+{
+    if (\$con === null) {
+        \$con = Propel::getServiceContainer()->getWriteConnection($tableMapClassName::DATABASE_NAME);
+    }
+
+    \$whereCriteria = new Criteria($tableMapClassName::DATABASE_NAME);
+    \$whereCriteria->add($objectClassName::LEFT_COL, \$first, Criteria::GREATER_EQUAL);
+    \$whereCriteria->add($objectClassName::RIGHT_COL, \$last, Criteria::LESS_EQUAL);";
+        if ($useScope) {
+            $script .= "
+    \$whereCriteria->add($objectClassName::SCOPE_COL, \$scope, Criteria::EQUAL);";
+        }
+        $script .= "
+
+    \$valuesCriteria = new Criteria($tableMapClassName::DATABASE_NAME);
+    \$valuesCriteria->add($objectClassName::LEVEL_COL, array('raw' => $objectClassName::LEVEL_COL . ' + ?', 'value' => \$delta), Criteria::CUSTOM_EQUAL);
+
+    \$whereCriteria->doUpdate(\$valuesCriteria, \$con);
+}
+";
+    }
+
+    protected function addUpdateLoadedNodes(&$script)
+    {
+        $queryClassName  = $this->queryClassName;
+        $objectClassName = $this->objectClassName;
+        $tableMapClassName = $this->tableMapClassName;
+
+        $script .= "
+/**
+ * Reload all already loaded nodes to sync them with updated db
+ *
+ * @param      $objectClassName \$prune        Object to prune from the update
+ * @param      ConnectionInterface \$con        Connection to use.
+ */
+static public function updateLoadedNodes(\$prune = null, ConnectionInterface \$con = null)
+{
+    if (Propel::isInstancePoolingEnabled()) {
+        \$keys = array();
+        foreach ($tableMapClassName::\$instances as \$obj) {
+            if (!\$prune || !\$prune->equals(\$obj)) {
+                \$keys[] = \$obj->getPrimaryKey();
+            }
+        }
+
+        if (!empty(\$keys)) {
+            // We don't need to alter the object instance pool; we're just modifying these ones
+            // already in the pool.
+            \$criteria = new Criteria($tableMapClassName::DATABASE_NAME);";
+        if (1 === count($this->table->getPrimaryKey())) {
+            $pkey = $this->table->getPrimaryKey();
+            $col = array_shift($pkey);
+            $script .= "
+            \$criteria->add(".$this->builder->getColumnConstant($col).", \$keys, Criteria::IN);";
+        } else {
+            $fields = array();
+            foreach ($this->table->getPrimaryKey() as $k => $col) {
+                $fields[] = $this->builder->getColumnConstant($col);
+            };
+            $script .= "
+
+            // Loop on each instances in pool
+            foreach (\$keys as \$values) {
+              // Create initial Criterion
+                \$cton = \$criteria->getNewCriterion(" . $fields[0] . ", \$values[0]);";
+            unset($fields[0]);
+            foreach ($fields as $k => $col) {
+                $script .= "
+
+                // Create next criterion
+                \$nextcton = \$criteria->getNewCriterion(" . $col . ", \$values[$k]);
+                // And merge it with the first
+                \$cton->addAnd(\$nextcton);";
+            }
+            $script .= "
+
+                // Add final Criterion to Criteria
+                \$criteria->addOr(\$cton);
+            }";
+        }
+
+        $script .= "
+            \$dataFetcher = $queryClassName::create(null, \$criteria)->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find(\$con);
+            while (\$row = \$dataFetcher->fetch()) {
+                \$key = $tableMapClassName::getPrimaryKeyHashFromRow(\$row, 0);
+                if (null !== (\$object = $tableMapClassName::getInstanceFromPool(\$key))) {";
+        $n = 0;
+        foreach ($this->table->getColumns() as $col) {
+            if ($col->isLazyLoad()) {
+                continue;
+            }
+            if ($col->getPhpName() == $this->getColumnPhpName('left_column')) {
+                $script .= "
+                    \$object->setLeftValue(\$row[$n]);";
+            } elseif ($col->getPhpName() == $this->getColumnPhpName('right_column')) {
+                $script .= "
+                    \$object->setRightValue(\$row[$n]);";
+            } elseif ($this->getParameter('use_scope') == 'true' && $col->getPhpName() == $this->getColumnPhpName('scope_column')) {
+                $script .= "
+                    \$object->setScopeValue(\$row[$n]);";
+            } elseif ($col->getPhpName() == $this->getColumnPhpName('level_column')) {
+                $script .= "
+                    \$object->setLevel(\$row[$n]);
+                    \$object->clearNestedSetChildren();";
+            }
+            $n++;
+        }
+        $script .= "
+                }
+            }
+            \$dataFetcher->close();
+        }
+    }
+}
+";
+    }
+
+    protected function addMakeRoomForLeaf(&$script)
+    {
+        $queryClassName = $this->queryClassName;
+        $useScope       = $this->behavior->useScope();
+
+        $script .= "
+/**
+ * Update the tree to allow insertion of a leaf at the specified position
+ *
+ * @param      int \$left    left column value";
+        if ($useScope) {
+            $script .= "
+ * @param      integer \$scope    scope column value";
+        }
+        $script .= "
+ * @param      mixed \$prune    Object to prune from the shift
+ * @param      ConnectionInterface \$con    Connection to use.
+ */
+static public function makeRoomForLeaf(\$left" . ($useScope ? ", \$scope" : ""). ", \$prune = null, ConnectionInterface \$con = null)
+{
+    // Update database nodes
+    $queryClassName::shiftRLValues(2, \$left, null" . ($useScope ? ", \$scope" : "") . ", \$con);
+
+    // Update all loaded nodes
+    $queryClassName::updateLoadedNodes(\$prune, \$con);
+}
+";
+    }
+
+    protected function addFixLevels(&$script)
+    {
+        $objectClassName   = $this->objectClassName;
+        $queryClassName    = $this->queryClassName;
+        $tableMapClassName = $this->tableMapClassName;
+        $useScope          = $this->behavior->useScope();
+
+        $script .= "
+/**
+ * Update the tree to allow insertion of a leaf at the specified position
+ *";
+        if ($useScope) {
+            $script .= "
+ * @param      integer \$scope    scope column value";
+        }
+        $script .= "
+ * @param      ConnectionInterface \$con    Connection to use.
+ */
+static public function fixLevels(" . ($useScope ? "\$scope, " : ""). "ConnectionInterface \$con = null)
+{
+    \$c = new Criteria();";
+        if ($useScope) {
+            $script .= "
+    \$c->add($objectClassName::SCOPE_COL, \$scope, Criteria::EQUAL);";
+        }
+        $script .= "
+    \$c->addAscendingOrderByColumn($objectClassName::LEFT_COL);
+    \$dataFetcher = $queryClassName::create(null, \$c)->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find(\$con);
+    ";
+        if (!$this->table->getChildrenColumn()) {
+            $script .= "
+    // set the class once to avoid overhead in the loop
+    \$cls = $tableMapClassName::getOMClass(false);";
+        }
+
+        $script .= "
+    \$level = null;
+    // iterate over the statement
+    while (\$row = \$dataFetcher->fetch()) {
+
+        // hydrate object
+        \$key = $tableMapClassName::getPrimaryKeyHashFromRow(\$row, 0);
+        if (null === (\$obj = $tableMapClassName::getInstanceFromPool(\$key))) {";
+        if ($this->table->getChildrenColumn()) {
+            $script .= "
+            // class must be set each time from the record row
+            \$cls = $tableMapClassName::getOMClass(\$row, 0);
+            \$cls = substr('.'.\$cls, strrpos('.'.\$cls, '.') + 1);
+            " . $this->builder->buildObjectInstanceCreationCode('$obj', '$cls') . "
+            \$obj->hydrate(\$row);
+            $tableMapClassName::addInstanceToPool(\$obj, \$key);";
+        } else {
+            $script .= "
+            " . $this->builder->buildObjectInstanceCreationCode('$obj', '$cls') . "
+            \$obj->hydrate(\$row);
+            $tableMapClassName::addInstanceToPool(\$obj, \$key);";
+        }
+        $script .= "
+        }
+
+        // compute level
+        // Algorithm shamelessly stolen from sfPropelActAsNestedSetBehaviorPlugin
+        // Probably authored by Tristan Rivoallan
+        if (\$level === null) {
+            \$level = 0;
+            \$i = 0;
+            \$prev = array(\$obj->getRightValue());
+        } else {
+            while (\$obj->getRightValue() > \$prev[\$i]) {
+                \$i--;
+            }
+            \$level = ++\$i;
+            \$prev[\$i] = \$obj->getRightValue();
+        }
+
+        // update level in node if necessary
+        if (\$obj->getLevel() !== \$level) {
+            \$obj->setLevel(\$level);
+            \$obj->save(\$con);
+        }
+    }
+    \$dataFetcher->close();
+}
+";
+    }
+
+    protected function addSetNegativeScope(&$script)
+    {
+        $objectClassName   = $this->objectClassName;
+        $tableMapClassName = $this->tableMapClassName;
+        $script .= "
+/**
+ * Updates all scope values for items that has negative left (<=0) values.
+ *
+ * @param      mixed     \$scope
+ * @param      ConnectionInterface \$con  Connection to use.
+ */
+public static function setNegativeScope(\$scope, ConnectionInterface \$con = null)
+{
+    //adjust scope value to \$scope
+    \$whereCriteria = new Criteria($tableMapClassName::DATABASE_NAME);
+    \$whereCriteria->add($objectClassName::LEFT_COL, 0, Criteria::LESS_EQUAL);
+
+    \$valuesCriteria = new Criteria($tableMapClassName::DATABASE_NAME);
+    \$valuesCriteria->add($objectClassName::SCOPE_COL, \$scope, Criteria::EQUAL);
+
+    \$whereCriteria->doUpdate(\$valuesCriteria, \$con);
+}
+";
+    }
+
+    protected function getColumnPhpName($columnName)
+    {
+        return $this->behavior->getColumnForParameter($columnName)->getPhpName();
     }
 }

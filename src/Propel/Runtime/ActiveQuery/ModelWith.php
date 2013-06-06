@@ -20,15 +20,26 @@ use Propel\Runtime\Map\RelationMap;
  */
 class ModelWith
 {
-    protected $modelName = '';
-    protected $modelPeerName = '';
+    protected $modelName;
+
+    protected $getTableMap;
+
     protected $isSingleTableInheritance = false;
+
     protected $isAdd = false;
+
     protected $isWithOneToMany = false;
-    protected $relationName = '';
-    protected $relationMethod = '';
-    protected $initMethod = '';
+
+    protected $relationName;
+
+    protected $relationMethod;
+
+    protected $initMethod;
+
+    protected $resetPartialMethod = '';
+
     protected $leftPhpName;
+
     protected $rightPhpName;
 
     public function __construct(ModelJoin $join = null)
@@ -48,7 +59,7 @@ class ModelWith
     {
         $tableMap = $join->getTableMap();
         $this->setModelName($tableMap->getClassName());
-        $this->setModelPeerName($tableMap->getPeerClassName());
+        $this->getTableMap = $tableMap;
         $this->isSingleTableInheritance = $tableMap->isSingleTableInheritance();
         $relation = $join->getRelationMap();
         $relationName = $relation->getName();
@@ -57,6 +68,7 @@ class ModelWith
             $this->relationName = $relation->getPluralName();
             $this->relationMethod = 'add' . $relationName;
             $this->initMethod = 'init' . $this->relationName;
+            $this->resetPartialMethod = 'resetPartial' . $this->relationName;
         } else {
             $this->relationName = $relationName;
             $this->relationMethod = 'set' . $relationName;
@@ -78,19 +90,14 @@ class ModelWith
         }
     }
 
+    public function getTableMap()
+    {
+        return $this->getTableMap;
+    }
+
     public function getModelName()
     {
         return $this->modelName;
-    }
-
-    public function setModelPeerName($modelPeerName)
-    {
-        $this->modelPeerName = $modelPeerName;
-    }
-
-    public function getModelPeerName()
-    {
-        return $this->modelPeerName;
     }
 
     public function setIsSingleTableInheritance($isSingleTableInheritance)
@@ -151,6 +158,16 @@ class ModelWith
     public function getInitMethod()
     {
         return $this->initMethod;
+    }
+
+    public function setResetPartialMethod($resetPartialMethod)
+    {
+        $this->resetPartialMethod = $resetPartialMethod;
+    }
+
+    public function getResetPartialMethod()
+    {
+        return $this->resetPartialMethod;
     }
 
     public function setLeftPhpName($leftPhpName)

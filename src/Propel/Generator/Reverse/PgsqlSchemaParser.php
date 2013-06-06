@@ -474,7 +474,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
 
         while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
             $name = $row['idxname'];
-            $unique = ('t' === $row['indisunique'] ? true : false);
+            $unique = (in_array($row['indisunique'], ['t', true, 1, '1']) ? true : false);
             if (!isset($indexes[$name])) {
                 if ($unique) {
                     $indexes[$name] = new Unique($name);

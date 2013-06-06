@@ -18,7 +18,10 @@ use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\ConnectionManagerInterface;
 use Propel\Runtime\Connection\ConnectionManagerSingle;
 use Propel\Runtime\Map\DatabaseMap;
+use Propel\Runtime\Propel;
 use Monolog\Logger;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
 class StandardServiceContainer implements ServiceContainerInterface
 {
@@ -68,7 +71,7 @@ class StandardServiceContainer implements ServiceContainerInterface
     protected $profiler;
 
     /**
-     * @var array[\Monolog\Logger] list of loggers
+     * @var array[LoggerInterface] list of loggers
      */
     protected $loggers = array();
 
@@ -126,7 +129,7 @@ class StandardServiceContainer implements ServiceContainerInterface
     /**
      * Reset existing adapters classes and set new classes for all datasources.
      *
-     * @param array $adapters A list of adapters
+     * @param array $adapterClasses A list of adapters
      */
     public function setAdapterClasses($adapterClasses)
     {
@@ -141,7 +144,9 @@ class StandardServiceContainer implements ServiceContainerInterface
      *
      * @param string $name The datasource name
      *
-     * @return Propel\Runtime\Adapter\AdapterInterface
+     * @return AdapterInterface
+     *
+     * @throws AdapterException
      */
     public function getAdapter($name = null)
     {
@@ -181,6 +186,27 @@ class StandardServiceContainer implements ServiceContainerInterface
         $this->adapters = array();
         foreach ($adapters as $name => $adapter) {
             $this->setAdapter($name, $adapter);
+        }
+    }
+
+    /**
+     * check whether the given propel generator version has the same version as
+     * the propel runtime.
+     *
+     * @param string $generatorVersion
+     */
+    public function checkVersion ($generatorVersion)
+    {
+        if ($generatorVersion != Propel::VERSION) {
+            $warning  = "Version mismatch: The generated model was build using propel '" . $generatorVersion;
+            $warning .= " while the current runtime is at version '" . Propel::VERSION . "'";
+
+            $logger = $this->getLogger();
+            if ($logger) {
+                $logger->warning($warning);
+            } else {
+                trigger_error($warning, E_USER_WARNING);
+            }
         }
     }
 
@@ -331,7 +357,7 @@ class StandardServiceContainer implements ServiceContainerInterface
     }
 
     /**
-     * Shortcut to define a single connectino for a datasource.
+     * Shortcut to define a single connection for a datasource.
      *
      * @param string $name The datasource name
      * @param \Propel\Runtime\Connection\ConnectionInterface A database connection
@@ -401,17 +427,9 @@ class StandardServiceContainer implements ServiceContainerInterface
     }
 
     /**
-     * @return boolean
-     */
-    public function hasLogger($name = 'defaultLogger')
-    {
-        return null !== $this->getLogger($name);
-    }
-
-    /**
      * Get a logger instance
      *
-     * @return \Monolog\Logger
+     * @return LoggerInterface
      */
     public function getLogger($name = 'defaultLogger')
     {
@@ -424,9 +442,9 @@ class StandardServiceContainer implements ServiceContainerInterface
 
     /**
      * @param string          $name   the name of the logger to be set
-     * @param \Monolog\Logger $logger A logger instance
+     * @param LoggerInterface $logger A logger instance
      */
-    public function setLogger($name, Logger $logger)
+    public function setLogger($name, LoggerInterface $logger)
     {
         $this->loggers[$name] = $logger;
     }
@@ -434,23 +452,40 @@ class StandardServiceContainer implements ServiceContainerInterface
     protected function buildLogger($name = 'defaultLogger')
     {
         if (!isset($this->loggerConfigurations[$name])) {
-            return 'defaultLogger' !== $name ? $this->getLogger() : null;
+            return 'defaultLogger' !== $name ? $this->getLogger() : new NullLogger();
         }
 
-        $logger = new Logger($name);
+        $logger        = new Logger($name);
         $configuration = $this->loggerConfigurations[$name];
         switch ($configuration['type']) {
             case 'stream':
-                $handler = new \Monolog\Handler\StreamHandler($configuration['path'], isset($configuration['level']) ? $configuration['level'] : null, isset($configuration['bubble']) ? $configuration['bubble'] : null);
+                $handler = new \Monolog\Handler\StreamHandler(
+                    $configuration['path'],
+                    isset($configuration['level']) ? $configuration['level'] : null,
+                    isset($configuration['bubble']) ? $configuration['bubble'] : null
+                );
                 break;
             case 'rotating_file':
-                $handler = new \Monolog\Handler\RotatingFileHandler($configuration['path'], isset($configuration['max_files']) ? $configuration['max_files'] : null, isset($configuration['level']) ? $configuration['level'] : null, isset($configuration['bubble']) ? $configuration['bubble'] : null);
+                $handler = new \Monolog\Handler\RotatingFileHandler(
+                    $configuration['path'],
+                    isset($configuration['max_files']) ? $configuration['max_files'] : null,
+                    isset($configuration['level']) ? $configuration['level'] : null,
+                    isset($configuration['bubble']) ? $configuration['bubble'] : null
+                );
                 break;
             case 'syslog':
-                $handler = new \Monolog\Handler\SyslogHandler($configuration['ident'], isset($configuration['facility']) ? $configuration['facility'] : null, isset($configuration['level']) ? $configuration['level'] : null, isset($configuration['bubble']) ? $configuration['bubble'] : null);
+                $handler = new \Monolog\Handler\SyslogHandler(
+                    $configuration['ident'],
+                    isset($configuration['facility']) ? $configuration['facility'] : null,
+                    isset($configuration['level']) ? $configuration['level'] : null,
+                    isset($configuration['bubble']) ? $configuration['bubble'] : null
+                );
                 break;
             default:
-                throw new UnexpectedValueException(sprintf('Handler type "%s" not supported by StandardServiceContainer. Try setting the Logger manually, or use another ServiceContainer.', $configuration['type']));
+                throw new UnexpectedValueException(sprintf(
+                    'Handler type "%s" not supported by StandardServiceContainer. Try setting the Logger manually, or use another ServiceContainer.',
+                    $configuration['type']
+                ));
                 break;
         }
         $logger->pushHandler($handler);

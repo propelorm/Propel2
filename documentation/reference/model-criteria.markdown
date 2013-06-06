@@ -332,7 +332,7 @@ $books = BookQuery::create()
 <?php
 // All the termination methods accept a Connection object
 // So you can specify which connection to use
-$con = Propel::getReadConnection(BookPeer::DATABASE_NAME);
+$con = Propel::getReadConnection(BookTableMap::DATABASE_NAME);
 $nbBooks = BookQuery::create()
   ->findOne($con);
 {% endhighlight %}
@@ -866,7 +866,7 @@ $authors = AuthorQuery::create()
   ->find();
 {% endhighlight %}
 
-This is excatly whath the generated `useBookQuery()` does, except that you have more control over the join type and alias when you use the relational API. Behind the scene, `useQuery('Book')` creates a `BookQuery` instance and returns it. So the `recent()` call is actually called on `BookQuery`, not on `ArticleQuery`. Upon calling `endUse()`, the `BookQuery` merges into the original `ArticleQuery` and returns it. So the final `find()` is indeed called on the `AuthorQuery` instance.
+This is exactly what the generated `useBookQuery()` does, except that you have more control over the join type and alias when you use the relational API. Behind the scene, `useQuery('Book')` creates a `BookQuery` instance and returns it. So the `recent()` call is actually called on `BookQuery`, not on `ArticleQuery`. Upon calling `endUse()`, the `BookQuery` merges into the original `ArticleQuery` and returns it. So the final `find()` is indeed called on the `AuthorQuery` instance.
 
 You can nest queries in as many levels as you like, in order to avoid the repetition of code in your model.
 
@@ -940,7 +940,7 @@ $books = $query
   ->find();
 {% endhighlight %}
 
-The `ModelCriteria` class offers a neat way to keep your code to a minimum in such occasions. It provides `_if()` and `_endif()` methods allowing for inline conditions. Using thses methods, the previous query can be written as follows:
+The `ModelCriteria` class offers a neat way to keep your code to a minimum in such occasions. It provides `_if()` and `_endif()` methods allowing for inline conditions. Using theses methods, the previous query can be written as follows:
 
 {% highlight php %}
 <?php
@@ -1246,7 +1246,7 @@ $q = new frontendBookQuery();
 $books = $q->find();
 {% endhighlight %}
 
->**Tip**<br />Due to late static binding issues in PHP 5.2, you cannot use the `create()` factory on an inherited query - unless you override it yoursel in the descendant class. Alternatively, Propel offers a global query factory named `PropelQuery`:
+>**Tip**<br />Due to late static binding issues in PHP 5.2, you cannot use the `create()` factory on an inherited query - unless you override it yourself in the descendant class. Alternatively, Propel offers a global query factory named `PropelQuery`:
 
 {% highlight php %}
 <?php

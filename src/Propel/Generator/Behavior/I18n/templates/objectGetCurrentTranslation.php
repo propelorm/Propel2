@@ -4,7 +4,7 @@
  *
  * @param     ConnectionInterface $con an optional connection object
  *
- * @return <?php echo $i18nTablePhpName ?>
+ * @return <?= $i18nTablePhpName ?>
  */
 public function getCurrentTranslation(ConnectionInterface $con = null)
 {

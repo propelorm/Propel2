@@ -20,6 +20,13 @@ use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
  */
 class ObjectBehaviorTest extends BookstoreTestBase
 {
+    public static function setUpBeforeClass()
+    {
+        //prevent issue with wrong DSN
+        self::$isInitialized = false;
+        parent::setUpBeforeClass();
+    }
+
     public function testObjectAttributes()
     {
         $t = new Table3();

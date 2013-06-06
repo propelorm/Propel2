@@ -34,7 +34,7 @@ class I18nConcreteInheritanceHandleValidateBehaviorTest extends BookstoreTestBas
         $class = 'Propel\Tests\Bookstore\Behavior\ValidateTriggerBook';
         $this->checkClassHasValidateBehavior($class);
 
-        $classMetadata = $this->metadataFactory->getClassMetadata($class);
+        $classMetadata = $this->metadataFactory->getMetadataFor($class);
         $this->assertCount(1, $classMetadata->getConstrainedProperties());
         $this->assertTrue(in_array('isbn', $classMetadata->getConstrainedProperties(), true));
 
@@ -49,7 +49,7 @@ class I18nConcreteInheritanceHandleValidateBehaviorTest extends BookstoreTestBas
         $i18nClass = 'Propel\Tests\Bookstore\Behavior\ValidateTriggerBookI18n';
         $this->checkClassHasValidateBehavior($i18nClass);
 
-        $i18nClassMetadata = $this->metadataFactory->getClassMetadata($i18nClass);
+        $i18nClassMetadata = $this->metadataFactory->getMetadataFor($i18nClass);
         $this->assertCount(1, $i18nClassMetadata->getConstrainedProperties());
         $this->assertTrue(in_array('title', $i18nClassMetadata->getConstrainedProperties(), true));
 
@@ -68,7 +68,7 @@ class I18nConcreteInheritanceHandleValidateBehaviorTest extends BookstoreTestBas
 
         $this->checkClassHasValidateBehavior($fiction);
 
-        $fictionMetadata = $this->metadataFactory->getClassMetadata($fiction);
+        $fictionMetadata = $this->metadataFactory->getMetadataFor($fiction);
         $this->assertCount(1, $fictionMetadata->getConstrainedProperties());
         $this->assertTrue(in_array('isbn', $fictionMetadata->getConstrainedProperties(), true));
 
@@ -87,7 +87,7 @@ class I18nConcreteInheritanceHandleValidateBehaviorTest extends BookstoreTestBas
 
         $this->checkClassHasValidateBehavior($comic);
 
-        $comicMetadata = $this->metadataFactory->getClassMetadata($comic);
+        $comicMetadata = $this->metadataFactory->getMetadataFor($comic);
         $this->assertCount(2, $comicMetadata->getConstrainedProperties());
         $this->assertTrue(in_array('isbn', $comicMetadata->getConstrainedProperties(), true));
         $this->assertTrue(in_array('bar', $comicMetadata->getConstrainedProperties(), true));
@@ -118,7 +118,7 @@ class I18nConcreteInheritanceHandleValidateBehaviorTest extends BookstoreTestBas
         foreach ($classes as $class) {
             $this->checkClassHasValidateBehavior('Propel\Tests\Bookstore\Behavior\\'.$class);
 
-            $classMetadata = $this->metadataFactory->getClassMetadata('Propel\Tests\Bookstore\Behavior\\'.$class);
+            $classMetadata = $this->metadataFactory->getMetadataFor('Propel\Tests\Bookstore\Behavior\\'.$class);
             $this->assertCount(1, $classMetadata->getConstrainedProperties());
             $this->assertTrue(in_array('title', $classMetadata->getConstrainedProperties(), true));
 

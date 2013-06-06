@@ -12,6 +12,8 @@ namespace Propel\Generator\Manager;
 
 use Propel\Generator\Exception\InvalidArgumentException;
 use Propel\Generator\Util\SqlParser;
+use Propel\Runtime\Adapter\AdapterFactory;
+use Propel\Runtime\Connection\ConnectionFactory;
 
 /**
  * Service class for managing SQL.
@@ -164,18 +166,18 @@ class SqlManager extends AbstractManager
                 continue;
             }
 
-            $pdo = $this->getPdoConnection($database);
-            $pdo->beginTransaction();
+            $con = $this->getConnectionInstance($database);
+            $con->beginTransaction();
 
             try {
                 foreach ($sqls as $sql) {
-                    $stmt = $pdo->prepare($sql);
+                    $stmt = $con->prepare($sql);
                     $stmt->execute();
                 }
 
-                $pdo->commit();
+                $con->commit();
             } catch (\PDOException $e) {
-                $pdo->rollback();
+                $con->rollback();
                 throw $e;
             }
         }
@@ -184,22 +186,22 @@ class SqlManager extends AbstractManager
     }
 
     /**
-     * Returns a PDO connection for a given datasource.
+     * Returns a ConnectionInterface instance for a given datasource.
      *
-     * @return PDO
+     * @return ConnectionInterface
      */
-    protected function getPdoConnection($datasource)
+    protected function getConnectionInstance($datasource)
     {
         $buildConnection = $this->getConnection($datasource);
+
         $dsn = str_replace("@DB@", $datasource, $buildConnection['dsn']);
 
         // Set user + password to null if they are empty strings or missing
         $username = isset($buildConnection['user']) && $buildConnection['user'] ? $buildConnection['user'] : null;
         $password = isset($buildConnection['password']) && $buildConnection['password'] ? $buildConnection['password'] : null;
 
-        $pdo = new \PDO($dsn, $username, $password);
-        $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+        $con = ConnectionFactory::create(array('dsn' => $dsn, 'user' => $username, 'password' => $password), AdapterFactory::create($buildConnection['adapter']));
 
-        return $pdo;
+        return $con;
     }
 }

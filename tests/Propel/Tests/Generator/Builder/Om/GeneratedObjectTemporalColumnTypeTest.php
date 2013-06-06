@@ -100,7 +100,7 @@ EOF;
         $r = new \ComplexColumnTypeEntity5();
         $r->setBar1(new \DateTime('1999-12-20'));
         $r->save();
-        \ComplexColumnTypeEntity5Peer::clearInstancePool();
+        \Map\ComplexColumnTypeEntity5TableMap::clearInstancePool();
         $r1 = \ComplexColumnTypeEntity5Query::create()->findPk($r->getId());
         $this->assertEquals('1999-12-20', $r1->getBar1(null)->format('Y-m-d'));
     }
@@ -110,7 +110,7 @@ EOF;
         $r = new \ComplexColumnTypeEntity5();
         $r->setBar2(strtotime('12:55'));
         $r->save();
-        \ComplexColumnTypeEntity5Peer::clearInstancePool();
+        \Map\ComplexColumnTypeEntity5TableMap::clearInstancePool();
         $r1 = \ComplexColumnTypeEntity5Query::create()->findPk($r->getId());
         $this->assertEquals('12:55', $r1->getBar2(null)->format('H:i'));
     }
@@ -120,7 +120,7 @@ EOF;
         $r = new \ComplexColumnTypeEntity5();
         $r->setBar3(new \DateTime('1999-12-20 12:55'));
         $r->save();
-        \ComplexColumnTypeEntity5Peer::clearInstancePool();
+        \Map\ComplexColumnTypeEntity5TableMap::clearInstancePool();
         $r1 = \ComplexColumnTypeEntity5Query::create()->findPk($r->getId());
         $this->assertEquals('1999-12-20 12:55', $r1->getBar3(null)->format('Y-m-d H:i'));
     }

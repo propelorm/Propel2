@@ -10,12 +10,11 @@
 
 namespace Propel\Runtime;
 
-use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\PropelException;
-use Propel\Runtime\Map\DatabaseMap;
 use Propel\Runtime\ServiceContainer\ServiceContainerInterface;
 use Propel\Runtime\ServiceContainer\StandardServiceContainer;
+use Psr\Log\LoggerInterface;
 
 /**
  * Propel's main resource pool and initialization & configuration class.
@@ -95,7 +94,7 @@ class Propel
     private static $isInstancePoolingEnabled = true;
 
     /**
-     * Configure Propel a PHP (array) config file.
+     * Configure Propel using the given config file.
      *
      * @param string $configFile Path (absolute or relative to include_path) to config file.
      * @deprecated Why don't you just include the configuration file?
@@ -104,6 +103,7 @@ class Propel
     {
         $serviceContainer = self::getServiceContainer();
         $serviceContainer->closeConnections();
+
         include $configFile;
     }
 
@@ -146,7 +146,7 @@ class Propel
      *
      * @param string $name The datasource name
      *
-     * @return Propel\Runtime\Adapter\AdapterInterface
+     * @return AdapterInterface
      */
     public static function getAdapter($name = null)
     {
@@ -250,19 +250,9 @@ class Propel
     }
 
     /**
-     * Returns true if a logger has been configured, otherwise false.
-     *
-     * @return boolean True if Propel uses logging
-     */
-    public static function hasLogger()
-    {
-        return self::$serviceContainer->hasLogger();
-    }
-
-    /**
      * Get the configured logger.
      *
-     * @return \Monolog\Logger Configured log class
+     * @return LoggerInterface Configured log class
      */
     public static function getLogger()
     {
@@ -274,34 +264,33 @@ class Propel
      * If a logger has been configured, the logger will be used, otherwise the
      * logging message will be discarded without any further action
      *
-     * @param      string The message that will be logged.
-     * @param      string The logging level.
+     * @param string $message The message that will be logged.
+     * @param int    $level   The logging level.
      *
      * @return boolean True if the message was logged successfully or no logger was used.
      */
     public static function log($message, $level = self::LOG_DEBUG)
     {
-        if (self::$serviceContainer->hasLogger()) {
-            $logger = self::$serviceContainer->getLogger();
-            switch ($level) {
-                case self::LOG_EMERG:
-                case self::LOG_ALERT:
-                    return $logger->addAlert($message);
-                case self::LOG_CRIT:
-                    return $logger->addCritical($message);
-                case self::LOG_ERR:
-                    return $logger->addError($message);
-                case self::LOG_WARNING:
-                    return $logger->addWarning($message);
-                case self::LOG_NOTICE:
-                case self::LOG_INFO:
-                    return $logger->addInfo($message);
-                default:
-                    return $logger->addDebug($message);
-            }
-        }
+        $logger = self::$serviceContainer->getLogger();
 
-        return true;
+        switch ($level) {
+            case self::LOG_EMERG:
+                return $logger->emergency($message);
+            case self::LOG_ALERT:
+                return $logger->alert($message);
+            case self::LOG_CRIT:
+                return $logger->critical($message);
+            case self::LOG_ERR:
+                return $logger->error($message);
+            case self::LOG_WARNING:
+                return $logger->warning($message);
+            case self::LOG_NOTICE:
+                return $logger->notice($message);
+            case self::LOG_INFO:
+                return $logger->info($message);
+            default:
+                return $logger->debug($message);
+        }
     }
 
     /**

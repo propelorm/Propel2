@@ -16,14 +16,13 @@ use Propel\Generator\Builder\DataModelBuilder;
 use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Exception\RuntimeException;
 use Propel\Generator\Model\Table;
+use \Propel\Runtime\Connection\ConnectionInterface;
 
 class QuickGeneratorConfig implements GeneratorConfigInterface
 {
     protected $builders = array(
-        'peer'                  => '\Propel\Generator\Builder\Om\PeerBuilder',
         'object'                => '\Propel\Generator\Builder\Om\ObjectBuilder',
         'objectstub'            => '\Propel\Generator\Builder\Om\ExtensionObjectBuilder',
-        'peerstub'              => '\Propel\Generator\Builder\Om\ExtensionPeerBuilder',
         'objectmultiextend'     => '\Propel\Generator\Builder\Om\MultiExtendObjectBuilder',
         'tablemap'              => '\Propel\Generator\Builder\Om\TableMapBuilder',
         'query'                 => '\Propel\Generator\Builder\Om\QueryBuilder',
@@ -151,7 +150,7 @@ class QuickGeneratorConfig implements GeneratorConfigInterface
     /**
      * {@inheritdoc}
      */
-    public function getConfiguredPlatform(\PDO $con = null, $database = null)
+    public function getConfiguredPlatform(ConnectionInterface $con = null, $database = null)
     {
         return null;
     }

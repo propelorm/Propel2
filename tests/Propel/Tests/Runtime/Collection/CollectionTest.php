@@ -12,8 +12,7 @@ namespace Propel\Tests\Runtime\collection;
 
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 use Propel\Tests\Bookstore\Book;
-use Propel\Tests\Bookstore\BookPeer;
-
+use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\Collection\Collection;
 
@@ -321,27 +320,11 @@ class CollectionTest extends BookstoreTestBase
         $this->assertEquals('bar2', $col->getInternalIterator()->current(), 'getInternalIterator() returns always the same iterator');
     }
 
-    public function testGetPeerClass()
-    {
-        $col = new Collection();
-        $col->setModel('\Propel\Tests\Bookstore\Book');
-        $this->assertEquals('\Propel\Tests\Bookstore\BookPeer', $col->getPeerClass(), 'getPeerClass() returns the Peer class for the collection model');
-    }
-
-    /**
-     * @expectedException \Propel\Runtime\Collection\Exception\ModelNotFoundException
-     */
-    public function testGetPeerClassNoModel()
-    {
-        $col = new Collection();
-        $col->getPeerClass();
-    }
-
     public function testGetWriteConnection()
     {
         $col = new Collection();
         $col->setModel('\Propel\Tests\Bookstore\Book');
-        $con = Propel::getServiceContainer()->getWriteConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getWriteConnection(BookTableMap::DATABASE_NAME);
         $this->assertEquals($con, $col->getWriteConnection(), 'getWriteConnection() returns a write connection for the collection model');
     }
 

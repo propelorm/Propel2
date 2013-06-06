@@ -103,7 +103,7 @@ EOF;
         $e = new \ComplexColumnTypeEntity3();
         $e->setBar('baz');
         $e->save();
-        \ComplexColumnTypeEntity3Peer::clearInstancePool();
+        \Map\ComplexColumnTypeEntity3TableMap::clearInstancePool();
         $e = \ComplexColumnTypeEntity3Query::create()->findOne();
         $this->assertEquals('baz', $e->getBar());
     }
@@ -138,7 +138,7 @@ EOF;
         $e->setBar('baz');
         $e->save();
         // force hydration
-        \ComplexColumnTypeEntity3Peer::clearInstancePool();
+        \Map\ComplexColumnTypeEntity3TableMap::clearInstancePool();
         $e = \ComplexColumnTypeEntity3Query::create()->findPk($e->getPrimaryKey());
         $e->setBar('baz');
         $this->assertFalse($e->isModified());

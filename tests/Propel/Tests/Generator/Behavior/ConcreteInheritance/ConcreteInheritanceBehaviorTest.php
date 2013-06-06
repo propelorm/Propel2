@@ -14,15 +14,15 @@ use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
 use Propel\Tests\Bookstore\Behavior\ConcreteArticle;
 use Propel\Tests\Bookstore\Behavior\ConcreteArticleQuery;
-use Propel\Tests\Bookstore\Behavior\ConcreteArticlePeer;
-use Propel\Tests\Bookstore\Behavior\ConcreteAuthorPeer;
+use Propel\Tests\Bookstore\Behavior\Map\ConcreteArticleTableMap;
+use Propel\Tests\Bookstore\Behavior\Map\ConcreteAuthorTableMap;
 use Propel\Tests\Bookstore\Behavior\ConcreteCategory;
 use Propel\Tests\Bookstore\Behavior\ConcreteCategoryQuery;
 use Propel\Tests\Bookstore\Behavior\ConcreteContent;
 use Propel\Tests\Bookstore\Behavior\ConcreteContentQuery;
-use Propel\Tests\Bookstore\Behavior\ConcreteContentPeer;
+use Propel\Tests\Bookstore\Behavior\Map\ConcreteContentTableMap;
 use Propel\Tests\Bookstore\Behavior\ConcreteQuizz;
-use Propel\Tests\Bookstore\Behavior\ConcreteQuizzPeer;
+use Propel\Tests\Bookstore\Behavior\Map\ConcreteQuizzTableMap;
 use Propel\Tests\Bookstore\Behavior\ConcreteQuizzQuery;
 
 use Propel\Runtime\Exception\PropelException;
@@ -35,7 +35,6 @@ use Propel\Generator\Util\QuickBuilder;
  * Tests for ConcreteInheritanceBehavior class
  *
  * @author François Zaniontto
- * @version   $Revision$
  */
 class ConcreteInheritanceBehaviorTest extends BookstoreTestBase
 {
@@ -70,7 +69,7 @@ EOF;
 
     public function testParentBehavior()
     {
-        $behaviors = ConcreteContentPeer::getTableMap()->getBehaviors();
+        $behaviors = ConcreteContentTableMap::getTableMap()->getBehaviors();
         $this->assertTrue(array_key_exists('concrete_inheritance_parent', $behaviors), 'modifyTable() gives the parent table the concrete_inheritance_parent behavior');
         $this->assertEquals('descendant_class', $behaviors['concrete_inheritance_parent']['descendant_column'], 'modifyTable() passed the descendant_column parameter to the parent behavior');
     }
@@ -78,28 +77,28 @@ EOF;
     public function testModifyTableAddsParentColumn()
     {
         $contentColumns = array('id', 'title', 'category_id');
-        $article = ConcreteArticlePeer::getTableMap();
+        $article = ConcreteArticleTableMap::getTableMap();
         foreach ($contentColumns as $column) {
             $this->assertTrue($article->hasColumn($column), 'modifyTable() adds the columns of the parent table');
         }
-        $quizz = ConcreteQuizzPeer::getTableMap();
+        $quizz = ConcreteQuizzTableMap::getTableMap();
         $this->assertEquals(3, count($quizz->getColumns()), 'modifyTable() does not add a column of the parent table if a similar column exists');
     }
 
     public function testModifyTableCopyDataAddsOneToOneRelationships()
     {
-        $article = ConcreteArticlePeer::getTableMap();
+        $article = ConcreteArticleTableMap::getTableMap();
         $this->assertTrue($article->hasRelation('ConcreteContent'), 'modifyTable() adds a relationship to the parent');
         $relation = $article->getRelation('ConcreteContent');
         $this->assertEquals(RelationMap::MANY_TO_ONE, $relation->getType(), 'modifyTable adds a one-to-one relationship');
-        $content = ConcreteContentPeer::getTableMap();
+        $content = ConcreteContentTableMap::getTableMap();
         $relation = $content->getRelation('ConcreteArticle');
         $this->assertEquals(RelationMap::ONE_TO_ONE, $relation->getType(), 'modifyTable adds a one-to-one relationship');
     }
 
     public function testModifyTableNoCopyDataNoParentRelationship()
     {
-        $quizz = ConcreteQuizzPeer::getTableMap();
+        $quizz = ConcreteQuizzTableMap::getTableMap();
         $this->assertFalse($quizz->hasRelation('ConcreteContent'), 'modifyTable() does not add a relationship to the parent when copy_data is false');
     }
 
@@ -108,9 +107,9 @@ EOF;
         $content = new ConcreteContent();
         $content->save();
         $c = new Criteria;
-        $c->add(ConcreteArticlePeer::ID, $content->getId());
+        $c->add(ConcreteArticleTableMap::ID, $content->getId());
         try {
-            ConcreteArticlePeer::doInsert($c);
+            ConcreteArticleTableMap::doInsert($c);
             $this->assertTrue(true, 'modifyTable() removed autoIncrement from copied Primary keys');
         } catch (PropelException $e) {
             $this->fail('modifyTable() removed autoIncrement from copied Primary keys');
@@ -123,19 +122,19 @@ EOF;
         $content = new ConcreteContent();
         $content->save();
         $c = new Criteria;
-        $c->add(ConcreteQuizzPeer::ID, $content->getId());
-        ConcreteQuizzPeer::doInsert($c);
+        $c->add(ConcreteQuizzTableMap::ID, $content->getId());
+        ConcreteQuizzTableMap::doInsert($c);
     }
 
     public function testModifyTableAddsForeignKeys()
     {
-        $article = ConcreteArticlePeer::getTableMap();
+        $article = ConcreteArticleTableMap::getTableMap();
         $this->assertTrue($article->hasRelation('ConcreteCategory'), 'modifyTable() copies relationships from parent table');
     }
 
     public function testModifyTableAddsForeignKeysWithoutDuplicates()
     {
-        $article = ConcreteAuthorPeer::getTableMap();
+        $article = ConcreteAuthorTableMap::getTableMap();
         $this->assertTrue($article->hasRelation('ConcreteNews'), 'modifyTable() copies relationships from parent table and removes hardcoded refPhpName');
     }
 
@@ -155,17 +154,6 @@ EOF;
         $this->assertEquals('Propel\Tests\Bookstore\Behavior\ConcreteContentQuery', $r->getParentClass()->getName(), 'concrete_inheritance changes the parent class of the Query Object to the parent object class');
         $r = new \ReflectionClass('Propel\Tests\Bookstore\Behavior\Base\ConcreteQuizzQuery');
         $this->assertEquals('Propel\Tests\Bookstore\Behavior\ConcreteContentQuery', $r->getParentClass()->getName(), 'concrete_inheritance changes the parent class of the Query Object to the parent object class');
-    }
-
-    /**
-     * @link http://www.propelorm.org/ticket/1262
-     */
-    public function testParentPeerClass()
-    {
-        $r = new \ReflectionClass('Propel\Tests\Bookstore\Behavior\Base\ConcreteArticlePeer');
-        $this->assertEquals('Propel\Tests\Bookstore\Behavior\ConcreteContentPeer', $r->getParentClass()->getName(), 'concrete_inheritance changes the parent class of the Peer Object to the parent object class');
-        $r = new \ReflectionClass('Propel\Tests\Bookstore\Behavior\Base\ConcreteQuizzPeer');
-        $this->assertEquals('Propel\Tests\Bookstore\Behavior\ConcreteContentPeer', $r->getParentClass()->getName(), 'concrete_inheritance changes the parent class of the Peer Object to the parent object class');
     }
 
     public function testPreSaveCopyData()
@@ -211,7 +199,7 @@ EOF;
     {
         $article = new ConcreteArticle();
         $article->save();
-        ConcreteContentPeer::clearInstancePool();
+        ConcreteContentTableMap::clearInstancePool();
         $content = $article->getParentOrCreate();
         $this->assertTrue($content instanceof ConcreteContent, 'getParentOrCreate() returns an instance of the parent class');
         $this->assertFalse($content->isNew(), 'getParentOrCreate() returns an existing instance of the parent class if the object is persisted');
@@ -225,7 +213,7 @@ EOF;
         $content = new ConcreteContent();
         $content->save();
         $id = $content->getId();
-        ConcreteContentPeer::clearInstancePool();
+        ConcreteContentTableMap::clearInstancePool();
         $article = new ConcreteArticle();
         $article->setId($id);
         $article->save();

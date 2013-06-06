@@ -7,7 +7,7 @@ title: Multi-Component Data Model
 
 Propel comes along with packaging capabilities that allow you to more easily integrate Propel into a packaged or modularized application.
 
-## Muliple Schemas ##
+## Multiple Schemas ##
 
 You can use as many `schema.xml` files as you want. Schema files have to be named `(*.)schema.xml`, so names like `schema.xml`, `package1.schema.xml`, `core.package1.schema.xml` are all acceptable. These files _have_ to be located in your project directory.
 
@@ -101,13 +101,10 @@ build/
       om/
       map/
       Author.php
-      AuthorPeer.php
       AuthorQuery.php
       Book.php
-      BookPeer.php
       BookQuery.php
       Review.php
-      ReviewPeer.php
       ReviewQuery.php
 {% endhighlight %}
 
@@ -129,16 +126,13 @@ build/
         om/
         map/
         Author.php
-        AuthorPeer.php
         AuthorQuery.php
       book/
         om/
         map/
         Book.php
-        BookPeer.php
         BookQuery.php
         Review.php
-        ReviewPeer.php
         ReviewQuery.php
 {% endhighlight %}
 
@@ -152,19 +146,16 @@ build/
         om/
         map/
         Author.php
-        AuthorPeer.php
         AuthorQuery.php
       book/
         om/
         map/
         Book.php
-        BookPeer.php
         BookQuery.php
       review/
         om/
         map/
         Review.php
-        ReviewPeer.php
         ReviewQuery.php
 {% endhighlight %}
 
@@ -189,7 +180,7 @@ build/
     book.schema.sql   // contains CREATE TABLE book and CREATE TABLE review
 {% endhighlight %}
 
-And, as you probably expect it, a package overridden at the table level also acocunts for an independent SQL file:
+And, as you probably expect it, a package overridden at the table level also accounts for an independent SQL file:
 
 {% highlight text %}
 build/
@@ -246,29 +237,21 @@ This should run without any complaints. When you have a look at the projects/boo
 addon/
    club/
       BookClubList.php
-      BookClubListPeer.php
       BookListRel.php
-      BookListRelPeer.php
 core/
    author/
       Author.php
-      AuthorPeer.php
    book/
       Book.php
-      BookPeer.php
 
       Media.php
-      MediaPeer.php
    publisher/
       Publisher.php
-      PublisherPeer.php
    review/
       Review.php
-      ReviewPeer.php
 util/
    log/
       BookstoreLog.php
-      BookstoreLogPeer.php
 {% endhighlight %}
 
 (The additional subdirectories map/ and om/ in each of these directories have been omitted for clarity.)

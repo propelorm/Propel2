@@ -29,6 +29,7 @@ use Propel\Generator\Platform\PlatformInterface;
  */
 class ObjectBuilder extends AbstractObjectBuilder
 {
+
     /**
      * Returns the package for the base object classes.
      *
@@ -256,8 +257,9 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     protected function addClassBody(&$script)
     {
         $this->declareClassFromBuilder($this->getStubObjectBuilder());
-        $this->declareClassFromBuilder($this->getStubPeerBuilder());
         $this->declareClassFromBuilder($this->getStubQueryBuilder());
+        $this->declareClassFromBuilder($this->getTableMapBuilder());
+
         $this->declareClasses(
             '\Exception',
             '\PDO',
@@ -268,10 +270,11 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             '\Propel\Runtime\Exception\BadMethodCallException',
             '\Propel\Runtime\Exception\PropelException',
             '\Propel\Runtime\ActiveQuery\Criteria',
+            '\Propel\Runtime\ActiveQuery\ModelCriteria',
             '\Propel\Runtime\ActiveRecord\ActiveRecordInterface',
             '\Propel\Runtime\Parser\AbstractParser',
             '\Propel\Runtime\Propel',
-            '\Propel\Runtime\Util\BasePeer'
+            '\Propel\Runtime\Map\TableMap'
         );
 
         $table = $this->getTable();
@@ -281,16 +284,23 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         }
 
         if ($table->hasCrossForeignKeys()) {
+            /* @var $refFK ForeignKey */
             foreach ($table->getCrossFks() as $fkList) {
                 list($refFK, $crossFK) = $fkList;
                 $fkName = $this->getFKPhpNameAffix($crossFK, true);
-                $this->addScheduledForDeletionAttribute($script, $fkName);
+
+                if (!$refFK->isLocalPrimaryKey()) {
+                    $this->addScheduledForDeletionAttribute($script, $fkName);
+                }
             }
         }
 
         foreach ($table->getReferrers() as $refFK) {
             $fkName = $this->getRefFKPhpNameAffix($refFK, true);
-            $this->addScheduledForDeletionAttribute($script, $fkName);
+
+            if (!$refFK->isLocalPrimaryKey()) {
+                $this->addScheduledForDeletionAttribute($script, $fkName);
+            }
         }
 
         if ($this->hasDefaultValues()) {
@@ -332,10 +342,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
         $this->addCopy($script);
 
-        if (!$table->isAlias()) {
-            $this->addGetPeer($script);
-        }
-
         $this->addFKMethods($script);
         $this->addRefFKMethods($script);
         $this->addCrossFKMethods($script);
@@ -376,9 +382,9 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     {
         $script .= "
     /**
-     * Peer class name
+     * TableMap class name
      */
-    const PEER = '" . addslashes($this->getStubPeerBuilder()->getFullyQualifiedClassName()) . "';
+    const TABLE_MAP = '" . addslashes($this->getTableMapBuilder()->getFullyQualifiedClassName()) . "';
 ";
     }
 
@@ -392,13 +398,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $table = $this->getTable();
 
         $script .= "
-    /**
-     * The Peer class.
-     * Instance provides a convenient way of calling static methods on a class
-     * that calling code may not be able to identify.
-     * @var        ".$this->getPeerClassName()."
-     */
-    protected static \$peer;
 ";
 
         $script .= $this->renderTemplate('baseObjectAttributes');
@@ -554,84 +553,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $clo = strtolower($column->getName()) . "_unserialized";
         $script .= "
     protected \$" . $clo . ";
-";
-    }
-
-    /**
-     * Adds the getPeer() method.
-     *
-     * This is a convenient, non introspective way of getting the Peer class for
-     * a particular object.
-     *
-     * @param string &$script
-     */
-    protected function addGetPeer(&$script)
-    {
-        $this->addGetPeerComment($script);
-        $this->addGetPeerFunctionOpen($script);
-        $this->addGetPeerFunctionBody($script);
-        $this->addGetPeerFunctionClose($script);
-    }
-
-    /**
-     * Adds the comment for the getPeer method.
-     *
-     * @param string &$script
-     */
-    protected function addGetPeerComment(&$script)
-    {
-        $script .= "
-    /**
-     * Returns a peer instance associated with this om.
-     *
-     * Since Peer classes are not to have any instance attributes, this method returns the
-     * same instance for all member of this class. The method could therefore
-     * be static, but this would prevent one from overriding the behavior.
-     *
-     * @return   ".$this->getPeerClassName()."
-     */";
-    }
-
-    /**
-     * Adds the function declaration (function opening) for the getPeer method.
-     *
-     * @param string &$script
-     */
-    protected function addGetPeerFunctionOpen(&$script)
-    {
-        $script .= "
-    public function getPeer()
-    {";
-    }
-
-    /**
-     * Adds the body of the getPeer method.
-     *
-     * @param string &$script
-     */
-    protected function addGetPeerFunctionBody(&$script)
-    {
-        $script .= "
-        if (self::\$peer === null) {
-            " . $this->buildObjectInstanceCreationCode('self::$peer', $this->getPeerClassName()) . "
-        }
-
-        return self::\$peer;";
-    }
-
-    /**
-     * Adds the function close for the getPeer method.
-     *
-     * Note: this is just a } and the body ends with a return statement, so it's
-     * quite useless. But it's here anyway for consistency, cause there's a close
-     * function for all functions and in some other instances, they are useful.
-     *
-     * @param string &$script
-     */
-    protected function addGetPeerFunctionClose(&$script)
-    {
-        $script .= "
-    }
 ";
     }
 
@@ -1092,7 +1013,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         if (null === \$this->$clo) {
             return null;
         }
-        \$valueSet = " . $this->getPeerClassName() . "::getValueSet(" . $this->getColumnConstant($column) . ");
+        \$valueSet = " . $this->getTableMapClassName() . "::getValueSet(" . $this->getColumnConstant($column) . ");
         if (!isset(\$valueSet[\$this->$clo])) {
             throw new PropelException('Unknown stored enum key: ' . \$this->$clo);
         }
@@ -1299,42 +1220,51 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         \$c->addSelectColumn(".$this->getColumnConstant($column).");
         try {
             \$row = array(0 => null);
-            \$stmt = ".$this->getPeerClassName()."::doSelectStmt(\$c, \$con);
-            \$stmt->bindColumn(1, \$row[0], PDO::PARAM_LOB, 0, PDO::SQLSRV_ENCODING_BINARY);
-            \$stmt->fetch(PDO::FETCH_BOUND);
-            \$stmt->closeCursor();";
+            \$dataFetcher = ".$this->getQueryClassName()."::create(null, \$c)->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find(\$con);
+            if (\$dataFetcher instanceof PDODataFetcher) {
+                \$dataFetcher->bindColumn(1, \$row[0], PDO::PARAM_LOB, 0, PDO::SQLSRV_ENCODING_BINARY);
+            }
+            \$row = \$dataFetcher->fetch(PDO::FETCH_BOUND);
+            \$dataFetcher->close();";
         } else {
             $script .= "
         \$c = \$this->buildPkeyCriteria();
         \$c->addSelectColumn(".$this->getColumnConstant($column).");
         try {
-            \$stmt = ".$this->getPeerClassName()."::doSelectStmt(\$c, \$con);
-            \$row = \$stmt->fetch(PDO::FETCH_NUM);
-            \$stmt->closeCursor();";
+            \$dataFetcher = ".$this->getQueryClassName()."::create(null, \$c)->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find(\$con);
+            \$row = \$dataFetcher->fetch();
+            \$dataFetcher->close();";
         }
+
+        $script .= "
+
+        \$firstColumn = \$row ? current(\$row) : null;
+";
 
         if ($column->getType() === PropelTypes::CLOB && $platform instanceof OraclePlatform) {
             // PDO_OCI returns a stream for CLOB objects, while other PDO adapters return a string...
             $script .= "
-            \$this->$clo = stream_get_contents(\$row[0]);";
+            if (\$firstColumn) {
+                \$this->$clo = stream_get_contents(\$firstColumn);
+            }";
         } elseif ($column->isLobType() && !$platform->hasStreamBlobImpl()) {
             $script .= "
-            if (\$row[0] !== null) {
+            if (\$firstColumn !== null) {
                 \$this->$clo = fopen('php://memory', 'r+');
-                fwrite(\$this->$clo, \$row[0]);
+                fwrite(\$this->$clo, \$firstColumn);
                 rewind(\$this->$clo);
             } else {
                 \$this->$clo = null;
             }";
         } elseif ($column->isPhpPrimitiveType()) {
             $script .= "
-            \$this->$clo = (\$row[0] !== null) ? (".$column->getPhpType().") \$row[0] : null;";
+            \$this->$clo = (\$firstColumn !== null) ? (".$column->getPhpType().") \$firstColumn : null;";
         } elseif ($column->isPhpObjectType()) {
             $script .= "
-            \$this->$clo = (\$row[0] !== null) ? new ".$column->getPhpType()."(\$row[0]) : null;";
+            \$this->$clo = (\$firstColumn !== null) ? new ".$column->getPhpType()."(\$firstColumn) : null;";
         } else {
             $script .= "
-            \$this->$clo = \$row[0];";
+            \$this->$clo = \$firstColumn;";
         }
 
         $script .= "
@@ -1500,8 +1430,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the close for the mutator close
-     * @param      string &$script The script will be modified in this method.
-     * @param Column $col The current column.
+     * @param string &$script The script will be modified in this method.
+     * @param Column $col     The current column.
      * @see addMutatorClose()
      **/
     protected function addMutatorCloseClose(&$script, Column $col)
@@ -1516,8 +1446,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds a setter for BLOB columns.
-     * @param      string &$script The script will be modified in this method.
-     * @param Column $col The current column.
+     * @param string &$script The script will be modified in this method.
+     * @param Column $col     The current column.
      * @see parent::addColumnMutators()
      */
     protected function addLobMutator(&$script, Column $col)
@@ -1542,8 +1472,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds a setter method for date/time/timestamp columns.
-     * @param      string &$script The script will be modified in this method.
-     * @param Column $col The current column.
+     * @param string &$script The script will be modified in this method.
+     * @param Column $col     The current column.
      * @see parent::addColumnMutators()
      */
     protected function addTemporalMutator(&$script, Column $col)
@@ -1602,8 +1532,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds a setter for Object columns.
-     * @param      string &$script The script will be modified in this method.
-     * @param Column $col The current column.
+     * @param string &$script The script will be modified in this method.
+     * @param Column $col     The current column.
      * @see parent::addColumnMutators()
      */
     protected function addObjectMutator(&$script, Column $col)
@@ -1624,8 +1554,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds a setter for Array columns.
-     * @param      string &$script The script will be modified in this method.
-     * @param Column $col The current column.
+     * @param string &$script The script will be modified in this method.
+     * @param Column $col     The current column.
      * @see parent::addColumnMutators()
      */
     protected function addArrayMutator(&$script, Column $col)
@@ -1646,8 +1576,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds a push method for an array column.
-     * @param      string &$script The script will be modified in this method.
-     * @param Column $col The current column.
+     * @param string &$script The script will be modified in this method.
+     * @param Column $col     The current column.
      */
     protected function addAddArrayElement(&$script, Column $col)
     {
@@ -1690,8 +1620,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds a remove method for an array column.
-     * @param      string &$script The script will be modified in this method.
-     * @param Column $col The current column.
+     * @param string &$script The script will be modified in this method.
+     * @param Column $col     The current column.
      */
     protected function addRemoveArrayElement(&$script, Column $col)
     {
@@ -1737,8 +1667,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds a setter for Enum columns.
-     * @param      string &$script The script will be modified in this method.
-     * @param Column $col The current column.
+     * @param string &$script The script will be modified in this method.
+     * @param Column $col     The current column.
      * @see parent::addColumnMutators()
      */
     protected function addEnumMutator(&$script, Column $col)
@@ -1748,7 +1678,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
         $script .= "
         if (\$v !== null) {
-            \$valueSet = " . $this->getPeerClassName() . "::getValueSet(" . $this->getColumnConstant($col) . ");
+            \$valueSet = " . $this->getTableMapClassName() . "::getValueSet(" . $this->getColumnConstant($col) . ");
             if (!in_array(\$v, \$valueSet)) {
                 throw new PropelException(sprintf('Value \"%s\" is not accepted in this enumerated column', \$v));
             }
@@ -1765,8 +1695,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds setter method for boolean columns.
-     * @param      string &$script The script will be modified in this method.
-     * @param Column $col The current column.
+     * @param string &$script The script will be modified in this method.
+     * @param Column $col     The current column.
      * @see parent::addColumnMutators()
      */
     protected function addBooleanMutator(&$script, Column $col)
@@ -1813,8 +1743,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds setter method for "normal" columns.
-     * @param      string &$script The script will be modified in this method.
-     * @param Column $col The current column.
+     * @param string &$script The script will be modified in this method.
+     * @param Column $col     The current column.
      * @see parent::addColumnMutators()
      */
     protected function addDefaultMutator(&$script, Column $col)
@@ -1844,7 +1774,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the hasOnlyDefaultValues() method.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addHasOnlyDefaultValues(&$script)
     {
@@ -1856,7 +1786,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the comment for the hasOnlyDefaultValues method
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      * @see addHasOnlyDefaultValues
      **/
     protected function addHasOnlyDefaultValuesComment(&$script)
@@ -1874,7 +1804,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function declaration for the hasOnlyDefaultValues method
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      * @see addHasOnlyDefaultValues
      **/
     protected function addHasOnlyDefaultValuesOpen(&$script)
@@ -1886,7 +1816,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function body for the hasOnlyDefaultValues method
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      * @see addHasOnlyDefaultValues
      **/
     protected function addHasOnlyDefaultValuesBody(&$script)
@@ -1918,7 +1848,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function close for the hasOnlyDefaultValues method
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      * @see addHasOnlyDefaultValues
      **/
     protected function addHasOnlyDefaultValuesClose(&$script)
@@ -1933,7 +1863,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the hydrate() method, which sets attributes of the object based on a ResultSet.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addHydrate(&$script)
     {
@@ -1945,7 +1875,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the comment for the hydrate method
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      * @see addHydrate()
      */
     protected function addHydrateComment(&$script)
@@ -1959,9 +1889,13 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * for results of JOIN queries where the resultset row includes columns from two or
      * more tables.
      *
-     * @param      array \$row The row returned by Statement->fetch(PDO::FETCH_NUM)
-     * @param      int \$startcol 0-based offset column which indicates which restultset column to start with.
-     * @param      boolean \$rehydrate Whether this object is being re-hydrated from the database.
+     * @param array   \$row       The row returned by DataFetcher->fetch().
+     * @param int     \$startcol  0-based offset column which indicates which restultset column to start with.
+     * @param boolean \$rehydrate Whether this object is being re-hydrated from the database.
+     * @param string  \$indexType The index type of \$row. Mostly DataFetcher->getIndexType().
+                                  One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_STUDLYPHPNAME
+     *                            TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
+     *
      * @return int             next starting column
      * @throws PropelException - Any caught Exception will be rewrapped as a PropelException.
      */";
@@ -1969,41 +1903,49 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function declaration for the hydrate method
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      * @see addHydrate()
      */
     protected function addHydrateOpen(&$script)
     {
         $script .= "
-    public function hydrate(\$row, \$startcol = 0, \$rehydrate = false)
+    public function hydrate(\$row, \$startcol = 0, \$rehydrate = false, \$indexType = TableMap::TYPE_NUM)
     {";
     }
 
     /**
      * Adds the function body for the hydrate method
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      * @see addHydrate()
      */
     protected function addHydrateBody(&$script)
     {
         $table = $this->getTable();
         $platform = $this->getPlatform();
+
+        $tableMap = $this->getTableMapClassName();
+
         $script .= "
         try {
 ";
         $n = 0;
         foreach ($table->getColumns() as $col) {
             if (!$col->isLazyLoad()) {
+                $indexName = "TableMap::TYPE_NUM == \$indexType ? $n + \$startcol : $tableMap::translateFieldName('{$col->getPhpName()}', TableMap::TYPE_PHPNAME, \$indexType)";
+
+                $script .= "
+
+            \$col = \$row[$indexName];";
                 $clo = strtolower($col->getName());
                 if ($col->getType() === PropelTypes::CLOB_EMU && $this->getPlatform() instanceof OraclePlatform) {
                     // PDO_OCI returns a stream for CLOB objects, while other PDO adapters return a string...
                     $script .= "
-            \$this->$clo = stream_get_contents(\$row[\$startcol + $n]);";
+            \$this->$clo = stream_get_contents(\$col);";
                 } elseif ($col->isLobType() && !$platform->hasStreamBlobImpl()) {
                     $script .= "
-            if (\$row[\$startcol + $n] !== null) {
+            if (null !== \$col) {
                 \$this->$clo = fopen('php://memory', 'r+');
-                fwrite(\$this->$clo, \$row[\$startcol + $n]);
+                fwrite(\$this->$clo, \$col);
                 rewind(\$this->$clo);
             } else {
                 \$this->$clo = null;
@@ -2026,29 +1968,29 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                     }
                     if ($handleMysqlDate) {
                         $script .= "
-            if (\$row[\$startcol + $n] === '$mysqlInvalidDateString') {
-                \$row[\$startcol + $n] = null;
+            if (\$col === '$mysqlInvalidDateString') {
+                \$col = null;
             }";
                     }
                     $script .= "
-            \$this->$clo = (\$row[\$startcol + $n] !== null) ? PropelDateTime::newInstance(\$row[\$startcol + $n], null, '$dateTimeClass') : null;";
+            \$this->$clo = (null !== \$col) ? PropelDateTime::newInstance(\$col, null, '$dateTimeClass') : null;";
                 } elseif ($col->isPhpPrimitiveType()) {
                     $script .= "
-            \$this->$clo = (\$row[\$startcol + $n] !== null) ? (".$col->getPhpType().") \$row[\$startcol + $n] : null;";
+            \$this->$clo = (null !== \$col) ? (".$col->getPhpType().") \$col : null;";
                 } elseif ($col->getType() === PropelTypes::OBJECT) {
                     $script .= "
-            \$this->$clo = \$row[\$startcol + $n];";
+            \$this->$clo = \$col;";
                 } elseif ($col->getType() === PropelTypes::PHP_ARRAY) {
                     $cloUnserialized = $clo . '_unserialized';
                     $script .= "
-            \$this->$clo = \$row[\$startcol + $n];
+            \$this->$clo = \$col;
             \$this->$cloUnserialized = null;";
                 } elseif ($col->isPhpObjectType()) {
                     $script .= "
-            \$this->$clo = (\$row[\$startcol + $n] !== null) ? new ".$col->getPhpType()."(\$row[\$startcol + $n]) : null;";
+            \$this->$clo = (null !== \$col) ? new ".$col->getPhpType()."(\$col) : null;";
                 } else {
                     $script .= "
-            \$this->$clo = \$row[\$startcol + $n];";
+            \$this->$clo = \$col;";
                 }
                 $n++;
             } // if col->isLazyLoad()
@@ -2067,7 +2009,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                 \$this->ensureConsistency();
             }
 
-            return \$startcol + $n; // $n = ".$this->getPeerClassName()."::NUM_HYDRATE_COLUMNS.
+            return \$startcol + $n; // $n = ".$this->getTableMapClass()."::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception \$e) {
             throw new PropelException(\"Error populating ".$this->getStubObjectBuilder()->getClassName()." object\", 0, \$e);
@@ -2076,7 +2018,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function close for the hydrate method
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      * @see addHydrate()
      */
     protected function addHydrateClose(&$script)
@@ -2088,7 +2030,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the buildPkeyCriteria method
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      **/
     protected function addBuildPkeyCriteria(&$script)
     {
@@ -2100,7 +2042,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the comment for the buildPkeyCriteria method
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      * @see addBuildPkeyCriteria()
      **/
     protected function addBuildPkeyCriteriaComment(&$script)
@@ -2118,7 +2060,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function declaration for the buildPkeyCriteria method
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      * @see addBuildPkeyCriteria()
      **/
     protected function addBuildPkeyCriteriaOpen(&$script)
@@ -2130,13 +2072,13 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function body for the buildPkeyCriteria method
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      * @see addBuildPkeyCriteria()
      **/
     protected function addBuildPkeyCriteriaBody(&$script)
     {
         $script .= "
-        \$criteria = new Criteria(".$this->getPeerClassName()."::DATABASE_NAME);";
+        \$criteria = new Criteria(".$this->getTableMapClass()."::DATABASE_NAME);";
         foreach ($this->getTable()->getPrimaryKey() as $col) {
             $clo = strtolower($col->getName());
             $script .= "
@@ -2146,7 +2088,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function close for the buildPkeyCriteria method
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      * @see addBuildPkeyCriteria()
      **/
     protected function addBuildPkeyCriteriaClose(&$script)
@@ -2160,7 +2102,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the buildCriteria method
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      **/
     protected function addBuildCriteria(&$script)
     {
@@ -2172,7 +2114,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds comment for the buildCriteria method
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      * @see addBuildCriteria()
      **/
     protected function addBuildCriteriaComment(&$script)
@@ -2187,7 +2129,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function declaration of the buildCriteria method
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      * @see addBuildCriteria()
      **/
     protected function addBuildCriteriaOpen(&$script)
@@ -2199,13 +2141,13 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function body of the buildCriteria method
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      * @see addBuildCriteria()
      **/
     protected function addBuildCriteriaBody(&$script)
     {
         $script .= "
-        \$criteria = new Criteria(".$this->getPeerClassName()."::DATABASE_NAME);
+        \$criteria = new Criteria(".$this->getTableMapClass()."::DATABASE_NAME);
 ";
         foreach ($this->getTable()->getColumns() as $col) {
             $clo = strtolower($col->getName());
@@ -2216,7 +2158,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function close of the buildCriteria method
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      * @see addBuildCriteria()
      **/
     protected function addBuildCriteriaClose(&$script)
@@ -2230,7 +2172,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the toArray method
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      **/
     protected function addToArray(&$script)
     {
@@ -2247,9 +2189,9 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * You can specify the key type of the array by passing one of the class
      * type constants.
      *
-     * @param     string  \$keyType (optional) One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME,
-     *                    BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM.
-     *                    Defaults to BasePeer::$defaultKeyType.
+     * @param     string  \$keyType (optional) One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_STUDLYPHPNAME,
+     *                    TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
+     *                    Defaults to TableMap::$defaultKeyType.
      * @param     boolean \$includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
      * @param     array \$alreadyDumpedObjects List of objects to skip to avoid recursion";
         if ($hasFks) {
@@ -2260,13 +2202,13 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      *
      * @return array an associative array containing the field names (as keys) and field values
      */
-    public function toArray(\$keyType = BasePeer::$defaultKeyType, \$includeLazyLoadColumns = true, \$alreadyDumpedObjects = array()" . ($hasFks ? ", \$includeForeignObjects = false" : '') . ")
+    public function toArray(\$keyType = TableMap::$defaultKeyType, \$includeLazyLoadColumns = true, \$alreadyDumpedObjects = array()" . ($hasFks ? ", \$includeForeignObjects = false" : '') . ")
     {
         if (isset(\$alreadyDumpedObjects['$objectClassName'][$pkGetter])) {
             return '*RECURSION*';
         }
         \$alreadyDumpedObjects['$objectClassName'][$pkGetter] = true;
-        \$keys = ".$this->getPeerClassName()."::getFieldNames(\$keyType);
+        \$keys = ".$this->getTableMapClassName()."::getFieldNames(\$keyType);
         \$result = array(";
         foreach ($this->getTable()->getColumns() as $num => $col) {
             if ($col->isLazyLoad()) {
@@ -2279,6 +2221,13 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         }
         $script .= "
         );";
+        $script .= "
+        \$virtualColumns = \$this->virtualColumns;
+        foreach(\$virtualColumns as \$key => \$virtualColumn)
+        {
+            \$result[\$key] = \$virtualColumn;
+        }
+        ";
         if ($hasFks) {
             $script .= "
         if (\$includeForeignObjects) {";
@@ -2313,7 +2262,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the getByName method
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      **/
     protected function addGetByName(&$script)
     {
@@ -2325,7 +2274,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the comment for the getByName method
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      * @see addGetByName
      **/
     protected function addGetByNameComment(&$script)
@@ -2337,41 +2286,41 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      *
      * @param      string \$name name
      * @param      string \$type The type of fieldname the \$name is of:
-     *                     one of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
-     *                     BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM.
-     *                     Defaults to BasePeer::$defaultKeyType.
+     *                     one of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_STUDLYPHPNAME
+     *                     TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
+     *                     Defaults to TableMap::$defaultKeyType.
      * @return mixed Value of field.
      */";
     }
 
     /**
      * Adds the function declaration for the getByName method
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      * @see addGetByName
      **/
     protected function addGetByNameOpen(&$script)
     {
         $defaultKeyType = $this->getDefaultKeyType();
         $script .= "
-    public function getByName(\$name, \$type = BasePeer::$defaultKeyType)
+    public function getByName(\$name, \$type = TableMap::$defaultKeyType)
     {";
     }
 
     /**
      * Adds the function body for the getByName method
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      * @see addGetByName
      **/
     protected function addGetByNameBody(&$script)
     {
         $script .= "
-        \$pos = ".$this->getPeerClassName()."::translateFieldName(\$name, \$type, BasePeer::TYPE_NUM);
+        \$pos = ".$this->getTableMapClassName()."::translateFieldName(\$name, \$type, TableMap::TYPE_NUM);
         \$field = \$this->getByPosition(\$pos);";
     }
 
     /**
      * Adds the function close for the getByName method
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      * @see addGetByName
      **/
     protected function addGetByNameClose(&$script)
@@ -2385,7 +2334,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the getByPosition method
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      **/
     protected function addGetByPosition(&$script)
     {
@@ -2397,7 +2346,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds comment for the getByPosition method
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      * @see addGetByPosition
      **/
     protected function addGetByPositionComment(&$script)
@@ -2414,7 +2363,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function declaration for the getByPosition method
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      * @see addGetByPosition
      **/
     protected function addGetByPositionOpen(&$script)
@@ -2426,7 +2375,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function body for the getByPosition method
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      * @see addGetByPosition
      **/
     protected function addGetByPositionBody(&$script)
@@ -2452,7 +2401,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function close for the getByPosition method
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      * @see addGetByPosition
      **/
     protected function addGetByPositionClose(&$script)
@@ -2469,17 +2418,17 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Sets a field from the object by name passed in as a string.
      *
-     * @param      string \$name peer name
-     * @param      mixed \$value field value
+     * @param      string \$name
+     * @param      mixed  \$value field value
      * @param      string \$type The type of fieldname the \$name is of:
-     *                     one of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
-     *                     BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM.
-     *                     Defaults to BasePeer::$defaultKeyType.
+     *                     one of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_STUDLYPHPNAME
+     *                     TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
+     *                     Defaults to TableMap::$defaultKeyType.
      * @return void
      */
-    public function setByName(\$name, \$value, \$type = BasePeer::$defaultKeyType)
+    public function setByName(\$name, \$value, \$type = TableMap::$defaultKeyType)
     {
-        \$pos = ".$this->getPeerClassName()."::translateFieldName(\$name, \$type, BasePeer::TYPE_NUM);
+        \$pos = ".$this->getTableMapClassName()."::translateFieldName(\$name, \$type, TableMap::TYPE_NUM);
 
         return \$this->setByPosition(\$pos, \$value);
     }
@@ -2510,7 +2459,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
             if (PropelTypes::ENUM === $col->getType()) {
                 $script .= "
-                \$valueSet = " . $this->getPeerClassName() . "::getValueSet(" . $this->getColumnConstant($col) . ");
+                \$valueSet = " . $this->getTableMapClassName() . "::getValueSet(" . $this->getColumnConstant($col) . ");
                 if (isset(\$valueSet[\$value])) {
                     \$value = \$valueSet[\$value];
                 }";
@@ -2547,17 +2496,17 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * array. If so the setByName() method is called for that column.
      *
      * You can specify the key type of the array by additionally passing one
-     * of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME,
-     * BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM.
-     * The default key type is the column's BasePeer::$defaultKeyType.
+     * of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_STUDLYPHPNAME,
+     * TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
+     * The default key type is the column's TableMap::$defaultKeyType.
      *
      * @param      array  \$arr     An array to populate the object from.
      * @param      string \$keyType The type of keys the array uses.
      * @return void
      */
-    public function fromArray(\$arr, \$keyType = BasePeer::$defaultKeyType)
+    public function fromArray(\$arr, \$keyType = TableMap::$defaultKeyType)
     {
-        \$keys = ".$this->getPeerClassName()."::getFieldNames(\$keyType);
+        \$keys = ".$this->getTableMapClassName()."::getFieldNames(\$keyType);
 ";
         foreach ($table->getColumns() as $num => $col) {
             $cfc = $col->getPhpName();
@@ -2571,7 +2520,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds a delete() method to remove the object form the datastore.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addDelete(&$script)
     {
@@ -2583,7 +2532,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the comment for the delete function
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      * @see addDelete()
      **/
     protected function addDeleteComment(&$script)
@@ -2603,7 +2552,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function declaration for the delete function
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      * @see addDelete()
      **/
     protected function addDeleteOpen(&$script)
@@ -2615,7 +2564,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function body for the delete function
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      * @see addDelete()
      **/
     protected function addDeleteBody(&$script)
@@ -2626,7 +2575,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         }
 
         if (\$con === null) {
-            \$con = Propel::getServiceContainer()->getWriteConnection(".$this->getPeerClassName()."::DATABASE_NAME);
+            \$con = Propel::getServiceContainer()->getWriteConnection(".$this->getTableMapClass()."::DATABASE_NAME);
         }
 
         \$con->beginTransaction();
@@ -2671,7 +2620,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function close for the delete function
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      * @see addDelete()
      **/
     protected function addDeleteClose(&$script)
@@ -2683,7 +2632,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds a reload() method to re-fetch the data for this object from the database.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addReload(&$script)
     {
@@ -2710,19 +2659,19 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         }
 
         if (\$con === null) {
-            \$con = Propel::getServiceContainer()->getReadConnection(".$this->getPeerClassName()."::DATABASE_NAME);
+            \$con = Propel::getServiceContainer()->getReadConnection(".$this->getTableMapClass()."::DATABASE_NAME);
         }
 
         // We don't need to alter the object instance pool; we're just modifying this instance
         // already in the pool.
 
-        \$stmt = ".$this->getPeerClassName()."::doSelectStmt(\$this->buildPkeyCriteria(), \$con);
-        \$row = \$stmt->fetch(PDO::FETCH_NUM);
-        \$stmt->closeCursor();
+        \$dataFetcher = ".$this->getQueryClassName()."::create(null, \$this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find(\$con);
+        \$row = \$dataFetcher->fetch();
+        \$dataFetcher->close();
         if (!\$row) {
             throw new PropelException('Cannot find matching row in the database to reload object values.');
         }
-        \$this->hydrate(\$row, 0, true); // rehydrate
+        \$this->hydrate(\$row, 0, true, \$dataFetcher->getIndexType()); // rehydrate
 ";
 
         // support for lazy load columns
@@ -2773,7 +2722,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the methods related to refreshing, saving and deleting the object.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addManipulationMethods(&$script)
     {
@@ -2787,7 +2736,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the correct getPrimaryKey() method for this object.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addGetPrimaryKey(&$script)
     {
@@ -2804,7 +2753,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the getPrimaryKey() method for tables that contain a single-column primary key.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addGetPrimaryKey_SinglePK(&$script)
     {
@@ -2826,7 +2775,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the setPrimaryKey() method for tables that contain a multi-column primary key.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addGetPrimaryKey_MultiPK(&$script)
     {
@@ -2858,7 +2807,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * This "feature" is deprecated, since the getPrimaryKey() method is not required
      * by the Persistent interface (or used by the templates).  Hence, this method is also
      * deprecated.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      * @deprecated
      */
     protected function addGetPrimaryKey_NoPK(&$script)
@@ -2878,7 +2827,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the correct setPrimaryKey() method for this object.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addSetPrimaryKey(&$script)
     {
@@ -2895,7 +2844,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the setPrimaryKey() method for tables that contain a single-column primary key.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addSetPrimaryKey_SinglePK(&$script)
     {
@@ -2921,7 +2870,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the setPrimaryKey() method for tables that contain a multi-columnprimary key.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addSetPrimaryKey_MultiPK(&$script)
     {
@@ -2951,7 +2900,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * This "feature" is deprecated, since the setPrimaryKey() method is not required
      * by the Persistent interface (or used by the templates).  Hence, this method is also
      * deprecated.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      * @deprecated
      */
     protected function addSetPrimaryKey_NoPK(&$script)
@@ -2975,7 +2924,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the isPrimaryKeyNull() method
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addIsPrimaryKeyNull(&$script)
     {
@@ -3040,7 +2989,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the methods that get & set objects related by foreign key to the current object.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addFKMethods(&$script)
     {
@@ -3054,7 +3003,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the class attributes that are needed to store fkey related objects.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addFKAttributes(&$script, ForeignKey $fk)
     {
@@ -3071,7 +3020,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the mutator (setter) method for setting an fkey related object.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addFKMutator(&$script, ForeignKey $fk)
     {
@@ -3142,7 +3091,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the accessor (getter) method for getting an fkey related object.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addFKAccessor(&$script, ForeignKey $fk)
     {
@@ -3159,9 +3108,9 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $localColumns = array(); // foreign key local attributes names
 
         // If the related columns are a primary key on the foreign table
-        // then use retrieveByPk() instead of doSelect() to take advantage
+        // then use findPk() instead of doSelect() to take advantage
         // of instance pooling
-        $useRetrieveByPk = $fk->isForeignPrimaryKey();
+        $findPk = $fk->isForeignPrimaryKey();
 
         foreach ($fk->getLocalColumns() as $columnName) {
 
@@ -3202,7 +3151,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     {";
         $script .= "
         if (\$this->$varName === null && ($conditional)) {";
-        if ($useRetrieveByPk) {
+        if ($findPk) {
             $script .= "
             \$this->$varName = ".$this->getClassNameFromBuilder($fkQueryBuilder)."::create()->findPk($localColumns, \$con);";
         } else {
@@ -3239,7 +3188,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * Adds a convenience method for setting a related object by specifying the primary key.
      * This can be used in conjunction with the getPrimaryKey() for systems where nothing is known
      * about the actual objects being related.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addFKByKeyMutator(&$script, ForeignKey $fk)
     {
@@ -3296,7 +3245,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the method that fetches fkey-related (referencing) objects but also joins in data from another table.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addRefFKGetJoinMethods(&$script, ForeignKey $refFK)
     {
@@ -3304,13 +3253,12 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $tblFK = $refFK->getTable();
         $joinBehavior = $this->getGeneratorConfig()->getBuildProperty('useLeftJoinsInDoJoinMethods') ? 'Criteria::LEFT_JOIN' : 'Criteria::INNER_JOIN';
 
-        $peerClassName = $this->getClassNameFromBuilder($this->getStubPeerBuilder());
         $fkQueryClassName = $this->getClassNameFromBuilder($this->getNewStubQueryBuilder($refFK->getTable()));
         $relCol = $this->getRefFKPhpNameAffix($refFK, $plural = true);
         $collName = $this->getRefFKCollVarName($refFK);
 
-        $fkPeerBuilder = $this->getNewPeerBuilder($tblFK);
-        $className = $fkPeerBuilder->getObjectClassName();
+        $fkObjectBuilder = $this->getNewObjectBuilder($tblFK);
+        $className = $fkObjectBuilder->getObjectClassName();
 
         foreach ($tblFK->getForeignKeys() as $fk2) {
 
@@ -3368,7 +3316,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * Adds the attributes used to store objects that have referrer fkey relationships to this object.
      * <code>protected collVarName;</code>
      * <code>private lastVarNameCriteria = null;</code>
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addRefFKAttributes(&$script, ForeignKey $refFK)
     {
@@ -3387,14 +3335,15 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * @var        ObjectCollection|{$className}[] Collection to store aggregation of $className objects.
      */
-    protected $".$this->getRefFKCollVarName($refFK).";
+    protected $" . $this->getRefFKCollVarName($refFK) . ";
+    protected $" . $this->getRefFKCollVarName($refFK) . "Partial;
 ";
         }
     }
 
     /**
      * Adds the methods for retrieving, initializing, adding objects that are related to this one by foreign keys.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addRefFKMethods(&$script)
     {
@@ -3410,12 +3359,14 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                 $this->addPKRefFKSet($script, $refFK);
             } else {
                 $this->addRefFKClear($script, $refFK);
+                $this->addRefFKPartial($script, $refFK);
                 $this->addRefFKInit($script, $refFK);
                 $this->addRefFKGet($script, $refFK);
                 $this->addRefFKSet($script, $refFK);
                 $this->addRefFKCount($script, $refFK);
                 $this->addRefFKAdd($script, $refFK);
                 $this->addRefFKDoAdd($script, $refFK);
+                $this->addRefFKRemove($script, $refFK);
                 $this->addRefFKGetJoinMethods($script, $refFK);
             }
         }
@@ -3452,7 +3403,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the method that clears the referrer fkey collection.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addRefFKClear(&$script, ForeignKey $refFK)
     {
@@ -3478,7 +3429,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the method that initializes the referrer fkey collection.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addRefFKInit(&$script, ForeignKey $refFK)
     {
@@ -3511,7 +3462,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the method that adds an object into the referrer fkey collection.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addRefFKAdd(&$script, ForeignKey $refFK)
     {
@@ -3537,10 +3488,12 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     public function add".$this->getRefFKPhpNameAffix($refFK, false)."($className \$l)
     {
         if (\$this->$collName === null) {
-            \$this->init".$this->getRefFKPhpNameAffix($refFK, true)."();
+            \$this->init" . $this->getRefFKPhpNameAffix($refFK, $plural = true) . "();
+            \$this->{$collName}Partial = true;
         }
-        if (!\$this->{$collName}->contains(\$l)) { // only add it if the **same** object is not already associated
-            \$this->doAdd" . $this->getRefFKPhpNameAffix($refFK, false)  . "(\$l);
+
+        if (!in_array(\$l, \$this->{$collName}->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
+            \$this->doAdd" . $this->getRefFKPhpNameAffix($refFK, $plural = false) . "(\$l);
         }
 
         return \$this;
@@ -3550,14 +3503,13 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the method that returns the size of the referrer fkey collection.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addRefFKCount(&$script, ForeignKey $refFK)
     {
         $table = $this->getTable();
         $tblFK = $refFK->getTable();
 
-        $peerClassName = $this->getPeerClassName();
         $fkQueryClassName = $this->getClassNameFromBuilder($this->getNewStubQueryBuilder($refFK->getTable()));
         $relCol = $this->getRefFKPhpNameAffix($refFK, $plural = true);
         $collName = $this->getRefFKCollVarName($refFK);
@@ -3575,38 +3527,42 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * @return int             Count of related $className objects.
      * @throws PropelException
      */
-    public function count$relCol(Criteria \$criteria = null, \$distinct = false, ConnectionInterface \$con = null)
+    public function count{$relCol}(Criteria \$criteria = null, \$distinct = false, ConnectionInterface \$con = null)
     {
-        if (null === \$this->$collName || null !== \$criteria) {
+        \$partial = \$this->{$collName}Partial && !\$this->isNew();
+        if (null === \$this->$collName || null !== \$criteria || \$partial) {
             if (\$this->isNew() && null === \$this->$collName) {
                 return 0;
-            } else {
-                \$query = $fkQueryClassName::create(null, \$criteria);
-                if (\$distinct) {
-                    \$query->distinct();
-                }
-
-                return \$query
-                    ->filterBy" . $this->getFKPhpNameAffix($refFK) . "(\$this)
-                    ->count(\$con);
             }
-        } else {
-            return count(\$this->$collName);
+
+            if (\$partial && !\$criteria) {
+                return count(\$this->get$relCol());
+            }
+
+            \$query = $fkQueryClassName::create(null, \$criteria);
+            if (\$distinct) {
+                \$query->distinct();
+            }
+
+            return \$query
+                ->filterBy" . $this->getFKPhpNameAffix($refFK) . "(\$this)
+                ->count(\$con);
         }
+
+        return count(\$this->$collName);
     }
 ";
     }
 
     /**
      * Adds the method that returns the referrer fkey collection.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addRefFKGet(&$script, ForeignKey $refFK)
     {
         $table = $this->getTable();
         $tblFK = $refFK->getTable();
 
-        $peerClassName = $this->getPeerClassName();
         $fkQueryClassName = $this->getClassNameFromBuilder($this->getNewStubQueryBuilder($refFK->getTable()));
         $relCol = $this->getRefFKPhpNameAffix($refFK, $plural = true);
         $collName = $this->getRefFKCollVarName($refFK);
@@ -3631,18 +3587,44 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      */
     public function get$relCol(\$criteria = null, ConnectionInterface \$con = null)
     {
-        if (null === \$this->$collName || null !== \$criteria) {
+        \$partial = \$this->{$collName}Partial && !\$this->isNew();
+        if (null === \$this->$collName || null !== \$criteria  || \$partial) {
             if (\$this->isNew() && null === \$this->$collName) {
                 // return empty collection
-                \$this->init".$this->getRefFKPhpNameAffix($refFK, true)."();
+                \$this->init" . $this->getRefFKPhpNameAffix($refFK, $plural = true) . "();
             } else {
                 \$$collName = $fkQueryClassName::create(null, \$criteria)
                     ->filterBy" . $this->getFKPhpNameAffix($refFK) . "(\$this)
                     ->find(\$con);
+
                 if (null !== \$criteria) {
+                    if (false !== \$this->{$collName}Partial && count(\$$collName)) {
+                        \$this->init" . $this->getRefFKPhpNameAffix($refFK, $plural = true) . "(false);
+
+                        foreach (\$$collName as \$obj) {
+                            if (false == \$this->{$collName}->contains(\$obj)) {
+                                \$this->{$collName}->append(\$obj);
+                            }
+                        }
+
+                        \$this->{$collName}Partial = true;
+                    }
+
+                    \$$collName" . "->getInternalIterator()->rewind();
+
                     return \$$collName;
                 }
+
+                if (\$partial && \$this->$collName) {
+                    foreach (\$this->$collName as \$obj) {
+                        if (\$obj->isNew()) {
+                            \${$collName}[] = \$obj;
+                        }
+                    }
+                }
+
                 \$this->$collName = \$$collName;
+                \$this->{$collName}Partial = false;
             }
         }
 
@@ -3651,7 +3633,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 ";
     } // addRefererGet()
 
-    protected function addRefFKSet(&$script, $refFK)
+    protected function addRefFKSet(&$script, ForeignKey $refFK)
     {
         $relatedName = $this->getRefFKPhpNameAffix($refFK, true);
         $relatedObjectClassName = $this->getRefFKPhpNameAffix($refFK, false);
@@ -3660,6 +3642,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $inputCollectionEntry = lcfirst($this->getRefFKPhpNameAffix($refFK, false));
 
         $collName = $this->getRefFKCollVarName($refFK);
+        $relCol   = $this->getFKPhpNameAffix($refFK, $plural = false);
 
         $script .= "
     /**
@@ -3670,26 +3653,47 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      *
      * @param      Collection \${$inputCollection} A Propel collection.
      * @param      ConnectionInterface \$con Optional connection object
+     * @return   ".$this->getObjectClassname()." The current object (for fluent API support)
      */
     public function set{$relatedName}(Collection \${$inputCollection}, ConnectionInterface \$con = null)
     {
-        \$this->{$inputCollection}ScheduledForDeletion = \$this->get{$relatedName}(new Criteria(), \$con)->diff(\${$inputCollection});
+        \${$inputCollection}ToDelete = \$this->get{$relatedName}(new Criteria(), \$con)->diff(\${$inputCollection});
 
+        ";
+
+        if ($refFK->isAtLeastOneLocalPrimaryKey()) {
+            $script .= "
+        //since at least one column in the foreign key is at the same time a PK
+        //we can not just set a PK to NULL in the lines below. We have to store
+        //a backup of all values, so we are able to manipulate these items based on the onDelete value later.
+        \$this->{$inputCollection}ScheduledForDeletion = clone \${$inputCollection}ToDelete;
+";
+        } else {
+            $script .= "
+        \$this->{$inputCollection}ScheduledForDeletion = \${$inputCollection}ToDelete;
+";
+        }
+
+        $script .= "
+        foreach (\${$inputCollection}ToDelete as \${$inputCollectionEntry}Removed) {
+            \${$inputCollectionEntry}Removed->set{$relCol}(null);
+        }
+
+        \$this->{$collName} = null;
         foreach (\${$inputCollection} as \${$inputCollectionEntry}) {
-            // Fix issue with collection modified by reference
-            if (\${$inputCollectionEntry}->isNew()) {
-                \${$inputCollectionEntry}->set" . $this->getFKPhpNameAffix($refFK, false)."(\$this);
-            }
             \$this->add{$relatedObjectClassName}(\${$inputCollectionEntry});
         }
 
         \$this->{$collName} = \${$inputCollection};
+        \$this->{$collName}Partial = false;
+
+        return \$this;
     }
 ";
     }
 
     /**
-     * @param        string &$script The script will be modified in this method.
+     * @param string     &$script The script will be modified in this method.
      * @param ForeignKey $refFK
      * @param ForeignKey $crossFK
      */
@@ -3701,12 +3705,59 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
         $script .= "
     /**
-     * @param    {$relatedObjectClassName} \${$lowerRelatedObjectClassName} The $lowerRelatedObjectClassName object to add.
+     * @param {$relatedObjectClassName} \${$lowerRelatedObjectClassName} The $lowerRelatedObjectClassName object to add.
      */
     protected function doAdd{$relatedObjectClassName}(\${$lowerRelatedObjectClassName})
     {
         \$this->{$collName}[]= \${$lowerRelatedObjectClassName};
-        \${$lowerRelatedObjectClassName}->set" . $this->getFKPhpNameAffix($refFK, false)."(\$this);
+        \${$lowerRelatedObjectClassName}->set" . $this->getFKPhpNameAffix($refFK, $plural = false) . "(\$this);
+    }
+";
+    }
+
+    /**
+     * @param string     &$script The script will be modified in this method.
+     * @param ForeignKey $refFK
+     * @param ForeignKey $crossFK
+     */
+    protected function addRefFKRemove(&$script, $refFK)
+    {
+        $relatedName                 = $this->getRefFKPhpNameAffix($refFK, $plural = true);
+        $relatedObjectClassName      = $this->getRefFKPhpNameAffix($refFK, $plural = false);
+        $inputCollection             = lcfirst($relatedName . 'ScheduledForDeletion');
+        $lowerRelatedObjectClassName = lcfirst($relatedObjectClassName);
+
+        $collName    = $this->getRefFKCollVarName($refFK);
+        $relCol      = $this->getFKPhpNameAffix($refFK, $plural = false);
+        $localColumn = $refFK->getLocalColumn();
+
+        $script .= "
+    /**
+     * @param  {$relatedObjectClassName} \${$lowerRelatedObjectClassName} The $lowerRelatedObjectClassName object to remove.
+     * @return ". $this->getObjectClassname() ." The current object (for fluent API support)
+     */
+    public function remove{$relatedObjectClassName}(\${$lowerRelatedObjectClassName})
+    {
+        if (\$this->get{$relatedName}()->contains(\${$lowerRelatedObjectClassName})) {
+            \$this->{$collName}->remove(\$this->{$collName}->search(\${$lowerRelatedObjectClassName}));
+            if (null === \$this->{$inputCollection}) {
+                \$this->{$inputCollection} = clone \$this->{$collName};
+                \$this->{$inputCollection}->clear();
+            }";
+
+        if (!$refFK->isComposite() && !$localColumn->isNotNull()) {
+            $script .= "
+            \$this->{$inputCollection}[]= \${$lowerRelatedObjectClassName};";
+        } else {
+            $script .= "
+            \$this->{$inputCollection}[]= clone \${$lowerRelatedObjectClassName};";
+        }
+
+        $script .= "
+            \${$lowerRelatedObjectClassName}->set{$relCol}(null);
+        }
+
+        return \$this;
     }
 ";
     }
@@ -3714,7 +3765,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the method that gets a one-to-one related referrer fkey.
      * This is for one-to-one relationship special case.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addPKRefFKGet(&$script, ForeignKey $refFK)
     {
@@ -3749,8 +3800,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the method that sets a one-to-one related referrer fkey.
      * This is for one-to-one relationships special case.
-     * @param      string &$script The script will be modified in this method.
-     * @param ForeignKey $refFK The referencing foreign key.
+     * @param string     &$script The script will be modified in this method.
+     * @param ForeignKey $refFK   The referencing foreign key.
      */
     protected function addPKRefFKSet(&$script, ForeignKey $refFK)
     {
@@ -3772,8 +3823,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         \$this->$varName = \$v;
 
         // Make sure that that the passed-in $className isn't already associated with this object
-        if (\$v !== null && \$v->get".$this->getFKPhpNameAffix($refFK, false)."() === null) {
-            \$v->set".$this->getFKPhpNameAffix($refFK, false)."(\$this);
+        if (\$v !== null && \$v->get" . $this->getFKPhpNameAffix($refFK, $plural = false) . "(null, false) === null) {
+            \$v->set" . $this->getFKPhpNameAffix($refFK, $plural = false) . "(\$this);
         }
 
         return \$this;
@@ -3806,18 +3857,36 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 ";
     }
 
-    protected function addCrossFkScheduledForDeletion(&$script, $refFK, $crossFK)
+    protected function addCrossFkScheduledForDeletion(&$script, ForeignKey $refFK, ForeignKey $crossFK)
     {
-        $queryClassName = $this->getRefFKPhpNameAffix($refFK, false) . 'Query';
-        $relatedName = $this->getFKPhpNameAffix($crossFK, true);
-        $lowerRelatedName = lcfirst($relatedName);
+        $queryClassName         = $this->getRefFKPhpNameAffix($refFK, false) . 'Query';
+        $relatedName            = $this->getFKPhpNameAffix($crossFK, true);
+        $lowerRelatedName       = lcfirst($relatedName);
         $lowerSingleRelatedName = lcfirst($this->getFKPhpNameAffix($crossFK, false));
+
+        $middelFks = $refFK->getTable()->getForeignKeys();
+        $isFirstPk = ($middelFks[0]->getForeignTableCommonName() == $this->getTable()->getCommonName());
 
         $script .= "
             if (\$this->{$lowerRelatedName}ScheduledForDeletion !== null) {
                 if (!\$this->{$lowerRelatedName}ScheduledForDeletion->isEmpty()) {
+                    \$pks = array();
+                    \$pk  = \$this->getPrimaryKey();
+                    foreach (\$this->{$lowerRelatedName}ScheduledForDeletion->getPrimaryKeys(false) as \$remotePk) {";
+
+        if ($isFirstPk) {
+            $script .= "
+                        \$pks[] = array(\$pk, \$remotePk);";
+        } else {
+            $script .= "
+                        \$pks[] = array(\$remotePk, \$pk);";
+        }
+
+        $script .= "
+                    }
+
                     $queryClassName::create()
-                        ->filterByPrimaryKeys(\$this->{$lowerRelatedName}ScheduledForDeletion->getPrimaryKeys(false))
+                        ->filterByPrimaryKeys(\$pks)
                         ->delete(\$con);
                     \$this->{$lowerRelatedName}ScheduledForDeletion = null;
                 }
@@ -3827,23 +3896,41 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                         \${$lowerSingleRelatedName}->save(\$con);
                     }
                 }
+            } elseif (\$this->coll{$relatedName}) {
+                foreach (\$this->coll{$relatedName} as \${$lowerSingleRelatedName}) {
+                    if (\${$lowerSingleRelatedName}->isModified()) {
+                        \${$lowerSingleRelatedName}->save(\$con);
+                    }
+                }
             }
 ";
     }
 
-    protected function addRefFkScheduledForDeletion(&$script, $refFK)
+    protected function addRefFkScheduledForDeletion(&$script, ForeignKey $refFK)
     {
-        $relatedName = $this->getRefFKPhpNameAffix($refFK, true);
-        $lowerRelatedName = lcfirst($relatedName);
-        $lowerSingleRelatedName = lcfirst($this->getRefFKPhpNameAffix($refFK, false));
-        $queryClassName = $this->getClassNameFromBuilder($this->getNewStubQueryBuilder($refFK->getTable()));
+        $relatedName            = $this->getRefFKPhpNameAffix($refFK, $plural = true);
+        $lowerRelatedName       = lcfirst($relatedName);
+        $lowerSingleRelatedName = lcfirst($this->getRefFKPhpNameAffix($refFK, $plural = false));
+        $queryClassName         = $this->getNewStubQueryBuilder($refFK->getTable())->getClassname();
 
         $script .= "
             if (\$this->{$lowerRelatedName}ScheduledForDeletion !== null) {
-                if (!\$this->{$lowerRelatedName}ScheduledForDeletion->isEmpty()) {
+                if (!\$this->{$lowerRelatedName}ScheduledForDeletion->isEmpty()) {";
+
+            if ($refFK->isLocalColumnsRequired() || ForeignKey::CASCADE === $refFK->getOnDelete()) {
+                $script .= "
                     $queryClassName::create()
                         ->filterByPrimaryKeys(\$this->{$lowerRelatedName}ScheduledForDeletion->getPrimaryKeys(false))
-                        ->delete(\$con);
+                        ->delete(\$con);";
+            } else {
+                $script .= "
+                    foreach (\$this->{$lowerRelatedName}ScheduledForDeletion as \${$lowerSingleRelatedName}) {
+                        // need to save related object because we set the relation to null
+                        \${$lowerSingleRelatedName}->save(\$con);
+                    }";
+            }
+
+            $script .= "
                     \$this->{$lowerRelatedName}ScheduledForDeletion = null;
                 }
             }
@@ -3869,38 +3956,61 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             $this->addCrossFKCount($script, $refFK, $crossFK);
             $this->addCrossFKAdd($script, $refFK, $crossFK);
             $this->addCrossFKDoAdd($script, $refFK, $crossFK);
+            $this->addCrossFKRemove($script, $refFK, $crossFK);
         }
     }
 
     /**
      * Adds the method that clears the referrer fkey collection.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addCrossFKClear(&$script, ForeignKey $crossFK)
     {
-        $relCol = $this->getFKPhpNameAffix($crossFK, true);
+        $relCol   = $this->getFKPhpNameAffix($crossFK, true);
         $collName = $this->getCrossFKVarName($crossFK);
 
         $script .= "
     /**
-     * Clears out the $collName collection
+     * Clears out the {$collName} collection
      *
      * This does not modify the database; however, it will remove any associated objects, causing
      * them to be refetched by subsequent calls to accessor method.
      *
      * @return void
-     * @see        add$relCol()
+     * @see        add{$relCol}()
      */
-    public function clear$relCol()
+    public function clear{$relCol}()
     {
         \$this->$collName = null; // important to set this to NULL since that means it is uninitialized
+        \$this->{$collName}Partial = null;
     }
 ";
     } // addRefererClear()
 
     /**
+     * Adds the method that clears the referrer fkey collection.
+     *
+     * @param string &$script The script will be modified in this method.
+     */
+    protected function addRefFKPartial(&$script, ForeignKey $refFK)
+    {
+        $relCol   = $this->getRefFKPhpNameAffix($refFK, $plural = true);
+        $collName = $this->getRefFKCollVarName($refFK);
+
+        $script .= "
+    /**
+     * Reset is the $collName collection loaded partially.
+     */
+    public function resetPartial{$relCol}(\$v = true)
+    {
+        \$this->{$collName}Partial = \$v;
+    }
+";
+    } // addRefFKPartial()
+
+    /**
      * Adds the method that initializes the referrer fkey collection.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addCrossFKInit(&$script, ForeignKey $crossFK)
     {
@@ -3975,21 +4085,13 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     protected function addCrossFKSet(&$script, $refFK, $crossFK)
     {
-        $relatedNamePlural = $this->getFKPhpNameAffix($crossFK, true);
-        $relatedName = $this->getFKPhpNameAffix($crossFK, false);
-        $relatedObjectClassName = $this->getNewStubObjectBuilder($crossFK->getForeignTable())->getUnqualifiedClassName();
-        $selfRelationName = $this->getFKPhpNameAffix($refFK, false);
-        $crossRefQueryClassName = $this->getClassNameFromBuilder($this->getNewStubQueryBuilder($refFK->getTable()));
-        $crossRefTableName = $crossFK->getTableName();
-        $collName = $this->getCrossFKVarName($crossFK);
-        $joinedTableObjectBuilder = $this->getNewObjectBuilder($refFK->getTable());
-        $className = $joinedTableObjectBuilder->getStubObjectBuilder()->getUnqualifiedClassName();
-        $crossRefObjectClassName = '$' . lcfirst($className);
-        $inputCollection = lcfirst($relatedNamePlural);
-        $inputCollectionEntry = lcfirst($this->getFKPhpNameAffix($crossFK, false));
-
-        $relCol = $this->getRefFKPhpNameAffix($refFK, true);
-        $relColVarName = $this->getRefFKCollVarName($crossFK);
+        $relatedNamePlural       = $this->getFKPhpNameAffix($crossFK, true);
+        $relatedName             = $this->getFKPhpNameAffix($crossFK, false);
+        $relatedObjectClassName  = $this->getNewStubObjectBuilder($crossFK->getForeignTable())->getUnqualifiedClassName();
+        $crossRefTableName       = $crossFK->getTableName();
+        $collName                = $this->getCrossFKVarName($crossFK);
+        $inputCollection         = lcfirst($relatedNamePlural);
+        $inputCollectionEntry    = lcfirst($this->getFKPhpNameAffix($crossFK, false));
 
         $script .= "
     /**
@@ -3998,43 +4100,26 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
      * and new objects from the given Propel collection.
      *
-     * @param      Collection \${$inputCollection} A Propel collection.
-     * @param      ConnectionInterface \$con Optional connection object
+     * @param  Collection \${$inputCollection} A Propel collection.
+     * @param  ConnectionInterface \$con Optional connection object
+     * @return " . $this->getObjectClassname() . " The current object (for fluent API support)
      */
     public function set{$relatedNamePlural}(Collection \${$inputCollection}, ConnectionInterface \$con = null)
     {
-        {$crossRefObjectClassName}s = {$crossRefQueryClassName}::create()
-            ->filterBy{$relatedName}(\${$inputCollection})
-            ->filterBy{$selfRelationName}(\$this)
-            ->find(\$con);
+        \$this->clear{$relatedNamePlural}();
+        \$current{$relatedNamePlural} = \$this->get{$relatedNamePlural}();
 
-        \$current{$relCol} = \$this->get{$relCol}();
-
-        \$this->{$inputCollection}ScheduledForDeletion = \$current{$relCol}->diff({$crossRefObjectClassName}s);
-        \$this->{$relColVarName} = {$crossRefObjectClassName}s;
+        \$this->{$inputCollection}ScheduledForDeletion = \$current{$relatedNamePlural}->diff(\${$inputCollection});
 
         foreach (\${$inputCollection} as \${$inputCollectionEntry}) {
-            // Skip objects that are already in the current collection.
-            \$isInCurrent = false;
-            foreach (\$current{$relCol} as {$crossRefObjectClassName}) {
-                if ({$crossRefObjectClassName}->get{$relatedName}() == \${$inputCollectionEntry}) {
-                    \$isInCurrent = true;
-                    break;
-                }
-            }
-            if (\$isInCurrent) {
-                continue;
-            }
-
-            // Fix issue with collection modified by reference
-            if (\${$inputCollectionEntry}->isNew()) {
+            if (!\$current{$relatedNamePlural}->contains(\${$inputCollectionEntry})) {
                 \$this->doAdd{$relatedName}(\${$inputCollectionEntry});
-            } else {
-                \$this->add{$relatedName}(\${$inputCollectionEntry});
             }
         }
 
         \$this->$collName = \${$inputCollection};
+
+        return \$this;
     }
 ";
     }
@@ -4083,7 +4168,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the method that adds an object into the referrer fkey collection.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addCrossFKAdd(&$script, ForeignKey $refFK, ForeignKey $crossFK)
     {
@@ -4105,38 +4190,40 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * Associate a " . $crossObjectClassName . " object to this object
      * through the " . $tblFK->getName() . " cross reference table.
      *
-     * @param  " .  $crossObjectClassName . " " . $crossObjectName . " The $className object to relate
-     * @return void
+     * @param  " . $crossObjectClassName . " " . $crossObjectName . " The $className object to relate
+     * @return "   . $this->getObjectClassname() . " The current object (for fluent API support)
      */
     public function add{$relatedObjectClassName}($crossObjectClassName $crossObjectName)
     {
         if (\$this->" . $collName . " === null) {
             \$this->init" . $relCol . "();
         }
+
         if (!\$this->" . $collName . "->contains(" . $crossObjectName . ")) { // only add it if the **same** object is not already associated
             \$this->doAdd{$relatedObjectClassName}($crossObjectName);
-
-            \$this->" . $collName . "[]= " . $crossObjectName . ";
+            \$this->" . $collName . "[] = " . $crossObjectName . ";
         }
+
+        return \$this;
     }
 ";
     }
 
     /**
-     * @param        string &$script The script will be modified in this method.
+     * @param string     &$script The script will be modified in this method.
      * @param ForeignKey $refFK
      * @param ForeignKey $crossFK
      */
     protected function addCrossFKDoAdd(&$script, ForeignKey $refFK, ForeignKey $crossFK)
     {
-        $relatedObjectClassName = $this->getFKPhpNameAffix($crossFK, false);
-        $lowerRelatedObjectClassName = lcfirst($relatedObjectClassName);
-        $joinedTableObjectBuilder = $this->getNewObjectBuilder($refFK->getTable());
-        $className = $joinedTableObjectBuilder->getObjectClassName();
-        $unqualifiedClassName = $joinedTableObjectBuilder->getStubObjectBuilder()->getUnqualifiedClassName();
-
-        $tblFK = $refFK->getTable();
-        $foreignObjectName = '$' . $tblFK->getStudlyPhpName();
+         $relatedObjectClassName      = $this->getFKPhpNameAffix($crossFK, $plural = false);
+         $selfRelationNamePlural      = $this->getFKPhpNameAffix($refFK, $plural = true);
+         $lowerRelatedObjectClassName = lcfirst($relatedObjectClassName);
+         $joinedTableObjectBuilder    = $this->getNewObjectBuilder($refFK->getTable());
+         $className                   = $joinedTableObjectBuilder->getObjectClassname();
+         $refKObjectClassName         = $this->getRefFKPhpNameAffix($refFK, $plural = false);
+         $tblFK                       = $refFK->getTable();
+         $foreignObjectName           = '$' . $tblFK->getStudlyPhpName();
 
         $script .= "
     /**
@@ -4146,14 +4233,63 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     {
         {$foreignObjectName} = new {$className}();
         {$foreignObjectName}->set{$relatedObjectClassName}(\${$lowerRelatedObjectClassName});
-        \$this->add{$unqualifiedClassName}({$foreignObjectName});
+        \$this->add{$refKObjectClassName}({$foreignObjectName});
+        // set the back reference to this object directly as using provided method either results
+        // in endless loop or in multiple relations
+        if (!\${$lowerRelatedObjectClassName}->get{$selfRelationNamePlural}()->contains(\$this)) {
+            \$foreignCollection   = \${$lowerRelatedObjectClassName}->get{$selfRelationNamePlural}();
+            \$foreignCollection[] = \$this;
+        }
+    }
+";
+    }
+
+    /**
+     * Adds the method that remove an object from the referrer fkey collection.
+     * @param string $script The script will be modified in this method.
+     */
+    protected function addCrossFKRemove(&$script, ForeignKey $refFK, ForeignKey $crossFK)
+    {
+        $relCol   = $this->getFKPhpNameAffix($crossFK, $plural = true);
+        $collName = 'coll' . $relCol;
+        $tblFK    = $refFK->getTable();
+
+        $joinedTableObjectBuilder = $this->getNewObjectBuilder($refFK->getTable());
+        $className                = $joinedTableObjectBuilder->getObjectClassname();
+        $M2MScheduledForDeletion  = lcfirst($relCol) . "ScheduledForDeletion";
+        $crossObjectName          = '$' . $crossFK->getForeignTable()->getStudlyPhpName();
+        $crossObjectClassName     = $this->getNewObjectBuilder($crossFK->getForeignTable())->getObjectClassname();
+        $relatedObjectClassName   = $this->getFKPhpNameAffix($crossFK, $plural = false);
+
+        $script .= "
+    /**
+     * Remove a {$crossObjectClassName} object to this object
+     * through the {$tblFK->getName()} cross reference table.
+     *
+     * @param {$crossObjectClassName} {$crossObjectName} The $className object to relate
+     * @return " . $this->getObjectClassname() . " The current object (for fluent API support)
+     */
+    public function remove{$relatedObjectClassName}($crossObjectClassName $crossObjectName)
+    {
+        if (\$this->get{$relCol}()->contains({$crossObjectName})) {
+            \$this->{$collName}->remove(\$this->{$collName}->search({$crossObjectName}));
+
+            if (null === \$this->{$M2MScheduledForDeletion}) {
+                \$this->{$M2MScheduledForDeletion} = clone \$this->{$collName};
+                \$this->{$M2MScheduledForDeletion}->clear();
+            }
+
+            \$this->{$M2MScheduledForDeletion}[] = {$crossObjectName};
+        }
+
+        return \$this;
     }
 ";
     }
 
     /**
      * Adds the workhourse doSave() method.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addDoSave(&$script)
     {
@@ -4263,30 +4399,29 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         }
 
         foreach ($table->getReferrers() as $refFK) {
-            $this->addRefFkScheduledForDeletion($script, $refFK);
-
             if ($refFK->isLocalPrimaryKey()) {
                 $varName = $this->getPKRefFKVarName($refFK);
                 $script .= "
             if (\$this->$varName !== null) {
-                if (!\$this->{$varName}->isDeleted()) {
-                        \$affectedRows += \$this->{$varName}->save(\$con);
+                if (!\$this->{$varName}->isDeleted() && (\$this->{$varName}->isNew() || \$this->{$varName}->isModified())) {
+                    \$affectedRows += \$this->{$varName}->save(\$con);
                 }
             }
 ";
             } else {
+                $this->addRefFkScheduledForDeletion($script, $refFK);
+
                 $collName = $this->getRefFKCollVarName($refFK);
                 $script .= "
-            if (\$this->$collName !== null) {
-                foreach (\$this->$collName as \$referrerFK) {
-                    if (!\$referrerFK->isDeleted()) {
+                if (\$this->$collName !== null) {
+            foreach (\$this->$collName as \$referrerFK) {
+                    if (!\$referrerFK->isDeleted() && (\$referrerFK->isNew() || \$referrerFK->isModified())) {
                         \$affectedRows += \$referrerFK->save(\$con);
                     }
                 }
             }
 ";
             } // if refFK->isLocalPrimaryKey()
-
         } /* foreach getReferrers() */
 
         $script .= "
@@ -4353,7 +4488,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     protected function addDoInsertBodyStandard()
     {
         return "
-        \$pk = " . $this->getNewPeerBuilder($this->getTable())->getBasePeerClassName() . "::doInsert(\$criteria, \$con);";
+        \$pk = \$criteria->insert(\$con);";
     }
 
     protected function addDoInsertBodyWithIdMethod()
@@ -4545,28 +4680,28 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      */
     protected function addDoUpdate()
     {
-        $basePeerClassName = $this->getNewPeerBuilder($this->getTable())->getBasePeerClassName();
-
         return "
     /**
      * Update the row in the database.
      *
      * @param      ConnectionInterface \$con
      *
+     * @return Integer Number of updated rows
      * @see doSave()
      */
     protected function doUpdate(ConnectionInterface \$con)
     {
         \$selectCriteria = \$this->buildPkeyCriteria();
         \$valuesCriteria = \$this->buildCriteria();
-        {$basePeerClassName}::doUpdate(\$selectCriteria, \$valuesCriteria, \$con);
+
+        return \$selectCriteria->doUpdate(\$valuesCriteria, \$con);
     }
 ";
     }
 
     /**
      * Adds the $alreadyInSave attribute, which prevents attempting to re-save the same object.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addAlreadyInSaveAttribute(&$script)
     {
@@ -4583,7 +4718,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the save() method.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addSave(&$script)
     {
@@ -4595,7 +4730,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the comment for the save method
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      * @see addSave()
      **/
     protected function addSaveComment(&$script)
@@ -4642,7 +4777,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function declaration for the save method
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      * @see addSave()
      **/
     protected function addSaveOpen(&$script)
@@ -4657,7 +4792,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function body for the save method
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      * @see addSave()
      **/
     protected function addSaveBody(&$script)
@@ -4672,7 +4807,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         }
 
         if (\$con === null) {
-            \$con = Propel::getServiceContainer()->getWriteConnection(".$this->getPeerClassName()."::DATABASE_NAME);
+            \$con = Propel::getServiceContainer()->getWriteConnection(".$this->getTableMapClass()."::DATABASE_NAME);
         }
 
         \$con->beginTransaction();
@@ -4708,7 +4843,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                 \$this->postSave(\$con);";
                 $this->applyBehaviorModifier('postSave', $script, "                ");
                 $script .= "
-                ".$this->getPeerClassName()."::addInstanceToPool(\$this);
+                ".$this->getTableMapClassName()."::addInstanceToPool(\$this);
             } else {
                 \$affectedRows = 0;
             }
@@ -4751,7 +4886,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             }
             $script .= "
             \$con->commit();
-            ".$this->getPeerClassName()."::addInstanceToPool(\$this);
+            ".$this->getTableMapClassName()."::addInstanceToPool(\$this);
 
             return \$affectedRows;";
         }
@@ -4765,7 +4900,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function close for the save method
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      * @see addSave()
      **/
     protected function addSaveClose(&$script)
@@ -4777,7 +4912,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the ensureConsistency() method to ensure that internal state is correct.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addEnsureConsistency(&$script)
     {
@@ -4826,7 +4961,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the copy() method, which (in complex OM) includes the $deepCopy param for making copies of related objects.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addCopy(&$script)
     {
@@ -4860,7 +4995,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the copyInto() method, which takes an object and sets contents to match current object.
      * In complex OM this method includes the $deepCopy param for making copies of related objects.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addCopyInto(&$script)
     {
@@ -4958,7 +5093,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds clear method
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addClear(&$script)
     {
@@ -5007,7 +5142,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds clearAllReferencers() method which resets all the collections of referencing
      * fk objects.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addClearAllReferences(&$script)
     {
@@ -5083,7 +5218,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds a magic __toString() method if a string column was defined as primary string
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addPrimaryString(&$script)
     {
@@ -5113,7 +5248,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      */
     public function __toString()
     {
-        return (string) \$this->exportTo(" . $this->getPeerClassName() . "::DEFAULT_STRING_FORMAT);
+        return (string) \$this->exportTo(" . $this->getTableMapClassName() . "::DEFAULT_STRING_FORMAT);
     }
 ";
     }

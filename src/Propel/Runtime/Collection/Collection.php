@@ -18,7 +18,7 @@ use Propel\Runtime\Exception\BadMethodCallException;
 use Propel\Runtime\Exception\UnexpectedValueException;
 use Propel\Runtime\Formatter\AbstractFormatter;
 use Propel\Runtime\Parser\AbstractParser;
-use Propel\Runtime\Util\BasePeer;
+use Propel\Runtime\Map\TableMap;
 
 /**
  * Class for iterating over a list of Propel elements
@@ -468,12 +468,7 @@ class Collection extends \ArrayObject implements \Serializable
         return $this->fullyQualifiedModel;
     }
 
-    /**
-     * Get the peer class of the elements in the collection
-     *
-     * @return string Name of the Propel peer class stored in the collection
-     */
-    public function getPeerClass()
+    public function getTableMapClass()
     {
         $model = $this->getModel();
 
@@ -481,7 +476,7 @@ class Collection extends \ArrayObject implements \Serializable
             throw new ModelNotFoundException('You must set the collection model before interacting with it');
         }
 
-        return constant($this->getFullyQualifiedModel() . '::PEER');
+        return constant($this->getFullyQualifiedModel() . '::TABLE_MAP');
     }
 
     /**
@@ -507,7 +502,7 @@ class Collection extends \ArrayObject implements \Serializable
      */
     public function getWriteConnection()
     {
-        $databaseName = constant($this->getPeerClass() . '::DATABASE_NAME');
+        $databaseName = constant($this->getTableMapClass() . '::DATABASE_NAME');
 
         return Propel::getServiceContainer()->getWriteConnection($databaseName);
     }
@@ -531,7 +526,7 @@ class Collection extends \ArrayObject implements \Serializable
             $parser = AbstractParser::getParser($parser);
         }
 
-        return $this->fromArray($parser->listToArray($data), BasePeer::TYPE_PHPNAME);
+        return $this->fromArray($parser->listToArray($data), TableMap::TYPE_PHPNAME);
     }
 
     /**
@@ -560,7 +555,7 @@ class Collection extends \ArrayObject implements \Serializable
             $parser = AbstractParser::getParser($parser);
         }
 
-        return $parser->listFromArray($this->toArray(null, $usePrefix, BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns));
+        return $parser->listFromArray($this->toArray(null, $usePrefix, TableMap::TYPE_PHPNAME, $includeLazyLoadColumns));
     }
 
     /**
@@ -594,12 +589,22 @@ class Collection extends \ArrayObject implements \Serializable
     /**
      * Returns a string representation of the current collection.
      * Based on the string representation of the underlying objects, defined in
-     * the Peer::DEFAULT_STRING_FORMAT constant
+     * the TableMap::DEFAULT_STRING_FORMAT constant
      *
      * @return string
      */
     public function __toString()
     {
-        return (string) $this->exportTo(constant($this->getPeerClass() . '::DEFAULT_STRING_FORMAT'));
+        return (string) $this->exportTo(constant($this->getTableMapClass() . '::DEFAULT_STRING_FORMAT'));
+    }
+
+    /**
+     * Creates clones of the containing data.
+     */
+    public function __clone()
+    {
+        foreach ($this as $key => $obj) {
+            $this[$key] = clone $obj;
+        }
     }
 }

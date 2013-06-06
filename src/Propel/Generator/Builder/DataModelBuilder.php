@@ -12,8 +12,8 @@ namespace Propel\Generator\Builder;
 
 use Propel\Common\Pluralizer\PluralizerInterface;
 use Propel\Generator\Builder\Om\ObjectBuilder;
-use Propel\Generator\Builder\Om\PeerBuilder;
 use Propel\Generator\Builder\Om\QueryBuilder;
+use Propel\Generator\Builder\Om\TableMapBuilder;
 use Propel\Generator\Builder\Sql\DataSQLBuilder;
 use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Model\Database;
@@ -54,18 +54,6 @@ abstract class DataModelBuilder
      * @var array string[]
      */
     private $warnings = array();
-
-    /**
-     * Peer builder class for current table.
-     * @var DataModelBuilder
-     */
-    private $peerBuilder;
-
-    /**
-     * Stub Peer builder class for current table.
-     * @var DataModelBuilder
-     */
-    private $stubPeerBuilder;
 
     /**
      * Object builder class for current table.
@@ -137,19 +125,6 @@ abstract class DataModelBuilder
     }
 
     /**
-     * Returns new or existing Peer builder class for this table.
-     * @return PeerBuilder
-     */
-    public function getPeerBuilder()
-    {
-        if (!isset($this->peerBuilder)) {
-            $this->peerBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'peer');
-        }
-
-        return $this->peerBuilder;
-    }
-
-    /**
      * Returns new or existing Pluralizer class.
      * @return PluralizerInterface
      */
@@ -160,19 +135,6 @@ abstract class DataModelBuilder
         }
 
         return $this->pluralizer;
-    }
-
-    /**
-     * Returns new or existing stub Peer builder class for this table.
-     * @return PeerBuilder
-     */
-    public function getStubPeerBuilder()
-    {
-        if (!isset($this->stubPeerBuilder)) {
-            $this->stubPeerBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'peerstub');
-        }
-
-        return $this->stubPeerBuilder;
     }
 
     /**
@@ -295,37 +257,9 @@ abstract class DataModelBuilder
     }
 
     /**
-     * Returns a new Peer class builder instance.
-     *
-     * This is used very frequently from the peer and object builders to get
-     * a peer builder for a RELATED table.
-     *
-     * @param  Table       $table
-     * @return PeerBuilder
-     */
-    public function getNewPeerBuilder(Table $table)
-    {
-        return $this->getGeneratorConfig()->getConfiguredBuilder($table, 'peer');
-    }
-
-    /**
-     * Convenience method to return a NEW Peer stub class builder instance.
-     *
-     * This is used from the peer and object builders to get
-     * a peer builder for a RELATED table.
-     *
-     * @param  Table       $table
-     * @return PeerBuilder
-     */
-    public function getNewStubPeerBuilder(Table $table)
-    {
-        return $this->getGeneratorConfig()->getConfiguredBuilder($table, 'peerstub');
-    }
-
-    /**
      * Convenience method to return a NEW Object class builder instance.
      *
-     * This is used very frequently from the peer and object builders to get
+     * This is used very frequently from the tableMap and object builders to get
      * an object builder for a RELATED table.
      *
      * @param  Table         $table
@@ -400,6 +334,15 @@ abstract class DataModelBuilder
         $stubQueryInheritanceBuilder->setChild($child);
 
         return $stubQueryInheritanceBuilder;
+    }
+
+    /**
+     * Returns new stub Query Inheritance builder class for this table.
+     * @return TableMapBuilder
+     */
+    public function getNewTableMapBuilder(Table $table)
+    {
+        return $this->getGeneratorConfig()->getConfiguredBuilder($table, 'tablemap');
     }
 
     /**

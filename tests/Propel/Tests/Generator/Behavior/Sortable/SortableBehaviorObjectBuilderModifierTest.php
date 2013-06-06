@@ -10,29 +10,27 @@
 
 namespace Propel\Tests\Generator\Behavior\Sortable;
 
-use Propel\Tests\Helpers\Bookstore\Behavior\BookstoreSortableTestBase;
-
-use Propel\Tests\Bookstore\Behavior\Table11;
-use Propel\Tests\Bookstore\Behavior\Table11Peer;
-
-use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Tests\Bookstore\Behavior\SortableTable11Query;
+use Propel\Tests\Bookstore\Behavior\Map\SortableTable11TableMap;
+use Propel\Tests\Bookstore\Behavior\SortableTable11 as Table11;
 
 /**
  * Tests for SortableBehavior class
  *
  * @author Massimiliano Arione
  */
-class SortableBehaviorObjectBuilderModifierTest extends BookstoreSortableTestBase
+class SortableBehaviorObjectBuilderModifierTest extends TestCase
 {
-    protected function setUp()
+    public function setUp()
     {
         parent::setUp();
+
         $this->populateTable11();
     }
 
     public function testPreInsert()
     {
-        Table11Peer::doDeleteAll();
+         SortableTable11TableMap::doDeleteAll();
         $t1 = new Table11();
         $t1->save();
         $this->assertEquals($t1->getRank(), 1, 'Sortable inserts new line in first position if no row present');
@@ -44,21 +42,19 @@ class SortableBehaviorObjectBuilderModifierTest extends BookstoreSortableTestBas
 
     public function testPreDelete()
     {
-        $max = Table11Peer::getMaxRank();
-        $t3 = Table11Peer::retrieveByRank(3);
+        $max = SortableTable11Query::create()->getMaxRank();
+        $t3 = SortableTable11Query::retrieveByRank(3);
         $t3->delete();
-        $this->assertEquals($max - 1, Table11Peer::getMaxRank(), 'Sortable rearrange subsequent rows on delete');
-        $c = new Criteria();
-        $c->add(Table11Peer::TITLE, 'row4');
-        $t4 = Table11Peer::doSelectOne($c);
+        $this->assertEquals($max - 1, SortableTable11Query::create()->getMaxRank(), 'Sortable rearrange subsequent rows on delete');
+        $t4 = SortableTable11Query::create()->filterByTitle('row4')->findOne();
         $this->assertEquals(3, $t4->getRank(), 'Sortable rearrange subsequent rows on delete');
     }
 
     public function testIsFirst()
     {
-        $first = Table11Peer::retrieveByRank(1);
-        $middle = Table11Peer::retrieveByRank(2);
-        $last = Table11Peer::retrieveByRank(4);
+        $first = SortableTable11Query::retrieveByRank(1);
+        $middle = SortableTable11Query::retrieveByRank(2);
+        $last = SortableTable11Query::retrieveByRank(4);
         $this->assertTrue($first->isFirst(), 'isFirst() returns true for the first in the rank');
         $this->assertFalse($middle->isFirst(), 'isFirst() returns false for a middle rank');
         $this->assertFalse($last->isFirst(), 'isFirst() returns false for the last in the rank');
@@ -66,9 +62,9 @@ class SortableBehaviorObjectBuilderModifierTest extends BookstoreSortableTestBas
 
     public function testIsLast()
     {
-        $first = Table11Peer::retrieveByRank(1);
-        $middle = Table11Peer::retrieveByRank(2);
-        $last = Table11Peer::retrieveByRank(4);
+        $first = SortableTable11Query::retrieveByRank(1);
+        $middle = SortableTable11Query::retrieveByRank(2);
+        $last = SortableTable11Query::retrieveByRank(4);
         $this->assertFalse($first->isLast(), 'isLast() returns false for the first in the rank');
         $this->assertFalse($middle->isLast(), 'isLast() returns false for a middle rank');
         $this->assertTrue($last->isLast(), 'isLast() returns true for the last in the rank');
@@ -76,19 +72,19 @@ class SortableBehaviorObjectBuilderModifierTest extends BookstoreSortableTestBas
 
     public function testGetNext()
     {
-        $t = Table11Peer::retrieveByRank(3);
+        $t = SortableTable11Query::retrieveByRank(3);
         $this->assertEquals(4, $t->getNext()->getRank(), 'getNext() returns the next object in rank');
 
-        $t = Table11Peer::retrieveByRank(4);
+        $t = SortableTable11Query::retrieveByRank(4);
         $this->assertNull($t->getNext(), 'getNext() returns null for the last object');
     }
 
     public function testGetPrevious()
     {
-        $t = Table11Peer::retrieveByRank(3);
+        $t = SortableTable11Query::retrieveByRank(3);
         $this->assertEquals(2, $t->getPrevious()->getRank(), 'getPrevious() returns the previous object in rank');
 
-        $t = Table11Peer::retrieveByRank(1);
+        $t = SortableTable11Query::retrieveByRank(1);
         $this->assertNull($t->getPrevious(), 'getPrevious() returns null for the first object');
     }
 
@@ -159,7 +155,7 @@ class SortableBehaviorObjectBuilderModifierTest extends BookstoreSortableTestBas
 
     public function testMoveToRank()
     {
-        $t2 = Table11Peer::retrieveByRank(2);
+        $t2 = SortableTable11Query::retrieveByRank(2);
         $t2->moveToRank(3);
         $expected = array(1 => 'row1', 2 => 'row3', 3 => 'row2', 4 => 'row4');
         $this->assertEquals($expected, $this->getFixturesArray(), 'moveToRank() can move up');
@@ -188,7 +184,7 @@ class SortableBehaviorObjectBuilderModifierTest extends BookstoreSortableTestBas
      */
     public function testMoveToNegativeRank()
     {
-        $t = Table11Peer::retrieveByRank(2);
+        $t = SortableTable11Query::retrieveByRank(2);
         $t->moveToRank(0);
     }
 
@@ -197,14 +193,14 @@ class SortableBehaviorObjectBuilderModifierTest extends BookstoreSortableTestBas
      */
     public function testMoveToOverMaxRank()
     {
-        $t = Table11Peer::retrieveByRank(2);
+        $t = SortableTable11Query::retrieveByRank(2);
         $t->moveToRank(5);
     }
 
     public function testSwapWith()
     {
-        $t2 = Table11Peer::retrieveByRank(2);
-        $t4 = Table11Peer::retrieveByRank(4);
+        $t2 = SortableTable11Query::retrieveByRank(2);
+        $t4 = SortableTable11Query::retrieveByRank(4);
         $t2->swapWith($t4);
         $expected = array(1 => 'row1', 2 => 'row4', 3 => 'row3', 4 => 'row2');
         $this->assertEquals($expected, $this->getFixturesArray(), 'swapWith() swaps ranks of the two objects and leaves the other ranks unchanged');
@@ -212,7 +208,7 @@ class SortableBehaviorObjectBuilderModifierTest extends BookstoreSortableTestBas
 
     public function testMoveUp()
     {
-        $t3 = Table11Peer::retrieveByRank(3);
+        $t3 = SortableTable11Query::retrieveByRank(3);
         $res = $t3->moveUp();
         $this->assertEquals($t3, $res, 'moveUp() returns the current object');
         $expected = array(1 => 'row1', 2 => 'row3', 3 => 'row2', 4 => 'row4');
@@ -227,7 +223,7 @@ class SortableBehaviorObjectBuilderModifierTest extends BookstoreSortableTestBas
 
     public function testMoveDown()
     {
-        $t2 = Table11Peer::retrieveByRank(2);
+        $t2 = SortableTable11Query::retrieveByRank(2);
         $res = $t2->moveDown();
         $this->assertEquals($t2, $res, 'moveDown() returns the current object');
         $expected = array(1 => 'row1', 2 => 'row3', 3 => 'row2', 4 => 'row4');
@@ -242,7 +238,7 @@ class SortableBehaviorObjectBuilderModifierTest extends BookstoreSortableTestBas
 
     public function testMoveToTop()
     {
-        $t3 = Table11Peer::retrieveByRank(3);
+        $t3 = SortableTable11Query::retrieveByRank(3);
         $res = $t3->moveToTop();
         $this->assertEquals($t3, $res, 'moveToTop() returns the current oobject');
         $expected = array(1 => 'row3', 2 => 'row1', 3 => 'row2', 4 => 'row4');
@@ -254,7 +250,7 @@ class SortableBehaviorObjectBuilderModifierTest extends BookstoreSortableTestBas
 
     public function testMoveToBottom()
     {
-        $t2 = Table11Peer::retrieveByRank(2);
+        $t2 = SortableTable11Query::retrieveByRank(2);
         $res = $t2->moveToBottom();
         $this->assertEquals($t2, $res, 'moveToBottom() returns the current object');
         $expected = array(1 => 'row1', 2 => 'row3', 3 => 'row4', 4 => 'row2');
@@ -267,17 +263,16 @@ class SortableBehaviorObjectBuilderModifierTest extends BookstoreSortableTestBas
 
     public function testRemoveFromList()
     {
-        $t2 = Table11Peer::retrieveByRank(2);
+        $t2 = SortableTable11Query::retrieveByRank(2);
         $res = $t2->removeFromList();
         $this->assertTrue($res instanceof Table11, 'removeFromList() returns the current object');
         $this->assertNull($res->getRank(), 'removeFromList() resets the object\'s rank');
-        Table11Peer::clearInstancePool();
+         SortableTable11TableMap::clearInstancePool();
         $expected = array(1 => 'row1', 2 => 'row2', 3 => 'row3', 4 => 'row4');
         $this->assertEquals($expected, $this->getFixturesArray(), 'removeFromList() does not change the list until the object is saved');
         $t2->save();
-        Table11Peer::clearInstancePool();
+         SortableTable11TableMap::clearInstancePool();
         $expected = array(null => 'row2', 1 => 'row1', 2 => 'row3', 3 => 'row4');
         $this->assertEquals($expected, $this->getFixturesArray(), 'removeFromList() changes the list once the object is saved');
     }
-
 }

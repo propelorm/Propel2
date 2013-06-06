@@ -93,11 +93,11 @@ class MysqlSchemaParser extends AbstractSchemaParser
     {
         $this->addVendorInfo = $this->getGeneratorConfig()->getBuildProperty('addVendorInfo');
 
-        $stmt = $this->dbh->query('SHOW FULL TABLES');
+        $dataFetcher = $this->dbh->query('SHOW FULL TABLES');
 
         // First load the tables (important that this happen before filling out details of tables)
         $tables = array();
-        while ($row = $stmt->fetch(\PDO::FETCH_NUM)) {
+        foreach ($dataFetcher as $row) {
             $name = $row[0];
             $type = $row[1];
 
@@ -122,9 +122,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
             $this->addIndexes($table);
             $this->addPrimaryKey($table);
 
-            if ($this->addVendorInfo) {
-                $this->addTableVendorInfo($table);
-            }
+            $this->addTableVendorInfo($table);
         }
 
         return count($tables);
@@ -257,8 +255,8 @@ class MysqlSchemaParser extends AbstractSchemaParser
     {
         $database = $table->getDatabase();
 
-        $stmt = $this->dbh->query(sprintf('SHOW CREATE TABLE `%s`', $table->getName()));
-        $row = $stmt->fetch(\PDO::FETCH_NUM);
+        $dataFetcher = $this->dbh->query(sprintf('SHOW CREATE TABLE `%s`', $table->getName()));
+        $row = $dataFetcher->fetch();
 
         $foreignKeys = array(); // local store to avoid duplicates
 
@@ -401,6 +399,10 @@ class MysqlSchemaParser extends AbstractSchemaParser
     {
         $stmt = $this->dbh->query("SHOW TABLE STATUS LIKE '" . $table->getName() . "'");
         $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+        if (!$this->addVendorInfo) {
+            // since we depend on `Engine` in the MysqlPlatform, we always have to extract this vendor information
+            $row = array('Engine' => $row['Engine']);
+        }
         $vi = $this->getNewVendorInfoObject($row);
         $table->addVendorInfo($vi);
     }

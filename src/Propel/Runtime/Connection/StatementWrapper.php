@@ -56,12 +56,12 @@ class StatementWrapper implements StatementInterface, \IteratorAggregate
      *
      * @param string            $sql            The SQL query for this statement
      * @param ConnectionWrapper $connection     The parent connection
-     * @param array             $driver_options Optional driver options
+     * @param array             $options        Optional driver options
      */
-    public function __construct($sql, ConnectionWrapper $connection, $driver_options = array())
+    public function __construct($sql, ConnectionWrapper $connection, $options = array())
     {
         $this->connection = $connection;
-        $this->statement = $connection->getWrappedConnection()->prepare($sql, $driver_options);
+        $this->statement = $connection->getWrappedConnection()->prepare($sql, $options);
     }
 
     /**
@@ -158,15 +158,17 @@ class StatementWrapper implements StatementInterface, \IteratorAggregate
     }
 
     /**
-     * Executes a prepared statement.  Returns a boolean value indicating success.
+     * Executes a prepared statement.
+     *
+     * Returns a boolean value indicating success.
      * Overridden for query counting and logging.
      *
-     * @param  string  $input_parameters
+     * @param  string  $parameters
      * @return boolean
      */
-    public function execute($input_parameters = null)
+    public function execute($parameters = null)
     {
-        $return = $this->statement->execute($input_parameters);
+        $return = $this->statement->execute($parameters);
         if ($this->connection->useDebug) {
             $sql = $this->getExecutedQueryString();
             $this->connection->log($sql);
@@ -201,20 +203,7 @@ class StatementWrapper implements StatementInterface, \IteratorAggregate
      * Fetches a row from a result set associated with a Statement object.
      * The fetch_style parameter determines how the Connection returns the row.
      *
-     * @param integer $fetchStyle        Controls how the next row will be returned to the caller.
-     * @param integer $cursorOrientation For a PDOStatement object representing a scrollable cursor,
-     *                                      This value determines which row will be returned to the caller.
-     * @param integer $cursorOffset For a PDOStatement object representing a
-     *                                      scrollable cursor for which the cursor_orientation
-     *                                      parameter is set to PDO::FETCH_ORI_ABS, this value
-     *                                      specifies the absolute number of the row in the
-     *                                      result set that shall be fetched.
-     *
-     *                                      For a PDOStatement object representing a
-     *                                      scrollable cursor for which the cursor_orientation
-     *                                      parameter is set to PDO::FETCH_ORI_REL, this value
-     *                                      specifies the row to fetch relative to the cursor
-     *                                      position before PDOStatement::fetch() was called.
+     * @param integer $fetchStyle Controls how the next row will be returned to the caller.
      *
      * @return mixed
      */
@@ -226,9 +215,8 @@ class StatementWrapper implements StatementInterface, \IteratorAggregate
     /**
      * Returns an array containing all of the result set rows.
      *
-     * @param integer $fetchStyle  Controls the contents of the returned array as documented in fetch()
-     * @param integer $columnIndex This argument have a different meaning depending
-     *                                      on the value of the fetch_style parameter.
+     * @param integer $fetchStyle Controls the contents of the returned array as documented in fetch()
+     *
      * @return array
      */
     public function fetchAll($fetchStyle = 4)

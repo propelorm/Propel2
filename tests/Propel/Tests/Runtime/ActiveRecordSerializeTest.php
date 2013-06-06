@@ -13,8 +13,8 @@ namespace Propel\Tests\Runtime\ActiveRecord;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 use Propel\Tests\Bookstore\Author;
 use Propel\Tests\Bookstore\Book;
-use Propel\Tests\Bookstore\BookPeer;
 use Propel\Tests\Bookstore\BookQuery;
+use Propel\Tests\Bookstore\Map\BookTableMap;
 
 /**
  * Test class for ActiveRecord serialization.
@@ -55,7 +55,7 @@ class ActiveRecordSerializeTest extends BookstoreTestBase
         $book->setTitle('Foo3');
         $book->setISBN('1234');
         $book->save();
-        BookPeer::clearInstancePool();
+        BookTableMap::clearInstancePool();
 
         $book = BookQuery::create()->findOneByTitle('Foo3');
         $sb = serialize($book);
@@ -66,6 +66,7 @@ class ActiveRecordSerializeTest extends BookstoreTestBase
     {
         $author = new Author();
         $author->setFirstName('John');
+        $author->setLastName('Doe');
         $book = new Book();
         $book->setTitle('Foo4');
         $book->setISBN('1234');
@@ -86,7 +87,8 @@ class ActiveRecordSerializeTest extends BookstoreTestBase
         $book2->setTitle('Foo6');
         $book2->setISBN('1234');
         $author = new Author();
-        $author->setFirstName('JAne');
+        $author->setFirstName('Jane');
+        $author->setLastName('Doe');
         $author->addBook($book1);
         $author->addBook($book2);
         $author->save();

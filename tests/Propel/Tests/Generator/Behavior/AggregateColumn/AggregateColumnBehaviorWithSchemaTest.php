@@ -16,7 +16,7 @@ use Propel\Tests\BookstoreSchemas\BookstoreContestEntry;
 use Propel\Tests\BookstoreSchemas\BookstoreContestEntryQuery;
 use Propel\Tests\BookstoreSchemas\BookstoreContestQuery;
 use Propel\Tests\BookstoreSchemas\BookstoreQuery;
-use Propel\Tests\BookstoreSchemas\BookstorePeer;
+use Propel\Tests\BookstoreSchemas\Map\BookstoreTableMap;
 use Propel\Tests\BookstoreSchemas\Customer;
 use Propel\Tests\BookstoreSchemas\CustomerQuery;
 use Propel\Tests\Helpers\Schemas\SchemasTestBase;
@@ -34,7 +34,7 @@ class AggregateColumnBehaviorWithSchemaTest extends SchemasTestBase
     {
         parent::setUp();
 
-        $this->con = Propel::getServiceContainer()->getConnection(BookstorePeer::DATABASE_NAME);
+        $this->con = Propel::getServiceContainer()->getConnection(BookstoreTableMap::DATABASE_NAME);
         $this->con->beginTransaction();
     }
 
@@ -46,7 +46,7 @@ class AggregateColumnBehaviorWithSchemaTest extends SchemasTestBase
 
     public function testParametersWithSchema()
     {
-        $storeTable = BookstorePeer::getTableMap();
+        $storeTable = BookstoreTableMap::getTableMap();
         $this->assertEquals(count($storeTable->getColumns()), 8, 'AggregateColumn adds one column by default');
         $this->assertTrue(method_exists('Propel\Tests\BookstoreSchemas\Bookstore', 'getTotalContestEntries'));
     }
@@ -59,6 +59,7 @@ class AggregateColumnBehaviorWithSchemaTest extends SchemasTestBase
         BookstoreContestQuery::create()->deleteAll($this->con);
 
         $store = new Bookstore();
+        $store->setStoreName('FreeAgent Bookstore');
         $store->save($this->con);
         $this->assertEquals(0, $store->computeTotalContestEntries($this->con), 'The compute method returns 0 for objects with no related objects');
 

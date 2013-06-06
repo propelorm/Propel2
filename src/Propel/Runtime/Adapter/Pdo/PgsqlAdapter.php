@@ -10,22 +10,19 @@
 
 namespace Propel\Runtime\Adapter\Pdo;
 
-use Propel\Runtime\Adapter\AdapterInterface;
+use Propel\Runtime\Adapter\SqlAdapterInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\InvalidArgumentException;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
-use Propel\Runtime\Util\BasePeer;
 
 /**
- * This is used to connect to PostgresQL databases.
- *
- * <a href="http://www.pgsql.org">http://www.pgsql.org</a>
+ * This is used to connect to PostgreSQL databases.
  *
  * @author Hans Lellelid <hans@xmpl.org> (Propel)
  * @author Hakan Tandogan <hakan42@gmx.de> (Torque)
  */
-class PgsqlAdapter extends PdoAdapter implements AdapterInterface
+class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
 {
     /**
      * Returns SQL which concatenates the second string to the first.
@@ -88,10 +85,9 @@ class PgsqlAdapter extends PdoAdapter implements AdapterInterface
         if (null === $name) {
             throw new InvalidArgumentException("Unable to fetch next sequence ID without sequence name.");
         }
-        $stmt = $con->query(sprintf('SELECT nextval(%s)', $con->quote($name)));
-        $row = $stmt->fetch(\PDO::FETCH_NUM);
+        $dataFetcher = $con->query(sprintf('SELECT nextval(%s)', $con->quote($name)));
 
-        return $row[0];
+        return $dataFetcher->fetchColumn();
     }
 
     /**
@@ -196,7 +192,7 @@ class PgsqlAdapter extends PdoAdapter implements AdapterInterface
         if ($query instanceof Criteria) {
             $params = array();
             $dbMap = Propel::getServiceContainer()->getDatabaseMap($query->getDbName());
-            $sql = BasePeer::createSelectSql($query, $params);
+            $sql = $query->createSelectSql($params);
         } else {
             $sql = $query;
         }

@@ -20,10 +20,10 @@ use Propel\Runtime\Propel;
 public function transferMoney($fromAccountNumber, $toAccountNumber, $amount)
 {
   // get the PDO connection object from Propel
-  $con = Propel::getWriteConnection(AccountPeer::DATABASE_NAME);
+  $con = Propel::getWriteConnection(AccountTableMap::DATABASE_NAME);
 
-  $fromAccount = AccountPeer::retrieveByPk($fromAccountNumber, $con);
-  $toAccount   = AccountPeer::retrieveByPk($toAccountNumber, $con);
+  $fromAccount = AccountQuery::create()->findPk($fromAccountNumber, $con);
+  $toAccount   = AccountQuery::create()->findPk($toAccountNumber, $con);
 
   $con->beginTransaction();
 
@@ -43,11 +43,11 @@ public function transferMoney($fromAccountNumber, $toAccountNumber, $amount)
 }
 {% endhighlight %}
 
-The transaction statements are `beginTransaction()`, `commit()` and `rollback()`, which are methods of the PDO connection object. Transaction methods are typically used inside a `try/catch` block. The exception is rethrown after rolling back the transaction: That ensures that the user knows that something wrong happenned.
+The transaction statements are `beginTransaction()`, `commit()` and `rollback()`, which are methods of the PDO connection object. Transaction methods are typically used inside a `try/catch` block. The exception is rethrown after rolling back the transaction: That ensures that the user knows that something wrong happened.
 
 In this example, if something wrong happens while saving either one of the two accounts, an `Exception` is thrown, and the whole operation is rolled back. That means that the transfer is cancelled, with an insurance that the money hasn't vanished (that's the A in ACID, which stands for "Atomicity"). If both account modifications work as expected, the whole transaction is committed, meaning that the data changes enclosed in the transaction are persisted in the database.
 
-Tip: In order to build a transaction, you need a connection object. The connection object for a Propel model is always available through `Propel::getReadConnection([ModelName]Peer::DATABASE_NAME)` (for READ queries) and `Propel::getWriteConnection([ModelName]Peer::DATABASE_NAME)` (for WRITE queries).
+Tip: In order to build a transaction, you need a connection object. The connection object for a Propel model is always available through `Propel::getReadConnection([ModelName]TableMap::DATABASE_NAME)` (for READ queries) and `Propel::getWriteConnection([ModelName]TableMap::DATABASE_NAME)` (for WRITE queries).
 
 ## Denormalization And Transactions ##
 
@@ -143,8 +143,8 @@ function deleteBooksWithNoPrice(ConnectionInterface $con)
   $con->beginTransaction();
   try {
     $c = new Criteria();
-    $c->add(BookPeer::PRICE, null, Criteria::ISNULL);
-    BookPeer::doDelete($c, $con);
+    $c->add(BookTableMap::PRICE, null, Criteria::ISNULL);
+    BookTableMap::doDelete($c, $con);
     $con->commit();
   } catch (Exception $e) {
     $con->rollback();
@@ -157,8 +157,8 @@ function deleteAuthorsWithNoEmail(ConnectionInterface $con)
   $con->beginTransaction();
   try {
     $c = new Criteria();
-    $c->add(AuthorPeer::EMAIL, null, Criteria::ISNULL);
-    AuthorPeer::doDelete($c, $con);
+    $c->add(AuthorTableMap::EMAIL, null, Criteria::ISNULL);
+    AuthorTableMap::doDelete($c, $con);
     $con->commit();
   } catch (Exception $e) {
     $con->rollback();
@@ -194,7 +194,7 @@ A database transaction has a cost in terms of performance. In fact, for simple d
 
 {% highlight php %}
 <?php
-$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+$con = Propel::getConnection(BookTableMap::DATABASE_NAME);
 for ($i=0; $i<2002; $i++)
 {
   $book = new Book();
@@ -222,7 +222,7 @@ You can take advantage of Propel's nested transaction capabilities to encapsulat
 
 {% highlight php %}
 <?php
-$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+$con = Propel::getConnection(BookTableMap::DATABASE_NAME);
 $con->beginTransaction();
 for ($i=0; $i<2002; $i++)
 {
@@ -254,22 +254,22 @@ All the code examples in this chapter show the connection object passed as a par
 
 {% highlight php %}
 <?php
-$con = Propel::getConnection(AccountPeer::DATABASE_NAME);
-$fromAccount = AccountPeer::retrieveByPk($fromAccountNumber, $con);
+$con = Propel::getConnection(AccountTableMap::DATABASE_NAME);
+$fromAccount = AccountQuery::create()->findPk($fromAccountNumber, $con);
 $fromAccount->setValue($fromAccount->getValue() - $amount);
 $fromAccount->save($con);
 {% endhighlight %}
 
-The same code works without explicitely passing the connection object, because Propel knows how to get the right connection from a Model:
+The same code works without explicitly passing the connection object, because Propel knows how to get the right connection from a Model:
 
 {% highlight php %}
 <?php
-$fromAccount = AccountPeer::retrieveByPk($fromAccountNumber);
+$fromAccount = AccountQuery::create()->findPk($fromAccountNumber);
 $fromAccount->setValue($fromAccount->getValue() - $amount);
 $fromAccount->save();
 {% endhighlight %}
 
-However, it's a good practice to pass the connection explicitely, and for three reasons:
+However, it's a good practice to pass the connection explicitly, and for three reasons:
 
 * Propel doesn't need to look for a connection object, and this results in a tiny boost in performance.
 * You can use a specific connection, which is required in distributed (master/slave) environments, in order to distinguish read and write operations.

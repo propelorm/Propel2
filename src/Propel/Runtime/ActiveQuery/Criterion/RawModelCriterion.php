@@ -35,7 +35,7 @@ class RawModelCriterion extends AbstractModelCriterion
      * @param ColumnMap $column     A Column object to help escaping the value
      * @param mixed     $value
      * @param string    $tableAlias optional table alias
-     * @param string    $type       A PDO type constant, e.g. PDO::PARAM_STR
+     * @param int       $type       A PDO type constant, e.g. PDO::PARAM_STR
      */
     public function __construct(Criteria $outer, $clause, $column, $value = null, $tableAlias = null, $type = PDO::PARAM_STR)
     {
@@ -46,8 +46,8 @@ class RawModelCriterion extends AbstractModelCriterion
     /**
      * Appends a Prepared Statement representation of the ModelCriterion onto the buffer
      *
-     * @param      string &$sb The string that will receive the Prepared Statement
-     * @param array $params A list to which Prepared Statement parameters will be appended
+     * @param string &$sb    The string that will receive the Prepared Statement
+     * @param array  $params A list to which Prepared Statement parameters will be appended
      */
     protected function appendPsForUniqueClauseTo(&$sb, array &$params)
     {

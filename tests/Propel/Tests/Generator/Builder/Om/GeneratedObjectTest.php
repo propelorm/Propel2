@@ -10,49 +10,52 @@
 
 namespace Propel\Tests\Generator\Builder\Om;
 
+use Propel\Tests\Bookstore\BookstoreQuery;
+use Propel\Generator\Util\QuickBuilder;
+use Propel\Runtime\Propel;
+use Propel\Runtime\Collection\ObjectCollection;
+use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\Map\TableMap;
+use Propel\Tests\Bookstore\AcctAuditLog;
+use Propel\Tests\Bookstore\AcctAuditLogQuery;
+use Propel\Tests\Bookstore\Author;
+use Propel\Tests\Bookstore\AuthorQuery;
+use Propel\Tests\Bookstore\Map\AuthorTableMap;
+use Propel\Tests\Bookstore\Map\AcctAuditLogTableMap;
+use Propel\Tests\Bookstore\Book;
+use Propel\Tests\Bookstore\BookSummary;
+use Propel\Tests\Bookstore\BookQuery;
+use Propel\Tests\Bookstore\Map\BookTableMap;
+use Propel\Tests\Bookstore\BookReader;
+use Propel\Tests\Bookstore\BookOpinion;
+use Propel\Tests\Bookstore\BookOpinionQuery;
+use Propel\Tests\Bookstore\Bookstore;
+use Propel\Tests\Bookstore\BookstoreContest;
+use Propel\Tests\Bookstore\BookstoreEmployee;
+use Propel\Tests\Bookstore\BookstoreEmployeeQuery;
+use Propel\Tests\Bookstore\Map\BookstoreEmployeeTableMap;
+use Propel\Tests\Bookstore\BookstoreEmployeeAccount;
+use Propel\Tests\Bookstore\BookstoreEmployeeAccountQuery;
+use Propel\Tests\Bookstore\Map\BookstoreEmployeeAccountTableMap;
+use Propel\Tests\Bookstore\BookstoreContestEntry;
+use Propel\Tests\Bookstore\BookstoreSale;
+use Propel\Tests\Bookstore\BookSummaryQuery;
+use Propel\Tests\Bookstore\Contest;
+use Propel\Tests\Bookstore\ContestView;
+use Propel\Tests\Bookstore\Customer;
+use Propel\Tests\Bookstore\Map\CustomerTableMap;
+use Propel\Tests\Bookstore\CustomerQuery;
+use Propel\Tests\Bookstore\Publisher;
+use Propel\Tests\Bookstore\PublisherQuery;
+use Propel\Tests\Bookstore\Review;
+use Propel\Tests\Bookstore\Map\ReviewTableMap;
+use Propel\Tests\Bookstore\Map\PublisherTableMap;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 use Propel\Tests\Helpers\Bookstore\Behavior\TestAuthor;
 use Propel\Tests\Helpers\Bookstore\Behavior\TestAuthorDeleteFalse;
 use Propel\Tests\Helpers\Bookstore\Behavior\TestAuthorSaveFalse;
 
-use Propel\Tests\Bookstore\AcctAuditLog;
-use Propel\Tests\Bookstore\AcctAuditLogPeer;
-use Propel\Tests\Bookstore\Author;
-use Propel\Tests\Bookstore\AuthorPeer;
-use Propel\Tests\Bookstore\AuthorQuery;
-use Propel\Tests\Bookstore\Book;
-use Propel\Tests\Bookstore\BookQuery;
-use Propel\Tests\Bookstore\BookPeer;
-use Propel\Tests\Bookstore\BookReader;
-use Propel\Tests\Bookstore\BookOpinion;
-use Propel\Tests\Bookstore\BookOpinionPeer;
-use Propel\Tests\Bookstore\Bookstore;
-use Propel\Tests\Bookstore\BookstorePeer;
-use Propel\Tests\Bookstore\BookstoreContest;
-use Propel\Tests\Bookstore\Contest;
-use Propel\Tests\Bookstore\ContestView;
-use Propel\Tests\Bookstore\Customer;
-use Propel\Tests\Bookstore\CustomerPeer;
-use Propel\Tests\Bookstore\Publisher;
-use Propel\Tests\Bookstore\PublisherPeer;
-use Propel\Tests\Bookstore\Review;
-use Propel\Tests\Bookstore\ReviewPeer;
-use Propel\Tests\Bookstore\BookstoreEmployee;
-use Propel\Tests\Bookstore\BookstoreEmployeePeer;
-use Propel\Tests\Bookstore\BookstoreEmployeeAccount;
-use Propel\Tests\Bookstore\BookstoreEmployeeAccountPeer;
-use Propel\Tests\Bookstore\BookstoreContestEntry;
-use Propel\Tests\Bookstore\BookstoreSale;
-
-use Propel\Runtime\Propel;
-use Propel\Runtime\Collection\ObjectCollection;
-use Propel\Runtime\ActiveQuery\Criteria;
-use Propel\Runtime\Util\BasePeer;
-
-use Propel\Generator\Util\QuickBuilder;
-
 use \DateTime;
-
 use MyNameSpace\TestKeyTypeTable;
 
 /**
@@ -67,7 +70,6 @@ use MyNameSpace\TestKeyTypeTable;
  * for each test method in this class.  See the BookstoreDataPopulator::populate()
  * method for the exact contents of the database.
  *
- * @see        BookstoreDataPopulator
  * @author Hans Lellelid <hans@xmpl.org>
  */
 class GeneratedObjectTest extends BookstoreTestBase
@@ -106,9 +108,9 @@ class GeneratedObjectTest extends BookstoreTestBase
 
         $pubId = $pub->getId();
 
-        PublisherPeer::clearInstancePool();
+        PublisherTableMap::clearInstancePool();
 
-        $pub2 = PublisherPeer::retrieveByPK($pubId);
+        $pub2 = PublisherQuery::create()->findPk($pubId);
         $pub2->setName('Penguin');
         $this->assertFalse($pub2->isModified(), "Expect Publisher to be not modified after setting default value second time.");
     }
@@ -146,10 +148,10 @@ class GeneratedObjectTest extends BookstoreTestBase
      */
     public function testDefaultExpressions()
     {
-        if (Propel::getServiceContainer()->getAdapter(BookstoreEmployeePeer::DATABASE_NAME) instanceof DBSqlite) {
+        if (Propel::getServiceContainer()->getAdapter(BookstoreEmployeeTableMap::DATABASE_NAME) instanceof DBSqlite) {
             $this->markTestSkipped("Cannot test default expressions with SQLite");
         }
-        BookstoreEmployeeAccountPeer::doDeleteAll();
+        BookstoreEmployeeAccountTableMap::doDeleteAll();
 
         $b = new Bookstore();
         $b->setStoreName("Foo!");
@@ -167,7 +169,7 @@ class GeneratedObjectTest extends BookstoreTestBase
 
         $acct->save();
 
-        $acct = BookstoreEmployeeAccountPeer::retrieveByPK($acct->getEmployeeId());
+        $acct = BookstoreEmployeeAccountQuery::create()->findPk($acct->getEmployeeId());
 
         $this->assertNotNull($acct->getAuthenticator(), "Expected a valid (non-NULL) authenticator column after save.");
         $this->assertEquals('Password', $acct->getAuthenticator(), "Expected authenticator='Password' after save.");
@@ -191,7 +193,7 @@ class GeneratedObjectTest extends BookstoreTestBase
      */
     public function testDefaultExpressions_ReloadOnInsert()
     {
-        if (Propel::getServiceContainer()->getAdapter(BookstoreEmployeePeer::DATABASE_NAME) instanceof DBSqlite) {
+        if (Propel::getServiceContainer()->getAdapter(BookstoreEmployeeTableMap::DATABASE_NAME) instanceof DBSqlite) {
             $this->markTestSkipped("Cannot test default date expressions with SQLite");
         }
 
@@ -231,7 +233,7 @@ class GeneratedObjectTest extends BookstoreTestBase
      */
     public function testDefaultExpressions_ReloadOnInsert_Override()
     {
-        if (Propel::getServiceContainer()->getAdapter(BookstoreEmployeePeer::DATABASE_NAME) instanceof DBSqlite) {
+        if (Propel::getServiceContainer()->getAdapter(BookstoreEmployeeTableMap::DATABASE_NAME) instanceof DBSqlite) {
             $this->markTestSkipped("Cannot test default date expressions with SQLite");
         }
 
@@ -274,7 +276,7 @@ class GeneratedObjectTest extends BookstoreTestBase
         $b->save();
 
         $sale = new BookstoreSale();
-        $sale->setBookstore(BookstorePeer::doSelectOne(new Criteria()));
+        $sale->setBookstore(BookstoreQuery::create()->findOne());
         $sale->setSaleName("Spring Sale");
         $sale->save();
 
@@ -301,7 +303,7 @@ class GeneratedObjectTest extends BookstoreTestBase
         $b->save();
 
         $sale = new BookstoreSale();
-        $sale->setBookstore(BookstorePeer::doSelectOne(new Criteria()));
+        $sale->setBookstore(BookstoreQuery::create()->findOne());
         $sale->setSaleName("Spring Sale");
         $sale->save();
 
@@ -326,7 +328,7 @@ class GeneratedObjectTest extends BookstoreTestBase
         $emp->save();
         $id = $emp->getId();
 
-        $retrieved = BookstoreEmployeePeer::retrieveByPK($id);
+        $retrieved = BookstoreEmployeeQuery::create()->findPk($id);
         $this->assertSame($emp, $retrieved, "Expected same object (from instance pool)");
     }
 
@@ -356,12 +358,12 @@ class GeneratedObjectTest extends BookstoreTestBase
         $this->assertSame($pub1, $book->getPublisher());
 
         // now change values behind the scenes
-        $con = Propel::getServiceContainer()->getConnection(BookstoreEmployeeAccountPeer::DATABASE_NAME);
-        $con->exec("UPDATE " . BookPeer::TABLE_NAME . " SET "
+        $con = Propel::getServiceContainer()->getConnection(BookstoreEmployeeAccountTableMap::DATABASE_NAME);
+        $con->exec("UPDATE " . BookTableMap::TABLE_NAME . " SET "
             . " publisher_id = " . $pub2->getId()
             . " WHERE id = " . $book->getId());
 
-        $book2 = BookPeer::retrieveByPK($book->getId());
+        $book2 = BookQuery::create()->findPk($book->getId());
         $this->assertSame($book, $book2, "Expected same book object instance");
 
         $this->assertEquals($pub1->getId(), $book->getPublisherId(), "Expected book to have OLD publisher id before reload()");
@@ -373,7 +375,7 @@ class GeneratedObjectTest extends BookstoreTestBase
 
         // Now let's set it back, just to be double sure ...
 
-        $con->exec("UPDATE " . BookPeer::TABLE_NAME . " SET "
+        $con->exec("UPDATE " . BookTableMap::TABLE_NAME . " SET "
             . " publisher_id = " . $pub1->getId()
             . " WHERE id = " . $book->getId());
 
@@ -408,7 +410,7 @@ class GeneratedObjectTest extends BookstoreTestBase
         $opinion->save();
 
 
-        $opinion2 = BookOpinionPeer::retrieveByPK($bookId, $readerId);
+        $opinion2 = BookOpinionQuery::create()->findPk(array($bookId, $readerId));
 
         $this->assertSame($opinion, $opinion2, "Expected same object to be retrieved from differently type-casted primary key values.");
 
@@ -461,18 +463,11 @@ class GeneratedObjectTest extends BookstoreTestBase
 
     }
 
-    public function testSaveCanInsertEmptyObjects()
-    {
-        $b = new Book();
-        $b->save();
-        $this->assertFalse($b->isNew());
-        $this->assertNotNull($b->getId());
-    }
-
     public function testSaveCanInsertNonEmptyObjects()
     {
         $b = new Book();
         $b->setTitle('foo');
+        $b->setISBN('FA404');
         $b->save();
         $this->assertFalse($b->isNew());
         $this->assertNotNull($b->getId());
@@ -530,6 +525,7 @@ class GeneratedObjectTest extends BookstoreTestBase
     {
         $a = new Author();
         $a->setFirstName('Foo');
+        $a->setLastName('Bar');
         $a->save();
         $this->assertFalse($a->isModified());
     }
@@ -537,8 +533,11 @@ class GeneratedObjectTest extends BookstoreTestBase
     public function testIsModifiedIsTrueForSavedObjectsWithModifications()
     {
         $a = new Author();
-        $a->save();
         $a->setFirstName('Foo');
+        $a->setLastName('Bar');
+        $a->save();
+        $a->setFirstName('Chuck');
+        $a->setLastName('Norris');
         $this->assertTrue($a->isModified());
     }
 
@@ -582,7 +581,8 @@ class GeneratedObjectTest extends BookstoreTestBase
     public function testIsModifiedAndNullValues()
     {
         $a = new Author();
-        $a->setFirstName("");
+        $a->setFirstName('');
+        $a->setLastName('Bar');
         $a->setAge(0);
         $a->save();
 
@@ -591,8 +591,6 @@ class GeneratedObjectTest extends BookstoreTestBase
 
         $a->setAge(null);
         $this->assertTrue($a->isModified(), "Expected Author to be modified after changing 0-value int column to NULL.");
-
-        $a->save();
 
         $a->setFirstName('');
         $this->assertTrue($a->isModified(), "Expected Author to be modified after changing NULL column value to empty string.");
@@ -659,21 +657,21 @@ class GeneratedObjectTest extends BookstoreTestBase
 
         $book->save();
 
-        BookPeer::clearInstancePool();
-        ReviewPeer::clearInstancePool();
+        BookTableMap::clearInstancePool();
+        ReviewTableMap::clearInstancePool();
 
-        $book = BookPeer::retrieveByPK($book->getId());
+        $book = BookQuery::create()->findPk($book->getId());
         $this->assertEquals($num, $book->countReviews(), "Expected countReviews() to return $num (after save)");
         $this->assertEquals($num, count($book->getReviews()), "Expected getReviews() to return $num (after save)");
 
         // Now set different criteria and expect different results
         $c = new Criteria();
-        $c->add(ReviewPeer::RECOMMENDED, false);
+        $c->add(ReviewTableMap::RECOMMENDED, false);
         $this->assertEquals(floor($num/2), $book->countReviews($c), "Expected " . floor($num/2) . " results from countReviews(recomm=false)");
 
         // Change Criteria, run again -- expect different.
         $c = new Criteria();
-        $c->add(ReviewPeer::RECOMMENDED, true);
+        $c->add(ReviewTableMap::RECOMMENDED, true);
         $this->assertEquals(ceil($num/2), count($book->getReviews($c)), "Expected " . ceil($num/2) . " results from getReviews(recomm=true)");
 
         $this->assertEquals($num, $book->countReviews(), "Expected countReviews to return $num with new empty Criteria");
@@ -729,8 +727,15 @@ class GeneratedObjectTest extends BookstoreTestBase
             'PublisherId',
             'AuthorId'
         );
-        $this->assertEquals($expectedKeys, array_keys($arr1), 'toArray() returns an associative array with BasePeer::TYPE_PHPNAME keys by default');
+        $this->assertEquals($expectedKeys, array_keys($arr1), 'toArray() returns an associative array with TableMap::TYPE_PHPNAME keys by default');
         $this->assertEquals('Don Juan', $arr1['Title'], 'toArray() returns an associative array representation of the object');
+    }
+
+    public function testWithColumn()
+    {
+        $book = BookQuery::create()->withColumn('Title', 'TitleCopy')->findOne();
+        $bookArray = $book->toArray();
+        $this->assertEquals($book->getTitleCopy(), $bookArray['TitleCopy']);
     }
 
     public function testToArrayKeyType()
@@ -738,17 +743,17 @@ class GeneratedObjectTest extends BookstoreTestBase
         $b = new Book();
         $b->setTitle('Don Juan');
 
-        $arr1 = $b->toArray(BasePeer::TYPE_COLNAME);
+        $arr1 = $b->toArray(TableMap::TYPE_COLNAME);
         $expectedKeys = array(
-            BookPeer::ID,
-            BookPeer::TITLE,
-            BookPeer::ISBN,
-            BookPeer::PRICE,
-            BookPeer::PUBLISHER_ID,
-            BookPeer::AUTHOR_ID
+            BookTableMap::ID,
+            BookTableMap::TITLE,
+            BookTableMap::ISBN,
+            BookTableMap::PRICE,
+            BookTableMap::PUBLISHER_ID,
+            BookTableMap::AUTHOR_ID
         );
         $this->assertEquals($expectedKeys, array_keys($arr1), 'toArray() accepts a $keyType parameter to change the result keys');
-        $this->assertEquals('Don Juan', $arr1[BookPeer::TITLE], 'toArray() returns an associative array representation of the object');
+        $this->assertEquals('Don Juan', $arr1[BookTableMap::TITLE], 'toArray() returns an associative array representation of the object');
     }
 
     public function testToArrayKeyTypePreDefined()
@@ -817,14 +822,14 @@ EOF;
      */
     public function testAllowPkInsertOnIdMethodNativeTable()
     {
-        CustomerPeer::doDeleteAll();
+        CustomerTableMap::doDeleteAll();
         $cu = new Customer;
         $cu->setPrimaryKey(100000);
         $cu->save();
 
         $this->assertEquals(100000, $cu->getPrimaryKey());
 
-        $cu2 = CustomerPeer::retrieveByPk(100000);
+        $cu2 = CustomerQuery::create()->findPk(100000);
 
         $this->assertSame($cu, $cu2);
     }
@@ -846,7 +851,7 @@ EOF;
      */
     public function testUniqueFkRel()
     {
-        BookstoreEmployeeAccountPeer::doDeleteAll();
+        BookstoreEmployeeAccountTableMap::doDeleteAll();
 
         $employee = new BookstoreEmployee();
         $employee->setName("Johnny Walker");
@@ -862,14 +867,14 @@ EOF;
         $al->save();
         $alId = $al->getId();
 
-        BookstoreEmployeePeer::clearInstancePool();
-        BookstoreEmployeeAccountPeer::clearInstancePool();
-        AcctAuditLogPeer::clearInstancePool();
+        BookstoreEmployeeTableMap::clearInstancePool();
+        BookstoreEmployeeAccountTableMap::clearInstancePool();
+        AcctAuditLogTableMap::clearInstancePool();
 
-        $al2 = AcctAuditLogPeer::retrieveByPK($alId);
+        $al2 = AcctAuditLogQuery::create()->findPk($alId);
         /* @var $al2 AcctAuditLog */
         $mapacct = $al2->getBookstoreEmployeeAccount();
-        $lookupacct = BookstoreEmployeeAccountPeer::retrieveByPK($acctId);
+        $lookupacct = BookstoreEmployeeAccountQuery::create()->findPk($acctId);
 
         $logs = $lookupacct->getAcctAuditLogs();
 
@@ -977,7 +982,8 @@ EOF;
 
     public function testPreSaveFalse()
     {
-        $con = Propel::getServiceContainer()->getConnection(AuthorPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(AuthorTableMap::DATABASE_NAME);
+        $nbNestedTransactions = $con->getNestedTransactionCount();
         $author = new TestAuthorSaveFalse();
         $author->setFirstName("bogus");
         $author->setLastName("Lastname");
@@ -986,7 +992,7 @@ EOF;
         $this->assertEquals('pre@save.com', $author->getEmail());
         $this->assertNotEquals(115, $author->getAge());
         $this->assertTrue($author->isNew());
-        $this->assertEquals(1, $con->getNestedTransactionCount());
+        $this->assertEquals($nbNestedTransactions, $con->getNestedTransactionCount());
     }
 
     public function testPostSave()
@@ -1010,7 +1016,7 @@ EOF;
 
     public function testPreDeleteFalse()
     {
-        $con = Propel::getServiceContainer()->getConnection(AuthorPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(AuthorTableMap::DATABASE_NAME);
         $author = new TestAuthorDeleteFalse();
         $author->setFirstName("bogus");
         $author->setLastName("Lastname");
@@ -1080,12 +1086,18 @@ EOF;
         $coll->setModel('\Propel\Tests\Bookstore\Book');
 
         for ($i = 0; $i < 3; $i++) {
-            $coll[] = new Book();
+            $b = new Book();
+            $b->setTitle('Title ' . $i);
+            $b->setISBN($i);
+
+            $coll[] = $b;
         }
 
         $this->assertEquals(3, $coll->count());
 
         $a = new Author();
+        $a->setFirstName('Chuck');
+        $a->setLastName('Norris');
         $a->setBooks($coll);
         $a->save();
 
@@ -1102,7 +1114,8 @@ EOF;
 
         $this->assertEquals(2, $a->getBooks()->count());
         $this->assertEquals(1, AuthorQuery::create()->count());
-        $this->assertEquals(2, BookQuery::create()->count());
+        //The book is not deleted because his fk is not required
+        $this->assertEquals(3, BookQuery::create()->count());
 
         $newBook = new Book();
         $newBook->setTitle('My New Book');
@@ -1118,7 +1131,7 @@ EOF;
         $this->assertEquals(3, $coll->count());
         $this->assertEquals(3, $a->getBooks()->count());
         $this->assertEquals(1, AuthorQuery::create()->count());
-        $this->assertEquals(3, BookQuery::create()->count());
+        $this->assertEquals(4, BookQuery::create()->count());
 
         // Add a new object
         $newBook1 = new Book();
@@ -1134,7 +1147,7 @@ EOF;
         $this->assertEquals(4, $coll->count());
         $this->assertEquals(4, $a->getBooks()->count());
         $this->assertEquals(1, AuthorQuery::create()->count());
-        $this->assertEquals(4, BookQuery::create()->count());
+        $this->assertEquals(5, BookQuery::create()->count());
 
         // Add the same collection
         $books = $a->getBooks();
@@ -1144,8 +1157,8 @@ EOF;
 
         $this->assertEquals(4, $books->count());
         $this->assertEquals(4, $a->getBooks()->count());
-        $this->assertEquals(1,  AuthorQuery::create()->count());
-        $this->assertEquals(4, BookQuery::create()->count());
+        $this->assertEquals(1, AuthorQuery::create()->count());
+        $this->assertEquals(5, BookQuery::create()->count());
     }
 
     public function testSetterOneToManyWithNoData()
@@ -1159,6 +1172,8 @@ EOF;
 
         // Basic usage
         $a = new Author();
+        $a->setFirstName('Chuck');
+        $a->setLastName('Norris');
         $a->setBooks($books);
         $a->save();
 
@@ -1175,6 +1190,7 @@ EOF;
 
         $book = new Book();
         $book->setTitle('My Book');
+        $book->setISBN('FA404');
         $book->save();
 
         // Modify it but don't save it
@@ -1183,10 +1199,12 @@ EOF;
         $coll = new ObjectCollection();
         $coll[] = $book;
 
-        BookPeer::clearInstancePool();
+        BookTableMap::clearInstancePool();
         $book = BookQuery::create()->findPk($book->getPrimaryKey());
 
         $a = new Author();
+        $a->setFirstName('Chuck');
+        $a->setLastName('Norris');
         $a->setBooks($coll);
         $a->save();
 
@@ -1210,11 +1228,17 @@ EOF;
         $coll = new ObjectCollection();
         $coll->setModel('\Propel\Tests\Bookstore\Book');
 
-        $coll[] = new Book();
-        $coll[] = new Book();
-        $coll[] = new Book();
+        for ($i = 0; $i < 3; $i++) {
+            $b = new Book();
+            $b->setTitle('Title ' . $i);
+            $b->setISBN($i);
+
+            $coll[] = $b;
+        }
 
         $a = new Author();
+        $a->setFirstName('Chuck');
+        $a->setLastName('Norris');
         $a->setBooks($coll);
         $a->save();
 
@@ -1234,13 +1258,16 @@ EOF;
         for ($i = 0; $i < 3; $i++) {
             $b = new Book();
             $b->setTitle('Book ' . $i);
+            $b->setISBN('FA404-' . $i);
             $b->save();
         }
 
-        BookPeer::clearInstancePool();
+        BookTableMap::clearInstancePool();
         $books = BookQuery::create()->find();
 
         $a = new Author();
+        $a->setFirstName('Chuck');
+        $a->setLastName('Norris');
         $a->setBooks($books);
         $a->save();
 
@@ -1261,6 +1288,8 @@ EOF;
         AuthorQuery::create()->deleteAll();
 
         $a = new Author();
+        $a->setFirstName('Chuck');
+        $a->setLastName('Norris');
         $a->setBooks(new ObjectCollection());
         $a->save();
 
@@ -1280,10 +1309,14 @@ EOF;
         foreach (array('foo', 'bar') as $title) {
             $b = new Book();
             $b->setTitle($title);
+            $b->setISBN('FA404');
+
             $books[] = $b;
         }
 
         $a = new Author();
+        $a->setFirstName('Chuck');
+        $a->setLastName('Norris');
         $a->setBooks($books);
         $a->save();
 
@@ -1295,6 +1328,8 @@ EOF;
         foreach (array('bam', 'bom') as $title) {
             $b = new Book();
             $b->setTitle($title);
+            $b->setISBN('FA404');
+
             $books[] = $b;
         }
 
@@ -1306,6 +1341,202 @@ EOF;
         $this->assertEquals('bom', $books[1]->getTitle());
 
         $this->assertEquals(1, AuthorQuery::create()->count());
-        $this->assertEquals(2, BookQuery::create()->count());
+        // the replaced book are still there because the PK is not required
+        $this->assertEquals(4, BookQuery::create()->count());
+    }
+
+    public function testSetterOneToManyWithFkRequired()
+    {
+        // Ensure no data
+        BookSummaryQuery::create()->deleteAll();
+        BookQuery::create()->deleteAll();
+
+        $coll = new ObjectCollection();
+        $coll->setModel('BookSummary');
+
+        for ($i = 0; $i < 3; $i++) {
+            $coll[] = new BookSummary();
+        }
+
+        $this->assertEquals(3, $coll->count());
+
+        $b = new Book();
+        $b->setTitle('myBook');
+        $b->setBookSummaries($coll);
+        $b->save();
+
+        $this->assertInstanceOf('Propel\Runtime\Collection\ObjectCollection', $b->getBookSummaries());
+        $this->assertEquals(3, $b->getBookSummaries()->count());
+        $this->assertEquals(1, BookQuery::create()->count());
+        $this->assertEquals(3, BookSummaryQuery::create()->count());
+
+        $coll->shift();
+        $this->assertEquals(2, $coll->count());
+
+        $b->setBookSummaries($coll);
+        $b->save();
+
+        $this->assertEquals(2, $b->getBookSummaries()->count());
+        $this->assertEquals(1, BookQuery::create()->count());
+        $this->assertEquals(2, BookSummaryQuery::create()->count());
+
+        $newBookSammary = new BookSummary();
+        $newBookSammary->setSummary('My sammary');
+
+        // Kind of new collection
+        $coll = clone $coll;
+        $coll[] = $newBookSammary;
+
+        $b->setBookSummaries($coll);
+        $b->save();
+
+        $this->assertEquals(3, $coll->count());
+        $this->assertEquals(3, $b->getBookSummaries()->count());
+        $this->assertEquals(1, BookQuery::create()->count());
+        $this->assertEquals(3, BookSummaryQuery::create()->count());
+
+        // Add a new object
+        $newBookSammary1 = new BookSummary();
+        $newBookSammary1->setSummary('My sammary 1');
+
+        // Existing collection - The fix around reference is tested here.
+        $coll[] = $newBookSammary1;
+
+        $b->setBookSummaries($coll);
+        $b->save();
+
+        $this->assertEquals(4, $coll->count());
+        $this->assertEquals(4, $b->getBookSummaries()->count());
+        $this->assertEquals(1, BookQuery::create()->count());
+        $this->assertEquals(4, BookSummaryQuery::create()->count());
+
+        // Add the same collection
+        $bookSummaries = $b->getBookSummaries();
+
+        $b->setBookSummaries($bookSummaries);
+        $b->save();
+
+        $this->assertEquals(4, $coll->count());
+        $this->assertEquals(4, $b->getBookSummaries()->count());
+        $this->assertEquals(1, BookQuery::create()->count());
+        $this->assertEquals(4, BookSummaryQuery::create()->count());
+    }
+
+    public function testSetterOneToManyReplacesOldObjectsByNewObjectsWithFkRequired()
+    {
+        // Ensure no data
+        BookSummaryQuery::create()->deleteAll();
+        BookQuery::create()->deleteAll();
+
+        $bookSummaries = new ObjectCollection();
+        foreach (array('foo', 'bar') as $summary) {
+            $s = new BookSummary();
+            $s->setSummary($summary);
+            $bookSummaries[] = $s;
+        }
+
+        $b = new Book();
+        $b->setTitle('Hello');
+        $b->setBookSummaries($bookSummaries);
+        $b->save();
+
+        $bookSummaries = $b->getBookSummaries();
+        $this->assertEquals('foo', $bookSummaries[0]->getSummary());
+        $this->assertEquals('bar', $bookSummaries[1]->getSummary());
+
+        $bookSummaries = new ObjectCollection();
+        foreach (array('bam', 'bom') as $summary) {
+            $s = new BookSummary();
+            $s->setSummary($summary);
+            $bookSummaries[] = $s;
+        }
+
+        $b->setBookSummaries($bookSummaries);
+        $b->save();
+
+        $bookSummaries = $b->getBookSummaries();
+        $this->assertEquals('bam', $bookSummaries[0]->getSummary());
+        $this->assertEquals('bom', $bookSummaries[1]->getSummary());
+
+        $this->assertEquals(1, BookQuery::create()->count());
+        $this->assertEquals(2, BookSummaryQuery::create()->count());
+    }
+
+    public function testUnsavedObjectCallingHashCodeIsNotChangingObject()
+    {
+        $book1 = new Book();
+        $book1->setTitle('Foo5');
+        $book1->setISBN('1234');
+
+        $author = new Author();
+        $author->setFirstName('JAne');
+        $author->setLastName('JAne');
+        $author->addBook($book1);
+
+        $a = clone $author;
+        $a->hashCode();
+
+        $this->assertEquals($author, $a);
+    }
+
+    public function testSavedObjectCallingHashCodeIsNotChangingObject()
+    {
+        $book1 = new Book();
+        $book1->setTitle('Foo5');
+        $book1->setISBN('1234');
+
+        $author = new Author();
+        $author->setFirstName('JAne');
+        $author->setLastName('JAne');
+        $author->addBook($book1);
+        $author->save();
+
+        $a = clone $author;
+        $a->hashCode();
+
+        $this->assertEquals($author, $a);
+    }
+
+    public function testUnsavedObjectCreatesSameHashForIdenticalObjects()
+    {
+        $book1 = new Book();
+        $book1->setTitle('Foo5');
+        $book1->setISBN('1234');
+
+        $author1 = new Author();
+        $author1->setFirstName('JAne');
+        $author1->setLastName('JAne');
+        $author1->addBook($book1);
+
+        $author2 = new Author();
+        $author2->setFirstName('JAne');
+        $author2->setLastName('JAne');
+        $author2->addBook($book1);
+
+        $this->assertEquals($author1->hashCode(), $author2->hashCode());
+    }
+
+    /**
+     * Primary key should differ
+     */
+    public function testSavedObjectCreatesDifferentHashForIdenticalObjects()
+    {
+        $book1 = new Book();
+        $book1->setTitle('Foo5');
+        $book1->setISBN('1234');
+
+        $author1 = new Author();
+        $author1->setFirstName('JAne');
+        $author1->setLastName('JAne');
+        $author1->addBook($book1);
+        $author1->save();
+
+        $author2 = new Author();
+        $author2->setFirstName('JAne');
+        $author2->setLastName('JAne');
+        $author2->addBook($book1);
+        $author2->save();
+
+        $this->assertNotEquals($author1->hashCode(), $author2->hashCode());
     }
 }

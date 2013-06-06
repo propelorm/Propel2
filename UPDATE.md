@@ -40,13 +40,13 @@ The classes used by Propel internally to build the object model were renamed. Th
     Replace...                       With...
     OMBuilder.php                    AbstractOMBuilder.php
     ObjectBuilder.php                AbstractObjectBuilder.php
-    PeerBuilder.php                  AbstractPeerBuilder.php
+    PeerBuilder.php                  __removed__
     PHP5ExtensionObjectBuilder.php   ExtensionObjectBuilder.php
-    PHP5ExtensionPeerBuilder.php     ExtensionPeerBuilder.php
+    PHP5ExtensionPeerBuilder.php     __removed__
     PHP5InterfaceBuilder.php         InterfaceBuilder.php
     PHP5MultiExtendObjectBuilder.php MultiExtendObjectBuilder.php
     PHP5ObjectBuilder.php            ObjectBuilder.php
-    PHP5PeerBuilder.php              PeerBuilder.php
+    PHP5PeerBuilder.php              __removed__
     PHP5TableMapBuilder.php          TableMapBuilder.php
 
 ## Base classes reorganized
@@ -134,6 +134,16 @@ After:
 ## `Propel\Generator\Model\XmlElement::loadFromXml` method has been renamed to `Propel\Generator\Model\MappingModel::loadMapping`.
 
 ## `Propel\Runtime\Om\BaseObject` class has been removed.
+
+## `Propel\Runtime\ActiveQuery\Criteria::addOr` operates only on existing conditions, where prior it would `OR` to a condition to
+on the same column (if it existed).
+
+E.g.
+```php
+$criteria->add('column1', 'value');
+$criteria->add('column2', 'value');
+$criteria->addOr('column1', 'value'); // this used to be OR`ed to the first add (matched by name)
+```
 
 All base object methods have been merged in generated Base Object classes.
 This could break, behaviors that call `parent` methods

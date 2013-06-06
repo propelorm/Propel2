@@ -203,7 +203,7 @@ echo $item->getName(); // 'Four micro-ondes'
 
 **Tip**: The big advantage of Propel behaviors is that they use code generation. Even though it's only a proxy method to the `ItemI18n` class, `Item::getName()` has all the phpDoc required to make your IDE happy.
 
-This new behavior also adds special capabiliies to the Query objects. The most interesting allows you to execute less queries when you need to query for an Item and one of its translations - which is common to display a list of items in the locale of the user:
+This new behavior also adds special capabilities to the Query objects. The most interesting allows you to execute less queries when you need to query for an Item and one of its translations - which is common to display a list of items in the locale of the user:
 
 {% highlight php %}
 <?php
@@ -421,7 +421,7 @@ Here is an example buildtime configuration file that defines a MySQL and a SQLit
 </config>
 {% endhighlight %}
 
-Now that Propel can deal with database vendors at buildtime more accurately, the generated classes offer more optimizations for the database they rely one. Incidentally, that means that you should rebuild your model if you use different database vendors. Thats includes cases when your development and production environments use different vendors.
+Now that Propel can deal with database vendors at buildtime more accurately, the generated classes offer more optimizations for the database they rely one. Incidentally, that means that you should rebuild your model if you use different database vendors. That includes cases when your development and production environments use different vendors.
 
 ## Support For SQL Schemas ##
 
@@ -547,13 +547,13 @@ $book->setStyle('novel');
 echo $book->getStyle(); // novel
 // Trying to set a value not in the valueSet throws an exception
 
-// Each value in an ENUM column has a related constant in the Peer class
+// Each value in an ENUM column has a related constant in the TableMap class
 // Your IDE with code completion should love this
-echo BookPeer::STYLE_NOVEL;  // 'novel'
-echo BookPeer::STYLE_ESSAY;  // 'essay'
-echo BookPeer::STYLE_POETRY; // 'poetry'
-// The Peer class also gives access to list of available values
-print_r(BookPeer::getValueSet(BookPeer::STYLE)); // array('novel', 'essay', 'poetry')
+echo BookTableMap::STYLE_NOVEL;  // 'novel'
+echo BookTableMap::STYLE_ESSAY;  // 'essay'
+echo BookTableMap::STYLE_POETRY; // 'poetry'
+// The TableMap class also gives access to list of available values
+print_r(BookTableMap::getValueSet(BookTableMap::STYLE)); // array('novel', 'essay', 'poetry')
 
 // ENUM columns are also searchable, using the generated filterByXXX() method
 // or other ModelCriteria methods (like where(), orWhere(), condition())

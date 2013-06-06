@@ -50,7 +50,7 @@ class TimestampableBehavior extends Behavior
     /**
      * Get the setter of one of the columns of the behavior
      *
-     * @param  string $column One of the behavior colums, 'create_column' or 'update_column'
+     * @param  string $column One of the behavior columns, 'create_column' or 'update_column'
      * @return string The related setter, 'setCreatedOn' or 'setUpdatedOn'
      */
     protected function getColumnSetter($column)

@@ -14,7 +14,6 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\Output;
-use Propel\Generator\Config\GeneratorConfig;
 use Propel\Generator\Manager\SqlManager;
 
 /**
@@ -39,10 +38,12 @@ class SqlBuildCommand extends AbstractCommand
             ->addOption('mysql-engine', null, InputOption::VALUE_REQUIRED,  'MySQL engine (MyISAM, InnoDB, ...)', self::DEFAULT_MYSQL_ENGINE)
             ->addOption('output-dir',   null, InputOption::VALUE_REQUIRED,  'The output directory', self::DEFAULT_OUTPUT_DIRECTORY)
             ->addOption('validate',     null, InputOption::VALUE_NONE,      '')
+            ->addOption('connection',   null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Connection to use', array())
             ->addOption('schema-name',  null, InputOption::VALUE_REQUIRED,  'The schema name for RDBMS supporting them', '')
             ->addOption('encoding',     null, InputOption::VALUE_REQUIRED,  'The encoding to use for the database', self::DEFAULT_DATABASE_ENCODING)
             ->addOption('table-prefix', null, InputOption::VALUE_REQUIRED,  'Add a prefix to all the table names in the database', '')
             ->setName('sql:build')
+            ->setAliases(array('sql'))
             ->setDescription('Build SQL files')
         ;
     }
@@ -52,7 +53,7 @@ class SqlBuildCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $generatorConfig = new GeneratorConfig(array_merge(array(
+        $generatorConfig = $this->getGeneratorConfig(array(
             'propel.platform.class'                 => $input->getOption('platform'),
             'propel.database.schema'                => $input->getOption('schema-name'),
             'propel.database.encoding'              => $input->getOption('encoding'),
@@ -61,11 +62,19 @@ class SqlBuildCommand extends AbstractCommand
             // MySQL specific
             'propel.mysql.tableType'                => $input->getOption('mysql-engine'),
             'propel.mysql.tableEngineKeyword'       => 'ENGINE',
-        ), $this->getBuildProperties($input->getOption('input-dir') . '/build.properties')));
+        ), $input);
 
         $this->createDirectory($input->getOption('output-dir'));
 
         $manager = new SqlManager();
+
+        $connections = array();
+        foreach ($input->getOption('connection') as $connection) {
+            list($name, $dsn, $infos) = $this->parseConnection($connection);
+            $connections[$name] = array_merge(array('dsn' => $dsn), $infos);
+        }
+        $manager->setConnections($connections);
+
         $manager->setValidate($input->getOption('validate'));
         $manager->setGeneratorConfig($generatorConfig);
         $manager->setSchemas($this->getSchemas($input->getOption('input-dir')));

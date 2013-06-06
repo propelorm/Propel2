@@ -154,7 +154,7 @@ class PropelTypes
     );
 
     /**
-     * Mapping between mapping types and PDO type contants (for prepared
+     * Mapping between mapping types and PDO type constants (for prepared
      * statement settings).
      *
      * @var array
@@ -247,7 +247,7 @@ class PropelTypes
     /**
      * Returns whether or not the given type is a temporal type.
      *
-     * @param  string  $mappingType
+     * @param  string  $type
      * @return boolean
      */
     public static function isTemporalType($type)
@@ -368,7 +368,7 @@ class PropelTypes
     /**
      * Convenience method to indicate whether a passed-in PHP type is an array.
      *
-     * @param string $phpType The PHP type to check
+     * @param  string  $phpType The PHP type to check
      * @return boolean
      */
     public static function isPhpArrayType($phpType)

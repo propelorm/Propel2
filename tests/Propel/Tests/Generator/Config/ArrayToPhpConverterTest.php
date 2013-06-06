@@ -32,6 +32,7 @@ class ArrayToPhpConverterTest extends \PHPUnit_Framework_TestCase
         ));
         $expected = <<<'EOF'
 $serviceContainer = \Propel\Runtime\Propel::getServiceContainer();
+$serviceContainer->checkVersion('2.0.0-dev');
 $serviceContainer->setAdapterClass('bookstore', 'mysql');
 $manager = new \Propel\Runtime\Connection\ConnectionManagerSingle();
 $manager->setConfiguration(array (
@@ -71,6 +72,7 @@ EOF;
         ));
         $expected = <<<'EOF'
 $serviceContainer = \Propel\Runtime\Propel::getServiceContainer();
+$serviceContainer->checkVersion('2.0.0-dev');
 $serviceContainer->setAdapterClass('bookstore-cms', 'mysql');
 $manager = new \Propel\Runtime\Connection\ConnectionManagerMasterSlave();
 $manager->setReadConfiguration(array (
@@ -110,6 +112,7 @@ EOF;
         ));
         $expected = <<<'EOF'
 $serviceContainer = \Propel\Runtime\Propel::getServiceContainer();
+$serviceContainer->checkVersion('2.0.0-dev');
 $serviceContainer->setProfilerClass('\Runtime\Runtime\Util\Profiler');
 $serviceContainer->setProfilerConfiguration(array (
   'slowTreshold' => 0.2,
@@ -145,6 +148,7 @@ EOF;
         )));
         $expected = <<<'EOF'
 $serviceContainer = \Propel\Runtime\Propel::getServiceContainer();
+$serviceContainer->checkVersion('2.0.0-dev');
 $serviceContainer->setLoggerConfiguration('defaultLogger', array (
   'type' => 'stream',
   'level' => '300',
@@ -173,6 +177,7 @@ EOF;
         ));
         $expected = <<<'EOF'
 $serviceContainer = \Propel\Runtime\Propel::getServiceContainer();
+$serviceContainer->checkVersion('2.0.0-dev');
 $serviceContainer->setLoggerConfiguration('defaultLogger', array (
   'type' => 'stream',
   'path' => '/var/log/propel.log',
@@ -229,6 +234,7 @@ EOF;
         );
         $expected = <<<'EOF'
 $serviceContainer = \Propel\Runtime\Propel::getServiceContainer();
+$serviceContainer->checkVersion('2.0.0-dev');
 $serviceContainer->setAdapterClass('bookstore', 'mysql');
 $manager = new \Propel\Runtime\Connection\ConnectionManagerSingle();
 $manager->setConfiguration(array (

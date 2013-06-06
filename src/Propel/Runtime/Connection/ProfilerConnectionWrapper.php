@@ -32,7 +32,7 @@ class ProfilerConnectionWrapper extends ConnectionWrapper
 
     /**
      * Whether the logging is enabled only for slow queries.
-     * The slow treshold is set on the profiler.
+     * The slow threshold is set on the profiler.
      */
     protected $isSlowOnly = false;
 
@@ -64,7 +64,7 @@ class ProfilerConnectionWrapper extends ConnectionWrapper
         switch ($attribute) {
             case 'isSlowOnly':
                 // Set whether the connection must only log slow queries.
-                // The slow treshold must be set on the profiler (100ms by default).
+                // The slow threshold must be set on the profiler (100ms by default).
                 $this->isSlowOnly = $value;
                 break;
             default:
@@ -145,10 +145,9 @@ class ProfilerConnectionWrapper extends ConnectionWrapper
      * @uses      self::getLogPrefix()
      * @see self::setLogger()
      *
-     * @param string  $msg           Message to log.
-     * @param integer $level         Log level to use; will use self::setLogLevel() specified level by default.
-     * @param string  $methodName    Name of the method whose execution is being logged.
-     * @param array   $debugSnapshot Previous return value from self::getDebugSnapshot().
+     * @param string  $msg        Message to log.
+     * @param integer $level      Log level to use; will use self::setLogLevel() specified level by default.
+     * @param string  $methodName Name of the method whose execution is being logged.
      */
     public function log($msg, $level = null, $methodName = null)
     {

@@ -96,7 +96,7 @@ class Behavior extends MappingModel
      * Expects an associative array looking like
      * array('name' => 'foo', 'value' => bar)
      *
-     * @param array $parameters
+     * @param array $parameter
      */
     public function addParameter(array $parameter)
     {
@@ -323,18 +323,6 @@ class Behavior extends MappingModel
      * @return Behavior
      */
     public function getQueryBuilderModifier()
-    {
-        return $this;
-    }
-
-    /**
-     * Returns the peer builder modifier object.
-     *
-     * The current object is returned by default.
-     *
-     * @return Behavior
-     */
-    public function getPeerBuilderModifier()
     {
         return $this;
     }

@@ -11,36 +11,24 @@
 namespace Propel\Tests\Helpers\Bookstore;
 
 use Propel\Runtime\Propel;
-use Propel\Runtime\ActiveQuery\Criteria;
 
 use Propel\Tests\Bookstore\AcctAccessRole;
 use Propel\Tests\Bookstore\Author;
-use Propel\Tests\Bookstore\AuthorPeer;
 use Propel\Tests\Bookstore\Book;
-use Propel\Tests\Bookstore\BookPeer;
+use Propel\Tests\Bookstore\BookQuery;
+use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\Bookstore\BookClubList;
-use Propel\Tests\Bookstore\BookClubListPeer;
 use Propel\Tests\Bookstore\BookListRel;
-use Propel\Tests\Bookstore\BookListRelPeer;
 use Propel\Tests\Bookstore\BookOpinion;
-use Propel\Tests\Bookstore\BookOpinionPeer;
 use Propel\Tests\Bookstore\BookReader;
-use Propel\Tests\Bookstore\BookReaderPeer;
 use Propel\Tests\Bookstore\BookSummary;
-use Propel\Tests\Bookstore\BookSummaryPeer;
 use Propel\Tests\Bookstore\Bookstore;
 use Propel\Tests\Bookstore\BookstoreEmployee;
-use Propel\Tests\Bookstore\BookstoreEmployeePeer;
 use Propel\Tests\Bookstore\BookstoreEmployeeAccount;
-use Propel\Tests\Bookstore\BookstoreEmployeeAccountPeer;
 use Propel\Tests\Bookstore\Media;
-use Propel\Tests\Bookstore\MediaPeer;
 use Propel\Tests\Bookstore\Publisher;
-use Propel\Tests\Bookstore\PublisherPeer;
 use Propel\Tests\Bookstore\ReaderFavorite;
-use Propel\Tests\Bookstore\ReaderFavoritePeer;
 use Propel\Tests\Bookstore\Review;
-use Propel\Tests\Bookstore\ReviewPeer;
 
 use Propel\Tests\Bookstore\RecordLabel;
 use Propel\Tests\Bookstore\ReleasePool;
@@ -62,7 +50,7 @@ class BookstoreDataPopulator
     public static function populate($con = null)
     {
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         }
         $con->beginTransaction();
 
@@ -270,11 +258,11 @@ class BookstoreDataPopulator
     public static function populateOpinionFavorite($con = null)
     {
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         }
         $con->beginTransaction();
 
-        $book1 = BookPeer::doSelectOne(new Criteria(), $con);
+        $book1 = BookQuery::create()->findOne($con);
         $reader1 = new BookReader();
         $reader1->save($con);
 
@@ -292,43 +280,41 @@ class BookstoreDataPopulator
 
     public static function depopulate($con = null)
     {
-        $peerClasses = array(
-            '\Propel\Tests\Bookstore\AuthorPeer',
-            '\Propel\Tests\Bookstore\BookstorePeer',
-            '\Propel\Tests\Bookstore\BookstoreContestPeer',
-            '\Propel\Tests\Bookstore\BookstoreContestEntryPeer',
-            '\Propel\Tests\Bookstore\BookstoreEmployeePeer',
-            '\Propel\Tests\Bookstore\BookstoreEmployeeAccountPeer',
-            '\Propel\Tests\Bookstore\BookstoreSalePeer',
-            '\Propel\Tests\Bookstore\BookClubListPeer',
-            '\Propel\Tests\Bookstore\BookOpinionPeer',
-            '\Propel\Tests\Bookstore\BookReaderPeer',
-            '\Propel\Tests\Bookstore\BookListRelPeer',
-            '\Propel\Tests\Bookstore\BookPeer',
-            '\Propel\Tests\Bookstore\ContestPeer',
-            '\Propel\Tests\Bookstore\CustomerPeer',
-            '\Propel\Tests\Bookstore\MediaPeer',
-            '\Propel\Tests\Bookstore\PublisherPeer',
-            '\Propel\Tests\Bookstore\ReaderFavoritePeer',
-            '\Propel\Tests\Bookstore\ReviewPeer',
-            '\Propel\Tests\Bookstore\BookSummaryPeer',
-            '\Propel\Tests\Bookstore\RecordLabelPeer',
-            '\Propel\Tests\Bookstore\ReleasePoolPeer',
+        $tableMapClasses = array(
+            'Propel\Tests\Bookstore\Map\AuthorTableMap',
+            'Propel\Tests\Bookstore\Map\BookstoreTableMap',
+            'Propel\Tests\Bookstore\Map\BookstoreContestTableMap',
+            'Propel\Tests\Bookstore\Map\BookstoreContestEntryTableMap',
+            'Propel\Tests\Bookstore\Map\BookstoreEmployeeTableMap',
+            'Propel\Tests\Bookstore\Map\BookstoreEmployeeAccountTableMap',
+            'Propel\Tests\Bookstore\Map\BookstoreSaleTableMap',
+            'Propel\Tests\Bookstore\Map\BookClubListTableMap',
+            'Propel\Tests\Bookstore\Map\BookOpinionTableMap',
+            'Propel\Tests\Bookstore\Map\BookReaderTableMap',
+            'Propel\Tests\Bookstore\Map\BookListRelTableMap',
+            'Propel\Tests\Bookstore\Map\BookTableMap',
+            'Propel\Tests\Bookstore\Map\ContestTableMap',
+            'Propel\Tests\Bookstore\Map\CustomerTableMap',
+            'Propel\Tests\Bookstore\Map\MediaTableMap',
+            'Propel\Tests\Bookstore\Map\PublisherTableMap',
+            'Propel\Tests\Bookstore\Map\ReaderFavoriteTableMap',
+            'Propel\Tests\Bookstore\Map\ReviewTableMap',
+            'Propel\Tests\Bookstore\Map\BookSummaryTableMap',
+            'Propel\Tests\Bookstore\Map\RecordLabelTableMap',
+            'Propel\Tests\Bookstore\Map\ReleasePoolTableMap',
         );
         // free the memory from existing objects
-        foreach ($peerClasses as $peerClass) {
-            foreach ($peerClass::$instances as $i) {
+        foreach ($tableMapClasses as $tableMapClass) {
+            foreach ($tableMapClass::$instances as $i) {
                 $i->clearAllReferences();
             }
+            $tableMapClass::doDeleteAll($con);
         }
         // delete records from the database
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         }
         $con->beginTransaction();
-        foreach ($peerClasses as $peerClass) {
-            $peerClass::doDeleteAll($con);
-        }
         $con->commit();
     }
 

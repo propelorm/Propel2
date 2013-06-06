@@ -17,8 +17,9 @@ use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Exception\RuntimeException;
 use Propel\Runtime\Map\RelationMap;
+use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\ActiveQuery\PropelQuery;
-use Propel\Runtime\Util\BasePeer;
+use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 
 /**
  * Class for iterating over a list of Propel objects
@@ -42,7 +43,7 @@ class ObjectCollection extends Collection
         }
         $con->beginTransaction();
         try {
-            /** @var $element BaseObject */
+            /** @var $element ActiveRecordInterface */
             foreach ($this as $element) {
                 $element->save($con);
             }
@@ -68,7 +69,7 @@ class ObjectCollection extends Collection
         }
         $con->beginTransaction();
         try {
-            /** @var $element BaseObject */
+            /** @var $element ActiveRecordInterface */
             foreach ($this as $element) {
                 $element->delete($con);
             }
@@ -89,7 +90,7 @@ class ObjectCollection extends Collection
     {
         $ret = array();
 
-        /** @var $obj BaseObject */
+        /** @var $obj ActiveRecordInterface */
         foreach ($this as $key => $obj) {
             $key = $usePrefix ? ($this->getModel() . '_' . $key) : $key;
             $ret[$key]= $obj->getPrimaryKey();
@@ -109,7 +110,7 @@ class ObjectCollection extends Collection
     {
         $class = $this->getFullyQualifiedModel();
         foreach ($arr as $element) {
-            /** @var $obj BaseObject */
+            /** @var $obj ActiveRecordInterface */
             $obj = new $class();
             $obj->fromArray($element);
             $this->append($obj);
@@ -124,9 +125,9 @@ class ObjectCollection extends Collection
      *                               Otherwise, the array is indexed using the specified column
      * @param boolean $usePrefix If true, the returned array prefixes keys
      *                               with the model class name ('Article_0', 'Article_1', etc).
-     * @param string $keyType (optional) One of the class type constants BasePeer::TYPE_PHPNAME,
-     *                               BasePeer::TYPE_STUDLYPHPNAME, BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME,
-     *                               BasePeer::TYPE_NUM. Defaults to BasePeer::TYPE_PHPNAME.
+     * @param string $keyType (optional) One of the class type constants TableMap::TYPE_PHPNAME,
+     *                               TableMap::TYPE_STUDLYPHPNAME, TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME,
+     *                               TableMap::TYPE_NUM. Defaults to TableMap::TYPE_PHPNAME.
      * @param boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
      * @param array   $alreadyDumpedObjects   List of objects to skip to avoid recursion
      *
@@ -150,12 +151,12 @@ class ObjectCollection extends Collection
      *
      * @return array
      */
-    public function toArray($keyColumn = null, $usePrefix = false, $keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array())
+    public function toArray($keyColumn = null, $usePrefix = false, $keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array())
     {
         $ret = array();
         $keyGetterMethod = 'get' . $keyColumn;
 
-        /** @var $obj BaseObject */
+        /** @var $obj ActiveRecordInterface */
         foreach ($this as $key => $obj) {
             $key = null === $keyColumn ? $key : $obj->$keyGetterMethod();
             $key = $usePrefix ? ($this->getModel() . '_' . $key) : $key;
@@ -236,6 +237,35 @@ class ObjectCollection extends Collection
     }
 
     /**
+     * Get an associative array representation of the collection.
+     * The first parameter specifies the column to be used for the key.
+     *
+     * <code>
+     *   $res = $userCollection->toKeyIndex('Name');
+     *
+     *   $res = array(
+     *       'peter' => class User #1 {$name => 'peter', ...},
+     *       'hans' => class User #2 {$name => 'hans', ...},
+     *       ...
+     *   )
+     * </code>
+     *
+     * @param string $keyColumn
+     *
+     * @return array
+     */
+    public function toKeyIndex($keyColumn = 'PrimaryKey')
+    {
+        $ret = array();
+        $keyGetterMethod = 'get' . ucfirst($keyColumn);
+        foreach ($this as $obj) {
+            $ret[$obj->$keyGetterMethod()] = $obj;
+        }
+
+        return $ret;
+    }
+
+    /**
      * Makes an additional query to populate the objects related to the collection objects
      * by a certain relation
      *
@@ -248,7 +278,7 @@ class ObjectCollection extends Collection
     public function populateRelation($relation, $criteria = null, $con = null)
     {
         if (!Propel::isInstancePoolingEnabled()) {
-            throw new RuntimeException('populateRelation() needs instance pooling to be enabled prior to populating the collection');
+            throw new RuntimeException(__METHOD__ .' needs instance pooling to be enabled prior to populating the collection');
         }
         $relationMap = $this->getFormatter()->getTableMap()->getRelation($relation);
         if ($this->isEmpty()) {
@@ -288,9 +318,48 @@ class ObjectCollection extends Collection
             // nothing to do; the instance pool will catch all calls to getRelatedObject()
             // and return the object in memory
         } else {
-            throw new UnsupportedRelationException('populateRelation() does not support this relation type');
+            throw new UnsupportedRelationException(__METHOD__ .' does not support this relation type');
         }
 
         return $relatedObjects;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function search($element)
+    {
+        if ($element instanceof ActiveRecordInterface) {
+            if (null !== $elt = $this->getIdenticalObject($element)) {
+                $element = $elt;
+            }
+        }
+
+        return parent::search($element);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function contains($element)
+    {
+        if ($element instanceof ActiveRecordInterface) {
+            if (null !== $elt = $this->getIdenticalObject($element)) {
+                $element = $elt;
+            }
+        }
+
+        return parent::contains($element);
+    }
+
+    private function getIdenticalObject(ActiveRecordInterface $object)
+    {
+        foreach ($this as $obj) {
+            if ($obj instanceof ActiveRecordInterface && $obj->hashCode() === $object->hashCode()) {
+                return $obj;
+            }
+        }
+
+        return null;
     }
 }

@@ -109,7 +109,7 @@ echo get_class($comic) . ': ' . $comic->getTitle() . "\n";
 // Comic: Little Nemo In Slumberland
 {% endhighlight %}
 
->**Tip**<br />You can override the base peer's `getOMClass()` to return the classname to use based on more complex logic (or query).
+>**Tip**<br />You can override the base TableMap's `getOMClass()` to return the classname to use based on more complex logic (or query).
 
 ### Abstract Entities ###
 
@@ -255,7 +255,7 @@ $footballer->save();
 echo $footballer->getFirstName(); // Michael
 {% endhighlight %}
 
-Multiple delegation also allows to implement a deep inheritance hirerarchy. For instance, if your object model contains a `ProBasketballer` inheriting from `Basketballer` inheriting from `Player`, the  `ProBasketballer` should delegate to both `Basketballer` and `Player`; delegating to `Basketballer` only isn't enough.
+Multiple delegation also allows to implement a deep inheritance hierarchy. For instance, if your object model contains a `ProBasketballer` inheriting from `Basketballer` inheriting from `Player`, the  `ProBasketballer` should delegate to both `Basketballer` and `Player`; delegating to `Basketballer` only isn't enough.
 
 {% highlight xml %}
 <table name="player">

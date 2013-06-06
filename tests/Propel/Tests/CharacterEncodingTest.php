@@ -14,7 +14,7 @@ use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
 use Propel\Tests\Bookstore\Author;
 use Propel\Tests\Bookstore\Book;
-use Propel\Tests\Bookstore\BookPeer;
+use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\Bookstore\Publisher;
 
 use Propel\Runtime\Propel;
@@ -29,7 +29,7 @@ use \Exception;
  * This test assumes that the created database supports UTF-8.  For this to work,
  * this file also has to be UTF-8.
  *
- * The database is relaoded before every test and flushed after every test.  This
+ * The database is reloaded before every test and flushed after every test.  This
  * means that you can always rely on the contents of the databases being the same
  * for each test method in this class.  See the BookstoreDataPopulator::populate()
  * method for the exact contents of the database.
@@ -57,7 +57,7 @@ class CharacterEncodingTest extends BookstoreTestBase
     {
         $this->markTestSkipped('Skipped because of weird behavior on some platforms');
 
-        $db = Propel::getServiceContainer()->getAdapter(BookPeer::DATABASE_NAME);
+        $db = Propel::getServiceContainer()->getAdapter(BookTableMap::DATABASE_NAME);
 
         $title = "Смерть на брудершафт. Младенец и черт";
         //        1234567890123456789012345678901234567
@@ -88,7 +88,7 @@ class CharacterEncodingTest extends BookstoreTestBase
     {
         $this->markTestSkipped('Skipped because of weird behavior on some platforms');
 
-        $db = Propel::getServiceContainer()->getAdapter(BookPeer::DATABASE_NAME);
+        $db = Propel::getServiceContainer()->getAdapter(BookTableMap::DATABASE_NAME);
         if ($db instanceof SqliteAdapter) {
             $this->markTestSkipped();
         }

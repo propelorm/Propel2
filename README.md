@@ -1,6 +1,6 @@
 # Propel2 #
 
-Propel2 is an open-source Object-Relational Mapping (ORM) for PHP 5.3.
+Propel2 is an open-source Object-Relational Mapping (ORM) for PHP 5.4.
 
 [![Build Status](https://secure.travis-ci.org/propelorm/Propel2.png?branch=master)](http://travis-ci.org/propelorm/Propel2)
 
@@ -18,7 +18,7 @@ Propel2 uses the following Symfony2 Components:
 Propel2 also relies on [**Composer**](https://github.com/composer/composer) to manage dependencies but you
 also can use [ClassLoader](https://github.com/symfony/ClassLoader) (see the `autoload.php.dist` file for instance).
 
-Propel2 is only supported on PHP 5.3.3 and up.
+Propel2 is only supported on PHP 5.4 and up.
 
 
 ## Installation ##
@@ -31,10 +31,8 @@ Read the [Propel documentation](http://www.propelorm.org/).
 Everybody can contribute to Propel2. Just fork it, and send Pull Requests.
 You have to follow [Propel2 Coding Standards](https://github.com/propelorm/Propel2/wiki/Coding-Standards) and provides unit tests as much as possible.
 
-**Note:** you can fix checkstyle before to submit a Pull Request by using the Symfony2 `check_cs` script.
-You just need to install [Finder](http://github.com/symfony/Finder) and the script:
-
-    git clone git://github.com/symfony/Finder.git vendor/Symfony/Component/Finder
+**Note:** you can fix checkstyle before to submit a Pull Request by using the Symfony2 [php-cs-fixer](http://cs.sensiolabs.org/) script.
+You just need to install the script:
 
     wget http://cs.sensiolabs.org/get/php-cs-fixer.phar
 
@@ -56,7 +54,7 @@ If you haven't wget on your computer, use `curl` instead:
 
 Then, install dependencies:
 
-    php composer.phar install
+    php composer.phar install --dev
 
 
 #### MySQL ####
@@ -66,14 +64,14 @@ three database schemas: `bookstore_schemas`, `contest`, and `second_hand_books`.
 
 Here is the set of commands to run in order to setup MySQL:
 
-    mysql -uroot -e 'create database test'
-    mysql -uroot -e 'create schema bookstore_schemas'
-    mysql -uroot -e 'create schema contest'
-    mysql -uroot -e 'create schema second_hand_books'
+    mysql -uroot -e 'SET FOREIGN_KEY_CHECKS = 0; DROP DATABASE IF EXISTS test; DROP SCHEMA IF EXISTS second_hand_books; DROP SCHEMA IF EXISTS contest; DROP SCHEMA IF EXISTS bookstore_schemas; SET FOREIGN_KEY_CHECKS = 1;'
+    mysql -uroot -e 'CREATE DATABASE test; CREATE SCHEMA bookstore_schemas; CREATE SCHEMA contest; CREATE SCHEMA second_hand_books;'
 
 Once done, build fixtures (default vendor is `mysql`):
 
     bin/propel test:prepare
+
+To match Travis CI MySQL configuration, you must set `@@sql_mode` to `STRICT_ALL_TABLES` in yours.
 
 #### PostgreSQL ####
 

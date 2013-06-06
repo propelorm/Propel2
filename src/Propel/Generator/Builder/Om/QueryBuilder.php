@@ -10,6 +10,7 @@
 
 namespace Propel\Generator\Builder\Om;
 
+use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\PropelTypes;
 
 /**
@@ -55,9 +56,16 @@ class QueryBuilder extends AbstractOMBuilder
         return $this->getStubQueryBuilder()->getUnprefixedClassName();
     }
 
+    public function getParentClass()
+    {
+        $parentClass = $this->getBehaviorContent('parentClass');
+
+        return null === $parentClass ? 'ModelCriteria' : $parentClass;
+    }
+
     /**
      * Adds class phpdoc comment and opening of class.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addClassOpen(&$script)
     {
@@ -66,8 +74,7 @@ class QueryBuilder extends AbstractOMBuilder
         $tableDesc = $table->getDescription();
         $queryClass = $this->getQueryClassName();
         $modelClass = $this->getObjectClassName();
-        $parentClass = $this->getBehaviorContent('parentClass');
-        $parentClass = null === $parentClass ? 'ModelCriteria' : $parentClass;
+        $parentClass = $this->getParentClass();
         $script .= "
 /**
  * Base class that represents a query for the '$tableName' table.
@@ -161,16 +168,19 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
      */
     protected function addClassBody(&$script)
     {
+        $table = $this->getTable();
+
         // namespaces
         $this->declareClasses(
             '\Propel\Runtime\Propel',
             '\Propel\Runtime\ActiveQuery\ModelCriteria',
             '\Propel\Runtime\ActiveQuery\Criteria',
             '\Propel\Runtime\ActiveQuery\ModelJoin',
-            '\Exception'
+            '\Exception',
+            '\Propel\Runtime\Exception\PropelException'
         );
         $this->declareClassFromBuilder($this->getStubQueryBuilder(), 'Child');
-        $this->declareClassFromBuilder($this->getStubPeerBuilder());
+        $this->declareClassFromBuilder($this->getTableMapBuilder());
 
         // apply behaviors
         $this->applyBehaviorModifier('queryAttributes', $script, "    ");
@@ -208,24 +218,88 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
         $this->addBasePostDelete($script);
         $this->addBasePreUpdate($script);
         $this->addBasePostUpdate($script);
+
+        // add the insert, update, delete, etc. methods
+        if (!$table->isAlias() && !$table->isReadOnly()) {
+            $this->addDeleteMethods($script);
+        }
+
         // apply behaviors
+        $this->applyBehaviorModifier('staticConstants', $script, "    ");
+        $this->applyBehaviorModifier('staticAttributes', $script, "    ");
+        $this->applyBehaviorModifier('staticMethods', $script, "    ");
         $this->applyBehaviorModifier('queryMethods', $script, "    ");
     }
 
     /**
+     * Adds the doDeleteAll(), etc. methods.
+     * @param string &$script The script will be modified in this method.
+     */
+    protected function addDeleteMethods(&$script)
+    {
+        $this->addDoDeleteAll($script);
+        $this->addDelete($script);
+
+        if ($this->isDeleteCascadeEmulationNeeded()) {
+            $this->addDoOnDeleteCascade($script);
+        }
+
+        if ($this->isDeleteSetNullEmulationNeeded()) {
+            $this->addDoOnDeleteSetNull($script);
+        }
+    }
+
+    /**
+     * Whether the platform in use requires ON DELETE CASCADE emulation and whether there are references to this table.
+     * @return boolean
+     */
+    protected function isDeleteCascadeEmulationNeeded()
+    {
+        $table = $this->getTable();
+        if ((!$this->getPlatform()->supportsNativeDeleteTrigger() || $this->getBuildProperty('emulateForeignKeyConstraints')) && count($table->getReferrers()) > 0) {
+            foreach ($table->getReferrers() as $fk) {
+                if ( ForeignKey::CASCADE === $fk->getOnDelete()) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Whether the platform in use requires ON DELETE SETNULL emulation and whether there are references to this table.
+     * @return boolean
+     */
+    protected function isDeleteSetNullEmulationNeeded()
+    {
+        $table = $this->getTable();
+        if ((!$this->getPlatform()->supportsNativeDeleteTrigger() || $this->getBuildProperty('emulateForeignKeyConstraints')) && count($table->getReferrers()) > 0) {
+            foreach ($table->getReferrers() as $fk) {
+                if (ForeignKey::SETNULL === $fk->getOnDelete()) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Closes class.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addClassClose(&$script)
     {
         $script .= "
-} // " . $this->getUnqualifiedClassName() . "";
+} // " . $this->getUnqualifiedClassName() . "
+";
         $this->applyBehaviorModifier('queryFilter', $script, "");
     }
 
     /**
      * Adds the constructor for this object.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      * @see addConstructor()
      */
     protected function addConstructor(&$script)
@@ -238,7 +312,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
 
     /**
      * Adds the comment for the constructor
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      **/
     protected function addConstructorComment(&$script)
     {
@@ -254,7 +328,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
 
     /**
      * Adds the function declaration for the constructor
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      **/
     protected function addConstructorOpen(&$script)
     {
@@ -266,7 +340,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
 
     /**
      * Adds the function body for the constructor
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      **/
     protected function addConstructorBody(&$script)
     {
@@ -276,7 +350,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
 
     /**
      * Adds the function close for the constructor
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      **/
     protected function addConstructorClose(&$script)
     {
@@ -287,7 +361,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
 
     /**
      * Adds the factory for this object.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addFactory(&$script)
     {
@@ -299,7 +373,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
 
     /**
      * Adds the comment for the factory
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      **/
     protected function addFactoryComment(&$script)
     {
@@ -317,7 +391,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
 
     /**
      * Adds the function declaration for the factory
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      **/
     protected function addFactoryOpen(&$script)
     {
@@ -328,7 +402,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
 
     /**
      * Adds the function body for the factory
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addFactoryBody(&$script)
     {
@@ -350,7 +424,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
 
     /**
      * Adds the function close for the factory
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addFactoryClose(&$script)
     {
@@ -362,7 +436,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     protected function addFindPk(&$script)
     {
         $class = $this->getObjectClassName();
-        $peerClassName = $this->getPeerClassName();
+        $tableMapClassName = $this->getTableMapClassName();
         $table = $this->getTable();
         $script .= "
     /**
@@ -408,14 +482,14 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
         } else {
             $pks = '$key';
         }
-        $pkHash = $this->getPeerBuilder()->getInstancePoolKeySnippet($pks);
+        $pkHash = $this->getTableMapBuilder()->getInstancePoolKeySnippet($pks);
         $script .= "
-        if ((null !== (\$obj = {$peerClassName}::getInstanceFromPool({$pkHash}))) && !\$this->formatter) {
+        if ((null !== (\$obj = {$tableMapClassName}::getInstanceFromPool({$pkHash}))) && !\$this->formatter) {
             // the object is already in the instance pool
             return \$obj;
         }
         if (\$con === null) {
-            \$con = Propel::getServiceContainer()->getReadConnection({$peerClassName}::DATABASE_NAME);
+            \$con = Propel::getServiceContainer()->getReadConnection({$this->getTableMapClass()}::DATABASE_NAME);
         }
         \$this->basePreSelect(\$con);
         if (\$this->formatter || \$this->modelAlias || \$this->with || \$this->select
@@ -433,7 +507,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     {
         $table = $this->getTable();
         $platform = $this->getPlatform();
-        $peerClassName = $this->getPeerClassName();
+        $tableMapClassName = $this->getTableMapClassName();
         $ARClassName = $this->getObjectClassName();
         $this->declareClassFromBuilder($this->getStubObjectBuilder());
         $this->declareClasses('\PDO');
@@ -461,7 +535,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
         } else {
             $pks []= "\$key";
         }
-        $pkHashFromRow = $this->getPeerBuilder()->getInstancePoolKeySnippet($pks);
+        $pkHashFromRow = $this->getTableMapBuilder()->getInstancePoolKeySnippet($pks);
         $script .= "
     /**
      * Find object by primary key using raw SQL to go fast.
@@ -493,11 +567,11 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
             throw new PropelException(sprintf('Unable to execute SELECT statement [%s]', \$sql), 0, \$e);
         }
         \$obj = null;
-        if (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {";
+        if (\$row = \$stmt->fetch(\PDO::FETCH_NUM)) {";
 
         if ($table->getChildrenColumn()) {
             $script .="
-            \$cls = {$peerClassName}::getOMClass(\$row, 0, false);
+            \$cls = {$tableMapClassName}::getOMClass(\$row, 0, false);
             \$obj = new \$cls();";
         } else {
             $script .="
@@ -505,7 +579,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
         }
         $script .= "
             \$obj->hydrate(\$row);
-            {$peerClassName}::addInstanceToPool(\$obj, $pkHashFromRow);
+            {$tableMapClassName}::addInstanceToPool(\$obj, $pkHashFromRow);
         }
         \$stmt->closeCursor();
 
@@ -516,7 +590,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
 
     /**
      * Adds the findPk method for this object.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addFindPkComplex(&$script)
     {
@@ -536,18 +610,18 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     {
         // As the query uses a PK condition, no limit(1) is necessary.
         \$criteria = \$this->isKeepQuery() ? clone \$this : \$this;
-        \$stmt = \$criteria
+        \$dataFetcher = \$criteria
             ->filterByPrimaryKey(\$key)
             ->doSelect(\$con);
 
-        return \$criteria->getFormatter()->init(\$criteria)->formatOne(\$stmt);
+        return \$criteria->getFormatter()->init(\$criteria)->formatOne(\$dataFetcher);
     }
 ";
     }
 
     /**
      * Adds the findPks method for this object.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addFindPks(&$script)
     {
@@ -583,18 +657,18 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
         }
         \$this->basePreSelect(\$con);
         \$criteria = \$this->isKeepQuery() ? clone \$this : \$this;
-        \$stmt = \$criteria
+        \$dataFetcher = \$criteria
             ->filterByPrimaryKeys(\$keys)
             ->doSelect(\$con);
 
-        return \$criteria->getFormatter()->init(\$criteria)->format(\$stmt);
+        return \$criteria->getFormatter()->init(\$criteria)->format(\$dataFetcher);
     }
 ";
     }
 
     /**
      * Adds the filterByPrimaryKey method for this object.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addFilterByPrimaryKey(&$script)
     {
@@ -637,7 +711,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
 
     /**
      * Adds the filterByPrimaryKey method for this object.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addFilterByPrimaryKeys(&$script)
     {
@@ -692,7 +766,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
 
     /**
      * Adds the filterByCol method for this object.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addFilterByCol(&$script, $col)
     {
@@ -777,12 +851,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
      */
     public function filterBy$colPhpName(\$$variableName = null, \$comparison = null)
     {";
-        if ($col->isPrimaryKey() && ($col->getType() == PropelTypes::INTEGER || $col->getType() == PropelTypes::BIGINT)) {
-            $script .= "
-        if (is_array(\$$variableName) && null === \$comparison) {
-            \$comparison = Criteria::IN;
-        }";
-        } elseif ($col->isNumericType() || $col->isTemporalType()) {
+        if ($col->isNumericType() || $col->isTemporalType()) {
             $script .= "
         if (is_array(\$$variableName)) {
             \$useMinMax = false;
@@ -846,7 +915,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
         }";
         } elseif ($col->getType() == PropelTypes::ENUM) {
             $script .= "
-        \$valueSet = " . $this->getPeerClassName() . "::getValueSet(" . $this->getColumnConstant($col) . ");
+        \$valueSet = " . $this->getTableMapClassName() . "::getValueSet(" . $this->getColumnConstant($col) . ");
         if (is_scalar(\$$variableName)) {
             if (!in_array(\$$variableName, \$valueSet)) {
                 throw new PropelException(sprintf('Value \"%s\" is not accepted in this enumerated column', \$$variableName));
@@ -890,7 +959,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
 
     /**
      * Adds the singular filterByCol method for an Array column.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addFilterByArrayCol(&$script, $col)
     {
@@ -935,7 +1004,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
 
     /**
      * Adds the filterByFk method for this object.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addFilterByFk(&$script, $fk)
     {
@@ -1009,7 +1078,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
 
     /**
      * Adds the filterByRefFk method for this object.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addFilterByRefFk(&$script, $fk)
     {
@@ -1071,7 +1140,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
 
     /**
      * Adds the joinFk method for this object.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addJoinFk(&$script, $fk)
     {
@@ -1084,7 +1153,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
 
     /**
      * Adds the joinRefFk method for this object.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addJoinRefFk(&$script, $fk)
     {
@@ -1097,7 +1166,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
 
     /**
      * Adds a joinRelated method for this object.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addJoinRelated(&$script, $fkTable, $queryClass, $relationName, $joinType)
     {
@@ -1138,7 +1207,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
 
     /**
      * Adds the useFkQuery method for this object.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addUseFkQuery(&$script, $fk)
     {
@@ -1153,7 +1222,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
 
     /**
      * Adds the useFkQuery method for this object.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addUseRefFkQuery(&$script, $fk)
     {
@@ -1168,7 +1237,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
 
     /**
      * Adds a useRelatedQuery method for this object.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addUseRelatedQuery(&$script, $fkTable, $queryClass, $relationName, $joinType)
     {
@@ -1225,7 +1294,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
 
     /**
      * Adds the prune method for this object.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addPrune(&$script)
     {
@@ -1274,7 +1343,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
 
     /**
      * Adds the basePreSelect hook for this object.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addBasePreSelect(&$script)
     {
@@ -1299,7 +1368,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
 
     /**
      * Adds the basePreDelete hook for this object.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addBasePreDelete(&$script)
     {
@@ -1324,7 +1393,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
 
     /**
      * Adds the basePostDelete hook for this object.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addBasePostDelete(&$script)
     {
@@ -1350,7 +1419,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
 
     /**
      * Adds the basePreUpdate hook for this object.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addBasePreUpdate(&$script)
     {
@@ -1365,7 +1434,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
      *
      * @param     array \$values The associative array of columns and values for the update
      * @param     ConnectionInterface \$con The connection object used by the query
-     * @param     boolean \$forceIndividualSaves If false (default), the resulting call is a BasePeer::doUpdate(), otherwise it is a series of save() calls on all the found objects
+     * @param     boolean \$forceIndividualSaves If false (default), the resulting call is a Criteria::doUpdate(), otherwise it is a series of save() calls on all the found objects
      */
     protected function basePreUpdate(&\$values, ConnectionInterface \$con, \$forceIndividualSaves = false)
     {" . $behaviorCode . "
@@ -1377,7 +1446,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
 
     /**
      * Adds the basePostUpdate hook for this object.
-     * @param      string &$script The script will be modified in this method.
+     * @param string &$script The script will be modified in this method.
      */
     protected function addBasePostUpdate(&$script)
     {
@@ -1414,7 +1483,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     /**
      * Checks whether any registered behavior on that table has a modifier for a hook
      * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
-     * @param string &$script The script will be modified in this method.
+     * @param string &$script  The script will be modified in this method.
      */
     public function applyBehaviorModifier($hookName, &$script, $tab = "        ")
     {
@@ -1429,4 +1498,288 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     {
         return $this->getBehaviorContentBase($contentName, 'QueryBuilderModifier');
     }
+
+    /**
+     * Adds the doDelete() method.
+     * @param string &$script The script will be modified in this method.
+     */
+    protected function addDelete(&$script)
+    {
+        $table = $this->getTable();
+        $emulateCascade = $this->isDeleteCascadeEmulationNeeded() || $this->isDeleteSetNullEmulationNeeded();
+        $script .= "
+    /**
+     * Performs a DELETE on the database, given a ".$this->getObjectClassName()." or Criteria object OR a primary key value.
+     *
+     * @param mixed               \$values Criteria or ".$this->getObjectClassName()." object or primary key or array of primary keys
+     *              which is used to create the DELETE statement
+     * @param ConnectionInterface \$con the connection to use
+     * @return int The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
+     *                if supported by native driver or if emulated using Propel.
+     * @throws PropelException Any exceptions caught during processing will be
+     *         rethrown wrapped into a PropelException.
+     */
+     public function delete(ConnectionInterface \$con = null)
+     {
+        if (null === \$con) {
+            \$con = Propel::getServiceContainer()->getWriteConnection(" . $this->getTableMapClass() . "::DATABASE_NAME);
+        }
+
+        \$criteria = \$this;
+
+        // Set the correct dbName
+        \$criteria->setDbName(" . $this->getTableMapClass() . "::DATABASE_NAME);
+
+        \$affectedRows = 0; // initialize var to track total num of affected rows
+
+        try {
+            // use transaction because \$criteria could contain info
+            // for more than one table or we could emulating ON DELETE CASCADE, etc.
+            \$con->beginTransaction();
+            ";
+
+        if ($this->isDeleteCascadeEmulationNeeded()) {
+            $script .= "
+            // cloning the Criteria in case it's modified by doSelect() or doSelectStmt()
+            \$c = clone \$criteria;
+            \$affectedRows += \$c->doOnDeleteCascade(\$con);
+            ";
+        }
+
+        if ($this->isDeleteSetNullEmulationNeeded()) {
+            $script .= "
+            // cloning the Criteria in case it's modified by doSelect() or doSelectStmt()
+            \$c = clone \$criteria;
+            \$c->doOnDeleteSetNull(\$con);
+            ";
+        }
+
+        $script .= "
+
+        {$this->getTableMapClassName()}::removeInstanceFromPool(\$criteria);
+        ";
+
+        $script .= "
+            \$affectedRows += ModelCriteria::delete(\$con);
+            {$this->getTableMapClassName()}::clearRelatedInstancePool();
+            \$con->commit();
+
+            return \$affectedRows;
+        } catch (PropelException \$e) {
+            \$con->rollBack();
+            throw \$e;
+        }
+    }
+";
+    }
+
+    /**
+     * Adds the doOnDeleteCascade() method, which provides ON DELETE CASCADE emulation.
+     * @param string &$script The script will be modified in this method.
+     */
+    protected function addDoOnDeleteCascade(&$script)
+    {
+        $table = $this->getTable();
+        $script .= "
+    /**
+     * This is a method for emulating ON DELETE CASCADE for DBs that don't support this
+     * feature (like MySQL or SQLite).
+     *
+     * This method is not very speedy because it must perform a query first to get
+     * the implicated records and then perform the deletes by calling those Query classes.
+     *
+     * This method should be used within a transaction if possible.
+     *
+     * @param ConnectionInterface \$con
+     * @return int The number of affected rows (if supported by underlying database driver).
+     */
+    protected function doOnDeleteCascade(ConnectionInterface \$con)
+    {
+        // initialize var to track total num of affected rows
+        \$affectedRows = 0;
+
+        // first find the objects that are implicated by the \$this
+        \$objects = {$this->getQueryClassName()}::create(null, \$this)->find(\$con);
+        foreach (\$objects as \$obj) {
+";
+
+        foreach ($table->getReferrers() as $fk) {
+
+            // $fk is the foreign key in the other table, so localTableName will
+            // actually be the table name of other table
+            $tblFK = $fk->getTable();
+
+            $joinedTableTableMapBuilder = $this->getNewTableMapBuilder($tblFK);
+
+            if (!$tblFK->isForReferenceOnly()) {
+                // we can't perform operations on tables that are
+                // not within the schema (i.e. that we have no map for, etc.)
+
+                $fkClassName = $joinedTableTableMapBuilder->getObjectClassName();
+
+                if (ForeignKey::CASCADE === $fk->getOnDelete()) {
+
+                    // backwards on purpose
+                    $columnNamesF = $fk->getLocalColumns();
+                    $columnNamesL = $fk->getForeignColumns();
+
+                    $this->declareClassFromBuilder($joinedTableTableMapBuilder->getTableMapBuilder());
+
+                    $script .= "
+
+            // delete related $fkClassName objects
+            \$query = new ".$joinedTableTableMapBuilder->getQueryClassName(true).";
+            ";
+                    for ($x = 0, $xlen = count($columnNamesF); $x < $xlen; $x++) {
+                        $columnFK = $tblFK->getColumn($columnNamesF[$x]);
+                        $columnL = $table->getColumn($columnNamesL[$x]);
+
+                        $script .= "
+            \$query->add(".$joinedTableTableMapBuilder->getColumnConstant($columnFK) .", \$obj->get".$columnL->getPhpName()."());";
+                    }
+
+                    $script .= "
+            \$affectedRows += \$query->delete(\$con);";
+
+                } // if cascade && fkey table name != curr table name
+
+            } // if not for ref only
+        } // foreach foreign keys
+        $script .= "
+        }
+
+        return \$affectedRows;
+    }
+";
+    } // end addDoOnDeleteCascade
+
+
+    /**
+     * Adds the doOnDeleteSetNull() method, which provides ON DELETE SET NULL emulation.
+     * @param string &$script The script will be modified in this method.
+     */
+    protected function addDoOnDeleteSetNull(&$script)
+    {
+        $table = $this->getTable();
+        $script .= "
+    /**
+     * This is a method for emulating ON DELETE SET NULL DBs that don't support this
+     * feature (like MySQL or SQLite).
+     *
+     * This method is not very speedy because it must perform a query first to get
+     * the implicated records and then perform the deletes by calling those query classes.
+     *
+     * This method should be used within a transaction if possible.
+     *
+     * @param ConnectionInterface \$con
+     * @return void
+     */
+    protected function doOnDeleteSetNull(ConnectionInterface \$con)
+    {
+        // first find the objects that are implicated by the \$this
+        \$objects = {$this->getQueryClassName()}::create(null, \$this)->find(\$con);
+        foreach (\$objects as \$obj) {
+";
+
+        // This logic is almost exactly the same as that in doOnDeleteCascade()
+        // it may make sense to refactor this, provided that things don't
+        // get too complicated.
+        foreach ($table->getReferrers() as $fk) {
+
+            // $fk is the foreign key in the other table, so localTableName will
+            // actually be the table name of other table
+            $tblFK = $fk->getTable();
+            $refTableTableMapBuilder = $this->getNewTableMapBuilder($tblFK);
+
+            if (!$tblFK->isForReferenceOnly()) {
+                // we can't perform operations on tables that are
+                // not within the schema (i.e. that we have no map for, etc.)
+
+                $fkClassName = $refTableTableMapBuilder->getObjectClassName();
+
+                if (ForeignKey::SETNULL === $fk->getOnDelete()) {
+                    // backwards on purpose
+                    $columnNamesF = $fk->getLocalColumns();
+                    $columnNamesL = $fk->getForeignColumns(); // should be same num as foreign
+
+                    $this->declareClassFromBuilder($refTableTableMapBuilder);
+
+                    $script .= "
+            // set fkey col in related $fkClassName rows to NULL
+            \$query = new " . $refTableTableMapBuilder->getQueryClassName(true) . "();
+            \$updateValues = new Criteria();";
+
+                    for ($x = 0, $xlen = count($columnNamesF); $x < $xlen; $x++) {
+                        $columnFK = $tblFK->getColumn($columnNamesF[$x]);
+                        $columnL = $table->getColumn($columnNamesL[$x]);
+                        $script .= "
+            \$query->add(".$refTableTableMapBuilder->getColumnConstant($columnFK).", \$obj->get".$columnL->getPhpName()."());
+            \$updateValues->add(".$refTableTableMapBuilder->getColumnConstant($columnFK).", null);
+";
+                    }
+
+                    $script .= "\$query->update(\$updateValues, \$con);
+";
+                } // if setnull && fkey table name != curr table name
+            } // if not for ref only
+        } // foreach foreign keys
+
+        $script .= "
+        }
+    }
+";
+    }
+
+
+    /**
+     * Adds the doDeleteAll() method.
+     * @param string &$script The script will be modified in this method.
+     */
+    protected function addDoDeleteAll(&$script)
+    {
+        $table = $this->getTable();
+        $script .= "
+    /**
+     * Deletes all rows from the ".$table->getName()." table.
+     *
+     * @param ConnectionInterface \$con the connection to use
+     * @return int The number of affected rows (if supported by underlying database driver).
+     */
+    public function doDeleteAll(ConnectionInterface \$con = null)
+    {
+        if (null === \$con) {
+            \$con = Propel::getServiceContainer()->getWriteConnection(" . $this->getTableMapClass() . "::DATABASE_NAME);
+        }
+        \$affectedRows = 0; // initialize var to track total num of affected rows
+        try {
+            // use transaction because \$criteria could contain info
+            // for more than one table or we could emulating ON DELETE CASCADE, etc.
+            \$con->beginTransaction();
+            ";
+        if ($this->isDeleteCascadeEmulationNeeded()) {
+            $script .="\$affectedRows += \$this->doOnDeleteCascade(\$con);
+            ";
+        }
+        if ($this->isDeleteSetNullEmulationNeeded()) {
+            $script .= "\$this->doOnDeleteSetNull(\$con);
+            ";
+        }
+        $script .= "\$affectedRows += parent::doDeleteAll(\$con);
+            // Because this db requires some delete cascade/set null emulation, we have to
+            // clear the cached instance *after* the emulation has happened (since
+            // instances get re-added by the select statement contained therein).
+            {$this->getTableMapClassName()}::clearInstancePool();
+            {$this->getTableMapClassName()}::clearRelatedInstancePool();
+
+            \$con->commit();
+        } catch (PropelException \$e) {
+            \$con->rollBack();
+            throw \$e;
+        }
+
+        return \$affectedRows;
+    }
+";
+    }
+
 }

@@ -10,6 +10,7 @@
 
 namespace Propel\Generator\Model\Diff;
 
+use Propel\Generator\Model\IdMethod;
 use Propel\Generator\Model\Table;
 
 /**
@@ -136,7 +137,7 @@ class DatabaseDiff
     }
 
     /**
-     * Retuns the number of removed tables.
+     * Returns the number of removed tables.
      *
      * @return integer
      */

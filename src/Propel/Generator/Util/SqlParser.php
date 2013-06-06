@@ -10,6 +10,9 @@
 
 namespace Propel\Generator\Util;
 
+use \Propel\Runtime\Connection\ConnectionInterface;
+use \Propel\Runtime\Connection\StatementInterface;
+
 /**
  * Service class for parsing a large SQL string into an array of SQL statements
  *
@@ -50,12 +53,12 @@ class SqlParser
      * Execute a list of DDL statements based on a string
      * Does not use transactions since they are not supported in DDL statements
      *
-     * @param string $input      The SQL statements
-     * @param PDO    $connection a connection object
+     * @param string              $input      The SQL statements
+     * @param ConnectionInterface $connection a connection object
      *
      * @return integer the number of executed statements
      */
-    public static function executeString($input, $connection)
+    public static function executeString($input, ConnectionInterface $connection)
     {
         return self::executeStatements(self::parseString($input), $connection);
     }
@@ -64,12 +67,12 @@ class SqlParser
      * Execute a list of DDL statements based on the path to the SQL file
      * Does not use transactions since they are not supported in DDL statements
      *
-     * @param string $file       the path to the SQL file
-     * @param PDO    $connection a connection object
+     * @param string              $file       the path to the SQL file
+     * @param ConnectionInterface $connection a connection object
      *
      * @return integer the number of executed statements
      */
-    public static function executeFile($file, $connection)
+    public static function executeFile($file, ConnectionInterface $connection)
     {
         return self::executeStatements(self::parseFile($file), $connection);
     }
@@ -78,22 +81,25 @@ class SqlParser
      * Execute a list of DDL statements based on an array
      * Does not use transactions since they are not supported in DDL statements
      *
-     * @param array $statements a list of SQL statements
-     * @param PDO   $connection a connection object
+     * @param array               $statements a list of SQL statements
+     * @param ConnectionInterface $connection a connection object
      *
      * @return integer the number of executed statements
      */
-    protected static function executeStatements($statements, $connection)
+    protected static function executeStatements($statements, ConnectionInterface $connection)
     {
+        $executed = 0;
+
         foreach ($statements as $statement) {
             $stmt = $connection->prepare($statement);
-            if ($stmt instanceof PDOStatement) {
+            if ($stmt instanceof StatementInterface) {
                 // only execute if has no error
                 $stmt->execute();
+                $executed++;
             }
         }
 
-        return count($statements);
+        return $executed;
     }
 
     /**
@@ -146,7 +152,7 @@ class SqlParser
      * //   ) ENGINE=InnoDB;"
      * // )
      * </code>
-     * @param string $input The absolute path to the file to parse
+     * @param string $file The absolute path to the file to parse
      *
      * @return array A list of SQL statement strings
      */

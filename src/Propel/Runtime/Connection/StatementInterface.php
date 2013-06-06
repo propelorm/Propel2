@@ -141,9 +141,7 @@ interface StatementInterface
     /**
      * Returns an array containing all of the result set rows.
      *
-     * @param integer $fetchStyle  Controls the contents of the returned array as documented in fetch()
-     * @param integer $columnIndex This argument have a different meaning depending
-     *                                      on the value of the fetch_style parameter.
+     * @param  integer $fetchStyle Controls the contents of the returned array as documented in fetch()
      * @return array
      */
     public function fetchAll($fetchStyle = 4);

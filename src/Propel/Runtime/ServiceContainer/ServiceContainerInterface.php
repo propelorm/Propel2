@@ -10,6 +10,9 @@
 
 namespace Propel\Runtime\ServiceContainer;
 
+use Propel\Runtime\Util\Profiler;
+use Psr\Log\LoggerInterface;
+
 interface ServiceContainerInterface
 {
     /**
@@ -124,21 +127,14 @@ interface ServiceContainerInterface
     /**
      * Get a profiler instance.
      *
-     * @return \Propel\Runtime\Util\Profiler.
+     * @return Profiler
      */
     public function getProfiler();
 
     /**
-     * Check if a logger is available for a given datasource.
-     *
-     * @return boolean
-     */
-    public function hasLogger($name = 'defaultLogger');
-
-    /**
      * Get a logger for a given datasource, or the default logger.
      *
-     * @return \Monolog\Logger
+     * @return LoggerInterface
      */
     public function getLogger($name = 'defaultLogger');
 }

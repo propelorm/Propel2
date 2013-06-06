@@ -166,7 +166,7 @@ As Propel uses PDO to query the underlying database, you can always write custom
 {% highlight php %}
 <?php
 use Propel\Runtime\Propel;
-$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+$con = Propel::getConnection(BookTableMap::DATABASE_NAME);
 $sql = "SELECT * FROM book WHERE id NOT IN "
         ."(SELECT book_review.book_id FROM book_review"
         ." INNER JOIN author ON (book_review.author_id=author.ID)"
@@ -242,7 +242,7 @@ echo $author->getFirstName(); // 'Jane'
 
 ## Query Termination Methods ##
 
-The Query methods that don't return the current query object are called "Termination Methods". You've alread seen come of them: `find()`, `findOne()`, `update()`, `delete()`. There are two more termination methods that you should know about:
+The Query methods that don't return the current query object are called "Termination Methods". You've already seen come of them: `find()`, `findOne()`, `update()`, `delete()`. There are two more termination methods that you should know about:
 
 {% highlight php %}
 <?php

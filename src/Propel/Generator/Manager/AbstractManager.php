@@ -169,7 +169,7 @@ abstract class AbstractManager
      */
     public function setValidate($validate)
     {
-        $this->validatealidate = (boolean) $validate;
+        $this->validate = (boolean) $validate;
     }
 
     /**

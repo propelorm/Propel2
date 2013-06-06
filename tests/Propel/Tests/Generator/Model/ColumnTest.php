@@ -144,7 +144,7 @@ class ColumnTest extends ModelTestCase
             'name'               => 'is_published',
             'phpName'            => 'IsPublished',
             'phpType'            => 'boolean',
-            'peerName'           => 'IS_PUBLISHED',
+            'tableMapName'       => 'IS_PUBLISHED',
             'prefix'             => 'col_',
             'accessorVisibility' => 'public',
             'mutatorVisibility'  => 'public',
@@ -166,7 +166,7 @@ class ColumnTest extends ModelTestCase
         $this->assertSame('is_published', $column->getName());
         $this->assertSame('IsPublished', $column->getPhpName());
         $this->assertSame('boolean', $column->getPhpType());
-        $this->assertSame('IS_PUBLISHED', $column->getPeerName());
+        $this->assertSame('IS_PUBLISHED', $column->getTableMapName());
         $this->assertSame('public', $column->getAccessorVisibility());
         $this->assertSame('public', $column->getMutatorVisibility());
         $this->assertFalse($column->isPrimaryString());
@@ -725,11 +725,11 @@ class ColumnTest extends ModelTestCase
 
         $column = new Column('created_at');
         $column->setTable($table);
-        $column->setPeerName('created_at');
+        $column->setTableMapName('created_at');
 
-        $this->assertSame('created_at', $column->getPeerName());
+        $this->assertSame('created_at', $column->getTableMapName());
         $this->assertSame('CREATED_AT', $column->getConstantColumnName());
-        $this->assertSame('ArticlePeer::CREATED_AT', $column->getConstantName());
+        $this->assertSame('ArticleTableMap::CREATED_AT', $column->getConstantName());
     }
 
     public function testSetDefaultPhpName()

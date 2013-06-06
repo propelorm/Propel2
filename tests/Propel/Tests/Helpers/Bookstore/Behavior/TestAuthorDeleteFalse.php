@@ -9,7 +9,7 @@ class TestAuthorDeleteFalse extends TestAuthor
     public function preDelete(ConnectionInterface $con = null)
     {
         parent::preDelete($con);
-        $this->setFirstName("Pre-Deleted");
+        $this->setFirstName('Pre-Deleted');
 
         return false;
     }

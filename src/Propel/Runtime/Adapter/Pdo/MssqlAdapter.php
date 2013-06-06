@@ -10,7 +10,7 @@
 
 namespace Propel\Runtime\Adapter\Pdo;
 
-use Propel\Runtime\Adapter\AdapterInterface;
+use Propel\Runtime\Adapter\SqlAdapterInterface;
 use Propel\Runtime\Adapter\Exception\MalformedClauseException;
 use Propel\Runtime\Adapter\Exception\ColumnNotFoundException;
 use Propel\Runtime\Connection\ConnectionInterface;
@@ -23,7 +23,7 @@ use Propel\Runtime\ActiveQuery\Criteria;
  *
  * @author Hans Lellelid <hans@xmpl.org> (Propel)
  */
-class MssqlAdapter extends PdoAdapter implements AdapterInterface
+class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
 {
     /**
      * MS SQL Server does not support SET NAMES
@@ -149,7 +149,7 @@ class MssqlAdapter extends PdoAdapter implements AdapterInterface
             $selectStatement = str_ireplace('distinct ', '', $selectStatement);
         }
 
-        // if we're starting at offset 0 then theres no need to simulate limit,
+        // if we're starting at offset 0 then there's no need to simulate limit,
         // just grab the top $limit number of rows
         if (0 === $offset) {
             $sql = $selectText . 'TOP ' . $limit . ' ' . $selectStatement . ' FROM ' . $fromStatement;

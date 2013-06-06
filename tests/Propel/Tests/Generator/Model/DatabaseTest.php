@@ -11,6 +11,8 @@
 namespace Propel\Tests\Generator\Model;
 
 use Propel\Generator\Model\Database;
+use Propel\Generator\Model\Table;
+use Propel\Generator\Platform\PgsqlPlatform;
 
 /**
  * Unit test suite for Database model class.
@@ -47,7 +49,6 @@ class DatabaseTest extends ModelTestCase
         $database->loadMapping(array(
             'name'                   => 'bookstore',
             'baseClass'              => 'CustomBaseObject',
-            'basePeer'               => 'CustomBasePeer',
             'defaultIdMethod'        => 'native',
             'defaultPhpNamingMethod' => 'underscore',
             'heavyIndexing'          => 'true',
@@ -57,7 +58,6 @@ class DatabaseTest extends ModelTestCase
 
         $this->assertSame('bookstore', $database->getName());
         $this->assertSame('CustomBaseObject', $database->getBaseClass());
-        $this->assertSame('CustomBasePeer', $database->getBasePeer());
         $this->assertSame('XML', $database->getDefaultStringFormat());
         $this->assertSame('native', $database->getDefaultIdMethod());
         $this->assertSame('underscore', $database->getDefaultPhpNamingMethod());
@@ -397,10 +397,8 @@ class DatabaseTest extends ModelTestCase
     {
         $database = new Database();
         $database->setBaseClass('CustomBaseObject');
-        $database->setBasePeer('CustomPeer');
 
         $this->assertSame('CustomBaseObject', $database->getBaseClass());
-        $this->assertSame('CustomPeer', $database->getBasePeer());
     }
 
     public function testSetDefaultIdMethod()
@@ -417,5 +415,20 @@ class DatabaseTest extends ModelTestCase
         $database->setDefaultPhpNamingMethod('foo');
 
         $this->assertSame('foo', $database->getDefaultPhpNamingMethod());
+    }
+
+    public function testAddTableWithSameNameOnDifferentSchema()
+    {
+        $db = new Database();
+        $db->setPlatform(new PgsqlPlatform());
+
+        $t1 = new Table('t1');
+        $db->addTable($t1);
+        $this->assertEquals('t1', $t1->getName());
+
+        $t1b = new Table('t1');
+        $t1b->setSchema('bis');
+        $db->addTable($t1b);
+        $this->assertEquals('bis.t1', $t1b->getName());
     }
 }

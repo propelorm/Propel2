@@ -101,40 +101,40 @@ EOF;
 
     public function testCreatesArchiveTable()
     {
-        $table = \ArchivableTest1Peer::getTableMap();
+        $table = \Map\ArchivableTest1TableMap::getTableMap();
         $this->assertTrue($table->getDatabaseMap()->hasTable('archivable_test_1_archive'));
         $this->assertSame("ArchivableTest1Archive", $table->getDatabaseMap()->getTable('archivable_test_1_archive')->getPhpName());
     }
 
     public function testDoesNotCreateCustomArchiveTableIfExists()
     {
-        $table = \ArchivableTest2Peer::getTableMap();
+        $table = \Map\ArchivableTest2TableMap::getTableMap();
         $this->assertTrue($table->getDatabaseMap()->hasTable('archivable_test_2_archive'));
     }
 
     public function testCanCreateCustomArchiveTableName()
     {
-        $table = \ArchivableTest3Peer::getTableMap();
+        $table = \Map\ArchivableTest3TableMap::getTableMap();
         $this->assertTrue($table->getDatabaseMap()->hasTable('my_old_archivable_test_3'));
         $this->assertSame("MyOldArchivableTest3", $table->getDatabaseMap()->getTable('my_old_archivable_test_3')->getPhpName());
     }
 
     public function testDoesNotCreateCustomArchiveTableIfArchiveClassIsSpecified()
     {
-        $table = \ArchivableTest4Peer::getTableMap();
+        $table = \Map\ArchivableTest4TableMap::getTableMap();
         $this->assertFalse($table->getDatabaseMap()->hasTable('archivable_test_4_archive'));
     }
 
     public function testCanCreateCustomArchiveTableNameAndPhpName()
     {
-        $table = \ArchivableTest5Peer::getTableMap();
+        $table = \Map\ArchivableTest5TableMap::getTableMap();
         $this->assertTrue($table->getDatabaseMap()->hasTable('archivable_test_5_backup'));
         $this->assertSame("ArchivableTest5MyBackup", $table->getDatabaseMap()->getTable('archivable_test_5_backup')->getPhpName());
     }
 
     public function testCopiesColumnsToArchiveTable()
     {
-        $table = \ArchivableTest1ArchivePeer::getTableMap();
+        $table = \Map\ArchivableTest1ArchiveTableMap::getTableMap();
         $this->assertTrue($table->hasColumn('id'));
         $this->assertContains('id INTEGER NOT NULL,', self::$generatedSQL, 'copied columns are not autoincremented');
         $this->assertTrue($table->hasColumn('title'));
@@ -144,33 +144,33 @@ EOF;
 
     public function testDoesNotCopyForeignKeys()
     {
-        $table = \ArchivableTest1ArchivePeer::getTableMap();
+        $table = \Map\ArchivableTest1ArchiveTableMap::getTableMap();
         $this->assertEquals(array(), $table->getRelations());
     }
 
     public function testCopiesIndices()
     {
-        $table = \ArchivableTest1ArchivePeer::getTableMap();
+        $table = \Map\ArchivableTest1ArchiveTableMap::getTableMap();
         $expected = "CREATE INDEX archivable_test_1_archive_I_1 ON archivable_test_1_archive (title,age);";
         $this->assertContains($expected, self::$generatedSQL);
     }
 
     public function testCopiesUniquesToIndices()
     {
-        $table = \ArchivableTest2ArchivePeer::getTableMap();
+        $table = \Map\ArchivableTest2ArchiveTableMap::getTableMap();
         $expected = "CREATE INDEX my_old_archivable_test_3_I_1 ON my_old_archivable_test_3 (title);";
         $this->assertContains($expected, self::$generatedSQL);
     }
 
     public function testAddsArchivedAtColumnToArchiveTableByDefault()
     {
-        $table = \ArchivableTest1ArchivePeer::getTableMap();
+        $table = \Map\ArchivableTest1ArchiveTableMap::getTableMap();
         $this->assertTrue($table->hasColumn('archived_at'));
     }
 
     public function testDoesNotAddArchivedAtColumnToArchiveTableIfSpecified()
     {
-        $table = \MyOldArchivableTest3Peer::getTableMap();
+        $table = \Map\MyOldArchivableTest3TableMap::getTableMap();
         $this->assertFalse($table->hasColumn('archived_at'));
     }
 

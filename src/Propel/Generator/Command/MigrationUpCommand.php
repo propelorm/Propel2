@@ -14,8 +14,8 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\Output;
-use Propel\Generator\Config\GeneratorConfig;
 use Propel\Generator\Manager\MigrationManager;
+use Propel\Generator\Util\SqlParser;
 
 /**
  * @author William Durand <william.durand1@gmail.com>
@@ -38,6 +38,7 @@ class MigrationUpCommand extends AbstractCommand
             ->addOption('migration-table',  null, InputOption::VALUE_REQUIRED,  'Migration table name', self::DEFAULT_MIGRATION_TABLE)
             ->addOption('connection',       null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Connection to use', array())
             ->setName('migration:up')
+            ->setAliases(array('up'))
             ->setDescription('Execute migrations up')
         ;
     }
@@ -47,9 +48,9 @@ class MigrationUpCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $generatorConfig = new GeneratorConfig(array(
-            'propel.platform.class' => $input->getOption('platform'),
-        ));
+        $generatorConfig = $this->getGeneratorConfig(array(
+            'propel.platform.class' => $input->getOption('platform')
+        ), $input);
 
         $this->createDirectory($input->getOption('output-dir'));
 
@@ -94,7 +95,7 @@ class MigrationUpCommand extends AbstractCommand
                 ));
             }
 
-            $pdo = $manager->getPdoConnection($datasource);
+            $conn = $manager->getAdapterConnection($datasource);
             $res = 0;
             $statements = SqlParser::parseString($sql);
             foreach ($statements as $statement) {
@@ -103,7 +104,7 @@ class MigrationUpCommand extends AbstractCommand
                         $output->writeln(sprintf('Executing statement "%s"', $statement));
                     }
 
-                    $stmt = $pdo->prepare($statement);
+                    $stmt = $conn->prepare($statement);
                     $stmt->execute();
                     $res++;
                 } catch (PDOException $e) {

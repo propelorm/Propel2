@@ -13,7 +13,7 @@ namespace Propel\Tests;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Tests\Bookstore\Author;
 use Propel\Tests\Bookstore\Book;
-use Propel\Tests\Bookstore\BookPeer;
+use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
 /* It's only fair to admit that these tests were carefully crafted
@@ -59,7 +59,7 @@ class Ticket520Test extends BookstoreTestBase
         $a->addBook($b2);
 
         $c = new Criteria();
-        $c->add(BookPeer::TITLE, "%Hitchhiker%", Criteria::LIKE);
+        $c->add(BookTableMap::TITLE, "%Hitchhiker%", Criteria::LIKE);
 
         $guides = $a->getBooks($c);
         $this->assertEquals(0, count($guides), 'Passing a Criteria means "force a database query"');
@@ -80,7 +80,7 @@ class Ticket520Test extends BookstoreTestBase
         $a->addBook($b2);
 
         $c = new Criteria();
-        $c->add(BookPeer::TITLE, "%Hitchhiker%", Criteria::LIKE);
+        $c->add(BookTableMap::TITLE, "%Hitchhiker%", Criteria::LIKE);
 
         $guides = $a->getBooks($c);
 
@@ -96,14 +96,16 @@ class Ticket520Test extends BookstoreTestBase
 
         $b1 = new Book();
         $b1->setTitle("The Hitchhikers Guide To The Galaxy");
+        $b1->setISBN('FA404-1');
         $a->addBook($b1);
 
         $b2 = new Book();
         $b2->setTitle("The Restaurant At The End Of The Universe");
+        $b2->setISBN('FA404-2');
         $a->addBook($b2);
 
         $c = new Criteria();
-        $c->add(BookPeer::TITLE, "%Hitchhiker%", Criteria::LIKE);
+        $c->add(BookTableMap::TITLE, "%Hitchhiker%", Criteria::LIKE);
 
         $guides = $a->getBooks($c);
 
@@ -122,6 +124,7 @@ class Ticket520Test extends BookstoreTestBase
 
         $b1 = new Book();
         $b1->setTitle("The Hitchhikers Guide To The Galaxy");
+        $b1->setISBN('FA404-1');
         $a->addBook($b1);
 
         $books = $a->getBooks();
@@ -150,6 +153,7 @@ class Ticket520Test extends BookstoreTestBase
 
         $b1 = new Book();
         $b1->setTitle("The Hitchhikers Guide To The Galaxy");
+        $b1->setISBN('FA404-1');
         $a->addBook($b1);
 
         $books = $a->getBooks();
@@ -169,12 +173,13 @@ class Ticket520Test extends BookstoreTestBase
         $a->save();
 
         $c = new Criteria();
-        $c->add(BookPeer::TITLE, "%Restaurant%", Criteria::LIKE);
+        $c->add(BookTableMap::TITLE, "%Restaurant%", Criteria::LIKE);
 
         $this->assertEquals(0, count($a->getBooks($c)));
 
         $b1 = new Book();
         $b1->setTitle("The Hitchhikers Guide To The Galaxy");
+        $b1->setISBN('FA404-1');
         $a->addBook($b1);
 
         /* Like testAddNewObjectAfterSaveWithPoisonedCache, but this time
@@ -196,10 +201,12 @@ class Ticket520Test extends BookstoreTestBase
 
         $b1 = new Book();
         $b1->setTitle("The Hitchhikers Guide To The Galaxy");
+        $b1->setISBN('FA404-1');
         $a->addBook($b1);
 
         $b2 = new Book();
         $b2->setTitle("The Restaurant At The End Of The Universe");
+        $b1->setISBN('FA404-2');
         $a->addBook($b2);
 
         /* As you cannot write $a->remove($b2), you have to delete $b2
@@ -235,11 +242,13 @@ class Ticket520Test extends BookstoreTestBase
 
         $b1 = new Book();
         $b1->setTitle("The Hitchhikers Guide To The Galaxy");
+        $b1->setISBN('FA404-1');
         $b1->setPublisher($p); // uh... did not check that :^)
         $a->addBook($b1);
 
         $b2 = new Book();
         $b2->setTitle("The Restaurant At The End Of The Universe");
+        $b1->setISBN('FA404-2');
         $b2->setPublisher($p);
         $a->addBook($b2);
 

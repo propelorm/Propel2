@@ -13,7 +13,8 @@ namespace Propel\Runtime\Connection;
 use Propel\Runtime\Propel;
 use Propel\Runtime\Connection\Exception\RollbackException;
 use Propel\Runtime\Exception\InvalidArgumentException;
-use Monolog\Logger;
+use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerAwareInterface;
 
 /**
  * Wraps a Connection class, providing nested transactions, statement cache, and logging.
@@ -29,7 +30,7 @@ use Monolog\Logger;
  * in-progress.
  *
  */
-class ConnectionWrapper implements ConnectionInterface
+class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
 {
     /**
      * Attribute to use to set whether to cache prepared statements.
@@ -108,7 +109,7 @@ class ConnectionWrapper implements ConnectionInterface
     /**
      * Configured logger.
      *
-     * @var \Monolog\Logger
+     * @var LoggerInterface
      */
     protected $logger;
 
@@ -181,7 +182,7 @@ class ConnectionWrapper implements ConnectionInterface
 
     /**
      * Check whether the connection contains a transaction that can be committed.
-     * To be used in an evironment where Propelexceptions are caught.
+     * To be used in an environment where Propelexceptions are caught.
      *
      * @return boolean True if the connection is in a committable transaction
      */
@@ -409,7 +410,7 @@ class ConnectionWrapper implements ConnectionInterface
      *
      * @see http://php.net/manual/en/pdo.query.php for a description of the possible parameters.
      *
-     * @return PDOStatement
+     * @return StatementInterface
      */
     public function query()
     {
@@ -444,6 +445,22 @@ class ConnectionWrapper implements ConnectionInterface
     public function quote($string, $parameter_type = 2)
     {
         return $this->connection->quote($string, $parameter_type);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getSingleDataFetcher($data)
+    {
+        return $this->connection->getSingleDataFetcher($data);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getDataFetcher($data)
+    {
+        return $this->connection->getDataFetcher($data);
     }
 
     /**
@@ -559,21 +576,18 @@ class ConnectionWrapper implements ConnectionInterface
     }
 
     /**
-     * Set a logger to use for this connection.
-     *
-     * @param     \Monolog\Logger  A Monolog logger
+     * {@inheritDoc}
      */
-    public function setLogger(Logger $logger = null)
+    public function setLogger(LoggerInterface $logger)
     {
         $this->logger = $logger;
     }
 
     /**
      * Gets the logger to use for this connection.
-     *
      * If no logger was set, returns the default logger from the Service Container.
      *
-     * @return \Monolog\Logger A Monolog logger, or null.
+     * @return LoggerInterface A logger.
      */
     public function getLogger()
     {
@@ -582,16 +596,6 @@ class ConnectionWrapper implements ConnectionInterface
         }
 
         return $this->logger;
-    }
-
-    /**
-     * Check if this connection has a configured logger.
-     *
-     * @return boolean
-     */
-    public function hasLogger()
-    {
-        return null !== $this->logger || Propel::getServiceContainer()->hasLogger($this->getName());
     }
 
     /**
@@ -606,11 +610,11 @@ class ConnectionWrapper implements ConnectionInterface
             return;
         }
         $callingMethod = $backtrace[1]['function'];
-        if (!$msg || !$this->hasLogger() || !$this->isLogEnabledForMethod($callingMethod)) {
+        if (!$msg || !$this->isLogEnabledForMethod($callingMethod)) {
             return;
         }
 
-        $this->getLogger()->addInfo($msg);
+        $this->getLogger()->info($msg);
     }
 
     /**

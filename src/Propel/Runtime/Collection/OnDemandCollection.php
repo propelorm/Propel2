@@ -11,10 +11,10 @@
 namespace Propel\Runtime\Collection;
 
 use Propel\Runtime\Collection\Exception\ReadOnlyModelException;
-use Propel\Runtime\Connection\StatementInterface;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Formatter\AbstractFormatter;
-use Propel\Runtime\Util\BasePeer;
+use Propel\Runtime\DataFetcher\DataFetcherInterface;
+use Propel\Runtime\Map\TableMap;
 
 /**
  * Class for iterating over a statement and returning one Propel object at a time
@@ -35,13 +35,13 @@ class OnDemandCollection extends Collection
     protected $isValid;
 
     /**
-     * @param AbstractFormatter  $formatter
-     * @param StatementInterface $stmt
+     * @param AbstractFormatter    $formatter
+     * @param DataFetcherInterface $dataFetcher
      */
-    public function initIterator(AbstractFormatter $formatter, StatementInterface $stmt)
+    public function initIterator(AbstractFormatter $formatter, DataFetcherInterface $dataFetcher)
     {
         $this->currentKey = -1;
-        $this->iterator = new OnDemandIterator($formatter, $stmt);
+        $this->iterator = new OnDemandIterator($formatter, $dataFetcher);
     }
 
     /**
@@ -52,9 +52,9 @@ class OnDemandCollection extends Collection
      *                               Otherwise, the array is indexed using the specified column
      * @param boolean $usePrefix If true, the returned array prefixes keys
      *                               with the model class name ('Article_0', 'Article_1', etc).
-     * @param string $keyType (optional) One of the class type constants BasePeer::TYPE_PHPNAME,
-     *                               BasePeer::TYPE_STUDLYPHPNAME, BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME,
-     *                               BasePeer::TYPE_NUM. Defaults to BasePeer::TYPE_PHPNAME.
+     * @param string $keyType (optional) One of the class type constants TableMap::TYPE_PHPNAME,
+     *                               TableMap::TYPE_STUDLYPHPNAME, TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME,
+     *                               TableMap::TYPE_NUM. Defaults to TableMap::TYPE_PHPNAME.
      * @param boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
      * @param array   $alreadyDumpedObjects   List of objects to skip to avoid recursion
      *
@@ -78,7 +78,7 @@ class OnDemandCollection extends Collection
      *
      * @return array
      */
-    public function toArray($keyColumn = null, $usePrefix = false, $keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array())
+    public function toArray($keyColumn = null, $usePrefix = false, $keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array())
     {
         $ret = array();
         $keyGetterMethod = 'get' . $keyColumn;
@@ -248,7 +248,7 @@ class OnDemandCollection extends Collection
 
     public function setFlags($flags)
     {
-        throw new PropelException('The On Demand Collection does not allow acces by offset');
+        throw new PropelException('The On Demand Collection does not allow access by offset');
     }
 
     public function uasort($cmp_function)

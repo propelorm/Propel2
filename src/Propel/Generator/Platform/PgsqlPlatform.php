@@ -70,20 +70,6 @@ class PgsqlPlatform extends DefaultPlatform
         return 32;
     }
 
-    /**
-     * Escape the string for RDBMS.
-     * @param  string $text
-     * @return string
-     */
-    public function disconnectedEscapeText($text)
-    {
-        if (function_exists('pg_escape_string')) {
-            return pg_escape_string($text);
-        } else {
-            return parent::disconnectedEscapeText($text);
-        }
-    }
-
     public function getBooleanString($b)
     {
         // parent method does the checking for allows string
@@ -502,9 +488,8 @@ ALTER TABLE %s ALTER COLUMN %s;
             throw new EngineException('PostgreSQL needs a sequence name to fetch primary keys');
         }
         $snippet = "
-\$stmt = %s->query(\"SELECT nextval('%s')\");
-\$row = \$stmt->fetch(\\PDO::FETCH_NUM);
-%s = \$row[0];";
+\$dataFetcher = %s->query(\"SELECT nextval('%s')\");
+%s = \$dataFetcher->fetchColumn();";
         $script = sprintf($snippet,
             $connectionVariableName,
             $this->quoteIdentifier($sequenceName),

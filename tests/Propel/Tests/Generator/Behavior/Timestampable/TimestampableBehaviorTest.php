@@ -13,9 +13,9 @@ namespace Propel\Tests\Generator\Behavior\Timestampable;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
 use Propel\Tests\Bookstore\Behavior\Table1;
-use Propel\Tests\Bookstore\Behavior\Table1Peer;
+use Propel\Tests\Bookstore\Behavior\Map\Table1TableMap;
 use Propel\Tests\Bookstore\Behavior\Table2;
-use Propel\Tests\Bookstore\Behavior\Table2Peer;
+use Propel\Tests\Bookstore\Behavior\Map\Table2TableMap;
 use Propel\Tests\Bookstore\Behavior\Table2Query;
 
 use Propel\Runtime\Collection\ObjectCollection;
@@ -27,13 +27,19 @@ use Propel\Runtime\Collection\ObjectCollection;
  */
 class TimestampableBehaviorTest extends BookstoreTestBase
 {
+    public static function setUpBeforeClass()
+    {
+        static::$isInitialized = false;
+        parent::setUpBeforeClass();
+    }
+
     public function testParameters()
     {
-        $table2 = Table2Peer::getTableMap();
+        $table2 = Table2TableMap::getTableMap();
         $this->assertEquals(count($table2->getColumns()), 4, 'Timestampable adds two columns by default');
         $this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table2', 'getCreatedAt'), 'Timestampable adds a created_at column by default');
         $this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table2', 'getUpdatedAt'), 'Timestampable adds an updated_at column by default');
-        $table1 = Table1Peer::getTableMap();
+        $table1 = Table1TableMap::getTableMap();
         $this->assertEquals(count($table1->getColumns()), 4, 'Timestampable does not add two columns when they already exist');
         $this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table1', 'getCreatedOn'), 'Timestampable allows customization of create_column name');
         $this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table1', 'getUpdatedOn'), 'Timestampable allows customization of update_column name');

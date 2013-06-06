@@ -10,35 +10,32 @@
 
 namespace Propel\Tests\Runtime\Formatter;
 
-use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
-use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
-
-use Propel\Tests\Bookstore\Author;
-use Propel\Tests\Bookstore\AuthorPeer;
-use Propel\Tests\Bookstore\AuthorQuery;
-use Propel\Tests\Bookstore\Book;
-use Propel\Tests\Bookstore\BookPeer;
-use Propel\Tests\Bookstore\BookQuery;
-use Propel\Tests\Bookstore\BookstoreEmployeePeer;
-use Propel\Tests\Bookstore\Essay;
-use Propel\Tests\Bookstore\EssayPeer;
-use Propel\Tests\Bookstore\Review;
-use Propel\Tests\Bookstore\ReviewPeer;
-
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
+use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
+use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
+use Propel\Tests\Bookstore\Author;
+use Propel\Tests\Bookstore\AuthorQuery;
+use Propel\Tests\Bookstore\Book;
+use Propel\Tests\Bookstore\BookQuery;
+use Propel\Tests\Bookstore\Essay;
+use Propel\Tests\Bookstore\Review;
+use Propel\Tests\Bookstore\Map\AuthorTableMap;
+use Propel\Tests\Bookstore\Map\BookTableMap;
+use Propel\Tests\Bookstore\Map\BookstoreEmployeeTableMap;
+use Propel\Tests\Bookstore\Map\EssayTableMap;
+use Propel\Tests\Bookstore\Map\ReviewTableMap;
 
 /**
  * Test class for ArrayFormatter when Criteria uses with().
  *
  * @author Francois Zaninotto
- * @version    $Id: ArrayFormatterWithTest.php 1348 2009-12-03 21:49:00Z francois $
  */
 class ArrayFormatterWithTest extends BookstoreEmptyTestBase
 {
     protected function assertCorrectHydration1($c, $msg)
     {
-        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         $book = $c->findOne($con);
         $count = $con->getQueryCount();
         $this->assertEquals($book['Title'], 'Don Juan', 'Main object is correctly hydrated ' . $msg);
@@ -51,8 +48,8 @@ class ArrayFormatterWithTest extends BookstoreEmptyTestBase
     public function testFindOneWith()
     {
         BookstoreDataPopulator::populate();
-        BookPeer::clearInstancePool();
-        AuthorPeer::clearInstancePool();
+        BookTableMap::clearInstancePool();
+        AuthorTableMap::clearInstancePool();
         $c = new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book');
         $c->setFormatter(ModelCriteria::FORMAT_ARRAY);
         $c->orderBy('Propel\Tests\Bookstore\Book.Title');
@@ -66,8 +63,8 @@ class ArrayFormatterWithTest extends BookstoreEmptyTestBase
     public function testFindOneWithAlias()
     {
         BookstoreDataPopulator::populate();
-        BookPeer::clearInstancePool();
-        AuthorPeer::clearInstancePool();
+        BookTableMap::clearInstancePool();
+        AuthorTableMap::clearInstancePool();
         $c = new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book');
         $c->setFormatter(ModelCriteria::FORMAT_ARRAY);
         $c->orderBy('Propel\Tests\Bookstore\Book.Title');
@@ -81,8 +78,8 @@ class ArrayFormatterWithTest extends BookstoreEmptyTestBase
     public function testFindOneWithMainAlias()
     {
         BookstoreDataPopulator::populate();
-        BookPeer::clearInstancePool();
-        AuthorPeer::clearInstancePool();
+        BookTableMap::clearInstancePool();
+        AuthorTableMap::clearInstancePool();
         $c = new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book');
         $c->setFormatter(ModelCriteria::FORMAT_ARRAY);
         $c->setModelAlias('b', true);
@@ -113,13 +110,14 @@ class ArrayFormatterWithTest extends BookstoreEmptyTestBase
         // save a book with no author
         $b = new Book();
         $b->setTitle('Foo');
+        $b->setISBN('FA404');
         $b->save();
         $c = new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book');
         $c->setFormatter(ModelCriteria::FORMAT_ARRAY);
         $c->where('Propel\Tests\Bookstore\Book.Title = ?', 'Foo');
         $c->leftJoin('Propel\Tests\Bookstore\Book.Author');
         $c->with('Author');
-        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         $book = $c->findOne($con);
         $count = $con->getQueryCount();
         $author = $book['Author'];
@@ -129,7 +127,7 @@ class ArrayFormatterWithTest extends BookstoreEmptyTestBase
     public function testFindOneWithRelationName()
     {
         BookstoreDataPopulator::populate();
-        BookstoreEmployeePeer::clearInstancePool();
+        BookstoreEmployeeTableMap::clearInstancePool();
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\BookstoreEmployee');
         $c->setFormatter(ModelCriteria::FORMAT_ARRAY);
         $c->join('Propel\Tests\Bookstore\BookstoreEmployee.Supervisor s');
@@ -146,21 +144,24 @@ class ArrayFormatterWithTest extends BookstoreEmptyTestBase
      */
     public function testFindOneWithSameRelatedObject()
     {
-        BookPeer::doDeleteAll();
-        AuthorPeer::doDeleteAll();
+        BookTableMap::doDeleteAll();
+        AuthorTableMap::doDeleteAll();
         $auth = new Author();
         $auth->setFirstName('John');
+        $auth->setLastName('Doe');
         $auth->save();
         $book1 = new Book();
         $book1->setTitle('Hello');
+        $book1->setISBN('FA404');
         $book1->setAuthor($auth);
         $book1->save();
         $book2 = new Book();
         $book2->setTitle('World');
+        $book2->setISBN('FA404');
         $book2->setAuthor($auth);
         $book2->save();
-        BookPeer::clearInstancePool();
-        AuthorPeer::clearInstancePool();
+        BookTableMap::clearInstancePool();
+        AuthorTableMap::clearInstancePool();
 
         $c = new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book');
         $c->setFormatter(ModelCriteria::FORMAT_ARRAY);
@@ -177,20 +178,22 @@ class ArrayFormatterWithTest extends BookstoreEmptyTestBase
 
     public function testFindOneWithDuplicateRelation()
     {
-        EssayPeer::doDeleteAll();
+        EssayTableMap::doDeleteAll();
         $auth1 = new Author();
         $auth1->setFirstName('John');
+        $auth1->setLastName('Doe');
         $auth1->save();
         $auth2 = new Author();
         $auth2->setFirstName('Jack');
+        $auth2->setLastName('Sparrow');
         $auth2->save();
         $essay = new Essay();
         $essay->setTitle('Foo');
         $essay->setFirstAuthor($auth1->getId());
         $essay->setSecondAuthor($auth2->getId());
         $essay->save();
-        AuthorPeer::clearInstancePool();
-        EssayPeer::clearInstancePool();
+        AuthorTableMap::clearInstancePool();
+        EssayTableMap::clearInstancePool();
 
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Essay');
         $c->setFormatter(ModelCriteria::FORMAT_ARRAY);
@@ -207,9 +210,9 @@ class ArrayFormatterWithTest extends BookstoreEmptyTestBase
     public function testFindOneWithDistantClass()
     {
         BookstoreDataPopulator::populate();
-        BookPeer::clearInstancePool();
-        AuthorPeer::clearInstancePool();
-        ReviewPeer::clearInstancePool();
+        BookTableMap::clearInstancePool();
+        AuthorTableMap::clearInstancePool();
+        ReviewTableMap::clearInstancePool();
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Review');
         $c->setFormatter(ModelCriteria::FORMAT_ARRAY);
         $c->where('Propel\Tests\Bookstore\Review.Recommended = ?', true);
@@ -228,15 +231,15 @@ class ArrayFormatterWithTest extends BookstoreEmptyTestBase
     public function testFindOneWithDistantClassRenamedRelation()
     {
         BookstoreDataPopulator::populate();
-        BookPeer::clearInstancePool();
-        AuthorPeer::clearInstancePool();
-        ReviewPeer::clearInstancePool();
+        BookTableMap::clearInstancePool();
+        AuthorTableMap::clearInstancePool();
+        ReviewTableMap::clearInstancePool();
         Propel::enableInstancePooling();
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\BookSummary');
         $c->joinWith('Propel\Tests\Bookstore\BookSummary.SummarizedBook');
         $c->joinWith('SummarizedBook.Author');
         $c->setFormatter(ModelCriteria::FORMAT_ARRAY);
-        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         $summary = $c->findOne($con);
         $count = $con->getQueryCount();
         $this->assertEquals('Harry Potter does some amazing magic!', $summary['Summary'], 'Main object is correctly hydrated');
@@ -255,7 +258,7 @@ class ArrayFormatterWithTest extends BookstoreEmptyTestBase
     {
         $c = new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book');
         $c->setFormatter(ModelCriteria::FORMAT_ARRAY);
-        $c->add(BookPeer::ISBN, '043935806X');
+        $c->add(BookTableMap::ISBN, '043935806X');
         $c->leftJoin('Propel\Tests\Bookstore\Book.Review');
         $c->with('Review');
         $c->limit(5);
@@ -265,15 +268,15 @@ class ArrayFormatterWithTest extends BookstoreEmptyTestBase
     public function testFindOneWithOneToMany()
     {
         BookstoreDataPopulator::populate();
-        BookPeer::clearInstancePool();
-        AuthorPeer::clearInstancePool();
-        ReviewPeer::clearInstancePool();
+        BookTableMap::clearInstancePool();
+        AuthorTableMap::clearInstancePool();
+        ReviewTableMap::clearInstancePool();
         $c = new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book');
         $c->setFormatter(ModelCriteria::FORMAT_ARRAY);
-        $c->add(BookPeer::ISBN, '043935806X');
+        $c->add(BookTableMap::ISBN, '043935806X');
         $c->leftJoin('Propel\Tests\Bookstore\Book.Review');
         $c->with('Review');
-        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         $books = $c->find($con);
         $this->assertEquals(1, count($books), 'with() does not duplicate the main object');
         $book = $books[0];
@@ -289,18 +292,23 @@ class ArrayFormatterWithTest extends BookstoreEmptyTestBase
     {
         $author1 = new Author();
         $author1->setFirstName('AA');
+        $author1->setLastName('AZ');
         $author2 = new Author();
         $author2->setFirstName('BB');
+        $author2->setLastName('B2');
         $book1 = new Book();
         $book1->setTitle('Aaa');
+        $book1->setISBN('FA404-A');
         $book1->setAuthor($author1);
         $book1->save();
         $book2 = new Book();
         $book2->setTitle('Bbb');
+        $book2->setISBN('FA404-B');
         $book2->setAuthor($author2);
         $book2->save();
         $book3 = new Book();
         $book3->setTitle('Ccc');
+        $book3->setISBN('FA404-C');
         $book3->setAuthor($author1);
         $book3->save();
         $authors = AuthorQuery::create()
@@ -315,15 +323,15 @@ class ArrayFormatterWithTest extends BookstoreEmptyTestBase
     public function testFindOneWithOneToManyThenManyToOne()
     {
         BookstoreDataPopulator::populate();
-        BookPeer::clearInstancePool();
-        AuthorPeer::clearInstancePool();
-        ReviewPeer::clearInstancePool();
+        BookTableMap::clearInstancePool();
+        AuthorTableMap::clearInstancePool();
+        ReviewTableMap::clearInstancePool();
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Author');
-        $c->add(AuthorPeer::LAST_NAME, 'Rowling');
+        $c->add(AuthorTableMap::LAST_NAME, 'Rowling');
         $c->leftJoinWith('Propel\Tests\Bookstore\Author.Book');
         $c->leftJoinWith('Book.Review');
         $c->setFormatter(ModelCriteria::FORMAT_ARRAY);
-        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         $authors = $c->find($con);
         $this->assertEquals(1, count($authors), 'with() does not duplicate the main object');
         $rowling = $authors[0];
@@ -339,15 +347,15 @@ class ArrayFormatterWithTest extends BookstoreEmptyTestBase
     public function testFindOneWithOneToManyThenManyToOneUsingAlias()
     {
         BookstoreDataPopulator::populate();
-        BookPeer::clearInstancePool();
-        AuthorPeer::clearInstancePool();
-        ReviewPeer::clearInstancePool();
+        BookTableMap::clearInstancePool();
+        AuthorTableMap::clearInstancePool();
+        ReviewTableMap::clearInstancePool();
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Author');
-        $c->add(AuthorPeer::LAST_NAME, 'Rowling');
+        $c->add(AuthorTableMap::LAST_NAME, 'Rowling');
         $c->leftJoinWith('Propel\Tests\Bookstore\Author.Book b');
         $c->leftJoinWith('b.Review r');
         $c->setFormatter(ModelCriteria::FORMAT_ARRAY);
-        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         $authors = $c->find($con);
         $this->assertEquals(1, count($authors), 'with() does not duplicate the main object');
         $rowling = $authors[0];
@@ -362,16 +370,16 @@ class ArrayFormatterWithTest extends BookstoreEmptyTestBase
 
     public function testFindWithLeftJoinWithOneToManyAndNullObject()
     {
-        BookPeer::clearInstancePool();
-        AuthorPeer::clearInstancePool();
-        ReviewPeer::clearInstancePool();
+        BookTableMap::clearInstancePool();
+        AuthorTableMap::clearInstancePool();
+        ReviewTableMap::clearInstancePool();
         $freud = new Author();
         $freud->setFirstName("Sigmund");
         $freud->setLastName("Freud");
         $freud->save($this->con);
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Author');
         $c->setFormatter(ModelCriteria::FORMAT_ARRAY);
-        $c->add(AuthorPeer::LAST_NAME, 'Freud');
+        $c->add(AuthorTableMap::LAST_NAME, 'Freud');
         $c->leftJoinWith('Propel\Tests\Bookstore\Author.Book');
         $c->leftJoinWith('Book.Review');
         // should not raise a notice
@@ -385,9 +393,9 @@ class ArrayFormatterWithTest extends BookstoreEmptyTestBase
             $this->markTestSkipped('This test is designed for SQLite as it saves an empty object.');
         }
 
-        BookPeer::clearInstancePool();
-        AuthorPeer::clearInstancePool();
-        ReviewPeer::clearInstancePool();
+        BookTableMap::clearInstancePool();
+        AuthorTableMap::clearInstancePool();
+        ReviewTableMap::clearInstancePool();
         $review = new Review();
         $review->save($this->con);
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Review');
@@ -402,16 +410,16 @@ class ArrayFormatterWithTest extends BookstoreEmptyTestBase
     public function testFindOneWithColumn()
     {
         BookstoreDataPopulator::populate();
-        BookPeer::clearInstancePool();
-        AuthorPeer::clearInstancePool();
-        ReviewPeer::clearInstancePool();
+        BookTableMap::clearInstancePool();
+        AuthorTableMap::clearInstancePool();
+        ReviewTableMap::clearInstancePool();
         $c = new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book');
         $c->setFormatter(ModelCriteria::FORMAT_ARRAY);
         $c->filterByTitle('The Tin Drum');
         $c->join('Propel\Tests\Bookstore\Book.Author');
         $c->withColumn('Author.FirstName', 'AuthorName');
         $c->withColumn('Author.LastName', 'AuthorName2');
-        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         $book = $c->findOne($con);
         $this->assertEquals(array('Id', 'Title', 'ISBN', 'Price', 'PublisherId', 'AuthorId', 'AuthorName', 'AuthorName2'), array_keys($book), 'withColumn() do not change the resulting model class');
         $this->assertEquals('The Tin Drum', $book['Title']);
@@ -422,9 +430,9 @@ class ArrayFormatterWithTest extends BookstoreEmptyTestBase
     public function testFindOneWithClassAndColumn()
     {
         BookstoreDataPopulator::populate();
-        BookPeer::clearInstancePool();
-        AuthorPeer::clearInstancePool();
-        ReviewPeer::clearInstancePool();
+        BookTableMap::clearInstancePool();
+        AuthorTableMap::clearInstancePool();
+        ReviewTableMap::clearInstancePool();
         $c = new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book');
         $c->setFormatter(ModelCriteria::FORMAT_ARRAY);
         $c->filterByTitle('The Tin Drum');
@@ -432,7 +440,7 @@ class ArrayFormatterWithTest extends BookstoreEmptyTestBase
         $c->withColumn('Author.FirstName', 'AuthorName');
         $c->withColumn('Author.LastName', 'AuthorName2');
         $c->with('Author');
-        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         $book = $c->findOne($con);
         $this->assertEquals(array('Id', 'Title', 'ISBN', 'Price', 'PublisherId', 'AuthorId', 'Author', 'AuthorName', 'AuthorName2'), array_keys($book), 'withColumn() do not change the resulting model class');
         $this->assertEquals('The Tin Drum', $book['Title']);
@@ -444,14 +452,14 @@ class ArrayFormatterWithTest extends BookstoreEmptyTestBase
     public function testFindPkWithOneToMany()
     {
         BookstoreDataPopulator::populate();
-        BookPeer::clearInstancePool();
-        AuthorPeer::clearInstancePool();
-        ReviewPeer::clearInstancePool();
-        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
+        BookTableMap::clearInstancePool();
+        AuthorTableMap::clearInstancePool();
+        ReviewTableMap::clearInstancePool();
+        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         $book = BookQuery::create()
             ->findOneByTitle('Harry Potter and the Order of the Phoenix', $con);
         $pk = $book->getPrimaryKey();
-        BookPeer::clearInstancePool();
+        BookTableMap::clearInstancePool();
         $book = BookQuery::create()
             ->setFormatter(ModelCriteria::FORMAT_ARRAY)
             ->joinWith('Review')

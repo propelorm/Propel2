@@ -14,7 +14,6 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\Output;
-use Propel\Generator\Config\GeneratorConfig;
 use Propel\Generator\Manager\GraphvizManager;
 
 /**
@@ -34,6 +33,7 @@ class GraphvizGenerateCommand extends AbstractCommand
         $this
             ->addOption('output-dir',   null, InputOption::VALUE_REQUIRED,  'The output directory', self::DEFAULT_OUTPUT_DIRECTORY)
             ->setName('graphviz:generate')
+            ->setAliases(array('graphviz'))
             ->setDescription('Generate Graphviz files (.dot)')
         ;
     }
@@ -43,16 +43,16 @@ class GraphvizGenerateCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $generatorConfig = new GeneratorConfig(array(
+        $generatorConfig = $this->getGeneratorConfig(array(
             'propel.platform.class'     => $input->getOption('platform'),
             'propel.packageObjectModel' => true,
-        ));
+        ), $input);
 
         $this->createDirectory($input->getOption('output-dir'));
 
         $manager = new GraphvizManager();
         $manager->setGeneratorConfig($generatorConfig);
-        $manager->setSchemas($this->getSchemas($input));
+        $manager->setSchemas($this->getSchemas($input->getOption('input-dir')));
         $manager->setLoggerClosure(function($message) use ($input, $output) {
             if ($input->getOption('verbose')) {
                 $output->writeln($message);

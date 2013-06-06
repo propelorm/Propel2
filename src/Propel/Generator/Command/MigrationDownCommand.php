@@ -14,8 +14,8 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\Output;
-use Propel\Generator\Config\GeneratorConfig;
 use Propel\Generator\Manager\MigrationManager;
+use Propel\Generator\Util\SqlParser;
 
 /**
  * @author William Durand <william.durand1@gmail.com>
@@ -38,6 +38,7 @@ class MigrationDownCommand extends AbstractCommand
             ->addOption('migration-table',  null, InputOption::VALUE_REQUIRED,  'Migration table name', self::DEFAULT_MIGRATION_TABLE)
             ->addOption('connection',       null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Connection to use', array())
             ->setName('migration:down')
+            ->setAliases(array('down'))
             ->setDescription('Execute migrations down')
         ;
     }
@@ -47,9 +48,9 @@ class MigrationDownCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $generatorConfig = new GeneratorConfig(array(
+        $generatorConfig = $this->getGeneratorConfig(array(
             'propel.platform.class' => $input->getOption('platform'),
-        ));
+        ), $input);
 
         $this->createDirectory($input->getOption('output-dir'));
 
@@ -102,7 +103,7 @@ class MigrationDownCommand extends AbstractCommand
                 ));
             }
 
-            $pdo = $manager->getPdoConnection($datasource);
+            $conn = $manager->getAdapterConnection($datasource);
             $res = 0;
             $statements = SqlParser::parseString($sql);
 
@@ -112,7 +113,7 @@ class MigrationDownCommand extends AbstractCommand
                         $output->writeln(sprintf('Executing statement "%s"', $statement));
                     }
 
-                    $stmt = $pdo->prepare($statement);
+                    $stmt = $conn->prepare($statement);
                     $stmt->execute();
                     $res++;
                 } catch (PDOException $e) {

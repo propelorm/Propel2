@@ -11,15 +11,16 @@
 namespace Propel\Tests\Runtime\ActiveQuery;
 
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
-use Propel\Tests\Bookstore\BookPeer;
+use Propel\Tests\Bookstore\Map\BookTableMap;
+use Propel\Tests\Bookstore\BookQuery;
 
 use Propel\Runtime\Propel;
 use Propel\Runtime\Adapter\Pdo\MysqlAdapter;
 use Propel\Runtime\Adapter\Pdo\PgsqlAdapter;
 use Propel\Runtime\Adapter\Pdo\SqliteAdapter;
 use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\ActiveQuery\Join;
-use Propel\Runtime\Util\BasePeer;
 
 /**
  * Test class for Criteria.
@@ -46,7 +47,7 @@ class CriteriaTest extends BookstoreTestBase
     protected function setUp()
     {
         parent::setUp();
-        $this->c = new Criteria();
+        $this->c = new ModelCriteria();
         $defaultDatasource = Propel::getServiceContainer()->getDefaultDatasource();
         $this->savedAdapter = Propel::getServiceContainer()->getAdapter($defaultDatasource);
         Propel::getServiceContainer()->setAdapter($defaultDatasource, new SqliteAdapter());
@@ -114,7 +115,7 @@ class CriteriaTest extends BookstoreTestBase
         $expect = "SELECT  FROM myTable1 WHERE (myTable1.myColumn1=:p1 AND myTable1.myColumn1=:p2)";
 
         $params = array();
-        $result = BasePeer::createSelectSql($this->c, $params);
+        $result = $this->c->createSelectSql($params);
 
         $expect_params = array(
             array('table' => 'myTable1', 'column' => 'myColumn1', 'value' => 'myValue1'),
@@ -149,7 +150,7 @@ class CriteriaTest extends BookstoreTestBase
         $expect = "SELECT  FROM myTable1, myTable3 WHERE (myTable1.myColumn1=:p1 AND myTable1.myColumn1=:p2) AND myTable3.myColumn3=:p3";
 
         $params = array();
-        $result = BasePeer::createSelectSql($this->c, $params);
+        $result = $this->c->createSelectSql($params);
 
         $expect_params = array(
             array('table' => 'myTable1', 'column' => 'myColumn1', 'value' => 'myValue1'),
@@ -179,7 +180,7 @@ class CriteriaTest extends BookstoreTestBase
         $expect = "SELECT  FROM myTable1, myTable2 WHERE myTable1.myColumn1=:p1 AND myTable2.myColumn2=:p2";
 
         $params = array();
-        $result = BasePeer::createSelectSql($this->c, $params);
+        $result = $this->c->createSelectSql($params);
 
         $expect_params = array(
             array('table' => 'myTable1', 'column' => 'myColumn1', 'value' => 'myValue1'),
@@ -208,47 +209,11 @@ class CriteriaTest extends BookstoreTestBase
         $expect = "SELECT  FROM myTable1 WHERE (myTable1.myColumn1=:p1 OR myTable1.myColumn1=:p2)";
 
         $params = array();
-        $result = BasePeer::createSelectSql($this->c, $params);
+        $result = $this->c->createSelectSql($params);
 
         $expect_params = array(
             array('table' => 'myTable1', 'column' => 'myColumn1', 'value' => 'myValue1'),
             array('table' => 'myTable1', 'column' => 'myColumn1', 'value' => 'myValue2'),
-        );
-
-        $this->assertEquals($expect, $result, 'addOr() called on an existing column creates a combined criterion');
-        $this->assertEquals($expect_params, $params, 'addOr() called on an existing column creates a combined criterion');
-    }
-
-    public function testAddAndOrColumnsPropel14Compatibility()
-    {
-        $table1 = "myTable1";
-        $column1 = "myColumn1";
-        $value1 = "myValue1";
-        $key1 = "$table1.$column1";
-
-        $table2 = "myTable1";
-        $column2 = "myColumn1";
-        $value2 = "myValue2";
-        $key2 = "$table2.$column2";
-
-        $table3 = "myTable3";
-        $column3 = "myColumn3";
-        $value3 = "myValue3";
-        $key3 = "$table3.$column3";
-
-        $this->c->add($key1, $value1, Criteria::EQUAL);
-        $this->c->add($key3, $value3, Criteria::EQUAL);
-        $this->c->addOr($key2, $value2, Criteria::EQUAL);
-
-        $expect = "SELECT  FROM myTable1, myTable3 WHERE (myTable1.myColumn1=:p1 OR myTable1.myColumn1=:p2) AND myTable3.myColumn3=:p3";
-
-        $params = array();
-        $result = BasePeer::createSelectSql($this->c, $params);
-
-        $expect_params = array(
-            array('table' => 'myTable1', 'column' => 'myColumn1', 'value' => 'myValue1'),
-            array('table' => 'myTable1', 'column' => 'myColumn1', 'value' => 'myValue2'),
-            array('table' => 'myTable3', 'column' => 'myColumn3', 'value' => 'myValue3'),
         );
 
         $this->assertEquals($expect, $result, 'addOr() called on an existing column creates a combined criterion');
@@ -273,7 +238,7 @@ class CriteriaTest extends BookstoreTestBase
         $expect = "SELECT  FROM myTable1, myTable2 WHERE (myTable1.myColumn1=:p1 OR myTable2.myColumn2=:p2)";
 
         $params = array();
-        $result = BasePeer::createSelectSql($this->c, $params);
+        $result = $this->c->createSelectSql($params);
 
         $expect_params = array(
             array('table' => 'myTable1', 'column' => 'myColumn1', 'value' => 'myValue1'),
@@ -296,7 +261,7 @@ class CriteriaTest extends BookstoreTestBase
         $expect = "SELECT  FROM myTable1 WHERE myTable1.myColumn1=:p1";
 
         $params = array();
-        $result = BasePeer::createSelectSql($this->c, $params);
+        $result = $this->c->createSelectSql($params);
 
         $expect_params = array(
             array('table' => 'myTable1', 'column' => 'myColumn1', 'value' => 'myValue1'),
@@ -351,10 +316,10 @@ class CriteriaTest extends BookstoreTestBase
 
         $criteria = new Criteria();
         $criteria->setIgnoreCase(true);
-        $criteria->addAscendingOrderByColumn(BookPeer::TITLE);
-        BookPeer::addSelectColumns($criteria);
+        $criteria->addAscendingOrderByColumn(BookTableMap::TITLE);
+        BookTableMap::addSelectColumns($criteria);
         $params=array();
-        $sql = BasePeer::createSelectSql($criteria, $params);
+        $sql = $criteria->createSelectSql($params);
         $expectedSQL = 'SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID, UPPER(book.TITLE) FROM `book` ORDER BY UPPER(book.TITLE) ASC';
         $this->assertEquals($expectedSQL, $sql);
 
@@ -374,9 +339,9 @@ class CriteriaTest extends BookstoreTestBase
         );
         try {
             $params = array();
-            $result = BasePeer::createSelectSql($this->c, $params);
+            $result = $this->c->createSelectSql($params);
         } catch (PropelException $e) {
-            $this->fail("PropelException thrown in BasePeer.createSelectSql(): ". $e->getMessage());
+            $this->fail("PropelException thrown in Criteria->createSelectSql(): ". $e->getMessage());
         }
 
         $this->assertEquals($expect, $result, "Boolean test failed.");
@@ -395,10 +360,10 @@ class CriteriaTest extends BookstoreTestBase
         $result = null;
         try {
             $params = array();
-            $result = BasePeer::createSelectSql($this->c, $params);
+            $result = $this->c->createSelectSql($params);
         } catch (PropelException $e) {
             print $e->getTraceAsString();
-            $this->fail("PropelException thrown in BasePeer.createSelectSql(): ". $e->getMessage());
+            $this->fail("PropelException thrown in Criteria->createSelectSql(): ". $e->getMessage());
         }
 
         $this->assertEquals($expect, $result, "Current date test failed!");
@@ -417,10 +382,10 @@ class CriteriaTest extends BookstoreTestBase
         $result = null;
         try {
             $params = array();
-            $result = BasePeer::createSelectSql($this->c, $params);
+            $result = $this->c->createSelectSql($params);
         } catch (PropelException $e) {
             print $e->getTraceAsString();
-            $this->fail("PropelException thrown in BasePeer.createSelectSql(): ". $e->getMessage());
+            $this->fail("PropelException thrown in Criteria->createSelectSql(): ". $e->getMessage());
         }
 
         $this->assertEquals($expect, $result);
@@ -437,10 +402,10 @@ class CriteriaTest extends BookstoreTestBase
         $expect = "SELECT * FROM TABLE WHERE 1<>1 AND TABLE.OTHER_COLUMN IN (:p1,:p2,:p3)";
         try {
             $params = array();
-            $result = BasePeer::createSelectSql($c, $params);
+            $result = $c->createSelectSql($params);
         } catch (PropelException $e) {
             print $e->getTraceAsString();
-            $this->fail("PropelException thrown in BasePeer.createSelectSql(): ". $e->getMessage());
+            $this->fail("PropelException thrown in Criteria->createSelectSql(): ". $e->getMessage());
         }
         $this->assertEquals($expect, $result);
     }
@@ -455,10 +420,10 @@ class CriteriaTest extends BookstoreTestBase
         $expect = "SELECT * FROM TABLE WHERE TABLE.OTHER_COLUMN IN (:p1,:p2,:p3) AND 1<>1";
         try {
             $params = array();
-            $result = BasePeer::createSelectSql($c, $params);
+            $result = $c->createSelectSql($params);
         } catch (PropelException $e) {
             print $e->getTraceAsString();
-            $this->fail("PropelException thrown in BasePeer.createSelectSql(): ". $e->getMessage());
+            $this->fail("PropelException thrown in Criteria->createSelectSql(): ". $e->getMessage());
         }
         $this->assertEquals($expect, $result);
     }
@@ -476,10 +441,10 @@ class CriteriaTest extends BookstoreTestBase
         $expect = "SELECT * FROM TABLE WHERE (1<>1 OR TABLE.COLUMN2 IN (:p1,:p2))";
         try {
             $params = array();
-            $result = BasePeer::createSelectSql($c, $params);
+            $result = $c->createSelectSql($params);
         } catch (PropelException $e) {
             print $e->getTraceAsString();
-            $this->fail("PropelException thrown in BasePeer.createSelectSql(): ". $e->getMessage());
+            $this->fail("PropelException thrown in Criteria->createSelectSql(): ". $e->getMessage());
         }
         $this->assertEquals($expect, $result);
 
@@ -496,7 +461,7 @@ class CriteriaTest extends BookstoreTestBase
         $c->add('foo = ?', 123, \PDO::PARAM_STR);
 
         $params = array();
-        $result = BasePeer::createSelectSql($c, $params);
+        $result = $c->createSelectSql($params);
         $expected = "SELECT A.COL, B.COL AS foo FROM A WHERE foo = :p1";
         $this->assertEquals($expected, $result);
         $expected = array(
@@ -547,10 +512,10 @@ class CriteriaTest extends BookstoreTestBase
         $expect = "SELECT * FROM TABLE_A INNER JOIN TABLE_B ON (TABLE_A.COL_1=TABLE_B.COL_1)";
         try {
             $params = array();
-            $result = BasePeer::createSelectSql($c, $params);
+            $result = $c->createSelectSql($params);
         } catch (PropelException $e) {
             print $e->getTraceAsString();
-            $this->fail("PropelException thrown in BasePeer.createSelectSql(): ". $e->getMessage());
+            $this->fail("PropelException thrown in Criteria->createSelectSql(): ". $e->getMessage());
         }
         $this->assertEquals($expect, $result);
     }
@@ -566,10 +531,10 @@ class CriteriaTest extends BookstoreTestBase
             . ' INNER JOIN TABLE_D ON (TABLE_B.COL_X=TABLE_D.COL_X)';
         try {
             $params = array();
-            $result = BasePeer::createSelectSql($c, $params);
+            $result = $c->createSelectSql($params);
         } catch (PropelException $e) {
             print $e->getTraceAsString();
-            $this->fail("PropelException thrown in BasePeer.createSelectSql(): ". $e->getMessage());
+            $this->fail("PropelException thrown in Criteria->createSelectSql(): ". $e->getMessage());
         }
         $this->assertEquals($expect, $result);
     }
@@ -584,17 +549,17 @@ class CriteriaTest extends BookstoreTestBase
         $expect = "SELECT TABLE_A.*, TABLE_B.* FROM TABLE_A LEFT JOIN TABLE_B ON (TABLE_A.COL_1=TABLE_B.COL_2)";
         try {
             $params = array();
-            $result = BasePeer::createSelectSql($c, $params);
+            $result = $c->createSelectSql($params);
         } catch (PropelException $e) {
             print $e->getTraceAsString();
-            $this->fail("PropelException thrown in BasePeer.createSelectSql(): ". $e->getMessage());
+            $this->fail("PropelException thrown in Criteria->createSelectSql(): ". $e->getMessage());
         }
         $this->assertEquals($expect, $result);
     }
 
     public function testAddSeveralLeftJoins ()
     {
-        // Fails.. Suspect answer in the chunk starting at BasePeer:605
+        // Fails.. Suspect answer in the chunk starting at BaseTableMap:605
         $c = new Criteria();
         $c->addSelectColumn('*');
         $c->addJoin('TABLE_A.COL_1', 'TABLE_B.COL_1', Criteria::LEFT_JOIN);
@@ -605,10 +570,10 @@ class CriteriaTest extends BookstoreTestBase
             .'LEFT JOIN TABLE_C ON (TABLE_A.COL_2=TABLE_C.COL_2)';
         try {
             $params = array();
-            $result = BasePeer::createSelectSql($c, $params);
+            $result = $c->createSelectSql($params);
         } catch (PropelException $e) {
             print $e->getTraceAsString();
-            $this->fail("PropelException thrown in BasePeer.createSelectSql(): ". $e->getMessage());
+            $this->fail("PropelException thrown in Criteria->createSelectSql(): ". $e->getMessage());
         }
         $this->assertEquals($expect, $result);
     }
@@ -622,17 +587,17 @@ class CriteriaTest extends BookstoreTestBase
         $expect = "SELECT * FROM TABLE_A RIGHT JOIN TABLE_B ON (TABLE_A.COL_1=TABLE_B.COL_2)";
         try {
             $params = array();
-            $result = BasePeer::createSelectSql($c, $params);
+            $result = $c->createSelectSql($params);
         } catch (PropelException $e) {
             print $e->getTraceAsString();
-            $this->fail("PropelException thrown in BasePeer.createSelectSql(): ". $e->getMessage());
+            $this->fail("PropelException thrown in Criteria->createSelectSql(): ". $e->getMessage());
         }
         $this->assertEquals($expect, $result);
     }
 
     public function testAddSeveralRightJoins ()
     {
-        // Fails.. Suspect answer in the chunk starting at BasePeer:605
+        // Fails.. Suspect answer in the chunk starting at BaseTableMap:605
         $c = new Criteria();
         $c->addSelectColumn('*');
         $c->addJoin('TABLE_A.COL_1', 'TABLE_B.COL_1', Criteria::RIGHT_JOIN);
@@ -643,10 +608,10 @@ class CriteriaTest extends BookstoreTestBase
             .'RIGHT JOIN TABLE_C ON (TABLE_A.COL_2=TABLE_C.COL_2)';
         try {
             $params = array();
-            $result = BasePeer::createSelectSql($c, $params);
+            $result = $c->createSelectSql($params);
         } catch (PropelException $e) {
             print $e->getTraceAsString();
-            $this->fail("PropelException thrown in BasePeer.createSelectSql(): ". $e->getMessage());
+            $this->fail("PropelException thrown in Criteria->createSelectSql(): ". $e->getMessage());
         }
         $this->assertEquals($expect, $result);
     }
@@ -660,10 +625,10 @@ class CriteriaTest extends BookstoreTestBase
         $expect = "SELECT * FROM TABLE_A INNER JOIN TABLE_B ON (TABLE_A.COL_1=TABLE_B.COL_1)";
         try {
             $params = array();
-            $result = BasePeer::createSelectSql($c, $params);
+            $result = $c->createSelectSql($params);
         } catch (PropelException $e) {
             print $e->getTraceAsString();
-            $this->fail("PropelException thrown in BasePeer.createSelectSql(): ". $e->getMessage());
+            $this->fail("PropelException thrown in Criteria->createSelectSql(): ". $e->getMessage());
         }
         $this->assertEquals($expect, $result);
     }
@@ -680,10 +645,10 @@ class CriteriaTest extends BookstoreTestBase
             .'INNER JOIN TABLE_C ON (TABLE_B.COL_1=TABLE_C.COL_1)';
         try {
             $params = array();
-            $result = BasePeer::createSelectSql($c, $params);
+            $result = $c->createSelectSql($params);
         } catch (PropelException $e) {
             print $e->getTraceAsString();
-            $this->fail("PropelException thrown in BasePeer.createSelectSql(): ". $e->getMessage());
+            $this->fail("PropelException thrown in Criteria->createSelectSql(): ". $e->getMessage());
         }
         $this->assertEquals($expect, $result);
     }
@@ -702,7 +667,7 @@ class CriteriaTest extends BookstoreTestBase
 
         $expect = 'SELECT TABLE_A.ID FROM TABLE_A LEFT JOIN TABLE_B ON (TABLE_A.FOO_ID=TABLE_B.ID) INNER JOIN TABLE_C ON (TABLE_A.BAR_ID=TABLE_C.ID)';
         $params = array();
-        $result = BasePeer::createSelectSql($c, $params);
+        $result = $c->createSelectSql($params);
         $this->assertEquals($expect, $result);
     }
 
@@ -718,7 +683,7 @@ class CriteriaTest extends BookstoreTestBase
 
         $expect = 'SELECT TABLE_A.ID FROM TABLE_A LEFT JOIN TABLE_B ON TABLE_A.FOO_ID=TABLE_B.ID';
         $params = array();
-        $result = BasePeer::createSelectSql($c, $params);
+        $result = $c->createSelectSql($params);
         $this->assertEquals($expect, $result);
     }
 
@@ -737,7 +702,7 @@ class CriteriaTest extends BookstoreTestBase
 
         $expect = 'SELECT TABLE_A.ID FROM TABLE_A LEFT JOIN TABLE_B ON (TABLE_A.FOO_ID=TABLE_B.ID AND TABLE_A.BAR=TABLE_B.BAZ)';
         $params = array();
-        $result = BasePeer::createSelectSql($c, $params);
+        $result = $c->createSelectSql($params);
         $this->assertEquals($expect, $result);
     }
 
@@ -759,7 +724,7 @@ class CriteriaTest extends BookstoreTestBase
         $expect = 'SELECT TABLE_A.ID FROM TABLE_A INNER JOIN TABLE_B '
             . 'ON (TABLE_A.FOO_ID=TABLE_B.ID AND TABLE_A.BAR=TABLE_B.BAZ)';
         $params = array();
-        $result = BasePeer::createSelectSql($c, $params);
+        $result = $c->createSelectSql($params);
         $this->assertEquals($expect, $result);
     }
 
@@ -781,7 +746,7 @@ class CriteriaTest extends BookstoreTestBase
         $expect = 'SELECT TABLE_A.ID FROM TABLE_A INNER JOIN TABLE_B '
             . 'ON (TABLE_A.FOO_ID=TABLE_B.ID AND TABLE_A.BAR=3)';
         $params = array();
-        $result = BasePeer::createSelectSql($c, $params);
+        $result = $c->createSelectSql($params);
         $this->assertEquals($expect, $result);
     }
 
@@ -804,7 +769,7 @@ class CriteriaTest extends BookstoreTestBase
         $expect = 'SELECT TABLE_A.ID FROM TABLE_A '
             . 'LEFT JOIN TABLE_B ON (TABLE_A.FOO_ID=TABLE_B.ID AND TABLE_A.BAR=TABLE_B.BAZ)';
         $params = array();
-        $result = BasePeer::createSelectSql($c, $params);
+        $result = $c->createSelectSql($params);
         $this->assertEquals($expect, $result);
     }
 
@@ -826,7 +791,7 @@ class CriteriaTest extends BookstoreTestBase
         $expect = 'SELECT TABLE_A.ID FROM TABLE_A INNER JOIN TABLE_B '
             . 'ON (TABLE_A.FOO_ID>=TABLE_B.ID AND TABLE_A.BAR<TABLE_B.BAZ)';
         $params = array();
-        $result = BasePeer::createSelectSql($c, $params);
+        $result = $c->createSelectSql($params);
         $this->assertEquals($expect, $result);
     }
 
@@ -849,7 +814,7 @@ class CriteriaTest extends BookstoreTestBase
         $expect = 'SELECT TABLE_A.ID FROM TABLE_A '
             . 'LEFT JOIN TABLE_B ON (TABLE_A.FOO_ID>=TABLE_B.ID AND TABLE_A.BAR<TABLE_B.BAZ)';
         $params = array();
-        $result = BasePeer::createSelectSql($c, $params);
+        $result = $c->createSelectSql($params);
         $this->assertEquals($expect, $result);
     }
 
@@ -864,7 +829,7 @@ class CriteriaTest extends BookstoreTestBase
 
         $expected = "SELECT A.COL FROM A WHERE date_part('YYYY', A.COL) = '2007'";
         $params = array();
-        $result = BasePeer::createSelectSql($c, $params);
+        $result = $c->createSelectSql($params);
         $this->assertEquals($expected, $result);
     }
 
@@ -925,15 +890,15 @@ class CriteriaTest extends BookstoreTestBase
     public function testHaving()
     {
         $c = new Criteria();
-        $c->addSelectColumn(BookPeer::TITLE);
-        $c->addAsColumn('isb_n', BookPeer::ISBN);
+        $c->addSelectColumn(BookTableMap::TITLE);
+        $c->addAsColumn('isb_n', BookTableMap::ISBN);
         $crit = $c->getNewCriterion('isb_n', '1234567890123');
         $c->addHaving($crit);
         $expected = 'SELECT book.TITLE, book.ISBN AS isb_n FROM book HAVING isb_n=:p1';
         $params = array();
-        $result = BasePeer::createSelectSql($c, $params);
+        $result = $c->createSelectSql($params);
         $this->assertEquals($expected, $result);
-        BasePEer::doSelect($c, $this->con);
+        $c->doSelect($this->con);
         $expected = 'SELECT book.TITLE, book.ISBN AS isb_n FROM book HAVING isb_n=\'1234567890123\'';
         $this->assertEquals($expected, $this->con->getLastExecutedQuery());
     }
@@ -941,14 +906,14 @@ class CriteriaTest extends BookstoreTestBase
     public function testHavingRaw()
     {
         $c = new Criteria();
-        $c->addSelectColumn(BookPeer::TITLE);
-        $c->addAsColumn("isb_n", BookPeer::ISBN);
+        $c->addSelectColumn(BookTableMap::TITLE);
+        $c->addAsColumn("isb_n", BookTableMap::ISBN);
         $c->addHaving('isb_n = ?', '1234567890123', \PDO::PARAM_STR);
         $expected = 'SELECT book.TITLE, book.ISBN AS isb_n FROM book HAVING isb_n = :p1';
         $params = array();
-        $result = BasePeer::createSelectSql($c, $params);
+        $result = $c->createSelectSql($params);
         $this->assertEquals($expected, $result);
-        BasePEer::doSelect($c, $this->con);
+        $c->doSelect($this->con);
         $expected = 'SELECT book.TITLE, book.ISBN AS isb_n FROM book HAVING isb_n = \'1234567890123\'';
         $this->assertEquals($expected, $this->con->getLastExecutedQuery());
     }
@@ -1006,7 +971,7 @@ class CriteriaTest extends BookstoreTestBase
         $c->addSelectModifier('SQL_CALC_FOUND_ROWS');
         $this->assertEquals(array(Criteria::DISTINCT, 'SQL_CALC_FOUND_ROWS'), $c->getSelectModifiers(), 'addSelectModifier() adds a select modifier only once');
         $params = array();
-        $result = BasePeer::createSelectSql($c, $params);
+        $result = $c->createSelectSql($params);
         $this->assertEquals('SELECT DISTINCT SQL_CALC_FOUND_ROWS  FROM ', $result, 'addSelectModifier() adds a modifier to the final query');
     }
 
@@ -1075,8 +1040,6 @@ class CriteriaTest extends BookstoreTestBase
 
         $this->assertEquals(0, $c->getLimit(), 'limit is 0 by default');
 
-        $this->assertNull($c->getBlobFlag(), 'blobFlag is null by default');
-
         $this->assertTrue(is_array($c->getAliases()), 'aliases is an array');
         $this->assertEquals(0, count($c->getAliases()), 'aliases is empty by default');
 
@@ -1091,6 +1054,29 @@ class CriteriaTest extends BookstoreTestBase
         $c2 = $c->setLimit(1);
         $this->assertEquals(1, $c->getLimit(), 'Limit is set by setLimit');
         $this->assertSame($c, $c2, 'setLimit() returns the current Criteria');
+    }
+
+    public function testCombineAndFilterBy()
+    {
+        $params = array();
+        $sql = "SELECT  FROM book WHERE ((book.TITLE LIKE :p1 OR book.ISBN LIKE :p2) AND book.TITLE LIKE :p3)";
+        $c = BookQuery::create()
+            ->condition('u1', 'book.TITLE LIKE ?', '%test1%')
+            ->condition('u2', 'book.ISBN LIKE ?', '%test2%')
+            ->combine(array('u1', 'u2'), 'or')
+            ->filterByTitle('%test3%');
+        $result = $c->createSelectSql($params);
+        $this->assertEquals($sql, $result);
+
+        $params = array();
+        $sql = "SELECT  FROM book WHERE (book.TITLE LIKE :p1 AND (book.TITLE LIKE :p2 OR book.ISBN LIKE :p3))";
+        $c = BookQuery::create()
+            ->filterByTitle('%test3%')
+            ->condition('u1', 'book.TITLE LIKE ?', '%test1%')
+            ->condition('u2', 'book.ISBN LIKE ?', '%test2%')
+            ->combine(array('u1', 'u2'), 'or');
+        $result = $c->createSelectSql($params);
+        $this->assertEquals($sql, $result);
     }
 }
 
@@ -1114,10 +1100,5 @@ class CriteriaForClearTest extends Criteria
     public function getUseTransaction()
     {
         return $this->useTransaction;
-    }
-
-    public function getBlobFlag()
-    {
-        return $this->blobFlag;
     }
 }

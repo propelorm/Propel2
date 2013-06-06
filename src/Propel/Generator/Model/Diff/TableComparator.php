@@ -74,8 +74,8 @@ class TableComparator
     /**
      * Returns the computed difference between two table objects.
      *
-     * @param  Column            $fromTable
-     * @param  Column            $toTable
+     * @param  Table             $fromTable
+     * @param  Table             $toTable
      * @param  boolean           $caseInsensitive
      * @return TableDiff|Boolean
      */
@@ -136,11 +136,13 @@ class TableComparator
             }
         }
 
+        $renamed = [];
         // check for column renamings
         foreach ($this->tableDiff->getAddedColumns() as $addedColumnName => $addedColumn) {
             foreach ($this->tableDiff->getRemovedColumns() as $removedColumnName => $removedColumn) {
-                if (!ColumnComparator::computeDiff($addedColumn, $removedColumn, $caseInsensitive)) {
+                if (!in_array($addedColumnName, $renamed) && !ColumnComparator::computeDiff($addedColumn, $removedColumn, $caseInsensitive)) {
                     // no difference except the name, that's probably a renaming
+                    $renamed[] = $addedColumnName;
                     $this->tableDiff->addRenamedColumn($removedColumn, $addedColumn);
                     $this->tableDiff->removeAddedColumn($addedColumnName);
                     $this->tableDiff->removeRemovedColumn($removedColumnName);

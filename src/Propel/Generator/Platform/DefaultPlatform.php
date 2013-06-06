@@ -24,6 +24,7 @@ use Propel\Generator\Model\Diff\ColumnDiff;
 use Propel\Generator\Model\Diff\DatabaseDiff;
 use Propel\Generator\Model\Diff\TableDiff;
 use Propel\Generator\Exception\EngineException;
+use Propel\Runtime\Connection\ConnectionInterface;
 
 /**
  * Default implementation for the PlatformInterface interface.
@@ -41,7 +42,7 @@ class DefaultPlatform implements PlatformInterface
     protected $schemaDomainMap;
 
     /**
-     * @var \PDO Database connection.
+     * @var ConnectionInterface Database connection.
      */
     protected $con;
 
@@ -53,9 +54,9 @@ class DefaultPlatform implements PlatformInterface
     /**
      * Default constructor.
      *
-     * @param \PDO $con Optional database connection to use in this platform.
+     * @param ConnectionInterface $con Optional database connection to use in this platform.
      */
-    public function __construct(\PDO $con = null)
+    public function __construct(ConnectionInterface $con = null)
     {
         if (null !== $con) {
             $this->setConnection($con);
@@ -64,12 +65,17 @@ class DefaultPlatform implements PlatformInterface
         $this->initialize();
     }
 
+    public function getObjectBuilderClass($type)
+    {
+        return '';
+    }
+
     /**
      * Sets the database connection to use for this Platform class.
      *
-     * @param \PDO $con Database connection to use in this platform.
+     * @param ConnectionInterface $con Database connection to use in this platform.
      */
-    public function setConnection(\PDO $con = null)
+    public function setConnection(ConnectionInterface $con = null)
     {
         $this->con = $con;
     }
@@ -77,11 +83,29 @@ class DefaultPlatform implements PlatformInterface
     /**
      * Returns the database connection to use for this Platform class.
      *
-     * @return \PDO
+     * @return ConnectionInterface
      */
     public function getConnection()
     {
         return $this->con;
+    }
+
+    /**
+     * Returns a platform specific builder class if exists.
+     *
+     * @param $type
+     *
+     * @return string|null Returns null if no platform specified builder class exists.
+     */
+    public function getBuilderClass($type)
+    {
+        $class = get_called_class();
+        $class = substr($class, strrpos($class, '\\') + 1, -(strlen('Platform')));
+        $class = 'Propel\Generator\Builder\Om\Platform\\' . $class . ucfirst($type) . 'Builder';
+
+        if (class_exists($class)) {
+            return $class;
+        }
     }
 
     /**

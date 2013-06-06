@@ -10,7 +10,7 @@
 
 namespace Propel\Runtime\Adapter\Pdo;
 
-use Propel\Runtime\Adapter\AdapterInterface;
+use Propel\Runtime\Adapter\SqlAdapterInterface;
 use Propel\Runtime\Adapter\Exception\UnsupportedEncodingException;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\StatementInterface;
@@ -23,7 +23,7 @@ use Propel\Runtime\Map\DatabaseMap;
  *
  * @author Benjamin Runnels
  */
-class SqlsrvAdapter extends MssqlAdapter implements AdapterInterface
+class SqlsrvAdapter extends MssqlAdapter implements SqlAdapterInterface
 {
     /**
      * @see parent::initConnection()

@@ -161,7 +161,7 @@ class "  .$this->getUnqualifiedClassName() . " extends " . $baseClassName . "
      */
     protected function addClassBody(&$script)
     {
-        $this->declareClassFromBuilder($this->getStubPeerBuilder());
+        $this->declareClassFromBuilder($this->getTableMapBuilder());
         $this->declareClasses(
             '\Propel\Runtime\Connection\ConnectionInterface',
             '\Propel\Runtime\ActiveQuery\Criteria'
@@ -260,7 +260,7 @@ class "  .$this->getUnqualifiedClassName() . " extends " . $baseClassName . "
         $child = $this->getChild();
         $col = $child->getColumn();
 
-        return "\$this->addUsingAlias(" . $col->getConstantName() . ", " . $this->getPeerClassName()."::CLASSKEY_".strtoupper($child->getKey()).");";
+        return "\$this->addUsingAlias(" . $col->getConstantName() . ", " . $this->getTableMapClassName()."::CLASSKEY_".strtoupper($child->getKey()).");";
     }
 
     protected function addDoDeleteAll(&$script)
@@ -277,10 +277,10 @@ class "  .$this->getUnqualifiedClassName() . " extends " . $baseClassName . "
      *
      * @return integer the number of deleted rows
      */
-    public function doDeleteAll(\$con)
+    public function doDeleteAll(ConnectionInterface \$con = null)
     {
         // condition on class key is already added in preDelete()
-        return parent::doDelete(\$con);
+        return parent::delete(\$con);
     }
 ";
     }

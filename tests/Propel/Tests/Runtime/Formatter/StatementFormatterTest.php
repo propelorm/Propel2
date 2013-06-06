@@ -14,12 +14,14 @@ use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
 use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
 
 use Propel\Tests\Bookstore\Book;
-use Propel\Tests\Bookstore\BookPeer;
+use Propel\Tests\Bookstore\Map\BookTableMap;
 
 use Propel\Runtime\Propel;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Formatter\StatementFormatter;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
+
+use Propel\Runtime\DataFetcher\PDODataFetcher;
 
 use \PDO;
 use \PDOStatement;
@@ -28,7 +30,6 @@ use \PDOStatement;
  * Test class for StatementFormatter.
  *
  * @author Francois Zaninotto
- * @version    $Id$
  */
 class StatementFormatterTest extends BookstoreEmptyTestBase
 {
@@ -40,7 +41,7 @@ class StatementFormatterTest extends BookstoreEmptyTestBase
 
     public function testFormatNoCriteria()
     {
-        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
 
         $stmt = $con->query('SELECT * FROM book');
         $formatter = new StatementFormatter();
@@ -54,15 +55,15 @@ class StatementFormatterTest extends BookstoreEmptyTestBase
 
     public function testFormatManyResults()
     {
-        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
 
         $stmt = $con->query('SELECT * FROM book');
         $formatter = new StatementFormatter();
         $formatter->init(new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book'));
         $books = $formatter->format($stmt);
 
-        $this->assertTrue($books instanceof PDOStatement, 'StatementFormatter::format() returns a PDOStatement');
-        $this->assertEquals(4, $books->rowCount(), 'StatementFormatter::format() returns as many rows as the results in the query');
+        $this->assertInstanceOf('PDOStatement', $books->getDataObject(), 'StatementFormatter::format() returns a PDOStatement');
+        $this->assertEquals(4, $books->count(), 'StatementFormatter::format() returns as many rows as the results in the query');
         while ($book = $books->fetch()) {
             $this->assertTrue(is_array($book), 'StatementFormatter::format() returns a statement that can be fetched');
         }
@@ -70,35 +71,35 @@ class StatementFormatterTest extends BookstoreEmptyTestBase
 
     public function testFormatOneResult()
     {
-        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
 
         $stmt = $con->query('SELECT * FROM book WHERE book.TITLE = "Quicksilver"');
         $formatter = new StatementFormatter();
         $formatter->init(new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book'));
         $books = $formatter->format($stmt);
 
-        $this->assertTrue($books instanceof PDOStatement, 'StatementFormatter::format() returns a PDOStatement');
-        $this->assertEquals(1, $books->rowCount(), 'StatementFormatter::format() returns as many rows as the results in the query');
+        $this->assertInstanceOf('PDOStatement', $books->getDataObject(), 'StatementFormatter::format() returns a PDOStatement');
+        $this->assertEquals(1, $books->count(), 'StatementFormatter::format() returns as many rows as the results in the query');
         $book = $books->fetch(PDO::FETCH_ASSOC);
         $this->assertEquals('Quicksilver', $book['title'], 'StatementFormatter::format() returns the rows matching the query');
     }
 
     public function testFormatNoResult()
     {
-        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
 
         $stmt = $con->query('SELECT * FROM book WHERE book.TITLE = "foo"');
         $formatter = new StatementFormatter();
         $formatter->init(new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book'));
         $books = $formatter->format($stmt);
 
-        $this->assertTrue($books instanceof PDOStatement, 'StatementFormatter::format() returns a PDOStatement');
-        $this->assertEquals(0, $books->rowCount(), 'StatementFormatter::format() returns as many rows as the results in the query');
+        $this->assertInstanceOf('PDOStatement', $books->getDataObject(), 'StatementFormatter::format() returns a PDOStatement');
+        $this->assertEquals(0, $books->count(), 'StatementFormatter::format() returns as many rows as the results in the query');
     }
 
     public function testFormatoneNoCriteria()
     {
-        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
 
         $stmt = $con->query('SELECT * FROM book');
         $formatter = new StatementFormatter();
@@ -112,19 +113,19 @@ class StatementFormatterTest extends BookstoreEmptyTestBase
 
     public function testFormatOneManyResults()
     {
-        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
 
         $stmt = $con->query('SELECT * FROM book');
         $formatter = new StatementFormatter();
         $formatter->init(new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book'));
         $book = $formatter->formatOne($stmt);
 
-        $this->assertTrue($book instanceof PDOStatement, 'StatementFormatter::formatOne() returns a PDO Statement');
+        $this->assertInstanceOf('Propel\Runtime\DataFetcher\PDODataFetcher', $book, 'StatementFormatter::formatOne() returns a PDODataFetcher');
     }
 
     public function testFormatOneNoResult()
     {
-        $con = Propel::getServiceContainer()->getConnection(BookPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
 
         $stmt = $con->query('SELECT * FROM book WHERE book.TITLE = "foo"');
         $formatter = new StatementFormatter();

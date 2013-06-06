@@ -136,11 +136,13 @@ class DatabaseComparator
             }
         }
 
+        $renamed = [];
         // check for table renamings
         foreach ($this->databaseDiff->getAddedTables() as $addedTableName => $addedTable) {
             foreach ($this->databaseDiff->getRemovedTables() as $removedTableName => $removedTable) {
-                if (!TableComparator::computeDiff($addedTable, $removedTable, $caseInsensitive)) {
+                if (!in_array($addedTableName, $renamed) && !TableComparator::computeDiff($addedTable, $removedTable, $caseInsensitive)) {
                     // no difference except the name, that's probably a renaming
+                    $renamed[] = $addedTableName;
                     $this->databaseDiff->addRenamedTable($removedTableName, $addedTableName);
                     $this->databaseDiff->removeAddedTable($addedTableName);
                     $this->databaseDiff->removeRemovedTable($removedTableName);

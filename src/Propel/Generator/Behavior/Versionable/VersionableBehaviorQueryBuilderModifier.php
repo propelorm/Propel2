@@ -18,15 +18,27 @@ namespace Propel\Generator\Behavior\Versionable;
 class VersionableBehaviorQueryBuilderModifier
 {
     protected $behavior;
+
     protected $table;
+
     protected $builder;
+
     protected $objectClassName;
-    protected $peerClassName;
 
     public function __construct($behavior)
     {
         $this->behavior = $behavior;
-        $this->table = $behavior->getTable();
+        $this->table    = $behavior->getTable();
+    }
+
+    public function queryAttributes()
+    {
+        return "
+/**
+ * Whether the versioning is enabled
+ */
+static \$isVersioningEnabled = true;
+";
     }
 
     protected function getParameter($key)
@@ -54,7 +66,6 @@ class VersionableBehaviorQueryBuilderModifier
         $this->builder = $builder;
         $this->objectClassName = $builder->getObjectClassName();
         $this->queryClassName = $builder->getQueryClassName();
-        $this->peerClassName = $builder->getPeerClassName();
     }
 
     /**
@@ -85,6 +96,10 @@ class VersionableBehaviorQueryBuilderModifier
             $this->addFilterByVersion($script);
             $this->addOrderByVersion($script);
         }
+
+        $script .= $this->addIsVersioningEnabled();
+        $script .= $this->addEnableVersioning();
+        $script .= $this->addDisableVersioning();
 
         return $script;
     }
@@ -118,6 +133,47 @@ public function filterByVersion(\$version = null, \$comparison = null)
 public function orderByVersion(\$order = Criteria::ASC)
 {
     return \$this->orderBy('{$this->getColumnPhpName()}', \$order);
+}
+";
+    }
+
+    protected function addIsVersioningEnabled()
+    {
+        return "
+/**
+ * Checks whether versioning is enabled
+ *
+ * @return boolean
+ */
+static public function isVersioningEnabled()
+{
+    return self::\$isVersioningEnabled;
+}
+";
+    }
+
+    protected function addEnableVersioning()
+    {
+        return "
+/**
+ * Enables versioning
+ */
+static public function enableVersioning()
+{
+    self::\$isVersioningEnabled = true;
+}
+";
+    }
+
+    protected function addDisableVersioning()
+    {
+        return "
+/**
+ * Disables versioning
+ */
+static public function disableVersioning()
+{
+    self::\$isVersioningEnabled = false;
 }
 ";
     }

@@ -16,7 +16,7 @@ Propel can be used in a master-slave replication environment. These environments
 
 You can configure Propel to support replication by adding a `<slaves>` element with nested `<connection>` element(s) to your `runtime-conf.xml`.
 
-The `<slaves>` section is at the same level as the master `<connection>` and contains multiple nested `<connection>` elements with the same information as the top-level (master) `<connection>`. It is recommended that they are numbered. The follwing example shows a slaves section with a several slave connections configured where "localhost" is the master and "slave-server1" and "slave-server2" are the slave-database connections.
+The `<slaves>` section is at the same level as the master `<connection>` and contains multiple nested `<connection>` elements with the same information as the top-level (master) `<connection>`. It is recommended that they are numbered. The following example shows a slaves section with a several slave connections configured where "localhost" is the master and "slave-server1" and "slave-server2" are the slave-database connections.
 
 {% highlight xml %}
 <?xml version="1.0"?>
@@ -55,7 +55,7 @@ The `<slaves>` section is at the same level as the master `<connection>` and con
 
 ## Implementation ##
 
-The replication functionality is implemented in the Propel connection configuration and initialization code and in the generated Peer and Object classes.
+The replication functionality is implemented in the Propel connection configuration and initialization code and in the generated TableMap and Object classes.
 
 ### `Propel::getReadConnection()` and `Propel::getWriteConnection()` ###
 
@@ -65,7 +65,7 @@ You can also specify that you want a READ connection (slave) or a WRITE connecti
 
 {% highlight php %}
 <?php
-$con = Propel::getReadConnection(MyPeer::DATABASE_NAME);
+$con = Propel::getReadConnection(MyTableMap::DATABASE_NAME);
 $books = BookQuery::create()->find($con);
 {% endhighlight %}
 
@@ -73,7 +73,7 @@ Other methods that are designed to perform write operations, like `ModelCriteria
 
 {% highlight php %}
 <?php
-$con = Propel::getWriteConnection(MyPeer::DATABASE_NAME);
+$con = Propel::getWriteConnection(MyTableMap::DATABASE_NAME);
 BookQuery::create()->deleteAll($con);
 {% endhighlight %}
 
@@ -85,7 +85,7 @@ Both READ (slave) and WRITE (master) connections are only configured on demand. 
 
 {% highlight php %}
 <?php
-$con = Propel::getReadConnection(MyPeer::DATABASE_NAME);
+$con = Propel::getReadConnection(MyTableMap::DATABASE_NAME);
 $stmt = $con->query('SELECT * FROM my');
 /* ... */
 {% endhighlight %}
@@ -98,9 +98,9 @@ To do so, call the `setForceMasterConnection()` method on the related `Connectio
 
 {% highlight php %}
 <?php
-$manager = Propel::getServiceContainer()->getConnectionManager(MyPeer::DATABASE_NAME);
+$manager = Propel::getServiceContainer()->getConnectionManager(MyTableMap::DATABASE_NAME);
 $manager->setForceMasterConnection(true);
-$con = Propel::getReadConnection(MyPeer::DATABASE_NAME);
+$con = Propel::getReadConnection(MyTableMap::DATABASE_NAME);
 // $con is a WRITE connection
 {% endhighlight %}
 

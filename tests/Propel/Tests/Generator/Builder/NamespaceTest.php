@@ -46,6 +46,7 @@ class NamespaceTest extends \PHPUnit_Framework_TestCase
 
     public function testUpdate()
     {
+        \Foo\Bar\Map\NamespacedBookTableMap::getTableMap();
         $book = new \Foo\Bar\NamespacedBook();
         $book->setTitle('foo');
         $book->setISBN('something');
@@ -122,8 +123,8 @@ class NamespaceTest extends \PHPUnit_Framework_TestCase
         $book->setISBN('1234');
         $book->setNamespacedPublisher($publisher);
         $book->save();
-        \Foo\Bar\NamespacedBookPeer::clearInstancePool();
-        \Baz\NamespacedPublisherPeer::clearInstancePool();
+        \Foo\Bar\Map\NamespacedBookTableMap::clearInstancePool();
+        \Baz\Map\NamespacedPublisherTableMap::clearInstancePool();
         $book2 = \Foo\Bar\NamespacedBookQuery::create()->findPk($book->getId());
         $publisher2 = $book2->getNamespacedPublisher();
         $this->assertEquals($publisher->getId(), $publisher2->getId());
@@ -141,8 +142,8 @@ class NamespaceTest extends \PHPUnit_Framework_TestCase
         $book->setISBN('1235');
         $book->setNamespacedAuthor($author);
         $book->save();
-        \Foo\Bar\NamespacedBookPeer::clearInstancePool();
-        \Foo\Bar\NamespacedAuthorPeer::clearInstancePool();
+        \Foo\Bar\Map\NamespacedBookTableMap::clearInstancePool();
+        \Foo\Bar\Map\NamespacedAuthorTableMap::clearInstancePool();
         $author2 = \Foo\Bar\NamespacedAuthorQuery::create()->findPk($author->getId());
         $book2 = $author2->getNamespacedBooks()->getFirst();
         $this->assertEquals($book->getId(), $book2->getId());
@@ -158,8 +159,8 @@ class NamespaceTest extends \PHPUnit_Framework_TestCase
         $book->setISBN('something');
         $book->setNamespacedPublisher($publisher);
         $book->save();
-        \Foo\Bar\NamespacedBookPeer::clearInstancePool();
-        \Baz\NamespacedPublisherPeer::clearInstancePool();
+        \Foo\Bar\Map\NamespacedBookTableMap::clearInstancePool();
+        \Baz\Map\NamespacedPublisherTableMap::clearInstancePool();
         $book2 = \Foo\Bar\NamespacedBookQuery::create()
             ->joinWith('NamespacedPublisher')
             ->findPk($book->getId());
@@ -179,8 +180,8 @@ class NamespaceTest extends \PHPUnit_Framework_TestCase
         $book->setISBN('something');
         $book->setNamespacedAuthor($author);
         $book->save();
-        \Foo\Bar\NamespacedBookPeer::clearInstancePool();
-        \Foo\Bar\NamespacedAuthorPeer::clearInstancePool();
+        \Foo\Bar\Map\NamespacedBookTableMap::clearInstancePool();
+        \Foo\Bar\Map\NamespacedAuthorTableMap::clearInstancePool();
         $author2 = \Foo\Bar\NamespacedAuthorQuery::create()
             ->joinWith('NamespacedBook')
             ->findPk($author->getId());
@@ -238,7 +239,7 @@ class NamespaceTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(1, $book2->countNamespacedBookClubs());
         $nbRels = \Baz\NamespacedBookListRelQuery::create()->count();
         $this->assertEquals(3, $nbRels);
-        $con = Propel::getServiceContainer()->getConnection(\Baz\NamespacedBookListRelPeer::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(\Baz\Map\NamespacedBookListRelTableMap::DATABASE_NAME);
         $books = \Foo\Bar\NamespacedBookQuery::create()
             ->orderByTitle()
             ->joinWith('NamespacedBookListRel')
@@ -255,5 +256,4 @@ class NamespaceTest extends \PHPUnit_Framework_TestCase
             ->findOne();
         $this->assertNull($book);
     }
-
 }

@@ -7,17 +7,17 @@
  *
  * @license MIT License
  */
+namespace Propel\Tests\Generator\Builder\Om;
+
+use MyNameSpace\ComplexColumnTypeEntity2;
+use MyNameSpace\ComplexColumnTypeEntity2Query;
+use MyNameSpace\Map\ComplexColumnTypeEntity2TableMap;
+use MyNameSpace\ComplexColumnTypeEntityWithConstructorQuery;
 
 use Propel\Generator\Util\QuickBuilder;
-
-use Propel\Tests\Generator\Builder\Om\Fixtures\ComplexColumnTypeEntityWithConstructor;
-
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
-use MyNameSpace\ComplexColumnTypeEntity2;
-use MyNameSpace\ComplexColumnTypeEntity2Peer;
-use MyNameSpace\ComplexColumnTypeEntity2Query;
-use MyNameSpace\ComplexColumnTypeEntityWithConstructorQuery;
+use Propel\Tests\Generator\Builder\Om\Fixtures\ComplexColumnTypeEntityWithConstructor;
 
 /**
  * Tests the generated objects for array column types accessor & mutator
@@ -43,7 +43,7 @@ EOF;
             QuickBuilder::buildSchema($schema);
         }
 
-        ComplexColumnTypeEntity2Peer::doDeleteAll();
+        ComplexColumnTypeEntity2TableMap::doDeleteAll();
     }
 
     public function testActiveRecordMethods()
@@ -100,7 +100,7 @@ EOF;
         $e = new ComplexColumnTypeEntity2();
         $e->save();
 
-        ComplexColumnTypeEntity2Peer::clearInstancePool();
+        ComplexColumnTypeEntity2TableMap::clearInstancePool();
         $e = ComplexColumnTypeEntity2Query::create()->findOne();
 
         $this->assertEquals(array('FOO'), $e->getDefaults());
@@ -111,7 +111,7 @@ EOF;
         $e = new ComplexColumnTypeEntity2();
         $e->save();
 
-        ComplexColumnTypeEntity2Peer::clearInstancePool();
+        ComplexColumnTypeEntity2TableMap::clearInstancePool();
         $e = ComplexColumnTypeEntity2Query::create()->findOne();
 
         $this->assertEquals(array('FOO', 'BAR', 'BAZ'), $e->getMultipleDefaults());
@@ -184,7 +184,7 @@ EOF;
         $value = array('foo', 1234);
         $e->setTags($value);
         $e->save();
-        ComplexColumnTypeEntity2Peer::clearInstancePool();
+        ComplexColumnTypeEntity2TableMap::clearInstancePool();
         $e = ComplexColumnTypeEntity2Query::create()->findOne();
         $this->assertEquals($value, $e->getTags(), 'array columns are persisted');
     }

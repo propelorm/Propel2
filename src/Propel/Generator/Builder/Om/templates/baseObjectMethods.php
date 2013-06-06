@@ -12,7 +12,7 @@
     /**
      * Has specified column been modified?
      *
-     * @param  string  $col column fully qualified name (BasePeer::TYPE_COLNAME), e.g. Book::AUTHOR_ID
+     * @param  string  $col column fully qualified name (TableMap::TYPE_COLNAME), e.g. Book::AUTHOR_ID
      * @return boolean True if $col has been modified.
      */
     public function isColumnModified($col)
@@ -43,7 +43,7 @@
 
     /**
      * Setter for the isNew attribute.  This method will be called
-     * by Propel-generated children and Peers.
+     * by Propel-generated children and objects.
      *
      * @param boolean $b the state of the object.
      */
@@ -115,19 +115,18 @@
     }
 
     /**
-     * If the primary key is not <code>null</code>, return the hashcode of the
-     * primary key.  Otherwise calls <code>Object.hashCode()</code>.
+     * If the primary key is not null, return the hashcode of the
+     * primary key. Otherwise, return the hash code of the object.
      *
      * @return int Hashcode
      */
     public function hashCode()
     {
-        $ok = $this->getPrimaryKey();
-        if (null === $ok) {
-            return crc32(serialize($this));
+        if (null !== $this->getPrimaryKey()) {
+            return crc32(serialize($this->getPrimaryKey()));
         }
 
-        return crc32(serialize($ok)); // serialize because it could be an array ("ComboKey")
+        return crc32(serialize(clone $this));
     }
 
     /**
@@ -212,7 +211,7 @@
             $parser = AbstractParser::getParser($parser);
         }
 
-        return $this->fromArray($parser->toArray($data), BasePeer::TYPE_PHPNAME);
+        return $this->fromArray($parser->toArray($data), TableMap::TYPE_PHPNAME);
     }
 
     /**
@@ -233,7 +232,7 @@
             $parser = AbstractParser::getParser($parser);
         }
 
-        return $parser->fromArray($this->toArray(BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns, array(), true));
+        return $parser->fromArray($this->toArray(TableMap::TYPE_PHPNAME, $includeLazyLoadColumns, array(), true));
     }
 
     /**

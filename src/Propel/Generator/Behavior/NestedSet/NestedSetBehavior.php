@@ -33,32 +33,34 @@ class NestedSetBehavior extends Behavior
 
     protected $queryBuilderModifier;
 
-    protected $peerBuilderModifier;
-
     /**
      * Add the left, right and scope to the current table
      */
     public function modifyTable()
     {
         $table = $this->getTable();
+
         if (!$table->hasColumn($this->getParameter('left_column'))) {
             $table->addColumn(array(
                 'name' => $this->getParameter('left_column'),
                 'type' => 'INTEGER'
             ));
         }
+
         if (!$table->hasColumn($this->getParameter('right_column'))) {
             $table->addColumn(array(
                 'name' => $this->getParameter('right_column'),
                 'type' => 'INTEGER'
             ));
         }
+
         if (!$table->hasColumn($this->getParameter('level_column'))) {
             $table->addColumn(array(
                 'name' => $this->getParameter('level_column'),
                 'type' => 'INTEGER'
             ));
         }
+
         if ('true' === $this->getParameter('use_scope') && !$table->hasColumn($this->getParameter('scope_column'))) {
             $table->addColumn(array(
                 'name' => $this->getParameter('scope_column'),
@@ -85,17 +87,18 @@ class NestedSetBehavior extends Behavior
         return $this->queryBuilderModifier;
     }
 
-    public function getPeerBuilderModifier()
-    {
-        if (null === $this->peerBuilderModifier) {
-            $this->peerBuilderModifier = new NestedSetBehaviorPeerBuilderModifier($this);
-        }
-
-        return $this->peerBuilderModifier;
-    }
-
     public function useScope()
     {
         return 'true' === $this->getParameter('use_scope');
+    }
+
+    public function getColumnConstant($columnName)
+    {
+        return $this->getColumn($columnName)->getName();
+    }
+
+    public function getColumn($columnName)
+    {
+        return $this->getColumnForParameter($columnName);
     }
 }

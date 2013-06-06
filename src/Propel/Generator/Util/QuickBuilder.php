@@ -14,20 +14,17 @@ use Propel\Generator\Builder\Util\SchemaReader;
 use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Platform\PlatformInterface;
-
-use Propel\Runtime\Propel;
-use Propel\Runtime\Adapter\Pdo\PdoConnection;
+use Propel\Runtime\Connection\PdoConnection;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\ConnectionWrapper;
 use Propel\Runtime\Connection\StatementInterface;
-
-use \PDO;
+use Propel\Runtime\Propel;
 
 class QuickBuilder
 {
     protected $schema, $platform, $config, $database;
 
-    protected $classTargets = array('tablemap', 'peer', 'object', 'query', 'peerstub', 'objectstub', 'querystub');
+    protected $classTargets = array('tablemap', 'object', 'query', 'objectstub', 'querystub');
 
     public function setSchema($schema)
     {
@@ -103,7 +100,7 @@ class QuickBuilder
         }
         $pdo = new PdoConnection($dsn, $user, $pass);
         $con = new ConnectionWrapper($pdo);
-        $con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
+        $con->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_WARNING);
         $this->buildSQL($con);
         $this->buildClasses($classTargets);
         $name = $this->getDatabase()->getName();
@@ -148,9 +145,31 @@ class QuickBuilder
         return $this->getPlatform()->getAddTablesDDL($this->getDatabase());
     }
 
+    public function getBuildName($classTargets = null)
+    {
+        $tables = [];
+        foreach ($this->getDatabase()->getTables() as $table) {
+            if (count($tables) > 3) break;
+            $tables[] = $table->getName();
+        }
+        $name = implode('_', $tables);
+        if (!$classTargets || count($classTargets) == 5) {
+            $name .= '-all';
+        } else {
+            $name .= '-' . implode('_', $classTargets);
+        }
+
+        return $name;
+    }
+
     public function buildClasses(array $classTargets = null)
     {
-        eval($this->getClasses($classTargets));
+        $code = "<?php\n".$this->getClasses($classTargets);
+        $name = $this->getBuildName($classTargets);
+        $tempFile = sys_get_temp_dir() . '/propelQuickBuilder'.$name.'.php';
+
+        file_put_contents($tempFile, $code);
+        include($tempFile);
     }
 
     public function getClasses(array $classTargets = null)

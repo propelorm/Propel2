@@ -12,8 +12,8 @@
 
     <xs:simpleType name="file">
         <xs:restriction base="xs:string">
-            <!-- Match any relative or absolute path and file containing letters, numbers and _ -->
-            <xs:pattern value="((\.{1,2}|[\w_]*)/)*([\w_]*\.?)+"/>
+            <!-- Match any relative or absolute path and file containing letters, numbers, - and _ -->
+            <xs:pattern value="((\.{1,2}|[\w_-]*)/)*([\w_-]*\.?)+"/>
         </xs:restriction>
     </xs:simpleType>
 
@@ -322,10 +322,10 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="peerName" type="php_class" use="optional">
+        <xs:attribute name="tableMapName" type="php_class" use="optional">
             <xs:annotation>
                 <xs:documentation xml:lang="en">
-                    Name used for the class constant corresponding to this column in PHP code. Defaults to the uppercase name, so a column named 'author_id' receives 'AUTHOR_ID' as peerName.
+                    Name used for the class constant corresponding to this column in PHP code. Defaults to the uppercase name, so a column named 'author_id' receives 'AUTHOR_ID' as tableMapName.
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
@@ -681,13 +681,6 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="basePeer" type="php_class" use="optional">
-            <xs:annotation>
-                <xs:documentation xml:lang="en">
-                    Instructs Propel to use a different SQL-generating BasePeer class (or sub-class of BasePeer).
-                </xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
         <xs:attribute name="alias" type="table_name" use="optional"/>
         <xs:attribute name="package" type="xs:string" use="optional">
             <xs:annotation>
@@ -801,7 +794,7 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="package" type="php_class" use="optional">
+        <xs:attribute name="package" type="file" use="optional">
             <xs:annotation>
                 <xs:documentation xml:lang="en">
                     Specifies the "package" for the generated classes. Classes are created in subdirectories according to the package attribute value.
@@ -826,13 +819,6 @@
             <xs:annotation>
                 <xs:documentation xml:lang="en">
                     Allows to specify a default base class that all generated Propel objects should extend (in place of propel.om.BaseObject)
-                </xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="basePeer" type="php_class" use="optional">
-            <xs:annotation>
-                <xs:documentation xml:lang="en">
-                    Instructs Propel to use a different SQL-generating BasePeer class (or sub-class of BasePeer) for all generated objects
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>

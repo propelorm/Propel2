@@ -13,6 +13,7 @@ namespace Propel\Generator\Platform;
 use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\Table;
+use Propel\Runtime\Connection\ConnectionInterface;
 
 /**
  * Interface for RDBMS platform specific behaviour.
@@ -40,13 +41,13 @@ interface PlatformInterface
 
     /**
      * Sets a database connection to use (for quoting, etc.).
-     * @param PDO $con The database connection to use in this Platform class.
+     * @param ConnectionInterface $con The database connection to use in this Platform class.
      */
-    public function setConnection(\PDO $con = null);
+    public function setConnection(ConnectionInterface $con = null);
 
     /**
      * Returns the database connection to use for this Platform class.
-     * @return PDO The database connection or NULL if none has been set.
+     * @return ConnectionInterface The database connection or NULL if none has been set.
      */
     public function getConnection();
 
@@ -116,8 +117,8 @@ interface PlatformInterface
      * echo $platform->getColumnListDDL(array('foo', 'bar');
      * // '"foo","bar"'
      * </code>
-     * @param      array Column[] or string[]
-     * @param string $delim The delimiter to use in separating the column names.
+     * @param Column[]|string[] $columns
+     * @param string            $delimiter The delimiter to use in separating the column names.
      *
      * @return string
      */
@@ -184,7 +185,7 @@ interface PlatformInterface
     public function supportsMigrations();
 
     /**
-     * Wether RDBMS supports VARCHAR without explicit size
+     * Whether RDBMS supports VARCHAR without explicit size
      * @return boolean
      */
     public function supportsVarcharWithoutSize();
