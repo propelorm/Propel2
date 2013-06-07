@@ -61,7 +61,8 @@ class InterfaceBuilder extends AbstractObjectBuilder
  * long as it does not already exist in the output directory.
  *
  */
-interface ".$this->getUnqualifiedClassName()." {
+interface ".$this->getUnqualifiedClassName()."
+{
 ";
     }
 
