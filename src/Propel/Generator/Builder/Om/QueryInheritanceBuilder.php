@@ -145,7 +145,8 @@ class QueryInheritanceBuilder extends AbstractOMBuilder
  * long as it does not already exist in the output directory.
  *
  */
-class "  .$this->getUnqualifiedClassName() . " extends " . $baseClassName . " {
+class "  .$this->getUnqualifiedClassName() . " extends " . $baseClassName . "
+{
 ";
     }
 
