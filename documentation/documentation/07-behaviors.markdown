@@ -6,13 +6,13 @@ title: Behaviors
 
 # Behaviors #
 
-Behaviors are a great way to package model extensions for reusability. They are the powerful, versatile, fast, and help you organize your code in a better way.
+Behaviors are a great way to package model extensions for reusability. They are powerful, versatile, fast, and help you organize your code in a better way.
 
 ## Pre and Post Hooks For `save()` And `delete()` Methods ##
 
 The `save()` and `delete()` methods of your generated objects are easy to override. In fact, Propel looks for one of the following methods in your objects and executes them when needed:
 
-{% highlight php %}
+```php
 <?php
 // save() hooks
 preInsert()            // code executed before insertion of a new object
@@ -24,20 +24,20 @@ postSave()             // code executed after saving an object (new or existing)
 // delete() hooks
 preDelete()            // code executed before deleting an object
 postDelete()           // code executed after deleting an object
-{% endhighlight %}
+```
 
 For example, you may want to keep track of the creation date of every row in the `book` table. In order to achieve this behavior, you can add a `created_at` column to the table in `schema.xml`:
 
-{% highlight xml %}
+```xml
 <table name="book">
   ...
   <column name="created_at" type="timestamp" />
 </table>
-{% endhighlight %}
+```
 
 Then, you can force the update of the `created_at` column before every insertion as follows:
 
-{% highlight php %}
+```php
 <?php
 class Book extends BaseBook
 {
@@ -47,28 +47,28 @@ class Book extends BaseBook
     return true;
   }
 }
-{% endhighlight %}
+```
 
 Whenever you call `save()` on a new object, Propel now executes the `preInsert()` method on this objects and therefore update the `created_at` column:
 
-{% highlight php %}
+```php
 <?php
 $b = new Book();
 $b->setTitle('War And Peace');
 $b->save();
 echo $b->getCreatedAt(); // 2009-10-02 18:14:23
-{% endhighlight %}
+```
 
 _Warning_: If you implement `preInsert()`, `preUpdate()`, `preSave()` or `preDelete()`, these methods **must return a boolean value**. Any return value other than `true` stops the action (save or delete). This is a neat way to bypass persistence on some cases, but can also create unexpected problems if you forget to return `true`.
 
->**Tip**<br />Since this feature adds a small overhead to write operations, you can deactivate it completely in your build properties by setting `propel.addHooks` to `false`.
+>**Tip**<br />Since this feature adds a small overhead to write operations, you can disable it completely in your build properties by setting `propel.addHooks` to `false`.
 
-{% highlight ini %}
+```ini
 # -------------------
 #  TEMPLATE VARIABLES
 # -------------------
 propel.addHooks = false
-{% endhighlight %}
+```
 
 ## Introducing Behaviors ##
 
@@ -76,7 +76,7 @@ When several of your custom model classes end up with similar methods added, it 
 
 For example, you may want to add the same ability you gave to `Book` to all the other objects in your model. Let's call this the "Timestampable behavior", because then all of your rows have a timestamp marking their creation. In order to achieve this behavior, you have to repeat the same operations on every table. First, add a `created_at` column to the other tables:
 
-{% highlight xml %}
+```xml
 <table name="book">
   ...
   <column name="created_at" type="timestamp" />
@@ -85,11 +85,11 @@ For example, you may want to add the same ability you gave to `Book` to all the 
   ...
   <column name="created_at" type="timestamp" />
 </table>
-{% endhighlight %}
+```
 
 Then, add a `preInsert()` hook to the object stub classes:
 
-{% highlight php %}
+```php
 <?php
 class Book extends BaseBook
 {
@@ -106,7 +106,7 @@ class Author extends BaseAuthor
     $this->setCreatedAt(time());
   }
 }
-{% endhighlight %}
+```
 
 Even if the code of this example is very simple, the repetition of code is already too much. Just imagine a more complex behavior, and you will understand that using the copy-and-paste technique soon leads to a maintenance nightmare.
 
@@ -116,7 +116,7 @@ Behaviors are special objects that use events called during the build process to
 
 For instance, Propel bundles a behavior called `timestampable`, which does exactly the same thing as described above. But instead of adding columns and methods by hand, all you have to do is to declare it in a `<behavior>` tag in your `schema.xml`, as follows:
 
-{% highlight xml %}
+```xml
 <table name="book">
   ...
   <behavior name="timestampable" />
@@ -125,7 +125,7 @@ For instance, Propel bundles a behavior called `timestampable`, which does exact
   ...
   <behavior name="timestampable" />
 </table>
-{% endhighlight %}
+```
 
 Then rebuild your model, and there you go: two columns, `created_at` and `updated_at`, were automatically added to both the `book` and `author` tables. Besides, the generated `BaseBook` and `BaseAuthor` classes already contain the code necessary to auto-set the current time on creation and on insertion.
 
@@ -155,7 +155,7 @@ Behaviors bundled with Propel require no further installation and work out of th
 
 Behaviors often offer some parameters to tweak their effect. For instance, the `timestampable` behavior allows you to customize the names of the columns added to store the creation date and the update date. The behavior customization occurs in the `schema.xml`, inside `<parameter>` tags nested in the `<behavior>` tag. So let's set the behavior to use `created_on` instead of `created_at` for the creation date column name (and same for the update date column):
 
-{% highlight xml %}
+```xml
 <table name="book">
   ...
   <behavior name="timestampable">
@@ -163,11 +163,11 @@ Behaviors often offer some parameters to tweak their effect. For instance, the `
     <parameter name="update_column" value="updated_on" />
   </behavior>
 </table>
-{% endhighlight %}
+```
 
 If the columns already exist in your schema, a behavior is smart enough not to add them one more time.
 
-{% highlight xml %}
+```xml
 <table name="book">
   ...
   <column name="created_on" type="timestamp" />
@@ -177,13 +177,13 @@ If the columns already exist in your schema, a behavior is smart enough not to a
     <parameter name="update_column" value="updated_on" />
   </behavior>
 </table>
-{% endhighlight %}
+```
 
 ## Using Third-Party Behaviors ##
 
 As a Propel behavior can be packaged into a single class, behaviors are quite easy to reuse and distribute across several projects. All you need to do is to copy the behavior file into your project, and declare it in `build.properties`, as follows:
 
-{% highlight ini %}
+```ini
 # ----------------------------------
 #  B E H A V I O R   S E T T I N G S
 # ----------------------------------
@@ -191,17 +191,17 @@ As a Propel behavior can be packaged into a single class, behaviors are quite ea
 propel.behavior.timestampable.class = propel.engine.behavior.timestampable.TimestampableBehavior
 # Add your custom behavior paths here
 propel.behavior.formidable.class = path.to.FormidableBehavior
-{% endhighlight %}
+```
 
 Propel will then find the `FormidableBehavior` class whenever you use the `formidable` behavior in your schema:
 
-{% highlight xml %}
+```xml
 <table name="author">
   ...
   <behavior name="timestampable" />
   <behavior name="formidable" />
 </table>
-{% endhighlight %}
+```
 
 >**Tip**<br />If you use autoloading during the build process, and if the behavior classes benefit from the autoloading, then you don't even need to declare the path to the behavior class.
 
@@ -209,7 +209,7 @@ Propel will then find the `FormidableBehavior` class whenever you use the `formi
 
 You can add a `<behavior>` tag directly under the `<database>` tag. That way, the behavior will be applied to all the tables of the database.
 
-{% highlight xml %}
+```xml
 <database name="propel">
   <behavior name="timestampable" />
   <table name="book">
@@ -219,19 +219,19 @@ You can add a `<behavior>` tag directly under the `<database>` tag. That way, th
     ...
   </table>
 </database>
-{% endhighlight %}
+```
 
 In this example, both the `book` and `author` table benefit from the `timestampable` behavior, and therefore automatically update their `created_at` and `updated_at` columns upon saving.
 
 Going one step further, you can even apply a behavior to all the databases of your project, provided the behavior doesn't need parameters - or can use default parameters. To add a behavior to all databases, simply declare it in the project's `build.properties` under the `propel.behavior.default` key, as follows:
 
-{% highlight ini %}
+```ini
 propel.behavior.default = archivable, timestampable
-{% endhighlight %}
+```
 
 ## Writing a Behavior ##
 
-Check the behaviors bundled with Propel to see how to implement your own behavior: they are the best starting point to understanding the power of behaviors and builders.
+Check [the behaviors bundled with Propel](https://github.com/propelorm/Propel2/tree/master/src/Propel/Generator/Behavior) to see how to implement your own behavior: they are the best starting point to understanding the power of behaviors and builders.
 
 ### Modifying the Data Model ###
 
@@ -239,7 +239,7 @@ Behaviors can modify their table, and even add another table, by implementing th
 
 For instance, to add a new column named 'foo' in the current table, add the following method to a behavior:
 
-{% highlight php %}
+```php
 <?php
 class MyBehavior extends Behavior
 {
@@ -261,13 +261,13 @@ class MyBehavior extends Behavior
     }
   }
 }
-{% endhighlight %}
+```
 
 ### Modifying the ActiveRecord Classes ###
 
 Behaviors can add code to the generated model object by implementing one of the following methods:
 
-{% highlight php %}
+```php
 objectAttributes()     // add attributes to the object
 objectMethods()        // add methods to the object
 preInsert()            // add code to be executed before insertion of a new object
@@ -280,13 +280,13 @@ preDelete()            // add code to be executed before deleting an object
 postDelete()           // add code to be executed after  deleting an object
 objectCall()           // add code to be executed inside the object's __call()
 objectFilter(&$script) // do whatever you want with the generated code, passed as reference
-{% endhighlight %}
+```
 
 ### Modifying the Query Classes ###
 
 Behaviors can also add code to the generated query objects by implementing one of the following methods:
 
-{% highlight php %}
+```php
 queryAttributes()     // add attributes to the query class
 queryMethods()        // add methods to the query class
 preSelectQuery()      // add code to be executed before selection of a existing objects
@@ -295,17 +295,17 @@ postUpdateQuery()     // add code to be executed after  update of a existing obj
 preDeleteQuery()      // add code to be executed before deletion of a existing objects
 postDeleteQuery()     // add code to be executed after  deletion of a existing objects
 queryFilter(&$script) // do whatever you want with the generated code, passed as reference
-{% endhighlight %}
+```
 
 ### Modifying the TableMap Classes ###
 
 Behaviors can also add code to the generated TableMap objects by implementing one of the following methods:
 
-{% highlight php %}
+```php
 staticAttributes()   // add static attributes to the TableMap class
 staticMethods()      // add static methods to the TableMap class
 tableMapFilter(&$script) // do whatever you want with the generated code, passed as reference
-{% endhighlight %}
+```
 
 ### Adding New Classes ###
 
@@ -313,7 +313,7 @@ Behaviors can add entirely new classes based on the data model. To build a new c
 
 For instance, to add an empty child class for the ActiveRecord class, create the following behavior:
 
-{% highlight php %}
+```php
 <?php
 require_once 'AddChildBehaviorBuilder.php';
 
@@ -321,11 +321,11 @@ class AddChildBehavior extends Behavior
 {
 	protected $additionalBuilders = array('AddChildBehaviorBuilder');
 }
-{% endhighlight %}
+```
 
 Next, write a builder extending the `OMBuilder` class, and implement the `getUnprefixedClassName()`, `addClassOpen()`, and `addClassBody()` methods:
 
-{% highlight php %}
+```php
 <?php
 class AddChildBehaviorBuilder extends OMBuilder
 {
@@ -360,7 +360,7 @@ class " . $this->getClassname() . " extends " . $this->getStubObjectBuilder() . 
 }";
 	}
 }
-{% endhighlight %}
+```
 
 By default, classes added by a behavior are generated each time the model is rebuilt. To limit the generation to the first time (for instance for stub classes), add a public `$overwrite` attribute to the builder and set it to `false`.
 
@@ -372,7 +372,7 @@ Behaviors can modify existing methods even if no hook is called in the builders,
 
 The `PropelPHPParser` constructor takes a string as input, so it is best used inside "filter" hooks in behaviors. For instance, to replace the `findPk()` method in the generated query class by a custom one, use the following syntax:
 
-{% highlight php %}
+```php
 <?php
 class FastPkFindBehavior extends Behavior
 {
@@ -401,13 +401,13 @@ public function findPk(\$key, \$con = null)
     $script = $parser->getCode();
   }
 }
-{% endhighlight %}
+```
 
 The `PropelPHPParser` class provides the following utility methods:
 
-{% highlight php %}
+```php
 removeMethod($methodName)
 replaceMethod($methodName, $newCode)
 addMethodAfter($methodName, $newCode)
 addMethodBefore($methodName, $newCode)
-{% endhighlight %}
+```

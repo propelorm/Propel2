@@ -11,7 +11,7 @@ The `aggregate_column` behavior keeps a column updated using an aggregate functi
 
 In the `schema.xml`, use the `<behavior>` tag to add the `aggregate_column` behavior to a table. You must provide parameters for the aggregate column `name`, the foreign table name, and the aggregate `expression`. For instance, to add an aggregate column keeping the comment count in a `post` table:
 
-{% highlight xml %}
+```xml
 <table name="post">
   <column name="id" type="INTEGER" required="true" primaryKey="true" autoIncrement="true" />
   <column name="title" type="VARCHAR" required="true" primaryString="true" />
@@ -28,11 +28,11 @@ In the `schema.xml`, use the `<behavior>` tag to add the `aggregate_column` beha
     <reference local="post_id" foreign="id" />
   </foreign-key>
 </table>
-{% endhighlight %}
+```
 
 Rebuild your model, and insert the table creation sql again. The model now has an additional `nb_comments` column, of type `integer` by default. And each time an record from the foreign table is added, modified, or removed, the aggregate column is updated:
 
-{% highlight php %}
+```php
 <?php
 $post = new Post();
 $post->setTitle('How Is Life On Earth?');
@@ -48,23 +48,23 @@ $comment2->save();
 echo $post->getNbComments(); // 2
 $comment2->delete();
 echo $post->getNbComments(); // 1
-{% endhighlight %}
+```
 
 The aggregate column is also kept up to date when related records get modified through a Query object:
 
-{% highlight php %}
+```php
 <?php
 CommentQuery::create()
   ->filterByPost($post)
   ->delete():
 echo $post->getNbComments(); // 0
-{% endhighlight %}
+```
 
 ## Customizing The Aggregate Calculation ##
 
 Any aggregate function can be used on any of the foreign columns. For instance, you can use the `aggregate_column` behavior to keep the latest update date of the related comments, or the total votes on the comments. You can even keep several aggregate columns in a single table:
 
-{% highlight xml %}
+```xml
 <table name="post">
   <column name="id" type="INTEGER" required="true" primaryKey="true" autoIncrement="true" />
   <column name="title" type="VARCHAR" required="true" primaryString="true" />
@@ -93,11 +93,11 @@ Any aggregate function can be used on any of the foreign columns. For instance, 
   <column name="created_at" type="TIMESTAMP" />
   <column name="vote" type="INTEGER" />
 </table>
-{% endhighlight %}
+```
 
 The behavior adds a `computeXXX()` method to the `Post` class to compute the value of the aggregate function. This method, called each time records are modified in the related `comment` table, is the translation of the behavior settings into a SQL query:
 
-{% highlight php %}
+```php
 <?php
 // in om/BasePost.php
 public function computeNbComments(PropelPDO $con)
@@ -107,7 +107,7 @@ public function computeNbComments(PropelPDO $con)
   $stmt->execute();
   return $stmt->fetchColumn();
 }
-{% endhighlight %}
+```
 
 You can override this method in the model class to customize the aggregate column calculation.
 
@@ -115,7 +115,7 @@ You can override this method in the model class to customize the aggregate colum
 
 By default, the behavior adds one columns to the model. If this column is already described in the schema, the behavior detects it and doesn't add it a second time. This can be useful if you need to use a custom `type` or `phpName` for the aggregate column:
 
-{% highlight xml %}
+```xml
 <table name="post">
   <column name="id" type="INTEGER" required="true" primaryKey="true" autoIncrement="true" />
   <column name="title" type="VARCHAR" required="true" primaryString="true" />
@@ -126,4 +126,4 @@ By default, the behavior adds one columns to the model. If this column is alread
     <parameter name="expression" value="COUNT(id)" />
   </behavior>
 </table>
-{% endhighlight %}
+```

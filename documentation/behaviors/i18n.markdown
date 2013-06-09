@@ -11,7 +11,7 @@ The `i18n` behavior provides internationalization to any !ActiveRecord object. U
 
 In the `schema.xml`, use the `<behavior>` tag to add the `i18n` behavior to a table. In the `<parameters>` tag, list the columns that need internationalization as the `i18n_columns` parameter:
 
-{% highlight xml %}
+```xml
 <table name="item">
   <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
   <column name="name" type="VARCHAR" required="true" />
@@ -22,11 +22,11 @@ In the `schema.xml`, use the `<behavior>` tag to add the `i18n` behavior to a ta
     <parameter name="i18n_columns" value="name, description" />
   </behavior>
 </table>
-{% endhighlight %}
+```
 
 Rebuild your model, insert the table creation sql again, and you're ready to go. The internationalized columns have now been moved to a new translation table called `item_i18n`; this new table contains a `locale` column, and shares a many-to-one relationship with the `item` table. In fact, everything happens as if you had defined the following schema:
 
-{% highlight xml %}
+```xml
 <table name="item">
   <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
   <column name="price" type="FLOAT" />
@@ -41,11 +41,11 @@ Rebuild your model, insert the table creation sql again, and you're ready to go.
     <reference local="id" foreign="id" />
   </foreign-key>
 </table>
-{% endhighlight %}
+```
 
 In addition, the ActiveRecord Item class now provides integrated translation capabilities.
 
-{% highlight php %}
+```php
 <?php
 $item = new Item();
 $item->setPrice('12.99');
@@ -72,7 +72,7 @@ $item->setLocale('en_EN');
 echo $item->getName(); // Microwave oven
 $item->setLocale('fr_FR');
 echo $item->getName(); // Four micro-ondes
-{% endhighlight %}
+```
 
 Getter an setter methods for internationalized columns still exist on the main object ; they are just proxy methods to the current translation object, using the same signature and phpDoc for better IDE integration.
 
@@ -82,7 +82,7 @@ Getter an setter methods for internationalized columns still exist on the main o
 
 If you prefer to deal with real translation objects, the behavior generates a `getTranslation()` method on the !ActiveRecord class, which returns a translation object with the required locale.
 
-{% highlight php %}
+```php
 <?php
 $item = new Item();
 $item->setPrice('12.99');
@@ -104,24 +104,24 @@ $t2->setName('Four micro-ondes');
 // these translation objects are already related to the main item
 // and therefore get saved together with it
 $item->save(); // already saves the two translations
-{% endhighlight %}
+```
 
 >**Tip**<br />Or course, if a translation already exists for a given locale, `getTranslation()` returns the existing translation and not a new one.
 
 You can remove a translation using `removeTranslation()` and a locale:
 
-{% highlight php %}
+```php
 <?php
 $item = ItemQuery::create()->findPk(1);
 // remove the French translation
 $item->removeTranslation('fr_FR');
-{% endhighlight %}
+```
 
 ## Querying For Objects With Translations ##
 
 If you need to display a list, the following code will issue n+1 SQL queries, n being the number of items:
 
-{% highlight php %}
+```php
 <?php
 $items = ItemQuery::create()->find(); // one query to retrieve all items
 $locale = 'en_EN';
@@ -130,11 +130,11 @@ foreach ($items as $item) {
   $item->setLocale($locale);
   echo $item->getName(); // one query to retrieve the English translation
 }
-{% endhighlight %}
+```
 
 Fortunately, the behavior adds methods to the Query class, allowing you to hydrate both the `Item` objects and the related `ItemI18n` objects for the given locale:
 
-{% highlight php %}
+```php
 <?php
 $items = ItemQuery::create()
   ->joinWithI18n('en_EN')
@@ -143,7 +143,7 @@ foreach ($items as $item) {
   echo $item->getPrice();
   echo $item->getName(); // no additional query
 }
-{% endhighlight %}
+```
 
 In addition to hydrating translations, `joinWithI18n()` sets the correct locale on results, so you don't need to call `setLocale()` for each result.
 
@@ -151,14 +151,14 @@ In addition to hydrating translations, `joinWithI18n()` sets the correct locale 
 
 If you need to search items using a condition on a translation, use the generated `useI18nQuery()` as you would with any `useXXXQuery()` method:
 
-{% highlight php %}
+```php
 <?php
 $items = ItemQuery::create()
   ->useI18nQuery('en_EN') // tests the condition on the English translation
     ->filterByName('Microwave oven')
   ->endUse()
   ->find();
-{% endhighlight %}
+```
 
 ## Symfony Compatibility ##
 
@@ -166,7 +166,7 @@ This behavior is entirely compatible with the i18n behavior for symfony. That me
 
 So the following schema is exactly equivalent to the first one in this tutorial:
 
-{% highlight xml %}
+```xml
 <table name="item">
   <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
   <column name="price" type="FLOAT" />
@@ -180,7 +180,7 @@ So the following schema is exactly equivalent to the first one in this tutorial:
   <column name="name" type="VARCHAR" required="true" />
   <column name="description" type="LONGVARCHAR" />
 </table>
-{% endhighlight %}
+```
 
 Such a schema is almost similar to a schema built for symfony; that means that the Propel i18n behavior is a drop-in replacement for symfony's i18n behavior, keeping BC but improving performance and usability.
 
@@ -188,7 +188,7 @@ Such a schema is almost similar to a schema built for symfony; that means that t
 
 If you don't specify a locale when dealing with a translatable object, Propel uses the default English locale 'en_EN'. This default can be overridden in the schema using the `default_locale` parameter:
 
-{% highlight xml %}
+```xml
 <table name="item">
   <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
   <column name="name" type="VARCHAR" required="true" />
@@ -200,11 +200,11 @@ If you don't specify a locale when dealing with a translatable object, Propel us
     <parameter name="default_locale" value="fr_FR" />
   </behavior>
 </table>
-{% endhighlight %}
+```
 
 You can change the name of the locale column added by the behavior by setting the `locale_column` parameter. Also, you can change the table name and the phpName of the i18n table by setting the `i18n_table` and `i18n_phpname` parameters:
 
-{% highlight xml %}
+```xml
 <table name="item">
   <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
   <column name="name" type="VARCHAR" required="true" />
@@ -218,4 +218,4 @@ You can change the name of the locale column added by the behavior by setting th
     <parameter name="i18n_phpname" value="ItemTranslation" />
   </behavior>
 </table>
-{% endhighlight %}
+```

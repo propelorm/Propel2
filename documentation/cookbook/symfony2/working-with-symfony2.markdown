@@ -63,7 +63,7 @@ Update your vendor directory with
 Register this bundle in the `AppKernel` class:
 
 
-{% highlight php %}
+```php
 <?php
 
 public function registerBundles()
@@ -79,11 +79,11 @@ public function registerBundles()
 
     ...
 }
-{% endhighlight %}
+```
 
 Don't forget to register the PropelBundle namespace in `app/autoload.php`:
 
-{% highlight php %}
+```php
 <?php
 
 $loader->registerNamespaces(array(
@@ -91,11 +91,11 @@ $loader->registerNamespaces(array(
 
     'Propel' => __DIR__.'/../vendor/bundles',
 ));
-{% endhighlight %}
+```
 
 To finish, add the following configuration `app/config/propel.ini`:
 
-{% highlight ini %}
+```ini
 # Enable full use of the DateTime class.
 # Setting this to true means that getter methods for date/time/timestamp
 # columns will return a DateTime object when the default format is empty.
@@ -114,13 +114,13 @@ propel.dateTimeClass = DateTime
 propel.defaultTimeStampFormat =
 propel.defaultTimeFormat =
 propel.defaultDateFormat =
-{% endhighlight %}
+```
 
 ## Sample Configuration
 
 ### Project configuration
 
-{% highlight yaml %}
+```yaml
 # in app/config/config.yml
 propel:
     path:       "%kernel.root_dir%/../vendor/propel"
@@ -129,9 +129,9 @@ propel:
 #    build_properties:
 #        xxxxx.xxxxx: xxxxxx
 #        xxxxx.xxxxx: xxxxxx
-{% endhighlight %}
+```
 
-{% highlight yaml %}
+```yaml
 # in app/config/config_*.yml
 propel:
     dbal:
@@ -155,7 +155,7 @@ propel:
 #               settings:
 #                   charset:        { value: UTF8 }
 #                   queries:        { query: 'INSERT INTO BAR ('hey', 'there')' }
-{% endhighlight %}
+```
 
 `options`, `attributes` and `settings` are parts of the runtime configuration. See [Runtime Configuration File](../../reference/runtime-configuration.html) documentation for more explanation.
 
@@ -164,28 +164,28 @@ propel:
 
 You can define _build properties_ by creating a `propel.ini` file in `app/config` and put build properties (see [Build properties Reference](../../reference/buildtime-configuration.html)).
 
-{% highlight ini %}
+```ini
 # in app/config/propel.ini
 xxxx.xxxx.xxxx = XXXX
-{% endhighlight %}
+```
 
 But you can follow the Symfony2 way by adding build properties in `app/config/config.yml`:
 
-{% highlight yaml %}
+```yaml
 # in app/config/config.yml
 propel:
     build_properties:
         xxxxx.xxxx.xxxxx:   XXXX
         xxxxx.xxxx.xxxxx:   XXXX
         ...
-{% endhighlight %}
+```
 
 
 ### Sample Schema
 
 Place the following schema in `src/Sensio/HelloBundle/Resources/config/schema.xml` :
 
-{% highlight xml %}
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <database name="default" namespace="Sensio\HelloBundle\Model" defaultIdMethod="native">
 
@@ -206,7 +206,7 @@ Place the following schema in `src/Sensio/HelloBundle/Resources/config/schema.xm
     </table>
 
 </database>
-{% endhighlight %}
+```
 
 
 ## Commands
@@ -231,7 +231,7 @@ Note that the `--force` option is needed to actually execute the SQL statements.
 
 Use the Model classes as any other class in Symfony2. Just use the correct namespace, and Symfony2 will autoload them:
 
-{% highlight php %}
+```php
 <?php
 
 class HelloController extends Controller
@@ -245,7 +245,7 @@ class HelloController extends Controller
         return $this->render('HelloBundle:Hello:index.html.twig', array('name' => $name, 'author' => $author));
     }
 }
-{% endhighlight %}
+```
 
 
 ### Migrations
@@ -302,7 +302,7 @@ If none of this parameter are set all files YAML, XML and SQL in the directory w
 
 A valid _XML fixtures file_ is:
 
-{% highlight xml %}
+```xml
 <Fixtures>
     <Object Namespace="Awesome">
         <o1 Title="My title" MyFoo="bar" />
@@ -311,11 +311,11 @@ A valid _XML fixtures file_ is:
         <r1 ObjectId="o1" Description="Hello world !" />
     </Related>
 </Fixtures>
-{% endhighlight %}
+```
 
 A valid _YAML fixtures file_ is:
 
-{% highlight yaml %}
+```yaml
 \Awesome\Object:
      o1:
          Title: My title
@@ -325,7 +325,7 @@ A valid _YAML fixtures file_ is:
      r1:
          ObjectId: o1
          Description: Hello world !
-{% endhighlight %}
+```
 
 You can dump data into YAML fixtures file by using this command:
 

@@ -9,7 +9,7 @@ title: Runtime Configuration File
 
 Here is a the sample runtime configuration file.
 
-{% highlight xml %}
+```xml
 <?xml version="1.0"?>
 <config>
   <log>
@@ -61,7 +61,7 @@ Here is a the sample runtime configuration file.
     <outerGlue> | </outerGlue>
   </profiler>
 </config>
-{% endhighlight %}
+```
 
 ## Explanation of Configuration Sections ##
 
@@ -71,7 +71,7 @@ Below you will find an explanation of the primary elements in the configuration.
 
 If the `<log>` element is present, Propel will use the specified information to instantiate a PEAR Log logger.
 
-{% highlight xml %}
+```xml
 <config>
  <log>
   <type>file<type>
@@ -79,7 +79,7 @@ If the `<log>` element is present, Propel will use the specified information to 
   <ident>my-app</ident>
   <level>7</level>
  </log>
-{% endhighlight %}
+```
 
 The nested elements correspond to the configuration options for the logger (options that would otherwise be passed to **Log::factory()** method).
 
@@ -96,20 +96,20 @@ This log configuring API is designed to provide a simple way to get log output f
 
 This is the top-level tag for Propel datasources configuration.
 
-{% highlight xml %}
+```xml
 <config>
  <propel>
   <datasources>
-{% endhighlight %}
+```
 
 ### `<datasource>` ###
 
-{% highlight xml %}
+```xml
 <config>
  <propel>
   <datasources>
    <datasource id="bookstore">
-{% endhighlight %}
+```
 A specific datasource being configured.
 
 * The @id must match the `<database>` @name attribute from your `schema.xml`.
@@ -118,13 +118,13 @@ A specific datasource being configured.
 
 The adapter to use for Propel.  Currently supported adapters:  sqlite, pgsql, mysql, oracle, mssql.  Note that it is possible that your adapter could be different from your connection driver (e.g. if using ODBC to connect to MSSQL database, you would use an ODBC PDO driver, but MSSQL Propel adapter).
 
-{% highlight xml %}
+```xml
 <config>
  <propel>
   <datasources>
    <datasource>
      <adapter>sqlite</adapter>
-{% endhighlight %}
+```
 
 ### `<connection>` ###
 
@@ -132,26 +132,26 @@ The PDO database connection for the specified datasource.
 
 Nested elements define the DSN, connection options, other PDO attributes, and finally some Propel-specific initialization settings.
 
-{% highlight xml %}
+```xml
 <config>
  <propel>
   <datasources>
    <datasource>
     <connection>
-{% endhighlight %}
+```
 
 #### `<classname>` ####
 
 A custom PDO class (must be a PropelPDO subclass) that you would like to use for the PDO connection.
 
-{% highlight xml %}
+```xml
 <config>
  <propel>
   <datasources>
    <datasource>
     <connection>
      <classname>DebugPDO</classname>
-{% endhighlight %}
+```
 
 This can be used to specify the alternative **DebugPDO** class bundled with Propel, or your own subclass.  _Your class must extend PropelPDO, because Propel requires the ability to nest transactions (without having exceptions being thrown by PDO)._
 
@@ -159,14 +159,14 @@ This can be used to specify the alternative **DebugPDO** class bundled with Prop
 
 The PDO DSN that Propel will use to connect to the database for this datasource.
 
-{% highlight xml %}
+```xml
 <config>
  <propel>
   <datasources>
    <datasource>
     <connection>
      <dsn>mysql:host=localhost;dbname=bookstore</dsn>
-{% endhighlight %}
+```
 
 See the PHP documentation for specific format:
  * [MySQL DSN](http://www.php.net/manual/en/ref.pdo-mysql.connection.php)
@@ -181,7 +181,7 @@ Note that some database (e.g. PostgreSQL) specify username and password as part 
 
 Specifies credentials for databases that specify username and password separately (e.g. MySQL, Oracle).
 
-{% highlight xml %}
+```xml
 <config>
  <propel>
   <datasources>
@@ -190,7 +190,7 @@ Specifies credentials for databases that specify username and password separatel
      <dsn>mysql:host=localhost;dbname=bookstore</dsn>
      <user>test</user>
      <password>testpass</password>
-{% endhighlight %}
+```
 
 #### `<options>` ####
 
@@ -198,7 +198,7 @@ Specify any options which _must_ be specified when the PDO connection is created
 
 See the [PDO documentation](http://www.php.net/pdo) for more details.
 
-{% highlight xml %}
+```xml
 <config>
  <propel>
   <datasources>
@@ -208,7 +208,7 @@ See the [PDO documentation](http://www.php.net/pdo) for more details.
      <options>
       <option id="ATTR_PERSISTENT">false</option>
      </options>
-{% endhighlight %}
+```
 
 #### `<attributes>` ####
 
@@ -222,7 +222,7 @@ In addition to the standard attributes that can be set on the PDO object, there 
 
 > Note that attributes in the XML can be specified with or without the PDO:: (or PropelPDO::) constant prefix.
 
-{% highlight xml %}
+```xml
 <config>
  <propel>
   <datasources>
@@ -234,13 +234,13 @@ In addition to the standard attributes that can be set on the PDO object, there 
       <option id="ATTR_STATEMENT_CLASS">myPDOStatement</option>
       <option id="PROPEL_ATTR_CACHE_PREPARES">true</option>
      </attributes>
-{% endhighlight %}
+```
 
 >**Tip**<br />If you are using MySQL and get the following error : "SQLSTATE[HY000]: General error: 2014 Cannot execute queries while other unbuffered queries are active", you can try adding the following attribute:
 
-{% highlight xml %}
+```xml
 <option id="MYSQL_ATTR_USE_BUFFERED_QUERY">true</option>
-{% endhighlight %}
+```
 
 ####  `<settings>` ####
 
@@ -255,7 +255,7 @@ Currently supported settings are:
 
 Specifies the character set to use.  Currently you must specify the charset in the way that is understood by your RDBMS.  Also note that not all database systems support specifying charset (e.g. SQLite must be compiled with specific charset support).  Specifying this option will likely result in an exception if your database doesn't support the specified charset.
 
-{% highlight xml %}
+```xml
 <config>
  <propel>
   <datasources>
@@ -265,13 +265,13 @@ Specifies the character set to use.  Currently you must specify the charset in t
      <settings>
       <setting id="charset">utf8</setting>
      </settings>
-{% endhighlight %}
+```
 
 ##### queries #####
 
 Specifies any SQL statements to run when the database connection is initialized.  This can be used for any environment setup or db initialization you would like to perform. These statements will be executed with every Propel initialization (e.g. every PHP script load).
 
-{% highlight xml %}
+```xml
 <config>
  <propel>
   <datasources>
@@ -284,17 +284,17 @@ Specifies any SQL statements to run when the database connection is initialized.
        <query>INSERT INTO BAR ('hey', 'there')</query>
       </setting>
      </settings>
-{% endhighlight %}
+```
 
 ### `<slaves>` ###
 
-{% highlight xml %}
+```xml
 <config>
  <propel>
   <datasources>
    <datasource>
     <slaves>
-{% endhighlight %}
+```
 
 The `<slaves>` tag groups lists slave `<connection>` elements which provide support for configuring slave db servers -- when using Propel in a master-slave replication environment. See the [Master-Slave documentation](../cookbook/replication.html) for more information.  The nested `<connection>` elements are configured the same way as the top-level `<connection>` element is configured.
 

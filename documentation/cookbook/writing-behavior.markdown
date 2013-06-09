@@ -13,7 +13,7 @@ In the tutorial "[Keeping an Aggregate Column up-to-date](http://propel.posterou
 
 A behavior is a class that can alter the generated classes for a table of your model. It must only extend the `Behavior` class and implement special "hook" methods. Here is the class skeleton to start with for the `aggregate_column` behavior:
 
-{% highlight php %}
+```php
 <?php
 class AggregateColumnBehavior extends Behavior
 {
@@ -22,17 +22,17 @@ class AggregateColumnBehavior extends Behavior
     'name' => null,
   );
 }
-{% endhighlight %}
+```
 
 Save this class in a file called `AggregateColumnBehavior.php`, and set the path for the class file in the project `build.properties` (just replace directory separators with dots). Remember that the `build.properties` paths are relative to the include path:
 
-{% highlight ini %}
+```ini
 propel.behavior.aggregate_column.class = path.to.AggregateColumnBehavior
-{% endhighlight %}
+```
 
 Test the behavior by adding it to a table of your model, for instance to a `poll_question` table:
 
-{% highlight xml %}
+```xml
 <database name="poll" defaultIdMethod="native">
   <table name="poll_question" phpName="PollQuestion">
     <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
@@ -42,11 +42,11 @@ Test the behavior by adding it to a table of your model, for instance to a `poll
     </behavior>
   </table>
 </database>
-{% endhighlight %}
+```
 
 Rebuild your model, and check the generated `PollQuestionTableMap` class under the `map` subdirectory of your build class directory. This class carries the structure metadata for the `PollQuestion` ActiveRecord class at runtime. The class should feature a `getBehaviors()` method as follows, proving that the behavior was correctly applied:
 
-{% highlight php %}
+```php
 <?php
 class PollQuestionTableMap extends TableMap
 {
@@ -59,13 +59,13 @@ class PollQuestionTableMap extends TableMap
     );
   } // getBehaviors()
 }
-{% endhighlight %}
+```
 
 ## Adding A Column ##
 
 The behavior works, but it still does nothing at all. Let's make it useful by allowing it to add a column. In the `AggregateColumnBehavior` class, just implement the `modifyTable()` method with the following code:
 
-{% highlight php %}
+```php
 <?php
 class AggregateColumnBehavior extends Behavior
 {
@@ -89,7 +89,7 @@ class AggregateColumnBehavior extends Behavior
     }
   }
 }
-{% endhighlight %}
+```
 
 This method shows that a behavior class has access to the `<parameters>` defined for it in the `schema.xml` through the `getParameter()` command. Behaviors can also always access the `Table` object attached to them, by calling `getTable()`. A `Table` can check if a column exists and add a new one easily. The `Table` class is one of the numerous generator classes that serve to describe the object model at buildtime, together with `Column`, `ForeignKey`, `Index`, and a lot more classes. You can find all the buildtime model classes under the `generator/lib/model` directory.
 
@@ -97,7 +97,7 @@ _Tip_: Don't mix up the _runtime_ database model (`DatabaseMap`, `TableMap`, `Co
 
 Now rebuild the model and the SQL, and sure enough, the new column is there. `BasePollQuestion` offers a `getTotalNbVotes()` and a `setTotalNbVotes()` method, and the table creation SQL now includes the additional `total_nb_votes` column:
 
-{% highlight sql %}
+```sql
 DROP TABLE IF EXISTS poll_question;
 CREATE TABLE poll_question
 (
@@ -106,7 +106,7 @@ CREATE TABLE poll_question
   total_nb_votes INTEGER,
   PRIMARY KEY (id)
 )Type=InnoDB;
-{% endhighlight %}
+```
 
 _Tip_: The behavior only adds the column if it's not present (`!$table->containsColumn($columnName)`). So if a user needs to customize the column type, or any other attribute, he can include a `<column>` tag in the table with the same name as defined in the behavior, and the `modifyTable()` will then skip the column addition.
 
@@ -114,7 +114,7 @@ _Tip_: The behavior only adds the column if it's not present (`!$table->contains
 
 In the previous post, a method of the ActiveRecord class was in charge of updating the `total_nb_votes` column. A behavior can easily add such methods by implementing the `objectMethods()` method:
 
-{% highlight php %}
+```php
 <?php
 class AggregateColumnBehavior extends Behavior
 {
@@ -155,13 +155,13 @@ public function update{$columnPhpName}(PropelPDO \$con)
 ";
   }
 }
-{% endhighlight %}
+```
 
 The ActiveRecord class builder expects a string in return to the call to `Behavior::objectMethods()`, and appends this string to the generated code of the ActiveRecord class. Don't bother about indentation: builder classes know how to properly indent a string returned by a behavior. A good rule of thumb is to create one behavior method for each added method, to provide better readability.
 
 Of course, the schema must be modified to supply the necessary parameters to the behavior:
 
-{% highlight xml %}
+```xml
 <database name="poll" defaultIdMethod="native">
   <table name="poll_question" phpName="PollQuestion">
     <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
@@ -184,11 +184,11 @@ Of course, the schema must be modified to supply the necessary parameters to the
     </foreign-key>
   </table>
 </database>
-{% endhighlight %}
+```
 
 Now if you rebuild the model, you will see the new `updateTotalNbVotes()` method in the generated `BasePollQuestion` class:
 
-{% highlight php %}
+```php
 <?php
 class BasePollQuestion extends BaseObject
 {
@@ -208,7 +208,7 @@ class BasePollQuestion extends BaseObject
     $this->save($con);
   }
 }
-{% endhighlight %}
+```
 
 Behaviors offer similar hook methods to allow the addition of methods to the query classes (`queryMethods()`) and to the object classes (`objectMethods()`). And if you need to add attributes, just implement one of the `objectAttributes()` or `queryAttributes()` methods.
 
@@ -218,7 +218,7 @@ The behavior's `addUpdateAggregateColumn()` method is somehow hard to read, beca
 
 Let's refactor the `addUpdateAggregateColumn()` method to take advantage of this feature:
 
-{% highlight php %}
+```php
 <?php
 class AggregateColumnBehavior extends Behavior
 {
@@ -241,13 +241,13 @@ class AggregateColumnBehavior extends Behavior
     ));
   }
 }
-{% endhighlight %}
+```
 
 The method no longer returns a string created by hand, but a _rendered template_. Propel templates are simple PHP files executed in a sandbox - they have only access to the variables declared as second argument of the `renderTemplate()` call.
 
 Now create a `templates/` directory in the same directory as the `AggregateColumnBehavior` class file, and add in a `objectUpdateAggregate.php` file with the following code:
 
-{% highlight php %}
+```php
 /**
  * Updates the aggregate column <?php echo $aggregateColumn->getName() ?>
  *
@@ -261,7 +261,7 @@ public function update<?php echo $columnPhpName ?>(PropelPDO $con)
   $this->set<?php echo $columnPhpName ?>($stmt->fetchColumn());
   $this->save($con);
 }
-{% endhighlight %}
+```
 
 No need to escape dollar signs anymore: this syntax allows for a cleaner separation, and is very convenient for large behaviors.
 
@@ -271,7 +271,7 @@ This is where it's getting tricky. In the [blog post](http://propel.posterous.co
 
 The short answer is: it can't. To modify the classes built for the `poll_answer` table, a behavior must be registered on the `poll_answer` table. But a behavior is just like a column or a foreign key: it has an object counterpart in the buildtime database model. So the trick here is to modify the `AggregateColumnBehavior::modifyTable()` method to _add a new behavior_ to the foreign table. This second behavior will be in charge of implementing the `postSave()` and `postDelete()` hooks of the `PollAnswer` class.
 
-{% highlight php %}
+```php
 <?php
 class AggregateColumnBehavior extends Behavior
 {
@@ -299,11 +299,11 @@ class AggregateColumnBehavior extends Behavior
     }
   }
 }
-{% endhighlight %}
+```
 
 In practice, everything now happens as if the `poll_answer` had its own behavior:
 
-{% highlight xml %}
+```xml
 <database name="poll" defaultIdMethod="native">
   <!-- ... -->
   <table name="poll_answer" phpName="PollAnswer">
@@ -314,7 +314,7 @@ In practice, everything now happens as if the `poll_answer` had its own behavior
     </behavior>
   </table>
 </database>
-{% endhighlight %}
+```
 
 Adding a behavior to a `Table` instance, as well as adding a `Parameter` to a `Behavior` instance, is quite straightforward. And since the second behavior class file is required in the `modifyTable()` method, there is no need to add a path for it in the `build.properties`.
 
@@ -324,7 +324,7 @@ The new `AggregateColumnRelationBehavior` is yet to write. It must implement a c
 
 Adding code to hooks from a behavior is just like adding methods: add a method with the right hook name returning a code string, and the code will get appended at the right place. Unsurprisingly, the behavior hook methods for `postSave()` and `postDelete()` are called `postSave()` and `postDelete()`:
 
-{% highlight php %}
+```php
 <?php
 class AggregateColumnBehavior extends Behavior
 {
@@ -377,19 +377,19 @@ protected function updateRelated{$foreignColumnPhpName}(PropelPDO \$con)
 ";
   }
 }
-{% endhighlight %}
+```
 
 The `postSave()` and `postDelete()` behavior hooks will not add code to the ActiveRecord `postSave()` and `postDelete()` methods - to allow users to further implement these methods - but instead it adds code directly to the `save()` and `delete()` methods, inside a transaction. Check the generated `BasePollAnswer` class for the added code in these methods:
 
-{% highlight php %}
+```php
 <?php
 // aggregate_column_relation behavior
 $this->updateRelatedTotalNbVotes($con);
-{% endhighlight %}
+```
 
 You will also see the new `updateRelatedTotalNbVotes()` method added by `AggregateColumnBehavior::objectMethods()`:
 
-{% highlight php %}
+```php
 <?php
 /**
  * Updates an aggregate column in the foreign poll_question table
@@ -402,7 +402,7 @@ protected function updateRelatedTotalNbVotes(PropelPDO $con)
     $parentPollQuestion->updateTotalNbVotes($con);
   }
 }
-{% endhighlight %}
+```
 
 ## Specifying a Priority For Behavior Execution ##
 
@@ -410,7 +410,7 @@ Since behaviors can modify tables, and even add tables, you may encounter cases 
 
 Propel Behavior classes support a `$tableModificationOrder` attribute just for that purpose. By default, it is set to 50; set it to a lower number to force an early execution, or to a greater number to force a late execution. For instance, in the following example, `BehaviorA` will be executed before `BehaviorB`:
 
-{% highlight php %}
+```php
 <?php
 class BehaviorA extends Behavior
 {
@@ -421,7 +421,7 @@ class BehaviorB extends Behavior
 {
   protected $tableModificationOrder = 60;
 }
-{% endhighlight %}
+```
 
 ## What's Left ##
 

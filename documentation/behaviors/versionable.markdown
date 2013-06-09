@@ -14,17 +14,17 @@ The `versionable` behavior provides versioning capabilities to any ActiveRecord 
 ## Basic Usage ##
 
 In the `schema.xml`, use the `<behavior>` tag to add the `versionable` behavior to a table:
-{% highlight xml %}
+```xml
 <table name="book">
   <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
   <column name="title" type="VARCHAR" required="true" />
   <behavior name="versionable" />
 </table>
-{% endhighlight %}
+```
 
 Rebuild your model, insert the table creation sql again, and you're ready to go. The model now has one new column, `version`, which stores the version number. It also has a new table, `book_version`, which stores all the versions of all `Book` objects, past and present. You won't need to interact with this second table, since the behavior offers an easy-to-use API that takes care of all versioning actions from the main ActiveRecord object.
 
-{% highlight php %}
+```php
 <?php
 $book = new Book();
 
@@ -51,13 +51,13 @@ print_r($book->compareVersions(1, 2));
 
 // deleting an object also deletes all its versions
 $book->delete();
-{% endhighlight %}
+```
 
 ## Adding details about each revision ##
 
 For future reference, you probably need to record who edited an object, as well as when and why. To enable audit log capabilities, add the three following parameters to the `<behavior>` tag:
 
-{% highlight xml %}
+```xml
 <table name="book">
   <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
   <column name="title" type="VARCHAR" required="true" />
@@ -67,11 +67,11 @@ For future reference, you probably need to record who edited an object, as well 
     <parameter name="log_comment" value="true" />
   </behavior>
 </table>
-{% endhighlight %}
+```
 
 Rebuild your model, and you can now define an author name and a comment for each revision using the `setVersionCreatedBy()` and `setVersionComment()` methods, as follows:
 
-{% highlight php %}
+```php
 <?php
 $book = new Book();
 $book->setTitle('War and Peas');
@@ -83,11 +83,11 @@ $book->setTitle('War and Peace');
 $book->setVersionCreatedBy('John Doe');
 $book->setVersionComment('Corrected typo on book title');
 $book->save();
-{% endhighlight %}
+```
 
 ## Retrieving revision history ##
 
-{% highlight php %}
+```php
 <?php
 // details about each revision are available for all versions of an object
 $book->toVersion(1);
@@ -109,13 +109,13 @@ foreach ($book->getAllVersions() as $bookVersion) {
 }
 // 'War and Peas', Version 1, updated by John Doe on 2010-12-21 22:53:02 (Book Creation)
 // 'War and Peace', Version 2, updated by John Doe on 2010-12-21 22:57:19 (Corrected typo on book title)
-{% endhighlight %}
+```
 
 ## Conditional versioning ##
 
 You may not need a new version each time an object is created or modified. If you want to specify your own condition, just override the `isVersioningNecessary()` method in your stub class. The behavior calls it behind the curtain each time you `save()` the main object. No version is created if it returns false.
 
-{% highlight php %}
+```php
 <?php
 class Book extends BaseBook
 {
@@ -130,11 +130,11 @@ $book->setTitle('Pride and Prejudice');
 $book->save(); // book is saved, no new version is created
 $book->setISBN('0553213105');
 $book->save(): // book is saved, and a new version is created
-{% endhighlight %}
+```
 
 Alternatively, you can choose to disable the automated creation of a new version at each save for all objects of a given model by calling the `disableVersioning()` method on the Query class. In this case, you still have the ability to manually create a new version of an object, using the `addVersion()` method on a saved object:
 
-{% highlight php %}
+```php
 <?php
 BookQuery::disableVersioning();
 $book = new Book();
@@ -145,7 +145,7 @@ $book->addVersion(); // a new version is created
 
 // you can reenable versioning using the Query static method enableVersioning()
 BookQuery::enableVersioning();
-{% endhighlight %}
+```
 
 ## Versioning Related objects ##
 
@@ -153,7 +153,7 @@ If a model uses the versionable behavior, and is related to another model also u
 
 The following example assumes that both the `Book` model and the `Author` model are versionable - one `Author` has many `Books`:
 
-{% highlight php %}
+```php
 <?php
 $author = new Author();
 $author->setFirstName('Leo');
@@ -175,7 +175,7 @@ echo $book->getAuthor()->getLastName(); // 'Totoi'
 $book->toVersion(3);
 echo $book->getTitle(); // 'War and Peace'
 echo $book->getAuthor()->getLastName(); // 'Tolstoi'
-{% endhighlight %}
+```
 
 >**Tip**<br />Versioning of related objects is only possible for simple foreign keys. Relationships based on composite foreign keys cannot preserve relation versionning for now.
 
@@ -183,7 +183,7 @@ echo $book->getAuthor()->getLastName(); // 'Tolstoi'
 
 You can change the name of the column added by the behavior by setting the `version_column` parameter. Propel only adds the column if it's not already present, so you can easily customize this column by adding it manually to your schema:
 
-{% highlight xml %}
+```xml
 <table name="book">
   <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
   <column name="title" type="VARCHAR" required="true" />
@@ -192,9 +192,9 @@ You can change the name of the column added by the behavior by setting the `vers
     <parameter name="version_column" value="my_version_column" />
   </behavior>
 </table>
-{% endhighlight %}
+```
 
-{% highlight php %}
+```php
 <?php
 $b = new Book();
 $b->setTitle('War And Peace');
@@ -202,11 +202,11 @@ $b->save();
 echo $b->getMyVersionColumn(); // 1
 // For convenience and ease of use, Propel creates a getVersion() anyway
 echo $b->getVersion(); // 1
-{% endhighlight %}
+```
 
 You can also change the name of the version table by setting the `version_table` parameter. Again, Propel automatically creates the table, unless it's already present in the schema:
 
-{% highlight xml %}
+```xml
 <table name="book">
   <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
   <column name="title" type="VARCHAR" required="true" />
@@ -214,11 +214,11 @@ You can also change the name of the version table by setting the `version_table`
     <parameter name="version_table" value="my_book_version" />
   </behavior>
 </table>
-{% endhighlight %}
+```
 
 The audit log abilities need to be enabled in the schema as well:
 
-{% highlight xml %}
+```xml
 <table name="book">
   <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
   <column name="title" type="VARCHAR" required="true" />
@@ -231,7 +231,7 @@ The audit log abilities need to be enabled in the schema as well:
     <parameter name="log_comment" value="true" />
   </behavior>
 </table>
-{% endhighlight %}
+```
 
 ## Public API ##
 

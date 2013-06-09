@@ -15,60 +15,60 @@ The starting point for runtime introspection is usually a table map. This object
 
 To retrieve a table map for a table, use the `getTableMap()` static method of the related TableMap class. For instance, to retrieve the table map for the `book` table, just call:
 
-{% highlight php %}
+```php
 <?php
 $bookTable = BookTableMap::getTableMap();
-{% endhighlight %}
+```
 
 ## TableMap properties ##
 
 A `TableMap` object carries the same information as the schema. Check the following example to see how you can read the general properties of a table from its map:
 
-{% highlight php %}
+```php
 <?php
 echo $bookTable->getName();          // 'table'
 echo $bookTable->getPhpName();       // 'Table'
 echo $bookTable->getPackage();       // 'bookstore'
 echo $bookTable->isUseIdGenerator(); // true
-{% endhighlight %}
+```
 
 >**Tip**<br />A TableMap object also references the `DatabaseMap` that contains it. From the database map, you can also retrieve other table maps using the table name or the table phpName:
 
-{% highlight php %}
+```php
 <?php
 $dbMap = $bookTable->getDatabaseMap();
 $authorTable = $dbMap->getTable('author');
 $authorTable = $dbMap->getTablebyPhpName('Author');
-{% endhighlight %}
+```
 
 To introspect the columns of a table, use any of the `getColumns()`, `getPrimaryKeys()`, and `getForeignKeys()` `TableMap` methods. They all return an array of `ColumnMap` objects.
 
-{% highlight php %}
+```php
 <?php
 $bookColumns = $bookTable->getColumns();
 foreach ($bookColumns as $column) {
   echo $column->getName();
 }
-{% endhighlight %}
+```
 
 Alternatively, if you know a column name, you can retrieve the corresponding ColumnMap directly using the of `getColumn($name)` method.
 
-{% highlight php %}
+```php
 <?php
 $bookTitleColumn = $bookTable->getColumn('title');
-{% endhighlight %}
+```
 
 The `DatabaseMap` object offers a shortcut to every `ColumnMap` object if you know the fully qualified column name:
-{% highlight php %}
+```php
 <?php
 $bookTitleColumn = $dbMap->getColumn('book.TITLE');
-{% endhighlight %}
+```
 
 ## ColumnMaps ##
 
 A `ColumnMap` instance offers a lot of information about a table column. Check the following examples:
 
-{% highlight php %}
+```php
 <?php
 $bookTitleColumn->getTableName();    // 'book'
 $bookTitleColumn->getTablePhpName(); // 'Book'
@@ -83,18 +83,18 @@ $bookTitleColumn->isText();          // true
 $bookTitleColumn->isPrimaryKey();    // false
 $bookTitleColumn->isForeignKey();    // false
 $bookTitleColumn->isPrimaryString(); // true
-{% endhighlight %}
+```
 
 `ColumnMap` objects also keep a reference to their parent `TableMap` object:
 
-{% highlight php %}
+```php
 <?php
 $bookTable = $bookTitleColumn->getTable();
-{% endhighlight %}
+```
 
 Foreign key columns give access to more information, including the related table and column:
 
-{% highlight php %}
+```php
 <?php
 $bookPublisherIdColumn = $bookTable->getColumn('publisher_id');
 echo $bookPublisherIdColumn->isForeignKey();         // true
@@ -103,7 +103,7 @@ echo $bookPublisherIdColumn->getRelatedTableName();  // 'publisher'
 echo $bookPublisherIdColumn->getRelatedColumnName(); // 'ID'
 $publisherTable = $bookPublisherIdColumn->getRelatedTable();
 $publisherRelation = $bookPublisherIdColumn->getRelation();
-{% endhighlight %}
+```
 
 ## RelationMaps ##
 
@@ -111,21 +111,21 @@ To get an insight on all the relationships of a table, including the ones relyin
 
 If you know its name, you can retrieve a `RelationMap` object using `TableMap::getRelation($relationName)`. Note that the relation name is the phpName of the related table, unless the foreign key defines a phpName in the schema. For instance, the name of the `RelationMap` object related to the `book.PUBLISHER_ID` column is 'Publisher'.
 
-{% highlight php %}
+```php
 <?php
 $publisherRelation = $bookTable->getRelation('Publisher');
-{% endhighlight %}
+```
 
 alternatively, you can access a `RelationMap` from a foreign key column using `ColumnMap::getRelation()`, as follows:
 
-{% highlight php %}
+```php
 <?php
 $publisherRelation = $bookTable->getColumn('publisher_id')->getRelation();
-{% endhighlight %}
+```
 
 Once you have a `RelationMap` instance, inspect its properties using any of the following methods:
 
-{% highlight php %}
+```php
 <?php
 echo $publisherRelation->getType();     // RelationMap::MANY_TO_ONE
 echo $publisherRelation->getOnDelete(); // 'SET NULL'
@@ -137,11 +137,11 @@ print_r(publisherRelation->getLocalColumns());
   // array($bookPublisherIdColumn)
 print_r(publisherRelation->getForeignColumns());
   // array($publisherBookIdColumn)
-{% endhighlight %}
+```
 
 This also works for relationships referencing the current table:
 
-{% highlight php %}
+```php
 <?php
 $reviewRelation = $bookTable->getRelation('Review');
 echo $reviewRelation->getType();     // RelationMap::ONE_TO_MANY
@@ -150,7 +150,7 @@ $reviewTable = $reviewRelation->getLocalTable();
 $bookTable   = $reviewRelation->getForeignTable();
 print_r($reviewRelation->getColumnMappings());
   // array('review.BOOK_ID' => 'book.ID')
-{% endhighlight %}
+```
 
 To retrieve all the relations of a table, call `TableMap::getRelations()`. You can then iterate over an array of `RelationMap` objects.
 

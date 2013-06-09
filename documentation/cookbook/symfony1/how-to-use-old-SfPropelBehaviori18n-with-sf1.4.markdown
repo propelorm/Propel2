@@ -11,7 +11,7 @@ All you have to do is to write your `schema.xml` with the old SfPropelBehaviorI1
  
 First [init a `symfony` project with `Propel` as default ORM](init-a-Symfony-project-with-Propel-git-way) and let's start with this `schema.xml`:
   
-{% highlight xml %}
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <database defaultIdMethod="native" name="propel">
   <table name="author">
@@ -36,11 +36,11 @@ First [init a `symfony` project with `Propel` as default ORM](init-a-Symfony-pro
     </foreign-key>
   </table>
 </database>
-{% endhighlight %}
+```
 
 And those fixtures:
 
-{% highlight yaml %}
+```yaml
 Author:
   bach:
     id: 1
@@ -73,25 +73,25 @@ BookI18n:
     id: illusions
     culture: en
     title: Jonathan Livingston Seagull
-{% endhighlight %}
+```
 
 Let's build this schema:
 
-{% highlight bash %}
+```bash
 php symfony propel:build --all --and-load --no-confirmation
-{% endhighlight %}
+```
 
 ## Simple Use Of embedI18n()
 
 Create a book module:
 
-{% highlight bash %}
+```bash
 php symfony propel:generate-module main book Book
-{% endhighlight %}
+```
 
 Add i18N to book form `lib/form/BookForm.class.php`:  
 
-{% highlight php %}
+```php
 <?php
 class BookForm extends BaseBookForm
 {
@@ -100,11 +100,11 @@ class BookForm extends BaseBookForm
     $this->embedI18n(array('fr','en'));
   }
 }
-{% endhighlight %}
+```
 
 Let's print the form with the i18n embedded forms in `apps/main/modules/book/templates/_form.php`:
 
-{% highlight php %}
+```php
 <?php use_stylesheets_for_form($form) ?>
 <?php use_javascripts_for_form($form) ?>
 
@@ -131,19 +131,19 @@ Let's print the form with the i18n embedded forms in `apps/main/modules/book/tem
     </tbody>
   </table>
 </form>
-{% endhighlight %}
+```
 
 ## Use embedI18n() In An Embedded Form
 
 Create an author module:
 
-{% highlight bash %}
+```bash
 php symfony propel:generate-module main author Author
-{% endhighlight %}
+```
 
 Embed book form in author `lib/form/AuthorForm.class.php`:
 
-{% highlight php %}
+```php
 <?php
 class AuthorForm extends BaseAuthorForm
 {
@@ -152,11 +152,11 @@ class AuthorForm extends BaseAuthorForm
     $this->embedRelation('Book');
   }
 }
-{% endhighlight %}
+```
 
 Finally let's print the form with all his embedded forms in `apps/main/modules/templates/_form.php`:
 
-{% highlight php %}
+```php
 <?php use_stylesheets_for_form($form) ?>
 <?php use_javascripts_for_form($form) ?>
 
@@ -183,7 +183,7 @@ Finally let's print the form with all his embedded forms in `apps/main/modules/t
     </tbody>
   </table>
 </form>
-{% endhighlight %}
+```
 
 As a bonus you can use special joinWithI18n() query even if it's not native (thanks to javer).
 

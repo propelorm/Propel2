@@ -12,17 +12,17 @@ Many applications need to store hierarchical data in the model. For instance, a 
 ## Basic Usage ##
 
 In the `schema.xml`, use the `<behavior>` tag to add the `nested_set` behavior to a table:
-{% highlight xml %}
+```xml
 <table name="section">
   <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
   <column name="title" type="VARCHAR" required="true" primaryString="true" />
   <behavior name="nested_set" />
 </table>
-{% endhighlight %}
+```
 
 Rebuild your model, insert the table creation sql again, and you're ready to go. The model now has the ability to be inserted into a tree structure, as follows:
 
-{% highlight php %}
+```php
 <?php
 $s1 = new Section();
 $s1->setTitle('Home');
@@ -47,13 +47,13 @@ $s2:World  $s4:Business
     |
 $s3:Europe
 */
-{% endhighlight %}
+```
 
 You can continue to insert new nodes as children or siblings of existing nodes, using any of the `insertAsFirstChildOf()`, `insertAsLastChildOf()`, `insertAsPrevSiblingOf()`, and `insertAsNextSiblingOf()` methods.
 
 Once you have built a tree, you can traverse it using any of the numerous methods  the `nested_set` behavior adds to the query and model objects. For instance:
 
-{% highlight php %}
+```php
 <?php
 $rootNode = SectionQuery::create()->findRoot(); // $s1
 $worldNode = $rootNode->getFirstChild();        // $s2
@@ -63,11 +63,11 @@ $allSections = $rootNode->getDescendants();     // array($s2, $s3, $s4)
 // you can also chain the methods
 $europeNode = $rootNode->getLastChild()->getPrevSibling()->getFirstChild();  // $s3
 $path = $europeNode->getAncestors();            // array($s1, $s2)
-{% endhighlight %}
+```
 
 The nodes returned by these methods are regular Propel model objects, with access to the properties and related models. The `nested_set` behavior also adds inspection methods to nodes:
 
-{% highlight php %}
+```php
 <?php
 echo $s2->isRoot();      // false
 echo $s2->isLeaf();      // false
@@ -75,7 +75,7 @@ echo $s2->getLevel();    // 1
 echo $s2->hasChildren(); // true
 echo $s2->countChildren(); // 1
 echo $s2->hasSiblings(); // true
-{% endhighlight %}
+```
 
 Each of the traversal and inspection methods result in a single database query, whatever the position of the node in the tree. This is because the information about the node position in the tree is stored in three columns of the model, named `tree_left`, `tree_left`, and `tree_level`. The value given to these columns is determined by the nested set algorithm, and it makes read queries much more effective than trees using a simple `parent_id` foreign key.
 
@@ -83,7 +83,7 @@ Each of the traversal and inspection methods result in a single database query, 
 
 You can move a node - and its subtree - across the tree using any of the `moveToFirstChildOf()`, `moveToLastChildOf()`, `moveToPrevSiblingOf()`, and `moveToLastSiblingOf()` methods. These operations are immediate and don't require that you save the model afterwards:
 
-{% highlight php %}
+```php
 <?php
 // move the entire "World" section under "Business"
 $s2->moveToFirstChildOf($s4);
@@ -105,11 +105,11 @@ $s4:Business $s3:Europe
     |
 $s2:World
 */
-{% endhighlight %}
+```
 
 You can delete the descendants of a node using `deleteDescendants()`:
 
-{% highlight php %}
+```php
 <?php
 // move the entire "World" section under "Business"
 $s4->deleteDescendants($s4);
@@ -118,7 +118,7 @@ $s4->deleteDescendants($s4);
     |        \
 $s4:Business $s3:Europe
 */
-{% endhighlight %}
+```
 
 If you `delete()` a node, all its descendants are deleted in cascade. To avoid accidental deletion of an entire tree, calling `delete()` on a root node throws an exception. Use the `delete()` Query method instead to delete an entire tree.
 
@@ -126,27 +126,27 @@ If you `delete()` a node, all its descendants are deleted in cascade. To avoid a
 
 The `nested_set` behavior adds numerous methods to the generated Query object. You can use these methods to build more complex queries. For instance, to get all the children of the root node ordered by title, build a Query as follows:
 
-{% highlight php %}
+```php
 <?php
 $children = SectionQuery::create()
   ->childrenOf($rootNode)
   ->orderByTitle()
   ->find();
-{% endhighlight %}
+```
 
 Alternatively, if you already have an existing query method, you can pass it to the model object's methods to filter the results:
 
-{% highlight php %}
+```php
 <?php
 $orderQuery = SectionQuery::create()->orderByTitle();
 $children = $rootNode->getChildren($orderQuery);
-{% endhighlight %}
+```
 
 ## Multiple Trees ##
 
 When you need to store several trees for a single model - for instance, several threads of posts in a forum - use a _scope_ for each tree. This requires that you enable scope tree support in the behavior definition by setting the `use_scope` parameter to `true`:
 
-{% highlight xml %}
+```xml
 <table name="post">
   <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
   <column name="body" type="VARCHAR" required="true" primaryString="true" />
@@ -158,18 +158,18 @@ When you need to store several trees for a single model - for instance, several 
     <reference local="thread_id" foreign="id" />
   </foreign-key>
 </table>
-{% endhighlight %}
+```
 
 Now, after rebuilding your model, you can have as many trees as required:
 
-{% highlight php %}
+```php
 <?php
 $thread = ThreadQuery::create()->findPk(123);
 $firstPost = PostQuery::create()->findRoot($thread->getId());  // first message of the discussion
 $discussion = PostQuery::create()->findTree(thread->getId()); // all messages of the discussion
 PostQuery::create()->inTree($thread->getId())->delete(); // delete an entire discussion
 $firstPostOfEveryDiscussion = PostQuery::create()->findRoots();
-{% endhighlight %}
+```
 
 ## Using a RecursiveIterator ##
 
@@ -177,31 +177,31 @@ An alternative way to browse a tree structure extensively is to use a [Recursive
 
 For instance, to display an entire tree structure, you can use the following code:
 
-{% highlight php %}
+```php
 <?php
 $root = SectionQuery::create()->findRoot();
 foreach ($root->getIterator() as $node) {
   echo str_repeat(' ', $node->getLevel()) . $node->getTitle() . "\n";
 }
-{% endhighlight %}
+```
 
 The iterator parses the tree in a recursive way by retrieving the children of every node. This can be quite effective on very large trees, since the iterator hydrates only a few objects at a time.
 
 Beware, though, that the iterator executes many queries to parse a tree. On smaller trees, prefer the `getBranch()` method to execute only one query, and hydrate all records at once:
 
-{% highlight php %}
+```php
 <?php
 $root = SectionQuery::create()->findRoot();
 foreach ($root->getBranch() as $node) {
   echo str_repeat(' ', $node->getLevel()) . $node->getTitle() . "\n";
 }
-{% endhighlight %}
+```
 
 ## Parameters ##
 
 By default, the behavior adds three columns to the model - four if you use the scope feature. You can use custom names for the nested sets columns. The following schema illustrates a complete customization of the behavior:
 
-{% highlight xml %}
+```xml
 <table name="post">
   <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
   <column name="lft" type="INTEGER" />
@@ -220,11 +220,11 @@ By default, the behavior adds three columns to the model - four if you use the s
     <reference local="thread_id" foreign="id" />
   </foreign-key>
 </table>
-{% endhighlight %}
+```
 
 Whatever name you give to your columns, the `nested_sets` behavior always adds the following proxy methods, which are mapped to the correct column:
 
-{% highlight php %}
+```php
 <?php
 $post->getLeftValue();         // returns $post->lft
 $post->setLeftValue($left);
@@ -234,11 +234,11 @@ $post->getLevel();             // returns $post->lvl
 $post->setLevel($level);
 $post->getScopeValue();        // returns $post->thread_id
 $post->setScopeValue($scope);
-{% endhighlight %}
+```
 
 If your application used the old nested sets builder from Propel 1.4, you can enable the `method_proxies` parameter so that the behavior generates method proxies for the methods that used a different name (e.g. `createRoot()` for `makeRoot()`, `retrieveFirstChild()` for `getFirstChild()`, etc.
 
-{% highlight xml %}
+```xml
 <table name="section">
   <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
   <column name="title" type="VARCHAR" required="true" primaryString="true" />
@@ -246,13 +246,13 @@ If your application used the old nested sets builder from Propel 1.4, you can en
     <parameter name="method_proxies" value="true" />
   </behavior>
 </table>
-{% endhighlight %}
+```
 
 ## Complete API ##
 
 Here is a list of the methods added by the behavior to the model objects:
 
-{% highlight php %}
+```php
 <?php
 // storage columns accessors
 int   getLeftValue()
@@ -317,11 +317,11 @@ $node retrieveNextSibling()
 $node retrieveFirstChild()
 $node retrieveLastChild()
 array getPath()
-{% endhighlight %}
+```
 
 The behavior also adds some methods to the Query classes:
 
-{% highlight php %}
+```php
 <?php
 // tree filter methods
 query descendantsOf($node)
@@ -340,18 +340,18 @@ query orderByLevel($reverse = false)
 // termination methods
 $node findRoot($scope = null)
 coll findTree($scope = null)
-{% endhighlight %}
+```
 
 Lastly, the behavior adds a few methods to the Query classes:
 
-{% highlight php %}
+```php
 <?php
 $node retrieveRoot($scope = null)
 array retrieveTree($scope = null)
 int   deleteTree($scope = null)
 // only for behavior with use_scope
 array retrieveRoots(Criteria $c = null)
-{% endhighlight %}
+```
 
 ## TODO ##
 

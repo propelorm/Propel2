@@ -17,14 +17,14 @@ To generate a schema file, create a new directory for your project & specify the
 
  1. Create the `legacyapp` project directory anywhere on your filesystem:
 
-{% highlight bash %}
+```bash
 > mkdir legacyapp
 > cd legacyapp
-{% endhighlight %}
+```
 
  2. Create a `build.properties` file in `legacyapp/` directory with the DB connection parameters for your existing database, e.g.:
 
-{% highlight ini %}
+```ini
 propel.project = legacyapp
 
 # The Propel driver to use for generating SQL, etc.
@@ -34,13 +34,13 @@ propel.database = mysql
 propel.database.url = mysql:dbname=legacyapp
 propel.database.user = root
 # propel.database.password #
-{% endhighlight %}
+```
 
  3. Run the `reverse` task to generate the `schema.xml`:
 
-{% highlight bash %}
+```bash
 > propel-gen reverse
-{% endhighlight %}
+```
 
  4. Pay attention to any errors/warnings issued by Phing during the task execution and then examine the generated `schema.xml` file to make any corrections needed.
 
@@ -59,22 +59,22 @@ To do this you would simply:
  1. Follow the steps above to create the `schema.xml` file from existing db.
  2. Then you would change the target database type and specify connection URL for new database in the project's `build.properties` file:
 
-{% highlight ini %}
+```ini
 propel.database = pgsql
 propel.database.url = pgsql://unix+localhost/newlegacyapp
-{% endhighlight %}
+```
 
  3. And then run the `sql` task to generate the new DDL:
 
-{% highlight bash %}
+```bash
 > propel-gen sql
-{% endhighlight %}
+```
 
  4. And (optionally) the `insert-sql` task to create the new database:
 
-{% highlight bash %}
+```bash
 > propel-gen insert-sql
-{% endhighlight %}
+```
 
 ## Working with Database Data ##
 
@@ -86,9 +86,9 @@ Propel also provides several tasks to facilitate data import/export. The most im
 
 Once you have created (or reverse-engineered) your `schema.xml` file, you can run the `datadump` task to dump data from the database into a `data.xml` file.
 
-{% highlight bash %}
+```bash
 > propel-gen datadump
-{% endhighlight %}
+```
 
 The task transfers database records to XML using a simple format, where each row is an element, and each column is an attribute. So for instance, the XML representation of a row in a `publisher` table:
 
@@ -98,20 +98,20 @@ The task transfers database records to XML using a simple format, where each row
 
 ... is rendered in the `data.xml` as follows:
 
-{% highlight xml %}
+```xml
 <dataset name="all">
  ...
   <Publisher PublisherId="1" Name="William Morrow"/>
  ...
 </dataset>
-{% endhighlight %}
+```
 
 ### Creating SQL from XML ###
 
 To create the SQL files from the XML, run the `datasql` task:
 
-{% highlight bash %}
+```bash
 > propel-gen datasql
-{% endhighlight %}
+```
 
 The generated SQL is placed in the `build/sql/` directory and will be inserted when you run the `insert-sql` task.

@@ -11,13 +11,13 @@ Propel's Query classes make it easy to write queries of any level of complexity 
 
 Propel proposes an object-oriented API for writing database queries. That means that you don't need to write any SQL code to interact with the database. Object orientation also facilitates code reuse and readability. Here is how to query the database for records in the `book` table ordered by the `title` column and published in the last month:
 
-{% highlight php %}
+```php
 <?php
 $books = BookQuery::create()
   ->filterByPublishedAt(array('min' => time() - 30 * 24 * 60 * 60))
   ->orderByTitle()
   ->find();
-{% endhighlight %}
+```
 
 The first thing to notice here is the fluid interface. Propel queries are made of method calls that return the current query object - `filterByPublishedAt()` and `orderByTitle()` return the current query augmented with conditions. `find()`, on the other hand, is a ''termination method'' that doesn't return the query, but its result - in this case, a collection of `Book` objects.
 
@@ -25,32 +25,32 @@ Propel generates one `filterByXXX()` method for every column in the table. The c
 
 When a termination method like `find()` is called, Propel builds the SQL code and executes it. The previous example generates the following code when `find()` is called:
 
-{% highlight php %}
+```php
 <?php
 // example Query generated for a MySQL database
 $query = 'SELECT book.* from `book`
 WHERE book.PUBLISHED_AT >= :p1
 ORDER BY book.TITLE ASC';
-{% endhighlight %}
+```
 
 Propel uses the column name in conjunction with the schema to determine the column type. In this case, `published_at` is defined in the schema as a `TIMESTAMP`. Then, Propel ''binds'' the value to the condition using the column type. This prevents SQL injection attacks that often plague web applications. Behind the curtain, Propel uses PDO to achieve this binding:
 
-{% highlight php %}
+```php
 <?php
 // $con is a PDO instance
 $stmt = $con->prepare($query);
 $stmt->bind(':p1', time() - 30 * 24 * 60 * 60, PDO::PARAM_INT);
 $res = $stmt->execute();
-{% endhighlight %}
+```
 
 The final `find()` doesn't just execute the SQL query above, it also instantiates `Book` objects and populates them with the results of the query. Eventually, it returns a `PropelCollection` object with these `Book` objects inside. For the sake of clarity, you can consider this collection object as an array. In fact, you can use it as if it were a true PHP array and iterate over the result list the usual way:
 
-{% highlight php %}
+```php
 <?php
 foreach ($books as $book) {
   echo $book->getTitle();
 }
-{% endhighlight %}
+```
 
 So Propel queries are a very powerful tool to write your queries in an object-oriented fashion. They are also very natural - if you know how to write an SQL query, chances are that you will write Propel queries in minutes.
 
@@ -64,7 +64,7 @@ For each object, Propel creates a few methods in the generated query object.
 
 * For all columns, `filterByXXX()` translates to a simple SQL `WHERE` condition by default:
 
-{% highlight php %}
+```php
 <?php
 $books = BookQuery::create()
   ->filterByTitle('War And Peace')
@@ -72,11 +72,11 @@ $books = BookQuery::create()
 // example Query generated for a MySQL database
 $query = 'SELECT book.* from `book`
 WHERE book.TITLE = :p1'; // :p1 => 'War And Peace'
-{% endhighlight %}
+```
 
 * For string columns, `filterByXXX()` translates to a SQL `WHERE ... LIKE` if the value contains wildcards:
 
-{% highlight php %}
+```php
 <?php
 $books = BookQuery::create()
   ->filterByTitle('War%')
@@ -84,11 +84,11 @@ $books = BookQuery::create()
 // example Query generated for a MySQL database
 $query = 'SELECT book.* from `book`
 WHERE book.TITLE LIKE :p1'; // :p1 => 'War%'
-{% endhighlight %}
+```
 
 * For numeric and temporal columns, `filterByXXX()` translates into an interval condition if the value is an associative array using 'min' and/or 'max' as keys:
 
-{% highlight php %}
+```php
 <?php
 $books = BookQuery::create()
   ->filterById(array('min' => 123, 'max' => 456))
@@ -96,11 +96,11 @@ $books = BookQuery::create()
 // example Query generated for a MySQL database
 $query = 'SELECT book.* from `book`
 WHERE book.ID >= :p1 AND book.ID <= :p2)'; // :p1 => 123, :p2 => 456
-{% endhighlight %}
+```
 
  * For integer columns, `filterByXXX()` translates into a SQL `WHERE ... IN` if the value is an array:
 
-{% highlight php %}
+```php
 <?php
 $books = BookQuery::create()
   ->filterByAuthorId(array(123, 456))
@@ -108,11 +108,11 @@ $books = BookQuery::create()
 // example Query generated for a MySQL database
 $query = 'SELECT book.* from `book`
 WHERE book.AUTHOR_ID IN (:p1, :p2)'; // :p1 => 123, :p2 => 456
-{% endhighlight %}
+```
 
  * For Boolean columns, `filterByXXX()` translates the value to a boolean using smart casting:
 
-{% highlight php %}
+```php
 <?php
 $books = BookQuery::create()
   ->filterByIsPublished('yes') // 'yes', 'on', 'true', true, and 1 all translate to boolean true
@@ -122,11 +122,11 @@ $books = BookQuery::create()
 $query = 'SELECT book.* from `book`
 WHERE book.IS_PUBLISHED = :p1
   AND book.IS_SOLD_OUT = :p2'; // :p1 => true, :p2 => false
-{% endhighlight %}
+```
 
  * for Temporal columns, `filterByXXX()` accepts a string, a timestamp, or a DateTime value:
 
-{% highlight php %}
+```php
 <?php
 $books = BookQuery::create()
   ->filterByPublishedAt(array('max' => time())
@@ -134,11 +134,11 @@ $books = BookQuery::create()
 // example Query generated for a MySQL database
 $query = 'SELECT book.* from `book`
 WHERE book.PUBLISHED_AT < :p1; // :p1 => 1291065396
-{% endhighlight %}
+```
 
  * for ENUM columns, `filterByXXX()` accepts one of the values defined in the `valueSet` attribute in the schema.
 
-{% highlight php %}
+```php
 <?php
 // Example for the book table:
 // <column name="style" type="ENUM" valueSet="novel, essay, poetry" />
@@ -148,11 +148,11 @@ $books = BookQuery::create()
 // example Query generated for a MySQL database
 $query = 'SELECT book.* from `book`
 WHERE book.STYLE = :p1; // :p1 => 0
-{% endhighlight %}
+```
 
  * for Object columns, `filterByXXX()` accepts a PHP object
 
-{% highlight php %}
+```php
 <?php
 $houses = HouseQuery::create()
   ->filterByCoordinates(new GeographicCoordinates(48.8527, 2.3510))
@@ -160,11 +160,11 @@ $houses = HouseQuery::create()
 // example Query generated for a MySQL database
 $query = 'SELECT house.* from `house`
 WHERE house.COORDINATES = :p1'; // :p1 => 'O:21:"GeographicCoordinates":2:{s:8:"latitude";d:48.8527;s:9:"longitude";d:2.3510;}'
-{% endhighlight %}
+```
 
  * for Array columns, Propel stores a serialized version of the array that makes it searchable. Therefore, `filterByXXX()` accepts a PHP array. Use any of `Criteria::CONTAINS_ALL`, `Criteria::CONTAINS_SOME`, or `Criteria::CONTAINS_NONE` as second argument to the filter method.
 
-{% highlight php %}
+```php
 <?php
 $books = BookQuery::create()
   ->filterByTags(array('novel', 'russian'), Criteria::CONTAINS_ALL)
@@ -191,7 +191,7 @@ $books = BookQuery::create()
 // example Query generated for a MySQL database
 $query = 'SELECT book.* from `book`
 WHERE book.TAGS LIKE :p1'; // :p1 => '%| russian |%'
-{% endhighlight %}
+```
 
 >**Tip**<br />Filters on array columns translate to SQL as LIKE conditions. That means that the resulting query often requires an expensive table scan, and is not suited for large tables.
 
@@ -199,7 +199,7 @@ WHERE book.TAGS LIKE :p1'; // :p1 => '%| russian |%'
 
 Propel also generates a `filterByXXX()` method for every foreign key. The filter expects an object of the related class as parameter:
 
-{% highlight php %}
+```php
 <?php
 $author = AuthorQuery::create()->findPk(123);
 $books = BookQuery::create()
@@ -208,7 +208,7 @@ $books = BookQuery::create()
 // example Query generated for a MySQL database
 $query = 'SELECT book.* from `book`
 WHERE book.AUTHOR_ID = :p1'; // :p1 => 123
-{% endhighlight %}
+```
 
 Check the generated BaseQuery classes for a complete view of the generated query methods. Every generated method comes with a detailed phpDoc comment, making code completion very easy on supported IDEs.
 
@@ -216,30 +216,30 @@ Check the generated BaseQuery classes for a complete view of the generated query
 
 In order to add conditions on related tables, a propel query can ''embed'' the query of the related table. The generated `useXXXQuery()` serve that purpose. For instance, here is how to query the database for books written by 'Leo Tolstoi':
 
-{% highlight php %}
+```php
 <?php
 $books = BookQuery::create()
   ->useAuthorQuery()
     ->filterByName('Leo Tolstoi')
   ->endUse()
   ->find();
-{% endhighlight %}
+```
 
 `useAuthorQuery()` returns a new instance of `AuthorQuery` already joined with the current `BookQuery` instance. The next method is therefore called on a different object - that's why the `filterByName()` call is further indented in the code example. Finally, `endUse()` merges the conditions applied on the `AuthorQuery` to the `BookQuery`, and returns the original `BookQuery` object.
 
 Propel knows how to join the `Book` model to the `Author` model, since you already defined a foreign key between the two tables in the `schema.xml`. Propel takes advantage of this knowledge of your model relationships to help you write faster queries and omit the most obvious data.
 
-{% highlight php %}
+```php
 <?php
 // example Query generated for a MySQL database
 $query = 'SELECT book.* from book
 INNER JOIN author ON book.AUTHOR_ID = author.ID
 WHERE author.NAME = :p1'; // :p1 => 'Leo Tolstoi'
-{% endhighlight %}
+```
 
 You can customize the related table alias and the join type by passing arguments to the `useXXXQuery()` method:
 
-{% highlight php %}
+```php
 <?php
 $books = BookQuery::create()
   ->useAuthorQuery('a', 'left join')
@@ -250,7 +250,7 @@ $books = BookQuery::create()
 $query = 'SELECT book.* from book
 LEFT JOIN author a ON book.AUTHOR_ID = a.ID
 WHERE a.NAME = :p1'; // :p1 => 'Leo Tolstoi'
-{% endhighlight %}
+```
 
 The `useXXXQuery()` methods allow for very complex queries. You can mix them, nest them, and reopen them to add more conditions.
 
@@ -260,7 +260,7 @@ The generated Query classes extend a core Propel class named `ModelCriteria`, wh
 
 ### Finding An Object From Its Primary Key ###
 
-{% highlight php %}
+```php
 <?php
 // Finding the book having primary key 123
 $book = BookQuery::create()->findPk(123);
@@ -268,11 +268,11 @@ $book = BookQuery::create()->findPk(123);
 $books = BookQuery::create()->findPks(array(123, 456));
 // Also works for objects with composite primary keys
 $bookOpinion = BookOpinionQuery::create()->findPk(array($bookId, $userId));
-{% endhighlight %}
+```
 
 ### Finding Objects ###
 
-{% highlight php %}
+```php
 <?php
 // Finding all Books
 $articles = BookQuery::create()
@@ -284,11 +284,11 @@ $articles = BookQuery::create()
 // Finding a single Book
 $article = BookQuery::create()
   ->findOne();
-{% endhighlight %}
+```
 
 ### Using Magic Query Methods ###
 
-{% highlight php %}
+```php
 <?php
 // The query recognizes method calls composed of `findOneBy` or `findBy`, and a column name.
 $book = BookQuery::create()->findOneByTitle('War And Peace');
@@ -310,11 +310,11 @@ $book = BookQuery::create()
   ->filterByTitle('War And Peace')
   ->filterById(123)
   ->findOne();
-{% endhighlight %}
+```
 
 ### Ordering Results ###
 
-{% highlight php %}
+```php
 <?php
 // Finding all Books ordered by published_at (ascending order by default)
 $books = BookQuery::create()
@@ -324,35 +324,35 @@ $books = BookQuery::create()
 $books = BookQuery::create()
   ->orderByPublishedAt('desc')
   ->find();
-{% endhighlight %}
+```
 
 ### Specifying A Connection ###
 
-{% highlight php %}
+```php
 <?php
 // All the termination methods accept a Connection object
 // So you can specify which connection to use
 $con = Propel::getReadConnection(BookTableMap::DATABASE_NAME);
 $nbBooks = BookQuery::create()
   ->findOne($con);
-{% endhighlight %}
+```
 
 >**Tip**<br />In debug mode, the connection object provides a way to check the latest executed query, by calling `$con->getLastExecutedQuery()`. See the [Logging documentation](../documentation/08-logging.html) for more details.
 
 ### Counting Objects ###
 
-{% highlight php %}
+```php
 <?php
 // Counting all Books
 $nbBooks = BookQuery::create()
   ->count($con);
 // This is much faster than counting the results of a find()
 // since count() doesn't populate Model objects
-{% endhighlight %}
+```
 
 ### Deleting Objects ###
 
-{% highlight php %}
+```php
 <?php
 // Deleting all Books
 $nbDeletedBooks = BookQuery::create()
@@ -361,11 +361,11 @@ $nbDeletedBooks = BookQuery::create()
 $nbDeletedBooks = BookQuery::create()
   ->filterByTitle('Pride And Prejudice')
   ->delete($con);
-{% endhighlight %}
+```
 
 ### Updating Objects ###
 
-{% highlight php %}
+```php
 <?php
 // Test data
 $author1 = new Author();
@@ -390,11 +390,11 @@ $nbUpdatedRows = AuthorQuery::create()
   ->filterByName('Leo Tolstoy')
   ->update(array('Name' => 'Leo Tolstoi'), $con, true);
 // Beware that it may take a long time
-{% endhighlight %}
+```
 
 ### Getting Columns Instead Of Objects ###
 
-{% highlight php %}
+```php
 <?php
 // When you only need a few columns, it is faster to skip object hydration
 // In such cases, call select() before find()
@@ -449,13 +449,13 @@ $articles = ArticleQuery::create()
 //   array('Id' => 123, 'Title' => 'foo', 'Content' => 'This is foo'),
 //   array('Id' => 456, 'Title' => 'bar', 'Content' => 'This is bar')
 // )
-{% endhighlight %}
+```
 
 ### Creating An Object Based on a Query ###
 
 You may often create a new object based on values used in conditions if a query returns no result. This happens a lot when dealing with cross-reference tables in many-to-many relationships. To avoid repeating yourself, use `findOneOrCreate()` instead of `findOne()` in such cases:
 
-{% highlight php %}
+```php
 <?php
 // The long way
 $bookTag = BookTagQuery::create()
@@ -472,13 +472,13 @@ $bookTag = BookTagQuery::create()
   ->filterByBook($book)
   ->filterByTag('crime')
   ->findOneOrCreate();
-{% endhighlight %}
+```
 
 ### Reusing A Query ###
 
 By default, termination methods like `findOne()`, `find()`, `count()`, `paginate()`, or `delete()` clone the original query. That means that you can reuse a query after a termination method:
 
-{% highlight php %}
+```php
 <?php
 $q = BookQuery::create()->filterByIsPublished(true);
 $book = $q->findOneByTitle('War And Peace');
@@ -491,7 +491,7 @@ echo $q->count(); // 34
 $q = BookQuery::create()->filterByIsPublished(true)->keepQuery(false);
 $book = $q->findOneByTitle('War And Peace');
 echo $q->count(); // 1
-{% endhighlight %}
+```
 
 ## Relational API ##
 
@@ -499,7 +499,7 @@ For more complex queries, you can use an alternative set of methods, closer to t
 
 This alternative API uses methods like `where()`, `join()` and `orderBy()` that translate directly to their SQL equivalent - `WHERE`, `JOIN`, etc. Here is an example:
 
-{% highlight php %}
+```php
 <?php
 $books = BookQuery::create()
   ->join('Book.Author')
@@ -507,19 +507,19 @@ $books = BookQuery::create()
   ->orderBy('Book.Title', 'asc')
   ->find();
 
-{% endhighlight %}
+```
 
 The names passed as parameters in these methods, like 'Book.Author', 'Author.Name', and 'Book.Title', are ''explicit column names''. These names are composed of the phpName of the model, and the phpName of the column, separated by a dot (e.g. 'Author.Name'). Manipulating object model names allows you to be detached from the actual data storage, and alter the database names without necessarily updating the PHP code. It also makes the use of table aliases much easier - more on that matter later.
 
 Propel knows how to map the explicit column names to database column names in order to translate the Propel query into an actual database query:
 
-{% highlight php %}
+```php
 <?php
 $query = 'SELECT book.* from book
 INNER JOIN author ON book.AUTHOR_ID = author.ID
 WHERE author.NAME = :p1
 ORDER BY book.TITLE ASC';
-{% endhighlight %}
+```
 
 In a `where()` call, the condition appears as a string. `'Author.Name = ?'` is such a condition. Propel uses the column name in conjunction with the schema to determine the column type. In this case, `author.name` is defined in the schema as a `VARCHAR`. Then, Propel binds the value to the condition using PDO and the correct column type, as when using a `filterByXXX()` method.
 
@@ -529,7 +529,7 @@ Let's dive in the alternative API.
 
 ### Adding A Simple Condition ###
 
-{% highlight php %}
+```php
 <?php
 // Finding all Books where title = 'War And Peace'
 $books = BookQuery::create()
@@ -559,13 +559,13 @@ $books = BookQuery::create()
 $books = BookQuery::create()
   ->where("LOCATE('War', Book.Title) = ?", true, PDO::PARAM_BOOL)
   ->find();
-{% endhighlight %}
+```
 
 ### Combining Several Conditions ###
 
 For speed reasons, `where()` only accepts simple conditions, with a single interrogation point for the value replacement. When you need to apply more than one condition, and combine them with a logical operator, you have to call `where()` multiple times.
 
-{% highlight php %}
+```php
 <?php
 // Finding all books where title = 'War And Peace' and published after $date
 $books = BookQuery::create()
@@ -578,11 +578,11 @@ $books = BookQuery::create()
   ->_or()
   ->where('Book.Title LIKE ?', 'War%')
   ->find();
-{% endhighlight %}
+```
 
 `_or()` can only combine one condition, therefore it's not suitable for logically complex conditions, that you would write in SQL with parenthesis. In such cases, you must create named conditions with `condition()`, and then combine them in an array that you can pass to `where()` instead of a single condition, as follows:
 
-{% highlight php %}
+```php
 <?php
 // Finding all books where title = 'War And Peace' or like 'War%'
 $books = BookQuery::create()
@@ -608,11 +608,11 @@ $books = BookQuery::create()
   //  AND
   //  (book.PUBLISHED_AT <= $end AND book.PUBLISHED_AT >= $begin)
   // );
-{% endhighlight %}
+```
 
 >**Tip**<br />`_or()` also works for embedded queries, called before a `useXXXQuery()`:
 
-{% highlight php %}
+```php
 <?php
 $books = BookQuery::create()
   ->filterByTitle('War and Peace')
@@ -627,11 +627,11 @@ $query = 'SELECT book.* from book
 INNER JOIN author ON book.AUTHOR_ID = author.ID
 WHERE book.TITLE = :p1'   // :p1 => 'War and Peace'
    OR author.NAME = :p2'; // :p2 => 'Leo Tolstoi'
-{% endhighlight %}
+```
 
 ### Joining Tables ###
 
-{% highlight php %}
+```php
 <?php
 // Test data
 $author1 = new Book();
@@ -694,11 +694,11 @@ $book = BookQuery::create()
   // SELECT book.* FROM book
   // INNER JOIN author ON (book.AUTHOR_ID = author.ID AND author.LAST_NAME <> 'Austen')
   // LIMIT 1;
-{% endhighlight %}
+```
 
 ### Table Aliases ###
 
-{% highlight php %}
+```php
 <?php
 // The first argument of BookQuery::create() defines a table alias
 $books = BookQuery::create('b')
@@ -724,24 +724,24 @@ $employee = EmployeeQuery::create('e')
   ->innerJoin('e.Supervisor s')
   ->where('s.Name = ?', 'John')
   ->find();
-{% endhighlight %}
+```
 
 ### Minimizing Queries ###
 
 Even if you do a join, Propel will issue new queries when you fetch related objects:
 
-{% highlight php %}
+```php
 <?php
 $book = BookQuery::create()
   ->join('Book.Author')
   ->where('Author.Name = ?', 'Jane Austen')
   ->findOne();
 $author = $book->getAuthor();  // Needs another database query
-{% endhighlight %}
+```
 
 Propel allows you to retrieve the main object together with related objects in a single query. You just have to call the `with()` method to specify which objects the main object should be hydrated with.
 
-{% highlight php %}
+```php
 <?php
 $book = BookQuery::create()
   ->join('Book.Author')
@@ -749,24 +749,24 @@ $book = BookQuery::create()
   ->where('Author.Name = ?', 'Jane Austen')
   ->findOne();
 $author = $book->getAuthor();  // Same result, with no supplementary query
-{% endhighlight %}
+```
 
 `with()` expects a relation name, as declared previously by `join()`. In practice, that means that `with()` and `join()` should always come one after the other. To avoid repetition, use `joinWith()` to both add a `join()` and a `with()` on a relation. So the shorter way to write the previous query is:
 
-{% highlight php %}
+```php
 <?php
 $book = BookQuery::create()
   ->joinWith('Book.Author')
   ->where('Author.Name = ?', 'Jane Austen')
   ->findOne();
 $author = $book->getAuthor();  // Same result, with no supplementary query
-{% endhighlight %}
+```
 
 Since the call to `with()` adds the columns of the related object to the SELECT part of the query, and uses these columns to populate the related object, that means that `joinWith()` is slower and consumes more memory that `join()`. So use it only when you actually need the related objects afterwards.
 
 `with()` and `joinWith()` are not limited to immediate relationships. As a matter of fact, just like you can chain `join()` calls, you can chain `joinWith()` calls to populate a chain of objects:
 
-{% highlight php %}
+```php
 <?php
 $review = ReviewQuery::create()
   ->joinWith('Review.Book')
@@ -776,7 +776,7 @@ $review = ReviewQuery::create()
 $book = $review->getBook()          // No additional query needed
 $author = $book->getAuthor();       // No additional query needed
 $publisher = $book->getPublisher(); // No additional query needed
-{% endhighlight %}
+```
 
 So `joinWith()` is very useful to minimize the number of database queries. As soon as you see that the number of queries necessary to perform an action is proportional to the number of results, adding `With` after `join()` calls is the trick to get down to a more reasonable query count.
 
@@ -784,14 +784,14 @@ So `joinWith()` is very useful to minimize the number of database queries. As so
 
 Sometimes you don't need to hydrate a full object in addition to the main object. If you only need one additional column, the `withColumn()` method is a good alternative to `joinWith()`, and it speeds up the query:
 
-{% highlight php %}
+```php
 <?php
 $book = BookQuery::create()
   ->join('Book.Author')
   ->withColumn('Author.Name', 'AuthorName')
   ->findOne();
 $authorName = $book->getAuthorName();
-{% endhighlight %}
+```
 
 Propel adds the 'with' column to the SELECT clause of the query, and uses the second argument of the `withColumn()` call as a column alias. This additional column is later available as a 'virtual' column, i.e. using a getter that does not correspond to a real column. You don't actually need to write the `getAuthorName()` method ; Propel uses the magic `__call()` method of the generated `Book` class to catch the call to a virtual column.
 
@@ -799,7 +799,7 @@ Propel adds the 'with' column to the SELECT clause of the query, and uses the se
 
 `withColumn()` is also of great use to add calculated columns, using aggregate functions and a GROUP BY statement:
 
-{% highlight php %}
+```php
 <?php
 $authors = AuthorQuery::create()
   ->join('Author.Book')
@@ -809,24 +809,24 @@ $authors = AuthorQuery::create()
 foreach ($authors as $author) {
 	echo $author->getName() . ': ' . $author->getNbBooks() . " books\n";
 }
-{% endhighlight %}
+```
 
 With a single SQL query, you can have both a list of objects and an additional column for each object. That makes of `withColumn()` a great query saver.
 
 >**Tip**<br />Users of PostgreSQL will need to use the alternative method `groupByClass($class)` to force the grouping on all the columns of a given model whenever they use an aggregate function:
 
-{% highlight php %}
+```php
 <?php
 $authors = AuthorQuery::create()
   ->join('Author.Book')
   ->withColumn('COUNT(Book.Id)', 'NbBooks')
   ->groupByClass('Author')
   ->find();
-{% endhighlight %}
+```
 
 ### Adding A Comment ###
 
-{% highlight php %}
+```php
 <?php
 // You can add a comment to the query object
 // For easier SQL log parsing
@@ -836,26 +836,26 @@ AuthorQuery::create()
   ->delete($con);
 // The comment ends up in the generated SQL query
 // DELETE /* Author Deletion */ FROM `author` WHERE author.NAME = 'Leo Tolstoy'
-{% endhighlight %}
+```
 
 ### Using Methods From Another Query Class ###
 
 After writing custom methods to query objects, developers often meet the need to use the method from another query. For instance, in order to select the authors of the most recent books, you may want to write:
 
-{% highlight php %}
+```php
 <?php
 // This doesn't work
 $authors = AuthorQuery::create()
   ->join('Author.Book')
   ->recent()
   ->find();
-{% endhighlight %}
+```
 
 The problem is that `recent()` is a method of `BookQuery`, not of the `AuthorQuery` class that the `create()` factory returns.
 
 Does that mean that you must repeat the `BookQuery::recent()` code into a new `AuthorQuery::recentBooks()` method? That would imply repeating the same code in two classes, which is not a good practice. Instead, use the `useQuery()` and `endUse()` combination to use the methods of `BookQuery` inside `AuthorQuery`:
 
-{% highlight php %}
+```php
 <?php
 // This works
 $authors = AuthorQuery::create()
@@ -864,7 +864,7 @@ $authors = AuthorQuery::create()
     ->recent()
   ->endUse()
   ->find();
-{% endhighlight %}
+```
 
 This is exactly what the generated `useBookQuery()` does, except that you have more control over the join type and alias when you use the relational API. Behind the scene, `useQuery('Book')` creates a `BookQuery` instance and returns it. So the `recent()` call is actually called on `BookQuery`, not on `ArticleQuery`. Upon calling `endUse()`, the `BookQuery` merges into the original `ArticleQuery` and returns it. So the final `find()` is indeed called on the `AuthorQuery` instance.
 
@@ -872,7 +872,7 @@ You can nest queries in as many levels as you like, in order to avoid the repeti
 
 >**Tip**<br />If you define an alias for the relation in `join()`, you must pass this alias instead of the model name in `useQuery()`.
 
-{% highlight php %}
+```php
 <?php
 $authors = AuthorQuery::create('a')
   ->join('a.Book b')
@@ -880,21 +880,21 @@ $authors = AuthorQuery::create('a')
     ->recent()
   ->endUse()
   ->find();
-{% endhighlight %}
+```
 
 ### Using A Query As Input For A Second Query (Table Subqueries) ###
 
 SQL supports table subqueries (a.k.a "inline view" in Oracle) to solve complex cases that a single query can't solve, or to optimize slow queries with several joins. For instance, to find the latest book written by every author in SQL, it usually takes a query like the following:
 
-{% highlight sql %}
+```sql
 SELECT book.ID, book.TITLE, book.AUTHOR_ID, book.PRICE, book.CREATED_AT, MAX(book.CREATED_AT)
 FROM book
 GROUP BY book.AUTHOR_ID
-{% endhighlight %}
+```
 
 Now if you want only the cheapest latest books with a single query, you need a subquery:
 
-{% highlight sql %}
+```sql
 SELECT lastBook.ID, lastBook.TITLE, lastBook.AUTHOR_ID, lastBook.PRICE, lastBook.CREATED_AT
 FROM
 (
@@ -903,11 +903,11 @@ FROM
   GROUP BY book.AUTHOR_ID
 ) AS lastBook
 WHERE lastBook.PRICE < 20
-{% endhighlight %}
+```
 
 To achieve this query using Propel, call `addSelectQuery()` to use a first query as the source for the SELECT part of a second query:
 
-{% highlight php %}
+```php
 <?php
 
 $latestBooks = BookQuery::create()
@@ -917,7 +917,7 @@ $latestCheapBooks = BookQuery::create()
   ->addSelectQuery($latestBooks, 'lastBook')
   ->where('lastBook.Price < ?', 20)
   ->find();
-{% endhighlight %}
+```
 
 You could use two queries or a WHERE IN to achieve the same result, but it wouldn't be as effective.
 
@@ -927,7 +927,7 @@ Thanks to the query factories and the fluid interface, developers can query the 
 
 But when you need to call a method on a Query object only if a certain condition is satisfied, it becomes compulsory to use a variable for the Query object:
 
-{% highlight php %}
+```php
 <?php
 // find all the published books, except if the user is an editor,
 // in which case also include non-published books
@@ -938,11 +938,11 @@ if (!$user->isEditor()) {
 $books = $query
   ->orderByTitle()
   ->find();
-{% endhighlight %}
+```
 
 The `ModelCriteria` class offers a neat way to keep your code to a minimum in such occasions. It provides `_if()` and `_endif()` methods allowing for inline conditions. Using theses methods, the previous query can be written as follows:
 
-{% highlight php %}
+```php
 <?php
 // find all the published books, except if the user is an editor
 $books = BookQuery::create()
@@ -951,7 +951,7 @@ $books = BookQuery::create()
   ->_endif()
   ->orderByTitle()
   ->find();
-{% endhighlight %}
+```
 
 The method calls enclosed between `_if($cond)` and `_endif()` will only be executed if the condition is true. To complete the list of tools available for fluid conditions, you can also use `_else()` and `_elseif($cond)`.
 
@@ -959,7 +959,7 @@ The method calls enclosed between `_if($cond)` and `_endif()` will only be execu
 
 The Propel Query objects have even more methods that allow you to write queries of any level of complexity. Check the API documentation for the `ModelCriteria` class to see all methods.
 
-{% highlight php %}
+```php
 <?php
 // Query Filters (return a query object)
 distinct()
@@ -998,13 +998,13 @@ findPk($pk, $con = null)
 findPks($pks, $con = null)
 delete($con = null)
 update($values, $con = null, $forceIndividualSaves = false)
-{% endhighlight %}
+```
 
 ## Collections, Pager, and Formatters ##
 
 ### PropelCollection Methods ###
 
-{% highlight php %}
+```php
 <?php
 // find() returns a PropelCollection, which you can use just like an array
 $books = BookQuery::create()->find(); // $books behaves like an array
@@ -1039,11 +1039,11 @@ There are <?php echo $books->count() ?> books:
   <?php endforeach; ?>
 </ul>
 <?php endif; ?>
-{% endhighlight %}
+```
 
 Here is the list of methods you can call on a PropelCollection:
 
-{% highlight php %}
+```php
 <?php
 // introspection methods
 array getData()  // return a copy of the result array
@@ -1089,13 +1089,13 @@ void toXML($xml) // imports a collection from an XML string
 void toYAML($yaml) // imports a collection from a YAML string
 void toJSON($json) // imports a collection from a JSON string
 void toCSV($csv) // imports a collection from a CSV string
-{% endhighlight %}
+```
 
 >**Tip**<br />`PropelCollection` extends `ArrayObject`, so you can also call all the methods of this SPL class on a collection (including `count()`, `append()`, `ksort()`, etc.).
 
 ### Paginating Results ###
 
-{% highlight php %}
+```php
 <?php
 // use paginate() instead of find() as termination method to paginate results
 $bookPager = BookQuery::create()
@@ -1127,24 +1127,24 @@ There are <?php echo $bookPager->count() ?> books:
   	on a total of <?php echo $bookPager->getNbResults() ?>
 	</p>
 <?php endif; ?>
-{% endhighlight %}
+```
 
 ### Using An Alternative Formatter ###
 
 By default, `find()` calls return a `PropelObjectCollection` of model objects. For performance reasons, you may want to get a collection of arrays instead. Use the `setFormatter()` to specify a custom result formatter.
 
-{% highlight php %}
+```php
 <?php
 $book = BookQuery::create()
   ->setFormatter('PropelArrayFormatter')
   ->findOne();
 print_r($book);
   => array('Id' => 123, 'Title' => 'War And Peace', 'ISBN' => '3245234535', 'AuthorId' => 456, 'PublisherId' => 567)
-{% endhighlight %}
+```
 
 Of course, the formatters take the calls to `with()` into account, so you can end up with a precise array representation of a model object:
 
-{% highlight php %}
+```php
 <?php
 $book = BookQuery::create()
   ->setFormatter('PropelArrayFormatter')
@@ -1168,7 +1168,7 @@ print_r($book);
          'Name'        => 'Penguin'
        )
      )
-{% endhighlight %}
+```
 
 Propel provides four formatters:
 
@@ -1186,7 +1186,7 @@ You can easily write your own formatter to format the results the way you want. 
 
 You can add custom methods to the query objects to make your queries smarter, more reusable, and more readable. Don't forget to return the current object (`$this`) in the new methods.
 
-{% highlight php %}
+```php
 <?php
 class BookQuery extends BaseBookQuery
 {
@@ -1206,13 +1206,13 @@ $books = BookQuery::create()
   ->recent()
   ->mostRecentFirst()
   ->find();
-{% endhighlight %}
+```
 
 ### Custom Hooks ###
 
 The query objects also allow you to add code to be executed before each query, by implementing one of the following methods: `preSelect()`, `preUpdate()`, and `preDelete()`. It makes the implementation of a 'soft delete' behavior very straightforward:
 
-{% highlight php %}
+```php
 <?php
 class BookQuery extends BaseBookQuery
 {
@@ -1228,11 +1228,11 @@ class BookQuery extends BaseBookQuery
 		return $this->update(array('DeletedAt' => time()));
 	}
 }
-{% endhighlight %}
+```
 
 >**Tip**<br />You can create several custom queries for a given model, in order to separate the methods into logical classes.
 
-{% highlight php %}
+```php
 <?php
 class frontendBookQuery extends BookQuery
 {
@@ -1244,12 +1244,12 @@ class frontendBookQuery extends BookQuery
 // Use 'frontendBook' instead of 'Book' in the frontend to retrieve only published articles
 $q = new frontendBookQuery();
 $books = $q->find();
-{% endhighlight %}
+```
 
 >**Tip**<br />Due to late static binding issues in PHP 5.2, you cannot use the `create()` factory on an inherited query - unless you override it yourself in the descendant class. Alternatively, Propel offers a global query factory named `PropelQuery`:
 
-{% highlight php %}
+```php
 <?php
 // Use 'frontendBook' instead of 'Book' in the frontend to retrieve only published articles
 $books = PropelQuery::from('frontendBook')->find();
-{% endhighlight %}
+```
