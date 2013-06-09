@@ -5,7 +5,12 @@ title: Inheritance
 
 # Inheritance #
 
-Developers often need one model table to extend another model table. Inheritance being an object-oriented notion, it doesn't have a true equivalent in the database world, so this is something an ORM must emulate. Propel offers three types of table inheritance: [Single Table Inheritance](http://www.martinfowler.com/eaaCatalog/singleTableInheritance.html), which is the most efficient implementations from a SQL and query performance perspective, but is limited to a small number of inherited fields ; [Class Table Inheritance](http://martinfowler.com/eaaCatalog/classTableInheritance.html), which separates data into several tables and uses joins to fetch complete children entities, and [Concrete Table Inheritance](http://www.martinfowler.com/eaaCatalog/concreteTableInheritance.html), which provides the most features but adds a small overhead on write queries.
+Developers often need one model table to extend another model table. Inheritance being an object-oriented notion, it doesn't have a true equivalent in the database world, so this is something an ORM must emulate. Propel offers three types of table inheritance:
+
+* [Single Table Inheritance](http://www.martinfowler.com/eaaCatalog/singleTableInheritance.html), which is the most efficient implementations from a SQL and query performance perspective, but is limited to a small number of inherited fields
+* [Class Table Inheritance](http://martinfowler.com/eaaCatalog/classTableInheritance.html), which separates data into several tables and uses joins to fetch complete children entities
+* [Concrete Table Inheritance](http://www.martinfowler.com/eaaCatalog/concreteTableInheritance.html), which provides the most features but adds a small overhead on write queries.
+
 
 ## Single Table Inheritance ##
 

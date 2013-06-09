@@ -6,7 +6,7 @@ title: Behaviors
 
 # Behaviors #
 
-Behaviors are a great way to package model extensions for reusability. They are the powerful, versatile, fast, and help you organize your code in a better way.
+Behaviors are a great way to package model extensions for reusability. They are powerful, versatile, fast, and help you organize your code in a better way.
 
 ## Pre and Post Hooks For `save()` And `delete()` Methods ##
 
@@ -61,7 +61,7 @@ echo $b->getCreatedAt(); // 2009-10-02 18:14:23
 
 _Warning_: If you implement `preInsert()`, `preUpdate()`, `preSave()` or `preDelete()`, these methods **must return a boolean value**. Any return value other than `true` stops the action (save or delete). This is a neat way to bypass persistence on some cases, but can also create unexpected problems if you forget to return `true`.
 
->**Tip**<br />Since this feature adds a small overhead to write operations, you can deactivate it completely in your build properties by setting `propel.addHooks` to `false`.
+>**Tip**<br />Since this feature adds a small overhead to write operations, you can disable it completely in your build properties by setting `propel.addHooks` to `false`.
 
 ```ini
 # -------------------
@@ -231,7 +231,7 @@ propel.behavior.default = archivable, timestampable
 
 ## Writing a Behavior ##
 
-Check the behaviors bundled with Propel to see how to implement your own behavior: they are the best starting point to understanding the power of behaviors and builders.
+Check [the behaviors bundled with Propel](https://github.com/propelorm/Propel2/tree/master/src/Propel/Generator/Behavior) to see how to implement your own behavior: they are the best starting point to understanding the power of behaviors and builders.
 
 ### Modifying the Data Model ###
 

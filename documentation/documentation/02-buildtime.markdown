@@ -17,7 +17,7 @@ To illustrate Propel's build abilities, this chapter uses the data structure of 
 
 Propel generates PHP classes based on a _relational_ description of your data model. This "schema" uses XML to describe tables, columns and relationships. The schema syntax closely follows the actual structure of the database.
 
-Create a `bookstore` directory. This will be the root of the bookstore project.
+Create a `bookstore` directory then setup Propel into it as covered in the previous chapter. This will be the root of the bookstore project.
 
 ### Database Connection Name ###
 
@@ -89,7 +89,7 @@ Each column also requires a `type`. The XML schema is database agnostic, so the 
 
 As for the other column attributes, `required`, `primaryKey`, and `autoIncrement`, they mean exactly what their names imply.
 
->**Tip**<br />Propel supports namespaces (for PHP > 5.3). If you specify a `namespace` attribute in a `<table>` element, the generated PHP classes for this table will use this namespace.
+>**Tip**<br />If you specify a `namespace` attribute in a `<table>` element, the generated PHP classes for this table will use this namespace.
 
 ### Foreign Keys ###
 
@@ -147,41 +147,47 @@ Use your own database vendor driver, chosen among pgsql, mysql, sqlite, mssql, a
 
 You can learn more about the available build settings and their possible values in the  [build configuration reference](../reference/buildtime-configuration).
 
-### Using the `propel-gen` Script To Build The Model ###
+### Using the `propel` Script To Build The SQL Code ###
 
-The Propel generator uses the `propel-gen` script, as seen in the previous chapter. This executable expects a command name as its argument.
+As seen in the previous chapter, Propel ships with a script that allows you to realise different actions such as schemas generation.
 
-Open a terminal and browse to the `bookstore/` directory, where you saved the two previous files (`schema.xml`, and `build.properties`). Then use the `propel-gen` script to call the "Object Model generator" command using its shortcut - "om":
-
-```bash
-cd /path/to/bookstore
-propel-gen om
-```
-
-You should normally see a some colored lines appear in the terminal, logging all the class generation, and ending with "BUILD FINISHED". If not, look for red lines in the log and follow the directions in the error messages.
-
-### Generated Object Model ###
-
-The "om" command added a new directory in the `bookstore/` project, called `build/`. The generated model classes are located under the `classes/bookstore/` subdirectory:
+Open a terminal and browse to your project's directory (here `bookstore/`), where you saved the two previous files (`schema.xml`, and `build.properties`). Then use the `propel` script to generate the SQL code of your schema:
 
 ```bash
-> cd /path/to/bookstore
-> cd build/classes/bookstore/
-> ls
-    om/
-    map/
-        AuthorTableMap.php
-        BookTableMap.php
-        PublisherTableMap.php
-    Author.php
-    AuthorQuery.php
-    Book.php
-    BookQuery.php
-    Publisher.php
-    PublisherQuery.php
+$ cd /path/to/bookstore
+$ propel sql:build
 ```
 
-For every table in the database, Propel creates 3 PHP classes:
+Before insert it into your database, you should create a database, let's say we want to call it `bookstore`. If you are using MySQL for instance, just run:
+
+```bash
+$ mysqladmin -u root -p create bookstore
+```
+
+Then insert the SQL into your database:
+```bash
+$ propel sql:insert
+```
+
+You should normally have yours tables created. Propel will also generate a `generated-sql` containning the SQL files of your schema ; useful if you are using a SCM, you can so compare the different versions of your schema.
+
+Each time you will update your schema, you should run `sql:build` and `sql:insert`.
+
+Depending on which RDBMS you are using, it may be normal to see some errors (e.g. "unable to DROP...") when you first run this command. This is because some databases have no way of checking to see whether a database object exists before attempting to DROP it (MySQL is a notable exception). It is safe to disregard these errors, and you can always run the script a second time to make sure that the errors are no longer present.
+
+>**Tip**<br />The `schema.sql` file will DROP any existing table before creating them, which will effectively erase your database.
+
+### Generate Model Classes ###
+
+Now that your database is ready, we are going to generate our model files. These files are just classes that allows you to interact easily with your different tables. To generate these tables, just run:
+
+```bash
+$ propel model:build
+```
+
+Propel will generate a new `generated-classes` folder containning all the stuff you need to interact with your different tables.
+
+For every table in the database, Propel creates 2 PHP classes:
 
 * a _model_ class (e.g. `Book`), which represents a row in the database;
 * a _tablemap_ class (e.g. `Map\BookTableMap`), offering static constants and methods mostly for compatibility with previous Propel versions;
@@ -189,7 +195,7 @@ For every table in the database, Propel creates 3 PHP classes:
 
 Propel uses the `phpName` attribute of each table as the base for the PHP class names.
 
-All these classes are empty, but they inherit from `Base` classes that you will find under the `om/` directory:
+All these classes are empty, but they inherit from `Base` classes that you will find under the `Base/` directory in the `generated-classes` one:
 
 ```php
 <?php
@@ -202,83 +208,27 @@ class Book extends BaseBook
 }
 ```
 
-These empty classes are called _stub_ classes. This is where you will add your own model code. These classes are generated only once by Propel ; on the other hand, the _base_ classes they extend are overwritten every time you call the `om` command, and that happens a lot in the course of a project, because the schema evolves with your needs.
+These empty classes are called _stub_ classes. This is where you will add your own model code. These classes are generated only once by Propel ; on the other hand, the _base_ classes they extend are overwritten every time you call the `model:build` command, and that happens a lot in the course of a project, because the schema evolves with your needs.
 
-In addition to these classes, Propel generates one `TableMap` class for each table under the `map/` directory. You will probably never use the map classes directly, but Propel needs them to get metadata information about the table structure at runtime.
 
->**Tip**<br />Never add any code of your own to the classes generated by Propel in the `om/` and `map/` directories; this code would be lost next time you call the `propel-gen` script.
+In addition to these classes, Propel generates one `TableMap` class for each table under the `Map/` directory. You will probably never use the map classes directly, but Propel needs them to get metadata information about the table structure at runtime.
 
-Basically, all that means is that despite the fact that Propel generates _seven_ classes for each table, you should only care about two of them: the model class and the query class.
+>**Tip**<br />Never add any code of your own to the classes generated by Propel in the `Map/` directory; this code would be lost next time you call the `model:build` command.
 
-## Building The Database ##
-
-To save you the burden of defining your model twice, Propel can initialize a database based on the schema, by creating the tables and foreign keys.
-
-### Building The SQL File ###
-
-Once again, use the `propel-gen` script to generate the SQL files necessary to create the tables, this time with the "sql" command:
-
-```bash
-cd /path/to/bookstore
-propel-gen sql
-```
-
-The generated SQL definition can be found in the `build/sql/schema.sql` file. The code is optimized for the database driver defined in the `build.properties`.
-
-### Using The SQL File ###
-
-Create the database and setup the access permissions using your favorite database client. For instance, to create the `my_db_name` database with MySQL, type:
-
-```bash
-mysqladmin -u root -p create my_db_name
-```
-
-Now you can use the generated code directly:
-
-```bash
-mysql -u root -p my_db_name < build/sql/schema.sql
-```
-
->**Tip**<br />The `schema.sql` file will DROP any existing table before creating them, which will effectively erase your database.
-
-Depending on which RDBMS you are using, it may be normal to see some errors (e.g. "unable to DROP...") when you first run this command. This is because some databases have no way of checking to see whether a database object exists before attempting to DROP it (MySQL is a notable exception). It is safe to disregard these errors, and you can always run the script a second time to make sure that the errors are no longer present.
-
-### Inserting SQL With `propel-gen` ###
-
-As an alternative to using the generated sql code directly, you can ask Propel to insert it directly into your database. Start by defining the database connection settings in the `build.properties`, as follows:
-
-```ini
-# Connection parameters
-propel.database.url = mysql:host=localhost;dbname=my_db_name
-propel.database.user = my_db_user
-propel.database.password = my_db_password
-
-# Other examples:
-# propel.database.url = sqlite:/path/to/bookstore.db
-# propel.database.url = pgsql:host=localhost dbname=my_db_name user=my_db_user password=my_db_password
-```
-
-The `propel.database.url` setting should be a PDO DSN (see the [PDO documentation](http://www.php.net/pdo) for more information about vendor-specific DSN). The `user` and `password` are only necessary for the `mysql` and `oracle` drivers.
-
-Then use the `propel-gen` script with the "insert-sql" command to connect to the database and inject the generated SQL code:
-
-```bash
-cd /path/to/bookstore
-propel-gen insert-sql
-```
+Basically, all that means is that despite the fact that Propel generates _five_ classes for each table, you should only care about two of them: the model class and the query class.
 
 ## Runtime Connection Settings ##
 
 The database and PHP classes are now ready to be used. But they don't know yet how to communicate with each other at runtime. You must tell Propel which database connection settings should be used to finish the setup.
 
-Propel stores the runtime settings in a service container, available from everywhere using `\Propel\Runtime\Propel::getServiceContainer()`. The service container uses lazy-loading to initiate connections only when necessary. 
+Propel stores the runtime settings in a service container, available from everywhere using `\Propel\Runtime\Propel::getServiceContainer()`. The service container uses lazy-loading to initiate connections only when necessary.
 
 Here is a sample setup file:
 
 ```php
 <?php
 // setup the autoloading
-require_once '/path/to/propel/vendor/autoload.php';
+require_once '/path/to/vendor/autoload.php';
 use Propel\Runtime\Propel;
 use Propel\Runtime\Connection\ConnectionManagerSingle;
 $serviceContainer = Propel::getServiceContainer();
@@ -305,7 +255,7 @@ $defaultLogger->pushHandler(new StreamHandler('/var/log/propel.log', Logger::WAR
 $serviceContainer->setLogger('defaultLogger', $defaultLogger);
 ```
 
-**Tip**: You may wish to write the setup code in a standalone script that is included at the beginning of your PHP scripts.
+>**Tip**<br/>: You may wish to write the setup code in a standalone script that is included at the beginning of your PHP scripts.
 
 Now you are ready to start using your model classes!
 
@@ -346,11 +296,11 @@ See the [runtime configuration reference](../reference/runtime-configuration) fo
 
 ### Building the Runtime Configuration ###
 
-For performance reasons, Propel prefers to use a PHP version of the connection settings rather than the XML file you just defined. So you must use the `propel-gen` script one last time to build the PHP version of the `runtime-conf.xml` configuration:
+For performance reasons, Propel prefers to use a PHP version of the connection settings rather than the XML file you just defined. So you must use the `propel` script one last time to build the PHP version of the `runtime-conf.xml` configuration:
 
 ```bash
-cd /path/to/bookstore
-propel-gen config:convert-xml
+$ cd /path/to/bookstore
+$ propel config:convert-xml
 ```
 
 The resulting file can be found under `build/conf/bookstore-conf.php`, where "bookstore" is the name of the project you defined in `build.properties`.
@@ -360,7 +310,7 @@ This simplifies the setup of Propel to the following script:
 ```php
 <?php
 // setup the autoloading
-require_once '/path/to/propel/vendor/autoload.php';
+require_once '/path/to/vendor/autoload.php';
 
 // setup Propel
 require_once 'build/conf/bookstore-conf.php';

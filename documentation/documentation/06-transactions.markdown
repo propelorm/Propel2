@@ -47,7 +47,7 @@ The transaction statements are `beginTransaction()`, `commit()` and `rollback()`
 
 In this example, if something wrong happens while saving either one of the two accounts, an `Exception` is thrown, and the whole operation is rolled back. That means that the transfer is cancelled, with an insurance that the money hasn't vanished (that's the A in ACID, which stands for "Atomicity"). If both account modifications work as expected, the whole transaction is committed, meaning that the data changes enclosed in the transaction are persisted in the database.
 
-Tip: In order to build a transaction, you need a connection object. The connection object for a Propel model is always available through `Propel::getReadConnection([ModelName]TableMap::DATABASE_NAME)` (for READ queries) and `Propel::getWriteConnection([ModelName]TableMap::DATABASE_NAME)` (for WRITE queries).
+>**Tip**<br/>: In order to build a transaction, you need a connection object. The connection object for a Propel model is always available through `Propel::getReadConnection([ModelName]TableMap::DATABASE_NAME)` (for READ queries) and `Propel::getWriteConnection([ModelName]TableMap::DATABASE_NAME)` (for WRITE queries).
 
 ## Denormalization And Transactions ##
 
@@ -130,7 +130,7 @@ class Book extends BaseBook
 
 In this example, the `nb_books` column of the `author` table will always we synchronized with the number of books. If anything happens during the transaction, the saving of the book is rolled back, as well as the `nb_books` column update. The transaction serves to preserve data consistency in a denormalized schema ("Consistency" stands for the C in ACID).
 
->**Tip**<br />Check the [behaviors documentation]() for details about the pre- and post- hooks in Propel model objects.
+>**Tip**<br />Check the [behaviors documentation](07-behaviors.html#pre-and-post-hooks-for-save-and-delete-methods) for details about the pre- and post- hooks in Propel model objects.
 
 ## Nested Transactions ##
 
@@ -246,7 +246,7 @@ COMMIT;
 
 In practice, encapsulating a large amount of simple queries inside a single transaction significantly improves performance.
 
-Tip: Until the final `commit()` is called, most database engines lock updated rows, or even tables, to prevent any query outside the transaction from seeing the partially committed data (this is how transactions preserve Isolation, which is the I in ACID). That means that large transactions will queue every other queries for potentially a long time. Consequently, use large transactions only when concurrency is not a requirement.
+>**Tip**<br/>: Until the final `commit()` is called, most database engines lock updated rows, or even tables, to prevent any query outside the transaction from seeing the partially committed data (this is how transactions preserve "Isolation", which is the I in ACID). That means that large transactions will queue every other queries for potentially a long time. Consequently, use large transactions only when concurrency is not a requirement.
 
 ## Why Is The Connection Always Passed As Parameter? ##
 

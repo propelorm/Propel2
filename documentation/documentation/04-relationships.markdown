@@ -27,7 +27,7 @@ $book->save();
 
 Propel generates the `setAuthor()` method based on the `phpName` attribute of the `<foreign-key>` element in the schema. When the attribute is not set, Propel uses the `phpName` of the related table instead.
 
-Internally, the call to `Book::setAuthor($author)` translates into `Book::setAuthorId($author->getId())`. But you don't actually have to save a Propel object before associating it to another. In fact, Propel automatically "cascades" INSERT statements when a new object has other related objects added to it.
+Internally, the call to `Book::setAuthor($author)` translates into `Book::setAuthorId($author->getId())`. But you don't actually have to save a Propel object before associating it to another. In fact, Propel automatically "cascades" `INSERT` statements when a new object has other related objects added to it.
 
 For one-to-many relationships - meaning, from the other side of a many-to-one relationship - the process is a little different. In the previous example, one `Book` has one `Author`, but one `Author` has many `Books`. From the `Author` point of view, a one-to-many relationships relates it to `Book`. So Propel doesn't generate an `Author::setBook()`, but rather an `Author::addBook()`:
 
@@ -74,7 +74,7 @@ $book->setAuthor($author);
 $book->save(); // saves all 3 objects!
 ```
 
-In practice, Propel _'cascades_' the `save()` action to the related objects.
+In practice, Propel _"cascades"_ the `save()` action to the related objects.
 
 ## Reading Related Object Properties ##
 
@@ -100,7 +100,7 @@ foreach ($books as $book) {
 
 Notice that Propel generated a `getBooks()` method returning an array of `Book` objects, rather than a `getBook()` method. This is because the definition of a foreign key defines a many-to-one relationship, seen from the other end as a one-to-many relationship.
 
->**Tip**<br />Propel also generates a `countBooks()` methods to get the number of related objects without hydrating all the `Book` objects. for performance reasons, you should prefer this method to `count($author->getBooks())`.
+>**Tip**<br />Propel also generates a `countBooks()` methods to get the number of related objects without hydrating all the `Book` objects. For performance reasons, you should prefer this method to `count($author->getBooks())`.
 
 Getters for one-to-many relationship accept an optional query object. This allows you to hydrate related objects, or retrieve only a subset of the related objects, or to reorder the list of results:
 
@@ -131,7 +131,7 @@ You don't need to specify that the `author_id` column of the `Book` object shoul
 
 ### Embedding Queries ###
 
-In SQL queries, relationships often translate to a JOIN statement. Propel abstracts this relational logic in the query objects, by allowing you to _embed_ a related query into another.
+In SQL queries, relationships often translate to a `JOIN` statement. Propel abstracts this relational logic in the query objects, by allowing you to _embed_ a related query into another.
 
 In practice, Propel generates one `useXXXQuery()` method for every relation in the Query objects. So the `BookQuery` class offers a `useAuthorQuery()` and a `usePublisherQuery()` method. These methods return a new Query instance of the related query class, that you can eventually merge into the main query by calling `endUse()`.
 
@@ -204,7 +204,7 @@ Databases typically use a cross-reference table, or junction table, to materiali
 </table>
 ```
 
-Once you rebuild your model, the relationship is seen as a one-to-many relationship from both the  `User` and the `Group` models. That means that you can deal with adding and reading relationships the same way as you usually do:
+Once you rebuild your model, the relationship is seen as a one-to-many relationship from both the `User` and the `Group` models. That means that you can deal with adding and reading relationships the same way as you usually do:
 
 ```php
 <?php
@@ -244,7 +244,7 @@ $groups = GroupQuery::create()
 
 ## One-to-One Relationships ##
 
-Propel supports the special case of one-to-one relationships. These relationships are defined when the primary key is also a foreign key. For example :
+Propel supports the special case of one-to-one relationships. These relationships are defined when the primary key is also a foreign key. For example:
 
 ```xml
 <table name="bookstore_employee" description="Employees of a bookstore">
@@ -310,7 +310,7 @@ $author = $book->getAuthor();  // Same result, with no supplementary query
 
 Since the call to `with()` adds the columns of the related object to the SELECT part of the query, and uses these columns to populate the related object, that means that a query using `with()` is slower and consumes more memory. So use it only when you actually need the related objects afterwards.
 
-If you don't want to add a filter on a related object but still need to hydrate it, calling `useXXXQuery()`,  `endUse()`, and then `with()` can be a little cumbersome. For this case, Propel provides a proxy method called `joinWith()`. It expects a string made of the initial query name and the foreign query name. For instance:
+If you don't want to add a filter on a related object but still need to hydrate it, calling `useXXXQuery()`, `endUse()`, and then `with()` can be a little cumbersome. For this case, Propel provides a proxy method called `joinWith()`. It expects a string made of the initial query name and the foreign query name. For instance:
 
 ```php
 <?php
