@@ -22,7 +22,7 @@ The `ModelUserProvider` takes three arguments:
 
 Basically, you'll have to declare a service:
 
-{% highlight xml %}
+```xml
 <!-- src/Acme/SecuredBundle/Resources/config/services.xml -->
 <?xml version="1.0" ?>
 <container xmlns="http://symfony.com/schema/dic/services"
@@ -34,11 +34,11 @@ Basically, you'll have to declare a service:
     </services>
 
 </container>
-{% endhighlight %}
+```
 
 And to create the corresponding class:
 
-{% highlight php %}
+```php
 <?php
 // src/Acme/SecuredBundle/Security/User/CustomUserProvider.php
 
@@ -53,11 +53,11 @@ class CustomUserProvider extends ModelUserProvider
         parent::__construct('Acme\SecuredBundle\Model\User', 'Acme\SecuredBundle\Proxy\User', 'username');
     }
 }
-{% endhighlight %}
+```
 
 The _proxy class_ is designed as following:
 
-{% highlight php %}
+```php
 <?php
 // src/Acme/SecuredBundle/Proxy/User.php
 
@@ -135,17 +135,17 @@ class User implements UserInterface
         return $this->user;
     }
 }
-{% endhighlight %}
+```
 
 Once done, you'll have to register your new custom provider in the `security.yml` file:
 
-{% highlight yaml %}
+```yaml
 # src/Acme/SecuredBundle/Resources/config/security.yml
 security:
     # ...
     providers:
         custom_provider:
             id: acme.secured.security.provider
-{% endhighlight %}
+```
 
 You now have a working security provider with Propel.

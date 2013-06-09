@@ -18,7 +18,7 @@ You can configure Propel to support replication by adding a `<slaves>` element w
 
 The `<slaves>` section is at the same level as the master `<connection>` and contains multiple nested `<connection>` elements with the same information as the top-level (master) `<connection>`. It is recommended that they are numbered. The following example shows a slaves section with a several slave connections configured where "localhost" is the master and "slave-server1" and "slave-server2" are the slave-database connections.
 
-{% highlight xml %}
+```xml
 <?xml version="1.0"?>
 <config>
   <log>
@@ -51,7 +51,7 @@ The `<slaves>` section is at the same level as the master `<connection>` and con
     </datasources>
   </propel>
 </config>
-{% endhighlight %}
+```
 
 ## Implementation ##
 
@@ -63,19 +63,19 @@ When requesting a connection from Propel (`Propel::getConnection()`), you get a 
 
 You can also specify that you want a READ connection (slave) or a WRITE connection (master).  Methods that are designed to perform READ operations, like `ModelCriteria::find()`, will always request a READ connection like so:
 
-{% highlight php %}
+```php
 <?php
 $con = Propel::getReadConnection(MyTableMap::DATABASE_NAME);
 $books = BookQuery::create()->find($con);
-{% endhighlight %}
+```
 
 Other methods that are designed to perform write operations, like `ModelCriteria::update()` or `ModelCriteria::delete()`; will explicitly request a WRITE connection:
 
-{% highlight php %}
+```php
 <?php
 $con = Propel::getWriteConnection(MyTableMap::DATABASE_NAME);
 BookQuery::create()->deleteAll($con);
-{% endhighlight %}
+```
 
 If you do have configured slave connections, Propel will choose a single random slave to use per request for any connections where the mode is READ.
 
@@ -83,12 +83,12 @@ Both READ (slave) and WRITE (master) connections are only configured on demand. 
 
 **Warning**: If you are using Propel to execute custom SQL queries in your application (and you want to make sure that Propel respects your replication setup), you will need to explicitly get the correct connection. For example:
 
-{% highlight php %}
+```php
 <?php
 $con = Propel::getReadConnection(MyTableMap::DATABASE_NAME);
 $stmt = $con->query('SELECT * FROM my');
 /* ... */
-{% endhighlight %}
+```
 
 ### `ConnectionManager::setForceMasterConnection()` ###
 
@@ -96,13 +96,13 @@ You can force Propel to always return a WRITE (master) connection when calling `
 
 To do so, call the `setForceMasterConnection()` method on the related `ConnectionManager`, as follows:
 
-{% highlight php %}
+```php
 <?php
 $manager = Propel::getServiceContainer()->getConnectionManager(MyTableMap::DATABASE_NAME);
 $manager->setForceMasterConnection(true);
 $con = Propel::getReadConnection(MyTableMap::DATABASE_NAME);
 // $con is a WRITE connection
-{% endhighlight %}
+```
 
 This can be useful if you must be sure that you are getting the most up-to-date data (i.e. if there is some latency possible between master and slaves). But remember that the only safe way to get data integrity is to use transactions.
 

@@ -35,7 +35,7 @@ You can also specify properties on the command line when you invoke Propel. The 
 
 ### General Build Settings ###
 
-{% highlight ini %}
+```ini
 # The name of your project.
 # This affects names of generated files, etc.
 propel.project = /Your-Project-Name/
@@ -81,11 +81,11 @@ propel.schema.validate = {true}|false
 # and you can use a custom XSL file by changing the `propel.schema.xsl.file`
 # property.
 propel.schema.transform = true|{false}
-{% endhighlight %}
+```
 
 ### Database Settings ###
 
-{% highlight ini %}
+```ini
 # The Propel platform that will be used to determine how to build
 # the SQL DDL, the PHP classes, etc.
 propel.database = pgsql|mysql|sqlite|mssql|oracle
@@ -130,13 +130,13 @@ propel.database.encoding = {empty}|string
 # This does not affect the tables phpName.
 # This setting can be overridden on a per-database basis in the schema.
 propel.tablePrefix = {empty}|string
-{% endhighlight %}
+```
 
 >**Tip**<br />If you need more than one database connection at buildtime, the INI format is not enough. Therefore, you can add a `buildtime-conf.xml` file in the same directory as the `build.properties` file, and Propel will use the connections defined in this file instead of the ones defined by `propel.database.XXX` settings. The buildtime configuration file uses the same format as the `runtime-conf.xml` (see the runtime documentation reference for more details about this format).
 
 ### Reverse-Engineering Settings ###
 
-{% highlight ini %}
+```ini
 # Whether to specify PHP names that are the same as the column names.
 propel.samePhpName = true|{false}
 
@@ -144,11 +144,11 @@ propel.samePhpName = true|{false}
 # does provide additional information (such as full-text indexes) which can
 # affect the generation of the DDL from the schema.
 propel.addVendorInfo = true|{false}
-{% endhighlight %}
+```
 
 ### Customizing Generated Object Model ###
 
-{% highlight ini %}
+```ini
 # Whether to add generic getter/setter methods.
 # Generic accessors are `getByName()`, `getByPosition(), ` and `toArray()`.
 propel.addGenericAccessors = {true}|false
@@ -184,11 +184,11 @@ propel.disableIdentifierQuoting = true|{false}
 # (see ticket:491 and ticket:588 to understand more about why this might be
 # important).
 propel.useLeftJoinsInDoJoinMethods = {true}|false
-{% endhighlight %}
+```
 
 ### MySQL-specific Settings ###
 
-{% highlight ini %}
+```ini
 # Default table type.
 # You can override this setting if you wish to default to another engine for
 # all tables (for instance InnoDB, or HEAP). This setting can also be
@@ -199,11 +199,11 @@ propel.mysql.tableType = {MyISAM}|string
 # Keyword used to specify the table engine in the CREATE SQL statement.
 # Defaults to 'ENGINE', users of MYSQL < 5 should use 'TYPE' instead.
 propel.mysql.tableEngineKeyword = {ENGINE}|TYPE
-{% endhighlight %}
+```
 
 ### Date/Time Settings ###
 
-{% highlight ini %}
+```ini
 # Enable full use of the DateTime class.
 # Setting this to true means that getter methods for date/time/timestamp
 # columns will return a DateTime object when the default format is empty.
@@ -222,11 +222,11 @@ propel.dateTimeClass = {DateTime}|string
 propel.defaultTimeStampFormat = {Y-m-d H:i:s}|string
 propel.defaultTimeFormat = { %X }|string
 propel.defaultDateFormat = { %x }|string
-{% endhighlight %}
+```
 
 ### Directories and Filenames ###
 
-{% highlight ini %}
+```ini
 # Directory where the project files (`build.properties`, `schema.xml`,
 # `runtime-conf.xml`, etc.) are located.
 # If you use the `propel-gen` script, this value will get overridden by
@@ -258,12 +258,12 @@ propel.runtime.phpconf-classmap.file = ${propel.project}-classmap.php
 
 # The directory where Propel should output the generated DDL (or data insert statements, etc.)
 propel.sql.dir = ${propel.output.dir}/sql
-{% endhighlight %}
+```
 
 
 ### Overriding Builder Classes ###
 
-{% highlight ini %}
+```ini
 # Object Model builders
 propel.builder.object.class = builder.om.ObjectBuilder
 propel.builder.objectstub.class = builder.om.ExtensionObjectBuilder
@@ -288,13 +288,13 @@ propel.platform.class = platform.${propel.database}Platform
 propel.builder.pluralizer.class = builder.util.DefaultEnglishPluralizer
 # Use StandardEnglishPluralizer instead of DefaultEnglishPluralizer for better pluralization
 # (Handles uncountable and irregular nouns)
-{% endhighlight %}
+```
 
 As you can see, you can specify your own builder and platform classes if you want to extend & override behavior in the default classes
 
 ### Overriding / Adding Behaviors ###
 
-{% highlight ini %}
+```ini
 # Define the path to the class to be used for the `timestampable` behavior.
 # This behavior is bundled with Propel, but if you want to override it, you can
 # specify a different path.
@@ -308,4 +308,4 @@ propel.behavior.my_behavior.class = my.custom.path.to.MyBehaviorClass
 # can add behaviors for all your schemas, provided that you define them in the
 # `propel.behavior.default` setting:
 propel.behavior.default = archivable,my_behavior
-{% endhighlight %}
+```

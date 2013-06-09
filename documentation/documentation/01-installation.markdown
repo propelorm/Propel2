@@ -20,29 +20,29 @@ Propel runs on most PHP platforms. It just requires:
 
 For a quick start, the best choice is to install Propel inside a project directory structure, typically under a `vendor/` subdirectory:
 
-{% highlight bash %}
+```bash
 myproject/
   ...
   vendor/ <= This is where third-party libraries usually go
-{% endhighlight %}
+```
 
 To install Propel there using Git, type:
 
-{% highlight bash %}
+```bash
 cd myproject/vendor
 git clone https://github.com/propelorm/Propel2.git propel
-{% endhighlight %}
+```
 
 This will export the propel library to a local `myproject/vendor/propel/` directory.
 
 Alternatively, to use a tarball, type the following commands on unix platforms:
 
-{% highlight bash %}
+```bash
 cd myproject/vendor
 wget http://files.propelorm.org/propel-2.0.0.tar.gz
 tar zxvf propel-2.0.0.tar.gz
 mv propel-2.0.0 propel
-{% endhighlight %}
+```
 
 Or, in Windows, download a ZIP from [files.propelorm.org](http://files.propelorm.org), unzip it under the `vendor/` directory, and rename it to `propel`.
 
@@ -67,7 +67,7 @@ Propel uses the some Symfony2 components to work properly:
 
 To install these packages, we advise you to use Composer. Check out the [Composer's site](https://getcomposer.org) and then add the following to you composer.json file :
 
-{% highlight json %}
+```json
 {
     "require": {
         "symfony/yaml": ">=2.0",
@@ -77,12 +77,12 @@ To install these packages, we advise you to use Composer. Check out the [Compose
         "symfony/validator": ">=2.0"
     }
 }
-{% endhighlight %}
+```
 
 Then, to install all of the dependencies, run in a terminal:
-{% highlight bash %}
+```bash
 php composer.phar install
-{% endhighlight %}
+```
 
 _Note_ : The composer.phar file must be at the same directory level of the composer.json file.
 
@@ -90,25 +90,25 @@ _Note_ : The composer.phar file must be at the same directory level of the compo
 
 The Propel generator component bundles a `propel` sh script (and a `propel.bat` script for Windows). This script makes it easy to execute build commands. You can test this component is properly installed by calling the `propel` script from the CLI:
 
-{% highlight bash %}
+```bash
 cd myproject
 vendor/propel/bin/propel
-{% endhighlight %}
+```
 
 The command should output the propel version following by a list of the options and the available commands. We will learn to use these commands later.
 
 >**Tip**<br />In order to allow an easier execution of the script, you can also add the propel generator's `bin/` directory to your PATH, or create a symlink. For example:
 
-{% highlight bash %}
+```bash
 cd myproject
 ln -s vendor/propel/bin/propel propel
-{% endhighlight %}
+```
 
 Or simply edit your .bashrc or .zshrc file: 
 
-{% highlight bash %}
+```bash
 export PATH=$PATH:/path/to/vendor/bin/
-{% endhighlight %}
+```
 
 At this point, Propel should be setup and ready to use. You can follow the steps in the [Build Guide](02-buildtime.html) to try it out.
 
@@ -120,19 +120,19 @@ Propel has its own PEAR channel, that you must "discover". Using the `pear insta
 
 So the commands to install Propel, Phing and PEAR Log globally sum up to this:
 
-{% highlight bash %}
+```bash
 pear channel-discover pear.propelorm.org
 pear install -a propel/propel_generator
 pear install -a propel/propel_runtime
-{% endhighlight %}
+```
 
 Once Propel is installed globally, you can access the `propel-gen` command from everywhere without symlink.
 
 >**Tip**<br />If you want to install non-stable versions of Propel, change your `preferred_state` PEAR environment variable before installing the Propel packages. Valid states include 'stable', 'beta', 'alpha', and 'devel':
 
-{% highlight bash %}
+```bash
 pear config-set preferred_state beta
-{% endhighlight %}
+```
 
 ## Troubleshooting ##
 

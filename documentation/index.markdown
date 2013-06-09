@@ -21,7 +21,7 @@ Propel makes database coding fun again.
 
 ### Show Me! ###
 
-{% highlight php %}
+```php
 <?php
 $book = BookQuery::create()->findPK(123); // retrieve a record from a database
 $book->setName('Don\'t be Hax0red!'); // modify. Don't worry about escaping
@@ -35,7 +35,7 @@ $books = BookQuery::create()  // retrieve all books...
 foreach($books as $book) {
   echo  $book->getAuthor()->getFullName();
 }
-{% endhighlight %}
+```
 
 ### Get It! ###
 

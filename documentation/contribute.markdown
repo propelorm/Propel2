@@ -29,29 +29,29 @@ The ticketing system is also hosted on GitHub:
 The best way to submit a patch is to make a Pull Request on GitHub. First, you should create a new branch from the `master`.
 Assuming you are in your local Propel project:
 
-{% highlight bash %}
+```bash
 > git checkout -b master fix-my-patch
-{% endhighlight %}
+```
 
 Now you can write your patch in this branch. Don't forget to provide unit tests with your fix to prove both the bug and the patch.
 It will ease the process to accept or refuse a Pull Request.
 
 When you're done, you have to rebase your branch to provide a clean and safe Pull Request.
 
-{% highlight bash %}
+```bash
 > git checkout master
 > git pull --ff-only upstream master
 > git checkout fix-my-patch
 > git rebase master
-{% endhighlight %}
+```
 
 In this example, the `upstream` remote is the PropelORM organization repository.
 
 Once done, you can submit the Pull Request by pushing your branch to your fork:
 
-{% highlight bash %}
+```bash
 > git push origin fix-my-patch
-{% endhighlight %}
+```
 
 Go to www.github.com and press the _Pull Request_ button. Add a short description to this Pull Request and submit it.
 
@@ -65,16 +65,16 @@ You can find the unit test classes and support files in the `test/testsuite` dir
 
 In order to run the tests, you must install PHPUnit:
 
-{% highlight bash %}
+```bash
 > pear channel-discover pear.phpunit.de
 > pear install phpunit/PHPUnit
-{% endhighlight %}
+```
 
 ### Configure the Database to be Used in the Tests ###
 
 You must configure both the generator and the runtime connection settings.
 
-{% highlight ini %}
+```ini
 // in test/fixtures/bookstore/build.properties
 propel.database = mysql
 propel.database.url = mysql:dbname=test
@@ -83,9 +83,9 @@ propel.disableIdentifierQuoting=true
 # For MySQL or Oracle, you also need to specify username & password
 propel.database.user = myusername
 propel.database.password = p@ssw0rd
-{% endhighlight %}
+```
 
-{% highlight xml %}
+```xml
 // in test/fixtures/bookstore/runtime-conf.xml
 <datasource id="bookstore">
   <!-- the Propel adapter to use for this connection -->
@@ -110,7 +110,7 @@ propel.database.password = p@ssw0rd
       </settings>
   </connection>
 </datasource>
-{% endhighlight %}
+```
 
 >**Tip**<br />To run the unit tests for the namespace support in PHP 5.3, you must also configure the `fixtures/namespaced` project.
 
@@ -120,12 +120,12 @@ propel.database.password = p@ssw0rd
 
 ### Build the Propel Model and Initialize the Database ###
 
-{% highlight bash %}
+```bash
 > cd /path/to/propel/test
 > ../generator/bin/propel-gen fixtures/bookstore main
 > mysqladmin create test
 > ../generator/bin/propel-gen fixtures/bookstore insert-sql
-{% endhighlight %}
+```
 
 >**Tip**<br />To run the unit tests for the namespace support in PHP 5.3, you must also build the `fixtures/namespaced/` project.
 
@@ -135,7 +135,7 @@ propel.database.password = p@ssw0rd
 
 If you test on MySQL, the following SQL script will create all the necessary test databases and grant access to the anonymous user, so the unit tests should pass without any special configuration:
 
-{% highlight sql %}
+```sql
 CREATE DATABASE test;
 GRANT ALL ON test.* TO ''@'localhost';
 
@@ -150,32 +150,32 @@ GRANT ALL ON second_hand_books.* TO ''@'localhost';
 
 CREATE DATABASE reverse_bookstore;
 GRANT ALL ON reverse_bookstore.* TO ''@'localhost';
-{% endhighlight %}
+```
 
 You can build all fixtures by running the `reset_tests.sh` shell script:
 
-{% highlight bash %}
+```bash
 > cd /path/to/propel/test
 > ./reset_tests.sh
-{% endhighlight %}
+```
 
 ### Run the Unit Tests ###
 
 Run all the unit tests at once using the `phpunit` command:
 
-{% highlight bash %}
+```bash
 > cd /path/to/propel/test
 > phpunit testsuite
-{% endhighlight %}
+```
 
 >**Warning**<br />The `testsuite/generator/builder/NamespaceTest.php` file uses PHP 5.3 namespaces, and therefore will create a parse error under PHP 5.2. To launch the unit test suite in a PHP 5.2 platform, simply delete this test file.
 
 To run a single test, go inside the unit test directory, and run the test using the command line. For example to run only GeneratedObjectTest:
 
-{% highlight bash %}
+```bash
 > cd testsuite/generator/builder/om
 > phpunit GeneratedObjectTest
-{% endhighlight %}
+```
 
 ### How the Tests Work ###
 
@@ -189,7 +189,7 @@ If you've made a change to a template or to Propel behavior, the right thing to 
 
 Writing a unit test often means adding a method to one of the existing test classes. For example, let's test a feature in the Propel templates that supports saving of objects when only default values have been specified. Just add a `testSaveWithDefaultValues()` method to the `GeneratedObjectTest` class, as follows:
 
-{% highlight php %}
+```php
 <?php
 
 /**
@@ -210,13 +210,13 @@ public function testSaveWithDefaultValues() {
   $this->assertNotNull($pub->getId(), "Expect Publisher->save() to work  with only default values.");
 }
 ?>
-{% endhighlight %}
+```
 
 Run the test again using the command line to check that it passes:
 
-{% highlight bash %}
+```bash
 > phpunit GeneratedObjectTest
-{% endhighlight %}
+```
 
 You can also write additional unit test classes to any of the directories in `test/testsuite/` (or add new directories if needed). The `phpunit` command will find these files automatically and run them.
 

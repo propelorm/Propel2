@@ -13,7 +13,7 @@ To define a namespace for a model class, you just need to specify it in a `names
 
 Here is an example schema using namespaces:
 
-{% highlight xml %}
+```xml
 <?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
 <database name="bookstore" defaultIdMethod="native" namespace="Bookstore">
 
@@ -51,7 +51,7 @@ Here is an example schema using namespaces:
   </table>
 
 </database>
-{% endhighlight %}
+```
 
 The `<database>` element defines a `namespace` attribute. The `book` and `author` tables inherit their namespace from the database, therefore the generated classes for these tables will be `\Bookstore\Book` and `\Bookstore\Author`.
 
@@ -65,7 +65,7 @@ As for the `user` table, it defines an absolute namespace (starting with a backs
 
 Namespaced models benefit from the Propel runtime autoloading just like the other model classes. You just need to alias them, or to use their fully qualified name.
 
-{% highlight php %}
+```php
 <?php
 // use an alias
 use Bookstore\Book;
@@ -73,38 +73,38 @@ $book = new Book();
 
 // or use fully qualified name
 $book = new \Bookstore\Book();
-{% endhighlight %}
+```
 
 Relation names forged by Propel don't take the namespace into account. That means that related getter and setters make no mention of it:
 
-{% highlight php %}
+```php
 <?php
 $author = new \Bookstore\Author();
 $book = new \Bookstore\Book();
 $book->setAuthor($author);
 $book->save();
-{% endhighlight %}
+```
 
 The namespace is used for the ActiveRecord class, but also for the Query classes. Just remember that when you use relation names ina query, the namespace should not appear:
 
-{% highlight php %}
+```php
 <?php
 $author = \Bookstore\AuthorQuery::create()
   ->useBookQuery()
     ->filterByPrice(array('max' => 10))
   ->endUse()
   ->findOne();
-{% endhighlight %}
+```
 
 Related tables can have different namespaces, it doesn't interfere with the functionality provided by the object model:
 
-{% highlight php %}
+```php
 <?php
 $book = \Bookstore\BookQuery::create()
   ->findOne();
 echo get_class($book->getPublisher());
 // \Bookstore\Book\Publisher
-{% endhighlight %}
+```
 
 >**Tip**<br />Using namespaces make generated model code incompatible with versions of PHP less than 5.3. Beware that you will not be able to use your model classes in an older PHP application.
 
@@ -112,19 +112,19 @@ echo get_class($book->getPublisher());
 
 In a schema, you can define a `package` attribute on a `<database>` or a `<table>` tag to generate model classes in a subdirectory (see [Multi-Component](multi-component-data-model.html)). If you use namespaces to autoload your classes based on a SplClassAutoloader (see [http://groups.google.com/group/php-standards](http://groups.google.com/group/php-standards)), then you may find yourself repeating the `namespace` data in the `package` attribute:
 
-{% highlight xml %}
+```xml
 <database name="bookstore" defaultIdMethod="native"
   namespace="Foo\Bar" package="Foo.Bar">
-{% endhighlight %}
+```
 
 To avoid such repetitions, just set the `propel.namespace.autoPackage` setting to `true` in your `build.properties`:
 
-{% highlight ini %}
+```ini
 propel.namespace.autoPackage = true
-{% endhighlight %}
+```
 
 Now Propel will automatically create a `package` attribute, and therefore distribute model classes in subdirectories, based on the `namespace` attribute, and you can  omit the manual `package` attribute in the schema:
 
-{% highlight xml %}
+```xml
 <database name="bookstore" defaultIdMethod="native" namespace="Foo\Bar">
-{% endhighlight %}
+```

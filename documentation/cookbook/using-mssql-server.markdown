@@ -19,15 +19,15 @@ This is a driver [released in August 2010 by Microsoft](http://blogs.msdn.com/b/
 
 Sample dsn's for pdo_sqlsrv:
 
-{% highlight xml %}
+```xml
 <dsn>sqlsrv:server=localhost\SQLEXPRESS;Database=propel</dsn>
 <dsn>sqlsrv:server=localhost\SQLEXPRESS,1433;Database=propel</dsn>
 <dsn>sqlsrv:server=localhost,1433;Database=propel</dsn>
-{% endhighlight %}
+```
 
 Sample runtime-conf.xml for pdo_sqlsrv:
 
-{% highlight xml %}
+```xml
 <datasource id="bookstore">
   <adapter>sqlsrv</adapter>
   <connection>
@@ -37,14 +37,14 @@ Sample runtime-conf.xml for pdo_sqlsrv:
     <password>password</password>
   </connection>
 </datasource>
-{% endhighlight %}
+```
 
 Sample build.properties for pdo_sqlsrv:
 
-{% highlight ini %}
+```ini
 propel.database = sqlsrv
 propel.database.url = sqlsrv:server=127.0.0.1,1433;Database=propel
-{% endhighlight %}
+```
 
 ### pdo_sybase ###
 
@@ -52,31 +52,31 @@ When built against FreeTDS dblib it will be called `pdo_sybase`. This requires p
 
 c:\freetds.conf
 
-{% highlight ini %}
+```ini
 [global]
   client charset = UTF-8
   tds version = 8.0
   text size = 20971520
-{% endhighlight %}
+```
 
 c:\locales.conf
 
-{% highlight ini %}
+```ini
 [default]
   date format = %Y-%m-%d %H:%M:%S.%z
-{% endhighlight %}
+```
 
 Sample dsn's for pdo_sybase:
 
-{% highlight xml %}
+```xml
 <dsn>sybase:host=localhost\SQLEXPRESS;dbname=propel</dsn>
 <dsn>sybase:host=localhost\SQLEXPRESS:1433;dbname=propel</dsn>
 <dsn>sybase:host=localhost:1433;dbname=propel</dsn>
-{% endhighlight %}
+```
 
 Sample `runtime-conf.xml` for pdo_sybase:
 
-{% highlight xml %}
+```xml
 <datasource id="bookstore">
   <adapter>mssql</adapter>
   <connection>
@@ -86,14 +86,14 @@ Sample `runtime-conf.xml` for pdo_sybase:
     <password>password</password>
   </connection>
 </datasource>
-{% endhighlight %}
+```
 
 Sample `build.properties` for `pdo_sybase`:
 
-{% highlight ini %}
+```ini
 propel.database = mssql
 propel.database.url = sybase:host=localhost:1433;dbname=propel
-{% endhighlight %}
+```
 
 ### pdo_mssql ###
 
@@ -101,11 +101,11 @@ When built against MS SQL Server dblib the driver will be called `pdo_mssql`. It
 
 Sample dsn's for `pdo_mssql`:
 
-{% highlight xml %}
+```xml
 <dsn>mssql:host=localhost\SQLEXPRESS;dbname=propel</dsn>
 <dsn>mssql:host=localhost\SQLEXPRESS,1433;dbname=propel</dsn>
 <dsn>mssql:host=localhost,1433;dbname=propel</dsn>
-{% endhighlight %}
+```
 
 ### pdo_odbc ###
 
@@ -122,32 +122,32 @@ Linux has 2 driver implementations that could be used: `pdo_dblib`, and `pdo_obd
 Redhat: `/etc/freetds.conf`
 Ubuntu: `/etc/freetds/freetds.conf`
 
-{% highlight ini %}
+```ini
 [global]
   client charset = UTF-8
   tds version = 8.0
   text size = 20971520
-{% endhighlight %}
+```
 
 Redhat: `/etc/locales.conf`
 Ubuntu: `/etc/freetds/locales.conf`
 
-{% highlight ini %}
+```ini
 [default]
   date format = %Y-%m-%d %H:%M:%S.%z
-{% endhighlight %}
+```
 
 Sample dsn's for `pdo_dblib`:
 
-{% highlight xml %}
+```xml
 <dsn>dblib:host=localhost\SQLEXPRESS;dbname=propel</dsn>
 <dsn>dblib:host=localhost\SQLEXPRESS:1433;dbname=propel</dsn>
 <dsn>dblib:host=localhost:1433;dbname=propel</dsn>
-{% endhighlight %}
+```
 
 Sample `runtime-conf.xml` for `pdo_dblib`:
 
-{% highlight xml %}
+```xml
 <datasource id="bookstore">
   <adapter>mssql</adapter>
   <connection>
@@ -157,14 +157,14 @@ Sample `runtime-conf.xml` for `pdo_dblib`:
     <password>password</password>
   </connection>
 </datasource>
-{% endhighlight %}
+```
 
 Sample `build.properties` for `pdo_dblib`:
 
-{% highlight ini %}
+```ini
 propel.database = mssql
 propel.database.url = dblib:host=localhost:1433;dbname=propel
-{% endhighlight %}
+```
 
 ### pdo_odbc ###
 

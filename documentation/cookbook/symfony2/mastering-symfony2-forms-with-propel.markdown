@@ -11,7 +11,7 @@ In this chapter, you'll learn how to master Symfony2 forms with Propel.
 
 Assuming you manage `Book` and `Author` objects, you'll define the following `schema.xml`:
 
-{% highlight xml %}
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <database name="default" namespace="Acme\LibraryBundle\Model" defaultIdMethod="native">
     <table name="book">
@@ -29,12 +29,12 @@ Assuming you manage `Book` and `Author` objects, you'll define the following `sc
         <column name="last_name" type="varchar" size="100" />
     </table>
 </database>
-{% endhighlight %}
+```
 
 In Symfony2, you deal with `Type` so let's create a `BookType` to manage
 our books. For the moment, just ignore the relation with `Author` objects.
 
-{% highlight php %}
+```php
 <?php
 // src/Acme/LibraryBundle/Form/Type/BookType.php
 
@@ -63,7 +63,7 @@ class BookType extends AbstractType
         return 'book';
     }
 }
-{% endhighlight %}
+```
 
 >**Setting the `data_class`**<br />Every form needs to know the name of the class that holds the underlying data (e.g. `Acme\LibraryBundle\Model\Book`). Usually, this is just guessed based off of the object passed to the second argument to createForm().
 
@@ -71,7 +71,7 @@ Basically, you will use this class in an action of one of your controllers.
 Assuming you have a `BookController` controller in your `LibraryBundle`, you will
 write the following code to create new books:
 
-{% highlight php %}
+```php
 <?php
 // src/Acme/LibraryBundle/Controller/BookController.php
 
@@ -94,13 +94,13 @@ class BookController extends Controller
         ));
     }
 }
-{% endhighlight %}
+```
 
 >**Warning**<br />To quickly explain how forms are rendered, the controller above extends the `Controller` class which provides the `render()` method used to return a `Response` but this is not considered as a best practice. It's better to create a controller as a service.
 
 To render the form, you'll need to create a Twig template like below:
 
-{% highlight django+jinja %}
+```jinja
 {# src/Acme/LibraryBundle/Resources/views/Book/new.html.twig #}
 
 <form action="{{ "{{ path('book_new')" }} }}" method="post" {{ "{{ form_enctype(form)" }} }}>
@@ -108,7 +108,7 @@ To render the form, you'll need to create a Twig template like below:
 
     <input type="submit" />
 </form>
-{% endhighlight %}
+```
 
 You'll get this result:
 
@@ -118,7 +118,7 @@ As such, the topic of persisting the `Book` object to the database is entirely
 unrelated to the topic of forms. But, if you've created a `Book` class with Propel,
 then persisting it after a form submission can be done when the form is valid:
 
-{% highlight php %}
+```php
 <?php
 // src/Acme/LibraryBundle/Controller/BookController.php
 
@@ -146,16 +146,16 @@ then persisting it after a form submission can be done when the form is valid:
         ));
     }
 }
-{% endhighlight %}
+```
 
 If, for some reason, you don't have access to your original `$book` object,
 you can fetch it from the form:
 
-{% highlight php %}
+```php
 <?php
 
 $book = $form->getData();
-{% endhighlight %}
+```
 
 As you can see, this is really easy to manage basic forms with both Symfony2
 and Propel. But, in real life, this kind of forms is not enough and you'll probably
@@ -167,7 +167,7 @@ manage objects with relations, this is the next part of this chapter.
 A `Book` has an `Author`, this is a **One-To-Many** relation. Let's modifying your
 `BookType` to handle this relation:
 
-{% highlight php %}
+```php
 <?php
 // src/Acme/LibraryBundle/Form/Type/BookType.php
 
@@ -198,11 +198,11 @@ class BookType extends AbstractType
         return 'book';
     }
 }
-{% endhighlight %}
+```
 
 You now have to write an `AuthorType` to reflect the new requirements:
 
-{% highlight php %}
+```php
 <?php
 // src/Acme/LibraryBundle/Form/Type/AuthorType.php
 
@@ -231,7 +231,7 @@ class AuthorType extends AbstractType
         return 'author';
     }
 }
-{% endhighlight %}
+```
 
 If you refresh your page, you'll now get the following result:
 
@@ -243,7 +243,7 @@ The `Author` instance is accessible naturally via $book->getAuthor().
 
 But you could have the following use case: to add books to an author. The main type will be the `AuthorType` as below:
 
-{% highlight php %}
+```php
 <?php
 // src/Acme/LibraryBundle/Form/Type/AuthorType.php
 
@@ -278,11 +278,11 @@ class AuthorType extends AbstractType
         return 'author';
     }
 }
-{% endhighlight %}
+```
 
 You'll also need to refactor your `BookType`:
 
-{% highlight php %}
+```php
 <?php
 // src/Acme/LibraryBundle/Form/Type/BookType.php
 
@@ -311,7 +311,7 @@ class BookType extends AbstractType
         return 'book';
     }
 }
-{% endhighlight %}
+```
 
 When you'll create a new `Author` object, you'll be able to add a set of new `Books` objects and they will be
 linked to this author without any effort thanks to Propel and specific methods to handle collections on related objects.
@@ -326,7 +326,7 @@ Now, imagine you want to add your books to some lists for book clubs. A `BookClu
 
 Add the following definition to your `schema.xml ` and rebuild your model classes:
 
-{% highlight xml %}
+```xml
 <table name="book_club_list" description="Reading list for a book club.">
     <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" description="Unique ID for a school reading list." />
     <column name="group_leader" required="true" type="VARCHAR" size="100" description="The name of the teacher in charge of summer reading." />
@@ -344,11 +344,11 @@ Add the following definition to your `schema.xml ` and rebuild your model classe
         <reference local="book_club_list_id" foreign="id" />
     </foreign-key>
 </table>
-{% endhighlight %}
+```
 
 You now have `BookClubList` and `BookListRel` objects. Let's create a `BookClubListType`:
 
-{% highlight php %}
+```php
 <?php
 // src/Acme/LibraryBundle/Form/Type/BookClubListType.php
 
@@ -384,7 +384,7 @@ class BookClubListType extends AbstractType
         return 'book_club_list';
     }
 }
-{% endhighlight %}
+```
 
 You've added a `CollectionType` for the `Book` list and you've configured it
 with your `BookType`. In this example, you allow to add and/or delete books.
@@ -403,7 +403,7 @@ In the previous example, you always create new objects.
 
 If you want to select existing authors when you create new books, you'll have to use a `model` type:
 
-{% highlight php %}
+```php
 <?php
 // src/Acme/LibraryBundle/Form/Type/BookType.php
 
@@ -437,7 +437,7 @@ class BookType extends AbstractType
         return 'book';
     }
 }
-{% endhighlight %}
+```
 
 You'll obtain the following result:
 

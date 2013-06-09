@@ -25,13 +25,13 @@ The package is defined in a configuration cascade. You can set it up for the who
 
 For the whole project, the main package is set in the `build.properties`:
 
-{% highlight ini %}
+```ini
 propel.targetPackage = my_project
-{% endhighlight %}
+```
 
 By default, all the tables of all the schemas in the project use this package. However, you can override the package for a given `<database>` by setting its `package` attribute:
 
-{% highlight xml %}
+```xml
 <!-- in author.schema.xml -->
 <database package="author" name="bookstore">
 	<table name="author">
@@ -48,7 +48,7 @@ By default, all the tables of all the schemas in the project use this package. H
 		<!-- review columns -->
 	</table>
 </database>
-{% endhighlight %}
+```
 
 In this example, thanks to the `package` attribute, the tables are grouped into the following packages:
 
@@ -59,7 +59,7 @@ In this example, thanks to the `package` attribute, the tables are grouped into 
 
 You can also override the `package` attribute at the `<table>` element level.
 
-{% highlight xml %}
+```xml
 <!-- in author.schema.xml -->
 <database package="author" name="bookstore">
 	<table name="author">
@@ -76,7 +76,7 @@ You can also override the `package` attribute at the `<table>` element level.
 		<!-- review columns -->
 	</table>
 </database>
-{% endhighlight %}
+```
 
 This ends up in the following package:
 
@@ -94,7 +94,7 @@ The `package` attribute of a table translates to the directory in which Propel g
 
 For instance, if no `package` attribute is defined at the database of table level, Propel places all classes according to the `propel.targetPackage` from the `build.properties`:
 
-{% highlight text %}
+```
 build/
   classes/
     my_project/
@@ -106,19 +106,19 @@ build/
       BookQuery.php
       Review.php
       ReviewQuery.php
-{% endhighlight %}
+```
 
 You can further tweak the location where Propel puts the created files by changing the `propel.output.dir` build property. By default this property is set to:
 
-{% highlight ini %}
+```ini
 propel.output.dir = ${propel.project.dir}/build
-{% endhighlight %}
+```
 
 You can change it to use any other directory as your build directory.
 
 If you set up packages for `<database>` elements, Propel splits up the generated model classes into subdirectories named after the package attribute:
 
-{% highlight text %}
+```
 build/
   classes/
     my_project/
@@ -134,11 +134,11 @@ build/
         BookQuery.php
         Review.php
         ReviewQuery.php
-{% endhighlight %}
+```
 
 And of course, if you specialize the `package` attribute per table, you can have one table use its own package:
 
-{% highlight text %}
+```
 build/
   classes/
     my_project/
@@ -157,7 +157,7 @@ build/
         map/
         Review.php
         ReviewQuery.php
-{% endhighlight %}
+```
 
 ### Packages And SQL Files ###
 
@@ -165,30 +165,30 @@ Propel also considers packages for SQL generation. In practice, Propel generates
 
 So by default, all the tables end up in a single SQL file:
 
-{% highlight text %}
+```
 build/
   sql/
     schema.sql
-{% endhighlight %}
+```
 
 If you specialize the `package` for each `<database>` element, Propel uses it for SQL files:
 
-{% highlight text %}
+```
 build/
   sql/
     author.schema.sql // contains CREATE TABLE author
     book.schema.sql   // contains CREATE TABLE book and CREATE TABLE review
-{% endhighlight %}
+```
 
 And, as you probably expect it, a package overridden at the table level also accounts for an independent SQL file:
 
-{% highlight text %}
+```
 build/
   sql/
     author.schema.sql // contains CREATE TABLE author
     book.schema.sql   // contains CREATE TABLE book
     review.schema.sql // contains CREATE TABLE review
-{% endhighlight %}
+```
 
 ## Understanding The packageObjectModel Build Property ##
 
@@ -196,9 +196,9 @@ The `propel.packageObjectModel` build property enables the "packaged" build proc
 
 To switch this on, simply add the following line to the `build.properties` file in your project directory:
 
-{% highlight text %}
+```
 propel.packageObjectModel = true
-{% endhighlight %}
+```
 
 ## The Bookstore Packaged Example ##
 
@@ -216,9 +216,9 @@ Each schema file has to contain a `<database>` tag that has its `package` attrib
 
 For example, in the bookstore-packaged example the `author.schema.xml` contains the following `<database>` tag:
 
-{% highlight text %}
+```
 <database package="core.author" name="bookstore" [...]>
-{% endhighlight %}
+```
 
 That means, that the Author OM classes will be created in a subdirectory `core/author/` of the build output directory.
 
@@ -228,12 +228,13 @@ You can have more than one schema file that belong to one package. For example, 
 
 To run the packaged bookstore example build simply go to the `propel/test/fixtures/bookstore-packages/` directory and type:
 
-{% highlight text %}
+```
 ../../../generator/bin/propel-gen om
-{% endhighlight %}
+```
 
 This should run without any complaints. When you have a look at the projects/bookstore-packaged/build/classes directory, the following directory tree should have been created:
-{% highlight text %}
+
+```
 addon/
    club/
       BookClubList.php
@@ -252,7 +253,7 @@ core/
 util/
    log/
       BookstoreLog.php
-{% endhighlight %}
+```
 
 (The additional subdirectories map/ and om/ in each of these directories have been omitted for clarity.)
 
@@ -260,9 +261,9 @@ util/
 
 From the same schema files, run the SQL generation by calling:
 
-{% highlight text %}
+```
 ../../../generator/bin/propel-gen sql
-{% endhighlight %}
+```
 
 Then, have a look at the `build/sql/` directory: you will see that for each package (that is specified as a package attribute in the schema file database tags), one sql file has been created:
 
@@ -277,8 +278,8 @@ These files contain the CREATE TABLE SQL statements necessary for each package.
 
 When you now run the insert-sql task by typing:
 
-{% highlight text %}
+```
 ../../../generator/bin/propel-gen insert-sql
-{% endhighlight %}
+```
 
 these SQL statements will be executed on a SQLite database located in the Propel/generator/test/ directory.

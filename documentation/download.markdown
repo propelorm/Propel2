@@ -11,21 +11,21 @@ For a full installation tutorial, check the [Installation documentation](documen
 
 Clone it:
 
-{% highlight bash %}
+```bash
 > git clone git://github.com/propelorm/Propel.git
-{% endhighlight %}
+```
 
 Or add it as a submodule:
 
-{% highlight bash %}
+```bash
 > git submodule add git://github.com/propelorm/Propel.git /path/to/propel
-{% endhighlight %}
+```
 
 ## Subversion Checkout / Externals ##
 
-{% highlight bash %}
+```bash
 > svn co http://svn.github.com/propelorm/Propel.git
-{% endhighlight %}
+```
 
 >**Warning**<br />SVN is no more the default Source Code Management since 2011.
 
@@ -33,18 +33,18 @@ Or add it as a submodule:
 
 Propel is available through its own PEAR channel [pear.propelorm.org](pear.propelorm.org), in two separate packages for generator and runtime:
 
-{% highlight bash %}
+```bash
 > pear channel-discover pear.propelorm.org
 > sudo pear install -a propel/propel_generator
 > sudo pear install -a propel/propel_runtime
-{% endhighlight %}
+```
 
 Propel depends on the Phing library, and the dependency should be properly handled by PEAR thanks to the -a option above. Alternatively, you can install Phing separately:
 
-{% highlight bash %}
+```bash
 > pear channel-discover pear.phing.info
 > sudo pear install phing/phing
-{% endhighlight %}
+```
 
 >**Tip**<br />If you would like to use a beta or RC version of Propel, you may need to change your preferred_state PEAR environment variable.
 
