@@ -10,17 +10,17 @@ The `sortable` behavior allows a model to become an ordered list, and provides n
 ## Basic Usage ##
 
 In the `schema.xml`, use the `<behavior>` tag to add the `sortable` behavior to a table:
-{% highlight xml %}
+```xml
 <table name="task">
   <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
   <column name="title" type="VARCHAR" required="true" primaryString="true" />
   <behavior name="sortable" />
 </table>
-{% endhighlight %}
+```
 
 Rebuild your model, insert the table creation sql again, and you're ready to go. The model now has the ability to be inserted into an ordered list, as follows:
 
-{% highlight php %}
+```php
 <?php
 $t1 = new Task();
 $t1->setTitle('Wash the dishes');
@@ -34,13 +34,13 @@ $t3 = new Task();
 $t3->setTitle('Rest a little');
 $t3->save()
 echo $t3->getRank(); // 3
-{% endhighlight %}
+```
 
 As long as you save new objects, Propel gives them the first available rank in the list.
 
 Once you have built an ordered list, you can traverse it using any of the methods added by the `sortable` behavior. For instance:
 
-{% highlight php %}
+```php
 <?php
 $firstTask = TaskQuery::create()->findOneByRank(1); // $t1
 $secondTask = $firstTask->getNext();      // $t2
@@ -51,22 +51,22 @@ $allTasks = TaskQuery::create()->findList();
 // => collection($t1, $t2, $t3)
 $allTasksInReverseOrder = TaskQuery::create()->orderByRank('desc')->find();
 // => collection($t3, $t2, $t2)
-{% endhighlight %}
+```
 
 The results returned by these methods are regular Propel model objects, with access to the properties and related models. The `sortable` behavior also adds inspection methods to objects:
 
-{% highlight php %}
+```php
 <?php
 echo $t2->isFirst();      // false
 echo $t2->isLast();       // false
 echo $t2->getRank();      // 2
-{% endhighlight %}
+```
 
 ## Manipulating Objects In A List ##
 
 You can move an object in the list using any of the `moveUp()`, `moveDown()`, `moveToTop()`, `moveToBottom()`, `moveToRank()`, and `swapWith()` methods. These operations are immediate and don't require that you save the model afterwards:
 
-{% highlight php %}
+```php
 <?php
 // The list is 1 - Wash the dishes, 2 - Do the laundry, 3 - Rest a little
 $t2->moveToTop();
@@ -80,11 +80,11 @@ $t2->swapWith($t1);
 $t2->moveToRank(3);
 // The list is now 1 - Wash the dishes, 2 - Rest a little, 3 - Do the laundry
 $t2->moveToRank(2);
-{% endhighlight %}
+```
 
 By default, new objects are added at the bottom of the list. But you can also insert them at a specific position, using any of the `insertAtTop()`, `insertAtBottom()`, and `insertAtRank()` methods. Note that the `insertAtXXX` methods don't save the object:
 
-{% highlight php %}
+```php
 <?php
 // The list is 1 - Wash the dishes, 2 - Do the laundry, 3 - Rest a little
 $t4 = new Task();
@@ -92,15 +92,15 @@ $t4->setTitle('Clean windows');
 $t4->insertAtRank(2);
 $t4->save();
 // The list is now  1 - Wash the dishes, 2 - Clean Windows, 3 - Do the laundry, 4 - Rest a little
-{% endhighlight %}
+```
 
 Whenever you `delete()` an object, the ranks are rearranged to fill the gap:
 
-{% highlight php %}
+```php
 <?php
 $t4->delete();
 // The list is now 1 - Wash the dishes, 2 - Do the laundry, 3 - Rest a little
-{% endhighlight %}
+```
 
 >**Tip**<br />You can remove an object from the list without necessarily deleting it by calling `removeFromList()`. Don't forget to `save()` it afterwards so that the other objects in the lists are rearranged to fill the gap.
 
@@ -108,7 +108,7 @@ $t4->delete();
 
 When you need to store several lists for a single model - for instance, one task list for each user - use a _scope_ for each list. This requires that you enable scope support in the behavior definition by setting the `use_scope` parameter to `true`:
 
-{% highlight xml %}
+```xml
 <table name="task">
   <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
   <column name="title" type="VARCHAR" required="true" primaryString="true" />
@@ -121,11 +121,11 @@ When you need to store several lists for a single model - for instance, one task
     <parameter name="scope_column" value="user_id" />
   </behavior>
 </table>
-{% endhighlight %}
+```
 
 Now, after rebuilding your model, you can have as many lists as required:
 
-{% highlight php %}
+```php
 <?php
 // test users
 $paul = new User();
@@ -146,29 +146,29 @@ $t3->setTitle('Rest a little');
 $t3->setUser($john);
 $t3->save()
 echo $t3->getRank(); // 1, because John has his own task list
-{% endhighlight %}
+```
 
 The generated methods now accept a `$scope` parameter to restrict the query to a given scope:
 
-{% highlight php %}
+```php
 <?php
 $firstPaulTask = TaskQuery::create()->findOneByRank($rank = 1, $scope = $paul->getId()); // $t1
 $lastPaulTask = $firstTask->getNext();      // $t2
 $firstJohnTask = TaskQuery::create()->findOneByRank($rank = 1, $scope = $john->getId()); // $t1
-{% endhighlight %}
+```
 
 Models using the sortable behavior with scope benefit from one additional Query methods named `inList()`:
 
-{% highlight php %}
+```php
 <?php
 $allPaulsTasks = TaskQuery::create()->inList($scope = $paul->getId())->find();
-{% endhighlight %}
+```
 
 ## Parameters ##
 
 By default, the behavior adds one columns to the model - two if you use the scope feature. If these columns are already described in the schema, the behavior detects it and doesn't add them a second time. The behavior parameters allow you to use custom names for the sortable columns. The following schema illustrates a complete customization of the behavior:
 
-{% highlight xml %}
+```xml
 <table name="task">
   <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
   <column name="title" type="VARCHAR" required="true" primaryString="true" />
@@ -183,26 +183,26 @@ By default, the behavior adds one columns to the model - two if you use the scop
     <parameter name="scope_column" value="user_id" />
   </behavior>
 </table>
-{% endhighlight %}
+```
 
 Whatever name you give to your columns, the `sortable` behavior always adds the following proxy methods, which are mapped to the correct column:
 
-{% highlight php %}
+```php
 <?php
 $task->getRank();         // returns $task->my_rank_column
 $task->setRank($rank);
 $task->getScopeValue();   // returns $task->user_id
 $task->setScopeValue($scope);
-{% endhighlight %}
+```
 
 The same happens for the generated Query object:
 
-{% highlight php %}
+```php
 <?php
 $query = TaskQuery::create()->filterByRank();  // proxies to filterByMyRankColumn()
 $query = TaskQuery::create()->orderByRank();   // proxies to orderByMyRankColumn()
 $tasks = TaskQuery::create()->findOneByRank(); // proxies to findOneByMyRankColumn()
-{% endhighlight %}
+```
 
 >**Tip**<br />The behavior adds columns but no index. Depending on your table structure, you might want to add a column index by hand to speed up queries on sorted lists.
 
@@ -210,7 +210,7 @@ $tasks = TaskQuery::create()->findOneByRank(); // proxies to findOneByMyRankColu
 
 Here is a list of the methods added by the behavior to the model objects:
 
-{% highlight php %}
+```php
 <?php
 // storage columns accessors
 int     getRank()
@@ -242,11 +242,11 @@ $object swapWith($object)
 
 // method to remove an object from the list (requires calling save() afterwards)
 $object removeFromList()
-{% endhighlight %}
+```
 
 Here is a list of the methods added by the behavior to the query objects:
 
-{% highlight php %}
+```php
 <?php
 query   filterByRank($order, $scope = null)
 query   orderByRank($order, $scope = null)
@@ -256,11 +256,11 @@ int     getMaxRank($scope = null)
 bool    reorder($newOrder) // $newOrder is a $id => $rank associative array
 // only for behavior with use_scope
 array   inList($scope)
-{% endhighlight %}
+```
 
 The behavior also adds a few methods to the Query classes:
 
-{% highlight php %}
+```php
 <?php
 int     getMaxRank($scope = null)
 $object retrieveByRank($rank, $scope = null)
@@ -270,4 +270,4 @@ bool    reorder($newOrder) // $newOrder is a $id => $rank associative array
 array   retrieveList($scope)
 int     countList($scope)
 int     deleteList($scope)
-{% endhighlight %}
+```

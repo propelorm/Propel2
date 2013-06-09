@@ -9,7 +9,7 @@ Propel provides the `copy()` method to perform copies of mapped row in the datab
 
 The `copy()` method by default performs shallow copies, meaning that any foreign key references will remain the same.
 
-{% highlight php %}
+```php
 <?php
 
 $a = new Author();
@@ -30,7 +30,7 @@ $bcopy = $b->copy();
 var_export($bcopy->getId() == $b->getId()); // FALSE
 var_export($bcopy->getAuthorId() == $b->getAuthorId()); // TRUE
 var_export($bcopy->getAuthor() == $b->getAuthor()); // TRUE
-{% endhighlight %}
+```
 
 ## Deep Copies ##
 
@@ -38,11 +38,11 @@ By calling `copy()` with a `TRUE` parameter, Propel will create a deep copy of t
 
 To continue with example from above:
 
-{% highlight php %}
+```php
 <?php
 
 $bdeep = $b->copy(true);
 var_export($bcopy->getId() == $b->getId()); // FALSE
 var_export($bcopy->getAuthorId() == $b->getAuthorId()); // FALSE
 var_export($bcopy->getAuthor() == $b->getAuthor()); // FALSE
-{% endhighlight %}
+```

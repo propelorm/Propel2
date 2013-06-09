@@ -13,31 +13,31 @@ Some database vendors support "schemas", a.k.a. namespaces of collections of dat
 
 In a XML schema, you can assign all the tables included into a `<database>` tag to a given schema by setting the `schema` attribute on the `<database>` tag:
 
-{% highlight xml %}
+```xml
 <database name="bookstore" schema="bookstore">
   <table name="book">
     <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
     <column name="title" type="VARCHAR" required="true" />
   </table>
 </database>
-{% endhighlight %}
+```
 
 >**Tip**<br />On RDBMS that do not support SQL schemas (Oracle, SQLite), the `schema` attribute is ignored.
 
 You can also assign a table to a given schema individually ; this overrides the `schema` of the parent `<database>`:
 
-{% highlight xml %}
+```xml
 <table name="book" schema="bookstore1">
   <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
   <column name="title" type="VARCHAR" required="true" />
 </table>
-{% endhighlight %}
+```
 
 ### Foreign Keys Between Schemas ###
 
 You can create foreign keys between tables assigned to different schemas, provided you set the `foreignSchema` attribute in the `<foreign-key>` tag.
 
-{% highlight xml %}
+```xml
 <table name="book" schema="bookstore">
   <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
   <column name="title" type="VARCHAR" required="true" />
@@ -50,20 +50,20 @@ You can create foreign keys between tables assigned to different schemas, provid
   <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
   <column name="name" type="VARCHAR" required="true" />
 </table>
-{% endhighlight %}
+```
 
 ## Schemas in Generated SQL ##
 
 When generating the SQL for table creation, Propel correctly adds the schema prefix (example for MySQL):
 
-{% highlight sql %}
+```sql
 CREATE TABLE `bookstore`.`book`
 (
   `id` INTEGER NOT NULL AUTO_INCREMENT,
   `title` VARCHAR(255),
   PRIMARY KEY (`id`)
 )
-{% endhighlight %}
+```
 
 >**Tip**<br />Propel does not take care of creating the schema. The target database must already contain the required schemas, and the user credentials must allow Propel to access this schema.
 
@@ -84,17 +84,17 @@ Propel provides other features to organize your model:
 
 You can easily tell Propel to copy the `schema` attribute to both the `package` and the `namespace` attributes, in order to reproduce the SQL organization at the PHP level. To that extent, modify the following settings in `build.properties`:
 
-{% highlight ini %}
+```ini
 propel.schema.autoPackage = true
 propel.schema.autoNamespace = true
-{% endhighlight %}
+```
 
 With such a configuration, a `book` table assigned to the `bookstore` schema will generate a `Bookstore\Book` ActiveRecord class under the `bookstore/` subdirectory.
 
 If you're stuck with PHP 5.2, you probably need to use the schema name as a class prefix rather than a namespace. That's what the `autoPrefix` setting is for:
 
-{% highlight ini %}
+```ini
 propel.schema.autoPrefix = true
-{% endhighlight %}
+```
 
 With such a configuration, a `book` table assigned to the `bookstore` schema will generate a `BookstoreBook` ActiveRecord class.

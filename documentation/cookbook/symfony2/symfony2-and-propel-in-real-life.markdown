@@ -20,7 +20,7 @@ In this section, you'll configure your database, create a `Product` object, pers
 Before you really begin, you'll need to configure your database connection information.
 By convention, this information is usually configured in an `app/config/parameters.ini` file:
 
-{% highlight ini %}
+```ini
 ;app/config/parameters.ini
 [parameters]
     database_driver   = mysql
@@ -29,7 +29,7 @@ By convention, this information is usually configured in an `app/config/paramete
     database_user     = root
     database_password = password
     database_charset  = UTF8
-{% endhighlight %}
+```
 
 >**Information**<br />Defining the configuration via `parameters.ini` is just a convention. The parameters defined in that file are referenced by the main configuration file when setting up Propel:
 
@@ -40,7 +40,7 @@ propel:
         user:       %database_user%
         password:   %database_password%
         dsn:        %database_driver%:host=%database_host%;dbname=%database_name%;charset=%database_charset%
-{% endhighlight %}
+```
 
 Now that Propel knows about your database, you can have it create the database for you:
 
@@ -56,7 +56,7 @@ With Propel, it's better to call them **Model classes** as generated Propel clas
 Suppose you're building an application where products need to be displayed. Let's writing a `schema.xml` inside
 the `Resources/config/` directory of your `AcmeStoreBundle`:
 
-{% highlight xml %}
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <database name="default" namespace="Acme\StoreBundle\Model" defaultIdMethod="native">
     <table name="product">
@@ -66,7 +66,7 @@ the `Resources/config/` directory of your `AcmeStoreBundle`:
         <column name="description" type="longvarchar" />
     </table>
 </database>
-{% endhighlight %}
+```
 
 ### Building the Model ###
 
@@ -97,7 +97,7 @@ Your database now has a fully-functional `product` table with columns that match
 Now that you have a `Product` object and corresponding `product` table, you're ready to persist data to the database.
 From inside a controller, this is pretty easy. Add the following method to the `DefaultController` of the bundle:
 
-{% highlight php %}
+```php
 <?php
 // src/Acme/StoreBundle/Controller/DefaultController.php
 use Acme\StoreBundle\Model\Product;
@@ -115,7 +115,7 @@ public function createAction()
 
     return new Response('Created product id '.$product->getId());
 }
-{% endhighlight %}
+```
 
 In this piece of code, you instantiate and work with the `$product` object. When you call the `save()` method on it, you persist
 it in the database. No need to use other services, the object knows how to persist it itself.
@@ -127,7 +127,7 @@ it in the database. No need to use other services, the object knows how to persi
 Fetching an object back out of the database is even easier. For example, suppose you've configured a route to display
 a specific `Product` based on its `id` value:
 
-{% highlight php %}
+```php
 <?php
 
 use Acme\StoreBundle\Model\ProductQuery;
@@ -143,14 +143,14 @@ public function showAction($id)
 
     // do something, like pass the $product object into a template
 }
-{% endhighlight %}
+```
 
 ### Updating an Object ###
 
 Once you've fetched an object from Propel, updating it is easy. Suppose you have a route that maps a product id
 to an update action in a controller:
 
-{% highlight php %}
+```php
 <?php
 
 use Acme\StoreBundle\Model\ProductQuery;
@@ -169,7 +169,7 @@ public function updateAction($id)
 
     return $this->redirect($this->generateUrl('homepage'));
 }
-{% endhighlight %}
+```
 
 Updating an object involves just three steps:
 
@@ -181,18 +181,18 @@ Updating an object involves just three steps:
 
 Deleting an object is very similar, but requires a call to the `delete()` method on the object:
 
-{% highlight php %}
+```php
 <?php
 
 $product->delete();
-{% endhighlight %}
+```
 
 
 ## Querying for Objects ##
 
 Propel provides `Query` classes to run both basic and complex queries without any work:
 
-{% highlight php %}
+```php
 <?php
 
 \Acme\StoreBundle\Model\ProductQuery::create()->findPk($id);
@@ -200,19 +200,19 @@ Propel provides `Query` classes to run both basic and complex queries without an
 \Acme\StoreBundle\Model\ProductQuery::create()
     ->filterByName('Foo')
     ->findOne();
-{% endhighlight %}
+```
 
 Imaging that you want to query for products, but only return products that cost more than 19.99,
 ordered from cheapest to most expensive. From inside a controller, do the following:
 
-{% highlight php %}
+```php
 <?php
 
 $products = \Acme\StoreBundle\Model\ProductQuery::create()
     ->filterByPrice(19.99, \Criteria::GREATER_THAN)
     ->orderByPrice()
     ->find();
-{% endhighlight %}
+```
 
 In one line, you get your products in a powerful oriented object way.
 No need to waste your time with SQL or whatever, Symfony2 is fully object oriented programming and Propel
@@ -220,7 +220,7 @@ respects the same philosophy by providing an awesome abstraction layer.
 
 If you want to reuse some queries, you can add your own methods to the `ProductQuery`:
 
-{% highlight php %}
+```php
 <?php
 // src/Acme/StoreBundle/Model/ProductQuery.php
 
@@ -232,18 +232,18 @@ class ProductQuery extends BaseProductQuery
             ->filterByPrice(1000, \Criteria::GREATER_THAN);
     }
 }
-{% endhighlight %}
+```
 
 But note that Propel generates a lot of methods for you and a simple `findAllOrderedByName()` can be written without
 any effort:
 
-{% highlight php %}
+```php
 <?php
 
 \Acme\StoreBundle\Model\ProductQuery::create()
     ->orderByName()
     ->find();
-{% endhighlight %}
+```
 
 
 ## Relationships/Associations ##
@@ -253,7 +253,7 @@ you'll need a `Category` object and a way to relate a `Product` object to a `Cat
 
 Start by adding the `category` definition in your `schema.xml`:
 
-{% highlight xml %}
+```xml
 <database name="default" namespace="Acme\StoreBundle\Model" defaultIdMethod="native">
     <table name="product">
         <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
@@ -272,7 +272,7 @@ Start by adding the `category` definition in your `schema.xml`:
         <column name="name" type="varchar" primaryString="1" size="100" />
    </table>
 </database>
-{% endhighlight %}
+```
 
 Create the classes:
 
@@ -291,7 +291,7 @@ Your database has been updated, you can continue to write your application.
 
 Now, let's see the code in action. Imagine you're inside a controller:
 
-{% highlight php %}
+```php
 <?php
 // ...
 use Acme\StoreBundle\Model\Category;
@@ -320,7 +320,7 @@ class DefaultController extends Controller
         );
     }
 }
-{% endhighlight %}
+```
 
 Now, a single row is added to both the `category` and product tables. The `product.category_id` column for the
 new product is set to whatever the id is of the new category. Propel manages the persistence of this relationship for you..
@@ -330,7 +330,7 @@ new product is set to whatever the id is of the new category. Propel manages the
 When you need to fetch associated objects, your workflow looks just like it did before.
 First, fetch a `$product` object and then access its related `Category`:
 
-{% highlight php %}
+```php
 <?php
 // ...
 use Acme\StoreBundle\Model\ProductQuery;
@@ -345,7 +345,7 @@ public function showAction($id)
 
     // ...
 }
-{% endhighlight %}
+```
 
 Note, in the above example, only one query was made.
 
@@ -363,7 +363,7 @@ to execute during different stages of the lifecycle of an object (e.g. the objec
 
 To add a hook, just add a new method to the object class:
 
-{% highlight php %}
+```php
 <?php
 // src/Acme/StoreBundle/Model/Product.php
 
@@ -376,7 +376,7 @@ class Product extends BaseProduct
         // do something before the object is inserted
     }
 }
-{% endhighlight %}
+```
 
 Propel provides the following hooks:
 

@@ -10,17 +10,17 @@ The `alternative_coding_standards` behavior changes the coding standards of the 
 ## Basic Usage ##
 
 In the `schema.xml`, use the `<behavior>` tag to add the `alternative_coding_standards` behavior to a table:
-{% highlight xml %}
+```xml
 <table name="book">
   <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
   <column name="title" type="VARCHAR" required="true" primaryString="true" />
   <behavior name="alternative_coding_standards" />
 </table>
-{% endhighlight %}
+```
 
 Rebuild your model, and you're ready to go. The code of the model classes now uses an alternative set of coding standards:
 
-{% highlight php %}
+```php
 <?php
 // in om/BaseBook.php
   /**
@@ -66,7 +66,7 @@ Rebuild your model, and you're ready to go. The code of the model classes now us
 
 		return $this;
 	} // setTitle()
-{% endhighlight %}
+```
 
 The behavior replaces tabulations by whitespace (2 spaces by default), places opening brackets on newlines, removes closing brackets comments, and can even strip every comments in the generated classes if you wish.
 
@@ -74,7 +74,7 @@ The behavior replaces tabulations by whitespace (2 spaces by default), places op
 
 Each of the new coding style rules has corresponding parameter in the behavior description. Here is the default configuration:
 
-{% highlight xml %}
+```xml
 <table name="book">
   <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
   <column name="title" type="VARCHAR" required="true" primaryString="true" />
@@ -86,6 +86,6 @@ Each of the new coding style rules has corresponding parameter in the behavior d
     <parameter name="strip_comments" value="false" />
   </behavior>
 </table>
-{% endhighlight %}
+```
 
 You can change these settings to better match your own coding styles.

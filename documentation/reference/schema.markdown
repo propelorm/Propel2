@@ -11,7 +11,7 @@ The schema for `schema.xml` contains a small number of elements with required an
 
 The hierarchical tree relationship for the elements is:
 
-{% highlight xml %}
+```xml
 <database>
    <table>
      <column>
@@ -30,17 +30,17 @@ The hierarchical tree relationship for the elements is:
    </table>
    <external-schema />
 </database>
-{% endhighlight %}
+```
 
 You can find example schemas in the test fixtures that the Propel development team uses for unit testing. For instance, the bookstore schema describes the model of a Bookstore application.
 
 >**Tip**<br />If you use an IDE supporting autocompletion in XML documents, you can take advantage of the XSD describing the `schema.xml` syntax to suggest elements and attributes as you type. To enable it, add a `xmlns:xsi` and a `xsi:noNamespaceSchemaLocation` attribute to the leading `<database>` tag:
 
-{% highlight xml %}
+```xml
 <database name="my_connection_name" defaultIdMethod="native"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:noNamespaceSchemaLocation="http://xsd.propelorm.org/1.6/database.xsd" >
-{% endhighlight %}
+```
 
 ## Detailed Reference ##
 
@@ -59,7 +59,7 @@ First, some conventions:
 
 Starting with the `<database>` element. The _attributes_ and _elements_ available are:
 
-{% highlight xml %}
+```xml
 <database
   name="/DatabaseName/"
   defaultIdMethod="native|none"
@@ -75,7 +75,7 @@ Starting with the `<database>` element. The _attributes_ and _elements_ availabl
   <external-schema>
   ...
 </database>
-{% endhighlight %}
+```
 
 Only the `name` and the `defaultIdMethod` attributes are required.
 
@@ -96,7 +96,7 @@ A Database element may include an `<external-schema>` element, or multiple `<tab
 
 The `<table>` element is the most complicated of the usable elements. Its definition looks like this:
 
-{% highlight xml %}
+```xml
 <table
   name = "/TableName/"
   [idMethod = "native|{none}"]
@@ -128,7 +128,7 @@ The `<table>` element is the most complicated of the usable elements. Its defini
   <id-method-parameter>
   ...
 </table>
-{% endhighlight %}
+```
 
 According to the schema, `name` is the only required attribute.  Also, the `idMethod`, `package`, `schema`, `namespace`, `phpNamingMethod`, `baseClass`, and `heavyIndexing` attributes all default to what is specified by the `<database>` element.
 
@@ -152,7 +152,7 @@ According to the schema, `name` is the only required attribute.  Also, the `idMe
 
 ### column element ###
 
-{% highlight xml %}
+```xml
 <column
   name = "/ColumnName/"
   [phpName = "/PHPColumnName/"]
@@ -176,7 +176,7 @@ According to the schema, `name` is the only required attribute.  Also, the `idMe
   >
     [<inheritance key="/KeyName/" class="/ClassName/" [extends="/BaseClassName/"] />]
 </column>
-{% endhighlight %}
+```
 
 #### Column Attributes ####
 
@@ -194,7 +194,7 @@ According to the schema, `name` is the only required attribute.  Also, the `idMe
 
 To link a column to another table use the following syntax:
 
-{% highlight xml %}
+```xml
 <foreign-key
   foreignTable = "/TheOtherTableName/"
   [foreignSchema = "/TheOtherTableSQLSchema/"]
@@ -208,7 +208,7 @@ To link a column to another table use the following syntax:
 >
   <reference local="/LocalColumnName/" foreign="/ForeignColumnName/" />
 </foreign-key>
-{% endhighlight %}
+```
 
 #### Foreign Key Attributes ####
 
@@ -219,12 +219,12 @@ To link a column to another table use the following syntax:
 
 To create an index on one or more columns, use the following syntax:
 
-{% highlight xml %}
+```xml
 <index [name="/IndexName/"]>
   <index-column name="/ColumnName/" [size="/LengthOfIndexColumn/"] />
   ...
 </index>
-{% endhighlight %}
+```
 
 In some cases your RDBMS may require you to specify an index size.
 
@@ -232,12 +232,12 @@ In some cases your RDBMS may require you to specify an index size.
 
 To create a unique index on one or more columns, use the following syntax:
 
-{% highlight xml %}
+```xml
 <unique [name="/IndexName/"]>
   <unique-column name="/ColumnName/" [size="/LengthOfIndexColumn/"] />
   ...
 </unique>
-{% endhighlight %}
+```
 
 In some cases your RDBMS may require you to specify an index size for unique indexes.
 
@@ -245,20 +245,20 @@ In some cases your RDBMS may require you to specify an index size for unique ind
 
 If you are using a database that uses sequences for auto-increment columns (e.g. PostgreSQL or Oracle), you can customize the name of the sequence using  the `<id-method-parameter>` tag:
 
-{% highlight xml %}
+```xml
 <id-method-parameter value="my_custom_sequence_name"/>
-{% endhighlight %}
+```
 
 ### external-schema element ###
 
 The `<external-schema>` element includes another schema file from the filesystem into the current schema. The format is:
 
-{% highlight xml %}
+```xml
 <external-schema
   filename="/a path to a file/"
   referenceOnly="{true}|false"
 />
-{% endhighlight %}
+```
 
 The `filename` can be relative or absolute. Beware that the external schema must contain a `<database>` with the same name as the current element. By default, tables from external schemas are ignored by the `sql` task - that means that Propel won't try to _insert_ the external tables. If you want Propel to take the tables from an external schema into account in SQL, set the `referenceOnly` attribute to `false`.
 
@@ -338,43 +338,43 @@ For example:
 
 (Overriding PHP type)
 
-{% highlight xml %}
+```xml
 <column name="population_served" type="INTEGER" phpType="string"/>
-{% endhighlight %}
+```
 
 (Overriding SQL type)
 
-{% highlight xml %}
+```xml
 <column name="ip_address" type="VARCHAR" sqlType="inet"/>
-{% endhighlight %}
+```
 
 ### Adding Vendor Info ###
 
 Propel supports database-specific elements in the schema (currently only for MySQL). This "vendor" parameters affect the generated SQL. To add vendor data, add a `<vendor>` tag with a `type` attribute specifying the target database vendor. In the `<vendor>` tag, add `<parameter>` tags with a `name` and a `value` attribute. For instance:
 
-{% highlight xml %}
+```xml
 <table name="book">
   <vendor type="mysql">
     <parameter name="Engine" value="InnoDB"/>
     <parameter name="Charset" value="utf8"/>
   </vendor>
 </table>
-{% endhighlight %}
+```
 
 This will change the generated SQL table creation to look like:
 
-{% highlight sql %}
+```sql
 CREATE TABLE book
   ()
   ENGINE = InnoDB
   DEFAULT CHARACTER SET utf8;
-{% endhighlight %}
+```
 
 #### MySQL Vendor Info ####
 
 Propel supports the following vendor parameters for MySQL:
 
-{% highlight txt %}
+```
 Name             | Example values
 -----------------|---------------
 // in <table> element
@@ -400,13 +400,13 @@ Charset          | utf8, latin1, etc.
 Collate          | utf8_unicode_ci, latin1_german1_ci, etc.
 // in <index> element
 Index_type       | FULLTEXT
-{% endhighlight %}
+```
 
 #### Oracle Vendor Info ####
 
 Propel supports the following vendor parameters for Oracle:
 
-{% highlight txt %}
+```
 Name             | Example values
 -----------------|---------------
 // in <table> element
@@ -429,7 +429,7 @@ MinExtents       | 1
 MaxExtents       | 99
 PCTIncrease      | 0
 Tablespace       | L_128K
-{% endhighlight %}
+```
 
 ### Using Custom Platform ###
 
@@ -437,7 +437,7 @@ For overriding the mapping between Propel types and native SQL types, you can cr
 
 For example:
 
-{% highlight php %}
+```php
 <?php
 require_once 'propel/engine/platform/MysqlPlatform.php';
 
@@ -458,7 +458,7 @@ class CustomMysqlPlatform extends MysqlPlatform
     $this->setSchemaDomainMapping(new Domain(PropelTypes::CLOB, "LONGTEXT"));
   }
 }
-{% endhighlight %}
+```
 
 You must then specify that mapping in the `build.properties` for your project:
 

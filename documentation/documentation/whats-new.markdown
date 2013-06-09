@@ -51,18 +51,18 @@ Once enabled on a table, the `versionable` behavior will store a copy of the Act
 
 The classic Wiki example is a good illustration of the utility of the `versionable` behavior:
 
-{% highlight xml %}
+```xml
 <table name="wiki_page">
   <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
   <column name="title" type="VARCHAR" required="true" />
   <column name="body" type="LONGVARCHAR" />
   <behavior name="versionable" />
 </table>
-{% endhighlight %}
+```
 
 After rebuild, the `WikiPage` model has versioning abilities:
 
-{% highlight php %}
+```php
 <?php
 $page = new WikiPage();
 
@@ -90,11 +90,11 @@ print_r($page->compareVersions(1, 2));
 
 // deleting an object also deletes all its versions
 $page->delete();
-{% endhighlight %}
+```
 
 The `versionable` behavior offers audit log functionality, so you can track who made a modification, when, and why:
 
-{% highlight php %}
+```php
 <?php
 $page = new WikiPage();
 $page->setTitle('PEAR');
@@ -116,13 +116,13 @@ foreach ($page->getAllVersions() as $pageVersion) {
 }
 // 'PEAR', Version 1, updated by John Doe on 2010-12-21 22:53:02 (First draft)
 // 'PEAR', Version 2, updated by ...
-{% endhighlight %}
+```
 
 If it was just for that, the `versionable` behavior would already be awesome. Versioning is a very common feature, and there is no doubt that this behavior will replace lots of boilerplate code. Consider the fact that it's very configurable, [fully documented](../behaviors/versionable.html), and unit tested, and there is no reason to develop your own versioning layer.
 
 But there is more. The `versionable` behavior also works on relationships. If the `WikiPage` has one `Category`, and if the `Category` model also uses the `versionable` behavior, then each time a `WikiPage` is saved, it saves the version of the related `Category` it is related to, and it is able to restore it:
 
-{% highlight php %}
+```php
 <?php
 $category = new Category();
 $category->setName('Libraries');
@@ -144,7 +144,7 @@ echo $page->getCategory()->getName(); // 'Libraries'
 $page->toVersion(3);
 echo $page->getTitle(); // 'PEAR - PHP Extension and Application Repository'
 echo $page->getCategory()->getName(); // 'PHP Libraries'
-{% endhighlight %}
+```
 
 Now the versioning is not limited to a single class anymore. You can even design a fully versionable **application** - it all depends on your imagination.
 
@@ -156,7 +156,7 @@ This is useful in multilingual applications, such as an e-commerce website selli
 
 Starting with Propel 1.6, this is possible by adding a simple `<behavior>` tag to the table that needs internationalization:
 
-{% highlight xml %}
+```xml
 #!xml
 <table name="item">
   <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
@@ -168,44 +168,44 @@ Starting with Propel 1.6, this is possible by adding a simple `<behavior>` tag t
     <parameter name="i18n_columns" value="name, description" />
   </behavior>
 </table>
-{% endhighlight %}
+```
 
 In this example, the `name` and `description` columns are moved to a new table, called `item_i18n`, which shares a many-to-one relationship with Item - one Item has many Item translations. But all this happens in the background; for the end user, everything happens as if there were only one main `Item` object:
 
-{% highlight php %}
+```php
 <?php
 $item = new Item();
 $item->setPrice('12.99');
 $item->setName('Microwave oven');
 $item->save();
-{% endhighlight %}
+```
 
 This creates one record in the `item` table with the price, and another in the `item_i18n` table with the English (default language) translation for the name. Of course, you can add more translations:
 
-{% highlight php %}
+```php
 <?php
 $item->setLocale('fr_FR');
 $item->setName('Four micro-ondes');
 $item->setLocale('es_ES');
 $item->setName('Microondas');
 $item->save();
-{% endhighlight %}
+```
 
 This works both for setting AND for getting internationalized columns:
 
-{% highlight php %}
+```php
 <?php
 $item->setLocale('en_EN');
 echo $item->getName(); //'Microwave oven'
 $item->setLocale('fr_FR');
 echo $item->getName(); // 'Four micro-ondes'
-{% endhighlight %}
+```
 
 **Tip**: The big advantage of Propel behaviors is that they use code generation. Even though it's only a proxy method to the `ItemI18n` class, `Item::getName()` has all the phpDoc required to make your IDE happy.
 
 This new behavior also adds special capabilities to the Query objects. The most interesting allows you to execute less queries when you need to query for an Item and one of its translations - which is common to display a list of items in the locale of the user:
 
-{% highlight php %}
+```php
 <?php
 $items = ItemQuery::create()->find(); // one query to retrieve all items
 $locale = 'en_EN';
@@ -214,11 +214,11 @@ foreach ($items as $item) {
   $item->setLocale($locale);
   echo $item->getName(); // one query to retrieve the English translation
 }
-{% endhighlight %}
+```
 
 This code snippet requires 1+n queries, n being the number of items. But just add one more method call to the query, and the SQL query count drops to 1:
 
-{% highlight php %}
+```php
 <?php
 $items = ItemQuery::create()
   ->joinWithI18n('en_EN')
@@ -227,7 +227,7 @@ foreach ($items as $item) {
   echo $item->getPrice();
   echo $item->getName(); // no additional query
 }
-{% endhighlight %}
+```
 
 In addition to hydrating translations, `joinWithI18n()` sets the correct locale on results, so you don't need to call `setLocale()` for each result.
 
@@ -243,7 +243,7 @@ ActiveRecord and Collection objects now have the ability to be converted to and 
 
 The syntax is very intuitive: ActiveRecord and collection objects now offer a `toXML()` and a `fromXML()` method (same for YAML, JSON, and CSV). Here are a few examples:
 
-{% highlight php %}
+```php
 <?php
 // dump a collection to YAML
 $books = BookQuery::create()
@@ -283,13 +283,13 @@ EOF;
 $book = new Book();
 $book->fromXML($bookString);
 echo $book->getTitle(); // Don Juan
-{% endhighlight %}
+```
 
 ## Model Objects String Representation ##
 
 Taking advantage of the dumping abilities just introduced, all ActiveRecord objects now have a string representation based on a YAML dump of their properties:
 
-{% highlight php %}
+```php
 <?php
 $author = new Author();
 $author->setFirstName('Leo');
@@ -300,13 +300,13 @@ echo $author;
 // LastName: Tolstoi
 // Email: null
 // Age: null
-{% endhighlight %}
+```
 
 **Tip**: Tables with a column using the `isPrimaryString` attribute still output the value of a single column as string representation.
 
 `PropelCollection` objects also take advantage from this possibility:
 
-{% highlight php %}
+```php
 <?php
 $authors = AuthorQuery::create()
   ->orderByLastName()
@@ -324,18 +324,18 @@ echo $authors;
 //   LastName: Tolstoi
 //   Email: null
 //   Age: null
-{% endhighlight %}
+```
 
 If you want to use another format for the default string representation instead of YAML, you can set the `defaultStringFormat` attribute to any of the supported formats in either the `<database>` or the `<table>` elements in the XML schema:
 
-{% highlight xml %}
+```xml
 <table name="publisher" defaultStringFormat="XML">
   <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
   <column name="name" required="true" type="VARCHAR" size="128" />
 </table>
-{% endhighlight %}
+```
 
-{% highlight php %}
+```php
 <?php
 $publisher = new Publisher();
 $publisher->setName('Penguin');
@@ -345,7 +345,7 @@ echo $publisher;
 //   <Id></Id>
 //   <Name><![CDATA[Peguin]]></Name>
 // </data>
-{% endhighlight %}
+```
 
 ## Easier OR in Queries ##
 
@@ -353,7 +353,7 @@ Combining two generated filters with a logical `OR` used to be impossible in pre
 
 Propel 1.6 introduces a new method for Query objects: `_or()`. It just specifies that the next condition will be combined with a logical `OR` rather than an `AND`.
 
-{% highlight php %}
+```php
 <?php
 // Basic usage: _or() as a drop-in replacement for orWhere()
 $books = BookQuery::create()
@@ -383,7 +383,7 @@ $books = BookQuery::create()
 // INNER JOIN author ON book.AUTHOR_ID = author.ID
 // WHERE book.TITLE = 'War and Peace'
 //    OR author.NAME = 'Leo Tolstoi'
-{% endhighlight %}
+```
 
 This new method is implemented in the `Criteria` class, so it also works for the old-style queries (using `add()` for conditions).
 
@@ -397,7 +397,7 @@ In Propel 1.6, you can write your buildtime connection settings in a `buildtime-
 
 Here is an example buildtime configuration file that defines a MySQL and a SQLite connection:
 
-{% highlight xml %}
+```xml
 <?xml version="1.0"?>
 <config>
   <propel>
@@ -419,7 +419,7 @@ Here is an example buildtime configuration file that defines a MySQL and a SQLit
     </datasources>
   </propel>
 </config>
-{% endhighlight %}
+```
 
 Now that Propel can deal with database vendors at buildtime more accurately, the generated classes offer more optimizations for the database they rely one. Incidentally, that means that you should rebuild your model if you use different database vendors. That includes cases when your development and production environments use different vendors.
 
@@ -427,7 +427,7 @@ Now that Propel can deal with database vendors at buildtime more accurately, the
 
 For complex models showing a large number of tables, database administrators often like to group tables into "SQL schemas", which are namespaces in the SQL server. Starting with Propel 1.6, it is now possible to assign tables to SQL schemas using the `schema` attribute in the `<database>` of the `<table>` tag:
 
-{% highlight xml %}
+```xml
 <database name="my_connection">
   <table name="book" schema="bookstore">
     <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
@@ -442,7 +442,7 @@ For complex models showing a large number of tables, database administrators oft
     <column name="name" type="VARCHAR" required="true" />
   </table>
 </database>
-{% endhighlight %}
+```
 
 **Tip**: This feature is only available in PostgreSQL, MSSQL, and MySQL. The `schema` attribute is simply ignored in Oracle and SQLite.
 
@@ -454,7 +454,7 @@ The Propel documentation contains a new tutorial about the SQL schema attributes
 
 The generated `filterByRelationName()` methods in the model queries now accept a `PropelCollection` as argument. This will allow you to keep using objects and avoid dealing with foreign keys completely:
 
-{% highlight php %}
+```php
 <?php
 // get young authors
 $authors = AuthorQuery::create()
@@ -464,13 +464,13 @@ $authors = AuthorQuery::create()
 $books = BookQuery::create()
   ->filterByAuthor($authors) // <= That's new
   ->find();
-{% endhighlight %}
+```
 
 ## Join With Several Conditions ##
 
 Creating a Join with more than one condition is now very easy. Just call `ModelCriteria::addJoinCondition($joinName, $condition)` after a `ModelCriteria::join()` to add further conditions to a join:
 
-{% highlight php %}
+```php
 <?php
 $authors = AuthorQuery::create()
   ->join('Author.Book')
@@ -478,11 +478,11 @@ $authors = AuthorQuery::create()
   ->find();
 // SELECT * FROM author
 // INNER JOIN book ON (author.ID=book.AUTHOR_ID AND book.TITLE IS NOT NULL);
-{% endhighlight %}
+```
 
 If you need to bind a variable to the condition, set the variable as last parameter of the `addJoinCondition()` call. Propel correctly binds the value using PDO:
 
-{% highlight php %}
+```php
 <?php
 $authors = AuthorQuery::create()
   ->join('Author.Book')
@@ -490,7 +490,7 @@ $authors = AuthorQuery::create()
   ->find();
 // SELECT * FROM author
 // INNER JOIN book ON (author.ID=book.AUTHOR_ID AND book.TITLE LIKE 'War%');
-{% endhighlight %}
+```
 
 **Tip**: `Criteria::addMultipleJoin()`, which allowed the same feature to some extent in previous versions, is now deprecated, since it was vulnerable in SQL injection attacks.
 
@@ -500,17 +500,17 @@ Propel models can share relationships even though the underlying tables aren't l
 
 For example, a `review` table designed for a MyISAM database engine is linked to a `book` table by a simple `book_id` column:
 
-{% highlight xml %}
+```xml
 <table name="review">
   <column name="review_id" type="INTEGER" primaryKey="true" required="true"/>
   <column name="reviewer" type="VARCHAR" size="50" required="true"/>
   <column name="book_id" required="true" type="INTEGER"/>
 </table>
-{% endhighlight %}
+```
 
 To enable a model-only relationship, add a `<foreign-key>` tag using the `skipSql` attribute, as follows:
 
-{% highlight xml %}
+```xml
 <table name="review">
   <column name="review_id" type="INTEGER" primaryKey="true" required="true"/>
   <column name="reviewer" type="VARCHAR" size="50" required="true"/>
@@ -520,7 +520,7 @@ To enable a model-only relationship, add a `<foreign-key>` tag using the `skipSq
     <reference local="book_id" foreign="id"/>
   </foreign-key>
 </table>
-{% endhighlight %}
+```
 
 Such a foreign key is not translated into SQL when Propel builds the table creation or table migration code. It can be seen as a "virtual foreign key". However, on the PHP side, the `Book` model actually has a one-to-many relationship with the `Review` model. The generated !ActiveRecord and !ActiveQuery classes take advantage of this relationship to offer smart getters and filters. 
 
@@ -532,14 +532,14 @@ Propel 1.6 introduces a new set of column types. The database-agnostic implement
 
 Although stored in the database as integers, ENUM columns let users manipulate a set of predefined values, without worrying about their storage.
 
-{% highlight xml %}
+```xml
 <table name="book">
   ...
   <column name="style" type="ENUM" valueSet="novel, essay, poetry" />
 </table>
-{% endhighlight %}
+```
 
-{% highlight php %}
+```php
 <?php
 // The ActiveRecord setter and getter let users use any value from the valueSet
 $book = new Book();
@@ -560,13 +560,13 @@ print_r(BookTableMap::getValueSet(BookTableMap::STYLE)); // array('novel', 'essa
 $books = BookQuery::create()
   ->filterByStyle('novel')
   ->find();
-{% endhighlight %}
+```
 
 ### OBJECT Columns ###
 
 An `OBJECT` column can store PHP objects (mostly Value Objects) in the database. The column setter serializes the object, which is later stored to the database as a string. The column getter unserializes the string and returns the object. Therefore, for the end user, the column contains an object.
 
-{% highlight php %}
+```php
 <?php
 class GeographicCoordinates
 {
@@ -589,16 +589,16 @@ $house = new House();
 $house->setCoordinates(new GeographicCoordinates(48.8527, 2.3510));
 echo $house->getCoordinates()->isInNorthernHemisphere(); // true
 $house->save();
-{% endhighlight %}
+```
 
 Not only do `OBJECT` columns benefit from these smart getter and setter in the generated Active Record class, they are also searchable using the generated `filterByXXX()` method in the query class:
 
-{% highlight php %}
+```php
 <?php
 $house = HouseQuery::create()
   ->filterByCoordinates(new GeographicCoordinates(48.8527, 2.3510))
   ->find();
-{% endhighlight %}
+```
 
 Propel looks in the database for a serialized version of the object passed as parameter of the `filterByXXX()` method.
 
@@ -606,7 +606,7 @@ Propel looks in the database for a serialized version of the object passed as pa
 
 An `ARRAY` column can store a simple PHP array in the database (nested arrays and associative arrays are not accepted). The column setter serializes the array, which is later stored to the database as a string. The column getter unserializes the string and returns the array. Therefore, for the end user, the column contains an array.
 
-{% highlight php %}
+```php
 <?php
 // The 'book' table has a 'tags' column of type ARRAY
 $book = new Book();
@@ -620,11 +620,11 @@ $book->addTag('romantic');
 print_r($book->getTags()); // array('novel', 'russian', 'romantic')
 $book->removeTag('russian');
 print_r($book->getTags()); // array('novel', 'romantic')
-{% endhighlight %}
+```
 
 Propel doesn't use `serialize()` to transform the array into a string. Instead, it uses a special serialization function, that makes it possible to search for values of `ARRAY` columns.
 
-{% highlight php %}
+```php
 <?php
 // Search books that contain all the specified tags
 $books = BookQuery::create()
@@ -646,7 +646,7 @@ $books = BookQuery::create()
 $books = BookQuery::create()
   ->filterByTag('russian')
   ->find();
-{% endhighlight %}
+```
 
 **Tip**: Filters on array columns translate to SQL as LIKE conditions. That means that the resulting query often requires a full table scan, and is not suited for large tables.
 
@@ -656,14 +656,14 @@ $books = BookQuery::create()
 
 SQL supports table subqueries to solve complex cases that a single query can't solve, or to optimize slow queries with several joins. For instance, to find the latest book written by every author in SQL, it usually takes a query like the following:
 
-{% highlight sql %}
+```sql
 SELECT book.ID, book.TITLE, book.AUTHOR_ID, book.PRICE, book.CREATED_AT, MAX(book.CREATED_AT) 
 FROM book 
 GROUP BY book.AUTHOR_ID
-{% endhighlight %}
+```
 
 Now if you want only the cheapest latest books with a single query, you need a subquery:
-{% highlight sql %}
+```sql
 SELECT lastBook.ID, lastBook.TITLE, lastBook.AUTHOR_ID, lastBook.PRICE, lastBook.CREATED_AT 
 FROM
 (
@@ -672,11 +672,11 @@ FROM
   GROUP BY book.AUTHOR_ID
 ) AS lastBook 
 WHERE lastBook.PRICE < 20
-{% endhighlight %}
+```
 
 To achieve this query using Propel, call the new `addSelectQuery()` method to use a first query as the source for the SELECT part of a second query:
 
-{% highlight php %}
+```php
 $latestBooks = BookQuery::create()
   ->withColumn('MAX(Book.CreatedAt)')
   ->groupBy('Book.AuthorId');
@@ -684,7 +684,7 @@ $latestCheapBooks = BookQuery::create()
   ->useSelectQuery($latestBooks, 'lastBook')
   ->where('lastBook.Price < ?', 20)
   ->find();
-{% endhighlight %}
+```
 
 You could use two queries or a WHERE IN to achieve the same result, but it wouldn't be as effective.
 

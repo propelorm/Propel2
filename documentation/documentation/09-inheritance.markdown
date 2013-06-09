@@ -5,7 +5,12 @@ title: Inheritance
 
 # Inheritance #
 
-Developers often need one model table to extend another model table. Inheritance being an object-oriented notion, it doesn't have a true equivalent in the database world, so this is something an ORM must emulate. Propel offers three types of table inheritance: [Single Table Inheritance](http://www.martinfowler.com/eaaCatalog/singleTableInheritance.html), which is the most efficient implementations from a SQL and query performance perspective, but is limited to a small number of inherited fields ; [Class Table Inheritance](http://martinfowler.com/eaaCatalog/classTableInheritance.html), which separates data into several tables and uses joins to fetch complete children entities, and [Concrete Table Inheritance](http://www.martinfowler.com/eaaCatalog/concreteTableInheritance.html), which provides the most features but adds a small overhead on write queries.
+Developers often need one model table to extend another model table. Inheritance being an object-oriented notion, it doesn't have a true equivalent in the database world, so this is something an ORM must emulate. Propel offers three types of table inheritance:
+
+* [Single Table Inheritance](http://www.martinfowler.com/eaaCatalog/singleTableInheritance.html), which is the most efficient implementations from a SQL and query performance perspective, but is limited to a small number of inherited fields
+* [Class Table Inheritance](http://martinfowler.com/eaaCatalog/classTableInheritance.html), which separates data into several tables and uses joins to fetch complete children entities
+* [Concrete Table Inheritance](http://www.martinfowler.com/eaaCatalog/concreteTableInheritance.html), which provides the most features but adds a small overhead on write queries.
+
 
 ## Single Table Inheritance ##
 
@@ -17,7 +22,7 @@ Let's illustrate this idea with an example. Consider an object model with three 
 
 A table using Single Table Inheritance requires a column to identify which class should be used to represent the _table_ row. Classically, this column is named `class_key` - but you can choose whatever name fits your taste. The column needs the `inheritance="single"` attribute to make Propel understand that it's the class key column. Note that this 'key' column must be a real column in the table.
 
-{% highlight xml %}
+```xml
 <table name="book">
   <column name="id" type="INTEGER" primaryKey="true" autoIncrement="true"/>
   <column name="title" type="VARCHAR" size="100"/>
@@ -27,7 +32,7 @@ A table using Single Table Inheritance requires a column to identify which class
     <inheritance key="3" class="Comic" extends="Book"/>
   </column>
 </table>
-{% endhighlight %}
+```
 
 Once you rebuild your model, Propel generated all three model classes (`Book`, `Essay`, and `Comic`) and three query classes (`BookQuery`, `EssayQuery`, and `ComicQuery`). The `Essay` and `Comic` classes extend the `Book` class, the `EssayQuery` and `ComicQuery` classes extend `BookQuery`.
 
@@ -41,7 +46,7 @@ Once you rebuild your model, Propel generated all three model classes (`Book`, `
 
 Use inherited objects just like you use regular Propel model objects:
 
-{% highlight php %}
+```php
 <?php
 $book = new Book();
 $book->setTitle('War And Peace');
@@ -52,23 +57,23 @@ $essay->save();
 $comic = new Comic();
 $comic->setTitle('Little Nemo In Slumberland');
 $comic->save();
-{% endhighlight %}
+```
 
 Inherited objects share the same properties and methods by default, but you can add your own logic to each of the generated classes.
 
 Behind the curtain, Propel sets the `class_key` column based on the model class. So the previous code stores the following rows in the database:
 
-{% highlight text %}
+```
 id | title                             | class_key
 ---|-----------------------------------|----------
 1  | War And Peace                     | Book
 2  | On the Duty of Civil Disobedience | Essay
 3  | Little Nemo In Slumberland        | Comic
-{% endhighlight %}
+```
 
 Incidentally, that means that you can add new classes manually, even if they are not defined as `<inheritance>` tags in the `schema.xml`:
 
-{% highlight php %}
+```php
 <?php
 class Novel extends Book
 {
@@ -81,13 +86,13 @@ class Novel extends Book
 $novel = new Novel();
 $novel->setTitle('Harry Potter');
 $novel->save();
-{% endhighlight %}
+```
 
 ### Retrieving Inherited objects ###
 
 In order to retrieve books, use the Query object of the main class, as you would usually do. Propel will hydrate children objects instead of the parent object when necessary:
 
-{% highlight php %}
+```php
 <?php
 $books = BookQuery::create()->find();
 foreach ($books as $book) {
@@ -97,17 +102,17 @@ foreach ($books as $book) {
 // Essay: On the Duty of Civil Disobedience
 // Comic: Little Nemo In Slumberland
 // Novel: Harry Potter
-{% endhighlight %}
+```
 
 If you want to retrieve only objects of a certain class, use the inherited query classes:
 
-{% highlight php %}
+```php
 <?php
 $comic = ComicQuery::create()
   ->findOne();
 echo get_class($comic) . ': ' . $comic->getTitle() . "\n";
 // Comic: Little Nemo In Slumberland
-{% endhighlight %}
+```
 
 >**Tip**<br />You can override the base TableMap's `getOMClass()` to return the classname to use based on more complex logic (or query).
 
@@ -115,10 +120,10 @@ echo get_class($comic) . ': ' . $comic->getTitle() . "\n";
 
 If you wish to enforce using subclasses of an entity, you may declare a table "abstract" in your XML data model:
 
-{% highlight xml %}
+```xml
 <table name="book" abstract="true">
   ...
-{% endhighlight %}
+```
 
 That way users will only be able to instantiate `Essay` or `Comic` books, but not `Book`.
 
@@ -133,7 +138,7 @@ A sports news website displays stats about various sports player. The object ori
 
 Instead of having the children table inherit from the parent table, Propel lets you _delegate_ column handling from the child to the parent table. Here is how it looks like:
 
-{% highlight xml %}
+```xml
 <table name="player">
   <column name="id" type="INTEGER" primaryKey="true" autoIncrement="true"/>
   <column name="first_name" type="VARCHAR" size="100"/>
@@ -164,7 +169,7 @@ Instead of having the children table inherit from the parent table, Propel lets 
     <parameter name="to" value="player" />
   </behavior>
 </table>
-{% endhighlight %}
+```
 
 The `footballer` table doesn't own the identity columns, which are in the `player` table. However, the `Footballer` class can _delegate_ these columns to the `Player` class. In this case, the `delegate` behavior doesn't alter the schema, it just allows the `Footballer` and `Basketballer` classes to proxy method calls to their "parent" `Player` class.
 
@@ -174,7 +179,7 @@ The `footballer` table doesn't own the identity columns, which are in the `playe
 
 Using the previous schema, here is how you create a `Basketballer` and set his stats and identity:
 
-{% highlight php %}
+```php
 <?php
 basketballer = new Basketballer();
 $basketballer->setPoints(101);
@@ -194,7 +199,7 @@ $basketballer->save();
 
 // retrieve delegated data directly from the main object
 echo $basketballer->getFirstName(); // Michael
-{% endhighlight %}
+```
 
 The `Basketballer` object delegates `Player` methods to its related `Player` object. If no `Player` object exists, the `delegate` behavior creates one and relates it to the current `basketballer`, so that both objects can be persisted together.
 
@@ -206,7 +211,7 @@ The same happens for `Footballer` class, which also delegates to `Player`. And s
 
 The `delegate` behavior allows to delegate to more than one class, effectively simulating multiple inheritance. Here is an example:
 
-{% highlight xml %}
+```xml
 <table name="person">
   <column name="id" type="INTEGER" primaryKey="true" autoIncrement="true"/>
   <column name="first_name" type="VARCHAR" size="100"/>
@@ -232,11 +237,11 @@ The `delegate` behavior allows to delegate to more than one class, effectively s
     <parameter name="to" value="person, team" />
   </behavior>
 </table>
-{% endhighlight %}
+```
 
 Now you can access the `Person` and `Team` properties directly from the `Footballer` class:
 
-{% highlight php %}
+```php
 <?php
 $footballer = new Footballer();
 $footballer->setGoalsScored(43);
@@ -253,11 +258,11 @@ $footballer->save();
 
 // retrieve delegated data directly from the main object
 echo $footballer->getFirstName(); // Michael
-{% endhighlight %}
+```
 
 Multiple delegation also allows to implement a deep inheritance hierarchy. For instance, if your object model contains a `ProBasketballer` inheriting from `Basketballer` inheriting from `Player`, the  `ProBasketballer` should delegate to both `Basketballer` and `Player`; delegating to `Basketballer` only isn't enough.
 
-{% highlight xml %}
+```xml
 <table name="player">
   <column name="id" type="INTEGER" primaryKey="true" autoIncrement="true"/>
   <column name="first_name" type="VARCHAR" size="100"/>
@@ -291,7 +296,7 @@ Multiple delegation also allows to implement a deep inheritance hierarchy. For i
     <parameter name="to" value="basketballer, player" />
   </behavior>
 </table>
-{% endhighlight %}
+```
 
 That way, you can call `setPoints()` as well as `setFirstName()` directly on `ProBasketballer`.
 
@@ -307,7 +312,7 @@ Propel implements Concrete Table Inheritance through a behavior.
 
 Once again, this is easier to understand through an example. In a Content Management System, content types are often organized in a hierarchy, each subclass adding more fields to the superclass. So let's consider the following schema, where the `article` and `video` tables use the same fields as the main `content` tables, plus additional fields:
 
-{% highlight xml %}
+```xml
 <table name="content">
   <column name="id" type="INTEGER" primaryKey="true" autoIncrement="true"/>
   <column name="title" type="VARCHAR" size="100"/>
@@ -338,11 +343,11 @@ Once again, this is easier to understand through an example. In a Content Manage
     <reference local="category_id" foreign="id" />
   </foreign-key>
 </table>
-{% endhighlight %}
+```
 
 Since the columns of the main table are copied to the child tables, this schema is a simple implementation of Concrete Table Inheritance. This is something that you can write by hand, but the repetition makes it tedious. Instead, you should let the `concrete_inheritance` behavior do it for you:
 
-{% highlight xml %}
+```xml
 <table name="content">
   <column name="id" type="INTEGER" primaryKey="true" autoIncrement="true"/>
   <column name="title" type="VARCHAR" size="100"/>
@@ -367,7 +372,7 @@ Since the columns of the main table are copied to the child tables, this schema 
   </behavior>
   <column name="resource_link" type="VARCHAR" size="100"/>
 </table>
-{% endhighlight %}
+```
 
 >**Tip**<br />The `concrete_inheritance` behavior copies columns, foreign keys and indices. If you've configured the `validate` behavior, it copies also validators.
 
@@ -375,7 +380,7 @@ Since the columns of the main table are copied to the child tables, this schema 
 
 For each of the tables in the schema above, Propel generates a Model class:
 
-{% highlight php %}
+```php
 <?php
 // create a new Category
 $cat = new Category();
@@ -393,11 +398,11 @@ $vid->setTitle('Avatar Trailer');
 $vid->setCategory($cat);
 $vid->setResourceLink('http://www.avatarmovie.com/index.html')
 $vid->save();
-{% endhighlight %}
+```
 
 And since the `concrete_inheritance` behavior tag defines a parent table, the `Article` and `Video` classes extend the `Content` class (same for the generated Query classes):
 
-{% highlight php %}
+```php
 <?php
 // methods of the parent model are accessible to the child models
 class Content extends BaseContent
@@ -424,7 +429,7 @@ class ContentQuery extends BaseContentQuery
 $articles = ArticleQuery::create()
   ->filterByCategoryName('Movie')
   ->find();
-{% endhighlight %}
+```
 
 That makes of Concrete Table Inheritance a powerful way to organize your model logic and to avoid repetition, both in the schema and in the model code.
 
@@ -432,7 +437,7 @@ That makes of Concrete Table Inheritance a powerful way to organize your model l
 
 By default, every time you save an `Article` or a `Video` object, Propel saves a copy of the `title` and `category_id` columns in a `Content` object. Consequently, retrieving objects regardless of their child type becomes very easy:
 
-{% highlight php %}
+```php
 <?php
 $conts = ContentQuery::create()->find();
 foreach ($conts as $content) {
@@ -440,11 +445,11 @@ foreach ($conts as $content) {
 }
 // Avatar Makes Best Opening Weekend in the History (Movie)
 // Avatar Trailer (Movie)
-{% endhighlight %}
+```
 
 Propel also creates a one-to-one relationship between a object and its parent copy. That's why the schema definition above doesn't define any primary key for the `article` and `video` tables: the `concrete_inheritance` behavior creates the `id` primary key which is also a foreign key to the parent `id` column. So once you have a parent object, getting the child object is just one method call away:
 
-{% highlight php %}
+```php
 <?php
 class Article extends BaseArticle
 {
@@ -471,13 +476,13 @@ foreach ($conts as $content) {
 //   weekends in the history of cinema.
 // Avatar Trailer (Movie)
 //   http://www.avatarmovie.com/index.html
-{% endhighlight %}
+```
 
 The `hasChildObject()` and `getChildObject()` methods are automatically added by the behavior to the parent class. Behind the curtain, the saved `content` row has an additional `descendant_column` field allowing it to use the right model for the job.
 
 >**Tip**<br />You can disable the data replication by setting the `copy_data_to_parent` parameter to "false". In that case, the `concrete_inheritance` behavior simply modifies the table at buildtime and does nothing at runtime. Also, with `copy_data_to_parent` disabled, any primary key copied from the parent table is not turned into a foreign key:
 
-{% highlight xml %}
+```xml
 <table name="article">
   <behavior name="concrete_inheritance">
     <parameter name="extends" value="content" />
@@ -495,4 +500,4 @@ The `hasChildObject()` and `getChildObject()` methods are automatically added by
     <reference local="category_id" foreign="id" />
   </foreign-key>
 </table>
-{% endhighlight %}
+```

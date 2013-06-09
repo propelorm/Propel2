@@ -17,9 +17,9 @@ _Properties_ are essentially variables. These variables can be specified on the 
 
 For example, here's how a property might be specified on the commandline:
 
-{% highlight bash %}
+```bash
 > phing -Dpropertyname=value
-{% endhighlight %}
+```
 
 More typically, properties are stored in files and loaded by Phing. For those not familiar with Java properties files, these files look like PHP INI files; the main difference is that values in properties files can be references to other properties (a feature that will probably exist in in INI files in PHP 5.1).
 
@@ -42,7 +42,7 @@ _Note, however, that some of the current values exist for legacy reasons and wil
 
 This can easily be customized on a project-by-project basis. For example, here is a `build.properties` file for the _bookstore _project that puts the generated classes in `/var/www/bookstore/classes` and puts the generated SQL in `/var/www/bookstore/db/sql`:
 
-{% highlight ini %}
+```ini
 propel.project = bookstore
 propel.database = sqlite
 propel.database.url = sqlite://localhost/./test/bookstore.db
@@ -53,13 +53,13 @@ propel.output.dir = /var/www/bookstore
 propel.php.dir = ${propel.output.dir}/classes
 propel.phpconf.dir = ${propel.output.dir}/conf
 propel.sql.dir = ${propel.output.dir}/db/sql
-{% endhighlight %}
+```
 
 The _targetPackage_ property is also used in determining the path of the generated classes. In the example above, the `Book.php` class will be located at `/var/www/bookstore/classes/bookstore/Book.php`. You can change this `bookstore` subdir by altering the _targetPackage_ property:
 
-{% highlight ini %}
+```ini
 propel.targetPackage = propelom
-{% endhighlight %}
+```
 
 Now the class will be located at `/var/www/bookstore/classes/propelom/Book.php`
 
@@ -79,24 +79,24 @@ The Propel tasks must be registered so that Phing can find them. This is done us
 
 For example, here is how we register the `<propel-om>` task, which is the task that creates the PHP classes for your object model:
 
-{% highlight xml %}
+```xml
 <taskdef
     name="propel-om"
     classname="propel.phing.PropelOMTask"/>
-{% endhighlight %}
+```
 
 Simple enough. Phing will now associate the `<propel-data-model>` tag with the _PropelOMTask_ class, which it expects to find at `propel/phing/PropelOMTask.php` (on your _include_path_). If Propel generator classes are not on your _include_path_, you can specify that path in your `<taskdef>` tag:
 
-{% highlight xml %}
+```xml
 <taskdef
     name="propel-om"
     classname="propel.phing.PropelOMTask"
     classpath="/path/to/propel-generator/classes"/>
-{% endhighlight %}
+```
 
 Or, for maximum re-usability, you can create a `<path>` object, and then reference it (this is the way `build-propel.xml` does it):
 
-{% highlight xml %}
+```xml
   <path id="propelclasses">
       <pathelement dir="/path/to/propel-generator/classes"/>
   </path>
@@ -105,13 +105,13 @@ Or, for maximum re-usability, you can create a `<path>` object, and then referen
     name="propel-om"
     classname="propel.phing.PropelOMTask"
     classpathRef="propelclasses"/>
-{% endhighlight %}
+```
 
 ### Step 2: invoking the new task ###
 
 Now that the `<propel-om>` task has been registered with Phing, it can be invoked in your build file.
 
-{% highlight xml %}
+```xml
 <propel-om
       outputDirectory="/var/www/bookstore/classes"
       targetDatabase="mysql"
@@ -120,7 +120,7 @@ Now that the `<propel-om>` task has been registered with Phing, it can be invoke
       targetPlatform="php5">
     <schemafileset dir="/var/www/bookstore/db/model" includes="*schema.xml"/>
 </propel-om>
-{% endhighlight %}
+```
 
 In the example above, it's worth pointing out that the `<propel-om>` task can actually transform multiple `schema.xml` files, which is why there is a `<schemafileset>` sub-element. Phing _filesets_ are beyond the scope of this HOWTO, but hopefully the above example is obvious enough.
 
@@ -128,7 +128,7 @@ In the example above, it's worth pointing out that the `<propel-om>` task can ac
 
 Now that we've seen the essential elements of our custom build file, it's time to look at how to assemble them into a working whole:
 
-{% highlight xml %}
+```xml
 <?xml version="1.0">
 <project name="propel" default="om">
 
@@ -160,13 +160,13 @@ Now that we've seen the essential elements of our custom build file, it's time t
  </target>
 
 </project>
-{% endhighlight %}
+```
 
 If that build script was named `build.xml` then it could be executed by simply running _phing_ in the directory where it is located:
 
-{% highlight bash %}
+```bash
 > phing om
-{% endhighlight %}
+```
 
 Actually, specifying the _om_ target is not necessary since it is the default.
 

@@ -11,45 +11,45 @@ The `auto_add_pk` behavior adds a primary key columns to the tables that don't h
 
 In the `schema.xml`, use the `<behavior>` tag to add the `auto_add_pk` behavior to a table:
 
-{% highlight xml %}
+```xml
 <table name="book">
   <column name="title" type="VARCHAR" required="true" primaryString="true" />
   <behavior name="auto_add_pk" />
 </table>
-{% endhighlight %}
+```
 
 Rebuild your model, and insert the table creation sql. You will notice that the `book` table has two columns and not just one. The behavior added an `id` column, of type integer and autoincremented. This column can be used as any other column:
 
-{% highlight php %}
+```php
 <?php
 $b = new Book();
 $b->setTitle('War And Peace');
 $b->save();
 echo $b->getId(); // 1
-{% endhighlight %}
+```
 
 This behavior is more powerful if you add it to the database instead of a table. That way, it will alter all tables not defining a primary key column - and leave the others unchanged.
 
-{% highlight xml %}
+```xml
 <database name="bookstore" defaultIdMethod="native">
   <behavior name="auto_add_pk" />
   <table name="book">
     <column name="title" type="VARCHAR" required="true" primaryString="true" />
   </table>
 </database>
-{% endhighlight %}
+```
 
 You can even enable it for all your databases by adding it to the default behaviors in your `build.properties` file:
 
-{% highlight ini %}
+```ini
 propel.behavior.default = auto_add_pk
-{% endhighlight %}
+```
 
 ## Parameters ##
 
 By default, the behavior adds a column named `id` to the table if the table has no primary key. You can customize all the attributes of the added column by setting corresponding parameters in the behavior definition:
 
-{% highlight xml %}
+```xml
 <database name="bookstore" defaultIdMethod="native">
   <behavior name="auto_add_pk">
     <parameter name="name" value="identifier" />
@@ -60,15 +60,15 @@ By default, the behavior adds a column named `id` to the table if the table has 
     <column name="title" type="VARCHAR" required="true" primaryString="true" />
   </table>
 </database>
-{% endhighlight %}
+```
 
 Once you regenerate your model, the column is now named differently:
 
-{% highlight php %}
+```php
 <?php
 $b = new Book();
 $b->setTitle('War And Peace');
 $b->setIdentifier(1);
 $b->save();
 echo $b->getIdentifier(); // 1
-{% endhighlight %}
+```

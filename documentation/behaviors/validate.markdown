@@ -5,17 +5,17 @@ title: Validate Behavior
 
 # Validate Behavior #
 
-The `validate` behavior provides validating capabilities to ActiveRecord objects.     
+The `validate` behavior provides validating capabilities to ActiveRecord objects.
 Using this behavior, you can perform validation of an ActiveRecord and its related objects, checking if properties meet certain conditions.
 
-This behavior is based on [Symfony2 Validator Component](http://symfony.com/doc/current/book/validation.html).     
+This behavior is based on [Symfony2 Validator Component](http://symfony.com/doc/current/book/validation.html).
 We recommend to read Symfony2 Validator Component documentation, in particular [Validator Constraints](http://symfony.com/doc/current/reference/constraints.html) chapter, before to start using this behavior.
 
 ## Basic Usage ##
 
 In the `schema.xml`, use the `<behavior>` tag to add the `validate` behavior to a table.
 Then add validation rules via `<parameter>` tag.
-{% highlight xml %}
+```xml
 <table name="author" description="Author Table">
   <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" description="Author Id" />
   <column name="first_name" required="true" type="VARCHAR" size="128" description="First Name" />
@@ -30,14 +30,14 @@ Then add validation rules via `<parameter>` tag.
     <parameter name="rule5" value="{column: email, validator: Email}" />
   </behavior>
 </table>
-{% endhighlight %}
+```
 
 Let's now see the properties of `<parameter>` tag:
-*   The `name` of each parameter is arbitrary. 
+*   The `name` of each parameter is arbitrary.
 *   The `value` of the parameters is an array in YAML format, in which we need to specify 3 values:
-     `column`: the column to validate      
-     `validator`: the name of [Validator Constraint](http://symfony.com/doc/current/reference/constraints.html)      
-     `options`: (optional)an array of optional values to pass to the validator constraint class, according to its reference documentation       
+     `column`: the column to validate
+     `validator`: the name of [Validator Constraint](http://symfony.com/doc/current/reference/constraints.html)
+     `options`: (optional)an array of optional values to pass to the validator constraint class, according to its reference documentation
 
 
 
@@ -48,7 +48,7 @@ Rebuild your model and you're ready to go. The ActiveRecord object now exposes t
 
 Now you are ready to perform validations:
 
-{% highlight php %}
+```php
 <?php
 
 $author = new Author();
@@ -65,7 +65,7 @@ else {
    echo "Everything's all right!";
 }
 
-{% endhighlight %}
+```
 
 
 
@@ -75,7 +75,7 @@ else {
 When we use ActiveRecord `validate()` method, we perform validation on the object itself and on all related objects. It's a great possibility but we need to know how this method works, to avoid unpleasant surprises.
 
 
-The `validate()` method follows these steps:   
+The `validate()` method follows these steps:
 
 1.   search the 1-n related objects by foreign key
 2.   if validate behavior is configured on it, call its `validate()` method
@@ -85,11 +85,11 @@ The `validate()` method follows these steps:
 
 
 
-Let's see it in action, with an example.    
+Let's see it in action, with an example.
 
 Consider the following model:
 
-{% highlight xml %}
+```xml
 <database name="bookstore">
     <table name="book">
         <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"/>
@@ -159,11 +159,11 @@ Consider the following model:
      </table>
 
 </database>
-{% endhighlight %}
+```
 
 And consider to perform a validation on a book object:
 
-{% highlight php %}
+```php
 <?php
 
 $book = new Book();
@@ -172,7 +172,7 @@ $book = new Book();
 // we add a publisher object, an author object and some reader objects
 
 $book->validate();
-{% endhighlight %}
+```
 
 
 The steps of validation are the following:
@@ -188,7 +188,7 @@ In this case, no reader object will be validated because the cross reference tab
 
 In previous example, if you want to perform validations also on reader objects, you need to configure the behavior also on reader_book table:
 
-{% highlight xml %}
+```xml
 <!-- previous schema -->
 
 <table name="validate_reader_book" isCrossRef="true">
@@ -207,7 +207,7 @@ In previous example, if you want to perform validations also on reader objects, 
             <parameter name="rule4" value="{column: book_id, validator: Type, options: {type: integer}}" />
         </behavior>
      </table>
-{% endhighlight %}
+```
 
 And now the validation flow will be the following:
 
@@ -224,12 +224,12 @@ And now the validation flow will be the following:
 
 ## Parameter tag: name ##
 
-Inside the `<parameter>` tag, you define the `name` property.     
+Inside the `<parameter>` tag, you define the `name` property.
 This property can be a value of your choice, but this name should be *unique*. If we define more rules with the same name, only the last one will be considered.
 
 In the following example, only the third and the fourth rules will be considered: the first two rules are overwritten by the third one.
 
-{% highlight xml %}
+```xml
 <!-- your schema -->
 
    <column name="reader_id" type="INTEGER" primaryKey="true"/>
@@ -242,23 +242,23 @@ In the following example, only the third and the fourth rules will be considered
     </behavior>
 
 <!-- end of your schema -->
-{% endhighlight %}
+```
 
 
 ## Parameter tag: value ##
 
 As we mentioned earlier, the `value` property contains a string, representing an array in YAML format. We've chosen this format because, in YAML array definition, there is no special xml character, so we have no need to escape anything and no need to change standard Propel xsd and xsl files.
-`options` key, inside the value array, is an array too, and it can contain other arrays (i.e. see [Choice constraint](http://symfony.com/doc/current/reference/constraints/Choice.html), in wich the `choices` option is an array, too) and with YAML there's no problem. 
+`options` key, inside the value array, is an array too, and it can contain other arrays (i.e. see [Choice constraint](http://symfony.com/doc/current/reference/constraints/Choice.html), in wich the `choices` option is an array, too) and with YAML there's no problem.
 
-Only in one case we suggest to be careful.     
-As each respectable validation library, also Symfony Validator Component allows validations against regular expressions, by using the constraint [Regex](http://symfony.com/doc/current/reference/constraints/Regex.html).             
-As you can see in Regex constraint documentation, `options` parameter contains a `pattern` key, defining the pattern for validation. 
+Only in one case we suggest to be careful.
+As each respectable validation library, also Symfony Validator Component allows validations against regular expressions, by using the constraint [Regex](http://symfony.com/doc/current/reference/constraints/Regex.html).
+As you can see in Regex constraint documentation, `options` parameter contains a `pattern` key, defining the pattern for validation.
 
 But usually, a regular expression pattern contains a lot of special and escape characters so, in YAML definition, we need to include the pattern string in a couple of double-quote (").
 
 In the following example, we add a constraint to validate ISBN. It's very complicated to check if an ISBN is valid, but a first check could be to disallow every character that's not a digit or minus, using the pattern  `/[^\d-]+/`:
 
-{% highlight xml %}
+```xml
 <!-- ATTENTION PLEASE: THIS EXAMPLE DOES NOT WORK -->
 
 <!-- your schema -->
@@ -268,12 +268,12 @@ In the following example, we add a constraint to validate ISBN. It's very compli
   </behavior>
 
 <!-- end of your schema -->
-{% endhighlight %}
+```
 
 But inside an xml string the double-quote characters should be escaped, so replace them with `&quot;`:
 
 
-{% highlight xml %}
+```xml
 <!-- THIS EXAMPLE WORKS FINE -->
 
 <!-- your schema -->
@@ -283,15 +283,15 @@ But inside an xml string the double-quote characters should be escaped, so repla
   </behavior>
 
 <!-- end of your schema -->
-{% endhighlight %}
+```
 
 
 ## Automatic validation ##
 
-You can automatic validate an ActiveRecord, before saving it into your database, thanks to `preSave()` hook (see [behaviors documentation](/documentation/07-behaviors.html)).     
+You can automatic validate an ActiveRecord, before saving it into your database, thanks to `preSave()` hook (see [behaviors documentation](/documentation/07-behaviors.html)).
 For example, let's suppose we wish to add automatic validation capability to our `Book` class. Open `Book.php`, in your model path, and add the following code:
 
-{% highlight php %}
+```php
 <?php
 //Code of your Book class.
 //Remember use statement to set properly ConnectionInterface namespace
@@ -300,11 +300,11 @@ public function preSave(ConnectionInterface $con = null)
 {
     return $this->validate();
 }
-{% endhighlight %}
+```
 
 If validation failed, `preSave()` returns false and the saving operation stops. No error is raised but the `save()` method of your ActiveRecord returns the integer `0`, because no object was affected. So, we can check the returned value of `save()` method to see what was happened and to get any error messages:
 
-{% highlight php %}
+```php
 <?php
 // your app code
 
@@ -330,7 +330,7 @@ if ($ret <= 0) {
         }
     }
 }
-{% endhighlight %}
+```
 
 ## Supported constraints ##
 
@@ -338,21 +338,21 @@ The behavior supports all Symfony Validator Constraints (see [http://symfony.com
 Propel has its own unique validator: `Unique` constraint.
 This constraint checks if a certain value is already stored in the database. You can use it in the same way:
 
-{% highlight xml %}
+```xml
 <!-- your schema -->
   <behavior name="validate">
       <parameter name="rule1" value="{column: column_name, validator: Unique}" />
   </behavior>
-{% endhighlight %}
+```
 
 And if you want to specify an error message:
 
-{% highlight xml %}
+```xml
 <!-- your schema -->
   <behavior name="validate">
       <parameter name="rule1" value="{column: column_name, validator: Unique, options: {message: Your message here}}" />
   </behavior>
-{% endhighlight %}
+```
 
 >**Tip**<br />`Date`, `Time` and `DateTime` constraints are useful if you store a date-time value inside a string. If you use a php `DateTime` object, if a value isn't valid, the `DateTime` object itself raises an exception, before performing any validations.
 
@@ -376,7 +376,7 @@ Let's also suppose to put our files in a subdir of our project root, called `/my
 Under `/myConstraints` dir, let's create the subdir `Propel/Runtime/Validator/Constraints`, in which we'll put the two following scripts:
 
 `PropelDomain.php`
-{% highlight php %}
+```php
 <?php
 // /myConstraints/Propel/Runtime/Validator/Constraints/PropelDomain.php
 
@@ -390,10 +390,10 @@ class PropelDomain extends Constraint
     public $message = 'This url does not belong to propelorm.org domain';
     public $column = '';
 }
-{% endhighlight %}
+```
 
 `PropelDomainValidator.php`
-{% highlight php %}
+```php
 <?php
  // /myConstraints/Propel/Runtime/Validator/Constraints/PropelDomainValidator.php
 
@@ -415,21 +415,21 @@ class PropelDomain extends Constraint
          }
      }
  }
-{% endhighlight %}
+```
 
 Now, open `composer.json` file, in your project root and add the namespace `Propel\Runtime\Validator\Constraints` to the autoload directive:
 
-{% highlight duel %}
+```json
 "autoload": {
         "psr-0": {
             "Propel\\Runtime\\Validator\\Constraints": "myConstraints/"
         }
     }
-{% endhighlight %}
+```
 
 Done! Now you can use your custom validator constraint in your `schema.xml` file, as usual:
 
-{% highlight xml %}
+```xml
 
 <!-- your schema -->
   <behavior name="validate">
@@ -437,7 +437,7 @@ Done! Now you can use your custom validator constraint in your `schema.xml` file
   </behavior>
 
 <!-- end of your schema -->
-{% endhighlight %}
+```
 
 **Note**: if you think your custom constraint could be generic enough to be useful for the community, please submit it to Propel team,
 to include it in Propel bundled constraints (see [http://dotheweb.posterous.com/open-source-is-a-gift](http://dotheweb.posterous.com/open-source-is-a-gift)).
@@ -446,7 +446,7 @@ to include it in Propel bundled constraints (see [http://dotheweb.posterous.com/
 
 The behavior adds to ActiveRecord objects the static `loadValidatorMetadata()` method, which contains all validation rules. So, inside your Symfony projects, you can perform "usual" Symfony validations:
 
-{% highlight php %}
+```php
 <?php
 
 //Symfony 2
@@ -469,11 +469,11 @@ public function indexAction()
         return new Response('The author is valid! Yes!');
     }
 }
-{% endhighlight %}
+```
 
 But if you wish to automatically validate also related objects, you can use the ActiveRecord `validate()` method, passing to it an instance of registered validator object:
 
-{% highlight php %}
+```php
 <?php
 
 //Symfony 2
@@ -493,19 +493,19 @@ public function indexAction()
 
         return new Response(print_r($errors, true));
 
-    } 
+    }
     else {
         return new Response('The author is valid! Yes!');
     }
 }
-{% endhighlight %}
+```
 
 
 ## Inside Silex ##
 
 Using the behavior inside a Silex project, is about the same as we've seen for Symfony:
 
-{% highlight php %}
+```php
 <?php
 
 //Silex
@@ -523,11 +523,11 @@ $app->post('/authors/new', function () use ($app) {
     return $violations;
 
 }
-{% endhighlight %}
+```
 
 and if you wish to automatically validate also related objects:
 
-{% highlight php %}
+```php
 <?php
 
 //Silex
@@ -546,7 +546,7 @@ $app->post('/authors/new', function () use ($app) {
     return $violations;
 
 }
-{% endhighlight %}
+```
 
 ## Properties and methods added to ActiveRecord ##
 
