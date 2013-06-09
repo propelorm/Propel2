@@ -33,4 +33,4 @@ The [#propel](http://webchat.freenode.net/?channels=propel) channel on **irc.fre
 
 >**Tip**<br />Since 2011, the Propel project is hosted and managed on [GitHub](http://github.com).
 
-You can look at the [Propel organization](https://github.com/propelorm) and to report bugs or to ask for new features to the [Propel ticketing system](https://github.com/propelorm/Propel/issues).
+You can look at the [Propel organization](https://github.com/propelorm) and to report bugs or to ask for new features to the [Propel ticketing system](https://github.com/propelorm/Propel2/issues).

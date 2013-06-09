@@ -6,21 +6,23 @@ title: How To Contribute ?
 # How To Contribute ? #
 
 You can easily contribute to the Propel project since all projects are hosted by [GitHub](https://github.com).
-You just have to _fork_ the Propel project on the [PropelORM organization](https://github.com/propelorm) and
+You just have to _fork_ the Propel2 project on the [PropelORM organization](https://github.com/propelorm) and
 to provide Pull Requests or to submit issues. Note, we are using [Git](http://git-scm.com) as main Source Code Management.
 
-The Propel organization maintains four projects:
+The Propel organization maintains five projects:
 
-* [Propel](http://github.com/propelorm/Propel) : the main project.
-* [PropelBundle](http://github.com/propelorm/PropelBundle) : a bundle to integrate Propel with [Symfony2](http://www.symfony.com).
-* [sfPropelORMPlugin](http://github.com/propelorm/sfPropelORMPlugin) : a plugin to integrate Propel with [symfony 1.x](http://www.symfony-project.org);
+* [Propel2](https://github.com/propelorm/Propel2) : the main version.
+* [Propel](https://github.com/propelorm/Propel) : the previous release of Propel.
+* [PropelBundle](https://github.com/propelorm/PropelBundle) : a bundle to integrate Propel with [Symfony2](http://www.symfony.com).
+* [sfPropelORMPlugin](https://github.com/propelorm/sfPropelORMPlugin) : a plugin to integrate Propel with [symfony 1.x](http://www.symfony-project.org);
 * [propelorm.github.com](https://github.com/propelorm/propelorm.github.com) : the Propel documentation (aka this website).
 
 ## Submit an issue ##
 
 The ticketing system is also hosted on GitHub:
 
-* Propel: [https://github.com/propelorm/Propel/issues](https://github.com/propelorm/Propel/issues)
+* Propel2: [https://github.com/propelorm/Propel2/issues](https://github.com/propelorm/Propel2/issues)
+* Propel (1.x): [https://github.com/propelorm/Propel/issues](https://github.com/propelorm/Propel/issues)
 * PropelBundle: [https://github.com/propelorm/PropelBundle/issues](https://github.com/propelorm/PropelBundle/issues)
 * sfPropelORMPlugin: [https://github.com/propelorm/sfPropelORMPlugin/issues](https://github.com/propelorm/sfPropelORMPlugin/issues)
 
@@ -30,7 +32,7 @@ The best way to submit a patch is to make a Pull Request on GitHub. First, you s
 Assuming you are in your local Propel project:
 
 ```bash
-> git checkout -b master fix-my-patch
+$ git checkout -b master fix-my-patch
 ```
 
 Now you can write your patch in this branch. Don't forget to provide unit tests with your fix to prove both the bug and the patch.
@@ -39,10 +41,10 @@ It will ease the process to accept or refuse a Pull Request.
 When you're done, you have to rebase your branch to provide a clean and safe Pull Request.
 
 ```bash
-> git checkout master
-> git pull --ff-only upstream master
-> git checkout fix-my-patch
-> git rebase master
+$ git checkout master
+$ git pull --ff-only upstream master
+$ git checkout fix-my-patch
+$ git rebase master
 ```
 
 In this example, the `upstream` remote is the PropelORM organization repository.
@@ -50,7 +52,7 @@ In this example, the `upstream` remote is the PropelORM organization repository.
 Once done, you can submit the Pull Request by pushing your branch to your fork:
 
 ```bash
-> git push origin fix-my-patch
+$ git push origin fix-my-patch
 ```
 
 Go to www.github.com and press the _Pull Request_ button. Add a short description to this Pull Request and submit it.
@@ -66,8 +68,8 @@ You can find the unit test classes and support files in the `test/testsuite` dir
 In order to run the tests, you must install PHPUnit:
 
 ```bash
-> pear channel-discover pear.phpunit.de
-> pear install phpunit/PHPUnit
+$ pear channel-discover pear.phpunit.de
+$ pear install phpunit/PHPUnit
 ```
 
 ### Configure the Database to be Used in the Tests ###
@@ -79,7 +81,7 @@ You must configure both the generator and the runtime connection settings.
 propel.database = mysql
 propel.database.url = mysql:dbname=test
 propel.mysqlTableType = InnoDB
-propel.disableIdentifierQuoting=true
+propel.disableIdentifierQuoting = true
 # For MySQL or Oracle, you also need to specify username & password
 propel.database.user = myusername
 propel.database.password = p@ssw0rd
@@ -121,10 +123,10 @@ propel.database.password = p@ssw0rd
 ### Build the Propel Model and Initialize the Database ###
 
 ```bash
-> cd /path/to/propel/test
-> ../generator/bin/propel-gen fixtures/bookstore main
-> mysqladmin create test
-> ../generator/bin/propel-gen fixtures/bookstore insert-sql
+$ cd /path/to/propel/test
+$ ../generator/bin/propel-gen fixtures/bookstore main
+$ mysqladmin create test
+$ ../generator/bin/propel-gen fixtures/bookstore insert-sql
 ```
 
 >**Tip**<br />To run the unit tests for the namespace support in PHP 5.3, you must also build the `fixtures/namespaced/` project.
@@ -155,8 +157,8 @@ GRANT ALL ON reverse_bookstore.* TO ''@'localhost';
 You can build all fixtures by running the `reset_tests.sh` shell script:
 
 ```bash
-> cd /path/to/propel/test
-> ./reset_tests.sh
+$ cd /path/to/propel/test
+$ ./reset_tests.sh
 ```
 
 ### Run the Unit Tests ###
@@ -164,17 +166,15 @@ You can build all fixtures by running the `reset_tests.sh` shell script:
 Run all the unit tests at once using the `phpunit` command:
 
 ```bash
-> cd /path/to/propel/test
-> phpunit testsuite
+$ cd /path/to/propel/test
+$ phpunit testsuite
 ```
-
->**Warning**<br />The `testsuite/generator/builder/NamespaceTest.php` file uses PHP 5.3 namespaces, and therefore will create a parse error under PHP 5.2. To launch the unit test suite in a PHP 5.2 platform, simply delete this test file.
 
 To run a single test, go inside the unit test directory, and run the test using the command line. For example to run only GeneratedObjectTest:
 
-```bash
-> cd testsuite/generator/builder/om
-> phpunit GeneratedObjectTest
+```
+$ cd testsuite/generator/builder/om
+$ phpunit GeneratedObjectTest
 ```
 
 ### How the Tests Work ###
@@ -215,7 +215,7 @@ public function testSaveWithDefaultValues() {
 Run the test again using the command line to check that it passes:
 
 ```bash
-> phpunit GeneratedObjectTest
+$ phpunit GeneratedObjectTest
 ```
 
 You can also write additional unit test classes to any of the directories in `test/testsuite/` (or add new directories if needed). The `phpunit` command will find these files automatically and run them.
