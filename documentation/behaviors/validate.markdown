@@ -15,6 +15,7 @@ We recommend to read Symfony2 Validator Component documentation, in particular [
 
 In the `schema.xml`, use the `<behavior>` tag to add the `validate` behavior to a table.
 Then add validation rules via `<parameter>` tag.
+
 ```xml
 <table name="author" description="Author Table">
   <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" description="Author Id" />
@@ -41,9 +42,10 @@ Let's now see the properties of `<parameter>` tag:
 
 
 
-Rebuild your model and you're ready to go. The ActiveRecord object now exposes two public methods:
+Rebuild your model and you're ready to go. The ActiveRecord object now exposes three public methods:
 * `validate()`: this method performs validation on the ActiveRecord object itself and on all related objects. If the validation is successful it returns true, otherwise false.
 * `getValidationFailures()`: this method returns a [ConstraintViolationList](http://api.symfony.com/2.0/Symfony/Component/Validator/ConstraintViolationList.html) object. If validate() is false, it returns a list of [ConstraintViolation](http://api.symfony.com/2.0/Symfony/Component/Validator/ConstraintViolation.html) objects, if validate() is true, it returns an empty `ConstraintViolationList` object.
+* `getValidatioFailuresArray()`: this method returns an associative array in which the keys are failed properties and the values are relative error messages.
 
 
 Now you are ready to perform validations:
@@ -560,4 +562,19 @@ The behavior adds the following methods to your ActiveRecord:
 
 *   `validate`:  this *public* method validates the object and all objects related to it.
 *   `getValidationFailures`:  this *public* method gets the ConstraintViolationList object, that contains all ConstraintViolation objects resulted from last call to `validate()` method.
+*   `getValidationFailuresArray`: this *public* method is the same that the previous except that it returns failures as an associative array,
+in which the keys are the failed properties and the values are the error messages.
+I.e.:
+
+```php
+$failures = array(
+    'property1' => 'message1',
+    'property2' => 'message2',
+    'property3' => array(
+        'message3.1',
+        'message3.2,
+        'message3.3
+    )
+);
+```
 *   `loadValidatorMetadata`:  this *public static* method contains all the Constraint objects.
