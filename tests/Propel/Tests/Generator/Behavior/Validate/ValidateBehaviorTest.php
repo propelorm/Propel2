@@ -80,6 +80,70 @@ class ValidateBehaviorTest extends BookstoreTestBase
         }
     }
 
+    public function testHasGetValidatioFailuresMethod()
+    {
+        foreach ($this->classes as $class) {
+            $this->assertTrue(method_exists($class, 'getValidationFailures'));
+        }
+    }
+
+    public function testHasGetValidationFailuresArrayMethod()
+    {
+        foreach ($this->classes as $class) {
+            $this->assertTrue(method_exists($class, 'getValidationFailuresArray'));
+        }
+    }
+
+    public function testGetValidationFailures()
+    {
+        $author = new ValidateAuthor();
+        $author->setEmail('foo');
+        $res = $author->validate();
+
+        $this->assertFalse($res, 'This validation expected to fail');
+
+        $failures = $author->getValidationFailures();
+
+        $this->assertInstanceOf('Symfony\Component\Validator\ConstraintViolationList', $failures);
+        $this->assertCount(4, $failures, 'Four constraint violation objects expected');
+
+        foreach ($failures as $failure) {
+            $this->assertInstanceOf('Symfony\Component\Validator\ConstraintViolation', $failure);
+        }
+
+        $this->assertEquals('first_name', $failures[0]->getPropertyPath());
+        $this->assertEquals('This value should not be null.', $failures[0]->getMessage());
+        $this->assertEquals('last_name', $failures[1]->getPropertyPath());
+        $this->assertEquals('This value should not be null.', $failures[1]->getMessage());
+        $this->assertEquals('email', $failures[2]->getPropertyPath());
+        $this->assertEquals('This value is not a valid email address.', $failures[2]->getMessage());
+        $this->assertEquals('email', $failures[3]->getPropertyPath());
+        $this->assertEquals('This value is too short. It should have 5 characters or more.', $failures[3]->getMessage());
+    }
+
+    public function testGetValidationFailuresArray()
+    {
+        $author = new ValidateAuthor();
+        $author->setEmail('foo');
+        $res = $author->validate();
+
+        $this->assertFalse($res, 'This validation expected to fail');
+
+        $failures = $author->getValidationFailuresArray();
+
+        $this->assertTrue(is_array($failures));
+
+        $expected = array(
+            'first_name' => 'This value should not be null.',
+            'last_name'  => 'This value should not be null.',
+            'email'      => array(
+                'This value is not a valid email address.',
+                'This value is too short. It should have 5 characters or more.'
+            )
+        );
+        $this->assertEquals($expected, $failures);
+    }
+
     /**
      * @expectedException  Propel\Generator\Exception\InvalidArgumentException
      * @expectedExceptionMessage  Please, define your rules for validation.
@@ -247,7 +311,7 @@ EOF;
        $failures = $reader->getValidationFailures();
 
        $this->assertInstanceOf('Symfony\Component\Validator\ConstraintViolationList', $failures);
-       $this->assertEquals(1, count($failures), 'Only one constraint violation object');
+       $this->assertCount(1, $failures, 'Only one constraint violation object');
 
        $failure = $failures[0];
        $this->assertInstanceOf('Symfony\Component\Validator\ConstraintViolation', $failure);
@@ -272,7 +336,7 @@ EOF;
        $failures = $reader->getValidationFailures();
 
        $this->assertInstanceOf('Symfony\Component\Validator\ConstraintViolationList', $failures);
-       $this->assertEquals(3, count($failures), 'Three constraint violation objects expected');
+       $this->assertCount(3, $failures, 'Three constraint violation objects expected');
 
        foreach ($failures as $failure) {
            $this->assertInstanceOf('Symfony\Component\Validator\ConstraintViolation', $failure);
@@ -315,7 +379,7 @@ EOF;
         $failures = $book->getValidationFailures();
 
         $this->assertInstanceOf('Symfony\Component\Validator\ConstraintViolationList', $failures);
-        $this->assertEquals(1, count($failures), 'Only one constraint violation object');
+        $this->assertCount(1, $failures, 'Only one constraint violation object');
 
         $failure = $failures[0];
         $this->assertInstanceOf('Symfony\Component\Validator\ConstraintViolation', $failure);
@@ -357,7 +421,7 @@ EOF;
         $failures = $book->getValidationFailures();
 
         $this->assertInstanceOf('Symfony\Component\Validator\ConstraintViolationList', $failures);
-        $this->assertEquals(1, count($failures), 'Only one constraint violation object');
+        $this->assertCount(1, $failures, 'Only one constraint violation object');
 
         $failure = $failures[0];
         $this->assertInstanceOf('Symfony\Component\Validator\ConstraintViolation', $failure);
@@ -421,7 +485,7 @@ EOF;
         $failures = $book->getValidationFailures();
 
         $this->assertInstanceOf('Symfony\Component\Validator\ConstraintViolationList', $failures);
-        $this->assertEquals(5, count($failures), 'Five constraint violation objects expected.');
+        $this->assertCount(5, $failures, 'Five constraint violation objects expected.');
 
         foreach ($failures as $failure) {
             $this->assertInstanceOf('Symfony\Component\Validator\ConstraintViolation', $failure);

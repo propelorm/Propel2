@@ -44,7 +44,8 @@
             <parameter name="rule3" value="{column: last_name, validator: NotNull}" />
             <parameter name="rule4" value="{column: last_name, validator: Length, options: {max: 128}}" />
             <parameter name="rule5" value="{column: email, validator: Email}" />
-            <parameter name="rule6" value="{column: birthday, validator: Date}" />
+            <parameter name="rule6" value="{column: email, validator: Length, options: {min: 5}}" />
+            <parameter name="rule7" value="{column: birthday, validator: Date}" />
         </behavior>
     </table>
 

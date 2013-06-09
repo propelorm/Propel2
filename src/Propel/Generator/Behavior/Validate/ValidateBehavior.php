@@ -54,6 +54,7 @@ class ValidateBehavior extends Behavior
         $script = $this->addLoadValidatorMetadataMethod();
         $script .= $this->addValidateMethod();
         $script .= $this->addGetValidationFailuresMethod();
+        $script .= $this->addGetValidationFailuresArrayMethod();
 
         return $script;
     }
@@ -260,6 +261,14 @@ class ValidateBehavior extends Behavior
     protected function addGetValidationFailuresMethod()
     {
         return $this->renderTemplate('objectGetValidationFailures');
+    }
+
+    /**
+     * Adds the getValidationFailuresArray() method.
+     */
+    protected function addGetValidationFailuresArrayMethod()
+    {
+        return $this->renderTemplate('objectGetValidationFailuresArray');
     }
 
 }
