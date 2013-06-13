@@ -77,7 +77,7 @@ To match Travis CI MySQL configuration, you must set `@@sql_mode` to `STRICT_ALL
 
 Create mandatory databases, then run:
 
-    bin/propel test:prepare --vendor=postgres --dsn="dbname=test" --user="postgres"
+    bin/propel test:prepare --vendor=pgsql --dsn="pgsql:dbname=test" --user="postgres"
 
 #### SQLite ####
 
