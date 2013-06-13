@@ -34,7 +34,7 @@ class PgsqlSchemaParserTest extends TestCase
         $this->con->beginTransaction();
 
         if ('pgsql' !== $this->con->getAttribute(\PDO::ATTR_DRIVER_NAME)) {
-//            $this->markTestSkipped('This test is designed for PostgreSQL');
+            $this->markTestSkipped('This test is designed for PostgreSQL');
         }
     }
 
@@ -64,7 +64,6 @@ class PgsqlSchemaParserTest extends TestCase
      */
     public function testParse($columnDDL, $expectedColumnPhpName, $expectedColumnDefaultType, $expectedColumnDefaultValue, $expectedSize, $expectedScale)
     {
-
         $this->con->query("create table foo ( {$columnDDL} );");
         $parser = new PgsqlSchemaParser($this->con);
         $parser->setGeneratorConfig(new QuickGeneratorConfig());
