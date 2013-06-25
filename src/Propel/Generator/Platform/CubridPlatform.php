@@ -141,7 +141,6 @@ class CubridPlatform extends DefaultPlatform
         $ret .= $fks;
         $ret .= $this->getEndDDL();
 
-        //echo $ret;
         return $ret;
     }
 
