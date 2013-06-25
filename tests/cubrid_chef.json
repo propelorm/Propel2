@@ -1,0 +1,10 @@
+{
+  "cubrid": {
+    "version": "9.1.0",
+    "new_dbs": ["test"]
+  },
+  "run_list" :[
+    "cubrid",
+    "cubrid::new_dbs"
+  ]
+}

@@ -2,19 +2,28 @@ language: php
 
 php:
   - 5.4
+  - 5.5
 
 env:
-  - DB=mysql DB_USER=root
+  - VENDOR=mysql DB=test DB_USER=root DSN=$VENDOR:dbname=$DB
+  # If a variable contains values separated by a semicolon, wrap it in quotes or
+  # the values after the first semicolon won't be set.
+  - VENDOR=cubrid DB=test DB_USER=dba DSN="$VENDOR:dbname=$DB;host=$HOSTNAME;port=33000"
 
 before_script:
   # MySQL
-  - sh -c "if [ '$DB' = 'mysql' ]; then mysql -u$DB_USER -e 'SET FOREIGN_KEY_CHECKS = 0; DROP DATABASE IF EXISTS test; DROP SCHEMA IF EXISTS second_hand_books; DROP SCHEMA IF EXISTS contest; DROP SCHEMA IF EXISTS bookstore_schemas; SET FOREIGN_KEY_CHECKS = 1;'; fi"
-  - sh -c "if [ '$DB' = 'mysql' ]; then mysql -u$DB_USER -e 'CREATE DATABASE test; CREATE SCHEMA bookstore_schemas; CREATE SCHEMA contest; CREATE SCHEMA second_hand_books;'; fi"
+  - sh -c "if [ '$VENDOR' = 'mysql' ]; then mysql -u$DB_USER -e 'SET FOREIGN_KEY_CHECKS = 0; DROP DATABASE IF EXISTS test; DROP SCHEMA IF EXISTS second_hand_books; DROP SCHEMA IF EXISTS contest; DROP SCHEMA IF EXISTS bookstore_schemas; SET FOREIGN_KEY_CHECKS = 1;'; fi"
+  - sh -c "if [ '$VENDOR' = 'mysql' ]; then mysql -u$DB_USER -e 'CREATE DATABASE test; CREATE SCHEMA bookstore_schemas; CREATE SCHEMA contest; CREATE SCHEMA second_hand_books;'; fi"
+
+  # Install CUBRID and its PDO driver.
+  # Need to install the PDO diver outside the `prepare_cubrid.sh` script because within the script
+  # the system will not recognize the custom PHP environment set by phpenv.
+  - sh -c "if [ '$VENDOR' = 'cubrid' ]; then sudo -E sh tests/prepare_cubrid.sh; echo '/opt/cubrid' | pecl install pdo_cubrid; fi"
 
   # Composer
   - wget http://getcomposer.org/composer.phar
-  - php composer.phar install
+  - php composer.phar install --dev --prefer-source
 
-  - php bin/propel test:prepare --vendor="$DB" --dsn="$DB:dbname=test" --user="$DB_USER"
+  - php bin/propel test:prepare --vendor="$VENDOR" --dsn="$DSN" --user="$DB_USER"
 
 script: phpunit
