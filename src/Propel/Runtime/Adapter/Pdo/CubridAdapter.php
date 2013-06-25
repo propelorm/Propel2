@@ -17,7 +17,7 @@ use Propel\Runtime\Connection\StatementInterface;
 use Propel\Runtime\Map\ColumnMap;
 
 /**
- * This is used in order to connect to a MySQL database.
+ * This is used in order to connect to a CUBRID database.
  *
  * @author Hans Lellelid <hans@xmpl.org> (Propel)
  * @author Jon S. Stevens <jon@clearink.com> (Torque)

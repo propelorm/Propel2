@@ -13,7 +13,7 @@ namespace Propel\Generator\Builder\Sql\Cubrid;
 use Propel\Generator\Builder\Sql\DataSQLBuilder;
 
 /**
- * MySQL class for building data dump SQL.
+ * CUBRID class for building data dump SQL.
  *
  * @author Hans Lellelid <hans@xmpl.org>
  */

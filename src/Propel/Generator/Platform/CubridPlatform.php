@@ -22,7 +22,7 @@ use Propel\Generator\Model\Unique;
 use Propel\Runtime\Connection\ConnectionInterface;
 
 /**
- * MySql PlatformInterface implementation.
+ * CUBRID PlatformInterface implementation.
  *
  * @author Hans Lellelid <hans@xmpl.org> (Propel)
  * @author Martin Poeschl <mpoeschl@marmot.at> (Torque)
