@@ -195,7 +195,7 @@ This works both for setting AND for getting internationalized columns:
 
 ```php
 <?php
-$item->setLocale('en_EN');
+$item->setLocale('en_US');
 echo $item->getName(); //'Microwave oven'
 $item->setLocale('fr_FR');
 echo $item->getName(); // 'Four micro-ondes'
@@ -208,7 +208,7 @@ This new behavior also adds special capabilities to the Query objects. The most 
 ```php
 <?php
 $items = ItemQuery::create()->find(); // one query to retrieve all items
-$locale = 'en_EN';
+$locale = 'en_US';
 foreach ($items as $item) {
   echo $item->getPrice();
   $item->setLocale($locale);
@@ -221,7 +221,7 @@ This code snippet requires 1+n queries, n being the number of items. But just ad
 ```php
 <?php
 $items = ItemQuery::create()
-  ->joinWithI18n('en_EN')
+  ->joinWithI18n('en_US')
   ->find(); // one query to retrieve both all items and their translations
 foreach ($items as $item) {
   echo $item->getPrice();

@@ -24,7 +24,7 @@ use Propel\Generator\Behavior\Validate\ValidateBehavior;
  */
 class I18nBehavior extends Behavior
 {
-    const DEFAULT_LOCALE = 'en_EN';
+    const DEFAULT_LOCALE = 'en_US';
 
     // default parameters value
     protected $parameters = array(

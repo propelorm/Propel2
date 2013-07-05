@@ -51,11 +51,11 @@ $item = new Item();
 $item->setPrice('12.99');
 
 // add an English translation
-$item->setLocale('en_EN');
+$item->setLocale('en_US');
 $item->setName('Microwave oven');
 // same as
 $itemI18n = new ItemI18n();
-$itemI18n->setLocale('en_EN');
+$itemI18n->setLocale('en_US');
 $itemI18n->setName('Microwave oven');
 $item->addItemI18n($itemI18n);
 
@@ -68,7 +68,7 @@ $item->save();
 
 // retrieve text and non-text translations directly from the main object
 echo $item->getPrice(); // 12.99
-$item->setLocale('en_EN');
+$item->setLocale('en_US');
 echo $item->getName(); // Microwave oven
 $item->setLocale('fr_FR');
 echo $item->getName(); // Four micro-ondes
@@ -76,7 +76,7 @@ echo $item->getName(); // Four micro-ondes
 
 Getter an setter methods for internationalized columns still exist on the main object ; they are just proxy methods to the current translation object, using the same signature and phpDoc for better IDE integration.
 
->**Tip**<br />Propel uses the [locale](http://en.wikipedia.org/wiki/Locale) concept to identify translations. A locale is a string composed of a language code and a territory code (such as 'en_EN' and 'fr_FR'). This allows different translations for two countries using the same language (such as 'fr_FR' and 'fr_CA');
+>**Tip**<br />Propel uses the [locale](http://en.wikipedia.org/wiki/Locale) concept to identify translations. A locale is a string composed of a language code and a territory code (such as 'en_US' and 'fr_FR'). This allows different translations for two countries using the same language (such as 'fr_FR' and 'fr_CA');
 
 ## Dealing With Locale And Translations ##
 
@@ -88,10 +88,10 @@ $item = new Item();
 $item->setPrice('12.99');
 
 // get the English translation
-$t1 = $item->getTranslation('en_EN');
+$t1 = $item->getTranslation('en_US');
 // same as
 $t1 = new ItemI18n();
-$t1->setLocale('en_EN');
+$t1->setLocale('en_US');
 $item->addItemI18n($t1);
 
 $t1->setName('Microwave oven');
@@ -124,7 +124,7 @@ If you need to display a list, the following code will issue n+1 SQL queries, n 
 ```php
 <?php
 $items = ItemQuery::create()->find(); // one query to retrieve all items
-$locale = 'en_EN';
+$locale = 'en_US';
 foreach ($items as $item) {
   echo $item->getPrice();
   $item->setLocale($locale);
@@ -137,7 +137,7 @@ Fortunately, the behavior adds methods to the Query class, allowing you to hydra
 ```php
 <?php
 $items = ItemQuery::create()
-  ->joinWithI18n('en_EN')
+  ->joinWithI18n('en_US')
   ->find(); // one query to retrieve both all items and their translations
 foreach ($items as $item) {
   echo $item->getPrice();
@@ -154,7 +154,7 @@ If you need to search items using a condition on a translation, use the generate
 ```php
 <?php
 $items = ItemQuery::create()
-  ->useI18nQuery('en_EN') // tests the condition on the English translation
+  ->useI18nQuery('en_US') // tests the condition on the English translation
     ->filterByName('Microwave oven')
   ->endUse()
   ->find();
@@ -186,7 +186,7 @@ Such a schema is almost similar to a schema built for symfony; that means that t
 
 ## Parameters ##
 
-If you don't specify a locale when dealing with a translatable object, Propel uses the default English locale 'en_EN'. This default can be overridden in the schema using the `default_locale` parameter:
+If you don't specify a locale when dealing with a translatable object, Propel uses the default English locale 'en_US'. This default can be overridden in the schema using the `default_locale` parameter:
 
 ```xml
 <table name="item">
