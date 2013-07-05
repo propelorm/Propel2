@@ -111,7 +111,7 @@ EOF;
     </table>
     <table name="i18n_behavior_test_0_i18n">
         <column name="id" primaryKey="true" type="INTEGER" />
-        <column name="locale" primaryKey="true" type="VARCHAR" size="5" default="en_EN" />
+        <column name="locale" primaryKey="true" type="VARCHAR" size="5" default="en_US" />
         <column name="bar" type="VARCHAR" size="100" />
         <foreign-key foreignTable="i18n_behavior_test_0">
             <reference local="id" foreign="id" />
@@ -166,7 +166,7 @@ EOF;
 CREATE TABLE i18n_behavior_test_0_i18n
 (
     id INTEGER NOT NULL,
-    locale VARCHAR(5) DEFAULT 'en_EN' NOT NULL,
+    locale VARCHAR(5) DEFAULT 'en_US' NOT NULL,
 EOF;
         $this->assertContains($expected, $builder->getSQL());
     }
@@ -182,7 +182,7 @@ EOF;
 CREATE TABLE i18n_behavior_test_0_i18n
 (
     id INTEGER NOT NULL,
-    locale VARCHAR(5) DEFAULT 'en_EN' NOT NULL,
+    locale VARCHAR(5) DEFAULT 'en_US' NOT NULL,
     bar VARCHAR(100),
     PRIMARY KEY (id,locale)
 );
@@ -231,7 +231,7 @@ DROP TABLE IF EXISTS foo_table;
 CREATE TABLE foo_table
 (
     id INTEGER NOT NULL,
-    locale VARCHAR(5) DEFAULT 'en_EN' NOT NULL,
+    locale VARCHAR(5) DEFAULT 'en_US' NOT NULL,
     PRIMARY KEY (id,locale)
 );
 EOF;
@@ -262,7 +262,7 @@ DROP TABLE IF EXISTS i18n_behavior_test_0_i18n;
 CREATE TABLE i18n_behavior_test_0_i18n
 (
     id INTEGER NOT NULL,
-    culture VARCHAR(5) DEFAULT 'en_EN' NOT NULL,
+    culture VARCHAR(5) DEFAULT 'en_US' NOT NULL,
     PRIMARY KEY (id,culture)
 );
 EOF;
@@ -324,7 +324,7 @@ DROP TABLE IF EXISTS i18n_behavior_test_0_i18n;
 CREATE TABLE i18n_behavior_test_0_i18n
 (
     id INTEGER NOT NULL,
-    locale VARCHAR(6) DEFAULT 'en_EN' NOT NULL,
+    locale VARCHAR(6) DEFAULT 'en_US' NOT NULL,
     PRIMARY KEY (id,locale)
 );
 EOF;
