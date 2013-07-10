@@ -115,6 +115,7 @@ class VersionableBehavior extends Behavior
                 'package'   => $table->getPackage(),
                 'schema'    => $table->getSchema(),
                 'namespace' => $table->getNamespace() ? '\\' . $table->getNamespace() : null,
+                'skipSql'   => $table->isSkipSql()
             ));
             $versionTable->isVersionTable = true;
             // every behavior adding a table should re-execute database behaviors

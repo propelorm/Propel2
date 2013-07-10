@@ -166,6 +166,7 @@ class I18nBehavior extends Behavior
                 'package'   => $table->getPackage(),
                 'schema'    => $table->getSchema(),
                 'namespace' => $table->getNamespace() ? '\\' . $table->getNamespace() : null,
+                'skipSql'   => $table->isSkipSql()
             ));
 
             // every behavior adding a table should re-execute database behaviors
