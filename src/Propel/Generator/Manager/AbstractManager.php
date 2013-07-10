@@ -233,7 +233,10 @@ abstract class AbstractManager
             $dom = new \DOMDocument('1.0', 'UTF-8');
             $dom->load($dmFilename);
 
+
+
             $this->includeExternalSchemas($dom, $schema->getPath());
+
 
             // normalize (or transform) the XML document using XSLT
             if ($this->getGeneratorConfig()->getBuildProperty('schemaTransform') && $this->xsl) {
@@ -315,7 +318,7 @@ abstract class AbstractManager
         $nbIncludedSchemas = 0;
         while ($externalSchema = $externalSchemaNodes->item(0)) {
             $include = $externalSchema->getAttribute('filename');
-
+            $referenceOnly = $externalSchema->getAttribute('referenceOnly');
             $this->log('Processing external schema: ' . $include);
 
             $externalSchema->parentNode->removeChild($externalSchema);
@@ -326,6 +329,9 @@ abstract class AbstractManager
             // The external schema may have external schemas of its own ; recurs
             $this->includeExternalSchemas($externalSchemaDom, $srcDir);
             foreach ($externalSchemaDom->getElementsByTagName('table') as $tableNode) {
+                if ($referenceOnly) {
+                    $tableNode->setAttribute("skipSql", "true");
+                }
                 $databaseNode->appendChild($dom->importNode($tableNode, true));
             }
 
