@@ -88,6 +88,26 @@ EOF;
         $this->assertContains($expected, $builder->getSQL());
     }
 
+    public function testSkipSqlParameterOnParentTable()
+    {
+        $schema = <<<EOF
+<database name="i18n_behavior_test_0">
+    <table name="i18n_behavior_test_0" skipSql="true">
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <column name="foo" type="INTEGER" />
+        <column name="bar" type="VARCHAR" size="100" />
+        <behavior name="i18n">
+            <parameter name="i18n_columns" value="bar" />
+        </behavior>
+    </table>
+</database>
+EOF;
+        $builder = new QuickBuilder();
+        $builder->setSchema($schema);
+
+        $this->assertEmpty($builder->getSQL());
+    }
+
     public function schemaDataProvider()
     {
         $schema1 = <<<EOF
