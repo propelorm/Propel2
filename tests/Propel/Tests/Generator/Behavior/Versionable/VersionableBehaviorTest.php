@@ -461,4 +461,22 @@ EOF;
         $this->assertContains($expected, $builder->getSQL());
     }
 
+    public function testSkipSqlParameterOnParentTable()
+    {
+        $schema = <<<EOF
+<database name="versionable_behavior_test_0">
+    <table name="versionable_behavior_test_0" skipSql="true">
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <column name="bar" type="INTEGER" />
+        <behavior name="versionable" />
+    </table>
+</database>
+EOF;
+
+        $builder = new QuickBuilder();
+        $builder->setSchema($schema);
+
+        $this->assertEmpty($builder->getSQL());
+    }
+
 }
