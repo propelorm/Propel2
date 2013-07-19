@@ -145,16 +145,7 @@ At this point, Propel should be setup and ready to use. You can follow the steps
 
 ## Troubleshooting ##
 
-### PHP Configuration ###
-
-Propel requires the following settings in `php.ini`:
-
-|Variable               |Value
-|-----------------------|-----
-|ze1_compatibility_mode |Off
-|magic_quotes_gpc       |Off
-|magic_quotes_sybase    |Off
-
 ### Getting Help ###
 
-If you can't manage to install Propel, don't hesitate to ask for help. See [Support](../support) for details on getting help.
+If you can't manage to install Propel, don't hesitate to ask for help. See
+[Support](../support) for details on getting help.
