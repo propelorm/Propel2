@@ -125,7 +125,7 @@ propel.database.password = p@ssw0rd
 
 ```bash
 $ cd /path/to/propel/test
-$ ../generator/bin/propel-gen fixtures/bookstore main
+$ ../bin/propel/propel-gen fixtures/bookstore main
 $ mysqladmin create test
 $ ../generator/bin/propel-gen fixtures/bookstore insert-sql
 ```

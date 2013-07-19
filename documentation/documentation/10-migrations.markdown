@@ -31,8 +31,8 @@ Here is a concrete example. On a new bookstore project, a developer creates an X
 
 The developer then calls the `diff` task to ask Propel to compare the database structure and the XML schema:
 
-```
-> propel-gen diff
+```bash
+$ propel diff
 
 [propel-sql-diff] Reading databases structure...
 [propel-sql-diff] Database is empty
@@ -85,8 +85,8 @@ DROP TABLE IF EXISTS `book`;
 
 Now, to actually create the `book` table in the database, the developer has to call the `migrate` task:
 
-```
-> propel-gen migrate
+```bash
+$ propel migrate
 
 [propel-migration] Executing migration PropelMigration_1286483354 up
 [propel-migration] 1 of 1 SQL statements executed successfully on datasource "bookstore"
@@ -118,8 +118,8 @@ After a few days, the developer wants to add a new `author` table, with a foreig
 
 In order to update the database structure accordingly, the process is the same:
 
-```
-> propel-gen diff
+```bash
+$ propel diff
 
 [propel-sql-diff] Reading databases structure...
 [propel-sql-diff] 1 tables imported from databases.
@@ -131,7 +131,7 @@ In order to update the database structure accordingly, the process is the same:
 [propel-sql-diff]   Please review the generated SQL statements, and add data migration code if necessary.
 [propel-sql-diff]   Once the migration class is valid, call the "migrate" task to execute it.
 
-> propel-gen migrate
+$ propel migrate
 
 [propel-migration] Executing migration PropelMigration_1286484196 up
 [propel-migration] 4 of 4 SQL statements executed successfully on datasource "bookstore"
@@ -163,10 +163,10 @@ CREATE TABLE `author`
 ) ENGINE=InnoDB;
 ```
 
->**Tip**<br />`diff` and `migrate` often come one after the other, so you may want to execute them both in one call. That's possible, provided that the first argument of the `propel-gen` script is the path to the current project:
+>**Tip**<br />`diff` and `migrate` often come one after the other, so you may want to execute them both in one call. That's possible, provided that the first argument of the `propel` script is the path to the current project:
 
-```
-> propel-gen . diff migrate
+```bash
+$ propel . diff migrate
 ```
 
 ## Migration Tasks ##
@@ -175,10 +175,10 @@ The two basic migration tasks are `diff` and `migrate` - you already know them. 
 
 ### Migration Up or Down, One At A Time ###
 
-In the previous example, two migrations were executed. But the developer now wants to revert the last one. The `down` task provides exactly this feature: it reverts only one migration.
+In the previous example, two migrations were executed. But the developer now wants to revert the last one. The `migration:down` task provides exactly this feature: it reverts only one migration.
 
 ```
-> propel-gen down
+$ propel migration:down
 
 [propel-migration-down] Executing migration PropelMigration_1286484196 down
 [propel-migration-down] 4 of 4 SQL statements executed successfully on datasource "bookstore"
@@ -187,34 +187,34 @@ In the previous example, two migrations were executed. But the developer now wan
 
 Notice that the `PropelMigration_1286484196` was executed _down_, not _up_ like the previous time. You can call this command several times to continue reverting the database structure, up to its original state:
 
-```
-> propel-gen down
+```bash
+$ propel migration:down
 
 [propel-migration-down] Executing migration PropelMigration_1286483354 down
 [propel-migration-down] 1 of 1 SQL statements executed successfully on datasource "bookstore"
 [propel-migration-down] Reverse migration complete. No more migration available for reverse
 ```
 
-As you may have guessed, the `up` task does exactly the opposite: it executes the next migration up:
+As you may have guessed, the `migration:up` task does exactly the opposite: it executes the next migration up:
 
-```
-> propel-gen up
+```bash
+$ propel migration:up
 
 [propel-migration-up] Executing migration PropelMigration_1286483354 up
 [propel-migration-up] 1 of 1 SQL statements executed successfully on datasource "bookstore"
 [propel-migration-up] Migration complete. 1 migrations left to execute.
 ```
 
->**Tip**<br />The difference between the `up` and `migrate` tasks is that `up` executes only one migration, while `migrate` executes all the migrations that were not yet executed.
+>**Tip**<br />The difference between the `migration:up` and `migrate` tasks is that `migration:up` executes only one migration, while `migrate` executes all the migrations that were not yet executed.
 
 ### Migration Status ###
 
-If you followed the latest example, you may notice that the schema and the database should now be desynchronized. By calling `down` twice, and `up` just once, there is one migration left to execute. This kind of situation sometimes happen in the life of a project: you don't really know which migrations were already executed, and which ones need to be executed now.
+If you followed the latest example, you may notice that the schema and the database should now be desynchronized. By calling `migration:down` twice, and `migration:up` just once, there is one migration left to execute. This kind of situation sometimes happen in the life of a project: you don't really know which migrations were already executed, and which ones need to be executed now.
 
-For these situations, Propel provides the `status` task. It simply lists the migrations not yet executed, to help you understand where you are in the migration process.
+For these situations, Propel provides the `migration:status` task. It simply lists the migrations not yet executed, to help you understand where you are in the migration process.
 
-```
-> propel-gen status
+```bash
+$ propel migration:status
 
 [propel-migration-status] Checking Database Versions...
 [propel-migration-status] Listing Migration files...
@@ -223,10 +223,10 @@ For these situations, Propel provides the `status` task. It simply lists the mig
 [propel-migration-status] Call the "migrate" task to execute it
 ```
 
->**Tip**<br />Like all other Propel tasks, `status` offers a "verbose" mode, where the CLI output shows a lot more details. Add `-verbose` at the end of the call to enable it - but remember to add the path to the project as first argument:
+>**Tip**<br />Like all other Propel tasks, `migration:status` offers a "verbose" mode, where the CLI output shows a lot more details. Add `--verbose` at the end of the call to enable it - but remember to add the path to the project as first argument:
 
-```
-> propel-gen . status -verbose
+```bash
+$ propel . migration:status --verbose
 [propel-migration-status] Checking Database Versions...
 [propel-migration-status] Connecting to database "bookstore" using DSN "mysql:dbname=bookstore"
 [propel-migration-status] Latest migration was executed on 2010-10-07 22:29:14 (timestamp 1286483354)
@@ -238,9 +238,9 @@ For these situations, Propel provides the `status` task. It simply lists the mig
 [propel-migration-status] Call the "migrate" task to execute it
 ```
 
-`up`, `down`, and `status` will help you to find your way in migration files, especially when they become numerous or when you need to revert more than one.
+`migration:up`, `migration:down`, and `migration:status` will help you to find your way in migration files, especially when they become numerous or when you need to revert more than one.
 
->**Tip**<br />There is no need to keep old migration files if you are sure that you won't ever need to revert to an old state. If a new developer needs to setup the project from scratch, the `sql` and `insert-sql` tasks will initialize the database structure to the current XML schema.
+>**Tip**<br />There is no need to keep old migration files if you are sure that you won't ever need to revert to an old state. If a new developer needs to setup the project from scratch, the `sql:build` and `sql:insert` tasks will initialize the database structure to the current XML schema.
 
 ## How Do Migrations Work? ##
 
@@ -276,8 +276,8 @@ propel.migration.dir = ${propel.output.dir}/migrations
 
 >**Tip**<br />The `diff` task supports an additional parameter, called `propel.migration.editor`, which specifies a text editor to be automatically launched at the end of the task to review the generated migration. Unfortunately, only editors launched in another window are accepted due to a Phing limitation. Mac users will find it useful, though:
 
-```
-> propel-gen . diff -Dpropel.migration.editor=mate
+```bash
+$ propel . diff -Dpropel.migration.editor=mate
 ```
 
 ## Migrating Data ##

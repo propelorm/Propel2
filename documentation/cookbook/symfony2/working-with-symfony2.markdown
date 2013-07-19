@@ -53,11 +53,11 @@ Add the following lines to your deps file (located in the root of the Symfony pr
         git=https://github.com/Xosofox/phing
     [propel]
         git=https://github.com/propelorm/Propel.git
-    
+
 Update your vendor directory with
 
     php bin/vendors install
-    
+
 ## Register your Bundle
 
 Register this bundle in the `AppKernel` class:
@@ -213,19 +213,19 @@ Place the following schema in `src/Sensio/HelloBundle/Resources/config/schema.xm
 
 ### Build Process
 
-Call the application console with the `propel:build` command:
+Call the application console with the `propel:model:build` command:
 
-    php app/console propel:build [--classes] [--sql] [--insert-sql]
-
+```
+php app/console propel:model:build [--platform="..."] [--input-dir="..."] ...
+```
 
 ### Insert SQL
 
-Call the application console with the `propel:insert-sql` command:
+Call the application console with the `propel:sql:insert` command:
 
-    php app/console propel:insert-sql [--force]
-
-Note that the `--force` option is needed to actually execute the SQL statements.
-
+```
+php app/console propel:sql:insert [--output-dir="..."] [--connection="..."]
+```
 
 ### Use The Model Classes
 

@@ -18,8 +18,8 @@ To generate a schema file, create a new directory for your project & specify the
  1. Create the `legacyapp` project directory anywhere on your filesystem:
 
 ```bash
-> mkdir legacyapp
-> cd legacyapp
+$ mkdir legacyapp
+$ cd legacyapp
 ```
 
  2. Create a `build.properties` file in `legacyapp/` directory with the DB connection parameters for your existing database, e.g.:
@@ -39,7 +39,7 @@ propel.database.user = root
  3. Run the `reverse` task to generate the `schema.xml`:
 
 ```bash
-> propel-gen reverse
+$ propel reverse
 ```
 
  4. Pay attention to any errors/warnings issued by Phing during the task execution and then examine the generated `schema.xml` file to make any corrections needed.
@@ -64,16 +64,16 @@ propel.database = pgsql
 propel.database.url = pgsql://unix+localhost/newlegacyapp
 ```
 
- 3. And then run the `sql` task to generate the new DDL:
+ 3. And then run the `sql:build` task to generate the new DDL:
 
 ```bash
-> propel-gen sql
+$ propel sql:build
 ```
 
- 4. And (optionally) the `insert-sql` task to create the new database:
+ 4. And (optionally) the `sql:insert` task to create the new database:
 
 ```bash
-> propel-gen insert-sql
+$ propel sql:insert
 ```
 
 ## Working with Database Data ##
@@ -87,7 +87,7 @@ Propel also provides several tasks to facilitate data import/export. The most im
 Once you have created (or reverse-engineered) your `schema.xml` file, you can run the `datadump` task to dump data from the database into a `data.xml` file.
 
 ```bash
-> propel-gen datadump
+$ propel datadump
 ```
 
 The task transfers database records to XML using a simple format, where each row is an element, and each column is an attribute. So for instance, the XML representation of a row in a `publisher` table:
@@ -111,7 +111,7 @@ The task transfers database records to XML using a simple format, where each row
 To create the SQL files from the XML, run the `datasql` task:
 
 ```bash
-> propel-gen datasql
+$ propel datasql
 ```
 
-The generated SQL is placed in the `build/sql/` directory and will be inserted when you run the `insert-sql` task.
+The generated SQL is placed in the `build/sql/` directory and will be inserted when you run the `sql:insert` task.

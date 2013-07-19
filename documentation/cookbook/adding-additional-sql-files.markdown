@@ -5,7 +5,7 @@ title: Adding Additional SQL Files
 
 # Adding Additional SQL Files #
 
-In many cases you may wish to have the _insert-sql_ task perform additional SQL operations (e.g. add views, stored procedures, triggers, sample data, etc.).  Rather than have to run additional SQL statements yourself every time you re-build your object model, you can have the Propel generator do this for you.
+In many cases you may wish to have the `sql:insert` task perform additional SQL operations (e.g. add views, stored procedures, triggers, sample data, etc.).  Rather than have to run additional SQL statements yourself every time you re-build your object model, you can have the Propel generator do this for you.
 
 ## 1. Create the SQL DDL files ##
 
@@ -35,4 +35,4 @@ schema.sql=your-db-name
 my_column-default.sql=your-db-name
 ```
 
-Now when you execute the _insert-sql_ Propel generator target, the _'my_column-default.sql_' file will be executed against the _your-db-name_ database.
+Now when you execute the `sql:insert` Propel generator target, the _'my_column-default.sql_' file will be executed against the _your-db-name_ database.

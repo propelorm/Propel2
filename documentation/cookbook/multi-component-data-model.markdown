@@ -224,12 +224,12 @@ That means, that the Author OM classes will be created in a subdirectory `core/a
 
 You can have more than one schema file that belong to one package. For example, in the the bookstore-packaged example both the `book.schema.xml` and `media.schema.xml` belong to the same package "core.book". The generated OM classes for these schemas will therefore end up in the same `core/book/` subdirectory.
 
-### The OM build ###
+### The Object Model build ###
 
 To run the packaged bookstore example build simply go to the `propel/test/fixtures/bookstore-packages/` directory and type:
 
-```
-../../../generator/bin/propel-gen om
+```bash
+$ propel model:build
 ```
 
 This should run without any complaints. When you have a look at the projects/bookstore-packaged/build/classes directory, the following directory tree should have been created:
@@ -261,8 +261,8 @@ util/
 
 From the same schema files, run the SQL generation by calling:
 
-```
-../../../generator/bin/propel-gen sql
+```$
+propel sql:build
 ```
 
 Then, have a look at the `build/sql/` directory: you will see that for each package (that is specified as a package attribute in the schema file database tags), one sql file has been created:
@@ -276,10 +276,10 @@ Then, have a look at the `build/sql/` directory: you will see that for each pack
 
 These files contain the CREATE TABLE SQL statements necessary for each package.
 
-When you now run the insert-sql task by typing:
+When you now run the `sql:insert` task by typing:
 
-```
-../../../generator/bin/propel-gen insert-sql
+```bash
+$ propel sql:insert
 ```
 
 these SQL statements will be executed on a SQLite database located in the Propel/generator/test/ directory.
