@@ -75,12 +75,12 @@ class Book extends BaseBook
 }
 
 // Most of the generated code is actually in the abstract Base- classes
-abstract class BaseBook extends BaseObject implements Persistent
+abstract class BaseBook extends BaseObject implements ActiveRecordInterface
 {
   // lots of generated code
 }
 
-// BaseObject and Persistent are classes bundled by Propel
+// ActiveRecordInterface is bundled with Propel
 
 // Do not alter the code of the Base- classes, as your modifications will be overridden
 // each time you rebuild the model. Instead, add your custom code to the stub class

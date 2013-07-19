@@ -265,7 +265,7 @@ propel.sql.dir = ${propel.output.dir}/sql
 
 ```ini
 # Object Model builders
-propel.builder.object.class = builder.om.ObjectBuilder
+propel.builder.object.class = builder.om.AbstractObjectBuilder
 propel.builder.objectstub.class = builder.om.ExtensionObjectBuilder
 
 propel.builder.objectmultiextend.class = builder.om.MultiExtendObjectBuilder

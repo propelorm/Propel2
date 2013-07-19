@@ -194,7 +194,7 @@ A database transaction has a cost in terms of performance. In fact, for simple d
 
 ```php
 <?php
-$con = Propel::getConnection(BookTableMap::DATABASE_NAME);
+$con = Propel::getWriteConnection(BookTableMap::DATABASE_NAME);
 for ($i=0; $i<2002; $i++)
 {
   $book = new Book();
@@ -222,7 +222,7 @@ You can take advantage of Propel's nested transaction capabilities to encapsulat
 
 ```php
 <?php
-$con = Propel::getConnection(BookTableMap::DATABASE_NAME);
+$con = Propel::getWriteConnection(BookTableMap::DATABASE_NAME);
 $con->beginTransaction();
 for ($i=0; $i<2002; $i++)
 {
@@ -254,7 +254,7 @@ All the code examples in this chapter show the connection object passed as a par
 
 ```php
 <?php
-$con = Propel::getConnection(AccountTableMap::DATABASE_NAME);
+$con = Propel::getWriteConnection(AccountTableMap::DATABASE_NAME);
 $fromAccount = AccountQuery::create()->findPk($fromAccountNumber, $con);
 $fromAccount->setValue($fromAccount->getValue() - $amount);
 $fromAccount->save($con);

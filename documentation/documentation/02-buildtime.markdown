@@ -169,7 +169,9 @@ Then insert the SQL into your database:
 $ propel sql:insert
 ```
 
-You should normally have yours tables created. Propel will also generate a `generated-sql` containning the SQL files of your schema ; useful if you are using a SCM, you can so compare the different versions of your schema.
+You should normally have yours tables created. Propel will also generate a
+`generated-sql` folder containning the SQL files of your schema ; useful if you
+are using a SCM, you can so compare the different versions of your schema.
 
 Each time you will update your schema, you should run `sql:build` and `sql:insert`.
 
