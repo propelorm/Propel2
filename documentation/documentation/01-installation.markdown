@@ -132,7 +132,7 @@ The command should output the propel version following by a list of the options 
 
 ```bash
 $ cd myproject
-$ ln -s vendor/propel/bin/propel propel
+$ ln -s vendor/propel/propel/bin/propel propel
 ```
 
 Or simply edit your .bashrc or .zshrc file:
