@@ -31,7 +31,7 @@ Clone this bundle in the `vendor/bundles/Propel` directory:
 
 Checkout Propel and Phing in the `vendor` directory:
 
-    svn checkout http://svn.github.com/propelorm/Propel.git vendor/propel
+    svn checkout http://github.com/propelorm/Propel2 vendor/propel
 
     svn checkout http://svn.phing.info/tags/2.4.6/ vendor/phing
 
@@ -39,7 +39,7 @@ Instead of using svn, you can clone the unofficial Git repositories:
 
     git submodule add https://github.com/Xosofox/phing vendor/phing
 
-    git submodule add https://github.com/propelorm/Propel.git vendor/propel
+    git submodule add https://github.com/propelorm/Propel2.git vendor/propel
 
 ### via Symfony2 vendor management
 
