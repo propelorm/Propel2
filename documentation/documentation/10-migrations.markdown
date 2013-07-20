@@ -328,9 +328,9 @@ You can also use Propel ActiveRecord and Query objects, but you'll then need to 
 
 ```php
 <?php
+// bootstrap the Propel runtime (and other dependencies)
+require_once '/path/to/vendor/autoload.php';
 
-// bootstrap the Propel runtime
-require_once '/path/to/runtime/lib/Propel.php';
 set_include_path('/path/to/generated-classes' . PATH_SEPARATOR . get_include_path());
 include '/path/to/generated-conf/config.php';
 
