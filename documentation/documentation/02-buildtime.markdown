@@ -305,7 +305,7 @@ $ cd /path/to/bookstore
 $ propel config:convert-xml
 ```
 
-The resulting file can be found under `build/conf/bookstore-conf.php`, where "bookstore" is the name of the project you defined in `build.properties`.
+The resulting file can be found under `generated-conf/config.php`.
 
 This simplifies the setup of Propel to the following script:
 
@@ -315,5 +315,5 @@ This simplifies the setup of Propel to the following script:
 require_once '/path/to/vendor/autoload.php';
 
 // setup Propel
-require_once 'build/conf/bookstore-conf.php';
+require_once '/generated-conf/config.php';
 ```

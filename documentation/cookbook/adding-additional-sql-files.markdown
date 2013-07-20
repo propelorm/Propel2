@@ -18,7 +18,7 @@ For example, if we wanted to add a default value to a column that was unsupporte
 ALTER TABLE my_table ALTER COLUMN my_column SET DEFAULT CURRENT_TIMESTAMP;
 ```
 
-Now we save that as _'my_column-default.sql_' in the same directory as the generated _'schema.sql_' file (usually in projectdir/build/sql/).
+Now we save that as _'my_column-default.sql'_ in the same directory as the generated _'schema.sql'_ file (usually in projectdir/generated-sql).
 
 ## 2. Tell Propel Generator about the new file ##
 

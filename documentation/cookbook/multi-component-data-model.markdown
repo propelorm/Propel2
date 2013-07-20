@@ -94,19 +94,15 @@ The `package` attribute of a table translates to the directory in which Propel g
 
 For instance, if no `package` attribute is defined at the database of table level, Propel places all classes according to the `propel.targetPackage` from the `build.properties`:
 
-```
-build/
-  classes/
-    my_project/
-      om/
-      map/
-      Author.php
-      AuthorQuery.php
-      Book.php
-      BookQuery.php
-      Review.php
-      ReviewQuery.php
-```
+* generated-classes/
+  * Base/
+  * Map/
+  * Author.php
+  * AuthorQuery.php
+  * Book.php
+  * BookQuery.php
+  * Review.php
+  * ReviewQuery.php
 
 You can further tweak the location where Propel puts the created files by changing the `propel.output.dir` build property. By default this property is set to:
 
@@ -118,46 +114,39 @@ You can change it to use any other directory as your build directory.
 
 If you set up packages for `<database>` elements, Propel splits up the generated model classes into subdirectories named after the package attribute:
 
-```
-build/
-  classes/
-    my_project/
-      author/
-        om/
-        map/
-        Author.php
-        AuthorQuery.php
-      book/
-        om/
-        map/
-        Book.php
-        BookQuery.php
-        Review.php
-        ReviewQuery.php
-```
+* generated-classes/
+  * author/
+      * Base/
+      * Map/
+      * Author.php
+      * AuthorQuery.php
+  * book/
+      * Base/
+      * Map/
+      * Book.php
+      * BookQuery.php
+      * Review.php
+      * ReviewQuery.php
 
 And of course, if you specialize the `package` attribute per table, you can have one table use its own package:
 
-```
-build/
-  classes/
-    my_project/
-      author/
-        om/
-        map/
-        Author.php
-        AuthorQuery.php
-      book/
-        om/
-        map/
-        Book.php
-        BookQuery.php
-      review/
-        om/
-        map/
-        Review.php
-        ReviewQuery.php
-```
+
+* generated-classes/
+  * author/
+      * Base/
+      * Map/
+      * Author.php
+      * AuthorQuery.php
+  * book/
+      * Base/
+      * Map/
+      * Book.php
+      * BookQuery.php
+  * review/
+      * Base/
+      * Map/
+      * Review.php
+      * ReviewQuery.php
 
 ### Packages And SQL Files ###
 
@@ -165,30 +154,21 @@ Propel also considers packages for SQL generation. In practice, Propel generates
 
 So by default, all the tables end up in a single SQL file:
 
-```
-build/
-  sql/
-    schema.sql
-```
+* generated-sql/
+  * schema.sql
 
 If you specialize the `package` for each `<database>` element, Propel uses it for SQL files:
 
-```
-build/
-  sql/
-    author.schema.sql // contains CREATE TABLE author
-    book.schema.sql   // contains CREATE TABLE book and CREATE TABLE review
-```
+* generated-sql/
+  * author.schema.sql // contains CREATE TABLE author
+  * book.schema.sql   // contains CREATE TABLE book and CREATE TABLE review
 
 And, as you probably expect it, a package overridden at the table level also accounts for an independent SQL file:
 
-```
-build/
-  sql/
-    author.schema.sql // contains CREATE TABLE author
-    book.schema.sql   // contains CREATE TABLE book
-    review.schema.sql // contains CREATE TABLE review
-```
+* generated-sql
+  * author.schema.sql // contains CREATE TABLE author
+  * book.schema.sql   // contains CREATE TABLE book
+  * review.schema.sql // contains CREATE TABLE review
 
 ## Understanding The packageObjectModel Build Property ##
 
@@ -232,7 +212,7 @@ To run the packaged bookstore example build simply go to the `propel/test/fixtur
 $ propel model:build
 ```
 
-This should run without any complaints. When you have a look at the projects/bookstore-packaged/build/classes directory, the following directory tree should have been created:
+This should run without any complaints. When you have a look at the `projects/bookstore-packaged/generated-classes` directory, the following directory tree should have been created:
 
 ```
 addon/
@@ -265,7 +245,7 @@ From the same schema files, run the SQL generation by calling:
 propel sql:build
 ```
 
-Then, have a look at the `build/sql/` directory: you will see that for each package (that is specified as a package attribute in the schema file database tags), one sql file has been created:
+Then, have a look at the `generated-sql/` directory: you will see that for each package (that is specified as a package attribute in the schema file database tags), one sql file has been created:
 
 * addon.club.schema.sql
 * core.author.schema.sql

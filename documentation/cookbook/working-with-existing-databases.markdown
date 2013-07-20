@@ -114,4 +114,4 @@ To create the SQL files from the XML, run the `datasql` task:
 $ propel datasql
 ```
 
-The generated SQL is placed in the `build/sql/` directory and will be inserted when you run the `sql:insert` task.
+The generated SQL is placed in the `generated-sql/` directory and will be inserted when you run the `sql:insert` task.

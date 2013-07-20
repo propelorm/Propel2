@@ -59,11 +59,11 @@ The best way to learn what a generated Active Record class can do is to inspect 
 <!-- Active Record classes are generated in the directory specified in build.properties
      under the propel.php.dir setting !-->
 <table name="book">
-<!-- generates the Book class under /path/to/project/build/classes/Book.php !-->
+<!-- generates the Book class under /path/to/project/generated-classes/Book.php !-->
 
 <!-- To group Active Record classes into subdirectories, set the package attribute in the <table> tag !-->
 <table name="book" package="bookstore">
-<!-- generates the Book class under /path/to/project/build/classes/bookstore/Book.php !-->
+<!-- generates the Book class under /path/to/project/generated-classes/bookstore/Book.php !-->
 ```
 
 ```php
