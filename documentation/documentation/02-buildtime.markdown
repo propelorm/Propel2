@@ -125,7 +125,7 @@ A table can have several `<foreign-key>` tags, describing foreign keys to foreig
 
 A foreign key represents a relationship. Just like a table or a column, a relationship has a `phpName`. By default, Propel uses the `phpName` of the foreign table as the `phpName` of the relation. The `refPhpName` defines the name of the relation as seen from the foreign table.
 
-There are many more attributes and elements available to describe a datamodel. Propel's documentation provides a complete [Schema of the schema syntax](../reference/schema), together with a [DTD](https://github.com/propelorm/Propel/blob/master/generator/resources/dtd/database.dtd) and a [XSD](https://github.com/propelorm/Propel/blob/master/generator/resources/xsd/database.xsd) schema for its validation.
+There are many more attributes and elements available to describe a datamodel. Propel's documentation provides a complete [Schema of the schema syntax](../reference/schema), together with a [DTD](https://github.com/propelorm/Propel2/blob/master/resources/dtd/database.dtd) and a [XSD](https://github.com/propelorm/Propel2/blob/master/resources/xsd/database.xsd) schema for its validation.
 
 ## Building The Model ##
 

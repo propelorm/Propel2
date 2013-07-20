@@ -69,7 +69,7 @@ propel.schema.autoNamespace = true|{false}
 propel.schema.autoPrefix = true|{false}
 
 # Whether to validate the XML schema using the XSD file.
-# The default XSD file is located under `generator/resources/xsd/database.xsd`
+# The default XSD file is located under `resources/xsd/database.xsd`
 # and you can use a custom XSD file by changing the `propel.schema.xsd.file`
 # property.
 propel.schema.validate = {true}|false
@@ -77,7 +77,7 @@ propel.schema.validate = {true}|false
 # Whether to transform the XML schema using the XSL file.
 # This was used in previous Propel versions to clean up the schema, but tended
 # to hide problems in the schema. It is disabled by default since Propel 1.5.
-# The default XSL file is located under `generator/resources/xsd/database.xsl`
+# The default XSL file is located under `resources/xsl/database.xsl`
 # and you can use a custom XSL file by changing the `propel.schema.xsl.file`
 # property.
 propel.schema.transform = true|{false}
