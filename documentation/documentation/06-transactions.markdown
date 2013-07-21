@@ -58,7 +58,7 @@ For instance, suppose that you have an `Author` model with a one to many relatio
 ```php
 <ul>
 <?php foreach ($authors as $author): ?>
-  <li><?php echo $author->getName() ?> (<?php echo $author->countBooks() ?> books)</li>
+  <li><?= $author->getName() ?> (<?= $author->countBooks() ?> books)</li>
 <?php endforeach; ?>
 </ul>
 ```

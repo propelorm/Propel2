@@ -1009,11 +1009,11 @@ update($values, $con = null, $forceIndividualSaves = false)
 // find() returns a PropelCollection, which you can use just like an array
 $books = BookQuery::create()->find(); // $books behaves like an array
 ?>
-There are <?php echo count($books) ?> books:
+There are <?= count($books) ?> books:
 <ul>
   <?php foreach ($books as $book): ?>
   <li>
-    <?php echo $book->getTitle() ?>
+    <?= $book->getTitle() ?>
   </li>
   <?php endforeach; ?>
 </ul>
@@ -1027,11 +1027,11 @@ $books = BookQuery::create()->find(); // $books is an object
 <?php if($books->isEmpty()): ?>
 There are no books.
 <?php else: ?>
-There are <?php echo $books->count() ?> books:
+There are <?= $books->count() ?> books:
 <ul>
   <?php foreach ($books as $book): ?>
-  <li class="<?php echo $books->isOdd() ? 'odd' : 'even' ?>">
-    <?php echo $book->getTitle() ?>
+  <li class="<?= $books->isOdd() ? 'odd' : 'even' ?>">
+    <?= $book->getTitle() ?>
   </li>
   <?php if($books->isLast()): ?>
   <li>Do you want more books?</li>
@@ -1106,11 +1106,11 @@ $bookPager = BookQuery::create()
 <?php if($bookPager->isEmpty()): ?>
 There are no books.
 <?php else: ?>
-There are <?php echo $bookPager->count() ?> books:
+There are <?= $bookPager->count() ?> books:
 <ul>
   <?php foreach ($bookPager as $book): ?>
-  <li class="<?php echo $bookPager->isOdd() ? 'odd' : 'even' ?>">
-    <?php echo $book->getTitle() ?>
+  <li class="<?= $bookPager->isOdd() ? 'odd' : 'even' ?>">
+    <?= $book->getTitle() ?>
   </li>
   <?php if($bookPager->isLast()): ?>
   <li>Do you want more books?</li>
@@ -1121,10 +1121,10 @@ There are <?php echo $bookPager->count() ?> books:
 
 <?php // PropelModelPager offers a convenient API to display pagination controls ?>
 <?php if($bookPager->haveToPaginate()): ?>
-  <p>Page <?php echo $bookPager->getPage() ?> of <?php echo $bookPager->getLastPage() ?></p>
+  <p>Page <?= $bookPager->getPage() ?> of <?= $bookPager->getLastPage() ?></p>
   <p>
-  	Displaying results <?php echo $bookPager->getFirstIndex() ?> to <?php echo $bookPager->getLastIndex() ?>
-  	on a total of <?php echo $bookPager->getNbResults() ?>
+    Displaying results <?= $bookPager->getFirstIndex() ?> to <?= $bookPager->getLastIndex() ?>
+    on a total of <?= $bookPager->getNbResults() ?>
 	</p>
 <?php endif; ?>
 ```
