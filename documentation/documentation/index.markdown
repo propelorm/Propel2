@@ -72,12 +72,6 @@ You can also look at [user contributed behaviors](../cookbook/user-contributed-b
 
 * [Writing A Behavior](../cookbook/writing-behavior.html) How to write a custom behavior to reuse model code horizontally.
 
-### Working with symfony 1.4 ###
-
-* [Using Propel as Default ORM](../cookbook/symfony1/init-a-Symfony-project-with-Propel-git-way.html) How to initialize a symfony project with Propel as default ORM - the git way.
-* [Using the `i18n` behavior](../cookbook/symfony1/how-to-use-old-SfPropelBehaviori18n-with-sf1.4.html) How to use Propel's `i18n` behavior with symfony 1.4.
-* [Using the legacy `symfony_i18n` behavior](../cookbook/symfony1/how-to-use-old-SfPropelBehaviori18n-with-sf1.4.html) How to use the old `SfPropelBehaviori18n` (a.k.a. `symfony_i18n`) with symfony 1.4.
-
 ### Working with Symfony2 ###
 
 * [Working with Symfony2 (Introduction)](../cookbook/symfony2/working-with-symfony2.html)

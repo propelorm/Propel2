@@ -39,15 +39,6 @@ title: The Cookbook
 * [User Contributed Behaviors](user-contributed-behaviors.html)
 
 
-### Working with symfony 1.4 ###
-
-* [Init A Symfony Project With Propel As Default ORM - The Git Way](symfony1/init-a-Symfony-project-with-Propel-git-way.html)
-
-* [How To Use Propel i18n Behavior With Symfony 1.4](symfony1/how-to-use-old-SfPropelBehaviori18n-with-sf1.4.html)
-
-* [How To Use Old SfPropelBehaviori18n (Aka symfony_i18n) With Symfony 1.4](symfony1/how-to-use-old-SfPropelBehaviori18n-with-sf1.4.html)
-
-
 ### Working with Symfony2 ###
 
 * [Working with Symfony2 (Introduction)](symfony2/working-with-symfony2.html)

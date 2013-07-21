@@ -14,7 +14,7 @@ The Propel organization maintains five projects:
 * [Propel2](https://github.com/propelorm/Propel2) : the main version.
 * [Propel](https://github.com/propelorm/Propel) : the previous major release of Propel.
 * [PropelBundle](https://github.com/propelorm/PropelBundle) : a bundle to integrate Propel with [Symfony2](http://www.symfony.com).
-* [sfPropelORMPlugin](https://github.com/propelorm/sfPropelORMPlugin) : a plugin to integrate Propel with [symfony 1.x](http://www.symfony-project.org);
+* [sfPropelORMPlugin](https://github.com/propelorm/sfPropelORMPlugin) : a plugin to integrate Propel 1.x with [symfony 1.x](http://www.symfony-project.org);
 * [propelorm.github.com](https://github.com/propelorm/propelorm.github.com) : the Propel documentation (aka this website).
 
 ## Submit an issue ##
