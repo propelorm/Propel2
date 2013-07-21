@@ -141,6 +141,16 @@ Or simply edit your .bashrc or .zshrc file:
 export PATH=$PATH:/path/to/vendor/bin/
 ```
 
+On Windows you could set the PATH for the opened command with:
+
+```
+set PATH=%PATH%;C:/path/to/vendor/bin/
+```
+
+To globally define the PATH adjust it inside the "Environment Variables", which
+you can find in your system advanced settings panel.
+
+
 At this point, Propel should be setup and ready to use. You can follow the steps in the [Build Guide](02-buildtime.html) to try it out.
 
 ## Troubleshooting ##
