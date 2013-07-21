@@ -193,7 +193,7 @@ Now if you rebuild the model, you will see the new `updateTotalNbVotes()` method
 
 ```php
 <?php
-class BasePollQuestion extends BaseObject
+class BasePollQuestion implements ActiveRecordInterface
 {
   // ...
 

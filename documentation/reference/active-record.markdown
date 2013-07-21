@@ -75,7 +75,7 @@ class Book extends BaseBook
 }
 
 // Most of the generated code is actually in the abstract Base- classes
-abstract class BaseBook extends BaseObject implements ActiveRecordInterface
+abstract class BaseBook implements ActiveRecordInterface
 {
   // lots of generated code
 }
@@ -544,7 +544,7 @@ See the [Validate behavior documentation](../behaviors/validate.html) for more d
 
 ## Import and Export Capabilities ##
 
-Active Record objects have the ability to be converted to and from a string, using any of the XML, YAML, JSON, and CSV formats. This ability uses magic methods, but the phpDoc blocks defined in the `BaseObject` class make the related methods visible to an IDE.
+Active Record objects have the ability to be converted to and from a string, using any of the XML, YAML, JSON, and CSV formats. This ability uses magic methods, but the phpDoc blocks defined in the `ActiveRecordInterface` interface make the related methods visible to an IDE.
 
 Each Active Record object accepts the following method calls:
 

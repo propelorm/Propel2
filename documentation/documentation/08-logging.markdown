@@ -89,7 +89,7 @@ $myObj->setName('foo');
 Propel::log('uh-oh, something went wrong with ' . $myObj->getName(), Logger::ERROR);
 ```
 
-You can also log your own messages from the generated model objects by using their `log()` method, implemented in `BaseObject`:
+You can also log your own messages from the generated model objects by using their `log()` method, implemented in `ActiveRecordInterface`:
 
 ```php
 <?php
