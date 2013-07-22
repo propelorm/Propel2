@@ -123,7 +123,7 @@ The Propel generator component bundles a `propel` sh script (and a `propel.bat` 
 
 ```bash
 $ cd myproject
-$ vendor/propel/bin/propel
+$ vendor/bin/propel
 ```
 
 The command should output the propel version following by a list of the options and the available commands. We will learn to use these commands later.
@@ -132,7 +132,7 @@ The command should output the propel version following by a list of the options 
 
 ```bash
 $ cd myproject
-$ ln -s vendor/propel/propel/bin/propel propel
+$ ln -s vendor/bin/propel propel
 ```
 
 Or simply edit your .bashrc or .zshrc file:
