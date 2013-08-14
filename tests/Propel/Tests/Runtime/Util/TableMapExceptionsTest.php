@@ -34,7 +34,7 @@ class TableMapExceptionsTest extends BookstoreTestBase
             $c->doSelect();
             $this->fail('Missing expected exception on BAD SQL');
         } catch (PropelException $e) {
-            $this->assertContains('[SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.ID BAD SQL:p1]', $e->getMessage(), 'SQL query is written in the exception message');
+            $this->assertContains($this->getSql('[SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.ID BAD SQL:p1]'), $e->getMessage(), 'SQL query is written in the exception message');
         }
     }
 
@@ -47,7 +47,7 @@ class TableMapExceptionsTest extends BookstoreTestBase
             $c->doCount();
             $this->fail('Missing expected exception on BAD SQL');
         } catch (PropelException $e) {
-            $this->assertContains('[SELECT COUNT(*) FROM `book` WHERE book.ID BAD SQL:p1]', $e->getMessage(), 'SQL query is written in the exception message');
+            $this->assertContains($this->getSql('[SELECT COUNT(*) FROM `book` WHERE book.ID BAD SQL:p1]'), $e->getMessage(), 'SQL query is written in the exception message');
         }
     }
 
@@ -60,7 +60,7 @@ class TableMapExceptionsTest extends BookstoreTestBase
             $c->doDelete(Propel::getServiceContainer()->getWriteConnection(BookTableMap::DATABASE_NAME));
             $this->fail('Missing expected exception on BAD SQL');
         } catch (PropelException $e) {
-            $this->assertContains('[DELETE FROM `book` WHERE book.ID BAD SQL:p1]', $e->getMessage(), 'SQL query is written in the exception message');
+            $this->assertContains($this->getSql('[DELETE FROM `book` WHERE book.ID BAD SQL:p1]'), $e->getMessage(), 'SQL query is written in the exception message');
         }
     }
 
@@ -76,20 +76,30 @@ class TableMapExceptionsTest extends BookstoreTestBase
             $c1->doUpdate($c2, Propel::getServiceContainer()->getWriteConnection(BookTableMap::DATABASE_NAME));
             $this->fail('Missing expected exception on BAD SQL');
         } catch (PropelException $e) {
-            $this->assertContains('[UPDATE `book` SET `TITLE`=:p1 WHERE book.ID BAD SQL:p2]', $e->getMessage(), 'SQL query is written in the exception message');
+            $this->assertContains($this->getSql('[UPDATE `book` SET `TITLE`=:p1 WHERE book.ID BAD SQL:p2]'), $e->getMessage(), 'SQL query is written in the exception message');
         }
     }
 
     public function testDoInsert()
     {
+        $con = Propel::getServiceContainer()->getWriteConnection(BookTableMap::DATABASE_NAME);
+
         try {
             $c = new Criteria();
             $c->setPrimaryTableName(BookTableMap::TABLE_NAME);
             $c->add(BookTableMap::AUTHOR_ID, 'lkhlkhj');
-            $c->doInsert(Propel::getServiceContainer()->getWriteConnection(BookTableMap::DATABASE_NAME));
+
+            $db = Propel::getServiceContainer()->getAdapter($c->getDbName());
+
+            $c->doInsert($con);
             $this->fail('Missing expected exception on BAD SQL');
         } catch (PropelException $e) {
-            $this->assertContains('[INSERT INTO `book` (`AUTHOR_ID`) VALUES (:p1)]', $e->getMessage(), 'SQL query is written in the exception message');
+            if ($db->isGetIdBeforeInsert()) {
+                $this->assertContains($this->getSql('[INSERT INTO book (AUTHOR_ID,ID) VALUES (:p1,:p2)]'), $e->getMessage(), 'SQL query is written in the exception message');
+            } else {
+                $this->assertContains($this->getSql('[INSERT INTO `book` (`AUTHOR_ID`) VALUES (:p1)]'), $e->getMessage(), 'SQL query is written in the exception message');
+            }
+
         }
     }
 }

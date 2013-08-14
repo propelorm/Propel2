@@ -288,6 +288,18 @@ abstract class PdoAdapter
     }
 
     /**
+     * @param string $sql
+     * @param Criteria $criteria
+     */
+    public function applyGroupBy(&$sql, Criteria $criteria)
+    {
+        $groupBy = $criteria->getGroupByColumns();
+        if ($groupBy) {
+            $sql .= ' GROUP BY ' . implode(',', $groupBy);
+        }
+    }
+
+    /**
      * Returns date formatter string for use in date() function.
      *
      * @return string
@@ -434,6 +446,30 @@ abstract class PdoAdapter
         ;
 
         return $sql;
+    }
+
+    /**
+     * Returns all selected columns that are selected without a aggregate function.
+     *
+     * @param Criteria $criteria
+     * @return string[]
+     */
+    public function getPlainSelectedColumns(Criteria $criteria)
+    {
+        $selected = [];
+        foreach ($criteria->getSelectColumns() as $columnName) {
+            if (false === strpos($columnName, '(')) {
+                $selected[] = $columnName;
+            }
+        }
+
+        foreach ($criteria->getAsColumns() as $alias => $col) {
+            if (!in_array($col, $selected)) {
+                $selected[] = $col;
+            }
+        }
+
+        return $selected;
     }
 
     /**

@@ -236,7 +236,7 @@ class QueryBuilderTest extends BookstoreTestBase
     public function testFindPkUsesFindPkComplexOnNonEmptyQueries()
     {
         BookQuery::create('b')->findPk(123, $this->con);
-        $expected = 'SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.ID=123';
+        $expected = $this->getSql('SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.ID=123');
         $this->assertEquals($expected, $this->con->getLastExecutedQuery());
     }
 

@@ -67,7 +67,7 @@ class ArrayFormatterTest extends BookstoreEmptyTestBase
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
 
-        $dataFetcher = $con->query('SELECT * FROM book WHERE book.TITLE = "Quicksilver"');
+        $dataFetcher = $con->query("SELECT * FROM book WHERE book.TITLE = 'Quicksilver'");
         $formatter = new ArrayFormatter();
         $formatter->init(new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book'));
         $books = $formatter->format($dataFetcher);
@@ -85,7 +85,7 @@ class ArrayFormatterTest extends BookstoreEmptyTestBase
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
 
-        $dataFetcher = $con->query('SELECT * FROM book WHERE book.TITLE = "foo"');
+        $dataFetcher = $con->query("SELECT * FROM book WHERE book.TITLE = 'foo'");
         $formatter = new ArrayFormatter();
         $formatter->init(new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book'));
         $books = $formatter->format($dataFetcher);
@@ -125,7 +125,7 @@ class ArrayFormatterTest extends BookstoreEmptyTestBase
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
 
-        $dataFetcher = $con->query('SELECT * FROM book WHERE book.TITLE = "foo"');
+        $dataFetcher = $con->query("SELECT * FROM book WHERE book.TITLE = 'foo'");
         $formatter = new ArrayFormatter();
         $formatter->init(new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book'));
         $book = $formatter->formatOne($dataFetcher);

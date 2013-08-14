@@ -171,8 +171,13 @@ class SqlManager extends AbstractManager
 
             try {
                 foreach ($sqls as $sql) {
-                    $stmt = $con->prepare($sql);
-                    $stmt->execute();
+                    try {
+                        $stmt = $con->prepare($sql);
+                        $stmt->execute();
+                    } catch (\Exception $e) {
+                        $message = sprintf('SQL insert failed: %s', $sql);
+                        throw new \Exception($message, 0, $e);
+                    }
                 }
 
                 $con->commit();
@@ -180,6 +185,8 @@ class SqlManager extends AbstractManager
                 $con->rollback();
                 throw $e;
             }
+
+            $this->log(sprintf('%d queries executed for %s database.', count($sqls), $database));
         }
 
         return true;

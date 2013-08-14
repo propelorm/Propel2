@@ -29,10 +29,26 @@ use Propel\Generator\Platform\MysqlPlatform;
  */
 class Table extends ScopedMappingModel implements IdMethod
 {
+
+    /**
+     * @var Column[]
+     */
     private $columns;
+
+    /**
+     * @var ForeignKey[]
+     */
     private $foreignKeys;
     private $foreignTableNames;
+
+    /**
+     * @var Index[]
+     */
     private $indices;
+
+    /**
+     * @var Unique[]
+     */
     private $unices;
     private $idMethodParameters;
     private $commonName;
@@ -1344,7 +1360,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Returns the list of all foreign keys.
      *
-     * @return array
+     * @return ForeignKey[]
      */
     public function getForeignKeys()
     {
@@ -1378,6 +1394,71 @@ class Table extends ScopedMappingModel implements IdMethod
     public function getUnices()
     {
         return $this->unices;
+    }
+
+    /**
+     * Checks if $keys are a unique constraint in the table.
+     * (through primaryKey, through a regular unices constraints or for single keys when it has isUnique=true)
+     *
+     * @param Column[]|string[] $keys
+     * @return bool
+     */
+    public function isUnique(array $keys)
+    {
+        if (1 === count($keys)) {
+            $column = $keys[0] instanceof Column ? $keys[0] : $this->getColumn($keys[0]);
+            if ($column){
+                if ($column->isUnique()) return true;
+                if ($column->isPrimaryKey() && 1 === count($column->getTable()->getPrimaryKey())) {
+                    return true;
+                }
+            }
+        }
+
+        // check if pk == $keys
+        if (count($this->getPrimaryKey()) === count($keys)) {
+            $allPk = true;
+            $stringArray = is_string($keys[0]);
+            foreach ($this->getPrimaryKey() as $pk) {
+                if ($stringArray) {
+                    if (!in_array($pk->getName(), $keys)) {
+                        $allPk = false;
+                        break;
+                    }
+                } else {
+                    if (!in_array($pk, $keys)) {
+                        $allPk = false;
+                        break;
+                    }
+                }
+            }
+
+            if ($allPk) {
+                return true;
+            }
+        }
+
+        // check if there is a unique constrains that contains exactly the $keys
+        if ($this->unices) {
+            foreach ($this->unices as $unique) {
+                if (count($unique->getColumns()) === count($keys)) {
+                    $allAvailable = true;
+                    foreach ($keys as $key) {
+                        if (!$unique->hasColumn($key instanceof Column ? $key->getName() : $key)) {
+                            $allAvailable = false;
+                            break;
+                        }
+                    }
+                    if ($allAvailable) {
+                        return true;
+                    }
+                } else {
+                    continue;
+                }
+            }
+        }
+
+        return false;
     }
 
     /**

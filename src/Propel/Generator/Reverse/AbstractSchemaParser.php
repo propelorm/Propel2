@@ -13,6 +13,7 @@ namespace Propel\Generator\Reverse;
 use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Model\VendorInfo;
 use Propel\Runtime\Connection\ConnectionInterface;
+use Propel\Runtime\Connection\SqlConnectionInterface;
 
 /**
  * Base class for reverse engineering a database schema.

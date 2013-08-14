@@ -159,7 +159,7 @@ class TestPrepareCommand extends AbstractCommand
 
             $in = new ArrayInput(array(
                 'command'      => 'sql:insert',
-                '--output-dir' => 'build/sql/',
+                '--input-dir' => 'build/sql/',
                 '--connection' => $conParams,
                 '--verbose'    => $input->getOption('verbose'),
             ));

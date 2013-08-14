@@ -42,10 +42,12 @@ class PoisonedCacheBugTest extends BookstoreTestBase
 
         $b1 = new Book();
         $b1->setTitle("The Hitchhikers Guide To The Galaxy");
+        $b1->setISBN('01234');
         $a->addBook($b1);
 
         $b2 = new Book();
         $b2->setTitle("The Restaurant At The End Of The Universe");
+        $b2->setISBN('5678');
         $a->addBook($b2);
 
         $a->save();

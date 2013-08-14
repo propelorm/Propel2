@@ -10,6 +10,7 @@
 
 namespace Propel\Runtime\Adapter\Pdo;
 
+use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Adapter\SqlAdapterInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\InvalidArgumentException;
@@ -123,6 +124,38 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
         }
         if ($offset > 0) {
             $sql .= sprintf(' OFFSET %u', $offset);
+        }
+    }
+
+    /**
+     * @param string $sql
+     * @param Criteria $criteria
+     */
+    public function applyGroupBy(&$sql, Criteria $criteria)
+    {
+        $groupBy = $criteria->getGroupByColumns();
+
+        if ($groupBy) {
+            //check if all selected columns are groupBy'ed.
+            $selected = $this->getPlainSelectedColumns($criteria);
+            $asSelects = $criteria->getAsColumns();
+
+            foreach ($selected as $colName) {
+                if (!in_array($colName, $groupBy)) {
+
+                    //is a alias there that is grouped?
+                    if ($alias = array_search($colName, $asSelects)) {
+                        if (in_array($alias, $groupBy)) {
+                            continue; //yes, alias is selected.
+                        }
+                    }
+                    $groupBy[] = $colName;
+                }
+            }
+
+            if ($groupBy) {
+                $sql .= ' GROUP BY ' . implode(',', $groupBy);
+            }
         }
     }
 
