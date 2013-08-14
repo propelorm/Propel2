@@ -14,10 +14,10 @@ before_script:
   - php composer.phar install --prefer-source
 
   # MySQL
-  - sh -c "if [ '$DB' = 'mysql' ]; then ./bin/setup.mysql.sh; fi"
+  - sh -c "if [ '$DB' = 'mysql' ]; then ./tests/bin/setup.mysql.sh; fi"
 
   # PostgreSQL
-  - sh -c "if [ '$DB' = 'pgsql' ]; then ./bin/setup.postgres.sh; fi"
+  - sh -c "if [ '$DB' = 'pgsql' ]; then ./tests/bin/setup.postgres.sh; fi"
 
 script:
  - sh -c "if [ '$DB' = 'mysql' ]; then phpunit; fi"
