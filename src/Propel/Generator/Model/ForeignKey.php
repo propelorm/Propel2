@@ -33,17 +33,65 @@ class ForeignKey extends MappingModel
     const SETDEFAULT = 'SET DEFAULT';
     const SETNULL    = 'SET NULL';
 
+    /**
+     * @var string
+     */
     private $foreignTableCommonName;
+
+    /**
+     * @var string
+     */
     private $foreignSchemaName;
+
+    /**
+     * @var string
+     */
     private $name;
+
+    /**
+     * @var string
+     */
     private $phpName;
+
+    /**
+     * @var string
+     */
     private $refPhpName;
+
+    /**
+     * @var string
+     */
     private $defaultJoin;
+
+    /**
+     * @var string
+     */
     private $onUpdate = '';
+
+    /**
+     * @var string
+     */
     private $onDelete = '';
+
+    /**
+     * @var Table
+     */
     private $parentTable;
+
+    /**
+     * @var string[]
+     */
     private $localColumns;
+
+    /**
+     * @var string[]
+     */
     private $foreignColumns;
+
+
+    /**
+     * @var bool
+     */
     private $skipSql;
 
     /**
@@ -290,7 +338,9 @@ class ForeignKey extends MappingModel
      */
     public function getForeignTable()
     {
-        return $this->parentTable->getDatabase()->getTable($this->getForeignTableName());
+        if ($this->parentTable->getDatabase()) {
+            return $this->parentTable->getDatabase()->getTable($this->getForeignTableName());
+        }
     }
 
     /**
