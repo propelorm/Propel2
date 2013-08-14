@@ -21,9 +21,24 @@ use Propel\Generator\Exception\EngineException;
  */
 class Index extends MappingModel
 {
+    /**
+     * @var string
+     */
     protected $name;
+
+    /**
+     * @var string
+     */
     protected $table;
+
+    /**
+     * @var string[]
+     */
     private $columns;
+
+    /**
+     * @var string[]
+     */
     private $columnsSize;
 
     /**
@@ -148,6 +163,15 @@ class Index extends MappingModel
                 $this->columnsSize[$name] = $attrib['size'];
             }
         }
+    }
+
+    /**
+     * @param string $name
+     * @return bool
+     */
+    public function hasColumn($name)
+    {
+        return in_array($name, $this->columns);
     }
 
     /**
