@@ -62,6 +62,27 @@ abstract class BookstoreTestBase extends \PHPUnit_Framework_TestCase
         }
     }
 
+    /**
+     * Makes the sql compatible with the current database.
+     * Means: replaces ` etc.
+     *
+     * @param string $sql
+     * @param string $source
+     * @return mixed
+     */
+    protected function getSql($sql, $source = 'mysql')
+    {
+        if (!$this->isDb('mysql') && 'mysql' === $source) {
+            return str_replace('`', '', $sql);
+        }
+        return $sql;
+    }
+
+    protected function isDb($db = 'mysql')
+    {
+        return in_array($this->getDriver(), array($db));
+    }
+
     protected function getDriver()
     {
         return $this->con->getAttribute(\PDO::ATTR_DRIVER_NAME);

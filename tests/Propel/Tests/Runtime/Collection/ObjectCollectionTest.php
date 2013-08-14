@@ -210,6 +210,7 @@ class ObjectCollectionTest extends BookstoreTestBase
         $col = new ObjectCollection();
         $b1  = new Book();
         $b1->setTitle('Bar');
+        $b1->setISBN('012345');
         $b1->save();
 
         $b2  = clone $b1;
@@ -227,6 +228,7 @@ class ObjectCollectionTest extends BookstoreTestBase
         $col = new ObjectCollection();
         $b1  = new Book();
         $b1->setTitle('Bar');
+        $b1->setISBN('012345');
         $b1->save();
 
         $b2  = clone $b1;
@@ -243,6 +245,7 @@ class ObjectCollectionTest extends BookstoreTestBase
         $col = new ObjectCollection();
         $b1  = new Book();
         $b1->setTitle('Bar');
+        $b1->setISBN('012345');
         $b2  = clone $b1;
 
         $this->assertFalse($col->contains($b1), 'contains() returns false on an empty collection');
@@ -258,6 +261,7 @@ class ObjectCollectionTest extends BookstoreTestBase
         $col = new ObjectCollection();
         $b1  = new Book();
         $b1->setTitle('Bar');
+        $b1->setISBN('012345');
         $b2  = clone $b1;
 
         $this->assertFalse($col->search($b1), 'search() returns false on an empty collection');

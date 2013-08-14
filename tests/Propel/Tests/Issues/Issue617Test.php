@@ -12,6 +12,7 @@ use Propel\Tests\Helpers\PlatformDatabaseBuildTimeBase;
  * not return the `Engine` of the table. Since we depend on that information in `MysqlPlatform`,
  * we really need that kind of information.
  *
+ * @group mysql
  */
 class Issue617Test extends PlatformDatabaseBuildTimeBase
 {

@@ -260,7 +260,7 @@ class TableMapTest extends BookstoreTestBase
         $c = new Criteria(BookTableMap::DATABASE_NAME);
         $c->add(BookTableMap::TITLE, 'War And Peace');
         $c->doDelete($con);
-        $expectedSQL = "DELETE FROM `book` WHERE book.TITLE='War And Peace'";
+        $expectedSQL = $this->getSql("DELETE FROM `book` WHERE book.TITLE='War And Peace'");
         $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'doDelete() translates a condition into a WHERE');
     }
 
@@ -271,7 +271,7 @@ class TableMapTest extends BookstoreTestBase
         $c->add(BookTableMap::TITLE, 'War And Peace');
         $c->add(BookTableMap::ID, 12);
         $c->doDelete($con);
-        $expectedSQL = "DELETE FROM `book` WHERE book.TITLE='War And Peace' AND book.ID=12";
+        $expectedSQL = $this->getSql("DELETE FROM `book` WHERE book.TITLE='War And Peace' AND book.ID=12");
         $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'doDelete() combines conditions in WHERE with an AND');
     }
 
@@ -282,7 +282,13 @@ class TableMapTest extends BookstoreTestBase
         $c->addAlias('b', BookTableMap::TABLE_NAME);
         $c->add('b.TITLE', 'War And Peace');
         $c->doDelete($con);
-        $expectedSQL = "DELETE b FROM `book` AS b WHERE b.TITLE='War And Peace'";
+
+        if ($this->isDb('pgsql')) {
+            $expectedSQL = $this->getSql("DELETE FROM `book` AS b WHERE b.TITLE='War And Peace'");
+        } else {
+            $expectedSQL = $this->getSql("DELETE b FROM `book` AS b WHERE b.TITLE='War And Peace'");
+        }
+
         $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'doDelete() accepts a Criteria with a table alias');
     }
 
@@ -298,7 +304,7 @@ class TableMapTest extends BookstoreTestBase
         $c->add(BookTableMap::TITLE, 'War And Peace');
         $c->add(AuthorTableMap::FIRST_NAME, 'Leo');
         $c->doDelete($con);
-        $expectedSQL = "DELETE FROM `author` WHERE author.FIRST_NAME='Leo'";
+        $expectedSQL = $this->getSql("DELETE FROM `author` WHERE author.FIRST_NAME='Leo'");
         $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'doDelete() issues two DELETE queries when passed conditions on two tables');
         $this->assertEquals($count + 2, $con->getQueryCount(), 'doDelete() issues two DELETE queries when passed conditions on two tables');
 
@@ -306,7 +312,7 @@ class TableMapTest extends BookstoreTestBase
         $c->add(AuthorTableMap::FIRST_NAME, 'Leo');
         $c->add(BookTableMap::TITLE, 'War And Peace');
         $c->doDelete($con);
-        $expectedSQL = "DELETE FROM `book` WHERE book.TITLE='War And Peace'";
+        $expectedSQL = $this->getSql("DELETE FROM `book` WHERE book.TITLE='War And Peace'");
         $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'doDelete() issues two DELETE queries when passed conditions on two tables');
         $this->assertEquals($count + 4, $con->getQueryCount(), 'doDelete() issues two DELETE queries when passed conditions on two tables');
     }
@@ -316,7 +322,7 @@ class TableMapTest extends BookstoreTestBase
         $c = new Criteria();
         $c->setComment('Foo');
         $c->addSelectColumn(BookTableMap::ID);
-        $expected = 'SELECT /* Foo */ book.ID FROM `book`';
+        $expected = $this->getSql('SELECT /* Foo */ book.ID FROM `book`');
         $params = array();
         $this->assertEquals($expected, $c->createSelectSQL($params), 'Criteria::setComment() adds a comment to select queries');
     }
@@ -330,7 +336,7 @@ class TableMapTest extends BookstoreTestBase
         $c2->add(BookTableMap::TITLE, 'Updated Title');
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         $c1->doUpdate($c2, $con);
-        $expected = 'UPDATE /* Foo */ `book` SET `TITLE`=\'Updated Title\'';
+        $expected = $this->getSql('UPDATE /* Foo */ `book` SET `TITLE`=\'Updated Title\'');
         $this->assertEquals($expected, $con->getLastExecutedQuery(), 'Criteria::setComment() adds a comment to update queries');
     }
 
@@ -341,7 +347,7 @@ class TableMapTest extends BookstoreTestBase
         $c->add(BookTableMap::TITLE, 'War And Peace');
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         $c->doDelete($con);
-        $expected = 'DELETE /* Foo */ FROM `book` WHERE book.TITLE=\'War And Peace\'';
+        $expected = $this->getSql('DELETE /* Foo */ FROM `book` WHERE book.TITLE=\'War And Peace\'');
         $this->assertEquals($expected, $con->getLastExecutedQuery(), 'Criteria::setComment() adds a comment to delete queries');
     }
 

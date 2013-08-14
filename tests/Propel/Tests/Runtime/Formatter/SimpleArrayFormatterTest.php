@@ -36,7 +36,7 @@ class SimpleArrayFormatterTest extends BookstoreEmptyTestBase
         $books = $formatter->format($stmt);
         $this->assertInstanceOf('\Propel\Runtime\Collection\Collection', $books);
         $this->assertCount(4, $books);
-        $this->assertSame('1', $books[0]);
+        $this->assertSame($this->isDb('mysql') ? '1' : 1, $books[0]);
     }
 
     public function testFormatWithOneRowAndValueEqualsZero()
@@ -50,30 +50,38 @@ class SimpleArrayFormatterTest extends BookstoreEmptyTestBase
         $books = $formatter->format($stmt);
         $this->assertInstanceOf('\Propel\Runtime\Collection\Collection', $books);
         $this->assertCount(4, $books);
-        $this->assertSame('0', $books[0]);
+        $this->assertSame($this->isDb('mysql') ? '0' : 0, $books[0]);
     }
 
     public function testFormatOneWithOneRowAndValueIsNotZero()
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
-        $stmt = $con->query('SELECT 1 FROM book LIMIT 0, 1');
+        if ($this->isDb('mysql')) {
+            $stmt = $con->query('SELECT 1 FROM book LIMIT 0, 1');
+        } else {
+            $stmt = $con->query('SELECT 1 FROM book LIMIT 1');
+        }
 
         $formatter = new SimpleArrayFormatter();
         $formatter->init(new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book'));
 
         $book = $formatter->formatOne($stmt);
-        $this->assertSame('1', $book);
+        $this->assertSame($this->isDb('mysql') ? '1' : 1, $book);
     }
 
     public function testFormatOneWithOneRowAndValueEqualsZero()
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
-        $stmt = $con->query('SELECT 0 FROM book LIMIT 0, 1');
+        if ($this->isDb('mysql')) {
+            $stmt = $con->query('SELECT 0 FROM book LIMIT 0, 1');
+        } else {
+            $stmt = $con->query('SELECT 0 FROM book LIMIT 1');
+        }
 
         $formatter = new SimpleArrayFormatter();
         $formatter->init(new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book'));
 
         $book = $formatter->formatOne($stmt);
-        $this->assertSame('0', $book);
+        $this->assertSame($this->isDb('mysql') ? '0' : 0, $book);
     }
 }

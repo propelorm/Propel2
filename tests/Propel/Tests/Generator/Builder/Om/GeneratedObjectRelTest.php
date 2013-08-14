@@ -741,6 +741,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
 
         $book = new Book();
         $book->setTitle('foo');
+        $book->setISBN('01234');
 
         // The object is "new"
         $this->assertTrue($book->isNew());
@@ -751,6 +752,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         $books[] = $book;
 
         $bookClubList->setBooks($books);
+        $bookClubList->setGroupLeader('TestLeader');
         $bookClubList->save();
 
         $this->assertEquals(1, BookQuery::create()->count());
@@ -767,6 +769,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
 
         $book = new Book();
         $book->setTitle('foo');
+        $book->setISBN('01234');
         $book->save();
 
         // The object isn't "new"
@@ -778,6 +781,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         $books[] = $book;
 
         $bookClubList->setBooks($books);
+        $bookClubList->setGroupLeader('TestLeader');
         $bookClubList->save();
 
         $this->assertEquals(1, BookQuery::create()->count());
@@ -845,9 +849,11 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         AuthorQuery::create()->deleteAll();
 
         $book = new Book();
+        $book->setISBN('012345');
         $book->setTitle('Propel Book');
 
         $book2 = new Book();
+        $book2->setISBN('6789');
         $book2->setTitle('Propel2 Book');
 
         $author = new Author();
@@ -898,6 +904,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
 
         $book = new Book();
         $book->setTitle('Propel Book');
+        $book->setISBN('01234');
 
         $book->addBookSummary($bookSummary);
         $book->addBookSummary($bookSummary2);

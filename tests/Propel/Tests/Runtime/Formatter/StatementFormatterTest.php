@@ -73,7 +73,7 @@ class StatementFormatterTest extends BookstoreEmptyTestBase
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
 
-        $stmt = $con->query('SELECT * FROM book WHERE book.TITLE = "Quicksilver"');
+        $stmt = $con->query("SELECT * FROM book WHERE book.TITLE = 'Quicksilver'");
         $formatter = new StatementFormatter();
         $formatter->init(new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book'));
         $books = $formatter->format($stmt);
@@ -88,7 +88,7 @@ class StatementFormatterTest extends BookstoreEmptyTestBase
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
 
-        $stmt = $con->query('SELECT * FROM book WHERE book.TITLE = "foo"');
+        $stmt = $con->query("SELECT * FROM book WHERE book.TITLE = 'foo'");
         $formatter = new StatementFormatter();
         $formatter->init(new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book'));
         $books = $formatter->format($stmt);
@@ -127,7 +127,7 @@ class StatementFormatterTest extends BookstoreEmptyTestBase
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
 
-        $stmt = $con->query('SELECT * FROM book WHERE book.TITLE = "foo"');
+        $stmt = $con->query("SELECT * FROM book WHERE book.TITLE = 'foo'");
         $formatter = new StatementFormatter();
         $formatter->init(new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book'));
         $book = $formatter->formatOne($stmt);

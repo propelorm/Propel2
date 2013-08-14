@@ -24,16 +24,16 @@ class ModelCriteriaWithNamespaceTest extends NamespacesTestBase
     public static function conditionsForTestReplaceNamesWithNamespaces()
     {
         return array(
-            array('Foo\\Bar\\NamespacedBook.Title = ?', 'Title', 'book.TITLE = ?'), // basic case
-            array('Foo\\Bar\\NamespacedBook.Title=?', 'Title', 'book.TITLE=?'), // without spaces
-            array('Foo\\Bar\\NamespacedBook.Id<= ?', 'Id', 'book.ID<= ?'), // with non-equal comparator
-            array('Foo\\Bar\\NamespacedBook.AuthorId LIKE ?', 'AuthorId', 'book.AUTHOR_ID LIKE ?'), // with SQL keyword separator
-            array('(Foo\\Bar\\NamespacedBook.AuthorId) LIKE ?', 'AuthorId', '(book.AUTHOR_ID) LIKE ?'), // with parenthesis
-            array('(Foo\\Bar\\NamespacedBook.Id*1.5)=1', 'Id', '(book.ID*1.5)=1'), // ignore numbers
+            array('Foo\\Bar\\NamespacedBook.Title = ?', 'Title', 'namespaced_book.TITLE = ?'), // basic case
+            array('Foo\\Bar\\NamespacedBook.Title=?', 'Title', 'namespaced_book.TITLE=?'), // without spaces
+            array('Foo\\Bar\\NamespacedBook.Id<= ?', 'Id', 'namespaced_book.ID<= ?'), // with non-equal comparator
+            array('Foo\\Bar\\NamespacedBook.AuthorId LIKE ?', 'AuthorId', 'namespaced_book.AUTHOR_ID LIKE ?'), // with SQL keyword separator
+            array('(Foo\\Bar\\NamespacedBook.AuthorId) LIKE ?', 'AuthorId', '(namespaced_book.AUTHOR_ID) LIKE ?'), // with parenthesis
+            array('(Foo\\Bar\\NamespacedBook.Id*1.5)=1', 'Id', '(namespaced_book.ID*1.5)=1'), // ignore numbers
             // dealing with quotes
-            array("Foo\\Bar\\NamespacedBook.Id + ' ' + Foo\\Bar\\NamespacedBook.AuthorId", null, "book.ID + ' ' + book.AUTHOR_ID"),
-            array("'Foo\\Bar\\NamespacedBook.Id' + Foo\\Bar\\NamespacedBook.AuthorId", null, "'Foo\\Bar\\NamespacedBook.Id' + book.AUTHOR_ID"),
-            array("Foo\\Bar\\NamespacedBook.Id + 'Foo\\Bar\\NamespacedBook.AuthorId'", null, "book.ID + 'Foo\\Bar\\NamespacedBook.AuthorId'"),
+            array("Foo\\Bar\\NamespacedBook.Id + ' ' + Foo\\Bar\\NamespacedBook.AuthorId", null, "namespaced_book.ID + ' ' + namespaced_book.AUTHOR_ID"),
+            array("'Foo\\Bar\\NamespacedBook.Id' + Foo\\Bar\\NamespacedBook.AuthorId", null, "'Foo\\Bar\\NamespacedBook.Id' + namespaced_book.AUTHOR_ID"),
+            array("Foo\\Bar\\NamespacedBook.Id + 'Foo\\Bar\\NamespacedBook.AuthorId'", null, "namespaced_book.ID + 'Foo\\Bar\\NamespacedBook.AuthorId'"),
         );
     }
 

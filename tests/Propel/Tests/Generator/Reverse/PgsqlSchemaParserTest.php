@@ -22,6 +22,7 @@ use Propel\Tests\TestCase;
  * Tests for Pgsql database schema parser.
  *
  * @author Alan Pinstein
+ * @group pgsql
  */
 class PgsqlSchemaParserTest extends TestCase
 {
@@ -72,10 +73,8 @@ class PgsqlSchemaParserTest extends TestCase
         $database->setPlatform(new DefaultPlatform());
 
         // make sure our DDL insert produced exactly the SQL we inserted
-        $this->assertEquals(1, $parser->parse($database), 'One table and one view defined should return one as we exclude views');
-        $tables = $database->getTables();
-        $this->assertEquals(1, count($tables));
-        $table = $tables[0];
+        $this->assertGreaterThanOrEqual(1, $parser->parse($database), 'We parsed at least one table.');
+        $table = $database->getTable('foo');
         $columns = $table->getColumns();
         $this->assertEquals(1, count($columns));
 
