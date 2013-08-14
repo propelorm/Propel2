@@ -210,6 +210,29 @@ SET search_path TO public;
         return $ret;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public function getAddForeignKeysDDL(Table $table)
+    {
+        $ret = '';
+        foreach ($table->getForeignKeys() as $fk) {
+            //PostgreSQL requires the keys of the foreignTable of a foreignKeys to be unique.
+            //check if there is already a unique constraint with exactly
+            //the keys of the FK, if not define it.
+            if ($fk->getForeignTable() && !$fk->getForeignTable()->isUnique($fk->getForeignColumnObjects())) {
+                $unique = new Unique();
+                $unique->setTable($fk->getForeignTable());
+                $unique->setColumns($fk->getForeignColumnObjects());
+                $ret .= $this->getAddIndexDDL($unique);
+            }
+
+            $ret .= $this->getAddForeignKeyDDL($fk);
+        }
+
+        return $ret;
+    }
+
     public function getAddTableDDL(Table $table)
     {
         $ret = '';
