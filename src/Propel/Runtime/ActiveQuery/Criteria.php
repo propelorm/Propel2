@@ -1799,7 +1799,6 @@ class Criteria
         $orderByClause = array();
 
         $orderBy = $this->getOrderByColumns();
-        $groupBy = $this->getGroupByColumns();
 
         // get the first part of the SQL statement, the SELECT part
         $selectSql = $db->createSelectSqlPart($this, $fromClause);
@@ -1860,9 +1859,6 @@ class Criteria
                 }
             }
         }
-
-        // Add the GROUP BY columns
-        $groupByClause = $groupBy;
 
         $having = $this->getHaving();
         $havingString = null;
@@ -1968,10 +1964,13 @@ class Criteria
         // Build the SQL from the arrays we compiled
         $sql =  $selectSql
             .' FROM '  . $from
-            .($whereClause ? ' WHERE '.implode(' AND ', $whereClause) : '')
-            .($groupByClause ? ' GROUP BY '.implode(',', $groupByClause) : '')
-            .($havingString ? ' HAVING '.$havingString : '')
-            .($orderByClause ? ' ORDER BY '.implode(',', $orderByClause) : '')
+            .($whereClause ? ' WHERE '.implode(' AND ', $whereClause) : '');
+
+
+        $db->applyGroupBy($sql, $this);
+
+        $sql .= ($havingString ? ' HAVING '.$havingString : '')
+             .($orderByClause ? ' ORDER BY '.implode(',', $orderByClause) : '')
         ;
 
         // APPLY OFFSET & LIMIT to the query.
@@ -2445,7 +2444,7 @@ class Criteria
                 $stmt = null; // close
             }
             Propel::log($e->getMessage(), Propel::LOG_ERR);
-            throw new PropelException(sprintf('Unable to execute SELECT statement [%s]', $sql));
+            throw new PropelException(sprintf('Unable to execute SELECT statement [%s]', $sql), null, $e);
         }
 
         return $con->getDataFetcher($stmt);

@@ -35,6 +35,7 @@ class PropelPDOTest extends BookstoreTestBase
 {
     protected function setUp()
     {
+        $this->con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
     }
 
     protected function tearDown()
@@ -215,7 +216,8 @@ class PropelPDOTest extends BookstoreTestBase
     }
 
     /**
-     * @link       http://propel.phpdb.org/trac/ticket/699
+     * @link http://trac.propelorm.org/ticket/699
+     * @group mysql
      */
     public function testNestedTransactionRollBackSwallow()
     {
@@ -323,7 +325,7 @@ class PropelPDOTest extends BookstoreTestBase
         $c = new Criteria();
         $c->add(BookTableMap::ID, array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1), Criteria::IN);
         $books = BookQuery::create(null, $c)->find($con);
-        $expected = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.ID IN (1,1,1,1,1,1,1,1,1,1,1,1)";
+        $expected = $this->getSql("SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.ID IN (1,1,1,1,1,1,1,1,1,1,1,1)");
         $this->assertEquals($expected, $con->getLastExecutedQuery(), 'PropelPDO correctly replaces arguments in queries');
     }
 
@@ -360,14 +362,11 @@ class PropelPDOTest extends BookstoreTestBase
 
         $con->useDebug(true);
         $books = BookQuery::create(null, $c)->find($con);
-        $latestExecutedQuery = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.TITLE LIKE 'Harry%s'";
-        if (!Propel::getServiceContainer()->getAdapter(BookTableMap::DATABASE_NAME)->useQuoteIdentifier()) {
-            $latestExecutedQuery = str_replace('`', '', $latestExecutedQuery);
-        }
+        $latestExecutedQuery = $this->getSql("SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.TITLE LIKE 'Harry%s'");
         $this->assertEquals($latestExecutedQuery, $con->getLastExecutedQuery(), 'PropelPDO updates the last executed query when useLogging is true');
 
         BookTableMap::doDeleteAll($con);
-        $latestExecutedQuery = "DELETE FROM `book`";
+        $latestExecutedQuery = $this->getSql("DELETE FROM `book`");
         $this->assertEquals($latestExecutedQuery, $con->getLastExecutedQuery(), 'PropelPDO updates the last executed query on delete operations');
 
         $sql = 'DELETE FROM book WHERE 1=1';
@@ -478,11 +477,11 @@ class PropelPDOTest extends BookstoreTestBase
         $c->add(BookTableMap::TITLE, 'Harry%s', Criteria::LIKE);
 
         $books = BookQuery::create(null, $c)->find($con);
-        $latestExecutedQuery = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.TITLE LIKE 'Harry%s'";
+        $latestExecutedQuery = $this->getSql("SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.TITLE LIKE 'Harry%s'");
         $this->assertEquals($latestExecutedQuery, $handler->latestMessage, 'PropelPDO logs queries and populates bound parameters in debug mode');
 
         BookTableMap::doDeleteAll($con);
-        $latestExecutedQuery = "DELETE FROM `book`";
+        $latestExecutedQuery = $this->getSql("DELETE FROM `book`");
         $this->assertEquals($latestExecutedQuery, $handler->latestMessage, 'PropelPDO logs deletion queries in debug mode');
 
         $latestExecutedQuery = 'DELETE FROM book WHERE 1=1';

@@ -887,7 +887,10 @@ class CriteriaTest extends BookstoreTestBase
         $this->assertEquals("column_alias", $crit->getColumn());
     }
 
-    public function testHaving()
+    /**
+     * @group mysql
+     */
+    public function testHavingAlias()
     {
         $c = new Criteria();
         $c->addSelectColumn(BookTableMap::TITLE);
@@ -903,7 +906,28 @@ class CriteriaTest extends BookstoreTestBase
         $this->assertEquals($expected, $this->con->getLastExecutedQuery());
     }
 
-    public function testHavingRaw()
+    public function testHaving()
+    {
+        $c = new Criteria();
+        $c->addSelectColumn(BookTableMap::TITLE);
+        $c->addSelectColumn(BookTableMap::ISBN);
+        $crit = $c->getNewCriterion('ISBN', '1234567890123');
+        $c->addHaving($crit);
+        $c->addGroupByColumn(BookTableMap::TITLE);
+        $c->addGroupByColumn(BookTableMap::ISBN);
+        $expected = 'SELECT book.TITLE, book.ISBN FROM book GROUP BY book.TITLE,book.ISBN HAVING ISBN=:p1';
+        $params = array();
+        $result = $c->createSelectSql($params);
+        $this->assertEquals($expected, $result);
+        $c->doSelect($this->con);
+        $expected = 'SELECT book.TITLE, book.ISBN FROM book GROUP BY book.TITLE,book.ISBN HAVING ISBN=\'1234567890123\'';
+        $this->assertEquals($expected, $this->con->getLastExecutedQuery());
+    }
+
+    /**
+     * @group mysql
+     */
+    public function testHavingAliasRaw()
     {
         $c = new Criteria();
         $c->addSelectColumn(BookTableMap::TITLE);

@@ -1355,13 +1355,16 @@ EOF;
         $coll->setModel('BookSummary');
 
         for ($i = 0; $i < 3; $i++) {
-            $coll[] = new BookSummary();
+            $summary = new BookSummary();
+            $summary->setSummary('Was Great!');
+            $coll[] = $summary;
         }
 
         $this->assertEquals(3, $coll->count());
 
         $b = new Book();
         $b->setTitle('myBook');
+        $b->setISBN('01234');
         $b->setBookSummaries($coll);
         $b->save();
 
@@ -1437,6 +1440,7 @@ EOF;
 
         $b = new Book();
         $b->setTitle('Hello');
+        $b->setISBN('01234');
         $b->setBookSummaries($bookSummaries);
         $b->save();
 

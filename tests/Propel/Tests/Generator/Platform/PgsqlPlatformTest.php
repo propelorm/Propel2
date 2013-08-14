@@ -585,7 +585,7 @@ ALTER TABLE foo ADD PRIMARY KEY (bar);
         $expected = "
 CREATE INDEX babar ON foo (bar1,bar2);
 ";
-        $this->assertEquals($expected, $this->getPLatform()->getAddIndexDDL($index));
+        $this->assertEquals($expected, $this->getPlatform()->getAddIndexDDL($index));
     }
 
     /**
@@ -598,7 +598,7 @@ CREATE INDEX babar ON foo (bar1,bar2);
 
 CREATE INDEX foo_index ON foo (bar1);
 ";
-        $this->assertEquals($expected, $this->getPLatform()->getAddIndicesDDL($table));
+        $this->assertEquals($expected, $this->getPlatform()->getAddIndicesDDL($table));
     }
 
     /**
@@ -609,7 +609,7 @@ CREATE INDEX foo_index ON foo (bar1);
         $expected = "
 DROP INDEX babar;
 ";
-        $this->assertEquals($expected, $this->getPLatform()->getDropIndexDDL($index));
+        $this->assertEquals($expected, $this->getPlatform()->getDropIndexDDL($index));
     }
 
     /**
@@ -618,7 +618,7 @@ DROP INDEX babar;
     public function testGetIndexDDL($index)
     {
         $expected = 'INDEX babar (bar1,bar2)';
-        $this->assertEquals($expected, $this->getPLatform()->getIndexDDL($index));
+        $this->assertEquals($expected, $this->getPlatform()->getIndexDDL($index));
     }
 
     /**
@@ -646,7 +646,7 @@ ALTER TABLE foo ADD CONSTRAINT foo_baz_FK
     REFERENCES baz (id)
     ON DELETE SET NULL;
 ";
-        $this->assertEquals($expected, $this->getPLatform()->getAddForeignKeysDDL($table));
+        $this->assertEquals($expected, $this->getPlatform()->getAddForeignKeysDDL($table));
     }
 
     /**
@@ -660,7 +660,7 @@ ALTER TABLE foo ADD CONSTRAINT foo_bar_FK
     REFERENCES bar (id)
     ON DELETE CASCADE;
 ";
-        $this->assertEquals($expected, $this->getPLatform()->getAddForeignKeyDDL($fk));
+        $this->assertEquals($expected, $this->getPlatform()->getAddForeignKeyDDL($fk));
     }
 
     /**
@@ -669,7 +669,7 @@ ALTER TABLE foo ADD CONSTRAINT foo_bar_FK
     public function testGetAddForeignKeySkipSqlDDL($fk)
     {
         $expected = '';
-        $this->assertEquals($expected, $this->getPLatform()->getAddForeignKeyDDL($fk));
+        $this->assertEquals($expected, $this->getPlatform()->getAddForeignKeyDDL($fk));
     }
 
     /**
@@ -680,7 +680,7 @@ ALTER TABLE foo ADD CONSTRAINT foo_bar_FK
         $expected = "
 ALTER TABLE foo DROP CONSTRAINT foo_bar_FK;
 ";
-        $this->assertEquals($expected, $this->getPLatform()->getDropForeignKeyDDL($fk));
+        $this->assertEquals($expected, $this->getPlatform()->getDropForeignKeyDDL($fk));
     }
 
     /**
@@ -689,7 +689,7 @@ ALTER TABLE foo DROP CONSTRAINT foo_bar_FK;
     public function testGetDropForeignKeySkipSqlDDL($fk)
     {
         $expected = '';
-        $this->assertEquals($expected, $this->getPLatform()->getDropForeignKeyDDL($fk));
+        $this->assertEquals($expected, $this->getPlatform()->getDropForeignKeyDDL($fk));
     }
 
     /**
@@ -701,7 +701,7 @@ ALTER TABLE foo DROP CONSTRAINT foo_bar_FK;
     FOREIGN KEY (bar_id)
     REFERENCES bar (id)
     ON DELETE CASCADE";
-        $this->assertEquals($expected, $this->getPLatform()->getForeignKeyDDL($fk));
+        $this->assertEquals($expected, $this->getPlatform()->getForeignKeyDDL($fk));
     }
 
     /**
@@ -710,7 +710,7 @@ ALTER TABLE foo DROP CONSTRAINT foo_bar_FK;
     public function testGetForeignKeySkipSqlDDL($fk)
     {
         $expected = '';
-        $this->assertEquals($expected, $this->getPLatform()->getForeignKeyDDL($fk));
+        $this->assertEquals($expected, $this->getPlatform()->getForeignKeyDDL($fk));
     }
 
     public function testGetCommentBlockDDL()
@@ -720,7 +720,7 @@ ALTER TABLE foo DROP CONSTRAINT foo_bar_FK;
 -- foo bar
 -----------------------------------------------------------------------
 ";
-        $this->assertEquals($expected, $this->getPLatform()->getCommentBlockDDL('foo bar'));
+        $this->assertEquals($expected, $this->getPlatform()->getCommentBlockDDL('foo bar'));
     }
 
 }

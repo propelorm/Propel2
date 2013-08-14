@@ -98,15 +98,34 @@ class PgsqlSchemaParser extends AbstractSchemaParser
         // Clean up
         $stmt = null;
 
-        $stmt = $this->dbh->query("SELECT c.oid,
+        $searchPath = '?';
+        $params = [$database->getSchema()];
+        if (!$database->getSchema()) {
+            $stmt = $this->dbh->query('SHOW search_path');
+            $searchPathString = $stmt->fetchColumn();
+
+            $params = [];
+            $searchPath = explode(',', $searchPathString);
+
+            foreach ($searchPath as $n => &$path) {
+                $params[] = $path;
+                $path = '?';
+            }
+            $searchPath = implode(', ', $searchPath);
+        }
+
+        $stmt = $this->dbh->prepare("SELECT c.oid,
             c.relname, n.nspname
             FROM pg_class c join pg_namespace n on (c.relnamespace=n.oid)
             WHERE c.relkind = 'r'
             AND n.nspname NOT IN ('information_schema','pg_catalog')
             AND n.nspname NOT LIKE 'pg_temp%'
             AND n.nspname NOT LIKE 'pg_toast%'
+            AND n.nspname IN ($searchPath)
             ORDER BY relname"
         );
+
+        $stmt->execute($params);
 
         $tableWraps = array();
 
@@ -223,7 +242,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
             $autoincrement = null;
 
             // if column has a default
-            if ('t' === $boolHasDefault && (strlen(trim($default)) > 0)) {
+            if (true === $boolHasDefault && (strlen(trim($default)) > 0)) {
                 if (!preg_match('/^nextval\(/', $default)) {
                     $strDefault= preg_replace('/::[\W\D]*/', '', $default);
                     $default = str_replace("'", '', $strDefault);
@@ -335,7 +354,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
         $arrDomain['scale'] = $arrLengthPrecision['scale'];
         $arrDomain['notnull'] = $row['typnotnull'];
         $arrDomain['default'] = $row['typdefault'];
-        $arrDomain['hasdefault'] = (strlen(trim($row['typdefault'])) > 0) ? 't' : 'f';
+        $arrDomain['hasdefault'] = (strlen(trim($row['typdefault'])) > 0) ? true : false;
 
         $stmt = null; // cleanup
 

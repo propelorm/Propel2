@@ -228,27 +228,27 @@ class CriteriaMergeTest extends BookstoreTestBase
         $c1->add(BookTableMap::TITLE, 'foo');
         $c2 = new Criteria();
         $c1->mergeWith($c2);
-        $sql = 'SELECT  FROM `book` WHERE book.TITLE=:p1';
+        $sql = $this->getSql('SELECT  FROM `book` WHERE book.TITLE=:p1');
         $this->assertCriteriaTranslation($c1, $sql, 'mergeWith() does not remove an existing where condition');
         $c1 = new Criteria();
         $c2 = new Criteria();
         $c2->add(BookTableMap::TITLE, 'foo');
         $c1->mergeWith($c2);
-        $sql = 'SELECT  FROM `book` WHERE book.TITLE=:p1';
+        $sql = $this->getSql('SELECT  FROM `book` WHERE book.TITLE=:p1');
         $this->assertCriteriaTranslation($c1, $sql, 'mergeWith() merges where condition to an empty condition');
         $c1 = new Criteria();
         $c1->add(BookTableMap::ID, 123);
         $c2 = new Criteria();
         $c2->add(BookTableMap::TITLE, 'foo');
         $c1->mergeWith($c2);
-        $sql = 'SELECT  FROM `book` WHERE book.ID=:p1 AND book.TITLE=:p2';
+        $sql = $this->getSql('SELECT  FROM `book` WHERE book.ID=:p1 AND book.TITLE=:p2');
         $this->assertCriteriaTranslation($c1, $sql, 'mergeWith() merges where condition to existing conditions');
         $c1 = new Criteria();
         $c1->add(BookTableMap::TITLE, 'foo');
         $c2 = new Criteria();
         $c2->add(BookTableMap::TITLE, 'bar');
         $c1->mergeWith($c2);
-        $sql = 'SELECT  FROM `book` WHERE (book.TITLE=:p1 AND book.TITLE=:p2)';
+        $sql = $this->getSql('SELECT  FROM `book` WHERE (book.TITLE=:p1 AND book.TITLE=:p2)');
         $this->assertCriteriaTranslation($c1, $sql, 'mergeWith() merges where condition to existing conditions on the same column');
         $c1 = new Criteria();
         $c1->add(BookTableMap::TITLE, 'foo');
@@ -256,9 +256,10 @@ class CriteriaMergeTest extends BookstoreTestBase
         $c2 = new Criteria();
         $c2->add(AuthorTableMap::FIRST_NAME, 'bar');
         $c1->mergeWith($c2);
-        $sql = 'SELECT  FROM `book` LEFT JOIN `author` ON (book.AUTHOR_ID=author.ID) WHERE book.TITLE=:p1 AND author.FIRST_NAME=:p2';
+        $sql = $this->getSql('SELECT  FROM `book` LEFT JOIN `author` ON (book.AUTHOR_ID=author.ID) WHERE book.TITLE=:p1 AND author.FIRST_NAME=:p2');
         $this->assertCriteriaTranslation($c1, $sql, 'mergeWith() merges where condition to existing conditions on the different tables');
     }
+
 
     public function testMergeOrWithWhereConditions()
     {
@@ -266,27 +267,27 @@ class CriteriaMergeTest extends BookstoreTestBase
         $c1->add(BookTableMap::TITLE, 'foo');
         $c2 = new Criteria();
         $c1->mergeWith($c2, Criteria::LOGICAL_OR);
-        $sql = 'SELECT  FROM `book` WHERE book.TITLE=:p1';
+        $sql = $this->getSql('SELECT  FROM `book` WHERE book.TITLE=:p1');
         $this->assertCriteriaTranslation($c1, $sql, 'mergeWith() does not remove an existing where condition');
         $c1 = new Criteria();
         $c2 = new Criteria();
         $c2->add(BookTableMap::TITLE, 'foo');
         $c1->mergeWith($c2, Criteria::LOGICAL_OR);
-        $sql = 'SELECT  FROM `book` WHERE book.TITLE=:p1';
+        $sql = $this->getSql('SELECT  FROM `book` WHERE book.TITLE=:p1');
         $this->assertCriteriaTranslation($c1, $sql, 'mergeWith() merges where condition to an empty condition');
         $c1 = new Criteria();
         $c1->add(BookTableMap::ID, 123);
         $c2 = new Criteria();
         $c2->add(BookTableMap::TITLE, 'foo');
         $c1->mergeWith($c2, Criteria::LOGICAL_OR);
-        $sql = 'SELECT  FROM `book` WHERE (book.ID=:p1 OR book.TITLE=:p2)';
+        $sql = $this->getSql('SELECT  FROM `book` WHERE (book.ID=:p1 OR book.TITLE=:p2)');
         $this->assertCriteriaTranslation($c1, $sql, 'mergeWith() merges where condition to existing conditions');
         $c1 = new Criteria();
         $c1->add(BookTableMap::TITLE, 'foo');
         $c2 = new Criteria();
         $c2->add(BookTableMap::TITLE, 'bar');
         $c1->mergeWith($c2, Criteria::LOGICAL_OR);
-        $sql = 'SELECT  FROM `book` WHERE (book.TITLE=:p1 OR book.TITLE=:p2)';
+        $sql = $this->getSql('SELECT  FROM `book` WHERE (book.TITLE=:p1 OR book.TITLE=:p2)');
         $this->assertCriteriaTranslation($c1, $sql, 'mergeWith() merges where condition to existing conditions on the same column');
         $c1 = new Criteria();
         $c1->add(BookTableMap::TITLE, 'foo');
@@ -294,7 +295,7 @@ class CriteriaMergeTest extends BookstoreTestBase
         $c2 = new Criteria();
         $c2->add(AuthorTableMap::FIRST_NAME, 'bar');
         $c1->mergeWith($c2, Criteria::LOGICAL_OR);
-        $sql = 'SELECT  FROM `book` LEFT JOIN `author` ON (book.AUTHOR_ID=author.ID) WHERE (book.TITLE=:p1 OR author.FIRST_NAME=:p2)';
+        $sql = $this->getSql('SELECT  FROM `book` LEFT JOIN `author` ON (book.AUTHOR_ID=author.ID) WHERE (book.TITLE=:p1 OR author.FIRST_NAME=:p2)');
         $this->assertCriteriaTranslation($c1, $sql, 'mergeWith() merges where condition to existing conditions on the different tables');
     }
 
@@ -305,14 +306,14 @@ class CriteriaMergeTest extends BookstoreTestBase
         $c2 = new Criteria();
         $c1->_or();
         $c1->mergeWith($c2);
-        $sql = 'SELECT  FROM `book` WHERE book.TITLE=:p1';
+        $sql = $this->getSql('SELECT  FROM `book` WHERE book.TITLE=:p1');
         $this->assertCriteriaTranslation($c1, $sql, 'mergeWith() does not remove an existing where condition');
         $c1 = new Criteria();
         $c2 = new Criteria();
         $c2->add(BookTableMap::TITLE, 'foo');
         $c1->_or();
         $c1->mergeWith($c2);
-        $sql = 'SELECT  FROM `book` WHERE book.TITLE=:p1';
+        $sql = $this->getSql('SELECT  FROM `book` WHERE book.TITLE=:p1');
         $this->assertCriteriaTranslation($c1, $sql, 'mergeWith() merges where condition to an empty condition');
         $c1 = new Criteria();
         $c1->add(BookTableMap::ID, 123);
@@ -320,7 +321,7 @@ class CriteriaMergeTest extends BookstoreTestBase
         $c2 = new Criteria();
         $c2->add(BookTableMap::TITLE, 'foo');
         $c1->mergeWith($c2);
-        $sql = 'SELECT  FROM `book` WHERE (book.ID=:p1 OR book.TITLE=:p2)';
+        $sql = $this->getSql('SELECT  FROM `book` WHERE (book.ID=:p1 OR book.TITLE=:p2)');
         $this->assertCriteriaTranslation($c1, $sql, 'mergeWith() merges where condition to existing conditions');
         $c1 = new Criteria();
         $c1->add(BookTableMap::TITLE, 'foo');
@@ -328,7 +329,7 @@ class CriteriaMergeTest extends BookstoreTestBase
         $c2 = new Criteria();
         $c2->add(BookTableMap::TITLE, 'bar');
         $c1->mergeWith($c2);
-        $sql = 'SELECT  FROM `book` WHERE (book.TITLE=:p1 OR book.TITLE=:p2)';
+        $sql = $this->getSql('SELECT  FROM `book` WHERE (book.TITLE=:p1 OR book.TITLE=:p2)');
         $this->assertCriteriaTranslation($c1, $sql, 'mergeWith() merges where condition to existing conditions on the same column');
         $c1 = new Criteria();
         $c1->add(BookTableMap::TITLE, 'foo');
@@ -337,9 +338,10 @@ class CriteriaMergeTest extends BookstoreTestBase
         $c2 = new Criteria();
         $c2->add(AuthorTableMap::FIRST_NAME, 'bar');
         $c1->mergeWith($c2);
-        $sql = 'SELECT  FROM `book` LEFT JOIN `author` ON (book.AUTHOR_ID=author.ID) WHERE (book.TITLE=:p1 OR author.FIRST_NAME=:p2)';
+        $sql = $this->getSql('SELECT  FROM `book` LEFT JOIN `author` ON (book.AUTHOR_ID=author.ID) WHERE (book.TITLE=:p1 OR author.FIRST_NAME=:p2)');
         $this->assertCriteriaTranslation($c1, $sql, 'mergeWith() merges where condition to existing conditions on the different tables');
     }
+
     public function testMergeWithHavingConditions()
     {
         $c1 = new Criteria();

@@ -45,6 +45,9 @@ class TimestampableBehaviorTest extends BookstoreTestBase
         $this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table1', 'getUpdatedOn'), 'Timestampable allows customization of update_column name');
     }
 
+    /**
+     * @TODO on slow CPU machines or a high load this will fail. Fix it.
+     */
     public function testPreSave()
     {
         $t1 = new Table2();
