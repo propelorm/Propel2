@@ -1397,6 +1397,9 @@ class Table extends ScopedMappingModel implements IdMethod
     }
 
     /**
+     * Checks if $keys are a unique constraint in the table.
+     * (through primaryKey, through a regular unices constraints or for single keys when it has isUnique=true)
+     *
      * @param Column[]|string[] $keys
      * @return bool
      */
