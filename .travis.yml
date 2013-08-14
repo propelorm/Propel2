@@ -6,16 +6,19 @@ php:
 
 env:
   - DB=mysql DB_USER=root
+  - DB=pgsql
 
 before_script:
-  # MySQL
-  - sh -c "if [ '$DB' = 'mysql' ]; then mysql -u$DB_USER -e 'SET FOREIGN_KEY_CHECKS = 0; DROP DATABASE IF EXISTS test; DROP SCHEMA IF EXISTS second_hand_books; DROP SCHEMA IF EXISTS contest; DROP SCHEMA IF EXISTS bookstore_schemas; SET FOREIGN_KEY_CHECKS = 1;'; fi"
-  - sh -c "if [ '$DB' = 'mysql' ]; then mysql -u$DB_USER -e 'CREATE DATABASE test; CREATE SCHEMA bookstore_schemas; CREATE SCHEMA contest; CREATE SCHEMA second_hand_books;'; fi"
-
   # Composer
   - wget http://getcomposer.org/composer.phar
-  - php composer.phar install --dev --prefer-source
+  - php composer.phar install --prefer-source
 
-  - php bin/propel test:prepare --vendor="$DB" --dsn="$DB:dbname=test" --user="$DB_USER"
+  # MySQL
+  - sh -c "if [ '$DB' = 'mysql' ]; then ./bin/setup.mysql.sh; fi"
 
-script: phpunit
+  # PostgreSQL
+  - sh -c "if [ '$DB' = 'pgsql' ]; then ./bin/setup.postgres.sh; fi"
+
+script:
+ - sh -c "if [ '$DB' = 'mysql' ]; then phpunit; fi"
+ - sh -c "if [ '$DB' = 'pgsql' ]; then phpunit --exclude-group mysql; fi"
