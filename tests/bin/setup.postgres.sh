@@ -1,6 +1,6 @@
 #!/bin/sh
 
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )";
+DIR=`dirname $0`;
 . $DIR/setup.base.sh;
 
 dropdb -U $DB_USER postgres;
