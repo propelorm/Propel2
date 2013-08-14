@@ -10,7 +10,11 @@ fi
 
 if [ "$mysql" = "" ]; then
     echo "Can not find mysql binary. Is it installed?";
-    exit;
+    exit 1;
+fi
+
+if [ "$DB_USER" = "" ]; then
+    DB_USER="root";
 fi
 
 $mysql -u$DB_USER -e '\

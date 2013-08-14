@@ -3,6 +3,10 @@
 DIR=`dirname $0`;
 . $DIR/setup.base.sh;
 
+if [ "$DB_USER" = "" ]; then
+    DB_USER="postgres";
+fi
+
 dropdb -U $DB_USER postgres;
 check;
 

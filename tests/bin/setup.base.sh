@@ -5,13 +5,8 @@ if [ "$DB" = "" ]; then
     exit;
 fi
 
-if [ "$DB_USER" = "" ]; then
-    echo "\$DB_USER is not defined."
-    exit;
-fi
-
-function check {
+check() {
     if [ $? != 0 ]; then
-        echo "Aborted."; exit;
+        echo "Aborted."; exit 1;
     fi
 }
