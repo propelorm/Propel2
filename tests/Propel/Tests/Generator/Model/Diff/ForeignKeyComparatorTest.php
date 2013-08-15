@@ -13,12 +13,13 @@ use Propel\Generator\Model\Column;
 use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Model\Diff\ForeignKeyComparator;
+use \Propel\Tests\TestCase;
 
 /**
  * Tests for the ColumnComparator service class.
  *
  */
-class PropelForeignComparatorTest extends \PHPUnit_Framework_TestCase
+class PropelForeignComparatorTest extends TestCase
 {
     public function testCompareNoDifference()
     {

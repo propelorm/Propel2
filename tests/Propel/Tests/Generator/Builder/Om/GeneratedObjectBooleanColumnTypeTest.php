@@ -11,13 +11,14 @@
 use Propel\Generator\Util\QuickBuilder;
 
 use Propel\Runtime\Propel;
+use \Propel\Tests\TestCase;
 
 /**
  * Tests the generated objects for boolean column types accessor & mutator
  *
  * @author Francois Zaninotto
  */
-class GeneratedObjectBooleanColumnTypeTest extends \PHPUnit_Framework_TestCase
+class GeneratedObjectBooleanColumnTypeTest extends TestCase
 {
     public function setUp()
     {

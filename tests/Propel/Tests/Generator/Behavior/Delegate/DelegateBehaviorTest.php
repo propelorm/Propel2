@@ -14,13 +14,14 @@ use Propel\Generator\Behavior\Delegate\DelegateBehavior;
 use Propel\Generator\Util\QuickBuilder;
 
 use Propel\Runtime\Propel;
+use Propel\Tests\TestCase;
 
 /**
  * Tests for DelegateBehavior class
  *
  * @author François Zaninotto
  */
-class DelegateBehaviorTest extends \PHPUnit_Framework_TestCase
+class DelegateBehaviorTest extends TestCase
 {
 
     public function setUp()

@@ -11,13 +11,14 @@
 namespace Propel\Tests\Runtime\Parser;
 
 use Propel\Runtime\Parser\JsonParser;
+use Propel\Tests\TestCase;
 
 /**
  * Test for JsonParser class
  *
  * @author Francois Zaninotto
  */
-class JsonParserTest extends \PHPUnit_Framework_TestCase
+class JsonParserTest extends TestCase
 {
     public static function arrayJsonConversionDataProvider()
     {

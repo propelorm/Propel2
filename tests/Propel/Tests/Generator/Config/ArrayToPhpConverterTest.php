@@ -11,8 +11,9 @@
 namespace Propel\Tests\Generator\Config;
 
 use Propel\Generator\Config\ArrayToPhpConverter;
+use Propel\Tests\TestCase;
 
-class ArrayToPhpConverterTest extends \PHPUnit_Framework_TestCase
+class ArrayToPhpConverterTest extends TestCase
 {
     public function testConvertConvertsSimpleDatasourceSection()
     {

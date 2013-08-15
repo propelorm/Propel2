@@ -11,13 +11,14 @@
 namespace Propel\Tests\Generator\Behavior;
 
 use Propel\Tests\Bookstore\Behavior\Map\Table3TableMap;
+use Propel\Tests\TestCase;
 
 /**
  * Tests the table structure behavior hooks.
  *
  * @author Francois Zaninotto
  */
-class TableBehaviorTest extends \PHPUnit_Framework_TestCase
+class TableBehaviorTest extends TestCase
 {
     protected function setUp()
     {

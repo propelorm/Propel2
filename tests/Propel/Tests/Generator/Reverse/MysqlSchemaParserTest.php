@@ -16,6 +16,7 @@ use Propel\Generator\Platform\DefaultPlatform;
 use Propel\Generator\Reverse\MysqlSchemaParser;
 
 use Propel\Runtime\Propel;
+use Propel\Tests\TestCase;
 
 /**
  * Tests for Mysql database schema parser.
@@ -23,7 +24,7 @@ use Propel\Runtime\Propel;
  * @author William Durand
  * @version     $Revision$
  */
-class MysqlSchemaParserTest extends \PHPUnit_Framework_TestCase
+class MysqlSchemaParserTest extends TestCase
 {
     protected function setUp()
     {

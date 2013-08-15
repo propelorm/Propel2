@@ -11,11 +11,12 @@
 namespace Propel\Tests\Generator\Platform;
 
 use Propel\Generator\Builder\Util\SchemaReader;
+use Propel\Tests\TestCase;
 
 /**
  * Base class for all Platform tests
  */
-abstract class PlatformTestBase extends \PHPUnit_Framework_TestCase
+abstract class PlatformTestBase extends TestCase
 {
 
     abstract protected function getPlatform();

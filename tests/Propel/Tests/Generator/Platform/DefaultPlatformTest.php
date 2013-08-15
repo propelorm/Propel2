@@ -12,8 +12,9 @@ use Propel\Generator\Model\Column;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Platform\DefaultPlatform;
 use Propel\Runtime\Propel;
+use \Propel\Tests\TestCase;
 
-class DefaultPlatformTest extends \PHPUnit_Framework_TestCase
+class DefaultPlatformTest extends TestCase
 {
     protected $platform;
 

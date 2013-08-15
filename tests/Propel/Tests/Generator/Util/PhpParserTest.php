@@ -9,11 +9,12 @@
  */
 
 use Propel\Generator\Util\PhpParser;
+use \Propel\Tests\TestCase;
 
 /**
  *
  */
-class PhpParserTest extends \PHPUnit_Framework_TestCase
+class PhpParserTest extends TestCase
 {
     public function basicClassCodeProvider()
     {

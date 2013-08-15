@@ -21,11 +21,12 @@ use MyNameSpace\Map\QuickBuildFoo1TableMap;
 
 use MyNameSpace2\QuickBuildFoo2;
 use MyNameSpace2\QuickBuildFoo2Query;
+use \Propel\Tests\TestCase;
 
 /**
  *
  */
-class QuickBuilderTest extends \PHPUnit_Framework_TestCase
+class QuickBuilderTest extends TestCase
 {
     public function testGetPlatform()
     {

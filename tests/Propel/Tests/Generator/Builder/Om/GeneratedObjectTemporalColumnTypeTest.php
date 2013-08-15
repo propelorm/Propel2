@@ -14,13 +14,14 @@ use Propel\Generator\Util\QuickBuilder;
 use Propel\Generator\Platform\MysqlPlatform;
 
 use Propel\Runtime\Propel;
+use Propel\Tests\TestCase;
 
 /**
  * Tests the generated objects for temporal column types accessor & mutator.
  *
  * @author Francois Zaninotto
  */
-class GeneratedObjectTemporalColumnTypeTest extends \PHPUnit_Framework_TestCase
+class GeneratedObjectTemporalColumnTypeTest extends TestCase
 {
     public function setUp()
     {

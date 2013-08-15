@@ -14,6 +14,7 @@ use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Builder\Om\AbstractOMBuilder;
 use Propel\Generator\Builder\Util\SchemaReader;
 use Propel\Generator\Platform\DefaultPlatform;
+use Propel\Tests\TestCase;
 
 /**
  * Test class for OMBuilder.
@@ -21,7 +22,7 @@ use Propel\Generator\Platform\DefaultPlatform;
  * @author François Zaninotto
  * @version    $Id: OMBuilderBuilderTest.php 1347 2009-12-03 21:06:36Z francois $
  */
-class AbstractOMBuilderRelatedByTest extends \PHPUnit_Framework_TestCase
+class AbstractOMBuilderRelatedByTest extends TestCase
 {
     public static $database;
 

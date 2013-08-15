@@ -11,8 +11,9 @@
 namespace Propel\Tests\Generator\Config;
 
 use Propel\Generator\Config\XmlToArrayConverter;
+use Propel\Tests\TestCase;
 
-class XmlToArrayConverterTest extends \PHPUnit_Framework_TestCase
+class XmlToArrayConverterTest extends TestCase
 {
     public function testConvertConvertsLogSectionOutsidePropelElement()
     {

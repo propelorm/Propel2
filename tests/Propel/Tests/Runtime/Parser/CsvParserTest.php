@@ -11,13 +11,14 @@
 namespace Propel\Tests\Runtime\Parser;
 
 use Propel\Runtime\Parser\CsvParser;
+use Propel\Tests\TestCase;
 
 /**
  * Test for CsvParser class
  *
  * @author Francois Zaninotto
  */
-class CsvParserTest extends \PHPUnit_Framework_TestCase
+class CsvParserTest extends TestCase
 {
     public static function arrayCsvConversionDataProvider()
     {

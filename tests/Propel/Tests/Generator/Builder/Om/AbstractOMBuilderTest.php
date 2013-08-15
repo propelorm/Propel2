@@ -15,6 +15,7 @@ use Propel\Generator\Builder\Om\AbstractOMBuilder;
 use Propel\Tests\Bookstore\Author;
 use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\Publisher;
+use Propel\Tests\TestCase;
 
 /**
  * Test class for OMBuilder.
@@ -22,7 +23,7 @@ use Propel\Tests\Bookstore\Publisher;
  * @author François Zaninotto
  * @version    $Id: OMBuilderBuilderTest.php 1347 2009-12-03 21:06:36Z francois $
  */
-class AbstractOMBuilderTest extends \PHPUnit_Framework_TestCase
+class AbstractOMBuilderTest extends TestCase
 {
 
     public function testClear()

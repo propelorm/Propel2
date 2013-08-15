@@ -11,11 +11,12 @@
 namespace Propel\Tests\Generator\Model;
 
 use Propel\Generator\Model\MappingModel;
+use Propel\Tests\TestCase;
 
 /**
  * @author William Durand <william.durand1@gmail.com>
  */
-class MappingModelTest extends \PHPUnit_Framework_TestCase
+class MappingModelTest extends TestCase
 {
     /**
      * @dataProvider providerForGetDefaultValueForArray

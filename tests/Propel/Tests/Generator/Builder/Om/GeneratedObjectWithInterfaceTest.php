@@ -11,8 +11,9 @@
 use Propel\Generator\Util\QuickBuilder;
 
 use Propel\Runtime\Propel;
+use \Propel\Tests\TestCase;
 
-class GeneratedObjectWithInterfaceTest extends \PHPUnit_Framework_TestCase
+class GeneratedObjectWithInterfaceTest extends TestCase
 {
       public function setUp()
       {
