@@ -34,7 +34,12 @@
     },
     "autoload": {
         "psr-0": {
-            "Propel": "src/"
+            "Propel": "src/",
+            "Propel\\Tests": [
+               "tests/",
+               "tests/Fixtures/bookstore/build/classes/",
+               "tests/Fixtures/schemas/build/classes"
+            ]
         }
     },
     "bin": [
