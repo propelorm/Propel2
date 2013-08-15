@@ -14,8 +14,11 @@ if [ "$mysql" = "" ]; then
 fi
 
 if [ "$DB_USER" = "" ]; then
+	echo "\$DB_USER not set. Using 'root'.";
     DB_USER="root";
 fi
+
+DB="mysql";
 
 $mysql -u$DB_USER -e '\
 SET FOREIGN_KEY_CHECKS = 0; \
@@ -36,6 +39,7 @@ CREATE SCHEMA second_hand_books; \
 check;
 
 if [ "$DB_PW" = "" ]; then
+    echo "\$DB_PW not set. Using no password.";
     php $DIR/../../bin/propel test:prepare --vendor="$DB" --dsn="$DB:dbname=test" --user="$DB_USER";
 else
     php $DIR/../../bin/propel test:prepare --vendor="$DB" --dsn="$DB:dbname=test" --user="$DB_USER" --password="$DB_PW";
