@@ -13,8 +13,6 @@ title: The Cookbook
 
 * [Customizing build](customizing-build.html)
 
-* [How to Create A Schema Based On A DBDesigner Model](dbdesigner.html)
-
 * [How to Use PHP 5.3 Namespaces](namespaces.html)
 
 * [Model Introspection At Runtime](runtime-introspection.html)
