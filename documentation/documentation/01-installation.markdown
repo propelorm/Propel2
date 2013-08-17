@@ -72,7 +72,7 @@ Alternatively, you can install Propel globally on your system using PEAR. All yo
 
 Propel has its own PEAR channel, that you must "discover". Using the `pear install -a` command, you can let PEAR download and install all dependencies.
 
-So the commands to install Propel, Phing and PEAR Log globally sum up to this:
+So the commands to install Propel globally sum up to this:
 
 ```bash
 $ pear channel-discover pear.propelorm.org

@@ -23,14 +23,6 @@ The most natural place to specify properties for a file are in the project's `bu
 
 You can also create a global `build.properties` file in the same directory as Propel's `default.properties` file. For users who have installed Propel using PEAR, this will be in PEAR data directory structure.
 
-### On the Command Line ###
-
-You can also specify properties on the command line when you invoke Propel. The command line accepts a camelCase version of the property name. So for instance, to set the value of the `propel.some.other.property` property using the command line, type:
-
-    > propel-gen /path/to/project -Dpropel.someOtherProperty#value
-
->**Tip**<br />There is no space between the -D and the property name.
-
 ## Property List ##
 
 ### General Build Settings ###
@@ -91,7 +83,7 @@ propel.schema.transform = true|{false}
 propel.database = pgsql|mysql|sqlite|mssql|oracle
 
 # The database PDO connection settings at buildtime.
-# This setting is required for the sql, reverse, and datasql tasks.
+# This setting is required for the sql and reverse tasks.
 # Note that some drivers (e.g. mysql, oracle) require that you specify the
 # username and password separately from the DSN, which is why they are
 # available as options.

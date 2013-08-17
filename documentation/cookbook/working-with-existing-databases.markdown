@@ -42,7 +42,7 @@ propel.database.user = root
 $ propel reverse
 ```
 
- 4. Pay attention to any errors/warnings issued by Phing during the task execution and then examine the generated `schema.xml` file to make any corrections needed.
+ 4. Pay attention to any errors/warnings issued during the task execution and then examine the generated `schema.xml` file to make any corrections needed.
 
  5. _'You're done! _' Now you have a `schema.xml` file in the `legacyapp/` project directory. You can now run the default Propel build to generate all the classes.
 

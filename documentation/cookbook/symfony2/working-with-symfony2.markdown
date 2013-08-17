@@ -29,17 +29,14 @@ Clone this bundle in the `vendor/bundles/Propel` directory:
 
     git submodule add https://github.com/propelorm/PropelBundle.git vendor/bundles/Propel/PropelBundle
 
-Checkout Propel and Phing in the `vendor` directory:
-
-    svn checkout http://github.com/propelorm/Propel2 vendor/propel
-
-    svn checkout http://svn.phing.info/tags/2.4.6/ vendor/phing
-
-Instead of using svn, you can clone the unofficial Git repositories:
-
-    git submodule add https://github.com/Xosofox/phing vendor/phing
+Then, checkout Propel in the `vendor` directory:
 
     git submodule add https://github.com/propelorm/Propel2.git vendor/propel
+
+
+Instead of using Git, you can clone the SVN repository:
+
+    svn checkout http://github.com/propelorm/Propel2 vendor/propel
 
 ### via Symfony2 vendor management
 
@@ -49,10 +46,8 @@ Add the following lines to your deps file (located in the root of the Symfony pr
     [PropelBundle]
         git=https://github.com/propelorm/PropelBundle.git
         target=/bundles/Propel/PropelBundle
-    [phing]
-        git=https://github.com/Xosofox/phing
     [propel]
-        git=https://github.com/propelorm/Propel.git
+        git=https://github.com/propelorm/Propel2.git
 
 Update your vendor directory with
 
@@ -124,7 +119,6 @@ propel.defaultDateFormat =
 # in app/config/config.yml
 propel:
     path:       "%kernel.root_dir%/../vendor/propel"
-    phing_path: "%kernel.root_dir%/../vendor/phing"
 #    logging:   %kernel.debug%
 #    build_properties:
 #        xxxxx.xxxxx: xxxxxx

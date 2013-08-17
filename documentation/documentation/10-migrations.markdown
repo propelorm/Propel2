@@ -274,10 +274,10 @@ propel.migration.caseInsensitive = true
 propel.migration.dir = ${propel.output.dir}/migrations
 ```
 
->**Tip**<br />The `diff` task supports an additional parameter, called `propel.migration.editor`, which specifies a text editor to be automatically launched at the end of the task to review the generated migration. Unfortunately, only editors launched in another window are accepted due to a Phing limitation. Mac users will find it useful, though:
+>**Tip**<br />The `diff` task supports an additional parameter, called `editor`, which specifies a text editor to be automatically launched at the end of the task to review the generated migration. Unfortunately, only editors launched in another window are accepted. Mac users will find it useful, though:
 
 ```bash
-$ propel . diff -Dpropel.migration.editor=mate
+$ propel diff --editor=mate
 ```
 
 ## Migrating Data ##
