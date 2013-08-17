@@ -189,7 +189,7 @@ $ propel model:build
 
 Propel will generate a new `generated-classes` folder containning all the stuff you need to interact with your different tables.
 
-For every table in the database, Propel creates 2 PHP classes:
+For every table in the database, Propel creates 3 PHP classes:
 
 * a _model_ class (e.g. `Book`), which represents a row in the database;
 * a _tablemap_ class (e.g. `Map\BookTableMap`), offering static constants and methods mostly for compatibility with previous Propel versions;
