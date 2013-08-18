@@ -1,0 +1,32 @@
+# $Id$
+#
+# This is a project-specific build.properties file.  The properties
+# in this file override anything set in Propel's top-level build.properties
+# file when *this* project is being built.
+#
+# See top-level build.properties-sample for explanation of configuration
+# options.
+#
+# Because this file is included before the top-level build.properties file,
+# you cannot refer to any properties set therein.
+
+propel.project                          = migration
+propel.database                         = ##DATABASE_VENDOR##
+propel.database.url                     = ##DATABASE_URL##
+propel.mysql.tableType                  = InnoDB
+propel.disableIdentifierQuoting         = true
+propel.schema.autoPrefix                = false
+
+# For MySQL or Oracle, you also need to specify username & password
+propel.database.user                    = ##DATABASE_USER##
+propel.database.password                = ##DATABASE_PASSWORD##
+
+# Note that if you do not wish to specify the database (e.g. if you
+# are using multiple databases) you can use the @DB@ token which
+# will be replaced with a database at runtime.
+# E.g.: propel.database.url = sqlite://localhost/./test/@DB@.db
+# This will work for the datadump and the insert-sql tasks.
+
+# propel.database.createUrl = (doesn't apply for SQLite, since db is auto-created)
+
+propel.targetPackage                    = migration
