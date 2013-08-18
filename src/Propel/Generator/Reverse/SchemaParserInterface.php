@@ -56,6 +56,11 @@ interface SchemaParserInterface
     public function getWarnings();
 
     /**
+     * @return \Propel\Generator\Platform\PlatformInterface
+     */
+    public function getPlatform();
+
+    /**
      * Parse the schema and populate passed-in Database model object.
      *
      * @param  Database $database
