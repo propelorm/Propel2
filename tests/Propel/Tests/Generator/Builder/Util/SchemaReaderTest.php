@@ -11,12 +11,13 @@
 namespace Propel\Tests\Generator\Builder\Util;
 
 use Propel\Generator\Builder\Util\SchemaReader;
+use Propel\Tests\TestCase;
 
 /**
  * Tests for SchemaReader class
  *
  */
-class SchemaReaderTest extends \PHPUnit_Framework_TestCase
+class SchemaReaderTest extends TestCase
 {
 
     public function testParseStringEmptySchema()

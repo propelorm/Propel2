@@ -12,13 +12,14 @@ namespace Propel\Tests\Runtime\Parser;
 
 use Propel\Runtime\Parser\AbstractParser;
 use Propel\Runtime\Parser\XmlParser;
+use Propel\Tests\TestCase;
 
 /**
  * Test for JsonParser class
  *
  * @author Francois Zaninotto
  */
-class AbstractParserTest extends \PHPUnit_Framework_TestCase
+class AbstractParserTest extends TestCase
 {
     public function testGetParser()
     {

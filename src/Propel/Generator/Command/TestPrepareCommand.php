@@ -57,6 +57,7 @@ class TestPrepareCommand extends AbstractCommand
         'reverse/mysql'         => array('reverse-bookstore'),
         'reverse/pgsql'         => array('reverse-bookstore'),
         'schemas'               => array('bookstore-schemas'),
+        'migration'             => array('migration'),
     );
 
     /**
@@ -136,7 +137,7 @@ class TestPrepareCommand extends AbstractCommand
             }
         }
 
-        if (0 < count((array) $this->getSchemas('.')) || false === strstr($fixturesDir, 'reverse')) {
+        if (0 < count($this->getSchemas('.'))) {
             $in = new ArrayInput(array(
                 'command'      => 'sql:build',
                 '--input-dir'  => '.',

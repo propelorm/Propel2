@@ -13,12 +13,13 @@ use Propel\Generator\Model\Column;
 use Propel\Generator\Model\ColumnDefaultValue;
 use Propel\Generator\Model\Diff\ColumnComparator;
 use Propel\Generator\Platform\MysqlPlatform;
+use \Propel\Tests\TestCase;
 
 /**
  * Tests for the ColumnComparator service class.
  *
  */
-class ColumnComparatorTest extends \PHPUnit_Framework_TestCase
+class ColumnComparatorTest extends TestCase
 {
     public function setUp()
     {

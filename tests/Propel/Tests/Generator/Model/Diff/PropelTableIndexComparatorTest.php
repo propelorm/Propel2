@@ -17,12 +17,13 @@ use Propel\Generator\Model\Unique;
 use Propel\Generator\Model\Diff\TableComparator;
 use Propel\Generator\Model\Diff\TableDiff;
 use Propel\Generator\Platform\MysqlPlatform;
+use \Propel\Tests\TestCase;
 
 /**
  * Tests for the Column methods of the TableComparator service class.
  *
  */
-class PropelTableIndexComparatorTest extends \PHPUnit_Framework_TestCase
+class PropelTableIndexComparatorTest extends TestCase
 {
     public function setUp()
     {

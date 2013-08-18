@@ -13,13 +13,14 @@ namespace Propel\Tests\Generator\Builder\Om;
 use Propel\Generator\Util\QuickBuilder;
 
 use Propel\Runtime\Propel;
+use Propel\Tests\TestCase;
 
 /**
  * Tests the generated TableMap classes for enum column type constants
  *
  * @author Francois Zaninotto
  */
-class GeneratedTableMapEnumColumnTypeTest extends \PHPUnit_Framework_TestCase
+class GeneratedTableMapEnumColumnTypeTest extends TestCase
 {
     public function setUp()
     {

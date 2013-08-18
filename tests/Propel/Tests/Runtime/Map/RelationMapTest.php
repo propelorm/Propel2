@@ -13,6 +13,7 @@ namespace Propel\Tests\Runtime\Map;
 use Propel\Runtime\Map\DatabaseMap;
 use Propel\Runtime\Map\RelationMap;
 use Propel\Runtime\Map\TableMap;
+use Propel\Tests\TestCase;
 
 /**
  * Test class for RelationMap.
@@ -20,7 +21,7 @@ use Propel\Runtime\Map\TableMap;
  * @author François Zaninotto
  * @version    $Id$
  */
-class RelationMapTest extends \PHPUnit_Framework_TestCase
+class RelationMapTest extends TestCase
 {
   protected $databaseMap, $relationName, $rmap;
 

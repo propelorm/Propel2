@@ -11,13 +11,14 @@
 namespace Propel\Tests\Generator\Builder;
 
 use Propel\Runtime\Propel;
+use Propel\Tests\TestCase;
 
 /**
  * Tests for Namespaces in generated classes class
  * Requires a build of the 'namespaced' fixture
  *
  */
-class NamespaceTest extends \PHPUnit_Framework_TestCase
+class NamespaceTest extends TestCase
 {
     protected function setUp()
     {

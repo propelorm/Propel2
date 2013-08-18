@@ -13,12 +13,13 @@ namespace Propel\Tests\Generator\Builder\Om;
 use Propel\Generator\Util\QuickBuilder;
 
 use Propel\Runtime\Propel;
+use Propel\Tests\TestCase;
 
 /**
  * Tests the generated Object classes for lazy load columns.
  *
  */
-class GeneratedObjectLazyLoadTest extends \PHPUnit_Framework_TestCase
+class GeneratedObjectLazyLoadTest extends TestCase
 {
     public function setUp()
     {

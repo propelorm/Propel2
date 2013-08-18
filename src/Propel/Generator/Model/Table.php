@@ -57,7 +57,12 @@ class Table extends ScopedMappingModel implements IdMethod
     private $idMethod;
     private $allowPkInsert;
     private $phpNamingMethod;
+
+    /**
+     * @var Database
+     */
     private $database;
+
     private $referrers;
     private $containsForeignPK;
     private $inheritanceColumn;
@@ -994,12 +999,12 @@ class Table extends ScopedMappingModel implements IdMethod
      */
     public function getName()
     {
-        if ($this->schema
-            && $this->getDatabase()
+        if ($this->getDatabase()
+            && ($this->schema || $this->getDatabase()->getSchema())
             && $this->getDatabase()->getPlatform()
             && $this->getDatabase()->getPlatform()->supportsSchemas()
         ) {
-            return $this->schema . '.' . $this->commonName;
+            return ($this->schema ?: $this->getDatabase()->getSchema()) . '.' . $this->commonName;
         }
 
         return $this->commonName;
@@ -1454,6 +1459,35 @@ class Table extends ScopedMappingModel implements IdMethod
                     }
                 } else {
                     continue;
+                }
+            }
+        }
+
+        return false;
+    }
+
+
+    /**
+     * Checks if a index exists with the given $keys.
+     *
+     * @param array $keys
+     * @return boolean
+     */
+    public function isIndex(array $keys)
+    {
+        if ($this->indices) {
+            foreach ($this->indices as $index) {
+                if (count($keys) === count($index->getColumns())) {
+                    $allAvailable = true;
+                    foreach ($keys as $key) {
+                        if (!$index->hasColumn($key instanceof Column ? $key->getName() : $key)) {
+                            $allAvailable = false;
+                            break;
+                        }
+                    }
+                    if ($allAvailable) {
+                        return true;
+                    }
                 }
             }
         }

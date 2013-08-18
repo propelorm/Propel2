@@ -14,13 +14,14 @@ namespace Propel\Tests\Generator\Behavior\Archivable;
 use Propel\Generator\Util\QuickBuilder;
 use Propel\Generator\Behavior\Archivable\ArchivableBehavior;
 use Propel\Runtime\Propel;
+use Propel\Tests\TestCase;
 
 /**
  * Tests for ArchivableBehavior class
  *
  * @author François Zaninotto
  */
-class ArchivableBehaviorTest extends \PHPUnit_Framework_TestCase
+class ArchivableBehaviorTest extends TestCase
 {
     protected static $generatedSQL;
 

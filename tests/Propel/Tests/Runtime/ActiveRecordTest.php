@@ -11,13 +11,14 @@
 namespace Propel\Tests\Runtime\ActiveRecord;
 
 use Propel\Tests\Bookstore\Book;
+use Propel\Tests\TestCase;
 
 /**
  * Test class for ActiveRecord.
  *
  * @author François Zaninotto
  */
-class ActiveRecordTest extends \PHPUnit_Framework_TestCase
+class ActiveRecordTest extends TestCase
 {
     public function testGetVirtualColumns()
     {

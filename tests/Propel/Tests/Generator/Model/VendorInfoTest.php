@@ -11,13 +11,14 @@
 namespace Propel\Tests\Generator\Model;
 
 use Propel\Generator\Model\VendorInfo;
+use Propel\Tests\TestCase;
 
 /**
  * Unit test suite for the VendorInfo model class.
  *
  * @author Hugo Hamon <webmaster@apprendre-php.com>
  */
-class VendorInfoTest extends \PHPUnit_Framework_TestCase
+class VendorInfoTest extends TestCase
 {
     public function testSetupObject()
     {

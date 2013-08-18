@@ -54,9 +54,11 @@ CREATE TABLE foo5
 
 ALTER TABLE foo2 RENAME COLUMN bar TO bar1;
 
-ALTER TABLE foo2 ALTER COLUMN baz DROP NOT NULL;
+ALTER TABLE foo2
 
-ALTER TABLE foo2 ADD baz3 TEXT;
+  ALTER COLUMN baz DROP NOT NULL,
+
+  ADD baz3 TEXT;
 
 END;
         $this->assertEquals($expected, $this->getPlatform()->getModifyDatabaseDDL($databaseDiff));
@@ -90,9 +92,11 @@ DROP INDEX bar_FK;
 
 ALTER TABLE foo RENAME COLUMN bar TO bar1;
 
-ALTER TABLE foo ALTER COLUMN baz DROP NOT NULL;
+ALTER TABLE foo
 
-ALTER TABLE foo ADD baz3 TEXT;
+  ALTER COLUMN baz DROP NOT NULL,
+
+  ADD baz3 TEXT;
 
 CREATE INDEX bar_FK ON foo (bar1);
 

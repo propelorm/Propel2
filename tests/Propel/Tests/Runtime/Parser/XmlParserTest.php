@@ -11,13 +11,14 @@
 namespace Propel\Tests\Runtime\Parser;
 
 use Propel\Runtime\Parser\XmlParser;
+use Propel\Tests\TestCase;
 
 /**
  * Test for XmlParser class
  *
  * @author Francois Zaninotto
  */
-class XmlParserTest extends \PHPUnit_Framework_TestCase
+class XmlParserTest extends TestCase
 {
     public static function arrayXmlConversionDataProvider()
     {

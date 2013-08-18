@@ -15,6 +15,7 @@ use Propel\Runtime\Map\RelationMap;
 use Propel\Runtime\Map\ColumnMap;
 use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Map\Exception\ColumnNotFoundException;
+use Propel\Tests\TestCase;
 
 /**
  * Test class for TableMap.
@@ -22,7 +23,7 @@ use Propel\Runtime\Map\Exception\ColumnNotFoundException;
  * @author François Zaninotto
  * @version    $Id$
  */
-class TableMapTest extends \PHPUnit_Framework_TestCase
+class TableMapTest extends TestCase
 {
     protected $databaseMap;
 

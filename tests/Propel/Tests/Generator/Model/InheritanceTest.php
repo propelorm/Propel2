@@ -11,13 +11,14 @@
 namespace Propel\Tests\Generator\Model;
 
 use Propel\Generator\Model\Inheritance;
+use Propel\Tests\TestCase;
 
 /**
  * Unit test suite for the Inheritance model class.
  *
  * @author Hugo Hamon <webmaster@apprendre-php.com>
  */
-class InheritanceTest extends \PHPUnit_Framework_TestCase
+class InheritanceTest extends TestCase
 {
     public function testCreateNewInheritance()
     {

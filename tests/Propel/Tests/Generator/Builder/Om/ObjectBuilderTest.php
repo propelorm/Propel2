@@ -16,6 +16,7 @@ use Propel\Generator\Model\Column;
 use Propel\Generator\Model\ColumnDefaultValue;
 use Propel\Generator\Model\Domain;
 use Propel\Generator\Model\Table;
+use Propel\Tests\TestCase;
 
 /**
  * Test class for ObjectBuilder.
@@ -23,7 +24,7 @@ use Propel\Generator\Model\Table;
  * @author François Zaninotto
  * @version    $Id$
  */
-class ObjectBuilderTest extends \PHPUnit_Framework_TestCase
+class ObjectBuilderTest extends TestCase
 {
     protected $builder;
 

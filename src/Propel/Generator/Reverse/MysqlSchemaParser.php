@@ -43,7 +43,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
         'integer'    => PropelTypes::INTEGER,
         'bigint'     => PropelTypes::BIGINT,
         'int24'      => PropelTypes::BIGINT,
-        'real'       => PropelTypes::REAL,
+        'real'       => PropelTypes::DOUBLE,
         'float'      => PropelTypes::FLOAT,
         'decimal'    => PropelTypes::DECIMAL,
         'numeric'    => PropelTypes::NUMERIC,
@@ -93,7 +93,11 @@ class MysqlSchemaParser extends AbstractSchemaParser
     {
         $this->addVendorInfo = $this->getGeneratorConfig()->getBuildProperty('addVendorInfo');
 
-        $dataFetcher = $this->dbh->query('SHOW FULL TABLES');
+        $sql = 'SHOW FULL TABLES';
+        if ($schema = $database->getSchema()) {
+            $sql .= ' FROM ' . $database->getPlatform()->quoteIdentifier($schema);
+        }
+        $dataFetcher = $this->dbh->query($sql);
 
         // First load the tables (important that this happen before filling out details of tables)
         $tables = array();
@@ -135,7 +139,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
      */
     protected function addColumns(Table $table)
     {
-        $stmt = $this->dbh->query(sprintf('SHOW COLUMNS FROM `%s`', $table->getName()));
+        $stmt = $this->dbh->query(sprintf('SHOW COLUMNS FROM %s', $this->getPlatform()->quoteIdentifier($table->getName())));
 
         while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
             $column = $this->getColumnFromRow($row, $table);
@@ -216,6 +220,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
         $column = new Column($name);
         $column->setTable($table);
         $column->setDomainForType($propelType);
+        $column->getDomain()->setOriginSqlType($nativeType ?: $sqlType);
         if ($sqlType) {
             $column->getDomain()->replaceSqlType($sqlType);
         }
@@ -255,7 +260,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
     {
         $database = $table->getDatabase();
 
-        $dataFetcher = $this->dbh->query(sprintf('SHOW CREATE TABLE `%s`', $table->getName()));
+        $dataFetcher = $this->dbh->query(sprintf('SHOW CREATE TABLE %s', $this->getPlatform()->quoteIdentifier($table->getName())));
         $row = $dataFetcher->fetch();
 
         $foreignKeys = array(); // local store to avoid duplicates
@@ -339,7 +344,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
      */
     protected function addIndexes(Table $table)
     {
-        $stmt = $this->dbh->query(sprintf('SHOW INDEX FROM `%s`', $table->getName()));
+        $stmt = $this->dbh->query(sprintf('SHOW INDEX FROM %s', $this->getPlatform()->quoteIdentifier($table->getName())));
 
         // Loop through the returned results, grouping the same key_name together
         // adding each column for that key.
@@ -376,7 +381,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
      */
     protected function addPrimaryKey(Table $table)
     {
-        $stmt = $this->dbh->query(sprintf('SHOW KEYS FROM `%s`', $table->getName()));
+        $stmt = $this->dbh->query(sprintf('SHOW KEYS FROM %s', $this->getPlatform()->quoteIdentifier($table->getName())));
 
         // Loop through the returned results, grouping the same key_name together
         // adding each column for that key.

@@ -191,7 +191,7 @@ class DatabaseDiff
     /**
      * Returns the modified tables.
      *
-     * @return array
+     * @return TableDiff[]
      */
     public function getModifiedTables()
     {

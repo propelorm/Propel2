@@ -14,13 +14,14 @@ use Propel\Generator\Util\QuickBuilder;
 
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
+use Propel\Tests\TestCase;
 
 /**
  * Tests the generated objects for object column types accessor & mutator
  *
  * @author Francois Zaninotto
  */
-class GeneratedObjectObjectColumnTypeTest extends \PHPUnit_Framework_TestCase
+class GeneratedObjectObjectColumnTypeTest extends TestCase
 {
     public function setup()
     {

@@ -14,13 +14,14 @@ use Propel\Generator\Util\QuickBuilder;
 
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Tests\TestCase;
 
 /**
  * Tests the generated queries for enum column types filters
  *
  * @author Francois Zaninotto
  */
-class GeneratedQueryEnumColumnTypeTest extends \PHPUnit_Framework_TestCase
+class GeneratedQueryEnumColumnTypeTest extends TestCase
 {
     public function setUp()
     {

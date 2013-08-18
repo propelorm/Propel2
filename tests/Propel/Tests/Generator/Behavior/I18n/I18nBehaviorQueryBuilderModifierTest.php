@@ -14,13 +14,14 @@ use Propel\Generator\Util\QuickBuilder;
 use Propel\Generator\Behavior\I18n\I18nBehavior;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Tests\TestCase;
 
 /**
  * Tests for I18nBehavior class query modifier
  *
  * @author François Zaninotto
  */
-class I18nBehaviorQueryBuilderModifierTest extends \PHPUnit_Framework_TestCase
+class I18nBehaviorQueryBuilderModifierTest extends TestCase
 {
     public function setUp()
     {

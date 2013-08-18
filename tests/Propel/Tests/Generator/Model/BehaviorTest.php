@@ -11,13 +11,14 @@
 use Propel\Generator\Builder\Util\SchemaReader;
 use Propel\Generator\Model\Behavior;
 use Propel\Generator\Model\Table;
+use \Propel\Tests\TestCase;
 
 /**
  * Tests for Behavior class
  *
  * @author Martin Poeschl <mpoeschl@marmot.at>
  */
-class BehaviorTest extends \PHPUnit_Framework_TestCase
+class BehaviorTest extends TestCase
 {
     private $schemaReader;
     private $appData;

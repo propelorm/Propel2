@@ -211,7 +211,7 @@ class TableDiff
     /**
      * Getter for the modifiedColumns property
      *
-     * @return array
+     * @return ColumnDiff[]
      */
     public function getModifiedColumns()
     {
@@ -396,7 +396,7 @@ class TableDiff
     /**
      * Getter for the addedIndices property
      *
-     * @return array
+     * @return Index[]
      */
     public function getAddedIndices()
     {
@@ -459,7 +459,7 @@ class TableDiff
     /**
      * Getter for the modifiedIndices property
      *
-     * @return
+     * @return [Index, Index]
      */
     public function getModifiedIndices()
     {
@@ -500,7 +500,7 @@ class TableDiff
     /**
      * Getter for the addedFks property
      *
-     * @return array
+     * @return ForeignKey[]
      */
     public function getAddedFks()
     {
@@ -573,7 +573,7 @@ class TableDiff
     /**
      * Getter for the modifiedFks property
      *
-     * @return array
+     * @return ForeignKey[]
      */
     public function getModifiedFks()
     {
