@@ -53,18 +53,32 @@ class ColumnComparator
         // compare column types
         $fromDomain = $fromColumn->getDomain();
         $toDomain = $toColumn->getDomain();
-        if ($fromDomain->getType() !== $toDomain->getType()) {
-            $changedProperties['type'] = array($fromDomain->getType(), $toDomain->getType());
-        }
+
         if ($fromDomain->getScale() !== $toDomain->getScale()) {
             $changedProperties['scale'] = array($fromDomain->getScale(), $toDomain->getScale());
         }
         if ($fromDomain->getSize() !== $toDomain->getSize()) {
             $changedProperties['size'] = array($fromDomain->getSize(), $toDomain->getSize());
         }
+
         if (strtoupper($fromDomain->getSqlType()) !== strtoupper($toDomain->getSqlType())) {
-            $changedProperties['sqlType'] = array($fromDomain->getSqlType(), $toDomain->getSqlType());
+            if ($fromDomain->getOriginSqlType()) {
+                if (strtoupper($fromDomain->getOriginSqlType()) !== strtoupper($toDomain->getSqlType())) {
+                    if ($fromDomain->getType() !== $toDomain->getType()) {
+                        $changedProperties['type'] = array($fromDomain->getType(), $toDomain->getType());
+                    }
+
+                    $changedProperties['sqlType'] = array($fromDomain->getSqlType(), $toDomain->getSqlType());
+                }
+            } else {
+                $changedProperties['sqlType'] = array($fromDomain->getSqlType(), $toDomain->getSqlType());
+
+                if ($fromDomain->getType() !== $toDomain->getType()) {
+                    $changedProperties['type'] = array($fromDomain->getType(), $toDomain->getType());
+                }
+            }
         }
+
         if ($fromColumn->isNotNull() !== $toColumn->isNotNull()) {
             $changedProperties['notNull'] = array($fromColumn->isNotNull(), $toColumn->isNotNull());
         }

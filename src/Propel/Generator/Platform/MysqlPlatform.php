@@ -52,12 +52,12 @@ class MysqlPlatform extends DefaultPlatform
         $this->setSchemaDomainMapping(new Domain(PropelTypes::BINARY, 'BLOB'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::VARBINARY, 'MEDIUMBLOB'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARBINARY, 'LONGBLOB'));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::BLOB, 'LONGBLOB'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::CLOB, 'LONGTEXT'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::TIMESTAMP, 'DATETIME'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::OBJECT, 'TEXT'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::PHP_ARRAY, 'TEXT'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::ENUM, 'TINYINT'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::REAL, 'DOUBLE'));
     }
 
     public function setGeneratorConfig(GeneratorConfigInterface $generatorConfig)
@@ -141,13 +141,15 @@ class MysqlPlatform extends DefaultPlatform
 
     public function getAddTablesDDL(Database $database)
     {
-        $ret = $this->getBeginDDL();
+        $ret = '';
         foreach ($database->getTablesForSql() as $table) {
             $ret .= $this->getCommentBlockDDL($table->getName());
             $ret .= $this->getDropTableDDL($table);
             $ret .= $this->getAddTableDDL($table);
         }
-        $ret .= $this->getEndDDL();
+        if ($ret) {
+            $ret = $this->getBeginDDL() . $ret . $this->getEndDDL();
+        }
 
         return $ret;
     }
@@ -418,6 +420,10 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
      */
     public function getDropPrimaryKeyDDL(Table $table)
     {
+        if (!$table->hasPrimaryKey()) {
+            return '';
+        }
+
         $pattern = "
 ALTER TABLE %s DROP PRIMARY KEY;
 ";
@@ -559,7 +565,8 @@ ALTER TABLE %s DROP FOREIGN KEY %s;
      */
     public function getModifyDatabaseDDL(DatabaseDiff $databaseDiff)
     {
-        $ret = $this->getBeginDDL();
+
+        $ret = '';
 
         foreach ($databaseDiff->getRemovedTables() as $table) {
             $ret .= $this->getDropTableDDL($table);
@@ -577,7 +584,9 @@ ALTER TABLE %s DROP FOREIGN KEY %s;
             $ret .= $this->getAddTableDDL($table);
         }
 
-        $ret .= $this->getEndDDL();
+        if ($ret) {
+            $ret = $this->getBeginDDL() . $ret . $this->getEndDDL();
+        }
 
         return $ret;
     }

@@ -79,6 +79,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
         'character' => 1,
         'integer'   => 32,
         'bigint'    => 64,
+        'smallint'  => 16,
         'double precision' => 54
     );
 

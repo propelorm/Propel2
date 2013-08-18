@@ -13,6 +13,7 @@ namespace Propel\Generator\Platform;
 use Propel\Generator\Exception\EngineException;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\Database;
+use Propel\Generator\Model\Diff\TableDiff;
 use Propel\Generator\Model\Domain;
 use Propel\Generator\Model\Index;
 use Propel\Generator\Model\IdMethod;
@@ -32,6 +33,11 @@ class PgsqlPlatform extends DefaultPlatform
 {
 
     /**
+     * @var string
+     */
+    protected $createOrDropSequences = '';
+
+    /**
      * Initializes db specific domain mapping.
      */
     protected function initialize()
@@ -41,7 +47,7 @@ class PgsqlPlatform extends DefaultPlatform
         $this->setSchemaDomainMapping(new Domain(PropelTypes::TINYINT, 'INT2'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::SMALLINT, 'INT2'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::BIGINT, 'INT8'));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::REAL, 'FLOAT'));
+        //$this->setSchemaDomainMapping(new Domain(PropelTypes::REAL, 'FLOAT'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::DOUBLE, 'DOUBLE PRECISION'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::FLOAT, 'DOUBLE PRECISION'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARCHAR, 'TEXT'));
@@ -322,7 +328,7 @@ DROP TABLE IF EXISTS %s CASCADE;
 
     public function getPrimaryKeyName(Table $table)
     {
-        $tableName = $table->getName();
+        $tableName = $table->getCommonName();
 
         return $tableName . '_pkey';
     }
@@ -338,7 +344,15 @@ DROP TABLE IF EXISTS %s CASCADE;
             $sqlType = $col->getType() === PropelTypes::BIGINT ? 'bigserial' : 'serial';
         }
         if ($this->hasSize($sqlType) && $col->isDefaultSqlType($this)) {
-            $ddl[] = $sqlType . $domain->getSizeDefinition();
+            if ($this->isNumber($sqlType)) {
+                if ('NUMERIC' === strtoupper($sqlType)) {
+                    $ddl[] = $sqlType . $domain->getSizeDefinition();
+                } else {
+                    $ddl[] = $sqlType;
+                }
+            } else {
+                $ddl[] = $sqlType . $domain->getSizeDefinition();
+            }
         } else {
             $ddl[] = $sqlType;
         }
@@ -386,6 +400,20 @@ DROP TABLE IF EXISTS %s CASCADE;
         return true;
     }
 
+
+    public function getModifyTableDDL(TableDiff $tableDiff)
+    {
+        $ret = parent::getModifyTableDDL($tableDiff);
+
+        if ($this->createOrDropSequences) {
+            $ret = $this->createOrDropSequences . $ret;
+        }
+
+        $this->createOrDropSequences = '';
+
+        return $ret;
+    }
+
     /**
      * Overrides the implementation from DefaultPlatform
      *
@@ -398,8 +426,10 @@ DROP TABLE IF EXISTS %s CASCADE;
         $ret = '';
         $changedProperties = $columnDiff->getChangedProperties();
 
-        $toColumn = $columnDiff->getToColumn();
+        $fromColumn = $columnDiff->getFromColumn();
+        $toColumn = clone $columnDiff->getToColumn();
 
+        $fromTable = $fromColumn->getTable();
         $table = $toColumn->getTable();
 
         $colName = $this->quoteIdentifier($toColumn->getName());
@@ -407,40 +437,133 @@ DROP TABLE IF EXISTS %s CASCADE;
         $pattern = "
 ALTER TABLE %s ALTER COLUMN %s;
 ";
-        foreach ($changedProperties as $key => $property) {
-            switch ($key) {
-                case 'defaultValueType':
-                    continue;
-                case 'size':
-                case 'type':
-                case 'scale':
-                    $sqlType = $toColumn->getDomain()->getSqlType();
-                    if ($toColumn->isAutoIncrement() && $table && $table->getIdMethodParameters() == null) {
-                        $sqlType = $toColumn->getType() === PropelTypes::BIGINT ? 'bigserial' : 'serial';
-                    }
-                    if ($this->hasSize($sqlType)) {
-                        $sqlType .= $toColumn->getDomain()->getSizeDefinition();
-                    }
-                    $ret .= sprintf($pattern, $this->quoteIdentifier($table->getName()), $colName . ' TYPE ' . $sqlType);
-                    break;
-                case 'defaultValueValue':
-                    if ($property[0] !== null && $property[1] === null) {
-                        $ret .= sprintf($pattern, $this->quoteIdentifier($table->getName()), $colName . ' DROP DEFAULT');
-                    } else {
-                        $ret .= sprintf($pattern, $this->quoteIdentifier($table->getName()), $colName . ' SET ' . $this->getColumnDefaultValueDDL($toColumn));
-                    }
-                    break;
-                case 'notNull':
-                    $notNull = ' DROP NOT NULL';
-                    if ($property[1]) {
-                        $notNull = ' SET NOT NULL';
-                    }
-                    $ret .= sprintf($pattern, $this->quoteIdentifier($table->getName()), $colName . $notNull);
-                    break;
+
+
+        if (isset($changedProperties['autoIncrement'])) {
+            $tableName = $table->getName();
+            $colPlainName = $toColumn->getName();
+            $seqName = "{$tableName}_{$colPlainName}_seq";
+
+            if ($toColumn->isAutoIncrement() && $table && $table->getIdMethodParameters() == null) {
+
+                $defaultValue = "nextval('$seqName'::regclass)";
+                $toColumn->setDefaultValue($defaultValue);
+                $changedProperties['defaultValueValue'] = [null, $defaultValue];
+
+                //add sequence
+                if (!$fromTable->getDatabase()->hasSequence($seqName)) {
+                    $this->createOrDropSequences .= sprintf("
+CREATE SEQUENCE %s;
+",
+                        $seqName
+                    );
+                    $fromTable->getDatabase()->addSequence($seqName);
+                }
+            }
+
+            if (!$toColumn->isAutoIncrement() && $fromColumn->isAutoIncrement()) {
+                $changedProperties['defaultValueValue'] = [$fromColumn->getDefaultValueString(), null];
+                $toColumn->setDefaultValue(null);
+
+                //remove sequence
+                if ($fromTable->getDatabase()->hasSequence($seqName)) {
+                    $this->createOrDropSequences .= sprintf("
+DROP SEQUENCE %s CASCADE;
+",
+                        $seqName
+                    );
+                    $fromTable->getDatabase()->removeSequence($seqName);
+                }
             }
         }
 
+        if (isset($changedProperties['size']) || isset($changedProperties['type']) || isset($changedProperties['scale'])) {
+
+            $sqlType = $toColumn->getDomain()->getSqlType();
+
+            if ($this->hasSize($sqlType)) {
+                if ($this->isNumber($sqlType)) {
+                    if ('NUMBER' === strtoupper($sqlType)) {
+                        $sqlType .= $toColumn->getDomain()->getSizeDefinition();
+                    }
+                } else {
+                    $sqlType .= $toColumn->getDomain()->getSizeDefinition();
+                }
+            }
+            if ($using = $this->getUsingCast($fromColumn, $toColumn)) {
+                $sqlType .= $using;
+            }
+            $ret .= sprintf($pattern, $this->quoteIdentifier($table->getName()), $colName . ' TYPE ' . $sqlType);
+        }
+
+        if (isset($changedProperties['defaultValueValue'])) {
+            $property = $changedProperties['defaultValueValue'];
+            if ($property[0] !== null && $property[1] === null) {
+                $ret .= sprintf($pattern, $this->quoteIdentifier($table->getName()), $colName . ' DROP DEFAULT');
+            } else {
+                $ret .= sprintf($pattern, $this->quoteIdentifier($table->getName()), $colName . ' SET ' . $this->getColumnDefaultValueDDL($toColumn));
+            }
+        }
+
+        if (isset($changedProperties['notNull'])) {
+            $property = $changedProperties['notNull'];
+            $notNull = ' DROP NOT NULL';
+            if ($property[1]) {
+                $notNull = ' SET NOT NULL';
+            }
+            $ret .= sprintf($pattern, $this->quoteIdentifier($table->getName()), $colName . $notNull);
+        }
+
         return $ret;
+    }
+
+    public function isString($type)
+    {
+        $strings = ['VARCHAR'];
+        return in_array(strtoupper($type), $strings);
+    }
+
+    public function isNumber($type)
+    {
+        $numbers = ['INTEGER', 'INT4', 'INT2', 'NUMBER', 'NUMERIC', 'SMALLINT', 'BIGINT', 'DECICAML', 'REAL', 'DOUBLE PRECISION', 'SERIAL', 'BIGSERIAL'];
+        return in_array(strtoupper($type), $numbers);
+    }
+
+    public function getUsingCast(Column $fromColumn, Column $toColumn)
+    {
+        $fromSqlType = strtoupper($fromColumn->getDomain()->getOriginSqlType() ?: $fromColumn->getDomain()->getSqlType());
+        $toSqlType = strtoupper($toColumn->getDomain()->getOriginSqlType() ?: $toColumn->getDomain()->getSqlType());
+        $name = $fromColumn->getName();
+
+        if ($this->isNumber($fromSqlType) && $this->isString($toSqlType)) {
+            //cast from int to string
+            return '  ';
+        }
+        if ($this->isString($fromSqlType) && $this->isNumber($toSqlType)) {
+            //cast from string to int
+            return "
+   USING CASE WHEN trim($name) SIMILAR TO '[0-9]+'
+        THEN CAST(trim($name) AS integer)
+        ELSE NULL END";
+        }
+
+        if ($this->isNumber($fromSqlType) && 'BYTEA' === $toSqlType) {
+            return " USING decode(CAST($name as text), 'escape')";
+        }
+
+        if ('DATE' === $fromSqlType && 'TIME' === $toSqlType) {
+            return " USING NULL";
+        }
+
+        if ($this->isNumber($fromSqlType) && $this->isNumber($toSqlType)) {
+            return '';
+        }
+
+        if ($this->isString($fromSqlType) && $this->isString($toSqlType)) {
+            return '';
+        }
+
+        return " USING NULL";
     }
 
     /**
@@ -521,4 +644,5 @@ ALTER TABLE %s ALTER COLUMN %s;
 
         return preg_replace('/^/m', $tab, $script);
     }
+
 }

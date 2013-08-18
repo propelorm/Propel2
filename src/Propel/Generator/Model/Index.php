@@ -101,6 +101,20 @@ class Index extends MappingModel
         return $this->name;
     }
 
+    public function getFQName()
+    {
+        $table = $this->getTable();
+        if ($table->getDatabase()
+            && ($table->getSchema() || $table->getDatabase()->getSchema())
+            && $table->getDatabase()->getPlatform()
+            && $table->getDatabase()->getPlatform()->supportsSchemas()
+        ) {
+            return ($table->getSchema() ?: $table->getDatabase()->getSchema()) . '.' . $this->getName();
+        }
+
+        return $this->getName();
+    }
+
     protected function createName()
     {
         $inputs[] = $this->table->getDatabase();
