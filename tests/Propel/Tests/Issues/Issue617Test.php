@@ -154,7 +154,9 @@ ALTER TABLE `issue617_user` DROP FOREIGN KEY `issue617_user_FK_1`;
 
 DROP INDEX `issue617_user_FI_1` ON `issue617_user`;
 
-ALTER TABLE `issue617_user` DROP `group_id`;
+ALTER TABLE `issue617_user`
+
+  DROP `group_id`;
 ';
 
         $this->assertContains($expected, $sql);

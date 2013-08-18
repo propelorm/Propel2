@@ -57,6 +57,15 @@ interface ServiceContainerInterface
     public function getAdapter($name = null);
 
     /**
+     * Get the adapter class for a given datasource.
+     *
+     * @param string $name The datasource name
+     *
+     * @return string
+     */
+    public function getAdapterClass($name = null);
+
+    /**
      * Get the database map for a given datasource.
      *
      * The database maps are "registered" by the generated map builder classes.
