@@ -822,6 +822,7 @@ class Database extends ScopedMappingModel
 
     public function __toString()
     {
+        $tables = [];
         foreach ($this->getTables() as $table) {
             $columns = [];
 

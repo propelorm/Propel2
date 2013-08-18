@@ -1,11 +1,12 @@
 <?php
 
-
 namespace Propel\Tests\Generator\Migration;
 
-class BaseTest extends MigrationTestCase {
+class BaseTest extends MigrationTestCase
+{
 
-    public function testColumnRequireChange() {
+    public function testColumnRequireChange()
+    {
         $originXml = '
 <database>
     <table name="migration_test_1">
@@ -27,7 +28,8 @@ class BaseTest extends MigrationTestCase {
         $this->migrateAndTest($originXml, $targetXml);
     }
 
-    public function testColumnTypeChangeSimple() {
+    public function testColumnTypeChangeSimple()
+    {
         $originXml = '
 <database>
     <table name="migration_test_2">
@@ -50,7 +52,8 @@ class BaseTest extends MigrationTestCase {
         $this->migrateAndTest($originXml, $targetXml);
     }
 
-    public function testColumnTypeChangeComplex() {
+    public function testColumnTypeChangeComplex()
+    {
         $originXml = '
 <database>
     <table name="migration_test_3">
@@ -81,7 +84,8 @@ class BaseTest extends MigrationTestCase {
         $this->migrateAndTest($originXml, $targetXml);
     }
 
-    public function testColumnTypeChangeMoreComplex() {
+    public function testColumnTypeChangeMoreComplex()
+    {
         $originXml = '
 <database>
     <table name="migration_test_3">
@@ -137,7 +141,8 @@ class BaseTest extends MigrationTestCase {
     /**
      * @group test
      */
-    public function testColumnChangePrimaryKey() {
+    public function testColumnChangePrimaryKey()
+    {
         $originXml = '
 <database>
     <table name="migration_test_5">

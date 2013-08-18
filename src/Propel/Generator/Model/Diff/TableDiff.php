@@ -573,7 +573,7 @@ class TableDiff
     /**
      * Getter for the modifiedFks property
      *
-     * @return [ForeignKey, ForeignKey]
+     * @return ForeignKey[]
      */
     public function getModifiedFks()
     {

@@ -1,11 +1,12 @@
 <?php
 
-
 namespace Propel\Tests\Generator\Migration;
 
-class PrimaryKeyTest extends MigrationTestCase {
+class PrimaryKeyTest extends MigrationTestCase
+{
 
-    public function testAdd() {
+    public function testAdd()
+    {
         $originXml = '
 <database>
     <table name="migration_test_9">
@@ -26,7 +27,8 @@ class PrimaryKeyTest extends MigrationTestCase {
         $this->migrateAndTest($originXml, $targetXml);
     }
 
-    public function testRemove() {
+    public function testRemove()
+    {
         $originXml = '
 <database>
     <table name="migration_test_9">
@@ -47,7 +49,8 @@ class PrimaryKeyTest extends MigrationTestCase {
         $this->migrateAndTest($originXml, $targetXml);
     }
 
-    public function testChange() {
+    public function testChange()
+    {
         $originXml = '
 <database>
     <table name="migration_test_9">
@@ -70,7 +73,8 @@ class PrimaryKeyTest extends MigrationTestCase {
         $this->migrateAndTest($originXml, $targetXml);
     }
 
-    public function testChangeName() {
+    public function testChangeName()
+    {
         $originXml = '
 <database>
     <table name="migration_test_9">
@@ -91,7 +95,8 @@ class PrimaryKeyTest extends MigrationTestCase {
         $this->migrateAndTest($originXml, $targetXml);
     }
 
-    public function testChangeSize() {
+    public function testChangeSize()
+    {
         $originXml = '
 <database>
     <table name="migration_test_9">

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Propel\Tests\Generator\Migration;
 
 use Propel\Generator\Config\QuickGeneratorConfig;
@@ -12,7 +11,8 @@ use Propel\Generator\Util\SqlParser;
 use Propel\Runtime\Propel;
 use Propel\Tests\TestCase;
 
-class MigrationTestCase extends TestCase {
+class MigrationTestCase extends TestCase
+{
 
     /**
      * @var \Propel\Runtime\Connection\ConnectionInterface
@@ -37,16 +37,16 @@ class MigrationTestCase extends TestCase {
     public function setUp()
     {
         if (!$this->con) {
-            require_once __DIR__  . '/../../../../Fixtures/migration/build/conf/migration-conf.php';
+            require_once __DIR__ . '/../../../../Fixtures/migration/build/conf/migration-conf.php';
             $this->con = Propel::getConnection('migration');
 
             $adapterClass = Propel::getServiceContainer()->getAdapterClass('migration');
             $this->database = new Database();
 
-            $schemaParserClass = sprintf('\\%s\\%sSchemaParser', 'Propel\\Generator\\Reverse',  ucfirst($adapterClass));
-            $platformClass     = sprintf('\\%s\\%sPlatform',     'Propel\\Generator\\Platform', ucfirst($adapterClass));
+            $schemaParserClass = sprintf('\\%s\\%sSchemaParser', 'Propel\\Generator\\Reverse', ucfirst($adapterClass));
+            $platformClass = sprintf('\\%s\\%sPlatform', 'Propel\\Generator\\Platform', ucfirst($adapterClass));
 
-            $this->parser   = new $schemaParserClass($this->con);
+            $this->parser = new $schemaParserClass($this->con);
             $this->platform = new $platformClass();
             $generatorConfig = new QuickGeneratorConfig();
             $generatorConfig->setBuildProperty('mysqlTableType', 'InnoDB');
@@ -86,7 +86,7 @@ class MigrationTestCase extends TestCase {
             $stmt = $this->con->prepare($statement);
             try {
                 $stmt->execute();
-            } catch(\Exception $e) {
+            } catch (\Exception $e) {
                 throw new BuildException(sprintf("Can not execute SQL: \n%s\nFrom database: \n%s\n\nTo database: \n%s\n",
                     $statement,
                     $this->database,
@@ -142,11 +142,11 @@ class MigrationTestCase extends TestCase {
         if (false !== $diff) {
             $sql = $this->database->getPlatform()->getModifyDatabaseDDL($diff);
             $this->fail(sprintf(
-                "There are unexpected diffs: \n%s\n`%s`\nCurrent Database: \n%s\nTo XML Database: \n%s\n",
-                $diff,
-                $sql,
-                $this->database,
-                $database)
+                    "There are unexpected diffs: \n%s\n`%s`\nCurrent Database: \n%s\nTo XML Database: \n%s\n",
+                    $diff,
+                    $sql,
+                    $this->database,
+                    $database)
             );
         }
         $this->assertFalse($diff, 'no changes.');

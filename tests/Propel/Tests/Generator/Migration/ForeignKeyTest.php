@@ -1,11 +1,12 @@
 <?php
 
-
 namespace Propel\Tests\Generator\Migration;
 
-class ForeignKeyTest extends MigrationTestCase {
+class ForeignKeyTest extends MigrationTestCase
+{
 
-    public function testAdd() {
+    public function testAdd()
+    {
         $originXml = '
 <database>
     <table name="migration_test_6">
@@ -39,7 +40,8 @@ class ForeignKeyTest extends MigrationTestCase {
         $this->migrateAndTest($originXml, $targetXml);
     }
 
-    public function testRemove() {
+    public function testRemove()
+    {
         $originXml = '
 <database>
     <table name="migration_test_6">
@@ -74,7 +76,8 @@ class ForeignKeyTest extends MigrationTestCase {
     }
 
 
-    public function testChange() {
+    public function testChange()
+    {
         $originXml = '
 <database>
     <table name="migration_test_6">
