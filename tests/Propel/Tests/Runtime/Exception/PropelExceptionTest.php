@@ -11,13 +11,14 @@
 namespace Propel\Tests\Runtime\Exception;
 
 use Propel\Runtime\Exception\PropelException;
+use Propel\Tests\TestCase;
 
 /**
  * Test for PropelException class
  *
  * @author Francois Zaninotto
  */
-class PropelExceptionTest extends \PHPUnit_Framework_TestCase
+class PropelExceptionTest extends TestCase
 {
     public function testSimpleConstructor()
     {

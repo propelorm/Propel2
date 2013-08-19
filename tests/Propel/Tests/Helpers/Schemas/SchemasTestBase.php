@@ -11,11 +11,12 @@
 namespace Propel\Tests\Helpers\Schemas;
 
 use Propel\Runtime\Propel;
+use Propel\Tests\TestCase;
 
 /**
  * Bse class for tests on the schemas schema
  */
-abstract class SchemasTestBase extends \PHPUnit_Framework_TestCase
+abstract class SchemasTestBase extends TestCase
 {
     public static function setUpBeforeClass()
     {

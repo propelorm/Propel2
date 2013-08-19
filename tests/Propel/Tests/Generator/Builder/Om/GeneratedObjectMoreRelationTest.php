@@ -12,13 +12,14 @@ namespace Propel\Tests\Generator\Builder\Om;
 
 use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Generator\Util\QuickBuilder;
+use Propel\Tests\TestCase;
 
 /**
  * Tests for More relations
  *
  * @author MArc J. Schmidt
  */
-class GeneratedObjectMoreRelationTest extends \PHPUnit_Framework_TestCase
+class GeneratedObjectMoreRelationTest extends TestCase
 {
     /**
      * Setup schema und some default data

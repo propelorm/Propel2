@@ -16,8 +16,9 @@ use Propel\Generator\Model\Schema;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\Table;
+use Propel\Tests\TestCase;
 
-class SchemaValidatorTest extends \PHPUnit_Framework_TestCase
+class SchemaValidatorTest extends TestCase
 {
     protected function getSchemaForTable($table)
     {

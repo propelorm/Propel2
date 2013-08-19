@@ -11,12 +11,13 @@
 namespace Propel\Tests\Generator\Builder\Util;
 
 use Propel\Generator\Builder\Util\PropelTemplate;
+use Propel\Tests\TestCase;
 
 /**
  * Tests for PropelTemplate class
  *
  */
-class PropelTemplateTest extends \PHPUnit_Framework_TestCase
+class PropelTemplateTest extends TestCase
 {
     public function testRenderStringNoParam()
     {

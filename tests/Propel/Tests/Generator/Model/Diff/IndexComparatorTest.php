@@ -13,12 +13,13 @@ use Propel\Generator\Model\Column;
 use Propel\Generator\Model\Index;
 use Propel\Generator\Model\Unique;
 use Propel\Generator\Model\Diff\IndexComparator;
+use \Propel\Tests\TestCase;
 
 /**
  * Tests for the ColumnComparator service class.
  *
  */
-class IndexComparatorTest extends \PHPUnit_Framework_TestCase
+class IndexComparatorTest extends TestCase
 {
     public function testCompareNoDifference()
     {

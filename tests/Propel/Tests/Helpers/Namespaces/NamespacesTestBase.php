@@ -11,11 +11,12 @@
 namespace Propel\Tests\Helpers\Namespaces;
 
 use Propel\Runtime\Propel;
+use Propel\Tests\TestCase;
 
 /**
  * Bse class for tests on the schemas schema
  */
-abstract class NamespacesTestBase extends \PHPUnit_Framework_TestCase
+abstract class NamespacesTestBase extends TestCase
 {
     protected function setUp()
     {

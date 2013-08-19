@@ -9,8 +9,9 @@ use Propel\Generator\Platform\MysqlPlatform;
 use Propel\Generator\Reverse\MysqlSchemaParser;
 use Propel\Generator\Util\SqlParser;
 use Propel\Runtime\Propel;
+use Propel\Tests\TestCase;
 
-class PlatformDatabaseBuildTimeBase extends \PHPUnit_Framework_TestCase
+class PlatformDatabaseBuildTimeBase extends TestCase
 {
 
     /**

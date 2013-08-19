@@ -9,6 +9,7 @@
  */
 
 namespace Propel\Tests\Helpers;
+use Propel\Tests\TestCase;
 
 /**
  * Base functionality to be extended by all Propel test cases.  Test
@@ -18,7 +19,7 @@ namespace Propel\Tests\Helpers;
  * @author Daniel Rall <dlr@finemaltcoding.com> (Torque)
  * @author Christopher Elkins <celkins@scardini.com> (Torque)
  */
-abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
+abstract class BaseTestCase extends TestCase
 {
     /**
      * Conditional compilation flag.

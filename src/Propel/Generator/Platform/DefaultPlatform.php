@@ -478,6 +478,10 @@ DROP TABLE " . $this->quoteIdentifier($table->getName()) . ";
      */
     public function getDropPrimaryKeyDDL(Table $table)
     {
+        if (!$table->hasPrimaryKey()) {
+            return '';
+        }
+
         $pattern = "
 ALTER TABLE %s DROP CONSTRAINT %s;
 ";
@@ -491,11 +495,15 @@ ALTER TABLE %s DROP CONSTRAINT %s;
     /**
      * Returns the DDL SQL to add the primary key of a table.
      *
-     * @param  Table  $table
+     * @param  Table  $table From Table
      * @return string
      */
     public function getAddPrimaryKeyDDL(Table $table)
     {
+        if (!$table->hasPrimaryKey()) {
+            return '';
+        }
+
         $pattern = "
 ALTER TABLE %s ADD %s;
 ";
@@ -509,7 +517,7 @@ ALTER TABLE %s ADD %s;
     /**
      * Returns the DDL SQL to add the indices of a table.
      *
-     * @param  Table  $table
+     * @param  Table  $table To Table
      * @return string
      */
     public function getAddIndicesDDL(Table $table)
@@ -555,7 +563,7 @@ DROP INDEX %s;
 ";
 
         return sprintf($pattern,
-            $this->quoteIdentifier($index->getName())
+            $this->quoteIdentifier($index->getFQName())
         );
     }
 
@@ -754,10 +762,9 @@ ALTER TABLE %s RENAME TO %s;
     {
         $ret = '';
 
+        $toTable = $tableDiff->getToTable();
+
         // drop indices, foreign keys
-        if ($tableDiff->hasModifiedPk()) {
-            $ret .= $this->getDropPrimaryKeyDDL($tableDiff->getFromTable());
-        }
         foreach ($tableDiff->getRemovedFks() as $fk) {
             $ret .= $this->getDropForeignKeyDDL($fk);
         }
@@ -773,24 +780,64 @@ ALTER TABLE %s RENAME TO %s;
             $ret .= $this->getDropIndexDDL($fromIndex);
         }
 
+        $columnChanges = '';
+
         // alter table structure
+        if ($tableDiff->hasModifiedPk()) {
+            $columnChanges .= $this->getDropPrimaryKeyDDL($tableDiff->getFromTable());
+        }
         foreach ($tableDiff->getRenamedColumns() as $columnRenaming) {
-            $ret .= $this->getRenameColumnDDL($columnRenaming[0], $columnRenaming[1]);
+            $columnChanges .= $this->getRenameColumnDDL($columnRenaming[0], $columnRenaming[1]);
         }
         if ($modifiedColumns = $tableDiff->getModifiedColumns()) {
-            $ret .= $this->getModifyColumnsDDL($modifiedColumns);
+            $columnChanges .= $this->getModifyColumnsDDL($modifiedColumns);
         }
         if ($addedColumns = $tableDiff->getAddedColumns()) {
-            $ret .= $this->getAddColumnsDDL($addedColumns);
+            $columnChanges .= $this->getAddColumnsDDL($addedColumns);
         }
         foreach ($tableDiff->getRemovedColumns() as $column) {
-            $ret .= $this->getRemoveColumnDDL($column);
+            $columnChanges .= $this->getRemoveColumnDDL($column);
         }
 
         // add new indices and foreign keys
         if ($tableDiff->hasModifiedPk()) {
-            $ret .= $this->getAddPrimaryKeyDDL($tableDiff->getToTable());
+            $columnChanges .= $this->getAddPrimaryKeyDDL($tableDiff->getToTable());
         }
+
+        if ($columnChanges) {
+            //merge column changes into one command. This is more compatible especially with PK constraints.
+
+            $changes = explode(';', $columnChanges);
+            $columnChanges = [];
+
+            foreach ($changes as $change) {
+                if (!trim($change)) continue;
+                $isCompatibleCall = preg_match(
+                    sprintf('/ALTER TABLE %s (?!RENAME)/', $this->quoteIdentifier($toTable->getName())),
+                    $change
+                );
+                if ($isCompatibleCall) {
+                    $columnChanges[] = preg_replace(
+                        sprintf('/ALTER TABLE %s /', $this->quoteIdentifier($toTable->getName())),
+                        "\n\n  ",
+                        trim($change)
+                    );
+                } else {
+                    $ret .= $change.";\n";
+                }
+            }
+
+            if (0 < count($columnChanges)) {
+                $ret .= sprintf("
+ALTER TABLE %s%s;
+",
+                    $this->quoteIdentifier($toTable->getName()),
+                    implode(',', $columnChanges)
+                );
+            }
+        }
+
+        // create indices, foreign keys
         foreach ($tableDiff->getModifiedIndices() as $indexName => $indexModification) {
             list($fromIndex, $toIndex) = $indexModification;
             $ret .= $this->getAddIndexDDL($toIndex);

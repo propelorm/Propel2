@@ -11,13 +11,14 @@
 namespace Propel\Tests\Runtime\Adapter\Pdo;
 
 use Propel\Runtime\Adapter\Pdo\PgsqlAdapter;
+use Propel\Tests\TestCase;
 
 /**
  * Tests the Pgsql adapter
  *
  * @author Kévin Gomez <contact@kevingomez.fr>
  */
-class PgsqlAdapterTest extends \PHPUnit_Framework_TestCase
+class PgsqlAdapterTest extends TestCase
 {
   public function testGetExplainPlanQuery()
   {

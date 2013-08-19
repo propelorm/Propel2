@@ -1420,6 +1420,9 @@ class Column extends MappingModel
     public function __clone()
     {
         $this->referrers = null;
+        if ($this->domain) {
+            $this->domain = clone $this->domain;
+        }
     }
 
     /**

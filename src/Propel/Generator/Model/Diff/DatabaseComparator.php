@@ -19,8 +19,19 @@ use Propel\Generator\Model\Database;
  */
 class DatabaseComparator
 {
+    /**
+     * @var DatabaseDiff
+     */
     protected $databaseDiff;
+
+    /**
+     * @var Database
+     */
     protected $fromDatabase;
+
+    /**
+     * @var Database
+     */
     protected $toDatabase;
 
     public function __construct($databaseDiff = null)
@@ -143,7 +154,7 @@ class DatabaseComparator
                 if (!in_array($addedTableName, $renamed) && !TableComparator::computeDiff($addedTable, $removedTable, $caseInsensitive)) {
                     // no difference except the name, that's probably a renaming
                     $renamed[] = $addedTableName;
-                    $this->databaseDiff->addRenamedTable($removedTableName, $addedTableName);
+                    $this->databaseDiff->addRenamedTable($removedTableName, $addedTable->getCommonName());
                     $this->databaseDiff->removeAddedTable($addedTableName);
                     $this->databaseDiff->removeRemovedTable($removedTableName);
                     $databaseDifferences--;

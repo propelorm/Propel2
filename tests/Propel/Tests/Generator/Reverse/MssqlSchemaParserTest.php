@@ -11,13 +11,14 @@
 namespace Propel\Tests\Generator\Reverse;
 
 use Propel\Generator\Reverse\MssqlSchemaParser;
+use Propel\Tests\TestCase;
 
 /**
  * Tests for Mssql database schema parser.
  *
  * @author Pierre Tachoire
  */
-class MssqlSchemaParserTest extends \PHPUnit_Framework_TestCase
+class MssqlSchemaParserTest extends TestCase
 {
     public function testCleanDelimitedIdentifiers()
     {

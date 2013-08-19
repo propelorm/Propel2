@@ -55,11 +55,13 @@ DROP TABLE IF EXISTS `foo1`;
 
 RENAME TABLE `foo3` TO `foo4`;
 
-ALTER TABLE `foo2` CHANGE `bar` `bar1` INTEGER;
+ALTER TABLE `foo2`
 
-ALTER TABLE `foo2` CHANGE `baz` `baz` VARCHAR(12);
+  CHANGE `bar` `bar1` INTEGER,
 
-ALTER TABLE `foo2` ADD
+  CHANGE `baz` `baz` VARCHAR(12),
+
+  ADD
 (
     `baz3` TEXT
 );
@@ -105,11 +107,13 @@ DROP INDEX `foo1_FI_2` ON `foo`;
 
 DROP INDEX `bar_FK` ON `foo`;
 
-ALTER TABLE `foo` CHANGE `bar` `bar1` INTEGER;
+ALTER TABLE `foo`
 
-ALTER TABLE `foo` CHANGE `baz` `baz` VARCHAR(12);
+  CHANGE `bar` `bar1` INTEGER,
 
-ALTER TABLE `foo` ADD
+  CHANGE `baz` `baz` VARCHAR(12),
+
+  ADD
 (
     `baz3` TEXT
 );

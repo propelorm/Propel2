@@ -11,13 +11,14 @@
 namespace Propel\Tests\Runtime\Parser;
 
 use Propel\Runtime\Parser\YamlParser;
+use Propel\Tests\TestCase;
 
 /**
  * Test for YamlParser class
  *
  * @author Francois Zaninotto
  */
-class YamlParserTest extends \PHPUnit_Framework_TestCase
+class YamlParserTest extends TestCase
 {
     public static function arrayYAMLConversionDataProvider()
     {

@@ -15,13 +15,14 @@ use Propel\Generator\Util\QuickBuilder;
 use Propel\Generator\Behavior\Archivable\ArchivableBehavior;
 
 use Propel\Runtime\Propel;
+use Propel\Tests\TestCase;
 
 /**
  * Tests for ArchivableBehavior class
  *
  * @author François Zaninotto
  */
-class ArchivableBehaviorQueryBuilderModifierTest extends \PHPUnit_Framework_TestCase
+class ArchivableBehaviorQueryBuilderModifierTest extends TestCase
 {
     public function setUp()
     {

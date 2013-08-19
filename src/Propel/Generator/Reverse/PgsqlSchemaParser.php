@@ -51,7 +51,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
         'int24'       => PropelTypes::BIGINT,
         'real'        => PropelTypes::REAL,
         'float'       => PropelTypes::FLOAT,
-        'float4'      => PropelTypes::FLOAT,
+        'float4'      => PropelTypes::REAL,
         'decimal'     => PropelTypes::DECIMAL,
         'numeric'     => PropelTypes::DECIMAL,
         'double'      => PropelTypes::DOUBLE,
@@ -68,6 +68,19 @@ class PgsqlSchemaParser extends AbstractSchemaParser
         'timestamptz' => PropelTypes::TIMESTAMP,
         'bytea'       => PropelTypes::BLOB,
         'text'        => PropelTypes::LONGVARCHAR,
+        'time without time zone' => PropelTypes::TIME,
+        'timestamp without time zone' => PropelTypes::TIMESTAMP,
+        'double precision' => PropelTypes::DOUBLE,
+    );
+
+
+    protected static $defaultTypeSizes = array(
+        'char'      => 1,
+        'character' => 1,
+        'integer'   => 32,
+        'bigint'    => 64,
+        'smallint'  => 16,
+        'double precision' => 54
     );
 
     /**
@@ -163,7 +176,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
             $this->addPrimaryKey($wrap->table, $wrap->oid, $version);
         }
 
-        // @TODO - Handle Sequences ...
+        $this->addSequences($database);
         return count($tableWraps);
     }
 
@@ -178,74 +191,66 @@ class PgsqlSchemaParser extends AbstractSchemaParser
     {
         // Get the columns, types, etc.
         // Based on code from pgAdmin3 (http://www.pgadmin.org/)
-        $stmt = $this->dbh->prepare("SELECT
-            att.attname,
-            att.atttypmod,
-            att.atthasdef,
-            att.attnotnull,
-            def.adsrc,
-            CASE WHEN att.attndims > 0 THEN 1 ELSE 0 END AS isarray,
-                CASE
-                    WHEN ty.typname = 'bpchar'
-                    THEN 'char'
-                    WHEN ty.typname = '_bpchar'
-                    THEN '_char'
-                    ELSE
-                        ty.typname
-                        END AS typname,
-                        ty.typtype
-                        FROM pg_attribute att
-                        JOIN pg_type ty ON ty.oid=att.atttypid
-                        LEFT OUTER JOIN pg_attrdef def ON adrelid=att.attrelid AND adnum=att.attnum
-                        WHERE att.attrelid = ? AND att.attnum > 0
-                        AND att.attisdropped IS FALSE
-                        ORDER BY att.attnum");
+
+        $searchPath = '?';
+        $params = [$table->getDatabase()->getSchema()];
+        if (!$table->getDatabase()->getSchema()) {
+            $stmt = $this->dbh->query('SHOW search_path');
+            $searchPathString = $stmt->fetchColumn();
+
+            $params = [];
+            $searchPath = explode(',', $searchPathString);
+
+            foreach ($searchPath as $n => &$path) {
+                $params[] = $path;
+                $path = '?';
+            }
+            $searchPath = implode(', ', $searchPath);
+        }
+
+        $stmt = $this->dbh->prepare("
+        SELECT
+            column_name,
+            data_type,
+            column_default,
+            is_nullable,
+            numeric_precision,
+            numeric_scale,
+            character_maximum_length
+        FROM information_schema.columns
+        WHERE
+            table_schema IN($searchPath) AND table_name = ?
+        ");
 
         $stmt->bindValue(1, $oid, \PDO::PARAM_INT);
-        $stmt->execute();
+        $params[] = $table->getCommonName();
+        $stmt->execute($params);
 
         while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
 
-            $size = null;
-            $precision = null;
-            $scale = null;
+            $size = $row['character_maximum_length'];
+            if (!$size) {
+                $size = $row['numeric_precision'];
+            }
+            $scale = $row['numeric_scale'];
+
+            $name = $row['column_name'];
+            $type = $row['data_type'];
+            $default = $row['column_default'];
+            $isNullable = (true === $row['is_nullable'] || 'YES' === strtoupper($row['is_nullable']));
 
             // Check to ensure that this column isn't an array data type
-            if (1 === ((int) $row['isarray'])) {
-                throw new EngineException(sprintf('Array datatypes are not currently supported [%s.%s]', $this->name, $row['attname']));
-            }
-
-            $name = $row['attname'];
-
-            // If they type is a domain, Process it
-            if ('d' === strtolower($row['typtype'])) {
-                $arrDomain = $this->processDomain($row['typname']);
-                $type = $arrDomain['type'];
-                $size = $arrDomain['length'];
-                $precision = $size;
-                $scale = $arrDomain['scale'];
-                $boolHasDefault = (strlen(trim($row['atthasdef'])) > 0) ? $row['atthasdef'] : $arrDomain['hasdefault'];
-                $default = (strlen(trim($row['adsrc'])) > 0) ? $row['adsrc'] : $arrDomain['default'];
-                $isNullable = (strlen(trim($row['attnotnull'])) > 0) ? $row['attnotnull'] : $arrDomain['notnull'];
-                $isNullable = ('t' === $isNullable ? false : true);
-            } else {
-                $type = $row['typname'];
-                $arrLengthPrecision = $this->processLengthScale($row['atttypmod'], $type);
-                $size = $arrLengthPrecision['length'];
-                $precision = $size;
-                $scale = $arrLengthPrecision['scale'];
-                $boolHasDefault = $row['atthasdef'];
-                $default = $row['adsrc'];
-                $isNullable = ('t' === $row['attnotnull'] ? false : true);
+            if ('ARRAY' === $type) {
+                $this->warn(sprintf('Array datatypes are not currently supported [%s.%s]', $table->getName(), $name));
+                continue;
             }
 
             $autoincrement = null;
 
             // if column has a default
-            if (true === $boolHasDefault && (strlen(trim($default)) > 0)) {
+            if ((strlen(trim($default)) > 0)) {
                 if (!preg_match('/^nextval\(/', $default)) {
                     $strDefault= preg_replace('/::[\W\D]*/', '', $default);
-                    $default = str_replace("'", '', $strDefault);
                 } else {
                     $autoincrement = true;
                     $default = null;
@@ -260,21 +265,35 @@ class PgsqlSchemaParser extends AbstractSchemaParser
                 $this->warn('Column [' . $table->getName() . '.' . $name. '] has a column type ('.$type.') that Propel does not support.');
             }
 
+            if (isset(static::$defaultTypeSizes[$type]) && $size == static::$defaultTypeSizes[$type]) {
+                $size = null;
+            }
+
+            if ('SERIAL' === substr(strtoupper($type), 0, 6)) {
+                $autoincrement = true;
+                $default = null;
+            }
+
             $column = new Column($name);
             $column->setTable($table);
             $column->setDomainForType($propelType);
-            // We may want to provide an option to include this:
-            // $column->getDomain()->replaceSqlType($type);
+            $column->getDomain()->setOriginSqlType($type);
             $column->getDomain()->replaceSize($size);
-            $column->getDomain()->replaceScale($scale);
-            if (null !== $default) {
-                if (in_array($default, array('now()'))) {
-                    $type = ColumnDefaultValue::TYPE_EXPR;
-                } else {
-                    $type = ColumnDefaultValue::TYPE_VALUE;
-                }
-                $column->getDomain()->setDefaultValue(new ColumnDefaultValue($default, $type));
+            if ($scale) {
+                $column->getDomain()->replaceScale($scale);
             }
+
+            $defaultType = '';
+            if (null !== $default) {
+                if ("'" !== substr($default, 0, 1) && strpos($default, '(')) {
+                    $defaultType = ColumnDefaultValue::TYPE_EXPR;
+                } else {
+                    $defaultType = ColumnDefaultValue::TYPE_VALUE;
+                    $default = str_replace("'", '', $strDefault);
+                }
+                $column->getDomain()->setDefaultValue(new ColumnDefaultValue($default, $defaultType));
+            }
+
             $column->setAutoIncrement($autoincrement);
             $column->setNotNull(!$isNullable);
 
@@ -558,34 +577,39 @@ class PgsqlSchemaParser extends AbstractSchemaParser
     /**
      * Adds the sequences for this database.
      *
-     * @return void
-     * @throws SQLException
+     * @param Database $database
      */
     protected function addSequences(Database $database)
     {
-        /*
-        -- WE DON'T HAVE ANY USE FOR THESE YET IN REVERSE ENGINEERING ...
-        $this->sequences = array();
-        $result = pg_query($this->conn->getResource(), "SELECT c.oid,
-                                                        case when n.nspname='public' then c.relname else n.nspname||'.'||c.relname end as relname
-                                                        FROM pg_class c join pg_namespace n on (c.relnamespace=n.oid)
-                                                        WHERE c.relkind = 'S'
-                                                          AND n.nspname NOT IN ('information_schema','pg_catalog')
-                                                          AND n.nspname NOT LIKE 'pg_temp%'
-                                                          AND n.nspname NOT LIKE 'pg_toast%'
-                                                        ORDER BY relname");
+        $searchPath = '?';
+        $params = [$database->getSchema()];
+        if (!$database->getSchema()) {
+            $stmt = $this->dbh->query('SHOW search_path');
+            $searchPathString = $stmt->fetchColumn();
 
-        if (!$result) {
-            throw new SQLException("Could not list sequences", pg_last_error($this->dblink));
+            $params = [];
+            $searchPath = explode(',', $searchPathString);
+
+            foreach ($searchPath as $n => &$path) {
+                $params[] = $path;
+                $path = '?';
+            }
+            $searchPath = implode(', ', $searchPath);
         }
 
-        while ($row = pg_fetch_assoc($result)) {
-            // FIXME -- decide what info we need for sequences & then create a SequenceInfo object (if needed)
-            $obj = new stdClass;
-            $obj->name = $row['relname'];
-            $obj->oid = $row['oid'];
-            $this->sequences[strtoupper($row['relname'])] = $obj;
+        $stmt = $this->dbh->prepare("
+            SELECT c.relname, n.nspname
+            FROM pg_class c, pg_namespace n
+            WHERE
+                n.oid = c.relnamespace
+            AND c.relkind = 'S'
+            AND n.nspname IN ($searchPath);
+        ");
+        $stmt->execute($params);
+
+        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            $name = $row['nspname'] . '.' . $row['relname'];
+            $database->addSequence($name);
         }
-         */
     }
 }

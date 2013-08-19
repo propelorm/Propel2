@@ -11,12 +11,13 @@
 namespace Propel\Tests\Generator\Config;
 
 use Propel\Generator\Config\GeneratorConfig;
+use Propel\Tests\TestCase;
 
 /**
  * @author William Durand <william.durand1@gmail.com>
  * @package	propel.generator.config
  */
-class GeneratorConfigTest extends \PHPUnit_Framework_TestCase
+class GeneratorConfigTest extends TestCase
 {
     protected $pathToFixtureFiles;
 

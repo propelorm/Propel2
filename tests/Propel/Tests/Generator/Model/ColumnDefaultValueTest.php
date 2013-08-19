@@ -9,12 +9,13 @@
  */
 
 use Propel\Generator\Model\ColumnDefaultValue;
+use \Propel\Tests\TestCase;
 
 /**
  * Tests for ColumnDefaultValue class.
  *
  */
-class ColumnDefaultValueTest extends \PHPUnit_Framework_TestCase
+class ColumnDefaultValueTest extends TestCase
 {
     public function equalsProvider()
     {

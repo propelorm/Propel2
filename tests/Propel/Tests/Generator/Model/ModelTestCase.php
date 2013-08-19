@@ -9,13 +9,14 @@
  */
 
 namespace Propel\Tests\Generator\Model;
+use Propel\Tests\TestCase;
 
 /**
  * This class provides methods for mocking Table, Database and Platform objects.
  *
  * @author Hugo Hamon <webmaster@apprendre-php.com>
  */
-abstract class ModelTestCase extends \PHPUnit_Framework_TestCase
+abstract class ModelTestCase extends TestCase
 {
     /**
      * Returns a dummy Behavior object.

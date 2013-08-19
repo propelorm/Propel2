@@ -30,8 +30,17 @@ class Database extends ScopedMappingModel
     const DEFAULT_STRING_FORMAT = 'YAML';
 
     private $platform;
+
+    /**
+     * @var Table[]
+     */
     private $tables;
+
+    /**
+     * @var string
+     */
     private $name;
+
     private $baseClass;
     private $defaultIdMethod;
     private $defaultPhpNamingMethod;
@@ -39,9 +48,26 @@ class Database extends ScopedMappingModel
     private $domainMap;
     private $heavyIndexing;
     private $parentSchema;
+
+    /**
+     * @var Table[]
+     */
     private $tablesByName;
+
+    /**
+     * @var Table[]
+     */
     private $tablesByLowercaseName;
+
+    /**
+     * @var Table[]
+     */
     private $tablesByPhpName;
+
+    /**
+     * @var string[]
+     */
+    private $sequences;
 
     protected $behaviors;
     protected $defaultStringFormat;
@@ -271,7 +297,7 @@ class Database extends ScopedMappingModel
     /**
      * Return the list of all tables.
      *
-     * @return array
+     * @return Table[]
      */
     public function getTables()
     {
@@ -337,6 +363,10 @@ class Database extends ScopedMappingModel
      */
     public function getTable($name, $caseInsensitive = false)
     {
+        if ($this->getSchema() && $this->getPlatform()->supportsSchemas() && false === strpos($name, '.')) {
+            $name = $this->getSchema() . '.' . $name;
+        }
+
         if (!$this->hasTable($name, $caseInsensitive)) {
             return null;
         }
@@ -414,6 +444,78 @@ class Database extends ScopedMappingModel
         }
 
         return $table;
+    }
+
+    /**
+     * @param string[] $sequences
+     */
+    public function setSequences($sequences)
+    {
+        $this->sequences = $sequences;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getSequences()
+    {
+        return $this->sequences;
+    }
+
+    /**
+     * @param string $sequence
+     */
+    public function addSequence($sequence)
+    {
+        $this->sequences[] = $sequence;
+    }
+
+    /**
+     * @param string $sequence
+     */
+    public function removeSequence($sequence)
+    {
+        if ($this->sequences) {
+            if (false !== ($idx = array_search($sequence, $this->sequences))) {
+                unset($this->sequence[$idx]);
+            }
+        }
+    }
+
+    /**
+     * @param string $sequence
+     * @return bool
+     */
+    public function hasSequence($sequence)
+    {
+        return $this->sequences && in_array($sequence, $this->sequences);
+    }
+
+    public function setSchema($schema)
+    {
+        $oldSchema = $this->schema;
+        if ($this->schema !== $schema) {
+
+            $fixHash = function(&$array) use($schema, $oldSchema){
+                foreach ($array as $k => $v) {
+                    if ($schema) {
+                        if (false === strpos($k, '.')) {
+                            $array[$schema . '.' . $k] = $v;
+                            unset($array[$k]);
+                        }
+                    } else {
+                        if (false !== strpos($k, '.')) {
+                            $array[explode('.', $k)[1]] = $v;
+                            unset($array[$k]);
+                        }
+                    }
+                }
+            };
+
+            $fixHash($this->tablesByName);
+            $fixHash($this->tablesByLowercaseName);
+        }
+        parent::setSchema($schema);
     }
 
     /**
@@ -716,5 +818,32 @@ class Database extends ScopedMappingModel
         foreach ($this->tables as $table) {
             $table->appendXml($dbNode);
         }
+    }
+
+    public function __toString()
+    {
+        $tables = [];
+        foreach ($this->getTables() as $table) {
+            $columns = [];
+
+            foreach ($table->getColumns() as $column) {
+                $columns[] = sprintf("    %s %s %s %s %s %s (%s)",
+                    $column->getName(),
+                    $column->getType(),
+                    $column->getSize(),
+                    $column->isPrimaryKey() ? 'PK' : '',
+                    $column->isNotNull() ? 'NOT NULL' : '',
+                    $column->getDefaultValueString() ? "'".$column->getDefaultValueString()."'" : '',
+                    $column->isAutoIncrement() ? 'AUTO_INCREMENT' : '',
+                    $column->getDomain()->getOriginSqlType()
+                );
+            }
+
+            $tables[] = sprintf("  %s (%s): \n%s", $table->getName(), $table->getCommonName(), implode("\n", $columns));
+        }
+
+        return sprintf("%s:\n%s",
+            $this->getName() . ($this->getSchema() ? '.'. $this->getSchema() : ''),
+            implode("\n", $tables));
     }
 }

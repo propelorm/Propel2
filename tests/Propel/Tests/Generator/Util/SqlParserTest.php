@@ -9,11 +9,12 @@
  */
 
 use Propel\Generator\Util\SqlParser;
+use \Propel\Tests\TestCase;
 
 /**
  *
  */
-class SqlParserTest extends \PHPUnit_Framework_TestCase
+class SqlParserTest extends TestCase
 {
     public function stripSqlCommentsDataProvider()
     {

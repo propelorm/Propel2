@@ -10,6 +10,7 @@
 
 namespace Propel\Generator\Platform;
 
+use Propel\Generator\Model\Column;
 use Propel\Generator\Model\Domain;
 use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\PropelTypes;

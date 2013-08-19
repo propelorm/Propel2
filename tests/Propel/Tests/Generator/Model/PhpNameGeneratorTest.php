@@ -9,13 +9,14 @@
  */
 
 use Propel\Generator\Model\PhpNameGenerator;
+use \Propel\Tests\TestCase;
 
 /**
  * Tests for PhpNameGenerator
  *
  * @author <a href="mailto:mpoeschl@marmot.at>Martin Poeschl</a>
  */
-class PhpNameGeneratorTest extends \PHPUnit_Framework_TestCase
+class PhpNameGeneratorTest extends TestCase
 {
     public static function phpnameMethodDataProvider()
     {
