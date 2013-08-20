@@ -147,11 +147,13 @@ class AggregateColumnBehaviorTest extends BookstoreTestBase
     {
         list($poll, $item1, $item2) = $this->populatePoll();
         $this->assertEquals(19, $poll->getTotalScore());
-        AggregateItemQuery::create()
-            ->setModelAlias('foo', true)
-            ->filterById($item1->getId())
-            ->delete($this->con);
-        $this->assertEquals(7, $poll->getTotalScore(), 'Deleting related objects with a query using alias updates the aggregate column');
+        if (!$this->runningOnSQLite()) {
+            AggregateItemQuery::create()
+                ->setModelAlias('foo', true)
+                ->filterById($item1->getId())
+                ->delete($this->con);
+            $this->assertEquals(7, $poll->getTotalScore(), 'Deleting related objects with a query using alias updates the aggregate column');
+        }
     }
 
     public function testRemoveRelation()

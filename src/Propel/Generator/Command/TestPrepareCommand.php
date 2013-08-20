@@ -151,11 +151,18 @@ class TestPrepareCommand extends AbstractCommand
 
             $conParams = array();
             foreach ($connections as $con) {
-                $conParams[] = sprintf(
-                    '%s=%s;user=%s;password=%s',
-                    $con, $input->getOption('dsn'),
-                    $input->getOption('user'), $input->getOption('password')
-                );
+                if ('sqlite' === substr($input->getOption('dsn'), 0, 6)) {
+                    $conParams[] = sprintf(
+                        '%s=%s',
+                        $con, $input->getOption('dsn')
+                    );
+                } else {
+                    $conParams[] = sprintf(
+                        '%s=%s;user=%s;password=%s',
+                        $con, $input->getOption('dsn'),
+                        $input->getOption('user'), $input->getOption('password')
+                    );
+                }
             }
 
             $in = new ArrayInput(array(

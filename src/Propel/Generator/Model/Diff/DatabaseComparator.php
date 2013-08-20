@@ -154,7 +154,7 @@ class DatabaseComparator
                 if (!in_array($addedTableName, $renamed) && !TableComparator::computeDiff($addedTable, $removedTable, $caseInsensitive)) {
                     // no difference except the name, that's probably a renaming
                     $renamed[] = $addedTableName;
-                    $this->databaseDiff->addRenamedTable($removedTableName, $addedTable->getCommonName());
+                    $this->databaseDiff->addRenamedTable($removedTableName, $addedTableName);
                     $this->databaseDiff->removeAddedTable($addedTableName);
                     $this->databaseDiff->removeRemovedTable($removedTableName);
                     $databaseDifferences--;

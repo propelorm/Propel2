@@ -51,7 +51,7 @@ class GeneratedObjectMoreRelationTest extends TestCase
         <column name="user_id" required="true" primaryKey="true" type="INTEGER" />
         <column name="page_id" required="true" primaryKey="true" type="INTEGER" />
         <column name="comment" type="VARCHAR" size="100" />
-        <foreign-key foreignTable="more_relation_test_page" onDelete="restrict">
+        <foreign-key foreignTable="more_relation_test_page" onDelete="cascade">
           <reference local="page_id" foreign="id"/>
         </foreign-key>
     </table>

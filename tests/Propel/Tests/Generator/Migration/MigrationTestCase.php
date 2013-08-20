@@ -81,12 +81,14 @@ class MigrationTestCase extends TestCase
         }
         $sql = $this->database->getPlatform()->getModifyDatabaseDDL($diff);
 
+        $this->con->beginTransaction();
         $statements = SqlParser::parseString($sql);
         foreach ($statements as $statement) {
-            $stmt = $this->con->prepare($statement);
             try {
+                $stmt = $this->con->prepare($statement);
                 $stmt->execute();
             } catch (\Exception $e) {
+                $this->con->rollBack();
                 throw new BuildException(sprintf("Can not execute SQL: \n%s\nFrom database: \n%s\n\nTo database: \n%s\n",
                     $statement,
                     $this->database,
@@ -94,7 +96,7 @@ class MigrationTestCase extends TestCase
                 ), null, $e);
             }
         }
-
+        $this->con->commit();
         return $database;
     }
 

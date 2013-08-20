@@ -7,18 +7,14 @@ php:
 env:
   - DB=mysql DB_USER=root
   - DB=pgsql
+  - DB=sqlite
 
 before_script:
   # Composer
   - wget http://getcomposer.org/composer.phar
   - php composer.phar install --prefer-source
 
-  # MySQL
-  - sh -c "if [ '$DB' = 'mysql' ]; then ./tests/bin/setup.mysql.sh; fi"
-
-  # PostgreSQL
-  - sh -c "if [ '$DB' = 'pgsql' ]; then ./tests/bin/setup.postgres.sh; fi"
+  - ./tests/bin/setup.$DB.sh;
 
 script:
- - sh -c "if [ '$DB' = 'mysql' ]; then phpunit; fi"
- - sh -c "if [ '$DB' = 'pgsql' ]; then phpunit --exclude-group mysql; fi"
+  - ./tests/bin/phpunit.$DB.sh;

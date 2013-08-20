@@ -84,7 +84,9 @@ class AggregateColumnBehavior extends Behavior
         }
         $tableName = $database->getTablePrefix() . $this->getParameter('foreign_table');
         if ($database->getPlatform()->supportsSchemas() && $this->getParameter('foreign_schema')) {
-            $tableName = $this->getParameter('foreign_schema').'.'.$tableName;
+            $tableName = $this->getParameter('foreign_schema')
+                .$database->getPlatform()->getSchemaDelimiter()
+                .$tableName;
         }
         $sql = sprintf('SELECT %s FROM %s WHERE %s',
             $this->getParameter('expression'),
@@ -111,7 +113,7 @@ class AggregateColumnBehavior extends Behavior
         $database = $this->getTable()->getDatabase();
         $tableName = $database->getTablePrefix() . $this->getParameter('foreign_table');
         if ($database->getPlatform()->supportsSchemas() && $this->getParameter('foreign_schema')) {
-            $tableName = $this->getParameter('foreign_schema'). '.' . $tableName;
+            $tableName = $this->getParameter('foreign_schema'). $database->getPlatform()->getSchemaDelimiter() . $tableName;
         }
 
         return $database->getTable($tableName);

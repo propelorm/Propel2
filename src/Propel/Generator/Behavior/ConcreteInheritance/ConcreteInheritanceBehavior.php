@@ -120,7 +120,7 @@ class ConcreteInheritanceBehavior extends Behavior
         $database = $this->getTable()->getDatabase();
         $tableName = $database->getTablePrefix() . $this->getParameter('extends');
         if ($database->getPlatform()->supportsSchemas() && $this->getParameter('schema')) {
-            $tableName = $this->getParameter('schema').'.'.$tableName;
+            $tableName = $this->getParameter('schema').$database->getPlatform()->getSchemaDelimiter().$tableName;
         }
 
         return $database->getTable($tableName);

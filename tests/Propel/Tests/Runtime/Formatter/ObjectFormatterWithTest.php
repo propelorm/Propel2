@@ -418,7 +418,7 @@ class ObjectFormatterWithTest extends BookstoreEmptyTestBase
 
     public function testFindWithLeftJoinWithManyToOneAndNullObject()
     {
-        if ('sqlite' !== $this->con->getAttribute(\PDO::ATTR_DRIVER_NAME)) {
+        if (!$this->runningOnSQLite()) {
             $this->markTestSkipped('This test is designed for SQLite as it saves an empty object.');
         }
 
@@ -426,6 +426,8 @@ class ObjectFormatterWithTest extends BookstoreEmptyTestBase
         AuthorTableMap::clearInstancePool();
         ReviewTableMap::clearInstancePool();
         $review = new Review();
+        $review->setReviewedBy('Peter');
+        $review->setRecommended(true);
         $review->save($this->con);
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Review');
         $c->leftJoinWith('Propel\Tests\Bookstore\Review.Book');

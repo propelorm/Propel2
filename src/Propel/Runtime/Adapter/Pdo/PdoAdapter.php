@@ -76,6 +76,16 @@ abstract class PdoAdapter
     }
 
     /**
+     * @return string
+     */
+    public function getAdapterId()
+    {
+        $class = str_replace('Adapter', '', get_called_class());
+        $lastSlash = strrpos($class, '\\');
+        return strtolower(substr($class, $lastSlash + 1));
+    }
+
+    /**
      * Prepare the parameters for a Connection
      *
      * @param array the connection parameters from the configuration
@@ -398,7 +408,6 @@ abstract class PdoAdapter
 
                 // expect every column to be of "table.column" formation
                 // it could be a function:  e.g. MAX(books.price)
-
                 $tableName = null;
 
                 $selectClause[] = $columnName; // the full column name: e.g. MAX(books.price)
@@ -426,7 +435,7 @@ abstract class PdoAdapter
                     } else {
                         $fromClause[] = $tableName;
                     }
-                } // if $dotPost !== false
+                }
             }
         }
 

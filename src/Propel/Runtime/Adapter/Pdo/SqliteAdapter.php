@@ -10,6 +10,7 @@
 
 namespace Propel\Runtime\Adapter\Pdo;
 
+use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Adapter\SqlAdapterInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
 
@@ -32,6 +33,23 @@ class SqliteAdapter extends PdoAdapter implements SqlAdapterInterface
      */
     public function setCharset(ConnectionInterface $con, $charset)
     {
+    }
+
+    public function initConnection(ConnectionInterface $con, array $settings)
+    {
+        $con->query('PRAGMA foreign_keys = ON');
+        parent::initConnection($con, $settings);
+    }
+
+
+    /**
+     * @see AdapterInterface::useQuoteIdentifier()
+     *
+     * @return boolean
+     */
+    public function useQuoteIdentifier()
+    {
+        return true;
     }
 
     /**
@@ -80,7 +98,7 @@ class SqliteAdapter extends PdoAdapter implements SqlAdapterInterface
      */
     public function quoteIdentifier($text)
     {
-        return sprintf('[%s]', $text);
+        return "[$text]";
     }
 
     /**

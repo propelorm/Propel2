@@ -184,6 +184,14 @@ class DefaultPlatform implements PlatformInterface
     }
 
     /**
+     * @return string
+     */
+    public function getSchemaDelimiter()
+    {
+        return '.';
+    }
+
+    /**
      * Returns the native IdMethod (sequence|identity)
      *
      * @return string The native IdMethod (PlatformInterface:IDENTITY, PlatformInterface::SEQUENCE).
@@ -313,7 +321,7 @@ class DefaultPlatform implements PlatformInterface
     public function getDropTableDDL(Table $table)
     {
         return "
-DROP TABLE " . $this->quoteIdentifier($table->getName()) . ";
+DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
 ";
     }
 
@@ -708,8 +716,7 @@ ALTER TABLE %s DROP CONSTRAINT %s;
      */
     public function getModifyDatabaseDDL(DatabaseDiff $databaseDiff)
     {
-        $ret = $this->getBeginDDL();
-
+        $ret = '';
         foreach ($databaseDiff->getRemovedTables() as $table) {
             $ret .= $this->getDropTableDDL($table);
         }
@@ -731,7 +738,9 @@ ALTER TABLE %s DROP CONSTRAINT %s;
             $ret .= $this->getAddForeignKeysDDL($table);
         }
 
-        $ret .= $this->getEndDDL();
+        if ($ret) {
+            $ret = $this->getBeginDDL() . $ret . $this->getEndDDL();
+        }
 
         return $ret;
     }
@@ -831,9 +840,7 @@ ALTER TABLE %s RENAME TO %s;
                 $ret .= sprintf("
 ALTER TABLE %s%s;
 ",
-                    $this->quoteIdentifier($toTable->getName()),
-                    implode(',', $columnChanges)
-                );
+                    $this->quoteIdentifier($toTable->getName()), implode(',', $columnChanges));
             }
         }
 

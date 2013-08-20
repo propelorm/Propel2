@@ -52,16 +52,39 @@ class StatementWrapper implements StatementInterface, \IteratorAggregate
     protected $boundValues = array();
 
     /**
+     * @var string
+     */
+    protected $sql;
+
+    /**
      * Creates a Statement instance
      *
      * @param string            $sql            The SQL query for this statement
      * @param ConnectionWrapper $connection     The parent connection
-     * @param array             $options        Optional driver options
      */
-    public function __construct($sql, ConnectionWrapper $connection, $options = array())
+    public function __construct($sql, ConnectionWrapper $connection)
     {
         $this->connection = $connection;
-        $this->statement = $connection->getWrappedConnection()->prepare($sql, $options);
+        $this->sql = $sql;
+    }
+
+    /**
+     * @param array $options Optional driver options
+     * @return $this
+     */
+    public function prepare($options)
+    {
+        $this->statement = $this->connection->getWrappedConnection()->prepare($this->sql, $options);
+        return $this;
+    }
+
+    /**
+     * @return \Propel\Runtime\DataFetcher\DataFetcherInterface
+     */
+    public function query()
+    {
+        $this->statement = $this->connection->getWrappedConnection()->query($this->sql);
+        return $this->connection->getWrappedConnection()->getDataFetcher($this);
     }
 
     /**
@@ -264,6 +287,38 @@ class StatementWrapper implements StatementInterface, \IteratorAggregate
     public function getIterator()
     {
         return $this->statement;
+    }
+
+    /**
+     * @return ConnectionWrapper
+     */
+    public function getConnection()
+    {
+        return $this->connection;
+    }
+
+    /**
+     * @return StatementInterface
+     */
+    public function getStatement()
+    {
+        return $this->statement;
+    }
+
+    /**
+     * @param StatementInterface $statement
+     */
+    public function setStatement(StatementInterface $statement)
+    {
+        $this->statement = $statement;
+    }
+
+    /**
+     * @return array
+     */
+    public function getBoundValues()
+    {
+        return $this->boundValues;
     }
 
     public function __call($method, $args)
