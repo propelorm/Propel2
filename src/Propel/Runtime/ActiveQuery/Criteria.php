@@ -1873,14 +1873,12 @@ class Criteria
             foreach ($orderBy as $orderByColumn) {
 
                 // Add function expression as-is.
-
                 if (strpos($orderByColumn, '(') !== false) {
                     $orderByClause[] = $orderByColumn;
                     continue;
                 }
 
                 // Split orderByColumn (i.e. "table.column DESC")
-
                 $dotPos = strrpos($orderByColumn, '.');
 
                 if ($dotPos !== false) {
@@ -1966,14 +1964,11 @@ class Criteria
             .' FROM '  . $from
             .($whereClause ? ' WHERE '.implode(' AND ', $whereClause) : '');
 
-
         $db->applyGroupBy($sql, $this);
 
         $sql .= ($havingString ? ' HAVING '.$havingString : '')
-             .($orderByClause ? ' ORDER BY '.implode(',', $orderByClause) : '')
-        ;
+             .($orderByClause ? ' ORDER BY '.implode(',', $orderByClause) : '');
 
-        // APPLY OFFSET & LIMIT to the query.
         if ($this->getLimit() || $this->getOffset()) {
             $db->applyLimit($sql, $this->getOffset(), $this->getLimit(), $this);
         }
@@ -2440,7 +2435,7 @@ class Criteria
             $db->bindValues($stmt, $params, $dbMap);
             $stmt->execute();
         } catch (\Exception $e) {
-            if ($stmt) {
+            if (isset($stmt)) {
                 $stmt = null; // close
             }
             Propel::log($e->getMessage(), Propel::LOG_ERR);

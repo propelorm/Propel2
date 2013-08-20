@@ -240,11 +240,12 @@ abstract class ModelTestCase extends TestCase
     /**
      * Returns a dummy Platform object.
      *
-     * @param  Boolean           $supportsSchemas Whether or not the platform supports schemas
+     * @param  boolean           $supportsSchemas Whether or not the platform supports schemas
      * @param  array             $options         An array of options
+     * @param  string            $schemaDelimiter
      * @return PlatformInterface
      */
-    protected function getPlatformMock($supportsSchemas = true, array $options = array())
+    protected function getPlatformMock($supportsSchemas = true, array $options = array(), $schemaDelimiter = '.')
     {
         $defaults = array(
             'max_column_name_length' => null,
@@ -262,6 +263,12 @@ abstract class ModelTestCase extends TestCase
             ->expects($this->any())
             ->method('supportsSchemas')
             ->will($this->returnValue($supportsSchemas))
+        ;
+
+        $platform
+            ->expects($this->any())
+            ->method('getSchemaDelimiter')
+            ->will($this->returnValue($schemaDelimiter))
         ;
 
         $platform

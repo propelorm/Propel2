@@ -101,6 +101,7 @@ class QuickBuilder
         $pdo = new PdoConnection($dsn, $user, $pass);
         $con = new ConnectionWrapper($pdo);
         $con->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_WARNING);
+        $adapter->initConnection($con, []);
         $this->buildSQL($con);
         $this->buildClasses($classTargets);
         $name = $this->getDatabase()->getName();

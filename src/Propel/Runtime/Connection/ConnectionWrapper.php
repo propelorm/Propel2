@@ -383,13 +383,15 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
     {
         if ($this->isCachePreparedStatements) {
             if (!isset($this->cachedPreparedStatements[$sql])) {
-                $return = new StatementWrapper($sql, $this, $driver_options);
+                $return = new StatementWrapper($sql, $this);
+                $return->prepare($driver_options);
                 $this->cachedPreparedStatements[$sql] = $return;
             } else {
                 $return = $this->cachedPreparedStatements[$sql];
             }
         } else {
-            $return = new StatementWrapper($sql, $this, $driver_options);
+            $return = new StatementWrapper($sql, $this);
+            $return->prepare($driver_options);
         }
 
         if ($this->useDebug) {
@@ -427,15 +429,16 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      *
      * @see http://php.net/manual/en/pdo.query.php for a description of the possible parameters.
      *
-     * @return StatementInterface
+     * @return StatementWrapper
      */
     public function query()
     {
         $args = func_get_args();
-        $return = call_user_func_array(array($this->connection, 'query'), $args);
+        $sql = array_shift($args);
+        $statementWrapper = new StatementWrapper($sql, $this);
+        $return = call_user_func_array(array($statementWrapper, 'query'), $args);
 
         if ($this->useDebug) {
-            $sql = $args[0];
             $this->log($sql);
             $this->setLastExecutedQuery($sql);
             $this->incrementQueryCount();

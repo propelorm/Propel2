@@ -49,7 +49,9 @@ CREATE TABLE i18n_behavior_test_0_i18n
 (
     id INTEGER NOT NULL,
     locale VARCHAR(5) DEFAULT 'fr_FR' NOT NULL,
-    PRIMARY KEY (id,locale)
+    PRIMARY KEY (id,locale),
+    FOREIGN KEY (id) REFERENCES i18n_behavior_test_0 (id)
+        ON DELETE CASCADE
 );
 EOF;
         $this->assertContains($expected, $builder->getSQL());
@@ -83,7 +85,9 @@ CREATE TABLE i18n_behavior_test_0_i18n
 (
     id INTEGER NOT NULL,
     locale VARCHAR(5) DEFAULT 'pt_PT' NOT NULL,
-    PRIMARY KEY (id,locale)
+    PRIMARY KEY (id,locale),
+    FOREIGN KEY (id) REFERENCES i18n_behavior_test_0 (id)
+        ON DELETE CASCADE
 );
 EOF;
         $this->assertContains($expected, $builder->getSQL());
@@ -171,7 +175,7 @@ EOF;
         $builder = new QuickBuilder();
         $builder->setSchema($schema);
         $expected = <<<EOF
--- FOREIGN KEY (id) REFERENCES i18n_behavior_test_0 (id)
+FOREIGN KEY (id) REFERENCES i18n_behavior_test_0 (id)
 EOF;
         $this->assertContains($expected, $builder->getSQL());
     }
@@ -205,8 +209,8 @@ CREATE TABLE i18n_behavior_test_0_i18n
     id INTEGER NOT NULL,
     locale VARCHAR(5) DEFAULT 'en_US' NOT NULL,
     bar VARCHAR(100),
-    PRIMARY KEY (id,locale)
-);
+    PRIMARY KEY (id,locale),
+    FOREIGN KEY (id) REFERENCES i18n_behavior_test_0 (id)
 EOF;
         $this->assertContains($expected, $builder->getSQL());
     }
@@ -221,7 +225,7 @@ EOF;
         $expected = <<<EOF
 CREATE TABLE i18n_behavior_test_0
 (
-    id INTEGER NOT NULL PRIMARY KEY,
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     foo INTEGER
 );
 EOF;
@@ -253,7 +257,9 @@ CREATE TABLE foo_table
 (
     id INTEGER NOT NULL,
     locale VARCHAR(5) DEFAULT 'en_US' NOT NULL,
-    PRIMARY KEY (id,locale)
+    PRIMARY KEY (id,locale),
+    FOREIGN KEY (id) REFERENCES i18n_behavior_test_0 (id)
+        ON DELETE CASCADE
 );
 EOF;
         $this->assertContains($expected, $builder->getSQL());
@@ -284,7 +290,9 @@ CREATE TABLE i18n_behavior_test_0_i18n
 (
     id INTEGER NOT NULL,
     culture VARCHAR(5) DEFAULT 'en_US' NOT NULL,
-    PRIMARY KEY (id,culture)
+    PRIMARY KEY (id,culture),
+    FOREIGN KEY (id) REFERENCES i18n_behavior_test_0 (id)
+        ON DELETE CASCADE
 );
 EOF;
         $this->assertContains($expected, $builder->getSQL());
@@ -315,7 +323,9 @@ CREATE TABLE i18n_behavior_test_0_i18n
 (
     id INTEGER NOT NULL,
     locale VARCHAR(5) DEFAULT 'fr_FR' NOT NULL,
-    PRIMARY KEY (id,locale)
+    PRIMARY KEY (id,locale),
+    FOREIGN KEY (id) REFERENCES i18n_behavior_test_0 (id)
+        ON DELETE CASCADE
 );
 EOF;
         $this->assertContains($expected, $builder->getSQL());
@@ -346,7 +356,9 @@ CREATE TABLE i18n_behavior_test_0_i18n
 (
     id INTEGER NOT NULL,
     locale VARCHAR(6) DEFAULT 'en_US' NOT NULL,
-    PRIMARY KEY (id,locale)
+    PRIMARY KEY (id,locale),
+    FOREIGN KEY (id) REFERENCES i18n_behavior_test_0 (id)
+        ON DELETE CASCADE
 );
 EOF;
         $this->assertContains($expected, $builder->getSQL());

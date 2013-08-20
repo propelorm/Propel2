@@ -277,6 +277,9 @@ class TableMapTest extends BookstoreTestBase
 
     public function testDoDeleteTableAlias()
     {
+        if ($this->runningOnSQLite()) {
+            $this->markTestSkipped('SQLite does not support Alias in Deletes');
+        }
         $con = Propel::getServiceContainer()->getWriteConnection(BookTableMap::DATABASE_NAME);
         $c = new Criteria(BookTableMap::DATABASE_NAME);
         $c->addAlias('b', BookTableMap::TABLE_NAME);

@@ -305,10 +305,14 @@ class ForeignKey extends MappingModel
     public function getForeignTableName()
     {
         if ($this->foreignSchemaName && $this->parentTable->getPlatform()->supportsSchemas()) {
-            return $this->foreignSchemaName . '.' . $this->foreignTableCommonName;
+            return $this->foreignSchemaName
+                . $this->parentTable->getPlatform()->getSchemaDelimiter()
+                . $this->foreignTableCommonName;
         } else if ($this->getTable()->getDatabase() && ($schema = $this->getTable()->getDatabase()->getSchema())
                    && $this->getTable()->getDatabase()->getPlatform()->supportsSchemas()) {
-            return $schema . '.' . $this->foreignTableCommonName;
+            return $schema
+                . $this->getTable()->getPlatform()->getSchemaDelimiter()
+                . $this->foreignTableCommonName;
         }
 
         return $this->foreignTableCommonName;

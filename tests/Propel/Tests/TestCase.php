@@ -16,16 +16,44 @@ namespace Propel\Tests;
 class TestCase extends \PHPUnit_Framework_TestCase
 {
     /**
+     * Depending on this type we return the correct runninOn* results,
+     * also getSql() is based on that.
+     *
+     * If $adapterClass is not available, the adapter type is extracted of this
+     * connection.
+     *
+     * @var ConnectionInterface
+     */
+    protected $con;
+
+    /**
+     *
+     * Depending on this type we return the correct runninOn* results,
+     * also getSql() is based on that.
+     *
+     * @var string
+     */
+    protected $adapterClass = '';
+
+    /**
      * Makes the sql compatible with the current database.
      * Means: replaces ` etc.
      *
      * @param string $sql
      * @param string $source
+     * @param string $target
      * @return mixed
      */
-    protected function getSql($sql, $source = 'mysql')
+    protected function getSql($sql, $source = 'mysql', $target = null)
     {
-        if (!$this->isDb('mysql') && 'mysql' === $source) {
+        if (!$target) {
+            $target = $this->getDriver();
+        }
+
+        if ('sqlite' === $target && 'mysql' === $source) {
+            return preg_replace('/`([^`]*)`/', '[$1]', $sql);
+        }
+        if ('mysql' !== $target && 'mysql' === $source) {
             return str_replace('`', '', $sql);
         }
         return $sql;
@@ -39,7 +67,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
      */
     protected function isDb($db = 'mysql')
     {
-        return in_array($this->getDriver(), array($db));
+        return $this->getDriver() == $db;
     }
 
     /**
@@ -83,10 +111,21 @@ class TestCase extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @return \Propel\Generator\Platform\PlatformInterface
+     */
+    protected function getPlatform()
+    {
+        $className = sprintf('\\Propel\\Generator\\Platform\\%sPlatform', ucfirst($this->getDriver()));
+        return new $className;
+    }
+
+    /**
      * @return string[]
      */
     protected function getDriver()
     {
-        return $this->con->getAttribute(\PDO::ATTR_DRIVER_NAME);
+        return $this->adapterClass
+            ? $this->adapterClass
+            :($this->con ? $this->con->getAttribute(\PDO::ATTR_DRIVER_NAME) : 'sqlite');
     }
 }

@@ -62,7 +62,7 @@ class StatementFormatterTest extends BookstoreEmptyTestBase
         $formatter->init(new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book'));
         $books = $formatter->format($stmt);
 
-        $this->assertInstanceOf('PDOStatement', $books->getDataObject(), 'StatementFormatter::format() returns a PDOStatement');
+        $this->assertInstanceOf('Propel\Runtime\Connection\StatementWrapper', $books->getDataObject(), 'StatementFormatter::format() returns a StatementWrapper');
         $this->assertEquals(4, $books->count(), 'StatementFormatter::format() returns as many rows as the results in the query');
         while ($book = $books->fetch()) {
             $this->assertTrue(is_array($book), 'StatementFormatter::format() returns a statement that can be fetched');
@@ -78,7 +78,7 @@ class StatementFormatterTest extends BookstoreEmptyTestBase
         $formatter->init(new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book'));
         $books = $formatter->format($stmt);
 
-        $this->assertInstanceOf('PDOStatement', $books->getDataObject(), 'StatementFormatter::format() returns a PDOStatement');
+        $this->assertInstanceOf('Propel\Runtime\Connection\StatementWrapper', $books->getDataObject(), 'StatementFormatter::format() returns a StatementWrapper');
         $this->assertEquals(1, $books->count(), 'StatementFormatter::format() returns as many rows as the results in the query');
         $book = $books->fetch(PDO::FETCH_ASSOC);
         $this->assertEquals('Quicksilver', $book['title'], 'StatementFormatter::format() returns the rows matching the query');
@@ -93,7 +93,7 @@ class StatementFormatterTest extends BookstoreEmptyTestBase
         $formatter->init(new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book'));
         $books = $formatter->format($stmt);
 
-        $this->assertInstanceOf('PDOStatement', $books->getDataObject(), 'StatementFormatter::format() returns a PDOStatement');
+        $this->assertInstanceOf('Propel\Runtime\Connection\StatementWrapper', $books->getDataObject(), 'StatementFormatter::format() returns a StatementWrapper');
         $this->assertEquals(0, $books->count(), 'StatementFormatter::format() returns as many rows as the results in the query');
     }
 
