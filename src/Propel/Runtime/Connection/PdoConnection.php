@@ -95,9 +95,7 @@ class PdoConnection extends \PDO implements SqlConnectionInterface
      */
     public function query($statement)
     {
-        $stmt = parent::query($statement);
-
-        return $this->getDataFetcher($stmt);
+        return parent::query($statement);
     }
 
     /**

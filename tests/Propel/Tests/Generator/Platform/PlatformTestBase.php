@@ -19,8 +19,6 @@ use Propel\Tests\TestCase;
 abstract class PlatformTestBase extends TestCase
 {
 
-    abstract protected function getPlatform();
-
     protected function getDatabaseFromSchema($schema)
     {
         $xtad = new SchemaReader($this->getPlatform());

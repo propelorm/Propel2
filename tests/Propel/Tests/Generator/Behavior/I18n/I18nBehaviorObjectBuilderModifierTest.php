@@ -71,7 +71,7 @@ class I18nBehaviorObjectBuilderModifierTest extends TestCase
             <parameter name="locale_alias" value="culture" />
         </behavior>
         <column name="movie_id" type="integer" />
-        <foreign-key foreignTable="movie">
+        <foreign-key foreignTable="movie" onDelete="cascade">
             <reference local="movie_id" foreign="id" />
         </foreign-key>
     </table>
@@ -87,7 +87,7 @@ class I18nBehaviorObjectBuilderModifierTest extends TestCase
     </table>
 </database>
 EOF;
-            QuickBuilder::buildSchema($schema);
+            $this->con = QuickBuilder::buildSchema($schema);
         }
     }
 
@@ -361,6 +361,7 @@ EOF;
 
     public function testI18nWithRelations2()
     {
+        \MovieI18nQuery::create()->deleteAll();
         \MovieQuery::create()->deleteAll();
         $count = \MovieQuery::create()->count();
         $this->assertEquals(0, $count, 'No movie before the test');

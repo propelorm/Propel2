@@ -138,9 +138,6 @@ class BaseTest extends MigrationTestCase
         $this->migrateAndTest($originXml, $targetXml);
     }
 
-    /**
-     * @group test
-     */
     public function testColumnChangePrimaryKey()
     {
         $originXml = '

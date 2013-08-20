@@ -363,8 +363,9 @@ class Database extends ScopedMappingModel
      */
     public function getTable($name, $caseInsensitive = false)
     {
-        if ($this->getSchema() && $this->getPlatform()->supportsSchemas() && false === strpos($name, '.')) {
-            $name = $this->getSchema() . '.' . $name;
+        if ($this->getSchema() && $this->getPlatform()->supportsSchemas()
+            && false === strpos($name, $this->getPlatform()->getSchemaDelimiter())) {
+            $name = $this->getSchema() . $this->getPlatform()->getSchemaDelimiter() . $name;
         }
 
         if (!$this->hasTable($name, $caseInsensitive)) {
@@ -494,18 +495,18 @@ class Database extends ScopedMappingModel
     public function setSchema($schema)
     {
         $oldSchema = $this->schema;
-        if ($this->schema !== $schema) {
-
-            $fixHash = function(&$array) use($schema, $oldSchema){
+        if ($this->schema !== $schema && $this->getPlatform()) {
+            $schemaDelimiter = $this->getPlatform()->getSchemaDelimiter();
+            $fixHash = function(&$array) use($schema, $oldSchema, $schemaDelimiter){
                 foreach ($array as $k => $v) {
-                    if ($schema) {
-                        if (false === strpos($k, '.')) {
-                            $array[$schema . '.' . $k] = $v;
+                    if ($schema && $this->getPlatform()->supportsSchemas()) {
+                        if (false === strpos($k, $schemaDelimiter)) {
+                            $array[$schema . $schemaDelimiter . $k] = $v;
                             unset($array[$k]);
                         }
-                    } else {
-                        if (false !== strpos($k, '.')) {
-                            $array[explode('.', $k)[1]] = $v;
+                    } else if ($oldSchema) {
+                        if (false !== strpos($k, $schemaDelimiter)) {
+                            $array[explode($schemaDelimiter, $k)[1]] = $v;
                             unset($array[$k]);
                         }
                     }

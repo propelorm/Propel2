@@ -37,6 +37,7 @@ class OnDemandCollectionTest extends BookstoreEmptyTestBase
 
     protected function tearDown()
     {
+        $this->books = null;
         parent::tearDown();
         Propel::enableInstancePooling();
     }

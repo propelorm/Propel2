@@ -1004,7 +1004,9 @@ class Table extends ScopedMappingModel implements IdMethod
             && $this->getDatabase()->getPlatform()
             && $this->getDatabase()->getPlatform()->supportsSchemas()
         ) {
-            return ($this->schema ?: $this->getDatabase()->getSchema()) . '.' . $this->commonName;
+            return ($this->schema ?: $this->getDatabase()->getSchema())
+                . $this->getDatabase()->getPlatform()->getSchemaDelimiter()
+                . $this->commonName;
         }
 
         return $this->commonName;

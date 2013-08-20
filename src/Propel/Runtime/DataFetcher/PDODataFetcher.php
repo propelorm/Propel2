@@ -24,6 +24,12 @@ class PDODataFetcher extends AbstractDataFetcher
     private $index = 0;
 
     /**
+     * For SQLITE rowCount emulation.
+     * @var integer
+     */
+    private $cachedCount;
+
+    /**
      * {@inheritDoc}
      */
     public function fetch($style = \PDO::FETCH_NUM)
@@ -93,6 +99,22 @@ class PDODataFetcher extends AbstractDataFetcher
      */
     public function count()
     {
+        if('sqlite' === $this->dataObject->getConnection()->getAttribute(\PDO::ATTR_DRIVER_NAME)) {
+            $lastQuery = $this->dataObject->getStatement()->queryString;
+            if ('SELECT ' === substr(trim(strtoupper($lastQuery)), 0, 7)) {
+                //SQLITE does not support rowCount() in 3.x on SELECTs anymore
+                //so emulate it
+                if (null === $this->cachedCount) {
+                    $sql = sprintf("SELECT COUNT(*) FROM (%s)", $lastQuery);
+                    $stmt = $this->dataObject->getConnection()->prepare($sql);
+                    $stmt->execute($this->dataObject->getBoundValues());
+                    $count = $stmt->fetchColumn();
+                    $this->cachedCount = $count+0;
+                }
+
+                return $this->cachedCount;
+            }
+        }
         return $this->dataObject->rowCount();
     }
 

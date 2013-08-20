@@ -10,6 +10,7 @@
 
 namespace Propel\Tests\Runtime\ActiveQuery;
 
+use Propel\Runtime\Propel;
 use Propel\Tests\Helpers\Schemas\SchemasTestBase;
 use Propel\Tests\BookstoreSchemas\Map\BookstoreContestTableMap;
 
@@ -57,11 +58,13 @@ class ModelCriteriaWithSchemaTest extends SchemasTestBase
 
     public function doTestReplaceNames($c, $tableMap, $origClause, $columnPhpName = false, $modifiedClause)
     {
+        $this->adapterClass = Propel::getServiceContainer()->getAdapterClass(BookstoreContestTableMap::DATABASE_NAME);
         $c->replaceNames($origClause);
         $columns = $c->replacedColumns;
         if ($columnPhpName) {
             $this->assertEquals(array($tableMap->getColumnByPhpName($columnPhpName)), $columns);
         }
+        $modifiedClause = preg_replace('/^(\(?)contest\./', '$1contest' . $this->getPlatform()->getSchemaDelimiter(), $modifiedClause);
         $this->assertEquals($modifiedClause, $origClause);
     }
 

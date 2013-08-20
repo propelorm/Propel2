@@ -227,4 +227,9 @@ interface PlatformInterface
      * @return string
      */
     public function getTimeFormatter();
+
+    /**
+     * @return string
+     */
+    public function getSchemaDelimiter();
 }

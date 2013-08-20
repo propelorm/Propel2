@@ -1984,16 +1984,18 @@ class ModelCriteriaTest extends BookstoreTestBase
         $expectedSQL = $this->getSql("DELETE FROM `book` WHERE book.TITLE = 'foo'");
         $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'delete() also works on tables with table alias');
 
-        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
-        $c->setModelAlias('b', true);
-        $c->where('b.Title = ?', 'foo');
-        $c->delete();
-        if ($this->isDb('pgsql')) {
-            $expectedSQL = $this->getSql("DELETE FROM `book` AS b WHERE b.TITLE = 'foo'");
-        } else {
-            $expectedSQL = $this->getSql("DELETE b FROM `book` AS b WHERE b.TITLE = 'foo'");
+        if ($this->runningOnMySQL() || $this->runningOnPostgreSQL()) {
+            $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
+            $c->setModelAlias('b', true);
+            $c->where('b.Title = ?', 'foo');
+            $c->delete();
+            if (!$this->runningOnMySQL()) {
+                $expectedSQL = $this->getSql("DELETE FROM `book` AS b WHERE b.TITLE = 'foo'");
+            } else {
+                $expectedSQL = $this->getSql("DELETE b FROM `book` AS b WHERE b.TITLE = 'foo'");
+            }
+            $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'delete() also works on tables with true table alias');
         }
-        $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'delete() also works on tables with true table alias');
     }
 
     public function testDeleteAll()
@@ -2059,12 +2061,14 @@ class ModelCriteriaTest extends BookstoreTestBase
         $expectedSQL = $this->getSql("UPDATE `book` SET `TITLE`='foo2' WHERE book.TITLE = 'foo'");
         $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'update() also works on tables with table alias');
 
-        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
-        $c->setModelAlias('b', true);
-        $c->where('b.Title = ?', 'foo');
-        $c->update(array('Title' => 'foo2'), $con);
-        $expectedSQL = $this->getSql("UPDATE `book` `b` SET `TITLE`='foo2' WHERE b.TITLE = 'foo'");
-        $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'update() also works on tables with true table alias');
+        if ($this->runningOnMySQL() || $this->runningOnPostgreSQL()) {
+            $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
+            $c->setModelAlias('b', true);
+            $c->where('b.Title = ?', 'foo');
+            $c->update(array('Title' => 'foo2'), $con);
+            $expectedSQL = $this->getSql("UPDATE `book` `b` SET `TITLE`='foo2' WHERE b.TITLE = 'foo'");
+            $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'update() also works on tables with true table alias');
+        }
     }
 
     public function testUpdateOneByOne()
@@ -2164,26 +2168,30 @@ class ModelCriteriaTest extends BookstoreTestBase
         $expectedSQL = $this->getSql("SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` INNER JOIN `author` `a` ON (book.AUTHOR_ID=a.ID) WHERE a.FIRST_NAME = 'Leo' LIMIT 1");
         $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'innerJoinX() is turned into join($x, Criteria::INNER_JOIN)');
 
-        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book', 'b');
-        $c->rightJoin('b.Author a');
-        $c->where('a.FirstName = ?', 'Leo');
-        $books = $c->findOne($con);
-        $expectedSQL = $this->getSql("SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` RIGHT JOIN `author` `a` ON (book.AUTHOR_ID=a.ID) WHERE a.FIRST_NAME = 'Leo' LIMIT 1");
-        $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'rightJoin($x) is turned into join($x, Criteria::RIGHT_JOIN)');
+        if (!$this->runningOnSQLite()) {
+            //SQLITE: SQLSTATE[HY000]: General error: 1 RIGHT and FULL OUTER JOINs are not currently supported
+            $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book', 'b');
+            $c->rightJoin('b.Author a');
+            $c->where('a.FirstName = ?', 'Leo');
+            $books = $c->findOne($con);
+            $expectedSQL = $this->getSql("SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` RIGHT JOIN `author` `a` ON (book.AUTHOR_ID=a.ID) WHERE a.FIRST_NAME = 'Leo' LIMIT 1");
+            $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'rightJoin($x) is turned into join($x, Criteria::RIGHT_JOIN)');
 
-        $books = BookQuery::create()
-            ->rightJoinAuthor('a')
-            ->where('a.FirstName = ?', 'Leo')
-            ->findOne($con);
-        $expectedSQL = $this->getSql("SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` RIGHT JOIN `author` `a` ON (book.AUTHOR_ID=a.ID) WHERE a.FIRST_NAME = 'Leo' LIMIT 1");
-        $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'rightJoinX() is turned into join($x, Criteria::RIGHT_JOIN)');
+            $books = BookQuery::create()
+                ->rightJoinAuthor('a')
+                ->where('a.FirstName = ?', 'Leo')
+                ->findOne($con);
+            $expectedSQL = $this->getSql("SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` RIGHT JOIN `author` `a` ON (book.AUTHOR_ID=a.ID) WHERE a.FIRST_NAME = 'Leo' LIMIT 1");
+            $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'rightJoinX() is turned into join($x, Criteria::RIGHT_JOIN)');
 
-        $books = BookQuery::create()
-            ->leftJoinAuthor()
-            ->where('Author.FirstName = ?', 'Leo')
-            ->findOne($con);
-        $expectedSQL = $this->getSql("SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` LEFT JOIN `author` ON (book.AUTHOR_ID=author.ID) WHERE author.FIRST_NAME = 'Leo' LIMIT 1");
-        $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'leftJoinX() is turned into join($x, Criteria::LEFT_JOIN)');
+            $books = BookQuery::create()
+                ->leftJoinAuthor()
+                ->where('Author.FirstName = ?', 'Leo')
+                ->findOne($con);
+            $expectedSQL = $this->getSql("SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` LEFT JOIN `author` ON (book.AUTHOR_ID=author.ID) WHERE author.FIRST_NAME = 'Leo' LIMIT 1");
+            $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'leftJoinX() is turned into join($x, Criteria::LEFT_JOIN)');
+        }
+
     }
 
     public function testMagicJoinWith()
@@ -2342,12 +2350,12 @@ class ModelCriteriaTest extends BookstoreTestBase
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         $c->find($con);
 
-        if ($this->isDb('pgsql')) {
-            $expectedSQL = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM book LEFT JOIN author ON (book.AUTHOR_ID=author.ID) WHERE book.TITLE = 'foo' AND author.FIRST_NAME = 'john' LIMIT 5 OFFSET 10";
+        if (!$this->runningOnMySQL()) {
+            $expectedSQL = $this->getSql("SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` LEFT JOIN `author` ON (book.AUTHOR_ID=author.ID) WHERE book.TITLE = 'foo' AND author.FIRST_NAME = 'john' LIMIT 5 OFFSET 10");
+
         } else {
             $expectedSQL = $this->getSql("SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` LEFT JOIN `author` ON (book.AUTHOR_ID=author.ID) WHERE book.TITLE = 'foo' AND author.FIRST_NAME = 'john' LIMIT 10, 5");
         }
-
 
         $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'useQuery() and endUse() allow to merge a secondary criteria');
     }
@@ -2374,8 +2382,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         $c->find($con);
 
-        if ($this->isDb('pgsql')) {
-            $expectedSQL = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM book LEFT JOIN author a ON (book.AUTHOR_ID=a.ID) WHERE book.TITLE = 'foo' AND a.FIRST_NAME = 'john' LIMIT 5 OFFSET 10";
+        if (!$this->runningOnMySQL()) {
+            $expectedSQL = $this->getSql("SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` LEFT JOIN `author` `a` ON (book.AUTHOR_ID=a.ID) WHERE book.TITLE = 'foo' AND a.FIRST_NAME = 'john' LIMIT 5 OFFSET 10");
+
         } else {
             $expectedSQL = $this->getSql("SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` LEFT JOIN `author` `a` ON (book.AUTHOR_ID=a.ID) WHERE book.TITLE = 'foo' AND a.FIRST_NAME = 'john' LIMIT 10, 5");
         }

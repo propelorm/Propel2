@@ -13,8 +13,11 @@ namespace Propel\Generator\Reverse;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\ColumnDefaultValue;
 use Propel\Generator\Model\Database;
+use Propel\Generator\Model\ForeignKey;
+use Propel\Generator\Model\Index;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Model\PropelTypes;
+use Propel\Generator\Model\Unique;
 use Propel\Generator\Reverse\AbstractSchemaParser;
 
 /**
@@ -80,16 +83,45 @@ class SqliteSchemaParser extends AbstractSchemaParser
      */
     public function parse(Database $database)
     {
-        $dataFetcher = $this->dbh->query("SELECT name FROM sqlite_master WHERE type='table' UNION ALL SELECT name FROM sqlite_temp_master WHERE type='table' ORDER BY name;");
+        $dataFetcher = $this->dbh->query("
+        SELECT name
+        FROM sqlite_master
+        WHERE type='table'
+        UNION ALL
+        SELECT name
+        FROM sqlite_temp_master
+        WHERE type='table'
+        ORDER BY name;");
 
         // First load the tables (important that this happen before filling out details of tables)
         $tables = array();
         foreach ($dataFetcher as $row) {
             $name = $row[0];
+            $commonName = '';
+
+            if ('sqlite_' == substr($name, 0, 7)) {
+                continue;
+            }
+
+            if ($database->getSchema()) {
+                if (false !== ($pos = strpos($name, '§'))) {
+                    if ($database->getSchema()) {
+                        if ($database->getSchema() !== substr($name, 0, $pos)) {
+                            continue;
+                        } else {
+                            $commonName = substr($name, $pos+2); //2 because the delimiter § uses in UTF8 one byte more.
+                        }
+                    }
+                } else {
+                    continue;
+                }
+            }
+
             if ($name === $this->getMigrationTable()) {
                 continue;
             }
-            $table = new Table($name);
+
+            $table = new Table($commonName ?: $name);
             $table->setIdMethod($database->getDefaultIdMethod());
             $database->addTable($table);
             $tables[] = $table;
@@ -103,6 +135,7 @@ class SqliteSchemaParser extends AbstractSchemaParser
         // Now add indexes and constraints.
         foreach ($tables as $table) {
             $this->addIndexes($table);
+            $this->addForeignKeys($table);
         }
 
         return count($tables);
@@ -135,9 +168,6 @@ class SqliteSchemaParser extends AbstractSchemaParser
             } else {
                 $type = $fulltype;
             }
-            // If column is primary key and of type INTEGER, it is auto increment
-            // See: http://sqlite.org/faq.html#q1
-            $autoincrement = (1 == $row['pk'] && 'integer' === strtolower($type));
             $notNull = $row['notnull'];
             $default = $row['dflt_value'];
 
@@ -161,14 +191,62 @@ class SqliteSchemaParser extends AbstractSchemaParser
                 $column->getDomain()->setDefaultValue(new ColumnDefaultValue($default, ColumnDefaultValue::TYPE_VALUE));
             }
 
-            $column->setAutoIncrement($autoincrement);
             $column->setNotNull($notNull);
 
-            if (1 == $row['pk'] || 'integer' === strtolower($type)) {
+            if (1 == $row['pk']) {
                 $column->setPrimaryKey(true);
             }
 
+            if ($column->isPrimaryKey()) {
+                //check if autoIncrement
+                $autoIncrementStmt = $this->dbh->prepare('
+                SELECT tbl_name
+                FROM sqlite_master
+                WHERE
+                  tbl_name = ?
+                AND
+                  sql LIKE "%AUTOINCREMENT%"
+                ');
+                $autoIncrementStmt->execute([$table->getName()]);
+                $autoincrementRow = $autoIncrementStmt->fetch(\PDO::FETCH_ASSOC);
+                if ($autoincrementRow && $autoincrementRow['tbl_name'] == $table->getName()) {
+                    $column->setAutoIncrement(true);
+                }
+            }
+
             $table->addColumn($column);
+        }
+    }
+
+    protected function addForeignKeys(Table $table)
+    {
+        $stmt = $this->dbh->query('PRAGMA foreign_key_list("' . $table->getName() . '")');
+
+        $lastId = null;
+        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            if ($lastId !== $row['id']) {
+                $fk = new ForeignKey();
+
+                $tableName   = $row['table'];
+                $tableSchema = '';
+
+                if (false !== ($pos = strpos($tableName, '§'))){
+                    $tableName = substr($tableName, $pos + 2);
+                    $tableSchema = substr($tableName, 0, $pos);
+                }
+
+                $fk->setForeignTableCommonName($tableName);
+                if ($table->getDatabase()->getSchema() != $tableSchema) {
+                    $fk->setForeignSchemaName($tableSchema);
+                }
+
+                $fk->setOnDelete($row['on_delete']);
+                $fk->setOnUpdate($row['on_update']);
+                $table->addForeignKey($fk);
+                $lastId = $row['id'];
+            }
+
+            $fk->addReference($row['from'], $row['to']);
         }
     }
 
@@ -177,16 +255,24 @@ class SqliteSchemaParser extends AbstractSchemaParser
      */
     protected function addIndexes(Table $table)
     {
-        $stmt = $this->dbh->query("PRAGMA index_list('" . $table->getName() . "')");
+        $stmt = $this->dbh->query('PRAGMA index_list("' . $table->getName() . '")');
 
         while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
             $name = $row['name'];
-            $index = new Index($name);
+
+            $index = $row['unique'] ? new Unique() : new Index();
 
             $stmt2 = $this->dbh->query("PRAGMA index_info('".$name."')");
             while ($row2 = $stmt2->fetch(\PDO::FETCH_ASSOC)) {
                 $colname = $row2['name'];
                 $index->addColumn($table->getColumn($colname));
+            }
+
+            if (1 === count($table->getPrimaryKey()) && 1 === count($index->getColumns())) {
+                //exclude the primary unique index, since it's autogenerated by sqlite
+                if ($table->getPrimaryKey()[0]->getName() === $index->getColumns()[0]) {
+                    continue;
+                }
             }
 
             $table->addIndex($index);

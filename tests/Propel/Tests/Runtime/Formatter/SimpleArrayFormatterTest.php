@@ -36,7 +36,7 @@ class SimpleArrayFormatterTest extends BookstoreEmptyTestBase
         $books = $formatter->format($stmt);
         $this->assertInstanceOf('\Propel\Runtime\Collection\Collection', $books);
         $this->assertCount(4, $books);
-        $this->assertSame($this->isDb('mysql') ? '1' : 1, $books[0]);
+        $this->assertSame(1, $books[0]+0);
     }
 
     public function testFormatWithOneRowAndValueEqualsZero()
@@ -50,7 +50,7 @@ class SimpleArrayFormatterTest extends BookstoreEmptyTestBase
         $books = $formatter->format($stmt);
         $this->assertInstanceOf('\Propel\Runtime\Collection\Collection', $books);
         $this->assertCount(4, $books);
-        $this->assertSame($this->isDb('mysql') ? '0' : 0, $books[0]);
+        $this->assertSame(0, $books[0]+0);
     }
 
     public function testFormatOneWithOneRowAndValueIsNotZero()
@@ -66,7 +66,7 @@ class SimpleArrayFormatterTest extends BookstoreEmptyTestBase
         $formatter->init(new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book'));
 
         $book = $formatter->formatOne($stmt);
-        $this->assertSame($this->isDb('mysql') ? '1' : 1, $book);
+        $this->assertSame(1, $book+0);
     }
 
     public function testFormatOneWithOneRowAndValueEqualsZero()
@@ -82,6 +82,6 @@ class SimpleArrayFormatterTest extends BookstoreEmptyTestBase
         $formatter->init(new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book'));
 
         $book = $formatter->formatOne($stmt);
-        $this->assertSame($this->isDb('mysql') ? '0' : 0, $book);
+        $this->assertSame(0, $book+0);
     }
 }
