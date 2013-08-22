@@ -144,7 +144,7 @@ class OnDemandFormatterTest extends BookstoreEmptyTestBase
             $book->save($con);
         }
 
-        $stmt = $con->query('SELECT * FROM book');
+        $stmt = $con->query('SELECT * FROM book ORDER BY book.ID ASC');
         $formatter = new OnDemandFormatter();
         $formatter->init(new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book'));
         $books = $formatter->format($stmt);
