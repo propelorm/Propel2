@@ -34,6 +34,8 @@ class ActiveRecordTest extends TestCase
         $this->assertFalse($b->hasVirtualColumn('foo'), 'hasVirtualColumn() returns false if the virtual column is not set');
         $b->virtualColumns = array('foo' => 'bar');
         $this->assertTrue($b->hasVirtualColumn('foo'), 'hasVirtualColumn() returns true if the virtual column is set');
+        $b->virtualColumns = array('foo' => null);
+        $this->assertTrue($b->hasVirtualColumn('foo'), 'hasVirtualColumn() returns true if the virtual column is set and has NULL value');
     }
 
     /**
