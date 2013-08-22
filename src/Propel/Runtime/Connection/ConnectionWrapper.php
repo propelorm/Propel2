@@ -375,7 +375,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      * @param array  $driver_options One $array or more key => value pairs to set attribute values
      *                               for the PDOStatement object that this method returns.
      *
-     * @return \Propel\Runtime\Connection\StatementInterface
+     * @return StatementInterface
      */
     public function prepare($sql, $driver_options = array())
     {
@@ -426,7 +426,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      *
      * @see http://php.net/manual/en/pdo.query.php for a description of the possible parameters.
      *
-     * @return \Propel\Runtime\Connection\StatementInterface
+     * @return StatementInterface
      */
     public function query()
     {
@@ -485,7 +485,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      *
      * @param string $sql A valid SQL statement
      *
-     * @return \Propel\Runtime\Connection\StatementInterface
+     * @return StatementInterface
      */
     protected function getStatementWrapper($sql)
     {
