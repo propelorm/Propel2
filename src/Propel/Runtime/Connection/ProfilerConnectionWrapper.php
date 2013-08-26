@@ -109,7 +109,7 @@ class ProfilerConnectionWrapper extends ConnectionWrapper
     /**
      * {@inheritDoc}
      */
-    protected function getStatementWrapper($sql)
+    protected function createStatementWrapper($sql)
     {
         return new ProfilerStatementWrapper($sql, $this);
     }

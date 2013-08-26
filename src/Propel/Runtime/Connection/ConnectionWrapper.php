@@ -384,7 +384,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
         if ($this->isCachePreparedStatements && isset($this->cachedPreparedStatements[$sql])) {
             $statementWrapper = $this->cachedPreparedStatements[$sql];
         } else {
-            $statementWrapper = $this->getStatementWrapper($sql);
+            $statementWrapper = $this->createStatementWrapper($sql);
             $statementWrapper->prepare($driver_options);
             if ($this->isCachePreparedStatements) {
                 $this->cachedPreparedStatements[$sql] = $statementWrapper;
@@ -432,7 +432,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
     {
         $args = func_get_args();
         $sql = array_shift($args);
-        $statementWrapper = $this->getStatementWrapper($sql);
+        $statementWrapper = $this->createStatementWrapper($sql);
         $return = call_user_func_array(array($statementWrapper, 'query'), $args);
 
         if ($this->useDebug) {
@@ -485,9 +485,9 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      *
      * @param string $sql A valid SQL statement
      *
-     * @return StatementInterface
+     * @return StatementWrapper
      */
-    protected function getStatementWrapper($sql)
+    protected function createStatementWrapper($sql)
     {
         return new StatementWrapper($sql, $this);
     }
