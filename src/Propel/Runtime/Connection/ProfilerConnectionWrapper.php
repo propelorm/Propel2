@@ -58,6 +58,9 @@ class ProfilerConnectionWrapper extends ConnectionWrapper
 
     /**
      * Overrides the parent setAttribute to support the isSlowOnly attribute.
+     *
+     * @param string $attribute The attribute name, or the constant name containing the attribute name (e.g. 'PDO::ATTR_CASE')
+     * @param mixed  $value
      */
     public function setAttribute($attribute, $value)
     {
@@ -73,46 +76,17 @@ class ProfilerConnectionWrapper extends ConnectionWrapper
     }
 
     /**
-     * Prepares a statement for execution and returns a statement object.
-     *
-     * Overrides PDO::prepare() in order to:
-     *  - Add logging and query counting if logging is true.
-     *  - Add query caching support if the PropelPDO::PROPEL_ATTR_CACHE_PREPARES was set to true.
-     *
-     * @param string $sql            This must be a valid SQL statement for the target database server.
-     * @param array  $driver_options One $array or more key => value pairs to set attribute values
-     *                                      for the PDOStatement object that this method returns.
-     *
-     * @return \Propel\Runtime\Connection\StatementInterface
+     * {@inheritDoc}
      */
     public function prepare($sql, $driver_options = array())
     {
         $this->getProfiler()->start();
 
-        if ($this->isCachePreparedStatements) {
-            if (!isset($this->cachedPreparedStatements[$sql])) {
-                $return = new ProfilerStatementWrapper($sql, $this, $driver_options);
-                $this->cachedPreparedStatements[$sql] = $return;
-            } else {
-                $return = $this->cachedPreparedStatements[$sql];
-            }
-        } else {
-            $return = new ProfilerStatementWrapper($sql, $this, $driver_options);
-        }
-
-        if ($this->useDebug) {
-            $this->log($sql, null, 'prepare');
-        }
-
-        return $return;
+        return parent::prepare($sql, $driver_options);
     }
 
     /**
-     * Execute an SQL statement and return the number of affected rows.
-     * Overrides PDO::exec() to log queries when required
-     *
-     * @param  string  $sql
-     * @return integer
+     * {@inheritDoc}
      */
     public function exec($sql)
     {
@@ -122,14 +96,7 @@ class ProfilerConnectionWrapper extends ConnectionWrapper
     }
 
     /**
-     * Executes an SQL statement, returning a result set as a PDOStatement object.
-     * Despite its signature here, this method takes a variety of parameters.
-     *
-     * Overrides PDO::query() to log queries when required
-     *
-     * @see http://php.net/manual/en/pdo.query.php for a description of the possible parameters.
-     *
-     * @return PDOStatement
+     * {@inheritDoc}
      */
     public function query()
     {
@@ -140,23 +107,23 @@ class ProfilerConnectionWrapper extends ConnectionWrapper
     }
 
     /**
-     * Logs the method call or SQL using the Propel::log() method or a registered logger class.
-     *
-     * @uses      self::getLogPrefix()
-     * @see self::setLogger()
-     *
-     * @param string  $msg        Message to log.
-     * @param integer $level      Log level to use; will use self::setLogLevel() specified level by default.
-     * @param string  $methodName Name of the method whose execution is being logged.
+     * {@inheritDoc}
      */
-    public function log($msg, $level = null, $methodName = null)
+    protected function createStatementWrapper($sql)
+    {
+        return new ProfilerStatementWrapper($sql, $this);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function log($msg)
     {
         if ($this->isSlowOnly && !$this->getProfiler()->isSlow()) {
             return;
         }
         $msg = $this->getProfiler()->getProfile() . $msg;
 
-        return parent::log($msg, $level, $methodName);
+        return parent::log($msg);
     }
-
 }
