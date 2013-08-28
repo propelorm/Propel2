@@ -346,8 +346,6 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      *
      * @param string $attribute The attribute name, or the constant name containing the attribute name (e.g. 'PDO::ATTR_CASE')
      * @param mixed  $value
-     *
-     * @return boolean TRUE on success or FALSE on failure.
      */
     public function setAttribute($attribute, $value)
     {
@@ -375,30 +373,29 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      *
      * @param string $sql            This must be a valid SQL statement for the target database server.
      * @param array  $driver_options One $array or more key => value pairs to set attribute values
-     *                                      for the PDOStatement object that this method returns.
+     *                               for the PDOStatement object that this method returns.
      *
-     * @return \Propel\Runtime\Connection\StatementInterface
+     * @return StatementInterface
      */
     public function prepare($sql, $driver_options = array())
     {
-        if ($this->isCachePreparedStatements) {
-            if (!isset($this->cachedPreparedStatements[$sql])) {
-                $return = new StatementWrapper($sql, $this);
-                $return->prepare($driver_options);
-                $this->cachedPreparedStatements[$sql] = $return;
-            } else {
-                $return = $this->cachedPreparedStatements[$sql];
-            }
+        $statementWrapper = null;
+
+        if ($this->isCachePreparedStatements && isset($this->cachedPreparedStatements[$sql])) {
+            $statementWrapper = $this->cachedPreparedStatements[$sql];
         } else {
-            $return = new StatementWrapper($sql, $this);
-            $return->prepare($driver_options);
+            $statementWrapper = $this->createStatementWrapper($sql);
+            $statementWrapper->prepare($driver_options);
+            if ($this->isCachePreparedStatements) {
+                $this->cachedPreparedStatements[$sql] = $statementWrapper;
+            }
         }
 
         if ($this->useDebug) {
             $this->log($sql);
         }
 
-        return $return;
+        return $statementWrapper;
     }
 
     /**
@@ -429,13 +426,13 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      *
      * @see http://php.net/manual/en/pdo.query.php for a description of the possible parameters.
      *
-     * @return StatementWrapper
+     * @return StatementInterface
      */
     public function query()
     {
         $args = func_get_args();
         $sql = array_shift($args);
-        $statementWrapper = new StatementWrapper($sql, $this);
+        $statementWrapper = $this->createStatementWrapper($sql);
         $return = call_user_func_array(array($statementWrapper, 'query'), $args);
 
         if ($this->useDebug) {
@@ -481,6 +478,18 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
     public function getDataFetcher($data)
     {
         return $this->connection->getDataFetcher($data);
+    }
+
+    /**
+     * Creates a wrapper for the Statement object.
+     *
+     * @param string $sql A valid SQL statement
+     *
+     * @return StatementWrapper
+     */
+    protected function createStatementWrapper($sql)
+    {
+        return new StatementWrapper($sql, $this);
     }
 
     /**
