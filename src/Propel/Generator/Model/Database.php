@@ -88,7 +88,7 @@ class Database extends ScopedMappingModel
 
         $this->heavyIndexing = false;
         $this->tablePrefix = '';
-        $this->defaultPhpNamingMethod = NameGenerator::CONV_METHOD_UNDERSCORE;
+        $this->defaultPhpNamingMethod = NameGeneratorInterface::CONV_METHOD_UNDERSCORE;
         $this->defaultIdMethod = IdMethod::NATIVE;
         $this->defaultStringFormat = static::DEFAULT_STRING_FORMAT;
         $this->behaviors = array();
@@ -106,7 +106,7 @@ class Database extends ScopedMappingModel
         $this->name = $this->getAttribute('name');
         $this->baseClass = $this->getAttribute('baseClass');
         $this->defaultIdMethod = $this->getAttribute('defaultIdMethod', IdMethod::NATIVE);
-        $this->defaultPhpNamingMethod = $this->getAttribute('defaultPhpNamingMethod', NameGenerator::CONV_METHOD_UNDERSCORE);
+        $this->defaultPhpNamingMethod = $this->getAttribute('defaultPhpNamingMethod', NameGeneratorInterface::CONV_METHOD_UNDERSCORE);
         $this->heavyIndexing = $this->booleanValue($this->getAttribute('heavyIndexing'));
         $this->tablePrefix = $this->getAttribute('tablePrefix', $this->getBuildProperty('tablePrefix'));
         $this->defaultStringFormat = $this->getAttribute('defaultStringFormat', static::DEFAULT_STRING_FORMAT);

@@ -13,14 +13,14 @@ namespace Propel\Tests\Generator\Model;
 use Propel\Generator\Model\Schema;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\NameFactory;
-use Propel\Generator\Model\NameGenerator;
+use Propel\Generator\Model\NameGeneratorInterface;
 use Propel\Generator\Platform\MysqlPlatform;
 
 use Propel\Tests\Helpers\BaseTestCase;
 
 /**
  * <p>Unit tests for class <code>NameFactory</code> and known
- * <code>NameGenerator</code> implementations.</p>
+ * <code>NameGeneratorInterface</code> implementations.</p>
  *
  * <p>To add more tests, add entries to the <code>ALGORITHMS</code>,
  * <code>INPUTS</code>, and <code>OUTPUTS</code> arrays, and code to
@@ -40,7 +40,7 @@ class NameFactoryTest extends BaseTestCase
 
     /**
      * The list of known name generation algorithms, specified as the
-     * fully qualified class names to <code>NameGenerator</code>
+     * fully qualified class names to <code>NameGeneratorInterface</code>
      * implementations.
      */
     private static $ALGORITHMS = array(NameFactory::CONSTRAINT_GENERATOR, NameFactory::PHP_GENERATOR);
@@ -75,9 +75,9 @@ class NameFactoryTest extends BaseTestCase
                         array(self::makeString(5), "FK", 2)
                     ),
                 array(
-                        array("MY_USER", NameGenerator::CONV_METHOD_UNDERSCORE),
-                        array("MY_USER", NameGenerator::CONV_METHOD_PHPNAME),
-                        array("MY_USER", NameGenerator::CONV_METHOD_NOCHANGE)
+                        array("MY_USER", NameGeneratorInterface::CONV_METHOD_UNDERSCORE),
+                        array("MY_USER", NameGeneratorInterface::CONV_METHOD_PHPNAME),
+                        array("MY_USER", NameGeneratorInterface::CONV_METHOD_NOCHANGE)
                     )
                 );
 
@@ -141,13 +141,13 @@ class NameFactoryTest extends BaseTestCase
 
     /**
      * Creates the list of arguments to pass to the specified type of
-     * <code>NameGenerator</code> implementation.
+     * <code>NameGeneratorInterface</code> implementation.
      *
-     * @param      algo The class name of the <code>NameGenerator</code> to
+     * @param      algo The class name of the <code>NameGeneratorInterface</code> to
      * create an argument list for.
      * @param      inputs The (possibly partial) list inputs from which to
      * generate the final list.
-     * @return the list of arguments to pass to the <code>NameGenerator</code>
+     * @return the list of arguments to pass to the <code>NameGeneratorInterface</code>
      */
     private function makeInputs($algo, $inputs)
     {

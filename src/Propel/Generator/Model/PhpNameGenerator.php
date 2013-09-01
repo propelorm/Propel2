@@ -11,14 +11,14 @@
 namespace Propel\Generator\Model;
 
 /**
- * A <code>NameGenerator</code> implementation for PHP-esque names.
+ * A <code>NameGeneratorInterface</code> implementation for PHP-esque names.
  *
  * @author Hans Lellelid <hans@xmpl.org> (Propel)
  * @author Daniel Rall <dlr@finemaltcoding.com> (Torque)
  * @author Byron Foster <byron_foster@yahoo.com> (Torque)
  * @author Bernd Goldschmidt <bgoldschmidt@rapidsoft.de>
  */
-class PhpNameGenerator implements NameGenerator
+class PhpNameGenerator implements NameGeneratorInterface
 {
 
     /**

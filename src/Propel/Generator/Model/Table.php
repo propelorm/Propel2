@@ -130,7 +130,7 @@ class Table extends ScopedMappingModel implements IdMethod
     private function getStdSeparatedName()
     {
         if ($this->schema && $this->getBuildProperty('schemaAutoPrefix')) {
-            return $this->schema . NameGenerator::STD_SEPARATOR_CHAR . $this->getCommonName();
+            return $this->schema . NameGeneratorInterface::STD_SEPARATOR_CHAR . $this->getCommonName();
         }
 
         return $this->getCommonName();
