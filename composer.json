@@ -20,7 +20,7 @@
         "symfony/yaml": "~2.2",
         "symfony/console": "~2.2",
         "symfony/finder": "~2.2",
-        "symfony/validator": "2.2.*@dev",
+        "symfony/validator": "~2.2",
         "symfony/filesystem": "~2.2",
         "psr/log": "~1.0"
     },
