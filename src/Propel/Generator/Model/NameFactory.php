@@ -32,7 +32,7 @@ class NameFactory
     const CONSTRAINT_GENERATOR = '\Propel\Generator\Model\ConstraintNameGenerator';
 
     /**
-     * The cache of <code>NameGenerator</code> algorithms in use for
+     * The cache of <code>NameGeneratorInterface</code> algorithms in use for
      * name generation, keyed by fully qualified class name.
      */
     private static $algorithms = array();
@@ -56,7 +56,7 @@ class NameFactory
      * Given a list of <code>String</code> objects, implements an
      * algorithm which produces a name.
      *
-     * @param string $algorithmName The fully qualified class name of the {@link NameGenerator}
+     * @param string $algorithmName The fully qualified class name of the {@link NameGeneratorInterface}
      *                              implementation to use to generate names.
      * @param  array           $inputs Inputs used to generate a name.
      * @return string          The generated name.

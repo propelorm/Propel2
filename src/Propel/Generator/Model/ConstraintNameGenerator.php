@@ -11,14 +11,14 @@
 namespace Propel\Generator\Model;
 
 /**
- * A <code>NameGenerator</code> implementation for table-specific
+ * A <code>NameGeneratorInterface</code> implementation for table-specific
  * constraints.  Conforms to the maximum column name length for the
  * type of database in use.
  *
  * @author Hans Lellelid <hans@xmpl.org> (Propel)
  * @author Daniel Rall <dlr@finemaltcoding.com> (Torque)
  */
-class ConstraintNameGenerator implements NameGenerator
+class ConstraintNameGenerator implements NameGeneratorInterface
 {
     /**
      * Conditional compilation flag.
