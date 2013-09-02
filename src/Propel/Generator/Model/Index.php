@@ -17,7 +17,7 @@ use Propel\Generator\Exception\EngineException;
  *
  * @author Jason van Zyl <vanzyl@apache.org>
  * @author Daniel Rall <dlr@finemaltcoding.com>
- * @author Hugo Hamon <webmaster@apprendre-php.com>
+ * @author Hugo Hamon <webmaster@apprendre-php.com> (Propel)
  */
 class Index extends MappingModel
 {
@@ -50,8 +50,8 @@ class Index extends MappingModel
     {
         parent::__construct();
 
-        $this->columns = array();
-        $this->columnsSize = array();
+        $this->columns     = [];
+        $this->columnsSize = [];
 
         if (null !== $name) {
             $this->setName($name);
@@ -195,8 +195,8 @@ class Index extends MappingModel
      */
     public function setColumns(array $columns)
     {
-        $this->columns = array();
-        $this->columnsSize = array();
+        $this->columns     = [];
+        $this->columnsSize = [];
         foreach ($columns as $column) {
             $this->addColumn($column);
         }
@@ -231,7 +231,7 @@ class Index extends MappingModel
      */
     public function resetColumnsSize()
     {
-        $this->columnsSize = array();
+        $this->columnsSize = [];
     }
 
     /**

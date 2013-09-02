@@ -62,27 +62,19 @@ class TableTest extends ModelTestCase
 
     public function testGetGeneratorConfig()
     {
-        $schema = $this->getMock('Propel\Generator\Model\Schema');
         $config = $this->getMock('Propel\Generator\Config\GeneratorConfig');
+        $database = $this->getDatabaseMock('foo');
 
-        $schema
+        $database
             ->expects($this->once())
             ->method('getGeneratorConfig')
             ->will($this->returnValue($config))
         ;
 
-        $database = $this->getDatabaseMock('foo');
-
-        $database
-            ->expects($this->once())
-            ->method('getParentSchema')
-            ->will($this->returnValue($schema))
-        ;
-
         $table = new Table();
         $table->setDatabase($database);
 
-        $this->assertInstanceOf('Propel\Generator\Config\GeneratorConfig', $table->getGeneratorConfig());
+        $this->assertSame($config, $table->getGeneratorConfig());
     }
 
     public function testGetBuildProperty()
@@ -187,15 +179,21 @@ class TableTest extends ModelTestCase
      */
     public function testGetNameWithPlatform($supportsSchemas, $schemaName, $expectedName)
     {
-        $platform = $this->getPlatformMock($supportsSchemas);
-        $database = $this->getDatabaseMock('bookstore', array(
-            'platform' => $platform
+        $database = $this->getDatabaseMock($schemaName, array(
+            'platform' => $this->getPlatformMock($supportsSchemas),
         ));
-
+        
+        $database
+            ->expects($supportsSchemas ? $this->once() : $this->never())
+            ->method('getSchemaDelimiter')
+            ->will($this->returnValue('.'))
+        ;
+        
         $table = new Table('books');
+        $table->setSchema($schemaName);
         $table->setDatabase($database);
 
-        $this->assertSame('books', $table->getName());
+        $this->assertSame($expectedName, $table->getName());
     }
 
     public function provideSchemaNames()

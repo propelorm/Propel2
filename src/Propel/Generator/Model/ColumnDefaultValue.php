@@ -13,7 +13,8 @@ namespace Propel\Generator\Model;
 /**
  * A class for holding a column default value.
  *
- * @author Hans Lellelid <hans@xmpl.org>
+ * @author Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author Hugo Hamon <webmaster@apprendre-php.com> (Propel)
  */
 class ColumnDefaultValue
 {
@@ -105,7 +106,7 @@ class ColumnDefaultValue
         }
 
         // special case for current timestamp
-        $equivalents = array('CURRENT_TIMESTAMP', 'NOW()');
+        $equivalents = [ 'CURRENT_TIMESTAMP', 'NOW()' ];
         if (in_array(strtoupper($this->getValue()), $equivalents) && in_array(strtoupper($other->getValue()), $equivalents)) {
             return true;
         }

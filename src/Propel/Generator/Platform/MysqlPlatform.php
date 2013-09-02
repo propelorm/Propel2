@@ -351,7 +351,7 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
 
         $ddl = array($this->quoteIdentifier($col->getName()));
         if ($this->hasSize($sqlType) && $col->isDefaultSqlType($this)) {
-            $ddl[] = $sqlType . $domain->getSizeDefinition();
+            $ddl[] = $sqlType . $col->getSizeDefinition();
         } else {
             $ddl[] = $sqlType;
         }

@@ -16,18 +16,33 @@ use Propel\Generator\Exception\BehaviorNotFoundException;
  * An abstract model class to represent objects that belongs to a schema like
  * databases, tables, columns, indices, unices, foreign keys...
  *
- * @author Hans Lellelid <hans@xmpl.org>
- * @author Hugo Hamon <webmaster@apprendre-php.com>
+ * @author Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author Hugo Hamon <webmaster@apprendre-php.com> (Propel)
  */
 abstract class MappingModel implements MappingModelInterface
 {
+    /**
+     * The list of attributes.
+     * 
+     * @var array
+     */
     protected $attributes;
+
+    /**
+     * The list of vendor's information.
+     * 
+     * @var array
+     */
     protected $vendorInfos;
 
+    /**
+     * Constructor.
+     * 
+     */
     public function __construct()
     {
-        $this->attributes  = array();
-        $this->vendorInfos = array();
+        $this->attributes  = [];
+        $this->vendorInfos = [];
     }
 
     /**
@@ -98,7 +113,7 @@ abstract class MappingModel implements MappingModelInterface
             return (Boolean) $value;
         }
 
-        return in_array(strtolower($value), array('true', 't', 'y', 'yes'), true);
+        return in_array(strtolower($value),  [ 'true', 't', 'y', 'yes' ], true);
     }
 
     protected function getDefaultValueForArray($stringValue)
@@ -109,7 +124,7 @@ abstract class MappingModel implements MappingModelInterface
             return null;
         }
 
-        $values = array();
+        $values = [];
         foreach (explode(',', $stringValue) as $v) {
             $values[] = trim($v);
         }
@@ -179,7 +194,7 @@ abstract class MappingModel implements MappingModelInterface
             $class = $behavior;
         } else {
             $generator = new PhpNameGenerator();
-            $phpName = $generator->generateName(array($behavior, PhpNameGenerator::CONV_METHOD_PHPNAME));
+            $phpName = $generator->generateName([ $behavior, PhpNameGenerator::CONV_METHOD_PHPNAME ]);
             $class = sprintf('\\Propel\\Generator\\Behavior\\%s\\%sBehavior', $phpName, $phpName);
         }
 

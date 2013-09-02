@@ -286,14 +286,14 @@ class TableComparator
             }
         }
 
-        foreach ($fromTableFks as $fromTableFkPos => $fromTableFk) {
+        foreach ($fromTableFks as $fromTableFk) {
             if (!$fromTableFk->isSkipSql() && !in_array($fromTableFk, $toTableFks)) {
                 $this->tableDiff->addRemovedFk($fromTableFk->getName(), $fromTableFk);
                 $fkDifferences++;
             }
         }
 
-        foreach ($toTableFks as $toTableFkPos => $toTableFk) {
+        foreach ($toTableFks as $toTableFk) {
             if (!$toTableFk->isSkipSql() && !in_array($toTableFk, $fromTableFks)) {
                 $this->tableDiff->addAddedFk($toTableFk->getName(), $toTableFk);
                 $fkDifferences++;

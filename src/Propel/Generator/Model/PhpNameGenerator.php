@@ -17,10 +17,10 @@ namespace Propel\Generator\Model;
  * @author Daniel Rall <dlr@finemaltcoding.com> (Torque)
  * @author Byron Foster <byron_foster@yahoo.com> (Torque)
  * @author Bernd Goldschmidt <bgoldschmidt@rapidsoft.de>
+ * @author Hugo Hamon <webmaster@apprendre-php.com> (Propel)
  */
 class PhpNameGenerator implements NameGeneratorInterface
 {
-
     /**
      * <code>inputs</code> should consist of two (three) elements, the
      * original name of the database element and the method for
@@ -118,7 +118,7 @@ class PhpNameGenerator implements NameGeneratorInterface
     {
         $name = '';
         $regexp = '/([a-z0-9]+)/i';
-        $matches = array();
+        $matches = [];
         if (!preg_match_all($regexp, $schemaName, $matches)) {
             return $schemaName;
         }

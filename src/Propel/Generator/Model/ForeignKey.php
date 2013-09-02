@@ -13,11 +13,11 @@ namespace Propel\Generator\Model;
 /**
  * A class for information about table foreign keys.
  *
- * @author Hans Lellelid <hans@xmpl.org>
+ * @author Hans Lellelid <hans@xmpl.org> (Propel)
  * @author Fedor <fedor.karpelevitch@home.com>
  * @author Daniel Rall <dlr@finemaltcoding.com>
  * @author Ulf Hermann <ulfhermann@kulturserver.de>
- * @author Hugo Hamon <webmaster@apprendre-php.com>
+ * @author Hugo Hamon <webmaster@apprendre-php.com> (Propel)
  */
 class ForeignKey extends MappingModel
 {
@@ -109,8 +109,8 @@ class ForeignKey extends MappingModel
 
         $this->onUpdate = self::NONE;
         $this->onDelete = self::NONE;
-        $this->localColumns = array();
-        $this->foreignColumns = array();
+        $this->localColumns   = [];
+        $this->foreignColumns = [];
         $this->skipSql = false;
     }
 
@@ -452,8 +452,8 @@ class ForeignKey extends MappingModel
      */
     public function clearReferences()
     {
-        $this->localColumns = array();
-        $this->foreignColumns = array();
+        $this->localColumns   = [];
+        $this->foreignColumns = [];
     }
 
     /**
@@ -473,7 +473,7 @@ class ForeignKey extends MappingModel
      */
     public function getLocalColumnObjects()
     {
-        $columns = array();
+        $columns = [];
         foreach ($this->localColumns as $columnName) {
             $columns[] = $this->parentTable->getColumn($columnName);
         }
@@ -511,7 +511,7 @@ class ForeignKey extends MappingModel
      */
     public function getLocalForeignMapping()
     {
-        $h = array();
+        $h = [];
         for ($i = 0, $size = count($this->localColumns); $i < $size; $i++) {
             $h[$this->localColumns[$i]] = $this->foreignColumns[$i];
         }
@@ -527,7 +527,7 @@ class ForeignKey extends MappingModel
      */
     public function getForeignLocalMapping()
     {
-        $h = array();
+        $h = [];
         for ($i = 0, $size = count($this->localColumns); $i < $size; $i++) {
             $h[$this->foreignColumns[$i]] = $this->localColumns[$i];
         }
@@ -543,13 +543,13 @@ class ForeignKey extends MappingModel
      */
     public function getColumnObjectsMapping()
     {
-        $mapping = array();
+        $mapping = [];
         $foreignTable = $this->getForeignTable();
         for ($i = 0, $size = count($this->localColumns); $i < $size; $i++) {
-            $mapping[] = array(
+            $mapping[] = [
                 'local'   => $this->parentTable->getColumn($this->localColumns[$i]),
                 'foreign' => $foreignTable->getColumn($this->foreignColumns[$i]),
-            );
+            ];
         }
 
         return $mapping;
@@ -598,7 +598,7 @@ class ForeignKey extends MappingModel
      */
     public function getForeignColumnObjects()
     {
-        $columns = array();
+        $columns = [];
         $foreignTable = $this->getForeignTable();
         foreach ($this->foreignColumns as $columnName) {
             $columns[] = $foreignTable->getColumn($columnName);
@@ -656,7 +656,7 @@ class ForeignKey extends MappingModel
         $lfmap = $this->getLocalForeignMapping();
         $foreignTable = $this->getForeignTable();
 
-        $foreignPKCols = array();
+        $foreignPKCols = [];
         foreach ($foreignTable->getPrimaryKey() as $fPKCol) {
             $foreignPKCols[] = $fPKCol->getName();
         }
@@ -690,7 +690,7 @@ class ForeignKey extends MappingModel
      */
     public function isLocalPrimaryKey()
     {
-        $localPKCols = array();
+        $localPKCols = [];
         foreach ($this->parentTable->getPrimaryKey() as $lPKCol) {
             $localPKCols[] = $lPKCol->getName();
         }
@@ -757,7 +757,7 @@ class ForeignKey extends MappingModel
      */
     public function getOtherFks()
     {
-        $fks = array();
+        $fks = [];
         foreach ($this->parentTable->getForeignKeys() as $fk) {
             if ($fk !== $this) {
                 $fks[]= $fk;
@@ -833,12 +833,12 @@ class ForeignKey extends MappingModel
         $lfmap = $this->getLocalForeignMapping();
         $foreignTable = $this->getForeignTable();
 
-        $foreignPKCols = array();
+        $foreignPKCols = [];
         foreach ($foreignTable->getPrimaryKey() as $fPKCol) {
             $foreignPKCols[$fPKCol->getName()] = true;
         }
 
-        $foreignCols = array();
+        $foreignCols = [];
         foreach ($this->getLocalColumns() as $colName) {
             if ($foreignPKCols[$lfmap[$colName]]) {
                 $foreignCols[] = $foreignTable->getColumn($lfmap[$colName]);

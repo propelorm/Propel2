@@ -25,11 +25,10 @@ use Propel\Generator\Platform\MysqlPlatform;
  * @author John McNally <jmcnally@collab.net> (Torque)
  * @author Daniel Rall <dlr@collab.net> (Torque)
  * @author Byron Foster <byron_foster@yahoo.com> (Torque)
- * @author Hugo Hamon <webmaster@apprendre-php.com>
+ * @author Hugo Hamon <webmaster@apprendre-php.com> (Propel)
  */
 class Table extends ScopedMappingModel implements IdMethod
 {
-
     /**
      * @var Column[]
      */
@@ -106,17 +105,17 @@ class Table extends ScopedMappingModel implements IdMethod
         $this->reloadOnUpdate = false;
         $this->skipSql = false;
 
-        $this->behaviors = array();
-        $this->columns = array();
-        $this->columnsByName = array();
-        $this->columnsByPhpName = array();
-        $this->columnsByLowercaseName = array();
-        $this->foreignKeys = array();
-        $this->foreignTableNames = array();
-        $this->idMethodParameters = array();
-        $this->indices = array();
-        $this->referrers = array();
-        $this->unices = array();
+        $this->behaviors              = [];
+        $this->columns                = [];
+        $this->columnsByName          = [];
+        $this->columnsByPhpName       = [];
+        $this->columnsByLowercaseName = [];
+        $this->foreignKeys            = [];
+        $this->foreignTableNames      = [];
+        $this->idMethodParameters     = [];
+        $this->indices                = [];
+        $this->referrers              = [];
+        $this->unices                 = [];
     }
 
     /**
@@ -280,7 +279,7 @@ class Table extends ScopedMappingModel implements IdMethod
          * implemented yet.
          * @var array
          */
-        $_indices = array();
+        $_indices = [];
 
         $this->collectIndexedColumns('PRIMARY', $this->getPrimaryKey(), $_indices);
 
@@ -360,12 +359,12 @@ class Table extends ScopedMappingModel implements IdMethod
          * capabilities on (col1), (col1, col2), and (col1, col2, col3)."
          * @link http://dev.mysql.com/doc/refman/5.5/en/mysql-indexes.html
          */
-        $indexedColumns = array();
+        $indexedColumns = [];
         foreach ($columns as $column) {
             $indexedColumns[] = $column;
             $indexedColumnsHash = $this->getColumnList($indexedColumns);
             if (!isset($collectedIndexes[$indexedColumnsHash])) {
-                $collectedIndexes[$indexedColumnsHash] = array();
+                $collectedIndexes[$indexedColumnsHash] = [];
             }
             $collectedIndexes[$indexedColumnsHash][] = $indexName;
         }
@@ -381,7 +380,7 @@ class Table extends ScopedMappingModel implements IdMethod
      */
     public function getColumnList($columns, $delimiter = ',')
     {
-        $list = array();
+        $list = [];
         foreach ($columns as $col) {
             if ($col instanceof Column) {
                 $col = $col->getName();
@@ -441,13 +440,12 @@ class Table extends ScopedMappingModel implements IdMethod
      */
     private function acquireConstraintName($nameType, $nbr)
     {
-        $inputs   = array();
-        $inputs[] = $this->database;
-        $inputs[] = $this->getCommonName();
-        $inputs[] = $nameType;
-        $inputs[] = $nbr;
-
-        return NameFactory::generateName(NameFactory::CONSTRAINT_GENERATOR, $inputs);
+        return NameFactory::generateName(NameFactory::CONSTRAINT_GENERATOR, [ 
+            $this->database,
+            $this->getCommonName(),
+            $nameType,
+            $nbr
+        ]);
     }
 
     /**
@@ -616,7 +614,7 @@ class Table extends ScopedMappingModel implements IdMethod
             return null;
         }
 
-        $names = array();
+        $names = [];
         foreach ($this->inheritanceColumn->getChildren() as $child) {
             $names[] = get_class($child);
         }
@@ -727,11 +725,11 @@ class Table extends ScopedMappingModel implements IdMethod
      */
     public function getCrossFks()
     {
-        $crossFks = array();
+        $crossFks = [];
         foreach ($this->referrers as $refFK) {
             if ($refFK->getTable()->isCrossRef()) {
                 foreach ($refFK->getOtherFks() as $crossFK) {
-                    $crossFks[] = array($refFK, $crossFK);
+                    $crossFks[] = [ $refFK, $crossFK ];
                 }
             }
         }
@@ -821,7 +819,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * Checks if the table has a index by name.
      *
      * @param  string $name
-     * @return bool
+     * @return boolean
      */
     public function hasIndex($name)
     {
@@ -888,7 +886,7 @@ class Table extends ScopedMappingModel implements IdMethod
      */
     public function getGeneratorConfig()
     {
-        return $this->database->getParentSchema()->getGeneratorConfig();
+        return $this->database->getGeneratorConfig();
     }
 
     /**
@@ -967,7 +965,7 @@ class Table extends ScopedMappingModel implements IdMethod
      */
     public function getEarlyBehaviors()
     {
-        $behaviors = array();
+        $behaviors = [];
         foreach ($this->behaviors as $name => $behavior) {
             if ($behavior->isEarly()) {
                 $behaviors[$name] = $behavior;
@@ -984,7 +982,7 @@ class Table extends ScopedMappingModel implements IdMethod
      */
     public function getAdditionalBuilders()
     {
-        $additionalBuilders = array();
+        $additionalBuilders = [];
         foreach ($this->behaviors as $behavior) {
             $additionalBuilders = array_merge($additionalBuilders, $behavior->getAdditionalBuilders());
         }
@@ -999,17 +997,38 @@ class Table extends ScopedMappingModel implements IdMethod
      */
     public function getName()
     {
-        if ($this->getDatabase()
-            && ($this->schema || $this->getDatabase()->getSchema())
-            && $this->getDatabase()->getPlatform()
-            && $this->getDatabase()->getPlatform()->supportsSchemas()
-        ) {
-            return ($this->schema ?: $this->getDatabase()->getSchema())
-                . $this->getDatabase()->getPlatform()->getSchemaDelimiter()
-                . $this->commonName;
+        $tableName = '';
+        if ($this->hasSchema()) {
+            $tableName = $this->guessSchemaName() . $this->database->getSchemaDelimiter();
         }
 
-        return $this->commonName;
+        $tableName .= $this->commonName;
+
+        return $tableName;
+    }
+
+    /**
+     * Returns the schema name.
+     * 
+     * @return string
+     */
+    private function guessSchemaName()
+    {
+        return $this->schema ?: $this->database->getSchema();
+    }
+
+    /**
+     * Returns whether or not this table is linked to a schema.
+     * 
+     * @return boolean
+     */
+    private function hasSchema()
+    {
+        return $this->database
+            && ($this->schema ?: $this->database->getSchema())
+            && ($platform = $this->getPlatform())
+            && $platform->supportsSchemas()
+        ;
     }
 
     /**
@@ -1051,11 +1070,7 @@ class Table extends ScopedMappingModel implements IdMethod
     public function getPhpName()
     {
         if (null === $this->phpName) {
-            $inputs = array();
-            $inputs[] = $this->getStdSeparatedName();
-            $inputs[] = $this->phpNamingMethod;
-
-            $this->phpName = NameFactory::generateName(NameFactory::PHP_GENERATOR, $inputs);
+            $this->phpName = $this->buildPhpName($this->getStdSeparatedName());
         }
 
         return $this->phpName;
@@ -1078,7 +1093,7 @@ class Table extends ScopedMappingModel implements IdMethod
      */
     private function buildPhpName($name)
     {
-        return NameFactory::generateName(NameFactory::PHP_GENERATOR, array($name, $this->phpNamingMethod));
+        return NameFactory::generateName(NameFactory::PHP_GENERATOR, [ $name, $this->phpNamingMethod ]);
     }
 
     /**
@@ -1408,7 +1423,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * (through primaryKey, through a regular unices constraints or for single keys when it has isUnique=true)
      *
      * @param Column[]|string[] $keys
-     * @return bool
+     * @return boolean
      */
     public function isUnique(array $keys)
     {
@@ -1561,7 +1576,7 @@ class Table extends ScopedMappingModel implements IdMethod
      */
     public function getForeignKeysReferencingTable($tableName)
     {
-        $matches = array();
+        $matches = [];
         foreach ($this->foreignKeys as $fk) {
             if ($fk->getForeignTableName() === $tableName) {
                 $matches[] = $fk;
@@ -1583,7 +1598,7 @@ class Table extends ScopedMappingModel implements IdMethod
      */
     public function getColumnForeignKeys($column)
     {
-        $matches = array();
+        $matches = [];
         foreach ($this->foreignKeys as $fk) {
             if (in_array($column, $fk->getLocalColumns())) {
                 $matches[] = $fk;
@@ -1750,7 +1765,7 @@ class Table extends ScopedMappingModel implements IdMethod
      */
     public function getPrimaryKey()
     {
-        $pk = array();
+        $pk = [];
         foreach ($this->columns as $col) {
             if ($col->isPrimaryKey()) {
                 $pk[] = $col;

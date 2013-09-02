@@ -25,7 +25,7 @@ class ColumnDiff
 
     public function __construct()
     {
-        $this->changedProperties = array();
+        $this->changedProperties = [];
     }
 
     /**
@@ -102,7 +102,7 @@ class ColumnDiff
         $diff->setToColumn($this->getFromColumn());
 
         // properties
-        $changedProperties = array();
+        $changedProperties = [];
         foreach ($this->getChangedProperties() as $name => $propertyChange) {
             $changedProperties[$name] = array_reverse($propertyChange);
         }

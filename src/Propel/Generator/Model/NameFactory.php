@@ -17,10 +17,10 @@ use Propel\Generator\Exception\EngineException;
  *
  * @author Hans Lellelid <hans@xmpl.org> (Propel)
  * @author Daniel Rall <dlr@finemaltcoding.com> (Torque)
+ * @author Hugo Hamon <webmaster@apprendre-php.com> (Propel)
  */
 class NameFactory
 {
-
     /**
      * The class name of the PHP name generator.
      */
@@ -35,7 +35,7 @@ class NameFactory
      * The cache of <code>NameGeneratorInterface</code> algorithms in use for
      * name generation, keyed by fully qualified class name.
      */
-    private static $algorithms = array();
+    private static $algorithms = [];
 
     /**
      * Factory method which retrieves an instance of the named generator.

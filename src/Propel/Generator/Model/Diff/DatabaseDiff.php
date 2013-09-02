@@ -27,10 +27,10 @@ class DatabaseDiff
 
     public function __construct()
     {
-        $this->addedTables = array();
-        $this->removedTables = array();
-        $this->modifiedTables = array();
-        $this->renamedTables = array();
+        $this->addedTables    = [];
+        $this->removedTables  = [];
+        $this->modifiedTables = [];
+        $this->renamedTables  = [];
     }
 
     /**
@@ -257,7 +257,7 @@ class DatabaseDiff
         }
         $diff->setRemovedTables($this->getAddedTables());
         $diff->setRenamedTables(array_flip($this->getRenamedTables()));
-        $tableDiffs = array();
+        $tableDiffs = [];
         foreach ($this->getModifiedTables() as $name => $tableDiff) {
             $tableDiffs[$name] = $tableDiff->getReverseDiff();
         }
@@ -273,7 +273,7 @@ class DatabaseDiff
      */
     public function getDescription()
     {
-        $changes = array();
+        $changes = [];
         if ($count = $this->countAddedTables()) {
             $changes[] = sprintf('%d added tables', $count);
         }
