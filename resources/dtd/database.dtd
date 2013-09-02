@@ -25,7 +25,6 @@ PHP class or method name.
 <!ATTLIST database
   name CDATA #IMPLIED
   defaultIdMethod (native|none) "none"
-  defaultTranslateMethode CDATA #IMPLIED
   package CDATA #IMPLIED
   schema CDATA #IMPLIED
   namespace CDATA #IMPLIED

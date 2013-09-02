@@ -138,13 +138,6 @@ abstract class MappingModel implements MappingModelInterface
     }
 
     /**
-     * Appends DOM elements to represent this object in XML.
-     *
-     * @param \DOMNode $node
-     */
-    abstract public function appendXml(\DOMNode $node);
-
-    /**
      * Adds a new VendorInfo instance to this current model object.
      *
      * @param  VendorInfo|array $vendor
@@ -180,6 +173,16 @@ abstract class MappingModel implements MappingModelInterface
     }
 
     /**
+     * Returns the list of all vendor information.
+     * 
+     * @return VendorInfo[]
+     */
+    public function getVendorInformation()
+    {
+        return $this->vendorInfos;
+    }
+
+    /**
      * Returns the best class name for a given behavior.
      *
      * If not found, the method tries to autoload \Propel\Generator\Behavior\[Bname]\[Bname]Behavior
@@ -203,30 +206,5 @@ abstract class MappingModel implements MappingModelInterface
         }
 
         return $class;
-    }
-
-    /**
-     * String representation of the current object.
-     *
-     * @return string
-     */
-    public function toString()
-    {
-        $doc = new \DOMDocument('1.0');
-        $doc->formatOutput = true;
-        $this->appendXml($doc);
-        $xmlstr = $doc->saveXML();
-
-        return trim(preg_replace('/<\?xml.*?\?>/', '', $xmlstr));
-    }
-
-    /**
-     * String representation of the current object.
-     *
-     * @return string
-     */
-    public function __toString()
-    {
-        return $this->toString();
     }
 }

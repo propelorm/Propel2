@@ -79,6 +79,25 @@ class Table extends ScopedMappingModel implements IdMethod
     private $forReferenceOnly;
     private $reloadOnInsert;
     private $reloadOnUpdate;
+
+    /**
+     * The default accessor visibility.
+     *
+     * It may be one of public, private and protected.
+     *
+     * @var string
+     */
+    private $defaultAccessorVisibility;
+
+    /**
+     * The default mutator visibility.
+     *
+     * It may be one of public, private and protected.
+     *
+     * @var string
+     */
+    private $defaultMutatorVisibility;
+
     protected $behaviors;
     protected $isCrossRef;
     protected $defaultStringFormat;
@@ -96,26 +115,27 @@ class Table extends ScopedMappingModel implements IdMethod
             $this->setCommonName($name);
         }
 
-        $this->idMethod  = IdMethod::NO_ID_METHOD;
-        $this->allowPkInsert = false;
-        $this->isAbstract = false;
-        $this->isCrossRef = false;
-        $this->readOnly = false;
-        $this->reloadOnInsert = false;
-        $this->reloadOnUpdate = false;
-        $this->skipSql = false;
-
-        $this->behaviors              = [];
-        $this->columns                = [];
-        $this->columnsByName          = [];
-        $this->columnsByPhpName       = [];
-        $this->columnsByLowercaseName = [];
-        $this->foreignKeys            = [];
-        $this->foreignTableNames      = [];
-        $this->idMethodParameters     = [];
-        $this->indices                = [];
-        $this->referrers              = [];
-        $this->unices                 = [];
+        $this->idMethod                  = IdMethod::NO_ID_METHOD;
+        $this->defaultAccessorVisibility = static::VISIBILITY_PUBLIC;
+        $this->defaultMutatorVisibility  = static::VISIBILITY_PUBLIC;
+        $this->allowPkInsert             = false;
+        $this->isAbstract                = false;
+        $this->isCrossRef                = false;
+        $this->readOnly                  = false;
+        $this->reloadOnInsert            = false;
+        $this->reloadOnUpdate            = false;
+        $this->skipSql                   = false;
+        $this->behaviors                 = [];
+        $this->columns                   = [];
+        $this->columnsByName             = [];
+        $this->columnsByPhpName          = [];
+        $this->columnsByLowercaseName    = [];
+        $this->foreignKeys               = [];
+        $this->foreignTableNames         = [];
+        $this->idMethodParameters        = [];
+        $this->indices                   = [];
+        $this->referrers                 = [];
+        $this->unices                    = [];
     }
 
     /**
@@ -171,6 +191,8 @@ class Table extends ScopedMappingModel implements IdMethod
         $this->reloadOnUpdate = $this->booleanValue($this->getAttribute('reloadOnUpdate'));
         $this->isCrossRef = $this->booleanValue($this->getAttribute('isCrossRef', false));
         $this->defaultStringFormat = $this->getAttribute('defaultStringFormat');
+        $this->defaultAccessorVisibility = $this->getAttribute('defaultAccessorVisibility', $this->database->getAttribute('defaultAccessorVisibility', static::VISIBILITY_PUBLIC));
+        $this->defaultMutatorVisibility  = $this->getAttribute('defaultMutatorVisibility', $this->database->getAttribute('defaultMutatorVisibility', static::VISIBILITY_PUBLIC));
     }
 
     /**
@@ -235,16 +257,16 @@ class Table extends ScopedMappingModel implements IdMethod
      * Adds extra indices for multi-part primary key columns.
      *
      * For databases like MySQL, values in a where clause much
-     * match key part order from the left to right.	 So, in the key
+     * match key part order from the left to right. So, in the key
      * definition <code>PRIMARY KEY (FOO_ID, BAR_ID)</code>,
      * <code>FOO_ID</code> <i>must</i> be the first element used in
      * the <code>where</code> clause of the SQL query used against
-     * this table for the primary key index to be used.	 This feature
+     * this table for the primary key index to be used. This feature
      * could cause problems under MySQL with heavily indexed tables,
      * as MySQL currently only supports 16 indices per table (i.e. it
      * might cause too many indices to be created).
      *
-     * See the mysqm manual http://www.mysql.com/doc/E/X/EXPLAIN.html
+     * See the mysql manual http://www.mysql.com/doc/E/X/EXPLAIN.html
      * for a better description of why heavy indexing is useful for
      * quickly searchable database tables.
      */
@@ -295,52 +317,65 @@ class Table extends ScopedMappingModel implements IdMethod
         foreach ($this->referrers as $foreignKey) {
             $referencedColumns = $foreignKey->getForeignColumnObjects();
             $referencedColumnsHash = $this->getColumnList($referencedColumns);
-            if (!empty($referencedColumns) && !isset($_indices[$referencedColumnsHash])) {
-                // no matching index defined in the schema, so we have to create one
-
-                $name = sprintf('I_referenced_%s_%s', $foreignKey->getName(), ++$counter);
-                if ($this->hasIndex($name)) {
-                    //if we have already a index with this name, then it looks like the columns of this index have just
-                    //been changed, so remove it and inject it again. This is the case if a referenced table is handled
-                    //later than the referencing table.
-                    $this->removeIndex($name);
-                }
-
-                $index = new Index();
-                $index->setName($name);
-                $index->setColumns($referencedColumns);
-                $index->resetColumnsSize();
-                $this->addIndex($index);
-                // Add this new index to our collection, otherwise we might add it again (bug #725)
-                $this->collectIndexedColumns($index->getName(), $referencedColumns, $_indices);
+            if (empty($referencedColumns) || isset($_indices[$referencedColumnsHash])) {
+                continue;
             }
+
+            // no matching index defined in the schema, so we have to create one
+            $name = sprintf('I_referenced_%s_%s', $foreignKey->getName(), ++$counter);
+            if ($this->hasIndex($name)) {
+                // if we have already a index with this name, then it looks like the columns of this index have just
+                // been changed, so remove it and inject it again. This is the case if a referenced table is handled
+                // later than the referencing table.
+                $this->removeIndex($name);
+            }
+
+            $index = $this->createIndex($name, $referencedColumns);
+            // Add this new index to our collection, otherwise we might add it again (bug #725)
+            $this->collectIndexedColumns($index->getName(), $referencedColumns, $_indices);
         }
 
         // we're adding indices for this table foreign keys
         foreach ($this->foreignKeys as $foreignKey) {
             $localColumns = $foreignKey->getLocalColumnObjects();
             $localColumnsHash = $this->getColumnList($localColumns);
-            if (!empty($localColumns) && !isset($_indices[$localColumnsHash])) {
-                // no matching index defined in the schema, so we have to create one.
-                // MySQL needs indices on any columns that serve as foreign keys. these are not auto-created prior to
-                // 4.1.2
-
-                $name = substr_replace($foreignKey->getName(), 'FI_',  strrpos($foreignKey->getName(), 'FK_'), 3);
-                if ($this->hasIndex($name)) {
-                    //if we have already a index with this name, then it looks like the columns of this index have just
-                    //been changed, so remove it and inject it again. This is the case if a referenced table is handled
-                    //later than the referencing table.
-                    $this->removeIndex($name);
-                }
-
-                $index = new Index();
-                $index->setName($name);
-                $index->setColumns($localColumns);
-                $index->resetColumnsSize();
-                $this->addIndex($index);
-                $this->collectIndexedColumns($index->getName(), $localColumns, $_indices);
+            if (empty($localColumns) || isset($_indices[$localColumnsHash])) {
+                continue;
             }
+
+            // No matching index defined in the schema, so we have to create one.
+            // MySQL needs indices on any columns that serve as foreign keys.
+            // These are not auto-created prior to 4.1.2.
+
+            $name = substr_replace($foreignKey->getName(), 'FI_',  strrpos($foreignKey->getName(), 'FK_'), 3);
+            if ($this->hasIndex($name)) {
+                // if we already have an index with this name, then it looks like the columns of this index have just
+                // been changed, so remove it and inject it again. This is the case if a referenced table is handled
+                // later than the referencing table.
+                $this->removeIndex($name);
+            }
+
+            $index = $this->createIndex($name, $localColumns);
+            $this->collectIndexedColumns($index->getName(), $localColumns, $_indices);
         }
+    }
+
+    /**
+     * Creates a new index.
+     *
+     * @param  string $name    The index name
+     * @param  array  $columns The list of columns to index
+     * @return Index  $index   The created index
+     */
+    protected function createIndex($name, array $columns)
+    {
+        $index = new Index($name);
+        $index->setColumns($columns);
+        $index->resetColumnsSize();
+
+        $this->addIndex($index);
+
+        return $index;
     }
 
     /**
@@ -518,6 +553,18 @@ class Table extends ScopedMappingModel implements IdMethod
     }
 
     /**
+     * Adds several columns at once.
+     * 
+     * @param Column[] $columns An array of Column instance
+     */
+    public function addColumns(array $columns)
+    {
+        foreach ($columns as $column) {
+            $this->addColumn($column);
+        }
+    }
+
+    /**
      * Removes a column from the table.
      *
      * @param Column|string $column The Column or its name
@@ -567,13 +614,13 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Adds a new foreign key to this table.
      *
-     * @param ForeignKey|array
+     * @param ForeignKey|array $foreignKey The foreign key mapping
      * @return ForeignKey
      */
-    public function addForeignKey($fkdata)
+    public function addForeignKey($foreignKey)
     {
-        if ($fkdata instanceof ForeignKey) {
-            $fk = $fkdata;
+        if ($foreignKey instanceof ForeignKey) {
+            $fk = $foreignKey;
             $fk->setTable($this);
             $this->foreignKeys[] = $fk;
 
@@ -586,9 +633,21 @@ class Table extends ScopedMappingModel implements IdMethod
 
         $fk = new ForeignKey();
         $fk->setTable($this);
-        $fk->loadMapping($fkdata);
+        $fk->loadMapping($foreignKey);
 
         return $this->addForeignKey($fk);
+    }
+
+    /**
+     * Adds several foreign keys at once.
+     *
+     * @param ForeignKey[] $foreignKeys An array of ForeignKey objects
+     */
+    public function addForeignKeys(array $foreignKeys)
+    {
+        foreach ($foreignKeys as $foreignKey) {
+            $this->addForeignKey($foreignKey);
+        }
     }
 
     /**
@@ -1230,12 +1289,32 @@ class Table extends ScopedMappingModel implements IdMethod
     }
 
     /**
+     * Makes this database in read-only mode.
+     * 
+     * @param boolean $flag True by default
+     */
+    public function setReadOnly($flag = true)
+    {
+        $this->readOnly = (boolean) $flag;
+    }
+
+    /**
      * Whether to force object to reload on INSERT.
      * @return boolean
      */
     public function isReloadOnInsert()
     {
         return $this->reloadOnInsert;
+    }
+
+    /**
+     * Makes this database reload on insert statement.
+     *
+     * @param boolean $flag True by default
+     */
+    public function setReloadOnInsert($flag = true)
+    {
+        $this->reloadOnInsert = (boolean) $flag;
     }
 
     /**
@@ -1246,6 +1325,16 @@ class Table extends ScopedMappingModel implements IdMethod
     public function isReloadOnUpdate()
     {
         return $this->reloadOnUpdate;
+    }
+
+    /**
+     * Makes this database reload on update statement.
+     *
+     * @param boolean $flag True by default
+     */
+    public function setReloadOnUpdate($flag = true)
+    {
+        $this->reloadOnUpdate = (boolean) $flag;
     }
 
     /**
@@ -1319,11 +1408,11 @@ class Table extends ScopedMappingModel implements IdMethod
      * table called "FOO", then the Foo business object class will be
      * declared abstract. This helps support class hierarchies
      *
-     * @param boolean $isAbstract
+     * @param boolean $flag
      */
-    public function setAbstract($isAbstract)
+    public function setAbstract($flag = true)
     {
-        $this->isAbstract = (Boolean) $isAbstract;
+        $this->isAbstract = (boolean) $flag;
     }
 
     /**
@@ -1392,6 +1481,8 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Returns a Collection of parameters relevant for the chosen
      * id generation method.
+     * 
+     * @return IdMethodParameter[]
      */
     public function getIdMethodParameters()
     {
@@ -1422,7 +1513,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * Checks if $keys are a unique constraint in the table.
      * (through primaryKey, through a regular unices constraints or for single keys when it has isUnique=true)
      *
-     * @param  Column[]|string[] $keys
+     * @param Column[]|string[] $keys
      * @return boolean
      */
     public function isUnique(array $keys)
@@ -1430,7 +1521,10 @@ class Table extends ScopedMappingModel implements IdMethod
         if (1 === count($keys)) {
             $column = $keys[0] instanceof Column ? $keys[0] : $this->getColumn($keys[0]);
             if ($column) {
-                if ($column->isUnique()) return true;
+                if ($column->isUnique()) {
+                    return true;
+                }
+
                 if ($column->isPrimaryKey() && 1 === count($column->getTable()->getPrimaryKey())) {
                     return true;
                 }
@@ -1652,108 +1746,12 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Returns whether or not to determine if code/sql gets created for this table.
      * Table will be skipped, if set to true.
-     * @param boolean $v
+     * 
+     * @param boolean $flag
      */
-    public function setForReferenceOnly($v)
+    public function setForReferenceOnly($flag = true)
     {
-        $this->forReferenceOnly = (Boolean) $v;
-    }
-
-    /**
-     * Appends XML nodes to passed-in DOMNode.
-     *
-     * @param \DOMNode $node
-     */
-    public function appendXml(\DOMNode $node)
-    {
-        $doc = ($node instanceof \DOMDocument) ? $node : $node->ownerDocument;
-
-        $tableNode = $node->appendChild($doc->createElement('table'));
-        $tableNode->setAttribute('name', $this->getCommonName());
-
-        if ($this->getSchema()) {
-            $tableNode->setAttribute('schema', $this->getSchema());
-        }
-
-        if (null !== $this->getPhpName()) {
-            $tableNode->setAttribute('phpName', $this->phpName);
-        }
-
-        if (IdMethod::NO_ID_METHOD !== $this->idMethod) {
-            $tableNode->setAttribute('idMethod', $this->idMethod);
-        }
-
-        if ($this->skipSql) {
-            $tableNode->setAttribute('skipSql', 'true');
-        }
-
-        if ($this->readOnly) {
-            $tableNode->setAttribute('readOnly', 'true');
-        }
-
-        if ($this->reloadOnInsert) {
-            $tableNode->setAttribute('reloadOnInsert', 'true');
-        }
-
-        if ($this->reloadOnUpdate) {
-            $tableNode->setAttribute('reloadOnUpdate', 'true');
-        }
-
-        if (null !== $this->forReferenceOnly) {
-            $tableNode->setAttribute('forReferenceOnly', $this->forReferenceOnly ? 'true' : 'false');
-        }
-
-        if ($this->isAbstract) {
-            $tableNode->setAttribute('abstract', 'true');
-        }
-
-        if ($this->interface) {
-            $tableNode->setAttribute('interface', $this->interface);
-        }
-
-        if ($this->description) {
-            $tableNode->setAttribute('description', $this->description);
-        }
-
-        if ($this->namespace) {
-            $tableNode->setAttribute('namespace', $this->namespace);
-        }
-
-        if ($this->package && !$this->packageOverridden) {
-            $tableNode->setAttribute('package', $this->package);
-        }
-
-        if ($this->baseClass) {
-            $tableNode->setAttribute('baseClass', $this->baseClass);
-        }
-
-        if ($this->isCrossRef) {
-            $tableNode->setAttribute('isCrossRef', 'true');
-        }
-
-        foreach ($this->columns as $col) {
-            $col->appendXml($tableNode);
-        }
-
-        foreach ($this->foreignKeys as $fk) {
-            $fk->appendXml($tableNode);
-        }
-
-        foreach ($this->idMethodParameters as $param) {
-            $param->appendXml($tableNode);
-        }
-
-        foreach ($this->indices as $index) {
-            $index->appendXml($tableNode);
-        }
-
-        foreach ($this->unices as $unique) {
-            $unique->appendXml($tableNode);
-        }
-
-        foreach ($this->vendorInfos as $vi) {
-            $vi->appendXml($tableNode);
-        }
+        $this->forReferenceOnly = (boolean) $flag;
     }
 
     /**
@@ -1860,11 +1858,21 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Sets a cross reference status for this foreign key.
      *
-     * @param boolean $isCrossRef
+     * @param boolean $flag
      */
-    public function setIsCrossRef($isCrossRef)
+    public function setIsCrossRef($flag = true)
     {
-        $this->isCrossRef = (Boolean) $isCrossRef;
+        $this->setCrossRef($flag);
+    }
+
+    /**
+     * Sets a cross reference status for this foreign key.
+     *
+     * @param boolean $flag
+     */
+    public function setCrossRef($flag = true)
+    {
+        $this->isCrossRef = (boolean) $flag;
     }
 
     /**
@@ -1885,5 +1893,65 @@ class Table extends ScopedMappingModel implements IdMethod
     public function hasCrossForeignKeys()
     {
         return 0 !== count($this->getCrossFks());
+    }
+
+    /**
+     * Returns the PHP naming method.
+     *
+     * @return string
+     */
+    public function getPhpNamingMethod()
+    {
+        return $this->phpNamingMethod;
+    }
+
+    /**
+     * Sets the PHP naming method.
+     *
+     * @param string $phpNamingMethod
+     */
+    public function setPhpNamingMethod($phpNamingMethod)
+    {
+        $this->phpNamingMethod = $phpNamingMethod;
+    }
+
+    /**
+     * Sets the default accessor visibility.
+     *
+     * @param string $defaultAccessorVisibility
+     */
+    public function setDefaultAccessorVisibility($defaultAccessorVisibility)
+    {
+        $this->defaultAccessorVisibility = $defaultAccessorVisibility;
+    }
+
+    /**
+     * Returns the default accessor visibility.
+     *
+     * @return string
+     */
+    public function getDefaultAccessorVisibility()
+    {
+        return $this->defaultAccessorVisibility;
+    }
+
+    /**
+     * Sets the default mutator visibility.
+     *
+     * @param string $defaultMutatorVisibility
+     */
+    public function setDefaultMutatorVisibility($defaultMutatorVisibility)
+    {
+        $this->defaultMutatorVisibility = $defaultMutatorVisibility;
+    }
+
+    /**
+     * Returns the default mutator visibility.
+     *
+     * @return string
+     */
+    public function getDefaultMutatorVisibility()
+    {
+        return $this->defaultMutatorVisibility;
     }
 }

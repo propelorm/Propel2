@@ -88,9 +88,11 @@ class Column extends MappingModel
     /**
      * Creates a new column and set the name.
      *
-     * @param string $name
+     * @param string $name The column's name
+     * @param string $type The column's type
+     * @param string $size The column's size
      */
-    public function __construct($name = null)
+    public function __construct($name = null, $type = null, $size = null)
     {
         parent::__construct();
 
@@ -98,17 +100,25 @@ class Column extends MappingModel
             $this->setName($name);
         }
 
-        $this->isAutoIncrement = false;
-        $this->isEnumeratedClasses = false;
-        $this->isLazyLoad = false;
-        $this->isNestedSetLeftKey = false;
-        $this->isNestedSetRightKey = false;
-        $this->isNodeKey = false;
-        $this->isNotNull = false;
-        $this->isPrimaryKey = false;
-        $this->isPrimaryString = false;
-        $this->isTreeScopeKey = false;
-        $this->isUnique = false;
+        if (null !== $type) {
+            $this->setType($type);
+        }
+
+        if (null !== $size) {
+            $this->setSize($size);
+        }
+
+        $this->isAutoIncrement            = false;
+        $this->isEnumeratedClasses        = false;
+        $this->isLazyLoad                 = false;
+        $this->isNestedSetLeftKey         = false;
+        $this->isNestedSetRightKey        = false;
+        $this->isNodeKey                  = false;
+        $this->isNotNull                  = false;
+        $this->isPrimaryKey               = false;
+        $this->isPrimaryString            = false;
+        $this->isTreeScopeKey             = false;
+        $this->isUnique                   = false;
         $this->needsTransactionInPostgres = false;
         $this->valueSet = [];
     }
@@ -599,6 +609,26 @@ class Column extends MappingModel
     }
 
     /**
+     * Returns the inheritance type.
+     * 
+     * @return string
+     */
+    public function getInheritanceType()
+    {
+        return $this->inheritanceType;
+    }
+
+    /**
+     * Returns the inheritance list.
+     * 
+     * @return Inheritance[]
+     */
+    public function getInheritanceList()
+    {
+        return $this->inheritanceList;
+    }
+
+    /**
      * Returns the inheritance definitions.
      *
      * @return array
@@ -643,11 +673,11 @@ class Column extends MappingModel
     /**
      * Sets whether or not the column is not null.
      *
-     * @param boolean $notNull
+     * @param boolean $flag
      */
-    public function setNotNull($notNull)
+    public function setNotNull($flag = true)
     {
-        $this->isNotNull = (Boolean) $notNull;
+        $this->isNotNull = (Boolean) $flag;
     }
 
     /**
@@ -687,11 +717,11 @@ class Column extends MappingModel
     /**
      * Sets whether or not the column is a primary key.
      *
-     * @param boolean $primary
+     * @param boolean $flag
      */
-    public function setPrimaryKey($primary)
+    public function setPrimaryKey($flag = true)
     {
-        $this->isPrimaryKey = (Boolean) $primary;
+        $this->isPrimaryKey = (Boolean) $flag;
     }
 
     /**
@@ -802,16 +832,6 @@ class Column extends MappingModel
     public function isTreeScopeKey()
     {
         return $this->isTreeScopeKey;
-    }
-
-    /**
-     * Sets whether or not the column must have a unique index on it.
-     *
-     * @param boolean $isUnique
-     */
-    public function setUnique($isUnique)
-    {
-        $this->isUnique = (Boolean) $isUnique;
     }
 
     /**
@@ -1091,79 +1111,6 @@ class Column extends MappingModel
         return $this->valueSet;
     }
 
-    public function appendXml(\DOMNode $node)
-    {
-        $doc = ($node instanceof \DOMDocument) ? $node : $node->ownerDocument;
-
-        $colNode = $node->appendChild($doc->createElement('column'));
-        $colNode->setAttribute('name', $this->name);
-
-        if (null !== $this->phpName) {
-            $colNode->setAttribute('phpName', $this->getPhpName());
-        }
-
-        $colNode->setAttribute('type', $this->getType());
-
-        $domain = $this->getDomain();
-
-        if (null !== $domain->getSize()) {
-            $colNode->setAttribute('size', $domain->getSize());
-        }
-
-        if (null !== $domain->getScale()) {
-            $colNode->setAttribute('scale', $domain->getScale());
-        }
-
-        if ($this->hasPlatform() && !$this->isDefaultSqlType($this->getPlatform())) {
-            $colNode->setAttribute('sqlType', $domain->getSqlType());
-        }
-
-        if (null !== $this->description) {
-            $colNode->setAttribute('description', $this->description);
-        }
-
-        if ($this->isPrimaryKey) {
-            $colNode->setAttribute('primaryKey', var_export($this->isPrimaryKey, true));
-        }
-
-        if ($this->isAutoIncrement) {
-            $colNode->setAttribute('autoIncrement', var_export($this->isAutoIncrement, true));
-        }
-
-        if ($this->isNotNull) {
-            $colNode->setAttribute('required', 'true');
-        } else {
-            $colNode->setAttribute('required', 'false');
-        }
-
-        if (null !== $domain->getDefaultValue()) {
-            $def = $domain->getDefaultValue();
-            if ($def->isExpression()) {
-                $colNode->setAttribute('defaultExpr', $def->getValue());
-            } else {
-                $colNode->setAttribute('defaultValue', $def->getValue());
-            }
-        }
-
-        if ($this->isInheritance()) {
-            $colNode->setAttribute('inheritance', $this->inheritanceType);
-            foreach ($this->inheritanceList as $inheritance) {
-                $inheritance->appendXml($colNode);
-            }
-        }
-
-        if ($this->isNodeKey()) {
-            $colNode->setAttribute('nodeKey', 'true');
-            if (null !== $this->getNodeKeySep()) {
-                $colNode->setAttribute('nodeKeySep', $this->nodeKeySep);
-            }
-        }
-
-        foreach ($this->vendorInfos as $vi) {
-            $vi->appendXml($colNode);
-        }
-    }
-
     /**
      * Returns the column size.
      *
@@ -1247,18 +1194,16 @@ class Column extends MappingModel
     /**
      * Sets a string that will give this column a default value.
      *
-     * @param ColumnDefaultValue|scalar column default value
+     * @param ColumnDefaultValue|scalar $defaultValue The column's default value
      * @return Column
      */
-    public function setDefaultValue($def)
+    public function setDefaultValue($defaultValue)
     {
-        if (!$def instanceof ColumnDefaultValue) {
-            $def = new ColumnDefaultValue($def, ColumnDefaultValue::TYPE_VALUE);
+        if (!$defaultValue instanceof ColumnDefaultValue) {
+            $defaultValue = new ColumnDefaultValue($defaultValue, ColumnDefaultValue::TYPE_VALUE);
         }
 
-        $this->domain->setDefaultValue($def);
-
-        return $this;
+        $this->domain->setDefaultValue($defaultValue);
     }
 
     /**
@@ -1335,11 +1280,11 @@ class Column extends MappingModel
      *
      * Use isAutoIncrement() to find out if it is set or not.
      *
-     * @param boolean $isAutoIncrement
+     * @param boolean $flag
      */
-    public function setAutoIncrement($isAutoIncrement)
+    public function setAutoIncrement($flag = true)
     {
-        $this->isAutoIncrement = (Boolean) $isAutoIncrement;
+        $this->isAutoIncrement = (Boolean) $flag;
     }
 
     /**

@@ -20,11 +20,10 @@ use Propel\Generator\Model\Behavior;
  */
 class TimestampableBehavior extends Behavior
 {
-    // default parameters value
-    protected $parameters = array(
+    protected $parameters = [
         'create_column' => 'created_at',
-        'update_column' => 'updated_at'
-    );
+        'update_column' => 'updated_at',
+    ];
 
     /**
      * Add the create_column and update_columns to the current table

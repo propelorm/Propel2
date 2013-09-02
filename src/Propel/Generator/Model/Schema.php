@@ -13,6 +13,7 @@ namespace Propel\Generator\Model;
 use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Exception\EngineException;
 use Propel\Generator\Platform\PlatformInterface;
+use Propel\Generator\Schema\Dumper\XmlDumper;
 
 /**
  * A class for holding application data structures.
@@ -43,7 +44,7 @@ class Schema
         }
 
         $this->isInitialized = false;
-        $this->databases = [];
+        $this->databases     = [];
     }
 
     /**
@@ -303,18 +304,9 @@ class Schema
      */
     public function toString()
     {
-        $result = '<app-data>'."\n";
-        foreach ($this->databases as $dbList) {
-            $result .= $dbList->toString();
-        }
-
-        if ($this->databases) {
-            $result .= "\n";
-        }
-
-        $result .= '</app-data>';
-
-        return $result;
+        $dumper = new XmlDumper();
+        
+        return $dumper->dumpSchema($this);
     }
 
     /**

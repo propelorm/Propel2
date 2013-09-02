@@ -385,6 +385,10 @@ class Domain extends MappingModel
         }
     }
 
+    /**
+     * @todo Remove? This method is never called.
+     * @param \DOMNode $node
+     */
     public function appendXml(\DOMNode $node)
     {
         $doc = ($node instanceof \DOMDocument) ? $node : $node->ownerDocument;
