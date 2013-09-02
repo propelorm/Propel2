@@ -890,7 +890,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         if (\$format === null) {
             return \$this->$clo;
         } else {
-            return \$this->$clo !== null ? \$this->{$clo}->format(\$format) : null;
+            return \$this->$clo instanceof \DateTime ? \$this->{$clo}->format(\$format) : null;
         }";
     }
 
