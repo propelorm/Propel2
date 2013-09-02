@@ -20,7 +20,7 @@ namespace Propel\Generator\Model;
  * @author Hans Lellelid <hans@xmpl.org> (Propel)
  * @author Jason van Zyl <jvanzyl@apache.org> (Torque)
  * @author Daniel Rall <dlr@collab.net> (Torque)
- * @author Hugo Hamon <webmaster@apprendre-php.com>
+ * @author Hugo Hamon <webmaster@apprendre-php.com> (Propel)
  */
 class Unique extends Index
 {

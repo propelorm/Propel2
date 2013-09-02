@@ -17,7 +17,7 @@ use Propel\Generator\Exception\EngineException;
  *
  * @author Hans Lellelid <hans@xmpl.org> (Propel)
  * @author Martin Poeschl <mpoeschl@marmot.at> (Torque)
- * @author Hugo Hamon <webmaster@apprendre-php.com>
+ * @author Hugo Hamon <webmaster@apprendre-php.com> (Propel)
  */
 class Domain extends MappingModel
 {
@@ -36,10 +36,10 @@ class Domain extends MappingModel
      *
      * If this domain needs a name, it must be specified manually.
      *
-     * @param string $type    Propel type.
-     * @param string $sqlType SQL type.
-     * @param string $size
-     * @param string $scale
+     * @param string  $type    Propel type.
+     * @param string  $sqlType SQL type.
+     * @param integer $size
+     * @param integer $scale
      */
     public function __construct($type = null, $sqlType = null, $size = null, $scale = null)
     {
@@ -279,7 +279,7 @@ class Domain extends MappingModel
             throw new EngineException('Cannot get PHP version of default value for default value EXPRESSION.');
         }
 
-        if (in_array($this->mappingType, array(PropelTypes::BOOLEAN, PropelTypes::BOOLEAN_EMU))) {
+        if (in_array($this->mappingType, [ PropelTypes::BOOLEAN, PropelTypes::BOOLEAN_EMU ])) {
             return $this->booleanValue($this->defaultValue->getValue());
         }
 
@@ -367,15 +367,15 @@ class Domain extends MappingModel
      */
     public function getSizeDefinition()
     {
-        if (null !== $this->size) {
-            if (null !== $this->scale) {
-                return sprintf('(%u,%u)', $this->size, $this->scale);
-            }
-
-            return sprintf('(%u)', $this->size);
+        if (null === $this->size) {
+            return '';
         }
 
-        return '';
+        if (null !== $this->scale) {
+            return sprintf('(%u,%u)', $this->size, $this->scale);
+        }
+
+        return sprintf('(%u)', $this->size);
     }
 
     public function __clone()

@@ -15,7 +15,7 @@ namespace Propel\Generator\Model;
  * attributes.
  *
  * @author Ulf Hermann <ulfhermann@kulturserver.de>
- * @author Hugo Hamon <webmaster@apprendre-php.com>
+ * @author Hugo Hamon <webmaster@apprendre-php.com> (Propel)
  */
 abstract class ScopedMappingModel extends MappingModel
 {

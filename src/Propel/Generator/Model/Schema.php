@@ -21,7 +21,7 @@ use Propel\Generator\Platform\PlatformInterface;
  * @author Leon Messerschmidt <leon@opticode.co.za> (Torque)
  * @author John McNally <jmcnally@collab.net> (Torque)
  * @author Daniel Rall <dlr@finemaltcoding.com> (Torque)
- * @author Hugo Hamon <webmaster@apprendre-php.com>
+ * @author Hugo Hamon <webmaster@apprendre-php.com> (Propel)
  */
 class Schema
 {
@@ -43,7 +43,7 @@ class Schema
         }
 
         $this->isInitialized = false;
-        $this->databases = array();
+        $this->databases = [];
     }
 
     /**

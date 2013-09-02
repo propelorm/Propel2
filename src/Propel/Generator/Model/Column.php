@@ -23,14 +23,14 @@ use Propel\Generator\Platform\PlatformInterface;
  * @author Daniel Rall <dlr@finemaltcoding.com> (Torque)
  * @author Byron Foster <byron_foster@yahoo.com> (Torque)
  * @author Bernd Goldschmidt <bgoldschmidt@rapidsoft.de>
- * @author Hugo Hamon <webmaster@apprendre-php.com>
+ * @author Hugo Hamon <webmaster@apprendre-php.com> (Propel)
  */
 class Column extends MappingModel
 {
     const DEFAULT_TYPE       = 'VARCHAR';
     const DEFAULT_VISIBILITY = 'public';
 
-    public static $validVisibilities = array('public', 'protected', 'private');
+    public static $validVisibilities = [ 'public', 'protected', 'private' ];
 
     private $name;
     private $description;
@@ -110,7 +110,7 @@ class Column extends MappingModel
         $this->isTreeScopeKey = false;
         $this->isUnique = false;
         $this->needsTransactionInPostgres = false;
-        $this->valueSet = array();
+        $this->valueSet = [];
     }
 
     protected function setupObject()
@@ -584,7 +584,7 @@ class Column extends MappingModel
         if ($inheritance instanceof Inheritance) {
             $inheritance->setColumn($this);
             if (null === $this->inheritanceList) {
-                $this->inheritanceList = array();
+                $this->inheritanceList = [];
                 $this->isEnumeratedClasses = true;
             }
             $this->inheritanceList[] = $inheritance;
@@ -874,7 +874,7 @@ class Column extends MappingModel
     public function addReferrer(ForeignKey $fk)
     {
         if (null === $this->referrers) {
-            $this->referrers = array();
+            $this->referrers = [];
         }
 
         $this->referrers[] = $fk;
@@ -888,7 +888,7 @@ class Column extends MappingModel
     public function getReferrers()
     {
         if (null === $this->referrers) {
-            $this->referrers = array();
+            $this->referrers = [];
         }
 
         return $this->referrers;
@@ -931,7 +931,7 @@ class Column extends MappingModel
      */
     public function clearInheritanceList()
     {
-        $this->inheritanceList = array();
+        $this->inheritanceList = [];
     }
 
     /**
@@ -957,7 +957,7 @@ class Column extends MappingModel
     {
         $this->getDomain()->setType($mappingType);
 
-        if (in_array($mappingType, array(PropelTypes::VARBINARY, PropelTypes::LONGVARBINARY, PropelTypes::BLOB))) {
+        if (in_array($mappingType, [ PropelTypes::VARBINARY, PropelTypes::LONGVARBINARY, PropelTypes::BLOB ])) {
             $this->needsTransactionInPostgres = true;
         }
     }
@@ -1435,6 +1435,6 @@ class Column extends MappingModel
      */
     public static function generatePhpName($name, $phpNamingMethod = PhpNameGenerator::CONV_METHOD_CLEAN, $namePrefix = null)
     {
-        return NameFactory::generateName(NameFactory::PHP_GENERATOR, array($name, $phpNamingMethod, $namePrefix));
+        return NameFactory::generateName(NameFactory::PHP_GENERATOR, [ $name, $phpNamingMethod, $namePrefix ]);
     }
 }

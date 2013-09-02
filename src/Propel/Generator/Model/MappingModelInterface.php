@@ -13,7 +13,7 @@ namespace Propel\Generator\Model;
 /**
  * An interface for representing mapping model objects.
  *
- * @author Hugo Hamon <webmaster@apprendre-php.com>
+ * @author Hugo Hamon <webmaster@apprendre-php.com> (Propel)
  */
 interface MappingModelInterface
 {

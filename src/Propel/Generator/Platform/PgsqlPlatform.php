@@ -346,12 +346,12 @@ DROP TABLE IF EXISTS %s CASCADE;
         if ($this->hasSize($sqlType) && $col->isDefaultSqlType($this)) {
             if ($this->isNumber($sqlType)) {
                 if ('NUMERIC' === strtoupper($sqlType)) {
-                    $ddl[] = $sqlType . $domain->getSizeDefinition();
+                    $ddl[] = $sqlType . $col->getSizeDefinition();
                 } else {
                     $ddl[] = $sqlType;
                 }
             } else {
-                $ddl[] = $sqlType . $domain->getSizeDefinition();
+                $ddl[] = $sqlType . $col->getSizeDefinition();
             }
         } else {
             $ddl[] = $sqlType;
@@ -484,10 +484,10 @@ DROP SEQUENCE %s CASCADE;
             if ($this->hasSize($sqlType)) {
                 if ($this->isNumber($sqlType)) {
                     if ('NUMBER' === strtoupper($sqlType)) {
-                        $sqlType .= $toColumn->getDomain()->getSizeDefinition();
+                        $sqlType .= $toColumn->getSizeDefinition();
                     }
                 } else {
-                    $sqlType .= $toColumn->getDomain()->getSizeDefinition();
+                    $sqlType .= $toColumn->getSizeDefinition();
                 }
             }
             if ($using = $this->getUsingCast($fromColumn, $toColumn)) {

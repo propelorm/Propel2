@@ -16,17 +16,17 @@ use Propel\Generator\Builder\Util\PropelTemplate;
  * Information about behaviors of a table.
  *
  * @author François Zaninotto
- * @author Hugo Hamon <webmaster@apprendre-php.com>
+ * @author Hugo Hamon <webmaster@apprendre-php.com> (Propel)
  */
 class Behavior extends MappingModel
 {
     protected $table;
     protected $database;
     protected $name;
-    protected $parameters = array();
+    protected $parameters = [];
     protected $isTableModified = false;
     protected $dirname;
-    protected $additionalBuilders = array();
+    protected $additionalBuilders = [];
     protected $tableModificationOrder = 50;
 
     /**
@@ -94,7 +94,7 @@ class Behavior extends MappingModel
      * Adds a single parameter.
      *
      * Expects an associative array looking like
-     * array('name' => 'foo', 'value' => bar)
+     * [ 'name' => 'foo', 'value' => bar ]
      *
      * @param array $parameter
      */
@@ -107,7 +107,7 @@ class Behavior extends MappingModel
     /**
      * Overrides the behavior parameters.
      *
-     * Expects an associative array looking like array('foo' => 'bar').
+     * Expects an associative array looking like [ 'foo' => 'bar' ].
      *
      * @param array $parameters
      */
@@ -224,7 +224,7 @@ class Behavior extends MappingModel
      * @param  string $templateDir
      * @return string
      */
-    public function renderTemplate($filename, $vars = array(), $templateDir = '/templates/')
+    public function renderTemplate($filename, $vars = [], $templateDir = '/templates/')
     {
         $filePath = $this->getDirname() . $templateDir . $filename;
         if (!file_exists($filePath)) {
@@ -239,7 +239,7 @@ class Behavior extends MappingModel
         }
         $template = new PropelTemplate();
         $template->setTemplateFile($filePath);
-        $vars = array_merge($vars, array('behavior' => $this));
+        $vars = array_merge($vars, [ 'behavior' => $this ]);
 
         return $template->render($vars);
     }
