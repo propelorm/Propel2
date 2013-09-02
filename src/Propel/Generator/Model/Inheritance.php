@@ -15,7 +15,7 @@ namespace Propel\Generator\Model;
  *
  * @author Hans Lellelid <hans@xmpl.org> (Propel)
  * @author John McNally <jmcnally@collab.net> (Torque)
- * @author Hugo Hamon <webmaster@apprendre-php.com>
+ * @author Hugo Hamon <webmaster@apprendre-php.com> (Propel)
  */
 class Inheritance extends MappingModel
 {

@@ -18,6 +18,7 @@ use Propel\Generator\Exception\EngineException;
  * @author Hans Lellelid <hans@xmpl.org> (Propel)
  * @author Daniel Rall <dlr@finemaltcoding.com> (Torque)
  * @author Byron Foster <byron_foster@yahoo.com> (Torque)
+ * @author Hugo Hamon <webmaster@apprendre-php.com> (Propel)
  */
 interface NameGeneratorInterface
 {

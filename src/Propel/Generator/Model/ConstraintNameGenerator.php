@@ -17,6 +17,7 @@ namespace Propel\Generator\Model;
  *
  * @author Hans Lellelid <hans@xmpl.org> (Propel)
  * @author Daniel Rall <dlr@finemaltcoding.com> (Torque)
+ * @author Hugo Hamon <webmaster@apprendre-php.com> (Propel)
  */
 class ConstraintNameGenerator implements NameGeneratorInterface
 {

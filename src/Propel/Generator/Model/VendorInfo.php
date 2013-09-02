@@ -13,8 +13,8 @@ namespace Propel\Generator\Model;
 /**
  * Object to hold vendor specific information.
  *
- * @author Hans Lellelid <hans@xmpl.org>
- * @author Hugo Hamon <webmaster@apprendre-php.com>
+ * @author Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author Hugo Hamon <webmaster@apprendre-php.com> (Propel)
  */
 class VendorInfo extends MappingModel
 {
@@ -30,7 +30,7 @@ class VendorInfo extends MappingModel
     {
         parent::__construct();
 
-        $this->parameters = array();
+        $this->parameters = [];
 
         if (null !== $type) {
             $this->setType($type);
@@ -95,7 +95,7 @@ class VendorInfo extends MappingModel
      *
      * @param array $parameters Parameter data.
      */
-    public function setParameters(array $parameters = array())
+    public function setParameters(array $parameters = [])
     {
         $this->parameters = $parameters;
     }

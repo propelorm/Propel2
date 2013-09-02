@@ -25,22 +25,22 @@ class TableDiff
     protected $fromTable;
     protected $toTable;
 
-    protected $addedColumns = array();
-    protected $removedColumns = array();
-    protected $modifiedColumns = array();
-    protected $renamedColumns = array();
+    protected $addedColumns     = [];
+    protected $removedColumns   = [];
+    protected $modifiedColumns  = [];
+    protected $renamedColumns   = [];
 
-    protected $addedPkColumns = array();
-    protected $removedPkColumns = array();
-    protected $renamedPkColumns = array();
+    protected $addedPkColumns   = [];
+    protected $removedPkColumns = [];
+    protected $renamedPkColumns = [];
 
-    protected $addedIndices = array();
-    protected $removedIndices = array();
-    protected $modifiedIndices = array();
+    protected $addedIndices     = [];
+    protected $removedIndices   = [];
+    protected $modifiedIndices  = [];
 
-    protected $addedFks = array();
-    protected $removedFks = array();
-    protected $modifiedFks = array();
+    protected $addedFks         = [];
+    protected $removedFks       = [];
+    protected $modifiedFks      = [];
 
     /**
      * Sets the fromTable property.
@@ -236,7 +236,7 @@ class TableDiff
      */
     public function addRenamedColumn($fromColumn, $toColumn)
     {
-        $this->renamedColumns[] = array($fromColumn, $toColumn);
+        $this->renamedColumns[] = [ $fromColumn, $toColumn ];
     }
 
     /**
@@ -349,7 +349,7 @@ class TableDiff
      */
     public function addRenamedPkColumn($fromColumn, $toColumn)
     {
-        $this->renamedPkColumns[] = array($fromColumn, $toColumn);
+        $this->renamedPkColumns[] = [ $fromColumn, $toColumn ];
     }
 
     /**
@@ -453,7 +453,7 @@ class TableDiff
      */
     public function addModifiedIndex($indexName, Index $fromIndex, Index $toIndex)
     {
-        $this->modifiedIndices[$indexName] = array($fromIndex, $toIndex);
+        $this->modifiedIndices[$indexName] = [ $fromIndex, $toIndex ];
     }
 
     /**
@@ -567,7 +567,7 @@ class TableDiff
      */
     public function addModifiedFk($fkName, ForeignKey $fromFk, ForeignKey $toFk)
     {
-        $this->modifiedFks[$fkName] = array($fromFk, $toFk);
+        $this->modifiedFks[$fkName] = [ $fromFk, $toFk ];
     }
 
     /**
@@ -684,12 +684,12 @@ class TableDiff
         // columns
         $diff->setAddedColumns($this->getRemovedColumns());
         $diff->setRemovedColumns($this->getAddedColumns());
-        $renamedColumns = array();
+        $renamedColumns = [];
         foreach ($this->getRenamedColumns() as $columnRenaming) {
             $renamedColumns[]= array_reverse($columnRenaming);
         }
         $diff->setRenamedColumns($renamedColumns);
-        $columnDiffs = array();
+        $columnDiffs = [];
         foreach ($this->getModifiedColumns() as $name => $columnDiff) {
             $columnDiffs[$name] = $columnDiff->getReverseDiff();
         }
@@ -698,7 +698,7 @@ class TableDiff
         // pks
         $diff->setAddedPkColumns($this->getRemovedPkColumns());
         $diff->setRemovedPkColumns($this->getAddedPkColumns());
-        $renamedPkColumns = array();
+        $renamedPkColumns = [];
         foreach ($this->getRenamedPkColumns() as $columnRenaming) {
             $renamedPkColumns[]= array_reverse($columnRenaming);
         }
@@ -707,7 +707,7 @@ class TableDiff
         // indices
         $diff->setAddedIndices($this->getRemovedIndices());
         $diff->setRemovedIndices($this->getAddedIndices());
-        $indexDiffs = array();
+        $indexDiffs = [];
         foreach ($this->getModifiedIndices() as $name => $indexDiff) {
             $indexDiffs[$name] = array_reverse($indexDiff);
         }
@@ -716,7 +716,7 @@ class TableDiff
         // fks
         $diff->setAddedFks($this->getRemovedFks());
         $diff->setRemovedFks($this->getAddedFks());
-        $fkDiffs = array();
+        $fkDiffs = [];
         foreach ($this->getModifiedFks() as $name => $fkDiff) {
             $fkDiffs[$name] = array_reverse($fkDiff);
         }

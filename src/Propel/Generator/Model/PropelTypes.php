@@ -17,7 +17,7 @@ namespace Propel\Generator\Model;
  * supported by the Propel project.
  *
  * @author Hans Lellelid <hans@xmpl.org> (Propel)
- * @author Hugo Hamon <webmaster@apprendre-php.com>
+ * @author Hugo Hamon <webmaster@apprendre-php.com> (Propel)
  */
 class PropelTypes
 {
@@ -84,7 +84,7 @@ class PropelTypes
      *
      * @var array
      */
-    private static $mappingTypes = array(
+    private static $mappingTypes = [
         self::CHAR,
         self::VARCHAR,
         self::LONGVARCHAR,
@@ -115,14 +115,14 @@ class PropelTypes
         // even numeric timestamps on Windows.
         self::BU_DATE,
         self::BU_TIMESTAMP,
-    );
+    ];
 
     /**
      * Mapping between Propel mapping types and PHP native types.
      *
      * @var array
      */
-    private static $mappingToPHPNativeMap = array(
+    private static $mappingToPHPNativeMap = [
         self::CHAR          => self::CHAR_NATIVE_TYPE,
         self::VARCHAR       => self::VARCHAR_NATIVE_TYPE,
         self::LONGVARCHAR   => self::LONGVARCHAR_NATIVE_TYPE,
@@ -151,7 +151,7 @@ class PropelTypes
         self::OBJECT        => self::OBJECT_NATIVE_TYPE,
         self::PHP_ARRAY     => self::PHP_ARRAY_NATIVE_TYPE,
         self::ENUM          => self::ENUM_NATIVE_TYPE,
-    );
+    ];
 
     /**
      * Mapping between mapping types and PDO type constants (for prepared
@@ -159,7 +159,7 @@ class PropelTypes
      *
      * @var array
      */
-    private static $mappingTypeToPDOTypeMap = array(
+    private static $mappingTypeToPDOTypeMap = [
         self::CHAR          => \PDO::PARAM_STR,
         self::VARCHAR       => \PDO::PARAM_STR,
         self::LONGVARCHAR   => \PDO::PARAM_STR,
@@ -192,15 +192,15 @@ class PropelTypes
         // numeric timestamps on Windows.
         self::BU_DATE       => \PDO::PARAM_STR,
         self::BU_TIMESTAMP  => \PDO::PARAM_STR,
-    );
+    ];
 
-    private static $pdoTypeNames = array(
+    private static $pdoTypeNames = [
         \PDO::PARAM_BOOL => 'PDO::PARAM_BOOL',
         \PDO::PARAM_NULL => 'PDO::PARAM_NULL',
         \PDO::PARAM_INT  => 'PDO::PARAM_INT',
         \PDO::PARAM_STR  => 'PDO::PARAM_STR',
         \PDO::PARAM_LOB  => 'PDO::PARAM_LOB',
-    );
+    ];
 
     /**
      * Returns the native PHP type which corresponds to the
@@ -252,13 +252,13 @@ class PropelTypes
      */
     public static function isTemporalType($type)
     {
-        return in_array($type, array(
+        return in_array($type, [
             self::DATE,
             self::TIME,
             self::TIMESTAMP,
             self::BU_DATE,
             self::BU_TIMESTAMP,
-        ));
+        ]);
     }
 
     /**
@@ -269,7 +269,7 @@ class PropelTypes
      */
     public static function isTextType($mappingType)
     {
-        return in_array($mappingType, array(
+        return in_array($mappingType, [
             self::CHAR,
             self::VARCHAR,
             self::LONGVARCHAR,
@@ -279,7 +279,7 @@ class PropelTypes
             self::TIMESTAMP,
             self::BU_DATE,
             self::BU_TIMESTAMP,
-        ));
+        ]);
     }
 
     /**
@@ -290,7 +290,7 @@ class PropelTypes
      */
     public static function isNumericType($mappingType)
     {
-        return in_array($mappingType, array(
+        return in_array($mappingType, [
             self::SMALLINT,
             self::TINYINT,
             self::INTEGER,
@@ -300,7 +300,7 @@ class PropelTypes
             self::NUMERIC,
             self::DECIMAL,
             self::REAL,
-        ));
+        ]);
     }
 
     /**
@@ -311,10 +311,7 @@ class PropelTypes
      */
     public static function isBooleanType($mappingType)
     {
-        return in_array($mappingType, array(
-            self::BOOLEAN,
-            self::BOOLEAN_EMU,
-        ));
+        return in_array($mappingType, [ self::BOOLEAN, self::BOOLEAN_EMU ]);
     }
 
     /**
@@ -325,11 +322,7 @@ class PropelTypes
      */
     public static function isLobType($mappingType)
     {
-        return in_array($mappingType, array(
-            self::VARBINARY,
-            self::LONGVARBINARY,
-            self::BLOB,
-        ));
+        return in_array($mappingType, [ self::VARBINARY, self::LONGVARBINARY, self::BLOB ]);
     }
 
     /**
@@ -340,7 +333,7 @@ class PropelTypes
      */
     public static function isPhpPrimitiveType($phpType)
     {
-        return in_array($phpType, array('boolean', 'int', 'double', 'float', 'string'));
+        return in_array($phpType, [ 'boolean', 'int', 'double', 'float', 'string' ]);
     }
 
     /**
@@ -351,7 +344,7 @@ class PropelTypes
      */
     public static function isPhpPrimitiveNumericType($phpType)
     {
-        return in_array($phpType, array('boolean', 'int', 'double', 'float'));
+        return in_array($phpType, [ 'boolean', 'int', 'double', 'float' ]);
     }
 
     /**
@@ -362,7 +355,7 @@ class PropelTypes
      */
     public static function isPhpObjectType($phpType)
     {
-        return !self::isPhpPrimitiveType($phpType) && !in_array($phpType, array('resource', 'array'));
+        return !self::isPhpPrimitiveType($phpType) && !in_array($phpType, [ 'resource', 'array' ]);
     }
 
     /**

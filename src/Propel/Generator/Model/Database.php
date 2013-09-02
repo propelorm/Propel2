@@ -23,12 +23,17 @@ use Propel\Generator\Platform\PlatformInterface;
  * @author Martin Poeschl<mpoeschl@marmot.at> (Torque)
  * @author Daniel Rall<dlr@collab.net> (Torque)
  * @author Byron Foster <byron_foster@yahoo.com> (Torque)
- * @author Hugo Hamon <webmaster@apprendre-php.com> (Torque)
+ * @author Hugo Hamon <webmaster@apprendre-php.com> (Propel)
  */
 class Database extends ScopedMappingModel
 {
     const DEFAULT_STRING_FORMAT = 'YAML';
 
+    /**
+     * The database's platform.
+     * 
+     * @var \Propel\Generator\Platform\PlatformInterface
+     */
     private $platform;
 
     /**
@@ -44,7 +49,6 @@ class Database extends ScopedMappingModel
     private $baseClass;
     private $defaultIdMethod;
     private $defaultPhpNamingMethod;
-    private $defaultTranslateMethod;
     private $domainMap;
     private $heavyIndexing;
     private $parentSchema;
@@ -91,12 +95,12 @@ class Database extends ScopedMappingModel
         $this->defaultPhpNamingMethod = NameGeneratorInterface::CONV_METHOD_UNDERSCORE;
         $this->defaultIdMethod = IdMethod::NATIVE;
         $this->defaultStringFormat = static::DEFAULT_STRING_FORMAT;
-        $this->behaviors = array();
-        $this->domainMap = array();
-        $this->tables = array();
-        $this->tablesByName = array();
-        $this->tablesByPhpName = array();
-        $this->tablesByLowercaseName = array();
+        $this->behaviors             = [];
+        $this->domainMap             = [];
+        $this->tables                = [];
+        $this->tablesByName          = [];
+        $this->tablesByPhpName       = [];
+        $this->tablesByLowercaseName = [];
     }
 
     protected function setupObject()
@@ -225,7 +229,7 @@ class Database extends ScopedMappingModel
      */
     public static function getSupportedStringFormats()
     {
-        return array('XML', 'YAML', 'JSON', 'CSV');
+        return [ 'XML', 'YAML', 'JSON', 'CSV' ];
     }
 
     /**
@@ -306,6 +310,8 @@ class Database extends ScopedMappingModel
 
     /**
      * Return the number of tables in the database.
+     * 
+     * Read-only tables are excluded from the count.
      *
      * @return integer
      */
@@ -328,7 +334,7 @@ class Database extends ScopedMappingModel
      */
     public function getTablesForSql()
     {
-        $tables = array();
+        $tables = [];
         foreach ($this->tables as $table) {
             if (!$table->isSkipSql()) {
                 $tables[] = $table;
@@ -414,7 +420,7 @@ class Database extends ScopedMappingModel
      */
     public function addTable($table)
     {
-        if (!($table instanceof Table)) {
+        if (!$table instanceof Table) {
             $tbl = new Table();
             $tbl->setDatabase($this);
             $tbl->setSchema($this->getSchema());
@@ -492,6 +498,24 @@ class Database extends ScopedMappingModel
         return $this->sequences && in_array($sequence, $this->sequences);
     }
 
+    /**
+     * Returns the schema delimiter character.
+     *
+     * For example, the dot character with mysql when
+     * naming tables. For instance: schema.the_table.
+     *
+     * @return string
+     */
+    public function getSchemaDelimiter()
+    {
+        return $this->platform->getSchemaDelimiter();
+    }
+
+    /**
+     * Sets the database's schema.
+     * 
+     * @param string $schema
+     */
     public function setSchema($schema)
     {
         $oldSchema = $this->schema;
@@ -712,7 +736,7 @@ class Database extends ScopedMappingModel
     public function getNextTableBehavior()
     {
         // order the behaviors according to Behavior::$tableModificationOrder
-        $behaviors = array();
+        $behaviors = [];
         $nextBehavior = null;
         foreach ($this->tables as $table) {
             foreach ($table->getBehaviors() as $behavior) {
@@ -743,7 +767,7 @@ class Database extends ScopedMappingModel
             // add generic behaviors from build.properties
             $defaultBehaviors = explode(',', $defaultBehaviors);
             foreach ($defaultBehaviors as $behavior) {
-                $this->addBehavior(array('name' => trim($behavior)));
+                $this->addBehavior([ 'name' => trim($behavior) ]);
             }
         }
 
