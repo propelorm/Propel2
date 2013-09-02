@@ -23,21 +23,21 @@ abstract class MappingModel implements MappingModelInterface
 {
     /**
      * The list of attributes.
-     * 
+     *
      * @var array
      */
     protected $attributes;
 
     /**
      * The list of vendor's information.
-     * 
+     *
      * @var array
      */
     protected $vendorInfos;
 
     /**
      * Constructor.
-     * 
+     *
      */
     public function __construct()
     {

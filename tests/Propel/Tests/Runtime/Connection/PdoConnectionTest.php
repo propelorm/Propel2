@@ -15,14 +15,15 @@ use Propel\Tests\TestCase;
 
 /**
  * Tests the PdoConnection class
- * 
+ *
  * @author Markus Staab <markus.staab@redaxo.de>
  */
-class PdoConnectionTest extends TestCase {
-    
-    public function testTransactionRollback() {
+class PdoConnectionTest extends TestCase
+{
+    public function testTransactionRollback()
+    {
         $con = $this->getMock('Propel\Runtime\Connection\PdoConnection', ['beginTransaction', 'rollback', 'commit'], ['sqlite::memory:']);
-        
+
         $con->expects($this->once())->method('beginTransaction');
         $con->expects($this->once())->method('rollback');
         $con->expects($this->never())->method('commit');
@@ -32,15 +33,15 @@ class PdoConnectionTest extends TestCase {
                 throw new \Exception("boom");
             });
             $this->fail('missing exception');
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             $this->assertEquals("boom", $e->getMessage(), "exception was rethrown");
         }
     }
-    
-    public function testTransactionCommit() {
+
+    public function testTransactionCommit()
+    {
         $con = $this->getMock('Propel\Runtime\Connection\PdoConnection', ['beginTransaction', 'rollback', 'commit'], ['sqlite::memory:']);
-        
+
         $con->expects($this->once())->method('beginTransaction');
         $con->expects($this->never())->method('rollback');
         $con->expects($this->once())->method('commit');
@@ -49,10 +50,11 @@ class PdoConnectionTest extends TestCase {
             // do nothing
         }), "transaction() returns true by default");
     }
-    
-    public function testTransactionChaining() {
+
+    public function testTransactionChaining()
+    {
         $con = $this->getMock('Propel\Runtime\Connection\PdoConnection', ['beginTransaction', 'rollback', 'commit'], ['sqlite::memory:']);
-        
+
         $con->expects($this->once())->method('beginTransaction');
         $con->expects($this->never())->method('rollback');
         $con->expects($this->once())->method('commit');
@@ -62,7 +64,8 @@ class PdoConnectionTest extends TestCase {
         }), "transaction() returns the returned value from the Closure");
     }
 
-    public function testTransactionNestedCommit() {
+    public function testTransactionNestedCommit()
+    {
         $con = $this->getMock('Propel\Runtime\Connection\PdoConnection', ['beginTransaction', 'rollback', 'commit'], ['sqlite::memory:']);
 
         $con->expects($this->exactly(2))->method('beginTransaction');
@@ -76,7 +79,8 @@ class PdoConnectionTest extends TestCase {
         }), "transaction() returns true by default");
     }
 
-    public function testTransactionNestedException() {
+    public function testTransactionNestedException()
+    {
         $con = $this->getMock('Propel\Runtime\Connection\PdoConnection', ['beginTransaction', 'rollback', 'commit'], ['sqlite::memory:']);
 
         $con->expects($this->exactly(2))->method('beginTransaction');

@@ -75,7 +75,6 @@ class ForeignKeyTest extends MigrationTestCase
         $this->migrateAndTest($originXml, $targetXml);
     }
 
-
     public function testChange()
     {
         $originXml = '

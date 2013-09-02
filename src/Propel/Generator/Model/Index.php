@@ -180,7 +180,7 @@ class Index extends MappingModel
     }
 
     /**
-     * @param string $name
+     * @param  string $name
      * @return bool
      */
     public function hasColumn($name)

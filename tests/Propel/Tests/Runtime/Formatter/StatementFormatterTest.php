@@ -24,7 +24,6 @@ use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\DataFetcher\PDODataFetcher;
 
 use \PDO;
-use \PDOStatement;
 
 /**
  * Test class for StatementFormatter.

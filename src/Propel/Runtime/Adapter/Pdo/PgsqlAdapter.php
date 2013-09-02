@@ -128,7 +128,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
     }
 
     /**
-     * @param string $sql
+     * @param string   $sql
      * @param Criteria $criteria
      */
     public function applyGroupBy(&$sql, Criteria $criteria)

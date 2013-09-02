@@ -59,8 +59,8 @@ class StatementWrapper implements StatementInterface, \IteratorAggregate
     /**
      * Creates a Statement instance
      *
-     * @param string            $sql            The SQL query for this statement
-     * @param ConnectionWrapper $connection     The parent connection
+     * @param string            $sql        The SQL query for this statement
+     * @param ConnectionWrapper $connection The parent connection
      */
     public function __construct($sql, ConnectionWrapper $connection)
     {
@@ -75,6 +75,7 @@ class StatementWrapper implements StatementInterface, \IteratorAggregate
     public function prepare($options)
     {
         $this->statement = $this->connection->getWrappedConnection()->prepare($this->sql, $options);
+
         return $this;
     }
 
@@ -84,6 +85,7 @@ class StatementWrapper implements StatementInterface, \IteratorAggregate
     public function query()
     {
         $this->statement = $this->connection->getWrappedConnection()->query($this->sql);
+
         return $this->connection->getWrappedConnection()->getDataFetcher($this);
     }
 

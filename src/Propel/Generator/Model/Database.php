@@ -31,7 +31,7 @@ class Database extends ScopedMappingModel
 
     /**
      * The database's platform.
-     * 
+     *
      * @var \Propel\Generator\Platform\PlatformInterface
      */
     private $platform;
@@ -310,7 +310,7 @@ class Database extends ScopedMappingModel
 
     /**
      * Return the number of tables in the database.
-     * 
+     *
      * Read-only tables are excluded from the count.
      *
      * @return integer
@@ -490,7 +490,7 @@ class Database extends ScopedMappingModel
     }
 
     /**
-     * @param string $sequence
+     * @param  string $sequence
      * @return bool
      */
     public function hasSequence($sequence)
@@ -513,7 +513,7 @@ class Database extends ScopedMappingModel
 
     /**
      * Sets the database's schema.
-     * 
+     *
      * @param string $schema
      */
     public function setSchema($schema)
@@ -521,14 +521,14 @@ class Database extends ScopedMappingModel
         $oldSchema = $this->schema;
         if ($this->schema !== $schema && $this->getPlatform()) {
             $schemaDelimiter = $this->getPlatform()->getSchemaDelimiter();
-            $fixHash = function(&$array) use($schema, $oldSchema, $schemaDelimiter){
+            $fixHash = function(&$array) use ($schema, $oldSchema, $schemaDelimiter) {
                 foreach ($array as $k => $v) {
                     if ($schema && $this->getPlatform()->supportsSchemas()) {
                         if (false === strpos($k, $schemaDelimiter)) {
                             $array[$schema . $schemaDelimiter . $k] = $v;
                             unset($array[$k]);
                         }
-                    } else if ($oldSchema) {
+                    } elseif ($oldSchema) {
                         if (false !== strpos($k, $schemaDelimiter)) {
                             $array[explode($schemaDelimiter, $k)[1]] = $v;
                             unset($array[$k]);

@@ -440,7 +440,7 @@ class Table extends ScopedMappingModel implements IdMethod
      */
     private function acquireConstraintName($nameType, $nbr)
     {
-        return NameFactory::generateName(NameFactory::CONSTRAINT_GENERATOR, [ 
+        return NameFactory::generateName(NameFactory::CONSTRAINT_GENERATOR, [
             $this->database,
             $this->getCommonName(),
             $nameType,
@@ -818,7 +818,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Checks if the table has a index by name.
      *
-     * @param  string $name
+     * @param  string  $name
      * @return boolean
      */
     public function hasIndex($name)
@@ -1009,7 +1009,7 @@ class Table extends ScopedMappingModel implements IdMethod
 
     /**
      * Returns the schema name.
-     * 
+     *
      * @return string
      */
     private function guessSchemaName()
@@ -1019,7 +1019,7 @@ class Table extends ScopedMappingModel implements IdMethod
 
     /**
      * Returns whether or not this table is linked to a schema.
-     * 
+     *
      * @return boolean
      */
     private function hasSchema()
@@ -1422,14 +1422,14 @@ class Table extends ScopedMappingModel implements IdMethod
      * Checks if $keys are a unique constraint in the table.
      * (through primaryKey, through a regular unices constraints or for single keys when it has isUnique=true)
      *
-     * @param Column[]|string[] $keys
+     * @param  Column[]|string[] $keys
      * @return boolean
      */
     public function isUnique(array $keys)
     {
         if (1 === count($keys)) {
             $column = $keys[0] instanceof Column ? $keys[0] : $this->getColumn($keys[0]);
-            if ($column){
+            if ($column) {
                 if ($column->isUnique()) return true;
                 if ($column->isPrimaryKey() && 1 === count($column->getTable()->getPrimaryKey())) {
                     return true;
@@ -1483,11 +1483,10 @@ class Table extends ScopedMappingModel implements IdMethod
         return false;
     }
 
-
     /**
      * Checks if a index exists with the given $keys.
      *
-     * @param array $keys
+     * @param  array   $keys
      * @return boolean
      */
     public function isIndex(array $keys)

@@ -132,6 +132,7 @@ class PdoConnection extends \PDO implements SqlConnectionInterface
             if ($result) {
                 return $result;
             }
+
             return true;
         } catch (\Exception $e) {
             $this->rollBack();

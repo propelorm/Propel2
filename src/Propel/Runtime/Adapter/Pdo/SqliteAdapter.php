@@ -10,7 +10,6 @@
 
 namespace Propel\Runtime\Adapter\Pdo;
 
-use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Adapter\SqlAdapterInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
 

@@ -17,7 +17,6 @@ use Propel\Tests\Bookstore\BookQuery;
 use Propel\Runtime\Propel;
 use Propel\Runtime\Adapter\Pdo\MysqlAdapter;
 use Propel\Runtime\Adapter\Pdo\PgsqlAdapter;
-use Propel\Runtime\Adapter\Pdo\SqliteAdapter;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\ActiveQuery\Join;

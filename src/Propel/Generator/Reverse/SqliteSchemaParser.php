@@ -230,7 +230,7 @@ class SqliteSchemaParser extends AbstractSchemaParser
                 $tableName   = $row['table'];
                 $tableSchema = '';
 
-                if (false !== ($pos = strpos($tableName, '§'))){
+                if (false !== ($pos = strpos($tableName, '§'))) {
                     $tableName = substr($tableName, $pos + 2);
                     $tableSchema = substr($tableName, 0, $pos);
                 }

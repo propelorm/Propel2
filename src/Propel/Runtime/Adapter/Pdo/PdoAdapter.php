@@ -82,6 +82,7 @@ abstract class PdoAdapter
     {
         $class = str_replace('Adapter', '', get_called_class());
         $lastSlash = strrpos($class, '\\');
+
         return strtolower(substr($class, $lastSlash + 1));
     }
 
@@ -298,7 +299,7 @@ abstract class PdoAdapter
     }
 
     /**
-     * @param string $sql
+     * @param string   $sql
      * @param Criteria $criteria
      */
     public function applyGroupBy(&$sql, Criteria $criteria)
@@ -460,7 +461,7 @@ abstract class PdoAdapter
     /**
      * Returns all selected columns that are selected without a aggregate function.
      *
-     * @param Criteria $criteria
+     * @param  Criteria $criteria
      * @return string[]
      */
     public function getPlainSelectedColumns(Criteria $criteria)

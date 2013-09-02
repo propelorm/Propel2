@@ -182,13 +182,13 @@ class TableTest extends ModelTestCase
         $database = $this->getDatabaseMock($schemaName, array(
             'platform' => $this->getPlatformMock($supportsSchemas),
         ));
-        
+
         $database
             ->expects($supportsSchemas ? $this->once() : $this->never())
             ->method('getSchemaDelimiter')
             ->will($this->returnValue('.'))
         ;
-        
+
         $table = new Table('books');
         $table->setSchema($schemaName);
         $table->setDatabase($database);

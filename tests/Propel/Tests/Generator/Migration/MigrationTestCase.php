@@ -97,6 +97,7 @@ class MigrationTestCase extends TestCase
             }
         }
         $this->con->commit();
+
         return $database;
     }
 

@@ -2223,8 +2223,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         );";
         $script .= "
         \$virtualColumns = \$this->virtualColumns;
-        foreach(\$virtualColumns as \$key => \$virtualColumn)
-        {
+        foreach (\$virtualColumns as \$key => \$virtualColumn) {
             \$result[\$key] = \$virtualColumn;
         }
         ";

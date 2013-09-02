@@ -88,7 +88,6 @@ class ForeignKey extends MappingModel
      */
     private $foreignColumns;
 
-
     /**
      * @var bool
      */
@@ -308,7 +307,7 @@ class ForeignKey extends MappingModel
             return $this->foreignSchemaName
                 . $this->parentTable->getPlatform()->getSchemaDelimiter()
                 . $this->foreignTableCommonName;
-        } else if ($this->getTable()->getDatabase() && ($schema = $this->getTable()->getDatabase()->getSchema())
+        } elseif ($this->getTable()->getDatabase() && ($schema = $this->getTable()->getDatabase()->getSchema())
                    && $this->getTable()->getDatabase()->getPlatform()->supportsSchemas()) {
             return $schema
                 . $this->getTable()->getPlatform()->getSchemaDelimiter()

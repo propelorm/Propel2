@@ -73,7 +73,6 @@ class PgsqlSchemaParser extends AbstractSchemaParser
         'double precision' => PropelTypes::DOUBLE,
     );
 
-
     protected static $defaultTypeSizes = array(
         'char'      => 1,
         'character' => 1,
@@ -177,6 +176,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
         }
 
         $this->addSequences($database);
+
         return count($tableWraps);
     }
 

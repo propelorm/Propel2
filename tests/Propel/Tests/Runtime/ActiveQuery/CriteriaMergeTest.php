@@ -260,7 +260,6 @@ class CriteriaMergeTest extends BookstoreTestBase
         $this->assertCriteriaTranslation($c1, $sql, 'mergeWith() merges where condition to existing conditions on the different tables');
     }
 
-
     public function testMergeOrWithWhereConditions()
     {
         $c1 = new Criteria();

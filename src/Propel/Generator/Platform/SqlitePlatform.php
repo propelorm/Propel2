@@ -112,10 +112,10 @@ class SqlitePlatform extends DefaultPlatform
             || $tableDiff->hasAddedPkColumns()
         );
 
-        if ($this->tableAlteringWorkaround && !$changedNotEditableThroughDirectDDL && $tableDiff->hasAddedColumns()){
+        if ($this->tableAlteringWorkaround && !$changedNotEditableThroughDirectDDL && $tableDiff->hasAddedColumns()) {
 
             $addedCols = $tableDiff->getAddedColumns();
-            foreach ($addedCols as $column){
+            foreach ($addedCols as $column) {
 
                 $sqlChangeNotSupported = false
 
@@ -133,7 +133,7 @@ class SqlitePlatform extends DefaultPlatform
                     || ($column->isNotNull() && $column->getDefaultValue() == 'NULL')
                 ;
 
-                if ($sqlChangeNotSupported){
+                if ($sqlChangeNotSupported) {
                     $changedNotEditableThroughDirectDDL = true;
                     break;
                 }
@@ -141,7 +141,7 @@ class SqlitePlatform extends DefaultPlatform
             }
         }
 
-        if ($changedNotEditableThroughDirectDDL){
+        if ($changedNotEditableThroughDirectDDL) {
             return $this->getMigrationTableDDL($tableDiff);
         } else {
             return parent::getModifyTableDDL($tableDiff);
@@ -153,11 +153,11 @@ class SqlitePlatform extends DefaultPlatform
      * Creates a temporarily created table with the new schema,
      * moves all items into it and drops the origin as well as renames the temp table to the origin then.
      *
-     * @param TableDiff $tableDiff
+     * @param  TableDiff $tableDiff
      * @return string
      */
-    public function getMigrationTableDDL(TableDiff $tableDiff){
-
+    public function getMigrationTableDDL(TableDiff $tableDiff)
+    {
         $pattern = "
 CREATE TEMPORARY TABLE %s AS SELECT %s FROM %s;
 DROP TABLE %s;
@@ -209,6 +209,7 @@ DROP TABLE %s;
             $this->quoteIdentifier($tempTableName), //from %s
             $this->quoteIdentifier($tempTableName) //drop table %s
         );
+
         return $sql;
     }
 
@@ -227,7 +228,6 @@ PRAGMA foreign_keys = ON;
 BEGIN;
 ';
     }
-
 
     public function getModifyDatabaseDDL(DatabaseDiff $databaseDiff)
     {
@@ -280,12 +280,12 @@ BEGIN;
             }
         }
 
-        if (count($pks = $table->getPrimaryKey()) > 1 && $table->hasAutoIncrementPrimaryKey()){
-            foreach ($pks as $pk){
+        if (count($pks = $table->getPrimaryKey()) > 1 && $table->hasAutoIncrementPrimaryKey()) {
+            foreach ($pks as $pk) {
                 //no pk can be NULL, as usual
                 $pk->setNotNull(true);
                 //in SQLite the column with the AUTOINCREMENT MUST be a primary key, too.
-                if (!$pk->isAutoIncrement()){
+                if (!$pk->isAutoIncrement()) {
                     //for all other sub keys we remove it, since we create a UNIQUE constraint over all primary keys.
                     $pk->setPrimaryKey(false);
                 }
@@ -293,12 +293,12 @@ BEGIN;
 
             //search if there is already a UNIQUE constraint over the primary keys
             $pkUniqueExist = false;
-            foreach ($table->getUnices() as $unique){
+            foreach ($table->getUnices() as $unique) {
                 $allPk = false;
-                foreach ($unique->getColumns() as $columnName){
+                foreach ($unique->getColumns() as $columnName) {
                     $allPk &= $table->getColumn($columnName)->isPrimaryKey();
                 }
-                if ($allPk){
+                if ($allPk) {
                     //there's already a unique constraint with the composite pk
                     $pkUniqueExist = true;
                     break;
@@ -306,9 +306,9 @@ BEGIN;
             }
 
             //there is none, let's create it
-            if (!$pkUniqueExist){
+            if (!$pkUniqueExist) {
                 $unique = new Unique();
-                foreach ($pks as $pk){
+                foreach ($pks as $pk) {
                     $unique->addColumn($pk);
                 }
                 $table->addUnique($unique);
@@ -316,7 +316,6 @@ BEGIN;
         }
 
     }
-
 
     /**
      * Returns the SQL for the primary key of a Table object
@@ -327,13 +326,15 @@ BEGIN;
         if ($table->hasPrimaryKey() && !$table->hasAutoIncrementPrimaryKey()) {
             return 'PRIMARY KEY (' . $this->getColumnListDDL($table->getPrimaryKey()) . ')';
         }
+
         return '';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getRemoveColumnDDL(Column $column){
+    public function getRemoveColumnDDL(Column $column)
+    {
         //not supported
         return '';
     }
@@ -350,7 +351,8 @@ BEGIN;
     /**
      * {@inheritdoc}
      */
-    public function getModifyColumnDDL(ColumnDiff $columnDiff){
+    public function getModifyColumnDDL(ColumnDiff $columnDiff)
+    {
         //not supported
         return '';
     }
@@ -358,7 +360,8 @@ BEGIN;
     /**
      * {@inheritdoc}
      */
-    public function getModifyColumnsDDL($columnDiffs){
+    public function getModifyColumnsDDL($columnDiffs)
+    {
         //not supported
         return '';
     }
@@ -411,7 +414,6 @@ BEGIN;
     {
         return 1024;
     }
-
 
     public function getColumnDDL(Column $col)
     {

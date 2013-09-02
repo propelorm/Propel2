@@ -39,9 +39,9 @@ class TestCase extends \PHPUnit_Framework_TestCase
      * Makes the sql compatible with the current database.
      * Means: replaces ` etc.
      *
-     * @param string $sql
-     * @param string $source
-     * @param string $target
+     * @param  string $sql
+     * @param  string $source
+     * @param  string $target
      * @return mixed
      */
     protected function getSql($sql, $source = 'mysql', $target = null)
@@ -56,13 +56,14 @@ class TestCase extends \PHPUnit_Framework_TestCase
         if ('mysql' !== $target && 'mysql' === $source) {
             return str_replace('`', '', $sql);
         }
+
         return $sql;
     }
 
     /**
      * Returns true if the current driver in the connection ($this->con) is $db.
      *
-     * @param string $db
+     * @param  string $db
      * @return bool
      */
     protected function isDb($db = 'mysql')
@@ -116,6 +117,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
     protected function getPlatform()
     {
         $className = sprintf('\\Propel\\Generator\\Platform\\%sPlatform', ucfirst($this->getDriver()));
+
         return new $className;
     }
 

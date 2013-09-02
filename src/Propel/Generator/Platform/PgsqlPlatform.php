@@ -400,7 +400,6 @@ DROP TABLE IF EXISTS %s CASCADE;
         return true;
     }
 
-
     public function getModifyTableDDL(TableDiff $tableDiff)
     {
         $ret = parent::getModifyTableDDL($tableDiff);
@@ -437,7 +436,6 @@ DROP TABLE IF EXISTS %s CASCADE;
         $pattern = "
 ALTER TABLE %s ALTER COLUMN %s;
 ";
-
 
         if (isset($changedProperties['autoIncrement'])) {
             $tableName = $table->getName();
@@ -520,12 +518,14 @@ DROP SEQUENCE %s CASCADE;
     public function isString($type)
     {
         $strings = ['VARCHAR'];
+
         return in_array(strtoupper($type), $strings);
     }
 
     public function isNumber($type)
     {
         $numbers = ['INTEGER', 'INT4', 'INT2', 'NUMBER', 'NUMERIC', 'SMALLINT', 'BIGINT', 'DECICAML', 'REAL', 'DOUBLE PRECISION', 'SERIAL', 'BIGSERIAL'];
+
         return in_array(strtoupper($type), $numbers);
     }
 
