@@ -609,7 +609,7 @@ class TableDiff
      */
     public function hasRemovedFks()
     {
-        return !!$this->modifiedColumns;
+        return !!$this->removedFks;
     }
 
     /**
