@@ -90,7 +90,7 @@ class PgsqlDataSQLBuilder extends DataSQLBuilder
     protected function getBlobSql($blob)
     {
        if (is_resource($blob)) {
-            return fopen($blob, "rb")
+            return fopen($blob, 'rb');
         }
 
         return (string) $blob;
