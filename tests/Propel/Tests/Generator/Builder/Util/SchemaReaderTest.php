@@ -13,31 +13,36 @@ namespace Propel\Tests\Generator\Builder\Util;
 use Propel\Generator\Builder\Util\SchemaReader;
 use Propel\Tests\TestCase;
 
-/**
- * Tests for SchemaReader class
- *
- */
 class SchemaReaderTest extends TestCase
 {
+    /**
+     * The schema reader.
+     *
+     * @var SchemaReader
+     */
+    private $reader;
 
     public function testParseStringEmptySchema()
     {
-        $xmlSchema = '<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>';
-        $schemaReader = new SchemaReader();
-        $schema = $schemaReader->parseString($xmlSchema);
-        $expectedSchema = "<app-data>
-</app-data>";
-        $this->assertEquals($expectedSchema, $schema->toString());
+        $schema = $this->reader->parseString('<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>');
+
+        $xml = <<<EOF
+<?xml version="1.0" encoding="utf-8"?>
+<app-data/>
+EOF;
+        $this->assertEquals($xml, $schema->toString());
     }
 
     public function testParseStringSchemaWithoutXmlDeclaration()
     {
-        $xmlSchema = '';
-        $schemaReader = new SchemaReader();
-        $schema = $schemaReader->parseString($xmlSchema);
-        $expectedSchema = "<app-data>
-</app-data>";
-        $this->assertEquals($expectedSchema, $schema->toString());
+        $schema = $this->reader->parseString('');
+
+        $xml = <<<EOF
+<?xml version="1.0" encoding="utf-8"?>
+<app-data/>
+EOF;
+
+        $this->assertEquals($xml, $schema->toString());
     }
 
     /**
@@ -45,50 +50,54 @@ class SchemaReaderTest extends TestCase
      */
     public function testParseStringIncorrectSchema()
     {
-        $xmlSchema = '<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?><foo/>';
-        $schemaReader = new SchemaReader();
-        $schema = $schemaReader->parseString($xmlSchema);
+        $this->reader->parseString('<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?><foo/>');
     }
 
     public function testParseStringDatabase()
     {
-        $xmlSchema = '<database name="foo"></database>';
-        $schemaReader = new SchemaReader();
-        $schema = $schemaReader->parseString($xmlSchema);
-        $expectedDatabase = '<database name="foo" defaultIdMethod="native" defaultPhpNamingMethod="underscore"/>';
-        $database = $schema->getDatabase();
-        $this->assertEquals($expectedDatabase, $database->toString());
-        $expectedSchema = "<app-data>\n$expectedDatabase\n</app-data>";
+        $schema = $this->reader->parseString('<database name="foo"></database>');
+
+        $expectedSchema = <<<EOF
+<?xml version="1.0" encoding="utf-8"?>
+<app-data>
+  <database name="foo" defaultIdMethod="native" defaultPhpNamingMethod="underscore"/>
+</app-data>
+EOF;
+
         $this->assertEquals($expectedSchema, $schema->toString());
     }
 
     public function testParseStringTable()
     {
         $xmlSchema = '<database name="foo"><table name="bar"><column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/></table></database>';
-        $schemaReader = new SchemaReader();
-        $schema = $schemaReader->parseString($xmlSchema);
-        $database = $schema->getDatabase();
-        $table = $database->getTable('bar');
-        $expectedTable = <<<EOF
-<table name="bar" phpName="Bar" idMethod="native">
-  <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
-</table>
+
+        $expectedSchema = <<<EOF
+<?xml version="1.0" encoding="utf-8"?>
+<app-data>
+  <database name="foo" defaultIdMethod="native" defaultPhpNamingMethod="underscore">
+    <table name="bar" idMethod="native" phpName="Bar">
+      <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    </table>
+  </database>
+</app-data>
 EOF;
-        $this->assertEquals($expectedTable, $table->toString());
+
+        $schema = $this->reader->parseString($xmlSchema);
+
+        $this->assertEquals($expectedSchema, $schema->toString());
     }
 
     public function testParseFile()
     {
-        $path = realpath(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'testSchema.xml');
-        $schemaReader = new SchemaReader();
-        $schema = $schemaReader->parseFile($path);
+        $schema = $this->reader->parseFile($this->getSchemaFile('testSchema.xml'));
         $expectedSchema = <<<EOF
+<?xml version="1.0" encoding="utf-8"?>
 <app-data>
-<database name="foo" defaultIdMethod="native" defaultPhpNamingMethod="underscore">
-  <table name="bar" phpName="Bar" idMethod="native">
-    <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
-  </table>
-</database>
+  <database name="foo" defaultIdMethod="native" defaultPhpNamingMethod="underscore">
+    <table name="bar" idMethod="native" phpName="Bar">
+      <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    </table>
+  </database>
 </app-data>
 EOF;
         $this->assertEquals($expectedSchema, $schema->toString());
@@ -96,21 +105,35 @@ EOF;
 
     public function testParseFileExternalSchema()
     {
-        $path = realpath(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'outerSchema.xml');
-        $schemaReader = new SchemaReader();
-        $schema = $schemaReader->parseFile($path);
+        $schema = $this->reader->parseFile($this->getSchemaFile('outerSchema.xml'));
         $expectedSchema = <<<EOF
+<?xml version="1.0" encoding="utf-8"?>
 <app-data>
-<database name="foo" defaultIdMethod="native" defaultPhpNamingMethod="underscore">
-  <table name="bar1" phpName="Bar1" idMethod="native">
-    <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
-  </table>
-  <table name="bar2" phpName="Bar2" idMethod="native" forReferenceOnly="true">
-    <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
-  </table>
-</database>
+  <database name="foo" defaultIdMethod="native" defaultPhpNamingMethod="underscore">
+    <table name="bar1" idMethod="native" phpName="Bar1">
+      <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    </table>
+    <table name="bar2" idMethod="native" phpName="Bar2" skipSql="true" forReferenceOnly="true">
+      <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    </table>
+  </database>
 </app-data>
 EOF;
         $this->assertEquals($expectedSchema, $schema->toString());
+    }
+
+    protected function setUp()
+    {
+        $this->reader = new SchemaReader();
+    }
+
+    protected function tearDown()
+    {
+        $this->reader = null;
+    }
+
+    protected function getSchemaFile($filename)
+    {
+        return realpath(dirname(__FILE__) . DIRECTORY_SEPARATOR . $filename);
     }
 }

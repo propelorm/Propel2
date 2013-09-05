@@ -25,15 +25,18 @@ class UniqueTest extends ModelTestCase
      */
     public function testCreateDefaultUniqueIndexName($tableName, $maxColumnNameLength, $indexName)
     {
-        $table = $this->getTableMock($tableName, array(
+        $database = $this->getDatabaseMock('bookstore');
+        $database
+            ->expects($this->any())
+            ->method('getMaxColumnNameLength')
+            ->will($this->returnValue($maxColumnNameLength))
+        ;
+
+        $table = $this->getTableMock($tableName, [
             'common_name' => $tableName,
-            'unices'      => array(new Unique(), new Unique()),
-            'database'    => $this->getDatabaseMock('bookstore', array(
-                'platform' => $this->getPlatformMock(true, array(
-                    'max_column_name_length' => $maxColumnNameLength,
-                )),
-            )),
-        ));
+            'unices'      => [ new Unique(), new Unique() ],
+            'database'    => $database,
+        ]);
 
         $index = new Unique();
         $index->setTable($table);
@@ -44,9 +47,9 @@ class UniqueTest extends ModelTestCase
 
     public function provideTableSpecificAttributes()
     {
-        return array(
-            array('books', 64, 'books_U_3'),
-            array('super_long_table_name', 16, 'super_long_t_U_3'),
-        );
+        return [
+            [ 'books', 64, 'books_U_3' ],
+            [ 'super_long_table_name', 16, 'super_long_t_U_3' ],
+        ];
     }
 }

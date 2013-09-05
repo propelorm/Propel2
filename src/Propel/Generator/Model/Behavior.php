@@ -20,13 +20,64 @@ use Propel\Generator\Builder\Util\PropelTemplate;
  */
 class Behavior extends MappingModel
 {
+    /**
+     * The table object on which the behavior is applied.
+     *
+     * @var Table
+     */
     protected $table;
+
+    /**
+     * The database object.
+     *
+     * @var Database
+     */
     protected $database;
+
+    /**
+     * The behavior name.
+     *
+     * @var string
+     */
     protected $name;
-    protected $parameters = [];
+
+    /**
+     * A collection of parameters.
+     *
+     * @var array
+     */
+    protected $parameters = [ ];
+
+    /**
+     * Wether or not the table has been
+     * modified by the behavior.
+     *
+     * @var boolean
+     */
     protected $isTableModified = false;
+
+    /**
+     * The absolute path to the directory
+     * that contains the behavior's templates
+     * files.
+     *
+     * @var string
+     */
     protected $dirname;
+
+    /**
+     * A collection of additional builders.
+     *
+     * @var array
+     */
     protected $additionalBuilders = [];
+
+    /**
+     * The order in which the behavior must
+     * be applied.
+     *
+     * @var int
+     */
     protected $tableModificationOrder = 50;
 
     /**
@@ -174,14 +225,24 @@ class Behavior extends MappingModel
      */
     public function modifyDatabase()
     {
-        foreach ($this->getDatabase()->getTables() as $table) {
+        foreach ($this->getTables() as $table) {
             if ($table->hasBehavior($this->getName())) {
                 // don't add the same behavior twice
                 continue;
             }
-            $b = clone $this;
-            $table->addBehavior($b);
+            $behavior = clone $this;
+            $table->addBehavior($behavior);
         }
+    }
+
+    /**
+     * Returns the list of all tables in the same database.
+     *
+     * @return Table[] A collection of Table instance
+     */
+    protected function getTables()
+    {
+        return $this->database->getTables();
     }
 
     /**
@@ -269,26 +330,12 @@ class Behavior extends MappingModel
      */
     public function getColumnForParameter($name)
     {
-        return $this->getTable()->getColumn($this->getParameter($name));
+        return $this->table->getColumn($this->getParameter($name));
     }
 
     protected function setupObject()
     {
         $this->name = $this->getAttribute("name");
-    }
-
-    public function appendXml(\DOMNode $node)
-    {
-        $doc = ($node instanceof \DOMDocument) ? $node : $node->ownerDocument;
-
-        $bNode = $node->appendChild($doc->createElement('behavior'));
-        $bNode->setAttribute('name', $this->getName());
-
-        foreach ($this->parameters as $name => $value) {
-            $parameterNode = $bNode->appendChild($doc->createElement('parameter'));
-            $parameterNode->setAttribute('name', $name);
-            $parameterNode->setAttribute('value', $value);
-        }
     }
 
     /**

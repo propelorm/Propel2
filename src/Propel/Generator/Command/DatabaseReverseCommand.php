@@ -10,6 +10,7 @@
 
 namespace Propel\Generator\Command;
 
+use Propel\Generator\Schema\Dumper\XmlDumper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
@@ -23,9 +24,7 @@ use Propel\Generator\Manager\ReverseManager;
 class DatabaseReverseCommand extends AbstractCommand
 {
     const DEFAULT_OUTPUT_DIRECTORY  = 'generated-reversed-database';
-
     const DEFAULT_DATABASE_NAME     = 'default';
-
     const DEFAULT_SCHEMA_NAME       = 'schema';
 
     /**
@@ -43,7 +42,7 @@ class DatabaseReverseCommand extends AbstractCommand
             ->setName('database:reverse')
             ->setAliases(array('reverse'))
             ->setDescription('Reverse-engineer a XML schema file based on given database')
-            ;
+        ;
     }
 
     /**
@@ -62,7 +61,7 @@ class DatabaseReverseCommand extends AbstractCommand
 
         $this->createDirectory($input->getOption('output-dir'));
 
-        $manager = new ReverseManager();
+        $manager = new ReverseManager(new XmlDumper());
         $manager->setGeneratorConfig($generatorConfig);
         $manager->setLoggerClosure(function($message) use ($input, $output) {
             if ($input->getOption('verbose')) {
@@ -72,6 +71,7 @@ class DatabaseReverseCommand extends AbstractCommand
         $manager->setWorkingDirectory($input->getOption('output-dir'));
 
         list($name, $dsn, $infos) = $this->parseConnection('connection=' . $input->getArgument('connection'));
+        
         $manager->setConnection(array_merge(array('dsn' => $dsn), $infos));
 
         $manager->setDatabaseName($input->getOption('database-name'));

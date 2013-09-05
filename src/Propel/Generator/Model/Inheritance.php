@@ -132,17 +132,4 @@ class Inheritance extends MappingModel
         $this->package   = $this->getAttribute('package');
         $this->ancestor  = $this->getAttribute('extends');
     }
-
-    public function appendXml(\DOMNode $node)
-    {
-        $doc = ($node instanceof \DOMDocument) ? $node : $node->ownerDocument;
-
-        $inherNode = $node->appendChild($doc->createElement('inheritance'));
-        $inherNode->setAttribute('key', $this->key);
-        $inherNode->setAttribute('class', $this->className);
-
-        if (null !== $this->ancestor) {
-            $inherNode->setAttribute('extends', $this->ancestor);
-        }
-    }
 }
