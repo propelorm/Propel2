@@ -1103,6 +1103,25 @@ class CriteriaTest extends BookstoreTestBase
         $result = $c->createSelectSql($params);
         $this->assertEquals($sql, $result);
     }
+
+    public function testGroupBy()
+    {
+        $params = array();
+        $c = BookQuery::create()
+            ->joinReview()
+            ->withColumn('COUNT(Review.Id)', 'Count')
+            ->groupById();
+
+        $result = $c->createSelectSql($params);
+
+        if ($this->runningOnPostgreSQL()){
+            $sql = 'SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID, COUNT(review.ID) AS Count FROM book LEFT JOIN review ON (book.ID=review.BOOK_ID) GROUP BY book.ID,book.TITLE,book.ISBN,book.PRICE,book.PUBLISHER_ID,book.AUTHOR_ID';
+        } else {
+            $sql = $this->getSql('SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID, COUNT(review.ID) AS Count FROM `book` LEFT JOIN `review` ON (book.ID=review.BOOK_ID) GROUP BY book.ID');
+        }
+
+        $this->assertEquals($sql, $result);
+    }
 }
 
 class CriteriaForClearTest extends Criteria
