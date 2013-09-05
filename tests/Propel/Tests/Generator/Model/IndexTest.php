@@ -36,7 +36,7 @@ class IndexTest extends ModelTestCase
     {
         $index = new Index();
         $index->setTable($this->getTableMock('books'));
-        $index->loadMapping(array('name' => 'foo_idx'));
+        $index->loadMapping([ 'name' => 'foo_idx' ]);
 
         $this->assertEquals('foo_idx', $index->getName());
     }
@@ -47,15 +47,18 @@ class IndexTest extends ModelTestCase
      */
     public function testCreateDefaultIndexName($tableName, $maxColumnNameLength, $indexName)
     {
-        $table = $this->getTableMock($tableName, array(
+        $database = $this->getDatabaseMock('bookstore');
+        $database
+            ->expects($this->any())
+            ->method('getMaxColumnNameLength')
+            ->will($this->returnValue($maxColumnNameLength))
+        ;
+
+        $table = $this->getTableMock($tableName, [
             'common_name' => $tableName,
-            'indices'     => array(new Index(), new Index()),
-            'database'    => $this->getDatabaseMock('bookstore', array(
-                'platform' => $this->getPlatformMock(true, array(
-                    'max_column_name_length' => $maxColumnNameLength,
-                )),
-            )),
-        ));
+            'indices'     => [ new Index(), new Index() ],
+            'database'    => $database,
+        ]);
 
         $index = new Index();
         $index->setTable($table);
@@ -65,10 +68,10 @@ class IndexTest extends ModelTestCase
 
     public function provideTableSpecificAttributes()
     {
-        return array(
-            array('books', 64, 'books_I_3'),
-            array('super_long_table_name', 16, 'super_long_t_I_3'),
-        );
+        return [
+            [ 'books', 64, 'books_I_3' ],
+            [ 'super_long_table_name', 16, 'super_long_t_I_3' ],
+        ];
     }
 
     /**
@@ -94,25 +97,25 @@ class IndexTest extends ModelTestCase
 
     public function provideColumnDefinitions()
     {
-        $dataset[0][] = array(
-            $this->getColumnMock('foo', array('size' => 100)),
-            $this->getColumnMock('bar', array('size' => 5)),
-            $this->getColumnMock('baz', array('size' => 0)),
-        );
+        $dataset[0][] = [
+            $this->getColumnMock('foo', [ 'size' => 100 ]),
+            $this->getColumnMock('bar', [ 'size' => 5   ]),
+            $this->getColumnMock('baz', [ 'size' => 0   ]),
+        ];
 
-        $dataset[1][] = array(
-            array('name' => 'foo', 'size' => 100),
-            array('name' => 'bar', 'size' => 5),
-            array('name' => 'baz', 'size' => 0),
-        );
+        $dataset[1][] = [
+            [ 'name' => 'foo', 'size' => 100 ],
+            [ 'name' => 'bar', 'size' => 5 ],
+            [ 'name' => 'baz', 'size' => 0 ],
+        ];
 
         return $dataset;
     }
 
     public function testResetColumnsSize()
     {
-        $columns[] = $this->getColumnMock('foo', array('size' => 100));
-        $columns[] = $this->getColumnMock('bar', array('size' => 5));
+        $columns[] = $this->getColumnMock('foo', [ 'size' => 100 ]);
+        $columns[] = $this->getColumnMock('bar', [ 'size' => 5   ]);
 
         $index = new Index();
         $index->setColumns($columns);
@@ -138,17 +141,17 @@ class IndexTest extends ModelTestCase
     public function testNoColumnAtPositionCaseSensitivity($name, $case)
     {
         $index = new Index();
-        $index->addColumn($this->getColumnMock('foo', array('size' => 5)));
+        $index->addColumn($this->getColumnMock('foo', [ 'size' => 5 ]));
 
         $this->assertFalse($index->hasColumnAtPosition(0, $name, 5, $case));
     }
 
     public function provideColumnAttributes()
     {
-        return array(
-            array('bar', false),
-            array('BAR', true),
-        );
+        return [
+            [ 'bar', false ],
+            [ 'BAR', true ],
+        ];
     }
 
     public function testNoSizedColumnAtPosition()
@@ -156,7 +159,7 @@ class IndexTest extends ModelTestCase
         $size = 5;
 
         $index = new Index();
-        $index->addColumn($this->getColumnMock('foo', array('size' => $size)));
+        $index->addColumn($this->getColumnMock('foo', [ 'size' => $size ]));
 
         $size++;
         $this->assertFalse($index->hasColumnAtPosition(0, 'foo', $size));
@@ -165,7 +168,7 @@ class IndexTest extends ModelTestCase
     public function testHasColumnAtFirstPosition()
     {
         $index = new Index();
-        $index->addColumn($this->getColumnMock('foo', array('size' => 0)));
+        $index->addColumn($this->getColumnMock('foo', [ 'size' => 0 ]));
 
         $this->assertTrue($index->hasColumnAtPosition(0, 'foo'));
     }

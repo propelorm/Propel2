@@ -18,23 +18,22 @@ use Propel\Generator\Model\Unique;
  *
  * @author Francois Zaninotto
  * @author Massimiliano Arione
- * @version        $Revision$
  */
 class SluggableBehavior extends Behavior
 {
-    // default parameters value
-    protected $parameters = array(
+    protected $parameters = [
         'slug_column'     => 'slug',
         'slug_pattern'    => '',
-        'replace_pattern' => '/\W+/', // Tip: use '/[^\\pL\\d]+/u' instead if you're in PHP5.3
+        'replace_pattern' => '/\W+/',
         'replacement'     => '-',
         'separator'       => '-',
         'permanent'       => 'false',
-        'scope_column'    => ''
-    );
+        'scope_column'    => '',
+    ];
 
     /**
-     * Add the slug_column to the current table
+     * Adds the slug_column to the current table.
+     *
      */
     public function modifyTable()
     {

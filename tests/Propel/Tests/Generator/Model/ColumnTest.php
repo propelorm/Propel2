@@ -980,14 +980,6 @@ class ColumnTest extends ModelTestCase
         $this->assertTrue($column->isPrimaryString());
     }
 
-    public function testSetUnique()
-    {
-        $column = new Column();
-        $column->setUnique(true);
-
-        $this->assertTrue($column->isUnique());
-    }
-
     public function testSetNotNull()
     {
         $column = new Column();

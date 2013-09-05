@@ -99,15 +99,4 @@ class IdMethodParameter extends MappingModel
     {
         return $this->parentTable->getName();
     }
-
-    public function appendXml(\DOMNode $node)
-    {
-        $doc = ($node instanceof \DOMDocument) ? $node : $node->ownerDocument;
-
-        $paramNode = $node->appendChild($doc->createElement('id-method-parameter'));
-        if ($this->getName()) {
-            $paramNode->setAttribute('name', $this->getName());
-        }
-        $paramNode->setAttribute('value', $this->getValue());
-    }
 }

@@ -36,6 +36,16 @@ abstract class ScopedMappingModel extends MappingModel
     }
 
     /**
+     * Returns whether or not the package has been overriden.
+     * 
+     * @return boolean
+     */
+    public function isPackageOverriden()
+    {
+        return $this->packageOverridden;
+    }
+
+    /**
      * Returns a build property by its name.
      *
      * @param string $name

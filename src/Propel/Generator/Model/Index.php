@@ -27,7 +27,9 @@ class Index extends MappingModel
     protected $name;
 
     /**
-     * @var string
+     * The Table instance.
+     * 
+     * @var Table
      */
     protected $table;
 
@@ -95,7 +97,7 @@ class Index extends MappingModel
         }
 
         if ($database = $this->table->getDatabase()) {
-            return substr($this->name, 0, $database->getPlatform()->getMaxColumnNameLength());
+            return substr($this->name, 0, $database->getMaxColumnNameLength());
         }
 
         return $this->name;
@@ -159,7 +161,7 @@ class Index extends MappingModel
     /**
      * Adds a new column to the index.
      *
-     * @param mixed $data Column or attributes from XML.
+     * @param Column|string $data Column or attributes from XML.
      */
     public function addColumn($data)
     {
@@ -170,11 +172,9 @@ class Index extends MappingModel
                 $this->columnsSize[$column->getName()] = $column->getSize();
             }
         } else {
-            $attrib = $data;
-            $name = $attrib['name'];
-            $this->columns[] = $name;
-            if (isset($attrib['size']) && $attrib['size'] > 0) {
-                $this->columnsSize[$name] = $attrib['size'];
+            $this->columns[] = $name = $data['name'];
+            if (isset($data['size']) && $data['size'] > 0) {
+                $this->columnsSize[$name] = $data['size'];
             }
         }
     }
@@ -292,22 +292,5 @@ class Index extends MappingModel
     protected function setupObject()
     {
         $this->name = $this->getAttribute('name');
-    }
-
-    public function appendXml(\DOMNode $node)
-    {
-        $doc = ($node instanceof \DOMDocument) ? $node : $node->ownerDocument;
-
-        $idxNode = $node->appendChild($doc->createElement('index'));
-        $idxNode->setAttribute('name', $this->getName());
-
-        foreach ($this->columns as $colname) {
-            $idxColNode = $idxNode->appendChild($doc->createElement('index-column'));
-            $idxColNode->setAttribute('name', $colname);
-        }
-
-        foreach ($this->vendorInfos as $vi) {
-            $vi->appendXml($idxNode);
-        }
     }
 }

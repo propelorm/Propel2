@@ -49,21 +49,4 @@ class Unique extends Index
         // @TODO replace the factory by a real object
         $this->name = NameFactory::generateName(NameFactory::CONSTRAINT_GENERATOR, $inputs);
     }
-
-    public function appendXml(\DOMNode $node)
-    {
-        $doc = ($node instanceof \DOMDocument) ? $node : $node->ownerDocument;
-
-        $uniqueNode = $node->appendChild($doc->createElement('unique'));
-        $uniqueNode->setAttribute('name', $this->getName());
-
-        foreach ($this->getColumns() as $colname) {
-            $uniqueColNode = $uniqueNode->appendChild($doc->createElement('unique-column'));
-            $uniqueColNode->setAttribute('name', $colname);
-        }
-
-        foreach ($this->vendorInfos as $vi) {
-            $vi->appendXml($uniqueNode);
-        }
-    }
 }

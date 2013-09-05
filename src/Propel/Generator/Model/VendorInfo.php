@@ -24,9 +24,10 @@ class VendorInfo extends MappingModel
     /**
      * Creates a new VendorInfo instance.
      *
-     * @param string $type RDBMS type (optional)
+     * @param string $type       RDBMS type (optional)
+     * @param array  $parameters An associative array of vendor's parameters (optional)
      */
-    public function __construct($type = null)
+    public function __construct($type = null, array $parameters = array())
     {
         parent::__construct();
 
@@ -34,6 +35,10 @@ class VendorInfo extends MappingModel
 
         if (null !== $type) {
             $this->setType($type);
+        }
+
+        if ($parameters) {
+            $this->setParameters($parameters);
         }
     }
 
@@ -140,20 +145,5 @@ class VendorInfo extends MappingModel
     protected function setupObject()
     {
         $this->type = $this->getAttribute('type');
-    }
-
-    public function appendXml(\DOMNode $node)
-    {
-        $doc = ($node instanceof \DOMDocument) ? $node : $node->ownerDocument;
-
-        $vendorNode = $node->appendChild($doc->createElement('vendor'));
-        $vendorNode->setAttribute('type', $this->type);
-
-        foreach ($this->parameters as $key => $value) {
-            $parameterNode = $doc->createElement('parameter');
-            $parameterNode->setAttribute('name', $key);
-            $parameterNode->setAttribute('value', $value);
-            $vendorNode->appendChild($parameterNode);
-        }
     }
 }

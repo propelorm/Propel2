@@ -528,7 +528,6 @@
     </xs:complexType>
 
     <xs:complexType name="table">
-
         <xs:choice maxOccurs="unbounded">
 
             <xs:element name="column" type="column" maxOccurs="unbounded">
@@ -547,6 +546,7 @@
                 </xs:annotation>
             </xs:element>
 
+            <!-- TODO: to be removed? The Table model class does not support this option -->
             <xs:element name="index" type="index" minOccurs="0" maxOccurs="unbounded">
                 <xs:annotation>
                     <xs:documentation xml:lang="en">
@@ -555,6 +555,7 @@
                 </xs:annotation>
             </xs:element>
 
+            <!-- TODO: to be removed? The Table model class does not support this option -->
             <xs:element name="unique" type="unique" minOccurs="0" maxOccurs="unbounded">
                 <xs:annotation>
                     <xs:documentation xml:lang="en">
@@ -571,6 +572,7 @@
                 </xs:annotation>
             </xs:element>
 
+            <!-- TODO: to be removed? Are validators still supported in Propel 2? -->
             <xs:element name="validator" type="validator" minOccurs="0" maxOccurs="unbounded">
                 <xs:annotation>
                     <xs:documentation xml:lang="en">
@@ -624,6 +626,7 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
+        <!-- TODO: to be removed? Is this really supported? -->
         <xs:attribute name="columnPrefix" type="column_name" use="optional"/>
         <xs:attribute name="defaultAccessorVisibility" type="visibility" use="optional">
             <xs:annotation>
@@ -779,7 +782,6 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="defaultTranslateMethod" type="xs:string" use="optional"/>
         <xs:attribute name="defaultAccessorVisibility" type="visibility" use="optional">
             <xs:annotation>
                 <xs:documentation xml:lang="en">

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<database name="acme_blog" defaultIdMethod="native" package="Acme" schema="acme" namespace="Acme\Model" baseClass="Acme\Model\ActiveRecord" defaultPhpNamingMethod="underscore" heavyIndexing="true" tablePrefix="acme_">
+  <vendor type="mysql">
+    <parameter name="Engine" value="InnoDB"/>
+    <parameter name="Charset" value="utf8"/>
+  </vendor>
+  <table name="blog_post" phpName="BlogPost" package="Acme.Blog" namespace="Acme\Model\Blog" baseClass="Acme\Model\ActiveRecord" description="The list of posts">
+    <column name="id" phpName="Id" type="integer" size="7" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="author_id" phpName="AuthorId" type="smallint" size="3" required="true"/>
+    <column name="category_id" phpName="CategoryId" type="tinyint" size="2" required="true"/>
+    <column name="title" phpName="Title" type="varchar" size="100" required="true"/>
+    <column name="body" phpName="Body" type="clob"/>
+    <column name="average_rating" phpName="AverageRating" type="float" size="2" scale="2" description="The post rating in percentage"/>
+    <foreign-key foreignTable="blog_author" name="fk_post_has_author" phpName="Author" refPhpName="Posts" defaultJoin="Criteria::LEFT_JOIN" onDelete="CASCADE">
+      <reference local="author_id" foreign="id"/>
+    </foreign-key>
+    <foreign-key foreignTable="blog_category" name="fk_post_has_category" phpName="Category" refPhpName="Posts" defaultJoin="Criteria::INNER_JOIN" onDelete="SET NULL">
+      <reference local="category_id" foreign="id"/>
+    </foreign-key>
+    <behavior name="timestampable">
+      <parameter name="created_at"/>
+      <parameter name="updated_at"/>
+    </behavior>
+    <behavior name="sluggable">
+      <parameter name="slug"/>
+      <parameter name=""/>
+      <parameter name="/\W+/"/>
+      <parameter name="-"/>
+      <parameter name="-"/>
+      <parameter name="false"/>
+      <parameter name=""/>
+    </behavior>
+  </table>
+  <table name="blog_author" phpName="BlogAuthor" package="Acme.Blog" namespace="Acme\Model\Blog" baseClass="Acme\Model\ActiveRecord" description="The list of authors">
+    <column name="id" phpName="Id" type="smallint" size="3" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="username" phpName="Username" type="varchar" size="15" required="true"/>
+    <column name="password" phpName="Password" type="varchar" size="40" required="true"/>
+    <unique name="author_password_unique_idx">
+      <unique-column name="username" size="8"/>
+    </unique>
+  </table>
+  <table name="blog_category" phpName="BlogCategory" package="Acme.Blog" namespace="Acme\Model\Blog" baseClass="Acme\Model\ActiveRecord" description="The list of categories">
+    <column name="id" phpName="Id" type="tinyint" size="2" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="name" phpName="Name" type="varchar" size="40" required="true"/>
+  </table>
+  <table name="blog_tag" phpName="BlogTag" package="Acme.Blog" namespace="Acme\Model\Blog" baseClass="Acme\Model\ActiveRecord" description="The list of tags">
+    <column name="id" phpName="Id" type="integer" size="7" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="name" phpName="Name" type="varchar" size="40" required="true"/>
+  </table>
+  <table name="blog_post_tag" phpName="BlogPostTag" package="Acme.Blog" namespace="Acme\Model\Blog" isCrossRef="true" baseClass="Acme\Model\ActiveRecord">
+    <column name="post_id" phpName="PostId" type="integer" size="7" primaryKey="true" required="true"/>
+    <column name="tag_id" phpName="TagId" type="integer" size="7" primaryKey="true" required="true"/>
+    <foreign-key foreignTable="blog_post" name="fk_post_has_tags" phpName="Post" defaultJoin="Criteria::LEFT_JOIN" onDelete="CASCADE">
+      <reference local="post_id" foreign="id"/>
+    </foreign-key>
+    <foreign-key foreignTable="blog_tag" name="fk_tag_has_posts" phpName="Tag" defaultJoin="Criteria::LEFT_JOIN" onDelete="CASCADE">
+      <reference local="tag_id" foreign="id"/>
+    </foreign-key>
+  </table>
+  <table name="cms_page" phpName="Page" package="Acme.Cms" namespace="Acme\Model\Cms" baseClass="Acme\Model\PublicationActiveRecord">
+    <column name="id" phpName="Id" type="integer" size="5" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="title" phpName="Title" type="varchar" size="150" required="true"/>
+    <column name="content" phpName="Content" type="clob">
+      <vendor type="mysql">
+        <parameter name="Charset" value="latin1"/>
+        <parameter name="Collate" value="latin1_general_ci"/>
+      </vendor>
+    </column>
+    <column name="is_published" phpName="IsPublished" type="boolean" required="true" defaultValue="false"/>
+    <index name="page_content_fulltext_idx">
+      <index-column name="content"/>
+      <vendor type="mysql">
+        <parameter name="Index_type" value="FULLTEXT"/>
+      </vendor>
+    </index>
+    <vendor type="mysql">
+      <parameter name="Engine" value="MyISAM"/>
+    </vendor>
+  </table>
+</database>

@@ -34,19 +34,19 @@ class ConstraintNameGenerator implements NameGeneratorInterface
      * of this constraint.
      *
      * @see NameGenerator
+     * @param array $inputs An array of input parameters
      * @throws EngineException
      */
     public function generateName($inputs)
     {
-        $db = $inputs[0];
-        $name = $inputs[1];
-        $namePostfix = $inputs[2];
+        $db            = $inputs[0];
+        $name          = $inputs[1];
+        $namePostfix   = $inputs[2];
         $constraintNbr = (string) $inputs[3];
 
         // Calculate maximum RDBMS-specific column character limit.
-        $maxBodyLength = -1;
         try {
-            $maxColumnNameLength = (int) $db->getPlatform()->getMaxColumnNameLength();
+            $maxColumnNameLength = (int) $db->getMaxColumnNameLength();
             $maxBodyLength = ($maxColumnNameLength - strlen($namePostfix) - strlen($constraintNbr) - 2);
         } catch (EngineException $e) {
             throw $e;

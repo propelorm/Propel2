@@ -27,8 +27,6 @@ use Propel\Generator\Platform\PlatformInterface;
  */
 class Database extends ScopedMappingModel
 {
-    const DEFAULT_STRING_FORMAT = 'YAML';
-
     /**
      * The database's platform.
      *
@@ -49,6 +47,24 @@ class Database extends ScopedMappingModel
     private $baseClass;
     private $defaultIdMethod;
     private $defaultPhpNamingMethod;
+
+    /**
+     * The default accessor visibility.
+     *
+     * It may be one of public, private and protected.
+     *
+     * @var string
+     */
+    private $defaultAccessorVisibility;
+
+    /**
+     * The default mutator visibility.
+     *
+     * It may be one of public, private and protected.
+     *
+     * @var string
+     */
+    private $defaultMutatorVisibility;
     private $domainMap;
     private $heavyIndexing;
     private $parentSchema;
@@ -80,9 +96,10 @@ class Database extends ScopedMappingModel
     /**
      * Constructs a new Database object.
      *
-     * @param string $name
+     * @param string            $name     The database's name
+     * @param PlatformInterface $platform The database's platform
      */
-    public function __construct($name = null)
+    public function __construct($name = null, PlatformInterface $platform = null)
     {
         parent::__construct();
 
@@ -90,17 +107,22 @@ class Database extends ScopedMappingModel
             $this->setName($name);
         }
 
-        $this->heavyIndexing = false;
-        $this->tablePrefix = '';
-        $this->defaultPhpNamingMethod = NameGeneratorInterface::CONV_METHOD_UNDERSCORE;
-        $this->defaultIdMethod = IdMethod::NATIVE;
-        $this->defaultStringFormat = static::DEFAULT_STRING_FORMAT;
-        $this->behaviors             = [];
-        $this->domainMap             = [];
-        $this->tables                = [];
-        $this->tablesByName          = [];
-        $this->tablesByPhpName       = [];
-        $this->tablesByLowercaseName = [];
+        if (null !== $platform) {
+            $this->setPlatform($platform);
+        }
+
+        $this->heavyIndexing             = false;
+        $this->defaultPhpNamingMethod    = NameGeneratorInterface::CONV_METHOD_UNDERSCORE;
+        $this->defaultIdMethod           = IdMethod::NATIVE;
+        $this->defaultStringFormat       = static::DEFAULT_STRING_FORMAT;
+        $this->defaultAccessorVisibility = static::VISIBILITY_PUBLIC;
+        $this->defaultMutatorVisibility  = static::VISIBILITY_PUBLIC;
+        $this->behaviors                 = [];
+        $this->domainMap                 = [];
+        $this->tables                    = [];
+        $this->tablesByName              = [];
+        $this->tablesByPhpName           = [];
+        $this->tablesByLowercaseName     = [];
     }
 
     protected function setupObject()
@@ -134,6 +156,16 @@ class Database extends ScopedMappingModel
     public function setPlatform(PlatformInterface $platform = null)
     {
         $this->platform = $platform;
+    }
+
+    /**
+     * Returns the max column name's length.
+     * 
+     * @return integer
+     */
+    public function getMaxColumnNameLength()
+    {
+        return $this->platform->getMaxColumnNameLength();
     }
 
     /**
@@ -291,11 +323,11 @@ class Database extends ScopedMappingModel
     /**
      * Sets whether or not heavy indexing is enabled.
      *
-     * @param boolean $heavyIndexing
+     * @param boolean $flag
      */
-    public function setHeavyIndexing($heavyIndexing)
+    public function setHeavyIndexing($flag = true)
     {
-        $this->heavyIndexing = (Boolean) $heavyIndexing;
+        $this->heavyIndexing = (Boolean) $flag;
     }
 
     /**
@@ -451,6 +483,18 @@ class Database extends ScopedMappingModel
         }
 
         return $table;
+    }
+
+    /**
+     * Adds several tables at once.
+     *
+     * @param Table[] $tables An array of Table instances
+     */
+    public function addTables(array $tables)
+    {
+        foreach ($tables as $table) {
+            $this->addTable($table);
+        }
     }
 
     /**
@@ -639,8 +683,6 @@ class Database extends ScopedMappingModel
         if ($this->parentSchema) {
             return $this->parentSchema->getGeneratorConfig();
         }
-
-        return null;
     }
 
     /**
@@ -654,8 +696,6 @@ class Database extends ScopedMappingModel
         if ($config = $this->getGeneratorConfig()) {
             return $config->getBuildProperty($name);
         }
-
-        return null;
     }
 
     /**
@@ -713,8 +753,6 @@ class Database extends ScopedMappingModel
         if (isset($this->behaviors[$name])) {
             return $this->behaviors[$name];
         }
-
-        return null;
     }
 
     /**
@@ -725,6 +763,16 @@ class Database extends ScopedMappingModel
     public function getTablePrefix()
     {
         return $this->tablePrefix;
+    }
+
+    /**
+     * Sets the tables' prefix.
+     *
+     * @param string $tablePrefix
+     */
+    public function setTablePrefix($tablePrefix)
+    {
+        $this->tablePrefix = $tablePrefix;
     }
 
     /**
@@ -802,55 +850,11 @@ class Database extends ScopedMappingModel
         }
     }
 
-    public function appendXml(\DOMNode $node)
-    {
-        $doc = ($node instanceof \DOMDocument) ? $node : $node->ownerDocument;
-
-        $dbNode = $node->appendChild($doc->createElement('database'));
-
-        $dbNode->setAttribute('name', $this->name);
-
-        if ($this->package) {
-            $dbNode->setAttribute('package', $this->package);
-        }
-
-        if ($this->defaultIdMethod) {
-            $dbNode->setAttribute('defaultIdMethod', $this->defaultIdMethod);
-        }
-
-        if ($this->baseClass) {
-            $dbNode->setAttribute('baseClass', $this->baseClass);
-        }
-
-        if ($this->defaultPhpNamingMethod) {
-            $dbNode->setAttribute('defaultPhpNamingMethod', $this->defaultPhpNamingMethod);
-        }
-
-        /*
-
-        FIXME - Before we can add support for domains in the schema, we need
-        to have a method of the Column that indicates whether the column was mapped
-        to a SPECIFIC domain (since Column->getDomain() will always return a Domain object)
-
-        foreach ($this->domainMap as $domain) {
-        $domain->appendXml($dbNode);
-        }
-         */
-        foreach ($this->vendorInfos as $vi) {
-            $vi->appendXml($dbNode);
-        }
-
-        foreach ($this->tables as $table) {
-            $table->appendXml($dbNode);
-        }
-    }
-
     public function __toString()
     {
         $tables = [];
         foreach ($this->getTables() as $table) {
             $columns = [];
-
             foreach ($table->getColumns() as $column) {
                 $columns[] = sprintf("    %s %s %s %s %s %s (%s)",
                     $column->getName(),
@@ -869,6 +873,47 @@ class Database extends ScopedMappingModel
 
         return sprintf("%s:\n%s",
             $this->getName() . ($this->getSchema() ? '.'. $this->getSchema() : ''),
-            implode("\n", $tables));
+            implode("\n", $tables)
+        );
+    }
+
+    /**
+     * Sets the default accessor visibility.
+     *
+     * @param string $defaultAccessorVisibility
+     */
+    public function setDefaultAccessorVisibility($defaultAccessorVisibility)
+    {
+        $this->defaultAccessorVisibility = $defaultAccessorVisibility;
+    }
+
+    /**
+     * Returns the default accessor visibility.
+     *
+     * @return string
+     */
+    public function getDefaultAccessorVisibility()
+    {
+        return $this->defaultAccessorVisibility;
+    }
+
+    /**
+     * Sets the default mutator visibility.
+     *
+     * @param string $defaultMutatorVisibility
+     */
+    public function setDefaultMutatorVisibility($defaultMutatorVisibility)
+    {
+        $this->defaultMutatorVisibility = $defaultMutatorVisibility;
+    }
+
+    /**
+     * Returns the default mutator visibility.
+     *
+     * @return string
+     */
+    public function getDefaultMutatorVisibility()
+    {
+        return $this->defaultMutatorVisibility;
     }
 }

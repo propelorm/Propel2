@@ -22,6 +22,9 @@
             <directory>./src/Propel/</directory>
             <exclude>
                 <directory>./bin</directory>
+                <directory>./documentation</directory>
+                <directory>./features</directory>
+                <directory>./resources</directory>
                 <directory>./src/Propel/Generator/Behavior/*/templates/</directory>
                 <directory>./tests</directory>
                 <directory>./tools</directory>

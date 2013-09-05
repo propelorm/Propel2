@@ -106,29 +106,29 @@ class ForeignKey extends MappingModel
             $this->setName($name);
         }
 
-        $this->onUpdate = self::NONE;
-        $this->onDelete = self::NONE;
+        $this->onUpdate       = self::NONE;
+        $this->onDelete       = self::NONE;
         $this->localColumns   = [];
         $this->foreignColumns = [];
-        $this->skipSql = false;
+        $this->skipSql        = false;
     }
 
     protected function setupObject()
     {
         $this->foreignTableCommonName = $this->parentTable->getDatabase()->getTablePrefix() . $this->getAttribute('foreignTable');
-        $this->foreignSchemaName = $this->getAttribute('foreignSchema');
+        $this->foreignSchemaName      = $this->getAttribute('foreignSchema');
 
         if (!$this->foreignSchemaName && $schema = $this->getSchemaName()) {
             $this->foreignSchemaName = $this->getSchemaName();
         }
 
-        $this->name = $this->getAttribute('name');
-        $this->phpName = $this->getAttribute('phpName');
-        $this->refPhpName = $this->getAttribute('refPhpName');
+        $this->name        = $this->getAttribute('name');
+        $this->phpName     = $this->getAttribute('phpName');
+        $this->refPhpName  = $this->getAttribute('refPhpName');
         $this->defaultJoin = $this->getAttribute('defaultJoin');
-        $this->onUpdate = $this->normalizeFKey($this->getAttribute('onUpdate'));
-        $this->onDelete = $this->normalizeFKey($this->getAttribute('onDelete'));
-        $this->skipSql = $this->booleanValue($this->getAttribute('skipSql'));
+        $this->onUpdate    = $this->normalizeFKey($this->getAttribute('onUpdate'));
+        $this->onDelete    = $this->normalizeFKey($this->getAttribute('onDelete'));
+        $this->skipSql     = $this->booleanValue($this->getAttribute('skipSql'));
     }
 
     /**
@@ -297,21 +297,46 @@ class ForeignKey extends MappingModel
     }
 
     /**
+     * Returns the PlatformInterface instance.
+     *
+     * @return PlatformInterface
+     */
+    private function getPlatform()
+    {
+        return $this->parentTable->getPlatform();
+    }
+
+    /**
+     * Returns the Database object of this Column.
+     *
+     * @return Database
+     */
+    public function getDatabase()
+    {
+        return $this->parentTable->getDatabase();
+    }
+
+    /**
      * Returns the foreign table name of the FK.
      *
      * @return string
      */
     public function getForeignTableName()
     {
-        if ($this->foreignSchemaName && $this->parentTable->getPlatform()->supportsSchemas()) {
+        $platform = $this->getPlatform();
+        if ($this->foreignSchemaName && $platform->supportsSchemas()) {
             return $this->foreignSchemaName
-                . $this->parentTable->getPlatform()->getSchemaDelimiter()
-                . $this->foreignTableCommonName;
-        } elseif ($this->getTable()->getDatabase() && ($schema = $this->getTable()->getDatabase()->getSchema())
-                   && $this->getTable()->getDatabase()->getPlatform()->supportsSchemas()) {
+                . $platform->getSchemaDelimiter()
+                . $this->foreignTableCommonName
+            ;
+        }
+
+        $database = $this->getDatabase();
+        if ($database && ($schema = $database->getSchema()) && $platform->supportsSchemas()) {
             return $schema
-                . $this->getTable()->getPlatform()->getSchemaDelimiter()
-                . $this->foreignTableCommonName;
+                . $platform->getSchemaDelimiter()
+                . $this->foreignTableCommonName
+            ;
         }
 
         return $this->foreignTableCommonName;
@@ -344,8 +369,8 @@ class ForeignKey extends MappingModel
      */
     public function getForeignTable()
     {
-        if ($this->parentTable->getDatabase()) {
-            return $this->parentTable->getDatabase()->getTable($this->getForeignTableName());
+        if ($database = $this->parentTable->getDatabase()) {
+            return $database->getTable($this->getForeignTableName());
         }
     }
 
@@ -764,49 +789,6 @@ class ForeignKey extends MappingModel
         }
 
         return $fks;
-    }
-
-    public function appendXml(\DOMNode $node)
-    {
-        $doc = ($node instanceof \DOMDocument) ? $node : $node->ownerDocument;
-
-        $fkNode = $node->appendChild($doc->createElement('foreign-key'));
-
-        $fkNode->setAttribute('foreignTable', $this->getForeignTableCommonName());
-        if ($schema = $this->getForeignSchemaName()) {
-            $fkNode->setAttribute('foreignSchema', $schema);
-        }
-        $fkNode->setAttribute('name', $this->getName());
-
-        if ($this->getPhpName()) {
-            $fkNode->setAttribute('phpName', $this->getPhpName());
-        }
-
-        if ($this->getRefPhpName()) {
-            $fkNode->setAttribute('refPhpName', $this->getRefPhpName());
-        }
-
-        if ($this->getDefaultJoin()) {
-            $fkNode->setAttribute('defaultJoin', $this->getDefaultJoin());
-        }
-
-        if ($this->getOnDelete()) {
-            $fkNode->setAttribute('onDelete', $this->getOnDelete());
-        }
-
-        if ($this->getOnUpdate()) {
-            $fkNode->setAttribute('onUpdate', $this->getOnUpdate());
-        }
-
-        for ($i = 0, $size = count($this->localColumns); $i < $size; $i++) {
-            $refNode = $fkNode->appendChild($doc->createElement('reference'));
-            $refNode->setAttribute('local', $this->localColumns[$i]);
-            $refNode->setAttribute('foreign', $this->foreignColumns[$i]);
-        }
-
-        foreach ($this->vendorInfos as $vi) {
-            $vi->appendXml($fkNode);
-        }
     }
 
     /**
