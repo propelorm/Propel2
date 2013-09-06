@@ -474,7 +474,7 @@ abstract class PdoAdapter
         }
 
         foreach ($criteria->getAsColumns() as $alias => $col) {
-            if (!in_array($col, $selected)) {
+            if (false === strpos($col, '(') && !in_array($col, $selected)) {
                 $selected[] = $col;
             }
         }
