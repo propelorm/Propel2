@@ -250,7 +250,7 @@ class DatabaseDiff
         $diff->setAddedTables($this->getRemovedTables());
         // idMethod is not set for tables build from reverse engineering
         // FIXME: this should be handled by reverse classes
-        foreach ($diff->getAddedTables() as $name => $table) {
+        foreach ($diff->getAddedTables() as $table) {
             if ($table->getIdMethod() == IdMethod::NO_ID_METHOD) {
                 $table->setIdMethod(IdMethod::NATIVE);
             }
@@ -307,7 +307,7 @@ class DatabaseDiff
         }
         if ($modifiedTables = $this->getModifiedTables()) {
             $ret .= "modifiedTables:\n";
-            foreach ($modifiedTables as $tableName => $tableDiff) {
+            foreach ($modifiedTables as $tableDiff) {
                 $ret .= $tableDiff->__toString();
             }
         }

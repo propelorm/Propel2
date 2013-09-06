@@ -42,6 +42,8 @@ class DefaultPlatform implements PlatformInterface
     protected $schemaDomainMap;
 
     /**
+     * The database connection.
+     *
      * @var ConnectionInterface Database connection.
      */
     protected $con;
@@ -65,6 +67,12 @@ class DefaultPlatform implements PlatformInterface
         $this->initialize();
     }
 
+    /**
+     * Returns the object builder class.
+     *
+     * @param  string $type
+     * @return string
+     */
     public function getObjectBuilderClass($type)
     {
         return '';
@@ -129,8 +137,6 @@ class DefaultPlatform implements PlatformInterface
         if (null !== $this->generatorConfig) {
             return $this->generatorConfig->getBuildProperty($name);
         }
-
-        return null;
     }
 
     /**
@@ -777,15 +783,15 @@ ALTER TABLE %s RENAME TO %s;
         foreach ($tableDiff->getRemovedFks() as $fk) {
             $ret .= $this->getDropForeignKeyDDL($fk);
         }
-        foreach ($tableDiff->getModifiedFks() as $fkName => $fkModification) {
-            list($fromFk, $toFk) = $fkModification;
+        foreach ($tableDiff->getModifiedFks() as $fkModification) {
+            list($fromFk) = $fkModification;
             $ret .= $this->getDropForeignKeyDDL($fromFk);
         }
         foreach ($tableDiff->getRemovedIndices() as $index) {
             $ret .= $this->getDropIndexDDL($index);
         }
-        foreach ($tableDiff->getModifiedIndices() as $indexName => $indexModification) {
-            list($fromIndex, $toIndex) = $indexModification;
+        foreach ($tableDiff->getModifiedIndices() as $indexModification) {
+            list($fromIndex) = $indexModification;
             $ret .= $this->getDropIndexDDL($fromIndex);
         }
 
@@ -845,15 +851,15 @@ ALTER TABLE %s%s;
         }
 
         // create indices, foreign keys
-        foreach ($tableDiff->getModifiedIndices() as $indexName => $indexModification) {
-            list($fromIndex, $toIndex) = $indexModification;
+        foreach ($tableDiff->getModifiedIndices() as $indexModification) {
+            list(, $toIndex) = $indexModification;
             $ret .= $this->getAddIndexDDL($toIndex);
         }
         foreach ($tableDiff->getAddedIndices() as $index) {
             $ret .= $this->getAddIndexDDL($index);
         }
-        foreach ($tableDiff->getModifiedFks() as $fkName => $fkModification) {
-            list($fromFk, $toFk) = $fkModification;
+        foreach ($tableDiff->getModifiedFks() as $fkModification) {
+            list(, $toFk) = $fkModification;
             $ret .= $this->getAddForeignKeyDDL($toFk);
         }
         foreach ($tableDiff->getAddedFks() as $fk) {
