@@ -19,13 +19,28 @@ use Propel\Generator\Model\Table;
  */
 class TableComparator
 {
+    /**
+     * The table difference.
+     *
+     * @var TableDiff
+     */
     protected $tableDiff;
 
-    public function __construct($tableDiff = null)
+    /**
+     * Constructor.
+     *
+     * @param TableDiff $tableDiff
+     */
+    public function __construct(TableDiff $tableDiff = null)
     {
         $this->tableDiff = (null === $tableDiff) ? new TableDiff() : $tableDiff;
     }
 
+    /**
+     * Returns the table difference.
+     *
+     * @return TableDiff
+     */
     public function getTableDiff()
     {
         return $this->tableDiff;
@@ -238,12 +253,12 @@ class TableComparator
             }
         }
 
-        foreach ($fromTableIndices as $fromTableIndexPos => $fromTableIndex) {
+        foreach ($fromTableIndices as $fromTableIndex) {
             $this->tableDiff->addRemovedIndex($fromTableIndex->getName(), $fromTableIndex);
             $indexDifferences++;
         }
 
-        foreach ($toTableIndices as $toTableIndexPos => $toTableIndex) {
+        foreach ($toTableIndices as $toTableIndex) {
             $this->tableDiff->addAddedIndex($toTableIndex->getName(), $toTableIndex);
             $indexDifferences++;
         }

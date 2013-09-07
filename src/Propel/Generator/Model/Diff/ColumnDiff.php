@@ -19,12 +19,43 @@ use Propel\Generator\Model\Column;
  */
 class ColumnDiff
 {
+    /**
+     * An associative array of modified properties.
+     *
+     * @var array
+     */
     protected $changedProperties;
+
+    /**
+     * The original column definition.
+     *
+     * @var Column
+     */
     protected $fromColumn;
+
+    /**
+     * The modified column definition.
+     *
+     * @var Column
+     */
     protected $toColumn;
 
-    public function __construct()
+    /**
+     * Constructor.
+     *
+     * @param Column $fromColumn The original column
+     * @param Column $toColumn   The modified column
+     */
+    public function __construct(Column $fromColumn = null, Column $toColumn = null)
     {
+        if (null !== $fromColumn) {
+            $this->setFromColumn($fromColumn);
+        }
+
+        if (null !== $toColumn) {
+            $this->setToColumn($toColumn);
+        }
+
         $this->changedProperties = [];
     }
 
@@ -98,12 +129,12 @@ class ColumnDiff
         $diff = new self();
 
         // columns
-        $diff->setFromColumn($this->getToColumn());
-        $diff->setToColumn($this->getFromColumn());
+        $diff->setFromColumn($this->toColumn);
+        $diff->setToColumn($this->fromColumn);
 
         // properties
         $changedProperties = [];
-        foreach ($this->getChangedProperties() as $name => $propertyChange) {
+        foreach ($this->changedProperties as $name => $propertyChange) {
             $changedProperties[$name] = array_reverse($propertyChange);
         }
         $diff->setChangedProperties($changedProperties);
@@ -111,12 +142,17 @@ class ColumnDiff
         return $diff;
     }
 
+    /**
+     * Returns the string representation of the difference.
+     *
+     * @return string
+     */
     public function __toString()
     {
         $ret = '';
-        $ret .= sprintf("      %s:\n", $this->getFromColumn()->getFullyQualifiedName());
+        $ret .= sprintf("      %s:\n", $this->fromColumn->getFullyQualifiedName());
         $ret .= "        modifiedProperties:\n";
-        foreach ($this->getChangedProperties() as $key => $value) {
+        foreach ($this->changedProperties as $key => $value) {
             $ret .= sprintf("          %s: %s\n", $key, json_encode($value));
         }
 
