@@ -24,9 +24,6 @@ class GraphvizManager extends AbstractManager
         $count = 0;
         $dotSyntax = '';
 
-        // file we are going to create
-        $dbMaps = $this->getDataModelDbMap();
-
         foreach ($this->getDataModels() as $dataModel) {
             $dotSyntax .= "digraph G {\n";
 
