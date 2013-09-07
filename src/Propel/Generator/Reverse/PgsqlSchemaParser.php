@@ -93,21 +93,13 @@ class PgsqlSchemaParser extends AbstractSchemaParser
     }
 
     /**
+     * Parses a database schema.
      *
+     * @param Database $database
+     * @return integer
      */
     public function parse(Database $database)
     {
-        $stmt = $this->dbh->query('SELECT version() as ver');
-        $nativeVersion = $stmt->fetchColumn();
-
-        if (!$nativeVersion) {
-            throw new EngineException('Failed to get database version');
-        }
-
-        $arrVersion = sscanf($nativeVersion, '%*s %d.%d');
-        $version = sprintf('%d.%d', $arrVersion[0], $arrVersion[1]);
-
-        // Clean up
         $stmt = null;
 
         $searchPath = '?';
@@ -119,7 +111,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
             $params = [];
             $searchPath = explode(',', $searchPathString);
 
-            foreach ($searchPath as $n => &$path) {
+            foreach ($searchPath as &$path) {
                 $params[] = $path;
                 $path = '?';
             }
@@ -144,14 +136,14 @@ class PgsqlSchemaParser extends AbstractSchemaParser
         // First load the tables (important that this happen before filling out details of tables)
         while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
             $name = $row['relname'];
-            $namespacename = $row['nspname'];
+            $namespaceName = $row['nspname'];
             if ($name == $this->getMigrationTable()) {
                 continue;
             }
             $oid = $row['oid'];
             $table = new Table($name);
-            if ($namespacename != 'public') {
-                $table->setSchema($namespacename);
+            if ('public' !== $namespaceName) {
+                $table->setSchema($namespaceName);
             }
             $table->setIdMethod($database->getDefaultIdMethod());
             $database->addTable($table);
@@ -165,14 +157,14 @@ class PgsqlSchemaParser extends AbstractSchemaParser
 
         // Now populate only columns.
         foreach ($tableWraps as $wrap) {
-            $this->addColumns($wrap->table, $wrap->oid, $version);
+            $this->addColumns($wrap->table, $wrap->oid);
         }
 
         // Now add indexes and constraints.
         foreach ($tableWraps as $wrap) {
-            $this->addForeignKeys($wrap->table, $wrap->oid, $version);
-            $this->addIndexes($wrap->table, $wrap->oid, $version);
-            $this->addPrimaryKey($wrap->table, $wrap->oid, $version);
+            $this->addForeignKeys($wrap->table, $wrap->oid);
+            $this->addIndexes($wrap->table, $wrap->oid);
+            $this->addPrimaryKey($wrap->table, $wrap->oid);
         }
 
         $this->addSequences($database);
@@ -185,9 +177,8 @@ class PgsqlSchemaParser extends AbstractSchemaParser
      *
      * @param Table  $table   The Table model class to add columns to.
      * @param int    $oid     The table OID
-     * @param string $version The database version.
      */
-    protected function addColumns(Table $table, $oid, $version)
+    protected function addColumns(Table $table, $oid)
     {
         // Get the columns, types, etc.
         // Based on code from pgAdmin3 (http://www.pgadmin.org/)
@@ -339,51 +330,10 @@ class PgsqlSchemaParser extends AbstractSchemaParser
         return $arrRetVal;
     }
 
-    private function processDomain($strDomain)
-    {
-        if (strlen(trim($strDomain)) < 1) {
-            throw new EngineException('Invalid domain name [' . $strDomain . ']');
-        }
-
-        $stmt = $this->dbh->prepare("SELECT
-            d.typname as domname,
-            b.typname as basetype,
-            d.typlen,
-            d.typtypmod,
-            d.typnotnull,
-            d.typdefault
-            FROM pg_type d
-            INNER JOIN pg_type b ON b.oid = CASE WHEN d.typndims > 0 then d.typelem ELSE d.typbasetype END
-            WHERE
-            d.typtype = 'd'
-            AND d.typname = ?
-            ORDER BY d.typname");
-        $stmt->bindValue(1, $strDomain);
-        $stmt->execute();
-
-        $row = $stmt->fetch(\PDO::FETCH_ASSOC);
-        if (!$row) {
-            throw new EngineException('Domain [' . $strDomain . '] not found.');
-        }
-
-        $arrDomain = array ();
-        $arrDomain['type'] = $row['basetype'];
-        $arrLengthPrecision = $this->processLengthScale($row['typtypmod'], $row['basetype']);
-        $arrDomain['length'] = $arrLengthPrecision['length'];
-        $arrDomain['scale'] = $arrLengthPrecision['scale'];
-        $arrDomain['notnull'] = $row['typnotnull'];
-        $arrDomain['default'] = $row['typdefault'];
-        $arrDomain['hasdefault'] = (strlen(trim($row['typdefault'])) > 0) ? true : false;
-
-        $stmt = null; // cleanup
-
-        return $arrDomain;
-    } // private function processDomain($strDomain)
-
     /**
      * Load foreign keys for this table.
      */
-    protected function addForeignKeys(Table $table, $oid, $version)
+    protected function addForeignKeys(Table $table, $oid)
     {
         $database = $table->getDatabase();
         $stmt = $this->dbh->prepare("SELECT
@@ -488,7 +438,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
     /**
      * Load indexes for this table
      */
-    protected function addIndexes(Table $table, $oid, $version)
+    protected function addIndexes(Table $table, $oid)
     {
         $stmt = $this->dbh->prepare("SELECT
             DISTINCT ON(cls.relname)
@@ -539,7 +489,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
     /**
      * Loads the primary key for this table.
      */
-    protected function addPrimaryKey(Table $table, $oid, $version)
+    protected function addPrimaryKey(Table $table, $oid)
     {
 
         $stmt = $this->dbh->prepare("SELECT

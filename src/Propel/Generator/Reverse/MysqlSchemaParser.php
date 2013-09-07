@@ -161,7 +161,6 @@ class MysqlSchemaParser extends AbstractSchemaParser
         $isNullable = ('YES' === $row['Null']);
         $autoincrement = (false !== strpos($row['Extra'], 'auto_increment'));
         $size = null;
-        $precision = null;
         $scale = null;
         $sqlType = false;
 
@@ -178,7 +177,6 @@ class MysqlSchemaParser extends AbstractSchemaParser
             if ($matches[2]) {
                 if (false !== ($cpos = strpos($matches[2], ','))) {
                     $size = (int) substr($matches[2], 0, $cpos);
-                    $precision = $size;
                     $scale = (int) substr($matches[2], $cpos + 1);
                 } else {
                     $size = (int) $matches[2];

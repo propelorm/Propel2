@@ -23,7 +23,6 @@ use Propel\Generator\Util\SqlParser;
 class MigrationMigrateCommand extends AbstractCommand
 {
     const DEFAULT_OUTPUT_DIRECTORY  = 'generated-migrations';
-
     const DEFAULT_MIGRATION_TABLE   = 'propel_migration';
 
     /**
@@ -67,7 +66,7 @@ class MigrationMigrateCommand extends AbstractCommand
         $manager->setMigrationTable($input->getOption('migration-table'));
         $manager->setWorkingDirectory($input->getOption('output-dir'));
 
-        if (!$nextMigrationTimestamp = $manager->getFirstUpMigrationTimestamp()) {
+        if (!$manager->getFirstUpMigrationTimestamp()) {
             $output->writeln('All migrations were already executed - nothing to migrate.');
 
             return false;

@@ -155,13 +155,11 @@ class SqliteSchemaParser extends AbstractSchemaParser
 
             $fulltype = $row['type'];
             $size = null;
-            $precision = null;
             $scale = null;
 
             if (preg_match('/^([^\(]+)\(\s*(\d+)\s*,\s*(\d+)\s*\)$/', $fulltype, $matches)) {
                 $type = $matches[1];
-                $precision = $matches[2];
-                $scale = $matches[3]; // aka precision
+                $scale = $matches[3];
             } elseif (preg_match('/^([^\(]+)\(\s*(\d+)\s*\)$/', $fulltype, $matches)) {
                 $type = $matches[1];
                 $size = $matches[2];

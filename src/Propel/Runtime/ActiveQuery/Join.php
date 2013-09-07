@@ -105,13 +105,13 @@ class Join
      */
     public function addCondition($left, $right, $operator = self::EQUAL)
     {
-        if ($pos = strrpos($left, '.')) {
+        if (strrpos($left, '.')) {
             list($this->leftTableName,  $this->left[]) = explode('.', $left);
         } else {
             $this->left[] = $left;
         }
 
-        if ($pos = strrpos($right, '.')) {
+        if (strrpos($right, '.')) {
             list($this->rightTableName, $this->right[]) = explode('.', $right);
         } else {
             $this->right[] = $right;
