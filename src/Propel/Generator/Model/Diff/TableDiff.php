@@ -249,7 +249,7 @@ class TableDiff
      * Returns an added column by its name.
      *
      * @param string $columnName
-     * @param Column
+     * @return Column|null
      */
     public function getAddedColumn($columnName)
     {
@@ -319,9 +319,9 @@ class TableDiff
     /**
      * Sets the list of modified columns.
      *
-     * @param ColumnDiff[] $modifiedColumns
+     * @param ColumnDiff[] $modifiedColumns An associative array of ColumnDiff objects
      */
-    public function setModifiedColumns($modifiedColumns)
+    public function setModifiedColumns(array $modifiedColumns)
     {
         $this->modifiedColumns = [];
         foreach ($modifiedColumns as $columnName => $modifiedColumn) {
@@ -378,7 +378,7 @@ class TableDiff
     /**
      * Getter for the renamedColumns property
      *
-     * @return Column[]
+     * @return array
      */
     public function getRenamedColumns()
     {
@@ -597,9 +597,11 @@ class TableDiff
     /**
      * Sets the list of modified indices.
      *
-     * @param Index[] $modifiedIndices
+     * Array must be [ [ Index $fromIndex, Index $toIndex ], [ ... ] ]
+     *
+     * @param array $modifiedIndices An aray of modified indices
      */
-    public function setModifiedIndices($modifiedIndices)
+    public function setModifiedIndices(array $modifiedIndices)
     {
         $this->modifiedIndices = [];
         foreach ($modifiedIndices as $indices) {
@@ -623,7 +625,7 @@ class TableDiff
     /**
      * Getter for the modifiedIndices property
      *
-     * @return [Index, Index]
+     * @return array
      */
     public function getModifiedIndices()
     {
@@ -723,7 +725,9 @@ class TableDiff
     /**
      * Sets the list of modified foreign keys.
      *
-     * @param ForeignKey[] $modifiedFks
+     * Array must be [ [ ForeignKey $fromFk, ForeignKey $toFk ], [ ... ] ]
+     *
+     * @param array $modifiedFks
      */
     public function setModifiedFks(array $modifiedFks)
     {
@@ -749,7 +753,7 @@ class TableDiff
     /**
      * Returns the list of modified foreign keys.
      *
-     * @return ForeignKey[]
+     * @return array
      */
     public function getModifiedFks()
     {
