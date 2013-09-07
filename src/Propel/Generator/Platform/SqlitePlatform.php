@@ -143,10 +143,9 @@ class SqlitePlatform extends DefaultPlatform
 
         if ($changedNotEditableThroughDirectDDL) {
             return $this->getMigrationTableDDL($tableDiff);
-        } else {
-            return parent::getModifyTableDDL($tableDiff);
         }
 
+        return parent::getModifyTableDDL($tableDiff);
     }
 
     /**

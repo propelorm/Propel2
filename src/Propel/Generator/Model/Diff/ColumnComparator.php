@@ -35,9 +35,7 @@ class ColumnComparator
                     return false;
                 }
             }
-            $columnDiff = new ColumnDiff();
-            $columnDiff->setFromColumn($fromColumn);
-            $columnDiff->setToColumn($toColumn);
+            $columnDiff = new ColumnDiff($fromColumn, $toColumn);
             $columnDiff->setChangedProperties($changedProperties);
 
             return $columnDiff;
