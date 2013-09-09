@@ -131,7 +131,7 @@ class XmlDumper implements DumperInterface
             $databaseNode->setAttribute('defaultStringFormat', $defaultStringFormat);
         }
 
-        if ($heavyIndexing = $database->isHeavyIndexing()) {
+        if ($database->isHeavyIndexing()) {
             $databaseNode->setAttribute('heavyIndexing', 'true');
         }
 

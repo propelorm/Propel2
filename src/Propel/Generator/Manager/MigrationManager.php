@@ -73,10 +73,7 @@ class MigrationManager extends AbstractManager
     {
         if (!isset($this->adapterConnections[$datasource])) {
             $buildConnection = $this->getConnection($datasource);
-            $dsn = str_replace("@DB@", $datasource, $buildConnection['dsn']);
-
             $conn = ConnectionFactory::create($buildConnection, AdapterFactory::create($buildConnection['adapter']));
-
             $this->adapterConnections[$datasource] = $conn;
         }
 
@@ -85,8 +82,8 @@ class MigrationManager extends AbstractManager
 
     public function getPlatform($datasource)
     {
-        $params       = $this->getConnection($datasource);
-        $adapter      = $params['adapter'];
+        $params  = $this->getConnection($datasource);
+        $adapter = $params['adapter'];
 
         $class = '\\Propel\\Generator\\Platform\\' . ucfirst($adapter) . 'Platform';
 

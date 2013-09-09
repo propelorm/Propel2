@@ -385,7 +385,9 @@ public function isLast(ConnectionInterface \$con = null)
     protected function addGetNext(&$script)
     {
         $useScope = $this->behavior->useScope();
-        list($methodSignature, $paramsDoc, $buildScope, $buildScopeVars) = $this->behavior->generateScopePhp();
+        // The generateScopePhp() method below contains the following list of variables:
+        // list($methodSignature, $paramsDoc, $buildScope, $buildScopeVars)
+        list($methodSignature, , , $buildScopeVars) = $this->behavior->generateScopePhp();
 
         $script .= "
 /**
@@ -428,7 +430,9 @@ public function getNext(ConnectionInterface \$con = null)
     {
         $useScope = $this->behavior->useScope();
 
-        list($methodSignature, $paramsDoc, $buildScope, $buildScopeVars) = $this->behavior->generateScopePhp();
+        // The generateScopePhp() method below contains the following list of variables:
+        // list($methodSignature, $paramsDoc, $buildScope, $buildScopeVars)
+        list($methodSignature, , , $buildScopeVars) = $this->behavior->generateScopePhp();
 
         $script .= "
 /**

@@ -24,6 +24,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
 {
     /**
      * The database connection.
+     *
      * @var SqlConnectionInterface
      */
     protected $dbh;
@@ -45,6 +46,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
     /**
      * Map native DB types to Propel types.
      * (Override in subclasses.)
+     *
      * @var array
      */
     protected $nativeToPropelTypeMap;
@@ -63,9 +65,16 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
      */
     protected $migrationTable = 'propel_migration';
 
+    /**
+     * The database's platform.
+     *
+     * @var \Propel\Generator\Platform\PlatformInterface
+     */
     protected $platform;
 
     /**
+     * Constructor.
+     *
      * @param ConnectionInterface $dbh Optional database connection
      */
     public function __construct(ConnectionInterface $dbh = null)
@@ -231,6 +240,8 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
     }
 
     /**
+     * Returns the database's platform.
+     *
      * @return \Propel\Generator\Platform\PlatformInterface
      */
     public function getPlatform()

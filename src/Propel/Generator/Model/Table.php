@@ -592,8 +592,9 @@ class Table extends ScopedMappingModel implements IdMethod
 
     private function getColumnPosition(Column $column)
     {
-        $position = false;
-        for ($pos = 0; $pos < $this->getNumColumns(); $pos++) {
+        $position  = false;
+        $nbColumns = $this->getNumColumns();
+        for ($pos = 0; $pos < $nbColumns; $pos++) {
             if ($this->columns[$pos] === $column) {
                 $position = $pos;
             }
@@ -605,8 +606,8 @@ class Table extends ScopedMappingModel implements IdMethod
     public function adjustColumnPositions()
     {
         $this->columns = array_values($this->columns);
-        $columnCount = $this->getNumColumns();
-        for ($i = 0; $i < $columnCount; $i++) {
+        $nbColumns = $this->getNumColumns();
+        for ($i = 0; $i < $nbColumns; $i++) {
             $this->columns[$i]->setPosition($i + 1);
         }
     }

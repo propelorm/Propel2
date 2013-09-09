@@ -70,7 +70,7 @@ class DatabaseReverseCommand extends AbstractCommand
         });
         $manager->setWorkingDirectory($input->getOption('output-dir'));
 
-        list($name, $dsn, $infos) = $this->parseConnection('connection=' . $input->getArgument('connection'));
+        list(, $dsn, $infos) = $this->parseConnection('connection=' . $input->getArgument('connection'));
         
         $manager->setConnection(array_merge(array('dsn' => $dsn), $infos));
 

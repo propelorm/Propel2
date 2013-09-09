@@ -153,7 +153,7 @@ public function inList($methodSignature)
     {
         $useScope = $this->behavior->useScope();
         if ($useScope) {
-            list($methodSignature, $paramsDoc, $buildScope) = $this->behavior->generateScopePhp();
+            list($methodSignature, $paramsDoc) = $this->behavior->generateScopePhp();
         }
 
         $script .= "
@@ -222,7 +222,7 @@ public function orderByRank(\$order = Criteria::ASC)
     {
         $useScope = $this->behavior->useScope();
         if ($useScope) {
-            list($methodSignature, $paramsDoc, $buildScope) = $this->behavior->generateScopePhp();
+            list($methodSignature, $paramsDoc, ) = $this->behavior->generateScopePhp();
         }
 
         $script .= "
@@ -258,7 +258,7 @@ public function findOneByRank(\$rank, " . ($useScope ? "$methodSignature, " : ""
     {
         $useScope = $this->behavior->useScope();
         if ($useScope) {
-            list($methodSignature, $paramsDoc, $buildScope) = $this->behavior->generateScopePhp();
+            list($methodSignature, $paramsDoc) = $this->behavior->generateScopePhp();
         }
 
         $script .= "

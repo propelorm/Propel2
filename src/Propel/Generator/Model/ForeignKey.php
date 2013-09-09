@@ -119,7 +119,7 @@ class ForeignKey extends MappingModel
         $this->foreignSchemaName      = $this->getAttribute('foreignSchema');
 
         if (!$this->foreignSchemaName && $schema = $this->getSchemaName()) {
-            $this->foreignSchemaName = $this->getSchemaName();
+            $this->foreignSchemaName = $schema;
         }
 
         $this->name        = $this->getAttribute('name');

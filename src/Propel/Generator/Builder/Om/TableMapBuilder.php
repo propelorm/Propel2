@@ -675,7 +675,8 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
         $removeInstancePoolKeySnippetObjects = $this->getInstancePoolKeySnippet($removeObjects);
 
         $removePks = array();
-        for ($i = 0; $i < count($pks); $i++) {
+        $nbPks = count($pks);
+        for ($i = 0; $i < $nbPks; $i++) {
             $removePks[] = "\$value[$i]";
         }
         $removeInstancePoolKeySnippetPks = $this->getInstancePoolKeySnippet($removePks);

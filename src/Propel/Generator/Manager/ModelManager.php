@@ -20,8 +20,18 @@ use Propel\Generator\Builder\Om\AbstractOMBuilder;
  */
 class ModelManager extends AbstractManager
 {
+    /**
+     * A Filesystem object.
+     *
+     * @var Filesystem
+     */
     private $filesystem;
 
+    /**
+     * Sets the filesystem object.
+     *
+     * @param Filesystem $filesystem
+     */
     public function setFilesystem(Filesystem $filesystem)
     {
         $this->filesystem = $filesystem;
@@ -67,9 +77,10 @@ class ModelManager extends AbstractManager
                         // -----------------------------------------------------------------------------------------
 
                         // these classes are only generated if they don't already exist
+                        $overwrite = false;
                         foreach (array('objectstub', 'querystub') as $target) {
                             $builder = $generatorConfig->getConfiguredBuilder($table, $target);
-                            $nbWrittenFiles += $this->doBuild($builder, $overwrite = false);
+                            $nbWrittenFiles += $this->doBuild($builder, $overwrite);
                         }
 
                         // -----------------------------------------------------------------------------------------
@@ -80,31 +91,34 @@ class ModelManager extends AbstractManager
                         if ($col = $table->getChildrenColumn()) {
                             if ($col->isEnumeratedClasses()) {
                                 foreach ($col->getChildren() as $child) {
+                                    $overwrite = true;
                                     foreach (array('queryinheritance') as $target) {
                                         if (!$child->getAncestor()) {
                                             continue;
                                         }
                                         $builder = $generatorConfig->getConfiguredBuilder($table, $target);
                                         $builder->setChild($child);
-                                        $nbWrittenFiles += $this->doBuild($builder, $overwrite = true);
+                                        $nbWrittenFiles += $this->doBuild($builder, $overwrite);
                                     }
+                                    $overwrite = false;
                                     foreach (array('objectmultiextend', 'queryinheritancestub') as $target) {
                                         $builder = $generatorConfig->getConfiguredBuilder($table, $target);
                                         $builder->setChild($child);
-                                        $nbWrittenFiles += $this->doBuild($builder, $overwrite = false);
+                                        $nbWrittenFiles += $this->doBuild($builder, $overwrite);
                                     }
-                                } // foreach
-                            } // if col->is enumerated
-                        } // if tbl->getChildrenCol
+                                }
+                            }
+                        }
 
                         // -----------------------------------------------------------------------------------------
                         // Create [empty] Interface if it doesn't exist
                         // -----------------------------------------------------------------------------------------
 
                         // Create [empty] interface if it does not already exist
+                        $overwrite = false;
                         if ($table->getInterface()) {
                             $builder = $generatorConfig->getConfiguredBuilder($table, 'interface');
-                            $nbWrittenFiles += $this->doBuild($builder, $overwrite = false);
+                            $nbWrittenFiles += $this->doBuild($builder, $overwrite);
                         }
 
                         // ----------------------------------
@@ -122,17 +136,17 @@ class ModelManager extends AbstractManager
                         if (0 === $nbWrittenFiles) {
                             $this->log("\t\t(no change)");
                         }
-                    } // if !$table->isForReferenceOnly()
-                } // foreach table
-            } // foreach database
-        } // foreach dataModel
+                    }
+                }
+            }
+        }
 
         if ($totalNbFiles) {
             $this->log(sprintf('Object model generation complete - %d files written', $totalNbFiles));
         } else {
             $this->log('Object model generation complete - All files already up to date');
         }
-    } // main()
+    }
 
     /**
      * Uses a builder class to create the output class.
