@@ -64,8 +64,7 @@ class ExtensionObjectBuilder extends AbstractObjectBuilder
  *
  */";
         }
-        $script .= "
-        ".($table->isAbstract() ? "abstract " : "")."class ".$this->getUnqualifiedClassName()." extends $baseClassName
+        $script .= PHP_EOL . ($table->isAbstract() ? "abstract " : "")."class ".$this->getUnqualifiedClassName()." extends $baseClassName
 {
 ";
     }
