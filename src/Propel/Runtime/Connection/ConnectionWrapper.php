@@ -638,7 +638,14 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
         if (!isset($backtrace[1]['function'])) {
             return;
         }
-        $callingMethod = $backtrace[1]['function'];
+
+        $i = 1;
+        $stackSize = count($backtrace);
+        do {
+            $callingMethod = $backtrace[$i]['function'];
+            $i++;
+        } while($callingMethod != "log" && $i < $stackSize);
+
         if (!$msg || !$this->isLogEnabledForMethod($callingMethod)) {
             return;
         }
