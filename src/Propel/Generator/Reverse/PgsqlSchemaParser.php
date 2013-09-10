@@ -10,7 +10,6 @@
 
 namespace Propel\Generator\Reverse;
 
-use Propel\Generator\Exception\EngineException;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\ColumnDefaultValue;
 use Propel\Generator\Model\Database;
@@ -192,7 +191,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
             $params = [];
             $searchPath = explode(',', $searchPathString);
 
-            foreach ($searchPath as $n => &$path) {
+            foreach ($searchPath as &$path) {
                 $params[] = $path;
                 $path = '?';
             }
@@ -274,7 +273,6 @@ class PgsqlSchemaParser extends AbstractSchemaParser
                 $column->getDomain()->replaceScale($scale);
             }
 
-            $defaultType = '';
             if (null !== $default) {
                 if ("'" !== substr($default, 0, 1) && strpos($default, '(')) {
                     $defaultType = ColumnDefaultValue::TYPE_EXPR;
@@ -290,44 +288,6 @@ class PgsqlSchemaParser extends AbstractSchemaParser
 
             $table->addColumn($column);
         }
-
-
-    } // addColumn()
-
-    private function processLengthScale($intTypmod, $strName)
-    {
-        // Define the return array
-        $arrRetVal = array('length' => null, 'scale' => null);
-
-        // Some datatypes don't have a Typmod
-        if (-1 === $intTypmod) {
-            return $arrRetVal;
-        }
-
-        // Decimal Datatype?
-        if ($strName == $this->getMappedNativeType(PropelTypes::DECIMAL)) {
-            $intLen = ($intTypmod - 4) >> 16;
-            $intPrec = ($intTypmod - 4) & 0xffff;
-            $intLen = sprintf('%ld', $intLen);
-            if ($intPrec) {
-                $intPrec = sprintf('%ld', $intPrec);
-            } // if ($intPrec)
-            $arrRetVal['length'] = $intLen;
-            $arrRetVal['scale'] = $intPrec;
-        } elseif (
-            $strName == $this->getMappedNativeType(PropelTypes::TIME)
-            || 'timetz' === $strName
-            || $strName == $this->getMappedNativeType(PropelTypes::TIMESTAMP)
-            || 'timestamptz' === $strName
-            || 'interval' === $strName
-            || 'bit' === $strName
-        ) {
-            $arrRetVal['length'] = sprintf('%ld', $intTypmod);
-        } else {
-            $arrRetVal['length'] = sprintf('%ld', ($intTypmod - 4));
-        }
-
-        return $arrRetVal;
     }
 
     /**
@@ -361,8 +321,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
         $stmt->bindValue(1, $oid);
         $stmt->execute();
 
-        $foreignKeys = array(); // local store to avoid duplicates
-
+        $foreignKeys = array();
         while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
 
             $name = $row['conname'];
@@ -506,7 +465,6 @@ class PgsqlSchemaParser extends AbstractSchemaParser
 
         // Loop through the returned results, grouping the same key_name together
         // adding each column for that key.
-
         while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
             $arrColumns = explode(' ', $row['indkey']);
             foreach ($arrColumns as $intColNum) {
@@ -540,7 +498,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
             $params = [];
             $searchPath = explode(',', $searchPathString);
 
-            foreach ($searchPath as $n => &$path) {
+            foreach ($searchPath as &$path) {
                 $params[] = $path;
                 $path = '?';
             }

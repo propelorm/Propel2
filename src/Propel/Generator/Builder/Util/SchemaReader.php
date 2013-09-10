@@ -28,36 +28,22 @@ use Propel\Generator\Platform\PlatformInterface;
  */
 class SchemaReader
 {
-
     /** enables debug output */
     const DEBUG = false;
 
     private $schema;
-
     private $currDB;
-
     private $currTable;
-
     private $currColumn;
-
     private $currFK;
-
     private $currIndex;
-
     private $currUnique;
-
     private $currBehavior;
-
     private $currVendorObject;
-
     private $isForReferenceOnly;
-
     private $currentPackage;
-
     private $currentXmlFile;
-
     private $defaultPackage;
-
     private $encoding;
 
     /**

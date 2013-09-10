@@ -20,9 +20,9 @@ namespace Propel\Generator\Builder\Om;
  */
 class InterfaceBuilder extends AbstractObjectBuilder
 {
-
     /**
      * Returns the name of the current class being built.
+     *
      * @return string
      */
     public function getUnprefixedClassName()
@@ -32,6 +32,7 @@ class InterfaceBuilder extends AbstractObjectBuilder
 
     /**
      * Adds class phpdoc comment and opening of class.
+     *
      * @param string &$script The script will be modified in this method.
      */
     protected function addClassOpen(&$script)
@@ -39,7 +40,6 @@ class InterfaceBuilder extends AbstractObjectBuilder
         $table = $this->getTable();
         $tableName = $table->getName();
         $tableDesc = $table->getDescription();
-        $baseClassName = $this->getObjectBuilder()->getUnqualifiedClassName();
 
         $script .= "
 /**

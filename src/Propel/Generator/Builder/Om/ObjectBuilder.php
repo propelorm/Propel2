@@ -3254,14 +3254,13 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
         $fkQueryClassName = $this->getClassNameFromBuilder($this->getNewStubQueryBuilder($refFK->getTable()));
         $relCol = $this->getRefFKPhpNameAffix($refFK, $plural = true);
-        $collName = $this->getRefFKCollVarName($refFK);
 
         $fkObjectBuilder = $this->getNewObjectBuilder($tblFK);
         $className = $fkObjectBuilder->getObjectClassName();
 
         foreach ($tblFK->getForeignKeys() as $fk2) {
 
-            $tblFK2 = $this->getForeignTable($fk2);
+            $tblFK2 = $fk2->getForeignTable();
             $doJoinGet = !$tblFK2->isForReferenceOnly();
 
             // it doesn't make sense to join in rows from the current table, since we are fetching
@@ -3506,9 +3505,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      */
     protected function addRefFKCount(&$script, ForeignKey $refFK)
     {
-        $table = $this->getTable();
-        $tblFK = $refFK->getTable();
-
         $fkQueryClassName = $this->getClassNameFromBuilder($this->getNewStubQueryBuilder($refFK->getTable()));
         $relCol = $this->getRefFKPhpNameAffix($refFK, $plural = true);
         $collName = $this->getRefFKCollVarName($refFK);
@@ -3559,9 +3555,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      */
     protected function addRefFKGet(&$script, ForeignKey $refFK)
     {
-        $table = $this->getTable();
-        $tblFK = $refFK->getTable();
-
         $fkQueryClassName = $this->getClassNameFromBuilder($this->getNewStubQueryBuilder($refFK->getTable()));
         $relCol = $this->getRefFKPhpNameAffix($refFK, $plural = true);
         $collName = $this->getRefFKCollVarName($refFK);

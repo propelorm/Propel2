@@ -243,8 +243,7 @@ class I18nBehavior extends Behavior
                 }
 
                 $column = $table->getColumn($columnName);
-                // add the column
-                $i18nColumn = $i18nTable->addColumn(clone $column);
+                $i18nTable->addColumn(clone $column);
 
                 //validate behavior: move rules associated to the column
                 if ($table->hasBehavior('validate')) {
