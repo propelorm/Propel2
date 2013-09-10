@@ -52,7 +52,7 @@ interface ServiceContainerInterface
      *
      * @param string $name The datasource name
      *
-     * @return Propel\Runtime\Adapter\AdapterInterface
+     * @return \Propel\Runtime\Adapter\AdapterInterface
      */
     public function getAdapter($name = null);
 
@@ -113,7 +113,7 @@ interface ServiceContainerInterface
      * @param string $name The datasource name that is used to look up the DSN
      *                          from the runtime configuration file. Empty name not allowed.
      *
-     * @return ConnectionInterface A database connection
+     * @return \Propel\Runtime\Connection\ConnectionInterface A database connection
      *
      * @throws \Propel\Runtime\Adapter\Exception\AdapterException - if connection is not properly configured
      */
@@ -129,7 +129,7 @@ interface ServiceContainerInterface
      * @param string $name The datasource name that is used to look up the DSN
      *                          from the runtime configuration file. Empty name not allowed.
      *
-     * @return ConnectionInterface A database connection
+     * @return \Propel\Runtime\Connection\ConnectionInterface A database connection
      */
     public function getReadConnection($name);
 
@@ -143,6 +143,7 @@ interface ServiceContainerInterface
     /**
      * Get a logger for a given datasource, or the default logger.
      *
+     * @param string $name
      * @return LoggerInterface
      */
     public function getLogger($name = 'defaultLogger');

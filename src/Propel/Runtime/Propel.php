@@ -146,7 +146,7 @@ class Propel
      *
      * @param string $name The datasource name
      *
-     * @return AdapterInterface
+     * @return \Propel\Runtime\Adapter\AdapterInterface
      */
     public static function getAdapter($name = null)
     {
