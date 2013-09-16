@@ -815,4 +815,30 @@ abstract class AbstractOMBuilder extends DataModelBuilder
 
         return $content;
     }
+
+    /**
+     * Opens class.
+     *
+     * @param string &$script
+     */
+    abstract protected function addClassOpen(&$script);
+
+    /**
+     * This method adds the contents of the generated class to the script.
+     *
+     * This method is abstract and should be overridden by the subclasses.
+     *
+     * Hint: Override this method in your subclass if you want to reorganize or
+     * drastically change the contents of the generated object class.
+     *
+     * @param string &$script The script will be modified in this method.
+     */
+    abstract protected function addClassBody(&$script);
+
+    /**
+     * Closes class.
+     *
+     * @param string &$script
+     */
+    abstract protected function addClassClose(&$script);
 }
