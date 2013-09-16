@@ -170,16 +170,6 @@ if (($condition) && !\$this->isColumnModified({$this->tableMapClassName}::RANK_C
  */
 protected \$sortableQueries = array();
 ";
-
-        if ($this->behavior->useScope()) {
-            $script .= "
-/**
- * The old scope value.
- * @var        int
- */
-protected \$oldScope;
-";
-        }
     }
 
     public function objectMethods($builder)

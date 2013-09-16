@@ -75,7 +75,7 @@ class StandardEnglishPluralizer implements PluralizerInterface
         'life' => 'lives'
     );
 
-    protected $_irregular = array(
+    protected $irregular = array(
         'leaf'   => 'leaves',
         'loaf'   => 'loaves',
         'move'   => 'moves',
@@ -96,7 +96,7 @@ class StandardEnglishPluralizer implements PluralizerInterface
         'alias' => 'aliases',
     );
 
-    private $_uncountable = array(
+    protected $uncountable = array(
         'sheep',
         'fish',
         'deer',
@@ -118,12 +118,12 @@ class StandardEnglishPluralizer implements PluralizerInterface
     public function getPluralForm($root)
     {
         // save some time in the case that singular and plural are the same
-        if (in_array(strtolower($root), $this->_uncountable)) {
+        if (in_array(strtolower($root), $this->uncountable)) {
             return $root;
         }
 
         // check for irregular singular words
-        foreach ($this->_irregular as $pattern => $result) {
+        foreach ($this->irregular as $pattern => $result) {
             $searchPattern = '/' . $pattern . '$/i';
             if (preg_match($searchPattern, $root)) {
                 $replacement = preg_replace($searchPattern, $result, $root);

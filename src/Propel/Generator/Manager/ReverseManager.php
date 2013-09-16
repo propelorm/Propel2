@@ -23,6 +23,10 @@ use Propel\Runtime\Connection\ConnectionFactory;
 class ReverseManager extends AbstractManager
 {
     /**
+     * @var string|null
+     */
+    private $schemaName;
+    /**
      * DOM document produced.
      *
      * @var \DOMDocument

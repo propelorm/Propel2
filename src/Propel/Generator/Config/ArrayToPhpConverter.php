@@ -9,6 +9,7 @@
  */
 
 namespace Propel\Generator\Config;
+use Propel\Runtime\Propel;
 
 /**
  * Runtime configuration converter
@@ -25,7 +26,7 @@ class ArrayToPhpConverter
      */
     public static function convert($c)
     {
-        $runtimeVersion = \Propel\Runtime\Propel::VERSION;
+        $runtimeVersion = Propel::VERSION;
 
         $conf = '';
         $conf .= "\$serviceContainer = \Propel\Runtime\Propel::getServiceContainer();";
