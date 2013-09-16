@@ -24,18 +24,6 @@ use Propel\Generator\Model\PropelTypes;
 abstract class AbstractObjectBuilder extends AbstractOMBuilder
 {
     /**
-     * This method adds the contents of the generated class to the script.
-     *
-     * This method is abstract and should be overridden by the subclasses.
-     *
-     * Hint: Override this method in your subclass if you want to reorganize or
-     * drastically change the contents of the generated object class.
-     *
-     * @param string &$script The script will be modified in this method.
-     */
-    abstract protected function addClassBody(&$script);
-
-    /**
      * Adds the getter methods for the column values.
      * This is here because it is probably generic enough to apply to templates being generated
      * in different languages (e.g. PHP4 and PHP5).
