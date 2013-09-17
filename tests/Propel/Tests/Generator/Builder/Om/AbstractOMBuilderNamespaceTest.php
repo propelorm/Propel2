@@ -160,4 +160,19 @@ class TestableOMBuilder2 extends AbstractOMBuilder
     public function getUnprefixedClassName()
     {
     }
+
+    protected function addClassOpen(&$script)
+    {
+
+    }
+
+    protected function addClassBody(&$script)
+    {
+
+    }
+
+    protected function addClassClose(&$script)
+    {
+
+    }
 }
