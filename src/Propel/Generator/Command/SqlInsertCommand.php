@@ -45,14 +45,21 @@ class SqlInsertCommand extends AbstractCommand
     {
         $manager = new SqlManager();
 
+        $generatorConfig = $this->getGeneratorConfig(array(), $input);
+
         if (!$input->hasOption('connection') || !$input->getOption('connection')) {
             throw new InvalidArgumentException(sprintf('At least one connection is required'));
         }
 
         $connections = array();
-        foreach ($input->getOption('connection') as $connection) {
-            list($name, $dsn, $infos) = $this->parseConnection($connection);
-            $connections[$name] = array_merge(array('dsn' => $dsn), $infos);
+        $optionConnections = $input->getOption('connection');
+        if (!$optionConnections) {
+            $connections = $generatorConfig->getBuildConnections($input->getOption('input-dir'));
+        } else {
+            foreach ($optionConnections as $connection) {
+                list($name, $dsn, $infos) = $this->parseConnection($connection);
+                $connections[$name] = array_merge(array('dsn' => $dsn), $infos);
+            }
         }
 
         $manager->setConnections($connections);
