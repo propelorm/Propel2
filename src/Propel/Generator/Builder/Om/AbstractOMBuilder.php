@@ -531,16 +531,6 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     }
 
     /**
-     * Convenience method to get the foreign Table object for an fkey.
-     * @deprecated use ForeignKey::getForeignTable() instead
-     * @return Table
-     */
-    protected function getForeignTable(ForeignKey $fk)
-    {
-        return $this->getTable()->getDatabase()->getTable($fk->getForeignTableName());
-    }
-
-    /**
      * Convenience method to get the default Join Type for a relation.
      * If the key is required, an INNER JOIN will be returned, else a LEFT JOIN will be suggested,
      * unless the schema is provided with the DefaultJoin attribute, which overrules the default Join Type
