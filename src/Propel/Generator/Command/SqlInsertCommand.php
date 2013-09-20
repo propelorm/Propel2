@@ -47,10 +47,6 @@ class SqlInsertCommand extends AbstractCommand
 
         $generatorConfig = $this->getGeneratorConfig(array(), $input);
 
-        if (!$input->hasOption('connection') || !$input->getOption('connection')) {
-            throw new InvalidArgumentException(sprintf('At least one connection is required'));
-        }
-
         $connections = array();
         $optionConnections = $input->getOption('connection');
         if (!$optionConnections) {
