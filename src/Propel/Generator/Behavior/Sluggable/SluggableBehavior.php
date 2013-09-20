@@ -21,6 +21,7 @@ use Propel\Generator\Model\Unique;
  */
 class SluggableBehavior extends Behavior
 {
+    private $builder;
     protected $parameters = [
         'slug_column'     => 'slug',
         'slug_pattern'    => '',

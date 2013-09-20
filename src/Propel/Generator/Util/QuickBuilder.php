@@ -12,8 +12,11 @@ namespace Propel\Generator\Util;
 
 use Propel\Generator\Builder\Util\SchemaReader;
 use Propel\Generator\Config\GeneratorConfigInterface;
+use Propel\Generator\Config\QuickGeneratorConfig;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Platform\PlatformInterface;
+use Propel\Generator\Platform\SqlitePlatform;
+use Propel\Runtime\Adapter\Pdo\SqliteAdapter;
 use Propel\Runtime\Connection\PdoConnection;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\ConnectionWrapper;
@@ -49,7 +52,7 @@ class QuickBuilder
     public function getPlatform()
     {
         if (null === $this->platform) {
-            $this->platform = new \Propel\Generator\Platform\SqlitePlatform();
+            $this->platform = new SqlitePlatform();
         }
 
         return $this->platform;
@@ -73,7 +76,7 @@ class QuickBuilder
     public function getConfig()
     {
         if (null === $this->config) {
-            $this->config = new \Propel\Generator\Config\QuickGeneratorConfig();
+            $this->config = new QuickGeneratorConfig();
         }
 
         return $this->config;
@@ -93,7 +96,7 @@ class QuickBuilder
             $dsn = 'sqlite::memory:';
         }
         if (null === $adapter) {
-            $adapter = new \Propel\Runtime\Adapter\Pdo\SqliteAdapter();
+            $adapter = new SqliteAdapter();
         }
         if (null === $classTargets) {
             $classTargets = $this->classTargets;

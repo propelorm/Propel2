@@ -10,10 +10,12 @@
 
 namespace Propel\Generator\Model;
 
+use Propel\Generator\Config\GeneratorConfig;
 use Propel\Generator\Exception\BuildException;
 use Propel\Generator\Exception\EngineException;
 use Propel\Generator\Exception\InvalidArgumentException;
 use Propel\Generator\Platform\MysqlPlatform;
+use Propel\Generator\Platform\PlatformInterface;
 
 /**
  * Data about a table used in an application.
@@ -64,6 +66,9 @@ class Table extends ScopedMappingModel implements IdMethod
 
     private $referrers;
     private $containsForeignPK;
+    /**
+     * @var Column
+     */
     private $inheritanceColumn;
     private $skipSql;
     private $readOnly;
@@ -98,6 +103,9 @@ class Table extends ScopedMappingModel implements IdMethod
      */
     private $defaultMutatorVisibility;
 
+    /**
+     * @var Behavior[]
+     */
     protected $behaviors;
     protected $isCrossRef;
     protected $defaultStringFormat;
@@ -516,6 +524,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * Adds a new column to the table.
      *
      * @param  Column|array $col
+     * @throws EngineException
      * @return Column
      */
     public function addColumn($col)
@@ -568,6 +577,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * Removes a column from the table.
      *
      * @param Column|string $column The Column or its name
+     * @throws EngineException
      */
     public function removeColumn($column)
     {
@@ -709,6 +719,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * Warning: only use when all the tables were created.
      *
      * @param boolean $throwErrors
+     * @throws BuildException
      */
     public function setupReferrers($throwErrors = false)
     {
@@ -800,11 +811,12 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Sets whether or not this table contains a foreign primary key.
      *
+     * @param $containsForeignPK
      * @return boolean
      */
-    public function setContainsForeignPK($b)
+    public function setContainsForeignPK($containsForeignPK)
     {
-        $this->containsForeignPK = (Boolean) $b;
+        $this->containsForeignPK = (Boolean) $containsForeignPK;
     }
 
     /**
@@ -841,6 +853,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * Adds a new parameter for the strategy that generates primary keys.
      *
      * @param IdMethodParameter $idMethodParameter
+     * @return IdMethodParameter
      */
     public function addIdMethodParameter($idMethodParameter)
     {
@@ -952,6 +965,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Adds a new Behavior to the table.
      *
+     * @param $bdata
      * @return Behavior $bdata
      */
     public function addBehavior($bdata)
@@ -974,7 +988,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Returns the list of table behaviors.
      *
-     * @return array
+     * @return Behavior[]
      */
     public function getBehaviors()
     {
@@ -1150,6 +1164,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * Returns the auto generated PHP name value for a given name.
      *
      * @param string $name
+     * @return string
      */
     private function buildPhpName($name)
     {

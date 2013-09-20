@@ -26,7 +26,13 @@ use Propel\Generator\Schema\Dumper\XmlDumper;
  */
 class Schema
 {
+    /**
+     * @var Database[]
+     */
     private $databases;
+    /**
+     * @var PlatformInterface
+     */
     private $platform;
     private $name;
     private $isInitialized;

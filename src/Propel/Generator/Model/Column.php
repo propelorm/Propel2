@@ -54,7 +54,13 @@ class Column extends MappingModel
      */
     private $phpType;
 
+    /**
+     * @var Domain
+     */
     private $domain;
+    /**
+     * @var Table
+     */
     private $parentTable;
 
     private $position;
@@ -318,6 +324,16 @@ class Column extends MappingModel
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * Returns the lowercased column name.
+     *
+     * @return string
+     */
+    public function getLowercasedName()
+    {
+        return strtolower($this->name);
     }
 
     /**
