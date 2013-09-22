@@ -136,14 +136,14 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
         $groupBy = $criteria->getGroupByColumns();
 
         if ($groupBy) {
-            //check if all selected columns are groupBy'ed.
+            // check if all selected columns are groupBy'ed.
             $selected = $this->getPlainSelectedColumns($criteria);
             $asSelects = $criteria->getAsColumns();
 
             foreach ($selected as $colName) {
                 if (!in_array($colName, $groupBy)) {
 
-                    //is a alias there that is grouped?
+                    // is a alias there that is grouped?
                     if ($alias = array_search($colName, $asSelects)) {
                         if (in_array($alias, $groupBy)) {
                             continue; //yes, alias is selected.

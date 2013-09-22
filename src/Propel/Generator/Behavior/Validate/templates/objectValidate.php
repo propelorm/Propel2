@@ -25,7 +25,7 @@ public function validate(Validator $validator = null)
         // foreign key reference.
 
 <?php foreach($aVarNames as $aVarName) : ?>
-        //If validate() method exists, the validate-behavior is configured for related object
+        // If validate() method exists, the validate-behavior is configured for related object
         if (method_exists($this-><?php echo $aVarName; ?>, 'validate')) {
             if (!$this-><?php echo $aVarName; ?>->validate($validator)) {
                 $failureMap->addAll($this-><?php echo $aVarName; ?>->getValidationFailures());

@@ -200,7 +200,7 @@ class Column extends MappingModel
 
             $this->isNotNull = ($this->booleanValue($this->getAttribute('required'), false) || $this->isPrimaryKey); // primary keys are required
 
-            //AutoIncrement/Sequences
+            // AutoIncrement/Sequences
             $this->isAutoIncrement = $this->booleanValue($this->getAttribute('autoIncrement'));
             $this->isLazyLoad = $this->booleanValue($this->getAttribute('lazyLoad'));
 

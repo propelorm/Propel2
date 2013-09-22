@@ -1112,7 +1112,7 @@ class Criteria
      */
     public function addSelectModifier($modifier)
     {
-        //only allow the keyword once
+        // only allow the keyword once
         if (!$this->hasSelectModifier($modifier)) {
             $this->selectModifiers[] = $modifier;
         }
@@ -2367,7 +2367,7 @@ class Criteria
         $db = Propel::getServiceContainer()->getAdapter($this->getDbName());
         $dbMap = Propel::getServiceContainer()->getDatabaseMap($this->getDbName());
 
-        //join are not supported with DELETE statement
+        // join are not supported with DELETE statement
         if (count($this->getJoins())) {
             throw new PropelException('Delete does not support join');
         }
