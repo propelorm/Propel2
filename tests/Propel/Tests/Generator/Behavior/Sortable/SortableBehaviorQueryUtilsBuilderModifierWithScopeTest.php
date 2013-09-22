@@ -97,21 +97,25 @@ class SortableBehaviorQueryUtilsBuilderModifierWithScopeTest extends TestCase
 
     public function testRetrieveList()
     {
+        $this->assertEquals(4, count(SortableTable12Query::retrieveList(null)), 'retrieveList() returns the list of objects in the scope');
         $this->assertEquals(4, count(SortableTable12Query::retrieveList(1)), 'retrieveList() returns the list of objects in the scope');
         $this->assertEquals(2, count(SortableTable12Query::retrieveList(2)), 'retrieveList() returns the list of objects in the scope');
     }
 
     public function testCountList()
     {
+        $this->assertEquals(4, SortableTable12Query::countList(null), 'countList() returns the list of objects in the scope');
         $this->assertEquals(4, SortableTable12Query::countList(1), 'countList() returns the list of objects in the scope');
         $this->assertEquals(2, SortableTable12Query::countList(2), 'countList() returns the list of objects in the scope');
     }
 
     public function testDeleteList()
     {
-        $this->assertEquals(4, SortableTable12Query::deleteList(1), 'deleteList() returns the list of objects in the scope');
+        $this->assertEquals(4, SortableTable12Query::deleteList(null), 'deleteList() returns the list of deleted objects in the scope');
+        $this->assertEquals(6, SortableTable12Query::create()->count(), 'deleteList() deletes the objects in the scope');
+        $this->assertEquals(4, SortableTable12Query::deleteList(1), 'deleteList() returns the list of deleted objects in the scope');
         $this->assertEquals(2, SortableTable12Query::create()->count(), 'deleteList() deletes the objects in the scope');
-        $this->assertEquals(2, SortableTable12Query::deleteList(2), 'deleteList() returns the list of objects in the scope');
+        $this->assertEquals(2, SortableTable12Query::deleteList(2), 'deleteList() returns the list of deleted objects in the scope');
         $this->assertEquals(0, SortableTable12Query::create()->count(), 'deleteList() deletes the objects in the scope');
     }
 }
