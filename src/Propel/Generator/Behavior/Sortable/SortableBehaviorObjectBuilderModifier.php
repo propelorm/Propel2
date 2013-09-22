@@ -163,13 +163,24 @@ if (($condition) && !\$this->isColumnModified({$this->tableMapClassName}::RANK_C
 
     public function objectAttributes($builder)
     {
-        return "
+        $script = "
 /**
  * Queries to be executed in the save transaction
  * @var        array
  */
 protected \$sortableQueries = array();
 ";
+        if ($this->behavior->useScope()) {
+            $script .= "
+/**
+ * The old scope value.
+ * @var        int
+ */
+protected \$oldScope;
+";
+        }
+
+        return $script;
     }
 
     public function objectMethods($builder)
@@ -479,12 +490,6 @@ public function getPrevious(ConnectionInterface \$con = null)
  */
 public function insertAtRank(\$rank, ConnectionInterface \$con = null)
 {";
-        if ($useScope) {
-            $script .= "
-    if (null === \$this->getScopeValue()) {
-        throw new PropelException('The scope must be defined before inserting an object in a suite');
-    }";
-        }
         $script .= "
     \$maxRank = {$this->queryClassName}::create()->getMaxRankArray(" . ($useScope ? "\$this->getScopeValue(), " : '') . "\$con);
     if (\$rank < 1 || \$rank > \$maxRank + 1) {
@@ -521,12 +526,6 @@ public function insertAtRank(\$rank, ConnectionInterface \$con = null)
  */
 public function insertAtBottom(ConnectionInterface \$con = null)
 {";
-        if ($useScope) {
-            $script .= "
-    if (null === \$this->getScopeValue()) {
-        throw new PropelException('The scope must be defined before inserting an object in a suite');
-    }";
-        }
         $script .= "
     \$this->{$this->getColumnSetter()}({$this->queryClassName}::create()->getMaxRankArray(" . ($useScope ? "\$this->getScopeValue(), " : '') . "\$con) + 1);
 
@@ -633,8 +632,8 @@ public function swapWith(\$object, ConnectionInterface \$con = null)
             \$object->setScopeValue(\$oldScope);
         }";
         }
-        $script .= "
 
+        $script .= "
         \$oldRank = \$this->{$this->getColumnGetter()}();
         \$newRank = \$object->{$this->getColumnGetter()}();
 
@@ -788,16 +787,6 @@ public function moveToBottom(ConnectionInterface \$con = null)
 public function removeFromList()
 {";
 
-        $script .= "
-    // Keep the list modification query for the save() transaction
-    \$this->sortableQueries[] = array(
-        'callable'  => array('{$this->queryFullClassName}', 'sortableShiftRank'),
-        'arguments' => array(-1, \$this->{$this->getColumnGetter()}() + 1, null" . ($useScope ? ", \$this->getScopeValue()" : '') . ")
-    );
-    // remove the object from the list
-    \$this->{$this->getColumnSetter('rank_column')}(null);
-    ";
-
         if ($useScope) {
             $script .= "
     // check if object is already removed
@@ -806,16 +795,24 @@ public function removeFromList()
     }
 
     // move the object to the end of null scope
-    \$this->setScopeValue(null);
-";
+    \$this->setScopeValue(null);";
+        } else {
+            $script .= "
+    // Keep the list modification query for the save() transaction
+    \$this->sortableQueries[] = array(
+        'callable'  => array('{$this->queryFullClassName}', 'sortableShiftRank'),
+        'arguments' => array(-1, \$this->{$this->getColumnGetter()}() + 1, null" . ($useScope ? ", \$this->getScopeValue()" : '') . ")
+    );
+    // remove the object from the list
+    \$this->{$this->getColumnSetter('rank_column')}(null);
+    ";
         }
-
         $script .= "
 
     return \$this;
 }
 ";
-}
+    }
 
     protected function addProcessSortableQueries(&$script)
     {

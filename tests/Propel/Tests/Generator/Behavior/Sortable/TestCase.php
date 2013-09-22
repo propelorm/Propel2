@@ -58,12 +58,13 @@ class TestCase extends BaseTestCase
     protected function populateTable12()
     {
         /* List used for tests
-         scope=1   scope=2
-         row1      row5
-         row2      row6
-         row3
-         row4
-         */
+         scope=1   scope=2   scope=null
+         row1      row5      row7
+         row2      row6      row8
+         row3                row9
+         row4                row10
+        */
+
         SortableTable12TableMap::doDeleteAll();
 
         $t1 = new SortableTable12();
@@ -101,6 +102,23 @@ class TestCase extends BaseTestCase
         $t6->setScopeValue(2);
         $t6->setTitle('row6');
         $t6->save();
+
+        $t7 = new SortableTable12();
+        $t7->setRank(1);
+        $t7->setTitle('row7');
+        $t7->save();
+        $t8 = new SortableTable12();
+        $t8->setRank(2);
+        $t8->setTitle('row8');
+        $t8->save();
+        $t9 = new SortableTable12();
+        $t9->setRank(3);
+        $t9->setTitle('row9');
+        $t9->save();
+        $t10 = new SortableTable12();
+        $t10->setRank(4);
+        $t10->setTitle('row10');
+        $t10->save();
     }
 
     protected function getFixturesArray()
@@ -117,11 +135,7 @@ class TestCase extends BaseTestCase
     protected function getFixturesArrayWithScope($scope = null)
     {
         $c = new Criteria();
-
-        if ($scope !== null) {
-            $c->add(SortableTable12TableMap::SCOPE_COL, $scope);
-        }
-
+        $c->add(SortableTable12TableMap::SCOPE_COL, $scope);
         $ts  = SortableTable12Query::create(null, $c)->orderByPosition()->find();
         $ret = array();
 
