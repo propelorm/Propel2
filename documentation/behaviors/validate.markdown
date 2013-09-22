@@ -293,8 +293,8 @@ For example, let's suppose we wish to add automatic validation capability to our
 
 ```php
 <?php
-//Code of your Book class.
-//Remember use statement to set properly ConnectionInterface namespace
+// Code of your Book class.
+// Remember use statement to set properly ConnectionInterface namespace
 
 public function preSave(ConnectionInterface $con = null)
 {
@@ -319,11 +319,11 @@ $book->setPrice(10,00);
 
 $ret = $book->save();
 
-//if $ret <= 0 means no affected rows, that is validation failed or no object to persist
+// if $ret <= 0 means no affected rows, that is validation failed or no object to persist
 if ($ret <= 0) {
     $failures = $book->getValidationFailures();
 
-    //count($failures) > 0 means that we have ConstraintViolation objects and validation failed
+    // count($failures) > 0 means that we have ConstraintViolation objects and validation failed
     if (count($failures) > 0) {
         foreach ($failures as $failure) {
             echo $failure->getPropertyPath()." validation failed: ".$failure->getMessage();
@@ -449,7 +449,7 @@ The behavior adds to ActiveRecord objects the static `loadValidatorMetadata()` m
 ```php
 <?php
 
-//Symfony 2
+// Symfony 2
 
 use Symfony\Component\HttpFoundation\Response;
 use YourVendor\YourBundle\Model\Author;
@@ -476,7 +476,7 @@ But if you wish to automatically validate also related objects, you can use the 
 ```php
 <?php
 
-//Symfony 2
+// Symfony 2
 
 use Symfony\Component\HttpFoundation\Response;
 use YouVendor\YourBundle\Model\Author;
@@ -508,7 +508,7 @@ Using the behavior inside a Silex project, is about the same as we've seen for S
 ```php
 <?php
 
-//Silex
+// Silex
 
 // ...
 
@@ -530,7 +530,7 @@ and if you wish to automatically validate also related objects:
 ```php
 <?php
 
-//Silex
+// Silex
 
 // ...
 
