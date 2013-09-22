@@ -1381,7 +1381,7 @@ class ModelCriteria extends BaseModelCriteria
             $con = Propel::getServiceContainer()->getWriteConnection($databaseName);
         }
 
-        //join are not supported with DELETE statement
+        // join are not supported with DELETE statement
         if (count($this->getJoins())) {
             throw new RuntimeException('Delete does not support join');
         }

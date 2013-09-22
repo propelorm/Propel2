@@ -878,7 +878,7 @@ class Table extends ScopedMappingModel implements IdMethod
      */
     public function removeIndex($name)
     {
-        //check if we have a index with this name already, then delete it
+        // check if we have a index with this name already, then delete it
         foreach ($this->indices as $n => $idx) {
             if ($idx->getName() == $name) {
                 unset($this->indices[$n]);

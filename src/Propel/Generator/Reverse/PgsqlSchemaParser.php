@@ -407,7 +407,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
                     break;
                 default:
                 case 'a':
-                    //NOACTION is the postgresql default
+                    // NOACTION is the postgresql default
                     $ondelete = ForeignKey::NONE;
                     break;
             }

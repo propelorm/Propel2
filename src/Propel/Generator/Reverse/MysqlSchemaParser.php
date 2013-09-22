@@ -200,7 +200,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
             $nativeType = $row['Type'];
         }
 
-        //BLOBs can't have any default values in MySQL
+        // BLOBs can't have any default values in MySQL
         $default = preg_match('~blob|text~', $nativeType) ? null : $row['Default'];
 
         $propelType = $this->getMappedPropelType($nativeType);
@@ -284,14 +284,14 @@ class MysqlSchemaParser extends AbstractSchemaParser
                     $fcols[] = trim($piece, '` ');
                 }
 
-                //typical for mysql is RESTRICT
+                // typical for mysql is RESTRICT
                 $fkactions = array(
                     'ON DELETE' => ForeignKey::RESTRICT,
                     'ON UPDATE' => ForeignKey::RESTRICT,
                 );
 
                 if ($fkey) {
-                    //split foreign key information -> search for ON DELETE and afterwords for ON UPDATE action
+                    // split foreign key information -> search for ON DELETE and afterwords for ON UPDATE action
                     foreach (array_keys($fkactions) as $fkaction) {
                         $result = null;
                         preg_match('/' . $fkaction . ' (' . ForeignKey::CASCADE . '|' . ForeignKey::SETNULL . ')/', $fkey, $result);

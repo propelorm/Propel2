@@ -131,7 +131,7 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
             throw new InvalidArgumentException('MssqlAdapter::applyLimit() expects a number for argument 2 and 3');
         }
 
-        //split the select and from clauses out of the original query
+        // split the select and from clauses out of the original query
         $selectSegment = array();
 
         $selectText = 'SELECT ';
@@ -157,12 +157,12 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
             return;
         }
 
-        //get the ORDER BY clause if present
+        // get the ORDER BY clause if present
         $orderStatement = stristr($fromStatement, 'ORDER BY');
         $orders = '';
 
         if (false !== $orderStatement) {
-            //remove order statement from the from statement
+            // remove order statement from the from statement
             $fromStatement = trim(str_replace($orderStatement, '', $fromStatement));
 
             $order = str_ireplace('ORDER BY', '', $orderStatement);
@@ -177,48 +177,48 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
             }
         }
 
-        //setup inner and outer select selects
+        // setup inner and outer select selects
         $innerSelect = '';
         $outerSelect = '';
         foreach (explode(', ', $selectStatement) as $selCol) {
             $selColArr = explode(' ', $selCol);
             $selColCount = count($selColArr) - 1;
 
-            //make sure the current column isn't * or an aggregate
+            // make sure the current column isn't * or an aggregate
             if ($selColArr[0] != '*' && ! strstr($selColArr[0], '(')) {
                 if (isset($orderArr[$selColArr[0]])) {
                     $orders[$orderArr[$selColArr[0]]['key']] = $selColArr[0] . ' ' . $orderArr[$selColArr[0]]['sort'];
                 }
 
-                //use the alias if one was present otherwise use the column name
+                // use the alias if one was present otherwise use the column name
                 $alias = (! stristr($selCol, ' AS ')) ? $selColArr[0] : $selColArr[$selColCount];
-                //don't quote the identifier if it is already quoted
+                // don't quote the identifier if it is already quoted
                 if ('[' !== $alias[0]) {
                     $alias = $this->quoteIdentifier($alias);
                 }
 
-                //save the first non-aggregate column for use in ROW_NUMBER() if required
+                // save the first non-aggregate column for use in ROW_NUMBER() if required
                 if (!isset($firstColumnOrderStatement)) {
                     $firstColumnOrderStatement = 'ORDER BY ' . $selColArr[0];
                 }
 
-                //add an alias to the inner select so all columns will be unique
+                // add an alias to the inner select so all columns will be unique
                 $innerSelect .= $selColArr[0] . ' AS ' . $alias . ', ';
                 $outerSelect .= $alias . ', ';
             } else {
-                //aggregate columns must always have an alias clause
+                // aggregate columns must always have an alias clause
                 if (!stristr($selCol, ' AS ')) {
                     throw new MalformedClauseException('MssqlAdapter::applyLimit() requires aggregate columns to have an Alias clause');
                 }
 
-                //aggregate column alias can't be used as the count column you must use the entire aggregate statement
+                // aggregate column alias can't be used as the count column you must use the entire aggregate statement
                 if (isset($orderArr[$selColArr[$selColCount]])) {
                     $orders[$orderArr[$selColArr[$selColCount]]['key']] = str_replace($selColArr[$selColCount - 1] . ' ' . $selColArr[$selColCount], '', $selCol) . $orderArr[$selColArr[$selColCount]]['sort'];
                 }
 
-                //quote the alias
+                // quote the alias
                 $alias = $selColArr[$selColCount];
-                //don't quote the identifier if it is already quoted
+                // don't quote the identifier if it is already quoted
                 if ($alias[0] != '[') {
                     $alias = $this->quoteIdentifier($alias);
                 }
@@ -231,7 +231,7 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
         if (is_array($orders)) {
             $orderStatement = 'ORDER BY ' . implode(', ', $orders);
         } else {
-            //use the first non aggregate column in our select statement if no ORDER BY clause present
+            // use the first non aggregate column in our select statement if no ORDER BY clause present
             if (isset($firstColumnOrderStatement)) {
                 $orderStatement = $firstColumnOrderStatement;
             } else {
@@ -239,12 +239,12 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
             }
         }
 
-        //substring the select strings to get rid of the last comma and add our FROM and SELECT clauses
+        // substring the select strings to get rid of the last comma and add our FROM and SELECT clauses
         $innerSelect = $selectText . 'ROW_NUMBER() OVER(' . $orderStatement . ') AS [RowNumber], ' . substr($innerSelect, 0, - 2) . ' FROM';
-        //outer select can't use * because of the RowNumber column
+        // outer select can't use * because of the RowNumber column
         $outerSelect = 'SELECT ' . substr($outerSelect, 0, - 2) . ' FROM';
 
-        //ROW_NUMBER() starts at 1 not 0
+        // ROW_NUMBER() starts at 1 not 0
         $sql = $outerSelect . ' (' . $innerSelect . ' ' . $fromStatement . ') AS derivedb WHERE RowNumber BETWEEN ' . ($offset + 1) . ' AND ' . ($limit + $offset);
     }
 
@@ -282,7 +282,7 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
             $i++;
         }
 
-        //if we made changes re-number the params
+        // if we made changes re-number the params
         if ($params != $paramCols) {
             $params = $paramCols;
             unset($paramCols);

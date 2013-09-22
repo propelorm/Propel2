@@ -82,7 +82,7 @@ class Domain extends MappingModel
         $schemaType = strtoupper($this->getAttribute('type'));
         $this->copy($this->database->getPlatform()->getDomainForType($schemaType));
 
-        //Name
+        // Name
         $this->name = $this->getAttribute('name');
 
         // Default value
