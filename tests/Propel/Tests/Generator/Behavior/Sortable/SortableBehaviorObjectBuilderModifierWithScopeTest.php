@@ -133,6 +133,22 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals($expected, $this->getFixturesArrayWithScope(2), 'insertAtRank() leaves other suites unchanged');
     }
 
+    public function testInsertAtRankNoScope()
+    {
+        $t = new Table12();
+        $t->setTitle('new');
+        $t->insertAtRank(2);
+        $this->assertEquals(2, $t->getRank(), 'insertAtRank() sets the position');
+        $this->assertTrue($t->isNew(), 'insertAtRank() doesn\'t save the object');
+        $t->save();
+        $expected = array(1 => 'row7', 2 => 'new', 3 => 'row8', 4 => 'row9', 5 => 'row10');
+        $this->assertEquals($expected, $this->getFixturesArrayWithScope(), 'insertAtRank() shifts the entire suite');
+        $expected = array(1 => 'row1', 2 => 'row2', 3 => 'row3', 4 => 'row4');
+        $this->assertEquals($expected, $this->getFixturesArrayWithScope(1), 'insertAtRank() leaves other suites unchanged');
+        $expected = array(1 => 'row5', 2 => 'row6');
+        $this->assertEquals($expected, $this->getFixturesArrayWithScope(2), 'insertAtRank() leaves other suites unchanged');
+    }
+
     /**
      * @expectedException \Propel\Runtime\Exception\PropelException
      */
@@ -153,15 +169,6 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $t->insertAtRank(6);
     }
 
-  /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
-     */
-    public function testInsertAtNoScope()
-    {
-        $t = new Table12();
-        $t->insertAtRank(3);
-    }
-
     public function testInsertAtBottom()
     {
         $t = new Table12();
@@ -177,13 +184,20 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals($expected, $this->getFixturesArrayWithScope(2), 'insertAtBottom() leaves other suites unchanged');
     }
 
-  /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
-     */
     public function testInsertAtBottomNoScope()
     {
         $t = new Table12();
+        $t->setTitle('new');
         $t->insertAtBottom();
+        $this->assertEquals(5, $t->getRank(), 'insertAtBottom() sets the position to the last');
+        $this->assertTrue($t->isNew(), 'insertAtTop() doesn\'t save the object');
+        $t->save();
+        $expected = array(1 => 'row7', 2 => 'row8', 3 => 'row9', 4 => 'row10', 5 => 'new');
+        $this->assertEquals($expected, $this->getFixturesArrayWithScope(), 'insertAtBottom() does not shift the entire suite');
+        $expected = array(1 => 'row1', 2 => 'row2', 3 => 'row3', 4 => 'row4');
+        $this->assertEquals($expected, $this->getFixturesArrayWithScope(1), 'insertAtRank() leaves other suites unchanged');
+        $expected = array(1 => 'row5', 2 => 'row6');
+        $this->assertEquals($expected, $this->getFixturesArrayWithScope(2), 'insertAtRank() leaves other suites unchanged');
     }
 
     public function testInsertAtTop()
@@ -199,6 +213,22 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals($expected, $this->getFixturesArrayWithScope(1), 'insertAtTop() shifts the entire suite');
         $expected = array(1 => 'row5', 2 => 'row6');
         $this->assertEquals($expected, $this->getFixturesArrayWithScope(2), 'insertAtTop() leaves other suites unchanged');
+    }
+
+    public function testInsertAtTopNoScope()
+    {
+        $t = new Table12();
+        $t->setTitle('new');
+        $t->insertAtTop();
+        $this->assertEquals(1, $t->getRank(), 'insertAtTop() sets the position to 1');
+        $this->assertTrue($t->isNew(), 'insertAtTop() doesn\'t save the object');
+        $t->save();
+        $expected = array(1 => 'new', 2 => 'row7', 3 => 'row8', 4 => 'row9', 5 => 'row10');
+        $this->assertEquals($expected, $this->getFixturesArrayWithScope(), 'insertAtTop() shifts the entire suite');
+        $expected = array(1 => 'row1', 2 => 'row2', 3 => 'row3', 4 => 'row4');
+        $this->assertEquals($expected, $this->getFixturesArrayWithScope(1), 'insertAtRank() leaves other suites unchanged');
+        $expected = array(1 => 'row5', 2 => 'row6');
+        $this->assertEquals($expected, $this->getFixturesArrayWithScope(2), 'insertAtRank() leaves other suites unchanged');
     }
 
     public function testMoveToRank()
@@ -218,6 +248,27 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $t2->moveToRank(2);
         $expected = array(1 => 'row1', 2 => 'row2', 3 => 'row3', 4 => 'row4');
         $this->assertEquals($expected, $this->getFixturesArrayWithScope(1), 'moveToRank() can move down');
+    }
+
+    public function testMoveToRankNoScope()
+    {
+        $t2 = SortableTable12Query::retrieveByRank(2);
+        $t2->moveToRank(3);
+        $expected = array(1 => 'row7', 2 => 'row9', 3 => 'row8', 4 => 'row10');
+        $this->assertEquals($expected, $this->getFixturesArrayWithScope(), 'moveToRank() can move up');
+        $expected = array(1 => 'row1', 2 => 'row2', 3 => 'row3', 4 => 'row4');
+        $this->assertEquals($expected, $this->getFixturesArrayWithScope(1), 'insertAtRank() leaves other suites unchanged');
+        $expected = array(1 => 'row5', 2 => 'row6');
+        $this->assertEquals($expected, $this->getFixturesArrayWithScope(2), 'insertAtRank() leaves other suites unchanged');
+        $t2->moveToRank(1);
+        $expected = array(1 => 'row8', 2 => 'row7', 3 => 'row9', 4 => 'row10');
+        $this->assertEquals($expected, $this->getFixturesArrayWithScope(), 'moveToRank() can move to the first rank');
+        $t2->moveToRank(4);
+        $expected = array(1 => 'row7', 2 => 'row9', 3 => 'row10', 4 => 'row8');
+        $this->assertEquals($expected, $this->getFixturesArrayWithScope(), 'moveToRank() can move to the last rank');
+        $t2->moveToRank(2);
+        $expected = array(1 => 'row7', 2 => 'row8', 3 => 'row9', 4 => 'row10');
+        $this->assertEquals($expected, $this->getFixturesArrayWithScope(), 'moveToRank() can move down');
     }
 
     /**
@@ -256,6 +307,19 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals($expected, $this->getFixturesArrayWithScope(1), 'swapWith() swaps ranks of the two objects and leaves the other ranks unchanged');
         $expected = array(1 => 'row5', 2 => 'row6');
         $this->assertEquals($expected, $this->getFixturesArrayWithScope(2), 'swapWith() leaves other suites unchanged');
+    }
+
+    public function testSwapWithBetweenScopes()
+    {
+        $t2 = SortableTable12Query::retrieveByRank(2, 1);
+        $t4 = SortableTable12Query::retrieveByRank(4);
+        $t2->swapWith($t4);
+        $expected = array(1 => 'row7', 2 => 'row8', 3 => 'row9', 4 => 'row2');
+        $this->assertEquals($expected, $this->getFixturesArrayWithScope(), 'swapWith() swaps ranks of the two objects between scopes and leaves the other ranks unchanged');
+        $expected = array(1 => 'row1', 2 => 'row10', 3 => 'row3', 4 => 'row4');
+        $this->assertEquals($expected, $this->getFixturesArrayWithScope(1), 'swapWith() swaps ranks of the two objects between scopes and leaves the other ranks unchanged');
+        $expected = array(1 => 'row5', 2 => 'row6');
+        $this->assertEquals($expected, $this->getFixturesArrayWithScope(2), 'swapWith() leaves rest of suites unchanged');
     }
 
     public function testMoveUp()
@@ -325,16 +389,26 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $t2 = SortableTable12Query::retrieveByRank(2, 1);
         $res = $t2->removeFromList();
         $this->assertTrue($res instanceof Table12, 'removeFromList() returns the current object');
-        $this->assertNull($res->getRank(), 'removeFromList() resets the object\'s rank');
         SortableTable12TableMap::clearInstancePool();
         $expected = array(1 => 'row1', 2 => 'row2', 3 => 'row3', 4 => 'row4');
         $this->assertEquals($expected, $this->getFixturesArrayWithScope(1), 'removeFromList() does not change the list until the object is saved');
         $t2->save();
         SortableTable12TableMap::clearInstancePool();
         $expected = array(1 => 'row1', 2 => 'row3', 3 => 'row4');
-        $this->assertEquals($expected, $this->getFixturesArrayWithScope(1), 'removeFromList() changes the list once the object is saved');
+        $this->assertEquals($expected, $this->getFixturesArrayWithScope(1), 'removeFromList() changes the list and moves object to null scope once the object is saved');
+        $expected = array(1 => 'row7', 2 => 'row8', 3 => 'row9', 4 => 'row10', 5 => 'row2');
+        $this->assertEquals($expected, $this->getFixturesArrayWithScope(), 'removeFromList() moves object to the end of null scope');
         $expected = array(1 => 'row5', 2 => 'row6');
         $this->assertEquals($expected, $this->getFixturesArrayWithScope(2), 'removeFromList() leaves other suites unchanged');
+    }
+
+    /**
+     * @expectedException Propel\Runtime\Exception\PropelException
+     */
+    public function testRemoveFromListNoScope()
+    {
+        $t2 = SortableTable12Query::retrieveByRank(2);
+        $t2->removeFromList();
     }
 
     /**
