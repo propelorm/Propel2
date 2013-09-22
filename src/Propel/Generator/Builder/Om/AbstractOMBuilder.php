@@ -266,7 +266,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      */
     public function declareClassNamespace($class, $namespace = '', $alias = false)
     {
-        //check if the class is already declared
+        // check if the class is already declared
         if (isset($this->declaredClasses[$namespace])
             && isset($this->declaredClasses[$namespace][$class])) {
             return $this->declaredClasses[$namespace][$class];
@@ -449,7 +449,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         foreach ($declaredClasses as $namespace => $classes) {
             asort($classes);
             foreach ($classes as $class => $alias) {
-                //Don't use our own class
+                // Don't use our own class
                 if ($class == $this->getUnqualifiedClassName() && $namespace == $this->getNamespace()) {
                     continue;
                 }

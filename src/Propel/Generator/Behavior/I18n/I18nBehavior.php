@@ -246,7 +246,7 @@ class I18nBehavior extends Behavior
                 // add the column
                 $i18nColumn = $i18nTable->addColumn(clone $column);
 
-                //validate behavior: move rules associated to the column
+                // validate behavior: move rules associated to the column
                 if ($table->hasBehavior('validate')) {
                     $validateBehavior = $table->getBehavior('validate');
                     $params = $validateBehavior->getParametersFromColumnName($columnName);
@@ -261,14 +261,14 @@ class I18nBehavior extends Behavior
             }
         }
 
-        //validate behavior
+        // validate behavior
         if (count($i18nValidateParams) > 0) {
             $i18nVbehavior = new ValidateBehavior();
             $i18nVbehavior->setName('validate');
             $i18nVbehavior->setParameters($i18nValidateParams);
             $i18nTable->addBehavior($i18nVbehavior);
 
-            //current table must have almost 1 validation rule
+            // current table must have almost 1 validation rule
             $validate = $table->getBehavior('validate');
             $validate->addRuleOnPk();
         }
