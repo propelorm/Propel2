@@ -11,6 +11,8 @@
 namespace Propel\Runtime\Util;
 
 use Propel\Runtime\ActiveQuery\ModelCriteria;
+use Propel\Runtime\Collection\Collection;
+use Propel\Runtime\Connection\ConnectionInterface;
 
 /**
  * Implements a pager based on a ModelCriteria
@@ -18,36 +20,56 @@ use Propel\Runtime\ActiveQuery\ModelCriteria;
  *
  * @author Fabien Potencier <fabien.potencier@symfony-project.com>
  * @author François Zaninotto
- * @version        $Revision$
  */
 class PropelModelPager implements \IteratorAggregate, \Countable
 {
+    /**
+     * @var ModelCriteria
+     */
     protected $query;
 
+    /**
+     * @var int current page
+     */
     protected $page;
 
+    /**
+     * @var int number of item per page
+     */
     protected $maxPerPage;
 
+    /**
+     * @var int index of the last page
+     */
     protected $lastPage;
 
+    /**
+     * @var int number of item the query return without pagination
+     */
     protected $nbResults;
 
-    protected $objects;
-
-    protected $parameters;
-
+    /**
+     * @var int
+     */
     protected $currentMaxLink;
 
+    /**
+     * @var int
+     */
     protected $maxRecordLimit;
 
+    /**
+     * @var Collection|array|mixed
+     */
     protected $results;
 
+    /**
+     * @var ConnectionInterface
+     */
     protected $con;
 
     public function __construct(ModelCriteria $query, $maxPerPage = 10)
     {
-        $this->parameters = array();
-
         $this->setQuery($query);
         $this->setMaxPerPage($maxPerPage);
         $this->setPage(1);
@@ -68,7 +90,7 @@ class PropelModelPager implements \IteratorAggregate, \Countable
         return $this->query;
     }
 
-    public function init($con = null)
+    public function init(ConnectionInterface $con = null)
     {
         $this->con = $con;
         $hasMaxRecordLimit = false !== $this->getMaxRecordLimit();
@@ -140,16 +162,16 @@ class PropelModelPager implements \IteratorAggregate, \Countable
         $this->maxRecordLimit = $limit;
     }
 
-    public function getLinks($nb_links = 5)
+    public function getLinks($nbLinks = 5)
     {
         $links = array();
-        $tmp   = $this->page - floor($nb_links / 2);
-        $check = $this->lastPage - $nb_links + 1;
+        $tmp   = $this->page - floor($nbLinks / 2);
+        $check = $this->lastPage - $nbLinks + 1;
         $limit = ($check > 0) ? $check : 1;
         $begin = ($tmp > 0) ? (($tmp > $limit) ? $limit : $tmp) : 1;
 
         $i = (int) $begin;
-        while (($i < $begin + $nb_links) && ($i <= $this->lastPage)) {
+        while (($i < $begin + $nbLinks) && ($i <= $this->lastPage)) {
             $links[] = $i++;
         }
 
@@ -414,14 +436,14 @@ class PropelModelPager implements \IteratorAggregate, \Countable
     }
 
     /**
-     * Returns the total number of results.
+     * Returns the number of items in the result collection.
      *
      * @see Countable
      * @return int
      */
     public function count()
     {
-        return $this->getNbResults();
+        return count($this->getResults());
     }
 
 }

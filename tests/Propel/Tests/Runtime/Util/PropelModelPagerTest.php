@@ -256,4 +256,18 @@ class PropelModelPagerTest extends BookstoreEmptyTestBase
         }
     }
 
+    public function testCountableInterface()
+    {
+        BookQuery::create()->deleteAll();
+        $pager = $this->getPager(10);
+        $this->assertCount(0, $pager);
+
+        $this->createBooks(15);
+        $pager = $this->getPager(10);
+        $this->assertCount(10, $pager);
+
+        $pager = $this->getPager(10, 2);
+        $this->assertCount(5, $pager);
+    }
+
 }

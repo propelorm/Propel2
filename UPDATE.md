@@ -118,7 +118,7 @@ After:
 
 ## `Propel\Generator\Model\ForeignKey::getForeignColumnNames` method has been removed.
 
-## `Propel\Generator\Model\Domain::printSize` method has been renamed to 
+## `Propel\Generator\Model\Domain::printSize` method has been renamed to
 `Propel\Generator\Model\Domain::getSizeDefinition`.
 
 ## `Propel\Generator\Model\Table::printPrimaryKey` method has been removed.
@@ -152,3 +152,6 @@ This could break, behaviors that call `parent` methods
 
 All methods from `Propel\Runtime\Om\Persistent` Interface have been removed
 All Base Object classes now implements `Propel\Runtime\Om\ActiveRecordInterface` this could be use to identify a Propel Object
+
+## `Propel\Runtime\Util\PropelModelPager::count()` now return the number of items in the collection.
+To get the old behavior use `Propel\Runtime\Util\PropelModelPager::getNbResults()`.
