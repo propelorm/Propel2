@@ -4,6 +4,8 @@ Propel2 is an open-source Object-Relational Mapping (ORM) for PHP 5.4.
 
 [![Build Status](https://secure.travis-ci.org/propelorm/Propel2.png?branch=master)](http://travis-ci.org/propelorm/Propel2)
 
+[![Total Downloads](https://poser.pugx.org/propel/propel/downloads.png)](https://packagist.org/packages/propel/propel)
+[![Latest Stable Version](https://poser.pugx.org/propel/propel/v/stable.png)](https://packagist.org/packages/propel/propel)
 
 ## Requirements ##
 
