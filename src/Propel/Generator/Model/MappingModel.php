@@ -174,7 +174,7 @@ abstract class MappingModel implements MappingModelInterface
 
     /**
      * Returns the list of all vendor information.
-     * 
+     *
      * @return VendorInfo[]
      */
     public function getVendorInformation()

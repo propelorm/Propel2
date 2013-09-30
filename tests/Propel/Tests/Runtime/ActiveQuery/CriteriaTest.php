@@ -1114,7 +1114,7 @@ class CriteriaTest extends BookstoreTestBase
 
         $result = $c->createSelectSql($params);
 
-        if ($this->runningOnPostgreSQL()){
+        if ($this->runningOnPostgreSQL()) {
             $sql = 'SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID, COUNT(review.ID) AS Count FROM book LEFT JOIN review ON (book.ID=review.BOOK_ID) GROUP BY book.ID,book.TITLE,book.ISBN,book.PRICE,book.PUBLISHER_ID,book.AUTHOR_ID';
         } else {
             $sql = $this->getSql('SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID, COUNT(review.ID) AS Count FROM `book` LEFT JOIN `review` ON (book.ID=review.BOOK_ID) GROUP BY book.ID');

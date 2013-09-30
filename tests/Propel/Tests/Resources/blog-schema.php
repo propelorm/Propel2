@@ -10,4 +10,3 @@ $schema->setName('acme');
 $schema->addDatabase($database);
 
 return $schema;
-

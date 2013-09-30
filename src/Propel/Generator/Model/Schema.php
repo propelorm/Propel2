@@ -311,7 +311,7 @@ class Schema
     public function toString()
     {
         $dumper = new XmlDumper();
-        
+
         return $dumper->dumpSchema($this);
     }
 

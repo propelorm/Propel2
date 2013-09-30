@@ -523,7 +523,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Adds a new column to the table.
      *
-     * @param  Column|array $col
+     * @param  Column|array    $col
      * @throws EngineException
      * @return Column
      */
@@ -563,7 +563,7 @@ class Table extends ScopedMappingModel implements IdMethod
 
     /**
      * Adds several columns at once.
-     * 
+     *
      * @param Column[] $columns An array of Column instance
      */
     public function addColumns(array $columns)
@@ -576,7 +576,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Removes a column from the table.
      *
-     * @param Column|string $column The Column or its name
+     * @param  Column|string   $column The Column or its name
      * @throws EngineException
      */
     public function removeColumn($column)
@@ -625,7 +625,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Adds a new foreign key to this table.
      *
-     * @param ForeignKey|array $foreignKey The foreign key mapping
+     * @param  ForeignKey|array $foreignKey The foreign key mapping
      * @return ForeignKey
      */
     public function addForeignKey($foreignKey)
@@ -718,7 +718,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * adds the missing referrers and is non-destructive.
      * Warning: only use when all the tables were created.
      *
-     * @param boolean $throwErrors
+     * @param  boolean        $throwErrors
      * @throws BuildException
      */
     public function setupReferrers($throwErrors = false)
@@ -852,7 +852,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Adds a new parameter for the strategy that generates primary keys.
      *
-     * @param IdMethodParameter $idMethodParameter
+     * @param  IdMethodParameter $idMethodParameter
      * @return IdMethodParameter
      */
     public function addIdMethodParameter($idMethodParameter)
@@ -1163,7 +1163,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Returns the auto generated PHP name value for a given name.
      *
-     * @param string $name
+     * @param  string $name
      * @return string
      */
     private function buildPhpName($name)
@@ -1306,7 +1306,7 @@ class Table extends ScopedMappingModel implements IdMethod
 
     /**
      * Makes this database in read-only mode.
-     * 
+     *
      * @param boolean $flag True by default
      */
     public function setReadOnly($flag = true)
@@ -1497,7 +1497,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Returns a Collection of parameters relevant for the chosen
      * id generation method.
-     * 
+     *
      * @return IdMethodParameter[]
      */
     public function getIdMethodParameters()
@@ -1529,7 +1529,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * Checks if $keys are a unique constraint in the table.
      * (through primaryKey, through a regular unices constraints or for single keys when it has isUnique=true)
      *
-     * @param Column[]|string[] $keys
+     * @param  Column[]|string[] $keys
      * @return boolean
      */
     public function isUnique(array $keys)
@@ -1762,7 +1762,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Returns whether or not to determine if code/sql gets created for this table.
      * Table will be skipped, if set to true.
-     * 
+     *
      * @param boolean $flag
      */
     public function setForReferenceOnly($flag = true)

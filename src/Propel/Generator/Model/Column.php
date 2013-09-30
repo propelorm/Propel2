@@ -626,7 +626,7 @@ class Column extends MappingModel
 
     /**
      * Returns the inheritance type.
-     * 
+     *
      * @return string
      */
     public function getInheritanceType()
@@ -636,7 +636,7 @@ class Column extends MappingModel
 
     /**
      * Returns the inheritance list.
-     * 
+     *
      * @return Inheritance[]
      */
     public function getInheritanceList()
@@ -1210,7 +1210,7 @@ class Column extends MappingModel
     /**
      * Sets a string that will give this column a default value.
      *
-     * @param ColumnDefaultValue|scalar $defaultValue The column's default value
+     * @param  ColumnDefaultValue|scalar $defaultValue The column's default value
      * @return Column
      */
     public function setDefaultValue($defaultValue)

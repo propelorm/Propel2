@@ -150,7 +150,7 @@ class ObjectBuilder extends AbstractObjectBuilder
      * Returns the type-casted and stringified default value for the specified
      * Column. This only works for scalar default values currently.
      *
-     * @param  Column $column
+     * @param  Column          $column
      * @throws EngineException
      * @return string
      */
@@ -834,7 +834,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Gets accessor lazy loaded snippets.
      *
-     * @param Column $column
+     * @param  Column $column
      * @return string
      */
     protected function getAccessorLazyLoadSnippet(Column $column)
@@ -3007,7 +3007,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the class attributes that are needed to store fkey related objects.
-     * @param string &$script The script will be modified in this method.
+     * @param string     &$script The script will be modified in this method.
      * @param ForeignKey $fk
      */
     protected function addFKAttributes(&$script, ForeignKey $fk)
@@ -3025,7 +3025,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the mutator (setter) method for setting an fkey related object.
-     * @param string &$script The script will be modified in this method.
+     * @param string     &$script The script will be modified in this method.
      * @param ForeignKey $fk
      */
     protected function addFKMutator(&$script, ForeignKey $fk)
@@ -3097,7 +3097,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the accessor (getter) method for getting an fkey related object.
-     * @param string &$script The script will be modified in this method.
+     * @param string     &$script The script will be modified in this method.
      * @param ForeignKey $fk
      */
     protected function addFKAccessor(&$script, ForeignKey $fk)
@@ -3195,7 +3195,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * Adds a convenience method for setting a related object by specifying the primary key.
      * This can be used in conjunction with the getPrimaryKey() for systems where nothing is known
      * about the actual objects being related.
-     * @param string &$script The script will be modified in this method.
+     * @param string     &$script The script will be modified in this method.
      * @param ForeignKey $fk
      */
     protected function addFKByKeyMutator(&$script, ForeignKey $fk)
@@ -3253,7 +3253,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the method that fetches fkey-related (referencing) objects but also joins in data from another table.
-     * @param string &$script The script will be modified in this method.
+     * @param string     &$script The script will be modified in this method.
      * @param ForeignKey $refFK
      */
     protected function addRefFKGetJoinMethods(&$script, ForeignKey $refFK)
@@ -3324,7 +3324,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * Adds the attributes used to store objects that have referrer fkey relationships to this object.
      * <code>protected collVarName;</code>
      * <code>private lastVarNameCriteria = null;</code>
-     * @param string &$script The script will be modified in this method.
+     * @param string     &$script The script will be modified in this method.
      * @param ForeignKey $refFK
      */
     protected function addRefFKAttributes(&$script, ForeignKey $refFK)
@@ -3412,7 +3412,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the method that clears the referrer fkey collection.
-     * @param string &$script The script will be modified in this method.
+     * @param string     &$script The script will be modified in this method.
      * @param ForeignKey $refFK
      */
     protected function addRefFKClear(&$script, ForeignKey $refFK)
@@ -3439,7 +3439,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the method that initializes the referrer fkey collection.
-     * @param string &$script The script will be modified in this method.
+     * @param string     &$script The script will be modified in this method.
      * @param ForeignKey $refFK
      */
     protected function addRefFKInit(&$script, ForeignKey $refFK)
@@ -3473,7 +3473,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the method that adds an object into the referrer fkey collection.
-     * @param string &$script The script will be modified in this method.
+     * @param string     &$script The script will be modified in this method.
      * @param ForeignKey $refFK
      */
     protected function addRefFKAdd(&$script, ForeignKey $refFK)
@@ -3515,7 +3515,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the method that returns the size of the referrer fkey collection.
-     * @param string &$script The script will be modified in this method.
+     * @param string     &$script The script will be modified in this method.
      * @param ForeignKey $refFK
      */
     protected function addRefFKCount(&$script, ForeignKey $refFK)
@@ -3566,7 +3566,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the method that returns the referrer fkey collection.
-     * @param string &$script The script will be modified in this method.
+     * @param string     &$script The script will be modified in this method.
      * @param ForeignKey $refFK
      */
     protected function addRefFKGet(&$script, ForeignKey $refFK)
@@ -3701,7 +3701,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     }
 
     /**
-     * @param string &$script The script will be modified in this method.
+     * @param string     &$script The script will be modified in this method.
      * @param ForeignKey $refFK
      */
     protected function addRefFKDoAdd(&$script, $refFK)
@@ -3723,7 +3723,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     }
 
     /**
-     * @param string &$script The script will be modified in this method.
+     * @param string     &$script The script will be modified in this method.
      * @param ForeignKey $refFK
      */
     protected function addRefFKRemove(&$script, $refFK)
@@ -3771,7 +3771,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the method that gets a one-to-one related referrer fkey.
      * This is for one-to-one relationship special case.
-     * @param string &$script The script will be modified in this method.
+     * @param string     &$script The script will be modified in this method.
      * @param ForeignKey $refFK
      */
     protected function addPKRefFKGet(&$script, ForeignKey $refFK)
@@ -3969,7 +3969,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the method that clears the referrer fkey collection.
-     * @param string &$script The script will be modified in this method.
+     * @param string     &$script The script will be modified in this method.
      * @param ForeignKey $crossFK
      */
     protected function addCrossFKClear(&$script, ForeignKey $crossFK)
@@ -3998,7 +3998,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the method that clears the referrer fkey collection.
      *
-     * @param string &$script The script will be modified in this method.
+     * @param string     &$script The script will be modified in this method.
      * @param ForeignKey $refFK
      */
     protected function addRefFKPartial(&$script, ForeignKey $refFK)
@@ -4019,7 +4019,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the method that initializes the referrer fkey collection.
-     * @param string &$script The script will be modified in this method.
+     * @param string     &$script The script will be modified in this method.
      * @param ForeignKey $crossFK
      */
     protected function addCrossFKInit(&$script, ForeignKey $crossFK)
@@ -4178,7 +4178,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the method that adds an object into the referrer fkey collection.
-     * @param string &$script The script will be modified in this method.
+     * @param string     &$script The script will be modified in this method.
      * @param ForeignKey $refFK
      * @param ForeignKey $crossFK
      */
@@ -4258,7 +4258,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the method that remove an object from the referrer fkey collection.
-     * @param string $script The script will be modified in this method.
+     * @param string     $script  The script will be modified in this method.
      * @param ForeignKey $refFK
      * @param ForeignKey $crossFK
      */

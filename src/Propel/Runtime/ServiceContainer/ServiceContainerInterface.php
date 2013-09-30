@@ -143,7 +143,7 @@ interface ServiceContainerInterface
     /**
      * Get a logger for a given datasource, or the default logger.
      *
-     * @param string $name
+     * @param  string          $name
      * @return LoggerInterface
      */
     public function getLogger($name = 'defaultLogger');

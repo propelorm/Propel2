@@ -248,7 +248,7 @@ class TableDiff
     /**
      * Returns an added column by its name.
      *
-     * @param string $columnName
+     * @param  string      $columnName
      * @return Column|null
      */
     public function getAddedColumn($columnName)

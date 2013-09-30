@@ -160,7 +160,7 @@ class Database extends ScopedMappingModel
 
     /**
      * Returns the max column name's length.
-     * 
+     *
      * @return integer
      */
     public function getMaxColumnNameLength()
