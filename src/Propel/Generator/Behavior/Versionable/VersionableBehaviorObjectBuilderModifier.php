@@ -18,11 +18,8 @@ namespace Propel\Generator\Behavior\Versionable;
 class VersionableBehaviorObjectBuilderModifier
 {
     protected $behavior;
-
     protected $table;
-
     protected $builder;
-
     protected $objectClassName;
 
     public function __construct($behavior)
@@ -542,9 +539,6 @@ public function getAllVersions(\$con = null)
 
     protected function addComputeDiff(&$script)
     {
-        $versionTable = $this->behavior->getVersionTable();
-        $fks = $versionTable->getForeignKeysReferencingTable($this->table->getName());
-
         $script .= "
 /**
  * Computes the diff between two versions.

@@ -594,7 +594,6 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
      */
     protected function addFindPkComplex(&$script)
     {
-        $table = $this->getTable();
         $class = $this->getObjectClassName();
         $this->declareClasses('\Propel\Runtime\Connection\ConnectionInterface');
         $script .= "
@@ -1508,8 +1507,6 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
      */
     protected function addDelete(&$script)
     {
-        $table = $this->getTable();
-        $emulateCascade = $this->isDeleteCascadeEmulationNeeded() || $this->isDeleteSetNullEmulationNeeded();
         $script .= "
     /**
      * Performs a DELETE on the database, given a ".$this->getObjectClassName()." or Criteria object OR a primary key value.
