@@ -291,6 +291,9 @@ class DefaultPlatform implements PlatformInterface
     {
         $ret = $this->getBeginDDL();
         foreach ($database->getTablesForSql() as $table) {
+            $this->normalizeTable($table);
+        }
+        foreach ($database->getTablesForSql() as $table) {
             $ret .= $this->getCommentBlockDDL($table->getName());
             $ret .= $this->getDropTableDDL($table);
             $ret .= $this->getAddTableDDL($table);
@@ -1351,5 +1354,26 @@ if (is_resource($columnValueAccessor)) {
             $connectionVariableName,
             $sequenceName ? ("'" . $sequenceName . "'") : ''
         );
+    }
+
+    /**
+     * Normalizes a table for the current platform. Very important for the TableComparator to not
+     * generate useless diffs.
+     * Useful for checking needed definitions/structures. E.g. Unique Indexes for ForeignKey columns,
+     * which the most Platforms requires but which is not always explicitly defined in the table model.
+     *
+     * @param Table $table The table object which gets modified.
+     */
+    public function normalizeTable(Table $table)
+    {
+        if ($table->hasForeignKeys()) {
+            foreach ($table->getForeignKeys() as $fk) {
+                if (!$fk->getForeignTable()->isUnique($fk->getForeignColumnObjects())) {
+                    $unique = new Unique();
+                    $unique->setColumns($fk->getForeignColumnObjects());
+                    $fk->getForeignTable()->addUnique($unique);
+                }
+            }
+        }
     }
 }

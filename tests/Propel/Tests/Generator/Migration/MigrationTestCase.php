@@ -145,7 +145,7 @@ class MigrationTestCase extends TestCase
         if (false !== $diff) {
             $sql = $this->database->getPlatform()->getModifyDatabaseDDL($diff);
             $this->fail(sprintf(
-                    "There are unexpected diffs: \n%s\n`%s`\nCurrent Database: \n%s\nTo XML Database: \n%s\n",
+                    "There are unexpected diffs (real to model): \n%s\n-----%s-----\nCurrent Database: \n%s\nTo XML Database: \n%s\n",
                     $diff,
                     $sql,
                     $this->database,

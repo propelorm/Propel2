@@ -90,12 +90,31 @@ class SqlitePlatform extends DefaultPlatform
     }
 
     /**
+     * Builds the DDL SQL to remove a list of columns
+     *
+     * @return string
+     */
+    public function getAddColumnsDDL($columns)
+    {
+        $ret = '';
+        $pattern = "
+ALTER TABLE %s ADD %s;
+";
+        foreach ($columns as $column) {
+            $tableName = $column->getTable()->getName();
+            $ret .= sprintf($pattern,
+                $this->quoteIdentifier($tableName),
+                $this->getColumnDDL($column)
+            );
+        }
+    }
+
+
+    /**
      * {@inheritdoc}
      */
     public function getModifyTableDDL(TableDiff $tableDiff)
     {
-        $tableDiff = clone $tableDiff;
-        $this->checkTable($tableDiff->getToTable());
 
         $changedNotEditableThroughDirectDDL = $this->tableAlteringWorkaround && (false
             || $tableDiff->hasModifiedFks()
@@ -228,29 +247,15 @@ BEGIN;
 ';
     }
 
-    public function getModifyDatabaseDDL(DatabaseDiff $databaseDiff)
-    {
-        foreach ($databaseDiff->getModifiedTables() as $table) {
-            $this->checkTable($table->getToTable());
-        }
-        foreach ($databaseDiff->getAddedTables() as $table) {
-            $this->checkTable($table);
-        }
-
-        return parent::getModifyDatabaseDDL($databaseDiff);
-    }
-
     /**
      * {@inheritdoc}
      */
     public function getAddTablesDDL(Database $database)
     {
         $ret = '';
-
         foreach ($database->getTablesForSql() as $table) {
-            $this->checkTable($table);
+            $this->normalizeTable($table);
         }
-
         foreach ($database->getTablesForSql() as $table) {
             $ret .= $this->getCommentBlockDDL($table->getName());
             $ret .= $this->getDropTableDDL($table);
@@ -267,18 +272,8 @@ BEGIN;
      *
      * @param Table $table
      */
-    public function checkTable(Table $table)
+    public function normalizeTable(Table $table)
     {
-        if ($table->hasForeignKeys()) {
-            foreach ($table->getForeignKeys() as $fk) {
-                if (!$fk->getForeignTable()->isUnique($fk->getForeignColumnObjects())) {
-                    $unique = new Unique();
-                    $unique->setColumns($fk->getForeignColumnObjects());
-                    $fk->getForeignTable()->addUnique($unique);
-                }
-            }
-        }
-
         if (count($pks = $table->getPrimaryKey()) > 1 && $table->hasAutoIncrementPrimaryKey()) {
             foreach ($pks as $pk) {
                 //no pk can be NULL, as usual
@@ -314,6 +309,7 @@ BEGIN;
             }
         }
 
+        parent::normalizeTable($table);
     }
 
     /**

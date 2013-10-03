@@ -40,6 +40,37 @@ class ForeignKeyTest extends MigrationTestCase
         $this->migrateAndTest($originXml, $targetXml);
     }
 
+    public function testAddNotUnique()
+    {
+        $originXml = '
+<database>
+    <table name="migration_test_6_1">
+        <column name="id" type="integer" primaryKey="true" autoIncrement="true" />
+        <column name="title" required="true" />
+    </table>
+</database>
+';
+
+        $targetXml = '
+<database>
+    <table name="migration_test_6_1">
+        <column name="id" type="integer" primaryKey="true" autoIncrement="true" />
+        <column name="id2" type="integer"/>
+        <column name="title" required="true" />
+    </table>
+    <table name="migration_test_7_1">
+        <column name="id" type="integer" primaryKey="true" autoIncrement="true" />
+        <column name="title" required="true" />
+        <column name="test_6_id" type="integer" />
+        <foreign-key foreignTable="migration_test_6_1" onDelete="cascade" onUpdate="cascade">
+            <reference local="test_6_id" foreign="id2" />
+        </foreign-key>
+    </table>
+</database>
+';
+        $this->migrateAndTest($originXml, $targetXml);
+    }
+
     public function testRemove()
     {
         $originXml = '
