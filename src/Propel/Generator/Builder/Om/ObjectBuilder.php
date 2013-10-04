@@ -41,6 +41,12 @@ class ObjectBuilder extends AbstractObjectBuilder
         $this->twig = new \Twig_Environment($loader, ['autoescape' => false, 'strict_variables' => true, 'cache' => sys_get_temp_dir() . 'propel2-cache', 'auto_reload' => true]);
         $this->twig->addFilter('addSlashes', new \Twig_SimpleFilter('addSlashes', 'addslashes'));
         $this->twig->addFilter('lcfirst', new \Twig_SimpleFilter('lcfirst', 'lcfirst'));
+        $this->twig->addFilter(
+            'varExport',
+            new \Twig_SimpleFilter('varExport', function ($input) {
+                return var_export($input, true);
+            })
+        );
     }
 
 
@@ -438,8 +444,9 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * @param string &$script
      * @param Column $column
      */
-    public function addTemporalAccessorComment(&$script, Column $column)
+    public function addTemporalAccessorComment(Column $column)
     {
+        $script = '';
         $clo = $column->getLowercasedName();
 
         $dateTimeClass = $this->getBuildProperty('dateTimeClass');
@@ -471,123 +478,9 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      *
      * @throws PropelException - if unable to parse/validate the date/time value.
      */";
+
+        return $script;
     }
-
-    /**
-     * Adds the function declaration for a temporal accessor.
-     *
-     * @param string &$script
-     * @param Column $column
-     */
-    public function addTemporalAccessorOpen(&$script, Column $column)
-    {
-        $cfc = $column->getPhpName();
-
-        $defaultfmt = null;
-        $visibility = $column->getAccessorVisibility();
-
-        // Default date/time formatter strings are specified in build.properties
-        if ($column->getType() === PropelTypes::DATE) {
-            $defaultfmt = $this->getBuildProperty('defaultDateFormat');
-        } elseif ($column->getType() === PropelTypes::TIME) {
-            $defaultfmt = $this->getBuildProperty('defaultTimeFormat');
-        } elseif ($column->getType() === PropelTypes::TIMESTAMP) {
-            $defaultfmt = $this->getBuildProperty('defaultTimeStampFormat');
-        }
-
-        if (empty($defaultfmt)) {
-            $defaultfmt = null;
-        }
-
-        $script .= "
-    ".$visibility." function get$cfc(\$format = ".var_export($defaultfmt, true)."";
-        if ($column->isLazyLoad()) {
-            $script .= ", \$con = null";
-        }
-        $script .= ")
-    {";
-    }
-
-    /**
-     * Gets accessor lazy loaded snippets.
-     *
-     * @param Column $column
-     * @return string
-     */
-    protected function getAccessorLazyLoadSnippet(Column $column)
-    {
-        if ($column->isLazyLoad()) {
-            $clo = $column->getLowercasedName();
-            $defaultValueString = 'null';
-            $def = $column->getDefaultValue();
-            if ($def !== null && !$def->isExpression()) {
-                $defaultValueString = $this->getDefaultValueString($column);
-            }
-
-            return "
-        if (!\$this->{$clo}_isLoaded && \$this->{$clo} === {$defaultValueString} && !\$this->isNew()) {
-            \$this->load{$column->getPhpName()}(\$con);
-        }
-";
-        }
-
-        return '';
-    }
-
-    /**
-     * Adds the body of the temporal accessor.
-     *
-     * @param string &$script
-     * @param Column $column
-     */
-    protected function addTemporalAccessorBody(&$script, Column $column)
-    {
-        $clo = $column->getLowercasedName();
-
-        $dateTimeClass = $this->getBuildProperty('dateTimeClass');
-        if (!$dateTimeClass) {
-            $dateTimeClass = '\DateTime';
-        }
-        $this->declareClasses($dateTimeClass);
-        $defaultfmt = null;
-
-        // Default date/time formatter strings are specified in build.properties
-        if ($column->getType() === PropelTypes::DATE) {
-            $defaultfmt = $this->getBuildProperty('defaultDateFormat');
-        } elseif ($column->getType() === PropelTypes::TIME) {
-            $defaultfmt = $this->getBuildProperty('defaultTimeFormat');
-        } elseif ($column->getType() === PropelTypes::TIMESTAMP) {
-            $defaultfmt = $this->getBuildProperty('defaultTimeStampFormat');
-        }
-
-        if (empty($defaultfmt)) {
-            $defaultfmt = null;
-        }
-
-        if ($column->isLazyLoad()) {
-            $script .= $this->getAccessorLazyLoadSnippet($column);
-        }
-
-        $script .= "
-        if (\$format === null) {
-            return \$this->$clo;
-        } else {
-            return \$this->$clo instanceof \DateTime ? \$this->{$clo}->format(\$format) : null;
-        }";
-    }
-
-    /**
-     * Adds the body of the temporal accessor.
-     *
-     * @param string &$script
-     */
-    protected function addTemporalAccessorClose(&$script)
-    {
-        $script .= "
-    }
-";
-    }
-
     /**
      * Adds an object getter method.
      *
