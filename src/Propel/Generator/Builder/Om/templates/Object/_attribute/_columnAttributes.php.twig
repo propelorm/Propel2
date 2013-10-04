@@ -21,7 +21,7 @@
          protected ${{ column.name|lower }}_isLoaded = false;
     {% endif %}
 
-    {% if column.type == 'OBJECT' or column.type == 'ARRAY' %}{# TODO: find a way to access the PropelType::-const vars via propel #}
+    {% if column.type == constant('Propel\\Generator\\Model\\PropelTypes::OBJECT') or column.type == constant('Propel\\Generator\\Model\\PropelTypes::PHP_ARRAY') %}
         /**
          * The unserialized ${{ column.name|lower }} value - i.e. the persisted object.
          * This is necessary to avoid repeated calls to unserialize() at runtime.
