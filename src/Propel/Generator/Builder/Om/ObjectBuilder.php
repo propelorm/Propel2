@@ -297,8 +297,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
         $table = $this->getTable();
 
-        $this->addBaseObjectMethods($script);
-
         $this->addColumnAccessorMethods($script);
         $this->addColumnMutatorMethods($script);
 
@@ -402,16 +400,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $script .= "
     protected \$" . $clo . ";
 ";
-    }
-
-    /**
-     * Adds the base object functions.
-     *
-     * @param string &$script
-     */
-    protected function addBaseObjectMethods(&$script)
-    {
-        $script .= $this->renderTemplate('baseObjectMethods', array('className' => $this->getUnqualifiedClassName()));
     }
 
     /**
