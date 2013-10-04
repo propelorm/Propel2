@@ -1,0 +1,12 @@
+/**
+ * Initializes internal state of {{ builder.qualifiedClassName }} object.
+{% if builder.defaultValues %}
+    * @see applyDefaults()"
+{% endif %}
+ */
+public function __construct()
+{
+    {% if builder.defaultValues %}
+        $this->applyDefaultValues();
+    {% endif %}
+}

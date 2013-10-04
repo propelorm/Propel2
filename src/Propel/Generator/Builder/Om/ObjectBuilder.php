@@ -296,7 +296,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $script .= $this->twig->render('Object/_classBody.php.twig', ['builder' => $this]);
 
         $table = $this->getTable();
-        $this->addConstructor($script);
 
         $this->addBaseObjectMethods($script);
 
@@ -402,74 +401,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $clo = $column->getLowercasedName() . "_unserialized";
         $script .= "
     protected \$" . $clo . ";
-";
-    }
-
-    /**
-     * Adds the constructor for this object.
-     *
-     * @param string &$script
-     */
-    protected function addConstructor(&$script)
-    {
-        $this->addConstructorComment($script);
-        $this->addConstructorOpen($script);
-        if ($this->hasDefaultValues()) {
-            $this->addConstructorBody($script);
-        }
-        $this->addConstructorClose($script);
-    }
-
-    /**
-     * Adds the comment for the constructor
-     *
-     * @param string &$script
-     */
-    protected function addConstructorComment(&$script)
-    {
-        $script .= "
-    /**
-     * Initializes internal state of ".$this->getQualifiedClassName()." object.";
-        if ($this->hasDefaultValues()) {
-            $script .= "
-     * @see applyDefaults()";
-        }
-        $script .= "
-     */";
-    }
-
-    /**
-     * Adds the function declaration for the constructor.
-     *
-     * @param string &$script
-     */
-    protected function addConstructorOpen(&$script)
-    {
-        $script .= "
-    public function __construct()
-    {";
-    }
-
-    /**
-     * Adds the function body for the constructor.
-     *
-     * @param string &$script
-     */
-    protected function addConstructorBody(&$script)
-    {
-        $script .= "
-        \$this->applyDefaultValues();";
-    }
-
-    /**
-     * Adds the function close for the constructor.
-     *
-     * @param string &$script
-     */
-    protected function addConstructorClose(&$script)
-    {
-        $script .= "
-    }
 ";
     }
 
