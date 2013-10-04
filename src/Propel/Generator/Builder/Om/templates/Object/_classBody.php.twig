@@ -1,0 +1,27 @@
+{% if not builder.table.isAlias %}
+    {% include 'Object/_constants.php.twig' %}
+    {{ builder.addAttributes }} {# Todo: remove and use inlcude instead #}
+{% endif %}
+{% if builder.table.hasCrossForeignKeys %}
+    {% for fkList in builder.table.crossFKs %} {# todo: add getters to the fklist #}
+        {% set refFk = fkList[0] %}
+        {% set crossFk = fkList[1] %}
+        {% set fkName = builder.getFKPhpNameAffix(crossFk, true) %}
+
+        {% if not refFk.localPrimaryKey %}
+            {% include 'Object/_scheduledForDeletionAttribute.php.twig' with {'fkName': fkName} %}
+        {% endif %}
+    {% endfor %}
+{% endif %}
+
+{% for ref in builder.table.referrers %}
+    {% set fkName = builder.refFKPhpNameAffix(ref, true) %}
+
+    {% if not ref.localPrimaryKey %}
+        {% include 'Object/_attribute/_scheduledForDeletionAttribute.php.twig' with {'fkName': fkName} %}
+    {% endif %}
+{% endfor %}
+
+{% if builder.hasDefaultValues %}
+    {% include 'Object/_applyDefaultValues.php.twig' with {'builder': builder} %}
+{% endif %}

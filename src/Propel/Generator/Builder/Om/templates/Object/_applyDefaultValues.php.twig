@@ -1,0 +1,20 @@
+/**
+ * Applies default values to this object.
+ * This method should be called from the object's constructor (or
+ * equivalent initialization method).
+ * @see __construct()
+ */
+
+public function applyDefaultValues()
+{
+    {% for column in builder.table.columns %}
+        {% set default = column.defaultValue %}
+        {% if default != null and not default.expression %}
+            {% if column.temporalType %}
+                $this->{{ column.name|lower }} = PropelDateTime::newInstance({{ builder.defaultValueString(column) }}, null, '{{ builder.buildProperty('dateTimeClass')|default('\DateTime') }}');
+            {% else %}
+                $this->{{ column.name|lower }} = {{ builder.defaultValueString(column) }};
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+}

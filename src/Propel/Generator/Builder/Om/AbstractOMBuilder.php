@@ -96,6 +96,8 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * This method may emit warnings for code which may cause problems
      * and will throw exceptions for errors that will definitely cause
      * problems.
+     *
+     * Todo: Why is this not abstract?!
      */
     protected function validateModel()
     {

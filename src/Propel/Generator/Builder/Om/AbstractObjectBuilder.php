@@ -140,7 +140,10 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
         return (!$table->isAlias() && $this->getBuildProperty('addGenericAccessors'));
     }
 
-    protected function hasDefaultValues()
+    /**
+     * todo: made this public because view need this
+     */
+    public function hasDefaultValues()
     {
         foreach ($this->getTable()->getColumns() as $col) {
             if (null !== $col->getDefaultValue()) {

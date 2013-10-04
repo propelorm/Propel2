@@ -15,6 +15,7 @@ use Propel\Generator\Model\Column;
 use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\IdMethod;
 use Propel\Generator\Model\PropelTypes;
+use Propel\Generator\Model\Table;
 use Propel\Generator\Platform\MssqlPlatform;
 use Propel\Generator\Platform\MysqlPlatform;
 use Propel\Generator\Platform\OraclePlatform;
@@ -31,6 +32,17 @@ use Propel\Generator\Platform\SqlsrvPlatform;
  */
 class ObjectBuilder extends AbstractObjectBuilder
 {
+    private $twig;
+
+    public function __construct(Table $table)
+    {
+        parent::__construct($table);
+        $loader = new \Twig_Loader_Filesystem(__DIR__ . '/templates/');
+        $this->twig = new \Twig_Environment($loader, ['autoescape' => false, 'strict_variables' => true, 'cache' => __DIR__ . '/cache/']);
+        $this->twig->addFilter('addSlashes', new \Twig_SimpleFilter('addSlashes', 'addslashes'));
+        $this->twig->addFilter('lcfirst', new \Twig_SimpleFilter('lcfirst', 'lcfirst'));
+    }
+
 
     /**
      * Returns the package for the base object classes.
@@ -150,11 +162,13 @@ class ObjectBuilder extends AbstractObjectBuilder
      * Returns the type-casted and stringified default value for the specified
      * Column. This only works for scalar default values currently.
      *
+     * TODO: made this public because template
+     *
      * @param  Column $column
      * @throws EngineException
      * @return string
      */
-    protected function getDefaultValueString(Column $column)
+    public function getDefaultValueString(Column $column)
     {
         $defaultValue = var_export(null, true);
         $val = $column->getPhpDefaultValue();
@@ -279,35 +293,9 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             '\Propel\Runtime\Map\TableMap'
         );
 
+        $script .= $this->twig->render('Object/_classBody.php.twig', ['builder' => $this]);
+
         $table = $this->getTable();
-        if (!$table->isAlias()) {
-            $this->addConstants($script);
-            $this->addAttributes($script);
-        }
-
-        if ($table->hasCrossForeignKeys()) {
-            /* @var $refFK ForeignKey */
-            foreach ($table->getCrossFks() as $fkList) {
-                list($refFK, $crossFK) = $fkList;
-                $fkName = $this->getFKPhpNameAffix($crossFK, true);
-
-                if (!$refFK->isLocalPrimaryKey()) {
-                    $this->addScheduledForDeletionAttribute($script, $fkName);
-                }
-            }
-        }
-
-        foreach ($table->getReferrers() as $refFK) {
-            $fkName = $this->getRefFKPhpNameAffix($refFK, true);
-
-            if (!$refFK->isLocalPrimaryKey()) {
-                $this->addScheduledForDeletionAttribute($script, $fkName);
-            }
-        }
-
-        if ($this->hasDefaultValues()) {
-            $this->addApplyDefaultValues($script);
-        }
         $this->addConstructor($script);
 
         $this->addBaseObjectMethods($script);
@@ -376,56 +364,14 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     }
 
     /**
-     * Adds any constants to the class.
-     *
-     * @param string &$script
+     * Todo: find a way to handle behaviours
      */
-    protected function addConstants(&$script)
+    public function addAttributes()
     {
-        $script .= "
-    /**
-     * TableMap class name
-     */
-    const TABLE_MAP = '" . addslashes($this->getTableMapBuilder()->getFullyQualifiedClassName()) . "';
-";
-    }
-
-    /**
-     * Adds class attributes.
-     *
-     * @param string &$script
-     */
-    protected function addAttributes(&$script)
-    {
-        $table = $this->getTable();
-
-        $script .= "
-";
-
-        $script .= $this->renderTemplate('baseObjectAttributes');
-
-        if (!$table->isAlias()) {
-            $this->addColumnAttributes($script);
-        }
-
-        foreach ($table->getForeignKeys() as $fk) {
-            $this->addFKAttributes($script, $fk);
-        }
-
-        foreach ($table->getReferrers() as $refFK) {
-            $this->addRefFKAttributes($script, $refFK);
-        }
-
-        // many-to-many relationships
-        foreach ($table->getCrossFks() as $fkList) {
-                $crossFK = $fkList[1];
-                $this->addCrossFKAttributes($script, $crossFK);
-        }
-
-        $this->addAlreadyInSaveAttribute($script);
-
-        // apply behaviors
+        $script = $this->twig->render('Object/_attributes.php.twig', ['builder' => $this]);
         $this->applyBehaviorModifier('objectAttributes', $script, "    ");
+
+        return $script;
     }
 
     /**
@@ -439,111 +385,12 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $table = $this->getTable();
 
         foreach ($table->getColumns() as $col) {
-            $this->addColumnAttributeComment($script, $col);
-            $this->addColumnAttributeDeclaration($script, $col);
-            if ($col->isLazyLoad() ) {
-                $this->addColumnAttributeLoaderComment($script, $col);
-                $this->addColumnAttributeLoaderDeclaration($script, $col);
-            }
             if ($col->getType() == PropelTypes::OBJECT || $col->getType() == PropelTypes::PHP_ARRAY) {
                 $this->addColumnAttributeUnserializedComment($script, $col);
                 $this->addColumnAttributeUnserializedDeclaration($script, $col);
             }
         }
     }
-
-    /**
-     * Adds comment about the attribute (variable) that stores column values.
-     *
-     * @param string &$script
-     * @param Column $column
-     */
-    protected function addColumnAttributeComment(&$script, Column $column)
-    {
-        $cptype = $column->getPhpType();
-        $clo = $column->getLowercasedName();
-
-        $script .= "
-    /**
-     * The value for the $clo field.";
-        if ($column->getDefaultValue()) {
-            if ($column->getDefaultValue()->isExpression()) {
-                $script .= "
-     * Note: this column has a database default value of: (expression) ".$column->getDefaultValue()->getValue();
-            } else {
-                $script .= "
-     * Note: this column has a database default value of: ". $this->getDefaultValueString($column);
-            }
-        }
-        $script .= "
-     * @var        $cptype
-     */";
-    }
-
-    /**
-     * Adds the declaration of a column value storage attribute.
-     *
-     * @param string &$script
-     * @param Column $column
-     */
-    protected function addColumnAttributeDeclaration(&$script, Column $column)
-    {
-        $clo = $column->getLowercasedName();
-        $script .= "
-    protected \$" . $clo . ";
-";
-    }
-
-    /**
-     * Adds the comment about the attribute keeping track if an attribute value
-     * has been loaded.
-     *
-     * @param string &$script
-     * @param Column $column
-     */
-    protected function addColumnAttributeLoaderComment(&$script, Column $column)
-    {
-        $clo = $column->getLowercasedName();
-        $script .= "
-    /**
-     * Whether the lazy-loaded \$$clo value has been loaded from database.
-     * This is necessary to avoid repeated lookups if \$$clo column is NULL in the db.
-     * @var boolean
-     */";
-    }
-
-    /**
-     * Adds the declaration of the attribute keeping track of an attribute
-     * loaded state.
-     *
-     * @param string &$script
-     * @param Column $column
-     */
-    protected function addColumnAttributeLoaderDeclaration(&$script, Column $column)
-    {
-        $clo = $column->getLowercasedName();
-        $script .= "
-    protected \$".$clo."_isLoaded = false;
-";
-    }
-
-    /**
-     * Adds the comment about the serialized attribute.
-     *
-     * @param string &$script
-     * @param Column $column
-     */
-    protected function addColumnAttributeUnserializedComment(&$script, Column $column)
-    {
-        $clo = $column->getLowercasedName();
-        $script .= "
-    /**
-     * The unserialized \$$clo value - i.e. the persisted object.
-     * This is necessary to avoid repeated calls to unserialize() at runtime.
-     * @var object
-     */";
-    }
-
     /**
      * Adds the declaration of the serialized attribute.
      *
@@ -650,95 +497,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             }
         }
         $script .= $this->renderTemplate('baseObjectMethodHook', $hooks);
-    }
-
-    /**
-     * Adds the applyDefaults() method, which is called from the constructor.
-     *
-     * @param string &$script
-     */
-    protected function addApplyDefaultValues(&$script)
-    {
-        $this->addApplyDefaultValuesComment($script);
-        $this->addApplyDefaultValuesOpen($script);
-        $this->addApplyDefaultValuesBody($script);
-        $this->addApplyDefaultValuesClose($script);
-    }
-
-    /**
-     * Adds the comment for the applyDefaults method.
-     *
-     * @param string &$script
-     */
-    protected function addApplyDefaultValuesComment(&$script)
-    {
-        $script .= "
-    /**
-     * Applies default values to this object.
-     * This method should be called from the object's constructor (or
-     * equivalent initialization method).
-     * @see __construct()
-     */";
-    }
-
-    /**
-     * Adds the function declaration for the applyDefaults method.
-     *
-     * @param string &$script
-     */
-    protected function addApplyDefaultValuesOpen(&$script)
-    {
-        $script .= "
-    public function applyDefaultValues()
-    {";
-    }
-
-    /**
-     * Adds the function body of the applyDefault method.
-     *
-     * @param string &$script
-     */
-    protected function addApplyDefaultValuesBody(&$script)
-    {
-        $table = $this->getTable();
-        // FIXME - Apply support for PHP default expressions here
-        // see: http://propel.phpdb.org/trac/ticket/378
-
-        $colsWithDefaults = array();
-        foreach ($table->getColumns() as $column) {
-            $def = $column->getDefaultValue();
-            if ($def !== null && !$def->isExpression()) {
-                $colsWithDefaults[] = $column;
-            }
-        }
-
-        foreach ($colsWithDefaults as $column) {
-            $clo = $column->getLowercasedName();
-            $defaultValue = $this->getDefaultValueString($column);
-            if ($column->isTemporalType()) {
-                $dateTimeClass = $this->getBuildProperty('dateTimeClass');
-                if (!$dateTimeClass) {
-                    $dateTimeClass = '\DateTime';
-                }
-                $script .= "
-        \$this->".$clo." = PropelDateTime::newInstance($defaultValue, null, '$dateTimeClass');";
-            } else {
-                $script .= "
-        \$this->".$clo." = $defaultValue;";
-            }
-        }
-    }
-
-    /**
-     * Adds the function close for the applyDefaults method.
-     *
-     * @param string &$script
-     */
-    protected function addApplyDefaultValuesClose(&$script)
-    {
-        $script .= "
-    }
-";
     }
 
     /**
@@ -4709,23 +4467,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
         return \$selectCriteria->doUpdate(\$valuesCriteria, \$con);
     }
-";
-    }
-
-    /**
-     * Adds the $alreadyInSave attribute, which prevents attempting to re-save the same object.
-     * @param string &$script The script will be modified in this method.
-     */
-    protected function addAlreadyInSaveAttribute(&$script)
-    {
-        $script .= "
-    /**
-     * Flag to prevent endless save loop, if this object is referenced
-     * by another object which falls in this transaction.
-     *
-     * @var boolean
-     */
-    protected \$alreadyInSave = false;
 ";
     }
 

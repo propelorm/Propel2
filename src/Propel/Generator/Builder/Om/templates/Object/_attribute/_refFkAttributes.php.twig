@@ -1,0 +1,13 @@
+{% set className = builder.newObjectBuilder(refFk.table).objectClassName %}
+{% if refFk.localPrimaryKey %}
+    /**
+     * @var        {{ className }} one-to-one related {{ className }} object
+     */
+    protected ${{ builder.pkRefFKVarName(refFk) }};
+{% else %}
+    /**
+     * @var        ObjectCollection|{{ className }}[] Collection to store aggregation of {{ className }} objects.
+     */
+    protected ${{ builder.refFKCollVarName(refFk) }};
+    protected ${{ builder.refFKCollVarName(refFk) }}Partial;
+{% endif %}
