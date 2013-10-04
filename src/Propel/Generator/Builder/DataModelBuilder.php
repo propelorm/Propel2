@@ -326,6 +326,7 @@ abstract class DataModelBuilder
 
     /**
      * Returns new stub Query Inheritance builder class for this table.
+     * @param $child
      * @return ObjectBuilder
      */
     public function getNewStubQueryInheritanceBuilder($child)
@@ -338,6 +339,7 @@ abstract class DataModelBuilder
 
     /**
      * Returns new stub Query Inheritance builder class for this table.
+     * @param \Propel\Generator\Model\Table $table
      * @return TableMapBuilder
      */
     public function getNewTableMapBuilder(Table $table)
@@ -475,6 +477,7 @@ abstract class DataModelBuilder
 
     /**
      * Returns the name of the current class being built, with a possible prefix.
+     * @param $identifier
      * @return string
      * @see OMBuilder#getClassName()
      */
