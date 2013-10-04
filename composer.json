@@ -22,7 +22,8 @@
         "symfony/finder": "~2.2",
         "symfony/validator": "~2.2",
         "symfony/filesystem": "~2.2",
-        "psr/log": "~1.0"
+        "psr/log": "~1.0",
+        "twig/twig": "1.12"
     },
     "require-dev": {
         "behat/behat": "~2.4",
