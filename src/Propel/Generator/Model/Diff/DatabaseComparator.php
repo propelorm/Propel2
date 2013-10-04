@@ -119,8 +119,13 @@ class DatabaseComparator
         $toDatabaseTables = $this->toDatabase->getTables();
         $databaseDifferences = 0;
 
+        $platform = $this->toDatabase->getPlatform() ?: $this->fromDatabase->getPlatform();
+
         // check for new tables in $toDatabase
         foreach ($toDatabaseTables as $table) {
+            if ($platform) {
+                $platform->normalizeTable($table);
+            }
             if (!$this->fromDatabase->hasTable($table->getName(), $caseInsensitive) && !$table->isSkipSql()) {
                 $this->databaseDiff->addAddedTable($table->getName(), $table);
                 $databaseDifferences++;

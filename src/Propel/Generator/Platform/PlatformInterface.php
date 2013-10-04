@@ -232,4 +232,14 @@ interface PlatformInterface
      * @return string
      */
     public function getSchemaDelimiter();
+
+    /**
+     * Normalizes a table for the current platform. Very important for the TableComparator to not
+     * generate useless diffs.
+     * Useful for checking needed definitions/structures. E.g. Unique Indexes for ForeignKey columns,
+     * which the most Platforms requires but which is not always explicitly defined in the table model.
+     *
+     * @param Table $table The table object which gets modified.
+     */
+    public function normalizeTable(Table $table);
 }
