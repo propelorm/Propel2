@@ -1,0 +1,136 @@
+{% set objectClassName = builder.classNameFromBuilder(builder.stubObjectBuilder(behavior.table)) %}
+{% set queryClassName = builder.classNameFromBuilder(builder.newStubQueryBuilder(behavior.table)) %}
+/**
+ * Sets the locale for translations
+ *
+ * @param     string $locale Locale to use for the translation, e.g. 'fr_FR'
+ *
+ * @return    {{ objectClassName }} The current object (for fluent API support)
+ */
+public function set{{ behavior.localeColumn.phpName }}($locale = '{{ behavior.defaultLocale }}')
+{
+    $this->currentLocale = $locale;
+
+    return $this;
+}
+
+/**
+ * Gets the locale for translations
+ *
+ * @return    string $locale Locale to use for the translation, e.g. 'fr_FR'
+ */
+public function get{{ behavior.localeColumn.phpName }}()
+{
+    return $this->currentLocale;
+}
+
+{% if behavior.parameter('locale_alias') %}
+    /**
+     * Gets the locale for translations.
+     * Alias for getLocale(), for BC purpose.
+     *
+     * @return    string $locale Locale to use for the translation, e.g. 'fr_FR'
+     */
+    public function get{{ behavior.parameter('locale_alias')|ucfirst }}()
+    {
+        return $this->getLocale();
+    }
+
+
+    /**
+     * Sets the locale for translations.
+     * Alias for setLocale(), for BC purpose.
+     *
+     * @param     string $locale Locale to use for the translation, e.g. 'fr_FR'
+     *
+     * @return    {{ objectClassName }} The current object (for fluent API support)
+     */
+    public function set{{ behavior.parameter('locale_alias')|ucfirst }}($locale = '{{ behavior.defaultLocale }}')
+    {
+        return $this->setLocale($locale);
+    }
+{% endif %}
+
+
+/**
+ * Returns the current translation for a given locale
+ *
+ * @param     string $locale Locale to use for the translation, e.g. 'fr_FR'
+ * @param     ConnectionInterface $con an optional connection object
+ *
+ * @return    {{ objectClassName }}
+ */
+public function getTranslation($locale = '{{ behavior.defaultLocale }}', ConnectionInterface $con = null)
+{
+    if (!isset($this->currentTranslations[$locale])) {
+        if (null !== $this->{{ builder.refFKCollVarName(behavior.i18nForeignKey) }}) {
+            foreach ($this->{{ builder.refFKCollVarName(behavior.i18nForeignKey) }} as $translation) {
+                if ($translation->get{{ behavior.localeColumn.phpName }}() == $locale) {
+                    $this->currentTranslations[$locale] = $translation;
+
+                    return $translation;
+                }
+            }
+        }
+        if ($this->isNew()) {
+            $translation = new {{ objectClassName }}();
+            $translation->set{{ behavior.localeColumn.phpName }}($locale);
+        } else {
+            $translation = {{ queryClassName }}::create()
+                ->filterByPrimaryKey(array($this->getPrimaryKey(), $locale))
+                ->findOneOrCreate($con);
+            $this->currentTranslations[$locale] = $translation;
+        }
+        $this->add{{ builder.refFKPhpNameAffix(behavior.i18nForeignKey, false) }}($translation);
+    }
+
+    return $this->currentTranslations[$locale];
+}
+
+
+/**
+ * Remove the translation for a given locale
+ *
+ * @param     string $locale Locale to use for the translation, e.g. 'fr_FR'
+ * @param     ConnectionInterface $con an optional connection object
+ *
+ * @return    {{ objectClassName }} The current object (for fluent API support)
+ */
+public function removeTranslation($locale = '{{ behavior.defaultLocale }}', ConnectionInterface $con = null)
+{
+    if (!$this->isNew()) {
+        {{ queryClassName }}::create()
+            ->filterByPrimaryKey(array($this->getPrimaryKey(), $locale))
+            ->delete($con);
+    }
+    if (isset($this->currentTranslations[$locale])) {
+        unset($this->currentTranslations[$locale]);
+    }
+    foreach ($this->{{ builder.refFKCollVarName(behavior.i18nForeignKey) }} as $key => $translation) {
+        if ($translation->get{{ behavior.localeColumn.phpName }}() == $locale) {
+            unset($this->{{ builder.refFKCollVarName(behavior.i18nForeignKey) }}[$key]);
+            break;
+        }
+    }
+
+    return $this;
+}
+
+
+
+/**
+ * Returns the current translation
+ *
+ * @param     ConnectionInterface $con an optional connection object
+ *
+ * @return    {{ objectClassName }}
+ */
+public function getCurrentTranslation(ConnectionInterface $con = null)
+{
+    return $this->getTranslation($this->getLocale(), $con);
+}
+
+{% for column in behavior.i18nColumns %}
+    {% include '@' ~ behavior.templateNamespace ~ '/Object/_translatedColumnAccessor.php.twig' with {'builder': builder, 'behavior': behavior, 'column': column} %}
+    {% include '@' ~ behavior.templateNamespace ~ '/Object/_translatedColumnMutator.php.twig' with {'builder': builder, 'behavior': behavior, 'column': column} %}
+{% endfor %}

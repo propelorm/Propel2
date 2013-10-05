@@ -1,0 +1,14 @@
+{# FIXME: the connection used by getCurrentTranslation in the generated code cannot be specified by the user #}
+{% if column.temporalType %}
+    {% embed 'Object/_accessor/_temporalAccessor.php.twig' with {'builder': builder, 'column': column} %}
+        {% block code %}
+            return $this->getCurrentTranslation()->get{{ column.phpName }}({{ block('parameters') }});
+        {% endblock %}
+    {% endembed %}
+{% else %}
+    {% embed 'Object/_accessor/_defaultAccessor.php.twig' with {'builder': builder, 'column': column} %}
+        {% block code %}
+            return $this->getCurrentTranslation()->get{{ column.phpName }}({{ block('parameters') }});
+        {% endblock %}
+    {% endembed %}
+{% endif %}
