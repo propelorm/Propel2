@@ -23,7 +23,7 @@
         "symfony/validator": "~2.2",
         "symfony/filesystem": "~2.2",
         "psr/log": "~1.0",
-        "twig/twig": "1.12"
+        "twig/twig": "~1.14"
     },
     "require-dev": {
         "behat/behat": "~2.4",
