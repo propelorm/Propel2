@@ -1,6 +1,6 @@
 {% if not builder.table.isAlias %}
     {% include 'Object/_constants.php.twig' %}
-    {{ builder.addAttributes }} {# Todo: remove and use inlcude instead #}
+    {% include 'Object/_attributes.php.twig' %}
 {% endif %}
 {% if builder.table.hasCrossForeignKeys %}
     {% for fkList in builder.table.crossFKs %} {# todo: add getters to the fklist #}
@@ -9,7 +9,7 @@
         {% set fkName = builder.getFKPhpNameAffix(crossFk, true) %}
 
         {% if not refFk.localPrimaryKey %}
-            {% include 'Object/_scheduledForDeletionAttribute.php.twig' with {'fkName': fkName} %}
+            {% include 'Object/_attribute/_scheduledForDeletionAttribute.php.twig' with {'fkName': fkName} %}
         {% endif %}
     {% endfor %}
 {% endif %}
@@ -29,3 +29,10 @@
 {% include 'Object/_constructor.php.twig' with {'builder': builder} %}
 {% include 'Object/_baseObjectMethods.php.twig' with {'builder': builder} %}
 {% include 'Object/_columnAccessorMethods.php.twig' with {'builder': builder} %}
+{% include 'Object/_columnMutatorMethods.php.twig' with {'builder': builder} %}
+
+{# TODO: more code here #}
+
+{% for behavior in builder.table.behaviors %}
+    {% include '@' ~ behavior.templateNamespace ~ '/Object/_methods.php.twig' ignore missing with {'builder': builder, 'behavior': behavior} %}
+{% endfor %}
