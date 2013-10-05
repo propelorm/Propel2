@@ -405,4 +405,31 @@ class Behavior extends MappingModel
     {
         return $this->additionalBuilders;
     }
+
+    /**
+     * Returns the path to the attribute template.
+     */
+    public function getTemplateDirectory()
+    {
+        $path = $this->getDirname() . DIRECTORY_SEPARATOR . 'templates';
+        if(!file_exists($path)) {
+            return null;
+        }
+
+        return $path;
+    }
+
+    public function getTemplateNamespace()
+    {
+        $fullClassName = explode('\\', get_class($this));
+        $simpleClassName = end($fullClassName);
+
+        // converts the classname from CamelCase to camel_case (see http://stackoverflow.com/a/1993772)
+        preg_match_all('!([A-Z][A-Z0-9]*(?=$|[A-Z][a-z0-9])|[A-Za-z][a-z0-9]+)!', $simpleClassName, $matches);
+        $ret = $matches[0];
+        foreach ($ret as &$match) {
+            $match = $match == strtoupper($match) ? strtolower($match) : lcfirst($match);
+        }
+        return implode('_', $ret);
+    }
 }
