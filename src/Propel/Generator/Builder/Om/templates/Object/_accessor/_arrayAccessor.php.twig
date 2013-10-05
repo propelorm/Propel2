@@ -1,4 +1,4 @@
-{% embed 'Object/_acccessor/_baseAccessor.php.twig' with {'builder': builder, 'column': column} %}
+{% embed 'Object/_accessor/_baseAccessor.php.twig' with {'builder': builder, 'column': column} %}
     {% block code %}
         if (null === $this->{{ column.name|lower }}_unserialized) {
             $this->{{ column.name|lower }}_unserialized = array();
