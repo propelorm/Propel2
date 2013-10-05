@@ -1,0 +1,64 @@
+{% block comment %}
+    /**
+     * Set the value of [{{ column.name|lower }}] column.
+     * {{ column.description }}
+     * @param      {{ column.phpType }} $v new value
+     * @return     {{ builder.objectClassName(true) }} The current object (for fluent API support)
+     */
+{% endblock %}
+{{ column.mutatorVisibility }} function set{{ column.phpName }}($v)
+{
+{% block full_code %}
+    {% if column.lazyLoad %}
+        // explicitly set the is-loaded flag to true for this lazy load column
+        // it doesn't matter if the value is actually set or not (logic below) as
+        // any attempt to set the value means that no db lookup should be performed
+        // when the get{{ column.phpName }}() method is called.
+        $this->{{ column.name|lower }}_isLoaded = true;
+    {% endif %}
+
+    {% block code %}
+    {% endblock %}
+
+    {% if column.foreignKey %}
+        {% for fk in column.foreignKeys %}
+            {% set tableFk = builder.table.database.table(fk.foreignTableName) %}
+            {% set colFk = tableFk.column(fk.mappedForeignColumn(column.name)) %}
+            {% set varName = builder.getFKVarName(fk) %}
+
+            if($this->{{ varName }} !== null && $this->{{ varName }}->get{{ colFk.phpName }}() !== $v) {
+                $this->{{ varName }} = null;
+            }
+        {% endfor %}
+    {% endif %}
+
+    {% for refFk in column.referrers %}
+        {% set tableFk = builder.database.table(refFk.foreignTableName) %}
+
+        {% if tableFk.name != builder.table.name %}
+            {% for fk in column.foreignKeys %}
+                {% set tableFk = builder.table.database.table(fk.foreignTableName) %}
+                {% set columnFk = tableFk.column(fk.mappedForeignColumn(column.name)) %}
+
+                {% if refFk.localPrimaryKey %}
+                    {% set varName = builder.getPKRefFKVarName(refPk) %}
+                    // update associated {{ tableFk.phpName }}
+                    if ($this->{{ varName }} !== null) {
+                        $this->{{ varName }}->set{{ columnFk.phpName }}($v);
+                    }
+                {% else %}
+                    {% set varName = builder.refFKCollVarName(refFk) %}
+                    // update associated {{ tableFk.phpName }}
+                    if ($this->{{ varName }} !== null) {
+                        foreach ($this->{{ varName }} as $referrerObject) {
+                            $referrerObject->set{{ columnFk.phpName }}($v);
+                        }
+                    }
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    {% endfor %}
+
+    return $this;
+{% endblock %}
+} // set{{ column.phpName }}

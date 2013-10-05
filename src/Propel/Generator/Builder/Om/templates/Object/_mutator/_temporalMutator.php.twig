@@ -1,0 +1,32 @@
+{% embed 'Object/_mutator/_baseMutator.php.twig' with {'builder': builder, 'column': column} %}
+    {% block comment %}
+        /**
+         * Sets the value of [{{ column.name|lower }}] column to a normalized version of the date/time value specified.
+         * {{ column.description }}
+         * @param      mixed $v string, integer (timestamp), or DateTime value.
+         *             Empty strings are treated as NULL.
+         * @return     {{ builder.objectClassName(true) }} The current object (for fluent API support)
+         */
+    {% endblock %}
+
+    {% block code %}
+        {% set dateTimeClass = builder.buildProperty('dateTimeClass')|default('\DateTime') %}
+        {% do builder.declareClasses(dateTimeClass, '\Propel\Runtime\Util\PropelDateTime') %}
+        {% set formatter = builder.temporalFormatter(column)|varExport %}
+
+        $dt = PropelDateTime::newInstance($v, null, '{{ dateTimeClass }}');
+        if ($this->{{ column.name|lower }} !== null || $dt !== null) {
+            {% if column.defaultValue is not null and not column.defaultValue.expression %}
+                {% set defaultValue = builder.defaultValueString(column) %}
+                if ( ($dt != $this->{{ column.name|lower }}) // normalized values don't match
+                || ($dt->format($fmt) === $defaultValue) // or the entered value matches the default
+                ) {
+            {% else %}
+                if ($dt !== $this->{{ column.name|lower }}) {
+            {% endif %}
+                $this->{{ column.name|lower }} = $dt;
+                $this->modifiedColumns[] = {{ builder.columnConstant(column) }};
+            }
+        } // if either are not null
+    {% endblock %}
+{% endembed %}
