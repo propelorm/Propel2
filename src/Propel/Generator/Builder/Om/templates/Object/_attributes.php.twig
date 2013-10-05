@@ -39,7 +39,11 @@ protected $virtualColumns = array();
 {% endfor %}
 
 {% for fkList in builder.table.crossFks %}
-    {% include 'Object/_crossFkAttributes.php.twig' with {'key': fkList[1]} %}
+    {% include 'Object/_attribute/_crossFkAttribute.php.twig' with {'crossFk': fkList[1]} %}
 {% endfor %}
 
 {% include 'Object/_attribute/_alreadyInSaveAttribute.php.twig' %}
+
+{% for behavior in builder.table.behaviors %}
+    {% include '@' ~ behavior.templateNamespace ~ '/Object/_attributes.php.twig' ignore missing with {'builder': builder, 'behavior': behavior} %}
+{% endfor %}
