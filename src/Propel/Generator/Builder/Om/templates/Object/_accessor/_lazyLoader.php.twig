@@ -1,0 +1,16 @@
+/**
+ * Load the value for the lazy-loaded [{{ column.name|lower }}] column.
+ *
+ * This method performs an additional query to return the value for
+ * the [{{ column.name|lower }}] column, since it is not populated by
+ * the hydrate() method.
+ *
+ * @param      $con ConnectionInterface (optional) The ConnectionInterface connection to use.
+ * @return void
+ * @throws PropelException - any underlying error will be wrapped and re-thrown.
+ */
+
+protected function load{{ column.phpName }}(ConnectionInterface $con = null)
+{
+    {{ builder.addLazyLoaderBody(column) }}
+}

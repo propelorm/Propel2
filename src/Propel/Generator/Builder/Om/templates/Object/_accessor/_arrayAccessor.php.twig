@@ -1,0 +1,13 @@
+{% embed 'Object/_acccessor/_baseAccessor.php.twig' with {'builder': builder, 'column': column} %}
+    {% block code %}
+        if (null === $this->{{ column.name|lower }}_unserialized) {
+            $this->{{ column.name|lower }}_unserialized = array();
+        }
+        if (!$this->{{ column.name|lower }} && null !== $this->{{ column.name|lower }}) {
+            ${{ column.name|lower }}_unserialized = substr($this->{{ column.name|lower }}, 2, -2);
+            $this->{{ column.name|lower }}_unserialized = ${{ column.name|lower }}_unserialized ? explode(' | ', ${{ column.name|lower }}_unserialized) : array();
+        }
+
+        return $this->{{ column.name|lower }}_unserialized;
+    {% endblock %}
+{% endembed %}

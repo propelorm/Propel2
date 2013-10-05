@@ -1,0 +1,14 @@
+{% embed 'Object/_acccessor/_baseAccessor.php.twig' with {'builder': builder, 'column': column} %}
+    {% block code %}
+        if (null === $this->{{ column.name|lower }}) {
+            return null;
+        }
+
+        $valueSet = {{ builder.tableMapClassName }}::getValueSet({{ builder.columnConstant(column) }});
+        if (!isset($valueSet[$this->{{ column.name|lower }}])) {
+            throw new PropelException('Unknown stored enum key: ' . \$this->$clo);
+        }
+
+        return $valueSet[$this->{{ column.name|lower }}];"
+    {% endblock %}
+{% endembed %}

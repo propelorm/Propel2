@@ -303,7 +303,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
         $table = $this->getTable();
 
-        $this->addColumnAccessorMethods($script);
         $this->addColumnMutatorMethods($script);
 
         $this->addHasOnlyDefaultValues($script);
@@ -481,120 +480,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
         return $script;
     }
-    /**
-     * Adds an object getter method.
-     *
-     * @param string &$script
-     * @param Column $column
-     */
-    protected function addObjectAccessor(&$script, Column $column)
-    {
-        $this->addDefaultAccessorComment($script, $column);
-        $this->addDefaultAccessorOpen($script, $column);
-        $this->addObjectAccessorBody($script, $column);
-        $this->addDefaultAccessorClose($script);
-    }
 
-    /**
-     * Adds the function body for an object accessor method.
-     *
-     * @param string &$script
-     * @param Column $column
-     */
-    protected function addObjectAccessorBody(&$script, Column $column)
-    {
-        $clo = $column->getLowercasedName();
-        $cloUnserialized = $clo.'_unserialized';
-        if ($column->isLazyLoad()) {
-            $script .= $this->getAccessorLazyLoadSnippet($column);
-        }
-
-        $script .= "
-        if (null == \$this->$cloUnserialized && null !== \$this->$clo) {
-            \$this->$cloUnserialized = unserialize(\$this->$clo);
-        }
-
-        return \$this->$cloUnserialized;";
-    }
-
-    /**
-     * Adds an array getter method.
-     *
-     * @param string &$script
-     * @param Column $column
-     */
-    protected function addArrayAccessor(&$script, Column $column)
-    {
-        $this->addDefaultAccessorComment($script, $column);
-        $this->addDefaultAccessorOpen($script, $column);
-        $this->addArrayAccessorBody($script, $column);
-        $this->addDefaultAccessorClose($script);
-    }
-
-    /**
-     * Adds the function body for an array accessor method.
-     *
-     * @param string &$script
-     * @param Column $column
-     */
-    protected function addArrayAccessorBody(&$script, Column $column)
-    {
-        $clo = $column->getLowercasedName();
-        $cloUnserialized = $clo.'_unserialized';
-        if ($column->isLazyLoad()) {
-            $script .= $this->getAccessorLazyLoadSnippet($column);
-        }
-
-        $script .= "
-        if (null === \$this->$cloUnserialized) {
-            \$this->$cloUnserialized = array();
-        }
-        if (!\$this->$cloUnserialized && null !== \$this->$clo) {
-            \$$cloUnserialized = substr(\$this->$clo, 2, -2);
-            \$this->$cloUnserialized = \$$cloUnserialized ? explode(' | ', \$$cloUnserialized) : array();
-        }
-
-        return \$this->$cloUnserialized;";
-    }
-
-    /**
-     * Adds an enum getter method.
-     *
-     * @param string &$script
-     * @param Column $column
-     */
-    protected function addEnumAccessor(&$script, Column $column)
-    {
-        $this->addDefaultAccessorComment($script, $column);
-        $this->addDefaultAccessorOpen($script, $column);
-        $this->addEnumAccessorBody($script, $column);
-        $this->addDefaultAccessorClose($script);
-    }
-
-    /**
-     * Adds the function body for an enum accessor method.
-     *
-     * @param string &$script
-     * @param Column $column
-     */
-    protected function addEnumAccessorBody(&$script, Column $column)
-    {
-        $clo = $column->getLowercasedName();
-        if ($column->isLazyLoad()) {
-            $script .= $this->getAccessorLazyLoadSnippet($column);
-        }
-
-        $script .= "
-        if (null === \$this->$clo) {
-            return null;
-        }
-        \$valueSet = " . $this->getTableMapClassName() . "::getValueSet(" . $this->getColumnConstant($column) . ");
-        if (!isset(\$valueSet[\$this->$clo])) {
-            throw new PropelException('Unknown stored enum key: ' . \$this->$clo);
-        }
-
-        return \$valueSet[\$this->$clo];";
-    }
 
     /**
      * Adds a tester method for an array column.
@@ -638,94 +524,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     }
 
     /**
-     * Adds a normal (non-temporal) getter method.
-     *
-     * @param string &$script
-     * @param Column $column
-     */
-    protected function addDefaultAccessor(&$script, Column $column)
-    {
-        $this->addDefaultAccessorComment($script, $column);
-        $this->addDefaultAccessorOpen($script, $column);
-        $this->addDefaultAccessorBody($script, $column);
-        $this->addDefaultAccessorClose($script);
-    }
-
-    /**
-     * Add the comment for a default accessor method (a getter).
-     *
-     * @param string &$script
-     * @param Column $column
-     */
-    public function addDefaultAccessorComment(&$script, Column $column)
-    {
-        $clo=$column->getLowercasedName();
-
-        $script .= "
-    /**
-     * Get the [$clo] column value.
-     * ".$column->getDescription();
-        if ($column->isLazyLoad()) {
-            $script .= "
-     * @param      ConnectionInterface An optional ConnectionInterface connection to use for fetching this lazy-loaded column.";
-        }
-        $script .= "
-     * @return   ".$column->getPhpType()."
-     */";
-    }
-
-    /**
-     * Adds the function declaration for a default accessor.
-     *
-     * @param string &$script
-     * @param Column $column
-     */
-    public function addDefaultAccessorOpen(&$script, Column $column)
-    {
-        $cfc = $column->getPhpName();
-        $visibility = $column->getAccessorVisibility();
-
-        $script .= "
-    ".$visibility." function get$cfc(";
-        if ($column->isLazyLoad()) {
-            $script .= "ConnectionInterface \$con = null";
-        }
-
-        $script .= ")
-    {";
-    }
-
-    /**
-     * Adds the function body for a default accessor method.
-     *
-     * @param string &$script
-     * @param Column $column
-     */
-    protected function addDefaultAccessorBody(&$script, Column $column)
-    {
-        $clo = $column->getLowercasedName();
-        if ($column->isLazyLoad()) {
-            $script .= $this->getAccessorLazyLoadSnippet($column);
-        }
-
-        $script .= "
-
-        return \$this->$clo;";
-    }
-
-    /**
-     * Adds the function close for a default accessor method.
-     *
-     * @param string &$script
-     */
-    protected function addDefaultAccessorClose(&$script)
-    {
-        $script .= "
-    }
-";
-    }
-
-    /**
      * Adds the lazy loader method.
      *
      * @param string &$script
@@ -733,58 +531,21 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      */
     protected function addLazyLoader(&$script, Column $column)
     {
-        $this->addLazyLoaderComment($script, $column);
-        $this->addLazyLoaderOpen($script, $column);
         $this->addLazyLoaderBody($script, $column);
         $this->addLazyLoaderClose($script);
     }
 
-    /**
-     * Adds the comment for the lazy loader method.
-     *
-     * @param string &$script
-     * @param Column $column
-     */
-    protected function addLazyLoaderComment(&$script, Column $column)
-    {
-        $clo = $column->getLowercasedName();
-
-        $script .= "
-    /**
-     * Load the value for the lazy-loaded [$clo] column.
-     *
-     * This method performs an additional query to return the value for
-     * the [$clo] column, since it is not populated by
-     * the hydrate() method.
-     *
-     * @param      \$con ConnectionInterface (optional) The ConnectionInterface connection to use.
-     * @return void
-     * @throws PropelException - any underlying error will be wrapped and re-thrown.
-     */";
-    }
-
-    /**
-     * Adds the function declaration for the lazy loader method.
-     *
-     * @param string &$script
-     * @param Column $column
-     */
-    protected function addLazyLoaderOpen(&$script, Column $column)
-    {
-        $cfc = $column->getPhpName();
-        $script .= "
-    protected function load$cfc(ConnectionInterface \$con = null)
-    {";
-    }
 
     /**
      * Adds the function body for the lazy loader method.
      *
      * @param string &$script
      * @param Column $column
+     * TODO: made this public because of twig usage
      */
-    protected function addLazyLoaderBody(&$script, Column $column)
+    public function addLazyLoaderBody(Column $column)
     {
+        $script = '';
         $platform = $this->getPlatform();
         $clo = $column->getLowercasedName();
 
@@ -847,17 +608,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         } catch (Exception \$e) {
             throw new PropelException(\"Error loading value for [$clo] column on demand.\", 0, \$e);
         }";
-    }
 
-    /**
-     * Adds the function close for the lazy loader.
-     *
-     * @param string &$script
-     */
-    protected function addLazyLoaderClose(&$script)
-    {
-        $script .= "
-    }";
+        return $script;
     }
 
     /**

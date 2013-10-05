@@ -1,0 +1,29 @@
+{% set defaultFormat = null %}
+
+{% if column.type == constant('Propel\\Generator\\Model\\PropelTypes::DATE') %}
+    {% set defaultFormat = builder.buildProperty('defaultDateFormat') %}
+{% elseif column.type == constant('Propel\\Generator\\Model\\PropelTypes::TIME') %}
+    {% set defaultFormat = builder.buildProperty('defaultTimeFormat') %}
+{% elseif column.type == constant('Propel\\Generator\\Model\\PropelTypes::TIMESTAMP') %}
+    {% set defaultFormat = builder.buildProperty('defaultTimeStampFormat') %}
+{% endif %}
+
+{% embed 'Object/_accessor/_baseAccessor.php.twig' with {'builder': builder, 'column': column} %}
+    {% block comment %}
+        {{ builder.addTemporalAccessorComment(column) }} {# todo: remove this ugly hack #}
+    {% endblock %}
+    {% block parameters %}
+        {% set parameters = [{'name': 'format', 'default': defaultFormat|varExport, 'type': null}] %}
+        {{ parent() }}
+    {% endblock %}
+
+    {% block code %}
+        {{ parent() }}
+        {% do builder.declareClasses(builder.buildProperty('dateTimeClass')|default('\DateTime')) %}
+        if($format === null) {
+            return $this->{{ column.name|lower }};
+        } else {
+            return $this->{{ column.name|lower }} instanceof \DateTime ? $this->{{ column.name|lower }}->format($format) : null;
+        }
+    {% endblock %}
+{% endembed %}

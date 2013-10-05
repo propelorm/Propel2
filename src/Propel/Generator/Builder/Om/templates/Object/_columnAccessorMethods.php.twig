@@ -1,44 +1,17 @@
 {% for column in builder.table.columns %}
-    {% if column.type == constant('Propel\\Generator\\Model\\PropelTypes::DATE')
-        or column.type == constant('Propel\\Generator\\Model\\PropelTypes::TIME')
-        or column.type == constant('Propel\\Generator\\Model\\PropelTypes::TIMESTAMP')
-    %}
-        {{ builder.addTemporalAccessorComment(column) }} {# todo: remove this ugly hack #}
-        {% set defaultFormat = null %}
-
-        {% if column.type == constant('Propel\\Generator\\Model\\PropelTypes::DATE') %}
-            {% set defaultFormat = builder.buildProperty('defaultDateFormat') %}
-        {% elseif column.type == constant('Propel\\Generator\\Model\\PropelTypes::TIME') %}
-            {% set defaultFormat = builder.buildProperty('defaultTimeFormat') %}
-        {% elseif column.type == constant('Propel\\Generator\\Model\\PropelTypes::TIMESTAMP') %}
-            {% set defaultFormat = builder.buildProperty('defaultTimeStampFormat') %}
-        {% endif %}
-
-        {{ column.accessorVisibility }} function get{{ column.phpName }}(
-            $format = {{ defaultFormat|varExport }}
-            {% if column.lazyLoad %}
-                , $con = null)
-            {% endif %}
-            );
-        {
-            {% do builder.declareClasses(builder.buildProperty('dateTimeClass')|default('\DateTime')) %}
-            {% if column.lazyLoad %}
-                {% include 'Object/_accessorLazyLoadSnippets' with {'builder': builder, 'column': column} %}
-            {% endif %}
-
-            if($format === null) {
-                return $this->{{ column.name|lower }};
-            } else {
-                return $this->{{ column.name|lower }} instanceof \DateTime ? $this->{{ column.name|lower }}->format($format) : null;s
-            }
-        }
-
+    {% if column.temporalType %}
+        {% include 'Object/_accessor/_temporalAccessor.php.twig' with {'column': column, 'builder': builder} %}
     {% elseif column.type == constant('Propel\\Generator\\Model\\PropelTypes::OBJECT') %}
-    {% elseif column.type == constant('Propel\\Generator\\Model\\PropelTypes::PHP_ARRAY') %}
+        {% include 'Object/_accessor/_objectAccessor.php.twig' with {'column': column, 'builder': builder} %}
+    {% elseif column.phpArrayType %}
+        {% include 'Object/_accessor/_arrayAccessor.php.twig' with {'column': column, 'builder': builder} %}
     {% elseif column.enumType %}
+        {% include 'Object/_accessor/_enumAccessor.php.twig' with {'column': column, 'builder': builder} %}
     {% else %}
+        {% include 'Object/_accessor/_defaultAccessor.php.twig' with {'column': column, 'builder': builder} %}
     {% endif %}
 
     {% if column.lazyLoad %}
+        {% include 'Object/_accessor/_lazyLoader.php.twig' with {'column': column, 'builder': builder} %}
     {% endif %}
 {% endfor %}

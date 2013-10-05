@@ -156,7 +156,7 @@ class I18nBehaviorObjectBuilderModifier
     // FIXME: the connection used by getCurrentTranslation in the generated code
     // cannot be specified by the user
     protected function addTranslatedColumnGetter(Column $column)
-    {
+    {/*
         $objectBuilder = $this->builder->getNewObjectBuilder($this->behavior->getI18nTable());
         $comment = '';
         $functionStatement = '';
@@ -176,7 +176,7 @@ class I18nBehaviorObjectBuilderModifier
             'functionStatement' => $functionStatement,
             'columnPhpName'     => $column->getPhpName(),
             'params'            => implode(', ', $params[0]),
-        ));
+        ));*/
     }
 
     // FIXME: the connection used by getCurrentTranslation in the generated code

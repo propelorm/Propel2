@@ -1,0 +1,14 @@
+{% embed 'Object/_accessor/_baseAccessor.php.twig' with {'builder': builder, 'column': column} %}
+    {% block code %}
+        {{ parent() }}
+
+        $clo = $column->getLowercasedName();
+        $cloUnserialized = $clo.'_unserialized';
+
+        if (null == $this->{{ column.name|lower }}_unserialized && null !== $this->{{ column.name|lower }}) {
+            $this->{{ column.name|lower }}_unserialized = unserialize($this->{{ column.name|lower }});
+        }
+
+        return $this->{{ column.name|lower }}_unserialized;
+    {% endblock %}
+{% endembed %}
