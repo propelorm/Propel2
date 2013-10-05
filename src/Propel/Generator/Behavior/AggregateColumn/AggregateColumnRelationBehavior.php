@@ -32,17 +32,6 @@ class AggregateColumnRelationBehavior extends Behavior
         return "\$this->updateRelated{$relationName}(\$con);";
     }
 
-    // no need for a postDelete() hook, since delete() uses Query::delete(),
-    // which already has a hook
-
-    public function objectAttributes($builder)
-    {
-        $relationName = $this->getRelationName($builder);
-
-        return "protected \$old{$relationName};
-";
-    }
-
     public function objectMethods($builder)
     {
         return $this->addObjectUpdateRelated($builder);
@@ -161,8 +150,19 @@ class AggregateColumnRelationBehavior extends Behavior
         return array_shift($fks);
     }
 
-    protected function getRelationName($builder)
+    public function getRelationName($builder)
     {
         return $builder->getFKPhpNameAffix($this->getForeignKey());
+    }
+
+    public function getTemplateDirectory()
+    {
+        $path = parent::getTemplateDirectory();
+
+        if($path !== null) {
+            return $path . '_relation';
+        }
+
+        return $path;
     }
 }
