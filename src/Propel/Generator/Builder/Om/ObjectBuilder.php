@@ -41,12 +41,20 @@ class ObjectBuilder extends AbstractObjectBuilder
         $this->twig = new \Twig_Environment($loader, ['autoescape' => false, 'strict_variables' => true, 'cache' => sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'propel2-cache', 'auto_reload' => true]);
         $this->twig->addFilter('addSlashes', new \Twig_SimpleFilter('addSlashes', 'addslashes'));
         $this->twig->addFilter('lcfirst', new \Twig_SimpleFilter('lcfirst', 'lcfirst'));
+        $this->twig->addFilter('ucfirst', new \Twig_SimpleFilter('ucfirst', 'ucfirst'));
         $this->twig->addFilter(
             'varExport',
             new \Twig_SimpleFilter('varExport', function ($input) {
                 return var_export($input, true);
             })
         );
+
+        foreach($table->getBehaviors() as $behavior) {
+            $path = $behavior->getTemplateDirectory();
+            if($path !== null) {
+                $loader->prependPath($behavior->getTemplateDirectory(), $behavior->getTemplateNamespace());
+            }
+        }
     }
 
 
@@ -147,10 +155,11 @@ class ObjectBuilder extends AbstractObjectBuilder
     /**
      * Returns the appropriate formatter (from platform) for a date/time column.
      *
+     * @TODO: made public becuase use in template
      * @param  Column $column
      * @return string
      */
-    protected function getTemporalFormatter(Column $column)
+    public function getTemporalFormatter(Column $column)
     {
         $fmt = null;
         if ($column->getType() === PropelTypes::DATE) {
@@ -303,8 +312,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
         $table = $this->getTable();
 
-        $this->addColumnMutatorMethods($script);
-
         $this->addHasOnlyDefaultValues($script);
 
         $this->addHydrate($script);
@@ -368,13 +375,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Todo: find a way to handle behaviours
      */
-    public function addAttributes()
-    {
-        $script = $this->twig->render('Object/_attributes.php.twig', ['builder' => $this]);
-        $this->applyBehaviorModifier('objectAttributes', $script, "    ");
-
-        return $script;
-    }
 
     /**
      * Adds variables that store column values.
@@ -421,20 +421,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             }
         }
         $script .= $this->renderTemplate('baseObjectMethodHook', $hooks);
-    }
-
-    /**
-     * Adds a date/time/timestamp getter method.
-     *
-     * @param string &$script
-     * @param Column $column
-     */
-    protected function addTemporalAccessor(&$script, Column $column)
-    {
-        $this->addTemporalAccessorComment($script, $column);
-        $this->addTemporalAccessorOpen($script, $column);
-        $this->addTemporalAccessorBody($script, $column);
-        $this->addTemporalAccessorClose($script);
     }
 
     /**
@@ -613,301 +599,15 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     }
 
     /**
-     * Adds the open of the mutator (setter) method for a column.
-     *
-     * @param string &$script
-     * @param Column $column
-     */
-    protected function addMutatorOpen(&$script, Column $column)
-    {
-        $this->addMutatorComment($script, $column);
-        $this->addMutatorOpenOpen($script, $column);
-        $this->addMutatorOpenBody($script, $column);
-    }
-
-    /**
-     * Adds the comment for a mutator.
-     *
-     * @param string &$script
-     * @param Column $column
-     */
-    public function addMutatorComment(&$script, Column $column)
-    {
-        $clo = $column->getLowercasedName();
-        $script .= "
-    /**
-     * Set the value of [$clo] column.
-     * ".$column->getDescription()."
-     * @param      ".$column->getPhpType()." \$v new value
-     * @return   ".$this->getObjectClassName(true)." The current object (for fluent API support)
-     */";
-    }
-
-    /**
-     * Adds the mutator function declaration.
-     *
-     * @param string &$script
-     * @param Column $column
-     */
-    public function addMutatorOpenOpen(&$script, Column $column)
-    {
-        $cfc = $column->getPhpName();
-        $visibility = $column->getMutatorVisibility();
-
-        $script .= "
-    ".$visibility." function set$cfc(\$v)
-    {";
-    }
-
-    /**
-     * Adds the mutator open body part.
-     *
-     * @param string &$script
-     * @param Column $column
-     */
-    protected function addMutatorOpenBody(&$script, Column $column)
-    {
-        $clo = $column->getLowercasedName();
-        $cfc = $column->getPhpName();
-        if ($column->isLazyLoad()) {
-            $script .= "
-        // explicitly set the is-loaded flag to true for this lazy load col;
-        // it doesn't matter if the value is actually set or not (logic below) as
-        // any attempt to set the value means that no db lookup should be performed
-        // when the get$cfc() method is called.
-        \$this->".$clo."_isLoaded = true;
-";
-        }
-    }
-
-    /**
-     * Adds the close of the mutator (setter) method for a column.
-     *
-     * @param string &$script
-     * @param Column $column
-     */
-    protected function addMutatorClose(&$script, Column $column)
-    {
-        $this->addMutatorCloseBody($script, $column);
-        $this->addMutatorCloseClose($script, $column);
-    }
-
-    /**
-     * Adds the body of the close part of a mutator.
-     *
-     * @param string &$script
-     * @param Column $column
-     */
-    protected function addMutatorCloseBody(&$script, Column $column)
-    {
-        $table = $this->getTable();
-
-        if ($column->isForeignKey()) {
-
-            foreach ($column->getForeignKeys() as $fk) {
-
-                $tblFK =  $table->getDatabase()->getTable($fk->getForeignTableName());
-                $colFK = $tblFK->getColumn($fk->getMappedForeignColumn($column->getName()));
-
-                $varName = $this->getFKVarName($fk);
-
-                $script .= "
-        if (\$this->$varName !== null && \$this->".$varName."->get".$colFK->getPhpName()."() !== \$v) {
-            \$this->$varName = null;
-        }
-";
-            } // foreach fk
-        } /* if col is foreign key */
-
-        foreach ($column->getReferrers() as $refFK) {
-
-            $tblFK = $this->getDatabase()->getTable($refFK->getForeignTableName());
-
-            if ( $tblFK->getName() != $table->getName() ) {
-
-                foreach ($column->getForeignKeys() as $fk) {
-
-                    $tblFK = $table->getDatabase()->getTable($fk->getForeignTableName());
-                    $colFK = $tblFK->getColumn($fk->getMappedForeignColumn($column->getName()));
-
-                    if ($refFK->isLocalPrimaryKey()) {
-                        $varName = $this->getPKRefFKVarName($refFK);
-                        $script .= "
-        // update associated ".$tblFK->getPhpName()."
-        if (\$this->$varName !== null) {
-            \$this->{$varName}->set".$colFK->getPhpName()."(\$v);
-        }
-";
-                    } else {
-                        $collName = $this->getRefFKCollVarName($refFK);
-                        $script .= "
-
-        // update associated ".$tblFK->getPhpName()."
-        if (\$this->$collName !== null) {
-            foreach (\$this->$collName as \$referrerObject) {
-                    \$referrerObject->set".$colFK->getPhpName()."(\$v);
-                }
-            }
-";
-                    } // if (isLocalPrimaryKey
-                } // foreach col->getPrimaryKeys()
-            } // if tablFk != table
-        } // foreach
-    }
-
-    /**
-     * Adds the close for the mutator close
-     * @param string &$script The script will be modified in this method.
-     * @param Column $col     The current column.
-     * @see addMutatorClose()
-     **/
-    protected function addMutatorCloseClose(&$script, Column $col)
-    {
-        $cfc = $col->getPhpName();
-        $script .= "
-
-        return \$this;
-    } // set$cfc()
-";
-    }
-
-    /**
-     * Adds a setter for BLOB columns.
-     * @param string &$script The script will be modified in this method.
-     * @param Column $col     The current column.
-     * @see parent::addColumnMutators()
-     */
-    protected function addLobMutator(&$script, Column $col)
-    {
-        $this->addMutatorOpen($script, $col);
-        $clo = $col->getLowercasedName();
-        $script .= "
-        // Because BLOB columns are streams in PDO we have to assume that they are
-        // always modified when a new value is passed in.  For example, the contents
-        // of the stream itself may have changed externally.
-        if (!is_resource(\$v) && \$v !== null) {
-            \$this->$clo = fopen('php://memory', 'r+');
-            fwrite(\$this->$clo, \$v);
-            rewind(\$this->$clo);
-        } else { // it's already a stream
-            \$this->$clo = \$v;
-        }
-        \$this->modifiedColumns[] = ".$this->getColumnConstant($col).";
-";
-        $this->addMutatorClose($script, $col);
-    } // addLobMutatorSnippet
-
-    /**
-     * Adds a setter method for date/time/timestamp columns.
-     * @param string &$script The script will be modified in this method.
-     * @param Column $col     The current column.
-     * @see parent::addColumnMutators()
-     */
-    protected function addTemporalMutator(&$script, Column $col)
-    {
-        $clo = $col->getLowercasedName();
-
-        $dateTimeClass = $this->getBuildProperty('dateTimeClass');
-        if (!$dateTimeClass) {
-            $dateTimeClass = '\DateTime';
-        }
-        $this->declareClasses($dateTimeClass, '\Propel\Runtime\Util\PropelDateTime');
-
-        $this->addTemporalMutatorComment($script, $col);
-        $this->addMutatorOpenOpen($script, $col);
-        $this->addMutatorOpenBody($script, $col);
-
-        $fmt = var_export($this->getTemporalFormatter($col), true);
-
-        $script .= "
-        \$dt = PropelDateTime::newInstance(\$v, null, '$dateTimeClass');
-        if (\$this->$clo !== null || \$dt !== null) {";
-
-        if (($def = $col->getDefaultValue()) !== null && !$def->isExpression()) {
-            $defaultValue = $this->getDefaultValueString($col);
-            $script .= "
-            if ( (\$dt != \$this->{$clo}) // normalized values don't match
-                || (\$dt->format($fmt) === $defaultValue) // or the entered value matches the default
-                 ) {";
-        } else {
-            $script .= "
-            if (\$dt !== \$this->{$clo}) {";
-        }
-
-        $script .= "
-                \$this->$clo = \$dt;
-                \$this->modifiedColumns[] = ".$this->getColumnConstant($col).";
-            }
-        } // if either are not null
-";
-        $this->addMutatorClose($script, $col);
-    }
-
-    public function addTemporalMutatorComment(&$script, Column $col)
-    {
-        $clo = $col->getLowercasedName();
-
-        $script .= "
-    /**
-     * Sets the value of [$clo] column to a normalized version of the date/time value specified.
-     * ".$col->getDescription()."
-     * @param      mixed \$v string, integer (timestamp), or \DateTime value.
-     *               Empty strings are treated as NULL.
-     * @return   ".$this->getObjectClassName(true)." The current object (for fluent API support)
-     */";
-    }
-
-    /**
-     * Adds a setter for Object columns.
-     * @param string &$script The script will be modified in this method.
-     * @param Column $col     The current column.
-     * @see parent::addColumnMutators()
-     */
-    protected function addObjectMutator(&$script, Column $col)
-    {
-        $clo = $col->getLowercasedName();
-        $cloUnserialized = $clo.'_unserialized';
-        $this->addMutatorOpen($script, $col);
-
-        $script .= "
-        if (\$this->$cloUnserialized !== \$v) {
-            \$this->$cloUnserialized = \$v;
-            \$this->$clo = serialize(\$v);
-            \$this->modifiedColumns[] = ".$this->getColumnConstant($col).";
-        }
-";
-        $this->addMutatorClose($script, $col);
-    }
-
-    /**
-     * Adds a setter for Array columns.
-     * @param string &$script The script will be modified in this method.
-     * @param Column $col     The current column.
-     * @see parent::addColumnMutators()
-     */
-    protected function addArrayMutator(&$script, Column $col)
-    {
-        $clo = $col->getLowercasedName();
-        $cloUnserialized = $clo.'_unserialized';
-        $this->addMutatorOpen($script, $col);
-
-        $script .= "
-        if (\$this->$cloUnserialized !== \$v) {
-            \$this->$cloUnserialized = \$v;
-            \$this->$clo = '| ' . implode(' | ', \$v) . ' |';
-            \$this->modifiedColumns[] = ".$this->getColumnConstant($col).";
-        }
-";
-        $this->addMutatorClose($script, $col);
-    }
-
-    /**
      * Adds a push method for an array column.
      * @param string &$script The script will be modified in this method.
      * @param Column $col     The current column.
+     *
+     * @TOdo: made public for twig
      */
-    protected function addAddArrayElement(&$script, Column $col)
+    public function addAddArrayElement(Column $col)
     {
+        $script = '';
         $clo = $col->getLowercasedName();
         $cfc = $col->getPhpName();
         $visibility = $col->getAccessorVisibility();
@@ -943,15 +643,20 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         return \$this;
     } // add$singularPhpName()
 ";
+
+        return $script;
     }
 
     /**
      * Adds a remove method for an array column.
      * @param string &$script The script will be modified in this method.
      * @param Column $col     The current column.
+     *
+     * @Todo: made public for twig
      */
-    protected function addRemoveArrayElement(&$script, Column $col)
+    public function addRemoveArrayElement(Column $col)
     {
+        $script = '';
         $clo = $col->getLowercasedName();
         $cfc = $col->getPhpName();
         $visibility = $col->getAccessorVisibility();
@@ -990,113 +695,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         return \$this;
     } // remove$singularPhpName()
 ";
-    }
 
-    /**
-     * Adds a setter for Enum columns.
-     * @param string &$script The script will be modified in this method.
-     * @param Column $col     The current column.
-     * @see parent::addColumnMutators()
-     */
-    protected function addEnumMutator(&$script, Column $col)
-    {
-        $clo = $col->getLowercasedName();
-        $this->addMutatorOpen($script, $col);
-
-        $script .= "
-        if (\$v !== null) {
-            \$valueSet = " . $this->getTableMapClassName() . "::getValueSet(" . $this->getColumnConstant($col) . ");
-            if (!in_array(\$v, \$valueSet)) {
-                throw new PropelException(sprintf('Value \"%s\" is not accepted in this enumerated column', \$v));
-            }
-            \$v = array_search(\$v, \$valueSet);
-        }
-
-        if (\$this->$clo !== \$v) {
-            \$this->$clo = \$v;
-            \$this->modifiedColumns[] = ".$this->getColumnConstant($col).";
-        }
-";
-        $this->addMutatorClose($script, $col);
-    }
-
-    /**
-     * Adds setter method for boolean columns.
-     * @param string &$script The script will be modified in this method.
-     * @param Column $col     The current column.
-     * @see parent::addColumnMutators()
-     */
-    protected function addBooleanMutator(&$script, Column $col)
-    {
-        $clo = $col->getLowercasedName();
-
-        $this->addBooleanMutatorComment($script, $col);
-        $this->addMutatorOpenOpen($script, $col);
-        $this->addMutatorOpenBody($script, $col);
-
-        $script .= "
-        if (\$v !== null) {
-            if (is_string(\$v)) {
-                \$v = in_array(strtolower(\$v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
-            } else {
-                \$v = (boolean) \$v;
-            }
-        }
-
-        if (\$this->$clo !== \$v) {
-            \$this->$clo = \$v;
-            \$this->modifiedColumns[] = ".$this->getColumnConstant($col).";
-        }
-";
-        $this->addMutatorClose($script, $col);
-    }
-
-    public function addBooleanMutatorComment(&$script, Column $col)
-    {
-        $clo = $col->getLowercasedName();
-
-        $script .= "
-    /**
-     * Sets the value of the [$clo] column.
-     * Non-boolean arguments are converted using the following rules:
-     *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
-     *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
-     * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
-     * ".$col->getDescription()."
-     * @param      boolean|integer|string \$v The new value
-     * @return   ".$this->getObjectClassName(true)." The current object (for fluent API support)
-     */";
-    }
-
-    /**
-     * Adds setter method for "normal" columns.
-     * @param string &$script The script will be modified in this method.
-     * @param Column $col     The current column.
-     * @see parent::addColumnMutators()
-     */
-    protected function addDefaultMutator(&$script, Column $col)
-    {
-        $clo = $col->getLowercasedName();
-
-        $this->addMutatorOpen($script, $col);
-
-        // Perform type-casting to ensure that we can use type-sensitive
-        // checking in mutators.
-        if ($col->isPhpPrimitiveType()) {
-            $script .= "
-        if (\$v !== null) {
-            \$v = (".$col->getPhpType().") \$v;
-        }
-";
-        }
-
-        $script .= "
-        if (\$this->$clo !== \$v) {
-            \$this->$clo = \$v;
-            \$this->modifiedColumns[] = ".$this->getColumnConstant($col).";
-        }
-";
-        $this->addMutatorClose($script, $col);
+        return $script;
     }
 
     /**
@@ -3266,7 +2866,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 ";
     }
 
-    protected function getCrossFKVarName(ForeignKey $crossFK)
+    /**
+     * @Todo: made public for use in template
+     */
+    public  function getCrossFKVarName(ForeignKey $crossFK)
     {
         return 'coll' . $this->getFKPhpNameAffix($crossFK, true);
     }
