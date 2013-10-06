@@ -202,6 +202,11 @@ SET search_path TO public;
     {
         $ret = $this->getBeginDDL();
         $ret .= $this->getAddSchemasDDL($database);
+
+        foreach ($database->getTablesForSql() as $table) {
+            $this->normalizeTable($table);
+        }
+
         foreach ($database->getTablesForSql() as $table) {
             $ret .= $this->getCommentBlockDDL($table->getName());
             $ret .= $this->getDropTableDDL($table);
@@ -223,16 +228,6 @@ SET search_path TO public;
     {
         $ret = '';
         foreach ($table->getForeignKeys() as $fk) {
-            //PostgreSQL requires the keys of the foreignTable of a foreignKeys to be unique.
-            //check if there is already a unique constraint with exactly
-            //the keys of the FK, if not define it.
-            if ($fk->getForeignTable() && !$fk->getForeignTable()->isUnique($fk->getForeignColumnObjects())) {
-                $unique = new Unique();
-                $unique->setTable($fk->getForeignTable());
-                $unique->setColumns($fk->getForeignColumnObjects());
-                $ret .= $this->getAddIndexDDL($unique);
-            }
-
             $ret .= $this->getAddForeignKeyDDL($fk);
         }
 
@@ -374,6 +369,22 @@ DROP TABLE IF EXISTS %s CASCADE;
         return sprintf('CONSTRAINT %s UNIQUE (%s)',
             $this->quoteIdentifier($unique->getName()),
             $this->getColumnListDDL($unique->getColumns())
+        );
+    }
+
+    public function getRenameTableDDL($fromTableName, $toTableName)
+    {
+        if (false !== ($pos = strpos($toTableName, '.'))) {
+            $toTableName = substr($toTableName, $pos + 1);
+        }
+
+        $pattern = "
+ALTER TABLE %s RENAME TO %s;
+";
+
+        return sprintf($pattern,
+            $this->quoteIdentifier($fromTableName),
+            $this->quoteIdentifier($toTableName)
         );
     }
 
