@@ -214,26 +214,25 @@ $ propel model:build
 
 This should run without any complaints. When you have a look at the `projects/bookstore-packaged/generated-classes` directory, the following directory tree should have been created:
 
-```
-addon/
-   club/
-      BookClubList.php
-      BookListRel.php
-core/
-   author/
-      Author.php
-   book/
-      Book.php
 
-      Media.php
-   publisher/
-      Publisher.php
-   review/
-      Review.php
-util/
-   log/
-      BookstoreLog.php
-```
+* addon/
+   * club/
+        * BookClubList.php
+        * BookListRel.php
+* core/
+   * author/
+        * Author.php
+   * book/
+        * Book.php
+    * media/
+        * Media.php
+   * publisher/
+        * Publisher.php
+   * review/
+        * Review.php
+* util/
+   * log/
+        * BookstoreLog.php
 
 (The additional subdirectories map/ and om/ in each of these directories have been omitted for clarity.)
 
