@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="WEB_MODULE" version="4">
+  <component name="NewModuleRootManager">
+    <content url="file://$MODULE_DIR$">
+      <excludeFolder url="file://$MODULE_DIR$/vendor/behat/behat" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/behat/gherkin" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/composer" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/monolog/monolog" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/phpunit/php-code-coverage" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/phpunit/php-file-iterator" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/phpunit/php-text-template" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/phpunit/php-timer" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/phpunit/php-token-stream" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/phpunit/phpunit" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/phpunit/phpunit-mock-objects" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/psr/log" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/config" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/console" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/dependency-injection" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/event-dispatcher" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/filesystem" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/finder" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/translation" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/validator" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/yaml" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/twig/twig" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module-library">
+      <library name="PHARS">
+        <CLASSES>
+          <root url="phar://$MODULE_DIR$/vendor/symfony/dependency-injection/Symfony/Component/DependencyInjection/Tests/Fixtures/includes/ProjectWithXsdExtensionInPhar.phar" />
+        </CLASSES>
+        <SOURCES>
+          <root url="phar://$MODULE_DIR$/vendor/symfony/dependency-injection/Symfony/Component/DependencyInjection/Tests/Fixtures/includes/ProjectWithXsdExtensionInPhar.phar" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="Composer Vendors">
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/vendor/psr/log" />
+          <root url="file://$MODULE_DIR$/vendor/twig/twig" />
+          <root url="file://$MODULE_DIR$/vendor/behat/behat" />
+          <root url="file://$MODULE_DIR$/vendor/behat/gherkin" />
+          <root url="file://$MODULE_DIR$/vendor/monolog/monolog" />
+          <root url="file://$MODULE_DIR$/vendor/phpunit/phpunit" />
+          <root url="file://$MODULE_DIR$/vendor/phpunit/php-timer" />
+          <root url="file://$MODULE_DIR$/vendor/phpunit/php-token-stream" />
+          <root url="file://$MODULE_DIR$/vendor/phpunit/php-code-coverage" />
+          <root url="file://$MODULE_DIR$/vendor/phpunit/php-file-iterator" />
+          <root url="file://$MODULE_DIR$/vendor/phpunit/php-text-template" />
+          <root url="file://$MODULE_DIR$/vendor/phpunit/phpunit-mock-objects" />
+          <root url="file://$MODULE_DIR$/vendor/symfony/yaml" />
+          <root url="file://$MODULE_DIR$/vendor/symfony/config" />
+          <root url="file://$MODULE_DIR$/vendor/symfony/finder" />
+          <root url="file://$MODULE_DIR$/vendor/symfony/console" />
+          <root url="file://$MODULE_DIR$/vendor/symfony/validator" />
+          <root url="file://$MODULE_DIR$/vendor/symfony/filesystem" />
+          <root url="file://$MODULE_DIR$/vendor/symfony/translation" />
+          <root url="file://$MODULE_DIR$/vendor/symfony/event-dispatcher" />
+          <root url="file://$MODULE_DIR$/vendor/symfony/dependency-injection" />
+          <root url="file://$MODULE_DIR$/vendor/composer" />
+        </CLASSES>
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/vendor/psr/log" />
+          <root url="file://$MODULE_DIR$/vendor/twig/twig" />
+          <root url="file://$MODULE_DIR$/vendor/behat/behat" />
+          <root url="file://$MODULE_DIR$/vendor/behat/gherkin" />
+          <root url="file://$MODULE_DIR$/vendor/monolog/monolog" />
+          <root url="file://$MODULE_DIR$/vendor/phpunit/phpunit" />
+          <root url="file://$MODULE_DIR$/vendor/phpunit/php-timer" />
+          <root url="file://$MODULE_DIR$/vendor/phpunit/php-token-stream" />
+          <root url="file://$MODULE_DIR$/vendor/phpunit/php-code-coverage" />
+          <root url="file://$MODULE_DIR$/vendor/phpunit/php-file-iterator" />
+          <root url="file://$MODULE_DIR$/vendor/phpunit/php-text-template" />
+          <root url="file://$MODULE_DIR$/vendor/phpunit/phpunit-mock-objects" />
+          <root url="file://$MODULE_DIR$/vendor/symfony/yaml" />
+          <root url="file://$MODULE_DIR$/vendor/symfony/config" />
+          <root url="file://$MODULE_DIR$/vendor/symfony/finder" />
+          <root url="file://$MODULE_DIR$/vendor/symfony/console" />
+          <root url="file://$MODULE_DIR$/vendor/symfony/validator" />
+          <root url="file://$MODULE_DIR$/vendor/symfony/filesystem" />
+          <root url="file://$MODULE_DIR$/vendor/symfony/translation" />
+          <root url="file://$MODULE_DIR$/vendor/symfony/event-dispatcher" />
+          <root url="file://$MODULE_DIR$/vendor/symfony/dependency-injection" />
+          <root url="file://$MODULE_DIR$/vendor/composer" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+  </component>
+</module>
+

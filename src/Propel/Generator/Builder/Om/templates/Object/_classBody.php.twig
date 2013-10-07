@@ -1,35 +1,42 @@
-{% if not builder.table.isAlias %}
-    {% include 'Object/_constants.php.twig' %}
-    {% include 'Object/_attributes.php.twig' %}
-{% endif %}
-{% if builder.table.hasCrossForeignKeys %}
-    {% for fkList in builder.table.crossFKs %} {# todo: add getters to the fklist #}
-        {% set refFk = fkList[0] %}
-        {% set crossFk = fkList[1] %}
-        {% set fkName = builder.getFKPhpNameAffix(crossFk, true) %}
+{% filter indent %}
+    {% if not builder.table.isAlias %}
+        {% include 'Object/_constants.php.twig' %}
+        {% include 'Object/_attributes.php.twig' %}
+    {% endif %}
+    {% if builder.table.hasCrossForeignKeys %}
+        {% for fkList in builder.table.crossFKs %} {# todo: add getters to the fklist #}
+            {% set refFk = fkList[0] %}
+            {% set crossFk = fkList[1] %}
+            {% set fkName = builder.getFKPhpNameAffix(crossFk, true) %}
 
-        {% if not refFk.localPrimaryKey %}
+            {% if not refFk.localPrimaryKey %}
+                {% include 'Object/_attribute/_scheduledForDeletionAttribute.php.twig' with {'fkName': fkName} %}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+    {% for ref in builder.table.referrers %}
+        {% set fkName = builder.refFKPhpNameAffix(ref, true) %}
+
+        {% if not ref.localPrimaryKey %}
             {% include 'Object/_attribute/_scheduledForDeletionAttribute.php.twig' with {'fkName': fkName} %}
         {% endif %}
     {% endfor %}
-{% endif %}
 
-{% for ref in builder.table.referrers %}
-    {% set fkName = builder.refFKPhpNameAffix(ref, true) %}
-
-    {% if not ref.localPrimaryKey %}
-        {% include 'Object/_attribute/_scheduledForDeletionAttribute.php.twig' with {'fkName': fkName} %}
+    {% if builder.hasDefaultValues %}
+        {% include 'Object/_applyDefaultValues.php.twig' with {'builder': builder} %}
     {% endif %}
-{% endfor %}
 
-{% if builder.hasDefaultValues %}
-    {% include 'Object/_applyDefaultValues.php.twig' with {'builder': builder} %}
-{% endif %}
 
-{% include 'Object/_constructor.php.twig' with {'builder': builder} %}
-{% include 'Object/_baseObjectMethods.php.twig' with {'builder': builder} %}
-{% include 'Object/_columnAccessorMethods.php.twig' with {'builder': builder} %}
-{% include 'Object/_columnMutatorMethods.php.twig' with {'builder': builder} %}
+    {% include 'Object/_constructor.php.twig' with {'builder': builder} %}
+    {% include 'Object/_baseObjectMethods.php.twig' with {'builder': builder} %}
+    {% include 'Object/_columnAccessorMethods.php.twig' with {'builder': builder} %}
+    {% include 'Object/_columnMutatorMethods.php.twig' with {'builder': builder} %}
+
+    {% if not is table.readOnly %}
+        {% include 'Object/_columnMutatorMethods.php.twig' with {'builder': builder} %}
+    {% endif %}
+{% endfilter %}
 
 {# TODO: more code here #}
 

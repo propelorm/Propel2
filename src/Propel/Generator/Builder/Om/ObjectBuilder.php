@@ -42,6 +42,16 @@ class ObjectBuilder extends AbstractObjectBuilder
         $this->twig->addFilter('addSlashes', new \Twig_SimpleFilter('addSlashes', 'addslashes'));
         $this->twig->addFilter('lcfirst', new \Twig_SimpleFilter('lcfirst', 'lcfirst'));
         $this->twig->addFilter('ucfirst', new \Twig_SimpleFilter('ucfirst', 'ucfirst'));
+        $this->twig->addFilter('indent', new \Twig_SimpleFilter('indent', function($string) {
+                $lines = explode(PHP_EOL, $string);
+                $output = '';
+
+                foreach($lines as $line) {
+                    $output .= '    ' . $line . PHP_EOL;
+                }
+
+                return $output;
+            }));
         $this->twig->addFilter(
             'varExport',
             new \Twig_SimpleFilter('varExport', function ($input) {
@@ -305,14 +315,14 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             '\Propel\Runtime\ActiveRecord\ActiveRecordInterface',
             '\Propel\Runtime\Parser\AbstractParser',
             '\Propel\Runtime\Propel',
-            '\Propel\Runtime\Map\TableMap'
+            '\Propel\Runtime\Map\TableMap',
+            '\Propel\Runtime\Util\PropelDateTime'
         );
 
         $script .= $this->twig->render('Object/_classBody.php.twig', ['builder' => $this]);
 
         $table = $this->getTable();
 
-        $this->addHasOnlyDefaultValues($script);
 
         $this->addHydrate($script);
         $this->addEnsureConsistency($script);
@@ -697,95 +707,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 ";
 
         return $script;
-    }
-
-    /**
-     * Adds the hasOnlyDefaultValues() method.
-     * @param string &$script The script will be modified in this method.
-     */
-    protected function addHasOnlyDefaultValues(&$script)
-    {
-        $this->addHasOnlyDefaultValuesComment($script);
-        $this->addHasOnlyDefaultValuesOpen($script);
-        $this->addHasOnlyDefaultValuesBody($script);
-        $this->addHasOnlyDefaultValuesClose($script);
-    }
-
-    /**
-     * Adds the comment for the hasOnlyDefaultValues method
-     * @param string &$script The script will be modified in this method.
-     * @see addHasOnlyDefaultValues
-     **/
-    protected function addHasOnlyDefaultValuesComment(&$script)
-    {
-        $script .= "
-    /**
-     * Indicates whether the columns in this object are only set to default values.
-     *
-     * This method can be used in conjunction with isModified() to indicate whether an object is both
-     * modified _and_ has some values set which are non-default.
-     *
-     * @return boolean Whether the columns in this object are only been set with default values.
-     */";
-    }
-
-    /**
-     * Adds the function declaration for the hasOnlyDefaultValues method
-     * @param string &$script The script will be modified in this method.
-     * @see addHasOnlyDefaultValues
-     **/
-    protected function addHasOnlyDefaultValuesOpen(&$script)
-    {
-        $script .= "
-    public function hasOnlyDefaultValues()
-    {";
-    }
-
-    /**
-     * Adds the function body for the hasOnlyDefaultValues method
-     * @param string &$script The script will be modified in this method.
-     * @see addHasOnlyDefaultValues
-     **/
-    protected function addHasOnlyDefaultValuesBody(&$script)
-    {
-        $table = $this->getTable();
-        $colsWithDefaults = array();
-        foreach ($table->getColumns() as $col) {
-            $def = $col->getDefaultValue();
-            if ($def !== null && !$def->isExpression()) {
-                $colsWithDefaults[] = $col;
-            }
-        }
-
-        foreach ($colsWithDefaults as $col) {
-
-            $clo = $col->getLowercasedName();
-            $accessor = "\$this->$clo";
-            if ($col->isTemporalType()) {
-                $fmt = $this->getTemporalFormatter($col);
-                $accessor = "\$this->$clo && \$this->{$clo}->format('$fmt')";
-            }
-            $script .= "
-            if ($accessor !== " . $this->getDefaultValueString($col).") {
-                return false;
-            }
-";
-        }
-    }
-
-    /**
-     * Adds the function close for the hasOnlyDefaultValues method
-     * @param string &$script The script will be modified in this method.
-     * @see addHasOnlyDefaultValues
-     **/
-    protected function addHasOnlyDefaultValuesClose(&$script)
-    {
-        $script .= "
-        // otherwise, everything was equal, so return TRUE
-        return true;";
-        $script .= "
-    } // hasOnlyDefaultValues()
-";
     }
 
     /**
@@ -1445,215 +1366,11 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     }
 
     /**
-     * Adds a delete() method to remove the object form the datastore.
-     * @param string &$script The script will be modified in this method.
-     */
-    protected function addDelete(&$script)
-    {
-        $this->addDeleteComment($script);
-        $this->addDeleteOpen($script);
-        $this->addDeleteBody($script);
-        $this->addDeleteClose($script);
-    }
-
-    /**
-     * Adds the comment for the delete function
-     * @param string &$script The script will be modified in this method.
-     * @see addDelete()
-     **/
-    protected function addDeleteComment(&$script)
-    {
-        $className = $this->getUnqualifiedClassName();
-        $script .= "
-    /**
-     * Removes this object from datastore and sets delete attribute.
-     *
-     * @param      ConnectionInterface \$con
-     * @return void
-     * @throws PropelException
-     * @see $className::setDeleted()
-     * @see $className::isDeleted()
-     */";
-    }
-
-    /**
-     * Adds the function declaration for the delete function
-     * @param string &$script The script will be modified in this method.
-     * @see addDelete()
-     **/
-    protected function addDeleteOpen(&$script)
-    {
-        $script .= "
-    public function delete(ConnectionInterface \$con = null)
-    {";
-    }
-
-    /**
-     * Adds the function body for the delete function
-     * @param string &$script The script will be modified in this method.
-     * @see addDelete()
-     **/
-    protected function addDeleteBody(&$script)
-    {
-        $script .= "
-        if (\$this->isDeleted()) {
-            throw new PropelException(\"This object has already been deleted.\");
-        }
-
-        if (\$con === null) {
-            \$con = Propel::getServiceContainer()->getWriteConnection(".$this->getTableMapClass()."::DATABASE_NAME);
-        }
-
-        \$con->beginTransaction();
-        try {
-            \$deleteQuery = ".$this->getQueryClassName()."::create()
-                ->filterByPrimaryKey(\$this->getPrimaryKey());";
-        if ($this->getGeneratorConfig()->getBuildProperty('addHooks')) {
-            $script .= "
-            \$ret = \$this->preDelete(\$con);";
-            // apply behaviors
-            $this->applyBehaviorModifier('preDelete', $script, "            ");
-            $script .= "
-            if (\$ret) {
-                \$deleteQuery->delete(\$con);
-                \$this->postDelete(\$con);";
-            // apply behaviors
-            $this->applyBehaviorModifier('postDelete', $script, "                ");
-            $script .= "
-                \$con->commit();
-                \$this->setDeleted(true);
-            } else {
-                \$con->commit();
-            }";
-        } else {
-            // apply behaviors
-            $this->applyBehaviorModifier('preDelete', $script, "            ");
-            $script .= "
-            \$deleteQuery->delete(\$con);";
-            // apply behaviors
-            $this->applyBehaviorModifier('postDelete', $script, "            ");
-            $script .= "
-            \$con->commit();
-            \$this->setDeleted(true);";
-        }
-
-        $script .= "
-        } catch (Exception \$e) {
-            \$con->rollBack();
-            throw \$e;
-        }";
-    }
-
-    /**
-     * Adds the function close for the delete function
-     * @param string &$script The script will be modified in this method.
-     * @see addDelete()
-     **/
-    protected function addDeleteClose(&$script)
-    {
-        $script .= "
-    }
-";
-    } // addDelete()
-
-    /**
-     * Adds a reload() method to re-fetch the data for this object from the database.
-     * @param string &$script The script will be modified in this method.
-     */
-    protected function addReload(&$script)
-    {
-        $table = $this->getTable();
-        $script .= "
-    /**
-     * Reloads this object from datastore based on primary key and (optionally) resets all associated objects.
-     *
-     * This will only work if the object has been saved and has a valid primary key set.
-     *
-     * @param      boolean \$deep (optional) Whether to also de-associated any related objects.
-     * @param      ConnectionInterface \$con (optional) The ConnectionInterface connection to use.
-     * @return void
-     * @throws PropelException - if this object is deleted, unsaved or doesn't have pk match in db
-     */
-    public function reload(\$deep = false, ConnectionInterface \$con = null)
-    {
-        if (\$this->isDeleted()) {
-            throw new PropelException(\"Cannot reload a deleted object.\");
-        }
-
-        if (\$this->isNew()) {
-            throw new PropelException(\"Cannot reload an unsaved object.\");
-        }
-
-        if (\$con === null) {
-            \$con = Propel::getServiceContainer()->getReadConnection(".$this->getTableMapClass()."::DATABASE_NAME);
-        }
-
-        // We don't need to alter the object instance pool; we're just modifying this instance
-        // already in the pool.
-
-        \$dataFetcher = ".$this->getQueryClassName()."::create(null, \$this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find(\$con);
-        \$row = \$dataFetcher->fetch();
-        \$dataFetcher->close();
-        if (!\$row) {
-            throw new PropelException('Cannot find matching row in the database to reload object values.');
-        }
-        \$this->hydrate(\$row, 0, true, \$dataFetcher->getIndexType()); // rehydrate
-";
-
-        // support for lazy load columns
-        foreach ($table->getColumns() as $col) {
-            if ($col->isLazyLoad()) {
-                $clo = $col->getLowercasedName();
-                $script .= "
-        // Reset the $clo lazy-load column
-        \$this->" . $clo . " = null;
-        \$this->".$clo."_isLoaded = false;
-";
-            }
-        }
-
-        $script .= "
-        if (\$deep) {  // also de-associate any related objects?
-";
-
-        foreach ($table->getForeignKeys() as $fk) {
-            $varName = $this->getFKVarName($fk);
-            $script .= "
-            \$this->".$varName." = null;";
-        }
-
-        foreach ($table->getReferrers() as $refFK) {
-            if ($refFK->isLocalPrimaryKey()) {
-                $script .= "
-            \$this->".$this->getPKRefFKVarName($refFK)." = null;
-";
-            } else {
-                $script .= "
-            \$this->".$this->getRefFKCollVarName($refFK)." = null;
-";
-            }
-        }
-
-        foreach ($table->getCrossFks() as $fkList) {
-            list($refFK, $crossFK) = $fkList;
-            $script .= "
-            \$this->" . $this->getCrossFKVarName($crossFK). " = null;";
-        }
-
-        $script .= "
-        } // if (deep)
-    }
-";
-    } // addReload()
-
-    /**
      * Adds the methods related to refreshing, saving and deleting the object.
      * @param string &$script The script will be modified in this method.
      */
     protected function addManipulationMethods(&$script)
     {
-        $this->addReload($script);
-        $this->addDelete($script);
         $this->addSave($script);
         $this->addDoSave($script);
         $script .= $this->addDoInsert();
@@ -3641,12 +3358,15 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * Adds the save() method.
      * @param string &$script The script will be modified in this method.
      */
-    protected function addSave(&$script)
+    protected function addSave()
     {
+        $script = '';
         $this->addSaveComment($script);
         $this->addSaveOpen($script);
         $this->addSaveBody($script);
         $this->addSaveClose($script);
+
+        return $script;
     }
 
     /**
