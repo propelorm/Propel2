@@ -12,50 +12,50 @@ public function reload($deep = false, ConnectionInterface $con = null)
 {
     if ($this->isDeleted()) {
         throw new PropelException("Cannot reload a deleted object.");
-}
+    }
 
-if ($this->isNew()) {
-    throw new PropelException("Cannot reload an unsaved object.");
-}
+    if ($this->isNew()) {
+        throw new PropelException("Cannot reload an unsaved object.");
+    }
 
-if ($con === null) {
-    $con = Propel::getServiceContainer()->getReadConnection({{ builder.tableMapClass }}::DATABASE_NAME);
-}
+    if ($con === null) {
+        $con = Propel::getServiceContainer()->getReadConnection({{ builder.tableMapClass }}::DATABASE_NAME);
+    }
 
-// We don't need to alter the object instance pool; we're just modifying this instance
-// already in the pool.
+    // We don't need to alter the object instance pool; we're just modifying this instance
+    // already in the pool.
 
-$dataFetcher = {{ builder.queryClassName }}::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
-$row = $dataFetcher->fetch();
-$dataFetcher->close();
-if (!$row) {
-    throw new PropelException('Cannot find matching row in the database to reload object values.');
-}
-$this->hydrate($row, 0, true, $dataFetcher->getIndexType()); // rehydrate
+    $dataFetcher = {{ builder.queryClassName }}::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
+    $row = $dataFetcher->fetch();
+    $dataFetcher->close();
+    if (!$row) {
+        throw new PropelException('Cannot find matching row in the database to reload object values.');
+    }
+    $this->hydrate($row, 0, true, $dataFetcher->getIndexType()); // rehydrate
 
-{% for column in builder.table.columns %}
-    {% if column.lazyLoad %}
-        // Reset the $clo lazy-load column
-        $this->{{ column.name|lower }} = null;
-        $this->{{ column.name|lower }}_isLoaded = false;
-    {% endif %}
-{% endfor %}
+    {% for column in builder.table.columns %}
+        {% if column.lazyLoad %}
+            // Reset the $clo lazy-load column
+            $this->{{ column.name|lower }} = null;
+            $this->{{ column.name|lower }}_isLoaded = false;
+        {% endif %}
+    {% endfor %}
 
-if ($deep) {  // also de-associate any related objects?
+    if ($deep) {  // also de-associate any related objects?
+        {% for fk in builder.table.foreignKeys %}
+            $this->{{ builder.fkVarName(fk) }} = null;
+        {% endfor %}
 
-{% for fk in builder.table.foreignKeys %}
-    $this->{{ builder.fkVarName(fk) }} = null;
-{% endfor %}
+        {% for refFk in builder.table.referrers %}
+            {% if refFk.localPrimaryKey %}
+                $this->{{ builder.pKRefFKVarName(refFk) }} = null;
+            {% else %}
+                $this->{{ builder.refFKCollVarName(refFk) }} = null;
+            {% endif %}
+        {% endfor %}
 
-{% for refFk in builder.table.referrers %}
-    {% if refFk.localPrimaryKey %}
-        $this->{{ builder.pKRefFKVarName(refFk) }} = null;
-    {% else %}
-        $this->{{ builder.refFKCollVarName(refFk) }} = null;
-    {% endif %}
-{% endfor %}
-
-{% for fkList in builder.table.crossFk %}
-    $this->{{ builder.crossFKVarName(fkList[1]) }} = null;
-{% endfor %}
+        {% for fkList in builder.table.crossFks %}
+            $this->{{ builder.crossFKVarName(fkList[1]) }} = null;
+        {% endfor %}
+    }
 }

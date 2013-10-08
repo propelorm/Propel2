@@ -1,1 +1,85 @@
-{{ builder.addSave }}
+/**
+ * Persists this object to the database.
+ *
+ * If the object is new, it inserts it; otherwise an update is performed.
+ * All modified related objects will also be persisted in the doSave()
+ * method.  This method wraps all precipitate database operations in a
+ * single transaction.
+
+{% if builder.table.reloadOnUpdate %}
+    *
+    * Since this table was configured to reload rows on update, the object will
+    * be reloaded from the database if an UPDATE operation is performed (unless
+    * the $skipReload parameter is TRUE).
+{% endif %}
+
+{% if builder.table.reloadOnInsert %}
+    *
+    * Since this table was configured to reload rows on insert, the object will
+    * be reloaded from the database if an INSERT operation is performed (unless
+    * the $skipReload parameter is TRUE).
+{% endif %}
+
+*
+* @param      ConnectionInterface $con
+
+{% if builder.table.reloadOnUpdate or builder.table.reloadOnInsert %}
+    * @param      boolean $skipReload Whether to skip the reload for this object from database.
+{% endif %}
+ * @return int             The number of rows affected by this insert/update and any referring fk objects' save() operations.
+ * @throws PropelException
+ * @see doSave()
+ */
+public function save(ConnectionInterface $con = null{% if builder.table.reloadOnUpdate or builder.table.reloadOnInsert %}, $skipReload = false{% endif %})
+{
+    if ($this->isDeleted()) {
+        throw new PropelException("You cannot save an object that has been deleted.");
+    }
+
+    if ($con === null) {
+        $con = Propel::getServiceContainer()->getWriteConnection({{ builder.tableMapClass }}::DATABASE_NAME);
+    }
+
+    $con->beginTransaction();
+    $isInsert = $this->isNew();
+    {# TODO: why not replace those pre/post-whatever hooks with a behavior? would be much cleaner code :) #}
+    try {
+        {% set addHooks = builder.generatorConfig.buildProperty('addHooks') %}
+        {% if addHooks %}$ret = $this->preSave($con);{% endif %}
+        {{ behavior_api.include('Object/_hooks/_preSave.php.twig', builder) }}
+
+        if ($isInsert) {
+            {% if addHooks %}$ret = $ret && $this->preInsert($con);{% endif %}
+            {{ behavior_api.include('Object/_hooks/_preInsert.php.twig', builder) }}
+            } else {
+            {% if addHooks %}$ret = $ret && $this->preUpdate($con);{% endif %}
+            {{ behavior_api.include('Object/_hooks/_preUpdate.php.twig', builder) }}
+        }
+
+        $affectedRows = 0;
+        {% if addHooks %}
+            if($ret) {
+        {% endif %}
+            $affectedRows = $this->doSave($con {% if builder.table.reloadOnUpdate or builder.table.reloadOnInsert %}, $skipReload{% endif %});
+            if ($isInsert) {
+                {% if addHooks %}$this->postInsert($con);{% endif %}
+                {{ behavior_api.include('Object/_hooks/_postInsert.php.twig', builder) }}
+            } else {
+                {% if addHooks %}$this->postUpdate($con);{% endif %}
+                {{ behavior_api.include('Object/_hooks/_postUpdate.php.twig', builder) }}
+            }
+
+            {% if addHooks %}$this->postSave($con);{% endif %}
+            {{ behavior_api.include('Object/_hooks/_postSave.php.twig', builder) }}
+            {{ builder.tableMapClass }}::addInstanceToPool($this);
+        {% if addHooks %}
+            }
+        {% endif %}
+        $con->commit();
+        return $affectedRows;
+    } catch(Exception $e) {
+        $con->rollBack();
+        throw $e;
+    }
+
+}

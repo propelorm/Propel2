@@ -1,0 +1,64 @@
+{% set hasFks = (builder.table.foreignKeys|length > 0) and (builder.table.referrers|length > 0) %}
+/**
+ * Exports the object as an array.
+ *
+ * You can specify the key type of the array by passing one of the class
+ * type constants.
+ *
+ * @param     string  $keyType (optional) One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_STUDLYPHPNAME,
+ *                    TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
+ *                    Defaults to TableMap::{{ builder.defaultKeyType }}.
+ * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
+ * @param     array $alreadyDumpedObjects List of objects to skip to avoid recursion"
+{% if hasFks %}
+    * @param     boolean $includeForeignObjects (optional) Whether to include hydrated related objects. Default to FALSE.
+{% endif %}
+ *
+ * @return array an associative array containing the field names (as keys) and field values
+ */
+public function toArray($keyType = TableMap::{{ builder.defaultKeyType }}, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(){% if hasFks %}, $includeForeignObjects = false{% endif %})
+{
+    if (isset($alreadyDumpedObjects['{{ builder.unqualifiedClassName }}'][{% if builder.table.hasCompositePrimaryKey %}serialize($this->getPrimaryKey()){% else %}$this->getPrimaryKey(){% endif %}])) {
+        return '*RECURSION*';
+    }
+    $alreadyDumpedObjects['{{ builder.unqualifiedClassName }}'][{% if builder.table.hasCompositePrimaryKey %}serialize($this->getPrimaryKey()){% else %}$this->getPrimaryKey(){% endif %}] = true;
+    $keys = {{ builder.tableMapClassName }}::getFieldNames($keyType);
+
+    $result = array(
+    {% for column in builder.table.columns %}
+        {% if column.lazyLoad %}
+            $keys[{{ loop.index0 }}] => ($includeLazyLoadColumns) ? $this->get{{ column.phpName }}() : null,
+        {% else %}
+            $keys[{{ loop.index0 }}] => $this->get{{ column.phpName }}(),
+        {% endif %}
+    {% endfor %}
+    );
+
+    $virtualColumns = $this->virtualColumns;
+    foreach ($virtualColumns as $key => $virtualColumn) {
+        $result[$key] = $virtualColumn;
+    }
+
+    {% if hasFks %}
+        if ($includeForeignObjects) {
+            {% for foreignKey in builder.table.foreignKeys %}
+                if (null !== $this->{{ builder.fKVarName(foreignKey) }}) {
+                    $result['{{ builder.fKPhpNameAffix(foreignKey, false) }}'] = $this->{{ builder.fKVarName(foreignKey) }}->toArray($keyType, $includeLazyLoadColumns, $alreadyDumpedObjects, true);
+                }
+            {% endfor %}
+            {% for ref in builder.table.referrers %}
+                {% if ref.localPrimaryKey %}
+                    if (null !== $this->{{ builder.pKRefFKVarName(ref) }}) {
+                        $result['{{ builder.refFKPhpNameAffix(ref, false) }}'] = $this->{{ builder.pKRefFKVarName(ref) }}->toArray($keyType, $includeLazyLoadColumns, $alreadyDumpedObjects, true);
+                    }
+                {% else %}
+                    if (null !== $this->{{ builder.refFKCollVarName(ref) }}) {
+                        $result['{{ builder.refFKPhpNameAffix(ref, true) }}'] = $this->{{ builder.refFKCollVarName(ref) }}->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+                    }
+                {% endif %}
+            {% endfor %}
+        }
+    {% endif %}
+
+    return $result;
+}
