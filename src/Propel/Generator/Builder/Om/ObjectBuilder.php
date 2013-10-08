@@ -327,16 +327,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $this->addHydrate($script);
         $this->addEnsureConsistency($script);
 
-        if (!$table->isReadOnly()) {
-            $this->addManipulationMethods($script);
-        }
-
-        if ($this->isAddGenericAccessors()) {
-            $this->addGetByName($script);
-            $this->addGetByPosition($script);
-            $this->addToArray($script);
-        }
-
         if ($this->isAddGenericMutators()) {
             $this->addSetByName($script);
             $this->addSetByPosition($script);
@@ -1018,246 +1008,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 ";
     }
 
-    /**
-     * Adds the toArray method
-     * @param string &$script The script will be modified in this method.
-     **/
-    protected function addToArray(&$script)
-    {
-        $fks = $this->getTable()->getForeignKeys();
-        $referrers = $this->getTable()->getReferrers();
-        $hasFks = count($fks) > 0 || count($referrers) > 0;
-        $objectClassName = $this->getUnqualifiedClassName();
-        $pkGetter = $this->getTable()->hasCompositePrimaryKey() ? 'serialize($this->getPrimaryKey())' : '$this->getPrimaryKey()';
-        $defaultKeyType = $this->getDefaultKeyType();
-        $script .= "
-    /**
-     * Exports the object as an array.
-     *
-     * You can specify the key type of the array by passing one of the class
-     * type constants.
-     *
-     * @param     string  \$keyType (optional) One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_STUDLYPHPNAME,
-     *                    TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
-     *                    Defaults to TableMap::$defaultKeyType.
-     * @param     boolean \$includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
-     * @param     array \$alreadyDumpedObjects List of objects to skip to avoid recursion";
-        if ($hasFks) {
-            $script .= "
-     * @param     boolean \$includeForeignObjects (optional) Whether to include hydrated related objects. Default to FALSE.";
-        }
-        $script .= "
-     *
-     * @return array an associative array containing the field names (as keys) and field values
-     */
-    public function toArray(\$keyType = TableMap::$defaultKeyType, \$includeLazyLoadColumns = true, \$alreadyDumpedObjects = array()" . ($hasFks ? ", \$includeForeignObjects = false" : '') . ")
-    {
-        if (isset(\$alreadyDumpedObjects['$objectClassName'][$pkGetter])) {
-            return '*RECURSION*';
-        }
-        \$alreadyDumpedObjects['$objectClassName'][$pkGetter] = true;
-        \$keys = ".$this->getTableMapClassName()."::getFieldNames(\$keyType);
-        \$result = array(";
-        foreach ($this->getTable()->getColumns() as $num => $col) {
-            if ($col->isLazyLoad()) {
-                $script .= "
-            \$keys[$num] => (\$includeLazyLoadColumns) ? \$this->get".$col->getPhpName()."() : null,";
-            } else {
-                $script .= "
-            \$keys[$num] => \$this->get".$col->getPhpName()."(),";
-            }
-        }
-        $script .= "
-        );";
-        $script .= "
-        \$virtualColumns = \$this->virtualColumns;
-        foreach (\$virtualColumns as \$key => \$virtualColumn) {
-            \$result[\$key] = \$virtualColumn;
-        }
-        ";
-        if ($hasFks) {
-            $script .= "
-        if (\$includeForeignObjects) {";
-            foreach ($fks as $fk) {
-                $script .= "
-            if (null !== \$this->" . $this->getFKVarName($fk) . ") {
-                \$result['" . $this->getFKPhpNameAffix($fk, false) . "'] = \$this->" . $this->getFKVarName($fk) . "->toArray(\$keyType, \$includeLazyLoadColumns,  \$alreadyDumpedObjects, true);
-            }";
-            }
-            foreach ($referrers as $fk) {
-                if ($fk->isLocalPrimaryKey()) {
-                    $script .= "
-            if (null !== \$this->" . $this->getPKRefFKVarName($fk) . ") {
-                \$result['" . $this->getRefFKPhpNameAffix($fk, false) . "'] = \$this->" . $this->getPKRefFKVarName($fk) . "->toArray(\$keyType, \$includeLazyLoadColumns, \$alreadyDumpedObjects, true);
-            }";
-                } else {
-                    $script .= "
-            if (null !== \$this->" . $this->getRefFKCollVarName($fk) . ") {
-                \$result['" . $this->getRefFKPhpNameAffix($fk, true) . "'] = \$this->" . $this->getRefFKCollVarName($fk) . "->toArray(null, true, \$keyType, \$includeLazyLoadColumns, \$alreadyDumpedObjects);
-            }";
-                }
-            }
-            $script .= "
-        }";
-        }
-        $script .= "
-
-        return \$result;
-    }
-";
-    } // addToArray()
-
-    /**
-     * Adds the getByName method
-     * @param string &$script The script will be modified in this method.
-     **/
-    protected function addGetByName(&$script)
-    {
-        $this->addGetByNameComment($script);
-        $this->addGetByNameOpen($script);
-        $this->addGetByNameBody($script);
-        $this->addGetByNameClose($script);
-    }
-
-    /**
-     * Adds the comment for the getByName method
-     * @param string &$script The script will be modified in this method.
-     * @see addGetByName
-     **/
-    protected function addGetByNameComment(&$script)
-    {
-        $defaultKeyType = $this->getDefaultKeyType();
-        $script .= "
-    /**
-     * Retrieves a field from the object by name passed in as a string.
-     *
-     * @param      string \$name name
-     * @param      string \$type The type of fieldname the \$name is of:
-     *                     one of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_STUDLYPHPNAME
-     *                     TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
-     *                     Defaults to TableMap::$defaultKeyType.
-     * @return mixed Value of field.
-     */";
-    }
-
-    /**
-     * Adds the function declaration for the getByName method
-     * @param string &$script The script will be modified in this method.
-     * @see addGetByName
-     **/
-    protected function addGetByNameOpen(&$script)
-    {
-        $defaultKeyType = $this->getDefaultKeyType();
-        $script .= "
-    public function getByName(\$name, \$type = TableMap::$defaultKeyType)
-    {";
-    }
-
-    /**
-     * Adds the function body for the getByName method
-     * @param string &$script The script will be modified in this method.
-     * @see addGetByName
-     **/
-    protected function addGetByNameBody(&$script)
-    {
-        $script .= "
-        \$pos = ".$this->getTableMapClassName()."::translateFieldName(\$name, \$type, TableMap::TYPE_NUM);
-        \$field = \$this->getByPosition(\$pos);";
-    }
-
-    /**
-     * Adds the function close for the getByName method
-     * @param string &$script The script will be modified in this method.
-     * @see addGetByName
-     **/
-    protected function addGetByNameClose(&$script)
-    {
-        $script .= "
-
-        return \$field;
-    }
-";
-    }
-
-    /**
-     * Adds the getByPosition method
-     * @param string &$script The script will be modified in this method.
-     **/
-    protected function addGetByPosition(&$script)
-    {
-        $this->addGetByPositionComment($script);
-        $this->addGetByPositionOpen($script);
-        $this->addGetByPositionBody($script);
-        $this->addGetByPositionClose($script);
-    }
-
-    /**
-     * Adds comment for the getByPosition method
-     * @param string &$script The script will be modified in this method.
-     * @see addGetByPosition
-     **/
-    protected function addGetByPositionComment(&$script)
-    {
-        $script .= "
-    /**
-     * Retrieves a field from the object by Position as specified in the xml schema.
-     * Zero-based.
-     *
-     * @param      int \$pos position in xml schema
-     * @return mixed Value of field at \$pos
-     */";
-    }
-
-    /**
-     * Adds the function declaration for the getByPosition method
-     * @param string &$script The script will be modified in this method.
-     * @see addGetByPosition
-     **/
-    protected function addGetByPositionOpen(&$script)
-    {
-        $script .= "
-    public function getByPosition(\$pos)
-    {";
-    }
-
-    /**
-     * Adds the function body for the getByPosition method
-     * @param string &$script The script will be modified in this method.
-     * @see addGetByPosition
-     **/
-    protected function addGetByPositionBody(&$script)
-    {
-        $table = $this->getTable();
-        $script .= "
-        switch (\$pos) {";
-        $i = 0;
-        foreach ($table->getColumns() as $col) {
-            $cfc = $col->getPhpName();
-            $script .= "
-            case $i:
-                return \$this->get$cfc();
-                break;";
-            $i++;
-        } /* foreach */
-        $script .= "
-            default:
-                return null;
-                break;
-        } // switch()";
-    }
-
-    /**
-     * Adds the function close for the getByPosition method
-     * @param string &$script The script will be modified in this method.
-     * @see addGetByPosition
-     **/
-    protected function addGetByPositionClose(&$script)
-    {
-        $script .= "
-    }
-";
-    }
-
     protected function addSetByName(&$script)
     {
         $defaultKeyType = $this->getDefaultKeyType();
@@ -1363,18 +1113,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $script .= "
     }
 ";
-    }
-
-    /**
-     * Adds the methods related to refreshing, saving and deleting the object.
-     * @param string &$script The script will be modified in this method.
-     */
-    protected function addManipulationMethods(&$script)
-    {
-        $this->addSave($script);
-        $this->addDoSave($script);
-        $script .= $this->addDoInsert();
-        $script .= $this->addDoUpdate();
     }
 
     /**
@@ -2947,8 +2685,9 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * Adds the workhourse doSave() method.
      * @param string &$script The script will be modified in this method.
      */
-    protected function addDoSave(&$script)
+    public function addDoSave()
     {
+        $script = '';
         $table = $this->getTable();
 
         $reloadOnUpdate = $table->isReloadOnUpdate();
@@ -3097,6 +2836,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     } // doSave()
 ";
 
+
+        return $script;
     }
 
     /**
@@ -3104,7 +2845,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      *
      * @return string the doInsert() method code
      */
-    protected function addDoInsert()
+    public function addDoInsert()
     {
         $table = $this->getTable();
         $script = "
@@ -3333,7 +3074,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      *
      * @return string the doUpdate() method code
      */
-    protected function addDoUpdate()
+    public function addDoUpdate()
     {
         return "
     /**
@@ -3350,203 +3091,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         \$valuesCriteria = \$this->buildCriteria();
 
         return \$selectCriteria->doUpdate(\$valuesCriteria, \$con);
-    }
-";
-    }
-
-    /**
-     * Adds the save() method.
-     * @param string &$script The script will be modified in this method.
-     */
-    protected function addSave()
-    {
-        $script = '';
-        $this->addSaveComment($script);
-        $this->addSaveOpen($script);
-        $this->addSaveBody($script);
-        $this->addSaveClose($script);
-
-        return $script;
-    }
-
-    /**
-     * Adds the comment for the save method
-     * @param string &$script The script will be modified in this method.
-     * @see addSave()
-     **/
-    protected function addSaveComment(&$script)
-    {
-        $table = $this->getTable();
-        $reloadOnUpdate = $table->isReloadOnUpdate();
-        $reloadOnInsert = $table->isReloadOnInsert();
-
-        $script .= "
-    /**
-     * Persists this object to the database.
-     *
-     * If the object is new, it inserts it; otherwise an update is performed.
-     * All modified related objects will also be persisted in the doSave()
-     * method.  This method wraps all precipitate database operations in a
-     * single transaction.";
-        if ($reloadOnUpdate) {
-            $script .= "
-     *
-     * Since this table was configured to reload rows on update, the object will
-     * be reloaded from the database if an UPDATE operation is performed (unless
-     * the \$skipReload parameter is TRUE).";
-        }
-        if ($reloadOnInsert) {
-            $script .= "
-     *
-     * Since this table was configured to reload rows on insert, the object will
-     * be reloaded from the database if an INSERT operation is performed (unless
-     * the \$skipReload parameter is TRUE).";
-        }
-        $script .= "
-     *
-     * @param      ConnectionInterface \$con";
-        if ($reloadOnUpdate || $reloadOnInsert) {
-            $script .= "
-     * @param      boolean \$skipReload Whether to skip the reload for this object from database.";
-        }
-        $script .= "
-     * @return int             The number of rows affected by this insert/update and any referring fk objects' save() operations.
-     * @throws PropelException
-     * @see doSave()
-     */";
-    }
-
-    /**
-     * Adds the function declaration for the save method
-     * @param string &$script The script will be modified in this method.
-     * @see addSave()
-     **/
-    protected function addSaveOpen(&$script)
-    {
-        $table = $this->getTable();
-        $reloadOnUpdate = $table->isReloadOnUpdate();
-        $reloadOnInsert = $table->isReloadOnInsert();
-        $script .= "
-    public function save(ConnectionInterface \$con = null".($reloadOnUpdate || $reloadOnInsert ? ", \$skipReload = false" : "").")
-    {";
-    }
-
-    /**
-     * Adds the function body for the save method
-     * @param string &$script The script will be modified in this method.
-     * @see addSave()
-     **/
-    protected function addSaveBody(&$script)
-    {
-        $table = $this->getTable();
-        $reloadOnUpdate = $table->isReloadOnUpdate();
-        $reloadOnInsert = $table->isReloadOnInsert();
-
-        $script .= "
-        if (\$this->isDeleted()) {
-            throw new PropelException(\"You cannot save an object that has been deleted.\");
-        }
-
-        if (\$con === null) {
-            \$con = Propel::getServiceContainer()->getWriteConnection(".$this->getTableMapClass()."::DATABASE_NAME);
-        }
-
-        \$con->beginTransaction();
-        \$isInsert = \$this->isNew();
-        try {";
-
-        if ($this->getGeneratorConfig()->getBuildProperty('addHooks')) {
-            // save with runtime hooks
-            $script .= "
-            \$ret = \$this->preSave(\$con);";
-            $this->applyBehaviorModifier('preSave', $script, "            ");
-            $script .= "
-            if (\$isInsert) {
-                \$ret = \$ret && \$this->preInsert(\$con);";
-            $this->applyBehaviorModifier('preInsert', $script, "                ");
-            $script .= "
-            } else {
-                \$ret = \$ret && \$this->preUpdate(\$con);";
-            $this->applyBehaviorModifier('preUpdate', $script, "                ");
-            $script .= "
-            }
-            if (\$ret) {
-                \$affectedRows = \$this->doSave(\$con".($reloadOnUpdate || $reloadOnInsert ? ", \$skipReload" : "").");
-                if (\$isInsert) {
-                    \$this->postInsert(\$con);";
-            $this->applyBehaviorModifier('postInsert', $script, "                    ");
-            $script .= "
-                } else {
-                    \$this->postUpdate(\$con);";
-            $this->applyBehaviorModifier('postUpdate', $script, "                    ");
-            $script .= "
-                }
-                \$this->postSave(\$con);";
-                $this->applyBehaviorModifier('postSave', $script, "                ");
-                $script .= "
-                ".$this->getTableMapClassName()."::addInstanceToPool(\$this);
-            } else {
-                \$affectedRows = 0;
-            }
-            \$con->commit();
-
-            return \$affectedRows;";
-        } else {
-            // save without runtime hooks
-            $this->applyBehaviorModifier('preSave', $script, "            ");
-            if ($this->hasBehaviorModifier('preUpdate')) {
-                $script .= "
-            if (!\$isInsert) {";
-                $this->applyBehaviorModifier('preUpdate', $script, "                ");
-                $script .= "
-            }";
-            }
-            if ($this->hasBehaviorModifier('preInsert')) {
-                $script .= "
-            if (\$isInsert) {";
-                $this->applyBehaviorModifier('preInsert', $script, "                ");
-                $script .= "
-            }";
-            }
-            $script .= "
-            \$affectedRows = \$this->doSave(\$con".($reloadOnUpdate || $reloadOnInsert ? ", \$skipReload" : "").");";
-            $this->applyBehaviorModifier('postSave', $script, "            ");
-            if ($this->hasBehaviorModifier('postUpdate')) {
-                $script .= "
-            if (!\$isInsert) {";
-                $this->applyBehaviorModifier('postUpdate', $script, "                ");
-                $script .= "
-            }";
-            }
-            if ($this->hasBehaviorModifier('postInsert')) {
-                $script .= "
-            if (\$isInsert) {";
-                $this->applyBehaviorModifier('postInsert', $script, "                ");
-                $script .= "
-            }";
-            }
-            $script .= "
-            \$con->commit();
-            ".$this->getTableMapClassName()."::addInstanceToPool(\$this);
-
-            return \$affectedRows;";
-        }
-
-        $script .= "
-        } catch (Exception \$e) {
-            \$con->rollBack();
-            throw \$e;
-        }";
-    }
-
-    /**
-     * Adds the function close for the save method
-     * @param string &$script The script will be modified in this method.
-     * @see addSave()
-     **/
-    protected function addSaveClose(&$script)
-    {
-        $script .= "
     }
 ";
     }

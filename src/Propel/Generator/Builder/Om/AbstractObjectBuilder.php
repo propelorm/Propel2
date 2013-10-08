@@ -59,8 +59,11 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
      * Whether to add the generic accessor methods (getByName(), getByPosition(), toArray()).
      * This is based on the build property propel.addGenericAccessors, and also whether the
      * table is an alias.
+     *
+     * @TODO: made public because twig
+     * @TODO: maybe move to some kind of core extension of propel?
      */
-    protected function isAddGenericAccessors()
+    public function isAddGenericAccessors()
     {
         $table = $this->getTable();
 
