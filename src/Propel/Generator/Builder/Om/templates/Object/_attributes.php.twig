@@ -44,6 +44,4 @@ protected $virtualColumns = array();
 
 {% include 'Object/_attribute/_alreadyInSaveAttribute.php.twig' %}
 
-{% for behavior in builder.table.behaviors %}
-    {% include '@' ~ behavior.templateNamespace ~ '/Object/_attributes.php.twig' ignore missing with {'builder': builder, 'behavior': behavior} %}
-{% endfor %}
+{{ behavior_api.include('Object/_attributes.php.twig', builder) }}
