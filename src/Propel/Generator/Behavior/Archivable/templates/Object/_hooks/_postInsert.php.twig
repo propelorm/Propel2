@@ -1,0 +1,7 @@
+{% if behavior.archiveOnInsert %}
+    if ($this->archiveOnInsert) {
+        $this->archive($con);
+    } else {
+        $this->archiveOnInsert = true;
+    }
+{% endif %}

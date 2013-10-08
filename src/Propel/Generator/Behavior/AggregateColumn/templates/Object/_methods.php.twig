@@ -1,0 +1,31 @@
+{% set query = behavior.buildQuery %}
+{% set column = behavior.column %}
+/**
+ * Computes the value of the aggregate column {{ column.name }}
+ *
+ * @param ConnectionInterface $con A connection object
+ *
+ * @return mixed The scalar result from the aggregate query
+ */
+public function compute{{ column.phpName }}(ConnectionInterface $con)
+{
+    $stmt = $con->prepare('{{ query.sql }}');
+    {% for key, binding in query.bindings %}
+        $stmt->bindValue(':p{{ key }}', $this->get{{ binding }}());
+    {% endfor %}
+    $stmt->execute();
+
+    return $stmt->fetchColumn();
+}
+
+
+/**
+ * Updates the aggregate column {{ column.name }}
+ *
+ * @param ConnectionInterface $con A connection object
+ */
+public function update{{ column.phpName }}(ConnectionInterface $con)
+{
+    $this->set{{ column.phpName }}($this->compute{{ column.phpName }}($con));
+    $this->save($con);
+}

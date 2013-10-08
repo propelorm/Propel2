@@ -25,29 +25,6 @@ class AggregateColumnRelationBehavior extends Behavior
         'update_method' => '',
     );
 
-    public function postSave($builder)
-    {
-        $relationName = $this->getRelationName($builder);
-
-        return "\$this->updateRelated{$relationName}(\$con);";
-    }
-
-    public function objectMethods($builder)
-    {
-        return $this->addObjectUpdateRelated($builder);
-    }
-
-    protected function addObjectUpdateRelated($builder)
-    {
-        $relationName = $this->getRelationName($builder);
-
-        return $this->renderTemplate('objectUpdateRelated', array(
-            'relationName'     => $relationName,
-            'variableName'     => lcfirst($relationName),
-            'updateMethodName' => $this->getParameter('update_method'),
-        ));
-    }
-
     public function objectFilter(&$script, $builder)
     {
         $relationName = $this->getRelationName($builder);

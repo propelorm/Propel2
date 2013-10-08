@@ -58,7 +58,7 @@ class I18nBehaviorObjectBuilderModifier
     public function objectFilter(&$script, $builder)
     {
         $i18nTable = $this->behavior->getI18nTable();
-        $i18nTablePhpName = $this->builder->getNewStubObjectBuilder($i18nTable)->getUnprefixedClassName();
+        $i18nTablePhpName = $builder->getNewStubObjectBuilder($i18nTable)->getUnprefixedClassName();
         $localeColumnName = $this->behavior->getLocaleColumn()->getPhpName();
         $pattern = '/public function add' . $i18nTablePhpName . '.*[\r\n]\s*\{/';
         $addition = "

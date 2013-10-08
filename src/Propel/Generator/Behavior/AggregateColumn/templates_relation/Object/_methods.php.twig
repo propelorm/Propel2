@@ -1,0 +1,16 @@
+{% set relationName = behavior.relationName(builder) %}
+/**
+ * Update the aggregate column in the related {{ relationName }} object
+ *
+ * @param ConnectionInterface $con A connection object
+ */
+protected function updateRelated{{ relationName }}(ConnectionInterface $con)
+{
+    if (${{ relationName|lcfirst }} = $this->get{{ relationName }}()) {
+        ${{ relationName|lcfirst }}->{{ behavior.parameter('update_method') }}($con);
+    }
+    if ($this->old{{ relationName }}) {
+        $this->old{{ relationName }}->{{ behavior.parameter('update_method') }}($con);
+        $this->old{{ relationName }} = null;
+    }
+}
