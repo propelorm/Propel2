@@ -1,3 +1,4 @@
+{% import 'behavior_include.twig' as behavior_api %}
 {% filter indent %}
     {% if not builder.table.isAlias %}
         {% include 'Object/_constants.php.twig' %}
@@ -31,15 +32,24 @@
     {% include 'Object/_constructor.php.twig' with {'builder': builder} %}
     {% include 'Object/_baseObjectMethods.php.twig' with {'builder': builder} %}
     {% include 'Object/_columnAccessorMethods.php.twig' with {'builder': builder} %}
-    {% include 'Object/_columnMutatorMethods.php.twig' with {'builder': builder} %}
 
-    {% if not is table.readOnly %}
+    {% if not builder.table.readOnly %}
         {% include 'Object/_columnMutatorMethods.php.twig' with {'builder': builder} %}
+
+        {% include 'Object/_manipulationMethods/_save.php.twig' with {'builder': builder} %}
+        {% include 'Object/_manipulationMethods/_reload.php.twig' with {'builder': builder} %}
+        {% include 'Object/_manipulationMethods/_delete.php.twig' with {'builder': builder} %}
+        {% include 'Object/_manipulationMethods/_doInsert.php.twig' with {'builder': builder} %}
+        {% include 'Object/_manipulationMethods/_doSave.php.twig' with {'builder': builder} %}
+        {% include 'Object/_manipulationMethods/_doUpdate.php.twig' with {'builder': builder} %}
+    {% endif %}
+
+    {% if builder.addGenericAccessors %}
+        {% include 'Object/_genericAccessors/_getByName.php.twig' with {'builder': builder} %}
+        {% include 'Object/_genericAccessors/_getByPosition.php.twig' with {'builder': builder} %}
+        {% include 'Object/_genericAccessors/_toArray.php.twig' with {'builder': builder} %}
     {% endif %}
 {% endfilter %}
 
 {# TODO: more code here #}
-
-{% for behavior in builder.table.behaviors %}
-    {% include '@' ~ behavior.templateNamespace ~ '/Object/_methods.php.twig' ignore missing with {'builder': builder, 'behavior': behavior} %}
-{% endfor %}
+{{ behavior_api.include('Object/_methods.php.twig', builder) }}
