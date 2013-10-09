@@ -1,0 +1,29 @@
+/**
+ * Sets a field from the object by Position as specified in the xml schema.
+ * Zero-based.
+ *
+ * @param      int $pos position in xml schema
+ * @param      mixed $value field value
+ * @return void
+ */
+public function setByPosition($pos, $value)
+{
+    switch ($pos) {
+        {% for column in builder.table.columns %}
+            case {{ loop.index0 }}:
+                {% if column.isEnumType %}
+                    $valueSet = {{ builder.tableMapClassName }}::getValueSet({{ builder.columnConstant(column) }});
+                    if (isset($valueSet[$value])) {
+                        $value = $valueSet[$value];
+                    }
+                {% elseif column.phpArrayType %}
+                    if (!is_array($value)) {
+                        $v = trim(substr($value, 2, -2));
+                        $value = $v ? explode(' | ', $v) : array();
+                    }
+                {% endif %}
+                $this->set{{ column.phpName }}($value);
+                break;
+        {% endfor %}
+    }
+}

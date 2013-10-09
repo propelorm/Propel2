@@ -1,0 +1,17 @@
+/**
+ * Sets a field from the object by name passed in as a string.
+ *
+ * @param      string $name
+ * @param      mixed  $value field value
+ * @param      string $type The type of fieldname the $name is of:
+ *                     one of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_STUDLYPHPNAME
+ *                     TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
+ *                     Defaults to TableMap::{{ builder.defaultKeyType }}
+ * @return void
+ */
+public function setByName($name, $value, $type = TableMap::{{ builder.defaultKeyType }})
+{
+    $pos = {{ builder.tableMapClassName }}::translateFieldName($name, $type, TableMap::TYPE_NUM);
+
+    return $this->setByPosition($pos, $value);
+}
