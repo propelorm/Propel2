@@ -49,6 +49,28 @@
         {% include 'Object/_genericAccessors/_getByPosition.php.twig' with {'builder': builder} %}
         {% include 'Object/_genericAccessors/_toArray.php.twig' with {'builder': builder} %}
     {% endif %}
+
+    {% if builder.addGenericMutators %}
+        {% include 'Object/_genericMutators/_setByName.php.twig' with {'builder': builder} %}
+        {% include 'Object/_genericMutators/_setByPosition.php.twig' with {'builder': builder} %}
+        {% include 'Object/_genericMutators/_fromArray.php.twig' with {'builder': builder} %}
+    {% endif %}
+
+    {% include 'Object/_ensureConsistency.php.twig' with {'builder': builder} %}
+    {% include 'Object/_buildCriteria.php.twig' with {'builder': builder} %}
+    {% include 'Object/_buildPkeyCriteria.php.twig' with {'builder': builder} %}
+
+    {% include 'Object/_primaryKey/_accessors.php.twig' with {'builder': builder} %}
+    {% include 'Object/_primaryKey/_mutators.php.twig' with {'builder': builder} %}
+
+    {% include 'Object/_copy.php.twig' with {'builder': builder} %}
+
+    {% if builder.generatorConfig.buildProperty('addHooks') %}
+        {% include 'Object/_hookMethods.php.twig' with {'builder': builder} %}
+    {% endif %}
+
+    {% include 'Object/_magicCall.php.twig' with {'builder': builder} %}
+    {% include 'Object/_magicToString.php.twig' with {'builder': builder} %}
 {% endfilter %}
 
 {# TODO: more code here #}
