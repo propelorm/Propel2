@@ -1,0 +1,23 @@
+{% for column in builder.table.columns if column.primaryString %}
+    {% if loop.index > 1 %}
+        /**
+         * Return the string representation of this object
+         *
+         * @return string The value of the '{{ column.name }}' column
+         */
+        public function __toString()
+        {
+            return (string) $this->get{{ column.phpName }}();
+        }
+    {% endif %}
+{% else %}
+    /**
+     * Return the string representation of this object
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string) $this->exportTo({{ builder.tableMapClassName }}::DEFAULT_STRING_FORMAT);
+    }
+{% endfor %}
