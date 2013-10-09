@@ -68,7 +68,7 @@ public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
         $copyObj->setNew(true);
         {% for column in builder.table.columns %}
             {% if column.autoIncrement %}
-                $copyObj->set{{ column.phpName }}({{ builder.defaultValueString }}); // this is a auto-increment column, so set to default value
+                $copyObj->set{{ column.phpName }}({{ builder.defaultValueString(column) }}); // this is a auto-increment column, so set to default value
             {% endif %}
         {% endfor %}
     }

@@ -20,8 +20,8 @@
      */
     public function setPrimaryKey($keys)
     {
-        {% for primaryKey in builder.table.primaryKeys %}
-            $this->set{{ primaryKey.phpName }}($keys[{{ loop.index0 }}]);";
+        {% for primaryKey in primaryKeys %}
+            $this->set{{ primaryKey.phpName }}($keys[{{ loop.index0 }}]);
         {% endfor %}
     }
 {% else %}

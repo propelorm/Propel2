@@ -12,7 +12,7 @@ public function buildPkeyCriteria()
 {
     $criteria = new Criteria({{ builder.tableMapClassName }}::DATABASE_NAME);
     {% for column in builder.table.primaryKey %}
-        $criteria->add({{ builder.columnConstant(column) }}, $this->{{ column.name|lower }});";
+        $criteria->add({{ builder.columnConstant(column) }}, $this->{{ column.name|lower }});
     {% endfor %}
 
     return $criteria;

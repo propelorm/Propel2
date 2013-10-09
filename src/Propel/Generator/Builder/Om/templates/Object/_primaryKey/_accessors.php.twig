@@ -18,7 +18,7 @@
     public function getPrimaryKey()
     {
         $pks = array();
-        {% for primaryKey in builder.table.primaryKeys %}
+        {% for primaryKey in primaryKeys %}
             $pks[{{ loop.index0 }}] = $this->get{{ primaryKey.phpName }}();
         {% endfor %}
 

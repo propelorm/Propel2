@@ -15,9 +15,10 @@
  * @param      string $keyType The type of keys the array uses.
  * @return void
  */
-public function fromArray($arr, $keyType = TableMap::$defaultKeyType)
+public function fromArray($arr, $keyType = TableMap::{{ builder.defaultKeyType }})
 {
     $keys = {{ builder.tableMapClassName }}::getFieldNames($keyType);
     {% for column in builder.table.columns %}
         if (array_key_exists($keys[{{ loop.index0 }}], $arr)) $this->set{{ column.phpName }}($arr[$keys[{{ loop.index0 }}]]);
     {% endfor %}
+}
