@@ -1,0 +1,61 @@
+{% set primaryKeys = builder.table.primaryKeys %}
+
+{% if primaryKeys|length == 1 %}
+    /**
+     * Returns the primary key for this object (row).
+     * @return   {{ primaryKeys[0].phpType }}
+     */
+    public function getPrimaryKey()
+    {
+        return $this->get{{ primaryKeys[0].phpName }}();
+    }
+{% elseif primaryKeys|length > 1 %}
+    /**
+     * Returns the composite primary key for this object.
+     * The array elements will be in same order as specified in XML.
+     * @return array
+     */
+    public function getPrimaryKey()
+    {
+        $pks = array();
+        {% for primaryKey in builder.table.primaryKeys %}
+            $pks[{{ loop.index0 }}] = $this->get{{ primaryKey.phpName }}();
+        {% endfor %}
+
+        return $pks;
+    }
+{% else %}
+    /**
+     * Returns NULL since this table doesn't have a primary key.
+     * This method exists only for BC and is deprecated!
+     *
+     * This "feature" is deprecated, since the getPrimaryKey() method is not required
+     * by the Persistent interface (or used by the templates).
+     *
+     * @return null
+     */
+    public function getPrimaryKey()
+    {
+        return null;
+    }
+{% endif %}
+
+/**
+ * Returns true if the primary key for this object is null.
+ * @return boolean
+ */
+public function isPrimaryKeyNull()
+{
+    {% if primaryKeys|length == 1 %}
+        return null === $this->get{{ primaryKeys[0].phpName }}();
+    {% else %}
+        return
+        {% for primaryKey in primaryKeys %}
+            (null === $this->get{{ primaryKey.phpName }}())
+
+            {% if not loop.last %}
+                &&
+            {% endif %}
+        {% endif %}
+        ;
+}

@@ -1,0 +1,41 @@
+{% set primaryKeys = builder.table.primaryKeys %}
+
+{% if primaryKeys|length == 1 %}
+    /**
+     * Generic method to set the primary key ({{ primaryKeys[0].name }} column).
+     *
+     * @param       $ctype $key Primary key.
+     * @return void
+     */
+    public function setPrimaryKey($key)
+    {
+        $this->set{{ primaryKeys[0].phpName }}($key);
+    }
+{% elseif primaryKeys|length > 1 %}
+    /**
+     * Set the [composite] primary key.
+     *
+     * @param      array $keys The elements of the composite key (order must match the order in XML file).
+     * @return void
+     */
+    public function setPrimaryKey($keys)
+    {
+        {% for primaryKey in builder.table.primaryKeys %}
+            $this->set{{ primaryKey.phpName }}($keys[{{ loop.index0 }}]);";
+        {% endfor %}
+    }
+{% else %}
+    /**
+     * Dummy primary key setter.
+     *
+     * This function only exists to preserve backwards compatibility.  It is no longer
+     * needed or required by the Persistent interface.  It will be removed in next BC-breaking
+     * release of Propel.
+     *
+     * @deprecated
+     */
+    public function setPrimaryKey($pk)
+    {
+        // do nothing, because this object doesn't have any primary keys
+    }
+{% endif %}
