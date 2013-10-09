@@ -38,7 +38,7 @@ public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
         {% if not column.autoIncrement %}
             $copyObj->set{{ column.phpName }}($this->get{{ column.phpName }}());
         {% endif %}
-    {% endif %}
+    {% endfor %}
 
     {% if builder.table.referrers|length > 0 %}
         if ($deepCopy) {

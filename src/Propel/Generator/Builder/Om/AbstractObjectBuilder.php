@@ -48,7 +48,7 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
      * This is based on the build property propel.addGenericMutators, and also whether the
      * table is read-only or an alias.
      */
-    protected function isAddGenericMutators()
+    public function isAddGenericMutators()
     {
         $table = $this->getTable();
 
