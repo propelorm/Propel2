@@ -28,7 +28,8 @@ The ticketing system is also hosted on GitHub:
 
 ## Make a Pull Request ##
 
-The best way to submit a patch is to make a Pull Request on GitHub. First, you should create a new branch from the `master`.
+The best way to submit a patch is to [make a Pull Request on GitHub](https://help.github.com/articles/creating-a-pull-request). 
+First, you should create a new branch from the `master`.
 Assuming you are in your local Propel project:
 
 ```bash
