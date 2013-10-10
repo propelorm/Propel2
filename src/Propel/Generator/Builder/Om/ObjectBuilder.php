@@ -347,42 +347,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     }
 
     /**
-     * Todo: find a way to handle behaviours
-     */
-
-    /**
-     * Adds variables that store column values.
-     *
-     * @param string &$script
-     */
-    protected function addColumnAttributes(&$script)
-    {
-
-        $table = $this->getTable();
-
-        foreach ($table->getColumns() as $col) {
-            if ($col->getType() == PropelTypes::OBJECT || $col->getType() == PropelTypes::PHP_ARRAY) {
-                $this->addColumnAttributeUnserializedComment($script, $col);
-                $this->addColumnAttributeUnserializedDeclaration($script, $col);
-            }
-        }
-    }
-    /**
-     * Adds the declaration of the serialized attribute.
-     *
-     * @param string &$script
-     * @param Column $column
-     */
-    protected function addColumnAttributeUnserializedDeclaration(&$script, Column $column)
-    {
-        $clo = $column->getLowercasedName() . "_unserialized";
-        $script .= "
-    protected \$" . $clo . ";
-";
-    }
-
-
-    /**
      * Adds a tester method for an array column.
      *
      * @param string &$script
