@@ -9,11 +9,11 @@
 public function set{{ builder.fKPhpNameAffix(foreignKey, false) }}({{ joinTableBuilder.objectClassName }} $v = null)
 {
     {% for columnName in foreignKey.localColumns %}
-        {% set column = table.column(columnName) %}
+        {% set column = builder.table.column(columnName) %}
         if ($v === null) {
-            $this->set{{ column.phpName }}({{ builder.defaultValueString(column.phpName) }});
+            $this->set{{ column.phpName }}({{ builder.defaultValueString(column) }});
         } else {
-            $this->set{{ column.phpName }}($v->get{{ foreignKey.table.column(foreignKey.localForeignMapping[columnName]) }}());
+            $this->set{{ column.phpName }}($v->get{{ foreignKey.foreignTable.column(foreignKey.localForeignMapping[columnName]).phpName }}());
         }
     {% endfor %}
     $this->{{ builder.fKVarName(foreignKey) }} = $v;

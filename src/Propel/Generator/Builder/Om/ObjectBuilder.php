@@ -324,8 +324,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $table = $this->getTable();
 
 
-        $this->addHydrate($script);
-
         $this->addRefFKMethods($script);
         $this->addCrossFKMethods($script);
         $this->addClear($script);
@@ -659,172 +657,19 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         return $script;
     }
 
-    /**
-     * Adds the hydrate() method, which sets attributes of the object based on a ResultSet.
-     * @param string &$script The script will be modified in this method.
-     */
-    protected function addHydrate(&$script)
+    public function getInvalidTemporalString(Column $column)
     {
-        $this->addHydrateComment($script);
-        $this->addHydrateOpen($script);
-        $this->addHydrateBody($script);
-        $this->addHydrateClose($script);
-    }
-
-    /**
-     * Adds the comment for the hydrate method
-     * @param string &$script The script will be modified in this method.
-     * @see addHydrate()
-     */
-    protected function addHydrateComment(&$script)
-    {
-        $script .= "
-    /**
-     * Hydrates (populates) the object variables with values from the database resultset.
-     *
-     * An offset (0-based \"start column\") is specified so that objects can be hydrated
-     * with a subset of the columns in the resultset rows.  This is needed, for example,
-     * for results of JOIN queries where the resultset row includes columns from two or
-     * more tables.
-     *
-     * @param array   \$row       The row returned by DataFetcher->fetch().
-     * @param int     \$startcol  0-based offset column which indicates which restultset column to start with.
-     * @param boolean \$rehydrate Whether this object is being re-hydrated from the database.
-     * @param string  \$indexType The index type of \$row. Mostly DataFetcher->getIndexType().
-                                  One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_STUDLYPHPNAME
-     *                            TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
-     *
-     * @return int             next starting column
-     * @throws PropelException - Any caught Exception will be rewrapped as a PropelException.
-     */";
-    }
-
-    /**
-     * Adds the function declaration for the hydrate method
-     * @param string &$script The script will be modified in this method.
-     * @see addHydrate()
-     */
-    protected function addHydrateOpen(&$script)
-    {
-        $script .= "
-    public function hydrate(\$row, \$startcol = 0, \$rehydrate = false, \$indexType = TableMap::TYPE_NUM)
-    {";
-    }
-
-    /**
-     * Adds the function body for the hydrate method
-     * @param string &$script The script will be modified in this method.
-     * @see addHydrate()
-     */
-    protected function addHydrateBody(&$script)
-    {
-        $table = $this->getTable();
-        $platform = $this->getPlatform();
-
-        $tableMap = $this->getTableMapClassName();
-
-        $script .= "
-        try {
-";
-        $n = 0;
-        foreach ($table->getColumns() as $col) {
-            if (!$col->isLazyLoad()) {
-                $indexName = "TableMap::TYPE_NUM == \$indexType ? $n + \$startcol : $tableMap::translateFieldName('{$col->getPhpName()}', TableMap::TYPE_PHPNAME, \$indexType)";
-
-                $script .= "
-
-            \$col = \$row[$indexName];";
-                $clo = $col->getLowercasedName();
-                if ($col->getType() === PropelTypes::CLOB_EMU && $this->getPlatform() instanceof OraclePlatform) {
-                    // PDO_OCI returns a stream for CLOB objects, while other PDO adapters return a string...
-                    $script .= "
-            \$this->$clo = stream_get_contents(\$col);";
-                } elseif ($col->isLobType() && !$platform->hasStreamBlobImpl()) {
-                    $script .= "
-            if (null !== \$col) {
-                \$this->$clo = fopen('php://memory', 'r+');
-                fwrite(\$this->$clo, \$col);
-                rewind(\$this->$clo);
-            } else {
-                \$this->$clo = null;
-            }";
-                } elseif ($col->isTemporalType()) {
-                    $dateTimeClass = $this->getBuildProperty('dateTimeClass');
-                    if (!$dateTimeClass) {
-                        $dateTimeClass = '\DateTime';
-                    }
-                    $handleMysqlDate = false;
-                    if ($this->getPlatform() instanceof MysqlPlatform) {
-                        if ($col->getType() === PropelTypes::TIMESTAMP) {
-                            $handleMysqlDate = true;
-                            $mysqlInvalidDateString = '0000-00-00 00:00:00';
-                        } elseif ($col->getType() === PropelTypes::DATE) {
-                            $handleMysqlDate = true;
-                            $mysqlInvalidDateString = '0000-00-00';
-                        }
-                        // 00:00:00 is a valid time, so no need to check for that.
-                    }
-                    if ($handleMysqlDate) {
-                        $script .= "
-            if (\$col === '$mysqlInvalidDateString') {
-                \$col = null;
-            }";
-                    }
-                    $script .= "
-            \$this->$clo = (null !== \$col) ? PropelDateTime::newInstance(\$col, null, '$dateTimeClass') : null;";
-                } elseif ($col->isPhpPrimitiveType()) {
-                    $script .= "
-            \$this->$clo = (null !== \$col) ? (".$col->getPhpType().") \$col : null;";
-                } elseif ($col->getType() === PropelTypes::OBJECT) {
-                    $script .= "
-            \$this->$clo = \$col;";
-                } elseif ($col->getType() === PropelTypes::PHP_ARRAY) {
-                    $cloUnserialized = $clo . '_unserialized';
-                    $script .= "
-            \$this->$clo = \$col;
-            \$this->$cloUnserialized = null;";
-                } elseif ($col->isPhpObjectType()) {
-                    $script .= "
-            \$this->$clo = (null !== \$col) ? new ".$col->getPhpType()."(\$col) : null;";
-                } else {
-                    $script .= "
-            \$this->$clo = \$col;";
-                }
-                $n++;
-            } // if col->isLazyLoad()
-        } /* foreach */
-
-        if ($this->getBuildProperty("addSaveMethod")) {
-            $script .= "
-            \$this->resetModified();
-";
+        if ($this->getPlatform() instanceof MysqlPlatform) {
+            if($column->getType() === PropelTypes::TIMESTAMP) {
+                return '0000-00-00 00:00:00';
+            } elseif($column->getType() === PropelTypes::DATE) {
+                return '0000-00-00';
+            }
         }
 
-        $script .= "
-            \$this->setNew(false);
-
-            if (\$rehydrate) {
-                \$this->ensureConsistency();
-            }
-
-            return \$startcol + $n; // $n = ".$this->getTableMapClass()."::NUM_HYDRATE_COLUMNS.
-
-        } catch (Exception \$e) {
-            throw new PropelException(\"Error populating ".$this->getStubObjectBuilder()->getClassName()." object\", 0, \$e);
-        }";
+        return null;
     }
 
-    /**
-     * Adds the function close for the hydrate method
-     * @param string &$script The script will be modified in this method.
-     * @see addHydrate()
-     */
-    protected function addHydrateClose(&$script)
-    {
-        $script .= "
-    }
-";
-    }
     /**
      * Constructs variable name for fkey-related objects.
      * @param  ForeignKey $fk

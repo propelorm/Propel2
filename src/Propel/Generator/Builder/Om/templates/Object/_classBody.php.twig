@@ -64,6 +64,7 @@
     {% include 'Object/_primaryKey/_mutators.php.twig' with {'builder': builder} %}
 
     {% include 'Object/_copy.php.twig' with {'builder': builder} %}
+    {% include 'Object/_hydrate.php.twig' with {'builder': builder} %}
 
     {% include 'Object/_foreignKey/_methods.php.twig' with {'builder': builder} %}
 
