@@ -321,12 +321,9 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
         $script .= $this->twig->render('Object/_classBody.php.twig', ['builder' => $this]);
 
-        $table = $this->getTable();
-
 
         $this->addRefFKMethods($script);
         $this->addCrossFKMethods($script);
-        $this->addClear($script);
         $this->addClearAllReferences($script);
 
         // apply behaviors
@@ -386,19 +383,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     } // has$singularPhpName()
 ";
     }
-
-    /**
-     * Adds the lazy loader method.
-     *
-     * @param string &$script
-     * @param Column $column
-     */
-    protected function addLazyLoader(&$script, Column $column)
-    {
-        $this->addLazyLoaderBody($script, $column);
-        $this->addLazyLoaderClose($script);
-    }
-
 
     /**
      * Adds the function body for the lazy loader method.
@@ -2263,54 +2247,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     }
 ";
     }
-
-    /**
-     * Adds clear method
-     * @param string &$script The script will be modified in this method.
-     */
-    protected function addClear(&$script)
-    {
-        $table = $this->getTable();
-
-        $script .= "
-    /**
-     * Clears the current object and sets all attributes to their default values
-     */
-    public function clear()
-    {";
-        foreach ($table->getColumns() as $col) {
-            $clo = $col->getLowercasedName();
-            $script .= "
-        \$this->".$clo." = null;";
-            if ($col->isLazyLoad()) {
-                $script .= "
-        \$this->".$clo."_isLoaded = false;";
-            }
-            if ($col->getType() == PropelTypes::OBJECT || $col->getType() == PropelTypes::PHP_ARRAY) {
-                $cloUnserialized = $clo.'_unserialized';
-
-                $script .="
-        \$this->$cloUnserialized = null;";
-            }
-        }
-
-        $script .= "
-        \$this->alreadyInSave = false;
-        \$this->clearAllReferences();";
-
-        if ($this->hasDefaultValues()) {
-            $script .= "
-        \$this->applyDefaultValues();";
-        }
-
-        $script .= "
-        \$this->resetModified();
-        \$this->setNew(true);
-        \$this->setDeleted(false);
-    }
-";
-    }
-
 
     /**
      * Adds clearAllReferencers() method which resets all the collections of referencing
