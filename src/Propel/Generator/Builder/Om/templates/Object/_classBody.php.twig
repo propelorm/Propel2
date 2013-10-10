@@ -65,6 +65,8 @@
 
     {% include 'Object/_copy.php.twig' with {'builder': builder} %}
 
+    {% include 'Object/_foreignKey/_methods.php.twig' with {'builder': builder} %}
+
     {% if builder.generatorConfig.buildProperty('addHooks') %}
         {% include 'Object/_hookMethods.php.twig' with {'builder': builder} %}
     {% endif %}

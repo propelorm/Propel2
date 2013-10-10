@@ -326,7 +326,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
         $this->addHydrate($script);
 
-        $this->addFKMethods($script);
         $this->addRefFKMethods($script);
         $this->addCrossFKMethods($script);
         $this->addClear($script);
@@ -858,20 +857,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     }
 
     /**
-     * Adds the methods that get & set objects related by foreign key to the current object.
-     * @param string &$script The script will be modified in this method.
-     */
-    protected function addFKMethods(&$script)
-    {
-        foreach ($this->getTable()->getForeignKeys() as $fk) {
-            $this->declareClassFromBuilder($this->getNewStubObjectBuilder($fk->getForeignTable()), 'Child');
-            $this->declareClassFromBuilder($this->getNewStubQueryBuilder($fk->getForeignTable()));
-            $this->addFKMutator($script, $fk);
-            $this->addFKAccessor($script, $fk);
-        } // foreach fk
-    }
-
-    /**
      * Adds the class attributes that are needed to store fkey related objects.
      * @param string &$script The script will be modified in this method.
      * @param ForeignKey $fk
@@ -890,84 +875,13 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     }
 
     /**
-     * Adds the mutator (setter) method for setting an fkey related object.
-     * @param string &$script The script will be modified in this method.
-     * @param ForeignKey $fk
-     */
-    protected function addFKMutator(&$script, ForeignKey $fk)
-    {
-        $table = $this->getTable();
-        $fkTable = $fk->getForeignTable();
-
-        $joinTableObjectBuilder = $this->getNewObjectBuilder($fkTable);
-        $className = $joinTableObjectBuilder->getObjectClassName();
-
-        $varName = $this->getFKVarName($fk);
-
-        $script .= "
-    /**
-     * Declares an association between this object and a $className object.
-     *
-     * @param                  $className \$v
-     * @return                 ".$this->getObjectClassName(true)." The current object (for fluent API support)
-     * @throws PropelException
-     */
-    public function set".$this->getFKPhpNameAffix($fk, false)."($className \$v = null)
-    {";
-        foreach ($fk->getLocalColumns() as $columnName) {
-            $column = $table->getColumn($columnName);
-            $lfmap = $fk->getLocalForeignMapping();
-            $colFKName = $lfmap[$columnName];
-            $colFK = $fkTable->getColumn($colFKName);
-            $script .= "
-        if (\$v === null) {
-            \$this->set".$column->getPhpName()."(".$this->getDefaultValueString($column).");
-        } else {
-            \$this->set".$column->getPhpName()."(\$v->get".$colFK->getPhpName()."());
-        }
-";
-
-        } /* foreach local col */
-
-        $script .= "
-        \$this->$varName = \$v;
-";
-
-        // Now add bi-directional relationship binding, taking into account whether this is
-        // a one-to-one relationship.
-
-        if ($fk->isLocalPrimaryKey()) {
-            $script .= "
-        // Add binding for other direction of this 1:1 relationship.
-        if (\$v !== null) {
-            \$v->set".$this->getRefFKPhpNameAffix($fk, false)."(\$this);
-        }
-";
-        } else {
-            $script .= "
-        // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the $className object, it will not be re-added.
-        if (\$v !== null) {
-            \$v->add".$this->getRefFKPhpNameAffix($fk, false)."(\$this);
-        }
-";
-
-        }
-
-        $script .= "
-
-        return \$this;
-    }
-";
-    }
-
-    /**
      * Adds the accessor (getter) method for getting an fkey related object.
      * @param string &$script The script will be modified in this method.
      * @param ForeignKey $fk
      */
-    protected function addFKAccessor(&$script, ForeignKey $fk)
+    public function addFKAccessor(ForeignKey $fk)
     {
+        $script = '';
         $table = $this->getTable();
 
         $varName = $this->getFKVarName($fk);
@@ -1055,6 +969,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     }
 ";
 
+        return $script;
     } // addFKAccessor
 
     /**

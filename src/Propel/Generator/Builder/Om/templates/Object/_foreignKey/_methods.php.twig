@@ -1,0 +1,7 @@
+{% for foreignKey in builder.table.foreignKeys %}
+    {% do builder.declareClassFromBuilder(builder.newStubObjectBuilder(foreignKey.foreignTable), 'Child') %}
+    {% do builder.declareClassFromBuilder(builder.newStubQueryBuilder(foreignKey.foreignTable)) %}
+
+    {% include 'Object/_mutator.php.twig' %}
+    {% include 'Object/_accessor.php.twig' %}
+{% endfor %}

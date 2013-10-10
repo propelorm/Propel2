@@ -1,0 +1,35 @@
+{% set joinTableBuilder = builder.newObjectBuilder(foreignKey.foreignTable) %}
+/**
+* Declares an association between this object and a $className object.
+*
+* @param                  {{ joinTableBuilder.objectClassName(true) }} \$v
+* @return                 {{ builder.objectClassName(true) }} The current object (for fluent API support)
+* @throws PropelException
+*/
+public function set{{ builder.fKPhpNameAffix(foreignKey, false) }}({{ joinTableBuilder.objectClassName }} $v = null)
+{
+    {% for columnName in foreignKey.localColumns %}
+        {% set column = table.column(columnName) %}
+        if ($v === null) {
+            $this->set{{ column.phpName }}({{ builder.defaultValueString(column.phpName) }});
+        } else {
+            $this->set{{ column.phpName }}($v->get{{ foreignKey.table.column(foreignKey.localForeignMapping[columnName]) }}());
+        }
+    {% endfor %}
+    $this->{{ builder.fKVarName(foreignKey) }} = $v;
+
+    {% if foreignKey.localPrimaryKey %}
+        // Add binding for other direction of this 1:1 relationship.
+        if ($v !== null) {
+            $v->set{{ builder.refFKPhpNameAffix(foreignKey, false) }}($this);
+        }
+    {% else %}
+        // Add binding for other direction of this n:n relationship.
+        // If this object has already been added to the $className object, it will not be re-added.
+        if ($v !== null) {
+            $v->add{{ builder.refFKPhpNameAffix(foreignKey, false) }}($this);
+        }
+    {% endif %}
+
+    return $this;
+}
