@@ -381,50 +381,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 ";
     }
 
-    /**
-     * Adds the comment for a temporal accessor.
-     *
-     * @param string &$script
-     * @param Column $column
-     */
-    public function addTemporalAccessorComment(Column $column)
-    {
-        $script = '';
-        $clo = $column->getLowercasedName();
-
-        $dateTimeClass = $this->getBuildProperty('dateTimeClass');
-        if (!$dateTimeClass) {
-            $dateTimeClass = '\DateTime';
-        }
-
-        $handleMysqlDate = false;
-        if ($this->getPlatform() instanceof MysqlPlatform) {
-            if ($column->getType() === PropelTypes::TIMESTAMP) {
-                $handleMysqlDate = true;
-                $mysqlInvalidDateString = '0000-00-00 00:00:00';
-            } elseif ($column->getType() === PropelTypes::DATE) {
-                $handleMysqlDate = true;
-                $mysqlInvalidDateString = '0000-00-00';
-            }
-            // 00:00:00 is a valid time, so no need to check for that.
-        }
-
-        $script .= "
-    /**
-     * Get the [optionally formatted] temporal [$clo] column value.
-     * {$column->getDescription()}
-     *
-     * @param      string \$format The date/time format string (either date()-style or strftime()-style).
-     *                            If format is NULL, then the raw \DateTime object will be returned.
-     *
-     * @return mixed Formatted date/time value as string or $dateTimeClass object (if format is NULL), NULL if column is NULL" .($handleMysqlDate ? ', and 0 if column value is ' . $mysqlInvalidDateString : '')."
-     *
-     * @throws PropelException - if unable to parse/validate the date/time value.
-     */";
-
-        return $script;
-    }
-
 
     /**
      * Adds a tester method for an array column.

@@ -10,7 +10,17 @@
 
 {% embed 'Object/_accessor/_baseAccessor.php.twig' with {'builder': builder, 'column': column} %}
     {% block comment %}
-        {{ builder.addTemporalAccessorComment(column) }} {# todo: remove this ugly hack #}
+        /**
+         * Get the [optionally formatted] temporal [{{ column.name|lower }}] column value.
+         * {{ column.description }}
+         *
+         * @param      string $format The date/time format string (either date()-style or strftime()-style).
+         *                            If format is NULL, then the raw \DateTime object will be returned.
+         *
+         * @return mixed Formatted date/time value as string or {{ builder.buildProperty('dateTimeClass')|default('\DateTime') }} object (if format is NULL), NULL if column is NULL{% if builder.invalidTemporalString(column) is not null %}, and 0 if column value is {{ builder.invalidTemporalString(column) }}){% endif %}.
+         *
+         * @throws PropelException - if unable to parse/validate the date/time value.
+         */
     {% endblock %}
     {% block parameters %}
         {% set parameters = [{'name': 'format', 'default': defaultFormat|varExport, 'type': null}] %}
