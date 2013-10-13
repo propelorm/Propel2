@@ -26,7 +26,7 @@ class PropelTwigExtension implements \Twig_ExtensionInterface {
      */
     public function getTokenParsers()
     {
-
+        return [];
     }
 
     /**
@@ -36,7 +36,7 @@ class PropelTwigExtension implements \Twig_ExtensionInterface {
      */
     public function getNodeVisitors()
     {
-
+        return [];
     }
 
     /**
@@ -73,7 +73,7 @@ class PropelTwigExtension implements \Twig_ExtensionInterface {
      */
     public function getTests()
     {
-
+        return [];
     }
 
     /**
@@ -83,7 +83,7 @@ class PropelTwigExtension implements \Twig_ExtensionInterface {
      */
     public function getFunctions()
     {
-
+        return [];
     }
 
     /**
@@ -93,7 +93,7 @@ class PropelTwigExtension implements \Twig_ExtensionInterface {
      */
     public function getOperators()
     {
-
+        return [];
     }
 
     /**
@@ -103,7 +103,7 @@ class PropelTwigExtension implements \Twig_ExtensionInterface {
      */
     public function getGlobals()
     {
-
+        return [];
     }
 
     /**

@@ -285,7 +285,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             '\Propel\Runtime\ActiveQuery\PropelQuery'
         );
 
-        $script .= $this->twig->render('Object/_classBody.php.twig', ['builder' => $this]);
+        $script .= $this->getTwig()->render('Object/_classBody.php.twig', ['builder' => $this]);
 
 
         $this->addCrossFKMethods($script);
