@@ -1,0 +1,10 @@
+{% for delegate, type in behavior.delegates %}
+    if (is_callable(array('{{ behavior.delegateObjectBuilder(builder, type, delegate).fullyQualifiedClassName }}', $name))) {
+        if (!$delegate = $this->get{{ behavior.delegateMethodName(builder, type, delegate) }}()) {
+            $delegate = new {{ builder.classNameFromBuilder(behavior.delegateObjectBuilder(builder, type, delegate)) }}();
+            $this->set{{ behavior.delegateMethodName(builder, type, delegate) }}($delegate);
+        }
+
+        return call_user_func_array(array($delegate, $name), $params);
+    }
+{% endfor %}

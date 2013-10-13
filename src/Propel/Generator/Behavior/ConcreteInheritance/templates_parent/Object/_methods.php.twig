@@ -1,0 +1,25 @@
+/**
+ * Whether or not this object is the parent of a child object
+ *
+ * @return    bool
+ */
+public function hasChildObject()
+{
+    return $this->{{ behavior.columnGetter }}() !== null;
+}
+
+/**
+ * Get the child object of this object
+ *
+ * @return    mixed
+ */
+public function getChildObject()
+{
+    if (!$this->hasChildObject()) {
+        return null;
+    }
+    $childObjectClass = $this->{{ behavior.columnGetter }}();
+    $childObject = PropelQuery::from($childObjectClass)->findPk($this->getPrimaryKey());
+
+    return $childObject->hasChildObject() ? $childObject->getChildObject() : $childObject;
+}

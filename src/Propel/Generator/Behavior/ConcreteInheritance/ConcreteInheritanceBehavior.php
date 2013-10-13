@@ -115,7 +115,7 @@ class ConcreteInheritanceBehavior extends Behavior
 
     }
 
-    protected function getParentTable()
+    public function getParentTable()
     {
         $database = $this->getTable()->getDatabase();
         $tableName = $database->getTablePrefix() . $this->getParameter('extends');
@@ -126,7 +126,7 @@ class ConcreteInheritanceBehavior extends Behavior
         return $database->getTable($tableName);
     }
 
-    protected function isCopyData()
+    public function isCopyData()
     {
         return 'true' === $this->getParameter('copy_data_to_parent');
     }
@@ -142,111 +142,5 @@ class ConcreteInheritanceBehavior extends Behavior
         }
 
         return null;
-    }
-
-    public function preSave($script)
-    {
-        if ($this->isCopyData()) {
-            return "\$parent = \$this->getSyncParent(\$con);
-\$parent->save(\$con);
-\$this->setPrimaryKey(\$parent->getPrimaryKey());
-";
-        }
-    }
-
-    public function postDelete($script)
-    {
-        if ($this->isCopyData()) {
-            return "\$this->getParentOrCreate(\$con)->delete(\$con);
-";
-        }
-    }
-
-    public function objectMethods($builder)
-    {
-        if (!$this->isCopyData()) {
-            return;
-        }
-        $this->builder = $builder;
-        $script = '';
-        $this->addObjectGetParentOrCreate($script);
-        $this->addObjectGetSyncParent($script);
-
-        return $script;
-    }
-
-    protected function addObjectGetParentOrCreate(&$script)
-    {
-        $parentTable = $this->getParentTable();
-        $parentClass = $this->builder->getClassNameFromBuilder($this->builder->getNewStubObjectBuilder($parentTable));
-        $script .= "
-/**
- * Get or Create the parent " . $parentClass . " object of the current object
- *
- * @return    " . $parentClass . " The parent object
- */
-public function getParentOrCreate(\$con = null)
-{
-    if (\$this->isNew()) {
-        if (\$this->isPrimaryKeyNull()) {
-            \$parent = new " . $parentClass . "();
-            \$parent->set" . $this->getParentTable()->getColumn($this->getParameter('descendant_column'))->getPhpName() . "('" . $this->builder->getStubObjectBuilder()->getQualifiedClassName() . "');
-
-            return \$parent;
-        } else {
-            \$parent = " . $this->builder->getNewStubQueryBuilder($parentTable)->getClassname() . "::create()->findPk(\$this->getPrimaryKey(), \$con);
-            if (null === \$parent || null !== \$parent->getDescendantClass()) {
-                \$parent = new " . $parentClass . "();
-                \$parent->setPrimaryKey(\$this->getPrimaryKey());
-                \$parent->set" . $this->getParentTable()->getColumn($this->getParameter('descendant_column'))->getPhpName() . "('" . $this->builder->getStubObjectBuilder()->getQualifiedClassName() . "');
-            }
-
-            return \$parent;
-        }
-    } else {
-        return " . $this->builder->getClassNameFromBuilder($this->builder->getNewStubQueryBuilder($parentTable)) . "::create()->findPk(\$this->getPrimaryKey(), \$con);
-    }
-}
-";
-    }
-
-    protected function addObjectGetSyncParent(&$script)
-    {
-        $parentTable = $this->getParentTable();
-        $pkeys = $parentTable->getPrimaryKey();
-        $cptype = $pkeys[0]->getPhpType();
-        $script .= "
-/**
- * Create or Update the parent " . $parentTable->getPhpName() . " object
- * And return its primary key
- *
- * @return    " . $cptype . " The primary key of the parent object
- */
-public function getSyncParent(\$con = null)
-{
-    \$parent = \$this->getParentOrCreate(\$con);";
-        foreach ($parentTable->getColumns() as $column) {
-            if ($column->isPrimaryKey() || $column->getName() == $this->getParameter('descendant_column')) {
-                continue;
-            }
-            $phpName = $column->getPhpName();
-            $script .= "
-    \$parent->set{$phpName}(\$this->get{$phpName}());";
-        }
-        foreach ($parentTable->getForeignKeys() as $fk) {
-            if (isset($fk->isParentChild) && $fk->isParentChild) {
-                continue;
-            }
-            $refPhpName = $this->builder->getFKPhpNameAffix($fk, false);
-            $script .= "
-    if (\$this->get" . $refPhpName . "() && \$this->get" . $refPhpName . "()->isNew()) {
-        \$parent->set" . $refPhpName . "(\$this->get" . $refPhpName . "());
-    }";
-        }
-        $script .= "
-
-    return \$parent;
-}
-";
     }
 }

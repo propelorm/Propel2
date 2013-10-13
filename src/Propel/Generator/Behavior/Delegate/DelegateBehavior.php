@@ -10,6 +10,7 @@
 
 namespace Propel\Generator\Behavior\Delegate;
 
+use Propel\Generator\Builder\Om\AbstractOMBuilder;
 use Propel\Generator\Model\Behavior;
 use Propel\Generator\Model\ForeignKey;
 
@@ -104,36 +105,40 @@ class DelegateBehavior extends Behavior
         return $this->getTable()->getDatabase()->getTable($delegateTableName);
     }
 
-    public function objectCall($builder)
+    public function getDelegates()
     {
-        $plural = false;
-        $script = '';
-        foreach ($this->delegates as $delegate => $type) {
-            $delegateTable = $this->getDelegateTable($delegate);
-            if ($type == self::ONE_TO_ONE) {
-                $fks = $delegateTable->getForeignKeysReferencingTable($this->getTable()->getName());
-                $fk = $fks[0];
-                $ARClassName = $builder->getClassNameFromBuilder($builder->getNewStubObjectBuilder($fk->getTable()));
-                $ARFQCN = $builder->getNewStubObjectBuilder($fk->getTable())->getFullyQualifiedClassName();
-                $relationName = $builder->getRefFKPhpNameAffix($fk, $plural);
-            } else {
-                $fks = $this->getTable()->getForeignKeysReferencingTable($delegate);
-                $fk = $fks[0];
-                $ARClassName = $builder->getClassNameFromBuilder($builder->getNewStubObjectBuilder($delegateTable));
-                $ARFQCN = $builder->getNewStubObjectBuilder($delegateTable)->getFullyQualifiedClassName();
-                $relationName = $builder->getFKPhpNameAffix($fk);
-            }
-                $script .= "
-if (is_callable(array('$ARFQCN', \$name))) {
-    if (!\$delegate = \$this->get$relationName()) {
-        \$delegate = new $ARClassName();
-        \$this->set$relationName(\$delegate);
+        return $this->delegates;
     }
 
-    return call_user_func_array(array(\$delegate, \$name), \$params);
-}";
-        }
+    public function isOneToOne($type)
+    {
+        return $type === static::ONE_TO_ONE;
+    }
 
-        return $script;
+    public function getDelegateForeignKey($type, $delegate)
+    {
+        if($type === static::ONE_TO_ONE) {
+            return $this->getDelegateTable($delegate)->getForeignKeysReferencingTable($this->getTable()->getName())[0];
+        } else {
+            return $this->getTable()->getForeignKeysReferencingTable($delegate)[0];
+        }
+    }
+
+    public function getDelegateObjectBuilder(AbstractOMBuilder $builder, $type, $delegate)
+    {
+        if($type === static::ONE_TO_ONE) {
+            return $builder->getNewStubObjectBuilder($this->getDelegateForeignKey($type, $delegate)->getTable());
+        } else {
+            return $builder->getNewStubObjectBuilder($this->getDelegateTable($delegate));
+        }
+    }
+
+    public function getDelegateMethodName(AbstractOMBuilder $builder, $type, $delegate)
+    {
+        if($type === static::ONE_TO_ONE) {
+            return $builder->getRefFKPhpNameAffix($this->getDelegateForeignKey($type, $delegate));
+        } else {
+            return $builder->getFKPhpNameAffix($this->getDelegateForeignKey($type, $delegate));
+        }
     }
 }
