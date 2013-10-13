@@ -63,21 +63,20 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     public function __construct(Table $table)
     {
         parent::__construct($table);
-        $this->twig = $this->createTwig();
     }
 
-    protected function initTwig()
+    protected function createTwig()
     {
         $loader = new \Twig_Loader_Filesystem(__DIR__ . '/templates/');
         $twig = new \Twig_Environment($loader, [
             'autoescape' => false,
             'strict_variables' => true,
-            'cache' => sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'propel2-cache',
+            'cache' => $this->getGeneratorConfig()->getBuildProperty('builderCachePath'),
             'auto_reload' => true
         ]);
         $twig->addExtension(new PropelTwigExtension());
 
-        foreach ($table->getBehaviors() as $behavior) {
+        foreach ($this->getTable()->getBehaviors() as $behavior) {
             $path = $behavior->getTemplateDirectory();
             if ($path !== null) {
                 $loader->prependPath($behavior->getTemplateDirectory(), $behavior->getTemplateNamespace());
@@ -85,6 +84,14 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         }
 
         return $twig;
+    }
+
+    public function getTwig()
+    {
+        if($this->twig === null) {
+            $this->twig = $this->createTwig(); // Create twig only when we need it
+        }
+        return $this->twig;
     }
 
 
