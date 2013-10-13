@@ -32,41 +32,6 @@ use Propel\Generator\Platform\SqlsrvPlatform;
  */
 class ObjectBuilder extends AbstractObjectBuilder
 {
-    private $twig;
-
-    public function __construct(Table $table)
-    {
-        parent::__construct($table);
-        $loader = new \Twig_Loader_Filesystem(__DIR__ . '/templates/');
-        $this->twig = new \Twig_Environment($loader, ['autoescape' => false, 'strict_variables' => true, 'cache' => sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'propel2-cache', 'auto_reload' => true]);
-        $this->twig->addFilter('addSlashes', new \Twig_SimpleFilter('addSlashes', 'addslashes'));
-        $this->twig->addFilter('lcfirst', new \Twig_SimpleFilter('lcfirst', 'lcfirst'));
-        $this->twig->addFilter('ucfirst', new \Twig_SimpleFilter('ucfirst', 'ucfirst'));
-        $this->twig->addFilter('indent', new \Twig_SimpleFilter('indent', function($string) {
-                $lines = explode(PHP_EOL, $string);
-                $output = '';
-
-                foreach($lines as $line) {
-                    $output .= '    ' . $line . PHP_EOL;
-                }
-
-                return $output;
-            }));
-        $this->twig->addFilter(
-            'varExport',
-            new \Twig_SimpleFilter('varExport', function ($input) {
-                return var_export($input, true);
-            })
-        );
-
-        foreach($table->getBehaviors() as $behavior) {
-            $path = $behavior->getTemplateDirectory();
-            if($path !== null) {
-                $loader->prependPath($behavior->getTemplateDirectory(), $behavior->getTemplateNamespace());
-            }
-        }
-    }
-
 
     /**
      * Returns the package for the base object classes.

@@ -11,6 +11,7 @@
 namespace Propel\Generator\Builder\Om;
 
 use Propel\Generator\Builder\DataModelBuilder;
+use Propel\Generator\Builder\PropelTwigExtension;
 use Propel\Generator\Builder\Util\PropelTemplate;
 use Propel\Generator\Exception\InvalidArgumentException;
 use Propel\Generator\Exception\LogicException;
@@ -51,6 +52,41 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * @var array
      */
     protected $whiteListOfDeclaredClasses = array('PDO', 'Exception', 'DateTime');
+
+    /**
+     * Contains a instance of twig for rendering the templates
+     *
+     * @var \Twig_Environment
+     */
+    private $twig;
+
+    public function __construct(Table $table)
+    {
+        parent::__construct($table);
+        $this->twig = $this->createTwig();
+    }
+
+    protected function initTwig()
+    {
+        $loader = new \Twig_Loader_Filesystem(__DIR__ . '/templates/');
+        $twig = new \Twig_Environment($loader, [
+            'autoescape' => false,
+            'strict_variables' => true,
+            'cache' => sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'propel2-cache',
+            'auto_reload' => true
+        ]);
+        $twig->addExtension(new PropelTwigExtension());
+
+        foreach ($table->getBehaviors() as $behavior) {
+            $path = $behavior->getTemplateDirectory();
+            if ($path !== null) {
+                $loader->prependPath($behavior->getTemplateDirectory(), $behavior->getTemplateNamespace());
+            }
+        }
+
+        return $twig;
+    }
+
 
     /**
      * Builds the PHP source for current class and returns it as a string.
