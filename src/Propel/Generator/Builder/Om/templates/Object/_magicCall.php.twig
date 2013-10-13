@@ -11,7 +11,7 @@
  */
 public function __call($name, $params)
 {
-    {{ behavior_api.include('Object/_magicCall.php.twig', builder) }}
+    {{ behavior_api.include('Object/_hooks/_magicCall.php.twig', builder) }}
 
     return $this->__parentCall($name, $params);
 }
