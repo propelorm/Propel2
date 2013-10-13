@@ -1,0 +1,68 @@
+{% extends 'Object/_refFk/_methods/_baseFkMethod.php.twig' %}
+
+{% block method %}
+    {{ parent() }}
+    {% set joinedTableObjectBuilder = builder.newObjectBuilder(refFk.table) %}
+    {% set className = joinedTableObjectBuilder.className %}
+    {% set fkQueryClassName = builder.classNameFromBuilder(builder.newStubQueryBuilder(refFk.table)) %}
+
+    /**
+     * Gets an array of {{ className }} objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this {{ builder.objectClassName }} is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @return Collection|{{ className }}[] List of {{ className }} objects
+     * @throws PropelException
+     */
+    public function get{{ relCol }}($criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->{{ collVarName }}Partial && !$this->isNew();
+        if (null === $this->{{ collVarName }} || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->{{ collVarName }}) {
+                // return empty collection
+                $this->init{{ builder.refFKPhpNameAffix(refFk, true) }}();
+            } else {
+                ${{ collVarName }} = {{ fkQueryClassName }}::create(null, $criteria)
+                    ->filterBy{{ builder.fKPhpNameAffix(refFk) }}($this)
+                    ->find($con);
+
+                if (null !== $criteria) {
+                    if (false !== $this->{{ collVarName }}Partial && count(${{ collVarName }})) {
+                        $this->init{{ builder.refFKPhpNameAffix(refFk, true) }}(false);
+
+                        foreach (${{ collVarName }} as $obj) {
+                            if (false == $this->{{ collVarName }}->contains($obj)) {
+                                $this->{{ collVarName }}->append($obj);
+                            }
+                        }
+
+                        $this->{{ collVarName }}Partial = true;
+                    }
+
+                    ${{ collVarName }}->getInternalIterator()->rewind();
+
+                    return ${{ collVarName }};
+                }
+
+                if ($partial && $this->{{ collVarName }}) {
+                    foreach ($this->{{ collVarName }} as $obj) {
+                        if ($obj->isNew()) {
+                            ${{ collVarName }}[] = $obj;
+                        }
+                    }
+                }
+
+                $this->{{ collVarName }} = ${{ collVarName }};
+                $this->{{ collVarName }}Partial = false;
+            }
+        }
+
+        return $this->{{ collVarName }};
+    }
+{% endblock %}

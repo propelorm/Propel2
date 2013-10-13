@@ -1,0 +1,29 @@
+{% extends 'Object/_refFk/_methods/_baseFkMethod.php.twig' %}
+
+{% block method %}
+    {{ parent() }}
+    {% set joinedTableObjectBuilder = builder.newObjectBuilder(refFk.table) %}
+    {% set className = joinedTableObjectBuilder.className %}
+    {% set fkQueryClassName = builder.classNameFromBuilder(builder.newStubQueryBuilder(refFk.table)) %}
+
+    /**
+     * Method called to associate a {{ className }} object to this object
+     * through the {{ className }} foreign key attribute.
+     *
+     * @param    {{ className }} $l {{ className }}
+     * @return   {{ builder.objectClassName(true) }} The current object (for fluent API support)
+     */
+    public function add{{ builder.refFkPhpNameAffix(refFk, false) }}({{ className }} $l)
+    {
+        if ($this->{{ collVarName }} === null) {
+            $this->init{{ relCol }}();
+            $this->{{ collVarName }}Partial = true;
+        }
+
+        if (!in_array($l, $this->{{ collVarName }}->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
+            $this->doAdd{{ builder.refFkPhpNameAffix(refFk, false) }}($l);
+        }
+
+        return $this;
+    }
+{% endblock %}

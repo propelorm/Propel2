@@ -1,0 +1,18 @@
+{% extends 'Object/_refFk/_methods/_baseFkMethod.php.twig' %}
+
+{% block method %}
+    {{ parent() }}
+    {% set joinedTableObjectBuilder = builder.newObjectBuilder(refFk.table) %}
+    {% set className = joinedTableObjectBuilder.className %}
+    {% set fkQueryClassName = builder.classNameFromBuilder(builder.newStubQueryBuilder(refFk.table)) %}
+    {% set relatedObjectClassName = builder.refFKPhpNameAffix(refFk, false) %}
+
+    /**
+     * @param {{ relatedObjectClassName }} ${{ relCol|lcfirst }} The {{ relCol|lcfirst }} object to add.
+     */
+    protected function doAdd{{ relatedObjectClassName }}({{ relatedObjectClassName }} ${{ relatedObjectClassName|lcfirst }})
+    {
+        $this->{{ collVarName }}[]= ${{ relatedObjectClassName|lcfirst }};
+        ${{ relatedObjectClassName|lcfirst }}->set{{ builder.fKPhpNameAffix(refFk, false) }}($this);
+    }
+{% endblock %}

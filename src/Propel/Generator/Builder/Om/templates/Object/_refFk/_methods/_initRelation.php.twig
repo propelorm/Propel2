@@ -1,0 +1,18 @@
+/**
+ * Initializes a collection based on the name of a relation.
+ * Avoids crafting an 'init[$relationName]s' method name
+ * that wouldn't work when StandardEnglishPluralizer is used.
+  *
+ * @param      string $relationName The name of the relation to initialize
+ * @return void
+ */
+public function initRelation($relationName)
+{
+    {% for refFk in referrers if refFk.localPrimaryKey %}
+        {% set relationName = builder.refFKPhpNameAffix(refFk) %}
+        {% set relCol = builder.refFKPhpNameAffix(refFk, true) %}
+        if ('{{ relationName }}' == $relationName) {
+            return $this->init{{ relCol }}();
+        }
+    {% endfor %}
+}

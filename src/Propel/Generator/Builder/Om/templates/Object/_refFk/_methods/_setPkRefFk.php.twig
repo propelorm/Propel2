@@ -1,0 +1,30 @@
+{#
+     Adds the method that sets a one-to-one related referrer fkey.
+     This is for one-to-one relationship special case.
+#}
+
+{% set joinedTableObjectBuilder = builder.newObjectBuilder(refFk.table) %}
+{% set className = joinedTableObjectBuilder.objectClassName %}
+
+{% set queryClassName = builder.classNameFromBuilder(builder.newStubQueryBuilder(refFk.table)) %}
+
+{% set varName = builder.pKRefFKVarName(refFk) %}
+
+/**
+ * Sets a single {{ className }} object as related to this object by a one-to-one relationship.
+ *
+ * @param                  {{ className }} $v {{ className }}
+ * @return                 {{ builder.objectClassName(true) }} The current object (for fluent API support)
+ * @throws PropelException
+ */
+public function set{{ builder.refFKPhpNameAffix(refFk, false) }}({{ className }} $v = null)
+{
+    $this->{{ varName }} = $v;
+
+    // Make sure that that the passed-in {{ className }} isn't already associated with this object
+    if ($v !== null && $v->get{{ builder.fKPhpNameAffix(refFk, false) }}(null, false) === null) {
+        $v->set{{ builder.fKPhpNameAffix(refFk, false) }}($this);
+    }
+
+    return $this;
+}

@@ -1,0 +1,53 @@
+{% extends 'Object/_refFk/_methods/_baseFkMethod.php.twig' %}
+
+{% block method %}
+    {{ parent() }}
+    {% set joinBehavior = builder.generatorConfig.buildProperty('useLeftJoinsInDoJoinMethods') ? 'Criteria::LEFT_JOIN' : 'Criteria::INNER_JOIN' %}
+
+    {% set fkQueryClassName = builder.classNameFromBuilder(builder.newStubQueryBuilder(refFk.table)) %}
+    {% set fkObjectBuilder = builder.newObjectBuilder(refFk.table) %}
+    {% set className = fkObjectBuilder.objectClassName %}
+
+    {% for foreignKey in refFk.table.foreignKeys %}
+        {% set foreignTable = foreignKey.foreignTable %}
+        {% set doJoinGet = not foreignTable.forReferenceOnly %}
+
+        {#
+            it doesn't make sense to join in rows from the current table, since we are fetching
+            objects related to *this* table (i.e. the joined rows will all be the same row as current object)
+        #}
+        {% if builder.table.phpName == foreignTable.phpName %}
+            {% set doJoinGet = false %}
+        {% endif %}
+
+        {% if builder.relatedBySuffix(refFk) != '' and builder.relatedBySuffix(refFk) == builder.relatedBySuffix(foreignKey) %}
+            {% set doJoinGet = false %}
+        {% endif %}
+
+        {% if doJoinGet %}
+            /**
+             * If this collection has already been initialized with
+             * an identical criteria, it returns the collection.
+             * Otherwise if this {{ builder.table.phpName }} is new, it will return
+             * an empty collection; or if this {{ builder.table.phpName }} has previously
+             * been saved, it will retrieve related {{ relCol }} from storage.
+             *
+             * This method is protected by default in order to keep the public
+             * api reasonable.  You can provide public methods for those you
+             * actually need in {{ builder.table.phpName }}.
+             *
+             * @param      Criteria $criteria optional Criteria object to narrow the query
+             * @param      ConnectionInterface $con optional connection object
+             * @param      string $joinBehavior optional join type to use (defaults to {{ joinBehavior }})
+             * @return Collection|{$className}[] List of $className objects
+             */
+            public function get{{ relCol }}Join{{ builder.fKPhpNameAffix(foreignKey, false) }}($criteria = null, $con = null, $joinBehavior = {{ joinBehavior }})
+            {
+                $query = {{ fkQueryClassName }}::create(null, $criteria);
+                $query->joinWith('{{ builder.fKPhpNameAffix(foreignKey, false) }}', $joinBehavior);
+
+                return $this->get{{ relCol }}($query, $con);
+            }
+        {% endif %}
+    {% endfor %}
+{% endblock %}
