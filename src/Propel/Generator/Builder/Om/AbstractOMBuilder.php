@@ -589,7 +589,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      *
      * @return string
      */
-    protected static function getRelatedBySuffix(ForeignKey $fk)
+    public static function getRelatedBySuffix(ForeignKey $fk)
     {
         $relCol = '';
         foreach ($fk->getLocalForeignMapping() as $localColumnName => $foreignColumnName) {
