@@ -1,5 +1,0 @@
-pygments:  true
-permalink: none
-markdown:  redcarpet
-redcarpet:
-  extensions: ["tables", "no_intra_emphasis"]
