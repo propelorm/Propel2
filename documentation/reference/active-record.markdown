@@ -59,11 +59,11 @@ The best way to learn what a generated Active Record class can do is to inspect 
 <!-- Active Record classes are generated in the directory specified in build.properties
      under the propel.php.dir setting !-->
 <table name="book">
-<!-- generates the Book class under /path/to/project/build/classes/Book.php !-->
+<!-- generates the Book class under /path/to/project/generated-classes/Book.php !-->
 
 <!-- To group Active Record classes into subdirectories, set the package attribute in the <table> tag !-->
 <table name="book" package="bookstore">
-<!-- generates the Book class under /path/to/project/build/classes/bookstore/Book.php !-->
+<!-- generates the Book class under /path/to/project/generated-classes/bookstore/Book.php !-->
 ```
 
 ```php
@@ -75,12 +75,12 @@ class Book extends BaseBook
 }
 
 // Most of the generated code is actually in the abstract Base- classes
-abstract class BaseBook extends BaseObject implements Persistent
+abstract class BaseBook implements ActiveRecordInterface
 {
   // lots of generated code
 }
 
-// BaseObject and Persistent are classes bundled by Propel
+// ActiveRecordInterface is bundled with Propel
 
 // Do not alter the code of the Base- classes, as your modifications will be overridden
 // each time you rebuild the model. Instead, add your custom code to the stub class
@@ -544,7 +544,7 @@ See the [Validate behavior documentation](../behaviors/validate.html) for more d
 
 ## Import and Export Capabilities ##
 
-Active Record objects have the ability to be converted to and from a string, using any of the XML, YAML, JSON, and CSV formats. This ability uses magic methods, but the phpDoc blocks defined in the `BaseObject` class make the related methods visible to an IDE.
+Active Record objects have the ability to be converted to and from a string, using any of the XML, YAML, JSON, and CSV formats. This ability uses magic methods, but the phpDoc blocks defined in the `ActiveRecordInterface` interface make the related methods visible to an IDE.
 
 Each Active Record object accepts the following method calls:
 

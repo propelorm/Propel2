@@ -81,7 +81,7 @@ class AggregateColumnBehavior extends Behavior
       ));
     }
     // add the aggregate column if not present
-    if(!$table->containsColumn($columnName)) {
+    if(!$table->hasColumn($columnName)) {
       $table->addColumn(array(
         'name'    => $columnName,
         'type'    => 'INTEGER',
@@ -108,7 +108,10 @@ CREATE TABLE poll_question
 )Type=InnoDB;
 ```
 
-_Tip_: The behavior only adds the column if it's not present (`!$table->containsColumn($columnName)`). So if a user needs to customize the column type, or any other attribute, he can include a `<column>` tag in the table with the same name as defined in the behavior, and the `modifyTable()` will then skip the column addition.
+_Tip_: The behavior only adds the column if it's not present (`!$table->hasColumn($columnName)`).
+So if a user needs to customize the column type, or any other attribute, he can
+include a `<column>` tag in the table with the same name as defined in the
+behavior, and the `modifyTable()` will then skip the column addition.
 
 ## Adding A Method To The ActiveRecord Class ##
 
@@ -190,7 +193,7 @@ Now if you rebuild the model, you will see the new `updateTotalNbVotes()` method
 
 ```php
 <?php
-class BasePollQuestion extends BaseObject
+class BasePollQuestion implements ActiveRecordInterface
 {
   // ...
 
@@ -287,14 +290,9 @@ class AggregateColumnBehavior extends Behavior
       require_once 'AggregateColumnRelationBehavior.php';
       $relationBehavior = new AggregateColumnRelationBehavior();
       $relationBehavior->setName('aggregate_column_relation');
-      $relationBehavior->addParameter(array(
-        'name' => 'foreign_table',
-        'value' => $table->getName()
-      ));
-      $relationBehavior->addParameter(array(
-        'name' => 'foreign_column',
-        'value' => $this->getParameter('name')
-      ));
+
+      $relationBehavior->setParameter('foreign_table', $table->getName());
+      $relationBehavior->setParameter('foreign_column', $this->getParameter('name');
       $foreignTable->addBehavior($relationBehavior);
     }
   }

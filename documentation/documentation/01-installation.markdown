@@ -72,7 +72,7 @@ Alternatively, you can install Propel globally on your system using PEAR. All yo
 
 Propel has its own PEAR channel, that you must "discover". Using the `pear install -a` command, you can let PEAR download and install all dependencies.
 
-So the commands to install Propel, Phing and PEAR Log globally sum up to this:
+So the commands to install Propel globally sum up to this:
 
 ```bash
 $ pear channel-discover pear.propelorm.org
@@ -123,7 +123,7 @@ The Propel generator component bundles a `propel` sh script (and a `propel.bat` 
 
 ```bash
 $ cd myproject
-$ vendor/propel/bin/propel
+$ vendor/bin/propel
 ```
 
 The command should output the propel version following by a list of the options and the available commands. We will learn to use these commands later.
@@ -132,7 +132,7 @@ The command should output the propel version following by a list of the options 
 
 ```bash
 $ cd myproject
-$ ln -s vendor/propel/bin/propel propel
+$ ln -s vendor/bin/propel propel
 ```
 
 Or simply edit your .bashrc or .zshrc file:
@@ -141,20 +141,21 @@ Or simply edit your .bashrc or .zshrc file:
 export PATH=$PATH:/path/to/vendor/bin/
 ```
 
+On Windows you could set the PATH for the opened command with:
+
+```
+set PATH=%PATH%;C:/path/to/vendor/bin/
+```
+
+To globally define the PATH adjust it inside the "Environment Variables", which
+you can find in your system advanced settings panel.
+
+
 At this point, Propel should be setup and ready to use. You can follow the steps in the [Build Guide](02-buildtime.html) to try it out.
 
 ## Troubleshooting ##
 
-### PHP Configuration ###
-
-Propel requires the following settings in `php.ini`:
-
-|Variable               |Value
-|-----------------------|-----
-|ze1_compatibility_mode |Off
-|magic_quotes_gpc       |Off
-|magic_quotes_sybase    |Off
-
 ### Getting Help ###
 
-If you can't manage to install Propel, don't hesitate to ask for help. See [Support](../support) for details on getting help.
+If you can't manage to install Propel, don't hesitate to ask for help. See
+[Support](../support) for details on getting help.

@@ -29,17 +29,14 @@ Clone this bundle in the `vendor/bundles/Propel` directory:
 
     git submodule add https://github.com/propelorm/PropelBundle.git vendor/bundles/Propel/PropelBundle
 
-Checkout Propel and Phing in the `vendor` directory:
+Then, checkout Propel in the `vendor` directory:
 
-    svn checkout http://svn.github.com/propelorm/Propel.git vendor/propel
+    git submodule add https://github.com/propelorm/Propel2.git vendor/propel
 
-    svn checkout http://svn.phing.info/tags/2.4.6/ vendor/phing
 
-Instead of using svn, you can clone the unofficial Git repositories:
+Instead of using Git, you can clone the SVN repository:
 
-    git submodule add https://github.com/Xosofox/phing vendor/phing
-
-    git submodule add https://github.com/propelorm/Propel.git vendor/propel
+    svn checkout http://github.com/propelorm/Propel2 vendor/propel
 
 ### via Symfony2 vendor management
 
@@ -49,15 +46,13 @@ Add the following lines to your deps file (located in the root of the Symfony pr
     [PropelBundle]
         git=https://github.com/propelorm/PropelBundle.git
         target=/bundles/Propel/PropelBundle
-    [phing]
-        git=https://github.com/Xosofox/phing
     [propel]
-        git=https://github.com/propelorm/Propel.git
-    
+        git=https://github.com/propelorm/Propel2.git
+
 Update your vendor directory with
 
     php bin/vendors install
-    
+
 ## Register your Bundle
 
 Register this bundle in the `AppKernel` class:
@@ -124,7 +119,6 @@ propel.defaultDateFormat =
 # in app/config/config.yml
 propel:
     path:       "%kernel.root_dir%/../vendor/propel"
-    phing_path: "%kernel.root_dir%/../vendor/phing"
 #    logging:   %kernel.debug%
 #    build_properties:
 #        xxxxx.xxxxx: xxxxxx
@@ -213,19 +207,19 @@ Place the following schema in `src/Sensio/HelloBundle/Resources/config/schema.xm
 
 ### Build Process
 
-Call the application console with the `propel:build` command:
+Call the application console with the `propel:model:build` command:
 
-    php app/console propel:build [--classes] [--sql] [--insert-sql]
-
+```
+php app/console propel:model:build [--platform="..."] [--input-dir="..."] ...
+```
 
 ### Insert SQL
 
-Call the application console with the `propel:insert-sql` command:
+Call the application console with the `propel:sql:insert` command:
 
-    php app/console propel:insert-sql [--force]
-
-Note that the `--force` option is needed to actually execute the SQL statements.
-
+```
+php app/console propel:sql:insert [--output-dir="..."] [--connection="..."]
+```
 
 ### Use The Model Classes
 

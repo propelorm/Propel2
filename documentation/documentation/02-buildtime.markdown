@@ -7,7 +7,10 @@ title: The Build Time
 
 The initial step in every Propel project is the "build". During build time, a developer describes the structure of the datamodel in a XML file called the "schema". From this schema, Propel generates PHP classes, called "model classes", made of object-oriented PHP code optimized for a given RDMBS. The model classes are the primary interface to find and manipulate data in the database in Propel.
 
-The XML schema can also be used to generate SQL code to setup your database. Alternatively, you can generate the schema from an existing database (see the [Existing-Database reverse engineering chapter](../cookbook/working-with-existing-databases) for more details), or from a DBDesigner 4 model (see the [DBDesigner2Propel chapter](../cookbook/dbdesigner)).
+The XML schema can also be used to generate SQL code to setup your database.
+Alternatively, you can generate the schema from an existing database (see the
+[Working with existing databases guide](../cookbook/working-with-existing-databases)
+for more details).
 
 During build time, a developer also defines the connection settings for communicating with the database.
 
@@ -125,7 +128,7 @@ A table can have several `<foreign-key>` tags, describing foreign keys to foreig
 
 A foreign key represents a relationship. Just like a table or a column, a relationship has a `phpName`. By default, Propel uses the `phpName` of the foreign table as the `phpName` of the relation. The `refPhpName` defines the name of the relation as seen from the foreign table.
 
-There are many more attributes and elements available to describe a datamodel. Propel's documentation provides a complete [Schema of the schema syntax](../reference/schema), together with a [DTD](https://github.com/propelorm/Propel/blob/master/generator/resources/dtd/database.dtd) and a [XSD](https://github.com/propelorm/Propel/blob/master/generator/resources/xsd/database.xsd) schema for its validation.
+There are many more attributes and elements available to describe a datamodel. Propel's documentation provides a complete [Schema of the schema syntax](../reference/schema), together with a [DTD](https://github.com/propelorm/Propel2/blob/master/resources/dtd/database.dtd) and a [XSD](https://github.com/propelorm/Propel2/blob/master/resources/xsd/database.xsd) schema for its validation.
 
 ## Building The Model ##
 
@@ -169,7 +172,9 @@ Then insert the SQL into your database:
 $ propel sql:insert
 ```
 
-You should normally have yours tables created. Propel will also generate a `generated-sql` containning the SQL files of your schema ; useful if you are using a SCM, you can so compare the different versions of your schema.
+You should normally have yours tables created. Propel will also generate a
+`generated-sql` folder containning the SQL files of your schema ; useful if you
+are using a SCM, you can so compare the different versions of your schema.
 
 Each time you will update your schema, you should run `sql:build` and `sql:insert`.
 
@@ -187,7 +192,7 @@ $ propel model:build
 
 Propel will generate a new `generated-classes` folder containning all the stuff you need to interact with your different tables.
 
-For every table in the database, Propel creates 2 PHP classes:
+For every table in the database, Propel creates 3 PHP classes:
 
 * a _model_ class (e.g. `Book`), which represents a row in the database;
 * a _tablemap_ class (e.g. `Map\BookTableMap`), offering static constants and methods mostly for compatibility with previous Propel versions;
@@ -303,7 +308,7 @@ $ cd /path/to/bookstore
 $ propel config:convert-xml
 ```
 
-The resulting file can be found under `build/conf/bookstore-conf.php`, where "bookstore" is the name of the project you defined in `build.properties`.
+The resulting file can be found under `generated-conf/config.php`.
 
 This simplifies the setup of Propel to the following script:
 
@@ -313,5 +318,5 @@ This simplifies the setup of Propel to the following script:
 require_once '/path/to/vendor/autoload.php';
 
 // setup Propel
-require_once 'build/conf/bookstore-conf.php';
+require_once '/generated-conf/config.php';
 ```

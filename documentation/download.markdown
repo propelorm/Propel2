@@ -46,7 +46,7 @@ $ git submodule add git://github.com/propelorm/Propel2.git /path/to/propel
 ## Subversion Checkout / Externals ##
 
 ```bash
-$ svn co http://svn.github.com/propelorm/Propel2.git
+$ svn co http://github.com/propelorm/Propel2
 ```
 
 >**Warning**<br />SVN is no more the default Source Code Management since 2011.

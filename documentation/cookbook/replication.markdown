@@ -59,9 +59,10 @@ The replication functionality is implemented in the Propel connection configurat
 
 ### `Propel::getReadConnection()` and `Propel::getWriteConnection()` ###
 
-When requesting a connection from Propel (`Propel::getConnection()`), you get a write connection by default. 
-
-You can also specify that you want a READ connection (slave) or a WRITE connection (master).  Methods that are designed to perform READ operations, like `ModelCriteria::find()`, will always request a READ connection like so:
+When you request a connection with Propel, you can either specify that you want
+a READ connection (slave) or a WRITE connection (master). Methods that are
+designed to perform READ operations, like `ModelCriteria::find()`, will always
+request a READ connection like so:
 
 ```php
 <?php

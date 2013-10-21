@@ -253,7 +253,7 @@ class MyBehavior extends Behavior
     $table = $this->getTable();
     $columnName = $this->getParameter('column_name');
     // add the column if not present
-    if(!$this->getTable()->containsColumn($columnName)) {
+    if(!$this->getTable()->hasColumn($columnName)) {
       $column = $this->getTable()->addColumn(array(
         'name'    => $columnName,
         'type'    => 'INTEGER',

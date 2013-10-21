@@ -72,7 +72,7 @@ the `Resources/config/` directory of your `AcmeStoreBundle`:
 
 Once you wrote your `schema.xml`, you just have to generate it:
 
-    php app/console propel:build-model
+    php app/console propel:model:build
 
 It will generate all classes to quickly develop your application in the `Model/` directory of your `AcmeStoreBundle` bundle.
 
@@ -83,14 +83,12 @@ You now have a usable `Product` class and all you need to persist it. Of course,
 Fortunately, Propel can automatically create all the database tables needed for every known entity in your application.
 To do this, run:
 
-    php app/console propel:build-sql
+    php app/console propel:sql:build
 
-    php app/console propel:insert-sql --force
+    php app/console propel:sql:insert --force
 
 
 Your database now has a fully-functional `product` table with columns that match the schema you've specified.
-
->**Tip**<br />You can run the last three commands in once by using the following command: `php app/console propel:build --insert-sql`.
 
 ### Persisting Objects to the Database ###
 
@@ -276,7 +274,7 @@ Start by adding the `category` definition in your `schema.xml`:
 
 Create the classes:
 
-    php app/console propel:build-model
+    php app/console propel:model:build
 
 Assuming you have products in your database, you won't to loose them. Thanks to migrations, Propel will
 be able to update your database without loosing existing data.

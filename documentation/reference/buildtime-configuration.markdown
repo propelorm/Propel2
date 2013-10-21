@@ -23,14 +23,6 @@ The most natural place to specify properties for a file are in the project's `bu
 
 You can also create a global `build.properties` file in the same directory as Propel's `default.properties` file. For users who have installed Propel using PEAR, this will be in PEAR data directory structure.
 
-### On the Command Line ###
-
-You can also specify properties on the command line when you invoke Propel. The command line accepts a camelCase version of the property name. So for instance, to set the value of the `propel.some.other.property` property using the command line, type:
-
-    > propel-gen /path/to/project -Dpropel.someOtherProperty#value
-
->**Tip**<br />There is no space between the -D and the property name.
-
 ## Property List ##
 
 ### General Build Settings ###
@@ -69,7 +61,7 @@ propel.schema.autoNamespace = true|{false}
 propel.schema.autoPrefix = true|{false}
 
 # Whether to validate the XML schema using the XSD file.
-# The default XSD file is located under `generator/resources/xsd/database.xsd`
+# The default XSD file is located under `resources/xsd/database.xsd`
 # and you can use a custom XSD file by changing the `propel.schema.xsd.file`
 # property.
 propel.schema.validate = {true}|false
@@ -77,7 +69,7 @@ propel.schema.validate = {true}|false
 # Whether to transform the XML schema using the XSL file.
 # This was used in previous Propel versions to clean up the schema, but tended
 # to hide problems in the schema. It is disabled by default since Propel 1.5.
-# The default XSL file is located under `generator/resources/xsd/database.xsl`
+# The default XSL file is located under `resources/xsl/database.xsl`
 # and you can use a custom XSL file by changing the `propel.schema.xsl.file`
 # property.
 propel.schema.transform = true|{false}
@@ -91,7 +83,7 @@ propel.schema.transform = true|{false}
 propel.database = pgsql|mysql|sqlite|mssql|oracle
 
 # The database PDO connection settings at buildtime.
-# This setting is required for the sql, reverse, and datasql tasks.
+# This setting is required for the sql and reverse tasks.
 # Note that some drivers (e.g. mysql, oracle) require that you specify the
 # username and password separately from the DSN, which is why they are
 # available as options.
@@ -265,7 +257,7 @@ propel.sql.dir = ${propel.output.dir}/sql
 
 ```ini
 # Object Model builders
-propel.builder.object.class = builder.om.ObjectBuilder
+propel.builder.object.class = builder.om.AbstractObjectBuilder
 propel.builder.objectstub.class = builder.om.ExtensionObjectBuilder
 
 propel.builder.objectmultiextend.class = builder.om.MultiExtendObjectBuilder

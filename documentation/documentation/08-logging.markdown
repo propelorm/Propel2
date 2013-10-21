@@ -89,7 +89,7 @@ $myObj->setName('foo');
 Propel::log('uh-oh, something went wrong with ' . $myObj->getName(), Logger::ERROR);
 ```
 
-You can also log your own messages from the generated model objects by using their `log()` method, inherited from `BaseObject`:
+You can also log your own messages from the generated model objects by using their `log()` method, implemented in `ActiveRecordInterface`:
 
 ```php
 <?php
@@ -116,7 +116,7 @@ The debug mode is disabled by default, but you can enable it at runtime as follo
 
 ```php
 <?php
-$con = Propel::getConnection(MyObjTableMap::DATABASE_NAME);
+$con = Propel::getWriteConnection(MyObjTableMap::DATABASE_NAME);
 $con->useDebug(true);
 ```
 
@@ -144,7 +144,7 @@ In debug mode, the connection class keeps track of the number of queries that ar
 
 ```php
 <?php
-$con = Propel::getConnection(MyObjTableMap::DATABASE_NAME);
+$con = Propel::getWriteConnection(MyObjTableMap::DATABASE_NAME);
 $myObjs = MyObjQuery::create()->doSelect(new Criteria(), $con);
 echo $con->getQueryCount();  // 1
 ```
@@ -157,7 +157,7 @@ For debugging purposes, you may need the SQL code of the latest executed query. 
 
 ```php
 <?php
-$con = Propel::getConnection(MyObjTableMap::DATABASE_NAME);
+$con = Propel::getWriteConnection(MyObjTableMap::DATABASE_NAME);
 $myObjs = MyObjTableMap::create()->doSelect(new Criteria(), $con);
 echo $con->getLastExecutedQuery(); // 'SELECT * FROM my_obj';
 ```
@@ -168,7 +168,7 @@ Propel also keeps track of the queries executed directly on the connection objec
 
 ```php
 <?php
-$con = Propel::getConnection(MyObjTableMap::DATABASE_NAME);
+$con = Propel::getWriteConnection(MyObjTableMap::DATABASE_NAME);
 $stmt = $con->prepare('SELECT * FROM my_obj WHERE name = :p1');
 $stmt->bindValue(':p1', 'foo');
 $stmt->execute();
@@ -226,7 +226,7 @@ By default, the full query logger logs only executed SQL queries. But the `Conne
 
 ```php
 <?php
-$con = Propel::getConnection(MyObjTableMap::DATABASE_NAME);
+$con = Propel::getWriteConnection(MyObjTableMap::DATABASE_NAME);
 $con->setLogMethods(array(
   'exec',
   'query',
