@@ -179,7 +179,7 @@ class ObjectBuilder extends AbstractObjectBuilder
             } catch (\Exception $exception) {
                 // prevent endless loop when timezone is undefined
                 date_default_timezone_set('America/Los_Angeles');
-                throw new EngineException(sprintf('Unable to parse default temporal value "%s" for column "%s"', $column->getDefaultValueString(), $column->getFullyQualifiedName()), $exception);
+                throw new EngineException(sprintf('Unable to parse default temporal value "%s" for column "%s"', $column->getDefaultValueString(), $column->getFullyQualifiedName()), 0, $exception);
             }
         } elseif ($column->isEnumType()) {
             $valueSet = $column->getValueSet();
@@ -286,14 +286,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         );
 
         $script .= $this->getTwig()->render('Object/_classBody.php.twig', ['builder' => $this]);
-
-
-        $this->addCrossFKMethods($script);
-        $this->addClearAllReferences($script);
-
-        // apply behaviors
-        $this->applyBehaviorModifier('objectMethods', $script, "    ");
-    }
+     }
 
     /**
      * Closes class.
@@ -889,210 +882,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         return 'coll' . $this->getFKPhpNameAffix($crossFK, true);
     }
 
-    protected function addCrossFKMethods(&$script)
-    {
-        foreach ($this->getTable()->getCrossFks() as $fkList) {
-            list($refFK, $crossFK) = $fkList;
-            $this->declareClassFromBuilder($this->getNewStubObjectBuilder($crossFK->getForeignTable()), 'Child');
-            $this->declareClassFromBuilder($this->getNewStubQueryBuilder($crossFK->getForeignTable()));
-
-            $this->addCrossFKClear($script, $crossFK);
-            $this->addCrossFKInit($script, $crossFK);
-            $this->addCrossFKGet($script, $refFK, $crossFK);
-            $this->addCrossFKSet($script, $refFK, $crossFK);
-            $this->addCrossFKCount($script, $refFK, $crossFK);
-            $this->addCrossFKAdd($script, $refFK, $crossFK);
-            $this->addCrossFKDoAdd($script, $refFK, $crossFK);
-            $this->addCrossFKRemove($script, $refFK, $crossFK);
-        }
-    }
-
-    /**
-     * Adds the method that clears the referrer fkey collection.
-     * @param string &$script The script will be modified in this method.
-     * @param ForeignKey $crossFK
-     */
-    protected function addCrossFKClear(&$script, ForeignKey $crossFK)
-    {
-        $relCol   = $this->getFKPhpNameAffix($crossFK, true);
-        $collName = $this->getCrossFKVarName($crossFK);
-
-        $script .= "
-    /**
-     * Clears out the {$collName} collection
-     *
-     * This does not modify the database; however, it will remove any associated objects, causing
-     * them to be refetched by subsequent calls to accessor method.
-     *
-     * @return void
-     * @see        add{$relCol}()
-     */
-    public function clear{$relCol}()
-    {
-        \$this->$collName = null; // important to set this to NULL since that means it is uninitialized
-        \$this->{$collName}Partial = null;
-    }
-";
-    } // addRefererClear()
-
-    /**
-     * Adds the method that initializes the referrer fkey collection.
-     * @param string &$script The script will be modified in this method.
-     * @param ForeignKey $crossFK
-     */
-    protected function addCrossFKInit(&$script, ForeignKey $crossFK)
-    {
-        $relCol = $this->getFKPhpNameAffix($crossFK, true);
-        $collName = $this->getCrossFKVarName($crossFK);
-        $relatedObjectClassName = $this->getClassNameFromBuilder($this->getNewStubObjectBuilder($crossFK->getForeignTable()), true);
-
-        $script .= "
-    /**
-     * Initializes the $collName collection.
-     *
-     * By default this just sets the $collName collection to an empty collection (like clear$relCol());
-     * however, you may wish to override this method in your stub class to provide setting appropriate
-     * to your application -- for example, setting the initial array to the values stored in database.
-     *
-     * @return void
-     */
-    public function init$relCol()
-    {
-        \$this->$collName = new ObjectCollection();
-        \$this->{$collName}->setModel('$relatedObjectClassName');
-    }
-";
-    }
-
-    protected function addCrossFKGet(&$script, $refFK, $crossFK)
-    {
-        $relatedName = $this->getFKPhpNameAffix($crossFK, $plural = true);
-        $relatedObjectClassName = $this->getClassNameFromBuilder($this->getNewStubObjectBuilder($crossFK->getForeignTable()));
-        $selfRelationName = $this->getFKPhpNameAffix($refFK, $plural = false);
-        $relatedQueryClassName = $this->getClassNameFromBuilder($this->getNewStubQueryBuilder($crossFK->getForeignTable()));
-        $crossRefTableName = $crossFK->getTableName();
-        $collName = $this->getCrossFKVarName($crossFK);
-
-        $script .= "
-    /**
-     * Gets a collection of $relatedObjectClassName objects related by a many-to-many relationship
-     * to the current object by way of the $crossRefTableName cross-reference table.
-     *
-     * If the \$criteria is not null, it is used to always fetch the results from the database.
-     * Otherwise the results are fetched from the database the first time, then cached.
-     * Next time the same method is called without \$criteria, the cached collection is returned.
-     * If this ".$this->getObjectClassName()." is new, it will return
-     * an empty collection or the current collection; the criteria is ignored on a new object.
-     *
-     * @param      Criteria \$criteria Optional query object to filter the query
-     * @param      ConnectionInterface \$con Optional connection object
-     *
-     * @return ObjectCollection|{$relatedObjectClassName}[] List of {$relatedObjectClassName} objects
-     */
-    public function get{$relatedName}(\$criteria = null, ConnectionInterface \$con = null)
-    {
-        if (null === \$this->$collName || null !== \$criteria) {
-            if (\$this->isNew() && null === \$this->$collName) {
-                // return empty collection
-                \$this->init{$relatedName}();
-            } else {
-                \$$collName = $relatedQueryClassName::create(null, \$criteria)
-                    ->filterBy{$selfRelationName}(\$this)
-                    ->find(\$con);
-                if (null !== \$criteria) {
-                    return \$$collName;
-                }
-                \$this->$collName = \$$collName;
-            }
-        }
-
-        return \$this->$collName;
-    }
-";
-    }
-
-    protected function addCrossFKSet(&$script, $refFK, $crossFK)
-    {
-        $relatedNamePlural       = $this->getFKPhpNameAffix($crossFK, true);
-        $relatedName             = $this->getFKPhpNameAffix($crossFK, false);
-        $relatedObjectClassName  = $this->getNewStubObjectBuilder($crossFK->getForeignTable())->getUnqualifiedClassName();
-        $crossRefTableName       = $crossFK->getTableName();
-        $collName                = $this->getCrossFKVarName($crossFK);
-        $inputCollection         = lcfirst($relatedNamePlural);
-        $inputCollectionEntry    = lcfirst($this->getFKPhpNameAffix($crossFK, false));
-
-        $script .= "
-    /**
-     * Sets a collection of $relatedObjectClassName objects related by a many-to-many relationship
-     * to the current object by way of the $crossRefTableName cross-reference table.
-     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
-     * and new objects from the given Propel collection.
-     *
-     * @param  Collection \${$inputCollection} A Propel collection.
-     * @param  ConnectionInterface \$con Optional connection object
-     * @return " . $this->getObjectClassname() . " The current object (for fluent API support)
-     */
-    public function set{$relatedNamePlural}(Collection \${$inputCollection}, ConnectionInterface \$con = null)
-    {
-        \$this->clear{$relatedNamePlural}();
-        \$current{$relatedNamePlural} = \$this->get{$relatedNamePlural}();
-
-        \$this->{$inputCollection}ScheduledForDeletion = \$current{$relatedNamePlural}->diff(\${$inputCollection});
-
-        foreach (\${$inputCollection} as \${$inputCollectionEntry}) {
-            if (!\$current{$relatedNamePlural}->contains(\${$inputCollectionEntry})) {
-                \$this->doAdd{$relatedName}(\${$inputCollectionEntry});
-            }
-        }
-
-        \$this->$collName = \${$inputCollection};
-
-        return \$this;
-    }
-";
-    }
-
-    protected function addCrossFKCount(&$script, $refFK, $crossFK)
-    {
-        $relatedName = $this->getFKPhpNameAffix($crossFK, $plural = true);
-        $relatedObjectClassName = $this->getClassNameFromBuilder($this->getNewStubObjectBuilder($crossFK->getForeignTable()));
-        $selfRelationName = $this->getFKPhpNameAffix($refFK, $plural = false);
-        $relatedQueryClassName = $this->getClassNameFromBuilder($this->getNewStubQueryBuilder($crossFK->getForeignTable()));
-        $crossRefTableName = $refFK->getTableName();
-        $collName = $this->getCrossFKVarName($crossFK);
-
-        $script .= "
-    /**
-     * Gets the number of $relatedObjectClassName objects related by a many-to-many relationship
-     * to the current object by way of the $crossRefTableName cross-reference table.
-     *
-     * @param      Criteria \$criteria Optional query object to filter the query
-     * @param      boolean \$distinct Set to true to force count distinct
-     * @param      ConnectionInterface \$con Optional connection object
-     *
-     * @return int the number of related $relatedObjectClassName objects
-     */
-    public function count{$relatedName}(\$criteria = null, \$distinct = false, ConnectionInterface \$con = null)
-    {
-        if (null === \$this->$collName || null !== \$criteria) {
-            if (\$this->isNew() && null === \$this->$collName) {
-                return 0;
-            } else {
-                \$query = $relatedQueryClassName::create(null, \$criteria);
-                if (\$distinct) {
-                    \$query->distinct();
-                }
-
-                return \$query
-                    ->filterBy{$selfRelationName}(\$this)
-                    ->count(\$con);
-            }
-        } else {
-            return count(\$this->$collName);
-        }
-    }
-";
-    }
 
     /**
      * Adds the method that adds an object into the referrer fkey collection.
@@ -1100,8 +889,9 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * @param ForeignKey $refFK
      * @param ForeignKey $crossFK
      */
-    protected function addCrossFKAdd(&$script, ForeignKey $refFK, ForeignKey $crossFK)
+    protected function addCrossFKAdd(ForeignKey $refFK, ForeignKey $crossFK)
     {
+        $script = '';
         $relCol = $this->getFKPhpNameAffix($crossFK, true);
         $collName = $this->getCrossFKVarName($crossFK);
 
@@ -1137,6 +927,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         return \$this;
     }
 ";
+
+        return $script;
     }
 
     /**
@@ -1144,8 +936,9 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * @param ForeignKey $refFK
      * @param ForeignKey $crossFK
      */
-    protected function addCrossFKDoAdd(&$script, ForeignKey $refFK, ForeignKey $crossFK)
+    protected function addCrossFKDoAdd(ForeignKey $refFK, ForeignKey $crossFK)
     {
+        $script = '';
          $relatedObjectClassName      = $this->getFKPhpNameAffix($crossFK, $plural = false);
          $selfRelationNamePlural      = $this->getFKPhpNameAffix($refFK, $plural = true);
          $lowerRelatedObjectClassName = lcfirst($relatedObjectClassName);
@@ -1172,6 +965,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         }
     }
 ";
+
+        return $script;
     }
 
     /**
@@ -1180,8 +975,9 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * @param ForeignKey $refFK
      * @param ForeignKey $crossFK
      */
-    protected function addCrossFKRemove(&$script, ForeignKey $refFK, ForeignKey $crossFK)
+    protected function addCrossFKRemove(ForeignKey $refFK, ForeignKey $crossFK)
     {
+        $script = '';
         $relCol   = $this->getFKPhpNameAffix($crossFK, $plural = true);
         $collName = 'coll' . $relCol;
         $tblFK    = $refFK->getTable();
@@ -1217,6 +1013,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         return \$this;
     }
 ";
+
+        return $script;
     }
 
     /**
@@ -1605,109 +1403,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         }
 
         return $script;
-    }
-
-    /**
-     * get the doUpdate() method code
-     *
-     * @return string the doUpdate() method code
-     */
-    public function addDoUpdate()
-    {
-        return "
-    /**
-     * Update the row in the database.
-     *
-     * @param      ConnectionInterface \$con
-     *
-     * @return Integer Number of updated rows
-     * @see doSave()
-     */
-    protected function doUpdate(ConnectionInterface \$con)
-    {
-        \$selectCriteria = \$this->buildPkeyCriteria();
-        \$valuesCriteria = \$this->buildCriteria();
-
-        return \$selectCriteria->doUpdate(\$valuesCriteria, \$con);
-    }
-";
-    }
-
-    /**
-     * Adds clearAllReferencers() method which resets all the collections of referencing
-     * fk objects.
-     * @param string &$script The script will be modified in this method.
-     */
-    protected function addClearAllReferences(&$script)
-    {
-        $table = $this->getTable();
-        $script .= "
-    /**
-     * Resets all references to other model objects or collections of model objects.
-     *
-     * This method is a user-space workaround for PHP's inability to garbage collect
-     * objects with circular references (even in PHP 5.3). This is currently necessary
-     * when using Propel in certain daemon or large-volume/high-memory operations.
-     *
-     * @param      boolean \$deep Whether to also clear the references on all referrer objects.
-     */
-    public function clearAllReferences(\$deep = false)
-    {
-        if (\$deep) {";
-        $vars = array();
-        foreach ($this->getTable()->getReferrers() as $refFK) {
-            if ($refFK->isLocalPrimaryKey()) {
-                $varName = $this->getPKRefFKVarName($refFK);
-                $script .= "
-            if (\$this->$varName) {
-                \$this->{$varName}->clearAllReferences(\$deep);
-            }";
-            } else {
-                $varName = $this->getRefFKCollVarName($refFK);
-                $script .= "
-            if (\$this->$varName) {
-                foreach (\$this->$varName as \$o) {
-                    \$o->clearAllReferences(\$deep);
-                }
-            }";
-            }
-            $vars[] = $varName;
-        }
-        foreach ($this->getTable()->getCrossFks() as $fkList) {
-            list($refFK, $crossFK) = $fkList;
-            $varName = $this->getCrossFKVarName($crossFK);
-            $script .= "
-            if (\$this->$varName) {
-                foreach (\$this->$varName as \$o) {
-                    \$o->clearAllReferences(\$deep);
-                }
-            }";
-            $vars[] = $varName;
-        }
-
-        $script .= "
-        } // if (\$deep)
-";
-
-        $this->applyBehaviorModifier('objectClearReferences', $script, "        ");
-
-        foreach ($vars as $varName) {
-            $script .= "
-        if (\$this->$varName instanceof Collection) {
-            \$this->{$varName}->clearIterator();
-        }
-        \$this->$varName = null;";
-        }
-
-        foreach ($table->getForeignKeys() as $fk) {
-            $varName = $this->getFKVarName($fk);
-            $script .= "
-        \$this->$varName = null;";
-        }
-
-        $script .= "
-    }
-";
     }
 
 }
