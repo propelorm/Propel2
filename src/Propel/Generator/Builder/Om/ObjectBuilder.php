@@ -175,7 +175,7 @@ class ObjectBuilder extends AbstractObjectBuilder
             } catch (\Exception $exception) {
                 // prevent endless loop when timezone is undefined
                 date_default_timezone_set('America/Los_Angeles');
-                throw new EngineException(sprintf('Unable to parse default temporal value "%s" for column "%s"', $column->getDefaultValueString(), $column->getFullyQualifiedName()), $exception);
+                throw new EngineException(sprintf('Unable to parse default temporal value "%s" for column "%s"', $column->getDefaultValueString(), $column->getFullyQualifiedName()), 0, $exception);
             }
         } elseif ($column->isEnumType()) {
             $valueSet = $column->getValueSet();
