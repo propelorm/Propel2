@@ -1,0 +1,36 @@
+{% set relatedName = builder.getFKPhpNameAffix(crossFk, false) %}
+{% set relatedObjectClassName = builder.newStubObjectBuilder(crossFk.foreignTable).unqualifiedClassName %}
+{% set selfRelationName = builder.fKPhpNameAffix(refFk, false) %}
+{% set relatedQueryClassName = builder.classNameFromBuilder(builder.newStubQueryBuilder(crossFk.foreignTable)) %}
+{% set crossRefTableName = crossFk.tableName %}
+{% set collName = builder.crossFKVarName(crossFk) %}
+
+/**
+* Gets the number of {{ relatedObjectClassName }} objects related by a many-to-many relationship
+* to the current object by way of the $crossRefTableName cross-reference table.
+*
+* @param      Criteria $criteria Optional query object to filter the query
+* @param      boolean $distinct Set to true to force count distinct
+* @param      ConnectionInterface $con Optional connection object
+*
+* @return int the number of related {{ relatedObjectClassName }} objects
+*/
+public function count{{ relatedName }}($criteria = null, $distinct = false, ConnectionInterface $con = null)
+{
+    if (null === $this->{{ collName }} || null !== $criteria) {
+        if ($this->isNew() && null === $this->{{ collName }}) {
+            return 0;
+        } else {
+            $query = {{ relatedQueryClassName }}::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterBy{{ selfRelationName }}($this)
+                ->count($con);
+        }
+    } else {
+        return count($this->{{ collName }});
+    }
+}

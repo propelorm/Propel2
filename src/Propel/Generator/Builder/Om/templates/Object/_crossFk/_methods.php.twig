@@ -1,0 +1,15 @@
+{% for fkList in builder.table.crossFks %}
+    {% set refFk = fkList[0] %}
+    {% set crossFk = fkList[1] %}
+
+    {% set relCol = builder.fKPhpNameAffix(crossFk, true) %}
+    {% set collName = builder.crossFKVarName(crossFk) %}
+    {#
+
+                $this->declareClassFromBuilder($this->getNewStubObjectBuilder($crossFK->getForeignTable()), 'Child');
+            $this->declareClassFromBuilder($this->getNewStubQueryBuilder($crossFK->getForeignTable()));
+    #}
+    {% include 'Object/_crossFk/_methods/_clear.php.twig' %}
+    {% include 'Object/_crossFk/_methods/_init.php.twig' %}
+    {% include 'Object/_crossFk/_methods/_accessor.php.twig' %}
+{% endfor %}

@@ -1,0 +1,14 @@
+/**
+ * Clears out the {{ collName }} collection
+ *
+ * This does not modify the database; however, it will remove any associated objects, causing
+ * them to be refetched by subsequent calls to accessor method.
+ *
+ * @return void
+ * @see        add{{ relCol }}()
+ */
+public function clear{{ relCol }}()
+{
+    $this->{{ collName }} = null; // important to set this to NULL since that means it is uninitialized
+    $this->{{ collName }}Partial = null;
+}

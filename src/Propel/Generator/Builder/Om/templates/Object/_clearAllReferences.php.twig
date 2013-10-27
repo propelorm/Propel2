@@ -1,0 +1,52 @@
+/**
+ * Resets all references to other model objects or collections of model objects.
+ *
+ * This method is a user-space workaround for PHP's inability to garbage collect
+ * objects with circular references (even in PHP 5.3). This is currently necessary
+ * when using Propel in certain daemon or large-volume/high-memory operations.
+ *
+ * @param      boolean $deep Whether to also clear the references on all referrer objects.
+ */
+public function clearAllReferences($deep = false)
+{
+    {% set vars = [] %}
+    if ($deep) {
+        {% for refFk in builder.table.referrers %}
+            {% if refFk.primaryKey %}
+                {% set varName = builder.pKRefFKVarName(refFk) %}
+                {% set vars = vars|merge([varName]) %}
+                if ($this->{{ varName }}) {
+                    $this->{{ varName }}->clearAllReferences($deep);
+                }
+            {% else %}
+                {% set varName = builder.refFKCollVarName(refFk) %}
+                {% set vars = vars|merge([varName]) %}
+                if ($this->{{ varName }}) {
+                    foreach ($this->{{ varName }} as $o) {
+                        $o->clearAllReferences($deep);
+                    }
+                }
+            {% endif %}
+        {% endfor %}
+
+        {% for fkList in builder.table.crossFks %}
+            {% set varName = builder.crossFKVarName(fkList[1]) %}
+            if ($this->{{ varName }}) {
+            foreach ($this->{{ varName }} as $o) {
+                $o->clearAllReferences($deep);
+            }
+        {% endfor %}
+    }
+
+    {# Todo: apply objectClearReferences #}
+    {% for varName in vars %}
+        if ($this->{{ varName }} instanceof Collection) {
+            $this->{{ varName }}->clearIterator();
+        }
+        $this->{{ varName }} = null;"
+    {% endfor %}
+
+    {% for foreignKey in builder.table.foreignKeys %}
+        $this->{{ builder.fKVarName(foreignKey) }} = null;";
+    {% endfor %}
+}

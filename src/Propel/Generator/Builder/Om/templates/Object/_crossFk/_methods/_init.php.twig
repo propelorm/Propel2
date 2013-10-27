@@ -1,0 +1,15 @@
+{% set relatedObjectClassName = builder.classNameFromBuilder(builder.newStubObjectBuilder(crossFk.foreignTable), true) %}
+/**
+ * Initializes the {{ collName }} collection.
+ *
+ * By default this just sets the $collName collection to an empty collection (like clear{{ relCol }}());
+ * however, you may wish to override this method in your stub class to provide setting appropriate
+ * to your application -- for example, setting the initial array to the values stored in database.
+ *
+ * @return void
+ */
+public function init{{ relCol }}()
+{
+    $this->{{ collName }} = new ObjectCollection();
+    $this->{{ collName }}->setModel('{{ relateObjectClassName }}');
+}
