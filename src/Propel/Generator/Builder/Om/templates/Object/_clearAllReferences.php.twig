@@ -38,7 +38,7 @@ public function clearAllReferences($deep = false)
         {% endfor %}
     }
 
-    {# Todo: apply objectClearReferences #}
+    {{ behavior_api.include('_clearReferences.php.twig', builder) }}
     {% for varName in vars %}
         if ($this->{{ varName }} instanceof Collection) {
             $this->{{ varName }}->clearIterator();
