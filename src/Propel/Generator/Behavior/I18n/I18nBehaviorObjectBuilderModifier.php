@@ -31,30 +31,6 @@ class I18nBehaviorObjectBuilderModifier
         $this->table = $behavior->getTable();
     }
 
-    public function postDelete($builder)
-    {
-        $this->builder = $builder;
-        if (!$builder->getPlatform()->supportsNativeDeleteTrigger() && !$builder->getBuildProperty('emulateForeignKeyConstraints')) {
-            $i18nTable = $this->behavior->getI18nTable();
-
-            return $this->behavior->renderTemplate('objectPostDelete', array(
-                'i18nQueryName'    => $builder->getClassNameFromBuilder($builder->getNewStubQueryBuilder($i18nTable)),
-                'objectClassName' => $builder->getNewStubObjectBuilder($this->behavior->getTable())->getUnqualifiedClassName(),
-            ));
-        }
-    }
-
-    public function objectClearReferences($builder)
-    {
-        return $this->behavior->renderTemplate('objectClearReferences', array(
-            'defaultLocale'   => $this->behavior->getDefaultLocale(),
-        ));
-    }
-
-    public function objectMethods($builder)
-    {
-    }
-
     public function objectFilter(&$script, $builder)
     {
         $i18nTable = $this->behavior->getI18nTable();
@@ -68,14 +44,5 @@ class I18nBehaviorObjectBuilderModifier
         }";
         $replacement = "\$0$addition";
         $script = preg_replace($pattern, $replacement, $script);
-    }
-
-    protected function isDateType($columnType)
-    {
-        return in_array($columnType, array(
-            PropelTypes::DATE,
-            PropelTypes::TIME,
-            PropelTypes::TIMESTAMP
-        ));
     }
 }

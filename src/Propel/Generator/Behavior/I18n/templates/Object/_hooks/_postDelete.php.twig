@@ -1,0 +1,7 @@
+{% if not builder.platform.supportsNativeDeleteTrigger and not builder.buildProperty('emulateForeignKeyConstraints') %}
+    // emulate delete cascade
+    {{ builder.classNameFromBuilder(builder.newStubQueryBuilder(behavior.i18nTable)) }}::create()
+        ->filterBy{{ builder.newStubObjectBuilder(behavior.table).unqualifiedClassName }}($this)
+        ->delete($con);
+
+{% endif %}
