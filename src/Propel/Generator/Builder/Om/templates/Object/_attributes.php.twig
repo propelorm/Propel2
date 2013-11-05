@@ -30,12 +30,12 @@ protected $virtualColumns = array();
     {% include 'Object/_attribute/_columnAttributes.php.twig' %}
 {% endif %}
 
-{% for key in builder.table.foreignKeys %}
-    {% include 'Object/_attribute/_foreignKeyAttribute.php.twig' with {'foreignKey': key} %}
+{% for foreignKey in builder.table.foreignKeys %}
+    {% include 'Object/_attribute/_foreignKeyAttribute.php.twig' %}
 {% endfor %}
 
 {% for refFk in builder.table.referrers %}
-    {% include 'Object/_attribute/_refFkAttributes.php.twig' with {'refFk': refFk} %}
+    {% include 'Object/_attribute/_refFkAttributes.php.twig' %}
 {% endfor %}
 
 {% for fkList in builder.table.crossFks %}
