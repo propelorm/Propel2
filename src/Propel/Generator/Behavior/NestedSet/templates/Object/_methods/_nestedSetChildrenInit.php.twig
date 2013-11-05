@@ -1,0 +1,10 @@
+/**
+ * Initializes the $collNestedSetChildren collection.
+ *
+ * @return     void
+ */
+public function initNestedSetChildren()
+{
+    $this->collNestedSetChildren = new ObjectCollection();
+    $this->collNestedSetChildren->setModel('{{ builder.newStubObjectBuilder(builder.table).fullyQualifiedClassName }}');
+}

@@ -1,0 +1,10 @@
+/**
+ * Proxy getter method for the right value of the nested set model.
+ * It provides a generic way to get the value, whatever the actual column name is.
+ *
+ * @return     int The nested set right value
+ */
+public function getRightValue()
+{
+    return $this->{{ behavior.columnForParameter('right_column').name|lower }};
+}

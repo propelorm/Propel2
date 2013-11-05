@@ -1,0 +1,21 @@
+/**
+ * Gets number of children for the given node
+ *
+ * @param      Criteria  $criteria Criteria to filter results.
+ * @param      ConnectionInterface $con Connection to use.
+ * @return     int       Number of children
+ */
+public function countChildren($criteria = null, ConnectionInterface $con = null)
+{
+    if (null === $this->collNestedSetChildren || null !== $criteria) {
+        if ($this->isLeaf() || ($this->isNew() && null === $this->collNestedSetChildren)) {
+            return 0;
+        } else {
+            return {{ builder.queryClassName }}::create(null, $criteria)
+                ->childrenOf($this)
+                ->count($con);
+        }
+    } else {
+        return count($this->collNestedSetChildren);
+    }
+}

@@ -1,0 +1,11 @@
+/**
+ * Execute queries that were saved to be run inside the save transaction
+ */
+protected function processNestedSetQueries($con)
+{
+    foreach ($this->nestedSetQueries as $query) {
+        $query['arguments'][]= $con;
+        call_user_func_array($query['callable'], $query['arguments']);
+    }
+    $this->nestedSetQueries = array();
+}

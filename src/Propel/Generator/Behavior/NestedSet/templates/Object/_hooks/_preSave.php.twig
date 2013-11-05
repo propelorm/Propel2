@@ -1,0 +1,21 @@
+if ($this->isNew() && $this->isRoot()) {
+    // check if no other root exist in, the tree
+    $nbRoots = {{ builder.queryClassName }}::create()
+        ->addUsingAlias({{ builder.objectClassName }}::LEFT_COL, 1, Criteria::EQUAL)
+    {% if behavior.useScope %}
+        ->addUsingAlias({{ objectClassName }}::SCOPE_COL, $this->getScopeValue(), Criteria::EQUAL)
+    {% endif %}
+        ->count($con);
+
+    if ($nbRoots > 0) {
+        throw new PropelException(
+        {% if behavior.useScope %}
+            sprintf('A root node already exists in this tree with scope "%s".', \$this->getScopeValue())
+        {% else %}
+            'A root node already exists in this tree. To allow multiple root nodes, add the `use_scope` parameter in the nested_set behavior tag.'
+        {% endif %}
+        );
+    }
+
+    $this->processNestedSetQueries($con);
+}

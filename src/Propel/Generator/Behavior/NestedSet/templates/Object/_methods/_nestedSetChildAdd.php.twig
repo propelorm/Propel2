@@ -1,0 +1,20 @@
+{% set objectName = '$' ~ builder.table.studlyPhpName %}
+/**
+ * Adds an element to the internal $collNestedSetChildren collection.
+ * Beware that this doesn't insert a node in the tree.
+ * This method is only used to facilitate children hydration.
+ *
+ * @param      {{ builder.objectClassName }} {{ builder.objectClassName }}
+ *
+ * @return     void
+ */
+public function addNestedSetChild({{ objectName }})
+{
+    if (null === $this->collNestedSetChildren) {
+        $this->initNestedSetChildren();
+    }
+    if (!in_array({{ objectName }}, $this->collNestedSetChildren->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
+        $this->collNestedSetChildren[]= {{ objectName }};
+        {{ objectName }}->setParent($this);
+    }
+}

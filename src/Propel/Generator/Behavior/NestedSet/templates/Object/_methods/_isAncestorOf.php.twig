@@ -1,0 +1,10 @@
+/**
+ * Tests if node is a ancestor of another node
+ *
+ * @param      {{ builder.objectClassName }} $node Propel node object
+ * @return     bool
+ */
+public function isAncestorOf($child)
+{
+    return $child->isDescendantOf($this);
+}

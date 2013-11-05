@@ -1,0 +1,10 @@
+/**
+ * Proxy getter method for the left value of the nested set model.
+ * It provides a generic way to get the value, whatever the actual column name is.
+ *
+ * @return     int The nested set left value
+ */
+public function getLeftValue()
+{
+    return $this->{{ behavior.columnForParameter('left_column').name|lower }};
+}

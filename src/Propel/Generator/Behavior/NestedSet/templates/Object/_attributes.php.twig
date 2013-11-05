@@ -1,0 +1,39 @@
+/**
+ * Queries to be executed in the save transaction
+ * @var        array
+ */
+protected nestedSetQueries = array();
+
+/**
+ * Internal cache for children nodes
+ * @var        null|ObjectCollection
+ */
+protected collNestedSetChildren = null;
+
+/**
+ * Internal cache for parent node
+ * @var        null|{{ builder.objectClassName }}
+ */
+protected aNestedSetParent = null;
+
+/**
+ * Left column for the set
+ */
+const LEFT_COL = '{{ builder.table.name }}.{{ behavior.columnConstant('left_column') }}';
+
+/**
+ * Right column for the set
+ */
+const RIGHT_COL = '{{ builder.table.name }}.{{ behavior.columnConstant('right_column') }}';
+
+/**
+ * Level column for the set
+ */
+const LEVEL_COL = '{{ builder.table.name }}.{{ behavior.columnConstant('level_column') }}';
+
+{% if behavior.useScope %}
+    /**
+     * Scope column for the set
+     */
+    const SCOPE_COL = '{{ builder.table.name }}.{{ behavior.columnConstant('scope_column') }}';
+{% endif %}

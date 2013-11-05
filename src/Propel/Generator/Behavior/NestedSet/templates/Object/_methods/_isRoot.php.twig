@@ -1,0 +1,9 @@
+/**
+ * Tests if node is a root
+ *
+ * @return     bool
+ */
+public function isRoot()
+{
+    return $this->isInTree() && $this->getLeftValue() == 1;
+}

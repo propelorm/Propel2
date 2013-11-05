@@ -1,0 +1,17 @@
+/**
+ * Tests if node is a descendant of another node
+ *
+ * @param      {{ builder.objectClassName }} $node Propel node object
+ * @return     bool
+ */
+public function isDescendantOf($parent)
+{
+    {% if behavior.useScope %}
+        if ($this->getScopeValue() !== $parent->getScopeValue()) {
+            return false; //since the `this` and $parent are in different scopes, there's no way that `this` is be a descendant of $parent.
+        }
+    {% endif %}
+
+    return $this->isInTree() && $this->getLeftValue() > $parent->getLeftValue() && $this->getRightValue() < $parent->getRightValue();
+    return $this->isInTree() && $this->getLeftValue() > $parent->getLeftValue() && $this->getRightValue() < $parent->getRightValue();
+}

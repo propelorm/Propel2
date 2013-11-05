@@ -1,0 +1,18 @@
+/**
+ * Inserts the given $child node as first child of current
+ * The modifications in the current object and the tree
+ * are not persisted until the child object is saved.
+ *
+ * @param      {{ builder.objectClassName }} $child    Propel object for child node
+ *
+ * @return     {{ builder.objectClassName }} The current Propel object
+ */
+public function addChild({{ builder.objectClassName }} $child)
+{
+    if ($this->isNew()) {
+        throw new PropelException('A {{ builder.objectClassName }} object must not be new to accept children.');
+    }
+    $child->insertAsFirstChildOf($this);
+
+    return $this;
+}

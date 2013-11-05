@@ -1,0 +1,12 @@
+/**
+ * Clears out the $collNestedSetChildren collection
+ *
+ * This does not modify the database; however, it will remove any associated objects, causing
+ * them to be refetched by subsequent calls to accessor method.
+ *
+ * @return     void
+ */
+public function clearNestedSetChildren()
+{
+    $this->collNestedSetChildren = null;
+}

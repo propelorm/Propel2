@@ -1,0 +1,19 @@
+/**
+ * Determines if the node has next sibling
+ *
+ * @param      ConnectionInterface $con Connection to use.
+ * @return     bool
+ */
+public function hasNextSibling(ConnectionInterface $con = null)
+{
+    if (!{{ builder.queryClassName }}::isValid($this)) {
+            return false;
+    }
+
+    return {{ builder.queryClassName }}::create()
+        ->filterBy{{ behavior.columnForParameter('left_column').phpName }}($this->getRightValue() + 1)
+        {% if behavior.useScope %}
+            ->inTree($this->getScopeValue())
+        {% endif %}
+        ->count($con) > 0;
+}

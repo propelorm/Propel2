@@ -1,0 +1,9 @@
+/**
+ * Tests if object is a node, i.e. if it is inserted in the tree
+ *
+ * @return     bool
+ */
+public function isInTree()
+{
+    return $this->getLeftValue() > 0 && $this->getRightValue() > $this->getLeftValue();
+}

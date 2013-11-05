@@ -1,0 +1,9 @@
+/**
+ * Tests if node has children
+ *
+ * @return     bool
+ */
+public function hasChildren()
+{
+    return ($this->getRightValue() - $this->getLeftValue()) > 1;
+}

@@ -1,0 +1,72 @@
+{% include '@' ~ behavior.templateNamespace ~ '/Object/_methods/_processNestedSetQueries.php.twig' %}
+
+{% if 'LeftValue' != behavior.columnForParameter('left_column').phpName %}
+    {% include '@' ~ behavior.templateNamespace ~ '/Object/_methods/_getLeft.php.twig' %}
+    {% include '@' ~ behavior.templateNamespace ~ '/Object/_methods/_setLeft.php.twig' %}
+{% endif %}
+
+{% if 'RightValue' != behavior.columnForParameter('right_column').phpName %}
+    {% include '@' ~ behavior.templateNamespace ~ '/Object/_methods/_getRight.php.twig' %}
+    {% include '@' ~ behavior.templateNamespace ~ '/Object/_methods/_setRight.php.twig' %}
+{% endif %}
+
+{% if 'Level' != behavior.columnForParameter('level_column').phpName %}
+    {% include '@' ~ behavior.templateNamespace ~ '/Object/_methods/_getLevel.php.twig' %}
+    {% include '@' ~ behavior.templateNamespace ~ '/Object/_methods/_setLevel.php.twig' %}
+{% endif %}
+
+{% if 'true' === behavior.parameter('use_scope') and 'ScopeValue' != behavior.columnForParameter('scope_column').phpName %}
+    {% include '@' ~ behavior.templateNamespace ~ '/Object/_methods/_getScope.php.twig' %}
+    {% include '@' ~ behavior.templateNamespace ~ '/Object/_methods/_setScope.php.twig' %}
+{% endif %}
+
+{% include '@' ~ behavior.templateNamespace ~ '/Object/_methods/_makeRoot.php.twig' %}
+
+{% include '@' ~ behavior.templateNamespace ~ '/Object/_methods/_isInTree.php.twig' %}
+{% include '@' ~ behavior.templateNamespace ~ '/Object/_methods/_isRoot.php.twig' %}
+{% include '@' ~ behavior.templateNamespace ~ '/Object/_methods/_isLeaf.php.twig' %}
+{% include '@' ~ behavior.templateNamespace ~ '/Object/_methods/_isDescendantOf.php.twig' %}
+{% include '@' ~ behavior.templateNamespace ~ '/Object/_methods/_isAncestorOf.php.twig' %}
+
+{% include '@' ~ behavior.templateNamespace ~ '/Object/_methods/_hasParent.php.twig' %}
+{% include '@' ~ behavior.templateNamespace ~ '/Object/_methods/_setParent.php.twig' %}
+{% include '@' ~ behavior.templateNamespace ~ '/Object/_methods/_getParent.php.twig' %}
+
+{% include '@' ~ behavior.templateNamespace ~ '/Object/_methods/_hasPrevSibling.php.twig' %}
+{% include '@' ~ behavior.templateNamespace ~ '/Object/_methods/_getPrevSibling.php.twig' %}
+
+{% include '@' ~ behavior.templateNamespace ~ '/Object/_methods/_hasNextSibling.php.twig' %}
+{% include '@' ~ behavior.templateNamespace ~ '/Object/_methods/_getNextSibling.php.twig' %}
+
+{% include '@' ~ behavior.templateNamespace ~ '/Object/_methods/_nestedSetChildrenClear.php.twig' %}
+{% include '@' ~ behavior.templateNamespace ~ '/Object/_methods/_nestedSetChildrenInit.php.twig' %}
+{% include '@' ~ behavior.templateNamespace ~ '/Object/_methods/_nestedSetChildrenAdd.php.twig' %}
+{% include '@' ~ behavior.templateNamespace ~ '/Object/_methods/_hasChildren.php.twig' %}
+{% include '@' ~ behavior.templateNamespace ~ '/Object/_methods/_getChildren.php.twig' %}
+{% include '@' ~ behavior.templateNamespace ~ '/Object/_methods/_countChildren.php.twig' %}
+
+{% include '@' ~ behavior.templateNamespace ~ '/Object/_methods/_getFirstChild.php.twig' %}
+{% include '@' ~ behavior.templateNamespace ~ '/Object/_methods/_getLastChild.php.twig' %}
+{% include '@' ~ behavior.templateNamespace ~ '/Object/_methods/_getSiblings.php.twig' %}
+{% include '@' ~ behavior.templateNamespace ~ '/Object/_methods/_getDescendants.php.twig' %}
+{% include '@' ~ behavior.templateNamespace ~ '/Object/_methods/_getCountDescendants.php.twig' %}
+{% include '@' ~ behavior.templateNamespace ~ '/Object/_methods/_getBranch.php.twig' %}
+{% include '@' ~ behavior.templateNamespace ~ '/Object/_methods/_getAncestors.php.twig' %}
+{% include '@' ~ behavior.templateNamespace ~ '/Object/_methods/_getAncestors.php.twig' %}
+
+{% include '@' ~ behavior.templateNamespace ~ '/Object/_methods/_addChild.php.twig' %}
+{% include '@' ~ behavior.templateNamespace ~ '/Object/_methods/_insertAsFirstChildOf.php.twig' %}
+{% include '@' ~ behavior.templateNamespace ~ '/Object/_methods/_insertAsLastChildOf.php.twig' %}
+
+{% include '@' ~ behavior.templateNamespace ~ '/Object/_methods/_insertAsPrevSiblingOf.php.twig' %}
+{% include '@' ~ behavior.templateNamespace ~ '/Object/_methods/_insertAsNextSiblingOf.php.twig' %}
+
+{% include '@' ~ behavior.templateNamespace ~ '/Object/_methods/_moveToFirstChildOf.php.twig' %}
+{% include '@' ~ behavior.templateNamespace ~ '/Object/_methods/_moveToLastChildOf.php.twig' %}
+{% include '@' ~ behavior.templateNamespace ~ '/Object/_methods/_moveToPrevSiblingOf.php.twig' %}
+{% include '@' ~ behavior.templateNamespace ~ '/Object/_methods/_moveToNextSiblingOf.php.twig' %}
+{% include '@' ~ behavior.templateNamespace ~ '/Object/_methods/_moveSubtreeTo.php.twig' %}
+
+{% include '@' ~ behavior.templateNamespace ~ '/Object/_methods/_deleteDescendants.php.twig' %}
+
+{% include '@' ~ behavior.templateNamespace ~ '/Object/_methods/_getIterator.php.twig' %}

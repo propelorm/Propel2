@@ -1,0 +1,27 @@
+/**
+ * Gets the children of the given node
+ *
+ * @param      Criteria  $criteria Criteria to filter results.
+ * @param      ConnectionInterface $con Connection to use.
+ * @return     array     List of {{ builder.objectClassName }} objects
+ */
+public function getChildren($criteria = null, ConnectionInterface $con = null)
+{
+    if (null === $this->collNestedSetChildren || null !== $criteria) {
+        if ($this->isLeaf() || ($this->isNew() && null === $this->collNestedSetChildren)) {
+            // return empty collection
+            $this->initNestedSetChildren();
+        } else {
+            $collNestedSetChildren = {{ builder.queryClassName }}::create(null, $criteria)
+              ->childrenOf($this)
+              ->orderByBranch()
+                ->find($con);
+            if (null !== $criteria) {
+                return $collNestedSetChildren;
+            }
+            $this->collNestedSetChildren = $collNestedSetChildren;
+        }
+    }
+
+    return $this->collNestedSetChildren;
+}

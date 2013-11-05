@@ -1,0 +1,23 @@
+/**
+ * Moves current node and its subtree to be the last child of $parent
+ * The modifications in the current object and the tree are immediate
+ *
+ * @param      {{ builder.objectClassName }} $parent    Propel object for parent node
+ * @param      ConnectionInterface $con    Connection to use.
+ *
+ * @return     {{ builder.objectClassName }} The current Propel object
+ */
+public function moveToLastChildOf($parent, ConnectionInterface $con = null)
+{
+    if (!$this->isInTree()) {
+        throw new PropelException('A {{ builder.objectClassName }} object must be already in the tree to be moved. Use the insertAsLastChildOf() instead.');
+    }
+
+    if ($parent->isDescendantOf($this)) {
+        throw new PropelException('Cannot move a node as child of one of its subtree nodes.');
+    }
+
+    $this->moveSubtreeTo($parent->getRightValue(), $parent->getLevel() - $this->getLevel() + 1{% if behavior.useScope %}, $parent->getScopeValue(){% endif %}, $con);
+
+    return $this;
+}

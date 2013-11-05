@@ -1,0 +1,18 @@
+/**
+ * Creates the supplied node as the root node.
+ *
+ * @return     {{ builder.objectClassName }} The current object (for fluent API support)
+ * @throws     PropelException
+ */
+public function makeRoot()
+{
+    if ($this->getLeftValue() || $this->getRightValue()) {
+        throw new PropelException('Cannot turn an existing node into a root node.');
+    }
+
+    $this->setLeftValue(1);
+    $this->setRightValue(2);
+    $this->setLevel(0);
+
+    return $this;
+}

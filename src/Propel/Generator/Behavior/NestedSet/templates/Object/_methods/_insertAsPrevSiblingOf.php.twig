@@ -1,0 +1,31 @@
+/**
+ * Inserts the current node as prev sibling given $sibling node
+ * The modifications in the current object and the tree
+ * are not persisted until the current object is saved.
+ *
+ * @param      {{ builder.objectClassName }} $sibling    Propel object for parent node
+ *
+ * @return     {{ builder.objectClassName }} The current Propel object
+ */
+public function insertAsPrevSiblingOf($sibling)
+{
+    if ($this->isInTree()) {
+        throw new PropelException('A {{ builder.objectClassName }} object must not already be in the tree to be inserted. Use the moveToPrevSiblingOf() instead.');
+    }
+    $left = $sibling->getLeftValue();
+    // Update node properties
+    $this->setLeftValue($left);
+    $this->setRightValue($left + 1);
+    $this->setLevel($sibling->getLevel());
+    {% if behavior.useScope %}
+        $scope = $sibling->getScopeValue();
+        $this->setScopeValue($scope);
+    {% endif %}
+    // Keep the tree modification query for the save() transaction
+    $this->nestedSetQueries []= array(
+        'callable'  => array('{{ builder.queryClassName }}', 'makeRoomForLeaf'),
+        'arguments' => array($left{% if behavior.useScope %}, $scope, $this->isNew() ? null : $this)
+    );
+
+    return $this;
+}

@@ -1,0 +1,26 @@
+/**
+ * Moves current node and its subtree to be the previous sibling of $sibling
+ * The modifications in the current object and the tree are immediate
+ *
+ * @param      {{ builder.objectClassName }} $sibling    Propel object for sibling node
+ * @param      ConnectionInterface $con    Connection to use.
+ *
+ * @return     {{ builder.objectClassName }} The current Propel object
+ */
+public function moveToPrevSiblingOf($sibling, ConnectionInterface $con = null)
+{
+    if (!$this->isInTree()) {
+        throw new PropelException('A {{ builder.objectClassName }} object must be already in the tree to be moved. Use the insertAsPrevSiblingOf() instead.');
+    }
+    if ($sibling->isRoot()) {
+        throw new PropelException('Cannot move to previous sibling of a root node.');
+    }
+
+    if ($sibling->isDescendantOf($this)) {
+        throw new PropelException('Cannot move a node as sibling of one of its subtree nodes.');
+    }
+
+    $this->moveSubtreeTo($sibling->getLeftValue(), $sibling->getLevel() - $this->getLevel(){% if behavior.useScope %}, $sibling->getScopeValue(), $con);
+
+    return $this;
+}
