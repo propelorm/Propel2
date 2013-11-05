@@ -1,0 +1,13 @@
+{% set const = builder.columnConstant(behavior.columnForParameter('slug_column')) %}
+if ($this->isColumnModified({{ const }}) && $this->{{ behavior.columnGetter }}()) {
+    $this->{{ behavior.columnSetter }}($this->makeSlugUnique($this->{{ behavior.columnGetter }}()));
+
+    {% if 'true' == behavior.parameter('permanent') %}
+        } elseif (!$this->{{ behavior.columnGetter }}()) {
+            $this->{{ behavior.columnSetter }}($this->createSlug());
+        }
+    {% else %}
+        } else {
+            $this->{{ behavior.columnSetter }}($this->createSlug());
+        }
+    {% endif %}
