@@ -12,5 +12,47 @@
 
 protected function load{{ column.phpName }}(ConnectionInterface $con = null)
 {
-    {{ builder.addLazyLoaderBody(column) }}
+    $c = $this->buildPkeyCriteria();
+    $c->addSelectColumn({{ builder.columnConstant(column) }});
+    {% if column.lobType and get_class(builder.platform) == 'Propel\Generator\Platform\SqlsrvPlatform' %}
+
+        try {
+            $row = array(0 => null);
+            $dataFetcher = {{ builder.queryClassName }}::create(null, $c)->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
+            if ($dataFetcher instanceof PDODataFetcher) {
+                $dataFetcher->bindColumn(1, $row[0], PDO::PARAM_LOB, 0, PDO::SQLSRV_ENCODING_BINARY);
+            }
+            $row = $dataFetcher->fetch(PDO::FETCH_BOUND);
+            $dataFetcher->close();
+    {% else %}
+        try {
+            $dataFetcher = {{ builder.queryClassName }}::create(null, $c)->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
+            $row = $dataFetcher->fetch();
+            $dataFetcher->close();
+    {% endif %}
+
+            $firstColumn = $row ? current($row) : null;
+            {% if column.lobType and builder.platform.hasStreamBlobImpl %}
+                if ($firstColumn) {
+                    $this->{{ column.name|lower }} = stream_get_contents($firstColumn);
+                }
+            {% elseif column.lobType %}
+                if ($firstColumn !== null) {
+                    $this->{{ column.name|lower }} = fopen('php://memory', 'r+');
+                    fwrite($this->{{ column.name|lower }}, $firstColumn);
+                    rewind($this->{{ column.name|lower }});
+                } else {
+                    $this->{{ column.name|lower }} = null;
+                }
+            {% elseif column.phpPrimitiveType %}
+                $this->{{ column.name|lower }} = ($firstColumn !== null) ? ({{ column.phpType }}) $firstColumn : null;
+            {% elseif column.phpObjectType %}
+                $this->{{ column.name|lower }} = ($firstColumn !== null) ? new {{ column.phpType }}($firstColumn) : null;
+            {% else %}
+                $this->{{ column.name|lower }} = $firstColumn;
+            {% endif %}
+            $this->{{ column.name|lower }}_isLoaded = true;
+        } catch (Exception $e) {
+            throw new PropelException("Error loading value for [{{ column.name|lower }}] column on demand.", 0, $e);
+        }
 }

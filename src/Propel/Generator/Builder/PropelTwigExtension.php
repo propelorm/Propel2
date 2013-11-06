@@ -83,7 +83,9 @@ class PropelTwigExtension implements \Twig_ExtensionInterface {
      */
     public function getFunctions()
     {
-        return [];
+        return [
+            new \Twig_SimpleFunction('get_class', 'get_class'), // very hacky but required for platform checking
+        ];
     }
 
     /**
