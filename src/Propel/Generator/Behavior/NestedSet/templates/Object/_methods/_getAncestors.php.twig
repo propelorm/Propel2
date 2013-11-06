@@ -1,0 +1,20 @@
+/**
+ * Gets ancestors for the given node, starting with the root node
+ * Use it for breadcrumb paths for instance
+ *
+ * @param      Criteria $query Criteria to filter results.
+ * @param      ConnectionInterface $con Connection to use.
+ * @return     array         List of {{ builder.objectClassName }} objects
+ */
+public function getAncestors($query = null, ConnectionInterface $con = null)
+{
+    if ($this->isRoot()) {
+        // save one query
+        return array();
+    } else {
+        return {{ builder.queryClassName }}::create(null, $query)
+            ->ancestorsOf($this)
+            ->orderByBranch()
+            ->find($con);
+    }
+}

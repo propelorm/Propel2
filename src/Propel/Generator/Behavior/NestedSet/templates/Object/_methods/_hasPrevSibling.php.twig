@@ -1,0 +1,20 @@
+
+/**
+ * Determines if the node has previous sibling
+ *
+ * @param      ConnectionInterface $con Connection to use.
+ * @return     bool
+ */
+public function hasPrevSibling(ConnectionInterface $con = null)
+{
+    if (!{{ builder.queryClassName }}::isValid($this)) {
+            return false;
+    }
+
+    return {{ builder.queryClassName }}::create()
+       ->filterBy{{ builder.columnForParameter('right_column').phpName }}($this->getLeftValue() - 1)
+        {% if behavior.useScope %}
+            ->inTree($this->getScopeValue())
+        {% endif %}
+        ->count($con) > 0;
+}

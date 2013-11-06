@@ -1,0 +1,4 @@
+if ($this->isInTree()) {
+    // fill up the room that was used by the node
+    {{ builder.queryClassName }}::shiftRLValues(-2, $this->getRightValue() + 1, null{% if behavior.useScope %}, $this->getScopeValue(){% endif %}, $con);
+}

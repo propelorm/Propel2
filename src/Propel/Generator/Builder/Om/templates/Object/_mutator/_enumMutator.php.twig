@@ -1,0 +1,16 @@
+{% embed 'Object/_mutator/_baseMutator.php.twig' with {'builder': builder, 'column': column} %}
+    {% block code %}
+        if ($v !== null) {
+            $valueSet = {{ builder.tableMapClassName }}::getValueSet({{ builder.columnConstant(column) }});
+            if (!in_array($v, $valueSet)) {
+                throw new PropelException(sprintf('Value "%s" is not accepted in this enumerated column', $v));
+            }
+            $v = array_search($v, $valueSet);
+        }
+
+        if ($this->{{ column.name|lower }} !== $v) {
+            $this->{{ column.name|lower }} = $v;
+            $this->modifiedColumns[] = {{ builder.columnConstant(column) }};
+        }
+    {% endblock %}
+{% endembed %}

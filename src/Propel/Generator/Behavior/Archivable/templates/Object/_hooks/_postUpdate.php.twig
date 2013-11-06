@@ -1,0 +1,7 @@
+{% if behavior.archiveOnUpdate %}
+    if ($this->archiveOnUpdate) {
+        $this->archive($con);
+    } else {
+        $this->archiveOnUpdate = true;
+    }
+{% endif %}

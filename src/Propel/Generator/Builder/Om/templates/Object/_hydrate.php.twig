@@ -1,0 +1,70 @@
+/**
+ * Hydrates (populates) the object variables with values from the database resultset.
+ *
+ * An offset (0-based \"start column\") is specified so that objects can be hydrated
+ * with a subset of the columns in the resultset rows.  This is needed, for example,
+ * for results of JOIN queries where the resultset row includes columns from two or
+ * more tables.
+ *
+ * @param array   $row       The row returned by DataFetcher->fetch().
+ * @param int     $startcol  0-based offset column which indicates which restultset column to start with.
+ * @param boolean $rehydrate Whether this object is being re-hydrated from the database.
+ * @param string  $indexType The index type of $row. Mostly DataFetcher->getIndexType().
+                              One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_STUDLYPHPNAME
+ *                            TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
+ *
+ * @return int             next starting column
+ * @throws PropelException - Any caught Exception will be rewrapped as a PropelException.
+ */
+public function hydrate($row, $startcol = 0, $rehydrate = false, $indexType = TableMap::TYPE_NUM)
+{
+    try {
+        {% set n = 0 %}
+        {% for column in builder.table.columns %}
+            {% set n = loop.index0 %}
+            {% if not column.lazyLoad %}
+                $col = $row[TableMap::TYPE_NUM == $indexType ? {{ loop.index0 }} + $startcol : {{ builder.tableMapClassName }}::translateFieldName('{{ column.phpName }}', TableMap::TYPE_PHPNAME, $indexType)];
+                {% if column.lobType and builder.platform.hasStreamBlobImpl %}
+                    $this->{{ column.name|lower }} = stream_get_contents($col);
+                {% elseif column.lobType %}
+                    if (null !== $col) {
+                        $this->{{ column.name|lower }} = fopen('php://memory', 'r+');
+                        fwrite($this->{{ column.name|lower }}, $col);
+                        rewind($this->{{ column.name|lower }});
+                    } else {
+                        $this->{{ column.name|lower }} = null;
+                    }
+                {% elseif column.temporalType %}
+                    {% if builder.invalidTemporalString(column) is not null %}
+                        if ($col === '{{ builder.invalidTemporalString }}') {
+                            $col = null;
+                        }
+                    {% endif %}
+
+                    $this->{{ column.name|lower }} = (null !== $col) ? PropelDateTime::newInstance($col, null, '{{ builder.buildProperty('dateTimeClass')|default('\DateTime') }}') : null;
+                {% elseif column.phpPrimitiveType %}
+                    $this->{{ column.name|lower }} = (null !== $col) ? ({{ column.phpType }}) $col : null;
+                {% elseif column.phpArrayType %}
+                    $this->{{ column.name|lower }} = $col;
+                    $this->{{ column.name|lower }}_unserialized = null;
+                {% else %}
+                    $this->{{ column.name|lower }} = $col;
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+
+        {% if builder.buildProperty('addSaveMethod') %}
+            $this->resetModified();
+        {% endif %}
+        $this->setNew(false);
+
+        if ($rehydrate) {
+            $this->ensureConsistency();
+        }
+
+        return $startcol + {{ n }}; // {{ n }} = {{ builder.tableMapClassName }}::NUM_HYDRATE_COLUMNS.
+
+    } catch (Exception $e) {
+        throw new PropelException("Error populating {{ builder.objectClassName }} object", 0, $e);
+    }
+}

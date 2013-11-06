@@ -1,0 +1,14 @@
+/**
+ * Build a Criteria object containing the values of all modified columns in this object.
+ *
+ * @return Criteria The Criteria object containing all modified values.
+ */
+public function buildCriteria()
+{
+    $criteria = new Criteria({{ builder.tableMapClassName }}::DATABASE_NAME);
+    {% for column in builder.table.columns %}
+        if ($this->isColumnModified({{ builder.columnConstant(column) }})) $criteria->add({{ builder.columnConstant(column) }}, $this->{{ column.name|lower }});
+    {% endfor %}
+
+    return $criteria;
+}

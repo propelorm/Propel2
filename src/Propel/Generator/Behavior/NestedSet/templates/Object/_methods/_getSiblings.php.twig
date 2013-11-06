@@ -1,0 +1,24 @@
+/**
+ * Gets the siblings of the given node
+ *
+ * @param boolean             $includeNode Whether to include the current node or not
+ * @param Criteria            $query Criteria to filter results.
+ * @param ConnectionInterface $con Connection to use.
+ *
+ * @return array List of {{ builder.objectClassName }} objects
+ */
+public function getSiblings($includeNode = false, $query = null, ConnectionInterface $con = null)
+{
+    if ($this->isRoot()) {
+        return array();
+    } else {
+         $query = {{ builder.queryClassName }}::create(null, $query)
+                ->childrenOf($this->getParent($con))
+                ->orderByBranch();
+        if (!$includeNode) {
+            $query->prune($this);
+        }
+
+        return $query->find($con);
+    }
+}

@@ -1,0 +1,18 @@
+/**
+ * Gets parent node for the current object if it exists
+ * The result is cached so further calls to the same method don't issue any queries
+ *
+ * @param  ConnectionInterface $con Connection to use.
+ * @return mixed Propel object if exists else false
+ */
+public function getParent(ConnectionInterface $con = null)
+{
+    if (null === $this->aNestedSetParent && $this->hasParent()) {
+        $this->aNestedSetParent = {{ builder.queryClassName }}::create()
+            ->ancestorsOf($this)
+            ->orderByLevel(true)
+            ->findOne($con);
+    }
+
+    return $this->aNestedSetParent;
+}

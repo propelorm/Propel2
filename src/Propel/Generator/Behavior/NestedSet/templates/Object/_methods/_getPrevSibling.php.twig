@@ -1,0 +1,15 @@
+/**
+ * Gets previous sibling for the given node if it exists
+ *
+ * @param      ConnectionInterface $con Connection to use.
+ * @return     mixed         Propel object if exists else false
+ */
+public function getPrevSibling(ConnectionInterface $con = null)
+{
+    return {{ builder.queryClassName }}::create()
+            ->filterBy{{ builder.columnForParameter('right_column') }}($this->getLeftValue() - 1)
+            {% if behavior.useScope %}
+                ->inTree($this->getScopeValue())
+            {% endif %}
+            ->findOne($con);
+}

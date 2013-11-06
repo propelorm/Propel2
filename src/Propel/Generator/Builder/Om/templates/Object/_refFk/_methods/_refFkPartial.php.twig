@@ -1,0 +1,12 @@
+{% extends 'Object/_refFk/_methods/_baseFkMethod.php.twig' %}
+
+{% block method %}
+    {{ parent() }}
+    /**
+     * Reset is the {{ collVarName }} collection loaded partially.
+     */
+    public function resetPartial{{ relCol }}($v = true)
+    {
+        $this->{{ collVarName }}Partial = $v;
+    }
+{% endblock %}

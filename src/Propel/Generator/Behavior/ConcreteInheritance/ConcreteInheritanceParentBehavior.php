@@ -38,55 +38,19 @@ class ConcreteInheritanceParentBehavior extends Behavior
         }
     }
 
-    protected function getColumnGetter()
+    public function getColumnGetter()
     {
         return 'get' . $this->getColumnForParameter('descendant_column')->getPhpName();
     }
 
-    public function objectMethods($builder)
+    public function getTemplateDirectory()
     {
-        $this->builder = $builder;
-        $this->builder->declareClasses('Propel\Runtime\ActiveQuery\PropelQuery');
-        $script = '';
-        $this->addHasChildObject($script);
-        $this->addGetChildObject($script);
+        $directory = parent::getTemplateDirectory();
 
-        return $script;
-    }
+        if($directory !== null) {
+            return $directory . '_parent';
+        }
 
-    protected function addHasChildObject(&$script)
-    {
-        $script .= "
-/**
- * Whether or not this object is the parent of a child object
- *
- * @return    bool
- */
-public function hasChildObject()
-{
-    return \$this->" . $this->getColumnGetter() . "() !== null;
-}
-";
-    }
-
-    protected function addGetChildObject(&$script)
-    {
-        $script .= "
-/**
- * Get the child object of this object
- *
- * @return    mixed
- */
-public function getChildObject()
-{
-    if (!\$this->hasChildObject()) {
-        return null;
-    }
-    \$childObjectClass = \$this->" . $this->getColumnGetter() . "();
-    \$childObject = PropelQuery::from(\$childObjectClass)->findPk(\$this->getPrimaryKey());
-
-    return \$childObject->hasChildObject() ? \$childObject->getChildObject() : \$childObject;
-}
-";
+        return $directory;
     }
 }

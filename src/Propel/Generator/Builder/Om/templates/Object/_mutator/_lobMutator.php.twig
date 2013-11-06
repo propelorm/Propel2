@@ -1,0 +1,15 @@
+{% embed 'Object/_mutator/_baseMutator.php.twig' with {'builder': builder, 'column': column} %}
+    {% block code %}
+        // Because BLOB columns are streams in PDO we have to assume that they are
+        // always modified when a new value is passed in.  For example, the contents
+        // of the stream itself may have changed externally.
+        if (!is_resource($v) && $v !== null) {
+            $this->{{ column.name|lower }} = fopen('php://memory', 'r+');
+            fwrite($this->{{ column.name|lower }}, $v);
+            rewind($this->{{ column.name|lower }});
+        } else { // it's already a stream
+            $this->{{ column.name|lower }} = $v;
+        }
+        $this->modifiedColumns[] = {{ builder.columnConstant(column) }};
+    {% endblock %}
+{% endembed %}

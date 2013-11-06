@@ -1,0 +1,15 @@
+/**
+ * Gets next sibling for the given node if it exists
+ *
+ * @param      ConnectionInterface $con Connection to use.
+ * @return     mixed         Propel object if exists else false
+ */
+public function getNextSibling(ConnectionInterface $con = null)
+{
+    return {{ builder.queryClassName }}::create()
+        ->filterBy{{ behavior.columnForParameter('left_column').phpName }}($this->getRightValue() + 1)
+        {% if behavior.useScope %}
+            ->inTree($this->getScopeValue())
+        {% endif %}
+        ->findOne($con);
+}

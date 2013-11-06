@@ -80,6 +80,9 @@ class ModelBuildCommand extends AbstractCommand
                 '')
             ->addOption('disable-namespace-auto-package', null, InputOption::VALUE_NONE,
                 'Disable namespace auto-packaging')
+            ->addOption('cache-path', null, InputOption::VALUE_OPTIONAL,
+                'The path which to use as a cache', sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'propel2')
+            ->addOption('disable-cache', null, InputOption::VALUE_OPTIONAL, 'Disable cache', false)
             ->setName('model:build')
             ->setAliases(array('build'))
             ->setDescription('Build the model classes based on Propel XML schemas')
@@ -91,6 +94,7 @@ class ModelBuildCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $cachePath = $input->getOption('disable-cache') ? null : $input->getOption('cache-path');
         $generatorConfig = $this->getGeneratorConfig(array(
             'propel.platform.class'                     => $input->getOption('platform'),
             'propel.builder.object.class'               => $input->getOption('object-class'),
@@ -102,6 +106,7 @@ class ModelBuildCommand extends AbstractCommand
             'propel.builder.queryinheritancestub.class' => $input->getOption('query-inheritance-stub-class'),
             'propel.builder.tablemap.class'             => $input->getOption('tablemap-class'),
             'propel.builder.pluralizer.class'           => $input->getOption('pluralizer-class'),
+            'propel.builder.cachePath'                  => $cachePath,
             'propel.disableIdentifierQuoting'           => !$input->getOption('enable-identifier-quoting'),
             'propel.targetPackage'                      => $input->getOption('target-package'),
             'propel.packageObjectModel'                 => $input->getOption('enable-package-object-model'),
@@ -123,6 +128,12 @@ class ModelBuildCommand extends AbstractCommand
         ), $input);
 
         $this->createDirectory($input->getOption('output-dir'));
+
+        if($cachePath !== null) {
+            $output->writeln('Cache directory is <info>"' . $cachePath . '"</info>.');
+        } else {
+            $output->writeln('Cache is disabled.');
+        }
 
         $manager = new ModelManager();
         $manager->setFilesystem($this->getFilesystem());

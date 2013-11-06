@@ -1,0 +1,54 @@
+/**
+ * Removes this object from datastore and sets delete attribute.
+ *
+ * @param      ConnectionInterface $con
+ * @return void
+ * @throws PropelException
+ * @see {{ builder.unqualifiedClassName }}::setDeleted()
+ * @see {{ builder.unqualifiedClassName }}::isDeleted()
+ */
+public function delete(ConnectionInterface $con = null)
+{
+    if ($this->isDeleted()) {
+        throw new PropelException("This object has already been deleted.");
+    }
+    if ($con === null) {
+        $con = Propel::getServiceContainer()->getWriteConnection({{ builder.tableMapClass }}::DATABASE_NAME);
+    }
+
+    $con->beginTransaction();
+    try {
+        $deleteQuery = {{ builder.queryClassName }}::create()->filterByPrimaryKey($this->getPrimaryKey());
+        {% set addHooks = builder.generatorConfig.buildProperty('addHooks') %}
+
+        {% if addHooks %}
+            $ret = $this->preDelete($con);
+        {% endif %}
+
+        {% for behavior in builder.table.behaviors %}
+            {% include '@' ~ behavior.templateNamespace ~ '/Object/_hooks/_preDelete.php.twig' ignore missing with {'builder': builder, 'behavior': behavior} %}
+        {% endfor %}
+
+        {% if addHooks %}
+            if ($ret) {
+        {% endif %}
+        $deleteQuery->delete($con);
+        $this->postDelete($con);
+
+        {% for behavior in builder.table.behaviors %}
+            {% include '@' ~ behavior.templateNamespace ~ '/Object/_hooks/_postDelete.php.twig' ignore missing with {'builder': builder, 'behavior': behavior} %}
+        {% endfor %}
+
+        $con->commit();
+        $this->setDeleted(true);
+
+        {% if addHooks %}
+            } else {
+                $con->commit();
+            }
+        {% endif %}
+    } catch (Exception $e) {
+        $con->rollBack();
+        throw $e;
+    }
+}

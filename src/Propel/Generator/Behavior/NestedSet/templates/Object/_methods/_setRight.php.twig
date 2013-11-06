@@ -1,0 +1,11 @@
+/**
+ * Proxy setter method for the right value of the nested set model.
+ * It provides a generic way to set the value, whatever the actual column name is.
+ *
+ * @param      int $v The nested set right value
+ * @return     {{ builder.objectClassName }} The current object (for fluent API support)
+ */
+public function setRightValue($v)
+{
+    return $this->set{{ behavior.columnForParameter('right_column').phpName }}($v);
+}

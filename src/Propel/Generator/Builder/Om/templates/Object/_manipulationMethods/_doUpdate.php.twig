@@ -1,0 +1,15 @@
+/**
+ * Update the row in the database.
+ *
+ * @param      ConnectionInterface $con
+ *
+ * @return Integer Number of updated rows
+ * @see doSave()
+ */
+protected function doUpdate(ConnectionInterface $con)
+{
+    $selectCriteria = $this->buildPkeyCriteria();
+    $valuesCriteria = $this->buildCriteria();
+
+    return $selectCriteria->doUpdate($valuesCriteria, $con);
+}

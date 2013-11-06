@@ -1,0 +1,10 @@
+{% embed 'Object/_mutator/_baseMutator.php.twig' with {'builder': builder, 'column': column} %}
+    {% block code %}
+        {% set columnUnserialized = column.name|lower ~ '_unserialized' %}
+        if ($this->{{ columnUnserialized }} !== $v) {
+            $this->{{ columnUnserialized }} = $v;
+            $this->{{ columnUnserialized }} = serialize($v);
+            $this->modifiedColumns[] = {{ builder.columnConstant(column) }};
+        }
+    {% endblock %}
+{% endembed %}

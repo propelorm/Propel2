@@ -182,15 +182,6 @@ class ArchivableBehavior extends Behavior
         return 'true' === $this->getParameter('archive_on_delete');
     }
 
-    public function getObjectBuilderModifier()
-    {
-        if (null === $this->objectBuilderModifier) {
-            $this->objectBuilderModifier = new ArchivableBehaviorObjectBuilderModifier($this);
-        }
-
-        return $this->objectBuilderModifier;
-    }
-
     public function getQueryBuilderModifier()
     {
         if (null === $this->queryBuilderModifier) {

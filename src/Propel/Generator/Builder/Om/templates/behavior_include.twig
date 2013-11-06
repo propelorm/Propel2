@@ -1,0 +1,5 @@
+{% macro include(template, builder) %}
+    {% for behavior in builder.table.behaviors %}
+        {{ include('@' ~ behavior.templateNamespace ~ '/' ~ template, {'builder': builder, 'behavior': behavior}, ignore_missing = true, with_context = false) }}
+    {% endfor %}
+{% endmacro %}

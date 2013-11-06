@@ -1,0 +1,27 @@
+/**
+ * Indicates whether the columns in this object are only set to default values.
+ *
+ * This method can be used in conjunction with isModified() to indicate whether an object is both
+ * modified _and_ has some values set which are non-default.
+ *
+ * @return boolean Whether the columns in this object are only been set with default values.
+ */
+public function hasOnlyDefaultValues()
+{
+    {% for column in builder.table.columns %}
+        {% set defaultValue = column.defaultValue %}
+        {% if defaultValue != null and not defaultValue.expression %}
+            {% set accessor = '$this->' ~ column.name|lower %}
+            {% if column.temporalType %}
+                {% set format = builder.temporalFormatter(column) %}
+                {% set accessor = accessor ~ ' && $this->' ~ column.name|lower ~ '->format(' ~ format ~ ')' %}
+
+                if ({{ accessor }} !== '{{ builder.defaultValueString(column) }}') {
+                    return false;
+                }
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+
+    return true;
+}

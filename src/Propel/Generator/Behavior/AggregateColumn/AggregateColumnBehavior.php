@@ -33,6 +33,11 @@ class AggregateColumnBehavior extends Behavior
      */
     public function modifyTable()
     {
+        // TODO: behavior should get a validate() method like the builder::validate()
+        if (!$this->getParameter('foreign_table')) {
+            throw new \InvalidArgumentException(sprintf('You must define a \'foreign_table\' parameter for the \'aggregate_column\' behavior in the \'%s\' table', $this->getTable()->getName()));
+        }
+
         $table = $this->getTable();
         if (!$columnName = $this->getParameter('name')) {
             throw new \InvalidArgumentException(sprintf('You must define a \'name\' parameter for the \'aggregate_column\' behavior in the \'%s\' table', $table->getName()));
@@ -57,19 +62,7 @@ class AggregateColumnBehavior extends Behavior
         }
     }
 
-    public function objectMethods($builder)
-    {
-        if (!$this->getParameter('foreign_table')) {
-            throw new \InvalidArgumentException(sprintf('You must define a \'foreign_table\' parameter for the \'aggregate_column\' behavior in the \'%s\' table', $this->getTable()->getName()));
-        }
-        $script = '';
-        $script .= $this->addObjectCompute();
-        $script .= $this->addObjectUpdate();
-
-        return $script;
-    }
-
-    protected function addObjectCompute()
+    public function buildQuery()
     {
         $conditions = array();
         if ($this->getParameter('condition')) {
@@ -94,18 +87,7 @@ class AggregateColumnBehavior extends Behavior
             implode(' AND ', $conditions)
         );
 
-        return $this->renderTemplate('objectCompute', array(
-            'column'   => $this->getColumn(),
-            'sql'      => $sql,
-            'bindings' => $bindings,
-        ));
-    }
-
-    protected function addObjectUpdate()
-    {
-        return $this->renderTemplate('objectUpdate', array(
-            'column'  => $this->getColumn(),
-        ));
+        return ['sql' => $sql, 'bindings' => $bindings];
     }
 
     protected function getForeignTable()
@@ -131,7 +113,7 @@ class AggregateColumnBehavior extends Behavior
         return array_shift($fks);
     }
 
-    protected function getColumn()
+    public function getColumn()
     {
         return $this->getTable()->getColumn($this->getParameter('name'));
     }

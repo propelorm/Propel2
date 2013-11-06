@@ -1,0 +1,34 @@
+{% set relatedNamePlural = builder.fKPhpNameAffix(crossFk, true) %}
+{% set relatedName = builder.getFKPhpNameAffix(crossFk, false) %}
+{% set relatedObjectClassName = builder.newStubObjectBuilder(crossFk.foreignTable).unqualifiedClassName %}
+{% set crossRefTableName = crossFk.tableName %}
+{% set collName = builder.crossFKVarName(crossFk) %}
+{% set inputCollection = relatedNamePlural|lcfirst %}
+{% set inputCollectionEntry = builder.fKPhpNameAffix(crossFk, false)|lcfirst %}
+/**
+ * Sets a collection of {{ relatedObjectClassName }} objects related by a many-to-many relationship
+ * to the current object by way of the {{ crossRefTableName }} cross-reference table.
+ * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+ * and new objects from the given Propel collection.
+ *
+ * @param  Collection ${{ inputCollection }} A Propel collection.
+ * @param  ConnectionInterface $con Optional connection object
+ * @return {{ builder.objectClassName }} The current object (for fluent API support)
+ */
+public function set{{ relatedNamePlural }}(Collection ${{ inputCollection }}, ConnectionInterface $con = null)
+{
+    $this->clear{{ relatedNamePlural }}();
+    $current{{ relatedNamePlural }} = $this->get{{ relatedNamePlural }}();
+
+    $this->{{ inputCollection }}ScheduledForDeletion = $current{{ relatedNamePlural }}->diff(${{ inputCollection }});
+
+    foreach (${{ inputCollection }} as ${{ inputCollectionEntry }}) {
+        if (!$current{{ relatedNamePlural }}->contains(${$inputCollectionEntry})) {
+            $this->doAdd{{ relatedName }}(${$inputCollectionEntry});
+        }
+    }
+
+    $this->{{ collName }} = ${{ inputCollection }};
+
+    return $this;
+}

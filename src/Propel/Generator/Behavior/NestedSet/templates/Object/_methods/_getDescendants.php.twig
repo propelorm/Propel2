@@ -1,0 +1,18 @@
+/**
+ * Gets descendants for the given node
+ *
+ * @param      Criteria $query Criteria to filter results.
+ * @param      ConnectionInterface $con Connection to use.
+ * @return     array         List of {{ builder.objectClassName }} objects
+ */
+public function getDescendants($query = null, ConnectionInterface $con = null)
+{
+    if ($this->isLeaf()) {
+        return array();
+    } else {
+        return {{ builder.queryClassName }}::create(null, $query)
+            ->descendantsOf($this)
+            ->orderByBranch()
+            ->find($con);
+    }
+}

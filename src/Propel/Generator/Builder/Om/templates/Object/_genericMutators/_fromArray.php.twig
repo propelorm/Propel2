@@ -1,0 +1,24 @@
+/**
+ * Populates the object using an array.
+ *
+ * This is particularly useful when populating an object from one of the
+ * request arrays (e.g. $_POST).  This method goes through the column
+ * names, checking to see whether a matching key exists in populated
+ * array. If so the setByName() method is called for that column.
+ *
+ * You can specify the key type of the array by additionally passing one
+ * of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_STUDLYPHPNAME,
+ * TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
+ * The default key type is the column's TableMap::{{ builder.defaultKeyType }}.
+ *
+ * @param      array  $arr     An array to populate the object from.
+ * @param      string $keyType The type of keys the array uses.
+ * @return void
+ */
+public function fromArray($arr, $keyType = TableMap::{{ builder.defaultKeyType }})
+{
+    $keys = {{ builder.tableMapClassName }}::getFieldNames($keyType);
+    {% for column in builder.table.columns %}
+        if (array_key_exists($keys[{{ loop.index0 }}], $arr)) $this->set{{ column.phpName }}($arr[$keys[{{ loop.index0 }}]]);
+    {% endfor %}
+}

@@ -1,0 +1,39 @@
+{% block comment %}
+
+    /**
+     * Get the [{{ column.name|lower }}] column value.
+     * {{ column.description }}
+    {% if column.lazyLoad %}
+        * @param    ConnectionInterface An optional ConnectionInterface connection to use for fetching this lazy-loaded column.
+    {% endif %}
+     * @return   {{ column.phpType }}
+     */
+{% endblock %}
+
+
+{{ column.accessorVisibility }} function get{{ column.phpName }}(
+{% block parameters %}
+    {% if not parameters is defined %}
+        {% set parameters = [] %}
+    {% endif %}
+    {% if column.lazyLoad %}
+        {% set parameters = parameters|merge([{'type': 'ConnectionInterface', 'name': 'con', 'default': 'null'}]) %}
+    {% endif %}
+    {% for parameter in parameters %}
+        {% if parameter.type %}
+            {{ parameter.type }}
+        {% endif %}
+        ${{ parameter.name }}
+        {% if parameter.default %}
+            = {{ parameter.default }}
+        {% endif %}
+    {% endfor %}
+{% endblock %}
+)
+{
+    {% block code %}
+        {% if column.lazyLoad %}
+            {% include 'Object/_accessor/_accessorLazyLoadSnippets.php.twig' with {'builder': builder, 'column': column} %}
+        {% endif %}
+    {% endblock %}
+}

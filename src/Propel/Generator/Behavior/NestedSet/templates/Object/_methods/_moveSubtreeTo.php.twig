@@ -1,0 +1,82 @@
+/**
+ * Move current node and its children to location $destLeft and updates rest of tree
+ *
+ * @param      int    $destLeft Destination left value
+ * @param      int    $levelDelta Delta to add to the levels
+ * @param      ConnectionInterface $con        Connection to use.
+ */
+protected function moveSubtreeTo($destLeft, $levelDelta{% if behavior.useScope %}, $targetScope = null, PropelPDO $con = null)
+{
+    $preventDefault = false;
+    $left  = $this->getLeftValue();
+    $right = $this->getRightValue();
+
+    {% if behavior.useScope %}
+        $scope = $this->getScopeValue();
+
+        if ($targetScope === null) {
+            $targetScope = $scope;
+        }"
+    {% endif %}
+
+
+    $treeSize = $right - $left +1;
+
+    if (null === $con) {
+        $con = Propel::getServiceContainer()->getWriteConnection({{ builder.tableMapClass }}::DATABASE_NAME);
+    }
+
+    $con->beginTransaction();
+    try {
+        // make room next to the target for the subtree
+        {{ builder.queryClassName }}::shiftRLValues($treeSize, $destLeft, null{% if behavior.useScope %}, $targetScope{% endif %}, $con);
+
+        {% if builder.useScope %}
+            if ($targetScope != $scope) {
+
+                //move subtree to < 0, so the items are out of scope.
+                {{ builder.queryClassName }}::shiftRLValues(-$right, $left, $right, $scope, $con);
+
+                //update scopes
+                {{ builder.queryClassName }}::setNegativeScope($targetScope, $con);
+
+                //update levels
+                {{ builder.queryClassName }}::shiftLevel($levelDelta, $left - $right, 0, $targetScope, $con);
+
+                //move the subtree to the target
+                {{ builder.queryClassName }}::shiftRLValues(($right - $left) + $destLeft, $left - $right, 0, $targetScope, $con);
+
+
+                $preventDefault = true;
+            }
+        {% endif %}
+
+        if (!$preventDefault) {
+
+
+            if ($left >= $destLeft) { // src was shifted too?
+                $left += $treeSize;
+                $right += $treeSize;
+            }
+
+            if ($levelDelta) {
+                // update the levels of the subtree
+                {{ builder.queryClassName }}::shiftLevel($levelDelta, $left, $right{% if behavior.useScope %}, $scope{% endif %}, $con);
+            }
+
+            // move the subtree to the target
+            {{ builder.queryClassName }}::shiftRLValues($destLeft - $left, $left, $right{% if behavior.useScope %}, $scope{% endif %}, $con);
+        }
+
+        // remove the empty room at the previous location of the subtree
+        {{ builder.queryClassName }}::shiftRLValues(-$treeSize, $right + 1, null{% if behavior.useScope %}, $scope{% endif %}, $con);
+
+        // update all loaded nodes
+        {{ builder.queryClassName }}::updateLoadedNodes(null, $con);
+
+        $con->commit();
+    } catch (PropelException $e) {
+        $con->rollback();
+        throw $e;
+    }
+}

@@ -1,0 +1,16 @@
+{% embed 'Object/_mutator/_baseMutator.php.twig' with {'builder': builder, 'column': column} %}
+    {% block code %}
+        {% if column.phpPrimitiveType %}
+            // Perform type-casting to ensure that we can use type-sensitive
+            // checking in mutators.
+            if ($v !== null) {
+                $v = ({{ column.phpType }}) $v;
+            }
+        {% endif %}
+
+        if ($this->{{ column.name|lower }} !== $v) {
+            $this->{{ column.name|lower }} = $v;
+            $this->modifiedColumns[] = {{ builder.columnConstant(column) }};
+        }
+    {% endblock %}
+{% endembed %}

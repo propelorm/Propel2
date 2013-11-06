@@ -69,15 +69,6 @@ class NestedSetBehavior extends Behavior
         }
     }
 
-    public function getObjectBuilderModifier()
-    {
-        if (null === $this->objectBuilderModifier) {
-            $this->objectBuilderModifier = new NestedSetBehaviorObjectBuilderModifier($this);
-        }
-
-        return $this->objectBuilderModifier;
-    }
-
     public function getQueryBuilderModifier()
     {
         if (null === $this->queryBuilderModifier) {

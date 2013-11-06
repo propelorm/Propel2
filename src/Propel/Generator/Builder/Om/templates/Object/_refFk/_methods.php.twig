@@ -1,0 +1,26 @@
+{% set referrers = builder.table.referrers %}
+
+{% for refFk in referrers %}
+    {% if loop.first %}
+        {% include 'Object/_refFk/_methods/_initRelation.php.twig' %}
+    {% endif %}
+
+    {% do builder.declareClassFromBuilder(builder.newStubObjectBuilder(refFk.table), 'Child') %}
+    {% do builder.declareClassFromBuilder(builder.newStubQueryBuilder(refFk.table)) %}
+
+    {% if refFk.localPrimaryKey %}
+        {% include 'Object/_refFk/_methods/_getPkRefFk.php.twig' %}
+        {% include 'Object/_refFk/_methods/_setPkRefFk.php.twig' %}
+    {% else %}
+        {% include 'Object/_refFk/_methods/_refFkClear.php.twig' %}
+        {% include 'Object/_refFk/_methods/_refFkPartial.php.twig' %}
+        {% include 'Object/_refFk/_methods/_refFkInit.php.twig' %}
+        {% include 'Object/_refFk/_methods/_refFkGet.php.twig' %}
+        {% include 'Object/_refFk/_methods/_refFkSet.php.twig' %}
+        {% include 'Object/_refFk/_methods/_refFkCount.php.twig' %}
+        {% include 'Object/_refFk/_methods/_refFkAdd.php.twig' %}
+        {% include 'Object/_refFk/_methods/_refFkDoAdd.php.twig' %}
+        {% include 'Object/_refFk/_methods/_refFkRemove.php.twig' %}
+        {% include 'Object/_refFk/_methods/_refFkGetJoinMethods.php.twig' %}
+    {% endif %}
+{% endfor %}

@@ -1,0 +1,154 @@
+{% set archiveTablePhpName = behavior.archiveTablePhpName(builder) %}
+{% set archiveTableQueryName = behavior.archiveTableQueryName(builder) %}
+/**
+ * Get an archived version of the current object.
+ *
+ * @param ConnectionInterface $con Optional connection object
+ *
+ * @return     {{ archiveTablePhpName }} An archive object, or null if the current object was never archived
+ */
+public function getArchive(ConnectionInterface $con = null)
+{
+    if ($this->isNew()) {
+        return null;
+    }
+    $archive = {{ archiveTableQueryName }}::create()
+        ->filterByPrimaryKey($this->getPrimaryKey())
+        ->findOne($con);
+
+    return $archive;
+}
+
+
+/**
+ * Copy the data of the current object into a $archiveTablePhpName archive object.
+ * The archived object is then saved.
+ * If the current object has already been archived, the archived object
+ * is updated and not duplicated.
+ *
+ * @param ConnectionInterface $con Optional connection object
+ *
+ * @throws PropelException If the object is new
+ *
+ * @return     {{ archiveTablePhpName }} The archive object based on this object
+ */
+public function archive(ConnectionInterface $con = null)
+{
+    if ($this->isNew()) {
+        throw new PropelException('New objects cannot be archived. You must save the current object before calling archive().');
+    }
+    if (!$archive = $this->getArchive({% if behavior.hasArchiveClass %}$con{% endif %})) {
+        $archive = new {{ archiveTablePhpName }}();
+        $archive->setPrimaryKey($this->getPrimaryKey());
+    }
+    $this->copyInto($archive, $deepCopy = false, $makeNew = false);
+    {% if behavior.archivedAtColumn %}
+        $archive->set{{ behavior.archivedAtColumn.phpName }}(time());
+    {% endif %}
+    $archive->save({% if behavior.hasArchiveClass %}$con{% endif %});
+
+    return $archive;
+}
+
+
+
+/**
+ * Revert the the current object to the state it had when it was last archived.
+ * The object must be saved afterwards if the changes must persist.
+ *
+ * @param ConnectionInterface $con Optional connection object
+ *
+ * @throws PropelException If the object has no corresponding archive.
+ *
+ * @return {{ builder.objectClassName }} The current object (for fluent API support)
+ */
+public function restoreFromArchive(ConnectionInterface $con = null)
+{
+    if (!$archive = $this->getArchive($con)) {
+        throw new PropelException('The current object has never been archived and cannot be restored');
+    }
+    $this->populateFromArchive($archive);
+
+    return $this;
+}
+
+
+
+/**
+ * Populates the the current object based on a $archiveTablePhpName archive object.
+ *
+ * @param      {{ archiveTablePhpName }} $archive An archived object based on the same class
+{% if behavior.table.hasAutoIncrementPrimaryKey %}
+    * @param      Boolean $populateAutoIncrementPrimaryKeys
+    *               If true, autoincrement columns are copied from the archive object.
+    *               If false, autoincrement columns are left intact.
+{% endif %}
+ *
+ * @return     {{ builder.objectClassName }} The current object (for fluent API support)
+ */
+public function populateFromArchive($archive{% if behavior.table.hasAutoIncrementPrimaryKey %}, $populateAutoIncrementPrimaryKeys = false{% endif %})
+{
+    {% if behavior.table.hasAutoIncrementPrimaryKey %}
+        if ($populateAutoIncrementPrimaryKeys) {
+            {% for column in behavior.table.columns %}
+                {% if column.autoIncrement %}
+                    $this->set{{ column.phpName }}($archive->get{{ column.phpName }}());
+                {% endif %}
+            {% endfor %}
+        }
+    {% endif %}
+
+    {% for column in behavior.table.columns %}
+        {% if not column.autoIncrement %}
+            $this->set{{ column.phpName }}($archive->get{{ column.phpName }}());
+        {% endif %}
+    {% endfor %}
+
+    return $this;
+}
+
+{% if behavior.archiveOnInsert or behavior.archiveOnUpdate %}
+    /**
+     * Persists the object to the database without archiving it.
+     *
+     * @param ConnectionInterface $con Optional connection object
+     *
+     * @return     {{ builder.objectClassName }} The current object (for fluent API support)
+     */
+    public function saveWithoutArchive(ConnectionInterface $con = null)
+    {
+        {% if not behavior.archiveOnInsert %}
+            if (!$this->isNew()) {
+                $this->archiveOnUpdate = false;
+            }
+        {% elseif not behavior.archiveOnUpdate %}
+            if ($this->isNew()) {
+                $this->archiveOnInsert = false;
+            }
+        {% else %}
+            if ($this->isNew()) {
+                $this->archiveOnInsert = false;
+            } else {
+                $this->archiveOnUpdate = false;
+            }
+        {% endif %}
+
+        return $this->save($con);
+    }
+{% endif %}
+
+{% if behavior.archiveOnDelete %}
+    /**
+     * Removes the object from the database without archiving it.
+     *
+     * @param ConnectionInterface $con Optional connection object
+     *
+     * @return     {{ builder.objectClassName }} The current object (for fluent API support)
+     */
+    public function deleteWithoutArchive(ConnectionInterface $con = null)
+    {
+        $this->archiveOnDelete = false;
+
+        return $this->delete($con);
+    }
+{% endif %}

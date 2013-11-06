@@ -1,0 +1,14 @@
+/**
+ * Gets descendants for the given node, plus the current node
+ *
+ * @param      Criteria $query Criteria to filter results.
+ * @param      ConnectionInterface $con Connection to use.
+ * @return     array         List of {{ builder.objectClassName }} objects
+ */
+public function getBranch($query = null, ConnectionInterface $con = null)
+{
+    return {{ builder.queryClassName }}::create(null, $query)
+        ->branchOf($this)
+        ->orderByBranch()
+        ->find($con);
+}

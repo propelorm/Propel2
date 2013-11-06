@@ -1,0 +1,28 @@
+{% embed 'Object/_mutator/_baseMutator.php.twig' with {'builder': builder, 'column': column} %}
+    {% block comment %}
+        /**
+         * Sets the value of the [{{ column.name|lower }}] column.
+         * Non-boolean arguments are converted using the following rules:
+         *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+         *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+         * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+         * {{ column.description }}
+         * @param      boolean|integer|string $v The new value
+         * @return     {{ builder.objectClassName(true) }} The current object (for fluent API support)
+         */
+    {% endblock %}
+    {% block code %}
+        if ($v !== null) {
+            if (is_string($v)) {
+                $v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+            } else {
+                $v = (boolean) $v;
+            }
+        }
+
+        if ($this->{{ column.name|lower }} !== $v) {
+            $this->{{ column.name|lower }} = $v;
+            $this->modifiedColumns[] = {{ builder.columnConstant(column) }};
+        }
+    {% endblock %}
+{% endembed %}

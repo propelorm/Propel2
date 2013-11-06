@@ -1,0 +1,40 @@
+{% set relatedName = builder.fKPhpNameAffix(crossFk, true) %}
+{% set relatedObjectClassName = builder.classNameFromBuilder(builder.newStubObjectBuilder(crossFk.foreignTable)) %}
+{% set selfRelationName = builder.fKPhpNameAffix(refFk, false) %}
+{% set relatedQueryClassName = builder.classNameFromBuilder(builder.newStubQueryBuilder(crossFk.foreignTable)) %}
+{% set crossRefTableName = crossFk.tableName %}
+
+/**
+ * Gets a collection of {{ relatedObjectClassName }} objects related by a many-to-many relationship
+ * to the current object by way of the $crossRefTableName cross-reference table.
+ *
+ * If the $criteria is not null, it is used to always fetch the results from the database.
+ * Otherwise the results are fetched from the database the first time, then cached.
+ * Next time the same method is called without $criteria, the cached collection is returned.
+ * If this ".$this->getObjectClassName()." is new, it will return
+ * an empty collection or the current collection; the criteria is ignored on a new object.
+ *
+ * @param      Criteria $criteria Optional query object to filter the query
+ * @param      ConnectionInterface $con Optional connection object
+ *
+ * @return ObjectCollection|{{ relatedObjectClassName }}[] List of {{ relatedObjectClassName }} objects
+ */
+public function get{{ relatedName }}($criteria = null, ConnectionInterface $con = null)
+{
+    if (null === $this->{{ collName }} || null !== $criteria) {
+        if ($this->isNew() && null === $this->{{ collName }}) {
+            // return empty collection
+            $this->init{{ relatedName }}}();
+        } else {
+            ${{ collName }} = {{ relatedQueryClassName }}::create(null, $criteria)
+                ->filterBy{{ selfRelationName }}($this)
+                ->find($con);
+            if (null !== $criteria) {
+                return ${{ collName }};
+            }
+            $this->{{ collName }} = ${{ collName }};
+        }
+    }
+
+    return $this->{{ collName }};
+}

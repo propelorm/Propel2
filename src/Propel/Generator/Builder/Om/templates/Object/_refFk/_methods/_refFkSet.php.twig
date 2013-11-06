@@ -1,0 +1,48 @@
+{% extends 'Object/_refFk/_methods/_baseFkMethod.php.twig' %}
+
+{% block method %}
+    {{ parent() }}
+    {% set relatedName = builder.refFKPhpNameAffix(refFk, true) %}
+    {% set relatedObjectClassName = builder.refFKPhpNameAffix(refFk, false) %}
+    
+    {% set inputCollection = relatedName|lcfirst %}
+    {% set inputCollectionEntry = relatedObjectClassName|lcfirst %}
+    
+    /**
+     * Sets a collection of {{ relatedObjectClassName }} objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param      Collection ${{ inputCollection }} A Propel collection.
+     * @param      ConnectionInterface $con Optional connection object
+     * @return     {{ builder.objectClassName }} The current object (for fluent API support)
+     */
+    public function set{{ relatedName }}(Collection ${{ inputCollection }}, ConnectionInterface $con = null)
+    {
+        ${{ inputCollection }}ToDelete = $this->get{{ relatedName }}(new Criteria(), $con)->diff(${{ inputCollection }});
+        
+        {% if refFk.atLeastOneLocalPrimaryKey %}
+            //since at least one column in the foreign key is at the same time a PK
+            //we can not just set a PK to NULL in the lines below. We have to store
+            //a backup of all values, so we are able to manipulate these items based on the onDelete value later.
+            $this->{{ inputCollection }}ScheduledForDeletion = clone ${{ inputCollection }}ToDelete;
+        {% else %}
+          $this->{{ inputCollection }}ScheduledForDeletion = ${{ inputCollection }}ToDelete;
+        {% endif %}
+            
+        foreach (${{ inputCollection }}ToDelete as ${{ inputCollectionEntry }}Removed) {
+            ${{ inputCollectionEntry }}Removed->set{{ relCol }}(null);
+        }
+
+        $this->{{ collVarName }} = null;
+        foreach (${{ inputCollection }} as ${{ inputCollectionEntry }}) {
+            $this->add{{ relatedObjectClassName }}(${{ inputCollectionEntry }});
+        }
+
+        $this->{{ collVarName }} = ${{ inputCollection }};
+        $this->{{ collVarName }}Partial = false;
+
+        return $this;
+    }
+{% endblock %}

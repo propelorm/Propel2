@@ -1,0 +1,14 @@
+/**
+ * Sets the cache for parent node of the current object.
+ * Warning: this does not move the current object in the tree.
+ * Use moveTofirstChildOf() or moveToLastChildOf() for that purpose
+ *
+ * @param      {{ builder.objectClassName }} $parent
+ * @return     {{ builder.objectClassName }} The current object, for fluid interface
+ */
+public function setParent($parent = null)
+{
+    $this->aNestedSetParent = $parent;
+
+    return $this;
+}

@@ -1,0 +1,5 @@
+{% if behavior.copyData %}
+    $parent = $this->getSyncParent($con);
+    $parent->save($con);
+    $this->setPrimaryKey($parent->getPrimaryKey());
+{% endif %}

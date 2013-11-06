@@ -1,0 +1,32 @@
+{% for column in builder.table.columns %}
+    /**
+     * The value for the {{ column.name|lower }} field.
+    {% if column.defaultvalue %}
+        {% if column.defaultValue.expression %}
+            * Note: this column has a database default value of: (expression) {{ column.defaultValue.value }}
+        {% else %}
+            * Note: this column has a database default value of: {{ builder.defaultValueString(column) }}
+        {% endif %}
+    {% endif %}
+     * @var        {{ column.phpType }}
+     */
+    protected ${{ column.name|lower }};
+
+    {% if column.lazyLoad %}
+        /**
+         * Whether the lazy-loaded ${{ column.name|lower }} value has been loaded from database.
+         * This is necessary to avoid repeated lookups if ${{ column.name|lower }} column is NULL in the db.
+         * @var boolean
+         */
+         protected ${{ column.name|lower }}_isLoaded = false;
+    {% endif %}
+
+    {% if column.type == constant('Propel\\Generator\\Model\\PropelTypes::OBJECT') or column.type == constant('Propel\\Generator\\Model\\PropelTypes::PHP_ARRAY') %}
+        /**
+         * The unserialized ${{ column.name|lower }} value - i.e. the persisted object.
+         * This is necessary to avoid repeated calls to unserialize() at runtime.
+         * @var object
+         */
+        protected ${{ column.name|lower }}_unserialized;
+    {% endif %}
+{% endfor %}

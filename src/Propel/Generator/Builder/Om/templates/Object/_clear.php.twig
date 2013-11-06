@@ -1,0 +1,26 @@
+/**
+ * Clears the current object and sets all attributes to their default values
+ */
+public function clear()
+{
+    {% for column in builder.table.columns %}
+        $this->{{ column.name|lower }} = null;
+
+        {% if column.lazyLoad %}
+            $this->{{ column.name|lower }}_isLoaded = false;
+        {% endif %}
+        {% if column.phpArrayType or column.phpObjectType %}
+            $this->{{ column.name|lower }}_unserialized = null;
+        {% endif %}
+    {% endfor %}
+
+    $this->alreadyInSave = false;
+    $this->clearAllReferences();
+
+    {% if builder.hasDefaultValues %}
+        $this->applyDefaultValues();
+    {% endif %}
+    $this->resetModified();
+    $this->setNew(true);
+    $this->setDeleted(false);
+}

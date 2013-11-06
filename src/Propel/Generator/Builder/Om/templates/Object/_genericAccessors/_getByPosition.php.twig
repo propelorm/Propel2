@@ -1,0 +1,20 @@
+/**
+ * Retrieves a field from the object by Position as specified in the xml schema.
+ * Zero-based.
+ *
+ * @param      int $pos position in xml schema
+ * @return mixed Value of field at $pos
+ */
+public function getByPosition($pos)
+{
+    switch ($pos) {
+        {% for column in builder.table.columns %}
+            case {{ loop.index0 }}:
+                return $this->get{{ column.phpName }}();
+                break;
+        {% endfor %}
+        default:
+            return null;
+            break;
+    }
+}

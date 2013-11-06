@@ -1,0 +1,47 @@
+
+/**
+ * attribute to determine if this object has previously been saved.
+ * @var boolean
+ */
+protected $new = true;
+
+/**
+ * attribute to determine whether this object has been deleted.
+ * @var boolean
+ */
+protected $deleted = false;
+
+/**
+ * The columns that have been modified in current object.
+ * Tracking modified columns allows us to only update modified columns.
+ * @var array
+ */
+protected $modifiedColumns = array();
+
+/**
+ * The (virtual) columns that are added at runtime
+ * The formatters can add supplementary columns based on a resultset
+ * @var array
+ */
+protected $virtualColumns = array();
+
+
+{% if not builder.table.alias %}
+    {% include 'Object/_attribute/_columnAttributes.php.twig' %}
+{% endif %}
+
+{% for foreignKey in builder.table.foreignKeys %}
+    {% include 'Object/_attribute/_foreignKeyAttribute.php.twig' %}
+{% endfor %}
+
+{% for refFk in builder.table.referrers %}
+    {% include 'Object/_attribute/_refFkAttributes.php.twig' %}
+{% endfor %}
+
+{% for fkList in builder.table.crossFks %}
+    {% include 'Object/_attribute/_crossFkAttribute.php.twig' with {'crossFk': fkList[1]} %}
+{% endfor %}
+
+{% include 'Object/_attribute/_alreadyInSaveAttribute.php.twig' %}
+
+{{ behavior_api.include('Object/_attributes.php.twig', builder) }}

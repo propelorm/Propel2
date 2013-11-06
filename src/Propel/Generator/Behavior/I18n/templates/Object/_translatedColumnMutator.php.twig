@@ -1,0 +1,17 @@
+{% if column.temporalType %}
+    {% embed 'Object/_mutator/_temporalMutator.php.twig' with {'builder': builder, 'column': column} %}
+        {% block code %}
+            $this->getCurrentTranslation()->set{{ column.phpName }}($v);
+
+            return $this;
+        {% endblock %}
+    {% endembed %}
+{% else %}
+    {% embed 'Object/_mutator/_defaultMutator.php.twig' with {'builder': builder, 'column': column} %}
+        {% block code %}
+            $this->getCurrentTranslation()->set{{ column.phpName }}($v);
+
+            return $this;
+        {% endblock %}
+    {% endembed %}
+{% endif %}

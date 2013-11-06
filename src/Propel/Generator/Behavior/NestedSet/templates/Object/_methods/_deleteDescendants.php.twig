@@ -1,0 +1,43 @@
+/**
+ * Deletes all descendants for the given node
+ * Instance pooling is wiped out by this command,
+ * so existing {{ builder.objectClassName }} instances are probably invalid (except for the current one)
+ *
+ * @param      ConnectionInterface $con Connection to use.
+ *
+ * @return     int         number of deleted nodes
+ */
+public function deleteDescendants(ConnectionInterface $con = null)
+{
+    if ($this->isLeaf()) {
+        // save one query
+        return;
+    }
+    if (null === $con) {
+        $con = Propel::getServiceContainer()->getReadConnection({{ builder.tableMapClass }}::DATABASE_NAME);
+    }
+    $left = $this->getLeftValue();
+    $right = $this->getRightValue();
+    {% if behavior.useScope %} $scope = $this->getScopeValue(); {% endif %}
+
+    $con->beginTransaction();
+    try {
+        // delete descendant nodes (will empty the instance pool)
+        $ret = {{ builder.queryClassName }}::create()
+            ->descendantsOf($this)
+            ->delete($con);
+
+        // fill up the room that was used by descendants
+        {{ builder.queryClassName }}::shiftRLValues($left - $right + 1, $right, null{% if behavior.useScope %}, $scope{% endif %}, $con);
+        
+        // fix the right value for the current node, which is now a leaf
+        $this->setRightValue($left + 1);
+        
+        $con->commit();
+    } catch (Exception $e) {
+        $con->rollback();
+        throw $e;
+    }
+
+    return $ret;
+}

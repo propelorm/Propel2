@@ -1,0 +1,57 @@
+{% if behavior.copyData %}
+    {% set parentTable = behavior.parentTable %}
+    {% set parentClassName = builder.classNameFromBuilder(builder.newStubObjectBuilder(parentTable)) %}
+    {% set parentQueryClassName = builder.newStubQueryBuilder(parentTable).className %}
+    
+    /**
+     * Get or Create the parent {{ parentClassName }} object of the current object
+     *
+     * @return    {{ parentClassName }} The parent object
+     */
+    public function getParentOrCreate($con = null)
+    {
+        if ($this->isNew()) {
+            if ($this->isPrimaryKeyNull()) {
+                $parent = new {{ parentClassName }}();
+                $parent->set{{ parentTable.column(behavior.parameter('descendant_column')).phpName }}('{{ builder.stubObjectBuilder.qualifiedClassName }}');
+    
+                return $parent;
+            } else {
+                $parent = {{ parentQueryClassName }}::create()->findPk($this->getPrimaryKey(), $con);
+                if (null === $parent || null !== $parent->getDescendantClass()) {
+                    $parent = new {{ parentClassName }}();
+                    $parent->setPrimaryKey($this->getPrimaryKey());
+                    $parent->set{{ parentTable.column(behavior.parameter('descendant_column')).phpName }}('{{ builder.stubObjectBuilder.qualifiedClassName }}');
+                }
+    
+                return $parent;
+            }
+        } else {
+            return {{ parentQueryClassName }}::create()->findPk($this->getPrimaryKey(), $con);
+        }
+    }
+
+    /**
+     * Create or Update the parent {{ parentTable.phpName }} object
+     * And return its primary key
+     *
+     * @return    {{ parentTable.primaryKey[0].phpType }} The primary key of the parent object
+     */
+    public function getSyncParent($con = null)
+    {
+        $parent = $this->getParentOrCreate($con);
+        {% for column in parentTable.columns if not column.primaryKey and  column.name != behavior.parameter('descendant_column') %}
+            $parent->set{{ column.phpName }}($this->get{{ column.phpName }}());
+        {% endfor %}
+
+        {% for foreignKey in parentTable.foreignKeys if (foreignKey.isParentChild is not defined) or (foreignKey.isParentChild is defined and foreignKey.isParentChild) %}
+            {# TODO: this var should be a class member and not added on runtime #}
+            {% set refPhpName = builder.fKPhpNameAffix(foreignKey, false) %}
+            if ($this->get{{ refPhpName }}() && $this->get{{ refPhpName }}()->isNew()) {
+                $parent->set{{ refPhpName }}($this->get{{ refPhpName }}());
+            }
+        {% endfor %}
+
+        return $parent;
+    }
+{% endif %}

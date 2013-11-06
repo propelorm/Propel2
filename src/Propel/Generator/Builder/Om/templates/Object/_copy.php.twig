@@ -1,0 +1,75 @@
+/**
+ * Makes a copy of this object that will be inserted as a new row in table when saved.
+ * It creates a new object filling in the simple attributes, but skipping any primary
+ * keys that are defined for the table.
+ *
+ * If desired, this method can also make copies of all associated (fkey referrers)
+ * objects.
+ *
+ * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
+ * @return                 {{ builder.objectClassName(true) }} Clone of current object.
+ * @throws PropelException
+ */
+public function copy($deepCopy = false)
+{
+    // we use get_class(), because this might be a subclass
+    $clazz = get_class($this);
+    {{ builder.buildObjectInstanceCreationCode('$copyObj', '$clazz') }}
+    $this->copyInto($copyObj, $deepCopy);
+    
+    return $copyObj;
+}
+
+{##}
+/**
+ * Sets contents of passed object to values from current object.
+ *
+ * If desired, this method can also make copies of all associated (fkey referrers)
+ * objects.
+ *
+ * @param      object $copyObj An object of {{ builder.objectClassName(true) }} (or compatible) type.
+ * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
+ * @param      boolean $makeNew Whether to reset autoincrement PKs and make the object new.
+ * @throws PropelException
+ */
+public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
+{
+    {% for column in builder.table.columns %}
+        {% if not column.autoIncrement %}
+            $copyObj->set{{ column.phpName }}($this->get{{ column.phpName }}());
+        {% endif %}
+    {% endfor %}
+
+    {% if builder.table.referrers|length > 0 %}
+        if ($deepCopy) {
+            // important: temporarily setNew(false) because this affects the behavior of
+            // the getter/setter methods for fkey referrer objects.
+            $copyObj->setNew(false);
+
+            {% for ref in builder.table.referrers %}
+                {% set afx = builder.refFKPhpNameAffix(ref, true) %}
+                {% if ref.localPrimaryKey %}
+                    $relObj = $this->get{{ afx }}();
+                    if ($relObj) {
+                        $copyObj->set{{ afx }}($relObj->copy($deepCopy));
+                    }
+                {% else %}
+                    foreach ($this->get{{ afx }}() as $relObj) {
+                        if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                            $copyObj->add{{ afx }}($relObj->copy($deepCopy));
+                        }
+                    }
+                {% endif %}
+            {% endfor %}
+        }
+    {% endif %}
+
+    if ($makeNew) {
+        $copyObj->setNew(true);
+        {% for column in builder.table.columns %}
+            {% if column.autoIncrement %}
+                $copyObj->set{{ column.phpName }}({{ builder.defaultValueString(column) }}); // this is a auto-increment column, so set to default value
+            {% endif %}
+        {% endfor %}
+    }
+}

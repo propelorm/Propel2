@@ -1,0 +1,19 @@
+{# TODO: maybe rename to buildPKCriteria ?? #}
+/**
+ * Builds a Criteria object containing the primary key for this object.
+ *
+ * Unlike buildCriteria() this method includes the primary key values regardless
+ * of whether or not they have been modified.
+ *
+ * @return Criteria The Criteria object containing value(s) for primary key(s).
+ */
+
+public function buildPkeyCriteria()
+{
+    $criteria = new Criteria({{ builder.tableMapClassName }}::DATABASE_NAME);
+    {% for column in builder.table.primaryKey %}
+        $criteria->add({{ builder.columnConstant(column) }}, $this->{{ column.name|lower }});
+    {% endfor %}
+
+    return $criteria;
+}

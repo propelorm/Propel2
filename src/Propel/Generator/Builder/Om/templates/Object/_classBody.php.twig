@@ -1,0 +1,82 @@
+{% import 'behavior_include.twig' as behavior_api %}
+{% filter indent %}
+    {% if not builder.table.isAlias %}
+        {% include 'Object/_constants.php.twig' %}
+        {% include 'Object/_attributes.php.twig' %}
+    {% endif %}
+    {% if builder.table.hasCrossForeignKeys %}
+        {% for fkList in builder.table.crossFKs %} {# todo: add getters to the fklist #}
+            {% set refFk = fkList[0] %}
+            {% set crossFk = fkList[1] %}
+            {% set fkName = builder.getFKPhpNameAffix(crossFk, true) %}
+
+            {% if not refFk.localPrimaryKey %}
+                {% include 'Object/_attribute/_scheduledForDeletionAttribute.php.twig' with {'fkName': fkName} %}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+    {% for ref in builder.table.referrers %}
+        {% set fkName = builder.refFKPhpNameAffix(ref, true) %}
+
+        {% if not ref.localPrimaryKey %}
+            {% include 'Object/_attribute/_scheduledForDeletionAttribute.php.twig' with {'fkName': fkName} %}
+        {% endif %}
+    {% endfor %}
+
+    {% if builder.hasDefaultValues %}
+        {% include 'Object/_applyDefaultValues.php.twig' with {'builder': builder} %}
+    {% endif %}
+
+
+    {% include 'Object/_constructor.php.twig' with {'builder': builder} %}
+    {% include 'Object/_baseObjectMethods.php.twig' with {'builder': builder} %}
+    {% include 'Object/_columnAccessorMethods.php.twig' with {'builder': builder} %}
+
+    {% if not builder.table.readOnly %}
+        {% include 'Object/_columnMutatorMethods.php.twig' with {'builder': builder} %}
+
+        {% include 'Object/_manipulationMethods/_save.php.twig' with {'builder': builder} %}
+        {% include 'Object/_manipulationMethods/_reload.php.twig' with {'builder': builder} %}
+        {% include 'Object/_manipulationMethods/_delete.php.twig' with {'builder': builder} %}
+        {% include 'Object/_manipulationMethods/_doInsert.php.twig' with {'builder': builder} %}
+        {% include 'Object/_manipulationMethods/_doSave.php.twig' with {'builder': builder} %}
+        {% include 'Object/_manipulationMethods/_doUpdate.php.twig' with {'builder': builder} %}
+    {% endif %}
+
+    {% if builder.addGenericAccessors %}
+        {% include 'Object/_genericAccessors/_getByName.php.twig' with {'builder': builder} %}
+        {% include 'Object/_genericAccessors/_getByPosition.php.twig' with {'builder': builder} %}
+        {% include 'Object/_genericAccessors/_toArray.php.twig' with {'builder': builder} %}
+    {% endif %}
+
+    {% if builder.addGenericMutators %}
+        {% include 'Object/_genericMutators/_setByName.php.twig' with {'builder': builder} %}
+        {% include 'Object/_genericMutators/_setByPosition.php.twig' with {'builder': builder} %}
+        {% include 'Object/_genericMutators/_fromArray.php.twig' with {'builder': builder} %}
+    {% endif %}
+
+    {% include 'Object/_ensureConsistency.php.twig' with {'builder': builder} %}
+    {% include 'Object/_buildCriteria.php.twig' with {'builder': builder} %}
+    {% include 'Object/_buildPkeyCriteria.php.twig' with {'builder': builder} %}
+
+    {% include 'Object/_primaryKey/_accessors.php.twig' with {'builder': builder} %}
+    {% include 'Object/_primaryKey/_mutators.php.twig' with {'builder': builder} %}
+
+    {% include 'Object/_copy.php.twig' with {'builder': builder} %}
+    {% include 'Object/_hydrate.php.twig' with {'builder': builder} %}
+    {% include 'Object/_clear.php.twig' with {'builder': builder} %}
+
+    {% include 'Object/_foreignKey/_methods.php.twig' with {'builder': builder} %}
+    {% include 'Object/_refFk/_methods.php.twig' with {'builder': builder} %}
+
+    {% if builder.generatorConfig.buildProperty('addHooks') %}
+        {% include 'Object/_hookMethods.php.twig' with {'builder': builder} %}
+    {% endif %}
+
+    {% include 'Object/_magicCall.php.twig' with {'builder': builder} %}
+    {% include 'Object/_magicToString.php.twig' with {'builder': builder} %}
+{% endfilter %}
+
+{# TODO: more code here #}
+{{ behavior_api.include('Object/_methods.php.twig', builder) }}

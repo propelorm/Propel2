@@ -1,0 +1,18 @@
+/**
+ * Gets number of descendants for the given node
+ *
+ * @param      Criteria $query Criteria to filter results.
+ * @param      ConnectionInterface $con Connection to use.
+ * @return     int         Number of descendants
+ */
+public function countDescendants($query = null, ConnectionInterface $con = null)
+{
+    if ($this->isLeaf()) {
+        // save one query
+        return 0;
+    } else {
+        return {{ builder.queryClassName }}::create(null, $query)
+            ->descendantsOf($this)
+            ->count($con);
+    }
+}

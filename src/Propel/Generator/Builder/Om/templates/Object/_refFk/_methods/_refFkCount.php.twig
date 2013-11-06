@@ -1,0 +1,42 @@
+{% extends 'Object/_refFk/_methods/_baseFkMethod.php.twig' %}
+
+{% block method %}
+    {{ parent() }}
+    {% set joinedTableObjectBuilder = builder.newObjectBuilder(refFk.table) %}
+    {% set className = joinedTableObjectBuilder.className %}
+    {% set fkQueryClassName = builder.classNameFromBuilder(builder.newStubQueryBuilder(refFk.table)) %}
+    
+    /**
+     * Returns the number of related {{ className }} objects.
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct
+     * @param      ConnectionInterface $con
+     * @return int             Count of related {{ className }} objects.
+     * @throws PropelException
+     */
+    public function count{{ relCol }}(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->{{ collVarName }}Partial && !$this->isNew();
+        if (null === $this->{{ collVarName }} || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->{{ collVarName }}) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->get{{ relCol }}());
+            }
+
+            $query = {{ fkQueryClassName }}::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterBy{{ builder.fKPhpNameAffix(refFk) }}($this)
+                ->count($con);
+        }
+
+        return count($this->{{ collVarName }});
+    }
+{% endblock %}

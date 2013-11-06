@@ -11,6 +11,7 @@
 namespace Propel\Generator\Builder\Om;
 
 use Propel\Generator\Builder\DataModelBuilder;
+use Propel\Generator\Builder\PropelTwigExtension;
 use Propel\Generator\Builder\Util\PropelTemplate;
 use Propel\Generator\Exception\InvalidArgumentException;
 use Propel\Generator\Exception\LogicException;
@@ -51,6 +52,48 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * @var array
      */
     protected $whiteListOfDeclaredClasses = array('PDO', 'Exception', 'DateTime');
+
+    /**
+     * Contains a instance of twig for rendering the templates
+     *
+     * @var \Twig_Environment
+     */
+    private $twig;
+
+    public function __construct(Table $table)
+    {
+        parent::__construct($table);
+    }
+
+    protected function createTwig()
+    {
+        $loader = new \Twig_Loader_Filesystem(__DIR__ . '/templates/');
+        $twig = new \Twig_Environment($loader, [
+            'autoescape' => false,
+            'strict_variables' => true,
+            'cache' => $this->getGeneratorConfig()->getBuildProperty('builderCachePath'),
+            'auto_reload' => true
+        ]);
+        $twig->addExtension(new PropelTwigExtension());
+
+        foreach ($this->getTable()->getBehaviors() as $behavior) {
+            $path = $behavior->getTemplateDirectory();
+            if ($path !== null) {
+                $loader->prependPath($behavior->getTemplateDirectory(), $behavior->getTemplateNamespace());
+            }
+        }
+
+        return $twig;
+    }
+
+    public function getTwig()
+    {
+        if($this->twig === null) {
+            $this->twig = $this->createTwig(); // Create twig only when we need it
+        }
+        return $this->twig;
+    }
+
 
     /**
      * Builds the PHP source for current class and returns it as a string.
@@ -96,6 +139,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * This method may emit warnings for code which may cause problems
      * and will throw exceptions for errors that will definitely cause
      * problems.
+     *
      */
     protected function validateModel()
     {
@@ -588,7 +632,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      *
      * @return string
      */
-    protected static function getRelatedBySuffix(ForeignKey $fk)
+    public static function getRelatedBySuffix(ForeignKey $fk)
     {
         $relCol = '';
         foreach ($fk->getLocalForeignMapping() as $localColumnName => $foreignColumnName) {

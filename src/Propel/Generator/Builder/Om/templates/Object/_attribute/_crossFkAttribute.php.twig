@@ -1,0 +1,5 @@
+{% set className = builder.newObjectBuilder(crossFk.foreignTable).objectClassName %}
+/**
+ * @var        {{ className }}[] Collection to store aggregation of {{ className }} objects.
+ */
+protected ${{ builder.crossFKVarName(crossFk) }};

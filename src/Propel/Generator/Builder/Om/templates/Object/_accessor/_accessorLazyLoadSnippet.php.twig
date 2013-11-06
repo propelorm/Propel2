@@ -1,0 +1,9 @@
+{% set defaultValueString = 'null' %}
+{% set defaultValue = column.defaultValue %}
+
+{% if defaultValue != null and not defaultValue.expression %}
+    {% set defaultValueString = builder.defaultValueString(column) %}
+{% endif %}
+if (!$this->{{ column.name|lower }}_isLoaded && $this->{{ column.name|lower }} === {{ defaultValueString }} && !$this->isNew()) {
+    $this->load{{ column.phpName }}($con);
+}

@@ -1,0 +1,29 @@
+/**
+ * Checks and repairs the internal consistency of the object.
+ *
+ * This method is executed after an already-instantiated object is re-hydrated
+ * from the database.  It exists to check any foreign keys to make sure that
+ * the objects related to the current object are correct based on foreign key.
+ *
+ * You can override this method in the stub class, but you should always invoke
+ * the base method from the overridden method (i.e. parent::ensureConsistency()),
+ * in case your model changes.
+ *
+ * @throws PropelException
+ */
+public function ensureConsistency()
+{
+    {% for column in builder.table.columns %}
+        {% if column.foreignKey %}
+            {% for fk in column.foreignKeys %}
+                {% set tableFk = builder.table.database.table(fk.foreignTableName) %}
+                {% set columnFk = tableFk.column(fk.mappedForeignColumn(column.name)) %}
+                {% set varName = builder.fKVarName(fk) %}
+
+                if ($this->{{ varName }} !== null && $this->{{ column.name|lower }} !== $this->{{ varName }}->get{{ column.phpName }}()) {
+                    $this->{{ varName }} = null;
+                }
+            {% endfor %}
+        {% endif %}
+    {% endfor %}
+}

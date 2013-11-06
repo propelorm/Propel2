@@ -1,0 +1,7 @@
+if ($this->isRoot()) {
+    throw new PropelException('Deletion of a root node is disabled for nested sets. Use {{ queryClassName }}::deleteTree({% if behavior.useScope %}$scope{% else %}''{% endif %}) instead to delete an entire tree');
+}
+
+if ($this->isInTree()) {
+    $this->deleteDescendants($con);
+}

@@ -1,0 +1,17 @@
+/**
+ * Retrieves a field from the object by name passed in as a string.
+ *
+ * @param      string $name name
+ * @param      string $type The type of fieldname the $name is of:
+ *                     one of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_STUDLYPHPNAME
+ *                     TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
+ *                     Defaults to TableMap::{{ builder.defaultKeyType }}.
+ * @return mixed Value of field.
+ */
+public function getByName($name, $type = TableMap::{{ builder.defaultKeyType }})
+{
+    $pos = {{ builder.tableMapClass }}::translateFieldName($name, $type, TableMap::TYPE_NUM);
+    $field = $this->getByPosition($pos);
+
+    return $field;
+}

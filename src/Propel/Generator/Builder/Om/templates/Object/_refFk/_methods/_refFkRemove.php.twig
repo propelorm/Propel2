@@ -1,0 +1,36 @@
+{% extends 'Object/_refFk/_methods/_baseFkMethod.php.twig' %}
+
+{% block method %}
+    {{ parent() }}
+    {% set relatedName = builder.refFKPhpNameAffix(refFk, true) %}
+    {% set relatedObjectClassName = builder.refFKPhpNameAffix(refFk, false) %}
+    
+    {% set inputCollection = (relatedName ~ 'ScheduledForDeletion')|lcfirst %}
+    {% set inputCollectionEntry = relatedObjectClassName|lcfirst %}
+    
+    {% set localColumn = refFk.localColumn %}
+    
+    /**
+     * @param  {{ relatedObjectClassName }} ${{ relatedObjectClassName|lcfirst }} The {{ relatedObjectClassName|lcfirst }} object to remove.
+     * @return {{ builder.objectClassName }} The current object (for fluent API support)
+     */
+    public function remove{{ relatedObjectClassName }}(${{ relatedObjectClassName|lcfirst }})
+    {
+        if ($this->get{{ relatedName }}()->contains(${{ relatedObjectClassName|lcfirst }})) {
+            $this->{{ collVarName }}->remove($this->{{ collVarName }}->search(${{ relatedObjectClassName|lcfirst }}));
+            if (null === $this->{{ inputCollection }}) {
+                $this->{{ inputCollection }} = clone $this->{{ collVarName }};
+                $this->{{ inputCollection }}->clear();
+            }
+
+            {% if refFk.composite and localColumn.notNull %}
+                $this->{{ inputCollection }}[]= ${{ relatedObjectClassName|lcfirst }};
+            {% else %}
+                $this->{{ inputCollection }}[]= clone ${{ relatedObjectClassName|lcfirst }};
+            {% endif %}
+            ${{ relatedObjectClassName|lcfirst }}->set{{ relCol }}(null);
+        }
+
+        return $this;
+    }
+{% endblock %}

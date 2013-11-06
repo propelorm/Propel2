@@ -1,0 +1,18 @@
+{% extends 'Object/_refFk/_methods/_baseFkMethod.php.twig' %}
+
+{% block method %}
+    {{ parent() }}
+    /**
+     * Clears out the {{ collVarName }} collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        add{{ relCol }}()
+     */
+    public function clear{{ relCol }}()
+    {
+        $this->{{ collVarName }} = null; // important to set this to NULL since that means it is uninitialized
+    }
+{% endblock %}

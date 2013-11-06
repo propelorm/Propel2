@@ -1,0 +1,5 @@
+{% embed 'Object/_accessor/_baseAccessor.php.twig' with {'builder': builder, 'column': column} %}
+    {% block code %}
+        return $this->{{ column.name|lower }};
+    {% endblock %}
+{% endembed %}
