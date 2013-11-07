@@ -1470,7 +1470,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         } else { // it's already a stream
             \$this->$clo = \$v;
         }
-        \$this->modifiedColumns[] = ".$this->getColumnConstant($col).";
+        \$this->modifiedColumns[".$this->getColumnConstant($col)."] = true;
 ";
         $this->addMutatorClose($script, $col);
     } // addLobMutatorSnippet
@@ -1514,7 +1514,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
         $script .= "
                 \$this->$clo = \$dt;
-                \$this->modifiedColumns[] = ".$this->getColumnConstant($col).";
+                \$this->modifiedColumns[".$this->getColumnConstant($col)."] = true;
             }
         } // if either are not null
 ";
@@ -1551,7 +1551,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         if (\$this->$cloUnserialized !== \$v) {
             \$this->$cloUnserialized = \$v;
             \$this->$clo = serialize(\$v);
-            \$this->modifiedColumns[] = ".$this->getColumnConstant($col).";
+            \$this->modifiedColumns[".$this->getColumnConstant($col)."] = true;
         }
 ";
         $this->addMutatorClose($script, $col);
@@ -1573,7 +1573,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         if (\$this->$cloUnserialized !== \$v) {
             \$this->$cloUnserialized = \$v;
             \$this->$clo = '| ' . implode(' | ', \$v) . ' |';
-            \$this->modifiedColumns[] = ".$this->getColumnConstant($col).";
+            \$this->modifiedColumns[".$this->getColumnConstant($col)."] = true;
         }
 ";
         $this->addMutatorClose($script, $col);
@@ -1692,7 +1692,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
         if (\$this->$clo !== \$v) {
             \$this->$clo = \$v;
-            \$this->modifiedColumns[] = ".$this->getColumnConstant($col).";
+            \$this->modifiedColumns[".$this->getColumnConstant($col)."] = true;
         }
 ";
         $this->addMutatorClose($script, $col);
@@ -1723,7 +1723,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
         if (\$this->$clo !== \$v) {
             \$this->$clo = \$v;
-            \$this->modifiedColumns[] = ".$this->getColumnConstant($col).";
+            \$this->modifiedColumns[".$this->getColumnConstant($col)."] = true;
         }
 ";
         $this->addMutatorClose($script, $col);
@@ -1771,7 +1771,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $script .= "
         if (\$this->$clo !== \$v) {
             \$this->$clo = \$v;
-            \$this->modifiedColumns[] = ".$this->getColumnConstant($col).";
+            \$this->modifiedColumns[".$this->getColumnConstant($col)."] = true;
         }
 ";
         $this->addMutatorClose($script, $col);
@@ -4479,7 +4479,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         if ($this->getPlatform() instanceof MssqlPlatform) {
             if ($table->hasAutoIncrementPrimaryKey() ) {
                 $script .= "
-        \$this->modifiedColumns[] = " . $this->getColumnConstant($table->getAutoIncrementPrimaryKey()).';';
+        \$this->modifiedColumns[" . $this->getColumnConstant($table->getAutoIncrementPrimaryKey()).'] = true;';
             }
             $script .= "
         \$criteria = \$this->buildCriteria();";
@@ -4585,7 +4585,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             $constantName = $this->getColumnConstant($column);
             if ($platform->supportsInsertNullPk()) {
                 $script .= "
-        \$this->modifiedColumns[] = $constantName;";
+        \$this->modifiedColumns[$constantName] = true;";
             }
             $columnProperty = $column->getLowercasedName();
             if (!$table->isAllowPkInsert()) {
@@ -4597,7 +4597,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                 $script .= "
         // add primary key column only if it is not null since this database does not accept that
         if (null !== \$this->{$columnProperty}) {
-            \$this->modifiedColumns[] = $constantName;
+            \$this->modifiedColumns[$constantName] = true;
         }";
             }
         }
