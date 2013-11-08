@@ -97,21 +97,11 @@ class ObjectFormatter extends AbstractFormatter
     public function getAllObjectsFromRow($row)
     {
         // main object
-        list($obj, $col) = call_user_func(
-            array($this->getTableMap(), 'populateObject'),
-            $row,
-            0,
-            $this->getDataFetcher()->getIndexType()
-        );
+        list($obj, $col) = $this->getTableMap()->populateobject($row, 0, $this->getDataFetcher()->getIndexType());
 
         // related objects added using with()
         foreach ($this->getWith() as $modelWith) {
-            list($endObject, $col) = call_user_func(
-                array($modelWith->getTableMap(), 'populateObject'),
-                $row,
-                $col,
-                $this->getDataFetcher()->getIndexType()
-            );
+            list($endObject, $col) = $modelWith->getTableMap()->populateobject($row, $col, $this->getDataFetcher()->getIndexType());
 
             if (null !== $modelWith->getLeftPhpName() && !isset($hydrationChain[$modelWith->getLeftPhpName()])) {
                 continue;
