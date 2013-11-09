@@ -5,6 +5,10 @@
         {% include 'Object/_accessor/_objectAccessor.php.twig' with {'column': column, 'builder': builder} %}
     {% elseif column.phpArrayType %}
         {% include 'Object/_accessor/_arrayAccessor.php.twig' with {'column': column, 'builder': builder} %}
+
+        {% if column.namePlural %}
+            {% include 'Object/_accessor/_arrayHasElement.php.twig' with {'column': column, 'builder': builder} %}
+        {% endif %}
     {% elseif column.enumType %}
         {% include 'Object/_accessor/_enumAccessor.php.twig' with {'column': column, 'builder': builder} %}
     {% else %}

@@ -1,0 +1,22 @@
+/**
+ * Removes a value from the [{{ column.name|lower }}] array column value.
+ * @param      mixed $value
+ * {{ column.description }}
+{% if column.lazyLoad %}
+    * @param      ConnectionInterface An optional ConnectionInterface connection to use for fetching this lazy-loaded column.
+{% endif %}
+ * @return   {{ builder.objectClassName }} The current object (for fluent API support)
+ */
+{{ column.accessorVisibility }} function remove{{ column.singularPhpName }}($value{% if column.lazyLoad %}, ConnectionInterface $con = null{% endif %})
+{
+    // we want to reindex the array, so array_ functions are not the best choice
+    $targetArray = array();
+    foreach ($this->get{{ column.phpName }}({% if column.lazyLoad %}$con{% endif %}) as $element) {
+        if ($element != $value) {
+            $targetArray []= $element;
+        }
+    }
+    $this->set{{ column.phpName }}($targetArray);
+
+    return $this;
+}

@@ -1,0 +1,12 @@
+/**
+ * Test the presence of a value in the [{{ column.name|lower }}] array column value.
+ * @param      mixed $value
+{% if column.lazyLoad %}
+    * @param    ConnectionInterface An optional ConnectionInterface connection to use for fetching this lazy-loaded column.
+{% endif %}
+ * @return   boolean
+ */
+{{ column.accessorVisibility }} function has{{ column.singularPhpName }}($value{% if column.lazyLoad %}, ConnectionInterface $con = null{% endif %})
+{
+    return in_array($value, $this->get{{ column.phpName }}({% if column.lazyLoad %}$con{% endif %});
+}
