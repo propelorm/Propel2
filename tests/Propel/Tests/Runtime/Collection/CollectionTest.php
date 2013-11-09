@@ -24,6 +24,16 @@ use Propel\Runtime\Collection\Collection;
  */
 class CollectionTest extends BookstoreTestBase
 {
+    public function testClone()
+    {
+        $col = new Collection(['Bar1']);
+        $colCloned = clone $col;
+        $colCloned[] = 'Bar2';
+
+        $this->assertCount(1, $col);
+        $this->assertCount(2, $colCloned);
+    }
+
     public function testArrayAccess()
     {
         $data = array('bar1', 'bar2', 'bar3');
@@ -63,7 +73,7 @@ class CollectionTest extends BookstoreTestBase
         $data = array('bar1', 'bar2', 'bar3');
         $col = new Collection($data);
         $expectedPositions = array(0, 1, 2);
-        foreach ($col as $element) {
+        foreach ($col as $k => $element) {
             $this->assertEquals(array_shift($expectedPositions), $col->getPosition(), 'getPosition() returns the current position');
             $this->assertEquals($element, $col->getCurrent(), 'getPosition() does not change the current position');
         }
@@ -85,12 +95,16 @@ class CollectionTest extends BookstoreTestBase
         $data = array('bar1', 'bar2', 'bar3');
         $col = new Collection($data);
         $expectedRes = array(true, false, false);
+
         foreach ($col as $element) {
             $this->assertEquals(array_shift($expectedRes), $col->isFirst(), 'isFirst() returns true only for the first element');
             $this->assertEquals($element, $col->getCurrent(), 'isFirst() does not change the current position');
         }
     }
 
+    /**
+     * @group test
+     */
     public function testGetPrevious()
     {
         $col = new Collection();
@@ -298,26 +312,6 @@ class CollectionTest extends BookstoreTestBase
 
         $col2 = unserialize($serializedCol);
         $this->assertEquals($col, $col2, 'Collection is serializable');
-    }
-
-    public function testGetIterator()
-    {
-        $data = array('bar1', 'bar2', 'bar3');
-        $col = new Collection($data);
-        $it1 = $col->getIterator();
-        $it2 = $col->getIterator();
-        $this->assertNotSame($it1, $it2, 'getIterator() returns always a new iterator');
-    }
-
-    public function testGetInternalIterator()
-    {
-        $data = array('bar1', 'bar2', 'bar3');
-        $col = new Collection($data);
-        $it1 = $col->getInternalIterator();
-        $it2 = $col->getINternalIterator();
-        $this->assertSame($it1, $it2, 'getInternalIterator() returns always the same iterator');
-        $col->getInternalIterator()->next();
-        $this->assertEquals('bar2', $col->getInternalIterator()->current(), 'getInternalIterator() returns always the same iterator');
     }
 
     public function testGetWriteConnection()

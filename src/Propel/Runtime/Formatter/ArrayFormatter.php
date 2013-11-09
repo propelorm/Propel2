@@ -40,11 +40,18 @@ class ArrayFormatter extends AbstractFormatter
         if ($this->isWithOneToMany() && $this->hasLimit) {
             throw new LogicException('Cannot use limit() in conjunction with with() on a one-to-many relationship. Please remove the with() call, or the limit() call.');
         }
+
+        $items = [];
         foreach ($dataFetcher as $row) {
             if ($object = &$this->getStructuredArrayFromRow($row)) {
-                $collection[] = $object;
+                $items[] =& $object;
             }
         }
+
+        foreach ($items as $item) {
+            $collection[] = $item;
+        }
+
         $this->currentObjects = array();
         $this->alreadyHydratedObjects = array();
         $dataFetcher->close();
@@ -112,7 +119,8 @@ class ArrayFormatter extends AbstractFormatter
 
         // hydrate main object or take it from registry
         $mainObjectIsNew = false;
-        $mainKey         = call_user_func(array($this->tableMap, 'getPrimaryKeyHashFromRow'), $row, 0, $this->getDataFetcher()->getIndexType());
+        $tableMap = $this->tableMap;
+        $mainKey = $tableMap::getPrimaryKeyHashFromRow($row, 0, $this->getDataFetcher()->getIndexType());
         // we hydrate the main object even in case of a one-to-many relationship
         // in order to get the $col variable increased anyway
         $obj = $this->getSingleObjectFromRow($row, $this->class, $col);

@@ -157,7 +157,7 @@ class ObjectCollection extends Collection
         $keyGetterMethod = 'get' . $keyColumn;
 
         /** @var $obj ActiveRecordInterface */
-        foreach ($this as $key => $obj) {
+        foreach ($this->data as $key => $obj) {
             $key = null === $keyColumn ? $key : $obj->$keyGetterMethod();
             $key = $usePrefix ? ($this->getModel() . '_' . $key) : $key;
             $ret[$key] = $obj->toArray($keyType, $includeLazyLoadColumns, $alreadyDumpedObjects, true);

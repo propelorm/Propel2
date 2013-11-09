@@ -3618,7 +3618,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                         \$this->{$collName}Partial = true;
                     }
 
-                    \$$collName" . "->getInternalIterator()->rewind();
+                    reset(\$$collName" . ");
 
                     return \$$collName;
                 }
@@ -5212,9 +5212,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
         foreach ($vars as $varName) {
             $script .= "
-        if (\$this->$varName instanceof Collection) {
-            \$this->{$varName}->clearIterator();
-        }
         \$this->$varName = null;";
         }
 

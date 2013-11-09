@@ -59,7 +59,7 @@ class OnDemandFormatterTest extends BookstoreEmptyTestBase
         $this->assertTrue(Propel::isInstancePoolingEnabled());
         $books = $formatter->format($stmt);
         $this->assertFalse(Propel::isInstancePoolingEnabled());
-        $books->getIterator()->closeCursor();
+        $books->closeCursor();
         $this->assertTrue(Propel::isInstancePoolingEnabled());
     }
 
@@ -74,7 +74,7 @@ class OnDemandFormatterTest extends BookstoreEmptyTestBase
         $this->assertFalse(Propel::isInstancePoolingEnabled());
         $books = $formatter->format($stmt);
         $this->assertFalse(Propel::isInstancePoolingEnabled());
-        $books->getIterator()->closeCursor();
+        $books->closeCursor();
         $this->assertFalse(Propel::isInstancePoolingEnabled());
         Propel::enableInstancePooling();
     }

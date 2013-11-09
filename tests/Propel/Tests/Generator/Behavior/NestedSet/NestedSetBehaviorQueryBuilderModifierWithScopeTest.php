@@ -40,8 +40,7 @@ class NestedSetBehaviorQueryBuilderModifierWithScopeTest extends TestCase
         $objs = \NestedSetTable10Query::create()
             ->treeRoots()
             ->find();
-        $coll = $this->buildCollection(array($t1, $t8));
-        $this->assertEquals($coll, $objs, 'treeRoots() filters by roots');
+        $this->assertEquals(array($t1, $t8), iterator_to_array($objs), 'treeRoots() filters by roots');
     }
 
     public function testInTree()
@@ -65,14 +64,12 @@ class NestedSetBehaviorQueryBuilderModifierWithScopeTest extends TestCase
             ->inTree(1)
             ->orderByBranch()
             ->find();
-        $coll = $this->buildCollection(array($t1, $t2, $t3, $t4, $t5, $t6, $t7));
-        $this->assertEquals($coll, $tree, 'inTree() filters by node');
+        $this->assertEquals(array($t1, $t2, $t3, $t4, $t5, $t6, $t7), iterator_to_array($tree), 'inTree() filters by node');
         $tree = \NestedSetTable10Query::create()
             ->inTree(2)
             ->orderByBranch()
             ->find();
-        $coll = $this->buildCollection(array($t8, $t9, $t10));
-        $this->assertEquals($coll, $tree, 'inTree() filters by node');
+        $this->assertEquals(array($t8, $t9, $t10), iterator_to_array($tree), 'inTree() filters by node');
     }
 
     public function testDescendantsOf()
@@ -96,8 +93,7 @@ class NestedSetBehaviorQueryBuilderModifierWithScopeTest extends TestCase
             ->descendantsOf($t1)
             ->orderByBranch()
             ->find();
-        $coll = $this->buildCollection(array($t2, $t3, $t4, $t5, $t6, $t7));
-        $this->assertEquals($coll, $objs, 'descendantsOf() filters by descendants of the same scope');
+        $this->assertEquals(array($t2, $t3, $t4, $t5, $t6, $t7), iterator_to_array($objs), 'descendantsOf() filters by descendants of the same scope');
     }
 
     public function testBranchOf()
@@ -121,8 +117,7 @@ class NestedSetBehaviorQueryBuilderModifierWithScopeTest extends TestCase
             ->branchOf($t1)
             ->orderByBranch()
             ->find();
-        $coll = $this->buildCollection(array($t1, $t2, $t3, $t4, $t5, $t6, $t7));
-        $this->assertEquals($coll, $objs, 'branchOf() filters by branch of the same scope');
+        $this->assertEquals(array($t1, $t2, $t3, $t4, $t5, $t6, $t7), iterator_to_array($objs), 'branchOf() filters by branch of the same scope');
 
     }
 
@@ -147,8 +142,7 @@ class NestedSetBehaviorQueryBuilderModifierWithScopeTest extends TestCase
             ->childrenOf($t1)
             ->orderByBranch()
             ->find();
-        $coll = $this->buildCollection(array($t2, $t3));
-        $this->assertEquals($coll, $objs, 'childrenOf() filters by children of the same scope');
+        $this->assertEquals(array($t2, $t3), iterator_to_array($objs), 'childrenOf() filters by children of the same scope');
     }
 
     public function testSiblingsOf()
@@ -172,10 +166,12 @@ class NestedSetBehaviorQueryBuilderModifierWithScopeTest extends TestCase
             ->siblingsOf($t3)
             ->orderByBranch()
             ->find();
-        $coll = $this->buildCollection(array($t2));
-        $this->assertEquals($coll, $desc, 'siblingsOf() returns filters by siblings of the same scope');
+        $this->assertEquals(array($t2), iterator_to_array($desc), 'siblingsOf() returns filters by siblings of the same scope');
     }
 
+    /**
+     * @todo, fix this test
+     */
     public function testAncestorsOf()
     {
         list($t1, $t2, $t3, $t4, $t5, $t6, $t7, $t8, $t9, $t10) = $this->initTreeWithScope();
@@ -200,6 +196,9 @@ class NestedSetBehaviorQueryBuilderModifierWithScopeTest extends TestCase
         $coll = $this->buildCollection(array($t1, $t3), 'ancestorsOf() filters by ancestors of the same scope');
     }
 
+    /**
+     * @todo, fix this test
+     */
     public function testRootsOf()
     {
         list($t1, $t2, $t3, $t4, $t5, $t6, $t7, $t8, $t9, $t10) = $this->initTreeWithScope();
@@ -267,8 +266,7 @@ class NestedSetBehaviorQueryBuilderModifierWithScopeTest extends TestCase
         */
         $objs = \NestedSetTable10Query::create()
             ->findRoots();
-        $coll = $this->buildCollection(array($t1, $t8));
-        $this->assertEquals($coll, $objs, 'findRoots() returns all root objects');
+        $this->assertEquals(array($t1, $t8), iterator_to_array($objs), 'findRoots() returns all root objects');
     }
 
     public function testFindTree()
@@ -289,11 +287,9 @@ class NestedSetBehaviorQueryBuilderModifierWithScopeTest extends TestCase
          t9 t10
         */
         $tree = \NestedSetTable10Query::create()->findTree(1);
-        $coll = $this->buildCollection(array($t1, $t2, $t3, $t4, $t5, $t6, $t7));
-        $this->assertEquals($coll, $tree, 'findTree() retrieves the tree of a scope, ordered by branch');
+        $this->assertEquals(array($t1, $t2, $t3, $t4, $t5, $t6, $t7), iterator_to_array($tree), 'findTree() retrieves the tree of a scope, ordered by branch');
         $tree = \NestedSetTable10Query::create()->findTree(2);
-        $coll = $this->buildCollection(array($t8, $t9, $t10));
-        $this->assertEquals($coll, $tree, 'findTree() retrieves the tree of a scope, ordered by branch');
+        $this->assertEquals(array($t8, $t9, $t10), iterator_to_array($tree), 'findTree() retrieves the tree of a scope, ordered by branch');
     }
 
     protected function buildCollection($arr)

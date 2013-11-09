@@ -239,9 +239,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         $list->clearBookListRels();
         $list->clearBooks();
         $books = $list->getBooks();
-        $expected = new ObjectCollection(array($book));
-        $expected->setModel('Book');
-        $this->assertEquals($expected, $books, 'addCrossFk() adds the object properly');
+        $this->assertEquals(array($book), iterator_to_array($books), 'addCrossFk() adds the object properly');
         $this->assertEquals(1, $list->countBookListRels());
     }
 
@@ -869,7 +867,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
 
         $books = $author->getBooks();
         $this->assertCount(1, $books);
-        $this->assertEquals('Propel2 Book', reset($books)->getTitle());
+        $this->assertEquals('Propel2 Book', $books->getFirst()->getTitle());
 
         $author->save();
         $book->save();
@@ -915,7 +913,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
 
         $bookSummaries = $book->getBookSummaries();
         $this->assertCount(1, $bookSummaries);
-        $this->assertEquals('summary2 Propel Book', reset($bookSummaries)->getSummary());
+        $this->assertEquals('summary2 Propel Book', $bookSummaries->getFirst()->getSummary());
 
         $book->save();
         $bookSummary2->save();
