@@ -1,23 +1,23 @@
 {% for column in builder.table.columns %}
     {% if column.lobType %}
-        {% include 'Object/_mutator/_lobMutator.php.twig' with {'builder': builder, 'column': column} %}
+        {% include 'Object/_mutator/_lobMutator.php.twig' %}
     {% elseif column.temporalType %}
-        {% include 'Object/_mutator/_temporalMutator.php.twig' with {'builder': builder, 'column': column} %}
+        {% include 'Object/_mutator/_temporalMutator.php.twig' %}
     {% elseif column.phpObjectType %}
-        {% include 'Object/_mutator/_objectMutator.php.twig' with {'builder': builder, 'column': column} %}
+        {% include 'Object/_mutator/_objectMutator.php.twig' %}
     {% elseif column.phpArrayType %}
-        {% include 'Object/_mutator/_arrayMutator.php.twig' with {'builder': builder, 'column': column} %}
+        {% include 'Object/_mutator/_arrayMutator.php.twig' %}
 
         {% if column.namePlural %}
-            {{ builder.addAddArrayElement(column) }}
-            {{ builder.addRemoveArrayElement(column) }}
+            {% include 'Object/_mutator/_arrayAdd.php.twig' %}
+            {% include 'Object/_mutator/_arrayRemove.php.twig' %}
         {% endif %}
     {% elseif column.enumType %}
-        {% include 'Object/_mutator/_enumMutator.php.twig' with {'builder': builder, 'column': column} %}
+        {% include 'Object/_mutator/_enumMutator.php.twig' %}
     {% elseif column.booleanType %}
-        {% include 'Object/_mutator/_booleanMutator.php.twig' with {'builder': builder, 'column': column} %}
+        {% include 'Object/_mutator/_booleanMutator.php.twig' %}
     {% else %}
-        {% include 'Object/_mutator/_defaultMutator.php.twig' with {'builder': builder, 'column': column} %}
+        {% include 'Object/_mutator/_defaultMutator.php.twig' %}
     {% endif %}
 
 
