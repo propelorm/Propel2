@@ -1398,4 +1398,9 @@ class Column extends MappingModel
     {
         return NameFactory::generateName(NameFactory::PHP_GENERATOR, [ $name, $phpNamingMethod, $namePrefix ]);
     }
+
+    public function getSingularPhpName()
+    {
+        return rtrim($this->getPhpName(), 's');
+    }
 }
