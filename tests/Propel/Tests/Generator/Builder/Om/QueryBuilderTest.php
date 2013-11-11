@@ -326,7 +326,7 @@ class QueryBuilderTest extends BookstoreTestBase
 
         $q = new BookListRelQuery();
         $objs = $q->findPks($search);
-        $this->assertEquals($bookListRelTest, $objs, 'BaseQuery overrides findPks() for composite primary keys to make it work');
+        $this->assertEquals($bookListRelTest->getArrayCopy(), $objs->getArrayCopy(), 'BaseQuery overrides findPks() for composite primary keys to make it work');
     }
 
     public function testFilterBy()

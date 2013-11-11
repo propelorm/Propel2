@@ -268,6 +268,7 @@ class ArrayFormatterWithTest extends BookstoreEmptyTestBase
     public function testFindOneWithOneToMany()
     {
         BookstoreDataPopulator::populate();
+
         BookTableMap::clearInstancePool();
         AuthorTableMap::clearInstancePool();
         ReviewTableMap::clearInstancePool();
