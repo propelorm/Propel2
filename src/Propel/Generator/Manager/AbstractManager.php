@@ -399,6 +399,7 @@ abstract class AbstractManager
      * Returns an array of properties as key/value pairs from an input file.
      *
      * @param  string $file
+     * @throws \Exception
      * @return array
      */
     protected function getProperties($file)
