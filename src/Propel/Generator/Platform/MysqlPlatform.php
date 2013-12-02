@@ -561,6 +561,7 @@ ALTER TABLE %s DROP FOREIGN KEY %s;
      * Builds the DDL SQL to modify a database
      * based on a DatabaseDiff instance
      *
+     * @param \Propel\Generator\Model\Diff\DatabaseDiff $databaseDiff
      * @return string
      */
     public function getModifyDatabaseDDL(DatabaseDiff $databaseDiff)
@@ -626,6 +627,8 @@ ALTER TABLE %s DROP %s;
 
     /**
      * Builds the DDL SQL to rename a column
+     * @param $fromColumn
+     * @param $toColumn
      * @return string
      */
     public function getRenameColumnDDL($fromColumn, $toColumn)
@@ -659,9 +662,11 @@ ALTER TABLE %s CHANGE %s %s;
             $this->getColumnDDL($toColumn)
         );
     }
+
     /**
      * Builds the DDL SQL to modify a list of columns
      *
+     * @param $columnDiffs
      * @return string
      */
     public function getModifyColumnsDDL($columnDiffs)

@@ -33,6 +33,7 @@ class ArchivableBehaviorObjectBuilderModifier
     }
 
     /**
+     * @param $builder
      * @return string the PHP code to be added to the builder
      */
     public function objectAttributes($builder)
@@ -55,6 +56,7 @@ class ArchivableBehaviorObjectBuilderModifier
     }
 
     /**
+     * @param $builder
      * @return string the PHP code to be added to the builder
      */
     public function postInsert($builder)
@@ -69,6 +71,7 @@ class ArchivableBehaviorObjectBuilderModifier
     }
 
     /**
+     * @param $builder
      * @return string the PHP code to be added to the builder
      */
     public function postUpdate($builder)
@@ -89,6 +92,7 @@ class ArchivableBehaviorObjectBuilderModifier
      * The actual deletion is made by the query object, so the AR class must tell
      * the query class to enable or disable archiveOnDelete.
      *
+     * @param $builder
      * @return string the PHP code to be added to the builder
      */
     public function preDelete($builder)
@@ -102,6 +106,7 @@ class ArchivableBehaviorObjectBuilderModifier
     }
 
     /**
+     * @param $builder
      * @return string the PHP code to be added to the builder
      */
     public function objectMethods($builder)
@@ -123,6 +128,7 @@ class ArchivableBehaviorObjectBuilderModifier
     }
 
     /**
+     * @param $builder
      * @return string the PHP code to be added to the builder
      */
     public function addGetArchive($builder)
@@ -134,6 +140,7 @@ class ArchivableBehaviorObjectBuilderModifier
     }
 
     /**
+     * @param $builder
      * @return string the PHP code to be added to the builder
      */
     public function addArchive($builder)
@@ -148,6 +155,7 @@ class ArchivableBehaviorObjectBuilderModifier
 
     /**
      *
+     * @param $builder
      * @return string the PHP code to be added to the builder
      */
     public function addRestoreFromArchive($builder)
@@ -162,6 +170,7 @@ class ArchivableBehaviorObjectBuilderModifier
      * This method is necessary because the archive's copyInto() may include the archived_at column
      * and therefore cannot be used. Besides, the way autoincremented PKs are handled should be explicit.
      *
+     * @param $builder
      * @return string the PHP code to be added to the builder
      */
     public function addPopulateFromArchive($builder)
@@ -187,6 +196,7 @@ class ArchivableBehaviorObjectBuilderModifier
     }
 
     /**
+     * @param $builder
      * @return string the PHP code to be added to the builder
      */
     public function addDeleteWithoutArchive($builder)

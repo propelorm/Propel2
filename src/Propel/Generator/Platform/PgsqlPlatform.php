@@ -581,6 +581,7 @@ DROP SEQUENCE %s CASCADE;
      * Overrides the implementation from DefaultPlatform
      *
      * @author     Niklas Närhinen <niklas@narhinen.net>
+     * @param $columnDiffs
      * @return string
      * @see DefaultPlatform::getModifyColumnsDDL
      */

@@ -161,6 +161,7 @@ class GeneratorConfig implements GeneratorConfigInterface
      *
      * @param  ConnectionInterface $con
      * @param  string              $database
+     * @throws \Propel\Generator\Exception\BuildException
      * @return PlatformInterface
      */
     public function getConfiguredPlatform(ConnectionInterface $con = null, $database = null)
