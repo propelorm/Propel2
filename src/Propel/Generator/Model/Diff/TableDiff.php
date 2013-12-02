@@ -420,7 +420,7 @@ class TableDiff
      */
     public function removeAddedPkColumn($columnName)
     {
-        if ($this->addedPkColumns[$columnName]) {
+        if (isset($this->addedPkColumns[$columnName])) {
             unset($this->addedPkColumns[$columnName]);
         }
     }
