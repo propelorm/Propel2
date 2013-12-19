@@ -665,6 +665,10 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
 
         $pks = $this->getTable()->getPrimaryKey();
 
+        if (!count($pks)) {
+            return;
+        }
+
         $add = array();
         $removeObjects = array();
         foreach ($pks as $pk) {
@@ -754,21 +758,6 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
      */
     protected function addGetPrimaryKeyHash(&$script)
     {
-        $script .= "
-    /**
-     * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
-     *
-     * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
-     * a multi-column primary key, a serialize()d version of the primary key will be returned.
-     *
-     * @param array  \$row       resultset row.
-     * @param int    \$offset    The 0-based offset for reading from the resultset row.
-     * @param string \$indexType One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_STUDLYPHPNAME
-     *                           TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM
-     */
-    public static function getPrimaryKeyHashFromRow(\$row, \$offset = 0, \$indexType = TableMap::TYPE_NUM)
-    {";
-
         // We have to iterate through all the columns so that we know the offset of the primary
         // key columns.
         $n = 0;
@@ -786,6 +775,21 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
         }
 
         $script .= "
+    /**
+     * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
+     *
+     * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
+     * a multi-column primary key, a serialize()d version of the primary key will be returned.
+     *
+     * @param array  \$row       resultset row.
+     * @param int    \$offset    The 0-based offset for reading from the resultset row.
+     * @param string \$indexType One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_STUDLYPHPNAME
+     *                           TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM
+     */
+    public static function getPrimaryKeyHashFromRow(\$row, \$offset = 0, \$indexType = TableMap::TYPE_NUM)
+    {";
+        if (count($pk) > 0) {
+            $script .= "
         // If the PK cannot be derived from the row, return NULL.
         if (".implode(' && ', $cond).") {
             return null;
@@ -794,6 +798,12 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
         return ".$this->getInstancePoolKeySnippet($pk).";
     }
 ";
+        } else {
+            $script .= "
+        return null;
+    }
+";
+        }
     }
 
     /**
