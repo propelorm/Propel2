@@ -1979,7 +1979,7 @@ class ModelCriteria extends BaseModelCriteria
                 }
 
                 if (
-                    ($this->isIgnoreCase() || $attachedCriterion->isIgnoreCase())
+                    ($this->isIgnoreCase() || method_exists($attachedCriterion, 'setIgnoreCase'))
                     && $dbMap->getTable($table)->getColumn($attachedCriterion->getColumn())->isText()
                 ) {
                     $attachedCriterion->setIgnoreCase(true);
