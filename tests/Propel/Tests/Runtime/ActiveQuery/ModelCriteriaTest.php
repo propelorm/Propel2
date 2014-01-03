@@ -488,6 +488,30 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertCriteriaTranslation($c, $sql, $params, 'filterBy() accepts a simple column name, even if initialized with an alias');
     }
 
+    public function testGetParams()
+    {
+        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
+        $c->filterBy('Title', 'foo');
+
+        $expectedParams =  array(
+            array('table' => 'book', 'column' => 'TITLE', 'value' => 'foo'),
+        );
+
+        $params = $c->getParams();
+
+        $this->assertEquals($expectedParams, $params, 'test getting parameters with a simple criterion');
+
+        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
+        $c->filterBy('Title', 'foo', Criteria::LIKE);
+
+        $expectedParams =  array(
+            array('table' => 'book', 'column' => 'TITLE', 'value' => 'foo'),
+        );
+
+        $this->assertEquals($expectedParams, $params, 'test getting parameters with Specialized Criterion used for LIKE expressions');
+
+    }
+
     public function testHaving()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
