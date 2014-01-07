@@ -15,6 +15,7 @@ use Propel\Generator\Builder\DataModelBuilder;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Platform\PlatformInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
+use Propel\Generator\Util\BehaviorLocator;
 
 interface GeneratorConfigInterface
 {
@@ -59,4 +60,11 @@ interface GeneratorConfigInterface
      * @return PlatformInterface
      */
     public function getConfiguredPlatform(ConnectionInterface $con = null, $database = null);
+    
+    /**
+     * Returns the behavior locator.
+     * 
+     * @return BehaviorLocator
+     */
+    public function getBehaviorLocator();
 }

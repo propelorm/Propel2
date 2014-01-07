@@ -13,6 +13,9 @@ namespace Propel\Generator\Model;
 use Propel\Generator\Exception\EngineException;
 use Propel\Generator\Exception\InvalidArgumentException;
 use Propel\Generator\Platform\PlatformInterface;
+use Propel\Generator\Util\BehaviorLocator;
+use Propel\Generator\Config\QuickGeneratorConfig;
+use Propel\Generator\Exception\BuildException;
 
 /**
  * A class for holding application data structures.
@@ -27,6 +30,9 @@ use Propel\Generator\Platform\PlatformInterface;
  */
 class Database extends ScopedMappingModel
 {
+    
+    use BehaviorableTrait;
+    
     /**
      * The database's platform.
      *
@@ -89,7 +95,6 @@ class Database extends ScopedMappingModel
      */
     private $sequences;
 
-    protected $behaviors;
     protected $defaultStringFormat;
     protected $tablePrefix;
 
@@ -697,64 +702,7 @@ class Database extends ScopedMappingModel
             return $config->getBuildProperty($name);
         }
     }
-
-    /**
-     * Adds a new behavior to the database*
-     *
-     * @param  Behavior|array $bdata
-     * @return Behavior
-     */
-    public function addBehavior($bdata)
-    {
-        if ($bdata instanceof Behavior) {
-            $behavior = $bdata;
-            $behavior->setDatabase($this);
-            $this->behaviors[$behavior->getName()] = $behavior;
-
-            return $behavior;
-        }
-
-        $class = $this->getConfiguredBehavior($bdata['name']);
-        $behavior = new $class();
-        $behavior->loadMapping($bdata);
-
-        return $this->addBehavior($behavior);
-    }
-
-    /**
-     * Returns the list of all database behaviors.
-     *
-     * @return array
-     */
-    public function getBehaviors()
-    {
-        return $this->behaviors;
-    }
-
-    /**
-     * Returns whether or not the database has a specific behavior.
-     *
-     * @param  string  $name
-     * @return boolean
-     */
-    public function hasBehavior($name)
-    {
-        return isset($this->behaviors[$name]);
-    }
-
-    /**
-     * Returns the corresponding behavior identified by its name.
-     *
-     * @param  string   $name
-     * @return Behavior
-     */
-    public function getBehavior($name)
-    {
-        if (isset($this->behaviors[$name])) {
-            return $this->behaviors[$name];
-        }
-    }
-
+    
     /**
      * Returns the table prefix for this database.
      *
@@ -836,6 +784,11 @@ class Database extends ScopedMappingModel
             // setup referrers again, since final initialization may have added columns
             $table->setupReferrers(true);
         }
+    }
+    
+    protected function registerBehavior(Behavior $behavior)
+    {
+        $behavior->setDatabase($this);
     }
 
     /**

@@ -182,29 +182,4 @@ abstract class MappingModel implements MappingModelInterface
         return $this->vendorInfos;
     }
 
-    /**
-     * Returns the best class name for a given behavior.
-     *
-     * If not found, the method tries to autoload \Propel\Generator\Behavior\[Bname]\[Bname]Behavior
-     *
-     * @param  string                    $behavior The behavior name (ie: timestampable)
-     * @return string                    $class The behavior fully qualified class name
-     * @throws BehaviorNotFoundException
-     */
-    public function getConfiguredBehavior($behavior)
-    {
-        if (false !== strpos($behavior, '\\')) {
-            $class = $behavior;
-        } else {
-            $generator = new PhpNameGenerator();
-            $phpName = $generator->generateName([ $behavior, PhpNameGenerator::CONV_METHOD_PHPNAME ]);
-            $class = sprintf('\\Propel\\Generator\\Behavior\\%s\\%sBehavior', $phpName, $phpName);
-        }
-
-        if (!class_exists($class)) {
-            throw new BehaviorNotFoundException(sprintf('Unknown behavior "%s"', $behavior));
-        }
-
-        return $class;
-    }
 }

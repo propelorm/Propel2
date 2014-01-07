@@ -1,6 +1,6 @@
 vendor/
 composer.phar
-composer.lock
+/composer.lock
 autoload.php
 phpunit.xml
 pom.xml

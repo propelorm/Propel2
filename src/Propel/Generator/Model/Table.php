@@ -31,6 +31,8 @@ use Propel\Generator\Platform\PlatformInterface;
  */
 class Table extends ScopedMappingModel implements IdMethod
 {
+    use BehaviorableTrait;
+    
     /**
      * @var Column[]
      */
@@ -103,10 +105,6 @@ class Table extends ScopedMappingModel implements IdMethod
      */
     private $defaultMutatorVisibility;
 
-    /**
-     * @var Behavior[]
-     */
-    protected $behaviors;
     protected $isCrossRef;
     protected $defaultStringFormat;
 
@@ -226,6 +224,11 @@ class Table extends ScopedMappingModel implements IdMethod
                 $behavior->setTableModified(true);
             }
         }
+    }
+    
+    protected function registerBehavior(Behavior $behavior)
+    {
+        $behavior->setTable($this);
     }
 
     /**
@@ -962,60 +965,7 @@ class Table extends ScopedMappingModel implements IdMethod
         return $this->database->getGeneratorConfig();
     }
 
-    /**
-     * Adds a new Behavior to the table.
-     *
-     * @param $bdata
-     * @return Behavior $bdata
-     */
-    public function addBehavior($bdata)
-    {
-        if ($bdata instanceof Behavior) {
-            $behavior = $bdata;
-            $behavior->setTable($this);
-            $this->behaviors[$behavior->getName()] = $behavior;
-
-            return $behavior;
-        }
-
-        $class = $this->getConfiguredBehavior($bdata['name']);
-        $behavior = new $class();
-        $behavior->loadMapping($bdata);
-
-        return $this->addBehavior($behavior);
-    }
-
-    /**
-     * Returns the list of table behaviors.
-     *
-     * @return Behavior[]
-     */
-    public function getBehaviors()
-    {
-        return $this->behaviors;
-    }
-
-    /**
-     * check if the table has a behavior by name
-     *
-     * @param  string  $name the behavior name
-     * @return boolean True if the behavior exists
-     */
-    public function hasBehavior($name)
-    {
-        return isset($this->behaviors[$name]);
-    }
-
-    /**
-     * Get one table behavior by name
-     *
-     * @param  string   $name the behavior name
-     * @return Behavior a behavior object
-     */
-    public function getBehavior($name)
-    {
-        return $this->behaviors[$name];
-    }
+    
 
     /**
      * Returns whether or not the table behaviors offer additional builders.

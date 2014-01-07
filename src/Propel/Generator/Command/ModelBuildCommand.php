@@ -15,6 +15,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\Output;
 use Propel\Generator\Manager\ModelManager;
+use Propel\Runtime\Propel;
+use Propel\Generator\Util\ComposerFinder;
 
 /**
  * @author Florian Klein <florian.klein@free.fr>
@@ -80,6 +82,8 @@ class ModelBuildCommand extends AbstractCommand
                 '')
             ->addOption('disable-namespace-auto-package', null, InputOption::VALUE_NONE,
                 'Disable namespace auto-packaging')
+            ->addOption('composer-dir', null, InputOption::VALUE_REQUIRED,
+				'Directory in which your composer.json resides', null)
             ->setName('model:build')
             ->setAliases(array('build'))
             ->setDescription('Build the model classes based on Propel XML schemas')
@@ -102,6 +106,7 @@ class ModelBuildCommand extends AbstractCommand
             'propel.builder.queryinheritancestub.class' => $input->getOption('query-inheritance-stub-class'),
             'propel.builder.tablemap.class'             => $input->getOption('tablemap-class'),
             'propel.builder.pluralizer.class'           => $input->getOption('pluralizer-class'),
+            'propel.builder.composer.dir'               => $input->getOption('composer-dir'),
             'propel.disableIdentifierQuoting'           => !$input->getOption('enable-identifier-quoting'),
             'propel.targetPackage'                      => $input->getOption('target-package'),
             'propel.packageObjectModel'                 => $input->getOption('enable-package-object-model'),
