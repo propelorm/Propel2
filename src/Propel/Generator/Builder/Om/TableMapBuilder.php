@@ -112,6 +112,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
             '\Propel\Runtime\ActiveQuery\Criteria',
             '\Propel\Runtime\Connection\ConnectionInterface',
             '\Propel\Runtime\Exception\PropelException',
+            '\Propel\Runtime\DataFetcher\DataFetcherInterface',
             '\Propel\Runtime\Propel'
         );
 
