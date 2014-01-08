@@ -10,6 +10,7 @@
 
 namespace Propel\Tests\Runtime\ActiveQuery\Criterion;
 
+use Propel\Runtime\Collection\ArrayCollection;
 use Propel\Tests\Helpers\BaseTestCase;
 
 use Propel\Runtime\ActiveQuery\Criteria;
@@ -164,6 +165,22 @@ class InModelCriterionTest extends BaseTestCase
 
         $this->assertEquals('1=1', $ps);
         $expected = array();
+        $this->assertEquals($expected, $params);
+    }
+
+    public function testAppendPsToWithArrayCollection()
+    {
+        $collection = new ArrayCollection(array('foo'));
+        $cton = new InModelCriterion(new Criteria(), 'A.COL IN ?', 'A.COL', $collection);
+
+        $params = array();
+        $ps = '';
+        $cton->appendPsTo($ps, $params);
+
+        $this->assertEquals('A.COL IN (:p1)', $ps);
+        $expected = array(
+            array('table' => 'A', 'column' => 'COL', 'value' => 'foo')
+        );
         $this->assertEquals($expected, $params);
     }
 

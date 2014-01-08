@@ -41,7 +41,8 @@ class InCriterion extends AbstractCriterion
     {
         $bindParams = array();
         $index = count($params); // to avoid counting the number of parameters for each element in the array
-        foreach ((array) $this->value as $value) {
+        $values = ($this->value instanceof \Iterator) ? iterator_to_array($this->value) : (array) $this->value;
+        foreach ($values as $value) {
             $params[] = array('table' => $this->realtable, 'column' => $this->column, 'value' => $value);
             $index++; // increment this first to correct for wanting bind params to start with :p1
             $bindParams[] = ':p' . $index;
