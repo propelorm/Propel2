@@ -26,7 +26,8 @@ class InModelCriterion extends AbstractModelCriterion
     {
         $bindParams = array(); // the param names used in query building
         $index = count($params);
-        foreach ((array) $this->value as $value) {
+        $values = ($this->value instanceof \Iterator) ? iterator_to_array($this->value) : (array) $this->value;
+        foreach ($values as $value) {
             $params[] = array(
                 'table'  => $this->realtable,
                 'column' => $this->column,
