@@ -29,6 +29,7 @@ class Column extends MappingModel
 {
     const DEFAULT_TYPE       = 'VARCHAR';
     const DEFAULT_VISIBILITY = 'public';
+    const CONSTANT_PREFIX    = 'COL_';
 
     public static $validVisibilities = [ 'public', 'protected', 'private' ];
 
@@ -335,6 +336,16 @@ class Column extends MappingModel
     {
         return strtolower($this->name);
     }
+    
+    /**
+     * Returns the uppercased column name.
+     *
+     * @return string
+     */
+    public function getUppercasedName()
+    {
+    	return strtoupper($this->name);
+    }
 
     /**
      * Sets the column name.
@@ -489,14 +500,14 @@ class Column extends MappingModel
     }
 
     /**
-     * Returns the full column constant name (e.g. TableMapName::COLUMN_NAME).
+     * Returns the full column constant name (e.g. TableMapName::COL_COLUMN_NAME).
      *
      * @return string A column constant name for insertion into PHP code
      */
-    public function getConstantName()
+    public function getFQConstantName()
     {
         $classname = $this->parentTable->getPhpName() . 'TableMap';
-        $const = $this->getConstantColumnName();
+        $const = $this->getConstantName();
 
         return $classname.'::'.$const;
     }
@@ -506,14 +517,14 @@ class Column extends MappingModel
      *
      * @return string
      */
-    public function getConstantColumnName()
+    public function getConstantName()
     {
         // was it overridden in schema.xml ?
         if ($this->getTableMapName()) {
-            return strtoupper($this->getTableMapName());
+            return self::CONSTANT_PREFIX.strtoupper($this->getTableMapName());
         }
 
-        return strtoupper($this->getName());
+        return self::CONSTANT_PREFIX.strtoupper($this->getName());
     }
 
     /**

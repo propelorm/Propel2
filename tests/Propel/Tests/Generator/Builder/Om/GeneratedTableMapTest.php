@@ -38,10 +38,10 @@ class GeneratedTableMapTest extends BookstoreTestBase
 {
     public function testAlias()
     {
-        $this->assertEquals('foo.ID', BookTableMap::alias('foo', BookTableMap::ID), 'alias() returns a column name using the table alias');
-        $this->assertEquals('book.ID', BookTableMap::alias('book', BookTableMap::ID), 'alias() returns a column name using the table alias');
-        $this->assertEquals('foo.COVER_IMAGE', MediaTableMap::alias('foo', MediaTableMap::COVER_IMAGE), 'alias() also works for lazy-loaded columns');
-        $this->assertEquals('foo.SUBTITLE', EssayTableMap::alias('foo', EssayTableMap::SUBTITLE), 'alias() also works for columns with custom phpName');
+        $this->assertEquals('foo.ID', BookTableMap::alias('foo', BookTableMap::COL_ID), 'alias() returns a column name using the table alias');
+        $this->assertEquals('book.ID', BookTableMap::alias('book', BookTableMap::COL_ID), 'alias() returns a column name using the table alias');
+        $this->assertEquals('foo.COVER_IMAGE', MediaTableMap::alias('foo', MediaTableMap::COL_COVER_IMAGE), 'alias() also works for lazy-loaded columns');
+        $this->assertEquals('foo.SUBTITLE', EssayTableMap::alias('foo', EssayTableMap::COL_SUBTITLE), 'alias() also works for columns with custom phpName');
     }
 
     public function testAddSelectColumns()
@@ -49,12 +49,12 @@ class GeneratedTableMapTest extends BookstoreTestBase
         $c = new Criteria();
         BookTableMap::addSelectColumns($c);
         $expected = array(
-            BookTableMap::ID,
-            BookTableMap::TITLE,
-            BookTableMap::ISBN,
-            BookTableMap::PRICE,
-            BookTableMap::PUBLISHER_ID,
-            BookTableMap::AUTHOR_ID
+            BookTableMap::COL_ID,
+            BookTableMap::COL_TITLE,
+            BookTableMap::COL_ISBN,
+            BookTableMap::COL_PRICE,
+            BookTableMap::COL_PUBLISHER_ID,
+            BookTableMap::COL_AUTHOR_ID
         );
         $this->assertEquals($expected, $c->getSelectColumns(), 'addSelectColumns() adds the columns of the model to the criteria');
     }
@@ -64,8 +64,8 @@ class GeneratedTableMapTest extends BookstoreTestBase
         $c = new Criteria();
         MediaTableMap::addSelectColumns($c);
         $expected = array(
-            MediaTableMap::ID,
-            MediaTableMap::BOOK_ID
+            MediaTableMap::COL_ID,
+            MediaTableMap::COL_BOOK_ID
         );
         $this->assertEquals($expected, $c->getSelectColumns(), 'addSelectColumns() does not add lazy loaded columns');
     }

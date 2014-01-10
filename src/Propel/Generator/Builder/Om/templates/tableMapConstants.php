@@ -42,7 +42,7 @@
     /**
      * the column name for the <?php echo strtoupper($col->getName()) ?> field
      */
-    const <?php echo $col->getConstantColumnName() ?> = '<?php echo $tableName ?>.<?php echo strtoupper($col->getName()) ?>';
+    const <?php echo $col->getConstantName() ?> = '<?php echo $tableName ?>.<?php echo strtoupper($col->getName()) ?>';
 <?php endforeach; ?>
 
     /**

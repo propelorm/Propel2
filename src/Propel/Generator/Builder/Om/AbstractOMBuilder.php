@@ -517,7 +517,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         }
 
         if (null === $classname) {
-            return $this->getBuildProperty('classPrefix') . $col->getConstantName();
+            return $this->getBuildProperty('classPrefix') . $col->getFQConstantName();
         }
 
         // was it overridden in schema.xml ?
@@ -527,7 +527,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
             $const = strtoupper($col->getName());
         }
 
-        return $classname.'::'.$const;
+        return $classname.'::'.Column::CONSTANT_PREFIX.$const;
     }
 
     /**

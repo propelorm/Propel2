@@ -29,7 +29,7 @@ class TableMapExceptionsTest extends BookstoreTestBase
     {
         try {
             $c = new Criteria();
-            $c->add(BookTableMap::ID, 12, ' BAD SQL');
+            $c->add(BookTableMap::COL_ID, 12, ' BAD SQL');
             BookTableMap::addSelectColumns($c);
             $c->doSelect();
             $this->fail('Missing expected exception on BAD SQL');
@@ -42,7 +42,7 @@ class TableMapExceptionsTest extends BookstoreTestBase
     {
         try {
             $c = new Criteria();
-            $c->add(BookTableMap::ID, 12, ' BAD SQL');
+            $c->add(BookTableMap::COL_ID, 12, ' BAD SQL');
             BookTableMap::addSelectColumns($c);
             $c->doCount();
             $this->fail('Missing expected exception on BAD SQL');
@@ -56,7 +56,7 @@ class TableMapExceptionsTest extends BookstoreTestBase
         try {
             $c = new Criteria();
             $c->setPrimaryTableName(BookTableMap::TABLE_NAME);
-            $c->add(BookTableMap::ID, 12, ' BAD SQL');
+            $c->add(BookTableMap::COL_ID, 12, ' BAD SQL');
             $c->doDelete(Propel::getServiceContainer()->getWriteConnection(BookTableMap::DATABASE_NAME));
             $this->fail('Missing expected exception on BAD SQL');
         } catch (PropelException $e) {
@@ -69,9 +69,9 @@ class TableMapExceptionsTest extends BookstoreTestBase
         try {
             $c1 = new Criteria();
             $c1->setPrimaryTableName(BookTableMap::TABLE_NAME);
-            $c1->add(BookTableMap::ID, 12, ' BAD SQL');
+            $c1->add(BookTableMap::COL_ID, 12, ' BAD SQL');
             $c2 = new Criteria();
-            $c2->add(BookTableMap::TITLE, 'Foo');
+            $c2->add(BookTableMap::COL_TITLE, 'Foo');
 
             $c1->doUpdate($c2, Propel::getServiceContainer()->getWriteConnection(BookTableMap::DATABASE_NAME));
             $this->fail('Missing expected exception on BAD SQL');
@@ -87,7 +87,7 @@ class TableMapExceptionsTest extends BookstoreTestBase
         try {
             $c = new Criteria();
             $c->setPrimaryTableName(BookTableMap::TABLE_NAME);
-            $c->add(BookTableMap::AUTHOR_ID, 'lkhlkhj');
+            $c->add(BookTableMap::COL_AUTHOR_ID, 'lkhlkhj');
 
             $db = Propel::getServiceContainer()->getAdapter($c->getDbName());
 

@@ -59,7 +59,7 @@ class Ticket520Test extends BookstoreTestBase
         $a->addBook($b2);
 
         $c = new Criteria();
-        $c->add(BookTableMap::TITLE, "%Hitchhiker%", Criteria::LIKE);
+        $c->add(BookTableMap::COL_TITLE, "%Hitchhiker%", Criteria::LIKE);
 
         $guides = $a->getBooks($c);
         $this->assertEquals(0, count($guides), 'Passing a Criteria means "force a database query"');
@@ -80,7 +80,7 @@ class Ticket520Test extends BookstoreTestBase
         $a->addBook($b2);
 
         $c = new Criteria();
-        $c->add(BookTableMap::TITLE, "%Hitchhiker%", Criteria::LIKE);
+        $c->add(BookTableMap::COL_TITLE, "%Hitchhiker%", Criteria::LIKE);
 
         $guides = $a->getBooks($c);
 
@@ -105,7 +105,7 @@ class Ticket520Test extends BookstoreTestBase
         $a->addBook($b2);
 
         $c = new Criteria();
-        $c->add(BookTableMap::TITLE, "%Hitchhiker%", Criteria::LIKE);
+        $c->add(BookTableMap::COL_TITLE, "%Hitchhiker%", Criteria::LIKE);
 
         $guides = $a->getBooks($c);
 
@@ -173,7 +173,7 @@ class Ticket520Test extends BookstoreTestBase
         $a->save();
 
         $c = new Criteria();
-        $c->add(BookTableMap::TITLE, "%Restaurant%", Criteria::LIKE);
+        $c->add(BookTableMap::COL_TITLE, "%Restaurant%", Criteria::LIKE);
 
         $this->assertEquals(0, count($a->getBooks($c)));
 

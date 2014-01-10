@@ -10,6 +10,8 @@
 
 namespace Propel\Generator\Behavior\Sortable;
 
+use Propel\Generator\Model\Column;
+
 /**
  * Behavior to add sortable columns and abilities
  *
@@ -134,7 +136,7 @@ class SortableBehaviorObjectBuilderModifier
             $condition = array();
 
             foreach ($this->behavior->getScopes() as $scope) {
-                $condition[] = "\$this->isColumnModified({$this->tableMapClassName}::".strtoupper($scope).")";
+                $condition[] = "\$this->isColumnModified({$this->tableMapClassName}::".Column::CONSTANT_PREFIX.strtoupper($scope).")";
             }
 
             $condition = implode(' OR ', $condition);

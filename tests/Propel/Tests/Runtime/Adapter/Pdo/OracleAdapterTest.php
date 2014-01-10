@@ -58,7 +58,7 @@ class OracleAdapterTest extends BookstoreTestBase
         $c->setDbName('oracle');
         BookTableMap::addSelectColumns($c);
         AuthorTableMap::addSelectColumns($c);
-        $c->addAsColumn('BOOK_PRICE', BookTableMap::PRICE);
+        $c->addAsColumn('BOOK_PRICE', BookTableMap::COL_PRICE);
         $c->setLimit(1);
         $params = array();
         $asColumns = $c->getAsColumns();
@@ -72,8 +72,8 @@ class OracleAdapterTest extends BookstoreTestBase
         Propel::getServiceContainer()->setAdapter('oracle', new OracleAdapter());
         $db = Propel::getServiceContainer()->getAdapter();
         $c = new Criteria();
-        $c->addSelectColumn(BookTableMap::ID);
-        $c->addAsColumn('book_ID', BookTableMap::ID);
+        $c->addSelectColumn(BookTableMap::COL_ID);
+        $c->addAsColumn('book_ID', BookTableMap::COL_ID);
         $fromClause = array();
         $selectSql = $db->createSelectSqlPart($c, $fromClause);
         $this->assertEquals('SELECT book.ID, book.ID AS book_ID', $selectSql, 'createSelectSqlPart() returns a SQL SELECT clause with both select and as columns');

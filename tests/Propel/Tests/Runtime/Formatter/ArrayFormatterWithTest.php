@@ -258,7 +258,7 @@ class ArrayFormatterWithTest extends BookstoreEmptyTestBase
     {
         $c = new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book');
         $c->setFormatter(ModelCriteria::FORMAT_ARRAY);
-        $c->add(BookTableMap::ISBN, '043935806X');
+        $c->add(BookTableMap::COL_ISBN, '043935806X');
         $c->leftJoin('Propel\Tests\Bookstore\Book.Review');
         $c->with('Review');
         $c->limit(5);
@@ -274,7 +274,7 @@ class ArrayFormatterWithTest extends BookstoreEmptyTestBase
         ReviewTableMap::clearInstancePool();
         $c = new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book');
         $c->setFormatter(ModelCriteria::FORMAT_ARRAY);
-        $c->add(BookTableMap::ISBN, '043935806X');
+        $c->add(BookTableMap::COL_ISBN, '043935806X');
         $c->leftJoin('Propel\Tests\Bookstore\Book.Review');
         $c->with('Review');
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
@@ -328,7 +328,7 @@ class ArrayFormatterWithTest extends BookstoreEmptyTestBase
         AuthorTableMap::clearInstancePool();
         ReviewTableMap::clearInstancePool();
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Author');
-        $c->add(AuthorTableMap::LAST_NAME, 'Rowling');
+        $c->add(AuthorTableMap::COL_LAST_NAME, 'Rowling');
         $c->leftJoinWith('Propel\Tests\Bookstore\Author.Book');
         $c->leftJoinWith('Book.Review');
         $c->setFormatter(ModelCriteria::FORMAT_ARRAY);
@@ -352,7 +352,7 @@ class ArrayFormatterWithTest extends BookstoreEmptyTestBase
         AuthorTableMap::clearInstancePool();
         ReviewTableMap::clearInstancePool();
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Author');
-        $c->add(AuthorTableMap::LAST_NAME, 'Rowling');
+        $c->add(AuthorTableMap::COL_LAST_NAME, 'Rowling');
         $c->leftJoinWith('Propel\Tests\Bookstore\Author.Book b');
         $c->leftJoinWith('b.Review r');
         $c->setFormatter(ModelCriteria::FORMAT_ARRAY);
@@ -380,7 +380,7 @@ class ArrayFormatterWithTest extends BookstoreEmptyTestBase
         $freud->save($this->con);
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Author');
         $c->setFormatter(ModelCriteria::FORMAT_ARRAY);
-        $c->add(AuthorTableMap::LAST_NAME, 'Freud');
+        $c->add(AuthorTableMap::COL_LAST_NAME, 'Freud');
         $c->leftJoinWith('Propel\Tests\Bookstore\Author.Book');
         $c->leftJoinWith('Book.Review');
         // should not raise a notice

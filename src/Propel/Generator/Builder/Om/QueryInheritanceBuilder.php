@@ -260,7 +260,7 @@ class "  .$this->getUnqualifiedClassName() . " extends " . $baseClassName . "
         $child = $this->getChild();
         $col = $child->getColumn();
 
-        return "\$this->addUsingAlias(" . $col->getConstantName() . ", " . $this->getTableMapClassName()."::CLASSKEY_".strtoupper($child->getKey()).");";
+        return "\$this->addUsingAlias(" . $col->getFQConstantName() . ", " . $this->getTableMapClassName()."::CLASSKEY_".strtoupper($child->getKey()).");";
     }
 
     protected function addDoDeleteAll(&$script)

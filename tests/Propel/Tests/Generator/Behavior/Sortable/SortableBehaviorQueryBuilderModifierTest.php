@@ -44,15 +44,15 @@ class SortableBehaviorQueryBuilderModifierTest extends TestCase
         $this->assertTrue(SortableTable11Query::create()->orderByRank() instanceof SortableTable11Query, 'orderByRank() returns the current query object');
         // default order
         $query = SortableTable11Query::create()->orderByRank();
-        $expectedQuery = SortableTable11Query::create()->addAscendingOrderByColumn(SortableTable11TableMap::SORTABLE_RANK);
+        $expectedQuery = SortableTable11Query::create()->addAscendingOrderByColumn(SortableTable11TableMap::COL_SORTABLE_RANK);
         $this->assertEquals($expectedQuery, $query, 'orderByRank() orders the query by rank asc');
         // asc order
         $query = SortableTable11Query::create()->orderByRank(Criteria::ASC);
-        $expectedQuery = SortableTable11Query::create()->addAscendingOrderByColumn(SortableTable11TableMap::SORTABLE_RANK);
+        $expectedQuery = SortableTable11Query::create()->addAscendingOrderByColumn(SortableTable11TableMap::COL_SORTABLE_RANK);
         $this->assertEquals($expectedQuery, $query, 'orderByRank() orders the query by rank, using the argument as sort direction');
         // desc order
         $query = SortableTable11Query::create()->orderByRank(Criteria::DESC);
-        $expectedQuery = SortableTable11Query::create()->addDescendingOrderByColumn(SortableTable11TableMap::SORTABLE_RANK);
+        $expectedQuery = SortableTable11Query::create()->addDescendingOrderByColumn(SortableTable11TableMap::COL_SORTABLE_RANK);
         $this->assertEquals($expectedQuery, $query, 'orderByRank() orders the query by rank, using the argument as sort direction');
     }
 

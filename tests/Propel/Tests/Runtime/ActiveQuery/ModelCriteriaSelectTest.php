@@ -127,7 +127,7 @@ class ModelCriteriaSelectTest extends BookstoreTestBase
         $this->assertEquals($expectedSQL, $this->con->getLastExecutedQuery(), 'findOne() called after select(string) allows for where() statements');
 
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Author');
-        $c->select(AuthorTableMap::FIRST_NAME);
+        $c->select(AuthorTableMap::COL_FIRST_NAME);
         $author = $c->find($this->con);
         $expectedSQL = $this->getSql("SELECT author.FIRST_NAME AS \"author.FIRST_NAME\" FROM `author`");
         $this->assertEquals($expectedSQL, $this->con->getLastExecutedQuery(), 'select(string) accepts model TableMap Constants');

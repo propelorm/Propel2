@@ -256,7 +256,7 @@ class OnDemandFormatterWithTest extends BookstoreEmptyTestBase
         ReviewTableMap::clearInstancePool();
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $c->setFormatter(ModelCriteria::FORMAT_ON_DEMAND);
-        $c->add(BookTableMap::ISBN, '043935806X');
+        $c->add(BookTableMap::COL_ISBN, '043935806X');
         $c->leftJoin('Propel\Tests\Bookstore\Book.Review');
         $c->with('Review');
         $books = $c->find();
