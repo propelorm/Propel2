@@ -473,8 +473,9 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     public function findPk(\$key, \$con = null)
     {";
         if (!$table->hasPrimaryKey()) {
+            $this->declareClass('Propel\\Runtime\\Exception\\LogicException');
             $script .= "
-        throw new \LogicException('The $class class has no primary key');
+        throw new LogicException('The {$this->getObjectName()} object has no primary key');
     }
 ";
             return $script;
@@ -653,7 +654,6 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
             '\Propel\Runtime\Propel'
         );
         $table = $this->getTable();
-        $class = $this->getObjectClassName();
         $pks = $table->getPrimaryKey();
         $count = count($pks);
         $script .= "
@@ -677,8 +677,9 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     public function findPks(\$keys, \$con = null)
     {";
         if (!$table->hasPrimaryKey()) {
+            $this->declareClass('Propel\\Runtime\\Exception\\LogicException');
             $script .= "
-        throw new \LogicException('The $class class has no primary key');
+        throw new LogicException('The {$this->getObjectName()} object has no primary key');
     }
 ";
             return $script;
@@ -716,11 +717,11 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     public function filterByPrimaryKey(\$key)
     {";
         $table = $this->getTable();
-        $class = $this->getObjectClassName();
 
         if (!$table->hasPrimaryKey()) {
+            $this->declareClass('Propel\\Runtime\\Exception\\LogicException');
             $script .= "
-        throw new \LogicException('The $class class has no primary key');
+        throw new LogicException('The {$this->getObjectName()} object has no primary key');
     }
 ";
             return $script;
@@ -769,11 +770,12 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     public function filterByPrimaryKeys(\$keys)
     {";
         $table = $this->getTable();
-        $class = $this->getObjectClassName();
 
         if (!$table->hasPrimaryKey()) {
+
+            $this->declareClass('Propel\\Runtime\\Exception\\LogicException');
             $script .= "
-        throw new \LogicException('The $class class has no primary key');
+        throw new LogicException('The {$this->getObjectName()} object has no primary key');
     }
 ";
             return $script;
@@ -1390,8 +1392,9 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
             $script .= "
             \$this->addUsingAlias($const, " . $objectName . "->get" . $col->getPhpName() . "(), Criteria::NOT_EQUAL);";
         } else {
+            $this->declareClass('Propel\\Runtime\\Exception\\LogicException');
             $script .= "
-            throw new \LogicException('$class class has no primary key');
+            throw new LogicException('{$this->getObjectName()} object has no primary key');
 ";
         }
         $script .= "

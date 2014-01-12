@@ -1249,16 +1249,23 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
 
         $script .= "
         } else { // it's a primary key, or an array of pks";
-        $script .= "
-            \$criteria = new Criteria(" . $this->getTableMapClass() . "::DATABASE_NAME);";
 
-        if (1 === count($table->getPrimaryKey())) {
-            $pkey = $table->getPrimaryKey();
-            $col = array_shift($pkey);
+        if (!$table->getPrimaryKey()) {
+            $class = $this->getObjectName();
+            $this->declareClass('Propel\\Runtime\\Exception\\LogicException');
             $script .= "
-            \$criteria->add(".$this->getColumnConstant($col).", (array) \$values, Criteria::IN);";
+            throw new LogicException('The $class object has no primary key');";
         } else {
             $script .= "
+            \$criteria = new Criteria(" . $this->getTableMapClass() . "::DATABASE_NAME);";
+
+            if (1 === count($table->getPrimaryKey())) {
+                $pkey = $table->getPrimaryKey();
+                $col = array_shift($pkey);
+                $script .= "
+            \$criteria->add(".$this->getColumnConstant($col).", (array) \$values, Criteria::IN);";
+            } else {
+                $script .= "
             // primary key is composite; we therefore, expect
             // the primary key passed to be an array of pkey values
             if (count(\$values) == count(\$values, COUNT_RECURSIVE)) {
@@ -1266,22 +1273,23 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
                 \$values = array(\$values);
             }
             foreach (\$values as \$value) {";
-            $i = 0;
-            foreach ($table->getPrimaryKey() as $col) {
-                if (0 === $i) {
-                    $script .= "
+                $i = 0;
+                foreach ($table->getPrimaryKey() as $col) {
+                    if (0 === $i) {
+                        $script .= "
                 \$criterion = \$criteria->getNewCriterion(".$this->getColumnConstant($col).", \$value[$i]);";
-                } else {
-                    $script .= "
+                    } else {
+                        $script .= "
                 \$criterion->addAnd(\$criteria->getNewCriterion(".$this->getColumnConstant($col).", \$value[$i]));";
+                    }
+                    $i++;
                 }
-                $i++;
-            }
-            $script .= "
+                $script .= "
                 \$criteria->addOr(\$criterion);";
-            $script .= "
+                $script .= "
             }";
-        } /* if count(table->getPrimaryKeys()) */
+            } /* if count(table->getPrimaryKeys()) */
+        }
 
         $script .= "
         }

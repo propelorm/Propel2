@@ -37,8 +37,8 @@ SCHEMA;
     }
 
     /**
-     * @expectedException           LogicException
-     * @expectedExceptionMessage    The ChildStuff class has no primary key
+     * @expectedException           \Propel\Runtime\Exception\LogicException
+     * @expectedExceptionMessage    The Stuff object has no primary key
      */
     public function testFindPkThrowsAnError()
     {
@@ -46,8 +46,27 @@ SCHEMA;
     }
 
     /**
-     * @expectedException           LogicException
-     * @expectedExceptionMessage    The ChildStuff class has no primary key
+     * @expectedException           \Propel\Runtime\Exception\LogicException
+     * @expectedExceptionMessage    The Stuff object has no primary key
+     */
+    public function testBuildPkeyCriteria()
+    {
+        $stuff = new \Stuff();
+        $stuff->buildPkeyCriteria();
+    }
+
+    /**
+     * @expectedException           \Propel\Runtime\Exception\LogicException
+     * @expectedExceptionMessage    The Stuff object has no primary key
+     */
+    public function testTableMapDoDelete()
+    {
+        \Map\StuffTableMap::doDelete([]);
+    }
+
+    /**
+     * @expectedException           \Propel\Runtime\Exception\LogicException
+     * @expectedExceptionMessage    The Stuff object has no primary key
      */
     public function testFindPksThrowsAnError()
     {
@@ -55,8 +74,8 @@ SCHEMA;
     }
 
     /**
-     * @expectedException           LogicException
-     * @expectedExceptionMessage    The ChildStuff class has no primary key
+     * @expectedException           \Propel\Runtime\Exception\LogicException
+     * @expectedExceptionMessage    The Stuff object has no primary key
      */
     public function testFilterByPrimaryKeyThrowsAnError()
     {
@@ -64,8 +83,8 @@ SCHEMA;
     }
 
     /**
-     * @expectedException           LogicException
-     * @expectedExceptionMessage    The ChildStuff class has no primary key
+     * @expectedException           \Propel\Runtime\Exception\LogicException
+     * @expectedExceptionMessage    The Stuff object has no primary key
      */
     public function testFilterByPrimaryKeysThrowsAnError()
     {
