@@ -63,7 +63,6 @@ class VersionableBehaviorObjectBuilderModifierTest extends TestCase
         </foreign-key>
         <behavior name="versionable" />
     </table>
-
 </database>
 EOF;
             QuickBuilder::buildSchema($schema);
@@ -97,6 +96,7 @@ EOF;
             <parameter name="version_comment_column" value="MyComment" />
         </behavior>
     </table>
+</database>
 EOF;
             QuickBuilder::buildSchema($schema2);
         }
@@ -115,6 +115,7 @@ EOF;
 
         <behavior name="versionable" />
     </table>
+</database>
 EOF;
             QuickBuilder::buildSchema($schema2);
         }
