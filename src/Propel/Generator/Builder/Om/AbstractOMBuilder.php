@@ -483,11 +483,22 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * This is the classname that is used whenever object or tablemap classes want
      * to invoke methods of the object classes.
      * @param  boolean $fqcn
-     * @return string  (e.g. 'My')
+     * @return string  (e.g. 'MyTable' or 'ChildMyTable')
      */
     public function getObjectClassName($fqcn = false)
     {
         return $this->getClassNameFromBuilder($this->getStubObjectBuilder(), $fqcn);
+    }
+
+    /**
+     * Returns always the final unqualified object class name. This is only useful for documentation/phpdoc,
+     * not in the actual code.
+     *
+     * @return string
+     */
+    public function getObjectName()
+    {
+        return $this->getStubObjectBuilder()->getUnqualifiedClassName();
     }
 
     /**

@@ -2059,6 +2059,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * Unlike buildCriteria() this method includes the primary key values regardless
      * of whether or not they have been modified.
      *
+     * @throws LogicException if no primary key is defined
+     *
      * @return Criteria The Criteria object containing value(s) for primary key(s).
      */";
     }
@@ -2082,6 +2084,13 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      **/
     protected function addBuildPkeyCriteriaBody(&$script)
     {
+        if (!$this->getTable()->getPrimaryKey()) {
+            $this->declareClass('Propel\\Runtime\\Exception\\LogicException');
+            $script .= "
+        throw new LogicException('The {$this->getObjectName()} object has no primary key');";
+            return;
+        }
+
         $script .= "
         \$criteria = new Criteria(".$this->getTableMapClass()."::DATABASE_NAME);";
         foreach ($this->getTable()->getPrimaryKey() as $col) {
