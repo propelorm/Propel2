@@ -63,7 +63,7 @@ class MigrationDiffCommand extends AbstractCommand
 
         $manager = new MigrationManager();
         $manager->setGeneratorConfig($generatorConfig);
-        $manager->setSchemas($this->getSchemas($input->getOption('input-dir')));
+        $manager->setSchemas($this->getSchemas($input->getOption('input-dir'), $input->getOption('recursive')));
 
         $connections = array();
         $optionConnections = $input->getOption('connection');

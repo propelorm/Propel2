@@ -37,6 +37,7 @@ abstract class AbstractCommand extends Command
         $this
             ->addOption('platform',  null, InputOption::VALUE_REQUIRED,  'The platform', self::DEFAULT_PLATFORM)
             ->addOption('input-dir', null, InputOption::VALUE_REQUIRED,  'The input directory', self::DEFAULT_INPUT_DIRECTORY)
+            ->addOption('recursive', null, InputOption::VALUE_NONE, 'Search for schema.xml inside the input directory')
         ;
     }
 
@@ -90,18 +91,21 @@ abstract class AbstractCommand extends Command
      * Find every schema files.
      *
      * @param  string|array $directory Path to the input directory
+     * @param bool          $recursive Search for file inside the input directory and all subdirectories
+     *
      * @return array        List of schema files
      */
-    protected function getSchemas($directory)
+    protected function getSchemas($directory, $recursive = false)
     {
         $finder = new Finder();
-
-        return iterator_to_array($finder
+        $finder
             ->name('*schema.xml')
-            ->in($directory)
-            ->depth(0)
-            ->files()
-        );
+            ->in($directory);
+        if (!$recursive) {
+            $finder->depth(0);
+        }
+
+        return iterator_to_array($finder->files());
     }
 
     /**
