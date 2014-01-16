@@ -1,0 +1,241 @@
+<?php
+
+/**
+ * This file is part of the Propel package.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @license MIT License
+ */
+
+namespace Propel\Common\Config\Loader;
+
+use Propel\Common\Config\Exception\InvalidArgumentException;
+use Propel\Common\Config\Exception\RuntimeException;
+use Propel\Common\Config\FileLocator;
+use Symfony\Component\Config\Loader\FileLoader as BaseFileLoader;
+use Symfony\Component\Config\FileLocatorInterface;
+use Symfony\Component\Yaml\Parser;
+
+/**
+ * Abstract class used by all file-based loaders.
+ *
+ * The resolve method and correlatives, with parameters between placeholders %name%, are heavily inspired to
+ * Symfony\Component\DependencyInjection\ParameterBag class.
+ *
+ * @author Cristiano Cinotti
+ */
+abstract class FileLoader extends BaseFileLoader
+{
+    /**
+     * If the configuration array with parameters is resolved.
+     *
+     * @var bool
+     */
+    private $resolved = false;
+
+    /**
+     * Configuration values array.
+     * It contains the configuration values array to manipulate while resolving parameters.
+     * It's useful, in particular, resolve() and get() method.
+     *
+     * @var array
+     */
+    private $config = array();
+
+    /**
+     * Constructor.
+     *
+     * @param FileLocatorInterface $locator A FileLocator instance
+     */
+    public function __construct(FileLocatorInterface $locator = null)
+    {
+        if (null === $locator) {
+            $locator = new FileLocator();
+        }
+
+        parent::__construct($locator);
+    }
+
+    /**
+     * Replaces parameter placeholders (%name%) by their values for all parameters.
+     *
+     * @param array $configuration The configuration array to resolve
+     */
+    public function resolveParams(array $configuration)
+    {
+        if ($this->resolved) {
+            return;
+        }
+
+        $this->config = $configuration;
+        $parameters = array();
+        foreach ($configuration as $key => $value) {
+            $key = $this->resolveValue($key);
+            $value = $this->resolveValue($value);
+            $parameters[$key] = $this->unescapeValue($value);
+        }
+
+        $this->resolved = true;
+
+        return $parameters;
+    }
+
+    private function isResolved()
+    {
+        return ($this->resolved);
+    }
+
+    /**
+     * Replaces parameter placeholders (%name%) by their values.
+     *
+     * @param mixed $value     The value to be resolved
+     * @param array $resolving An array of keys that are being resolved (used internally to detect circular references)
+     *
+     * @return mixed The resolved value
+     *
+     */
+    private function resolveValue($value, array $resolving = array())
+    {
+        if (is_array($value)) {
+            $args = array();
+            foreach ($value as $k => $v) {
+                $args[$this->resolveValue($k, $resolving)] = $this->resolveValue($v, $resolving);
+            }
+
+            return $args;
+        }
+
+        if (!is_string($value)) {
+            return $value;
+        }
+
+        return $this->resolveString($value, $resolving);
+    }
+
+    /**
+     * Resolves parameters inside a string
+     *
+     * @param string $value     The string to resolve
+     * @param array  $resolving An array of keys that are being resolved (used internally to detect circular references)
+     *
+     * @return string The resolved string
+     *
+     * @throws Propel\Common\Config\Exception\RuntimeException         if a problem occurs
+     * @throws Propel\Common\Config\Exception\InvalidArgumentException if a parameter is non-existent
+     */
+    private function resolveString($value, array $resolving = array())
+    {
+        if (preg_match('/^%([^%\s]+)%$/', $value, $match)) {
+            $key = strtolower($match[1]);
+
+            if (isset($resolving[$key])) {
+                throw new RuntimeException("Circular reference detected for parameter '$key'.");
+            }
+
+            $resolving[$key] = true;
+
+            return $this->resolved ? $this->get($key) : $this->resolveValue($this->get($key), $resolving);
+        }
+
+        $self = $this;
+
+        return preg_replace_callback('/%%|%([^%\s]+)%/', function ($match) use ($self, $resolving, $value) {
+            // skip %%
+            if (!isset($match[1])) {
+                return '%%';
+            }
+
+            $key = strtolower($match[1]);
+            if (isset($resolving[$key])) {
+                throw new RuntimeException(sprintf("Circular reference detected for parameter '$key'."));
+            }
+
+            $resolved = $this->get($key);
+
+            if (!is_string($resolved) && !is_numeric($resolved)) {
+                throw new RuntimeException(sprintf('A string value must be composed of strings and/or numbers, but found parameter "%s" of type %s inside string value "%s".', $key, gettype($resolved), $value));
+            }
+
+            $resolved = (string) $resolved;
+            $resolving[$key] = true;
+
+            return $self->isResolved() ? $resolved : $self->resolveString($resolved, $resolving);
+        }, $value);
+    }
+
+    /**
+     * Return unescaped variable.
+     *
+     * @param $value The variable to unescape
+     * @return array|mixed
+     */
+    private function unescapeValue($value)
+    {
+        if (is_string($value)) {
+            return str_replace('%%', '%', $value);
+        }
+
+        if (is_array($value)) {
+            $result = array();
+            foreach ($value as $k => $v) {
+                $result[$k] = $this->unescapeValue($v);
+            }
+
+            return $result;
+        }
+
+        return $value;
+    }
+
+    /**
+     * Return the value correspondent to a given key.
+     *
+     * @param mix $property_key The key, in the configuration values array, to return the respective value
+     *
+     * @return mix
+     * @throws Propel\Common\Config\Exception\InvalidArgumentException when non-existent key in configuration array
+     */
+    private function get($property_key)
+    {
+        $found = false;
+
+        $ret = $this->getValue($property_key, null, $found);
+
+        if (false === $found) {
+            throw new InvalidArgumentException("Parameter '$property_key' not found in configuration file.");
+        }
+
+        return $ret;
+    }
+
+    /**
+     * Scan recursively an array to find a value of a given key.
+     *
+     * @param string $property_key The array key
+     * @param array $config The array to scan
+     * @param boolean $found if the key was found
+     * @return mixed The value or null if not found
+     */
+    private function getValue($property_key, $config = null, &$found)
+    {
+        if (null === $config) {
+            $config = $this->config;
+        }
+
+        foreach ($config as $key => $value) {
+            if ($key === $property_key) {
+                $found = true;
+
+                return $value;
+            }
+            if (is_array($value)) {
+                $ret = $this->getValue($property_key, $value, $found);
+
+                if (null !== $ret) {
+                    return $ret;
+                }
+            }
+        }
+    }
+}
