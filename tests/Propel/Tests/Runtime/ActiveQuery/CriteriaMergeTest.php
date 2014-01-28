@@ -101,51 +101,51 @@ class CriteriaMergeTest extends BookstoreTestBase
     public function testMergeWithSelectColumns()
     {
         $c1 = new Criteria();
-        $c1->addSelectColumn(BookTableMap::TITLE);
-        $c1->addSelectColumn(BookTableMap::ID);
+        $c1->addSelectColumn(BookTableMap::COL_TITLE);
+        $c1->addSelectColumn(BookTableMap::COL_ID);
         $c2 = new Criteria();
         $c1->mergeWith($c2);
-        $this->assertEquals(array(BookTableMap::TITLE, BookTableMap::ID), $c1->getSelectColumns(), 'mergeWith() does not remove an existing select columns');
+        $this->assertEquals(array(BookTableMap::COL_TITLE, BookTableMap::COL_ID), $c1->getSelectColumns(), 'mergeWith() does not remove an existing select columns');
         $c1 = new Criteria();
         $c2 = new Criteria();
-        $c2->addSelectColumn(BookTableMap::TITLE);
-        $c2->addSelectColumn(BookTableMap::ID);
+        $c2->addSelectColumn(BookTableMap::COL_TITLE);
+        $c2->addSelectColumn(BookTableMap::COL_ID);
         $c1->mergeWith($c2);
-        $this->assertEquals(array(BookTableMap::TITLE, BookTableMap::ID), $c1->getSelectColumns(), 'mergeWith() merges the select columns to an empty select');
+        $this->assertEquals(array(BookTableMap::COL_TITLE, BookTableMap::COL_ID), $c1->getSelectColumns(), 'mergeWith() merges the select columns to an empty select');
         $c1 = new Criteria();
-        $c1->addSelectColumn(BookTableMap::TITLE);
+        $c1->addSelectColumn(BookTableMap::COL_TITLE);
         $c2 = new Criteria();
-        $c2->addSelectColumn(BookTableMap::ID);
+        $c2->addSelectColumn(BookTableMap::COL_ID);
         $c1->mergeWith($c2);
-        $this->assertEquals(array(BookTableMap::TITLE, BookTableMap::ID), $c1->getSelectColumns(), 'mergeWith() merges the select columns after the existing select columns');
+        $this->assertEquals(array(BookTableMap::COL_TITLE, BookTableMap::COL_ID), $c1->getSelectColumns(), 'mergeWith() merges the select columns after the existing select columns');
         $c1 = new Criteria();
-        $c1->addSelectColumn(BookTableMap::TITLE);
+        $c1->addSelectColumn(BookTableMap::COL_TITLE);
         $c2 = new Criteria();
-        $c2->addSelectColumn(BookTableMap::TITLE);
+        $c2->addSelectColumn(BookTableMap::COL_TITLE);
         $c1->mergeWith($c2);
-        $this->assertEquals(array(BookTableMap::TITLE, BookTableMap::TITLE), $c1->getSelectColumns(), 'mergeWith() merges the select columns to an existing select, even if duplicated');
+        $this->assertEquals(array(BookTableMap::COL_TITLE, BookTableMap::COL_TITLE), $c1->getSelectColumns(), 'mergeWith() merges the select columns to an existing select, even if duplicated');
     }
 
     public function testMergeWithAsColumns()
     {
         $c1 = new Criteria();
-        $c1->addAsColumn('foo', BookTableMap::TITLE);
-        $c1->addAsColumn('bar', BookTableMap::ID);
+        $c1->addAsColumn('foo', BookTableMap::COL_TITLE);
+        $c1->addAsColumn('bar', BookTableMap::COL_ID);
         $c2 = new Criteria();
         $c1->mergeWith($c2);
-        $this->assertEquals(array('foo' => BookTableMap::TITLE, 'bar' => BookTableMap::ID), $c1->getAsColumns(), 'mergeWith() does not remove an existing as columns');
+        $this->assertEquals(array('foo' => BookTableMap::COL_TITLE, 'bar' => BookTableMap::COL_ID), $c1->getAsColumns(), 'mergeWith() does not remove an existing as columns');
         $c1 = new Criteria();
         $c2 = new Criteria();
-        $c2->addAsColumn('foo', BookTableMap::TITLE);
-        $c2->addAsColumn('bar', BookTableMap::ID);
+        $c2->addAsColumn('foo', BookTableMap::COL_TITLE);
+        $c2->addAsColumn('bar', BookTableMap::COL_ID);
         $c1->mergeWith($c2);
-        $this->assertEquals(array('foo' => BookTableMap::TITLE, 'bar' => BookTableMap::ID), $c1->getAsColumns(), 'mergeWith() merges the select columns to an empty as');
+        $this->assertEquals(array('foo' => BookTableMap::COL_TITLE, 'bar' => BookTableMap::COL_ID), $c1->getAsColumns(), 'mergeWith() merges the select columns to an empty as');
         $c1 = new Criteria();
-        $c1->addAsColumn('foo', BookTableMap::TITLE);
+        $c1->addAsColumn('foo', BookTableMap::COL_TITLE);
         $c2 = new Criteria();
-        $c2->addAsColumn('bar', BookTableMap::ID);
+        $c2->addAsColumn('bar', BookTableMap::COL_ID);
         $c1->mergeWith($c2);
-        $this->assertEquals(array('foo' => BookTableMap::TITLE, 'bar' => BookTableMap::ID), $c1->getAsColumns(), 'mergeWith() merges the select columns after the existing as columns');
+        $this->assertEquals(array('foo' => BookTableMap::COL_TITLE, 'bar' => BookTableMap::COL_ID), $c1->getAsColumns(), 'mergeWith() merges the select columns after the existing as columns');
     }
 
     /**
@@ -154,107 +154,107 @@ class CriteriaMergeTest extends BookstoreTestBase
     public function testMergeWithAsColumnsThrowsException()
     {
         $c1 = new Criteria();
-        $c1->addAsColumn('foo', BookTableMap::TITLE);
+        $c1->addAsColumn('foo', BookTableMap::COL_TITLE);
         $c2 = new Criteria();
-        $c2->addAsColumn('foo', BookTableMap::ID);
+        $c2->addAsColumn('foo', BookTableMap::COL_ID);
         $c1->mergeWith($c2);
     }
 
     public function testMergeWithOrderByColumns()
     {
         $c1 = new Criteria();
-        $c1->addAscendingOrderByColumn(BookTableMap::TITLE);
-        $c1->addAscendingOrderByColumn(BookTableMap::ID);
+        $c1->addAscendingOrderByColumn(BookTableMap::COL_TITLE);
+        $c1->addAscendingOrderByColumn(BookTableMap::COL_ID);
         $c2 = new Criteria();
         $c1->mergeWith($c2);
-        $this->assertEquals(array(BookTableMap::TITLE . ' ASC', BookTableMap::ID . ' ASC'), $c1->getOrderByColumns(), 'mergeWith() does not remove an existing orderby columns');
+        $this->assertEquals(array(BookTableMap::COL_TITLE . ' ASC', BookTableMap::COL_ID . ' ASC'), $c1->getOrderByColumns(), 'mergeWith() does not remove an existing orderby columns');
         $c1 = new Criteria();
         $c2 = new Criteria();
-        $c2->addAscendingOrderByColumn(BookTableMap::TITLE);
-        $c2->addAscendingOrderByColumn(BookTableMap::ID);
+        $c2->addAscendingOrderByColumn(BookTableMap::COL_TITLE);
+        $c2->addAscendingOrderByColumn(BookTableMap::COL_ID);
         $c1->mergeWith($c2);
-        $this->assertEquals(array(BookTableMap::TITLE . ' ASC', BookTableMap::ID . ' ASC'), $c1->getOrderByColumns(), 'mergeWith() merges the select columns to an empty order by');
+        $this->assertEquals(array(BookTableMap::COL_TITLE . ' ASC', BookTableMap::COL_ID . ' ASC'), $c1->getOrderByColumns(), 'mergeWith() merges the select columns to an empty order by');
         $c1 = new Criteria();
-        $c1->addAscendingOrderByColumn(BookTableMap::TITLE);
+        $c1->addAscendingOrderByColumn(BookTableMap::COL_TITLE);
         $c2 = new Criteria();
-        $c2->addAscendingOrderByColumn(BookTableMap::ID);
+        $c2->addAscendingOrderByColumn(BookTableMap::COL_ID);
         $c1->mergeWith($c2);
-        $this->assertEquals(array(BookTableMap::TITLE . ' ASC', BookTableMap::ID . ' ASC'), $c1->getOrderByColumns(), 'mergeWith() merges the select columns after the existing orderby columns');
+        $this->assertEquals(array(BookTableMap::COL_TITLE . ' ASC', BookTableMap::COL_ID . ' ASC'), $c1->getOrderByColumns(), 'mergeWith() merges the select columns after the existing orderby columns');
         $c1 = new Criteria();
-        $c1->addAscendingOrderByColumn(BookTableMap::TITLE);
+        $c1->addAscendingOrderByColumn(BookTableMap::COL_TITLE);
         $c2 = new Criteria();
-        $c2->addAscendingOrderByColumn(BookTableMap::TITLE);
+        $c2->addAscendingOrderByColumn(BookTableMap::COL_TITLE);
         $c1->mergeWith($c2);
-        $this->assertEquals(array(BookTableMap::TITLE . ' ASC'), $c1->getOrderByColumns(), 'mergeWith() does not merge duplicated orderby columns');
+        $this->assertEquals(array(BookTableMap::COL_TITLE . ' ASC'), $c1->getOrderByColumns(), 'mergeWith() does not merge duplicated orderby columns');
         $c1 = new Criteria();
-        $c1->addAscendingOrderByColumn(BookTableMap::TITLE);
+        $c1->addAscendingOrderByColumn(BookTableMap::COL_TITLE);
         $c2 = new Criteria();
-        $c2->addDescendingOrderByColumn(BookTableMap::TITLE);
+        $c2->addDescendingOrderByColumn(BookTableMap::COL_TITLE);
         $c1->mergeWith($c2);
-        $this->assertEquals(array(BookTableMap::TITLE . ' ASC', BookTableMap::TITLE . ' DESC'), $c1->getOrderByColumns(), 'mergeWith() merges duplicated orderby columns with inverse direction');
+        $this->assertEquals(array(BookTableMap::COL_TITLE . ' ASC', BookTableMap::COL_TITLE . ' DESC'), $c1->getOrderByColumns(), 'mergeWith() merges duplicated orderby columns with inverse direction');
     }
 
     public function testMergeWithGroupByColumns()
     {
         $c1 = new Criteria();
-        $c1->addGroupByColumn(BookTableMap::TITLE);
-        $c1->addGroupByColumn(BookTableMap::ID);
+        $c1->addGroupByColumn(BookTableMap::COL_TITLE);
+        $c1->addGroupByColumn(BookTableMap::COL_ID);
         $c2 = new Criteria();
         $c1->mergeWith($c2);
-        $this->assertEquals(array(BookTableMap::TITLE, BookTableMap::ID), $c1->getGroupByColumns(), 'mergeWith() does not remove an existing groupby columns');
+        $this->assertEquals(array(BookTableMap::COL_TITLE, BookTableMap::COL_ID), $c1->getGroupByColumns(), 'mergeWith() does not remove an existing groupby columns');
         $c1 = new Criteria();
         $c2 = new Criteria();
-        $c2->addGroupByColumn(BookTableMap::TITLE);
-        $c2->addGroupByColumn(BookTableMap::ID);
+        $c2->addGroupByColumn(BookTableMap::COL_TITLE);
+        $c2->addGroupByColumn(BookTableMap::COL_ID);
         $c1->mergeWith($c2);
-        $this->assertEquals(array(BookTableMap::TITLE, BookTableMap::ID), $c1->getGroupByColumns(), 'mergeWith() merges the select columns to an empty groupby');
+        $this->assertEquals(array(BookTableMap::COL_TITLE, BookTableMap::COL_ID), $c1->getGroupByColumns(), 'mergeWith() merges the select columns to an empty groupby');
         $c1 = new Criteria();
-        $c1->addGroupByColumn(BookTableMap::TITLE);
+        $c1->addGroupByColumn(BookTableMap::COL_TITLE);
         $c2 = new Criteria();
-        $c2->addGroupByColumn(BookTableMap::ID);
+        $c2->addGroupByColumn(BookTableMap::COL_ID);
         $c1->mergeWith($c2);
-        $this->assertEquals(array(BookTableMap::TITLE, BookTableMap::ID), $c1->getGroupByColumns(), 'mergeWith() merges the select columns after the existing groupby columns');
+        $this->assertEquals(array(BookTableMap::COL_TITLE, BookTableMap::COL_ID), $c1->getGroupByColumns(), 'mergeWith() merges the select columns after the existing groupby columns');
         $c1 = new Criteria();
-        $c1->addGroupByColumn(BookTableMap::TITLE);
+        $c1->addGroupByColumn(BookTableMap::COL_TITLE);
         $c2 = new Criteria();
-        $c2->addGroupByColumn(BookTableMap::TITLE);
+        $c2->addGroupByColumn(BookTableMap::COL_TITLE);
         $c1->mergeWith($c2);
-        $this->assertEquals(array(BookTableMap::TITLE), $c1->getGroupByColumns(), 'mergeWith() does not merge duplicated groupby columns');
+        $this->assertEquals(array(BookTableMap::COL_TITLE), $c1->getGroupByColumns(), 'mergeWith() does not merge duplicated groupby columns');
     }
 
     public function testMergeWithWhereConditions()
     {
         $c1 = new Criteria();
-        $c1->add(BookTableMap::TITLE, 'foo');
+        $c1->add(BookTableMap::COL_TITLE, 'foo');
         $c2 = new Criteria();
         $c1->mergeWith($c2);
         $sql = $this->getSql('SELECT  FROM `book` WHERE book.TITLE=:p1');
         $this->assertCriteriaTranslation($c1, $sql, 'mergeWith() does not remove an existing where condition');
         $c1 = new Criteria();
         $c2 = new Criteria();
-        $c2->add(BookTableMap::TITLE, 'foo');
+        $c2->add(BookTableMap::COL_TITLE, 'foo');
         $c1->mergeWith($c2);
         $sql = $this->getSql('SELECT  FROM `book` WHERE book.TITLE=:p1');
         $this->assertCriteriaTranslation($c1, $sql, 'mergeWith() merges where condition to an empty condition');
         $c1 = new Criteria();
-        $c1->add(BookTableMap::ID, 123);
+        $c1->add(BookTableMap::COL_ID, 123);
         $c2 = new Criteria();
-        $c2->add(BookTableMap::TITLE, 'foo');
+        $c2->add(BookTableMap::COL_TITLE, 'foo');
         $c1->mergeWith($c2);
         $sql = $this->getSql('SELECT  FROM `book` WHERE book.ID=:p1 AND book.TITLE=:p2');
         $this->assertCriteriaTranslation($c1, $sql, 'mergeWith() merges where condition to existing conditions');
         $c1 = new Criteria();
-        $c1->add(BookTableMap::TITLE, 'foo');
+        $c1->add(BookTableMap::COL_TITLE, 'foo');
         $c2 = new Criteria();
-        $c2->add(BookTableMap::TITLE, 'bar');
+        $c2->add(BookTableMap::COL_TITLE, 'bar');
         $c1->mergeWith($c2);
         $sql = $this->getSql('SELECT  FROM `book` WHERE (book.TITLE=:p1 AND book.TITLE=:p2)');
         $this->assertCriteriaTranslation($c1, $sql, 'mergeWith() merges where condition to existing conditions on the same column');
         $c1 = new Criteria();
-        $c1->add(BookTableMap::TITLE, 'foo');
-        $c1->addJoin(BookTableMap::AUTHOR_ID, AuthorTableMap::ID, Criteria::LEFT_JOIN);
+        $c1->add(BookTableMap::COL_TITLE, 'foo');
+        $c1->addJoin(BookTableMap::COL_AUTHOR_ID, AuthorTableMap::COL_ID, Criteria::LEFT_JOIN);
         $c2 = new Criteria();
-        $c2->add(AuthorTableMap::FIRST_NAME, 'bar');
+        $c2->add(AuthorTableMap::COL_FIRST_NAME, 'bar');
         $c1->mergeWith($c2);
         $sql = $this->getSql('SELECT  FROM `book` LEFT JOIN `author` ON (book.AUTHOR_ID=author.ID) WHERE book.TITLE=:p1 AND author.FIRST_NAME=:p2');
         $this->assertCriteriaTranslation($c1, $sql, 'mergeWith() merges where condition to existing conditions on the different tables');
@@ -263,36 +263,36 @@ class CriteriaMergeTest extends BookstoreTestBase
     public function testMergeOrWithWhereConditions()
     {
         $c1 = new Criteria();
-        $c1->add(BookTableMap::TITLE, 'foo');
+        $c1->add(BookTableMap::COL_TITLE, 'foo');
         $c2 = new Criteria();
         $c1->mergeWith($c2, Criteria::LOGICAL_OR);
         $sql = $this->getSql('SELECT  FROM `book` WHERE book.TITLE=:p1');
         $this->assertCriteriaTranslation($c1, $sql, 'mergeWith() does not remove an existing where condition');
         $c1 = new Criteria();
         $c2 = new Criteria();
-        $c2->add(BookTableMap::TITLE, 'foo');
+        $c2->add(BookTableMap::COL_TITLE, 'foo');
         $c1->mergeWith($c2, Criteria::LOGICAL_OR);
         $sql = $this->getSql('SELECT  FROM `book` WHERE book.TITLE=:p1');
         $this->assertCriteriaTranslation($c1, $sql, 'mergeWith() merges where condition to an empty condition');
         $c1 = new Criteria();
-        $c1->add(BookTableMap::ID, 123);
+        $c1->add(BookTableMap::COL_ID, 123);
         $c2 = new Criteria();
-        $c2->add(BookTableMap::TITLE, 'foo');
+        $c2->add(BookTableMap::COL_TITLE, 'foo');
         $c1->mergeWith($c2, Criteria::LOGICAL_OR);
         $sql = $this->getSql('SELECT  FROM `book` WHERE (book.ID=:p1 OR book.TITLE=:p2)');
         $this->assertCriteriaTranslation($c1, $sql, 'mergeWith() merges where condition to existing conditions');
         $c1 = new Criteria();
-        $c1->add(BookTableMap::TITLE, 'foo');
+        $c1->add(BookTableMap::COL_TITLE, 'foo');
         $c2 = new Criteria();
-        $c2->add(BookTableMap::TITLE, 'bar');
+        $c2->add(BookTableMap::COL_TITLE, 'bar');
         $c1->mergeWith($c2, Criteria::LOGICAL_OR);
         $sql = $this->getSql('SELECT  FROM `book` WHERE (book.TITLE=:p1 OR book.TITLE=:p2)');
         $this->assertCriteriaTranslation($c1, $sql, 'mergeWith() merges where condition to existing conditions on the same column');
         $c1 = new Criteria();
-        $c1->add(BookTableMap::TITLE, 'foo');
-        $c1->addJoin(BookTableMap::AUTHOR_ID, AuthorTableMap::ID, Criteria::LEFT_JOIN);
+        $c1->add(BookTableMap::COL_TITLE, 'foo');
+        $c1->addJoin(BookTableMap::COL_AUTHOR_ID, AuthorTableMap::COL_ID, Criteria::LEFT_JOIN);
         $c2 = new Criteria();
-        $c2->add(AuthorTableMap::FIRST_NAME, 'bar');
+        $c2->add(AuthorTableMap::COL_FIRST_NAME, 'bar');
         $c1->mergeWith($c2, Criteria::LOGICAL_OR);
         $sql = $this->getSql('SELECT  FROM `book` LEFT JOIN `author` ON (book.AUTHOR_ID=author.ID) WHERE (book.TITLE=:p1 OR author.FIRST_NAME=:p2)');
         $this->assertCriteriaTranslation($c1, $sql, 'mergeWith() merges where condition to existing conditions on the different tables');
@@ -301,7 +301,7 @@ class CriteriaMergeTest extends BookstoreTestBase
     public function testMerge_OrWithWhereConditions()
     {
         $c1 = new Criteria();
-        $c1->add(BookTableMap::TITLE, 'foo');
+        $c1->add(BookTableMap::COL_TITLE, 'foo');
         $c2 = new Criteria();
         $c1->_or();
         $c1->mergeWith($c2);
@@ -309,33 +309,33 @@ class CriteriaMergeTest extends BookstoreTestBase
         $this->assertCriteriaTranslation($c1, $sql, 'mergeWith() does not remove an existing where condition');
         $c1 = new Criteria();
         $c2 = new Criteria();
-        $c2->add(BookTableMap::TITLE, 'foo');
+        $c2->add(BookTableMap::COL_TITLE, 'foo');
         $c1->_or();
         $c1->mergeWith($c2);
         $sql = $this->getSql('SELECT  FROM `book` WHERE book.TITLE=:p1');
         $this->assertCriteriaTranslation($c1, $sql, 'mergeWith() merges where condition to an empty condition');
         $c1 = new Criteria();
-        $c1->add(BookTableMap::ID, 123);
+        $c1->add(BookTableMap::COL_ID, 123);
         $c1->_or();
         $c2 = new Criteria();
-        $c2->add(BookTableMap::TITLE, 'foo');
+        $c2->add(BookTableMap::COL_TITLE, 'foo');
         $c1->mergeWith($c2);
         $sql = $this->getSql('SELECT  FROM `book` WHERE (book.ID=:p1 OR book.TITLE=:p2)');
         $this->assertCriteriaTranslation($c1, $sql, 'mergeWith() merges where condition to existing conditions');
         $c1 = new Criteria();
-        $c1->add(BookTableMap::TITLE, 'foo');
+        $c1->add(BookTableMap::COL_TITLE, 'foo');
         $c1->_or();
         $c2 = new Criteria();
-        $c2->add(BookTableMap::TITLE, 'bar');
+        $c2->add(BookTableMap::COL_TITLE, 'bar');
         $c1->mergeWith($c2);
         $sql = $this->getSql('SELECT  FROM `book` WHERE (book.TITLE=:p1 OR book.TITLE=:p2)');
         $this->assertCriteriaTranslation($c1, $sql, 'mergeWith() merges where condition to existing conditions on the same column');
         $c1 = new Criteria();
-        $c1->add(BookTableMap::TITLE, 'foo');
-        $c1->addJoin(BookTableMap::AUTHOR_ID, AuthorTableMap::ID, Criteria::LEFT_JOIN);
+        $c1->add(BookTableMap::COL_TITLE, 'foo');
+        $c1->addJoin(BookTableMap::COL_AUTHOR_ID, AuthorTableMap::COL_ID, Criteria::LEFT_JOIN);
         $c1->_or();
         $c2 = new Criteria();
-        $c2->add(AuthorTableMap::FIRST_NAME, 'bar');
+        $c2->add(AuthorTableMap::COL_FIRST_NAME, 'bar');
         $c1->mergeWith($c2);
         $sql = $this->getSql('SELECT  FROM `book` LEFT JOIN `author` ON (book.AUTHOR_ID=author.ID) WHERE (book.TITLE=:p1 OR author.FIRST_NAME=:p2)');
         $this->assertCriteriaTranslation($c1, $sql, 'mergeWith() merges where condition to existing conditions on the different tables');
@@ -344,7 +344,7 @@ class CriteriaMergeTest extends BookstoreTestBase
     public function testMergeWithHavingConditions()
     {
         $c1 = new Criteria();
-        $cton = $c1->getNewCriterion(BookTableMap::TITLE, 'foo', Criteria::EQUAL);
+        $cton = $c1->getNewCriterion(BookTableMap::COL_TITLE, 'foo', Criteria::EQUAL);
         $c1->addHaving($cton);
         $c2 = new Criteria();
         $c1->mergeWith($c2);
@@ -352,16 +352,16 @@ class CriteriaMergeTest extends BookstoreTestBase
         $this->assertCriteriaTranslation($c1, $sql, 'mergeWith() does not remove an existing having condition');
         $c1 = new Criteria();
         $c2 = new Criteria();
-        $cton = $c2->getNewCriterion(BookTableMap::TITLE, 'foo', Criteria::EQUAL);
+        $cton = $c2->getNewCriterion(BookTableMap::COL_TITLE, 'foo', Criteria::EQUAL);
         $c2->addHaving($cton);
         $c1->mergeWith($c2);
         $sql = 'SELECT  FROM  HAVING book.TITLE=:p1';
         $this->assertCriteriaTranslation($c1, $sql, 'mergeWith() merges having condition to an empty having');
         $c1 = new Criteria();
-        $cton = $c1->getNewCriterion(BookTableMap::TITLE, 'foo', Criteria::EQUAL);
+        $cton = $c1->getNewCriterion(BookTableMap::COL_TITLE, 'foo', Criteria::EQUAL);
         $c1->addHaving($cton);
         $c2 = new Criteria();
-        $cton = $c2->getNewCriterion(BookTableMap::TITLE, 'bar', Criteria::EQUAL);
+        $cton = $c2->getNewCriterion(BookTableMap::COL_TITLE, 'bar', Criteria::EQUAL);
         $c2->addHaving($cton);
         $c1->mergeWith($c2);
         $sql = 'SELECT  FROM  HAVING (book.TITLE=:p1 AND book.TITLE=:p2)';
@@ -403,7 +403,7 @@ class CriteriaMergeTest extends BookstoreTestBase
     public function testMergeWithJoins()
     {
         $c1 = new Criteria();
-        $c1->addJoin(BookTableMap::AUTHOR_ID, AuthorTableMap::ID, Criteria::LEFT_JOIN);
+        $c1->addJoin(BookTableMap::COL_AUTHOR_ID, AuthorTableMap::COL_ID, Criteria::LEFT_JOIN);
         $c2 = new Criteria();
         $c1->mergeWith($c2);
         $joins = $c1->getJoins();
@@ -411,15 +411,15 @@ class CriteriaMergeTest extends BookstoreTestBase
         $this->assertEquals('LEFT JOIN author ON (book.AUTHOR_ID=author.ID)', $joins[0]->toString(), 'mergeWith() does not remove an existing join');
         $c1 = new Criteria();
         $c2 = new Criteria();
-        $c2->addJoin(BookTableMap::AUTHOR_ID, AuthorTableMap::ID, Criteria::LEFT_JOIN);
+        $c2->addJoin(BookTableMap::COL_AUTHOR_ID, AuthorTableMap::COL_ID, Criteria::LEFT_JOIN);
         $c1->mergeWith($c2);
         $joins = $c1->getJoins();
         $this->assertEquals(1, count($joins), 'mergeWith() merge joins to an empty join');
         $this->assertEquals('LEFT JOIN author ON (book.AUTHOR_ID=author.ID)', $joins[0]->toString(), 'mergeWith() merge joins to an empty join');
         $c1 = new Criteria();
-        $c1->addJoin(BookTableMap::AUTHOR_ID, AuthorTableMap::ID, Criteria::LEFT_JOIN);
+        $c1->addJoin(BookTableMap::COL_AUTHOR_ID, AuthorTableMap::COL_ID, Criteria::LEFT_JOIN);
         $c2 = new Criteria();
-        $c2->addJoin(BookTableMap::PUBLISHER_ID, PublisherTableMap::ID, Criteria::INNER_JOIN);
+        $c2->addJoin(BookTableMap::COL_PUBLISHER_ID, PublisherTableMap::COL_ID, Criteria::INNER_JOIN);
         $c1->mergeWith($c2);
         $joins = $c1->getJoins();
         $this->assertEquals(2, count($joins), 'mergeWith() merge joins to an existing join');

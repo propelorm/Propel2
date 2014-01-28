@@ -329,7 +329,7 @@ class NestedSetBehaviorQueryBuilderModifierWithScopeTest extends TestCase
          */
         $this->assertEquals(array($t1, $t8), \NestedSetTable10Query::retrieveRoots()->getArrayCopy(), 'retrieveRoots() returns the tree roots');
         $c = new Criteria();
-        $c->add(\Map\NestedSetTable10TableMap::TITLE, 't1');
+        $c->add(\Map\NestedSetTable10TableMap::COL_TITLE, 't1');
         $this->assertEquals(array($t1), \NestedSetTable10Query::retrieveRoots($c)->getArrayCopy(), 'retrieveRoots() accepts a Criteria as first parameter');
     }
 

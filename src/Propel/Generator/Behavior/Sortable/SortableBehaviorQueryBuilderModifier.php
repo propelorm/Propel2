@@ -10,6 +10,8 @@
 
 namespace Propel\Generator\Behavior\Sortable;
 
+use Propel\Generator\Model\Column;
+
 /**
  * Behavior to add sortable query methods
  *
@@ -113,12 +115,12 @@ static public function sortableApplyScopeCriteria(Criteria \$criteria, \$scope, 
         if ($this->behavior->hasMultipleScopes()) {
             foreach ($this->behavior->getScopes() as $idx => $scope) {
                 $script .= "
-    \$criteria->\$method({$this->tableMapClassName}::".strtoupper($scope).", \$scope[$idx], Criteria::EQUAL);
+    \$criteria->\$method({$this->tableMapClassName}::".Column::CONSTANT_PREFIX.strtoupper($scope).", \$scope[$idx], Criteria::EQUAL);
 ";
             }
         } else {
             $script .= "
-    \$criteria->\$method({$this->tableMapClassName}::".strtoupper(current($this->behavior->getScopes())).", \$scope, Criteria::EQUAL);
+    \$criteria->\$method({$this->tableMapClassName}::".Column::CONSTANT_PREFIX.strtoupper(current($this->behavior->getScopes())).", \$scope, Criteria::EQUAL);
 ";
         }
 

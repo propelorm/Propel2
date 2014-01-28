@@ -299,17 +299,17 @@ class BookstoreTest extends BookstoreEmptyTestBase
         // re-fetch books and lists from db to be sure that nothing is cached
 
         $crit = new Criteria();
-        $crit->add(BookTableMap::ID, $phoenix->getId());
+        $crit->add(BookTableMap::COL_ID, $phoenix->getId());
         $phoenix = BookQuery::create(null, $crit)->findOne();
         $this->assertNotNull($phoenix, "book 'phoenix' has been re-fetched from db");
 
         $crit = new Criteria();
-        $crit->add(BookClubListTableMap::ID, $blc1->getId());
+        $crit->add(BookClubListTableMap::COL_ID, $blc1->getId());
         $blc1 = BookClubListQuery::create(null, $crit)->findOne();
         $this->assertNotNull($blc1, 'BookClubList 1 has been re-fetched from db');
 
         $crit = new Criteria();
-        $crit->add(BookClubListTableMap::ID, $blc2->getId());
+        $crit->add(BookClubListTableMap::COL_ID, $blc2->getId());
         $blc2 = BookClubListQuery::create(null, $crit)->findOne();
         $this->assertNotNull($blc2, 'BookClubList 2 has been re-fetched from db');
 
@@ -332,12 +332,12 @@ class BookstoreTest extends BookstoreEmptyTestBase
 
         // Attempting to delete [multi-table] by found pk
         $c = new Criteria();
-        $c->add(BookTableMap::ID, $hp->getId());
+        $c->add(BookTableMap::COL_ID, $hp->getId());
         // The only way for cascading to work currently
         // is to specify the author_id and publisher_id (i.e. the fkeys
         // have to be in the criteria).
-        $c->add(AuthorTableMap::ID, $hp->getAuthor()->getId());
-        $c->add(PublisherTableMap::ID, $hp->getPublisher()->getId());
+        $c->add(AuthorTableMap::COL_ID, $hp->getAuthor()->getId());
+        $c->add(PublisherTableMap::COL_ID, $hp->getPublisher()->getId());
         $c->setSingleRecord(true);
         BookTableMap::doDelete($c);
 
@@ -348,9 +348,9 @@ class BookstoreTest extends BookstoreEmptyTestBase
 
         // Attempting to delete books by complex criteria
         $c = new Criteria();
-        $cn = $c->getNewCriterion(BookTableMap::ISBN, "043935806X");
-        $cn->addOr($c->getNewCriterion(BookTableMap::ISBN, "0380977427"));
-        $cn->addOr($c->getNewCriterion(BookTableMap::ISBN, "0140422161"));
+        $cn = $c->getNewCriterion(BookTableMap::COL_ISBN, "043935806X");
+        $cn->addOr($c->getNewCriterion(BookTableMap::COL_ISBN, "0380977427"));
+        $cn->addOr($c->getNewCriterion(BookTableMap::COL_ISBN, "0140422161"));
         $c->add($cn);
         BookTableMap::doDelete($c);
 
@@ -645,17 +645,17 @@ class BookstoreTest extends BookstoreEmptyTestBase
         // re-fetch books and lists from db to be sure that nothing is cached
 
         $crit = new Criteria();
-        $crit->add(BookTableMap::ID, $phoenix->getId());
+        $crit->add(BookTableMap::COL_ID, $phoenix->getId());
         $phoenix = BookQuery::create(null, $crit)->findOne();
         $this->assertNotNull($phoenix, "book 'phoenix' has been re-fetched from db");
 
         $crit = new Criteria();
-        $crit->add(BookClubListTableMap::ID, $blc1->getId());
+        $crit->add(BookClubListTableMap::COL_ID, $blc1->getId());
         $blc1 = BookClubListQuery::create(null, $crit)->findOne();
         $this->assertNotNull($blc1, 'BookClubList 1 has been re-fetched from db');
 
         $crit = new Criteria();
-        $crit->add(BookClubListTableMap::ID, $blc2->getId());
+        $crit->add(BookClubListTableMap::COL_ID, $blc2->getId());
         $blc2 = BookClubListQuery::create(null, $crit)->findOne();
         $this->assertNotNull($blc2, 'BookClubList 2 has been re-fetched from db');
 
@@ -678,12 +678,12 @@ class BookstoreTest extends BookstoreEmptyTestBase
 
         // Attempting to delete [multi-table] by found pk
         $c = new Criteria();
-        $c->add(BookTableMap::ID, $hp->getId());
+        $c->add(BookTableMap::COL_ID, $hp->getId());
         // The only way for cascading to work currently
         // is to specify the author_id and publisher_id (i.e. the fkeys
         // have to be in the criteria).
-        $c->add(AuthorTableMap::ID, $hp->getAuthor()->getId());
-        $c->add(PublisherTableMap::ID, $hp->getPublisher()->getId());
+        $c->add(AuthorTableMap::COL_ID, $hp->getAuthor()->getId());
+        $c->add(PublisherTableMap::COL_ID, $hp->getPublisher()->getId());
         $c->setSingleRecord(true);
         BookTableMap::doDelete($c);
 

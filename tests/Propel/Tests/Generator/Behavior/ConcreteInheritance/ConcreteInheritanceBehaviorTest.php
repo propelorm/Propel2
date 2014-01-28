@@ -107,7 +107,7 @@ EOF;
         $content = new ConcreteContent();
         $content->save();
         $c = new Criteria;
-        $c->add(ConcreteArticleTableMap::ID, $content->getId());
+        $c->add(ConcreteArticleTableMap::COL_ID, $content->getId());
         try {
             ConcreteArticleTableMap::doInsert($c);
             $this->assertTrue(true, 'modifyTable() removed autoIncrement from copied Primary keys');
@@ -122,7 +122,7 @@ EOF;
         $content = new ConcreteContent();
         $content->save();
         $c = new Criteria;
-        $c->add(ConcreteQuizzTableMap::ID, $content->getId());
+        $c->add(ConcreteQuizzTableMap::COL_ID, $content->getId());
         ConcreteQuizzTableMap::doInsert($c);
     }
 

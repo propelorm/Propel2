@@ -317,7 +317,7 @@ class CriteriaTest extends BookstoreTestBase
 
         $criteria = new Criteria();
         $criteria->setIgnoreCase(true);
-        $criteria->addAscendingOrderByColumn(BookTableMap::TITLE);
+        $criteria->addAscendingOrderByColumn(BookTableMap::COL_TITLE);
         BookTableMap::addSelectColumns($criteria);
         $params=array();
         $sql = $criteria->createSelectSql($params);
@@ -894,8 +894,8 @@ class CriteriaTest extends BookstoreTestBase
     public function testHavingAlias()
     {
         $c = new Criteria();
-        $c->addSelectColumn(BookTableMap::TITLE);
-        $c->addAsColumn('isb_n', BookTableMap::ISBN);
+        $c->addSelectColumn(BookTableMap::COL_TITLE);
+        $c->addAsColumn('isb_n', BookTableMap::COL_ISBN);
         $crit = $c->getNewCriterion('isb_n', '1234567890123');
         $c->addHaving($crit);
         $expected = $this->getSql('SELECT book.TITLE, book.ISBN AS isb_n FROM `book` HAVING isb_n=:p1');
@@ -910,12 +910,12 @@ class CriteriaTest extends BookstoreTestBase
     public function testHaving()
     {
         $c = new Criteria();
-        $c->addSelectColumn(BookTableMap::TITLE);
-        $c->addSelectColumn(BookTableMap::ISBN);
+        $c->addSelectColumn(BookTableMap::COL_TITLE);
+        $c->addSelectColumn(BookTableMap::COL_ISBN);
         $crit = $c->getNewCriterion('ISBN', '1234567890123');
         $c->addHaving($crit);
-        $c->addGroupByColumn(BookTableMap::TITLE);
-        $c->addGroupByColumn(BookTableMap::ISBN);
+        $c->addGroupByColumn(BookTableMap::COL_TITLE);
+        $c->addGroupByColumn(BookTableMap::COL_ISBN);
         $expected = $this->getSql('SELECT book.TITLE, book.ISBN FROM `book` GROUP BY book.TITLE,book.ISBN HAVING ISBN=:p1');
         $params = array();
         $result = $c->createSelectSql($params);
@@ -931,8 +931,8 @@ class CriteriaTest extends BookstoreTestBase
     public function testHavingAliasRaw()
     {
         $c = new Criteria();
-        $c->addSelectColumn(BookTableMap::TITLE);
-        $c->addAsColumn("isb_n", BookTableMap::ISBN);
+        $c->addSelectColumn(BookTableMap::COL_TITLE);
+        $c->addAsColumn("isb_n", BookTableMap::COL_ISBN);
         $c->addHaving('isb_n = ?', '1234567890123', \PDO::PARAM_STR);
         $expected = $this->getSql('SELECT book.TITLE, book.ISBN AS isb_n FROM `book` HAVING isb_n = :p1');
         $params = array();

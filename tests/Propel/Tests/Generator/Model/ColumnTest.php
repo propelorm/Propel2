@@ -25,7 +25,7 @@ class ColumnTest extends ModelTestCase
 
         $this->assertSame('title', $column->getName());
         $this->assertEmpty($column->getAutoIncrementString());
-        $this->assertSame('TITLE', $column->getConstantColumnName());
+        $this->assertSame('COL_TITLE', $column->getConstantName());
         $this->assertSame('public', $column->getMutatorVisibility());
         $this->assertSame('public', $column->getAccessorVisibility());
         $this->assertFalse($column->getSize());
@@ -728,8 +728,8 @@ class ColumnTest extends ModelTestCase
         $column->setTableMapName('created_at');
 
         $this->assertSame('created_at', $column->getTableMapName());
-        $this->assertSame('CREATED_AT', $column->getConstantColumnName());
-        $this->assertSame('ArticleTableMap::CREATED_AT', $column->getConstantName());
+        $this->assertSame('COL_CREATED_AT', $column->getConstantName());
+        $this->assertSame('ArticleTableMap::COL_CREATED_AT', $column->getFQConstantName());
     }
 
     public function testSetDefaultPhpName()

@@ -206,7 +206,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
     /**
      * the column name for the " . strtoupper($col->getName()) ." field
      */
-    const ".$col->getConstantColumnName() ." = '" . $this->getTable()->getName() . ".".strtoupper($col->getName())."';
+    const ".$col->getConstantName() ." = '" . $this->getTable()->getName() . ".".strtoupper($col->getName())."';
 ";
         } // foreach
     }
@@ -223,7 +223,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
     /** The enumerated values for the " . strtoupper($col->getName()) . " field */";
                 foreach ($col->getValueSet() as $value) {
                     $script .= "
-    const " . $col->getConstantColumnName() . '_' . $this->getEnumValueConstant($value) . " = '" . $value . "';";
+    const " . $col->getConstantName() . '_' . $this->getEnumValueConstant($value) . " = '" . $value . "';";
                 }
                 $script .= "
 ";
@@ -243,10 +243,10 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
         foreach ($this->getTable()->getColumns() as $col) {
             if ($col->isEnumType()) {
                 $script .= "
-                {$col->getConstantName()} => array(
+                {$col->getFQConstantName()} => array(
                 ";
                 foreach ($col->getValueSet() as $value) {
-                    $script .= "            self::" . $col->getConstantColumnName() . '_' . $this->getEnumValueConstant($value) . ",
+                    $script .= "            self::" . $col->getConstantName() . '_' . $this->getEnumValueConstant($value) . ",
 ";
                 }
                 $script .= "        ),";
@@ -373,14 +373,14 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
             $fieldNamesPhpName       .= "'" . $col->getPhpName() . "', ";
             $fieldNamesStudlyPhpName .= "'" . $col->getStudlyPhpName() . "', ";
             $fieldNamesColname       .= $this->getColumnConstant($col, $this->getTableMapClass()) . ", ";
-            $fieldNamesRawColname    .= "'" . $col->getConstantColumnName() . "', ";
+            $fieldNamesRawColname    .= "'" . $col->getConstantName() . "', ";
             $fieldNamesFieldName     .= "'" . $col->getName() . "', ";
             $fieldNamesNum           .= "$num, ";
 
             $fieldKeysPhpName        .= "'" . $col->getPhpName() . "' => $num, ";
             $fieldKeysStudlyPhpName  .= "'" . $col->getStudlyPhpName() . "' => $num, ";
             $fieldKeysColname        .= $this->getColumnConstant($col, $this->getTableMapClass())." => $num, ";
-            $fieldKeysRawColname     .= "'" . $col->getConstantColumnName() . "' => $num, ";
+            $fieldKeysRawColname     .= "'" . $col->getConstantName() . "' => $num, ";
             $fieldKeysFieldName      .= "'" . $col->getName() . "' => $num, ";
             $fieldKeysNum            .= "$num, ";
         }
@@ -1147,7 +1147,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
         foreach ($this->getTable()->getColumns() as $col) {
             if (!$col->isLazyLoad()) {
                 $script .= "
-            \$criteria->addSelectColumn({$col->getConstantName()});";
+            \$criteria->addSelectColumn({$col->getFQConstantName()});";
             } // if !col->isLazyLoad
         } // foreach
         $script .= "
@@ -1155,7 +1155,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
         foreach ($this->getTable()->getColumns() as $col) {
             if (!$col->isLazyLoad()) {
                 $script .= "
-            \$criteria->addSelectColumn(\$alias . '." . $col->getConstantColumnName()."');";
+            \$criteria->addSelectColumn(\$alias . '." . $col->getUppercasedName()."');";
             } // if !col->isLazyLoad
         } // foreach
         $script .= "

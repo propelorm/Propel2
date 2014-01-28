@@ -10,6 +10,8 @@
 
 namespace Propel\Generator\Behavior\Versionable;
 
+use Propel\Generator\Model\Column;
+
 /**
  * Behavior to add versionable columns and abilities
  *
@@ -673,6 +675,7 @@ public function compareVersions(\$fromVersionNumber, \$toVersionNumber, \$keys =
         $fks = $versionTable->getForeignKeysReferencingTable($this->table->getName());
         $relCol = $this->builder->getRefFKPhpNameAffix($fks[0], $plural);
         $versionGetter = 'get'.$relCol;
+        $colPrefix = Column::CONSTANT_PREFIX;
 
         $script .= <<<EOF
 /**
@@ -684,7 +687,7 @@ public function compareVersions(\$fromVersionNumber, \$toVersionNumber, \$keys =
 public function getLastVersions(\$number = 10, \$criteria = null, \$con = null)
 {
     \$criteria = {$this->getVersionQueryClassName()}::create(null, \$criteria);
-    \$criteria->addDescendingOrderByColumn({$versionTableMapClassName}::VERSION);
+    \$criteria->addDescendingOrderByColumn({$versionTableMapClassName}::{$colPrefix}VERSION);
     \$criteria->limit(\$number);
 
     return \$this->{$versionGetter}(\$criteria, \$con);
