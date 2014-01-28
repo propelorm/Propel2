@@ -38,9 +38,9 @@ class MigrationDiffCommand extends AbstractCommand
         parent::configure();
 
         $this
-            ->addOption('output-dir',       null, InputOption::VALUE_REQUIRED,  'The output directory', self::DEFAULT_OUTPUT_DIRECTORY)
+            ->addOption('output-dir',       null, InputOption::VALUE_REQUIRED,  'The output directory where the migration files are located', self::DEFAULT_OUTPUT_DIRECTORY)
             ->addOption('migration-table',  null, InputOption::VALUE_REQUIRED,  'Migration table name', self::DEFAULT_MIGRATION_TABLE)
-            ->addOption('connection',       null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Connection to use', array())
+            ->addOption('connection',       null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Connection to use. Example: \'bookstore=mysql:host=127.0.0.1;dbname=test;user=root;password=foobar\' where "bookstore" is your propel database name (used in your schema.xml)', array())
             ->addOption('table-renaming',   null, InputOption::VALUE_NONE,  'Detect table renaming', null)
             ->addOption('editor',           null, InputOption::VALUE_OPTIONAL,  'The text editor to use to open diff files', null)
             ->setName('migration:diff')
