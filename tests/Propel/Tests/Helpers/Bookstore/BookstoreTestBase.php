@@ -28,20 +28,16 @@ abstract class BookstoreTestBase extends TestCase
      */
     protected $con;
 
-    public static function setUpBeforeClass()
-    {
-        if (true !== self::$isInitialized) {
-            Propel::init(__DIR__ . '/../../../../Fixtures/bookstore/build/conf/bookstore-conf.php');
-            self::$isInitialized = true;
-        }
-    }
-
     /**
      * This is run before each unit test; it populates the database.
      */
     protected function setUp()
     {
 	    parent::setUp();
+        if (true !== self::$isInitialized) {
+            Propel::init(__DIR__ . '/../../../../Fixtures/bookstore/build/conf/bookstore-conf.php');
+            self::$isInitialized = true;
+        }
         $this->con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         $this->con->beginTransaction();
     }
