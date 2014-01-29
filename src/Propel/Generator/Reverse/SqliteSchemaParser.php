@@ -121,7 +121,19 @@ class SqliteSchemaParser extends AbstractSchemaParser
                 continue;
             }
 
+            $schema = null;
+            if (!$database->getSchema()) {
+                if (false !== ($pos = strpos($name, '§'))) {
+                    $schema = substr($name, 0, $pos); //2 because the delimiter § uses in UTF8 one byte more.
+                    $commonName = substr($name, $pos+2); //2 because the delimiter § uses in UTF8 one byte more.
+                }
+            }
+
             $table = new Table($commonName ?: $name);
+            if (null !== $schema) {
+                $table->setSchema($schema);
+            }
+
             $table->setIdMethod($database->getDefaultIdMethod());
             $database->addTable($table);
             $tables[] = $table;
@@ -148,7 +160,10 @@ class SqliteSchemaParser extends AbstractSchemaParser
      */
     protected function addColumns(Table $table)
     {
-        $stmt = $this->dbh->query("PRAGMA table_info('" . $table->getName() . "')");
+        $tableName = $table->getName();
+
+//        var_dump("PRAGMA table_info('$tableName') //");
+        $stmt = $this->dbh->query("PRAGMA table_info('$tableName')");
 
         while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
             $name = $row['name'];

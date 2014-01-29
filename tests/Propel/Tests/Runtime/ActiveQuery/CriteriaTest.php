@@ -50,7 +50,6 @@ class CriteriaTest extends BookstoreTestBase
         $defaultDatasource = Propel::getServiceContainer()->getDefaultDatasource();
         $this->savedAdapter = Propel::getServiceContainer()->getAdapter($defaultDatasource);
         $newAdapter = Propel::getServiceContainer()->getAdapter(BookTableMap::DATABASE_NAME);
-        $this->adapterClass = $newAdapter->getAdapterId();
         Propel::getServiceContainer()->setAdapter($defaultDatasource, $newAdapter);
     }
 

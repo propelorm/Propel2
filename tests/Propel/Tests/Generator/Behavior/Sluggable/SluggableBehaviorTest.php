@@ -10,6 +10,8 @@
 
 namespace Propel\Tests\Generator\Behavior\Sluggable;
 
+use Propel\Runtime\Propel;
+use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
 use Propel\Tests\Bookstore\Behavior\Table13;
@@ -20,6 +22,7 @@ use Propel\Tests\Bookstore\Behavior\Table14Query;
 use Propel\Tests\Bookstore\Behavior\Map\Table14TableMap;
 use Propel\Tests\Bookstore\Behavior\TableWithScope;
 use Propel\Tests\Bookstore\Behavior\TableWithScopeQuery;
+use Propel\Tests\TestCase;
 
 /**
  * Tests for SluggableBehavior class
@@ -28,12 +31,14 @@ use Propel\Tests\Bookstore\Behavior\TableWithScopeQuery;
  */
 class SluggableBehaviorTest extends BookstoreTestBase
 {
-    public static function setUpBeforeClass()
+    protected function setUp()
     {
         //prevent issue DSN not Found
         self::$isInitialized = false;
-        parent::setUpBeforeClass();
+        parent::setUp();
+        include_once(__DIR__.'/SluggableBehaviorTestClasses.php');
     }
+
 
     public function testParameters()
     {
@@ -307,46 +312,5 @@ class SluggableBehaviorTest extends BookstoreTestBase
         } catch (Exception $e) {
             $this->fail($e->getMessage());
         }
-    }
-}
-
-class TestableTable13 extends Table13
-{
-    public function createSlug()
-    {
-        return parent::createSlug();
-    }
-
-    public function createRawSlug()
-    {
-        return parent::createRawSlug();
-    }
-
-    public static function cleanupSlugPart($slug, $separator = '-')
-    {
-        return parent::cleanupSlugPart($slug, $separator);
-    }
-
-    public function makeSlugUnique($slug, $separator = '-', $increment = 0)
-    {
-        return parent::makeSlugUnique($slug, $separator, $increment);
-    }
-}
-
-class TestableTable14 extends Table14
-{
-    public function createSlug()
-    {
-        return parent::createSlug();
-    }
-
-    public function createRawSlug()
-    {
-        return parent::createRawSlug();
-    }
-
-    public static function limitSlugSize($slug, $incrementReservedSpace = 3)
-    {
-        return parent::limitSlugSize($slug, $incrementReservedSpace);
     }
 }

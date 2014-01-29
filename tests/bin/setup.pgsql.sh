@@ -31,12 +31,3 @@ CREATE SCHEMA second_hand_books;
 CREATE SCHEMA migration;
 ';
 check;
-
-dsn="pgsql:host=$DB_HOSTNAME;dbname=postgres";
-
-if [ "$DB_PW" = "" ]; then
-    echo "\$DB_PW not set. Using no password.";
-    php $DIR/../../bin/propel test:prepare --vendor="pgsql" --dsn="$dsn" --user="$DB_USER";
-else
-    php $DIR/../../bin/propel test:prepare --vendor="pgsql" --dsn="$dsn" --user="$DB_USER" --password="$DB_PW";
-fi

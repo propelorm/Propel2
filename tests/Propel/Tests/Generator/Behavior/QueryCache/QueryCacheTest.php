@@ -19,11 +19,11 @@ use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
  */
 class QueryCacheTest extends BookstoreTestBase
 {
-    public static function setUpBeforeClass()
+    protected function setUp()
     {
         //prevent issue DSN not Found
         self::$isInitialized = false;
-        parent::setUpBeforeClass();
+        parent::setUp();
     }
 
     public function testExistingKey()

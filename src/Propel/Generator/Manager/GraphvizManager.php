@@ -27,6 +27,7 @@ class GraphvizManager extends AbstractManager
         foreach ($this->getDataModels() as $dataModel) {
             $dotSyntax .= "digraph G {\n";
 
+            /** @var $database \Propel\Generator\Model\Database */
             foreach ($dataModel->getDatabases() as $database) {
                 $this->log("db: " . $database->getName());
 
@@ -54,21 +55,14 @@ class GraphvizManager extends AbstractManager
                 $count = 0;
                 $dotSyntax .= "\n";
                 foreach ($database->getTables() as $tbl) {
-                    foreach ($tbl->getColumns() as $col) {
-                        $fk = $col->getForeignKeys();
-
-                        if (0 === count($fk)|| null === $fk) {
-                            continue;
-                        }
-
-                        if (1 < count($fk)) {
-                            throw new BuildException('Not sure what to do here...'); // WTF?
-                        }
-
-                        $fk = $fk[0];   // try first one
+                    foreach ($tbl->getForeignKeys() as $fk) {
                         $dotSyntax .= 'node'.$tbl->getName();
                         $dotSyntax .= ':cols -> node'.$fk->getForeignTableName();
-                        $dotSyntax .= ':table [label="' . $col->getName() . '=' . implode(',', $fk->getForeignColumns()) . ' "];';
+                        $label = [];
+                        foreach ($fk->getColumnObjectsMapping() as $map) {
+                            $label[] = $map['local']->getName().'='.$map['foreign']->getName();
+                        }
+                        $dotSyntax .= ':table [label="' . implode('\l', $label) . ' ", color=gray];';
                         $dotSyntax .= "\n";
                     }
 

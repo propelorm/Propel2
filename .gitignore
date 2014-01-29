@@ -6,8 +6,11 @@ phpunit.xml
 pom.xml
 php-cs-fixer.phar
 
+tests/test.sq3
+
 generated-classes/
 
+tests/Fixtures/fixtures_built
 tests/Fixtures/namespaced/build/
 tests/Fixtures/nestedset/build/
 tests/Fixtures/schemas/build/

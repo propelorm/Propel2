@@ -10,13 +10,14 @@
 
 namespace Propel\Tests\Common\Pluralizer;
 
+use Propel\Common\Pluralizer\SimpleEnglishPluralizer;
 use Propel\Common\Pluralizer\StandardEnglishPluralizer;
 
 /**
  * Tests for the StandardEnglishPluralizer class
  *
  */
-class StandardEnglishPluralizerTest extends \PHPUnit_Framework_TestCase
+class EnglishPluralizerTest extends \PHPUnit_Framework_TestCase
 {
     public function getPluralFormDataProvider()
     {
@@ -94,9 +95,17 @@ class StandardEnglishPluralizerTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider getPluralFormDataProvider
      */
-    public function testgetPluralForm($input, $output)
+    public function testStandardPluralForm($input, $output)
     {
         $pluralizer = new StandardEnglishPluralizer();
         $this->assertEquals($output, $pluralizer->getPluralForm($input));
+    }
+    /**
+     * @dataProvider getPluralFormDataProvider
+     */
+    public function testSimplePluralForm($input)
+    {
+        $pluralizer = new SimpleEnglishPluralizer();
+        $this->assertEquals($input.'s', $pluralizer->getPluralForm($input));
     }
 }
