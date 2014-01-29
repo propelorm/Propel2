@@ -32,15 +32,10 @@ use Propel\Tests\TestCase;
  */
 class SluggableBehaviorTest extends BookstoreTestBase
 {
-    public static function setUpBeforeClass()
+    protected function setUp()
     {
         //prevent issue DSN not Found
         self::$isInitialized = false;
-        parent::setUpBeforeClass();
-    }
-
-    protected function setUp()
-    {
         parent::setUp();
         include_once(__DIR__.'/SluggableBehaviorTestClasses.php');
     }

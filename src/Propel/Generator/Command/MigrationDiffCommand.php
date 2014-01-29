@@ -150,6 +150,7 @@ class MigrationDiffCommand extends AbstractCommand
             }
 
             if (!$appDataDatabase = $manager->getDatabase($name)) {
+                $output->writeln(sprintf('<error>Database "%s" does not exist in schema.xml. Skipped.</error>', $name));
                 continue;
             }
 

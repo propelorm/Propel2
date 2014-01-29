@@ -140,14 +140,23 @@ class TestCase extends \PHPUnit_Framework_TestCase
      * Returns the current connection DSN.
      *
      * @param string $database
+     * @param boolean $withCredentials
      * @return string
      */
-    protected function getConnectionDsn($database = 'bookstore')
+    protected function getConnectionDsn($database = 'bookstore', $withCredentials = false)
     {
         $serviceContainer = \Propel\Runtime\Propel::getServiceContainer();
         /** @var $manager \Propel\Runtime\Connection\ConnectionManagerSingle */
         $manager = $serviceContainer->getConnectionManager($database);
-        $dsn = $manager->getConfiguration()['dsn'];
+        $configuration = $manager->getConfiguration();
+        $dsn = $configuration['dsn'];
+
+        if ($withCredentials) {
+            $dsn .= ';user=' . $configuration['user'];
+            if (isset($configuration['password']) && $configuration['password']) {
+                $dsn .= ';password=' . $configuration['password'];
+            }
+        }
 
         return $dsn;
     }
