@@ -176,7 +176,10 @@ class SqliteSchemaParser extends AbstractSchemaParser
      */
     protected function addColumns(Table $table)
     {
-        $stmt = $this->dbh->query("PRAGMA table_info('" . $table->getName() . "')");
+        $tableName = $table->getName();
+
+//        var_dump("PRAGMA table_info('$tableName') //");
+        $stmt = $this->dbh->query("PRAGMA table_info('$tableName')");
 
         while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
             $name = $row['name'];

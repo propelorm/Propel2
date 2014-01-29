@@ -22,6 +22,7 @@ class DatabaseReverseTest extends TestCase
             '--database-name' => 'reverse-test',
             '--output-dir' => $outputDir,
             '--verbose' => true,
+            '--platform' => ucfirst($this->getDriver()).'Platform',
             'connection' => $this->getConnectionDsn('bookstore-schemas')
         ));
 
