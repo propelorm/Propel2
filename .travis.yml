@@ -3,12 +3,12 @@ language: php
 php:
   - 5.4
   - 5.5
-  - hhvm
+#  - hhvm
 
 env:
   - DB=mysql DB_USER=root
-  - DB=pgsql
-  - DB=sqlite
+#  - DB=pgsql
+#  - DB=sqlite
 
 before_script:
   # Composer
@@ -19,6 +19,9 @@ before_script:
 
 script:
   - ./tests/bin/phpunit.$DB.sh;
+
+after_script:
+  - php vendor/bin/coveralls -v
 
 matrix:
   allow_failures:

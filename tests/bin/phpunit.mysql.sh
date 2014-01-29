@@ -1,2 +1,2 @@
 #!/bin/sh
-phpunit;
+phpunit -v --configuration tests/phpunit/mysql.phpunit.xml;

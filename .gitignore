@@ -8,6 +8,7 @@ php-cs-fixer.phar
 
 generated-classes/
 
+tests/Fixtures/fixtures_built
 tests/Fixtures/namespaced/build/
 tests/Fixtures/nestedset/build/
 tests/Fixtures/schemas/build/
