@@ -33,7 +33,6 @@ class GeneratedRelationMapWithSchemasTest extends SchemasTestBase
     {
         parent::setUp();
         $this->databaseMap = Propel::getServiceContainer()->getDatabaseMap('bookstore-schemas');
-        $this->adapterClass = Propel::getServiceContainer()->getAdapterClass(BookstoreContestTableMap::DATABASE_NAME);
     }
 
     public function testGetRightTable()

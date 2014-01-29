@@ -10,6 +10,7 @@
 
 namespace Propel\Tests\Runtime\ActiveQuery;
 
+use Propel\Runtime\Exception\PropelException;
 use Propel\Tests\Helpers\BaseTestCase;
 
 use Propel\Runtime\Propel;
@@ -47,6 +48,11 @@ class CriteriaCombineTest extends BaseTestCase
         $defaultDatasource = Propel::getServiceContainer()->getDefaultDatasource();
         $this->savedAdapter = Propel::getServiceContainer()->getAdapter($defaultDatasource);
         Propel::getServiceContainer()->setAdapter($defaultDatasource, new SqliteAdapter());
+    }
+
+    protected function getDriver()
+    {
+        return 'sqlite';
     }
 
     protected function tearDown()

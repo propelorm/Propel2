@@ -25,6 +25,12 @@ use Propel\Runtime\ActiveQuery\Criteria;
  */
 class SubQueryTest extends BookstoreTestBase
 {
+    protected function setUp()
+    {
+        parent::setUp();
+        include_once(__DIR__.'/SubQueryTestClasses.php');
+    }
+
     protected function assertCriteriaTranslation($criteria, $expectedSql, $expectedParams, $message = '')
     {
         $params = array();
@@ -260,13 +266,5 @@ class SubQueryTest extends BookstoreTestBase
         $sql = $this->getSql("SELECT COUNT(*) FROM (SELECT subCriteriaAlias.ID, subCriteriaAlias.TITLE, subCriteriaAlias.ISBN, subCriteriaAlias.PRICE, subCriteriaAlias.PUBLISHER_ID, subCriteriaAlias.AUTHOR_ID FROM (SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book`) AS subCriteriaAlias WHERE subCriteriaAlias.PRICE<20) propelmatch4cnt");
 
         $this->assertEquals($sql, $query, 'addSelectQuery() doCount is defined as complexQuery');
-    }
-}
-
-class TestableBookQuery extends BookQuery
-{
-    public function configureSelectColumns()
-    {
-        return parent::configureSelectColumns();
     }
 }

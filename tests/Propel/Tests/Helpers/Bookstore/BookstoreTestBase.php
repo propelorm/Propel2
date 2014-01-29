@@ -41,6 +41,7 @@ abstract class BookstoreTestBase extends TestCase
      */
     protected function setUp()
     {
+	    parent::setUp();
         $this->con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         $this->con->beginTransaction();
     }
