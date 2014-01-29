@@ -136,7 +136,7 @@ class MigrationDiffCommand extends AbstractCommand
             }
 
             if (!$appDataFromXml->hasDatabase($name)) {
-                // FIXME: tables present in database but not in XML
+                $output->writeln(sprintf('Database "%s" does not exist in schema.xml. Skipped.', $name));
                 continue;
             }
 
