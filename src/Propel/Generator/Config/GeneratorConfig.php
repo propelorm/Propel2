@@ -17,6 +17,7 @@ use Propel\Generator\Reverse\SchemaParserInterface;
 use Propel\Runtime\Adapter\AdapterFactory;
 use Propel\Runtime\Connection\ConnectionFactory;
 use Propel\Runtime\Connection\ConnectionInterface;
+use Propel\Generator\Util\BehaviorLocator;
 
 /**
  * A class that holds build properties and provide a class loading mechanism for
@@ -38,6 +39,11 @@ class GeneratorConfig implements GeneratorConfigInterface
 
     protected $defaultBuildConnection = null;
 
+    /**
+     * @var BehaviorLocator
+     */
+    protected $behaviorLocator = null;
+    
     /**
      * Construct a new GeneratorConfig.
      *
@@ -327,4 +333,13 @@ class GeneratorConfig implements GeneratorConfigInterface
 
         return $con;
     }
+    
+    public function getBehaviorLocator() {
+        if (!$this->behaviorLocator) {
+            $this->behaviorLocator = new BehaviorLocator($this);
+        }
+        
+        return $this->behaviorLocator;
+	}
+
 }

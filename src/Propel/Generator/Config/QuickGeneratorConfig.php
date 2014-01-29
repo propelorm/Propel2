@@ -17,6 +17,7 @@ use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Exception\RuntimeException;
 use Propel\Generator\Model\Table;
 use \Propel\Runtime\Connection\ConnectionInterface;
+use Propel\Generator\Util\BehaviorLocator;
 
 class QuickGeneratorConfig implements GeneratorConfigInterface
 {
@@ -33,6 +34,11 @@ class QuickGeneratorConfig implements GeneratorConfigInterface
     );
 
     protected $buildProperties = array();
+    
+    /**
+     * @var BehaviorLocator
+     */
+    protected $behaviorLocator = null;
 
     public function __construct()
     {
@@ -153,5 +159,14 @@ class QuickGeneratorConfig implements GeneratorConfigInterface
     public function getConfiguredPlatform(ConnectionInterface $con = null, $database = null)
     {
         return null;
+    }
+    
+
+    public function getBehaviorLocator() {
+    	if (!$this->behaviorLocator) {
+    		$this->behaviorLocator = new BehaviorLocator($this);
+    	}
+    
+    	return $this->behaviorLocator;
     }
 }
