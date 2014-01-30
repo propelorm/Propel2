@@ -1,2 +1,2 @@
 #!/bin/sh
-phpunit;
+phpunit --group database;

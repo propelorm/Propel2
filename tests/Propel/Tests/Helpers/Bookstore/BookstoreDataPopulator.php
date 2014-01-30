@@ -310,12 +310,6 @@ class BookstoreDataPopulator
             }
             $tableMapClass::doDeleteAll($con);
         }
-        // delete records from the database
-        if ($con === null) {
-            $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
-        }
-        $con->beginTransaction();
-        $con->commit();
     }
 
 }

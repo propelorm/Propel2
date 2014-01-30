@@ -15,7 +15,10 @@ use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
 /**
  * Class QueryCacheTest
+ *
  * @author Manuel Raynaud <mraynaud@openstudio.fr>
+ *
+ * @group database
  */
 class QueryCacheTest extends BookstoreTestBase
 {

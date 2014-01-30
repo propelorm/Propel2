@@ -1,13 +1,16 @@
 <?php
 
-namespace Propel\Tests\Command;
+namespace Propel\Tests\Generator\Command;
 
 use Propel\Generator\Command\DatabaseReverseCommand;
 use Propel\Runtime\Propel;
-use Propel\Tests\TestCase;
+use Propel\Tests\TestCaseFixturesDatabase;
 use Symfony\Component\Console\Application;
 
-class DatabaseReverseTest extends TestCase
+/**
+ * @group database
+ */
+class DatabaseReverseTest extends TestCaseFixturesDatabase
 {
     public function testCommand()
     {
@@ -15,7 +18,7 @@ class DatabaseReverseTest extends TestCase
         $command = new DatabaseReverseCommand();
         $app->add($command);
 
-        $outputDir = __DIR__.'/../../../reversecommand';
+        $outputDir = __DIR__.'/../../../../reversecommand';
 
         $input = new \Symfony\Component\Console\Input\ArrayInput(array(
             'command' => 'database:reverse',
@@ -23,7 +26,7 @@ class DatabaseReverseTest extends TestCase
             '--output-dir' => $outputDir,
             '--verbose' => true,
             '--platform' => ucfirst($this->getDriver()).'Platform',
-            'connection' => $this->getConnectionDsn('bookstore-schemas')
+            'connection' => $this->getConnectionDsn('bookstore-schemas', true)
         ));
 
         $output = new \Symfony\Component\Console\Output\BufferedOutput();

@@ -18,7 +18,8 @@ use Propel\Runtime\ActiveQuery\Criteria;
  * Test class for Criteria fluid operators.
  *
  * @author Francois Zaninotto
- * @version    $Id: CriteriaCombineTest.php 1347 2009-12-03 21:06:36Z francois $
+ *
+ * @group database
  */
 class CriteriaFluidOperatorTest extends BookstoreTestBase
 {

@@ -2,6 +2,9 @@
 
 namespace Propel\Tests\Generator\Migration;
 
+/**
+ * @group database
+ */
 class PrimaryKeyAITest extends MigrationTestCase
 {
 

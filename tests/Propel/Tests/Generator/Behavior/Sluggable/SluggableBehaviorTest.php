@@ -23,12 +23,13 @@ use Propel\Tests\Bookstore\Behavior\Table14Query;
 use Propel\Tests\Bookstore\Behavior\Map\Table14TableMap;
 use Propel\Tests\Bookstore\Behavior\TableWithScope;
 use Propel\Tests\Bookstore\Behavior\TableWithScopeQuery;
-use Propel\Tests\TestCase;
 
 /**
  * Tests for SluggableBehavior class
  *
  * @author François Zaninotto
+ *
+ * @group database
  */
 class SluggableBehaviorTest extends BookstoreTestBase
 {

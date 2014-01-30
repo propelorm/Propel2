@@ -1,6 +1,6 @@
 <?php
 
-namespace Propel\Tests\Command;
+namespace Propel\Tests\Generator\Command;
 
 use Propel\Generator\Command\GraphvizGenerateCommand;
 use Propel\Runtime\Propel;
@@ -15,11 +15,11 @@ class GraphvizGenerateTest extends TestCase
         $command = new GraphvizGenerateCommand();
         $app->add($command);
 
-        $outputDir = __DIR__.'/../../../graphviztest';
+        $outputDir = __DIR__.'/../../../../graphviztest';
 
         $input = new \Symfony\Component\Console\Input\ArrayInput(array(
             'command' => 'graphviz:generate',
-            '--input-dir' => __DIR__ . '/../../../Fixtures/bookstore',
+            '--input-dir' => __DIR__ . '/../../../../Fixtures/bookstore',
             '--output-dir' => $outputDir,
             '--verbose' => true
         ));

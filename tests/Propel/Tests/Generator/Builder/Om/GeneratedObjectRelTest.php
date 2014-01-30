@@ -50,6 +50,8 @@ use \DateTime;
  * method for the exact contents of the database.
  *
  * @author Hans Lellelid <hans@xmpl.org>
+ *
+ * @group database
  */
 class GeneratedObjectRelTest extends BookstoreEmptyTestBase
 {

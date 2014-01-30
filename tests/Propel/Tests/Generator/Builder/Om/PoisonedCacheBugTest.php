@@ -20,6 +20,9 @@ use Propel\Tests\Bookstore\BookQuery;
 use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
+/**
+ * @group database
+ */
 class PoisonedCacheBugTest extends BookstoreTestBase
 {
     /**

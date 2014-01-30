@@ -12,8 +12,8 @@ namespace Propel\Tests\Runtime\Adapter;
 
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
-use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 use Propel\Tests\Bookstore\Map\BookTableMap;
+use Propel\Tests\TestCaseFixtures;
 
 /**
  * Tests the DbOracle adapter
@@ -21,7 +21,7 @@ use Propel\Tests\Bookstore\Map\BookTableMap;
  * @see        BookstoreDataPopulator
  * @author Francois EZaninotto
  */
-class AbstractAdapterTest extends BookstoreTestBase
+class AbstractAdapterTest extends TestCaseFixtures
 {
     public function testTurnSelectColumnsToAliases()
     {

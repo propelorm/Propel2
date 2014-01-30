@@ -12,12 +12,12 @@ namespace Propel\Tests\Helpers\Bookstore;
 
 use Propel\Runtime\Propel;
 use Propel\Tests\Bookstore\Map\BookTableMap;
-use Propel\Tests\TestCase;
+use Propel\Tests\TestCaseFixturesDatabase;
 
 /**
  * Base class contains some methods shared by subclass test cases.
  */
-abstract class BookstoreTestBase extends TestCase
+abstract class BookstoreTestBase extends TestCaseFixturesDatabase
 {
     /**
      * @var Boolean
@@ -35,6 +35,10 @@ abstract class BookstoreTestBase extends TestCase
     {
 	    parent::setUp();
         if (true !== self::$isInitialized) {
+            $file = __DIR__ . '/../../../../Fixtures/bookstore/build/conf/bookstore-conf.php';
+            if (!file_exists($file)) {
+                return;
+            }
             Propel::init(__DIR__ . '/../../../../Fixtures/bookstore/build/conf/bookstore-conf.php');
             self::$isInitialized = true;
         }

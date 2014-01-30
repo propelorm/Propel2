@@ -27,7 +27,8 @@ use Propel\Runtime\ActiveQuery\ModelCriteria;
  * Test class for ObjectFormatter.
  *
  * @author Francois Zaninotto
- * @version    $Id$
+ *
+ * @group database
  */
 class ObjectFormatterTest extends BookstoreEmptyTestBase
 {

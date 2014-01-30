@@ -71,6 +71,8 @@ use MyNameSpace\TestKeyTypeTable;
  * method for the exact contents of the database.
  *
  * @author Hans Lellelid <hans@xmpl.org>
+ *
+ * @group database
  */
 class GeneratedObjectTest extends BookstoreTestBase
 {

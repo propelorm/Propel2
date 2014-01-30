@@ -23,7 +23,8 @@ use Propel\Tests\Bookstore\Behavior\ConcreteQuizzQuery;
  * Tests for ConcreteInheritanceParentBehavior class
  *
  * @author François Zaniontto
- * @version   $Revision$
+ *
+ * @group database
  */
 class ConcreteInheritanceParentBehaviorTest extends BookstoreTestBase
 {

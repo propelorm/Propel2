@@ -13,9 +13,9 @@ namespace Propel\Tests\Runtime\Collection;
 use Propel\Runtime\Collection\Collection;
 use Propel\Runtime\Collection\ObjectCollection;
 
-use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\Publisher;
+use Propel\Tests\TestCaseFixtures;
 
 /**
  * Test class for Collection.
@@ -23,7 +23,7 @@ use Propel\Tests\Bookstore\Publisher;
  * @author Francois Zaninotto
  * @version    $Id: CollectionTest.php 1348 2009-12-03 21:49:00Z francois $
  */
-class CollectionConvertTest extends BookstoreTestBase
+class CollectionConvertTest extends TestCaseFixtures
 {
     protected function setUp()
     {

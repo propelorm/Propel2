@@ -10,22 +10,20 @@
 
 namespace Propel\Tests\Runtime\Map;
 
-use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
-
 use Propel\Runtime\Propel;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\DatabaseMap;
 use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Map\Exception\ColumnNotFoundException;
 use Propel\Runtime\Map\Exception\TableNotFoundException;
+use Propel\Tests\TestCaseFixtures;
 
 /**
  * Test class for DatabaseMap.
  *
  * @author François Zaninotto
- * @version    $Id$
  */
-class DatabaseMapTest extends BookstoreTestBase
+class DatabaseMapTest extends TestCaseFixtures
 {
     protected $databaseMap;
 

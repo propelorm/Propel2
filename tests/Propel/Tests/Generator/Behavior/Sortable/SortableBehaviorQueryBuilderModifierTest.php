@@ -21,6 +21,8 @@ use Propel\Tests\Bookstore\Behavior\SortableTable11 as Table11;
  * Tests for SortableBehavior class query modifier
  *
  * @author Francois Zaninotto
+ *
+ * @group database
  */
 class SortableBehaviorQueryBuilderModifierTest extends TestCase
 {

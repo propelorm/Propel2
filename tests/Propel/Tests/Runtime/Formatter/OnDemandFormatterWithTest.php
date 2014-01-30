@@ -29,6 +29,8 @@ use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
  * Test class for OnDemandFormatter when Criteria uses with().
  *
  * @author Francois Zaninotto
+ *
+ * @group database
  */
 class OnDemandFormatterWithTest extends BookstoreEmptyTestBase
 {

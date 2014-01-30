@@ -28,6 +28,8 @@ use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
  * Tests for AggregateColumnBehavior class
  *
  * @author François Zaninotto
+ *
+ * @group database
  */
 class AggregateColumnBehaviorTest extends BookstoreTestBase
 {
@@ -36,7 +38,6 @@ class AggregateColumnBehaviorTest extends BookstoreTestBase
         parent::setUp();
         include_once(__DIR__.'/AggregateColumnsBehaviorTestClasses.php');
     }
-
 
     public function testParameters()
     {

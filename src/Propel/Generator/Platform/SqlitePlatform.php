@@ -233,7 +233,6 @@ DROP TABLE %s;
     public function getBeginDDL()
     {
         return '
-END;
 PRAGMA foreign_keys = OFF;
 ';
     }
@@ -242,7 +241,6 @@ PRAGMA foreign_keys = OFF;
     {
         return '
 PRAGMA foreign_keys = ON;
-BEGIN;
 ';
     }
 

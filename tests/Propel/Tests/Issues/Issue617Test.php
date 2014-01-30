@@ -13,6 +13,7 @@ use Propel\Tests\Helpers\PlatformDatabaseBuildTimeBase;
  * we really need that kind of information.
  *
  * @group mysql
+ * @group database
  */
 class Issue617Test extends PlatformDatabaseBuildTimeBase
 {

@@ -10,17 +10,15 @@
 
 namespace Propel\Tests\Runtime\Map;
 
-use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
-
 use Propel\Runtime\Propel;
+use Propel\Tests\TestCaseFixtures;
 
 /**
  * Test class for RelatedMap::getSymmetricalRelation.
  *
  * @author François Zaninotto
- * @version    $Id: GeneratedRelationMapTest.php 1347 2009-12-03 21:06:36Z francois $
  */
-class RelatedMapSymmetricalTest extends BookstoreTestBase
+class RelatedMapSymmetricalTest extends TestCaseFixtures
 {
     protected $databaseMap;
 

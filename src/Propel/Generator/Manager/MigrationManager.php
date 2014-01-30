@@ -71,6 +71,10 @@ class MigrationManager extends AbstractManager
         return $this->connections[$datasource];
     }
 
+    /**
+     * @param $datasource
+     * @return ConnectionInterface
+     */
     public function getAdapterConnection($datasource)
     {
         if (!isset($this->adapterConnections[$datasource])) {

@@ -17,6 +17,8 @@ use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
  * Tests the generated Object behavior hooks.
  *
  * @author Francois Zaninotto
+ *
+ * @group database
  */
 class ObjectBehaviorTest extends BookstoreTestBase
 {

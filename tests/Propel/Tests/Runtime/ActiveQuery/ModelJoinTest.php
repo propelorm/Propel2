@@ -19,14 +19,14 @@ use Propel\Tests\Bookstore\Map\ReaderFavoriteTableMap;
 
 use Propel\Runtime\ActiveQuery\ModelJoin;
 use Propel\Runtime\Map\TableMap;
+use Propel\Tests\TestCaseFixtures;
 
 /**
  * Test class for ModelJoin.
  *
  * @author François Zaninotto
- * @version    $Id: ModelJoinTest.php 1347 2009-12-03 21:06:36Z francois $
  */
-class ModelJoinTest extends BookstoreTestBase
+class ModelJoinTest extends TestCaseFixtures
 {
     public function testTableMap()
     {

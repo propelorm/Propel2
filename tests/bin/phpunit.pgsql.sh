@@ -1,2 +1,2 @@
 #!/bin/sh
-phpunit --exclude-group mysql;
+phpunit --group database --exclude-group mysql;

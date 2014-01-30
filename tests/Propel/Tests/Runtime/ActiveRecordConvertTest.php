@@ -10,17 +10,17 @@
 
 namespace Propel\Tests\Runtime\ActiveRecord;
 
-use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 use Propel\Tests\Bookstore\Author;
 use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\Publisher;
+use Propel\Tests\TestCaseFixtures;
 
 /**
  * Test class for ActiveRecord.
  *
  * @author François Zaninotto
  */
-class ActiveRecordConvertTest extends BookstoreTestBase
+class ActiveRecordConvertTest extends TestCaseFixtures
 {
     protected function setUp()
     {

@@ -23,8 +23,8 @@ use Propel\Tests\Bookstore\Behavior\Map\Table8TableMap;
  * Tests for AutoAddPkBehavior class
  *
  * @author François Zaninotto
- * @version		$Revision$
- * @package		generator.behavior
+ *
+ * @group database
  */
 class AutoAddPkBehaviorTest extends BookstoreTestBase
 {

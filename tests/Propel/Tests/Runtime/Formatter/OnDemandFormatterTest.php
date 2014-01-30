@@ -27,6 +27,8 @@ use Propel\Runtime\ActiveQuery\ModelCriteria;
  * Test class for OnDemandFormatter.
  *
  * @author Francois Zaninotto
+ *
+ * @group database
  */
 class OnDemandFormatterTest extends BookstoreEmptyTestBase
 {

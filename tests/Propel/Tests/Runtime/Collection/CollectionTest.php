@@ -20,7 +20,8 @@ use Propel\Runtime\Collection\Collection;
  * Test class for Collection.
  *
  * @author Francois Zaninotto
- * @version    $Id: CollectionTest.php 1348 2009-12-03 21:49:00Z francois $
+ *
+ * @group database
  */
 class CollectionTest extends BookstoreTestBase
 {
@@ -64,6 +65,101 @@ class CollectionTest extends BookstoreTestBase
         $col = new Collection();
         $col->setData($data);
         $this->assertEquals($data, $col->getArrayCopy(), 'setData() sets the collection data');
+    }
+
+    public function testGetPosition()
+    {
+        $col = new Collection();
+        $this->assertEquals(0, $col->getPosition(), 'getPosition() returns 0 on an empty collection');
+        $data = array('bar1', 'bar2', 'bar3');
+        $col = new Collection($data);
+        $expectedPositions = array(0, 1, 2);
+        foreach ($col as $k => $element) {
+            $this->assertEquals(array_shift($expectedPositions), $col->getPosition(), 'getPosition() returns the current position');
+            $this->assertEquals($element, $col->getCurrent(), 'getPosition() does not change the current position');
+        }
+    }
+
+    public function testGetFirst()
+    {
+        $col = new Collection();
+        $this->assertNull($col->getFirst(), 'getFirst() returns null on an empty collection');
+        $data = array('bar1', 'bar2', 'bar3');
+        $col = new Collection($data);
+        $this->assertEquals('bar1', $col->getFirst(), 'getFirst() returns value of the first element in the collection');
+    }
+
+    public function testIsFirst()
+    {
+        $col = new Collection();
+        $this->assertTrue($col->isFirst(), 'isFirst() returns true on an empty collection');
+        $data = array('bar1', 'bar2', 'bar3');
+        $col = new Collection($data);
+        $expectedRes = array(true, false, false);
+
+        foreach ($col as $element) {
+            $this->assertEquals(array_shift($expectedRes), $col->isFirst(), 'isFirst() returns true only for the first element');
+            $this->assertEquals($element, $col->getCurrent(), 'isFirst() does not change the current position');
+        }
+    }
+
+    public function testGetPrevious()
+    {
+        $col = new Collection();
+        $this->assertNull($col->getPrevious(), 'getPrevious() returns null on an empty collection');
+        $data = array('bar1', 'bar2', 'bar3');
+        $col = new Collection($data);
+        $this->assertNull($col->getPrevious(), 'getPrevious() returns null when the internal pointer is at the beginning of the list');
+        $col->getNext();
+        $this->assertEquals('bar1', $col->getPrevious(), 'getPrevious() returns the previous element');
+        $this->assertEquals('bar1', $col->getCurrent(), 'getPrevious() decrements the internal pointer');
+    }
+
+    public function testGetCurrent()
+    {
+        $col = new Collection();
+        $this->assertNull($col->getCurrent(), 'getCurrent() returns null on an empty collection');
+        $data = array('bar1', 'bar2', 'bar3');
+        $col = new Collection($data);
+        $this->assertEquals('bar1', $col->getCurrent(), 'getCurrent() returns the value of the first element when the internal pointer is at the beginning of the list');
+        foreach ($col as $key => $value) {
+            $this->assertEquals($value, $col->getCurrent(), 'getCurrent() returns the value of the current element in the collection');
+        }
+    }
+
+    public function testGetNext()
+    {
+        $col = new Collection();
+        $this->assertNull($col->getNext(), 'getNext() returns null on an empty collection');
+        $data = array('bar1', 'bar2', 'bar3');
+        $col = new Collection($data);
+        $this->assertEquals('bar2', $col->getNext(), 'getNext() returns the second element when the internal pointer is at the beginning of the list');
+        $this->assertEquals('bar2', $col->getCurrent(), 'getNext() increments the internal pointer');
+        $col->getNext();
+        $this->assertNull($col->getNext(), 'getNext() returns null when the internal pointer is at the end of the list');
+    }
+
+    public function testGetLast()
+    {
+        $col = new Collection();
+        $this->assertNull($col->getLast(), 'getLast() returns null on an empty collection');
+        $data = array('bar1', 'bar2', 'bar3');
+        $col = new Collection($data);
+        $this->assertEquals('bar3', $col->getLast(), 'getLast() returns the last element');
+        $this->assertEquals('bar3', $col->getCurrent(), 'getLast() moves the internal pointer to the last element');
+    }
+
+    public function testIsLAst()
+    {
+        $col = new Collection();
+        $this->assertTrue($col->isLast(), 'isLast() returns true on an empty collection');
+        $data = array('bar1', 'bar2', 'bar3');
+        $col = new Collection($data);
+        $expectedRes = array(false, false, true);
+        foreach ($col as $element) {
+            $this->assertEquals(array_shift($expectedRes), $col->isLast(), 'isLast() returns true only for the last element');
+            $this->assertEquals($element, $col->getCurrent(), 'isLast() does not change the current position');
+        }
     }
 
     public function testIsEmpty()
@@ -223,6 +319,9 @@ class CollectionTest extends BookstoreTestBase
         $this->assertEquals($col, $col2, 'Collection is serializable');
     }
 
+    /**
+     * @database
+     */
     public function testGetWriteConnection()
     {
         $col = new Collection();

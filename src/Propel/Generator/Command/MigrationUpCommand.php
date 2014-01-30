@@ -103,6 +103,7 @@ class MigrationUpCommand extends AbstractCommand
             $conn = $manager->getAdapterConnection($datasource);
             $res = 0;
             $statements = SqlParser::parseString($sql);
+            $conn->beginTransaction();
             foreach ($statements as $statement) {
                 try {
                     if ($input->getOption('verbose')) {
@@ -116,6 +117,7 @@ class MigrationUpCommand extends AbstractCommand
                     throw new RuntimeException(sprintf('<error>Failed to execute SQL "%s". Aborting migration.</error>', $statement), 0, $e);
                 }
             }
+            $conn->commit();
             if (!$res) {
                 $output->writeln('No statement was executed. The version was not updated.');
                 $output->writeln(sprintf(

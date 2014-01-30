@@ -45,6 +45,8 @@ use Propel\Runtime\ActiveQuery\ModelCriteria;
  * Test class for ModelCriteria.
  *
  * @author Francois Zaninotto
+ *
+ * @group database
  */
 class ModelCriteriaTest extends BookstoreTestBase
 {

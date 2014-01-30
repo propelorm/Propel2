@@ -24,6 +24,8 @@ use Propel\Tests\Bookstore\Map\BookstoreEmployeeTableMap;
  * Test class for ObjectFormatter.
  *
  * @author Francois Zaninotto
+ *
+ * @group database
  */
 class ObjectFormatterInheritanceTest extends BookstoreEmptyTestBase
 {

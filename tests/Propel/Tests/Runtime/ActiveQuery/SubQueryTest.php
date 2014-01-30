@@ -21,7 +21,8 @@ use Propel\Runtime\ActiveQuery\Criteria;
  * Test class for SubQueryTest.
  *
  * @author Francois Zaninotto
- * @version    $Id$
+ *
+ * @group database
  */
 class SubQueryTest extends BookstoreTestBase
 {
