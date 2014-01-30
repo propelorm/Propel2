@@ -198,7 +198,12 @@ class TestCaseFixtures extends TestCase
             return 'sqlite:' . realpath($path);
         }
 
-        $dsn = (strtolower(getenv('DB')) ?: 'mysql') . ':host=' . (getenv('DB_HOSTNAME') ?: '127.0.0.1' ) . ';dbname=';
+        $db = strtolower(getenv('DB'));
+        if (!$db || 'agnostic' === $db) {
+            $db = 'mysql';
+        }
+
+        $dsn = $db . ':host=' . (getenv('DB_HOSTNAME') ?: '127.0.0.1' ) . ';dbname=';
         $dsn .= getenv('DB_NAME') ?: 'test';
 
         return $dsn;
@@ -218,6 +223,11 @@ class TestCaseFixtures extends TestCase
             $driver = explode(':', $currentDSN)[0];
         }
 
-        return strtolower($driver) ?: (strtolower(getenv('DB')) ?: 'mysql');
+        $db = strtolower(getenv('DB'));
+        if (!$db || 'agnostic' === $db) {
+            $db = 'mysql';
+        }
+
+        return strtolower($driver) ?: $db;
     }
 }
