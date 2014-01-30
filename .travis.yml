@@ -17,7 +17,7 @@ before_script:
   - wget http://getcomposer.org/composer.phar
   - php composer.phar install --prefer-source
 
-  - ./tests/bin/setup.$DB.sh;
+  - if [ "$DB" != 'agnostic' ]; then ./tests/bin/setup.$DB.sh; fi   # setup only for integration tests
 
 script:
   - ./tests/bin/phpunit.$DB.sh;
