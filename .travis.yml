@@ -6,8 +6,9 @@ php:
 #  - hhvm
 
 env:
-  - DB=mysql DB_USER=root
-#  - DB=pgsql
+  - DB=agnostic                                   #only database agnostic tests
+  - DB=mysql DB_USER=root                         #only database tests against mysql
+  - DB=pgsql DB_USER=postgres DB_NAME=postgres    #only database tests against postgresql
 #  - DB=sqlite
 
 before_script:
@@ -23,6 +24,6 @@ script:
 after_script:
   - php vendor/bin/coveralls -v
 
-matrix:
-  allow_failures:
-    - php: hhvm
+#matrix:
+#  allow_failures:
+#    - php: hhvm

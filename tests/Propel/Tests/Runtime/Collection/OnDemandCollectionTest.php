@@ -23,7 +23,8 @@ use Propel\Runtime\ActiveQuery\PropelQuery;
  * Test class for OnDemandCollection.
  *
  * @author Francois Zaninotto
- * @version    $Id: ObjectCollectionTest.php 1348 2009-12-03 21:49:00Z francois $
+ *
+ * @group database
  */
 class OnDemandCollectionTest extends BookstoreEmptyTestBase
 {

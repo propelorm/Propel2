@@ -30,6 +30,8 @@ use \Exception;
 
 /**
  * Test for PropelPDO subclass.
+ *
+ * @group database
  */
 class PropelPDOTest extends BookstoreTestBase
 {

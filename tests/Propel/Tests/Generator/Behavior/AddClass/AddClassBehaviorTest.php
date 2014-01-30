@@ -10,15 +10,15 @@
 
 namespace Propel\Tests\Generator\Behavior\AddClass;
 
-use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 use Propel\Tests\Bookstore\Behavior\AddClassTableFooClass;
+use Propel\Tests\TestCaseFixtures;
 
 /**
  * Tests the generated classes by behaviors.
  *
  * @author Francois Zaninotto
  */
-class AddClassBehaviorTest extends BookstoreTestBase
+class AddClassBehaviorTest extends TestCaseFixtures
 {
     public function testClassExists()
     {

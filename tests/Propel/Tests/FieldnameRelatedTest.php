@@ -33,7 +33,7 @@ use Propel\Tests\Bookstore\Book;
  *
  * @author Sven Fuchs <svenfuchs@artweb-design.de>
  */
-class FieldnameRelatedTest extends TestCase
+class FieldnameRelatedTest extends TestCaseFixtures
 {
     /**
      * Tests if fieldname type constants are defined

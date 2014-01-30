@@ -16,15 +16,16 @@ use Propel\Generator\Model\Database;
 use Propel\Generator\Platform\DefaultPlatform;
 use Propel\Generator\Reverse\PgsqlSchemaParser;
 use Propel\Runtime\Propel;
-use Propel\Tests\TestCase;
+use Propel\Tests\TestCaseFixturesDatabase;
 
 /**
  * Tests for Pgsql database schema parser.
  *
  * @author Alan Pinstein
  * @group pgsql
+ * @group database
  */
-class PgsqlSchemaParserTest extends TestCase
+class PgsqlSchemaParserTest extends TestCaseFixturesDatabase
 {
     protected function setUp()
     {

@@ -23,10 +23,6 @@ use Propel\Tests\TestCase;
  */
 class I18nBehaviorQueryBuilderModifierTest extends TestCase
 {
-    protected function getDriver()
-    {
-        return 'sqlite';
-    }
 
     public function setUp()
     {

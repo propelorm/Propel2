@@ -14,6 +14,7 @@ use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Adapter\Pdo\MysqlAdapter;
+use Propel\Tests\TestCaseFixtures;
 
 /**
  * Tests the DbMySQL adapter
@@ -21,7 +22,7 @@ use Propel\Runtime\Adapter\Pdo\MysqlAdapter;
  * @see        BookstoreDataPopulator
  * @author William Durand
  */
-class MysqlAdapterTest extends BookstoreTestBase
+class MysqlAdapterTest extends TestCaseFixtures
 {
     public static function getConParams()
     {

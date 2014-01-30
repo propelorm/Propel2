@@ -23,7 +23,8 @@ use Propel\Runtime\ActiveQuery\ModelCriteria;
  * Test class for ArrayFormatter.
  *
  * @author Francois Zaninotto
- * @version    $Id$
+ *
+ * @group database
  */
 class ArrayFormatterTest extends BookstoreEmptyTestBase
 {

@@ -20,7 +20,8 @@ use Propel\Runtime\Collection\Collection;
  * Test class for Collection.
  *
  * @author Francois Zaninotto
- * @version    $Id: CollectionTest.php 1348 2009-12-03 21:49:00Z francois $
+ *
+ * @group database
  */
 class CollectionTest extends BookstoreTestBase
 {
@@ -102,9 +103,6 @@ class CollectionTest extends BookstoreTestBase
         }
     }
 
-    /**
-     * @group test
-     */
     public function testGetPrevious()
     {
         $col = new Collection();
@@ -314,6 +312,9 @@ class CollectionTest extends BookstoreTestBase
         $this->assertEquals($col, $col2, 'Collection is serializable');
     }
 
+    /**
+     * @database
+     */
     public function testGetWriteConnection()
     {
         $col = new Collection();

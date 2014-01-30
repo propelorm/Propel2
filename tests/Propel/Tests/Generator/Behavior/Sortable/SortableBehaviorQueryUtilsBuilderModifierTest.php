@@ -19,6 +19,8 @@ use Propel\Tests\Bookstore\Behavior\Map\SortableTable11TableMap;
  * Tests for SortableBehavior class
  *
  * @author Massimiliano Arione
+ *
+ * @group database
  */
 class SortableBehaviorQueryUtilsBuilderModifierTest extends TestCase
 {

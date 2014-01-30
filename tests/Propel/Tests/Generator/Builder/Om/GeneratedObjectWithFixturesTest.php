@@ -43,6 +43,8 @@ use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
  *
  * @see        BookstoreDataPopulator
  * @author Hans Lellelid <hans@xmpl.org>
+ *
+ * @group database
  */
 class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
 {

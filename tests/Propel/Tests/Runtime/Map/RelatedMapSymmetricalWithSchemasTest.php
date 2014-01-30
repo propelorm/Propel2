@@ -11,16 +11,16 @@
 namespace Propel\Tests\Runtime\Map;
 
 use Propel\Runtime\Propel;
-
-use Propel\Tests\Helpers\Schemas\SchemasTestBase;
+use Propel\Tests\TestCaseFixturesDatabase;
 
 /**
  * Test class for RelatedMap::getSymmetricalRelation with schemas.
  *
  * @author Ulf Hermann
- * @version    $Id$
+ *
+ * @group database
  */
-class RelatedMapSymmetricalWithSchemasTest extends SchemasTestBase
+class RelatedMapSymmetricalWithSchemasTest extends TestCaseFixturesDatabase
 {
   protected $databaseMap;
 

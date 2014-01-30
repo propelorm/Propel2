@@ -18,6 +18,8 @@ use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
  * Tests for Unique Constraint
  *
  * @author Cristiano Cinotti
+ *
+ * @group database
  */
 class UniqueConstraintTest extends BookstoreTestBase
 {

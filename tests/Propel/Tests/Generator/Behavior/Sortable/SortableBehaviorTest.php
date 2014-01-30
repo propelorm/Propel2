@@ -18,6 +18,8 @@ use Propel\Tests\Bookstore\Behavior\Map\SortableTable12TableMap;
  *
  * @author Massimiliano Arione
  * @author William Durand <william.durand1@gmail.com>
+ *
+ * @group database
  */
 class SortableBehaviorTest extends TestCase
 {

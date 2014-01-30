@@ -24,6 +24,8 @@ use Propel\Tests\Bookstore\Behavior\Map\Table6TableMap;
  * Test class for PropelQuery
  *
  * @author Francois Zaninotto
+ *
+ * @group database
  */
 class PropelQueryTest extends BookstoreTestBase
 {

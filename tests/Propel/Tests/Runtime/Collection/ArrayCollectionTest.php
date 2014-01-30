@@ -27,6 +27,8 @@ use Propel\Runtime\Map\TableMap;
  * Test class for ObjectCollection.
  *
  * @author Francois Zaninotto
+ *
+ * @group database
  */
 class ArrayCollectionTest extends BookstoreEmptyTestBase
 {

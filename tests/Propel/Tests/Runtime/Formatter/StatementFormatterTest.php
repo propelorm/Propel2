@@ -29,6 +29,8 @@ use \PDO;
  * Test class for StatementFormatter.
  *
  * @author Francois Zaninotto
+ *
+ * @group database
  */
 class StatementFormatterTest extends BookstoreEmptyTestBase
 {

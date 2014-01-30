@@ -23,6 +23,8 @@ use Propel\Tests\Bookstore\Behavior\Map\SortableTable12TableMap;
  * Tests for SortableBehavior class
  *
  * @author Massimiliano Arione
+ *
+ * @group database
  */
 class SortableBehaviorObjectBuilderModifierWithScopeTest extends TestCase
 {

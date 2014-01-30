@@ -19,31 +19,19 @@ use Propel\Tests\BookstoreSchemas\BookstoreQuery;
 use Propel\Tests\BookstoreSchemas\Map\BookstoreTableMap;
 use Propel\Tests\BookstoreSchemas\Customer;
 use Propel\Tests\BookstoreSchemas\CustomerQuery;
-use Propel\Tests\Helpers\Schemas\SchemasTestBase;
 
 use Propel\Runtime\Propel;
+use Propel\Tests\TestCaseFixturesDatabase;
 
 /**
  * Tests for AggregateColumnBehavior class
  *
  * @author François Zaninotto
+ *
+ * @group database
  */
-class AggregateColumnBehaviorWithSchemaTest extends SchemasTestBase
+class AggregateColumnBehaviorWithSchemaTest extends TestCaseFixturesDatabase
 {
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->con = Propel::getServiceContainer()->getConnection(BookstoreTableMap::DATABASE_NAME);
-        $this->con->beginTransaction();
-    }
-
-    protected function tearDown()
-    {
-        $this->con->commit();
-        parent::tearDown();
-    }
-
     public function testParametersWithSchema()
     {
         $storeTable = BookstoreTableMap::getTableMap();
@@ -53,41 +41,43 @@ class AggregateColumnBehaviorWithSchemaTest extends SchemasTestBase
 
     public function testComputeWithSchema()
     {
-        BookstoreContestEntryQuery::create()->deleteAll($this->con);
-        BookstoreQuery::create()->deleteAll($this->con);
-        CustomerQuery::create()->deleteAll($this->con);
-        BookstoreContestQuery::create()->deleteAll($this->con);
+        $con = Propel::getServiceContainer()->getConnection(BookstoreTableMap::DATABASE_NAME);
+
+        BookstoreContestEntryQuery::create()->deleteAll();
+        BookstoreQuery::create()->deleteAll();
+        CustomerQuery::create()->deleteAll();
+        BookstoreContestQuery::create()->deleteAll();
 
         $store = new Bookstore();
         $store->setStoreName('FreeAgent Bookstore');
-        $store->save($this->con);
-        $this->assertEquals(0, $store->computeTotalContestEntries($this->con), 'The compute method returns 0 for objects with no related objects');
+        $store->save();
+        $this->assertEquals(0, $store->computeTotalContestEntries($con), 'The compute method returns 0 for objects with no related objects');
 
         $contest = new BookstoreContest();
         $contest->setBookstore($store);
-        $contest->save($this->con);
+        $contest->save();
         $customer1 = new Customer();
-        $customer1->save($this->con);
+        $customer1->save();
 
         $entry1 = new BookstoreContestEntry();
         $entry1->setBookstore($store);
         $entry1->setBookstoreContest($contest);
         $entry1->setCustomer($customer1);
-        $entry1->save($this->con, true); // skip reload to avoid #1151 for now
+        $entry1->save(null, true); // skip reload to avoid #1151 for now
 
-        $this->assertEquals(1, $store->computeTotalContestEntries($this->con), 'The compute method computes the aggregate function on related objects');
+        $this->assertEquals(1, $store->computeTotalContestEntries($con), 'The compute method computes the aggregate function on related objects');
 
         $customer2 = new Customer();
-        $customer2->save($this->con);
+        $customer2->save();
 
         $entry2 = new BookstoreContestEntry();
         $entry2->setBookstore($store);
         $entry2->setBookstoreContest($contest);
         $entry2->setCustomer($customer2);
-        $entry2->save($this->con, true); // skip reload to avoid #1151 for now
+        $entry2->save(null, true); // skip reload to avoid #1151 for now
 
-        $this->assertEquals(2, $store->computeTotalContestEntries($this->con), 'The compute method computes the aggregate function on related objects');
-        $entry1->delete($this->con);
-        $this->assertEquals(1, $store->computeTotalContestEntries($this->con), 'The compute method computes the aggregate function on related objects');
+        $this->assertEquals(2, $store->computeTotalContestEntries($con), 'The compute method computes the aggregate function on related objects');
+        $entry1->delete();
+        $this->assertEquals(1, $store->computeTotalContestEntries($con), 'The compute method computes the aggregate function on related objects');
     }
 }

@@ -23,6 +23,8 @@ use Propel\Tests\Bookstore\ContestView;
  * Test class for ObjectCollection.
  *
  * @author Francois Zaninotto
+ *
+ * @group database
  */
 class ObjectCollectionTest extends BookstoreTestBase
 {

@@ -16,11 +16,8 @@ use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
-/* It's only fair to admit that these tests were carefully crafted
-after studying the current implementation to make it look as bad as
-possible. I am really sorry. :-( */
-
 /**
+ * @group database
  */
 class Ticket520Test extends BookstoreTestBase
 {

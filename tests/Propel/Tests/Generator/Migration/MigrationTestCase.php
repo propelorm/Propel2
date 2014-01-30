@@ -9,9 +9,9 @@ use Propel\Generator\Model\Diff\DatabaseComparator;
 use Propel\Generator\Util\QuickBuilder;
 use Propel\Generator\Util\SqlParser;
 use Propel\Runtime\Propel;
-use Propel\Tests\TestCase;
+use Propel\Tests\TestCaseFixturesDatabase;
 
-class MigrationTestCase extends TestCase
+class MigrationTestCase extends TestCaseFixturesDatabase
 {
 
     /**

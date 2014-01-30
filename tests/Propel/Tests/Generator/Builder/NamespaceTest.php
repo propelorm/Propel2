@@ -11,26 +11,27 @@
 namespace Propel\Tests\Generator\Builder;
 
 use Propel\Runtime\Propel;
-use Propel\Tests\TestCase;
+use Propel\Tests\TestCaseFixturesDatabase;
 
 /**
  * Tests for Namespaces in generated classes class
  * Requires a build of the 'namespaced' fixture
  *
+ * @group database
  */
-class NamespaceTest extends TestCase
+class NamespaceTest extends TestCaseFixturesDatabase
 {
-    protected function setUp()
-    {
-        parent::setUp();
-        Propel::init(__DIR__ . '/../../../../Fixtures/namespaced/build/conf/bookstore_namespaced-conf.php');
-    }
-
-    protected function tearDown()
-    {
-        parent::tearDown();
-        Propel::init(dirname(__FILE__) . '/../../../../Fixtures/bookstore/build/conf/bookstore-conf.php');
-    }
+//    protected function setUp()
+//    {
+//        parent::setUp();
+//        Propel::init(__DIR__ . '/../../../../Fixtures/namespaced/build/conf/bookstore_namespaced-conf.php');
+//    }
+//
+//    protected function tearDown()
+//    {
+//        parent::tearDown();
+//        Propel::init(dirname(__FILE__) . '/../../../../Fixtures/bookstore/build/conf/bookstore-conf.php');
+//    }
 
     public function testInsert()
     {

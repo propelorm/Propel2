@@ -36,6 +36,8 @@ use \Exception;
  *
  * @see        BookstoreDataPopulator
  * @author Hans Lellelid <hans@xmpl.org>
+ *
+ * @group database
  */
 class CharacterEncodingTest extends BookstoreTestBase
 {

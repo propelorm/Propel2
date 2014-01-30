@@ -17,6 +17,7 @@ use Propel\Generator\Model\Table;
 use Propel\Generator\Util\SqlParser;
 use Propel\Runtime\Adapter\AdapterFactory;
 use Propel\Runtime\Connection\ConnectionFactory;
+use Propel\Runtime\Connection\ConnectionInterface;
 
 /**
  * Service class for preparing and executing migrations
@@ -69,6 +70,10 @@ class MigrationManager extends AbstractManager
         return $this->connections[$datasource];
     }
 
+    /**
+     * @param $datasource
+     * @return ConnectionInterface
+     */
     public function getAdapterConnection($datasource)
     {
         if (!isset($this->adapterConnections[$datasource])) {

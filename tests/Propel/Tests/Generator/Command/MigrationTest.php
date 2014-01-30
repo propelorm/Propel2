@@ -1,18 +1,21 @@
 <?php
 
-namespace Propel\Tests\Command;
+namespace Propel\Tests\Generator\Command;
 
 use Propel\Generator\Command\MigrationDiffCommand;
 use Propel\Generator\Command\MigrationDownCommand;
 use Propel\Generator\Command\MigrationMigrateCommand;
 use Propel\Generator\Command\MigrationUpCommand;
 use Propel\Runtime\Propel;
-use Propel\Tests\TestCase;
+use Propel\Tests\TestCaseFixturesDatabase;
 use Symfony\Component\Console\Application;
 
-class MigrationTest extends TestCase
+/**
+ * @group database
+ */
+class MigrationTest extends TestCaseFixturesDatabase
 {
-    protected static $output = '/../../../migrationdiff';
+    protected static $output = '/../../../../migrationdiff';
 
     protected $connectionOption;
     protected $inputDir;
@@ -23,7 +26,7 @@ class MigrationTest extends TestCase
         parent::setUp();
         $this->connectionOption =  ['migration_command=' . $this->getConnectionDsn('bookstore', true)];
         $this->connectionOption = str_replace('dbname=test', 'dbname=migration', $this->connectionOption);
-        $this->inputDir = __DIR__ . '/../../../Fixtures/migration-command';
+        $this->inputDir = __DIR__ . '/../../../../Fixtures/migration-command';
         $this->outputDir = __DIR__ . self::$output;
     }
 

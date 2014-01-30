@@ -21,6 +21,8 @@ use Propel\Tests\Bookstore\Behavior\Map\SortableTable12TableMap;
  * Tests for SortableBehavior class query modifier when the scope is enabled
  *
  * @author Francois Zaninotto
+ *
+ * @group database
  */
 class SortableBehaviorQueryBuilderModifierWithScopeTest extends TestCase
 {

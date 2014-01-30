@@ -12,23 +12,19 @@ namespace Propel\Tests\Generator\Behavior\Sortable;
 
 use Propel\Runtime\ActiveQuery\Criteria;
 
-use Propel\Tests\TestCase as BaseTestCase;
 use Propel\Tests\Bookstore\Behavior\SortableTable11;
 use Propel\Tests\Bookstore\Behavior\SortableTable11Query;
 use Propel\Tests\Bookstore\Behavior\SortableTable12;
 use Propel\Tests\Bookstore\Behavior\SortableTable12Query;
 use Propel\Tests\Bookstore\Behavior\Map\SortableTable12TableMap;
 use Propel\Tests\Bookstore\Behavior\Map\SortableTable11TableMap;
+use Propel\Tests\TestCaseFixturesDatabase;
 
 /**
  * @author William Durand <william.durand1@gmail.com>
  */
-class TestCase extends BaseTestCase
+class TestCase extends TestCaseFixturesDatabase
 {
-    public function setUp()
-    {
-        require(__DIR__ . '/../../../../../Fixtures/bookstore/build/conf/bookstore-conf.php');
-    }
 
     protected function populateTable11()
     {

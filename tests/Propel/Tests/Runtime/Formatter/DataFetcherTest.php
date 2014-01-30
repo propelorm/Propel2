@@ -19,6 +19,8 @@ use Propel\Runtime\Propel;
 
 /**
  * Test class for DataFetcher.
+ *
+ * @group database
  */
 class DataFetcherTest extends BookstoreEmptyTestBase
 {

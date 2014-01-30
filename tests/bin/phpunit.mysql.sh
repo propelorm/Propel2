@@ -1,2 +1,2 @@
 #!/bin/sh
-phpunit -v --configuration tests/phpunit/mysql.phpunit.xml;
+phpunit -v --group database;

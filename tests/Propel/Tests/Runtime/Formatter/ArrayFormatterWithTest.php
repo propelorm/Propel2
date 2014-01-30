@@ -30,6 +30,8 @@ use Propel\Tests\Bookstore\Map\ReviewTableMap;
  * Test class for ArrayFormatter when Criteria uses with().
  *
  * @author Francois Zaninotto
+ *
+ * @group database
  */
 class ArrayFormatterWithTest extends BookstoreEmptyTestBase
 {
