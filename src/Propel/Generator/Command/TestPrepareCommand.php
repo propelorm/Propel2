@@ -82,7 +82,7 @@ class TestPrepareCommand extends AbstractCommand
                 new InputOption('dsn',          null, InputOption::VALUE_OPTIONAL, 'The data source name', self::DEFAULT_DSN),
                 new InputOption('user',          'u', InputOption::VALUE_REQUIRED, 'The database user', self::DEFAULT_DB_USER),
                 new InputOption('password',      'p', InputOption::VALUE_REQUIRED, 'The database password', self::DEFAULT_DB_PASSWD),
-                new InputOption('exclude-schema',  null, InputOption::VALUE_NONE, 'Whether this should not touch database\'s schema'),
+                new InputOption('exclude-database',  null, InputOption::VALUE_NONE, 'Whether this should not touch database\'s schema'),
             ))
             ->setName('test:prepare')
             ->setDescription('Prepare the Propel test suite by building fixtures')
@@ -113,22 +113,9 @@ class TestPrepareCommand extends AbstractCommand
             return 1;
         }
 
-        $output->writeln(sprintf('Building fixtures in <info>%-40s</info> ' . ($input->getOption('exclude-schema') ? '(exclude-schema)' : ''), $fixturesDir));
+        $output->writeln(sprintf('Building fixtures in <info>%-40s</info> ' . ($input->getOption('exclude-database') ? '(exclude-database)' : ''), $fixturesDir));
 
         chdir($this->root . '/' . $fixturesDir);
-
-        if (0 < count((array) $this->getSchemas('.'))) {
-            $in = new ArrayInput(array(
-                'command'      => 'model:build',
-                '--input-dir'  => '.',
-                '--output-dir' => 'build/classes/',
-                '--platform'   => ucfirst($input->getOption('vendor')) . 'Platform',
-                '--verbose'    => $input->getOption('verbose'),
-            ));
-
-            $command = $this->getApplication()->find('model:build');
-            $command->run($in, $output);
-        }
 
         $distributionFiles = array(
             'runtime-conf.xml.dist' => 'runtime-conf.xml',
@@ -162,7 +149,20 @@ class TestPrepareCommand extends AbstractCommand
             $command->run($in, $output);
         }
 
-        if ($input->getOption('exclude-schema')) {
+        if (0 < count((array) $this->getSchemas('.'))) {
+            $in = new ArrayInput(array(
+                'command'      => 'model:build',
+                '--input-dir'  => '.',
+                '--output-dir' => 'build/classes/',
+                '--platform'   => ucfirst($input->getOption('vendor')) . 'Platform',
+                '--verbose'    => $input->getOption('verbose'),
+            ));
+
+            $command = $this->getApplication()->find('model:build');
+            $command->run($in, $output);
+        }
+
+        if ($input->getOption('exclude-database')) {
             return 0;
         }
 

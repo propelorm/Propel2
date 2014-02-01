@@ -56,7 +56,7 @@ class TestCaseFixtures extends TestCase
         );
 
         if (!static::$withDatabaseSchema) {
-            $options['--exclude-schema'] = true;
+            $options['--exclude-database'] = true;
         }
 
         $mode = static::$withDatabaseSchema ? 'fixtures-database' : 'fixtures-only';
