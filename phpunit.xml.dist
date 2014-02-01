@@ -1,48 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit backupGlobals="false"
-    backupStaticAttributes="false"
-    colors="true"
-    convertErrorsToExceptions="true"
-    convertNoticesToExceptions="true"
-    convertWarningsToExceptions="true"
-    processIsolation="false"
-    stopOnFailure="false"
-    syntaxCheck="false"
-    bootstrap="tests/bootstrap.php"
->
+         backupStaticAttributes="false"
+         colors="true"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         processIsolation="false"
+         stopOnFailure="false"
+         syntaxCheck="false"
+         bootstrap="tests/bootstrap.php"
+    >
 
   <testsuites>
-      <testsuite name="Propel2 Test Suite">
-          <directory>./tests/Propel/Tests/</directory>
-      </testsuite>
+    <testsuite name="Propel2 Test Suite">
+      <directory>tests/Propel/Tests/</directory>
+    </testsuite>
   </testsuites>
 
   <logging>
-    <log type="coverage-clover" target="../clover.xml"/>
+    <log type="coverage-clover" target="tests/clover.xml"/>
+    <!--<log type="coverage-html" target="tests/coverage-report" charset="UTF-8"
+         highlight="false" lowUpperBound="35" highLowerBound="70"/>-->
   </logging>
 
   <filter>
     <whitelist>
-      <directory>../../src/Propel/</directory>
+      <directory>src/Propel/</directory>
       <exclude>
-        <directory>../../src/Propel/Generator/Builder/SQL/Mssql</directory>
-        <directory>../../src/Propel/Generator/Builder/SQL/Oracle</directory>
-        <directory>../../src/Propel/Generator/Builder/SQL/Sqlsrv</directory>
+        <directory>src/Propel/Generator/Builder/SQL/Mssql</directory>
+        <directory>src/Propel/Generator/Builder/SQL/Oracle</directory>
+        <directory>src/Propel/Generator/Builder/SQL/Sqlsrv</directory>
 
-        <file>../../src/Propel/Generator/Platform/MssqlPlatform.php</file>
-        <file>../../src/Propel/Generator/Platform/OraclePlatform.php</file>
-        <file>../../src/Propel/Generator/Platform/SqlsrvPlatform.php</file>
+        <file>src/Propel/Generator/Platform/MssqlPlatform.php</file>
+        <file>src/Propel/Generator/Platform/OraclePlatform.php</file>
+        <file>src/Propel/Generator/Platform/SqlsrvPlatform.php</file>
 
-        <file>../../src/Propel/Generator/Reverse/MssqlSchemaParser.php</file>
-        <file>../../src/Propel/Generator/Reverse/OracleSchemaParser.php</file>
-        <file>../../src/Propel/Generator/Reverse/SqlsrvSchemaParser.php</file>
+        <file>src/Propel/Generator/Reverse/MssqlSchemaParser.php</file>
+        <file>src/Propel/Generator/Reverse/OracleSchemaParser.php</file>
+        <file>src/Propel/Generator/Reverse/SqlsrvSchemaParser.php</file>
 
-        <directory>../../src/Propel/Runtime/Adapter/MSSQL</directory>
-        <file>../../src/Propel/Runtime/Adapter/Pdo/MssqlAdapter.php</file>
-        <file>../../src/Propel/Runtime/Adapter/Pdo/OracleAdapter.php</file>
-        <file>../../src/Propel/Runtime/Adapter/Pdo/SqlsrvAdapter.php</file>
+        <directory>src/Propel/Runtime/Adapter/MSSQL</directory>
+        <file>src/Propel/Runtime/Adapter/Pdo/MssqlAdapter.php</file>
+        <file>src/Propel/Runtime/Adapter/Pdo/OracleAdapter.php</file>
+        <file>src/Propel/Runtime/Adapter/Pdo/SqlsrvAdapter.php</file>
 
-        <file>../../src/Propel/Runtime/Adapter/Pdo/SqlsrvAdapter.php</file>
+        <file>src/Propel/Runtime/Adapter/Pdo/SqlsrvAdapter.php</file>
       </exclude>
     </whitelist>
   </filter>
