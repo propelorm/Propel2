@@ -14,7 +14,6 @@ use Propel\Common\Pluralizer\PluralizerInterface;
 use Propel\Generator\Builder\Om\ObjectBuilder;
 use Propel\Generator\Builder\Om\QueryBuilder;
 use Propel\Generator\Builder\Om\TableMapBuilder;
-use Propel\Generator\Builder\Sql\DataSQLBuilder;
 use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\Table;
@@ -96,12 +95,6 @@ abstract class DataModelBuilder
      * @var DataModelBuilder
      */
     private $multiExtendObjectBuilder;
-
-    /**
-     * The Data-SQL builder for current table.
-     * @var DataSQLBuilder
-     */
-    private $dataSqlBuilder;
 
     /**
      * The Pluralizer class to use.
@@ -226,19 +219,6 @@ abstract class DataModelBuilder
         }
 
         return $this->multiExtendObjectBuilder;
-    }
-
-    /**
-     * Returns new or existing data sql builder class for this table.
-     * @return DataSQLBuilder
-     */
-    public function getDataSQLBuilder()
-    {
-        if (!isset($this->dataSqlBuilder)) {
-            $this->dataSqlBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'datasql');
-        }
-
-        return $this->dataSqlBuilder;
     }
 
     /**
@@ -458,7 +438,7 @@ abstract class DataModelBuilder
      * Wraps call to Platform->quoteIdentifier() with a check to see whether quoting is enabled.
      *
      * All subclasses should call this quoteIdentifier() method rather than calling the Platform
-     * method directly.  This method is used by both DataSQLBuilder and DDLBuilder, and potentially
+     * method directly.  This method is used by DDLBuilder, and potentially
      * in the OM builders also, which is why it is defined in this class.
      *
      * @param  string $text The text to quote.
