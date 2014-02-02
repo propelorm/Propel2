@@ -19,6 +19,7 @@ use Propel\Generator\Model\Diff\DatabaseDiff;
 use Propel\Generator\Model\Diff\TableDiff;
 use Propel\Generator\Model\Domain;
 use Propel\Generator\Model\ForeignKey;
+use Propel\Generator\Model\Index;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Model\Unique;
@@ -262,6 +263,31 @@ PRAGMA foreign_keys = ON;
         }
 
         return $ret;
+    }
+
+    /**
+     * Returns the DDL SQL to add an Index.
+     *
+     * @param  Index  $index
+     * @return string
+     */
+    public function getAddIndexDDL(Index $index)
+    {
+        $name = $index->getName();
+        if ($schema = $index->getTable()->getSchema()) {
+            $name = $schema . '§' . $name;
+        }
+
+        $pattern = "
+CREATE %sINDEX %s ON %s (%s);
+";
+
+        return sprintf($pattern,
+            $index->isUnique() ? 'UNIQUE ' : '',
+            $name,
+            $this->quoteIdentifier($index->getTable()->getName()),
+            $this->getColumnListDDL($index->getColumns())
+        );
     }
 
     /**

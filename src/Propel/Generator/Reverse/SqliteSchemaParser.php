@@ -201,7 +201,16 @@ class SqliteSchemaParser extends AbstractSchemaParser
             $column->getDomain()->replaceScale($scale);
 
             if (null !== $default) {
-                $column->getDomain()->setDefaultValue(new ColumnDefaultValue($default, ColumnDefaultValue::TYPE_VALUE));
+                if ("'" !== substr($default, 0, 1) && strpos($default, '(')) {
+                    $defaultType = ColumnDefaultValue::TYPE_EXPR;
+                    if ('datetime(CURRENT_TIMESTAMP, \'localtime\')' === $default) {
+                        $default = 'CURRENT_TIMESTAMP';
+                    }
+                } else {
+                    $defaultType = ColumnDefaultValue::TYPE_VALUE;
+                    $default = str_replace("'", '', $default);
+                }
+                $column->getDomain()->setDefaultValue(new ColumnDefaultValue($default, $defaultType));
             }
 
             $column->setNotNull($notNull);
@@ -244,8 +253,8 @@ class SqliteSchemaParser extends AbstractSchemaParser
                 $tableSchema = '';
 
                 if (false !== ($pos = strpos($tableName, '§'))) {
-                    $tableName = substr($tableName, $pos + 2);
                     $tableSchema = substr($tableName, 0, $pos);
+                    $tableName = substr($tableName, $pos + 2);
                 }
 
                 $fk->setForeignTableCommonName($tableName);

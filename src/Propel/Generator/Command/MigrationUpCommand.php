@@ -75,7 +75,7 @@ class MigrationUpCommand extends AbstractCommand
         if (!$nextMigrationTimestamp = $manager->getFirstUpMigrationTimestamp()) {
             $output->writeln('All migrations were already executed - nothing to migrate.');
 
-            return false;
+            return 1;
         }
         $output->writeln(sprintf(
             'Executing migration %s up',
@@ -86,7 +86,7 @@ class MigrationUpCommand extends AbstractCommand
         if (false === $migration->preUp($manager)) {
             $output->writeln('<error>preUp() returned false. Aborting migration.</error>');
 
-            return false;
+            return 1;
         }
 
         foreach ($migration->getUpSQL() as $datasource => $sql) {
@@ -103,7 +103,6 @@ class MigrationUpCommand extends AbstractCommand
             $conn = $manager->getAdapterConnection($datasource);
             $res = 0;
             $statements = SqlParser::parseString($sql);
-            $conn->beginTransaction();
             foreach ($statements as $statement) {
                 try {
                     if ($input->getOption('verbose')) {
@@ -115,11 +114,9 @@ class MigrationUpCommand extends AbstractCommand
                     $res++;
                 } catch (\PDOException $e) {
                     $output->writeln(sprintf('<error>Failed to execute SQL "%s". Aborting migration.</error>', $statement));
-                    $conn->rollBack();
-                    return false;
+                    throw $e;
                 }
             }
-            $conn->commit();
             if (!$res) {
                 $output->writeln('No statement was executed. The version was not updated.');
                 $output->writeln(sprintf(
@@ -128,7 +125,7 @@ class MigrationUpCommand extends AbstractCommand
                 ));
                 $output->writeln('<error>Migration aborted</error>', Project::MSG_ERR);
 
-                return false;
+                return 1;
             }
             $output->writeln(sprintf(
                 '%d of %d SQL statements executed successfully on datasource "%s"',

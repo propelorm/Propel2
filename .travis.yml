@@ -9,7 +9,7 @@ env:
   - DB=agnostic                                   #only database agnostic tests
   - DB=mysql DB_USER=root                         #only database tests against mysql
   - DB=pgsql DB_USER=postgres DB_NAME=postgres    #only database tests against postgresql
-#  - DB=sqlite
+  - DB=sqlite
 
 before_script:
   # Composer
