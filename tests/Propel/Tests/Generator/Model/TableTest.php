@@ -531,6 +531,24 @@ class TableTest extends ModelTestCase
         $this->assertCount(1, $table->getIndices());
     }
 
+    public function testIsIndex()
+    {
+        $table = new Table();
+        $column1 = new Column('category_id');
+        $column2 = new Column('type');
+        $table->addColumn($column1);
+        $table->addColumn($column2);
+
+        $index = new Index('test_index');
+        $index->setColumns([$column1, $column2]);
+        $table->addIndex($index);
+
+        $this->assertTrue($table->isIndex(['category_id', 'type']));
+        $this->assertTrue($table->isIndex(['type', 'category_id']));
+        $this->assertFalse($table->isIndex(['category_id', 'type2']));
+        $this->assertFalse($table->isIndex(['asd']));
+    }
+
     public function testAddUniqueIndex()
     {
         $table = new Table();
