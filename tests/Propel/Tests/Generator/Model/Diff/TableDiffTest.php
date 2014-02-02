@@ -478,6 +478,82 @@ class TableDiffTest extends \PHPUnit_Framework_TestCase
         return new TableDiff($fromTable, $toTable);
     }
 
+    public function testToString()
+    {
+        $tableA = new Table('A');
+        $tableB = new Table('B');
+
+        $diff = new TableDiff($tableA, $tableB);
+        $diff->addAddedColumn('id', new Column('id', 'integer'));
+        $diff->addRemovedColumn('category_id', new Column('category_id', 'integer'));
+
+        $colFoo = new Column('foo', 'integer');
+        $colBar = new Column('bar', 'integer');
+        $tableA->addColumn($colFoo);
+        $tableA->addColumn($colBar);
+
+        $diff->addRenamedColumn($colFoo, $colBar);
+        $columnDiff = new ColumnDiff($colFoo, $colBar);
+        $diff->addModifiedColumn('foo', $columnDiff);
+
+        $fk = new ForeignKey('category');
+        $fk->setTable($tableA);
+        $fk->setForeignTableCommonName('B');
+        $fk->addReference('category_id', 'id');
+        $fkChanged = clone $fk;
+        $fkChanged->setForeignTableCommonName('C');
+        $fkChanged->addReference('bla', 'id2');
+        $fkChanged->setOnDelete('cascade');
+        $fkChanged->setOnUpdate('cascade');
+
+        $diff->addAddedFk('category', $fk);
+        $diff->addModifiedFk('category', $fk, $fkChanged);
+        $diff->addRemovedFk('category', $fk);
+
+        $index = new Index('test_index');
+        $index->setTable($tableA);
+        $index->setColumns([$colFoo]);
+
+        $indexChanged = clone $index;
+        $indexChanged->setColumns([$colBar]);
+
+        $diff->addAddedIndex('test_index', $index);
+        $diff->addModifiedIndex('test_index', $index, $indexChanged);
+        $diff->addRemovedIndex('test_index', $index);
+
+        $string = (string) $diff;
+
+        $expected = '  A:
+    addedColumns:
+      - id
+    removedColumns:
+      - category_id
+    modifiedColumns:
+      A.FOO:
+        modifiedProperties:
+    renamedColumns:
+      foo: bar
+    addedIndices:
+      - test_index
+    removedIndices:
+      - test_index
+    modifiedIndices:
+      - test_index
+    addedFks:
+      - category
+    removedFks:
+      - category
+    modifiedFks:
+      category:
+          localColumns: from ["category_id"] to ["category_id","bla"]
+          foreignColumns: from ["id"] to ["id","id2"]
+          onUpdate: from  to CASCADE
+          onDelete: from  to CASCADE
+';
+
+        $this->assertEquals($expected, $string);
+    }
+
     public function testMagicClone()
     {
         $diff = new TableDiff(new Table('A'), new Table('B'));
