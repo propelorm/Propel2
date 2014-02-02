@@ -3396,66 +3396,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     } // addFKAccessor
 
     /**
-     * Adds a convenience method for setting a related object by specifying the primary key.
-     * This can be used in conjunction with the getPrimaryKey() for systems where nothing is known
-     * about the actual objects being related.
-     * @param string     &$script The script will be modified in this method.
-     * @param ForeignKey $fk
-     */
-    protected function addFKByKeyMutator(&$script, ForeignKey $fk)
-    {
-        $table = $this->getTable();
-
-        $methodAffix = $this->getFKPhpNameAffix($fk);
-
-        $script .= "
-    /**
-     * Provides convenient way to set a relationship based on a
-     * key.  e.g.
-     * <code>\$bar->setFooKey(\$foo->getPrimaryKey())</code>
-     *";
-        if (count($fk->getLocalColumns()) > 1) {
-            $script .= "
-     * Note: It is important that the xml schema used to create this class
-     * maintains consistency in the order of related columns between
-     * ".$table->getName()." and ". $fk->getName().".
-     * If for some reason this is impossible, this method should be
-     * overridden in <code>".$table->getPhpName()."</code>.";
-        }
-        $script .= "
-     * @return \$this|".$this->getObjectClassName(true)." The current object (for fluent API support)
-     * @throws PropelException
-     */
-    public function set".$methodAffix."Key(\$key)
-    {
-";
-        if (count($fk->getLocalColumns()) > 1) {
-            $i = 0;
-            foreach ($fk->getLocalColumns() as $colName) {
-                $col = $table->getColumn($colName);
-                $fktype = $col->getPhpType();
-                $script .= "
-            \$this->set".$col->getPhpName()."( ($fktype) \$key[$i] );
-";
-                $i++;
-            } /* foreach */
-        } else {
-            $lcols = $fk->getLocalColumns();
-            $colName = $lcols[0];
-            $col = $table->getColumn($colName);
-            $fktype = $col->getPhpType();
-            $script .= "
-        \$this->set".$col->getPhpName()."( ($fktype) \$key);
-";
-        }
-        $script .= "
-
-        return \$this;
-    }
-";
-    } // addFKByKeyMutator()
-
-    /**
      * Adds the method that fetches fkey-related (referencing) objects but also joins in data from another table.
      * @param string     &$script The script will be modified in this method.
      * @param ForeignKey $refFK
