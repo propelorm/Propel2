@@ -91,13 +91,13 @@ class MysqlSchemaParser extends AbstractSchemaParser
      */
     public function parse(Database $database)
     {
-        $this->addVendorInfo = $this->getGeneratorConfig()->getBuildProperty('addVendorInfo');
+        $this->addVendorInfo = $this->getBuildProperty('addVendorInfo');
 
         $sql = 'SHOW FULL TABLES';
         if ($schema = $database->getSchema()) {
             $sql .= ' FROM ' . $database->getPlatform()->quoteIdentifier($schema);
         }
-        $dataFetcher = $this->dbh->query($sql);
+        $dataFetcher = $this->getConnection()->query($sql);
 
         // First load the tables (important that this happen before filling out details of tables)
         $tables = array();
@@ -139,7 +139,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
      */
     protected function addColumns(Table $table)
     {
-        $stmt = $this->dbh->query(sprintf('SHOW COLUMNS FROM %s', $this->getPlatform()->quoteIdentifier($table->getName())));
+        $stmt = $this->getConnection()->query(sprintf('SHOW COLUMNS FROM %s', $this->getPlatform()->quoteIdentifier($table->getName())));
 
         while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
             $column = $this->getColumnFromRow($row, $table);
@@ -258,7 +258,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
     {
         $database = $table->getDatabase();
 
-        $dataFetcher = $this->dbh->query(sprintf('SHOW CREATE TABLE %s', $this->getPlatform()->quoteIdentifier($table->getName())));
+        $dataFetcher = $this->getConnection()->query(sprintf('SHOW CREATE TABLE %s', $this->getPlatform()->quoteIdentifier($table->getName())));
         $row = $dataFetcher->fetch();
 
         $foreignKeys = array(); // local store to avoid duplicates
@@ -342,7 +342,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
      */
     protected function addIndexes(Table $table)
     {
-        $stmt = $this->dbh->query(sprintf('SHOW INDEX FROM %s', $this->getPlatform()->quoteIdentifier($table->getName())));
+        $stmt = $this->getConnection()->query(sprintf('SHOW INDEX FROM %s', $this->getPlatform()->quoteIdentifier($table->getName())));
 
         // Loop through the returned results, grouping the same key_name together
         // adding each column for that key.
@@ -379,7 +379,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
      */
     protected function addPrimaryKey(Table $table)
     {
-        $stmt = $this->dbh->query(sprintf('SHOW KEYS FROM %s', $this->getPlatform()->quoteIdentifier($table->getName())));
+        $stmt = $this->getConnection()->query(sprintf('SHOW KEYS FROM %s', $this->getPlatform()->quoteIdentifier($table->getName())));
 
         // Loop through the returned results, grouping the same key_name together
         // adding each column for that key.
@@ -400,7 +400,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
      */
     protected function addTableVendorInfo(Table $table)
     {
-        $stmt = $this->dbh->query("SHOW TABLE STATUS LIKE '" . $table->getName() . "'");
+        $stmt = $this->getConnection()->query("SHOW TABLE STATUS LIKE '" . $table->getName() . "'");
         $row = $stmt->fetch(\PDO::FETCH_ASSOC);
         if (!$this->addVendorInfo) {
             // since we depend on `Engine` in the MysqlPlatform, we always have to extract this vendor information
