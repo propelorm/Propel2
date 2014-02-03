@@ -48,7 +48,7 @@ class ObjectFormatterInheritanceTest extends BookstoreEmptyTestBase
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         BookstoreEmployeeTableMap::clearInstancePool();
 
-        $stmt = $con->query('SELECT * FROM bookstore_employee');
+        $stmt = $con->query('SELECT id, class_key, name, job_title, supervisor_id, photo FROM bookstore_employee');
         $formatter = new ObjectFormatter();
         $formatter->init(new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\BookstoreEmployee'));
         $emps = $formatter->format($stmt);

@@ -11,7 +11,7 @@
 namespace Propel\Tests;
 
 
-class TestCase  extends \PHPUnit_Framework_TestCase
+class TestCase extends \PHPUnit_Framework_TestCase
 {
     protected function getDriver()
     {
@@ -114,25 +114,5 @@ class TestCase  extends \PHPUnit_Framework_TestCase
         $obj =  new $className($con);
 
         return $obj;
-    }
-
-    /**
-     * Returns current database driver.
-     *
-     * @return string[]
-     */
-    protected function getDriver()
-    {
-        $driver = $this->con ? $this->con->getAttribute(\PDO::ATTR_DRIVER_NAME) : null;
-
-        if (null === $driver && $currentDSN = $this->getBuiltDsn()) {
-            $driver = explode(':', $currentDSN)[0];
-        }
-
-        if (null === $driver && getenv('DATABASE')) {
-            $driver = getenv('DATABASE');
-        }
-
-        return strtolower($driver);
     }
 }

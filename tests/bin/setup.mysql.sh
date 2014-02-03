@@ -39,12 +39,3 @@ CREATE SCHEMA second_hand_books;
 CREATE SCHEMA migration;
 ';
 check;
-
-dsn="mysql:host=$DB_HOSTNAME;dbname=test";
-
-if [ "$DB_PW" = "" ]; then
-    echo "\$DB_PW not set. Using no password.";
-    php $DIR/../../bin/propel test:prepare --vendor="mysql" --dsn="$dsn" --user="$DB_USER";
-else
-    php $DIR/../../bin/propel test:prepare --vendor="mysql" --dsn="$dsn" --user="$DB_USER" --password="$DB_PW";
-fi

@@ -14,6 +14,9 @@ use Propel\Runtime\Collection\Collection;
 use Propel\Runtime\Collection\CollectionIterator;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
+/**
+ * @group database
+ */
 class CollectionIteratorTest extends BookstoreTestBase
 {
     public function testIsEmpty()

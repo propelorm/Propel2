@@ -21,8 +21,6 @@ use Symfony\Component\Finder\Finder;
  * those files (model classes and -conf.php files) are created.
  *
  * If you need additional to that also database's tables use TestCaseFixturesDatabase instead.
- *
- * @author William Durand <william.durand1@gmail.com>
  */
 class TestCaseFixtures extends TestCase
 {
@@ -41,11 +39,11 @@ class TestCaseFixtures extends TestCase
      */
     protected $con;
 
-	/**
-	 * Setup fixture. Needed here because we want to have a realistic code coverage value.
-	 */
-	protected function setUp()
-	{
+    /**
+     * Setup fixture. Needed here because we want to have a realistic code coverage value.
+     */
+    protected function setUp()
+    {
         $dsn = $this->getFixturesConnectionDsn();
 
         $options = array(
@@ -100,11 +98,11 @@ class TestCaseFixtures extends TestCase
             $options['--password'] = getenv('DB_PW');
         }
 
-		$input = new \Symfony\Component\Console\Input\ArrayInput($options);
+        $input = new \Symfony\Component\Console\Input\ArrayInput($options);
 
-		$output = new \Symfony\Component\Console\Output\BufferedOutput();
-		$app->setAutoExit(false);
-		if (0 !== $app->run($input, $output)) {
+        $output = new \Symfony\Component\Console\Output\BufferedOutput();
+        $app->setAutoExit(false);
+        if (0 !== $app->run($input, $output)) {
             echo $output->fetch();
             $this->fail('Can not initialize fixtures.');
             return false;
@@ -117,7 +115,7 @@ class TestCaseFixtures extends TestCase
         );
 
         $this->readAllRuntimeConfigs();
-	}
+    }
 
     protected function getLastBuildMode()
     {
@@ -228,6 +226,6 @@ class TestCaseFixtures extends TestCase
             $db = 'mysql';
         }
 
-        return strtolower($driver) ?: $db;
+        return $db ?: strtolower($driver);
     }
 }

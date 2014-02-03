@@ -22,52 +22,48 @@ class GraphvizManager extends AbstractManager
     public function build()
     {
         $count = 0;
-        $dotSyntax = '';
 
-        foreach ($this->getDataModels() as $dataModel) {
-            $dotSyntax .= "digraph G {\n";
+        foreach ($this->getDatabases() as $database) {
+            $dotSyntax = "digraph G {\n";
 
-            /** @var $database \Propel\Generator\Model\Database */
-            foreach ($dataModel->getDatabases() as $database) {
-                $this->log("db: " . $database->getName());
+            $this->log("db: " . $database->getName());
 
-                // print the tables
-                foreach ($database->getTables() as $tbl) {
-                    $this->log("\t+ " . $tbl->getName());
-                    $dotSyntax .= 'node'.$tbl->getName().' [label="{<table>'.$tbl->getName().'|<cols>';
+            // print the tables
+            foreach ($database->getTables() as $tbl) {
+                $this->log("\t+ " . $tbl->getName());
+                $dotSyntax .= 'node'.$tbl->getName().' [label="{<table>'.$tbl->getName().'|<cols>';
 
-                    foreach ($tbl->getColumns() as $col) {
-                        $dotSyntax .= $col->getName() . ' (' . $col->getType()  . ')';
-                        if (count($col->getForeignKeys()) > 0) {
-                            $dotSyntax .= ' [FK]';
-                        } elseif ($col->isPrimaryKey()) {
-                            $dotSyntax .= ' [PK]';
-                        }
-                        $dotSyntax .= '\l';
+                foreach ($tbl->getColumns() as $col) {
+                    $dotSyntax .= $col->getName() . ' (' . $col->getType()  . ')';
+                    if (count($col->getForeignKeys()) > 0) {
+                        $dotSyntax .= ' [FK]';
+                    } elseif ($col->isPrimaryKey()) {
+                        $dotSyntax .= ' [PK]';
                     }
-                    $dotSyntax .= '}", shape=record];';
-                    $dotSyntax .= "\n";
-
-                    $count++;
+                    $dotSyntax .= '\l';
                 }
-
-                // print the relations
-                $count = 0;
+                $dotSyntax .= '}", shape=record];';
                 $dotSyntax .= "\n";
-                foreach ($database->getTables() as $tbl) {
-                    foreach ($tbl->getForeignKeys() as $fk) {
-                        $dotSyntax .= 'node'.$tbl->getName();
-                        $dotSyntax .= ':cols -> node'.$fk->getForeignTableName();
-                        $label = [];
-                        foreach ($fk->getColumnObjectsMapping() as $map) {
-                            $label[] = $map['local']->getName().'='.$map['foreign']->getName();
-                        }
-                        $dotSyntax .= ':table [label="' . implode('\l', $label) . ' ", color=gray];';
-                        $dotSyntax .= "\n";
-                    }
 
-                    $count++;
+                $count++;
+            }
+
+            // print the relations
+            $count = 0;
+            $dotSyntax .= "\n";
+            foreach ($database->getTables() as $tbl) {
+                foreach ($tbl->getForeignKeys() as $fk) {
+                    $dotSyntax .= 'node'.$tbl->getName();
+                    $dotSyntax .= ':cols -> node'.$fk->getForeignTableName();
+                    $label = [];
+                    foreach ($fk->getColumnObjectsMapping() as $map) {
+                        $label[] = $map['local']->getName().'='.$map['foreign']->getName();
+                    }
+                    $dotSyntax .= ':table [label="' . implode('\l', $label) . ' ", color=gray];';
+                    $dotSyntax .= "\n";
                 }
+
+                $count++;
             }
 
             $dotSyntax .= "}\n";

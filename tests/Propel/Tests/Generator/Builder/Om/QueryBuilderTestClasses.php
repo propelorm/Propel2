@@ -17,7 +17,7 @@ use Propel\Tests\Bookstore\BookQuery;
 
 class myCustomBookQuery extends BookQuery
 {
-    public static function create($modelAlias = null, $criteria = null)
+    public static function create($modelAlias = null, Criteria $criteria = null)
     {
         if ($criteria instanceof myCustomBookQuery) {
             return $criteria;

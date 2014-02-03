@@ -10,6 +10,8 @@ use Propel\Tests\Helpers\PlatformDatabaseBuildTimeBase;
 
 /**
  * Tests for a M2M relation with three pks where each is a FK.
+ *
+ * @group database
  */
 class GeneratedObjectM2MRelationThreePKsTest extends PlatformDatabaseBuildTimeBase
 {

@@ -2,6 +2,7 @@
 
 namespace Propel\Tests\Generator\Behavior\AggregateColumn;
 
+use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Propel;
@@ -48,7 +49,7 @@ class TestableComment extends AggregateComment
 
 class TestableAggregateCommentQuery extends AggregateCommentQuery
 {
-    public static function create($modelAlias = null, $criteria = null)
+    public static function create($modelAlias = null, Criteria $criteria = null)
     {
         return new TestableAggregateCommentQuery();
     }
