@@ -46,7 +46,7 @@ class DataFetcherTest extends BookstoreEmptyTestBase
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
 
-        $dataFetcher = $con->query('SELECT * FROM book');
+        $dataFetcher = $con->query('SELECT id, title, isbn, price, publisher_id, author_id FROM book');
         $this->assertInstanceOf('Propel\Runtime\DataFetcher\PDODataFetcher', $dataFetcher);
 
         $this->assertEquals(4, $dataFetcher->count());
@@ -69,11 +69,11 @@ class DataFetcherTest extends BookstoreEmptyTestBase
         }
         $this->assertNull($last);
 
-        $dataFetcher = $con->query('SELECT * FROM book');
+        $dataFetcher = $con->query('SELECT id, title, isbn, price, publisher_id, author_id FROM book');
         $this->assertEquals('Harry Potter and the Order of the Phoenix', $dataFetcher->fetchColumn(1));
         $this->assertEquals('Quicksilver', $dataFetcher->fetchColumn(1));
 
-        $dataFetcher = $con->query('SELECT * FROM book');
+        $dataFetcher = $con->query('SELECT id, title, isbn, price, publisher_id, author_id FROM book');
         $rows        = [];
         $last        = null;
         $i           = -1;
