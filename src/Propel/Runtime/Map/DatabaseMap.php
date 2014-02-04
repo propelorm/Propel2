@@ -173,6 +173,11 @@ class DatabaseMap
         return $this->getTable($tableName)->getColumn($columnName, false);
     }
 
+    /**
+     * @param string $phpName
+     * @return TableMap
+     * @throws Exception\TableNotFoundException
+     */
     public function getTableByPhpName($phpName)
     {
         if ('\\' !== $phpName[0]) {

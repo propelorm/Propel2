@@ -100,6 +100,7 @@ class ObjectFormatter extends AbstractFormatter
         list($obj, $col) = $this->getTableMap()->populateobject($row, 0, $this->getDataFetcher()->getIndexType());
 
         // related objects added using with()
+        $hydrationChain = null;
         foreach ($this->getWith() as $modelWith) {
             list($endObject, $col) = $modelWith->getTableMap()->populateobject($row, $col, $this->getDataFetcher()->getIndexType());
 
@@ -109,7 +110,7 @@ class ObjectFormatter extends AbstractFormatter
 
             if ($modelWith->isPrimary()) {
                 $startObject = $obj;
-            } elseif (isset($hydrationChain)) {
+            } elseif (null !== $hydrationChain) {
                 $startObject = $hydrationChain[$modelWith->getLeftPhpName()];
             } else {
                 continue;
@@ -122,7 +123,7 @@ class ObjectFormatter extends AbstractFormatter
                 }
                 continue;
             }
-            if (isset($hydrationChain)) {
+            if (null !== $hydrationChain) {
                 $hydrationChain[$modelWith->getRightPhpName()] = $endObject;
             } else {
                 $hydrationChain = array($modelWith->getRightPhpName() => $endObject);

@@ -1822,7 +1822,6 @@ class Criteria
         // included via a LEFT JOIN
         foreach ($this->keys() as $key) {
             $criterion = $this->getCriterion($key);
-            $table = null;
             foreach ($criterion->getAttachedCriterion() as $attachedCriterion) {
                 $tableName = $attachedCriterion->getTable();
 

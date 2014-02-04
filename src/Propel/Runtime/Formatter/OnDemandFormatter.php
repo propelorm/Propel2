@@ -88,6 +88,7 @@ class OnDemandFormatter extends ObjectFormatter
         $class = $this->isSingleTableInheritance ? call_user_func(array($this->tableMap, 'getOMClass'), $row, $col, false) : $this->class;
         $obj = $this->getSingleObjectFromRow($row, $class, $col);
         // related objects using 'with'
+        $hydrationChain = null;
         foreach ($this->getWith() as $modelWith) {
             if ($modelWith->isSingleTableInheritance()) {
                 $class = call_user_func(array($modelWith->getTableMap(), 'getOMClass'), $row, $col, false);
@@ -102,7 +103,7 @@ class OnDemandFormatter extends ObjectFormatter
             $endObject = $this->getSingleObjectFromRow($row, $class, $col);
             if ($modelWith->isPrimary()) {
                 $startObject = $obj;
-            } elseif (isset($hydrationChain)) {
+            } elseif (null !== $hydrationChain) {
                 $startObject = $hydrationChain[$modelWith->getLeftPhpName()];
             } else {
                 continue;
@@ -115,7 +116,7 @@ class OnDemandFormatter extends ObjectFormatter
                 }
                 continue;
             }
-            if (isset($hydrationChain)) {
+            if (null !== $hydrationChain) {
                 $hydrationChain[$modelWith->getRightPhpName()] = $endObject;
             } else {
                 $hydrationChain = array($modelWith->getRightPhpName() => $endObject);

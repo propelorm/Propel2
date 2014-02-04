@@ -199,6 +199,9 @@ abstract class AbstractFormatter
         }
     }
 
+    /**
+     * @return \Propel\Runtime\Map\TableMap
+     */
     public function getTableMap()
     {
         return Propel::getServiceContainer()->getDatabaseMap($this->dbName)->getTableByPhpName($this->class);

@@ -26,6 +26,8 @@ class ConcreteInheritanceParentBehavior extends Behavior
         'descendant_column' => 'descendant_class'
     );
 
+    protected $builder;
+
     public function modifyTable()
     {
         $table = $this->getTable();

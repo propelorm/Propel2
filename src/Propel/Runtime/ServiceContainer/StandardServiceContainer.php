@@ -486,7 +486,6 @@ class StandardServiceContainer implements ServiceContainerInterface
                     'Handler type "%s" not supported by StandardServiceContainer. Try setting the Logger manually, or use another ServiceContainer.',
                     $configuration['type']
                 ));
-                break;
         }
         $logger->pushHandler($handler);
 
