@@ -1,0 +1,17 @@
+{
+	"name" : "propel/collection-behavior",
+	"description" : "Creates model-related collections for nice IDE support",
+	"type" : "propel-behavior",
+	"require" : {
+		"propel/propel" : "dev-master"
+	},
+	"autoload" : {
+		"psr-4" : {
+			"Propel\\Behavior\\Collection\\" : "src"
+		}
+	},
+	"extra": {
+		"name": "collection",
+		"class": "\\Propel\\Behavior\\Collection\\CollectionBehavior"
+	}
+}
