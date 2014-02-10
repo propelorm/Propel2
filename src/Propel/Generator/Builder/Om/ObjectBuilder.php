@@ -1129,7 +1129,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * ".$column->getDescription();
         if ($column->isLazyLoad()) {
             $script .= "
-     * @param      ConnectionInterface An optional ConnectionInterface connection to use for fetching this lazy-loaded column.";
+     * @param      ConnectionInterface \$con An optional ConnectionInterface connection to use for fetching this lazy-loaded column.";
         }
         $script .= "
      * @return boolean
@@ -1181,7 +1181,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * ".$column->getDescription();
         if ($column->isLazyLoad()) {
             $script .= "
-     * @param      ConnectionInterface An optional ConnectionInterface connection to use for fetching this lazy-loaded column.";
+     * @param      ConnectionInterface \$con An optional ConnectionInterface connection to use for fetching this lazy-loaded column.";
         }
         $script .= "
      * @return   ".$column->getPhpType()."
@@ -1679,7 +1679,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * ".$col->getDescription();
         if ($col->isLazyLoad()) {
             $script .= "
-     * @param      ConnectionInterface An optional ConnectionInterface connection to use for fetching this lazy-loaded column.";
+     * @param      ConnectionInterface \$con An optional ConnectionInterface connection to use for fetching this lazy-loaded column.";
         }
         $script .= "
      * @return   ".$this->getObjectClassName(true)." The current object (for fluent API support)
@@ -1723,7 +1723,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * ".$col->getDescription();
         if ($col->isLazyLoad()) {
             $script .= "
-     * @param      ConnectionInterface An optional ConnectionInterface connection to use for fetching this lazy-loaded column.";
+     * @param      ConnectionInterface \$con An optional ConnectionInterface connection to use for fetching this lazy-loaded column.";
         }
         $script .= "
      * @return   ".$this->getObjectClassName(true)." The current object (for fluent API support)
@@ -3418,7 +3418,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * @param      string \$joinBehavior optional join type to use (defaults to $joinBehavior)
      * @return ObjectCollection|{$className}[] List of $className objects
      */
-    public function get".$relCol."Join".$relCol2."(Criteria \$criteria = null, \$con = null, \$joinBehavior = $joinBehavior)
+    public function get".$relCol."Join".$relCol2."(Criteria \$criteria = null, ConnectionInterface \$con = null, \$joinBehavior = $joinBehavior)
     {";
                 $script .= "
         \$query = $fkQueryClassName::create(null, \$criteria);
