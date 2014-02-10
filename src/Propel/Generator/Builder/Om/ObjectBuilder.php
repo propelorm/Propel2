@@ -995,10 +995,33 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      */
     protected function addEnumAccessor(&$script, Column $column)
     {
-        $this->addDefaultAccessorComment($script, $column);
+        $this->addEnumAccessorComment($script, $column);
         $this->addDefaultAccessorOpen($script, $column);
         $this->addEnumAccessorBody($script, $column);
         $this->addDefaultAccessorClose($script);
+    }
+
+    /**
+     * Add the comment for an enum accessor method.
+     *
+     * @param string &$script
+     * @param Column $column
+     */
+    public function addEnumAccessorComment(&$script, Column $column)
+    {
+        $clo=$column->getLowercasedName();
+
+        $script .= "
+    /**
+     * Get the [$clo] column value.
+     * ".$column->getDescription();
+        if ($column->isLazyLoad()) {
+            $script .= "
+     * @param      ConnectionInterface An optional ConnectionInterface connection to use for fetching this lazy-loaded column.";
+        }
+        $script .= "
+     * @return   string
+     */";
     }
 
     /**
@@ -1679,7 +1702,9 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     protected function addEnumMutator(&$script, Column $col)
     {
         $clo = $col->getLowercasedName();
-        $this->addMutatorOpen($script, $col);
+        $this->addEnumMutatorComment($script, $col);
+        $this->addMutatorOpenOpen($script, $col);
+        $this->addMutatorOpenBody($script, $col);
 
         $script .= "
         if (\$v !== null) {
@@ -1696,6 +1721,24 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         }
 ";
         $this->addMutatorClose($script, $col);
+    }
+
+    /**
+     * Adds the comment for an enum mutator.
+     *
+     * @param string &$script
+     * @param Column $column
+     */
+    public function addEnumMutatorComment(&$script, Column $column)
+    {
+        $clo = $column->getLowercasedName();
+        $script .= "
+    /**
+     * Set the value of [$clo] column.
+     * ".$column->getDescription()."
+     * @param      string \$v new value
+     * @return   ".$this->getObjectClassName(true)." The current object (for fluent API support)
+     */";
     }
 
     /**
