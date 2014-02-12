@@ -299,7 +299,7 @@ public function addVersion(\$con = null)
             $fkVersionColumnName = $fk->getLocalColumnName() . '_version';
             $fkVersionColumnPhpName = $versionTable->getColumn($fkVersionColumnName)->getPhpName();
             $script .= "
-    if ((\$related = \$this->get{$fkGetter}(\$con)) && \$related->getVersion()) {
+    if ((\$related = \$this->get{$fkGetter}(null, \$con)) && \$related->getVersion()) {
         \$version->set{$fkVersionColumnPhpName}(\$related->getVersion());
     }";
         }
@@ -309,7 +309,7 @@ public function addVersion(\$con = null)
             $idsColumn = $this->behavior->getReferrerIdsColumn($fk);
             $versionsColumn = $this->behavior->getReferrerVersionsColumn($fk);
             $script .= "
-    if (\$relateds = \$this->get{$fkGetter}(\$con)->toKeyValue('{$fk->getForeignColumn()->getPhpName()}', 'Version')) {
+    if (\$relateds = \$this->get{$fkGetter}(null, \$con)->toKeyValue('{$fk->getForeignColumn()->getPhpName()}', 'Version')) {
         \$version->set{$idsColumn->getPhpName()}(array_keys(\$relateds));
         \$version->set{$versionsColumn->getPhpName()}(array_values(\$relateds));
     }";

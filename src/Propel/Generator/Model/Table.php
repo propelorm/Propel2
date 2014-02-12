@@ -32,7 +32,7 @@ use Propel\Generator\Platform\PlatformInterface;
 class Table extends ScopedMappingModel implements IdMethod
 {
     use BehaviorableTrait;
-    
+
     /**
      * @var Column[]
      */
@@ -225,7 +225,7 @@ class Table extends ScopedMappingModel implements IdMethod
             }
         }
     }
-    
+
     protected function registerBehavior(Behavior $behavior)
     {
         $behavior->setTable($this);
@@ -566,7 +566,7 @@ class Table extends ScopedMappingModel implements IdMethod
 
     /**
      * Adds several columns at once.
-     * 
+     *
      * @param Column[] $columns An array of Column instance
      */
     public function addColumns(array $columns)
@@ -708,7 +708,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Returns the list of references to this table.
      *
-     * @return array
+     * @return ForeignKey[]
      */
     public function getReferrers()
     {
@@ -965,7 +965,7 @@ class Table extends ScopedMappingModel implements IdMethod
         return $this->database->getGeneratorConfig();
     }
 
-    
+
 
     /**
      * Returns whether or not the table behaviors offer additional builders.
@@ -1256,7 +1256,7 @@ class Table extends ScopedMappingModel implements IdMethod
 
     /**
      * Makes this database in read-only mode.
-     * 
+     *
      * @param boolean $flag True by default
      */
     public function setReadOnly($flag = true)
@@ -1447,7 +1447,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Returns a Collection of parameters relevant for the chosen
      * id generation method.
-     * 
+     *
      * @return IdMethodParameter[]
      */
     public function getIdMethodParameters()
@@ -1712,7 +1712,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Returns whether or not to determine if code/sql gets created for this table.
      * Table will be skipped, if set to true.
-     * 
+     *
      * @param boolean $flag
      */
     public function setForReferenceOnly($flag = true)

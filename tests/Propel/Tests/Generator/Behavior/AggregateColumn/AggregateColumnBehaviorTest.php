@@ -10,6 +10,7 @@
 
 namespace Propel\Tests\Generator\Behavior\AggregateColumn;
 
+use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Tests\Bookstore\Behavior\AggregateColumn;
 use Propel\Tests\Bookstore\Behavior\AggregateComment;
 use Propel\Tests\Bookstore\Behavior\AggregateCommentQuery;
@@ -251,7 +252,7 @@ class TestableComment extends AggregateComment
 
 class TestableAggregateCommentQuery extends AggregateCommentQuery
 {
-    public static function create($modelAlias = null, $criteria = null)
+    public static function create($modelAlias = null, Criteria $criteria = null)
     {
         return new TestableAggregateCommentQuery();
     }

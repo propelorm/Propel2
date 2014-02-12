@@ -92,6 +92,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
 {
     use InstancePoolTrait;
     use TableMapTrait;
+
 ";
     }
 
@@ -429,10 +430,10 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
      */
     public static function buildTableMap()
     {
-      \$dbMap = Propel::getServiceContainer()->getDatabaseMap(" . $this->getTableMapClass() . "::DATABASE_NAME);
-      if (!\$dbMap->hasTable(" . $this->getTableMapClass() . "::TABLE_NAME)) {
-        \$dbMap->addTableObject(new ".$this->getTableMapClass()."());
-      }
+        \$dbMap = Propel::getServiceContainer()->getDatabaseMap(" . $this->getTableMapClass() . "::DATABASE_NAME);
+        if (!\$dbMap->hasTable(" . $this->getTableMapClass() . "::TABLE_NAME)) {
+            \$dbMap->addTableObject(new ".$this->getTableMapClass()."());
+        }
     }
 ";
     }
@@ -725,8 +726,8 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
         }
 
         return $this->renderTemplate('tableMapClearRelatedInstancePool', array(
-                'tableName'            => $table->getName(),
-                'relatedClassNames'   => $relatedClassNames,
+            'tableName'           => $table->getName(),
+            'relatedClassNames'   => $relatedClassNames,
         ));
     }
 
@@ -786,6 +787,8 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
      * @param int    \$offset    The 0-based offset for reading from the resultset row.
      * @param string \$indexType One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_STUDLYPHPNAME
      *                           TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM
+     *
+     * @return string The primary key hash of the row
      */
     public static function getPrimaryKeyHashFromRow(\$row, \$offset = 0, \$indexType = TableMap::TYPE_NUM)
     {";
@@ -835,13 +838,15 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
         $n = 0;
 
         if ($table->hasCompositePrimaryKey()) {
-            $pks = array();
             foreach ($table->getColumns() as $col) {
                 if (!$col->isLazyLoad()) {
                     if ($col->isPrimaryKey()) {
-                        $pks[] = '\$pks[] = (' . $col->getPhpType() . ') ' . "\$row[\$indexType == TableMap::TYPE_NUM
-                            ? $n + \$offset
-                            : self::translateFieldName('{$col->getPhpName()}', TableMap::TYPE_PHPNAME, \$indexType)]";
+                        $script .= '
+        $pks[] = (' . $col->getPhpType() . ') ' . "\$row[
+            \$indexType == TableMap::TYPE_NUM
+                ? $n + \$offset
+                : self::translateFieldName('{$col->getPhpName()}', TableMap::TYPE_PHPNAME, \$indexType)
+        ];";
                     }
                     $n++;
                 }
@@ -849,7 +854,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
 
             $script .= "
 
-            return \$pks;";
+        return \$pks;";
         } else {
 
             $pk = "''";
@@ -857,18 +862,17 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
                 if (!$col->isLazyLoad()) {
                     if ($col->isPrimaryKey()) {
                         $pk = '(' . $col->getPhpType() . ') ' . "\$row[
-                            \$indexType == TableMap::TYPE_NUM
-                            ? $n + \$offset
-                            : self::translateFieldName('{$col->getPhpName()}', TableMap::TYPE_PHPNAME, \$indexType)
-                        ]";
+            \$indexType == TableMap::TYPE_NUM
+                ? $n + \$offset
+                : self::translateFieldName('{$col->getPhpName()}', TableMap::TYPE_PHPNAME, \$indexType)
+        ]";
                     }
                     $n++;
                 }
             }
 
             $script .= "
-
-            return " . $pk . ";";
+        return " . $pk . ";";
         }
 
         $script .= "
@@ -911,6 +915,8 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
      * @param boolean \$withPrefix Whether or not to return the path with the class name
      * @throws PropelException Any exceptions caught during processing will be
      *         rethrown wrapped into a PropelException.
+     *
+     * @return string The OM class
      */
     public static function getOMClass(\$row, \$colnum, \$withPrefix = true)
     {
@@ -1049,6 +1055,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
             \$cls = static::getOMClass(\$row, \$offset, false);";
         }
         $script .= "
+            /** @var {$this->getObjectClassName()} \$obj */
             \$obj = new \$cls();
             \$col = \$obj->hydrate(\$row, \$offset, false, \$indexType);
             {$this->getTableMapClassName()}::addInstanceToPool(\$obj, \$key);
@@ -1103,12 +1110,14 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
                 // class must be set each time from the record row
                 \$cls = static::getOMClass(\$row, 0);
                 \$cls = preg_replace('#\.#', '\\\\', \$cls);
+                /** @var {$this->getObjectClassName()} \$obj */
                 " . $this->buildObjectInstanceCreationCode('$obj', '$cls') . "
                 \$obj->hydrate(\$row);
                 \$results[] = \$obj;
                 {$this->getTableMapClassName()}::addInstanceToPool(\$obj, \$key);";
         } else {
             $script .= "
+                /** @var {$this->getObjectClassName()} \$obj */
                 " . $this->buildObjectInstanceCreationCode('$obj', '$cls') . "
                 \$obj->hydrate(\$row);
                 \$results[] = \$obj;
@@ -1296,9 +1305,11 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
 
         \$query = " . $this->getQueryClassName() . "::create()->mergeWith(\$criteria);
 
-        if (\$values instanceof Criteria) { {$this->getTableMapClassName()}::clearInstancePool();
+        if (\$values instanceof Criteria) {
+            {$this->getTableMapClassName()}::clearInstancePool();
         } elseif (!is_object(\$values)) { // it's a primary key, or an array of pks
-            foreach ((array) \$values as \$singleval) { {$this->getTableMapClassName()}::removeInstanceFromPool(\$singleval);
+            foreach ((array) \$values as \$singleval) {
+                {$this->getTableMapClassName()}::removeInstanceFromPool(\$singleval);
             }
         }
 
