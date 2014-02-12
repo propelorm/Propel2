@@ -92,8 +92,9 @@ class MigrationStatusCommand extends AbstractCommand
             }
         }
 
+        $oldestMigrationTimestamp = $manager->getOldestDatabaseVersion();
         if ($input->getOption('verbose')) {
-            if ($oldestMigrationTimestamp = $manager->getOldestDatabaseVersion()) {
+            if ($oldestMigrationTimestamp) {
                 $output->writeln(sprintf(
                     'Latest migration was executed on %s (timestamp %d)',
                     date('Y-m-d H:i:s', $oldestMigrationTimestamp),
