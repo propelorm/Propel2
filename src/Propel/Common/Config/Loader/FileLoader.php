@@ -15,7 +15,6 @@ use Propel\Common\Config\Exception\RuntimeException;
 use Propel\Common\Config\FileLocator;
 use Symfony\Component\Config\Loader\FileLoader as BaseFileLoader;
 use Symfony\Component\Config\FileLocatorInterface;
-use Symfony\Component\Yaml\Parser;
 
 /**
  * Abstract class used by all file-based loaders.
@@ -212,10 +211,10 @@ abstract class FileLoader extends BaseFileLoader
     /**
      * Scan recursively an array to find a value of a given key.
      *
-     * @param string $property_key The array key
-     * @param array $config The array to scan
-     * @param boolean $found if the key was found
-     * @return mixed The value or null if not found
+     * @param  string  $property_key The array key
+     * @param  array   $config       The array to scan
+     * @param  boolean $found        if the key was found
+     * @return mixed   The value or null if not found
      */
     private function getValue($property_key, $config = null, &$found)
     {

@@ -12,7 +12,6 @@ namespace Propel\Tests\Common\Config\Loader;
 
 use Propel\Common\Config\Loader\FileLoader as BaseFileLoader;
 use Propel\Tests\TestCase;
-use Symfony\Component\Yaml\Yaml;
 
 class FileLoaderTest extends TestCase
 {

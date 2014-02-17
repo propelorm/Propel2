@@ -13,6 +13,7 @@ namespace Propel\Common\Config;
 use Propel\Common\Config\Exception\InvalidArgumentException;
 use Propel\Common\Config\Loader\DelegatingLoader;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\Config\Definition\Processor;
 
 /**
  * Class ConfigurationManager
@@ -33,11 +34,13 @@ class ConfigurationManager
     /**
      * Load and validate configuration values from a file.
      *
-     * @param string $filename Configuration file name
+     * @param string $filename  Configuration file name
+     * @param array  $extraConf Array of configuration properties, to be merged with those loaded from file.
+     *                          It's useful when passing configuration parameters from command line.
      */
-    public function __construct($filename = 'propel')
+    public function __construct($filename = 'propel', $extraConf = array())
     {
-        $this->load($filename);
+        $this->load($filename, $extraConf);
         $this->process();
     }
 
@@ -75,10 +78,19 @@ class ConfigurationManager
      * Only one configuration file is supposed to be found.
      * This method also looks for a '.dist' configuration file and loads it.
      *
-     * @param string $filename Configuration file name
+     * @param string $filename  Configuration file name
+     * @param array  $extraConf Array of configuration properties, to be merged with those loaded from file.
      */
-    private function load($fileName)
+    protected function load($fileName, $extraConf)
     {
+        if (null === $fileName) {
+            $fileName = 'propel';
+        }
+
+        if (null === $extraConf) {
+            $extraConf = array();
+        }
+
         if ('propel' === $fileName) {
             $currentDir = getcwd();
             $dirs[] = $currentDir;
@@ -128,15 +140,17 @@ class ConfigurationManager
             $distConf = $distDelegatingLoader->load($fileName . '.dist');
         }
 
-        $this->config = array_merge($distConf, $conf);
+        $this->config = array_replace_recursive($distConf, $conf, $extraConf);
     }
 
     /**
      * Validate the configuration array via Propel\Common\Config\PropelConfiguration class
-     * @todo
+     * and add default values.
      */
-    private function process()
+    protected function process()
     {
-
+        $processor = new Processor();
+        $configuration = new PropelConfiguration();
+        $this->config = $processor->processConfiguration($configuration, $this->config);
     }
 }
