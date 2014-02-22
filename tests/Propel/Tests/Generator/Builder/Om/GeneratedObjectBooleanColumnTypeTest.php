@@ -30,11 +30,18 @@ class GeneratedObjectBooleanColumnTypeTest extends TestCase
         <column name="bar" type="BOOLEAN" />
         <column name="true_bar" type="BOOLEAN" defaultValue="true" />
         <column name="false_bar" type="BOOLEAN" defaultValue="false" />
+        <column name="is_baz" type="BOOLEAN" />
     </table>
 </database>
 EOF;
             QuickBuilder::buildSchema($schema);
         }
+    }
+
+    public function testIsserName()
+    {
+        $this->assertTrue(method_exists('ComplexColumnTypeEntity4', 'isBar'));
+        $this->assertTrue(method_exists('ComplexColumnTypeEntity4', 'isBaz'));
     }
 
     public function providerForSetter()
@@ -71,8 +78,10 @@ EOF;
         $e->setBar($value);
         if ($expected) {
             $this->assertTrue($e->getBar());
+            $this->assertTrue($e->isBar());
         } else {
             $this->assertFalse($e->getBar());
+            $this->assertFalse($e->isBar());
         }
     }
 

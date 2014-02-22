@@ -50,6 +50,9 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
                 }
             } elseif ($col->isEnumType()) {
                 $this->addEnumAccessor($script, $col);
+            } elseif ($col->isBooleanType()) {
+                $this->addDefaultAccessor($script, $col);
+                $this->addBooleanAccessor($script, $col);
             } else {
                 $this->addDefaultAccessor($script, $col);
             }
