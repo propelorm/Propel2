@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<database name="bookstore-behavior" defaultIdMethod="native" package="behavior.default_order" namespace="Propel\Tests\Bookstore\Behavior">
+
+    <table name="default_order_1">
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+        <column name="title" type="VARCHAR" size="100" primaryString="true" />
+
+        <behavior name="default_order">
+            <parameter name="column" value="title"/>
+        </behavior>
+    </table>
+
+    <table name="default_order_2">
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+        <column name="title" type="VARCHAR" size="100" primaryString="true" />
+
+        <behavior name="default_order">
+            <parameter name="column1" value="title"/>
+            <parameter name="column2" value="id"/>
+            <parameter name="direction2" value="desc"/>
+        </behavior>
+    </table>
+
+</database>
