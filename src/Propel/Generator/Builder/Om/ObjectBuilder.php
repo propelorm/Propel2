@@ -717,6 +717,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         }
 
         foreach ($colsWithDefaults as $column) {
+            /** @var Column $column */
             $clo = $column->getLowercasedName();
             $defaultValue = $this->getDefaultValueString($column);
             if ($column->isTemporalType()) {
@@ -1938,7 +1939,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         }
 
         foreach ($colsWithDefaults as $col) {
-
+            /** @var Column $col */
             $clo = $col->getLowercasedName();
             $accessor = "\$this->$clo";
             if ($col->isTemporalType()) {
@@ -3494,6 +3495,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         }
     }
 
+    /**
+     * @param string       &$script
+     * @param ForeignKey[] $referrers
+     */
     protected function addInitRelations(&$script, $referrers)
     {
         $script .= "
@@ -4104,6 +4109,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     protected function addCrossFKMethods(&$script)
     {
         foreach ($this->getTable()->getCrossFks() as $fkList) {
+            /** @var ForeignKey $refFK */
+            /** @var ForeignKey $crossFK */
             list($refFK, $crossFK) = $fkList;
             $this->declareClassFromBuilder($this->getNewStubObjectBuilder($crossFK->getForeignTable()), 'Child');
             $this->declareClassFromBuilder($this->getNewStubQueryBuilder($crossFK->getForeignTable()));
@@ -4197,7 +4204,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 ";
     }
 
-    protected function addCrossFKGet(&$script, $refFK, $crossFK)
+    protected function addCrossFKGet(&$script, ForeignKey $refFK, ForeignKey $crossFK)
     {
         $relatedName = $this->getFKPhpNameAffix($crossFK, $plural = true);
         $relatedObjectClassName = $this->getClassNameFromBuilder($this->getNewStubObjectBuilder($crossFK->getForeignTable()));
@@ -4244,7 +4251,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 ";
     }
 
-    protected function addCrossFKSet(&$script, $refFK, $crossFK)
+    protected function addCrossFKSet(&$script, ForeignKey $refFK, ForeignKey $crossFK)
     {
         $relatedNamePlural       = $this->getFKPhpNameAffix($crossFK, true);
         $relatedName             = $this->getFKPhpNameAffix($crossFK, false);
@@ -4285,7 +4292,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 ";
     }
 
-    protected function addCrossFKCount(&$script, $refFK, $crossFK)
+    protected function addCrossFKCount(&$script, ForeignKey $refFK, ForeignKey $crossFK)
     {
         $relatedName = $this->getFKPhpNameAffix($crossFK, $plural = true);
         $relatedObjectClassName = $this->getClassNameFromBuilder($this->getNewStubObjectBuilder($crossFK->getForeignTable()));

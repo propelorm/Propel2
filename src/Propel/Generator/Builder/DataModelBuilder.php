@@ -11,12 +11,15 @@
 namespace Propel\Generator\Builder;
 
 use Propel\Common\Pluralizer\PluralizerInterface;
+use Propel\Generator\Builder\Om\MultiExtendObjectBuilder;
 use Propel\Generator\Builder\Om\ObjectBuilder;
 use Propel\Generator\Builder\Om\QueryBuilder;
+use Propel\Generator\Builder\Om\QueryInheritanceBuilder;
 use Propel\Generator\Builder\Om\TableMapBuilder;
 use Propel\Generator\Builder\Sql\DataSQLBuilder;
 use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Model\Database;
+use Propel\Generator\Model\Inheritance;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Platform\PlatformInterface;
 
@@ -191,7 +194,7 @@ abstract class DataModelBuilder
 
     /**
      * Returns new or existing Object builder class for this table.
-     * @return ObjectBuilder
+     * @return TableMapBuilder
      */
     public function getTableMapBuilder()
     {
@@ -217,7 +220,7 @@ abstract class DataModelBuilder
 
     /**
      * Returns new or existing stub child object builder class for this table.
-     * @return ObjectBuilder
+     * @return MultiExtendObjectBuilder
      */
     public function getMultiExtendObjectBuilder()
     {
@@ -250,6 +253,7 @@ abstract class DataModelBuilder
      */
     public function getNewBuilder(Table $table, $classname)
     {
+        /** @var DataModelBuilder $builder */
         $builder = new $classname($table);
         $builder->setGeneratorConfig($this);
 
@@ -314,10 +318,13 @@ abstract class DataModelBuilder
 
     /**
      * Returns new Query Inheritance builder class for this table.
+     *
+     * @param Inheritance $child
      * @return ObjectBuilder
      */
-    public function getNewQueryInheritanceBuilder($child)
+    public function getNewQueryInheritanceBuilder(Inheritance $child)
     {
+        /** @var QueryInheritanceBuilder $queryInheritanceBuilder */
         $queryInheritanceBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'queryinheritance');
         $queryInheritanceBuilder->setChild($child);
 
@@ -326,10 +333,13 @@ abstract class DataModelBuilder
 
     /**
      * Returns new stub Query Inheritance builder class for this table.
+     *
+     * @param Inheritance $child
      * @return ObjectBuilder
      */
-    public function getNewStubQueryInheritanceBuilder($child)
+    public function getNewStubQueryInheritanceBuilder(Inheritance $child)
     {
+        /** @var QueryInheritanceBuilder $stubQueryInheritanceBuilder */
         $stubQueryInheritanceBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'queryinheritancestub');
         $stubQueryInheritanceBuilder->setChild($child);
 

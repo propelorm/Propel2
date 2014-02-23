@@ -26,6 +26,7 @@ class PropelQuery
         if (!class_exists($queryClass)) {
             throw new ClassNotFoundException('Cannot find a query class for ' . $class);
         }
+        /** @var ModelCriteria $query */
         $query = new $queryClass();
         if (null !== $alias) {
             $query->setModelAlias($alias);

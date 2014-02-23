@@ -66,6 +66,7 @@ class Table extends ScopedMappingModel implements IdMethod
      */
     private $database;
 
+    /** @var ForeignKey[] */
     private $referrers;
     private $containsForeignPK;
     /**
@@ -795,7 +796,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Returns the list of cross foreign keys.
      *
-     * @return array
+     * @return ForeignKey[][]
      */
     public function getCrossFks()
     {
@@ -855,7 +856,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Adds a new parameter for the strategy that generates primary keys.
      *
-     * @param IdMethodParameter $idMethodParameter
+     * @param IdMethodParameter|array $idMethodParameter
      * @return IdMethodParameter
      */
     public function addIdMethodParameter($idMethodParameter)
@@ -912,7 +913,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * Adds a new index to the indices list and set the
      * parent table of the column to the current table.
      *
-     * @param  Index $index
+     * @param  Index|array $index
      * @return Index
      */
     public function addIndex($index)
@@ -936,7 +937,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * Adds a new Unique index to the list of unique indices and set the
      * parent table of the column to the current table.
      *
-     * @param  Unique $unique
+     * @param  Unique|array $unique
      * @return Unique
      */
     public function addUnique($unique)
@@ -1458,7 +1459,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Returns the list of all indices of this table.
      *
-     * @return array
+     * @return Index[]
      */
     public function getIndices()
     {
@@ -1468,7 +1469,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Returns the list of all unique indices of this table.
      *
-     * @return array
+     * @return Unique[]
      */
     public function getUnices()
     {

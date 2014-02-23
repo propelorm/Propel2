@@ -10,6 +10,8 @@
 
 namespace Propel\Runtime\Formatter;
 
+use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
+use Propel\Runtime\Collection\Collection;
 use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\ActiveQuery\BaseModelCriteria;
 use Propel\Runtime\DataFetcher\DataFetcherInterface;
@@ -65,6 +67,7 @@ class OnDemandFormatter extends ObjectFormatter
     {
         $class = $this->getCollectionClassName();
 
+        /** @var Collection $collection */
         $collection = new $class();
         $collection->setModel($this->class);
 
@@ -78,7 +81,7 @@ class OnDemandFormatter extends ObjectFormatter
      *
      *  @param    array  $row associative array with data
      *
-     * @return BaseObject
+     * @return ActiveRecordInterface
      */
     public function getAllObjectsFromRow($row)
     {
@@ -91,7 +94,7 @@ class OnDemandFormatter extends ObjectFormatter
         foreach ($this->getWith() as $modelWith) {
             if ($modelWith->isSingleTableInheritance()) {
                 $class = call_user_func(array($modelWith->getTableMap(), 'getOMClass'), $row, $col, false);
-                $refl = new ReflectionClass($class);
+                $refl = new \ReflectionClass($class);
                 if ($refl->isAbstract()) {
                     $col += constant('Map\\' . $class . 'TableMap::NUM_COLUMNS');
                     continue;

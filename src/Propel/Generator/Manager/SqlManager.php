@@ -14,6 +14,7 @@ use Propel\Generator\Exception\InvalidArgumentException;
 use Propel\Generator\Util\SqlParser;
 use Propel\Runtime\Adapter\AdapterFactory;
 use Propel\Runtime\Connection\ConnectionFactory;
+use Propel\Runtime\Connection\ConnectionInterface;
 
 /**
  * Service class for managing SQL.
@@ -195,6 +196,7 @@ class SqlManager extends AbstractManager
     /**
      * Returns a ConnectionInterface instance for a given datasource.
      *
+     * @param string $datasource
      * @return ConnectionInterface
      */
     protected function getConnectionInstance($datasource)

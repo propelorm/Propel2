@@ -15,7 +15,6 @@ use Propel\Generator\Model\Column;
 use Propel\Generator\Model\ColumnDefaultValue;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\Diff\ColumnDiff;
-use Propel\Generator\Model\Diff\DatabaseDiff;
 use Propel\Generator\Model\Diff\TableDiff;
 use Propel\Generator\Model\Domain;
 use Propel\Generator\Model\ForeignKey;
@@ -92,6 +91,7 @@ class SqlitePlatform extends DefaultPlatform
     /**
      * Builds the DDL SQL to remove a list of columns
      *
+     * @param Column[] $columns
      * @return string
      */
     public function getAddColumnsDDL($columns)
@@ -337,7 +337,7 @@ BEGIN;
     /**
      * {@inheritdoc}
      */
-    public function getRenameColumnDDL($fromColumn, $toColumn)
+    public function getRenameColumnDDL(Column $fromColumn, Column $toColumn)
     {
         //not supported
         return '';

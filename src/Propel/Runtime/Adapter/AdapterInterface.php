@@ -28,7 +28,7 @@ interface AdapterInterface
      *
      * @param array $conparams connection parameters
      *
-     * @return Propel\Runtime\Connection\ConnectionInterface
+     * @return ConnectionInterface
      */
     public function getConnection($conparams);
 
@@ -40,8 +40,8 @@ interface AdapterInterface
      *
      * @see initConnection()
      *
-     * @param Propel\Runtime\Connection\ConnectionInterface $con
-     * @param string                                        $charset The $string charset encoding.
+     * @param ConnectionInterface $con
+     * @param string              $charset The $string charset encoding.
      */
     public function setCharset(ConnectionInterface $con, $charset);
 
@@ -129,8 +129,8 @@ interface AdapterInterface
     /**
      * Gets the generated ID (either last ID for autoincrement or next sequence ID).
      *
-     * @param Propel\Runtime\Connection\ConnectionInterface $con
-     * @param string                                        $name
+     * @param ConnectionInterface $con
+     * @param string              $name
      *
      * @return mixed
      */
@@ -139,8 +139,8 @@ interface AdapterInterface
     /**
      * Formats a temporal value before binding, given a ColumnMap object
      *
-     * @param mixed                        $value The temporal value
-     * @param Propel\Runtime\Map\ColumnMap $cMap
+     * @param mixed     $value The temporal value
+     * @param ColumnMap $cMap
      *
      * @return string The formatted temporal value
      */

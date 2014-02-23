@@ -67,7 +67,7 @@ class DatabaseDiff
     /**
      * Returns the list of added tables.
      *
-     * @return array
+     * @return Table[]
      */
     public function getAddedTables()
     {
@@ -129,7 +129,7 @@ class DatabaseDiff
     /**
      * Returns the list of removed tables.
      *
-     * @return array
+     * @return Table[]
      */
     public function getRemovedTables()
     {

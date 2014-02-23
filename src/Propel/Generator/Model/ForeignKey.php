@@ -10,6 +10,8 @@
 
 namespace Propel\Generator\Model;
 
+use Propel\Generator\Platform\PlatformInterface;
+
 /**
  * A class for information about table foreign keys.
  *
@@ -493,7 +495,7 @@ class ForeignKey extends MappingModel
     /**
      * Returns an array of local column objects.
      *
-     * @return array
+     * @return Column[]
      */
     public function getLocalColumnObjects()
     {

@@ -38,7 +38,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
     /**
      * GeneratorConfig object holding build properties.
      *
-     * @var GeneratorConfig
+     * @var GeneratorConfigInterface
      */
     private $generatorConfig;
 
@@ -155,7 +155,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
     /**
      * Gets the GeneratorConfig option.
      *
-     * @return GeneratorConfig
+     * @return GeneratorConfigInterface
      */
     public function getGeneratorConfig()
     {

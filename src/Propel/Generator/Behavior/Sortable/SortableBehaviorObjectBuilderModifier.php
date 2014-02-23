@@ -10,7 +10,9 @@
 
 namespace Propel\Generator\Behavior\Sortable;
 
+use Propel\Generator\Builder\Om\AbstractOMBuilder;
 use Propel\Generator\Model\Column;
+use Propel\Generator\Model\Table;
 
 /**
  * Behavior to add sortable columns and abilities
@@ -31,7 +33,7 @@ class SortableBehaviorObjectBuilderModifier
     protected $table;
 
     /**
-     * @var Builder
+     * @var AbstractOMBuilder
      */
     protected $builder;
 
@@ -79,7 +81,7 @@ class SortableBehaviorObjectBuilderModifier
         return $this->behavior->getColumnForParameter($name)->getPhpName();
     }
 
-    protected function setBuilder($builder)
+    protected function setBuilder(AbstractOMBuilder $builder)
     {
         $this->builder = $builder;
         $this->objectClassName = $builder->getObjectClassName();

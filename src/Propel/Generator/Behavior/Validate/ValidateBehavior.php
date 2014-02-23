@@ -72,7 +72,7 @@ class ValidateBehavior extends Behavior
      * Returns the parameters associated with a given column.
      * Useful for i18n behavior
      *
-     * @param string The column name
+     * @param string $columnName The column name
      * @return array The array of parameters associated to given column
      */
     public function getParametersFromColumnName($columnName = null)
@@ -94,7 +94,7 @@ class ValidateBehavior extends Behavior
      * Remove parameters associated with given column.
      * Useful for i18n behavior
      *
-     * @param  string  The column name
+     * @param  string  $columnName  The column name
      */
     public function removeParametersFromColumnName($columnName = null)
     {

@@ -10,8 +10,10 @@
 
 namespace Propel\Generator\Builder\Om;
 
+use Propel\Generator\Model\Column;
 use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\PropelTypes;
+use Propel\Generator\Model\Table;
 
 /**
  * Generates a PHP5 base Query class for user object model (OM).
@@ -823,8 +825,9 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     /**
      * Adds the filterByCol method for this object.
      * @param string &$script The script will be modified in this method.
+     * @param Column $col
      */
-    protected function addFilterByCol(&$script, $col)
+    protected function addFilterByCol(&$script, Column $col)
     {
         $colPhpName = $col->getPhpName();
         $colName = $col->getName();
@@ -1016,8 +1019,9 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     /**
      * Adds the singular filterByCol method for an Array column.
      * @param string &$script The script will be modified in this method.
+     * @param Column $col
      */
-    protected function addFilterByArrayCol(&$script, $col)
+    protected function addFilterByArrayCol(&$script, Column $col)
     {
         $colPhpName = $col->getPhpName();
         $singularPhpName = rtrim($colPhpName, 's');
@@ -1134,9 +1138,11 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
 
     /**
      * Adds the filterByRefFk method for this object.
-     * @param string &$script The script will be modified in this method.
+     *
+     * @param string     &$script The script will be modified in this method.
+     * @param ForeignKey $fk
      */
-    protected function addFilterByRefFk(&$script, $fk)
+    protected function addFilterByRefFk(&$script, ForeignKey $fk)
     {
         $this->declareClasses(
             '\Propel\Runtime\Collection\ObjectCollection',
@@ -1209,9 +1215,10 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
 
     /**
      * Adds the joinRefFk method for this object.
-     * @param string &$script The script will be modified in this method.
+     * @param string     &$script The script will be modified in this method.
+     * @param ForeignKey $fk
      */
-    protected function addJoinRefFk(&$script, $fk)
+    protected function addJoinRefFk(&$script, ForeignKey $fk)
     {
         $queryClass = $this->getQueryClassName();
         $fkTable = $this->getTable()->getDatabase()->getTable($fk->getTableName());
@@ -1279,9 +1286,10 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
 
     /**
      * Adds the useFkQuery method for this object.
-     * @param string &$script The script will be modified in this method.
+     * @param string     &$script The script will be modified in this method.
+     * @param ForeignKey $fk
      */
-    protected function addUseRefFkQuery(&$script, $fk)
+    protected function addUseRefFkQuery(&$script, ForeignKey $fk)
     {
         $fkTable = $this->getTable()->getDatabase()->getTable($fk->getTableName());
         $fkQueryBuilder = $this->getNewStubQueryBuilder($fkTable);
@@ -1296,7 +1304,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
      * Adds a useRelatedQuery method for this object.
      * @param string &$script The script will be modified in this method.
      */
-    protected function addUseRelatedQuery(&$script, $fkTable, $queryClass, $relationName, $joinType)
+    protected function addUseRelatedQuery(&$script, Table $fkTable, $queryClass, $relationName, $joinType)
     {
         $script .= "
     /**
@@ -1319,7 +1327,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
 ";
     }
 
-    protected function addFilterByCrossFK(&$script, $refFK, $crossFK)
+    protected function addFilterByCrossFK(&$script, ForeignKey $refFK, ForeignKey $crossFK)
     {
         $queryClass = $this->getQueryClassName();
         $crossRefTable = $crossFK->getTable();

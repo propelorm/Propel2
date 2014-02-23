@@ -132,7 +132,7 @@ class Schema
      * final initialization process.
      *
      * @param  boolean $doFinalInitialization
-     * @return array
+     * @return Database[]
      */
     public function getDatabases($doFinalInitialization = true)
     {
@@ -253,7 +253,7 @@ class Schema
     /**
      * Merge other Schema objects together into this Schema object.
      *
-     * @param array $schemas
+     * @param Schema[] $schemas
      */
     public function joinSchemas(array $schemas)
     {
@@ -311,7 +311,7 @@ class Schema
     public function toString()
     {
         $dumper = new XmlDumper();
-        
+
         return $dumper->dumpSchema($this);
     }
 

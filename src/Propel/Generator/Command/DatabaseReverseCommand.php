@@ -15,7 +15,6 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Output\Output;
 use Propel\Generator\Manager\ReverseManager;
 
 /**
@@ -71,7 +70,7 @@ class DatabaseReverseCommand extends AbstractCommand
         $manager->setWorkingDirectory($input->getOption('output-dir'));
 
         list(, $dsn, $infos) = $this->parseConnection('connection=' . $input->getArgument('connection'));
-        
+
         $manager->setConnection(array_merge(array('dsn' => $dsn), $infos));
 
         $manager->setDatabaseName($input->getOption('database-name'));

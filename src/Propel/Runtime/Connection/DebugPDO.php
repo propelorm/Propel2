@@ -10,8 +10,6 @@
 
 namespace Propel\Runtime\Connection;
 
-use Propel\Runtime\Connection\ConnectionWrapper;
-
 /**
  * Connection wrapper class with debug enabled by default.
  *

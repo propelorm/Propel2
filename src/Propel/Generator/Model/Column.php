@@ -238,7 +238,7 @@ class Column extends MappingModel
                 use booleanValue()
             */
             $this->isInheritance = (null !== $this->inheritanceType && 'false' !== $this->inheritanceType);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw new EngineException(sprintf(
                 'Error setting up column %s: %s',
                 $this->getAttribute('name'),
@@ -336,7 +336,7 @@ class Column extends MappingModel
     {
         return strtolower($this->name);
     }
-    
+
     /**
      * Returns the uppercased column name.
      *
@@ -637,7 +637,7 @@ class Column extends MappingModel
 
     /**
      * Returns the inheritance type.
-     * 
+     *
      * @return string
      */
     public function getInheritanceType()
@@ -647,7 +647,7 @@ class Column extends MappingModel
 
     /**
      * Returns the inheritance list.
-     * 
+     *
      * @return Inheritance[]
      */
     public function getInheritanceList()
@@ -658,7 +658,7 @@ class Column extends MappingModel
     /**
      * Returns the inheritance definitions.
      *
-     * @return array
+     * @return Inheritance[]
      */
     public function getChildren()
     {
@@ -906,7 +906,7 @@ class Column extends MappingModel
      *
      * Only if it is a foreign key or part of a foreign key.
      *
-     * @return array
+     * @return ForeignKey[]
      */
     public function getForeignKeys()
     {
@@ -930,7 +930,7 @@ class Column extends MappingModel
     /**
      * Returns the list of references to this column.
      *
-     * @return array
+     * @return ForeignKey[]
      */
     public function getReferrers()
     {
@@ -1221,7 +1221,7 @@ class Column extends MappingModel
     /**
      * Sets a string that will give this column a default value.
      *
-     * @param ColumnDefaultValue|scalar $defaultValue The column's default value
+     * @param ColumnDefaultValue|mixed $defaultValue The column's default value
      * @return Column
      */
     public function setDefaultValue($defaultValue)

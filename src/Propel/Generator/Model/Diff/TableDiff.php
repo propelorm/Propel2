@@ -238,7 +238,7 @@ class TableDiff
     /**
      * Returns the list of added columns
      *
-     * @return array
+     * @return Column[]
      */
     public function getAddedColumns()
     {
@@ -599,7 +599,7 @@ class TableDiff
      *
      * Array must be [ [ Index $fromIndex, Index $toIndex ], [ ... ] ]
      *
-     * @param array $modifiedIndices An aray of modified indices
+     * @param Index[] $modifiedIndices An aray of modified indices
      */
     public function setModifiedIndices(array $modifiedIndices)
     {
@@ -727,7 +727,7 @@ class TableDiff
      *
      * Array must be [ [ ForeignKey $fromFk, ForeignKey $toFk ], [ ... ] ]
      *
-     * @param array $modifiedFks
+     * @param ForeignKey[] $modifiedFks
      */
     public function setModifiedFks(array $modifiedFks)
     {

@@ -189,7 +189,7 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
      * Protects MySQL from charset injection risk.
      * @see http://www.propelorm.org/ticket/1360
      *
-     * @param array the connection parameters from the configuration
+     * @param array $params the connection parameters from the configuration
      *
      * @return array the modified parameters
      */

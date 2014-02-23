@@ -11,9 +11,14 @@
 namespace Propel\Generator\Reverse;
 
 use Propel\Generator\Model\Column;
+use Propel\Generator\Model\ColumnDefaultValue;
 use Propel\Generator\Model\Database;
+use Propel\Generator\Model\ForeignKey;
+use Propel\Generator\Model\IdMethodParameter;
+use Propel\Generator\Model\Index;
 use Propel\Generator\Model\PropelTypes;
-use Propel\Generator\Reverse\AbstractSchemaParser;
+use Propel\Generator\Model\Table;
+use Propel\Runtime\Connection\StatementInterface;
 
 /**
  * Oracle database schema parser.
@@ -132,7 +137,6 @@ class OracleSchemaParser extends AbstractSchemaParser
     protected function addColumns(Table $table)
     {
         $stmt = $this->dbh->query("SELECT COLUMN_NAME, DATA_TYPE, NULLABLE, DATA_LENGTH, DATA_PRECISION, DATA_SCALE, DATA_DEFAULT FROM USER_TAB_COLS WHERE TABLE_NAME = '" . $table->getName() . "'");
-        /* @var stmt StatementInterface */
         while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
             if (false !== strpos($row['COLUMN_NAME'], '$')) {
                 // this is an Oracle internal column - prune
@@ -228,12 +232,12 @@ class OracleSchemaParser extends AbstractSchemaParser
         // local store to avoid duplicates
         $foreignKeys = array();
 
+        /* @var StatementInterface $stmt */
         $stmt = $this->dbh->query("SELECT CONSTRAINT_NAME, DELETE_RULE, R_CONSTRAINT_NAME FROM USER_CONSTRAINTS WHERE CONSTRAINT_TYPE = 'R' AND TABLE_NAME = '" . $table->getName(). "'");
-        /* @var stmt StatementInterface */
         while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
             // Local reference
+            /* @var StatementInterface $stmt2 */
             $stmt2 = $this->dbh->query("SELECT COLUMN_NAME FROM USER_CONS_COLUMNS WHERE CONSTRAINT_NAME = '".$row['CONSTRAINT_NAME']."' AND TABLE_NAME = '" . $table->getName(). "'");
-            /* @var stmt2 StatementInterface */
             $localReferenceInfo = $stmt2->fetch(\PDO::FETCH_ASSOC);
 
             // Foreign reference
@@ -261,7 +265,6 @@ class OracleSchemaParser extends AbstractSchemaParser
     protected function addPrimaryKey(Table $table)
     {
         $stmt = $this->dbh->query("SELECT COLS.COLUMN_NAME FROM USER_CONSTRAINTS CONS, USER_CONS_COLUMNS COLS WHERE CONS.CONSTRAINT_NAME = COLS.CONSTRAINT_NAME AND CONS.TABLE_NAME = '".$table->getName()."' AND CONS.CONSTRAINT_TYPE = 'P'");
-        /* @var stmt StatementInterface */
         while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
             // This fixes a strange behavior by PDO. Sometimes the
             // row values are inside an index 0 of an array

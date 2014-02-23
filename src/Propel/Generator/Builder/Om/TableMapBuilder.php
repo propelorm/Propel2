@@ -581,6 +581,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
             }
         }
         foreach ($this->getTable()->getCrossFks() as $fkList) {
+            /** @var ForeignKey $crossFK */
             list(, $crossFK) = $fkList;
             $relationName = $this->getFKPhpNameAffix($crossFK);
             $pluralName = "'" . $this->getFKPhpNameAffix($crossFK, true) . "'";

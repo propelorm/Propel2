@@ -12,7 +12,15 @@ namespace Propel\Generator\Builder\Util;
 
 use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Exception\SchemaException;
+use Propel\Generator\Model\Behavior;
+use Propel\Generator\Model\Column;
+use Propel\Generator\Model\Database;
+use Propel\Generator\Model\ForeignKey;
+use Propel\Generator\Model\Index;
 use Propel\Generator\Model\Schema;
+use Propel\Generator\Model\Table;
+use Propel\Generator\Model\Unique;
+use Propel\Generator\Model\VendorInfo;
 use Propel\Generator\Platform\PlatformInterface;
 
 /**
@@ -31,15 +39,33 @@ class SchemaReader
     /** enables debug output */
     const DEBUG = false;
 
+    /** @var Schema  */
     private $schema;
+
+    /** @var Database */
     private $currDB;
+
+    /** @var Table */
     private $currTable;
+
+    /** @var Column */
     private $currColumn;
+
+    /** @var ForeignKey */
     private $currFK;
+
+    /** @var Index */
     private $currIndex;
+
+    /** @var Unique */
     private $currUnique;
+
+    /** @var Behavior */
     private $currBehavior;
+
+    /** @var VendorInfo */
     private $currVendorObject;
+
     private $isForReferenceOnly;
     private $currentPackage;
     private $currentXmlFile;

@@ -10,6 +10,7 @@
 
 namespace Propel\Runtime\Collection;
 
+use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\Collection\Exception\ReadOnlyModelException;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Connection\ConnectionInterface;
@@ -207,7 +208,7 @@ class ArrayCollection extends Collection
 
     /**
      * @throws PropelException
-     * @return BaseObject
+     * @return ActiveRecordInterface
      */
     protected function getWorkerObject()
     {

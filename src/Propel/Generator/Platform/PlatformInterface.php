@@ -12,6 +12,7 @@ namespace Propel\Generator\Platform;
 
 use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Model\Column;
+use Propel\Generator\Model\Domain;
 use Propel\Generator\Model\Table;
 use Propel\Runtime\Connection\ConnectionInterface;
 
@@ -94,7 +95,7 @@ interface PlatformInterface
     public function getNullString($notNull);
 
     /**
-     * @return The RDBMS-specific SQL fragment for autoincrement.
+     * @return string The RDBMS-specific SQL fragment for autoincrement.
      */
     public function getAutoIncrement();
 

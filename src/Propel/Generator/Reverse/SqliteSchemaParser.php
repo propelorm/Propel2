@@ -18,7 +18,6 @@ use Propel\Generator\Model\Index;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Model\Unique;
-use Propel\Generator\Reverse\AbstractSchemaParser;
 
 /**
  * SQLite database schema parser.

@@ -20,8 +20,11 @@ use Propel\Runtime\Map\TableMap;
  */
 class ModelJoin extends Join
 {
+    /** @var RelationMap */
     protected $relationMap;
+
     protected $tableMap;
+
     protected $previousJoin;
 
     public function setRelationMap(RelationMap $relationMap, $leftTableAlias = null, $relationAlias = null)
@@ -40,6 +43,9 @@ class ModelJoin extends Join
         return $this;
     }
 
+    /**
+     * @return RelationMap
+     */
     public function getRelationMap()
     {
         return $this->relationMap;
@@ -80,6 +86,9 @@ class ModelJoin extends Join
         return $this;
     }
 
+    /**
+     * @return ModelJoin
+     */
     public function getPreviousJoin()
     {
         return $this->previousJoin;
@@ -131,6 +140,7 @@ class ModelJoin extends Join
 
     public function equals($join)
     {
+        /** @var ModelJoin $join */
         return parent::equals($join)
             && $this->relationMap == $join->getRelationMap()
             && $this->previousJoin == $join->getPreviousJoin()

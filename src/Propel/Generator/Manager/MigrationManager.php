@@ -14,6 +14,7 @@ use Propel\Generator\Exception\InvalidArgumentException;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\Table;
+use Propel\Generator\Platform\PlatformInterface;
 use Propel\Generator\Util\SqlParser;
 use Propel\Runtime\Adapter\AdapterFactory;
 use Propel\Runtime\Connection\ConnectionFactory;
@@ -80,6 +81,10 @@ class MigrationManager extends AbstractManager
         return $this->adapterConnections[$datasource];
     }
 
+    /**
+     * @param string $datasource
+     * @return PlatformInterface
+     */
     public function getPlatform($datasource)
     {
         $params  = $this->getConnection($datasource);

@@ -7,7 +7,6 @@ use Propel\Runtime\Exception\InvalidArgumentException;
 use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\Formatter\AbstractFormatter;
 use Propel\Runtime\Map\TableMap;
-use Propel\Runtime\ActiveQuery\Criteria;
 
 class BaseModelCriteria extends Criteria implements \IteratorAggregate
 {
@@ -17,6 +16,7 @@ class BaseModelCriteria extends Criteria implements \IteratorAggregate
 
     protected $modelAlias;
 
+    /** @var TableMap */
     protected $tableMap;
 
     protected $formatter;
@@ -46,7 +46,7 @@ class BaseModelCriteria extends Criteria implements \IteratorAggregate
      * together with the main object.
      *
      * @see with()
-     * @return array
+     * @return ModelWith[]
      */
     public function getWith()
     {
@@ -219,7 +219,7 @@ class BaseModelCriteria extends Criteria implements \IteratorAggregate
      * constructed on a Propel\Runtime\Collection\PropelCollection.
      * Compulsory for implementation of \IteratorAggregate.
      *
-     * @return Traversable
+     * @return \Traversable
      *
      * @throws LogicException
      */

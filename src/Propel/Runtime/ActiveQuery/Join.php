@@ -395,7 +395,7 @@ class Join
     }
 
     /**
-     * @return all right columns of the join condition
+     * @return array All right columns of the join condition
      */
     public function getRightColumns()
     {
@@ -497,6 +497,7 @@ class Join
      */
     public function buildJoinCondition(Criteria $c)
     {
+        /** @var AbstractCriterion $joinCondition */
         $joinCondition = null;
         for ($i = 0; $i < $this->count; $i++) {
             $criterion = $c->getNewCriterion($this->getLeftColumn($i), $this->getLeftColumn($i) . $this->getOperator($i) . $this->getRightColumn($i), Criteria::CUSTOM);

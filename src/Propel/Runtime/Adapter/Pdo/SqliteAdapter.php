@@ -25,7 +25,7 @@ class SqliteAdapter extends PdoAdapter implements SqlAdapterInterface
      * For SQLite this method has no effect, since SQLite doesn't support specifying a character
      * set (or, another way to look at it, it doesn't require a single character set per DB).
      *
-     * @param PDO    $con     A PDO connection instance.
+     * @param ConnectionInterface $con A PDO connection instance.
      * @param string $charset The charset encoding.
      *
      * @throws \Propel\Runtime\Exception\PropelException If the specified charset doesn't match sqlite_libencoding()
