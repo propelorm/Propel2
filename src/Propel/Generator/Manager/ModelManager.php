@@ -93,7 +93,7 @@ class ModelManager extends AbstractManager
                                 foreach ($col->getChildren() as $child) {
                                     $overwrite = true;
                                     foreach (array('queryinheritance') as $target) {
-                                        if (!$child->getAncestor()) {
+                                        if (!$child->getAncestor() && $child->getClassName() == $table->getPhpName()) {
                                             continue;
                                         }
                                         $builder = $generatorConfig->getConfiguredBuilder($table, $target);
