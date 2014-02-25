@@ -125,7 +125,7 @@ class MigrationMigrateCommand extends AbstractCommand
                     $output->writeln('No statement was executed. The version was not updated.');
                     $output->writeln(sprintf(
                         'Please review the code in "%s"',
-                        $manager->getMigrationDir() . DIRECTORY_SEPARATOR . $manager->getMigrationClassName($timestamp)
+                        $manager->getWorkingDirectory() . DIRECTORY_SEPARATOR . $manager->getMigrationClassName($timestamp)
                     ));
                     $output->writeln('<error>Migration aborted</error>');
 
