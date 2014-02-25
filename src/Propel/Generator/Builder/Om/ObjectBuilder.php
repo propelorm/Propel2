@@ -988,6 +988,63 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     }
 
     /**
+     * Adds a boolean isser method.
+     *
+     * @param string &$script
+     * @param Column $column
+     */
+    protected function addBooleanAccessor(&$script, Column $column)
+    {
+        $this->addDefaultAccessorComment($script, $column);
+        $this->addBooleanAccessorOpen($script, $column);
+        $this->addBooleanAccessorBody($script, $column);
+        $this->addDefaultAccessorClose($script);
+    }
+
+    /**
+     * Adds the function declaration for a boolean accessor.
+     *
+     * @param string &$script
+     * @param Column $column
+     */
+    public function addBooleanAccessorOpen(&$script, Column $column)
+    {
+        $cfc = $column->getPhpName();
+        $cfc = preg_replace('/^Is(?=[A-Z])/', '', $cfc);
+        $visibility = $column->getAccessorVisibility();
+
+        $script .= "
+    ".$visibility." function is$cfc(";
+        if ($column->isLazyLoad()) {
+            $script .= "ConnectionInterface \$con = null";
+        }
+
+        $script .= ")
+    {";
+    }
+
+    /**
+     * Adds the function body for a boolean accessor method.
+     *
+     * @param string &$script
+     * @param Column $column
+     */
+    protected function addBooleanAccessorBody(&$script, Column $column)
+    {
+        $cfc = $column->getPhpName();
+        $clo = $column->getLowercasedName();
+
+        $script .= "
+        return \$this->get$cfc(";
+
+        if ($column->isLazyLoad()) {
+            $script .= '$con';
+        }
+
+        $script .= ");";
+    }
+
+    /**
      * Adds an enum getter method.
      *
      * @param string &$script
