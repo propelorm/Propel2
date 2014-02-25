@@ -512,10 +512,12 @@ class TableMap
     /**
      * Add a primary key column to this Table.
      *
-     * @param  string                        $columnName A String with the column name.
-     * @param  string                        $type       A string specifying the Propel type.
-     * @param  boolean                       $isNotNull  Whether column does not allow NULL values.
-     * @param                                $size       An int specifying the size.
+     * @param  string                        $columnName   A String with the column name.
+     * @param  string                        $phpName      A string representing the PHP name.
+     * @param  string                        $type         A string specifying the Propel type.
+     * @param  boolean                       $isNotNull    Whether column does not allow NULL values.
+     * @param  int                           $size         An int specifying the size.
+     * @param  string                        $defaultValue The default value for this column.
      * @return \Propel\Runtime\Map\ColumnMap Newly added PrimaryKey column.
      */
     public function addPrimaryKey($columnName, $phpName, $type, $isNotNull = false, $size = null, $defaultValue = null)
@@ -527,6 +529,7 @@ class TableMap
      * Add a foreign key column to the table.
      *
      * @param  string                        $columnName   A String with the column name.
+     * @param  string                        $phpName      A string representing the PHP name.
      * @param  string                        $type         A string specifying the Propel type.
      * @param  string                        $fkTable      A String with the foreign key table name.
      * @param  string                        $fkColumn     A String with the foreign key column name.
@@ -544,6 +547,7 @@ class TableMap
      * Add a foreign primary key column to the table.
      *
      * @param  string                        $columnName   A String with the column name.
+     * @param  string                        $phpName      A string representing the PHP name.
      * @param  string                        $type         A string specifying the Propel type.
      * @param  string                        $fkTable      A String with the foreign key table name.
      * @param  string                        $fkColumn     A String with the foreign key column name.
