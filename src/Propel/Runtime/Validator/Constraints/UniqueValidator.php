@@ -22,8 +22,7 @@ class UniqueValidator extends ConstraintValidator
             return;
         }
 
-        $object     = $this->context->getRoot();
-        $className  = get_class($object);
+        $className  = $this->context->getClassName();
         $tableMap   = $className::TABLE_MAP;
         $queryClass = $className . 'Query';
         $filter     = sprintf('filterBy%s', $tableMap::translateFieldName($this->context->getPropertyName(), TableMap::TYPE_STUDLYPHPNAME, TableMap::TYPE_PHPNAME));
