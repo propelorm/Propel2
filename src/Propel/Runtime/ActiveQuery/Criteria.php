@@ -2138,7 +2138,7 @@ class Criteria
      *
      * @throws PropelException
      */
-    public function doUpdate($updateValues, $con)
+    public function doUpdate($updateValues, ConnectionInterface $con)
     {
         $db = Propel::getServiceContainer()->getAdapter($this->getDbName());
         $dbMap = Propel::getServiceContainer()->getDatabaseMap($this->getDbName());
@@ -2283,7 +2283,7 @@ class Criteria
         return $params;
     }
 
-    public function doCount($con = null)
+    public function doCount(ConnectionInterface $con = null)
     {
         $dbMap = Propel::getServiceContainer()->getDatabaseMap($this->getDbName());
         $db = Propel::getServiceContainer()->getAdapter($this->getDbName());
@@ -2414,13 +2414,13 @@ class Criteria
     /**
      * Builds, binds and executes a SELECT query based on the current object.
      *
-     * @param $con A connection object
+     * @param ConnectionInterface $con A connection object
      *
      * @return DataFetcherInterface A dataFetcher using the connection, ready to be fetched
      *
      * @throws \Propel\Runtime\Exception\PropelException
      */
-    public function doSelect($con = null)
+    public function doSelect(ConnectionInterface $con = null)
     {
         if (null === $con) {
             $con = Propel::getServiceContainer()->getReadConnection($this->getDbName());

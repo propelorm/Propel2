@@ -426,9 +426,12 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      *
      * @see http://php.net/manual/en/pdo.query.php for a description of the possible parameters.
      *
+     * @param string $statement The SQL statement to prepare and execute.
+     *                          Data inside the query should be properly escaped.
+     *
      * @return StatementInterface
      */
-    public function query()
+    public function query($statement)
     {
         $args = func_get_args();
         $sql = array_shift($args);
