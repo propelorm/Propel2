@@ -16,7 +16,7 @@ use Propel\Runtime\DataFetcher\PDODataFetcher;
 /**
  * PDO extension that implements ConnectionInterface and builds statements implementing StatementInterface.
  */
-class PdoConnection extends \PDO implements SqlConnectionInterface
+class PdoConnection extends \PDO implements ConnectionInterface
 {
     /**
      * @var string The datasource name associated to this connection
