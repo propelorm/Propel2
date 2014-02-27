@@ -22,6 +22,7 @@ script:
   - ./tests/bin/phpunit.$DB.sh;
 
 matrix:
+  fast_finish: true
   allow_failures:
     - php: hhvm
     - php: 5.6
