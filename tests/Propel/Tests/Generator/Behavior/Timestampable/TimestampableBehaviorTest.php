@@ -33,6 +33,19 @@ class TimestampableBehaviorTest extends BookstoreTestBase
         parent::setUpBeforeClass();
     }
 
+    private function assertTimeEquals($expected, $actual, $message = '')
+    {
+        // accept $expected or ($expected + 1s)
+        return $this->assertThat(
+            $actual,
+            $this->logicalOr(
+                $this->equalTo($expected),
+                $this->equalTo($expected + 1)
+            ),
+            $message
+        );
+    }
+
     public function testParameters()
     {
         $table2 = Table2TableMap::getTableMap();
@@ -45,21 +58,18 @@ class TimestampableBehaviorTest extends BookstoreTestBase
         $this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table1', 'getUpdatedOn'), 'Timestampable allows customization of update_column name');
     }
 
-    /**
-     * @TODO on slow CPU machines or a high load this will fail. Fix it.
-     */
     public function testPreSave()
     {
         $t1 = new Table2();
         $this->assertNull($t1->getUpdatedAt());
         $tsave = time();
         $t1->save();
-        $this->assertEquals($t1->getUpdatedAt('U'), $tsave, 'Timestampable sets updated_column to time() on creation');
+        $this->assertTimeEquals($tsave, $t1->getUpdatedAt('U'), 'Timestampable sets updated_column to time() on creation');
         sleep(1);
         $t1->setTitle('foo');
         $tupdate = time();
         $t1->save();
-        $this->assertEquals($t1->getUpdatedAt('U'), $tupdate, 'Timestampable changes updated_column to time() on update');
+        $this->assertTimeEquals($tupdate, $t1->getUpdatedAt('U'), 'Timestampable changes updated_column to time() on update');
     }
 
     public function testPreSaveNoChange()
@@ -68,11 +78,11 @@ class TimestampableBehaviorTest extends BookstoreTestBase
         $this->assertNull($t1->getUpdatedAt());
         $tsave = time();
         $t1->save();
-        $this->assertEquals($t1->getUpdatedAt('U'), $tsave, 'Timestampable sets updated_column to time() on creation');
+        $this->assertTimeEquals($tsave, $t1->getUpdatedAt('U'), 'Timestampable sets updated_column to time() on creation');
         sleep(1);
         $tupdate = time();
         $t1->save();
-        $this->assertEquals($t1->getUpdatedAt('U'), $tsave, 'Timestampable only changes updated_column if the object was modified');
+        $this->assertTimeEquals($tsave, $t1->getUpdatedAt('U'), 'Timestampable only changes updated_column if the object was modified');
     }
 
     public function testPreSaveManuallyUpdated()
@@ -81,14 +91,14 @@ class TimestampableBehaviorTest extends BookstoreTestBase
         $t1->setUpdatedAt(time() - 10);
         $tsave = time();
         $t1->save();
-        $this->assertNotEquals($t1->getUpdatedAt('U'), $tsave, 'Timestampable does not set updated_column to time() on creation when it is set by the user');
+        $this->assertLessThan($tsave, $t1->getUpdatedAt('U'), 'Timestampable does not set updated_column to time() on creation when it is set by the user');
         // tip: if I set it to time()-10 a second time, the object sees that I want to change it to the same value
         // and skips the update, therefore the updated_at is not in the list of modified columns,
         // and the behavior changes it to the current date... let's say it's an edge case
         $t1->setUpdatedAt(time() - 15);
         $tupdate = time();
         $t1->save();
-        $this->assertNotEquals($t1->getUpdatedAt('U'), $tupdate, 'Timestampable does not change updated_column to time() on update when it is set by the user');
+        $this->assertLessThan($tupdate, $t1->getUpdatedAt('U'), 'Timestampable does not change updated_column to time() on update when it is set by the user');
     }
 
     public function testPreInsert()
@@ -97,12 +107,12 @@ class TimestampableBehaviorTest extends BookstoreTestBase
         $this->assertNull($t1->getCreatedAt());
         $tsave = time();
         $t1->save();
-        $this->assertEquals($t1->getCreatedAt('U'), $tsave, 'Timestampable sets created_column to time() on creation');
+        $this->assertTimeEquals($tsave, $t1->getCreatedAt('U'), 'Timestampable sets created_column to time() on creation');
         sleep(1);
         $t1->setTitle('foo');
         $tupdate = time();
         $t1->save();
-        $this->assertEquals($t1->getCreatedAt('U'), $tsave, 'Timestampable does not update created_column on update');
+        $this->assertTimeEquals($tsave, $t1->getCreatedAt('U'), 'Timestampable does not update created_column on update');
     }
 
     public function testPreInsertManuallyUpdated()
@@ -111,7 +121,7 @@ class TimestampableBehaviorTest extends BookstoreTestBase
         $t1->setCreatedAt(time() - 10);
         $tsave = time();
         $t1->save();
-        $this->assertNotEquals($t1->getCreatedAt('U'), $tsave, 'Timestampable does not set created_column to time() on creation when it is set by the user');
+        $this->assertLessThan($tsave, $t1->getCreatedAt('U'), 'Timestampable does not set created_column to time() on creation when it is set by the user');
     }
 
     public function testObjectKeepUpdateDateUnchanged()
@@ -120,25 +130,25 @@ class TimestampableBehaviorTest extends BookstoreTestBase
         $t1->setUpdatedAt(time() - 10);
         $tsave = time();
         $t1->save();
-        $this->assertNotEquals($t1->getUpdatedAt('U'), $tsave);
+        $this->assertLessThan($tsave, $t1->getUpdatedAt('U'));
         // let's save it a second time; the updated_at should be changed
         $t1->setTitle('foo');
         $tsave = time();
         $t1->save();
-        $this->assertEquals($t1->getUpdatedAt('U'), $tsave);
+        $this->assertTimeEquals($tsave, $t1->getUpdatedAt('U'));
 
         // now let's do this a second time
         $t1 = new Table2();
         $t1->setUpdatedAt(time() - 10);
         $tsave = time();
         $t1->save();
-        $this->assertNotEquals($t1->getUpdatedAt('U'), $tsave);
+        $this->assertLessThan($tsave, $t1->getUpdatedAt('U'));
         // let's save it a second time; the updated_at should be changed
         $t1->keepUpdateDateUnchanged();
         $t1->setTitle('foo');
         $tsave = time();
         $t1->save();
-        $this->assertNotEquals($t1->getUpdatedAt('U'), $tsave, 'keepUpdateDateUnchanged() prevents the behavior from updating the update date');
+        $this->assertLessThan($tsave, $t1->getUpdatedAt('U'), 'keepUpdateDateUnchanged() prevents the behavior from updating the update date');
 
     }
 
