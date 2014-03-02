@@ -29,6 +29,9 @@ class DataRow
         return $this->table;
     }
 
+    /**
+     * @return ColumnValue[]
+     */
     public function getColumnValues()
     {
         return $this->columnValues;

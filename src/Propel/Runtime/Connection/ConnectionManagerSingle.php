@@ -11,7 +11,6 @@
 namespace Propel\Runtime\Connection;
 
 use Propel\Runtime\Adapter\AdapterInterface;
-use Propel\Runtime\Connection\ConnectionInterface;
 
 /**
  * Manager for single connection to a datasource.

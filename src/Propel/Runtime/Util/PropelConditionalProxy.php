@@ -10,6 +10,8 @@
 
 namespace Propel\Runtime\Util;
 
+use Propel\Runtime\ActiveQuery\Criteria;
+
 /**
  * Proxy for conditional statements in a fluid interface.
  * This class replaces another class for wrong statements,
@@ -33,6 +35,7 @@ namespace Propel\Runtime\Util;
  */
 class PropelConditionalProxy
 {
+    /** @var Criteria */
     protected $criteria;
 
     protected $parent;
@@ -43,7 +46,7 @@ class PropelConditionalProxy
 
     protected $parentState;
 
-    public function __construct($criteria, $cond, $proxy = null)
+    public function __construct(Criteria $criteria, $cond, self $proxy = null)
     {
         $this->criteria = $criteria;
         $this->wasTrue = false;

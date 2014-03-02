@@ -11,6 +11,7 @@
 namespace Propel\Runtime\ActiveQuery\Criterion;
 
 use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\Map\ColumnMap;
 
 /**
  * This is an "inner" class that describes an object in the criteria.
@@ -62,6 +63,7 @@ Abstract class AbstractModelCriterion extends AbstractCriterion
             return false;
         }
 
+        /** @var AbstractModelCriterion $crit */
         $crit = $obj;
 
         $isEquiv = (((null === $this->table && null === $crit->getTable())

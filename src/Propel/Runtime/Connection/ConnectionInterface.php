@@ -135,7 +135,7 @@ interface ConnectionInterface
      *
      * @return bool|mixed Returns the result of the callable on success, or <code>true</code> when the callable doesn't return anything.
      *
-     * @throws Exception Re-throws a possible <code>Exception</code> triggered by the callable.
+     * @throws \Exception Re-throws a possible <code>Exception</code> triggered by the callable.
      */
     public function transaction(callable $callable);
 

@@ -137,7 +137,7 @@ abstract class AbstractManager
      * Returns the data models that have been
      * processed.
      *
-     * @return array
+     * @return Schema[]
      */
     public function getDataModels()
     {

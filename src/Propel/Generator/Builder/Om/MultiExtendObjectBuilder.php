@@ -27,6 +27,7 @@ class MultiExtendObjectBuilder extends AbstractObjectBuilder
     /**
      * The current child "object" we are operating on.
      *
+     * @var Inheritance $child
      */
     private $child;
 

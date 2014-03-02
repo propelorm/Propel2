@@ -14,6 +14,7 @@ use Propel\Runtime\ActiveQuery\Criterion\Exception\InvalidClauseException;
 use Propel\Runtime\ActiveQuery\Criteria;
 
 use \PDO;
+use Propel\Runtime\Map\ColumnMap;
 
 /**
  * Specialized ModelCriterion used for custom expressions with a typed binding,

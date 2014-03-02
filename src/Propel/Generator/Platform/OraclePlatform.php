@@ -11,6 +11,7 @@
 namespace Propel\Generator\Platform;
 
 use Propel\Generator\Exception\EngineException;
+use Propel\Generator\Model\Column;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\Domain;
 use Propel\Generator\Model\ForeignKey;
@@ -352,7 +353,7 @@ CREATE %sINDEX %s ON %s (%s)%s;
      * Warning: duplicates logic from OracleAdapter::bindValue().
      * Any code modification here must be ported there.
      */
-    public function getColumnBindingPHP($column, $identifier, $columnValueAccessor, $tab = "            ")
+    public function getColumnBindingPHP(Column $column, $identifier, $columnValueAccessor, $tab = "            ")
     {
         if ($column->getPDOType() == PropelTypes::CLOB_EMU) {
             return sprintf(

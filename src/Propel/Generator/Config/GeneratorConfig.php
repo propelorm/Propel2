@@ -10,6 +10,8 @@
 
 namespace Propel\Generator\Config;
 
+use Propel\Common\Pluralizer\PluralizerInterface;
+use Propel\Generator\Builder\DataModelBuilder;
 use Propel\Generator\Exception\BuildException;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Platform\PlatformInterface;
@@ -43,11 +45,11 @@ class GeneratorConfig implements GeneratorConfigInterface
      * @var BehaviorLocator
      */
     protected $behaviorLocator = null;
-    
+
     /**
      * Construct a new GeneratorConfig.
      *
-     * @param array|Traversable $props
+     * @param array|\Traversable $props
      */
     public function __construct($props = null)
     {
@@ -72,7 +74,7 @@ class GeneratorConfig implements GeneratorConfigInterface
      * Renames the propel.xxx properties to just xxx and renames any xxx.yyy properties
      * to xxxYyy as PHP doesn't like the xxx.yyy syntax.
      *
-     * @param array|Traversable $props
+     * @param array|\Traversable $props
      */
     public function setBuildProperties($props)
     {
@@ -231,6 +233,7 @@ class GeneratorConfig implements GeneratorConfigInterface
         if (!$classname) {
             $classname = $this->getBuilderClassName($type);
         }
+        /** @var DataModelBuilder $builder */
         $builder   = new $classname($table);
         $builder->setGeneratorConfig($this);
 
@@ -240,7 +243,7 @@ class GeneratorConfig implements GeneratorConfigInterface
     /**
      * Returns a configured Pluralizer class.
      *
-     * @return Pluralizer
+     * @return PluralizerInterface
      */
     public function getConfiguredPluralizer()
     {
@@ -333,12 +336,12 @@ class GeneratorConfig implements GeneratorConfigInterface
 
         return $con;
     }
-    
+
     public function getBehaviorLocator() {
         if (!$this->behaviorLocator) {
             $this->behaviorLocator = new BehaviorLocator($this);
         }
-        
+
         return $this->behaviorLocator;
 	}
 

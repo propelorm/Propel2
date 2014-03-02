@@ -10,6 +10,9 @@
 
 namespace Propel\Runtime\Formatter;
 
+use Propel\Runtime\ActiveQuery\ModelWith;
+use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
+use Propel\Runtime\Collection\Collection;
 use Propel\Runtime\Propel;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\ActiveQuery\BaseModelCriteria;
@@ -28,12 +31,14 @@ abstract class AbstractFormatter
 
     protected $tableMap;
 
+    /** @var ModelWith[] $with */
     protected $with;
 
     protected $asColumns;
 
     protected $hasLimit;
 
+    /** @var ActiveRecordInterface[] */
     protected $currentObjects;
 
     protected $collectionName;
@@ -161,6 +166,7 @@ abstract class AbstractFormatter
         $collection = array();
 
         if ($class = $this->getCollectionClassName()) {
+            /** @var Collection $collection */
             $collection = new $class();
             $collection->setModel($this->class);
             $collection->setFormatter($this);
@@ -177,11 +183,11 @@ abstract class AbstractFormatter
     /**
      * Formats an ActiveRecord object
      *
-     * @param BaseObject $record the object to format
+     * @param ActiveRecordInterface $record the object to format
      *
-     * @return BaseObject The original record
+     * @return ActiveRecordInterface The original record
      */
-    public function formatRecord($record = null)
+    public function formatRecord(ActiveRecordInterface $record = null)
     {
         return $record;
     }
@@ -225,7 +231,7 @@ abstract class AbstractFormatter
      * @param int    $col   Offset of the object in the list of objects to hydrate
      * @param string $class Propel model object class
      *
-     * @return BaseObject
+     * @return ActiveRecordInterface
      */
     protected function getWorkerObject($col, $class)
     {
@@ -246,7 +252,7 @@ abstract class AbstractFormatter
      * @param string $class The classname of the object to create
      * @param int    $col   The start column for the hydration (modified)
      *
-     * @return BaseObject
+     * @return ActiveRecordInterface
      */
     public function getSingleObjectFromRow($row, $class, &$col = 0)
     {

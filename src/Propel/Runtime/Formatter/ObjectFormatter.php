@@ -10,6 +10,7 @@
 
 namespace Propel\Runtime\Formatter;
 
+use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\DataFetcher\DataFetcherInterface;
 
@@ -92,7 +93,7 @@ class ObjectFormatter extends AbstractFormatter
      * @param array $row associative array indexed by column number,
      *                      as returned by DataFetcher::fetch()
      *
-     * @return BaseObject
+     * @return ActiveRecordInterface
      */
     public function getAllObjectsFromRow($row)
     {

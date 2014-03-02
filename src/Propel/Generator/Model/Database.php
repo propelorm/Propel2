@@ -10,12 +10,10 @@
 
 namespace Propel\Generator\Model;
 
+use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Exception\EngineException;
 use Propel\Generator\Exception\InvalidArgumentException;
 use Propel\Generator\Platform\PlatformInterface;
-use Propel\Generator\Util\BehaviorLocator;
-use Propel\Generator\Config\QuickGeneratorConfig;
-use Propel\Generator\Exception\BuildException;
 
 /**
  * A class for holding application data structures.
@@ -30,13 +28,13 @@ use Propel\Generator\Exception\BuildException;
  */
 class Database extends ScopedMappingModel
 {
-    
+
     use BehaviorableTrait;
-    
+
     /**
      * The database's platform.
      *
-     * @var \Propel\Generator\Platform\PlatformInterface
+     * @var PlatformInterface
      */
     private $platform;
 
@@ -73,6 +71,8 @@ class Database extends ScopedMappingModel
     private $defaultMutatorVisibility;
     private $domainMap;
     private $heavyIndexing;
+
+    /** @var Schema */
     private $parentSchema;
 
     /**
@@ -165,7 +165,7 @@ class Database extends ScopedMappingModel
 
     /**
      * Returns the max column name's length.
-     * 
+     *
      * @return integer
      */
     public function getMaxColumnNameLength()
@@ -367,7 +367,7 @@ class Database extends ScopedMappingModel
     /**
      * Returns the list of all tables that have a SQL representation.
      *
-     * @return array
+     * @return Table[]
      */
     public function getTablesForSql()
     {
@@ -702,7 +702,7 @@ class Database extends ScopedMappingModel
             return $config->getBuildProperty($name);
         }
     }
-    
+
     /**
      * Returns the table prefix for this database.
      *
@@ -785,7 +785,7 @@ class Database extends ScopedMappingModel
             $table->setupReferrers(true);
         }
     }
-    
+
     protected function registerBehavior(Behavior $behavior)
     {
         $behavior->setDatabase($this);

@@ -10,8 +10,6 @@
 
 namespace Propel\Runtime\Connection;
 
-use Propel\Runtime\Connection\StatementInterface;
-
 /**
  * Wraps a Statement class, providing logging.
  *
@@ -284,7 +282,7 @@ class StatementWrapper implements StatementInterface, \IteratorAggregate
     /**
      * Return the internal statement, which is traversable
      *
-     * @return Traversable
+     * @return \Traversable
      */
     public function getIterator()
     {

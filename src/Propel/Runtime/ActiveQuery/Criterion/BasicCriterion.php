@@ -39,7 +39,7 @@ class BasicCriterion extends AbstractCriterion
      * Sets ignore case.
      *
      * @param  boolean   $b True if case should be ignored.
-     * @return Criterion A modified Criterion object.
+     * @return BasicCriterion A modified Criterion object.
      */
     public function setIgnoreCase($b)
     {

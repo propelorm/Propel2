@@ -11,7 +11,6 @@
 namespace Propel\Runtime\Map;
 
 use Propel\Runtime\Exception\PropelException;
-use Propel\Runtime\Map\TableMap;
 
 trait TableMapTrait
 {

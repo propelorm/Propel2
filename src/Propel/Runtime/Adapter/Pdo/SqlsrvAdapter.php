@@ -28,8 +28,8 @@ class SqlsrvAdapter extends MssqlAdapter implements SqlAdapterInterface
     /**
      * @see parent::initConnection()
      *
-     * @param Propel\Runtime\Connection\ConnectionInterface $con
-     * @param array                                         $settings An array of settings.
+     * @param ConnectionInterface $con
+     * @param array               $settings An array of settings.
      */
     public function initConnection(ConnectionInterface $con, array $settings)
     {

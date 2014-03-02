@@ -10,6 +10,7 @@
 
 namespace Propel\Runtime\ActiveQuery;
 
+use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\Exception\RuntimeException;
 use Propel\Runtime\Propel;
 use Propel\Runtime\Collection\ObjectCollection;
@@ -21,7 +22,6 @@ use Propel\Runtime\Map\ColumnMap;
 use Propel\Runtime\Map\RelationMap;
 use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Util\PropelModelPager;
-use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion;
 use Propel\Runtime\ActiveQuery\Criterion\InModelCriterion;
 use Propel\Runtime\ActiveQuery\Criterion\BasicModelCriterion;
@@ -713,6 +713,7 @@ class ModelCriteria extends BaseModelCriteria
         }
 
         $className = $this->joins[$relationName]->getTableMap()->getClassName();
+        /** @var self $secondaryCriteriaClass */
         if (null === $secondaryCriteriaClass) {
             $secondaryCriteria = PropelQuery::from($className);
         } else {
@@ -962,7 +963,7 @@ class ModelCriteria extends BaseModelCriteria
      *
      * @param ConnectionInterface $con an optional connection object
      *
-     * @return ObjectCollection|array|mixed the list of results, formatted by the current formatter
+     * @return ObjectCollection|ActiveRecordInterface[]|array|mixed the list of results, formatted by the current formatter
      */
     public function find(ConnectionInterface $con = null)
     {
@@ -1543,7 +1544,7 @@ class ModelCriteria extends BaseModelCriteria
      * @param array  $conditions The list of condition names, e.g. array('cond1', 'cond2')
      * @param string $operator   An operator, Criteria::LOGICAL_AND (default) or Criteria::LOGICAL_OR
      *
-     * @return Criterion a Criterion or ModelCriterion object
+     * @return AbstractCriterion A Criterion or ModelCriterion object
      */
     protected function getCriterionForConditions($conditions, $operator = null)
     {

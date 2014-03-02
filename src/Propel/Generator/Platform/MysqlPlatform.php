@@ -628,7 +628,7 @@ ALTER TABLE %s DROP %s;
      * Builds the DDL SQL to rename a column
      * @return string
      */
-    public function getRenameColumnDDL($fromColumn, $toColumn)
+    public function getRenameColumnDDL(Column $fromColumn, Column $toColumn)
     {
         return $this->getChangeColumnDDL($fromColumn, $toColumn);
     }
@@ -647,7 +647,7 @@ ALTER TABLE %s DROP %s;
      * Builds the DDL SQL to change a column
      * @return string
      */
-    public function getChangeColumnDDL($fromColumn, $toColumn)
+    public function getChangeColumnDDL(Column $fromColumn, Column $toColumn)
     {
         $pattern = "
 ALTER TABLE %s CHANGE %s %s;
@@ -721,7 +721,7 @@ ALTER TABLE %s CHANGE %s %s;
         return 'Y-m-d H:i:s';
     }
 
-    public function getColumnBindingPHP($column, $identifier, $columnValueAccessor, $tab = "            ")
+    public function getColumnBindingPHP(Column $column, $identifier, $columnValueAccessor, $tab = "            ")
     {
         // FIXME - This is a temporary hack to get around apparent bugs w/ PDO+MYSQL
         // See http://pecl.php.net/bugs/bug.php?id=9919

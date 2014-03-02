@@ -995,7 +995,7 @@ ALTER TABLE %s DROP COLUMN %s;
      *
      * @return string
      */
-    public function getRenameColumnDDL($fromColumn, $toColumn)
+    public function getRenameColumnDDL(Column $fromColumn, Column $toColumn)
     {
         $pattern = "
 ALTER TABLE %s RENAME COLUMN %s TO %s;
@@ -1029,6 +1029,7 @@ ALTER TABLE %s MODIFY %s;
     /**
      * Builds the DDL SQL to modify a list of columns
      *
+     * @param ColumnDiff[] $columnDiffs
      * @return string
      */
     public function getModifyColumnsDDL($columnDiffs)
@@ -1079,6 +1080,7 @@ ALTER TABLE %s ADD %s;
     /**
      * Builds the DDL SQL to remove a list of columns
      *
+     * @param Column[] $columns
      * @return string
      */
     public function getAddColumnsDDL($columns)
@@ -1309,7 +1311,7 @@ ALTER TABLE %s ADD
      * Warning: duplicates logic from AdapterInterface::bindValue().
      * Any code modification here must be ported there.
      */
-    public function getColumnBindingPHP($column, $identifier, $columnValueAccessor, $tab = "            ")
+    public function getColumnBindingPHP(Column $column, $identifier, $columnValueAccessor, $tab = "            ")
     {
         $script = '';
         if ($column->isTemporalType()) {

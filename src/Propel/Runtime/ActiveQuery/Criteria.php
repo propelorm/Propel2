@@ -170,7 +170,7 @@ class Criteria
 
     /**
      * Storage of conditions data. Collection of Criterion objects.
-     * @var array
+     * @var AbstractCriterion[]
      */
     protected $map = array();
 
@@ -194,7 +194,7 @@ class Criteria
 
     /**
      * Storage of join data. collection of Join objects.
-     * @var array
+     * @var Join[]
      */
     protected $joins = array();
 
@@ -268,7 +268,7 @@ class Criteria
 
     /**
      * Get the criteria map, i.e. the array of Criterions
-     * @return array
+     * @return AbstractCriterion[]
      */
     public function getMap()
     {
@@ -724,7 +724,7 @@ class Criteria
      *
      * @param  string   $key
      * @param  mixed    $value
-     * @return Instance of self.
+     * @return Criteria Instance of self.
      */
     public function put($key, $value)
     {
@@ -771,11 +771,11 @@ class Criteria
      * The name of the table must be used implicitly in the column name,
      * so the Column name must be something like 'TABLE.id'.
      *
-     * @param string $critOrColumn The column to run the comparison on, or a Criterion object.
+     * @param string $p1 The column to run the comparison on, or a Criterion object.
      * @param mixed  $value
      * @param string $comparison   A String.
      *
-     * @return A modified Criteria object.
+     * @return Criteria A modified Criteria object.
      */
     public function add($p1, $value = null, $comparison = null)
     {
@@ -817,7 +817,7 @@ class Criteria
      * @param mixed  $value
      * @param string $comparison A String.
      *
-     * @return A modified Criteria object.
+     * @return Criteria A modified Criteria object.
      */
     public function addCond($name, $p1, $value = null, $comparison = null)
     {
@@ -1001,7 +1001,7 @@ class Criteria
 
     /**
      * Get the array of Joins.
-     * @return array Join[]
+     * @return Join[]
      */
     public function getJoins()
     {
@@ -1039,7 +1039,7 @@ class Criteria
     /**
      * Get the associative array of Criteria for the subQueries per alias.
      *
-     * @return array Criteria[]
+     * @return Criteria[]
      */
     public function getSelectQueries()
     {
@@ -1322,7 +1322,7 @@ class Criteria
     /**
      * Get select modifiers.
      *
-     * @return An array with the select modifiers.
+     * @return array An array with the select modifiers.
      */
     public function getSelectModifiers()
     {
@@ -1333,7 +1333,7 @@ class Criteria
      * Add group by column name.
      *
      * @param  string $groupBy The name of the column to group by.
-     * @return A      modified Criteria object.
+     * @return Criteria A modified Criteria object.
      */
     public function addGroupByColumn($groupBy)
     {
@@ -1346,7 +1346,7 @@ class Criteria
      * Add order by column name, explicitly specifying ascending.
      *
      * @param  string $name The name of the column to order by.
-     * @return A      modified Criteria object.
+     * @return Criteria A modified Criteria object.
      */
     public function addAscendingOrderByColumn($name)
     {
@@ -1489,6 +1489,7 @@ class Criteria
             return false;
         }
 
+        /** @var Criteria $crit */
         if ($this === $crit) {
             return true;
         }
@@ -1647,7 +1648,7 @@ class Criteria
      * @param mixed $value      The value to bind in the condition
      * @param mixed $comparison A PDO::PARAM_ class constant
      *
-     * @return A modified Criteria object.
+     * @return Criteria A modified Criteria object.
      */
     public function addHaving($p1, $value = null, $comparison = null)
     {
@@ -1675,7 +1676,7 @@ class Criteria
      * @param mixed $value      The value to bind in the condition
      * @param mixed $comparison A Criteria class constant, or a PDO::PARAM_ class constant
      *
-     * @return Criterion
+     * @return AbstractCriterion
      */
     protected function getCriterionForCondition($p1, $value = null, $comparison = null)
     {

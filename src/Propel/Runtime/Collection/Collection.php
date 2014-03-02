@@ -10,8 +10,7 @@
 
 namespace Propel\Runtime\Collection;
 
-use ArrayIterator;
-
+use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Propel;
 use Propel\Runtime\Collection\Exception\ModelNotFoundException;
 use Propel\Runtime\Exception\BadMethodCallException;
@@ -607,7 +606,7 @@ class Collection implements \ArrayAccess, \SeekableIterator, \Countable, \Serial
      * @param mixed $parser A AbstractParser instance, or a format name ('XML', 'YAML', 'JSON', 'CSV')
      * @param string $data The source data to import from
      *
-     * @return BaseObject The current object, for fluid interface
+     * @return mixed The current object, for fluid interface
      */
     public function importFrom($parser, $data)
     {

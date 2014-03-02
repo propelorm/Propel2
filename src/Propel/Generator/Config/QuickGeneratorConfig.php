@@ -13,7 +13,6 @@ namespace Propel\Generator\Config;
 use Propel\Common\Pluralizer\PluralizerInterface;
 use Propel\Common\Pluralizer\StandardEnglishPluralizer;
 use Propel\Generator\Builder\DataModelBuilder;
-use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Exception\RuntimeException;
 use Propel\Generator\Model\Table;
 use \Propel\Runtime\Connection\ConnectionInterface;
@@ -34,7 +33,7 @@ class QuickGeneratorConfig implements GeneratorConfigInterface
     );
 
     protected $buildProperties = array();
-    
+
     /**
      * @var BehaviorLocator
      */
@@ -160,13 +159,13 @@ class QuickGeneratorConfig implements GeneratorConfigInterface
     {
         return null;
     }
-    
+
 
     public function getBehaviorLocator() {
     	if (!$this->behaviorLocator) {
     		$this->behaviorLocator = new BehaviorLocator($this);
     	}
-    
+
     	return $this->behaviorLocator;
     }
 }

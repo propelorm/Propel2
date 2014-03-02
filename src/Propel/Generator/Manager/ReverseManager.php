@@ -16,6 +16,7 @@ use Propel\Generator\Model\Database;
 use Propel\Generator\Schema\Dumper\DumperInterface;
 use Propel\Runtime\Adapter\AdapterFactory;
 use Propel\Runtime\Connection\ConnectionFactory;
+use Propel\Runtime\Connection\ConnectionInterface;
 
 /**
  * @author William Durand <william.durand1@gmail.com>

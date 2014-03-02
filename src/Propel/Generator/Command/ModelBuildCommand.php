@@ -13,10 +13,7 @@ namespace Propel\Generator\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Output\Output;
 use Propel\Generator\Manager\ModelManager;
-use Propel\Runtime\Propel;
-use Propel\Generator\Util\ComposerFinder;
 
 /**
  * @author Florian Klein <florian.klein@free.fr>

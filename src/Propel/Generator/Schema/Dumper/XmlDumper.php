@@ -34,7 +34,7 @@ class XmlDumper implements DumperInterface
     /**
      * The DOMDocument object.
      *
-     * @var DOMDocument
+     * @var \DOMDocument
      */
     private $document;
 

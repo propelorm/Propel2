@@ -98,7 +98,7 @@ class ProfilerConnectionWrapper extends ConnectionWrapper
     /**
      * {@inheritDoc}
      */
-    public function query()
+    public function query($statement)
     {
         $this->getProfiler()->start();
         $args = func_get_args();

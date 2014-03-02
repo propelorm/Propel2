@@ -10,6 +10,7 @@
 
 namespace Propel\Runtime\Formatter;
 
+use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\DataFetcher\DataFetcherInterface;
 
@@ -43,7 +44,7 @@ class StatementFormatter extends AbstractFormatter
         return $dataFetcher->count() > 0 ? $dataFetcher : null;
     }
 
-    public function formatRecord($record = null)
+    public function formatRecord(ActiveRecordInterface $record = null)
     {
         throw new PropelException('The Statement formatter cannot transform a record into a statement');
     }

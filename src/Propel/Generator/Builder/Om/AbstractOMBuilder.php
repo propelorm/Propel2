@@ -17,7 +17,6 @@ use Propel\Generator\Exception\LogicException;
 use Propel\Generator\Exception\RuntimeException;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\ForeignKey;
-use Propel\Generator\Model\Table;
 
 /**
  * Baseclass for OM-building classes.
@@ -388,10 +387,11 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     }
 
     /**
-     * @param $builder
+     * @param self           $builder
      * @param boolean|string $aliasPrefix the prefix for the Alias or True for auto generation of the Alias
+     * @return string
      */
-    public function declareClassFromBuilder($builder, $aliasPrefix = false)
+    public function declareClassFromBuilder(self $builder, $aliasPrefix = false)
     {
         return $this->declareClassNamespacePrefix($builder->getUnqualifiedClassName(), $builder->getNamespace(), $aliasPrefix);
     }

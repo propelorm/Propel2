@@ -63,14 +63,14 @@ abstract class AbstractCriterion
 
     /**
      * Other connected criterions
-     * @var [AbstractCriterion]
+     * @var AbstractCriterion[]
      */
     protected $clauses = array();
 
     /**
      * Operators for connected criterions
      * Only self::UND and self::ODER are accepted
-     * @var [String]
+     * @var string[]
      */
     protected $conjunctions = array();
 
@@ -211,7 +211,7 @@ abstract class AbstractCriterion
 
     /**
      * Get the list of clauses in this Criterion.
-     * @return array
+     * @return self[]
      */
     private function getClauses()
     {
@@ -240,7 +240,9 @@ abstract class AbstractCriterion
 
     /**
      * Append an OR Criterion onto this Criterion's list.
-     * @return Criterion
+     *
+     * @param AbstractCriterion $criterion
+     * @return AbstractCriterion
      */
     public function addOr(AbstractCriterion $criterion)
     {
@@ -308,6 +310,7 @@ abstract class AbstractCriterion
             return false;
         }
 
+        /** @var AbstractCriterion $crit */
         $crit = $obj;
 
         $isEquiv = (((null === $this->table && null === $crit->getTable())
@@ -362,7 +365,7 @@ abstract class AbstractCriterion
     /**
      * get an array of all criterion attached to this
      * recursing through all sub criterion
-     * @return Criterion[]
+     * @return AbstractCriterion[]
      */
     public function getAttachedCriterion()
     {

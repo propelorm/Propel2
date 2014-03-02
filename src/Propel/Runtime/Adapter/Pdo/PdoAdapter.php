@@ -89,7 +89,7 @@ abstract class PdoAdapter
     /**
      * Prepare the parameters for a Connection
      *
-     * @param array the connection parameters from the configuration
+     * @param array $conparams the connection parameters from the configuration
      *
      * @return array the modified parameters
      */

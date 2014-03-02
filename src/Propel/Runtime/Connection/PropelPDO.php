@@ -10,8 +10,6 @@
 
 namespace Propel\Runtime\Connection;
 
-use Propel\Runtime\Connection\ConnectionWrapper;
-
 /**
  * Class kept for BC sake - the functionality of the old PropelPDO class was moved to:
  * - ConnectionWrapper for the nested transactions, and logging
