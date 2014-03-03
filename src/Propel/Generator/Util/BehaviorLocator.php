@@ -43,14 +43,14 @@ class BehaviorLocator
     }
 
     /**
-     * Searches the composer.lock file
-     *  
-     * @return SplFileInfo the found composer.lock or null if composer.lock isn't found
+     * Searches a composer file
+     *
+     * @return SplFileInfo the found composer file or null if composer file isn't found
      */
-    private function findComposerLock()
+    private function findComposerFile($fileName)
     {
         if (null !== $this->composerDir) {
-            $filePath = $this->composerDir . '/composer.lock';
+            $filePath = $this->composerDir . '/' . $fileName;
             
             if (file_exists($filePath)) {
                 return new SplFileInfo($filePath, dirname($filePath), dirname($filePath));
@@ -58,7 +58,7 @@ class BehaviorLocator
         }
         
         $finder = new Finder();
-        $result = $finder->name('composer.lock')
+        $result = $finder->name($fileName)
             ->in($this->getSearchDirs())
             ->depth(0);
         
@@ -67,6 +67,26 @@ class BehaviorLocator
         }
         
         return null;
+    }
+    
+    /**
+     * Searches the composer.lock file
+     *
+     * @return SplFileInfo the found composer.lock or null if composer.lock isn't found
+     */
+    private function findComposerLock()
+    {
+        return $this->findComposerFile('composer.lock');
+    }
+    
+    /**
+     * Searches the composer.json file
+     *
+     * @return SplFileInfo the found composer.json or null if composer.json isn't found
+     */
+    private function findComposerJson()
+    {
+    	return $this->findComposerFile('composer.json');
     }
 
     /**
@@ -92,12 +112,24 @@ class BehaviorLocator
     public function getBehaviors()
     {
         if (null === $this->behaviors) {
+            // find behaviors in composer.lock file
             $lock = $this->findComposerLock();
             
             if (null === $lock) {
                 $this->behaviors = [];
             } else {
                 $this->behaviors = $this->loadBehaviors($lock);
+            }
+            
+            // find behavior in composer.json (useful when developing a behavior) 
+            $json = $this->findComposerJson();
+                        
+            if (null !== $json) {
+                $behavior = $this->loadBehavior(json_decode($json->getContents(), true));
+                
+                if (null !== $behavior) {
+                    $this->behaviors[$behavior['name']] = $behavior;
+                }
             }
         }
         
@@ -162,28 +194,46 @@ class BehaviorLocator
         
         $json = json_decode($composerLock->getContents(), true);
         
-        if (array_key_exists('packages', $json)) {
+        if (isset($json['packages'])) {
             foreach ($json['packages'] as $package) {
-                if (array_key_exists('type', $package) && $package['type'] == self::BEHAVIOR_PACKAGE_TYPE) {
-                    
-                    // find propel behavior information
-                    if (array_key_exists('extra', $package)) {
-                        $extra = $package['extra'];
-                        
-                        if (array_key_exists('name', $extra) && array_key_exists('class', $extra)) {
-                            $behaviors[$extra['name']] = [
-                                'name' => $extra['name'],
-                                'class' => $extra['class'],
-                                'package' => $package['name']
-                            ];
-                        } else {
-                            throw new BuildException(sprintf('Cannot read behavior name and class from package %s', $package['name']));
-                        }
-                    }
+                $behavior = $this->loadBehavior($package);
+                
+                if (null !== $behavior) {
+                    $behaviors[$behavior['name']] = $behavior;
                 }
             }
         }
         
         return $behaviors;
+    }
+
+    /**
+     * Reads the propel behavior data from a given composer package
+     * 
+     * @param array $package
+     * @throws BuildException
+     * @return array behavior data
+     */
+    private function loadBehavior($package)
+    {
+        if (isset($package['type']) && $package['type'] == self::BEHAVIOR_PACKAGE_TYPE) {
+        
+            // find propel behavior information
+            if (isset($package['extra'])) {
+                $extra = $package['extra'];
+        
+                if (isset($extra['name']) && isset($extra['class'])) {
+                    return [
+                        'name' => $extra['name'],
+                        'class' => $extra['class'],
+                        'package' => $package['name']
+                    ];
+                } else {
+                    throw new BuildException(sprintf('Cannot read behavior name and class from package %s', $package['name']));
+                }
+            }
+        }
+        
+        return null;
     }
 }
