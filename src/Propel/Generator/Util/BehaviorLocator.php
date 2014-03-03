@@ -78,9 +78,9 @@ class BehaviorLocator
     {
         return [
             getcwd(),
-            getcwd() . '/../',                  // cwd is a subfolder
-            __DIR__ . '/../../../../../../',    // vendor/propel/propel
-            __DIR__ . '/../../../../'           // propel development environment
+            getcwd() . '/../',                   // cwd is a subfolder
+            __DIR__ . '/../../../../../../../',  // vendor/propel/propel
+            __DIR__ . '/../../../../'            // propel development environment
         ];
     }
 
