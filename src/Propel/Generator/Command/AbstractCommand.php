@@ -54,8 +54,9 @@ abstract class AbstractCommand extends Command
      */
     protected function getGeneratorConfig(array $properties, InputInterface $input = null)
     {
-        $buildfile = $input->getOption('build-properties');
-        if(empty($buildfile))
+        if($input && $input->hasOption('build-properties'))
+            $buildfile = $input->getOption('build-properties');
+        else
             $buildfile = self::DEFAULT_BUILD_PROPERTIES_FILE_NAME;
         
         $options = $properties;
