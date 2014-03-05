@@ -230,4 +230,47 @@ class PropelTableColumnComparatorTest extends TestCase
         $this->assertEquals(array('col1' => $columnDiff), $tableDiff->getModifiedColumns());
     }
 
+    public function testCompareSeveralRenamedSameColumns()
+    {
+        $t1 = new Table();
+        $c1 = new Column('col1');
+        $c1->getDomain()->copy($this->platform->getDomainForType('VARCHAR'));
+        $c1->getDomain()->replaceSize(255);
+        $t1->addColumn($c1);
+        $c2 = new Column('col2');
+        $c2->getDomain()->copy($this->platform->getDomainForType('VARCHAR'));
+        $c2->getDomain()->replaceSize(255);
+        $t1->addColumn($c2);
+        $c3 = new Column('col3');
+        $c3->getDomain()->copy($this->platform->getDomainForType('VARCHAR'));
+        $c3->getDomain()->replaceSize(255);
+        $t1->addColumn($c3);
+
+        $t2 = new Table();
+        $c4 = new Column('col4');
+        $c4->getDomain()->copy($this->platform->getDomainForType('VARCHAR'));
+        $c4->getDomain()->replaceSize(255);
+        $t2->addColumn($c4);
+        $c5 = new Column('col5');
+        $c5->getDomain()->copy($this->platform->getDomainForType('VARCHAR'));
+        $c5->getDomain()->replaceSize(255);
+        $t2->addColumn($c5);
+        $c6 = new Column('col3');
+        $c6->getDomain()->copy($this->platform->getDomainForType('VARCHAR'));
+        $c6->getDomain()->replaceSize(255);
+        $t2->addColumn($c6);
+
+        // col1 and col2 were renamed
+        $tc = new TableComparator();
+        $tc->setFromTable($t1);
+        $tc->setToTable($t2);
+        $nbDiffs = $tc->compareColumns();
+        $tableDiff = $tc->getTableDiff();
+        $this->assertEquals(2, $nbDiffs);
+        $this->assertEquals(array(array($c1, $c4), array($c2, $c5)), $tableDiff->getRenamedColumns());
+        $this->assertEquals(array(), $tableDiff->getAddedColumns());
+        $this->assertEquals(array(), $tableDiff->getRemovedColumns());
+        $this->assertEquals(array(), $tableDiff->getModifiedColumns());
+    }
+
 }

@@ -161,17 +161,17 @@ class TableComparator
             }
         }
 
-        $renamed = [];
         // check for column renamings
         foreach ($this->tableDiff->getAddedColumns() as $addedColumnName => $addedColumn) {
             foreach ($this->tableDiff->getRemovedColumns() as $removedColumnName => $removedColumn) {
-                if (!in_array($addedColumnName, $renamed) && !ColumnComparator::computeDiff($addedColumn, $removedColumn, $caseInsensitive)) {
+                if (!ColumnComparator::computeDiff($addedColumn, $removedColumn, $caseInsensitive)) {
                     // no difference except the name, that's probably a renaming
-                    $renamed[] = $addedColumnName;
                     $this->tableDiff->addRenamedColumn($removedColumn, $addedColumn);
                     $this->tableDiff->removeAddedColumn($addedColumnName);
                     $this->tableDiff->removeRemovedColumn($removedColumnName);
                     $columnDifferences--;
+                    // skip to the next added column
+                    break;
                 }
             }
         }
@@ -221,6 +221,8 @@ class TableComparator
                     $this->tableDiff->removeAddedPkColumn($addedColumnName);
                     $this->tableDiff->removeRemovedPkColumn($removedColumnName);
                     $pkDifferences--;
+                    // skip to the next added column
+                    break;
                 }
             }
         }
