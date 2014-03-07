@@ -116,7 +116,7 @@ class MigrationMigrateCommand extends AbstractCommand
                         $stmt->execute();
                         $res++;
                     } catch (\PDOException $e) {
-                        $output->writeln(sprintf('<error>Failed to execute SQL "%s"</error>', $statement));
+                        $output->writeln(sprintf('<error>Failed to execute SQL "%s": %s</error>', $statement, $e->getMessage()));
                         // continue
                     }
                 }
