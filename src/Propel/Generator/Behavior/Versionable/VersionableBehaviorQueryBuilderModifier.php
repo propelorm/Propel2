@@ -112,7 +112,7 @@ static \$isVersioningEnabled = true;
  *
  * @param     integer \$version
  * @param     string  \$comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
- * @return    " . $this->builder->getQueryClassName() . " The current query, for fluid interface
+ * @return    \$this|" . $this->builder->getQueryClassName() . " The current query, for fluid interface
  */
 public function filterByVersion(\$version = null, \$comparison = null)
 {
@@ -128,7 +128,7 @@ public function filterByVersion(\$version = null, \$comparison = null)
  * Wrap the order on the version column
  *
  * @param   string \$order The sorting order. Criteria::ASC by default, also accepts Criteria::DESC
- * @return  " . $this->builder->getQueryClassName() . " The current query, for fluid interface
+ * @return  \$this|" . $this->builder->getQueryClassName() . " The current query, for fluid interface
  */
 public function orderByVersion(\$order = Criteria::ASC)
 {

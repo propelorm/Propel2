@@ -59,7 +59,7 @@ class BaseModelCriteria extends Criteria implements \IteratorAggregate
      *
      * @param    array
      *
-     * @return ModelCriteria The current object, for fluid interface
+     * @return $this|ModelCriteria The current object, for fluid interface
      */
     public function setWith($with)
     {
@@ -77,7 +77,7 @@ class BaseModelCriteria extends Criteria implements \IteratorAggregate
      * </code>
      *
      * @param  string|AbstractFormatter $formatter a formatter class name, or a formatter instance
-     * @return ModelCriteria            The current object, for fluid interface
+     * @return $this|ModelCriteria                    The current object, for fluid interface
      *
      * @throws InvalidArgumentException
      */
@@ -128,7 +128,7 @@ class BaseModelCriteria extends Criteria implements \IteratorAggregate
      *
      * @param string $modelName
      *
-     * @return ModelCriteria The current object, for fluid interface
+     * @return $this|ModelCriteria The current object, for fluid interface
      */
     public function setModelName($modelName)
     {
@@ -158,7 +158,7 @@ class BaseModelCriteria extends Criteria implements \IteratorAggregate
      * @param string  $modelAlias    The model alias
      * @param boolean $useAliasInSQL Whether to use the alias in the SQL code (false by default)
      *
-     * @return ModelCriteria The current object, for fluid interface
+     * @return $this|ModelCriteria The current object, for fluid interface
      */
     public function setModelAlias($modelAlias, $useAliasInSQL = false)
     {

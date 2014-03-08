@@ -5,7 +5,7 @@
  * are not persisted until the current object is saved.
  *
  * @param  <?= $objectClassName ?> $parent Propel object for parent node
- * @return <?= $objectClassName ?> The current Propel object
+ * @return $this|<?= $objectClassName ?> The current Propel object
  */
 public function insertAsLastChildOf($parent)
 {

@@ -172,7 +172,7 @@ protected \$enforceVersion = false;
  * Wrap the setter for version value
  *
  * @param   string
- * @return  " . $this->table->getPhpName() . "
+ * @return  \$this|" . $this->table->getPhpName() . "
  */
 public function setVersion(\$v)
 {
@@ -203,7 +203,7 @@ public function getVersion()
 /**
  * Enforce a new Version of this object upon next save.
  *
- * @return {$objectClass}
+ * @return \$this|{$objectClass}
  */
 public function enforceVersioning()
 {
@@ -332,7 +332,7 @@ public function addVersion(\$con = null)
  * @param   integer \$versionNumber The version number to read
  * @param   ConnectionInterface \$con The connection to use
  *
- * @return  {$ARclassName} The current object (for fluent API support)
+ * @return  \$this|{$ARclassName} The current object (for fluent API support)
  */
 public function toVersion(\$versionNumber, \$con = null)
 {
@@ -363,7 +363,7 @@ public function toVersion(\$versionNumber, \$con = null)
  * @param ConnectionInterface   \$con the connection to use
  * @param array                 \$loadedObjects objects that been loaded in a chain of populateFromVersion calls on referrer or fk objects.
  *
- * @return {$ARclassName} The current object (for fluent API support)
+ * @return \$this|{$ARclassName} The current object (for fluent API support)
  */
 public function populateFromVersion(\$version, \$con = null, &\$loadedObjects = array())
 {";
@@ -527,7 +527,7 @@ public function getOneVersion(\$versionNumber, \$con = null)
  *
  * @param   ConnectionInterface \$con the connection to use
  *
- * @return  ObjectCollection A list of {$versionARClassName} objects
+ * @return  ObjectCollection|{$versionARClassName}[] A list of {$versionARClassName} objects
  */
 public function getAllVersions(\$con = null)
 {
@@ -682,7 +682,7 @@ public function compareVersions(\$fromVersionNumber, \$toVersionNumber, \$keys =
  * retrieve the last \$number versions.
  *
  * @param Integer \$number the number of record to return.
- * @return PropelCollection|array {$versionARClassName}[] List of {$versionARClassName} objects
+ * @return PropelCollection|{$versionARClassName}[] List of {$versionARClassName} objects
  */
 public function getLastVersions(\$number = 10, \$criteria = null, \$con = null)
 {

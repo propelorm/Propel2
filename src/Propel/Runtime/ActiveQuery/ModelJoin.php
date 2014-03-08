@@ -56,7 +56,7 @@ class ModelJoin extends Join
      *
      * @param TableMap $tableMap The table map to use
      *
-     * @return ModelJoin The current join object, for fluid interface
+     * @return $this|ModelJoin The current join object, for fluid interface
      */
     public function setTableMap(TableMap $tableMap)
     {
