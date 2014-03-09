@@ -331,6 +331,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             $this->addSetByName($script);
             $this->addSetByPosition($script);
             $this->addFromArray($script);
+            $this->addImportFrom($script);
         }
 
         $this->addBuildCriteria($script);
@@ -2636,6 +2637,35 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         }";
         } /* foreach */
         $script .= "
+    }
+";
+    }
+
+    protected function addImportFrom(&$script)
+    {
+        $script .= "
+     /**
+     * Populate the current object from a string, using a given parser format
+     * <code>
+     * \$book = new Book();
+     * \$book->importFrom('JSON', '{\"Id\":9012,\"Title\":\"Don Juan\",\"ISBN\":\"0140422161\",\"Price\":12.99,\"PublisherId\":1234,\"AuthorId\":5678}');
+     * </code>
+     *
+     * @param mixed \$parser A AbstractParser instance,
+     *                       or a format name ('XML', 'YAML', 'JSON', 'CSV')
+     * @param string \$data The source data to import from
+     *
+     * @return \$this|".$this->getObjectClassName(true)." The current object, for fluid interface
+     */
+    public function importFrom(\$parser, \$data)
+    {
+        if (!\$parser instanceof AbstractParser) {
+            \$parser = AbstractParser::getParser(\$parser);
+        }
+
+        \$this->fromArray(\$parser->toArray(\$data), TableMap::TYPE_PHPNAME);
+
+        return \$this;
     }
 ";
     }

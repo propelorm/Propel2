@@ -1064,6 +1064,7 @@ EOF;
             array('delete'),
             array('save'),
             array('doSave'),
+            array('importFrom'),
         );
     }
 

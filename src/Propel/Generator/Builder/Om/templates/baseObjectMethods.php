@@ -193,30 +193,6 @@
     }
 
     /**
-     * Populate the current object from a string, using a given parser format
-     * <code>
-     * $book = new Book();
-     * $book->importFrom('JSON', '{"Id":9012,"Title":"Don Juan","ISBN":"0140422161","Price":12.99,"PublisherId":1234,"AuthorId":5678}');
-     * </code>
-     *
-     * @param mixed $parser A AbstractParser instance,
-     *                       or a format name ('XML', 'YAML', 'JSON', 'CSV')
-     * @param string $data The source data to import from
-     *
-     * @return $this|<?php echo $className ?> The current object, for fluid interface
-     */
-    public function importFrom($parser, $data)
-    {
-        if (!$parser instanceof AbstractParser) {
-            $parser = AbstractParser::getParser($parser);
-        }
-
-        $this->fromArray($parser->toArray($data), TableMap::TYPE_PHPNAME);
-
-        return $this;
-    }
-
-    /**
      * Export the current object properties to a string, using a given parser format
      * <code>
      * $book = BookQuery::create()->findPk(9012);
