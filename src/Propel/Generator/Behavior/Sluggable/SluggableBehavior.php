@@ -128,7 +128,7 @@ if (\$this->isColumnModified($const) && \$this->{$this->getColumnGetter()}()) {
  * Wrap the setter for slug value
  *
  * @param   string
- * @return  " . $this->getTable()->getPhpName() . "
+ * @return  \$this|" . $this->getTable()->getPhpName() . "
  */
 public function setSlug(\$v)
 {
@@ -321,7 +321,7 @@ protected function makeSlugUnique(\$slug, \$separator = '" . $this->getParameter
  *
  * @param     string \$slug The value to use as filter.
  *
- * @return    " . $this->builder->getQueryClassName() . " The current query, for fluid interface
+ * @return    \$this|" . $this->builder->getQueryClassName() . " The current query, for fluid interface
  */
 public function filterBySlug(\$slug)
 {

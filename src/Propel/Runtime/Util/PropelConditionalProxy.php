@@ -66,7 +66,7 @@ class PropelConditionalProxy
      *
      * @param boolean $cond
      *
-     * @return PropelConditionalProxy
+     * @return $this|PropelConditionalProxy|Criteria
      */
     public function _if($cond)
     {
@@ -78,7 +78,7 @@ class PropelConditionalProxy
      *
      * @param boolean $cond ignored
      *
-     * @return PropelConditionalProxy
+     * @return $this|PropelConditionalProxy|Criteria
      */
     public function _elseif($cond)
     {
@@ -88,7 +88,7 @@ class PropelConditionalProxy
     /**
      * Allows for conditional statements in a fluid interface.
      *
-     * @return PropelConditionalProxy
+     * @return $this|PropelConditionalProxy|Criteria
      */
     public function _else()
     {
@@ -99,7 +99,7 @@ class PropelConditionalProxy
      * Returns the parent object
      * Allows for conditional statements in a fluid interface.
      *
-     * @return PropelConditionalProxy|Criteria
+     * @return $this|PropelConditionalProxy|Criteria
      */
     public function _endif()
     {

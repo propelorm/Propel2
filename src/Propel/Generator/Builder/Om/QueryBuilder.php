@@ -146,13 +146,15 @@ class QueryBuilder extends AbstractOMBuilder
  * @method     $modelClass findOneBy" . $column->getPhpName() . "(" . $column->getPhpType() . " \$" . $column->getName() . ") Return the first $modelClass filtered by the " . $column->getName() . " column";
         }
         $script .= "
- *";
+ *
+ * @method     {$modelClass}[]|ObjectCollection find(ConnectionInterface \$con = null) Return $modelClass objects based on current ModelCriteria";
         foreach ($this->getTable()->getColumns() as $column) {
             $script .= "
- * @method     array findBy" . $column->getPhpName() . "(" . $column->getPhpType() . " \$" . $column->getName() . ") Return $modelClass objects filtered by the " . $column->getName() . " column";
+ * @method     {$modelClass}[]|ObjectCollection findBy" . $column->getPhpName() . "(" . $column->getPhpType() . " \$" . $column->getName() . ") Return $modelClass objects filtered by the " . $column->getName() . " column";
         }
 
         $script .= "
+ * @method     {$modelClass}[]|\\Propel\\Runtime\\Util\\PropelModelPager paginate(\$page = 1, \$maxPerPage = 10, ConnectionInterface \$con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
  */
 abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
@@ -717,7 +719,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
      *
      * @param     mixed \$key Primary key to use for the query
      *
-     * @return " . $this->getQueryClassName() . " The current query, for fluid interface
+     * @return \$this|" . $this->getQueryClassName() . " The current query, for fluid interface
      */
     public function filterByPrimaryKey(\$key)
     {";
@@ -769,7 +771,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
      *
      * @param     array \$keys The list of primary key to use for the query
      *
-     * @return " . $this->getQueryClassName() . " The current query, for fluid interface
+     * @return \$this|" . $this->getQueryClassName() . " The current query, for fluid interface
      */
     public function filterByPrimaryKeys(\$keys)
     {";
@@ -906,7 +908,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
         $script .= "
      * @param     string \$comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return " . $this->getQueryClassName() . " The current query, for fluid interface
+     * @return \$this|" . $this->getQueryClassName() . " The current query, for fluid interface
      */
     public function filterBy$colPhpName(\$$variableName = null, \$comparison = null)
     {";
@@ -1034,7 +1036,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
      * @param     mixed \$$variableName The value to use as filter
      * @param     string \$comparison Operator to use for the column comparison, defaults to Criteria::CONTAINS_ALL
      *
-     * @return " . $this->getQueryClassName() . " The current query, for fluid interface
+     * @return \$this|" . $this->getQueryClassName() . " The current query, for fluid interface
      */
     public function filterBy$singularPhpName(\$$variableName = null, \$comparison = null)
     {
@@ -1240,7 +1242,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
      * @param     string \$relationAlias optional alias for the relation
      * @param     string \$joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
-     * @return ". $queryClass . " The current query, for fluid interface
+     * @return \$this|". $queryClass . " The current query, for fluid interface
      */
     public function join" . $relationName . "(\$relationAlias = null, \$joinType = " . $joinType . ")
     {
@@ -1373,7 +1375,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
      *
      * @param   $class $objectName Object to remove from the list of results
      *
-     * @return " . $this->getQueryClassName() . " The current query, for fluid interface
+     * @return \$this|" . $this->getQueryClassName() . " The current query, for fluid interface
      */
     public function prune($objectName = null)
     {

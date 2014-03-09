@@ -269,7 +269,7 @@ public function getRank()
  * Wrap the setter for rank value
  *
  * @param     int
- * @return    {$this->objectClassName}
+ * @return    \$this|{$this->objectClassName}
  */
 public function setRank(\$v)
 {
@@ -328,7 +328,7 @@ public function getScopeValue(\$returnNulls = true)
  * Wrap the setter for scope value
  *
  * @param     mixed A array or a native type
- * @return    {$this->objectClassName}
+ * @return    \$this|{$this->objectClassName}
  */
 public function setScopeValue(\$v)
 {
@@ -488,7 +488,7 @@ public function getPrevious(ConnectionInterface \$con = null)
  * @param     integer    \$rank rank value
  * @param     ConnectionInterface  \$con      optional connection
  *
- * @return    {$this->objectClassName} the current object
+ * @return    \$this|{$this->objectClassName} the current object
  *
  * @throws    PropelException
  */
@@ -524,7 +524,7 @@ public function insertAtRank(\$rank, ConnectionInterface \$con = null)
  *
  * @param ConnectionInterface \$con optional connection
  *
- * @return    {$this->objectClassName} the current object
+ * @return    \$this|{$this->objectClassName} the current object
  *
  * @throws    PropelException
  */
@@ -545,7 +545,7 @@ public function insertAtBottom(ConnectionInterface \$con = null)
  * Insert in the first rank
  * The modifications are not persisted until the object is saved.
  *
- * @return    {$this->objectClassName} the current object
+ * @return    \$this|{$this->objectClassName} the current object
  */
 public function insertAtTop()
 {
@@ -565,7 +565,7 @@ public function insertAtTop()
  * @param     integer   \$newRank rank value
  * @param     ConnectionInterface \$con optional connection
  *
- * @return    {$this->objectClassName} the current object
+ * @return    \$this|{$this->objectClassName} the current object
  *
  * @throws    PropelException
  */
@@ -616,7 +616,7 @@ public function moveToRank(\$newRank, ConnectionInterface \$con = null)
  * @param     {$this->objectClassName} \$object
  * @param     ConnectionInterface \$con optional connection
  *
- * @return    {$this->objectClassName} the current object
+ * @return    \$this|{$this->objectClassName} the current object
  *
  * @throws Exception if the database cannot execute the two updates
  */
@@ -665,7 +665,7 @@ public function swapWith(\$object, ConnectionInterface \$con = null)
  *
  * @param     ConnectionInterface \$con optional connection
  *
- * @return    {$this->objectClassName} the current object
+ * @return    \$this|{$this->objectClassName} the current object
  */
 public function moveUp(ConnectionInterface \$con = null)
 {
@@ -698,7 +698,7 @@ public function moveUp(ConnectionInterface \$con = null)
  *
  * @param     ConnectionInterface \$con optional connection
  *
- * @return    {$this->objectClassName} the current object
+ * @return    \$this|{$this->objectClassName} the current object
  */
 public function moveDown(ConnectionInterface \$con = null)
 {
@@ -731,7 +731,7 @@ public function moveDown(ConnectionInterface \$con = null)
  *
  * @param     ConnectionInterface \$con optional connection
  *
- * @return    {$this->objectClassName} the current object
+ * @return    \$this|{$this->objectClassName} the current object
  */
 public function moveToTop(ConnectionInterface \$con = null)
 {
@@ -786,7 +786,7 @@ public function moveToBottom(ConnectionInterface \$con = null)
  * Removes the current object from the list".($useScope ? ' (moves it to the null scope)' : '').".
  * The modifications are not persisted until the object is saved.
  *
- * @return    {$this->objectClassName} the current object
+ * @return    \$this|{$this->objectClassName} the current object
  */
 public function removeFromList()
 {";

@@ -343,7 +343,7 @@ class Behavior extends MappingModel
      *
      * The current object is returned by default.
      *
-     * @return Behavior
+     * @return $this|Behavior
      */
     public function getTableModifier()
     {
@@ -355,7 +355,7 @@ class Behavior extends MappingModel
      *
      * The current object is returned by default.
      *
-     * @return Behavior
+     * @return $this|Behavior
      */
     public function getObjectBuilderModifier()
     {
@@ -367,7 +367,7 @@ class Behavior extends MappingModel
      *
      * The current object is returned by default.
      *
-     * @return Behavior
+     * @return $this|Behavior
      */
     public function getQueryBuilderModifier()
     {
@@ -379,7 +379,7 @@ class Behavior extends MappingModel
      *
      * The current object is returned by default.
      *
-     * @return Behavior
+     * @return $this|Behavior
      */
     public function getTableMapBuilderModifier()
     {

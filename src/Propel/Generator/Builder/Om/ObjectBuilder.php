@@ -1401,7 +1401,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * Set the value of [$clo] column.
      * ".$column->getDescription()."
      * @param      ".$column->getPhpType()." \$v new value
-     * @return   ".$this->getObjectClassName(true)." The current object (for fluent API support)
+     * @return     \$this|".$this->getObjectClassName(true)." The current object (for fluent API support)
      */";
     }
 
@@ -1614,7 +1614,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * ".$col->getDescription()."
      * @param      mixed \$v string, integer (timestamp), or \DateTime value.
      *               Empty strings are treated as NULL.
-     * @return   ".$this->getObjectClassName(true)." The current object (for fluent API support)
+     * @return     \$this|".$this->getObjectClassName(true)." The current object (for fluent API support)
      */";
     }
 
@@ -1683,7 +1683,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * @param      ConnectionInterface \$con An optional ConnectionInterface connection to use for fetching this lazy-loaded column.";
         }
         $script .= "
-     * @return   ".$this->getObjectClassName(true)." The current object (for fluent API support)
+     * @return     \$this|".$this->getObjectClassName(true)." The current object (for fluent API support)
      */
     $visibility function add$singularPhpName(\$value";
         if ($col->isLazyLoad()) {
@@ -1727,7 +1727,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * @param      ConnectionInterface \$con An optional ConnectionInterface connection to use for fetching this lazy-loaded column.";
         }
         $script .= "
-     * @return   ".$this->getObjectClassName(true)." The current object (for fluent API support)
+     * @return     \$this|".$this->getObjectClassName(true)." The current object (for fluent API support)
      */
     $visibility function remove$singularPhpName(\$value";
         if ($col->isLazyLoad()) {
@@ -1797,7 +1797,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * Set the value of [$clo] column.
      * ".$column->getDescription()."
      * @param      string \$v new value
-     * @return   ".$this->getObjectClassName(true)." The current object (for fluent API support)
+     * @return     \$this|".$this->getObjectClassName(true)." The current object (for fluent API support)
      */";
     }
 
@@ -1845,7 +1845,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
      * ".$col->getDescription()."
      * @param      boolean|integer|string \$v The new value
-     * @return   ".$this->getObjectClassName(true)." The current object (for fluent API support)
+     * @return     \$this|".$this->getObjectClassName(true)." The current object (for fluent API support)
      */";
     }
 
@@ -2542,7 +2542,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      *                     one of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_STUDLYPHPNAME
      *                     TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
      *                     Defaults to TableMap::$defaultKeyType.
-     * @return void
+     * @return     \$this|".$this->getObjectClassName(true)."
      */
     public function setByName(\$name, \$value, \$type = TableMap::$defaultKeyType)
     {
@@ -2563,7 +2563,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      *
      * @param      int \$pos position in xml schema
      * @param      mixed \$value field value
-     * @return void
+     * @return     \$this|".$this->getObjectClassName(true)."
      */
     public function setByPosition(\$pos, \$value)
     {
@@ -2596,6 +2596,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         } /* foreach */
         $script .= "
         } // switch()
+
+        return \$this;
     }
 ";
     }
@@ -3157,7 +3159,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * Declares an association between this object and a $className object.
      *
      * @param                  $className \$v
-     * @return                 ".$this->getObjectClassName(true)." The current object (for fluent API support)
+     * @return                 \$this|".$this->getObjectClassName(true)." The current object (for fluent API support)
      * @throws PropelException
      */
     public function set".$this->getFKPhpNameAffix($fk, false)."($className \$v = null)
@@ -3333,7 +3335,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * overridden in <code>".$table->getPhpName()."</code>.";
         }
         $script .= "
-     * @return                 ".$this->getObjectClassName(true)." The current object (for fluent API support)
+     * @return                 \$this|".$this->getObjectClassName(true)." The current object (for fluent API support)
      * @throws PropelException
      */
     public function set".$methodAffix."Key(\$key)
@@ -3613,7 +3615,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * through the $className foreign key attribute.
      *
      * @param    $className \$l $className
-     * @return   ".$this->getObjectClassName(true)." The current object (for fluent API support)
+     * @return   \$this|".$this->getObjectClassName(true)." The current object (for fluent API support)
      */
     public function add".$this->getRefFKPhpNameAffix($refFK, false)."($className \$l)
     {
@@ -3782,7 +3784,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      *
      * @param      Collection \${$inputCollection} A Propel collection.
      * @param      ConnectionInterface \$con Optional connection object
-     * @return   ".$this->getObjectClassname()." The current object (for fluent API support)
+     * @return     \$this|".$this->getObjectClassname()." The current object (for fluent API support)
      */
     public function set{$relatedName}(Collection \${$inputCollection}, ConnectionInterface \$con = null)
     {
@@ -3880,7 +3882,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $script .= "
     /**
      * @param  {$className} \${$lowerRelatedObjectClassName} The $className object to remove.
-     * @return ". $this->getObjectClassname() ." The current object (for fluent API support)
+     * @return \$this|". $this->getObjectClassname() ." The current object (for fluent API support)
      */
     public function remove{$relatedObjectClassName}($className \${$lowerRelatedObjectClassName})
     {
@@ -3962,7 +3964,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * Sets a single $className object as related to this object by a one-to-one relationship.
      *
      * @param                  $className \$v $className
-     * @return                 ".$this->getObjectClassName(true)." The current object (for fluent API support)
+     * @return                 \$this|".$this->getObjectClassName(true)." The current object (for fluent API support)
      * @throws PropelException
      */
     public function set".$this->getRefFKPhpNameAffix($refFK, false)."($className \$v = null)
@@ -4270,7 +4272,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      *
      * @param  Collection \${$inputCollection} A Propel collection.
      * @param  ConnectionInterface \$con Optional connection object
-     * @return " . $this->getObjectClassname() . " The current object (for fluent API support)
+     * @return \$this|" . $this->getObjectClassname() . " The current object (for fluent API support)
      */
     public function set{$relatedNamePlural}(Collection \${$inputCollection}, ConnectionInterface \$con = null)
     {
@@ -4361,7 +4363,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * through the " . $tblFK->getName() . " cross reference table.
      *
      * @param  " . $crossObjectClassName . " " . $crossObjectName . " The $className object to relate
-     * @return "   . $this->getObjectClassname() . " The current object (for fluent API support)
+     * @return \$this|"   . $this->getObjectClassname() . " The current object (for fluent API support)
      */
     public function add{$relatedObjectClassName}($crossObjectClassName $crossObjectName)
     {
@@ -4440,7 +4442,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * through the {$tblFK->getName()} cross reference table.
      *
      * @param {$crossObjectClassName} {$crossObjectName} The $className object to relate
-     * @return " . $this->getObjectClassname() . " The current object (for fluent API support)
+     * @return \$this|" . $this->getObjectClassname() . " The current object (for fluent API support)
      */
     public function remove{$relatedObjectClassName}($crossObjectClassName $crossObjectName)
     {

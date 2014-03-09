@@ -171,7 +171,7 @@
      * @param string $name  The virtual column name
      * @param mixed  $value The value to give to the virtual column
      *
-     * @return <?php echo $className ?> The current object, for fluid interface
+     * @return $this|<?php echo $className ?> The current object, for fluid interface
      */
     public function setVirtualColumn($name, $value)
     {
@@ -203,7 +203,7 @@
      *                       or a format name ('XML', 'YAML', 'JSON', 'CSV')
      * @param string $data The source data to import from
      *
-     * @return <?php echo $className ?> The current object, for fluid interface
+     * @return $this|<?php echo $className ?> The current object, for fluid interface
      */
     public function importFrom($parser, $data)
     {

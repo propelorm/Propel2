@@ -104,7 +104,7 @@ class NestedSetBehaviorQueryBuilderModifier
 /**
  * Filter the query to restrict the result to root objects
  *
- * @return    {$this->queryClassName} The current query, for fluid interface
+ * @return    \$this|{$this->queryClassName} The current query, for fluid interface
  */
 public function treeRoots()
 {
@@ -121,7 +121,7 @@ public function treeRoots()
  *
  * @param     int \$scope        Scope to determine which objects node to return
  *
- * @return    {$this->queryClassName} The current query, for fluid interface
+ * @return    \$this|{$this->queryClassName} The current query, for fluid interface
  */
 public function inTree(\$scope = null)
 {
@@ -190,7 +190,7 @@ public function branchOf($objectName)
  *
  * @param     {$this->objectClassName} $objectName The object to use for child search
  *
- * @return    {$this->queryClassName} The current query, for fluid interface
+ * @return    \$this|{$this->queryClassName} The current query, for fluid interface
  */
 public function childrenOf($objectName)
 {
@@ -212,7 +212,7 @@ public function childrenOf($objectName)
  * @param     {$this->objectClassName} $objectName The object to use for sibling search
  * @param      ConnectionInterface \$con Connection to use.
  *
- * @return    {$this->queryClassName} The current query, for fluid interface
+ * @return    \$this|{$this->queryClassName} The current query, for fluid interface
  */
 public function siblingsOf($objectName, ConnectionInterface \$con = null)
 {

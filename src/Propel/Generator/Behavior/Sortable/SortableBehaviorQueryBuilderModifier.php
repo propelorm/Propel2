@@ -139,7 +139,7 @@ static public function sortableApplyScopeCriteria(Criteria \$criteria, \$scope, 
  *
 $paramsDoc
  *
- * @return    {$this->queryClassName} The current query, for fluid interface
+ * @return    \$this|{$this->queryClassName} The current query, for fluid interface
  */
 public function inList($methodSignature)
 {
@@ -201,7 +201,7 @@ public function filterByRank(\$rank" . ($useScope ? ", $methodSignature" : "") .
  *
  * @param     string \$order either Criteria::ASC (default) or Criteria::DESC
  *
- * @return    " . $this->queryClassName . " The current query, for fluid interface
+ * @return    \$this|" . $this->queryClassName . " The current query, for fluid interface
  */
 public function orderByRank(\$order = Criteria::ASC)
 {
