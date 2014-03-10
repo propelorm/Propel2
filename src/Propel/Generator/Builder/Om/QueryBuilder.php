@@ -114,6 +114,8 @@ class QueryBuilder extends AbstractOMBuilder
  * @method     $queryClass innerJoin(\$relation) Adds a INNER JOIN clause to the query
  *";
 
+        $relationQueryClasses = [];
+
         // magic XXXjoinYYY() methods, for IDE completion
         foreach ($this->getTable()->getForeignKeys() as $fk) {
             $relationName = $this->getFKPhpNameAffix($fk);
@@ -123,6 +125,8 @@ class QueryBuilder extends AbstractOMBuilder
  * @method     $queryClass rightJoin" . $relationName . "(\$relationAlias = null) Adds a RIGHT JOIN clause to the query using the " . $relationName . " relation
  * @method     $queryClass innerJoin" . $relationName . "(\$relationAlias = null) Adds a INNER JOIN clause to the query using the " . $relationName . " relation
  *";
+
+            $relationQueryClasses[$this->getNewStubQueryBuilder($fk->getForeignTable())->getQueryClassName(true)] = true;
         }
         foreach ($this->getTable()->getReferrers() as $refFK) {
             $relationName = $this->getRefFKPhpNameAffix($refFK);
@@ -131,6 +135,15 @@ class QueryBuilder extends AbstractOMBuilder
  * @method     $queryClass leftJoin" . $relationName . "(\$relationAlias = null) Adds a LEFT JOIN clause to the query using the " . $relationName . " relation
  * @method     $queryClass rightJoin" . $relationName . "(\$relationAlias = null) Adds a RIGHT JOIN clause to the query using the " . $relationName . " relation
  * @method     $queryClass innerJoin" . $relationName . "(\$relationAlias = null) Adds a INNER JOIN clause to the query using the " . $relationName . " relation
+ *";
+
+            $relationQueryClasses[$this->getNewStubQueryBuilder($refFK->getTable())->getQueryClassName(true)] = true;
+        }
+
+        if (!empty($relationQueryClasses)) {
+            $relationQueryClasses = implode('|', array_keys($relationQueryClasses));
+            $script .= "
+ * @method     $relationQueryClasses endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *";
         }
 
