@@ -102,9 +102,6 @@ class CollectionTest extends BookstoreTestBase
         }
     }
 
-    /**
-     * @group test
-     */
     public function testGetPrevious()
     {
         $col = new Collection();

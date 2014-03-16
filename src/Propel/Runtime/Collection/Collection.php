@@ -230,9 +230,12 @@ class Collection implements \ArrayAccess, \SeekableIterator, \Countable, \Serial
         if (0 === count($this->data)) {
             return true;
         }
-        $copy = $this->data;
-        reset($copy);
-        return current($copy) === current($this->data);
+
+        // hhvm bug with array pointer https://github.com/facebook/hhvm/issues/1693
+        $copy = array_reverse($this->data, true);
+        end($copy);
+
+        return key($copy) === key($this->data);
     }
 
     /**
@@ -309,8 +312,9 @@ class Collection implements \ArrayAccess, \SeekableIterator, \Countable, \Serial
             return true;
         }
 
-        $copy = $this->data;
-        end($copy);
+        // hhvm bug with array pointer https://github.com/facebook/hhvm/issues/1693
+        $copy = array_reverse($this->data, true);
+        reset($copy);
 
         return key($this->data) === key($copy);
     }
@@ -332,7 +336,7 @@ class Collection implements \ArrayAccess, \SeekableIterator, \Countable, \Serial
      */
     public function isOdd()
     {
-        return (Boolean)($this->getPosition() % 2);
+        return (boolean)($this->getPosition() % 2);
     }
 
     /**

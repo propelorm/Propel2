@@ -10,3 +10,4 @@ require_once __DIR__.'/../autoload.php.dist';
  */
 ini_set('precision', 14);
 ini_set('serialize_precision', 14);
+setlocale(LC_ALL, 'en_GB.utf8'); //fixed issues with hhvm and iconv

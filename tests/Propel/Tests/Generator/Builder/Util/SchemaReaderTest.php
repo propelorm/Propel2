@@ -24,6 +24,10 @@ class SchemaReaderTest extends TestCase
 
     public function testParseStringEmptySchema()
     {
+        if (defined('HHVM_VERSION')) {
+            $this->markTestSkipped('HHVM does not support yet xml with no elements.');
+        }
+
         $schema = $this->reader->parseString('<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>');
 
         $xml = <<<EOF
@@ -35,6 +39,10 @@ EOF;
 
     public function testParseStringSchemaWithoutXmlDeclaration()
     {
+        if (defined('HHVM_VERSION')) {
+            $this->markTestSkipped('HHVM does not support yet xml with no elements.');
+        }
+
         $schema = $this->reader->parseString('');
 
         $xml = <<<EOF

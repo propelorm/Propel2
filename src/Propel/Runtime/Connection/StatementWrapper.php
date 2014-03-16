@@ -186,12 +186,12 @@ class StatementWrapper implements StatementInterface, \IteratorAggregate
      * Returns a boolean value indicating success.
      * Overridden for query counting and logging.
      *
-     * @param  string  $parameters
+     * @param  array $input_parameters
      * @return boolean
      */
-    public function execute($parameters = null)
+    public function execute($input_parameters = null)
     {
-        $return = $this->statement->execute($parameters);
+        $return = $this->statement->execute($input_parameters);
         if ($this->connection->useDebug) {
             $sql = $this->getExecutedQueryString();
             $this->connection->log($sql);

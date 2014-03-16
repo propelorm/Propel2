@@ -60,7 +60,7 @@ class ProfilerStatementWrapper extends StatementWrapper
      * @param  string  $input_parameters
      * @return boolean
      */
-    public function execute($input_parameters = null)
+    public function execute(array $input_parameters = null)
     {
         $this->connection->getProfiler()->start();
 
