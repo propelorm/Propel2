@@ -65,6 +65,9 @@ class PropelDateTimeTest extends \PHPUnit_Framework_TestCase
      */
     public function testConstruct()
     {
+        if (defined('HHVM_VERSION')) {
+            $this->markTestSkipped('HHVM has issues with overwritten DateTime classes. facebook/hhvm#1960');
+        }
 
         // Because of a PHP bug ()
         // we cannot use a timestamp format that includes a timezone.	It gets weird. :)
@@ -85,6 +88,10 @@ class PropelDateTimeTest extends \PHPUnit_Framework_TestCase
      */
     public function testSerialize_NoTZ()
     {
+        if (defined('HHVM_VERSION')) {
+            $this->markTestSkipped('HHVM has issues with overwritten DateTime classes. facebook/hhvm#1960');
+        }
+
         $now = date('Y-m-d H:i:s');
         $dt = new DateTime($now);
         $pdt = new PropelDateTime($now);
@@ -104,6 +111,10 @@ class PropelDateTimeTest extends \PHPUnit_Framework_TestCase
      */
     public function testSerialize_SameTZ()
     {
+        if (defined('HHVM_VERSION')) {
+            $this->markTestSkipped('HHVM has issues with overwritten DateTime classes. facebook/hhvm#1960');
+        }
+
         $now = date('Y-m-d H:i:s');
         $dt = new DateTime($now, new DateTimeZone('America/New_York'));
         $pdt = new PropelDateTime($now, new DateTimeZone('America/New_York'));

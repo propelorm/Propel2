@@ -107,11 +107,11 @@ interface StatementInterface
      * - or pass an array of input-only parameter values
      *
      *
-     * @param array $params An array of values with as many elements as there are
+     * @param array $parameters An array of values with as many elements as there are
      *                                  bound parameters in the SQL statement being executed.
      * @return boolean Returns TRUE on success or FALSE on failure.
      */
-    public function execute($params = null);
+    public function execute($parameters = null);
 
     /**
      * Fetches the next row from a result set.

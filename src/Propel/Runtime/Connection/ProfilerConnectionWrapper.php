@@ -78,11 +78,11 @@ class ProfilerConnectionWrapper extends ConnectionWrapper
     /**
      * {@inheritDoc}
      */
-    public function prepare($sql, $driver_options = array())
+    public function prepare($statement, array $driver_options = array())
     {
         $this->getProfiler()->start();
 
-        return parent::prepare($sql, $driver_options);
+        return parent::prepare($statement, $driver_options);
     }
 
     /**
@@ -98,7 +98,7 @@ class ProfilerConnectionWrapper extends ConnectionWrapper
     /**
      * {@inheritDoc}
      */
-    public function query($statement)
+    public function query($statement = '')
     {
         $this->getProfiler()->start();
         $args = func_get_args();

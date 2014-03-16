@@ -169,7 +169,7 @@ interface ConnectionInterface
      *                                 successfully prepares, FALSE otherwise.
      * @throws \Propel\Runtime\Connection\Exception\ConnectionException depending on error handling.
      */
-    public function prepare($statement, $driver_options = array());
+    public function prepare($statement, $driver_options = null);
 
     /**
      * Executes an SQL statement, returning a result set as a Statement object.
@@ -197,5 +197,5 @@ interface ConnectionInterface
      *                SQL statement. Returns FALSE if the driver does not support
      *                quoting in this way.
      */
-    public function quote($string, $parameter_type = 2);
+    public function quote($string, $parameter_type = \PDO::PARAM_STR);
 }

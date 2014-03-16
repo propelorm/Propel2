@@ -371,28 +371,28 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      *  - Add logging and query counting if logging is true.
      *  - Add query caching support if the PropelPDO::PROPEL_ATTR_CACHE_PREPARES was set to true.
      *
-     * @param string $sql            This must be a valid SQL statement for the target database server.
+     * @param string $statement      This must be a valid SQL statement for the target database server.
      * @param array  $driver_options One $array or more key => value pairs to set attribute values
      *                               for the PDOStatement object that this method returns.
      *
      * @return StatementInterface
      */
-    public function prepare($sql, $driver_options = array())
+    public function prepare($statement, $driver_options = null)
     {
         $statementWrapper = null;
 
-        if ($this->isCachePreparedStatements && isset($this->cachedPreparedStatements[$sql])) {
-            $statementWrapper = $this->cachedPreparedStatements[$sql];
+        if ($this->isCachePreparedStatements && isset($this->cachedPreparedStatements[$statement])) {
+            $statementWrapper = $this->cachedPreparedStatements[$statement];
         } else {
-            $statementWrapper = $this->createStatementWrapper($sql);
+            $statementWrapper = $this->createStatementWrapper($statement);
             $statementWrapper->prepare($driver_options);
             if ($this->isCachePreparedStatements) {
-                $this->cachedPreparedStatements[$sql] = $statementWrapper;
+                $this->cachedPreparedStatements[$statement] = $statementWrapper;
             }
         }
 
         if ($this->useDebug) {
-            $this->log($sql);
+            $this->log($statement);
         }
 
         return $statementWrapper;
