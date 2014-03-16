@@ -116,7 +116,7 @@ class PdoConnection extends \PDO implements ConnectionInterface
      *
      * @param callable $callable A callable to be wrapped in a transaction
      *
-     * @return bool|mixed Returns the result of the callable on success, or <code>true</code> when the callable doesn't return anything.
+     * @return mixed Returns the result of the callable.
      *
      * @throws \Exception Re-throws a possible <code>Exception</code> triggered by the callable.
      */
@@ -129,11 +129,7 @@ class PdoConnection extends \PDO implements ConnectionInterface
 
             $this->commit();
 
-            if ($result) {
-                return $result;
-            }
-
-            return true;
+            return $result;
         } catch (\Exception $e) {
             $this->rollBack();
 

@@ -46,9 +46,9 @@ class PdoConnectionTest extends TestCase
         $con->expects($this->never())->method('rollback');
         $con->expects($this->once())->method('commit');
 
-        $this->assertTrue($con->transaction(function() {
+        $this->assertNull($con->transaction(function() {
             // do nothing
-        }), "transaction() returns true by default");
+        }), "transaction() returns null by default");
     }
 
     public function testTransactionChaining()
@@ -72,11 +72,11 @@ class PdoConnectionTest extends TestCase
         $con->expects($this->never())->method('rollback');
         $con->expects($this->exactly(2))->method('commit');
 
-        $this->assertTrue($con->transaction(function() use ($con) {
-            $this->assertTrue($con->transaction(function() {
+        $this->assertNull($con->transaction(function() use ($con) {
+            $this->assertNull($con->transaction(function() {
                 // do nothing
-            }), "transaction() returns true by default");
-        }), "transaction() returns true by default");
+            }), "transaction() returns null by default");
+        }), "transaction() returns null by default");
     }
 
     public function testTransactionNestedException()
