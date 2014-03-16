@@ -8,9 +8,8 @@
  * @license MIT License
  */
 
-namespace Propel\Tests\Runtime\Adapter\Pdo;
+namespace Propel\Tests\Runtime\Connection;
 
-use Propel\Runtime\Propel;
 use Propel\Tests\TestCase;
 
 /**
@@ -18,11 +17,11 @@ use Propel\Tests\TestCase;
  *
  * @author Markus Staab <markus.staab@redaxo.de>
  */
-class PdoConnectionTest extends TestCase
+class TransactionTraitTest extends TestCase
 {
     public function testTransactionRollback()
     {
-        $con = $this->getMock('Propel\Runtime\Connection\PdoConnection', ['beginTransaction', 'rollback', 'commit'], ['sqlite::memory:']);
+        $con = $this->getMockForTrait('Propel\Runtime\Connection\TransactionTrait');
 
         $con->expects($this->once())->method('beginTransaction');
         $con->expects($this->once())->method('rollback');
@@ -40,7 +39,7 @@ class PdoConnectionTest extends TestCase
 
     public function testTransactionCommit()
     {
-        $con = $this->getMock('Propel\Runtime\Connection\PdoConnection', ['beginTransaction', 'rollback', 'commit'], ['sqlite::memory:']);
+        $con = $this->getMockForTrait('Propel\Runtime\Connection\TransactionTrait');
 
         $con->expects($this->once())->method('beginTransaction');
         $con->expects($this->never())->method('rollback');
@@ -53,7 +52,7 @@ class PdoConnectionTest extends TestCase
 
     public function testTransactionChaining()
     {
-        $con = $this->getMock('Propel\Runtime\Connection\PdoConnection', ['beginTransaction', 'rollback', 'commit'], ['sqlite::memory:']);
+        $con = $this->getMockForTrait('Propel\Runtime\Connection\TransactionTrait');
 
         $con->expects($this->once())->method('beginTransaction');
         $con->expects($this->never())->method('rollback');
@@ -66,7 +65,7 @@ class PdoConnectionTest extends TestCase
 
     public function testTransactionNestedCommit()
     {
-        $con = $this->getMock('Propel\Runtime\Connection\PdoConnection', ['beginTransaction', 'rollback', 'commit'], ['sqlite::memory:']);
+        $con = $this->getMockForTrait('Propel\Runtime\Connection\TransactionTrait');
 
         $con->expects($this->exactly(2))->method('beginTransaction');
         $con->expects($this->never())->method('rollback');
@@ -81,7 +80,7 @@ class PdoConnectionTest extends TestCase
 
     public function testTransactionNestedException()
     {
-        $con = $this->getMock('Propel\Runtime\Connection\PdoConnection', ['beginTransaction', 'rollback', 'commit'], ['sqlite::memory:']);
+        $con = $this->getMockForTrait('Propel\Runtime\Connection\TransactionTrait');
 
         $con->expects($this->exactly(2))->method('beginTransaction');
         $con->expects($this->exactly(2))->method('rollback');
