@@ -26,6 +26,7 @@ abstract class AbstractCommand extends Command
 {
     const DEFAULT_INPUT_DIRECTORY   = '.';
     const DEFAULT_PLATFORM          = 'MysqlPlatform';
+    const DEFAULT_BUILD_PROPERTIES_FILE_NAME = 'build.properties';
 
     protected $filesystem;
 
@@ -38,6 +39,7 @@ abstract class AbstractCommand extends Command
             ->addOption('platform',  null, InputOption::VALUE_REQUIRED,  'The platform', self::DEFAULT_PLATFORM)
             ->addOption('input-dir', null, InputOption::VALUE_REQUIRED,  'The input directory', self::DEFAULT_INPUT_DIRECTORY)
             ->addOption('recursive', null, InputOption::VALUE_NONE, 'Search for schema.xml inside the input directory')
+            ->addOption('build-properties', null, InputOption::VALUE_REQUIRED, 'Declare a file containing build.properties to be used', self::DEFAULT_BUILD_PROPERTIES_FILE_NAME)
         ;
     }
 
@@ -52,11 +54,16 @@ abstract class AbstractCommand extends Command
      */
     protected function getGeneratorConfig(array $properties, InputInterface $input = null)
     {
+        if($input && $input->hasOption('build-properties'))
+            $buildfile = $input->getOption('build-properties');
+        else
+            $buildfile = self::DEFAULT_BUILD_PROPERTIES_FILE_NAME;
+        
         $options = $properties;
         if ($input && $input->hasOption('input-dir')) {
             $options = array_merge(
                 $properties,
-                $this->getBuildProperties($input->getOption('input-dir') . '/build.properties')
+                $this->getBuildProperties($input->getOption('input-dir') . '/' . $buildfile)
             );
         }
 
