@@ -18,6 +18,8 @@ use Propel\Runtime\DataFetcher\PDODataFetcher;
  */
 class PdoConnection extends \PDO implements ConnectionInterface
 {
+    use TransactionTrait;
+
     /**
      * @var string The datasource name associated to this connection
      */
@@ -106,35 +108,6 @@ class PdoConnection extends \PDO implements ConnectionInterface
         $stmt = parent::exec($statement);
 
         return $this->getDataFetcher($stmt);
-    }
-
-    /**
-     * Executes the given callable within a transaction.
-     * This helper method takes care to commit or rollback the transaction.
-     *
-     * In case you want the transaction to rollback just throw an Exception of any type.
-     *
-     * @param callable $callable A callable to be wrapped in a transaction
-     *
-     * @return mixed Returns the result of the callable.
-     *
-     * @throws \Exception Re-throws a possible <code>Exception</code> triggered by the callable.
-     */
-    public function transaction(callable $callable)
-    {
-        $this->beginTransaction();
-
-        try {
-            $result = call_user_func($callable);
-
-            $this->commit();
-
-            return $result;
-        } catch (\Exception $e) {
-            $this->rollBack();
-
-            throw $e;
-        }
     }
 
     /**
