@@ -13,9 +13,13 @@ namespace Propel\Generator\Util;
 use Propel\Generator\Builder\Util\SchemaReader;
 use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Config\QuickGeneratorConfig;
+use Propel\Generator\Exception\BuildException;
+use Propel\Generator\Model\Database;
+use Propel\Generator\Model\Diff\DatabaseComparator;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Platform\PlatformInterface;
 use Propel\Generator\Platform\SqlitePlatform;
+use Propel\Generator\Reverse\SchemaParserInterface;
 use Propel\Runtime\Adapter\Pdo\SqliteAdapter;
 use Propel\Runtime\Connection\PdoConnection;
 use Propel\Runtime\Connection\ConnectionInterface;
@@ -25,14 +29,93 @@ use Propel\Runtime\Propel;
 
 class QuickBuilder
 {
-    protected $schema, $platform, $config, $database;
+    /**
+     * The Xml.
+     *
+     * @var string
+     */
+    protected $schema;
 
+    /**
+     * The Database Schema.
+     *
+     * @var string
+     */
+    protected $schemaName;
+
+    /**
+     * @var PlatformInterface
+     */
+    protected $platform;
+
+    /**
+     * @var GeneratorConfigInterface
+     */
+    protected $config;
+
+    /**
+     * @var Database
+     */
+    protected $database;
+
+    /**
+     * @var SchemaParserInterface
+     */
+    protected $parser;
+
+    /**
+     * @var array
+     */
     protected $classTargets = array('tablemap', 'object', 'query', 'objectstub', 'querystub');
 
+    /**
+     * @param string $schema
+     */
     public function setSchema($schema)
     {
         $this->schema = $schema;
     }
+
+    /**
+     * @return string
+     */
+    public function getSchema()
+    {
+        return $this->schema;
+    }
+
+    /**
+     * @param string $schemaName
+     */
+    public function setSchemaName($schemaName)
+    {
+        $this->schemaName = $schemaName;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSchemaName()
+    {
+        return $this->schemaName;
+    }
+
+    /**
+     * @param \Propel\Generator\Reverse\SchemaParserInterface $parser
+     */
+    public function setParser($parser)
+    {
+        $this->parser = $parser;
+    }
+
+    /**
+     * @return \Propel\Generator\Reverse\SchemaParserInterface
+     */
+    public function getParser()
+    {
+        return $this->parser;
+    }
+
 
     /**
      * Setter for the platform property
@@ -134,14 +217,63 @@ class QuickBuilder
                 // drop statements cause errors since the table doesn't exist
                 continue;
             }
-            $stmt = $con->prepare($statement);
-            if ($stmt instanceof StatementInterface) {
-                // only execute if has no error
-                $stmt->execute();
+            try {
+                $stmt = $con->prepare($statement);
+                if ($stmt instanceof StatementInterface) {
+                    // only execute if has no error
+                    $stmt->execute();
+                }
+            } catch (\PDOException $e) {
+                throw new \Exception('SQL failed: ' . $statement, 0, $e);
             }
         }
 
         return count($statements);
+    }
+
+    public function updateDB(ConnectionInterface $con)
+    {
+        $database = $this->readConnectedDatabase();
+        $diff = DatabaseComparator::computeDiff($database, $this->database);
+
+        if (false === $diff) {
+            return null;
+        }
+        $sql = $this->database->getPlatform()->getModifyDatabaseDDL($diff);
+
+        $con->beginTransaction();
+        $statements = SqlParser::parseString($sql);
+        foreach ($statements as $statement) {
+            try {
+                $stmt = $con->prepare($statement);
+                $stmt->execute();
+            } catch (\Exception $e) {
+                //echo $sql; //uncomment for better debugging
+                throw new BuildException(sprintf("Can not execute SQL: \n%s\nFrom database: \n%s\n\nTo database: \n%s\n\nDiff:\n%s",
+                    $statement,
+                    $this->database,
+                    $database,
+                    $diff
+                ), null, $e);
+            }
+        }
+        $con->commit();
+
+        return $database;
+    }
+
+    /**
+     * @return Database
+     */
+    public function readConnectedDatabase()
+    {
+        $this->getDatabase();
+        $database = new Database();
+        $database->setSchema($this->database->getSchema());
+        $database->setName($this->database->getName());
+        $database->setPlatform($this->getPlatform());
+        $this->getParser()->parse($database);
+        return $database;
     }
 
     public function getSQL()
@@ -166,14 +298,53 @@ class QuickBuilder
         return $name;
     }
 
-    public function buildClasses(array $classTargets = null)
+    /**
+     * @param array $classTargets array('tablemap', 'object', 'query', 'objectstub', 'querystub')
+     * @param bool $separate pass true to get for each class a own file. better for debugging.
+     */
+    public function buildClasses(array $classTargets = null, $separate = false)
     {
-        $code = "<?php\n".$this->getClasses($classTargets);
-        $name = $this->getBuildName($classTargets);
-        $tempFile = sys_get_temp_dir() . '/propelQuickBuilder'.$name.'.php';
+        $classes = $classTargets ? : array('tablemap', 'object', 'query', 'objectstub', 'querystub');
 
-        file_put_contents($tempFile, $code);
-        include($tempFile);
+        $dirHash = substr(sha1(getcwd()), 0, 10);
+        $dir = sys_get_temp_dir() . "/propelQuickBuild-$dirHash/";
+
+        if (!is_dir($dir)) {
+            mkdir($dir);
+        }
+
+        $includes = [];
+        $allCode = '';
+        $allCodeName = [];
+        foreach ($this->getDatabase()->getTables() as $table) {
+            if (5 > count($allCodeName)) {
+                $allCodeName[] = $table->getPhpName();
+            }
+
+            if ($separate) {
+                foreach ($classes as $class) {
+                    $code = $this->getClassesForTable($table, [$class]);
+                        $tempFile = $dir
+                            . str_replace('\\', '-', $table->getPhpName())
+                            . "-$class"
+                            . '.php';
+                        file_put_contents($tempFile, "<?php\n" . $code);
+                        $includes[] = $tempFile;
+                }
+            } else {
+                $code = $this->getClassesForTable($table, $classes);
+                $allCode .= $code;
+            }
+        }
+        if ($separate) {
+            foreach ($includes as $tempFile) {
+                include($tempFile);
+            }
+        } else {
+            $tempFile = $dir . join('_', $allCodeName).'.php';
+            file_put_contents($tempFile, "<?php\n" . $allCode);
+            include($tempFile);
+        }
     }
 
     public function getClasses(array $classTargets = null)
@@ -269,7 +440,7 @@ class QuickBuilder
                 $output .= $token;
             } elseif (in_array($token[0], array(T_COMMENT, T_DOC_COMMENT))) {
                 // strip comments
-                continue;
+                $output .= $token[1];
             } elseif (T_NAMESPACE === $token[0]) {
                 if ($inNamespace) {
                     $output .= "}\n";

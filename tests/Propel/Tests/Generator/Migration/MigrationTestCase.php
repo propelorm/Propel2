@@ -88,7 +88,6 @@ class MigrationTestCase extends TestCase
                 $stmt = $this->con->prepare($statement);
                 $stmt->execute();
             } catch (\Exception $e) {
-                $this->con->rollBack();
                 throw new BuildException(sprintf("Can not execute SQL: \n%s\nFrom database: \n%s\n\nTo database: \n%s\n",
                     $statement,
                     $this->database,

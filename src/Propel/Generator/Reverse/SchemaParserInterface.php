@@ -61,6 +61,11 @@ interface SchemaParserInterface
     public function getPlatform();
 
     /**
+     * @param \Propel\Generator\Platform\PlatformInterface $platform
+     */
+    public function setPlatform($platform);
+
+    /**
      * Parse the schema and populate passed-in Database model object.
      *
      * @param  Database $database

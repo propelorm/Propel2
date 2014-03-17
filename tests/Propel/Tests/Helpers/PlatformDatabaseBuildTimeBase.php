@@ -7,6 +7,7 @@ use Propel\Generator\Model\Database;
 use Propel\Generator\Model\Diff\DatabaseComparator;
 use Propel\Generator\Platform\MysqlPlatform;
 use Propel\Generator\Reverse\MysqlSchemaParser;
+use Propel\Generator\Util\QuickBuilder;
 use Propel\Generator\Util\SqlParser;
 use Propel\Runtime\Propel;
 use Propel\Tests\TestCase;
@@ -30,18 +31,25 @@ class PlatformDatabaseBuildTimeBase extends TestCase
     public $platform;
 
     /**
+     * @var string
+     */
+    protected $databaseName = 'reverse-bookstore';
+
+    /**
      * @var PDO
      */
     public $con;
 
     protected function setUp()
     {
-        include(__DIR__ . '/../../../Fixtures/reverse/mysql/build/conf/reverse-bookstore-conf.php');
+        $config = sprintf('%s-conf.php', $this->databaseName);
+        $path = 'reverse-bookstore' === $this->databaseName ? 'reverse/mysql' : $this->databaseName;
+        include(__DIR__ . '/../../../Fixtures/' . $path . '/build/conf/' . $config);
 
-        $this->con = Propel::getConnection('reverse-bookstore');
+        $this->con = Propel::getConnection($this->databaseName);
 
-        $this->parser   = new MysqlSchemaParser($this->con);
-        $this->platform = new MysqlPlatform();
+        $this->parser = $this->getParser($this->con);
+        $this->platform = $this->getPlatform();
 
         $this->parser->setGeneratorConfig(new QuickGeneratorConfig());
         $this->parser->setPlatform($this->platform);
@@ -53,6 +61,43 @@ class PlatformDatabaseBuildTimeBase extends TestCase
         $this->database = new Database();
         $this->database->setPlatform($this->platform);
         $this->parser->parse($this->database);
+    }
+
+    /**
+     * Builds all classes and migrates the database.
+     *
+     * @param string $schema xml schema
+     */
+    public function buildAndMigrate($schema)
+    {
+        $builder = new QuickBuilder();
+        $platform  = $this->getPlatform();
+
+        $builder->setPlatform($platform);
+        $builder->setParser($this->getParser($this->con));
+        $builder->getParser()->setPlatform($platform);
+        $builder->setSchema($schema);
+        $builder->buildClasses(null, true);
+
+        $builder->updateDB($this->con);
+    }
+
+    /**
+     * Migrates the database.
+     *
+     * @param string $schema xml schema
+     */
+    public function migrate($schema)
+    {
+        $builder = new QuickBuilder();
+        $platform  = $this->getPlatform();
+
+        $builder->setPlatform($platform);
+        $builder->setParser($this->getParser($this->con));
+        $builder->getParser()->setPlatform($platform);
+        $builder->setSchema($schema);
+
+        $builder->updateDB($this->con);
     }
 
     /**

@@ -66,7 +66,9 @@ class Table extends ScopedMappingModel implements IdMethod
      */
     private $database;
 
-    /** @var ForeignKey[] */
+    /**
+     * @var ForeignKey[]
+     */
     private $referrers;
     private $containsForeignPK;
     /**
@@ -796,20 +798,44 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Returns the list of cross foreign keys.
      *
-     * @return ForeignKey[][]
+     * @return CrossForeignKeys[]
      */
     public function getCrossFks()
     {
         $crossFks = [];
         foreach ($this->referrers as $refFK) {
             if ($refFK->getTable()->isCrossRef()) {
-                foreach ($refFK->getOtherFks() as $crossFK) {
-                    $crossFks[] = [ $refFK, $crossFK ];
+                $crossFK = new CrossForeignKeys($refFK, $this);
+                foreach ($refFK->getOtherFks() as $fk) {
+                    if ($fk->isAtLeastOneLocalPrimaryKeyIsRequired() &&
+                        $crossFK->isAtLeastOneLocalPrimaryKeyNotCovered($fk)) {
+                        $crossFK->addCrossForeignKey($fk);
+                    }
+                }
+                if ($crossFK->hasCrossForeignKeys()) {
+                    $crossFks[] = $crossFK;
                 }
             }
         }
 
         return $crossFks;
+    }
+
+    /**
+     * Returns all required(notNull && no defaultValue) primary keys which are not in $primaryKeys.
+     *
+     * @param Column[] $primaryKeys
+     * @return Column[]
+     */
+    public function getOtherRequiredPrimaryKeys(array $primaryKeys) {
+        $pks = [];
+        foreach ($this->getPrimaryKey() as $primaryKey) {
+            if ($primaryKey->isNotNull() && !$primaryKey->hasDefaultValue() && !in_array($primaryKey, $primaryKeys, true)) {
+                $pks = $primaryKey;
+            }
+        }
+
+        return $pks;
     }
 
     /**
@@ -1647,10 +1673,10 @@ class Table extends ScopedMappingModel implements IdMethod
     }
 
     /**
-     * Returns the foreign keys that include column in it's list of local
+     * Returns the foreign keys that include $column in it's list of local
      * columns.
      *
-     * Eg. Foreign key (a, b, c) references tbl(x, y, z) will be returned of col
+     * Eg. Foreign key (a, b, c) references tbl(x, y, z) will be returned of $column
      * is either a, b or c.
      *
      * @param  string $column Name of the column

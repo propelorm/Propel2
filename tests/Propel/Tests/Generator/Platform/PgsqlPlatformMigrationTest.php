@@ -42,7 +42,14 @@ class PgsqlPlatformMigrationTest extends PlatformMigrationTestProvider
 
 DROP TABLE IF EXISTS foo1 CASCADE;
 
-ALTER TABLE foo3 RENAME TO foo4;
+DROP TABLE IF EXISTS foo3 CASCADE;
+
+CREATE TABLE foo4
+(
+    id serial NOT NULL,
+    yipee INTEGER,
+    PRIMARY KEY (id)
+);
 
 CREATE TABLE foo5
 (

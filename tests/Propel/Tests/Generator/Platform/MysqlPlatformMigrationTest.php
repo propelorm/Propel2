@@ -53,7 +53,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 
 DROP TABLE IF EXISTS `foo1`;
 
-RENAME TABLE `foo3` TO `foo4`;
+DROP TABLE IF EXISTS `foo3`;
 
 ALTER TABLE `foo2`
 
@@ -65,6 +65,13 @@ ALTER TABLE `foo2`
 (
     `baz3` TEXT
 );
+
+CREATE TABLE `foo4`
+(
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `yipee` INTEGER,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
 
 CREATE TABLE `foo5`
 (
@@ -339,57 +346,5 @@ ALTER TABLE `foo` ADD
 
         $this->assertEquals('bar2', $secondPair[0]->getName());
         $this->assertEquals('bar_la2', $secondPair[1]->getName());
-    }
-
-    public function testTableRenaming()
-    {
-        $schema1 = '
-<database name="test">
-    <table name="foo">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar1" type="INTEGER" />
-        <column name="bar2" type="INTEGER" />
-    </table>
-    <table name="foo2">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar1" type="INTEGER" />
-        <column name="bar2" type="INTEGER" />
-    </table>
-</database>
-';
-        $schema2 = '
-<database name="test">
-    <table name="foo_bla">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar1" type="INTEGER" />
-        <column name="bar2" type="INTEGER" />
-    </table>
-    <table name="foo_bla2">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar1" type="INTEGER" />
-        <column name="bar2" type="INTEGER" />
-    </table>
-</database>
-';
-
-        $d1 = $this->getDatabaseFromSchema($schema1);
-        $d2 = $this->getDatabaseFromSchema($schema2);
-
-        $diff = DatabaseComparator::computeDiff($d1, $d2);
-        $renamedTables = $diff->getRenamedTables();
-
-        $firstPair = array(key($renamedTables), current($renamedTables));
-        next($renamedTables);
-        $secondPair = array(key($renamedTables), current($renamedTables));
-
-        $this->assertEquals('foo', $firstPair[0]);
-        $this->assertEquals('foo_bla', $firstPair[1]);
-
-        $this->assertEquals('foo2', $secondPair[0]);
-        $this->assertEquals(
-            'foo_bla2',
-            $secondPair[1],
-            'Table `Foo2` should not renamed to `foo_bla` since we have already renamed a table to this name.'
-        );
     }
 }

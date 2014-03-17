@@ -208,12 +208,28 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
     public function testManyToManyCounter()
     {
         BookstoreDataPopulator::populate();
+        /** @var $blc1 BookClubList */
         $blc1 = BookClubListQuery::create()->findOneByGroupLeader('Crazyleggs');
         $nbBooks = $blc1->countBooks();
         $this->assertEquals(2, $nbBooks, 'countCrossRefFK() returns the correct list of objects');
         $query = BookQuery::create()
             ->filterByTitle('Harry Potter and the Order of the Phoenix');
         $nbBooks = $blc1->countBooks($query);
+
+        $bla = BookListRelQuery::create(null)
+            ->filterByBookClubList($blc1);
+
+        $bla2 = BookListRelQuery::create(null, $query)
+            ->filterByBookClubList($blc1);
+
+        $bla3 = BookListRelQuery::create()
+            ->useBookQuery()->filterByTitle('Harry Potter and the Order of the Phoenix')->endUse()
+            ->filterByBookClubList($blc1);
+
+        $items = iterator_to_array($bla->find());
+        $items2 = iterator_to_array($bla2->find());
+        $items3 = iterator_to_array($bla3->find());
+
         $this->assertEquals(1, $nbBooks, 'countCrossRefFK() accepts a query as first parameter');
     }
 

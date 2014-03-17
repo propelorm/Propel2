@@ -152,21 +152,6 @@ class DatabaseComparator
             }
         }
 
-        // check for table renamings
-        foreach ($this->databaseDiff->getAddedTables() as $addedTableName => $addedTable) {
-            foreach ($this->databaseDiff->getRemovedTables() as $removedTableName => $removedTable) {
-                if (!TableComparator::computeDiff($addedTable, $removedTable, $caseInsensitive)) {
-                    // no difference except the name, that's probably a renaming
-                    $this->databaseDiff->addRenamedTable($removedTableName, $addedTableName);
-                    $this->databaseDiff->removeAddedTable($addedTableName);
-                    $this->databaseDiff->removeRemovedTable($removedTableName);
-                    $databaseDifferences--;
-                    // skip to the next added table
-                    break;
-                }
-            }
-        }
-
         return $databaseDifferences;
     }
 }

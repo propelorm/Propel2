@@ -399,6 +399,15 @@ class Collection implements \ArrayAccess, \SeekableIterator, \Countable, \Serial
     }
 
     /**
+     * Prepend one  elements to the end of the collection
+     *
+     * @param  mixed   $value the element to prepend
+     */
+    public function push($value) {
+        $this[] = $value;
+    }
+
+    /**
      * Prepend one or more elements to the beginning of the collection
      *
      * @param  mixed $value the element to prepend

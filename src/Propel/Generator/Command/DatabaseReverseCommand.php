@@ -37,7 +37,7 @@ class DatabaseReverseCommand extends AbstractCommand
             ->addOption('output-dir',    null, InputOption::VALUE_REQUIRED, 'The output directory', self::DEFAULT_OUTPUT_DIRECTORY)
             ->addOption('database-name', null, InputOption::VALUE_REQUIRED, 'The database name to reverse', self::DEFAULT_DATABASE_NAME)
             ->addOption('schema-name',   null, InputOption::VALUE_REQUIRED, 'The schema name to generate', self::DEFAULT_SCHEMA_NAME)
-            ->addArgument('connection',  null, InputArgument::REQUIRED,     'Connection to use')
+            ->addArgument('connection',  InputArgument::REQUIRED,     'Connection to use. Example: "mysql:host=127.0.0.1;dbname=test;user=root;password=foobar"')
             ->setName('database:reverse')
             ->setAliases(array('reverse'))
             ->setDescription('Reverse-engineer a XML schema file based on given database')

@@ -52,7 +52,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 
 DROP TABLE IF EXISTS `foo1`;
 
-RENAME TABLE `foo3` TO `foo4`;
+DROP TABLE IF EXISTS `foo3`;
 
 ALTER TABLE `foo2`
 
@@ -64,6 +64,13 @@ ALTER TABLE `foo2`
 (
     `baz3` TEXT
 );
+
+CREATE TABLE `foo4`
+(
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `yipee` INTEGER,
+    PRIMARY KEY (`id`)
+) ENGINE=MyISAM;
 
 CREATE TABLE `foo5`
 (

@@ -855,7 +855,7 @@ ALTER TABLE %s%s;
 
         // create indices, foreign keys
         foreach ($tableDiff->getModifiedIndices() as $indexModification) {
-            list(, $toIndex) = $indexModification;
+            list($oldIndex, $toIndex) = $indexModification;
             $ret .= $this->getAddIndexDDL($toIndex);
         }
         foreach ($tableDiff->getAddedIndices() as $index) {
@@ -1370,7 +1370,7 @@ if (is_resource($columnValueAccessor)) {
     {
         if ($table->hasForeignKeys()) {
             foreach ($table->getForeignKeys() as $fk) {
-                if (!$fk->getForeignTable()->isUnique($fk->getForeignColumnObjects())) {
+                if ($fk->getForeignTable() && !$fk->getForeignTable()->isUnique($fk->getForeignColumnObjects())) {
                     $unique = new Unique();
                     $unique->setColumns($fk->getForeignColumnObjects());
                     $fk->getForeignTable()->addUnique($unique);

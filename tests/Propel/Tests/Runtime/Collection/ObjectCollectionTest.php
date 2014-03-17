@@ -240,7 +240,7 @@ class ObjectCollectionTest extends BookstoreTestBase
         $this->assertTrue(0 === $col->search($b2));
     }
 
-    public function testContainsMatchesSimilarNewObjects()
+    public function testContainsMatchesNotSimilarNewObjects()
     {
         $col = new ObjectCollection();
         $b1  = new Book();
@@ -253,10 +253,10 @@ class ObjectCollectionTest extends BookstoreTestBase
         $col = new ObjectCollection(array($b1));
 
         $this->assertTrue($col->contains($b1));
-        $this->assertTrue($col->contains($b2));
+        $this->assertFalse($col->contains($b2));
     }
 
-    public function testSearchMatchesSimilarNewObjects()
+    public function testSearchMatchesNotSimilarNewObjects()
     {
         $col = new ObjectCollection();
         $b1  = new Book();
@@ -268,6 +268,6 @@ class ObjectCollectionTest extends BookstoreTestBase
 
         $col = new ObjectCollection(array($b1));
         $this->assertTrue(0 === $col->search($b1));
-        $this->assertTrue(0 === $col->search($b2));
+        $this->assertFalse(0 === $col->search($b2));
     }
 }

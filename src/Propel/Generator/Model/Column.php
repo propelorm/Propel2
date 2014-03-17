@@ -1191,6 +1191,16 @@ class Column extends MappingModel
     }
 
     /**
+     * Returns true if this table has a default value (and which is not NULL).
+     *
+     * @return bool
+     */
+    public function hasDefaultValue()
+    {
+        return null !== $this->getDefaultValue();
+    }
+
+    /**
      * Returns a string that will give this column a default value in PHP.
      *
      * @return string
