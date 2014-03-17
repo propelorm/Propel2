@@ -1320,19 +1320,18 @@ class ModelCriteria extends BaseModelCriteria
         $criteria = $this->isKeepQuery() ? clone $this : $this;
         $criteria->setDbName($this->getDbName());
 
-        $con->beginTransaction();
         try {
-            if (!$affectedRows = $criteria->basePreDelete($con)) {
-                $affectedRows = $criteria->doDelete($con);
-            }
-            $criteria->basePostDelete($affectedRows, $con);
-            $con->commit();
+            return $con->transaction(function () use ($con, $criteria) {
+                if (!$affectedRows = $criteria->basePreDelete($con)) {
+                    $affectedRows = $criteria->doDelete($con);
+                }
+                $criteria->basePostDelete($affectedRows, $con);
+
+                return $affectedRows;
+            });
         } catch (PropelException $e) {
-            $con->rollback();
             throw new PropelException(__METHOD__  . ' is unable to delete. ', 0, $e);
         }
-
-        return $affectedRows;
     }
 
     /**
@@ -1350,17 +1349,16 @@ class ModelCriteria extends BaseModelCriteria
         if (null === $con) {
             $con = Propel::getServiceContainer()->getWriteConnection($this->getDbName());
         }
-        $con->beginTransaction();
         try {
-            if (!$affectedRows = $this->basePreDelete($con)) {
-                $affectedRows = $this->doDeleteAll($con);
-            }
-            $this->basePostDelete($affectedRows, $con);
-            $con->commit();
+            return $con->transaction(function () use ($con) {
+                if (!$affectedRows = $this->basePreDelete($con)) {
+                    $affectedRows = $this->doDeleteAll($con);
+                }
+                $this->basePostDelete($affectedRows, $con);
 
-            return $affectedRows;
+                return $affectedRows;
+            });
         } catch (PropelException $e) {
-            $con->rollBack();
             throw new PropelException(__METHOD__  . ' is unable to delete all. ', 0, $e);
         }
     }
@@ -1477,21 +1475,14 @@ class ModelCriteria extends BaseModelCriteria
             $criteria->setPrimaryTableName(constant($this->modelTableMapName.'::TABLE_NAME'));
         }
 
-        $con->beginTransaction();
-        try {
-
+        return $con->transaction(function () use ($con, $values, $criteria, $forceIndividualSaves) {
             if (!$affectedRows = $criteria->basePreUpdate($values, $con, $forceIndividualSaves)) {
                 $affectedRows = $criteria->doUpdate($values, $con, $forceIndividualSaves);
             }
             $criteria->basePostUpdate($affectedRows, $con);
 
-            $con->commit();
-        } catch (PropelException $e) {
-            $con->rollBack();
-            throw $e;
-        }
-
-        return $affectedRows;
+            return $affectedRows;
+        });
     }
 
     /**
