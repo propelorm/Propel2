@@ -1612,12 +1612,10 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
         // Set the correct dbName
         \$criteria->setDbName(" . $this->getTableMapClass() . "::DATABASE_NAME);
 
-        \$affectedRows = 0; // initialize var to track total num of affected rows
-
-        try {
-            // use transaction because \$criteria could contain info
-            // for more than one table or we could emulating ON DELETE CASCADE, etc.
-            \$con->beginTransaction();
+        // use transaction because \$criteria could contain info
+        // for more than one table or we could emulating ON DELETE CASCADE, etc.
+        return \$con->transaction(function () use (\$con, \$criteria) {
+            \$affectedRows = 0; // initialize var to track total num of affected rows
             ";
 
         if ($this->isDeleteCascadeEmulationNeeded()) {
@@ -1643,13 +1641,9 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
         $script .= "
             \$affectedRows += ModelCriteria::delete(\$con);
             {$this->getTableMapClassName()}::clearRelatedInstancePool();
-            \$con->commit();
 
             return \$affectedRows;
-        } catch (PropelException \$e) {
-            \$con->rollBack();
-            throw \$e;
-        }
+        });
     }
 ";
     }
@@ -1831,11 +1825,11 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
         if (null === \$con) {
             \$con = Propel::getServiceContainer()->getWriteConnection(" . $this->getTableMapClass() . "::DATABASE_NAME);
         }
-        \$affectedRows = 0; // initialize var to track total num of affected rows
-        try {
-            // use transaction because \$criteria could contain info
-            // for more than one table or we could emulating ON DELETE CASCADE, etc.
-            \$con->beginTransaction();
+
+        // use transaction because \$criteria could contain info
+        // for more than one table or we could emulating ON DELETE CASCADE, etc.
+        return \$con->transaction(function () use (\$con) {
+            \$affectedRows = 0; // initialize var to track total num of affected rows
             ";
         if ($this->isDeleteCascadeEmulationNeeded()) {
             $script .="\$affectedRows += \$this->doOnDeleteCascade(\$con);
@@ -1851,14 +1845,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
             // instances get re-added by the select statement contained therein).
             {$this->getTableMapClassName()}::clearInstancePool();
             {$this->getTableMapClassName()}::clearRelatedInstancePool();
-
-            \$con->commit();
-        } catch (PropelException \$e) {
-            \$con->rollBack();
-            throw \$e;
-        }
-
-        return \$affectedRows;
+        });
     }
 ";
     }

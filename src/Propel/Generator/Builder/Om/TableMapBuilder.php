@@ -1388,18 +1388,11 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
         // Set the correct dbName
         \$query = " . $this->getQueryClassName() . "::create()->mergeWith(\$criteria);
 
-        try {
-            // use transaction because \$criteria could contain info
-            // for more than one table (I guess, conceivably)
-            \$con->beginTransaction();
-            \$pk = \$query->doInsert(\$con);
-            \$con->commit();
-        } catch (PropelException \$e) {
-            \$con->rollBack();
-            throw \$e;
-        }
-
-        return \$pk;
+        // use transaction because \$criteria could contain info
+        // for more than one table (I guess, conceivably)
+        return \$con->transaction(function () use (\$con, \$query) {
+            return \$query->doInsert(\$con);
+        });
     }
 ";
     }

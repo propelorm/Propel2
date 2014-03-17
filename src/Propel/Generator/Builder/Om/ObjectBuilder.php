@@ -2730,8 +2730,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             \$con = Propel::getServiceContainer()->getWriteConnection(".$this->getTableMapClass()."::DATABASE_NAME);
         }
 
-        \$con->beginTransaction();
-        try {
+        \$con->transaction(function () use (\$con) {
             \$deleteQuery = ".$this->getQueryClassName()."::create()
                 ->filterByPrimaryKey(\$this->getPrimaryKey());";
         if ($this->getGeneratorConfig()->getBuildProperty('addHooks')) {
@@ -2746,10 +2745,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             // apply behaviors
             $this->applyBehaviorModifier('postDelete', $script, "                ");
             $script .= "
-                \$con->commit();
                 \$this->setDeleted(true);
-            } else {
-                \$con->commit();
             }";
         } else {
             // apply behaviors
@@ -2759,15 +2755,11 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             // apply behaviors
             $this->applyBehaviorModifier('postDelete', $script, "            ");
             $script .= "
-            \$con->commit();
             \$this->setDeleted(true);";
         }
 
         $script .= "
-        } catch (Exception \$e) {
-            \$con->rollBack();
-            throw \$e;
-        }";
+        });";
     }
 
     /**
@@ -5014,9 +5006,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             \$con = Propel::getServiceContainer()->getWriteConnection(".$this->getTableMapClass()."::DATABASE_NAME);
         }
 
-        \$con->beginTransaction();
-        \$isInsert = \$this->isNew();
-        try {";
+        return \$con->transaction(function () use (\$con".($reloadOnUpdate || $reloadOnInsert ? ", \$skipReload" : "").") {
+            \$isInsert = \$this->isNew();";
 
         if ($this->getGeneratorConfig()->getBuildProperty('addHooks')) {
             // save with runtime hooks
@@ -5051,7 +5042,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             } else {
                 \$affectedRows = 0;
             }
-            \$con->commit();
 
             return \$affectedRows;";
         } else {
@@ -5089,17 +5079,13 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             }";
             }
             $script .= "
-            \$con->commit();
             ".$this->getTableMapClassName()."::addInstanceToPool(\$this);
 
             return \$affectedRows;";
         }
 
         $script .= "
-        } catch (Exception \$e) {
-            \$con->rollBack();
-            throw \$e;
-        }";
+        });";
     }
 
     /**

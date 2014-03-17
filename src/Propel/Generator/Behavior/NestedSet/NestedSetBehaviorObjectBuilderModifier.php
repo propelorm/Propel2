@@ -1293,7 +1293,6 @@ public function moveToNextSiblingOf(\$sibling, ConnectionInterface \$con = null)
  */
 protected function moveSubtreeTo(\$destLeft, \$levelDelta" . ($this->behavior->useScope() ? ", \$targetScope = null" : "") . ", PropelPDO \$con = null)
 {
-    \$preventDefault = false;
     \$left  = \$this->getLeftValue();
     \$right = \$this->getRightValue();";
 
@@ -1315,8 +1314,9 @@ protected function moveSubtreeTo(\$destLeft, \$levelDelta" . ($this->behavior->u
         \$con = Propel::getServiceContainer()->getWriteConnection($tableMapClass::DATABASE_NAME);
     }
 
-    \$con->beginTransaction();
-    try {
+    \$con->transaction(function () use (\$con, \$treeSize, \$destLeft, \$left, \$right, \$levelDelta" . ($useScope ? ", \$scope, \$targetScope" : "") . ") {
+        \$preventDefault = false;
+
         // make room next to the target for the subtree
         $queryClassName::shiftRLValues(\$treeSize, \$destLeft, null" . ($useScope ? ", \$targetScope" : "") . ", \$con);
 
@@ -1343,7 +1343,7 @@ protected function moveSubtreeTo(\$destLeft, \$levelDelta" . ($this->behavior->u
             \$preventDefault = true;
         }
 ";
-    }
+        }
 
         $script .= "
 
@@ -1371,12 +1371,7 @@ protected function moveSubtreeTo(\$destLeft, \$levelDelta" . ($this->behavior->u
 
         // update all loaded nodes
         $queryClassName::updateLoadedNodes(null, \$con);
-
-        \$con->commit();
-    } catch (PropelException \$e) {
-        \$con->rollback();
-        throw \$e;
-    }
+    });
 }
 ";
     }
@@ -1414,8 +1409,8 @@ public function deleteDescendants(ConnectionInterface \$con = null)
     \$scope = \$this->getScopeValue();";
         }
         $script .= "
-    \$con->beginTransaction();
-    try {
+
+    return \$con->transaction(function () use (\$con, \$left, \$right" . ($useScope ? ", \$scope" : "") . ") {
         // delete descendant nodes (will empty the instance pool)
         \$ret = $queryClassName::create()
             ->descendantsOf(\$this)
@@ -1427,13 +1422,8 @@ public function deleteDescendants(ConnectionInterface \$con = null)
         // fix the right value for the current node, which is now a leaf
         \$this->setRightValue(\$left + 1);
 
-        \$con->commit();
-    } catch (Exception \$e) {
-        \$con->rollback();
-        throw \$e;
-    }
-
-    return \$ret;
+        return \$ret;
+    });
 }
 ";
     }

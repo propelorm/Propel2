@@ -42,17 +42,12 @@ class ObjectCollection extends Collection
         if (null === $con) {
             $con = $this->getWriteConnection();
         }
-        $con->beginTransaction();
-        try {
+        $con->transaction(function () use ($con) {
             /** @var $element ActiveRecordInterface */
             foreach ($this as $element) {
                 $element->save($con);
             }
-            $con->commit();
-        } catch (PropelException $e) {
-            $con->rollback();
-            throw $e;
-        }
+        });
     }
 
     /**
@@ -68,17 +63,12 @@ class ObjectCollection extends Collection
         if (null === $con) {
             $con = $this->getWriteConnection();
         }
-        $con->beginTransaction();
-        try {
+        $con->transaction(function () use ($con) {
             /** @var $element ActiveRecordInterface */
             foreach ($this as $element) {
                 $element->delete($con);
             }
-            $con->commit();
-        } catch (PropelException $e) {
-            $con->rollback();
-            throw $e;
-        }
+        });
     }
 
     /**
