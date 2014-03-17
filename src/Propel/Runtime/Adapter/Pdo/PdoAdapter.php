@@ -54,7 +54,7 @@ abstract class PdoAdapter
         $driver_options = array();
         if (isset($conparams['options']) && is_array($conparams['options'])) {
             foreach ($conparams['options'] as $option => $optiondata) {
-                $value = $optiondata['value'];
+                $value = $optiondata;
                 if (is_string($value) && false !== strpos($value, '::')) {
                     if (!defined($value)) {
                         throw new InvalidArgumentException(sprintf('Error processing driver options for dsn "%s"', $dsn));
