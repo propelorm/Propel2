@@ -168,9 +168,7 @@ class SqlManager extends AbstractManager
             }
 
             $con = $this->getConnectionInstance($database);
-            $con->beginTransaction();
-
-            try {
+            $con->transaction(function() use ($database, $sqls, $con) {
                 foreach ($sqls as $sql) {
                     try {
                         $stmt = $con->prepare($sql);
@@ -180,14 +178,9 @@ class SqlManager extends AbstractManager
                         throw new \Exception($message, 0, $e);
                     }
                 }
-
-                $con->commit();
-            } catch (\PDOException $e) {
-                $con->rollback();
-                throw $e;
-            }
-
-            $this->log(sprintf('%d queries executed for %s database.', count($sqls), $database));
+                
+                $this->log(sprintf('%d queries executed for %s database.', count($sqls), $database));
+            });
         }
 
         return true;

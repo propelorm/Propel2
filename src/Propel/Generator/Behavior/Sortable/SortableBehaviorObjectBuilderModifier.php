@@ -586,8 +586,8 @@ public function moveToRank(\$newRank, ConnectionInterface \$con = null)
         return \$this;
     }
 
-    \$con->beginTransaction();
-    try {
+    
+    return \$con->transaction(function() use (\$oldRank, \$newRank, \$con) {
         // shift the objects between the old and the new rank
         \$delta = (\$oldRank < \$newRank) ? -1 : 1;
         {$this->queryClassName}::sortableShiftRank(\$delta, min(\$oldRank, \$newRank), max(\$oldRank, \$newRank), " . ($useScope ? "\$this->getScopeValue(), " : '') . "\$con);
@@ -596,13 +596,8 @@ public function moveToRank(\$newRank, ConnectionInterface \$con = null)
         \$this->{$this->getColumnSetter()}(\$newRank);
         \$this->save(\$con);
 
-        \$con->commit();
-
         return \$this;
-    } catch (Exception \$e) {
-        \$con->rollback();
-        throw \$e;
-    }
+    });
 }
 ";
     }
@@ -625,8 +620,8 @@ public function swapWith(\$object, ConnectionInterface \$con = null)
     if (null === \$con) {
         \$con = Propel::getServiceContainer()->getWriteConnection({$this->tableMapClassName}::DATABASE_NAME);
     }
-    \$con->beginTransaction();
-    try {";
+
+    return \$con->transaction(function() use (\$con) {";
         if ($this->behavior->useScope()) {
             $script .= "
         \$oldScope = \$this->getScopeValue();
@@ -646,13 +641,9 @@ public function swapWith(\$object, ConnectionInterface \$con = null)
 
         \$this->save(\$con);
         \$object->save(\$con);
-        \$con->commit();
 
         return \$this;
-    } catch (Exception \$e) {
-        \$con->rollback();
-        throw \$e;
-    }
+    });
 }
 ";
     }
@@ -675,17 +666,12 @@ public function moveUp(ConnectionInterface \$con = null)
     if (null === \$con) {
         \$con = Propel::getServiceContainer()->getWriteConnection({$this->tableMapClassName}::DATABASE_NAME);
     }
-    \$con->beginTransaction();
-    try {
+    return \$con->transaction(function() use (\$con) {
         \$prev = \$this->getPrevious(\$con);
         \$this->swapWith(\$prev, \$con);
-        \$con->commit();
 
         return \$this;
-    } catch (Exception \$e) {
-        \$con->rollback();
-        throw \$e;
-    }
+    });
 }
 ";
     }
@@ -708,17 +694,13 @@ public function moveDown(ConnectionInterface \$con = null)
     if (null === \$con) {
         \$con = Propel::getServiceContainer()->getWriteConnection({$this->tableMapClassName}::DATABASE_NAME);
     }
-    \$con->beginTransaction();
-    try {
+    
+    return \$con->transaction(function() use (\$con) {
         \$next = \$this->getNext(\$con);
         \$this->swapWith(\$next, \$con);
-        \$con->commit();
-
+        
         return \$this;
-    } catch (Exception \$e) {
-        \$con->rollback();
-        throw \$e;
-    }
+    });
 }
 ";
     }
@@ -763,17 +745,13 @@ public function moveToBottom(ConnectionInterface \$con = null)
     if (null === \$con) {
         \$con = Propel::getServiceContainer()->getWriteConnection({$this->tableMapClassName}::DATABASE_NAME);
     }
-    \$con->beginTransaction();
-    try {
+    
+    return \$con->transaction(function() use (\$con) {
         \$bottom = {$this->queryClassName}::create()->getMaxRankArray(" . ($useScope ? "\$this->getScopeValue(), " : '') . "\$con);
         \$res = \$this->moveToRank(\$bottom, \$con);
-        \$con->commit();
 
         return \$res;
-    } catch (Exception \$e) {
-        \$con->rollback();
-        throw \$e;
-    }
+    });
 }
 ";
     }

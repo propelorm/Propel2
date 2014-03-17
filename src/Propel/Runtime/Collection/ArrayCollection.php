@@ -43,8 +43,7 @@ class ArrayCollection extends Collection
         if (null === $con) {
             $con = $this->getWriteConnection();
         }
-        $con->beginTransaction();
-        try {
+        $con->transaction(function() use ($con) {
             $obj = $this->getWorkerObject();
             foreach ($this as $element) {
                 $obj->clear();
@@ -52,10 +51,7 @@ class ArrayCollection extends Collection
                 $obj->setNew($obj->isPrimaryKeyNull());
                 $obj->save($con);
             }
-            $con->commit();
-        } catch (PropelException $e) {
-            $con->rollback();
-        }
+        });
     }
 
     /**
@@ -74,19 +70,14 @@ class ArrayCollection extends Collection
         if (null === $con) {
             $con = $this->getWriteConnection();
         }
-        $con->beginTransaction();
-        try {
+        $con->transaction(function() use ($con) {
             foreach ($this as $element) {
                 $obj = $this->getWorkerObject();
                 $obj->setDeleted(false);
                 $obj->fromArray($element);
                 $obj->delete($con);
             }
-            $con->commit();
-        } catch (PropelException $e) {
-            $con->rollback();
-            throw $e;
-        }
+        });
     }
 
     /**
