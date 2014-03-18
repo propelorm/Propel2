@@ -142,7 +142,7 @@ class MigrationDownCommand extends AbstractCommand
                 $datasource
             ));
 
-            $manager->updateLatestMigrationTimestamp($datasource, $previousTimestamp);
+            $manager->removeMigrationTimestamp($datasource, $nextMigrationTimestamp);
 
             if ($input->getOption('verbose')) {
                 $output->writeln(sprintf(

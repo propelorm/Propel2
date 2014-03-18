@@ -116,14 +116,13 @@ class MigrationManager extends AbstractManager
         return $this->migrationTable;
     }
 
-    public function getOldestDatabaseVersion()
+    public function getAllDatabaseVersions()
     {
         if (!$connections = $this->getConnections()) {
             throw new \Exception('You must define database connection settings in a buildtime-conf.xml file to use migrations');
         }
 
-        $oldestMigrationTimestamp = null;
-        $migrationTimestamps      = array();
+        $migrationTimestamps = array();
         foreach ($connections as $name => $params) {
             $conn = $this->getAdapterConnection($name);
             $platform = $this->getGeneratorConfig()->getConfiguredPlatform($conn);
@@ -136,29 +135,27 @@ class MigrationManager extends AbstractManager
             try {
                 $stmt = $conn->prepare($sql);
                 $stmt->execute();
-                if ($migrationTimestamp = $stmt->fetchColumn()) {
-                    $migrationTimestamps[$name] = $migrationTimestamp;
+
+                while ($migrationTimestamp = $stmt->fetchColumn()) {
+                    $migrationTimestamps[] = $migrationTimestamp;
                 }
             } catch (\PDOException $e) {
                 $this->createMigrationTable($name);
-                $oldestMigrationTimestamp = 0;
+                $migrationTimestamps = [];
             }
         }
 
-        if (null === $oldestMigrationTimestamp && $migrationTimestamps) {
-            sort($migrationTimestamps);
-            $oldestMigrationTimestamp = array_shift($migrationTimestamps);
-        }
+        sort($migrationTimestamps);
 
-        return $oldestMigrationTimestamp;
+        return $migrationTimestamps;
     }
 
     public function migrationTableExists($datasource)
     {
         $conn = $this->getAdapterConnection($datasource);
         $sql = sprintf('SELECT version FROM %s', $this->getMigrationTable());
-        $stmt = $conn->prepare($sql);
         try {
+            $stmt = $conn->prepare($sql);
             $stmt->execute();
 
             return true;
@@ -192,22 +189,34 @@ class MigrationManager extends AbstractManager
         }
     }
 
-    public function updateLatestMigrationTimestamp($datasource, $timestamp)
+    public function removeMigrationTimestamp($datasource, $timestamp)
     {
         $platform = $this->getPlatform($datasource);
         $conn = $this->getAdapterConnection($datasource);
-        $conn->transaction(function () use ($conn, $platform) {
-            $sql = sprintf('DELETE FROM %s', $this->getMigrationTable());
-            $stmt = $conn->prepare($sql);
-            $stmt->execute();
-            $sql = sprintf('INSERT INTO %s (%s) VALUES (?)',
+        $conn->transaction(function () use ($conn, $platform, $timestamp) {
+            $sql = sprintf('DELETE FROM %s WHERE %s = ?',
                 $this->getMigrationTable(),
                 $platform->quoteIdentifier('version')
             );
             $stmt = $conn->prepare($sql);
             $stmt->bindParam(1, $timestamp, \PDO::PARAM_INT);
             $stmt->execute();
+            $conn->commit();
         });
+    }
+
+    public function updateLastMigrationTimestamp($datasource, $timestamp)
+    {
+        $platform = $this->getPlatform($datasource);
+        $conn = $this->getAdapterConnection($datasource);
+        $sql = sprintf('INSERT INTO %s (%s) VALUES (?)',
+            $this->getMigrationTable(),
+            $platform->quoteIdentifier('version')
+        );
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(1, $timestamp, \PDO::PARAM_INT);
+        $stmt->execute();
+        $conn->commit();
     }
 
     public function getMigrationTimestamps()
@@ -229,14 +238,7 @@ class MigrationManager extends AbstractManager
 
     public function getValidMigrationTimestamps()
     {
-        $oldestMigrationTimestamp = $this->getOldestDatabaseVersion();
-        $migrationTimestamps = $this->getMigrationTimestamps();
-        // removing already executed migrations
-        foreach ($migrationTimestamps as $key => $timestamp) {
-            if ($timestamp <= $oldestMigrationTimestamp) {
-                unset($migrationTimestamps[$key]);
-            }
-        }
+        $migrationTimestamps = array_diff($this->getMigrationTimestamps(), $this->getAllDatabaseVersions());
         sort($migrationTimestamps);
 
         return $migrationTimestamps;
@@ -249,14 +251,7 @@ class MigrationManager extends AbstractManager
 
     public function getAlreadyExecutedMigrationTimestamps()
     {
-        $oldestMigrationTimestamp = $this->getOldestDatabaseVersion();
-        $migrationTimestamps = $this->getMigrationTimestamps();
-        // removing already executed migrations
-        foreach ($migrationTimestamps as $key => $timestamp) {
-            if ($timestamp > $oldestMigrationTimestamp) {
-                unset($migrationTimestamps[$key]);
-            }
-        }
+        $migrationTimestamps = array_intersect($this->getMigrationTimestamps(), $this->getAllDatabaseVersions());
         sort($migrationTimestamps);
 
         return $migrationTimestamps;
@@ -371,5 +366,11 @@ EOP;
         }
 
         return '';
+    }
+
+    public function getOldestDatabaseVersion()
+    {
+        $versions = $this->getAllDatabaseVersions();
+        return array_pop($versions);
     }
 }
