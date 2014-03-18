@@ -1845,6 +1845,8 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
             // instances get re-added by the select statement contained therein).
             {$this->getTableMapClassName()}::clearInstancePool();
             {$this->getTableMapClassName()}::clearRelatedInstancePool();
+
+            return \$affectedRows;
         });
     }
 ";
