@@ -10,6 +10,8 @@
 
 namespace Propel\Tests\Generator\Model;
 
+use Propel\Generator\Model\Column;
+use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\Table;
 
 /**
@@ -693,35 +695,6 @@ class TableTest extends ModelTestCase
         $table->addForeignKey($fk3);
 
         $this->assertCount(2, $table->getForeignKeysReferencingTable('authors'));
-    }
-
-    public function testGetCrossForeignKeys()
-    {
-        $crossTable1 = new Table();
-        $crossTable1->setIsCrossRef(true);
-
-        $crossTable2 = new Table();
-        $crossTable2->setIsCrossRef(true);
-
-        $referrerFK1 = $this->getForeignKeyMock('cross_fk1', array(
-            'table'     => $crossTable1,
-            'other_fks' => array(
-                $this->getForeignKeyMock('cross_fk1_1'),
-                $this->getForeignKeyMock('cross_fk1_2'),
-            ),
-        ));
-
-        $referrerFK2 = $this->getForeignKeyMock('cross_fk2', array(
-            'table'     => $crossTable2,
-            'other_fks' => array($this->getForeignKeyMock('cross_fk2_1')),
-        ));
-
-        $table = new Table();
-        $table->addReferrer($referrerFK1);
-        $table->addReferrer($referrerFK2);
-
-        $this->assertTrue($table->hasCrossForeignKeys());
-        $this->assertCount(3, $table->getCrossFks());
     }
 
     public function testGetColumnForeignKeys()

@@ -809,7 +809,7 @@ class Database extends ScopedMappingModel
         foreach ($this->getTables() as $table) {
             $columns = [];
             foreach ($table->getColumns() as $column) {
-                $columns[] = sprintf("    %s %s %s %s %s %s (%s)",
+                $columns[] = sprintf("      %s %s %s %s %s %s (%s)",
                     $column->getName(),
                     $column->getType(),
                     $column->getSize(),
@@ -821,7 +821,50 @@ class Database extends ScopedMappingModel
                 );
             }
 
-            $tables[] = sprintf("  %s (%s): \n%s", $table->getName(), $table->getCommonName(), implode("\n", $columns));
+            $fks = [];
+            foreach ($table->getForeignKeys() as $fk) {
+                $fks[] = sprintf("      %s (%s => %s)",
+                    $fk->getName(),
+                    join(', ', $fk->getLocalColumns()),
+                    join(', ', $fk->getForeignColumns())
+                );
+            }
+
+            $indices = [];
+            foreach ($table->getIndices() as $index) {
+                $indices[] = sprintf("      %s (%s)",
+                    $index->getName(),
+                    join(', ', $index->getColumns())
+                );
+            }
+
+            $unices = [];
+            foreach ($table->getUnices() as $index) {
+                $unices[] = sprintf("      %s (%s)",
+                    $index->getName(),
+                    join(', ', $index->getColumns())
+                );
+            }
+
+            $tableDef = sprintf("  %s (%s):\n%s",
+                $table->getName(),
+                $table->getCommonName(),
+                implode("\n", $columns)
+            );
+
+            if ($fks) {
+                $tableDef .= "\n    FKs:\n" . implode("\n", $fks);
+            }
+
+            if ($indices) {
+                $tableDef .= "\n    indices:\n" . implode("\n", $indices);
+            }
+
+            if ($unices) {
+                $tableDef .= "\n    unices:\n". implode("\n", $unices);
+            }
+
+            $tables[] = $tableDef;
         }
 
         return sprintf("%s:\n%s",

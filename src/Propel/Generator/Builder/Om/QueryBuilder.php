@@ -11,6 +11,7 @@
 namespace Propel\Generator\Builder\Om;
 
 use Propel\Generator\Model\Column;
+use Propel\Generator\Model\CrossForeignKeys;
 use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Model\Table;
@@ -225,9 +226,8 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
             $this->addJoinRefFk($script, $refFK);
             $this->addUseRefFKQuery($script, $refFK);
         }
-        foreach ($this->getTable()->getCrossFks() as $fkList) {
-            list($refFK, $crossFK) = $fkList;
-            $this->addFilterByCrossFK($script, $refFK, $crossFK);
+        foreach ($this->getTable()->getCrossFks() as $crossFKs) {
+            $this->addFilterByCrossFK($script, $crossFKs);
         }
         $this->addPrune($script);
         $this->addBasePreSelect($script);
@@ -1342,17 +1342,19 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
 ";
     }
 
-    protected function addFilterByCrossFK(&$script, ForeignKey $refFK, ForeignKey $crossFK)
+    protected function addFilterByCrossFK(&$script, CrossForeignKeys $crossFKs)
     {
-        $queryClass = $this->getQueryClassName();
-        $crossRefTable = $crossFK->getTable();
-        $foreignTable = $crossFK->getForeignTable();
-        $fkPhpName =  $foreignTable->getPhpName();
-        $crossTableName = $crossRefTable->getName();
-        $relName = $this->getFKPhpNameAffix($crossFK, $plural = false);
-        $objectName = '$' . $foreignTable->getStudlyPhpName();
-        $relationName = $this->getRefFKPhpNameAffix($refFK, $plural = false);
-        $script .= "
+        $relationName = $this->getRefFKPhpNameAffix($crossFKs->getIncomingForeignKey(), $plural = false);
+
+        foreach ($crossFKs->getCrossForeignKeys() as $crossFK) {
+            $queryClass = $this->getQueryClassName();
+            $crossRefTable = $crossFK->getTable();
+            $foreignTable = $crossFK->getForeignTable();
+            $fkPhpName =  $foreignTable->getPhpName();
+            $crossTableName = $crossRefTable->getName();
+            $relName = $this->getFKPhpNameAffix($crossFK, $plural = false);
+            $objectName = '$' . $foreignTable->getStudlyPhpName();
+            $script .= "
     /**
      * Filter the query by a related $fkPhpName object
      * using the $crossTableName table as cross reference
@@ -1370,6 +1372,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
             ->endUse();
     }
 ";
+        }
     }
 
     /**

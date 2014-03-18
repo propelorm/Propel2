@@ -580,15 +580,15 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
                 $script .= ", '" . $this->getRefFKPhpNameAffix($fkey, true) . "');";
             }
         }
-        foreach ($this->getTable()->getCrossFks() as $fkList) {
-            /** @var ForeignKey $crossFK */
-            list(, $crossFK) = $fkList;
-            $relationName = $this->getFKPhpNameAffix($crossFK);
-            $pluralName = "'" . $this->getFKPhpNameAffix($crossFK, true) . "'";
-            $onDelete = $crossFK->hasOnDelete() ? "'" . $crossFK->getOnDelete() . "'" : 'null';
-            $onUpdate = $crossFK->hasOnUpdate() ? "'" . $crossFK->getOnUpdate() . "'" : 'null';
-            $script .= "
+        foreach ($this->getTable()->getCrossFks() as $crossFKs) {
+            foreach ($crossFKs->getCrossForeignKeys() as $crossFK) {
+                $relationName = $this->getFKPhpNameAffix($crossFK);
+                $pluralName = "'" . $this->getFKPhpNameAffix($crossFK, true) . "'";
+                $onDelete = $crossFK->hasOnDelete() ? "'" . $crossFK->getOnDelete() . "'" : 'null';
+                $onUpdate = $crossFK->hasOnUpdate() ? "'" . $crossFK->getOnUpdate() . "'" : 'null';
+                $script .= "
         \$this->addRelation('$relationName', '" . addslashes($this->getNewStubObjectBuilder($crossFK->getForeignTable())->getFullyQualifiedClassName()) . "', RelationMap::MANY_TO_MANY, array(), $onDelete, $onUpdate, $pluralName);";
+            }
         }
         $script .= "
     } // buildRelations()
@@ -839,6 +839,11 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
         $n = 0;
 
         if ($table->hasCompositePrimaryKey()) {
+            $script .= "
+            \$pks = [];
+            ";
+
+            $pks = array();
             foreach ($table->getColumns() as $col) {
                 if (!$col->isLazyLoad()) {
                     if ($col->isPrimaryKey()) {

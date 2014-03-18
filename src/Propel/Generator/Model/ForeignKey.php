@@ -179,6 +179,17 @@ class ForeignKey extends MappingModel
     }
 
     /**
+     * Returns true if $column is in our local columns list.
+     *
+     * @param Column $column
+     * @return boolean
+     */
+    public function hasLocalColumn(Column $column)
+    {
+        return in_array($column, $this->getLocalColumnObjects(), true);
+    }
+
+    /**
      * Returns the onUpdate behavior.
      *
      * @return string
@@ -655,8 +666,7 @@ class ForeignKey extends MappingModel
     }
 
     /**
-     * Returns whether this foreign key uses a required column, or a list of
-     * required columns.
+     * Returns whether this foreign key uses only required local columns.
      *
      * @return boolean
      */
@@ -669,6 +679,38 @@ class ForeignKey extends MappingModel
         }
 
         return true;
+    }
+
+    /**
+     * Returns whether this foreign key uses at least one required local column.
+     *
+     * @return boolean
+     */
+    public function isAtLeastOneLocalColumnRequired()
+    {
+        foreach ($this->localColumns as $columnName) {
+            if ($this->parentTable->getColumn($columnName)->isNotNull()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Returns whether this foreign key uses at least one required(notNull && no defaultValue) local primary key.
+     *
+     * @return boolean
+     */
+    public function isAtLeastOneLocalPrimaryKeyIsRequired()
+    {
+        foreach ($this->getLocalPrimaryKeys() as $pk) {
+            if ($pk->isNotNull() && !$pk->hasDefaultValue()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -693,8 +735,7 @@ class ForeignKey extends MappingModel
         }
 
         return ((count($foreignPKCols) === count($foreignCols))
-            && !array_diff($foreignPKCols, $foreignCols))
-        ;
+            && !array_diff($foreignPKCols, $foreignCols));
     }
 
     /**
@@ -779,7 +820,7 @@ class ForeignKey extends MappingModel
      * Returns the list of other foreign keys starting on the same table.
      * Used in many-to-many relationships.
      *
-     * @return array
+     * @return ForeignKey[]
      */
     public function getOtherFks()
     {
@@ -802,7 +843,7 @@ class ForeignKey extends MappingModel
     {
         $cols = $this->getForeignPrimaryKeys();
 
-        return count($cols) !== 0;
+        return 0 !== count($cols);
     }
 
     /**
@@ -812,7 +853,6 @@ class ForeignKey extends MappingModel
      */
     public function getForeignPrimaryKeys()
     {
-
         $lfmap = $this->getLocalForeignMapping();
         $foreignTable = $this->getForeignTable();
 
@@ -822,7 +862,7 @@ class ForeignKey extends MappingModel
         }
 
         $foreignCols = [];
-        foreach ($this->getLocalColumns() as $colName) {
+        foreach ($this->getLocalColumn() as $colName) {
             if ($foreignPKCols[$lfmap[$colName]]) {
                 $foreignCols[] = $foreignTable->getColumn($lfmap[$colName]);
             }
@@ -832,20 +872,33 @@ class ForeignKey extends MappingModel
     }
 
     /**
+     * Returns all local columns which are also a primary key of the local table.
+     *
+     * @return Column[]
+     */
+    public function getLocalPrimaryKeys()
+    {
+        $cols = [];
+        $localCols = $this->getLocalColumnObjects();
+
+        foreach ($localCols as $localCol) {
+            if ($localCol->isPrimaryKey()) {
+                $cols[] = $localCol;
+            }
+        }
+
+        return $cols;
+    }
+
+    /**
      * Whether at least one local column is also a primary key.
      *
      * @return boolean True if there is at least one column that is a primary key
      */
     public function isAtLeastOneLocalPrimaryKey()
     {
-        $localCols = $this->getLocalColumnObjects();
+        $cols = $this->getLocalPrimaryKeys();
 
-        foreach ($localCols as $localCol) {
-            if ($this->getTable()->getColumn($localCol->getName())->isPrimaryKey()) {
-                return true;
-            }
-        }
-
-        return false;
+        return 0 !== count($cols);
     }
 }

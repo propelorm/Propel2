@@ -321,12 +321,26 @@ class ObjectCollection extends Collection
     public function search($element)
     {
         if ($element instanceof ActiveRecordInterface) {
-            if (null !== $elt = $this->getIdenticalObject($element)) {
-                $element = $elt;
+            $hashCode = $element->hashCode();
+            foreach ($this as $pos => $obj) {
+                if ($hashCode === $obj->hashCode()) {
+                    return $pos;
+                }
             }
+            return false;
+        } else {
+            return parent::search($element);
         }
+    }
 
-        return parent::search($element);
+    /**
+     * @param $element
+     */
+    public function removeObject($element)
+    {
+        if (false !== ($pos = $this->search($element))) {
+            $this->remove($pos);
+        }
     }
 
     /**
@@ -334,23 +348,6 @@ class ObjectCollection extends Collection
      */
     public function contains($element)
     {
-        if ($element instanceof ActiveRecordInterface) {
-            if (null !== $elt = $this->getIdenticalObject($element)) {
-                $element = $elt;
-            }
-        }
-
-        return parent::contains($element);
-    }
-
-    private function getIdenticalObject(ActiveRecordInterface $object)
-    {
-        foreach ($this as $obj) {
-            if ($obj instanceof ActiveRecordInterface && $obj->hashCode() === $object->hashCode()) {
-                return $obj;
-            }
-        }
-
-        return null;
+        return false !== $this->search($element);
     }
 }

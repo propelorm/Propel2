@@ -104,7 +104,41 @@ EOF;
 
             $page->save();
         }
+    }
 
+    public function testRefRelation()
+    {
+        /** @var $page \MoreRelationTest\Page */
+        $page = \MoreRelationTest\PageQuery::create()->findOne();
+        $comments = $page->getComments();
+        $count = count($comments);
+
+        $comment = new \MoreRelationTest\Comment();
+        $comment->setComment('Comment 1');
+        $comment->setUserId(123);
+        $comment->setPage($page);
+
+        $this->assertCount($count + 1, $comments);
+        $this->assertCount($count + 1, $page->getComments());
+
+        //remove
+        $page->removeComment($comment);
+        $this->assertCount($count, $comments);
+        $this->assertCount($count, $page->getComments());
+    }
+
+    public function testDuplicate()
+    {
+        $page = \MoreRelationTest\PageQuery::create()->findOne();
+        $pageComment = \MoreRelationTest\CommentQuery::create()->filterByPage($page)->findOne();
+        $currentCount = count($page->getComments());
+
+        \MoreRelationTest\Map\PageTableMap::clearInstancePool();
+        /** @var $newPageObject \MoreRelationTest\Page */
+        $newPageObject = \MoreRelationTest\PageQuery::create()->findOne(); //resets the cached comments through getComments()
+        $newPageObject->addComment($pageComment);
+
+        $this->assertCount($currentCount, $newPageObject->getComments(), 'same count as before');
     }
 
     /**
@@ -138,6 +172,7 @@ EOF;
         $this->assertEquals(0, $count, 'There should be no unassigned comment.');
 
         $page->removeComment($comment);
+
         $page->save();
 
         $count = \MoreRelationTest\CommentQuery::create()->filterByPageId($id)->count();

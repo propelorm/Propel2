@@ -91,7 +91,9 @@ class MysqlSchemaParser extends AbstractSchemaParser
      */
     public function parse(Database $database)
     {
-        $this->addVendorInfo = $this->getGeneratorConfig()->getBuildProperty('addVendorInfo');
+        if ($this->getGeneratorConfig()) {
+            $this->addVendorInfo = $this->getGeneratorConfig()->getBuildProperty('addVendorInfo');
+        }
 
         $sql = 'SHOW FULL TABLES';
         if ($schema = $database->getSchema()) {

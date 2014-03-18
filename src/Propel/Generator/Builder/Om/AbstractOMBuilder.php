@@ -16,6 +16,7 @@ use Propel\Generator\Exception\InvalidArgumentException;
 use Propel\Generator\Exception\LogicException;
 use Propel\Generator\Exception\RuntimeException;
 use Propel\Generator\Model\Column;
+use Propel\Generator\Model\CrossForeignKeys;
 use Propel\Generator\Model\ForeignKey;
 
 /**
@@ -588,6 +589,75 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         }
 
         return $className . $this->getRelatedBySuffix($fk);
+    }
+
+    /**
+     * @param CrossForeignKeys $crossFKs
+     * @param bool $plural
+     * @return string
+     */
+    protected function getCrossFKsPhpNameAffix(CrossForeignKeys $crossFKs, $plural = true)
+    {
+        $names = [];
+        foreach ($crossFKs->getCrossForeignKeys() as $fk) {
+            $names[] = $this->getFKPhpNameAffix($fk, false);
+        }
+
+        foreach ($crossFKs->getUnclassifiedPrimaryKeys() as $pk) {
+            $names[] = $pk->getPhpName();
+        }
+
+        $name = implode($names);
+        return (true === $plural ? $this->getPluralizer()->getPluralForm($name) : $name);
+    }
+
+    protected function getCrossFKInformation(CrossForeignKeys $crossFKs)
+    {
+        $names = [];
+        $signatures = [];
+        $shortSignature = [];
+        $phpDoc = [];
+
+        foreach ($crossFKs->getCrossForeignKeys() as $fk) {
+            $crossObjectName  = '$' . lcfirst($this->getFKPhpNameAffix($fk)); //$fk->getForeignTable()->getStudlyPhpName();
+            $crossObjectClassName  = $this->getNewObjectBuilder($fk->getForeignTable())->getObjectClassName();
+
+            $names[] = $crossObjectClassName;
+            $signatures[] = "$crossObjectClassName $crossObjectName" . ($fk->isAtLeastOneLocalColumnRequired() ? '' : ' = null');
+            $shortSignature[] = $crossObjectName;
+            $phpDoc[] = "
+     * @param $crossObjectClassName $crossObjectName The object to relate";
+        }
+
+        $names = implode(', ', $names). (1 < count($names) ? ' combination' : '');
+        $phpDoc = implode($phpDoc);
+        $signatures = implode(', ', $signatures);
+        $shortSignature = implode(', ', $shortSignature);
+
+        return [
+            $names,
+            $phpDoc,
+            $signatures,
+            $shortSignature
+        ];
+    }
+
+    /**
+     * @param CrossForeignKeys $crossFKs
+     * @return string
+     */
+    protected function getCrossFKsVarName(CrossForeignKeys $crossFKs)
+    {
+        return 'coll' . $this->getCrossFKsPhpNameAffix($crossFKs);
+    }
+
+    /**
+     * @param ForeignKey $crossFK
+     * @return string
+     */
+    protected function getCrossFKVarName(ForeignKey $crossFK)
+    {
+        return 'coll' . $this->getFKPhpNameAffix($crossFK, true);
     }
 
     /**

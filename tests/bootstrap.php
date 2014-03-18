@@ -2,6 +2,7 @@
 
 require_once __DIR__.'/../autoload.php.dist';
 
+echo sprintf("Tests started in temp %s.\n", sys_get_temp_dir());
 /**
  * fix var_export behavior with floating number precision since PHP 5.4.22
  *

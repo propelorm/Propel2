@@ -122,6 +122,18 @@ class TestCase extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @return \Propel\Generator\Reverse\SchemaParserInterface
+     */
+    protected function getParser($con)
+    {
+        $className = sprintf('\\Propel\\Generator\\Reverse\\%sSchemaParser', ucfirst($this->getDriver()));
+
+        $obj =  new $className($con);
+
+        return $obj;
+    }
+
+    /**
      * @return string[]
      */
     protected function getDriver()
