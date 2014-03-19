@@ -205,7 +205,7 @@ class MigrationManager extends AbstractManager
         });
     }
 
-    public function updateLastMigrationTimestamp($datasource, $timestamp)
+    public function updateLatestMigrationTimestamp($datasource, $timestamp)
     {
         $platform = $this->getPlatform($datasource);
         $conn = $this->getAdapterConnection($datasource);
@@ -285,8 +285,9 @@ class MigrationManager extends AbstractManager
         return new $className();
     }
 
-    public function getMigrationClassBody($migrationsUp, $migrationsDown, $timestamp)
+    public function getMigrationClassBody($migrationsUp, $migrationsDown, $timestamp, $comment = '')
     {
+        $comment = str_replace('"', '\\"', $comment);
         $timeInWords = date('Y-m-d H:i:s', $timestamp);
         $migrationAuthor = ($author = $this->getUser()) ? 'by ' . $author : '';
         $migrationClassName = $this->getMigrationClassName($timestamp);
@@ -302,6 +303,10 @@ class MigrationManager extends AbstractManager
  */
 class $migrationClassName
 {
+    /*
+     * Store migration comment
+     */
+    public \$comment = "$comment";
 
     public function preUp(\$manager)
     {
