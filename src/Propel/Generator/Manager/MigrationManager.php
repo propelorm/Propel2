@@ -285,9 +285,8 @@ class MigrationManager extends AbstractManager
         return new $className();
     }
 
-    public function getMigrationClassBody($migrationsUp, $migrationsDown, $timestamp, $comment = '')
+    public function getMigrationClassBody($migrationsUp, $migrationsDown, $timestamp)
     {
-        $comment = str_replace('"', '\\"', $comment);
         $timeInWords = date('Y-m-d H:i:s', $timestamp);
         $migrationAuthor = ($author = $this->getUser()) ? 'by ' . $author : '';
         $migrationClassName = $this->getMigrationClassName($timestamp);
@@ -303,10 +302,6 @@ class MigrationManager extends AbstractManager
  */
 class $migrationClassName
 {
-    /*
-     * Store migration comment
-     */
-    public \$comment = "$comment";
 
     public function preUp(\$manager)
     {
