@@ -205,7 +205,7 @@ class MigrationManager extends AbstractManager
         });
     }
 
-    public function updateLastMigrationTimestamp($datasource, $timestamp)
+    public function updateLatestMigrationTimestamp($datasource, $timestamp)
     {
         $platform = $this->getPlatform($datasource);
         $conn = $this->getAdapterConnection($datasource);
