@@ -38,8 +38,12 @@ class AggregateColumnRelationBehavior extends Behavior
     public function objectAttributes($builder)
     {
         $relationName = $this->getRelationName($builder);
+        $relatedClass = $builder->getClassNameFromBuilder($builder->getNewStubObjectBuilder($this->getForeignTable()));
 
-        return "protected \$old{$relationName};
+        return "/**
+ * @var $relatedClass
+ */
+protected \$old{$relationName};
 ";
     }
 
