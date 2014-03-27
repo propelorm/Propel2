@@ -4088,7 +4088,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
             $script .= "
     /**
-     * @var        {$className}[] Cross Collection to store aggregation of $className objects.
+     * @var        ObjectCollection|{$className}[] Cross Collection to store aggregation of $className objects.
      */
     protected \$coll" . $this->getFKPhpNameAffix($fk, true) . ";
 
@@ -4115,10 +4115,12 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         } else {
             $refFK = $crossFKs->getIncomingForeignKey();
             if (!$refFK->isLocalPrimaryKey()) {
+                $foreignTable = $crossFKs->getCrossForeignKeys()[0]->getForeignTable();
+                $className = $this->getNewObjectBuilder($foreignTable)->getObjectClassName();
                 $script .= "
     /**
      * An array of objects scheduled for deletion.
-     * @var ObjectCollection
+     * @var ObjectCollection|{$className}[]
      */
     protected \$$name = null;
 ";
