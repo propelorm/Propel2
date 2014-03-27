@@ -201,7 +201,6 @@ class MigrationManager extends AbstractManager
             $stmt = $conn->prepare($sql);
             $stmt->bindParam(1, $timestamp, \PDO::PARAM_INT);
             $stmt->execute();
-            $conn->commit();
         });
     }
 
@@ -216,7 +215,6 @@ class MigrationManager extends AbstractManager
         $stmt = $conn->prepare($sql);
         $stmt->bindParam(1, $timestamp, \PDO::PARAM_INT);
         $stmt->execute();
-        $conn->commit();
     }
 
     public function getMigrationTimestamps()
