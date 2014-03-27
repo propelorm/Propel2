@@ -241,23 +241,23 @@ class QuickBuilder
         }
         $sql = $this->database->getPlatform()->getModifyDatabaseDDL($diff);
 
-        $con->beginTransaction();
-        $statements = SqlParser::parseString($sql);
-        foreach ($statements as $statement) {
-            try {
-                $stmt = $con->prepare($statement);
-                $stmt->execute();
-            } catch (\Exception $e) {
-                //echo $sql; //uncomment for better debugging
-                throw new BuildException(sprintf("Can not execute SQL: \n%s\nFrom database: \n%s\n\nTo database: \n%s\n\nDiff:\n%s",
-                    $statement,
-                    $this->database,
-                    $database,
-                    $diff
-                ), null, $e);
+        $con->transaction(function () use ($con, $sql, $database, $diff) {
+            $statements = SqlParser::parseString($sql);
+            foreach ($statements as $statement) {
+                try {
+                    $stmt = $con->prepare($statement);
+                    $stmt->execute();
+                } catch (\Exception $e) {
+                    //echo $sql; //uncomment for better debugging
+                    throw new BuildException(sprintf("Can not execute SQL: \n%s\nFrom database: \n%s\n\nTo database: \n%s\n\nDiff:\n%s",
+                        $statement,
+                        $this->database,
+                        $database,
+                        $diff
+                    ), null, $e);
+                }
             }
-        }
-        $con->commit();
+        });
 
         return $database;
     }
