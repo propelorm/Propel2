@@ -98,7 +98,7 @@ EOF;
             $book->resetModified();
         }
 
-        $this->assertEquals($this->coll, $coll);
+        $this->assertEquals($this->coll->getData(), $coll->getData());
     }
 
     public function toYamlDataProvider()
@@ -145,7 +145,7 @@ EOF;
             $book->resetModified();
         }
 
-        $this->assertEquals($this->coll, $coll);
+        $this->assertEquals($this->coll->getData(), $coll->getData());
     }
 
     public function toJsonDataProvider()
@@ -178,7 +178,7 @@ EOF;
             $book->resetModified();
         }
 
-        $this->assertEquals($this->coll, $coll);
+        $this->assertEquals($this->coll->getData(), $coll->getData());
     }
 
     public function toCsvDataProvider()
@@ -209,7 +209,7 @@ EOF;
             $book->resetModified();
         }
 
-        $this->assertEquals($this->coll, $coll);
+        $this->assertEquals($this->coll->getData(), $coll->getData());
     }
 
     /**

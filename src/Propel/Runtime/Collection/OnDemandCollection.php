@@ -16,7 +16,6 @@ use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Formatter\AbstractFormatter;
 use Propel\Runtime\DataFetcher\DataFetcherInterface;
 use Propel\Runtime\Map\TableMap;
-use Propel\Runtime\Propel;
 
 /**
  * Class for iterating over a statement and returning one Propel object at a time
@@ -25,24 +24,6 @@ use Propel\Runtime\Propel;
  */
 class OnDemandCollection extends Collection
 {
-    /**
-     * @var OnDemandIterator
-     */
-    protected $iterator;
-
-    protected $currentRow;
-
-    protected $currentKey;
-
-    protected $isValid;
-
-    /** @var AbstractFormatter $formatter */
-    protected $formatter;
-
-    /** @var DataFetcherInterface $dataFetcher */
-    protected $dataFetcher;
-
-    protected $enableInstancePoolingOnFinish;
 
     /**
      * @param AbstractFormatter    $formatter
@@ -50,100 +31,8 @@ class OnDemandCollection extends Collection
      */
     public function initIterator(AbstractFormatter $formatter, DataFetcherInterface $dataFetcher)
     {
-        $this->formatter = $formatter;
-        $this->dataFetcher = $dataFetcher;
-        $this->currentKey = -1;
-        $this->enableInstancePoolingOnFinish = Propel::disableInstancePooling();
+        $this->lastIterator = new OnDemandIterator($formatter, $dataFetcher);
     }
-
-    public function closeCursor()
-    {
-        $this->dataFetcher->close();
-        if ($this->enableInstancePoolingOnFinish) {
-            Propel::enableInstancePooling();
-        }
-    }
-
-    /**
-     * Returns the number of rows in the resultset
-     * Warning: this number is inaccurate for most databases. Do not rely on it for a portable application.
-     *
-     * @return integer Number of results
-     */
-    public function count()
-    {
-        return $this->dataFetcher->count();
-    }
-
-    // Iterator Interface
-
-    /**
-     * Gets the current Model object in the collection
-     * This is where the hydration takes place.
-     *
-     * @see ObjectFormatter::getAllObjectsFromRow()
-     *
-     * @return ActiveRecordInterface
-     */
-    public function current()
-    {
-        return $this->formatter->getAllObjectsFromRow($this->currentRow);
-    }
-
-    /**
-     * Gets the current key in the iterator
-     *
-     * @return string
-     */
-    public function key()
-    {
-        return $this->currentKey;
-    }
-
-    /**
-     * Advances the cursor in the statement
-     * Closes the cursor if the end of the statement is reached
-     */
-    public function next()
-    {
-        $this->currentRow = $this->dataFetcher->fetch();
-        $this->currentKey++;
-        $this->isValid = (Boolean) $this->currentRow;
-        if (!$this->isValid) {
-            $this->closeCursor();
-        }
-    }
-
-    /**
-     * Initializes the iterator by advancing to the first position
-     * This method can only be called once (this is a NoRewindIterator)
-     */
-    public function rewind()
-    {
-        // check that the hydration can begin
-        if (null === $this->formatter) {
-            throw new PropelException('The On Demand collection requires a formatter. Add it by calling setFormatter()');
-        }
-        if (null === $this->dataFetcher) {
-            throw new PropelException('The On Demand collection requires a dataFetcher. Add it by calling setDataFetcher()');
-        }
-        if (null !== $this->isValid) {
-            throw new PropelException('The On Demand collection can only be iterated once');
-        }
-
-        // initialize the current row and key
-        $this->next();
-    }
-
-    /**
-     * @return boolean
-     */
-    public function valid()
-    {
-        return (Boolean) $this->isValid;
-    }
-
-
 
     /**
      * Get an array representation of the collection
@@ -184,6 +73,7 @@ class OnDemandCollection extends Collection
         $ret = array();
         $keyGetterMethod = 'get' . $keyColumn;
 
+        /** @var $obj ActiveRecordInterface */
         foreach ($this as $key => $obj) {
             $key = null === $keyColumn ? $key : $obj->$keyGetterMethod();
             $key = $usePrefix ? ($this->getModel() . '_' . $key) : $key;
@@ -205,6 +95,16 @@ class OnDemandCollection extends Collection
         throw new ReadOnlyModelException('The On Demand Collection is read only');
     }
 
+    // IteratorAggregate Interface
+
+    /**
+     * @return OnDemandIterator
+     */
+    public function getIterator()
+    {
+        return $this->lastIterator;
+    }
+
     // ArrayAccess Interface
 
     /**
@@ -215,10 +115,6 @@ class OnDemandCollection extends Collection
      */
     public function offsetExists($offset)
     {
-        if ($offset === $this->currentKey) {
-            return true;
-        }
-
         throw new PropelException('The On Demand Collection does not allow access by offset');
     }
 
@@ -230,10 +126,6 @@ class OnDemandCollection extends Collection
      */
     public function offsetGet($offset)
     {
-        if ($offset === $this->currentKey) {
-            return $this->currentRow;
-        }
-
         throw new PropelException('The On Demand Collection does not allow access by offset');
     }
 
@@ -276,6 +168,18 @@ class OnDemandCollection extends Collection
         throw new PropelException('The On Demand Collection cannot be serialized');
     }
 
+    // Countable Interface
+
+    /**
+     * Returns the number of rows in the resultset
+     *
+     * @return integer Number of results
+     */
+    public function count()
+    {
+        return $this->getIterator()->count();
+    }
+
     // ArrayObject methods
 
     public function append($value)
@@ -288,11 +192,6 @@ class OnDemandCollection extends Collection
         throw new ReadOnlyModelException('The On Demand Collection is read only');
     }
 
-    public function asort()
-    {
-        throw new ReadOnlyModelException('The On Demand Collection is read only');
-    }
-
     public function exchangeArray($input)
     {
         throw new ReadOnlyModelException('The On Demand Collection is read only');
@@ -301,41 +200,6 @@ class OnDemandCollection extends Collection
     public function getArrayCopy()
     {
         throw new PropelException('The On Demand Collection does not allow access by offset');
-    }
-
-    public function getFlags()
-    {
-        throw new PropelException('The On Demand Collection does not allow access by offset');
-    }
-
-    public function ksort()
-    {
-        throw new ReadOnlyModelException('The On Demand Collection is read only');
-    }
-
-    public function natcasesort()
-    {
-        throw new ReadOnlyModelException('The On Demand Collection is read only');
-    }
-
-    public function natsort()
-    {
-        throw new ReadOnlyModelException('The On Demand Collection is read only');
-    }
-
-    public function setFlags($flags)
-    {
-        throw new PropelException('The On Demand Collection does not allow access by offset');
-    }
-
-    public function uasort($cmp_function)
-    {
-        throw new ReadOnlyModelException('The On Demand Collection is read only');
-    }
-
-    public function uksort($cmp_function)
-    {
-        throw new ReadOnlyModelException('The On Demand Collection is read only');
     }
 
     /**

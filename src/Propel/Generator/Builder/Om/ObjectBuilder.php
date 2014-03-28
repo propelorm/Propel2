@@ -3822,8 +3822,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                         \$this->{$collName}Partial = true;
                     }
 
-                    \${$collName}->rewind();
-
                     return \$$collName;
                 }
 
