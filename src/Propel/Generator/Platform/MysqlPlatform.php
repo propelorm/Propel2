@@ -62,10 +62,10 @@ class MysqlPlatform extends DefaultPlatform
 
     public function setGeneratorConfig(GeneratorConfigInterface $generatorConfig)
     {
-        if ($defaultTableEngine = $generatorConfig->getBuildProperty('mysqlTableType')) {
+        if ($defaultTableEngine = $generatorConfig->get()['database']['adapters']['mysql']['tableType']) {
             $this->defaultTableEngine = $defaultTableEngine;
         }
-        if ($tableEngineKeyword = $generatorConfig->getBuildProperty('mysqlTableEngineKeyword')) {
+        if ($tableEngineKeyword = $generatorConfig->get()['database']['adapters']['mysql']['tableEngineKeyword']) {
             $this->tableEngineKeyword = $tableEngineKeyword;
         }
     }

@@ -22,10 +22,6 @@ class SqlBuildCommand extends AbstractCommand
 {
     const DEFAULT_OUTPUT_DIRECTORY   = 'generated-sql';
 
-    const DEFAULT_MYSQL_ENGINE       = 'InnoDB';
-
-    const DEFAULT_DATABASE_ENCODING  = 'UTF-8';
-
     /**
      * {@inheritdoc}
      */
@@ -34,12 +30,12 @@ class SqlBuildCommand extends AbstractCommand
         parent::configure();
 
         $this
-            ->addOption('mysql-engine', null, InputOption::VALUE_REQUIRED,  'MySQL engine (MyISAM, InnoDB, ...)', self::DEFAULT_MYSQL_ENGINE)
+            ->addOption('mysql-engine', null, InputOption::VALUE_REQUIRED,  'MySQL engine (MyISAM, InnoDB, ...)')
             ->addOption('output-dir',   null, InputOption::VALUE_REQUIRED,  'The output directory', self::DEFAULT_OUTPUT_DIRECTORY)
             ->addOption('validate',     null, InputOption::VALUE_NONE,      '')
             ->addOption('connection',   null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Connection to use', array())
             ->addOption('schema-name',  null, InputOption::VALUE_REQUIRED,  'The schema name for RDBMS supporting them', '')
-            ->addOption('encoding',     null, InputOption::VALUE_REQUIRED,  'The encoding to use for the database', self::DEFAULT_DATABASE_ENCODING)
+            //->addOption('encoding',     null, InputOption::VALUE_REQUIRED,  'The encoding to use for the database')
             ->addOption('table-prefix', null, InputOption::VALUE_REQUIRED,  'Add a prefix to all the table names in the database', '')
             ->setName('sql:build')
             ->setAliases(array('sql'))
@@ -52,16 +48,23 @@ class SqlBuildCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $generatorConfig = $this->getGeneratorConfig(array(
-            'propel.platform.class'                 => $input->getOption('platform'),
-            'propel.database.schema'                => $input->getOption('schema-name'),
-            'propel.database.encoding'              => $input->getOption('encoding'),
-            'propel.tablePrefix'                    => $input->getOption('table-prefix'),
-            'propel.useLeftJoinsInDoJoinMethods'    => true,
-            // MySQL specific
-            'propel.mysql.tableType'                => $input->getOption('mysql-engine'),
-            'propel.mysql.tableEngineKeyword'       => 'ENGINE',
-        ), $input);
+        $configOptions = array();
+
+        foreach ($input->getOptions() as $key => $option) {
+            switch ($key) {
+                case 'schema-name';
+                    $configOptions['propel']['generator']['schema']['basename'] = $option;
+                    break;
+                case 'table-prefix':
+                    $configOptions['propel']['generator']['tablePrefix'] = $option;
+                    break;
+                case 'mysql-engine';
+                    $configOptions['propel']['database']['adapters']['mysql']['tableType'] = $option;
+                    break;
+            }
+        }
+
+        $generatorConfig = $this->getGeneratorConfig($configOptions, $input);
 
         $this->createDirectory($input->getOption('output-dir'));
 

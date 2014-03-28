@@ -346,7 +346,13 @@ abstract class DataModelBuilder
     }
 
     /**
-     * Get a specific [name transformed] build property.
+     * Get a specific configuration property.
+     *
+     * The name of the requested property must be given as a string, representing its hierarchy in the configuration
+     * array, with each level separated by a dot. I.e.:
+     * <code> $config['database']['adapter']['mysql']['tableType']</code>
+     * is expressed by:
+     * <code>'database.adapter.mysql.tableType</code>
      *
      * @param  string $name
      * @return string
@@ -354,7 +360,7 @@ abstract class DataModelBuilder
     public function getBuildProperty($name)
     {
         if ($this->getGeneratorConfig()) {
-            return $this->getGeneratorConfig()->getBuildProperty($name);
+            return $this->getGeneratorConfig()->getConfigProperty($name);
         }
 
         return null; // just to be explicit
@@ -456,7 +462,7 @@ abstract class DataModelBuilder
      */
     public function quoteIdentifier($text)
     {
-        if (!$this->getBuildProperty('disableIdentifierQuoting')) {
+        if (!$this->getBuildProperty('generator.objectModel.disableIdentifierQuoting')) {
             return $this->getPlatform()->quoteIdentifier($text);
         }
 
@@ -470,6 +476,6 @@ abstract class DataModelBuilder
      */
     public function prefixClassName($identifier)
     {
-        return $this->getBuildProperty('classPrefix') . $identifier;
+        return $this->getBuildProperty('generator.objectModel.classPrefix') . $identifier;
     }
 }

@@ -15,9 +15,6 @@ use Symfony\Component\Config\FileLocator as BaseFileLocator;
 /**
  * Propel file locator class.
  *
- * Deafult Propel configuration file directories are: current, a subdirectory named "conf"
- * or a subdirectory named "config".
- *
  * @author Cristiano Cinotti
  */
 class FileLocator extends BaseFileLocator

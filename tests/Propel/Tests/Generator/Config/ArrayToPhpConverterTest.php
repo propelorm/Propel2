@@ -17,26 +17,25 @@ class ArrayToPhpConverterTest extends TestCase
 {
     public function testConvertConvertsSimpleDatasourceSection()
     {
-        $conf = array('datasources' => array(
-          'bookstore' => array(
-            'adapter' => 'mysql',
-            'connection' => array(
-              'classname' => 'DebugPDO',
-              'dsn' => 'mysql:host=localhost;dbname=bookstore',
-              'user' => 'testuser',
-              'password' => 'password',
-              'options' =>  array('ATTR_PERSISTENT' => false),
-              'attributes' => array('ATTR_EMULATE_PREPARES' => true),
-            ),
-          ),
-          'default' => 'bookstore',
-        ));
-        $expected = <<<'EOF'
-$serviceContainer = \Propel\Runtime\Propel::getServiceContainer();
-$serviceContainer->checkVersion('2.0.0-dev');
-$serviceContainer->setAdapterClass('bookstore', 'mysql');
-$manager = new \Propel\Runtime\Connection\ConnectionManagerSingle();
-$manager->setConfiguration(array (
+        $conf = array(
+            'connections' => array(
+                'bookstore' => array(
+                  'adapter' => 'mysql',
+                  'classname' => 'DebugPDO',
+                  'dsn' => 'mysql:host=localhost;dbname=bookstore',
+                  'user' => 'testuser',
+                  'password' => 'password',
+                  'options' =>  array('ATTR_PERSISTENT' => false),
+                  'attributes' => array('ATTR_EMULATE_PREPARES' => true)
+                )
+            )
+        );
+        $expected = <<<EOF
+\$serviceContainer = \Propel\Runtime\Propel::getServiceContainer();
+\$serviceContainer->checkVersion('2.0.0-dev');
+\$serviceContainer->setAdapterClass('bookstore', 'mysql');
+\$manager = new \Propel\Runtime\Connection\ConnectionManagerSingle();
+\$manager->setConfiguration(array (
   'classname' => 'DebugPDO',
   'dsn' => 'mysql:host=localhost;dbname=bookstore',
   'user' => 'testuser',
@@ -50,43 +49,40 @@ $manager->setConfiguration(array (
     'ATTR_EMULATE_PREPARES' => true,
   ),
 ));
-$manager->setName('bookstore');
-$serviceContainer->setConnectionManager('bookstore', $manager);
-$serviceContainer->setDefaultDatasource('bookstore');
+\$manager->setName('bookstore');
+\$serviceContainer->setConnectionManager('bookstore', \$manager);
+\$serviceContainer->setDefaultDatasource('bookstore');
 EOF;
         $this->assertEquals($expected, ArrayToPhpConverter::convert($conf));
     }
 
     public function testConvertConvertsMasterSlaveDatasourceSection()
     {
-        $conf = array('datasources' => array(
-          'bookstore-cms' => array(
-            'adapter' => 'mysql',
-            'connection' => array('dsn' => 'mysql:host=localhost;dbname=bookstore'),
-            'slaves' => array(
-              'connection' => array(
-                array('dsn' => 'mysql:host=slave-server1; dbname=bookstore'),
-                array('dsn' => 'mysql:host=slave-server2; dbname=bookstore'),
-              ),
-            ),
-          ),
-        ));
+        $conf = array(
+            'connections' => array(
+                'bookstore-cms' => array(
+                    'adapter' => 'mysql',
+                    'dsn' => 'mysql:host=localhost;dbname=bookstore',
+                    'slaves' => array(
+                        array('dsn' => 'mysql:host=slave-server1; dbname=bookstore'),
+                        array('dsn' => 'mysql:host=slave-server2; dbname=bookstore')
+                    )
+                )
+            )
+        );
         $expected = <<<'EOF'
 $serviceContainer = \Propel\Runtime\Propel::getServiceContainer();
 $serviceContainer->checkVersion('2.0.0-dev');
 $serviceContainer->setAdapterClass('bookstore-cms', 'mysql');
 $manager = new \Propel\Runtime\Connection\ConnectionManagerMasterSlave();
 $manager->setReadConfiguration(array (
-  'connection' =>
+  0 =>
   array (
-    0 =>
-    array (
-      'dsn' => 'mysql:host=slave-server1; dbname=bookstore',
-    ),
-    1 =>
-    array (
-      'dsn' => 'mysql:host=slave-server2; dbname=bookstore',
-    ),
+    'dsn' => 'mysql:host=slave-server1; dbname=bookstore',
+  ),
+  1 =>
+  array (
+    'dsn' => 'mysql:host=slave-server2; dbname=bookstore',
   ),
 ));
 $manager->setWriteConfiguration(array (
@@ -102,35 +98,28 @@ EOF;
     public function testConvertConvertsProfilerSection()
     {
         $conf = array('profiler' => array(
-            'class' => '\Runtime\Runtime\Util\Profiler',
+            'classname' => '\Propel\Runtime\Util\Profiler',
             'slowTreshold' => 0.2,
-            'details' => array(
-                'time' => array('name' => 'Time', 'precision' => 3, 'pad' => '8'),
-                'mem' => array('name' => 'Memory', 'precision' => 3, 'pad' => '8'),
-            ),
+            'time' => array('precision' => 3, 'pad' => '8'),
+            'memory' => array('precision' => 3, 'pad' => '8'),
             'innerGlue' => ': ',
             'outerGlue' => ' | '
         ));
         $expected = <<<'EOF'
 $serviceContainer = \Propel\Runtime\Propel::getServiceContainer();
 $serviceContainer->checkVersion('2.0.0-dev');
-$serviceContainer->setProfilerClass('\Runtime\Runtime\Util\Profiler');
+$serviceContainer->setProfilerClass('\Propel\Runtime\Util\Profiler');
 $serviceContainer->setProfilerConfiguration(array (
   'slowTreshold' => 0.2,
-  'details' =>
+  'time' =>
   array (
-    'time' =>
-    array (
-      'name' => 'Time',
-      'precision' => 3,
-      'pad' => '8',
-    ),
-    'mem' =>
-    array (
-      'name' => 'Memory',
-      'precision' => 3,
-      'pad' => '8',
-    ),
+    'precision' => 3,
+    'pad' => '8',
+  ),
+  'memory' =>
+  array (
+    'precision' => 3,
+    'pad' => '8',
   ),
   'innerGlue' => ': ',
   'outerGlue' => ' | ',
@@ -141,9 +130,8 @@ EOF;
 
     public function testConvertConvertsLogSection()
     {
-        $conf = array('log' => array('logger' => array(
+        $conf = array('log' => array('defaultLogger' => array(
             'type' => 'stream',
-            'name' => 'defaultLogger',
             'level' => '300',
             'path' => '/var/log/propel.log',
         )));
@@ -162,19 +150,15 @@ EOF;
     public function testConvertConvertsLogSectionWithMultipleLoggers()
     {
         $conf = array('log' => array(
-            'logger' => array(
-                array(
-                    'type' => 'stream',
-                    'path' => '/var/log/propel.log',
-                    'level' => '300',
-                    'name' => 'defaultLogger',
-                ),
-                array(
-                    'type' => 'stream',
-                    'path' => '/var/log/propel_bookstore.log',
-                    'name' => 'bookstore',
-                ),
+            'defaultLogger' => array(
+                'type' => 'stream',
+                'path' => '/var/log/propel.log',
+                'level' => '300'
             ),
+            'bookstoreLogger' => array(
+                'type' => 'stream',
+                'path' => '/var/log/propel_bookstore.log',
+            )
         ));
         $expected = <<<'EOF'
 $serviceContainer = \Propel\Runtime\Propel::getServiceContainer();
@@ -184,7 +168,7 @@ $serviceContainer->setLoggerConfiguration('defaultLogger', array (
   'path' => '/var/log/propel.log',
   'level' => '300',
 ));
-$serviceContainer->setLoggerConfiguration('bookstore', array (
+$serviceContainer->setLoggerConfiguration('bookstoreLogger', array (
   'type' => 'stream',
   'path' => '/var/log/propel_bookstore.log',
 ));
@@ -195,43 +179,38 @@ EOF;
     public function testConvertConvertsCompleteConfiguration()
     {
         $conf = array(
-          'log' => array('logger' => array(
+          'log' => array('defaultLogger' => array(
             'type' => 'stream',
-            'name' => 'defaultLogger',
             'level' => '300',
             'path' => '/var/log/propel.log',
           )),
-          'datasources' => array(
+          'connections' => array(
             'bookstore' => array(
               'adapter' => 'mysql',
-              'connection' => array(
-                'classname' => '\\Propel\\Runtime\\Connection\\DebugPDO',
-                'dsn' => 'mysql:host=127.0.0.1;dbname=test',
-                'user' => 'root',
-                'password' => '',
-                'options' => array(
-                  'ATTR_PERSISTENT' => false,
-                ),
-                'attributes' => array(
-                  'ATTR_EMULATE_PREPARES' => true,
-                ),
-                'settings' => array(
-                  'charset' => 'utf8',
-                ),
+              'classname' => '\\Propel\\Runtime\\Connection\\DebugPDO',
+              'dsn' => 'mysql:host=127.0.0.1;dbname=test',
+              'user' => 'root',
+              'password' => '',
+              'options' => array(
+                'ATTR_PERSISTENT' => false,
+              ),
+              'attributes' => array(
+                'ATTR_EMULATE_PREPARES' => true,
+              ),
+              'settings' => array(
+                'charset' => 'utf8',
               ),
             ),
             'bookstore-cms' => array(
               'adapter' => 'mysql',
-              'connection' => array('dsn' => 'mysql:host=localhost;dbname=bookstore'),
+              'dsn' => 'mysql:host=localhost;dbname=bookstore',
               'slaves' => array(
-                'connection' => array(
                   array('dsn' => 'mysql:host=slave-server1; dbname=bookstore'),
                   array('dsn' => 'mysql:host=slave-server2; dbname=bookstore'),
                 ),
               ),
             ),
-            'default' => 'bookstore',
-          ),
+            'defaultConnection' => 'bookstore'
         );
         $expected = <<<'EOF'
 $serviceContainer = \Propel\Runtime\Propel::getServiceContainer();
@@ -261,16 +240,13 @@ $serviceContainer->setConnectionManager('bookstore', $manager);
 $serviceContainer->setAdapterClass('bookstore-cms', 'mysql');
 $manager = new \Propel\Runtime\Connection\ConnectionManagerMasterSlave();
 $manager->setReadConfiguration(array (
-  'connection' =>
+  0 =>
   array (
-    0 =>
-    array (
-      'dsn' => 'mysql:host=slave-server1; dbname=bookstore',
-    ),
-    1 =>
-    array (
-      'dsn' => 'mysql:host=slave-server2; dbname=bookstore',
-    ),
+    'dsn' => 'mysql:host=slave-server1; dbname=bookstore',
+  ),
+  1 =>
+  array (
+    'dsn' => 'mysql:host=slave-server2; dbname=bookstore',
   ),
 ));
 $manager->setWriteConfiguration(array (

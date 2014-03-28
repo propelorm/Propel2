@@ -68,13 +68,8 @@ class DatabaseTest extends ModelTestCase
 
     public function testDoFinalization()
     {
-        $config = $this->getMock('Propel\Generator\Config\GeneratorConfig');
-        $config
-            ->expects($this->once())
-            ->method('getBuildProperty')
-            ->with($this->equalTo('behaviorDefault'))
-            ->will($this->returnValue('timestampable'))
-        ;
+        $config = $this->getMockBuilder('Propel\Generator\Config\GeneratorConfig')
+                            ->disableOriginalConstructor()->getMock();
 
         $schema = $this->getSchemaMock('bookstore', array(
             'generator_config' => $config
@@ -100,7 +95,7 @@ class DatabaseTest extends ModelTestCase
         $database->addTable($this->getTableMock('bar'));
         $database->doFinalInitialization();
 
-        $this->assertCount(1, $database->getBehaviors());
+        $this->assertCount(0, $database->getBehaviors());
         $this->assertSame(2, $database->countTables());
     }
 
@@ -287,7 +282,8 @@ class DatabaseTest extends ModelTestCase
 
     public function testGetGeneratorConfig()
     {
-        $config = $this->getMock('Propel\Generator\Config\GeneratorConfig');
+        $config = $this->getMockBuilder('Propel\Generator\Config\GeneratorConfig')
+            ->disableOriginalConstructor()->getMock();
 
         $schema = $this->getSchemaMock('bookstore', array(
             'generator_config' => $config
@@ -301,11 +297,13 @@ class DatabaseTest extends ModelTestCase
 
     public function testGetBuildProperty()
     {
-        $config = $this->getMock('Propel\Generator\Config\GeneratorConfig');
+        $config = $this->getMockBuilder('Propel\Generator\Config\GeneratorConfig')
+            ->disableOriginalConstructor()->getMock();
+
         $config
             ->expects($this->once())
-            ->method('getBuildProperty')
-            ->with($this->equalTo('mysqlTableType'))
+            ->method('getConfigProperty')
+            ->with($this->equalTo('generator.database.adapters.mysql.tableType'))
             ->will($this->returnValue('InnoDB'))
         ;
 
@@ -316,7 +314,7 @@ class DatabaseTest extends ModelTestCase
         $database = new Database();
         $database->setParentSchema($schema);
 
-        $this->assertSame('InnoDB', $database->getBuildProperty('mysqlTableType'));
+        $this->assertSame('InnoDB', $database->getBuildProperty('generator.database.adapters.mysql.tableType'));
     }
 
     public function testAddArrayDomain()

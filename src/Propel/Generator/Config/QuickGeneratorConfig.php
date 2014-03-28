@@ -10,71 +10,55 @@
 
 namespace Propel\Generator\Config;
 
+use Propel\Common\Config\ConfigurationManager;
 use Propel\Common\Pluralizer\PluralizerInterface;
 use Propel\Common\Pluralizer\StandardEnglishPluralizer;
 use Propel\Generator\Builder\DataModelBuilder;
-use Propel\Generator\Exception\RuntimeException;
+use Propel\Generator\Exception\InvalidArgumentException;
 use Propel\Generator\Model\Table;
 use \Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Generator\Util\BehaviorLocator;
 
-class QuickGeneratorConfig implements GeneratorConfigInterface
+class QuickGeneratorConfig extends ConfigurationManager implements GeneratorConfigInterface
 {
-    protected $builders = array(
-        'object'                => '\Propel\Generator\Builder\Om\ObjectBuilder',
-        'objectstub'            => '\Propel\Generator\Builder\Om\ExtensionObjectBuilder',
-        'objectmultiextend'     => '\Propel\Generator\Builder\Om\MultiExtendObjectBuilder',
-        'tablemap'              => '\Propel\Generator\Builder\Om\TableMapBuilder',
-        'query'                 => '\Propel\Generator\Builder\Om\QueryBuilder',
-        'querystub'             => '\Propel\Generator\Builder\Om\ExtensionQueryBuilder',
-        'queryinheritance'      => '\Propel\Generator\Builder\Om\QueryInheritanceBuilder',
-        'queryinheritancestub'  => '\Propel\Generator\Builder\Om\ExtensionQueryInheritanceBuilder',
-        'interface'             => '\Propel\Generator\Builder\Om\InterfaceBuilder',
-    );
-
-    protected $buildProperties = array();
-
     /**
      * @var BehaviorLocator
      */
     protected $behaviorLocator = null;
 
-    public function __construct()
+    public function __construct($extraConf = array())
     {
-        $this->setBuildProperties($this->parsePseudoIniFile(__DIR__ . '/../../../../tools/generator/default.properties'));
-    }
-
-    /**
-     * Why would Phing use ini while it so fun to invent a new format? (sic)
-     * parse_ini_file() doesn't work for Phing property files
-     */
-    protected function parsePseudoIniFile($filepath)
-    {
-        $properties = array();
-        if (false === ($lines = @file($filepath))) {
-            throw new RuntimeException(sprintf('Unable to parse contents of %s.', $filepath));
+        if (null === $extraConf) {
+            $extraConf = array();
         }
 
-        foreach ($lines as $line) {
-            $line = trim($line);
-            if (empty($line) || '#' ===  $line{0} || ';' === $line{0}) {
-                continue;
-            }
+        //Creates a GeneratorConfig based on Propel default values plus the following
+        $configs = array(
+           'propel' => array(
+               'database' => array(
+                   'connections' => array(
+                       'default' => array(
+                           'adapter' => 'sqlite',
+                           'classname' => 'Propel\Runtime\Connection\DebugPDO',
+                           'dsn' => 'sqlite::memory:',
+                           'user' => '',
+                           'password' => ''
+                       )
+                   )
+               ),
+               'runtime' => array(
+                   'defaultConnection' => 'default',
+                   'connections' => array('default')
+               ),
+               'generator' => array(
+                   'defaultConnection' => 'default',
+                   'connections' => array('default')
+               )
+           )
+        );
 
-            $pos = strpos($line, '=');
-            $property = trim(substr($line, 0, $pos));
-            $value = trim(substr($line, $pos + 1));
-
-            if ('true' === $value) {
-                $value = true;
-            } elseif ('false' === $value) {
-                $value = false;
-            }
-
-            $properties[$property] = $value;
-        }
-
-        return $properties;
+        $configs = array_replace_recursive($configs, $extraConf);
+        $this->process($configs);
     }
 
     /**
@@ -87,7 +71,12 @@ class QuickGeneratorConfig implements GeneratorConfigInterface
      */
     public function getConfiguredBuilder(Table $table, $type)
     {
-        $class = $this->builders[$type];
+        $class = $this->getConfigProperty('generator.objectModel.builders.' . $type);
+
+        if (null === $class) {
+            throw new InvalidArgumentException("Invalid data model builder type `$type`");
+        }
+
         $builder = new $class($table);
         $builder->setGeneratorConfig($this);
 
@@ -102,54 +91,6 @@ class QuickGeneratorConfig implements GeneratorConfigInterface
     public function getConfiguredPluralizer()
     {
         return new StandardEnglishPluralizer();
-    }
-
-    /**
-     * Parses the passed-in properties, renaming and saving eligible properties
-     * in this object.
-     *
-     * Renames the propel.xxx properties to just xxx and renames any xxx.yyy
-     * properties to xxxYyy as PHP doesn't like the xxx.yyy syntax.
-     *
-     * @param array|\Traversable $props
-     */
-    public function setBuildProperties($props)
-    {
-        $this->buildProperties = array();
-
-        foreach ($props as $key => $propValue) {
-            if (strpos($key, "propel.") === 0) {
-                $newKey = substr($key, strlen("propel."));
-                $j = strpos($newKey, '.');
-                while (false !== $j) {
-                    $newKey = substr($newKey, 0, $j) . ucfirst(substr($newKey, $j + 1));
-                    $j = strpos($newKey, '.');
-                }
-                $this->setBuildProperty($newKey, $propValue);
-            }
-        }
-    }
-
-    /**
-     * Returns a specific propel (renamed) property from the build.
-     *
-     * @param  string $name
-     * @return mixed
-     */
-    public function getBuildProperty($name)
-    {
-        return isset($this->buildProperties[$name]) ? $this->buildProperties[$name] : null;
-    }
-
-    /**
-     * Sets a specific propel (renamed) property from the build.
-     *
-     * @param string $name
-     * @param mixed  $value
-     */
-    public function setBuildProperty($name, $value)
-    {
-        $this->buildProperties[$name] = $value;
     }
 
     /**

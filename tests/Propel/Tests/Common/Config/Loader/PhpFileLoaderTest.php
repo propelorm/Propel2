@@ -42,7 +42,6 @@ class PhpFileLoaderTest extends ConfigTestCase
 
 EOF;
         $this->dumpTempFile('parameters.php', $content);
-
         $test = $this->loader->load('parameters.php');
         $this->assertEquals('bar', $test['foo']);
         $this->assertEquals('baz', $test['bar']);

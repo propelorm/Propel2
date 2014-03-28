@@ -49,14 +49,15 @@ class DatabaseReverseCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $vendor = $input->getArgument('connection');
-        $vendor = preg_split('{:}', $vendor);
-        $vendor = ucfirst($vendor[0]);
+        $configOptions = array();
 
-        $generatorConfig = $this->getGeneratorConfig(array(
-            'propel.platform.class'         => $input->getOption('platform'),
-            'propel.reverse.parser.class'   => sprintf('\\Propel\\Generator\\Reverse\\%sSchemaParser', $vendor),
-        ), $input);
+        if ($this->hasInputArgument('connection', $input)) {
+            $configOptions += $this->connectionToProperties('reverseconnection='.$input->getArgument('connection'), 'reverse');
+            $configOptions['propel']['reverse']['parserClass'] = 
+                sprintf('\\Propel\\Generator\\Reverse\\%sSchemaParser', ucfirst($configOptions['propel']['database']['connections']['reverseconnection']['adapter']));
+        }
+
+        $generatorConfig = $this->getGeneratorConfig($configOptions, $input);
 
         $this->createDirectory($input->getOption('output-dir'));
 
@@ -68,11 +69,6 @@ class DatabaseReverseCommand extends AbstractCommand
             }
         });
         $manager->setWorkingDirectory($input->getOption('output-dir'));
-
-        list(, $dsn, $infos) = $this->parseConnection('connection=' . $input->getArgument('connection'));
-
-        $manager->setConnection(array_merge(array('dsn' => $dsn), $infos));
-
         $manager->setDatabaseName($input->getOption('database-name'));
         $manager->setSchemaName($input->getOption('schema-name'));
 

@@ -17,7 +17,6 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
-use Propel\Generator\Exception\RuntimeException;
 
 /**
  * @author William Durand <william.durand1@gmail.com>
@@ -25,7 +24,6 @@ use Propel\Generator\Exception\RuntimeException;
 abstract class AbstractCommand extends Command
 {
     const DEFAULT_INPUT_DIRECTORY   = '.';
-    const DEFAULT_PLATFORM          = 'MysqlPlatform';
 
     protected $filesystem;
 
@@ -35,7 +33,7 @@ abstract class AbstractCommand extends Command
     protected function configure()
     {
         $this
-            ->addOption('platform',  null, InputOption::VALUE_REQUIRED,  'The platform', self::DEFAULT_PLATFORM)
+            ->addOption('platform',  null, InputOption::VALUE_REQUIRED,  'The platform')
             ->addOption('input-dir', null, InputOption::VALUE_REQUIRED,  'The input directory', self::DEFAULT_INPUT_DIRECTORY)
             ->addOption('recursive', null, InputOption::VALUE_NONE, 'Search for schema.xml inside the input directory')
         ;
@@ -43,48 +41,33 @@ abstract class AbstractCommand extends Command
 
     /**
      * Returns a new `GeneratorConfig` object with your `$properties` merged with
-     * the build.properties in the `input-dir` folder.
+     * the configuration properties in the `input-dir` folder.
      *
-     * @param array $properties
+     * @param array $properties Properties to add to the configuration. They usually come from command line.
      * @param       $input
      *
      * @return GeneratorConfig
      */
-    protected function getGeneratorConfig(array $properties, InputInterface $input = null)
+    protected function getGeneratorConfig(array $properties = null, InputInterface $input = null)
     {
-        $options = $properties;
-        if ($input && $input->hasOption('input-dir')) {
-            $options = array_merge(
-                $properties,
-                $this->getBuildProperties($input->getOption('input-dir') . '/build.properties')
-            );
+        if (null === $input) {
+            return new GeneratorConfig(null, $properties);
         }
 
-        return new GeneratorConfig($options);
-    }
+        $inputDir = null;
 
-    protected function getBuildProperties($file)
-    {
-        $properties = array();
-
-        if (file_exists($file)) {
-            if (false === $lines = @file($file)) {
-                throw new RuntimeException(sprintf('Unable to parse contents of "%s".', $file));
-            }
-
-            foreach ($lines as $line) {
-                $line = trim($line);
-
-                if (empty($line) || in_array($line[0], array('#', ';'))) {
-                    continue;
-                }
-
-                $pos = strpos($line, '=');
-                $properties[trim(substr($line, 0, $pos))] = trim(substr($line, $pos + 1));
+        if ($input->hasOption('input-dir')) {
+            //For SqlInsertCommand `input-dir` is the directory containing sql to insert
+            if (!($this instanceof SqlInsertCommand)) {
+                $inputDir = $input->getOption('input-dir');
             }
         }
 
-        return $properties;
+        if ($input->hasOption('platform') && (null !== $input->getOption('platform'))) {
+            $properties['propel']['generator']['platformClass'] = '\\Propel\\Generator\\Platform\\' . $input->getOption('platform');
+        }
+
+        return new GeneratorConfig($inputDir, $properties);
     }
 
     /**
@@ -133,6 +116,13 @@ abstract class AbstractCommand extends Command
         }
     }
 
+    /**
+     * Parse a connection string and return an array with name, dsn and extra informations
+     *
+     * @parama string $connection The connection string
+     *
+     * @return array
+     */
     protected function parseConnection($connection)
     {
         $pos  = strpos($connection, '=');
@@ -153,5 +143,64 @@ abstract class AbstractCommand extends Command
         $extras['adapter'] = $adapter;
 
         return array($name, $dsn, $extras);
+    }
+
+    /**
+     * Parse a connection string and return an array of properties to pass to GeneratorConfig constructor.
+     * The connection must be in the following format: 
+     * `bookstore=mysql:host=127.0.0.1;dbname=test;user=root;password=foobar`
+     * where "bookstore" is your propel database name (used in your schema.xml).
+     *
+     * @param string $connection The connection string
+     * @param string $section The section where the connection must be registered in (generator, runtime...)
+     *
+     * @return array
+     */
+    protected function connectionToProperties($connection, $section = null)
+    {        
+        list($name, $dsn, $infos) = $this->parseConnection($connection);
+        $config['propel']['database']['connections'][$name]['classname'] = '\Propel\Runtime\Connection\ConnectionWrapper';
+        $config['propel']['database']['connections'][$name]['adapter'] = strtolower($infos['adapter']);
+        $config['propel']['database']['connections'][$name]['dsn'] = $dsn;
+        $config['propel']['database']['connections'][$name]['user'] = isset($infos['user']) && $infos['user'] ? $infos['user'] : null;
+        $config['propel']['database']['connections'][$name]['password'] = isset($infos['password']) ? $infos['password'] : null;
+        
+        if (null === $section) {
+            $section = 'generator';
+        }
+        
+        if ('reverse' === $section) {
+            $config['propel']['reverse']['connection'] = $name;
+        } else {
+            $config['propel'][$section]['connections'][] = $name;
+        }
+
+        return $config;
+    }
+    
+    /*
+     * Check if a given input option exists and it isn't null.
+     *
+     * @param string $option The name of the input option to check
+     * @param Symfony\Component\Console\Input\InputInterface Input object
+     *
+     * @return boolean
+     */
+    protected function hasInputOption($option, $input)
+    {
+        return $input->hasOption($option) && null !== $input->getOption($option);
+    }
+    
+    /*
+     * Check if a given input argument exists and it isn't null.
+     *
+     * @param string $argument The name of the input argument to check
+     * @param Symfony\Component\Console\Input\InputInterface Input object
+     *
+     * @return boolean
+     */
+    protected function hasInputArgument($argument, $input)
+    {
+        return $input->hasArgument($argument) && null !== $input->getArgument($argument);
     }
 }

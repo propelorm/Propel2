@@ -126,6 +126,10 @@ abstract class FileLoader extends BaseFileLoader
     private function resolveString($value, array $resolving = array())
     {
         if (preg_match('/^%([^%\s]+)%$/', $value, $match)) {
+            if (null !== $ret = $this->parseEnvironmentParams($match[1])) {
+                return $ret;
+            }
+
             $key = strtolower($match[1]);
 
             if (isset($resolving[$key])) {
@@ -143,6 +147,10 @@ abstract class FileLoader extends BaseFileLoader
             // skip %%
             if (!isset($match[1])) {
                 return '%%';
+            }
+
+            if (null !== $ret = $this->parseEnvironmentParams($match[1])) {
+                return $ret;
             }
 
             $key = strtolower($match[1]);
@@ -190,9 +198,9 @@ abstract class FileLoader extends BaseFileLoader
     /**
      * Return the value correspondent to a given key.
      *
-     * @param mix $property_key The key, in the configuration values array, to return the respective value
+     * @param mixed $property_key The key, in the configuration values array, to return the respective value
      *
-     * @return mix
+     * @return mixed
      * @throws Propel\Common\Config\Exception\InvalidArgumentException when non-existent key in configuration array
      */
     private function get($property_key)
@@ -236,5 +244,28 @@ abstract class FileLoader extends BaseFileLoader
                 }
             }
         }
+    }
+
+    /**
+     * Check if the parameter contains an environment variable and parse it
+     *
+     * @param string $value The value to parse
+     *
+     * @return string|null
+     * @throws Propel\Common\Config\Exception\InvalidArgumentException if the environment variable is not set
+     */
+    private function parseEnvironmentParams($value)
+    {
+        // env.variable is an environment variable
+        $env = explode('.', $value);
+        if ('env' === $env[0]) {
+            if (!$envParam = getenv($env[1])) {
+                throw new InvalidArgumentException("Environment variable '$env[1]' is not defined.");
+            }
+
+            return $envParam;
+        }
+
+        return null;
     }
 }

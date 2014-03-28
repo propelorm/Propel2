@@ -249,6 +249,28 @@ EOF;
         $this->assertEquals(array('runtime' => array('foo' => 'bar', 'bar' => 'baz')), $actual);
     }
 
+    public function testLoadInGivenDirectory()
+    {
+        $yamlConf = <<<EOF
+buildtime:
+    bfoo: bbar
+    bbar: bbaz
+EOF;
+        $yamlDistConf = <<<EOF
+runtime:
+    foo: bar
+    bar: baz
+EOF;
+        $this->getFilesystem()->dumpFile('myDir/mySubdir/propel.yaml', $yamlConf);
+        $this->getFilesystem()->dumpFile('myDir/mySubdir/propel.yaml.dist', $yamlDistConf);
+
+        $manager = new TestableConfigurationManager('myDir/mySubdir/');
+        $actual = $manager->get();
+
+        $this->assertEquals(array('foo' => 'bar', 'bar' => 'baz'), $actual['runtime']);
+        $this->assertEquals(array('bfoo' => 'bbar', 'bbar' => 'bbaz'), $actual['buildtime']);
+    }
+
     public function testMergeExtraProperties()
     {
         $extraConf = array(
@@ -365,6 +387,11 @@ propel:
       connections:
           - mysource
           - yoursource
+  generator:
+      defaultConnection: mysource
+      connections:
+          - mysource
+          - yoursource
 EOF;
         $this->getFilesystem()->dumpFile('propel.yaml', $yamlConf);
 
@@ -400,6 +427,11 @@ propel:
       connections:
           - mysource
           - yoursource
+  generator:
+      defaultConnection: mysource
+      connections:
+          - mysource
+          - yoursource
 EOF;
         $this->getFilesystem()->dumpFile('propel.yaml', $yamlConf);
 
@@ -411,7 +443,228 @@ EOF;
         $this->assertFalse($actual['generator']['schema']['autoPackage']);
         $this->assertEquals($actual['generator']['objectModel']['pluralizerClass'], '\Propel\Common\Pluralizer\StandardEnglishPluralizer');
         $this->assertEquals($actual['generator']['objectModel']['builders']['objectstub'], '\Propel\Generator\Builder\Om\ExtensionObjectBuilder');
+    }
 
+    public function testGetConfigProperty()
+    {
+        $yamlConf = <<<EOF
+propel:
+  database:
+      connections:
+          mysource:
+              adapter: mysql
+              classname: Propel\Runtime\Connection\DebugPDO
+              dsn: mysql:host=localhost;dbname=mydb
+              user: root
+              password:
+              attributes:
+          yoursource:
+              adapter: mysql
+              classname: Propel\Runtime\Connection\DebugPDO
+              dsn: mysql:host=localhost;dbname=yourdb
+              user: root
+              password:
+              attributes:
+  runtime:
+      defaultConnection: mysource
+      connections:
+          - mysource
+          - yoursource
+  generator:
+      defaultConnection: mysource
+      connections:
+          - mysource
+          - yoursource
+EOF;
+        $this->getFilesystem()->dumpFile('propel.yaml', $yamlConf);
+
+        $manager = new ConfigurationManager();
+        $this->assertEquals('mysource', $manager->getConfigProperty('runtime.defaultConnection'));
+        $this->assertEquals('yoursource', $manager->getConfigProperty('runtime.connections.1'));
+        $this->assertEquals('root', $manager->getConfigProperty('database.connections.mysource.user'));
+    }
+
+    /**
+     * @expectedException Propel\Common\Config\Exception\InvalidArgumentException
+     * @expectedMessage Invalid configuration property name
+     */
+    public function testGetConfigPropertyBadNameThrowsException()
+    {
+        $yamlConf = <<<EOF
+propel:
+  database:
+      connections:
+          mysource:
+              adapter: mysql
+              classname: Propel\Runtime\Connection\DebugPDO
+              dsn: mysql:host=localhost;dbname=mydb
+              user: root
+              password:
+              attributes:
+          yoursource:
+              adapter: mysql
+              classname: Propel\Runtime\Connection\DebugPDO
+              dsn: mysql:host=localhost;dbname=yourdb
+              user: root
+              password:
+              attributes:
+  runtime:
+      defaultConnection: mysource
+      connections:
+          - mysource
+          - yoursource
+  generator:
+      defaultConnection: mysource
+      connections:
+          - mysource
+          - yoursource
+EOF;
+        $this->getFilesystem()->dumpFile('propel.yaml', $yamlConf);
+
+        $manager = new ConfigurationManager();
+        $value = $manager->getConfigProperty(10);
+    }
+
+    public function testGetConfigPropertyBadName()
+    {
+        $yamlConf = <<<EOF
+propel:
+  database:
+      connections:
+          mysource:
+              adapter: mysql
+              classname: Propel\Runtime\Connection\DebugPDO
+              dsn: mysql:host=localhost;dbname=mydb
+              user: root
+              password:
+              attributes:
+          yoursource:
+              adapter: mysql
+              classname: Propel\Runtime\Connection\DebugPDO
+              dsn: mysql:host=localhost;dbname=yourdb
+              user: root
+              password:
+              attributes:
+  runtime:
+      defaultConnection: mysource
+      connections:
+          - mysource
+          - yoursource
+  generator:
+      defaultConnection: mysource
+      connections:
+          - mysource
+          - yoursource
+EOF;
+        $this->getFilesystem()->dumpFile('propel.yaml', $yamlConf);
+
+        $manager = new ConfigurationManager();
+        $value = $manager->getConfigProperty('database.connections.adapter');
+
+        $this->assertNull($value);
+    }
+
+    public function testProcessWithParam()
+    {
+        $configs = array(
+            'propel' => array(
+                'database' => array(
+                    'connections' => array(
+                        'default' => array(
+                            'adapter' => 'sqlite',
+                            'classname' => 'Propel\Runtime\Connection\DebugPDO',
+                            'dsn' => 'sqlite::memory:',
+                            'user' => '',
+                            'password' => ''
+                        )
+                    )
+                ),
+                'runtime' => array(
+                    'defaultConnection' => 'default',
+                    'connections' => array('default')
+                ),
+                'generator' => array(
+                    'defaultConnection' => 'default',
+                    'connections' => array('default')
+                )
+            )
+        );
+
+        $manager = new NotLoadingConfigurationManager($configs);
+        $actual = $manager->GetSection('database')['connections'];
+
+        $this->assertEquals($configs['propel']['database']['connections'], $actual);
+    }
+
+    public function testProcessWrongParameter()
+    {
+        $manager = new NotLoadingConfigurationManager(null);
+
+        $this->assertEmpty($manager->get());
+    }
+
+    public function testGetConfigurationParametersArrayTest()
+    {
+        $yamlConf = <<<EOF
+propel:
+  database:
+      connections:
+          mysource:
+              adapter: mysql
+              classname: Propel\Runtime\Connection\DebugPDO
+              dsn: mysql:host=localhost;dbname=mydb
+              user: root
+              password:
+          yoursource:
+              adapter: mysql
+              classname: Propel\Runtime\Connection\DebugPDO
+              dsn: mysql:host=localhost;dbname=yourdb
+              user: root
+              password:
+  runtime:
+      defaultConnection: mysource
+      connections:
+          - mysource
+          - yoursource
+  generator:
+      defaultConnection: mysource
+      connections:
+          - mysource
+EOF;
+        $this->getFilesystem()->dumpFile('propel.yaml', $yamlConf);
+
+        $expectedRuntime = array(
+            'mysource' => array(
+                'adapter' => 'mysql',
+                'classname' => 'Propel\Runtime\Connection\DebugPDO',
+                'dsn' => 'mysql:host=localhost;dbname=mydb',
+                'user' => 'root',
+                'password' => ''
+            ),
+            'yoursource' => array(
+                'adapter' => 'mysql',
+                'classname' => 'Propel\Runtime\Connection\DebugPDO',
+                'dsn' => 'mysql:host=localhost;dbname=yourdb',
+                'user' => 'root',
+                'password' => ''
+            )
+        );
+
+        $expectedGenerator = array(
+            'mysource' => array(
+                'adapter' => 'mysql',
+                'classname' => 'Propel\Runtime\Connection\DebugPDO',
+                'dsn' => 'mysql:host=localhost;dbname=mydb',
+                'user' => 'root',
+                'password' => ''
+            )
+        );
+
+        $manager = new ConfigurationManager();
+        $this->assertEquals($expectedRuntime, $manager->getConnectionParametersArray('runtime'));
+        $this->assertEquals($expectedRuntime, $manager->getConnectionParametersArray()); //default `runtime`
+        $this->assertEquals($expectedGenerator, $manager->getConnectionParametersArray('generator'));
+        $this->assertNull($manager->getConnectionParametersArray('bad_section'));
     }
 }
 
@@ -420,5 +673,13 @@ class TestableConfigurationManager extends ConfigurationManager
     public function __construct($filename = 'propel', $extraConf = array())
     {
         $this->load($filename, $extraConf);
+    }
+}
+
+class NotLoadingConfigurationManager extends ConfigurationManager
+{
+    public function __construct($configs = null)
+    {
+        $this->process($configs);
     }
 }

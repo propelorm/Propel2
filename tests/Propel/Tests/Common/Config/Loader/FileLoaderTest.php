@@ -105,6 +105,9 @@ class FileLoaderTest extends TestCase
 
     public function testResolveParams()
     {
+        putenv('host=127.0.0.1');
+        putenv('user=root');
+
         $config = array(
             'home' => 'myHome',
             'project' => 'myProject',
@@ -118,7 +121,9 @@ class FileLoaderTest extends TestCase
                 'template' => '%home%/templates',
                 'output%project%' => '/build'
             ),
-            '%home%' => 4
+            '%home%' => 4,
+            'host' => '%env.host%',
+            'user' => '%env.user%'
         );
 
         $expected = array(
@@ -134,7 +139,9 @@ class FileLoaderTest extends TestCase
                 'template' => 'myHome/templates',
                 'outputmyProject' => '/build'
             ),
-            'myHome' => 4
+            'myHome' => 4,
+            'host' => '127.0.0.1',
+            'user' => 'root'
         );
 
         $this->assertEquals($expected, $this->loader->resolveParams($config));
@@ -190,6 +197,40 @@ class FileLoaderTest extends TestCase
     public function testResolveThrowsRuntimeExceptionIfCircularReferenceMixed()
     {
         $this->loader->resolveParams(array('foo' => 'a %bar%', 'bar' => 'a %foobar%', 'foobar' => 'a %foo%'));
+    }
+
+    public function testResolveEnvironmentVariable()
+    {
+        putenv('home=myHome');
+        putenv('schema=mySchema');
+        putenv('isBoolean=true');
+        putenv('integer=1');
+
+        $config = array(
+            'home' => '%env.home%',
+            'property1' => '%env.integer%',
+            'property2' => '%env.isBoolean%',
+            'direcories' => array(
+                'projects' => '%home%/projects',
+                'schema' => '%env.schema%',
+                'template' => '%home%/templates',
+                'output%env.home%' => '/build'
+            )
+        );
+
+        $expected = array(
+            'home' => 'myHome',
+            'property1' => '1',
+            'property2' => 'true',
+            'direcories' => array(
+                'projects' => 'myHome/projects',
+                'schema' => 'mySchema',
+                'template' => 'myHome/templates',
+                'outputmyHome' => '/build'
+            )
+        );
+
+        $this->assertEquals($expected, $this->loader->resolveParams($config));
     }
 }
 

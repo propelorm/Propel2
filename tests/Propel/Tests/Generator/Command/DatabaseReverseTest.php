@@ -18,7 +18,10 @@ class DatabaseReverseTest extends TestCaseFixturesDatabase
         $command = new DatabaseReverseCommand();
         $app->add($command);
 
+	$currentDir = getcwd();
         $outputDir = __DIR__.'/../../../../reversecommand';
+
+	chdir(__DIR__.'/../../../../Fixtures/bookstore');
 
         $input = new \Symfony\Component\Console\Input\ArrayInput(array(
             'command' => 'database:reverse',
@@ -32,6 +35,8 @@ class DatabaseReverseTest extends TestCaseFixturesDatabase
         $output = new \Symfony\Component\Console\Output\BufferedOutput();
         $app->setAutoExit(false);
         $result = $app->run($input, $output);
+
+	chdir($currentDir);
 
         if (0 !== $result) {
             echo $output->fetch();
@@ -49,6 +54,7 @@ class DatabaseReverseTest extends TestCaseFixturesDatabase
         $this->assertEquals('acct_access_role', $table['name']);
         $this->assertEquals('AcctAccessRole', $table['phpName']);
         $this->assertCount(2, $table->xpath('column'));
+
     }
 
 }

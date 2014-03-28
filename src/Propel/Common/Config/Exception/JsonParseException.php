@@ -15,7 +15,7 @@ class JsonParseException extends RuntimeException implements ExceptionInterface
     /**
      * Create an exception based on error codes returned by json_last_error function
      *
-     * @param array $errors Array of LibXMLError objects
+     * @param int $error A JSON error constant, as returned by json_last_error()
      * @see http://www.php.net/manual/en/function.json-last-error.php
      */
     public function __construct($error)

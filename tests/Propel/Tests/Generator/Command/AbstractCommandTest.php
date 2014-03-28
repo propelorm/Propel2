@@ -85,6 +85,4 @@ class TestableAbstractCommand extends AbstractCommand
 
         $output->write(count($result));
     }
-
-
 }

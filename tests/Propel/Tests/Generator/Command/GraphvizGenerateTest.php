@@ -4,10 +4,10 @@ namespace Propel\Tests\Generator\Command;
 
 use Propel\Generator\Command\GraphvizGenerateCommand;
 use Propel\Runtime\Propel;
-use Propel\Tests\TestCase;
+use Propel\Tests\TestCaseFixtures;
 use Symfony\Component\Console\Application;
 
-class GraphvizGenerateTest extends TestCase
+class GraphvizGenerateTest extends TestCaseFixtures
 {
     public function testCommand()
     {

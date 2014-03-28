@@ -49,7 +49,7 @@ class TestPrepareCommand extends AbstractCommand
      * @var array
      */
     protected $fixtures = array(
-        // directory - array of connections
+        //directory - array of connections
         'bookstore'             => array('bookstore', 'bookstore-cms', 'bookstore-behavior'),
         'bookstore-packaged'    => array('bookstore-packaged', 'bookstore-log'),
         'namespaced'            => array('bookstore_namespaced'),
@@ -79,7 +79,7 @@ class TestPrepareCommand extends AbstractCommand
         $this
             ->setDefinition(array(
                 new InputOption('vendor',       null, InputOption::VALUE_REQUIRED, 'The database vendor', self::DEFAULT_VENDOR),
-                new InputOption('dsn',          null, InputOption::VALUE_OPTIONAL, 'The data source name', self::DEFAULT_DSN),
+                new InputOption('dsn',          null, InputOption::VALUE_REQUIRED, 'The data source name', self::DEFAULT_DSN),
                 new InputOption('user',          'u', InputOption::VALUE_REQUIRED, 'The database user', self::DEFAULT_DB_USER),
                 new InputOption('password',      'p', InputOption::VALUE_REQUIRED, 'The database password', self::DEFAULT_DB_PASSWD),
                 new InputOption('exclude-database',  null, InputOption::VALUE_NONE, 'Whether this should not touch database\'s schema'),
@@ -117,35 +117,28 @@ class TestPrepareCommand extends AbstractCommand
 
         chdir($this->root . '/' . $fixturesDir);
 
-        $distributionFiles = array(
-            'runtime-conf.xml.dist' => 'runtime-conf.xml',
-            'build.properties.dist' => 'build.properties',
-        );
+        if (is_file('propel.yaml.dist')) {
+            $content = file_get_contents('propel.yaml.dist');
 
-        foreach ($distributionFiles as $sourceFile => $targetFile) {
-            if (is_file($sourceFile)) {
-                $content = file_get_contents($sourceFile);
+            $content = str_replace('##DATABASE_VENDOR##',   $input->getOption('vendor'), $content);
+            $content = str_replace('##DATABASE_URL##',      $input->getOption('dsn'), $content);
+            $content = str_replace('##DATABASE_USER##',     $input->getOption('user'), $content);
+            $content = str_replace('##DATABASE_PASSWORD##', $input->getOption('password'), $content);
 
-                $content = str_replace('##DATABASE_VENDOR##',   $input->getOption('vendor'), $content);
-                $content = str_replace('##DATABASE_URL##',      $input->getOption('dsn'), $content);
-                $content = str_replace('##DATABASE_USER##',     $input->getOption('user'), $content);
-                $content = str_replace('##DATABASE_PASSWORD##', $input->getOption('password'), $content);
-
-                file_put_contents($targetFile, $content);
-            } else {
-                $output->writeln(sprintf('<comment>No "%s" file found, skipped.</comment>', $sourceFile));
-            }
+            file_put_contents('propel.yaml', $content);
+        } else {
+            $output->writeln(sprintf('<comment>No "propel.yaml.dist" file found, skipped.</comment>'));
         }
 
-        if (is_file('runtime-conf.xml')) {
+        if (is_file('propel.yaml')) {
             $in = new ArrayInput(array(
-                'command'       => 'config:convert-xml',
+                'command'       => 'config:convert',
                 '--input-dir'   => '.',
                 '--output-dir'  => './build/conf',
                 '--output-file' => sprintf('%s-conf.php', $connections[0]), // the first connection is the main one
             ));
 
-            $command = $this->getApplication()->find('config:convert-xml');
+            $command = $this->getApplication()->find('config:convert');
             $command->run($in, $output);
         }
 

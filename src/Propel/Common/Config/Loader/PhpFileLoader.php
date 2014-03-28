@@ -51,7 +51,7 @@ class PhpFileLoader extends FileLoader
         //write it on stdoutput
         ob_start();
         $content = include $path;
-        ob_clean();
+        ob_end_clean();
 
         if (!is_array($content)) {
             throw new InvalidArgumentException("The configuration file '$file' has invalid content.");

@@ -65,7 +65,8 @@ class TableTest extends ModelTestCase
 
     public function testGetGeneratorConfig()
     {
-        $config = $this->getMock('Propel\Generator\Config\GeneratorConfig');
+        $config = $this->getMockBuilder('Propel\Generator\Config\GeneratorConfig')
+            ->disableOriginalConstructor()->getMock();
         $database = $this->getDatabaseMock('foo');
 
         $database
