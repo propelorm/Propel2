@@ -31,6 +31,7 @@ class GeneratedObjectBooleanColumnTypeTest extends TestCase
         <column name="true_bar" type="BOOLEAN" defaultValue="true" />
         <column name="false_bar" type="BOOLEAN" defaultValue="false" />
         <column name="is_baz" type="BOOLEAN" />
+        <column name="has_xy" type="BOOLEAN" />
     </table>
 </database>
 EOF;
@@ -42,6 +43,7 @@ EOF;
     {
         $this->assertTrue(method_exists('ComplexColumnTypeEntity4', 'isBar'));
         $this->assertTrue(method_exists('ComplexColumnTypeEntity4', 'isBaz'));
+        $this->assertTrue(method_exists('ComplexColumnTypeEntity4', 'hasXy'));
     }
 
     public function providerForSetter()

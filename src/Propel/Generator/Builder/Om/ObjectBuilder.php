@@ -1013,12 +1013,14 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      */
     public function addBooleanAccessorOpen(&$script, Column $column)
     {
-        $cfc = $column->getPhpName();
-        $cfc = preg_replace('/^Is(?=[A-Z])/', '', $cfc);
+        $name = $column->getStudlyPhpName();
+        if (!preg_match('/^(?:is|has)(?=[A-Z])/', $name)) {
+            $name = 'is' . ucfirst($name);
+        }
         $visibility = $column->getAccessorVisibility();
 
         $script .= "
-    ".$visibility." function is$cfc(";
+    ".$visibility." function $name(";
         if ($column->isLazyLoad()) {
             $script .= "ConnectionInterface \$con = null";
         }
@@ -1036,7 +1038,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     protected function addBooleanAccessorBody(&$script, Column $column)
     {
         $cfc = $column->getPhpName();
-        $clo = $column->getLowercasedName();
 
         $script .= "
         return \$this->get$cfc(";
