@@ -35,11 +35,27 @@ use Propel\Runtime\Propel;
  */
 class QueryBuilderInheritanceTest extends BookstoreTestBase
 {
-
-    public function testConstruct()
+    public function constructProvider()
     {
-        $query = BookstoreCashierQuery::create();
-        $this->assertTrue($query instanceof BookstoreCashierQuery, 'the create() factory returns an instance of the correct class');
+        return [
+            ['BookstoreCashierQuery'],
+            ['BookstoreEmployeeQuery'],
+            ['BookstoreManagerQuery'],
+            ['BookstoreHeadQuery'],
+            ['DistributionStoreQuery'],
+            ['DistributionOnlineQuery'],
+            ['DistributionVirtualStoreQuery'],
+        ];
+    }
+
+    /**
+     * @dataProvider constructProvider
+     */
+    public function testConstruct($class)
+    {
+        $class = 'Propel\\Tests\\Bookstore\\' . $class;
+        $query = $class::create();
+        $this->assertTrue($query instanceof $class, 'the create() factory returns an instance of the correct class');
     }
 
     public function testFindFilter()
