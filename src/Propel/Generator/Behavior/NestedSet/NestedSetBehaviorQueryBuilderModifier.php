@@ -316,10 +316,12 @@ public function orderByLevel(\$reverse = false)
 {
     if (\$reverse) {
         return \$this
-            ->addAscendingOrderByColumn({$this->objectClassName}::RIGHT_COL);
+            ->addDescendingOrderByColumn({$this->objectClassName}::LEVEL_COL)
+            ->addDescendingOrderByColumn({$this->objectClassName}::LEFT_COL);
     } else {
         return \$this
-            ->addDescendingOrderByColumn({$this->objectClassName}::RIGHT_COL);
+            ->addAscendingOrderByColumn({$this->objectClassName}::LEVEL_COL)
+            ->addAscendingOrderByColumn({$this->objectClassName}::LEFT_COL);
     }
 }
 ";

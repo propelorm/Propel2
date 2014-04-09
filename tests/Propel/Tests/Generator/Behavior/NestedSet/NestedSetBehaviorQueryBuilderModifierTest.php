@@ -208,9 +208,6 @@ class NestedSetBehaviorQueryBuilderModifierTest extends TestCase
         $this->assertEquals(array($t4, $t7, $t6, $t5, $t3, $t2, $t1), iterator_to_array($objs), 'orderByBranch(true) orders by branch right to left');
     }
 
-    /**
-     * @todo, fix this test
-     */
     public function testOrderByLevel()
     {
         list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
@@ -228,19 +225,13 @@ class NestedSetBehaviorQueryBuilderModifierTest extends TestCase
             ->orderByLevel()
             ->find();
 
-        // this test is corrup as it had the wrong call. `buildCollection`doesnt allow second parameter,
-        // seems to be the `assertEquals` call but this fails.
-        #old: $coll = $this->buildCollection(array($t1, $t2, $t5, $t4, $t6, $t7), 'orderByLevel() orders by level, from the root to the leaf');
-        #new: $this->assertEquals(array($t1, $t2, $t3, $t5, $t4, $t6, $t7), iterator_to_array($objs), 'orderByLevel() orders by level, from the root to the leaf');
-
+        $this->assertEquals(array($t1, $t2, $t3, $t5, $t4, $t6, $t7), iterator_to_array($objs), 'orderByLevel() orders by level, from the root to the leaf');
 
         $objs = \NestedSetTable9Query::create()
             ->orderByLevel(true)
             ->find();
 
-        //same as above
-        #old: $coll = $this->buildCollection(array($t7, $t6, $t4, $t5, $t2, $t1), 'orderByLevel(true) orders by level, from the leaf to the root');
-        #new: $this->assertEquals(array($t7, $t6, $t4, $t5, $t2, $t1), iterator_to_array($objs), 'orderByLevel(true) orders by level, from the leaf to the root');
+        $this->assertEquals(array($t7, $t6, $t4, $t5, $t3, $t2, $t1), iterator_to_array($objs), 'orderByLevel() orders by level, from the root to the leaf');
     }
 
     public function testFindRoot()
