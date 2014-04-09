@@ -245,8 +245,8 @@ class TableComparator
         $fromTableIndices = array_merge($this->getFromTable()->getIndices(), $this->getFromTable()->getUnices());
         $toTableIndices = array_merge($this->getToTable()->getIndices(), $this->getToTable()->getUnices());
 
-        foreach ($toTableIndices as $toTableIndexPos => $toTableIndex) {
-            foreach ($fromTableIndices as $fromTableIndexPos => $fromTableIndex) {
+        foreach ($fromTableIndices as $fromTableIndexPos => $fromTableIndex) {
+            foreach ($toTableIndices as $toTableIndexPos => $toTableIndex) {
                 if (false === IndexComparator::computeDiff($fromTableIndex, $toTableIndex, $caseInsensitive)) {
                     unset($fromTableIndices[$fromTableIndexPos]);
                     unset($toTableIndices[$toTableIndexPos]);
