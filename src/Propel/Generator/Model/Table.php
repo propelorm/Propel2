@@ -168,12 +168,16 @@ class Table extends ScopedMappingModel implements IdMethod
     {
         parent::setupObject();
 
-        $this->commonName = $this->database->getTablePrefix() . $this->getAttribute('name');
+        $this->commonName = $this->getAttribute('name');
 
         // retrieves the method for converting from specified name to a PHP name.
         $this->phpNamingMethod = $this->getAttribute('phpNamingMethod', $this->database->getDefaultPhpNamingMethod());
 
         $this->phpName = $this->getAttribute('phpName', $this->buildPhpName($this->getStdSeparatedName()));
+
+        if ($this->database->getTablePrefix()) {
+            $this->commonName = $this->database->getTablePrefix() . $this->commonName;
+        }
 
         $this->idMethod = $this->getAttribute('idMethod', $this->database->getDefaultIdMethod());
         $this->allowPkInsert = $this->booleanValue($this->getAttribute('allowPkInsert'));

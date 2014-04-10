@@ -11,7 +11,7 @@
 namespace Propel\Tests\Generator\Model;
 
 use Propel\Generator\Model\Column;
-use Propel\Generator\Model\ForeignKey;
+use Propel\Generator\Model\Database;
 use Propel\Generator\Model\Table;
 
 /**
@@ -755,6 +755,26 @@ class TableTest extends ModelTestCase
         $table->setAlias('Book');
         $this->assertTrue($table->isAlias());
         $this->assertSame('Book', $table->getAlias());
+    }
+
+    public function testTablePrefix()
+    {
+        $database = new Database();
+        $database->loadMapping(array(
+            'name'                   => 'bookstore',
+            'defaultIdMethod'        => 'native',
+            'defaultPhpNamingMethod' => 'underscore',
+            'tablePrefix'            => 'acme_',
+            'defaultStringFormat'    => 'XML',
+        ));
+
+        $table = new Table();
+        $database->addTable($table);
+        $table->loadMapping(array(
+           'name' => 'books'
+        ));
+        $this->assertEquals('Books', $table->getPhpName());
+        $this->assertEquals('acme_books', $table->getCommonName());
     }
 
     public function testSetContainsForeignPK()
