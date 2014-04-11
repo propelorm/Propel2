@@ -35,7 +35,7 @@ use Propel\Runtime\Map\TableMap;
  *
  * @author Francois Zaninotto
  */
-class Collection implements \ArrayAccess, \SeekableIterator, \Countable, \Serializable
+class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Serializable
 {
     /**
      * @var string
@@ -58,6 +58,11 @@ class Collection implements \ArrayAccess, \SeekableIterator, \Countable, \Serial
      * @var array
      */
     protected $data = array();
+
+    /**
+     * @var CollectionIterator
+     */
+    protected $lastIterator;
 
     public function __construct($data = array())
     {
@@ -150,54 +155,11 @@ class Collection implements \ArrayAccess, \SeekableIterator, \Countable, \Serial
     }
 
     /**
-     * Gets the position of the internal pointer
-     * This position can be later used in seek()
-     *
-     * @return integer
+     * @return CollectionIterator
      */
-    public function getPosition()
+    public function getIterator()
     {
-        return key($this->data);
-    }
-
-    public function seek($position)
-    {
-        if (!isset($this->data[$position])) {
-            throw new \OutOfBoundsException("invalid seek position ($position)");
-        }
-
-        foreach ($this->data as $k => $d) {
-            if ($k === $position) {
-                return;
-            }
-        }
-    }
-
-    /* Methods required for Iterator interface */
-
-    public function rewind()
-    {
-        reset($this->data);
-    }
-
-    public function current()
-    {
-        return current($this->data);
-    }
-
-    public function key()
-    {
-        return key($this->data);
-    }
-
-    public function next()
-    {
-        next($this->data);
-    }
-
-    public function valid()
-    {
-        return null !== key($this->data);
+        return $this->lastIterator = new CollectionIterator($this);
     }
 
     public function count()
@@ -206,8 +168,7 @@ class Collection implements \ArrayAccess, \SeekableIterator, \Countable, \Serial
     }
 
     /**
-     * Move the internal pointer to the beginning of the list
-     * And get the first element in the collection
+     * Get the first element in the collection
      *
      * @return mixed
      */
@@ -221,102 +182,18 @@ class Collection implements \ArrayAccess, \SeekableIterator, \Countable, \Serial
     }
 
     /**
-     * Check whether the internal pointer is at the beginning of the list
-     *
-     * @return boolean
-     */
-    public function isFirst()
-    {
-        if (0 === count($this->data)) {
-            return true;
-        }
-
-        // hhvm bug with array pointer https://github.com/facebook/hhvm/issues/1693
-        $copy = array_reverse($this->data, true);
-        end($copy);
-
-        return key($copy) === key($this->data);
-    }
-
-    /**
-     * Move the internal pointer backward
-     * And get the previous element in the collection
-     *
-     * @return mixed
-     */
-    public function getPrevious()
-    {
-        if (0 === ($pos = $this->getPosition()) || !count($this->data)) {
-            return null;
-        }
-
-        return prev($this->data);
-    }
-
-    /**
-     * Get the current element in the collection
-     *
-     * @return mixed
-     */
-    public function getCurrent()
-    {
-        if (!count($this->data)) {
-            return null;
-        }
-        return current($this->data);
-    }
-
-    /**
-     * Move the internal pointer forward
-     * And get the next element in the collection
-     *
-     * @return mixed
-     */
-    public function getNext()
-    {
-        $c = count($this->data);
-        if (!$c || $this->isLast()) {
-            return null;
-        }
-
-        return next($this->data);
-    }
-
-    /**
-     * Move the internal pointer to the end of the list
-     * And get the last element in the collection
+     * Get the last element in the collection
      *
      * @return mixed
      */
     public function getLast()
     {
-        if (0 === $count = $this->count()) {
+        if (0 === $this->count()) {
             return null;
         }
 
         end($this->data);
         return current($this->data);
-    }
-
-    /**
-     * Check whether the internal pointer is at the end of the list
-     *
-     * @return boolean
-     */
-    public function isLast()
-    {
-        $count = $this->count();
-
-        if (0 === $count) {
-            // empty list... so yes, this is the last
-            return true;
-        }
-
-        // hhvm bug with array pointer https://github.com/facebook/hhvm/issues/1693
-        $copy = array_reverse($this->data, true);
-        reset($copy);
-
-        return key($this->data) === key($copy);
     }
 
     /**
@@ -327,26 +204,6 @@ class Collection implements \ArrayAccess, \SeekableIterator, \Countable, \Serial
     public function isEmpty()
     {
         return 0 === $this->count();
-    }
-
-    /**
-     * Check if the current index is an odd integer
-     *
-     * @return boolean
-     */
-    public function isOdd()
-    {
-        return (boolean)($this->getPosition() % 2);
-    }
-
-    /**
-     * Check if the current index is an even integer
-     *
-     * @return boolean
-     */
-    public function isEven()
-    {
-        return !$this->isOdd();
     }
 
     /**
@@ -683,6 +540,12 @@ class Collection implements \ArrayAccess, \SeekableIterator, \Countable, \Serial
             $includeLazyLoadColumns = isset($params[1]) ? $params[1] : true;
 
             return $this->exportTo($format, $usePrefix, $includeLazyLoadColumns);
+        }
+        if (!$this->lastIterator) {
+            $this->getIterator();
+        }
+        if (is_callable([$this->lastIterator, $name])) {
+            return call_user_func_array([$this->lastIterator, $name], $params);
         }
         throw new BadMethodCallException('Call to undefined method: ' . $name);
     }
