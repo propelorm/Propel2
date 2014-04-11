@@ -5596,7 +5596,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
         // if auto-increment, get the id after
         if ($platform->isNativeIdMethodAutoIncrement() && $table->getIdMethod() == "native") {
-            $column = $table->getFirstPrimaryKeyColumn();
             $script .= "
         try {";
             $script .= $platform->getIdentifierPhp('$pk', '$con', $primaryKeyMethodInfo);
@@ -5604,15 +5603,18 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         } catch (Exception \$e) {
             throw new PropelException('Unable to get autoincrement id.', 0, \$e);
         }";
-            if ($table->isAllowPkInsert()) {
-                $script .= "
+	        $column = $table->getFirstPrimaryKeyColumn();
+	        if ($column) {
+	            if ($table->isAllowPkInsert()) {
+	                $script .= "
         if (\$pk !== null) {
             \$this->set".$column->getPhpName()."(\$pk);
         }";
-            } else {
-                $script .= "
+	            } else {
+	                $script .= "
         \$this->set".$column->getPhpName()."(\$pk);";
-            }
+                }
+	        }
             $script .= "
 ";
         }
