@@ -131,7 +131,7 @@ class Schema
      * The first boolean parameter tells whether or not to run the
      * final initialization process.
      *
-     * @param  boolean $doFinalInitialization
+     * @param  boolean    $doFinalInitialization
      * @return Database[]
      */
     public function getDatabases($doFinalInitialization = true)

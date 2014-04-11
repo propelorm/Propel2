@@ -22,7 +22,7 @@ class AdapterFactory
      * with the specified Propel driver.
      *
      * @param string $driver The name of the Propel driver to create a new adapter instance
-     *                            for or a shorter form adapter key.
+     *                       for or a shorter form adapter key.
      *
      * @throws \Propel\Runtime\Exception\InvalidArgumentException If the adapter could not be instantiated.
      * @return \Propel\Runtime\Adapter\AdapterInterface           An instance of a Propel database adapter.

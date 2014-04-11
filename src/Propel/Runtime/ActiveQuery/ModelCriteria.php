@@ -162,8 +162,8 @@ class ModelCriteria extends BaseModelCriteria
      * @see Criteria::add()
      *
      * @param mixed $clause A string representing the pseudo SQL clause, e.g. 'Book.AuthorId = ?'
-     *                           Or an array of condition names
-     * @param mixed $value A value for the condition
+     *                      Or an array of condition names
+     * @param mixed $value  A value for the condition
      *
      * @return $this|ModelCriteria The current object, for fluid interface
      */
@@ -197,8 +197,8 @@ class ModelCriteria extends BaseModelCriteria
      * @see Criteria::addHaving()
      *
      * @param mixed $clause A string representing the pseudo SQL clause, e.g. 'Book.AuthorId = ?'
-     *                           Or an array of condition names
-     * @param mixed $value A value for the condition
+     *                      Or an array of condition names
+     * @param mixed $value  A value for the condition
      *
      * @return $this|ModelCriteria The current object, for fluid interface
      */
@@ -673,10 +673,10 @@ class ModelCriteria extends BaseModelCriteria
      * These columns can later be retrieved from the hydrated objects using getVirtualColumn()
      *
      * @param string $clause The SQL clause with object model column names
-     *                           e.g. 'UPPER(Author.FirstName)'
-     * @param string $name Optional alias for the added column
-     *                           If no alias is provided, the clause is used as a column alias
-     *                           This alias is used for retrieving the column via BaseObject::getVirtualColumn($alias)
+     *                       e.g. 'UPPER(Author.FirstName)'
+     * @param string $name   Optional alias for the added column
+     *                       If no alias is provided, the clause is used as a column alias
+     *                       This alias is used for retrieving the column via BaseObject::getVirtualColumn($alias)
      *
      * @return $this|ModelCriteria The current object, for fluid interface
      */
@@ -755,7 +755,7 @@ class ModelCriteria extends BaseModelCriteria
      *
      * @param Criteria $criteria The criteria to read properties from
      * @param string   $operator The logical operator used to combine conditions
-     *              Defaults to Criteria::LOGICAL_AND, also accepts Criteria::LOGICAL_OR
+     *                           Defaults to Criteria::LOGICAL_AND, also accepts Criteria::LOGICAL_OR
      *
      * @return $this|ModelCriteria The primary criteria object
      */
@@ -1952,7 +1952,7 @@ class ModelCriteria extends BaseModelCriteria
      * Does part of the job of createSelectSql() for the cache
      *
      * @return array list of parameters, each parameter being an array like
-     *                  array('table' => $realtable, 'column' => $column, 'value' => $value)
+     *               array('table' => $realtable, 'column' => $column, 'value' => $value)
      */
     public function getParams()
     {

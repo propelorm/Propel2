@@ -388,8 +388,8 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     }
 
     /**
-     * @param self           $builder
-     * @param boolean|string $aliasPrefix the prefix for the Alias or True for auto generation of the Alias
+     * @param  self           $builder
+     * @param  boolean|string $aliasPrefix the prefix for the Alias or True for auto generation of the Alias
      * @return string
      */
     public function declareClassFromBuilder(self $builder, $aliasPrefix = false)
@@ -592,8 +592,8 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     }
 
     /**
-     * @param CrossForeignKeys $crossFKs
-     * @param bool $plural
+     * @param  CrossForeignKeys $crossFKs
+     * @param  bool             $plural
      * @return string
      */
     protected function getCrossFKsPhpNameAffix(CrossForeignKeys $crossFKs, $plural = true)
@@ -608,6 +608,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         }
 
         $name = implode($names);
+
         return (true === $plural ? $this->getPluralizer()->getPluralForm($name) : $name);
     }
 
@@ -643,7 +644,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     }
 
     /**
-     * @param CrossForeignKeys $crossFKs
+     * @param  CrossForeignKeys $crossFKs
      * @return string
      */
     protected function getCrossFKsVarName(CrossForeignKeys $crossFKs)
@@ -652,7 +653,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     }
 
     /**
-     * @param ForeignKey $crossFK
+     * @param  ForeignKey $crossFK
      * @return string
      */
     protected function getCrossFKVarName(ForeignKey $crossFK)

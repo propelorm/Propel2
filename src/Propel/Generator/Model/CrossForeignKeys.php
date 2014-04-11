@@ -74,7 +74,7 @@ class CrossForeignKeys
 
     /**
      * @param ForeignKey $foreignKey
-     * @param Table $crossTable
+     * @param Table      $crossTable
      */
     public function __construct(ForeignKey $foreignKey, Table $crossTable)
     {
@@ -127,7 +127,7 @@ class CrossForeignKeys
      *  isAtLeastOneLocalPrimaryKeyNotCovered(FK3) where FK1,FK2 is in our collection: false
      *  isAtLeastOneLocalPrimaryKeyNotCovered(FK4) where FK1,FK2 is in our collection: true
      *
-     * @param ForeignKey $fk
+     * @param  ForeignKey $fk
      * @return bool
      */
     public function isAtLeastOneLocalPrimaryKeyNotCovered(ForeignKey $fk)

@@ -78,7 +78,7 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
     }
 
     /**
-     * @param mixed $offset
+     * @param  mixed $offset
      * @return bool
      */
     public function offsetExists($offset)
@@ -87,7 +87,7 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
     }
 
     /**
-     * @param mixed $offset
+     * @param  mixed $offset
      * @return mixed
      */
     public function &offsetGet($offset)
@@ -178,6 +178,7 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
             return null;
         }
         reset($this->data);
+
         return current($this->data);
     }
 
@@ -193,6 +194,7 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
         }
 
         end($this->data);
+
         return current($this->data);
     }
 
@@ -236,6 +238,7 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
         $array = $this->getArrayCopy();
         $ret = array_pop($array);
         $this->exchangeArray($array);
+
         return $ret;
     }
 
@@ -258,16 +261,17 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
     /**
      * Prepend one  elements to the end of the collection
      *
-     * @param  mixed   $value the element to prepend
+     * @param mixed $value the element to prepend
      */
-    public function push($value) {
+    public function push($value)
+    {
         $this[] = $value;
     }
 
     /**
      * Prepend one or more elements to the beginning of the collection
      *
-     * @param  mixed $value the element to prepend
+     * @param  mixed   $value the element to prepend
      * @return integer The number of new elements in the array
      */
     public function prepend($value)
@@ -322,7 +326,7 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
     /**
      * Whether or not this collection contains a specified element
      *
-     * @param  mixed $element
+     * @param  mixed   $element
      * @return boolean
      */
     public function contains($element)
@@ -419,7 +423,7 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
     /**
      * Get the model of the elements in the collection
      *
-     * @return    string  Fully qualified Name of the Propel object class stored in the collection
+     * @return string Fully qualified Name of the Propel object class stored in the collection
      */
     public function getFullyQualifiedModel()
     {
@@ -473,8 +477,8 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
      * $coll->importFrom('JSON', '{{"Id":9012,"Title":"Don Juan","ISBN":"0140422161","Price":12.99,"PublisherId":1234,"AuthorId":5678}}');
      * </code>
      *
-     * @param mixed $parser A AbstractParser instance, or a format name ('XML', 'YAML', 'JSON', 'CSV')
-     * @param string $data The source data to import from
+     * @param mixed  $parser A AbstractParser instance, or a format name ('XML', 'YAML', 'JSON', 'CSV')
+     * @param string $data   The source data to import from
      *
      * @return mixed The current object, for fluid interface
      */
@@ -497,15 +501,15 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
      *
      * A OnDemandCollection cannot be exported. Any attempt will result in a PropelException being thrown.
      *
-     * @param mixed $parser A AbstractParser instance, or a format name ('XML', 'YAML', 'JSON', 'CSV')
-     * @param boolean $usePrefix (optional) If true, the returned element keys will be prefixed with the
-     *                                            model class name ('Article_0', 'Article_1', etc). Defaults to TRUE.
-     *                                            Not supported by ArrayCollection, as ArrayFormatter has
-     *                                            already created the array used here with integers as keys.
-     * @param boolean $includeLazyLoadColumns (optional) Whether to include lazy load(ed) columns. Defaults to TRUE.
-     *                                            Not supported by ArrayCollection, as ArrayFormatter has
-     *                                            already included lazy-load columns in the array used here.
-     * @return string The exported data
+     * @param  mixed   $parser                 A AbstractParser instance, or a format name ('XML', 'YAML', 'JSON', 'CSV')
+     * @param  boolean $usePrefix              (optional) If true, the returned element keys will be prefixed with the
+     *                                         model class name ('Article_0', 'Article_1', etc). Defaults to TRUE.
+     *                                         Not supported by ArrayCollection, as ArrayFormatter has
+     *                                         already created the array used here with integers as keys.
+     * @param  boolean $includeLazyLoadColumns (optional) Whether to include lazy load(ed) columns. Defaults to TRUE.
+     *                                         Not supported by ArrayCollection, as ArrayFormatter has
+     *                                         already included lazy-load columns in the array used here.
+     * @return string  The exported data
      */
     public function exportTo($parser, $usePrefix = true, $includeLazyLoadColumns = true)
     {
@@ -523,7 +527,7 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
      * Allows to define default __call() behavior if you use a custom BaseObject
      *
      * @param string $name
-     * @param mixed $params
+     * @param mixed  $params
      *
      * @return array|string
      */
@@ -559,7 +563,7 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
      */
     public function __toString()
     {
-        return (string)$this->exportTo(constant($this->getTableMapClass() . '::DEFAULT_STRING_FORMAT'));
+        return (string) $this->exportTo(constant($this->getTableMapClass() . '::DEFAULT_STRING_FORMAT'));
     }
 
     /**

@@ -37,7 +37,7 @@ abstract class ScopedMappingModel extends MappingModel
 
     /**
      * Returns whether or not the package has been overriden.
-     * 
+     *
      * @return boolean
      */
     public function isPackageOverriden()

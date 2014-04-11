@@ -146,7 +146,7 @@ interface ConnectionInterface
      *                          Data inside the query should be properly escaped.
      *
      * @return int The number of rows that were modified or deleted by the SQL
-     *               statement you issued. If no rows were affected, returns 0.
+     *             statement you issued. If no rows were affected, returns 0.
      */
     public function exec($statement);
 
@@ -161,12 +161,12 @@ interface ConnectionInterface
      * these parameters to bind any user-input, do not include the user-input
      * directly in the query.
      *
-     * @param string $statement This must be a valid SQL statement for the target
-     *                          database server.
-     * @param array $driver_options
+     * @param string $statement      This must be a valid SQL statement for the target
+     *                               database server.
+     * @param array  $driver_options
      *
-     * @return \Propel\Runtime\Connection\StatementInterface|bool A Statement object if the database server
-     *                                 successfully prepares, FALSE otherwise.
+     * @return \Propel\Runtime\Connection\StatementInterface|bool       A Statement object if the database server
+     *                                                                  successfully prepares, FALSE otherwise.
      * @throws \Propel\Runtime\Connection\Exception\ConnectionException depending on error handling.
      */
     public function prepare($statement, $driver_options = null);

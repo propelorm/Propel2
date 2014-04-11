@@ -77,7 +77,7 @@ class BaseModelCriteria extends Criteria implements \IteratorAggregate
      * </code>
      *
      * @param  string|AbstractFormatter $formatter a formatter class name, or a formatter instance
-     * @return $this|ModelCriteria                    The current object, for fluid interface
+     * @return $this|ModelCriteria      The current object, for fluid interface
      *
      * @throws InvalidArgumentException
      */

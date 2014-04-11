@@ -344,7 +344,7 @@ class Column extends MappingModel
      */
     public function getUppercasedName()
     {
-    	return strtoupper($this->name);
+        return strtoupper($this->name);
     }
 
     /**
@@ -1231,7 +1231,7 @@ class Column extends MappingModel
     /**
      * Sets a string that will give this column a default value.
      *
-     * @param ColumnDefaultValue|mixed $defaultValue The column's default value
+     * @param  ColumnDefaultValue|mixed $defaultValue The column's default value
      * @return Column
      */
     public function setDefaultValue($defaultValue)

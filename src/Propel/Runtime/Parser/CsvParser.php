@@ -229,7 +229,7 @@ class CsvParser extends AbstractParser
     /**
      * Accepts a formatted row of data and returns it raw
      *
-     * @param array $row An array of data from a CSV output
+     * @param  array $row An array of data from a CSV output
      * @return array The cleaned up array
      */
     protected function cleanupRow($row)

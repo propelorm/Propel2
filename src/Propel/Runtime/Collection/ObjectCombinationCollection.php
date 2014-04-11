@@ -11,14 +11,6 @@
 namespace Propel\Runtime\Collection;
 
 use Propel\Runtime\Propel;
-use Propel\Runtime\Collection\Exception\ReadOnlyModelException;
-use Propel\Runtime\Collection\Exception\UnsupportedRelationException;
-use Propel\Runtime\Connection\ConnectionInterface;
-use Propel\Runtime\Exception\PropelException;
-use Propel\Runtime\Exception\RuntimeException;
-use Propel\Runtime\Map\RelationMap;
-use Propel\Runtime\Map\TableMap;
-use Propel\Runtime\ActiveQuery\PropelQuery;
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 
 /**
@@ -83,7 +75,7 @@ class ObjectCombinationCollection extends ObjectCollection
                         $found = false;
                         break;
                     }
-                } else if ($isActiveRecord[$idx] ? $obj->hashCode() !== $hashes[$idx] : $obj !== $hashes[$idx]) {
+                } elseif ($isActiveRecord[$idx] ? $obj->hashCode() !== $hashes[$idx] : $obj !== $hashes[$idx]) {
                     $found = false;
                     break;
                 }
@@ -92,6 +84,7 @@ class ObjectCombinationCollection extends ObjectCollection
                 return $pos;
             }
         }
+
         return false;
     }
 

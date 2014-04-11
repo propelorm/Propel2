@@ -17,9 +17,9 @@ trait TableMapTrait
     /**
      * Returns an array of field names.
      *
-     * @param string $type The type of fieldnames to return:
-     *                     One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_STUDLYPHPNAME
-     *                     TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM
+     * @param  string          $type The type of fieldnames to return:
+     *                               One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_STUDLYPHPNAME
+     *                               TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM
      * @return array           A list of field names
      * @throws PropelException
      */
@@ -35,10 +35,10 @@ trait TableMapTrait
     /**
      * Translates a fieldname to another type
      *
-     * @param string $name     field name
-     * @param string $fromType One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_STUDLYPHPNAME
-     *                         TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM
-     * @param  string          $toType One of the class type constants
+     * @param  string          $name     field name
+     * @param  string          $fromType One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_STUDLYPHPNAME
+     *                                   TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM
+     * @param  string          $toType   One of the class type constants
      * @return string          translated name of the field.
      * @throws PropelException - if the specified name could not be found in the fieldname mappings.
      */

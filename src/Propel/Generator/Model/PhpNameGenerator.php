@@ -36,10 +36,10 @@ class PhpNameGenerator implements NameGeneratorInterface
      * works the same as the <code>CONV_METHOD_PHPNAME</code> method
      * but will not lowercase any characters.
      *
-     * @param string[] $inputs List expected to contain two (optional: three) parameters,
-     *                         element 0 contains name to convert, element 1 contains method for conversion,
-     *                         optional element 2 contains prefix to be striped from name
-     * @return string The generated name.
+     * @param  string[] $inputs List expected to contain two (optional: three) parameters,
+     *                          element 0 contains name to convert, element 1 contains method for conversion,
+     *                          optional element 2 contains prefix to be striped from name
+     * @return string   The generated name.
      * @see NameGenerator
      */
     public function generateName($inputs)

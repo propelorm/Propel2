@@ -83,7 +83,7 @@ class MigrationManager extends AbstractManager
     }
 
     /**
-     * @param string $datasource
+     * @param  string            $datasource
      * @return PlatformInterface
      */
     public function getPlatform($datasource)
@@ -369,6 +369,7 @@ EOP;
     public function getOldestDatabaseVersion()
     {
         $versions = $this->getAllDatabaseVersions();
+
         return array_pop($versions);
     }
 }

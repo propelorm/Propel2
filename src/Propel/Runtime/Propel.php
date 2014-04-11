@@ -211,7 +211,7 @@ class Propel
      * connectionSettings. If the connection has already been opened, return it.
      *
      * @param string $name The datasource name that is used to look up the DSN
-     *                          from the runtime configuration file. Empty name not allowed.
+     *                     from the runtime configuration file. Empty name not allowed.
      *
      * @return ConnectionInterface A database connection
      *
@@ -230,7 +230,7 @@ class Propel
      * connection. If the slave connection has already been opened, return it.
      *
      * @param string $name The datasource name that is used to look up the DSN
-     *                          from the runtime configuration file. Empty name not allowed.
+     *                     from the runtime configuration file. Empty name not allowed.
      *
      * @return ConnectionInterface A database connection
      */

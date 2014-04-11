@@ -111,13 +111,13 @@ class ObjectCollection extends Collection
      * Get an array representation of the collection
      * Each object is turned into an array and the result is returned
      *
-     * @param string $keyColumn If null, the returned array uses an incremental index.
-     *                               Otherwise, the array is indexed using the specified column
-     * @param boolean $usePrefix If true, the returned array prefixes keys
-     *                               with the model class name ('Article_0', 'Article_1', etc).
-     * @param string $keyType (optional) One of the class type constants TableMap::TYPE_PHPNAME,
-     *                               TableMap::TYPE_STUDLYPHPNAME, TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME,
-     *                               TableMap::TYPE_NUM. Defaults to TableMap::TYPE_PHPNAME.
+     * @param string  $keyColumn              If null, the returned array uses an incremental index.
+     *                                        Otherwise, the array is indexed using the specified column
+     * @param boolean $usePrefix              If true, the returned array prefixes keys
+     *                                        with the model class name ('Article_0', 'Article_1', etc).
+     * @param string  $keyType                (optional) One of the class type constants TableMap::TYPE_PHPNAME,
+     *                                        TableMap::TYPE_STUDLYPHPNAME, TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME,
+     *                                        TableMap::TYPE_NUM. Defaults to TableMap::TYPE_PHPNAME.
      * @param boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
      * @param array   $alreadyDumpedObjects   List of objects to skip to avoid recursion
      *
@@ -159,10 +159,10 @@ class ObjectCollection extends Collection
     /**
      * Get an array representation of the collection
      *
-     * @param string $keyColumn If null, the returned array uses an incremental index.
-     *                                 Otherwise, the array is indexed using the specified column
+     * @param string  $keyColumn If null, the returned array uses an incremental index.
+     *                           Otherwise, the array is indexed using the specified column
      * @param boolean $usePrefix If true, the returned array prefixes keys
-     *                                 with the model class name ('Article_0', 'Article_1', etc).
+     *                           with the model class name ('Article_0', 'Article_1', etc).
      *
      * <code>
      *   $bookCollection->getArrayCopy();
@@ -326,6 +326,7 @@ class ObjectCollection extends Collection
                     return $pos;
                 }
             }
+
             return false;
         } else {
             return parent::search($element);

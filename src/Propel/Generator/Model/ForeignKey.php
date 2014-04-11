@@ -181,7 +181,7 @@ class ForeignKey extends MappingModel
     /**
      * Returns true if $column is in our local columns list.
      *
-     * @param Column $column
+     * @param  Column  $column
      * @return boolean
      */
     public function hasLocalColumn(Column $column)

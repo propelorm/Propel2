@@ -91,7 +91,7 @@ class SqlitePlatform extends DefaultPlatform
     /**
      * Builds the DDL SQL to remove a list of columns
      *
-     * @param Column[] $columns
+     * @param  Column[] $columns
      * @return string
      */
     public function getAddColumnsDDL($columns)
@@ -108,7 +108,6 @@ ALTER TABLE %s ADD %s;
             );
         }
     }
-
 
     /**
      * {@inheritdoc}

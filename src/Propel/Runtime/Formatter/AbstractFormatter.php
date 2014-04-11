@@ -247,8 +247,8 @@ abstract class AbstractFormatter
     /**
      * Gets a Propel object hydrated from a selection of columns in statement row
      *
-     * @param array $row associative array indexed by column number,
-     *                   as returned by DataFetcher::fetch()
+     * @param array  $row   associative array indexed by column number,
+     *                      as returned by DataFetcher::fetch()
      * @param string $class The classname of the object to create
      * @param int    $col   The start column for the hydration (modified)
      *

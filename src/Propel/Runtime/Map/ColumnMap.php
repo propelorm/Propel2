@@ -306,7 +306,7 @@ class ColumnMap
     /**
      * Set if this column may be null.
      *
-     * @param      boolean $nn True if column may be null.
+     * @param boolean $nn True if column may be null.
      */
     public function setNotNull($nn)
     {
@@ -345,8 +345,8 @@ class ColumnMap
     /**
      * Set the foreign key for this column.
      *
-     * @param      string $tableName The name of the table that is foreign.
-     * @param      string $columnName The name of the column that is foreign.
+     * @param string $tableName  The name of the table that is foreign.
+     * @param string $columnName The name of the column that is foreign.
      */
     public function setForeignKey($tableName, $columnName)
     {

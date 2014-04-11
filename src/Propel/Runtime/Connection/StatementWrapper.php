@@ -67,7 +67,7 @@ class StatementWrapper implements StatementInterface, \IteratorAggregate
     }
 
     /**
-     * @param array $options Optional driver options
+     * @param  array $options Optional driver options
      * @return $this
      */
     public function prepare($options)
@@ -172,8 +172,8 @@ class StatementWrapper implements StatementInterface, \IteratorAggregate
      * Returns the number of columns in the result set
      *
      * @return integer Returns the number of columns in the result set represented
-     *                              by the PDOStatement object. If there is no result set,
-     *                              this method should return 0.
+     *                 by the PDOStatement object. If there is no result set,
+     *                 this method should return 0.
      */
     public function columnCount()
     {
@@ -186,7 +186,7 @@ class StatementWrapper implements StatementInterface, \IteratorAggregate
      * Returns a boolean value indicating success.
      * Overridden for query counting and logging.
      *
-     * @param  array $input_parameters
+     * @param  array   $input_parameters
      * @return boolean
      */
     public function execute($input_parameters = null)
@@ -251,8 +251,8 @@ class StatementWrapper implements StatementInterface, \IteratorAggregate
      * Returns a single column from the next row of a result set.
      *
      * @param integer $columnIndex 0-indexed number of the column you wish to retrieve from the row. If no
-     *                                      value is supplied, PDOStatement->fetchColumn()
-     *                                      fetches the first column.
+     *                             value is supplied, PDOStatement->fetchColumn()
+     *                             fetches the first column.
      *
      * @return string A single column in the next row of a result set.
      */

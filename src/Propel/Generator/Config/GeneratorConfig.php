@@ -337,12 +337,13 @@ class GeneratorConfig implements GeneratorConfigInterface
         return $con;
     }
 
-    public function getBehaviorLocator() {
+    public function getBehaviorLocator()
+    {
         if (!$this->behaviorLocator) {
             $this->behaviorLocator = new BehaviorLocator($this);
         }
 
         return $this->behaviorLocator;
-	}
+    }
 
 }

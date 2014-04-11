@@ -195,7 +195,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      *
      * @param string $generatorVersion
      */
-    public function checkVersion ($generatorVersion)
+    public function checkVersion($generatorVersion)
     {
         if ($generatorVersion != Propel::VERSION) {
             $warning  = "Version mismatch: The generated model was build using propel '" . $generatorVersion;
@@ -328,7 +328,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      * connectionSettings. If the connection has already been opened, return it.
      *
      * @param string $name The datasource name that is used to look up the DSN
-     *                          from the runtime configuration file. Empty name not allowed.
+     *                     from the runtime configuration file. Empty name not allowed.
      *
      * @return ConnectionInterface A database connection
      *
@@ -347,7 +347,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      * connection. If the slave connection has already been opened, return it.
      *
      * @param string $name The datasource name that is used to look up the DSN
-     *                          from the runtime configuration file. Empty name not allowed.
+     *                     from the runtime configuration file. Empty name not allowed.
      *
      * @return ConnectionInterface A database connection
      */

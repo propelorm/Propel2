@@ -7,7 +7,7 @@ use Propel\Generator\Config\GeneratorConfigInterface;
 
 /**
  * BehaviorableTrait use it on every model that can hold behaviors
- * 
+ *
  */
 trait BehaviorableTrait
 {
@@ -15,17 +15,17 @@ trait BehaviorableTrait
      * @var Behavior[]
      */
     protected $behaviors;
-    
+
     /**
      * @var BehaviorLocator
      */
     private $behaviorLocator;
-    
+
     /**
      * @return GeneratorConfigInterface
      */
-    protected abstract function getGeneratorConfig();
-    
+    abstract protected function getGeneratorConfig();
+
     /**
      * Returns the behavior locator.
      *
@@ -33,52 +33,52 @@ trait BehaviorableTrait
      */
     private function getBehaviorLocator()
     {
-    	if (null === $this->behaviorLocator) {
-    		$config = $this->getGeneratorConfig();
-    		if (null !== $config) {
-    			$this->behaviorLocator = $config->getBehaviorLocator();
-    			if (null === $this->behaviorLocator) {
-    				$this->behaviorLocator = new BehaviorLocator();
-    			}
-    		} else {
-    			$this->behaviorLocator = new BehaviorLocator();
-    		}
-    	}
-    
-    	return $this->behaviorLocator;
+        if (null === $this->behaviorLocator) {
+            $config = $this->getGeneratorConfig();
+            if (null !== $config) {
+                $this->behaviorLocator = $config->getBehaviorLocator();
+                if (null === $this->behaviorLocator) {
+                    $this->behaviorLocator = new BehaviorLocator();
+                }
+            } else {
+                $this->behaviorLocator = new BehaviorLocator();
+            }
+        }
+
+        return $this->behaviorLocator;
     }
-    
+
     /**
      * Adds a new Behavior
      *
      * @param $bdata
      * @throws BuildException when the added behavior is not an instance of \Propel\Generator\Model\Behavior
-     * @return Behavior $bdata
+     * @return Behavior       $bdata
      */
     public function addBehavior($bdata)
     {
-    	if ($bdata instanceof Behavior) {
-    		$behavior = $bdata;
-    		$this->registerBehavior($behavior);
-    		$this->behaviors[$behavior->getName()] = $behavior;
-    
-    		return $behavior;
-    	}
-    
-    	$locator = $this->getBehaviorLocator();
-    	$class = $locator->getBehavior($bdata['name']);
-    	$behavior = new $class();
-    	if (!($behavior instanceof Behavior)) {
-    		throw new BuildException(sprintf('Behavior [%s: %s] not instance of %s',
-    				$bdata['name'], $class, '\Propel\Generator\Model\Behavior'));
-    	}
-    	$behavior->loadMapping($bdata);
-    
-    	return $this->addBehavior($behavior);
+        if ($bdata instanceof Behavior) {
+            $behavior = $bdata;
+            $this->registerBehavior($behavior);
+            $this->behaviors[$behavior->getName()] = $behavior;
+
+            return $behavior;
+        }
+
+        $locator = $this->getBehaviorLocator();
+        $class = $locator->getBehavior($bdata['name']);
+        $behavior = new $class();
+        if (!($behavior instanceof Behavior)) {
+            throw new BuildException(sprintf('Behavior [%s: %s] not instance of %s',
+                    $bdata['name'], $class, '\Propel\Generator\Model\Behavior'));
+        }
+        $behavior->loadMapping($bdata);
+
+        return $this->addBehavior($behavior);
     }
-    
-    protected abstract function registerBehavior(Behavior $behavior);
-    
+
+    abstract protected function registerBehavior(Behavior $behavior);
+
     /**
      * Returns the list of behaviors.
      *
@@ -86,9 +86,9 @@ trait BehaviorableTrait
      */
     public function getBehaviors()
     {
-    	return $this->behaviors;
+        return $this->behaviors;
     }
-    
+
     /**
      * check if the given behavior exists
      *
@@ -97,9 +97,9 @@ trait BehaviorableTrait
      */
     public function hasBehavior($name)
     {
-    	return array_key_exists($name, $this->behaviors);
+        return array_key_exists($name, $this->behaviors);
     }
-    
+
     /**
      * Get behavior by name
      *
@@ -111,6 +111,7 @@ trait BehaviorableTrait
         if ($this->hasBehavior($name)) {
             return $this->behaviors[$name];
         }
-    	return null;
+
+        return null;
     }
 }

@@ -141,6 +141,7 @@ class ModelJoin extends Join
     public function equals($join)
     {
         /** @var ModelJoin $join */
+
         return parent::equals($join)
             && $this->relationMap == $join->getRelationMap()
             && $this->previousJoin == $join->getPreviousJoin()

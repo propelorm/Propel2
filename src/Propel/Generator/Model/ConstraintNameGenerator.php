@@ -36,7 +36,7 @@ class ConstraintNameGenerator implements NameGeneratorInterface
      * of this constraint.
      *
      * @see NameGenerator
-     * @param array $inputs An array of input parameters
+     * @param  array           $inputs An array of input parameters
      * @return string
      * @throws EngineException
      */

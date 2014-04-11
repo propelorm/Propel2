@@ -33,14 +33,14 @@ interface StatementInterface
      * parameters that both send in data and are updated to receive it.
      *
      * @param mixed $column Parameter identifier. For a prepared statement using named placeholders,
-     *                              this will be a parameter name of the form :name. For a prepared statement
-     *                              using question mark placeholders, this will be the 1-indexed position of the parameter
+     *                      this will be a parameter name of the form :name. For a prepared statement
+     *                      using question mark placeholders, this will be the 1-indexed position of the parameter
      *
      * @param mixed $variable Name of the PHP variable to bind to the SQL statement parameter.
      *
-     * @param integer $type Explicit data type for the parameter using the PDO::PARAM_* constants. To return
-     *                              an INOUT parameter from a stored procedure, use the bitwise OR operator to set the
-     *                              PDO::PARAM_INPUT_OUTPUT bits for the data_type parameter.
+     * @param  integer $type Explicit data type for the parameter using the PDO::PARAM_* constants. To return
+     *                       an INOUT parameter from a stored procedure, use the bitwise OR operator to set the
+     *                       PDO::PARAM_INPUT_OUTPUT bits for the data_type parameter.
      * @return boolean Returns TRUE on success or FALSE on failure.
      */
     public function bindParam($column, &$variable, $type = null);
@@ -52,8 +52,8 @@ interface StatementInterface
      * in the SQL statement that was used to prepare the statement.
      *
      * @param mixed $param Parameter identifier. For a prepared statement using named placeholders,
-     *                              this will be a parameter name of the form :name. For a prepared statement
-     *                              using question mark placeholders, this will be the 1-indexed position of the parameter
+     *                     this will be a parameter name of the form :name. For a prepared statement
+     *                     using question mark placeholders, this will be the 1-indexed position of the parameter
      *
      * @param mixed   $value The value to bind to the parameter.
      * @param integer $type  Explicit data type for the parameter using the PDO::PARAM_* constants.
@@ -92,8 +92,8 @@ interface StatementInterface
      * Returns the number of columns in the result set
      *
      * @return integer Returns the number of columns in the result set represented
-     *                              by the PDOStatement object. If there is no result set,
-     *                              this method should return 0.
+     *                 by the PDOStatement object. If there is no result set,
+     *                 this method should return 0.
      */
     public function columnCount();
 
@@ -107,8 +107,8 @@ interface StatementInterface
      * - or pass an array of input-only parameter values
      *
      *
-     * @param array $parameters An array of values with as many elements as there are
-     *                                  bound parameters in the SQL statement being executed.
+     * @param  array   $parameters An array of values with as many elements as there are
+     *                             bound parameters in the SQL statement being executed.
      * @return boolean Returns TRUE on success or FALSE on failure.
      */
     public function execute($parameters = null);
@@ -121,18 +121,18 @@ interface StatementInterface
      *
      * @param integer $fetchStyle        Controls how the next row will be returned to the caller.
      * @param integer $cursorOrientation For a PDOStatement object representing a scrollable cursor,
-     *                                      This value determines which row will be returned to the caller.
-     * @param integer $cursorOffset For a PDOStatement object representing a
-     *                                      scrollable cursor for which the cursor_orientation
-     *                                      parameter is set to PDO::FETCH_ORI_ABS, this value
-     *                                      specifies the absolute number of the row in the
-     *                                      result set that shall be fetched.
+     *                                   This value determines which row will be returned to the caller.
+     * @param integer $cursorOffset      For a PDOStatement object representing a
+     *                                   scrollable cursor for which the cursor_orientation
+     *                                   parameter is set to PDO::FETCH_ORI_ABS, this value
+     *                                   specifies the absolute number of the row in the
+     *                                   result set that shall be fetched.
      *
-     *                                      For a PDOStatement object representing a
-     *                                      scrollable cursor for which the cursor_orientation
-     *                                      parameter is set to PDO::FETCH_ORI_REL, this value
-     *                                      specifies the row to fetch relative to the cursor
-     *                                      position before PDOStatement::fetch() was called.
+     *                                   For a PDOStatement object representing a
+     *                                   scrollable cursor for which the cursor_orientation
+     *                                   parameter is set to PDO::FETCH_ORI_REL, this value
+     *                                   specifies the row to fetch relative to the cursor
+     *                                   position before PDOStatement::fetch() was called.
      *
      * @return mixed
      */
@@ -150,8 +150,8 @@ interface StatementInterface
      * Returns a single column from the next row of a result set.
      *
      * @param integer $columnIndex 0-indexed number of the column you wish to retrieve from the row. If no
-     *                                      value is supplied, PDOStatement->fetchColumn()
-     *                                      fetches the first column.
+     *                             value is supplied, PDOStatement->fetchColumn()
+     *                             fetches the first column.
      *
      * @return string A single column in the next row of a result set.
      */

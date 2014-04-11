@@ -153,8 +153,8 @@ class ModelManager extends AbstractManager
      * This method assumes that the DataModelBuilder class has been initialized
      * with the build properties.
      *
-     * @param AbstractOMBuilder $builder
-     * @param boolean           $overwrite
+     * @param  AbstractOMBuilder $builder
+     * @param  boolean           $overwrite
      * @return int
      */
     protected function doBuild(AbstractOMBuilder $builder, $overwrite = true)

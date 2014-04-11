@@ -151,7 +151,7 @@ class ObjectBuilder extends AbstractObjectBuilder
      * Returns the type-casted and stringified default value for the specified
      * Column. This only works for scalar default values currently.
      *
-     * @param  Column $column
+     * @param  Column          $column
      * @throws EngineException
      * @return string
      */
@@ -838,7 +838,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Gets accessor lazy loaded snippets.
      *
-     * @param Column $column
+     * @param  Column $column
      * @return string
      */
     protected function getAccessorLazyLoadSnippet(Column $column)
@@ -1082,7 +1082,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * @param      ConnectionInterface An optional ConnectionInterface connection to use for fetching this lazy-loaded column.";
         }
         $script .= "
-     * @return   string
+     * @return string
      */";
     }
 
@@ -1185,7 +1185,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * @param      ConnectionInterface \$con An optional ConnectionInterface connection to use for fetching this lazy-loaded column.";
         }
         $script .= "
-     * @return   ".$column->getPhpType()."
+     * @return ".$column->getPhpType()."
      */";
     }
 
@@ -1400,8 +1400,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Set the value of [$clo] column.
      * ".$column->getDescription()."
-     * @param      ".$column->getPhpType()." \$v new value
-     * @return     \$this|".$this->getObjectClassName(true)." The current object (for fluent API support)
+     * @param  ".$column->getPhpType()." \$v new value
+     * @return \$this|".$this->getObjectClassName(true)." The current object (for fluent API support)
      */";
     }
 
@@ -1612,9 +1612,9 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Sets the value of [$clo] column to a normalized version of the date/time value specified.
      * ".$col->getDescription()."
-     * @param      mixed \$v string, integer (timestamp), or \DateTime value.
+     * @param  mixed \$v string, integer (timestamp), or \DateTime value.
      *               Empty strings are treated as NULL.
-     * @return     \$this|".$this->getObjectClassName(true)." The current object (for fluent API support)
+     * @return \$this|".$this->getObjectClassName(true)." The current object (for fluent API support)
      */";
     }
 
@@ -1676,14 +1676,14 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $script .= "
     /**
      * Adds a value to the [$clo] array column value.
-     * @param      mixed \$value
+     * @param  mixed \$value
      * ".$col->getDescription();
         if ($col->isLazyLoad()) {
             $script .= "
-     * @param      ConnectionInterface \$con An optional ConnectionInterface connection to use for fetching this lazy-loaded column.";
+     * @param  ConnectionInterface \$con An optional ConnectionInterface connection to use for fetching this lazy-loaded column.";
         }
         $script .= "
-     * @return     \$this|".$this->getObjectClassName(true)." The current object (for fluent API support)
+     * @return \$this|".$this->getObjectClassName(true)." The current object (for fluent API support)
      */
     $visibility function add$singularPhpName(\$value";
         if ($col->isLazyLoad()) {
@@ -1720,14 +1720,14 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $script .= "
     /**
      * Removes a value from the [$clo] array column value.
-     * @param      mixed \$value
+     * @param  mixed \$value
      * ".$col->getDescription();
         if ($col->isLazyLoad()) {
             $script .= "
-     * @param      ConnectionInterface \$con An optional ConnectionInterface connection to use for fetching this lazy-loaded column.";
+     * @param  ConnectionInterface \$con An optional ConnectionInterface connection to use for fetching this lazy-loaded column.";
         }
         $script .= "
-     * @return     \$this|".$this->getObjectClassName(true)." The current object (for fluent API support)
+     * @return \$this|".$this->getObjectClassName(true)." The current object (for fluent API support)
      */
     $visibility function remove$singularPhpName(\$value";
         if ($col->isLazyLoad()) {
@@ -1796,8 +1796,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Set the value of [$clo] column.
      * ".$column->getDescription()."
-     * @param      string \$v new value
-     * @return     \$this|".$this->getObjectClassName(true)." The current object (for fluent API support)
+     * @param  string \$v new value
+     * @return \$this|".$this->getObjectClassName(true)." The current object (for fluent API support)
      */";
     }
 
@@ -1844,8 +1844,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
      * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
      * ".$col->getDescription()."
-     * @param      boolean|integer|string \$v The new value
-     * @return     \$this|".$this->getObjectClassName(true)." The current object (for fluent API support)
+     * @param  boolean|integer|string \$v The new value
+     * @return \$this|".$this->getObjectClassName(true)." The current object (for fluent API support)
      */";
     }
 
@@ -2191,6 +2191,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         if (!$this->getTable()->getPrimaryKey()) {
             $script .= "
         throw new LogicException('The {$this->getObjectName()} object has no primary key');";
+
             return;
         }
 
@@ -2536,13 +2537,13 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Sets a field from the object by name passed in as a string.
      *
-     * @param      string \$name
-     * @param      mixed  \$value field value
-     * @param      string \$type The type of fieldname the \$name is of:
-     *                     one of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_STUDLYPHPNAME
-     *                     TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
-     *                     Defaults to TableMap::$defaultKeyType.
-     * @return     \$this|".$this->getObjectClassName(true)."
+     * @param  string \$name
+     * @param  mixed  \$value field value
+     * @param  string \$type The type of fieldname the \$name is of:
+     *                one of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_STUDLYPHPNAME
+     *                TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
+     *                Defaults to TableMap::$defaultKeyType.
+     * @return \$this|".$this->getObjectClassName(true)."
      */
     public function setByName(\$name, \$value, \$type = TableMap::$defaultKeyType)
     {
@@ -2561,9 +2562,9 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * Sets a field from the object by Position as specified in the xml schema.
      * Zero-based.
      *
-     * @param      int \$pos position in xml schema
-     * @param      mixed \$value field value
-     * @return     \$this|".$this->getObjectClassName(true)."
+     * @param  int \$pos position in xml schema
+     * @param  mixed \$value field value
+     * @return \$this|".$this->getObjectClassName(true)."
      */
     public function setByPosition(\$pos, \$value)
     {
@@ -2876,7 +2877,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $script .= $this->addDoUpdate();
     }
 
-
     protected function addHashCode(&$script)
     {
         $script .= "
@@ -2931,7 +2931,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $script .= "
         if (\$validPk) {
             return crc32(json_encode(\$this->getPrimaryKey(), JSON_UNESCAPED_UNICODE));
-        } else if (\$validPrimaryKeyFKs) {
+        } elseif (\$validPrimaryKeyFKs) {
             return crc32(json_encode(\$primaryKeyFKs, JSON_UNESCAPED_UNICODE));
         }
 
@@ -2970,7 +2970,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $script .= "
     /**
      * Returns the primary key for this object (row).
-     * @return   $cptype
+     * @return $cptype
      */
     public function getPrimaryKey()
     {
@@ -3207,7 +3207,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the class attributes that are needed to store fkey related objects.
-     * @param string &$script The script will be modified in this method.
+     * @param string     &$script The script will be modified in this method.
      * @param ForeignKey $fk
      */
     protected function addFKAttributes(&$script, ForeignKey $fk)
@@ -3225,7 +3225,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the mutator (setter) method for setting an fkey related object.
-     * @param string &$script The script will be modified in this method.
+     * @param string     &$script The script will be modified in this method.
      * @param ForeignKey $fk
      */
     protected function addFKMutator(&$script, ForeignKey $fk)
@@ -3242,8 +3242,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Declares an association between this object and a $className object.
      *
-     * @param                  $className \$v
-     * @return                 \$this|".$this->getObjectClassName(true)." The current object (for fluent API support)
+     * @param  $className \$v
+     * @return \$this|".$this->getObjectClassName(true)." The current object (for fluent API support)
      * @throws PropelException
      */
     public function set".$this->getFKPhpNameAffix($fk, false)."($className \$v = null)
@@ -3297,7 +3297,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the accessor (getter) method for getting an fkey related object.
-     * @param string &$script The script will be modified in this method.
+     * @param string     &$script The script will be modified in this method.
      * @param ForeignKey $fk
      */
     protected function addFKAccessor(&$script, ForeignKey $fk)
@@ -3350,8 +3350,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Get the associated $className object
      *
-     * @param      ConnectionInterface \$con Optional Connection object.
-     * @return                 $className The associated $className object.
+     * @param  ConnectionInterface \$con Optional Connection object.
+     * @return $className The associated $className object.
      * @throws PropelException
      */
     public function get".$this->getFKPhpNameAffix($fk, false)."(ConnectionInterface \$con = null)
@@ -3395,7 +3395,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * Adds a convenience method for setting a related object by specifying the primary key.
      * This can be used in conjunction with the getPrimaryKey() for systems where nothing is known
      * about the actual objects being related.
-     * @param string &$script The script will be modified in this method.
+     * @param string     &$script The script will be modified in this method.
      * @param ForeignKey $fk
      */
     protected function addFKByKeyMutator(&$script, ForeignKey $fk)
@@ -3419,7 +3419,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * overridden in <code>".$table->getPhpName()."</code>.";
         }
         $script .= "
-     * @return                 \$this|".$this->getObjectClassName(true)." The current object (for fluent API support)
+     * @return \$this|".$this->getObjectClassName(true)." The current object (for fluent API support)
      * @throws PropelException
      */
     public function set".$methodAffix."Key(\$key)
@@ -3453,7 +3453,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the method that fetches fkey-related (referencing) objects but also joins in data from another table.
-     * @param string &$script The script will be modified in this method.
+     * @param string     &$script The script will be modified in this method.
      * @param ForeignKey $refFK
      */
     protected function addRefFKGetJoinMethods(&$script, ForeignKey $refFK)
@@ -3524,7 +3524,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * Adds the attributes used to store objects that have referrer fkey relationships to this object.
      * <code>protected collVarName;</code>
      * <code>private lastVarNameCriteria = null;</code>
-     * @param string &$script The script will be modified in this method.
+     * @param string     &$script The script will be modified in this method.
      * @param ForeignKey $refFK
      */
     protected function addRefFKAttributes(&$script, ForeignKey $refFK)
@@ -3616,7 +3616,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the method that clears the referrer fkey collection.
-     * @param string &$script The script will be modified in this method.
+     * @param string     &$script The script will be modified in this method.
      * @param ForeignKey $refFK
      */
     protected function addRefFKClear(&$script, ForeignKey $refFK)
@@ -3643,7 +3643,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the method that initializes the referrer fkey collection.
-     * @param string &$script The script will be modified in this method.
+     * @param string     &$script The script will be modified in this method.
      * @param ForeignKey $refFK
      */
     protected function addRefFKInit(&$script, ForeignKey $refFK)
@@ -3677,7 +3677,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the method that adds an object into the referrer fkey collection.
-     * @param string &$script The script will be modified in this method.
+     * @param string     &$script The script will be modified in this method.
      * @param ForeignKey $refFK
      */
     protected function addRefFKAdd(&$script, ForeignKey $refFK)
@@ -3698,8 +3698,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * Method called to associate a $className object to this object
      * through the $className foreign key attribute.
      *
-     * @param    $className \$l $className
-     * @return   \$this|".$this->getObjectClassName(true)." The current object (for fluent API support)
+     * @param  $className \$l $className
+     * @return \$this|".$this->getObjectClassName(true)." The current object (for fluent API support)
      */
     public function add".$this->getRefFKPhpNameAffix($refFK, false)."($className \$l)
     {
@@ -3719,7 +3719,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the method that returns the size of the referrer fkey collection.
-     * @param string &$script The script will be modified in this method.
+     * @param string     &$script The script will be modified in this method.
      * @param ForeignKey $refFK
      */
     protected function addRefFKCount(&$script, ForeignKey $refFK)
@@ -3770,7 +3770,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the method that returns the referrer fkey collection.
-     * @param string &$script The script will be modified in this method.
+     * @param string     &$script The script will be modified in this method.
      * @param ForeignKey $refFK
      */
     protected function addRefFKGet(&$script, ForeignKey $refFK)
@@ -3866,7 +3866,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      *
      * @param      Collection \${$inputCollection} A Propel collection.
      * @param      ConnectionInterface \$con Optional connection object
-     * @return     \$this|".$this->getObjectClassname()." The current object (for fluent API support)
+     * @return \$this|".$this->getObjectClassname()." The current object (for fluent API support)
      */
     public function set{$relatedName}(Collection \${$inputCollection}, ConnectionInterface \$con = null)
     {
@@ -3907,7 +3907,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     }
 
     /**
-     * @param string &$script The script will be modified in this method.
+     * @param string     &$script The script will be modified in this method.
      * @param ForeignKey $refFK
      */
     protected function addRefFKDoAdd(&$script, ForeignKey $refFK)
@@ -3938,7 +3938,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     }
 
     /**
-     * @param string &$script The script will be modified in this method.
+     * @param string     &$script The script will be modified in this method.
      * @param ForeignKey $refFK
      */
     protected function addRefFKRemove(&$script, ForeignKey $refFK)
@@ -3996,7 +3996,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the method that gets a one-to-one related referrer fkey.
      * This is for one-to-one relationship special case.
-     * @param string &$script The script will be modified in this method.
+     * @param string     &$script The script will be modified in this method.
      * @param ForeignKey $refFK
      */
     protected function addPKRefFKGet(&$script, ForeignKey $refFK)
@@ -4012,8 +4012,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Gets a single $className object, which is related to this object by a one-to-one relationship.
      *
-     * @param      ConnectionInterface \$con optional connection object
-     * @return                 $className
+     * @param  ConnectionInterface \$con optional connection object
+     * @return $className
      * @throws PropelException
      */
     public function get".$this->getRefFKPhpNameAffix($refFK, false)."(ConnectionInterface \$con = null)
@@ -4046,8 +4046,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Sets a single $className object as related to this object by a one-to-one relationship.
      *
-     * @param                  $className \$v $className
-     * @return                 \$this|".$this->getObjectClassName(true)." The current object (for fluent API support)
+     * @param  $className \$v $className
+     * @return \$this|".$this->getObjectClassName(true)." The current object (for fluent API support)
      * @throws PropelException
      */
     public function set".$this->getRefFKPhpNameAffix($refFK, false)."($className \$v = null)
@@ -4133,6 +4133,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             return 'combination' . ucfirst($this->getCrossFKsVarName($crossFKs)) . "ScheduledForDeletion";
         } else {
             $fkName = lcfirst($this->getFKPhpNameAffix($crossFKs->getCrossForeignKeys()[0], true));
+
             return "{$fkName}ScheduledForDeletion";
         }
     }
@@ -4380,7 +4381,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the method that clears the referrer fkey collection.
-     * @param string &$script The script will be modified in this method.
+     * @param string           &$script  The script will be modified in this method.
      * @param CrossForeignKeys $crossFKs
      */
     protected function addCrossFKClear(&$script, CrossForeignKeys $crossFKs)
@@ -4408,7 +4409,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the method that clears the referrer fkey collection.
      *
-     * @param string &$script The script will be modified in this method.
+     * @param string     &$script The script will be modified in this method.
      * @param ForeignKey $refFK
      */
     protected function addRefFKPartial(&$script, ForeignKey $refFK)
@@ -4429,7 +4430,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the method that initializes the referrer fkey collection.
-     * @param string &$script The script will be modified in this method.
+     * @param string           &$script  The script will be modified in this method.
      * @param CrossForeignKeys $crossFKs
      */
     protected function addCrossFKInit(&$script, CrossForeignKeys $crossFKs)
@@ -4465,7 +4466,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             $collectionClass = $init['collectionClass'];
             $relatedObjectClassName = $init['relatedObjectClassName'];
 
-
             $script .= "
     /**
      * Initializes the $collName collection.
@@ -4494,7 +4494,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the method that check if the referrer fkey collection is initialized.
-     * @param string &$script The script will be modified in this method.
+     * @param string           &$script  The script will be modified in this method.
      * @param CrossForeignKeys $crossFKs
      */
     protected function addCrossFKIsLoaded(&$script, CrossForeignKeys $crossFKs)
@@ -4642,6 +4642,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         return \$this->$collVarName;
     }
 ";
+
             return;
         }
 
@@ -4707,7 +4708,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     }
 
     /**
-     * @param string $script
+     * @param string           $script
      * @param CrossForeignKeys $crossFKs
      */
     protected function addCrossFKSet(&$script, CrossForeignKeys $crossFKs)
@@ -4730,7 +4731,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             $relatedObjectClassName = $this->getNewStubObjectBuilder($crossFK->getForeignTable())->getUnqualifiedClassName();
             $collName = $this->getCrossFKVarName($crossFK);
         }
-
 
         $script .= "
     /**
@@ -4785,7 +4785,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     }
 
     /**
-     * @param string $script
+     * @param string           $script
      * @param CrossForeignKeys $crossFks
      */
     protected function addCrossFKCount(&$script, CrossForeignKeys $crossFKs)
@@ -4808,7 +4808,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             $collName = $this->getCrossFKVarName($crossFK);
             $relatedQueryClassName = $this->getClassNameFromBuilder($this->getNewStubQueryBuilder($crossFK->getForeignTable()));
         }
-
 
         $script .= "
     /**
@@ -4853,11 +4852,11 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * Extracts some useful information from a CrossForeignKeys object.
      *
      * @param CrossForeignKeys $crossFKs
-     * @param ForeignKey $crossFKToIgnore
-     * @param array $signature
-     * @param array $shortSignature
-     * @param array $normalizedShortSignature
-     * @param array $phpDoc
+     * @param ForeignKey       $crossFKToIgnore
+     * @param array            $signature
+     * @param array            $shortSignature
+     * @param array            $normalizedShortSignature
+     * @param array            $phpDoc
      */
     protected function extractCrossInformation(
         CrossForeignKeys $crossFKs,
@@ -4901,12 +4900,12 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     }
 
     /**
-     * @param CrossForeignKeys $crossFKs
-     * @param ForeignKey $crossFK will be the first variable defined
+     * @param  CrossForeignKeys $crossFKs
+     * @param  ForeignKey       $crossFK  will be the first variable defined
      * @return array
      */
-    protected function getCrossFKAddMethodInformation(CrossForeignKeys $crossFKs, ForeignKey $crossFK = null) {
-
+    protected function getCrossFKAddMethodInformation(CrossForeignKeys $crossFKs, ForeignKey $crossFK = null)
+    {
         if ($crossFK) {
             $crossObjectName = '$' . lcfirst($this->getFKPhpNameAffix($crossFK));
             $crossObjectClassName = $this->getNewObjectBuilder($crossFK->getForeignTable())->getObjectClassName();
@@ -4930,7 +4929,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the method that adds an object into the referrer fkey collection.
-     * @param string &$script The script will be modified in this method.
+     * @param string           &$script  The script will be modified in this method.
      * @param CrossForeignKeys $crossFKs
      */
     protected function addCrossFKAdd(&$script, CrossForeignKeys $crossFKs)
@@ -4960,7 +4959,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * Associate a $crossObjectClassName to this object
      * through the " . $tblFK->getName() . " cross reference table.
      * $phpDoc
-     * @return "   . $this->getObjectClassname() . " The current object (for fluent API support)
+     * @return " . $this->getObjectClassname() . " The current object (for fluent API support)
      */
     public function add{$relatedObjectClassName}($signature)
     {
@@ -4983,22 +4982,24 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Returns a function signature comma separated.
      *
-     * @param CrossForeignKeys $crossFKs
-     * @param string $excludeSignatureItem Which variable to exclude.
+     * @param  CrossForeignKeys $crossFKs
+     * @param  string           $excludeSignatureItem Which variable to exclude.
      * @return string
      */
-    protected function getCrossFKGetterSignature(CrossForeignKeys $crossFKs, $excludeSignatureItem) {
+    protected function getCrossFKGetterSignature(CrossForeignKeys $crossFKs, $excludeSignatureItem)
+    {
         list (, $getSignature) = $this->getCrossFKAddMethodInformation($crossFKs);
         $getSignature = explode(', ', $getSignature);
 
         if (false !== ($pos = array_search($excludeSignatureItem, $getSignature))) {
             unset($getSignature[$pos]);
         }
+
         return implode(', ', $getSignature);
     }
 
     /**
-     * @param string     &$script The script will be modified in this method.
+     * @param string           &$script  The script will be modified in this method.
      * @param CrossForeignKeys $crossFKs
      */
     protected function addCrossFKDoAdd(&$script, CrossForeignKeys $crossFKs)
@@ -5065,7 +5066,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         if (\${$lowerRelatedObjectClassName}->is{$getterName}Loaded()) {
             \${$lowerRelatedObjectClassName}->init{$getterName}();
             \${$lowerRelatedObjectClassName}->get{$getterName}()->push($getterRemoveObjectName);
-        } else if (!\${$lowerRelatedObjectClassName}->get{$getterName}()->contains($getterRemoveObjectName)) {
+        } elseif (!\${$lowerRelatedObjectClassName}->get{$getterName}()->contains($getterRemoveObjectName)) {
             \${$lowerRelatedObjectClassName}->get{$getterName}()->push($getterRemoveObjectName);
         }\n";
 
@@ -5081,7 +5082,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         if (!\${$lowerRelatedObjectClassName}->is{$selfRelationNamePlural}Loaded()) {
             \${$lowerRelatedObjectClassName}->init{$selfRelationNamePlural}();
             \${$lowerRelatedObjectClassName}->get{$selfRelationNamePlural}($getterSignature)->push(\$this);
-        } else if (!\${$lowerRelatedObjectClassName}->get{$selfRelationNamePlural}($getterSignature)->contains(\$this)) {
+        } elseif (!\${$lowerRelatedObjectClassName}->get{$selfRelationNamePlural}($getterSignature)->contains(\$this)) {
             \${$lowerRelatedObjectClassName}->get{$selfRelationNamePlural}($getterSignature)->push(\$this);
         }\n";
 
@@ -5093,11 +5094,12 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     }
 
     /**
-     * @param CrossForeignKeys $crossFKs
-     * @param ForeignKey $excludeFK
+     * @param  CrossForeignKeys $crossFKs
+     * @param  ForeignKey       $excludeFK
      * @return string
      */
-    protected function getCrossRefFKGetterName(CrossForeignKeys $crossFKs, ForeignKey $excludeFK) {
+    protected function getCrossRefFKGetterName(CrossForeignKeys $crossFKs, ForeignKey $excludeFK)
+    {
         $names = [];
 
         $fks = $crossFKs->getCrossForeignKeys();
@@ -5113,15 +5115,17 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         }
 
         $name = implode($names);
+
         return $this->getPluralizer()->getPluralForm($name);
     }
 
     /**
-     * @param CrossForeignKeys $crossFKs
-     * @param ForeignKey $excludeFK
+     * @param  CrossForeignKeys $crossFKs
+     * @param  ForeignKey       $excludeFK
      * @return string
      */
-    protected function getCrossRefFKRemoveObjectNames(CrossForeignKeys $crossFKs, ForeignKey $excludeFK) {
+    protected function getCrossRefFKRemoveObjectNames(CrossForeignKeys $crossFKs, ForeignKey $excludeFK)
+    {
         $names = [];
 
         $fks = $crossFKs->getCrossForeignKeys();
@@ -5143,10 +5147,9 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         return implode(', ', $names);
     }
 
-
     /**
      * Adds the method that remove an object from the referrer fkey collection.
-     * @param string $script The script will be modified in this method.
+     * @param string           $script   The script will be modified in this method.
      * @param CrossForeignKeys $crossFKs
      */
     protected function addCrossFKRemove(&$script, CrossForeignKeys $crossFKs)
@@ -5180,8 +5183,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      */
     public function remove{$relatedObjectClassName}($signature)
     {
-        if (\$this->get{$relCol}()->contains({$shortSignature})) {
-            {$foreignObjectName} = new {$className}();
+        if (\$this->get{$relCol}()->contains({$shortSignature})) { {$foreignObjectName} = new {$className}();
 ";
             foreach ($crossFKs->getCrossForeignKeys() as $crossFK) {
                 $relatedObjectClassName = $this->getFKPhpNameAffix($crossFK, $plural = false);
@@ -5229,6 +5231,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 ";
 
         $script .= "
+
         return \$this;
     }
 ";
@@ -5601,18 +5604,18 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         } catch (Exception \$e) {
             throw new PropelException('Unable to get autoincrement id.', 0, \$e);
         }";
-	        $column = $table->getFirstPrimaryKeyColumn();
-	        if ($column) {
-	            if ($table->isAllowPkInsert()) {
-	                $script .= "
+            $column = $table->getFirstPrimaryKeyColumn();
+            if ($column) {
+                if ($table->isAllowPkInsert()) {
+                    $script .= "
         if (\$pk !== null) {
             \$this->set".$column->getPhpName()."(\$pk);
         }";
-	            } else {
-	                $script .= "
+                } else {
+                    $script .= "
         \$this->set".$column->getPhpName()."(\$pk);";
                 }
-	        }
+            }
             $script .= "
 ";
         }
@@ -5917,8 +5920,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * If desired, this method can also make copies of all associated (fkey referrers)
      * objects.
      *
-     * @param      boolean \$deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-     * @return                 ".$this->getObjectClassName(true)." Clone of current object.
+     * @param  boolean \$deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
+     * @return ".$this->getObjectClassName(true)." Clone of current object.
      * @throws PropelException
      */
     public function copy(\$deepCopy = false)

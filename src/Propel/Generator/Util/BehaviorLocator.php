@@ -12,7 +12,7 @@ use Propel\Generator\Config\GeneratorConfigInterface;
  * Service class to find composer and installed packages
  *
  * @author Thomas Gossmann
- *        
+ *
  */
 class BehaviorLocator
 {
@@ -51,24 +51,24 @@ class BehaviorLocator
     {
         if (null !== $this->composerDir) {
             $filePath = $this->composerDir . '/' . $fileName;
-            
+
             if (file_exists($filePath)) {
                 return new SplFileInfo($filePath, dirname($filePath), dirname($filePath));
             }
         }
-        
+
         $finder = new Finder();
         $result = $finder->name($fileName)
             ->in($this->getSearchDirs())
             ->depth(0);
-        
+
         if (count($result)) {
             return $result->getIterator()->current();
         }
-        
+
         return null;
     }
-    
+
     /**
      * Searches the composer.lock file
      *
@@ -78,7 +78,7 @@ class BehaviorLocator
     {
         return $this->findComposerFile('composer.lock');
     }
-    
+
     /**
      * Searches the composer.json file
      *
@@ -86,7 +86,7 @@ class BehaviorLocator
      */
     private function findComposerJson()
     {
-    	return $this->findComposerFile('composer.json');
+        return $this->findComposerFile('composer.json');
     }
 
     /**
@@ -114,34 +114,34 @@ class BehaviorLocator
         if (null === $this->behaviors) {
             // find behaviors in composer.lock file
             $lock = $this->findComposerLock();
-            
+
             if (null === $lock) {
                 $this->behaviors = [];
             } else {
                 $this->behaviors = $this->loadBehaviors($lock);
             }
-            
-            // find behavior in composer.json (useful when developing a behavior) 
+
+            // find behavior in composer.json (useful when developing a behavior)
             $json = $this->findComposerJson();
-                        
+
             if (null !== $json) {
                 $behavior = $this->loadBehavior(json_decode($json->getContents(), true));
-                
+
                 if (null !== $behavior) {
                     $this->behaviors[$behavior['name']] = $behavior;
                 }
             }
         }
-        
+
         return $this->behaviors;
     }
 
     /**
      * Returns the class name for a given behavior name
      *
-     * @param string $name The behavior name (e.g. timetampable)
+     * @param  string                    $name The behavior name (e.g. timetampable)
      * @throws BehaviorNotFoundException when the behavior cannot be found
-     * @return string the class name
+     * @return string                    the class name
      */
     public function getBehavior($name)
     {
@@ -149,7 +149,7 @@ class BehaviorLocator
             $class = $name;
         } else {
             $class = $this->getCoreBehavior($name);
-            
+
             if (!class_exists($class)) {
                 $behaviors = $this->getBehaviors();
                 if (array_key_exists($name, $behaviors)) {
@@ -157,11 +157,11 @@ class BehaviorLocator
                 }
             }
         }
-        
+
         if (!class_exists($class)) {
             throw new BehaviorNotFoundException(sprintf('Unknown behavior "%s". You may try running `composer update` or passing the `--composer-dir` option.', $name));
         }
-        
+
         return $class;
     }
 
@@ -169,59 +169,60 @@ class BehaviorLocator
      * Searches for the given behavior name in the Propel\Generator\Behavior namespace as
      * \Propel\Generator\Behavior\[Bname]\[Bname]Behavior
      *
-     * @param string $name The behavior name (ie: timestampable)
+     * @param  string $name The behavior name (ie: timestampable)
      * @return string The behavior fully qualified class name
      */
     private function getCoreBehavior($name)
     {
         $generator = new PhpNameGenerator();
         $phpName = $generator->generateName([$name, PhpNameGenerator::CONV_METHOD_PHPNAME]);
+
         return sprintf('\\Propel\\Generator\\Behavior\\%s\\%sBehavior', $phpName, $phpName);
     }
 
     /**
      * Finds all behaviors by parsing composer.lock file
      *
-     * @param SplFileInfo $composerLock            
+     * @param SplFileInfo $composerLock
      */
     private function loadBehaviors($composerLock)
     {
         $behaviors = [];
-        
+
         if (null === $composerLock) {
             return $behaviors;
         }
-        
+
         $json = json_decode($composerLock->getContents(), true);
-        
+
         if (isset($json['packages'])) {
             foreach ($json['packages'] as $package) {
                 $behavior = $this->loadBehavior($package);
-                
+
                 if (null !== $behavior) {
                     $behaviors[$behavior['name']] = $behavior;
                 }
             }
         }
-        
+
         return $behaviors;
     }
 
     /**
      * Reads the propel behavior data from a given composer package
-     * 
-     * @param array $package
+     *
+     * @param  array          $package
      * @throws BuildException
-     * @return array behavior data
+     * @return array          behavior data
      */
     private function loadBehavior($package)
     {
         if (isset($package['type']) && $package['type'] == self::BEHAVIOR_PACKAGE_TYPE) {
-        
+
             // find propel behavior information
             if (isset($package['extra'])) {
                 $extra = $package['extra'];
-        
+
                 if (isset($extra['name']) && isset($extra['class'])) {
                     return [
                         'name' => $extra['name'],
@@ -233,7 +234,7 @@ class BehaviorLocator
                 }
             }
         }
-        
+
         return null;
     }
 }

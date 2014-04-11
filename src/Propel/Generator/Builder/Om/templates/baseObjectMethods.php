@@ -105,7 +105,7 @@
             return true;
         }
 
-        if (null === $this->getPrimaryKey() || null === $obj->getPrimaryKey())  {
+        if (null === $this->getPrimaryKey() || null === $obj->getPrimaryKey()) {
             return false;
         }
 

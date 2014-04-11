@@ -90,7 +90,7 @@ interface PlatformInterface
 
     /**
      * @return string The RDBMS-specific SQL fragment for <code>NULL</code>
-     * or <code>NOT NULL</code>.
+     *                or <code>NOT NULL</code>.
      */
     public function getNullString($notNull);
 

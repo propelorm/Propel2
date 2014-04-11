@@ -90,10 +90,10 @@ abstract class AbstractCommand extends Command
     /**
      * Find every schema files.
      *
-     * @param  string|array $directory Path to the input directory
-     * @param bool          $recursive Search for file inside the input directory and all subdirectories
+     * @param string|array $directory Path to the input directory
+     * @param bool         $recursive Search for file inside the input directory and all subdirectories
      *
-     * @return array        List of schema files
+     * @return array List of schema files
      */
     protected function getSchemas($directory, $recursive = false)
     {

@@ -116,7 +116,6 @@ class QuickBuilder
         return $this->parser;
     }
 
-
     /**
      * Setter for the platform property
      *
@@ -273,6 +272,7 @@ class QuickBuilder
         $database->setName($this->database->getName());
         $database->setPlatform($this->getPlatform());
         $this->getParser()->parse($database);
+
         return $database;
     }
 
@@ -300,7 +300,7 @@ class QuickBuilder
 
     /**
      * @param array $classTargets array('tablemap', 'object', 'query', 'objectstub', 'querystub')
-     * @param bool $separate pass true to get for each class a own file. better for debugging.
+     * @param bool  $separate     pass true to get for each class a own file. better for debugging.
      */
     public function buildClasses(array $classTargets = null, $separate = false)
     {

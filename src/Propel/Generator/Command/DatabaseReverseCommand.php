@@ -62,7 +62,7 @@ class DatabaseReverseCommand extends AbstractCommand
 
         $manager = new ReverseManager(new XmlDumper());
         $manager->setGeneratorConfig($generatorConfig);
-        $manager->setLoggerClosure(function($message) use ($input, $output) {
+        $manager->setLoggerClosure(function ($message) use ($input, $output) {
             if ($input->getOption('verbose')) {
                 $output->writeln($message);
             }

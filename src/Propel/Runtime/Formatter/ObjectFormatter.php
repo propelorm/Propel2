@@ -91,7 +91,7 @@ class ObjectFormatter extends AbstractFormatter
      * The following objects (the ones added by way of ModelCriteria::with()) are linked to the first one
      *
      * @param array $row associative array indexed by column number,
-     *                      as returned by DataFetcher::fetch()
+     *                   as returned by DataFetcher::fetch()
      *
      * @return ActiveRecordInterface
      */

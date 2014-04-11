@@ -153,8 +153,8 @@ class MysqlSchemaParser extends AbstractSchemaParser
      * Factory method creating a Column object
      * based on a row from the 'show columns from ' MySQL query result.
      *
-     * @param array $row An associative array with the following keys:
-     *                       Field, Type, Null, Key, Default, Extra.
+     * @param  array  $row An associative array with the following keys:
+     *                     Field, Type, Null, Key, Default, Extra.
      * @return Column
      */
     public function getColumnFromRow($row, Table $table)
@@ -314,9 +314,9 @@ class MysqlSchemaParser extends AbstractSchemaParser
                 $foreignColumns = array();
                 $foreignTable = $database->getTable($ftbl, true);
 
-	            if (!$foreignTable) {
-		            continue;
-	            }
+                if (!$foreignTable) {
+                    continue;
+                }
 
                 foreach ($fcols as $fcol) {
                     $foreignColumns[] = $foreignTable->getColumn($fcol);

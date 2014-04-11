@@ -189,7 +189,7 @@ class SqlManager extends AbstractManager
     /**
      * Returns a ConnectionInterface instance for a given datasource.
      *
-     * @param string $datasource
+     * @param  string              $datasource
      * @return ConnectionInterface
      */
     protected function getConnectionInstance($datasource)

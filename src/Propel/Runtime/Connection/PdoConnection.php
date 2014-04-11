@@ -123,7 +123,7 @@ class PdoConnection extends \PDO implements ConnectionInterface
     /**
      * Overwrite. Fixes HHVM strict issue.
      *
-     * @param null $name
+     * @param  null        $name
      * @return string|void
      */
     public function lastInsertId($name = null)
@@ -134,8 +134,8 @@ class PdoConnection extends \PDO implements ConnectionInterface
     /**
      * Overwrite. Fixes HHVM strict issue.
      *
-     * @param string $statement
-     * @param array $driver_options
+     * @param  string                                     $statement
+     * @param  array                                      $driver_options
      * @return bool|\PDOStatement|StatementInterface|void
      */
     public function prepare($statement, $driver_options = null)
@@ -146,8 +146,8 @@ class PdoConnection extends \PDO implements ConnectionInterface
     /**
      * Overwrite. Fixes HHVM strict issue.
      *
-     * @param string $string
-     * @param int $parameter_type
+     * @param  string $string
+     * @param  int    $parameter_type
      * @return string
      */
     public function quote($string, $parameter_type = \PDO::PARAM_STR)

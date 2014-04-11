@@ -330,7 +330,7 @@ class Criteria
      * Get the column aliases.
      *
      * @return array An assoc array which map the column alias names
-     * to the alias clauses.
+     *               to the alias clauses.
      */
     public function getAsColumns()
     {
@@ -408,8 +408,8 @@ class Criteria
      * Use this method to get the details of a table name that comes in a clause,
      * which can be either a table name or an alias name.
      *
-     * @param  string $tableAliasOrName
-     * @return        array($tableName, $tableAlias)
+     * @param  string            $tableAliasOrName
+     * @return array($tableName, $tableAlias)
      */
     public function getTableNameAndAlias($tableAliasOrName)
     {
@@ -722,9 +722,9 @@ class Criteria
      * throw a NPE. The reason for this is that none of the add()
      * methods support adding anything other than a String as a key.
      *
-     * @param  string   $key
-     * @param  mixed    $value
-     * @return $this|Criteria    Instance of self.
+     * @param  string         $key
+     * @param  mixed          $value
+     * @return $this|Criteria Instance of self.
      */
     public function put($key, $value)
     {
@@ -771,9 +771,9 @@ class Criteria
      * The name of the table must be used implicitly in the column name,
      * so the Column name must be something like 'TABLE.id'.
      *
-     * @param string $p1 The column to run the comparison on, or a Criterion object.
+     * @param string $p1         The column to run the comparison on, or a Criterion object.
      * @param mixed  $value
-     * @param string $comparison   A String.
+     * @param string $comparison A String.
      *
      * @return $this|Criteria A modified Criteria object.
      */
@@ -829,9 +829,9 @@ class Criteria
     /**
      * Combine several named criterions with a logical operator
      *
-     * @param array  $criterions array of the name of the criterions to combine
-     * @param string $operator   logical operator, either Criteria::LOGICAL_AND, or Criteria::LOGICAL_OR
-     * @param string $name       optional name to combine the criterion later
+     * @param  array          $criterions array of the name of the criterions to combine
+     * @param  string         $operator   logical operator, either Criteria::LOGICAL_AND, or Criteria::LOGICAL_OR
+     * @param  string         $name       optional name to combine the criterion later
      * @return $this|Criteria
      */
     public function combine($criterions = array(), $operator = self::LOGICAL_AND, $name = null)
@@ -870,8 +870,8 @@ class Criteria
      * @param mixed $left     A String with the left side of the join.
      * @param mixed $right    A String with the right side of the join.
      * @param mixed $joinType A String with the join operator
-     *                             among Criteria::INNER_JOIN, Criteria::LEFT_JOIN,
-     *                             and Criteria::RIGHT_JOIN
+     *                        among Criteria::INNER_JOIN, Criteria::LEFT_JOIN,
+     *                        and Criteria::RIGHT_JOIN
      *
      * @return $this|Criteria A modified Criteria object.
      */
@@ -1151,7 +1151,7 @@ class Criteria
     /**
      * Sets ignore case.
      *
-     * @param  boolean  $b True if case should be ignored.
+     * @param  boolean        $b True if case should be ignored.
      * @return $this|Criteria Modified Criteria object (for fluent API)
      */
     public function setIgnoreCase($b)
@@ -1180,7 +1180,7 @@ class Criteria
      * multiple records but you are only interested in the first one then you
      * should be using setLimit(1).
      *
-     * @param  boolean  $b Set to TRUE if you expect the query to select just one record.
+     * @param  boolean        $b Set to TRUE if you expect the query to select just one record.
      * @return $this|Criteria Modified Criteria object (for fluent API)
      */
     public function setSingleRecord($b)
@@ -1203,7 +1203,7 @@ class Criteria
     /**
      * Set limit.
      *
-     * @param  int      $limit An int with the value for limit.
+     * @param  int            $limit An int with the value for limit.
      * @return $this|Criteria Modified Criteria object (for fluent API)
      */
     public function setLimit($limit)
@@ -1227,8 +1227,8 @@ class Criteria
     /**
      * Set offset.
      *
-     * @param int $offset An int with the value for offset.  (Note this values is
-     *                             cast to a 32bit integer and may result in truncation)
+     * @param  int            $offset An int with the value for offset.  (Note this values is
+     *                        cast to a 32bit integer and may result in truncation)
      * @return $this|Criteria Modified Criteria object (for fluent API)
      */
     public function setOffset($offset)
@@ -1251,7 +1251,7 @@ class Criteria
     /**
      * Add select column.
      *
-     * @param  string   $name Name of the select column.
+     * @param  string         $name Name of the select column.
      * @return $this|Criteria Modified Criteria object (for fluent API)
      */
     public function addSelectColumn($name)
@@ -1264,7 +1264,7 @@ class Criteria
     /**
      * Set the query comment, that appears after the first verb in the SQL query
      *
-     * @param  string   $comment The comment to add to the query, without comment sign
+     * @param  string         $comment The comment to add to the query, without comment sign
      * @return $this|Criteria Modified Criteria object (for fluent API)
      */
     public function setComment($comment = null)
@@ -1333,7 +1333,7 @@ class Criteria
     /**
      * Add group by column name.
      *
-     * @param  string $groupBy The name of the column to group by.
+     * @param  string         $groupBy The name of the column to group by.
      * @return $this|Criteria A modified Criteria object.
      */
     public function addGroupByColumn($groupBy)
@@ -1346,7 +1346,7 @@ class Criteria
     /**
      * Add order by column name, explicitly specifying ascending.
      *
-     * @param  string $name The name of the column to order by.
+     * @param  string         $name The name of the column to order by.
      * @return $this|Criteria A modified Criteria object.
      */
     public function addAscendingOrderByColumn($name)
@@ -1359,7 +1359,7 @@ class Criteria
     /**
      * Add order by column name, explicitly specifying descending.
      *
-     * @param  string   $name The name of the column to order by.
+     * @param  string         $name The name of the column to order by.
      * @return $this|Criteria Modified Criteria object (for fluent API)
      */
     public function addDescendingOrderByColumn($name)
@@ -1551,8 +1551,8 @@ class Criteria
      *
      * @param Criteria $criteria The criteria to read properties from
      * @param string   $operator The logical operator used to combine conditions
-     *            Defaults to Criteria::LOGICAL_AND, also accepts Criteria::LOGICAL_OR
-     *            This parameter is deprecated, use _or() instead
+     *                           Defaults to Criteria::LOGICAL_AND, also accepts Criteria::LOGICAL_OR
+     *                           This parameter is deprecated, use _or() instead
      *
      * @return $this|Criteria The current criteria object
      */
@@ -2133,10 +2133,10 @@ class Criteria
      * @param ConnectionInterface $con          The ConnectionInterface connection object to use.
      *
      * @return int The number of rows affected by last update statement.
-     *                             For most uses there is only one update statement executed, so this number will
-     *                             correspond to the number of rows affected by the call to this method.
-     *                             Note that the return value does require that this information is returned
-     *                             (supported) by the Propel db driver.
+     *             For most uses there is only one update statement executed, so this number will
+     *             correspond to the number of rows affected by the call to this method.
+     *             Note that the return value does require that this information is returned
+     *             (supported) by the Propel db driver.
      *
      * @throws PropelException
      */

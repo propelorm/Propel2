@@ -10,8 +10,6 @@
 
 namespace Propel\Runtime\Collection;
 
-use Propel\Runtime\Exception\BadMethodCallException;
-
 /**
  * Iterator class for iterating over Collection data
  */
@@ -83,6 +81,7 @@ class CollectionIterator extends \ArrayIterator
             return null;
         }
         $this->rewind();
+
         return $this->current();
     }
 
@@ -109,6 +108,7 @@ class CollectionIterator extends \ArrayIterator
         }
 
         $this->seek($this->getPosition() - 1);
+
         return $this->current();
     }
 
@@ -131,6 +131,7 @@ class CollectionIterator extends \ArrayIterator
     public function getNext()
     {
         $this->next();
+
         return $this->current();
     }
 
@@ -147,6 +148,7 @@ class CollectionIterator extends \ArrayIterator
         }
 
         $this->seek(count($this->positions) - 1);
+
         return $this->current();
     }
 
@@ -172,7 +174,7 @@ class CollectionIterator extends \ArrayIterator
      */
     public function isOdd()
     {
-        return (boolean)($this->getPosition() % 2);
+        return (boolean) ($this->getPosition() % 2);
     }
 
     /**

@@ -69,11 +69,11 @@ class Join
      * Use it preferably with no arguments, and then use addCondition() and setJoinType()
      * Syntax with arguments used mainly for backwards compatibility
      *
-     * @param string $leftColumn The left column of the join condition
+     * @param string $leftColumn  The left column of the join condition
      *                            (may contain an alias name)
      * @param string $rightColumn The right column of the join condition
      *                            (may contain an alias name)
-     * @param string $joinType The type of the join. Valid join types are null (implicit join),
+     * @param string $joinType    The type of the join. Valid join types are null (implicit join),
      *                            Criteria::LEFT_JOIN, Criteria::RIGHT_JOIN, and Criteria::INNER_JOIN
      */
     public function __construct($leftColumn = null, $rightColumn = null, $joinType = null)
@@ -97,9 +97,9 @@ class Join
      * Join condition definition.
      * Warning: doesn't support table aliases. Use the explicit methods to use aliases.
      *
-     * @param string $left The left column of the join condition
+     * @param string $left     The left column of the join condition
      *                         (may contain an alias name)
-     * @param string $right The right column of the join condition
+     * @param string $right    The right column of the join condition
      *                         (may contain an alias name)
      * @param string $operator The comparison operator of the join condition, default Join::EQUAL
      */
@@ -224,8 +224,8 @@ class Join
      * Set the join type
      *
      * @param string $joinType The type of the join. Valid join types are
-     *        null (adding the join condition to the where clause),
-     *        Criteria::LEFT_JOIN(), Criteria::RIGHT_JOIN(), and Criteria::INNER_JOIN()
+     *                         null (adding the join condition to the where clause),
+     *                         Criteria::LEFT_JOIN(), Criteria::RIGHT_JOIN(), and Criteria::INNER_JOIN()
      */
     public function setJoinType($joinType = null)
     {
@@ -236,7 +236,7 @@ class Join
      * Get the join type
      *
      * @return string The type of the join, i.e. Criteria::LEFT_JOIN(), ...,
-     *         or null for adding the join condition to the where Clause
+     *                or null for adding the join condition to the where Clause
      */
     public function getJoinType()
     {

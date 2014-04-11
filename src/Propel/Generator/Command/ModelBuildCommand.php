@@ -80,7 +80,7 @@ class ModelBuildCommand extends AbstractCommand
             ->addOption('disable-namespace-auto-package', null, InputOption::VALUE_NONE,
                 'Disable namespace auto-packaging')
             ->addOption('composer-dir', null, InputOption::VALUE_REQUIRED,
-				'Directory in which your composer.json resides', null)
+                'Directory in which your composer.json resides', null)
             ->setName('model:build')
             ->setAliases(array('build'))
             ->setDescription('Build the model classes based on Propel XML schemas')
@@ -130,7 +130,7 @@ class ModelBuildCommand extends AbstractCommand
         $manager->setFilesystem($this->getFilesystem());
         $manager->setGeneratorConfig($generatorConfig);
         $manager->setSchemas($this->getSchemas($input->getOption('input-dir'), $input->getOption('recursive')));
-        $manager->setLoggerClosure(function($message) use ($input, $output) {
+        $manager->setLoggerClosure(function ($message) use ($input, $output) {
             if ($input->getOption('verbose')) {
                 $output->writeln($message);
             }

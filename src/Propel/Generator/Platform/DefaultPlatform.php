@@ -1029,7 +1029,7 @@ ALTER TABLE %s MODIFY %s;
     /**
      * Builds the DDL SQL to modify a list of columns
      *
-     * @param ColumnDiff[] $columnDiffs
+     * @param  ColumnDiff[] $columnDiffs
      * @return string
      */
     public function getModifyColumnsDDL($columnDiffs)
@@ -1080,7 +1080,7 @@ ALTER TABLE %s ADD %s;
     /**
      * Builds the DDL SQL to remove a list of columns
      *
-     * @param Column[] $columns
+     * @param  Column[] $columns
      * @return string
      */
     public function getAddColumnsDDL($columns)

@@ -60,10 +60,10 @@ interface GeneratorConfigInterface
      * @return PlatformInterface
      */
     public function getConfiguredPlatform(ConnectionInterface $con = null, $database = null);
-    
+
     /**
      * Returns the behavior locator.
-     * 
+     *
      * @return BehaviorLocator
      */
     public function getBehaviorLocator();

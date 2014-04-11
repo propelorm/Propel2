@@ -160,12 +160,12 @@ class QuickGeneratorConfig implements GeneratorConfigInterface
         return null;
     }
 
+    public function getBehaviorLocator()
+    {
+        if (!$this->behaviorLocator) {
+            $this->behaviorLocator = new BehaviorLocator($this);
+        }
 
-    public function getBehaviorLocator() {
-    	if (!$this->behaviorLocator) {
-    		$this->behaviorLocator = new BehaviorLocator($this);
-    	}
-
-    	return $this->behaviorLocator;
+        return $this->behaviorLocator;
     }
 }

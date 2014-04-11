@@ -28,7 +28,7 @@ class Index extends MappingModel
 
     /**
      * The Table instance.
-     * 
+     *
      * @var Table
      */
     protected $table;

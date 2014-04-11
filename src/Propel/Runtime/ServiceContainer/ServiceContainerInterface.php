@@ -111,7 +111,7 @@ interface ServiceContainerInterface
      * connectionSettings. If the connection has already been opened, return it.
      *
      * @param string $name The datasource name that is used to look up the DSN
-     *                          from the runtime configuration file. Empty name not allowed.
+     *                     from the runtime configuration file. Empty name not allowed.
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface A database connection
      *
@@ -127,7 +127,7 @@ interface ServiceContainerInterface
      * connection. If the slave connection has already been opened, return it.
      *
      * @param string $name The datasource name that is used to look up the DSN
-     *                          from the runtime configuration file. Empty name not allowed.
+     *                     from the runtime configuration file. Empty name not allowed.
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface A database connection
      */
@@ -143,7 +143,7 @@ interface ServiceContainerInterface
     /**
      * Get a logger for a given datasource, or the default logger.
      *
-     * @param string $name
+     * @param  string          $name
      * @return LoggerInterface
      */
     public function getLogger($name = 'defaultLogger');

@@ -570,7 +570,7 @@ class Database extends ScopedMappingModel
         $oldSchema = $this->schema;
         if ($this->schema !== $schema && $this->getPlatform()) {
             $schemaDelimiter = $this->getPlatform()->getSchemaDelimiter();
-            $fixHash = function(&$array) use ($schema, $oldSchema, $schemaDelimiter) {
+            $fixHash = function (&$array) use ($schema, $oldSchema, $schemaDelimiter) {
                 foreach ($array as $k => $v) {
                     if ($schema && $this->getPlatform()->supportsSchemas()) {
                         if (false === strpos($k, $schemaDelimiter)) {

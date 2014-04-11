@@ -495,6 +495,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
         throw new LogicException('The {$this->getObjectName()} object has no primary key');
     }
 ";
+
             return $script;
         }
 
@@ -579,7 +580,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
      * @param     mixed \$key Primary key to use for the query
      * @param     ConnectionInterface \$con A connection object
      *
-     * @return   $ARClassName A model object, or null if the key is not found
+     * @return $ARClassName A model object, or null if the key is not found
      */
     protected function findPkSimple(\$key, ConnectionInterface \$con)
     {
@@ -702,6 +703,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
         throw new LogicException('The {$this->getObjectName()} object has no primary key');
     }
 ";
+
             return $script;
         }
 
@@ -744,6 +746,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
         throw new LogicException('The {$this->getObjectName()} object has no primary key');
     }
 ";
+
             return $script;
         }
 
@@ -753,6 +756,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
             $col = $pks[0];
             $const = $this->getColumnConstant($col);
             $script .= "
+
         return \$this->addUsingAlias($const, \$key, Criteria::EQUAL);";
         } else {
             // composite primary key
@@ -797,6 +801,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
         throw new LogicException('The {$this->getObjectName()} object has no primary key');
     }
 ";
+
             return $script;
         }
 
@@ -806,6 +811,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
             $col = $pks[0];
             $const = $this->getColumnConstant($col);
             $script .= "
+
         return \$this->addUsingAlias($const, \$keys, Criteria::IN);";
         } else {
             // composite primary key
@@ -1331,7 +1337,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
      *                                   to be used as main alias in the secondary query
      * @param     string \$joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
-     * @return   $queryClass A secondary query class using the current class as primary query
+     * @return $queryClass A secondary query class using the current class as primary query
      */
     public function use" . $relationName . "Query(\$relationAlias = null, \$joinType = " . $joinType . ")
     {
@@ -1411,7 +1417,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
             $conditionsString = implode(', ', $conditions);
             $script .= "
             \$this->combine(array(" . $conditionsString . "), Criteria::LOGICAL_OR);";
-        } else if ($table->hasPrimaryKey()) {
+        } elseif ($table->hasPrimaryKey()) {
             $col = $pks[0];
             $const = $this->getColumnConstant($col);
             $script .= "
@@ -1599,10 +1605,10 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
      * Performs a DELETE on the database based on the current ModelCriteria
      *
      * @param ConnectionInterface \$con the connection to use
-     * @return int The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
-     *                if supported by native driver or if emulated using Propel.
+     * @return int             The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
+     *                         if supported by native driver or if emulated using Propel.
      * @throws PropelException Any exceptions caught during processing will be
-     *         rethrown wrapped into a PropelException.
+     *                         rethrown wrapped into a PropelException.
      */
     public function delete(ConnectionInterface \$con = null)
     {
