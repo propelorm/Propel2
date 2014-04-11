@@ -55,6 +55,7 @@ class Table extends ScopedMappingModel implements IdMethod
     private $unices;
     private $idMethodParameters;
     private $commonName;
+    private $originCommonName;
     private $description;
     private $phpName;
     private $idMethod;
@@ -168,7 +169,7 @@ class Table extends ScopedMappingModel implements IdMethod
     {
         parent::setupObject();
 
-        $this->commonName = $this->getAttribute('name');
+        $this->commonName = $this->originCommonName = $this->getAttribute('name');
 
         // retrieves the method for converting from specified name to a PHP name.
         $this->phpNamingMethod = $this->getAttribute('phpNamingMethod', $this->database->getDefaultPhpNamingMethod());
@@ -1165,7 +1166,7 @@ class Table extends ScopedMappingModel implements IdMethod
     }
 
     /**
-     * Returns the common name (without schema name).
+     * Returns the common name (without schema name), but with table prefix if defined.
      *
      * @return string
      */
@@ -1181,8 +1182,18 @@ class Table extends ScopedMappingModel implements IdMethod
      */
     public function setCommonName($name)
     {
-        $this->commonName = $name;
+        $this->commonName = $this->originCommonName = $name;
     }
+
+	/**
+	 * Returns the unmodified common name (not modified by table prefix).
+	 *
+	 * @return string
+	 */
+	public function getOriginCommonName()
+	{
+		return $this->originCommonName;
+	}
 
     /**
      * Sets the default string format for ActiveRecord objects in this table.

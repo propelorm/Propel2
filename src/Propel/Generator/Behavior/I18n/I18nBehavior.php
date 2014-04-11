@@ -113,7 +113,7 @@ class I18nBehavior extends Behavior
         $table = $this->getTable();
 
         return strtr($string, array(
-            '%TABLE%'   => $table->getName(),
+            '%TABLE%'   => $table->getOriginCommonName(),
             '%PHPNAME%' => $table->getPhpName(),
         ));
     }

@@ -26,11 +26,11 @@ class I18nBehaviorTest extends TestCase
     public function testModifyDatabaseOverridesDefaultLocale()
     {
         $schema = <<<EOF
-<database name="i18n_behavior_test_0">
+<database name="i18n_behavior_test_0" tablePrefix="i18n_">
     <behavior name="i18n">
         <parameter name="default_locale" value="fr_FR" />
     </behavior>
-    <table name="i18n_behavior_test_0">
+    <table name="behavior_test_0">
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <behavior name="i18n" />
     </table>
