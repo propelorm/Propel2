@@ -314,6 +314,10 @@ class MysqlSchemaParser extends AbstractSchemaParser
                 $foreignColumns = array();
                 $foreignTable = $database->getTable($ftbl, true);
 
+	            if (!$foreignTable) {
+		            continue;
+	            }
+
                 foreach ($fcols as $fcol) {
                     $foreignColumns[] = $foreignTable->getColumn($fcol);
                 }
