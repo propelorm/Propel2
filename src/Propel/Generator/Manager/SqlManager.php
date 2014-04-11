@@ -128,7 +128,19 @@ class SqlManager extends AbstractManager
             $sqlDbMapContent .= sprintf("%s=%s\n", $filename, $datasource);
         }
 
-        file_put_contents($this->getSqlDbMapFilename(), $sqlDbMapContent);
+        if (!$this->existSqlMap()) {
+            file_put_contents($this->getSqlDbMapFilename(), $sqlDbMapContent);
+        }
+    }
+
+    /**
+     * Checks if the sqldb.map exists.
+     *
+     * @return bool
+     */
+    public function existSqlMap()
+    {
+        return file_exists($this->getSqlDbMapFilename());
     }
 
     /**

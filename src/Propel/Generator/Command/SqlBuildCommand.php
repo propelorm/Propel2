@@ -89,6 +89,10 @@ class SqlBuildCommand extends AbstractCommand
         });
         $manager->setWorkingDirectory($input->getOption('output-dir'));
 
+        if ($manager->existSqlMap()) {
+            $output->writeln("<info>sqldb.map won't be saved because it already exists. Remove it to generate a new map.</info>");
+        }
+
         $manager->buildSql();
     }
 }
