@@ -79,6 +79,14 @@ class PropelPDOTest extends BookstoreTestBase
         }
     }
 
+	public function testPdoSignature()
+	{
+		$con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
+		$stmt = $con->prepare('SELECT author.FIRST_NAME, author.LAST_NAME FROM author');
+		$stmt->execute();
+		$stmt->fetchAll(\PDO::FETCH_COLUMN, 0); // should not throw exception: Third parameter not allowed for PDO::FETCH_COLUMN
+	}
+
     public function testCommitAfterFetch()
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
