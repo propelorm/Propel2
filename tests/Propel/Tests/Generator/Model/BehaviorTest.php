@@ -90,7 +90,11 @@ EOF;
         $this->assertEquals(1, count($behaviors), 'SchemaReader ads as many behaviors as there are behaviors tags');
         $behavior = $table->getBehavior('timestampable');
         $this->assertEquals('table1', $behavior->getTable()->getName(), 'SchemaReader sets the behavior table correctly');
-        $this->assertEquals(array('create_column' => 'created_on', 'update_column' => 'updated_on'), $behavior->getParameters(), 'SchemaReader sets the behavior parameters correctly');
+        $this->assertEquals(
+            array('create_column' => 'created_on', 'update_column' => 'updated_on', 'disable_created_at' => 'false', 'disable_updated_at' => 'false'),
+            $behavior->getParameters(),
+            'SchemaReader sets the behavior parameters correctly'
+        );
     }
 
   /**

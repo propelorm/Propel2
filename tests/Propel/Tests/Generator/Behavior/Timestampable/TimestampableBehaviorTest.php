@@ -10,6 +10,7 @@
 
 namespace Propel\Tests\Generator\Behavior\Timestampable;
 
+use Propel\Generator\Util\QuickBuilder;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
 use Propel\Tests\Bookstore\Behavior\Table1;
@@ -239,4 +240,65 @@ class TimestampableBehaviorTest extends BookstoreTestBase
         $this->assertEquals('CreatedAt9', $t->getTitle(), 'firstCreatedFirst() returns the element with oldest create date first');
     }
 
+    public function testDisableUpdatedAt()
+    {
+        $schema = <<<EOF
+<database name="timestampable_database">
+    <table name="table_without_updated_at">
+        <column name="id" type="INTEGER" primaryKey="true" autoIncrement="true" />
+        <column name="name" type="varchar" />
+
+        <behavior name="timestampable">
+            <parameter name="disable_updated_at" value="true" />
+        </behavior>
+    </table>
+</database>
+EOF;
+
+        $builder = new QuickBuilder();
+        $builder->setSchema($schema);
+        $builder->build();
+
+        $this->assertTrue(method_exists('TableWithoutUpdatedAt', 'getCreatedAt'));
+        $this->assertTrue(method_exists('TableWithoutUpdatedAt', 'setCreatedAt'));
+        $this->assertFalse(method_exists('TableWithoutUpdatedAt', 'getUpdatedAt'));
+        $this->assertFalse(method_exists('TableWithoutUpdatedAt', 'setUpdatedAt'));
+
+        $obj = new \TableWithoutUpdatedAt();
+        $obj->setName('Peter');
+        $this->assertNull($obj->getCreatedAt());
+        $this->assertEquals(1, $obj->save());
+        $this->assertNotNull($obj->getCreatedAt());
+    }
+
+    public function testDisableCreatedAt()
+    {
+        $schema = <<<EOF
+<database name="timestampable_database">
+    <table name="table_without_created_at">
+        <column name="id" type="INTEGER" primaryKey="true" autoIncrement="true" />
+        <column name="name" type="varchar" />
+
+        <behavior name="timestampable">
+            <parameter name="disable_created_at" value="true" />
+        </behavior>
+    </table>
+</database>
+EOF;
+
+        $builder = new QuickBuilder();
+        $builder->setSchema($schema);
+        $builder->build();
+
+        $this->assertFalse(method_exists('TableWithoutCreatedAt', 'getCreatedAt'));
+        $this->assertFalse(method_exists('TableWithoutCreatedAt', 'setCreatedAt'));
+        $this->assertTrue(method_exists('TableWithoutCreatedAt', 'getUpdatedAt'));
+        $this->assertTrue(method_exists('TableWithoutCreatedAt', 'setUpdatedAt'));
+
+        $obj = new \TableWithoutCreatedAt();
+        $obj->setName('Peter');
+        $this->assertNull($obj->getUpdatedAt());
+        $this->assertEquals(1, $obj->save());
+        $this->assertNotNull($obj->getUpdatedAt());
+    }
 }
