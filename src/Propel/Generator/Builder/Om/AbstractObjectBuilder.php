@@ -72,7 +72,9 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
     protected function addColumnMutatorMethods(&$script)
     {
         foreach ($this->getTable()->getColumns() as $col) {
-            if ($col->isLobType()) {
+            if (PropelTypes::OBJECT === $col->getType()) {
+                $this->addObjectMutator($script, $col);
+            } elseif ($col->isLobType()) {
                 $this->addLobMutator($script, $col);
             } elseif (
                 PropelTypes::DATE === $col->getType()
@@ -80,8 +82,6 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
                 || PropelTypes::TIMESTAMP === $col->getType()
             ) {
                 $this->addTemporalMutator($script, $col);
-            } elseif (PropelTypes::OBJECT === $col->getType()) {
-                $this->addObjectMutator($script, $col);
             } elseif (PropelTypes::PHP_ARRAY === $col->getType()) {
                 $this->addArrayMutator($script, $col);
                 if ($col->isNamePlural()) {

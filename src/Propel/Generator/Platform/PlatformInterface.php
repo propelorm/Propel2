@@ -243,4 +243,12 @@ interface PlatformInterface
      * @param Table $table The table object which gets modified.
      */
     public function normalizeTable(Table $table);
+
+
+    /**
+     * Get the PHP snippet for binding a value to a column.
+     * Warning: duplicates logic from AdapterInterface::bindValue().
+     * Any code modification here must be ported there.
+     */
+    public function getColumnBindingPHP(Column $column, $identifier, $columnValueAccessor, $tab = "            ");
 }

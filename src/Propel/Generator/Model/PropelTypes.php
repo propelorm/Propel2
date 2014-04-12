@@ -181,9 +181,11 @@ class PropelTypes
         self::DATE          => \PDO::PARAM_STR,
         self::TIME          => \PDO::PARAM_STR,
         self::TIMESTAMP     => \PDO::PARAM_STR,
+        self::BU_DATE       => \PDO::PARAM_STR,
+        self::BU_TIMESTAMP  => \PDO::PARAM_STR,
         self::BOOLEAN       => \PDO::PARAM_BOOL,
         self::BOOLEAN_EMU   => \PDO::PARAM_INT,
-        self::OBJECT        => \PDO::PARAM_STR,
+        self::OBJECT        => \PDO::PARAM_LOB,
         self::PHP_ARRAY     => \PDO::PARAM_STR,
         self::ENUM          => \PDO::PARAM_INT,
 
@@ -322,7 +324,7 @@ class PropelTypes
      */
     public static function isLobType($mappingType)
     {
-        return in_array($mappingType, [ self::VARBINARY, self::LONGVARBINARY, self::BLOB ]);
+        return in_array($mappingType, [ self::VARBINARY, self::LONGVARBINARY, self::BLOB, self::OBJECT ]);
     }
 
     /**

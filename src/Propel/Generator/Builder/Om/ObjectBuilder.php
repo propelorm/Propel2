@@ -944,8 +944,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         }
 
         $script .= "
-        if (null == \$this->$cloUnserialized && null !== \$this->$clo) {
-            \$this->$cloUnserialized = unserialize(\$this->$clo);
+        if (null == \$this->$cloUnserialized && is_resource(\$this->$clo)) {
+            if (\$serialisedString = stream_get_contents(\$this->$clo)) {
+                \$this->$cloUnserialized = unserialize(\$serialisedString);
+            }
         }
 
         return \$this->$cloUnserialized;";
@@ -1633,7 +1635,9 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $script .= "
         if (\$this->$cloUnserialized !== \$v) {
             \$this->$cloUnserialized = \$v;
-            \$this->$clo = serialize(\$v);
+            \$this->$clo = fopen('php://memory', 'r+');
+            fwrite(\$this->$clo, serialize(\$v));
+            rewind(\$this->$clo);
             \$this->modifiedColumns[".$this->getColumnConstant($col)."] = true;
         }
 ";

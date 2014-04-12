@@ -449,7 +449,7 @@ class ColumnTest extends ModelTestCase
             array('TIMESTAMP', \PDO::PARAM_STR),
             array('BOOLEAN', \PDO::PARAM_BOOL),
             array('BOOLEAN_EMU', \PDO::PARAM_INT),
-            array('OBJECT', \PDO::PARAM_STR),
+            array('OBJECT', \PDO::PARAM_LOB),
             array('ARRAY', \PDO::PARAM_STR),
             array('ENUM', \PDO::PARAM_INT),
             array('BU_DATE', \PDO::PARAM_STR),

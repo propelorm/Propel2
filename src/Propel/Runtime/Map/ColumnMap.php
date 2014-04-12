@@ -12,7 +12,7 @@ namespace Propel\Runtime\Map;
 
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Map\Exception\ForeignKeyNotFoundException;
-use Propel\Runtime\Util\PropelColumnTypes;
+use Propel\Generator\Model\PropelTypes;
 
 /**
  * ColumnMap is used to model a column of a table in a database.
@@ -172,7 +172,7 @@ class ColumnMap
     /**
      * Set the Propel type of this column.
      *
-     * @param string $type A string representing the Propel type (e.g. PropelColumnTypes::DATE).
+     * @param string $type A string representing the Propel type (e.g. PropelTypes::DATE).
      */
     public function setType($type)
     {
@@ -182,7 +182,7 @@ class ColumnMap
     /**
      * Get the Propel type of this column.
      *
-     * @return string A string representing the Propel type (e.g. PropelColumnTypes::DATE).
+     * @return string A string representing the Propel type (e.g. PropelTypes::DATE).
      */
     public function getType()
     {
@@ -196,7 +196,7 @@ class ColumnMap
      */
     public function getPdoType()
     {
-        return PropelColumnTypes::getPdoType($this->type);
+        return PropelTypes::getPdoType($this->type);
     }
 
     /**
@@ -207,9 +207,9 @@ class ColumnMap
     public function isLob()
     {
         return in_array($this->type, array(
-            PropelColumnTypes::BLOB,
-            PropelColumnTypes::VARBINARY,
-            PropelColumnTypes::LONGVARBINARY,
+            PropelTypes::BLOB,
+            PropelTypes::VARBINARY,
+            PropelTypes::LONGVARBINARY,
         ));
     }
 
@@ -221,11 +221,11 @@ class ColumnMap
     public function isTemporal()
     {
         return in_array($this->type, array(
-            PropelColumnTypes::TIMESTAMP,
-            PropelColumnTypes::DATE,
-            PropelColumnTypes::TIME,
-            PropelColumnTypes::BU_DATE,
-            PropelColumnTypes::BU_TIMESTAMP,
+            PropelTypes::TIMESTAMP,
+            PropelTypes::DATE,
+            PropelTypes::TIME,
+            PropelTypes::BU_DATE,
+            PropelTypes::BU_TIMESTAMP,
         ));
     }
 
@@ -237,15 +237,15 @@ class ColumnMap
     public function isNumeric()
     {
         return in_array($this->type, array(
-            PropelColumnTypes::NUMERIC,
-            PropelColumnTypes::DECIMAL,
-            PropelColumnTypes::TINYINT,
-            PropelColumnTypes::SMALLINT,
-            PropelColumnTypes::INTEGER,
-            PropelColumnTypes::BIGINT,
-            PropelColumnTypes::REAL,
-            PropelColumnTypes::FLOAT,
-            PropelColumnTypes::DOUBLE,
+            PropelTypes::NUMERIC,
+            PropelTypes::DECIMAL,
+            PropelTypes::TINYINT,
+            PropelTypes::SMALLINT,
+            PropelTypes::INTEGER,
+            PropelTypes::BIGINT,
+            PropelTypes::REAL,
+            PropelTypes::FLOAT,
+            PropelTypes::DOUBLE,
         ));
     }
 
@@ -257,9 +257,9 @@ class ColumnMap
     public function isText()
     {
         return in_array($this->type, array(
-            PropelColumnTypes::VARCHAR,
-            PropelColumnTypes::LONGVARCHAR,
-            PropelColumnTypes::CHAR,
+            PropelTypes::VARCHAR,
+            PropelTypes::LONGVARCHAR,
+            PropelTypes::CHAR,
         ));
     }
 

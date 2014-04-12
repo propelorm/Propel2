@@ -20,7 +20,7 @@ use Propel\Runtime\Map\ColumnMap;
 use Propel\Runtime\Map\DatabaseMap;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Util\PropelDateTime;
-use Propel\Runtime\Util\PropelColumnTypes;
+use Propel\Generator\Model\PropelTypes;
 
 /**
  * Base for PDO database adapters.
@@ -271,15 +271,15 @@ abstract class PdoAdapter
         /** @var $dt PropelDateTime */
         if ($dt = PropelDateTime::newInstance($value)) {
             switch ($cMap->getType()) {
-                case PropelColumnTypes::TIMESTAMP:
-                case PropelColumnTypes::BU_TIMESTAMP:
+                case PropelTypes::TIMESTAMP:
+                case PropelTypes::BU_TIMESTAMP:
                     $value = $dt->format($this->getTimestampFormatter());
                     break;
-                case PropelColumnTypes::DATE:
-                case PropelColumnTypes::BU_DATE:
+                case PropelTypes::DATE:
+                case PropelTypes::BU_DATE:
                     $value = $dt->format($this->getDateFormatter());
                     break;
-                case PropelColumnTypes::TIME:
+                case PropelTypes::TIME:
                     $value = $dt->format($this->getTimeFormatter());
                     break;
             }
