@@ -334,9 +334,19 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      */
     public function setAttribute($attribute, $value)
     {
-        if (is_string($attribute) && false !== strpos($attribute, '::')) {
+        if (is_string($attribute)) {
+            if (false === strpos($attribute, '::')) {
+                if (defined('\PDO::' . $attribute)) {
+                    $attribute = '\PDO::' . $attribute;
+                } else {
+                    $attribute = __CLASS__ . '::' . $attribute;
+                }
+            }
             if (!defined($attribute)) {
-                throw new InvalidArgumentException(sprintf('Invalid connection option/attribute name specified: "%s"', $attribute));
+                throw new InvalidArgumentException(sprintf(
+                    'Invalid connection option/attribute name specified: "%s"',
+                    $attribute
+                ));
             }
             $attribute = constant($attribute);
         }
