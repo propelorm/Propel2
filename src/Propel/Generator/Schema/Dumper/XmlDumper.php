@@ -317,7 +317,7 @@ class XmlDumper implements DumperInterface
         foreach ($behavior->getParameters() as $name => $value) {
             $parameterNode = $behaviorNode->appendChild($this->document->createElement('parameter'));
             $parameterNode->setAttribute('name', $name);
-            $parameterNode->setAttribute('name', $value);
+            $parameterNode->setAttribute('value', $value);
         }
     }
 

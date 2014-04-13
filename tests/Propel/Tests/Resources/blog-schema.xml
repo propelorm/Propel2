@@ -31,17 +31,19 @@
         <unique-column name="slug" size="255"/>
       </unique>
       <behavior name="timestampable">
-        <parameter name="created_at"/>
-        <parameter name="updated_at"/>
+        <parameter name="create_column" value="created_at"/>
+        <parameter name="update_column" value="updated_at"/>
+        <parameter name="disable_created_at" value="false"/>
+        <parameter name="disable_updated_at" value="false"/>
       </behavior>
       <behavior name="sluggable">
-        <parameter name="slug"/>
-        <parameter name=""/>
-        <parameter name="/\W+/"/>
-        <parameter name="-"/>
-        <parameter name="-"/>
-        <parameter name="false"/>
-        <parameter name=""/>
+        <parameter name="slug_column" value="slug"/>
+        <parameter name="slug_pattern" value=""/>
+        <parameter name="replace_pattern" value="/\W+/"/>
+        <parameter name="replacement" value="-"/>
+        <parameter name="separator" value="-"/>
+        <parameter name="permanent" value="false"/>
+        <parameter name="scope_column" value=""/>
       </behavior>
     </table>
     <table name="blog_author" phpName="BlogAuthor" package="Acme.Blog" namespace="Acme\Model\Blog" baseClass="Acme\Model\ActiveRecord" description="The list of authors">
