@@ -812,7 +812,7 @@ class Database extends ScopedMappingModel
                 $columns[] = sprintf("      %s %s %s %s %s %s (%s)",
                     $column->getName(),
                     $column->getType(),
-                    $column->getSize(),
+                    $column->getSize() ? '(' . $column->getSize() . ')' : '',
                     $column->isPrimaryKey() ? 'PK' : '',
                     $column->isNotNull() ? 'NOT NULL' : '',
                     $column->getDefaultValueString() ? "'".$column->getDefaultValueString()."'" : '',
@@ -832,9 +832,13 @@ class Database extends ScopedMappingModel
 
             $indices = [];
             foreach ($table->getIndices() as $index) {
+                $indexColumns = [];
+                foreach ($index->getColumns() as $indexColumnName) {
+                    $indexColumns[] = sprintf('%s (%s)', $indexColumnName, $index->getColumnSize($indexColumnName));
+                }
                 $indices[] = sprintf("      %s (%s)",
                     $index->getName(),
-                    join(', ', $index->getColumns())
+                    join(', ', $indexColumns)
                 );
             }
 
@@ -911,5 +915,18 @@ class Database extends ScopedMappingModel
     public function getDefaultMutatorVisibility()
     {
         return $this->defaultMutatorVisibility;
+    }
+
+    public function __clone()
+    {
+        $tables = [];
+        foreach ($this->tables as $oldTable) {
+            $table = clone $oldTable;
+            $tables[] = $table;
+            $this->tablesByName[$table->getName()] = $table;
+            $this->tablesByLowercaseName[strtolower($table->getName())] = $table;
+            $this->tablesByPhpName[$table->getPhpName()] = $table;
+        }
+        $this->tables = $tables;
     }
 }

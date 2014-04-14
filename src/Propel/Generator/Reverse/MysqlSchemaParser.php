@@ -353,9 +353,11 @@ class MysqlSchemaParser extends AbstractSchemaParser
         // Loop through the returned results, grouping the same key_name together
         // adding each column for that key.
 
+        /** @var $indexes Index[] */
         $indexes = array();
         while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
             $colName = $row['Column_name'];
+            $colSize = $row['Sub_part'];
             $name = $row['Key_name'];
 
             if ('PRIMARY' === $name) {
@@ -373,10 +375,17 @@ class MysqlSchemaParser extends AbstractSchemaParser
                     $vi = $this->getNewVendorInfoObject($row);
                     $indexes[$name]->addVendorInfo($vi);
                 }
-                $table->addIndex($indexes[$name]);
+                if ($isUnique) {
+                    $table->addUnique($indexes[$name]);
+                } else {
+                    $table->addIndex($indexes[$name]);
+                }
             }
 
-            $indexes[$name]->addColumn($table->getColumn($colName));
+            $indexes[$name]->addColumn([
+                'name' => $colName,
+                'size' => $colSize
+            ]);
         }
     }
 

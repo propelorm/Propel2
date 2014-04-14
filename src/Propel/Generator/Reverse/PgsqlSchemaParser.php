@@ -425,10 +425,11 @@ class PgsqlSchemaParser extends AbstractSchemaParser
             if (!isset($indexes[$name])) {
                 if ($unique) {
                     $indexes[$name] = new Unique($name);
+                    $table->addUnique($indexes[$name]);
                 } else {
                     $indexes[$name] = new Index($name);
+                    $table->addIndex($indexes[$name]);
                 }
-                $table->addIndex($indexes[$name]);
             }
 
             $arrColumns = explode(' ', $row['indkey']);

@@ -98,16 +98,8 @@ class TableComparator
     {
         $tc = new self();
 
-        $tc->setFromTable(clone $fromTable);
-        $tc->setToTable(clone $toTable);
-
-        if ($toTable->getDatabase() || $fromTable->getDatabase()) {
-            $platform = $toTable->getDatabase()->getPlatform() ?: $fromTable->getDatabase()->getPlatform();
-            if ($platform) {
-                $platform->normalizeTable($tc->getFromTable());
-                $platform->normalizeTable($tc->getToTable());
-            }
-        }
+        $tc->setFromTable($fromTable);
+        $tc->setToTable($toTable);
 
         $differences = 0;
         $differences += $tc->compareColumns($caseInsensitive);
@@ -247,14 +239,15 @@ class TableComparator
 
         foreach ($fromTableIndices as $fromTableIndexPos => $fromTableIndex) {
             foreach ($toTableIndices as $toTableIndexPos => $toTableIndex) {
-                if (false === IndexComparator::computeDiff($fromTableIndex, $toTableIndex, $caseInsensitive)) {
-                    unset($fromTableIndices[$fromTableIndexPos]);
-                    unset($toTableIndices[$toTableIndexPos]);
-                } else {
-                    $test = $caseInsensitive ?
-                        strtolower($fromTableIndex->getName()) == strtolower($toTableIndex->getName()) :
-                        $fromTableIndex->getName() == $toTableIndex->getName();
-                    if ($test) {
+                $sameName = $caseInsensitive ?
+                    strtolower($fromTableIndex->getName()) == strtolower($toTableIndex->getName()) :
+                    $fromTableIndex->getName() == $toTableIndex->getName();
+                if ($sameName) {
+                    if (false === IndexComparator::computeDiff($fromTableIndex, $toTableIndex, $caseInsensitive)) {
+                        //no changes
+                        unset($fromTableIndices[$fromTableIndexPos]);
+                        unset($toTableIndices[$toTableIndexPos]);
+                    } else {
                         // same name, but different columns
                         $this->tableDiff->addModifiedIndex($fromTableIndex->getName(), $fromTableIndex, $toTableIndex);
                         unset($fromTableIndices[$fromTableIndexPos]);

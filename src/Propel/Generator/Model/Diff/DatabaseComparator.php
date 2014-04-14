@@ -98,6 +98,17 @@ class DatabaseComparator
         $dc->setFromDatabase($fromDatabase);
         $dc->setToDatabase($toDatabase);
 
+        $platform = $toDatabase->getPlatform() ?: $fromDatabase->getPlatform();
+
+        if ($platform) {
+            foreach ($fromDatabase->getTables() as $table) {
+                $platform->normalizeTable($table);
+            }
+            foreach ($toDatabase->getTables() as $table) {
+                $platform->normalizeTable($table);
+            }
+        }
+
         $differences = 0;
         $differences += $dc->compareTables($caseInsensitive);
 
@@ -119,13 +130,8 @@ class DatabaseComparator
         $toDatabaseTables = $this->toDatabase->getTables();
         $databaseDifferences = 0;
 
-        $platform = $this->toDatabase->getPlatform() ?: $this->fromDatabase->getPlatform();
-
         // check for new tables in $toDatabase
         foreach ($toDatabaseTables as $table) {
-            if ($platform) {
-                $platform->normalizeTable($table);
-            }
             if (!$this->fromDatabase->hasTable($table->getName(), $caseInsensitive) && !$table->isSkipSql()) {
                 $this->databaseDiff->addAddedTable($table->getName(), $table);
                 $databaseDifferences++;

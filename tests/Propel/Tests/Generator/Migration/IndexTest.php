@@ -115,6 +115,9 @@ class IndexTest extends MigrationTestCase
         $this->migrateAndTest($originXml, $targetXml);
     }
 
+    /**
+     * @group mysql
+     */
     public function testChangeSize()
     {
         $originXml = '
@@ -136,6 +139,43 @@ class IndexTest extends MigrationTestCase
         <column name="title" required="true" />
         <index name="testIndex">
             <index-column name="title" size="100" />
+        </index>
+    </table>
+</database>
+';
+        $this->migrateAndTest($originXml, $targetXml);
+    }
+
+    public function testSameIndex()
+    {
+        $originXml = '
+<database>
+    <table name="migration_test_8">
+        <column name="id" type="integer" primaryKey="true" autoIncrement="true" />
+        <column name="title" required="true" />
+        <index name="testIndex">
+            <index-column name="title" />
+        </index>
+        <index name="testIndex2">
+            <index-column name="title" />
+        </index>
+    </table>
+</database>
+';
+
+        $targetXml = '
+<database>
+    <table name="migration_test_8">
+        <column name="id" type="integer" primaryKey="true" autoIncrement="true" />
+        <column name="title" required="true" />
+        <index name="testIndex">
+            <index-column name="title" />
+        </index>
+        <index name="testIndex2">
+            <index-column name="title" />
+        </index>
+        <index name="testIndex3">
+            <index-column name="title" />
         </index>
     </table>
 </database>

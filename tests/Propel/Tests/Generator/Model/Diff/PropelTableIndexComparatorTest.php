@@ -100,6 +100,7 @@ class PropelTableIndexComparatorTest extends TestCase
         $i1 = new Index('Foo_Index');
         $i1->addColumn($c1);
         $t1->addIndex($i1);
+
         $t2 = new Table();
         $c2 = new Column('fOO');
         $c2->getDomain()->copy($this->platform->getDomainForType('DOUBLE'));
@@ -112,7 +113,8 @@ class PropelTableIndexComparatorTest extends TestCase
         $i2->addColumn($c2);
         $t2->addIndex($i2);
 
-        $this->assertFalse(TableComparator::computeDiff($t1, $t2, true));
+        $this->assertFalse(TableComparator::computeDiff($t1, $t2, $caseInsensitive = true));
+        $this->assertNotFalse(TableComparator::computeDiff($t1, $t2, $caseInsensitive = false));
     }
 
     public function testCompareAddedIndices()

@@ -48,6 +48,7 @@ class MigrationTestCase extends TestCase
 
             $this->parser = new $schemaParserClass($this->con);
             $this->platform = new $platformClass();
+            $this->platform->setIdentifierQuoting(true);
             $generatorConfig = new QuickGeneratorConfig();
             $generatorConfig->setBuildProperty('mysqlTableType', 'InnoDB');
             $this->platform->setGeneratorConfig($generatorConfig);
@@ -60,9 +61,9 @@ class MigrationTestCase extends TestCase
     /**
      * @param string $xml
      *
-     * @return Database
+     * @return Database|boolean
      */
-    public function applyXml($xml)
+    public function applyXml($xml, $changeRequired = false)
     {
         $this->readDatabase();
 
@@ -77,11 +78,25 @@ class MigrationTestCase extends TestCase
         $diff = DatabaseComparator::computeDiff($this->database, $database);
 
         if (false === $diff) {
-            return null;
+            if ($changeRequired) {
+                throw new BuildException(sprintf("No changes in schema to current database: \nSchema database:\n%s\n\nCurrent Database:\n%s",
+                    $database,
+                    $this->database
+                ));
+            }
+
+            return false;
         }
         $sql = $this->database->getPlatform()->getModifyDatabaseDDL($diff);
 
         $this->con->beginTransaction();
+        if (!$sql) {
+            throw new BuildException(
+                sprintf('Ooops. There is a diff between current database and schema xml but no SQL has been generated. Change: %s',
+                $diff
+            ));
+        }
+
         $statements = SqlParser::parseString($sql);
         foreach ($statements as $statement) {
             try {
@@ -117,16 +132,26 @@ class MigrationTestCase extends TestCase
      */
     public function migrateAndTest($originXml, $targetXml)
     {
-        $this->applyXmlAndTest($originXml);
-        $this->applyXmlAndTest($targetXml);
+        try {
+            $this->applyXmlAndTest($originXml);
+        } catch (BuildException $e) {
+            throw new BuildException('There was a exception in initialing the first(origin) schema', 0, $e);
+        }
+
+        try {
+            $this->applyXmlAndTest($targetXml, true);
+        } catch (BuildException $e) {
+            throw new BuildException('There was a exception in initialing the second(target) schema', 0, $e);
+       }
     }
 
     /**
      * @param string $xml
+     * @param bool   $changeRequired
      */
-    public function applyXmlAndTest($xml)
+    public function applyXmlAndTest($xml, $changeRequired = false)
     {
-        $database = $this->applyXml($xml);
+        $database = $this->applyXml($xml, $changeRequired);
         if ($database) {
             $this->compareCurrentDatabase($database);
         }
@@ -136,6 +161,7 @@ class MigrationTestCase extends TestCase
      * Compares the current database with $database.
      *
      * @param Database $database
+     * @throws BuildException if a difference has been found between $database and the real database
      */
     public function compareCurrentDatabase(Database $database)
     {
@@ -143,7 +169,7 @@ class MigrationTestCase extends TestCase
         $diff = DatabaseComparator::computeDiff($this->database, $database);
         if (false !== $diff) {
             $sql = $this->database->getPlatform()->getModifyDatabaseDDL($diff);
-            $this->fail(sprintf(
+            throw new BuildException(sprintf(
                     "There are unexpected diffs (real to model): \n%s\n-----%s-----\nCurrent Database: \n%s\nTo XML Database: \n%s\n",
                     $diff,
                     $sql,

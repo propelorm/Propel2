@@ -162,6 +162,22 @@ interface PlatformInterface
     public function quoteIdentifier($text);
 
     /**
+     * @param bool $enabled
+     */
+    public function setIdentifierQuoting($enabled = true);
+
+    /**
+     * @return boolean
+     */
+    public function getIdentifierQuoting();
+
+    /**
+     * Whether RDBMS supports native index sizes.
+     * @return boolean
+     */
+    public function supportsIndexSize();
+
+    /**
      * Whether RDBMS supports native ON DELETE triggers (e.g. ON DELETE CASCADE).
      * @return boolean
      */

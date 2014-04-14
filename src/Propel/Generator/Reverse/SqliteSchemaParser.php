@@ -256,8 +256,13 @@ class SqliteSchemaParser extends AbstractSchemaParser
 
         while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
             $name = $row['name'];
+            $internalName = $name;
 
-            $index = $row['unique'] ? new Unique() : new Index();
+            if (0 === strpos($name, 'sqlite_autoindex')) {
+                $internalName = '';
+            }
+
+            $index = $row['unique'] ? new Unique($internalName) : new Index($internalName);
 
             $stmt2 = $this->dbh->query("PRAGMA index_info('".$name."')");
             while ($row2 = $stmt2->fetch(\PDO::FETCH_ASSOC)) {
@@ -272,7 +277,11 @@ class SqliteSchemaParser extends AbstractSchemaParser
                 }
             }
 
-            $table->addIndex($index);
+            if ($index instanceof Unique) {
+                $table->addUnique($index);
+            } else {
+                $table->addIndex($index);
+            }
         }
     }
 }

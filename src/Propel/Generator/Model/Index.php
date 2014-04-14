@@ -87,7 +87,7 @@ class Index extends MappingModel
      */
     public function getName()
     {
-        if (null === $this->name) {
+        if (!$this->name) {
             try {
                 // generate an index name if we don't have a supplied one
                 $this->createName();
@@ -217,10 +217,19 @@ class Index extends MappingModel
      * Returns the size for the specified column.
      *
      * @param  string  $name
+     * @param  boolean $caseInsensitive
      * @return integer
      */
-    public function getColumnSize($name)
+    public function getColumnSize($name, $caseInsensitive = false)
     {
+        if ($caseInsensitive) {
+            foreach ($this->columnsSize as $forName => $size) {
+                if (0 === strcasecmp($forName, $name)) {
+                    return $size;
+                }
+            }
+            return null;
+        }
         return isset($this->columnsSize[$name]) ? $this->columnsSize[$name] : null;
     }
 
@@ -249,18 +258,17 @@ class Index extends MappingModel
             return false;
         }
 
-        $test = false;
         if ($caseInsensitive) {
-            $test = strcasecmp($this->columns[$pos], $name);
+            $test = 0 === strcasecmp($this->columns[$pos], $name);
         } else {
-            $test = strcasecmp($this->columns[$pos], $name);
+            $test = $this->columns[$pos] == $name;
         }
 
-        if (0 !== $test) {
+        if (!$test) {
             return false;
         }
 
-        if (null !== $size && $this->columnsSize[$name] != $size) {
+        if ($this->getColumnSize($name, $caseInsensitive) != $size) {
             return false;
         }
 

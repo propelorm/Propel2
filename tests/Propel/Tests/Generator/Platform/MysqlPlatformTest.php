@@ -555,7 +555,7 @@ ALTER TABLE `foo` ADD PRIMARY KEY (`bar`);
     public function testAddIndicesDDL($table)
     {
         $expected = "
-CREATE INDEX `babar` ON `foo` (`bar1`,`bar2`);
+CREATE INDEX `babar` ON `foo` (`bar1`, `bar2`);
 
 CREATE INDEX `foo_index` ON `foo` (`bar1`);
 ";
@@ -568,7 +568,7 @@ CREATE INDEX `foo_index` ON `foo` (`bar1`);
     public function testAddIndexDDL($index)
     {
         $expected = "
-CREATE INDEX `babar` ON `foo` (`bar1`,`bar2`);
+CREATE INDEX `babar` ON `foo` (`bar1`, `bar2`);
 ";
         $this->assertEquals($expected, $this->getPlatform()->getAddIndexDDL($index));
     }

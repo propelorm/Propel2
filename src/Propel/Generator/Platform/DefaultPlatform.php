@@ -1198,6 +1198,11 @@ ALTER TABLE %s ADD
         return true;
     }
 
+    public function supportsIndexSize()
+    {
+        return false;
+    }
+
     /**
      * Whether the underlying PDO driver for this platform returns BLOB columns as streams (instead of strings).
      *
@@ -1375,6 +1380,13 @@ if (is_resource($columnValueAccessor)) {
                     $unique->setColumns($fk->getForeignColumnObjects());
                     $fk->getForeignTable()->addUnique($unique);
                 }
+            }
+        }
+
+        if (!$this->supportsIndexSize() && $table->getIndices()) {
+            // when the plafform does not support index sizes we reset it
+            foreach ($table->getIndices() as $index) {
+                $index->resetColumnsSize();
             }
         }
     }

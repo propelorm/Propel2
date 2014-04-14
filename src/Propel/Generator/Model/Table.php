@@ -451,6 +451,10 @@ class Table extends ScopedMappingModel implements IdMethod
      */
     public function doNaming()
     {
+        if (!$this->getDatabase()) {
+            return;
+        }
+
         for ($i = 0, $size = count($this->foreignKeys); $i < $size; $i++) {
             $fk = $this->foreignKeys[$i];
             $name = $fk->getName();
@@ -649,6 +653,7 @@ class Table extends ScopedMappingModel implements IdMethod
             if (!in_array($fk->getForeignTableName(), $this->foreignTableNames)) {
                 $this->foreignTableNames[] = $fk->getForeignTableName();
             }
+            $this->doNaming();
 
             return $fk;
         }
@@ -1813,6 +1818,19 @@ class Table extends ScopedMappingModel implements IdMethod
                 return $col;
             }
         }
+    }
+
+    public function __clone()
+    {
+        $columns = [];
+        foreach ($this->columns as $oldCol) {
+            $col = clone $oldCol;
+            $columns[] = $col;
+            $this->columnsByName[$col->getName()] = $col;
+            $this->columnsByLowercaseName[strtolower($col->getName())] = $col;
+            $this->columnsByPhpName[$col->getPhpName()] = $col;
+        }
+        $this->columns = $columns;
     }
 
     /**

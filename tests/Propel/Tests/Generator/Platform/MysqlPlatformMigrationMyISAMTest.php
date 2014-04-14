@@ -170,7 +170,7 @@ CREATE INDEX `baz_FK` ON `foo` (`baz`);
 
 DROP INDEX `bar_baz_FK` ON `foo`;
 
-CREATE INDEX `bar_baz_FK` ON `foo` (`id`,`bar`,`baz`);
+CREATE INDEX `bar_baz_FK` ON `foo` (`id`, `bar`, `baz`);
 ";
         $this->assertEquals($expected, $this->getPlatform()->getModifyTableIndicesDDL($tableDiff));
     }

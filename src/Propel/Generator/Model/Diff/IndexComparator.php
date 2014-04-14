@@ -34,7 +34,7 @@ class IndexComparator
         $max = count($fromIndexColumns);
         for ($i = 0; $i < $max; $i++) {
             $indexColumn = $fromIndexColumns[$i];
-            if (!$toIndex->hasColumnAtPosition($i, $indexColumn, null, $caseInsensitive)) {
+            if (!$toIndex->hasColumnAtPosition($i, $indexColumn, $fromIndex->getColumnSize($indexColumn), $caseInsensitive)) {
                 return true;
             }
         }
@@ -44,7 +44,7 @@ class IndexComparator
         $max = count($toIndexColumns);
         for ($i = 0; $i < $max; $i++) {
             $indexColumn = $toIndexColumns[$i];
-            if (!$fromIndex->hasColumnAtPosition($i, $indexColumn, null, $caseInsensitive)) {
+            if (!$fromIndex->hasColumnAtPosition($i, $indexColumn, $toIndex->getColumnSize($indexColumn), $caseInsensitive)) {
                 return true;
             }
         }

@@ -125,6 +125,11 @@ class MysqlPlatform extends DefaultPlatform
         return strtolower($this->getDefaultTableEngine()) == 'innodb';
     }
 
+    public function supportsIndexSize()
+    {
+        return true;
+    }
+
     public function supportsForeignKeys(Table $table)
     {
         $vendorSpecific = $table->getVendorInfoForType('mysql');
@@ -449,7 +454,7 @@ CREATE %sINDEX %s ON %s (%s);
             $this->getIndexType($index),
             $this->quoteIdentifier($index->getName()),
             $this->quoteIdentifier($index->getTable()->getName()),
-            $this->getColumnListDDL($index->getColumns())
+            $this->getIndexColumnListDDL($index)
         );
     }
 
