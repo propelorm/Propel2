@@ -50,6 +50,18 @@ class TypeTest extends BookstoreTestBase
         $this->assertEquals($b, $typeObjectEntity->getDetails()->getPropProtected());
         $this->assertEquals($c, $typeObjectEntity->getDetails()->getPropPrivate());
 
+        // change propPublic, same object
+        $detailsObject = $typeObjectEntity->getDetails();
+        $detailsObject->setPropPublic('changed');
+        $typeObjectEntity->setDetails($detailsObject);
+        $typeObjectEntity->save();
+        TypeObjectTableMap::clearInstancePool();
+        $typeObjectEntity = TypeObjectQuery::create()->findOne();
+
+        $this->assertEquals($detailsObject, $typeObjectEntity->getDetails());
+        $this->assertEquals('changed', $typeObjectEntity->getDetails()->getPropPublic());
+
+
         // same but with a more complex object
         $q = TypeObjectQuery::create();
         $typeObjectEntity->setDetails($q);

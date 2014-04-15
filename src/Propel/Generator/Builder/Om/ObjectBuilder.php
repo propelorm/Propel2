@@ -1633,7 +1633,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $this->addMutatorOpen($script, $col);
 
         $script .= "
-        if (\$this->$cloUnserialized !== \$v) {
+        if (\$this->$clo !== serialize(\$v)) {
             \$this->$cloUnserialized = \$v;
             \$this->$clo = fopen('php://memory', 'r+');
             fwrite(\$this->$clo, serialize(\$v));
