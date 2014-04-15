@@ -555,9 +555,12 @@ class Join
 
     public function equals($join)
     {
+        $parametersOfThisClauses = array();
+        $parametersOfJoinClauses = array();
+
         return null !== $join
             && $join instanceof Join
-            && $this->joinType === $join->getJoinType()
+            && $this->getJoinType() === $join->getJoinType()
             && $this->getConditions() == $join->getConditions()
         ;
     }
