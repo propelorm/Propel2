@@ -232,11 +232,13 @@ class SchemaReader
                     break;
 
                 case 'index':
-                    $this->currIndex = $this->currTable->addIndex($attributes);
+                    $this->currIndex = new Index();
+                    $this->currIndex->loadMapping($attributes);
                     break;
 
                 case 'unique':
-                    $this->currUnique = $this->currTable->addUnique($attributes);
+                    $this->currUnique = new Unique();
+                    $this->currUnique->loadMapping($attributes);
                     break;
 
                 case 'vendor':
@@ -359,6 +361,12 @@ class SchemaReader
 
     public function endElement($parser, $name)
     {
+        if ('index' === $name) {
+            $this->currTable->addIndex($this->currIndex);
+        } else if ('unique' === $name) {
+            $this->currTable->addUnique($this->currUnique);
+        }
+
         if (self::DEBUG) {
             print('endElement(' . $name . ") called\n");
         }

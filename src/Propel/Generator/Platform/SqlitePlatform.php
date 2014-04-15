@@ -267,31 +267,25 @@ BEGIN;
 
     /**
      * Unfortunately, SQLite does not support composite pks where one is AUTOINCREMENT,
-     * so we have to flag both as NOT NULL and create a UNIQUE constraint.
+     * so we have to flag both as NOT NULL and create in either way a UNIQUE constraint over pks since
+     * those UNIQUE is otherwise automatically created by the sqlite engine.
      *
      * @param Table $table
      */
     public function normalizeTable(Table $table)
     {
-        if (count($pks = $table->getPrimaryKey()) > 1 && $table->hasAutoIncrementPrimaryKey()) {
-            foreach ($pks as $pk) {
-                //no pk can be NULL, as usual
-                $pk->setNotNull(true);
-                //in SQLite the column with the AUTOINCREMENT MUST be a primary key, too.
-                if (!$pk->isAutoIncrement()) {
-                    //for all other sub keys we remove it, since we create a UNIQUE constraint over all primary keys.
-                    $pk->setPrimaryKey(false);
-                }
-            }
-
+        if ($table->getPrimaryKey()) {
             //search if there is already a UNIQUE constraint over the primary keys
             $pkUniqueExist = false;
             foreach ($table->getUnices() as $unique) {
-                $allPk = false;
+                $coversAllPrimaryKeys = true;
                 foreach ($unique->getColumns() as $columnName) {
-                    $allPk &= $table->getColumn($columnName)->isPrimaryKey();
+                    if (!$table->getColumn($columnName)->isPrimaryKey()) {
+                        $coversAllPrimaryKeys = false;
+                        break;
+                    }
                 }
-                if ($allPk) {
+                if ($coversAllPrimaryKeys) {
                     //there's already a unique constraint with the composite pk
                     $pkUniqueExist = true;
                     break;
@@ -301,11 +295,24 @@ BEGIN;
             //there is none, let's create it
             if (!$pkUniqueExist) {
                 $unique = new Unique();
-                foreach ($pks as $pk) {
+                foreach ($table->getPrimaryKey() as $pk) {
                     $unique->addColumn($pk);
                 }
                 $table->addUnique($unique);
             }
+
+            if ($table->hasAutoIncrementPrimaryKey()) {
+                foreach ($table->getPrimaryKey() as $pk) {
+                    //no pk can be NULL, as usual
+                    $pk->setNotNull(true);
+                    //in SQLite the column with the AUTOINCREMENT MUST be a primary key, too.
+                    if (!$pk->isAutoIncrement()) {
+                        //for all other sub keys we remove it, since we create a UNIQUE constraint over all primary keys.
+                        $pk->setPrimaryKey(false);
+                    }
+                }
+            }
+
         }
 
         parent::normalizeTable($table);

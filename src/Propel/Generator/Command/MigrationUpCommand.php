@@ -10,6 +10,7 @@
 
 namespace Propel\Generator\Command;
 
+use Propel\Runtime\Exception\RuntimeException;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -112,9 +113,7 @@ class MigrationUpCommand extends AbstractCommand
                     $stmt->execute();
                     $res++;
                 } catch (\PDOException $e) {
-                    $output->writeln(sprintf('<error>Failed to execute SQL "%s". Aborting migration.</error>', $statement));
-
-                    return false;
+                    throw new RuntimeException(sprintf('<error>Failed to execute SQL "%s". Aborting migration.</error>', $statement), 0, $e);
                 }
             }
             if (!$res) {

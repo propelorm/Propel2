@@ -135,13 +135,13 @@ class MigrationTestCase extends TestCase
         try {
             $this->applyXmlAndTest($originXml);
         } catch (BuildException $e) {
-            throw new BuildException('There was a exception in initialing the first(origin) schema', 0, $e);
+            throw new BuildException('There was a exception in applying the first(origin) schema', 0, $e);
         }
 
         try {
             $this->applyXmlAndTest($targetXml, true);
         } catch (BuildException $e) {
-            throw new BuildException('There was a exception in initialing the second(target) schema', 0, $e);
+            throw new BuildException('There was a exception in applying the second(target) schema', 0, $e);
        }
     }
 

@@ -85,10 +85,11 @@ CREATE TABLE book
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     title VARCHAR(255) NOT NULL,
     author_id INTEGER,
+    UNIQUE (id),
     FOREIGN KEY (author_id) REFERENCES author (id)
 );
 
-CREATE INDEX book_I_1 ON book (title);
+CREATE INDEX book_i_639136 ON book (title);
 
 -----------------------------------------------------------------------
 -- author
@@ -100,7 +101,8 @@ CREATE TABLE author
 (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     first_name VARCHAR(100),
-    last_name VARCHAR(100)
+    last_name VARCHAR(100),
+    UNIQUE (id)
 );
 
 EOF;

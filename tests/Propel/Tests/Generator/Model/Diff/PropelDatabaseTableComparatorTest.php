@@ -270,6 +270,48 @@ class PropelDatabaseTableComparatorTest extends TestCase
         $this->assertEquals(array('Foo_Table' => $tableDiff), $databaseDiff->getModifiedTables());
     }
 
+    public function testCompareRenamedTable()
+    {
+        $d1 = new Database();
+        $t1 = new Table('Foo_Table');
+        $c1 = new Column('Foo');
+        $c1->getDomain()->copy($this->platform->getDomainForType('DOUBLE'));
+        $c1->getDomain()->replaceScale(2);
+        $c1->getDomain()->replaceSize(3);
+        $c1->setNotNull(true);
+        $c1->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_VALUE));
+        $t1->addColumn($c1);
+        $d1->addTable($t1);
+        $t2 = new Table('Bar');
+        $d1->addTable($t2);
+
+        $d2 = new Database();
+        $t3 = new Table('Foo_Table2');
+        $c3 = new Column('Foo');
+        $c3->getDomain()->copy($this->platform->getDomainForType('DOUBLE'));
+        $c3->getDomain()->replaceScale(2);
+        $c3->getDomain()->replaceSize(3);
+        $c3->setNotNull(true);
+        $c3->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_VALUE));
+        $t3->addColumn($c3);
+        $d2->addTable($t3);
+        $t4 = new Table('Bar');
+        $d2->addTable($t4);
+
+        $dc = new DatabaseComparator();
+        $dc->setFromDatabase($d1);
+        $dc->setToDatabase($d2);
+        $dc->setWithRenaming(true);
+        $nbDiffs = $dc->compareTables();
+        $databaseDiff = $dc->getDatabaseDiff();
+        $this->assertEquals(1, $nbDiffs);
+        $this->assertEquals(1, count($databaseDiff->getRenamedTables()));
+        $this->assertEquals(array('Foo_Table' => 'Foo_Table2'), $databaseDiff->getRenamedTables());
+        $this->assertEquals(array(), $databaseDiff->getAddedTables());
+        $this->assertEquals(array(), $databaseDiff->getRemovedTables());
+    }
+
+
     public function testCompareSeveralTableDifferences()
     {
         $d1 = new Database();

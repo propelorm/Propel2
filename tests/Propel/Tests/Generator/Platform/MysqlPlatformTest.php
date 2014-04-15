@@ -91,9 +91,9 @@ CREATE TABLE `x`.`book`
     `title` VARCHAR(255) NOT NULL,
     `author_id` INTEGER,
     PRIMARY KEY (`id`),
-    INDEX `book_I_1` (`title`),
-    INDEX `book_FI_1` (`author_id`),
-    CONSTRAINT `book_FK_1`
+    INDEX `book_i_639136` (`title`),
+    INDEX `book_fi_4444ca` (`author_id`),
+    CONSTRAINT `book_fk_4444ca`
         FOREIGN KEY (`author_id`)
         REFERENCES `y`.`author` (`id`)
 ) ENGINE=InnoDB;
@@ -124,8 +124,8 @@ CREATE TABLE `x`.`book_summary`
     `book_id` INTEGER NOT NULL,
     `summary` TEXT NOT NULL,
     PRIMARY KEY (`id`),
-    INDEX `book_summary_FI_1` (`book_id`),
-    CONSTRAINT `book_summary_FK_1`
+    INDEX `book_summary_fi_23450f` (`book_id`),
+    CONSTRAINT `book_summary_fk_23450f`
         FOREIGN KEY (`book_id`)
         REFERENCES `x`.`book` (`id`)
         ON DELETE CASCADE
@@ -162,9 +162,9 @@ CREATE TABLE `book`
     `title` VARCHAR(255) NOT NULL,
     `author_id` INTEGER,
     PRIMARY KEY (`id`),
-    INDEX `book_I_1` (`title`),
-    INDEX `book_FI_1` (`author_id`),
-    CONSTRAINT `book_FK_1`
+    INDEX `book_i_639136` (`title`),
+    INDEX `book_fi_ea464c` (`author_id`),
+    CONSTRAINT `book_fk_ea464c`
         FOREIGN KEY (`author_id`)
         REFERENCES `author` (`id`)
 ) ENGINE=InnoDB;
@@ -247,7 +247,7 @@ CREATE TABLE `foo`
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `bar` INTEGER,
     PRIMARY KEY (`id`),
-    UNIQUE INDEX `foo_U_1` (`bar`)
+    UNIQUE INDEX `foo_u_14f552` (`bar`)
 ) ENGINE=InnoDB;
 ";
         $this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
@@ -273,7 +273,7 @@ CREATE TABLE `foo`
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `bar` INTEGER,
     PRIMARY KEY (`id`),
-    INDEX `foo_I_1` (`bar`)
+    INDEX `foo_i_14f552` (`bar`)
 ) ENGINE=InnoDB;
 ";
         $this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
@@ -302,8 +302,8 @@ CREATE TABLE `foo`
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `bar_id` INTEGER,
     PRIMARY KEY (`id`),
-    INDEX `foo_FI_1` (`bar_id`),
-    CONSTRAINT `foo_FK_1`
+    INDEX `foo_fi_426410` (`bar_id`),
+    CONSTRAINT `foo_fk_426410`
         FOREIGN KEY (`bar_id`)
         REFERENCES `bar` (`id`)
 ) ENGINE=InnoDB;
@@ -334,7 +334,7 @@ CREATE TABLE `foo`
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `bar_id` INTEGER,
     PRIMARY KEY (`id`),
-    INDEX `foo_FI_1` (`bar_id`)
+    INDEX `foo_fi_426410` (`bar_id`)
 ) ENGINE=InnoDB;
 ";
         $this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
@@ -638,12 +638,12 @@ DROP INDEX `babar` ON `foo`;
     public function testGetAddForeignKeysDDL($table)
     {
         $expected = "
-ALTER TABLE `foo` ADD CONSTRAINT `foo_bar_FK`
+ALTER TABLE `foo` ADD CONSTRAINT `foo_bar_fk`
     FOREIGN KEY (`bar_id`)
     REFERENCES `bar` (`id`)
     ON DELETE CASCADE;
 
-ALTER TABLE `foo` ADD CONSTRAINT `foo_baz_FK`
+ALTER TABLE `foo` ADD CONSTRAINT `foo_baz_fk`
     FOREIGN KEY (`baz_id`)
     REFERENCES `baz` (`id`)
     ON DELETE SET NULL;
@@ -657,7 +657,7 @@ ALTER TABLE `foo` ADD CONSTRAINT `foo_baz_FK`
     public function testGetAddForeignKeyDDL($fk)
     {
         $expected = "
-ALTER TABLE `foo` ADD CONSTRAINT `foo_bar_FK`
+ALTER TABLE `foo` ADD CONSTRAINT `foo_bar_fk`
     FOREIGN KEY (`bar_id`)
     REFERENCES `bar` (`id`)
     ON DELETE CASCADE;
@@ -680,7 +680,7 @@ ALTER TABLE `foo` ADD CONSTRAINT `foo_bar_FK`
     public function testGetDropForeignKeyDDL($fk)
     {
         $expected = "
-ALTER TABLE `foo` DROP FOREIGN KEY `foo_bar_FK`;
+ALTER TABLE `foo` DROP FOREIGN KEY `foo_bar_fk`;
 ";
         $this->assertEquals($expected, $this->getPlatform()->getDropForeignKeyDDL($fk));
     }
@@ -699,7 +699,7 @@ ALTER TABLE `foo` DROP FOREIGN KEY `foo_bar_FK`;
      */
     public function testGetForeignKeyDDL($fk)
     {
-        $expected = "CONSTRAINT `foo_bar_FK`
+        $expected = "CONSTRAINT `foo_bar_fk`
     FOREIGN KEY (`bar_id`)
     REFERENCES `bar` (`id`)
     ON DELETE CASCADE";
@@ -755,8 +755,8 @@ CREATE TABLE `bar`
     `subid` INTEGER,
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (`id`),
-    INDEX `bar_FI_1` (`id`, `subid`),
-    CONSTRAINT `bar_FK_1`
+    INDEX `bar_fi_bb8268` (`id`, `subid`),
+    CONSTRAINT `bar_fk_bb8268`
         FOREIGN KEY (`id`,`subid`)
         REFERENCES `foo` (`id`,`subid`)
 ) ENGINE=InnoDB;

@@ -80,64 +80,93 @@ class SqliteSchemaParser extends AbstractSchemaParser
     /**
      *
      */
-    public function parse(Database $database)
+    public function parse(Database $database, array $additionalTables = array())
     {
-        $dataFetcher = $this->dbh->query("
-        SELECT name
-        FROM sqlite_master
-        WHERE type='table'
-        UNION ALL
-        SELECT name
-        FROM sqlite_temp_master
-        WHERE type='table'
-        ORDER BY name;");
+        if ($this->getGeneratorConfig()) {
+            $this->addVendorInfo = $this->getGeneratorConfig()->getBuildProperty('addVendorInfo');
+        }
 
-        // First load the tables (important that this happen before filling out details of tables)
-        $tables = array();
-        foreach ($dataFetcher as $row) {
-            $name = $row[0];
-            $commonName = '';
+        $this->parseTables($database);
 
-            if ('sqlite_' == substr($name, 0, 7)) {
-                continue;
-            }
-
-            if ($database->getSchema()) {
-                if (false !== ($pos = strpos($name, '§'))) {
-                    if ($database->getSchema()) {
-                        if ($database->getSchema() !== substr($name, 0, $pos)) {
-                            continue;
-                        } else {
-                            $commonName = substr($name, $pos+2); //2 because the delimiter § uses in UTF8 one byte more.
-                        }
-                    }
-                } else {
-                    continue;
-                }
-            }
-
-            if ($name === $this->getMigrationTable()) {
-                continue;
-            }
-
-            $table = new Table($commonName ?: $name);
-            $table->setIdMethod($database->getDefaultIdMethod());
-            $database->addTable($table);
-            $tables[] = $table;
+        foreach ($additionalTables as $table) {
+            $this->parseTables($database, $table);
         }
 
         // Now populate only columns.
-        foreach ($tables as $table) {
+        foreach ($database->getTables() as $table) {
             $this->addColumns($table);
         }
 
         // Now add indexes and constraints.
-        foreach ($tables as $table) {
+        foreach ($database->getTables() as $table) {
             $this->addIndexes($table);
             $this->addForeignKeys($table);
         }
 
-        return count($tables);
+        return count($database->getTables());
+    }
+
+    protected function parseTables(Database $database, Table $filterTable = null)
+    {
+        $sql = "
+        SELECT name
+        FROM sqlite_master
+        WHERE type='table'
+        %filter%
+        UNION ALL
+        SELECT name
+        FROM sqlite_temp_master
+        WHERE type='table'
+        %filter%
+        ORDER BY name;";
+
+        $filter = '';
+
+        if ($filterTable) {
+            if ($schema = $filterTable->getSchema()) {
+                $filter = sprintf(" AND name LIKE '%s§%%'", $schema);
+            }
+            $filter .= sprintf(" AND (name = '%s' OR name LIKE '%%§%1\$s')", $filterTable->getCommonName());
+        } else if ($schema = $database->getSchema()) {
+            $filter = sprintf(" AND name LIKE '%s§%%'", $schema);
+        }
+
+        $sql = str_replace('%filter%', $filter, $sql);
+
+        $dataFetcher = $this->dbh->query($sql);
+
+        // First load the tables (important that this happen before filling out details of tables)
+        foreach ($dataFetcher as $row) {
+            $tableName = $row[0];
+            $tableSchema = '';
+
+            if ('sqlite_' == substr($tableName, 0, 7)) {
+                continue;
+            }
+
+            if (false !== ($pos = strpos($tableName, '§'))) {
+                $tableSchema = substr($tableName, 0, $pos);
+                $tableName = substr($tableName, $pos + 2);
+            }
+
+            $table = new Table($tableName);
+
+            if ($filterTable && $filterTable->getSchema()) {
+                $table->setSchema($filterTable->getSchema());
+            } else {
+                if (!$database->getSchema() && $tableSchema) {
+                    //we have no schema to filter, but this belongs to one, so next
+                    continue;
+                }
+            }
+
+            if ($tableName === $this->getMigrationTable()) {
+                continue;
+            }
+
+            $table->setIdMethod($database->getDefaultIdMethod());
+            $database->addTable($table);
+        }
     }
 
     /**
@@ -185,12 +214,21 @@ class SqliteSchemaParser extends AbstractSchemaParser
             $column->getDomain()->replaceScale($scale);
 
             if (null !== $default) {
-                $column->getDomain()->setDefaultValue(new ColumnDefaultValue($default, ColumnDefaultValue::TYPE_VALUE));
+                if ("'" !== substr($default, 0, 1) && strpos($default, '(')) {
+                    $defaultType = ColumnDefaultValue::TYPE_EXPR;
+                    if ('datetime(CURRENT_TIMESTAMP, \'localtime\')' === $default) {
+                            $default = 'CURRENT_TIMESTAMP';
+                        }
+                } else {
+                    $defaultType = ColumnDefaultValue::TYPE_VALUE;
+                    $default = str_replace("'", '', $default);
+                }
+                $column->getDomain()->setDefaultValue(new ColumnDefaultValue($default, $defaultType));
             }
 
             $column->setNotNull($notNull);
 
-            if (1 == $row['pk']) {
+            if (0 < $row['pk']+0) {
                 $column->setPrimaryKey(true);
             }
 
@@ -217,6 +255,8 @@ class SqliteSchemaParser extends AbstractSchemaParser
 
     protected function addForeignKeys(Table $table)
     {
+        $database = $table->getDatabase();
+
         $stmt = $this->dbh->query('PRAGMA foreign_key_list("' . $table->getName() . '")');
 
         $lastId = null;
@@ -224,22 +264,27 @@ class SqliteSchemaParser extends AbstractSchemaParser
             if ($lastId !== $row['id']) {
                 $fk = new ForeignKey();
 
-                $tableName   = $row['table'];
-                $tableSchema = '';
-
-                if (false !== ($pos = strpos($tableName, '§'))) {
-                    $tableName = substr($tableName, $pos + 2);
-                    $tableSchema = substr($tableName, 0, $pos);
+                $onDelete = $row['on_delete'];
+                if ($onDelete && 'NO ACTION' !== $onDelete) {
+                    $fk->setOnDelete($onDelete);
                 }
 
-                $fk->setForeignTableCommonName($tableName);
-                if ($table->getDatabase()->getSchema() != $tableSchema) {
-                    $fk->setForeignSchemaName($tableSchema);
+                $onUpdate = $row['on_update'];
+                if ($onUpdate && 'NO ACTION' !== $onUpdate) {
+                    $fk->setOnUpdate($onUpdate);
                 }
 
-                $fk->setOnDelete($row['on_delete']);
-                $fk->setOnUpdate($row['on_update']);
+                $foreignTable = $database->getTable($row['table'], true);
+
+                if (!$foreignTable) {
+                    continue;
+                }
+
                 $table->addForeignKey($fk);
+                $fk->setForeignTableCommonName($foreignTable->getCommonName());
+                if ($table->guessSchemaName() != $foreignTable->guessSchemaName()) {
+                    $fk->setForeignSchemaName($foreignTable->guessSchemaName());
+                }
                 $lastId = $row['id'];
             }
 

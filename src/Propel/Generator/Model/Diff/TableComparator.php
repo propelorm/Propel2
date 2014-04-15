@@ -288,14 +288,14 @@ class TableComparator
 
         foreach ($fromTableFks as $fromTableFkPos => $fromTableFk) {
             foreach ($toTableFks as $toTableFkPos => $toTableFk) {
-                if (false === ForeignKeyComparator::computeDiff($fromTableFk, $toTableFk, $caseInsensitive)) {
-                    unset($fromTableFks[$fromTableFkPos]);
-                    unset($toTableFks[$toTableFkPos]);
-                } else {
-                    $test = $caseInsensitive ?
-                        strtolower($fromTableFk->getName()) == strtolower($toTableFk->getName()) :
-                        $fromTableFk->getName() == $toTableFk->getName();
-                    if ($test) {
+                $sameName = $caseInsensitive ?
+                    strtolower($fromTableFk->getName()) == strtolower($toTableFk->getName()) :
+                    $fromTableFk->getName() == $toTableFk->getName();
+                if ($sameName) {
+                    if (false === ForeignKeyComparator::computeDiff($fromTableFk, $toTableFk, $caseInsensitive)) {
+                        unset($fromTableFks[$fromTableFkPos]);
+                        unset($toTableFks[$toTableFkPos]);
+                    } else {
                         // same name, but different columns
                         $this->tableDiff->addModifiedFk($fromTableFk->getName(), $fromTableFk, $toTableFk);
                         unset($fromTableFks[$fromTableFkPos]);

@@ -41,6 +41,7 @@ class MigrationDiffCommand extends AbstractCommand
             ->addOption('output-dir',       null, InputOption::VALUE_REQUIRED,  'The output directory', self::DEFAULT_OUTPUT_DIRECTORY)
             ->addOption('migration-table',  null, InputOption::VALUE_REQUIRED,  'Migration table name', self::DEFAULT_MIGRATION_TABLE)
             ->addOption('connection',       null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Connection to use', array())
+            ->addOption('table-renaming',   null, InputOption::VALUE_NONE,  'Detect table renaming', null)
             ->addOption('editor',           null, InputOption::VALUE_OPTIONAL,  'The text editor to use to open diff files', null)
             ->setName('migration:diff')
             ->setAliases(array('diff'))
@@ -85,8 +86,15 @@ class MigrationDiffCommand extends AbstractCommand
         }
 
         $totalNbTables = 0;
-        $schema = new Schema();
-        foreach ($connections as $name => $params) {
+        $reversedSchema = new Schema();
+
+        foreach ($manager->getDatabases() as $appDatabase) {
+
+            $name = $appDatabase->getName();
+            if (!$params = @$connections[$name]) {
+                $output->writeln(sprintf('<info>No connection configured for database "%s"</info>', $name));
+            }
+
             if ($input->getOption('verbose')) {
                 $output->writeln(sprintf('Connecting to database "%s" using DSN "%s"', $name, $params['dsn']));
             }
@@ -99,14 +107,22 @@ class MigrationDiffCommand extends AbstractCommand
                 continue;
             }
 
+            $additionalTables = [];
+            foreach ($appDatabase->getTables() as $table) {
+                if ($table->getSchema() && $table->getSchema() != $appDatabase->getSchema()) {
+                    $additionalTables[] = $table;
+                }
+            }
+
             $database = new Database($name);
             $database->setPlatform($platform);
+            $database->setSchema($appDatabase->getSchema());
             $database->setDefaultIdMethod(IdMethod::NATIVE);
 
             $parser   = $generatorConfig->getConfiguredSchemaParser($conn);
-            $nbTables = $parser->parse($database, $this);
+            $nbTables = $parser->parse($database, $additionalTables);
 
-            $schema->addDatabase($database);
+            $reversedSchema->addDatabase($database);
             $totalNbTables += $nbTables;
 
             if ($input->getOption('verbose')) {
@@ -120,27 +136,24 @@ class MigrationDiffCommand extends AbstractCommand
             $output->writeln('No table found in all databases');
         }
 
-        $appDatasFromXml = $manager->getDataModels();
-        $appDataFromXml  = array_pop($appDatasFromXml);
-
         // comparing models
         $output->writeln('Comparing models...');
+        $tableRenaming = $input->getOption('table-renaming');
 
         $migrationsUp   = array();
         $migrationsDown = array();
-        foreach ($schema->getDatabases() as $database) {
+        foreach ($reversedSchema->getDatabases() as $database) {
             $name = $database->getName();
 
             if ($input->getOption('verbose')) {
                 $output->writeln(sprintf('Comparing database "%s"', $name));
             }
 
-            if (!$appDataFromXml->hasDatabase($name)) {
-                // FIXME: tables present in database but not in XML
+            if (!$appDataDatabase = $manager->getDatabase($name)) {
                 continue;
             }
 
-            $databaseDiff = DatabaseComparator::computeDiff($database, $appDataFromXml->getDatabase($name));
+            $databaseDiff = DatabaseComparator::computeDiff($database, $appDataDatabase, false, $tableRenaming);
 
             if (!$databaseDiff) {
                 if ($input->getOption('verbose')) {
@@ -150,6 +163,13 @@ class MigrationDiffCommand extends AbstractCommand
             }
 
             $output->writeln(sprintf('Structure of database was modified in datasource "%s": %s', $name, $databaseDiff->getDescription()));
+
+            foreach ($databaseDiff->getPossibleRenamedTables() as $fromTableName => $toTableName) {
+                $output->writeln(sprintf(
+                    '<info>Possible table renaming detected: "%s" to "%s". It will be deleted and recreated. Use --table-renaming to only rename it.</info>',
+                        $fromTableName, $toTableName
+                ));
+            }
 
             $platform               = $generatorConfig->getConfiguredPlatform(null, $name);
             $migrationsUp[$name]    = $platform->getModifyDatabaseDDL($databaseDiff);
@@ -185,8 +205,11 @@ class MigrationDiffCommand extends AbstractCommand
      */
     protected function getReverseClass(InputInterface $input)
     {
-        $reverse = strstr($input->getOption('platform'), 'Platform', true);
-        $reverse = 'Propel\\Generator\\Reverse\\'.$reverse.'SchemaParser';
+        $reverse = $input->getOption('platform');
+        if (false !== strpos($reverse, 'Platform')) {
+            $reverse = strstr($input->getOption('platform'), 'Platform', true);
+        }
+        $reverse = sprintf('Propel\\Generator\\Reverse\\%sSchemaParser', ucfirst($reverse));
 
         return $reverse;
     }

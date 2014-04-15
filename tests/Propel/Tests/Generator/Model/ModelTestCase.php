@@ -9,6 +9,7 @@
  */
 
 namespace Propel\Tests\Generator\Model;
+use Propel\Generator\Model\Index;
 use Propel\Tests\TestCase;
 
 /**
@@ -168,7 +169,7 @@ abstract class ModelTestCase extends TestCase
             ->method('setTable')
         ;
         $index
-            ->expects($this->once())
+            ->expects($this->any())
             ->method('getName')
             ->will($this->returnValue($name))
         ;

@@ -10,6 +10,7 @@
 
 namespace Propel\Generator\Behavior\ConcreteInheritance;
 
+use Propel\Generator\Exception\InvalidArgumentException;
 use Propel\Generator\Model\Behavior;
 use Propel\Generator\Model\ForeignKey;
 
@@ -66,7 +67,9 @@ class ConcreteInheritanceBehavior extends Behavior
             if ($column->isPrimaryKey() && $this->isCopyData()) {
                 $fk = new ForeignKey();
                 $fk->setForeignTableCommonName($column->getTable()->getCommonName());
-                $fk->setForeignSchemaName($column->getTable()->getSchema());
+                if ($table->guessSchemaName() != $column->getTable()->guessSchemaName()) {
+                    $fk->setForeignSchemaName($column->getTable()->guessSchemaName());
+                }
                 $fk->setOnDelete('CASCADE');
                 $fk->setOnUpdate(null);
                 $fk->addReference($copiedColumn, $column);
@@ -123,7 +126,11 @@ class ConcreteInheritanceBehavior extends Behavior
             $tableName = $this->getParameter('schema').$database->getPlatform()->getSchemaDelimiter().$tableName;
         }
 
-        return $database->getTable($tableName);
+        if (!$table = $database->getTable($tableName)) {
+            throw new InvalidArgumentException(sprintf('Table "%s" used in the concrete_inheritance behavior at table "%s" not exist.', $tableName, $this->getTable()->getName()));
+        }
+
+        return $table;
     }
 
     protected function isCopyData()

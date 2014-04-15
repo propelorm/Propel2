@@ -12,6 +12,7 @@ namespace Propel\Tests\Generator\Model;
 
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\Database;
+use Propel\Generator\Model\Index;
 use Propel\Generator\Model\Table;
 
 /**
@@ -504,7 +505,20 @@ class TableTest extends ModelTestCase
     public function testAddIndex()
     {
         $table = new Table();
-        $table->addIndex($this->getIndexMock('author_idx'));
+        $index = new Index();
+        $index->addColumn(['name' => 'bla']);
+        $table->addIndex($index);
+
+        $this->assertCount(1, $table->getIndices());
+    }
+
+    /**
+     * @expectedException \Propel\Generator\Exception\InvalidArgumentException
+     */
+    public function testAddEmptyIndex()
+    {
+        $table = new Table();
+        $table->addIndex(new Index());
 
         $this->assertCount(1, $table->getIndices());
     }
@@ -512,7 +526,7 @@ class TableTest extends ModelTestCase
     public function testAddArrayIndex()
     {
         $table = new Table();
-        $table->addIndex(array('name' => 'author_idx'));
+        $table->addIndex(array('name' => 'author_idx', 'columns' => [['name' => 'bla']]));
 
         $this->assertCount(1, $table->getIndices());
     }

@@ -42,14 +42,7 @@ class PgsqlPlatformMigrationTest extends PlatformMigrationTestProvider
 
 DROP TABLE IF EXISTS foo1 CASCADE;
 
-DROP TABLE IF EXISTS foo3 CASCADE;
-
-CREATE TABLE foo4
-(
-    id serial NOT NULL,
-    yipee INTEGER,
-    PRIMARY KEY (id)
-);
+ALTER TABLE foo3 RENAME TO foo4;
 
 CREATE TABLE foo5
 (
@@ -89,13 +82,13 @@ ALTER TABLE foo1 RENAME TO foo2;
     {
         $expected = <<<END
 
-ALTER TABLE foo DROP CONSTRAINT foo1_FK_2;
+ALTER TABLE foo DROP CONSTRAINT foo1_fk_2;
 
-ALTER TABLE foo DROP CONSTRAINT foo1_FK_1;
+ALTER TABLE foo DROP CONSTRAINT foo1_fk_1;
 
-DROP INDEX bar_baz_FK;
+DROP INDEX bar_baz_fk;
 
-DROP INDEX bar_FK;
+DROP INDEX bar_fk;
 
 ALTER TABLE foo RENAME COLUMN bar TO bar1;
 
@@ -105,11 +98,11 @@ ALTER TABLE foo
 
   ADD baz3 TEXT;
 
-CREATE INDEX bar_FK ON foo (bar1);
+CREATE INDEX bar_fk ON foo (bar1);
 
-CREATE INDEX baz_FK ON foo (baz3);
+CREATE INDEX baz_fk ON foo (baz3);
 
-ALTER TABLE foo ADD CONSTRAINT foo1_FK_1
+ALTER TABLE foo ADD CONSTRAINT foo1_fk_1
     FOREIGN KEY (bar1)
     REFERENCES foo2 (bar);
 
@@ -156,13 +149,13 @@ END;
     {
         $expected = <<<END
 
-DROP INDEX bar_FK;
+DROP INDEX bar_fk;
 
-CREATE INDEX baz_FK ON foo (baz);
+CREATE INDEX baz_fk ON foo (baz);
 
-DROP INDEX bar_baz_FK;
+DROP INDEX bar_baz_fk;
 
-CREATE INDEX bar_baz_FK ON foo (id,bar,baz);
+CREATE INDEX bar_baz_fk ON foo (id,bar,baz);
 
 END;
         $this->assertEquals($expected, $this->getPlatform()->getModifyTableIndicesDDL($tableDiff));
@@ -175,15 +168,15 @@ END;
     {
         $expected = <<<END
 
-ALTER TABLE foo1 DROP CONSTRAINT foo1_FK_1;
+ALTER TABLE foo1 DROP CONSTRAINT foo1_fk_1;
 
-ALTER TABLE foo1 ADD CONSTRAINT foo1_FK_3
+ALTER TABLE foo1 ADD CONSTRAINT foo1_fk_3
     FOREIGN KEY (baz)
     REFERENCES foo2 (baz);
 
-ALTER TABLE foo1 DROP CONSTRAINT foo1_FK_2;
+ALTER TABLE foo1 DROP CONSTRAINT foo1_fk_2;
 
-ALTER TABLE foo1 ADD CONSTRAINT foo1_FK_2
+ALTER TABLE foo1 ADD CONSTRAINT foo1_fk_2
     FOREIGN KEY (bar,id)
     REFERENCES foo2 (bar,id);
 
@@ -198,13 +191,13 @@ END;
     {
         $expected = <<<END
 
-ALTER TABLE foo1 DROP CONSTRAINT foo1_FK_1;
+ALTER TABLE foo1 DROP CONSTRAINT foo1_fk_1;
 
 END;
         $this->assertEquals($expected, $this->getPlatform()->getModifyTableForeignKeysDDL($tableDiff));
         $expected = <<<END
 
-ALTER TABLE foo1 ADD CONSTRAINT foo1_FK_1
+ALTER TABLE foo1 ADD CONSTRAINT foo1_fk_1
     FOREIGN KEY (bar)
     REFERENCES foo2 (bar);
 

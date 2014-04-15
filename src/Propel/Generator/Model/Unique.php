@@ -34,19 +34,4 @@ class Unique extends Index
         return true;
     }
 
-    /**
-     * Creates a default name for this index.
-     *
-     */
-    protected function createName()
-    {
-        // ASSUMPTION: This Index not yet added to the list.
-        $inputs[] = $this->table->getDatabase();
-        $inputs[] = $this->table->getCommonName();
-        $inputs[] = 'U';
-        $inputs[] = count($this->table->getUnices()) + 1;
-
-        // @TODO replace the factory by a real object
-        $this->name = NameFactory::generateName(NameFactory::CONSTRAINT_GENERATOR, $inputs);
-    }
 }

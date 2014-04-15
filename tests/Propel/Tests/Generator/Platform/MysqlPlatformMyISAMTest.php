@@ -91,8 +91,8 @@ CREATE TABLE `x`.`book`
     `title` VARCHAR(255) NOT NULL,
     `author_id` INTEGER,
     PRIMARY KEY (`id`),
-    INDEX `book_I_1` (`title`),
-    INDEX `book_FI_1` (`author_id`)
+    INDEX `book_i_639136` (`title`),
+    INDEX `book_fi_4444ca` (`author_id`)
 ) ENGINE=MyISAM;
 
 -- ---------------------------------------------------------------------
@@ -121,7 +121,7 @@ CREATE TABLE `x`.`book_summary`
     `book_id` INTEGER NOT NULL,
     `summary` TEXT NOT NULL,
     PRIMARY KEY (`id`),
-    INDEX `book_summary_FI_1` (`book_id`)
+    INDEX `book_summary_fi_23450f` (`book_id`)
 ) ENGINE=MyISAM;
 
 # This restores the fkey checks, after having unset them earlier
@@ -155,8 +155,8 @@ CREATE TABLE `book`
     `title` VARCHAR(255) NOT NULL,
     `author_id` INTEGER,
     PRIMARY KEY (`id`),
-    INDEX `book_I_1` (`title`),
-    INDEX `book_FI_1` (`author_id`)
+    INDEX `book_i_639136` (`title`),
+    INDEX `book_fi_ea464c` (`author_id`)
 ) ENGINE=MyISAM;
 
 -- ---------------------------------------------------------------------
@@ -237,7 +237,7 @@ CREATE TABLE `foo`
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `bar` INTEGER,
     PRIMARY KEY (`id`),
-    UNIQUE INDEX `foo_U_1` (`bar`)
+    UNIQUE INDEX `foo_u_14f552` (`bar`)
 ) ENGINE=MyISAM;
 ";
         $this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
@@ -263,7 +263,7 @@ CREATE TABLE `foo`
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `bar` INTEGER,
     PRIMARY KEY (`id`),
-    INDEX `foo_I_1` (`bar`)
+    INDEX `foo_i_14f552` (`bar`)
 ) ENGINE=MyISAM;
 ";
         $this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
@@ -292,7 +292,7 @@ CREATE TABLE `foo`
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `bar_id` INTEGER,
     PRIMARY KEY (`id`),
-    INDEX `foo_FI_1` (`bar_id`)
+    INDEX `foo_fi_426410` (`bar_id`)
 ) ENGINE=MyISAM;
 ";
         $this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
@@ -321,7 +321,7 @@ CREATE TABLE `foo`
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `bar_id` INTEGER,
     PRIMARY KEY (`id`),
-    INDEX `foo_FI_1` (`bar_id`)
+    INDEX `foo_fi_426410` (`bar_id`)
 ) ENGINE=MyISAM;
 ";
         $this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
@@ -722,7 +722,7 @@ CREATE TABLE `bar`
     `subid` INTEGER,
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (`id`),
-    INDEX `bar_FI_1` (`id`, `subid`)
+    INDEX `bar_fi_bb8268` (`id`, `subid`)
 ) ENGINE=MyISAM;
 ";
 

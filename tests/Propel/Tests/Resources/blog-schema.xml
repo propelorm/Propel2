@@ -21,10 +21,10 @@
       <foreign-key foreignTable="blog_category" name="fk_post_has_category" phpName="Category" refPhpName="Posts" defaultJoin="Criteria::INNER_JOIN" onDelete="SET NULL">
         <reference local="category_id" foreign="id"/>
       </foreign-key>
-      <index name="FI_post_has_author">
+      <index name="fi_post_has_author">
         <index-column name="author_id"/>
       </index>
-      <index name="FI_post_has_category">
+      <index name="fi_post_has_category">
         <index-column name="category_id"/>
       </index>
       <unique name="blog_post_slug">
@@ -71,7 +71,7 @@
       <foreign-key foreignTable="blog_tag" name="fk_tag_has_posts" phpName="Tag" defaultJoin="Criteria::LEFT_JOIN" onDelete="CASCADE">
         <reference local="tag_id" foreign="id"/>
       </foreign-key>
-      <index name="FI_tag_has_posts">
+      <index name="fi_tag_has_posts">
         <index-column name="tag_id"/>
       </index>
     </table>

@@ -69,8 +69,8 @@ class IndexTest extends ModelTestCase
     public function provideTableSpecificAttributes()
     {
         return [
-            [ 'books', 64, 'books_I_3' ],
-            [ 'super_long_table_name', 16, 'super_long_t_I_3' ],
+            [ 'books', 64, 'books_i_no_columns' ],
+            [ 'super_long_table_name', 16, 'super_long_table' ],
         ];
     }
 

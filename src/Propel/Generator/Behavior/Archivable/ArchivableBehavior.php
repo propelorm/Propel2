@@ -102,7 +102,6 @@ class ArchivableBehavior extends Behavior
             // copy the indices
             foreach ($table->getIndices() as $index) {
                 $copiedIndex = clone $index;
-                $copiedIndex->setName('');
                 $archiveTable->addIndex($copiedIndex);
             }
             // copy unique indices to indices

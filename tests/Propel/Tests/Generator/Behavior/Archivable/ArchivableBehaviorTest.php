@@ -152,14 +152,14 @@ EOF;
     public function testCopiesIndices()
     {
         $table = \Map\ArchivableTest1ArchiveTableMap::getTableMap();
-        $expected = "CREATE INDEX archivable_test_1_archive_I_1 ON archivable_test_1_archive (title,age);";
+        $expected = "CREATE INDEX archivable_test_1_archive_i_6c947f ON archivable_test_1_archive (title,age);";
         $this->assertContains($expected, self::$generatedSQL);
     }
 
     public function testCopiesUniquesToIndices()
     {
         $table = \Map\ArchivableTest2ArchiveTableMap::getTableMap();
-        $expected = "CREATE INDEX my_old_archivable_test_3_I_1 ON my_old_archivable_test_3 (title);";
+        $expected = "CREATE INDEX my_old_archivable_test_3_i_639136 ON my_old_archivable_test_3 (title);";
         $this->assertContains($expected, self::$generatedSQL);
     }
 

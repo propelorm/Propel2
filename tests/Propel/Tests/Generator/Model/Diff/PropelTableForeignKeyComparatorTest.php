@@ -78,7 +78,8 @@ class PropelTableForeignKeyComparatorTest extends TestCase
         $fk2->addReference($c3, $c4);
         $t2->addForeignKey($fk2);
 
-        $this->assertFalse(TableComparator::computeDiff($t1, $t2, true));
+        $diff = TableComparator::computeDiff($t1, $t2, true);
+        $this->assertFalse($diff);
     }
 
     public function testCompareAddedFks()
@@ -87,7 +88,6 @@ class PropelTableForeignKeyComparatorTest extends TestCase
         $db1->setPlatform($this->platform);
         $t1 = new Table('Baz');
         $db1->addTable($t1);
-        $t1->doNaming();
 
         $db2 = new Database();
         $db2->setPlatform($this->platform);
@@ -98,7 +98,6 @@ class PropelTableForeignKeyComparatorTest extends TestCase
         $t2 = new Table('Baz');
         $t2->addForeignKey($fk2);
         $db2->addTable($t2);
-        $t2->doNaming();
 
         $tc = new TableComparator();
         $tc->setFromTable($t1);
@@ -107,7 +106,7 @@ class PropelTableForeignKeyComparatorTest extends TestCase
         $tableDiff = $tc->getTableDiff();
         $this->assertEquals(1, $nbDiffs);
         $this->assertEquals(1, count($tableDiff->getAddedFks()));
-        $this->assertEquals(array('Baz_FK_1' => $fk2), $tableDiff->getAddedFks());
+        $this->assertEquals(array('Baz_fk_9c94ed' => $fk2), $tableDiff->getAddedFks());
     }
 
     public function testCompareRemovedFks()
@@ -121,13 +120,11 @@ class PropelTableForeignKeyComparatorTest extends TestCase
         $t1 = new Table('Baz');
         $t1->addForeignKey($fk1);
         $db1->addTable($t1);
-        $t1->doNaming();
 
         $db2 = new Database();
         $db2->setPlatform($this->platform);
         $t2 = new Table('Baz');
         $db2->addTable($t2);
-        $t2->doNaming();
 
         $tc = new TableComparator();
         $tc->setFromTable($t1);
@@ -136,7 +133,7 @@ class PropelTableForeignKeyComparatorTest extends TestCase
         $tableDiff = $tc->getTableDiff();
         $this->assertEquals(1, $nbDiffs);
         $this->assertEquals(1, count($tableDiff->getRemovedFks()));
-        $this->assertEquals(array('Baz_FK_1' => $fk1), $tableDiff->getRemovedFks());
+        $this->assertEquals(array('Baz_fk_9c94ed' => $fk1), $tableDiff->getRemovedFks());
     }
 
     public function testCompareModifiedFks()
@@ -145,23 +142,21 @@ class PropelTableForeignKeyComparatorTest extends TestCase
         $db1->setPlatform($this->platform);
         $c1 = new Column('Foo');
         $c2 = new Column('Bar');
-        $fk1 = new ForeignKey();
+        $fk1 = new ForeignKey('my_foreign_key');
         $fk1->addReference($c1, $c2);
         $t1 = new Table('Baz');
         $t1->addForeignKey($fk1);
         $db1->addTable($t1);
-        $t1->doNaming();
 
         $db2 = new Database();
         $db2->setPlatform($this->platform);
         $c3 = new Column('Foo');
         $c4 = new Column('Bar2');
-        $fk2 = new ForeignKey();
+        $fk2 = new ForeignKey('my_foreign_key');
         $fk2->addReference($c3, $c4);
         $t2 = new Table('Baz');
         $t2->addForeignKey($fk2);
         $db2->addTable($t2);
-        $t2->doNaming();
 
         $tc = new TableComparator();
         $tc->setFromTable($t1);
@@ -170,6 +165,6 @@ class PropelTableForeignKeyComparatorTest extends TestCase
         $tableDiff = $tc->getTableDiff();
         $this->assertEquals(1, $nbDiffs);
         $this->assertEquals(1, count($tableDiff->getModifiedFks()));
-        $this->assertEquals(array('Baz_FK_1' => array($fk1, $fk2)), $tableDiff->getModifiedFks());
+        $this->assertEquals(array('my_foreign_key' => array($fk1, $fk2)), $tableDiff->getModifiedFks());
     }
 }
