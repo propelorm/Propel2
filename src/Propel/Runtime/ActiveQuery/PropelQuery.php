@@ -19,6 +19,11 @@ use Propel\Runtime\Exception\ClassNotFoundException;
  */
 class PropelQuery
 {
+    /**
+     * @param $queryClassAndAlias
+     * @return ModelCriteria
+     * @throws \Propel\Runtime\Exception\ClassNotFoundException
+     */
     public static function from($queryClassAndAlias)
     {
         list($class, $alias) = ModelCriteria::getClassAndAlias($queryClassAndAlias);
