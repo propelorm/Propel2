@@ -76,6 +76,14 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function compareRegex($left, $right)
+    {
+        return sprintf("dbo.RegexMatch(%s, %s", $left, $right);
+    }
+
+    /**
      * @see AdapterInterface::quoteIdentifier()
      *
      * @param  string $text

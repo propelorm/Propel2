@@ -40,6 +40,14 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function compareRegex($left, $right)
+    {
+        return sprintf("%s ~* %s", $left, $right);
+    }
+
+    /**
      * Returns SQL which extracts a substring.
      *
      * @param string  $s   String to extract from.

@@ -76,6 +76,14 @@ abstract class PdoAdapter
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function compareRegex($left, $right)
+    {
+        return sprintf("%s REGEXP %s", $left, $right);
+    }
+
+    /**
      * @return string
      */
     public function getAdapterId()

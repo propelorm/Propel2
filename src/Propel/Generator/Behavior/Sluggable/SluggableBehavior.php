@@ -10,6 +10,7 @@
 
 namespace Propel\Generator\Behavior\Sluggable;
 
+use Propel\Generator\Builder\Om\ObjectBuilder;
 use Propel\Generator\Model\Behavior;
 use Propel\Generator\Model\Unique;
 
@@ -21,6 +22,9 @@ use Propel\Generator\Model\Unique;
  */
 class SluggableBehavior extends Behavior
 {
+    /**
+     * @var ObjectBuilder
+     */
     private $builder;
     protected $parameters = [
         'slug_column'     => 'slug',
@@ -299,8 +303,12 @@ protected function makeSlugUnique(\$slug, \$separator = '" . $this->getParameter
         $script .= "
     }
 
+    \$adapter = \\Propel\\Runtime\\Propel::getServiceContainer()->getAdapter('" . $this->builder->getDatabase()->getName() . "');
+    \$col = 'q." . $this->getColumnForParameter('slug_column')->getPhpName() . "';
+    \$compare = \$alreadyExists ? \$adapter->compareRegex(\$col, '?') : sprintf('%s = ?', \$col);
+
     \$query = " . $this->builder->getStubQueryBuilder()->getClassname() . "::create('q')
-        ->where('q." . $this->getColumnForParameter('slug_column')->getPhpName() . " ' . (\$alreadyExists ? 'REGEXP' : '=') . ' ?', \$alreadyExists ? '^' . \$slug2 . '[0-9]+$' : \$slug2)
+        ->where(\$compare, \$alreadyExists ? '^' . \$slug2 . '[0-9]+$' : \$slug2)
         ->prune(\$this)";
 
         if ($this->getParameter('scope_column')) {
@@ -325,9 +333,10 @@ protected function makeSlugUnique(\$slug, \$separator = '" . $this->getParameter
         return \$slug2;
     }
 
+    \$adapter = \\Propel\\Runtime\\Propel::getServiceContainer()->getAdapter('" . $this->builder->getDatabase()->getName() . "');
     // Already exists
     \$object = \$query
-        ->addDescendingOrderByColumn('LENGTH(" . $this->getColumnForParameter('slug_column')->getName() . ")')
+        ->addDescendingOrderByColumn(\$adapter->strLength('" . $this->getColumnForParameter('slug_column')->getName() . "'))
         ->addDescendingOrderByColumn('" . $this->getColumnForParameter('slug_column')->getName() . "')
     ->findOne();
 

@@ -10,6 +10,7 @@
 
 namespace Propel\Tests\Generator\Behavior\Sluggable;
 
+use Propel\Runtime\Adapter\Pdo\PgsqlAdapter;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
 use Propel\Tests\Bookstore\Behavior\Table13;
@@ -305,7 +306,7 @@ class SluggableBehaviorTest extends BookstoreTestBase
             $t->save();
 
             $this->assertEquals('hello-world', $t->getSlug());
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->fail($e->getMessage());
         }
     }
@@ -314,6 +315,12 @@ class SluggableBehaviorTest extends BookstoreTestBase
     {
         Table13Query::create()->deleteAll();
         $con = Propel::getServiceContainer()->getConnection(Table13TableMap::DATABASE_NAME);
+        $adapter = Propel::getAdapter(Table13TableMap::DATABASE_NAME);
+
+        $expectedCount = 4;
+        if ($adapter instanceof PgsqlAdapter) {
+            $expectedCount++; //because of the SELECT nextval(...) query
+        }
 
         for ($i=0; $i < 5; $i++) {
             $nbQuery = $con->getQueryCount();
@@ -322,7 +329,7 @@ class SluggableBehaviorTest extends BookstoreTestBase
             $t->setTitle('Hello, World');
             $t->save($con);
 
-            $this->assertLessThanOrEqual(4, $con->getQueryCount() - $nbQuery, 'no more than 4 query to get a slug when it already exist');
+            $this->assertLessThanOrEqual($expectedCount, $con->getQueryCount() - $nbQuery, "no more than $expectedCount query to get a slug when it already exist");
         }
     }
 

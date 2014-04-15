@@ -38,6 +38,12 @@ class SqliteAdapter extends PdoAdapter implements SqlAdapterInterface
     {
         $con->query('PRAGMA foreign_keys = ON');
         parent::initConnection($con, $settings);
+
+        //add regex support
+        $con->sqliteCreateFunction('regexp', function($pattern, $value) {
+            mb_regex_encoding('UTF-8');
+            return (false !== mb_ereg($pattern, $value)) ? 1 : 0;
+        });
     }
 
 
