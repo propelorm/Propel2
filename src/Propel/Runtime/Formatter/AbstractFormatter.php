@@ -236,7 +236,10 @@ abstract class AbstractFormatter
     protected function getWorkerObject($col, $class)
     {
         if (isset($this->currentObjects[$col])) {
+            $this->currentObjects[$col]->clearAllReferences();
             $this->currentObjects[$col]->clear();
+            
+            // TODO: also consider to return always a new $class(), it's a little fast that clear the previous and is must secure to clear all data/references!
         } else {
             $this->currentObjects[$col] = new $class();
         }
