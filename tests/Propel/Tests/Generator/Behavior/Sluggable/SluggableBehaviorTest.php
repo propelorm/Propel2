@@ -20,6 +20,7 @@ use Propel\Tests\Bookstore\Behavior\Table14Query;
 use Propel\Tests\Bookstore\Behavior\Map\Table14TableMap;
 use Propel\Tests\Bookstore\Behavior\TableWithScope;
 use Propel\Tests\Bookstore\Behavior\TableWithScopeQuery;
+use Propel\Runtime\Propel;
 
 /**
  * Tests for SluggableBehavior class
@@ -257,7 +258,7 @@ class SluggableBehaviorTest extends BookstoreTestBase
 
     public function testQueryFindOneBySlug()
     {
-        $this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table13Query', 'findOneBySlug'), 'The generated query provides a findOneBySlug() method');
+        $this->assertFalse(method_exists('\Propel\Tests\Bookstore\Behavior\Table13Query', 'findOneBySlug'), 'The generated query does not provide a findOneBySlug() method if the slug column is "slug".');
         $this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table14Query', 'findOneBySlug'), 'The generated query provides a findOneBySlug() method even if the slug column doesn\'t have the default name');
 
         Table14Query::create()->deleteAll();
@@ -307,6 +308,77 @@ class SluggableBehaviorTest extends BookstoreTestBase
         } catch (Exception $e) {
             $this->fail($e->getMessage());
         }
+    }
+
+    public function testNumberOfQueriesForMakeUniqSlug()
+    {
+        Table13Query::create()->deleteAll();
+        $con = Propel::getServiceContainer()->getConnection(Table13TableMap::DATABASE_NAME);
+
+        for ($i=0; $i < 5; $i++) {
+            $nbQuery = $con->getQueryCount();
+
+            $t = new Table13();
+            $t->setTitle('Hello, World');
+            $t->save($con);
+
+            $this->assertLessThanOrEqual(4, $con->getQueryCount() - $nbQuery, 'no more than 4 query to get a slug when it already exist');
+        }
+    }
+
+    public function testSlugRegexp()
+    {
+        Table13Query::create()->deleteAll();
+        $con = Propel::getServiceContainer()->getConnection(Table13TableMap::DATABASE_NAME);
+
+        for ($i=0; $i < 3; $i++) {
+            $t = new Table13();
+            $t->setTitle('Hello, World');
+            $t->save($con);
+        }
+        $this->assertEquals('hello-world-2', $t->getSlug());
+
+        $t = new Table13();
+        $t->setTitle('World');
+        $t->save($con);
+
+        $this->assertEquals('world', $t->getSlug());
+
+        $t = new Table13();
+        $t->setTitle('World');
+        $t->save($con);
+
+        $this->assertEquals('world-1', $t->getSlug());
+
+        $t = new Table13();
+        $t->setTitle('Hello, World');
+        $t->save($con);
+
+        $this->assertEquals('hello-world-3', $t->getSlug());
+
+        $t = new Table13();
+        $t->setTitle('World');
+        $t->save($con);
+
+        $this->assertEquals('world-2', $t->getSlug());
+
+        $t = new Table13();
+        $t->setTitle('World 000');
+        $t->save($con);
+
+        $this->assertEquals('world-000', $t->getSlug());
+
+        $t = new Table13();
+        $t->setTitle('World');
+        $t->save($con);
+
+        $this->assertEquals('world-101', $t->getSlug());
+
+        $t = new Table13();
+        $t->setTitle('World');
+        $t->save($con);
+
+        $this->assertEquals('world-102', $t->getSlug());
     }
 }
 
