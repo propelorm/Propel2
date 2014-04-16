@@ -308,7 +308,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $this->addBaseObjectMethods($script);
 
         $this->addColumnAccessorMethods($script);
-        $this->addColumnMutatorMethods($script);
 
         $this->addHasOnlyDefaultValues($script);
 
@@ -316,6 +315,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $this->addEnsureConsistency($script);
 
         if (!$table->isReadOnly()) {
+            $this->addColumnMutatorMethods($script);
             $this->addManipulationMethods($script);
         }
 

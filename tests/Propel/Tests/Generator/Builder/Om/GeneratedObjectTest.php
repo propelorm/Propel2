@@ -1065,6 +1065,8 @@ EOF;
             array('save'),
             array('doSave'),
             array('importFrom'),
+            array('setName'),
+            array('setId'),
         );
     }
 
