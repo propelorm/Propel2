@@ -188,7 +188,7 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
         // pk constraint name must be 30 chars at most
         $tableName = substr($tableName, 0, min(27, strlen($tableName)));
 
-        return $tableName . '_PK';
+        return $tableName . '_pk';
     }
 
     public function getPrimaryKeyDDL(Table $table)

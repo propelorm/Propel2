@@ -43,7 +43,7 @@ class MysqlPlatformMigrationMyISAMTest extends PlatformMigrationTestProvider
     /**
      * @dataProvider providerForTestGetModifyDatabaseDDL
      */
-    public function testGetModifyDatabaseDDL($databaseDiff)
+    public function testRenameTableDDL($databaseDiff)
     {
         $expected = "
 # This is a fix for InnoDB in MySQL >= 4.1.x
@@ -52,7 +52,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 
 DROP TABLE IF EXISTS `foo1`;
 
-DROP TABLE IF EXISTS `foo3`;
+RENAME TABLE `foo3` TO `foo4`;
 
 ALTER TABLE `foo2`
 
@@ -64,13 +64,6 @@ ALTER TABLE `foo2`
 (
     `baz3` TEXT
 );
-
-CREATE TABLE `foo4`
-(
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `yipee` INTEGER,
-    PRIMARY KEY (`id`)
-) ENGINE=MyISAM;
 
 CREATE TABLE `foo5`
 (
@@ -103,11 +96,11 @@ RENAME TABLE `foo1` TO `foo2`;
     public function testGetModifyTableDDL($tableDiff)
     {
         $expected = "
-DROP INDEX `bar_baz_FK` ON `foo`;
+DROP INDEX `bar_baz_fk` ON `foo`;
 
-DROP INDEX `foo1_FI_2` ON `foo`;
+DROP INDEX `foo1_fi_2` ON `foo`;
 
-DROP INDEX `bar_FK` ON `foo`;
+DROP INDEX `bar_fk` ON `foo`;
 
 ALTER TABLE `foo`
 
@@ -120,9 +113,9 @@ ALTER TABLE `foo`
     `baz3` TEXT
 );
 
-CREATE INDEX `bar_FK` ON `foo` (`bar1`);
+CREATE INDEX `bar_fk` ON `foo` (`bar1`);
 
-CREATE INDEX `baz_FK` ON `foo` (`baz3`);
+CREATE INDEX `baz_fk` ON `foo` (`baz3`);
 ";
         $this->assertEquals($expected, $this->getPlatform()->getModifyTableDDL($tableDiff));
     }
@@ -164,13 +157,13 @@ ALTER TABLE `foo` ADD PRIMARY KEY (`id`,`bar`);
     public function testGetModifyTableIndicesDDL($tableDiff)
     {
         $expected = "
-DROP INDEX `bar_FK` ON `foo`;
+DROP INDEX `bar_fk` ON `foo`;
 
-CREATE INDEX `baz_FK` ON `foo` (`baz`);
+CREATE INDEX `baz_fk` ON `foo` (`baz`);
 
-DROP INDEX `bar_baz_FK` ON `foo`;
+DROP INDEX `bar_baz_fk` ON `foo`;
 
-CREATE INDEX `bar_baz_FK` ON `foo` (`id`, `bar`, `baz`);
+CREATE INDEX `bar_baz_fk` ON `foo` (`id`, `bar`, `baz`);
 ";
         $this->assertEquals($expected, $this->getPlatform()->getModifyTableIndicesDDL($tableDiff));
     }

@@ -48,8 +48,8 @@ class UniqueTest extends ModelTestCase
     public function provideTableSpecificAttributes()
     {
         return [
-            [ 'books', 64, 'books_U_3' ],
-            [ 'super_long_table_name', 16, 'super_long_t_U_3' ],
+            [ 'books', 64, 'books_u_no_columns' ],
+            [ 'super_long_table_name', 16, 'super_long_table' ],
         ];
     }
 }

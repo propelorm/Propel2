@@ -63,7 +63,7 @@ EOF;
         $d1 = $this->getDatabaseFromSchema($schema1);
         $d2 = $this->getDatabaseFromSchema($schema2);
 
-        return array(array(DatabaseComparator::computeDiff($d1, $d2)));
+        return array(array(DatabaseComparator::computeDiff($d1, $d2, $caseInsensitive = false, $withRenaming = true)));
     }
 
     public function providerForTestGetRenameTableDDL()
@@ -79,16 +79,16 @@ EOF;
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <column name="bar" type="INTEGER" />
         <column name="baz" type="VARCHAR" size="12" required="true" />
-        <foreign-key name="foo1_FK_1" foreignTable="foo2">
+        <foreign-key name="foo1_fk_1" foreignTable="foo2">
             <reference local="bar" foreign="bar" />
         </foreign-key>
-        <foreign-key name="foo1_FK_2" foreignTable="foo2">
+        <foreign-key name="foo1_fk_2" foreignTable="foo2">
             <reference local="baz" foreign="baz" />
         </foreign-key>
-        <index name="bar_FK">
+        <index name="bar_fk">
             <index-column name="bar"/>
         </index>
-        <index name="bar_baz_FK">
+        <index name="bar_baz_fk">
             <index-column name="bar"/>
             <index-column name="baz"/>
         </index>
@@ -107,13 +107,13 @@ EOF;
         <column name="bar1" type="INTEGER" />
         <column name="baz" type="VARCHAR" size="12" required="false" />
         <column name="baz3" type="LONGVARCHAR" />
-        <foreign-key name="foo1_FK_1" foreignTable="foo2">
+        <foreign-key name="foo1_fk_1" foreignTable="foo2">
             <reference local="bar1" foreign="bar" />
         </foreign-key>
-        <index name="bar_FK">
+        <index name="bar_fk">
             <index-column name="bar1"/>
         </index>
-        <index name="baz_FK">
+        <index name="baz_fk">
             <index-column name="baz3"/>
         </index>
     </table>
@@ -199,10 +199,10 @@ EOF;
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <column name="bar" type="INTEGER" />
         <column name="baz" type="VARCHAR" size="12" required="true" />
-        <index name="bar_FK">
+        <index name="bar_fk">
             <index-column name="bar"/>
         </index>
-        <index name="bar_baz_FK">
+        <index name="bar_baz_fk">
             <index-column name="bar"/>
             <index-column name="baz"/>
         </index>
@@ -215,12 +215,12 @@ EOF;
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <column name="bar" type="INTEGER" />
         <column name="baz" type="VARCHAR" size="12" required="true" />
-        <index name="bar_baz_FK">
+        <index name="bar_baz_fk">
             <index-column name="id"/>
             <index-column name="bar"/>
             <index-column name="baz"/>
         </index>
-        <index name="baz_FK">
+        <index name="baz_fk">
             <index-column name="baz"/>
         </index>
     </table>
@@ -244,10 +244,10 @@ EOF;
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <column name="bar" type="INTEGER" />
         <column name="baz" type="VARCHAR" size="12" required="true" />
-        <foreign-key name="foo1_FK_1" foreignTable="foo2">
+        <foreign-key name="foo1_fk_1" foreignTable="foo2">
             <reference local="bar" foreign="bar" />
         </foreign-key>
-        <foreign-key name="foo1_FK_2" foreignTable="foo2">
+        <foreign-key name="foo1_fk_2" foreignTable="foo2">
             <reference local="bar" foreign="bar" />
             <reference local="baz" foreign="baz" />
         </foreign-key>
@@ -265,11 +265,11 @@ EOF;
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <column name="bar" type="INTEGER" />
         <column name="baz" type="VARCHAR" size="12" required="true" />
-        <foreign-key name="foo1_FK_2" foreignTable="foo2">
+        <foreign-key name="foo1_fk_2" foreignTable="foo2">
             <reference local="bar" foreign="bar" />
             <reference local="id" foreign="id" />
         </foreign-key>
-        <foreign-key name="foo1_FK_3" foreignTable="foo2">
+        <foreign-key name="foo1_fk_3" foreignTable="foo2">
             <reference local="baz" foreign="baz" />
         </foreign-key>
     </table>
@@ -297,7 +297,7 @@ EOF;
     <table name="foo1">
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <column name="bar" type="INTEGER" />
-        <foreign-key name="foo1_FK_1" foreignTable="foo2">
+        <foreign-key name="foo1_fk_1" foreignTable="foo2">
             <reference local="bar" foreign="bar" />
         </foreign-key>
     </table>
@@ -312,7 +312,7 @@ EOF;
     <table name="foo1">
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <column name="bar" type="INTEGER" />
-        <foreign-key name="foo1_FK_1" foreignTable="foo2" skipSql="true">
+        <foreign-key name="foo1_fk_1" foreignTable="foo2" skipSql="true">
             <reference local="bar" foreign="bar" />
         </foreign-key>
     </table>
@@ -339,7 +339,7 @@ EOF;
     <table name="foo1">
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <column name="bar" type="INTEGER" />
-        <foreign-key name="foo1_FK_1" foreignTable="foo2" skipSql="true">
+        <foreign-key name="foo1_fk_1" foreignTable="foo2" skipSql="true">
             <reference local="bar" foreign="bar" />
         </foreign-key>
     </table>

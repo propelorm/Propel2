@@ -94,15 +94,59 @@ class PgsqlSchemaParser extends AbstractSchemaParser
      * Parses a database schema.
      *
      * @param  Database $database
+     * @param  Table[]  $additionalTables
      * @return integer
      */
-    public function parse(Database $database)
+    public function parse(Database $database, array $additionalTables = array())
+    {
+        $tableWraps = array();
+
+        $this->parseTables($tableWraps, $database);
+        foreach ($additionalTables as $table) {
+            $this->parseTables($tableWraps, $database, $table);
+        }
+
+        // Now populate only columns.
+        foreach ($tableWraps as $wrap) {
+            $this->addColumns($wrap->table, $wrap->oid);
+        }
+
+        // Now add indexes and constraints.
+        foreach ($tableWraps as $wrap) {
+            $this->addForeignKeys($wrap->table, $wrap->oid);
+            $this->addIndexes($wrap->table, $wrap->oid);
+            $this->addPrimaryKey($wrap->table, $wrap->oid);
+        }
+
+        $this->addSequences($database);
+
+        return count($tableWraps);
+    }
+
+    protected function parseTables(&$tableWraps, Database $database, Table $filterTable = null)
     {
         $stmt = null;
 
-        $searchPath = '?';
-        $params = [$database->getSchema()];
-        if (!$database->getSchema()) {
+        $params = [];
+
+        $sql = "
+          SELECT c.oid, c.relname, n.nspname
+          FROM pg_class c join pg_namespace n on (c.relnamespace=n.oid)
+          WHERE c.relkind = 'r'
+            AND n.nspname NOT IN ('information_schema','pg_catalog')
+            AND n.nspname NOT LIKE 'pg_temp%'
+            AND n.nspname NOT LIKE 'pg_toast%'";
+
+        if ($filterTable) {
+            if ($schema = $filterTable->getSchema()) {
+                $sql .= ' AND n.nspname = ?';
+                $params[] = $schema;
+            }
+
+            $sql .= ' AND c.relname = ?';
+            $params[] = $filterTable->getCommonName();
+
+        } else if (!$database->getSchema()) {
             $stmt = $this->dbh->query('SHOW search_path');
             $searchPathString = $stmt->fetchColumn();
 
@@ -114,22 +158,20 @@ class PgsqlSchemaParser extends AbstractSchemaParser
                 $path = '?';
             }
             $searchPath = implode(', ', $searchPath);
+            $sql .= "
+            AND n.nspname IN ($searchPath)";
+
+        } elseif ($database->getSchema()) {
+            $sql .= "
+            AND n.nspname = ?";
+            $params[] = $database->getSchema();
         }
 
-        $stmt = $this->dbh->prepare("SELECT c.oid,
-            c.relname, n.nspname
-            FROM pg_class c join pg_namespace n on (c.relnamespace=n.oid)
-            WHERE c.relkind = 'r'
-            AND n.nspname NOT IN ('information_schema','pg_catalog')
-            AND n.nspname NOT LIKE 'pg_temp%'
-            AND n.nspname NOT LIKE 'pg_toast%'
-            AND n.nspname IN ($searchPath)
-            ORDER BY relname"
-        );
+        $sql .= "
+          ORDER BY relname";
+        $stmt = $this->dbh->prepare($sql);
 
         $stmt->execute($params);
-
-        $tableWraps = array();
 
         // First load the tables (important that this happen before filling out details of tables)
         while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
@@ -153,21 +195,6 @@ class PgsqlSchemaParser extends AbstractSchemaParser
             $tableWraps[] = $wrap;
         }
 
-        // Now populate only columns.
-        foreach ($tableWraps as $wrap) {
-            $this->addColumns($wrap->table, $wrap->oid);
-        }
-
-        // Now add indexes and constraints.
-        foreach ($tableWraps as $wrap) {
-            $this->addForeignKeys($wrap->table, $wrap->oid);
-            $this->addIndexes($wrap->table, $wrap->oid);
-            $this->addPrimaryKey($wrap->table, $wrap->oid);
-        }
-
-        $this->addSequences($database);
-
-        return count($tableWraps);
     }
 
     /**
@@ -183,7 +210,11 @@ class PgsqlSchemaParser extends AbstractSchemaParser
 
         $searchPath = '?';
         $params = [$table->getDatabase()->getSchema()];
-        if (!$table->getDatabase()->getSchema()) {
+
+        if ($schema = $table->getSchema()) {
+            $searchPath = '?';
+            $params = [$schema];
+        } else if (!$table->getDatabase()->getSchema()) {
             $stmt = $this->dbh->query('SHOW search_path');
             $searchPathString = $stmt->fetchColumn();
 
@@ -208,10 +239,9 @@ class PgsqlSchemaParser extends AbstractSchemaParser
             character_maximum_length
         FROM information_schema.columns
         WHERE
-            table_schema IN($searchPath) AND table_name = ?
+            table_schema IN ($searchPath) AND table_name = ?
         ");
 
-        $stmt->bindValue(1, $oid, \PDO::PARAM_INT);
         $params[] = $table->getCommonName();
         $stmt->execute($params);
 
@@ -326,7 +356,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
             $name = $row['conname'];
             $localTable = $row['fktab'];
             $localColumns = explode(',', trim($row['fkcols'], '{}'));
-            $foreignTable = $row['reftab'];
+            $foreignTableName = $row['reftab'];
             $foreignColumns = explode(',', trim($row['refcols'], '{}'));
 
             // On Update
@@ -370,13 +400,19 @@ class PgsqlSchemaParser extends AbstractSchemaParser
                     break;
             }
 
-            $foreignTable = $database->getTable($foreignTable);
+            $foreignTable = $database->getTable($foreignTableName);
             $localTable   = $database->getTable($localTable);
+
+            if (!$foreignTable) {
+                continue;
+            }
 
             if (!isset($foreignKeys[$name])) {
                 $fk = new ForeignKey($name);
                 $fk->setForeignTableCommonName($foreignTable->getCommonName());
-                $fk->setForeignSchemaName($foreignTable->getSchema());
+                if ($table->guessSchemaName() != $foreignTable->guessSchemaName()) {
+                    $fk->setForeignSchemaName($foreignTable->getSchema());
+                }
                 $fk->setOnDelete($ondelete);
                 $fk->setOnUpdate($onupdate);
                 $table->addForeignKey($fk);
@@ -425,10 +461,8 @@ class PgsqlSchemaParser extends AbstractSchemaParser
             if (!isset($indexes[$name])) {
                 if ($unique) {
                     $indexes[$name] = new Unique($name);
-                    $table->addUnique($indexes[$name]);
                 } else {
                     $indexes[$name] = new Index($name);
-                    $table->addIndex($indexes[$name]);
                 }
             }
 
@@ -442,6 +476,14 @@ class PgsqlSchemaParser extends AbstractSchemaParser
 
                 $indexes[$name]->addColumn($table->getColumn($row2['attname']));
 
+            }
+        }
+
+        foreach ($indexes as $index) {
+            if ($index instanceof Unique) {
+                $table->addUnique($index);
+            } else {
+                $table->addIndex($index);
             }
         }
     }
@@ -478,6 +520,9 @@ class PgsqlSchemaParser extends AbstractSchemaParser
                 $stmt2->execute();
 
                 $row2 = $stmt2->fetch(\PDO::FETCH_ASSOC);
+                if (!$table->getColumn($row2['attname'])) {
+                    continue;
+                }
                 $table->getColumn($row2['attname'])->setPrimaryKey(true);
             }
         }

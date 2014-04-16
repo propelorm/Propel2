@@ -472,7 +472,7 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
     {
         $tableName = $table->getCommonName();
 
-        return $tableName . '_PK';
+        return $tableName . '_pk';
     }
 
     /**

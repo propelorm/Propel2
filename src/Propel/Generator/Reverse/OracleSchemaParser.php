@@ -76,8 +76,9 @@ class OracleSchemaParser extends AbstractSchemaParser
     /**
      * Searches for tables in the database. Maybe we want to search also the views.
      * @param Database $database The Database model class to add tables to.
+     * @param Table[]  $additionalTables
      */
-    public function parse(Database $database)
+    public function parse(Database $database, array $additionalTables = array())
     {
         $tables = array();
         $stmt = $this->dbh->query("SELECT OBJECT_NAME FROM USER_OBJECTS WHERE OBJECT_TYPE = 'TABLE'");

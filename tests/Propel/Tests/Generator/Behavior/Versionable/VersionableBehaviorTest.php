@@ -52,7 +52,8 @@ CREATE TABLE versionable_behavior_test_0
 (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     bar INTEGER,
-    version INTEGER DEFAULT 0
+    version INTEGER DEFAULT 0,
+    UNIQUE (id)
 );
 EOF;
         $this->assertContains($expected, $builder->getSQL());
@@ -84,7 +85,8 @@ CREATE TABLE versionable_behavior_test_0
 (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     bar INTEGER,
-    foo_ver INTEGER DEFAULT 0
+    foo_ver INTEGER DEFAULT 0,
+    UNIQUE (id)
 );
 EOF;
         $this->assertContains($expected, $builder->getSQL());
@@ -115,7 +117,8 @@ CREATE TABLE versionable_behavior_test_0
 (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     bar INTEGER,
-    version BIGINT
+    version BIGINT,
+    UNIQUE (id)
 );
 EOF;
         $this->assertContains($expected, $builder->getSQL());
@@ -165,6 +168,7 @@ CREATE TABLE versionable_behavior_test_0
     bar INTEGER,
     foreign_id INTEGER,
     version INTEGER DEFAULT 0,
+    UNIQUE (id),
     FOREIGN KEY (foreign_id) REFERENCES versionable_behavior_test_1 (id)
 );
 EOF;
@@ -185,6 +189,7 @@ CREATE TABLE versionable_behavior_test_0_version
     version INTEGER DEFAULT 0 NOT NULL,
     foreign_id_version INTEGER DEFAULT 0,
     PRIMARY KEY (id,version),
+    UNIQUE (id,version),
     FOREIGN KEY (id) REFERENCES versionable_behavior_test_0 (id)
         ON DELETE CASCADE
 );
@@ -210,7 +215,8 @@ CREATE TABLE versionable_behavior_test_1
 (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     bar INTEGER,
-    version INTEGER DEFAULT 0
+    version INTEGER DEFAULT 0,
+    UNIQUE (id)
 );
 EOF;
         $this->assertContains($expected, $builder->getSQL());
@@ -230,6 +236,7 @@ CREATE TABLE versionable_behavior_test_1_version
     versionable_behavior_test_0_ids MEDIUMTEXT,
     versionable_behavior_test_0_versions MEDIUMTEXT,
     PRIMARY KEY (id,version),
+    UNIQUE (id,version),
     FOREIGN KEY (id) REFERENCES versionable_behavior_test_1 (id)
         ON DELETE CASCADE
 );
@@ -257,6 +264,7 @@ CREATE TABLE versionable_behavior_test_0_version
     bar INTEGER,
     version INTEGER DEFAULT 0 NOT NULL,
     PRIMARY KEY (id,version),
+    UNIQUE (id,version),
     FOREIGN KEY (id) REFERENCES versionable_behavior_test_0 (id)
         ON DELETE CASCADE
 );
@@ -292,6 +300,7 @@ CREATE TABLE foo_ver
     bar INTEGER,
     version INTEGER DEFAULT 0 NOT NULL,
     PRIMARY KEY (id,version),
+    UNIQUE (id,version),
     FOREIGN KEY (id) REFERENCES versionable_behavior_test_0 (id)
         ON DELETE CASCADE
 );
@@ -328,7 +337,8 @@ CREATE TABLE versionable_behavior_test_0
 (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     bar INTEGER,
-    version INTEGER DEFAULT 0
+    version INTEGER DEFAULT 0,
+    UNIQUE (id)
 );
 
 -----------------------------------------------------------------------
@@ -340,7 +350,8 @@ DROP TABLE IF EXISTS versionable_behavior_test_0_version;
 CREATE TABLE versionable_behavior_test_0_version
 (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    baz INTEGER
+    baz INTEGER,
+    UNIQUE (id)
 );
 
 EOF;
@@ -387,7 +398,8 @@ CREATE TABLE versionable_behavior_test_0
     version INTEGER DEFAULT 0,
     version_created_at TIMESTAMP,
     version_created_by VARCHAR(100),
-    version_comment VARCHAR(255)
+    version_comment VARCHAR(255),
+    UNIQUE (id)
 );
 EOF;
         $this->assertContains($expected, $builder->getSQL());
@@ -416,6 +428,7 @@ CREATE TABLE versionable_behavior_test_0_version
     version_created_by VARCHAR(100),
     version_comment VARCHAR(255),
     PRIMARY KEY (id,version),
+    UNIQUE (id,version),
     FOREIGN KEY (id) REFERENCES versionable_behavior_test_0 (id)
         ON DELETE CASCADE
 );
@@ -447,6 +460,7 @@ CREATE TABLE versionable_behavior_test_0_version
     bar INTEGER,
     version INTEGER DEFAULT 0 NOT NULL,
     PRIMARY KEY (id,version),
+    UNIQUE (id,version),
     FOREIGN KEY (id) REFERENCES versionable_behavior_test_0 (id)
         ON DELETE CASCADE
 );

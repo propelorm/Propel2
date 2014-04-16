@@ -68,34 +68,6 @@ class SqlManager extends AbstractManager
     }
 
     /**
-     * @return array
-     */
-    public function getDatabases()
-    {
-        if (null === $this->databases) {
-            $databases = array();
-            foreach ($this->getDataModels() as $dataModel) {
-                foreach ($dataModel->getDatabases() as $database) {
-                    if (!isset($databases[$database->getName()])) {
-                        $databases[$database->getName()] = $database;
-                    } else {
-                        $tables = $database->getTables();
-                        // Merge tables from different schema.xml to the same database
-                        foreach ($tables as $table) {
-                            if (!$databases[$database->getName()]->hasTable($table->getName(), true)) {
-                                $databases[$database->getName()]->addTable($table);
-                            }
-                        }
-                    }
-                }
-            }
-            $this->databases = $databases;
-        }
-
-        return $this->databases;
-    }
-
-    /**
      * @return string
      */
     public function getSqlDbMapFilename()

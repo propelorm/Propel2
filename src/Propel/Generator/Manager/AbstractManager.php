@@ -14,6 +14,7 @@ use Propel\Generator\Builder\Util\SchemaReader;
 use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Exception\BuildException;
 use Propel\Generator\Exception\EngineException;
+use Propel\Generator\Model\Database;
 use Propel\Generator\Model\Schema;
 
 /**
@@ -30,6 +31,11 @@ abstract class AbstractManager
      * Data models that we collect. One from each XML schema file.
      */
     protected $dataModels = array();
+
+    /**
+     * @var Database[]
+     */
+    protected $databases;
 
     /**
      * Map of data model name to database name.
@@ -163,6 +169,44 @@ abstract class AbstractManager
     }
 
     /**
+     * @return Database[]
+     */
+    public function getDatabases()
+    {
+        if (null === $this->databases) {
+            $databases = array();
+            foreach ($this->getDataModels() as $dataModel) {
+                foreach ($dataModel->getDatabases() as $database) {
+                    if (!isset($databases[$database->getName()])) {
+                        $databases[$database->getName()] = $database;
+                    } else {
+                        $tables = $database->getTables();
+                        // Merge tables from different schema.xml to the same database
+                        foreach ($tables as $table) {
+                            if (!$databases[$database->getName()]->hasTable($table->getName(), true)) {
+                                $databases[$database->getName()]->addTable($table);
+                            }
+                        }
+                    }
+                }
+            }
+            $this->databases = $databases;
+        }
+
+        return $this->databases;
+    }
+
+    /**
+     * @param  string $name
+     * @return Database|null
+     */
+    public function getDatabase($name)
+    {
+        $dbs = $this->getDatabases();
+        return @$dbs[$name];
+    }
+
+    /**
      * Sets whether to perform validation on the datamodel schema.xml file(s).
      *
      * @param boolean $validate
@@ -233,10 +277,7 @@ abstract class AbstractManager
             $dom = new \DOMDocument('1.0', 'UTF-8');
             $dom->load($dmFilename);
 
-
-
             $this->includeExternalSchemas($dom, $schema->getPath());
-
 
             // normalize (or transform) the XML document using XSLT
             if ($this->getGeneratorConfig()->getBuildProperty('schemaTransform') && $this->xsl) {

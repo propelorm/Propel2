@@ -77,7 +77,6 @@
         </behavior>
     </table>
 
-
     <table name="bookstore_contest_entry" schema="contest" reloadOnInsert="true">
         <column name="bookstore_id" type="INTEGER" primaryKey="true" />
         <column name="contest_id" type="INTEGER" primaryKey="true" />

@@ -78,12 +78,12 @@ CREATE TABLE book
     author_id NUMBER
 );
 
-ALTER TABLE book ADD CONSTRAINT book_PK PRIMARY KEY (id);
+ALTER TABLE book ADD CONSTRAINT book_pk PRIMARY KEY (id);
 
 CREATE SEQUENCE book_SEQ
     INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE ORDER;
 
-CREATE INDEX book_I_1 ON book (title);
+CREATE INDEX book_i_639136 ON book (title);
 
 -----------------------------------------------------------------------
 -- author
@@ -100,7 +100,7 @@ CREATE TABLE author
     last_name NVARCHAR2(100)
 );
 
-ALTER TABLE author ADD CONSTRAINT author_PK PRIMARY KEY (id);
+ALTER TABLE author ADD CONSTRAINT author_pk PRIMARY KEY (id);
 
 CREATE SEQUENCE author_SEQ
     INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE ORDER;
@@ -109,7 +109,7 @@ CREATE SEQUENCE author_SEQ
 -- Foreign Keys
 -----------------------------------------------------------------------
 
-ALTER TABLE book ADD CONSTRAINT book_FK_1
+ALTER TABLE book ADD CONSTRAINT book_fk_ea464c
     FOREIGN KEY (author_id) REFERENCES author (id);
 
 EOF;
@@ -143,7 +143,7 @@ CREATE TABLE foo
     bar NVARCHAR2(255) NOT NULL
 );
 
-ALTER TABLE foo ADD CONSTRAINT foo_PK PRIMARY KEY (id);
+ALTER TABLE foo ADD CONSTRAINT foo_pk PRIMARY KEY (id);
 
 CREATE SEQUENCE foo_SEQ
     INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE ORDER;
@@ -165,7 +165,7 @@ CREATE TABLE foo
     baz NVARCHAR2(255) NOT NULL
 );
 
-ALTER TABLE foo ADD CONSTRAINT foo_PK PRIMARY KEY (foo,bar);
+ALTER TABLE foo ADD CONSTRAINT foo_pk PRIMARY KEY (foo,bar);
 ";
         $this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
     }
@@ -181,10 +181,10 @@ CREATE TABLE foo
 (
     id NUMBER NOT NULL,
     bar NUMBER,
-    CONSTRAINT foo_U_1 UNIQUE (bar)
+    CONSTRAINT foo_u_14f552 UNIQUE (bar)
 );
 
-ALTER TABLE foo ADD CONSTRAINT foo_PK PRIMARY KEY (id);
+ALTER TABLE foo ADD CONSTRAINT foo_pk PRIMARY KEY (id);
 
 CREATE SEQUENCE foo_SEQ
     INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE ORDER;
@@ -234,7 +234,7 @@ DROP SEQUENCE foo_sequence;
      */
     public function testGetPrimaryKeyDDLSimpleKey($table)
     {
-        $expected ='CONSTRAINT foo_PK PRIMARY KEY (bar)';
+        $expected ='CONSTRAINT foo_pk PRIMARY KEY (bar)';
         $this->assertEquals($expected, $this->getPlatform()->getPrimaryKeyDDL($table));
     }
 
@@ -244,7 +244,7 @@ DROP SEQUENCE foo_sequence;
         $column = new Column('bar');
         $column->setPrimaryKey(true);
         $table->addColumn($column);
-        $expected = 'CONSTRAINT this_table_has_a_very_long__PK PRIMARY KEY (bar)';
+        $expected = 'CONSTRAINT this_table_has_a_very_long__pk PRIMARY KEY (bar)';
         $this->assertEquals($expected, $this->getPlatform()->getPrimaryKeyDDL($table));
     }
 
@@ -257,7 +257,7 @@ DROP SEQUENCE foo_sequence;
         $column2 = new Column('bar2');
         $column2->setPrimaryKey(true);
         $table->addColumn($column2);
-        $expected = 'CONSTRAINT foo_PK PRIMARY KEY (bar1,bar2)';
+        $expected = 'CONSTRAINT foo_pk PRIMARY KEY (bar1,bar2)';
         $this->assertEquals($expected, $this->getPlatform()->getPrimaryKeyDDL($table));
     }
 
@@ -267,7 +267,7 @@ DROP SEQUENCE foo_sequence;
     public function testGetDropPrimaryKeyDDL($table)
     {
         $expected = "
-ALTER TABLE foo DROP CONSTRAINT foo_PK;
+ALTER TABLE foo DROP CONSTRAINT foo_pk;
 ";
         $this->assertEquals($expected, $this->getPlatform()->getDropPrimaryKeyDDL($table));
     }
@@ -278,7 +278,7 @@ ALTER TABLE foo DROP CONSTRAINT foo_PK;
     public function testGetAddPrimaryKeyDDL($table)
     {
         $expected = "
-ALTER TABLE foo ADD CONSTRAINT foo_PK PRIMARY KEY (bar);
+ALTER TABLE foo ADD CONSTRAINT foo_pk PRIMARY KEY (bar);
 ";
         $this->assertEquals($expected, $this->getPlatform()->getAddPrimaryKeyDDL($table));
     }
@@ -342,11 +342,11 @@ DROP INDEX babar;
     public function testGetAddForeignKeysDDL($table)
     {
         $expected = "
-ALTER TABLE foo ADD CONSTRAINT foo_bar_FK
+ALTER TABLE foo ADD CONSTRAINT foo_bar_fk
     FOREIGN KEY (bar_id) REFERENCES bar (id)
     ON DELETE CASCADE;
 
-ALTER TABLE foo ADD CONSTRAINT foo_baz_FK
+ALTER TABLE foo ADD CONSTRAINT foo_baz_fk
     FOREIGN KEY (baz_id) REFERENCES baz (id)
     ON DELETE SET NULL;
 ";
@@ -359,7 +359,7 @@ ALTER TABLE foo ADD CONSTRAINT foo_baz_FK
     public function testGetAddForeignKeyDDL($fk)
     {
         $expected = "
-ALTER TABLE foo ADD CONSTRAINT foo_bar_FK
+ALTER TABLE foo ADD CONSTRAINT foo_bar_fk
     FOREIGN KEY (bar_id) REFERENCES bar (id)
     ON DELETE CASCADE;
 ";
@@ -381,7 +381,7 @@ ALTER TABLE foo ADD CONSTRAINT foo_bar_FK
     public function testGetDropForeignKeyDDL($fk)
     {
         $expected = "
-ALTER TABLE foo DROP CONSTRAINT foo_bar_FK;
+ALTER TABLE foo DROP CONSTRAINT foo_bar_fk;
 ";
         $this->assertEquals($expected, $this->getPLatform()->getDropForeignKeyDDL($fk));
     }
@@ -400,7 +400,7 @@ ALTER TABLE foo DROP CONSTRAINT foo_bar_FK;
      */
     public function testGetForeignKeyDDL($fk)
     {
-        $expected = "CONSTRAINT foo_bar_FK
+        $expected = "CONSTRAINT foo_bar_fk
     FOREIGN KEY (bar_id) REFERENCES bar (id)
     ON DELETE CASCADE";
         $this->assertEquals($expected, $this->getPLatform()->getForeignKeyDDL($fk));
@@ -513,7 +513,7 @@ STORAGE
 )
 TABLESPACE L_128K;
 
-ALTER TABLE book ADD CONSTRAINT book_PK PRIMARY KEY (id)
+ALTER TABLE book ADD CONSTRAINT book_pk PRIMARY KEY (id)
 USING INDEX
 PCTFREE 20
 INITRANS 4
@@ -528,7 +528,7 @@ TABLESPACE IL_128K;
 CREATE SEQUENCE book_SEQ
     INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE ORDER;
 
-CREATE INDEX book_I_1 ON book (title)
+CREATE INDEX book_i_639136 ON book (title)
 PCTFREE 20
 INITRANS 4
 STORAGE
@@ -563,7 +563,7 @@ STORAGE
 )
 TABLESPACE L_128K;
 
-ALTER TABLE author ADD CONSTRAINT author_PK PRIMARY KEY (id)
+ALTER TABLE author ADD CONSTRAINT author_pk PRIMARY KEY (id)
 USING INDEX
 PCTFREE 20
 INITRANS 4
@@ -582,7 +582,7 @@ CREATE SEQUENCE author_SEQ
 -- Foreign Keys
 -----------------------------------------------------------------------
 
-ALTER TABLE book ADD CONSTRAINT book_FK_1
+ALTER TABLE book ADD CONSTRAINT book_fk_4444ca
     FOREIGN KEY (author_id) REFERENCES author (id);
 
 EOF;

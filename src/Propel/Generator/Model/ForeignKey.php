@@ -96,6 +96,11 @@ class ForeignKey extends MappingModel
     private $skipSql;
 
     /**
+     * @var bool
+     */
+    private $autoNaming = false;
+
+    /**
      * Constructs a new ForeignKey object.
      *
      * @param string $name
@@ -120,10 +125,6 @@ class ForeignKey extends MappingModel
         $this->foreignTableCommonName = $this->parentTable->getDatabase()->getTablePrefix() . $this->getAttribute('foreignTable');
         $this->foreignSchemaName      = $this->getAttribute('foreignSchema');
 
-        if (!$this->foreignSchemaName && $schema = $this->getSchemaName()) {
-            $this->foreignSchemaName = $schema;
-        }
-
         $this->name        = $this->getAttribute('name');
         $this->phpName     = $this->getAttribute('phpName');
         $this->refPhpName  = $this->getAttribute('refPhpName');
@@ -131,6 +132,27 @@ class ForeignKey extends MappingModel
         $this->onUpdate    = $this->normalizeFKey($this->getAttribute('onUpdate'));
         $this->onDelete    = $this->normalizeFKey($this->getAttribute('onDelete'));
         $this->skipSql     = $this->booleanValue($this->getAttribute('skipSql'));
+    }
+
+    protected function doNaming()
+    {
+        if (!$this->name || $this->autoNaming) {
+            $newName = 'fk_';
+
+            $hash = [];
+            $hash[] = $this->foreignSchemaName . '.' . $this->foreignTableCommonName;
+            $hash[] = implode(',', (array)$this->localColumns);
+            $hash[] = implode(',', (array)$this->foreignColumns);
+
+            $newName .= substr(md5(strtolower(implode(':', $hash))), 0, 6);
+
+            if ($this->parentTable) {
+                $newName = $this->parentTable->getCommonName() . '_' . $newName;
+            }
+
+            $this->name = $newName;
+            $this->autoNaming = true;
+        }
     }
 
     /**
@@ -236,6 +258,8 @@ class ForeignKey extends MappingModel
      */
     public function getName()
     {
+        $this->doNaming();
+
         return $this->name;
     }
 
@@ -246,6 +270,7 @@ class ForeignKey extends MappingModel
      */
     public function setName($name)
     {
+        $this->autoNaming = !$name; //if no name we activate autoNaming
         $this->name = $name;
     }
 
@@ -345,7 +370,7 @@ class ForeignKey extends MappingModel
         }
 
         $database = $this->getDatabase();
-        if ($database && ($schema = $database->getSchema()) && $platform->supportsSchemas()) {
+        if ($database && ($schema = $this->parentTable->guessSchemaName()) && $platform->supportsSchemas()) {
             return $schema
                 . $platform->getSchemaDelimiter()
                 . $this->foreignTableCommonName

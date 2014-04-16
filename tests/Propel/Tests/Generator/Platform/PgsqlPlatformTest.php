@@ -27,7 +27,7 @@ class PgsqlPlatformTest extends PlatformTestProvider
     /**
      * Get the Platform object for this class
      *
-     * @return Platform
+     * @return PgsqlPlatform
      */
     protected function getPlatform()
     {
@@ -84,7 +84,7 @@ CREATE TABLE book
     PRIMARY KEY (id)
 );
 
-CREATE INDEX book_I_1 ON book (title);
+CREATE INDEX book_i_639136 ON book (title);
 
 -----------------------------------------------------------------------
 -- author
@@ -100,7 +100,7 @@ CREATE TABLE author
     PRIMARY KEY (id)
 );
 
-ALTER TABLE book ADD CONSTRAINT book_FK_1
+ALTER TABLE book ADD CONSTRAINT book_fk_ea464c
     FOREIGN KEY (author_id)
     REFERENCES author (id);
 
@@ -224,7 +224,7 @@ CREATE TABLE x.book
     PRIMARY KEY (id)
 );
 
-CREATE INDEX book_I_1 ON x.book (title);
+CREATE INDEX book_i_639136 ON x.book (title);
 
 -----------------------------------------------------------------------
 -- y.author
@@ -254,11 +254,11 @@ CREATE TABLE x.book_summary
     PRIMARY KEY (id)
 );
 
-ALTER TABLE x.book ADD CONSTRAINT book_FK_1
+ALTER TABLE x.book ADD CONSTRAINT book_fk_4444ca
     FOREIGN KEY (author_id)
     REFERENCES y.author (id);
 
-ALTER TABLE x.book_summary ADD CONSTRAINT book_summary_FK_1
+ALTER TABLE x.book_summary ADD CONSTRAINT book_summary_fk_23450f
     FOREIGN KEY (book_id)
     REFERENCES x.book (id)
     ON DELETE CASCADE;
@@ -321,7 +321,7 @@ CREATE TABLE foo
     id serial NOT NULL,
     bar INTEGER,
     PRIMARY KEY (id),
-    CONSTRAINT foo_U_1 UNIQUE (bar)
+    CONSTRAINT foo_u_14f552 UNIQUE (bar)
 );
 
 EOF;
@@ -636,12 +636,12 @@ DROP INDEX babar;
     public function testGetAddForeignKeysDDL($table)
     {
         $expected = "
-ALTER TABLE foo ADD CONSTRAINT foo_bar_FK
+ALTER TABLE foo ADD CONSTRAINT foo_bar_fk
     FOREIGN KEY (bar_id)
     REFERENCES bar (id)
     ON DELETE CASCADE;
 
-ALTER TABLE foo ADD CONSTRAINT foo_baz_FK
+ALTER TABLE foo ADD CONSTRAINT foo_baz_fk
     FOREIGN KEY (baz_id)
     REFERENCES baz (id)
     ON DELETE SET NULL;
@@ -655,7 +655,7 @@ ALTER TABLE foo ADD CONSTRAINT foo_baz_FK
     public function testGetAddForeignKeyDDL($fk)
     {
         $expected = "
-ALTER TABLE foo ADD CONSTRAINT foo_bar_FK
+ALTER TABLE foo ADD CONSTRAINT foo_bar_fk
     FOREIGN KEY (bar_id)
     REFERENCES bar (id)
     ON DELETE CASCADE;
@@ -678,7 +678,7 @@ ALTER TABLE foo ADD CONSTRAINT foo_bar_FK
     public function testGetDropForeignKeyDDL($fk)
     {
         $expected = "
-ALTER TABLE foo DROP CONSTRAINT foo_bar_FK;
+ALTER TABLE foo DROP CONSTRAINT foo_bar_fk;
 ";
         $this->assertEquals($expected, $this->getPlatform()->getDropForeignKeyDDL($fk));
     }
@@ -697,7 +697,7 @@ ALTER TABLE foo DROP CONSTRAINT foo_bar_FK;
      */
     public function testGetForeignKeyDDL($fk)
     {
-        $expected = "CONSTRAINT foo_bar_FK
+        $expected = "CONSTRAINT foo_bar_fk
     FOREIGN KEY (bar_id)
     REFERENCES bar (id)
     ON DELETE CASCADE";

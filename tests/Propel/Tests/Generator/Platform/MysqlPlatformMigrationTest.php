@@ -44,7 +44,7 @@ class MysqlPlatformMigrationTest extends PlatformMigrationTestProvider
     /**
      * @dataProvider providerForTestGetModifyDatabaseDDL
      */
-    public function testGetModifyDatabaseDDL($databaseDiff)
+    public function testRenameTableDDL($databaseDiff)
     {
         $expected = "
 # This is a fix for InnoDB in MySQL >= 4.1.x
@@ -53,7 +53,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 
 DROP TABLE IF EXISTS `foo1`;
 
-DROP TABLE IF EXISTS `foo3`;
+RENAME TABLE `foo3` TO `foo4`;
 
 ALTER TABLE `foo2`
 
@@ -65,13 +65,6 @@ ALTER TABLE `foo2`
 (
     `baz3` TEXT
 );
-
-CREATE TABLE `foo4`
-(
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `yipee` INTEGER,
-    PRIMARY KEY (`id`)
-) ENGINE=InnoDB;
 
 CREATE TABLE `foo5`
 (
@@ -104,15 +97,15 @@ RENAME TABLE `foo1` TO `foo2`;
     public function testGetModifyTableDDL($tableDiff)
     {
         $expected = "
-ALTER TABLE `foo` DROP FOREIGN KEY `foo1_FK_2`;
+ALTER TABLE `foo` DROP FOREIGN KEY `foo1_fk_2`;
 
-ALTER TABLE `foo` DROP FOREIGN KEY `foo1_FK_1`;
+ALTER TABLE `foo` DROP FOREIGN KEY `foo1_fk_1`;
 
-DROP INDEX `bar_baz_FK` ON `foo`;
+DROP INDEX `bar_baz_fk` ON `foo`;
 
-DROP INDEX `foo1_FI_2` ON `foo`;
+DROP INDEX `foo1_fi_2` ON `foo`;
 
-DROP INDEX `bar_FK` ON `foo`;
+DROP INDEX `bar_fk` ON `foo`;
 
 ALTER TABLE `foo`
 
@@ -125,11 +118,11 @@ ALTER TABLE `foo`
     `baz3` TEXT
 );
 
-CREATE INDEX `bar_FK` ON `foo` (`bar1`);
+CREATE INDEX `bar_fk` ON `foo` (`bar1`);
 
-CREATE INDEX `baz_FK` ON `foo` (`baz3`);
+CREATE INDEX `baz_fk` ON `foo` (`baz3`);
 
-ALTER TABLE `foo` ADD CONSTRAINT `foo1_FK_1`
+ALTER TABLE `foo` ADD CONSTRAINT `foo1_fk_1`
     FOREIGN KEY (`bar1`)
     REFERENCES `foo2` (`bar`);
 ";
@@ -173,13 +166,13 @@ ALTER TABLE `foo` ADD PRIMARY KEY (`id`,`bar`);
     public function testGetModifyTableIndicesDDL($tableDiff)
     {
         $expected = "
-DROP INDEX `bar_FK` ON `foo`;
+DROP INDEX `bar_fk` ON `foo`;
 
-CREATE INDEX `baz_FK` ON `foo` (`baz`);
+CREATE INDEX `baz_fk` ON `foo` (`baz`);
 
-DROP INDEX `bar_baz_FK` ON `foo`;
+DROP INDEX `bar_baz_fk` ON `foo`;
 
-CREATE INDEX `bar_baz_FK` ON `foo` (`id`, `bar`, `baz`);
+CREATE INDEX `bar_baz_fk` ON `foo` (`id`, `bar`, `baz`);
 ";
         $this->assertEquals($expected, $this->getPlatform()->getModifyTableIndicesDDL($tableDiff));
     }
@@ -190,15 +183,15 @@ CREATE INDEX `bar_baz_FK` ON `foo` (`id`, `bar`, `baz`);
     public function testGetModifyTableForeignKeysDDL($tableDiff)
     {
         $expected = "
-ALTER TABLE `foo1` DROP FOREIGN KEY `foo1_FK_1`;
+ALTER TABLE `foo1` DROP FOREIGN KEY `foo1_fk_1`;
 
-ALTER TABLE `foo1` ADD CONSTRAINT `foo1_FK_3`
+ALTER TABLE `foo1` ADD CONSTRAINT `foo1_fk_3`
     FOREIGN KEY (`baz`)
     REFERENCES `foo2` (`baz`);
 
-ALTER TABLE `foo1` DROP FOREIGN KEY `foo1_FK_2`;
+ALTER TABLE `foo1` DROP FOREIGN KEY `foo1_fk_2`;
 
-ALTER TABLE `foo1` ADD CONSTRAINT `foo1_FK_2`
+ALTER TABLE `foo1` ADD CONSTRAINT `foo1_fk_2`
     FOREIGN KEY (`bar`,`id`)
     REFERENCES `foo2` (`bar`,`id`);
 ";
@@ -211,11 +204,11 @@ ALTER TABLE `foo1` ADD CONSTRAINT `foo1_FK_2`
     public function testGetModifyTableForeignKeysSkipSqlDDL($tableDiff)
     {
         $expected = "
-ALTER TABLE `foo1` DROP FOREIGN KEY `foo1_FK_1`;
+ALTER TABLE `foo1` DROP FOREIGN KEY `foo1_fk_1`;
 ";
         $this->assertEquals($expected, $this->getPlatform()->getModifyTableForeignKeysDDL($tableDiff));
         $expected = "
-ALTER TABLE `foo1` ADD CONSTRAINT `foo1_FK_1`
+ALTER TABLE `foo1` ADD CONSTRAINT `foo1_fk_1`
     FOREIGN KEY (`bar`)
     REFERENCES `foo2` (`bar`);
 ";
@@ -346,5 +339,57 @@ ALTER TABLE `foo` ADD
 
         $this->assertEquals('bar2', $secondPair[0]->getName());
         $this->assertEquals('bar_la2', $secondPair[1]->getName());
+    }
+
+    public function testTableRenaming()
+    {
+        $schema1 = '
+<database name="test">
+    <table name="foo">
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <column name="bar1" type="INTEGER" />
+        <column name="bar2" type="INTEGER" />
+    </table>
+    <table name="foo2">
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <column name="bar1" type="INTEGER" />
+        <column name="bar2" type="INTEGER" />
+    </table>
+</database>
+';
+        $schema2 = '
+<database name="test">
+    <table name="foo_bla">
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <column name="bar1" type="INTEGER" />
+        <column name="bar2" type="INTEGER" />
+    </table>
+    <table name="foo_bla2">
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <column name="bar1" type="INTEGER" />
+        <column name="bar2" type="INTEGER" />
+    </table>
+</database>
+';
+
+        $d1 = $this->getDatabaseFromSchema($schema1);
+        $d2 = $this->getDatabaseFromSchema($schema2);
+
+        $diff = DatabaseComparator::computeDiff($d1, $d2, false, true);
+        $renamedTables = $diff->getRenamedTables();
+
+        $firstPair = array(key($renamedTables), current($renamedTables));
+        next($renamedTables);
+        $secondPair = array(key($renamedTables), current($renamedTables));
+
+        $this->assertEquals('foo', $firstPair[0]);
+        $this->assertEquals('foo_bla', $firstPair[1]);
+
+        $this->assertEquals('foo2', $secondPair[0]);
+        $this->assertEquals(
+            'foo_bla2',
+            $secondPair[1],
+            'Table `Foo2` should not renamed to `foo_bla` since we have already renamed a table to this name.'
+        );
     }
 }

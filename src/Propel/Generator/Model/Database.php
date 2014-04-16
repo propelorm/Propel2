@@ -460,7 +460,6 @@ class Database extends ScopedMappingModel
         if (!$table instanceof Table) {
             $tbl = new Table();
             $tbl->setDatabase($this);
-            $tbl->setSchema($this->getSchema());
             $tbl->loadMapping($table);
 
             return $this->addTable($tbl);
@@ -470,10 +469,6 @@ class Database extends ScopedMappingModel
 
         if (isset($this->tablesByName[$table->getName()])) {
             throw new EngineException(sprintf('Table "%s" declared twice', $table->getName()));
-        }
-
-        if (null === $table->getSchema()) {
-            $table->setSchema($this->getSchema());
         }
 
         $this->tables[] = $table;
@@ -798,7 +793,6 @@ class Database extends ScopedMappingModel
     protected function setupTableReferrers()
     {
         foreach ($this->tables as $table) {
-            $table->doNaming();
             $table->setupReferrers();
         }
     }
@@ -823,8 +817,10 @@ class Database extends ScopedMappingModel
 
             $fks = [];
             foreach ($table->getForeignKeys() as $fk) {
-                $fks[] = sprintf("      %s (%s => %s)",
+                $fks[] = sprintf("      %s to %s.%s (%s => %s)",
                     $fk->getName(),
+                    $fk->getForeignSchemaName(),
+                    $fk->getForeignTableCommonName(),
                     join(', ', $fk->getLocalColumns()),
                     join(', ', $fk->getForeignColumns())
                 );

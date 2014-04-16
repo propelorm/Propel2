@@ -210,7 +210,8 @@ class QuickBuilder
 
     public function buildSQL(ConnectionInterface $con)
     {
-        $statements = SqlParser::parseString($this->getSQL());
+        $sql = $this->getSQL();
+        $statements = SqlParser::parseString($sql);
         foreach ($statements as $statement) {
             if (strpos($statement, 'DROP') === 0) {
                 // drop statements cause errors since the table doesn't exist
@@ -222,7 +223,7 @@ class QuickBuilder
                     // only execute if has no error
                     $stmt->execute();
                 }
-            } catch (\PDOException $e) {
+            } catch (\Exception $e) {
                 throw new \Exception('SQL failed: ' . $statement, 0, $e);
             }
         }
