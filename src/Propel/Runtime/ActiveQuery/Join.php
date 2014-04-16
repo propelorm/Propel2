@@ -127,6 +127,7 @@ class Join
      * @param array $lefts     The left columns of the join condition
      * @param array $rights    The right columns of the join condition
      * @param array $operators The comparison operators of the join condition, default Join::EQUAL
+     * @throws \Propel\Runtime\Exception\LogicException
      */
     public function addConditions($lefts, $rights, $operators = array())
     {
@@ -208,6 +209,7 @@ class Join
     }
 
     /**
+     * @param int $index
      * @return string[] the comparison operator for the join condition
      */
     public function getOperator($index = 0)
@@ -306,6 +308,10 @@ class Join
         return $columns;
     }
 
+    /**
+     * @param string $leftTableName
+     * @return $this
+     */
     public function setLeftTableName($leftTableName)
     {
         $this->leftTableName = $leftTableName;
@@ -313,11 +319,18 @@ class Join
         return $this;
     }
 
+    /**
+     * @return null|string
+     */
     public function getLeftTableName()
     {
         return $this->leftTableName;
     }
 
+    /**
+     * @param string $leftTableAlias
+     * @return $this
+     */
     public function setLeftTableAlias($leftTableAlias)
     {
         $this->leftTableAlias = $leftTableAlias;
@@ -325,21 +338,33 @@ class Join
         return $this;
     }
 
+    /**
+     * @return null|string
+     */
     public function getLeftTableAlias()
     {
         return $this->leftTableAlias;
     }
 
+    /**
+     * @return bool
+     */
     public function hasLeftTableAlias()
     {
         return null !== $this->leftTableAlias;
     }
 
+    /**
+     * @return null|string
+     */
     public function getLeftTableAliasOrName()
     {
         return $this->leftTableAlias ? $this->leftTableAlias : $this->leftTableName;
     }
 
+    /**
+     * @return string
+     */
     public function getLeftTableWithAlias()
     {
         return $this->leftTableAlias ? $this->leftTableName . ' ' . $this->leftTableAlias : $this->leftTableName;
@@ -407,6 +432,10 @@ class Join
         return $columns;
     }
 
+    /**
+     * @param string $rightTableName
+     * @return $this
+     */
     public function setRightTableName($rightTableName)
     {
         $this->rightTableName = $rightTableName;
@@ -414,11 +443,18 @@ class Join
         return $this;
     }
 
+    /**
+     * @return null|string
+     */
     public function getRightTableName()
     {
         return $this->rightTableName;
     }
 
+    /**
+     * @param string $rightTableAlias
+     * @return $this
+     */
     public function setRightTableAlias($rightTableAlias)
     {
         $this->rightTableAlias = $rightTableAlias;
@@ -426,21 +462,33 @@ class Join
         return $this;
     }
 
+    /**
+     * @return null|string
+     */
     public function getRightTableAlias()
     {
         return $this->rightTableAlias;
     }
 
+    /**
+     * @return bool
+     */
     public function hasRightTableAlias()
     {
         return null !== $this->rightTableAlias;
     }
 
+    /**
+     * @return null|string
+     */
     public function getRightTableAliasOrName()
     {
         return $this->rightTableAlias ? $this->rightTableAlias : $this->rightTableName;
     }
 
+    /**
+     * @return string
+     */
     public function getRightTableWithAlias()
     {
         return $this->rightTableAlias ? $this->rightTableName . ' ' . $this->rightTableAlias : $this->rightTableName;
@@ -553,12 +601,20 @@ class Join
         );
     }
 
+    /**
+     * @param null|Join $join
+     * @return bool
+     */
     public function equals($join)
     {
+        $parametersOfThisClauses = array();
+        $parametersOfJoinClauses = array();
+
         return null !== $join
             && $join instanceof Join
-            && $this->joinType === $join->getJoinType()
+            && $this->getJoinType() === $join->getJoinType()
             && $this->getConditions() == $join->getConditions()
+            && $this->getClause($parametersOfThisClauses) == $join->getClause($parametersOfJoinClauses)
         ;
     }
 
@@ -574,6 +630,9 @@ class Join
         return $this->getClause($params);
     }
 
+    /**
+     * @return string
+     */
     public function __toString()
     {
         return $this->toString();
