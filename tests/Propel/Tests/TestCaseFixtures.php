@@ -39,6 +39,10 @@ class TestCaseFixtures extends TestCase
      */
     protected $con;
 
+    public static $lastBuildDsn;
+    public static $lastBuildMode;
+    public static $lastReadConfigs;
+
     /**
      * Setup fixture. Needed here because we want to have a realistic code coverage value.
      */
@@ -114,16 +118,24 @@ class TestCaseFixtures extends TestCase
             "$dsn\n$mode\nFixtures has been created. Delete this file to let the test suite regenerate all fixtures."
         );
 
+        static::$lastBuildDsn = $dsn;
+        static::$lastBuildMode = $mode;
+        static::$lastReadConfigs = '';
+
         $this->readAllRuntimeConfigs();
     }
 
     protected function getLastBuildMode()
     {
+        if (static::$lastBuildMode) {
+            return static::$lastBuildMode;
+        }
+
         $builtInfo = __DIR__ . '/../../Fixtures/fixtures_built';
         if (file_exists($builtInfo) && ($h = fopen($builtInfo, 'r'))) {
             fgets($h);
             $secondLine = fgets($h);
-            return trim($secondLine);
+            return static::$lastBuildMode = trim($secondLine);
         }
     }
 
@@ -132,12 +144,18 @@ class TestCaseFixtures extends TestCase
      */
     protected function readAllRuntimeConfigs()
     {
+        if (static::$lastReadConfigs === static::$lastBuildMode.':'.static::$lastBuildDsn) {
+            return;
+        }
+
         $finder = new Finder();
         $finder->files()->name('*-conf.php')->in(__DIR__.'/../../Fixtures/');
 
         foreach ($finder as $file) {
             include_once($file->getPathname());
         }
+
+        static::$lastReadConfigs = static::$lastBuildMode.':'.static::$lastBuildDsn;
     }
 
     /**
@@ -147,9 +165,13 @@ class TestCaseFixtures extends TestCase
      */
     protected function getBuiltDsn()
     {
+        if (static::$lastBuildDsn) {
+            return static::$lastBuildDsn;
+        }
+
         $builtInfo = __DIR__ . '/../../Fixtures/fixtures_built';
         if (file_exists($builtInfo) && ($h = fopen($builtInfo, 'r')) && $firstLine = fgets($h)) {
-            return trim($firstLine);
+            return static::$lastBuildDsn = trim($firstLine);
         }
     }
 
