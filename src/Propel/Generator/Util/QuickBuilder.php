@@ -303,7 +303,7 @@ class QuickBuilder
      */
     public function buildClasses(array $classTargets = null, $separate = false)
     {
-        $classes = $classTargets ? : array('tablemap', 'object', 'query', 'objectstub', 'querystub');
+        $classes = $classTargets === null ? array('tablemap', 'object', 'query', 'objectstub', 'querystub') : $classTargets;
 
         $dirHash = substr(sha1(getcwd()), 0, 10);
         $dir = sys_get_temp_dir() . "/propelQuickBuild-$dirHash/";
