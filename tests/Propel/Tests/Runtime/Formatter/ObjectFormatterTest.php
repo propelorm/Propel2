@@ -10,6 +10,7 @@
 
 namespace Propel\Tests\Runtime\Formatter;
 
+use Propel\Tests\Bookstore\AuthorCollection;
 use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
 use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
 
@@ -60,6 +61,15 @@ class ObjectFormatterTest extends BookstoreEmptyTestBase
         $books = $formatter->format($stmt);
         $this->assertTrue($books instanceof ObjectCollection);
         $this->assertEquals(4, $books->count());
+    }
+
+    public function testFormatValidClassCustomCollection()
+    {
+        $stmt = $this->con->query('SELECT * FROM author');
+        $formatter = new ObjectFormatter();
+        $formatter->setClass('\Propel\Tests\Bookstore\Author');
+        $authors = $formatter->format($stmt);
+        $this->assertTrue($authors instanceof AuthorCollection);
     }
 
     public function testFormatManyResults()
