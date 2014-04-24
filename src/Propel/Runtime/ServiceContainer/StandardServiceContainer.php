@@ -14,6 +14,7 @@ use Propel\Runtime\Adapter\AdapterFactory;
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Adapter\Exception\AdapterException;
 use Propel\Runtime\Exception\UnexpectedValueException;
+use Propel\Runtime\Exception\RuntimeException;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\ConnectionManagerInterface;
 use Propel\Runtime\Connection\ConnectionManagerSingle;
@@ -270,9 +271,14 @@ class StandardServiceContainer implements ServiceContainerInterface
      * @param string $name The datasource name
      *
      * @return \Propel\Runtime\Connection\ConnectionManagerInterface
+     * @throws \Propel\Runtime\Exception\RuntimeException - if the datasource doesn't exist
      */
     public function getConnectionManager($name)
     {
+        if (!isset($this->connectionManagers[$name])) {
+            throw new RuntimeException(sprintf('No connection defined for database "%s". Did you forget to define a connection or is it wrong written?', $name));
+        }
+
         return $this->connectionManagers[$name];
     }
 
