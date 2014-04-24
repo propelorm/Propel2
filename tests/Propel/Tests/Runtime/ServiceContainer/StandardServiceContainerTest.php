@@ -242,6 +242,14 @@ class StandardServiceContainerTest extends BaseTestCase
         $this->assertEquals($expected, $this->sc->getConnectionManagers());
     }
 
+    /**
+     * @expectedException Propel\Runtime\Exception\RuntimeException
+     */
+    public function testGetConnectionManagerWithUnknownDatasource()
+    {
+        $this->sc->getConnectionManager('unknown');
+    }
+
     public function testCloseConnectionsClosesConnectionsOnAllConnectionManagers()
     {
         $manager1 = new TestableConnectionManagerSingle();
