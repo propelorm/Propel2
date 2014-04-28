@@ -153,4 +153,13 @@ class MigrationManagerTest extends TestCase
 
         $this->assertEquals(2, $migrationManager->getFirstDownMigrationTimestamp());
     }
+
+    public function testGetCommentMigrationManager()
+    {
+        $migrationManager = $this->createMigrationManager([1, 2, 3]);
+
+        $body = $migrationManager->getMigrationClassBody("foo", "bar", 4, "migration comment");
+
+        $this->assertContains('public $comment = \'migration comment\';', $body);
+    }
 }
