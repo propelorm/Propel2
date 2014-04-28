@@ -88,6 +88,9 @@ class MigrationMigrateCommand extends AbstractCommand
             ));
 
             $migration = $manager->getMigrationObject($timestamp);
+            if (property_exists($migration, 'comment') && $migration->comment) {
+                $output->writeln(sprintf('<info>%s</info>', $migration->comment));
+            }
             if (false === $migration->preUp($manager)) {
                 $output->writeln('<error>preUp() returned false. Aborting migration.</error>');
 

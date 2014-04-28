@@ -1,13 +1,14 @@
 <?php
 
-/*
- *	$Id: TableTest.php 1891 2010-08-09 15:03:18Z francois $
+/**
  * This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license MIT License
+ * @license    MIT License
  */
+
+namespace Propel\Tests\Generator\Model\Diff\DatabaseTableComparatorTest;
 
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\ColumnDefaultValue;
@@ -17,7 +18,7 @@ use Propel\Generator\Model\Diff\DatabaseComparator;
 use Propel\Generator\Model\Diff\DatabaseDiff;
 use Propel\Generator\Model\Diff\TableComparator;
 use Propel\Generator\Platform\MysqlPlatform;
-use \Propel\Tests\TestCase;
+use Propel\Tests\TestCase;
 
 /**
  * Tests for the Table method of the DatabaseComparator service class.
@@ -414,6 +415,145 @@ class PropelDatabaseTableComparatorTest extends TestCase
         $this->assertEquals(0, count($databaseDiff->getRenamedTables()));
         $this->assertEquals(array('table4', 'table5'), array_keys($databaseDiff->getAddedTables()));
         $this->assertEquals(array('table1', 'table2'), array_keys($databaseDiff->getRemovedTables()));
+    }
+
+
+    public function testRemoveTable()
+    {
+        $dc = new DatabaseComparator();
+        $this->assertTrue($dc->getRemoveTable());
+
+        $dc->setRemoveTable(false);
+        $this->assertFalse($dc->getRemoveTable());
+
+        $dc->setRemoveTable(true);
+        $this->assertTrue($dc->getRemoveTable());
+
+        $d1 = new Database();
+        $t1 = new Table('Foo');
+        $d1->addTable($t1);
+        $d2 = new Database();
+
+
+        // with renaming false and remove false
+        $diff = DatabaseComparator::computeDiff($d1, $d2, false, false, false);
+        $this->assertFalse($diff);
+
+        // with renaming true and remove false
+        $diff = DatabaseComparator::computeDiff($d1, $d2, false, false, false);
+        $this->assertFalse($diff);
+
+        // with renaming false and remove true
+        $diff = DatabaseComparator::computeDiff($d1, $d2, false, false, true);
+        $this->assertInstanceOf('Propel\Generator\Model\Diff\DatabaseDiff', $diff);
+
+        // with renaming true and remove true
+        $diff = DatabaseComparator::computeDiff($d1, $d2, false, true, true);
+        $this->assertInstanceOf('Propel\Generator\Model\Diff\DatabaseDiff', $diff);
+    }
+
+    public function testExcludedTablesWithoutRenaming()
+    {
+        $dc = new DatabaseComparator();
+        $this->assertCount(0, $dc->getExcludedTables());
+
+        $dc->setExcludedTables(array('foo'));
+        $this->assertCount(1, $dc->getExcludedTables());
+
+        $d1 = new Database();
+        $d2 = new Database();
+        $t2 = new Table('Bar');
+        $d2->addTable($t2);
+
+        $diff = DatabaseComparator::computeDiff($d1, $d2, false, false, true, array('Bar'));
+        $this->assertFalse($diff);
+
+        $diff = DatabaseComparator::computeDiff($d1, $d2, false, false, true, array('Baz'));
+        $this->assertInstanceOf('Propel\Generator\Model\Diff\DatabaseDiff', $diff);
+
+        $d1 = new Database();
+        $t1 = new Table('Foo');
+        $d1->addTable($t1);
+        $d2 = new Database();
+        $t2 = new Table('Bar');
+        $d2->addTable($t2);
+
+        $diff = DatabaseComparator::computeDiff($d1, $d2, false, false, true, array('Bar', 'Foo'));
+        $this->assertFalse($diff);
+
+        $diff = DatabaseComparator::computeDiff($d1, $d2, false, false, true, array('Foo'));
+        $this->assertInstanceOf('Propel\Generator\Model\Diff\DatabaseDiff', $diff);
+
+        $diff = DatabaseComparator::computeDiff($d1, $d2, false, false, true, array('Bar'));
+        $this->assertInstanceOf('Propel\Generator\Model\Diff\DatabaseDiff', $diff);
+
+
+        $d1 = new Database();
+        $t1 = new Table('Foo');
+        $c1 = new Column('col1');
+        $t1->addColumn($c1);
+        $d1->addTable($t1);
+        $d2 = new Database();
+        $t2 = new Table('Foo');
+        $d2->addTable($t2);
+
+        $diff = DatabaseComparator::computeDiff($d1, $d2, false, false, true, array('Bar', 'Foo'));
+        $this->assertFalse($diff);
+
+        $diff = DatabaseComparator::computeDiff($d1, $d2, false, false, true, array('Bar'));
+        $this->assertInstanceOf('Propel\Generator\Model\Diff\DatabaseDiff', $diff);
+    }
+
+    public function testExcludedTablesWithRenaming()
+    {
+        $dc = new DatabaseComparator();
+        $this->assertCount(0, $dc->getExcludedTables());
+
+        $dc->setExcludedTables(array('foo'));
+        $this->assertCount(1, $dc->getExcludedTables());
+
+        $d1 = new Database();
+        $d2 = new Database();
+        $t2 = new Table('Bar');
+        $d2->addTable($t2);
+
+        $diff = DatabaseComparator::computeDiff($d1, $d2, false, true, true, array('Bar'));
+        $this->assertFalse($diff);
+
+        $diff = DatabaseComparator::computeDiff($d1, $d2, false, true, true, array('Baz'));
+        $this->assertInstanceOf('Propel\Generator\Model\Diff\DatabaseDiff', $diff);
+
+        $d1 = new Database();
+        $t1 = new Table('Foo');
+        $d1->addTable($t1);
+        $d2 = new Database();
+        $t2 = new Table('Bar');
+        $d2->addTable($t2);
+
+        $diff = DatabaseComparator::computeDiff($d1, $d2, false, true, true, array('Bar', 'Foo'));
+        $this->assertFalse($diff);
+
+        $diff = DatabaseComparator::computeDiff($d1, $d2, false, true, true, array('Foo'));
+        $this->assertInstanceOf('Propel\Generator\Model\Diff\DatabaseDiff', $diff);
+
+        $diff = DatabaseComparator::computeDiff($d1, $d2, false, true, true, array('Bar'));
+        $this->assertInstanceOf('Propel\Generator\Model\Diff\DatabaseDiff', $diff);
+
+
+        $d1 = new Database();
+        $t1 = new Table('Foo');
+        $c1 = new Column('col1');
+        $t1->addColumn($c1);
+        $d1->addTable($t1);
+        $d2 = new Database();
+        $t2 = new Table('Foo');
+        $d2->addTable($t2);
+
+        $diff = DatabaseComparator::computeDiff($d1, $d2, false, true, true, array('Bar', 'Foo'));
+        $this->assertFalse($diff);
+
+        $diff = DatabaseComparator::computeDiff($d1, $d2, false, true, true, array('Bar'));
+        $this->assertInstanceOf('Propel\Generator\Model\Diff\DatabaseDiff', $diff);
     }
 
 }
