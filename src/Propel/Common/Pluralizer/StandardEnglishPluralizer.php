@@ -64,7 +64,7 @@ class StandardEnglishPluralizer implements PluralizerInterface
         'foot'  => 'feet',
         'goose' => 'geese',
         'tooth' => 'teeth',
-        'quiz' => 'quizzes',
+        'quiz'  => 'quizzes',
         'alias' => 'aliases',
 
         'alf'  => 'alves',
@@ -92,8 +92,8 @@ class StandardEnglishPluralizer implements PluralizerInterface
         'mythos' => 'mythoi',
         'testis' => 'testes',
         'numen'  => 'numina',
-        'quiz' => 'quizzes',
-        'alias' => 'aliases',
+        'quiz'   => 'quizzes',
+        'alias'  => 'aliases',
     );
 
     protected $uncountable = array(
