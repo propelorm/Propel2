@@ -154,9 +154,14 @@ class ConcreteInheritanceBehavior extends Behavior
     public function preSave($script)
     {
         if ($this->isCopyData()) {
-            return "\$parent = \$this->getSyncParent(\$con);
-\$parent->save(\$con);
-\$this->setPrimaryKey(\$parent->getPrimaryKey());
+            return "if(!\$this->alreadyInSave)
+{
+    \$this->alreadyInSave = true;
+    \$parent = \$this->getSyncParent(\$con);
+    \$parent->save(\$con);
+    \$this->setPrimaryKey(\$parent->getPrimaryKey());
+    \$this->alreadyInSave = false;
+}
 ";
         }
     }
@@ -222,37 +227,43 @@ public function getParentOrCreate(\$con = null)
         $parentTable = $this->getParentTable();
         $pkeys = $parentTable->getPrimaryKey();
         $cptype = $pkeys[0]->getPhpType();
+        $parentClass = $this->builder->getClassNameFromBuilder($this->builder->getNewObjectBuilder($parentTable));
         $script .= "
 /**
- * Create or Update the parent " . $parentTable->getPhpName() . " object
- * And return its primary key
+ * Retrieves the parent " . $parentTable->getPhpName() . " object.
+ * If parent object doesn't exist, creates it.
  *
- * @return    " . $cptype . " The primary key of the parent object
+ * @return    " . $cptype . " parent object
  */
 public function getSyncParent(\$con = null)
 {
-    \$parent = \$this->getParentOrCreate(\$con);";
-        foreach ($parentTable->getColumns() as $column) {
-            if ($column->isPrimaryKey() || $column->getName() == $this->getParameter('descendant_column')) {
-                continue;
+    if( null === \$this->a{$parentClass} ) {
+        \$parent = \$this->getParentOrCreate(\$con);";
+            foreach ($parentTable->getColumns() as $column) {
+                if ($column->isPrimaryKey() || $column->getName() == $this->getParameter('descendant_column')) {
+                    continue;
+                }
+                $phpName = $column->getPhpName();
+                $script .= "
+        \$parent->set{$phpName}(\$this->get{$phpName}());";
             }
-            $phpName = $column->getPhpName();
-            $script .= "
-    \$parent->set{$phpName}(\$this->get{$phpName}());";
-        }
-        foreach ($parentTable->getForeignKeys() as $fk) {
-            if (isset($fk->isParentChild) && $fk->isParentChild) {
-                continue;
+            foreach ($parentTable->getForeignKeys() as $fk) {
+                if (isset($fk->isParentChild) && $fk->isParentChild) {
+                    continue;
+                }
+                $refPhpName = $this->builder->getFKPhpNameAffix($fk, false);
+                $script .= "
+        if (\$this->get" . $refPhpName . "() && \$this->get" . $refPhpName . "()->isNew()) {
+            \$parent->set" . $refPhpName . "(\$this->get" . $refPhpName . "());
+        }";
             }
-            $refPhpName = $this->builder->getFKPhpNameAffix($fk, false);
             $script .= "
-    if (\$this->get" . $refPhpName . "() && \$this->get" . $refPhpName . "()->isNew()) {
-        \$parent->set" . $refPhpName . "(\$this->get" . $refPhpName . "());
-    }";
-        }
-        $script .= "
-
-    return \$parent;
+    
+	    \$this->set{$parentClass}(\$parent);
+        return \$parent;
+    } else {
+        return \$this->get{$parentClass}(\$con);
+    }
 }
 ";
     }
