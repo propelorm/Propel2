@@ -5247,7 +5247,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             if (\$this->isNew() || \$this->isModified()) {
                 // persist changes
                 if (\$this->isNew()) {
-                    \$this->doInsert(\$con);";
+                    \$this->doInsert(\$con);
+                    \$affectedRows += 1;";
         if ($reloadOnInsert) {
             $script .= "
                     if (!\$skipReload) {
@@ -5256,7 +5257,25 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         }
         $script .= "
                 } else {
-                    \$this->doUpdate(\$con);";
+                    \$amountOfUpdatedRows = \$this->doUpdate(\$con);
+                    if(0 === \$amountOfUpdatedRows) {";
+                $classPks = $this->getTable()->getPrimaryKey();
+                if(!empty($classPks)) {
+                    $queryClassName = $this->getQueryClassName();
+                    $script .= "
+                        //Verify that the object really doesn't exist
+                        \$amountOfExistingObjects = {$queryClassName}::create()->filterByPrimaryKey(\$this->getPrimaryKey())->count();
+                        if(0 === \$amountOfExistingObjects) {
+                            //We aim to rollback transaction if the object doesn't exist
+                            //Because new objects may have been created because of its update
+                            //Or other objects, will rely on a non-existant object.
+                            throw new PropelException('No object was found in database.');
+                        }";
+                }
+                $script .= "
+                    }
+                    \$affectedRows += \$amountOfUpdatedRows;
+                    ";
         if ($reloadOnUpdate) {
             $script .= "
                     if (!\$skipReload) {
@@ -5264,8 +5283,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                     }";
         }
         $script .= "
-                }
-                \$affectedRows += 1;";
+                }";
 
         // We need to rewind any LOB columns
         foreach ($table->getColumns() as $col) {

@@ -462,9 +462,108 @@ class GeneratedObjectTest extends BookstoreTestBase
         $book->setTitle("Salt: A World History");
         $affected = $book->save();
         $this->assertEquals(2, $affected, "Expected 2 affected rows when saving updated book with updated author.");
-
+    }
+    
+    /**
+        * Test updating an object which doesn't exist.
+    */
+    public function testSaveUpdateNonExistantObject()
+    {
+        try
+        {
+            //Delete all books & authors in order to verify such PK doesn't exist.
+            BookQuery::create()->deleteAll();
+            
+            $b = new Book();
+            $b->setId(100); //An Id which doesn't exist
+            $b->setNew(false);
+            $b->setTitle("Some new title.");
+            $b->save(); //Cause update
+            
+            $this->fail("An exception must be thrown when trying to save a non-existant object.");
+        }
+        catch(\Exception $x)
+        {
+            $this->assertInstanceOf('\Propel\Runtime\Exception\PropelException', $x);
+        }
     }
 
+    /**
+        * Test updating an object which doesn't exist, while adding a new foreign-key object.
+        * Verify that an exception is thrown, and the foreign-key object isn't saved.
+    */
+    public function testSaveUpdateNonExistingObjectWithNewFk()
+    {
+        //Constants
+        $AUTHOR_FIRST_NAME = "Mark";
+        $AUTHOR_LAST_NAME = "Kurlansky";
+        
+        try {   
+            //We must exit all transactions in order to verify that the author 
+            //doesn't exist outside the transaction.
+            while( $this->con->isInTransaction() ) {
+                $this->con->rollback();
+            }
+            
+            //Delete all books & authors to verify such objects do not exist.
+            BookQuery::create()->deleteAll();
+            AuthorQuery::create()->deleteAll();
+            
+            $b = new Book();
+            $b->setId(100); //An Id which doesn't exist.
+            $b->setNew(false);
+            
+            $author = new Author();
+            $author->setFirstName($AUTHOR_FIRST_NAME);
+            $author->setLastName($AUTHOR_LAST_NAME);
+            
+            $b->setAuthor($author);
+            $b->setTitle("Some new title");
+            $b->save(); //Cause author creation + book update
+            
+            $this->fail("An exception must be thrown when trying to save a non-existant object.");
+        }
+        catch(\Exception $x) {
+            $this->assertInstanceOf('\Propel\Runtime\Exception\PropelException', $x);
+        }
+        
+        //Verify that the author object wasn't saved
+        $amountOfAuthors = AuthorQuery::create()
+                                ->filterByFirstName($AUTHOR_FIRST_NAME)
+                                ->filterByLastName($AUTHOR_LAST_NAME)
+                                ->count();
+        
+        $this->assertEquals(0, $amountOfAuthors);
+    }
+
+    public function testSaveUpdateWhenNothingIsUpdated()
+    {
+        try {
+            //Constants
+            $BOOK_TITLE = "My Book Title";
+            
+            //Create a new book
+            $b = new Book();
+            $b->setTitle($BOOK_TITLE);
+            $b->save(); //Cause insert
+            
+            //Create another book, and cause no change
+            $b2 = new Book();
+            $b2->setId($b->getId());
+            $b2->setNew(false);
+            
+            //Set the title to the same one present in db
+            $b2->setTitle($BOOK_TITLE);
+            
+            $amountOfRowsUpdated = $b2->save(); //Cause update
+            
+            $this->assertEquals(0, $amountOfRowsUpdated);
+        }
+        catch(\Exception $x) {
+            $this->fail("save() must not throw an exception when no rows are updated, but object do exist.");
+        }
+    }
+    
     public function testSaveCanInsertNonEmptyObjects()
     {
         $b = new Book();
