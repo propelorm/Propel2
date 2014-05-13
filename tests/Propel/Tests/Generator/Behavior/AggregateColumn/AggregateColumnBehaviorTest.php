@@ -106,60 +106,76 @@ class AggregateColumnBehaviorTest extends BookstoreTestBase
     {
         list($poll, $item1, $item2) = $this->populatePoll();
         $this->assertEquals(19, $poll->getTotalScore());
+        $this->assertEquals(2, $poll->getNbVotes());
         $item1->setScore(10);
         $item1->save($this->con);
         $this->assertEquals(17, $poll->getTotalScore(), 'Updating a related object updates the aggregate column');
+        $this->assertEquals(2, $poll->getNbVotes());
     }
 
     public function testDeleteRelated()
     {
         list($poll, $item1, $item2) = $this->populatePoll();
         $this->assertEquals(19, $poll->getTotalScore());
+        $this->assertEquals(2, $poll->getNbVotes());
         $item1->delete($this->con);
         $this->assertEquals(7, $poll->getTotalScore(), 'Deleting a related object updates the aggregate column');
+        $this->assertEquals(1, $poll->getNbVotes());
         $item2->delete($this->con);
         $this->assertNull($poll->getTotalScore(), 'Deleting a related object updates the aggregate column');
+        $this->assertEquals(0, $poll->getNbVotes());
     }
 
     public function testUpdateRelatedWithQuery()
     {
         list($poll, $item1, $item2) = $this->populatePoll();
         $this->assertEquals(19, $poll->getTotalScore());
+        $this->assertEquals(2, $poll->getNbVotes());
         AggregateItemQuery::create()
             ->update(array('Score' => 4), $this->con);
         $this->assertEquals(8, $poll->getTotalScore(), 'Updating related objects with a query updates the aggregate column');
+        $this->assertEquals(2, $poll->getNbVotes());
     }
 
     public function testUpdateRelatedWithQueryUsingAlias()
     {
         list($poll, $item1, $item2) = $this->populatePoll();
         $this->assertEquals(19, $poll->getTotalScore());
+        $this->assertEquals(2, $poll->getNbVotes());
         AggregateItemQuery::create()
             ->setModelAlias('foo', true)
             ->update(array('Score' => 4), $this->con);
         $this->assertEquals(8, $poll->getTotalScore(), 'Updating related objects with a query using alias updates the aggregate column');
+        $this->assertEquals(2, $poll->getNbVotes());
     }
 
     public function testDeleteRelatedWithQuery()
     {
         list($poll, $item1, $item2) = $this->populatePoll();
         $this->assertEquals(19, $poll->getTotalScore());
+        $this->assertEquals(2, $poll->getNbVotes());
         AggregateItemQuery::create()
             ->deleteAll($this->con);
         $this->assertNull($poll->getTotalScore(), 'Deleting related objects with a query updates the aggregate column');
+        $this->assertEquals(0, $poll->getNbVotes());
     }
 
     public function testDeleteRelatedWithQueryUsingAlias()
     {
         list($poll, $item1, $item2) = $this->populatePoll();
         $this->assertEquals(19, $poll->getTotalScore());
-        if (!$this->runningOnSQLite()) {
-            AggregateItemQuery::create()
-                ->setModelAlias('foo', true)
-                ->filterById($item1->getId())
-                ->delete($this->con);
-            $this->assertEquals(7, $poll->getTotalScore(), 'Deleting related objects with a query using alias updates the aggregate column');
+        $this->assertEquals(2, $poll->getNbVotes());
+
+        if ($this->runningOnSQLite()) {
+            $this->markTestSkipped('Not executed on sqlite');
         }
+
+        AggregateItemQuery::create()
+            ->setModelAlias('foo', true)
+            ->filterById($item1->getId())
+            ->delete($this->con);
+        $this->assertEquals(7, $poll->getTotalScore(), 'Deleting related objects with a query using alias updates the aggregate column');
+        $this->assertEquals(1, $poll->getNbVotes());
     }
 
     public function testRemoveRelation()

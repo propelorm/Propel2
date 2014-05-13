@@ -789,7 +789,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
                         continue;
                     }
                     $script .= "
-" . $tab . '// ' . $behavior->getName() . " behavior
+" . $tab . '// ' . $behavior->getId() . " behavior
 ";
                     $script .= preg_replace('/^/m', $tab, $addedScript);
                 }

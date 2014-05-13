@@ -11,7 +11,7 @@
 use Propel\Generator\Builder\Util\SchemaReader;
 use Propel\Generator\Model\Behavior;
 use Propel\Generator\Model\Table;
-use \Propel\Tests\TestCase;
+use Propel\Tests\TestCase;
 
 /**
  * Tests for Behavior class
@@ -28,6 +28,33 @@ class BehaviorTest extends TestCase
         $b = new Behavior();
         $b->loadMapping(array('name' => 'foo'));
         $this->assertEquals($b->getName(), 'foo', 'setupObject() sets the Behavior name from XML attributes');
+    }
+
+    public function testSetupObjectWithMultipleBehaviorWithNoId()
+    {
+        $b = new Propel\Tests\Helpers\MultipleBehavior();
+        $b->loadMapping(array('name' => 'foo'));
+
+        $this->assertEquals($b->getName(), 'foo', 'setupObject() sets the Behavior name from XML attributes');
+        $this->assertEquals($b->getId(), 'foo', 'setupObject() sets the Behavior id from its name when no explicit id is given');
+    }
+
+    public function testSetupObjectWithMultipleBehaviorWithId()
+    {
+        $b = new Propel\Tests\Helpers\MultipleBehavior();
+        $b->loadMapping(array('name' => 'foo', 'id' => 'bar'));
+
+        $this->assertEquals($b->getName(), 'foo', 'setupObject() sets the Behavior name from XML attributes');
+        $this->assertEquals($b->getId(), 'bar', 'setupObject() sets the Behavior id from XML attributes');
+    }
+
+    /**
+     * @expectedException Propel\Generator\Exception\LogicException
+     */
+    public function testSetupObjectFailIfIdGivenOnNotMultipleBehavior()
+    {
+        $b = new Behavior();
+        $b->loadMapping(array('name' => 'foo', 'id' => 'lala'));
     }
 
     public function testName()

@@ -314,6 +314,10 @@ class XmlDumper implements DumperInterface
         $behaviorNode = $parentNode->appendChild($this->document->createElement('behavior'));
         $behaviorNode->setAttribute('name', $behavior->getName());
 
+        if ($behavior->allowMultiple()) {
+            $behaviorNode->setAttribute('id', $behavior->getId());
+        }
+
         foreach ($behavior->getParameters() as $name => $value) {
             $parameterNode = $behaviorNode->appendChild($this->document->createElement('parameter'));
             $parameterNode->setAttribute('name', $name);
