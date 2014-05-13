@@ -35,6 +35,13 @@ class Behavior extends MappingModel
     protected $database;
 
     /**
+     * The behavior id.
+     *
+     * @var string
+     */
+    protected $id;
+
+    /**
      * The behavior name.
      *
      * @var string
@@ -88,6 +95,20 @@ class Behavior extends MappingModel
     public function setName($name)
     {
         $this->name = $name;
+
+        if ($this->id === null) {
+            $this->id = $name;
+        }
+    }
+
+    /**
+     * Returns the id of the Behavior
+     *
+     * @return string
+     */
+    public function getId()
+    {
+        return $this->id;
     }
 
     /**
@@ -336,6 +357,7 @@ class Behavior extends MappingModel
     protected function setupObject()
     {
         $this->name = $this->getAttribute("name");
+        $this->id = $this->getAttribute("id") ?: $this->name;
     }
 
     /**

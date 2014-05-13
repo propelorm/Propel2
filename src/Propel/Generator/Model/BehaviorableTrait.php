@@ -60,7 +60,7 @@ trait BehaviorableTrait
         if ($bdata instanceof Behavior) {
             $behavior = $bdata;
             $this->registerBehavior($behavior);
-            $this->behaviors[$behavior->getName()] = $behavior;
+            $this->behaviors[$behavior->getId()] = $behavior;
 
             return $behavior;
         }
