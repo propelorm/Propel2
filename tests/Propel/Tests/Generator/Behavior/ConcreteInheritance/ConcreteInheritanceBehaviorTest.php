@@ -363,7 +363,7 @@ EOF;
  * @how_to_use Simply, call ConcreteArticleLoopSaveChecker->save(),
  * and then take the result from getDoesLoopParentSaveHappen().
  */
-class ConcreteArticleLoopSaveChecker extends ConcreteArticle
+class ConcreteArticleLoopSaveChecker extends \Propel\Tests\Bookstore\Behavior\ConcreteArticle
 {    
     public function getDoesLoopSavingOccur()
     {
