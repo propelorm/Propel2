@@ -374,6 +374,7 @@ class Column extends MappingModel
      */
     public function getSingularName()
     {
+        if ($this->getAttribute('phpSingularName')) return $this->getAttribute('phpSingularName');
         return rtrim($this->name, 's');
     }
 
