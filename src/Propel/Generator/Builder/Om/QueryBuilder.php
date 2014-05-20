@@ -1045,7 +1045,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     protected function addFilterByArrayCol(&$script, Column $col)
     {
         $colPhpName = $col->getPhpName();
-        $singularPhpName = $col->getSingularName();
+        $singularPhpName = $col->getPhpSingularName();
         $colName = $col->getName();
         $variableName = $col->getStudlyPhpName();
         $qualifiedName = $this->getColumnConstant($col);

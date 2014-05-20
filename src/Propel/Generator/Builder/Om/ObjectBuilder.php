@@ -1124,7 +1124,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $clo = $column->getLowercasedName();
         $cfc = $column->getPhpName();
         $visibility = $column->getAccessorVisibility();
-        $singularPhpName = $column->getSingularName();
+        $singularPhpName = $column->getPhpSingularName();
         $script .= "
     /**
      * Test the presence of a value in the [$clo] array column value.
@@ -1676,7 +1676,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $clo = $col->getLowercasedName();
         $cfc = $col->getPhpName();
         $visibility = $col->getAccessorVisibility();
-        $singularPhpName = $col->getSingularName();
+        $singularPhpName = $col->getPhpSingularName();
         $script .= "
     /**
      * Adds a value to the [$clo] array column value.
@@ -1720,7 +1720,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $clo = $col->getLowercasedName();
         $cfc = $col->getPhpName();
         $visibility = $col->getAccessorVisibility();
-        $singularPhpName = $col->getSingularName();
+        $singularPhpName = $col->getPhpSingularName();
         $script .= "
     /**
      * Removes a value from the [$clo] array column value.
