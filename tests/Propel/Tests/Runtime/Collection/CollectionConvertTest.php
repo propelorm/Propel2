@@ -25,6 +25,8 @@ use Propel\Tests\TestCaseFixtures;
  */
 class CollectionConvertTest extends TestCaseFixtures
 {
+    private $coll;
+
     protected function setUp()
     {
         parent::setUp();
@@ -53,7 +55,7 @@ class CollectionConvertTest extends TestCaseFixtures
     {
         $expected = <<<EOF
 <?xml version="1.0" encoding="UTF-8"?>
-<data>
+<Books>
   <Book>
     <Id>9012</Id>
     <Title><![CDATA[Don Juan]]></Title>
@@ -70,7 +72,7 @@ class CollectionConvertTest extends TestCaseFixtures
     <PublisherId></PublisherId>
     <AuthorId></AuthorId>
   </Book>
-</data>
+</Books>
 
 EOF;
 
@@ -104,20 +106,21 @@ EOF;
     public function toYamlDataProvider()
     {
         $expected = <<<EOF
-Book_0:
-    Id: 9012
-    Title: 'Don Juan'
-    ISBN: '0140422161'
-    Price: 12.99
-    PublisherId: 1234
-    AuthorId: 5678
-Book_1:
-    Id: 58
-    Title: 'Harry Potter and the Order of the Phoenix'
-    ISBN: 043935806X
-    Price: 10.99
-    PublisherId: null
-    AuthorId: null
+Books:
+    -
+        Id: 9012
+        Title: 'Don Juan'
+        ISBN: '0140422161'
+        Price: 12.99
+        PublisherId: 1234
+        AuthorId: 5678
+    -
+        Id: 58
+        Title: 'Harry Potter and the Order of the Phoenix'
+        ISBN: 043935806X
+        Price: 10.99
+        PublisherId: null
+        AuthorId: null
 
 EOF;
 
@@ -151,7 +154,7 @@ EOF;
     public function toJsonDataProvider()
     {
         $expected = <<<EOF
-{"Book_0":{"Id":9012,"Title":"Don Juan","ISBN":"0140422161","Price":12.99,"PublisherId":1234,"AuthorId":5678},"Book_1":{"Id":58,"Title":"Harry Potter and the Order of the Phoenix","ISBN":"043935806X","Price":10.99,"PublisherId":null,"AuthorId":null}}
+{"Books":[{"Id":9012,"Title":"Don Juan","ISBN":"0140422161","Price":12.99,"PublisherId":1234,"AuthorId":5678},{"Id":58,"Title":"Harry Potter and the Order of the Phoenix","ISBN":"043935806X","Price":10.99,"PublisherId":null,"AuthorId":null}]}
 EOF;
 
         return array(array($expected));
@@ -230,12 +233,12 @@ EOF;
         $coll[]= $publisher;
         $expected = <<<EOF
 <?xml version="1.0" encoding="UTF-8"?>
-<data>
+<Publishers>
   <Publisher>
     <Id>12345</Id>
     <Name><![CDATA[Penguinoo]]></Name>
   </Publisher>
-</data>
+</Publishers>
 
 EOF;
         $this->assertEquals($expected, (string) $coll);

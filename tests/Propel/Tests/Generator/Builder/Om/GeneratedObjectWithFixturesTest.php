@@ -356,9 +356,9 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
         $arr = $a1->toArray(TableMap::TYPE_PHPNAME, null, array(), true);
         $this->assertTrue(array_key_exists('Books', $arr));
         $this->assertEquals(2, count($arr['Books']));
-        $this->assertEquals('War and Peace', $arr['Books']['Book_0']['Title']);
-        $this->assertEquals('Anna Karenina', $arr['Books']['Book_1']['Title']);
-        $this->assertEquals('*RECURSION*', $arr['Books']['Book_0']['Author']);
+        $this->assertEquals('War and Peace', $arr['Books'][0]['Title']);
+        $this->assertEquals('Anna Karenina', $arr['Books'][1]['Title']);
+        $this->assertEquals('*RECURSION*', $arr['Books'][0]['Author']);
     }
 
 }

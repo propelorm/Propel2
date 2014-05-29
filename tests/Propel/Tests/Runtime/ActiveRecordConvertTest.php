@@ -22,6 +22,8 @@ use Propel\Tests\TestCaseFixtures;
  */
 class ActiveRecordConvertTest extends TestCaseFixtures
 {
+    private $book;
+
     protected function setUp()
     {
         parent::setUp();
@@ -57,7 +59,7 @@ class ActiveRecordConvertTest extends TestCaseFixtures
     <Id>1234</Id>
     <Name><![CDATA[Penguin]]></Name>
     <Books>
-      <Book_0><![CDATA[*RECURSION*]]></Book_0>
+      <Book><![CDATA[*RECURSION*]]></Book>
     </Books>
   </Publisher>
   <Author>
@@ -67,7 +69,7 @@ class ActiveRecordConvertTest extends TestCaseFixtures
     <Email></Email>
     <Age></Age>
     <Books>
-      <Book_0><![CDATA[*RECURSION*]]></Book_0>
+      <Book><![CDATA[*RECURSION*]]></Book>
     </Books>
   </Author>
 </data>
@@ -118,7 +120,7 @@ Publisher:
     Id: 1234
     Name: Penguin
     Books:
-        Book_0: '*RECURSION*'
+        - '*RECURSION*'
 Author:
     Id: 5678
     FirstName: George
@@ -126,7 +128,7 @@ Author:
     Email: null
     Age: null
     Books:
-        Book_0: '*RECURSION*'
+        - '*RECURSION*'
 
 EOF;
 
@@ -164,7 +166,7 @@ EOF;
     public function toJsonDataProvider()
     {
         $expected = <<<EOF
-{"Id":9012,"Title":"Don Juan","ISBN":"0140422161","Price":12.99,"PublisherId":1234,"AuthorId":5678,"Publisher":{"Id":1234,"Name":"Penguin","Books":{"Book_0":"*RECURSION*"}},"Author":{"Id":5678,"FirstName":"George","LastName":"Byron","Email":null,"Age":null,"Books":{"Book_0":"*RECURSION*"}}}
+{"Id":9012,"Title":"Don Juan","ISBN":"0140422161","Price":12.99,"PublisherId":1234,"AuthorId":5678,"Publisher":{"Id":1234,"Name":"Penguin","Books":["*RECURSION*"]},"Author":{"Id":5678,"FirstName":"George","LastName":"Byron","Email":null,"Age":null,"Books":["*RECURSION*"]}}
 EOF;
 
         return array(array($expected));
@@ -200,7 +202,7 @@ EOF;
 
     public function toCsvDataProvider()
     {
-        $expected = "Id,Title,ISBN,Price,PublisherId,AuthorId,Publisher,Author\r\n9012,Don Juan,0140422161,12.99,1234,5678,\"a:3:{s:2:\\\"Id\\\";i:1234;s:4:\\\"Name\\\";s:7:\\\"Penguin\\\";s:5:\\\"Books\\\";a:1:{s:6:\\\"Book_0\\\";s:11:\\\"*RECURSION*\\\";}}\",\"a:6:{s:2:\\\"Id\\\";i:5678;s:9:\\\"FirstName\\\";s:6:\\\"George\\\";s:8:\\\"LastName\\\";s:5:\\\"Byron\\\";s:5:\\\"Email\\\";N;s:3:\\\"Age\\\";N;s:5:\\\"Books\\\";a:1:{s:6:\\\"Book_0\\\";s:11:\\\"*RECURSION*\\\";}}\"\r\n";
+        $expected = "Id,Title,ISBN,Price,PublisherId,AuthorId,Publisher,Author\r\n9012,Don Juan,0140422161,12.99,1234,5678,\"a:3:{s:2:\\\"Id\\\";i:1234;s:4:\\\"Name\\\";s:7:\\\"Penguin\\\";s:5:\\\"Books\\\";a:1:{i:0;s:11:\\\"*RECURSION*\\\";}}\",\"a:6:{s:2:\\\"Id\\\";i:5678;s:9:\\\"FirstName\\\";s:6:\\\"George\\\";s:8:\\\"LastName\\\";s:5:\\\"Byron\\\";s:5:\\\"Email\\\";N;s:3:\\\"Age\\\";N;s:5:\\\"Books\\\";a:1:{i:0;s:11:\\\"*RECURSION*\\\";}}\"\r\n";
 
         return array(array($expected));
     }

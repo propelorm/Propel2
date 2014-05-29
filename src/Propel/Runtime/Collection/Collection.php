@@ -10,7 +10,10 @@
 
 namespace Propel\Runtime\Collection;
 
+use Propel\Common\Pluralizer\PluralizerInterface;
+use Propel\Common\Pluralizer\StandardEnglishPluralizer;
 use Propel\Runtime\Connection\ConnectionInterface;
+use Propel\Runtime\Exception\RuntimeException;
 use Propel\Runtime\Propel;
 use Propel\Runtime\Collection\Exception\ModelNotFoundException;
 use Propel\Runtime\Exception\BadMethodCallException;
@@ -63,6 +66,11 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
      * @var CollectionIterator
      */
     protected $lastIterator;
+
+    /**
+     * @var PluralizerInterface|null
+     */
+    private $pluralizer;
 
     public function __construct($data = array())
     {
@@ -488,7 +496,7 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
             $parser = AbstractParser::getParser($parser);
         }
 
-        return $this->fromArray($parser->listToArray($data), TableMap::TYPE_PHPNAME);
+        return $this->fromArray($parser->listToArray($data, $this->getPluralModelName()), TableMap::TYPE_PHPNAME);
     }
 
     /**
@@ -517,7 +525,9 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
             $parser = AbstractParser::getParser($parser);
         }
 
-        return $parser->listFromArray($this->toArray(null, $usePrefix, TableMap::TYPE_PHPNAME, $includeLazyLoadColumns));
+        $array = $this->toArray(null, $usePrefix, TableMap::TYPE_PHPNAME, $includeLazyLoadColumns);
+
+        return $parser->listFromArray($array, $this->getPluralModelName());
     }
 
     /**
@@ -540,7 +550,7 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
         }
         if (0 === strpos($name, 'to')) {
             $format = substr($name, 2);
-            $usePrefix = isset($params[0]) ? $params[0] : true;
+            $usePrefix = isset($params[0]) ? $params[0] : false;
             $includeLazyLoadColumns = isset($params[1]) ? $params[1] : true;
 
             return $this->exportTo($format, $usePrefix, $includeLazyLoadColumns);
@@ -563,7 +573,7 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
      */
     public function __toString()
     {
-        return (string) $this->exportTo(constant($this->getTableMapClass() . '::DEFAULT_STRING_FORMAT'));
+        return (string) $this->exportTo(constant($this->getTableMapClass() . '::DEFAULT_STRING_FORMAT'), false);
     }
 
     /**
@@ -576,5 +586,27 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
                 $this[$key] = clone $obj;
             }
         }
+    }
+
+    protected function getPluralizer()
+    {
+        if ($this->pluralizer === null) {
+            $this->pluralizer = $this->createPluralizer();
+        }
+
+        return $this->pluralizer;
+    }
+
+    /**
+     * Overwrite this method if you want to use a custom pluralizer
+     */
+    protected function createPluralizer()
+    {
+        return new StandardEnglishPluralizer();
+    }
+
+    protected function getPluralModelName()
+    {
+        return $this->getPluralizer()->getPluralForm($this->getModel());
     }
 }

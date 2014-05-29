@@ -14,6 +14,8 @@ use Propel\Tests\Bookstore\Map\BookTableMap;
 
 use Propel\Runtime\Map\TableMap;
 use Propel\Tests\Bookstore\Book;
+use Propel\Tests\Bookstore\Map\ReviewTableMap;
+use Propel\Tests\Bookstore\Review;
 
 /**
  * Tests some of the methods of generated Object classes. These are:
@@ -380,6 +382,150 @@ class FieldnameRelatedTest extends TestCaseFixtures
             $result = $book->toArray($type);
             // remove ID since its autoincremented at each test iteration
             $result = array_slice($result, 1, 2, true);
+            $this->assertEquals(
+                $expected,
+                $result,
+                'expected was: ' . print_r($expected, 1) .
+                'but toArray() returned ' . print_r($result, 1)
+            );
+        }
+    }
+
+    /**
+     * @see https://github.com/propelorm/Propel2/issues/648
+     */
+    public function testToArrayWithForeignObjectsDoesNotHavePrefix()
+    {
+        $book = new Book();
+        $book->addReview(new Review());
+
+        $array = $book->toArray(TableMap::TYPE_PHPNAME, false, [], true);
+
+        $this->assertArrayHasKey('Reviews', $array);
+        $this->assertArrayNotHasKey('Review_0', $array['Reviews']);
+        $this->assertArrayHasKey(0, $array['Reviews']);
+    }
+
+    public function testToArrayWithForeignObjects()
+    {
+        $types = [
+            TableMap::TYPE_PHPNAME,
+            TableMap::TYPE_STUDLYPHPNAME,
+            TableMap::TYPE_COLNAME,
+            TableMap::TYPE_FIELDNAME,
+            TableMap::TYPE_NUM
+        ];
+
+        $review = new Review();
+        $review->setRecommended(true)->setReviewedBy('Someone')->setReviewDate(null);
+
+        $book = new Book();
+        $book->setTitle('Harry Potter and the Order of the Phoenix')
+            ->setISBN('043935806X')
+            ->addReview($review)
+            ->setPrice(10);
+
+        $expecteds = array (
+            TableMap::TYPE_PHPNAME => [
+                'Id' => null,
+                'Title' => 'Harry Potter and the Order of the Phoenix',
+                'ISBN' => '043935806X',
+                'Price' => 10.0,
+                'PublisherId' => null,
+                'AuthorId' => null,
+                'Reviews' => [
+                    [
+                        'Id' => null,
+                        'ReviewedBy' => 'Someone',
+                        'ReviewDate' => null,
+                        'Recommended' => true,
+                        'Status' => null,
+                        'BookId' => null,
+                        'Book' => '*RECURSION*'
+                    ]
+                ]
+            ],
+            TableMap::TYPE_STUDLYPHPNAME => array (
+                'id' => null,
+                'title' => 'Harry Potter and the Order of the Phoenix',
+                'iSBN' => '043935806X',
+                'price' => 10.0,
+                'publisherId' => null,
+                'authorId' => null,
+                'reviews' => [
+                    [
+                        'id' => null,
+                        'reviewedBy' => 'Someone',
+                        'reviewDate' => null,
+                        'recommended' => true,
+                        'status' => null,
+                        'bookId' => null,
+                        'book' => '*RECURSION*'
+                    ]
+                ]
+            ),
+            TableMap::TYPE_COLNAME => array (
+                'book.ID' => null,
+                'book.TITLE' => 'Harry Potter and the Order of the Phoenix',
+                'book.ISBN' => '043935806X',
+                'book.PRICE' => 10.0,
+                'book.PUBLISHER_ID' => null,
+                'book.AUTHOR_ID' => null,
+                'Reviews' => [
+                    [
+                        'review.ID' => null,
+                        'review.REVIEWED_BY' => 'Someone',
+                        'review.REVIEW_DATE' => null,
+                        'review.RECOMMENDED' => true,
+                        'review.STATUS' => null,
+                        'review.BOOK_ID' => null,
+                        'Book' => '*RECURSION*'
+                    ]
+                ]
+            ),
+            TableMap::TYPE_FIELDNAME => array (
+                'id' => null,
+                'title' => 'Harry Potter and the Order of the Phoenix',
+                'isbn' => '043935806X',
+                'price' => 10.0,
+                'publisher_id' => null,
+                'author_id' => null,
+                'reviews' => [
+                    [
+                        'id' => null,
+                        'reviewed_by' => 'Someone',
+                        'review_date' => null,
+                        'recommended' => true,
+                        'status' => null,
+                        'book_id' => null,
+                        'book' => '*RECURSION*'
+                    ]
+                ]
+            ),
+            TableMap::TYPE_NUM => array (
+                '0' => null,
+                '1' => 'Harry Potter and the Order of the Phoenix',
+                '2' => '043935806X',
+                '3' => 10.0,
+                '4' => null,
+                '5' => null,
+                'Reviews' => [
+                    [
+                        '0' => null,
+                        '1' => 'Someone',
+                        '2' => null,
+                        '3' => 1,
+                        '4' => null,
+                        '5' => null,
+                        'Book' => '*RECURSION*',
+                    ]
+                ]
+            )
+        );
+
+        foreach ($types as $type) {
+            $expected = $expecteds[$type];
+            $result = $book->toArray($type, true, [], true);
             $this->assertEquals(
                 $expected,
                 $result,

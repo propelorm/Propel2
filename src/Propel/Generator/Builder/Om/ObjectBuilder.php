@@ -16,6 +16,7 @@ use Propel\Generator\Model\CrossForeignKeys;
 use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\IdMethod;
 use Propel\Generator\Model\PropelTypes;
+use Propel\Generator\Model\Table;
 use Propel\Generator\Platform\MssqlPlatform;
 use Propel\Generator\Platform\MysqlPlatform;
 use Propel\Generator\Platform\OraclePlatform;
@@ -2357,19 +2358,22 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             foreach ($fks as $fk) {
                 $script .= "
             if (null !== \$this->" . $this->getFKVarName($fk) . ") {
-                \$result['" . $this->getFKPhpNameAffix($fk, false) . "'] = \$this->" . $this->getFKVarName($fk) . "->toArray(\$keyType, \$includeLazyLoadColumns,  \$alreadyDumpedObjects, true);
+                {$this->addToArrayKeyLookUp($fk->getForeignTable(), false)}
+                \$result[\$key] = \$this->" . $this->getFKVarName($fk) . "->toArray(\$keyType, \$includeLazyLoadColumns,  \$alreadyDumpedObjects, true);
             }";
             }
             foreach ($referrers as $fk) {
                 if ($fk->isLocalPrimaryKey()) {
                     $script .= "
             if (null !== \$this->" . $this->getPKRefFKVarName($fk) . ") {
-                \$result['" . $this->getRefFKPhpNameAffix($fk, false) . "'] = \$this->" . $this->getPKRefFKVarName($fk) . "->toArray(\$keyType, \$includeLazyLoadColumns, \$alreadyDumpedObjects, true);
+                {$this->addToArrayKeyLookUp($fk->getTable(), false)}
+                \$result[\$key] = \$this->" . $this->getPKRefFKVarName($fk) . "->toArray(\$keyType, \$includeLazyLoadColumns, \$alreadyDumpedObjects, true);
             }";
                 } else {
                     $script .= "
             if (null !== \$this->" . $this->getRefFKCollVarName($fk) . ") {
-                \$result['" . $this->getRefFKPhpNameAffix($fk, true) . "'] = \$this->" . $this->getRefFKCollVarName($fk) . "->toArray(null, true, \$keyType, \$includeLazyLoadColumns, \$alreadyDumpedObjects);
+                {$this->addToArrayKeyLookUp($fk->getTable(), true)}
+                \$result[\$key] = \$this->" . $this->getRefFKCollVarName($fk) . "->toArray(null, false, \$keyType, \$includeLazyLoadColumns, \$alreadyDumpedObjects);
             }";
                 }
             }
@@ -2382,6 +2386,36 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     }
 ";
     } // addToArray()
+
+    /**
+     * Adds the switch-statement for looking up the array-key name for toArray
+     * @see toArray
+     */
+    protected function addToArrayKeyLookUp(Table $table, $plural)
+    {
+        $phpName = $table->getPhpName();
+        $studlyPhpName = $table->getStudlyPhpName();
+        $fieldName = $table->getName();
+
+        if ($plural) {
+            $phpName = $this->getPluralizer()->getPluralForm($phpName);
+            $studlyPhpName = $this->getPluralizer()->getPluralForm($studlyPhpName);
+            $fieldName = $this->getPluralizer()->getPluralForm($fieldName);
+        }
+
+        return "
+                switch (\$keyType) {
+                    case TableMap::TYPE_STUDLYPHPNAME:
+                        \$key = '" . $studlyPhpName . "';
+                        break;
+                    case TableMap::TYPE_FIELDNAME:
+                        \$key = '" . $fieldName . "';
+                        break;
+                    default:
+                        \$key = '" . $phpName . "';
+                }
+        ";
+    }
 
     /**
      * Adds the getByName method
