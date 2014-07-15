@@ -322,6 +322,13 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="phpSingularName" type="php_name" use="optional">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">
+                    Name used in PHP code to reference the singular form of this column (in getters, setters, etc.). Defaults to an auto-generated value based on the column's phpName.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="tableMapName" type="php_class" use="optional">
             <xs:annotation>
                 <xs:documentation xml:lang="en">

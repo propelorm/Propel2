@@ -987,4 +987,20 @@ class ColumnTest extends ModelTestCase
 
         $this->assertTrue($column->isNotNull());
     }
+
+    public function testPhpSingularName()
+    {
+        $column = new Column();
+        $column->setPhpName('Aliases');
+
+        $this->assertEquals($column->getPhpName(), 'Aliases');
+        $this->assertEquals($column->getPhpSingularName(), 'Aliase');
+
+        $column = new Column();
+        $column->setPhpName('Aliases');
+        $column->setPhpSingularName('Alias');
+
+        $this->assertEquals($column->getPhpName(), 'Aliases');
+        $this->assertEquals($column->getPhpSingularName(), 'Alias');
+    }
 }
