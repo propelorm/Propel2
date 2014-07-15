@@ -614,7 +614,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
         return array(";
             foreach ($behaviors as $behavior) {
                 $script .= "
-            '{$behavior->getName()}' => array(";
+            '{$behavior->getId()}' => array(";
                 foreach ($behavior->getParameters() as $key => $value) {
                     $script .= "'$key' => ";
                     if (is_array($value)) {

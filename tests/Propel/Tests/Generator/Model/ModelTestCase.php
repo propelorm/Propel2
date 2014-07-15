@@ -55,6 +55,12 @@ abstract class ModelTestCase extends TestCase
 
         $behavior
             ->expects($this->any())
+            ->method('getId')
+            ->will($this->returnValue($name))
+        ;
+
+        $behavior
+            ->expects($this->any())
             ->method('getAdditionalBuilders')
             ->will($this->returnValue($options['additional_builders']))
         ;

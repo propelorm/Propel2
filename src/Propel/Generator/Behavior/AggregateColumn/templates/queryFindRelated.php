@@ -4,7 +4,7 @@
  *
  * @param ConnectionInterface $con A connection object
  */
-protected function findRelated<?=$relationName?>s($con)
+protected function findRelated<?=$relationName.$aggregateName?>s($con)
 {
     $criteria = clone $this;
     if ($this->useAliasInSQL) {

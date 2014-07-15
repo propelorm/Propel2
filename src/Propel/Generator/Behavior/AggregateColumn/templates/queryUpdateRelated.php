@@ -1,5 +1,5 @@
 
-protected function updateRelated<?=$relationName?>s($con)
+protected function updateRelated<?=$relationName.$aggregateName?>s($con)
 {
     foreach ($this-><?=$variableName?>s as $<?=$variableName?>) {
         $<?=$variableName?>-><?= $updateMethodName ?>($con);
