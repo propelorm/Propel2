@@ -283,6 +283,16 @@ class StandardServiceContainer implements ServiceContainerInterface
     }
 
     /**
+     * @param string $name
+     *
+     * @return boolean true if a connectionManager with $name has been registered
+     */
+    public function hasConnectionManager($name)
+    {
+        return isset($this->connectionManagers[$name]);
+    }
+
+    /**
      * @return array[\Propel\Runtime\Connection\ConnectionManagerInterface]
      */
     public function getConnectionManagers()

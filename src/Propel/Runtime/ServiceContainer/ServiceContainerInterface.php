@@ -84,6 +84,13 @@ interface ServiceContainerInterface
     public function getConnectionManager($name);
 
     /**
+     * @param string $name
+     *
+     * @return boolean true if a connectionManager with $name has been registered
+     */
+    public function hasConnectionManager($name);
+
+    /**
      * Close any associated resource handles.
      *
      * This method frees any database connection handles that have been
