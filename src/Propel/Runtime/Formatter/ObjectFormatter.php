@@ -59,6 +59,11 @@ class ObjectFormatter extends AbstractFormatter
 
     public function getCollectionClassName()
     {
+        $collectionClass = $this->getClass().'Collection';
+        if (class_exists($collectionClass)) {
+            return $collectionClass;
+        }
+
         return '\Propel\Runtime\Collection\ObjectCollection';
     }
 
