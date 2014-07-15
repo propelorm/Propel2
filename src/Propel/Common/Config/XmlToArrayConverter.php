@@ -8,41 +8,64 @@
  * @license MIT License
  */
 
-namespace Propel\Generator\Config;
+namespace Propel\Common\Config;
+
+use Propel\Common\Config\Exception\InvalidArgumentException;
+use Propel\Common\Config\Exception\XmlParseException;
 
 /**
- * Runtime configuration converter
- * From XML string to array
+ * Class to convert an xml string to array
  */
 class XmlToArrayConverter
 {
     /**
-     * Create a PHP array from the XML configuration found in a runtime-conf.xml file
+     * Create a PHP array from the XML file
      *
-     * @param String $configuration The XML configuration
+     * @param String $xmlFile The XML file or a string containing xml to parse
      *
      * @return Array
+     *
+     * @throws Propel\Common\Config\Exception\XmlParseException if parse errors occur
      */
-    public static function convert($configuration)
+    public static function convert($xmlToParse)
     {
-        $xml = simplexml_load_string($configuration);
-        $conf = self::simpleXmlToArray($xml);
+        if (!is_string($xmlToParse)) {
+            throw new InvalidArgumentException("XmlToArrayConverter::convert method expects an xml file to parse, or a string containing valid xml");
+        }
 
-        /* For some reason the array generated from runtime-conf.xml has separate
-         * 'log' section and 'propel' sections. To maintain backward compatibility
-         * we need to put 'log' back into the 'propel' section.
-         */
-        if (isset($conf['log'])) {
-            $conf['propel']['log'] = $conf['log'];
-            unset($conf['log']);
+        if (file_exists($xmlToParse)) {
+            $xmlToParse = file_get_contents($xmlToParse);
         }
-        if (isset($conf['profiler'])) {
-            $conf['propel']['profiler'] = $conf['profiler'];
-            unset($conf['profiler']);
+
+        if (false === $xmlToParse) {
+            throw new InvalidArgumentException('Error while reading configuration file');
         }
-        if (isset($conf['propel'])) {
-            $conf = $conf['propel'];
+
+        //Empty xml file returns empty array
+        if ('' === $xmlToParse) {
+            return array();
         }
+
+        if ($xmlToParse[0] !== '<') {
+            throw new InvalidArgumentException('Invalid xml content');
+        }
+
+        $currentEntityLoader = libxml_disable_entity_loader(true);
+        $currentInternalErrors = libxml_use_internal_errors(true);
+
+        $xml = simplexml_load_string($xmlToParse);
+        $errors = libxml_get_errors();
+
+        libxml_clear_errors();
+        libxml_use_internal_errors($currentInternalErrors);
+        libxml_disable_entity_loader($currentEntityLoader);
+
+
+        if (count($errors) > 0) {
+            throw new XmlParseException($errors);
+        }
+
+        $conf = self::simpleXmlToArray($xml);
 
         return $conf;
     }

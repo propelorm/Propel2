@@ -10,9 +10,12 @@
 
 namespace Propel\Generator\Config;
 
+use Propel\Common\Config\ConfigurationManager;
 use Propel\Common\Pluralizer\PluralizerInterface;
 use Propel\Generator\Builder\DataModelBuilder;
 use Propel\Generator\Exception\BuildException;
+use Propel\Generator\Exception\ClassNotFoundException;
+use Propel\Generator\Exception\InvalidArgumentException;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Platform\PlatformInterface;
 use Propel\Generator\Reverse\SchemaParserInterface;
@@ -26,143 +29,21 @@ use Propel\Generator\Util\BehaviorLocator;
  * the generator.
  *
  * @author Hans Lellelid <hans@xmpl.org>
+ * @author Cristiano Cinotti
  */
-class GeneratorConfig implements GeneratorConfigInterface
+class GeneratorConfig extends ConfigurationManager implements GeneratorConfigInterface
 {
-
-    /**
-     * The build properties.
-     *
-     * @var array
-     */
-    private $buildProperties = array();
-
-    protected $buildConnections = null;
-
-    protected $defaultBuildConnection = null;
-
     /**
      * @var BehaviorLocator
      */
     protected $behaviorLocator = null;
 
     /**
-     * Construct a new GeneratorConfig.
+     * Connections configured in the `generator` section of the configuration file
      *
-     * @param array|\Traversable $props
+     * @var array
      */
-    public function __construct($props = null)
-    {
-        if ($props) {
-            $this->setBuildProperties($props);
-        }
-    }
-
-    /**
-     * Returns the build properties.
-     *
-     * @return array
-     */
-    public function getBuildProperties()
-    {
-        return $this->buildProperties;
-    }
-
-    /**
-     * Parses the passed-in properties, renaming and saving eligible properties in this object.
-     *
-     * Renames the propel.xxx properties to just xxx and renames any xxx.yyy properties
-     * to xxxYyy as PHP doesn't like the xxx.yyy syntax.
-     *
-     * @param array|\Traversable $props
-     */
-    public function setBuildProperties($props)
-    {
-        $this->buildProperties = array();
-
-        foreach ($props as $key => $propValue) {
-            if (strpos($key, "propel.") === 0) {
-                $newKey = substr($key, strlen("propel."));
-                $j = strpos($newKey, '.');
-                while ($j !== false) {
-                    $newKey =  substr($newKey, 0, $j) . ucfirst(substr($newKey, $j + 1));
-                    $j = strpos($newKey, '.');
-                }
-                $this->setBuildProperty($newKey, $propValue);
-            }
-        }
-    }
-
-    /**
-     * Returns a specific Propel (renamed) property from the build.
-     *
-     * @param  string $name
-     * @return mixed
-     */
-    public function getBuildProperty($name)
-    {
-        return isset($this->buildProperties[$name]) ? $this->buildProperties[$name] : null;
-    }
-
-    /**
-     * Sets a specific propel (renamed) property from the build.
-     *
-     * @param string $name
-     * @param mixed  $value
-     */
-    public function setBuildProperty($name, $value)
-    {
-        $this->buildProperties[$name] = $value;
-    }
-
-    /**
-     * Resolves and returns the class name based on the specified property
-     * value. The name of the property holds the class path as a dot-path
-     * notation.
-     *
-     * @param  string         $propname
-     * @return string
-     * @throws BuildException
-     */
-    public function getClassName($propname)
-    {
-        $classpath = $this->getBuildProperty($propname);
-        if (null === $classpath) {
-            throw new BuildException("Unable to find class path for '$propname' property.");
-        }
-
-        // This is a slight hack to workaround camel case inconsistencies for the DataSQL classes.
-        // Basically, we want to turn ?.?.?.sqliteDataSQLBuilder into ?.?.?.SqliteDataSQLBuilder
-        $lastdotpos = strrpos($classpath, '.');
-        if ($lastdotpos !== false) {
-            $classpath{$lastdotpos+1} = strtoupper($classpath{$lastdotpos+1});
-        } else {
-            // Allows to configure full classname instead of a dot-path notation
-            if (class_exists($classpath)) {
-                return $classpath;
-            }
-            $classpath = ucfirst($classpath);
-        }
-
-        if (empty($classpath)) {
-            throw new BuildException("Unable to find class path for '$propname' property.");
-        }
-
-        return $classpath;
-    }
-
-    /**
-     * Resolves and returns the builder class name.
-     *
-     * @param  string $type
-     * @return string
-     */
-    public function getBuilderClassName($type)
-    {
-        $propname = 'builder' . ucfirst(strtolower($type)) . 'Class';
-
-        return $this->getClassName($propname);
-    }
+    protected $buildConnections = null;
 
     /**
      * Creates and configures a new Platform class.
@@ -170,28 +51,19 @@ class GeneratorConfig implements GeneratorConfigInterface
      * @param  ConnectionInterface $con
      * @param  string              $database
      * @return PlatformInterface
+     *
+     * @throws Propel\Generator\Exception\ClassNotFoundException if the platform class doesn't exists
+     * @throws Propel\Generator\Exception\BuildException         if the class isn't an implementation of PlatformInterface
      */
     public function getConfiguredPlatform(ConnectionInterface $con = null, $database = null)
     {
-        $buildConnection = $this->getBuildConnection($database);
-
-        if (null !== $buildConnection['adapter']) {
-            $clazz = '\\Propel\\Generator\\Platform\\' . ucfirst($buildConnection['adapter']) . 'Platform';
-        } elseif ($this->getBuildProperty('platformClass')) {
-            // propel.platform.class = platform.${propel.database}Platform by default
-            $platformClass = preg_split("#\.#", $this->getBuildProperty('platformClass'));
-            $platformClass = ucfirst($platformClass[count($platformClass) - 1]);
-            $clazz = '\\Propel\\Generator\\Platform\\' . $platformClass;
+        if (null !== $database) {
+            $clazz = '\\Propel\\Generator\\Platform\\' . ucfirst($this->getBuildConnection($database)['adapter']) . 'Platform';
         } else {
-            return null;
+            $clazz = $this->get()['generator']['platformClass'];
         }
 
-        $platform = new $clazz();
-
-        if (!$platform instanceof PlatformInterface) {
-            throw new BuildException("Specified platform class ($clazz) does not implement the PlatformInterface interface.");
-        }
-
+        $platform = $this->getInstance($clazz);
         $platform->setConnection($con);
         $platform->setGeneratorConfig($this);
 
@@ -202,18 +74,21 @@ class GeneratorConfig implements GeneratorConfigInterface
      * Creates and configures a new SchemaParser class for specified platform.
      * @param  ConnectionInterface   $con
      * @return SchemaParserInterface
+     *
+     * @throws Propel\Generator\Exception\ClassNotFoundException if the class doesn't exists
+     * @throws Propel\Generator\Exception\BuildException         if the class isn't an implementation of SchemaParserInterface
      */
     public function getConfiguredSchemaParser(ConnectionInterface $con = null)
     {
-        $clazz  = $this->getClassName("reverseParserClass");
-        $parser = new $clazz();
+        $clazz = $this->get()['migrations']['parserClass'];
 
-        if (!$parser instanceof SchemaParserInterface) {
-            throw new BuildException("Specified platform class ($clazz) does implement SchemaParserInterface interface.", $this->getLocation());
+        if (null === $clazz) {
+            $clazz = '\\Propel\\Generator\\Reverse\\' . ucfirst($this->getBuildConnection()['adapter']) . 'SchemaParser';
         }
 
+        $parser = $this->getInstance($clazz, null, '\\Propel\\Generator\\Reverse\\SchemaParserInterface');
         $parser->setConnection($con);
-        $parser->setMigrationTable($this->getBuildProperty('migrationTable'));
+        $parser->setMigrationTable($this->get()['migrations']['tableName']);
         $parser->setGeneratorConfig($this);
 
         return $parser;
@@ -221,20 +96,19 @@ class GeneratorConfig implements GeneratorConfigInterface
 
     /**
      * Returns a configured data model builder class for specified table and
-     * based on type ('ddl', 'sql', etc.).
+     * based on type ('object', 'query', 'tableMap' etc.).
      *
      * @param  Table            $table
      * @param  string           $type
      * @return DataModelBuilder
+     *
+     * @throws Propel\Generator\Exception\ClassNotFoundException if the type of builder is wrong and the builder class doesn't exists
      */
     public function getConfiguredBuilder(Table $table, $type)
     {
-        $classname = $table->getDatabase()->getPlatform()->getBuilderClass($type);
-        if (!$classname) {
-            $classname = $this->getBuilderClassName($type);
-        }
-        /** @var DataModelBuilder $builder */
-        $builder   = new $classname($table);
+        $classname = $this->getConfigProperty('generator.objectModel.builders.' . $type);
+
+        $builder = $this->getInstance($classname, $table);
         $builder->setGeneratorConfig($this);
 
         return $builder;
@@ -247,86 +121,70 @@ class GeneratorConfig implements GeneratorConfigInterface
      */
     public function getConfiguredPluralizer()
     {
-        $classname = $this->getBuilderClassName('pluralizer');
-        $pluralizer = new $classname();
+        $classname = $this->get()['generator']['objectModel']['pluralizerClass'];
 
-        return $pluralizer;
-    }
-
-    public function setBuildConnections($buildConnections)
-    {
-        $this->buildConnections = $buildConnections;
+        return $this->getInstance($classname, null, '\\Propel\\Common\\Pluralizer\\PluralizerInterface');
     }
 
     /**
-     * Returns all connections from the buildtime config.
+     * Return an array of all configured connection properties, from `generator` and `reverse` 
+     * sections of the configuration.
      *
-     * @param string $directory Relative to current working directory or absolute.
-     *
-     * @return array|null
+     * @return array
      */
-    public function getBuildConnections($directory = '.')
+    public function getBuildConnections()
     {
         if (null === $this->buildConnections) {
-            $buildTimeConfigPath = $this->getBuildProperty('buildtimeConfFile')
-                ? $this->getBuildProperty('projectDir') . DIRECTORY_SEPARATOR . $this->getBuildProperty('buildtimeConfFile')
-                : $directory . '/buildtime-conf.xml';
-            if ($buildTimeConfigString = $this->getBuildProperty('buildtimeConf')) {
-                // configuration passed as propel.buildtimeConf string
-                // probably using the command line, which doesn't accept whitespace
-                // therefore base64 encoded
-                $this->parseBuildConnections(base64_decode($buildTimeConfigString));
-            } elseif (file_exists($buildTimeConfigPath)) {
-                // configuration stored in a buildtime-conf.xml file
-                $this->parseBuildConnections(file_get_contents($buildTimeConfigPath));
-            } else {
-                $this->buildConnections = array();
+            $connectionNames = $this->get()['generator']['connections'];
+
+            $reverseConnection = $this->getConfigProperty('reverse.connection');
+            if (null !== $reverseConnection && !in_array($reverseConnection, $connectionNames)) {
+                $connectionNames[] = $reverseConnection;
+            }
+
+            foreach ($connectionNames as $name) {
+                $this->buildConnections[$name] = $this->getConfigProperty('database.connections.' . $name);
             }
         }
 
         return $this->buildConnections;
     }
 
-    protected function parseBuildConnections($xmlString)
-    {
-        $conf = simplexml_load_string($xmlString);
-        $this->defaultBuildConnection = (string) $conf->propel->datasources['default'];
-        $buildConnections = array();
-        foreach ($conf->propel->datasources->datasource as $datasource) {
-            $id = (string) $datasource['id'];
-            $buildConnections[$id] = array(
-                'adapter'  => (string) $datasource->adapter
-            );
-            foreach ((array) $datasource->connection as $key => $connection) {
-                $buildConnections[$id][$key] = $connection;
-            }
-        }
-        $this->buildConnections = $buildConnections;
-    }
-
+    /**
+     * Return the connection properties array, of a given database name.
+     * If the database name is null, it returns the default connection properties
+     *
+     * @param  string $databaseName
+     * @return array
+     *
+     * @throws Propel\Generator\Exception\InvalidArgumentException if wrong database name
+     */
     public function getBuildConnection($databaseName = null)
     {
-        $connections = $this->getBuildConnections();
         if (null === $databaseName) {
-            $databaseName = $this->defaultBuildConnection;
+            $databaseName = $this->get()['generator']['defaultConnection'];
         }
-        if (isset($connections[$databaseName])) {
-            return $connections[$databaseName];
-        } else {
-            // fallback to the single connection from build.properties
-            return array(
-                'adapter'  => $this->getBuildProperty('databaseAdapter'),
-                'dsn'      => $this->getBuildProperty('databaseUrl'),
-                'user'     => $this->getBuildProperty('databaseUser'),
-                'password' => $this->getBuildProperty('databasePassword'),
-            );
-        }
+
+        if (!array_key_exists($databaseName, $this->getBuildConnections())) {
+            throw new InvalidArgumentException("Invalid database name: no configured connection named `$databaseName`.");
+         }
+
+        return $this->getBuildConnections()[$databaseName];
     }
 
-    public function getConnection($database)
+    /**
+     * Return a connection object of a given database name
+     *
+     * @param  string              $database
+     * @return ConnectionInterface
+     */
+    public function getConnection($database = null)
     {
         $buildConnection = $this->getBuildConnection($database);
-        $dsn = str_replace("@DB@", $database, $buildConnection['dsn']);
+
+        //Still useful ?
+        //$dsn = str_replace("@DB@", $database, $buildConnection['dsn']);
+        $dsn = $buildConnection['dsn'];
 
         // Set user + password to null if they are empty strings or missing
         $username = isset($buildConnection['user']) && $buildConnection['user'] ? $buildConnection['user'] : null;
@@ -346,4 +204,34 @@ class GeneratorConfig implements GeneratorConfigInterface
         return $this->behaviorLocator;
     }
 
+    /**
+     * Return an instance of $className
+     *
+     * @param $className The name of the class to return an instance
+     * @param $interfaceName The name of the interface to be implemented by the returned class
+     *
+     * @throws Propel\Generator\Exception\ClassNotFoundException   if the class doesn't exists
+     * @throws Propel\Generator\Exception\InvalidArgumentException if the interface doesn't exists
+     * @throws Propel\Generator\Exception\BuildException           if the class isn't an implementation of the given interface
+     */
+    private function getInstance($className, $arguments = null, $interfaceName = null)
+    {
+        if (!class_exists($className)) {
+            throw new ClassNotFoundException("Class $className not found.");
+        }
+
+        $object = new $className($arguments);
+
+        if (null !== $interfaceName) {
+            if (!interface_exists($interfaceName)) {
+                throw new InvalidArgumentException("Interface $interfaceName does not exists.");
+            }
+
+            if (!$object instanceof $interfaceName) {
+                throw new BuildException("Specified class ($className) does not implement $interfaceName interface.");
+            }
+        }
+
+        return $object;
+    }
 }

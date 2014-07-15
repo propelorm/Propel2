@@ -280,7 +280,7 @@ abstract class AbstractManager
             $this->includeExternalSchemas($dom, $schema->getPath());
 
             // normalize (or transform) the XML document using XSLT
-            if ($this->getGeneratorConfig()->getBuildProperty('schemaTransform') && $this->xsl) {
+            if ($this->getGeneratorConfig()->get()['generator']['schema']['transform'] && $this->xsl) {
                 $this->log('Transforming ' . $dmFilename . ' using stylesheet ' . $this->xsl->getPath());
 
                 if (!class_exists('\XSLTProcessor')) {
@@ -327,7 +327,7 @@ abstract class AbstractManager
             $this->dataModelDbMap[$schema->getName()] = $schema->getDatabase(null, false)->getName();
         }
 
-        if (count($schemas) > 1 && $this->getGeneratorConfig()->getBuildProperty('packageObjectModel')) {
+        if (count($schemas) > 1 && $this->getGeneratorConfig()->get()['generator']['packageObjectModel']) {
             $schema = $this->joinDataModels($schemas);
             $this->dataModels = array($schema);
         } else {

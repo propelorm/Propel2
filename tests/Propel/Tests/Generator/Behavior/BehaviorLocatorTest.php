@@ -30,8 +30,8 @@ class BehaviorLocatorTest extends TestCase
 
     public function testBehaviorLocatorWithComposerLock()
     {
-        $config = new QuickGeneratorConfig();
-        $config->setBuildProperty('builderComposerDir', __DIR__ . '/../../../../Fixtures/behavior-installer');
+        $configOptions['propel']['paths']['composerDir'] = __DIR__ . '/../../../../Fixtures/behavior-installer';
+        $config = new QuickGeneratorConfig($configOptions);
         $locator = new BehaviorLocator($config);
         
         // test found behaviors
@@ -47,8 +47,8 @@ class BehaviorLocatorTest extends TestCase
     
     public function testBehaviorLocatorWithComposerJson()
     {
-        $config = new QuickGeneratorConfig();
-        $config->setBuildProperty('builderComposerDir', __DIR__ . '/../../../../Fixtures/behavior-development');
+        $configOptions['propel']['paths']['composerDir'] = __DIR__ . '/../../../../Fixtures/behavior-development';
+        $config = new QuickGeneratorConfig($configOptions);
         $locator = new BehaviorLocator($config);
     
         // test found behaviors

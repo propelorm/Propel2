@@ -13,10 +13,8 @@ class MigrationManagerTest extends TestCase
      */
     private function createMigrationManager(array $migrationTimestamps)
     {
-        $generatorConfig = new GeneratorConfig();
+        $generatorConfig = new GeneratorConfig(__DIR__ . '/../../../../Fixtures/migration/');
 
-        $generatorConfig->setBuildProperty('projectDir', __DIR__ . '/../../../../Fixtures/migration/');
-        $generatorConfig->setBuildProperty('buildtimeConfFile', 'runtime-conf.xml');
         $connections = $generatorConfig->getBuildConnections();
 
         $migrationManager = $this->getMock('Propel\Generator\Manager\MigrationManager', ['getMigrationTimestamps']);
@@ -30,7 +28,6 @@ class MigrationManagerTest extends TestCase
 
         // make sure there is no other table named migration
         $migrationManager->getAdapterConnection('migration')->query('DROP TABLE IF EXISTS migration');
-
 
         return $migrationManager;
     }

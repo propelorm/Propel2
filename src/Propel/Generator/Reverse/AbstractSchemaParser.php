@@ -163,21 +163,6 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
     }
 
     /**
-     * Gets a specific propel (renamed) property from the build.
-     *
-     * @param  string $name
-     * @return mixed
-     */
-    public function getBuildProperty($name)
-    {
-        if (null !== $this->generatorConfig) {
-            return $this->generatorConfig->getBuildProperty($name);
-        }
-
-        return null;
-    }
-
-    /**
      * Gets a type mapping from native type to Propel type.
      *
      * @return array The mapped Propel type.

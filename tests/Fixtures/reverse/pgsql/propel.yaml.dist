@@ -1,0 +1,33 @@
+# Configuration file for `bookstore` fixtures
+propel:
+  general:
+    project: reverse_bookstore
+
+  database:
+    connections:
+      reverse-bookstore:
+        adapter: ##DATABASE_VENDOR##
+        classname: \Propel\Runtime\Connection\DebugPDO
+        dsn: ##DATABASE_URL##
+        user: ##DATABASE_USER##
+        password: ##DATABASE_PASSWORD##
+        options:
+          ATTR_PERSISTENT: false
+        attributes:
+          ATTR_EMULATE_PREPARES: true
+        #Propel specific settings
+        settings:
+          charset: utf8
+  generator:
+    defaultConnection: reverse-bookstore
+    connections:
+      - reverse-bookstore
+    objectModel:
+      disableIdentifierQuoting: true
+    schema:
+      autoPrefix: true
+
+  runtime:
+    defaultConnection: reverse-bookstore
+    connections:
+      - reverse-bookstore

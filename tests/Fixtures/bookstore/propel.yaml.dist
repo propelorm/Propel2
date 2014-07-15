@@ -1,0 +1,63 @@
+# Configuration file for `bookstore` fixtures
+propel:
+  general:
+    project: bookstore
+
+  database:
+    connections:
+      bookstore:
+        adapter: ##DATABASE_VENDOR##
+        classname: \Propel\Runtime\Connection\DebugPDO
+        dsn: ##DATABASE_URL##
+        user: ##DATABASE_USER##
+        password: ##DATABASE_PASSWORD##
+        options:
+          ATTR_PERSISTENT: false
+        attributes:
+          ATTR_EMULATE_PREPARES: true
+        #Propel specific settings
+        settings:
+          charset: utf8
+      bookstore-cms:
+        adapter: ##DATABASE_VENDOR##
+        classname: \Propel\Runtime\Connection\DebugPDO
+        dsn: ##DATABASE_URL##
+        user: ##DATABASE_USER##
+        password: ##DATABASE_PASSWORD##
+        options:
+          ATTR_PERSISTENT: false
+        attributes:
+          ATTR_EMULATE_PREPARES: true
+        #Propel specific settings
+        settings:
+          charset: utf8
+      bookstore-behavior:
+        adapter: ##DATABASE_VENDOR##
+        classname: \Propel\Runtime\Connection\DebugPDO
+        dsn: ##DATABASE_URL##
+        user: ##DATABASE_USER##
+        password: ##DATABASE_PASSWORD##
+        options:
+          ATTR_PERSISTENT: false
+        attributes:
+          ATTR_EMULATE_PREPARES: true
+        #Propel specific settings
+        settings:
+          charset: utf8
+
+  generator:
+    defaultConnection: bookstore
+    connections:
+      - bookstore
+      - bookstore-cms
+      - bookstore-behavior
+    targetPackage: bookstore
+    objectModel:
+      disableIdentifierQuoting: true
+
+  runtime:
+    defaultConnection: bookstore
+    connections:
+      - bookstore
+      - bookstore-cms
+      - bookstore-behavior

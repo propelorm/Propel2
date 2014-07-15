@@ -99,24 +99,6 @@ class DefaultPlatform implements PlatformInterface
     }
 
     /**
-     * Returns a platform specific builder class if exists.
-     *
-     * @param $type
-     *
-     * @return string|null Returns null if no platform specified builder class exists.
-     */
-    public function getBuilderClass($type)
-    {
-        $class = get_called_class();
-        $class = substr($class, strrpos($class, '\\') + 1, -(strlen('Platform')));
-        $class = 'Propel\Generator\Builder\Om\Platform\\' . $class . ucfirst($type) . 'Builder';
-
-        if (class_exists($class)) {
-            return $class;
-        }
-    }
-
-    /**
      * Sets the GeneratorConfigInterface to use in the parsing.
      *
      * @param GeneratorConfigInterface $config
@@ -124,19 +106,6 @@ class DefaultPlatform implements PlatformInterface
     public function setGeneratorConfig(GeneratorConfigInterface $config)
     {
         // do nothing by default
-    }
-
-    /**
-     * Gets a specific propel (renamed) property from the build.
-     *
-     * @param  string $name
-     * @return mixed
-     */
-    protected function getBuildProperty($name)
-    {
-        if (null !== $this->generatorConfig) {
-            return $this->generatorConfig->getBuildProperty($name);
-        }
     }
 
     /**

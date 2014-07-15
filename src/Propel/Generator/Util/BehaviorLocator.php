@@ -38,7 +38,7 @@ class BehaviorLocator
     {
         $this->generatorConfig = $config;
         if (null !== $config) {
-            $this->composerDir = $config->getBuildProperty('builderComposerDir');
+            $this->composerDir = $config->get()['paths']['composerDir'];
         }
     }
 

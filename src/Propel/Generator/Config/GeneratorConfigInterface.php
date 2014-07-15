@@ -37,22 +37,6 @@ interface GeneratorConfigInterface
     public function getConfiguredPluralizer();
 
     /**
-     * Returns a specific propel (renamed) property from the build.
-     *
-     * @param  string $name
-     * @return mixed
-     */
-    public function getBuildProperty($name);
-
-    /**
-     * Sets a specific propel (renamed) property from the build.
-     *
-     * @param string $name
-     * @param mixed  $value
-     */
-    public function setBuildProperty($name, $value);
-
-    /**
      * Creates and configures a new Platform class.
      *
      * @param  ConnectionInterface $con

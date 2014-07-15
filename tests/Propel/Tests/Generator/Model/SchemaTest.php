@@ -193,7 +193,8 @@ class SchemaTest extends ModelTestCase
     {
         $database1 = $this->getDatabaseMock('bookstore');
         $database2 = $this->getDatabaseMock('shoestore');
-        $config = $this->getMock('Propel\Generator\Config\GeneratorConfig');
+        $config = $this->getMockBuilder('Propel\Generator\Config\GeneratorConfig')
+            ->disableOriginalConstructor()->getMock();
 
         $schema = new Schema($this->getPlatformMock());
         $schema->setGeneratorConfig($config);
@@ -218,7 +219,8 @@ class SchemaTest extends ModelTestCase
 
     public function testSetGeneratorConfig()
     {
-        $config = $this->getMock('Propel\Generator\Config\GeneratorConfig');
+        $config = $this->getMockBuilder('Propel\Generator\Config\GeneratorConfig')
+            ->disableOriginalConstructor()->getMock();
 
         $schema = new Schema();
         $schema->setGeneratorConfig($config);

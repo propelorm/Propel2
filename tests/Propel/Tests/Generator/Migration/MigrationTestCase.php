@@ -50,7 +50,6 @@ class MigrationTestCase extends TestCaseFixturesDatabase
             $this->platform = new $platformClass();
             $this->platform->setIdentifierQuoting(true);
             $generatorConfig = new QuickGeneratorConfig();
-            $generatorConfig->setBuildProperty('mysqlTableType', 'InnoDB');
             $this->platform->setGeneratorConfig($generatorConfig);
 
             $this->parser->setGeneratorConfig(new QuickGeneratorConfig());

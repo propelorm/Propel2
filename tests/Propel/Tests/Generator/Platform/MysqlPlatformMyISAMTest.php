@@ -37,10 +37,11 @@ class MysqlPlatformMyISAMTest extends PlatformTestProvider
 
         if (!$platform) {
             $platform = new MysqlPlatform();
-            $config = new GeneratorConfig();
-            $config->setBuildProperties(array(
-                 'propel.mysql.tableType' => 'MyISAM'
-            ));
+
+            $configProp['propel']['database']['adapters']['mysql']['tableType'] = 'MyISAM';
+            $configProp['propel']['paths']['composerDir'] = __DIR__ . '/../../../../../';
+            $config = new GeneratorConfig(__DIR__ . '/../../../../Fixtures/bookstore', $configProp);
+
             $platform->setGeneratorConfig($config);
         }
 
@@ -697,12 +698,12 @@ DROP INDEX `babar` ON `foo`;
         $schema = '
 <database name="test1">
   <table name="foo">
-    <behavior name="AutoAddPK"/>
+    <behavior name="AutoAddPk"/>
     <column name="name" type="VARCHAR"/>
     <column name="subid" type="INTEGER"/>
   </table>
   <table name="bar">
-    <behavior name="AutoAddPK"/>
+    <behavior name="AutoAddPk"/>
 
     <column name="name" type="VARCHAR"/>
     <column name="subid" type="INTEGER"/>

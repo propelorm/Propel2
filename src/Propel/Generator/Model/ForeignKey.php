@@ -663,7 +663,10 @@ class ForeignKey extends MappingModel
         $columns = [];
         $foreignTable = $this->getForeignTable();
         foreach ($this->foreignColumns as $columnName) {
-            $columns[] = $foreignTable->getColumn($columnName);
+            $column = $foreignTable->getColumn($columnName);
+            if (null !== $column) {
+                $columns[] = $column;
+            }
         }
 
         return $columns;

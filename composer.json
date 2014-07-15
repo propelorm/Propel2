@@ -22,6 +22,7 @@
         "symfony/finder": "~2.2",
         "symfony/validator": "~2.2",
         "symfony/filesystem": "~2.2",
+        "symfony/config": "~2.2",
         "psr/log": "~1.0"
     },
     "require-dev": {

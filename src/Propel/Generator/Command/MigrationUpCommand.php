@@ -48,9 +48,7 @@ class MigrationUpCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $generatorConfig = $this->getGeneratorConfig(array(
-            'propel.platform.class' => $input->getOption('platform')
-        ), $input);
+        $generatorConfig = $this->getGeneratorConfig(null, $input);
 
         $this->createDirectory($input->getOption('output-dir'));
 

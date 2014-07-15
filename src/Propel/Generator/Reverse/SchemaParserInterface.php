@@ -43,14 +43,6 @@ interface SchemaParserInterface
     public function setGeneratorConfig(GeneratorConfigInterface $config);
 
     /**
-     * Gets a specific propel (renamed) property from the build.
-     *
-     * @param  string $name
-     * @return mixed
-     */
-    public function getBuildProperty($name);
-
-    /**
      * Gets array of warning messages.
      * @return string[]
      */

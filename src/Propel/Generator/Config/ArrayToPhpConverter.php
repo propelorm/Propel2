@@ -33,8 +33,8 @@ class ArrayToPhpConverter
         $conf .= "
 \$serviceContainer->checkVersion('{$runtimeVersion}');";
         // set datasources
-        if (isset($c['datasources'])) {
-            foreach ($c['datasources'] as $name => $params) {
+        if (isset($c['connections'])) {
+            foreach ($c['connections'] as $name => $params) {
                 if (!is_array($params)) {
                     continue;
                 }
@@ -50,17 +50,20 @@ class ArrayToPhpConverter
                     $conf .= "
 \$manager = new \Propel\Runtime\Connection\ConnectionManagerMasterSlave();
 \$manager->setReadConfiguration(" . var_export($params['slaves'], true). ");";
-                } elseif (isset($params['connection'])) {
+                } elseif (isset($params['dsn'])) {
                     $conf .= "
 \$manager = new \Propel\Runtime\Connection\ConnectionManagerSingle();";
                 } else {
                     continue;
                 }
 
-                if (isset($params['connection'])) {
+                if (isset($params['dsn'])) {
                     $masterConfigurationSetter = isset($params['slaves']) ? 'setWriteConfiguration' : 'setConfiguration';
+                    $connection = $params;
+                    unset($connection['adapter']);
+                    unset($connection['slaves']);
                     $conf .= "
-\$manager->{$masterConfigurationSetter}(". var_export($params['connection'], true) . ");";
+\$manager->{$masterConfigurationSetter}(". var_export($connection, true) . ");";
                 }
 
                 $conf .= "
@@ -69,11 +72,11 @@ class ArrayToPhpConverter
             }
 
             // set default datasource
-            if (isset($c['datasources']['default'])) {
-                $defaultDatasource = $c['datasources']['default'];
-            } elseif (isset($c['datasources']) && is_array($c['datasources'])) {
+            if (isset($c['defaultConnection'])) {
+                $defaultDatasource = $c['defaultConnection'];
+            } elseif (isset($c['connections']) && is_array($c['connections'])) {
                 // fallback to the first datasource
-                $datasourceNames = array_keys($c['datasources']);
+                $datasourceNames = array_keys($c['connections']);
                 $defaultDatasource = $datasourceNames[0];
             }
 
@@ -84,11 +87,12 @@ class ArrayToPhpConverter
         // set profiler
         if (isset($c['profiler'])) {
             $profilerConf = $c['profiler'];
-            if (isset($profilerConf['class'])) {
+            if (isset($profilerConf['classname'])) {
                 $conf .= "
-\$serviceContainer->setProfilerClass('{$profilerConf['class']}');";
-                unset($profilerConf['class']);
+\$serviceContainer->setProfilerClass('{$profilerConf['classname']}');";
+                unset($profilerConf['classname']);
             }
+
             if ($profilerConf) {
                 $conf .= "
 \$serviceContainer->setProfilerConfiguration(" . var_export($profilerConf, true) . ");";
@@ -97,31 +101,14 @@ class ArrayToPhpConverter
         }
 
         // set logger
-        if (isset($c['log']) && isset($c['log']['logger'])) {
-            $loggerConfiguration = $c['log']['logger'];
-            // is it a single logger or a list of loggers?
-            if (isset($loggerConfiguration[0])) {
-                foreach ($loggerConfiguration as $singleLoggerConfiguration) {
-                    $conf .= self::getLoggerCode($singleLoggerConfiguration);
-                }
-            } else {
-                $conf .= self::getLoggerCode($loggerConfiguration);
+        if (isset($c['log']) && count($c['log']) > 0) {
+            foreach ($c['log'] as $key => $logger) {
+                $conf .= "
+\$serviceContainer->setLoggerConfiguration('{$key}', " . var_export($logger, true) . ");";
             }
             unset($c['log']);
         }
 
         return preg_replace('/[ \t]*$/m', '', $conf);
-    }
-
-    protected static function getLoggerCode($conf)
-    {
-        $name = 'default';
-        if (isset($conf['name'])) {
-            $name = $conf['name'];
-            unset($conf['name']);
-        }
-
-        return "
-\$serviceContainer->setLoggerConfiguration('{$name}', " . var_export($conf, true) . ");";
     }
 }

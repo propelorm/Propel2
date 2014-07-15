@@ -1,0 +1,33 @@
+# Configuration file for `migration` fixtures
+propel:
+  general:
+    project: bookstore_namespaced
+
+  database:
+    connections:
+      bookstore_namespaced:
+        adapter: ##DATABASE_VENDOR##
+        classname: \Propel\Runtime\Connection\DebugPDO
+        dsn: ##DATABASE_URL##
+        user: ##DATABASE_USER##
+        password: ##DATABASE_PASSWORD##
+        options:
+          ATTR_PERSISTENT: false
+        attributes:
+          ATTR_EMULATE_PREPARES: true
+        #Propel specific settings
+        settings:
+          charset: utf8
+
+  generator:
+    defaultConnection: bookstore_namespaced
+    connections:
+      - bookstore_namespaced
+    targetPackage: bookstore
+    objectModel:
+      disableIdentifierQuoting: true
+
+  runtime:
+    defaultConnection: bookstore_namespaced
+    connections:
+      - bookstore_namespaced

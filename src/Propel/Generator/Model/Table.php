@@ -677,6 +677,7 @@ class Table extends ScopedMappingModel implements IdMethod
 
             // table referrers
             $foreignTable = $this->database->getTable($foreignKey->getForeignTableName());
+
             if (null !== $foreignTable) {
                 $referrers = $foreignTable->getReferrers();
                 if (null === $referrers || !in_array($foreignKey, $referrers, true) ) {

@@ -28,8 +28,6 @@ class MigrationDiffCommand extends AbstractCommand
 {
     const DEFAULT_OUTPUT_DIRECTORY  = 'generated-migrations';
 
-    const DEFAULT_MIGRATION_TABLE   = 'propel_migration';
-
     /**
      * {@inheritdoc}
      */
@@ -39,7 +37,7 @@ class MigrationDiffCommand extends AbstractCommand
 
         $this
             ->addOption('output-dir',         null, InputOption::VALUE_REQUIRED,  'The output directory where the migration files are located', self::DEFAULT_OUTPUT_DIRECTORY)
-            ->addOption('migration-table',    null, InputOption::VALUE_REQUIRED,  'Migration table name', self::DEFAULT_MIGRATION_TABLE)
+            ->addOption('migration-table',    null, InputOption::VALUE_REQUIRED,  'Migration table name', null)
             ->addOption('connection',         null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Connection to use. Example: \'bookstore=mysql:host=127.0.0.1;dbname=test;user=root;password=foobar\' where "bookstore" is your propel database name (used in your schema.xml)', array())
             ->addOption('table-renaming',     null, InputOption::VALUE_NONE,      'Detect table renaming', null)
             ->addOption('editor',             null, InputOption::VALUE_OPTIONAL,  'The text editor to use to open diff files', null)
@@ -57,11 +55,23 @@ class MigrationDiffCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $generatorConfig = $this->getGeneratorConfig(array(
-            'propel.platform.class'       => $input->getOption('platform'),
-            'propel.reverse.parser.class' => $this->getReverseClass($input),
-            'propel.migration.table'      => $input->getOption('migration-table')
-        ), $input);
+        $configOptions = array();
+        
+        if ($this->hasInputOption('connection', $input)) {
+            foreach ($input->getOption('connection') as $conn) {
+                $configOptions += $this->connectionToProperties($conn);
+            }
+        }
+
+        if ($this->hasInputOption('migration-table', $input)) {
+            $configOptions['propel']['migrations']['tableName'] = $input->getOption('migration-table');
+        }
+
+        if ($this->hasInputOption('platform', $input)) {
+            $configOptions['propel']['migrations']['parserClass'] = $this->getReverseClass($input);
+        }
+
+        $generatorConfig = $this->getGeneratorConfig($configOptions, $input);
 
         $this->createDirectory($input->getOption('output-dir'));
 
@@ -81,7 +91,7 @@ class MigrationDiffCommand extends AbstractCommand
         }
 
         $manager->setConnections($connections);
-        $manager->setMigrationTable($input->getOption('migration-table'));
+        $manager->setMigrationTable($generatorConfig->getConfigProperty('migrations.tableName'));
         $manager->setWorkingDirectory($input->getOption('output-dir'));
 
         if ($manager->hasPendingMigrations()) {
