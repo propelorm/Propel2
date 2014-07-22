@@ -84,7 +84,7 @@ class PropelConfiguration implements ConfigurationInterface
                                     ->arrayNode('settings')
                                         ->children()
                                             ->scalarNode('charset')->defaultValue('utf8')->end()
-                                            ->arrayNode('query')
+                                            ->arrayNode('queries')
                                                 ->prototype('scalar')->end()
                                             ->end()
                                         ->end()
