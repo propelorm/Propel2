@@ -127,10 +127,8 @@ abstract class PdoAdapter
         }
 
         if (isset($settings['queries']) && is_array($settings['queries'])) {
-            foreach ($settings['queries'] as $queries) {
-                foreach ((array) $queries as $query) {
-                    $con->exec($query);
-                }
+            foreach ($settings['queries'] as $query) {
+                $con->exec($query);
             }
         }
     }
