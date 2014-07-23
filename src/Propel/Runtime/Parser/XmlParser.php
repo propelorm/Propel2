@@ -115,6 +115,10 @@ class XmlParser extends AbstractParser
                 $value = htmlspecialchars($value, ENT_COMPAT, 'UTF-8');
                 $child = $element->ownerDocument->createCDATASection($value);
                 $element->appendChild($child);
+            } elseif ($value instanceof \DateTime) {
+                $element->setAttribute('type', 'xsd:dateTime');
+                $child = $element->ownerDocument->createTextNode($value->format(\DateTime::ISO8601));
+                $element->appendChild($child);
             } else {
                 $child = $element->ownerDocument->createTextNode($value);
                 $element->appendChild($child);
@@ -182,6 +186,8 @@ class XmlParser extends AbstractParser
                 $array[$index] = htmlspecialchars_decode($element->firstChild->textContent);
             } elseif (!$element->hasChildNodes()) {
                 $array[$index] = null;
+            } elseif ($element->hasAttribute('type') && $element->getAttribute('type') === 'xsd:dateTime') {
+                $array[$index] = new \DateTime($element->textContent);
             } else {
                 $array[$index] = $element->textContent;
             }
