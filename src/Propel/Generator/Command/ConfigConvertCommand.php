@@ -19,7 +19,6 @@ use Propel\Generator\Config\ArrayToPhpConverter;
 class ConfigConvertCommand extends AbstractCommand
 {
     const DEFAULT_INPUT_DIRECTORY   = '.';
-    const DEFAULT_OUTPUT_DIRECTORY  = './generated-conf';
     const DEFAULT_OUTPUT_FILE       = 'config.php';
 
     /**
@@ -29,7 +28,7 @@ class ConfigConvertCommand extends AbstractCommand
     {
         $this
             ->addOption('input-dir',   null, InputOption::VALUE_REQUIRED,  'The input directory',   self::DEFAULT_INPUT_DIRECTORY)
-            ->addOption('output-dir',  null, InputOption::VALUE_REQUIRED,  'The output directory',  self::DEFAULT_OUTPUT_DIRECTORY)
+            ->addOption('output-dir',  null, InputOption::VALUE_REQUIRED,  'The output directory')
             ->addOption('output-file', null, InputOption::VALUE_REQUIRED,  'The output file',       self::DEFAULT_OUTPUT_FILE)
             ->setName('config:convert')
             ->setAliases(array('convert-conf'))
@@ -43,6 +42,11 @@ class ConfigConvertCommand extends AbstractCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $configManager = new ConfigurationManager($input->getOption('input-dir'));
+
+        if (!$input->getOption('output-dir')) {
+            $input->setOption('output-dir', $configManager->getSection('paths')['phpConfDir']);
+        }
+
         $this->createDirectory($input->getOption('output-dir'));
 
         $outputFilePath = $input->getOption('output-dir') . DIRECTORY_SEPARATOR .$input->getOption('output-file');

@@ -20,16 +20,15 @@ use Propel\Generator\Manager\SqlManager;
  */
 class SqlInsertCommand extends AbstractCommand
 {
-    const DEFAULT_OUTPUT_DIRECTORY  = 'generated-sql';
-
     /**
      * {@inheritdoc}
      */
     protected function configure()
     {
+        parent::configure();
+        
         $this
-            ->addOption('input-dir', null, InputOption::VALUE_REQUIRED, 'The input directory', self::DEFAULT_OUTPUT_DIRECTORY)
-            ->addOption('sql-dir', null, InputOption::VALUE_REQUIRED, 'The SQL files directory', self::DEFAULT_OUTPUT_DIRECTORY)
+            ->addOption('sql-dir', null, InputOption::VALUE_REQUIRED, 'The SQL files directory')
             ->addOption('connection', null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Connection to use. Example: \'bookstore=mysql:host=127.0.0.1;dbname=test;user=root;password=foobar\' where "bookstore" is your propel database name (used in your schema.xml)')
             ->setName('sql:insert')
             ->setAliases(array('insert-sql'))
@@ -44,12 +43,17 @@ class SqlInsertCommand extends AbstractCommand
     {
         $manager = new SqlManager();
 
-        $generatorConfig = $this->getGeneratorConfig(array(), $input);
+        $configOptions = array();
+        if ($sqlDir = $input->getOption('sql-dir')) {
+            $configOptions['propel']['paths']['sqlDir'] = $sqlDir;
+        }
+
+        $generatorConfig = $this->getGeneratorConfig($configOptions, $input);
 
         $connections = array();
         $optionConnections = $input->getOption('connection');
         if (!$optionConnections) {
-            $connections = $generatorConfig->getBuildConnections($input->getOption('input-dir'));
+            $connections = $generatorConfig->getBuildConnections($generatorConfig->getSection('paths')['sqlDir']);
         } else {
             foreach ($optionConnections as $connection) {
                 list($name, $dsn, $infos) = $this->parseConnection($connection);

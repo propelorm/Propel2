@@ -109,25 +109,25 @@ class FileLoaderTest extends TestCase
         putenv('user=root');
 
         $config = array(
-            'home' => 'myHome',
+            'HoMe' => 'myHome',
             'project' => 'myProject',
-            'subhome' => '%home%/subhome',
+            'subhome' => '%HoMe%/subhome',
             'property1' => 1,
             'property2' => false,
             'direcories' => array(
-                'project' => '%home%/projects/%project%',
+                'project' => '%HoMe%/projects/%project%',
                 'conf' => '%project%',
                 'schema' => '%project%/schema',
-                'template' => '%home%/templates',
+                'template' => '%HoMe%/templates',
                 'output%project%' => '/build'
             ),
-            '%home%' => 4,
+            '%HoMe%' => 4,
             'host' => '%env.host%',
             'user' => '%env.user%'
         );
 
         $expected = array(
-            'home' => 'myHome',
+            'HoMe' => 'myHome',
             'project' => 'myProject',
             'subhome' => 'myHome/subhome',
             'property1' => 1,
