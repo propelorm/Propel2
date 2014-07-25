@@ -130,7 +130,7 @@ abstract class FileLoader extends BaseFileLoader
                 return $ret;
             }
 
-            $key = strtolower($match[1]);
+            $key = $match[1];
 
             if (isset($resolving[$key])) {
                 throw new RuntimeException("Circular reference detected for parameter '$key'.");
@@ -153,7 +153,7 @@ abstract class FileLoader extends BaseFileLoader
                 return $ret;
             }
 
-            $key = strtolower($match[1]);
+            $key = $match[1];
             if (isset($resolving[$key])) {
                 throw new RuntimeException(sprintf("Circular reference detected for parameter '$key'."));
             }

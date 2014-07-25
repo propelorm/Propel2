@@ -20,8 +20,6 @@ use Propel\Generator\Manager\SqlManager;
  */
 class SqlBuildCommand extends AbstractCommand
 {
-    const DEFAULT_OUTPUT_DIRECTORY   = 'generated-sql';
-
     /**
      * {@inheritdoc}
      */
@@ -31,7 +29,7 @@ class SqlBuildCommand extends AbstractCommand
 
         $this
             ->addOption('mysql-engine', null, InputOption::VALUE_REQUIRED,  'MySQL engine (MyISAM, InnoDB, ...)')
-            ->addOption('output-dir',   null, InputOption::VALUE_REQUIRED,  'The output directory', self::DEFAULT_OUTPUT_DIRECTORY)
+            ->addOption('output-dir',   null, InputOption::VALUE_REQUIRED,  'The output directory')
             ->addOption('validate',     null, InputOption::VALUE_NONE,      '')
             ->addOption('connection',   null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Connection to use', array())
             ->addOption('schema-name',  null, InputOption::VALUE_REQUIRED,  'The schema name for RDBMS supporting them', '')
@@ -51,22 +49,27 @@ class SqlBuildCommand extends AbstractCommand
         $configOptions = array();
 
         foreach ($input->getOptions() as $key => $option) {
-            switch ($key) {
-                case 'schema-name';
-                    $configOptions['propel']['generator']['schema']['basename'] = $option;
-                    break;
-                case 'table-prefix':
-                    $configOptions['propel']['generator']['tablePrefix'] = $option;
-                    break;
-                case 'mysql-engine';
-                    $configOptions['propel']['database']['adapters']['mysql']['tableType'] = $option;
-                    break;
+            if (null !== $option) {
+                switch ($key) {
+                    case 'output-dir':
+                        $configOptions['propel']['paths']['sqlDir'] = $option;
+                        break;
+                    case 'schema-name';
+                        $configOptions['propel']['generator']['schema']['basename'] = $option;
+                        break;
+                    case 'table-prefix':
+                        $configOptions['propel']['generator']['tablePrefix'] = $option;
+                        break;
+                    case 'mysql-engine';
+                        $configOptions['propel']['database']['adapters']['mysql']['tableType'] = $option;
+                        break;
+                }
             }
         }
 
         $generatorConfig = $this->getGeneratorConfig($configOptions, $input);
 
-        $this->createDirectory($input->getOption('output-dir'));
+        $this->createDirectory($generatorConfig->getSection('paths')['sqlDir']);
 
         $manager = new SqlManager();
 
@@ -90,7 +93,7 @@ class SqlBuildCommand extends AbstractCommand
                 $output->writeln($message);
             }
         });
-        $manager->setWorkingDirectory($input->getOption('output-dir'));
+        $manager->setWorkingDirectory($generatorConfig->getSection('paths')['sqlDir']);
 
         if ($manager->existSqlMap()) {
             $output->writeln("<info>sqldb.map won't be saved because it already exists. Remove it to generate a new map.</info>");
