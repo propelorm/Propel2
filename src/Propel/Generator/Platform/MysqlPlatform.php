@@ -698,6 +698,18 @@ ALTER TABLE %s CHANGE %s %s;
         ));
     }
 
+    public function getDefaultTypeSizes()
+    {
+        return array(
+            'char'     => 1,
+            'tinyint'  => 4,
+            'smallint' => 6,
+            'int'      => 11,
+            'bigint'   => 20,
+            'decimal'  => 10,
+        );
+    }
+
     /**
      * Escape the string for RDBMS.
      * @param  string $text

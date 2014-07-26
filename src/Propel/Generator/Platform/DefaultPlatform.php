@@ -1333,6 +1333,29 @@ if (is_resource($columnValueAccessor)) {
     }
 
     /**
+     * Returns a integer indexed array of default type sizes.
+     *
+     * @return integer[] type indexed array of integers
+     */
+    public function getDefaultTypeSizes()
+    {
+        return [];
+    }
+
+    /**
+     * Returns the default size of a specific type.
+     *
+     * @param string $type
+     * @return integer
+     */
+    public function getDefaultTypeSize($type)
+    {
+        $sizes = $this->getDefaultTypeSizes();
+
+        return isset($sizes[strtolower($type)]) ? $sizes[strtolower($type)] : null;
+    }
+
+    /**
      * Normalizes a table for the current platform. Very important for the TableComparator to not
      * generate useless diffs.
      * Useful for checking needed definitions/structures. E.g. Unique Indexes for ForeignKey columns,
@@ -1356,6 +1379,14 @@ if (is_resource($columnValueAccessor)) {
             // when the plafform does not support index sizes we reset it
             foreach ($table->getIndices() as $index) {
                 $index->resetColumnsSize();
+            }
+        }
+
+        foreach ($table->getColumns() as $column) {
+            if ($column->getSize() && $defaultSize = $this->getDefaultTypeSize($column->getType())) {
+                if (intval($column->getSize()) === $defaultSize) {
+                    $column->setSize(null);
+                }
             }
         }
     }

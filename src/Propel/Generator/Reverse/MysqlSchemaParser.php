@@ -207,11 +207,8 @@ class MysqlSchemaParser extends AbstractSchemaParser
             if ($matches[3]) {
                 $sqlType = $row['Type'];
             }
-            foreach (self::$defaultTypeSizes as $type => $defaultSize) {
-                if ($nativeType === $type && $size === $defaultSize) {
-                    $size = null;
-                    continue;
-                }
+            if (isset(static::$defaultTypeSizes[$nativeType]) && $size === static::$defaultTypeSizes[$nativeType]) {
+                $size = null;
             }
         } elseif (preg_match('/^(\w+)\(/', $row['Type'], $matches)) {
             $nativeType = $matches[1];

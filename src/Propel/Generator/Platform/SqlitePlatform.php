@@ -75,6 +75,18 @@ class SqlitePlatform extends DefaultPlatform
         return '§';
     }
 
+    public function getDefaultTypeSizes()
+    {
+        return array(
+            'char'      => 1,
+            'character' => 1,
+            'integer'   => 32,
+            'bigint'    => 64,
+            'smallint'  => 16,
+            'double precision' => 54
+        );
+    }
+
     /**
      * {@inheritdoc}
      */
