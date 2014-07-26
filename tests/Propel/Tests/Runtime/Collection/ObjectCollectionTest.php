@@ -131,7 +131,7 @@ class ObjectCollectionTest extends BookstoreTestBase
                 'Email' => null,
                 'Age' => null,
                 'Books' => array(
-                    'Book_0' => '*RECURSION*',
+                    0 => '*RECURSION*',
                 )
             ),
         ));

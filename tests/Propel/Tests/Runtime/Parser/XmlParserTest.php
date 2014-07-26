@@ -137,14 +137,14 @@ class XmlParserTest extends TestCase
     public static function listToXMLDataProvider()
     {
         $list = array(
-            'book0' => array('Id' => 123, 'Title' => 'Pride and Prejudice', 'AuthorId' => 456, 'ISBN' => '0553213105', 'Author' => array('Id' => 456, 'FirstName' => 'Jane', 'LastName' => 'Austen')),
-            'book1' => array('Id' => 82, 'Title' => 'Anna Karenina', 'AuthorId' => 543, 'ISBN' => '0143035002', 'Author' => array('Id' => 543, 'FirstName' => 'Leo', 'LastName' => 'Tolstoi')),
-            'book2' => array('Id' => 567, 'Title' => 'War and Peace', 'AuthorId' => 543, 'ISBN' => '067003469X', 'Author' => array('Id' => 543, 'FirstName' => 'Leo', 'LastName' => 'Tolstoi')),
+            ['Id' => 123, 'Title' => 'Pride and Prejudice', 'AuthorId' => 456, 'ISBN' => '0553213105', 'Author' => ['Id' => 456, 'FirstName' => 'Jane', 'LastName' => 'Austen']],
+            ['Id' => 82, 'Title' => 'Anna Karenina', 'AuthorId' => 543, 'ISBN' => '0143035002', 'Author' => ['Id' => 543, 'FirstName' => 'Leo', 'LastName' => 'Tolstoi']],
+            ['Id' => 567, 'Title' => 'War and Peace', 'AuthorId' => 543, 'ISBN' => '067003469X', 'Author' => ['Id' => 543, 'FirstName' => 'Leo', 'LastName' => 'Tolstoi']],
         );
         $xml = <<<EOF
 <?xml version="1.0" encoding="UTF-8"?>
-<data>
-  <book>
+<Books>
+  <Book>
     <Id>123</Id>
     <Title><![CDATA[Pride and Prejudice]]></Title>
     <AuthorId>456</AuthorId>
@@ -154,8 +154,8 @@ class XmlParserTest extends TestCase
       <FirstName><![CDATA[Jane]]></FirstName>
       <LastName><![CDATA[Austen]]></LastName>
     </Author>
-  </book>
-  <book>
+  </Book>
+  <Book>
     <Id>82</Id>
     <Title><![CDATA[Anna Karenina]]></Title>
     <AuthorId>543</AuthorId>
@@ -165,8 +165,8 @@ class XmlParserTest extends TestCase
       <FirstName><![CDATA[Leo]]></FirstName>
       <LastName><![CDATA[Tolstoi]]></LastName>
     </Author>
-  </book>
-  <book>
+  </Book>
+  <Book>
     <Id>567</Id>
     <Title><![CDATA[War and Peace]]></Title>
     <AuthorId>543</AuthorId>
@@ -176,8 +176,8 @@ class XmlParserTest extends TestCase
       <FirstName><![CDATA[Leo]]></FirstName>
       <LastName><![CDATA[Tolstoi]]></LastName>
     </Author>
-  </book>
-</data>
+  </Book>
+</Books>
 
 EOF;
 
@@ -190,7 +190,7 @@ EOF;
     public function testListToXML($list, $xml)
     {
         $parser = new XmlParser();
-        $this->assertEquals($xml, $parser->listToXML($list));
+        $this->assertEquals($xml, $parser->listToXML($list, 'Books'));
     }
 
     /**
