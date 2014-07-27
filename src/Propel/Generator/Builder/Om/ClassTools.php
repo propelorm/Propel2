@@ -10,8 +10,6 @@
 
 namespace Propel\Generator\Builder\Om;
 
-use Propel\Generator\Model\Table;
-
 /**
  * Tools to support class & package inclusion and referencing.
  *
@@ -79,46 +77,5 @@ class ClassTools
         }
 
         return $path . $classname . $extension;
-    }
-
-    /**
-     * Gets the baseClass path if specified for table/db.
-     *
-     * @return string
-     */
-    public static function getBaseClass(Table $table)
-    {
-        return $table->getBaseClass();
-    }
-
-    /**
-     * Gets the interface path if specified for table.
-     *
-     * @return string
-     */
-    public static function getInterface(Table $table)
-    {
-        return $table->getInterface();
-    }
-
-    /**
-     * Gets a list of PHP reserved words.
-     *
-     * @return string[]
-     */
-    public static function getPhpReservedWords()
-    {
-        return array(
-            'and', 'or', 'xor', 'exception', '__FILE__', '__LINE__',
-            'array', 'as', 'break', 'case', 'class', 'const', 'continue',
-            'declare', 'default', 'die', 'do', 'echo', 'else', 'elseif', 'empty',
-            'enddeclare', 'endfor', 'endforeach', 'endif', 'endswitch', 'endwhile',
-            'eval', 'exit', 'extends', 'for', 'foreach', 'function', 'global',
-            'if', 'include', 'include_once', 'isset', 'list', 'new', 'print', 'require',
-            'require_once', 'return', 'static', 'switch', 'unset', 'use', 'var', 'while',
-            '__FUNCTION__', '__CLASS__', '__METHOD__', '__DIR__', '__NAMESPACE__', 'final', 'php_user_filter', 'interface',
-            'implements', 'extends', 'public', 'protected', 'private', 'abstract', 'clone', 'try', 'catch',
-            'throw', 'this', 'namespace'
-        );
     }
 }
