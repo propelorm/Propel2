@@ -178,11 +178,11 @@ abstract class AbstractCommand extends Command
         return $config;
     }
     
-    /*
+    /**
      * Check if a given input option exists and it isn't null.
      *
      * @param string $option The name of the input option to check
-     * @param Symfony\Component\Console\Input\InputInterface Input object
+     * @param \Symfony\Component\Console\Input\InputInterface $input object
      *
      * @return boolean
      */
@@ -191,11 +191,11 @@ abstract class AbstractCommand extends Command
         return $input->hasOption($option) && null !== $input->getOption($option);
     }
     
-    /*
+    /**
      * Check if a given input argument exists and it isn't null.
      *
      * @param string $argument The name of the input argument to check
-     * @param Symfony\Component\Console\Input\InputInterface Input object
+     * @param \Symfony\Component\Console\Input\InputInterface $input object
      *
      * @return boolean
      */
