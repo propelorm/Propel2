@@ -2329,10 +2329,11 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      */
     public function toArray(\$keyType = TableMap::$defaultKeyType, \$includeLazyLoadColumns = true, \$alreadyDumpedObjects = array()" . ($hasFks ? ", \$includeForeignObjects = false" : '') . ")
     {
-        if (isset(\$alreadyDumpedObjects['$objectClassName'][$pkGetter])) {
+
+        if (isset(\$alreadyDumpedObjects['$objectClassName'][\$this->hashCode()])) {
             return '*RECURSION*';
         }
-        \$alreadyDumpedObjects['$objectClassName'][$pkGetter] = true;
+        \$alreadyDumpedObjects['$objectClassName'][\$this->hashCode()] = true;
         \$keys = ".$this->getTableMapClassName()."::getFieldNames(\$keyType);
         \$result = array(";
         foreach ($this->getTable()->getColumns() as $num => $col) {
