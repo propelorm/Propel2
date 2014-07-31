@@ -557,8 +557,8 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
             $conditions []= sprintf('%s = :p%d', $platform->quoteIdentifier(strtoupper($column->getName())), $index);
         }
         $query = sprintf(
-            'SELECT %s FROM %s WHERE %s',
-            implode(', ', $selectColumns),
+            'SELECT `%s` FROM %s WHERE %s',
+            implode('`, `', $selectColumns),
             $platform->quoteIdentifier($table->getName()),
             implode(' AND ', $conditions)
         );
