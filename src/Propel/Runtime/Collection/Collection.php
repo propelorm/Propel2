@@ -31,10 +31,10 @@ use Propel\Runtime\Map\TableMap;
  * @method Collection fromJSON(string $data) Populate the collection from a JSON string
  * @method Collection fromCSV(string $data) Populate the collection from a CSV string
  *
- * @method string toXML(boolean $usePrefix, boolean $includeLazyLoadColumns) Export the collection to an XML string
- * @method string toYAML(boolean $usePrefix, boolean $includeLazyLoadColumns) Export the collection to a YAML string
- * @method string toJSON(boolean $usePrefix, boolean $includeLazyLoadColumns) Export the collection to a JSON string
- * @method string toCSV(boolean $usePrefix, boolean $includeLazyLoadColumns) Export the collection to a CSV string
+ * @method string toXML(boolean $usePrefix = true, boolean $includeLazyLoadColumns = true) Export the collection to an XML string
+ * @method string toYAML(boolean $usePrefix = true, boolean $includeLazyLoadColumns = true) Export the collection to a YAML string
+ * @method string toJSON(boolean $usePrefix = true, boolean $includeLazyLoadColumns = true) Export the collection to a JSON string
+ * @method string toCSV(boolean $usePrefix = true, boolean $includeLazyLoadColumns = true) Export the collection to a CSV string
  *
  * @author Francois Zaninotto
  */
