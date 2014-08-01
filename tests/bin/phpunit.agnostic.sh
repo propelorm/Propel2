@@ -1,2 +1,2 @@
 #!/bin/sh
-phpunit --exclude-group database;
+./vendor/bin/phpunit --exclude-group database;

@@ -6,6 +6,9 @@ use Propel\Generator\Config\GeneratorConfig;
 use Propel\Generator\Manager\MigrationManager;
 use Propel\Tests\TestCase;
 
+/**
+ * @group database
+ */
 class MigrationManagerTest extends TestCase
 {
     /**

@@ -17,7 +17,7 @@ use Propel\Runtime\Connection\ConnectionInterface;
 use Symfony\Component\Finder\Finder;
 
 /**
- * The same as TestCaseFixtures but makes additional to that sure that
+ * The same as TestCaseFixtures but makes additional sure that
  * database schema has been updated.
  *
  * @author William Durand <william.durand1@gmail.com>
