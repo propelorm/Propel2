@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<database name="bookstore" defaultIdMethod="native" namespace="Propel\Tests\Bookstore">
+
+    <table name="type_object">
+        <column name="id" type="INTEGER" primaryKey="true" autoIncrement="true" />
+        <column name="details" type="object" />
+    </table>
+
+</database>
