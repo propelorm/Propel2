@@ -14,7 +14,7 @@ use Symfony\Component\Finder\Finder;
 use Propel\Runtime\Propel;
 
 $finder = new Finder();
-$finder->files()->name('*.php')->in(__DIR__.'/../src/Propel/Generator/Command');
+$finder->files()->name('*.php')->in(__DIR__.'/../src/Propel/Generator/Command')->depth(0);
 
 $app = new Application('Propel', Propel::VERSION);
 
