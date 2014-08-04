@@ -57,10 +57,7 @@ abstract class AbstractCommand extends Command
         $inputDir = null;
 
         if ($input->hasOption('input-dir')) {
-            //For SqlInsertCommand `input-dir` is the directory containing sql to insert
-            if (!($this instanceof SqlInsertCommand)) {
-                $inputDir = $input->getOption('input-dir');
-            }
+            $inputDir = $input->getOption('input-dir');
         }
 
         if ($input->hasOption('platform') && (null !== $input->getOption('platform'))) {
