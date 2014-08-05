@@ -62,6 +62,11 @@ class ModelBuildCommand extends AbstractCommand
         foreach ($inputOptions as $key => $option) {
             if (null !== $option) {
                 switch ($key) {
+                    case 'input-dir':
+                        if ('.' !== $option) {
+                            $configOptions['propel']['paths']['schemaDir'] = $option;
+                        }
+                        break;
                     case 'output-dir':
                         $configOptions['propel']['paths']['phpDir'] = $option;
                         break;
@@ -123,7 +128,7 @@ class ModelBuildCommand extends AbstractCommand
         $manager = new ModelManager();
         $manager->setFilesystem($this->getFilesystem());
         $manager->setGeneratorConfig($generatorConfig);
-        $manager->setSchemas($this->getSchemas($input->getOption('input-dir'), $input->getOption('recursive')));
+        $manager->setSchemas($this->getSchemas($generatorConfig->getSection('paths')['schemaDir'], $input->getOption('recursive')));
         $manager->setLoggerClosure(function ($message) use ($input, $output) {
             if ($input->getOption('verbose')) {
                 $output->writeln($message);

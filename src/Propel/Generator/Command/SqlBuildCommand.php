@@ -51,6 +51,11 @@ class SqlBuildCommand extends AbstractCommand
         foreach ($input->getOptions() as $key => $option) {
             if (null !== $option) {
                 switch ($key) {
+                    case 'input-dir':
+                        if ('.' !== $option) {
+                            $configOptions['propel']['paths']['schemaDir'] = $option;
+                        }
+                        break;
                     case 'output-dir':
                         $configOptions['propel']['paths']['sqlDir'] = $option;
                         break;
@@ -76,7 +81,7 @@ class SqlBuildCommand extends AbstractCommand
         $connections = array();
         $optionConnections = $input->getOption('connection');
         if (!$optionConnections) {
-            $connections = $generatorConfig->getBuildConnections($input->getOption('input-dir'));
+            $connections = $generatorConfig->getBuildConnections();
         } else {
             foreach ($optionConnections as $connection) {
                 list($name, $dsn, $infos) = $this->parseConnection($connection);
@@ -87,7 +92,7 @@ class SqlBuildCommand extends AbstractCommand
 
         $manager->setValidate($input->getOption('validate'));
         $manager->setGeneratorConfig($generatorConfig);
-        $manager->setSchemas($this->getSchemas($input->getOption('input-dir'), $input->getOption('recursive')));
+        $manager->setSchemas($this->getSchemas($generatorConfig->getSection('paths')['schemaDir'], $input->getOption('recursive')));
         $manager->setLoggerClosure(function ($message) use ($input, $output) {
             if ($input->getOption('verbose')) {
                 $output->writeln($message);
