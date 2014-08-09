@@ -1077,7 +1077,7 @@ class CriteriaTest extends BookstoreTestBase
     public function testLimit()
     {
         $c = new Criteria();
-        $this->assertEquals(0, $c->getLimit(), 'Limit is 0 by default');
+        $this->assertEquals(-1, $c->getLimit(), 'Limit is -1 by default');
 
         $c2 = $c->setLimit(1);
         $this->assertEquals(1, $c->getLimit(), 'Limit is set by setLimit');
