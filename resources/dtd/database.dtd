@@ -55,6 +55,7 @@ PHP class or method name.
   readOnly (true|false) "false"
   abstract (true|false) "false"
   isCrossRef (true|false) "false"
+  allowPkInsert (true|false) "false"
   package CDATA #IMPLIED
   schema CDATA #IMPLIED
   namespace CDATA #IMPLIED
@@ -136,7 +137,7 @@ PHP class or method name.
   name CDATA #IMPLIED
 >
 
-<!ELEMENT behavior (parameter+)>
+<!ELEMENT behavior (parameter*)>
 <!ATTLIST behavior
   name CDATA #IMPLIED
 >
