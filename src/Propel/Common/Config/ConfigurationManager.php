@@ -177,16 +177,15 @@ class ConfigurationManager
                 $numFiles = 1;
             }
 
-            if ($numFiles !== 1) {
-                if ($numFiles <= 0) {
-                    throw new InvalidArgumentException('Propel configuration file not found');
-                }
-
+            if ($numFiles > 1) {
                 throw new InvalidArgumentException('Propel expects only one configuration file');
+            } elseif ($numFiles === 0) {
+                $this->config = $extraConf;
+                return;
+            } else {
+                $file = current($files);
+                $fileName = $file->getPathName();
             }
-
-            $file = current($files);
-            $fileName = $file->getPathName();
         }
 
         $delegatingLoader = new DelegatingLoader();
