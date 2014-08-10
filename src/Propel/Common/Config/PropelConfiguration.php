@@ -142,7 +142,6 @@ class PropelConfiguration implements ConfigurationInterface
                     ->end()
                 ->end() //reverse
                 ->arrayNode('runtime')
-                    ->isRequired()
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->scalarNode('defaultConnection')->isRequired()->end()
@@ -201,7 +200,6 @@ class PropelConfiguration implements ConfigurationInterface
                     ->end()
                 ->end() //runtime
                 ->arrayNode('generator')
-                    ->isRequired()
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->scalarNode('defaultConnection')->isRequired()->end()

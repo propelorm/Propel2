@@ -85,11 +85,7 @@ EOF;
         $this->assertEquals('baz', $actual['bar']);
     }
 
-    /**
-     * @expectedException Propel\Common\Config\Exception\InvalidArgumentException
-     * @exceptionMessage Propel configuration file not found
-     */
-    public function testWrongConfigFileThrowsException()
+    public function testNotExistingConfigFileLoadsDefaultSettingsAndDoesNotThrowExceptions()
     {
         $yamlConf = <<<EOF
 foo: bar
@@ -320,11 +316,7 @@ EOF;
         $manager = new ConfigurationManager();
     }
 
-    /**
-     * @expectedException Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
-     * @expectedMessage The child node "runtime" at path "propel" must be configured
-     */
-    public function testNotDefineRuntimeSectionTrowsException()
+    public function testNotDefineRuntimeAndGeneratorSectionUsesDefaultConnections()
     {
         $yamlConf = <<<EOF
 propel:
@@ -343,6 +335,15 @@ EOF;
         $this->getFilesystem()->dumpFile('propel.yaml', $yamlConf);
 
         $manager = new ConfigurationManager();
+
+        $this->assertArrayHasKey('runtime', $manager->get());
+        $this->assertArrayHasKey('generator', $manager->get());
+
+        $this->assertArrayHasKey('connections', $manager->getSection('runtime'));
+        $this->assertArrayHasKey('connections', $manager->getSection('generator'));
+
+        $this->assertEquals(['default'], $manager->get()['runtime']['connections']);
+        $this->assertEquals(['default'], $manager->get()['generator']['connections']);
     }
 
     /**

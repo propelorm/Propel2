@@ -230,5 +230,15 @@ class ConfigurationManager
                 unset($this->config['database']['connections'][$name]['slaves']);
             }
         }
+
+        foreach (['runtime', 'generator'] as $section) {
+            if (!isset($this->config[$section]['connections']) || count($this->config[$section]['connections']) === 0) {
+                $this->config[$section]['connections'] = array_keys($this->config['database']['connections']);
+            }
+
+            if (!isset($this->config[$section]['defaultConnection'])) {
+                $this->config[$section]['defaultConnection'] = key($this->config['database']['connections']);
+            }
+        }
     }
 }
