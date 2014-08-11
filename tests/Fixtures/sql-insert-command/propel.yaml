@@ -1,4 +1,4 @@
-# Configuration file for `bookstore` fixtures
+# Configuration file for `sql-insert-command` fixtures
 propel:
   general:
     project: bookstore
@@ -23,39 +23,11 @@ propel:
         #Propel specific settings
         settings:
           charset: utf8
-      bookstore-cms:
-        adapter: mysql
-        classname: \Propel\Runtime\Connection\DebugPDO
-        dsn: mysql:host=127.0.0.1;dbname=test
-        user: root
-        password: 
-        options:
-          ATTR_PERSISTENT: false
-        attributes:
-          ATTR_EMULATE_PREPARES: true
-        #Propel specific settings
-        settings:
-          charset: utf8
-      bookstore-behavior:
-        adapter: mysql
-        classname: \Propel\Runtime\Connection\DebugPDO
-        dsn: mysql:host=127.0.0.1;dbname=test
-        user: root
-        password: 
-        options:
-          ATTR_PERSISTENT: false
-        attributes:
-          ATTR_EMULATE_PREPARES: true
-        #Propel specific settings
-        settings:
-          charset: utf8
 
   generator:
     defaultConnection: bookstore
     connections:
       - bookstore
-      - bookstore-cms
-      - bookstore-behavior
     targetPackage: bookstore
     objectModel:
       disableIdentifierQuoting: true
@@ -64,5 +36,3 @@ propel:
     defaultConnection: bookstore
     connections:
       - bookstore
-      - bookstore-cms
-      - bookstore-behavior

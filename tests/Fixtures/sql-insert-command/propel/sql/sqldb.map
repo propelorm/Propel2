@@ -1,3 +1,0 @@
-# Sqlfile -> Database map
-bookstore.sql=bookstore
-bookstore-behavior.sql=bookstore-behavior
