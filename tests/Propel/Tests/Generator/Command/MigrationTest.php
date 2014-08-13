@@ -50,12 +50,13 @@ class MigrationTest extends TestCaseFixturesDatabase
             '--verbose' => true
         ));
 
-        $output = new \Symfony\Component\Console\Output\BufferedOutput();
+        $output = new \Symfony\Component\Console\Output\StreamOutput(fopen("php://temp", 'r+'));
         $app->setAutoExit(false);
         $result = $app->run($input, $output);
 
         if (0 !== $result) {
-            echo $output->fetch();
+            rewind($output->getStream());
+            echo stream_get_contents($output->getStream());
         }
 
         $this->assertEquals(0, $result, 'migration:diff tests exited successfully');
@@ -84,16 +85,17 @@ class MigrationTest extends TestCaseFixturesDatabase
             '--verbose' => true
         ));
 
-        $output = new \Symfony\Component\Console\Output\BufferedOutput();
+        $output = new \Symfony\Component\Console\Output\StreamOutput(fopen("php://temp", 'r+'));
         $app->setAutoExit(false);
         $result = $app->run($input, $output);
 
+        rewind($output->getStream());
         if (0 !== $result) {
-            echo $output->fetch();
+            echo stream_get_contents($output->getStream());
         }
 
         $this->assertEquals(0, $result, 'migration:up tests exited successfully');
-        $outputString = $output->fetch();
+        $outputString = stream_get_contents($output->getStream());
         $this->assertContains('Migration complete.', $outputString);
     }
 
@@ -112,16 +114,17 @@ class MigrationTest extends TestCaseFixturesDatabase
             '--verbose' => true
         ));
 
-        $output = new \Symfony\Component\Console\Output\BufferedOutput();
+        $output = new \Symfony\Component\Console\Output\StreamOutput(fopen("php://temp", 'r+'));
         $app->setAutoExit(false);
         $result = $app->run($input, $output);
 
+        rewind($output->getStream());
         if (0 !== $result) {
-            echo $output->fetch();
+            echo stream_get_contents($output->getStream());
         }
 
         $this->assertEquals(0, $result, 'migration:down tests exited successfully');
-        $outputString = $output->fetch();
+        $outputString = stream_get_contents($output->getStream());
         $this->assertContains('Reverse migration complete.', $outputString);
     }
 
@@ -140,16 +143,17 @@ class MigrationTest extends TestCaseFixturesDatabase
             '--verbose' => true
         ));
 
-        $output = new \Symfony\Component\Console\Output\BufferedOutput();
+        $output = new \Symfony\Component\Console\Output\StreamOutput(fopen("php://temp", 'r+'));
         $app->setAutoExit(false);
         $result = $app->run($input, $output);
 
+        rewind($output->getStream());
         if (0 !== $result) {
-            echo $output->fetch();
+            echo stream_get_contents($output->getStream());
         }
 
         $this->assertEquals(0, $result, 'migration:down tests exited successfully');
-        $outputString = $output->fetch();
+        $outputString = stream_get_contents($output->getStream());
         $this->assertContains('Migration complete.', $outputString);
 
         //revert this migration change so we have the same database structure as before this test
