@@ -71,18 +71,22 @@ class MigrationDiffCommand extends AbstractCommand
             $configOptions['propel']['migrations']['parserClass'] = $this->getReverseClass($input);
         }
 
+        if ($input->getOption('input-dir') !== '.'){
+            $configOptions['propel']['paths']['schemaDir'] = $input->getOption('input-dir');
+        }
+
         $generatorConfig = $this->getGeneratorConfig($configOptions, $input);
 
         $this->createDirectory($input->getOption('output-dir'));
 
         $manager = new MigrationManager();
         $manager->setGeneratorConfig($generatorConfig);
-        $manager->setSchemas($this->getSchemas($input->getOption('input-dir'), $input->getOption('recursive')));
+        $manager->setSchemas($this->getSchemas($generatorConfig->getSection('paths')['schemaDir'], $input->getOption('recursive')));
 
         $connections = array();
         $optionConnections = $input->getOption('connection');
         if (!$optionConnections) {
-            $connections = $generatorConfig->getBuildConnections($input->getOption('input-dir'));
+            $connections = $generatorConfig->getBuildConnections();
         } else {
             foreach ($optionConnections as $connection) {
                 list($name, $dsn, $infos) = $this->parseConnection($connection);

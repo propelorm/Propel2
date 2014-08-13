@@ -53,7 +53,7 @@ class SqlInsertCommand extends AbstractCommand
         $connections = array();
         $optionConnections = $input->getOption('connection');
         if (!$optionConnections) {
-            $connections = $generatorConfig->getBuildConnections($generatorConfig->getSection('paths')['sqlDir']);
+            $connections = $generatorConfig->getBuildConnections();
         } else {
             foreach ($optionConnections as $connection) {
                 list($name, $dsn, $infos) = $this->parseConnection($connection);
@@ -67,7 +67,7 @@ class SqlInsertCommand extends AbstractCommand
                 $output->writeln($message);
             }
         });
-        $manager->setWorkingDirectory($input->getOption('sql-dir'));
+        $manager->setWorkingDirectory($generatorConfig->getSection('paths')['sqlDir']);
 
         $manager->insertSql();
     }
