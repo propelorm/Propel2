@@ -95,7 +95,7 @@ abstract class AbstractFormatter
         $this->setClass($criteria->getModelName());
         $this->setWith($criteria->getWith());
         $this->asColumns = $criteria->getAsColumns();
-        $this->hasLimit = $criteria->getLimit() != 0;
+        $this->hasLimit = $criteria->getLimit() != -1;
         if ($dataFetcher) {
             $this->setDataFetcher($dataFetcher);
         }

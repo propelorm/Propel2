@@ -100,7 +100,7 @@ class PropelModelPager implements \IteratorAggregate, \Countable
         $qForCount = clone $this->getQuery();
         $count = $qForCount
             ->offset(0)
-            ->limit(0)
+            ->limit(-1)
             ->count($this->con)
         ;
 
@@ -108,7 +108,7 @@ class PropelModelPager implements \IteratorAggregate, \Countable
 
         $q = $this->getQuery()
             ->offset(0)
-            ->limit(0)
+            ->limit(-1)
         ;
 
         if (0 === $this->getPage() || 0 === $this->getMaxPerPage()) {

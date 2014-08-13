@@ -128,7 +128,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
      */
     public function applyLimit(&$sql, $offset, $limit)
     {
-        if ($limit > 0) {
+        if ($limit >= 0) {
             $sql .= sprintf(' LIMIT %u', $limit);
         }
         if ($offset > 0) {

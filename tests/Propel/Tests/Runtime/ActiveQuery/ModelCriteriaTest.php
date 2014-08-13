@@ -740,6 +740,12 @@ class ModelCriteriaTest extends BookstoreTestBase
         $sql = 'SELECT  FROM  LIMIT 10';
         $params = array();
         $this->assertCriteriaTranslation($c, $sql, $params, 'limit() adds a LIMIT clause');
+        //test that limit 0 also works
+        $c->limit(0);
+        $sql = 'SELECT  FROM  LIMIT 0';
+        $params = array();
+        $this->assertCriteriaTranslation($c, $sql, $params, 'limit() adds a LIMIT clause');
+
     }
 
     public function testOffset()
@@ -1479,7 +1485,7 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c = BookQuery::create();
         $c->filterByTitle('foo');
         $c->findOne();
-        $this->assertEquals(0, $c->getLimit(), 'findOne() clones the query by default');
+        $this->assertEquals(-1, $c->getLimit(), 'findOne() clones the query by default');
 
         $c = BookQuery::create();
         $c->filterByTitle('foo');

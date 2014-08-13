@@ -218,10 +218,10 @@ class Criteria
     protected $originalDbName;
 
     /**
-     * To limit the number of rows to return.  <code>0</code> means return all
+     * To limit the number of rows to return.  <code>-1</code> means return all
      * rows.
      */
-    protected $limit = 0;
+    protected $limit = -1;
 
     /** To start the results at a row other than the first one. */
     protected $offset = 0;
@@ -1560,7 +1560,7 @@ class Criteria
     {
         // merge limit
         $limit = $criteria->getLimit();
-        if (0 != $limit && 0 === $this->getLimit()) {
+        if (0 != $limit && -1 === $this->getLimit()) {
             $this->limit = $limit;
         }
 
@@ -1971,7 +1971,7 @@ class Criteria
         $sql .= ($havingString ? ' HAVING '.$havingString : '')
              .($orderByClause ? ' ORDER BY '.implode(',', $orderByClause) : '');
 
-        if ($this->getLimit() || $this->getOffset()) {
+        if ($this->getLimit() >= 0 || $this->getOffset()) {
             $db->applyLimit($sql, $this->getOffset(), $this->getLimit(), $this);
         }
 
@@ -2296,7 +2296,7 @@ class Criteria
 
         $needsComplexCount = $this->getGroupByColumns()
             || $this->getOffset()
-            || $this->getLimit()
+            || $this->getLimit() >= 0
             || $this->getHaving()
             || in_array(Criteria::DISTINCT, $this->getSelectModifiers())
             || count($this->selectQueries) > 0
