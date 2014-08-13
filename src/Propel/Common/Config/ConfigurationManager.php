@@ -177,16 +177,15 @@ class ConfigurationManager
                 $numFiles = 1;
             }
 
-            if ($numFiles !== 1) {
-                if ($numFiles <= 0) {
-                    throw new InvalidArgumentException('Propel configuration file not found');
-                }
-
+            if ($numFiles > 1) {
                 throw new InvalidArgumentException('Propel expects only one configuration file');
+            } elseif ($numFiles === 0) {
+                $this->config = $extraConf;
+                return;
+            } else {
+                $file = current($files);
+                $fileName = $file->getPathName();
             }
-
-            $file = current($files);
-            $fileName = $file->getPathName();
         }
 
         $delegatingLoader = new DelegatingLoader();
@@ -229,6 +228,16 @@ class ConfigurationManager
         foreach ($this->config['database']['connections'] as $name => $connection) {
             if (count($connection['slaves'] <= 0)) {
                 unset($this->config['database']['connections'][$name]['slaves']);
+            }
+        }
+
+        foreach (['runtime', 'generator'] as $section) {
+            if (!isset($this->config[$section]['connections']) || count($this->config[$section]['connections']) === 0) {
+                $this->config[$section]['connections'] = array_keys($this->config['database']['connections']);
+            }
+
+            if (!isset($this->config[$section]['defaultConnection'])) {
+                $this->config[$section]['defaultConnection'] = key($this->config['database']['connections']);
             }
         }
     }
