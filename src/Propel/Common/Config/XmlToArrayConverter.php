@@ -131,6 +131,16 @@ class XmlToArrayConverter
     private static function getConvertedXmlValue($value)
     {
         $value = (string) $value; // convert from simplexml to string
+
+        //handle numeric values
+        if (is_numeric($value)) {
+            if (ctype_digit($value)) {
+                $value = intval($value);
+            } else {
+                $value = floatval($value);
+            }
+        }
+
         // handle booleans specially
         $lwr = strtolower($value);
         if ($lwr === "false") {
