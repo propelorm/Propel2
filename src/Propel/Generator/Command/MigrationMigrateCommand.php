@@ -21,7 +21,6 @@ use Propel\Generator\Util\SqlParser;
  */
 class MigrationMigrateCommand extends AbstractCommand
 {
-    const DEFAULT_OUTPUT_DIRECTORY  = 'generated-migrations';
     const DEFAULT_MIGRATION_TABLE   = 'propel_migration';
 
     /**
@@ -32,7 +31,7 @@ class MigrationMigrateCommand extends AbstractCommand
         parent::configure();
 
         $this
-            ->addOption('output-dir',       null, InputOption::VALUE_REQUIRED,  'The output directory', self::DEFAULT_OUTPUT_DIRECTORY)
+            ->addOption('output-dir',       null, InputOption::VALUE_REQUIRED,  'The output directory')
             ->addOption('migration-table',  null, InputOption::VALUE_REQUIRED,  'Migration table name', self::DEFAULT_MIGRATION_TABLE)
             ->addOption('connection',       null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Connection to use', array())
             ->setName('migration:migrate')
@@ -46,9 +45,15 @@ class MigrationMigrateCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $generatorConfig = $this->getGeneratorConfig(null, $input);
+        $configOptions = array();
 
-        $this->createDirectory($input->getOption('output-dir'));
+        if ($this->hasInputOption('output-dir', $input)) {
+            $configOptions['propel']['paths']['migrationDir'] = $input->getOption('output-dir');
+        }
+
+        $generatorConfig = $this->getGeneratorConfig($configOptions, $input);
+
+        $this->createDirectory($generatorConfig->getSection('paths')['migrationDir']);
 
         $manager = new MigrationManager();
         $manager->setGeneratorConfig($generatorConfig);
@@ -66,7 +71,7 @@ class MigrationMigrateCommand extends AbstractCommand
 
         $manager->setConnections($connections);
         $manager->setMigrationTable($input->getOption('migration-table'));
-        $manager->setWorkingDirectory($input->getOption('output-dir'));
+        $manager->setWorkingDirectory($generatorConfig->getSection('paths')['migrationDir']);
 
         if (!$manager->getFirstUpMigrationTimestamp()) {
             $output->writeln('All migrations were already executed - nothing to migrate.');

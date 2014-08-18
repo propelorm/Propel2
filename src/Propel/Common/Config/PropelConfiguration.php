@@ -49,6 +49,7 @@ class PropelConfiguration implements ConfigurationInterface
                         ->scalarNode('phpDir')->defaultValue(getcwd() . '/generated-classes')->end()
                         ->scalarNode('phpConfDir')->defaultValue(getcwd() . '/generated-conf')->end()
                         ->scalarNode('sqlDir')->defaultValue(getcwd() . '/generated-sql')->end()
+                        ->scalarNode('migrationDir')->defaultValue(getcwd() . '/generated-migrations')->end()
                         ->scalarNode('composerDir')->defaultNull()->end()
                     ->end()
                 ->end()

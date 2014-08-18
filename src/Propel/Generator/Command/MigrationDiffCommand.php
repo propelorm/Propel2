@@ -26,8 +26,6 @@ use Propel\Generator\Model\Schema;
  */
 class MigrationDiffCommand extends AbstractCommand
 {
-    const DEFAULT_OUTPUT_DIRECTORY  = 'generated-migrations';
-
     /**
      * {@inheritdoc}
      */
@@ -36,7 +34,7 @@ class MigrationDiffCommand extends AbstractCommand
         parent::configure();
 
         $this
-            ->addOption('output-dir',         null, InputOption::VALUE_REQUIRED,  'The output directory where the migration files are located', self::DEFAULT_OUTPUT_DIRECTORY)
+            ->addOption('output-dir',         null, InputOption::VALUE_REQUIRED,  'The output directory where the migration files are located')
             ->addOption('migration-table',    null, InputOption::VALUE_REQUIRED,  'Migration table name', null)
             ->addOption('connection',         null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Connection to use. Example: \'bookstore=mysql:host=127.0.0.1;dbname=test;user=root;password=foobar\' where "bookstore" is your propel database name (used in your schema.xml)', array())
             ->addOption('table-renaming',     null, InputOption::VALUE_NONE,      'Detect table renaming', null)
@@ -56,7 +54,7 @@ class MigrationDiffCommand extends AbstractCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $configOptions = array();
-        
+
         if ($this->hasInputOption('connection', $input)) {
             foreach ($input->getOption('connection') as $conn) {
                 $configOptions += $this->connectionToProperties($conn);
@@ -71,13 +69,17 @@ class MigrationDiffCommand extends AbstractCommand
             $configOptions['propel']['migrations']['parserClass'] = $this->getReverseClass($input);
         }
 
-        if ($input->getOption('input-dir') !== '.'){
+        if ($input->getOption('input-dir') !== '.') {
             $configOptions['propel']['paths']['schemaDir'] = $input->getOption('input-dir');
+        }
+
+        if ($this->hasInputOption('output-dir', $input)) {
+            $configOptions['propel']['paths']['migrationDir'] = $input->getOption('output-dir');
         }
 
         $generatorConfig = $this->getGeneratorConfig($configOptions, $input);
 
-        $this->createDirectory($input->getOption('output-dir'));
+        $this->createDirectory($generatorConfig->getSection('paths')['migrationDir']);
 
         $manager = new MigrationManager();
         $manager->setGeneratorConfig($generatorConfig);
@@ -96,7 +98,7 @@ class MigrationDiffCommand extends AbstractCommand
 
         $manager->setConnections($connections);
         $manager->setMigrationTable($generatorConfig->getConfigProperty('migrations.tableName'));
-        $manager->setWorkingDirectory($input->getOption('output-dir'));
+        $manager->setWorkingDirectory($generatorConfig->getSection('paths')['migrationDir']);
 
         if ($manager->hasPendingMigrations()) {
             throw new RuntimeException('Uncommitted migrations have been found ; you should either execute or delete them before rerunning the \'diff\' task');
@@ -206,7 +208,7 @@ class MigrationDiffCommand extends AbstractCommand
         $migrationFileName  = $manager->getMigrationFileName($timestamp);
         $migrationClassBody = $manager->getMigrationClassBody($migrationsUp, $migrationsDown, $timestamp, $input->getOption('comment'));
 
-        $file = $input->getOption('output-dir') . DIRECTORY_SEPARATOR . $migrationFileName;
+        $file = $generatorConfig->getSection('paths')['migrationDir'] . DIRECTORY_SEPARATOR . $migrationFileName;
         file_put_contents($file, $migrationClassBody);
 
         $output->writeln(sprintf('"%s" file successfully created.', $file));
