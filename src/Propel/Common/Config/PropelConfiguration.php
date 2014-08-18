@@ -63,7 +63,7 @@ class PropelConfiguration implements ConfigurationInterface
                             ->prototype('array')
                             ->fixXmlConfig('slave')
                                 ->children()
-                                    ->scalarNode('classname')->isRequired()->defaultValue('\Propel\Runtime\Connection\ConnectionWrapper')->end()
+                                    ->scalarNode('classname')->defaultValue('\Propel\Runtime\Connection\ConnectionWrapper')->end()
                                     ->enumNode('adapter')
                                         ->isRequired()
                                         ->cannotBeEmpty()
