@@ -852,7 +852,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     {
         $colPhpName = $col->getPhpName();
         $colName = $col->getName();
-        $variableName = $col->getStudlyPhpName();
+        $variableName = $col->getCamelCaseName();
         $qualifiedName = $this->getColumnConstant($col);
         $script .= "
     /**
@@ -1047,7 +1047,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
         $colPhpName = $col->getPhpName();
         $singularPhpName = $col->getPhpSingularName();
         $colName = $col->getName();
-        $variableName = $col->getStudlyPhpName();
+        $variableName = $col->getCamelCaseName();
         $qualifiedName = $this->getColumnConstant($col);
         $script .= "
     /**
@@ -1101,7 +1101,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
         $this->declareClassFromBuilder($fkStubObjectBuilder);
         $fkPhpName = $this->getClassNameFromBuilder($fkStubObjectBuilder, true);
         $relationName = $this->getFKPhpNameAffix($fk);
-        $objectName = '$' . $fkTable->getStudlyPhpName();
+        $objectName = '$' . $fkTable->getCamelCaseName();
         $script .= "
     /**
      * Filter the query by a related $fkPhpName object
@@ -1176,7 +1176,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
         $this->declareClassFromBuilder($fkStubObjectBuilder);
         $fkPhpName = $this->getClassNameFromBuilder($fkStubObjectBuilder, true);
         $relationName = $this->getRefFKPhpNameAffix($fk);
-        $objectName = '$' . $fkTable->getStudlyPhpName();
+        $objectName = '$' . $fkTable->getCamelCaseName();
         $script .= "
     /**
      * Filter the query by a related $fkPhpName object
@@ -1359,7 +1359,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
             $fkPhpName =  $foreignTable->getPhpName();
             $crossTableName = $crossRefTable->getName();
             $relName = $this->getFKPhpNameAffix($crossFK, $plural = false);
-            $objectName = '$' . $foreignTable->getStudlyPhpName();
+            $objectName = '$' . $foreignTable->getCamelCaseName();
             $script .= "
     /**
      * Filter the query by a related $fkPhpName object
@@ -1389,7 +1389,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     {
         $table = $this->getTable();
         $class = $this->getObjectClassName();
-        $objectName = '$' . $table->getStudlyPhpName();
+        $objectName = '$' . $table->getCamelCaseName();
 
         $script .= "
     /**

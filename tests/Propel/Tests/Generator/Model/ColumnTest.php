@@ -737,7 +737,7 @@ class ColumnTest extends ModelTestCase
         $column = new Column('created_at');
 
         $this->assertSame('CreatedAt', $column->getPhpName());
-        $this->assertSame('createdAt', $column->getStudlyPhpName());
+        $this->assertSame('createdAt', $column->getCamelCaseName());
     }
 
     public function testSetCustomPhpName()
@@ -746,7 +746,7 @@ class ColumnTest extends ModelTestCase
         $column->setPhpName('CreatedAt');
 
         $this->assertSame('CreatedAt', $column->getPhpName());
-        $this->assertSame('createdAt', $column->getStudlyPhpName());
+        $this->assertSame('createdAt', $column->getCamelCaseName());
     }
 
     public function testSetDefaultMutatorAndAccessorMethodsVisibility()

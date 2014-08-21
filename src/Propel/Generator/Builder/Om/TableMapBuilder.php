@@ -357,14 +357,14 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
         $tableColumns = $this->getTable()->getColumns();
 
         $fieldNamesPhpName       = '';
-        $fieldNamesStudlyPhpName = '';
+        $fieldNamesCamelCaseName = '';
         $fieldNamesColname       = '';
         $fieldNamesRawColname    = '';
         $fieldNamesFieldName     = '';
         $fieldNamesNum           = '';
 
         $fieldKeysPhpName        = '';
-        $fieldKeysStudlyPhpName  = '';
+        $fieldKeysCamelCaseName  = '';
         $fieldKeysColname        = '';
         $fieldKeysRawColname     = '';
         $fieldKeysFieldName      = '';
@@ -372,14 +372,14 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
 
         foreach ($tableColumns as $num => $col) {
             $fieldNamesPhpName       .= "'" . $col->getPhpName() . "', ";
-            $fieldNamesStudlyPhpName .= "'" . $col->getStudlyPhpName() . "', ";
+            $fieldNamesCamelCaseName .= "'" . $col->getCamelCaseName() . "', ";
             $fieldNamesColname       .= $this->getColumnConstant($col, $this->getTableMapClass()) . ", ";
             $fieldNamesRawColname    .= "'" . $col->getConstantName() . "', ";
             $fieldNamesFieldName     .= "'" . $col->getName() . "', ";
             $fieldNamesNum           .= "$num, ";
 
             $fieldKeysPhpName        .= "'" . $col->getPhpName() . "' => $num, ";
-            $fieldKeysStudlyPhpName  .= "'" . $col->getStudlyPhpName() . "' => $num, ";
+            $fieldKeysCamelCaseName  .= "'" . $col->getCamelCaseName() . "' => $num, ";
             $fieldKeysColname        .= $this->getColumnConstant($col, $this->getTableMapClass())." => $num, ";
             $fieldKeysRawColname     .= "'" . $col->getConstantName() . "' => $num, ";
             $fieldKeysFieldName      .= "'" . $col->getName() . "' => $num, ";
@@ -388,13 +388,13 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
 
         return $this->renderTemplate('tableMapFields', array(
                 'fieldNamesPhpName'       => $fieldNamesPhpName,
-                'fieldNamesStudlyPhpName' => $fieldNamesStudlyPhpName,
+                'fieldNamesCamelCaseName' => $fieldNamesCamelCaseName,
                 'fieldNamesColname'       => $fieldNamesColname,
                 'fieldNamesRawColname'    => $fieldNamesRawColname,
                 'fieldNamesFieldName'     => $fieldNamesFieldName,
                 'fieldNamesNum'           => $fieldNamesNum,
                 'fieldKeysPhpName'        => $fieldKeysPhpName,
-                'fieldKeysStudlyPhpName'  => $fieldKeysStudlyPhpName,
+                'fieldKeysCamelCaseName'  => $fieldKeysCamelCaseName,
                 'fieldKeysColname'        => $fieldKeysColname,
                 'fieldKeysRawColname'     => $fieldKeysRawColname,
                 'fieldKeysFieldName'      => $fieldKeysFieldName,
@@ -786,7 +786,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
      *
      * @param array  \$row       resultset row.
      * @param int    \$offset    The 0-based offset for reading from the resultset row.
-     * @param string \$indexType One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_STUDLYPHPNAME
+     * @param string \$indexType One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME
      *                           TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM
      *
      * @return string The primary key hash of the row
@@ -825,7 +825,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
      *
      * @param array  \$row       resultset row.
      * @param int    \$offset    The 0-based offset for reading from the resultset row.
-     * @param string \$indexType One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_STUDLYPHPNAME
+     * @param string \$indexType One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME
      *                           TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM
      *
      * @return mixed The primary key of the row
@@ -1028,7 +1028,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
      * @param array  \$row       row returned by DataFetcher->fetch().
      * @param int    \$offset    The 0-based offset for reading from the resultset row.
      * @param string \$indexType The index type of \$row. Mostly DataFetcher->getIndexType().
-                                 One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_STUDLYPHPNAME
+                                 One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME
      *                           TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
      *
      * @throws PropelException Any exceptions caught during processing will be

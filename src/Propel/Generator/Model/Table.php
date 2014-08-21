@@ -1103,13 +1103,13 @@ class Table extends ScopedMappingModel implements IdMethod
     }
 
     /**
-     * Returns the studly version of PHP name.
+     * Returns the camelCase version of PHP name.
      *
      * The studly name is the PHP name with the first character lowercase.
      *
      * @return string
      */
-    public function getStudlyPhpName()
+    public function getCamelCaseName()
     {
         return lcfirst($this->getPhpName());
     }

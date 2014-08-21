@@ -214,7 +214,7 @@ class TableTest extends ModelTestCase
         $table = new Table('created_at');
 
         $this->assertSame('CreatedAt', $table->getPhpName());
-        $this->assertSame('createdAt', $table->getStudlyPhpName());
+        $this->assertSame('createdAt', $table->getCamelCaseName());
     }
 
     public function testSetCustomPhpName()
@@ -223,7 +223,7 @@ class TableTest extends ModelTestCase
         $table->setPhpName('CreatedAt');
 
         $this->assertSame('CreatedAt', $table->getPhpName());
-        $this->assertSame('createdAt', $table->getStudlyPhpName());
+        $this->assertSame('createdAt', $table->getCamelCaseName());
     }
 
     public function testSetDescription()

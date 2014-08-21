@@ -467,13 +467,13 @@ class Column extends MappingModel
     }
 
     /**
-     * Returns the studly version of the PHP name.
+     * Returns the camelCase version of the PHP name.
      *
      * The studly name is the PHP name with the first character lowercase.
      *
      * @return string
      */
-    public function getStudlyPhpName()
+    public function getCamelCaseName()
     {
         return lcfirst($this->getPhpName());
     }

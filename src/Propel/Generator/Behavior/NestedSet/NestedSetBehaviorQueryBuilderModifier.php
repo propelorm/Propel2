@@ -132,7 +132,7 @@ public function inTree(\$scope = null)
 
     protected function addDescendantsOf(&$script)
     {
-        $objectName = '$' . $this->table->getStudlyPhpName();
+        $objectName = '$' . $this->table->getCamelCaseName();
         $script .= "
 /**
  * Filter the query to restrict the result to descendants of an object
@@ -157,7 +157,7 @@ public function descendantsOf($objectName)
 
     protected function addBranchOf(&$script)
     {
-        $objectName = '$' . $this->table->getStudlyPhpName();
+        $objectName = '$' . $this->table->getCamelCaseName();
         $script .= "
 /**
  * Filter the query to restrict the result to the branch of an object.
@@ -183,7 +183,7 @@ public function branchOf($objectName)
 
     protected function addChildrenOf(&$script)
     {
-        $objectName = '$' . $this->table->getStudlyPhpName();
+        $objectName = '$' . $this->table->getCamelCaseName();
         $script .= "
 /**
  * Filter the query to restrict the result to children of an object
@@ -203,7 +203,7 @@ public function childrenOf($objectName)
 
     protected function addSiblingsOf(&$script)
     {
-        $objectName = '$' . $this->table->getStudlyPhpName();
+        $objectName = '$' . $this->table->getCamelCaseName();
         $script .= "
 /**
  * Filter the query to restrict the result to siblings of an object.
@@ -230,7 +230,7 @@ public function siblingsOf($objectName, ConnectionInterface \$con = null)
 
     protected function addAncestorsOf(&$script)
     {
-        $objectName = '$' . $this->table->getStudlyPhpName();
+        $objectName = '$' . $this->table->getCamelCaseName();
         $script .= "
 /**
  * Filter the query to restrict the result to ancestors of an object
@@ -255,7 +255,7 @@ public function ancestorsOf($objectName)
 
     protected function addRootsOf(&$script)
     {
-        $objectName = '$' . $this->table->getStudlyPhpName();
+        $objectName = '$' . $this->table->getCamelCaseName();
         $script .= "
 /**
  * Filter the query to restrict the result to roots of an object.
