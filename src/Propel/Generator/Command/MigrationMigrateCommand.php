@@ -74,28 +74,33 @@ class MigrationMigrateCommand extends AbstractCommand
             return false;
         }
 
-        $timestamps = $manager->getValidMigrationTimestamps();
-        if (count($timestamps) > 1) {
-            $output->writeln(sprintf('%d migrations to execute', count($timestamps)));
+        $migrations = $manager->getValidMigrationTimestamps();
+
+        if (count($migrations) > 1) {
+            $output->writeln(sprintf('%d migrations to execute', count($migrations)));
         }
 
-        foreach ($timestamps as $timestamp) {
-            $output->writeln(sprintf(
-                'Executing migration %s up',
-                $manager->getMigrationClassName($timestamp)
-            ));
 
-            $migration = $manager->getMigrationObject($timestamp);
-            if (property_exists($migration, 'comment') && $migration->comment) {
-                $output->writeln(sprintf('<info>%s</info>', $migration->comment));
-            }
-            if (false === $migration->preUp($manager)) {
-                $output->writeln('<error>preUp() returned false. Aborting migration.</error>');
 
-                return false;
-            }
+        foreach ($migrations as $datasource => $timestamps) {
 
-            foreach ($migration->getUpSQL() as $datasource => $sql) {
+            foreach($timestamps as $timestamp){
+
+                $output->writeln(sprintf(
+                    'Executing migration %s up',
+                    $manager->getMigrationClassName($timestamp)
+                ));
+
+                $migration = $manager->getMigrationObject($timestamp);
+                if (property_exists($migration, 'comment') && $migration->comment) {
+                    $output->writeln(sprintf('<info>%s</info>', $migration->comment));
+                }
+                if (false === $migration->preUp($manager)) {
+                    $output->writeln('<error>preUp() returned false. Aborting migration.</error>');
+
+                    return false;
+                }
+
                 $connection = $manager->getConnection($datasource);
                 if ($input->getOption('verbose')) {
                     $output->writeln(sprintf(
@@ -106,42 +111,47 @@ class MigrationMigrateCommand extends AbstractCommand
                 }
 
                 $conn = $manager->getAdapterConnection($datasource);
-                $res = 0;
-                $statements = SqlParser::parseString($sql);
-                foreach ($statements as $statement) {
-                    try {
-                        if ($input->getOption('verbose')) {
-                            $output->writeln(sprintf('Executing statement "%s"', $statement));
+
+                    foreach ($migration->getUpSQL() as $migrationDatasource => $sql) {
+
+                        if ($migrationDatasource != $datasource){
+                            continue;
                         }
-                        $stmt = $conn->prepare($statement);
-                        $stmt->execute();
-                        $res++;
-                    } catch (\PDOException $e) {
-                        $output->writeln(sprintf('<error>Failed to execute SQL "%s": %s</error>', $statement, $e->getMessage()));
-                        // continue
+
+
+                        $res = 0;
+                        $statements = SqlParser::parseString($sql);
+                        foreach ($statements as $statement) {
+                            try {
+                                if ($input->getOption('verbose')) {
+                                    $output->writeln(sprintf('Executing statement "%s"', $statement));
+                                }
+                                $stmt = $conn->prepare($statement);
+                                $stmt->execute();
+                                $res++;
+                            } catch (\PDOException $e) {
+                                $output->writeln(sprintf('<error>Failed to execute SQL "%s": %s</error>', $statement, $e->getMessage()));
+                                // continue
+                            }
+                        }
+                        if (!$res) {
+                            $output->writeln('No statement was executed. The version was not updated.');
+                            $output->writeln(sprintf(
+                                'Please review the code in "%s"',
+                                $manager->getWorkingDirectory() . DIRECTORY_SEPARATOR . $manager->getMigrationClassName($timestamp)
+                            ));
+                            $output->writeln('<error>Migration aborted</error>');
+
+                            return false;
+                        }
+                        $output->writeln(sprintf(
+                            '%d of %d SQL statements executed successfully on datasource "%s"',
+                            $res,
+                            count($statements),
+                            $datasource
+                        ));
                     }
-                }
-                if (!$res) {
-                    $output->writeln('No statement was executed. The version was not updated.');
-                    $output->writeln(sprintf(
-                        'Please review the code in "%s"',
-                        $manager->getWorkingDirectory() . DIRECTORY_SEPARATOR . $manager->getMigrationClassName($timestamp)
-                    ));
-                    $output->writeln('<error>Migration aborted</error>');
 
-                    return false;
-                }
-                $output->writeln(sprintf(
-                    '%d of %d SQL statements executed successfully on datasource "%s"',
-                    $res,
-                    count($statements),
-                    $datasource
-                ));
-            }
-
-            // migrations for datasources have passed - update the timestamp
-            // for all datasources
-            foreach ($manager->getConnections() as $datasource => $connection) {
                 $manager->updateLatestMigrationTimestamp($datasource, $timestamp);
                 if ($input->getOption('verbose')) {
                     $output->writeln(sprintf(
@@ -150,8 +160,10 @@ class MigrationMigrateCommand extends AbstractCommand
                         $datasource
                     ));
                 }
+
+                $migration->postUp($manager);
             }
-            $migration->postUp($manager);
+
         }
 
         $output->writeln('Migration complete. No further migration to execute.');

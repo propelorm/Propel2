@@ -141,16 +141,20 @@ class MigrationManager extends AbstractManager
                 $stmt->execute();
 
                 while ($migrationTimestamp = $stmt->fetchColumn()) {
-                    $migrationTimestamps[] = $migrationTimestamp;
+                    $migrationTimestamps[$name][] = $migrationTimestamp;
                 }
+
+                if (!isset($migrationTimestamps[$name])){
+                    $migrationTimestamps[$name] = [];
+                }
+
             } catch (\PDOException $e) {
                 $this->createMigrationTable($name);
-                $migrationTimestamps = [];
+                $migrationTimestamps[$name] = [];
             }
         }
 
-        sort($migrationTimestamps);
-
+        asort($migrationTimestamps);
         return $migrationTimestamps;
     }
 
@@ -240,10 +244,17 @@ class MigrationManager extends AbstractManager
 
     public function getValidMigrationTimestamps()
     {
-        $migrationTimestamps = array_diff($this->getMigrationTimestamps(), $this->getAllDatabaseVersions());
-        sort($migrationTimestamps);
+        $migrationTimestamps = $this->getMigrationTimestamps();
 
-        return $migrationTimestamps;
+        $validMigrationsTimestamps = [];
+
+        foreach ($this->getAllDatabaseVersions() as $connection => $databaseVersions ){
+            if($diff = array_diff($migrationTimestamps,$databaseVersions)){
+                sort($diff);
+                $validMigrationsTimestamps[$connection] = $diff;
+            }
+        }
+        return $validMigrationsTimestamps;
     }
 
     public function hasPendingMigrations()
@@ -253,17 +264,30 @@ class MigrationManager extends AbstractManager
 
     public function getAlreadyExecutedMigrationTimestamps()
     {
-        $migrationTimestamps = array_intersect($this->getMigrationTimestamps(), $this->getAllDatabaseVersions());
-        sort($migrationTimestamps);
+        $migrationTimestamps = $this->getMigrationTimestamps();
+        $executedMigrations = [];
 
-        return $migrationTimestamps;
+            foreach ($this->getAllDatabaseVersions() as $datasource => $timestamps){
+                if ($migrations = array_intersect($migrationTimestamps, $timestamps)){
+                    sort($migrations);
+                    $executedMigrations[$datasource] = $migrations;
+                }
+            }
+
+
+        return $executedMigrations;
     }
 
     public function getFirstUpMigrationTimestamp()
     {
         $validTimestamps = $this->getValidMigrationTimestamps();
+        $firstMigrations = [];
 
-        return array_shift($validTimestamps);
+            foreach ($validTimestamps as $datasource => $timestamps){
+                $firstMigrations[$datasource] = array_shift($timestamps);
+            }
+
+        return $firstMigrations;
     }
 
     public function getFirstDownMigrationTimestamp()
@@ -375,7 +399,14 @@ EOP;
     public function getOldestDatabaseVersion()
     {
         $versions = $this->getAllDatabaseVersions();
+        $oldestVersions = null;
 
-        return array_pop($versions);
+            foreach ($versions as $datasource => $timestamps){
+                if ($version = array_pop($timestamps)){
+                    $oldestVersions[$datasource] = $version;
+                }
+            }
+
+        return $oldestVersions;
     }
 }

@@ -70,93 +70,108 @@ class MigrationDownCommand extends AbstractCommand
         $manager->setWorkingDirectory($input->getOption('output-dir'));
 
         $previousTimestamps = $manager->getAlreadyExecutedMigrationTimestamps();
-        if (!$nextMigrationTimestamp = array_pop($previousTimestamps)) {
-            $output->writeln('No migration were ever executed on this database - nothing to reverse.');
 
-            return false;
+        if (!$previousTimestamps){
+            $output->writeln('Nothing to reverse.');
         }
 
-        $output->writeln(sprintf(
-            'Executing migration %s down',
-            $manager->getMigrationClassName($nextMigrationTimestamp)
-        ));
+        foreach($previousTimestamps as $datasource => $timestamp){
 
-        if ($nbPreviousTimestamps = count($previousTimestamps)) {
-            $previousTimestamp = array_pop($previousTimestamps);
-        } else {
-            $previousTimestamp = 0;
-        }
-
-        $migration = $manager->getMigrationObject($nextMigrationTimestamp);
-        if (false === $migration->preDown($manager)) {
-            $output->writeln('<error>preDown() returned false. Aborting migration.</error>');
-
-            return false;
-        }
-
-        foreach ($migration->getDownSQL() as $datasource => $sql) {
-            $connection = $manager->getConnection($datasource);
-
-            if ($input->getOption('verbose')) {
-                $output->writeln(sprintf(
-                    'Connecting to database "%s" using DSN "%s"',
-                    $datasource,
-                    $connection['dsn']
-                ));
+            if (!$nextMigrationTimestamp = array_pop($timestamp)) {
+                $output->writeln('No migration were ever executed on this database - nothing to reverse.');
             }
 
-            $conn = $manager->getAdapterConnection($datasource);
-            $res = 0;
-            $statements = SqlParser::parseString($sql);
+            $output->writeln(sprintf(
+                'Executing migration %s down',
+                $manager->getMigrationClassName($nextMigrationTimestamp)
+            ));
 
-            foreach ($statements as $statement) {
-                try {
-                    if ($input->getOption('verbose')) {
-                        $output->writeln(sprintf('Executing statement "%s"', $statement));
-                    }
-
-                    $stmt = $conn->prepare($statement);
-                    $stmt->execute();
-                    $res++;
-                } catch (\PDOException $e) {
-                    $output->writeln(sprintf('<error>Failed to execute SQL "%s"</error>', $statement));
-                }
+            if ($nbPreviousTimestamps = count($previousTimestamps)) {
+                $previousTimestamp = array_pop($previousTimestamps);
+            } else {
+                $previousTimestamp = 0;
             }
-            if (!$res) {
-                $output->writeln('No statement was executed. The version was not updated.');
-                $output->writeln(sprintf(
-                    'Please review the code in "%s"',
-                    $manager->getMigrationDir() . DIRECTORY_SEPARATOR . $manager->getMigrationClassName($nextMigrationTimestamp)
-                ));
-                $output->writeln('<error>Migration aborted</error>');
+
+            $migration = $manager->getMigrationObject($nextMigrationTimestamp);
+            if (false === $migration->preDown($manager)) {
+                $output->writeln('<error>preDown() returned false. Aborting migration.</error>');
 
                 return false;
             }
 
-            $output->writeln(sprintf(
-                '%d of %d SQL statements executed successfully on datasource "%s"',
-                $res,
-                count($statements),
-                $datasource
-            ));
+            foreach ($migration->getDownSQL() as $migrationDatasource => $sql) {
 
-            $manager->removeMigrationTimestamp($datasource, $nextMigrationTimestamp);
+                if ($migrationDatasource != $datasource){
+                    continue;
+                }
 
-            if ($input->getOption('verbose')) {
+                $connection = $manager->getConnection($datasource);
+
+                if ($input->getOption('verbose')) {
+                    $output->writeln(sprintf(
+                        'Connecting to database "%s" using DSN "%s"',
+                        $datasource,
+                        $connection['dsn']
+                    ));
+                }
+
+                $conn = $manager->getAdapterConnection($datasource);
+                $res = 0;
+                $statements = SqlParser::parseString($sql);
+
+                foreach ($statements as $statement) {
+                    try {
+                        if ($input->getOption('verbose')) {
+                            $output->writeln(sprintf('Executing statement "%s"', $statement));
+                        }
+
+                        $stmt = $conn->prepare($statement);
+                        $stmt->execute();
+                        $res++;
+                    } catch (\PDOException $e) {
+                        $output->writeln(sprintf('<error>Failed to execute SQL "%s"</error>', $statement));
+                    }
+                }
+                if (!$res) {
+                    $output->writeln('No statement was executed. The version was not updated.');
+                    $output->writeln(sprintf(
+                        'Please review the code in "%s"',
+                        $manager->getMigrationDir() . DIRECTORY_SEPARATOR . $manager->getMigrationClassName($nextMigrationTimestamp)
+                    ));
+                    $output->writeln('<error>Migration aborted</error>');
+
+                    return false;
+                }
+
                 $output->writeln(sprintf(
-                    'Downgraded migration date to %d for datasource "%s"',
-                    $previousTimestamp,
+                    '%d of %d SQL statements executed successfully on datasource "%s"',
+                    $res,
+                    count($statements),
                     $datasource
                 ));
+
+                $manager->removeMigrationTimestamp($datasource, $nextMigrationTimestamp);
+
+                if ($input->getOption('verbose')) {
+                    $output->writeln(sprintf(
+                        'Downgraded migration date to %d for datasource "%s"',
+                        $previousTimestamp,
+                        $datasource
+                    ));
+                }
+
+                $migration->postDown($manager);
+
+                if ($nbPreviousTimestamps) {
+                    $output->writeln(sprintf('Reverse migration complete. %d more migrations available for reverse.', $nbPreviousTimestamps));
+                } else {
+                    $output->writeln('Reverse migration complete. No more migration available for reverse');
+                }
+
             }
+
         }
 
-        $migration->postDown($manager);
 
-        if ($nbPreviousTimestamps) {
-            $output->writeln(sprintf('Reverse migration complete. %d more migrations available for reverse.', $nbPreviousTimestamps));
-        } else {
-            $output->writeln('Reverse migration complete. No more migration available for reverse');
-        }
     }
 }
