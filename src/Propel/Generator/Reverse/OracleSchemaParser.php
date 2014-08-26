@@ -83,8 +83,7 @@ class OracleSchemaParser extends AbstractSchemaParser
         $tables = array();
         $stmt = $this->dbh->query("SELECT OBJECT_NAME FROM USER_OBJECTS WHERE OBJECT_TYPE = 'TABLE'");
 
-        $seqPattern = $this->getGeneratorConfig()->get()['database']['adapters']['oracleAutoincrementSequencePattern']
-        );
+        $seqPattern = $this->getGeneratorConfig()->get()['database']['adapters']['oracleAutoincrementSequencePattern'];
 
         // First load the tables (important that this happen before filling out details of tables)
         while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
