@@ -31,7 +31,7 @@ Read the [Propel documentation](http://www.propelorm.org/).
 Everybody can contribute to Propel2. Just fork it, and send Pull Requests.
 You have to follow [Propel2 Coding Standards](https://github.com/propelorm/Propel2/wiki/Coding-Standards) and provides unit tests as much as possible.
 
-Please see our [contribution guideline](https://github.com/propelorm/propelorm.github.com/blob/master/contribute.markdown). Thank you!
+Please see our [contribution guideline](http://propelorm.org/contribute.html). Thank you!
 
 ## License ##
 
