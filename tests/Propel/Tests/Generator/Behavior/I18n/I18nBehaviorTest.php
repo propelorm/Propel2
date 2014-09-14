@@ -371,4 +371,67 @@ CREATE TABLE i18n_behavior_test_0_i18n
 EOF;
         $this->assertContains($expected, $builder->getSQL());
     }
+
+    public function customPkSchemaDataProvider()
+    {
+        $schema1 = <<<EOF
+<database name="i18n_behavior_test_custom_pk_0">
+    <table name="i18n_behavior_test_custom_pk_0">
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <column name="foo" type="INTEGER" />
+        <column name="bar" type="VARCHAR" size="100" />
+        <behavior name="i18n">
+            <parameter name="i18n_columns" value="bar" />
+            <parameter name="i18n_pk_column" value="custom_id" />
+        </behavior>
+    </table>
+</database>
+EOF;
+        $schema2 = <<<EOF
+<database name="i18n_behavior_test_custom_pk_0">
+    <table name="i18n_behavior_test_custom_pk_0">
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <column name="foo" type="INTEGER" />
+        <behavior name="i18n" />
+    </table>
+    <table name="i18n_behavior_test_custom_pk_0_i18n">
+        <column name="custom_id" primaryKey="true" type="INTEGER" />
+        <column name="locale" primaryKey="true" type="VARCHAR" size="5" default="en_US" />
+        <column name="bar" type="VARCHAR" size="100" />
+        <foreign-key foreignTable="i18n_behavior_test_custom_pk_0">
+            <reference local="custom_id" foreign="id" />
+        </foreign-key>
+    </table>
+</database>
+EOF;
+
+        return array(array($schema1), array($schema2));
+    }
+
+    /**
+     * @dataProvider customPkSchemaDataProvider
+     */
+    public function testModifyTableRelatesI18nTableToMainTableWithCustomPk($schema)
+    {
+        $builder = new QuickBuilder();
+        $builder->setSchema($schema);
+        $expected = <<<EOF
+-----------------------------------------------------------------------
+-- i18n_behavior_test_custom_pk_0_i18n
+-----------------------------------------------------------------------
+
+DROP TABLE IF EXISTS i18n_behavior_test_custom_pk_0_i18n;
+
+CREATE TABLE i18n_behavior_test_custom_pk_0_i18n
+(
+    custom_id INTEGER NOT NULL,
+    locale VARCHAR(5) DEFAULT 'en_US' NOT NULL,
+    bar VARCHAR(100),
+    PRIMARY KEY (custom_id,locale),
+    UNIQUE (custom_id,locale),
+    FOREIGN KEY (custom_id) REFERENCES i18n_behavior_test_custom_pk_0 (id)
+EOF;
+        $this->assertContains($expected, $builder->getSQL());
+    }
+
 }
