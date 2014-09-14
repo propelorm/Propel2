@@ -106,6 +106,7 @@ class I18nBehaviorObjectBuilderModifier
             'objectClassName'  => $this->builder->getClassNameFromBuilder($this->builder->getStubObjectBuilder($this->table)),
             'defaultLocale'    => $this->behavior->getDefaultLocale(),
             'alias'            => ucfirst($alias),
+            'localeColumnName'  => $this->behavior->getLocaleColumn()->getPhpName(),
         ));
     }
 
@@ -113,6 +114,7 @@ class I18nBehaviorObjectBuilderModifier
     {
         return $this->behavior->renderTemplate('objectGetLocaleAlias', array(
             'alias' => ucfirst($alias),
+            'localeColumnName'  => $this->behavior->getLocaleColumn()->getPhpName(),
         ));
     }
 
@@ -150,6 +152,7 @@ class I18nBehaviorObjectBuilderModifier
     {
         return $this->behavior->renderTemplate('objectGetCurrentTranslation', array(
             'i18nTablePhpName' => $this->builder->getClassNameFromBuilder($this->builder->getNewStubObjectBuilder($this->behavior->getI18nTable())),
+            'localeColumnName'  => $this->behavior->getLocaleColumn()->getPhpName(),
         ));
     }
 
