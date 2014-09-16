@@ -66,7 +66,7 @@ class FieldnameRelatedTest extends TestCaseFixtures
                 4 => 'PublisherId',
                 5 => 'AuthorId'
             ),
-            TableMap::TYPE_STUDLYPHPNAME => array(
+            TableMap::TYPE_CAMELNAME => array(
                 0 => 'id',
                 1 => 'title',
                 2 => 'iSBN',
@@ -118,14 +118,14 @@ class FieldnameRelatedTest extends TestCaseFixtures
     {
         $types = array(
             TableMap::TYPE_PHPNAME,
-            TableMap::TYPE_STUDLYPHPNAME,
+            TableMap::TYPE_CAMELNAME,
             TableMap::TYPE_COLNAME,
             TableMap::TYPE_FIELDNAME,
             TableMap::TYPE_NUM
         );
         $expecteds = array (
             TableMap::TYPE_PHPNAME => 'AuthorId',
-            TableMap::TYPE_STUDLYPHPNAME => 'authorId',
+            TableMap::TYPE_CAMELNAME => 'authorId',
             TableMap::TYPE_COLNAME => 'book.AUTHOR_ID',
             TableMap::TYPE_FIELDNAME => 'author_id',
             TableMap::TYPE_NUM => 5,
@@ -147,7 +147,7 @@ class FieldnameRelatedTest extends TestCaseFixtures
     {
         $types = array(
             TableMap::TYPE_PHPNAME,
-            TableMap::TYPE_STUDLYPHPNAME,
+            TableMap::TYPE_CAMELNAME,
             TableMap::TYPE_COLNAME,
             TableMap::TYPE_FIELDNAME,
             TableMap::TYPE_NUM
@@ -161,7 +161,7 @@ class FieldnameRelatedTest extends TestCaseFixtures
                 4 => 'PublisherId',
                 5 => 'AuthorId'
             ),
-            TableMap::TYPE_STUDLYPHPNAME => array(
+            TableMap::TYPE_CAMELNAME => array(
                 0 => 'id',
                 1 => 'title',
                 2 => 'iSBN',
@@ -213,14 +213,14 @@ class FieldnameRelatedTest extends TestCaseFixtures
     {
         $types = array(
             TableMap::TYPE_PHPNAME,
-            TableMap::TYPE_STUDLYPHPNAME,
+            TableMap::TYPE_CAMELNAME,
             TableMap::TYPE_COLNAME,
             TableMap::TYPE_FIELDNAME,
             TableMap::TYPE_NUM
         );
         $expecteds = array (
             TableMap::TYPE_PHPNAME => 'AuthorId',
-            TableMap::TYPE_STUDLYPHPNAME => 'authorId',
+            TableMap::TYPE_CAMELNAME => 'authorId',
             TableMap::TYPE_COLNAME => 'book.AUTHOR_ID',
             TableMap::TYPE_FIELDNAME => 'author_id',
             TableMap::TYPE_NUM => 5,
@@ -242,7 +242,7 @@ class FieldnameRelatedTest extends TestCaseFixtures
     {
         $types = array(
             TableMap::TYPE_PHPNAME => 'Title',
-            TableMap::TYPE_STUDLYPHPNAME => 'title',
+            TableMap::TYPE_CAMELNAME => 'title',
             TableMap::TYPE_COLNAME => 'book.TITLE',
             TableMap::TYPE_FIELDNAME => 'title',
             TableMap::TYPE_NUM => 1
@@ -266,7 +266,7 @@ class FieldnameRelatedTest extends TestCaseFixtures
         $book = new Book();
         $types = array(
             TableMap::TYPE_PHPNAME => 'Title',
-            TableMap::TYPE_STUDLYPHPNAME => 'title',
+            TableMap::TYPE_CAMELNAME => 'title',
             TableMap::TYPE_COLNAME => 'book.TITLE',
             TableMap::TYPE_FIELDNAME => 'title',
             TableMap::TYPE_NUM => 1
@@ -289,7 +289,7 @@ class FieldnameRelatedTest extends TestCaseFixtures
     {
         $types = array(
             TableMap::TYPE_PHPNAME,
-            TableMap::TYPE_STUDLYPHPNAME,
+            TableMap::TYPE_CAMELNAME,
             TableMap::TYPE_COLNAME,
             TableMap::TYPE_FIELDNAME,
             TableMap::TYPE_NUM
@@ -299,7 +299,7 @@ class FieldnameRelatedTest extends TestCaseFixtures
                 'Title' => 'Harry Potter and the Order of the Phoenix',
                 'ISBN' => '043935806X'
             ),
-            TableMap::TYPE_STUDLYPHPNAME => array (
+            TableMap::TYPE_CAMELNAME => array (
                 'title' => 'Harry Potter and the Order of the Phoenix',
                 'iSBN' => '043935806X'
             ),
@@ -342,7 +342,7 @@ class FieldnameRelatedTest extends TestCaseFixtures
     {
         $types = array(
             TableMap::TYPE_PHPNAME,
-            TableMap::TYPE_STUDLYPHPNAME,
+            TableMap::TYPE_CAMELNAME,
             TableMap::TYPE_COLNAME,
             TableMap::TYPE_FIELDNAME,
             TableMap::TYPE_NUM
@@ -359,7 +359,7 @@ class FieldnameRelatedTest extends TestCaseFixtures
                 'Title' => 'Harry Potter and the Order of the Phoenix',
                 'ISBN' => '043935806X'
             ),
-            TableMap::TYPE_STUDLYPHPNAME => array (
+            TableMap::TYPE_CAMELNAME => array (
                 'title' => 'Harry Potter and the Order of the Phoenix',
                 'iSBN' => '043935806X'
             ),
@@ -410,7 +410,7 @@ class FieldnameRelatedTest extends TestCaseFixtures
     {
         $types = [
             TableMap::TYPE_PHPNAME,
-            TableMap::TYPE_STUDLYPHPNAME,
+            TableMap::TYPE_CAMELNAME,
             TableMap::TYPE_COLNAME,
             TableMap::TYPE_FIELDNAME,
             TableMap::TYPE_NUM
@@ -445,7 +445,7 @@ class FieldnameRelatedTest extends TestCaseFixtures
                     ]
                 ]
             ],
-            TableMap::TYPE_STUDLYPHPNAME => array (
+            TableMap::TYPE_CAMELNAME => array (
                 'id' => null,
                 'title' => 'Harry Potter and the Order of the Phoenix',
                 'iSBN' => '043935806X',

@@ -7,7 +7,7 @@
      */
     protected static $fieldNames = array (
         self::TYPE_PHPNAME       => array(<?= $fieldNamesPhpName ?>),
-        self::TYPE_STUDLYPHPNAME => array(<?= $fieldNamesStudlyPhpName ?>),
+        self::TYPE_CAMELNAME     => array(<?= $fieldNamesCamelCaseName ?>),
         self::TYPE_COLNAME       => array(<?= $fieldNamesColname ?>),
         self::TYPE_RAW_COLNAME   => array(<?= $fieldNamesRawColname ?>),
         self::TYPE_FIELDNAME     => array(<?= $fieldNamesFieldName ?>),
@@ -22,7 +22,7 @@
      */
     protected static $fieldKeys = array (
         self::TYPE_PHPNAME       => array(<?= $fieldKeysPhpName ?>),
-        self::TYPE_STUDLYPHPNAME => array(<?= $fieldKeysStudlyPhpName ?>),
+        self::TYPE_CAMELNAME     => array(<?= $fieldKeysCamelCaseName ?>),
         self::TYPE_COLNAME       => array(<?= $fieldKeysColname ?>),
         self::TYPE_RAW_COLNAME   => array(<?= $fieldKeysRawColname ?>),
         self::TYPE_FIELDNAME     => array(<?= $fieldKeysFieldName ?>),

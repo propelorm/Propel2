@@ -620,7 +620,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         $phpDoc = [];
 
         foreach ($crossFKs->getCrossForeignKeys() as $fk) {
-            $crossObjectName  = '$' . lcfirst($this->getFKPhpNameAffix($fk)); //$fk->getForeignTable()->getStudlyPhpName();
+            $crossObjectName  = '$' . lcfirst($this->getFKPhpNameAffix($fk)); //$fk->getForeignTable()->getCamelCaseName();
             $crossObjectClassName  = $this->getNewObjectBuilder($fk->getForeignTable())->getObjectClassName();
 
             $names[] = $crossObjectClassName;

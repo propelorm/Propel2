@@ -769,7 +769,7 @@ class GeneratedObjectTest extends BookstoreTestBase
     </table>
 </database>
 EOF;
-        $extraConf['propel']['generator']['objectModel']['defaultKeyType'] = 'studlyPhpName';
+        $extraConf['propel']['generator']['objectModel']['defaultKeyType'] = 'camelName';
         $generatorConfig = new QuickGeneratorConfig($extraConf);
         $builder = new QuickBuilder();
         $builder->setSchema($schema);

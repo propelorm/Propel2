@@ -1016,7 +1016,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      */
     public function addBooleanAccessorOpen(&$script, Column $column)
     {
-        $name = $column->getStudlyPhpName();
+        $name = $column->getCamelCaseName();
         if (!preg_match('/^(?:is|has)(?=[A-Z])/', $name)) {
             $name = 'is' . ucfirst($name);
         }
@@ -2006,7 +2006,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * @param int     \$startcol  0-based offset column which indicates which restultset column to start with.
      * @param boolean \$rehydrate Whether this object is being re-hydrated from the database.
      * @param string  \$indexType The index type of \$row. Mostly DataFetcher->getIndexType().
-                                  One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_STUDLYPHPNAME
+                                  One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME
      *                            TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
      *
      * @return int             next starting column
@@ -2314,7 +2314,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * You can specify the key type of the array by passing one of the class
      * type constants.
      *
-     * @param     string  \$keyType (optional) One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_STUDLYPHPNAME,
+     * @param     string  \$keyType (optional) One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME,
      *                    TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
      *                    Defaults to TableMap::$defaultKeyType.
      * @param     boolean \$includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
@@ -2395,19 +2395,19 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     protected function addToArrayKeyLookUp(Table $table, $plural)
     {
         $phpName = $table->getPhpName();
-        $studlyPhpName = $table->getStudlyPhpName();
+        $camelCaseName = $table->getCamelCaseName();
         $fieldName = $table->getName();
 
         if ($plural) {
             $phpName = $this->getPluralizer()->getPluralForm($phpName);
-            $studlyPhpName = $this->getPluralizer()->getPluralForm($studlyPhpName);
+            $camelCaseName = $this->getPluralizer()->getPluralForm($camelCaseName);
             $fieldName = $this->getPluralizer()->getPluralForm($fieldName);
         }
 
         return "
                 switch (\$keyType) {
-                    case TableMap::TYPE_STUDLYPHPNAME:
-                        \$key = '" . $studlyPhpName . "';
+                    case TableMap::TYPE_CAMELNAME:
+                        \$key = '" . $camelCaseName . "';
                         break;
                     case TableMap::TYPE_FIELDNAME:
                         \$key = '" . $fieldName . "';
@@ -2444,7 +2444,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      *
      * @param      string \$name name
      * @param      string \$type The type of fieldname the \$name is of:
-     *                     one of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_STUDLYPHPNAME
+     *                     one of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME
      *                     TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
      *                     Defaults to TableMap::$defaultKeyType.
      * @return mixed Value of field.
@@ -2579,7 +2579,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * @param  string \$name
      * @param  mixed  \$value field value
      * @param  string \$type The type of fieldname the \$name is of:
-     *                one of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_STUDLYPHPNAME
+     *                one of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME
      *                TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
      *                Defaults to TableMap::$defaultKeyType.
      * @return \$this|".$this->getObjectClassName(true)."
@@ -2656,7 +2656,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * array. If so the setByName() method is called for that column.
      *
      * You can specify the key type of the array by additionally passing one
-     * of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_STUDLYPHPNAME,
+     * of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME,
      * TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
      * The default key type is the column's TableMap::$defaultKeyType.
      *
@@ -4990,7 +4990,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $className                   = $joinedTableObjectBuilder->getObjectClassname();
         $refKObjectClassName         = $this->getRefFKPhpNameAffix($crossFKs->getIncomingForeignKey(), $plural = false);
         $tblFK                       = $crossFKs->getIncomingForeignKey()->getTable();
-        $foreignObjectName           = '$' . $tblFK->getStudlyPhpName();
+        $foreignObjectName           = '$' . $tblFK->getCamelCaseName();
 
         list ($signature, $shortSignature, $normalizedShortSignature, $phpDoc) = $this->getCrossFKAddMethodInformation($crossFKs);
 
@@ -5151,7 +5151,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $joinedTableObjectBuilder    = $this->getNewObjectBuilder($crossFKs->getIncomingForeignKey()->getTable());
         $className                   = $joinedTableObjectBuilder->getObjectClassname();
         $refKObjectClassName         = $this->getRefFKPhpNameAffix($crossFKs->getIncomingForeignKey(), $plural = false);
-        $foreignObjectName           = '$' . $tblFK->getStudlyPhpName();
+        $foreignObjectName           = '$' . $tblFK->getCamelCaseName();
 
         $script .= "
     /**

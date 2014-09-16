@@ -34,10 +34,10 @@ class TableMap
     const TYPE_PHPNAME = 'phpName';
 
     /**
-     * studlyphpname type
+     * camelCase type
      * e.g. 'authorId'
      */
-    const TYPE_STUDLYPHPNAME = 'studlyPhpName';
+    const TYPE_CAMELNAME = 'camelName';
 
     /**
      * column (tableMap) name type
