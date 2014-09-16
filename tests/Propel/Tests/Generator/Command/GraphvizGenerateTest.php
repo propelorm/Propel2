@@ -24,12 +24,13 @@ class GraphvizGenerateTest extends TestCaseFixtures
             '--verbose' => true
         ));
 
-        $output = new \Symfony\Component\Console\Output\BufferedOutput();
+        $output = new \Symfony\Component\Console\Output\StreamOutput(fopen("php://temp", 'r+'));
         $app->setAutoExit(false);
         $result = $app->run($input, $output);
 
         if (0 !== $result) {
-            echo $output->fetch();
+            rewind($output->getStream());
+            echo stream_get_contents($output->getStream());
         }
 
         $this->assertEquals(0, $result, 'graphviz:generate tests exited successfully');

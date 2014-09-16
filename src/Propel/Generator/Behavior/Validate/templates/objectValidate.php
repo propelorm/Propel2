@@ -6,10 +6,22 @@
  * @param      object $validator A Validator class instance
  * @return     boolean Whether all objects pass validation.
  */
-public function validate(Validator $validator = null)
+public function validate(ValidatorInterface $validator = null)
 {
     if (null === $validator) {
-        $validator = new Validator(new ClassMetadataFactory(new StaticMethodLoader()), new ConstraintValidatorFactory(), new DefaultTranslator());
+        if(class_exists('Symfony\\Component\\Validator\\Validator\\LegacyValidator')){
+            $validator = new LegacyValidator(
+                        new ExecutionContextFactory(new DefaultTranslator()),
+                        new ClassMetaDataFactory(new StaticMethodLoader()),
+                        new ConstraintValidatorFactory()
+            );
+        }else{
+            $validator = new Validator(
+                        new ClassMetadataFactory(new StaticMethodLoader()),
+                        new ConstraintValidatorFactory(),
+                        new DefaultTranslator()
+            );
+        }
     }
 
     $failureMap = new ConstraintViolationList();
