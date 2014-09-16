@@ -1086,6 +1086,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         }
         $script .= "
      * @return string
+     * @throws \\Propel\\Runtime\\Exception\\PropelException
      */";
     }
 
@@ -1803,6 +1804,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * ".$column->getDescription()."
      * @param  string \$v new value
      * @return \$this|".$this->getObjectClassName(true)." The current object (for fluent API support)
+     * @throws \\Propel\\Runtime\\Exception\\PropelException
      */";
     }
 
