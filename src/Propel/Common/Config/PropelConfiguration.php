@@ -11,6 +11,7 @@
 namespace Propel\Common\Config;
 
 use Symfony\Component\Config\Definition\ConfigurationInterface;
+use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 
 /**
@@ -31,8 +32,21 @@ class PropelConfiguration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('propel');
 
-        $rootNode->
-            children()
+        $this->addGeneralSection($rootNode);
+        $this->addPathsSection($rootNode);
+        $this->addDatabaseSection($rootNode);
+        $this->addMigrationsSection($rootNode);
+        $this->addReverseSection($rootNode);
+        $this->addRuntimeSection($rootNode);
+        $this->addGeneratorSection($rootNode);
+
+        return $treeBuilder;
+    }
+
+    protected function addGeneralSection(ArrayNodeDefinition $node)
+    {
+        $node
+            ->children()
                 ->arrayNode('general')
                     ->addDefaultsIfNotSet()
                     ->children()
@@ -40,6 +54,14 @@ class PropelConfiguration implements ConfigurationInterface
                         ->scalarNode('version')->defaultValue('2.0.0-dev')->end()
                     ->end()
                 ->end()
+            ->end()
+        ;
+    }
+
+    protected function addPathsSection(ArrayNodeDefinition $node)
+    {
+        $node
+            ->children()
                 ->arrayNode('paths')
                     ->addDefaultsIfNotSet()
                     ->children()
@@ -53,6 +75,14 @@ class PropelConfiguration implements ConfigurationInterface
                         ->scalarNode('composerDir')->defaultNull()->end()
                     ->end()
                 ->end()
+            ->end()
+        ;
+    }
+
+    protected function addDatabaseSection(ArrayNodeDefinition $node)
+    {
+        $node
+            ->children()
                 ->arrayNode('database')
                     ->isRequired()
                     ->addDefaultsIfNotSet()
@@ -129,6 +159,14 @@ class PropelConfiguration implements ConfigurationInterface
                         ->end() //adapters
                     ->end()
                 ->end() //database
+            ->end()
+        ;
+    }
+
+    protected function addMigrationsSection(ArrayNodeDefinition $node)
+    {
+        $node
+            ->children()
                 ->arrayNode('migrations')
                     ->addDefaultsIfNotSet()
                     ->children()
@@ -138,12 +176,28 @@ class PropelConfiguration implements ConfigurationInterface
                         ->scalarNode('parserClass')->defaultNull()->end()
                     ->end()
                 ->end() //migrations
+            ->end()
+        ;
+    }
+
+    protected function addReverseSection(ArrayNodeDefinition $node)
+    {
+        $node
+            ->children()
                 ->arrayNode('reverse')
                     ->children()
                         ->scalarNode('connection')->end()
                         ->scalarNode('parserClass')->end()
                     ->end()
                 ->end() //reverse
+            ->end()
+        ;
+    }
+
+    protected function addRuntimeSection(ArrayNodeDefinition $node)
+    {
+        $node
+            ->children()
                 ->arrayNode('runtime')
                     ->addDefaultsIfNotSet()
                     ->fixXmlConfig('connection')
@@ -204,6 +258,14 @@ class PropelConfiguration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end() //runtime
+            ->end()
+        ;
+    }
+
+    protected function addGeneratorSection(ArrayNodeDefinition $node)
+    {
+        $node
+            ->children()
                 ->arrayNode('generator')
                     ->addDefaultsIfNotSet()
                     ->fixXmlConfig('connection')
@@ -274,7 +336,5 @@ class PropelConfiguration implements ConfigurationInterface
                 ->end() //generator
             ->end()
         ;
-
-        return $treeBuilder;
     }
 }
