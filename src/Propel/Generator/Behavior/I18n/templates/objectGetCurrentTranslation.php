@@ -8,5 +8,5 @@
  */
 public function getCurrentTranslation(ConnectionInterface $con = null)
 {
-    return $this->getTranslation($this->getLocale(), $con);
+    return $this->getTranslation($this->get<?= $localeColumnName ?>(), $con);
 }
