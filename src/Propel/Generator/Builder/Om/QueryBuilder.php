@@ -580,6 +580,8 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
      * @param     mixed \$key Primary key to use for the query
      * @param     ConnectionInterface \$con A connection object
      *
+     * @throws \\Propel\\Runtime\\Exception\\PropelException
+     *
      * @return $ARClassName A model object, or null if the key is not found
      */
     protected function findPkSimple(\$key, ConnectionInterface \$con)
@@ -1115,6 +1117,8 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
         }
         $script .= "
      * @param string \$comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @throws \\Propel\\Runtime\\Exception\\PropelException
      *
      * @return $queryClass The current query, for fluid interface
      */
