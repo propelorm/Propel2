@@ -35,7 +35,7 @@ class SqlitePlatform extends DefaultPlatform
      *
      * @var bool
      */
-    private $foreignKeySupport = null;
+    protected $foreignKeySupport = null;
 
     /**
      * If we should alter the table through creating a temporarily created table,
@@ -43,7 +43,7 @@ class SqlitePlatform extends DefaultPlatform
      *
      * @var bool
      */
-    private $tableAlteringWorkaround = true;
+    protected $tableAlteringWorkaround = true;
 
     /**
      * Initializes db specific domain mapping.
@@ -119,6 +119,8 @@ ALTER TABLE %s ADD %s;
                 $this->getColumnDDL($column)
             );
         }
+
+        return $ret;
     }
 
     /**
@@ -126,7 +128,6 @@ ALTER TABLE %s ADD %s;
      */
     public function getModifyTableDDL(TableDiff $tableDiff)
     {
-
         $changedNotEditableThroughDirectDDL = $this->tableAlteringWorkaround && (false
             || $tableDiff->hasModifiedFks()
             || $tableDiff->hasModifiedIndices()
