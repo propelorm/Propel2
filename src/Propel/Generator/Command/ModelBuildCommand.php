@@ -42,7 +42,7 @@ class ModelBuildCommand extends AbstractCommand
             ->addOption('pluralizer-class', null, InputOption::VALUE_REQUIRED, 'The pluralizer class name')
             ->addOption('enable-identifier-quoting', null, InputOption::VALUE_NONE, 'Identifier quoting may result in undesired behavior (especially in Postgres)')
             ->addOption('target-package', null, InputOption::VALUE_REQUIRED, '', '')
-            ->addOption('enable-package-object-model', null, InputOption::VALUE_NONE, '')
+            ->addOption('disable-package-object-model', null, InputOption::VALUE_NONE, 'Disable schema database merging (packageObjectModel)')
             ->addOption('disable-namespace-auto-package', null, InputOption::VALUE_NONE, 'Disable namespace auto-packaging')
             ->addOption('composer-dir', null, InputOption::VALUE_REQUIRED, 'Directory in which your composer.json resides', null)
             ->setName('model:build')
@@ -105,9 +105,9 @@ class ModelBuildCommand extends AbstractCommand
                             $configOptions['propel']['generator']['objectModel']['disableIdentifierQuoting'] = !$option;
                         }
                         break;
-                    case 'enable-package-object-model':
+                    case 'disable-package-object-model':
                         if ($option) {
-                            $configOptions['propel']['generator']['packageObjectModel'] = $option;
+                            $configOptions['propel']['generator']['packageObjectModel'] = false;
                         }
                         break;
                     case 'disable-namespace-autopackage':

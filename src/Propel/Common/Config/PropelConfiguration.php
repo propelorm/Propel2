@@ -274,7 +274,7 @@ class PropelConfiguration implements ConfigurationInterface
                         ->scalarNode('tablePrefix')->end()
                         ->scalarNode('platformClass')->defaultValue('\\Propel\\Generator\\Platform\\MysqlPlatform')->end()
                         ->scalarNode('targetPackage')->end()
-                        ->booleanNode('packageObjectModel')->defaultFalse()->end()
+                        ->booleanNode('packageObjectModel')->defaultTrue()->end()
                         ->booleanNode('namespaceAutoPackage')->defaultTrue()->end()
                         ->arrayNode('connections')
                             ->prototype('scalar')->end()
