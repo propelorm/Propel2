@@ -3253,7 +3253,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      */
     protected function addFKAttributes(&$script, ForeignKey $fk)
     {
-        $className = $this->getNewObjectBuilder($fk->getForeignTable())->getObjectClassName();
+        $className = $this->getClassNameFromTable($fk->getForeignTable());
         $varName = $this->getFKVarName($fk);
 
         $script .= "
@@ -3274,8 +3274,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $table = $this->getTable();
         $fkTable = $fk->getForeignTable();
 
-        $joinTableObjectBuilder = $this->getNewObjectBuilder($fkTable);
-        $className = $joinTableObjectBuilder->getObjectClassName();
+        $className = $this->getClassNameFromTable($fkTable);
 
         $varName = $this->getFKVarName($fk);
 
@@ -3446,8 +3445,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $fkQueryClassName = $this->getClassNameFromBuilder($this->getNewStubQueryBuilder($refFK->getTable()));
         $relCol = $this->getRefFKPhpNameAffix($refFK, $plural = true);
 
-        $fkObjectBuilder = $this->getNewObjectBuilder($tblFK);
-        $className = $fkObjectBuilder->getObjectClassName();
+        $className = $this->getClassNameFromTable($tblFK);
 
         foreach ($tblFK->getForeignKeys() as $fk2) {
 
@@ -3510,8 +3508,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      */
     protected function addRefFKAttributes(&$script, ForeignKey $refFK)
     {
-        $joinedTableObjectBuilder = $this->getNewObjectBuilder($refFK->getTable());
-        $className = $joinedTableObjectBuilder->getObjectClassName();
+        $className = $this->getClassNameFromTable($refFK->getTable());
 
         if ($refFK->isLocalPrimaryKey()) {
             $script .= "
@@ -3665,11 +3662,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     {
         $tblFK = $refFK->getTable();
 
-        $joinedTableObjectBuilder = $this->getNewObjectBuilder($refFK->getTable());
-        $className = $joinedTableObjectBuilder->getObjectClassName();
+        $className = $this->getClassNameFromTable($refFK->getTable());
 
         if ($tblFK->getChildrenColumn()) {
-            $className = $joinedTableObjectBuilder->getFullyQualifiedClassName();
+            $className = $this->getClassNameFromTable($refFK->getTable(), true);
         }
 
         $collName = $this->getRefFKCollVarName($refFK);
@@ -3760,8 +3756,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $relCol = $this->getRefFKPhpNameAffix($refFK, $plural = true);
         $collName = $this->getRefFKCollVarName($refFK);
 
-        $joinedTableObjectBuilder = $this->getNewObjectBuilder($refFK->getTable());
-        $className = $joinedTableObjectBuilder->getObjectClassName();
+        $className = $this->getClassNameFromTable($refFK->getTable());
 
         $script .= "
     /**
@@ -3829,8 +3824,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $relatedName = $this->getRefFKPhpNameAffix($refFK, true);
         $relatedObjectClassName = $this->getRefFKPhpNameAffix($refFK, false);
 
-        $builder = $this->getNewObjectBuilder($refFK->getTable());
-        $className = $builder->getObjectClassName();
+        $className = $this->getClassNameFromTable($refFK->getTable());
 
         $inputCollection = lcfirst($relatedName);
         $inputCollectionEntry = lcfirst($this->getRefFKPhpNameAffix($refFK, false));
@@ -3895,11 +3889,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     {
         $tblFK = $refFK->getTable();
 
-        $joinedTableObjectBuilder = $this->getNewObjectBuilder($refFK->getTable());
-        $className = $joinedTableObjectBuilder->getObjectClassName();
+        $className = $this->getClassNameFromTable($refFK->getTable());
 
         if ($tblFK->getChildrenColumn()) {
-            $className = $joinedTableObjectBuilder->getFullyQualifiedClassName();
+            $className = $this->getClassNameFromTable($refFK->getTable(), true);
         }
 
         $relatedObjectClassName = $this->getRefFKPhpNameAffix($refFK, false);
@@ -3926,11 +3919,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     {
         $tblFK = $refFK->getTable();
 
-        $joinedTableObjectBuilder = $this->getNewObjectBuilder($refFK->getTable());
-        $className = $joinedTableObjectBuilder->getObjectClassName();
+        $className = $this->getClassNameFromTable($refFK->getTable());
 
         if ($tblFK->getChildrenColumn()) {
-            $className = $joinedTableObjectBuilder->getFullyQualifiedClassName();
+            $className = $this->getClassNameFromTable($refFK->getTable(), true);
         }
 
         $relatedName                 = $this->getRefFKPhpNameAffix($refFK, $plural = true);
@@ -3982,8 +3974,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      */
     protected function addPKRefFKGet(&$script, ForeignKey $refFK)
     {
-        $joinedTableObjectBuilder = $this->getNewObjectBuilder($refFK->getTable());
-        $className = $joinedTableObjectBuilder->getObjectClassName();
+        $className = $this->getClassNameFromTable($refFK->getTable());
 
         $queryClassName = $this->getClassNameFromBuilder($this->getNewStubQueryBuilder($refFK->getTable()));
 
@@ -4018,8 +4009,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      */
     protected function addPKRefFKSet(&$script, ForeignKey $refFK)
     {
-        $joinedTableObjectBuilder = $this->getNewObjectBuilder($refFK->getTable());
-        $className = $joinedTableObjectBuilder->getObjectClassName();
+        $className = $this->getClassNameFromTable($refFK->getTable());
 
         $varName = $this->getPKRefFKVarName($refFK);
 
@@ -4063,8 +4053,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         }
 
         foreach ($crossFKs->getCrossForeignKeys() as $fk) {
-            $joinedTableObjectBuilder = $this->getNewObjectBuilder($fk->getForeignTable());
-            $className = $joinedTableObjectBuilder->getObjectClassName();
+            $className = $this->getClassNameFromTable($fk->getForeignTable());
 
             $script .= "
     /**
@@ -4096,7 +4085,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             $refFK = $crossFKs->getIncomingForeignKey();
             if (!$refFK->isLocalPrimaryKey()) {
                 $foreignTable = $crossFKs->getCrossForeignKeys()[0]->getForeignTable();
-                $className = $this->getNewObjectBuilder($foreignTable)->getObjectClassName();
+                $className = $this->getClassNameFromTable($foreignTable);
                 $script .= "
     /**
      * An array of objects scheduled for deletion.
@@ -4121,8 +4110,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     protected function addCrossFkScheduledForDeletionAttribute(&$script, ForeignKey $crossFK)
     {
-        $joinedTableObjectBuilder = $this->getNewObjectBuilder($crossFK->getForeignTable());
-        $className = $joinedTableObjectBuilder->getObjectClassName();
+        $className = $this->getClassNameFromTable($crossFK->getForeignTable());
         $fkName = lcfirst($this->getFKPhpNameAffix($crossFK, true));
 
         $script .= "
@@ -4136,8 +4124,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     protected function addRefFkScheduledForDeletionAttribute(&$script, ForeignKey $refFK)
     {
-        $joinedTableObjectBuilder = $this->getNewObjectBuilder($refFK->getTable());
-        $className = $joinedTableObjectBuilder->getObjectClassName();
+        $className = $this->getClassNameFromTable($refFK->getTable());
         $fkName = lcfirst($this->getRefFKPhpNameAffix($refFK, true));
 
         $script .= "
@@ -4849,8 +4836,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     ) {
         foreach ($crossFKs->getCrossForeignKeys() as $fk) {
 
-            $joinedTableObjectBuilder = $this->getNewObjectBuilder($fk->getForeignTable());
-            $phpType = $typeHint = $joinedTableObjectBuilder->getObjectClassName();
+            $phpType = $typeHint = $this->getClassNameFromTable($fk->getForeignTable());
             $name = '$' . lcfirst($this->getFKPhpNameAffix($fk));
 
             $normalizedShortSignature[] = $name;
@@ -4889,7 +4875,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     {
         if ($crossFK) {
             $crossObjectName = '$' . lcfirst($this->getFKPhpNameAffix($crossFK));
-            $crossObjectClassName = $this->getNewObjectBuilder($crossFK->getForeignTable())->getObjectClassName();
+            $crossObjectClassName = $this->getClassNameFromTable($crossFK->getForeignTable());
             $signature[] = "$crossObjectClassName $crossObjectName" . ($crossFK->isAtLeastOneLocalColumnRequired() ? '' : ' = null');
             $shortSignature[] = $crossObjectName;
             $phpDoc[] = "
@@ -4932,7 +4918,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
             $tblFK = $refFK->getTable();
             $relatedObjectClassName = $this->getFKPhpNameAffix($crossFK, false);
-            $crossObjectClassName = $this->getNewObjectBuilder($crossFK->getForeignTable())->getObjectClassName();
+            $crossObjectClassName = $this->getClassNameFromTable($crossFK->getForeignTable());
             list ($signature, $shortSignature, $normalizedShortSignature, $phpDoc) = $this->getCrossFKAddMethodInformation($crossFKs, $crossFK);
 
             $script .= "
@@ -4988,8 +4974,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $selfRelationName      = $this->getFKPhpNameAffix($crossFKs->getIncomingForeignKey(), $plural = false);
         $selfRelationNamePlural      = $this->getFKPhpNameAffix($crossFKs->getIncomingForeignKey(), $plural = true);
         $relatedObjectClassName      = $this->getCrossFKsPhpNameAffix($crossFKs, $plural = false);
-        $joinedTableObjectBuilder    = $this->getNewObjectBuilder($crossFKs->getIncomingForeignKey()->getTable());
-        $className                   = $joinedTableObjectBuilder->getObjectClassname();
+        $className                   = $this->getClassNameFromTable($crossFKs->getIncomingForeignKey()->getTable());
+
         $refKObjectClassName         = $this->getRefFKPhpNameAffix($crossFKs->getIncomingForeignKey(), $plural = false);
         $tblFK                       = $crossFKs->getIncomingForeignKey()->getTable();
         $foreignObjectName           = '$' . $tblFK->getCamelCaseName();
@@ -5150,10 +5136,9 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         list($signature, $shortSignature, $normalizedShortSignature, $phpDoc) = $this->getCrossFKAddMethodInformation($crossFKs);
         $names = str_replace('$', '', $normalizedShortSignature);
 
-        $joinedTableObjectBuilder    = $this->getNewObjectBuilder($crossFKs->getIncomingForeignKey()->getTable());
-        $className                   = $joinedTableObjectBuilder->getObjectClassname();
-        $refKObjectClassName         = $this->getRefFKPhpNameAffix($crossFKs->getIncomingForeignKey(), $plural = false);
-        $foreignObjectName           = '$' . $tblFK->getCamelCaseName();
+        $className = $this->getClassNameFromTable($crossFKs->getIncomingForeignKey()->getTable());
+        $refKObjectClassName = $this->getRefFKPhpNameAffix($crossFKs->getIncomingForeignKey(), $plural = false);
+        $foreignObjectName = '$' . $tblFK->getCamelCaseName();
 
         $script .= "
     /**

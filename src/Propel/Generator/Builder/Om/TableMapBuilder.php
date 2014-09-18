@@ -709,15 +709,14 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
             $tblFK = $fk->getTable();
 
             $joinedTableTableMapBuilder = $this->getNewTableMapBuilder($tblFK)->getTableMapBuilder();
-            $this->declareClassFromBuilder($joinedTableTableMapBuilder);
+            $tableMapClassName = $this->declareClassFromBuilder($joinedTableTableMapBuilder, true);
 
             if (!$tblFK->isForReferenceOnly()) {
                 // we can't perform operations on tables that are
                 // not within the schema (i.e. that we have no map for, etc.)
 
                 if (ForeignKey::CASCADE === $fk->getOnDelete()  || ForeignKey::SETNULL === $fk->getOnDelete()) {
-                    $class = $this->getClassNameFromBuilder($joinedTableTableMapBuilder);
-                    $relatedClassNames[$class] = $class;
+                    $relatedClassNames[$tableMapClassName] = $tableMapClassName;
                 }
             }
         }

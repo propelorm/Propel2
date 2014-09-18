@@ -18,6 +18,7 @@ use Propel\Generator\Exception\RuntimeException;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\CrossForeignKeys;
 use Propel\Generator\Model\ForeignKey;
+use Propel\Generator\Model\Table;
 
 /**
  * Baseclass for OM-building classes.
@@ -72,7 +73,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         $this->addClassBody($script);
         $this->addClassClose($script);
 
-        $ignoredNamespace = $this->getNamespace();
+        $ignoredNamespace = ltrim($this->getNamespace(), '\\');
 
         if ($useStatements = $this->getUseStatements($ignoredNamespace ?: 'namespace')) {
             $script = $useStatements . $script;
@@ -233,7 +234,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     }
 
     /**
-     * This declare the class use and get the correct name to use (short classname, Alias, or FQCN)
+     * This declares the class use and returns the correct name to use (short classname, Alias, or FQCN)
      *
      * @param  AbstractOMBuilder $builder
      * @param  boolean           $fqcn    true to return the $fqcn classname
@@ -257,6 +258,21 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     }
 
     /**
+     * This declares the class use and returns the correct name to use
+     *
+     * @param Table $table
+     * @param bool $fqcn
+     * @return string
+     */
+    public function getClassNameFromTable(Table $table, $fqcn = false)
+    {
+        $namespace = $table->getNamespace();
+        $class = $table->getPhpName();
+
+        return $this->declareClassNamespace($class, $namespace, true);
+    }
+
+    /**
      * Declare a class to be use and return it's name or it's alias
      *
      * @param  string         $class     the class name
@@ -266,6 +282,8 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      */
     public function declareClassNamespace($class, $namespace = '', $alias = false)
     {
+        $namespace = trim($namespace, '\\');
+
         // check if the class is already declared
         if (isset($this->declaredClasses[$namespace])
             && isset($this->declaredClasses[$namespace][$class])) {
@@ -299,7 +317,15 @@ abstract class AbstractOMBuilder extends DataModelBuilder
                 return $this->declareClassNamespace($class, $namespace, 'Base' . $class);
             }
 
-            return $this->declareClassNamespace($class, $namespace, 'Child' . $class);
+            if ('Child' == substr($alias, 0, 5)) {
+                //we already requested Child.$class and its in use too,
+                //so use the fqcn
+                return ($namespace ? '\\' . $namespace : '') .  '\\' . $class;
+            } else {
+                $autoAliasName = 'Child' . $class;
+            }
+
+            return $this->declareClassNamespace($class, $namespace, $autoAliasName);
         }
 
         throw new LogicException(sprintf(
@@ -311,8 +337,10 @@ abstract class AbstractOMBuilder extends DataModelBuilder
 
     /**
      * check if the current $class need an alias or if the class could be used with a shortname without conflict
+     *
      * @param string $class
      * @param string $namespace
+     * @return boolean
      */
     protected function needAliasForClassName($class, $namespace)
     {
