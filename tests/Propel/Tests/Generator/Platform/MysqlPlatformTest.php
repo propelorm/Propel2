@@ -794,4 +794,44 @@ CREATE TABLE `foo`
         $this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
     }
 
+    public function testVendorOptionsQuoting()
+    {
+
+        $schema   = <<<EOF
+<database name="test">
+    <table name="foo">
+        <column name="id" primaryKey="true" type="INTEGER"/>
+        <vendor type="mysql">
+            <parameter name="AutoIncrement" value="100" />
+            <parameter name="AvgRowLength" value="50" />
+            <parameter name="Charset" value="utf8" />
+            <parameter name="Checksum" value="1" />
+            <parameter name="Collate" value="utf8_unicode_ci" />
+            <parameter name="Connection" value="mysql://foo@bar.host:9306/federated/test_table" />
+            <parameter name="DataDirectory" value="/tmp/mysql-foo-table/" />
+            <parameter name="DelayKeyWrite" value="1" />
+            <parameter name="IndexDirectory" value="/tmp/mysql-foo-table-idx/" />
+            <parameter name="InsertMethod" value="LAST" />
+            <parameter name="KeyBlockSize" value="5" />
+            <parameter name="MaxRows" value="5000" />
+            <parameter name="MinRows" value="0" />
+            <parameter name="Pack_Keys" value="DEFAULT" />
+            <parameter name="PackKeys" value="1" />
+            <parameter name="RowFormat" value="COMPRESSED" />
+            <parameter name="Union" value="other_table" />
+        </vendor>
+    </table>
+</database>
+EOF;
+        $table    = $this->getTableFromSchema($schema);
+        $expected = "
+CREATE TABLE `foo`
+(
+    `id` INTEGER NOT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=100 AVG_ROW_LENGTH=50 CHARACTER SET='utf8' CHECKSUM=1 COLLATE='utf8_unicode_ci' CONNECTION='mysql://foo@bar.host:9306/federated/test_table' DATA DIRECTORY='/tmp/mysql-foo-table/' DELAY_KEY_WRITE=1 INDEX DIRECTORY='/tmp/mysql-foo-table-idx/' INSERT_METHOD=LAST KEY_BLOCK_SIZE=5 MAX_ROWS=5000 MIN_ROWS=0 PACK_KEYS=DEFAULT PACK_KEYS=1 ROW_FORMAT=COMPRESSED UNION='other_table';
+";
+        $this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
+    }
+
 }

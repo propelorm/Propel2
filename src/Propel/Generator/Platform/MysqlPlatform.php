@@ -300,6 +300,13 @@ CREATE TABLE %s
             'Union'           => 'UNION',
         );
 
+        $noQuotedValue = array_flip([
+            'InsertMethod',
+            'Pack_Keys',
+            'PackKeys',
+            'RowFormat',
+        ]);
+
         foreach ($supportedOptions as $name => $sqlName) {
             $parameterValue = null;
 
@@ -311,8 +318,10 @@ CREATE TABLE %s
 
             // if we have a param value, then parse it out
             if (!is_null($parameterValue)) {
-                // if the value is numeric, then there is no need for quotes
-                $parameterValue = is_numeric($parameterValue) ? $parameterValue : $this->quote($parameterValue);
+                // if the value is numeric or is parameter is in $noQuotedValue, then there is no need for quotes
+                if (!is_numeric($parameterValue) && !isset($noQuotedValue[$name])) {
+                    $parameterValue = $this->quote($parameterValue);
+                }
 
                 $tableOptions [] = sprintf('%s=%s', $sqlName, $parameterValue);
             }
