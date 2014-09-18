@@ -283,12 +283,30 @@
     <table name="contest">
         <column name="id" type="INTEGER" primaryKey="true" autoIncrement="true" />
         <column name="name" type="VARCHAR" size="100" />
+        <column name="country_code" type="VARCHAR" size="6" />
+        <foreign-key foreignTable="country" onDelete="setnull">
+          <reference local="country_code" foreign="code" />
+        </foreign-key>
     </table>
 
     <!-- Test Views (read-only tables) -->
-    <table name="contest_view" readOnly="true">
+    <table name="country_translation" readOnly="true">
         <column name="id" type="INTEGER" primaryKey="true" autoIncrement="true" />
-        <column name="name" type="VARCHAR" size="100" />
+        <column name="country_code" type="VARCHAR" size="6" />
+        <column name="language_code" type="VARCHAR" size="6" />
+        <column name="label" type="VARCHAR" size="100" />
+        <index>
+            <index-column name="country_code"/>
+        </index>
+        <foreign-key foreignTable="country" onDelete="cascade">
+            <reference local="country_code" foreign="code" />
+        </foreign-key>
+    </table>
+
+    <!-- Test Views (read-only tables) -->
+    <table name="country" readOnly="true">
+        <column name="code" type="VARCHAR" size="6" primaryKey="true" />
+        <column name="capital" type="VARCHAR" size="100" />
     </table>
 
     <table name="bookstore_contest">

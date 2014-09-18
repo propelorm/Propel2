@@ -18,7 +18,7 @@ use Propel\Tests\Bookstore\Author;
 use Propel\Tests\Bookstore\Map\AuthorTableMap;
 use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\Map\BookTableMap;
-use Propel\Tests\Bookstore\ContestView;
+use Propel\Tests\Bookstore\Country;
 /**
  * Test class for ObjectCollection.
  *
@@ -49,8 +49,8 @@ class ObjectCollectionTest extends BookstoreTestBase
     public function testSaveOnReadOnlyEntityThrowsException()
     {
         $col = new ObjectCollection();
-        $col->setModel('Propel\Tests\Bookstore\ContestView');
-        $cv = new ContestView();
+        $col->setModel('Propel\Tests\Bookstore\Country');
+        $cv = new Country();
         $col []= $cv;
         $col->save();
     }
@@ -61,8 +61,8 @@ class ObjectCollectionTest extends BookstoreTestBase
     public function testDeleteOnReadOnlyEntityThrowsException()
     {
         $col = new ObjectCollection();
-        $col->setModel('Propel\Tests\Bookstore\ContestView');
-        $cv = new ContestView();
+        $col->setModel('Propel\Tests\Bookstore\Country');
+        $cv = new Country();
         $cv->setNew(false);
         $col []= $cv;
         $col->delete();

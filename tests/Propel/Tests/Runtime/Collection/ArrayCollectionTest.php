@@ -13,7 +13,7 @@ namespace Propel\Tests\Runtime\Collection;
 use Propel\Tests\Bookstore\Author;
 use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\Map\BookTableMap;
-use Propel\Tests\Bookstore\ContestView;
+use Propel\Tests\Bookstore\Country;
 use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
 use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
 use Propel\Runtime\Collection\ObjectCollection;
@@ -59,8 +59,8 @@ class ArrayCollectionTest extends BookstoreEmptyTestBase
     public function testSaveOnReadOnlyEntityThrowsException()
     {
         $col = new ArrayCollection();
-        $col->setModel('ContestView');
-        $cv = new ContestView();
+        $col->setModel('Country');
+        $cv = new Country();
         $col []= $cv;
         $col->save();
     }
@@ -81,8 +81,8 @@ class ArrayCollectionTest extends BookstoreEmptyTestBase
     public function testDeleteOnReadOnlyEntityThrowsException()
     {
         $col = new ArrayCollection();
-        $col->setModel('ContestView');
-        $cv = new ContestView();
+        $col->setModel('Country');
+        $cv = new Country();
         $cv->setNew(false);
         $col []= $cv;
         $col->delete();

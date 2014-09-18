@@ -21,6 +21,9 @@ use Propel\Tests\Bookstore\AcctAuditLog;
 use Propel\Tests\Bookstore\AcctAuditLogQuery;
 use Propel\Tests\Bookstore\Author;
 use Propel\Tests\Bookstore\AuthorQuery;
+use Propel\Tests\Bookstore\ContestQuery;
+use Propel\Tests\Bookstore\CountryQuery;
+use Propel\Tests\Bookstore\CountryTranslationQuery;
 use Propel\Tests\Bookstore\Map\AuthorTableMap;
 use Propel\Tests\Bookstore\Map\AcctAuditLogTableMap;
 use Propel\Tests\Bookstore\Book;
@@ -42,8 +45,9 @@ use Propel\Tests\Bookstore\BookstoreContestEntry;
 use Propel\Tests\Bookstore\BookstoreSale;
 use Propel\Tests\Bookstore\BookSummaryQuery;
 use Propel\Tests\Bookstore\Contest;
-use Propel\Tests\Bookstore\ContestView;
+use Propel\Tests\Bookstore\Country;
 use Propel\Tests\Bookstore\Customer;
+use Propel\Tests\Bookstore\Map\ContestTableMap;
 use Propel\Tests\Bookstore\Map\CustomerTableMap;
 use Propel\Tests\Bookstore\CustomerQuery;
 use Propel\Tests\Bookstore\Publisher;
@@ -1068,10 +1072,27 @@ EOF;
             array('delete'),
             array('save'),
             array('doSave'),
-            array('importFrom'),
-            array('setName'),
-            array('setId'),
+            array('importFrom')
         );
+    }
+
+    public static function conditionsForTestVisibility()
+    {
+        return array(
+            array('setCode'),
+            array('setCapital')
+        );
+    }
+
+    /**
+     * @dataProvider conditionsForTestVisibility
+     */
+    public function testMethodVisibility($method)
+    {
+        $cv = new Country();
+        $reflectionMethod = new \ReflectionMethod($cv, $method);
+
+        $this->assertTrue($reflectionMethod->isProtected(), 'readOnly tables end up with no callable `' . $method . '` method in the generated object class');
     }
 
     /**
@@ -1079,9 +1100,42 @@ EOF;
      */
     public function testReadOnly($method)
     {
-        $cv = new ContestView();
+        $cv = new Country();
         $this->assertFalse(method_exists($cv, $method), 'readOnly tables end up with no ' . $method . ' method in the generated object class');
     }
+
+    public function testReadOnlyRelations()
+    {
+        //add countries
+        CountryTranslationQuery::create()->deleteAll();
+        CountryQuery::create()->deleteAll();
+        $stmt = $this->con->prepare('INSERT INTO country VALUES (?, ?)');
+        $stmt->execute(['fr', 'Paris']);
+        $stmt->execute(['us', 'Washington']);
+        $stmt->execute(['de', 'Berlin']);
+
+        $stmt = $this->con->prepare('INSERT INTO country_translation (country_code, language_code, label) VALUES (?, ?, ?)');
+        $stmt->execute(['fr', 'fr_FR', 'France']);
+        $stmt->execute(['us', 'us_US', 'United States America']);
+        $stmt->execute(['de', 'de_DE', 'Berlin']);
+
+        $contest = new Contest();
+        $contest->setName('Symfony Live 2014');
+        $contest->setCountryCode('fr');
+        $contest->save();
+
+        ContestTableMap::clearInstancePool();
+
+        $contestDb = ContestQuery::create()
+                ->joinWith('Contest.Country')
+                ->joinWith('Country.CountryTranslation')
+                ->findPk($contest->getId());
+
+        $translations = $contestDb->getCountry()->getCountryTranslations();
+        $this->assertCount(1, $translations);
+        $this->assertEquals('France', $translations[0]->getLabel());
+    }
+
 
     public function testSetterOneToMany()
     {
