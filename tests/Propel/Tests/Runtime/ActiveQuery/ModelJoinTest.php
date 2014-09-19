@@ -66,7 +66,7 @@ class ModelJoinTest extends TestCaseFixtures
         $join = new ModelJoin();
         $join->setTableMap($bookTable);
         $join->setRelationMap($bookTable->getRelation('Author'), 'b');
-        $this->assertEquals(array('b.AUTHOR_ID'), $join->getLeftColumns(), 'setRelationMap() automatically sets the left columns using the left table alias');
+        $this->assertEquals(array('b.author_id'), $join->getLeftColumns(), 'setRelationMap() automatically sets the left columns using the left table alias');
         $this->assertEquals(array(AuthorTableMap::COL_ID), $join->getRightColumns(), 'setRelationMap() automatically sets the right columns');
     }
 
@@ -77,7 +77,7 @@ class ModelJoinTest extends TestCaseFixtures
         $join->setTableMap($bookTable);
         $join->setRelationMap($bookTable->getRelation('Author'), null, 'a');
         $this->assertEquals(array(BookTableMap::COL_AUTHOR_ID), $join->getLeftColumns(), 'setRelationMap() automatically sets the left columns');
-        $this->assertEquals(array('a.ID'), $join->getRightColumns(), 'setRelationMap() automatically sets the right columns  using the right table alias');
+        $this->assertEquals(array('a.id'), $join->getRightColumns(), 'setRelationMap() automatically sets the right columns  using the right table alias');
     }
 
     public function testSetRelationMapComposite()

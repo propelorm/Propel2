@@ -57,6 +57,7 @@ class TestPrepareCommand extends AbstractCommand
         'reverse/pgsql'         => array('reverse-bookstore'),
         'schemas'               => array('bookstore-schemas'),
         'migration'             => array('migration'),
+        'quoting'               => array('quoting'),
     );
 
     /**

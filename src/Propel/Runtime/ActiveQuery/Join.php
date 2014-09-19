@@ -65,6 +65,11 @@ class Join
     protected $joinCondition;
 
     /**
+     * @var boolean
+     */
+    protected $identifierQuoting = false;
+
+    /**
      * Constructor
      * Use it preferably with no arguments, and then use addCondition() and setJoinType()
      * Syntax with arguments used mainly for backwards compatibility
@@ -590,7 +595,7 @@ class Join
 
         $rightTableName = $this->getRightTableWithAlias();
 
-        if (null !== $this->getAdapter() && $this->getAdapter()->useQuoteIdentifier()) {
+        if ($this->isIdentifierQuotingEnabled()) {
             $rightTableName = $this->getAdapter()->quoteIdentifierTable($rightTableName);
         }
 
@@ -637,4 +642,21 @@ class Join
     {
         return $this->toString();
     }
+
+    /**
+     * @return boolean
+     */
+    public function isIdentifierQuotingEnabled()
+    {
+        return $this->identifierQuoting;
+    }
+
+    /**
+     * @param boolean $identifierQuoting
+     */
+    public function setIdentifierQuoting($identifierQuoting)
+    {
+        $this->identifierQuoting = $identifierQuoting;
+    }
+
 }

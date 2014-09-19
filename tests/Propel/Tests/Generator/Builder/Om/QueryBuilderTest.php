@@ -220,7 +220,7 @@ class QueryBuilderTest extends BookstoreTestBase
     public function testFindPkUsesFindPkSimpleOnEmptyQueries()
     {
         BookQuery::create()->findPk(123, $this->con);
-        $expected = 'SELECT ID, TITLE, ISBN, PRICE, PUBLISHER_ID, AUTHOR_ID FROM book WHERE ID = 123';
+        $expected = 'SELECT id, title, isbn, price, publisher_id, author_id FROM book WHERE id = 123';
         $this->assertEquals($expected, $this->con->getLastExecutedQuery());
     }
 
@@ -243,7 +243,7 @@ class QueryBuilderTest extends BookstoreTestBase
     public function testFindPkUsesFindPkComplexOnNonEmptyQueries()
     {
         BookQuery::create('b')->findPk(123, $this->con);
-        $expected = $this->getSql('SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.ID=123');
+        $expected = $this->getSql('SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book WHERE book.id=123');
         $this->assertEquals($expected, $this->con->getLastExecutedQuery());
     }
 
@@ -353,7 +353,7 @@ class QueryBuilderTest extends BookstoreTestBase
         $this->assertEquals($q1, $q, 'filterByPrimaryKey() translates to a Criteria::EQUAL in the PK column');
 
         $q = BookQuery::create()->setModelAlias('b', true)->filterByPrimaryKey(12);
-        $q1 = BookQuery::create()->setModelAlias('b', true)->add('b.ID', 12, Criteria::EQUAL);
+        $q1 = BookQuery::create()->setModelAlias('b', true)->add('b.id', 12, Criteria::EQUAL);
         $this->assertEquals($q1, $q, 'filterByPrimaryKey() uses true table alias if set');
     }
 
@@ -392,7 +392,7 @@ class QueryBuilderTest extends BookstoreTestBase
         $this->assertEquals($q1, $q, 'filterByPrimaryKeys() translates to a Criteria::IN on the PK column');
 
         $q = BookQuery::create()->setModelAlias('b', true)->filterByPrimaryKeys(array(10, 11, 12));
-        $q1 = BookQuery::create()->setModelAlias('b', true)->add('b.ID', array(10, 11, 12), Criteria::IN);
+        $q1 = BookQuery::create()->setModelAlias('b', true)->add('b.id', array(10, 11, 12), Criteria::IN);
         $this->assertEquals($q1, $q, 'filterByPrimaryKeys() uses true table alias if set');
     }
 
@@ -450,7 +450,7 @@ class QueryBuilderTest extends BookstoreTestBase
         $this->assertEquals($q1, $q, 'filterByPkColumn() accepts an optional comparison operator');
 
         $q = BookQuery::create()->setModelAlias('b', true)->filterById(12);
-        $q1 = BookQuery::create()->setModelAlias('b', true)->add('b.ID', 12, Criteria::EQUAL);
+        $q1 = BookQuery::create()->setModelAlias('b', true)->add('b.id', 12, Criteria::EQUAL);
         $this->assertEquals($q1, $q, 'filterByPkColumn() uses true table alias if set');
 
         $q = BookQuery::create()->filterById(array(10, 11, 12));
@@ -473,7 +473,7 @@ class QueryBuilderTest extends BookstoreTestBase
         $this->assertEquals($q1, $q, 'filterByNumColumn() accepts an optional comparison operator');
 
         $q = BookQuery::create()->setModelAlias('b', true)->filterByPrice(12);
-        $q1 = BookQuery::create()->setModelAlias('b', true)->add('b.PRICE', 12, Criteria::EQUAL);
+        $q1 = BookQuery::create()->setModelAlias('b', true)->add('b.price', 12, Criteria::EQUAL);
         $this->assertEquals($q1, $q, 'filterByNumColumn() uses true table alias if set');
 
         $q = BookQuery::create()->filterByPrice(array(10, 11, 12));
@@ -510,7 +510,7 @@ class QueryBuilderTest extends BookstoreTestBase
         $this->assertEquals($q1, $q, 'filterByDateColumn() accepts an optional comparison operator');
 
         $q = BookstoreEmployeeAccountQuery::create()->setModelAlias('b', true)->filterByCreated(12);
-        $q1 = BookstoreEmployeeAccountQuery::create()->setModelAlias('b', true)->add('b.CREATED', 12, Criteria::EQUAL);
+        $q1 = BookstoreEmployeeAccountQuery::create()->setModelAlias('b', true)->add('b.created', 12, Criteria::EQUAL);
         $this->assertEquals($q1, $q, 'filterByDateColumn() uses true table alias if set');
 
         $q = BookstoreEmployeeAccountQuery::create()->filterByCreated(array('min' => 10));
@@ -539,7 +539,7 @@ class QueryBuilderTest extends BookstoreTestBase
         $this->assertEquals($q1, $q, 'filterByStringColumn() accepts an optional comparison operator');
 
         $q = BookQuery::create()->setModelAlias('b', true)->filterByTitle('foo');
-        $q1 = BookQuery::create()->setModelAlias('b', true)->add('b.TITLE', 'foo', Criteria::EQUAL);
+        $q1 = BookQuery::create()->setModelAlias('b', true)->add('b.title', 'foo', Criteria::EQUAL);
         $this->assertEquals($q1, $q, 'filterByStringColumn() uses true table alias if set');
 
         $q = BookQuery::create()->filterByTitle(array('foo', 'bar'));
@@ -586,7 +586,7 @@ class QueryBuilderTest extends BookstoreTestBase
         $this->assertEquals($q1, $q, 'filterByBooleanColumn() translates to a Criteria::EQUAL by default');
 
         $q = ReviewQuery::create()->setModelAlias('b', true)->filterByRecommended(true);
-        $q1 = ReviewQuery::create()->setModelAlias('b', true)->add('b.RECOMMENDED', true, Criteria::EQUAL);
+        $q1 = ReviewQuery::create()->setModelAlias('b', true)->add('b.recommended', true, Criteria::EQUAL);
         $this->assertEquals($q1, $q, 'filterByBooleanColumn() uses true table alias if set');
 
         $q = ReviewQuery::create()->filterByRecommended('true');
@@ -938,7 +938,7 @@ class QueryBuilderTest extends BookstoreTestBase
         $q1 = BookQuery::create()
             ->addAlias('a', AuthorTableMap::TABLE_NAME)
             ->addJoinObject($join, 'a')
-            ->add('a.FIRST_NAME', 'Leo', Criteria::EQUAL);
+            ->add('a.first_name', 'Leo', Criteria::EQUAL);
         $this->assertTrue($q->equals($q1), 'useFkQuery() uses the first argument as a table alias');
     }
 
@@ -994,10 +994,10 @@ class QueryBuilderTest extends BookstoreTestBase
         $q1 = BookQuery::create()
             ->addAlias('a', AuthorTableMap::TABLE_NAME)
             ->addJoinObject($join1, 'a')
-            ->add('a.FIRST_NAME', 'Leo', Criteria::EQUAL)
+            ->add('a.first_name', 'Leo', Criteria::EQUAL)
             ->addAlias('b', AuthorTableMap::TABLE_NAME)
             ->addJoinObject($join2, 'b')
-            ->add('b.LAST_NAME', 'Tolstoi', Criteria::EQUAL);
+            ->add('b.last_name', 'Tolstoi', Criteria::EQUAL);
         $this->assertTrue($q->equals($q1), 'useFkQuery() called twice on the same relation with two aliases creates two joins');
     }
 

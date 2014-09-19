@@ -151,11 +151,4 @@ class MssqlPropelPDO extends PropelPDO
         return '[' . $text . ']';
     }
 
-    /**
-     * @return boolean
-     */
-    public function useQuoteIdentifier()
-    {
-        return true;
-    }
 }

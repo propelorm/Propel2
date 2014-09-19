@@ -708,11 +708,18 @@
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="heavyIndexing" type="xs:boolean" use="optional">
-            <xs:annotation>
-                <xs:documentation xml:lang="en">
-                    Adds indexes for each component of the primary key (when using composite primary keys)
-                </xs:documentation>
-            </xs:annotation>
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+              Adds indexes for each component of the primary key (when using composite primary keys)
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="identifierQuoting" type="xs:boolean" use="optional">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+              Quotes all field and table names in SQL queries
+            </xs:documentation>
+          </xs:annotation>
         </xs:attribute>
         <xs:attribute name="description" type="xs:string" use="optional">
             <xs:annotation>
@@ -842,6 +849,13 @@
             <xs:annotation>
                 <xs:documentation xml:lang="en">
                     Adds indexes for each component of the primary key (when using composite primary keys)
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="identifierQuoting" type="xs:boolean" default="false">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">
+                    Quotes all field and table names in SQL queries
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>

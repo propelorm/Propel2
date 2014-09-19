@@ -49,9 +49,9 @@ class DefaultPlatform implements PlatformInterface
     protected $con;
 
     /**
-     * @var boolean whether the identifier quoting is enabled
+     * @var bool
      */
-    protected $isIdentifierQuotingEnabled = false;
+    protected $identifierQuoting = true;
 
     /**
      * Default constructor.
@@ -99,13 +99,28 @@ class DefaultPlatform implements PlatformInterface
     }
 
     /**
+     * @return boolean
+     */
+    public function isIdentifierQuotingEnabled()
+    {
+        return $this->identifierQuoting;
+    }
+
+    /**
+     * @param boolean $enabled
+     */
+    public function setIdentifierQuoting($enabled)
+    {
+        $this->identifierQuoting = $enabled;
+    }
+
+    /**
      * Sets the GeneratorConfigInterface to use in the parsing.
      *
-     * @param GeneratorConfigInterface $config
+     * @param GeneratorConfigInterface $generatorConfig
      */
-    public function setGeneratorConfig(GeneratorConfigInterface $config)
+    public function setGeneratorConfig(GeneratorConfigInterface $generatorConfig)
     {
-        // do nothing by default
     }
 
     /**
@@ -423,10 +438,8 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
     {
         $list = array();
         foreach ($columns as $column) {
-            if ($column instanceof Column) {
-                $column = $column->getName();
-            }
-            $list[] = $this->quoteIdentifier($column);
+            $columnName = $column->getName();
+            $list[] = $this->quoteIdentifier($columnName);
         }
 
         return implode($delimiter, $list);
@@ -532,7 +545,7 @@ CREATE %sINDEX %s ON %s (%s);
             $index->isUnique() ? 'UNIQUE ' : '',
             $this->quoteIdentifier($index->getName()),
             $this->quoteIdentifier($index->getTable()->getName()),
-            $this->getColumnListDDL($index->getColumns())
+            $this->getColumnListDDL($index->getColumnObjects())
         );
     }
 
@@ -564,7 +577,7 @@ DROP INDEX %s;
         return sprintf('%sINDEX %s (%s)',
             $index->isUnique() ? 'UNIQUE ' : '',
             $this->quoteIdentifier($index->getName()),
-            $this->getColumnListDDL($index->getColumns())
+            $this->getColumnListDDL($index->getColumnObjects())
         );
     }
 
@@ -576,7 +589,7 @@ DROP INDEX %s;
      */
     public function getUniqueDDL(Unique $unique)
     {
-        return sprintf('UNIQUE (%s)', $this->getColumnListDDL($unique->getColumns()));
+        return sprintf('UNIQUE (%s)', $this->getColumnListDDL($unique->getColumnObjects()));
     }
 
     /**
@@ -651,9 +664,9 @@ ALTER TABLE %s DROP CONSTRAINT %s;
     REFERENCES %s (%s)";
         $script = sprintf($pattern,
             $this->quoteIdentifier($fk->getName()),
-            $this->getColumnListDDL($fk->getLocalColumns()),
+            $this->getColumnListDDL($fk->getLocalColumnObjects()),
             $this->quoteIdentifier($fk->getForeignTableName()),
-            $this->getColumnListDDL($fk->getForeignColumns())
+            $this->getColumnListDDL($fk->getForeignColumnObjects())
         );
         if ($fk->hasOnUpdate()) {
             $script .= "
@@ -1004,11 +1017,11 @@ ALTER TABLE %s MODIFY %s;
     public function getModifyColumnsDDL($columnDiffs)
     {
         $lines = array();
-        $tableName = null;
+        $table = null;
         foreach ($columnDiffs as $columnDiff) {
             $toColumn = $columnDiff->getToColumn();
-            if (null === $tableName) {
-                $tableName = $toColumn->getTable()->getName();
+            if (null === $table) {
+                $table = $toColumn->getTable();
             }
             $lines[] = $this->getColumnDDL($toColumn);
         }
@@ -1024,7 +1037,7 @@ ALTER TABLE %s MODIFY
 ";
 
         return sprintf($pattern,
-            $this->quoteIdentifier($tableName),
+            $this->quoteIdentifier($table->getName()),
             implode($sep, $lines)
         );
     }
@@ -1055,10 +1068,10 @@ ALTER TABLE %s ADD %s;
     public function getAddColumnsDDL($columns)
     {
         $lines = array();
-        $tableName = null;
+        $table = null;
         foreach ($columns as $column) {
-            if (null === $tableName) {
-                $tableName = $column->getTable()->getName();
+            if (null === $table) {
+                $table = $column->getTable();
             }
             $lines[] = $this->getColumnDDL($column);
         }
@@ -1074,7 +1087,7 @@ ALTER TABLE %s ADD
 ";
 
         return sprintf($pattern,
-            $this->quoteIdentifier($tableName),
+            $this->quoteIdentifier($table->getName()),
             implode($sep, $lines)
         );
     }
@@ -1130,23 +1143,23 @@ ALTER TABLE %s ADD
     }
 
     /**
-     * Quotes identifiers used in database SQL.
+     * Quotes identifiers used in database SQL if isIdentifierQuotingEnabled is true.
+     * Calls doQuoting() when identifierQuoting is enabled.
+     *
      * @param  string $text
      * @return string Quoted identifier.
      */
-    public function quoteIdentifier($text)
+    protected function quoteIdentifier($text)
     {
-        return $this->isIdentifierQuotingEnabled ? '"' . strtr($text, array('.' => '"."')) . '"' : $text;
+        return $this->isIdentifierQuotingEnabled() ? $this->doQuoting($text) : $text;
     }
 
-    public function setIdentifierQuoting($enabled = true)
+    /**
+     * {@inheritdoc}
+     */
+    public function doQuoting($text)
     {
-        $this->isIdentifierQuotingEnabled = (Boolean) $enabled;
-    }
-
-    public function getIdentifierQuoting()
-    {
-        return $this->isIdentifierQuotingEnabled;
+        return '"' . strtr($text, array('.' => '"."')) . '"';
     }
 
     /**
@@ -1167,6 +1180,9 @@ ALTER TABLE %s ADD
         return true;
     }
 
+    /**
+     * @return bool
+     */
     public function supportsIndexSize()
     {
         return false;

@@ -23,8 +23,6 @@ propel:
     defaultConnection: bookstore-schemas
     connections:
       - bookstore-schemas
-    objectModel:
-      disableIdentifierQuoting: true
 
   runtime:
     defaultConnection: bookstore-schemas

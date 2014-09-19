@@ -39,8 +39,8 @@ EOF;
 
         $quickBuilder = new QuickBuilder();
         $quickBuilder->setSchema($schema);
+        $quickBuilder->setIdentifierQuoting(true);
         $platform = new SqlitePlatform();
-        $platform->setIdentifierQuoting(true);
         $quickBuilder->setPlatform($platform);
 
         $quickBuilder->build();

@@ -31,6 +31,7 @@ PHP class or method name.
   baseClass CDATA #IMPLIED
   defaultPhpNamingMethod (nochange|underscore|phpname) "underscore"
   heavyIndexing (true|false) "false"
+  identifierQuoting (true|false) "false"
   tablePrefix CDATA #IMPLIED
   defaultStringFormat CDATA #IMPLIED
   xmlns:xsi CDATA #IMPLIED
@@ -64,6 +65,7 @@ PHP class or method name.
   interface CDATA #IMPLIED
   phpNamingMethod (nochange|underscore|phpname) #IMPLIED
   heavyIndexing (true|false) #IMPLIED
+  identifierQuoting (true|false) #IMPLIED
   description CDATA #IMPLIED
   defaultStringFormat CDATA #IMPLIED
 >

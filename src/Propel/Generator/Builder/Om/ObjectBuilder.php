@@ -2203,7 +2203,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         }
 
         $script .= "
-        \$criteria = new Criteria(".$this->getTableMapClass()."::DATABASE_NAME);";
+        \$criteria = ".$this->getQueryClassName()."::create();";
         foreach ($this->getTable()->getPrimaryKey() as $col) {
             $clo = $col->getLowercasedName();
             $script .= "
@@ -5473,7 +5473,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         } elseif ($table->getIdMethod() == IdMethod::NATIVE && ($platform->getNativeIdMethod() == PlatformInterface::SEQUENCE || $platform->getNativeIdMethod() == PlatformInterface::SERIAL)) {
             $primaryKeyMethodInfo = $platform->getSequenceName($table);
         }
-        $query = 'INSERT INTO ' . $platform->quoteIdentifier($table->getName()) . ' (%s) VALUES (%s)';
+        $query = 'INSERT INTO ' . $this->quoteIdentifier($table->getName()) . ' (%s) VALUES (%s)';
         $script = "
         \$modifiedColumns = array();
         \$index = 0;
@@ -5524,7 +5524,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
          // check the columns in natural order for more readable SQL queries";
         foreach ($table->getColumns() as $column) {
             $constantName = $this->getColumnConstant($column);
-            $identifier = var_export($platform->quoteIdentifier(strtoupper($column->getName())), true);
+            $identifier = var_export($this->quoteIdentifier($column->getName()), true);
             $script .= "
         if (\$this->isColumnModified($constantName)) {
             \$modifiedColumns[':p' . \$index++]  = $identifier;
@@ -5544,7 +5544,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             foreach (\$modifiedColumns as \$identifier => \$columnName) {
                 switch (\$columnName) {";
         foreach ($table->getColumns() as $column) {
-            $columnNameCase = var_export($platform->quoteIdentifier(strtoupper($column->getName())), true);
+            $columnNameCase = var_export($this->quoteIdentifier($column->getName()), true);
             $script .= "
                     case $columnNameCase:";
             $script .= $platform->getColumnBindingPHP($column, "\$identifier", '$this->' . $column->getLowercasedName(), '                        ');

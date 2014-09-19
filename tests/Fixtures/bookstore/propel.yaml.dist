@@ -53,8 +53,6 @@ propel:
       - bookstore-behavior
     targetPackage: bookstore
     packageObjectModel: false
-    objectModel:
-      disableIdentifierQuoting: true
 
   runtime:
     defaultConnection: bookstore

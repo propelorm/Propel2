@@ -380,7 +380,7 @@ DROP TABLE IF EXISTS %s CASCADE;
     {
         return sprintf('CONSTRAINT %s UNIQUE (%s)',
             $this->quoteIdentifier($unique->getName()),
-            $this->getColumnListDDL($unique->getColumns())
+            $this->getColumnListDDL($unique->getColumnObjects())
         );
     }
 
@@ -514,7 +514,10 @@ DROP SEQUENCE %s CASCADE;
             if ($using = $this->getUsingCast($fromColumn, $toColumn)) {
                 $sqlType .= $using;
             }
-            $ret .= sprintf($pattern, $this->quoteIdentifier($table->getName()), $colName . ' TYPE ' . $sqlType);
+            $ret .= sprintf($pattern,
+                $this->quoteIdentifier($table->getName()),
+                $colName . ' TYPE ' . $sqlType
+            );
         }
 
         if (isset($changedProperties['defaultValueValue'])) {
@@ -661,7 +664,7 @@ DROP SEQUENCE %s CASCADE;
 %s = \$dataFetcher->fetchColumn();";
         $script = sprintf($snippet,
             $connectionVariableName,
-            $this->quoteIdentifier($sequenceName),
+            $sequenceName,
             $columnValueMutator
         );
 

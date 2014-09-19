@@ -27,6 +27,7 @@ use Propel\Generator\Model\PropelTypes;
  */
 abstract class PdoAdapter
 {
+
     /**
      * Build database connection
      *
@@ -208,6 +209,32 @@ abstract class PdoAdapter
     }
 
     /**
+     * Quotes full qualified column names and table names.
+     *
+     * book.author_id => `book`.`author_id`
+     * author_id => `author_id`
+     *
+     * @param string $text
+     * @return string
+     */
+    public function quote($text)
+    {
+        if (false !== ($pos = strrpos($text, '.'))) {
+            $table = substr($text, 0, $pos);
+            $column = substr($text, $pos + 1);
+        } else {
+            $table = '';
+            $column = $text;
+        }
+
+        if ($table) {
+            return $this->quoteIdentifierTable($table) . '.' . $this->quoteIdentifier($column);
+        } else {
+            return $this->quoteIdentifier($column);
+        }
+    }
+
+    /**
      * Quotes a database table which could have space separating it from an alias,
      * both should be identified separately. This doesn't take care of dots which
      * separate schema names from table names. Adapters for RDBMs which support
@@ -305,14 +332,15 @@ abstract class PdoAdapter
     }
 
     /**
-     * @param string   $sql
      * @param Criteria $criteria
+     *
+     * @return string
      */
-    public function applyGroupBy(&$sql, Criteria $criteria)
+    public function getGroupBy(Criteria $criteria)
     {
         $groupBy = $criteria->getGroupByColumns();
         if ($groupBy) {
-            $sql .= ' GROUP BY ' . implode(',', $groupBy);
+            return ' GROUP BY ' . implode(',', $groupBy);
         }
     }
 
@@ -334,21 +362,6 @@ abstract class PdoAdapter
     public function getTimeFormatter()
     {
         return 'H:i:s';
-    }
-
-    /**
-     * Should Column-Names get identifiers for inserts or updates.
-     * By default false is returned -> backwards compatibility.
-     *
-     * it`s a workaround...!!!
-     *
-     * @deprecated
-     *
-     * @return boolean
-     */
-    public function useQuoteIdentifier()
-    {
-        return false;
     }
 
     /**
@@ -379,14 +392,10 @@ abstract class PdoAdapter
         }
 
         if ($realTableName = $criteria->getTableForAlias($tableName)) {
-            if ($this->useQuoteIdentifier()) {
-                $realTableName = $this->quoteIdentifierTable($realTableName);
-            }
+            $realTableName = $criteria->quoteIdentifierTable($realTableName);
             $sql .= $tableName . ' FROM ' . $realTableName . ' AS ' . $tableName;
         } else {
-            if ($this->useQuoteIdentifier()) {
-                $tableName = $this->quoteIdentifierTable($tableName);
-            }
+            $tableName = $criteria->quoteIdentifierTable($tableName);
             $sql .= 'FROM ' . $tableName;
         }
 
@@ -593,4 +602,5 @@ abstract class PdoAdapter
 
         return $stmt->bindValue($parameter, $value, $cMap->getPdoType());
     }
+
 }

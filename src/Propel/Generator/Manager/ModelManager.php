@@ -51,10 +51,6 @@ class ModelManager extends AbstractManager
             $this->log('Datamodel: ' . $dataModel->getName());
 
             foreach ($dataModel->getDatabases() as $database) {
-                if ($generatorConfig->get()['generator']['objectModel']['disableIdentifierQuoting']) {
-                    $database->getPlatform()->setIdentifierQuoting(false);
-                }
-
                 $this->log(' - Database: ' . $database->getName());
 
                 foreach ($database->getTables() as $table) {

@@ -10,6 +10,7 @@
 
 namespace Propel\Runtime\Adapter;
 
+use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Map\ColumnMap;
 
@@ -113,6 +114,17 @@ interface AdapterInterface
     public function quoteIdentifierTable($table);
 
     /**
+     * Quotes full qualified column names and table names.
+     *
+     * book.author_id => `book`.`author_id`
+     * author_id => `author_id`
+     *
+     * @param string $text
+     * @return string
+     */
+    public function quote($text);
+
+    /**
      * Whether this adapter uses an ID generation system that requires getting ID _before_ performing INSERT.
      *
      * @return boolean
@@ -125,6 +137,16 @@ interface AdapterInterface
      * @return boolean
      */
     public function isGetIdAfterInsert();
+
+    /**
+     * Returns the "DELETE FROM <table> [AS <alias>]" part of DELETE query.
+     *
+     * @param Criteria $criteria
+     * @param string   $tableName
+     *
+     * @return string
+     */
+    public function getDeleteFromClause(Criteria $criteria, $tableName);
 
     /**
      * Gets the generated ID (either last ID for autoincrement or next sequence ID).
@@ -168,16 +190,10 @@ interface AdapterInterface
     public function getTimeFormatter();
 
     /**
-     * Should Column-Names get identifiers for inserts or updates.
-     * By default false is returned -> backwards compatibility.
+     * @param Criteria $criteria
      *
-     * it`s a workaround...!!!
-     *
-     * @todo       should be abstract
-     * @deprecated
-     *
-     * @return boolean
+     * @return string
      */
-    public function useQuoteIdentifier();
+    public function getGroupBy(Criteria $criteria);
 
 }

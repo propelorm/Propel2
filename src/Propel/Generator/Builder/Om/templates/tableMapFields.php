@@ -9,7 +9,6 @@
         self::TYPE_PHPNAME       => array(<?= $fieldNamesPhpName ?>),
         self::TYPE_CAMELNAME     => array(<?= $fieldNamesCamelCaseName ?>),
         self::TYPE_COLNAME       => array(<?= $fieldNamesColname ?>),
-        self::TYPE_RAW_COLNAME   => array(<?= $fieldNamesRawColname ?>),
         self::TYPE_FIELDNAME     => array(<?= $fieldNamesFieldName ?>),
         self::TYPE_NUM           => array(<?= $fieldNamesNum ?>)
     );
@@ -24,7 +23,6 @@
         self::TYPE_PHPNAME       => array(<?= $fieldKeysPhpName ?>),
         self::TYPE_CAMELNAME     => array(<?= $fieldKeysCamelCaseName ?>),
         self::TYPE_COLNAME       => array(<?= $fieldKeysColname ?>),
-        self::TYPE_RAW_COLNAME   => array(<?= $fieldKeysRawColname ?>),
         self::TYPE_FIELDNAME     => array(<?= $fieldKeysFieldName ?>),
         self::TYPE_NUM           => array(<?= $fieldKeysNum ?>)
     );

@@ -41,6 +41,7 @@ class MigrationDiffCommand extends AbstractCommand
             ->addOption('editor',             null, InputOption::VALUE_OPTIONAL,  'The text editor to use to open diff files', null)
             ->addOption('skip-removed-table', null, InputOption::VALUE_NONE,      'Option to skip removed table from the migration')
             ->addOption('skip-tables',        null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_OPTIONAL, 'List of excluded tables', array())
+            ->addOption('disable-identifier-quoting', null, InputOption::VALUE_NONE, 'Disable identifier quoting in SQL queries for reversed database tables.')
             ->addOption('comment',            "m",  InputOption::VALUE_OPTIONAL,  'A comment for the migration', '')
             ->setName('migration:diff')
             ->setAliases(array('diff'))
@@ -133,6 +134,10 @@ class MigrationDiffCommand extends AbstractCommand
                 }
             }
 
+            if ($input->getOption('disable-identifier-quoting')) {
+                $platform->setIdentifierQuoting(false);
+            }
+
             $database = new Database($name);
             $database->setPlatform($platform);
             $database->setSchema($appDatabase->getSchema());
@@ -194,6 +199,9 @@ class MigrationDiffCommand extends AbstractCommand
             }
 
             $platform               = $generatorConfig->getConfiguredPlatform(null, $name);
+            if ($input->getOption('disable-identifier-quoting')) {
+                $platform->setIdentifierQuoting(false);
+            }
             $migrationsUp[$name]    = $platform->getModifyDatabaseDDL($databaseDiff);
             $migrationsDown[$name]  = $platform->getModifyDatabaseDDL($databaseDiff->getReverseDiff());
         }

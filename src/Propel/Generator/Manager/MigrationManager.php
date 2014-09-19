@@ -200,7 +200,7 @@ class MigrationManager extends AbstractManager
         $conn->transaction(function () use ($conn, $platform, $timestamp) {
             $sql = sprintf('DELETE FROM %s WHERE %s = ?',
                 $this->getMigrationTable(),
-                $platform->quoteIdentifier('version')
+                $platform->doQuoting('version')
             );
             $stmt = $conn->prepare($sql);
             $stmt->bindParam(1, $timestamp, \PDO::PARAM_INT);
@@ -214,7 +214,7 @@ class MigrationManager extends AbstractManager
         $conn = $this->getAdapterConnection($datasource);
         $sql = sprintf('INSERT INTO %s (%s) VALUES (?)',
             $this->getMigrationTable(),
-            $platform->quoteIdentifier('version')
+            $platform->doQuoting('version')
         );
         $stmt = $conn->prepare($sql);
         $stmt->bindParam(1, $timestamp, \PDO::PARAM_INT);

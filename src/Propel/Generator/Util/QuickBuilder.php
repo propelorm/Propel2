@@ -69,6 +69,13 @@ class QuickBuilder
     protected $classTargets = array('tablemap', 'object', 'query', 'objectstub', 'querystub');
 
     /**
+     * Identifier quoting for reversed database.
+     *
+     * @var bool
+     */
+    protected $identifierQuoting = false;
+
+    /**
      * @param string $schema
      */
     public function setSchema($schema)
@@ -136,6 +143,8 @@ class QuickBuilder
         if (null === $this->platform) {
             $this->platform = new SqlitePlatform();
         }
+
+        $this->platform->setIdentifierQuoting($this->identifierQuoting);
 
         return $this->platform;
     }
@@ -483,4 +492,21 @@ class QuickBuilder
 
         return $code;
     }
+
+    /**
+     * @return boolean
+     */
+    public function isIdentifierQuotingEnabled()
+    {
+        return $this->identifierQuoting;
+    }
+
+    /**
+     * @param boolean $identifierQuoting
+     */
+    public function setIdentifierQuoting($identifierQuoting)
+    {
+        $this->identifierQuoting = $identifierQuoting;
+    }
+
 }

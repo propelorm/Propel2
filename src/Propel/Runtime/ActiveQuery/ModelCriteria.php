@@ -1392,10 +1392,7 @@ class ModelCriteria extends BaseModelCriteria
         $affectedRows = 0; // initialize this in case the next loop has no iterations.
 
         try {
-            $db = Propel::getServiceContainer()->getAdapter($databaseName);
-            if ($db->useQuoteIdentifier()) {
-                $tableName = $db->quoteIdentifierTable($tableName);
-            }
+            $tableName = $this->quoteIdentifierTable($tableName);
             $sql = "DELETE FROM " . $tableName;
             $stmt = $con->prepare($sql);
 
@@ -1521,9 +1518,15 @@ class ModelCriteria extends BaseModelCriteria
                     $set->add($realColumnName, $value);
                 }
             }
+
             $affectedRows = parent::doUpdate($set, $con);
-            call_user_func(array($this->modelTableMapName, 'clearInstancePool'));
-            call_user_func(array($this->modelTableMapName, 'clearRelatedInstancePool'));
+            if ($this->getTableMap()->extractPrimaryKey($this)) {
+                // this criteria updates only one object defined by a concrete primary key,
+                // therefore there's no need to remove anything from the pool
+            } else {
+                call_user_func(array($this->modelTableMapName, 'clearInstancePool'));
+                call_user_func(array($this->modelTableMapName, 'clearRelatedInstancePool'));
+            }
         }
 
         return $affectedRows;
@@ -1558,7 +1561,7 @@ class ModelCriteria extends BaseModelCriteria
      */
     protected function getCriterionForClause($clause, $value, $bindingType = null)
     {
-        $clause = trim($clause);
+        $origin = $clause = trim($clause);
         if ($this->replaceNames($clause)) {
             // at least one column name was found and replaced in the clause
             // this is enough to determine the type to bind the parameter to
@@ -1583,7 +1586,7 @@ class ModelCriteria extends BaseModelCriteria
         // no column match in clause, must be an expression like '1=1'
         if (false !== strpos($clause, '?')) {
             if (null === $bindingType) {
-                throw new PropelException(sprintf('Cannot determine the column to bind to the parameter in clause "%s".', $clause));
+                throw new PropelException(sprintf('Cannot determine the column to bind to the parameter in clause "%s".', $origin));
             }
 
             return new RawCriterion($this, $clause, $value, $bindingType);
@@ -1621,76 +1624,9 @@ class ModelCriteria extends BaseModelCriteria
     }
 
     /**
-     * Replaces complete column names (like Article.AuthorId) in an SQL clause
-     * by their exact Propel column fully qualified name (e.g. article.AUTHOR_ID)
-     * but ignores the column names inside quotes
-     * e.g. 'CONCAT(Book.Title, "Book.Title") = ?'
-     *   => 'CONCAT(book.TITLE, "Book.Title") = ?'
-     *
-     * @param string $clause SQL clause to inspect (modified by the method)
-     *
-     * @return boolean Whether the method managed to find and replace at least one column name
-     */
-    protected function replaceNames(&$clause)
-    {
-        $this->replacedColumns = array();
-        $this->currentAlias = '';
-        $this->foundMatch = false;
-        $isAfterBackslash = false;
-        $isInString = false;
-        $stringQuotes = '';
-        $parsedString = '';
-        $stringToTransform = '';
-        $len = strlen($clause);
-        $pos = 0;
-        while ($pos < $len) {
-            $char = $clause[$pos];
-            // check flags for strings or escaper
-            switch ($char) {
-                case '\\':
-                    $isAfterBackslash = true;
-                    break;
-                case "'":
-                case '"':
-                    if ($isInString && $stringQuotes == $char) {
-                        if (!$isAfterBackslash) {
-                            $isInString = false;
-                        }
-                    } elseif (!$isInString) {
-                        $parsedString .= preg_replace_callback("/[\w\\\]+\.\w+/", array($this, 'doReplaceNameInExpression'), $stringToTransform);
-                        $stringToTransform = '';
-                        $stringQuotes = $char;
-                        $isInString = true;
-                    }
-                    break;
-            }
-
-            if ('\\' !== $char) {
-                $isAfterBackslash = false;
-            }
-
-            if ($isInString) {
-                $parsedString .= $char;
-            } else {
-                $stringToTransform .= $char;
-            }
-
-            $pos++;
-        }
-
-        if ($stringToTransform) {
-            $parsedString .= preg_replace_callback("/[\w\\\]+\.\w+/", array($this, 'doReplaceNameInExpression'), $stringToTransform);
-        }
-
-        $clause = $parsedString;
-
-        return $this->foundMatch;
-    }
-
-    /**
      * Callback function to replace column names by their real name in a clause
      * e.g.  'Book.Title IN ?'
-     *    => 'book.TITLE IN ?'
+     *    => 'book.title IN ?'
      *
      * @param array $matches Matches found by preg_replace_callback
      *
@@ -1699,16 +1635,25 @@ class ModelCriteria extends BaseModelCriteria
     protected function doReplaceNameInExpression($matches)
     {
         $key = $matches[0];
-        list($column, $realColumnName) = $this->getColumnFromName($key);
+        list($column, $realFullColumnName) = $this->getColumnFromName($key);
 
         if ($column instanceof ColumnMap) {
             $this->replacedColumns[] = $column;
             $this->foundMatch = true;
 
-            return $realColumnName;
+            if (false !== strpos($key, '.')) {
+                list($tableName, $columnName) = explode('.', $key);
+                list($realTableName, $realColumnName) = explode('.', $realFullColumnName);
+                if (isset($this->aliases[$tableName])) {
+                    //don't replace a alias with their real table name
+                    return $this->quoteIdentifier($tableName.'.'.$realColumnName);
+                }
+            }
+
+            return $this->quoteIdentifier($realFullColumnName);
         }
 
-        return $key;
+        return $this->quoteIdentifier($key);
     }
 
     /**
@@ -1717,10 +1662,10 @@ class ModelCriteria extends BaseModelCriteria
      * Examples:
      * <code>
      * $c->getColumnFromName('Book.Title');
-     *   => array($bookTitleColumnMap, 'book.TITLE')
+     *   => array($bookTitleColumnMap, 'book.title')
      * $c->join('Book.Author a')
      *   ->getColumnFromName('a.FirstName');
-     *   => array($authorFirstNameColumnMap, 'a.FIRST_NAME')
+     *   => array($authorFirstNameColumnMap, 'a.first_name')
      * </code>
      *
      * @param string $phpName String representing the column name in a pseudo SQL clause, e.g. 'Book.Title'
@@ -1744,7 +1689,7 @@ class ModelCriteria extends BaseModelCriteria
         } elseif ($prefix === $this->getModelShortName()) {
             // column of the Criteria's model
             $tableMap = $this->getTableMap();
-        } elseif ($prefix == $this->getTableMap()->getName()) {
+        } elseif ($this->getTableMap() && $prefix == $this->getTableMap()->getName()) {
             // column name from Criteria's tableMap
             $tableMap = $this->getTableMap();
         } elseif (isset($this->joins[$prefix])) {
