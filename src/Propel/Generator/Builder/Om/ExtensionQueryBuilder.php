@@ -42,7 +42,6 @@ class ExtensionQueryBuilder extends AbstractOMBuilder
         $baseClassName = $this->getClassNameFromBuilder($this->getQueryBuilder());
 
         $script .= "
-
 /**
  * Skeleton subclass for performing query and update operations on the '$tableName' table.
  *
