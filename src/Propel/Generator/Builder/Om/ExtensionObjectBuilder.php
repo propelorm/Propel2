@@ -43,7 +43,6 @@ class ExtensionObjectBuilder extends AbstractObjectBuilder
 
         if ($this->getBuildProperty('generator.objectModel.addClassLevelComment')) {
             $script .= "
-
 /**
  * Skeleton subclass for representing a row from the '$tableName' table.
  *
