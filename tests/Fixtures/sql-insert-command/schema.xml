@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<database name="bookstore" defaultIdMethod="native"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    namespace="Propel\Tests\Bookstore">
+
+    <table name="publisher" description="Publisher Table" defaultStringFormat="XML">
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" description="Publisher Id" />
+        <column name="name" required="true" type="VARCHAR" size="128" default="Penguin" description="Publisher Name" />
+    </table>
+
+</database>
