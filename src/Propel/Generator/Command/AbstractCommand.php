@@ -54,20 +54,11 @@ abstract class AbstractCommand extends Command
             return new GeneratorConfig(null, $properties);
         }
 
-        $inputDir = null;
-
-        if ($input->hasOption('input-dir')) {
-            //For SqlInsertCommand `input-dir` is the directory containing sql to insert
-            if (!($this instanceof SqlInsertCommand)) {
-                $inputDir = $input->getOption('input-dir');
-            }
-        }
-
         if ($input->hasOption('platform') && (null !== $input->getOption('platform'))) {
             $properties['propel']['generator']['platformClass'] = '\\Propel\\Generator\\Platform\\' . $input->getOption('platform');
         }
 
-        return new GeneratorConfig($inputDir, $properties);
+        return new GeneratorConfig($input->getOption('input-dir'), $properties);
     }
 
     /**
