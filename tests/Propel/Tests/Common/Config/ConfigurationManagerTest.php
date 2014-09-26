@@ -299,7 +299,7 @@ EOF;
 
     /**
      * @expectedException Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
-     * @expectedMessage Unrecognized options "foo, bar" under "propel"
+     * @expectedExceptionMessage Unrecognized options "foo, bar" under "propel"
      */
     public function testInvalidHierarchyTrowsException()
     {
@@ -348,7 +348,7 @@ EOF;
 
     /**
      * @expectedException Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
-     * @expectedMessage The child node "runtime" at path "propel" must be configured
+     * @expectedExceptionMessage The child node "database" at path "propel" must be configured
      */
     public function testNotDefineDatabaseSectionTrowsException()
     {
@@ -487,7 +487,7 @@ EOF;
 
     /**
      * @expectedException Propel\Common\Config\Exception\InvalidArgumentException
-     * @expectedMessage Invalid configuration property name
+     * @expectedExceptionMessage Invalid configuration property name
      */
     public function testGetConfigPropertyBadNameThrowsException()
     {
