@@ -363,6 +363,37 @@ EOF;
         $manager = new ConfigurationManager();
     }
 
+    /**
+     * @expectedException Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
+     * @expectedExceptionMessage Dots are not allowed in connection names
+     */
+    public function testDotInConnectionNamesArentAccepted()
+    {
+        $yamlConf = <<<EOF
+propel:
+  database:
+      connections:
+          mysource.name:
+              adapter: mysql
+              classname: Propel\Runtime\Connection\DebugPDO
+              dsn: mysql:host=localhost;dbname=mydb
+              user: root
+              password:
+  runtime:
+      defaultConnection: mysource
+      connections:
+          - mysource
+          - yoursource
+  generator:
+      defaultConnection: mysource
+      connections:
+          - mysource
+EOF;
+        $this->getFilesystem()->dumpFile('propel.yaml', $yamlConf);
+
+        $manager = new ConfigurationManager();
+    }
+
     public function testLoadValidConfigurationFile()
     {
         $yamlConf = <<<EOF
