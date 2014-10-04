@@ -93,7 +93,7 @@ class GeneratorConfigTest extends ConfigTestCase
 
     /**
      * @expectedException Propel\Generator\Exception\InvalidArgumentException
-     * @expectedMessage Invalid database name: no configured connection named `badsource`.
+     * @expectedExceptionMessage Invalid database name: no configured connection named `badsource`.
      */
     public function testGetConfiguredPlatformGivenBadDatabaseNameThrowsException()
     {
@@ -136,7 +136,7 @@ class GeneratorConfigTest extends ConfigTestCase
 
     /**
      * @expectedException Propel\Generator\Exception\BuildException
-     * @expectedMessage Specified platform class (\Propel\Generator\Platform\MysqlPlatform) does not implement SchemaParserInterface interface.
+     * @expectedExceptionMessage Specified class (\Propel\Generator\Platform\MysqlPlatform) does not implement \Propel\Generator\Reverse\SchemaParserInterface interface.
      */
     public function testGetConfiguredSchemaParserGivenNonSchemaParserClass()
     {
@@ -154,7 +154,7 @@ class GeneratorConfigTest extends ConfigTestCase
 
     /**
      * @expectedException Propel\Generator\Exception\ClassNotFoundException
-     * @expectedMessage Specified platform class (\Propel\Generator\Reverse\BadSchemaParser) does not exist
+     * @expectedExceptionMessage Class \Propel\Generator\Reverse\BadSchemaParser not found.
      */
     public function testGetConfiguredSchemaParserGivenBadClass()
     {
@@ -201,7 +201,7 @@ class GeneratorConfigTest extends ConfigTestCase
 
     /**
      * @expectedException Propel\Generator\Exception\ClassNotFoundException
-     * @expectedMessage Class \Propel\Common\Pluralizer\WrongEnglishPluralizer not found.
+     * @expectedExceptionMessage Class \Propel\Common\Pluralizer\WrongEnglishPluralizer not found.
      */
     public function testGetConfiguredPluralizerNonExistentClassThrowsException()
     {
@@ -213,7 +213,7 @@ class GeneratorConfigTest extends ConfigTestCase
 
     /**
      * @expectedException Propel\Generator\Exception\BuildException
-     * @expectedMessage Specified class (\Propel\Common\Config\PropelConfiguration) does not implement
+     * @expectedExceptionMessage Specified class (\Propel\Common\Config\PropelConfiguration) does not implement
      */
     public function testGetConfiguredPluralizerWrongClassThrowsException()
     {
@@ -279,7 +279,7 @@ class GeneratorConfigTest extends ConfigTestCase
 
     /**
      * @expectedException Propel\Generator\Exception\InvalidArgumentException
-     * @expectedMessage Invalid database name: no configured connection named `wrongsource`.
+     * @expectedExceptionMessage Invalid database name: no configured connection named `wrongsource`.
      */
     public function testGetBuildConnectionGivenWrongDatabaseThrowsException()
     {
@@ -302,7 +302,7 @@ class GeneratorConfigTest extends ConfigTestCase
 
     /**
      * @expectedException Propel\Generator\Exception\InvalidArgumentException
-     * @expectedMessage Invalid database name: no configured connection named `badsource`.
+     * @expectedExceptionMessage Invalid database name: no configured connection named `badsource`.
      */
     public function testGetConnectionWrongDatabaseThrowsException()
     {

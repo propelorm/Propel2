@@ -84,7 +84,7 @@ EOF;
 
     /**
      * @expectedException Propel\Common\Config\Exception\InputOutputException
-     * @expectedMessage You don't have permissions to access configuration file notreadable.yaml.
+     * @expectedExceptionMessage You don't have permissions to access configuration file notreadable.yaml.
      */
     public function testYamlFileNotReadableThrowsException()
     {

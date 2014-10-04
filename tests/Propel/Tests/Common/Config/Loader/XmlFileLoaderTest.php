@@ -85,7 +85,7 @@ EOF;
 
     /**
      * @expectedException Propel\Common\Config\Exception\InputOutputException
-     * @expectedMessage You don't have permissions to access configuration file notreadable.xml.
+     * @expectedExceptionMessage You don't have permissions to access configuration file notreadable.xml.
      */
     public function testXmlFileNotReadableThrowsException()
     {
