@@ -89,6 +89,18 @@ class PropelConfiguration implements ConfigurationInterface
                     ->children()
                         ->arrayNode('connections')
                             ->isRequired()
+                            ->validate()
+                            ->always()
+                                ->then(function($connections) {
+                                    foreach ($connections as $name => $connection) {
+                                        if (strpos($name, '.') !== false) {
+                                            throw new \InvalidArgumentException('Dots are not allowed in connection names');
+                                        }
+                                    }
+
+                                    return $connections;
+                                })
+                            ->end()
                             ->requiresAtLeastOneElement()
                             ->normalizeKeys(false)
                             ->prototype('array')
