@@ -1595,8 +1595,18 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                 || (\$dt->format($fmt) === $defaultValue) // or the entered value matches the default
                  ) {";
         } else {
+            switch ($col->getType()) {
+                case 'DATE':
+                    $format = 'Y-m-d';
+                    break;
+                case 'TIME':
+                    $format = 'H:i:s';
+                    break;
+                default:
+                    $format = 'Y-m-d H:i:s';
+            }
             $script .= "
-            if (\$dt !== \$this->{$clo}) {";
+            if (\$this->{$clo} === null || \$dt === null || \$dt->format(\"$format\") !== \$this->{$clo}->format(\"$format\")) {";
         }
 
         $script .= "
