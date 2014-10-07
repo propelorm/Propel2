@@ -58,7 +58,7 @@
      */
     public function isDeleted()
     {
-        return $this->deleted;
+        return $this->isDeleted;
     }
 
     /**
@@ -68,7 +68,7 @@
      */
     public function setDeleted($b)
     {
-        $this->deleted = (boolean) $b;
+        $this->isDeleted = (boolean) $b;
     }
 
     /**
