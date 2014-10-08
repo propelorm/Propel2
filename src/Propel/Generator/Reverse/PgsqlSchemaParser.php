@@ -296,7 +296,6 @@ class PgsqlSchemaParser extends AbstractSchemaParser
             $column = new Column($name);
             $column->setTable($table);
             $column->setDomainForType($propelType);
-            $column->getDomain()->setOriginSqlType($type);
             $column->getDomain()->replaceSize($size);
             if ($scale) {
                 $column->getDomain()->replaceScale($scale);

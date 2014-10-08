@@ -104,7 +104,7 @@ class BaseTest extends MigrationTestCase
     {
         $originXml = '
 <database>
-    <table name="migration_test_3">
+    <table name="migration_test_complex">
         <column name="field1" type="CHAR" />
         <column name="field2" type="LONGVARCHAR" />
         <column name="field3" type="CLOB" />
@@ -113,19 +113,22 @@ class BaseTest extends MigrationTestCase
         <column name="field5" type="DECIMAL" />
         <column name="field6" type="TINYINT" />
         <column name="field7" type="SMALLINT" />
+
+        <column name="field_object" type="object" />
     </table>
 </database>
 ';
 
         $targetXml = '
 <database>
-    <table name="migration_test_3">
+    <table name="migration_test_complex">
         <column name="field1" type="LONGVARCHAR" />
 
         <column name="field4" type="DECIMAL" />
         <column name="field5" type="TINYINT" />
         <column name="field6" type="SMALLINT" />
-        <column name="field7" type="NUMERIC" />
+
+        <column name="field_object" type="object" />
     </table>
 </database>
 ';

@@ -60,20 +60,10 @@ class ColumnComparator
         }
 
         if (strtoupper($fromDomain->getSqlType()) !== strtoupper($toDomain->getSqlType())) {
-            if ($fromDomain->getOriginSqlType()) {
-                if (strtoupper($fromDomain->getOriginSqlType()) !== strtoupper($toDomain->getSqlType())) {
-                    if ($fromDomain->getType() !== $toDomain->getType()) {
-                        $changedProperties['type'] = [ $fromDomain->getType(), $toDomain->getType() ];
-                    }
+            $changedProperties['sqlType'] = [ $fromDomain->getSqlType(), $toDomain->getSqlType() ];
 
-                    $changedProperties['sqlType'] = [ $fromDomain->getSqlType(), $toDomain->getSqlType() ];
-                }
-            } else {
-                $changedProperties['sqlType'] = [ $fromDomain->getSqlType(), $toDomain->getSqlType() ];
-
-                if ($fromDomain->getType() !== $toDomain->getType()) {
-                    $changedProperties['type'] = [ $fromDomain->getType(), $toDomain->getType() ];
-                }
+            if ($fromDomain->getType() !== $toDomain->getType()) {
+                $changedProperties['type'] = [ $fromDomain->getType(), $toDomain->getType() ];
             }
         }
 

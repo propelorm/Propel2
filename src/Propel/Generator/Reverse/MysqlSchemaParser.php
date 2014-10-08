@@ -57,8 +57,8 @@ class MysqlSchemaParser extends AbstractSchemaParser
         'timestamp'  => PropelTypes::TIMESTAMP,
         'tinyblob'   => PropelTypes::BINARY,
         'blob'       => PropelTypes::BLOB,
-        'mediumblob' => PropelTypes::BLOB,
-        'longblob'   => PropelTypes::BLOB,
+        'mediumblob' => PropelTypes::VARBINARY,
+        'longblob'   => PropelTypes::LONGVARBINARY,
         'longtext'   => PropelTypes::CLOB,
         'tinytext'   => PropelTypes::VARCHAR,
         'mediumtext' => PropelTypes::LONGVARCHAR,
@@ -237,7 +237,6 @@ class MysqlSchemaParser extends AbstractSchemaParser
         $column = new Column($name);
         $column->setTable($table);
         $column->setDomainForType($propelType);
-        $column->getDomain()->setOriginSqlType($nativeType ?: $sqlType);
         if ($sqlType) {
             $column->getDomain()->replaceSqlType($sqlType);
         }

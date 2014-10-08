@@ -59,6 +59,7 @@ class PgsqlPlatform extends DefaultPlatform
         $this->setSchemaDomainMapping(new Domain(PropelTypes::OBJECT, 'BYTEA'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::PHP_ARRAY, 'TEXT'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::ENUM, 'INT2'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::DECIMAL, 'NUMERIC'));
     }
 
     public function getNativeIdMethod()
@@ -557,8 +558,8 @@ DROP SEQUENCE %s CASCADE;
 
     public function getUsingCast(Column $fromColumn, Column $toColumn)
     {
-        $fromSqlType = strtoupper($fromColumn->getDomain()->getOriginSqlType() ?: $fromColumn->getDomain()->getSqlType());
-        $toSqlType = strtoupper($toColumn->getDomain()->getOriginSqlType() ?: $toColumn->getDomain()->getSqlType());
+        $fromSqlType = strtoupper($fromColumn->getDomain()->getSqlType());
+        $toSqlType = strtoupper($toColumn->getDomain()->getSqlType());
         $name = $fromColumn->getName();
 
         if ($this->isNumber($fromSqlType) && $this->isString($toSqlType)) {

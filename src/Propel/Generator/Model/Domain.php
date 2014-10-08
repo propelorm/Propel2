@@ -27,7 +27,6 @@ class Domain extends MappingModel
     private $scale;
     private $mappingType;
     private $sqlType;
-    private $originSqlType;
     private $defaultValue;
     private $database;
 
@@ -73,7 +72,6 @@ class Domain extends MappingModel
         $this->scale = $domain->getScale();
         $this->size = $domain->getSize();
         $this->sqlType = $domain->getSqlType();
-        $this->originSqlType = $domain->getOriginSqlType();
         $this->mappingType = $domain->getType();
     }
 
@@ -310,22 +308,6 @@ class Domain extends MappingModel
         if (null !== $value) {
             $this->defaultValue = $value;
         }
-    }
-
-    /**
-     * @param mixed $originSqlType
-     */
-    public function setOriginSqlType($originSqlType)
-    {
-        $this->originSqlType = $originSqlType;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getOriginSqlType()
-    {
-        return $this->originSqlType;
     }
 
     /**
