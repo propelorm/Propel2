@@ -182,20 +182,20 @@ class TableMapBuilderTest extends BookstoreTestBase
     public function testRelationsColumns()
     {
         $bookTable = $this->databaseMap->getTableByPhpName('Propel\Tests\Bookstore\Book');
-        $expectedMapping = array('book.PUBLISHER_ID' => 'publisher.ID');
+        $expectedMapping = array('book.publisher_id' => 'publisher.id');
         $this->assertEquals(
             $expectedMapping,
             $bookTable->getRelation('Publisher')->getColumnMappings(),
             'The map builder adds columns in the correct order for foreign keys'
         );
-        $expectedMapping = array('review.BOOK_ID' => 'book.ID');
+        $expectedMapping = array('review.book_id' => 'book.id');
         $this->assertEquals(
             $expectedMapping,
             $bookTable->getRelation('Review')->getColumnMappings(),
             'The map builder adds columns in the correct order for incoming foreign keys'
         );
         $publisherTable = $this->databaseMap->getTableByPhpName('Propel\Tests\Bookstore\Publisher');
-        $expectedMapping = array('book.PUBLISHER_ID' => 'publisher.ID');
+        $expectedMapping = array('book.publisher_id' => 'publisher.id');
         $this->assertEquals(
             $expectedMapping,
             $publisherTable->getRelation('Book')->getColumnMappings(),
@@ -203,8 +203,8 @@ class TableMapBuilderTest extends BookstoreTestBase
         );
         $rfTable = $this->databaseMap->getTableByPhpName('Propel\Tests\Bookstore\ReaderFavorite');
         $expectedMapping = array(
-            'reader_favorite.BOOK_ID' => 'book_opinion.BOOK_ID',
-            'reader_favorite.READER_ID' => 'book_opinion.READER_ID'
+            'reader_favorite.book_id' => 'book_opinion.book_id',
+            'reader_favorite.reader_id' => 'book_opinion.reader_id'
         );
         $this->assertEquals(
             $expectedMapping,

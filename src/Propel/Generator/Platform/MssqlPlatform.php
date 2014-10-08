@@ -151,9 +151,9 @@ END
         $pattern = 'CONSTRAINT %s FOREIGN KEY (%s) REFERENCES %s (%s)';
         $script = sprintf($pattern,
             $this->quoteIdentifier($fk->getName()),
-            $this->getColumnListDDL($fk->getLocalColumns()),
+            $this->getColumnListDDL($fk->getLocalColumnObjects()),
             $this->quoteIdentifier($fk->getForeignTableName()),
-            $this->getColumnListDDL($fk->getForeignColumns())
+            $this->getColumnListDDL($fk->getForeignColumnObjects())
         );
         if ($fk->hasOnUpdate() && $fk->getOnUpdate() != ForeignKey::SETNULL) {
             $script .= ' ON UPDATE ' . $fk->getOnUpdate();
@@ -178,9 +178,12 @@ END
         return !('INT' === $sqlType || 'TEXT' === $sqlType);
     }
 
-    public function quoteIdentifier($text)
+    /**
+     * {@inheritdoc}
+     */
+    public function doQuoting($text)
     {
-        return $this->isIdentifierQuotingEnabled ? '[' . strtr($text, array('.' => '].[')) . ']' : $text;
+        return '[' . strtr($text, array('.' => '].[')) . ']';
     }
 
     public function getTimestampFormatter()

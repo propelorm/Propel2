@@ -114,16 +114,6 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
     }
 
     /**
-     * @see AdapterInterface::useQuoteIdentifier()
-     *
-     * @return boolean
-     */
-    public function useQuoteIdentifier()
-    {
-        return true;
-    }
-
-    /**
      * @see AdapterInterface::applyLimit()
      *
      * @param string  $sql

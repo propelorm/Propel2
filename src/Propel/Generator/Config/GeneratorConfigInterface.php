@@ -51,4 +51,18 @@ interface GeneratorConfigInterface
      * @return BehaviorLocator
      */
     public function getBehaviorLocator();
+
+    /**
+     * Return a specific configuration property.
+     * The name of the requested property must be given as a string, representing its hierarchy in the configuration
+     * array, with each level separated by a dot. I.e.:
+     * <code> $config['database']['adapter']['mysql']['tableType']</code>
+     * is expressed by:
+     * <code>'database.adapter.mysql.tableType</code>
+     *
+     * @param string $name The name of property, expressed as a dot separated level hierarchy
+     * @throws \Propel\Common\Config\Exception\InvalidArgumentException
+     * @return mixed The configuration property
+     */
+    public function getConfigProperty($name);
 }

@@ -60,6 +60,7 @@ class PlatformDatabaseBuildTimeBase extends TestCaseFixtures
     public function readDatabase()
     {
         $this->database = new Database();
+        $this->database->setIdentifierQuoting(true);
         $this->database->setPlatform($this->platform);
         $this->parser->parse($this->database);
     }

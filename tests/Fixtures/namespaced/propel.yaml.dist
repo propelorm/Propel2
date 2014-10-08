@@ -24,8 +24,6 @@ propel:
     connections:
       - bookstore_namespaced
     targetPackage: bookstore
-    objectModel:
-      disableIdentifierQuoting: true
 
   runtime:
     defaultConnection: bookstore_namespaced

@@ -37,6 +37,11 @@ class Index extends MappingModel
     protected $columns;
 
     /**
+     * @var Column[]
+     */
+    protected $columnObjects = [];
+
+    /**
      * @var string[]
      */
     protected $columnsSize;
@@ -181,10 +186,14 @@ class Index extends MappingModel
             if ($column->getSize()) {
                 $this->columnsSize[$column->getName()] = $column->getSize();
             }
+            $this->columnObjects[] = $column;
         } else {
             $this->columns[] = $name = $data['name'];
             if (isset($data['size']) && $data['size'] > 0) {
                 $this->columnsSize[$name] = $data['size'];
+            }
+            if ($this->getTable()) {
+                $this->columnObjects[] = $this->getTable()->getColumn($name);
             }
         }
     }
@@ -310,5 +319,21 @@ class Index extends MappingModel
     protected function setupObject()
     {
         $this->setName($this->getAttribute('name'));
+    }
+
+    /**
+     * @return Column[]
+     */
+    public function getColumnObjects()
+    {
+        return $this->columnObjects;
+    }
+
+    /**
+     * @param Column[] $columnObjects
+     */
+    public function setColumnObjects($columnObjects)
+    {
+        $this->columnObjects = $columnObjects;
     }
 }

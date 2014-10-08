@@ -233,11 +233,13 @@ class SchemaReader
 
                 case 'index':
                     $this->currIndex = new Index();
+                    $this->currIndex->setTable($this->currTable);
                     $this->currIndex->loadMapping($attributes);
                     break;
 
                 case 'unique':
                     $this->currUnique = new Unique();
+                    $this->currUnique->setTable($this->currTable);
                     $this->currUnique->loadMapping($attributes);
                     break;
 

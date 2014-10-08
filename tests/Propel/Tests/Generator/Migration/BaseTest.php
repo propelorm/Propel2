@@ -21,7 +21,7 @@ class BaseTest extends MigrationTestCase
 <database>
     <table name="migration_test_0">
         <column name="id" type="integer" primaryKey="true" autoIncrement="true" />
-        <column name="char" type="CHAR" size="1" />
+        <column name="charfield" type="CHAR" size="1" />
     </table>
 </database>
 ';
@@ -35,7 +35,7 @@ class BaseTest extends MigrationTestCase
 <database>
     <table name="migration_test_1">
         <column name="id" type="integer" primaryKey="true" autoIncrement="true" />
-        <column name="char" type="CHAR" size="1" />
+        <column name="charfield" type="CHAR" size="1" />
     </table>
 </database>
 ';
@@ -44,7 +44,7 @@ class BaseTest extends MigrationTestCase
 <database>
     <table name="migration_test_1">
         <column name="id" type="integer" primaryKey="true" autoIncrement="true" />
-        <column name="char" type="CHAR" size="1" />
+        <column name="charfield" type="CHAR" size="1" />
     </table>
 </database>
 ';

@@ -114,6 +114,11 @@ class ModelJoin extends Join
         return $this->hasRightTableAlias();
     }
 
+    public function isIdentifierQuotingEnabled()
+    {
+        return $this->getTableMap()->isIdentifierQuotingEnabled();
+    }
+
     /**
      * This method returns the last related, but already hydrated object up until this join
      * Starting from $startObject and continuously calling the getters to get

@@ -549,17 +549,17 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
         $selectColumns = array();
         foreach ($table->getColumns() as $column) {
             if (!$column->isLazyLoad()) {
-                $selectColumns []= $platform->quoteIdentifier(strtoupper($column->getName()));
+                $selectColumns []= $this->quoteIdentifier($column->getName());
             }
         }
         $conditions = array();
         foreach ($table->getPrimaryKey() as $index => $column) {
-            $conditions []= sprintf('%s = :p%d', $platform->quoteIdentifier(strtoupper($column->getName())), $index);
+            $conditions []= sprintf('%s = :p%d', $this->quoteIdentifier($column->getName()), $index);
         }
         $query = sprintf(
             'SELECT %s FROM %s WHERE %s',
             implode(', ', $selectColumns),
-            $platform->quoteIdentifier($table->getName()),
+            $this->quoteIdentifier($table->getName()),
             implode(' AND ', $conditions)
         );
         $pks = array();

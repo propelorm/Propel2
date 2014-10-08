@@ -1,11 +1,11 @@
-# Configuration file for `migration` fixtures
+# Configuration file for `quoting` fixtures
 propel:
   general:
-    project: migration
+    project: quoting
 
   database:
     connections:
-      migration:
+      quoting:
         adapter: ##DATABASE_VENDOR##
         classname: \Propel\Runtime\Connection\DebugPDO
         dsn: ##DATABASE_URL##
@@ -20,12 +20,12 @@ propel:
           charset: utf8
 
   generator:
-    defaultConnection: migration
+    targetPackage: quoting
+    defaultConnection: quoting
     connections:
-      - migration
-    targetPackage: migration
+      - quoting
 
   runtime:
-    defaultConnection: migration
+    defaultConnection: quoting
     connections:
-      - migration
+      - quoting

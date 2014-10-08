@@ -10,6 +10,7 @@
 
 namespace Propel\Generator\Behavior\AggregateColumn;
 
+use Propel\Generator\Builder\Om\ObjectBuilder;
 use Propel\Generator\Model\Behavior;
 
 /**
@@ -69,19 +70,23 @@ class AggregateColumnBehavior extends Behavior
         }
     }
 
-    public function objectMethods($builder)
+    public function objectMethods(ObjectBuilder $builder)
     {
         if (!$this->getParameter('foreign_table')) {
             throw new \InvalidArgumentException(sprintf('You must define a \'foreign_table\' parameter for the \'aggregate_column\' behavior in the \'%s\' table', $this->getTable()->getName()));
         }
         $script = '';
-        $script .= $this->addObjectCompute();
-        $script .= $this->addObjectUpdate();
+        $script .= $this->addObjectCompute($builder);
+        $script .= $this->addObjectUpdate($builder);
 
         return $script;
     }
 
-    protected function addObjectCompute()
+    /**
+     * @param ObjectBuilder $builder
+     * @return string
+     */
+    protected function addObjectCompute(ObjectBuilder $builder)
     {
         $conditions = array();
         if ($this->getParameter('condition')) {
@@ -100,9 +105,10 @@ class AggregateColumnBehavior extends Behavior
                 .$database->getPlatform()->getSchemaDelimiter()
                 .$tableName;
         }
+
         $sql = sprintf('SELECT %s FROM %s WHERE %s',
             $this->getParameter('expression'),
-            $database->getPlatform()->quoteIdentifier($tableName),
+            $builder->getTable()->quoteIdentifier($tableName),
             implode(' AND ', $conditions)
         );
 

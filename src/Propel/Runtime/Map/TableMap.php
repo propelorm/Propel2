@@ -13,9 +13,7 @@ namespace Propel\Runtime\Map;
 use Propel\Runtime\Map\Exception\ColumnNotFoundException;
 use Propel\Runtime\Map\Exception\RelationNotFoundException;
 use Propel\Runtime\Propel;
-use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\ActiveQuery\Criteria;
-use Propel\Runtime\Exception\RuntimeException;
 
 /**
  * TableMap is used to model a table in a database.
@@ -44,12 +42,6 @@ class TableMap
      * e.g. 'book.AUTHOR_ID'
      */
     const TYPE_COLNAME = 'colName';
-
-    /**
-     * column part of the column tableMap name
-     * e.g. 'AUTHOR_ID'
-     */
-    const TYPE_RAW_COLNAME = 'rawColName';
 
     /**
      * column fieldname type
@@ -167,6 +159,11 @@ class TableMap
      * @var mixed
      */
     protected $pkInfo;
+
+    /**
+     * @var boolean
+     */
+    protected $identifierQuoting = null;
 
     /**
      * Construct a new TableMap.
@@ -414,7 +411,7 @@ class TableMap
             $this->foreignKeys[$name] = $col;
         }
 
-        $this->columns[$name] = $col;
+        $this->columns[ColumnMap::normalizeName($name)] = $col;
         $this->columnsByPhpName[$phpName] = $col;
 
         return $col;
@@ -748,4 +745,50 @@ class TableMap
 
         return call_user_func_array($callable, $args);
     }
+
+    /**
+     * @return boolean
+     */
+    public function isIdentifierQuotingEnabled()
+    {
+        return $this->identifierQuoting;
+    }
+
+    /**
+     * @param boolean $identifierQuoting
+     */
+    public function setIdentifierQuoting($identifierQuoting)
+    {
+        $this->identifierQuoting = $identifierQuoting;
+    }
+
+    /**
+     * @return array|null null if not covered by only pk
+     */
+    public function extractPrimaryKey(Criteria $criteria)
+    {
+        $pkCols = $this->getPrimaryKeys();
+        if (count($pkCols) !== count($criteria->getMap())) {
+            return null;
+        }
+
+        $pk = [];
+        foreach ($pkCols as $pkCol) {
+            $fqName = $pkCol->getFullyQualifiedName();
+            $name = $pkCol->getName();
+
+            if ($criteria->containsKey($fqName)) {
+                $value = $criteria->getValue($fqName);
+            } else if ($criteria->containsKey($name)) {
+                $value = $criteria->getValue($name);
+            } else {
+                return null;
+            }
+
+            $pk[$name] = $value;
+        }
+
+        return $pk;
+    }
+
 }

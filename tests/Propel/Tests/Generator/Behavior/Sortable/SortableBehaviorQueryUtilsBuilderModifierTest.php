@@ -33,7 +33,7 @@ class SortableBehaviorQueryUtilsBuilderModifierTest extends TestCase
 
     public function testStaticAttributes()
     {
-        $this->assertEquals('sortable_table11.SORTABLE_RANK', SortableTable11TableMap::RANK_COL);
+        $this->assertEquals('sortable_table11.sortable_rank', SortableTable11TableMap::RANK_COL);
     }
 
     public function testGetMaxRank()

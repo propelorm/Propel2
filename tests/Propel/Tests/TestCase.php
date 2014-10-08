@@ -36,6 +36,9 @@ class TestCase extends \PHPUnit_Framework_TestCase
         if ('sqlite' === $target && 'mysql' === $source) {
             return preg_replace('/`([^`]*)`/', '[$1]', $sql);
         }
+        if ('pgsql' === $target && 'mysql' === $source) {
+            return preg_replace('/`([^`]*)`/', '"$1"', $sql);
+        }
         if ('mysql' !== $target && 'mysql' === $source) {
             return str_replace('`', '', $sql);
         }

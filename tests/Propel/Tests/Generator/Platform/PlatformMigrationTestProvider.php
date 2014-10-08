@@ -25,7 +25,7 @@ abstract class PlatformMigrationTestProvider extends PlatformTestBase
     public function providerForTestGetModifyDatabaseDDL()
     {
         $schema1 = <<<EOF
-<database name="test">
+<database name="test" identifierQuoting="true">
     <table name="foo1">
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <column name="blooopoo" type="INTEGER" />
@@ -42,7 +42,7 @@ abstract class PlatformMigrationTestProvider extends PlatformTestBase
 </database>
 EOF;
         $schema2 = <<<EOF
-<database name="test">
+<database name="test" identifierQuoting="true">
     <table name="foo2">
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <column name="bar1" type="INTEGER" />
@@ -74,7 +74,7 @@ EOF;
     public function providerForTestGetModifyTableDDL()
     {
         $schema1 = <<<EOF
-<database name="test">
+<database name="test" identifierQuoting="true">
     <table name="foo">
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <column name="bar" type="INTEGER" />
@@ -101,7 +101,7 @@ EOF;
 </database>
 EOF;
         $schema2 = <<<EOF
-<database name="test">
+<database name="test" identifierQuoting="true">
     <table name="foo">
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <column name="bar1" type="INTEGER" />
@@ -133,7 +133,7 @@ EOF;
     public function providerForTestGetModifyTableColumnsDDL()
     {
         $schema1 = <<<EOF
-<database name="test">
+<database name="test" identifierQuoting="true">
     <table name="foo">
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <column name="bar" type="INTEGER" />
@@ -142,7 +142,7 @@ EOF;
 </database>
 EOF;
         $schema2 = <<<EOF
-<database name="test">
+<database name="test" identifierQuoting="true">
     <table name="foo">
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <column name="bar1" type="INTEGER" />
@@ -164,7 +164,7 @@ EOF;
     public function providerForTestGetModifyTablePrimaryKeysDDL()
     {
         $schema1 = <<<EOF
-<database name="test">
+<database name="test" identifierQuoting="true">
     <table name="foo">
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <column name="bar" type="INTEGER" />
@@ -173,7 +173,7 @@ EOF;
 </database>
 EOF;
         $schema2 = <<<EOF
-<database name="test">
+<database name="test" identifierQuoting="true">
     <table name="foo">
         <column name="id" primaryKey="true" type="INTEGER" />
         <column name="bar" type="INTEGER" primaryKey="true" />
@@ -194,7 +194,7 @@ EOF;
     public function providerForTestGetModifyTableIndicesDDL()
     {
         $schema1 = <<<EOF
-<database name="test">
+<database name="test" identifierQuoting="true">
     <table name="foo">
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <column name="bar" type="INTEGER" />
@@ -210,7 +210,7 @@ EOF;
 </database>
 EOF;
         $schema2 = <<<EOF
-<database name="test">
+<database name="test" identifierQuoting="true">
     <table name="foo">
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <column name="bar" type="INTEGER" />
@@ -239,7 +239,7 @@ EOF;
     public function providerForTestGetModifyTableForeignKeysDDL()
     {
         $schema1 = <<<EOF
-<database name="test">
+<database name="test" identifierQuoting="true">
     <table name="foo1">
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <column name="bar" type="INTEGER" />
@@ -260,7 +260,7 @@ EOF;
 </database>
 EOF;
         $schema2 = <<<EOF
-<database name="test">
+<database name="test" identifierQuoting="true">
     <table name="foo1">
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <column name="bar" type="INTEGER" />
@@ -293,7 +293,7 @@ EOF;
     public function providerForTestGetModifyTableForeignKeysSkipSqlDDL()
     {
         $schema1 = <<<EOF
-<database name="test">
+<database name="test" identifierQuoting="true">
     <table name="foo1">
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <column name="bar" type="INTEGER" />
@@ -308,7 +308,7 @@ EOF;
 </database>
 EOF;
         $schema2 = <<<EOF
-<database name="test">
+<database name="test" identifierQuoting="true">
     <table name="foo1">
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <column name="bar" type="INTEGER" />
@@ -335,7 +335,7 @@ EOF;
     public function providerForTestGetModifyTableForeignKeysSkipSql2DDL()
     {
         $schema1 = <<<EOF
-<database name="test">
+<database name="test" identifierQuoting="true">
     <table name="foo1">
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <column name="bar" type="INTEGER" />
@@ -350,7 +350,7 @@ EOF;
 </database>
 EOF;
         $schema2 = <<<EOF
-<database name="test">
+<database name="test" identifierQuoting="true">
     <table name="foo1">
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <column name="bar" type="INTEGER" />
@@ -374,6 +374,7 @@ EOF;
     public function providerForTestGetRemoveColumnDDL()
     {
         $table = new Table('foo');
+        $table->setIdentifierQuoting(true);
         $column = new Column('bar');
         $table->addColumn($column);
 
@@ -383,12 +384,15 @@ EOF;
     public function providerForTestGetRenameColumnDDL()
     {
         $t1 = new Table('foo');
+        $t1->setIdentifierQuoting(true);
         $c1 = new Column('bar1');
         $c1->getDomain()->setType('DOUBLE');
         $c1->getDomain()->setSqlType('DOUBLE');
         $c1->getDomain()->replaceSize(2);
         $t1->addColumn($c1);
+
         $t2 = new Table('foo');
+        $t2->setIdentifierQuoting(true);
         $c2 = new Column('bar2');
         $c2->getDomain()->setType('DOUBLE');
         $c2->getDomain()->setSqlType('DOUBLE');
@@ -401,11 +405,13 @@ EOF;
     public function providerForTestGetModifyColumnDDL()
     {
         $t1 = new Table('foo');
+        $t1->setIdentifierQuoting(true);
         $c1 = new Column('bar');
         $c1->getDomain()->copy($this->getPlatform()->getDomainForType('DOUBLE'));
         $c1->getDomain()->replaceSize(2);
         $t1->addColumn($c1);
         $t2 = new Table('foo');
+        $t2->setIdentifierQuoting(true);
         $c2 = new Column('bar');
         $c2->getDomain()->copy($this->getPlatform()->getDomainForType('DOUBLE'));
         $c2->getDomain()->replaceSize(3);
@@ -417,6 +423,7 @@ EOF;
     public function providerForTestGetModifyColumnsDDL()
     {
         $t1 = new Table('foo');
+        $t1->setIdentifierQuoting(true);
         $c1 = new Column('bar1');
         $c1->getDomain()->copy($this->getPlatform()->getDomainForType('DOUBLE'));
         $c1->getDomain()->replaceSize(2);
@@ -425,7 +432,10 @@ EOF;
         $c2->getDomain()->setType('INTEGER');
         $c2->getDomain()->setSqlType('INTEGER');
         $t1->addColumn($c2);
+
         $t2 = new Table('foo');
+        $t2->setIdentifierQuoting(true);
+        $t2->setIdentifierQuoting(true);
         $c3 = new Column('bar1');
         $c3->getDomain()->copy($this->getPlatform()->getDomainForType('DOUBLE'));
         $c3->getDomain()->replaceSize(3);
@@ -445,7 +455,7 @@ EOF;
     public function providerForTestGetAddColumnDDL()
     {
         $schema = <<<EOF
-<database name="test">
+<database name="test" identifierQuoting="true">
     <table name="foo">
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <column name="bar" type="INTEGER" />
@@ -460,7 +470,7 @@ EOF;
     public function providerForTestGetAddColumnsDDL()
     {
         $schema = <<<EOF
-<database name="test">
+<database name="test" identifierQuoting="true">
     <table name="foo">
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <column name="bar1" type="INTEGER" />
@@ -476,12 +486,14 @@ EOF;
     public function providerForTestGetModifyColumnRemoveDefaultValueDDL()
     {
         $t1 = new Table('test');
+        $t1->setIdentifierQuoting(true);
         $c1 = new Column();
         $c1->setName('test');
         $c1->getDomain()->setType('INTEGER');
         $c1->setDefaultValue(0);
         $t1->addColumn($c1);
         $t2 = new Table('test');
+        $t2->setIdentifierQuoting(true);
         $c2 = new Column();
         $c2->setName('test');
         $c2->getDomain()->setType('INTEGER');
@@ -493,7 +505,7 @@ EOF;
     public function providerForTestGetModifyTableForeignKeysSkipSql3DDL()
     {
         $schema1 = <<<EOF
-<database name="test">
+<database name="test" identifierQuoting="true">
     <table name="test">
         <column name="test" type="INTEGER" primaryKey="true" autoIncrement="true" required="true" />
         <column name="ref_test" type="INTEGER"/>
@@ -507,7 +519,7 @@ EOF;
 </database>
 EOF;
         $schema2 = <<<EOF
-<database name="test">
+<database name="test" identifierQuoting="true">
   <table name="test">
     <column name="test" type="INTEGER" primaryKey="true" autoIncrement="true" required="true" />
     <column name="ref_test" type="INTEGER"/>
@@ -527,7 +539,7 @@ EOF;
     public function providerForTestGetModifyTableForeignKeysSkipSql4DDL()
     {
         $schema1 = <<<EOF
-<database name="test">
+<database name="test" identifierQuoting="true">
     <table name="test">
         <column name="test" type="INTEGER" primaryKey="true" autoIncrement="true" required="true" />
         <column name="ref_test" type="INTEGER"/>
@@ -541,7 +553,7 @@ EOF;
 </database>
 EOF;
         $schema2 = <<<EOF
-<database name="test">
+<database name="test" identifierQuoting="true">
   <table name="test">
     <column name="test" type="INTEGER" primaryKey="true" autoIncrement="true" required="true" />
     <column name="ref_test" type="INTEGER"/>

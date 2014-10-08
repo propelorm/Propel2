@@ -324,7 +324,6 @@ class PropelConfiguration implements ConfigurationInterface
                                 ->booleanNode('addTimeStamp')->defaultFalse()->end()
                                 ->booleanNode('addHooks')->defaultTrue()->end()
                                 ->scalarNode('classPrefix')->defaultNull()->end()
-                                ->booleanNode('disableIdentifierQuoting')->defaultFalse()->end()
                                 ->booleanNode('useLeftJoinsInDoJoinMethods')->defaultTrue()->end()
                                 ->scalarNode('pluralizerClass')->defaultValue('\Propel\Common\Pluralizer\StandardEnglishPluralizer')->end()
                                 ->arrayNode('builders')

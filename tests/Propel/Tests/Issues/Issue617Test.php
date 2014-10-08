@@ -19,7 +19,7 @@ class Issue617Test extends PlatformDatabaseBuildTimeBase
 {
     /**
      * Contains the builder instance of the updated schema (removed FK)
-     * @var PropelQuickBuilder
+     * @var QuickBuilder
      */
     private $updatedBuilder;
 
@@ -53,7 +53,7 @@ class Issue617Test extends PlatformDatabaseBuildTimeBase
          * Create issue617 tables with foreign keys
          */
         $schema = '
-<database name="bookstore">
+<database name="bookstore" identifierQuoting="true">
 <table name="issue617_user">
   <vendor type="mysql">
     <parameter name="Engine" value="InnoDB"/>
@@ -81,6 +81,7 @@ class Issue617Test extends PlatformDatabaseBuildTimeBase
 ';
 
         $builder = new QuickBuilder();
+        $builder->setIdentifierQuoting(true);
         $builder->setPlatform($this->database->getPlatform());
         $builder->setSchema($schema);
 
@@ -122,7 +123,7 @@ CREATE TABLE `issue617_group`
     {
         $this->readDatabase();
         $updatedSchema = '
-<database name="reverse-bookstore">
+<database name="reverse-bookstore" identifierQuoting="true">
 <table name="issue617_user">
   <vendor type="mysql">
     <parameter name="Engine" value="InnoDB"/>
@@ -144,6 +145,7 @@ CREATE TABLE `issue617_group`
 ';
 
         $this->updatedBuilder = new QuickBuilder();
+        $this->updatedBuilder->setIdentifierQuoting(true);
         $this->updatedBuilder->setPlatform($this->database->getPlatform());
         $this->updatedBuilder->setSchema($updatedSchema);
 

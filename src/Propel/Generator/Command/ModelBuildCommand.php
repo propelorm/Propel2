@@ -100,11 +100,6 @@ class ModelBuildCommand extends AbstractCommand
                     case 'composer-dir':
                         $configOptions['propel']['paths']['composerDir'] = $option;
                         break;
-                    case 'enable-identifier-quoting':
-                        if ($option) {
-                            $configOptions['propel']['generator']['objectModel']['disableIdentifierQuoting'] = !$option;
-                        }
-                        break;
                     case 'disable-package-object-model':
                         if ($option) {
                             $configOptions['propel']['generator']['packageObjectModel'] = false;

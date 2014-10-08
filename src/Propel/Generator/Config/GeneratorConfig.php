@@ -17,6 +17,7 @@ use Propel\Generator\Exception\BuildException;
 use Propel\Generator\Exception\ClassNotFoundException;
 use Propel\Generator\Exception\InvalidArgumentException;
 use Propel\Generator\Model\Table;
+use Propel\Generator\Platform\DefaultPlatform;
 use Propel\Generator\Platform\PlatformInterface;
 use Propel\Generator\Reverse\SchemaParserInterface;
 use Propel\Runtime\Adapter\AdapterFactory;
@@ -63,6 +64,7 @@ class GeneratorConfig extends ConfigurationManager implements GeneratorConfigInt
             $clazz = $this->get()['generator']['platformClass'];
         }
 
+        /** @var DefaultPlatform $platform */
         $platform = $this->getInstance($clazz);
         $platform->setConnection($con);
         $platform->setGeneratorConfig($this);

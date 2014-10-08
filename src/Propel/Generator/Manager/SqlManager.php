@@ -85,10 +85,6 @@ class SqlManager extends AbstractManager
             $platform = $database->getPlatform();
             $filename = $database->getName() . '.sql';
 
-            if ($this->getGeneratorConfig()->get()['generator']['objectModel']['disableIdentifierQuoting']) {
-                $platform->setIdentifierQuoting(false);
-            }
-
             $ddl = $platform->getAddTablesDDL($database);
 
             $file = $this->getWorkingDirectory() . DIRECTORY_SEPARATOR . $filename;

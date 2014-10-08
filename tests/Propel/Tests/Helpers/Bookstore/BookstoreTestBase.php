@@ -39,7 +39,7 @@ abstract class BookstoreTestBase extends TestCaseFixturesDatabase
             if (!file_exists($file)) {
                 return;
             }
-            Propel::init(__DIR__ . '/../../../../Fixtures/bookstore/build/conf/bookstore-conf.php');
+            Propel::init($file);
             self::$isInitialized = true;
         }
         $this->con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);

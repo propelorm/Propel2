@@ -247,7 +247,7 @@ CREATE TABLE `foo`
     public function testGetAddTableDDLIndex()
     {
         $schema = <<<EOF
-<database name="test">
+<database name="test" identifierQuoting="true">
     <table name="foo">
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <column name="bar" type="INTEGER" />
@@ -273,7 +273,7 @@ CREATE TABLE `foo`
     public function testGetAddTableDDLForeignKey()
     {
         $schema = <<<EOF
-<database name="test">
+<database name="test" identifierQuoting="true">
     <table name="foo">
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <column name="bar_id" type="INTEGER" />
@@ -302,7 +302,7 @@ CREATE TABLE `foo`
     public function testGetAddTableDDLForeignKeySkipSql()
     {
         $schema = <<<EOF
-<database name="test">
+<database name="test" identifierQuoting="true">
     <table name="foo">
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <column name="bar_id" type="INTEGER" />
@@ -331,7 +331,7 @@ CREATE TABLE `foo`
     public function testGetAddTableDDLEngine()
     {
         $schema = <<<EOF
-<database name="test">
+<database name="test" identifierQuoting="true">
     <table name="foo">
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
     </table>
@@ -356,7 +356,7 @@ CREATE TABLE `foo`
     public function testGetAddTableDDLVendor()
     {
         $schema = <<<EOF
-<database name="test">
+<database name="test" identifierQuoting="true">
     <table name="foo">
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <vendor type="mysql">
@@ -398,6 +398,7 @@ CREATE TABLE `Woopah`.`foo`
     public function testGetDropTableDDL()
     {
         $table = new Table('foo');
+        $table->setIdentifierQuoting(true);
         $expected = "
 DROP TABLE IF EXISTS `foo`;
 ";
@@ -495,6 +496,7 @@ DROP TABLE IF EXISTS `Woopah`.`foo`;
     public function testGetPrimaryKeyDDLSimpleKey()
     {
         $table = new Table('foo');
+        $table->setIdentifierQuoting(true);
         $column = new Column('bar');
         $column->setPrimaryKey(true);
         $table->addColumn($column);
@@ -505,6 +507,7 @@ DROP TABLE IF EXISTS `Woopah`.`foo`;
     public function testGetPrimaryKeyDDLCompositeKey()
     {
         $table = new Table('foo');
+        $table->setIdentifierQuoting(true);
         $column1 = new Column('bar1');
         $column1->setPrimaryKey(true);
         $table->addColumn($column1);
@@ -584,6 +587,7 @@ DROP INDEX `babar` ON `foo`;
     public function testGetIndexDDLKeySize()
     {
         $table = new Table('foo');
+        $table->setIdentifierQuoting(true);
         $column1 = new Column('bar1');
         $column1->getDomain()->copy($this->getPlatform()->getDomainForType('VARCHAR'));
         $column1->setSize(5);
@@ -598,6 +602,7 @@ DROP INDEX `babar` ON `foo`;
     public function testGetIndexDDLFulltext()
     {
         $table = new Table('foo');
+        $table->setIdentifierQuoting(true);
         $column1 = new Column('bar1');
         $column1->getDomain()->copy($this->getPlatform()->getDomainForType('LONGVARCHAR'));
         $table->addColumn($column1);
@@ -696,7 +701,7 @@ DROP INDEX `babar` ON `foo`;
     public function testAddExtraIndicesForeignKeys()
     {
         $schema = '
-<database name="test1">
+<database name="test1" identifierQuoting="true">
   <table name="foo">
     <behavior name="AutoAddPk"/>
     <column name="name" type="VARCHAR"/>

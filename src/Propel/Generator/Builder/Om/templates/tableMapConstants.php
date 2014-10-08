@@ -40,9 +40,9 @@
 <?php foreach ($columns as $col) : ?>
 
     /**
-     * the column name for the <?php echo strtoupper($col->getName()) ?> field
+     * the column name for the <?php echo $col->getName() ?> field
      */
-    const <?php echo $col->getConstantName() ?> = '<?php echo $tableName ?>.<?php echo strtoupper($col->getName()) ?>';
+    const <?php echo $col->getConstantName() ?> = '<?php echo $tableName ?>.<?php echo $col->getName() ?>';
 <?php endforeach; ?>
 
     /**

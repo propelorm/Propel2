@@ -28,6 +28,9 @@
             <xsl:if test='not(boolean(@heavyIndexing))'>
                 <xsl:attribute name='heavyIndexing'>false</xsl:attribute>
             </xsl:if>
+            <xsl:if test='not(boolean(@identifierQuoting))'>
+              <xsl:attribute name='identifierQuoting'>false</xsl:attribute>
+            </xsl:if>
             <xsl:apply-templates select='@*'/>
             <xsl:apply-templates select='external-schema'/>
             <xsl:apply-templates select='table'/>

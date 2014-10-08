@@ -92,6 +92,8 @@ class SqlitePlatform extends DefaultPlatform
      */
     public function setGeneratorConfig(GeneratorConfigInterface $generatorConfig)
     {
+        parent::setGeneratorConfig($generatorConfig);
+
         if (null !== ($foreignKeySupport = $generatorConfig->getConfigProperty('database.adapter.sqlite.foreignKey'))) {
             $this->foreignKeySupport = filter_var($foreignKeySupport, FILTER_VALIDATE_BOOLEAN);;
         }
@@ -503,9 +505,9 @@ PRAGMA foreign_keys = ON;
         $pattern = "FOREIGN KEY (%s) REFERENCES %s (%s)";
 
         $script = sprintf($pattern,
-            $this->getColumnListDDL($fk->getLocalColumns()),
+            $this->getColumnListDDL($fk->getLocalColumnObjects()),
             $this->quoteIdentifier($fk->getForeignTableName()),
-            $this->getColumnListDDL($fk->getForeignColumns())
+            $this->getColumnListDDL($fk->getForeignColumnObjects())
         );
 
         if ($fk->hasOnUpdate()) {
@@ -531,9 +533,12 @@ PRAGMA foreign_keys = ON;
         ));
     }
 
-    public function quoteIdentifier($text)
+    /**
+     * {@inheritdoc}
+     */
+    public function doQuoting($text)
     {
-        return $this->isIdentifierQuotingEnabled ? '[' . $text . ']' : $text;
+        return '[' . strtr($text, array('.' => '].[')) . ']';
     }
 
     public function supportsSchemas()
