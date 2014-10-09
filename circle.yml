@@ -16,7 +16,7 @@ notify:
   webhooks:
     # A list of hook hashes, containing the url field
     - url: http://propel.jarves.io/build.php
-    - url: https://webhooks.gitter.im/e/2fe18b161b97a4420abe
+    - url: https://webhooks.gitter.im/e/dcbbf1b4889e30a88403
 
 test:
   override:
