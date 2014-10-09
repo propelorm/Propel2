@@ -1,2 +1,6 @@
 #!/bin/sh
-./vendor/bin/phpunit --exclude-group database;
+
+DIR=`dirname $0`;
+. $DIR/base.sh;
+
+$PHPUNIT --exclude-group database;

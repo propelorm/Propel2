@@ -1,2 +1,5 @@
 #!/bin/sh
-./vendor/bin/phpunit --group database;
+DIR=`dirname $0`;
+. $DIR/base.sh;
+
+$PHPUNIT --group database;
