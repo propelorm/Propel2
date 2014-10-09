@@ -1,5 +1,11 @@
 #!/bin/sh
 
+
+if [ "$CIRCLE_PROJECT_USERNAME" = "propelorm" ]; then
+    # only primary repo (not forks) should do the expensive code coverage report.
+    export PHPUNIT_COVERAGE=1
+fi
+
 if [ "$CIRCLE_NODE_INDEX" = "0" ]; then
     echo "agnostic tests"
     ./tests/bin/phpunit.agnostic.sh;

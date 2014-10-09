@@ -2,7 +2,6 @@ machine:
   environment:
     DB_USER: ubuntu
     DB_NAME: circle_test
-    PHPUNIT_COVERAGE: 1
   php:
     version: 5.4.4
 dependencies:
