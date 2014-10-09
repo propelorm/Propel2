@@ -31,8 +31,8 @@ use Propel\Generator\Model\Diff\DatabaseDiff;
  */
 class MysqlPlatform extends DefaultPlatform
 {
-    protected $tableEngineKeyword = 'ENGINE';  // overwritten in build.properties
-    protected $defaultTableEngine = 'MyISAM';  // overwritten in build.properties
+    protected $tableEngineKeyword = 'ENGINE';  // overwritten in propel config
+    protected $defaultTableEngine = 'InnoDB';  // overwritten in propel config
 
     /**
      * Initializes db specific domain mapping.

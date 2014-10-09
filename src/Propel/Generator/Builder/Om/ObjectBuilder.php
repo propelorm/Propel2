@@ -814,7 +814,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $defaultfmt = null;
         $visibility = $column->getAccessorVisibility();
 
-        // Default date/time formatter strings are specified in build.properties
+        // Default date/time formatter strings are specified in propel config
         if ($column->getType() === PropelTypes::DATE) {
             $defaultfmt = $this->getBuildProperty('generator.dateTime.defaultDateFormat');
         } elseif ($column->getType() === PropelTypes::TIME) {
@@ -879,7 +879,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $this->declareClasses($dateTimeClass);
         $defaultfmt = null;
 
-        // Default date/time formatter strings are specified in build.properties
+        // Default date/time formatter strings are specified in propel config
         if ($column->getType() === PropelTypes::DATE) {
             $defaultfmt = $this->getBuildProperty('generator.dateTime.defaultDateFormat');
         } elseif ($column->getType() === PropelTypes::TIME) {

@@ -953,7 +953,7 @@ class Table extends ScopedMappingModel implements IdMethod
     }
 
     /**
-     * Retrieves the configuration object, filled by build.properties
+     * Retrieves the configuration object.
      *
      * @return GeneratorConfig
      */
