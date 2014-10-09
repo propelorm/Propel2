@@ -154,7 +154,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
             $searchPath = explode(',', $searchPathString);
 
             foreach ($searchPath as &$path) {
-                $params[] = $path;
+                $params[] = trim($path);
                 $path = '?';
             }
             $searchPath = implode(', ', $searchPath);
@@ -222,7 +222,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
             $searchPath = explode(',', $searchPathString);
 
             foreach ($searchPath as &$path) {
-                $params[] = $path;
+                $params[] = trim($path);
                 $path = '?';
             }
             $searchPath = implode(', ', $searchPath);
@@ -544,7 +544,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
             $searchPath = explode(',', $searchPathString);
 
             foreach ($searchPath as &$path) {
-                $params[] = $path;
+                $params[] = trim($path);
                 $path = '?';
             }
             $searchPath = implode(', ', $searchPath);
