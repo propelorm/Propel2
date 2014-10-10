@@ -161,11 +161,11 @@ class ConfigurationManager
             }
 
             $finder = new Finder();
-            $finder->in($dirs)->depth(0)->files()->name($fileName . '.*')->notName('*.dist');
+            $finder->in($dirs)->depth(0)->files()->name($fileName . '.{php,inc,ini,properties,yaml,yml,xml,json}');
             $files = iterator_to_array($finder);
 
             $distfinder = new Finder();
-            $distfinder->in($dirs)->depth(0)->files()->name($fileName . '.*.dist');
+            $distfinder->in($dirs)->depth(0)->files()->name($fileName . '.{php,inc,ini,properties,yaml,yml,xml,json}.dist');
             $distfiles = iterator_to_array($distfinder);
 
             $numFiles = count($files);
