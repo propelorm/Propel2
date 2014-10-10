@@ -105,9 +105,9 @@ class ModelBuildCommand extends AbstractCommand
                             $configOptions['propel']['generator']['packageObjectModel'] = false;
                         }
                         break;
-                    case 'disable-namespace-autopackage':
+                    case 'disable-namespace-auto-package':
                         if ($option) {
-                            $configOptions['propel']['generator']['namespaceAutoPackage'] = !$option;
+                            $configOptions['propel']['generator']['namespaceAutoPackage'] = false;
                         }
                         break;
                     case 'mysql-engine':
