@@ -4517,10 +4517,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
         if (1 < count($crossFKs->getCrossForeignKeys()) || $crossFKs->getUnclassifiedPrimaryKeys()) {
             $relatedName = $this->getCrossFKsPhpNameAffix($crossFKs, true);
-            $collName = $this->getCrossFKsPhpNameAffix($crossFKs, $plural = false);
             $collVarName = 'combination' . ucfirst($this->getCrossFKsVarName($crossFKs));
-
-            //list($signature, $shortSignature, $normalizedShortSignature, $phpDoc) = $this->getCrossFKAddMethodInformation($crossFKs);
 
             $classNames = [];
             foreach ($crossFKs->getCrossForeignKeys() as $crossFK) {

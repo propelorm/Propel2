@@ -627,8 +627,29 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     protected function getCrossFKsPhpNameAffix(CrossForeignKeys $crossFKs, $plural = true)
     {
         $names = [];
-        foreach ($crossFKs->getCrossForeignKeys() as $fk) {
-            $names[] = $this->getFKPhpNameAffix($fk, false);
+
+        if ($plural) {
+            if ($pks = $crossFKs->getUnclassifiedPrimaryKeys()) {
+                //we have a non fk as pk as well, so we need to make pluralisation on our own and can't
+                //rely on getFKPhpNameAffix's pluralisation
+                foreach ($crossFKs->getCrossForeignKeys() as $fk) {
+                    $names[] = $this->getFKPhpNameAffix($fk, false);
+                }
+            } else {
+                //we have only fks, so give us names with plural and return those
+                $lastIdx = count($crossFKs->getCrossForeignKeys()) - 1;
+                foreach ($crossFKs->getCrossForeignKeys() as $idx => $fk) {
+                    $needPlural = $idx === $lastIdx; //only last fk should be plural
+                    $names[] = $this->getFKPhpNameAffix($fk, $needPlural);
+                }
+
+                return implode($names);
+            }
+        } else {
+            // no plural, so $plural=false
+            foreach ($crossFKs->getCrossForeignKeys() as $fk) {
+                $names[] = $this->getFKPhpNameAffix($fk, false);
+            }
         }
 
         foreach ($crossFKs->getUnclassifiedPrimaryKeys() as $pk) {
