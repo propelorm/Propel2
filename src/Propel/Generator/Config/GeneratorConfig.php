@@ -145,7 +145,9 @@ class GeneratorConfig extends ConfigurationManager implements GeneratorConfigInt
             }
 
             foreach ($connectionNames as $name) {
-                $this->buildConnections[$name] = $this->getConfigProperty('database.connections.' . $name);
+                if ($definition = $this->getConfigProperty('database.connections.' . $name)) {
+                    $this->buildConnections[$name] = $definition;
+                }
             }
         }
 
@@ -169,7 +171,7 @@ class GeneratorConfig extends ConfigurationManager implements GeneratorConfigInt
 
         if (!array_key_exists($databaseName, $this->getBuildConnections())) {
             throw new InvalidArgumentException("Invalid database name: no configured connection named `$databaseName`.");
-         }
+        }
 
         return $this->getBuildConnections()[$databaseName];
     }
