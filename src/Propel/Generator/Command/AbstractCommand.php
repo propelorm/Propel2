@@ -33,9 +33,9 @@ abstract class AbstractCommand extends Command
     protected function configure()
     {
         $this
-            ->addOption('platform',  null, InputOption::VALUE_REQUIRED,  'The platform')
-            ->addOption('input-dir', null, InputOption::VALUE_REQUIRED,  'The input directory', self::DEFAULT_INPUT_DIRECTORY)
-            ->addOption('recursive', null, InputOption::VALUE_NONE, 'Search for schema.xml inside the input directory')
+            ->addOption('platform',  null, InputOption::VALUE_REQUIRED,  'The platform to use. Define a full qualified class name or mysql|pgsql|sqlite|mssql|oracle.', 'mysql')
+            ->addOption('input-dir', null, InputOption::VALUE_REQUIRED,  'The input directory where for example the configuration file is placed.', self::DEFAULT_INPUT_DIRECTORY)
+            ->addOption('recursive', null, InputOption::VALUE_NONE, 'Search recursive for *schema.xml inside the input directory')
         ;
     }
 
@@ -55,7 +55,23 @@ abstract class AbstractCommand extends Command
         }
 
         if ($input->hasOption('platform') && (null !== $input->getOption('platform'))) {
-            $properties['propel']['generator']['platformClass'] = '\\Propel\\Generator\\Platform\\' . $input->getOption('platform');
+            $platformClass = $platform = $input->getOption('platform');
+
+            $classes = [
+                $platform,
+                '\\Propel\\Generator\\Platform\\' . $platform,
+                '\\Propel\\Generator\\Platform\\' . ucfirst($platform),
+                '\\Propel\\Generator\\Platform\\' . ucfirst(strtolower($platform)) . 'Platform',
+            ];
+
+            foreach ($classes as $class) {
+                if (class_exists($class)) {
+                    $platformClass = $class;
+                    break;
+                }
+            }
+
+            $properties['propel']['generator']['platformClass'] = $platformClass;
         }
 
         return new GeneratorConfig($input->getOption('input-dir'), $properties);
