@@ -29,6 +29,29 @@ class BaseTest extends MigrationTestCase
         $this->applyXmlAndTest($targetXml);
     }
 
+    public function testSimpleSize()
+    {
+        $originXml = '
+<database>
+    <table name="migration_test_0">
+        <column name="id" type="integer" primaryKey="true" autoIncrement="true" />
+        <column name="title" type="VARCHAR" size="50" />
+    </table>
+</database>
+';
+
+        $targetXml = '
+<database>
+    <table name="migration_test_0">
+        <column name="id" type="integer" primaryKey="true" autoIncrement="true" />
+        <column name="title" type="VARCHAR" size="250" />
+    </table>
+</database>
+';
+        $this->applyXmlAndTest($originXml);
+        $this->applyXmlAndTest($targetXml);
+    }
+
     public function testCharToChar()
     {
         $originXml = '
@@ -51,6 +74,42 @@ class BaseTest extends MigrationTestCase
 
         $this->applyXmlAndTest($originXml);
         $this->applyXmlAndTest($targetXml);
+    }
+
+    public function testScale()
+    {
+        $originXml = '
+<database>
+    <table name="migration_test_1">
+        <column name="id" type="integer" primaryKey="true" autoIncrement="true" />
+        <column name="credits" phpName="Credits" type="DECIMAL" size="9" scale="2" required="true"/>
+
+    </table>
+</database>
+';
+
+        $targetXml = '
+<database>
+    <table name="migration_test_1">
+        <column name="id" type="integer" primaryKey="true" autoIncrement="true" />
+        <column name="credits" phpName="Credits" type="DECIMAL" scale="2" required="true"/>
+
+    </table>
+</database>
+';
+
+        $target2Xml = '
+<database>
+    <table name="migration_test_1">
+        <column name="id" type="integer" primaryKey="true" autoIncrement="true" />
+        <column name="credits" phpName="Credits" type="DECIMAL" size="10" scale="2" required="true"/>
+
+    </table>
+</database>
+';
+        $this->applyXmlAndTest($originXml);
+        $this->applyXmlAndTest($targetXml);
+        $this->applyXmlAndTest($target2Xml);
     }
 
     public function testColumnRequireChange()

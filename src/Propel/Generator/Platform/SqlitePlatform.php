@@ -325,7 +325,6 @@ PRAGMA foreign_keys = ON;
                     }
                 }
             }
-
         }
 
         parent::normalizeTable($table);

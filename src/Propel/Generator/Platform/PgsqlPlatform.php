@@ -503,15 +503,16 @@ DROP SEQUENCE %s CASCADE;
 
             $sqlType = $toColumn->getDomain()->getSqlType();
 
-            if ($this->hasSize($sqlType)) {
+            if ($this->hasSize($sqlType) && $toColumn->isDefaultSqlType($this)) {
                 if ($this->isNumber($sqlType)) {
-                    if ('NUMBER' === strtoupper($sqlType)) {
+                    if ('NUMERIC' === strtoupper($sqlType)) {
                         $sqlType .= $toColumn->getSizeDefinition();
                     }
                 } else {
                     $sqlType .= $toColumn->getSizeDefinition();
                 }
             }
+
             if ($using = $this->getUsingCast($fromColumn, $toColumn)) {
                 $sqlType .= $using;
             }
