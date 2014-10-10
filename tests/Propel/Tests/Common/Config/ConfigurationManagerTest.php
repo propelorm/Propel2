@@ -96,6 +96,37 @@ EOF;
         $manager = new TestableConfigurationManager();
     }
 
+    public function testBackupConfigFilesAreIgnored()
+    {
+        $yamlConf = <<<EOF
+foo: bar
+bar: baz
+EOF;
+        $this->getFilesystem()->dumpFile('propel.yaml.bak', $yamlConf);
+        $this->getFilesystem()->dumpFile('propel.yaml~', $yamlConf);
+
+        $manager = new TestableConfigurationManager();
+        $actual = $manager->get();
+
+        $this->assertArrayNotHasKey('bar', $actual);
+        $this->assertArrayNotHasKey('baz', $actual);
+    }
+
+    public function testUnsupportedExtensionsAreIgnored()
+    {
+        $yamlConf = <<<EOF
+foo: bar
+bar: baz
+EOF;
+        $this->getFilesystem()->dumpFile('propel.log', $yamlConf);
+
+        $manager = new TestableConfigurationManager();
+        $actual = $manager->get();
+
+        $this->assertArrayNotHasKey('bar', $actual);
+        $this->assertArrayNotHasKey('baz', $actual);
+    }
+
     /**
      * @expectedException Propel\Common\Config\Exception\InvalidArgumentException
      * @exceptionMessage Propel expects only one configuration file
