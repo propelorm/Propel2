@@ -35,7 +35,7 @@ class DatabaseReverseCommand extends AbstractCommand
 
         $this
             ->addOption('output-dir',    null, InputOption::VALUE_REQUIRED, 'The output directory', self::DEFAULT_OUTPUT_DIRECTORY)
-            ->addOption('database-name', null, InputOption::VALUE_REQUIRED, 'The database name used in the created schema.xml', self::DEFAULT_DATABASE_NAME)
+            ->addOption('database-name', null, InputOption::VALUE_REQUIRED, 'The database name used in the created schema.xml. If not defined we use `connection`.')
             ->addOption('schema-name',   null, InputOption::VALUE_REQUIRED, 'The schema name to generate', self::DEFAULT_SCHEMA_NAME)
             ->addArgument(
                 'connection',
@@ -56,22 +56,26 @@ class DatabaseReverseCommand extends AbstractCommand
     {
         $configOptions = array();
 
-        if ($this->hasInputArgument('connection', $input)) {
-            $connection = $input->getArgument('connection');
-            if (false === strpos($connection, ':')) {
-                //treat it as connection name
-                $configOptions['propel']['reverse']['connection'] = $connection;
-            } else {
-                //probably a dsn
-                $configOptions += $this->connectionToProperties('reverseconnection=' . $connection, 'reverse');
-                $configOptions['propel']['reverse']['parserClass'] =
-                    sprintf(
-                        '\\Propel\\Generator\\Reverse\\%sSchemaParser',
-                        ucfirst($configOptions['propel']['database']['connections']['reverseconnection']['adapter'])
-                    );
+        $connection = $input->getArgument('connection');
+        if (false === strpos($connection, ':')) {
+            //treat it as connection name
+            $configOptions['propel']['reverse']['connection'] = $connection;
+            if (!$input->getOption('database-name')) {
+                $input->setOption('database-name', $connection);
             }
-            $generatorConfig = $this->getGeneratorConfig($configOptions, $input);
+        } else {
+            //probably a dsn
+            $configOptions += $this->connectionToProperties('reverseconnection=' . $connection, 'reverse');
+            $configOptions['propel']['reverse']['parserClass'] = sprintf(
+                '\\Propel\\Generator\\Reverse\\%sSchemaParser',
+                ucfirst($configOptions['propel']['database']['connections']['reverseconnection']['adapter'])
+            );
+
+            if (!$input->getOption('database-name')) {
+                $input->setOption('database-name', self::DEFAULT_DATABASE_NAME);
+            }
         }
+        $generatorConfig = $this->getGeneratorConfig($configOptions, $input);
 
         $this->createDirectory($input->getOption('output-dir'));
 
