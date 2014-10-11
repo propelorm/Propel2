@@ -4337,7 +4337,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             $this->addCrossFKClear($script, $crossFKs);
             $this->addCrossFKInit($script, $crossFKs);
             $this->addCrossFKisLoaded($script, $crossFKs);
-            $this->addCrossFKGetQuery($script, $crossFKs);
+            $this->addCrossFKCreateQuery($script, $crossFKs);
             $this->addCrossFKGet($script, $crossFKs);
             $this->addCrossFKSet($script, $crossFKs);
             $this->addCrossFKCount($script, $crossFKs);
@@ -4509,7 +4509,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         }
     }
 
-    protected function addCrossFKGetQuery(&$script, CrossForeignKeys $crossFKs)
+    protected function addCrossFKCreateQuery(&$script, CrossForeignKeys $crossFKs)
     {
         if (1 <= count($crossFKs->getCrossForeignKeys()) && !$crossFKs->getUnclassifiedPrimaryKeys()) {
             return;
@@ -4542,7 +4542,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      *
      * @return $relatedQueryClassName
      */
-    public function get{$firstFkName}Query($signature, Criteria \$criteria = null)
+    public function create{$firstFkName}Query($signature, Criteria \$criteria = null)
     {
         \$criteria = $relatedQueryClassName::create(\$criteria)
             ->filterBy{$selfRelationName}(\$this);
@@ -4715,7 +4715,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      */
     public function get{$firstFkName}($signature, Criteria \$criteria = null, ConnectionInterface \$con = null)
     {
-        return \$this->get{$firstFkName}Query($shortSignature, \$criteria)->find(\$con);
+        return \$this->create{$firstFkName}Query($shortSignature, \$criteria)->find(\$con);
     }
 ";
             return;
@@ -4948,11 +4948,11 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * @param Criteria \$criteria
      * @param ConnectionInterface \$con
      *
-     * @return {$relatedObjectClassName}[]|ObjectCollection
+     * @return integer
      */
     public function count{$firstFkName}($signature, Criteria \$criteria = null, ConnectionInterface \$con = null)
     {
-        return \$this->get{$firstFkName}Query($shortSignature, \$criteria)->count(\$con);
+        return \$this->create{$firstFkName}Query($shortSignature, \$criteria)->count(\$con);
     }
 ";
         }
