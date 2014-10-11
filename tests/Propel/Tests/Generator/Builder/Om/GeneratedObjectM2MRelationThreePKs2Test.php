@@ -2,6 +2,7 @@
 
 namespace Propel\Tests\Generator\Builder\Om;
 
+use Base\RelationpkUserGroupQuery;
 use Propel\Generator\Platform\MysqlPlatform;
 use Propel\Generator\Util\QuickBuilder;
 use Propel\Runtime\Collection\ObjectCollection;
@@ -90,8 +91,13 @@ class GeneratedObjectM2MRelationThreePKs2Test extends PlatformDatabaseBuildTimeB
 
         $hans->addGroup($admins, 'standard');
         $this->assertCount(1, $hans->getGroupPositions());
+        $this->assertEquals([$admins, 'standard'], $hans->getGroupPositions()->getFirst());
+
         $this->assertCount(1, $admins->getUserPositions());
+        $this->assertEquals([$hans, 'standard'], $admins->getUserPositions()->getFirst());
+
         $hans->save();
+        $this->assertEquals([$admins], iterator_to_array($hans->getGroups('standard')));
 
         $this->assertEquals(1, \RelationpkUserGroupQuery::create()->count(), 'We have one connection.');
         $this->assertEquals(1, \RelationpkUserQuery::create()->count(), 'We have one user.');
@@ -113,8 +119,67 @@ class GeneratedObjectM2MRelationThreePKs2Test extends PlatformDatabaseBuildTimeB
 
         $newHansObject->addGroup($admins, 'lead');
         $this->assertCount(2, $newHansObject->getGroupPositions());
-        $this->assertCount(2, $admins->getUserPositions()); //wrong
+        $this->assertCount(2, $admins->getUserPositions());
+        $this->assertEquals([[$hans, 'standard'], [$hans, 'lead']], iterator_to_array($admins->getUserPositions()));
         $newHansObject->save();
+
+        $collection = $newHansObject->getGroupPositions(RelationpkUserGroupQuery::create()->filterByPosition('lead'));
+        $this->assertCount(1, $collection);
+        $this->assertCount(1, $collection->getObjectsFromPosition(1));
+        $this->assertEquals('Admins', $collection->getObjectsFromPosition(1)[0]->getName());
+        $this->assertEquals('lead', $collection->getObjectsFromPosition(2)[0]);
+
+        $this->assertEquals('Admins', $collection->getFirst()[0]->getName());
+        $this->assertCount(1, $newHansObject->getGroups('lead'));
+        $this->assertCount(2, $newHansObject->getGroups());
+        $this->assertEquals(1, $newHansObject->countGroups('lead'));
+        $this->assertEquals(2, $newHansObject->countGroups());
+        $this->assertEquals('Admins', $newHansObject->getGroups('lead')->getFirst()->getName());
+
+        $this->assertCount(2, \RelationpkUserQuery::create()->filterByGroup($admins)->find());
+        $this->assertCount(
+            1,
+            \RelationpkUserQuery::create()
+                ->useRelationpkUserGroupQuery()
+                    ->filterByPosition('lead')
+                ->endUse()
+                ->find()
+        );
+        $this->assertCount(
+            1,
+            \RelationpkUserQuery::create()
+                ->useRelationpkUserGroupQuery()
+                    ->filterByPosition('standard')
+                ->endUse()
+                ->find()
+        );
+        $this->assertEquals(
+            'hans',
+            \RelationpkUserQuery::create()
+                ->useRelationpkUserGroupQuery()
+                    ->filterByPosition('standard')
+                ->endUse()
+                ->find()
+                ->getFirst()
+                ->getName()
+        );
+        $this->assertCount(
+            0,
+            \RelationpkUserQuery::create()
+                ->useRelationpkUserGroupQuery()
+                    ->filterByPosition('not existent')
+                ->endUse()
+                ->find()
+        );
+
+        $this->assertCount(1, \RelationpkUserGroupQuery::create()
+            ->filterByPosition('lead')
+            ->filterByGroup($admins)
+            ->find());
+
+        $this->assertCount(2, \RelationpkUserGroupQuery::create()
+            ->filterByGroup($admins)
+            ->find());
 
         $this->assertEquals(2, \RelationpkUserGroupQuery::create()->count(), 'We have two connections.');
         $this->assertEquals(1, \RelationpkUserQuery::create()->count(), 'We have one user.');

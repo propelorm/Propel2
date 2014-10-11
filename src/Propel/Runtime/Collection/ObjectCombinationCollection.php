@@ -52,6 +52,21 @@ class ObjectCombinationCollection extends ObjectCollection
     }
 
     /**
+     * Returns all values from one position/column.
+     *
+     * @param int $position beginning with 1
+     * @return array
+     */
+    public function getObjectsFromPosition($position = 1)
+    {
+        $result = [];
+        foreach ($this as $array) {
+            $result[] = $array[$position - 1];
+        }
+        return $result;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function search($element)
