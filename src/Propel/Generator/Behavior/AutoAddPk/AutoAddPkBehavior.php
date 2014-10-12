@@ -27,28 +27,28 @@ class AutoAddPkBehavior extends Behavior
     );
 
     /**
-     * Copy the behavior to the database tables
-     * Only for tables that have no Pk
+     * Copy the behavior to the database entities
+     * Only for entities that have no Pk
      */
     public function modifyDatabase()
     {
-        foreach ($this->getDatabase()->getTables() as $table) {
-            if (!$table->hasPrimaryKey()) {
+        foreach ($this->getDatabase()->getEntities() as $entity) {
+            if (!$entity->hasPrimaryKey()) {
                 $b = clone $this;
-                $table->addBehavior($b);
+                $entity->addBehavior($b);
             }
         }
     }
 
     /**
-     * Add the primary key to the current table
+     * Add the primary key to the current entity
      */
-    public function modifyTable()
+    public function modifyEntity()
     {
-        $table = $this->getTable();
-        if (!$table->hasPrimaryKey() && !$table->hasBehavior('concrete_inheritance')) {
+        $entity = $this->getEntity();
+        if (!$entity->hasPrimaryKey() && !$entity->hasBehavior('concrete_inheritance')) {
             $columnAttributes = array_merge(array('primaryKey' => 'true'), $this->getParameters());
-            $this->getTable()->addColumn($columnAttributes);
+            $this->getEntity()->addField($columnAttributes);
         }
     }
 }

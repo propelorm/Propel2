@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
 <database name="bookstore-behavior" defaultIdMethod="native" package="behavior.auto_add_pk" namespace="Propel\Tests\Bookstore\Behavior">
 
-    <table name="table6">
-        <column name="title" type="VARCHAR" size="100" primaryString="true" />
+    <entity name="Entity6">
+        <field name="title" type="VARCHAR" size="100" primaryString="true" />
         <behavior name="auto_add_pk" />
-    </table>
+    </entity>
 
-    <table name="table7">
-        <column name="foo" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="title" type="VARCHAR" size="100" primaryString="true" />
+    <entity name="Entity7">
+        <field name="foo" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+        <field name="title" type="VARCHAR" size="100" primaryString="true" />
         <behavior name="auto_add_pk" />
-    </table>
+    </entity>
 
-    <table name="table8">
-        <column name="title" type="VARCHAR" size="100" primaryString="true" />
-        <column name="foo_id" type="INTEGER" required="false"/>
-        <foreign-key foreignTable="table6" onDelete="setnull">
-            <reference local="foo_id" foreign="id" />
-        </foreign-key>
+    <entity name="Entity8">
+        <field name="title" type="VARCHAR" size="100" primaryString="true" />
+        <field name="fooId" type="INTEGER" required="false"/>
+        <relation field="foo" target="Entity6" onDelete="setnull">
+            <reference local="fooId" foreign="id" />
+        </relation>
         <behavior name="auto_add_pk">
             <parameter name="name" value="identifier" />
             <parameter name="autoIncrement" value="false" />
             <parameter name="type" value="BIGINT" />
         </behavior>
-    </table>
+    </entity>
 
 </database>

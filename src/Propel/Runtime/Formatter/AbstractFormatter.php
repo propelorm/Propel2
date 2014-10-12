@@ -13,6 +13,7 @@ namespace Propel\Runtime\Formatter;
 use Propel\Runtime\ActiveQuery\ModelWith;
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\Collection\Collection;
+use Propel\Runtime\Map\EntityMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\ActiveQuery\BaseModelCriteria;
@@ -27,14 +28,14 @@ abstract class AbstractFormatter
 {
     protected $dbName;
 
-    protected $class;
+    protected $entityName;
 
-    protected $tableMap;
+    protected $entityMap;
 
     /** @var ModelWith[] $with */
     protected $with;
 
-    protected $asColumns;
+    protected $asFields;
 
     protected $hasLimit;
 
@@ -51,7 +52,7 @@ abstract class AbstractFormatter
     public function __construct(BaseModelCriteria $criteria = null, DataFetcherInterface $dataFetcher = null)
     {
         $this->with = array();
-        $this->asColumns = array();
+        $this->asFields = array();
         $this->currentObjects = array();
         $this->hasLimit = false;
 
@@ -92,9 +93,10 @@ abstract class AbstractFormatter
     public function init(BaseModelCriteria $criteria, DataFetcherInterface $dataFetcher = null)
     {
         $this->dbName = $criteria->getDbName();
-        $this->setClass($criteria->getModelName());
+        $this->setEntityName($criteria->getEntityName());
+        $this->entityMap = $criteria->getEntityMap();
         $this->setWith($criteria->getWith());
-        $this->asColumns = $criteria->getAsColumns();
+        $this->asFields = $criteria->getAsFields();
         $this->hasLimit = $criteria->getLimit() != -1;
         if ($dataFetcher) {
             $this->setDataFetcher($dataFetcher);
@@ -115,15 +117,14 @@ abstract class AbstractFormatter
         return $this->dbName;
     }
 
-    public function setClass($class)
+    public function setEntityName($entityName)
     {
-        $this->class     = $class;
-        $this->tableMap  = constant($this->class . '::TABLE_MAP');
+        $this->entityName = $entityName;
     }
 
-    public function getClass()
+    public function getEntityName()
     {
-        return $this->class;
+        return $this->entityName;
     }
 
     public function setWith($withs = array())
@@ -136,14 +137,14 @@ abstract class AbstractFormatter
         return $this->with;
     }
 
-    public function setAsColumns($asColumns = array())
+    public function setAsFields($asFields = array())
     {
-        $this->asColumns = $asColumns;
+        $this->asFields = $asFields;
     }
 
-    public function getAsColumns()
+    public function getAsFields()
     {
-        return $this->asColumns;
+        return $this->asFields;
     }
 
     public function setHasLimit($hasLimit = false)
@@ -165,19 +166,18 @@ abstract class AbstractFormatter
     {
         $collection = array();
 
-        if ($class = $this->getCollectionClassName()) {
+        if ($entityName = $this->getCollectionEntityNameName()) {
             /** @var Collection $collection */
-            $collection = new $class();
-            $collection->setModel($this->class);
+            $collection = new $entityName();
+            $collection->setModel($this->entityName);
             $collection->setFormatter($this);
         }
 
         return $collection;
     }
 
-    public function getCollectionClassName()
+    public function getCollectionEntityNameName()
     {
-
     }
 
     /**
@@ -200,14 +200,17 @@ abstract class AbstractFormatter
 
     public function checkInit()
     {
-        if (null === $this->tableMap) {
+        if (null === $this->entityMap) {
             throw new PropelException('You must initialize a formatter object before calling format() or formatOne()');
         }
     }
 
-    public function getTableMap()
+    /**
+     * @return EntityMap
+     */
+    public function getEntityMap()
     {
-        return Propel::getServiceContainer()->getDatabaseMap($this->dbName)->getTableByPhpName($this->class);
+        return $this->entityMap;
     }
 
     protected function isWithOneToMany()
@@ -222,44 +225,43 @@ abstract class AbstractFormatter
     }
 
     /**
-     * Gets the worker object for the class.
+     * Gets the worker object for the entityName.
      * To save memory, we don't create a new object for each row,
-     * But we keep hydrating a single object per class.
-     * The column offset in the row is used to index the array of classes
-     * As there may be more than one object of the same class in the chain
+     * But we keep hydrating a single object per entityName.
+     * The field offset in the row is used to index the array of entityNamees
+     * As there may be more than one object of the same entityName in the chain
      *
-     * @param int    $col   Offset of the object in the list of objects to hydrate
-     * @param string $class Propel model object class
+     * @param int    $col        Offset of the object in the list of objects to hydrate
+     * @param string $entityName Propel model object entityName
      *
      * @return ActiveRecordInterface
      */
-    protected function getWorkerObject($col, $class)
+    protected function getWorkerObject($col, $entityName)
     {
         if (isset($this->currentObjects[$col])) {
             $this->currentObjects[$col]->clearAllReferences();
             $this->currentObjects[$col]->clear();
-            
-            // TODO: also consider to return always a new $class(), it's a little fast that clear the previous and is must secure to clear all data/references!
+            // TODO: also consider to return always a new $entityName(), it's a little fast that clear the previous and is must secure to clear all data/references!
         } else {
-            $this->currentObjects[$col] = new $class();
+            $this->currentObjects[$col] = new $entityName();
         }
 
         return $this->currentObjects[$col];
     }
 
     /**
-     * Gets a Propel object hydrated from a selection of columns in statement row
+     * Gets a Propel object hydrated from a selection of fields in statement row
      *
-     * @param array  $row   associative array indexed by column number,
-     *                      as returned by DataFetcher::fetch()
-     * @param string $class The classname of the object to create
-     * @param int    $col   The start column for the hydration (modified)
+     * @param array  $row        associative array indexed by field number,
+     *                           as returned by DataFetcher::fetch()
+     * @param string $entityName The entityNamename of the object to create
+     * @param int    $col        The start field for the hydration (modified)
      *
      * @return ActiveRecordInterface
      */
-    public function getSingleObjectFromRow($row, $class, &$col = 0)
+    public function getSingleObjectFromRow($row, $entityName, &$col = 0)
     {
-        $obj = $this->getWorkerObject($col, $class);
+        $obj = $this->getWorkerObject($col, $entityName);
         $col = $obj->hydrate($row, $col, false, $this->getDataFetcher()->getIndexType());
 
         return $obj;

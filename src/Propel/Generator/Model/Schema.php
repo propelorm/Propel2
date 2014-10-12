@@ -30,49 +30,17 @@ class Schema
      * @var Database[]
      */
     private $databases;
-    /**
-     * @var PlatformInterface
-     */
-    private $platform;
     private $name;
     private $isInitialized;
     protected $generatorConfig;
 
     /**
      * Creates a new instance for the specified database type.
-     *
-     * @param PlatformInterface $platform
      */
-    public function __construct(PlatformInterface $platform = null)
+    public function __construct()
     {
-        if (null !== $platform) {
-            $this->setPlatform($platform);
-        }
-
         $this->isInitialized = false;
         $this->databases     = [];
-    }
-
-    /**
-     * Sets the platform object to use for any databases added to this
-     * application schema.
-     *
-     * @param PlatformInterface $platform
-     */
-    public function setPlatform(PlatformInterface $platform)
-    {
-        $this->platform = $platform;
-    }
-
-    /**
-     * Returns the platform object to use for any databases added to this
-     * application schema.
-     *
-     * @return PlatformInterface
-     */
-    public function getPlatform()
-    {
-        return $this->platform;
     }
 
     /**
@@ -214,15 +182,7 @@ class Schema
     public function addDatabase($database)
     {
         if ($database instanceof Database) {
-            $platform = null;
             $database->setParentSchema($this);
-            if (null === $database->getPlatform()) {
-                if ($config = $this->getGeneratorConfig()) {
-                    $platform = $config->getConfiguredPlatform(null, $database->getName());
-                }
-
-                $database->setPlatform($platform ? $platform : $this->platform);
-            }
             $this->databases[] = $database;
 
             return $database;
@@ -266,11 +226,11 @@ class Schema
                     $namespace = $db->getNamespace();
                     $db->setNamespace(null);
                     // join tables
-                    foreach ($addDb->getTables() as $addTable) {
-                        if ($db->getTable($addTable->getName())) {
-                            throw new EngineException(sprintf('Duplicate table found: %s.', $addTable->getName()));
+                    foreach ($addDb->getEntities() as $addEntity) {
+                        if ($db->hasEntityByFullClassName($addEntity->getFullClassName())) {
+                            throw new EngineException(sprintf('Duplicate entity found: %s.', $addEntity->getName()));
                         }
-                        $db->addTable($addTable);
+                        $db->addEntity($addEntity);
                     }
                     // join database behaviors
                     foreach ($addDb->getBehaviors() as $addBehavior) {
@@ -292,11 +252,11 @@ class Schema
      *
      * @return integer
      */
-    public function countTables()
+    public function countEntities()
     {
         $nb = 0;
         foreach ($this->getDatabases() as $database) {
-            $nb += $database->countTables();
+            $nb += $database->countEntities();
         }
 
         return $nb;

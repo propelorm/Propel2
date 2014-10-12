@@ -1,0 +1,76 @@
+$reader = $this->getEntityMap()->getPropReader();
+$writer = $this->getEntityMap()->getPropWriter();
+
+$slugField = 'slug';
+
+$incrementSlug = function($slug, $replacement = '-') {
+    $pieces = explode($replacement, $slug);
+    $last = array_pop($pieces);
+
+    if (is_numeric($last)) {
+        $last++;
+        return implode($replacement, $pieces) . $replacement . $last;
+    } else {
+        return implode($replacement, $pieces) . $replacement . '2';
+    }
+};
+
+$slugs = [];
+foreach ($event->getEntitiesToInsert() as $entity) {
+
+    $slug = $reader($entity, $slugField);
+    $slug = $this->cleanupSlugPart($slug);
+    while (true) {
+        if (!isset($slugs[$slug])) {
+            $slugs[$slug] = $entity;
+            break;
+        }
+
+        //create another slug
+        $slug = $incrementSlug($slug);
+    }
+
+    $slugs[$slug] = $entity;
+}
+
+//updates
+foreach ($event->getEntitiesToUpdate() as $entity) {
+    $slugModified = $event->getSession()->isFieldModified($entity, $slugField);
+    if ($slugModified) {
+        $slug = $reader($entity, $slugField);
+        while (true) {
+            if (!isset($slugs[$slug])) {
+                $slugs[$slug] = $entity;
+                break;
+            }
+
+            //create another slug
+            $slug = $incrementSlug($slug);
+        }
+    }
+}
+
+//search for already reserved slugs and change its value then.
+$slugReservedItems = {{queryClass}}::create()
+    ->select([$slugField])
+    ->filterBySlug(array_keys($slugs), Criteria::IN)
+    ->find();
+
+foreach ($slugReservedItems as $reservedSlug) {
+    $slug = $reservedSlug;
+    while (true) {
+        if (!isset($slugs[$slug])) {
+            $slugs[$slug] = $slugs[$reservedSlug]; //add new
+            unset($slugs[$reservedSlug]); //remove old
+            break;
+        }
+
+        //create another slug
+        $slug = $this->incrementSlug($slug);
+    }
+}
+
+//update the actual field in the entity
+foreach ($slugs as $slug => $entity) {
+    $writer($entity, $slugField, $slug);
+}

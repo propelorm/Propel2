@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
 <database name="bookstore-behavior" defaultIdMethod="native" package="behavior.timestampable" namespace="Propel\Tests\Bookstore\Behavior">
 
-    <table name="table1">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="title" type="VARCHAR" size="100" primaryString="true" />
-        <column name="created_on" type="TIMESTAMP" />
-        <column name="updated_on" type="TIMESTAMP" />
+    <entity name="Entity1">
+        <field name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+        <field name="title" type="VARCHAR" size="100" primaryString="true" />
+        <field name="createdOn" type="TIMESTAMP" />
+        <field name="updatedOn" type="TIMESTAMP" />
         <behavior name="timestampable">
-          <parameter name="create_column" value="created_on" />
-          <parameter name="update_column" value="updated_on" />
+          <parameter name="create_field" value="createdOn" />
+          <parameter name="update_field" value="updatedOn" />
       </behavior>
-    </table>
+    </entity>
 
-    <table name="table2">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="title" type="VARCHAR" size="100" primaryString="true" />
+    <entity name="Entity2">
+        <field name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+        <field name="title" type="VARCHAR" size="100" primaryString="true" />
         <behavior name="timestampable" />
-    </table>
+    </entity>
 
 </database>

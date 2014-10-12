@@ -379,8 +379,8 @@ public function getMaxRankArray(" . ($useScope ? "\$scope, " : "") . "Connection
 
     protected function addReorder(&$script)
     {
-        $columnGetter = 'get' . $this->behavior->getColumnForParameter('rank_column')->getPhpName();
-        $columnSetter = 'set' . $this->behavior->getColumnForParameter('rank_column')->getPhpName();
+        $columnGetter = 'get' . $this->behavior->getColumnForParameter('rank_column')->getName();
+        $columnSetter = 'set' . $this->behavior->getColumnForParameter('rank_column')->getName();
         $script .= "
 /**
  * Reorder a set of sortable objects based on a list of id/position

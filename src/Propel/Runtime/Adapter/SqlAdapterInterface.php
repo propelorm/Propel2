@@ -11,9 +11,9 @@
 namespace Propel\Runtime\Adapter;
 
 use Propel\Runtime\Connection\StatementInterface;
-use Propel\Runtime\Map\ColumnMap;
 use Propel\Runtime\Map\DatabaseMap;
 use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\Map\FieldMap;
 
 /**
  * Interface for adapters.
@@ -42,7 +42,7 @@ interface SqlAdapterInterface extends AdapterInterface
      * Allows manipulation of the query string before StatementPdo is instantiated.
      *
      * @param string      $sql    The sql statement
-     * @param array       $params array('column' => ..., 'table' => ..., 'value' => ...)
+     * @param array       $params array('field' => ..., 'table' => ..., 'value' => ...)
      * @param Criteria    $values
      * @param DatabaseMap $dbMap
      */
@@ -76,7 +76,7 @@ interface SqlAdapterInterface extends AdapterInterface
 
     /**
      * Builds the SELECT part of a SQL statement based on a Criteria
-     * taking into account select columns and 'as' columns (i.e. columns aliases)
+     * taking into account select fields and 'as' fields (i.e. fields aliases)
      *
      * @param Criteria $criteria
      * @param array    $fromClause
@@ -87,15 +87,15 @@ interface SqlAdapterInterface extends AdapterInterface
     public function createSelectSqlPart(Criteria $criteria, &$fromClause, $aliasAll = false);
 
     /**
-     * Ensures uniqueness of select column names by turning them all into aliases
-     * This is necessary for queries on more than one table when the tables share a column name
+     * Ensures uniqueness of select field names by turning them all into aliases
+     * This is necessary for queries on more than one table when the tables share a field name
      *
      * @see http://propel.phpdb.org/trac/ticket/795
      *
      * @param  Criteria $criteria
-     * @return Criteria The input, with Select columns replaced by aliases
+     * @return Criteria The input, with Select fields replaced by aliases
      */
-    public function turnSelectColumnsToAliases(Criteria $criteria);
+    public function turnSelectFieldsToAliases(Criteria $criteria);
 
     /**
      * Binds values in a prepared statement.
@@ -114,22 +114,22 @@ interface SqlAdapterInterface extends AdapterInterface
      * </code>
      *
      * @param StatementInterface $stmt
-     * @param array              $params array('column' => ..., 'table' => ..., 'value' => ...)
+     * @param array              $params array('field' => ..., 'table' => ..., 'value' => ...)
      * @param DatabaseMap        $dbMap
      */
     public function bindValues(StatementInterface $stmt, array $params, DatabaseMap $dbMap);
 
     /**
      * Binds a value to a positioned parameter in a statement,
-     * given a ColumnMap object to infer the binding type.
+     * given a FieldMap object to infer the binding type.
      *
      * @param StatementInterface $stmt      The statement to bind
      * @param string             $parameter Parameter identifier
      * @param mixed              $value     The value to bind
-     * @param ColumnMap          $cMap      The ColumnMap of the column to bind
+     * @param FieldMap           $fMap      The FieldMap of the field to bind
      * @param null|integer       $position  The position of the parameter to bind
      *
      * @return boolean
      */
-    public function bindValue(StatementInterface $stmt, $parameter, $value, ColumnMap $cMap, $position = null);
+    public function bindValue(StatementInterface $stmt, $parameter, $value, FieldMap $fMap, $position = null);
 }

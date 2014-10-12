@@ -10,11 +10,11 @@
 
 namespace Propel\Tests\Generator\Platform;
 
-use Propel\Generator\Model\Column;
-use Propel\Generator\Model\Table;
+use Propel\Generator\Model\Field;
+use Propel\Generator\Model\Entity;
 use Propel\Generator\Model\Diff\DatabaseComparator;
-use Propel\Generator\Model\Diff\ColumnComparator;
-use Propel\Generator\Model\Diff\TableComparator;
+use Propel\Generator\Model\Diff\FieldComparator;
+use Propel\Generator\Model\Diff\EntityComparator;
 
 /**
  * provider for platform migration unit tests
@@ -66,12 +66,12 @@ EOF;
         return array(array(DatabaseComparator::computeDiff($d1, $d2, $caseInsensitive = false, $withRenaming = true)));
     }
 
-    public function providerForTestGetRenameTableDDL()
+    public function providerForTestGetRenameEntityDDL()
     {
         return array(array('foo1', 'foo2'));
     }
 
-    public function providerForTestGetModifyTableDDL()
+    public function providerForTestGetModifyEntityDDL()
     {
         $schema1 = <<<EOF
 <database name="test" identifierQuoting="true">
@@ -79,10 +79,10 @@ EOF;
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <column name="bar" type="INTEGER" />
         <column name="baz" type="VARCHAR" size="12" required="true" />
-        <foreign-key name="foo1_fk_1" foreignTable="foo2">
+        <foreign-key name="foo1_fk_1" foreignEntity="foo2">
             <reference local="bar" foreign="bar" />
         </foreign-key>
-        <foreign-key name="foo1_fk_2" foreignTable="foo2">
+        <foreign-key name="foo1_fk_2" foreignEntity="foo2">
             <reference local="baz" foreign="baz" />
         </foreign-key>
         <index name="bar_fk">
@@ -107,7 +107,7 @@ EOF;
         <column name="bar1" type="INTEGER" />
         <column name="baz" type="VARCHAR" size="12" required="false" />
         <column name="baz3" type="LONGVARCHAR" />
-        <foreign-key name="foo1_fk_1" foreignTable="foo2">
+        <foreign-key name="foo1_fk_1" foreignEntity="foo2">
             <reference local="bar1" foreign="bar" />
         </foreign-key>
         <index name="bar_fk">
@@ -124,13 +124,13 @@ EOF;
     </table>
 </database>
 EOF;
-        $t1 = $this->getDatabaseFromSchema($schema1)->getTable('foo');
-        $t2 = $this->getDatabaseFromSchema($schema2)->getTable('foo');
+        $t1 = $this->getDatabaseFromSchema($schema1)->getEntity('foo');
+        $t2 = $this->getDatabaseFromSchema($schema2)->getEntity('foo');
 
-        return array(array(TableComparator::computeDiff($t1,$t2)));
+        return array(array(EntityComparator::computeDiff($t1,$t2)));
     }
 
-    public function providerForTestGetModifyTableColumnsDDL()
+    public function providerForTestGetModifyEntityFieldsDDL()
     {
         $schema1 = <<<EOF
 <database name="test" identifierQuoting="true">
@@ -151,17 +151,17 @@ EOF;
     </table>
 </database>
 EOF;
-        $t1 = $this->getDatabaseFromSchema($schema1)->getTable('foo');
-        $t2 = $this->getDatabaseFromSchema($schema2)->getTable('foo');
-        $tc = new TableComparator();
-        $tc->setFromTable($t1);
-        $tc->setToTable($t2);
-        $tc->compareColumns();
+        $t1 = $this->getDatabaseFromSchema($schema1)->getEntity('foo');
+        $t2 = $this->getDatabaseFromSchema($schema2)->getEntity('foo');
+        $tc = new EntityComparator();
+        $tc->setFromEntity($t1);
+        $tc->setToEntity($t2);
+        $tc->compareFields();
 
-        return array(array($tc->getTableDiff()));
+        return array(array($tc->getEntityDiff()));
     }
 
-    public function providerForTestGetModifyTablePrimaryKeysDDL()
+    public function providerForTestGetModifyEntityPrimaryKeysDDL()
     {
         $schema1 = <<<EOF
 <database name="test" identifierQuoting="true">
@@ -181,17 +181,17 @@ EOF;
     </table>
 </database>
 EOF;
-        $t1 = $this->getDatabaseFromSchema($schema1)->getTable('foo');
-        $t2 = $this->getDatabaseFromSchema($schema2)->getTable('foo');
-        $tc = new TableComparator();
-        $tc->setFromTable($t1);
-        $tc->setToTable($t2);
+        $t1 = $this->getDatabaseFromSchema($schema1)->getEntity('foo');
+        $t2 = $this->getDatabaseFromSchema($schema2)->getEntity('foo');
+        $tc = new EntityComparator();
+        $tc->setFromEntity($t1);
+        $tc->setToEntity($t2);
         $tc->comparePrimaryKeys();
 
-        return array(array($tc->getTableDiff()));
+        return array(array($tc->getEntityDiff()));
     }
 
-    public function providerForTestGetModifyTableIndicesDDL()
+    public function providerForTestGetModifyEntityIndicesDDL()
     {
         $schema1 = <<<EOF
 <database name="test" identifierQuoting="true">
@@ -226,17 +226,17 @@ EOF;
     </table>
 </database>
 EOF;
-        $t1 = $this->getDatabaseFromSchema($schema1)->getTable('foo');
-        $t2 = $this->getDatabaseFromSchema($schema2)->getTable('foo');
-        $tc = new TableComparator();
-        $tc->setFromTable($t1);
-        $tc->setToTable($t2);
+        $t1 = $this->getDatabaseFromSchema($schema1)->getEntity('foo');
+        $t2 = $this->getDatabaseFromSchema($schema2)->getEntity('foo');
+        $tc = new EntityComparator();
+        $tc->setFromEntity($t1);
+        $tc->setToEntity($t2);
         $tc->compareIndices();
 
-        return array(array($tc->getTableDiff()));
+        return array(array($tc->getEntityDiff()));
     }
 
-    public function providerForTestGetModifyTableForeignKeysDDL()
+    public function providerForTestGetModifyEntityRelationsDDL()
     {
         $schema1 = <<<EOF
 <database name="test" identifierQuoting="true">
@@ -244,10 +244,10 @@ EOF;
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <column name="bar" type="INTEGER" />
         <column name="baz" type="VARCHAR" size="12" required="true" />
-        <foreign-key name="foo1_fk_1" foreignTable="foo2">
+        <foreign-key name="foo1_fk_1" foreignEntity="foo2">
             <reference local="bar" foreign="bar" />
         </foreign-key>
-        <foreign-key name="foo1_fk_2" foreignTable="foo2">
+        <foreign-key name="foo1_fk_2" foreignEntity="foo2">
             <reference local="bar" foreign="bar" />
             <reference local="baz" foreign="baz" />
         </foreign-key>
@@ -265,11 +265,11 @@ EOF;
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <column name="bar" type="INTEGER" />
         <column name="baz" type="VARCHAR" size="12" required="true" />
-        <foreign-key name="foo1_fk_2" foreignTable="foo2">
+        <foreign-key name="foo1_fk_2" foreignEntity="foo2">
             <reference local="bar" foreign="bar" />
             <reference local="id" foreign="id" />
         </foreign-key>
-        <foreign-key name="foo1_fk_3" foreignTable="foo2">
+        <foreign-key name="foo1_fk_3" foreignEntity="foo2">
             <reference local="baz" foreign="baz" />
         </foreign-key>
     </table>
@@ -280,24 +280,24 @@ EOF;
     </table>
 </database>
 EOF;
-        $t1 = $this->getDatabaseFromSchema($schema1)->getTable('foo1');
-        $t2 = $this->getDatabaseFromSchema($schema2)->getTable('foo1');
-        $tc = new TableComparator();
-        $tc->setFromTable($t1);
-        $tc->setToTable($t2);
-        $tc->compareForeignKeys();
+        $t1 = $this->getDatabaseFromSchema($schema1)->getEntity('foo1');
+        $t2 = $this->getDatabaseFromSchema($schema2)->getEntity('foo1');
+        $tc = new EntityComparator();
+        $tc->setFromEntity($t1);
+        $tc->setToEntity($t2);
+        $tc->compareRelations();
 
-        return array(array($tc->getTableDiff()));
+        return array(array($tc->getEntityDiff()));
     }
 
-    public function providerForTestGetModifyTableForeignKeysSkipSqlDDL()
+    public function providerForTestGetModifyEntityRelationsSkipSqlDDL()
     {
         $schema1 = <<<EOF
 <database name="test" identifierQuoting="true">
     <table name="foo1">
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <column name="bar" type="INTEGER" />
-        <foreign-key name="foo1_fk_1" foreignTable="foo2">
+        <foreign-key name="foo1_fk_1" foreignEntity="foo2">
             <reference local="bar" foreign="bar" />
         </foreign-key>
     </table>
@@ -312,7 +312,7 @@ EOF;
     <table name="foo1">
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <column name="bar" type="INTEGER" />
-        <foreign-key name="foo1_fk_1" foreignTable="foo2" skipSql="true">
+        <foreign-key name="foo1_fk_1" foreignEntity="foo2" skipSql="true">
             <reference local="bar" foreign="bar" />
         </foreign-key>
     </table>
@@ -322,24 +322,24 @@ EOF;
     </table>
 </database>
 EOF;
-        $t1 = $this->getDatabaseFromSchema($schema1)->getTable('foo1');
-        $t2 = $this->getDatabaseFromSchema($schema2)->getTable('foo1');
-        $tc = new TableComparator();
-        $tc->setFromTable($t1);
-        $tc->setToTable($t2);
-        $tc->compareForeignKeys();
+        $t1 = $this->getDatabaseFromSchema($schema1)->getEntity('foo1');
+        $t2 = $this->getDatabaseFromSchema($schema2)->getEntity('foo1');
+        $tc = new EntityComparator();
+        $tc->setFromEntity($t1);
+        $tc->setToEntity($t2);
+        $tc->compareRelations();
 
-        return array(array($tc->getTableDiff()));
+        return array(array($tc->getEntityDiff()));
     }
 
-    public function providerForTestGetModifyTableForeignKeysSkipSql2DDL()
+    public function providerForTestGetModifyEntityRelationsSkipSql2DDL()
     {
         $schema1 = <<<EOF
 <database name="test" identifierQuoting="true">
     <table name="foo1">
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <column name="bar" type="INTEGER" />
-        <foreign-key name="foo1_fk_1" foreignTable="foo2" skipSql="true">
+        <foreign-key name="foo1_fk_1" foreignEntity="foo2" skipSql="true">
             <reference local="bar" foreign="bar" />
         </foreign-key>
     </table>
@@ -361,98 +361,98 @@ EOF;
     </table>
 </database>
 EOF;
-        $t1 = $this->getDatabaseFromSchema($schema1)->getTable('foo1');
-        $t2 = $this->getDatabaseFromSchema($schema2)->getTable('foo1');
-        $tc = new TableComparator();
-        $tc->setFromTable($t1);
-        $tc->setToTable($t2);
-        $tc->compareForeignKeys();
+        $t1 = $this->getDatabaseFromSchema($schema1)->getEntity('foo1');
+        $t2 = $this->getDatabaseFromSchema($schema2)->getEntity('foo1');
+        $tc = new EntityComparator();
+        $tc->setFromEntity($t1);
+        $tc->setToEntity($t2);
+        $tc->compareRelations();
 
-        return array(array($tc->getTableDiff()));
+        return array(array($tc->getEntityDiff()));
     }
 
-    public function providerForTestGetRemoveColumnDDL()
+    public function providerForTestGetRemoveFieldDDL()
     {
-        $table = new Table('foo');
+        $table = new Entity('foo');
         $table->setIdentifierQuoting(true);
-        $column = new Column('bar');
-        $table->addColumn($column);
+        $column = new Field('bar');
+        $table->addField($column);
 
         return array(array($column));
     }
 
-    public function providerForTestGetRenameColumnDDL()
+    public function providerForTestGetRenameFieldDDL()
     {
-        $t1 = new Table('foo');
+        $t1 = new Entity('foo');
         $t1->setIdentifierQuoting(true);
-        $c1 = new Column('bar1');
+        $c1 = new Field('bar1');
         $c1->getDomain()->setType('DOUBLE');
         $c1->getDomain()->setSqlType('DOUBLE');
         $c1->getDomain()->replaceSize(2);
-        $t1->addColumn($c1);
+        $t1->addField($c1);
 
-        $t2 = new Table('foo');
+        $t2 = new Entity('foo');
         $t2->setIdentifierQuoting(true);
-        $c2 = new Column('bar2');
+        $c2 = new Field('bar2');
         $c2->getDomain()->setType('DOUBLE');
         $c2->getDomain()->setSqlType('DOUBLE');
         $c2->getDomain()->replaceSize(2);
-        $t2->addColumn($c2);
+        $t2->addField($c2);
 
         return array(array($c1, $c2));
     }
 
-    public function providerForTestGetModifyColumnDDL()
+    public function providerForTestGetModifyFieldDDL()
     {
-        $t1 = new Table('foo');
+        $t1 = new Entity('foo');
         $t1->setIdentifierQuoting(true);
-        $c1 = new Column('bar');
+        $c1 = new Field('bar');
         $c1->getDomain()->copy($this->getPlatform()->getDomainForType('DOUBLE'));
         $c1->getDomain()->replaceSize(2);
-        $t1->addColumn($c1);
-        $t2 = new Table('foo');
+        $t1->addField($c1);
+        $t2 = new Entity('foo');
         $t2->setIdentifierQuoting(true);
-        $c2 = new Column('bar');
+        $c2 = new Field('bar');
         $c2->getDomain()->copy($this->getPlatform()->getDomainForType('DOUBLE'));
         $c2->getDomain()->replaceSize(3);
-        $t2->addColumn($c2);
+        $t2->addField($c2);
 
-        return array(array(ColumnComparator::computeDiff($c1, $c2)));
+        return array(array(FieldComparator::computeDiff($c1, $c2)));
     }
 
-    public function providerForTestGetModifyColumnsDDL()
+    public function providerForTestGetModifyFieldsDDL()
     {
-        $t1 = new Table('foo');
+        $t1 = new Entity('foo');
         $t1->setIdentifierQuoting(true);
-        $c1 = new Column('bar1');
+        $c1 = new Field('bar1');
         $c1->getDomain()->copy($this->getPlatform()->getDomainForType('DOUBLE'));
         $c1->getDomain()->replaceSize(2);
-        $t1->addColumn($c1);
-        $c2 = new Column('bar2');
+        $t1->addField($c1);
+        $c2 = new Field('bar2');
         $c2->getDomain()->setType('INTEGER');
         $c2->getDomain()->setSqlType('INTEGER');
-        $t1->addColumn($c2);
+        $t1->addField($c2);
 
-        $t2 = new Table('foo');
+        $t2 = new Entity('foo');
         $t2->setIdentifierQuoting(true);
         $t2->setIdentifierQuoting(true);
-        $c3 = new Column('bar1');
+        $c3 = new Field('bar1');
         $c3->getDomain()->copy($this->getPlatform()->getDomainForType('DOUBLE'));
         $c3->getDomain()->replaceSize(3);
-        $t2->addColumn($c3);
-        $c4 = new Column('bar2');
+        $t2->addField($c3);
+        $c4 = new Field('bar2');
         $c4->getDomain()->setType('INTEGER');
         $c4->getDomain()->setSqlType('INTEGER');
         $c4->setNotNull(true);
-        $t2->addColumn($c4);
+        $t2->addField($c4);
 
         return array(array(array(
-            ColumnComparator::computeDiff($c1, $c3),
-            ColumnComparator::computeDiff($c2, $c4)
+            FieldComparator::computeDiff($c1, $c3),
+            FieldComparator::computeDiff($c2, $c4)
         )));
     }
 
-    public function providerForTestGetAddColumnDDL()
+    public function providerForTestGetAddFieldDDL()
     {
         $schema = <<<EOF
 <database name="test" identifierQuoting="true">
@@ -462,12 +462,12 @@ EOF;
     </table>
 </database>
 EOF;
-        $column = $this->getDatabaseFromSchema($schema)->getTable('foo')->getColumn('bar');
+        $column = $this->getDatabaseFromSchema($schema)->getEntity('foo')->getField('bar');
 
         return array(array($column));
     }
 
-    public function providerForTestGetAddColumnsDDL()
+    public function providerForTestGetAddFieldsDDL()
     {
         $schema = <<<EOF
 <database name="test" identifierQuoting="true">
@@ -478,38 +478,38 @@ EOF;
     </table>
 </database>
 EOF;
-        $table = $this->getDatabaseFromSchema($schema)->getTable('foo');
+        $table = $this->getDatabaseFromSchema($schema)->getEntity('foo');
 
-        return array(array(array($table->getColumn('bar1'), $table->getColumn('bar2'))));
+        return array(array(array($table->getField('bar1'), $table->getField('bar2'))));
     }
 
-    public function providerForTestGetModifyColumnRemoveDefaultValueDDL()
+    public function providerForTestGetModifyFieldRemoveDefaultValueDDL()
     {
-        $t1 = new Table('test');
+        $t1 = new Entity('test');
         $t1->setIdentifierQuoting(true);
-        $c1 = new Column();
+        $c1 = new Field();
         $c1->setName('test');
         $c1->getDomain()->setType('INTEGER');
         $c1->setDefaultValue(0);
-        $t1->addColumn($c1);
-        $t2 = new Table('test');
+        $t1->addField($c1);
+        $t2 = new Entity('test');
         $t2->setIdentifierQuoting(true);
-        $c2 = new Column();
+        $c2 = new Field();
         $c2->setName('test');
         $c2->getDomain()->setType('INTEGER');
-        $t2->addColumn($c2);
+        $t2->addField($c2);
 
-        return array(array(ColumnComparator::computeDiff($c1, $c2)));
+        return array(array(FieldComparator::computeDiff($c1, $c2)));
     }
 
-    public function providerForTestGetModifyTableForeignKeysSkipSql3DDL()
+    public function providerForTestGetModifyEntityRelationsSkipSql3DDL()
     {
         $schema1 = <<<EOF
 <database name="test" identifierQuoting="true">
     <table name="test">
         <column name="test" type="INTEGER" primaryKey="true" autoIncrement="true" required="true" />
         <column name="ref_test" type="INTEGER"/>
-        <foreign-key foreignTable="test2" onDelete="CASCADE" onUpdate="CASCADE" skipSql="true">
+        <foreign-key foreignEntity="test2" onDelete="CASCADE" onUpdate="CASCADE" skipSql="true">
             <reference local="ref_test" foreign="test" />
         </foreign-key>
     </table>
@@ -536,14 +536,14 @@ EOF;
         return array(array($diff));
     }
 
-    public function providerForTestGetModifyTableForeignKeysSkipSql4DDL()
+    public function providerForTestGetModifyEntityRelationsSkipSql4DDL()
     {
         $schema1 = <<<EOF
 <database name="test" identifierQuoting="true">
     <table name="test">
         <column name="test" type="INTEGER" primaryKey="true" autoIncrement="true" required="true" />
         <column name="ref_test" type="INTEGER"/>
-        <foreign-key foreignTable="test2" onDelete="CASCADE" onUpdate="CASCADE" skipSql="true">
+        <foreign-key foreignEntity="test2" onDelete="CASCADE" onUpdate="CASCADE" skipSql="true">
             <reference local="ref_test" foreign="test" />
         </foreign-key>
     </table>

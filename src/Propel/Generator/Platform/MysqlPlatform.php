@@ -12,15 +12,15 @@ namespace Propel\Generator\Platform;
 
 use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Exception\EngineException;
-use Propel\Generator\Model\Column;
+use Propel\Generator\Model\Field;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\Domain;
-use Propel\Generator\Model\ForeignKey;
+use Propel\Generator\Model\Relation;
 use Propel\Generator\Model\Index;
 use Propel\Generator\Model\PropelTypes;
-use Propel\Generator\Model\Table;
+use Propel\Generator\Model\Entity;
 use Propel\Generator\Model\Unique;
-use Propel\Generator\Model\Diff\ColumnDiff;
+use Propel\Generator\Model\Diff\FieldDiff;
 use Propel\Generator\Model\Diff\DatabaseDiff;
 
 /**
@@ -29,10 +29,10 @@ use Propel\Generator\Model\Diff\DatabaseDiff;
  * @author Hans Lellelid <hans@xmpl.org> (Propel)
  * @author Martin Poeschl <mpoeschl@marmot.at> (Torque)
  */
-class MysqlPlatform extends DefaultPlatform
+class MysqlPlatform extends SqlDefaultPlatform
 {
     protected $tableEngineKeyword = 'ENGINE';  // overwritten in propel config
-    protected $defaultTableEngine = 'InnoDB';  // overwritten in propel config
+    protected $defaultEntityEngine = 'InnoDB';  // overwritten in propel config
 
     /**
      * Initializes db specific domain mapping.
@@ -54,11 +54,143 @@ class MysqlPlatform extends DefaultPlatform
         $this->setSchemaDomainMapping(new Domain(PropelTypes::REAL, 'DOUBLE'));
     }
 
+
+    protected function setupReferrers(Entity $entity, $throwErrors = false)
+    {
+        parent::setupReferrers($entity, $throwErrors);
+        $this->addExtraIndices($entity);
+    }
+
+    /**
+     * Adds extra indices for reverse foreign keys
+     * This is required for MySQL databases,
+     * and is called from Database::doFinalInitialization()
+     */
+    protected function addExtraIndices(Entity $entity)
+    {
+        /**
+         * A collection of indexed columns. The keys is the column name
+         * (concatenated with a comma in the case of multi-col index), the value is
+         * an array with the names of the indexes that index these columns. We use
+         * it to determine which additional indexes must be created for foreign
+         * keys. It could also be used to detect duplicate indexes, but this is not
+         * implemented yet.
+         * @var array
+         */
+        $indices = [];
+
+        $this->collectIndexedFields('PRIMARY', $entity->getPrimaryKey(), $indices);
+
+        /** @var Index[] $entityIndices */
+        $entityIndices = array_merge($entity->getIndices(), $entity->getUnices());
+        foreach ($entityIndices as $index) {
+            $this->collectIndexedFields($this->getName($index), $index->getFields(), $indices);
+        }
+
+        // we're determining which entitys have foreign keys that point to this entity,
+        // since MySQL needs an index on any column that is referenced by another entity
+        // (yep, MySQL _is_ a PITA)
+        $counter = 0;
+        foreach ($entity->getReferrers() as $relation) {
+            $referencedFields = $relation->getForeignFieldObjects();
+            $referencedFieldsHash = $this->getFieldList($referencedFields);
+            if (empty($referencedFields) || isset($indices[$referencedFieldsHash])) {
+                continue;
+            }
+
+            // no matching index defined in the schema, so we have to create one
+            $name = sprintf('i_referenced_%s_%s', $this->getName($relation), ++$counter);
+            if ($entity->hasIndex($name)) {
+                // if we have already a index with this name, then it looks like the columns of this index have just
+                // been changed, so remove it and inject it again. This is the case if a referenced entity is handled
+                // later than the referencing entity.
+                $entity->removeIndex($name);
+            }
+
+            $index = $entity->createIndex($name, $referencedFields);
+            // Add this new index to our collection, otherwise we might add it again (bug #725)
+            $this->collectIndexedFields($this->getName($index), $referencedFields, $indices);
+        }
+
+        // we're adding indices for this entity foreign keys
+        foreach ($entity->getRelations() as $relation) {
+            $localFields = $relation->getLocalFieldObjects();
+            $localFieldsHash = $this->getFieldList($localFields);
+            if (empty($localFields) || isset($indices[$localFieldsHash])) {
+                continue;
+            }
+
+            // No matching index defined in the schema, so we have to create one.
+            // MySQL needs indices on any columns that serve as foreign keys.
+            // These are not auto-created prior to 4.1.2.
+
+            $name = substr_replace($this->getName($relation), 'rl_',  strrpos($this->getName($relation), 'rl_'), 3);
+            if ($entity->hasIndex($name)) {
+                // if we already have an index with this name, then it looks like the columns of this index have just
+                // been changed, so remove it and inject it again. This is the case if a referenced entity is handled
+                // later than the referencing entity.
+                $entity->removeIndex($name);
+            }
+
+            $index = $entity->createIndex($name, $localFields);
+            $this->collectIndexedFields($this->getName($index), $localFields, $indices);
+        }
+    }
+
+    /**
+     * Helper function to collect indexed columns.
+     *
+     * @param string $indexName        The name of the index
+     * @param array  $columns          The column names or objects
+     * @param array  $collectedIndexes The collected indexes
+     */
+    protected function collectIndexedFields($indexName, $columns, &$collectedIndexes)
+    {
+        /**
+         * "If the entity has a multiple-column index, any leftmost prefix of the
+         * index can be used by the optimizer to find rows. For example, if you
+         * have a three-column index on (col1, col2, col3), you have indexed search
+         * capabilities on (col1), (col1, col2), and (col1, col2, col3)."
+         * @link http://dev.mysql.com/doc/refman/5.5/en/mysql-indexes.html
+         */
+        $indexedFields = [];
+        foreach ($columns as $column) {
+            $indexedFields[] = $column;
+            $indexedFieldsHash = $this->getFieldList($indexedFields);
+            if (!isset($collectedIndexes[$indexedFieldsHash])) {
+                $collectedIndexes[$indexedFieldsHash] = [];
+            }
+            $collectedIndexes[$indexedFieldsHash][] = $indexName;
+        }
+    }
+
+
+    /**
+     * Returns a delimiter-delimited string list of column names.
+     *
+     * @see Platform::getFieldList() if quoting is required
+     * @param array
+     * @param  string $delimiter
+     * @return string
+     */
+    public function getFieldList($columns, $delimiter = ',')
+    {
+        $list = [];
+        foreach ($columns as $col) {
+            if ($col instanceof Field) {
+                $col = $this->getName($col);
+            }
+            $list[] = $col;
+        }
+
+        return implode($delimiter, $list);
+    }
+
     public function setGeneratorConfig(GeneratorConfigInterface $generatorConfig)
     {
         parent::setGeneratorConfig($generatorConfig);
-        if ($defaultTableEngine = $generatorConfig->get()['database']['adapters']['mysql']['tableType']) {
-            $this->defaultTableEngine = $defaultTableEngine;
+        if ($defaultEntityEngine = $generatorConfig->get()['database']['adapters']['mysql']['tableType']) {
+            $this->defaultEntityEngine = $defaultEntityEngine;
         }
         if ($tableEngineKeyword = $generatorConfig->get()['database']['adapters']['mysql']['tableEngineKeyword']) {
             $this->tableEngineKeyword = $tableEngineKeyword;
@@ -70,7 +202,7 @@ class MysqlPlatform extends DefaultPlatform
      *
      * @param string $tableEngineKeyword
      */
-    public function setTableEngineKeyword($tableEngineKeyword)
+    public function setEntityEngineKeyword($tableEngineKeyword)
     {
         $this->tableEngineKeyword = $tableEngineKeyword;
     }
@@ -80,29 +212,29 @@ class MysqlPlatform extends DefaultPlatform
      *
      * @return string
      */
-    public function getTableEngineKeyword()
+    public function getEntityEngineKeyword()
     {
         return $this->tableEngineKeyword;
     }
 
     /**
-     * Setter for the defaultTableEngine property
+     * Setter for the defaultEntityEngine property
      *
-     * @param string $defaultTableEngine
+     * @param string $defaultEntityEngine
      */
-    public function setDefaultTableEngine($defaultTableEngine)
+    public function setDefaultEntityEngine($defaultEntityEngine)
     {
-        $this->defaultTableEngine = $defaultTableEngine;
+        $this->defaultEntityEngine = $defaultEntityEngine;
     }
 
     /**
-     * Getter for the defaultTableEngine property
+     * Getter for the defaultEntityEngine property
      *
      * @return string
      */
-    public function getDefaultTableEngine()
+    public function getDefaultEntityEngine()
     {
-        return $this->defaultTableEngine;
+        return $this->defaultEntityEngine;
     }
 
     public function getAutoIncrement()
@@ -110,14 +242,14 @@ class MysqlPlatform extends DefaultPlatform
         return 'AUTO_INCREMENT';
     }
 
-    public function getMaxColumnNameLength()
+    public function getMaxFieldNameLength()
     {
         return 64;
     }
 
     public function supportsNativeDeleteTrigger()
     {
-        return strtolower($this->getDefaultTableEngine()) == 'innodb';
+        return strtolower($this->getDefaultEntityEngine()) == 'innodb';
     }
 
     public function supportsIndexSize()
@@ -125,27 +257,27 @@ class MysqlPlatform extends DefaultPlatform
         return true;
     }
 
-    public function supportsForeignKeys(Table $table)
+    public function supportsRelations(Entity $entity)
     {
-        $vendorSpecific = $table->getVendorInfoForType('mysql');
+        $vendorSpecific = $entity->getVendorInfoForType('mysql');
         if ($vendorSpecific->hasParameter('Type')) {
-            $mysqlTableType = $vendorSpecific->getParameter('Type');
+            $mysqlEntityType = $vendorSpecific->getParameter('Type');
         } elseif ($vendorSpecific->hasParameter('Engine')) {
-            $mysqlTableType = $vendorSpecific->getParameter('Engine');
+            $mysqlEntityType = $vendorSpecific->getParameter('Engine');
         } else {
-            $mysqlTableType = $this->getDefaultTableEngine();
+            $mysqlEntityType = $this->getDefaultEntityEngine();
         }
 
-        return strtolower($mysqlTableType) == 'innodb';
+        return strtolower($mysqlEntityType) == 'innodb';
     }
 
-    public function getAddTablesDDL(Database $database)
+    public function getAddEntitiesDDL(Database $database)
     {
         $ret = '';
-        foreach ($database->getTablesForSql() as $table) {
-            $ret .= $this->getCommentBlockDDL($table->getName());
-            $ret .= $this->getDropTableDDL($table);
-            $ret .= $this->getAddTableDDL($table);
+        foreach ($database->getEntitiesForSql() as $entity) {
+            $ret .= $this->getCommentBlockDDL($this->getName($entity));
+            $ret .= $this->getDropEntityDDL($entity);
+            $ret .= $this->getAddEntityDDL($entity);
         }
         if ($ret) {
             $ret = $this->getBeginDDL() . $ret . $this->getEndDDL();
@@ -158,7 +290,7 @@ class MysqlPlatform extends DefaultPlatform
     {
         return "
 # This is a fix for InnoDB in MySQL >= 4.1.x
-# It \"suspends judgement\" for fkey relationships until are tables are set.
+# It \"suspends judgement\" for fkey relationships until are entitys are set.
 SET FOREIGN_KEY_CHECKS = 0;
 ";
     }
@@ -172,22 +304,22 @@ SET FOREIGN_KEY_CHECKS = 1;
     }
 
     /**
-     * Returns the SQL for the primary key of a Table object
+     * Returns the SQL for the primary key of a Entity object
      *
-     * @param Table $table
+     * @param Entity $entity
      *
      * @return string
      */
-    public function getPrimaryKeyDDL(Table $table)
+    public function getPrimaryKeyDDL(Entity $entity)
     {
-        if ($table->hasPrimaryKey()) {
+        if ($entity->hasPrimaryKey()) {
 
-            $keys = $table->getPrimaryKey();
+            $keys = $entity->getPrimaryKey();
 
-            //MySQL throws an 'Incorrect table definition; there can be only one auto column and it must be defined as a key'
-            //if the primary key consists of multiple columns and if the first is not the autoIncrement one. So
-            //this push the autoIncrement column to the first position if its not already.
-            $autoIncrement = $table->getAutoIncrementPrimaryKey();
+            //MySQL throws an 'Incorrect entity definition; there can be only one auto field and it must be defined as a key'
+            //if the primary key consists of multiple fields and if the first is not the autoIncrement one. So
+            //this pushes the autoIncrement field to the first position if its not already.
+            $autoIncrement = $entity->getAutoIncrementPrimaryKey();
             if ($autoIncrement && $keys[0] != $autoIncrement) {
                 $idx = array_search($autoIncrement, $keys);
                 if ($idx !== false) {
@@ -196,57 +328,57 @@ SET FOREIGN_KEY_CHECKS = 1;
                 }
             }
 
-            return 'PRIMARY KEY (' . $this->getColumnListDDL($keys) . ')';
+            return 'PRIMARY KEY (' . $this->getFieldListDDL($keys) . ')';
         }
     }
 
-    public function getAddTableDDL(Table $table)
+    public function getAddEntityDDL(Entity $entity)
     {
         $lines = array();
 
-        foreach ($table->getColumns() as $column) {
-            $lines[] = $this->getColumnDDL($column);
+        foreach ($entity->getFields() as $field) {
+            $lines[] = $this->getFieldDDL($field);
         }
 
-        if ($table->hasPrimaryKey()) {
-            $lines[] = $this->getPrimaryKeyDDL($table);
+        if ($entity->hasPrimaryKey()) {
+            $lines[] = $this->getPrimaryKeyDDL($entity);
         }
 
-        foreach ($table->getUnices() as $unique) {
+        foreach ($entity->getUnices() as $unique) {
             $lines[] = $this->getUniqueDDL($unique);
         }
 
-        foreach ($table->getIndices() as $index) {
+        foreach ($entity->getIndices() as $index) {
             $lines[] = $this->getIndexDDL($index);
         }
 
-        if ($this->supportsForeignKeys($table)) {
-            foreach ($table->getForeignKeys() as $foreignKey) {
-                if ($foreignKey->isSkipSql()) {
+        if ($this->supportsRelations($entity)) {
+            foreach ($entity->getRelations() as $relation) {
+                if ($relation->isSkipSql()) {
                     continue;
                 }
                 $lines[] = str_replace("
     ", "
-        ", $this->getForeignKeyDDL($foreignKey));
+        ", $this->getRelationDDL($relation));
             }
         }
 
-        $vendorSpecific = $table->getVendorInfoForType('mysql');
+        $vendorSpecific = $entity->getVendorInfoForType('mysql');
         if ($vendorSpecific->hasParameter('Type')) {
-            $mysqlTableType = $vendorSpecific->getParameter('Type');
+            $mysqlEntityType = $vendorSpecific->getParameter('Type');
         } elseif ($vendorSpecific->hasParameter('Engine')) {
-            $mysqlTableType = $vendorSpecific->getParameter('Engine');
+            $mysqlEntityType = $vendorSpecific->getParameter('Engine');
         } else {
-            $mysqlTableType = $this->getDefaultTableEngine();
+            $mysqlEntityType = $this->getDefaultEntityEngine();
         }
 
-        $tableOptions = $this->getTableOptions($table);
+        $entityOptions = $this->getEntityOptions($entity);
 
-        if ($table->getDescription()) {
-            $tableOptions[] = 'COMMENT=' . $this->quote($table->getDescription());
+        if ($entity->getDescription()) {
+            $entityOptions[] = 'COMMENT=' . $this->quote($entity->getDescription());
         }
 
-        $tableOptions = $tableOptions ? ' ' . implode(' ', $tableOptions) : '';
+        $entityOptions = $entityOptions ? ' ' . implode(' ', $entityOptions) : '';
         $sep = ",
     ";
 
@@ -258,22 +390,22 @@ CREATE TABLE %s
 ";
 
         return sprintf($pattern,
-            $this->quoteIdentifier($table->getName()),
+            $this->quoteIdentifier($this->getName($entity)),
             implode($sep, $lines),
-            $this->getTableEngineKeyword(),
-            $mysqlTableType,
-            $tableOptions
+            $this->getEntityEngineKeyword(),
+            $mysqlEntityType,
+            $entityOptions
         );
     }
 
-    protected function getTableOptions(Table $table)
+    protected function getEntityOptions(Entity $entity)
     {
-        $dbVI = $table->getDatabase()->getVendorInfoForType('mysql');
-        $tableVI = $table->getVendorInfoForType('mysql');
-        $vi = $dbVI->getMergedVendorInfo($tableVI);
-        $tableOptions = array();
-        // List of supported table options
-        // see http://dev.mysql.com/doc/refman/5.5/en/create-table.html
+        $dbVI = $entity->getDatabase()->getVendorInfoForType('mysql');
+        $entityVI = $entity->getVendorInfoForType('mysql');
+        $vi = $dbVI->getMergedVendorInfo($entityVI);
+        $entityOptions = array();
+        // List of supported entity options
+        // see http://dev.mysql.com/doc/refman/5.5/en/create-entity.html
         $supportedOptions = array(
             'AutoIncrement'   => 'AUTO_INCREMENT',
             'AvgRowLength'    => 'AVG_ROW_LENGTH',
@@ -318,26 +450,26 @@ CREATE TABLE %s
                     $parameterValue = $this->quote($parameterValue);
                 }
 
-                $tableOptions [] = sprintf('%s=%s', $sqlName, $parameterValue);
+                $entityOptions [] = sprintf('%s=%s', $sqlName, $parameterValue);
             }
         }
 
-        return $tableOptions;
+        return $entityOptions;
     }
 
-    public function getDropTableDDL(Table $table)
+    public function getDropEntityDDL(Entity $entity)
     {
         return "
-DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
+DROP TABLE IF EXISTS " . $this->quoteIdentifier($this->getName($entity)) . ";
 ";
     }
 
-    public function getColumnDDL(Column $col)
+    public function getFieldDDL(Field $col)
     {
         $domain = $col->getDomain();
         $sqlType = $domain->getSqlType();
         $notNullString = $this->getNullString($col->isNotNull());
-        $defaultSetting = $this->getColumnDefaultValueDDL($col);
+        $defaultSetting = $this->getFieldDefaultValueDDL($col);
 
         // Special handling of TIMESTAMP/DATETIME types ...
         // See: http://propel.phpdb.org/trac/ticket/538
@@ -350,15 +482,15 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
         } elseif ($sqlType == 'DATE') {
             $def = $domain->getDefaultValue();
             if ($def && $def->isExpression()) {
-                throw new EngineException('DATE columns cannot have default *expressions* in MySQL.');
+                throw new EngineException('DATE fields cannot have default *expressions* in MySQL.');
             }
         } elseif ($sqlType == 'TEXT' || $sqlType == 'BLOB') {
             if ($domain->getDefaultValue()) {
-                throw new EngineException('BLOB and TEXT columns cannot have DEFAULT values. in MySQL.');
+                throw new EngineException('BLOB and TEXT fields cannot have DEFAULT values. in MySQL.');
             }
         }
 
-        $ddl = array($this->quoteIdentifier($col->getName()));
+        $ddl = array($this->quoteIdentifier($this->getName($col)));
         if ($this->hasSize($sqlType) && $col->isDefaultSqlType($this)) {
             $ddl[] = $sqlType . $col->getSizeDefinition();
         } else {
@@ -405,31 +537,31 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
     }
 
     /**
-     * Creates a comma-separated list of column names for the index.
+     * Creates a comma-separated list of field names for the index.
      * For MySQL unique indexes there is the option of specifying size, so we cannot simply use
-     * the getColumnsList() method.
+     * the getFieldsList() method.
      * @param  Index  $index
      * @return string
      */
-    protected function getIndexColumnListDDL(Index $index)
+    protected function getIndexFieldListDDL(Index $index)
     {
         $list = array();
-        foreach ($index->getColumns() as $col) {
-            $list[] = $this->quoteIdentifier($col) . ($index->hasColumnSize($col) ? '(' . $index->getColumnSize($col) . ')' : '');
+        foreach ($index->getFieldObjects() as $col) {
+            $list[] = $this->quoteIdentifier($this->getName($col)) . ($index->hasFieldSize($col->getName()) ? '(' . $index->getFieldSize($col->getName()) . ')' : '');
         }
 
         return implode(', ', $list);
     }
 
     /**
-     * Builds the DDL SQL to drop the primary key of a table.
+     * Builds the DDL SQL to drop the primary key of a entity.
      *
-     * @param  Table  $table
+     * @param  Entity  $entity
      * @return string
      */
-    public function getDropPrimaryKeyDDL(Table $table)
+    public function getDropPrimaryKeyDDL(Entity $entity)
     {
-        if (!$table->hasPrimaryKey()) {
+        if (!$entity->hasPrimaryKey()) {
             return '';
         }
 
@@ -438,7 +570,7 @@ ALTER TABLE %s DROP PRIMARY KEY;
 ";
 
         return sprintf($pattern,
-            $this->quoteIdentifier($table->getName())
+            $this->quoteIdentifier($this->getName($entity))
         );
     }
 
@@ -456,9 +588,9 @@ CREATE %sINDEX %s ON %s (%s);
 
         return sprintf($pattern,
             $this->getIndexType($index),
-            $this->quoteIdentifier($index->getName()),
-            $this->quoteIdentifier($index->getTable()->getName()),
-            $this->getIndexColumnListDDL($index)
+            $this->quoteIdentifier($this->getName($index)),
+            $this->quoteIdentifier($this->getName($index->getEntity())),
+            $this->getIndexFieldListDDL($index)
         );
     }
 
@@ -475,8 +607,8 @@ DROP INDEX %s ON %s;
 ";
 
         return sprintf($pattern,
-            $this->quoteIdentifier($index->getName()),
-            $this->quoteIdentifier($index->getTable()->getName())
+            $this->quoteIdentifier($this->getName($index)),
+            $this->quoteIdentifier($this->getName($index->getEntity()))
         );
     }
 
@@ -488,8 +620,8 @@ DROP INDEX %s ON %s;
     {
         return sprintf('%sINDEX %s (%s)',
             $this->getIndexType($index),
-            $this->quoteIdentifier($index->getName()),
-            $this->getIndexColumnListDDL($index)
+            $this->quoteIdentifier($this->getName($index)),
+            $this->getIndexFieldListDDL($index)
         );
     }
 
@@ -509,40 +641,40 @@ DROP INDEX %s ON %s;
     public function getUniqueDDL(Unique $unique)
     {
         return sprintf('UNIQUE INDEX %s (%s)',
-            $this->quoteIdentifier($unique->getName()),
-            $this->getIndexColumnListDDL($unique)
+            $this->quoteIdentifier($this->getName($unique)),
+            $this->getIndexFieldListDDL($unique)
         );
     }
 
-    public function getAddForeignKeyDDL(ForeignKey $fk)
+    public function getAddRelationDDL(Relation $relation)
     {
-        if ($this->supportsForeignKeys($fk->getTable())) {
-            return parent::getAddForeignKeyDDL($fk);
+        if ($this->supportsRelations($relation->getEntity())) {
+            return parent::getAddRelationDDL($relation);
         }
 
         return '';
     }
 
     /**
-     * Builds the DDL SQL for a ForeignKey object.
+     * Builds the DDL SQL for a Relation object.
      *
-     * @param ForeignKey $fk
+     * @param Relation $relation
      *
      * @return string
      */
-    public function getForeignKeyDDL(ForeignKey $fk)
+    public function getRelationDDL(Relation $relation)
     {
-        if ($this->supportsForeignKeys($fk->getTable())) {
-            return parent::getForeignKeyDDL($fk);
+        if ($this->supportsRelations($relation->getEntity())) {
+            return parent::getRelationDDL($relation);
         }
 
         return '';
     }
 
-    public function getDropForeignKeyDDL(ForeignKey $fk)
+    public function getDropRelationDDL(Relation $relation)
     {
-        if (!$this->supportsForeignKeys($fk->getTable())) return '';
-        if ($fk->isSkipSql()) {
+        if (!$this->supportsRelations($relation->getEntity())) return '';
+        if ($relation->isSkipSql()) {
             return;
         }
         $pattern = "
@@ -550,8 +682,8 @@ ALTER TABLE %s DROP FOREIGN KEY %s;
 ";
 
         return sprintf($pattern,
-            $this->quoteIdentifier($fk->getTable()->getName()),
-            $this->quoteIdentifier($fk->getName())
+            $this->quoteIdentifier($this->getName($relation->getEntity())),
+            $this->quoteIdentifier($this->getName($relation))
         );
     }
 
@@ -577,20 +709,20 @@ ALTER TABLE %s DROP FOREIGN KEY %s;
 
         $ret = '';
 
-        foreach ($databaseDiff->getRemovedTables() as $table) {
-            $ret .= $this->getDropTableDDL($table);
+        foreach ($databaseDiff->getRemovedEntities() as $entity) {
+            $ret .= $this->getDropEntityDDL($entity);
         }
 
-        foreach ($databaseDiff->getRenamedTables() as $fromTableName => $toTableName) {
-            $ret .= $this->getRenameTableDDL($fromTableName, $toTableName);
+        foreach ($databaseDiff->getRenamedEntities() as $fromEntityName => $toEntityName) {
+            $ret .= $this->getRenameEntityDDL($fromEntityName, $toEntityName);
         }
 
-        foreach ($databaseDiff->getModifiedTables() as $tableDiff) {
-            $ret .= $this->getModifyTableDDL($tableDiff);
+        foreach ($databaseDiff->getModifiedEntities() as $entityDiff) {
+            $ret .= $this->getModifyEntityDDL($entityDiff);
         }
 
-        foreach ($databaseDiff->getAddedTables() as $table) {
-            $ret .= $this->getAddTableDDL($table);
+        foreach ($databaseDiff->getAddedEntities() as $entity) {
+            $ret .= $this->getAddEntityDDL($entity);
         }
 
         if ($ret) {
@@ -601,83 +733,83 @@ ALTER TABLE %s DROP FOREIGN KEY %s;
     }
 
     /**
-     * Builds the DDL SQL to rename a table
+     * Builds the DDL SQL to rename a entity
      * @return string
      */
-    public function getRenameTableDDL($fromTableName, $toTableName)
+    public function getRenameEntityDDL($fromEntityName, $toEntityName)
     {
         $pattern = "
 RENAME TABLE %s TO %s;
 ";
 
         return sprintf($pattern,
-            $this->quoteIdentifier($fromTableName),
-            $this->quoteIdentifier($toTableName)
+            $this->quoteIdentifier($fromEntityName),
+            $this->quoteIdentifier($toEntityName)
         );
     }
 
     /**
-     * Builds the DDL SQL to remove a column
+     * Builds the DDL SQL to remove a field
      *
      * @return string
      */
-    public function getRemoveColumnDDL(Column $column)
+    public function getRemoveFieldDDL(Field $field)
     {
         $pattern = "
 ALTER TABLE %s DROP %s;
 ";
 
         return sprintf($pattern,
-            $this->quoteIdentifier($column->getTable()->getName()),
-            $this->quoteIdentifier($column->getName())
+            $this->quoteIdentifier($this->getName($field->getEntity())),
+            $this->quoteIdentifier($this->getName($field))
         );
     }
 
     /**
-     * Builds the DDL SQL to rename a column
+     * Builds the DDL SQL to rename a field
      * @return string
      */
-    public function getRenameColumnDDL(Column $fromColumn, Column $toColumn)
+    public function getRenameFieldDDL(Field $fromField, Field $toField)
     {
-        return $this->getChangeColumnDDL($fromColumn, $toColumn);
+        return $this->getChangeFieldDDL($fromField, $toField);
     }
 
     /**
-     * Builds the DDL SQL to modify a column
+     * Builds the DDL SQL to modify a field
      *
      * @return string
      */
-    public function getModifyColumnDDL(ColumnDiff $columnDiff)
+    public function getModifyFieldDDL(FieldDiff $fieldDiff)
     {
-        return $this->getChangeColumnDDL($columnDiff->getFromColumn(), $columnDiff->getToColumn());
+        return $this->getChangeFieldDDL($fieldDiff->getFromField(), $fieldDiff->getToField());
     }
 
     /**
-     * Builds the DDL SQL to change a column
+     * Builds the DDL SQL to change a field
      * @return string
      */
-    public function getChangeColumnDDL(Column $fromColumn, Column $toColumn)
+    public function getChangeFieldDDL(Field $fromField, Field $toField)
     {
         $pattern = "
 ALTER TABLE %s CHANGE %s %s;
 ";
 
         return sprintf($pattern,
-            $this->quoteIdentifier($fromColumn->getTable()->getName()),
-            $this->quoteIdentifier($fromColumn->getName()),
-            $this->getColumnDDL($toColumn)
+            $this->quoteIdentifier($this->getName($fromField->getEntity())),
+            $this->quoteIdentifier($this->getName($fromField)),
+            $this->getFieldDDL($toField)
         );
     }
     /**
-     * Builds the DDL SQL to modify a list of columns
+     * Builds the DDL SQL to modify a list of fields
      *
      * @return string
      */
-    public function getModifyColumnsDDL($columnDiffs)
+    public function getModifyFieldsDDL($fieldDiffs)
     {
         $ret = '';
-        foreach ($columnDiffs as $columnDiff) {
-            $ret .= $this->getModifyColumnDDL($columnDiff);
+        foreach ($fieldDiffs as $fieldDiff) {
+            $ret .= $this->getModifyFieldDDL($fieldDiff);
         }
 
         return $ret;
@@ -729,7 +861,7 @@ ALTER TABLE %s CHANGE %s %s;
      *
      * MySQL documentation says that identifiers cannot contain '.'. Thus it
      * should be safe to split the string by '.' and quote each part individually
-     * to allow for a <schema>.<table> or <table>.<column> syntax.
+     * to allow for a <schema>.<entity> or <entity>.<field> syntax.
      *
      * @param  string $text the identifier
      * @return string the quoted identifier
@@ -744,20 +876,20 @@ ALTER TABLE %s CHANGE %s %s;
         return 'Y-m-d H:i:s';
     }
 
-    public function getColumnBindingPHP(Column $column, $identifier, $columnValueAccessor, $tab = "            ")
+    public function getFieldBindingPHP(Field $field, $identifier, $fieldValueAccessor, $tab = "            ")
     {
         // FIXME - This is a temporary hack to get around apparent bugs w/ PDO+MYSQL
         // See http://pecl.php.net/bugs/bug.php?id=9919
-        if ($column->getPDOType() === \PDO::PARAM_BOOL) {
+        if ($field->getPDOType() === \PDO::PARAM_BOOL) {
             return sprintf(
                 "
 %s\$stmt->bindValue(%s, (int) %s, PDO::PARAM_INT);",
                 $tab,
                 $identifier,
-                $columnValueAccessor
+                $fieldValueAccessor
             );
         }
 
-        return parent::getColumnBindingPHP($column, $identifier, $columnValueAccessor, $tab);
+        return parent::getFieldBindingPHP($field, $identifier, $fieldValueAccessor, $tab);
     }
 }

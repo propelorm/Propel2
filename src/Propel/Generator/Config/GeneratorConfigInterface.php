@@ -11,8 +11,8 @@
 namespace Propel\Generator\Config;
 
 use Propel\Common\Pluralizer\PluralizerInterface;
-use Propel\Generator\Builder\DataModelBuilder;
-use Propel\Generator\Model\Table;
+use Propel\Generator\Builder\Om\AbstractBuilder;
+use Propel\Generator\Model\Entity;
 use Propel\Generator\Platform\PlatformInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Generator\Util\BehaviorLocator;
@@ -20,14 +20,15 @@ use Propel\Generator\Util\BehaviorLocator;
 interface GeneratorConfigInterface
 {
     /**
-     * Returns a configured data model builder class for specified table and
+     * Returns a configured data model builder class for specified entity and
      * based on type ('ddl', 'sql', etc.).
      *
-     * @param  Table            $table
-     * @param  string           $type
-     * @return DataModelBuilder
+     * @param  Entity $entity
+     * @param  string $type
+     *
+     * @return AbstractBuilder
      */
-    public function getConfiguredBuilder(Table $table, $type);
+    public function getConfiguredBuilder(Entity $entity, $type);
 
     /**
      * Returns a configured Pluralizer class.
@@ -39,11 +40,12 @@ interface GeneratorConfigInterface
     /**
      * Creates and configures a new Platform class.
      *
+     * @param  string              $platform full or short class name
      * @param  ConnectionInterface $con
-     * @param  string              $database
+     *
      * @return PlatformInterface
      */
-    public function getConfiguredPlatform(ConnectionInterface $con = null, $database = null);
+    public function createPlatform($platform, ConnectionInterface $con = null);
 
     /**
      * Returns the behavior locator.
@@ -56,11 +58,12 @@ interface GeneratorConfigInterface
      * Return a specific configuration property.
      * The name of the requested property must be given as a string, representing its hierarchy in the configuration
      * array, with each level separated by a dot. I.e.:
-     * <code> $config['database']['adapter']['mysql']['tableType']</code>
+     * <code> $config['database']['adapter']['mysql']['entityType']</code>
      * is expressed by:
-     * <code>'database.adapter.mysql.tableType</code>
+     * <code>'database.adapter.mysql.entityType</code>
      *
      * @param string $name The name of property, expressed as a dot separated level hierarchy
+     *
      * @throws \Propel\Common\Config\Exception\InvalidArgumentException
      * @return mixed The configuration property
      */

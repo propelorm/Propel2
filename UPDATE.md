@@ -38,8 +38,8 @@ The generated model is automatically updated once you rebuild your model.
 The classes used by Propel internally to build the object model were renamed. This affects your project if you extended one of these classes.
 
     Replace...                       With...
-    OMBuilder.php                    AbstractOMBuilder.php
-    ObjectBuilder.php                AbstractObjectBuilder.php
+    OMBuilder.php                    AbstractBuilder.php
+    ObjectBuilder.php                __removed__   
     PeerBuilder.php                  __removed__
     PHP5ExtensionObjectBuilder.php   ExtensionObjectBuilder.php
     PHP5ExtensionPeerBuilder.php     __removed__

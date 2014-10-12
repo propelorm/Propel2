@@ -10,11 +10,12 @@
 
 namespace Propel\Runtime\ActiveQuery\Criterion;
 
+use Propel\Runtime\Configuration;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Adapter\AdapterInterface;
-use Propel\Runtime\Map\ColumnMap;
+use Propel\Runtime\Map\FieldMap;
 
 /**
  * This is an "inner" class that describes an object in the criteria.
@@ -38,22 +39,22 @@ abstract class AbstractCriterion
     protected $comparison;
 
     /**
-     * Table name
+     * Entity name
      * @var string
      */
-    protected $table;
+    protected $entityName;
 
     /**
-     * Real table name
+     * Real entityName name
      * @var string
      */
-    protected $realtable;
+    protected $realEntity;
 
     /**
-     * Column name
+     * Field name
      * @var string
      */
-    protected $column;
+    protected $field;
 
     /**
      * The DBAdapter which might be used to get db specific
@@ -75,17 +76,22 @@ abstract class AbstractCriterion
     protected $conjunctions = array();
 
     /**
+     * @var Configuration
+     */
+    protected $configuration;
+
+    /**
      * Create a new instance.
      *
      * @param Criteria $outer      The outer class (this is an "inner" class).
-     * @param string   $column     TABLE.COLUMN format.
+     * @param string   $field     TABLE.COLUMN format.
      * @param mixed    $value
      * @param string   $comparison
      */
-    public function __construct(Criteria $outer, $column, $value, $comparison = null)
+    public function __construct(Criteria $outer, $field, $value, $comparison = null)
     {
         $this->value = $value;
-        $this->setColumn($column);
+        $this->setField($field);
         $this->comparison = (null === $comparison) ? Criteria::EQUAL : $comparison;
         $this->init($outer);
     }
@@ -96,70 +102,87 @@ abstract class AbstractCriterion
     */
     public function init(Criteria $criteria)
     {
-        try {
-            $db = Propel::getServiceContainer()->getAdapter($criteria->getDbName());
-            $this->setAdapter($db);
-        } catch (\Exception $e) {
-            // we are only doing this to allow easier debugging, so
-            // no need to throw up the exception, just make note of it.
-            Propel::log("Could not get a AdapterInterface, sql may be wrong", Propel::LOG_ERR);
+        if ($criteria->hasConfiguration()) {
+            $this->configuration = $criteria->getConfiguration();
         }
 
-        // init $this->realtable
-        $realtable = $criteria->getTableForAlias($this->table);
-        $this->realtable = $realtable ? $realtable : $this->table;
+        $this->setAdapter($this->getConfiguration()->getAdapter($criteria->getDbName()));
+
+        // init $this->realEntity
+        $realEntity = $criteria->getEntityForAlias($this->entityName);
+        $this->realEntity = $realEntity ? $realEntity : $this->entityName;
     }
 
     /**
-     * Set the $column and $table properties based on a column name or object
+     * Set the $field and $entity properties based on a field name or object
      */
-    protected function setColumn($column)
+    protected function setField($field)
     {
-        if ($column instanceof ColumnMap) {
-            $this->column = $column->getName();
-            $this->table = $column->getTable()->getName();
+        if ($field instanceof FieldMap) {
+            $this->field = $field->getName();
+            $this->entityName = $field->getEntity()->getFullClassName();
         } else {
-            $dotPos = strrpos($column, '.');
+            $dotPos = strrpos($field, '.');
             if ($dotPos === false) {
-                // no dot => aliased column
-                $this->table = null;
-                $this->column = $column;
+                // no dot => aliased field
+                $this->entityName = null;
+                $this->field = $field;
             } else {
-                $this->table = substr($column, 0, $dotPos);
-                $this->column = substr($column, $dotPos + 1, strlen($column));
+                $this->entityName = substr($field, 0, $dotPos);
+                $this->field = substr($field, $dotPos + 1, strlen($field));
             }
         }
     }
 
     /**
-     * Get the column name.
+     * Get the field name.
      *
-     * @return string A String with the column name.
+     * @return string A String with the field name.
      */
-    public function getColumn()
+    public function getField()
     {
-        return $this->column;
+        return $this->field;
     }
 
     /**
-     * Set the table name.
+     * @return Configuration
+     */
+    public function getConfiguration()
+    {
+        if ($this->configuration) {
+            return $this->configuration;
+        }
+
+        return Configuration::getCurrentConfiguration();
+    }
+
+    /**
+     * @param Configuration $configuration
+     */
+    public function setConfiguration(Configuration $configuration)
+    {
+        $this->configuration = $configuration;
+    }
+
+    /**
+     * Set the entityName name.
      *
-     * @param  string $name A String with the table name.
+     * @param  string $name A String with the entityName name.
      * @return void
      */
-    public function setTable($name)
+    public function setEntityName($name)
     {
-        $this->table = $name;
+        $this->entityName = $name;
     }
 
     /**
-     * Get the table name.
+     * Get the entityName name.
      *
-     * @return string A String with the table name.
+     * @return string A String with the entityName name.
      */
-    public function getTable()
+    public function getEntityName()
     {
-        return $this->table;
+        return $this->entityName;
     }
 
     /**
@@ -299,7 +322,7 @@ abstract class AbstractCriterion
 
     /**
      * This method checks another Criteria to see if they contain
-     * the same attributes and hashtable entries.
+     * the same attributes and hashentity entries.
      * @return boolean
      */
     public function equals($obj)
@@ -316,9 +339,9 @@ abstract class AbstractCriterion
         /** @var AbstractCriterion $crit */
         $crit = $obj;
 
-        $isEquiv = (((null === $this->table && null === $crit->getTable())
-            || (null !== $this->table && $this->table === $crit->getTable()))
-            && $this->column === $crit->getColumn()
+        $isEquiv = (((null === $this->entityName && null === $crit->getEntityName())
+            || (null !== $this->entityName && $this->entityName === $crit->getEntityName()))
+            && $this->field === $crit->getField()
             && $this->comparison === $crit->getComparison())
         ;
 
@@ -341,27 +364,27 @@ abstract class AbstractCriterion
     }
 
     /**
-     * Get all tables from nested criterion objects
+     * Get all entities from nested criterion objects
      * @return array
      */
-    public function getAllTables()
+    public function getAllEntities()
     {
-        $tables = array();
-        $this->addCriterionTable($this, $tables);
+        $entities = array();
+        $this->addCriterionEntity($this, $entities);
 
-        return $tables;
+        return $entities;
     }
 
     /**
      * method supporting recursion through all criterions to give
-     * us a string array of tables from each criterion
+     * us a string array of entities from each criterion
      * @return void
      */
-    private function addCriterionTable(AbstractCriterion $c, array &$s)
+    private function addCriterionEntity(AbstractCriterion $c, array &$s)
     {
-        $s[] = $c->getTable();
+        $s[] = $c->getEntityName();
         foreach ($c->getClauses() as $clause) {
-            $this->addCriterionTable($clause, $s);
+            $this->addCriterionEntity($clause, $s);
         }
     }
 

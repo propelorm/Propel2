@@ -11,11 +11,13 @@
 namespace Propel\Runtime\Connection;
 
 use Propel\Runtime\Adapter\AdapterInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * Manager for single connection to a datasource.
  */
-class ConnectionManagerSingle implements ConnectionManagerInterface
+class ConnectionManagerSingle implements ConnectionManagerInterface, LoggerAwareInterface
 {
     /**
      * @var string The datasource name associated to this connection
@@ -27,10 +29,31 @@ class ConnectionManagerSingle implements ConnectionManagerInterface
      */
     protected $configuration = array();
 
+    protected $logger;
+
     /**
      * @var \Propel\Runtime\Connection\ConnectionInterface
      */
     protected $connection;
+
+    protected $adapter;
+
+    function __construct(AdapterInterface $adapter)
+    {
+        $this->adapter = $adapter;
+    }
+
+    /**
+     * Sets a logger instance on the object
+     *
+     * @param LoggerInterface $logger
+     *
+     * @return null
+     */
+    public function setLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
 
     /**
      * @param string $name The datasource name associated to this connection
@@ -66,14 +89,15 @@ class ConnectionManagerSingle implements ConnectionManagerInterface
     }
 
     /**
-     * @param \Propel\Runtime\Adapter\AdapterInterface $adapter
-     *
      * @return \Propel\Runtime\Connection\ConnectionInterface
      */
-    public function getWriteConnection(AdapterInterface $adapter = null)
+    public function getWriteConnection()
     {
         if (null === $this->connection) {
-            $this->connection = ConnectionFactory::create($this->configuration, $adapter);
+            $this->connection = ConnectionFactory::create($this->configuration, $this->adapter);
+            if ($this->connection instanceof LoggerAwareInterface) {
+                $this->connection->setLogger($this->logger);
+            }
             $this->connection->setName($this->getName());
         }
 
@@ -81,13 +105,11 @@ class ConnectionManagerSingle implements ConnectionManagerInterface
     }
 
     /**
-     * @param \Propel\Runtime\Adapter\AdapterInterface $adapter
-     *
      * @return \Propel\Runtime\Connection\ConnectionInterface
      */
-    public function getReadConnection(AdapterInterface $adapter = null)
+    public function getReadConnection()
     {
-        return $this->getWriteConnection($adapter);
+        return $this->getWriteConnection($this->adapter);
     }
 
     public function closeConnections()

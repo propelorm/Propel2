@@ -746,16 +746,16 @@ static public function updateLoadedNodes(\$prune = null, ConnectionInterface \$c
             if ($col->isLazyLoad()) {
                 continue;
             }
-            if ($col->getPhpName() == $this->getColumnPhpName('left_column')) {
+            if ($col->getName() == $this->getColumnPhpName('left_column')) {
                 $script .= "
                     \$object->setLeftValue(\$row[$n]);";
-            } elseif ($col->getPhpName() == $this->getColumnPhpName('right_column')) {
+            } elseif ($col->getName() == $this->getColumnPhpName('right_column')) {
                 $script .= "
                     \$object->setRightValue(\$row[$n]);";
-            } elseif ($this->getParameter('use_scope') == 'true' && $col->getPhpName() == $this->getColumnPhpName('scope_column')) {
+            } elseif ($this->getParameter('use_scope') == 'true' && $col->getName() == $this->getColumnPhpName('scope_column')) {
                 $script .= "
                     \$object->setScopeValue(\$row[$n]);";
-            } elseif ($col->getPhpName() == $this->getColumnPhpName('level_column')) {
+            } elseif ($col->getName() == $this->getColumnPhpName('level_column')) {
                 $script .= "
                     \$object->setLevel(\$row[$n]);
                     \$object->clearNestedSetChildren();";
@@ -914,6 +914,6 @@ public static function setNegativeScope(\$scope, ConnectionInterface \$con = nul
 
     protected function getColumnPhpName($columnName)
     {
-        return $this->behavior->getColumnForParameter($columnName)->getPhpName();
+        return $this->behavior->getColumnForParameter($columnName)->getName();
     }
 }

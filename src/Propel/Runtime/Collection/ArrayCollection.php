@@ -89,7 +89,7 @@ class ArrayCollection extends Collection
     public function getPrimaryKeys($usePrefix = true)
     {
         $ret      = array();
-        $callable = array($this->getTableMapClass(), 'getPrimaryKeyFromRow');
+        $callable = array($this->getEntityMapClass(), 'getPrimaryKeyFromRow');
 
         foreach ($this as $key => $element) {
             $key       = $usePrefix ? ($this->getModel() . '_' . $key) : $key;
@@ -101,7 +101,7 @@ class ArrayCollection extends Collection
 
     /**
      * Populates the collection from an array
-     * Uses the object model to force the column types
+     * Uses the object model to force the field types
      * Does not empty the collection before adding the data from the array
      *
      * @param array $arr
@@ -120,8 +120,8 @@ class ArrayCollection extends Collection
      * Get an array representation of the collection
      * This is not an alias for getData(), since it returns a copy of the data
      *
-     * @param string  $keyColumn If null, the returned array uses an incremental index.
-     *                           Otherwise, the array is indexed using the specified column
+     * @param string  $keyField If null, the returned array uses an incremental index.
+     *                           Otherwise, the array is indexed using the specified field
      * @param boolean $usePrefix If true, the returned array prefixes keys
      *                           with the model class name ('Article_0', 'Article_1', etc).
      *
@@ -145,11 +145,11 @@ class ArrayCollection extends Collection
      *
      * @return array
      */
-    public function toArray($keyColumn = null, $usePrefix = false)
+    public function toArray($keyField = null, $usePrefix = false)
     {
         $ret = array();
         foreach ($this as $key => $element) {
-            $key = null === $keyColumn ? $key : $element[$keyColumn];
+            $key = null === $keyField ? $key : $element[$keyField];
             $key = $usePrefix ? ($this->getModel() . '_' . $key) : $key;
             $ret[$key] = $element;
         }
@@ -160,38 +160,38 @@ class ArrayCollection extends Collection
     /**
      * Synonym for toArray(), to provide a similar interface to PropelObjectCollection
      *
-     * @param string  $keyColumn
+     * @param string  $keyField
      * @param boolean $usePrefix
      *
      * @return array
      */
-    public function getArrayCopy($keyColumn = null, $usePrefix = false)
+    public function getArrayCopy($keyField = null, $usePrefix = false)
     {
-        if (null === $keyColumn && false === $usePrefix) {
+        if (null === $keyField && false === $usePrefix) {
             return parent::getArrayCopy();
         }
 
-        return $this->toArray($keyColumn, $usePrefix);
+        return $this->toArray($keyField, $usePrefix);
     }
 
     /**
      * Get an associative array representation of the collection
-     * The first parameter specifies the column to be used for the key,
+     * The first parameter specifies the field to be used for the key,
      * And the second for the value.
      * <code>
      * $res = $coll->toKeyValue('Id', 'Name');
      * </code>
      *
-     * @param string $keyColumn
-     * @param string $valueColumn
+     * @param string $keyField
+     * @param string $valueField
      *
      * @return array
      */
-    public function toKeyValue($keyColumn, $valueColumn)
+    public function toKeyValue($keyField, $valueField)
     {
         $ret = array();
         foreach ($this as $obj) {
-            $ret[$obj[$keyColumn]] = $obj[$valueColumn];
+            $ret[$obj[$keyField]] = $obj[$valueField];
         }
 
         return $ret;

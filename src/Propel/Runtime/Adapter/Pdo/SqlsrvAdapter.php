@@ -15,7 +15,7 @@ use Propel\Runtime\Adapter\Exception\UnsupportedEncodingException;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\StatementInterface;
 use Propel\Runtime\ActiveQuery\Criteria;
-use Propel\Runtime\Map\ColumnMap;
+use Propel\Runtime\Map\FieldMap;
 use Propel\Runtime\Map\DatabaseMap;
 
 /**
@@ -73,14 +73,14 @@ class SqlsrvAdapter extends MssqlAdapter implements SqlAdapterInterface
     {
         $i = 1;
         foreach ($params as $param) {
-            $tableName = $param['table'];
-            $columnName = $param['column'];
+            $entityName = $param['entity'];
+            $fieldName = $param['field'];
             $value = $param['value'];
 
             // this is to workaround for a bug with pdo_sqlsrv inserting or updating blobs with null values
             // http://social.msdn.microsoft.com/Forums/en-US/sqldriverforphp/thread/5a755bdd-41e9-45cb-9166-c9da4475bb94
-            if (null !== $tableName) {
-                $cMap = $dbMap->getTable($tableName)->getColumn($columnName);
+            if (null !== $entityName) {
+                $cMap = $dbMap->getEntity($entityName)->getField($fieldName);
                 if (null === $value && $cMap->isLob()) {
                     $sql = str_replace(":p$i", "CONVERT(VARBINARY(MAX), :p$i)", $sql);
                 }
@@ -95,12 +95,12 @@ class SqlsrvAdapter extends MssqlAdapter implements SqlAdapterInterface
      * @param PDOStatement $stmt
      * @param string       $parameter
      * @param mixed        $value
-     * @param ColumnMap    $cMap
+     * @param FieldMap    $cMap
      * @param null|integer $position
      *
      * @return boolean
      */
-    public function bindValue(StatementInterface $stmt, $parameter, $value, ColumnMap $cMap, $position = null)
+    public function bindValue(StatementInterface $stmt, $parameter, $value, FieldMap $cMap, $position = null)
     {
         if ($cMap->isTemporal()) {
             $value = $this->formatTemporalValue($value, $cMap);

@@ -4,28 +4,14 @@
 <database package="core.book" name="bookstore" defaultIdMethod="native" namespace="Propel\Tests\BookstorePackaged">
 
   <!-- This table exists to explore/test the handling of BLOB/CLOB objects. -->
-  <table name="media">
+  <entity name="Media">
    <behavior name="auto_add_pk" />
-    <column
-      name="cover_image"
-      type="BLOB"
-      lazyLoad="true"
-      description="The image of the book cover."/>
-    <column
-      name="excerpt"
-      type="CLOB"
-      lazyLoad="true"
-      description="An excerpt from the book."/>
-    <column
-      name="book_id"
-      required="true"
-      type="INTEGER"
-      description="Book ID for this media collection."/>
-    <foreign-key foreignTable="book" onDelete="CASCADE">
-      <reference
-        local="book_id"
-        foreign="id"/>
-    </foreign-key>
-  </table>
+    <field name="cover_image" type="BLOB" lazyLoad="true" description="The image of the book cover."/>
+    <field name="excerpt" type="CLOB" lazyLoad="true" description="An excerpt from the book."/>
+    <field name="book_id" required="true" type="INTEGER" description="Book ID for this media collection."/>
+    <relation target="Book" onDelete="CASCADE">
+        <reference local="book_id" foreign="id"/>
+    </relation>
+  </entity>
 
 </database>

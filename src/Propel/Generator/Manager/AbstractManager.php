@@ -16,6 +16,7 @@ use Propel\Generator\Exception\BuildException;
 use Propel\Generator\Exception\EngineException;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\Schema;
+use Propel\Runtime\Map\DatabaseMap;
 
 /**
  * An abstract base Propel manager to perform work related to the XML schema
@@ -174,17 +175,18 @@ abstract class AbstractManager
     public function getDatabases()
     {
         if (null === $this->databases) {
+            /** @var DatabaseMap[] $databases */
             $databases = array();
             foreach ($this->getDataModels() as $dataModel) {
                 foreach ($dataModel->getDatabases() as $database) {
                     if (!isset($databases[$database->getName()])) {
                         $databases[$database->getName()] = $database;
                     } else {
-                        $tables = $database->getTables();
-                        // Merge tables from different schema.xml to the same database
-                        foreach ($tables as $table) {
-                            if (!$databases[$database->getName()]->hasTable($table->getName(), true)) {
-                                $databases[$database->getName()]->addTable($table);
+                        $entities = $database->getEntities();
+                        // Merge entities from different schema.xml to the same database
+                        foreach ($entities as $entity) {
+                            if (!$databases[$database->getName()]->hasEntity($entity->getName(), true)) {
+                                $databases[$database->getName()]->addEntity($entity);
                             }
                         }
                     }
@@ -265,9 +267,13 @@ abstract class AbstractManager
     protected function loadDataModels()
     {
         $schemas = array();
-        $totalNbTables   = 0;
+        $totalNbEntities   = 0;
         $dataModelFiles  = $this->getSchemas();
-        $defaultPlatform = $this->getGeneratorConfig()->getConfiguredPlatform();
+//        $defaultPlatform = $this->getGeneratorConfig()->getConfiguredPlatform();
+
+        if (empty($dataModelFiles)) {
+            throw new BuildException('No schema files were found (matching your schema fileset definition).');
+        }
 
         // Make a transaction for each file
         foreach ($dataModelFiles as $schema) {
@@ -304,19 +310,19 @@ abstract class AbstractManager
                 }
             }
 
-            $xmlParser = new SchemaReader($defaultPlatform, $this->dbEncoding);
+            $xmlParser = new SchemaReader($this->dbEncoding);
             $xmlParser->setGeneratorConfig($this->getGeneratorConfig());
             $schema = $xmlParser->parseString($dom->saveXML(), $dmFilename);
-            $nbTables = $schema->getDatabase(null, false)->countTables();
-            $totalNbTables += $nbTables;
+            $nbEntities = $schema->getDatabase(null, false)->countEntities();
+            $totalNbEntities += $nbEntities;
 
-            $this->log(sprintf('  %d tables processed successfully', $nbTables));
+            $this->log(sprintf('  %d entities processed successfully', $nbEntities));
 
             $schema->setName($dmFilename);
             $schemas[] = $schema;
         }
 
-        $this->log(sprintf('%d tables found in %d schema files.', $totalNbTables, count($dataModelFiles)));
+        $this->log(sprintf('%d entities found in %d schema files.', $totalNbEntities, count($dataModelFiles)));
 
         if (empty($schemas)) {
             throw new BuildException('No schema files were found (matching your schema fileset definition).');
@@ -334,7 +340,7 @@ abstract class AbstractManager
             $this->dataModels = $schemas;
         }
 
-        foreach ($this->dataModels as &$schema) {
+        foreach ($this->dataModels as $schema) {
             $schema->doFinalInitialization();
         }
 
@@ -369,11 +375,11 @@ abstract class AbstractManager
 
             // The external schema may have external schemas of its own ; recurs
             $this->includeExternalSchemas($externalSchemaDom, $srcDir);
-            foreach ($externalSchemaDom->getElementsByTagName('table') as $tableNode) {
+            foreach ($externalSchemaDom->getElementsByTagName('entity') as $entityNode) {
                 if ($referenceOnly) {
-                    $tableNode->setAttribute("skipSql", "true");
+                    $entityNode->setAttribute("skipSql", "true");
                 }
-                $databaseNode->appendChild($dom->importNode($tableNode, true));
+                $databaseNode->appendChild($dom->importNode($entityNode, true));
             }
 
             $nbIncludedSchemas++;
@@ -385,7 +391,7 @@ abstract class AbstractManager
     /**
      * Joins the datamodels collected from schema.xml files into one big datamodel.
      * We need to join the datamodels in this case to allow for foreign keys
-     * that point to tables in different packages.
+     * that point to entities in different packages.
      *
      * @param  array  $schemas
      * @return Schema

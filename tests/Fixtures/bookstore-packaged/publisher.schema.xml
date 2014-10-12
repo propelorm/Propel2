@@ -3,15 +3,15 @@
 
 <database package="core.publisher" name="bookstore" defaultIdMethod="native" namespace="Propel\Tests\BookstorePackaged">
 
-  <table name="publisher" description="Publisher Table">
+  <entity name="Publisher" description="Publisher Table">
     <behavior name="auto_add_pk" />
-    <column
+    <field
       name="name"
       required="true"
       type="VARCHAR"
       size="128"
       default="Penguin"
       description="Publisher Name"/>
-  </table>
+  </entity>
 
 </database>

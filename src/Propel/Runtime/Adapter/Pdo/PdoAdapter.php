@@ -16,7 +16,7 @@ use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\PdoConnection;
 use Propel\Runtime\Connection\StatementInterface;
 use Propel\Runtime\Exception\InvalidArgumentException;
-use Propel\Runtime\Map\ColumnMap;
+use Propel\Runtime\Map\FieldMap;
 use Propel\Runtime\Map\DatabaseMap;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Util\PropelDateTime;
@@ -199,7 +199,7 @@ abstract class PdoAdapter
     }
 
     /**
-     * Quotes database object identifiers (table names, col names, sequences, etc.).
+     * Quotes database object identifiers (entity names, col names, sequences, etc.).
      * @param  string $text The identifier to quote.
      * @return string The quoted identifier.
      */
@@ -209,7 +209,7 @@ abstract class PdoAdapter
     }
 
     /**
-     * Quotes full qualified column names and table names.
+     * Quotes full qualified field names and entity names.
      *
      * book.author_id => `book`.`author_id`
      * author_id => `author_id`
@@ -220,32 +220,32 @@ abstract class PdoAdapter
     public function quote($text)
     {
         if (false !== ($pos = strrpos($text, '.'))) {
-            $table = substr($text, 0, $pos);
-            $column = substr($text, $pos + 1);
+            $entity = substr($text, 0, $pos);
+            $field = substr($text, $pos + 1);
         } else {
-            $table = '';
-            $column = $text;
+            $entity = '';
+            $field = $text;
         }
 
-        if ($table) {
-            return $this->quoteIdentifierTable($table) . '.' . $this->quoteIdentifier($column);
+        if ($entity) {
+            return $this->quoteIdentifierEntity($entity) . '.' . $this->quoteIdentifier($field);
         } else {
-            return $this->quoteIdentifier($column);
+            return $this->quoteIdentifier($field);
         }
     }
 
     /**
-     * Quotes a database table which could have space separating it from an alias,
+     * Quotes a database entity which could have space separating it from an alias,
      * both should be identified separately. This doesn't take care of dots which
-     * separate schema names from table names. Adapters for RDBMs which support
+     * separate schema names from entity names. Adapters for RDBMs which support
      * schemas have to implement that in the platform-specific way.
      *
-     * @param  string $table The table name to quo
-     * @return string The quoted table name
+     * @param  string $entity The entity name to quo
+     * @return string The quoted entity name
      **/
-    public function quoteIdentifierTable($table)
+    public function quoteIdentifierEntity($entity)
     {
-        return implode(' ', array_map(array($this, 'quoteIdentifier'), explode(' ', $table)));
+        return implode(' ', array_map(array($this, 'quoteIdentifier'), explode(' ', $entity)));
     }
 
     /**
@@ -292,14 +292,14 @@ abstract class PdoAdapter
     }
 
     /**
-     * Formats a temporal value before binding, given a ColumnMap object
+     * Formats a temporal value before binding, given a FieldMap object
      *
      * @param mixed     $value The temporal value
-     * @param ColumnMap $cMap
+     * @param FieldMap $cMap
      *
      * @return string The formatted temporal value
      */
-    public function formatTemporalValue($value, ColumnMap $cMap)
+    public function formatTemporalValue($value, FieldMap $cMap)
     {
         /** @var $dt PropelDateTime */
         if ($dt = PropelDateTime::newInstance($value)) {
@@ -338,7 +338,7 @@ abstract class PdoAdapter
      */
     public function getGroupBy(Criteria $criteria)
     {
-        $groupBy = $criteria->getGroupByColumns();
+        $groupBy = $criteria->getGroupByFields();
         if ($groupBy) {
             return ' GROUP BY ' . implode(',', $groupBy);
         }
@@ -368,7 +368,7 @@ abstract class PdoAdapter
      * Allows manipulation of the query string before StatementPdo is instantiated.
      *
      * @param string      $sql    The sql statement
-     * @param array       $params array('column' => ..., 'table' => ..., 'value' => ...)
+     * @param array       $params array('field' => ..., 'entity' => ..., 'value' => ...)
      * @param Criteria    $values
      * @param DatabaseMap $dbMap
      */
@@ -377,26 +377,26 @@ abstract class PdoAdapter
     }
 
     /**
-     * Returns the "DELETE FROM <table> [AS <alias>]" part of DELETE query.
+     * Returns the "DELETE FROM <entity> [AS <alias>]" part of DELETE query.
      *
      * @param Criteria $criteria
-     * @param string   $tableName
+     * @param string   $entityName
      *
      * @return string
      */
-    public function getDeleteFromClause(Criteria $criteria, $tableName)
+    public function getDeleteFromClause(Criteria $criteria, $entityName)
     {
         $sql = 'DELETE ';
         if ($queryComment = $criteria->getComment()) {
             $sql .= '/* ' . $queryComment . ' */ ';
         }
 
-        if ($realTableName = $criteria->getTableForAlias($tableName)) {
-            $realTableName = $criteria->quoteIdentifierTable($realTableName);
-            $sql .= $tableName . ' FROM ' . $realTableName . ' AS ' . $tableName;
+        if ($realEntityName = $criteria->getEntityForAlias($entityName)) {
+            $realEntityName = $criteria->quoteIdentifierEntity($realEntityName);
+            $sql .= $entityName . ' FROM ' . $realEntityName . ' AS ' . $entityName;
         } else {
-            $tableName = $criteria->quoteIdentifierTable($tableName);
-            $sql .= 'FROM ' . $tableName;
+            $entityName = $criteria->quoteIdentifierEntity($entityName);
+            $sql .= 'FROM ' . $entityName;
         }
 
         return $sql;
@@ -404,7 +404,7 @@ abstract class PdoAdapter
 
     /**
      * Builds the SELECT part of a SQL statement based on a Criteria
-     * taking into account select columns and 'as' columns (i.e. columns aliases)
+     * taking into account select fields and 'as' fields (i.e. fields aliases)
      *
      * @param Criteria $criteria
      * @param array    $fromClause
@@ -417,46 +417,52 @@ abstract class PdoAdapter
         $selectClause = array();
 
         if ($aliasAll) {
-            $this->turnSelectColumnsToAliases($criteria);
-            // no select columns after that, they are all aliases
+            $this->turnSelectFieldsToAliases($criteria);
+            // no select fields after that, they are all aliases
         } else {
-            foreach ($criteria->getSelectColumns() as $columnName) {
+            foreach ($criteria->getSelectFields() as $fieldName) {
 
-                // expect every column to be of "table.column" formation
+                // expect every field to be of "entity.field" formation
                 // it could be a function:  e.g. MAX(books.price)
-                $tableName = null;
+                $entityName = null;
 
-                $selectClause[] = $columnName; // the full column name: e.g. MAX(books.price)
+                $selectClause[] = $fieldName; // the full field name: e.g. MAX(books.price)
 
-                $parenPos = strrpos($columnName, '(');
-                $dotPos = strrpos($columnName, '.', ($parenPos !== false ? $parenPos : 0));
+                $parenPos = strrpos($fieldName, '(');
+                $dotPos = strrpos($fieldName, '.', ($parenPos !== false ? $parenPos : 0));
 
                 if (false !== $dotPos) {
-                    if (false === $parenPos) { // table.column
-                        $tableName = substr($columnName, 0, $dotPos);
-                    } else { // FUNC(table.column)
+                    if (false === $parenPos) { // entity.field
+                        $entityName = substr($fieldName, 0, $dotPos);
+                    } else { // FUNC(entity.field)
                         // functions may contain qualifiers so only take the last
-                        // word as the table name.
+                        // word as the entity name.
                         // COUNT(DISTINCT books.price)
-                        $tableName = substr($columnName, $parenPos + 1, $dotPos - ($parenPos + 1));
-                        $lastSpace = strrpos($tableName, ' ');
+                        $entityName = substr($fieldName, $parenPos + 1, $dotPos - ($parenPos + 1));
+                        $lastSpace = strrpos($entityName, ' ');
                         if (false !== $lastSpace) { // COUNT(DISTINCT books.price)
-                            $tableName = substr($tableName, $lastSpace + 1);
+                            $entityName = substr($entityName, $lastSpace + 1);
                         }
                     }
-                    // is it a table alias?
-                    $tableName2 = $criteria->getTableForAlias($tableName);
-                    if ($tableName2 !== null) {
-                        $fromClause[] = $tableName2 . ' ' . $tableName;
+
+                    // is it a entity alias?
+                    $entityForAlias = $criteria->getEntityForAlias($entityName);
+                    if ($criteria->getConfiguration()->hasEntityMap($entityName)) {
+                        $entityTableName = $criteria->getConfiguration()->getEntityMap($entityName)->getTableName();
                     } else {
-                        $fromClause[] = $tableName;
+                        $entityTableName = $entityName;
+                    }
+                    if ($entityForAlias !== null) {
+                        $fromClause[] = $entityForAlias . ' ' . $entityTableName;
+                    } else {
+                        $fromClause[] = $entityTableName;
                     }
                 }
             }
         }
 
         // set the aliases
-        foreach ($criteria->getAsColumns() as $alias => $col) {
+        foreach ($criteria->getAsFields() as $alias => $col) {
             $selectClause[] = $col . ' AS ' . $alias;
         }
 
@@ -474,21 +480,21 @@ abstract class PdoAdapter
     }
 
     /**
-     * Returns all selected columns that are selected without a aggregate function.
+     * Returns all selected fields that are selected without a aggregate function.
      *
      * @param  Criteria $criteria
      * @return string[]
      */
-    public function getPlainSelectedColumns(Criteria $criteria)
+    public function getPlainSelectedFields(Criteria $criteria)
     {
         $selected = [];
-        foreach ($criteria->getSelectColumns() as $columnName) {
-            if (false === strpos($columnName, '(')) {
-                $selected[] = $columnName;
+        foreach ($criteria->getSelectFields() as $fieldName) {
+            if (false === strpos($fieldName, '(')) {
+                $selected[] = $fieldName;
             }
         }
 
-        foreach ($criteria->getAsColumns() as $alias => $col) {
+        foreach ($criteria->getAsFields() as $alias => $col) {
             if (false === strpos($col, '(') && !in_array($col, $selected)) {
                 $selected[] = $col;
             }
@@ -498,39 +504,39 @@ abstract class PdoAdapter
     }
 
     /**
-     * Ensures uniqueness of select column names by turning them all into aliases
-     * This is necessary for queries on more than one table when the tables share a column name
+     * Ensures uniqueness of select field names by turning them all into aliases
+     * This is necessary for queries on more than one entity when the entities share a field name
      *
      * @see http://propel.phpdb.org/trac/ticket/795
      *
      * @param  Criteria $criteria
-     * @return Criteria The input, with Select columns replaced by aliases
+     * @return Criteria The input, with Select fields replaced by aliases
      */
-    public function turnSelectColumnsToAliases(Criteria $criteria)
+    public function turnSelectFieldsToAliases(Criteria $criteria)
     {
-        $selectColumns = $criteria->getSelectColumns();
-        // clearSelectColumns also clears the aliases, so get them too
-        $asColumns = $criteria->getAsColumns();
-        $criteria->clearSelectColumns();
-        $columnAliases = $asColumns;
-        // add the select columns back
-        foreach ($selectColumns as $clause) {
+        $selectFields = $criteria->getSelectFields();
+        // clearSelectFields also clears the aliases, so get them too
+        $asFields = $criteria->getAsFields();
+        $criteria->clearSelectFields();
+        $fieldAliases = $asFields;
+        // add the select fields back
+        foreach ($selectFields as $clause) {
             // Generate a unique alias
             $baseAlias = preg_replace('/\W/', '_', $clause);
             $alias = $baseAlias;
             // If it already exists, add a unique suffix
             $i = 0;
-            while (isset($columnAliases[$alias])) {
+            while (isset($fieldAliases[$alias])) {
                 $i++;
                 $alias = $baseAlias . '_' . $i;
             }
             // Add it as an alias
-            $criteria->addAsColumn($alias, $clause);
-            $columnAliases[$alias] = $clause;
+            $criteria->addAsField($alias, $clause);
+            $fieldAliases[$alias] = $clause;
         }
         // Add the aliases back, don't modify them
-        foreach ($asColumns as $name => $clause) {
-            $criteria->addAsColumn($name, $clause);
+        foreach ($asFields as $name => $clause) {
+            $criteria->addAsField($name, $clause);
         }
 
         return $criteria;
@@ -553,7 +559,7 @@ abstract class PdoAdapter
      * </code>
      *
      * @param StatementInterface $stmt
-     * @param array              $params array('column' => ..., 'table' => ..., 'value' => ...)
+     * @param array              $params array('field' => ..., 'entity' => ..., 'value' => ...)
      * @param DatabaseMap        $dbMap
      */
     public function bindValues(StatementInterface $stmt, array $params, DatabaseMap $dbMap)
@@ -567,30 +573,30 @@ abstract class PdoAdapter
                 $stmt->bindValue($parameter, null, \PDO::PARAM_NULL);
                 continue;
             }
-            $tableName = $param['table'];
-            if (null === $tableName) {
+            $entityName = $param['entity'];
+            if (null === $entityName) {
                 $type = isset($param['type']) ? $param['type'] : \PDO::PARAM_STR;
                 $stmt->bindValue($parameter, $value, $type);
                 continue;
             }
-            $cMap = $dbMap->getTable($tableName)->getColumn($param['column']);
+            $cMap = $dbMap->getEntity($entityName)->getField($param['field']);
             $this->bindValue($stmt, $parameter, $value, $cMap, $position);
         }
     }
 
     /**
      * Binds a value to a positioned parameter in a statement,
-     * given a ColumnMap object to infer the binding type.
+     * given a FieldMap object to infer the binding type.
      *
      * @param StatementInterface $stmt      The statement to bind
      * @param string             $parameter Parameter identifier
      * @param mixed              $value     The value to bind
-     * @param ColumnMap          $cMap      The ColumnMap of the column to bind
+     * @param FieldMap          $cMap      The FieldMap of the field to bind
      * @param null|integer       $position  The position of the parameter to bind
      *
      * @return boolean
      */
-    public function bindValue(StatementInterface $stmt, $parameter, $value, ColumnMap $cMap, $position = null)
+    public function bindValue(StatementInterface $stmt, $parameter, $value, FieldMap $cMap, $position = null)
     {
         if ($cMap->isTemporal()) {
             $value = $this->formatTemporalValue($value, $cMap);

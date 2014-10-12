@@ -22,8 +22,11 @@
         "symfony/finder": "~2.3",
         "symfony/validator": "~2.3",
         "symfony/filesystem": "~2.3",
+        "symfony/event-dispatcher": "~2.3",
         "symfony/config": "~2.3",
-        "psr/log": "~1.0"
+        "psr/log": "~1.0",
+        "gossi/php-code-generator": "dev-master",
+        "mustache/mustache": "~2.6"
     },
     "require-dev": {
         "behat/behat": "~2.4",
@@ -36,6 +39,9 @@
     "autoload": {
         "psr-0": {
             "Propel": "src/"
+        },
+        "psr-4": {
+            "MJS\\TopSort\\": "/Users/marc/bude/topsort/src/"
         }
     },
     "bin": [

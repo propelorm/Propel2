@@ -52,7 +52,7 @@ class ObjectCombinationCollection extends ObjectCollection
     }
 
     /**
-     * Returns all values from one position/column.
+     * Returns all values from one position/field.
      *
      * @param int $position beginning with 1
      * @return array

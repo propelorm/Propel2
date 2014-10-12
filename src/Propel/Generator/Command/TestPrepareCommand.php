@@ -148,7 +148,6 @@ class TestPrepareCommand extends AbstractCommand
                 'command'      => 'model:build',
                 '--input-dir'  => '.',
                 '--output-dir' => 'build/classes/',
-                '--platform'   => ucfirst($input->getOption('vendor')) . 'Platform',
                 '--verbose'    => $input->getOption('verbose'),
             ));
 
@@ -165,7 +164,6 @@ class TestPrepareCommand extends AbstractCommand
                 'command'      => 'sql:build',
                 '--input-dir'  => '.',
                 '--output-dir' => 'build/sql/',
-                '--platform'   => ucfirst($input->getOption('vendor')) . 'Platform',
                 '--verbose'    => $input->getOption('verbose'),
             ));
 

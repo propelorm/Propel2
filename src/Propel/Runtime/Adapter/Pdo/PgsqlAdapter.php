@@ -97,7 +97,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
         }
         $dataFetcher = $con->query(sprintf('SELECT nextval(%s)', $con->quote($name)));
 
-        return $dataFetcher->fetchColumn();
+        return $dataFetcher->fetchField();
     }
 
     /**
@@ -143,12 +143,12 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
      */
     public function getGroupBy(Criteria $criteria)
     {
-        $groupBy = $criteria->getGroupByColumns();
+        $groupBy = $criteria->getGroupByFields();
 
         if ($groupBy) {
-            // check if all selected columns are groupBy'ed.
-            $selected = $this->getPlainSelectedColumns($criteria);
-            $asSelects = $criteria->getAsColumns();
+            // check if all selected fields are groupBy'ed.
+            $selected = $this->getPlainSelectedFields($criteria);
+            $asSelects = $criteria->getAsFields();
 
             foreach ($selected as $colName) {
                 if (!in_array($colName, $groupBy)) {
@@ -186,37 +186,37 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
      * @see PdoAdapter::getDeleteFromClause()
      *
      * @param Criteria $criteria
-     * @param string   $tableName
+     * @param string   $entityName
      *
      * @return string
      */
-    public function getDeleteFromClause(Criteria $criteria, $tableName)
+    public function getDeleteFromClause(Criteria $criteria, $entityName)
     {
         $sql = 'DELETE ';
         if ($queryComment = $criteria->getComment()) {
             $sql .= '/* ' . $queryComment . ' */ ';
         }
-        if ($realTableName = $criteria->getTableForAlias($tableName)) {
-            $realTableName = $criteria->quoteIdentifierTable($realTableName);
-            $sql .= 'FROM ' . $realTableName . ' AS ' . $tableName;
+        if ($realEntityName = $criteria->getEntityForAlias($entityName)) {
+            $realEntityName = $criteria->quoteIdentifierEntity($realEntityName);
+            $sql .= 'FROM ' . $realEntityName . ' AS ' . $entityName;
         } else {
-            $tableName = $criteria->quoteIdentifierTable($tableName);
-            $sql .= 'FROM ' . $tableName;
+            $entityName = $criteria->quoteIdentifierEntity($entityName);
+            $sql .= 'FROM ' . $entityName;
         }
 
         return $sql;
     }
 
     /**
-     * @see AdapterInterface::quoteIdentifierTable()
+     * @see AdapterInterface::quoteIdentifierEntity()
      *
-     * @param  string $table
+     * @param  string $entity
      * @return string
      */
-    public function quoteIdentifierTable($table)
+    public function quoteIdentifierEntity($entity)
     {
-        // e.g. 'database.table alias' should be escaped as '"database"."table" "alias"'
-        return '"' . strtr($table, array('.' => '"."', ' ' => '" "')) . '"';
+        // e.g. 'database.entity alias' should be escaped as '"database"."entity" "alias"'
+        return '"' . strtr($entity, array('.' => '"."', ' ' => '" "')) . '"';
     }
 
     /**

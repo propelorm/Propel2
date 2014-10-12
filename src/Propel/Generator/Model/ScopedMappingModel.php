@@ -77,12 +77,8 @@ abstract class ScopedMappingModel extends MappingModel
     public function setNamespace($namespace)
     {
         $namespace = rtrim(trim($namespace), '\\');
-
-        if ($namespace === $this->namespace) {
-            return;
-        }
-
         $this->namespace = $namespace;
+
         if ($namespace && (!$this->package || $this->packageOverridden) && $this->getBuildProperty('generator.namespaceAutoPackage')) {
             $this->package = str_replace('\\', '.', $namespace);
             $this->packageOverridden = true;

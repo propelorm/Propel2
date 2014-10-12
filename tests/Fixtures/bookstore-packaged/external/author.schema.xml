@@ -3,30 +3,30 @@
 
 <database package="core.author" name="bookstore" defaultIdMethod="native">
 
-  <table name="author" description="Author Table">
+  <entity name="Author" description="Author Table">
         <behavior name="auto_add_pk" />
-    <column
-      name="first_name"
+    <field
+      name="firstName"
       required="true"
       type="VARCHAR"
       size="128"
       description="First Name"/>
-    <column
-      name="last_name"
+    <field
+      name="lastName"
       required="true"
       type="VARCHAR"
       size="128"
       description="Last Name"/>
-    <column
+    <field
       name="email"
       type="VARCHAR"
       size="128"
       description="E-Mail Address"/>
-    <column
+    <field
       name="age"
       type="INTEGER"
       description="The authors age"/>
 
-  </table>
+  </entity>
 
 </database>

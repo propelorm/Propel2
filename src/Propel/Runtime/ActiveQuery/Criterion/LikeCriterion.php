@@ -15,7 +15,7 @@ use Propel\Runtime\Adapter\Pdo\PgsqlAdapter;
 
 /**
  * Specialized Criterion used for LIKE expressions
- * e.g. table.column LIKE ? or table.column NOT LIKE ?  (or ILIKE for Postgres)
+ * e.g. entity.field LIKE ? or entity.field NOT LIKE ?  (or ILIKE for Postgres)
  */
 class LikeCriterion extends AbstractCriterion
 {
@@ -26,13 +26,13 @@ class LikeCriterion extends AbstractCriterion
      * Create a new instance.
      *
      * @param Criteria $outer      The outer class (this is an "inner" class).
-     * @param string   $column     ignored
+     * @param string   $field     ignored
      * @param string   $value      The condition to be added to the query string
      * @param string   $comparison One of Criteria::LIKE and Criteria::NOT_LIKE
      */
-    public function __construct(Criteria $outer, $column, $value, $comparison = Criteria::LIKE)
+    public function __construct(Criteria $outer, $field, $value, $comparison = Criteria::LIKE)
     {
-        return parent::__construct($outer, $column, $value, $comparison);
+        return parent::__construct($outer, $field, $value, $comparison);
     }
 
     /**
@@ -66,10 +66,10 @@ class LikeCriterion extends AbstractCriterion
      */
     protected function appendPsForUniqueClauseTo(&$sb, array &$params)
     {
-        $field = (null === $this->table) ? $this->column : $this->table . '.' . $this->column;
+        $field = (null === $this->entityName) ? $this->field : $this->entityName . '.' . $this->field;
         $db = $this->getAdapter();
         // If selection is case insensitive use ILIKE for PostgreSQL or SQL
-        // UPPER() function on column name for other databases.
+        // UPPER() function on field name for other databases.
         if ($this->ignoreStringCase) {
             if ($db instanceof PgsqlAdapter) {
                 if (Criteria::LIKE === $this->comparison) {
@@ -82,7 +82,7 @@ class LikeCriterion extends AbstractCriterion
             }
         }
 
-        $params[] = array('table' => $this->realtable, 'column' => $this->column, 'value' => $this->value);
+        $params[] = array('entity' => $this->realEntity, 'field' => $this->field, 'value' => $this->value);
 
         $sb .= $field . $this->comparison;
 

@@ -10,12 +10,12 @@
 
 namespace Propel\Tests\Generator\Platform;
 
-use Propel\Generator\Model\Column;
+use Propel\Generator\Model\Field;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\Domain;
-use Propel\Generator\Model\ForeignKey;
+use Propel\Generator\Model\Relation;
 use Propel\Generator\Model\Index;
-use Propel\Generator\Model\Table;
+use Propel\Generator\Model\Entity;
 use Propel\Generator\Model\Unique;
 
 /**
@@ -24,160 +24,157 @@ use Propel\Generator\Model\Unique;
 abstract class PlatformTestProvider extends PlatformTestBase
 {
 
-    public function providerForTestGetAddTablesDDL()
+    public function providerForTestGetAddEntitiesDDL()
     {
         $schema = <<<EOF
 <database name="test" identifierQuoting="true">
-    <table name="book">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="title" type="VARCHAR" size="255" required="true" />
+    <entity name="book">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <field name="title" type="VARCHAR" size="255" required="true" />
         <index>
-            <index-column name="title" />
+            <index-field name="title" />
         </index>
-        <column name="author_id" type="INTEGER"/>
-        <foreign-key foreignTable="author">
-            <reference local="author_id" foreign="id" />
-        </foreign-key>
-    </table>
-    <table name="author">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="first_name" type="VARCHAR" size="100" />
-        <column name="last_name" type="VARCHAR" size="100" />
-    </table>
+        <relation target="author" />
+    </entity>
+    <entity name="author">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <field name="firstName" type="VARCHAR" size="100" />
+        <field name="lastName" type="VARCHAR" size="100" />
+    </entity>
 </database>
 EOF;
 
         return array(array($schema));
     }
 
-    public function providerForTestGetAddTablesDDLSchema()
+    public function providerForTestGetAddEntitiesDDLSchema()
     {
         $schema = <<<EOF
 <database name="test" schema="x" identifierQuoting="true">
-    <table name="book">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="title" type="VARCHAR" size="255" required="true" />
+    <entity name="book">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <field name="title" type="VARCHAR" size="255" required="true" />
         <index>
-            <index-column name="title" />
+            <index-field name="title" />
         </index>
-        <column name="author_id" type="INTEGER"/>
-        <foreign-key foreignTable="author" foreignSchema="y">
+        <field name="author_id" type="INTEGER"/>
+        <foreign-key foreignEntity="author" foreignSchema="y">
             <reference local="author_id" foreign="id" />
         </foreign-key>
-    </table>
-    <table name="author" schema="y">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="first_name" type="VARCHAR" size="100" />
-        <column name="last_name" type="VARCHAR" size="100" />
-    </table>
-    <table name="book_summary">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="book_id" required="true" type="INTEGER" />
-        <column name="summary" required="true" type="LONGVARCHAR" />
-        <foreign-key foreignTable="book" onDelete="cascade">
+    </entity>
+    <entity name="author" schema="y">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <field name="first_name" type="VARCHAR" size="100" />
+        <field name="last_name" type="VARCHAR" size="100" />
+    </entity>
+    <entity name="book_summary">
+        <field name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+        <field name="book_id" required="true" type="INTEGER" />
+        <field name="summary" required="true" type="LONGVARCHAR" />
+        <foreign-key foreignEntity="book" onDelete="cascade">
             <reference local="book_id" foreign="id" />
         </foreign-key>
-    </table>
+    </entity>
 </database>
 EOF;
 
         return array(array($schema));
     }
 
-    public function providerForTestGetAddTablesSkipSQLDDL()
+    public function providerForTestGetAddEntitiesSkipSQLDDL()
     {
         $schema = <<<EOF
 <database name="test" identifierQuoting="true">
-    <table name="book" skipSql="true">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="title" type="VARCHAR" size="255" required="true" />
+    <entity name="book" skipSql="true">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <field name="title" type="VARCHAR" size="255" required="true" />
         <index>
-            <index-column name="title" />
+            <index-field name="title" />
         </index>
-        <column name="author_id" type="INTEGER"/>
-        <foreign-key foreignTable="author">
+        <field name="author_id" type="INTEGER"/>
+        <foreign-key foreignEntity="author">
             <reference local="author_id" foreign="id" />
         </foreign-key>
-    </table>
-    <table name="author" skipSql="true">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="first_name" type="VARCHAR" size="100" />
-        <column name="last_name" type="VARCHAR" size="100" />
-    </table>
+    </entity>
+    <entity name="author" skipSql="true">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <field name="first_name" type="VARCHAR" size="100" />
+        <field name="last_name" type="VARCHAR" size="100" />
+    </entity>
 </database>
 EOF;
 
         return array(array($schema));
     }
 
-    public function providerForTestGetAddTableDDLSimplePK()
+    public function providerForTestGetAddEntityDDLSimplePK()
     {
         $schema = <<<EOF
 <database name="test" identifierQuoting="true">
-    <table name="foo" description="This is foo table">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="VARCHAR" size="255" required="true" />
-    </table>
+    <entity name="foo" description="This is foo entity">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <field name="bar" type="VARCHAR" size="255" required="true" />
+    </entity>
 </database>
 EOF;
 
         return array(array($schema));
     }
 
-    public function providerForTestGetAddTableDDLNonIntegerPK()
+    public function providerForTestGetAddEntityDDLNonIntegerPK()
     {
         $schema = <<<EOF
 <database name="test" identifierQuoting="true">
-    <table name="foo" description="This is foo table">
-        <column name="foo" primaryKey="true" type="VARCHAR" />
-        <column name="bar" type="VARCHAR" size="255" required="true" />
-    </table>
+    <entity name="foo" description="This is foo entity">
+        <field name="foo" primaryKey="true" type="VARCHAR" />
+        <field name="bar" type="VARCHAR" size="255" required="true" />
+    </entity>
 </database>
 EOF;
 
         return array(array($schema));
     }
 
-    public function providerForTestGetAddTableDDLCompositePK()
+    public function providerForTestGetAddEntityDDLCompositePK()
     {
         $schema = <<<EOF
 <database name="test" identifierQuoting="true">
-    <table name="foo">
-        <column name="foo" primaryKey="true" type="INTEGER" />
-        <column name="bar" primaryKey="true" type="INTEGER" />
-        <column name="baz" type="VARCHAR" size="255" required="true" />
-    </table>
+    <entity name="foo">
+        <field name="foo" primaryKey="true" type="INTEGER" />
+        <field name="bar" primaryKey="true" type="INTEGER" />
+        <field name="baz" type="VARCHAR" size="255" required="true" />
+    </entity>
 </database>
 EOF;
 
         return array(array($schema));
     }
 
-    public function providerForTestGetAddTableDDLUniqueIndex()
+    public function providerForTestGetAddEntityDDLUniqueIndex()
     {
         $schema = <<<EOF
 <database name="test" identifierQuoting="true">
-    <table name="foo">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
+    <entity name="foo">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <field name="bar" type="INTEGER" />
         <unique>
-            <unique-column name="bar" />
+            <unique-field name="bar" />
         </unique>
-    </table>
+    </entity>
 </database>
 EOF;
 
         return array(array($schema));
     }
 
-    public function providerForTestGetAddTableDDLSchema()
+    public function providerForTestGetAddEntityDDLSchema()
     {
         $schema = <<<EOF
 <database name="test" identifierQuoting="true">
-    <table name="foo" schema="Woopah">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
-    </table>
+    <entity name="foo" schema="Woopah">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <field name="bar" type="INTEGER" />
+    </entity>
 </database>
 EOF;
 
@@ -186,18 +183,18 @@ EOF;
 
     public function providerForTestGetUniqueDDL()
     {
-        $table = new Table('foo');
-        $table->setIdentifierQuoting(true);
-        $column1 = new Column('bar1');
-        $column1->getDomain()->copy(new Domain('FOOTYPE'));
-        $table->addColumn($column1);
-        $column2 = new Column('bar2');
-        $column2->getDomain()->copy(new Domain('BARTYPE'));
-        $table->addColumn($column2);
+        $entity = new Entity('foo');
+        $entity->setIdentifierQuoting(true);
+        $field1 = new Field('bar1');
+        $field1->getDomain()->copy(new Domain('FOOTYPE'));
+        $entity->addField($field1);
+        $field2 = new Field('bar2');
+        $field2->getDomain()->copy(new Domain('BARTYPE'));
+        $entity->addField($field2);
         $index = new Unique('babar');
-        $index->addColumn($column1);
-        $index->addColumn($column2);
-        $table->addUnique($index);
+        $index->addField($field1);
+        $index->addField($field2);
+        $entity->addUnique($index);
 
         return array(
             array($index)
@@ -206,41 +203,41 @@ EOF;
 
     public function providerForTestGetIndicesDDL()
     {
-        $table = new Table('foo');
-        $table->setIdentifierQuoting(true);
-        $column1 = new Column('bar1');
-        $column1->getDomain()->copy(new Domain('FOOTYPE'));
-        $table->addColumn($column1);
-        $column2 = new Column('bar2');
-        $column2->getDomain()->copy(new Domain('BARTYPE'));
-        $table->addColumn($column2);
+        $entity = new Entity('foo');
+        $entity->setIdentifierQuoting(true);
+        $field1 = new Field('bar1');
+        $field1->getDomain()->copy(new Domain('FOOTYPE'));
+        $entity->addField($field1);
+        $field2 = new Field('bar2');
+        $field2->getDomain()->copy(new Domain('BARTYPE'));
+        $entity->addField($field2);
         $index1 = new Index('babar');
-        $index1->addColumn($column1);
-        $index1->addColumn($column2);
-        $table->addIndex($index1);
+        $index1->addField($field1);
+        $index1->addField($field2);
+        $entity->addIndex($index1);
         $index2 = new Index('foo_index');
-        $index2->addColumn($column1);
-        $table->addIndex($index2);
+        $index2->addField($field1);
+        $entity->addIndex($index2);
 
         return array(
-            array($table)
+            array($entity)
         );
     }
 
     public function providerForTestGetIndexDDL()
     {
-        $table = new Table('foo');
-        $table->setIdentifierQuoting(true);
-        $column1 = new Column('bar1');
-        $column1->getDomain()->copy(new Domain('FOOTYPE'));
-        $table->addColumn($column1);
-        $column2 = new Column('bar2');
-        $column2->getDomain()->copy(new Domain('BARTYPE'));
-        $table->addColumn($column2);
+        $entity = new Entity('foo');
+        $entity->setIdentifierQuoting(true);
+        $field1 = new Field('bar1');
+        $field1->getDomain()->copy(new Domain('FOOTYPE'));
+        $entity->addField($field1);
+        $field2 = new Field('bar2');
+        $field2->getDomain()->copy(new Domain('BARTYPE'));
+        $entity->addField($field2);
         $index = new Index('babar');
-        $index->addColumn($column1);
-        $index->addColumn($column2);
-        $table->addIndex($index);
+        $index->addField($field1);
+        $index->addField($field2);
+        $entity->addIndex($index);
 
         return array(
             array($index)
@@ -249,48 +246,48 @@ EOF;
 
     public function providerForTestPrimaryKeyDDL()
     {
-        $table = new Table('foo');
-        $table->setIdentifierQuoting(true);
-        $column = new Column('bar');
-        $column->setPrimaryKey(true);
-        $table->addColumn($column);
+        $entity = new Entity('foo');
+        $entity->setIdentifierQuoting(true);
+        $field = new Field('bar');
+        $field->setPrimaryKey(true);
+        $entity->addField($field);
 
         return array(
-            array($table)
+            array($entity)
         );
     }
 
-    public function providerForTestGetForeignKeyDDL()
+    public function providerForTestGetRelationDDL()
     {
         $db = new Database();
         $db->setIdentifierQuoting(true);
-        $table1 = new Table('foo');
-        $db->addTable($table1);
-        $column1 = new Column('bar_id');
-        $column1->getDomain()->copy(new Domain('FOOTYPE'));
-        $table1->addColumn($column1);
+        $entity1 = new Entity('foo');
+        $db->addEntity($entity1);
+        $field1 = new Field('bar_id');
+        $field1->getDomain()->copy(new Domain('FOOTYPE'));
+        $entity1->addField($field1);
 
-        $table2 = new Table('bar');
-        $db->addTable($table2);
-        $column2 = new Column('id');
-        $column2->getDomain()->copy(new Domain('BARTYPE'));
+        $entity2 = new Entity('bar');
+        $db->addEntity($entity2);
+        $field2 = new Field('id');
+        $field2->getDomain()->copy(new Domain('BARTYPE'));
 
-        $table2->addColumn($column2);
+        $entity2->addField($field2);
 
-        $fk = new ForeignKey('foo_bar_fk');
-        $fk->setForeignTableCommonName('bar');
-        $fk->addReference($column1, $column2);
+        $fk = new Relation('foo_bar_fk');
+        $fk->setForeignEntityCommonName('bar');
+        $fk->addReference($field1, $field2);
         $fk->setOnDelete('CASCADE');
-        $table1->addForeignKey($fk);
+        $entity1->addRelation($fk);
 
         return array(
             array($fk)
         );
     }
 
-    public function providerForTestGetForeignKeySkipSqlDDL()
+    public function providerForTestGetRelationSkipSqlDDL()
     {
-        $arr = self::providerForTestGetForeignKeyDDL();
+        $arr = self::providerForTestGetRelationDDL();
         $fk = $arr[0][0];
         $fk->setSkipSql(true);
 
@@ -299,46 +296,46 @@ EOF;
         );
     }
 
-    public function providerForTestGetForeignKeysDDL()
+    public function providerForTestGetRelationsDDL()
     {
         $db = new Database();
         $db->setIdentifierQuoting(true);
-        $table1 = new Table('foo');
-        $db->addTable($table1);
+        $entity1 = new Entity('foo');
+        $db->addEntity($entity1);
 
-        $column1 = new Column('bar_id');
-        $column1->getDomain()->copy(new Domain('FOOTYPE'));
-        $table1->addColumn($column1);
+        $field1 = new Field('bar_id');
+        $field1->getDomain()->copy(new Domain('FOOTYPE'));
+        $entity1->addField($field1);
 
-        $table2 = new Table('bar');
-        $db->addTable($table2);
-        $column2 = new Column('id');
-        $column2->getDomain()->copy(new Domain('BARTYPE'));
-        $table2->addColumn($column2);
+        $entity2 = new Entity('bar');
+        $db->addEntity($entity2);
+        $field2 = new Field('id');
+        $field2->getDomain()->copy(new Domain('BARTYPE'));
+        $entity2->addField($field2);
 
-        $fk = new ForeignKey('foo_bar_fk');
-        $fk->setForeignTableCommonName('bar');
-        $fk->addReference($column1, $column2);
+        $fk = new Relation('foo_bar_fk');
+        $fk->setForeignEntityCommonName('bar');
+        $fk->addReference($field1, $field2);
         $fk->setOnDelete('CASCADE');
-        $table1->addForeignKey($fk);
+        $entity1->addRelation($fk);
 
-        $column3 = new Column('baz_id');
-        $column3->getDomain()->copy(new Domain('BAZTYPE'));
-        $table1->addColumn($column3);
-        $table3 = new Table('baz');
-        $db->addTable($table3);
-        $column4 = new Column('id');
-        $column4->getDomain()->copy(new Domain('BAZTYPE'));
-        $table3->addColumn($column4);
+        $field3 = new Field('baz_id');
+        $field3->getDomain()->copy(new Domain('BAZTYPE'));
+        $entity1->addField($field3);
+        $entity3 = new Entity('baz');
+        $db->addEntity($entity3);
+        $field4 = new Field('id');
+        $field4->getDomain()->copy(new Domain('BAZTYPE'));
+        $entity3->addField($field4);
 
-        $fk = new ForeignKey('foo_baz_fk');
-        $fk->setForeignTableCommonName('baz');
-        $fk->addReference($column3, $column4);
+        $fk = new Relation('foo_baz_fk');
+        $fk->setForeignEntityCommonName('baz');
+        $fk->addReference($field3, $field4);
         $fk->setOnDelete('SETNULL');
-        $table1->addForeignKey($fk);
+        $entity1->addRelation($fk);
 
         return array(
-            array($table1)
+            array($entity1)
         );
     }
 

@@ -29,8 +29,8 @@ class InModelCriterion extends AbstractModelCriterion
         $values = ($this->value instanceof \Traversable) ? iterator_to_array($this->value) : (array) $this->value;
         foreach ($values as $value) {
             $params[] = array(
-                'table'  => $this->realtable,
-                'column' => $this->column,
+                'entity'  => $this->realEntity,
+                'field' => $this->field,
                 'value'  => $value
             );
             $index++; // increment this first to correct for wanting bind params to start with :p1

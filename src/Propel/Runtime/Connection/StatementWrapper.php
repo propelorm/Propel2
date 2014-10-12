@@ -159,19 +159,19 @@ class StatementWrapper implements StatementInterface, \IteratorAggregate
     }
 
     /**
-     * Returns the number of columns in the result set.
+     * Returns the number of fields in the result set.
      *
-     * Use columnCount() to return the number of columns in the result set
+     * Use columnCount() to return the number of fields in the result set
      * represented by the Statement object.
      *
-     * If the Statement object was returned from PDO::query(), the column count
+     * If the Statement object was returned from PDO::query(), the field count
      * is immediately available.
      *
      * If the Statement object was returned from PDO::prepare(), an accurate
-     * column count will not be available until you invoke Statement::execute().
-     * Returns the number of columns in the result set
+     * field count will not be available until you invoke Statement::execute().
+     * Returns the number of fields in the result set
      *
-     * @return integer Returns the number of columns in the result set represented
+     * @return integer Returns the number of fields in the result set represented
      *                 by the PDOStatement object. If there is no result set,
      *                 this method should return 0.
      */
@@ -248,13 +248,13 @@ class StatementWrapper implements StatementInterface, \IteratorAggregate
     }
 
     /**
-     * Returns a single column from the next row of a result set.
+     * Returns a single field from the next row of a result set.
      *
-     * @param integer $columnIndex 0-indexed number of the column you wish to retrieve from the row. If no
+     * @param integer $columnIndex 0-indexed number of the field you wish to retrieve from the row. If no
      *                             value is supplied, PDOStatement->fetchColumn()
-     *                             fetches the first column.
+     *                             fetches the first field.
      *
-     * @return string A single column in the next row of a result set.
+     * @return string A single field in the next row of a result set.
      */
     public function fetchColumn($columnIndex = 0)
     {
@@ -270,7 +270,7 @@ class StatementWrapper implements StatementInterface, \IteratorAggregate
      * If the last SQL statement executed by the associated Statement object was a SELECT statement,
      * some databases may return the number of rows returned by that statement. However,
      * this behaviour is not guaranteed for all databases and should not be
-     * relied on for portable applications.
+     * relied on for porentity applications.
      *
      * @return integer The number of rows.
      */

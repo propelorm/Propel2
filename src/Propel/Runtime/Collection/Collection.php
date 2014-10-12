@@ -20,7 +20,7 @@ use Propel\Runtime\Exception\BadMethodCallException;
 use Propel\Runtime\Exception\UnexpectedValueException;
 use Propel\Runtime\Formatter\AbstractFormatter;
 use Propel\Runtime\Parser\AbstractParser;
-use Propel\Runtime\Map\TableMap;
+use Propel\Runtime\Map\EntityMap;
 
 /**
  * Class for iterating over a list of Propel elements
@@ -31,10 +31,10 @@ use Propel\Runtime\Map\TableMap;
  * @method Collection fromJSON(string $data) Populate the collection from a JSON string
  * @method Collection fromCSV(string $data) Populate the collection from a CSV string
  *
- * @method string toXML(boolean $usePrefix = true, boolean $includeLazyLoadColumns = true) Export the collection to an XML string
- * @method string toYAML(boolean $usePrefix = true, boolean $includeLazyLoadColumns = true) Export the collection to a YAML string
- * @method string toJSON(boolean $usePrefix = true, boolean $includeLazyLoadColumns = true) Export the collection to a JSON string
- * @method string toCSV(boolean $usePrefix = true, boolean $includeLazyLoadColumns = true) Export the collection to a CSV string
+ * @method string toXML(boolean $usePrefix = true, boolean $includeLazyLoadFields = true) Export the collection to an XML string
+ * @method string toYAML(boolean $usePrefix = true, boolean $includeLazyLoadFields = true) Export the collection to a YAML string
+ * @method string toJSON(boolean $usePrefix = true, boolean $includeLazyLoadFields = true) Export the collection to a JSON string
+ * @method string toCSV(boolean $usePrefix = true, boolean $includeLazyLoadFields = true) Export the collection to a CSV string
  *
  * @author Francois Zaninotto
  */
@@ -438,7 +438,7 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
         return $this->fullyQualifiedModel;
     }
 
-    public function getTableMapClass()
+    public function getEntityMapClass()
     {
         $model = $this->getModel();
 
@@ -472,7 +472,7 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
      */
     public function getWriteConnection()
     {
-        $databaseName = constant($this->getTableMapClass() . '::DATABASE_NAME');
+        $databaseName = constant($this->getEntityMapClass() . '::DATABASE_NAME');
 
         return Propel::getServiceContainer()->getWriteConnection($databaseName);
     }
@@ -496,7 +496,7 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
             $parser = AbstractParser::getParser($parser);
         }
 
-        return $this->fromArray($parser->listToArray($data, $this->getPluralModelName()), TableMap::TYPE_PHPNAME);
+        return $this->fromArray($parser->listToArray($data, $this->getPluralModelName()), EntityMap::TYPE_PHPNAME);
     }
 
     /**
@@ -514,18 +514,18 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
      *                                         model class name ('Article_0', 'Article_1', etc). Defaults to TRUE.
      *                                         Not supported by ArrayCollection, as ArrayFormatter has
      *                                         already created the array used here with integers as keys.
-     * @param  boolean $includeLazyLoadColumns (optional) Whether to include lazy load(ed) columns. Defaults to TRUE.
+     * @param  boolean $includeLazyLoadFields (optional) Whether to include lazy load(ed) fields. Defaults to TRUE.
      *                                         Not supported by ArrayCollection, as ArrayFormatter has
-     *                                         already included lazy-load columns in the array used here.
+     *                                         already included lazy-load fields in the array used here.
      * @return string  The exported data
      */
-    public function exportTo($parser, $usePrefix = true, $includeLazyLoadColumns = true)
+    public function exportTo($parser, $usePrefix = true, $includeLazyLoadFields = true)
     {
         if (!$parser instanceof AbstractParser) {
             $parser = AbstractParser::getParser($parser);
         }
 
-        $array = $this->toArray(null, $usePrefix, TableMap::TYPE_PHPNAME, $includeLazyLoadColumns);
+        $array = $this->toArray(null, $usePrefix, EntityMap::TYPE_PHPNAME, $includeLazyLoadFields);
 
         return $parser->listFromArray($array, $this->getPluralModelName());
     }
@@ -551,9 +551,9 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
         if (0 === strpos($name, 'to')) {
             $format = substr($name, 2);
             $usePrefix = isset($params[0]) ? $params[0] : false;
-            $includeLazyLoadColumns = isset($params[1]) ? $params[1] : true;
+            $includeLazyLoadFields = isset($params[1]) ? $params[1] : true;
 
-            return $this->exportTo($format, $usePrefix, $includeLazyLoadColumns);
+            return $this->exportTo($format, $usePrefix, $includeLazyLoadFields);
         }
         if (!$this->lastIterator) {
             $this->getIterator();
@@ -567,13 +567,13 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
     /**
      * Returns a string representation of the current collection.
      * Based on the string representation of the underlying objects, defined in
-     * the TableMap::DEFAULT_STRING_FORMAT constant
+     * the EntityMap::DEFAULT_STRING_FORMAT constant
      *
      * @return string
      */
     public function __toString()
     {
-        return (string) $this->exportTo(constant($this->getTableMapClass() . '::DEFAULT_STRING_FORMAT'), false);
+        return (string) $this->exportTo(constant($this->getEntityMapClass() . '::DEFAULT_STRING_FORMAT'), false);
     }
 
     /**

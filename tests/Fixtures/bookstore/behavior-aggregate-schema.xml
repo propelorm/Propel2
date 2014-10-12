@@ -1,46 +1,40 @@
 <?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
 <database name="bookstore-behavior" defaultIdMethod="native" package="behavior.aggregate" namespace="Propel\Tests\Bookstore\Behavior">
 
-    <table name="aggregate_post" phpName="AggregatePost">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <behavior name="aggregate_column">
-            <parameter name="name" value="nb_comments" />
+    <entity name="AggregatePost">
+        <field name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+        <behavior name="aggregate_field">
+            <parameter name="field" value="commentsCount" />
             <parameter name="expression" value="COUNT(id)" />
-            <parameter name="foreign_table" value="aggregate_comment" />
+            <parameter name="foreign_entity" value="AggregateComment" />
         </behavior>
-    </table>
+    </entity>
 
-    <table name="aggregate_comment" phpName="AggregateComment">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="post_id" type="INTEGER" />
-        <foreign-key foreignTable="aggregate_post" onDelete="setnull" onUpdate="cascade">
-            <reference local="post_id" foreign="id" />
-        </foreign-key>
-    </table>
+    <entity name="AggregateComment">
+        <field name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+        <relation target="AggregatePost" onDelete="setnull" onUpdate="cascade" />
+    </entity>
 
-    <table name="aggregate_poll" phpName="AggregatePoll">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+    <entity name="AggregatePoll">
+        <field name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
 
-        <behavior id="aggregate_total_score" name="aggregate_column">
-            <parameter name="name" value="total_score" />
+        <behavior id="aggregate_total_score" name="aggregate_field">
+            <parameter name="name" value="totalScore" />
             <parameter name="expression" value="SUM(score)" />
-            <parameter name="foreign_table" value="aggregate_item" />
+            <parameter name="foreign_entity" value="AggregateItem" />
         </behavior>
 
-        <behavior id="aggregate_nb_votes" name="aggregate_column">
-            <parameter name="name" value="nb_votes" />
+        <behavior id="aggregate_nb_votes" name="aggregate_field">
+            <parameter name="name" value="votesCount" />
             <parameter name="expression" value="COUNT(score)" />
-            <parameter name="foreign_table" value="aggregate_item" />
+            <parameter name="foreign_entity" value="AggregateItem" />
         </behavior>
-    </table>
+    </entity>
 
-    <table name="aggregate_item" phpName="AggregateItem">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="score" defaultValue="0" type="INTEGER" />
-        <column name="poll_id" type="INTEGER" />
-        <foreign-key foreignTable="aggregate_poll" onDelete="setnull" onUpdate="cascade">
-            <reference local="poll_id" foreign="id" />
-        </foreign-key>
-    </table>
+    <entity name="AggregateItem">
+        <field name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+        <field name="score" defaultValue="0" type="INTEGER" />
+        <relation target="AggregatePoll" onDelete="setnull" onUpdate="cascade" />
+    </entity>
 
 </database>

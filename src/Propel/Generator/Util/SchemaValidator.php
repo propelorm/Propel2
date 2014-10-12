@@ -63,10 +63,10 @@ class SchemaValidator
 
                 $list = &$namespaces[$table->getNamespace()];
             }
-            if (in_array($table->getPhpName(), $list)) {
+            if (in_array($table->getName(), $list)) {
                 $this->errors[] = sprintf('Table "%s" declares a phpName already used in another table', $table->getName());
             }
-            $list[] = $table->getPhpName();
+            $list[] = $table->getName();
             $this->validateTableAttributes($table);
             $this->validateTableColumns($table);
         }
@@ -88,10 +88,10 @@ class SchemaValidator
         }
         $phpNames = array();
         foreach ($table->getColumns() as $column) {
-            if (in_array($column->getPhpName(), $phpNames)) {
+            if (in_array($column->getName(), $phpNames)) {
                 $this->errors[] = sprintf('Column "%s" declares a phpName already used in table "%s"', $column->getName(), $table->getName());
             }
-            $phpNames[]= $column->getPhpName();
+            $phpNames[]= $column->getName();
         }
     }
 

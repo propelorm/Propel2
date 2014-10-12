@@ -15,7 +15,7 @@ use Propel\Runtime\Adapter\Pdo\PgsqlAdapter;
 
 /**
  * Specialized ModelCriterion used for LIKE expressions
- * e.g. table.column LIKE ? or table.column NOT LIKE ?
+ * e.g. entity.field LIKE ? or entity.field NOT LIKE ?
  */
 class LikeModelCriterion extends BasicModelCriterion
 {
@@ -47,7 +47,7 @@ class LikeModelCriterion extends BasicModelCriterion
 
     /**
      * Appends a Prepared Statement representation of the ModelCriterion onto the buffer
-     * Handles case insensitivity for VARCHAR columns
+     * Handles case insensitivity for VARCHAR fields
      *
      * @param string &$sb    The string that will receive the Prepared Statement
      * @param array  $params A list to which Prepared Statement parameters will be appended
@@ -55,7 +55,7 @@ class LikeModelCriterion extends BasicModelCriterion
     protected function appendPsForUniqueClauseTo(&$sb, array &$params)
     {
         // LIKE is case insensitive in mySQL and SQLite, but not in PostGres
-        // If the column is case insensitive, use ILIKE / NOT ILIKE instead of LIKE / NOT LIKE
+        // If the field is case insensitive, use ILIKE / NOT ILIKE instead of LIKE / NOT LIKE
         if ($this->ignoreStringCase) {
             if ($this->getAdapter() instanceof PgsqlAdapter) {
                 $this->clause = preg_replace('/LIKE \?$/i', 'ILIKE ?', $this->clause);

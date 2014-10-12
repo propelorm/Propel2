@@ -15,7 +15,7 @@ use Propel\Runtime\ActiveQuery\Criteria;
 
 /**
  * Specialized Criterion used for traditional expressions,
- * e.g. table.column = ? or table.column >= ? etc.
+ * e.g. entity.field = ? or entity.field >= ? etc.
  */
 class BasicCriterion extends AbstractCriterion
 {
@@ -26,13 +26,13 @@ class BasicCriterion extends AbstractCriterion
      * Create a new instance.
      *
      * @param Criteria $outer      The outer class (this is an "inner" class).
-     * @param string   $column     ignored
+     * @param string   $field     ignored
      * @param string   $value      The condition to be added to the query string
      * @param string   $comparison One of Criteria::LIKE and Criteria::NOT_LIKE
      */
-    public function __construct(Criteria $outer, $column, $value, $comparison = Criteria::EQUAL)
+    public function __construct(Criteria $outer, $field, $value, $comparison = Criteria::EQUAL)
     {
-        return parent::__construct($outer, $column, $value, $comparison);
+        return parent::__construct($outer, $field, $value, $comparison);
     }
 
     /**
@@ -66,9 +66,9 @@ class BasicCriterion extends AbstractCriterion
      */
     protected function appendPsForUniqueClauseTo(&$sb, array &$params)
     {
-        $field = (null === $this->table) ? $this->column : $this->table . '.' . $this->column;
+        $field = (null === $this->entityName) ? $this->field : $this->entityName . '.' . $this->field;
         // NULL VALUES need special treatment because the SQL syntax is different
-        // i.e. table.column IS NULL rather than table.column = null
+        // i.e. entity.field IS NULL rather than entity.field = null
         if ($this->value !== null) {
 
             // ANSI SQL functions get inserted right into SQL (not escaped, etc.)
@@ -76,7 +76,7 @@ class BasicCriterion extends AbstractCriterion
                 $sb .= $field . $this->comparison . $this->value;
             } else {
 
-                $params[] = array('table' => $this->realtable, 'column' => $this->column, 'value' => $this->value);
+                $params[] = array('entity' => $this->realEntity, 'field' => $this->field, 'value' => $this->value);
 
                 // default case, it is a normal col = value expression; value
                 // will be replaced w/ '?' and will be inserted later using PDO bindValue()

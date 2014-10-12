@@ -62,9 +62,6 @@ class SqlBuildCommand extends AbstractCommand
                     case 'schema-name';
                         $configOptions['propel']['generator']['schema']['basename'] = $option;
                         break;
-                    case 'table-prefix':
-                        $configOptions['propel']['generator']['tablePrefix'] = $option;
-                        break;
                     case 'mysql-engine';
                         $configOptions['propel']['database']['adapters']['mysql']['tableType'] = $option;
                         break;

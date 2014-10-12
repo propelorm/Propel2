@@ -21,7 +21,7 @@ PHP class or method name.
               to lowercase.
 -->
 
-<!ELEMENT database (external-schema*, table+, behavior*)>
+<!ELEMENT database (external-schema*, entity+, behavior*)>
 <!ATTLIST database
   name CDATA #IMPLIED
   defaultIdMethod (native|none) "none"
@@ -47,10 +47,10 @@ PHP class or method name.
      note: the interface="true", requires that useManagers=true in the
      properties file.
 -->
-<!ELEMENT table (column+,(foreign-key|index|unique|id-method-parameter|behavior|vendor)*)>
-<!ATTLIST table
+<!ELEMENT entity (field+,(relation|index|unique|id-method-parameter|behavior|vendor)*)>
+<!ATTLIST entity
   name CDATA #REQUIRED
-  phpName CDATA #IMPLIED
+  tableName CDATA #IMPLIED
   idMethod (native|autoincrement|sequence|none|null) "null"
   skipSql (true|false) "false"
   readOnly (true|false) "false"
@@ -63,7 +63,7 @@ PHP class or method name.
   baseClass CDATA #IMPLIED
   alias CDATA #IMPLIED
   interface CDATA #IMPLIED
-  phpNamingMethod (nochange|underscore|phpname) #IMPLIED
+  tableNamingMethod (nochange|underscore|phpname) #IMPLIED
   heavyIndexing (true|false) #IMPLIED
   identifierQuoting (true|false) #IMPLIED
   description CDATA #IMPLIED
@@ -76,11 +76,9 @@ PHP class or method name.
   value CDATA #REQUIRED
 >
 
-<!ELEMENT column ((inheritance|vendor)*)>
-<!ATTLIST column
+<!ELEMENT field ((inheritance|vendor)*)>
+<!ATTLIST field
   name CDATA #REQUIRED
-  phpName CDATA #IMPLIED
-  tableMapName CDATA #IMPLIED
   primaryKey (true|false) "false"
   required (true|false) "false"
   type
@@ -116,13 +114,13 @@ PHP class or method name.
   extends CDATA #IMPLIED
 >
 
-<!ELEMENT foreign-key (reference+, vendor*)>
-<!ATTLIST foreign-key
-  foreignTable CDATA #REQUIRED
-  foreignSchema CDATA #IMPLIED
+<!ELEMENT relation (reference*, vendor*)>
+<!ATTLIST relation
+  target CDATA #REQUIRED
+  field CDATA #IMPLIED
   name CDATA #IMPLIED
-  phpName CDATA #IMPLIED
-  refPhpName CDATA #IMPLIED
+  refFieldName CDATA #IMPLIED
+  refName CDATA #IMPLIED
   onUpdate (CASCADE|cascade|SETNULL|setnull|RESTRICT|restrict|NONE|none) "none"
   onDelete (CASCADE|cascade|SETNULL|setnull|RESTRICT|restrict|NONE|none) "none"
   skipSql (true|false) "false"
@@ -134,7 +132,7 @@ PHP class or method name.
   foreign CDATA #REQUIRED
 >
 
-<!ELEMENT index (index-column+,vendor*)>
+<!ELEMENT index (index-field+,vendor*)>
 <!ATTLIST index
   name CDATA #IMPLIED
 >
@@ -144,19 +142,19 @@ PHP class or method name.
   name CDATA #IMPLIED
 >
 
-<!ELEMENT index-column (vendor*)>
-<!ATTLIST index-column
+<!ELEMENT index-field (vendor*)>
+<!ATTLIST index-field
   name CDATA #REQUIRED
   size CDATA #IMPLIED
 >
 
-<!ELEMENT unique (unique-column+)>
+<!ELEMENT unique (unique-field+)>
 <!ATTLIST unique
   name CDATA #IMPLIED
 >
 
-<!ELEMENT unique-column (vendor*)>
-<!ATTLIST unique-column
+<!ELEMENT unique-field (vendor*)>
+<!ATTLIST unique-field
   name CDATA #REQUIRED
 >
 

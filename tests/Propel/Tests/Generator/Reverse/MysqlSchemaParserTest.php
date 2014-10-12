@@ -12,7 +12,7 @@ namespace Propel\Tests\Generator\Reverse;
 
 use Propel\Generator\Config\QuickGeneratorConfig;
 use Propel\Generator\Model\Database;
-use Propel\Generator\Platform\DefaultPlatform;
+use Propel\Generator\Platform\SqlDefaultPlatform;
 use Propel\Generator\Reverse\MysqlSchemaParser;
 
 use Propel\Runtime\Propel;
@@ -36,7 +36,7 @@ class MysqlSchemaParserTest extends TestCaseFixturesDatabase
         $parser->setGeneratorConfig(new QuickGeneratorConfig());
 
         $database = new Database();
-        $database->setPlatform(new DefaultPlatform());
+        $database->setPlatform(new SqlDefaultPlatform());
 
         $this->assertEquals(1, $parser->parse($database), 'One table and one view defined should return one as we exclude views');
 

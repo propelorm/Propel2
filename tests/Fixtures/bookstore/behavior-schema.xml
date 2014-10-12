@@ -5,10 +5,10 @@
         <parameter name="foo" value="bar" />
     </behavior>
 
-    <table name="table3">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="title" type="VARCHAR" size="100" primaryString="true" />
+    <entity name="Entity3">
+        <field name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+        <field name="title" type="VARCHAR" size="100" primaryString="true" />
         <behavior name="Propel\Tests\Helpers\Bookstore\Behavior\Testallhooksbehavior" />
-    </table>
+    </entity>
 
 </database>

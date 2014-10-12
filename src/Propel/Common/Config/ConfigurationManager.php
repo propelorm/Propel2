@@ -80,8 +80,8 @@ class ConfigurationManager
      * is expressed by:
      * <code>'database.adapter.mysql.tableType</code>
      *
-     * @param $name The name of property, expressed as a dot separated level hierarchy
-     * @throws Propel\Common\Config\Exception\InvalidArgumentException
+     * @param string $name The name of property, expressed as a dot separated level hierarchy
+     * @throws \Propel\Common\Config\Exception\InvalidArgumentException
      * @return mixed The configuration property
      */
     public function getConfigProperty($name)
@@ -164,16 +164,16 @@ class ConfigurationManager
             $finder->in($dirs)->depth(0)->files()->name($fileName . '.{php,inc,ini,properties,yaml,yml,xml,json}');
             $files = iterator_to_array($finder);
 
-            $distfinder = new Finder();
-            $distfinder->in($dirs)->depth(0)->files()->name($fileName . '.{php,inc,ini,properties,yaml,yml,xml,json}.dist');
-            $distfiles = iterator_to_array($distfinder);
+            $distFinder = new Finder();
+            $distFinder->in($dirs)->depth(0)->files()->name($fileName . '.{php,inc,ini,properties,yaml,yml,xml,json}.dist');
+            $distFiles = iterator_to_array($distFinder);
 
             $numFiles = count($files);
-            $numDistFiles = count($distfiles);
+            $numDistFiles = count($distFiles);
 
             //allow to load only .dist file
             if (0 === $numFiles && 1 === $numDistFiles) {
-                $files = $distfiles;
+                $files = $distFiles;
                 $numFiles = 1;
             }
 
@@ -212,7 +212,7 @@ class ConfigurationManager
     protected function process($extraConf = null)
     {
         if (null === $extraConf && count($this->config) <= 0) {
-            return null;
+            return;
         }
 
         $processor = new Processor();

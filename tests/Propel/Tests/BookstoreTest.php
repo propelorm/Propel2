@@ -157,7 +157,9 @@ class BookstoreTest extends BookstoreEmptyTestBase
         // Perform a "complex" search
         // --------------------------
 
-        $results = BookQuery::create()->filterByTitle('Harry%', Criteria::LIKE)->find();
+        $results = BookQuery::create();
+        $results->filterByTitle('Harry%', Criteria::LIKE);
+        $results = $results->find();
         $this->assertEquals(1, count($results));
 
         $results = BookQuery::create()->filterByISBN(array("0380977427", "0140422161"), Criteria::IN)->find();

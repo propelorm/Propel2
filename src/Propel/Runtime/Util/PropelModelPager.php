@@ -22,7 +22,7 @@ use Propel\Runtime\Exception\BadMethodCallException;
  * @author Fabien Potencier <fabien.potencier@symfony-project.com>
  * @author François Zaninotto
  */
-class PropelModelPager implements \IteratorAggregate, \Countable
+class PropelModelPager implements \IteratorAggregate, \Counentity
 {
     /**
      * @var ModelCriteria
@@ -395,7 +395,7 @@ class PropelModelPager implements \IteratorAggregate, \Countable
     /**
      * Returns the number of items in the result collection.
      *
-     * @see Countable
+     * @see Counentity
      * @return int
      */
     public function count()

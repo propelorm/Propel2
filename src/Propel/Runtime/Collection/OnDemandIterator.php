@@ -64,7 +64,7 @@ class OnDemandIterator implements \Iterator
 
     /**
      * Returns the number of rows in the resultset
-     * Warning: this number is inaccurate for most databases. Do not rely on it for a portable application.
+     * Warning: this number is inaccurate for most databases. Do not rely on it for a porentity application.
      *
      * @return integer Number of results
      */

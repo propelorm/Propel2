@@ -5,93 +5,91 @@
   schema="bookstore_schemas"
   namespace="Propel\Tests\BookstoreSchemas">
 
-    <table name="book" description="Book Table">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" description="Book Id" />
-        <column name="title" type="VARCHAR" required="true" description="Book Title" primaryString="true" />
-        <column name="isbn" required="true" type="VARCHAR" size="24" phpName="ISBN" description="ISBN Number" />
-        <column name="price" required="false" type="FLOAT" description="Price of the book." />
-    </table>
+    <entity name="Book" description="Book Table">
+        <field name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" description="Book Id" />
+        <field name="title" type="VARCHAR" required="true" description="Book Title" primaryString="true" />
+        <field name="isbn" required="true" type="VARCHAR" size="24" phpName="ISBN" description="ISBN Number" />
+        <field name="price" required="false" type="FLOAT" description="Price of the book." />
+    </entity>
 
-    <!--  Test some custom php column types. -->
-    <table name="bookstore">
-        <column name="id" type="INTEGER" primaryKey="true" autoIncrement="true" description="Book store ID number" />
-        <column name="store_name" type="VARCHAR" size="50" required="true" />
-        <column name="location" type="VARCHAR" size="100" />
-        <column name="population_served" type="BIGINT" />
-        <column name="total_books" type="INTEGER" />
-        <column name="store_open_time" type="TIME" />
-        <column name="website" type="VARCHAR" size="255"/>
-        <behavior name="aggregate_column">
-            <parameter name="name" value="total_contest_entries" />
-            <parameter name="expression" value="COUNT(customer_id)" />
-            <parameter name="foreign_table" value="bookstore_contest_entry" />
-            <parameter name="foreign_schema" value="contest" />
+    <!--  Test some custom php field types. -->
+    <entity name="Bookstore">
+        <field name="id" type="INTEGER" primaryKey="true" autoIncrement="true" description="Book store ID number" />
+        <field name="storeName" type="VARCHAR" size="50" required="true" />
+        <field name="location" type="VARCHAR" size="100" />
+        <field name="populationServed" type="BIGINT" />
+        <field name="totalBooks" type="INTEGER" />
+        <field name="storeOpenTime" type="TIME" />
+        <field name="website" type="VARCHAR" size="255"/>
+        <behavior name="aggregate_field">
+            <parameter name="name" value="totalContestEntries" />
+            <parameter name="expression" value="COUNT(customerId)" />
+            <parameter name="foreign_entity" value="BookstoreContestEntry" />
         </behavior>
-    </table>
+    </entity>
 
-    <table name="customer" allowPkInsert="true">
-        <column name="id" type="INTEGER" primaryKey="true" autoIncrement="true" />
-        <column name="first_contest" type="INTEGER"/>
-        <column name="second_contest" type="INTEGER"/>
-        <column name="name" type="VARCHAR" size="255" />
-        <column name="join_date" type="DATE" />
-        <foreign-key foreignTable="bookstore_contest" foreignSchema="contest">
-            <reference local="first_contest" foreign="id"/>
-        </foreign-key>
-        <foreign-key foreignTable="bookstore_contest" foreignSchema="contest">
-            <reference local="second_contest" foreign="id"/>
-        </foreign-key>
-    </table>
+    <entity name="Customer" allowPkInsert="true">
+        <field name="id" type="INTEGER" primaryKey="true" autoIncrement="true" />
+        <field name="firstContest" type="INTEGER"/>
+        <field name="secondContest" type="INTEGER"/>
+        <field name="name" type="VARCHAR" size="255" />
+        <field name="joinDate" type="DATE" />
+        <relation target="BookstoreContest" foreignSchema="contest">
+            <reference local="firstContest" foreign="id"/>
+        </relation>
+        <relation target="BookstoreContest" foreignSchema="contest">
+            <reference local="secondContest" foreign="id"/>
+        </relation>
+    </entity>
 
     <!-- Test one-to-one (1:1) relationship -->
-    <table name="customer_account" reloadOnInsert="true" reloadOnUpdate="true" description="A table that represents a bookstore customer's account.">
-        <column name="customer_id" type="INTEGER" primaryKey="true" description="Primary key for the account ..." />
-        <column name="enabled" type="BOOLEAN" default="true" />
-        <column name="not_enabled" type="BOOLEAN" default="false" />
-        <column name="created" type="TIMESTAMP" defaultExpr="CURRENT_TIMESTAMP" />
-        <foreign-key foreignTable="customer" onDelete="cascade">
-            <reference local="customer_id" foreign="id" />
-        </foreign-key>
-    </table>
+    <entity name="CustomerAccount" reloadOnInsert="true" reloadOnUpdate="true" description="A entity that represents a bookstore customer's account.">
+        <field name="customerId" type="INTEGER" primaryKey="true" description="Primary key for the account ..." />
+        <field name="enabled" type="BOOLEAN" default="true" />
+        <field name="notEnabled" type="BOOLEAN" default="false" />
+        <field name="created" type="TIMESTAMP" defaultExpr="CURRENT_TIMESTAMP" />
+        <relation target="Customer" onDelete="cascade">
+            <reference local="customerId" foreign="id" />
+        </relation>
+    </entity>
 
-    <!-- Test Views (read-only tables) -->
-    <table name="contest_view" readOnly="true" schema="contest">
-        <column name="id" type="INTEGER" primaryKey="true" autoIncrement="true" />
-        <column name="name" type="VARCHAR" size="100" />
-    </table>
+    <!-- Test Views (read-only entitys) -->
+    <entity name="ContestView" readOnly="true" schema="contest">
+        <field name="id" type="INTEGER" primaryKey="true" autoIncrement="true" />
+        <field name="name" type="VARCHAR" size="100" />
+    </entity>
 
-    <table name="bookstore_contest" schema="contest">
-        <column name="id" type="INTEGER" primaryKey="true" autoIncrement="true" />
-        <column name="bookstore_id" type="INTEGER" />
-        <column name="prize_book_id" type="INTEGER" />
-        <foreign-key foreignTable="bookstore" foreignSchema="bookstore_schemas" onDelete="cascade">
-            <reference local="bookstore_id" foreign="id" />
-        </foreign-key>
-    </table>
+    <entity name="BookstoreContest" schema="contest">
+        <field name="id" type="INTEGER" primaryKey="true" autoIncrement="true" />
+        <field name="bookstoreId" type="INTEGER" />
+        <field name="prizeBookId" type="INTEGER" />
+        <relation target="Bookstore" onDelete="cascade">
+            <reference local="bookstoreId" foreign="id" />
+        </relation>
+    </entity>
 
-    <table name="second_hand_book" schema="second_hand_books">
-        <column name="age" type="INTEGER" />
+    <entity name="SecondHandBook" schema="second_hand_books">
+        <field name="age" type="INTEGER" />
         <behavior name="concrete_inheritance">
-            <parameter name="extends" value="book" />
-            <parameter name="schema" value="bookstore_schemas" />
+            <parameter name="extends" value="Book" />
         </behavior>
-    </table>
+    </entity>
 
-    <table name="bookstore_contest_entry" schema="contest" reloadOnInsert="true">
-        <column name="bookstore_id" type="INTEGER" primaryKey="true" />
-        <column name="contest_id" type="INTEGER" primaryKey="true" />
-        <column name="customer_id" type="INTEGER" primaryKey="true" />
-        <column name="entry_date" type="TIMESTAMP" defaultExpr="CURRENT_TIMESTAMP" />
-        <foreign-key foreignTable="bookstore" foreignSchema="bookstore_schemas" onDelete="cascade">
-            <reference local="bookstore_id" foreign="id" />
-        </foreign-key>
-        <foreign-key foreignTable="customer" foreignSchema="bookstore_schemas" onDelete="cascade">
-            <reference local="customer_id" foreign="id" />
-        </foreign-key>
-        <foreign-key foreignTable="bookstore_contest" onDelete="cascade">
-            <reference local="bookstore_id" foreign="bookstore_id" />
-            <reference local="contest_id" foreign="id" />
-        </foreign-key>
-    </table>
+    <entity name="BookstoreContestEntry" schema="contest" reloadOnInsert="true">
+        <field name="bookstoreId" type="INTEGER" primaryKey="true" />
+        <field name="contestId" type="INTEGER" primaryKey="true" />
+        <field name="customerId" type="INTEGER" primaryKey="true" />
+        <field name="entryDate" type="TIMESTAMP" defaultExpr="CURRENT_TIMESTAMP" />
+        <relation target="Bookstore" onDelete="cascade">
+            <reference local="bookstoreId" foreign="id" />
+        </relation>
+        <relation target="Customer" onDelete="cascade">
+            <reference local="customerId" foreign="id" />
+        </relation>
+        <relation target="BookstoreContest" onDelete="cascade">
+            <reference local="bookstoreId" foreign="bookstoreId" />
+            <reference local="contestId" foreign="id" />
+        </relation>
+    </entity>
 
 </database>

@@ -11,6 +11,8 @@
 namespace Propel\Generator\Command;
 
 use Propel\Common\Config\ConfigurationManager;
+use Propel\Generator\Manager\ModelManager;
+use Propel\Generator\Model\Entity;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -30,6 +32,7 @@ class ConfigConvertCommand extends AbstractCommand
             ->addOption('input-dir',   null, InputOption::VALUE_REQUIRED,  'The input directory',   self::DEFAULT_INPUT_DIRECTORY)
             ->addOption('output-dir',  null, InputOption::VALUE_REQUIRED,  'The output directory')
             ->addOption('output-file', null, InputOption::VALUE_REQUIRED,  'The output file',       self::DEFAULT_OUTPUT_FILE)
+            ->addOption('recursive', null, InputOption::VALUE_NONE, 'Search recursive for *schema.xml inside the input directory')
             ->setName('config:convert')
             ->setAliases(array('convert-conf'))
             ->setDescription('Transform the configuration to PHP code leveraging the ServiceContainer')
@@ -60,9 +63,30 @@ class ConfigConvertCommand extends AbstractCommand
         $options['log'] = $configManager->getSection('runtime')['log'];
         $options['profiler'] = $configManager->getConfigProperty('runtime.profiler');
 
+        $schemas = $this->getSchemas($input->getOption('input-dir'));
+        if ($schemas) {
+            $manager = new ModelManager();
+            $manager->setFilesystem($this->getFilesystem());
+            $generatorConfig = $this->getGeneratorConfig([], $input);
+            $manager->setGeneratorConfig($generatorConfig);
+            $manager->setSchemas($schemas, $input->getOption('recursive'));
+            $manager->setWorkingDirectory($input->getOption('output-dir'));
+
+            $databaseToEntities = [];
+            foreach ($manager->getDatabases() as $database){
+                $entities = array_map(function(Entity $entity) {
+                    return $entity->getFullClassName();
+                }, $database->getEntities());
+
+                $databaseToEntities[$database->getName()] = $entities;
+            }
+            $options['databaseToEntities'] = $databaseToEntities;
+        } else {
+            $options['databaseToEntities'] = [];
+        }
+
         $phpConf = ArrayToPhpConverter::convert($options);
-        $phpConf = "<?php
-" . $phpConf;
+        $phpConf = "<?php\n" . $phpConf;
 
         if (file_exists($outputFilePath)) {
             $currentContent = file_get_contents($outputFilePath);

@@ -49,6 +49,7 @@ class ObjectFormatter extends AbstractFormatter
         } else {
             // only many-to-one relationships
             foreach ($dataFetcher as $row) {
+                var_dump($row);
                 $collection[] = $this->getAllObjectsFromRow($row);
             }
         }
@@ -95,7 +96,7 @@ class ObjectFormatter extends AbstractFormatter
      * The first object to hydrate is the model of the Criteria
      * The following objects (the ones added by way of ModelCriteria::with()) are linked to the first one
      *
-     * @param array $row associative array indexed by column number,
+     * @param array $row associative array indexed by field number,
      *                   as returned by DataFetcher::fetch()
      *
      * @return ActiveRecordInterface
@@ -103,48 +104,57 @@ class ObjectFormatter extends AbstractFormatter
     public function getAllObjectsFromRow($row)
     {
         // main object
-        list($obj, $col) = $this->getTableMap()->populateobject($row, 0, $this->getDataFetcher()->getIndexType());
+        $columnIndex = 0;
+        $obj = $this->getEntityMap()->populateObject($row, $columnIndex, $this->getDataFetcher()->getIndexType());
 
         // related objects added using with()
         foreach ($this->getWith() as $modelWith) {
-            list($endObject, $col) = $modelWith->getTableMap()->populateobject($row, $col, $this->getDataFetcher()->getIndexType());
+            if (!$modelWith->getEntityMap()->isValidRow($row, $columnIndex)) {
+                //left joins can be NULL
+                continue;
+            }
 
-            if (null !== $modelWith->getLeftPhpName() && !isset($hydrationChain[$modelWith->getLeftPhpName()])) {
+            $joinedObject = $modelWith->getEntityMap()->populateObject($row, $columnIndex, $this->getDataFetcher()->getIndexType());
+
+            if (null !== $modelWith->getLeftName() && !isset($hydrationChain[$modelWith->getLeftName()])) {
                 continue;
             }
 
             if ($modelWith->isPrimary()) {
                 $startObject = $obj;
             } elseif (isset($hydrationChain)) {
-                $startObject = $hydrationChain[$modelWith->getLeftPhpName()];
+                $startObject = $hydrationChain[$modelWith->getLeftName()];
             } else {
                 continue;
             }
-            // as we may be in a left join, the endObject may be empty
-            // in which case it should not be related to the previous object
-            if (null === $endObject || $endObject->isPrimaryKeyNull()) {
-                if ($modelWith->isAdd()) {
-                    call_user_func(array($startObject, $modelWith->getInitMethod()), false);
-                }
-                continue;
-            }
+//            // as we may be in a left join, the endObject may be empty
+//            // in which case it should not be related to the previous object
+//            if (null === $joinedObject || $joinedObject->isPrimaryKeyNull()) {
+//                if ($modelWith->isAdd()) {
+//                    call_user_func(array($startObject, $modelWith->getInitMethod()), false);
+//                }
+//                continue;
+//            }
             if (isset($hydrationChain)) {
-                $hydrationChain[$modelWith->getRightPhpName()] = $endObject;
+                $hydrationChain[$modelWith->getRightName()] = $joinedObject;
             } else {
-                $hydrationChain = array($modelWith->getRightPhpName() => $endObject);
+                $hydrationChain = array($modelWith->getRightName() => $joinedObject);
             }
 
-            call_user_func(array($startObject, $modelWith->getRelationMethod()), $endObject);
+            $writer = $this->getEntityMap()->getPropWriter();
+            $writer($obj, $modelWith->getRelationName(), $joinedObject);
 
-            if ($modelWith->isAdd()) {
-                call_user_func(array($startObject, $modelWith->getResetPartialMethod()), false);
-            }
+//            call_user_func(array($startObject, $modelWith->getRelationMethod()), $joinedObject);
+
+//            if ($modelWith->isAdd()) {
+//                call_user_func(array($startObject, $modelWith->getResetPartialMethod()), false);
+//            }
         }
 
-        // columns added using withColumn()
-        foreach ($this->getAsColumns() as $alias => $clause) {
-            $obj->setVirtualColumn($alias, $row[$col]);
-            $col++;
+        // fields added using withField()
+        foreach ($this->getAsFields() as $alias => $clause) {
+            $obj->setVirtualField($alias, $row[$columnIndex]);
+            $columnIndex++;
         }
 
         return $obj;

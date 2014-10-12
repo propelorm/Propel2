@@ -31,14 +31,14 @@ class RawCriterion extends AbstractCriterion
      * Create a new instance.
      *
      * @param Criteria $outer  The outer class (this is an "inner" class).
-     * @param string   $column ignored
+     * @param string   $field ignored
      * @param string   $value  The condition to be added to the query string
      * @param int      $type   A PDO type constant, e.g. PDO::PARAM_STR
      */
-    public function __construct(Criteria $outer, $column, $value, $type = PDO::PARAM_STR)
+    public function __construct(Criteria $outer, $field, $value, $type = PDO::PARAM_STR)
     {
         $this->value = $value;
-        $this->column = $column;
+        $this->field = $field;
         $this->type = $type;
         $this->init($outer);
     }
@@ -51,11 +51,11 @@ class RawCriterion extends AbstractCriterion
      */
     protected function appendPsForUniqueClauseTo(&$sb, array &$params)
     {
-        if (1 !== substr_count($this->column, '?')) {
-            throw new InvalidClauseException(sprintf('Could not build SQL for expression "%s" because Criteria::RAW works only with a clause containing a single question mark placeholder', $this->column));
+        if (1 !== substr_count($this->field, '?')) {
+            throw new InvalidClauseException(sprintf('Could not build SQL for expression "%s" because Criteria::RAW works only with a clause containing a single question mark placeholder', $this->field));
         }
-        $params[] = array('table' => null, 'type' => $this->type, 'value' => $this->value);
-        $sb .= str_replace('?', ':p' . count($params), $this->column);
+        $params[] = array('entity' => null, 'type' => $this->type, 'value' => $this->value);
+        $sb .= str_replace('?', ':p' . count($params), $this->field);
     }
 
 }

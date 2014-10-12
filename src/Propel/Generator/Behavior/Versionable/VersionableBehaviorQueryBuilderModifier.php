@@ -53,7 +53,7 @@ static \$isVersioningEnabled = true;
 
     protected function getColumnPhpName($name = 'version_column')
     {
-        return $this->behavior->getColumnForParameter($name)->getPhpName();
+        return $this->behavior->getColumnForParameter($name)->getName();
     }
 
     protected function getVersionQueryClassName()

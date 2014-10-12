@@ -11,15 +11,23 @@
 namespace Propel\Generator\Builder;
 
 use Propel\Common\Pluralizer\PluralizerInterface;
+use Propel\Generator\Builder\Om\AbstractBuilder;
+use Propel\Generator\Builder\Om\ActiveRecordTraitBuilder;
+use Propel\Generator\Builder\Om\MultiExtendBuilder;
 use Propel\Generator\Builder\Om\MultiExtendObjectBuilder;
 use Propel\Generator\Builder\Om\ObjectBuilder;
+use Propel\Generator\Builder\Om\ProxyBuilder;
 use Propel\Generator\Builder\Om\QueryBuilder;
 use Propel\Generator\Builder\Om\QueryInheritanceBuilder;
-use Propel\Generator\Builder\Om\TableMapBuilder;
+use Propel\Generator\Builder\Om\RepositoryBuilder;
+use Propel\Generator\Builder\Om\EntityMapBuilder;
+use Propel\Generator\Builder\Om\StubQueryBuilder;
+use Propel\Generator\Builder\Om\StubQueryInheritanceBuilder;
+use Propel\Generator\Builder\Om\StubRepositoryBuilder;
 use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\Inheritance;
-use Propel\Generator\Model\Table;
+use Propel\Generator\Model\Entity;
 use Propel\Generator\Platform\PlatformInterface;
 
 /**
@@ -39,10 +47,11 @@ abstract class DataModelBuilder
 {
 
     /**
-     * The current table.
-     * @var Table
+     * The current entity.
+     *
+     * @var Entity
      */
-    private $table;
+    private $entity;
 
     /**
      * The generator config object holding build properties, etc.
@@ -53,75 +62,94 @@ abstract class DataModelBuilder
 
     /**
      * An array of warning messages that can be retrieved for display.
+     *
      * @var array string[]
      */
     private $warnings = array();
 
     /**
-     * Object builder class for current table.
+     * Object builder class for current entity.
+     *
      * @var DataModelBuilder
      */
     private $objectBuilder;
 
     /**
-     * Stub Object builder class for current table.
+     * Proxy builder class for current entity.
+     *
      * @var DataModelBuilder
      */
-    private $stubObjectBuilder;
+    private $proxyBuilder;
 
     /**
-     * Query builder class for current table.
+     * Stub Object builder class for current entity.
+     *
+     * @var DataModelBuilder
+     */
+    private $activeRecordTraitBuilder;
+
+    /**
+     * Query builder class for current entity.
+     *
      * @var DataModelBuilder
      */
     private $queryBuilder;
 
     /**
-     * Stub Query builder class for current table.
+     * Stub Query builder class for current entity.
+     *
      * @var DataModelBuilder
      */
     private $stubQueryBuilder;
 
     /**
-     * TableMap builder class for current table.
+     * EntityMap builder class for current entity.
+     *
      * @var DataModelBuilder
      */
-    protected $tablemapBuilder;
+    protected $entitymapBuilder;
 
     /**
-     * Stub Interface builder class for current table.
+     * Stub Interface builder class for current entity.
+     *
      * @var DataModelBuilder
      */
     private $interfaceBuilder;
 
     /**
-     * Stub child object for current table.
+     * Stub child object for current entity.
+     *
      * @var DataModelBuilder
      */
     private $multiExtendObjectBuilder;
 
     /**
      * The Pluralizer class to use.
+     *
      * @var PluralizerInterface
      */
     private $pluralizer;
 
     /**
      * The platform class
+     *
      * @var PlatformInterface
      */
     protected $platform;
 
     /**
      * Creates new instance of DataModelBuilder subclass.
-     * @param Table $table The Table which we are using to build [OM, DDL, etc.].
+     *
+     * @param Entity $entity The Entity which we are using to build [OM, DDL, etc.].
      */
-    public function __construct(Table $table)
+    public function __construct(Entity $entity)
     {
-        $this->table = $table;
+        $this->entity = $entity;
     }
 
     /**
      * Returns new or existing Pluralizer class.
+     *
      * @return PluralizerInterface
      */
     public function getPluralizer()
@@ -133,108 +161,184 @@ abstract class DataModelBuilder
         return $this->pluralizer;
     }
 
+    protected function validateModel()
+    {
+        // Validation is currently only implemented in the subclasses.
+    }
+
     /**
-     * Returns new or existing Object builder class for this table.
+     * Returns new or existing Object builder class for this entity.
+     *
      * @return ObjectBuilder
      */
     public function getObjectBuilder()
     {
         if (!isset($this->objectBuilder)) {
-            $this->objectBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'object');
+            $this->objectBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getEntity(), 'object');
         }
 
         return $this->objectBuilder;
     }
 
     /**
-     * Returns new or existing stub Object builder class for this table.
-     * @return ObjectBuilder
+     * Returns new or existing Proxy builder class for this entity.
+     *
+     * @return ProxyBuilder
      */
-    public function getStubObjectBuilder()
+    public function getProxyBuilder()
     {
-        if (!isset($this->stubObjectBuilder)) {
-            $this->stubObjectBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'objectstub');
+        if (!isset($this->proxyBuilder)) {
+            $this->proxyBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getEntity(), 'proxy');
         }
 
-        return $this->stubObjectBuilder;
+        return $this->proxyBuilder;
     }
 
     /**
-     * Returns new or existing Query builder class for this table.
-     * @return ObjectBuilder
+     * Returns new or existing stub Object builder class for this entity.
+     *
+     * @return ActiveRecordTraitBuilder
+     */
+    public function getActiveRecordTraitBuilder()
+    {
+        if (!isset($this->activeRecordTraitBuilder)) {
+            $this->activeRecordTraitBuilder = $this->getGeneratorConfig()->getConfiguredBuilder(
+                $this->getEntity(),
+                'activerecordtrait'
+            );
+        }
+
+        return $this->activeRecordTraitBuilder;
+    }
+
+    /**
+     * Returns new or existing Object builder class for this entity.
+     *
+     * @return RepositoryBuilder
+     */
+    public function getRepositoryBuilder()
+    {
+        if (!isset($this->objectRepository)) {
+            $this->objectRepository = $this->getGeneratorConfig()->getConfiguredBuilder(
+                $this->getEntity(),
+                'repository'
+            );
+        }
+
+        return $this->objectRepository;
+    }
+
+    /**
+     * Returns new or existing stub Repository builder class for this entity.
+     *
+     * @return StubRepositoryBuilder
+     */
+    public function getStubRepositoryBuilder()
+    {
+        if (!isset($this->stubRepositoryBuilder)) {
+            $this->stubRepositoryBuilder = $this->getGeneratorConfig()->getConfiguredBuilder(
+                $this->getEntity(),
+                'repositorystub'
+            );
+        }
+
+        return $this->stubRepositoryBuilder;
+    }
+
+    /**
+     * Returns new or existing Query builder class for this entity.
+     *
+     * @return QueryBuilder
      */
     public function getQueryBuilder()
     {
         if (!isset($this->queryBuilder)) {
-            $this->queryBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'query');
+            $this->queryBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getEntity(), 'query');
         }
 
         return $this->queryBuilder;
     }
 
     /**
-     * Returns new or existing stub Query builder class for this table.
-     * @return ObjectBuilder
+     * Returns new or existing stub Query builder class for this entity.
+     *
+     * @return StubQueryBuilder
      */
     public function getStubQueryBuilder()
     {
         if (!isset($this->stubQueryBuilder)) {
-            $this->stubQueryBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'querystub');
+            $this->stubQueryBuilder = $this->getGeneratorConfig()->getConfiguredBuilder(
+                $this->getEntity(),
+                'querystub'
+            );
         }
 
         return $this->stubQueryBuilder;
     }
 
     /**
-     * Returns new or existing Object builder class for this table.
-     * @return TableMapBuilder
+     * Returns new or existing Object builder class for this entity.
+     *
+     * @return EntityMapBuilder
      */
-    public function getTableMapBuilder()
+    public function getEntityMapBuilder()
     {
-        if (!isset($this->tablemapBuilder)) {
-            $this->tablemapBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'tablemap');
+        if (!isset($this->entitymapBuilder)) {
+            $this->entitymapBuilder = $this->getGeneratorConfig()->getConfiguredBuilder(
+                $this->getEntity(),
+                'entitymap'
+            );
         }
 
-        return $this->tablemapBuilder;
+        return $this->entitymapBuilder;
     }
 
     /**
-     * Returns new or existing stub Interface builder class for this table.
-     * @return ObjectBuilder
+     * Returns new or existing stub Interface builder class for this entity.
+     *
+     * @return AbstractBuilder
      */
     public function getInterfaceBuilder()
     {
         if (!isset($this->interfaceBuilder)) {
-            $this->interfaceBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'interface');
+            $this->interfaceBuilder = $this->getGeneratorConfig()->getConfiguredBuilder(
+                $this->getEntity(),
+                'interface'
+            );
         }
 
         return $this->interfaceBuilder;
     }
 
     /**
-     * Returns new or existing stub child object builder class for this table.
+     * Returns new or existing stub child object builder class for this entity.
+     *
      * @return MultiExtendObjectBuilder
      */
     public function getMultiExtendObjectBuilder()
     {
         if (!isset($this->multiExtendObjectBuilder)) {
-            $this->multiExtendObjectBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'objectmultiextend');
+            $this->multiExtendObjectBuilder = $this->getGeneratorConfig()->getConfiguredBuilder(
+                $this->getEntity(),
+                'objectmultiextend'
+            );
         }
 
         return $this->multiExtendObjectBuilder;
     }
 
     /**
-     * Gets a new data model builder class for specified table and classname.
+     * Gets a new data model builder class for specified entity and classname.
      *
-     * @param  Table            $table
-     * @param  string           $classname The class of builder
+     * @param  Entity $entity
+     * @param  string $classname The class of builder
+     *
      * @return DataModelBuilder
      */
-    public function getNewBuilder(Table $table, $classname)
+    public function getNewBuilder(Entity $entity, $classname)
     {
         /** @var DataModelBuilder $builder */
-        $builder = new $classname($table);
+        $builder = new $classname($entity);
         $builder->setGeneratorConfig($this);
 
         return $builder;
@@ -243,96 +347,139 @@ abstract class DataModelBuilder
     /**
      * Convenience method to return a NEW Object class builder instance.
      *
-     * This is used very frequently from the tableMap and object builders to get
-     * an object builder for a RELATED table.
+     * This is used very frequently from the entityMap and object builders to get
+     * an object builder for a RELATED entity.
      *
-     * @param  Table         $table
+     * @param  Entity $entity
+     *
      * @return ObjectBuilder
      */
-    public function getNewObjectBuilder(Table $table)
+    public function getNewObjectBuilder(Entity $entity)
     {
-        return $this->getGeneratorConfig()->getConfiguredBuilder($table, 'object');
+        return $this->getGeneratorConfig()->getConfiguredBuilder($entity, 'object');
     }
 
     /**
      * Convenience method to return a NEW Object stub class builder instance.
      *
      * This is used from the query builders to get
-     * an object builder for a RELATED table.
+     * an object builder for a RELATED entity.
      *
-     * @param  Table         $table
-     * @return ObjectBuilder
+     * @param  Entity $entity
+     *
+     * @return ActiveRecordTraitBuilder
      */
-    public function getNewStubObjectBuilder(Table $table)
+    public function getNewActiveRecordTraitObjectBuilder(Entity $entity)
     {
-        return $this->getGeneratorConfig()->getConfiguredBuilder($table, 'objectstub');
+        return $this->getGeneratorConfig()->getConfiguredBuilder($entity, 'activerecordtrait');
+    }
+
+    /**
+     * Convenience method to return a NEW repository class builder instance.
+     *
+     * This is used very frequently from the entityMap and object builders to get
+     * an object builder for a RELATED entity.
+     *
+     * @param  Entity $entity
+     *
+     * @return RepositoryBuilder
+     */
+    public function getNewRepositoryBuilder(Entity $entity)
+    {
+        return $this->getGeneratorConfig()->getConfiguredBuilder($entity, 'repository');
+    }
+
+    /**
+     * Convenience method to return a NEW repository stub class builder instance.
+     *
+     * This is used from the query builders to get
+     * an object builder for a RELATED entity.
+     *
+     * @param  Entity $entity
+     *
+     * @return StubRepositoryBuilder
+     */
+    public function getNewStubRepositoryBuilder(Entity $entity)
+    {
+        return $this->getGeneratorConfig()->getConfiguredBuilder($entity, 'repositorystub');
     }
 
     /**
      * Convenience method to return a NEW query class builder instance.
      *
      * This is used from the query builders to get
-     * a query builder for a RELATED table.
+     * a query builder for a RELATED entity.
      *
-     * @param  Table        $table
+     * @param  Entity $entity
+     *
      * @return QueryBuilder
      */
-    public function getNewQueryBuilder(Table $table)
+    public function getNewQueryBuilder(Entity $entity)
     {
-        return $this->getGeneratorConfig()->getConfiguredBuilder($table, 'query');
+        return $this->getGeneratorConfig()->getConfiguredBuilder($entity, 'query');
     }
 
     /**
      * Convenience method to return a NEW query stub class builder instance.
      *
      * This is used from the query builders to get
-     * a query builder for a RELATED table.
+     * a query builder for a RELATED entity.
      *
-     * @param  Table        $table
+     * @param  Entity $entity
+     *
      * @return QueryBuilder
      */
-    public function getNewStubQueryBuilder(Table $table)
+    public function getNewStubQueryBuilder(Entity $entity)
     {
-        return $this->getGeneratorConfig()->getConfiguredBuilder($table, 'querystub');
+        return $this->getGeneratorConfig()->getConfiguredBuilder($entity, 'querystub');
     }
 
     /**
-     * Returns new Query Inheritance builder class for this table.
+     * Returns new Query Inheritance builder class for this entity.
      *
-     * @param  Inheritance   $child
+     * @param  Inheritance $child
+     *
      * @return ObjectBuilder
      */
     public function getNewQueryInheritanceBuilder(Inheritance $child)
     {
         /** @var QueryInheritanceBuilder $queryInheritanceBuilder */
-        $queryInheritanceBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'queryinheritance');
+        $queryInheritanceBuilder = $this->getGeneratorConfig()->getConfiguredBuilder(
+            $this->getEntity(),
+            'queryinheritance'
+        );
         $queryInheritanceBuilder->setChild($child);
 
         return $queryInheritanceBuilder;
     }
 
     /**
-     * Returns new stub Query Inheritance builder class for this table.
+     * Returns new stub Query Inheritance builder class for this entity.
      *
-     * @param  Inheritance   $child
-     * @return ObjectBuilder
+     * @param  Inheritance $child
+     *
+     * @return StubQueryInheritanceBuilder
      */
     public function getNewStubQueryInheritanceBuilder(Inheritance $child)
     {
         /** @var QueryInheritanceBuilder $stubQueryInheritanceBuilder */
-        $stubQueryInheritanceBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'queryinheritancestub');
+        $stubQueryInheritanceBuilder = $this->getGeneratorConfig()->getConfiguredBuilder(
+            $this->getEntity(),
+            'queryinheritancestub'
+        );
         $stubQueryInheritanceBuilder->setChild($child);
 
         return $stubQueryInheritanceBuilder;
     }
 
     /**
-     * Returns new stub Query Inheritance builder class for this table.
-     * @return TableMapBuilder
+     * Returns new stub Query Inheritance builder class for this entity.
+     *
+     * @return EntityMapBuilder
      */
-    public function getNewTableMapBuilder(Table $table)
+    public function getNewEntityMapBuilder(Entity $entity)
     {
-        return $this->getGeneratorConfig()->getConfiguredBuilder($table, 'tablemap');
+        return $this->getGeneratorConfig()->getConfiguredBuilder($entity, 'entitymap');
     }
 
     /**
@@ -350,11 +497,12 @@ abstract class DataModelBuilder
      *
      * The name of the requested property must be given as a string, representing its hierarchy in the configuration
      * array, with each level separated by a dot. I.e.:
-     * <code> $config['database']['adapter']['mysql']['tableType']</code>
+     * <code> $config['database']['adapter']['mysql']['entityType']</code>
      * is expressed by:
-     * <code>'database.adapter.mysql.tableType</code>
+     * <code>'database.adapter.mysql.entityType</code>
      *
      * @param  string $name
+     *
      * @return string
      */
     public function getBuildProperty($name)
@@ -377,38 +525,41 @@ abstract class DataModelBuilder
     }
 
     /**
-     * Sets the table for this builder.
-     * @param Table $table
+     * Sets the entity for this builder.
+     *
+     * @param Entity $entity
      */
-    public function setTable(Table $table)
+    public function setEntity(Entity $entity)
     {
-        $this->table = $table;
+        $this->entity = $entity;
     }
 
     /**
-     * Returns the current Table object.
-     * @return Table
+     * Returns the current Entity object.
+     *
+     * @return Entity
      */
-    public function getTable()
+    public function getEntity()
     {
-        return $this->table;
+        return $this->entity;
     }
 
     /**
-     * Convenience method to returns the Platform class for this table (database).
+     * Convenience method to returns the Platform class for this entity (database).
+     *
      * @return PlatformInterface
      */
     public function getPlatform()
     {
         if (null === $this->platform) {
-            // try to load the platform from the table
-            $table = $this->getTable();
-            if ($table && $database = $table->getDatabase()) {
+            // try to load the platform from the entity
+            $entity = $this->getEntity();
+            if ($entity && $database = $entity->getDatabase()) {
                 $this->setPlatform($database->getPlatform());
             }
         }
 
-        if (!$this->table->isIdentifierQuotingEnabled()) {
+        if (!$this->entity->isIdentifierQuotingEnabled()) {
             $this->platform->setIdentifierQuoting(false);
         }
 
@@ -426,14 +577,15 @@ abstract class DataModelBuilder
     }
 
     /**
-     * Quotes identifier based on $this->getTable()->isIdentifierQuotingEnabled.
+     * Quotes identifier based on $this->getEntity()->isIdentifierQuotingEnabled.
      *
      * @param string $text
+     *
      * @return string
      */
     public function quoteIdentifier($text)
     {
-        if ($this->getTable()->isIdentifierQuotingEnabled()) {
+        if ($this->getEntity()->isIdentifierQuotingEnabled()) {
             return $this->getPlatform()->doQuoting($text);
         }
 
@@ -441,18 +593,20 @@ abstract class DataModelBuilder
     }
 
     /**
-     * Convenience method to returns the database for current table.
+     * Convenience method to returns the database for current entity.
+     *
      * @return Database
      */
     public function getDatabase()
     {
-        if ($this->getTable()) {
-            return $this->getTable()->getDatabase();
+        if ($this->getEntity()) {
+            return $this->getEntity()->getDatabase();
         }
     }
 
     /**
      * Pushes a message onto the stack of warnings.
+     *
      * @param string $msg The warning message.
      */
     protected function warn($msg)
@@ -462,6 +616,7 @@ abstract class DataModelBuilder
 
     /**
      * Gets array of warning messages.
+     *
      * @return string[]
      */
     public function getWarnings()
@@ -471,6 +626,7 @@ abstract class DataModelBuilder
 
     /**
      * Returns the name of the current class being built, with a possible prefix.
+     *
      * @return string
      * @see OMBuilder#getClassName()
      */

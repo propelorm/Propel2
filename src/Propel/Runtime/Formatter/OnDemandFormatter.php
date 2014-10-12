@@ -26,13 +26,13 @@ use Propel\Runtime\DataFetcher\DataFetcherInterface;
  */
 class OnDemandFormatter extends ObjectFormatter
 {
-    protected $isSingleTableInheritance = false;
+    protected $isSingleEntityInheritance = false;
 
     public function init(BaseModelCriteria $criteria = null, DataFetcherInterface $dataFetcher = null)
     {
         parent::init($criteria, $dataFetcher);
 
-        $this->isSingleTableInheritance = $criteria->getTableMap()->isSingleTableInheritance();
+        $this->isSingleEntityInheritance = $criteria->getEntityMap()->isSingleEntityInheritance();
 
         return $this;
     }
@@ -89,15 +89,15 @@ class OnDemandFormatter extends ObjectFormatter
         $col = 0;
 
         // main object
-        $class = $this->isSingleTableInheritance ? call_user_func(array($this->tableMap, 'getOMClass'), $row, $col, false) : $this->class;
+        $class = $this->isSingleEntityInheritance ? call_user_func(array($this->entityMap, 'getOMClass'), $row, $col, false) : $this->class;
         $obj = $this->getSingleObjectFromRow($row, $class, $col);
         // related objects using 'with'
         foreach ($this->getWith() as $modelWith) {
-            if ($modelWith->isSingleTableInheritance()) {
-                $class = call_user_func(array($modelWith->getTableMap(), 'getOMClass'), $row, $col, false);
+            if ($modelWith->isSingleEntityInheritance()) {
+                $class = call_user_func(array($modelWith->getEntityMap(), 'getOMClass'), $row, $col, false);
                 $refl = new \ReflectionClass($class);
                 if ($refl->isAbstract()) {
-                    $col += constant('Map\\' . $class . 'TableMap::NUM_COLUMNS');
+                    $col += constant('Map\\' . $class . 'EntityMap::NUM_COLUMNS');
                     continue;
                 }
             } else {
@@ -107,7 +107,7 @@ class OnDemandFormatter extends ObjectFormatter
             if ($modelWith->isPrimary()) {
                 $startObject = $obj;
             } elseif (isset($hydrationChain)) {
-                $startObject = $hydrationChain[$modelWith->getLeftPhpName()];
+                $startObject = $hydrationChain[$modelWith->getLeftName()];
             } else {
                 continue;
             }
@@ -120,14 +120,14 @@ class OnDemandFormatter extends ObjectFormatter
                 continue;
             }
             if (isset($hydrationChain)) {
-                $hydrationChain[$modelWith->getRightPhpName()] = $endObject;
+                $hydrationChain[$modelWith->getRightName()] = $endObject;
             } else {
-                $hydrationChain = array($modelWith->getRightPhpName() => $endObject);
+                $hydrationChain = array($modelWith->getRightName() => $endObject);
             }
             call_user_func(array($startObject, $modelWith->getRelationMethod()), $endObject);
         }
-        foreach ($this->getAsColumns() as $alias => $clause) {
-            $obj->setVirtualColumn($alias, $row[$col]);
+        foreach ($this->getAsFields() as $alias => $clause) {
+            $obj->setVirtualField($alias, $row[$col]);
             $col++;
         }
 

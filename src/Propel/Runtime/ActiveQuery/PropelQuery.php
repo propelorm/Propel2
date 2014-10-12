@@ -34,7 +34,7 @@ class PropelQuery
         /** @var ModelCriteria $query */
         $query = new $queryClass();
         if (null !== $alias) {
-            $query->setModelAlias($alias);
+            $query->setEntityAlias($alias);
         }
 
         return $query;

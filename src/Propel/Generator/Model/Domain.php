@@ -86,9 +86,9 @@ class Domain extends MappingModel
         // Default value
         $defval = $this->getAttribute('defaultValue', $this->getAttribute('default'));
         if (null !== $defval) {
-            $this->setDefaultValue(new ColumnDefaultValue($defval, ColumnDefaultValue::TYPE_VALUE));
+            $this->setDefaultValue(new FieldDefaultValue($defval, FieldDefaultValue::TYPE_VALUE));
         } elseif (null !== $this->getAttribute('defaultExpr')) {
-            $this->setDefaultValue(new ColumnDefaultValue($this->getAttribute('defaultExpr'), ColumnDefaultValue::TYPE_EXPR));
+            $this->setDefaultValue(new FieldDefaultValue($this->getAttribute('defaultExpr'), FieldDefaultValue::TYPE_EXPR));
         }
 
         $this->size = $this->getAttribute('size');
@@ -255,7 +255,7 @@ class Domain extends MappingModel
     /**
      * Returns the default value object.
      *
-     * @return ColumnDefaultValue
+     * @return FieldDefaultValue
      */
     public function getDefaultValue()
     {
@@ -291,9 +291,9 @@ class Domain extends MappingModel
     /**
      * Sets the default value.
      *
-     * @param ColumnDefaultValue $value
+     * @param FieldDefaultValue $value
      */
-    public function setDefaultValue(ColumnDefaultValue $value)
+    public function setDefaultValue(FieldDefaultValue $value)
     {
         $this->defaultValue = $value;
     }
@@ -301,9 +301,9 @@ class Domain extends MappingModel
     /**
      * Replaces the default value if the new value is not null.
      *
-     * @param ColumnDefaultValue $value
+     * @param FieldDefaultValue $value
      */
-    public function replaceDefaultValue(ColumnDefaultValue $value = null)
+    public function replaceDefaultValue(FieldDefaultValue $value = null)
     {
         if (null !== $value) {
             $this->defaultValue = $value;

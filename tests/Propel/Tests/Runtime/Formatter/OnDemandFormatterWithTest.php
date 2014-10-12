@@ -89,7 +89,7 @@ class OnDemandFormatterWithTest extends BookstoreEmptyTestBase
         AuthorTableMap::clearInstancePool();
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $c->setFormatter(ModelCriteria::FORMAT_ON_DEMAND);
-        $c->setModelAlias('b', true);
+        $c->setEntityAlias('b', true);
         $c->orderBy('b.Title');
         $c->join('b.Author a');
         $c->with('a');

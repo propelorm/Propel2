@@ -16,7 +16,7 @@ use Propel\Runtime\Adapter\SqlAdapterInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\StatementInterface;
 use Propel\Runtime\Exception\InvalidArgumentException;
-use Propel\Runtime\Map\ColumnMap;
+use Propel\Runtime\Map\FieldMap;
 use Propel\Generator\Model\PropelTypes;
 
 /**
@@ -153,7 +153,7 @@ class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
 
         $dataFetcher = $con->query(sprintf('SELECT %s.nextval FROM dual', $name));
 
-        return $dataFetcher->fetchColumn();
+        return $dataFetcher->fetchField();
     }
 
     /**
@@ -166,39 +166,39 @@ class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
     }
 
     /**
-     * Ensures uniqueness of select column names by turning them all into aliases
-     * This is necessary for queries on more than one table when the tables share a column name
+     * Ensures uniqueness of select field names by turning them all into aliases
+     * This is necessary for queries on more than one entity when the entities share a field name
      *
      * @see http://propel.phpdb.org/trac/ticket/795
      *
      * @param  Criteria $criteria
-     * @return Criteria The input, with Select columns replaced by aliases
+     * @return Criteria The input, with Select fields replaced by aliases
      */
-    public function turnSelectColumnsToAliases(Criteria $criteria)
+    public function turnSelectFieldsToAliases(Criteria $criteria)
     {
-        $selectColumns = $criteria->getSelectColumns();
-        // clearSelectColumns also clears the aliases, so get them too
-        $asColumns = $criteria->getAsColumns();
-        $criteria->clearSelectColumns();
-        $columnAliases = $asColumns;
-        // add the select columns back
-        foreach ($selectColumns as $id => $clause) {
+        $selectFields = $criteria->getSelectFields();
+        // clearSelectFields also clears the aliases, so get them too
+        $asFields = $criteria->getAsFields();
+        $criteria->clearSelectFields();
+        $fieldAliases = $asFields;
+        // add the select fields back
+        foreach ($selectFields as $id => $clause) {
             // Generate a unique alias
             $baseAlias = "ORA_COL_ALIAS_".$id;
             $alias = $baseAlias;
             // If it already exists, add a unique suffix
             $i = 0;
-            while (isset($columnAliases[$alias])) {
+            while (isset($fieldAliases[$alias])) {
                 $i++;
                 $alias = $baseAlias . '_' . $i;
             }
             // Add it as an alias
-            $criteria->addAsColumn($alias, $clause);
-            $columnAliases[$alias] = $clause;
+            $criteria->addAsField($alias, $clause);
+            $fieldAliases[$alias] = $clause;
         }
         // Add the aliases back, don't modify them
-        foreach ($asColumns as $name => $clause) {
-            $criteria->addAsColumn($name, $clause);
+        foreach ($asFields as $name => $clause) {
+            $criteria->addAsField($name, $clause);
         }
 
         return $criteria;
@@ -210,12 +210,12 @@ class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
      * @param StatementInterface $stmt
      * @param string             $parameter
      * @param mixed              $value
-     * @param ColumnMap          $cMap
+     * @param FieldMap          $cMap
      * @param null|integer       $position
      *
      * @return boolean
      */
-    public function bindValue(StatementInterface $stmt, $parameter, $value, ColumnMap $cMap, $position = null)
+    public function bindValue(StatementInterface $stmt, $parameter, $value, FieldMap $cMap, $position = null)
     {
         if (PropelTypes::CLOB_EMU === $cMap->getType()) {
             return $stmt->bindParam(':p'.$position, $value, $cMap->getPdoType(), strlen($value));

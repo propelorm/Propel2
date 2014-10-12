@@ -2,7 +2,7 @@
 
 namespace Propel\Runtime\DataFetcher;
 
-use Propel\Runtime\Map\TableMap;
+use Propel\Runtime\Map\EntityMap;
 
 /**
  * Class PDODataFetcher
@@ -108,7 +108,7 @@ class PDODataFetcher extends AbstractDataFetcher
                     $sql = sprintf("SELECT COUNT(*) FROM (%s)", $lastQuery);
                     $stmt = $this->dataObject->getConnection()->prepare($sql);
                     $stmt->execute($this->dataObject->getBoundValues());
-                    $count = $stmt->fetchColumn();
+                    $count = $stmt->fetchField();
                     $this->cachedCount = $count+0;
                 }
 
@@ -124,22 +124,22 @@ class PDODataFetcher extends AbstractDataFetcher
      */
     public function getIndexType()
     {
-        return TableMap::TYPE_NUM;
+        return EntityMap::TYPE_NUM;
     }
 
     /**
-     * Bind a column to a PHP variable.
+     * Bind a field to a PHP variable.
      *
-     * @see http://www.php.net/manual/en/pdostatement.bindcolumn.php
+     * @see http://www.php.net/manual/en/pdostatement.bindfield.php
      *
-     * @param mixed $column
+     * @param mixed $field
      * @param mixed $param
      * @param int   $type
      * @param int   $maxlen
      * @param mixed $driverdata
      */
-    public function bindColumn($column, &$param, $type = null, $maxlen = null, $driverdata = null)
+    public function bindField($field, &$param, $type = null, $maxlen = null, $driverdata = null)
     {
-        $this->dataObject->bindColumn($column, $param, $type, $maxlen, $driverdata);
+        $this->dataObject->bindField($field, $param, $type, $maxlen, $driverdata);
     }
 }

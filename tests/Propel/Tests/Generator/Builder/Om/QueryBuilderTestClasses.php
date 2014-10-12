@@ -24,7 +24,7 @@ class myCustomBookQuery extends BookQuery
         }
         $query = new myCustomBookQuery();
         if (null !== $modelAlias) {
-            $query->setModelAlias($modelAlias);
+            $query->setEntityAlias($modelAlias);
         }
         if ($criteria instanceof Criteria) {
             $query->mergeWith($criteria);
@@ -39,10 +39,10 @@ class mySecondBookQuery extends BookQuery
 {
     public static $preSelectWasCalled = false;
 
-    public function __construct($dbName = 'bookstore', $modelName = '\Propel\Tests\Bookstore\Book', $modelAlias = null)
+    public function __construct($dbName = 'bookstore', $entityName = '\Propel\Tests\Bookstore\Book', $entityAlias = null)
     {
         self::$preSelectWasCalled = false;
-        parent::__construct($dbName, $modelName, $modelAlias);
+        parent::__construct($dbName, $entityName, $entityAlias);
     }
 
     public function preSelect(ConnectionInterface $con)

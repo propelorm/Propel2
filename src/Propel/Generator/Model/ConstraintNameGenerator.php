@@ -49,8 +49,8 @@ class ConstraintNameGenerator implements NameGeneratorInterface
 
         // Calculate maximum RDBMS-specific column character limit.
         try {
-            $maxColumnNameLength = (int) $db->getMaxColumnNameLength();
-            $maxBodyLength = ($maxColumnNameLength - strlen($namePostfix) - strlen($constraintNbr) - 2);
+            $maxFieldNameLength = (int) $db->getMaxFieldNameLength();
+            $maxBodyLength = ($maxFieldNameLength - strlen($namePostfix) - strlen($constraintNbr) - 2);
         } catch (EngineException $e) {
             throw $e;
         }

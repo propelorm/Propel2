@@ -197,11 +197,11 @@ class PropelTypes
     ];
 
     private static $pdoTypeNames = [
-        \PDO::PARAM_BOOL => 'PDO::PARAM_BOOL',
-        \PDO::PARAM_NULL => 'PDO::PARAM_NULL',
-        \PDO::PARAM_INT  => 'PDO::PARAM_INT',
-        \PDO::PARAM_STR  => 'PDO::PARAM_STR',
-        \PDO::PARAM_LOB  => 'PDO::PARAM_LOB',
+        \PDO::PARAM_BOOL => '\\PDO::PARAM_BOOL',
+        \PDO::PARAM_NULL => '\\PDO::PARAM_NULL',
+        \PDO::PARAM_INT  => '\\PDO::PARAM_INT',
+        \PDO::PARAM_STR  => '\\PDO::PARAM_STR',
+        \PDO::PARAM_LOB  => '\\PDO::PARAM_LOB',
     ];
 
     /**
