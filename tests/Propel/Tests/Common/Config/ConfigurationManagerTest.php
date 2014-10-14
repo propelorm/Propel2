@@ -14,6 +14,8 @@ use Propel\Common\Config\ConfigurationManager;
 
 class ConfigurationManagerTest extends ConfigTestCase
 {
+    use DataProviderTrait;
+
     /**
      * Current working directory
      */
@@ -422,6 +424,30 @@ propel:
 EOF;
         $this->getFilesystem()->dumpFile('propel.yaml', $yamlConf);
 
+        $manager = new ConfigurationManager();
+    }
+
+    /**
+     * @dataProvider providerForInvalidConnections
+     */
+    public function testRuntimeOrGeneratorConnectionIsNotInConfiguredConnectionsThrowsException($yamlConf, $section)
+    {
+        $this->setExpectedException("Propel\Common\Config\Exception\InvalidConfigurationException",
+            "`wrongsource` isn't a valid configured connection (Section: propel.$section.connections).");
+
+        $this->getFilesystem()->dumpFile('propel.yaml', $yamlConf);
+        $manager = new ConfigurationManager();
+    }
+
+    /**
+     * @dataProvider providerForInvalidDefaultConnection
+     */
+    public function testRuntimeOrGeneratorDefaultConnectionIsNotInConfiguredConnectionsThrowsException($yamlConf, $section)
+    {
+        $this->setExpectedException("Propel\Common\Config\Exception\InvalidConfigurationException",
+            "`wrongsource` isn't a valid configured connection (Section: propel.$section.defaultConnection).");
+
+        $this->getFilesystem()->dumpFile('propel.yaml', $yamlConf);
         $manager = new ConfigurationManager();
     }
 

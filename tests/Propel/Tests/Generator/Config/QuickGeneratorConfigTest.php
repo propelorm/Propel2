@@ -63,6 +63,16 @@ class QuickGeneratorConfigTest extends TestCase
     {
         $extraConf = array(
             'propel' => array(
+                'database' => array(
+                    'connections' => array(
+                        'fakeConn' => array(
+                            'adapter' => 'sqlite',
+                            'dsn' => 'sqlite:fakeDb.sqlite',
+                            'user'=> '',
+                            'password' => ''
+                        )
+                    )
+                ),
                 'runtime' => array(
                     'defaultConnection' => 'fakeConn',
                     'connections' => array('fakeConn', 'default')
@@ -77,6 +87,8 @@ class QuickGeneratorConfigTest extends TestCase
         $this->assertEquals('path/to/composer', $generatorConfig->get()['paths']['composerDir']);
         $this->assertEquals('fakeConn', $generatorConfig->get()['runtime']['defaultConnection']);
         $this->assertEquals(array('fakeConn', 'default'), $generatorConfig->get()['runtime']['connections']);
+        $this->assertEquals(array('adapter' => 'sqlite', 'classname' => '\Propel\Runtime\Connection\ConnectionWrapper',
+            'dsn' => 'sqlite:fakeDb.sqlite', 'user' => '', 'password' => ''), $generatorConfig->get()['database']['connections']['fakeConn']);
         $this->assertEquals(array('adapter' => 'sqlite','classname' => 'Propel\Runtime\Connection\DebugPDO','dsn' => 'sqlite::memory:','user' => '',
         'password' => ''), $generatorConfig->get()['database']['connections']['default']);
     }
