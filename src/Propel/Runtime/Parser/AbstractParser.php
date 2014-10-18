@@ -10,8 +10,6 @@
 
 namespace Propel\Runtime\Parser;
 
-use Propel\Common\Pluralizer\PluralizerInterface;
-use Propel\Common\Pluralizer\StandardEnglishPluralizer;
 use Propel\Runtime\Exception\FileNotFoundException;
 
 /**
@@ -86,6 +84,7 @@ abstract class AbstractParser
             return file_put_contents($path, $data);
         }
 
+        // @FIXME Shall we keep this echo statement?
         echo $data;
     }
 

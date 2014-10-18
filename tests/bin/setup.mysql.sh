@@ -14,7 +14,7 @@ if [ "$mysql" = "" ]; then
 fi
 
 if [ "$DB_USER" = "" ]; then
-	echo "\$DB_USER not set. Using 'root'.";
+    echo "\$DB_USER not set. Using 'root'.";
     DB_USER="root";
 fi
 

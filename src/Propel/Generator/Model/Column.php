@@ -1334,7 +1334,7 @@ class Column extends MappingModel
      */
     public function getAutoIncrementString()
     {
-        if ($this->isAutoIncrement() && IdMethod::NATIVE === $this->parentTable->getIdMethod()) {
+        if ($this->isAutoIncrement() && $this->parentTable->isNativeIdMethod()) {
             return $this->getPlatform()->getAutoIncrement();
         }
 

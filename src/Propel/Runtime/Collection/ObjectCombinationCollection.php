@@ -10,7 +10,6 @@
 
 namespace Propel\Runtime\Collection;
 
-use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 
 /**
@@ -20,7 +19,6 @@ use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
  */
 class ObjectCombinationCollection extends ObjectCollection
 {
-
     /**
      * Get an array of the primary keys of all the objects in the collection
      *
@@ -120,5 +118,4 @@ class ObjectCombinationCollection extends ObjectCollection
     {
         return false !== call_user_func_array([$this, 'search'], func_get_args());
     }
-
 }

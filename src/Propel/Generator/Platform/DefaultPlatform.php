@@ -15,7 +15,6 @@ use Propel\Generator\Model\Column;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\Domain;
 use Propel\Generator\Model\ForeignKey;
-use Propel\Generator\Model\IdMethod;
 use Propel\Generator\Model\Index;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Model\Table;
@@ -33,7 +32,6 @@ use Propel\Runtime\Connection\ConnectionInterface;
  */
 class DefaultPlatform implements PlatformInterface
 {
-
     /**
      * Mapping from Propel types to Domain objects.
      *
@@ -245,7 +243,7 @@ class DefaultPlatform implements PlatformInterface
     {
         static $longNamesMap = array();
         $result = null;
-        if (IdMethod::NATIVE === $table->getIdMethod()) {
+        if ($table->isNativeIdMethod()) {
             $idMethodParams = $table->getIdMethodParameters();
             $maxIdentifierLength = $this->getMaxColumnNameLength();
             if (empty($idMethodParams)) {

@@ -1,4 +1,5 @@
 <?php
+
 namespace Propel\Generator\Model;
 
 use Propel\Generator\Util\BehaviorLocator;
@@ -65,9 +66,10 @@ trait BehaviorableTrait
                 // the user probably just forgot to specify the "id" attribute
                 if ($behavior->getId() === $behavior->getName()) {
                     throw new BuildException(sprintf('Behavior "%s" is already registered. Specify a different ID attribute to register the same behavior several times.', $behavior->getName()));
-                } else { // or he copy-pasted it and forgot to update it.
-                    throw new BuildException(sprintf('A behavior with ID "%s" is already registered.', $behavior->getId()));
                 }
+
+                // or he copy-pasted it and forgot to update it.
+                throw new BuildException(sprintf('A behavior with ID "%s" is already registered.', $behavior->getId()));
             }
 
             $this->registerBehavior($behavior);
@@ -79,9 +81,13 @@ trait BehaviorableTrait
         $locator = $this->getBehaviorLocator();
         $class = $locator->getBehavior($bdata['name']);
         $behavior = new $class();
-        if (!($behavior instanceof Behavior)) {
-            throw new BuildException(sprintf('Behavior [%s: %s] not instance of %s',
-                    $bdata['name'], $class, '\Propel\Generator\Model\Behavior'));
+        if (!$behavior instanceof Behavior) {
+            throw new BuildException(sprintf(
+                'Behavior [%s: %s] not instance of %s',
+                $bdata['name'],
+                $class,
+                '\Propel\Generator\Model\Behavior'
+            ));
         }
         $behavior->loadMapping($bdata);
 
@@ -119,10 +125,6 @@ trait BehaviorableTrait
      */
     public function getBehavior($id)
     {
-        if ($this->hasBehavior($id)) {
-            return $this->behaviors[$id];
-        }
-
-        return null;
+        return $this->hasBehavior($id) ? $this->behaviors[$id] : null;
     }
 }

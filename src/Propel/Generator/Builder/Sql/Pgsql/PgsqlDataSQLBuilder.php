@@ -12,12 +12,13 @@ namespace Propel\Generator\Builder\Sql\Pgsql;
 
 use Propel\Generator\Builder\Sql\DataSQLBuilder;
 use Propel\Generator\Builder\Util\DataRow;
-use Propel\Generator\Model\IdMethod;
 
 /**
  * PostgreSQL class for building data dump SQL.
  *
  * @author Hans Lellelid <hans@xmpl.org>
+ *
+ * @todo remove this class? DataSQLBuilder class seems to not exist.
  */
 class PgsqlDataSQLBuilder extends DataSQLBuilder
 {
@@ -41,7 +42,7 @@ class PgsqlDataSQLBuilder extends DataSQLBuilder
 
         $table = $this->getTable();
 
-        if ($table->hasAutoIncrementPrimaryKey() && $table->getIdMethod() == IdMethod::NATIVE) {
+        if ($table->hasAutoIncrementPrimaryKey() && $table->isNativeIdMethod()) {
             foreach ($row->getColumnValues() as $colValue) {
                 if ($colValue->getColumn()->isAutoIncrement()) {
                     if ($colValue->getValue() > $this->maxSeqVal) {
@@ -58,7 +59,7 @@ class PgsqlDataSQLBuilder extends DataSQLBuilder
     {
         $table = $this->getTable();
         $sql = '';
-        if ($table->hasAutoIncrementPrimaryKey() && $table->getIdMethod() == IdMethod::NATIVE) {
+        if ($table->hasAutoIncrementPrimaryKey() && $table->isNativeIdMethod()) {
             $seqname = $this->getPlatform()->getSequenceName($table);
             $sql .= "SELECT pg_catalog.setval('$seqname', ".((int) $this->maxSeqVal).");
 ";

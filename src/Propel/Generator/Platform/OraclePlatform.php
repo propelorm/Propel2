@@ -173,7 +173,7 @@ CREATE SEQUENCE %s
         $ret = "
 DROP TABLE " . $this->quoteIdentifier($table->getName(), $table) . " CASCADE CONSTRAINTS;
 ";
-        if ($table->getIdMethod() == IdMethod::NATIVE) {
+        if ($table->isNativeIdMethod()) {
             $ret .= "
 DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
 ";

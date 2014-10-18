@@ -11,16 +11,17 @@
 namespace Propel\Runtime\Formatter;
 
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
-use Propel\Runtime\Collection\Collection;
 use Propel\Runtime\Collection\OnDemandCollection;
 use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\ActiveQuery\BaseModelCriteria;
 use Propel\Runtime\DataFetcher\DataFetcherInterface;
 
 /**
- * Object formatter for Propel query
- * format() returns a OnDemandCollection that hydrates objects as the use iterates on the collection
- * This formatter consumes less memory than the ObjectFormatter, but doesn't use Instance Pool
+ * Object formatter for Propel query.
+ *
+ * The format() method returns a OnDemandCollection that hydrates objects as the
+ * use iterates on the collection. This formatter consumes less memory than the
+ * ObjectFormatter, but doesn't use Instance Pool.
  *
  * @author Francois Zaninotto
  */

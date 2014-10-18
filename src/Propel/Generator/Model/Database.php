@@ -414,8 +414,8 @@ class Database extends ScopedMappingModel
     public function getTable($name, $caseInsensitive = false)
     {
         if ($this->getSchema() && $this->getPlatform()->supportsSchemas()
-            && false === strpos($name, $this->getPlatform()->getSchemaDelimiter())) {
-            $name = $this->getSchema() . $this->getPlatform()->getSchemaDelimiter() . $name;
+            && false === strpos($name, $this->getSchemaDelimiter())) {
+            $name = $this->getSchema() . $this->getSchemaDelimiter() . $name;
         }
 
         if (!$this->hasTable($name, $caseInsensitive)) {
@@ -571,7 +571,7 @@ class Database extends ScopedMappingModel
     {
         $oldSchema = $this->schema;
         if ($this->schema !== $schema && $this->getPlatform()) {
-            $schemaDelimiter = $this->getPlatform()->getSchemaDelimiter();
+            $schemaDelimiter = $this->getSchemaDelimiter();
             $fixHash = function (&$array) use ($schema, $oldSchema, $schemaDelimiter) {
                 foreach ($array as $k => $v) {
                     if ($schema && $this->getPlatform()->supportsSchemas()) {
