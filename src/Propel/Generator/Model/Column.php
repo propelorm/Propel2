@@ -1180,6 +1180,11 @@ class Column extends MappingModel
             $valueSet = array_map('trim', $valueSet);
         }
 
+        // when using native enum type, make the array indices respect the actual string values defined in DDL
+        if (strtoupper(substr(trim($this->getDomain()->getSqlType()), 0, 4)) === 'ENUM') {
+            $valueSet = array_combine($valueSet, $valueSet);
+        }
+
         $this->valueSet = $valueSet;
     }
 
