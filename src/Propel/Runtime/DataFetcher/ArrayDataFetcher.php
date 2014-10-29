@@ -2,7 +2,7 @@
 
 namespace Propel\Runtime\DataFetcher;
 
-use Propel\Runtime\Map\TableMap;
+use Propel\Runtime\Map\EntityMap;
 
 /**
  * Class ArrayDataFetcher
@@ -14,7 +14,7 @@ class ArrayDataFetcher extends AbstractDataFetcher
     /**
      * @var string
      */
-    protected $indexType = TableMap::TYPE_PHPNAME;
+    protected $indexType = EntityMap::TYPE_PHPNAME;
 
     /**
      * {@inheritDoc}
@@ -88,7 +88,7 @@ class ArrayDataFetcher extends AbstractDataFetcher
     /**
      * Sets the current index type.
      *
-     * @param string $indexType one of TableMap::TYPE_*
+     * @param string $indexType one of EntityMap::TYPE_*
      */
     public function setIndexType($indexType)
     {

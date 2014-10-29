@@ -6,18 +6,15 @@ use Propel\Runtime\Propel;
 use Propel\Runtime\Exception\InvalidArgumentException;
 use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\Formatter\AbstractFormatter;
-use Propel\Runtime\Map\TableMap;
+use Propel\Runtime\Map\EntityMap;
 
 class BaseModelCriteria extends Criteria implements \IteratorAggregate
 {
-    protected $modelName;
+    protected $entityName;
 
-    protected $modelTableMapName;
+    protected $entityMap;
 
-    protected $modelAlias;
-
-    /** @var TableMap */
-    protected $tableMap;
+    protected $entityAlias;
 
     protected $formatter;
 
@@ -30,15 +27,15 @@ class BaseModelCriteria extends Criteria implements \IteratorAggregate
      * the specified database.
      *
      * @param string $dbName     The dabase name
-     * @param string $modelName  The phpName of a model, e.g. 'Book'
-     * @param string $modelAlias The alias for the model in this query, e.g. 'b'
+     * @param string $entityName  The phpName of a model, e.g. 'Book'
+     * @param string $entityAlias The alias for the model in this query, e.g. 'b'
      */
-    public function __construct($dbName = null, $modelName = null, $modelAlias = null)
+    public function __construct($dbName = null, $entityName = null, $entityAlias = null)
     {
         $this->setDbName($dbName);
         $this->originalDbName = $dbName;
-        $this->setModelName($modelName);
-        $this->modelAlias = $modelAlias;
+        $this->setEntityName($entityName);
+        $this->entityAlias = $entityAlias;
     }
 
     /**
@@ -117,39 +114,32 @@ class BaseModelCriteria extends Criteria implements \IteratorAggregate
      *
      * @return string
      */
-    public function getModelName()
+    public function getEntityName()
     {
-        return $this->modelName;
+        return $this->entityName;
     }
 
     /**
      * Sets the model name.
-     * This also sets `this->modelTableMapName` and `this->tableMap`.
+     * This also sets `this->entityMap` and `this->entityMap`.
      *
-     * @param string $modelName
+     * @param string $entityName
      *
      * @return $this|ModelCriteria The current object, for fluid interface
      */
-    public function setModelName($modelName)
+    public function setEntityName($entityName)
     {
-        if (0 === strpos($modelName, '\\')) {
-            $this->modelName = substr($modelName, 1);
+        if (0 === strpos($entityName, '\\')) {
+            $this->entityName = substr($entityName, 1);
         } else {
-            $this->modelName = $modelName;
+            $this->entityName = $entityName;
         }
-        if ($this->modelName && !$this->modelTableMapName) {
-            $this->modelTableMapName = constant($this->modelName . '::TABLE_MAP');
-        }
-        if (!$this->tableMap && $this->modelName) {
-            $this->tableMap = Propel::getServiceContainer()->getDatabaseMap($this->getDbName())->getTableByPhpName($this->modelName);
-        }
-
         return $this;
     }
 
     public function getFullyQualifiedModelName()
     {
-        return '\\' . $this->getModelName();
+        return '\\' . $this->getEntityName();
     }
 
     /**
@@ -160,14 +150,14 @@ class BaseModelCriteria extends Criteria implements \IteratorAggregate
      *
      * @return $this|ModelCriteria The current object, for fluid interface
      */
-    public function setModelAlias($modelAlias, $useAliasInSQL = false)
+    public function setEntityAlias($modelAlias, $useAliasInSQL = false)
     {
         if ($useAliasInSQL) {
-            $this->addAlias($modelAlias, $this->tableMap->getName());
+            $this->addAlias($modelAlias, $this->entityMap->getName());
             $this->useAliasInSQL = true;
         }
 
-        $this->modelAlias = $modelAlias;
+        $this->entityAlias = $modelAlias;
 
         return $this;
     }
@@ -177,9 +167,9 @@ class BaseModelCriteria extends Criteria implements \IteratorAggregate
      *
      * @return string The model alias
      */
-    public function getModelAlias()
+    public function getEntityAlias()
     {
-        return $this->modelAlias;
+        return $this->entityAlias;
     }
 
     /**
@@ -189,7 +179,7 @@ class BaseModelCriteria extends Criteria implements \IteratorAggregate
      */
     public function getModelAliasOrName()
     {
-        return $this->modelAlias ? $this->modelAlias : $this->modelName;
+        return $this->entityAlias ? $this->entityAlias : $this->entityName;
     }
 
     /**
@@ -199,17 +189,29 @@ class BaseModelCriteria extends Criteria implements \IteratorAggregate
      */
     public function getModelShortName()
     {
-        return static::getShortName($this->modelName);
+        return static::getShortName($this->entityName);
     }
 
     /**
-     * Returns the TableMap object for this Criteria
+     * Returns the EntityMap object for this Criteria
      *
-     * @return TableMap
+     * @return EntityMap
      */
-    public function getTableMap()
+    public function getEntityMap()
     {
-        return $this->tableMap;
+        if (null === $this->entityMap) {
+            return $this->getConfiguration()->getEntityMap($this->entityName);
+        }
+
+        return $this->entityMap;
+    }
+
+    /**
+     * @param EntityMap $entityMap
+     */
+    public function setEntityMap(EntityMap $entityMap)
+    {
+        $this->entityMap = $entityMap;
     }
 
     /**

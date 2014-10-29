@@ -14,7 +14,7 @@ use Propel\Runtime\ActiveQuery\Criterion\Exception\InvalidClauseException;
 
 /**
  * Specialized ModelCriterion used for traditional expressions,
- * e.g. table.column = ? or table.column >= ? etc.
+ * e.g. entity.field = ? or entity.field >= ? etc.
  */
 class BasicModelCriterion extends AbstractModelCriterion
 {
@@ -31,8 +31,8 @@ class BasicModelCriterion extends AbstractModelCriterion
                 throw new InvalidClauseException('A clause must contain a question mark in order to be bound to a value');
             }
             $params[] = array(
-                'table'  => $this->realtable,
-                'column' => $this->column,
+                'entity'  => $this->realEntity,
+                'field' => $this->field,
                 'value'  => $this->value
             );
             $sb .= str_replace('?', ':p'.count($params), $this->clause);

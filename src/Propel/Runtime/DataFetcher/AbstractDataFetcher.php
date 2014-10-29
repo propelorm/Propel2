@@ -39,7 +39,7 @@ abstract class AbstractDataFetcher implements DataFetcherInterface
     /**
      * {@inheritDoc}
      */
-    public function fetchColumn($index = null)
+    public function fetchField($index = null)
     {
         $next = $this->fetch();
 

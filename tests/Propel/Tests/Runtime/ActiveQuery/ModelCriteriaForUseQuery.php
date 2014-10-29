@@ -7,9 +7,9 @@ use Propel\Runtime\ActiveQuery\ModelCriteria;
 
 class ModelCriteriaForUseQuery extends ModelCriteria
 {
-    public function __construct($dbName = 'bookstore', $modelName = 'Propel\Tests\Bookstore\Author', $modelAlias = null)
+    public function __construct($dbName = 'bookstore', $entityName = 'Propel\Tests\Bookstore\Author', $entityAlias = null)
     {
-        parent::__construct($dbName, $modelName, $modelAlias);
+        parent::__construct($dbName, $entityName, $entityAlias);
     }
 
     public function withNoName()

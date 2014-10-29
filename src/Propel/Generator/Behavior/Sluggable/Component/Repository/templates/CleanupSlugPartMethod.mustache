@@ -1,0 +1,26 @@
+// transliterate
+if (function_exists('iconv')) {
+    $slug = iconv('utf-8', 'us-ascii//TRANSLIT', $slug);
+}
+
+// lowercase
+if (function_exists('mb_strtolower')) {
+    $slug = mb_strtolower($slug);
+} else {
+    $slug = strtolower($slug);
+}
+
+// remove accents resulting from OSX's iconv
+$slug = str_replace(array('\'', '`', '^'), '', $slug);
+
+// replace non letter or digits with separator
+$slug = preg_replace('" . $this->getBehavior()->getParameter('replace_pattern') . "', $replacement, $slug);
+
+// trim
+$slug = trim($slug, $replacement);
+
+if (empty($slug)) {
+    return 'n-a';
+}
+
+return $slug;

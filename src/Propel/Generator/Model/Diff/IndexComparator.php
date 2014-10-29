@@ -30,21 +30,21 @@ class IndexComparator
     public static function computeDiff(Index $fromIndex, Index $toIndex, $caseInsensitive = false)
     {
         // Check for removed index columns in $toIndex
-        $fromIndexColumns = $fromIndex->getColumns();
-        $max = count($fromIndexColumns);
+        $fromIndexFields = $fromIndex->getFields();
+        $max = count($fromIndexFields);
         for ($i = 0; $i < $max; $i++) {
-            $indexColumn = $fromIndexColumns[$i];
-            if (!$toIndex->hasColumnAtPosition($i, $indexColumn, $fromIndex->getColumnSize($indexColumn), $caseInsensitive)) {
+            $indexField = $fromIndexFields[$i];
+            if (!$toIndex->hasFieldAtPosition($i, $indexField, $fromIndex->getFieldSize($indexField), $caseInsensitive)) {
                 return true;
             }
         }
 
         // Check for new index columns in $toIndex
-        $toIndexColumns = $toIndex->getColumns();
-        $max = count($toIndexColumns);
+        $toIndexFields = $toIndex->getFields();
+        $max = count($toIndexFields);
         for ($i = 0; $i < $max; $i++) {
-            $indexColumn = $toIndexColumns[$i];
-            if (!$fromIndex->hasColumnAtPosition($i, $indexColumn, $toIndex->getColumnSize($indexColumn), $caseInsensitive)) {
+            $indexField = $toIndexFields[$i];
+            if (!$fromIndex->hasFieldAtPosition($i, $indexField, $toIndex->getFieldSize($indexField), $caseInsensitive)) {
                 return true;
             }
         }

@@ -23,8 +23,8 @@ class IdMethodParameter extends MappingModel
     private $name;
     private $value;
 
-    /** @var Table */
-    private $parentTable;
+    /** @var Entity */
+    private $parentEntity;
 
     protected function setupObject()
     {
@@ -75,21 +75,21 @@ class IdMethodParameter extends MappingModel
     /**
      * Sets the parent table.
      *
-     * @param Table $parent
+     * @param Entity $parent
      */
-    public function setTable(Table $parent)
+    public function setEntity(Entity $parent)
     {
-        $this->parentTable = $parent;
+        $this->parentEntity = $parent;
     }
 
     /**
      * Returns the parent table.
      *
-     * @return Table
+     * @return Entity
      */
-    public function getTable()
+    public function getEntity()
     {
-        return $this->parentTable;
+        return $this->parentEntity;
     }
 
     /**
@@ -97,8 +97,8 @@ class IdMethodParameter extends MappingModel
      *
      * @return string
      */
-    public function getTableName()
+    public function getEntityName()
     {
-        return $this->parentTable->getName();
+        return $this->parentEntity->getName();
     }
 }

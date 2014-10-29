@@ -11,15 +11,15 @@
 namespace Propel\Generator\Platform;
 
 use Propel\Generator\Config\GeneratorConfigInterface;
-use Propel\Generator\Model\Column;
-use Propel\Generator\Model\ColumnDefaultValue;
+use Propel\Generator\Model\Field;
+use Propel\Generator\Model\FieldDefaultValue;
 use Propel\Generator\Model\Database;
-use Propel\Generator\Model\Diff\ColumnDiff;
-use Propel\Generator\Model\Diff\TableDiff;
+use Propel\Generator\Model\Diff\FieldDiff;
+use Propel\Generator\Model\Diff\EntityDiff;
 use Propel\Generator\Model\Domain;
-use Propel\Generator\Model\ForeignKey;
+use Propel\Generator\Model\Relation;
 use Propel\Generator\Model\PropelTypes;
-use Propel\Generator\Model\Table;
+use Propel\Generator\Model\Entity;
 use Propel\Generator\Model\Unique;
 
 /**
@@ -27,7 +27,7 @@ use Propel\Generator\Model\Unique;
  *
  * @author Hans Lellelid <hans@xmpl.org>
  */
-class SqlitePlatform extends DefaultPlatform
+class SqlitePlatform extends SqlDefaultPlatform
 {
     /**
      * If we should generate FOREIGN KEY statements.
@@ -35,15 +35,15 @@ class SqlitePlatform extends DefaultPlatform
      *
      * @var bool
      */
-    protected $foreignKeySupport = null;
+    protected $relationSupport = null;
 
     /**
-     * If we should alter the table through creating a temporarily created table,
-     * moving all items to the new one and finally rename the temp table.
+     * If we should alter the entity through creating a temporarily created entity,
+     * moving all items to the new one and finally rename the temp entity.
      *
      * @var bool
      */
-    protected $tableAlteringWorkaround = true;
+    protected $entityAlteringWorkaround = true;
 
     /**
      * Initializes db specific domain mapping.
@@ -55,7 +55,7 @@ class SqlitePlatform extends DefaultPlatform
         $version = \SQLite3::version();
         $version = $version['versionString'];
 
-        $this->foreignKeySupport = version_compare($version, '3.6.19') >= 0;
+        $this->relationSupport = version_compare($version, '3.6.19') >= 0;
 
         $this->setSchemaDomainMapping(new Domain(PropelTypes::NUMERIC, 'DECIMAL'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARCHAR, 'MEDIUMTEXT'));
@@ -94,31 +94,31 @@ class SqlitePlatform extends DefaultPlatform
     {
         parent::setGeneratorConfig($generatorConfig);
 
-        if (null !== ($foreignKeySupport = $generatorConfig->getConfigProperty('database.adapter.sqlite.foreignKey'))) {
-            $this->foreignKeySupport = filter_var($foreignKeySupport, FILTER_VALIDATE_BOOLEAN);;
+        if (null !== ($relationSupport = $generatorConfig->getConfigProperty('database.adapter.sqlite.relation'))) {
+            $this->relationSupport = filter_var($relationSupport, FILTER_VALIDATE_BOOLEAN);;
         }
-        if (null !== ($tableAlteringWorkaround = $generatorConfig->getConfigProperty('database.adapter.sqlite.tableAlteringWorkaround'))) {
-            $this->tableAlteringWorkaround = filter_var($tableAlteringWorkaround, FILTER_VALIDATE_BOOLEAN);;;
+        if (null !== ($entityAlteringWorkaround = $generatorConfig->getConfigProperty('database.adapter.sqlite.entityAlteringWorkaround'))) {
+            $this->entityAlteringWorkaround = filter_var($entityAlteringWorkaround, FILTER_VALIDATE_BOOLEAN);;;
         }
     }
 
     /**
-     * Builds the DDL SQL to remove a list of columns
+     * Builds the DDL SQL to remove a list of fields
      *
-     * @param  Column[] $columns
+     * @param  Field[] $fields
      * @return string
      */
-    public function getAddColumnsDDL($columns)
+    public function getAddFieldsDDL($fields)
     {
         $ret = '';
         $pattern = "
 ALTER TABLE %s ADD %s;
 ";
-        foreach ($columns as $column) {
-            $tableName = $column->getTable()->getName();
+        foreach ($fields as $field) {
+            $entityName = $field->getEntity()->getName();
             $ret .= sprintf($pattern,
-                $this->quoteIdentifier($tableName),
-                $this->getColumnDDL($column)
+                $this->quoteIdentifier($entityName),
+                $this->getFieldDDL($field)
             );
         }
 
@@ -128,67 +128,67 @@ ALTER TABLE %s ADD %s;
     /**
      * {@inheritdoc}
      */
-    public function getModifyTableDDL(TableDiff $tableDiff)
+    public function getModifyEntityDDL(EntityDiff $entityDiff)
     {
-        $changedNotEditableThroughDirectDDL = $this->tableAlteringWorkaround && (false
-            || $tableDiff->hasModifiedFks()
-            || $tableDiff->hasModifiedIndices()
-            || $tableDiff->hasModifiedColumns()
-            || $tableDiff->hasRenamedColumns()
+        $changedNotEdientityThroughDirectDDL = $this->entityAlteringWorkaround && (false
+            || $entityDiff->hasModifiedFks()
+            || $entityDiff->hasModifiedIndices()
+            || $entityDiff->hasModifiedFields()
+            || $entityDiff->hasRenamedFields()
 
-            || $tableDiff->hasRemovedFks()
-            || $tableDiff->hasRemovedIndices()
-            || $tableDiff->hasRemovedColumns()
+            || $entityDiff->hasRemovedFks()
+            || $entityDiff->hasRemovedIndices()
+            || $entityDiff->hasRemovedFields()
 
-            || $tableDiff->hasAddedIndices()
-            || $tableDiff->hasAddedFks()
-            || $tableDiff->hasAddedPkColumns()
+            || $entityDiff->hasAddedIndices()
+            || $entityDiff->hasAddedFks()
+            || $entityDiff->hasAddedPkFields()
         );
 
-        if ($this->tableAlteringWorkaround && !$changedNotEditableThroughDirectDDL && $tableDiff->hasAddedColumns()) {
+        if ($this->entityAlteringWorkaround && !$changedNotEdientityThroughDirectDDL && $entityDiff->hasAddedFields()) {
 
-            $addedCols = $tableDiff->getAddedColumns();
-            foreach ($addedCols as $column) {
+            $addedCols = $entityDiff->getAddedFields();
+            foreach ($addedCols as $field) {
 
                 $sqlChangeNotSupported = false
 
-                    //The column may not have a PRIMARY KEY or UNIQUE constraint.
-                    || $column->isPrimaryKey()
-                    || $column->isUnique()
+                    //The field may not have a PRIMARY KEY or UNIQUE constraint.
+                    || $field->isPrimaryKey()
+                    || $field->isUnique()
 
-                    //The column may not have a default value of CURRENT_TIME, CURRENT_DATE, CURRENT_TIMESTAMP,
+                    //The field may not have a default value of CURRENT_TIME, CURRENT_DATE, CURRENT_TIMESTAMP,
                     //or an expression in parentheses.
                     || false !== array_search(
-                        $column->getDefaultValue(), array('CURRENT_TIME', 'CURRENT_DATE', 'CURRENT_TIMESTAMP'))
-                    || substr(trim($column->getDefaultValue()), 0, 1) == '('
+                        $field->getDefaultValue(), array('CURRENT_TIME', 'CURRENT_DATE', 'CURRENT_TIMESTAMP'))
+                    || substr(trim($field->getDefaultValue()), 0, 1) == '('
 
-                    //If a NOT NULL constraint is specified, then the column must have a default value other than NULL.
-                    || ($column->isNotNull() && $column->getDefaultValue() == 'NULL')
+                    //If a NOT NULL constraint is specified, then the field must have a default value other than NULL.
+                    || ($field->isNotNull() && $field->getDefaultValue() == 'NULL')
                 ;
 
                 if ($sqlChangeNotSupported) {
-                    $changedNotEditableThroughDirectDDL = true;
+                    $changedNotEdientityThroughDirectDDL = true;
                     break;
                 }
 
             }
         }
 
-        if ($changedNotEditableThroughDirectDDL) {
-            return $this->getMigrationTableDDL($tableDiff);
+        if ($changedNotEdientityThroughDirectDDL) {
+            return $this->getMigrationEntityDDL($entityDiff);
         }
 
-        return parent::getModifyTableDDL($tableDiff);
+        return parent::getModifyEntityDDL($entityDiff);
     }
 
     /**
-     * Creates a temporarily created table with the new schema,
-     * moves all items into it and drops the origin as well as renames the temp table to the origin then.
+     * Creates a temporarily created entity with the new schema,
+     * moves all items into it and drops the origin as well as renames the temp entity to the origin then.
      *
-     * @param  TableDiff $tableDiff
+     * @param  EntityDiff $entityDiff
      * @return string
      */
-    public function getMigrationTableDDL(TableDiff $tableDiff)
+    public function getMigrationEntityDDL(EntityDiff $entityDiff)
     {
         $pattern = "
 CREATE TEMPORARY TABLE %s AS SELECT %s FROM %s;
@@ -198,27 +198,27 @@ INSERT INTO %s (%s) SELECT %s FROM %s;
 DROP TABLE %s;
 ";
 
-        $originTable     = clone $tableDiff->getFromTable();
-        $newTable        = clone $tableDiff->getToTable();
+        $originEntity     = clone $entityDiff->getFromEntity();
+        $newEntity        = clone $entityDiff->getToEntity();
 
-        $originTableName = $originTable->getName();
-        $tempTableName   = $newTable->getCommonName().'__temp__'.uniqid();
+        $originEntityName = $originEntity->getName();
+        $tempEntityName   = $newEntity->getCommonName().'__temp__'.uniqid();
 
-        $originTableFields = $this->getColumnListDDL($originTable->getColumns());
+        $originEntityFields = $this->getFieldListDDL($originEntity->getFields());
 
         $fieldMap = []; /** struct: [<oldCol> => <newCol>] */
-        //start with modified columns
-        foreach ($tableDiff->getModifiedColumns() as $diff) {
-            $fieldMap[$diff->getFromColumn()->getName()] = $diff->getToColumn()->getName();
+        //start with modified fields
+        foreach ($entityDiff->getModifiedFields() as $diff) {
+            $fieldMap[$diff->getFromField()->getName()] = $diff->getToField()->getName();
         }
 
-        foreach ($tableDiff->getRenamedColumns() as $col) {
+        foreach ($entityDiff->getRenamedFields() as $col) {
             list ($from, $to) = $col;
             $fieldMap[$from->getName()] = $to->getName();
         }
 
-        foreach ($newTable->getColumns() as $col) {
-            if ($originTable->hasColumn($col)) {
+        foreach ($newEntity->getFields() as $col) {
+            if ($originEntity->hasField($col)) {
                 if (!isset($fieldMap[$col->getName()])) {
                     $fieldMap[$col->getName()] = $col->getName();
                 }
@@ -226,20 +226,20 @@ DROP TABLE %s;
 
         }
 
-        $createTable = $this->getAddTableDDL($newTable);
-        $createTable .= $this->getAddIndicesDDL($newTable);
+        $createEntity = $this->getAddEntityDDL($newEntity);
+        $createEntity .= $this->getAddIndicesDDL($newEntity);
 
         $sql = sprintf($pattern,
-            $this->quoteIdentifier($tempTableName), //CREATE TEMPORARY TABLE %s
-            $originTableFields, //select %s
-            $this->quoteIdentifier($originTableName), //from %s
-            $this->quoteIdentifier($originTableName), //drop table %s
-            $createTable, //[create table] %s
-            $this->quoteIdentifier($originTableName), //insert into %s
+            $this->quoteIdentifier($tempEntityName), //CREATE TEMPORARY TABLE %s
+            $originEntityFields, //select %s
+            $this->quoteIdentifier($originEntityName), //from %s
+            $this->quoteIdentifier($originEntityName), //drop entity %s
+            $createEntity, //[create entity] %s
+            $this->quoteIdentifier($originEntityName), //insert into %s
             implode(', ', $fieldMap), //(%s)
             implode(', ', array_keys($fieldMap)), //select %s
-            $this->quoteIdentifier($tempTableName), //from %s
-            $this->quoteIdentifier($tempTableName) //drop table %s
+            $this->quoteIdentifier($tempEntityName), //from %s
+            $this->quoteIdentifier($tempEntityName) //drop entity %s
         );
 
         return $sql;
@@ -262,17 +262,17 @@ PRAGMA foreign_keys = ON;
     /**
      * {@inheritdoc}
      */
-    public function getAddTablesDDL(Database $database)
+    public function getAddEntitiesDDL(Database $database)
     {
         $ret = '';
-        foreach ($database->getTablesForSql() as $table) {
-            $this->normalizeTable($table);
+        foreach ($database->getEntitiesForSql() as $entity) {
+            $this->normalizeEntity($entity);
         }
-        foreach ($database->getTablesForSql() as $table) {
-            $ret .= $this->getCommentBlockDDL($table->getName());
-            $ret .= $this->getDropTableDDL($table);
-            $ret .= $this->getAddTableDDL($table);
-            $ret .= $this->getAddIndicesDDL($table);
+        foreach ($database->getEntitiesForSql() as $entity) {
+            $ret .= $this->getCommentBlockDDL($entity->getName());
+            $ret .= $this->getDropEntityDDL($entity);
+            $ret .= $this->getAddEntityDDL($entity);
+            $ret .= $this->getAddIndicesDDL($entity);
         }
 
         return $ret;
@@ -283,17 +283,17 @@ PRAGMA foreign_keys = ON;
      * so we have to flag both as NOT NULL and create in either way a UNIQUE constraint over pks since
      * those UNIQUE is otherwise automatically created by the sqlite engine.
      *
-     * @param Table $table
+     * @param Entity $entity
      */
-    public function normalizeTable(Table $table)
+    public function normalizeEntity(Entity $entity)
     {
-        if ($table->getPrimaryKey()) {
+        if ($entity->getPrimaryKey()) {
             //search if there is already a UNIQUE constraint over the primary keys
             $pkUniqueExist = false;
-            foreach ($table->getUnices() as $unique) {
+            foreach ($entity->getUnices() as $unique) {
                 $coversAllPrimaryKeys = true;
-                foreach ($unique->getColumns() as $columnName) {
-                    if (!$table->getColumn($columnName)->isPrimaryKey()) {
+                foreach ($unique->getFields() as $fieldName) {
+                    if (!$entity->getField($fieldName)->isPrimaryKey()) {
                         $coversAllPrimaryKeys = false;
                         break;
                     }
@@ -308,17 +308,17 @@ PRAGMA foreign_keys = ON;
             //there is none, let's create it
             if (!$pkUniqueExist) {
                 $unique = new Unique();
-                foreach ($table->getPrimaryKey() as $pk) {
-                    $unique->addColumn($pk);
+                foreach ($entity->getPrimaryKey() as $pk) {
+                    $unique->addField($pk);
                 }
-                $table->addUnique($unique);
+                $entity->addUnique($unique);
             }
 
-            if ($table->hasAutoIncrementPrimaryKey()) {
-                foreach ($table->getPrimaryKey() as $pk) {
+            if ($entity->hasAutoIncrementPrimaryKey()) {
+                foreach ($entity->getPrimaryKey() as $pk) {
                     //no pk can be NULL, as usual
                     $pk->setNotNull(true);
-                    //in SQLite the column with the AUTOINCREMENT MUST be a primary key, too.
+                    //in SQLite the field with the AUTOINCREMENT MUST be a primary key, too.
                     if (!$pk->isAutoIncrement()) {
                         //for all other sub keys we remove it, since we create a UNIQUE constraint over all primary keys.
                         $pk->setPrimaryKey(false);
@@ -327,17 +327,17 @@ PRAGMA foreign_keys = ON;
             }
         }
 
-        parent::normalizeTable($table);
+        parent::normalizeEntity($entity);
     }
 
     /**
-     * Returns the SQL for the primary key of a Table object
+     * Returns the SQL for the primary key of a Entity object
      * @return string
      */
-    public function getPrimaryKeyDDL(Table $table)
+    public function getPrimaryKeyDDL(Entity $entity)
     {
-        if ($table->hasPrimaryKey() && !$table->hasAutoIncrementPrimaryKey()) {
-            return 'PRIMARY KEY (' . $this->getColumnListDDL($table->getPrimaryKey()) . ')';
+        if ($entity->hasPrimaryKey() && !$entity->hasAutoIncrementPrimaryKey()) {
+            return 'PRIMARY KEY (' . $this->getFieldListDDL($entity->getPrimaryKey()) . ')';
         }
 
         return '';
@@ -346,7 +346,7 @@ PRAGMA foreign_keys = ON;
     /**
      * {@inheritdoc}
      */
-    public function getRemoveColumnDDL(Column $column)
+    public function getRemoveFieldDDL(Field $field)
     {
         //not supported
         return '';
@@ -355,7 +355,7 @@ PRAGMA foreign_keys = ON;
     /**
      * {@inheritdoc}
      */
-    public function getRenameColumnDDL(Column $fromColumn, Column $toColumn)
+    public function getRenameFieldDDL(Field $fromField, Field $toField)
     {
         //not supported
         return '';
@@ -364,7 +364,7 @@ PRAGMA foreign_keys = ON;
     /**
      * {@inheritdoc}
      */
-    public function getModifyColumnDDL(ColumnDiff $columnDiff)
+    public function getModifyFieldDDL(FieldDiff $fieldDiff)
     {
         //not supported
         return '';
@@ -373,7 +373,7 @@ PRAGMA foreign_keys = ON;
     /**
      * {@inheritdoc}
      */
-    public function getModifyColumnsDDL($columnDiffs)
+    public function getModifyFieldsDDL($fieldDiffs)
     {
         //not supported
         return '';
@@ -382,7 +382,7 @@ PRAGMA foreign_keys = ON;
     /**
      * {@inheritdoc}
      */
-    public function getDropPrimaryKeyDDL(Table $table)
+    public function getDropPrimaryKeyDDL(Entity $entity)
     {
         //not supported
         return '';
@@ -391,7 +391,7 @@ PRAGMA foreign_keys = ON;
     /**
      * {@inheritdoc}
      */
-    public function getAddPrimaryKeyDDL(Table $table)
+    public function getAddPrimaryKeyDDL(Entity $entity)
     {
         //not supported
         return '';
@@ -400,7 +400,7 @@ PRAGMA foreign_keys = ON;
     /**
      * {@inheritdoc}
      */
-    public function getAddForeignKeyDDL(ForeignKey $fk)
+    public function getAddRelationDDL(Relation $relation)
     {
         //not supported
         return '';
@@ -409,7 +409,7 @@ PRAGMA foreign_keys = ON;
     /**
      * {@inheritdoc}
      */
-    public function getDropForeignKeyDDL(ForeignKey $fk)
+    public function getDropRelationDDL(Relation $relation)
     {
         //not supported
         return '';
@@ -423,12 +423,12 @@ PRAGMA foreign_keys = ON;
         return 'PRIMARY KEY AUTOINCREMENT';
     }
 
-    public function getMaxColumnNameLength()
+    public function getMaxFieldNameLength()
     {
         return 1024;
     }
 
-    public function getColumnDDL(Column $col)
+    public function getFieldDDL(Field $col)
     {
         if ($col->isAutoIncrement()) {
             $col->setType('INTEGER');
@@ -441,40 +441,40 @@ PRAGMA foreign_keys = ON;
             //sqlite use CURRENT_TIMESTAMP different than mysql/pgsql etc
             //we set it to the more common behavior
             $col->setDefaultValue(
-                new ColumnDefaultValue("(datetime(CURRENT_TIMESTAMP, 'localtime'))", ColumnDefaultValue::TYPE_EXPR)
+                new FieldDefaultValue("(datetime(CURRENT_TIMESTAMP, 'localtime'))", FieldDefaultValue::TYPE_EXPR)
             );
         }
 
-        return parent::getColumnDDL($col);
+        return parent::getFieldDDL($col);
     }
 
-    public function getAddTableDDL(Table $table)
+    public function getAddEntityDDL(Entity $entity)
     {
-        $table = clone $table;
-        $tableDescription = $table->hasDescription() ? $this->getCommentLineDDL($table->getDescription()) : '';
+        $entity = clone $entity;
+        $entityDescription = $entity->hasDescription() ? $this->getCommentLineDDL($entity->getDescription()) : '';
 
         $lines = array();
 
-        foreach ($table->getColumns() as $column) {
-            $lines[] = $this->getColumnDDL($column);
+        foreach ($entity->getFields() as $field) {
+            $lines[] = $this->getFieldDDL($field);
         }
 
-        if ($table->hasPrimaryKey() && ($pk = $this->getPrimaryKeyDDL($table))) {
+        if ($entity->hasPrimaryKey() && ($pk = $this->getPrimaryKeyDDL($entity))) {
             $lines[] = $pk;
         }
 
-        foreach ($table->getUnices() as $unique) {
+        foreach ($entity->getUnices() as $unique) {
             $lines[] = $this->getUniqueDDL($unique);
         }
 
-        if ($this->foreignKeySupport) {
-            foreach ($table->getForeignKeys() as $foreignKey) {
-                if ($foreignKey->isSkipSql()) {
+        if ($this->relationSupport) {
+            foreach ($entity->getRelations() as $relation) {
+                if ($relation->isSkipSql()) {
                     continue;
                 }
                 $lines[] = str_replace("
     ", "
-        ", $this->getForeignKeyDDL($foreignKey));
+        ", $this->getRelationDDL($relation));
             }
         }
 
@@ -489,33 +489,33 @@ PRAGMA foreign_keys = ON;
 ";
 
         return sprintf($pattern,
-            $tableDescription,
-            $this->quoteIdentifier($table->getName()),
+            $entityDescription,
+            $this->quoteIdentifier($entity->getName()),
             implode($sep, $lines)
         );
     }
 
-    public function getForeignKeyDDL(ForeignKey $fk)
+    public function getRelationDDL(Relation $relation)
     {
-        if ($fk->isSkipSql() || !$this->foreignKeySupport) {
+        if ($relation->isSkipSql() || !$this->relationSupport) {
             return;
         }
 
         $pattern = "FOREIGN KEY (%s) REFERENCES %s (%s)";
 
         $script = sprintf($pattern,
-            $this->getColumnListDDL($fk->getLocalColumnObjects()),
-            $this->quoteIdentifier($fk->getForeignTableName()),
-            $this->getColumnListDDL($fk->getForeignColumnObjects())
+            $this->getFieldListDDL($relation->getLocalFieldObjects()),
+            $this->quoteIdentifier($relation->getForeignEntityName()),
+            $this->getFieldListDDL($relation->getForeignFieldObjects())
         );
 
-        if ($fk->hasOnUpdate()) {
+        if ($relation->hasOnUpdate()) {
             $script .= "
-    ON UPDATE " . $fk->getOnUpdate();
+    ON UPDATE " . $relation->getOnUpdate();
         }
-        if ($fk->hasOnDelete()) {
+        if ($relation->hasOnDelete()) {
             $script .= "
-    ON DELETE " . $fk->getOnDelete();
+    ON DELETE " . $relation->getOnDelete();
         }
 
         return $script;

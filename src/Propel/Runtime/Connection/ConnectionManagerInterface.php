@@ -29,14 +29,14 @@ interface ConnectionManagerInterface
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface
      */
-    public function getWriteConnection(AdapterInterface $adapter = null);
+    public function getWriteConnection();
 
     /**
      * @param \Propel\Runtime\Adapter\AdapterInterface $adapter
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface
      */
-    public function getReadConnection(AdapterInterface $adapter = null);
+    public function getReadConnection();
 
     public function closeConnections();
 }

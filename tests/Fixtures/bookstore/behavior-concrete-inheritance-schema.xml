@@ -1,66 +1,59 @@
 <?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
 <database name="bookstore-behavior" defaultIdMethod="native" package="behavior.concrete_inheritance" namespace="Propel\Tests\Bookstore\Behavior">
 
-    <table name="concrete_category">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="name" type="VARCHAR" size="100" primaryString="true" />
-    </table>
+    <entity name="ConcreteCategory">
+        <field name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+        <field name="name" type="VARCHAR" size="100" primaryString="true" />
+    </entity>
 
-    <table name="concrete_content">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="title" type="VARCHAR" size="100" primaryString="true" />
-        <column name="category_id" required="false" type="INTEGER" />
-        <foreign-key foreignTable="concrete_category" onDelete="cascade">
-            <reference local="category_id" foreign="id" />
-        </foreign-key>
+    <entity name="ConcreteContent">
+        <field name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+        <field name="title" type="VARCHAR" size="100" primaryString="true" />
+        <relation target="ConcreteCategory" onDelete="cascade">
+        </relation>
         <index>
-            <index-column name="title" />
+            <index-field name="title" />
         </index>
+    </entity>
 
-    </table>
-
-    <table name="concrete_article">
-        <column name="body" type="longvarchar" />
-        <column name="author_id" required="false" type="INTEGER" />
-        <foreign-key foreignTable="concrete_author" refPhpName="Article" onDelete="cascade">
-            <reference local="author_id" foreign="id" />
-        </foreign-key>
+    <entity name="ConcreteArticle">
+        <field name="body" type="longvarchar" />
+        <relation target="ConcreteAuthor" refPhpName="Article" onDelete="cascade">
+        </relation>
         <behavior name="concrete_inheritance">
-            <parameter name="extends" value="concrete_content" />
+            <parameter name="extends" value="ConcreteContent" />
         </behavior>
-    </table>
+    </entity>
 
-    <table name="concrete_author">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="name" type="VARCHAR" size="100" primaryString="true" />
-    </table>
+    <entity name="ConcreteAuthor">
+        <field name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+        <field name="name" type="VARCHAR" size="100" primaryString="true" />
+    </entity>
 
 
-    <table name="concrete_news">
+    <entity name="ConcreteNews">
         <behavior name="concrete_inheritance">
-            <parameter name="extends" value="concrete_article" />
+            <parameter name="extends" value="ConcreteArticle" />
         </behavior>
-    </table>
+    </entity>
 
-    <table name="concrete_quizz">
-        <column name="title" type="VARCHAR" size="200" primaryString="true" />
+    <entity name="ConcreteQuizz">
+        <field name="title" type="VARCHAR" size="200" primaryString="true" />
         <behavior name="concrete_inheritance">
-            <parameter name="extends" value="concrete_content" />
+            <parameter name="extends" value="ConcreteContent" />
             <parameter name="copy_data_to_parent" value="false" />
         </behavior>
-    </table>
+    </entity>
 
-    <table name="concrete_quizz_question">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="question" type="VARCHAR" size="100" primaryString="true" />
-        <column name="answer_1" type="VARCHAR" size="100" />
-        <column name="answer_2" type="VARCHAR" size="100" />
-        <column name="correct_answer" type="INTEGER" />
-        <column name="quizz_id" required="true" type="INTEGER" />
-        <foreign-key foreignTable="concrete_quizz" onDelete="cascade">
-            <reference local="quizz_id" foreign="id" />
-        </foreign-key>
+    <entity name="ConcreteQuizzQuestion">
+        <field name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+        <field name="question" type="VARCHAR" size="100" primaryString="true" />
+        <field name="answer1" type="VARCHAR" size="100" />
+        <field name="answer2" type="VARCHAR" size="100" />
+        <field name="correct_answer" type="INTEGER" />
+        <relation target="ConcreteQuizz" onDelete="cascade">
+        </relation>
 
-    </table>
+    </entity>
 
 </database>

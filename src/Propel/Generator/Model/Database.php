@@ -39,9 +39,14 @@ class Database extends ScopedMappingModel
     private $platform;
 
     /**
-     * @var Table[]
+     * @var string
      */
-    private $tables;
+    private $platformClass;
+
+    /**
+     * @var Entity[]
+     */
+    private $entities;
 
     /**
      * @var string
@@ -81,19 +86,20 @@ class Database extends ScopedMappingModel
     private $parentSchema;
 
     /**
-     * @var Table[]
+     * @var Entity[]
      */
-    private $tablesByName;
+    private $entitiesByName;
+    private $entitiesByFullClassName;
 
     /**
-     * @var Table[]
+     * @var Entity[]
      */
-    private $tablesByLowercaseName;
+    private $entitiesByLowercaseName;
 
-    /**
-     * @var Table[]
-     */
-    private $tablesByPhpName;
+//    /**
+//     * @var Entity[]
+//     */
+//    private $entitiesByPhpName;
 
     /**
      * @var string[]
@@ -101,7 +107,7 @@ class Database extends ScopedMappingModel
     private $sequences;
 
     protected $defaultStringFormat;
-    protected $tablePrefix;
+    protected $entityPrefix;
 
     /**
      * Constructs a new Database object.
@@ -130,10 +136,10 @@ class Database extends ScopedMappingModel
         $this->defaultMutatorVisibility  = static::VISIBILITY_PUBLIC;
         $this->behaviors                 = [];
         $this->domainMap                 = [];
-        $this->tables                    = [];
-        $this->tablesByName              = [];
-        $this->tablesByPhpName           = [];
-        $this->tablesByLowercaseName     = [];
+        $this->entities                    = [];
+        $this->entitiesByName              = [];
+//        $this->entitiesByPhpName           = [];
+        $this->entitiesByLowercaseName     = [];
     }
 
     protected function setupObject()
@@ -141,12 +147,13 @@ class Database extends ScopedMappingModel
         parent::setupObject();
 
         $this->name = $this->getAttribute('name');
+        $this->platformClass = $this->getAttribute('platform') ?: 'mysql';
         $this->baseClass = $this->getAttribute('baseClass');
         $this->defaultIdMethod = $this->getAttribute('defaultIdMethod', IdMethod::NATIVE);
         $this->defaultPhpNamingMethod = $this->getAttribute('defaultPhpNamingMethod', NameGeneratorInterface::CONV_METHOD_UNDERSCORE);
         $this->heavyIndexing = $this->booleanValue($this->getAttribute('heavyIndexing'));
         $this->identifierQuoting = $this->getAttribute('identifierQuoting') ? $this->booleanValue($this->getAttribute('identifierQuoting')) : false;
-        $this->tablePrefix = $this->getAttribute('tablePrefix', $this->getBuildProperty('generator.tablePrefix'));
+        $this->entityPrefix = $this->getAttribute('entityPrefix', $this->getBuildProperty('generator.entityPrefix'));
         $this->defaultStringFormat = $this->getAttribute('defaultStringFormat', static::DEFAULT_STRING_FORMAT);
     }
 
@@ -157,6 +164,10 @@ class Database extends ScopedMappingModel
      */
     public function getPlatform()
     {
+        if (null === $this->platform) {
+            $this->platform = $this->getGeneratorConfig()->createPlatform($this->platformClass);
+        }
+
         return $this->platform;
     }
 
@@ -175,9 +186,9 @@ class Database extends ScopedMappingModel
      *
      * @return integer
      */
-    public function getMaxColumnNameLength()
+    public function getMaxFieldNameLength()
     {
-        return $this->platform->getMaxColumnNameLength();
+        return $this->getPlatform()->getMaxFieldNameLength();
     }
 
     /**
@@ -202,7 +213,7 @@ class Database extends ScopedMappingModel
 
     /**
      * Returns the name of the base super class inherited by active record
-     * objects. This parameter is overridden at the table level.
+     * objects. This parameter is overridden at the entity level.
      *
      * @return string
      */
@@ -213,7 +224,7 @@ class Database extends ScopedMappingModel
 
     /**
      * Sets the name of the base super class inherited by active record objects.
-     * This parameter is overridden at the table level.
+     * This parameter is overridden at the entity level.
      *
      * @param string $class.
      */
@@ -224,7 +235,7 @@ class Database extends ScopedMappingModel
 
     /**
      * Returns the name of the default ID method strategy.
-     * This parameter can be overridden at the table level.
+     * This parameter can be overridden at the entity level.
      *
      * @return string
      */
@@ -235,7 +246,7 @@ class Database extends ScopedMappingModel
 
     /**
      * Sets the name of the default ID method strategy.
-     * This parameter can be overridden at the table level.
+     * This parameter can be overridden at the entity level.
      *
      * @param string $strategy
      */
@@ -246,8 +257,8 @@ class Database extends ScopedMappingModel
 
     /**
      * Returns the name of the default PHP naming method strategy, which
-     * specifies the method for converting schema names for table and column to
-     * PHP names. This parameter can be overridden at the table layer.
+     * specifies the method for converting schema names for entity and column to
+     * PHP names. This parameter can be overridden at the entity layer.
      *
      * @return string
      */
@@ -277,8 +288,8 @@ class Database extends ScopedMappingModel
     }
 
     /**
-     * Sets the default string format for ActiveRecord objects in this table.
-     * This parameter can be overridden at the table level.
+     * Sets the default string format for ActiveRecord objects in this entity.
+     * This parameter can be overridden at the entity level.
      *
      * Any of 'XML', 'YAML', 'JSON', or 'CSV'.
      *
@@ -298,8 +309,8 @@ class Database extends ScopedMappingModel
     }
 
     /**
-     * Returns the default string format for ActiveRecord objects in this table.
-     * This parameter can be overridden at the table level.
+     * Returns the default string format for ActiveRecord objects in this entity.
+     * This parameter can be overridden at the entity level.
      *
      * @return string
      */
@@ -343,27 +354,27 @@ class Database extends ScopedMappingModel
     }
 
     /**
-     * Return the list of all tables.
+     * Return the list of all entities.
      *
-     * @return Table[]
+     * @return Entity[]
      */
-    public function getTables()
+    public function getEntities()
     {
-        return $this->tables;
+        return $this->entities;
     }
 
     /**
-     * Return the number of tables in the database.
+     * Return the number of entities in the database.
      *
-     * Read-only tables are excluded from the count.
+     * Read-only entities are excluded from the count.
      *
      * @return integer
      */
-    public function countTables()
+    public function countEntities()
     {
         $count = 0;
-        foreach ($this->tables as $table) {
-            if (!$table->isReadOnly()) {
+        foreach ($this->entities as $entity) {
+            if (!$entity->isReadOnly()) {
                 $count++;
             }
         }
@@ -372,135 +383,166 @@ class Database extends ScopedMappingModel
     }
 
     /**
-     * Returns the list of all tables that have a SQL representation.
+     * Returns the list of all entities that have a SQL representation.
      *
-     * @return Table[]
+     * @return Entity[]
      */
-    public function getTablesForSql()
+    public function getEntitiesForSql()
     {
-        $tables = [];
-        foreach ($this->tables as $table) {
-            if (!$table->isSkipSql()) {
-                $tables[] = $table;
+        $entities = [];
+        foreach ($this->entities as $entity) {
+            if (!$entity->isSkipSql()) {
+                $entities[] = $entity;
             }
         }
 
-        return $tables;
+        return $entities;
     }
 
     /**
-     * Returns whether or not the database has a table.
+     * Returns whether or not the database has a entity.
      *
      * @param  string  $name
      * @param  boolean $caseInsensitive
      * @return boolean
      */
-    public function hasTable($name, $caseInsensitive = false)
+    public function hasEntity($name, $caseInsensitive = false)
     {
         if ($caseInsensitive) {
-            return isset($this->tablesByLowercaseName[ strtolower($name) ]);
+            return isset($this->entitiesByLowercaseName[ strtolower($name) ]);
         }
 
-        return isset($this->tablesByName[$name]);
+        return isset($this->entitiesByName[$name]);
     }
 
     /**
-     * Returns the table with the specified name.
+     * @param string $fullClassName
+     *
+     * @return bool
+     */
+    public function hasEntityByFullClassName($fullClassName)
+    {
+        return isset($this->entitiesByFullClassName[$fullClassName]);
+    }
+
+    /**
+     * @param string $fullClassName
+     *
+     * @return Entity
+     */
+    public function getEntityByFullClassName($fullClassName)
+    {
+        return $this->entitiesByFullClassName[$fullClassName];
+    }
+
+    /**
+     * Returns the entity with the specified name.
      *
      * @param  string  $name
      * @param  boolean $caseInsensitive
-     * @return Table
+     * @return Entity
      */
-    public function getTable($name, $caseInsensitive = false)
+    public function getEntity($name, $caseInsensitive = false)
     {
-        if ($this->getSchema() && $this->getPlatform()->supportsSchemas()
-            && false === strpos($name, $this->getPlatform()->getSchemaDelimiter())) {
-            $name = $this->getSchema() . $this->getPlatform()->getSchemaDelimiter() . $name;
-        }
-
-        if (!$this->hasTable($name, $caseInsensitive)) {
-            return null;
+        if (!$this->hasEntity($name, $caseInsensitive)) {
+            throw new InvalidArgumentException(
+                sprintf(
+                    'Entity %s in database %s not found [%s]',
+                    $name,
+                    $this->getName(),
+                    $this->getEntityNames()
+                )
+            );
         }
 
         if ($caseInsensitive) {
-            return $this->tablesByLowercaseName[strtolower($name)];
+            return $this->entitiesByLowercaseName[strtolower($name)];
         }
 
-        return $this->tablesByName[$name];
+        return $this->entitiesByName[$name];
     }
 
     /**
-     * Returns whether or not the database has a table identified by its
-     * PHP name.
-     *
-     * @param  string  $phpName
-     * @return boolean
+     * @return string
      */
-    public function hasTableByPhpName($phpName)
+    public function getEntityNames()
     {
-        return isset($this->tablesByPhpName[$phpName]);
+        return implode(',', array_keys($this->entitiesByName));
     }
 
-    /**
-     * Returns the table object with the specified PHP name.
-     *
-     * @param  string $phpName
-     * @return Table
-     */
-    public function getTableByPhpName($phpName)
-    {
-        if (isset($this->tablesByPhpName[$phpName])) {
-            return $this->tablesByPhpName[$phpName];
-        }
+//    /**
+//     * Returns whether or not the database has a entity identified by its
+//     * PHP name.
+//     *
+//     * @param  string  $phpName
+//     * @return boolean
+//     */
+//    public function hasEntityByPhpName($phpName)
+//    {
+//        return isset($this->entitiesByPhpName[$phpName]);
+//    }
+//
+//    /**
+//     * Returns the entity object with the specified PHP name.
+//     *
+//     * @param  string $phpName
+//     * @return Entity
+//     */
+//    public function getEntityByPhpName($phpName)
+//    {
+//        if (isset($this->entitiesByPhpName[$phpName])) {
+//            return $this->entitiesByPhpName[$phpName];
+//        }
+//
+//        return null; // just to be explicit
+//    }
 
-        return null; // just to be explicit
-    }
-
     /**
-     * Adds a new table to this database.
+     * Adds a new entity to this database.
      *
-     * @param  Table|array $table
-     * @return Table
+     * @param  Entity|array $entity
+     * @return Entity
      */
-    public function addTable($table)
+    public function addEntity($entity)
     {
-        if (!$table instanceof Table) {
-            $tbl = new Table();
+        if (!$entity instanceof Entity) {
+            $tbl = new Entity();
             $tbl->setDatabase($this);
-            $tbl->loadMapping($table);
+            $tbl->loadMapping($entity);
 
-            return $this->addTable($tbl);
+            return $this->addEntity($tbl);
         }
 
-        $table->setDatabase($this);
+        $entity->setDatabase($this);
 
-        if (isset($this->tablesByName[$table->getName()])) {
-            throw new EngineException(sprintf('Table "%s" declared twice', $table->getName()));
+        if (isset($this->entitiesByName[$entity->getName()])) {
+            throw new EngineException(sprintf('Entity "%s" declared twice', $entity->getName()));
         }
 
-        $this->tables[] = $table;
-        $this->tablesByName[$table->getName()] = $table;
-        $this->tablesByLowercaseName[strtolower($table->getName())] = $table;
-        $this->tablesByPhpName[$table->getPhpName()] = $table;
+        $this->entities[] = $entity;
+        $this->entitiesByFullClassName[$entity->getFullClassName()] = $entity;
+        $this->entitiesByName[$entity->getName()] = $entity;
+        $this->entitiesByLowercaseName[strtolower($entity->getName())] = $entity;
+//        $this->entitiesByPhpName[$entity->getName()] = $entity;
 
-        $this->computeTableNamespace($table);
+//        $this->computeEntityNamespace($entity);
 
-        if (null === $table->getPackage()) {
-            $table->setPackage($this->getPackage());
+        if (null === $entity->getPackage()) {
+            $entity->setPackage($this->getPackage());
         }
 
-        return $table;
+        return $entity;
     }
 
     /**
-     * Adds several tables at once.
+     * Adds several entities at once.
      *
-     * @param Table[] $tables An array of Table instances
+     * @param Entity[] $entities An array of Entity instances
      */
-    public function addTables(array $tables)
+    public function addEntities(array $entities)
     {
-        foreach ($tables as $table) {
-            $this->addTable($table);
+        foreach ($entities as $entity) {
+            $this->addEntity($entity);
         }
     }
 
@@ -553,74 +595,74 @@ class Database extends ScopedMappingModel
      * Returns the schema delimiter character.
      *
      * For example, the dot character with mysql when
-     * naming tables. For instance: schema.the_table.
+     * naming entities. For instance: schema.the_entity.
      *
      * @return string
      */
     public function getSchemaDelimiter()
     {
-        return $this->platform->getSchemaDelimiter();
+        return $this->getPlatform()->getSchemaDelimiter();
     }
 
-    /**
-     * Sets the database's schema.
-     *
-     * @param string $schema
-     */
-    public function setSchema($schema)
-    {
-        $oldSchema = $this->schema;
-        if ($this->schema !== $schema && $this->getPlatform()) {
-            $schemaDelimiter = $this->getPlatform()->getSchemaDelimiter();
-            $fixHash = function (&$array) use ($schema, $oldSchema, $schemaDelimiter) {
-                foreach ($array as $k => $v) {
-                    if ($schema && $this->getPlatform()->supportsSchemas()) {
-                        if (false === strpos($k, $schemaDelimiter)) {
-                            $array[$schema . $schemaDelimiter . $k] = $v;
-                            unset($array[$k]);
-                        }
-                    } elseif ($oldSchema) {
-                        if (false !== strpos($k, $schemaDelimiter)) {
-                            $array[explode($schemaDelimiter, $k)[1]] = $v;
-                            unset($array[$k]);
-                        }
-                    }
-                }
-            };
+//    /**
+//     * Sets the database's schema.
+//     *
+//     * @param string $schema
+//     */
+//    public function setSchema($schema)
+//    {
+//        $oldSchema = $this->schema;
+//        if ($this->schema !== $schema && $this->getPlatform()) {
+//            $schemaDelimiter = $this->getPlatform()->getSchemaDelimiter();
+//            $fixHash = function (&$array) use ($schema, $oldSchema, $schemaDelimiter) {
+//                foreach ($array as $k => $v) {
+//                    if ($schema && $this->getPlatform()->supportsSchemas()) {
+//                        if (false === strpos($k, $schemaDelimiter)) {
+//                            $array[$schema . $schemaDelimiter . $k] = $v;
+//                            unset($array[$k]);
+//                        }
+//                    } elseif ($oldSchema) {
+//                        if (false !== strpos($k, $schemaDelimiter)) {
+//                            $array[explode($schemaDelimiter, $k)[1]] = $v;
+//                            unset($array[$k]);
+//                        }
+//                    }
+//                }
+//            };
+//
+//            $fixHash($this->entitiesByName);
+//            $fixHash($this->entitiesByLowercaseName);
+//        }
+//        parent::setSchema($schema);
+//    }
 
-            $fixHash($this->tablesByName);
-            $fixHash($this->tablesByLowercaseName);
-        }
-        parent::setSchema($schema);
-    }
-
-    /**
-     * Computes the table namespace based on the current relative or
-     * absolute table namespace and the database namespace.
-     *
-     * @param  Table  $table
-     * @return string
-     */
-    private function computeTableNamespace(Table $table)
-    {
-        $namespace = $table->getNamespace();
-        if ($this->isAbsoluteNamespace($namespace)) {
-            $namespace = ltrim($namespace, '\\');
-            $table->setNamespace($namespace);
-
-            return $namespace;
-        }
-
-        if ($namespace = $this->getNamespace()) {
-            if ($table->getNamespace()) {
-                $namespace .= '\\'.$table->getNamespace();
-            }
-
-            $table->setNamespace($namespace);
-        }
-
-        return $namespace;
-    }
+//    /**
+//     * Computes the entity namespace based on the current relative or
+//     * absolute entity namespace and the database namespace.
+//     *
+//     * @param  Entity  $entity
+//     * @return string
+//     */
+//    private function computeEntityNamespace(Entity $entity)
+//    {
+//        $namespace = $entity->getNamespace();
+//        if ($this->isAbsoluteNamespace($namespace)) {
+//            $namespace = ltrim($namespace, '\\');
+//            $entity->setNamespace($namespace);
+//
+//            return $namespace;
+//        }
+//
+//        if ($namespace = $this->getNamespace()) {
+//            if ($entity->getNamespace()) {
+//                $namespace .= '\\'.$entity->getNamespace();
+//            }
+//
+//            $entity->setNamespace($namespace);
+//        }
+//
+//        return $namespace;
+//    }
 
     /**
      * Sets the parent schema
@@ -708,40 +750,40 @@ class Database extends ScopedMappingModel
     }
 
     /**
-     * Returns the table prefix for this database.
+     * Returns the entity prefix for this database.
      *
      * @return string
      */
-    public function getTablePrefix()
+    public function getEntityPrefix()
     {
-        return $this->tablePrefix;
+        return $this->entityPrefix;
     }
 
     /**
-     * Sets the tables' prefix.
+     * Sets the entities' prefix.
      *
-     * @param string $tablePrefix
+     * @param string $entityPrefix
      */
-    public function setTablePrefix($tablePrefix)
+    public function setEntityPrefix($entityPrefix)
     {
-        $this->tablePrefix = $tablePrefix;
+        $this->entityPrefix = $entityPrefix;
     }
 
     /**
-     * Returns the next behavior on all tables, ordered by behavior priority,
+     * Returns the next behavior on all entities, ordered by behavior priority,
      * and skipping the ones that were already executed.
      *
      * @return Behavior
      */
-    public function getNextTableBehavior()
+    public function getNextEntityBehavior()
     {
-        // order the behaviors according to Behavior::$tableModificationOrder
+        // order the behaviors according to Behavior::$entityModificationOrder
         $behaviors = [];
         $nextBehavior = null;
-        foreach ($this->tables as $table) {
-            foreach ($table->getBehaviors() as $behavior) {
-                if (!$behavior->isTableModified()) {
-                    $behaviors[$behavior->getTableModificationOrder()][] = $behavior;
+        foreach ($this->entities as $entity) {
+            foreach ($entity->getBehaviors() as $behavior) {
+                if (!$behavior->isEntityModified()) {
+                    $behaviors[$behavior->getEntityModificationOrder()][] = $behavior;
                 }
             }
         }
@@ -759,26 +801,18 @@ class Database extends ScopedMappingModel
      */
     public function doFinalInitialization()
     {
-        // add the referrers for the foreign keys
-        $this->setupTableReferrers();
-
         // execute database behaviors
         foreach ($this->getBehaviors() as $behavior) {
             $behavior->modifyDatabase();
         }
 
-        // execute table behaviors (may add new tables and new behaviors)
-        while ($behavior = $this->getNextTableBehavior()) {
-            $behavior->getTableModifier()->modifyTable();
-            $behavior->setTableModified(true);
+        // execute entity behaviors (may add new entities and new behaviors)
+        while ($behavior = $this->getNextEntityBehavior()) {
+            $behavior->getEntityModifier()->modifyEntity();
+            $behavior->setEntityModified(true);
         }
 
-        // do naming and heavy indexing
-        foreach ($this->tables as $table) {
-            $table->doFinalInitialization();
-            // setup referrers again, since final initialization may have added columns
-            $table->setupReferrers(true);
-        }
+        $this->getPlatform()->finalizeDefinition($this);
     }
 
     protected function registerBehavior(Behavior $behavior)
@@ -786,23 +820,12 @@ class Database extends ScopedMappingModel
         $behavior->setDatabase($this);
     }
 
-    /**
-     * Setups all table referrers.
-     *
-     */
-    protected function setupTableReferrers()
-    {
-        foreach ($this->tables as $table) {
-            $table->setupReferrers();
-        }
-    }
-
     public function __toString()
     {
-        $tables = [];
-        foreach ($this->getTables() as $table) {
+        $entities = [];
+        foreach ($this->getEntities() as $entity) {
             $columns = [];
-            foreach ($table->getColumns() as $column) {
+            foreach ($entity->getFields() as $column) {
                 $columns[] = sprintf("      %s %s %s %s %s %s",
                     $column->getName(),
                     $column->getType(),
@@ -815,60 +838,60 @@ class Database extends ScopedMappingModel
             }
 
             $fks = [];
-            foreach ($table->getForeignKeys() as $fk) {
+            foreach ($entity->getRelations() as $fk) {
                 $fks[] = sprintf("      %s to %s.%s (%s => %s)",
                     $fk->getName(),
                     $fk->getForeignSchemaName(),
-                    $fk->getForeignTableCommonName(),
-                    join(', ', $fk->getLocalColumns()),
-                    join(', ', $fk->getForeignColumns())
+                    $fk->getForeignEntityCommonName(),
+                    join(', ', $fk->getLocalFields()),
+                    join(', ', $fk->getForeignFields())
                 );
             }
 
             $indices = [];
-            foreach ($table->getIndices() as $index) {
-                $indexColumns = [];
-                foreach ($index->getColumns() as $indexColumnName) {
-                    $indexColumns[] = sprintf('%s (%s)', $indexColumnName, $index->getColumnSize($indexColumnName));
+            foreach ($entity->getIndices() as $index) {
+                $indexFields = [];
+                foreach ($index->getFields() as $indexFieldName) {
+                    $indexFields[] = sprintf('%s (%s)', $indexFieldName, $index->getFieldSize($indexFieldName));
                 }
                 $indices[] = sprintf("      %s (%s)",
                     $index->getName(),
-                    join(', ', $indexColumns)
+                    join(', ', $indexFields)
                 );
             }
 
             $unices = [];
-            foreach ($table->getUnices() as $index) {
+            foreach ($entity->getUnices() as $index) {
                 $unices[] = sprintf("      %s (%s)",
                     $index->getName(),
-                    join(', ', $index->getColumns())
+                    join(', ', $index->getFields())
                 );
             }
 
-            $tableDef = sprintf("  %s (%s):\n%s",
-                $table->getName(),
-                $table->getCommonName(),
+            $entityDef = sprintf("  %s (%s):\n%s",
+                $entity->getName(),
+                $entity->getCommonName(),
                 implode("\n", $columns)
             );
 
             if ($fks) {
-                $tableDef .= "\n    FKs:\n" . implode("\n", $fks);
+                $entityDef .= "\n    FKs:\n" . implode("\n", $fks);
             }
 
             if ($indices) {
-                $tableDef .= "\n    indices:\n" . implode("\n", $indices);
+                $entityDef .= "\n    indices:\n" . implode("\n", $indices);
             }
 
             if ($unices) {
-                $tableDef .= "\n    unices:\n". implode("\n", $unices);
+                $entityDef .= "\n    unices:\n". implode("\n", $unices);
             }
 
-            $tables[] = $tableDef;
+            $entities[] = $entityDef;
         }
 
         return sprintf("%s:\n%s",
             $this->getName() . ($this->getSchema() ? '.'. $this->getSchema() : ''),
-            implode("\n", $tables)
+            implode("\n", $entities)
         );
     }
 
@@ -914,15 +937,15 @@ class Database extends ScopedMappingModel
 
     public function __clone()
     {
-        $tables = [];
-        foreach ($this->tables as $oldTable) {
-            $table = clone $oldTable;
-            $tables[] = $table;
-            $this->tablesByName[$table->getName()] = $table;
-            $this->tablesByLowercaseName[strtolower($table->getName())] = $table;
-            $this->tablesByPhpName[$table->getPhpName()] = $table;
+        $entities = [];
+        foreach ($this->entities as $oldEntity) {
+            $entity = clone $oldEntity;
+            $entities[] = $entity;
+            $this->entitiesByName[$entity->getName()] = $entity;
+            $this->entitiesByLowercaseName[strtolower($entity->getName())] = $entity;
+//            $this->entitiesByPhpName[$entity->getName()] = $entity;
         }
-        $this->tables = $tables;
+        $this->entities = $entities;
     }
 
     /**

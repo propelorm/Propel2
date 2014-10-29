@@ -21,7 +21,7 @@ public function archive(ConnectionInterface $con = null)
     }
     $this->copyInto($archive, $deepCopy = false, $makeNew = false);
 <?php if ($archivedAtColumn): ?>
-    $archive->set<?php echo $archivedAtColumn->getPhpName() ?>(time());
+    $archive->set<?php echo $archivedAtColumn->getName() ?>(time());
 <?php endif; ?>
     $archive->save(<?php if (!$hasArchiveClass): ?>$con<?php endif; ?>);
 

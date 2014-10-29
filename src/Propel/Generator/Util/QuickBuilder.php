@@ -10,17 +10,19 @@
 
 namespace Propel\Generator\Util;
 
+use Propel\Generator\Builder\Om\EntityMapBuilder;
 use Propel\Generator\Builder\Util\SchemaReader;
 use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Config\QuickGeneratorConfig;
 use Propel\Generator\Exception\BuildException;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\Diff\DatabaseComparator;
-use Propel\Generator\Model\Table;
+use Propel\Generator\Model\Entity;
 use Propel\Generator\Platform\PlatformInterface;
 use Propel\Generator\Platform\SqlitePlatform;
 use Propel\Generator\Reverse\SchemaParserInterface;
 use Propel\Runtime\Adapter\Pdo\SqliteAdapter;
+use Propel\Runtime\Configuration;
 use Propel\Runtime\Connection\PdoConnection;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\ConnectionWrapper;
@@ -66,7 +68,7 @@ class QuickBuilder
     /**
      * @var array
      */
-    protected $classTargets = array('tablemap', 'object', 'query', 'objectstub', 'querystub');
+    protected $classTargets = array('activerecordtrait', 'entitymap', 'proxy', 'object', 'query', 'repository', 'repositorystub', 'querystub');
 
     /**
      * Identifier quoting for reversed database.
@@ -74,6 +76,15 @@ class QuickBuilder
      * @var bool
      */
     protected $identifierQuoting = false;
+
+    /**
+     * Map from full entity class name to full entity map class name,
+     * build in this quickBuilder. Can be used to register those tableMaps
+     * to Propel\Runtime\Configuration, so queries/models are aware of it.
+     *
+     * @var string[]
+     */
+    protected $knownEntityClassNames = [];
 
     /**
      * @param string $schema
@@ -197,10 +208,12 @@ class QuickBuilder
         $con->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_WARNING);
         $adapter->initConnection($con, []);
         $this->buildSQL($con);
-        $this->buildClasses($classTargets);
-        $name = $this->getDatabase()->getName();
-        Propel::getServiceContainer()->setAdapter($name, $adapter);
-        Propel::getServiceContainer()->setConnection($name, $con);
+        $this->buildClasses($classTargets, true);
+//        $this->updateDB($con);
+//        $name = $this->getDatabase()->getName();
+//
+//        Propel::getServiceContainer()->setAdapter($name, $adapter);
+//        Propel::getServiceContainer()->setConnection($name, $con);
 
         return $con;
     }
@@ -223,8 +236,8 @@ class QuickBuilder
         $statements = SqlParser::parseString($sql);
         foreach ($statements as $statement) {
             if (strpos($statement, 'DROP') === 0) {
-                // drop statements cause errors since the table doesn't exist
-                continue;
+                // drop statements cause errors since the entity doesn't exist
+//                continue;
             }
             try {
                 $stmt = $con->prepare($statement);
@@ -286,17 +299,17 @@ class QuickBuilder
 
     public function getSQL()
     {
-        return $this->getPlatform()->getAddTablesDDL($this->getDatabase());
+        return $this->getPlatform()->getAddEntitiesDDL($this->getDatabase());
     }
 
     public function getBuildName($classTargets = null)
     {
-        $tables = [];
-        foreach ($this->getDatabase()->getTables() as $table) {
-            if (count($tables) > 3) break;
-            $tables[] = $table->getName();
+        $entitys = [];
+        foreach ($this->getDatabase()->getEntities() as $entity) {
+            if (count($entitys) > 3) break;
+            $entitys[] = $entity->getName();
         }
-        $name = implode('_', $tables);
+        $name = implode('_', $entitys);
         if (!$classTargets || count($classTargets) == 5) {
             $name .= '-all';
         } else {
@@ -307,12 +320,12 @@ class QuickBuilder
     }
 
     /**
-     * @param array $classTargets array('tablemap', 'object', 'query', 'objectstub', 'querystub')
+     * @param array $classTargets array('entitymap', 'object', 'query', 'activerecordtrait', 'querystub')
      * @param bool  $separate     pass true to get for each class a own file. better for debugging.
      */
     public function buildClasses(array $classTargets = null, $separate = false)
     {
-        $classes = $classTargets === null ? array('tablemap', 'object', 'query', 'objectstub', 'querystub') : $classTargets;
+        $classes = $classTargets === null ? $this->classTargets : $classTargets;
 
         $dirHash = substr(sha1(getcwd()), 0, 10);
         $dir = sys_get_temp_dir() . "/propelQuickBuild-$dirHash/";
@@ -324,29 +337,30 @@ class QuickBuilder
         $includes = [];
         $allCode = '';
         $allCodeName = [];
-        foreach ($this->getDatabase()->getTables() as $table) {
+        foreach ($this->getDatabase()->getEntities() as $entity) {
             if (5 > count($allCodeName)) {
-                $allCodeName[] = $table->getPhpName();
+                $allCodeName[] = $entity->getName();
             }
 
             if ($separate) {
                 foreach ($classes as $class) {
-                    $code = $this->getClassesForTable($table, [$class]);
+                    $code = $this->getClassesForEntity($entity, [$class]);
                         $tempFile = $dir
-                            . str_replace('\\', '-', $table->getPhpName())
+                            . str_replace('\\', '-', $entity->getName())
                             . "-$class"
                             . '.php';
                         file_put_contents($tempFile, "<?php\n" . $code);
                         $includes[] = $tempFile;
                 }
             } else {
-                $code = $this->getClassesForTable($table, $classes);
+                $code = $this->getClassesForEntity($entity, $classes);
                 $allCode .= $code;
             }
         }
         if ($separate) {
             foreach ($includes as $tempFile) {
                 include($tempFile);
+                var_dump($tempFile);
             }
         } else {
             $tempFile = $dir . join('_', $allCodeName).'.php';
@@ -358,14 +372,24 @@ class QuickBuilder
     public function getClasses(array $classTargets = null)
     {
         $script = '';
-        foreach ($this->getDatabase()->getTables() as $table) {
-            $script .= $this->getClassesForTable($table, $classTargets);
+        foreach ($this->getDatabase()->getEntities() as $entity) {
+            $script .= $this->getClassesForEntity($entity, $classTargets);
         }
 
         return $script;
     }
 
-    public function getClassesForTable(Table $table, array $classTargets = null)
+    /**
+     * @param Configuration $configuration
+     */
+    public function registerEntities(Configuration $configuration)
+    {
+        foreach ($this->knownEntityClassNames as $databaseName => $entityNames) {
+            $configuration->registerEntity($databaseName, $entityNames);
+        }
+    }
+
+    public function getClassesForEntity(Entity $entity, array $classTargets = null)
     {
         if (null === $classTargets) {
             $classTargets = $this->classTargets;
@@ -374,21 +398,27 @@ class QuickBuilder
         $script = '';
 
         foreach ($classTargets as $target) {
-            $class = $this->getConfig()->getConfiguredBuilder($table, $target)->build();
-            $script .= $this->fixNamespaceDeclarations($class);
+            $builder = $this->getConfig()->getConfiguredBuilder($entity, $target);
+            if ($builder instanceof EntityMapBuilder) {
+                $dbName = $builder->getEntity()->getDatabase()->getName();
+                $fullEntityClassName = $builder->getObjectBuilder()->getFullClassName();
+                $this->knownEntityClassNames[$dbName][] = $fullEntityClassName;
+            }
+            $source = $builder->build();
+            $script .= $this->fixNamespaceDeclarations($source);
         }
 
-        if ($col = $table->getChildrenColumn()) {
+        if ($col = $entity->getChildrenField()) {
             if ($col->isEnumeratedClasses()) {
                 foreach ($col->getChildren() as $child) {
                     if ($child->getAncestor()) {
-                        $builder = $this->getConfig()->getConfiguredBuilder($table, 'queryinheritance');
+                        $builder = $this->getConfig()->getConfiguredBuilder($entity, 'queryinheritance');
                         $builder->setChild($child);
                         $class = $builder->build();
                         $script .= $this->fixNamespaceDeclarations($class);
 
                         foreach (array('objectmultiextend', 'queryinheritancestub') as $target) {
-                            $builder = $this->getConfig()->getConfiguredBuilder($table, $target);
+                            $builder = $this->getConfig()->getConfiguredBuilder($entity, $target);
                             $builder->setChild($child);
                             $class = $builder->build();
                             $script .= $this->fixNamespaceDeclarations($class);
@@ -398,14 +428,9 @@ class QuickBuilder
             }
         }
 
-        if ($table->getInterface()) {
-            $interface = $this->getConfig()->getConfiguredBuilder($table, 'interface')->build();
-            $script .= $this->fixNamespaceDeclarations($interface);
-        }
-
-        if ($table->hasAdditionalBuilders()) {
-            foreach ($table->getAdditionalBuilders() as $builderClass) {
-                $builder = new $builderClass($table);
+        if ($entity->hasAdditionalBuilders()) {
+            foreach ($entity->getAdditionalBuilders() as $builderClass) {
+                $builder = new $builderClass($entity);
                 $class = $builder->build();
                 $script .= $this->fixNamespaceDeclarations($class);
             }
@@ -416,13 +441,13 @@ class QuickBuilder
         return $script;
     }
 
-    public static function debugClassesForTable($schema, $tableName)
+    public static function debugClassesForEntity($schema, $entityName)
     {
         $builder = new self;
         $builder->setSchema($schema);
-        foreach ($builder->getDatabase()->getTables() as $table) {
-            if ($table->getName() == $tableName) {
-                echo $builder->getClassesForTable($table);
+        foreach ($builder->getDatabase()->getEntities() as $entity) {
+            if ($entity->getName() == $entityName) {
+                echo $builder->getClassesForEntity($entity);
             }
         }
     }

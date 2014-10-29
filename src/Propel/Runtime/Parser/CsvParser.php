@@ -75,26 +75,26 @@ class CsvParser extends AbstractParser
      */
     protected function formatRow($row)
     {
-        foreach ($row as &$column) {
-            if (!is_scalar($column)) {
-                $column = $this->serialize($column);
+        foreach ($row as &$field) {
+            if (!is_scalar($field)) {
+                $field = $this->serialize($field);
             }
             switch ($this->quoting) {
                 case self::QUOTE_NONE:
                     // do nothing... no quoting is happening here
                     break;
                 case self::QUOTE_ALL:
-                    $column = $this->quote($this->escape($column));
+                    $field = $this->quote($this->escape($field));
                     break;
                 case self::QUOTE_NONNUMERIC:
-                    if (preg_match('/[^0-9]/', $column)) {
-                        $column = $this->quote($this->escape($column));
+                    if (preg_match('/[^0-9]/', $field)) {
+                        $field = $this->quote($this->escape($field));
                     }
                     break;
                 case self::QUOTE_MINIMAL:
                 default:
-                    if ($this->containsSpecialChars($column)) {
-                        $column = $this->quote($this->escape($column));
+                    if ($this->containsSpecialChars($field)) {
+                        $field = $this->quote($this->escape($field));
                     }
                     break;
             }
@@ -104,7 +104,7 @@ class CsvParser extends AbstractParser
     }
 
     /**
-    * Escapes a column (escapes quotechar with escapechar)
+    * Escapes a field (escapes quotechar with escapechar)
     *
     * @param string $input    A single value to be escaped for output
     * @return string    Escaped input value
@@ -119,7 +119,7 @@ class CsvParser extends AbstractParser
     }
 
     /**
-     * Quotes a column with quotechar
+     * Quotes a field with quotechar
      *
      * @param  string $input A single value to be quoted for output
      * @return string Quoted input value
@@ -189,23 +189,23 @@ class CsvParser extends AbstractParser
             $heading = array_shift($rows);
             $keys = explode($this->delimiter, $heading);
         } else {
-            $keys = range(0, count($this->getColumns($rows[0])) - 1);
+            $keys = range(0, count($this->getFields($rows[0])) - 1);
         }
         if ($isList) {
             $array = array();
             foreach ($rows as $row) {
-                $values = $this->cleanupRow($this->getColumns($row));
+                $values = $this->cleanupRow($this->getFields($row));
                 if ($values !== array()) {
                     $array []= array_combine($keys, $values);
                 }
             }
         } else {
-            $values = $this->cleanupRow($this->getColumns(array_shift($rows)));
+            $values = $this->cleanupRow($this->getFields(array_shift($rows)));
             if ($keys === array('') && $values === array()) {
                 $array = array();
             } else {
                 if (count($keys) > count($values)) {
-                    // empty values at the end of the row are not match bu the getColumns() regexp
+                    // empty values at the end of the row are not match bu the getFields() regexp
                     $values = array_pad($values, count($keys), null);
                 }
                 $array = array_combine($keys, $values);
@@ -220,7 +220,7 @@ class CsvParser extends AbstractParser
         return $this->toArray($array, $rootKey, true);
     }
 
-    protected function getColumns($row)
+    protected function getFields($row)
     {
         $delim = preg_quote($this->delimiter, '/');
         preg_match_all('/(".+?"|[^' . $delim . ']+)(' . $delim . '|$)/', $row, $matches);
@@ -236,17 +236,17 @@ class CsvParser extends AbstractParser
      */
     protected function cleanupRow($row)
     {
-        foreach ($row as $key => $column) {
-            if ($this->isQuoted($column)) {
-                $column = $this->unescape($this->unquote($column));
+        foreach ($row as $key => $field) {
+            if ($this->isQuoted($field)) {
+                $field = $this->unescape($this->unquote($field));
             }
-            if ($this->isSerialized($column)) {
-                $column = $this->unserialize($column);
+            if ($this->isSerialized($field)) {
+                $field = $this->unserialize($field);
             }
-            if ('N;' === $column) {
-                $column = null;
+            if ('N;' === $field) {
+                $field = null;
             }
-            $row[$key] = $column;
+            $row[$key] = $field;
         }
 
         return $row;

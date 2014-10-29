@@ -44,7 +44,7 @@ class PropelQueryTest extends BookstoreTestBase
 
         $q = PropelQuery::from('\Propel\Tests\Bookstore\Book b');
         $expected = new BookQuery();
-        $expected->setModelAlias('b');
+        $expected->setEntityAlias('b');
         $this->assertEquals($expected, $q, 'from() sets the model alias if found after the blank');
 
         $q = PropelQuery::from('\Propel\Tests\Runtime\ActiveQuery\myBook');

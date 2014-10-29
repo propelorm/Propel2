@@ -13,7 +13,7 @@ namespace Propel\Runtime\ActiveQuery\Criterion;
 use Propel\Runtime\ActiveQuery\Criteria;
 
 /**
- * Specialized Criterion used for IN expressions, e.g. table.column IN (?, ?) or table.column NOT IN (?, ?)
+ * Specialized Criterion used for IN expressions, e.g. entity.field IN (?, ?) or entity.field NOT IN (?, ?)
  */
 class InCriterion extends AbstractCriterion
 {
@@ -22,13 +22,13 @@ class InCriterion extends AbstractCriterion
      * Create a new instance.
      *
      * @param Criteria $outer      The outer class (this is an "inner" class).
-     * @param string   $column     ignored
+     * @param string   $field     ignored
      * @param string   $value      The condition to be added to the query string
      * @param string   $comparison One of Criteria::IN and Criteria::NOT_IN
      */
-    public function __construct(Criteria $outer, $column, $value, $comparison = Criteria::IN)
+    public function __construct(Criteria $outer, $field, $value, $comparison = Criteria::IN)
     {
-        return parent::__construct($outer, $column, $value, $comparison);
+        return parent::__construct($outer, $field, $value, $comparison);
     }
 
     /**
@@ -43,12 +43,12 @@ class InCriterion extends AbstractCriterion
         $index = count($params); // to avoid counting the number of parameters for each element in the array
         $values = ($this->value instanceof \Traversable) ? iterator_to_array($this->value) : (array) $this->value;
         foreach ($values as $value) {
-            $params[] = array('table' => $this->realtable, 'column' => $this->column, 'value' => $value);
+            $params[] = array('entity' => $this->realEntity, 'field' => $this->field, 'value' => $value);
             $index++; // increment this first to correct for wanting bind params to start with :p1
             $bindParams[] = ':p' . $index;
         }
         if (count($bindParams)) {
-            $field = ($this->table === null) ? $this->column : $this->table . '.' . $this->column;
+            $field = ($this->entityName === null) ? $this->field : $this->entityName . '.' . $this->field;
             $sb .= $field . $this->comparison . '(' . implode(',', $bindParams) . ')';
         } else {
             $sb .= (Criteria::IN === $this->comparison) ? '1<>1' : '1=1';

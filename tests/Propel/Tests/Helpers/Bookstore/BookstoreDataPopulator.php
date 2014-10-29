@@ -10,13 +10,12 @@
 
 namespace Propel\Tests\Helpers\Bookstore;
 
-use Propel\Runtime\Propel;
+use Propel\Runtime\Configuration;
 
 use Propel\Tests\Bookstore\AcctAccessRole;
 use Propel\Tests\Bookstore\Author;
 use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\BookQuery;
-use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\Bookstore\BookClubList;
 use Propel\Tests\Bookstore\BookListRel;
 use Propel\Tests\Bookstore\BookOpinion;
@@ -47,13 +46,8 @@ define('_LOB_SAMPLE_FILE_PATH', __DIR__ . '/../../../../Fixtures/etc/lob');
 class BookstoreDataPopulator
 {
 
-    public static function populate($con = null)
+    public static function populate()
     {
-        if ($con === null) {
-            $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
-        }
-        $con->beginTransaction();
-
         // Add publisher records
         // ---------------------
 
@@ -63,7 +57,7 @@ class BookstoreDataPopulator
 
         $morrow = new Publisher();
         $morrow->setName("William Morrow");
-        $morrow->save($con);
+        $morrow->save();
         $morrow_id = $morrow->getId();
 
         $penguin = new Publisher();
@@ -73,7 +67,7 @@ class BookstoreDataPopulator
 
         $vintage = new Publisher();
         $vintage->setName("Vintage");
-        $vintage->save($con);
+        $vintage->save();
         $vintage_id = $vintage->getId();
 
         $rowling = new Author();
@@ -84,19 +78,19 @@ class BookstoreDataPopulator
         $stephenson = new Author();
         $stephenson->setFirstName("Neal");
         $stephenson->setLastName("Stephenson");
-        $stephenson->save($con);
+        $stephenson->save();
         $stephenson_id = $stephenson->getId();
 
         $byron = new Author();
         $byron->setFirstName("George");
         $byron->setLastName("Byron");
-        $byron->save($con);
+        $byron->save();
         $byron_id = $byron->getId();
 
         $grass = new Author();
         $grass->setFirstName("Gunter");
         $grass->setLastName("Grass");
-        $grass->save($con);
+        $grass->save();
         $grass_id = $grass->getId();
 
         $phoenix = new Book();
@@ -105,7 +99,7 @@ class BookstoreDataPopulator
         $phoenix->setAuthor($rowling);
         $phoenix->setPublisher($scholastic);
         $phoenix->setPrice(10.99);
-        $phoenix->save($con);
+        $phoenix->save();
         $phoenix_id = $phoenix->getId();
 
         $qs = new Book();
@@ -114,7 +108,7 @@ class BookstoreDataPopulator
         $qs->setPrice(11.99);
         $qs->setAuthor($stephenson);
         $qs->setPublisher($morrow);
-        $qs->save($con);
+        $qs->save();
         $qs_id = $qs->getId();
 
         $dj = new Book();
@@ -123,7 +117,7 @@ class BookstoreDataPopulator
         $dj->setPrice(12.99);
         $dj->setAuthor($byron);
         $dj->setPublisher($penguin);
-        $dj->save($con);
+        $dj->save();
         $dj_id = $dj->getId();
 
         $td = new Book();
@@ -132,7 +126,7 @@ class BookstoreDataPopulator
         $td->setPrice(13.99);
         $td->setAuthor($grass);
         $td->setPublisher($vintage);
-        $td->save($con);
+        $td->save();
         $td_id = $td->getId();
 
         $r1 = new Review();
@@ -140,7 +134,7 @@ class BookstoreDataPopulator
         $r1->setReviewedBy("Washington Post");
         $r1->setRecommended(true);
         $r1->setReviewDate(time());
-        $r1->save($con);
+        $r1->save();
         $r1_id = $r1->getId();
 
         $r2 = new Review();
@@ -148,7 +142,7 @@ class BookstoreDataPopulator
         $r2->setReviewedBy("New York Times");
         $r2->setRecommended(false);
         $r2->setReviewDate(time());
-        $r2->save($con);
+        $r2->save();
         $r2_id = $r2->getId();
 
         $blob_path = _LOB_SAMPLE_FILE_PATH . '/tin_drum.gif';
@@ -161,7 +155,7 @@ class BookstoreDataPopulator
         if (get_class(Propel::getServiceContainer()->getAdapter()) != "OracleAdapter") {
             $m1->setExcerpt(file_get_contents($clob_path));
         }
-        $m1->save($con);
+        $m1->save();
 
         // Add book list records
         // ---------------------
@@ -190,7 +184,7 @@ class BookstoreDataPopulator
         $bemp2->setName("Pieter");
         $bemp2->setJobTitle("Clerk");
         $bemp2->setSupervisor($bemp1);
-        $bemp2->save($con);
+        $bemp2->save();
 
         $role = new AcctAccessRole();
         $role->setName("Admin");
@@ -200,7 +194,7 @@ class BookstoreDataPopulator
         $bempacct->setAcctAccessRole($role);
         $bempacct->setLogin("john");
         $bempacct->setPassword("johnp4ss");
-        $bempacct->save($con);
+        $bempacct->save();
 
         // Add bookstores
 
@@ -208,13 +202,13 @@ class BookstoreDataPopulator
         $store->setStoreName("Amazon");
         $store->setPopulationServed(5000000000); // world population
         $store->setTotalBooks(300);
-        $store->save($con);
+        $store->save();
 
         $store = new Bookstore();
         $store->setStoreName("Local Store");
         $store->setPopulationServed(20);
         $store->setTotalBooks(500000);
-        $store->save($con);
+        $store->save();
 
         $summary = new BookSummary();
         $summary->setSummarizedBook($phoenix);
@@ -251,64 +245,55 @@ class BookstoreDataPopulator
         $pool->setName('Chris Forties - Despegue (foem.info Runners Up Remixes)');
         $pool->setRecordLabel($fade);
         $pool->save();
-
-        $con->commit();
     }
 
-    public static function populateOpinionFavorite($con = null)
+    public static function populateOpinionFavorite()
     {
-        if ($con === null) {
-            $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
-        }
-        $con->beginTransaction();
-
-        $book1 = BookQuery::create()->findOne($con);
+        $book1 = BookQuery::create()->findOne();
         $reader1 = new BookReader();
-        $reader1->save($con);
+        $reader1->save();
 
         $bo = new BookOpinion();
         $bo->setBook($book1);
         $bo->setBookReader($reader1);
-        $bo->save($con);
+        $bo->save();
 
         $rf = new ReaderFavorite();
         $rf->setBookOpinion($bo);
-        $rf->save($con);
-
-        $con->commit();
+        $rf->save();
     }
 
-    public static function depopulate($con = null)
+    public static function depopulate(Configuration $configuration)
     {
-        $tableMapClasses = array(
-            'Propel\Tests\Bookstore\Map\AuthorTableMap',
-            'Propel\Tests\Bookstore\Map\BookstoreTableMap',
-            'Propel\Tests\Bookstore\Map\BookstoreContestTableMap',
-            'Propel\Tests\Bookstore\Map\BookstoreContestEntryTableMap',
-            'Propel\Tests\Bookstore\Map\BookstoreEmployeeTableMap',
-            'Propel\Tests\Bookstore\Map\BookstoreEmployeeAccountTableMap',
-            'Propel\Tests\Bookstore\Map\BookstoreSaleTableMap',
-            'Propel\Tests\Bookstore\Map\BookClubListTableMap',
-            'Propel\Tests\Bookstore\Map\BookOpinionTableMap',
-            'Propel\Tests\Bookstore\Map\BookReaderTableMap',
-            'Propel\Tests\Bookstore\Map\BookListRelTableMap',
-            'Propel\Tests\Bookstore\Map\BookTableMap',
-            'Propel\Tests\Bookstore\Map\ContestTableMap',
-            'Propel\Tests\Bookstore\Map\CustomerTableMap',
-            'Propel\Tests\Bookstore\Map\MediaTableMap',
-            'Propel\Tests\Bookstore\Map\PublisherTableMap',
-            'Propel\Tests\Bookstore\Map\ReaderFavoriteTableMap',
-            'Propel\Tests\Bookstore\Map\ReviewTableMap',
-            'Propel\Tests\Bookstore\Map\BookSummaryTableMap',
-            'Propel\Tests\Bookstore\Map\RecordLabelTableMap',
-            'Propel\Tests\Bookstore\Map\ReleasePoolTableMap',
+        $entityClasses = array(
+            'Propel\Tests\Bookstore\Author',
+            'Propel\Tests\Bookstore\Bookstore',
+            'Propel\Tests\Bookstore\BookstoreContest',
+            'Propel\Tests\Bookstore\BookstoreContestEntry',
+            'Propel\Tests\Bookstore\BookstoreEmployee',
+            'Propel\Tests\Bookstore\BookstoreEmployeeAccount',
+            'Propel\Tests\Bookstore\BookstoreSale',
+            'Propel\Tests\Bookstore\BookClubList',
+            'Propel\Tests\Bookstore\BookOpinion',
+            'Propel\Tests\Bookstore\BookReader',
+            'Propel\Tests\Bookstore\BookListRel',
+            'Propel\Tests\Bookstore\Book',
+            'Propel\Tests\Bookstore\Contest',
+            'Propel\Tests\Bookstore\Customer',
+            'Propel\Tests\Bookstore\Media',
+            'Propel\Tests\Bookstore\Publisher',
+            'Propel\Tests\Bookstore\ReaderFavorite',
+            'Propel\Tests\Bookstore\Review',
+            'Propel\Tests\Bookstore\BookSummary',
+            'Propel\Tests\Bookstore\RecordLabel',
+            'Propel\Tests\Bookstore\ReleasePool',
         );
+
         // free the memory from existing objects
-        foreach ($tableMapClasses as $tableMapClass) {
-            foreach ($tableMapClass::$instances as $i) {
-                $i->clearAllReferences();
-            }
-            $tableMapClass::doDeleteAll($con);
+        foreach ($entityClasses as $entityClass) {
+            $configuration
+                ->getRepository($entityClass)
+                ->deleteAll();
         }
     }
 

@@ -197,7 +197,7 @@ class VersionableBehavior extends Behavior
 
     public function getVersionTablePhpName()
     {
-        return $this->getTable()->getPhpName() . 'Version';
+        return $this->getTable()->getName() . 'Version';
     }
 
     public function getVersionableFks()

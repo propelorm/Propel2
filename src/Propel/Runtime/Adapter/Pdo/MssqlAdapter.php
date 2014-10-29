@@ -12,7 +12,7 @@ namespace Propel\Runtime\Adapter\Pdo;
 
 use Propel\Runtime\Adapter\SqlAdapterInterface;
 use Propel\Runtime\Adapter\Exception\MalformedClauseException;
-use Propel\Runtime\Adapter\Exception\ColumnNotFoundException;
+use Propel\Runtime\Adapter\Exception\FieldNotFoundException;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\InvalidArgumentException;
 use Propel\Runtime\Map\DatabaseMap;
@@ -95,15 +95,15 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
     }
 
     /**
-     * @see AdapterInterface::quoteIdentifierTable()
+     * @see AdapterInterface::quoteIdentifierEntity()
      *
-     * @param  string $table
+     * @param  string $entity
      * @return string
      */
-    public function quoteIdentifierTable($table)
+    public function quoteIdentifierEntity($entity)
     {
-        // e.g. 'database.table alias' should be escaped as '[database].[table] [alias]'
-        return '[' . strtr($table, array('.' => '].[', ' ' => '] [')) . ']';
+        // e.g. 'database.entity alias' should be escaped as '[database].[entity] [alias]'
+        return '[' . strtr($entity, array('.' => '].[', ' ' => '] [')) . ']';
     }
 
     /**
@@ -192,34 +192,34 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
             $selColArr = explode(' ', $selCol);
             $selColCount = count($selColArr) - 1;
 
-            // make sure the current column isn't * or an aggregate
+            // make sure the current field isn't * or an aggregate
             if ($selColArr[0] != '*' && ! strstr($selColArr[0], '(')) {
                 if (isset($orderArr[$selColArr[0]])) {
                     $orders[$orderArr[$selColArr[0]]['key']] = $selColArr[0] . ' ' . $orderArr[$selColArr[0]]['sort'];
                 }
 
-                // use the alias if one was present otherwise use the column name
+                // use the alias if one was present otherwise use the field name
                 $alias = (! stristr($selCol, ' AS ')) ? $selColArr[0] : $selColArr[$selColCount];
                 // don't quote the identifier if it is already quoted
                 if ('[' !== $alias[0]) {
                     $alias = $this->quoteIdentifier($alias);
                 }
 
-                // save the first non-aggregate column for use in ROW_NUMBER() if required
-                if (!isset($firstColumnOrderStatement)) {
-                    $firstColumnOrderStatement = 'ORDER BY ' . $selColArr[0];
+                // save the first non-aggregate field for use in ROW_NUMBER() if required
+                if (!isset($firstFieldOrderStatement)) {
+                    $firstFieldOrderStatement = 'ORDER BY ' . $selColArr[0];
                 }
 
-                // add an alias to the inner select so all columns will be unique
+                // add an alias to the inner select so all fields will be unique
                 $innerSelect .= $selColArr[0] . ' AS ' . $alias . ', ';
                 $outerSelect .= $alias . ', ';
             } else {
-                // aggregate columns must always have an alias clause
+                // aggregate fields must always have an alias clause
                 if (!stristr($selCol, ' AS ')) {
-                    throw new MalformedClauseException('MssqlAdapter::applyLimit() requires aggregate columns to have an Alias clause');
+                    throw new MalformedClauseException('MssqlAdapter::applyLimit() requires aggregate fields to have an Alias clause');
                 }
 
-                // aggregate column alias can't be used as the count column you must use the entire aggregate statement
+                // aggregate field alias can't be used as the count field you must use the entire aggregate statement
                 if (isset($orderArr[$selColArr[$selColCount]])) {
                     $orders[$orderArr[$selColArr[$selColCount]]['key']] = str_replace($selColArr[$selColCount - 1] . ' ' . $selColArr[$selColCount], '', $selCol) . $orderArr[$selColArr[$selColCount]]['sort'];
                 }
@@ -239,17 +239,17 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
         if (is_array($orders)) {
             $orderStatement = 'ORDER BY ' . implode(', ', $orders);
         } else {
-            // use the first non aggregate column in our select statement if no ORDER BY clause present
-            if (isset($firstColumnOrderStatement)) {
-                $orderStatement = $firstColumnOrderStatement;
+            // use the first non aggregate field in our select statement if no ORDER BY clause present
+            if (isset($firstFieldOrderStatement)) {
+                $orderStatement = $firstFieldOrderStatement;
             } else {
-                throw new ColumnNotFoundException('MssqlAdapter::applyLimit() unable to find column to use with ROW_NUMBER()');
+                throw new FieldNotFoundException('MssqlAdapter::applyLimit() unable to find field to use with ROW_NUMBER()');
             }
         }
 
         // substring the select strings to get rid of the last comma and add our FROM and SELECT clauses
         $innerSelect = $selectText . 'ROW_NUMBER() OVER(' . $orderStatement . ') AS [RowNumber], ' . substr($innerSelect, 0, - 2) . ' FROM';
-        // outer select can't use * because of the RowNumber column
+        // outer select can't use * because of the RowNumber field
         $outerSelect = 'SELECT ' . substr($outerSelect, 0, - 2) . ' FROM';
 
         // ROW_NUMBER() starts at 1 not 0
@@ -269,13 +269,13 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
         $i = 1;
         $paramCols = array();
         foreach ($params as $param) {
-            if (null !== $param['table']) {
-                $column = $dbMap->getTable($param['table'])->getColumn($param['column']);
+            if (null !== $param['entity']) {
+                $field = $dbMap->getEntity($param['entity'])->getField($param['field']);
                 /* MSSQL pdo_dblib and pdo_mssql blob values must be converted to hex and then the hex added
                  * to the query string directly.  If it goes through PDOStatement::bindValue quotes will cause
                  * an error with the insert or update.
                  */
-                if (is_resource($param['value']) && $column->isLob()) {
+                if (is_resource($param['value']) && $field->isLob()) {
                     // we always need to make sure that the stream is rewound, otherwise nothing will
                     // get written to database.
                     rewind($param['value']);

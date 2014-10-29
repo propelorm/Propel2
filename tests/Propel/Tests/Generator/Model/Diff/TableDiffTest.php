@@ -10,7 +10,7 @@ use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\Index;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Model\Unique;
-use Propel\Generator\Platform\DefaultPlatform;
+use Propel\Generator\Platform\SqlDefaultPlatform;
 
 class TableDiffTest extends \PHPUnit_Framework_TestCase
 {
@@ -177,7 +177,7 @@ class TableDiffTest extends \PHPUnit_Framework_TestCase
     public function testSetAddedIndices()
     {
         $table = new Table();
-        $table->setDatabase(new Database('foo', new DefaultPlatform()));
+        $table->setDatabase(new Database('foo', new SqlDefaultPlatform()));
 
         $index = new Index('username_unique_idx');
         $index->setTable($table);
@@ -192,7 +192,7 @@ class TableDiffTest extends \PHPUnit_Framework_TestCase
     public function testSetRemovedIndices()
     {
         $table = new Table();
-        $table->setDatabase(new Database('foo', new DefaultPlatform()));
+        $table->setDatabase(new Database('foo', new SqlDefaultPlatform()));
 
         $index = new Index('username_unique_idx');
         $index->setTable($table);
@@ -207,7 +207,7 @@ class TableDiffTest extends \PHPUnit_Framework_TestCase
     public function testSetModifiedIndices()
     {
         $table = new Table('users');
-        $table->setDatabase(new Database('foo', new DefaultPlatform()));
+        $table->setDatabase(new Database('foo', new SqlDefaultPlatform()));
 
         $fromIndex = new Index('username_unique_idx');
         $fromIndex->setTable($table);
@@ -383,7 +383,7 @@ class TableDiffTest extends \PHPUnit_Framework_TestCase
     public function testReverseDiffHasAddedIndices()
     {
         $table = new Table();
-        $table->setDatabase(new Database('foo', new DefaultPlatform()));
+        $table->setDatabase(new Database('foo', new SqlDefaultPlatform()));
 
         $index = new Index('username_unique_idx');
         $index->setTable($table);
@@ -399,7 +399,7 @@ class TableDiffTest extends \PHPUnit_Framework_TestCase
     public function testReverseDiffHasRemovedIndices()
     {
         $table = new Table();
-        $table->setDatabase(new Database('foo', new DefaultPlatform()));
+        $table->setDatabase(new Database('foo', new SqlDefaultPlatform()));
 
         $index = new Index('username_unique_idx');
         $index->setTable($table);
@@ -415,7 +415,7 @@ class TableDiffTest extends \PHPUnit_Framework_TestCase
     public function testReverseDiffHasModifiedIndices()
     {
         $table = new Table();
-        $table->setDatabase(new Database('foo', new DefaultPlatform()));
+        $table->setDatabase(new Database('foo', new SqlDefaultPlatform()));
 
         $fromIndex = new Index('i1');
         $fromIndex->setTable($table);

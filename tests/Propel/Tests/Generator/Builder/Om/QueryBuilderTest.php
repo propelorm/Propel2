@@ -68,7 +68,7 @@ class QueryBuilderTest extends BookstoreTestBase
     {
         $query = new BookQuery();
         $this->assertEquals('bookstore', $query->getDbName(), 'Constructor sets dabatase name');
-        $this->assertEquals('Propel\Tests\Bookstore\Book', $query->getModelName(), 'Constructor sets model name');
+        $this->assertEquals('Propel\Tests\Bookstore\Book', $query->getEntityName(), 'Constructor sets model name');
     }
 
     public function testCreate()
@@ -76,12 +76,12 @@ class QueryBuilderTest extends BookstoreTestBase
         $query = BookQuery::create();
         $this->assertTrue($query instanceof BookQuery, 'create() returns an object of its class');
         $this->assertEquals('bookstore', $query->getDbName(), 'create() sets dabatase name');
-        $this->assertEquals('Propel\Tests\Bookstore\Book', $query->getModelName(), 'create() sets model name');
+        $this->assertEquals('Propel\Tests\Bookstore\Book', $query->getEntityName(), 'create() sets model name');
         $query = BookQuery::create('foo');
         $this->assertTrue($query instanceof BookQuery, 'create() returns an object of its class');
         $this->assertEquals($query->getDbName(), 'bookstore', 'create() sets dabatase name');
-        $this->assertEquals('Propel\Tests\Bookstore\Book', $query->getModelName(), 'create() sets model name');
-        $this->assertEquals('foo', $query->getModelAlias(), 'create() can set the model alias');
+        $this->assertEquals('Propel\Tests\Bookstore\Book', $query->getEntityName(), 'create() sets model name');
+        $this->assertEquals('foo', $query->getEntityAlias(), 'create() can set the model alias');
     }
 
     public function testCreateCustom()
@@ -91,12 +91,12 @@ class QueryBuilderTest extends BookstoreTestBase
         $this->assertTrue($query instanceof myCustomBookQuery, 'create() returns an object of its class');
         $this->assertTrue($query instanceof BookQuery, 'create() returns an object of its class');
         $this->assertEquals('bookstore', $query->getDbName(), 'create() sets dabatase name');
-        $this->assertEquals('Propel\Tests\Bookstore\Book', $query->getModelName(), 'create() sets model name');
+        $this->assertEquals('Propel\Tests\Bookstore\Book', $query->getEntityName(), 'create() sets model name');
         $query = myCustomBookQuery::create('foo');
         $this->assertTrue($query instanceof myCustomBookQuery, 'create() returns an object of its class');
         $this->assertEquals('bookstore', $query->getDbName(), 'create() sets dabatase name');
-        $this->assertEquals('Propel\Tests\Bookstore\Book', $query->getModelName(), 'create() sets model name');
-        $this->assertEquals('foo', $query->getModelAlias(), 'create() can set the model alias');
+        $this->assertEquals('Propel\Tests\Bookstore\Book', $query->getEntityName(), 'create() sets model name');
+        $this->assertEquals('foo', $query->getEntityAlias(), 'create() can set the model alias');
     }
 
     public function testBasePreSelect()
@@ -151,7 +151,7 @@ class QueryBuilderTest extends BookstoreTestBase
 
         $q = new BookQuery();
         $book = $q
-            ->setModelAlias('b')
+            ->setEntityAlias('b')
             ->where('b.Title like ?', 'Don%')
             ->orderBy('b.ISBN', 'desc')
             ->findOne();
@@ -352,8 +352,8 @@ class QueryBuilderTest extends BookstoreTestBase
         $q1 = BookQuery::create()->add(BookTableMap::COL_ID, 12, Criteria::EQUAL);
         $this->assertEquals($q1, $q, 'filterByPrimaryKey() translates to a Criteria::EQUAL in the PK column');
 
-        $q = BookQuery::create()->setModelAlias('b', true)->filterByPrimaryKey(12);
-        $q1 = BookQuery::create()->setModelAlias('b', true)->add('b.id', 12, Criteria::EQUAL);
+        $q = BookQuery::create()->setEntityAlias('b', true)->filterByPrimaryKey(12);
+        $q1 = BookQuery::create()->setEntityAlias('b', true)->add('b.id', 12, Criteria::EQUAL);
         $this->assertEquals($q1, $q, 'filterByPrimaryKey() uses true table alias if set');
     }
 
@@ -391,8 +391,8 @@ class QueryBuilderTest extends BookstoreTestBase
         $q1 = BookQuery::create()->add(BookTableMap::COL_ID, array(10, 11, 12), Criteria::IN);
         $this->assertEquals($q1, $q, 'filterByPrimaryKeys() translates to a Criteria::IN on the PK column');
 
-        $q = BookQuery::create()->setModelAlias('b', true)->filterByPrimaryKeys(array(10, 11, 12));
-        $q1 = BookQuery::create()->setModelAlias('b', true)->add('b.id', array(10, 11, 12), Criteria::IN);
+        $q = BookQuery::create()->setEntityAlias('b', true)->filterByPrimaryKeys(array(10, 11, 12));
+        $q1 = BookQuery::create()->setEntityAlias('b', true)->add('b.id', array(10, 11, 12), Criteria::IN);
         $this->assertEquals($q1, $q, 'filterByPrimaryKeys() uses true table alias if set');
     }
 
@@ -449,8 +449,8 @@ class QueryBuilderTest extends BookstoreTestBase
         $q1 = BookQuery::create()->add(BookTableMap::COL_ID, 12, Criteria::NOT_EQUAL);
         $this->assertEquals($q1, $q, 'filterByPkColumn() accepts an optional comparison operator');
 
-        $q = BookQuery::create()->setModelAlias('b', true)->filterById(12);
-        $q1 = BookQuery::create()->setModelAlias('b', true)->add('b.id', 12, Criteria::EQUAL);
+        $q = BookQuery::create()->setEntityAlias('b', true)->filterById(12);
+        $q1 = BookQuery::create()->setEntityAlias('b', true)->add('b.id', 12, Criteria::EQUAL);
         $this->assertEquals($q1, $q, 'filterByPkColumn() uses true table alias if set');
 
         $q = BookQuery::create()->filterById(array(10, 11, 12));
@@ -472,8 +472,8 @@ class QueryBuilderTest extends BookstoreTestBase
         $q1 = BookQuery::create()->add(BookTableMap::COL_PRICE, 12, Criteria::NOT_EQUAL);
         $this->assertEquals($q1, $q, 'filterByNumColumn() accepts an optional comparison operator');
 
-        $q = BookQuery::create()->setModelAlias('b', true)->filterByPrice(12);
-        $q1 = BookQuery::create()->setModelAlias('b', true)->add('b.price', 12, Criteria::EQUAL);
+        $q = BookQuery::create()->setEntityAlias('b', true)->filterByPrice(12);
+        $q1 = BookQuery::create()->setEntityAlias('b', true)->add('b.price', 12, Criteria::EQUAL);
         $this->assertEquals($q1, $q, 'filterByNumColumn() uses true table alias if set');
 
         $q = BookQuery::create()->filterByPrice(array(10, 11, 12));
@@ -509,8 +509,8 @@ class QueryBuilderTest extends BookstoreTestBase
         $q1 = BookstoreEmployeeAccountQuery::create()->add(BookstoreEmployeeAccountTableMap::COL_CREATED, 12, Criteria::NOT_EQUAL);
         $this->assertEquals($q1, $q, 'filterByDateColumn() accepts an optional comparison operator');
 
-        $q = BookstoreEmployeeAccountQuery::create()->setModelAlias('b', true)->filterByCreated(12);
-        $q1 = BookstoreEmployeeAccountQuery::create()->setModelAlias('b', true)->add('b.created', 12, Criteria::EQUAL);
+        $q = BookstoreEmployeeAccountQuery::create()->setEntityAlias('b', true)->filterByCreated(12);
+        $q1 = BookstoreEmployeeAccountQuery::create()->setEntityAlias('b', true)->add('b.created', 12, Criteria::EQUAL);
         $this->assertEquals($q1, $q, 'filterByDateColumn() uses true table alias if set');
 
         $q = BookstoreEmployeeAccountQuery::create()->filterByCreated(array('min' => 10));
@@ -538,8 +538,8 @@ class QueryBuilderTest extends BookstoreTestBase
         $q1 = BookQuery::create()->add(BookTableMap::COL_TITLE, 'foo', Criteria::NOT_EQUAL);
         $this->assertEquals($q1, $q, 'filterByStringColumn() accepts an optional comparison operator');
 
-        $q = BookQuery::create()->setModelAlias('b', true)->filterByTitle('foo');
-        $q1 = BookQuery::create()->setModelAlias('b', true)->add('b.title', 'foo', Criteria::EQUAL);
+        $q = BookQuery::create()->setEntityAlias('b', true)->filterByTitle('foo');
+        $q1 = BookQuery::create()->setEntityAlias('b', true)->add('b.title', 'foo', Criteria::EQUAL);
         $this->assertEquals($q1, $q, 'filterByStringColumn() uses true table alias if set');
 
         $q = BookQuery::create()->filterByTitle(array('foo', 'bar'));
@@ -585,8 +585,8 @@ class QueryBuilderTest extends BookstoreTestBase
         $q1 = ReviewQuery::create()->add(ReviewTableMap::COL_RECOMMENDED, false, Criteria::EQUAL);
         $this->assertEquals($q1, $q, 'filterByBooleanColumn() translates to a Criteria::EQUAL by default');
 
-        $q = ReviewQuery::create()->setModelAlias('b', true)->filterByRecommended(true);
-        $q1 = ReviewQuery::create()->setModelAlias('b', true)->add('b.recommended', true, Criteria::EQUAL);
+        $q = ReviewQuery::create()->setEntityAlias('b', true)->filterByRecommended(true);
+        $q1 = ReviewQuery::create()->setEntityAlias('b', true)->add('b.recommended', true, Criteria::EQUAL);
         $this->assertEquals($q1, $q, 'filterByBooleanColumn() uses true table alias if set');
 
         $q = ReviewQuery::create()->filterByRecommended('true');
@@ -850,10 +850,10 @@ class QueryBuilderTest extends BookstoreTestBase
         $this->assertTrue($q->equals($q1), 'joinFk() works fine with table aliases');
 
         $q = BookQuery::create()
-            ->setModelAlias('b', true)
+            ->setEntityAlias('b', true)
             ->joinAuthor('a');
         $q1 = BookQuery::create()
-            ->setModelAlias('b', true)
+            ->setEntityAlias('b', true)
             ->join('b.Author a', Criteria::LEFT_JOIN);
         $this->assertTrue($q->equals($q1), 'joinFk() works fine with true table aliases');
     }

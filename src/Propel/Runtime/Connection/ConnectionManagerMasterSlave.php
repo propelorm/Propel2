@@ -11,11 +11,13 @@
 namespace Propel\Runtime\Connection;
 
 use Propel\Runtime\Adapter\AdapterInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * Manager for master/slave connection to a datasource.
  */
-class ConnectionManagerMasterSlave implements ConnectionManagerInterface
+class ConnectionManagerMasterSlave implements ConnectionManagerInterface, LoggerAwareInterface
 {
     /**
      * @var string The datasource name associated to this connection
@@ -47,6 +49,8 @@ class ConnectionManagerMasterSlave implements ConnectionManagerInterface
      */
     protected $isForceMasterConnection = false;
 
+    protected $logger;
+
     /**
      * @param string $name The datasource name associated to this connection
      */
@@ -61,6 +65,18 @@ class ConnectionManagerMasterSlave implements ConnectionManagerInterface
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * Sets a logger instance on the object
+     *
+     * @param LoggerInterface $logger
+     *
+     * @return null
+     */
+    public function setLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
     }
 
     /**
@@ -142,6 +158,9 @@ class ConnectionManagerMasterSlave implements ConnectionManagerInterface
         if (null === $this->writeConnection) {
             $this->writeConnection = ConnectionFactory::create($this->writeConfiguration, $adapter);
             $this->writeConnection->setName($this->getName());
+            if ($this->writeConnection instanceof LoggerAwareInterface) {
+                $this->writeConnection->setLogger($this->logger);
+            }
         }
 
         return $this->writeConnection;
@@ -171,6 +190,9 @@ class ConnectionManagerMasterSlave implements ConnectionManagerInterface
                 $configuration = $this->readConfiguration[$key];
                 $this->readConnection = ConnectionFactory::create($configuration, $adapter);
                 $this->readConnection->setName($this->getName());
+                if ($this->readConnection instanceof LoggerAwareInterface) {
+                    $this->readConnection->setLogger($this->logger);
+                }
             }
         }
 

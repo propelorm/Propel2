@@ -2,62 +2,25 @@
 
 namespace Propel\Tests\Helpers\Bookstore\Behavior;
 
-use Propel\Generator\Builder\Om\AbstractOMBuilder;
+use Propel\Generator\Builder\Om\AbstractBuilder;
 
-class AddClassBehaviorBuilder extends AbstractOMBuilder
+class AddClassBehaviorBuilder extends AbstractBuilder
 {
     public $overwrite = true;
 
-    public function getPackage()
+    public function getFullClassName($injectNamespace = '', $classPrefix = '')
     {
-        return parent::getPackage();
+        return parent::getFullClassName() . 'FooClass';
     }
 
     /**
-     * Returns the name of the current class being built.
-     * @return string
+     * In this method the actual builder will define the class definition in $this->definition.
+     *
+     * @return false|null return false if this class should not be generated.
      */
-    public function getUnprefixedClassName()
+    protected function buildClass()
     {
-        return $this->getStubObjectBuilder()->getUnprefixedClassName() . 'FooClass';
-    }
-
-    /**
-     * Adds class phpdoc comment and opening of class.
-     * @param string &$script The script will be modified in this method.
-     */
-    protected function addClassOpen(&$script)
-    {
-        $table = $this->getTable();
-        $tableName = $table->getName();
-        $script .= "
-/**
- * Test class for Additional builder enabled on the '$tableName' table.
- *
- */
-class ".$this->getUnqualifiedClassName()."
-{
-";
-    }
-
-    /**
-     * Specifies the methods that are added as part of the basic OM class.
-     * This can be overridden by subclasses that wish to add more methods.
-     * @see ObjectBuilder::addClassBody()
-     */
-    protected function addClassBody(&$script)
-    {
-        $script .= "  // no code";
-    }
-
-    /**
-     * Closes class.
-     * @param string &$script The script will be modified in this method.
-     */
-    protected function addClassClose(&$script)
-    {
-        $script .= "
-} // " . $this->getUnqualifiedClassName() . "
-";
+        $tableName = $this->getEntity()->getTableName();
+        $this->getDefinition()->setDescription("Test class for Additional builder enabled on the '$tableName' table.");
     }
 }

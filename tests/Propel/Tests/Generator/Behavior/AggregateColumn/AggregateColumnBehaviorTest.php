@@ -143,7 +143,7 @@ class AggregateColumnBehaviorTest extends BookstoreTestBase
         $this->assertEquals(19, $poll->getTotalScore());
         $this->assertEquals(2, $poll->getNbVotes());
         AggregateItemQuery::create()
-            ->setModelAlias('foo', true)
+            ->setEntityAlias('foo', true)
             ->update(array('Score' => 4), $this->con);
         $this->assertEquals(8, $poll->getTotalScore(), 'Updating related objects with a query using alias updates the aggregate column');
         $this->assertEquals(2, $poll->getNbVotes());
@@ -171,7 +171,7 @@ class AggregateColumnBehaviorTest extends BookstoreTestBase
         }
 
         AggregateItemQuery::create()
-            ->setModelAlias('foo', true)
+            ->setEntityAlias('foo', true)
             ->filterById($item1->getId())
             ->delete($this->con);
         $this->assertEquals(7, $poll->getTotalScore(), 'Deleting related objects with a query using alias updates the aggregate column');

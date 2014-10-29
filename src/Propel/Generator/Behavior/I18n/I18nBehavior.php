@@ -115,7 +115,7 @@ class I18nBehavior extends Behavior
 
         return strtr($string, array(
             '%TABLE%'   => $table->getOriginCommonName(),
-            '%PHPNAME%' => $table->getPhpName(),
+            '%PHPNAME%' => $table->getName(),
         ));
     }
 

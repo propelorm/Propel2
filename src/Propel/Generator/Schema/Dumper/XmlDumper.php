@@ -197,7 +197,7 @@ class XmlDumper implements DumperInterface
             $tableNode->setAttribute('idMethod', $idMethod);
         }
 
-        if ($phpName = $table->getPhpName()) {
+        if ($phpName = $table->getName()) {
             $tableNode->setAttribute('phpName', $phpName);
         }
 
@@ -336,7 +336,7 @@ class XmlDumper implements DumperInterface
         $columnNode = $parentNode->appendChild($this->document->createElement('column'));
         $columnNode->setAttribute('name', $column->getName());
 
-        if ($phpName = $column->getPhpName()) {
+        if ($phpName = $column->getName()) {
             $columnNode->setAttribute('phpName', $phpName);
         }
 
@@ -431,7 +431,7 @@ class XmlDumper implements DumperInterface
 
         $foreignKeyNode->setAttribute('name', $foreignKey->getName());
 
-        if ($phpName = $foreignKey->getPhpName()) {
+        if ($phpName = $foreignKey->getName()) {
             $foreignKeyNode->setAttribute('phpName', $phpName);
         }
 

@@ -11,6 +11,7 @@
 namespace Propel\Tests;
 
 use Propel\Generator\Command\TestPrepareCommand;
+use Propel\Runtime\Configuration;
 use Propel\Runtime\Propel;
 use Symfony\Component\Console\Application;
 use Propel\Runtime\Connection\ConnectionInterface;
@@ -30,6 +31,11 @@ class TestCaseFixtures extends TestCase
      * @var bool
      */
     protected static $withDatabaseSchema = false;
+
+    /**
+     * @var Configuration
+     */
+    protected $configuration;
 
     /**
      * Depending on this type we return the correct runninOn* results,
@@ -151,6 +157,7 @@ class TestCaseFixtures extends TestCase
         $finder = new Finder();
         $finder->files()->name('*-conf.php')->in(__DIR__.'/../../Fixtures/');
 
+        $configuration = $this->configuration;
         foreach ($finder as $file) {
             include_once($file->getPathname());
         }
@@ -184,9 +191,8 @@ class TestCaseFixtures extends TestCase
      */
     protected function getConnectionDsn($database = 'bookstore', $withCredentials = false)
     {
-        $serviceContainer = \Propel\Runtime\Propel::getServiceContainer();
         /** @var $manager \Propel\Runtime\Connection\ConnectionManagerSingle */
-        $manager = $serviceContainer->getConnectionManager($database);
+        $manager = $this->configuration->getConnectionManager($database);
         $configuration = $manager->getConfiguration();
         $dsn = $configuration['dsn'];
 

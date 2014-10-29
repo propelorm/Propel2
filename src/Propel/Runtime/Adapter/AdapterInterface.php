@@ -12,7 +12,7 @@ namespace Propel\Runtime\Adapter;
 
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Connection\ConnectionInterface;
-use Propel\Runtime\Map\ColumnMap;
+use Propel\Runtime\Map\FieldMap;
 
 /**
  * Interface for adapters.
@@ -96,25 +96,25 @@ interface AdapterInterface
     public function strLength($s);
 
     /**
-     * Quotes database object identifiers (table names, col names, sequences, etc.).
+     * Quotes database object identifiers (entity names, col names, sequences, etc.).
      * @param  string $text The identifier to quote.
      * @return string The quoted identifier.
      */
     public function quoteIdentifier($text);
 
     /**
-     * Quotes a database table which could have space separating it from an alias,
+     * Quotes a database entity which could have space separating it from an alias,
      * both should be identified separately. This doesn't take care of dots which
-     * separate schema names from table names. Adapters for RDBMs which support
+     * separate schema names from entity names. Adapters for RDBMs which support
      * schemas have to implement that in the platform-specific way.
      *
-     * @param  string $table The table name to quo
-     * @return string The quoted table name
+     * @param  string $entity The entity name to quo
+     * @return string The quoted entity name
      **/
-    public function quoteIdentifierTable($table);
+    public function quoteIdentifierEntity($entity);
 
     /**
-     * Quotes full qualified column names and table names.
+     * Quotes full qualified field names and entity names.
      *
      * book.author_id => `book`.`author_id`
      * author_id => `author_id`
@@ -139,14 +139,14 @@ interface AdapterInterface
     public function isGetIdAfterInsert();
 
     /**
-     * Returns the "DELETE FROM <table> [AS <alias>]" part of DELETE query.
+     * Returns the "DELETE FROM <entity> [AS <alias>]" part of DELETE query.
      *
      * @param Criteria $criteria
-     * @param string   $tableName
+     * @param string   $entityName
      *
      * @return string
      */
-    public function getDeleteFromClause(Criteria $criteria, $tableName);
+    public function getDeleteFromClause(Criteria $criteria, $entityName);
 
     /**
      * Gets the generated ID (either last ID for autoincrement or next sequence ID).
@@ -159,14 +159,14 @@ interface AdapterInterface
     public function getId(ConnectionInterface $con, $name = null);
 
     /**
-     * Formats a temporal value before binding, given a ColumnMap object
+     * Formats a temporal value before binding, given a FieldMap object
      *
      * @param mixed     $value The temporal value
-     * @param ColumnMap $cMap
+     * @param FieldMap $cMap
      *
      * @return string The formatted temporal value
      */
-    public function formatTemporalValue($value, ColumnMap $cMap);
+    public function formatTemporalValue($value, FieldMap $cMap);
 
     /**
      * Returns timestamp formatter string for use in date() function.

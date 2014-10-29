@@ -49,7 +49,7 @@ class I18nBehaviorQueryBuilderModifier
             'queryClass'       => $this->builder->getQueryClassName(),
             'defaultLocale'    => $this->behavior->getDefaultLocale(),
             'i18nRelationName' => $this->builder->getRefFKPhpNameAffix($fk),
-            'localeColumn'     => $this->behavior->getLocaleColumn()->getPhpName(),
+            'localeColumn'     => $this->behavior->getLocaleColumn()->getName(),
         ));
     }
 
@@ -74,7 +74,7 @@ class I18nBehaviorQueryBuilderModifier
             'namespacedQueryClass' => $this->builder->getNewStubQueryBuilder($i18nTable)->getFullyQualifiedClassName(),
             'defaultLocale'        => $this->behavior->getDefaultLocale(),
             'i18nRelationName'     => $this->builder->getRefFKPhpNameAffix($fk),
-            'localeColumn'         => $this->behavior->getLocaleColumn()->getPhpName(),
+            'localeColumn'         => $this->behavior->getLocaleColumn()->getName(),
         ));
     }
 }

@@ -11,9 +11,9 @@
 namespace Propel\Tests\Generator\Reverse;
 
 use Propel\Generator\Config\QuickGeneratorConfig;
-use Propel\Generator\Model\ColumnDefaultValue;
+use Propel\Generator\Model\FieldDefaultValue;
 use Propel\Generator\Model\Database;
-use Propel\Generator\Platform\DefaultPlatform;
+use Propel\Generator\Platform\SqlDefaultPlatform;
 use Propel\Generator\Reverse\PgsqlSchemaParser;
 use Propel\Runtime\Propel;
 use Propel\Tests\TestCaseFixturesDatabase;
@@ -53,37 +53,37 @@ class PgsqlSchemaParserTest extends TestCaseFixturesDatabase
     public function parseDataProvider()
     {
         return array(
-            // columnDDL, expectedColumnPhpName, expectedColumnDefaultType, expectedColumnDefaultValue, expectedSize, expectedScale
-            array("my_column varchar(20) default null", "MyColumn", ColumnDefaultValue::TYPE_VALUE, "NULL", 20, null),
-            array("my_column varchar(20) default ''", "MyColumn", ColumnDefaultValue::TYPE_VALUE, "", 20, null),
-            array("my_column numeric(11,0) default 0", "MyColumn", ColumnDefaultValue::TYPE_VALUE, 0, 11, 0),
-            array("my_column numeric(55,8) default 0", "MyColumn", ColumnDefaultValue::TYPE_VALUE, 0, 55, 8),
+            // columnDDL, expectedFieldPhpName, expectedFieldDefaultType, expectedFieldDefaultValue, expectedSize, expectedScale
+            array("my_column varchar(20) default null", "MyField", FieldDefaultValue::TYPE_VALUE, "NULL", 20, null),
+            array("my_column varchar(20) default ''", "MyField", FieldDefaultValue::TYPE_VALUE, "", 20, null),
+            array("my_column numeric(11,0) default 0", "MyField", FieldDefaultValue::TYPE_VALUE, 0, 11, 0),
+            array("my_column numeric(55,8) default 0", "MyField", FieldDefaultValue::TYPE_VALUE, 0, 55, 8),
         );
     }
 
     /**
      * @dataProvider parseDataProvider
      */
-    public function testParse($columnDDL, $expectedColumnPhpName, $expectedColumnDefaultType, $expectedColumnDefaultValue, $expectedSize, $expectedScale)
+    public function testParse($columnDDL, $expectedFieldPhpName, $expectedFieldDefaultType, $expectedFieldDefaultValue, $expectedSize, $expectedScale)
     {
         $this->con->query("create table foo ( {$columnDDL} );");
         $parser = new PgsqlSchemaParser($this->con);
         $parser->setGeneratorConfig(new QuickGeneratorConfig());
 
         $database = new Database();
-        $database->setPlatform(new DefaultPlatform());
+        $database->setPlatform(new SqlDefaultPlatform());
 
         // make sure our DDL insert produced exactly the SQL we inserted
         $this->assertGreaterThanOrEqual(1, $parser->parse($database), 'We parsed at least one table.');
-        $table = $database->getTable('foo');
-        $columns = $table->getColumns();
+        $table = $database->getEntity('foo');
+        $columns = $table->getFields();
         $this->assertEquals(1, count($columns));
 
         // check out our rev-eng column info
         $defaultValue = $columns[0]->getDefaultValue();
-        $this->assertEquals($expectedColumnPhpName, $columns[0]->getPhpName());
-        $this->assertEquals($expectedColumnDefaultType, $defaultValue->getType());
-        $this->assertEquals($expectedColumnDefaultValue, $defaultValue->getValue());
+        $this->assertEquals($expectedFieldPhpName, $columns[0]->getName());
+        $this->assertEquals($expectedFieldDefaultType, $defaultValue->getType());
+        $this->assertEquals($expectedFieldDefaultValue, $defaultValue->getValue());
         $this->assertEquals($expectedSize, $columns[0]->getSize());
         $this->assertEquals($expectedScale, $columns[0]->getScale());
     }

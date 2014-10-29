@@ -10,7 +10,7 @@
 
 namespace Propel\Runtime\Validator\Constraints;
 
-use Propel\Runtime\Map\TableMap;
+use Propel\Runtime\Map\EntityMap;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
@@ -23,9 +23,9 @@ class UniqueValidator extends ConstraintValidator
         }
 
         $className  = $this->context->getClassName();
-        $tableMap   = $className::TABLE_MAP;
+        $entityMap   = $className::TABLE_MAP;
         $queryClass = $className . 'Query';
-        $filter     = sprintf('filterBy%s', $tableMap::translateFieldName($this->context->getPropertyName(), TableMap::TYPE_CAMELNAME, TableMap::TYPE_PHPNAME));
+        $filter     = sprintf('filterBy%s', $entityMap::translateFieldName($this->context->getPropertyName(), EntityMap::TYPE_CAMELNAME, EntityMap::TYPE_PHPNAME));
 
         if (0 < $queryClass::create()->$filter($value)->count()) {
             $this->context->addViolation($constraint->message);

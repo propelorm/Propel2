@@ -11,14 +11,14 @@
 namespace Propel\Generator\Platform;
 
 use Propel\Generator\Exception\EngineException;
-use Propel\Generator\Model\Column;
+use Propel\Generator\Model\Field;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\Domain;
-use Propel\Generator\Model\ForeignKey;
+use Propel\Generator\Model\Relation;
 use Propel\Generator\Model\IdMethod;
 use Propel\Generator\Model\Index;
 use Propel\Generator\Model\PropelTypes;
-use Propel\Generator\Model\Table;
+use Propel\Generator\Model\Entity;
 use Propel\Generator\Model\Unique;
 
 /**
@@ -28,7 +28,7 @@ use Propel\Generator\Model\Unique;
  * @author Martin Poeschl <mpoeschl@marmot.at> (Torque)
  * @author Denis Dalmais
  */
-class OraclePlatform extends DefaultPlatform
+class OraclePlatform extends SqlDefaultPlatform
 {
 
     /**
@@ -62,7 +62,7 @@ class OraclePlatform extends DefaultPlatform
 
     }
 
-    public function getMaxColumnNameLength()
+    public function getMaxFieldNameLength()
     {
         return 30;
     }
@@ -90,18 +90,18 @@ ALTER SESSION SET NLS_TIMESTAMP_FORMAT='YYYY-MM-DD HH24:MI:SS';
 ";
     }
 
-    public function getAddTablesDDL(Database $database)
+    public function getAddEntitiesDDL(Database $database)
     {
         $ret = $this->getBeginDDL();
-        foreach ($database->getTablesForSql() as $table) {
-            $ret .= $this->getCommentBlockDDL($table->getName());
-            $ret .= $this->getDropTableDDL($table);
-            $ret .= $this->getAddTableDDL($table);
-            $ret .= $this->getAddIndicesDDL($table);
+        foreach ($database->getEntitiesForSql() as $entity) {
+            $ret .= $this->getCommentBlockDDL($entity->getName());
+            $ret .= $this->getDropEntityDDL($entity);
+            $ret .= $this->getAddEntityDDL($entity);
+            $ret .= $this->getAddIndicesDDL($entity);
         }
         $ret2 = '';
-        foreach ($database->getTablesForSql() as $table) {
-            $ret2 .= $this->getAddForeignKeysDDL($table);
+        foreach ($database->getEntitiesForSql() as $entity) {
+            $ret2 .= $this->getAddRelationsDDL($entity);
         }
         if ($ret2) {
             $ret .= $this->getCommentBlockDDL('Foreign Keys') . $ret2;
@@ -111,17 +111,17 @@ ALTER SESSION SET NLS_TIMESTAMP_FORMAT='YYYY-MM-DD HH24:MI:SS';
         return $ret;
     }
 
-    public function getAddTableDDL(Table $table)
+    public function getAddEntityDDL(Entity $entity)
     {
-        $tableDescription = $table->hasDescription() ? $this->getCommentLineDDL($table->getDescription()) : '';
+        $entityDescription = $entity->hasDescription() ? $this->getCommentLineDDL($entity->getDescription()) : '';
 
         $lines = array();
 
-        foreach ($table->getColumns() as $column) {
-            $lines[] = $this->getColumnDDL($column);
+        foreach ($entity->getFields() as $field) {
+            $lines[] = $this->getFieldDDL($field);
         }
 
-        foreach ($table->getUnices() as $unique) {
+        foreach ($entity->getUnices() as $unique) {
             $lines[] = $this->getUniqueDDL($unique);
         }
 
@@ -135,71 +135,71 @@ ALTER SESSION SET NLS_TIMESTAMP_FORMAT='YYYY-MM-DD HH24:MI:SS';
 )%s;
 ";
         $ret = sprintf($pattern,
-            $tableDescription,
-            $this->quoteIdentifier($table->getName()),
+            $entityDescription,
+            $this->quoteIdentifier($entity->getName()),
             implode($sep, $lines),
-            $this->generateBlockStorage($table)
+            $this->generateBlockStorage($entity)
         );
 
-        $ret .= $this->getAddPrimaryKeyDDL($table);
-        $ret .= $this->getAddSequencesDDL($table);
+        $ret .= $this->getAddPrimaryKeyDDL($entity);
+        $ret .= $this->getAddSequencesDDL($entity);
 
         return $ret;
     }
 
-    public function getAddPrimaryKeyDDL(Table $table)
+    public function getAddPrimaryKeyDDL(Entity $entity)
     {
-        if (is_array($table->getPrimaryKey()) && count($table->getPrimaryKey())) {
-            return parent::getAddPrimaryKeyDDL($table);
+        if (is_array($entity->getPrimaryKey()) && count($entity->getPrimaryKey())) {
+            return parent::getAddPrimaryKeyDDL($entity);
         }
     }
 
-    public function getAddSequencesDDL(Table $table)
+    public function getAddSequencesDDL(Entity $entity)
     {
-        if ('native' === $table->getIdMethod()) {
+        if ('native' === $entity->getIdMethod()) {
             $pattern = "
 CREATE SEQUENCE %s
     INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE ORDER;
 ";
 
             return sprintf($pattern,
-                $this->quoteIdentifier($this->getSequenceName($table))
+                $this->quoteIdentifier($this->getSequenceName($entity))
             );
         }
     }
 
-    public function getDropTableDDL(Table $table)
+    public function getDropEntityDDL(Entity $entity)
     {
         $ret = "
-DROP TABLE " . $this->quoteIdentifier($table->getName(), $table) . " CASCADE CONSTRAINTS;
+DROP TABLE " . $this->quoteIdentifier($entity->getName(), $entity) . " CASCADE CONSTRAINTS;
 ";
-        if ($table->getIdMethod() == IdMethod::NATIVE) {
+        if ($entity->getIdMethod() == IdMethod::NATIVE) {
             $ret .= "
-DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
+DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($entity)) . ";
 ";
         }
 
         return $ret;
     }
 
-    public function getPrimaryKeyName(Table $table)
+    public function getPrimaryKeyName(Entity $entity)
     {
-        $tableName = $table->getName();
+        $entityName = $entity->getName();
         // pk constraint name must be 30 chars at most
-        $tableName = substr($tableName, 0, min(27, strlen($tableName)));
+        $entityName = substr($entityName, 0, min(27, strlen($entityName)));
 
-        return $tableName . '_pk';
+        return $entityName . '_pk';
     }
 
-    public function getPrimaryKeyDDL(Table $table)
+    public function getPrimaryKeyDDL(Entity $entity)
     {
-        if ($table->hasPrimaryKey()) {
+        if ($entity->hasPrimaryKey()) {
             $pattern = 'CONSTRAINT %s PRIMARY KEY (%s)%s';
 
             return sprintf($pattern,
-                $this->quoteIdentifier($this->getPrimaryKeyName($table)),
-                $this->getColumnListDDL($table->getPrimaryKey()),
-                $this->generateBlockStorage($table, true)
+                $this->quoteIdentifier($this->getPrimaryKeyName($entity)),
+                $this->getFieldListDDL($entity->getPrimaryKey()),
+                $this->generateBlockStorage($entity, true)
             );
         }
     }
@@ -208,33 +208,33 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
     {
         return sprintf('CONSTRAINT %s UNIQUE (%s)',
             $this->quoteIdentifier($unique->getName()),
-            $this->getColumnListDDL($unique->getColumnObjects())
+            $this->getFieldListDDL($unique->getFieldObjects())
         );
     }
 
-    public function getForeignKeyDDL(ForeignKey $fk)
+    public function getRelationDDL(Relation $relation)
     {
-        if ($fk->isSkipSql()) {
+        if ($relation->isSkipSql()) {
             return;
         }
         $pattern = "CONSTRAINT %s
     FOREIGN KEY (%s) REFERENCES %s (%s)";
         $script = sprintf($pattern,
-            $this->quoteIdentifier($fk->getName()),
-            $this->getColumnListDDL($fk->getLocalColumnObjects()),
-            $this->quoteIdentifier($fk->getForeignTableName()),
-            $this->getColumnListDDL($fk->getForeignColumnObjects())
+            $this->quoteIdentifier($relation->getName()),
+            $this->getFieldListDDL($relation->getLocalFieldObjects()),
+            $this->quoteIdentifier($relation->getForeignEntityName()),
+            $this->getFieldListDDL($relation->getForeignFieldObjects())
         );
-        if ($fk->hasOnDelete()) {
+        if ($relation->hasOnDelete()) {
             $script .= "
-    ON DELETE " . $fk->getOnDelete();
+    ON DELETE " . $relation->getOnDelete();
         }
 
         return $script;
     }
 
     /**
-     * Whether the underlying PDO driver for this platform returns BLOB columns as streams (instead of strings).
+     * Whether the underlying PDO driver for this platform returns BLOB fields as streams (instead of strings).
      * @return boolean
      */
     public function hasStreamBlobImpl()
@@ -269,7 +269,7 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
     /**
      * Generate oracle block storage
      *
-     * @param Table|Index $object       object with vendor parameters
+     * @param Entity|Index $object       object with vendor parameters
      * @param boolean     $isPrimaryKey is a primary key vendor part
      *
      * @return string oracle vendor sql part
@@ -318,8 +318,8 @@ USING INDEX
             $physicalParameters .= ")
 ";
         }
-        if ($vendorSpecific->hasParameter($prefix.'Tablespace')) {
-            $physicalParameters .= "TABLESPACE " . $vendorSpecific->getParameter($prefix.'Tablespace');
+        if ($vendorSpecific->hasParameter($prefix.'Entitiespace')) {
+            $physicalParameters .= "TABLESPACE " . $vendorSpecific->getParameter($prefix.'Entitiespace');
         }
 
         return $physicalParameters;
@@ -334,7 +334,7 @@ USING INDEX
     public function getAddIndexDDL(Index $index)
     {
         // don't create index form primary key
-        if ($this->getPrimaryKeyName($index->getTable()) == $this->quoteIdentifier($index->getName())) {
+        if ($this->getPrimaryKeyName($index->getEntity()) == $this->quoteIdentifier($index->getName())) {
             return '';
         }
 
@@ -345,32 +345,32 @@ CREATE %sINDEX %s ON %s (%s)%s;
         return sprintf($pattern,
             $index->isUnique() ? 'UNIQUE ' : '',
             $this->quoteIdentifier($index->getName()),
-            $this->quoteIdentifier($index->getTable()->getName()),
-            $this->getColumnListDDL($index->getColumnObjects()),
+            $this->quoteIdentifier($index->getEntity()->getName()),
+            $this->getFieldListDDL($index->getFieldObjects()),
             $this->generateBlockStorage($index)
         );
     }
 
     /**
-     * Get the PHP snippet for binding a value to a column.
+     * Get the PHP snippet for binding a value to a field.
      * Warning: duplicates logic from OracleAdapter::bindValue().
      * Any code modification here must be ported there.
      */
-    public function getColumnBindingPHP(Column $column, $identifier, $columnValueAccessor, $tab = "            ")
+    public function getFieldBindingPHP(Field $field, $identifier, $fieldValueAccessor, $tab = "            ")
     {
-        if ($column->getPDOType() == PropelTypes::CLOB_EMU) {
+        if ($field->getPDOType() == PropelTypes::CLOB_EMU) {
             return sprintf(
                 "%s\$stmt->bindParam(%s, %s, %s, strlen(%s));
 ",
                 $tab,
                 $identifier,
-                $columnValueAccessor,
-                PropelTypes::getPdoTypeString($column->getType()),
-                $columnValueAccessor
+                $fieldValueAccessor,
+                PropelTypes::getPdoTypeString($field->getType()),
+                $fieldValueAccessor
             );
         }
 
-        return parent::getColumnBindingPHP($column, $identifier, $columnValueAccessor, $tab);
+        return parent::getFieldBindingPHP($field, $identifier, $fieldValueAccessor, $tab);
     }
 
     /**
@@ -378,18 +378,18 @@ CREATE %sINDEX %s ON %s (%s)%s;
      * Warning: duplicates logic from OracleAdapter::getId().
      * Any code modification here must be ported there.
      */
-    public function getIdentifierPhp($columnValueMutator, $connectionVariableName = '$con', $sequenceName = '', $tab = "            ")
+    public function getIdentifierPhp($fieldValueMutator, $connectionVariableName = '$con', $sequenceName = '', $tab = "            ")
     {
         if (!$sequenceName) {
             throw new EngineException('Oracle needs a sequence name to fetch primary keys');
         }
         $snippet = "
 \$dataFetcher = %s->query('SELECT %s.nextval FROM dual');
-%s = \$dataFetcher->fetchColumn();";
+%s = \$dataFetcher->fetchField();";
         $script = sprintf($snippet,
             $connectionVariableName,
             $sequenceName,
-            $columnValueMutator
+            $fieldValueMutator
         );
 
         return preg_replace('/^/m', $tab, $script);

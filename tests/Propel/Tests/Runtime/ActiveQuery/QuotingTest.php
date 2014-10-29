@@ -107,7 +107,7 @@ class QuotingTest extends TestCaseFixturesDatabase
     public function testAlias()
     {
         \Propel\Tests\Quoting\GroupQuery::create()
-            ->setModelAlias('g', true)
+            ->setEntityAlias('g', true)
             ->where('g.Id > 0')
             ->orderBy('g.As')
             ->orderBy('AuthorId')
@@ -117,7 +117,7 @@ class QuotingTest extends TestCaseFixturesDatabase
         $this->assertEquals($expected, $this->getLastQuery());
 
         \Propel\Tests\Quoting\AuthorQuery::create('g')
-            ->setModelAlias('g', true)
+            ->setEntityAlias('g', true)
             ->groupBy('g.Id')
             ->having('g.Id > 0')
             ->find();

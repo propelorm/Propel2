@@ -37,7 +37,7 @@ class MssqlPropelPDO extends PropelPDO
             if ($this->useDebug) {
                 $this->log('Begin transaction', null, __METHOD__);
             }
-            $this->isUncommitable = false;
+            $this->isUncommientity = false;
         }
         $this->nestedTransactionCount++;
 
@@ -58,7 +58,7 @@ class MssqlPropelPDO extends PropelPDO
         $opcount = $this->getNestedTransactionCount();
         if ($opcount > 0) {
             if ($opcount === 1) {
-                if ($this->isUncommitable) {
+                if ($this->isUncommientity) {
                     throw new PropelException('Cannot commit because a nested transaction was rolled back');
                 } else {
                     $return = self::exec('COMMIT TRANSACTION');
@@ -93,7 +93,7 @@ class MssqlPropelPDO extends PropelPDO
                     $this->log('Rollback transaction', null, __METHOD__);
                 }
             } else {
-                $this->isUncommitable = true;
+                $this->isUncommientity = true;
             }
             $this->nestedTransactionCount--;
         }
@@ -139,7 +139,7 @@ class MssqlPropelPDO extends PropelPDO
     {
         $result = self::query('SELECT SCOPE_IDENTITY()');
 
-        return (int) $result->fetchColumn();
+        return (int) $result->fetchField();
     }
 
     /**

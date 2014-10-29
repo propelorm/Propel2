@@ -8,23 +8,23 @@
  * @license MIT License
  */
 
-use Propel\Generator\Model\ColumnDefaultValue;
+use Propel\Generator\Model\FieldDefaultValue;
 use \Propel\Tests\TestCase;
 
 /**
- * Tests for ColumnDefaultValue class.
+ * Tests for FieldDefaultValue class.
  *
  */
-class ColumnDefaultValueTest extends TestCase
+class FieldDefaultValueTest extends TestCase
 {
     public function equalsProvider()
     {
         return array(
-            array(new ColumnDefaultValue('foo', 'bar'), new ColumnDefaultValue('foo', 'bar'), true),
-            array(new ColumnDefaultValue('foo', 'bar'), new ColumnDefaultValue('foo1', 'bar'), false),
-            array(new ColumnDefaultValue('foo', 'bar'), new ColumnDefaultValue('foo', 'bar1'), false),
-            array(new ColumnDefaultValue('current_timestamp', 'bar'), new ColumnDefaultValue('now()', 'bar'), true),
-            array(new ColumnDefaultValue('current_timestamp', 'bar'), new ColumnDefaultValue('now()', 'bar1'), false),
+            array(new FieldDefaultValue('foo', 'bar'), new FieldDefaultValue('foo', 'bar'), true),
+            array(new FieldDefaultValue('foo', 'bar'), new FieldDefaultValue('foo1', 'bar'), false),
+            array(new FieldDefaultValue('foo', 'bar'), new FieldDefaultValue('foo', 'bar1'), false),
+            array(new FieldDefaultValue('current_timestamp', 'bar'), new FieldDefaultValue('now()', 'bar'), true),
+            array(new FieldDefaultValue('current_timestamp', 'bar'), new FieldDefaultValue('now()', 'bar1'), false),
         );
     }
 

@@ -63,14 +63,14 @@ interface DataFetcherInterface extends \Iterator, \Countable
     public function rewind();
 
     /**
-     * Returns the data of the first column of the next row,
+     * Returns the data of the first field of the next row,
      * based on this->fetch();
      *
      * @param int $index
      *
      * @return mixed|null
      */
-    public function fetchColumn($index = null);
+    public function fetchField($index = null);
 
     /**
      * Returns the data of the next row,
@@ -93,11 +93,11 @@ interface DataFetcherInterface extends \Iterator, \Countable
     public function count();
 
     /**
-     * Returns the TableMap::TYPE_*
+     * Returns the EntityMap::TYPE_*
      * depends on your resultSet. We need this information
      * to be able to populate objects based on your array of fetch().
      *
-     * @return string one of TableMap::TYPE_*
+     * @return string one of EntityMap::TYPE_*
      */
     public function getIndexType();
 }

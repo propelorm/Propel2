@@ -93,11 +93,11 @@ class SimpleArrayFormatter extends AbstractFormatter
 
     public function getStructuredArrayFromRow($row)
     {
-        $columnNames = array_keys($this->getAsColumns());
-        if (count($columnNames) > 1 && count($row) > 1) {
+        $fieldNames = array_keys($this->getAsFields());
+        if (count($fieldNames) > 1 && count($row) > 1) {
             $finalRow = array();
             foreach ($row as $index => $value) {
-                $finalRow[str_replace('"', '', $columnNames[$index])] = $value;
+                $finalRow[str_replace('"', '', $fieldNames[$index])] = $value;
             }
         } else {
             $finalRow = $row[0];

@@ -18,9 +18,9 @@ namespace Propel\Generator\Platform;
 class SqlsrvPlatform extends MssqlPlatform
 {
     /**
-     * @see Platform#getMaxColumnNameLength()
+     * @see Platform#getMaxFieldNameLength()
      */
-    public function getMaxColumnNameLength()
+    public function getMaxFieldNameLength()
     {
         return 128;
     }

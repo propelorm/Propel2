@@ -11,6 +11,7 @@
 namespace Propel\Runtime\ActiveQuery;
 
 use Propel\Runtime\Adapter\Pdo\PdoAdapter;
+use Propel\Runtime\Configuration;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\DataFetcher\DataFetcherInterface;
@@ -66,13 +67,13 @@ class Criteria
     /** Comparison type. */
     const NOT_LIKE = ' NOT LIKE ';
 
-    /** Comparison for array column types */
+    /** Comparison for array field types */
     const CONTAINS_ALL = 'CONTAINS_ALL';
 
-    /** Comparison for array column types */
+    /** Comparison for array field types */
     const CONTAINS_SOME = 'CONTAINS_SOME';
 
-    /** Comparison for array column types */
+    /** Comparison for array field types */
     const CONTAINS_NONE = 'CONTAINS_NONE';
 
     /** PostgreSQL comparison type */
@@ -152,16 +153,16 @@ class Criteria
     protected $singleRecord = false;
 
     /**
-     * Storage of select data. Collection of column names.
+     * Storage of select data. Collection of field names.
      * @var array
      */
-    protected $selectColumns = array();
+    protected $selectFields = array();
 
     /**
-     * Storage of aliased select data. Collection of column names.
+     * Storage of aliased select data. Collection of field names.
      * @var string[]
      */
-    protected $asColumns = array();
+    protected $asFields = array();
 
     /**
      * Storage of select modifiers data. Collection of modifier names.
@@ -176,16 +177,16 @@ class Criteria
     protected $map = array();
 
     /**
-     * Storage of ordering data. Collection of column names.
+     * Storage of ordering data. Collection of field names.
      * @var array
      */
-    protected $orderByColumns = array();
+    protected $orderByFields = array();
 
     /**
-     * Storage of grouping data. Collection of column names.
+     * Storage of grouping data. Collection of field names.
      * @var array
      */
-    protected $groupByColumns = array();
+    protected $groupByFields = array();
 
     /**
      * Storage of having data.
@@ -208,12 +209,12 @@ class Criteria
     protected $dbName;
 
     /**
-     * The primary table for this Criteria.
+     * The primary entity for this Criteria.
      * Useful in cases where there are no select or where
-     * columns.
+     * fields.
      * @var string
      */
-    protected $primaryTableName;
+    protected $primaryEntityName;
 
     /** The name of the database as given in the constructor. */
     protected $originalDbName;
@@ -265,7 +266,12 @@ class Criteria
     /**
      * @var array
      */
-    public $replacedColumns = [];
+    public $replacedFields = [];
+
+    /**
+     * @var Configuration
+     */
+    private $configuration;
 
     /**
      * Creates a new instance with the default capacity which corresponds to
@@ -273,10 +279,11 @@ class Criteria
      *
      * @param String $dbName The database name.
      */
-    public function __construct($dbName = null)
+    public function __construct($dbName = null, Configuration $configuration = null)
     {
         $this->setDbName($dbName);
         $this->originalDbName = $dbName;
+        $this->configuration = $configuration;
     }
 
     /**
@@ -301,11 +308,11 @@ class Criteria
         $this->ignoreCase = false;
         $this->singleRecord = false;
         $this->selectModifiers = array();
-        $this->selectColumns = array();
-        $this->orderByColumns = array();
-        $this->groupByColumns = array();
+        $this->selectFields = array();
+        $this->orderByFields = array();
+        $this->groupByFields = array();
         $this->having = null;
-        $this->asColumns = array();
+        $this->asFields = array();
         $this->joins = array();
         $this->selectQueries = array();
         $this->dbName = $this->originalDbName;
@@ -318,69 +325,69 @@ class Criteria
     }
 
     /**
-     * Add an AS clause to the select columns. Usage:
+     * Add an AS clause to the select fields. Usage:
      *
      * <code>
      * Criteria myCrit = new Criteria();
-     * myCrit->addAsColumn('alias', 'ALIAS('.MyTableMap::ID.')');
+     * myCrit->addAsField('alias', 'ALIAS('.MyEntityMap::ID.')');
      * </code>
      *
      * If the name already exists, it is replaced by the new clause.
      *
-     * @param string $name   Wanted Name of the column (alias).
-     * @param string $clause SQL clause to select from the table
+     * @param string $name   Wanted Name of the field (alias).
+     * @param string $clause SQL clause to select from the entity
      *
      * @return $this|Criteria A modified Criteria object.
      */
-    public function addAsColumn($name, $clause)
+    public function addAsField($name, $clause)
     {
-        $this->asColumns[$name] = $clause;
+        $this->asFields[$name] = $clause;
 
         return $this;
     }
 
     /**
-     * Get the column aliases.
+     * Get the field aliases.
      *
-     * @return array An assoc array which map the column alias names
+     * @return array An assoc array which map the field alias names
      *               to the alias clauses.
      */
-    public function getAsColumns()
+    public function getAsFields()
     {
-        return $this->asColumns;
+        return $this->asFields;
     }
 
     /**
-     * Returns the column name associated with an alias (AS-column).
+     * Returns the field name associated with an alias (AS-field).
      *
      * @param  string $alias
      * @return string $string
      */
-    public function getColumnForAs($as)
+    public function getFieldForAs($as)
     {
-        if (isset($this->asColumns[$as])) {
-            return $this->asColumns[$as];
+        if (isset($this->asFields[$as])) {
+            return $this->asFields[$as];
         }
     }
 
     /**
-     * Allows one to specify an alias for a table that can
+     * Allows one to specify an alias for a entity that can
      * be used in various parts of the SQL.
      *
      * @param string $alias
-     * @param string $table
+     * @param string $entity
      *
      * @return $this|Criteria A modified Criteria object.
      */
-    public function addAlias($alias, $table)
+    public function addAlias($alias, $entity)
     {
-        $this->aliases[$alias] = $table;
+        $this->aliases[$alias] = $entity;
 
         return $this;
     }
 
     /**
-     * Remove an alias for a table (useful when merging Criterias).
+     * Remove an alias for a entity (useful when merging Criterias).
      *
      * @param string $alias
      *
@@ -404,37 +411,43 @@ class Criteria
     }
 
     /**
-     * Returns the table name associated with an alias.
+     * Returns the entity name associated with an alias.
      *
      * @param  string $alias
      * @return string $string
      */
-    public function getTableForAlias($alias)
+    public function getEntityForAlias($alias)
     {
         if (isset($this->aliases[$alias])) {
             return $this->aliases[$alias];
         }
     }
 
-    /**
-     * Returns the table name and alias based on a table alias or name.
-     * Use this method to get the details of a table name that comes in a clause,
-     * which can be either a table name or an alias name.
-     *
-     * @param  string            $tableAliasOrName
-     * @return array($tableName, $tableAlias)
-     */
-    public function getTableNameAndAlias($tableAliasOrName)
+    public function getTableName($entityName)
     {
-        if (isset($this->aliases[$tableAliasOrName])) {
-            return array($this->aliases[$tableAliasOrName], $tableAliasOrName);
-        }
-
-        return array($tableAliasOrName, null);
+        $entityMap = $this->getConfiguration()->getDatabase($this->getDbName())->getEntity($entityName);
+        return $entityMap->getTableName();
     }
 
     /**
-     * Get the keys of the criteria map, i.e. the list of columns bearing a condition
+     * Returns the entity name and alias based on a entity alias or name.
+     * Use this method to get the details of a entity name that comes in a clause,
+     * which can be either a entity name or an alias name.
+     *
+     * @param  string            $entityAliasOrName
+     * @return array($entityName, $entityAlias)
+     */
+    public function getEntityNameAndAlias($entityAliasOrName)
+    {
+        if (isset($this->aliases[$entityAliasOrName])) {
+            return array($this->aliases[$entityAliasOrName], $entityAliasOrName);
+        }
+
+        return array($entityAliasOrName, null);
+    }
+
+    /**
+     * Get the keys of the criteria map, i.e. the list of fields bearing a condition
      * <code>
      * print_r($c->keys());
      *  => array('book.price', 'book.title', 'author.first_name')
@@ -450,31 +463,31 @@ class Criteria
     /**
      * Does this Criteria object contain the specified key?
      *
-     * @param  string  $column [table.]column
+     * @param  string  $field [entity.]field
      * @return boolean True if this Criteria object contain the specified key.
      */
-    public function containsKey($column)
+    public function containsKey($field)
     {
         // must use array_key_exists() because the key could
         // exist but have a NULL value (that'd be valid).
-        return isset($this->map[$column]);
+        return isset($this->map[$field]);
     }
 
     /**
      * Does this Criteria object contain the specified key and does it have a value set for the key
      *
-     * @param  string  $column [table.]column
+     * @param  string  $field [entity.]field
      * @return boolean True if this Criteria object contain the specified key and a value for that key
      */
-    public function keyContainsValue($column)
+    public function keyContainsValue($field)
     {
         // must use array_key_exists() because the key could
         // exist but have a NULL value (that'd be valid).
-        return isset($this->map[$column]) && null !== $this->map[$column]->getValue();
+        return isset($this->map[$field]) && null !== $this->map[$field]->getValue();
     }
 
     /**
-     * Whether this Criteria has any where columns.
+     * Whether this Criteria has any where fields.
      *
      * This counts conditions added with the add() method.
      *
@@ -510,21 +523,21 @@ class Criteria
     }
 
     /**
-     * Method to return criteria related to columns in a table.
+     * Method to return criteria related to fields in a entity.
      *
-     * Make sure you call containsKey($column) prior to calling this method,
-     * since no check on the existence of the $column is made in this method.
+     * Make sure you call containsKey($field) prior to calling this method,
+     * since no check on the existence of the $field is made in this method.
      *
-     * @param  string            $column Column name.
+     * @param  string            $field Field name.
      * @return AbstractCriterion A Criterion object.
      */
-    public function getCriterion($column)
+    public function getCriterion($field)
     {
-        return $this->map[$column];
+        return $this->map[$field];
     }
 
     /**
-     * Method to return the latest Criterion in a table.
+     * Method to return the latest Criterion in a entity.
      *
      * @return AbstractCriterion A Criterion or null no Criterion is added.
      */
@@ -544,79 +557,79 @@ class Criteria
      * to this Criteria.  This can be used to chain the
      * Criterions to form a more complex where clause.
      *
-     * @param  string            $column     Full name of column (for example TABLE.COLUMN).
+     * @param  string            $field     Full name of field (for example TABLE.COLUMN).
      * @param  mixed             $value
      * @param  string            $comparison Criteria comparison constant or PDO binding type
      * @return AbstractCriterion
      */
-    public function getNewCriterion($column, $value = null, $comparison = self::EQUAL)
+    public function getNewCriterion($field, $value = null, $comparison = self::EQUAL)
     {
         if (is_int($comparison)) {
             // $comparison is a PDO::PARAM_* constant value
             // something like $c->add('foo like ?', '%bar%', PDO::PARAM_STR);
-            return new RawCriterion($this, $column, $value, $comparison);
+            return new RawCriterion($this, $field, $value, $comparison);
         }
         switch ($comparison) {
             case Criteria::CUSTOM:
                 // custom expression with no parameter binding
-                // something like $c->add(BookTableMap::TITLE, "CONCAT(book.TITLE, 'bar') = 'foobar'", Criteria::CUSTOM);
+                // something like $c->add(BookEntityMap::TITLE, "CONCAT(book.TITLE, 'bar') = 'foobar'", Criteria::CUSTOM);
                 return new CustomCriterion($this, $value);
             case Criteria::IN:
             case Criteria::NOT_IN:
-                // table.column IN (?, ?) or table.column NOT IN (?, ?)
-                // something like $c->add(BookTableMap::TITLE, array('foo', 'bar'), Criteria::IN);
-                return new InCriterion($this, $column, $value, $comparison);
+                // entity.field IN (?, ?) or entity.field NOT IN (?, ?)
+                // something like $c->add(BookEntityMap::TITLE, array('foo', 'bar'), Criteria::IN);
+                return new InCriterion($this, $field, $value, $comparison);
             case Criteria::LIKE:
             case Criteria::NOT_LIKE:
             case Criteria::ILIKE:
             case Criteria::NOT_ILIKE:
-                // table.column LIKE ? or table.column NOT LIKE ?  (or ILIKE for Postgres)
-                // something like $c->add(BookTableMap::TITLE, 'foo%', Criteria::LIKE);
-                return new LikeCriterion($this, $column, $value, $comparison);
+                // entity.field LIKE ? or entity.field NOT LIKE ?  (or ILIKE for Postgres)
+                // something like $c->add(BookEntityMap::TITLE, 'foo%', Criteria::LIKE);
+                return new LikeCriterion($this, $field, $value, $comparison);
                 break;
             default:
                 // simple comparison
-                // something like $c->add(BookTableMap::PRICE, 12, Criteria::GREATER_THAN);
-                return new BasicCriterion($this, $column, $value, $comparison);
+                // something like $c->add(BookEntityMap::PRICE, 12, Criteria::GREATER_THAN);
+                return new BasicCriterion($this, $field, $value, $comparison);
         }
     }
 
     /**
-     * Method to return a String table name.
+     * Method to return a String entity name.
      *
      * @param  string $name Name of the key.
      * @return string The value of the object at key.
      */
-    public function getColumnName($name)
+    public function getFieldName($name)
     {
         if (isset($this->map[$name])) {
-            return $this->map[$name]->getColumn();
+            return $this->map[$name]->getField();
         }
 
         return null;
     }
 
     /**
-     * Shortcut method to get an array of columns indexed by table.
+     * Shortcut method to get an array of fields indexed by entity.
      * <code>
-     * print_r($c->getTablesColumns());
+     * print_r($c->getEntitiesFields());
      *  => array(
      *       'book'   => array('book.price', 'book.title'),
      *       'author' => array('author.first_name')
      *     )
      * </code>
      *
-     * @return array array(table => array(table.column1, table.column2))
+     * @return array array(entity => array(entity.field1, entity.field2))
      */
-    public function getTablesColumns()
+    public function getEntitiesFields()
     {
-        $tables = array();
+        $entities = array();
         foreach ($this->keys() as $key) {
-            $tableName = substr($key, 0, strrpos($key, '.'));
-            $tables[$tableName][] = $key;
+            $entityName = substr($key, 0, strrpos($key, '.'));
+            $entities[$entityName][] = $key;
         }
 
-        return $tables;
+        return $entities;
     }
 
     /**
@@ -653,47 +666,47 @@ class Criteria
      */
     public function setDbName($dbName = null)
     {
-        $this->dbName = (null === $dbName ? Propel::getServiceContainer()->getDefaultDatasource() : $dbName);
+        $this->dbName = (null === $dbName ? $this->getConfiguration()->getDefaultDatasource() : $dbName);
     }
 
     /**
-     * Get the primary table for this Criteria.
+     * Get the primary entity for this Criteria.
      *
      * This is useful for cases where a Criteria may not contain
-     * any SELECT columns or WHERE columns.  This must be explicitly
+     * any SELECT fields or WHERE fields.  This must be explicitly
      * set, of course, in order to be useful.
      *
      * @return string
      */
-    public function getPrimaryTableName()
+    public function getPrimaryEntityName()
     {
-        return $this->primaryTableName;
+        return $this->primaryEntityName;
     }
 
     /**
-     * Sets the primary table for this Criteria.
+     * Sets the primary entity for this Criteria.
      *
      * This is useful for cases where a Criteria may not contain
-     * any SELECT columns or WHERE columns.  This must be explicitly
+     * any SELECT fields or WHERE fields.  This must be explicitly
      * set, of course, in order to be useful.
      *
      * @param string $v
      */
-    public function setPrimaryTableName($tableName)
+    public function setPrimaryEntityName($entityName)
     {
-        $this->primaryTableName = $tableName;
+        $this->primaryEntityName = $entityName;
     }
 
     /**
-     * Method to return a String table name.
+     * Method to return a String entity name.
      *
      * @param  string $name The name of the key.
-     * @return string The value of table for criterion at key.
+     * @return string The value of entity for criterion at key.
      */
-    public function getTableName($name)
+    public function getEntityNameFor($name)
     {
         if (isset($this->map[$name])) {
-            return $this->map[$name]->getTable();
+            return $this->map[$name]->getEntity();
         }
 
         return null;
@@ -715,7 +728,7 @@ class Criteria
     }
 
     /**
-     * An alias to getValue() -- exposing a Hashtable-like interface.
+     * An alias to getValue() -- exposing a Hashentity-like interface.
      *
      * @param  string $key An Object.
      * @return mixed  The value within the Criterion (not the Criterion object).
@@ -726,7 +739,7 @@ class Criteria
     }
 
     /**
-     * Overrides Hashtable put, so that this object is returned
+     * Overrides Hashentity put, so that this object is returned
      * instead of the value previously in the Criteria object.
      * The reason is so that it more closely matches the behavior
      * of the add() methods. If you want to get the previous value
@@ -771,20 +784,20 @@ class Criteria
 
     /**
      * This method adds a new criterion to the list of criterias.
-     * If a criterion for the requested column already exists, it is
+     * If a criterion for the requested field already exists, it is
      * replaced. If is used as follow:
      *
      * <code>
      * $crit = new Criteria();
-     * $crit->add($column, $value, Criteria::GREATER_THAN);
+     * $crit->add($field, $value, Criteria::GREATER_THAN);
      * </code>
      *
      * Any comparison can be used.
      *
-     * The name of the table must be used implicitly in the column name,
-     * so the Column name must be something like 'TABLE.id'.
+     * The name of the entity must be used implicitly in the field name,
+     * so the Field name must be something like 'TABLE.id'.
      *
-     * @param string $p1         The column to run the comparison on, or a Criterion object.
+     * @param string $p1         The field to run the comparison on, or a Criterion object.
      * @param mixed  $value
      * @param string $comparison A String.
      *
@@ -793,7 +806,7 @@ class Criteria
     public function add($p1, $value = null, $comparison = null)
     {
         if ($p1 instanceof AbstractCriterion) {
-            $this->map[$p1->getTable() . '.' . $p1->getColumn()] = $p1;
+            $this->map[$p1->getEntity() . '.' . $p1->getField()] = $p1;
         } else {
             $this->map[$p1] = $this->getCriterionForCondition($p1, $value, $comparison);
         }
@@ -815,18 +828,18 @@ class Criteria
      *
      * <code>
      * $crit = new Criteria();
-     * $crit->addCond('cond1', $column1, $value1, Criteria::GREATER_THAN);
-     * $crit->addCond('cond2', $column2, $value2, Criteria::EQUAL);
+     * $crit->addCond('cond1', $field1, $value1, Criteria::GREATER_THAN);
+     * $crit->addCond('cond2', $field2, $value2, Criteria::EQUAL);
      * $crit->combine(array('cond1', 'cond2'), Criteria::LOGICAL_OR);
      * </code>
      *
      * Any comparison can be used.
      *
-     * The name of the table must be used implicitly in the column name,
-     * so the Column name must be something like 'TABLE.id'.
+     * The name of the entity must be used implicitly in the field name,
+     * so the Field name must be something like 'TABLE.id'.
      *
      * @param string $name       name to combine the criterion later
-     * @param string $p1         The column to run the comparison on, or AbstractCriterion object.
+     * @param string $p1         The field to run the comparison on, or AbstractCriterion object.
      * @param mixed  $value
      * @param string $comparison A String.
      *
@@ -873,10 +886,10 @@ class Criteria
     }
 
     /**
-     * This is the way that you should add a join of two tables.
+     * This is the way that you should add a join of two entities.
      * Example usage:
      * <code>
-     * $c->addJoin(ProjectTableMap::ID, FooTableMap::PROJECT_ID, Criteria::LEFT_JOIN);
+     * $c->addJoin(ProjectEntityMap::ID, FooEntityMap::PROJECT_ID, Criteria::LEFT_JOIN);
      * // LEFT JOIN FOO ON (PROJECT.ID = FOO.PROJECT_ID)
      * </code>
      *
@@ -903,21 +916,21 @@ class Criteria
         $join = new Join();
         $join->setIdentifierQuoting($this->isIdentifierQuotingEnabled());
 
-        // is the left table an alias ?
+        // is the left entity an alias ?
         $dotpos = strrpos($left, '.');
-        $leftTableAlias = substr($left, 0, $dotpos);
-        $leftColumnName = substr($left, $dotpos + 1);
-        list($leftTableName, $leftTableAlias) = $this->getTableNameAndAlias($leftTableAlias);
+        $leftEntityAlias = substr($left, 0, $dotpos);
+        $leftFieldName = substr($left, $dotpos + 1);
+        list($leftEntityName, $leftEntityAlias) = $this->getEntityNameAndAlias($leftEntityAlias);
 
-        // is the right table an alias ?
+        // is the right entity an alias ?
         $dotpos = strrpos($right, '.');
-        $rightTableAlias = substr($right, 0, $dotpos);
-        $rightColumnName = substr($right, $dotpos + 1);
-        list($rightTableName, $rightTableAlias) = $this->getTableNameAndAlias($rightTableAlias);
+        $rightEntityAlias = substr($right, 0, $dotpos);
+        $rightFieldName = substr($right, $dotpos + 1);
+        list($rightEntityName, $rightEntityAlias) = $this->getEntityNameAndAlias($rightEntityAlias);
 
         $join->addExplicitCondition(
-            $leftTableName, $leftColumnName, $leftTableAlias,
-            $rightTableName, $rightColumnName, $rightTableAlias,
+            $leftEntityName, $leftFieldName, $leftEntityAlias,
+            $rightEntityName, $rightFieldName, $rightEntityAlias,
             Join::EQUAL
         );
 
@@ -934,8 +947,8 @@ class Criteria
      *
      * Example usage:
      * $c->addMultipleJoin(array(
-     *     array(LeftTableMap::LEFT_COLUMN, RightTableMap::RIGHT_COLUMN),  // if no third argument, defaults to Criteria::EQUAL
-     *     array(FoldersTableMap::alias( 'fo', FoldersTableMap::LFT ), FoldersTableMap::alias( 'parent', FoldersTableMap::RGT ), Criteria::LESS_EQUAL )
+     *     array(LeftEntityMap::LEFT_COLUMN, RightEntityMap::RIGHT_COLUMN),  // if no third argument, defaults to Criteria::EQUAL
+     *     array(FoldersEntityMap::alias( 'fo', FoldersEntityMap::LFT ), FoldersEntityMap::alias( 'parent', FoldersEntityMap::RGT ), Criteria::LESS_EQUAL )
      *   ),
      *   Criteria::LEFT_JOIN
       * );
@@ -955,37 +968,37 @@ class Criteria
             $left = $condition[0];
             $right = $condition[1];
             if ($pos = strrpos($left, '.')) {
-                $leftTableAlias = substr($left, 0, $pos);
-                $leftColumnName = substr($left, $pos + 1);
-                list($leftTableName, $leftTableAlias) = $this->getTableNameAndAlias($leftTableAlias);
+                $leftEntityAlias = substr($left, 0, $pos);
+                $leftFieldName = substr($left, $pos + 1);
+                list($leftEntityName, $leftEntityAlias) = $this->getEntityNameAndAlias($leftEntityAlias);
             } else {
-                list($leftTableName, $leftTableAlias) = array(null, null);
-                $leftColumnName = $left;
+                list($leftEntityName, $leftEntityAlias) = array(null, null);
+                $leftFieldName = $left;
             }
 
             if ($pos = strrpos($right, '.')) {
-                $rightTableAlias = substr($right, 0, $pos);
-                $rightColumnName = substr($right, $pos + 1);
-                list($rightTableName, $rightTableAlias) = $this->getTableNameAndAlias($rightTableAlias);
+                $rightEntityAlias = substr($right, 0, $pos);
+                $rightFieldName = substr($right, $pos + 1);
+                list($rightEntityName, $rightEntityAlias) = $this->getEntityNameAndAlias($rightEntityAlias);
             } else {
-                list($rightTableName, $rightTableAlias) = array(null, null);
-                $rightColumnName = $right;
+                list($rightEntityName, $rightEntityAlias) = array(null, null);
+                $rightFieldName = $right;
             }
 
-            if (!$join->getRightTableName()) {
-                $join->setRightTableName($rightTableName);
+            if (!$join->getRightEntityName()) {
+                $join->setRightEntityName($rightEntityName);
             }
 
-            if (!$join->getRightTableAlias()) {
-                $join->setRightTableAlias($rightTableAlias);
+            if (!$join->getRightEntityAlias()) {
+                $join->setRightEntityAlias($rightEntityAlias);
             }
 
-            $conditionClause = $leftTableAlias ? $leftTableAlias . '.' : ($leftTableName ? $leftTableName . '.' : '');
-            $conditionClause .= $leftColumnName;
+            $conditionClause = $leftEntityAlias ? $leftEntityAlias . '.' : ($leftEntityName ? $leftEntityName . '.' : '');
+            $conditionClause .= $leftFieldName;
             $conditionClause .= isset($condition[2]) ? $condition[2] : JOIN::EQUAL;
-            $conditionClause .= $rightTableAlias ? $rightTableAlias . '.' : ($rightTableName ? $rightTableName . '.' : '');
-            $conditionClause .= $rightColumnName;
-            $criterion = $this->getNewCriterion($leftTableName.'.'.$leftColumnName, $conditionClause, Criteria::CUSTOM);
+            $conditionClause .= $rightEntityAlias ? $rightEntityAlias . '.' : ($rightEntityName ? $rightEntityName . '.' : '');
+            $conditionClause .= $rightFieldName;
+            $criterion = $this->getNewCriterion($leftEntityName.'.'.$leftFieldName, $conditionClause, Criteria::CUSTOM);
 
             if (null === $joinCondition) {
                 $joinCondition = $criterion;
@@ -1264,14 +1277,14 @@ class Criteria
     }
 
     /**
-     * Add select column.
+     * Add select field.
      *
-     * @param  string         $name Name of the select column.
+     * @param  string         $name Name of the select field.
      * @return $this|Criteria Modified Criteria object (for fluent API)
      */
-    public function addSelectColumn($name)
+    public function addSelectField($name)
     {
-        $this->selectColumns[] = $name;
+        $this->selectFields[] = $name;
 
         return $this;
     }
@@ -1300,37 +1313,37 @@ class Criteria
     }
 
     /**
-     * Whether this Criteria has any select columns.
+     * Whether this Criteria has any select fields.
      *
-     * This will include columns added with addAsColumn() method.
+     * This will include fields added with addAsField() method.
      *
      * @return boolean
-     * @see addAsColumn()
-     * @see addSelectColumn()
+     * @see addAsField()
+     * @see addSelectField()
      */
     public function hasSelectClause()
     {
-        return !empty($this->selectColumns) || !empty($this->asColumns);
+        return !empty($this->selectFields) || !empty($this->asFields);
     }
 
     /**
-     * Get select columns.
+     * Get select fields.
      *
-     * @return array An array with the name of the select columns.
+     * @return array An array with the name of the select fields.
      */
-    public function getSelectColumns()
+    public function getSelectFields()
     {
-        return $this->selectColumns;
+        return $this->selectFields;
     }
 
     /**
-     * Clears current select columns.
+     * Clears current select fields.
      *
      * @return $this|Criteria Modified Criteria object (for fluent API)
      */
-    public function clearSelectColumns()
+    public function clearSelectFields()
     {
-        $this->selectColumns = $this->asColumns = array();
+        $this->selectFields = $this->asFields = array();
 
         return $this;
     }
@@ -1346,86 +1359,86 @@ class Criteria
     }
 
     /**
-     * Add group by column name.
+     * Add group by field name.
      *
-     * @param  string         $groupBy The name of the column to group by.
+     * @param  string         $groupBy The name of the field to group by.
      * @return $this|Criteria A modified Criteria object.
      */
-    public function addGroupByColumn($groupBy)
+    public function addGroupByField($groupBy)
     {
-        $this->groupByColumns[] = $groupBy;
+        $this->groupByFields[] = $groupBy;
 
         return $this;
     }
 
     /**
-     * Add order by column name, explicitly specifying ascending.
+     * Add order by field name, explicitly specifying ascending.
      *
-     * @param  string         $name The name of the column to order by.
+     * @param  string         $name The name of the field to order by.
      * @return $this|Criteria A modified Criteria object.
      */
-    public function addAscendingOrderByColumn($name)
+    public function addAscendingOrderByField($name)
     {
-        $this->orderByColumns[] = $name . ' ' . self::ASC;
+        $this->orderByFields[] = $name . ' ' . self::ASC;
 
         return $this;
     }
 
     /**
-     * Add order by column name, explicitly specifying descending.
+     * Add order by field name, explicitly specifying descending.
      *
-     * @param  string         $name The name of the column to order by.
+     * @param  string         $name The name of the field to order by.
      * @return $this|Criteria Modified Criteria object (for fluent API)
      */
-    public function addDescendingOrderByColumn($name)
+    public function addDescendingOrderByField($name)
     {
-        $this->orderByColumns[] = $name . ' ' . self::DESC;
+        $this->orderByFields[] = $name . ' ' . self::DESC;
 
         return $this;
     }
 
     /**
-     * Get order by columns.
+     * Get order by fields.
      *
-     * @return array An array with the name of the order columns.
+     * @return array An array with the name of the order fields.
      */
-    public function getOrderByColumns()
+    public function getOrderByFields()
     {
-        return $this->orderByColumns;
+        return $this->orderByFields;
     }
 
     /**
-     * Clear the order-by columns.
+     * Clear the order-by fields.
      *
      * @return $this|Criteria Modified Criteria object (for fluent API)
      */
-    public function clearOrderByColumns()
+    public function clearOrderByFields()
     {
-        $this->orderByColumns = array();
+        $this->orderByFields = array();
 
         return $this;
     }
 
     /**
-     * Clear the group-by columns.
+     * Clear the group-by fields.
      *
      * @return $this|Criteria
      */
-    public function clearGroupByColumns()
+    public function clearGroupByFields()
     {
-        $this->groupByColumns = array();
+        $this->groupByFields = array();
 
         return $this;
     }
 
     /**
-     * Get group by columns.
+     * Get group by fields.
      *
      * @return array
      */
-    public function getGroupByColumns()
+    public function getGroupByFields()
     {
-        return $this->groupByColumns;
+        return $this->groupByFields;
     }
 
     /**
@@ -1474,7 +1487,7 @@ class Criteria
             $sb .= "\nParams: ";
             $paramstr = array();
             foreach ($params as $param) {
-                $paramstr[] = $param['table'] . '.' . $param['column'] . ' => ' . var_export($param['value'], true);
+                $paramstr[] = $param['entity'] . '.' . $param['field'] . ' => ' . var_export($param['value'], true);
             }
             $sb .= implode(', ', $paramstr);
 
@@ -1496,7 +1509,7 @@ class Criteria
 
     /**
      * This method checks another Criteria to see if they contain
-     * the same attributes and hashtable entries.
+     * the same attributes and hashentity entries.
      * @return boolean
      */
     public function equals($crit)
@@ -1521,10 +1534,10 @@ class Criteria
                 && $this->singleRecord    === $criteria->isSingleRecord()
                 && $this->dbName          === $criteria->getDbName()
                 && $this->selectModifiers === $criteria->getSelectModifiers()
-                && $this->selectColumns   === $criteria->getSelectColumns()
-                && $this->asColumns       === $criteria->getAsColumns()
-                && $this->orderByColumns  === $criteria->getOrderByColumns()
-                && $this->groupByColumns  === $criteria->getGroupByColumns()
+                && $this->selectFields   === $criteria->getSelectFields()
+                && $this->asFields       === $criteria->getAsFields()
+                && $this->orderByFields  === $criteria->getOrderByFields()
+                && $this->groupByFields  === $criteria->getGroupByFields()
                 && $this->aliases         === $criteria->getAliases()
                ) // what about having ??
             {
@@ -1591,23 +1604,23 @@ class Criteria
             $this->selectModifiers = $selectModifiers;
         }
 
-        // merge select columns
-        $this->selectColumns = array_merge($this->getSelectColumns(), $criteria->getSelectColumns());
+        // merge select fields
+        $this->selectFields = array_merge($this->getSelectFields(), $criteria->getSelectFields());
 
-        // merge as columns
-        $commonAsColumns = array_intersect_key($this->getAsColumns(), $criteria->getAsColumns());
-        if (!empty($commonAsColumns)) {
-            throw new LogicException('The given criteria contains an AsColumn with an alias already existing in the current object');
+        // merge as fields
+        $commonAsFields = array_intersect_key($this->getAsFields(), $criteria->getAsFields());
+        if (!empty($commonAsFields)) {
+            throw new LogicException('The given criteria contains an AsField with an alias already existing in the current object');
         }
-        $this->asColumns = array_merge($this->getAsColumns(), $criteria->getAsColumns());
+        $this->asFields = array_merge($this->getAsFields(), $criteria->getAsFields());
 
-        // merge orderByColumns
-        $orderByColumns = array_merge($this->getOrderByColumns(), $criteria->getOrderByColumns());
-        $this->orderByColumns = array_unique($orderByColumns);
+        // merge orderByFields
+        $orderByFields = array_merge($this->getOrderByFields(), $criteria->getOrderByFields());
+        $this->orderByFields = array_unique($orderByFields);
 
-        // merge groupByColumns
-        $groupByColumns = array_merge($this->getGroupByColumns(), $criteria->getGroupByColumns());
-        $this->groupByColumns = array_unique($groupByColumns);
+        // merge groupByFields
+        $groupByFields = array_merge($this->getGroupByFields(), $criteria->getGroupByFields());
+        $this->groupByFields = array_unique($groupByFields);
 
         // merge where conditions
         if (Criteria::LOGICAL_OR === $operator) {
@@ -1656,11 +1669,11 @@ class Criteria
      * <p>
      * <code>
      * $crit = new Criteria();
-     * $c = $crit->getNewCriterion(BaseTableMap::ID, 5, Criteria::LESS_THAN);
+     * $c = $crit->getNewCriterion(BaseEntityMap::ID, 5, Criteria::LESS_THAN);
      * $crit->addHaving($c);
      * </code>
      *
-     * @param mixed $p1         A Criterion, or a SQL clause with a question mark placeholder, or a column name
+     * @param mixed $p1         A Criterion, or a SQL clause with a question mark placeholder, or a field name
      * @param mixed $value      The value to bind in the condition
      * @param mixed $comparison A PDO::PARAM_ class constant
      *
@@ -1685,10 +1698,10 @@ class Criteria
      *    using Criteria::RAW and $comparison as a type.
      *    <code>$c->getCriterionForCondition('foo like ?', '%bar%', PDO::PARAM_STR);</code>
      *
-     *  - Otherwise, create a classic Criterion based on a column name and a comparison.
-     *    <code>$c->getCriterionForCondition(BookTableMap::TITLE, 'War%', Criteria::LIKE);</code>
+     *  - Otherwise, create a classic Criterion based on a field name and a comparison.
+     *    <code>$c->getCriterionForCondition(BookEntityMap::TITLE, 'War%', Criteria::LIKE);</code>
      *
-     * @param mixed $p1         A Criterion, or a SQL clause with a question mark placeholder, or a column name
+     * @param mixed $p1         A Criterion, or a SQL clause with a question mark placeholder, or a field name
      * @param mixed $value      The value to bind in the condition
      * @param mixed $comparison A Criteria class constant, or a PDO::PARAM_ class constant
      *
@@ -1702,31 +1715,31 @@ class Criteria
         }
 
         // $comparison is one of Criteria's constants, or a PDO binding type
-        // something like $c->add(BookTableMap::TITLE, 'War%', Criteria::LIKE);
+        // something like $c->add(BookEntityMap::TITLE, 'War%', Criteria::LIKE);
         return $this->getNewCriterion($p1, $value, $comparison);
     }
 
     /**
-     * If a criterion for the requested column already exists, the condition is "AND"ed to the existing criterion (necessary for Propel 1.4 compatibility).
-     * If no criterion for the requested column already exists, the condition is "AND"ed to the latest criterion.
+     * If a criterion for the requested field already exists, the condition is "AND"ed to the existing criterion (necessary for Propel 1.4 compatibility).
+     * If no criterion for the requested field already exists, the condition is "AND"ed to the latest criterion.
      * If no criterion exist, the condition is added a new criterion
      *
      * Any comparison can be used.
      *
      * Supports a number of different signatures:
-     *  - addAnd(column, value, comparison)
-     *  - addAnd(column, value)
+     *  - addAnd(field, value, comparison)
+     *  - addAnd(field, value)
      *  - addAnd(Criterion)
      *
      * @return $this|Criteria A modified Criteria object.
      */
-    public function addAnd($p1, $p2 = null, $p3 = null, $preferColumnCondition = true)
+    public function addAnd($p1, $p2 = null, $p3 = null, $preferFieldCondition = true)
     {
         $criterion = $this->getCriterionForCondition($p1, $p2, $p3);
 
-        $key = $criterion->getTable() . '.' . $criterion->getColumn();
-        if ($preferColumnCondition && $this->containsKey($key)) {
-            // FIXME: addAnd() operates preferably on existing conditions on the same column
+        $key = $criterion->getEntity() . '.' . $criterion->getField();
+        if ($preferFieldCondition && $this->containsKey($key)) {
+            // FIXME: addAnd() operates preferably on existing conditions on the same field
             // this may cause unexpected results, but it's there for BC with Propel 14
             $this->getCriterion($key)->addAnd($criterion);
         } else {
@@ -1744,13 +1757,13 @@ class Criteria
      * Any comparison can be used.
      *
      * Supports a number of different signatures:
-     *  - addOr(column, value, comparison)
-     *  - addOr(column, value)
+     *  - addOr(field, value, comparison)
+     *  - addOr(field, value)
      *  - addOr(Criterion)
      *
      * @return $this|Criteria A modified Criteria object.
      */
-    public function addOr($p1, $p2 = null, $p3 = null, $preferColumnCondition = true)
+    public function addOr($p1, $p2 = null, $p3 = null, $preferFieldCondition = true)
     {
         $rightCriterion = $this->getCriterionForCondition($p1, $p2, $p3);
 
@@ -1771,24 +1784,24 @@ class Criteria
      * Overrides Criteria::add() to use the default combine operator
      * @see Criteria::add()
      *
-     * @param string|AbstractCriterion $p1                    The column to run the comparison on (e.g. BookTableMap::ID), or Criterion object
+     * @param string|AbstractCriterion $p1                    The field to run the comparison on (e.g. BookEntityMap::ID), or Criterion object
      * @param mixed                    $value
      * @param string                   $operator              A String, like Criteria::EQUAL.
-     * @param boolean                  $preferColumnCondition If true, the condition is combined with an existing condition on the same column
+     * @param boolean                  $preferFieldCondition If true, the condition is combined with an existing condition on the same field
     *                      (necessary for Propel 1.4 compatibility).
      *                     If false, the condition is combined with the last existing condition.
      *
      * @return $this|Criteria A modified Criteria object.
      */
-    public function addUsingOperator($p1, $value = null, $operator = null, $preferColumnCondition = true)
+    public function addUsingOperator($p1, $value = null, $operator = null, $preferFieldCondition = true)
     {
         if (Criteria::LOGICAL_OR === $this->defaultCombineOperator) {
             $this->defaultCombineOperator = Criteria::LOGICAL_AND;
 
-            return $this->addOr($p1, $value, $operator, $preferColumnCondition);
+            return $this->addOr($p1, $value, $operator, $preferFieldCondition);
         }
 
-        return $this->addAnd($p1, $value, $operator, $preferColumnCondition);
+        return $this->addAnd($p1, $value, $operator, $preferFieldCondition);
     }
 
     /**
@@ -1806,16 +1819,16 @@ class Criteria
      */
     public function createSelectSql(&$params)
     {
-        $adapter = Propel::getServiceContainer()->getAdapter($this->getDbName());
-        $dbMap = Propel::getServiceContainer()->getDatabaseMap($this->getDbName());
+        $adapter = $this->getConfiguration()->getAdapter($this->getDbName());
+        $dbMap = $this->getConfiguration()->getDatabase($this->getDbName());
 
         $fromClause = array();
         $joinClause = array();
-        $joinTables = array();
+        $joinEntities = array();
         $whereClause = array();
         $orderByClause = array();
 
-        $orderBy = $this->getOrderByColumns();
+        $orderBy = $this->getOrderByFields();
 
         // get the first part of the SQL statement, the SELECT part
         $selectSql = $adapter->createSelectSqlPart($this, $fromClause);
@@ -1831,31 +1844,33 @@ class Criteria
             if (!$fromClause) {
                 $fromClause[] = $join->getLeftTableWithAlias();
             }
-            $joinTables[] = $join->getRightTableWithAlias();
+            $joinEntities[] = $join->getRightTableWithAlias();
             $joinClauseString = $join->getClause($params);
             $this->replaceNames($joinClauseString);
             $joinClause[] = $joinClauseString;
         }
 
         // add the criteria to WHERE clause
-        // this will also add the table names to the FROM clause if they are not already
+        // this will also add the entity names to the FROM clause if they are not already
         // included via a LEFT JOIN
         foreach ($this->keys() as $key) {
             $criterion = $this->getCriterion($key);
-            $table = null;
+            $entity = null;
             foreach ($criterion->getAttachedCriterion() as $attachedCriterion) {
-                $tableName = $attachedCriterion->getTable();
+                $entityName = $attachedCriterion->getEntityName();
 
-                $table = $this->getTableForAlias($tableName);
-                if ($table !== null) {
-                    $fromClause[] = $table . ' ' . $tableName;
+                $entity = $this->getEntityForAlias($entityName);
+                if ($entity !== null) {
+                    $table = $this->getTableName($entity);
+                    $fromClause[] = $table . ' ' . $entityName;
                 } else {
-                    $fromClause[] = $tableName;
-                    $table = $tableName;
+                    $table = $this->getTableName($entityName);
+                    $fromClause[] = $table;
+                    $entity = $entityName;
                 }
 
                 if ($this->isIgnoreCase() && method_exists($attachedCriterion, 'setIgnoreCase')
-                    && $dbMap->getTable($table)->getColumn($attachedCriterion->getColumn())->isText()) {
+                    && $dbMap->getEntity($entity)->getField($attachedCriterion->getField())->isText()) {
                     $attachedCriterion->setIgnoreCase(true);
                 }
             }
@@ -1872,10 +1887,10 @@ class Criteria
         $fromClause = array_unique($fromClause);
         $fromClause = array_diff($fromClause, array(''));
 
-        // tables should not exist in both the from and join clauses
-        if ($joinTables && $fromClause) {
-            foreach ($fromClause as $fi => $ftable) {
-                if (in_array($ftable, $joinTables)) {
+        // entities should not exist in both the from and join clauses
+        if ($joinEntities && $fromClause) {
+            foreach ($fromClause as $fi => $fentity) {
+                if (in_array($fentity, $joinEntities)) {
                     unset($fromClause[$fi]);
                 }
             }
@@ -1892,79 +1907,79 @@ class Criteria
 
         if (!empty($orderBy)) {
 
-            foreach ($orderBy as $orderByColumn) {
+            foreach ($orderBy as $orderByField) {
 
                 // Add function expression as-is.
-                if (strpos($orderByColumn, '(') !== false) {
-                    $orderByClause[] = $orderByColumn;
+                if (strpos($orderByField, '(') !== false) {
+                    $orderByClause[] = $orderByField;
                     continue;
                 }
 
-                // Split orderByColumn (i.e. "table.column DESC")
-                $dotPos = strrpos($orderByColumn, '.');
+                // Split orderByField (i.e. "entity.field DESC")
+                $dotPos = strrpos($orderByField, '.');
 
                 if ($dotPos !== false) {
-                    $tableName = substr($orderByColumn, 0, $dotPos);
-                    $columnName = substr($orderByColumn, $dotPos + 1);
+                    $entityName = substr($orderByField, 0, $dotPos);
+                    $fieldName = substr($orderByField, $dotPos + 1);
                 } else {
-                    $tableName = '';
-                    $columnName = $orderByColumn;
+                    $entityName = '';
+                    $fieldName = $orderByField;
                 }
 
-                $spacePos = strpos($columnName, ' ');
+                $spacePos = strpos($fieldName, ' ');
 
                 if ($spacePos !== false) {
-                    $direction = substr($columnName, $spacePos);
-                    $columnName = substr($columnName, 0, $spacePos);
+                    $direction = substr($fieldName, $spacePos);
+                    $fieldName = substr($fieldName, 0, $spacePos);
                 } else {
                     $direction = '';
                 }
 
-                $tableAlias = $tableName;
-                if ($aliasTableName = $this->getTableForAlias($tableName)) {
-                    $tableName = $aliasTableName;
+                $entityAlias = $entityName;
+                if ($aliasEntityName = $this->getEntityForAlias($entityName)) {
+                    $entityName = $aliasEntityName;
                 }
 
-                $columnAlias = $columnName;
-                if ($asColumnName = $this->getColumnForAs($columnName)) {
-                    $columnName = $asColumnName;
+                $fieldAlias = $fieldName;
+                if ($asFieldName = $this->getFieldForAs($fieldName)) {
+                    $fieldName = $asFieldName;
                 }
 
-                $column = $tableName ? $dbMap->getTable($tableName)->getColumn($columnName) : null;
+                $field = $dbMap->hasEntity($entityName) ? $dbMap->getEntity($entityName)->getField($fieldName) : null;
 
-                if ($this->isIgnoreCase() && $column && $column->isText()) {
-                    $ignoreCaseColumn = $adapter->ignoreCaseInOrderBy("$tableAlias.$columnAlias");
-                    $this->replaceNames($ignoreCaseColumn);
-                    $orderByClause[] =  $ignoreCaseColumn . $direction;
-                    $selectSql .= ', ' . $ignoreCaseColumn;
+                if ($this->isIgnoreCase() && $field && $field->isText()) {
+                    $ignoreCaseField = $adapter->ignoreCaseInOrderBy("$entityAlias.$fieldAlias");
+                    $this->replaceNames($ignoreCaseField);
+                    $orderByClause[] =  $ignoreCaseField . $direction;
+                    $selectSql .= ', ' . $ignoreCaseField;
                 } else {
-                    $this->replaceNames($orderByColumn);
-                    $orderByClause[] = $orderByColumn;
+                    $this->replaceNames($orderByField);
+                    $orderByClause[] = $orderByField;
                 }
             }
         }
 
-        if (empty($fromClause) && $this->getPrimaryTableName()) {
-            $fromClause[] = $this->getPrimaryTableName();
+        if (empty($fromClause) && $this->getPrimaryEntityName()) {
+            $fromClause[] = $this->getTableName($this->getPrimaryEntityName());
         }
 
-        // tables should not exist as alias of subQuery
+        // entities should not exist as alias of subQuery
         if ($this->hasSelectQueries()) {
-            foreach ($fromClause as $key => $ftable) {
-                if (false !== strpos($ftable, ' ')) {
-                    list(, $tableName) = explode(' ', $ftable);
+            foreach ($fromClause as $key => $fentity) {
+                if (false !== strpos($fentity, ' ')) {
+                    list(, $entityName) = explode(' ', $fentity);
                 } else {
-                    $tableName = $ftable;
+                    $entityName = $fentity;
                 }
-                if ($this->hasSelectQuery($tableName)) {
+                if ($this->hasSelectQuery($entityName)) {
                     unset($fromClause[$key]);
                 }
             }
         }
 
-        // from / join tables quoted if it is necessary
-        $fromClause = array_map(array($this, 'quoteIdentifierTable'), $fromClause);
-        $joinClause = $joinClause ? $joinClause : array_map(array($this, 'quoteIdentifierTable'), $joinClause);
+        // from / join entities quoted if it is necessary
+        $fromClause = array_map(array($this, 'quoteIdentifierEntity'), $fromClause);
+        $joinClause = $joinClause ? $joinClause : array_map(array($this, 'quoteIdentifierEntity'), $joinClause);
 
         // add subQuery to From after adding quotes
         foreach ($this->getSelectQueries() as $subQueryAlias => $subQueryCriteria) {
@@ -2006,7 +2021,7 @@ class Criteria
      *
      * @param array $matches Matches found by preg_replace_callback
      *
-     * @return string the column name replacement
+     * @return string the field name replacement
      */
     protected function doReplaceNameInExpression($matches)
     {
@@ -2014,32 +2029,32 @@ class Criteria
     }
 
     /**
-     * Quotes identifier based on $this->isIdentifierQuotingEnabled() and $tableMap->isIdentifierQuotingEnabled.
+     * Quotes identifier based on $this->isIdentifierQuotingEnabled() and $entityMap->isIdentifierQuotingEnabled.
      *
      * @param string $string
      * @return string
      */
-    public function quoteIdentifier($string, $tableName = '')
+    public function quoteIdentifier($string, $entityName = '')
     {
         if ($this->isIdentifierQuotingEnabled()) {
-            $adapter = Propel::getServiceContainer()->getAdapter($this->getDbName());
+            $adapter = $this->getConfiguration()->getAdapter($this->getDbName());
 
             return $adapter->quote($string);
         }
 
-        //find table name and ask tableMap if quoting is enabled
-        if (!$tableName && false !== ($pos = strrpos($string, '.'))) {
-            $tableName = substr($string, 0, $pos);
+        //find entity name and ask entityMap if quoting is enabled
+        if (!$entityName && false !== ($pos = strrpos($string, '.'))) {
+            $entityName = substr($string, 0, $pos);
         }
 
-        $tableMapName = $this->getTableForAlias($tableName) ?: $tableName;
+        $entityMapName = $this->getEntityForAlias($entityName) ?: $entityName;
 
-        if ($tableMapName) {
-            $dbMap = Propel::getServiceContainer()->getDatabaseMap($this->getDbName());
-            if ($dbMap->hasTable($tableMapName)) {
-                $tableMap = $dbMap->getTable($tableMapName);
-                if ($tableMap->isIdentifierQuotingEnabled()) {
-                    $adapter = Propel::getServiceContainer()->getAdapter($this->getDbName());
+        if ($entityMapName) {
+            $dbMap = $this->getConfiguration()->getDatabase($this->getDbName());
+            if ($dbMap->hasEntity($entityMapName)) {
+                $entityMap = $dbMap->getEntity($entityMapName);
+                if ($entityMap->isIdentifierQuotingEnabled()) {
+                    $adapter = $this->getConfiguration()->getAdapter($this->getDbName());
 
                     return $adapter->quote($string);
                 }
@@ -2049,27 +2064,27 @@ class Criteria
         return $string;
     }
 
-    public function quoteIdentifierTable($string)
+    public function quoteIdentifierEntity($string)
     {
-        $realTableName = $string;
+        $realEntityName = $string;
         if (false !== ($pos = strrpos($string, ' '))) {
-            $realTableName = substr($string, 0, $pos);
+            $realEntityName = substr($string, 0, $pos);
         }
 
-        $dbMap = Propel::getServiceContainer()->getDatabaseMap($this->getDbName());
+        $dbMap = $this->getConfiguration()->getDatabase($this->getDbName());
 
         if ($this->isIdentifierQuotingEnabled()) {
-            $adapter = Propel::getServiceContainer()->getAdapter($this->getDbName());
+            $adapter = $this->getConfiguration()->getAdapter($this->getDbName());
 
-            return $adapter->quoteIdentifierTable($string);
+            return $adapter->quoteIdentifierEntity($string);
         }
 
-        if ($dbMap->hasTable($realTableName)) {
-            $tableMap = $dbMap->getTable($realTableName);
-            if ($tableMap->isIdentifierQuotingEnabled()) {
-                $adapter = Propel::getServiceContainer()->getAdapter($this->getDbName());
+        if ($dbMap->hasEntity($realEntityName)) {
+            $entityMap = $dbMap->getEntity($realEntityName);
+            if ($entityMap->isIdentifierQuotingEnabled()) {
+                $adapter = $this->getConfiguration()->getAdapter($this->getDbName());
 
-                return $adapter->quoteIdentifierTable($string);
+                return $adapter->quoteIdentifierEntity($string);
             }
         }
 
@@ -2077,19 +2092,19 @@ class Criteria
     }
 
     /**
-     * Replaces complete column names (like Article.AuthorId) in an SQL clause
-     * by their exact Propel column fully qualified name (e.g. article.author_id)
-     * but ignores the column names inside quotes
+     * Replaces complete field names (like Article.AuthorId) in an SQL clause
+     * by their exact Propel field fully qualified name (e.g. article.author_id)
+     * but ignores the field names inside quotes
      * e.g. 'CONCAT(Book.AuthorID, "Book.AuthorID") = ?'
      *   => 'CONCAT(book.author_id, "Book.AuthorID") = ?'
      *
      * @param string $sql SQL clause to inspect (modified by the method)
      *
-     * @return boolean Whether the method managed to find and replace at least one column name
+     * @return boolean Whether the method managed to find and replace at least one field name
      */
     public function replaceNames(&$sql)
     {
-        $this->replacedColumns = array();
+        $this->replacedFields = array();
         $this->currentAlias = '';
         $this->foundMatch = false;
         $isAfterBackslash = false;
@@ -2157,37 +2172,34 @@ class Criteria
      * figure out the primary key from the database map and insert the
      * row with the next available id using util.db.IDBroker.
      * <p>
-     * If no primary key is defined for the table the values will be
+     * If no primary key is defined for the entity the values will be
      * inserted as specified in Criteria and null will be returned.
      *
-     * @param  ConnectionInterface $con A ConnectionInterface connection.
      * @return mixed               The primary key for the new row if the primary key is auto-generated. Otherwise will return null.
      *
      * @throws \Propel\Runtime\Exception\PropelException
      */
-    public function doInsert(ConnectionInterface $con = null)
+    public function doInsert()
     {
         // The primary key
         $id = null;
-        if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection($this->getDbName());
-        }
-        $db = Propel::getServiceContainer()->getAdapter($this->getDbName());
+        $con = $this->getConfiguration()->getConnectionManager($this->getDbName())->getWriteConnection();
+        $db = $this->getConfiguration()->getAdapter($this->getDbName());
 
-        // Get the table name and method for determining the primary
+        // Get the entity name and method for determining the primary
         // key value.
         $keys = $this->keys();
         if (!empty($keys)) {
-            $tableName = $this->getTableName($keys[0]);
+            $entityName = $this->getEntityNameFor($keys[0]);
         } else {
             throw new PropelException('Database insert attempted without anything specified to insert.');
         }
 
-        $tableName = $this->getTableName($keys[0]);
-        $dbMap = Propel::getServiceContainer()->getDatabaseMap($this->getDbName());
-        $tableMap = $dbMap->getTable($tableName);
-        $keyInfo = $tableMap->getPrimaryKeyMethodInfo();
-        $useIdGen = $tableMap->isUseIdGenerator();
+        $entityName = $this->getEntityNameFor($keys[0]);
+        $dbMap = $this->getConfiguration()->getDatabase($this->getDbName());
+        $entityMap = $dbMap->getEntity($entityName);
+        $keyInfo = $entityMap->getPrimaryKeyMethodInfo();
+        $useIdGen = $entityMap->isUseIdGenerator();
         //$keyGen = $con->getIdGenerator();
 
         $pk = $this->getPrimaryKey();
@@ -2195,10 +2207,10 @@ class Criteria
         // only get a new key value if you need to
         // the reason is that a primary key might be defined
         // but you are still going to set its value. for example:
-        // a join table where both keys are primary and you are
-        // setting both columns with your own values
+        // a join entity where both keys are primary and you are
+        // setting both fields with your own values
 
-        // pk will be null if there is no primary key defined for the table
+        // pk will be null if there is no primary key defined for the entity
         // we're inserting into.
         if (null !== $pk && $useIdGen && !$this->keyContainsValue($pk->getFullyQualifiedName()) && $db->isGetIdBeforeInsert()) {
             try {
@@ -2210,21 +2222,21 @@ class Criteria
         }
 
         try {
-            $qualifiedCols = $this->keys(); // we need table.column cols when populating values
-            $columns = array(); // but just 'column' cols for the SQL
+            $qualifiedCols = $this->keys(); // we need entity.field cols when populating values
+            $fields = array(); // but just 'field' cols for the SQL
             foreach ($qualifiedCols as $qualifiedCol) {
-                $columns[] = substr($qualifiedCol, strrpos($qualifiedCol, '.') + 1);
+                $fields[] = substr($qualifiedCol, strrpos($qualifiedCol, '.') + 1);
             }
 
             // add identifiers
-            $columns = array_map(array($this, 'quoteIdentifier'), $columns);
-            $tableName = $this->quoteIdentifierTable($tableName);
+            $fields = array_map(array($this, 'quoteIdentifier'), $fields);
+            $entityName = $this->quoteIdentifierEntity($entityName);
 
-            $sql = 'INSERT INTO ' . $tableName
-                . ' (' . implode(',', $columns) . ')'
+            $sql = 'INSERT INTO ' . $entityName
+                . ' (' . implode(',', $fields) . ')'
                 . ' VALUES (';
-            // . substr(str_repeat("?,", count($columns)), 0, -1) .
-            for ($p = 1, $cnt = count($columns); $p <= $cnt; $p++) {
+            // . substr(str_repeat("?,", count($fields)), 0, -1) .
+            for ($p = 1, $cnt = count($fields); $p <= $cnt; $p++) {
                 $sql .= ':p'.$p;
                 if ($p !== $cnt) {
                     $sql .= ',';
@@ -2245,7 +2257,7 @@ class Criteria
             throw new PropelException(sprintf('Unable to execute INSERT statement [%s]', $sql), 0, $e);
         }
 
-        // If the primary key column is auto-incremented, get the id now.
+        // If the primary key field is auto-incremented, get the id now.
         if (null !== $pk && $useIdGen && $db->isGetIdAfterInsert()) {
             try {
                 $id = $db->getId($con, $keyInfo);
@@ -2262,17 +2274,17 @@ class Criteria
         if (!$criteria) {
             $criteria = $this;
         }
-        // Assume all the keys are for the same table.
+        // Assume all the keys are for the same entity.
         $keys = $criteria->keys();
         $key = $keys[0];
-        $table = $criteria->getTableName($key);
+        $entity = $criteria->getEntityNameFor($key);
 
         $pk = null;
 
-        if (!empty($table)) {
-            $dbMap = Propel::getServiceContainer()->getDatabaseMap($criteria->getDbName());
+        if (!empty($entity)) {
+            $dbMap = $this->getConfiguration()->getDatabase($criteria->getDbName());
 
-            $pks = $dbMap->getTable($table)->getPrimaryKeys();
+            $pks = $dbMap->getEntity($entity)->getPrimaryKeys();
             if (!empty($pks)) {
                 $pk = array_shift($pks);
             }
@@ -2287,11 +2299,10 @@ class Criteria
      * <p>
      * Use this method for performing an update of the kind:
      * <p>
-     * WHERE some_column = some value AND could_have_another_column =
+     * WHERE some_field = some value AND could_have_another_field =
      * another value AND so on.
      *
      * @param Criteria            $updateValues A Criteria object containing values used in set clause.
-     * @param ConnectionInterface $con          The ConnectionInterface connection object to use.
      *
      * @return int The number of rows affected by last update statement.
      *             For most uses there is only one update statement executed, so this number will
@@ -2301,34 +2312,36 @@ class Criteria
      *
      * @throws PropelException
      */
-    public function doUpdate($updateValues, ConnectionInterface $con)
+    public function doUpdate($updateValues)
     {
-        /** @var PdoAdapter $db */
-        $db = Propel::getServiceContainer()->getAdapter($this->getDbName());
-        $dbMap = Propel::getServiceContainer()->getDatabaseMap($this->getDbName());
+        $con = $this->getConfiguration()->getConnectionManager($this->getDbName())->getWriteConnection();
 
-        // Get list of required tables, containing all columns
-        $tablesColumns = $this->getTablesColumns();
-        if (empty($tablesColumns) && ($table = $this->getPrimaryTableName())) {
-            $tablesColumns = array($table => array());
+        /** @var PdoAdapter $db */
+        $db = $this->getConfiguration()->getAdapter($this->getDbName());
+        $dbMap = $this->getConfiguration()->getDatabase($this->getDbName());
+
+        // Get list of required entities, containing all fields
+        $entitiesFields = $this->getEntitiesFields();
+        if (empty($entitiesFields) && ($entity = $this->getPrimaryEntityName())) {
+            $entitiesFields = array($entity => array());
         }
 
-        // we also need the columns for the update SQL
-        $updateTablesColumns = $updateValues->getTablesColumns();
+        // we also need the fields for the update SQL
+        $updateEntitiesFields = $updateValues->getEntitiesFields();
 
-        // If no columns are changing values, we may get here with
-        // an empty array in $updateTablesColumns.  In that case,
+        // If no fields are changing values, we may get here with
+        // an empty array in $updateEntitiesFields.  In that case,
         // there is nothing to do, so we return the rows affected,
         // which is 0.  Fixes a bug in which an UPDATE statement
         // would fail in this instance.
 
-        if (empty($updateTablesColumns)) {
+        if (empty($updateEntitiesFields)) {
             return 0;
         }
 
         $affectedRows = 0; // initialize this in case the next loop has no iterations.
 
-        foreach ($tablesColumns as $tableName => $columns) {
+        foreach ($entitiesFields as $entityName => $fields) {
 
             $whereClause = array();
             $params = array();
@@ -2338,25 +2351,25 @@ class Criteria
                 if ($queryComment = $this->getComment()) {
                     $sql .= '/* ' . $queryComment . ' */ ';
                 }
-                // is it a table alias?
-                if ($realTableName = $this->getTableForAlias($tableName)) {
-                    $updateTable = $realTableName . ' ' . $tableName;
-                    $tableName = $realTableName;
+                // is it a entity alias?
+                if ($realEntityName = $this->getEntityForAlias($entityName)) {
+                    $updateEntity = $realEntityName . ' ' . $entityName;
+                    $entityName = $realEntityName;
                 } else {
-                    $updateTable = $tableName;
+                    $updateEntity = $entityName;
                 }
-                $sql .= $this->quoteIdentifierTable($updateTable);
+                $sql .= $this->quoteIdentifierEntity($updateEntity);
                 $sql .= " SET ";
                 $p = 1;
-                foreach ($updateTablesColumns[$tableName] as $col) {
-                    $updateColumnName = substr($col, strrpos($col, '.') + 1);
+                foreach ($updateEntitiesFields[$entityName] as $col) {
+                    $updateFieldName = substr($col, strrpos($col, '.') + 1);
                     // add identifiers for the actual database?
-                    $updateColumnName = $this->quoteIdentifier($updateColumnName, $tableName);
+                    $updateFieldName = $this->quoteIdentifier($updateFieldName, $entityName);
                     if ($updateValues->getComparison($col) != Criteria::CUSTOM_EQUAL) {
-                        $sql .= $updateColumnName . '=:p'.$p++.', ';
+                        $sql .= $updateFieldName . '=:p'.$p++.', ';
                     } else {
                         $param = $updateValues->get($col);
-                        $sql .= $updateColumnName . ' = ';
+                        $sql .= $updateFieldName . ' = ';
                         if (is_array($param)) {
                             if (isset($param['raw'])) {
                                 $raw = $param['raw'];
@@ -2383,11 +2396,11 @@ class Criteria
                     }
                 }
 
-                $params = $this->buildParams($updateTablesColumns[$tableName], $updateValues);
+                $params = $this->buildParams($updateEntitiesFields[$entityName], $updateValues);
 
                 $sql = substr($sql, 0, -2);
-                if (!empty($columns)) {
-                    foreach ($columns as $colName) {
+                if (!empty($fields)) {
+                    foreach ($fields as $colName) {
                         $sb = '';
                         $this->getCriterion($colName)->appendPsTo($sb, $params);
                         $this->replaceNames($sb);
@@ -2417,23 +2430,23 @@ class Criteria
                 throw new PropelException(sprintf('Unable to execute UPDATE statement [%s]', $sql), 0, $e);
             }
 
-        } // foreach table in the criteria
+        } // foreach entity in the criteria
 
         return $affectedRows;
     }
 
-    public function buildParams($columns, Criteria $values = null)
+    public function buildParams($fields, Criteria $values = null)
     {
         if (!$values) {
             $values = $this;
         }
         $params = array();
-        foreach ($columns as $key) {
+        foreach ($fields as $key) {
             if ($values->containsKey($key)) {
                 $crit = $values->getCriterion($key);
                 $params[] = array(
-                    'column' => $crit->getColumn(),
-                    'table' => $crit->getTable(),
+                    'field' => $crit->getField(),
+                    'entity' => $crit->getEntity(),
                     'value' => $crit->getValue()
                 );
             }
@@ -2442,16 +2455,14 @@ class Criteria
         return $params;
     }
 
-    public function doCount(ConnectionInterface $con = null)
+    public function doCount()
     {
-        $dbMap = Propel::getServiceContainer()->getDatabaseMap($this->getDbName());
-        $db = Propel::getServiceContainer()->getAdapter($this->getDbName());
+        $dbMap = $this->getConfiguration()->getDatabase($this->getDbName());
+        $db = $this->getConfiguration()->getAdapter($this->getDbName());
 
-        if (null === $con) {
-            $con = Propel::getServiceContainer()->getReadConnection($this->getDbName());
-        }
+        $con = $this->getConfiguration()->getConnectionManager($this->getDbName())->getWriteConnection();
 
-        $needsComplexCount = $this->getGroupByColumns()
+        $needsComplexCount = $this->getGroupByFields()
             || $this->getOffset()
             || $this->getLimit() >= 0
             || $this->getHaving()
@@ -2463,15 +2474,15 @@ class Criteria
         if ($needsComplexCount) {
             if ($this->needsSelectAliases()) {
                 if ($this->getHaving()) {
-                    throw new LogicException('Propel cannot create a COUNT query when using HAVING and  duplicate column names in the SELECT part');
+                    throw new LogicException('Propel cannot create a COUNT query when using HAVING and  duplicate field names in the SELECT part');
                 }
-                $db->turnSelectColumnsToAliases($this);
+                $db->turnSelectFieldsToAliases($this);
             }
             $selectSql = $this->createSelectSql($params);
             $sql = 'SELECT COUNT(*) FROM (' . $selectSql . ') propelmatch4cnt';
         } else {
-            // Replace SELECT columns with COUNT(*)
-            $this->clearSelectColumns()->addSelectColumn('COUNT(*)');
+            // Replace SELECT fields with COUNT(*)
+            $this->clearSelectFields()->addSelectField('COUNT(*)');
             $sql = $this->createSelectSql($params);
         }
         try {
@@ -2487,21 +2498,21 @@ class Criteria
     }
 
     /**
-     * Checks whether the Criteria needs to use column aliasing
+     * Checks whether the Criteria needs to use field aliasing
      * This is implemented in a service class rather than in Criteria itself
      * in order to avoid doing the tests when it's not necessary (e.g. for SELECTs)
      */
     public function needsSelectAliases()
     {
-        $columnNames = array();
-        foreach ($this->getSelectColumns() as $fullyQualifiedColumnName) {
-            if ($pos = strrpos($fullyQualifiedColumnName, '.')) {
-                $columnName = substr($fullyQualifiedColumnName, $pos);
-                if (isset($columnNames[$columnName])) {
-                    // more than one column with the same name, so aliasing is required
+        $fieldNames = array();
+        foreach ($this->getSelectFields() as $fullyQualifiedFieldName) {
+            if ($pos = strrpos($fullyQualifiedFieldName, '.')) {
+                $fieldName = substr($fullyQualifiedFieldName, $pos);
+                if (isset($fieldNames[$fieldName])) {
+                    // more than one field with the same name, so aliasing is required
                     return true;
                 }
-                $columnNames[$columnName] = true;
+                $fieldNames[$fieldName] = true;
             }
         }
 
@@ -2512,43 +2523,39 @@ class Criteria
      * Issue a DELETE query based on the current ModelCriteria
      * This method is called by ModelCriteria::delete() inside a transaction
      *
-     * @param ConnectionInterface $con a connection object
-     *
      * @return int             the number of deleted rows
      * @throws PropelException
      */
-    public function doDelete(ConnectionInterface $con = null)
+    public function doDelete()
     {
-        if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection($this->getDbName());
-        }
+        $con = $this->getConfiguration()->getConnectionManager($this->getDbName())->getWriteConnection();
 
-        $adapter = Propel::getServiceContainer()->getAdapter($this->getDbName());
-        $dbMap = Propel::getServiceContainer()->getDatabaseMap($this->getDbName());
+        $adapter = $this->getConfiguration()->getAdapter($this->getDbName());
+        $dbMap = $this->getConfiguration()->getDatabase($this->getDbName());
 
         // join are not supported with DELETE statement
         if (count($this->getJoins())) {
             throw new PropelException('Delete does not support join');
         }
 
-        // Set up a list of required tables (one DELETE statement will
-        // be executed per table)
-        $tables = $this->getTablesColumns();
-        if (empty($tables)) {
+        // Set up a list of required entities (one DELETE statement will
+        // be executed per entity)
+        $entities = $this->getEntitiesFields();
+        if (empty($entities)) {
             throw new PropelException("Cannot delete from an empty Criteria");
         }
 
         $affectedRows = 0; // initialize this in case the next loop has no iterations.
 
-        foreach ($tables as $tableName => $columns) {
+        foreach ($entities as $entityName => $fields) {
 
             $whereClause = array();
             $params = array();
             $stmt = null;
             try {
-                $sql = $adapter->getDeleteFromClause($this, $tableName);
+                $sql = $adapter->getDeleteFromClause($this, $entityName);
 
-                foreach ($columns as $colName) {
+                foreach ($fields as $colName) {
                     $sb = '';
                     $this->getCriterion($colName)->appendPsTo($sb, $params);
                     $this->replaceNames($sb);
@@ -2566,39 +2573,64 @@ class Criteria
                 throw new PropelException(sprintf('Unable to execute DELETE statement [%s]', $sql), 0, $e);
             }
 
-        } // for each table
+        } // for each entity
 
         return $affectedRows;
     }
 
     /**
+     * @return Configuration
+     */
+    public function getConfiguration()
+    {
+        if ($this->configuration) {
+            return $this->configuration;
+        }
+
+        return Configuration::getCurrentConfiguration();
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasConfiguration()
+    {
+        return null !== $this->configuration;
+    }
+
+    /**
+     * @param Configuration $configuration
+     */
+    public function setConfiguration(Configuration $configuration)
+    {
+        $this->configuration = $configuration;
+    }
+
+    /**
      * Builds, binds and executes a SELECT query based on the current object.
-     *
-     * @param ConnectionInterface $con A connection object
      *
      * @return DataFetcherInterface A dataFetcher using the connection, ready to be fetched
      *
      * @throws \Propel\Runtime\Exception\PropelException
      */
-    public function doSelect(ConnectionInterface $con = null)
+    public function doSelect()
     {
-        if (null === $con) {
-            $con = Propel::getServiceContainer()->getReadConnection($this->getDbName());
-        }
-        $dbMap = Propel::getServiceContainer()->getDatabaseMap($this->getDbName());
-        $db = Propel::getServiceContainer()->getAdapter($this->getDbName());
+        $dbMap = $this->getConfiguration()->getDatabase($this->getDbName());
+
+        $con = $this->getConfiguration()->getConnectionManager($this->getDbName())->getReadConnection();
+        $adapter = $this->getConfiguration()->getAdapter($this->getDbName());
 
         $params = array();
         $sql = $this->createSelectSql($params);
         try {
             $stmt = $con->prepare($sql);
-            $db->bindValues($stmt, $params, $dbMap);
+            $adapter->bindValues($stmt, $params, $dbMap);
             $stmt->execute();
         } catch (\Exception $e) {
             if (isset($stmt)) {
                 $stmt = null; // close
             }
-            Propel::log($e->getMessage(), Propel::LOG_ERR);
+            $this->getConfiguration()->log($e->getMessage(), Configuration::LOG_ERR);
             throw new PropelException(sprintf('Unable to execute SELECT statement [%s]', $sql), null, $e);
         }
 

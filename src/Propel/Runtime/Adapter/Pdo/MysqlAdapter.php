@@ -13,7 +13,7 @@ namespace Propel\Runtime\Adapter\Pdo;
 use Propel\Runtime\Adapter\SqlAdapterInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\StatementInterface;
-use Propel\Runtime\Map\ColumnMap;
+use Propel\Runtime\Map\FieldMap;
 
 /**
  * This is used in order to connect to a MySQL database.
@@ -65,27 +65,27 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
     }
 
     /**
-     * Locks the specified table.
+     * Locks the specified entity.
      *
      * @param ConnectionInterface $con   The Propel connection to use.
-     * @param string              $table The name of the table to lock.
+     * @param string              $entity The name of the entity to lock.
      *
      * @throws \PDOException No Statement could be created or executed.
      */
-    public function lockTable($con, $table)
+    public function lockEntity($con, $entity)
     {
-        $con->exec("LOCK TABLE $table WRITE");
+        $con->exec("LOCK TABLE $entity WRITE");
     }
 
     /**
-     * Unlocks the specified table.
+     * Unlocks the specified entity.
      *
      * @param ConnectionInterface $con   The Propel connection to use.
-     * @param string              $table The name of the table to unlock.
+     * @param string              $entity The name of the entity to unlock.
      *
      * @throws \PDOException No Statement could be created or executed.
      */
-    public function unlockTable($con, $table)
+    public function unlockEntity($con, $entity)
     {
         $con->exec('UNLOCK TABLES');
     }
@@ -102,15 +102,15 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
     }
 
     /**
-     * @see AdapterInterface::quoteIdentifierTable()
+     * @see AdapterInterface::quoteIdentifierEntity()
      *
-     * @param  string $table
+     * @param  string $entity
      * @return string
      */
-    public function quoteIdentifierTable($table)
+    public function quoteIdentifierEntity($entity)
     {
-        // e.g. 'database.table alias' should be escaped as '`database`.`table` `alias`'
-        return '`' . strtr($table, array('.' => '`.`', ' ' => '` `')) . '`';
+        // e.g. 'database.entity alias' should be escaped as '`database`.`entity` `alias`'
+        return '`' . strtr($entity, array('.' => '`.`', ' ' => '` `')) . '`';
     }
 
     /**
@@ -146,12 +146,12 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
      * @param StatementInterface $stmt
      * @param string             $parameter
      * @param mixed              $value
-     * @param ColumnMap          $cMap
+     * @param FieldMap          $cMap
      * @param null|integer       $position
      *
      * @return boolean
      */
-    public function bindValue(StatementInterface $stmt, $parameter, $value, ColumnMap $cMap, $position = null)
+    public function bindValue(StatementInterface $stmt, $parameter, $value, FieldMap $cMap, $position = null)
     {
         $pdoType = $cMap->getPdoType();
         // FIXME - This is a temporary hack to get around apparent bugs w/ PDO+MYSQL

@@ -14,7 +14,7 @@ use Propel\Generator\Builder\Util\PropelTemplate;
 use Propel\Generator\Exception\LogicException;
 
 /**
- * Information about behaviors of a table.
+ * Information about behaviors of a entity.
  *
  * @author François Zaninotto
  * @author Hugo Hamon <webmaster@apprendre-php.com> (Propel)
@@ -22,11 +22,11 @@ use Propel\Generator\Exception\LogicException;
 class Behavior extends MappingModel
 {
     /**
-     * The table object on which the behavior is applied.
+     * The entity object on which the behavior is applied.
      *
-     * @var Table
+     * @var Entity
      */
-    protected $table;
+    protected $entity;
 
     /**
      * The database object.
@@ -57,12 +57,12 @@ class Behavior extends MappingModel
     protected $parameters = [ ];
 
     /**
-     * Wether or not the table has been
+     * Whether or not the entity has been
      * modified by the behavior.
      *
      * @var boolean
      */
-    protected $isTableModified = false;
+    protected $isEntityModified = false;
 
     /**
      * The absolute path to the directory
@@ -86,7 +86,7 @@ class Behavior extends MappingModel
      *
      * @var int
      */
-    protected $tableModificationOrder = 50;
+    protected $entityModificationOrder = 50;
 
     /**
      * Sets the name of the Behavior
@@ -114,7 +114,7 @@ class Behavior extends MappingModel
 
     /**
      * Indicates whether the behavior can be applied several times on the same
-     * table or not.
+     * entity or not.
      *
      * @return bool
      */
@@ -144,23 +144,23 @@ class Behavior extends MappingModel
     }
 
     /**
-     * Sets the table this behavior is applied to
+     * Sets the entity this behavior is applied to
      *
-     * @param Table $table
+     * @param Entity $entity
      */
-    public function setTable(Table $table)
+    public function setEntity(Entity $entity)
     {
-        $this->table = $table;
+        $this->entity = $entity;
     }
 
     /**
-     * Returns the table this behavior is applied to
+     * Returns the entity this behavior is applied to
      *
-     * @return Table
+     * @return Entity
      */
-    public function getTable()
+    public function getEntity()
     {
-        return $this->table;
+        return $this->entity;
     }
 
     /**
@@ -174,7 +174,7 @@ class Behavior extends MappingModel
     }
 
     /**
-     * Returns the table this behavior is applied to if behavior is applied to
+     * Returns the entity this behavior is applied to if behavior is applied to
      * a database element.
      *
      * @return Database
@@ -232,21 +232,21 @@ class Behavior extends MappingModel
     }
 
     /**
-     * Defines when this behavior must execute its modifyTable() method
+     * Defines when this behavior must execute its modifyEntity() method
      * relative to other behaviors. The bigger the value is, the later the
      * behavior is executed.
      *
      * Default is 50.
      *
-     * @param integer $tableModificationOrder
+     * @param integer $entityModificationOrder
      */
-    public function setTableModificationOrder($tableModificationOrder)
+    public function setEntityModificationOrder($entityModificationOrder)
     {
-        $this->tableModificationOrder = (int) $tableModificationOrder;
+        $this->entityModificationOrder = (int) $entityModificationOrder;
     }
 
     /**
-     * Returns when this behavior must execute its modifyTable() method relative
+     * Returns when this behavior must execute its modifyEntity() method relative
      * to other behaviors. The bigger the value is, the later the behavior is
      * executed.
      *
@@ -254,126 +254,126 @@ class Behavior extends MappingModel
      *
      * @return integer
      */
-    public function getTableModificationOrder()
+    public function getEntityModificationOrder()
     {
-        return $this->tableModificationOrder;
+        return $this->entityModificationOrder;
     }
 
     /**
      * This method is automatically called on database behaviors when the
      * database model is finished.
      *
-     * Propagates the behavior to the tables of the database and override this
+     * Propagates the behavior to the entities of the database and override this
      * method to have a database behavior do something special.
      */
     public function modifyDatabase()
     {
-        foreach ($this->getTables() as $table) {
-            if ($table->hasBehavior($this->getId())) {
+        foreach ($this->getEntities() as $entity) {
+            if ($entity->hasBehavior($this->getId())) {
                 // don't add the same behavior twice
                 continue;
             }
             $behavior = clone $this;
-            $table->addBehavior($behavior);
+            $entity->addBehavior($behavior);
         }
     }
 
     /**
-     * Returns the list of all tables in the same database.
+     * Returns the list of all entities in the same database.
      *
-     * @return Table[] A collection of Table instance
+     * @return Entity[] A collection of Entity instance
      */
-    protected function getTables()
+    protected function getEntities()
     {
-        return $this->database->getTables();
+        return $this->database->getEntities();
     }
 
     /**
-     * This method is automatically called on table behaviors when the database
+     * This method is automatically called on entity behaviors when the database
      * model is finished. It also override it to add columns to the current
-     * table.
+     * entity.
      */
-    public function modifyTable()
+    public function modifyEntity()
     {
 
     }
 
     /**
-     * Sets whether or not the table has been modified.
+     * Sets whether or not the entity has been modified.
      *
      * @param boolean $modified
      */
-    public function setTableModified($modified)
+    public function setEntityModified($modified)
     {
-        $this->isTableModified = $modified;
+        $this->isEntityModified = $modified;
     }
 
     /**
-     * Returns whether or not the table has been modified.
+     * Returns whether or not the entity has been modified.
      *
      * @return boolean
      */
-    public function isTableModified()
+    public function isEntityModified()
     {
-        return $this->isTableModified;
+        return $this->isEntityModified;
     }
+//
+//    /**
+//     * Use Propel simple templating system to render a PHP file using variables
+//     * passed as arguments. The template file name is relative to the behavior's
+//     * directory name.
+//     *
+//     * @param  string $filename
+//     * @param  array  $vars
+//     * @param  string $templateDir
+//     * @return string
+//     */
+//    public function renderTemplate($filename, $vars = [], $templateDir = '/templates/')
+//    {
+//        $filePath = $this->getDirname() . $templateDir . $filename;
+//        if (!file_exists($filePath)) {
+//            // try with '.php' at the end
+//            $filePath = $filePath . '.php';
+//            if (!file_exists($filePath)) {
+//                throw new \InvalidArgumentException(sprintf('Template "%s" not found in "%s" directory',
+//                    $filename,
+//                    $this->getDirname() . $templateDir
+//                ));
+//            }
+//        }
+//        $template = new PropelTemplate();
+//        $template->setTemplateFile($filePath);
+//        $vars = array_merge($vars, [ 'behavior' => $this ]);
+//
+//        return $template->render($vars);
+//    }
 
-    /**
-     * Use Propel simple templating system to render a PHP file using variables
-     * passed as arguments. The template file name is relative to the behavior's
-     * directory name.
-     *
-     * @param  string $filename
-     * @param  array  $vars
-     * @param  string $templateDir
-     * @return string
-     */
-    public function renderTemplate($filename, $vars = [], $templateDir = '/templates/')
-    {
-        $filePath = $this->getDirname() . $templateDir . $filename;
-        if (!file_exists($filePath)) {
-            // try with '.php' at the end
-            $filePath = $filePath . '.php';
-            if (!file_exists($filePath)) {
-                throw new \InvalidArgumentException(sprintf('Template "%s" not found in "%s" directory',
-                    $filename,
-                    $this->getDirname() . $templateDir
-                ));
-            }
-        }
-        $template = new PropelTemplate();
-        $template->setTemplateFile($filePath);
-        $vars = array_merge($vars, [ 'behavior' => $this ]);
-
-        return $template->render($vars);
-    }
-
-    /**
-     * Returns the current absolute directory name of this behavior. It also
-     * works for descendants.
-     *
-     * @return string
-     */
-    protected function getDirname()
-    {
-        if (null === $this->dirname) {
-            $r = new \ReflectionObject($this);
-            $this->dirname = dirname($r->getFileName());
-        }
-
-        return $this->dirname;
-    }
+//    /**
+//     * Returns the current absolute directory name of this behavior. It also
+//     * works for descendants.
+//     *
+//     * @return string
+//     */
+//    protected function getDirname()
+//    {
+//        if (null === $this->dirname) {
+//            $r = new \ReflectionObject($this);
+//            $this->dirname = dirname($r->getFileName());
+//        }
+//
+//        return $this->dirname;
+//    }
 
     /**
      * Returns a column object using a name stored in the behavior parameters.
-     * Useful for table behaviors.
+     * Useful for entity behaviors.
      *
      * @param  string $name
-     * @return Column
+     * @return Field
      */
-    public function getColumnForParameter($name)
+    public function getFieldForParameter($name)
     {
-        return $this->table->getColumn($this->getParameter($name));
+        return $this->entity->getField($this->getParameter($name));
     }
 
     protected function setupObject()
@@ -388,13 +388,13 @@ class Behavior extends MappingModel
     }
 
     /**
-     * Returns the table modifier object.
+     * Returns the entity modifier object.
      *
      * The current object is returned by default.
      *
      * @return $this|Behavior
      */
-    public function getTableModifier()
+    public function getEntityModifier()
     {
         return $this;
     }
@@ -424,13 +424,13 @@ class Behavior extends MappingModel
     }
 
     /**
-     * Returns the table map builder modifier object.
+     * Returns the entity map builder modifier object.
      *
      * The current object is returned by default.
      *
      * @return $this|Behavior
      */
-    public function getTableMapBuilderModifier()
+    public function getEntityMapBuilderModifier()
     {
         return $this;
     }

@@ -21,7 +21,7 @@ class Inheritance extends MappingModel
 {
     private $key;
     private $className;
-    private $package;
+//    private $package;
     private $ancestor;
     private $column;
 
@@ -48,9 +48,9 @@ class Inheritance extends MappingModel
     /**
      * Returns the parent column.
      *
-     * @return Column
+     * @return Field
      */
-    public function getColumn()
+    public function getField()
     {
         return $this->column;
     }
@@ -58,9 +58,9 @@ class Inheritance extends MappingModel
     /**
      * Sets the parent column
      *
-     * @param Column $column
+     * @param Field $column
      */
-    public function setColumn(Column $column)
+    public function setField(Field $column)
     {
         $this->column = $column;
     }
@@ -85,25 +85,25 @@ class Inheritance extends MappingModel
         $this->className = $name;
     }
 
-    /**
-     * Returns the package.
-     *
-     * @return string
-     */
-    public function getPackage()
-    {
-        return $this->package;
-    }
-
-    /**
-     * Sets the package.
-     *
-     * @param string $package
-     */
-    public function setPackage($package)
-    {
-        $this->package = $package;
-    }
+//    /**
+//     * Returns the package.
+//     *
+//     * @return string
+//     */
+//    public function getPackage()
+//    {
+//        return $this->package;
+//    }
+//
+//    /**
+//     * Sets the package.
+//     *
+//     * @param string $package
+//     */
+//    public function setPackage($package)
+//    {
+//        $this->package = $package;
+//    }
 
     /**
      * Returns the ancestor value.
@@ -129,7 +129,7 @@ class Inheritance extends MappingModel
     {
         $this->key       = $this->getAttribute('key');
         $this->className = $this->getAttribute('class');
-        $this->package   = $this->getAttribute('package');
+//        $this->package   = $this->getAttribute('package');
         $this->ancestor  = $this->getAttribute('extends');
     }
 }

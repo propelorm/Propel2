@@ -11,16 +11,16 @@
 namespace Propel\Generator\Platform;
 
 use Propel\Generator\Exception\EngineException;
-use Propel\Generator\Model\Column;
+use Propel\Generator\Model\Field;
 use Propel\Generator\Model\Database;
-use Propel\Generator\Model\Diff\TableDiff;
+use Propel\Generator\Model\Diff\EntityDiff;
 use Propel\Generator\Model\Domain;
 use Propel\Generator\Model\Index;
 use Propel\Generator\Model\IdMethod;
 use Propel\Generator\Model\PropelTypes;
-use Propel\Generator\Model\Table;
+use Propel\Generator\Model\Entity;
 use Propel\Generator\Model\Unique;
-use Propel\Generator\Model\Diff\ColumnDiff;
+use Propel\Generator\Model\Diff\FieldDiff;
 
 /**
  * Postgresql PlatformInterface implementation.
@@ -29,7 +29,7 @@ use Propel\Generator\Model\Diff\ColumnDiff;
  * @author Martin Poeschl <mpoeschl@marmot.at> (Torque)
  * @author Niklas Närhinen <niklas@narhinen.net>
  */
-class PgsqlPlatform extends DefaultPlatform
+class PgsqlPlatform extends SqlDefaultPlatform
 {
 
     /**
@@ -84,7 +84,7 @@ class PgsqlPlatform extends DefaultPlatform
         );
     }
 
-    public function getMaxColumnNameLength()
+    public function getMaxFieldNameLength()
     {
         return 32;
     }
@@ -107,23 +107,23 @@ class PgsqlPlatform extends DefaultPlatform
      * Override to provide sequence names that conform to postgres' standard when
      * no id-method-parameter specified.
      *
-     * @param Table $table
+     * @param Entity $entity
      *
      * @return string
      */
-    public function getSequenceName(Table $table)
+    public function getSequenceName(Entity $entity)
     {
         $result = null;
-        if ($table->getIdMethod() == IdMethod::NATIVE) {
-            $idMethodParams = $table->getIdMethodParameters();
+        if ($entity->getIdMethod() == IdMethod::NATIVE) {
+            $idMethodParams = $entity->getIdMethodParameters();
             if (empty($idMethodParams)) {
                 $result = null;
                 // We're going to ignore a check for max length (mainly
                 // because I'm not sure how Postgres would handle this w/ SERIAL anyway)
-                foreach ($table->getColumns() as $col) {
+                foreach ($entity->getFields() as $col) {
                     if ($col->isAutoIncrement()) {
-                        $result = $table->getName() . '_' . $col->getName() . '_seq';
-                        break; // there's only one auto-increment column allowed
+                        $result = $entity->getName() . '_' . $col->getName() . '_seq';
+                        break; // there's only one auto-increment field allowed
                     }
                 }
             } else {
@@ -134,30 +134,30 @@ class PgsqlPlatform extends DefaultPlatform
         return $result;
     }
 
-    protected function getAddSequenceDDL(Table $table)
+    protected function getAddSequenceDDL(Entity $entity)
     {
-        if ($table->getIdMethod() == IdMethod::NATIVE
-         && $table->getIdMethodParameters() != null) {
+        if ($entity->getIdMethod() == IdMethod::NATIVE
+         && $entity->getIdMethodParameters() != null) {
             $pattern = "
 CREATE SEQUENCE %s;
 ";
 
             return sprintf($pattern,
-                $this->quoteIdentifier(strtolower($this->getSequenceName($table)))
+                $this->quoteIdentifier(strtolower($this->getSequenceName($entity)))
             );
         }
     }
 
-    protected function getDropSequenceDDL(Table $table)
+    protected function getDropSequenceDDL(Entity $entity)
     {
-        if ($table->getIdMethod() == IdMethod::NATIVE
-         && $table->getIdMethodParameters() != null) {
+        if ($entity->getIdMethod() == IdMethod::NATIVE
+         && $entity->getIdMethodParameters() != null) {
             $pattern = "
 DROP SEQUENCE %s;
 ";
 
             return sprintf($pattern,
-                $this->quoteIdentifier(strtolower($this->getSequenceName($table)))
+                $this->quoteIdentifier(strtolower($this->getSequenceName($entity)))
             );
         }
     }
@@ -166,20 +166,20 @@ DROP SEQUENCE %s;
     {
         $ret = '';
         $schemas = array();
-        foreach ($database->getTables() as $table) {
-            $vi = $table->getVendorInfoForType('pgsql');
+        foreach ($database->getEntities() as $entity) {
+            $vi = $entity->getVendorInfoForType('pgsql');
             if ($vi->hasParameter('schema') && !isset($schemas[$vi->getParameter('schema')])) {
                 $schemas[$vi->getParameter('schema')] = true;
-                $ret .= $this->getAddSchemaDDL($table);
+                $ret .= $this->getAddSchemaDDL($entity);
             }
         }
 
         return $ret;
     }
 
-    public function getAddSchemaDDL(Table $table)
+    public function getAddSchemaDDL(Entity $entity)
     {
-        $vi = $table->getVendorInfoForType('pgsql');
+        $vi = $entity->getVendorInfoForType('pgsql');
         if ($vi->hasParameter('schema')) {
             $pattern = "
 CREATE SCHEMA %s;
@@ -189,9 +189,9 @@ CREATE SCHEMA %s;
         };
     }
 
-    public function getUseSchemaDDL(Table $table)
+    public function getUseSchemaDDL(Entity $entity)
     {
-        $vi = $table->getVendorInfoForType('pgsql');
+        $vi = $entity->getVendorInfoForType('pgsql');
         if ($vi->hasParameter('schema')) {
             $pattern = "
 SET search_path TO %s;
@@ -201,9 +201,9 @@ SET search_path TO %s;
         }
     }
 
-    public function getResetSchemaDDL(Table $table)
+    public function getResetSchemaDDL(Entity $entity)
     {
-        $vi = $table->getVendorInfoForType('pgsql');
+        $vi = $entity->getVendorInfoForType('pgsql');
         if ($vi->hasParameter('schema')) {
             return "
 SET search_path TO public;
@@ -211,23 +211,23 @@ SET search_path TO public;
         }
     }
 
-    public function getAddTablesDDL(Database $database)
+    public function getAddEntitiesDDL(Database $database)
     {
         $ret = $this->getBeginDDL();
         $ret .= $this->getAddSchemasDDL($database);
 
-        foreach ($database->getTablesForSql() as $table) {
-            $this->normalizeTable($table);
+        foreach ($database->getEntitiesForSql() as $entity) {
+            $this->normalizeEntity($entity);
         }
 
-        foreach ($database->getTablesForSql() as $table) {
-            $ret .= $this->getCommentBlockDDL($table->getName());
-            $ret .= $this->getDropTableDDL($table);
-            $ret .= $this->getAddTableDDL($table);
-            $ret .= $this->getAddIndicesDDL($table);
+        foreach ($database->getEntitiesForSql() as $entity) {
+            $ret .= $this->getCommentBlockDDL($entity->getName());
+            $ret .= $this->getDropEntityDDL($entity);
+            $ret .= $this->getAddEntityDDL($entity);
+            $ret .= $this->getAddIndicesDDL($entity);
         }
-        foreach ($database->getTablesForSql() as $table) {
-            $ret .= $this->getAddForeignKeysDDL($table);
+        foreach ($database->getEntitiesForSql() as $entity) {
+            $ret .= $this->getAddRelationsDDL($entity);
         }
         $ret .= $this->getEndDDL();
 
@@ -237,33 +237,33 @@ SET search_path TO public;
     /**
      * {@inheritDoc}
      */
-    public function getAddForeignKeysDDL(Table $table)
+    public function getAddRelationsDDL(Entity $entity)
     {
         $ret = '';
-        foreach ($table->getForeignKeys() as $fk) {
-            $ret .= $this->getAddForeignKeyDDL($fk);
+        foreach ($entity->getRelations() as $relation) {
+            $ret .= $this->getAddRelationDDL($relation);
         }
 
         return $ret;
     }
 
-    public function getAddTableDDL(Table $table)
+    public function getAddEntityDDL(Entity $entity)
     {
         $ret = '';
-        $ret .= $this->getUseSchemaDDL($table);
-        $ret .= $this->getAddSequenceDDL($table);
+        $ret .= $this->getUseSchemaDDL($entity);
+        $ret .= $this->getAddSequenceDDL($entity);
 
         $lines = array();
 
-        foreach ($table->getColumns() as $column) {
-            $lines[] = $this->getColumnDDL($column);
+        foreach ($entity->getFields() as $field) {
+            $lines[] = $this->getFieldDDL($field);
         }
 
-        if ($table->hasPrimaryKey()) {
-            $lines[] = $this->getPrimaryKeyDDL($table);
+        if ($entity->hasPrimaryKey()) {
+            $lines[] = $this->getPrimaryKeyDDL($entity);
         }
 
-        foreach ($table->getUnices() as $unique) {
+        foreach ($entity->getUnices() as $unique) {
             $lines[] = $this->getUniqueDDL($unique);
         }
 
@@ -276,79 +276,79 @@ CREATE TABLE %s
 );
 ";
         $ret .= sprintf($pattern,
-            $this->quoteIdentifier($table->getName()),
+            $this->quoteIdentifier($entity->getName()),
             implode($sep, $lines)
         );
 
-        if ($table->hasDescription()) {
+        if ($entity->hasDescription()) {
             $pattern = "
 COMMENT ON TABLE %s IS %s;
 ";
             $ret .= sprintf($pattern,
-                $this->quoteIdentifier($table->getName()),
-                $this->quote($table->getDescription())
+                $this->quoteIdentifier($entity->getName()),
+                $this->quote($entity->getDescription())
             );
         }
 
-        $ret .= $this->getAddColumnsComments($table);
-        $ret .= $this->getResetSchemaDDL($table);
+        $ret .= $this->getAddFieldsComments($entity);
+        $ret .= $this->getResetSchemaDDL($entity);
 
         return $ret;
     }
 
-    protected function getAddColumnsComments(Table $table)
+    protected function getAddFieldsComments(Entity $entity)
     {
         $ret = '';
-        foreach ($table->getColumns() as $column) {
-            $ret .= $this->getAddColumnComment($column);
+        foreach ($entity->getFields() as $field) {
+            $ret .= $this->getAddFieldComment($field);
         }
 
         return $ret;
     }
 
-    protected function getAddColumnComment(Column $column)
+    protected function getAddFieldComment(Field $field)
     {
         $pattern = "
 COMMENT ON COLUMN %s.%s IS %s;
 ";
-        if ($description = $column->getDescription()) {
+        if ($description = $field->getDescription()) {
             return sprintf($pattern,
-                $this->quoteIdentifier($column->getTable()->getName()),
-                $this->quoteIdentifier($column->getName()),
+                $this->quoteIdentifier($field->getEntity()->getName()),
+                $this->quoteIdentifier($field->getName()),
                 $this->quote($description)
             );
         }
     }
 
-    public function getDropTableDDL(Table $table)
+    public function getDropEntityDDL(Entity $entity)
     {
         $ret = '';
-        $ret .= $this->getUseSchemaDDL($table);
+        $ret .= $this->getUseSchemaDDL($entity);
         $pattern = "
 DROP TABLE IF EXISTS %s CASCADE;
 ";
-        $ret .= sprintf($pattern, $this->quoteIdentifier($table->getName()));
-        $ret .= $this->getDropSequenceDDL($table);
-        $ret .= $this->getResetSchemaDDL($table);
+        $ret .= sprintf($pattern, $this->quoteIdentifier($entity->getName()));
+        $ret .= $this->getDropSequenceDDL($entity);
+        $ret .= $this->getResetSchemaDDL($entity);
 
         return $ret;
     }
 
-    public function getPrimaryKeyName(Table $table)
+    public function getPrimaryKeyName(Entity $entity)
     {
-        $tableName = $table->getCommonName();
+        $entityName = $entity->getCommonName();
 
-        return $tableName . '_pkey';
+        return $entityName . '_pkey';
     }
 
-    public function getColumnDDL(Column $col)
+    public function getFieldDDL(Field $col)
     {
         $domain = $col->getDomain();
 
         $ddl = array($this->quoteIdentifier($col->getName()));
         $sqlType = $domain->getSqlType();
-        $table = $col->getTable();
-        if ($col->isAutoIncrement() && $table && $table->getIdMethodParameters() == null) {
+        $entity = $col->getEntity();
+        if ($col->isAutoIncrement() && $entity && $entity->getIdMethodParameters() == null) {
             $sqlType = $col->getType() === PropelTypes::BIGINT ? 'bigserial' : 'serial';
         }
         if ($this->hasSize($sqlType) && $col->isDefaultSqlType($this)) {
@@ -364,7 +364,7 @@ DROP TABLE IF EXISTS %s CASCADE;
         } else {
             $ddl[] = $sqlType;
         }
-        if ($default = $this->getColumnDefaultValueDDL($col)) {
+        if ($default = $this->getFieldDefaultValueDDL($col)) {
             $ddl[] = $default;
         }
         if ($notNull = $this->getNullString($col->isNotNull())) {
@@ -381,14 +381,14 @@ DROP TABLE IF EXISTS %s CASCADE;
     {
         return sprintf('CONSTRAINT %s UNIQUE (%s)',
             $this->quoteIdentifier($unique->getName()),
-            $this->getColumnListDDL($unique->getColumnObjects())
+            $this->getFieldListDDL($unique->getFieldObjects())
         );
     }
 
-    public function getRenameTableDDL($fromTableName, $toTableName)
+    public function getRenameEntityDDL($fromEntityName, $toEntityName)
     {
-        if (false !== ($pos = strpos($toTableName, '.'))) {
-            $toTableName = substr($toTableName, $pos + 1);
+        if (false !== ($pos = strpos($toEntityName, '.'))) {
+            $toEntityName = substr($toEntityName, $pos + 1);
         }
 
         $pattern = "
@@ -396,8 +396,8 @@ ALTER TABLE %s RENAME TO %s;
 ";
 
         return sprintf($pattern,
-            $this->quoteIdentifier($fromTableName),
-            $this->quoteIdentifier($toTableName)
+            $this->quoteIdentifier($fromEntityName),
+            $this->quoteIdentifier($toEntityName)
         );
     }
 
@@ -424,9 +424,9 @@ ALTER TABLE %s RENAME TO %s;
         return true;
     }
 
-    public function getModifyTableDDL(TableDiff $tableDiff)
+    public function getModifyEntityDDL(EntityDiff $entityDiff)
     {
-        $ret = parent::getModifyTableDDL($tableDiff);
+        $ret = parent::getModifyEntityDDL($entityDiff);
 
         if ($this->createOrDropSequences) {
             $ret = $this->createOrDropSequences . $ret;
@@ -438,86 +438,86 @@ ALTER TABLE %s RENAME TO %s;
     }
 
     /**
-     * Overrides the implementation from DefaultPlatform
+     * Overrides the implementation from SqlDefaultPlatform
      *
      * @author     Niklas Närhinen <niklas@narhinen.net>
      * @return string
-     * @see DefaultPlatform::getModifyColumnDDL
+     * @see DefaultPlatform::getModifyFieldDDL
      */
-    public function getModifyColumnDDL(ColumnDiff $columnDiff)
+    public function getModifyFieldDDL(FieldDiff $fieldDiff)
     {
         $ret = '';
-        $changedProperties = $columnDiff->getChangedProperties();
+        $changedProperties = $fieldDiff->getChangedProperties();
 
-        $fromColumn = $columnDiff->getFromColumn();
-        $toColumn = clone $columnDiff->getToColumn();
+        $fromField = $fieldDiff->getFromField();
+        $toField = clone $fieldDiff->getToField();
 
-        $fromTable = $fromColumn->getTable();
-        $table = $toColumn->getTable();
+        $fromEntity = $fromField->getEntity();
+        $entity = $toField->getEntity();
 
-        $colName = $this->quoteIdentifier($toColumn->getName());
+        $colName = $this->quoteIdentifier($toField->getName());
 
         $pattern = "
 ALTER TABLE %s ALTER COLUMN %s;
 ";
 
         if (isset($changedProperties['autoIncrement'])) {
-            $tableName = $table->getName();
-            $colPlainName = $toColumn->getName();
-            $seqName = "{$tableName}_{$colPlainName}_seq";
+            $entityName = $entity->getName();
+            $colPlainName = $toField->getName();
+            $seqName = "{$entityName}_{$colPlainName}_seq";
 
-            if ($toColumn->isAutoIncrement() && $table && $table->getIdMethodParameters() == null) {
+            if ($toField->isAutoIncrement() && $entity && $entity->getIdMethodParameters() == null) {
 
                 $defaultValue = "nextval('$seqName'::regclass)";
-                $toColumn->setDefaultValue($defaultValue);
+                $toField->setDefaultValue($defaultValue);
                 $changedProperties['defaultValueValue'] = [null, $defaultValue];
 
                 //add sequence
-                if (!$fromTable->getDatabase()->hasSequence($seqName)) {
+                if (!$fromEntity->getDatabase()->hasSequence($seqName)) {
                     $this->createOrDropSequences .= sprintf("
 CREATE SEQUENCE %s;
 ",
                         $seqName
                     );
-                    $fromTable->getDatabase()->addSequence($seqName);
+                    $fromEntity->getDatabase()->addSequence($seqName);
                 }
             }
 
-            if (!$toColumn->isAutoIncrement() && $fromColumn->isAutoIncrement()) {
-                $changedProperties['defaultValueValue'] = [$fromColumn->getDefaultValueString(), null];
-                $toColumn->setDefaultValue(null);
+            if (!$toField->isAutoIncrement() && $fromField->isAutoIncrement()) {
+                $changedProperties['defaultValueValue'] = [$fromField->getDefaultValueString(), null];
+                $toField->setDefaultValue(null);
 
                 //remove sequence
-                if ($fromTable->getDatabase()->hasSequence($seqName)) {
+                if ($fromEntity->getDatabase()->hasSequence($seqName)) {
                     $this->createOrDropSequences .= sprintf("
 DROP SEQUENCE %s CASCADE;
 ",
                         $seqName
                     );
-                    $fromTable->getDatabase()->removeSequence($seqName);
+                    $fromEntity->getDatabase()->removeSequence($seqName);
                 }
             }
         }
 
         if (isset($changedProperties['size']) || isset($changedProperties['type']) || isset($changedProperties['scale'])) {
 
-            $sqlType = $toColumn->getDomain()->getSqlType();
+            $sqlType = $toField->getDomain()->getSqlType();
 
-            if ($this->hasSize($sqlType) && $toColumn->isDefaultSqlType($this)) {
+            if ($this->hasSize($sqlType) && $toField->isDefaultSqlType($this)) {
                 if ($this->isNumber($sqlType)) {
                     if ('NUMERIC' === strtoupper($sqlType)) {
-                        $sqlType .= $toColumn->getSizeDefinition();
+                        $sqlType .= $toField->getSizeDefinition();
                     }
                 } else {
-                    $sqlType .= $toColumn->getSizeDefinition();
+                    $sqlType .= $toField->getSizeDefinition();
                 }
             }
 
-            if ($using = $this->getUsingCast($fromColumn, $toColumn)) {
+            if ($using = $this->getUsingCast($fromField, $toField)) {
                 $sqlType .= $using;
             }
             $ret .= sprintf($pattern,
-                $this->quoteIdentifier($table->getName()),
+                $this->quoteIdentifier($entity->getName()),
                 $colName . ' TYPE ' . $sqlType
             );
         }
@@ -525,9 +525,9 @@ DROP SEQUENCE %s CASCADE;
         if (isset($changedProperties['defaultValueValue'])) {
             $property = $changedProperties['defaultValueValue'];
             if ($property[0] !== null && $property[1] === null) {
-                $ret .= sprintf($pattern, $this->quoteIdentifier($table->getName()), $colName . ' DROP DEFAULT');
+                $ret .= sprintf($pattern, $this->quoteIdentifier($entity->getName()), $colName . ' DROP DEFAULT');
             } else {
-                $ret .= sprintf($pattern, $this->quoteIdentifier($table->getName()), $colName . ' SET ' . $this->getColumnDefaultValueDDL($toColumn));
+                $ret .= sprintf($pattern, $this->quoteIdentifier($entity->getName()), $colName . ' SET ' . $this->getFieldDefaultValueDDL($toField));
             }
         }
 
@@ -537,7 +537,7 @@ DROP SEQUENCE %s CASCADE;
             if ($property[1]) {
                 $notNull = ' SET NOT NULL';
             }
-            $ret .= sprintf($pattern, $this->quoteIdentifier($table->getName()), $colName . $notNull);
+            $ret .= sprintf($pattern, $this->quoteIdentifier($entity->getName()), $colName . $notNull);
         }
 
         return $ret;
@@ -557,11 +557,11 @@ DROP SEQUENCE %s CASCADE;
         return in_array(strtoupper($type), $numbers);
     }
 
-    public function getUsingCast(Column $fromColumn, Column $toColumn)
+    public function getUsingCast(Field $fromField, Field $toField)
     {
-        $fromSqlType = strtoupper($fromColumn->getDomain()->getSqlType());
-        $toSqlType = strtoupper($toColumn->getDomain()->getSqlType());
-        $name = $fromColumn->getName();
+        $fromSqlType = strtoupper($fromField->getDomain()->getSqlType());
+        $toSqlType = strtoupper($toField->getDomain()->getSqlType());
+        $name = $fromField->getName();
 
         if ($this->isNumber($fromSqlType) && $this->isString($toSqlType)) {
             //cast from int to string
@@ -595,41 +595,41 @@ DROP SEQUENCE %s CASCADE;
     }
 
     /**
-     * Overrides the implementation from DefaultPlatform
+     * Overrides the implementation from SqlDefaultPlatform
      *
      * @author     Niklas Närhinen <niklas@narhinen.net>
      * @return string
-     * @see DefaultPlatform::getModifyColumnsDDL
+     * @see DefaultPlatform::getModifyFieldsDDL
      */
-    public function getModifyColumnsDDL($columnDiffs)
+    public function getModifyFieldsDDL($fieldDiffs)
     {
         $ret = '';
-        foreach ($columnDiffs as $columnDiff) {
-            $ret .= $this->getModifyColumnDDL($columnDiff);
+        foreach ($fieldDiffs as $fieldDiff) {
+            $ret .= $this->getModifyFieldDDL($fieldDiff);
         }
 
         return $ret;
     }
 
     /**
-     * Overrides the implementation from DefaultPlatform
+     * Overrides the implementation from SqlDefaultPlatform
      *
      * @author     Niklas Närhinen <niklas@narhinen.net>
      * @return string
-     * @see DefaultPlatform::getAddColumnsDLL
+     * @see DefaultPlatform::getAddFieldsDLL
      */
-    public function getAddColumnsDDL($columns)
+    public function getAddFieldsDDL($fields)
     {
         $ret = '';
-        foreach ($columns as $column) {
-            $ret .= $this->getAddColumnDDL($column);
+        foreach ($fields as $field) {
+            $ret .= $this->getAddFieldDDL($field);
         }
 
         return $ret;
     }
 
     /**
-     * Overrides the implementation from DefaultPlatform
+     * Overrides the implementation from SqlDefaultPlatform
      *
      * @author     Niklas Närhinen <niklas@narhinen.net>
      * @return string
@@ -643,7 +643,7 @@ DROP SEQUENCE %s CASCADE;
     ";
 
             return sprintf($pattern,
-                $this->quoteIdentifier($index->getTable()->getName()),
+                $this->quoteIdentifier($index->getEntity()->getName()),
                 $this->quoteIdentifier($index->getName())
             );
         } else {
@@ -656,18 +656,18 @@ DROP SEQUENCE %s CASCADE;
      * Warning: duplicates logic from PgsqlAdapter::getId().
      * Any code modification here must be ported there.
      */
-    public function getIdentifierPhp($columnValueMutator, $connectionVariableName = '$con', $sequenceName = '', $tab = "            ")
+    public function getIdentifierPhp($fieldValueMutator, $connectionVariableName = '$con', $sequenceName = '', $tab = "            ")
     {
         if (!$sequenceName) {
             throw new EngineException('PostgreSQL needs a sequence name to fetch primary keys');
         }
         $snippet = "
 \$dataFetcher = %s->query(\"SELECT nextval('%s')\");
-%s = \$dataFetcher->fetchColumn();";
+%s = \$dataFetcher->fetchField();";
         $script = sprintf($snippet,
             $connectionVariableName,
             $sequenceName,
-            $columnValueMutator
+            $fieldValueMutator
         );
 
         return preg_replace('/^/m', $tab, $script);

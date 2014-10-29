@@ -16,14 +16,14 @@ public function populateFromArchive($archive<?php if ($usesAutoIncrement): ?>, $
     if ($populateAutoIncrementPrimaryKeys) {
 <?php foreach ($columns as $col): ?>
 <?php if ($col->isAutoIncrement()): ?>
-        $this->set<?php echo $col->getPhpName() ?>($archive->get<?php echo $col->getPhpName() ?>());
+        $this->set<?php echo $col->getName() ?>($archive->get<?php echo $col->getName() ?>());
 <?php endif; ?>
 <?php endforeach; ?>
     }
 <?php endif; ?>
 <?php foreach ($columns as $col): ?>
 <?php if (!$col->isAutoIncrement()): ?>
-    $this->set<?php echo $col->getPhpName() ?>($archive->get<?php echo $col->getPhpName() ?>());
+    $this->set<?php echo $col->getName() ?>($archive->get<?php echo $col->getName() ?>());
 <?php endif; ?>
 <?php endforeach; ?>
 

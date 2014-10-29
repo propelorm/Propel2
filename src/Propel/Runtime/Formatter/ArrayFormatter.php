@@ -109,7 +109,7 @@ class ArrayFormatter extends AbstractFormatter
      * The first object to hydrate is the model of the Criteria
      * The following objects (the ones added by way of ModelCriteria::with()) are linked to the first one
      *
-     *  @param    array  $row associative array indexed by column number,
+     *  @param    array  $row associative array indexed by field number,
      *                   as returned by DataFetcher::fetch()
      *
      * @return Array
@@ -120,8 +120,8 @@ class ArrayFormatter extends AbstractFormatter
 
         // hydrate main object or take it from registry
         $mainObjectIsNew = false;
-        $tableMap = $this->tableMap;
-        $mainKey = $tableMap::getPrimaryKeyHashFromRow($row, 0, $this->getDataFetcher()->getIndexType());
+        $entityMap = $this->entityMap;
+        $mainKey = $entityMap::getPrimaryKeyHashFromRow($row, 0, $this->getDataFetcher()->getIndexType());
         // we hydrate the main object even in case of a one-to-many relationship
         // in order to get the $col variable increased anyway
         $obj = $this->getSingleObjectFromRow($row, $this->class, $col);
@@ -137,11 +137,11 @@ class ArrayFormatter extends AbstractFormatter
         foreach ($this->getWith() as $relAlias => $modelWith) {
 
             // determine class to use
-            if ($modelWith->isSingleTableInheritance()) {
-                $class = call_user_func(array($modelWith->getTableMap(), 'getOMClass'), $row, $col, false);
+            if ($modelWith->isSingleEntityInheritance()) {
+                $class = call_user_func(array($modelWith->getEntityMap(), 'getOMClass'), $row, $col, false);
                 $refl = new \ReflectionClass($class);
                 if ($refl->isAbstract()) {
-                    $col += constant('Map\\'.$class . 'TableMap::NUM_COLUMNS');
+                    $col += constant('Map\\'.$class . 'EntityMap::NUM_COLUMNS');
                     continue;
                 }
             } else {
@@ -150,7 +150,7 @@ class ArrayFormatter extends AbstractFormatter
 
             // hydrate related object or take it from registry
             $key = call_user_func(
-                array($modelWith->getTableMap(), 'getPrimaryKeyHashFromRow'),
+                array($modelWith->getEntityMap(), 'getPrimaryKeyHashFromRow'),
                 $row,
                 $col,
                 $this->getDataFetcher()->getIndexType()
@@ -170,7 +170,7 @@ class ArrayFormatter extends AbstractFormatter
             if ($modelWith->isPrimary()) {
                 $arrayToAugment = &$this->alreadyHydratedObjects[$this->class][$mainKey];
             } else {
-                $arrayToAugment = &$hydrationChain[$modelWith->getLeftPhpName()];
+                $arrayToAugment = &$hydrationChain[$modelWith->getLeftName()];
             }
 
             if ($modelWith->isAdd()) {
@@ -186,11 +186,11 @@ class ArrayFormatter extends AbstractFormatter
                 $arrayToAugment[$modelWith->getRelationName()] = & $this->alreadyHydratedObjects[$relAlias][$key];
             }
 
-            $hydrationChain[$modelWith->getRightPhpName()] = &$this->alreadyHydratedObjects[$relAlias][$key];
+            $hydrationChain[$modelWith->getRightName()] = &$this->alreadyHydratedObjects[$relAlias][$key];
         }
 
-        // columns added using withColumn()
-        foreach ($this->getAsColumns() as $alias => $clause) {
+        // fields added using withField()
+        foreach ($this->getAsFields() as $alias => $clause) {
             $this->alreadyHydratedObjects[$this->class][$mainKey][$alias] = $row[$col];
             $col++;
         }

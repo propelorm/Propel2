@@ -17,7 +17,7 @@ use Propel\Runtime\Collection\Exception\UnsupportedRelationException;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\RuntimeException;
 use Propel\Runtime\Map\RelationMap;
-use Propel\Runtime\Map\TableMap;
+use Propel\Runtime\Map\EntityMap;
 use Propel\Runtime\ActiveQuery\PropelQuery;
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 
@@ -111,14 +111,14 @@ class ObjectCollection extends Collection
      * Get an array representation of the collection
      * Each object is turned into an array and the result is returned
      *
-     * @param string  $keyColumn              If null, the returned array uses an incremental index.
-     *                                        Otherwise, the array is indexed using the specified column
+     * @param string  $keyField              If null, the returned array uses an incremental index.
+     *                                        Otherwise, the array is indexed using the specified field
      * @param boolean $usePrefix              If true, the returned array prefixes keys
      *                                        with the model class name ('Article_0', 'Article_1', etc).
-     * @param string  $keyType                (optional) One of the class type constants TableMap::TYPE_PHPNAME,
-     *                                        TableMap::TYPE_CAMELNAME, TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME,
-     *                                        TableMap::TYPE_NUM. Defaults to TableMap::TYPE_PHPNAME.
-     * @param boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
+     * @param string  $keyType                (optional) One of the class type constants EntityMap::TYPE_PHPNAME,
+     *                                        EntityMap::TYPE_CAMELNAME, EntityMap::TYPE_COLNAME, EntityMap::TYPE_FIELDNAME,
+     *                                        EntityMap::TYPE_NUM. Defaults to EntityMap::TYPE_PHPNAME.
+     * @param boolean $includeLazyLoadFields (optional) Whether to include lazy loaded fields. Defaults to TRUE.
      * @param array   $alreadyDumpedObjects   List of objects to skip to avoid recursion
      *
      * <code>
@@ -141,16 +141,16 @@ class ObjectCollection extends Collection
      *
      * @return array
      */
-    public function toArray($keyColumn = null, $usePrefix = false, $keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array())
+    public function toArray($keyField = null, $usePrefix = false, $keyType = EntityMap::TYPE_PHPNAME, $includeLazyLoadFields = true, $alreadyDumpedObjects = array())
     {
         $ret = array();
-        $keyGetterMethod = 'get' . $keyColumn;
+        $keyGetterMethod = 'get' . $keyField;
 
         /** @var $obj ActiveRecordInterface */
         foreach ($this->data as $key => $obj) {
-            $key = null === $keyColumn ? $key : $obj->$keyGetterMethod();
+            $key = null === $keyField ? $key : $obj->$keyGetterMethod();
             $key = $usePrefix ? ($this->getModel() . '_' . $key) : $key;
-            $ret[$key] = $obj->toArray($keyType, $includeLazyLoadColumns, $alreadyDumpedObjects, true);
+            $ret[$key] = $obj->toArray($keyType, $includeLazyLoadFields, $alreadyDumpedObjects, true);
         }
 
         return $ret;
@@ -159,8 +159,8 @@ class ObjectCollection extends Collection
     /**
      * Get an array representation of the collection
      *
-     * @param string  $keyColumn If null, the returned array uses an incremental index.
-     *                           Otherwise, the array is indexed using the specified column
+     * @param string  $keyField If null, the returned array uses an incremental index.
+     *                           Otherwise, the array is indexed using the specified field
      * @param boolean $usePrefix If true, the returned array prefixes keys
      *                           with the model class name ('Article_0', 'Article_1', etc).
      *
@@ -184,15 +184,15 @@ class ObjectCollection extends Collection
      *
      * @return array
      */
-    public function getArrayCopy($keyColumn = null, $usePrefix = false)
+    public function getArrayCopy($keyField = null, $usePrefix = false)
     {
-        if (null === $keyColumn && false === $usePrefix) {
+        if (null === $keyField && false === $usePrefix) {
             return parent::getArrayCopy();
         }
         $ret = array();
-        $keyGetterMethod = 'get' . $keyColumn;
+        $keyGetterMethod = 'get' . $keyField;
         foreach ($this as $key => $obj) {
-            $key = null === $keyColumn ? $key : $obj->$keyGetterMethod();
+            $key = null === $keyField ? $key : $obj->$keyGetterMethod();
             $key = $usePrefix ? ($this->getModel() . '_' . $key) : $key;
             $ret[$key] = $obj;
         }
@@ -202,23 +202,23 @@ class ObjectCollection extends Collection
 
     /**
      * Get an associative array representation of the collection
-     * The first parameter specifies the column to be used for the key,
+     * The first parameter specifies the field to be used for the key,
      * And the second for the value.
      *
      * <code>
      *   $res = $coll->toKeyValue('Id', 'Name');
      * </code>
      *
-     * @param string $keyColumn
-     * @param string $valueColumn
+     * @param string $keyField
+     * @param string $valueField
      *
      * @return array
      */
-    public function toKeyValue($keyColumn = 'PrimaryKey', $valueColumn = null)
+    public function toKeyValue($keyField = 'PrimaryKey', $valueField = null)
     {
         $ret = array();
-        $keyGetterMethod = 'get' . $keyColumn;
-        $valueGetterMethod = (null === $valueColumn) ? '__toString' : ('get' . $valueColumn);
+        $keyGetterMethod = 'get' . $keyField;
+        $valueGetterMethod = (null === $valueField) ? '__toString' : ('get' . $valueField);
         foreach ($this as $obj) {
             $ret[$obj->$keyGetterMethod()] = $obj->$valueGetterMethod();
         }
@@ -228,7 +228,7 @@ class ObjectCollection extends Collection
 
     /**
      * Get an associative array representation of the collection.
-     * The first parameter specifies the column to be used for the key.
+     * The first parameter specifies the field to be used for the key.
      *
      * <code>
      *   $res = $userCollection->toKeyIndex('Name');
@@ -240,14 +240,14 @@ class ObjectCollection extends Collection
      *   )
      * </code>
      *
-     * @param string $keyColumn
+     * @param string $keyField
      *
      * @return array
      */
-    public function toKeyIndex($keyColumn = 'PrimaryKey')
+    public function toKeyIndex($keyField = 'PrimaryKey')
     {
         $ret = array();
-        $keyGetterMethod = 'get' . ucfirst($keyColumn);
+        $keyGetterMethod = 'get' . ucfirst($keyField);
         foreach ($this as $obj) {
             $ret[$obj->$keyGetterMethod()] = $obj;
         }
@@ -270,17 +270,17 @@ class ObjectCollection extends Collection
         if (!Propel::isInstancePoolingEnabled()) {
             throw new RuntimeException(__METHOD__ .' needs instance pooling to be enabled prior to populating the collection');
         }
-        $relationMap = $this->getFormatter()->getTableMap()->getRelation($relation);
+        $relationMap = $this->getFormatter()->getEntityMap()->getRelation($relation);
         if ($this->isEmpty()) {
             // save a useless query and return an empty collection
             $coll = new ObjectCollection();
-            $coll->setModel($relationMap->getRightTable()->getClassName());
+            $coll->setModel($relationMap->getRightEntity()->getClassName());
 
             return $coll;
         }
         $symRelationMap = $relationMap->getSymmetricalRelation();
 
-        $query = PropelQuery::from($relationMap->getRightTable()->getClassName());
+        $query = PropelQuery::from($relationMap->getRightEntity()->getClassName());
         if (null !== $criteria) {
             $query->mergeWith($criteria);
         }
@@ -319,18 +319,26 @@ class ObjectCollection extends Collection
      */
     public function search($element)
     {
-        if ($element instanceof ActiveRecordInterface) {
-            $hashCode = $element->hashCode();
-            foreach ($this as $pos => $obj) {
-                if ($hashCode === $obj->hashCode()) {
-                    return $pos;
-                }
+        $hashCode = $this->getHashCode($element);
+        foreach ($this as $pos => $obj) {
+            if ($hashCode === $this->getHashCode($obj)) {
+                return $pos;
             }
-
-            return false;
-        } else {
-            return parent::search($element);
         }
+
+        return false;
+    }
+
+    /**
+     * @param $instance
+     * @return mixed
+     */
+    protected function getHashCode($instance)
+    {
+        $class = get_class($instance);
+        $entityMapClass = constant($class.'::TABLE_MAP');
+
+        return $entityMapClass ? $entityMapClass::getHashCode($instance) : spl_object_hash($instance);
     }
 
     /**

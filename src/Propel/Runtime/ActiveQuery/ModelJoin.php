@@ -11,7 +11,7 @@
 namespace Propel\Runtime\ActiveQuery;
 
 use Propel\Runtime\Map\RelationMap;
-use Propel\Runtime\Map\TableMap;
+use Propel\Runtime\Map\EntityMap;
 
 /**
  * A ModelJoin is a Join object tied to a RelationMap object
@@ -23,19 +23,19 @@ class ModelJoin extends Join
     /** @var RelationMap */
     protected $relationMap;
 
-    protected $tableMap;
+    protected $entityMap;
 
     protected $previousJoin;
 
-    public function setRelationMap(RelationMap $relationMap, $leftTableAlias = null, $relationAlias = null)
+    public function setRelationMap(RelationMap $relationMap, $leftEntityAlias = null, $relationAlias = null)
     {
-        $leftCols = $relationMap->getLeftColumns();
-        $rightCols = $relationMap->getRightColumns();
-        $nbColumns = $relationMap->countColumnMappings();
-        for ($i=0; $i < $nbColumns; $i++) {
+        $leftCols = $relationMap->getLeftFields();
+        $rightCols = $relationMap->getRightFields();
+        $nbFields = $relationMap->countFieldMappings();
+        for ($i=0; $i < $nbFields; $i++) {
             $this->addExplicitCondition(
-                $leftCols[$i]->getTableName(), $leftCols[$i]->getName(), $leftTableAlias,
-                $rightCols[$i]->getTableName(), $rightCols[$i]->getName(), $relationAlias,
+                $leftCols[$i]->getEntityName(), $leftCols[$i]->getName(), $leftEntityAlias,
+                $rightCols[$i]->getEntityName(), $rightCols[$i]->getName(), $relationAlias,
                 Criteria::EQUAL);
         }
         $this->relationMap = $relationMap;
@@ -52,31 +52,31 @@ class ModelJoin extends Join
     }
 
     /**
-     * Sets the right tableMap for this join
+     * Sets the right entityMap for this join
      *
-     * @param TableMap $tableMap The table map to use
+     * @param EntityMap $entityMap The entity map to use
      *
      * @return $this|ModelJoin The current join object, for fluid interface
      */
-    public function setTableMap(TableMap $tableMap)
+    public function setEntityMap(EntityMap $entityMap)
     {
-        $this->tableMap = $tableMap;
+        $this->entityMap = $entityMap;
 
         return $this;
     }
 
     /**
-     * Gets the right tableMap for this join
+     * Gets the right entityMap for this join
      *
-     * @return TableMap The table map
+     * @return EntityMap The entity map
      */
-    public function getTableMap()
+    public function getEntityMap()
     {
-        if (null === $this->tableMap && null !== $this->relationMap) {
-            $this->tableMap = $this->relationMap->getRightTable();
+        if (null === $this->entityMap && null !== $this->relationMap) {
+            $this->entityMap = $this->relationMap->getRightEntity();
         }
 
-        return $this->tableMap;
+        return $this->entityMap;
     }
 
     public function setPreviousJoin(ModelJoin $join)
@@ -116,7 +116,7 @@ class ModelJoin extends Join
 
     public function isIdentifierQuotingEnabled()
     {
-        return $this->getTableMap()->isIdentifierQuotingEnabled();
+        return $this->getEntityMap()->isIdentifierQuotingEnabled();
     }
 
     /**
@@ -143,6 +143,48 @@ class ModelJoin extends Join
         return $previousObject->$method();
     }
 
+//    public function getClause(&$params)
+//    {
+//        if (null === $this->joinCondition) {
+//            $conditions = array();
+//            for ($i = 0; $i < $this->count; $i++) {
+//                $conditions [] = $this->getLeftField($i) . $this->getOperator($i) . $this->getRightField($i);
+//            }
+//            $joinCondition = sprintf('(%s)', implode($conditions, ' AND '));
+//        } else {
+//            $joinCondition = '';
+//            $this->joinCondition->appendPsTo($joinCondition, $params);
+//        }
+//
+//        $rightEntityName = $this->getRightTableName();
+//
+//        if ($this->hasRightEntityAlias()) {
+//            $rightEntityName .= ' ' . $this->getRightEntityAlias();
+//        }
+////        $rightEntityName = $this->getRightEntityWithAlias();
+//
+//        if ($this->isIdentifierQuotingEnabled()) {
+//            $rightEntityName = $this->getAdapter()->quoteIdentifierEntity($rightEntityName);
+//        }
+//
+//        return sprintf(
+//            '%s %s ON %s',
+//            $this->getJoinType(),
+//            $rightEntityName,
+//            $joinCondition
+//        );
+//    }
+
+    /**
+     * Overwrite so it returns the real table name.
+     *
+     * @return string
+     */
+    public function getRightTableName()
+    {
+        return $this->getEntityMap()->getTableName();
+    }
+
     public function equals($join)
     {
         /** @var ModelJoin $join */
@@ -157,7 +199,7 @@ class ModelJoin extends Join
     public function __toString()
     {
         return parent::toString()
-            . ' tableMap: ' . ($this->tableMap ? get_class($this->tableMap) : 'null')
+            . ' entityMap: ' . ($this->entityMap ? get_class($this->entityMap) : 'null')
             . ' relationMap: ' . $this->relationMap->getName()
             . ' previousJoin: ' . ($this->previousJoin ? '(' . $this->previousJoin . ')' : 'null')
             . ' relationAlias: ' . $this->rightTableAlias;

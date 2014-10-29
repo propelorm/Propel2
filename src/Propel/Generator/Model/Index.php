@@ -25,9 +25,9 @@ class Index extends MappingModel
     protected $name;
 
     /**
-     * The Table instance.
+     * The Entity instance.
      *
-     * @var Table
+     * @var Entity
      */
     protected $table;
 
@@ -37,7 +37,7 @@ class Index extends MappingModel
     protected $columns;
 
     /**
-     * @var Column[]
+     * @var Field[]
      */
     protected $columnObjects = [];
 
@@ -99,7 +99,7 @@ class Index extends MappingModel
         $this->doNaming();
 
         if ($this->table && $database = $this->table->getDatabase()) {
-            return substr($this->name, 0, $database->getMaxColumnNameLength());
+            return substr($this->name, 0, $database->getMaxFieldNameLength());
         }
 
         return $this->name;
@@ -121,7 +121,7 @@ class Index extends MappingModel
             }
 
             if ($this->table) {
-                $newName = $this->table->getCommonName() . '_' . $newName;
+                $newName = $this->table->getTableName() . '_' . $newName;
             }
 
             $this->name = $newName;
@@ -131,7 +131,7 @@ class Index extends MappingModel
 
     public function getFQName()
     {
-        $table = $this->getTable();
+        $table = $this->getEntity();
         if ($table->getDatabase()
             && ($table->getSchema() || $table->getDatabase()->getSchema())
             && $table->getDatabase()->getPlatform()
@@ -144,11 +144,11 @@ class Index extends MappingModel
     }
 
     /**
-     * Sets the index parent Table.
+     * Sets the index parent Entity.
      *
-     * @param Table $table
+     * @param Entity $table
      */
-    public function setTable(Table $table)
+    public function setEntity(Entity $table)
     {
         $this->table = $table;
     }
@@ -156,9 +156,9 @@ class Index extends MappingModel
     /**
      * Returns the index parent table.
      *
-     * @return Table
+     * @return Entity
      */
-    public function getTable()
+    public function getEntity()
     {
         return $this->table;
     }
@@ -168,7 +168,7 @@ class Index extends MappingModel
      *
      * @return string
      */
-    public function getTableName()
+    public function getEntityName()
     {
         return $this->table->getName();
     }
@@ -176,11 +176,11 @@ class Index extends MappingModel
     /**
      * Adds a new column to the index.
      *
-     * @param Column|array $data Column or attributes from XML.
+     * @param Field|array $data Field or attributes from XML.
      */
-    public function addColumn($data)
+    public function addField($data)
     {
-        if ($data instanceof Column) {
+        if ($data instanceof Field) {
             $column = $data;
             $this->columns[] = $column->getName();
             if ($column->getSize()) {
@@ -192,8 +192,8 @@ class Index extends MappingModel
             if (isset($data['size']) && $data['size'] > 0) {
                 $this->columnsSize[$name] = $data['size'];
             }
-            if ($this->getTable()) {
-                $this->columnObjects[] = $this->getTable()->getColumn($name);
+            if ($this->getEntity()) {
+                $this->columnObjects[] = $this->getEntity()->getField($name);
             }
         }
     }
@@ -202,7 +202,7 @@ class Index extends MappingModel
      * @param  string $name
      * @return bool
      */
-    public function hasColumn($name)
+    public function hasField($name)
     {
         return in_array($name, $this->columns);
     }
@@ -212,12 +212,12 @@ class Index extends MappingModel
      *
      * @param array $columns array of array definitions $columns[]['name'] = 'columnName'
      */
-    public function setColumns(array $columns)
+    public function setFields(array $columns)
     {
         $this->columns     = [];
         $this->columnsSize = [];
         foreach ($columns as $column) {
-            $this->addColumn($column);
+            $this->addField($column);
         }
     }
 
@@ -227,7 +227,7 @@ class Index extends MappingModel
      * @param  string  $name
      * @return boolean
      */
-    public function hasColumnSize($name)
+    public function hasFieldSize($name)
     {
         return isset($this->columnsSize[$name]);
     }
@@ -239,7 +239,7 @@ class Index extends MappingModel
      * @param  boolean $caseInsensitive
      * @return integer
      */
-    public function getColumnSize($name, $caseInsensitive = false)
+    public function getFieldSize($name, $caseInsensitive = false)
     {
         if ($caseInsensitive) {
             foreach ($this->columnsSize as $forName => $size) {
@@ -257,7 +257,7 @@ class Index extends MappingModel
      *
      * This method is useful for generated indices for FKs.
      */
-    public function resetColumnsSize()
+    public function resetFieldsSize()
     {
         $this->columnsSize = [];
     }
@@ -266,12 +266,12 @@ class Index extends MappingModel
      * Returns whether or not this index has a given column at a given position.
      *
      * @param  integer $pos             Position in the column list
-     * @param  string  $name            Column name
+     * @param  string  $name            Field name
      * @param  integer $size            Optional size check
      * @param  boolean $caseInsensitive Whether or not the comparison is case insensitive (false by default)
      * @return boolean
      */
-    public function hasColumnAtPosition($pos, $name, $size = null, $caseInsensitive = false)
+    public function hasFieldAtPosition($pos, $name, $size = null, $caseInsensitive = false)
     {
         if (!isset($this->columns[$pos])) {
             return false;
@@ -287,7 +287,7 @@ class Index extends MappingModel
             return false;
         }
 
-        if ($this->getColumnSize($name, $caseInsensitive) != $size) {
+        if ($this->getFieldSize($name, $caseInsensitive) != $size) {
             return false;
         }
 
@@ -299,7 +299,7 @@ class Index extends MappingModel
      *
      * @return boolean
      */
-    public function hasColumns()
+    public function hasFields()
     {
         return count($this->columns) > 0;
     }
@@ -311,7 +311,7 @@ class Index extends MappingModel
      *
      * @return array
      */
-    public function getColumns()
+    public function getFields()
     {
         return $this->columns;
     }
@@ -322,17 +322,17 @@ class Index extends MappingModel
     }
 
     /**
-     * @return Column[]
+     * @return Field[]
      */
-    public function getColumnObjects()
+    public function getFieldObjects()
     {
         return $this->columnObjects;
     }
 
     /**
-     * @param Column[] $columnObjects
+     * @param Field[] $columnObjects
      */
-    public function setColumnObjects($columnObjects)
+    public function setFieldObjects($columnObjects)
     {
         $this->columnObjects = $columnObjects;
     }

@@ -78,7 +78,7 @@ class SortableBehaviorObjectBuilderModifier
 
     protected function getColumnPhpName($name)
     {
-        return $this->behavior->getColumnForParameter($name)->getPhpName();
+        return $this->behavior->getColumnForParameter($name)->getName();
     }
 
     protected function setBuilder(AbstractOMBuilder $builder)
@@ -99,7 +99,7 @@ class SortableBehaviorObjectBuilderModifier
      */
     protected function getColumnGetter($columnName = 'rank_column')
     {
-        return 'get' . $this->behavior->getColumnForParameter($columnName)->getPhpName();
+        return 'get' . $this->behavior->getColumnForParameter($columnName)->getName();
     }
 
     /**
@@ -111,7 +111,7 @@ class SortableBehaviorObjectBuilderModifier
      */
     protected function getColumnSetter($columnName = 'rank_column')
     {
-        return 'set' . $this->behavior->getColumnForParameter($columnName)->getPhpName();
+        return 'set' . $this->behavior->getColumnForParameter($columnName)->getName();
     }
 
     public function preSave($builder)

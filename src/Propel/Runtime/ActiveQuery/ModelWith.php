@@ -10,6 +10,7 @@
 
 namespace Propel\Runtime\ActiveQuery;
 
+use Propel\Runtime\Map\EntityMap;
 use Propel\Runtime\Map\RelationMap;
 
 /**
@@ -22,9 +23,9 @@ class ModelWith
 {
     protected $modelName;
 
-    protected $getTableMap;
+    protected $getEntityMap;
 
-    protected $isSingleTableInheritance = false;
+    protected $isSingleEntityInheritance = false;
 
     protected $isAdd = false;
 
@@ -38,9 +39,9 @@ class ModelWith
 
     protected $resetPartialMethod = '';
 
-    protected $leftPhpName;
+    protected $leftName;
 
-    protected $rightPhpName;
+    protected $rightName;
 
     public function __construct(ModelJoin $join = null)
     {
@@ -57,10 +58,10 @@ class ModelWith
      */
     public function init(ModelJoin $join)
     {
-        $tableMap = $join->getTableMap();
-        $this->setModelName($tableMap->getClassName());
-        $this->getTableMap = $tableMap;
-        $this->isSingleTableInheritance = $tableMap->isSingleTableInheritance();
+        $entityMap = $join->getEntityMap();
+        $this->setModelName($entityMap->getFullClassName());
+        $this->getEntityMap = $entityMap;
+        $this->isSingleEntityInheritance = $entityMap->isSingleEntityInheritance();
         $relation = $join->getRelationMap();
         $relationName = $relation->getName();
         if ($relation->getType() == RelationMap::ONE_TO_MANY) {
@@ -73,9 +74,9 @@ class ModelWith
             $this->relationName = $relationName;
             $this->relationMethod = 'set' . $relationName;
         }
-        $this->rightPhpName = $join->hasRelationAlias() ? $join->getRelationAlias() : $relationName;
+        $this->rightName = $join->hasRelationAlias() ? $join->getRelationAlias() : $relationName;
         if (!$join->isPrimary()) {
-            $this->leftPhpName = $join->hasLeftTableAlias() ? $join->getLeftTableAlias() : $join->getPreviousJoin()->getRelationMap()->getName();
+            $this->leftName = $join->hasLeftEntityAlias() ? $join->getLeftEntityAlias() : $join->getPreviousJoin()->getRelationMap()->getName();
         }
     }
 
@@ -90,9 +91,12 @@ class ModelWith
         }
     }
 
-    public function getTableMap()
+    /**
+     * @return EntityMap
+     */
+    public function getEntityMap()
     {
-        return $this->getTableMap;
+        return $this->getEntityMap;
     }
 
     public function getModelName()
@@ -100,14 +104,14 @@ class ModelWith
         return $this->modelName;
     }
 
-    public function setIsSingleTableInheritance($isSingleTableInheritance)
+    public function setIsSingleEntityInheritance($isSingleEntityInheritance)
     {
-        $this->isSingleTableInheritance = $isSingleTableInheritance;
+        $this->isSingleEntityInheritance = $isSingleEntityInheritance;
     }
 
-    public function isSingleTableInheritance()
+    public function isSingleEntityInheritance()
     {
-        return $this->isSingleTableInheritance;
+        return $this->isSingleEntityInheritance;
     }
 
     public function setIsAdd($isAdd)
@@ -140,15 +144,15 @@ class ModelWith
         return $this->relationName;
     }
 
-    public function setRelationMethod($relationMethod)
-    {
-        $this->relationMethod = $relationMethod;
-    }
-
-    public function getRelationMethod()
-    {
-        return $this->relationMethod;
-    }
+//    public function setRelationMethod($relationMethod)
+//    {
+//        $this->relationMethod = $relationMethod;
+//    }
+//
+//    public function getRelationMethod()
+//    {
+//        return $this->relationMethod;
+//    }
 
     public function setInitMethod($initMethod)
     {
@@ -170,35 +174,35 @@ class ModelWith
         return $this->resetPartialMethod;
     }
 
-    public function setLeftPhpName($leftPhpName)
+    public function setLeftName($leftPhpName)
     {
-        $this->leftPhpName = $leftPhpName;
+        $this->leftName = $leftPhpName;
     }
 
-    public function getLeftPhpName()
+    public function getLeftName()
     {
-        return $this->leftPhpName;
+        return $this->leftName;
     }
 
-    public function setRightPhpName($rightPhpName)
+    public function setRightName($rightPhpName)
     {
-        $this->rightPhpName = $rightPhpName;
+        $this->rightName = $rightPhpName;
     }
 
-    public function getRightPhpName()
+    public function getRightName()
     {
-        return $this->rightPhpName;
+        return $this->rightName;
     }
 
     // Utility methods
 
     public function isPrimary()
     {
-        return null === $this->leftPhpName;
+        return null === $this->leftName;
     }
 
     public function __toString()
     {
-        return sprintf('modelName: %s, relationName: %s, relationMethod: %s, leftPhpName: %s, rightPhpName: %s', $this->modelName, $this->relationName, $this->relationMethod, $this->leftPhpName, $this->rightPhpName);
+        return sprintf('entityName: %s, relationName: %s, relationMethod: %s, leftName: %s, rightName: %s', $this->modelName, $this->relationName, $this->relationMethod, $this->leftName, $this->rightName);
     }
 }

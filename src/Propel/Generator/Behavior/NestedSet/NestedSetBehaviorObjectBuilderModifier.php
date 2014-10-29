@@ -44,7 +44,7 @@ class NestedSetBehaviorObjectBuilderModifier
 
     protected function getColumnPhpName($name)
     {
-        return $this->behavior->getColumnForParameter($name)->getPhpName();
+        return $this->behavior->getColumnForParameter($name)->getName();
     }
 
     protected function setBuilder($builder)

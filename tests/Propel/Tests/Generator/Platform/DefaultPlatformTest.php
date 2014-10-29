@@ -8,9 +8,9 @@
  * @license MIT License
  */
 
-use Propel\Generator\Model\Column;
+use Propel\Generator\Model\Field;
 use Propel\Generator\Model\PropelTypes;
-use Propel\Generator\Platform\DefaultPlatform;
+use Propel\Generator\Platform\SqlDefaultPlatform;
 use Propel\Runtime\Propel;
 use \Propel\Tests\TestCase;
 
@@ -21,12 +21,12 @@ class DefaultPlatformTest extends TestCase
     /**
      * Get the Platform object for this class
      *
-     * @return Platform
+     * @return \Propel\Generator\Platform\PlatformInterface
      */
     protected function getPlatform()
     {
         if (null === $this->platform) {
-            $this->platform = new DefaultPlatform();
+            $this->platform = new SqlDefaultPlatform();
         }
 
         return $this->platform;
@@ -105,18 +105,18 @@ class DefaultPlatformTest extends TestCase
         $this->assertEquals($expected, $quoted);
     }
 
-    protected function createColumn($type, $defaultValue)
+    protected function createField($type, $defaultValue)
     {
-        $column = new Column();
+        $column = new Field();
         $column->setType($type);
         $column->setDefaultValue($defaultValue);
 
         return $column;
     }
 
-    public function createEnumColumn($defaultValues, $defaultValue)
+    public function createEnumField($defaultValues, $defaultValue)
     {
-        $column = new Column();
+        $column = new Field();
         $column->setType(PropelTypes::ENUM);
         $column->setValueSet($defaultValues);
         $column->setDefaultValue($defaultValue);
@@ -124,31 +124,31 @@ class DefaultPlatformTest extends TestCase
         return $column;
     }
 
-    public function getColumnDefaultValueDDLDataProvider()
+    public function getFieldDefaultValueDDLDataProvider()
     {
         return array(
-            array($this->createColumn(PropelTypes::INTEGER, 0), "DEFAULT 0"),
-            array($this->createColumn(PropelTypes::INTEGER, '0'), "DEFAULT 0"),
-            array($this->createColumn(PropelTypes::VARCHAR, 'foo'), "DEFAULT 'foo'"),
-            array($this->createColumn(PropelTypes::VARCHAR, 0), "DEFAULT '0'"),
-            array($this->createColumn(PropelTypes::BOOLEAN, true), "DEFAULT 1"),
-            array($this->createColumn(PropelTypes::BOOLEAN, false), "DEFAULT 0"),
-            array($this->createColumn(PropelTypes::BOOLEAN, 'true'), "DEFAULT 1"),
-            array($this->createColumn(PropelTypes::BOOLEAN, 'false'), "DEFAULT 0"),
-            array($this->createColumn(PropelTypes::BOOLEAN, 'TRUE'), "DEFAULT 1"),
-            array($this->createColumn(PropelTypes::BOOLEAN, 'FALSE'), "DEFAULT 0"),
-            array($this->createEnumColumn(array('foo', 'bar', 'baz'), 'foo'), "DEFAULT 0"),
-            array($this->createEnumColumn(array('foo', 'bar', 'baz'), 'bar'), "DEFAULT 1"),
-            array($this->createEnumColumn(array('foo', 'bar', 'baz'), 'baz'), "DEFAULT 2"),
+            array($this->createField(PropelTypes::INTEGER, 0), "DEFAULT 0"),
+            array($this->createField(PropelTypes::INTEGER, '0'), "DEFAULT 0"),
+            array($this->createField(PropelTypes::VARCHAR, 'foo'), "DEFAULT 'foo'"),
+            array($this->createField(PropelTypes::VARCHAR, 0), "DEFAULT '0'"),
+            array($this->createField(PropelTypes::BOOLEAN, true), "DEFAULT 1"),
+            array($this->createField(PropelTypes::BOOLEAN, false), "DEFAULT 0"),
+            array($this->createField(PropelTypes::BOOLEAN, 'true'), "DEFAULT 1"),
+            array($this->createField(PropelTypes::BOOLEAN, 'false'), "DEFAULT 0"),
+            array($this->createField(PropelTypes::BOOLEAN, 'TRUE'), "DEFAULT 1"),
+            array($this->createField(PropelTypes::BOOLEAN, 'FALSE'), "DEFAULT 0"),
+            array($this->createEnumField(array('foo', 'bar', 'baz'), 'foo'), "DEFAULT 0"),
+            array($this->createEnumField(array('foo', 'bar', 'baz'), 'bar'), "DEFAULT 1"),
+            array($this->createEnumField(array('foo', 'bar', 'baz'), 'baz'), "DEFAULT 2"),
         );
     }
 
     /**
-     * @dataProvider getColumnDefaultValueDDLDataProvider
+     * @dataProvider getFieldDefaultValueDDLDataProvider
      */
-    public function testGetColumnDefaultValueDDL($column, $default)
+    public function testGetFieldDefaultValueDDL($column, $default)
     {
-        $this->assertEquals($default, $this->getPlatform()->getColumnDefaultValueDDL($column));
+        $this->assertEquals($default, $this->getPlatform()->getFieldDefaultValueDDL($column));
     }
 
 }

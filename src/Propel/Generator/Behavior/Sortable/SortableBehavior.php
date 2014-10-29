@@ -119,11 +119,11 @@ class SortableBehavior extends Behavior
             foreach ($this->getScopes() as $idx => $scope) {
 
                 $column = $this->table->getColumn($scope);
-                $param  = '$scope'.$column->getPhpName();
+                $param  = '$scope'.$column->getName();
 
                 $buildScope[]     = "    \$scope[] = $param;\n";
                 $buildScopeVars[] = "    $param = \$scope[$idx];\n";
-                $paramsDoc[]      = " * @param     ".$column->getPhpType()." $param Scope value for column `".$column->getPhpName()."`";
+                $paramsDoc[]      = " * @param     ".$column->getPhpType()." $param Scope value for column `".$column->getName()."`";
 
                 if (!$column->isNotNull()) {
                     $param .= ' = null';
@@ -157,7 +157,7 @@ class SortableBehavior extends Behavior
      */
     public function getColumnGetter($name)
     {
-        return 'get' . $this->getTable()->getColumn($name)->getPhpName();
+        return 'get' . $this->getTable()->getColumn($name)->getName();
     }
 
     /**
@@ -168,7 +168,7 @@ class SortableBehavior extends Behavior
      */
     public function getColumnSetter($name)
     {
-        return 'set' . $this->getTable()->getColumn($name)->getPhpName();
+        return 'set' . $this->getTable()->getColumn($name)->getName();
     }
 
     /**

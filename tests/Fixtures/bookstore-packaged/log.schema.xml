@@ -3,29 +3,12 @@
 
 <database package="util.log" name="bookstore-log" defaultIdMethod="native" namespace="Propel\Tests\BookstorePackaged">
 
-  <table name="log" phpName="BookstoreLog" description="Used to test multiple databases support">
+  <entity name="BookstoreLog" description="Used to test multiple databases support">
     <behavior name="auto_add_pk" />
-    <column
-      name="time"
-      required="true"
-      type="TIMESTAMP"
-      description="Log time"/>
-    <column
-      name="ident"
-      required="true"
-      type="CHAR"
-      size="24"
-      description="Log priority"/>
-    <column
-      name="priority"
-      required="true"
-      type="INTEGER"
-      description="Log priority"/>
-    <column
-      name="message"
-      required="true"
-      type="LONGVARCHAR"
-      description="Log message"/>
-  </table>
+    <field name="time" required="true" type="TIMESTAMP" description="Log time"/>
+    <field name="ident" required="true" type="CHAR" size="24" description="Log priority"/>
+    <field name="priority" required="true" type="INTEGER" description="Log priority"/>
+    <field name="message" required="true" type="LONGVARCHAR" description="Log message"/>
+  </entity>
 
 </database>

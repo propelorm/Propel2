@@ -44,19 +44,19 @@ class RelationMap
 
     protected $type;
 
-    protected $localTable;
+    protected $localEntity;
 
-    protected $foreignTable;
-
-    /**
-     * @var ColumnMap[]
-     */
-    protected $localColumns = array();
+    protected $foreignEntity;
 
     /**
-     * @var ColumnMap[]
+     * @var FieldMap[]
      */
-    protected $foreignColumns = array();
+    protected $localFields = array();
+
+    /**
+     * @var FieldMap[]
+     */
+    protected $foreignFields = array();
 
     protected $onUpdate;
 
@@ -118,87 +118,87 @@ class RelationMap
     }
 
     /**
-     * Set the local table
+     * Set the local entity
      *
-     * @param \Propel\Runtime\Map\TableMap $table The local table for this relationship
+     * @param \Propel\Runtime\Map\EntityMap $entity The local entity for this relationship
      */
-    public function setLocalTable(TableMap $table)
+    public function setLocalEntity(EntityMap $entity)
     {
-        $this->localTable = $table;
+        $this->localEntity = $entity;
     }
 
     /**
-     * Get the local table
+     * Get the local entity
      *
-     * @return \Propel\Runtime\Map\TableMap The local table for this relationship
+     * @return \Propel\Runtime\Map\EntityMap The local entity for this relationship
      */
-    public function getLocalTable()
+    public function getLocalEntity()
     {
-        return $this->localTable;
+        return $this->localEntity;
     }
 
     /**
-     * Set the foreign table
+     * Set the foreign entity
      *
-     * @param \Propel\Runtime\Map\TableMap $table The foreign table for this relationship
+     * @param \Propel\Runtime\Map\EntityMap $entity The foreign entity for this relationship
      */
-    public function setForeignTable($table)
+    public function setForeignEntity($entity)
     {
-        $this->foreignTable = $table;
+        $this->foreignEntity = $entity;
     }
 
     /**
-     * Get the foreign table
+     * Get the foreign entity
      *
-     * @return \Propel\Runtime\Map\TableMap The foreign table for this relationship
+     * @return \Propel\Runtime\Map\EntityMap The foreign entity for this relationship
      */
-    public function getForeignTable()
+    public function getForeignEntity()
     {
-        return $this->foreignTable;
+        return $this->foreignEntity;
     }
 
     /**
-     * Get the left table of the relation
+     * Get the left entity of the relation
      *
-     * @return \Propel\Runtime\Map\TableMap The left table for this relationship
+     * @return \Propel\Runtime\Map\EntityMap The left entity for this relationship
      */
-    public function getLeftTable()
+    public function getLeftEntity()
     {
-        return RelationMap::MANY_TO_ONE === $this->getType() ? $this->getLocalTable() : $this->getForeignTable();
+        return RelationMap::MANY_TO_ONE === $this->getType() ? $this->getLocalEntity() : $this->getForeignEntity();
     }
 
     /**
-     * Get the right table of the relation
+     * Get the right entity of the relation
      *
-     * @return \Propel\Runtime\Map\TableMap The right table for this relationship
+     * @return \Propel\Runtime\Map\EntityMap The right entity for this relationship
      */
-    public function getRightTable()
+    public function getRightEntity()
     {
-        return RelationMap::MANY_TO_ONE === $this->getType() ? $this->getForeignTable() : $this->getLocalTable();
+        return RelationMap::MANY_TO_ONE === $this->getType() ? $this->getForeignEntity() : $this->getLocalEntity();
     }
 
     /**
-     * Add a column mapping
+     * Add a field mapping
      *
-     * @param \Propel\Runtime\Map\ColumnMap $local   The local column
-     * @param \Propel\Runtime\Map\ColumnMap $foreign The foreign column
+     * @param \Propel\Runtime\Map\FieldMap $local   The local field
+     * @param \Propel\Runtime\Map\FieldMap $foreign The foreign field
      */
-    public function addColumnMapping(ColumnMap $local, ColumnMap $foreign)
+    public function addFieldMapping(FieldMap $local, FieldMap $foreign)
     {
-        $this->localColumns[] = $local;
-        $this->foreignColumns[] = $foreign;
+        $this->localFields[] = $local;
+        $this->foreignFields[] = $foreign;
     }
 
     /**
-     * Get an associative array mapping local column names to foreign column names
+     * Get an associative array mapping local field names to foreign field names
      * The arrangement of the returned array depends on the $direction parameter:
      *  - If the value is RelationMap::LOCAL_TO_FOREIGN, then the returned array is local => foreign
      *  - If the value is RelationMap::LEFT_TO_RIGHT, then the returned array is left => right
      *
-     * @param  int   $direction How the associative array must return columns
-     * @return array Associative array (local => foreign) of fully qualified column names
+     * @param  int   $direction How the associative array must return fields
+     * @return array Associative array (local => foreign) of fully qualified field names
      */
-    public function getColumnMappings($direction = RelationMap::LOCAL_TO_FOREIGN)
+    public function getFieldMappings($direction = RelationMap::LOCAL_TO_FOREIGN)
     {
         $h = array();
         if (RelationMap::LEFT_TO_RIGHT === $direction
@@ -206,11 +206,11 @@ class RelationMap
             $direction = RelationMap::LOCAL_TO_FOREIGN;
         }
 
-        for ($i = 0, $size = count($this->localColumns); $i < $size; $i++) {
+        for ($i = 0, $size = count($this->localFields); $i < $size; $i++) {
             if (RelationMap::LOCAL_TO_FOREIGN === $direction) {
-                $h[$this->localColumns[$i]->getFullyQualifiedName()] = $this->foreignColumns[$i]->getFullyQualifiedName();
+                $h[$this->localFields[$i]->getFullyQualifiedName()] = $this->foreignFields[$i]->getFullyQualifiedName();
             } else {
-                $h[$this->foreignColumns[$i]->getFullyQualifiedName()] = $this->localColumns[$i]->getFullyQualifiedName();
+                $h[$this->foreignFields[$i]->getFullyQualifiedName()] = $this->localFields[$i]->getFullyQualifiedName();
             }
         }
 
@@ -218,63 +218,63 @@ class RelationMap
     }
 
     /**
-     * Returns true if the relation has more than one column mapping
+     * Returns true if the relation has more than one field mapping
      *
      * @return boolean
      */
     public function isComposite()
     {
-        return $this->countColumnMappings() > 1;
+        return $this->countFieldMappings() > 1;
     }
 
     /**
-     * Return the number of column mappings
+     * Return the number of field mappings
      *
      * @return int
      */
-    public function countColumnMappings()
+    public function countFieldMappings()
     {
-        return count($this->localColumns);
+        return count($this->localFields);
     }
 
     /**
-     * Get the local columns
+     * Get the local fields
      *
-     * @return ColumnMap[]
+     * @return FieldMap[]
      */
-    public function getLocalColumns()
+    public function getLocalFields()
     {
-        return $this->localColumns;
+        return $this->localFields;
     }
 
     /**
-     * Get the foreign columns
+     * Get the foreign fields
      *
-     * @return ColumnMap[]
+     * @return FieldMap[]
      */
-    public function getForeignColumns()
+    public function getForeignFields()
     {
-        return $this->foreignColumns;
+        return $this->foreignFields;
     }
 
     /**
-     * Get the left columns of the relation
+     * Get the left fields of the relation
      *
-     * @return ColumnMap[]
+     * @return FieldMap[]
      */
-    public function getLeftColumns()
+    public function getLeftFields()
     {
-        return RelationMap::MANY_TO_ONE === $this->getType() ? $this->getLocalColumns() : $this->getForeignColumns();
+        return RelationMap::MANY_TO_ONE === $this->getType() ? $this->getLocalFields() : $this->getForeignFields();
     }
 
     /**
-     * Get the right columns of the relation
+     * Get the right fields of the relation
      *
-     * @return ColumnMap[]
+     * @return FieldMap[]
      */
-    public function getRightColumns()
+    public function getRightFields()
     {
-        return RelationMap::MANY_TO_ONE === $this->getType() ? $this->getForeignColumns() : $this->getLocalColumns();
+        return RelationMap::MANY_TO_ONE === $this->getType() ? $this->getForeignFields() : $this->getLocalFields();
     }
 
     /**
@@ -324,9 +324,9 @@ class RelationMap
      */
     public function getSymmetricalRelation()
     {
-        $localMapping = array($this->getLeftColumns(), $this->getRightColumns());
-        foreach ($this->getRightTable()->getRelations() as $relation) {
-            if ($localMapping == array($relation->getRightColumns(), $relation->getLeftColumns())) {
+        $localMapping = array($this->getLeftFields(), $this->getRightFields());
+        foreach ($this->getRightEntity()->getRelations() as $relation) {
+            if ($localMapping == array($relation->getRightFields(), $relation->getLeftFields())) {
                 return $relation;
             }
         }

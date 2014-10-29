@@ -14,7 +14,7 @@ use Propel\Runtime\ActiveQuery\Criterion\Exception\InvalidClauseException;
 use Propel\Runtime\ActiveQuery\Criteria;
 
 use \PDO;
-use Propel\Runtime\Map\ColumnMap;
+use Propel\Runtime\Map\FieldMap;
 
 /**
  * Specialized ModelCriterion used for custom expressions with a typed binding,
@@ -33,15 +33,15 @@ class RawModelCriterion extends AbstractModelCriterion
      *
      * @param Criteria  $outer      The outer class (this is an "inner" class).
      * @param string    $clause     A simple pseudo-SQL clause, e.g. 'foo.BAR LIKE ?'
-     * @param ColumnMap $column     A Column object to help escaping the value
+     * @param FieldMap $field     A Field object to help escaping the value
      * @param mixed     $value
-     * @param string    $tableAlias optional table alias
+     * @param string    $entityAlias optional entity alias
      * @param int       $type       A PDO type constant, e.g. PDO::PARAM_STR
      */
-    public function __construct(Criteria $outer, $clause, $column, $value = null, $tableAlias = null, $type = PDO::PARAM_STR)
+    public function __construct(Criteria $outer, $clause, $field, $value = null, $entityAlias = null, $type = PDO::PARAM_STR)
     {
         $this->type = $type;
-        parent::__construct($outer, $clause, $column, $value, $tableAlias);
+        parent::__construct($outer, $clause, $field, $value, $entityAlias);
     }
 
     /**
@@ -53,10 +53,10 @@ class RawModelCriterion extends AbstractModelCriterion
     protected function appendPsForUniqueClauseTo(&$sb, array &$params)
     {
         if (1 !== substr_count($this->clause, '?')) {
-            throw new InvalidClauseException(sprintf('Could not build SQL for expression "%s" because Criteria::MODEL_CLAUSE_RAW works only with a clause containing a single question mark placeholder', $this->column));
+            throw new InvalidClauseException(sprintf('Could not build SQL for expression "%s" because Criteria::MODEL_CLAUSE_RAW works only with a clause containing a single question mark placeholder', $this->field));
         }
         $params[] = array(
-            'table' => null,
+            'entity' => null,
             'type'  => $this->type,
             'value' => $this->value
         );

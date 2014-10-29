@@ -13,12 +13,12 @@ namespace Propel\Generator\Builder\Util;
 use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Exception\SchemaException;
 use Propel\Generator\Model\Behavior;
-use Propel\Generator\Model\Column;
+use Propel\Generator\Model\Field;
 use Propel\Generator\Model\Database;
-use Propel\Generator\Model\ForeignKey;
+use Propel\Generator\Model\Relation;
 use Propel\Generator\Model\Index;
 use Propel\Generator\Model\Schema;
-use Propel\Generator\Model\Table;
+use Propel\Generator\Model\Entity;
 use Propel\Generator\Model\Unique;
 use Propel\Generator\Model\VendorInfo;
 use Propel\Generator\Platform\PlatformInterface;
@@ -39,19 +39,19 @@ class SchemaReader
     /** enables debug output */
     const DEBUG = false;
 
-    /** @var Schema  */
+    /** @var Schema */
     private $schema;
 
     /** @var Database */
     private $currDB;
 
-    /** @var Table */
-    private $currTable;
+    /** @var Entity */
+    private $currEntity;
 
-    /** @var Column */
-    private $currColumn;
+    /** @var Field */
+    private $currField;
 
-    /** @var ForeignKey */
+    /** @var Relation */
     private $currFK;
 
     /** @var Index */
@@ -82,13 +82,14 @@ class SchemaReader
     /**
      * Creates a new instance for the specified database type.
      *
-     * @param PlatformInterface $defaultPlatform The default database platform for the application.
-     * @param string            $defaultPackage  the default PHP package used for the om
-     * @param string            $encoding        The database encoding.
+     * @param string $defaultPackage the default PHP package used for the om
+     * @param string $encoding       The database encoding.
      */
-    public function __construct(PlatformInterface $defaultPlatform = null, $defaultPackage = null, $encoding = 'iso-8859-1')
-    {
-        $this->schema = new Schema($defaultPlatform);
+    public function __construct(
+        $defaultPackage = null,
+        $encoding = 'iso-8859-1'
+    ) {
+        $this->schema = new Schema();
         $this->defaultPackage = $defaultPackage;
         $this->firstPass = true;
         $this->encoding = $encoding;
@@ -109,6 +110,7 @@ class SchemaReader
      * populated Schema structure.
      *
      * @param  string $xmlFile The input file to parse.
+     *
      * @return Schema populated by <code>xmlFile</code>.
      */
     public function parseFile($xmlFile)
@@ -127,6 +129,7 @@ class SchemaReader
      *
      * @param  string $xmlString The input string to parse.
      * @param  string $xmlFile   The input file name.
+     *
      * @return Schema
      */
     public function parseString($xmlString, $xmlFile = null)
@@ -144,9 +147,12 @@ class SchemaReader
         xml_set_object($parser, $this);
         xml_set_element_handler($parser, 'startElement', 'endElement');
         if (!xml_parse($parser, $xmlString)) {
-            throw new SchemaException(sprintf('XML error: %s at line %d',
-                xml_error_string(xml_get_error_code($parser)),
-                xml_get_current_line_number($parser))
+            throw new SchemaException(
+                sprintf(
+                    'XML error: %s at line %d',
+                    xml_error_string(xml_get_error_code($parser)),
+                    xml_get_current_line_number($parser)
+                )
             );
         }
         xml_parser_free($parser);
@@ -159,6 +165,7 @@ class SchemaReader
     public function startElement($parser, $name, $attributes)
     {
         $parentTag = $this->peekCurrentSchemaTag();
+
         if (false === $parentTag) {
             switch ($name) {
                 case 'database':
@@ -184,7 +191,9 @@ class SchemaReader
                     // and it's ignored in the nested external-schemas
                     if (!$this->isExternalSchema()) {
                         $isForRefOnly = isset($attributes['referenceOnly']) ? $attributes['referenceOnly'] : null;
-                        $this->isForReferenceOnly = (null !== $isForRefOnly ? ('true' === strtolower($isForRefOnly)) : true); // defaults to TRUE
+                        $this->isForReferenceOnly = (null !== $isForRefOnly ? ('true' === strtolower(
+                                $isForRefOnly
+                            )) : true); // defaults to TRUE
                     }
 
                     if ('/' !== $xmlFile{0}) {
@@ -195,17 +204,26 @@ class SchemaReader
                     }
 
                     $this->parseFile($xmlFile);
-                break;
+                    break;
 
                 case 'domain':
                     $this->currDB->addDomain($attributes);
                     break;
 
-                case 'table':
-                    $this->currTable = $this->currDB->addTable($attributes);
+//                case 'table':
+//                    //backwards compatibility
+//                    $attributes['tableName'] = $attributes['name'];
+//                    if (isset($attributes['phpName'])) {
+//                        $attributes['name'] = $attributes['phpName'];
+//                    } else {
+//                        $attributes['name'] = static::toCamelCase($attributes['tableName']);
+//                    }
+//                    //no break, since we need to treat it as entity now
+                case 'entity':
+                    $this->currEntity = $this->currDB->addEntity($attributes);
                     if ($this->isExternalSchema()) {
-                        $this->currTable->setForReferenceOnly($this->isForReferenceOnly);
-                        $this->currTable->setPackage($this->currentPackage);
+                        $this->currEntity->setForReferenceOnly($this->isForReferenceOnly);
+                        $this->currEntity->setPackage($this->currentPackage);
                     }
                     break;
 
@@ -215,66 +233,73 @@ class SchemaReader
 
                 case 'behavior':
                     $this->currBehavior = $this->currDB->addBehavior($attributes);
-                  break;
+                    break;
 
                 default:
                     $this->_throwInvalidTagException($parser, $name);
             }
-
-        } elseif ('table' === $parentTag) {
+        } elseif ('entity' === $parentTag || 'table' === $parentTag) {
             switch ($name) {
-                case 'column':
-                    $this->currColumn = $this->currTable->addColumn($attributes);
+//                case 'column':
+//                    //backwards compatibility
+//                    $attributes['tableName'] = $attributes['name'];
+//                    if (isset($attributes['phpName'])) {
+//                        $attributes['name'] = $attributes['phpName'];
+//                    } else {
+//                        $attributes['name'] = static::toCamelCase($attributes['tableName']);
+//                    }
+//                    //no break, since we need to treat it as entity now
+                case 'field':
+                    $this->currField = $this->currEntity->addField($attributes);
                     break;
 
-                case 'foreign-key':
-                    $this->currFK = $this->currTable->addForeignKey($attributes);
+                case 'relation':
+//                case 'foreign-key':
+                    $this->currFK = $this->currEntity->addRelation($attributes);
                     break;
 
                 case 'index':
                     $this->currIndex = new Index();
-                    $this->currIndex->setTable($this->currTable);
+                    $this->currIndex->setEntity($this->currEntity);
                     $this->currIndex->loadMapping($attributes);
                     break;
 
                 case 'unique':
                     $this->currUnique = new Unique();
-                    $this->currUnique->setTable($this->currTable);
+                    $this->currUnique->setEntity($this->currEntity);
                     $this->currUnique->loadMapping($attributes);
                     break;
 
                 case 'vendor':
-                    $this->currVendorObject = $this->currTable->addVendorInfo($attributes);
+                    $this->currVendorObject = $this->currEntity->addVendorInfo($attributes);
                     break;
 
                 case 'id-method-parameter':
-                    $this->currTable->addIdMethodParameter($attributes);
+                    $this->currEntity->addIdMethodParameter($attributes);
                     break;
 
                 case 'behavior':
-                    $this->currBehavior = $this->currTable->addBehavior($attributes);
+                    $this->currBehavior = $this->currEntity->addBehavior($attributes);
                     break;
 
                 default:
                     $this->_throwInvalidTagException($parser, $name);
             }
-
-        } elseif ('column' === $parentTag) {
+        } elseif ('field' === $parentTag) { // || 'column' === $parentTag) {
 
             switch ($name) {
                 case 'inheritance':
-                    $this->currColumn->addInheritance($attributes);
+                    $this->currField->addInheritance($attributes);
                     break;
 
                 case 'vendor':
-                    $this->currVendorObject = $this->currColumn->addVendorInfo($attributes);
+                    $this->currVendorObject = $this->currField->addVendorInfo($attributes);
                     break;
 
                 default:
                     $this->_throwInvalidTagException($parser, $name);
             }
-
-        } elseif ('foreign-key' === $parentTag) {
+        } elseif ('relation' === $parentTag) { // || 'foreign-key' === $parentTag) {
 
             switch ($name) {
                 case 'reference':
@@ -288,12 +313,12 @@ class SchemaReader
                 default:
                     $this->_throwInvalidTagException($parser, $name);
             }
-
         } elseif ('index' === $parentTag) {
 
             switch ($name) {
-                case 'index-column':
-                    $this->currIndex->addColumn($attributes);
+//                case 'index-column':
+                case 'index-field':
+                    $this->currIndex->addField($attributes);
                     break;
 
                 case 'vendor':
@@ -303,12 +328,12 @@ class SchemaReader
                 default:
                     $this->_throwInvalidTagException($parser, $name);
             }
-
         } elseif ('unique' === $parentTag) {
 
             switch ($name) {
-                case 'unique-column':
-                    $this->currUnique->addColumn($attributes);
+//                case 'unique-column':
+                case 'unique-field':
+                    $this->currUnique->addField($attributes);
                     break;
 
                 case 'vendor':
@@ -342,7 +367,6 @@ class SchemaReader
             // it must be an invalid tag
             $this->_throwInvalidTagException($parser, $name);
         }
-
         $this->pushCurrentSchemaTag($name);
     }
 
@@ -364,9 +388,11 @@ class SchemaReader
     public function endElement($parser, $name)
     {
         if ('index' === $name) {
-            $this->currTable->addIndex($this->currIndex);
-        } else if ('unique' === $name) {
-            $this->currTable->addUnique($this->currUnique);
+            $this->currEntity->addIndex($this->currIndex);
+        } else {
+            if ('unique' === $name) {
+                $this->currEntity->addUnique($this->currUnique);
+            }
         }
 
         if (self::DEBUG) {

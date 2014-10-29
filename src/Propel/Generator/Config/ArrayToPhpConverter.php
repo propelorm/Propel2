@@ -29,9 +29,15 @@ class ArrayToPhpConverter
         $runtimeVersion = Propel::VERSION;
 
         $conf = '';
-        $conf .= "\$serviceContainer = \Propel\Runtime\Propel::getServiceContainer();";
         $conf .= "
-\$serviceContainer->checkVersion('{$runtimeVersion}');";
+if (!isset(\$configuration) || !(\$configuration instanceof \\Propel\\Runtime\\Configuration)) {
+    \$configuration = \\Propel\\Runtime\\Configuration::\$globalConfiguration;
+    if (null === \$configuration) {
+        \$configuration = new \\Propel\\Runtime\\Configuration();
+    }
+}
+
+\$configuration->checkVersion('{$runtimeVersion}');";
         // set datasources
         if (isset($c['connections'])) {
             foreach ($c['connections'] as $name => $params) {
@@ -42,17 +48,17 @@ class ArrayToPhpConverter
                 // set adapters
                 if (isset($params['adapter'])) {
                     $conf .= "
-\$serviceContainer->setAdapterClass('{$name}', '{$params['adapter']}');";
+\$configuration->setAdapterClass('{$name}', '{$params['adapter']}');";
                 }
 
                 // set connection settings
                 if (isset($params['slaves'])) {
                     $conf .= "
-\$manager = new \Propel\Runtime\Connection\ConnectionManagerMasterSlave();
+\$manager = new \\Propel\\Runtime\\Connection\\ConnectionManagerMasterSlave(\$configuration->getAdapter('{$name}'));
 \$manager->setReadConfiguration(" . var_export($params['slaves'], true). ");";
                 } elseif (isset($params['dsn'])) {
                     $conf .= "
-\$manager = new \Propel\Runtime\Connection\ConnectionManagerSingle();";
+\$manager = new \\Propel\\Runtime\\Connection\\ConnectionManagerSingle(\$configuration->getAdapter('{$name}'));";
                 } else {
                     continue;
                 }
@@ -68,7 +74,7 @@ class ArrayToPhpConverter
 
                 $conf .= "
 \$manager->setName('{$name}');
-\$serviceContainer->setConnectionManager('{$name}', \$manager);";
+\$configuration->setConnectionManager('{$name}', \$manager);";
             }
 
             // set default datasource
@@ -81,7 +87,7 @@ class ArrayToPhpConverter
             }
 
             $conf .= "
-\$serviceContainer->setDefaultDatasource('{$defaultDatasource}');";
+\$configuration->setDefaultDatasource('{$defaultDatasource}');";
         }
 
         // set profiler
@@ -89,13 +95,13 @@ class ArrayToPhpConverter
             $profilerConf = $c['profiler'];
             if (isset($profilerConf['classname'])) {
                 $conf .= "
-\$serviceContainer->setProfilerClass('{$profilerConf['classname']}');";
+\$configuration->setProfilerClass('{$profilerConf['classname']}');";
                 unset($profilerConf['classname']);
             }
 
             if ($profilerConf) {
                 $conf .= "
-\$serviceContainer->setProfilerConfiguration(" . var_export($profilerConf, true) . ");";
+\$configuration->setProfilerConfiguration(" . var_export($profilerConf, true) . ");";
             }
             unset($c['profiler']);
         }
@@ -104,11 +110,21 @@ class ArrayToPhpConverter
         if (isset($c['log']) && count($c['log']) > 0) {
             foreach ($c['log'] as $key => $logger) {
                 $conf .= "
-\$serviceContainer->setLoggerConfiguration('{$key}', " . var_export($logger, true) . ");";
+\$configuration->setLoggerConfiguration('{$key}', " . var_export($logger, true) . ");";
             }
             unset($c['log']);
         }
 
+        // register all known entity classes
+
+        foreach ($c['databaseToEntities'] as $database => $entityClasses) {
+            $entities = var_export($entityClasses, true);
+            $conf .= "
+\$configuration->registerEntity('$database', $entities);";
+        }
+
+        $conf .= '
+return $configuration;';
         return preg_replace('/[ \t]*$/m', '', $conf);
     }
 }

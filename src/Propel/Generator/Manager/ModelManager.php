@@ -10,8 +10,8 @@
 
 namespace Propel\Generator\Manager;
 
+use Propel\Generator\Builder\Om\AbstractBuilder;
 use Symfony\Component\Filesystem\Filesystem;
-use Propel\Generator\Builder\Om\AbstractOMBuilder;
 
 /**
  * This manager creates the Object Model classes based on the XML schema file.
@@ -41,8 +41,8 @@ class ModelManager extends AbstractManager
     {
         $this->validate();
 
-        $totalNbFiles    = 0;
-        $dataModels      = $this->getDataModels();
+        $totalNbFiles = 0;
+        $dataModels = $this->getDataModels();
         $generatorConfig = $this->getGeneratorConfig();
 
         $this->log('Generating PHP files...');
@@ -53,18 +53,18 @@ class ModelManager extends AbstractManager
             foreach ($dataModel->getDatabases() as $database) {
                 $this->log(' - Database: ' . $database->getName());
 
-                foreach ($database->getTables() as $table) {
-                    if (!$table->isForReferenceOnly()) {
+                foreach ($database->getEntities() as $entity) {
+                    if (!$entity->isForReferenceOnly()) {
                         $nbWrittenFiles = 0;
-                        $this->log('  + Table: ' . $table->getName());
+                        $this->log('  + Entity: ' . $entity->getName());
 
                         // -----------------------------------------------------------------------------------------
-                        // Create Object, and TableMap classes
+                        // Create Object, and EntityMap classes
                         // -----------------------------------------------------------------------------------------
 
                         // these files are always created / overwrite any existing files
-                        foreach (array('object', 'tablemap', 'query') as $target) {
-                            $builder = $generatorConfig->getConfiguredBuilder($table, $target);
+                        foreach (array('activerecordtrait', 'object', 'entitymap', 'query', 'repository') as $target) {
+                            $builder = $generatorConfig->getConfiguredBuilder($entity, $target);
                             $nbWrittenFiles += $this->doBuild($builder);
                         }
 
@@ -74,8 +74,8 @@ class ModelManager extends AbstractManager
 
                         // these classes are only generated if they don't already exist
                         $overwrite = false;
-                        foreach (array('objectstub', 'querystub') as $target) {
-                            $builder = $generatorConfig->getConfiguredBuilder($table, $target);
+                        foreach (array('querystub', 'repositorystub') as $target) {
+                            $builder = $generatorConfig->getConfiguredBuilder($entity, $target);
                             $nbWrittenFiles += $this->doBuild($builder, $overwrite);
                         }
 
@@ -83,22 +83,22 @@ class ModelManager extends AbstractManager
                         // Create [empty] stub child Object classes if they don't exist
                         // -----------------------------------------------------------------------------------------
 
-                        // If table has enumerated children (uses inheritance) then create the empty child stub classes if they don't already exist.
-                        if ($col = $table->getChildrenColumn()) {
+                        // If entity has enumerated children (uses inheritance) then create the empty child stub classes if they don't already exist.
+                        if ($col = $entity->getChildrenField()) {
                             if ($col->isEnumeratedClasses()) {
                                 foreach ($col->getChildren() as $child) {
                                     $overwrite = true;
                                     foreach (array('queryinheritance') as $target) {
-                                        if (!$child->getAncestor() && $child->getClassName() == $table->getPhpName()) {
+                                        if (!$child->getAncestor() && $child->getClassName() == $entity->getName()) {
                                             continue;
                                         }
-                                        $builder = $generatorConfig->getConfiguredBuilder($table, $target);
+                                        $builder = $generatorConfig->getConfiguredBuilder($entity, $target);
                                         $builder->setChild($child);
                                         $nbWrittenFiles += $this->doBuild($builder, $overwrite);
                                     }
                                     $overwrite = false;
                                     foreach (array('objectmultiextend', 'queryinheritancestub') as $target) {
-                                        $builder = $generatorConfig->getConfiguredBuilder($table, $target);
+                                        $builder = $generatorConfig->getConfiguredBuilder($entity, $target);
                                         $builder->setChild($child);
                                         $nbWrittenFiles += $this->doBuild($builder, $overwrite);
                                     }
@@ -106,25 +106,17 @@ class ModelManager extends AbstractManager
                             }
                         }
 
-                        // -----------------------------------------------------------------------------------------
-                        // Create [empty] Interface if it doesn't exist
-                        // -----------------------------------------------------------------------------------------
-
-                        // Create [empty] interface if it does not already exist
-                        $overwrite = false;
-                        if ($table->getInterface()) {
-                            $builder = $generatorConfig->getConfiguredBuilder($table, 'interface');
-                            $nbWrittenFiles += $this->doBuild($builder, $overwrite);
-                        }
-
                         // ----------------------------------
                         // Create classes added by behaviors
                         // ----------------------------------
-                        if ($table->hasAdditionalBuilders()) {
-                            foreach ($table->getAdditionalBuilders() as $builderClass) {
-                                $builder = new $builderClass($table);
+                        if ($entity->hasAdditionalBuilders()) {
+                            foreach ($entity->getAdditionalBuilders() as $builderClass) {
+                                $builder = new $builderClass($entity);
                                 $builder->setGeneratorConfig($generatorConfig);
-                                $nbWrittenFiles += $this->doBuild($builder, isset($builder->overwrite) ? $builder->overwrite : true);
+                                $nbWrittenFiles += $this->doBuild(
+                                    $builder,
+                                    isset($builder->overwrite) ? $builder->overwrite : true
+                                );
                             }
                         }
 
@@ -149,11 +141,12 @@ class ModelManager extends AbstractManager
      * This method assumes that the DataModelBuilder class has been initialized
      * with the build properties.
      *
-     * @param  AbstractOMBuilder $builder
-     * @param  boolean           $overwrite
+     * @param  AbstractBuilder $builder
+     * @param  boolean               $overwrite
+     *
      * @return int
      */
-    protected function doBuild(AbstractOMBuilder $builder, $overwrite = true)
+    protected function doBuild(AbstractBuilder $builder, $overwrite = true)
     {
         $path = $builder->getClassFilePath();
         $file = new \SplFileInfo($this->getWorkingDirectory() . DIRECTORY_SEPARATOR . $path);
@@ -162,26 +155,37 @@ class ModelManager extends AbstractManager
 
         // skip files already created once
         if ($file->isFile() && !$overwrite) {
-            $this->log("\t-> (exists) " . $builder->getClassFilePath());
+            $this->log("\t-> (exists) " . $path);
 
             return 0;
         }
 
         $script = $builder->build();
+        if (false === $script) {
+            return 0;
+        }
         foreach ($builder->getWarnings() as $warning) {
             $this->log($warning);
         }
 
         // skip unchanged files
         if ($file->isFile() && $script == file_get_contents($file->getPathname())) {
-            $this->log("\t-> (unchanged) " . $builder->getClassFilePath());
+            $this->log("\t-> (unchanged) " . $path);
 
             return 0;
         }
 
         // write / overwrite new / changed files
         $action = $file->isFile() ? 'Updating' : 'Creating';
-        $this->log(sprintf("\t-> %s %s (table: %s, builder: %s)", $action, $builder->getClassFilePath(), $builder->getTable()->getName(), get_class($builder)));
+        $this->log(
+            sprintf(
+                "\t-> %s %s (entity: %s, builder: %s)",
+                $action,
+                $path,
+                $builder->getEntity()->getName(),
+                get_class($builder)
+            )
+        );
         file_put_contents($file->getPathname(), $script);
 
         return 1;

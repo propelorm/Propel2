@@ -62,10 +62,10 @@ class ModelCriteriaTest extends BookstoreTestBase
     public function testGetModelName()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
-        $this->assertEquals('Propel\Tests\Bookstore\Book', $c->getModelName(), 'getModelName() returns the name of the class associated to the model class');
+        $this->assertEquals('Propel\Tests\Bookstore\Book', $c->getEntityName(), 'getEntityName() returns the name of the class associated to the model class');
 
         $c = new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book');
-        $this->assertEquals('Propel\Tests\Bookstore\Book', $c->getModelName(), 'getModelName() returns the name of the class associated to the model class');
+        $this->assertEquals('Propel\Tests\Bookstore\Book', $c->getEntityName(), 'getEntityName() returns the name of the class associated to the model class');
     }
 
     public function testGetFullyQualifiedModelName()
@@ -185,14 +185,14 @@ class ModelCriteriaTest extends BookstoreTestBase
     public function testTableAlias()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
-        $c->setModelAlias('b');
+        $c->setEntityAlias('b');
         $c->where('b.Title = ?', 'foo');
 
         $sql = $this->getSql("SELECT  FROM book WHERE book.title = :p1");
         $params = array(
             array('table' => 'book', 'column' => 'title', 'value' => 'foo'),
         );
-        $this->assertCriteriaTranslation($c, $sql, $params, 'setModelAlias() allows the definition of the alias after construction');
+        $this->assertCriteriaTranslation($c, $sql, $params, 'setEntityAlias() allows the definition of the alias after construction');
 
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book', 'b');
         $c->where('b.Title = ?', 'foo');
@@ -207,7 +207,7 @@ class ModelCriteriaTest extends BookstoreTestBase
     public function testTrueTableAlias()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
-        $c->setModelAlias('b', true);
+        $c->setEntityAlias('b', true);
         $c->where('b.Title = ?', 'foo');
         $c->join('b.Author a');
         $c->where('a.FirstName = ?', 'john');
@@ -218,7 +218,7 @@ class ModelCriteriaTest extends BookstoreTestBase
             array('table' => 'book', 'column' => 'title', 'value' => 'foo'),
             array('table' => 'author', 'column' => 'first_name', 'value' => 'john'),
         );
-        $this->assertCriteriaTranslation($c, $sql, $params, 'setModelAlias() allows the definition of a true SQL alias after construction');
+        $this->assertCriteriaTranslation($c, $sql, $params, 'setEntityAlias() allows the definition of a true SQL alias after construction');
     }
 
     public function testCondition()
@@ -700,7 +700,7 @@ class ModelCriteriaTest extends BookstoreTestBase
     public function testGroupByClassTrueAlias()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
-        $c->setModelAlias('b', true);
+        $c->setEntityAlias('b', true);
         $c->groupByClass('b');
 
         $sql = 'SELECT  FROM  GROUP BY b.id,b.title,b.isbn,b.price,b.publisher_id,b.author_id';
@@ -969,14 +969,14 @@ class ModelCriteriaTest extends BookstoreTestBase
     public function testJoinTrueTableAlias()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
-        $c->setModelAlias('b', true);
+        $c->setEntityAlias('b', true);
         $c->join('b.Author');
         $sql = $this->getSql('SELECT  FROM book b INNER JOIN author ON (b.author_id=author.id)');
         $params = array();
         $this->assertCriteriaTranslation($c, $sql, $params, 'join() supports relation on true table alias');
 
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
-        $c->setModelAlias('b', true);
+        $c->setEntityAlias('b', true);
         $c->join('Author');
         $sql = $this->getSql('SELECT  FROM book b INNER JOIN author ON (b.author_id=author.id)');
         $params = array();
@@ -1222,7 +1222,7 @@ class ModelCriteriaTest extends BookstoreTestBase
     public function testWithAliasAddsSelectColumnsOfMainTable()
     {
         $c = new TestableModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
-        $c->setModelAlias('b', true);
+        $c->setEntityAlias('b', true);
         $c->join('b.Author a');
         $c->with('a');
         $expectedColumns = array(
@@ -1559,7 +1559,7 @@ class ModelCriteriaTest extends BookstoreTestBase
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
-        $c->setModelAlias('b', true);
+        $c->setEntityAlias('b', true);
         $books = $c->find($con);
         $sql = $this->getSql("SELECT b.id, b.title, b.isbn, b.price, b.publisher_id, b.author_id FROM book b");
         $this->assertEquals($sql, $con->getLastExecutedQuery(), 'find() uses the true model alias if available');
@@ -2016,7 +2016,7 @@ class ModelCriteriaTest extends BookstoreTestBase
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
 
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
-        $c->setModelAlias('b', false);
+        $c->setEntityAlias('b', false);
         $c->where('b.Title = ?', 'foo');
         $c->delete();
         $expectedSQL = $this->getSql("DELETE FROM book WHERE book.title = 'foo'");
@@ -2024,7 +2024,7 @@ class ModelCriteriaTest extends BookstoreTestBase
 
         if ($this->runningOnMySQL() || $this->runningOnPostgreSQL()) {
             $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
-            $c->setModelAlias('b', true);
+            $c->setEntityAlias('b', true);
             $c->where('b.Title = ?', 'foo');
             $c->delete();
             if (!$this->runningOnMySQL()) {
@@ -2093,7 +2093,7 @@ class ModelCriteriaTest extends BookstoreTestBase
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
 
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
-        $c->setModelAlias('b', false);
+        $c->setEntityAlias('b', false);
         $c->where('b.Title = ?', 'foo');
         $c->update(array('Title' => 'foo2'), $con);
         $expectedSQL = $this->getSql("UPDATE book SET title='foo2' WHERE book.title = 'foo'");
@@ -2101,7 +2101,7 @@ class ModelCriteriaTest extends BookstoreTestBase
 
         if ($this->runningOnMySQL() || $this->runningOnPostgreSQL()) {
             $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
-            $c->setModelAlias('b', true);
+            $c->setEntityAlias('b', true);
             $c->where('b.Title = ?', 'foo');
             $c->update(array('Title' => 'foo2'), $con);
             $expectedSQL = $this->getSql("UPDATE book b SET title='foo2' WHERE b.title = 'foo'");
@@ -2383,7 +2383,7 @@ class ModelCriteriaTest extends BookstoreTestBase
 
         $c = $c2->endUse();
         $this->assertTrue($c->thisIsMe, 'endUse() returns the Primary Criteria');
-        $this->assertEquals('Propel\Tests\Bookstore\Book', $c->getModelName(), 'endUse() returns the Primary Criteria');
+        $this->assertEquals('Propel\Tests\Bookstore\Book', $c->getEntityName(), 'endUse() returns the Primary Criteria');
 
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         $c->find($con);
@@ -2415,7 +2415,7 @@ class ModelCriteriaTest extends BookstoreTestBase
 
         $c = $c2->endUse();
         $this->assertTrue($c->thisIsMe, 'endUse() returns the Primary Criteria');
-        $this->assertEquals('Propel\Tests\Bookstore\Book', $c->getModelName(), 'endUse() returns the Primary Criteria');
+        $this->assertEquals('Propel\Tests\Bookstore\Book', $c->getEntityName(), 'endUse() returns the Primary Criteria');
 
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         $c->find($con);
@@ -2484,7 +2484,7 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c2->where('Work.Title = ?', 'War And Peace');
 
         $c = $c2->endUse();
-        $this->assertEquals('Propel\Tests\Bookstore\BookstoreContest', $c->getModelName(), 'endUse() returns the Primary Criteria');
+        $this->assertEquals('Propel\Tests\Bookstore\BookstoreContest', $c->getEntityName(), 'endUse() returns the Primary Criteria');
 
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         $c->find($con);
@@ -2505,7 +2505,7 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c2->where('w.Title = ?', 'War And Peace');
 
         $c = $c2->endUse();
-        $this->assertEquals('Propel\Tests\Bookstore\BookstoreContest', $c->getModelName(), 'endUse() returns the Primary Criteria');
+        $this->assertEquals('Propel\Tests\Bookstore\BookstoreContest', $c->getEntityName(), 'endUse() returns the Primary Criteria');
 
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         $c->find($con);
@@ -2551,7 +2551,7 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c1->mergeWith($c2);
         $with = $c1->getWith();
         $this->assertEquals(1, count($with), 'mergeWith() does not remove an existing join');
-        $this->assertEquals('modelName: Propel\Tests\Bookstore\Author, relationName: Author, relationMethod: setAuthor, leftPhpName: , rightPhpName: a', $with['a']->__toString(), 'mergeWith() does not remove an existing join');
+        $this->assertEquals('entityName: Propel\Tests\Bookstore\Author, relationName: Author, relationMethod: setAuthor, leftName: , rightName: a', $with['a']->__toString(), 'mergeWith() does not remove an existing join');
 
         $c1 = new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book', 'b');
         $c1->leftJoinWith('b.Author a');
@@ -2559,7 +2559,7 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c1->mergeWith($c2);
         $with = $c1->getWith();
         $this->assertEquals(1, count($with), 'mergeWith() does not remove an existing join');
-        $this->assertEquals('modelName: Propel\Tests\Bookstore\Author, relationName: Author, relationMethod: setAuthor, leftPhpName: , rightPhpName: a', $with['a']->__toString(), 'mergeWith() does not remove an existing join');
+        $this->assertEquals('entityName: Propel\Tests\Bookstore\Author, relationName: Author, relationMethod: setAuthor, leftName: , rightName: a', $with['a']->__toString(), 'mergeWith() does not remove an existing join');
 
         $c1 = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book', 'b');
         $c2 = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book', 'b');
@@ -2567,7 +2567,7 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c1->mergeWith($c2);
         $with = $c1->getWith();
         $this->assertEquals(1, count($with), 'mergeWith() merge joins to an empty join');
-        $this->assertEquals('modelName: Propel\Tests\Bookstore\Author, relationName: Author, relationMethod: setAuthor, leftPhpName: , rightPhpName: a', $with['a']->__toString(), 'mergeWith() merge joins to an empty join');
+        $this->assertEquals('entityName: Propel\Tests\Bookstore\Author, relationName: Author, relationMethod: setAuthor, leftName: , rightName: a', $with['a']->__toString(), 'mergeWith() merge joins to an empty join');
 
         $c1 = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book', 'b');
         $c1->leftJoinWith('b.Author a');
@@ -2576,8 +2576,8 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c1->mergeWith($c2);
         $with = $c1->getWith();
         $this->assertEquals(2, count($with), 'mergeWith() merge joins to an existing join');
-        $this->assertEquals('modelName: Propel\Tests\Bookstore\Author, relationName: Author, relationMethod: setAuthor, leftPhpName: , rightPhpName: a', $with['a']->__toString(), 'mergeWith() merge joins to an empty join');
-        $this->assertEquals('modelName: Propel\Tests\Bookstore\Publisher, relationName: Publisher, relationMethod: setPublisher, leftPhpName: , rightPhpName: p', $with['p']->__toString(), 'mergeWith() merge joins to an empty join');
+        $this->assertEquals('entityName: Propel\Tests\Bookstore\Author, relationName: Author, relationMethod: setAuthor, leftName: , rightName: a', $with['a']->__toString(), 'mergeWith() merge joins to an empty join');
+        $this->assertEquals('entityName: Propel\Tests\Bookstore\Publisher, relationName: Publisher, relationMethod: setPublisher, leftName: , rightName: p', $with['p']->__toString(), 'mergeWith() merge joins to an empty join');
 
     }
 
@@ -2587,11 +2587,11 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals(BookTableMap::COL_TITLE, $c->getAliasedColName(BookTableMap::COL_TITLE), 'getAliasedColName() returns the input when the table has no alias');
 
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
-        $c->setModelAlias('foo');
+        $c->setEntityAlias('foo');
         $this->assertEquals(BookTableMap::COL_TITLE, $c->getAliasedColName(BookTableMap::COL_TITLE), 'getAliasedColName() returns the input when the table has a query alias');
 
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
-        $c->setModelAlias('foo', true);
+        $c->setEntityAlias('foo', true);
         $this->assertEquals('foo.title', $c->getAliasedColName(BookTableMap::COL_TITLE), 'getAliasedColName() returns the column name with table alias when the table has a true alias');
     }
 
@@ -2616,10 +2616,10 @@ class ModelCriteriaTest extends BookstoreTestBase
     public function testAddUsingAliasTrueAlias()
     {
         $c1 = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
-        $c1->setModelAlias('b', true);
+        $c1->setEntityAlias('b', true);
         $c1->addUsingAlias(BookTableMap::COL_TITLE, 'foo');
         $c2 = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
-        $c2->setModelAlias('b', true);
+        $c2->setEntityAlias('b', true);
         $c2->add('b.title', 'foo');
         $this->assertEquals($c2, $c1, 'addUsingalias() translates to add() when the table has a true alias');
     }
@@ -2638,11 +2638,11 @@ class ModelCriteriaTest extends BookstoreTestBase
     public function testAddUsingAliasTrueAliasTwice()
     {
         $c1 = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
-        $c1->setModelAlias('b', true);
+        $c1->setEntityAlias('b', true);
         $c1->addUsingAlias(BookTableMap::COL_TITLE, 'foo');
         $c1->addUsingAlias(BookTableMap::COL_TITLE, 'bar');
         $c2 = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
-        $c2->setModelAlias('b', true);
+        $c2->setEntityAlias('b', true);
         $c2->add('b.title', 'foo');
         $c2->addAnd('b.title', 'bar');
         $this->assertEquals($c2, $c1, 'addUsingalias() translates to addAnd() when the table already has a condition on the column');

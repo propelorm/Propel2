@@ -67,7 +67,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      * Whether the final commit is possible
      * Is false if a nested transaction is rolled back
      */
-    protected $isUncommitable = false;
+    protected $isUncommientity = false;
 
     /**
      * Count of queries performed.
@@ -186,11 +186,11 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      * Check whether the connection contains a transaction that can be committed.
      * To be used in an environment where Propelexceptions are caught.
      *
-     * @return boolean True if the connection is in a committable transaction
+     * @return boolean True if the connection is in a commitentity transaction
      */
-    public function isCommitable()
+    public function isCommientity()
     {
-        return $this->isInTransaction() && !$this->isUncommitable;
+        return $this->isInTransaction() && !$this->isUncommientity;
     }
 
     /**
@@ -206,7 +206,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
             if ($this->useDebug) {
                 $this->log('Begin transaction');
             }
-            $this->isUncommitable = false;
+            $this->isUncommientity = false;
         }
         $this->nestedTransactionCount++;
 
@@ -226,7 +226,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
 
         if ($opcount > 0) {
             if (1 === $opcount) {
-                if ($this->isUncommitable) {
+                if ($this->isUncommientity) {
                     throw new RollbackException('Cannot commit because a nested transaction was rolled back');
                 }
 
@@ -260,7 +260,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
                     $this->log('Rollback transaction');
                 }
             } else {
-                $this->isUncommitable = true;
+                $this->isUncommientity = true;
             }
 
             $this->nestedTransactionCount--;
@@ -548,7 +548,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
     /**
      * Get the SQL code for the latest query executed by Propel
      *
-     * @return string Executable SQL code
+     * @return string Execuentity SQL code
      */
     public function getLastExecutedQuery()
     {
@@ -558,7 +558,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
     /**
      * Set the SQL code for the latest query executed by Propel
      *
-     * @param string $query Executable SQL code
+     * @param string $query Execuentity SQL code
      */
     public function setLastExecutedQuery($query)
     {
@@ -612,16 +612,11 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
 
     /**
      * Gets the logger to use for this connection.
-     * If no logger was set, returns the default logger from the Service Container.
      *
      * @return LoggerInterface A logger.
      */
     public function getLogger()
     {
-        if (null === $this->logger) {
-            return Propel::getServiceContainer()->getLogger($this->getName());
-        }
-
         return $this->logger;
     }
 
@@ -648,7 +643,9 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
             return;
         }
 
-        $this->getLogger()->info($msg);
+        if ($this->getLogger()) {
+            $this->getLogger()->info($msg);
+        }
     }
 
     /**
