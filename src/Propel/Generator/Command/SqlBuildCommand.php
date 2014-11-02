@@ -29,6 +29,7 @@ class SqlBuildCommand extends AbstractCommand
 
         $this
             ->addOption('mysql-engine', null, InputOption::VALUE_REQUIRED,  'MySQL engine (MyISAM, InnoDB, ...)')
+            ->addOption('schema-dir',   null, InputOption::VALUE_REQUIRED,  'The directory where the schema files are placed')
             ->addOption('output-dir',   null, InputOption::VALUE_REQUIRED,  'The output directory')
             ->addOption('validate',     null, InputOption::VALUE_NONE,      '')
             ->addOption('connection',   null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Connection to use', array())
@@ -51,10 +52,8 @@ class SqlBuildCommand extends AbstractCommand
         foreach ($input->getOptions() as $key => $option) {
             if (null !== $option) {
                 switch ($key) {
-                    case 'input-dir':
-                        if ('.' !== $option) {
-                            $configOptions['propel']['paths']['schemaDir'] = $option;
-                        }
+                    case 'schema-dir':
+                        $configOptions['propel']['paths']['schemaDir'] = $option;
                         break;
                     case 'output-dir':
                         $configOptions['propel']['paths']['sqlDir'] = $option;

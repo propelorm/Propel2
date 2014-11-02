@@ -19,7 +19,8 @@ class GraphvizGenerateTest extends TestCaseFixtures
 
         $input = new \Symfony\Component\Console\Input\ArrayInput(array(
             'command' => 'graphviz:generate',
-            '--input-dir' => __DIR__ . '/../../../../Fixtures/bookstore',
+            '--schema-dir' => __DIR__ . '/../../../../Fixtures/bookstore',
+            '--config-dir' => __DIR__ . '/../../../../Fixtures/bookstore',
             '--output-dir' => $outputDir,
             '--verbose' => true
         ));
