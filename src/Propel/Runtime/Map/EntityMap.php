@@ -226,6 +226,7 @@ abstract class EntityMap
     abstract public function populateDependencyGraph($entity, DependencyGraph $dependencyGraph);
     abstract public function populateObject(array $row, &$offset = 0, $indexType = EntityMap::TYPE_NUM);
     abstract public function isValidRow(array $row, $offset = 0);
+    abstract public function getSnapshot($entity);
     abstract public function getPropWriter();
     abstract public function getPropReader();
 
@@ -242,14 +243,6 @@ abstract class EntityMap
     public function getRepository()
     {
         return $this->getConfiguration()->getRepository($this->getFullClassName());
-    }
-
-    public function prepareWritingValue($type, $value, $fieldName)
-    {
-        //modify $value from the database depending on $type
-        //so we inject the correct (maybe unserialized or something)
-        //into the actual entity object.
-        return $value;
     }
 
     /**

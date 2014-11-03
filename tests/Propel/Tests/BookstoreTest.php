@@ -183,6 +183,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
         $qs_lookup = BookQuery::create()->findPk($qs_id);
         $this->assertNotNull($qs_lookup, 'just-created book can be found by pk');
 
+        var_dump('@@@@@@@@@@@@@@@@@@@@@@ ');
         $new_title = "Quicksilver (".crc32(uniqid(rand())).")";
         // Attempting to update found object
         $qs_lookup->setTitle($new_title);
@@ -199,6 +200,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
         $control = strtotime('2004-02-29 00:00:00');
 
         // should be two in the db
+        /** @var Review $r */
         $r = ReviewQuery::create()->findOne();
         $r_id = $r->getId();
         $r->setReviewDate($control);

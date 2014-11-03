@@ -202,7 +202,7 @@ trait NamingTrait
      */
     public function getProxyClassName($fqcn = false)
     {
-        return $this->getClassNameFromBuilder($this->getBuilder()->getObjectBuilder(), $fqcn);
+        return $this->getClassNameFromBuilder($this->getBuilder()->getProxyBuilder(), $fqcn);
     }
 
     /**

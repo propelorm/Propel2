@@ -55,6 +55,7 @@ class RepositoryBuilder extends AbstractBuilder
         $this->applyComponent('Repository\\GetEntityMapMethod');
         $this->applyComponent('Repository\\HookMethods');
         $this->applyComponent('Repository\\GetPrimaryKeyMethod');
+        $this->applyComponent('Repository\\BuildChangeSetMethod');
 
         $platformBuilder = $this->getPlatform()->getRepositoryBuilder($this->getEntity());
         $platformBuilder->setDefinition($this->getDefinition());

@@ -49,7 +49,6 @@ class ObjectFormatter extends AbstractFormatter
         } else {
             // only many-to-one relationships
             foreach ($dataFetcher as $row) {
-                var_dump($row);
                 $collection[] = $this->getAllObjectsFromRow($row);
             }
         }

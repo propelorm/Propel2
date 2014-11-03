@@ -42,11 +42,19 @@ class SqlPersister
      */
     protected $autoIncrementValues;
 
-    function __construct(Session $session, EntityMap $entityMap)
+    public function __construct(Session $session, EntityMap $entityMap)
     {
         $this->session = $session;
         $this->entityMap = $entityMap;
         $this->repository = $session->getConfiguration()->getRepository($entityMap->getFullClassName());
+    }
+
+    /**
+     * @return \Propel\Runtime\Repository\Repository
+     */
+    protected function getRepository()
+    {
+        return $this->session->getConfiguration()->getRepository($this->entityMap->getFullClassName());
     }
 
     /**
@@ -69,18 +77,18 @@ class SqlPersister
             }
         }
 
-        $event = new SaveEvent($this->getSession(), $this->entityMap, $updates, $inserts);
+        $event = new SaveEvent($this->getSession(), $this->entityMap, $inserts, $updates);
         $this->getSession()->getConfiguration()->getEventDispatcher()->dispatch(Events::PRE_SAVE, $event);
-
+//
 //        echo sprintf(
 //            "%s: %d inserts, %d updates\n",
-//            $this->entityMap->getClassName(),
+//            $this->entityMap->getFullClassName(),
 //            count($inserts),
 //            count($updates)
 //        );
 
         $this->doInsert($inserts);
-        $this->doUpdates($inserts);
+        $this->doUpdates($updates);
 
         $this->getSession()->getConfiguration()->getEventDispatcher()->dispatch(Events::SAVE, $event);
     }
@@ -199,10 +207,6 @@ EOF;
         $sqlStart = 'UPDATE ' . $this->entityMap->getTableName();
         $where = [];
         foreach ($this->entityMap->getPrimaryKeys() as $pk) {
-            if ($pk->isAutoIncrement()) {
-                continue;
-            }
-
             $where[] = $pk->getColumnName() . ' = ?';
         }
 
@@ -211,28 +215,30 @@ EOF;
         $connection = $connection->getWriteConnection();
 
         foreach($updates as $entity) {
-            $changeSet = $this->entityMap->getChangeSet($entity);
+            $changeSet = $this->getRepository()->buildChangeSet($entity);
             if ($changeSet) {
                 $params = [];
-                $changes = $changeSet->getMap();
                 $sets = [];
-                foreach ($changes as $columnName => $value) {
+                foreach ($changeSet as $fieldName => $value) {
+                    $columnName = $this->entityMap->getField($fieldName)->getColumnName();
                     $sets[] = $columnName . ' = ?';
                     $params[] = $value;
                 }
 
-                foreach ($this->entityMap->getPrimaryKeys() as $pk) {
-                    if ($pk->isAutoIncrement()) {
-                        continue;
-                    }
+                $originValues = $this->getRepository()->getLastKnownValues($entity);
 
+                foreach ($this->entityMap->getPrimaryKeys() as $pk) {
                     $fieldName = $pk->getName();
-                    $params[] = $this->repository->getOriginalValues($entity)[$fieldName];
+                    $params[] = $originValues[$fieldName];
                 }
 
                 $query = $sqlStart . ' SET ' . implode(', ', $sets).$where;
                 $stmt = $connection->prepare($query);
-                $stmt->execute($params);
+                try {
+                    $stmt->execute($params);
+                } catch (\Exception $e) {
+                    throw new RuntimeException(sprintf('Could not execute query %s', $query), 0, $e);
+                }
             }
         }
 

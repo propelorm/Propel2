@@ -46,19 +46,16 @@ class PropertySetterMethods extends BuildComponent
 
         $varType = $field->getPhpType();
 
-        switch (strtoupper($field->getType())) {
-            case PropelTypes::DATE:
-            case PropelTypes::TIME:
-                $dateTimeClass = $this->getBuilder()->getBuildProperty('dateTimeClass');
-                if (!$dateTimeClass) {
-                    $dateTimeClass = '\DateTime';
-                }
-                $varType = 'integer|' . $dateTimeClass;
+        if ($field->isTemporalType()) {
+            $dateTimeClass = $this->getBuilder()->getBuildProperty('dateTimeClass');
+            if (!$dateTimeClass) {
+                $dateTimeClass = '\DateTime';
+            }
+            $varType = 'integer|' . $dateTimeClass;
 
-                $body = "\$this->$varName = \\Propel\\Runtime\\Util\\PropelDateTime::newInstance(\$$varName, null, '$dateTimeClass');";
-                break;
-            default:
-                $body = "\$this->$varName = \$$varName;";
+            $body = "\$this->$varName = \\Propel\\Runtime\\Util\\PropelDateTime::newInstance(\$$varName, null, '$dateTimeClass');";
+        } else {
+            $body = "\$this->$varName = \$$varName;";
         }
 
         $methodName = 'set' . ucfirst($field->getName());

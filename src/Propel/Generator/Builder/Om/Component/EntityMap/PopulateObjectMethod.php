@@ -51,9 +51,8 @@ if (EntityMap::TYPE_NUM === \$indexType) {
         foreach ($fieldNames as $idx => $fieldName) {
             $propName = $fieldNames[$idx];
             $name = $fieldNames[$idx];
-            $type = $fieldTypes[$idx];
             $body .= "
-    \$writer(\$obj, '$propName', \$originalValues['$fieldName'] = \$this->prepareWritingValue('$type', \$row[\$offset + $idx], '$name'));";
+    \$writer(\$obj, '$propName', \$originalValues['$fieldName'] = \$this->prepareWritingValue(\$row[\$offset + $idx], '$name'));";
         }
 
         $body .= "
@@ -63,9 +62,8 @@ if (EntityMap::TYPE_NUM === \$indexType) {
         foreach ($camelNames as $idx => $fieldName) {
             $propName = $fieldNames[$idx];
             $name = $fieldNames[$idx];
-            $type = $fieldTypes[$idx];
             $body .= "
-    \$writer(\$obj, '$propName', \$originalValues['$fieldName'] = \$this->prepareWritingValue('$type', \$row['$fieldName'], '$name'));";
+    \$writer(\$obj, '$propName', \$originalValues['$fieldName'] = \$this->prepareWritingValue(\$row['$fieldName'], '$name'));";
         }
 
         $body .= "
@@ -75,10 +73,9 @@ if (EntityMap::TYPE_NUM === \$indexType) {
         foreach ($fieldNames as $idx => $fieldName) {
             $propName = $fieldNames[$idx];
             $name = $fieldNames[$idx];
-            $type = $fieldTypes[$idx];
             $fieldName = $columnNames[$idx];
             $body .= "
-    \$writer(\$obj, '$propName', \$originalValues['$fieldName'] = \$this->prepareWritingValue('$type', \$row['$fieldName'], '$name'));";
+    \$writer(\$obj, '$propName', \$originalValues['$fieldName'] = \$this->prepareWritingValue(\$row['$fieldName'], '$name'));";
         }
 
         $body .= "
@@ -88,10 +85,9 @@ if (EntityMap::TYPE_NUM === \$indexType) {
         foreach ($colNames as $idx => $fieldName) {
             $propName = $fieldNames[$idx];
             $name = $fieldNames[$idx];
-            $type = $fieldTypes[$idx];
             $fieldName = $colNames[$idx];
             $body .= "
-    \$writer(\$obj, '$propName', \$originalValues['$fieldName'] = \$this->prepareWritingValue('$type', \$row['$fieldName'], '$name'));";
+    \$writer(\$obj, '$propName', \$originalValues['$fieldName'] = \$this->prepareWritingValue(\$row['$fieldName'], '$name'));";
         }
 
         $body .= "
@@ -99,7 +95,7 @@ if (EntityMap::TYPE_NUM === \$indexType) {
 ";
 
         $body .= "
-\$this->getRepository()->setOriginalValue(spl_object_hash(\$obj), \$originalValues);
+\$this->getRepository()->setLastKnownValues(\$obj, \$originalValues);
 \$offset = \$offset + $fieldCount;
 return \$obj;
 ";

@@ -22,12 +22,13 @@ class ProxyBuilder extends AbstractBuilder
      */
     public function getFullClassName($fullClassName = 'Base', $classPrefix = '')
     {
-        return parent::getFullClassName($fullClassName, $classPrefix).'Proxy';
+        return parent::getFullClassName('Base', '').'Proxy';
     }
 
     public function buildClass()
     {
-        $this->getDefinition()->setAbstract(true);
+        $parentClass = $this->getObjectBuilder()->getFullClassName();
+        $this->getDefinition()->setParentClassName('\\' . $parentClass);
         $this->getDefinition()->addInterface('\\Propel\\Runtime\\EntityProxyInterface');
         $this->applyComponent('Proxy\\Constructor');
     }

@@ -34,7 +34,7 @@ abstract class Repository
     /**
      * @var array[]
      */
-    protected $originalValues = [];
+    protected $lastKnownValues = [];
 
     /**
      * @var Configuration
@@ -105,10 +105,14 @@ abstract class Repository
     protected function postSave(SaveEvent $event)
     {
         foreach ($event->getEntitiesToInsert() as $entity) {
+            var_dump('inserted ' . spl_object_hash($entity) . ' => ' . get_class($entity));
             $this->committedIds[spl_object_hash($entity)] = true;
+            $this->snapshot($entity);
         }
         foreach ($event->getEntitiesToUpdate() as $entity) {
+            var_dump('updated ' . spl_object_hash($entity) . ' => ' . get_class($entity));
             $this->committedIds[spl_object_hash($entity)] = true;
+            $this->snapshot($entity);
         }
     }
 
@@ -237,13 +241,52 @@ abstract class Repository
     {
     }
 
-    public function setOriginalValue($id, $values)
+    /**
+     * @param object|string $id
+     * @param array $values
+     */
+    public function setLastKnownValues($id, $values)
     {
-        $this->originalValues[$id] = $values;
+        if (is_object($id)) {
+            $id = spl_object_hash($id);
+        }
+        $this->lastKnownValues[$id] = $values;
     }
 
-    public function getOriginalValues($id)
+    /**
+     * Reads all values of $entities and place it in lastKnownValues.
+     *
+     * @param object $entity
+     */
+    public function snapshot($entity)
     {
-        return $this->originalValues[$id];
+        $values = $this->getEntityMap()->getSnapshot($entity);
+        $this->lastKnownValues[spl_object_hash($entity)] = $values;
+    }
+
+    /**
+     * @param object|string $id
+     *
+     * @return array
+     */
+    public function getLastKnownValues($id)
+    {
+        if (is_object($id)) {
+            $id = spl_object_hash($id);
+        }
+        return $this->lastKnownValues[$id];
+    }
+
+    /**
+     * @param object|string $id
+     *
+     * @return bool
+     */
+    public function hasKnownValues($id)
+    {
+        if (is_object($id)) {
+            $id = spl_object_hash($id);
+        }
+        return isset($this->lastKnownValues[$id]);
     }
 }

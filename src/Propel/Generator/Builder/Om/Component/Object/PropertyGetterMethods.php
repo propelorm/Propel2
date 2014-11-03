@@ -4,6 +4,7 @@ namespace Propel\Generator\Builder\Om\Component\Object;
 
 use Propel\Generator\Builder\Om\Component\BuildComponent;
 use Propel\Generator\Model\Field;
+use Propel\Generator\Model\PropelTypes;
 
 /**
  * Adds all getter methods for all entity fields. Excludes fields marked as implementationDetail.
@@ -36,12 +37,24 @@ class PropertyGetterMethods extends BuildComponent
     {
         $varName = $field->getName();
         $visibility = $field->getAccessorVisibility();
-
-        $body = "
-        return \$this->$varName;";
-
         $methodName = 'get' . ucfirst($field->getName());
-        $this->addMethod($methodName, $visibility)
+        $method = $this->addMethod($methodName, $visibility);
+
+        $body = '';
+
+        if ($field->isTemporalType()) {
+                $body .= "
+if (\$format && \$this->{$varName}) {
+    return \$this->{$varName}->format(\$format);
+}";
+            $method->addSimpleParameter('format', 'string');
+        }
+
+
+        $body .= "
+return \$this->$varName;";
+
+        $method
             ->setType($field->getPhpType())
             ->setDescription("Returns the value of $varName.")
             ->setBody($body);

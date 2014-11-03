@@ -22,7 +22,7 @@ class GetAutoIncrementFieldNamesMethod extends BuildComponent
 
         $fields = var_export($fields, true);
         $body = "
-        return $fields;
+return $fields;
         ";
 
         $this->addMethod('getAutoIncrementFieldNames')

@@ -63,7 +63,7 @@ class ModelManager extends AbstractManager
                         // -----------------------------------------------------------------------------------------
 
                         // these files are always created / overwrite any existing files
-                        foreach (array('activerecordtrait', 'object', 'entitymap', 'query', 'repository') as $target) {
+                        foreach (array('activerecordtrait', 'proxy', 'object', 'entitymap', 'query', 'repository') as $target) {
                             $builder = $generatorConfig->getConfiguredBuilder($entity, $target);
                             $nbWrittenFiles += $this->doBuild($builder);
                         }
