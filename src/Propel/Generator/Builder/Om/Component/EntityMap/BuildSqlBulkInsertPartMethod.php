@@ -62,6 +62,14 @@ if (!(\$value instanceof $dateTimeClass)) {
 
             $body .= $this->getTypeCasting($field);
 
+            if ($field->isLobType()) {
+                $body .= "
+if (is_resource(\$value)) {
+    \$value = stream_get_contents(\$value);
+}
+";
+            }
+
             $body .= "
 \$params[] = \$value;";
         }

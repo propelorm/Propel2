@@ -20,18 +20,21 @@ class PopulateObjectMethod extends BuildComponent
 
     public function process()
     {
-        $proxyClass = $this->getProxyClassName();
         $this->getDefinition()->declareUse('Propel\Runtime\Map\EntityMap');
 
         $body = "
 \$writer = \$this->getPropWriter();
-\$obj = new $proxyClass;
+\$obj = \$this->getRepository()->createProxy();
 \$originalValues = [];
 ";
 
         $colNames = $columnNames = $camelNames = $fieldNames = $fieldTypes = [];
         $fieldCount = 0;
         foreach ($this->getEntity()->getFields() as $field) {
+            if ($field->isLazyLoad()) {
+                continue;
+            }
+
             $fieldCount++;
 
             if ($field->isImplementationDetail()) {

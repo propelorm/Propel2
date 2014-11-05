@@ -22,6 +22,7 @@ class BuildChangeSetMethod extends BuildComponent
 $changes = [];
 $changed = false;
 $reader = $this->getEntityMap()->getPropReader();
+$isset = $this->getEntityMap()->getPropIsset();
 $id = spl_object_hash($entity);
 if (!$this->hasKnownValues($id)) {
     throw new \Propel\Runtime\Exception\RuntimeException("Can not compute a change set on a unknown entity." . $id);
@@ -32,9 +33,40 @@ $originValues = $this->getLastKnownValues($id);
         foreach ($this->getEntity()->getFields() as $field){
             if ($field->isImplementationDetail()) continue;
             $fieldName = $field->getName();
+
             $body .= "
-if (\$originValues['$fieldName'] !== (\$v = \$reader(\$entity, '$fieldName'))) {
-    \$changes['$fieldName'] = \$this->getEntityMap()->prepareReadingValue(\$v, '$fieldName');
+\$different = null;
+";
+
+            if ($field->isLazyLoad()) {
+                //if not set in originValues and not loaded in $entity then there's no need to compare those and
+                //execute with it extra queries
+                $lazyLoaded = '_' . $fieldName . '_loaded';
+
+                $body .= "
+\$lazyLastLoaded = isset(\$originValues['$fieldName']);
+\$lazyNowLoaded = \$isset(\$entity, '$lazyLoaded');
+if (false === \$lazyLastLoaded && false === \$lazyNowLoaded) {
+    //both, initial population and lifetime value have not been set,
+    //so there can't be any difference.
+    \$different = false;
+}
+";
+            }
+
+
+            $body .= "
+if (null === \$different) {
+    \$currentValue = \$this->getEntityMap()->prepareReadingValue(\$reader(\$entity, '$fieldName'), '$fieldName');
+    if (!isset(\$originValues['$fieldName'])) {
+        \$lastValue = null;
+    } else {
+        \$lastValue = \$originValues['$fieldName'];
+    }
+    \$different = \$lastValue !== \$currentValue;
+}
+if (\$different) {
+    \$changes['$fieldName'] = \$currentValue;
     \$changed = true;
 }
 ";

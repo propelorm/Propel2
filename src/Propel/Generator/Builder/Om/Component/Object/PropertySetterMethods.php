@@ -45,6 +45,7 @@ class PropertySetterMethods extends BuildComponent
         $className = $this->getObjectClassName();
 
         $varType = $field->getPhpType();
+        $body = '';
 
         if ($field->isTemporalType()) {
             $dateTimeClass = $this->getBuilder()->getBuildProperty('dateTimeClass');
@@ -53,10 +54,22 @@ class PropertySetterMethods extends BuildComponent
             }
             $varType = 'integer|' . $dateTimeClass;
 
-            $body = "\$this->$varName = \\Propel\\Runtime\\Util\\PropelDateTime::newInstance(\$$varName, null, '$dateTimeClass');";
+            $body = "\$$varName = \\Propel\\Runtime\\Util\\PropelDateTime::newInstance(\$$varName, null, '$dateTimeClass');";
+        } else if ($field->isLobType()) {
+            $body = "
+if (!is_resource(\$$varName) && \$$varName !== null) {
+    //convert string to resource
+    \$stream = fopen('php://memory', 'r+');
+    fwrite(\$stream, \$$varName);
+    rewind(\$stream);
+    \$$varName = \$stream;
+}";
         } else {
-            $body = "\$this->$varName = \$$varName;";
         }
+
+        $body .= "
+\$this->$varName = \$$varName;
+return \$this;";
 
         $methodName = 'set' . ucfirst($field->getName());
 

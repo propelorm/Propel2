@@ -31,5 +31,7 @@ class ProxyBuilder extends AbstractBuilder
         $this->getDefinition()->setParentClassName('\\' . $parentClass);
         $this->getDefinition()->addInterface('\\Propel\\Runtime\\EntityProxyInterface');
         $this->applyComponent('Proxy\\Constructor');
+        $this->applyComponent('Proxy\\LazyLoadedStateProperties');
+        $this->applyComponent('Proxy\\MagicGetterMethod');
     }
 }

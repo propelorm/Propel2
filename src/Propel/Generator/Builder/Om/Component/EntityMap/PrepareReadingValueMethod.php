@@ -10,6 +10,12 @@ use Propel\Generator\Model\Field;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Platform\MysqlPlatform;
 
+/**
+ *
+ * Adds prepareWritingValue method to be used for data converting from php object -> database.
+ *
+ * @author Marc J. Schmidt <marc@marcjschmidt.de>
+ */
 class PrepareReadingValueMethod extends BuildComponent
 {
     public function process()
@@ -50,6 +56,14 @@ return $value;
             $body = "
     if (\$value instanceof \\DateTime) {
         \$value = \$value->format('$format');
+    }
+";
+        } else if ($field->isLobType()) {
+            $body = "
+    if (is_resource(\$value)) {
+        \$value = stream_get_contents(\$value);
+    } else {
+        \$value = (string) \$value;
     }
 ";
         }

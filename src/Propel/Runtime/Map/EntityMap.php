@@ -180,6 +180,7 @@ abstract class EntityMap
     protected $classWriter = [];
     protected $propReader;
     protected $propWriter;
+    protected $propIsset;
 
     /**
      * Construct a new EntityMap.
@@ -229,6 +230,7 @@ abstract class EntityMap
     abstract public function getSnapshot($entity);
     abstract public function getPropWriter();
     abstract public function getPropReader();
+    abstract public function getPropIsset();
 
     abstract public function persistDependencies(Session $session, $entity, $deep = false);
 
@@ -452,6 +454,28 @@ abstract class EntityMap
         $this->classReader[$className] = \Closure::bind(
             function ($object, $prop) {
                 return $object->$prop;
+            },
+            null,
+            $className
+        );
+
+        return $this->classReader[$className];
+    }
+
+    /**
+     * @param string $className
+     *
+     * @return \Closure
+     */
+    public function getClassPropIsset($className)
+    {
+        if (isset($this->classReader[$className])) {
+            return $this->classReader[$className];
+        }
+
+        $this->classReader[$className] = \Closure::bind(
+            function ($object, $prop) {
+                return isset($object->$prop);
             },
             null,
             $className

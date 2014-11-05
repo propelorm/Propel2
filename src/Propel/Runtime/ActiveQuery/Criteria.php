@@ -806,7 +806,7 @@ class Criteria
     public function add($p1, $value = null, $comparison = null)
     {
         if ($p1 instanceof AbstractCriterion) {
-            $this->map[$p1->getEntity() . '.' . $p1->getField()] = $p1;
+            $this->map[$p1->getEntityName() . '.' . $p1->getField()] = $p1;
         } else {
             $this->map[$p1] = $this->getCriterionForCondition($p1, $value, $comparison);
         }
@@ -2624,6 +2624,7 @@ class Criteria
         $sql = $this->createSelectSql($params);
         try {
             $stmt = $con->prepare($sql);
+            echo "sql: $sql\n";
             $adapter->bindValues($stmt, $params, $dbMap);
             $stmt->execute();
         } catch (\Exception $e) {

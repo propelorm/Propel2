@@ -1216,7 +1216,7 @@ class ModelCriteria extends BaseModelCriteria
         // We need to set the primary entity name, since in the case that there are no WHERE fields
         // it will be impossible for the createSelectSql() method to determine which
         // entities go into the FROM clause.
-        $criteria->setPrimaryEntityName(constant($this->entityMap . '::TABLE_NAME'));
+        $criteria->setPrimaryEntityName($this->getEntityMap()->getFullClassName());
 
         $dataFetcher = $criteria->doCount();
         if ($row = $dataFetcher->fetch()) {
@@ -1363,7 +1363,7 @@ class ModelCriteria extends BaseModelCriteria
             throw new RuntimeException('Delete does not support join');
         }
 
-        $this->setPrimaryEntityName(constant($this->entityMap.'::TABLE_NAME'));
+        $this->setPrimaryEntityName($this->getEntityMap()->getFullClassName());
         $entityName = $this->getPrimaryEntityName();
 
         $affectedRows = 0; // initialize this in case the next loop has no iterations.
@@ -1441,7 +1441,7 @@ class ModelCriteria extends BaseModelCriteria
 
         $criteria = $this->isKeepQuery() ? clone $this : $this;
         if ($this->entityMap) {
-            $criteria->setPrimaryEntityName(constant($this->entityMap.'::TABLE_NAME'));
+            $criteria->setPrimaryEntityName($this->getEntityMap()->getFullClassName());
         }
 
         return $con->transaction(function () use ($con, $values, $criteria, $forceIndividualSaves) {
