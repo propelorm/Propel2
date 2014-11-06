@@ -2684,6 +2684,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     protected function addImportFrom(&$script)
     {
+        $defaultKeyType = $this->getDefaultKeyType();
         $script .= "
      /**
      * Populate the current object from a string, using a given parser format
@@ -2692,19 +2693,25 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * \$book->importFrom('JSON', '{\"Id\":9012,\"Title\":\"Don Juan\",\"ISBN\":\"0140422161\",\"Price\":12.99,\"PublisherId\":1234,\"AuthorId\":5678}');
      * </code>
      *
+     * You can specify the key type of the array by additionally passing one
+     * of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME,
+     * TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
+     * The default key type is the column's TableMap::$defaultKeyType.
+     *
      * @param mixed \$parser A AbstractParser instance,
      *                       or a format name ('XML', 'YAML', 'JSON', 'CSV')
      * @param string \$data The source data to import from
+     * @param string \$keyType The type of keys the array uses.
      *
      * @return \$this|".$this->getObjectClassName(true)." The current object, for fluid interface
      */
-    public function importFrom(\$parser, \$data)
+    public function importFrom(\$parser, \$data, \$keyType = TableMap::$defaultKeyType)
     {
         if (!\$parser instanceof AbstractParser) {
             \$parser = AbstractParser::getParser(\$parser);
         }
 
-        \$this->fromArray(\$parser->toArray(\$data), TableMap::TYPE_PHPNAME);
+        \$this->fromArray(\$parser->toArray(\$data), \$keyType);
 
         return \$this;
     }
