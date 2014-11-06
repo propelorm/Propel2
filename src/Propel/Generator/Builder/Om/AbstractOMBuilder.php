@@ -629,7 +629,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         $names = [];
 
         if ($plural) {
-            if ($pks = $crossFKs->getUnclassifiedPrimaryKeys()) {
+            if ($crossFKs->getUnclassifiedPrimaryKeys()) {
                 //we have a non fk as pk as well, so we need to make pluralisation on our own and can't
                 //rely on getFKPhpNameAffix's pluralisation
                 foreach ($crossFKs->getCrossForeignKeys() as $fk) {
