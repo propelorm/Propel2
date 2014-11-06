@@ -25,7 +25,7 @@ Propel2 is only supported on PHP 5.4 and up.
 
 ## Installation ##
 
-Read the [Propel documentation](http://www.propelorm.org/).
+Read the [Propel documentation](http://propelorm.org/documentation/01-installation.html).
 
 
 ## Contribute ##
