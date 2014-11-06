@@ -36,7 +36,7 @@ class SqlBuildCommand extends AbstractCommand
             //->addOption('encoding',     null, InputOption::VALUE_REQUIRED,  'The encoding to use for the database')
             ->addOption('table-prefix', null, InputOption::VALUE_REQUIRED,  'Add a prefix to all the table names in the database', '')
             ->setName('sql:build')
-            ->setAliases(array('sql'))
+            ->setAliases(array('build-sql'))
             ->setDescription('Build SQL files')
         ;
     }
