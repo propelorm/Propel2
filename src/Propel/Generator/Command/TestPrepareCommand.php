@@ -134,7 +134,6 @@ class TestPrepareCommand extends AbstractCommand
         if (is_file('propel.yaml')) {
             $in = new ArrayInput(array(
                 'command'       => 'config:convert',
-                '--input-dir'   => '.',
                 '--output-dir'  => './build/conf',
                 '--output-file' => sprintf('%s-conf.php', $connections[0]), // the first connection is the main one
             ));
@@ -146,7 +145,7 @@ class TestPrepareCommand extends AbstractCommand
         if (0 < count((array) $this->getSchemas('.'))) {
             $in = new ArrayInput(array(
                 'command'      => 'model:build',
-                '--input-dir'  => '.',
+                '--schema-dir'  => '.',
                 '--output-dir' => 'build/classes/',
                 '--platform'   => ucfirst($input->getOption('vendor')) . 'Platform',
                 '--verbose'    => $input->getOption('verbose'),
@@ -163,7 +162,7 @@ class TestPrepareCommand extends AbstractCommand
         if (0 < count($this->getSchemas('.'))) {
             $in = new ArrayInput(array(
                 'command'      => 'sql:build',
-                '--input-dir'  => '.',
+                '--schema-dir'  => '.',
                 '--output-dir' => 'build/sql/',
                 '--platform'   => ucfirst($input->getOption('vendor')) . 'Platform',
                 '--verbose'    => $input->getOption('verbose'),
@@ -190,7 +189,6 @@ class TestPrepareCommand extends AbstractCommand
 
             $in = new ArrayInput(array(
                 'command'      => 'sql:insert',
-                '--input-dir'  => '.',
                 '--sql-dir'    => 'build/sql/',
                 '--connection' => $conParams,
                 '--verbose'    => $input->getOption('verbose'),

@@ -30,6 +30,7 @@ class ModelBuildCommand extends AbstractCommand
 
         $this
             ->addOption('mysql-engine', null, InputOption::VALUE_REQUIRED,  'MySQL engine (MyISAM, InnoDB, ...)')
+            ->addOption('schema-dir', null, InputOption::VALUE_REQUIRED,  'The directory where the schema files are placed')
             ->addOption('output-dir', null, InputOption::VALUE_REQUIRED, 'The output directory')
             ->addOption('object-class', null, InputOption::VALUE_REQUIRED, 'The object class generator name')
             ->addOption('object-stub-class', null, InputOption::VALUE_REQUIRED, 'The object stub class generator name')
@@ -62,10 +63,8 @@ class ModelBuildCommand extends AbstractCommand
         foreach ($inputOptions as $key => $option) {
             if (null !== $option) {
                 switch ($key) {
-                    case 'input-dir':
-                        if ('.' !== $option) {
-                            $configOptions['propel']['paths']['schemaDir'] = $option;
-                        }
+                    case 'schema-dir':
+                        $configOptions['propel']['paths']['schemaDir'] = $option;
                         break;
                     case 'output-dir':
                         $configOptions['propel']['paths']['phpDir'] = $option;

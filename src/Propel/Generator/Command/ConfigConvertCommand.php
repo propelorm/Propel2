@@ -18,7 +18,7 @@ use Propel\Generator\Config\ArrayToPhpConverter;
 
 class ConfigConvertCommand extends AbstractCommand
 {
-    const DEFAULT_INPUT_DIRECTORY   = '.';
+    const DEFAULT_CONFIG_DIRECTORY   = '.';
     const DEFAULT_OUTPUT_FILE       = 'config.php';
 
     /**
@@ -27,7 +27,7 @@ class ConfigConvertCommand extends AbstractCommand
     protected function configure()
     {
         $this
-            ->addOption('input-dir',   null, InputOption::VALUE_REQUIRED,  'The input directory',   self::DEFAULT_INPUT_DIRECTORY)
+            ->addOption('config-dir',   null, InputOption::VALUE_REQUIRED,  'The directory where the configuration file is placed.',   self::DEFAULT_CONFIG_DIRECTORY)
             ->addOption('output-dir',  null, InputOption::VALUE_REQUIRED,  'The output directory')
             ->addOption('output-file', null, InputOption::VALUE_REQUIRED,  'The output file',       self::DEFAULT_OUTPUT_FILE)
             ->setName('config:convert')
@@ -41,7 +41,7 @@ class ConfigConvertCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $configManager = new ConfigurationManager($input->getOption('input-dir'));
+        $configManager = new ConfigurationManager($input->getOption('config-dir'));
 
         if (!$input->getOption('output-dir')) {
             $input->setOption('output-dir', $configManager->getSection('paths')['phpConfDir']);

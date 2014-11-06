@@ -34,6 +34,7 @@ class MigrationDiffCommand extends AbstractCommand
         parent::configure();
 
         $this
+            ->addOption('schema-dir',         null, InputOption::VALUE_REQUIRED,  'The directory where the schema files are placed')
             ->addOption('output-dir',         null, InputOption::VALUE_REQUIRED,  'The output directory where the migration files are located')
             ->addOption('migration-table',    null, InputOption::VALUE_REQUIRED,  'Migration table name', null)
             ->addOption('connection',         null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Connection to use. Example: \'bookstore=mysql:host=127.0.0.1;dbname=test;user=root;password=foobar\' where "bookstore" is your propel database name (used in your schema.xml)', array())
@@ -70,8 +71,8 @@ class MigrationDiffCommand extends AbstractCommand
             $configOptions['propel']['migrations']['parserClass'] = $this->getReverseClass($input);
         }
 
-        if ($input->getOption('input-dir') !== '.') {
-            $configOptions['propel']['paths']['schemaDir'] = $input->getOption('input-dir');
+        if ($this->hasInputOption('schema-dir', $input)) {
+            $configOptions['propel']['paths']['schemaDir'] = $input->getOption('schema-dir');
         }
 
         if ($this->hasInputOption('output-dir', $input)) {
