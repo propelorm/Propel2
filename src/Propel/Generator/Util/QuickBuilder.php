@@ -351,7 +351,13 @@ class QuickBuilder
         } else {
             $tempFile = $dir . join('_', $allCodeName).'.php';
             file_put_contents($tempFile, "<?php\n" . $allCode);
-            include($tempFile);
+            // check for syntax errors before inclusion
+            $checkSyntax = exec(PHP_BINARY . " -l $tempFile 2>&1");
+            if (strstr($checkSyntax, 'No syntax errors detected')) {
+                include($tempFile);
+            } else {
+                throw new BuildException('Syntax errors found in generated file' . PHP_EOL . $checkSyntax);
+            }
         }
     }
 
