@@ -318,10 +318,10 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
 
             $script .= "
     /** A key representing a particular subclass */
-    const CLASSKEY_".strtoupper($child->getKey())." = '" . $child->getKey() . "';
+    const CLASSKEY_".$child->getConstantSuffix()." = '" . $child->getKey() . "';
 ";
 
-            if (strtoupper($child->getClassName()) != strtoupper($child->getKey())) {
+            if (strtoupper($child->getClassName()) != $child->getConstantSuffix()) {
                 $script .= "
     /** A key representing a particular subclass */
     const CLASSKEY_".strtoupper($child->getClassname())." = '" . $fqcn . "';
@@ -330,7 +330,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
 
             $script .= "
     /** A class that can be returned by this tableMap. */
-    const CLASSNAME_".strtoupper($child->getKey())." = '". $fqcn . "';
+    const CLASSNAME_".$child->getConstantSuffix()." = '". $fqcn . "';
 ";
         }
     }
@@ -935,8 +935,8 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
 ";
             foreach ($col->getChildren() as $child) {
                 $script .= "
-                case {$this->getTableMapClassName()}::CLASSKEY_".strtoupper($child->getKey()).":
-                    \$omClass = {$this->getTableMapClassName()}::CLASSNAME_".strtoupper($child->getKey()).";
+                case {$this->getTableMapClassName()}::CLASSKEY_".$child->getConstantSuffix().":
+                    \$omClass = {$this->getTableMapClassName()}::CLASSNAME_".$child->getConstantSuffix().";
                     break;
 ";
             } /* foreach */
