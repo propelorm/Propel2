@@ -351,7 +351,10 @@ class QuickBuilder
         } else {
             $tempFile = $dir . join('_', $allCodeName).'.php';
             file_put_contents($tempFile, "<?php\n" . $allCode);
-            include($tempFile);
+            $output = exec("/usr/local/bin/php -l $tempFile 2>&1");
+            if (!preg_match('/Errors parsing/', $output)) {
+                include($tempFile);
+            }
         }
     }
 
