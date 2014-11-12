@@ -10,7 +10,6 @@
 
 namespace Propel\Common\Config\Loader;
 
-use Propel\Common\Config\Exception\InputOutputException;
 use Propel\Common\Config\Exception\InvalidArgumentException;
 use Propel\Common\Config\Exception\IniParseException;
 
@@ -41,14 +40,7 @@ class IniFileLoader extends FileLoader
      */
     public function supports($resource, $type = null)
     {
-        $info = pathinfo($resource);
-        $extension = $info['extension'];
-
-        if ('dist' === $extension) {
-            $extension = pathinfo($info['filename'], PATHINFO_EXTENSION);
-        }
-
-        return is_string($resource) && ('ini' === $extension || 'properties' === $extension);
+        return $this->checkSupports(array('ini', 'properties'), $resource);
     }
 
     /**
@@ -58,19 +50,15 @@ class IniFileLoader extends FileLoader
      * @param  string $type The resource type
      * @return array  The configuration array
      *
-     * @throws \InvalidArgumentException                               if configuration file not found
-     * @throws Propel\Common\Config\Exception\InvalidArgumentException When ini file is not valid
-     * @throws Propel\Common\Config\Exception\InputOutputException     if configuration file is not readable
+     * @return array
+     *
+     * @throws \InvalidArgumentException                                if configuration file not found
+     * @throws \Propel\Common\Config\Exception\InvalidArgumentException When ini file is not valid
+     * @throws \Propel\Common\Config\Exception\InputOutputException     if configuration file is not readable
      */
     public function load($file, $type = null)
     {
-        $path = $this->locator->locate($file);
-
-        if (!is_readable($path)) {
-            throw new InputOutputException("You don't have permissions to access configuration file $file.");
-        }
-
-        $ini = parse_ini_file($path, true);
+        $ini = parse_ini_file($this->getPath($file), true);
 
         if (false === $ini) {
             throw new InvalidArgumentException("The configuration file '$file' has invalid content.");
@@ -149,11 +137,11 @@ class IniFileLoader extends FileLoader
     /**
      * Process a key.
      *
-     * @param  string                                           $key
-     * @param  string                                           $value
-     * @param  array                                            $config
+     * @param string $key
+     * @param string $value
+     * @param array  $config
      *
-     * @throws Propel\Common\Config\Exception\IniParseException
+     * @throws \Propel\Common\Config\Exception\IniParseException
      */
     private function parseKey($key, $value, array &$config)
     {

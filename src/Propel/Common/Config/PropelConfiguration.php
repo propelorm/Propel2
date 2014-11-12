@@ -68,10 +68,10 @@ class PropelConfiguration implements ConfigurationInterface
                         ->scalarNode('projectDir')->defaultValue(getcwd())->end()
                         ->scalarNode('schemaDir')->defaultValue(getcwd())->end()
                         ->scalarNode('outputDir')->defaultValue(getcwd())->end()
-                        ->scalarNode('phpDir')->defaultValue(getcwd() . '/generated-classes')->end()
-                        ->scalarNode('phpConfDir')->defaultValue(getcwd() . '/generated-conf')->end()
-                        ->scalarNode('sqlDir')->defaultValue(getcwd() . '/generated-sql')->end()
-                        ->scalarNode('migrationDir')->defaultValue(getcwd() . '/generated-migrations')->end()
+                        ->scalarNode('phpDir')->defaultValue(getcwd().'/generated-classes')->end()
+                        ->scalarNode('phpConfDir')->defaultValue(getcwd().'/generated-conf')->end()
+                        ->scalarNode('sqlDir')->defaultValue(getcwd().'/generated-sql')->end()
+                        ->scalarNode('migrationDir')->defaultValue(getcwd().'/generated-migrations')->end()
                         ->scalarNode('composerDir')->defaultNull()->end()
                     ->end()
                 ->end()
@@ -91,7 +91,7 @@ class PropelConfiguration implements ConfigurationInterface
                             ->isRequired()
                             ->validate()
                             ->always()
-                                ->then(function($connections) {
+                                ->then(function ($connections) {
                                     foreach ($connections as $name => $connection) {
                                         if (strpos($name, '.') !== false) {
                                             throw new \InvalidArgumentException('Dots are not allowed in connection names');

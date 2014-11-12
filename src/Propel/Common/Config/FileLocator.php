@@ -33,7 +33,7 @@ class FileLocator extends BaseFileLocator
             $configDirectories = array(
                 getcwd(),
                 'config',
-                'conf'
+                'conf',
             );
         }
 

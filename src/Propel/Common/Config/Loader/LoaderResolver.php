@@ -30,7 +30,7 @@ class LoaderResolver extends BaseLoaderResolver
                 new PhpFileLoader(),
                 new XmlFileLoader(),
                 new YamlFileLoader(),
-                new JsonFileLoader()
+                new JsonFileLoader(),
             );
         }
 
