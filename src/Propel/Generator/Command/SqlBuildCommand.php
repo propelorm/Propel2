@@ -35,7 +35,7 @@ class SqlBuildCommand extends AbstractCommand
             ->addOption('connection',   null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Connection to use', array())
             ->addOption('schema-name',  null, InputOption::VALUE_REQUIRED,  'The schema name for RDBMS supporting them', '')
             //->addOption('encoding',     null, InputOption::VALUE_REQUIRED,  'The encoding to use for the database')
-            ->addOption('table-prefix', null, InputOption::VALUE_REQUIRED,  'Add a prefix to all the table names in the database', '')
+            ->addOption('table-prefix', null, InputOption::VALUE_REQUIRED,  'Add a prefix to all the table names in the database')
             ->setName('sql:build')
             ->setAliases(array('build-sql'))
             ->setDescription('Build SQL files')
