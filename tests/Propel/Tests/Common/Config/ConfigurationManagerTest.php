@@ -755,6 +755,34 @@ EOF;
         $this->assertEquals($expectedGenerator, $manager->getConnectionParametersArray('generator'));
         $this->assertNull($manager->getConnectionParametersArray('bad_section'));
     }
+
+    public function testSetConnectionsIfNotDefined()
+    {
+        $yamlConf = <<<EOF
+propel:
+  database:
+      connections:
+          mysource:
+              adapter: mysql
+              classname: Propel\Runtime\Connection\DebugPDO
+              dsn: mysql:host=localhost;dbname=mydb
+              user: root
+              password:
+          yoursource:
+              adapter: mysql
+              classname: Propel\Runtime\Connection\DebugPDO
+              dsn: mysql:host=localhost;dbname=yourdb
+              user: root
+              password:
+EOF;
+        $this->getFilesystem()->dumpFile('propel.yaml', $yamlConf);
+        $manager = new ConfigurationManager();
+
+        $this->assertEquals('mysource', $manager->getSection('generator')['defaultConnection']);
+        $this->assertEquals('mysource', $manager->getSection('runtime')['defaultConnection']);
+        $this->assertEquals(array('mysource', 'yoursource'), $manager->getSection('generator')['connections']);
+        $this->assertEquals(array('mysource', 'yoursource'), $manager->getSection('runtime')['connections']);
+    }
 }
 
 class TestableConfigurationManager extends ConfigurationManager

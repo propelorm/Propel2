@@ -238,6 +238,9 @@ class ConfigurationManager
             }
 
             if (!isset($this->config[$section]['defaultConnection'])) {
+                //The previous `array_keys` instruction has moved the pointer to the last element of the array, so the last
+                //connection is set as default, instead of the first one. To avoid this, we reset the array.
+                reset($this->config['database']['connections']);
                 $this->config[$section]['defaultConnection'] = key($this->config['database']['connections']);
             }
 
