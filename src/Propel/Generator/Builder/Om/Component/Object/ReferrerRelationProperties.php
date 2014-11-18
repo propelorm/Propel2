@@ -40,12 +40,24 @@ class ReferrerRelationProperties extends BuildComponent
             $this->addProperty($this->getPKRefRelationVarName($refRelation))
                 ->setType($className)
                 ->setTypeDescription("one-to-one related $className object");
+
+            if ($refRelation->getEntity()->isActiveRecord()) {
+                $this->addProperty($this->getPKRefRelationVarName($refRelation).'Partial')
+                    ->setType('boolean');
+            }
+
         } else {
             $collection = $this->getDefinition()->declareUse('Propel\Runtime\Collection\Collection');
 
             $this->addProperty($this->getRefRelationCollVarName($refRelation))
                 ->setType("$collection|{$className}[]")
                 ->setTypeDescription("Collection to store aggregation of $className objects");
+
+
+            if ($refRelation->getEntity()->isActiveRecord()) {
+                $this->addProperty($this->getRefRelationCollVarName($refRelation).'Partial')
+                    ->setType('boolean');
+            }
         }
     }
 } 

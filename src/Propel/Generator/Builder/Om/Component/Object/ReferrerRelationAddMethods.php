@@ -9,7 +9,7 @@ use Propel\Generator\Builder\Om\Component\RelationTrait;
 use Propel\Generator\Model\Relation;
 
 /**
- * Adds all referrer relations as class properties.
+ * Adds all referrer add methods.
  *
  * @author Marc J. Schmidt <marc@marcjschmidt.de>
  */

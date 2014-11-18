@@ -39,12 +39,19 @@ class ObjectBuilder extends AbstractBuilder
         if ($this->isAddGenericAccessors()) {
             $this->applyComponent('Object\\PropertyGetterMethods');
             $this->applyComponent('Object\\RelationGetterMethods');
+            $this->applyComponent('Object\\CrossRelationGetterMethods');
+
+            if ($this->getEntity()->isActiveRecord()) {
+                $this->applyComponent('Object\\CrossRelationCountMethods');
+                $this->applyComponent('Object\\ReferrerRelationCountMethods');
+            }
         }
 
         if ($this->isAddGenericMutators()) {
             $this->applyComponent('Object\\PropertySetterMethods');
             $this->applyComponent('Object\\RelationSetterMethods');
             $this->applyComponent('Object\\ReferrerRelationAddMethods');
+            $this->applyComponent('Object\\CrossRelationAdderMethods');
         }
     }
 }

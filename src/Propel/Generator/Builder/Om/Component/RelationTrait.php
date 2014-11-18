@@ -145,7 +145,7 @@ trait RelationTrait
     {
         $pluralizer = $this->getBuilder()->getPluralizer();
         if ($relation->getRefField()) {
-            return $plural ? $pluralizer->getPluralForm($relation->getRefField()) : $relation->getRefField();
+            return ucfirst($plural ? $pluralizer->getPluralForm($relation->getRefField()) : $relation->getRefField());
         }
 
         $className = $relation->getEntity()->getName();
@@ -153,7 +153,7 @@ trait RelationTrait
             $className = $pluralizer->getPluralForm($className);
         }
 
-        return $className . $this->getRefRelatedBySuffix($relation);
+        return ucfirst($className . $this->getRefRelatedBySuffix($relation));
     }
 
     /**

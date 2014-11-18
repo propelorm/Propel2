@@ -54,7 +54,7 @@ class RelationSetterMethods extends BuildComponent
 
         $this->addMethod($setterName)
             ->setDescription("Declares an association between this object and a $relationClassName object.")
-            ->setType("\$this|$className")
+            ->setType("\$this|\\$className")
             ->setTypeDescription("The current object (for fluent API support)")
             ->addSimpleParameter($varName, $relationClassName, null)
             ->setBody($body);

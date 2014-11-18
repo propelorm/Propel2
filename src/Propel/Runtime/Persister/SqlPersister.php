@@ -112,7 +112,7 @@ class SqlPersister
 EOF;
 
         $stmt = $connection->prepare($sql);
-        $stmt->execute([$this->entityMap->getName()]);
+        $stmt->execute([$this->entityMap->getTableName()]);
 
         return $stmt->fetchColumn();
     }

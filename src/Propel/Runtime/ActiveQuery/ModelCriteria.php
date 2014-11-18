@@ -83,9 +83,10 @@ class ModelCriteria extends BaseModelCriteria
      */
     public static function create($entityAlias = null, Criteria $criteria = null)
     {
-        $thisClass = get_called_class();
-        if ($criteria instanceof $thisClass) {
-        }
+//        $thisClass = get_called_class();
+//        if ($criteria instanceof $thisClass) {
+//            return $criteria;
+//        }
 
         $query = new static;
         if (null !== $entityAlias) {

@@ -103,6 +103,7 @@ class Entity extends ScopedMappingModel implements IdMethod
      * @var boolean
      */
     private $identifierQuoting;
+    private $activeRecord = true;
     private $forReferenceOnly;
     private $reloadOnInsert;
     private $reloadOnUpdate;
@@ -1870,6 +1871,22 @@ class Entity extends ScopedMappingModel implements IdMethod
     public function getDefaultMutatorVisibility()
     {
         return $this->defaultMutatorVisibility;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isActiveRecord()
+    {
+        return $this->activeRecord;
+    }
+
+    /**
+     * @param boolean $activeRecord
+     */
+    public function setActiveRecord($activeRecord)
+    {
+        $this->activeRecord = $activeRecord;
     }
 
     /**
