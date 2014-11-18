@@ -94,6 +94,16 @@ class FileLoaderTest extends TestCase
                 array('foo' => 'bar', '50% is less than 100%'),
                 array('foo' => 'bar', '50% is less than 100%'),
                 'Text between % signs is allowed, if there are spaces.'
+            ),
+            array(
+                array('foo' => array('bar' => 'baz', '%bar%' => 'babar'), 'babaz' => '%foo%'),
+                array('foo' => array('bar' => 'baz', 'baz' => 'babar'), 'babaz' => array('bar' => 'baz', 'baz' => 'babar')),
+                ''
+            ),
+            array(
+                array('foo' => array('bar' => 'baz'), 'babaz' => '%foo%'),
+                array('foo' => array('bar' => 'baz'), 'babaz' => array('bar' => 'baz')),
+                ''
             )
         );
     }
@@ -145,6 +155,11 @@ class FileLoaderTest extends TestCase
         );
 
         $this->assertEquals($expected, $this->loader->resolveParams($config));
+
+        //cleanup environment
+        putenv('host');
+        putenv('user');
+
     }
 
     /**
@@ -231,6 +246,66 @@ class FileLoaderTest extends TestCase
         );
 
         $this->assertEquals($expected, $this->loader->resolveParams($config));
+
+        //cleanup environment
+        putenv('home');
+        putenv('schema');
+        putenv('isBoolean');
+        putenv('integer');
+    }
+
+    public function testResourceNameIsNotStringReturnsFalse()
+    {
+        $this->assertFalse($this->loader->checkSupports('ini', null));
+        $this->assertFalse($this->loader->checkSupports('yaml', array('foo',  'bar')));
+    }
+
+    public function testExtensionIsNotStringOrArrayReturnsFalse()
+    {
+        $this->assertFalse($this->loader->checkSupports(null, '/tmp/propel.yaml'));
+        $this->assertFalse($this->loader->checkSupports(12, '/tmp/propel.yaml'));
+    }
+
+    /**
+     * @expectedException \Propel\Common\Config\Exception\InvalidArgumentException
+     * @expectedExceptionMessage Environment variable 'foo' is not defined.
+     */
+    public function testNonExistentEnvironmentVariableThrowsException()
+    {
+        putenv('home=myHome');
+
+        $config = array(
+            'home' => '%env.home%',
+            'property1' => '%env.foo%',
+        );
+
+        $this->loader->resolveParams($config);
+    }
+
+    /**
+     * @expectedException \Propel\Common\Config\Exception\RuntimeException
+     * @expectedExceptionMessage A string value must be composed of strings and/or numbers,
+     */
+    public function testParameterIsNotStringOrNumber()
+    {
+        $config = array(
+            'foo' => 'a %bar%',
+            'bar' => array(),
+            'baz' => '%foo%'
+        );
+
+        $this->loader->resolveParams($config);
+    }
+
+    public function testCallResolveParamTwiceReturnNull()
+    {
+        $config = array(
+            'foo' => 'bar',
+            'baz' => '%foo%'
+        );
+
+        $this->assertEquals(array('foo' => 'bar', 'baz' => 'bar'), $this->loader->resolveParams($config));
+        $this->assertNull($this->loader->resolveParams($config));
     }
 }
 
@@ -244,5 +319,10 @@ class TestableFileLoader extends BaseFileLoader
     public function supports($resource, $type = null)
     {
 
+    }
+
+    public function checkSupports($ext, $resource)
+    {
+        return parent::checkSupports($ext, $resource);
     }
 }

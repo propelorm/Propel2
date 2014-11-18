@@ -25,7 +25,7 @@ class XmlToArrayConverter
      *
      * @return Array
      *
-     * @throws Propel\Common\Config\Exception\XmlParseException if parse errors occur
+     * @throws \Propel\Common\Config\Exception\XmlParseException if parse errors occur
      */
     public static function convert($xmlToParse)
     {
@@ -35,10 +35,6 @@ class XmlToArrayConverter
 
         if (file_exists($xmlToParse)) {
             $xmlToParse = file_get_contents($xmlToParse);
-        }
-
-        if (false === $xmlToParse) {
-            throw new InvalidArgumentException('Error while reading configuration file');
         }
 
         //Empty xml file returns empty array
@@ -59,7 +55,6 @@ class XmlToArrayConverter
         libxml_clear_errors();
         libxml_use_internal_errors($currentInternalErrors);
         libxml_disable_entity_loader($currentEntityLoader);
-
 
         if (count($errors) > 0) {
             throw new XmlParseException($errors);
