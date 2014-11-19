@@ -181,14 +181,18 @@ class ReverseManager extends AbstractManager
     {
         $config     = $this->getGeneratorConfig();
         $connection = $this->getConnection();
+        $databaseName = $config->getConfigProperty('reverse.connection');
 
-        $this->log('Reading database structure...');
 
         $database = new Database($this->getDatabaseName());
-        $database->setPlatform($config->getConfiguredPlatform($connection));
+        $database->setPlatform($config->getConfiguredPlatform($connection), $databaseName);
         $database->setDefaultIdMethod(IdMethod::NATIVE);
 
-        $parser   = $config->getConfiguredSchemaParser($connection);
+        $buildConnection = $config->getBuildConnection($databaseName);
+        $this->log(sprintf('Reading database structure of database `%s` using dsn `%s`', $this->getDatabaseName(), $buildConnection['dsn']));
+
+        $parser   = $config->getConfiguredSchemaParser($connection, $databaseName);
+        $this->log(sprintf('SchemaParser `%s` chosen', get_class($parser)));
         $nbTables = $parser->parse($database);
 
         $this->log(sprintf('Successfully reverse engineered %d tables', $nbTables));

@@ -154,7 +154,7 @@ class GeneratorConfigTest extends ConfigTestCase
 
     /**
      * @expectedException Propel\Generator\Exception\ClassNotFoundException
-     * @expectedExceptionMessage Class \Propel\Generator\Reverse\BadSchemaParser not found.
+     * @expectedExceptionMessage Reverse SchemaParser class for `\Propel\Generator\Reverse\BadSchemaParser` not found.
      */
     public function testGetConfiguredSchemaParserGivenBadClass()
     {
