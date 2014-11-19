@@ -33,6 +33,8 @@ class SqlManager extends AbstractManager
      */
     protected $databases = null;
 
+    protected $overwriteSqlMap = false;
+
     /**
      * Set the database connection settings
      *
@@ -56,6 +58,22 @@ class SqlManager extends AbstractManager
     public function hasConnection($connection)
     {
         return isset($this->connections[$connection]);
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isOverwriteSqlMap()
+    {
+        return $this->overwriteSqlMap;
+    }
+
+    /**
+     * @param boolean $overwriteSqlMap
+     */
+    public function setOverwriteSqlMap($overwriteSqlMap)
+    {
+        $this->overwriteSqlMap = (boolean) $overwriteSqlMap;
     }
 
     public function getConnection($datasource)
@@ -96,7 +114,7 @@ class SqlManager extends AbstractManager
             $sqlDbMapContent .= sprintf("%s=%s\n", $filename, $datasource);
         }
 
-        if (!$this->existSqlMap()) {
+        if ($this->isOverwriteSqlMap() || !$this->existSqlMap()) {
             file_put_contents($this->getSqlDbMapFilename(), $sqlDbMapContent);
         }
     }

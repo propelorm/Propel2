@@ -32,6 +32,7 @@ class SqlBuildCommand extends AbstractCommand
             ->addOption('schema-dir',   null, InputOption::VALUE_REQUIRED,  'The directory where the schema files are placed')
             ->addOption('output-dir',   null, InputOption::VALUE_REQUIRED,  'The output directory')
             ->addOption('validate',     null, InputOption::VALUE_NONE,      '')
+            ->addOption('overwrite',    null, InputOption::VALUE_NONE,      '')
             ->addOption('connection',   null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Connection to use', array())
             ->addOption('schema-name',  null, InputOption::VALUE_REQUIRED,  'The schema name for RDBMS supporting them', '')
             //->addOption('encoding',     null, InputOption::VALUE_REQUIRED,  'The encoding to use for the database')
@@ -87,6 +88,7 @@ class SqlBuildCommand extends AbstractCommand
                 $connections[$name] = array_merge(array('dsn' => $dsn), $infos);
             }
         }
+        $manager->setOverwriteSqlMap($input->getOption('overwrite'));
         $manager->setConnections($connections);
 
         $manager->setValidate($input->getOption('validate'));
@@ -99,8 +101,8 @@ class SqlBuildCommand extends AbstractCommand
         });
         $manager->setWorkingDirectory($generatorConfig->getSection('paths')['sqlDir']);
 
-        if ($manager->existSqlMap()) {
-            $output->writeln("<info>sqldb.map won't be saved because it already exists. Remove it to generate a new map.</info>");
+        if (!$manager->isOverwriteSqlMap() && $manager->existSqlMap()) {
+            $output->writeln("<info>sqldb.map won't be saved because it already exists. Remove it to generate a new map. Use --overwrite to force a overwrite.</info>");
         }
 
         $manager->buildSql();
