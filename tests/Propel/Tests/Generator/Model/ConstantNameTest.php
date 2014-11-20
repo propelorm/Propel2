@@ -87,7 +87,7 @@ XML;
         $this->assertTrue(class_exists('ConstantNameTest3\UserCheck3MacAddress'));
         $this->assertTrue(class_exists('ConstantNameTest3\Map\UserCheck3TableMap'));
         $this->assertTrue(defined('\ConstantNameTest3\Map\UserCheck3TableMap::CLASSKEY_KEY'));
-        $this->assertEquals('Key.-_:*', \ConstantNameTest3\Map\UserCheck3TableMap::CLASSKEY_KEY);
+        $this->assertEquals('Calling-Station-Id', \ConstantNameTest3\Map\UserCheck3TableMap::CLASSKEY_KEY);
     }
 
     protected function buildClasses($schema)
