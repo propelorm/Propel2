@@ -18,9 +18,14 @@ if [ "$DB_USER" = "" ]; then
     DB_USER="root";
 fi
 
+pw_option=""
+if [ -n "$DB_PW" ]; then
+	pw_option=" -p$DB_PW"
+fi
+
 DB_HOSTNAME=${DB_HOSTNAME-127.0.0.1};
 
-$mysql --host=$DB_HOSTNAME -u$DB_USER -e '
+$mysql --host=$DB_HOSTNAME -u$DB_USER $pw_option -e '
 SET FOREIGN_KEY_CHECKS = 0;
 DROP DATABASE IF EXISTS test;
 DROP SCHEMA IF EXISTS second_hand_books;
@@ -31,7 +36,7 @@ SET FOREIGN_KEY_CHECKS = 1;
 '
 check;
 
-$mysql --host=$DB_HOSTNAME -u$DB_USER -e '
+$mysql --host=$DB_HOSTNAME -u$DB_USER $pw_option -e '
 CREATE DATABASE test;
 CREATE SCHEMA bookstore_schemas;
 CREATE SCHEMA contest;
