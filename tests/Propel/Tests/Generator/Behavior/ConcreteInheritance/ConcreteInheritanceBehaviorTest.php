@@ -53,13 +53,13 @@ class ConcreteInheritanceBehaviorTest extends BookstoreTestBase
         <index>
             <index-column name="title" />
         </index>
-
     </table>
     <table name="concrete_article_set_pk" allowPkInsert="true">
         <column name="body" type="longvarchar" />
         <column name="author_id" required="false" type="INTEGER" />
         <behavior name="concrete_inheritance">
             <parameter name="extends" value="concrete_content_set_pk" />
+            <parameter name="copy_data_to_child" value="title" />
         </behavior>
     </table>
 </database>
@@ -67,6 +67,19 @@ EOF;
 
             QuickBuilder::buildSchema($schema);
         }
+    }
+
+    public function testCopyToChild()
+    {
+        $article = new \ConcreteArticleSetPk();
+        $this->assertTrue(method_exists($article, 'getSyncParent'));
+        $this->assertTrue(method_exists($article, 'syncParentToChild'));
+        $parent = $article->getSyncParent();
+        $parent->setTitle('test title');
+        $article->syncParentToChild($parent);
+        $this->assertEquals('test title', $parent->getTitle());
+        $article->save();
+        $this->assertEquals('test title', $article->getTitle());
     }
 
     public function testParentBehavior()

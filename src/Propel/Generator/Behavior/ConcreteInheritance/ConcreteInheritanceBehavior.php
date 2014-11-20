@@ -30,6 +30,7 @@ class ConcreteInheritanceBehavior extends Behavior
         'extends'             => '',
         'descendant_column'   => 'descendant_class',
         'copy_data_to_parent' => 'true',
+        'copy_data_to_child'  => 'false',
         'schema'              => ''
     );
 
@@ -138,6 +139,22 @@ class ConcreteInheritanceBehavior extends Behavior
         return 'true' === $this->getParameter('copy_data_to_parent');
     }
 
+    /**
+     * @return string[]|bool
+     */
+    protected function getCopyToChild()
+    {
+        if ('false' === strtolower($this->getParameter('copy_data_to_child'))) {
+            return false;
+        }
+
+        if ('true' === strtolower($this->getParameter('copy_data_to_child'))) {
+            return true;
+        }
+
+        return explode(',', str_replace(' ', '', $this->getParameter('copy_data_to_child')));
+    }
+
     public function parentClass($builder)
     {
         $parentTable = $this->getParentTable();
@@ -151,13 +168,19 @@ class ConcreteInheritanceBehavior extends Behavior
         return null;
     }
 
-    public function preSave($script)
+    public function preSave()
     {
         if ($this->isCopyData()) {
-            return "\$parent = \$this->getSyncParent(\$con);
+            $script = "\$parent = \$this->getSyncParent(\$con);
 \$parent->save(\$con);
 \$this->setPrimaryKey(\$parent->getPrimaryKey());
 ";
+
+            if ($this->getCopyToChild()) {
+                $script .= "\$this->syncParentToChild(\$parent);\n";
+            }
+
+            return $script;
         }
     }
 
@@ -171,15 +194,71 @@ class ConcreteInheritanceBehavior extends Behavior
 
     public function objectMethods($builder)
     {
-        if (!$this->isCopyData()) {
-            return;
-        }
-        $this->builder = $builder;
         $script = '';
-        $this->addObjectGetParentOrCreate($script);
-        $this->addObjectGetSyncParent($script);
+        $this->builder = $builder;
+
+        if ($this->isCopyData()) {
+            $this->addObjectGetParentOrCreate($script);
+            $this->addObjectGetSyncParent($script);
+        }
+
+        if ($this->getCopyToChild()) {
+            $this->addSyncParentToChild($script);
+        }
 
         return $script;
+    }
+
+    protected function addSyncParentToChild(&$script)
+    {
+        $parentTable = $this->getParentTable();
+        $parentClass = $this->builder->getClassNameFromBuilder($this->builder->getNewStubObjectBuilder($parentTable));
+
+        $script .= "
+/**
+ * This method syncs additional columns from parent to child, defined by
+ * ConcreteBehavior's `copy_data_to_child` parameter.
+ *
+ * This method is called in preSave of child, but postSave of parent, so you
+ * have basically access to generated IDs (or generated columns by triggers if you have
+ * `reloadoninsert` at the parent table activated).
+ *
+ * @param $parentClass \$parent The parent object
+ */
+public function syncParentToChild($parentClass \$parent)
+{
+    ";
+
+        $columns = $this->getCopyToChild();
+        if (true === $columns) {
+            $columns = $parentTable->getColumns();
+        } else {
+            $columnNames = $columns;
+            $columns = [];
+            foreach ($columnNames as $columnName) {
+                $column = $this->getTable()->getColumn($columnName);
+                $columns[] = $column;
+            }
+        }
+
+        foreach ($columns as $column) {
+            if ($column->isPrimaryKey()) {
+                // exclude primary keys, because they are already synced to child
+                continue;
+            }
+
+            $getter = 'get' . ucfirst($column->getPhpName());
+            $setter = 'set' . ucfirst($column->getPhpName());
+
+
+            $script .= "
+    \$this->{$setter}(\$parent->{$getter}());
+            ";
+        }
+
+        $script .= "
+}
+";
     }
 
     protected function addObjectGetParentOrCreate(&$script)

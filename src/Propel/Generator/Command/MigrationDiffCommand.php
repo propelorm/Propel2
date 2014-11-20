@@ -67,10 +67,6 @@ class MigrationDiffCommand extends AbstractCommand
             $configOptions['propel']['migrations']['tableName'] = $input->getOption('migration-table');
         }
 
-        if ($this->hasInputOption('platform', $input)) {
-            $configOptions['propel']['migrations']['parserClass'] = $this->getReverseClass($input);
-        }
-
         if ($this->hasInputOption('schema-dir', $input)) {
             $configOptions['propel']['paths']['schemaDir'] = $input->getOption('schema-dir');
         }
@@ -144,7 +140,7 @@ class MigrationDiffCommand extends AbstractCommand
             $database->setSchema($appDatabase->getSchema());
             $database->setDefaultIdMethod(IdMethod::NATIVE);
 
-            $parser   = $generatorConfig->getConfiguredSchemaParser($conn);
+            $parser   = $generatorConfig->getConfiguredSchemaParser($conn, $name);
             $nbTables = $parser->parse($database, $additionalTables);
 
             $reversedSchema->addDatabase($database);
@@ -199,7 +195,8 @@ class MigrationDiffCommand extends AbstractCommand
                 ));
             }
 
-            $platform               = $generatorConfig->getConfiguredPlatform(null, $name);
+            $conn     = $manager->getAdapterConnection($name);
+            $platform = $generatorConfig->getConfiguredPlatform($conn, $name);
             if ($input->getOption('disable-identifier-quoting')) {
                 $platform->setIdentifierQuoting(false);
             }
@@ -231,17 +228,4 @@ class MigrationDiffCommand extends AbstractCommand
         }
     }
 
-    /**
-     * Return the name of the reverse parser class
-     */
-    protected function getReverseClass(InputInterface $input)
-    {
-        $reverse = $input->getOption('platform');
-        if (false !== strpos($reverse, 'Platform')) {
-            $reverse = strstr($input->getOption('platform'), 'Platform', true);
-        }
-        $reverse = sprintf('Propel\\Generator\\Reverse\\%sSchemaParser', ucfirst($reverse));
-
-        return $reverse;
-    }
 }

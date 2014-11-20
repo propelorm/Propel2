@@ -54,23 +54,7 @@ abstract class AbstractCommand extends Command
             return new GeneratorConfig(null, $properties);
         }
 
-        if ($input->hasOption('platform') && (null !== $input->getOption('platform'))) {
-            $platformClass = $platform = $input->getOption('platform');
-
-            $classes = [
-                $platform,
-                '\\Propel\\Generator\\Platform\\' . $platform,
-                '\\Propel\\Generator\\Platform\\' . ucfirst($platform),
-                '\\Propel\\Generator\\Platform\\' . ucfirst(strtolower($platform)) . 'Platform',
-            ];
-
-            foreach ($classes as $class) {
-                if (class_exists($class)) {
-                    $platformClass = $class;
-                    break;
-                }
-            }
-
+        if ($input->hasOption('platform') && ($platformClass = $input->getOption('platform'))) {
             $properties['propel']['generator']['platformClass'] = $platformClass;
         }
 
@@ -90,6 +74,7 @@ abstract class AbstractCommand extends Command
         $finder = new Finder();
         $finder
             ->name('*schema.xml')
+            ->sortByName()
             ->in($directory);
         if (!$recursive) {
             $finder->depth(0);
@@ -184,7 +169,7 @@ abstract class AbstractCommand extends Command
 
         return $config;
     }
-    
+
     /**
      * Check if a given input option exists and it isn't null.
      *

@@ -101,6 +101,14 @@ class QuickGeneratorConfig extends ConfigurationManager implements GeneratorConf
         return null;
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function getConfiguredSchemaParser(ConnectionInterface $con = null, $database = null)
+    {
+        return null;
+    }
+
     public function getBehaviorLocator()
     {
         if (!$this->behaviorLocator) {
