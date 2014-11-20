@@ -172,7 +172,7 @@ class ".$this->getUnqualifiedClassName()." extends ".$this->getParentClassName()
         $col = $child->getColumn();
         $cfc = $col->getPhpName();
 
-        $const = "CLASSKEY_".strtoupper($child->getKey());
+        $const = "CLASSKEY_".$child->getConstantSuffix();
 
         $script .= "
     /**
@@ -182,7 +182,7 @@ class ".$this->getUnqualifiedClassName()." extends ".$this->getParentClassName()
     {";
         $script .= "
         parent::__construct();
-        \$this->set$cfc(".$this->getTableMapClassName()."::CLASSKEY_".strtoupper($child->getKey()).");
+        \$this->set$cfc(".$this->getTableMapClassName()."::CLASSKEY_".$child->getConstantSuffix().");
     }
 ";
     }
