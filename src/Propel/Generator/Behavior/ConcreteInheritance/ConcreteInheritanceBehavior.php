@@ -149,7 +149,7 @@ class ConcreteInheritanceBehavior extends Behavior
         }
 
         if ('true' === strtolower($this->getParameter('copy_data_to_child'))) {
-            return false;
+            return true;
         }
 
         return explode(',', str_replace(' ', '', $this->getParameter('copy_data_to_child')));
