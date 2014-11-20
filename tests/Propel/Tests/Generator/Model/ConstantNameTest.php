@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Model;
@@ -39,6 +39,7 @@ XML;
         $this->assertTrue(class_exists('ConstantNameTest1\UserCheck1'));
         $this->assertTrue(class_exists('ConstantNameTest1\UserCheck1Expiration'));
         $this->assertTrue(class_exists('ConstantNameTest1\Map\UserCheck1TableMap'));
+        $this->assertTrue(defined('\ConstantNameTest1\Map\UserCheck1TableMap::CLASSKEY_EXPIRATION'));
         $this->assertEquals('Expiration', \ConstantNameTest1\Map\UserCheck1TableMap::CLASSKEY_EXPIRATION);
     }
 
@@ -87,7 +88,7 @@ XML;
         $this->assertTrue(class_exists('ConstantNameTest3\UserCheck3MacAddress'));
         $this->assertTrue(class_exists('ConstantNameTest3\Map\UserCheck3TableMap'));
         $this->assertTrue(defined('\ConstantNameTest3\Map\UserCheck3TableMap::CLASSKEY_KEY'));
-        $this->assertEquals('Calling-Station-Id', \ConstantNameTest3\Map\UserCheck3TableMap::CLASSKEY_KEY);
+        $this->assertEquals('Key.-_:*', \ConstantNameTest3\Map\UserCheck3TableMap::CLASSKEY_KEY);
     }
 
     protected function buildClasses($schema)
