@@ -74,85 +74,95 @@ class MigrationUpCommand extends AbstractCommand
         $manager->setMigrationTable($input->getOption('migration-table'));
         $manager->setWorkingDirectory($generatorConfig->getSection('paths')['migrationDir']);
 
-        if (!$nextMigrationTimestamp = $manager->getFirstUpMigrationTimestamp()) {
+        if (!$migrationTimestamps = $manager->getFirstUpMigrationTimestamp()) {
             $output->writeln('All migrations were already executed - nothing to migrate.');
 
             return false;
         }
-        $output->writeln(sprintf(
-            'Executing migration %s up',
-            $manager->getMigrationClassName($nextMigrationTimestamp)
-        ));
 
-        $migration = $manager->getMigrationObject($nextMigrationTimestamp);
-        if (false === $migration->preUp($manager)) {
-            $output->writeln('<error>preUp() returned false. Aborting migration.</error>');
 
-            return false;
-        }
+        foreach($migrationTimestamps as $datasource => $nextMigrationTimestamp){
 
-        foreach ($migration->getUpSQL() as $datasource => $sql) {
-            $connection = $manager->getConnection($datasource);
+            $output->writeln(sprintf(
+                'Executing migration %s up',
+                $manager->getMigrationClassName($nextMigrationTimestamp)
+            ));
 
-            if ($input->getOption('verbose')) {
-                $output->writeln(sprintf(
-                    'Connecting to database "%s" using DSN "%s"',
-                    $datasource,
-                    $connection['dsn']
-                ));
-            }
-
-            $conn = $manager->getAdapterConnection($datasource);
-            $res = 0;
-            $statements = SqlParser::parseString($sql);
-            foreach ($statements as $statement) {
-                try {
-                    if ($input->getOption('verbose')) {
-                        $output->writeln(sprintf('Executing statement "%s"', $statement));
-                    }
-
-                    $stmt = $conn->prepare($statement);
-                    $stmt->execute();
-                    $res++;
-                } catch (\PDOException $e) {
-                    throw new RuntimeException(sprintf('<error>Failed to execute SQL "%s". Aborting migration.</error>', $statement), 0, $e);
-                }
-            }
-            if (!$res) {
-                $output->writeln('No statement was executed. The version was not updated.');
-                $output->writeln(sprintf(
-                    'Please review the code in "%s"',
-                    $manager->getMigrationDir() . DIRECTORY_SEPARATOR . $manager->getMigrationClassName($nextMigrationTimestamp)
-                ));
-                $output->writeln('<error>Migration aborted</error>', Project::MSG_ERR);
+            $migration = $manager->getMigrationObject($nextMigrationTimestamp);
+            if (false === $migration->preUp($manager)) {
+                $output->writeln('<error>preUp() returned false. Aborting migration.</error>');
 
                 return false;
             }
-            $output->writeln(sprintf(
-                '%d of %d SQL statements executed successfully on datasource "%s"',
-                $res,
-                count($statements),
-                $datasource
-            ));
-            $manager->updateLatestMigrationTimestamp($datasource, $nextMigrationTimestamp);
-            if ($input->getOption('verbose')) {
+
+            foreach ($migration->getUpSQL() as $migrationDatasource => $sql) {
+
+                if ($migrationDatasource != $datasource){
+                    continue;
+                }
+
+                $connection = $manager->getConnection($datasource);
+
+                if ($input->getOption('verbose')) {
+                    $output->writeln(sprintf(
+                        'Connecting to database "%s" using DSN "%s"',
+                        $datasource,
+                        $connection['dsn']
+                    ));
+                }
+
+                $conn = $manager->getAdapterConnection($datasource);
+                $res = 0;
+                $statements = SqlParser::parseString($sql);
+                foreach ($statements as $statement) {
+                    try {
+                        if ($input->getOption('verbose')) {
+                            $output->writeln(sprintf('Executing statement "%s"', $statement));
+                        }
+
+                        $stmt = $conn->prepare($statement);
+                        $stmt->execute();
+                        $res++;
+                    } catch (\PDOException $e) {
+                        throw new RuntimeException(sprintf('<error>Failed to execute SQL "%s". Aborting migration.</error>', $statement), 0, $e);
+                    }
+                }
+                if (!$res) {
+                    $output->writeln('No statement was executed. The version was not updated.');
+                    $output->writeln(sprintf(
+                        'Please review the code in "%s"',
+                        $manager->getMigrationDir() . DIRECTORY_SEPARATOR . $manager->getMigrationClassName($nextMigrationTimestamp)
+                    ));
+                    $output->writeln('<error>Migration aborted</error>', Project::MSG_ERR);
+
+                    return false;
+                }
                 $output->writeln(sprintf(
-                    'Updated latest migration date to %d for datasource "%s"',
-                    $nextMigrationTimestamp,
+                    '%d of %d SQL statements executed successfully on datasource "%s"',
+                    $res,
+                    count($statements),
                     $datasource
                 ));
+                $manager->updateLatestMigrationTimestamp($datasource, $nextMigrationTimestamp);
+                if ($input->getOption('verbose')) {
+                    $output->writeln(sprintf(
+                        'Updated latest migration date to %d for datasource "%s"',
+                        $nextMigrationTimestamp,
+                        $datasource
+                    ));
+                }
             }
-        }
 
-        $migration->postUp($manager);
+            $migration->postUp($manager);
 
-        if ($timestamps = $manager->getValidMigrationTimestamps()) {
-            $output->writeln(sprintf(
-                'Migration complete. %d migrations left to execute.',
-                count($timestamps)
-            ));
-        } else {
-            $output->writeln('Migration complete. No further migration to execute.');
+            if ($timestamps = $manager->getValidMigrationTimestamps()) {
+                $output->writeln(sprintf(
+                    'Migration complete. %d migrations left to execute.',
+                    count($timestamps)
+                ));
+            } else {
+                $output->writeln('Migration complete. No further migration to execute.');
+            }
         }
     }
 }

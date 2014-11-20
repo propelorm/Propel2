@@ -48,13 +48,16 @@ class MigrationManagerTest extends TestCase
     {
         $databaseVersions = [1, 2, 3];
         $migrationManager = $this->createMigrationManager([]);
-        $migrationManager->createMigrationTable('migration');
+        $datasource = 'migration';
+        $migrationManager->createMigrationTable($datasource);
 
         foreach ($databaseVersions as $version) {
-            $migrationManager->updateLatestMigrationTimestamp('migration', $version);
+            $migrationManager->updateLatestMigrationTimestamp($datasource, $version);
         }
 
-        $this->assertEquals($databaseVersions, $migrationManager->getAllDatabaseVersions());
+        $allVersions = $migrationManager->getAllDatabaseVersions();
+
+        $this->assertEquals($databaseVersions, $allVersions[$datasource]);
     }
 
     public function testGetValidMigrationTimestamps()
@@ -62,48 +65,59 @@ class MigrationManagerTest extends TestCase
         $localTimestamps = [1, 2, 3, 4];
         $databaseTimestamps = [1, 2];
         $expectedMigrationTimestamps = [3, 4];
+        $datasource = 'migration';
 
         $migrationManager = $this->createMigrationManager($localTimestamps);
-        $migrationManager->createMigrationTable('migration');
+        $migrationManager->createMigrationTable($datasource);
 
         foreach ($databaseTimestamps as $timestamp) {
-            $migrationManager->updateLatestMigrationTimestamp('migration', $timestamp);
+            $migrationManager->updateLatestMigrationTimestamp($datasource, $timestamp);
         }
 
-        $this->assertEquals($expectedMigrationTimestamps, $migrationManager->getValidMigrationTimestamps());
+        $migrationTimestamps = $migrationManager->getValidMigrationTimestamps();
+
+        $this->assertEquals($expectedMigrationTimestamps, $migrationTimestamps[$datasource]);
     }
 
     public function testRemoveMigrationTimestamp()
     {
         $localTimestamps = [1, 2];
         $databaseTimestamps = [1, 2];
+        $datasource = 'migration';
 
         $migrationManager = $this->createMigrationManager($localTimestamps);
-        $migrationManager->createMigrationTable('migration');
+        $migrationManager->createMigrationTable($datasource);
 
         foreach ($databaseTimestamps as $timestamp) {
-            $migrationManager->updateLatestMigrationTimestamp('migration', $timestamp);
+            $migrationManager->updateLatestMigrationTimestamp($datasource, $timestamp);
         }
 
         $this->assertEquals([], $migrationManager->getValidMigrationTimestamps());
-        $migrationManager->removeMigrationTimestamp('migration', 2);
-        $this->assertEquals([2], $migrationManager->getValidMigrationTimestamps());
+
+        $migrationManager->removeMigrationTimestamp($datasource, 2);
+        $migrationTimestamps = $migrationManager->getValidMigrationTimestamps();
+
+        $this->assertEquals([2], $migrationTimestamps[$datasource]);
     }
 
     public function testGetAlreadyExecutedTimestamps()
     {
         $timestamps = [1, 2];
 
+        $datasource = 'migration';
+
         $migrationManager = $this->createMigrationManager($timestamps);
-        $migrationManager->createMigrationTable('migration');
+        $migrationManager->createMigrationTable($datasource);
 
         $this->assertEquals([], $migrationManager->getAlreadyExecutedMigrationTimestamps());
 
         foreach ($timestamps as $timestamp) {
-            $migrationManager->updateLatestMigrationTimestamp('migration', $timestamp);
+            $migrationManager->updateLatestMigrationTimestamp($datasource, $timestamp);
         }
 
-        $this->assertEquals($timestamps, $migrationManager->getAlreadyExecutedMigrationTimestamps());
+        $executedTimestamps = $migrationManager->getAlreadyExecutedMigrationTimestamps();
+
+        $this->assertEquals($timestamps, $executedTimestamps[$datasource]);
     }
 
     public function testIsPending()
@@ -122,36 +136,45 @@ class MigrationManagerTest extends TestCase
 
     public function testGetOldestDatabaseVersion()
     {
+        $datasource = 'migration';
         $timestamps = [1, 2];
         $migrationManager = $this->createMigrationManager($timestamps);
-        $migrationManager->createMigrationTable('migration');
+        $migrationManager->createMigrationTable($datasource);
 
         $this->assertNull($migrationManager->getOldestDatabaseVersion());
         foreach ($timestamps as $timestamp) {
-            $migrationManager->updateLatestMigrationTimestamp('migration', $timestamp);
+            $migrationManager->updateLatestMigrationTimestamp($datasource, $timestamp);
         }
-        $this->assertEquals(2, $migrationManager->getOldestDatabaseVersion());
+
+        $oldestVersions = $migrationManager->getOldestDatabaseVersion();
+
+        $this->assertEquals(2, $oldestVersions[$datasource]);
     }
 
     public function testGetFirstUpMigrationTimestamp()
     {
+        $datasource = 'migration';
         $migrationManager = $this->createMigrationManager([1, 2, 3]);
-        $migrationManager->createMigrationTable('migration');
+        $migrationManager->createMigrationTable($datasource);
 
-        $migrationManager->updateLatestMigrationTimestamp('migration', 1);
+        $migrationManager->updateLatestMigrationTimestamp($datasource, 1);
+        $migrationTimestamps = $migrationManager->getFirstUpMigrationTimestamp();
 
-        $this->assertEquals(2, $migrationManager->getFirstUpMigrationTimestamp());
+        $this->assertEquals(2, $migrationTimestamps[$datasource]);
     }
 
     public function testGetFirstDownMigrationTimestamp()
     {
+        $datasource = 'migration';
         $migrationManager = $this->createMigrationManager([1, 2, 3]);
-        $migrationManager->createMigrationTable('migration');
+        $migrationManager->createMigrationTable($datasource);
 
-        $migrationManager->updateLatestMigrationTimestamp('migration', 1);
-        $migrationManager->updateLatestMigrationTimestamp('migration', 2);
+        $migrationManager->updateLatestMigrationTimestamp($datasource, 1);
+        $migrationManager->updateLatestMigrationTimestamp($datasource, 2);
 
-        $this->assertEquals(2, $migrationManager->getFirstDownMigrationTimestamp());
+        $firstDownMigrations = $migrationManager->getFirstDownMigrationTimestamp();
+
+        $this->assertEquals(2, $firstDownMigrations[$datasource]);
     }
 
     public function testGetCommentMigrationManager()
