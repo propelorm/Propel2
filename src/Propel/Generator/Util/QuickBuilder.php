@@ -26,6 +26,8 @@ use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\ConnectionWrapper;
 use Propel\Runtime\Connection\StatementInterface;
 use Propel\Runtime\Propel;
+use Symfony\Component\Process\PhpExecutableFinder;
+use Symfony\Component\Process\Process;
 
 class QuickBuilder
 {
@@ -349,12 +351,9 @@ class QuickBuilder
                 include($tempFile);
             }
         } else {
-            $tempFile = $dir . join('_', $allCodeName).'.php';
+            $tempFile = $dir . join('_', $allCodeName) . '.php';
             file_put_contents($tempFile, "<?php\n" . $allCode);
-            $output = exec("/usr/local/bin/php -l $tempFile 2>&1");
-            if (!preg_match('/Errors parsing/', $output)) {
-                include($tempFile);
-            }
+            $this->safeInclude($tempFile);
         }
     }
 
@@ -512,4 +511,29 @@ class QuickBuilder
         $this->identifierQuoting = $identifierQuoting;
     }
 
+    /**
+     * Try to check the generated file for syntax errors and then include it
+     *
+     * @param string $filename
+     */
+    protected function safeInclude($filename)
+    {
+        $phpBinaryFinder = new PhpExecutableFinder();
+        $phpBinary = $phpBinaryFinder->find();
+        if (!$phpBinary) {
+            // we can't check the syntax without php binary, but let's hope for the best and include the file
+            include $filename;
+        }
+
+        try {
+            $process = new Process("$phpBinary -l $filename");
+        } catch (\RuntimeException $e) {
+            // probably proc_open can't be found or it is forbidden to use, but we still have to include the file
+            include $filename;
+        }
+        $process->run();
+        if ($process->isSuccessful()) {
+            include $filename;
+        }
+    }
 }
