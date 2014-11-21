@@ -111,8 +111,7 @@ class MigrationUpCommand extends AbstractCommand
                         $output->writeln(sprintf('Executing statement "%s"', $statement));
                     }
 
-                    $stmt = $conn->prepare($statement);
-                    $stmt->execute();
+                    $conn->exec($statement);
                     $res++;
                 } catch (\PDOException $e) {
                     throw new RuntimeException(sprintf('<error>Failed to execute SQL "%s". Aborting migration.</error>', $statement), 0, $e);

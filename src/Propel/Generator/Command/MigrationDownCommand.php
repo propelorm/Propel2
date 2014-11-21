@@ -119,8 +119,7 @@ class MigrationDownCommand extends AbstractCommand
                         $output->writeln(sprintf('Executing statement "%s"', $statement));
                     }
 
-                    $stmt = $conn->prepare($statement);
-                    $stmt->execute();
+                    $conn->exec($statement);
                     $res++;
                 } catch (\PDOException $e) {
                     $output->writeln(sprintf('<error>Failed to execute SQL "%s"</error>', $statement));
