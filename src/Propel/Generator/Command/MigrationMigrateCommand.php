@@ -118,8 +118,7 @@ class MigrationMigrateCommand extends AbstractCommand
                         if ($input->getOption('verbose')) {
                             $output->writeln(sprintf('Executing statement "%s"', $statement));
                         }
-                        $stmt = $conn->prepare($statement);
-                        $stmt->execute();
+                        $conn->exec($statement);
                         $res++;
                     } catch (\PDOException $e) {
                         $output->writeln(sprintf('<error>Failed to execute SQL "%s": %s</error>', $statement, $e->getMessage()));
