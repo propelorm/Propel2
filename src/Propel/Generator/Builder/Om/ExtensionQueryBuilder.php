@@ -86,7 +86,7 @@ class ".$this->getUnqualifiedClassName()." extends $baseClassName
     protected function addClassClose(&$script)
     {
         $script .= "
-} // " . $this->getUnqualifiedClassName() . "
+}
 ";
         $this->applyBehaviorModifier('extensionQueryFilter', $script, "");
     }
