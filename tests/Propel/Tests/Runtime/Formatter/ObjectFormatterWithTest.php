@@ -56,6 +56,25 @@ class ObjectFormatterWithTest extends BookstoreEmptyTestBase
         $this->assertEquals($publisher->getName(), 'Penguin', 'Related object is correctly hydrated ' . $msg);
     }
 
+    public function testOneToManyRelationHydration()
+    {
+        BookstoreDataPopulator::populate();
+        $bookQuery = BookQuery::create()
+            ->leftJoinReview('review')
+            ->with('review')
+            ->filterByISBN('043935806X'); //Harry Potter
+
+        Propel::disableInstancePooling();
+        /** @var Book $books */
+        $book = $bookQuery->find()[0];
+        $this->assertCount(2, $book->getReviews());
+
+        Propel::enableInstancePooling();
+        /** @var Book $books */
+        $book = $bookQuery->find()[0];
+        $this->assertCount(2, $book->getReviews());
+    }
+
     public function testFindOneWith()
     {
         BookstoreDataPopulator::populate();

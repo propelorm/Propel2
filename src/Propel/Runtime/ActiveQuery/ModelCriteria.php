@@ -983,7 +983,9 @@ class ModelCriteria extends BaseModelCriteria
     /**
      * Issue a SELECT ... LIMIT 1 query based on the current ModelCriteria
      * and format the result with the current formatter
-     * By default, returns a model object
+     * By default, returns a model object.
+     *
+     * Does not work with ->with()s containing one-to-many relations.
      *
      * @param ConnectionInterface $con an optional connection object
      *
