@@ -31,7 +31,8 @@ class ConcreteInheritanceBehavior extends Behavior
         'descendant_column'   => 'descendant_class',
         'copy_data_to_parent' => 'true',
         'copy_data_to_child'  => 'false',
-        'schema'              => ''
+        'schema'              => '',
+        'exclude_behaviors'   => '',
     );
 
     public function modifyTable()
@@ -101,8 +102,15 @@ class ConcreteInheritanceBehavior extends Behavior
             $this->getTable()->addUnique($copiedUnique);
         }
 
+        // list of Behaviors to be excluded in child table
+        $excludeBehaviors = array_flip(explode(',', str_replace(' ', '', $this->getParameter('exclude_behaviors'))));
+
         // add the Behaviors of the parent table
         foreach ($parentTable->getBehaviors() as $behavior) {
+            if (isset($excludeBehaviors[$behavior->getName()])) {
+                continue;
+            }
+
             if ($behavior->getName() == 'concrete_inheritance_parent' || $behavior->getName() == 'concrete_inheritance') {
                 continue;
             }
