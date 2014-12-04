@@ -5316,7 +5316,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             if (\$this->isNew() || \$this->isModified()) {
                 // persist changes
                 if (\$this->isNew()) {
-                    \$this->doInsert(\$con);";
+                    \$this->doInsert(\$con);
+                    \$affectedRows += 1;";
         if ($reloadOnInsert) {
             $script .= "
                     if (!\$skipReload) {
@@ -5325,7 +5326,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         }
         $script .= "
                 } else {
-                    \$this->doUpdate(\$con);";
+                    \$affectedRows += \$this->doUpdate(\$con);";
         if ($reloadOnUpdate) {
             $script .= "
                     if (!\$skipReload) {
@@ -5333,8 +5334,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                     }";
         }
         $script .= "
-                }
-                \$affectedRows += 1;";
+                }";
 
         // We need to rewind any LOB columns
         foreach ($table->getColumns() as $col) {
