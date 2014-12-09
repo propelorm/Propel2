@@ -1614,7 +1614,7 @@ class ModelCriteria extends BaseModelCriteria
             }
         } elseif ('ARRAY' === $colMap->getType() && is_array($value)) {
             $value = '| ' . implode(' | ', $value) . ' |';
-        } elseif ('ENUM' === $colMap->getType()) {
+        } elseif ('ENUM' === $colMap->getType() && !is_null($value)) {
             if (is_array($value)) {
                 $value = array_map(array($colMap, 'getValueSetKey'), $value);
             } else {
