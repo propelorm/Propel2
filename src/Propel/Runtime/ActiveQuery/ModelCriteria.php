@@ -11,6 +11,7 @@
 namespace Propel\Runtime\ActiveQuery;
 
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
+use Propel\Runtime\Exception\EntityNotFoundException;
 use Propel\Runtime\Exception\RuntimeException;
 use Propel\Runtime\Propel;
 use Propel\Runtime\Collection\ObjectCollection;
@@ -1011,6 +1012,93 @@ class ModelCriteria extends BaseModelCriteria
     /**
      * Issue a SELECT ... LIMIT 1 query based on the current ModelCriteria
      * and format the result with the current formatter
+     * By default, returns a model object.
+     *
+     * Throws an exception when nothing was found.
+     *
+     * Does not work with ->with()s containing one-to-many relations.
+     *
+     * @param ConnectionInterface $con an optional connection object
+     *
+     * @return mixed the result, formatted by the current formatter
+     * @throws EntityNotFoundException|\Exception When nothing is found
+     */
+    public function requireOne(ConnectionInterface $con = null)
+    {
+        $result = $this->findOne($con);
+
+        if ($result === null) {
+            throw $this->createEntityNotFoundException();
+        }
+
+        return $result;
+    }
+
+    /**
+     * Apply a condition on a column and issues the SELECT ... LIMIT 1 query
+     *
+     * Throws an exception when nothing was found.
+     *
+     * @see filterBy()
+     * @see findOne()
+     *
+     * @param mixed               $column A string representing the column phpName, e.g. 'AuthorId'
+     * @param mixed               $value  A value for the condition
+     * @param ConnectionInterface $con    an optional connection object
+     *
+     * @return mixed the result, formatted by the current formatter
+     * @throws EntityNotFoundException|\Exception When nothing is found
+     */
+    public function requireOneBy($column, $value, ConnectionInterface $con = null)
+    {
+        $result = $this->findOneBy($column, $value, $con);
+
+        if ($result === null) {
+            throw $this->createEntityNotFoundException();
+        }
+
+        return $result;
+    }
+
+    /**
+     * Apply a list of conditions on columns and issues the SELECT ... LIMIT 1 query
+     * <code>
+     * $c->requireOneByArray([
+     *  'Title'     => 'War And Peace',
+     *  'Publisher' => $publisher
+     * ], $con);
+     * </code>
+     *
+     * @see requireOne()
+     *
+     * @param mixed               $conditions An array of conditions, using column phpNames as key
+     * @param ConnectionInterface $con        an optional connection object
+     *
+     * @return mixed the list of results, formatted by the current formatter
+     */
+    public function requireOneByArray($conditions, ConnectionInterface $con = null)
+    {
+        $result = $this->findOneByArray($conditions, $con);
+
+        if ($result === null) {
+            throw $this->createEntityNotFoundException();
+        }
+
+        return $result;
+    }
+
+    private function createEntityNotFoundException()
+    {
+        if (!isset($this->entityNotFoundExceptionClass)) {
+            throw new PropelException('Please define a entityNotFoundExceptionClass property with the name of your NotFoundException-class in ' . get_class($this));
+        }
+
+        return new $this->entityNotFoundExceptionClass("{$this->getModelShortName()} could not be found");
+    }
+
+    /**
+     * Issue a SELECT ... LIMIT 1 query based on the current ModelCriteria
+     * and format the result with the current formatter
      * By default, returns a model object
      *
      * @param ConnectionInterface $con an optional connection object
@@ -1940,18 +2028,18 @@ class ModelCriteria extends BaseModelCriteria
 
     /**
      * Handle the magic
-     * Supports findByXXX(), findOneByXXX(), filterByXXX(), orderByXXX(), and groupByXXX() methods,
+     * Supports findByXXX(), findOneByXXX(), requireOneByXXX(), filterByXXX(), orderByXXX(), and groupByXXX() methods,
      * where XXX is a column phpName.
      * Supports XXXJoin(), where XXX is a join direction (in 'left', 'right', 'inner')
      */
     public function __call($name, $arguments)
     {
         // Maybe it's a magic call to one of the methods supporting it, e.g. 'findByTitle'
-        static $methods = array('findBy', 'findOneBy', 'filterBy', 'orderBy', 'groupBy');
+        static $methods = array('findBy', 'findOneBy', 'requireOneBy', 'filterBy', 'orderBy', 'groupBy');
         foreach ($methods as $method) {
             if (0 === strpos($name, $method)) {
                 $columns = substr($name, strlen($method));
-                if (in_array($method, array('findBy', 'findOneBy')) && strpos($columns, 'And') !== false) {
+                if (in_array($method, array('findBy', 'findOneBy', 'requireOneBy')) && strpos($columns, 'And') !== false) {
                     $method = $method . 'Array';
                     $columns = explode('And', $columns);
                     $conditions = array();
