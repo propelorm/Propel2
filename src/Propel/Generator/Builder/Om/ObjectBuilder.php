@@ -3677,12 +3677,15 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
         $collName = $this->getRefFKCollVarName($refFK);
 
+        $fkStub = $tblFK->getGeneratorConfig()->getConfiguredBuilder($tblFK, 'objectstub');
+        $fkClassName = $fkStub->getFullyQualifiedBaseClassName();
+
         $script .= "
     /**
      * Method called to associate a $className object to this object
      * through the $className foreign key attribute.
      *
-     * @param  $className \$l $className
+     * @param  $className|$fkClassName \$l $className
      * @return \$this|".$this->getObjectClassName(true)." The current object (for fluent API support)
      */
     public function add".$this->getRefFKPhpNameAffix($refFK, false)."($className \$l)

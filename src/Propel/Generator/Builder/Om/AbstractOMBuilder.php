@@ -147,6 +147,22 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     }
 
     /**
+     * Returns the qualified base classname (e.g. Model\Base\Book)
+     *
+     * @return string
+     */
+    public function getFullyQualifiedBaseClassName()
+    {
+
+        if ($namespace = $this->getNamespace()) {
+            return '\\' . $namespace . '\\Base\\' . $this->getUnqualifiedClassName();
+        }
+
+        return $this->getUnqualifiedClassName();
+
+    }
+
+    /**
      * Returns the fully qualified classname (e.g. \Model\Book)
      *
      * @return string
