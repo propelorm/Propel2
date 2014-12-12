@@ -197,10 +197,10 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
             $sql .= '/* ' . $queryComment . ' */ ';
         }
         if ($realEntityName = $criteria->getEntityForAlias($entityName)) {
-            $realEntityName = $criteria->quoteIdentifierEntity($realEntityName);
+            $realEntityName = $criteria->quoteTableIdentifierForEntity($realEntityName);
             $sql .= 'FROM ' . $realEntityName . ' AS ' . $entityName;
         } else {
-            $entityName = $criteria->quoteIdentifierEntity($entityName);
+            $entityName = $criteria->quoteTableIdentifierForEntity($entityName);
             $sql .= 'FROM ' . $entityName;
         }
 
@@ -213,7 +213,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
      * @param  string $entity
      * @return string
      */
-    public function quoteIdentifierEntity($entity)
+    public function quoteTableIdentifier($entity)
     {
         // e.g. 'database.entity alias' should be escaped as '"database"."entity" "alias"'
         return '"' . strtr($entity, array('.' => '"."', ' ' => '" "')) . '"';

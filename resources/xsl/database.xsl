@@ -39,7 +39,7 @@
     </xsl:template>
 
     <!--
-    Normalizes any defaultPhpNamingMethod attribute by making it lowercase
+    Normalizes any defaultColumnNamingMethod attribute by making it lowercase
     -->
     <xsl:template match='@defaultPhPNamingMethod'>
         <xsl:attribute name='defaultPhPNamingMethod'><xsl:value-of select='translate(., "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz")'/></xsl:attribute>

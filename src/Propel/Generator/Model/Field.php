@@ -172,8 +172,8 @@ class Field extends MappingModel
             }
 
             $this->name = $this->getAttribute('name');
-            $this->phpName = $this->getAttribute('phpName');
-            $this->phpSingularName = $this->getAttribute('phpSingularName');
+            $this->columnName = $this->getAttribute('columnName');
+            $this->phpSingularName = $this->getAttribute('singularName');
             $this->phpType = $this->getAttribute('phpType');
             $this->tableMapName = $this->getAttribute('tableMapName');
             $this->description = $this->getAttribute('description');
@@ -182,7 +182,7 @@ class Field extends MappingModel
                 Retrieves the method for converting from specified name
                 to a PHP name, defaulting to parent tables default method.
             */
-            $this->phpNamingMethod = $this->getAttribute('phpNamingMethod', $database->getDefaultPhpNamingMethod());
+            $this->phpNamingMethod = $this->getAttribute('phpNamingMethod', $database->getDefaultColumnNamingMethod());
 
             $this->namePrefix = $this->getAttribute(
                 'prefix',
@@ -341,6 +341,10 @@ class Field extends MappingModel
      */
     public function getColumnName()
     {
+        if (null == $this->columnName) {
+            return NamingTool::toUnderscore($this->getName());
+        }
+
         return $this->columnName;
     }
 
@@ -407,7 +411,7 @@ class Field extends MappingModel
      */
     public function getSingularName()
     {
-        if ($this->getAttribute('phpSingularName')) return $this->getAttribute('phpSingularName');
+        if ($this->getAttribute('singularName')) return $this->getAttribute('singularName');
         return rtrim($this->name, 's');
     }
 
@@ -462,22 +466,22 @@ class Field extends MappingModel
 //        return $this->phpSingularName;
 //    }
 
-    /**
-     * Sets the name to use in PHP sources.
-     *
-     * It will generate a phpName from its name if no
-     * $phpName is passed.
-     *
-     * @param string $phpName
-     */
-    public function setPhpName($phpName = null)
-    {
-        if (null === $phpName) {
-            $this->phpName = self::generatePhpName($this->name, $this->phpNamingMethod, $this->namePrefix);
-        } else {
-            $this->phpName = $phpName;
-        }
-    }
+//    /**
+//     * Sets the name to use in PHP sources.
+//     *
+//     * It will generate a phpName from its name if no
+//     * $phpName is passed.
+//     *
+//     * @param string $phpName
+//     */
+//    public function setPhpName($phpName = null)
+//    {
+//        if (null === $phpName) {
+//            $this->phpName = self::generatePhpName($this->name, $this->phpNamingMethod, $this->namePrefix);
+//        } else {
+//            $this->phpName = $phpName;
+//        }
+//    }
 
 //    /**
 //     * Sets the singular forn of the name to use in PHP
@@ -1505,19 +1509,6 @@ class Field extends MappingModel
         if ($this->domain) {
             $this->domain = clone $this->domain;
         }
-    }
-
-    /**
-     * Returns a generated PHP name.
-     *
-     * @param  string $name
-     * @param  string $phpNamingMethod
-     * @param  string $namePrefix
-     * @return string
-     */
-    public static function generatePhpName($name, $phpNamingMethod = PhpNameGenerator::CONV_METHOD_CLEAN, $namePrefix = null)
-    {
-        return NameFactory::generateName(NameFactory::PHP_GENERATOR, [ $name, $phpNamingMethod, $namePrefix ]);
     }
 
     /**

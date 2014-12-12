@@ -44,24 +44,25 @@ class CrossRelationProperties extends BuildComponent
                     ->setType('boolean')
                     ->setTypeDescription("");
             }
+
+            return;
         }
 
-        foreach ($crossRelation->getRelations() as $relation) {
-            $className = $this->getClassNameFromEntity($relation->getForeignEntity());
-            $varName = $this->getRelationVarName($relation, true);
+        $relation = $crossRelation->getRelations()[0];
+        $className = $this->getClassNameFromEntity($relation->getForeignEntity());
+        $varName = $this->getCrossRelationRelationVarName($relation);
 
-            $this->addProperty($varName)
-                ->setType("ObjectCollection|{$className}[]")
-                ->setTypeDescription("Cross Collection to store aggregation of $className objects.");
+        $this->addProperty($varName)
+            ->setType("ObjectCollection|{$className}[]")
+            ->setTypeDescription("Cross Collection to store aggregation of $className objects.");
 
 
-            if ($crossRelation->getEntity()->isActiveRecord()) {
-                $partialVarName = $varName . 'Partial';
+        if ($crossRelation->getEntity()->isActiveRecord()) {
+            $partialVarName = $varName . 'Partial';
 
-                $this->addProperty($partialVarName)
-                    ->setType('boolean')
-                    ->setTypeDescription("");
-            }
+            $this->addProperty($partialVarName)
+                ->setType('boolean')
+                ->setTypeDescription("");
         }
     }
 } 

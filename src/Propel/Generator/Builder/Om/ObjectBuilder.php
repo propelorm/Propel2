@@ -53,5 +53,7 @@ class ObjectBuilder extends AbstractBuilder
             $this->applyComponent('Object\\ReferrerRelationAddMethods');
             $this->applyComponent('Object\\CrossRelationAdderMethods');
         }
+
+        $this->applyComponent('Object\\ConstructorMethod');
     }
 }

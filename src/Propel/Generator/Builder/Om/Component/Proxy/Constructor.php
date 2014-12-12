@@ -22,12 +22,7 @@ class Constructor extends BuildComponent
 
         //reset lazy loaded properties
         foreach ($this->getEntity()->getFields() as $field) {
-            if (!$field->isLazyLoad()) {
-                continue;
-            }
-
-            $this->addProperty('_' . $field->getName().'_loaded', false)
-                ->setType($repositoryClass);
+            if ($field->isPrimaryKey()) continue;
 
             $propertiesToUnset[] = '$this->' . $field->getName();
         }
@@ -41,6 +36,7 @@ $this->_repository = $repository;
 
 
         $this->addProperty('_repository', null, 'private');
+        $this->addProperty('__duringInitializing__', false, 'public');
 
         $this->addMethod('__construct')
             ->addSimpleParameter('repository', $repositoryClass)

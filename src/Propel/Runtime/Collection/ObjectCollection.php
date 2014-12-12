@@ -335,10 +335,11 @@ class ObjectCollection extends Collection
      */
     protected function getHashCode($instance)
     {
-        $class = get_class($instance);
-        $entityMapClass = constant($class.'::TABLE_MAP');
+        if (is_callable([$instance, 'hashCode'])) {
+            return $instance->hashCode();
+        }
 
-        return $entityMapClass ? $entityMapClass::getHashCode($instance) : spl_object_hash($instance);
+        return spl_object_hash($instance);
     }
 
     /**

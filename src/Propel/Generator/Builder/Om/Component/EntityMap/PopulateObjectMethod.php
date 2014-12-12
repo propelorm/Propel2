@@ -24,11 +24,17 @@ class PopulateObjectMethod extends BuildComponent
 
         $body = "
 \$writer = \$this->getPropWriter();
-\$obj = \$this->getRepository()->createProxy();
+if (\$entity) {
+    \$obj = \$entity;
+} else {
+    \$obj = \$this->getRepository()->createProxy();
+}
+\$obj->__duringInitializing__ = true;
 \$originalValues = [];
 ";
 
-        $colNames = $columnNames = $camelNames = $fieldNames = $fieldTypes = [];
+        $fullColumnNames = $columnNames = $camelNames = $fieldNames = $fieldTypes = [];
+        $implementationDetail = [];
         $fieldCount = 0;
         foreach ($this->getEntity()->getFields() as $field) {
             if ($field->isLazyLoad()) {
@@ -38,24 +44,28 @@ class PopulateObjectMethod extends BuildComponent
             $fieldCount++;
 
             if ($field->isImplementationDetail()) {
-                continue;
+                $implementationDetail[$field->getName()] = true;
             }
 
             $fieldNames[] = $field->getName();
             $fieldTypes[] = $field->getType();
             $camelNames[] = $field->getCamelCaseName();
             $columnNames[] = $field->getColumnName();
-            $colNames[] = $field->getEntity()->getName(). '.' .$field->getName();
+            $fullColumnNames[] = $field->getEntity()->getName(). '.' .$field->getColumnName();
         }
 
         $body .= "
 if (EntityMap::TYPE_NUM === \$indexType) {
+    //0
 ";
         foreach ($fieldNames as $idx => $fieldName) {
             $propName = $fieldNames[$idx];
-            $name = $fieldNames[$idx];
             $body .= "
-    \$writer(\$obj, '$propName', \$originalValues['$fieldName'] = \$this->prepareWritingValue(\$row[\$offset + $idx], '$name'));";
+    \$originalValues['$propName'] = \$this->prepareWritingValue(\$row[\$offset + $idx], '$propName');";
+            if (!isset($implementationDetail[$propName])) {
+                $body .= "
+    \$writer(\$obj, '$propName', \$originalValues['$propName']);";
+            }
         }
 
         $body .= "
@@ -64,42 +74,86 @@ if (EntityMap::TYPE_NUM === \$indexType) {
 ";
         foreach ($camelNames as $idx => $fieldName) {
             $propName = $fieldNames[$idx];
-            $name = $fieldNames[$idx];
             $body .= "
-    \$writer(\$obj, '$propName', \$originalValues['$fieldName'] = \$this->prepareWritingValue(\$row['$fieldName'], '$name'));";
+    \$originalValues['$propName'] = \$this->prepareWritingValue(\$row[\$offset + $idx], '$propName');";
+            if (!isset($implementationDetail[$propName])) {
+                $body .= "
+    \$writer(\$obj, '$propName', \$originalValues['$propName']);";
+            }
         }
 
         $body .= "
 } else if (EntityMap::TYPE_FIELDNAME === \$indexType) {
     //column_name
 ";
-        foreach ($fieldNames as $idx => $fieldName) {
+        foreach ($columnNames as $idx => $fieldName) {
             $propName = $fieldNames[$idx];
-            $name = $fieldNames[$idx];
-            $fieldName = $columnNames[$idx];
             $body .= "
-    \$writer(\$obj, '$propName', \$originalValues['$fieldName'] = \$this->prepareWritingValue(\$row['$fieldName'], '$name'));";
+    \$originalValues['$propName'] = \$this->prepareWritingValue(\$row[\$offset + $idx], '$propName');";
+            if (!isset($implementationDetail[$propName])) {
+                $body .= "
+    \$writer(\$obj, '$propName', \$originalValues['$propName']);";
+            }
         }
 
         $body .= "
 } else if (EntityMap::TYPE_COLNAME === \$indexType) {
     //book.column_name
 ";
-        foreach ($colNames as $idx => $fieldName) {
+        foreach ($fullColumnNames as $idx => $fieldName) {
             $propName = $fieldNames[$idx];
-            $name = $fieldNames[$idx];
-            $fieldName = $colNames[$idx];
             $body .= "
-    \$writer(\$obj, '$propName', \$originalValues['$fieldName'] = \$this->prepareWritingValue(\$row['$fieldName'], '$name'));";
+    \$originalValues['$propName'] = \$this->prepareWritingValue(\$row[\$offset + $idx], '$propName');";
+            if (!isset($implementationDetail[$propName])) {
+                $body .= "
+    \$writer(\$obj, '$propName', \$originalValues['$propName']);";
+            }
         }
 
         $body .= "
 }
 ";
 
+        foreach ($this->getEntity()->getRelations() as $relation) {
+            $relationName = $relation->getField();
+            $className = $relation->getForeignEntity()->getFullClassName();
+
+            $body .= "
+//relation $relationName
+\$exist = true;
+";
+            foreach ($relation->getLocalFieldObjects() as $field) {
+                $propName = $field->getName();
+                $body .= "\$exist = \$exist && null !== \$originalValues['$propName'];";
+            }
+
+            $body .= "
+if (\$exist) {
+    \$relationProxy = \$this->getConfiguration()->getRepository('$className')->createProxy();
+    \$relationProxyWriter = \$this->getConfiguration()->getEntityMap('$className')->getPropWriter();
+";
+
+            foreach ($relation->getFieldObjectsMapping() as $map) {
+                $local = $map['local'];
+                $foreign = $map['foreign'];
+                $pkName = $foreign->getName();
+                $localName = $local->getName();
+                $body .= "
+    \$relationProxyWriter(\$relationProxy, '$pkName', \$originalValues['$localName']);";
+            }
+
+
+            $body .= "
+    \$writer(\$obj, '$relationName', \$relationProxy);
+}
+";
+        }
+
+
         $body .= "
 \$this->getRepository()->setLastKnownValues(\$obj, \$originalValues);
 \$offset = \$offset + $fieldCount;
+unset(\$obj->__duringInitializing__);
 return \$obj;
 ";
 
@@ -112,6 +166,7 @@ return \$obj;
             ->addSimpleParameter('row', 'array')
             ->addParameter($offsetParameter)
             ->addSimpleParameter('indexType', 'string', PhpConstant::create('EntityMap::TYPE_NUM'))
+            ->addSimpleParameter('entity', 'object', null)
             ->setBody($body);
     }
 }

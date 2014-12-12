@@ -69,7 +69,7 @@ EOF;
         }
         if (!class_exists('VersionableBehaviorTest6')) {
             $schema2 = <<<EOF
-<database name="versionable_behavior_test_2" defaultPhpNamingMethod="nochange">
+<database name="versionable_behavior_test_2" defaultColumnNamingMethod="nochange">
     <table name="VersionableBehaviorTest6">
         <column name="Id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <column name="FooBar" type="VARCHAR" size="100" />
@@ -103,7 +103,7 @@ EOF;
 
         if (!class_exists('VersionableBehaviorTest8')) {
             $schema2 = <<<EOF
-<database name="versionable_behavior_test_3" defaultPhpNamingMethod="nochange">
+<database name="versionable_behavior_test_3" defaultColumnNamingMethod="nochange">
     <table name="VersionableBehaviorTest8">
         <column name="Id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <column name="FooBar" type="VARCHAR" size="100" />

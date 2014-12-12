@@ -657,7 +657,7 @@ class Relation extends MappingModel
      * Returns an array of local and foreign field objects
      * mapped for this foreign key.
      *
-     * @return array
+     * @return Field[][]
      */
     public function getFieldObjectsMapping()
     {

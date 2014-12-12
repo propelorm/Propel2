@@ -67,7 +67,7 @@ class CrossRelationGetterMethods extends BuildComponent
                 $this->getBuilder()->getNewObjectBuilder($relation->getForeignEntity())
             );
 
-            $collName = $this->getRelationVarName($relation);
+            $collName = $this->getCrossRelationRelationVarName($relation);
 
             $body = <<<EOF
 return \$this->$collName;
@@ -280,7 +280,7 @@ EOF;
                 $this->getBuilder()->getNewStubQueryBuilder($relation->getForeignEntity())
             );
 
-            $collName = $this->getRelationVarName($relation);
+            $collName = $this->getCrossRelationRelationVarName($relation);
 
             $body = <<<EOF
 \$partial = \$this->{$collName}Partial && !\$this->isNew();

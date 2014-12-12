@@ -94,7 +94,7 @@ abstract class AbstractBuilder extends DataModelBuilder
 
         $generator = new CodeGenerator();
 
-        $code = "<?php\n\n" . $generator->generateCode($this->getDefinition());
+        $code = "<?php\n\n" . $generator->generate($this->getDefinition());
 
         return $code;
     }

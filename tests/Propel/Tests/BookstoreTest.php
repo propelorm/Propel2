@@ -229,7 +229,6 @@ class BookstoreTest extends BookstoreEmptyTestBase
         $m1_lookup = MediaQuery::create()->findPk($m1_id);
 
         $this->assertNotNull($m1_lookup, 'Can find just-created media item');
-        var_dump(get_class($m1_lookup));
         $this->assertNotNull($m1_lookup->getCoverImage());
         $this->assertEquals(md5(file_get_contents($blob_path)), md5(stream_get_contents($m1_lookup->getCoverImage())), 'BLOB was correctly updated');
         $this->assertEquals(file_get_contents($clob_path), (string) $m1_lookup->getExcerpt(), 'CLOB was correctly updated');
@@ -256,37 +255,39 @@ class BookstoreTest extends BookstoreEmptyTestBase
 
         // init book club list 1 with 2 books
 
-        $blc1 = new BookClubList();
-        $blc1->setGroupLeader("Crazyleggs");
-        $blc1->setTheme("Happiness");
+        $bookClubList1 = new BookClubList();
+        $bookClubList1->setGroupLeader("Crazyleggs");
+        $bookClubList1->setTheme("Happiness");
 
-        $brel1 = new BookListRel();
-        $brel1->setBook($phoenix);
+        $bookListRelation1 = new BookListRel();
+        $bookListRelation1->setBook($phoenix);
 
-        $brel2 = new BookListRel();
-        $brel2->setBook($dj);
+        $bookListRelation2 = new BookListRel();
+        $bookListRelation2->setBook($dj);
 
-        $blc1->addBookListRel($brel1);
-        $blc1->addBookListRel($brel2);
+        $bookClubList1->addBookListRel($bookListRelation1);
+        $bookClubList1->addBookListRel($bookListRelation2);
 
-        $blc1->save();
+        var_dump('11111###############################################');
+        $bookClubList1->save();
 
-        $this->assertNotNull($blc1->getId(), 'BookClubList 1 was saved');
+        $this->assertNotNull($bookClubList1->getId(), 'BookClubList 1 was saved');
 
         // init book club list 2 with 1 book
 
-        $blc2 = new BookClubList();
-        $blc2->setGroupLeader("John Foo");
-        $blc2->setTheme("Default");
+        $bookClubList2 = new BookClubList();
+        $bookClubList2->setGroupLeader("John Foo");
+        $bookClubList2->setTheme("Default");
 
-        $brel3 = new BookListRel();
-        $brel3->setBook($phoenix);
+        $bookListRelation3 = new BookListRel();
+        $bookListRelation3->setBook($phoenix);
 
-        $blc2->addBookListRel($brel3);
+        $bookClubList2->addBookListRel($bookListRelation3);
 
-        $blc2->save();
+        var_dump('###############################################');
+        $bookClubList2->save();
 
-        $this->assertNotNull($blc2->getId(), 'BookClubList 2 was saved');
+        $this->assertNotNull($bookClubList2->getId(), 'BookClubList 2 was saved');
 
         // re-fetch books and lists from db to be sure that nothing is cached
 
@@ -296,22 +297,22 @@ class BookstoreTest extends BookstoreEmptyTestBase
         $this->assertNotNull($phoenix, "book 'phoenix' has been re-fetched from db");
 
         $crit = new Criteria();
-        $crit->add(BookClubListEntityMap::COL_ID, $blc1->getId());
-        $blc1 = BookClubListQuery::create(null, $crit)->findOne();
-        $this->assertNotNull($blc1, 'BookClubList 1 has been re-fetched from db');
+        $crit->add(BookClubListEntityMap::COL_ID, $bookClubList1->getId());
+        $bookClubList1 = BookClubListQuery::create(null, $crit)->findOne();
+        $this->assertNotNull($bookClubList1, 'BookClubList 1 has been re-fetched from db');
 
         $crit = new Criteria();
-        $crit->add(BookClubListEntityMap::COL_ID, $blc2->getId());
-        $blc2 = BookClubListQuery::create(null, $crit)->findOne();
-        $this->assertNotNull($blc2, 'BookClubList 2 has been re-fetched from db');
+        $crit->add(BookClubListEntityMap::COL_ID, $bookClubList2->getId());
+        $bookClubList2 = BookClubListQuery::create(null, $crit)->findOne();
+        $this->assertNotNull($bookClubList2, 'BookClubList 2 has been re-fetched from db');
 
         $relCount = $phoenix->countBookListRels();
         $this->assertEquals(2, $relCount, "book 'phoenix' has 2 BookListRels");
 
-        $relCount = $blc1->countBookListRels();
+        $relCount = $bookClubList1->countBookListRels();
         $this->assertEquals(2, $relCount, 'BookClubList 1 has 2 BookListRels');
 
-        $relCount = $blc2->countBookListRels();
+        $relCount = $bookClubList2->countBookListRels();
         $this->assertEquals(1, $relCount, 'BookClubList 2 has 1 BookListRel');
 
         // Cleanup (tests DELETE)
@@ -331,7 +332,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
         $c->add(AuthorEntityMap::COL_ID, $hp->getAuthor()->getId());
         $c->add(PublisherEntityMap::COL_ID, $hp->getPublisher()->getId());
         $c->setSingleRecord(true);
-        BookEntityMap::doDelete($c);
+        $c->doDelete();
 
         // Checking to make sure correct records were removed.
         $this->assertEquals(3, AuthorQuery::create()->count(), 'Correct records were removed from author table');
@@ -344,7 +345,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
         $cn->addOr($c->getNewCriterion(BookEntityMap::COL_ISBN, "0380977427"));
         $cn->addOr($c->getNewCriterion(BookEntityMap::COL_ISBN, "0140422161"));
         $c->add($cn);
-        BookEntityMap::doDelete($c);
+        $c->doDelete();
 
         // Attempting to delete book [id = $td_id]
         $td->delete();
@@ -363,8 +364,8 @@ class BookstoreTest extends BookstoreEmptyTestBase
         // set to SETNULL in the foreign keys in book. Is this correct?
         $rowling->delete();
         $scholastic->delete();
-        $blc1->delete();
-        $blc2->delete();
+        $bookClubList1->delete();
+        $bookClubList2->delete();
 
         $this->assertCount(0, AuthorQuery::create()->find(), 'no records in [author] table');
         $this->assertCount(0, PublisherQuery::create()->find(), 'no records in [publisher] table');

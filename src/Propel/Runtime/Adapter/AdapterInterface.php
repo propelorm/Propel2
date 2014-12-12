@@ -111,7 +111,7 @@ interface AdapterInterface
      * @param  string $entity The entity name to quo
      * @return string The quoted entity name
      **/
-    public function quoteIdentifierEntity($entity);
+    public function quoteTableIdentifier($entity);
 
     /**
      * Quotes full qualified field names and entity names.

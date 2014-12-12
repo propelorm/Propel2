@@ -4,9 +4,9 @@ namespace Propel\Generator\Util;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 use Propel\Generator\Exception\BuildException;
-use Propel\Generator\Model\PhpNameGenerator;
 use Propel\Generator\Exception\BehaviorNotFoundException;
 use Propel\Generator\Config\GeneratorConfigInterface;
+use Propel\Generator\Model\NamingTool;
 
 /**
  * Service class to find composer and installed packages
@@ -174,8 +174,7 @@ class BehaviorLocator
      */
     private function getCoreBehavior($name)
     {
-        $generator = new PhpNameGenerator();
-        $phpName = $generator->generateName([$name, PhpNameGenerator::CONV_METHOD_PHPNAME]);
+        $phpName = NamingTool::toCamelCase($name);
 
         return sprintf('\\Propel\\Generator\\Behavior\\%s\\%sBehavior', $phpName, $phpName);
     }

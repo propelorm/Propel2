@@ -1737,7 +1737,7 @@ class Criteria
     {
         $criterion = $this->getCriterionForCondition($p1, $p2, $p3);
 
-        $key = $criterion->getEntity() . '.' . $criterion->getField();
+        $key = $criterion->getEntityName() . '.' . $criterion->getField();
         if ($preferFieldCondition && $this->containsKey($key)) {
             // FIXME: addAnd() operates preferably on existing conditions on the same field
             // this may cause unexpected results, but it's there for BC with Propel 14
@@ -1978,8 +1978,8 @@ class Criteria
         }
 
         // from / join entities quoted if it is necessary
-        $fromClause = array_map(array($this, 'quoteIdentifierEntity'), $fromClause);
-        $joinClause = $joinClause ? $joinClause : array_map(array($this, 'quoteIdentifierEntity'), $joinClause);
+        $fromClause = array_map(array($this, 'quoteTableIdentifierForEntity'), $fromClause);
+        $joinClause = $joinClause ? $joinClause : array_map(array($this, 'quoteTableIdentifierForEntity'), $joinClause);
 
         // add subQuery to From after adding quotes
         foreach ($this->getSelectQueries() as $subQueryAlias => $subQueryCriteria) {
@@ -2042,55 +2042,68 @@ class Criteria
             return $adapter->quote($string);
         }
 
+        $rightSide = '';
         //find entity name and ask entityMap if quoting is enabled
-        if (!$entityName && false !== ($pos = strrpos($string, '.'))) {
+        if (!$entityName && false !== ($pos = strpos($string, '.'))) {
             $entityName = substr($string, 0, $pos);
+            $rightSide = substr($string, $pos);
         }
 
         $entityMapName = $this->getEntityForAlias($entityName) ?: $entityName;
+        $quoteIdentifier = false;
 
         if ($entityMapName) {
             $dbMap = $this->getConfiguration()->getDatabase($this->getDbName());
             if ($dbMap->hasEntity($entityMapName)) {
                 $entityMap = $dbMap->getEntity($entityMapName);
-                if ($entityMap->isIdentifierQuotingEnabled()) {
-                    $adapter = $this->getConfiguration()->getAdapter($this->getDbName());
-
-                    return $adapter->quote($string);
+                $quoteIdentifier = $entityMap->isIdentifierQuotingEnabled();
+                $string = $entityMap->getTableName();
+                if ($rightSide) {
+                    $string .= $rightSide;
                 }
             }
         }
 
+        if ($quoteIdentifier || $this->isIdentifierQuotingEnabled()) {
+            $adapter = $this->getConfiguration()->getAdapter($this->getDbName());
+
+            return $adapter->quote($string);
+        }
+
         return $string;
     }
 
-    public function quoteIdentifierEntity($string)
+    public function quoteTableIdentifierForEntity($string)
     {
         $realEntityName = $string;
+        $alias = null;
         if (false !== ($pos = strrpos($string, ' '))) {
             $realEntityName = substr($string, 0, $pos);
+            $alias = substr($string, $pos + 1);
         }
 
         $dbMap = $this->getConfiguration()->getDatabase($this->getDbName());
-
-        if ($this->isIdentifierQuotingEnabled()) {
-            $adapter = $this->getConfiguration()->getAdapter($this->getDbName());
-
-            return $adapter->quoteIdentifierEntity($string);
-        }
+        $quoteIdentifier = false;
 
         if ($dbMap->hasEntity($realEntityName)) {
             $entityMap = $dbMap->getEntity($realEntityName);
-            if ($entityMap->isIdentifierQuotingEnabled()) {
-                $adapter = $this->getConfiguration()->getAdapter($this->getDbName());
 
-                return $adapter->quoteIdentifierEntity($string);
+            $quoteIdentifier = $entityMap->isIdentifierQuotingEnabled();
+
+            $string = $entityMap->getTableName();
+            if ($alias) {
+                $string .= " $alias";
             }
+        }
+
+        if ($quoteIdentifier || $this->isIdentifierQuotingEnabled()) {
+            $adapter = $this->getConfiguration()->getAdapter($this->getDbName());
+
+            return $adapter->quoteTableIdentifier($string);
         }
 
         return $string;
     }
-
     /**
      * Replaces complete field names (like Article.AuthorId) in an SQL clause
      * by their exact Propel field fully qualified name (e.g. article.author_id)
@@ -2230,7 +2243,7 @@ class Criteria
 
             // add identifiers
             $fields = array_map(array($this, 'quoteIdentifier'), $fields);
-            $entityName = $this->quoteIdentifierEntity($entityName);
+            $entityName = $this->quoteTableIdentifierForEntity($entityName);
 
             $sql = 'INSERT INTO ' . $entityName
                 . ' (' . implode(',', $fields) . ')'
@@ -2358,7 +2371,7 @@ class Criteria
                 } else {
                     $updateEntity = $entityName;
                 }
-                $sql .= $this->quoteIdentifierEntity($updateEntity);
+                $sql .= $this->quoteTableIdentifierForEntity($updateEntity);
                 $sql .= " SET ";
                 $p = 1;
                 foreach ($updateEntitiesFields[$entityName] as $col) {
@@ -2547,6 +2560,7 @@ class Criteria
 
         $affectedRows = 0; // initialize this in case the next loop has no iterations.
 
+        var_dump('############ddddeletete');
         foreach ($entities as $entityName => $fields) {
 
             $whereClause = array();
@@ -2558,6 +2572,7 @@ class Criteria
                 foreach ($fields as $colName) {
                     $sb = '';
                     $this->getCriterion($colName)->appendPsTo($sb, $params);
+                    echo "delete-sb: $sb\n";
                     $this->replaceNames($sb);
                     $whereClause[] = $sb;
                 }
@@ -2569,7 +2584,7 @@ class Criteria
                 $stmt->execute();
                 $affectedRows = $stmt->rowCount();
             } catch (\Exception $e) {
-                Propel::log($e->getMessage(), Propel::LOG_ERR);
+                $this->getConfiguration()->getLogger()->log($e->getMessage(), Configuration::LOG_ERR);
                 throw new PropelException(sprintf('Unable to execute DELETE statement [%s]', $sql), 0, $e);
             }
 

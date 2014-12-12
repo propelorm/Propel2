@@ -21,7 +21,7 @@ class GetPrimaryKeyMethod extends BuildComponent
 
     public function process()
     {
-        $body = '$reader = $this->getPropReader();' . PHP_EOL;
+        $body = '$reader = $this->getEntityMap()->getPropReader();' . PHP_EOL;
 
         $pks = $this->getEntity()->getPrimaryKey();
 

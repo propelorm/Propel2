@@ -38,7 +38,6 @@ if (null === \$key) {
             } else {
                 $pks = '$key';
             }
-            $pkHash =
             $pkHash = $this->getFirstLevelCacheKeySnippet($pks);
             $body .= "
 if ((null !== (\$obj = \$this->getInstanceFromFirstLevelCache({$pkHash})))) {

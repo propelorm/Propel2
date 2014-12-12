@@ -55,7 +55,7 @@ class Database extends ScopedMappingModel
 
     private $baseClass;
     private $defaultIdMethod;
-    private $defaultPhpNamingMethod;
+    private $defaultColumnNamingMethod;
 
     /**
      * The default accessor visibility.
@@ -129,7 +129,7 @@ class Database extends ScopedMappingModel
 
         $this->heavyIndexing             = false;
         $this->identifierQuoting         = false;
-        $this->defaultPhpNamingMethod    = NameGeneratorInterface::CONV_METHOD_UNDERSCORE;
+        $this->defaultColumnNamingMethod = 'underscore';
         $this->defaultIdMethod           = IdMethod::NATIVE;
         $this->defaultStringFormat       = static::DEFAULT_STRING_FORMAT;
         $this->defaultAccessorVisibility = static::VISIBILITY_PUBLIC;
@@ -150,7 +150,7 @@ class Database extends ScopedMappingModel
         $this->platformClass = $this->getAttribute('platform') ?: 'mysql';
         $this->baseClass = $this->getAttribute('baseClass');
         $this->defaultIdMethod = $this->getAttribute('defaultIdMethod', IdMethod::NATIVE);
-        $this->defaultPhpNamingMethod = $this->getAttribute('defaultPhpNamingMethod', NameGeneratorInterface::CONV_METHOD_UNDERSCORE);
+        $this->defaultColumnNamingMethod = $this->getAttribute('defaultColumnNamingMethod', 'underscore');
         $this->heavyIndexing = $this->booleanValue($this->getAttribute('heavyIndexing'));
         $this->identifierQuoting = $this->getAttribute('identifierQuoting') ? $this->booleanValue($this->getAttribute('identifierQuoting')) : false;
         $this->entityPrefix = $this->getAttribute('entityPrefix', $this->getBuildProperty('generator.entityPrefix'));
@@ -262,9 +262,9 @@ class Database extends ScopedMappingModel
      *
      * @return string
      */
-    public function getDefaultPhpNamingMethod()
+    public function getDefaultColumnNamingMethod()
     {
-        return $this->defaultPhpNamingMethod;
+        return $this->defaultColumnNamingMethod;
     }
 
     /**
@@ -272,9 +272,9 @@ class Database extends ScopedMappingModel
      *
      * @param string $strategy
      */
-    public function setDefaultPhpNamingMethod($strategy)
+    public function setDefaultColumnNamingMethod($strategy)
     {
-        $this->defaultPhpNamingMethod = $strategy;
+        $this->defaultColumnNamingMethod = $strategy;
     }
 
     /**

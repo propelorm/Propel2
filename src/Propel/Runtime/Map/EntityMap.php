@@ -177,6 +177,7 @@ abstract class EntityMap
     protected $databaseName;
 
     protected $classReader = [];
+    protected $classIsser = [];
     protected $classWriter = [];
     protected $propReader;
     protected $propWriter;
@@ -225,7 +226,7 @@ abstract class EntityMap
     }
 
     abstract public function populateDependencyGraph($entity, DependencyGraph $dependencyGraph);
-    abstract public function populateObject(array $row, &$offset = 0, $indexType = EntityMap::TYPE_NUM);
+    abstract public function populateObject(array $row, &$offset = 0, $indexType = EntityMap::TYPE_NUM, $entity = null);
     abstract public function isValidRow(array $row, $offset = 0);
     abstract public function getSnapshot($entity);
     abstract public function getPropWriter();
@@ -469,11 +470,11 @@ abstract class EntityMap
      */
     public function getClassPropIsset($className)
     {
-        if (isset($this->classReader[$className])) {
-            return $this->classReader[$className];
+        if (isset($this->classIsser[$className])) {
+            return $this->classIsser[$className];
         }
 
-        $this->classReader[$className] = \Closure::bind(
+        $this->classIsser[$className] = \Closure::bind(
             function ($object, $prop) {
                 return isset($object->$prop);
             },
@@ -481,7 +482,7 @@ abstract class EntityMap
             $className
         );
 
-        return $this->classReader[$className];
+        return $this->classIsser[$className];
     }
 
     /**

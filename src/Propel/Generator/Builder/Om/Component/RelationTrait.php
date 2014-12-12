@@ -112,12 +112,13 @@ trait RelationTrait
      * Constructs variable name for fkey-related objects.
      *
      * @param  Relation $relation
+     * @param  boolean  $plural
      *
      * @return string
      */
-    public function getRelationVarName(Relation $relation)
+    public function getRelationVarName(Relation $relation, $plural = false)
     {
-        return lcfirst($this->getRelationPhpName($relation, false));
+        return lcfirst($this->getRelationPhpName($relation, $plural));
     }
 
     /**

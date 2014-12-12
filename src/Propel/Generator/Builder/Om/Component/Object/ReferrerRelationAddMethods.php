@@ -2,7 +2,6 @@
 
 namespace Propel\Generator\Builder\Om\Component\Object;
 
-use gossi\codegen\model\PhpParameter;
 use Propel\Generator\Builder\Om\Component\BuildComponent;
 use Propel\Generator\Builder\Om\Component\NamingTrait;
 use Propel\Generator\Builder\Om\Component\RelationTrait;
@@ -45,7 +44,15 @@ class ReferrerRelationAddMethods extends BuildComponent
         $colVarName = $this->getRefRelationCollVarName($refRelation);
         $relationClassName = $this->getClassNameFromEntity($refRelation->getEntity());
 
-        $body = "\$this->{$colVarName}[] = \$$varName;";
+        $body = "
+if (!\$this->{$colVarName}->contains(\${$varName})) {
+    \$this->{$colVarName}[] = \${$varName};
+    \${$varName}->set" . $this->getRelationPhpName($refRelation) . "(\$this);
+}
+";
+        $this->getDefinition()->declareUse('Propel\Runtime\Collection\ObjectCollection');
+
+        $this->addConstructorBody("\$this->{$colVarName} = new ObjectCollection();");
 
         $this->addMethod($methodName)
             ->addSimpleParameter($varName, $relationClassName)

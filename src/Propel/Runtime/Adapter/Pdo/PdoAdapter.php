@@ -228,7 +228,7 @@ abstract class PdoAdapter
         }
 
         if ($entity) {
-            return $this->quoteIdentifierEntity($entity) . '.' . $this->quoteIdentifier($field);
+            return $this->quoteTableIdentifier($entity) . '.' . $this->quoteIdentifier($field);
         } else {
             return $this->quoteIdentifier($field);
         }
@@ -243,7 +243,7 @@ abstract class PdoAdapter
      * @param  string $entity The entity name to quo
      * @return string The quoted entity name
      **/
-    public function quoteIdentifierEntity($entity)
+    public function quoteTableIdentifier($entity)
     {
         return implode(' ', array_map(array($this, 'quoteIdentifier'), explode(' ', $entity)));
     }
@@ -392,10 +392,10 @@ abstract class PdoAdapter
         }
 
         if ($realEntityName = $criteria->getEntityForAlias($entityName)) {
-            $realEntityName = $criteria->quoteIdentifierEntity($realEntityName);
+            $realEntityName = $criteria->quoteTableIdentifierForEntity($realEntityName);
             $sql .= $entityName . ' FROM ' . $realEntityName . ' AS ' . $entityName;
         } else {
-            $entityName = $criteria->quoteIdentifierEntity($entityName);
+            $entityName = $criteria->quoteTableIdentifierForEntity($entityName);
             $sql .= 'FROM ' . $entityName;
         }
 

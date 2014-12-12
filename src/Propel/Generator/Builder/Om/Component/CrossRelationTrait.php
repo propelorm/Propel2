@@ -117,7 +117,7 @@ trait CrossRelationTrait
     }
 
     /**
-     * Returns the
+     * Returns the relation name for a relation of a CrossRelation.
      *
      * @param Relation $relation
      *

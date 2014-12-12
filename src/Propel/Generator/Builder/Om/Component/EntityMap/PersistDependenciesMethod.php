@@ -5,8 +5,10 @@ namespace Propel\Generator\Builder\Om\Component\EntityMap;
 
 use gossi\docblock\tags\TagFactory;
 use Propel\Generator\Builder\Om\Component\BuildComponent;
+use Propel\Generator\Builder\Om\Component\CrossRelationTrait;
 use Propel\Generator\Builder\Om\Component\NamingTrait;
 use Propel\Generator\Builder\Om\Component\RelationTrait;
+use Propel\Generator\Model\CrossRelation;
 use Propel\Runtime\Session\DependencyGraph;
 
 /**
@@ -16,8 +18,7 @@ use Propel\Runtime\Session\DependencyGraph;
  */
 class PersistDependenciesMethod extends BuildComponent
 {
-    use NamingTrait;
-    use RelationTrait;
+    use CrossRelationTrait;
 
     public function process()
     {
@@ -30,8 +31,39 @@ $reader = $this->getPropReader();
         foreach ($this->getEntity()->getRelations() as $relation) {
             $relationName = $this->getRelationVarName($relation);
             $body .= "
+// many-to-one {$relation->getForeignEntity()->getFullClassName()}
 if (\$relationEntity = \$reader(\$entity, '$relationName')) {
     \$session->persist(\$relationEntity, \$deep);
+}
+";
+        }
+
+//        foreach ($this->getEntity()->getReferrers() as $relation) {
+//            $relationName = $this->getRefRelationCollVarName($relation);
+//            $body .= "
+//if (\$relationEntities = \$reader(\$entity, '$relationName')) {
+//    foreach (\$relationEntities as \$relationEntity) {
+//        \$session->persist(\$relationEntity, \$deep);
+//    }
+//}
+//";
+//        }
+
+        foreach ($this->getEntity()->getCrossRelations() as $crossRelation) {
+            $varName = $this->getRefRelationCollVarName($crossRelation->getIncomingRelation());
+
+            $to = [];
+            foreach ($crossRelation->getRelations() as $relation) {
+                $to[] = $relation->getForeignEntity()->getFullClassName();
+            }
+            $to = implode(', ', $to);
+
+            $body .= "
+// cross relation {$crossRelation->getMiddleEntity()->getFullClassName()} (to $to)
+if (\$relationEntities = \$reader(\$entity, '$varName')) {
+    foreach (\$relationEntities as \$relationEntity) {
+        \$session->persist(\$relationEntity, \$deep);
+    }
 }
 ";
         }

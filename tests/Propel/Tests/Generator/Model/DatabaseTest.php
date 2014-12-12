@@ -28,7 +28,7 @@ class DatabaseTest extends ModelTestCase
         $this->assertSame('bookstore', $database->getName());
         $this->assertSame('YAML', $database->getDefaultStringFormat());
         $this->assertSame('native', $database->getDefaultIdMethod());
-        $this->assertSame('underscore', $database->getDefaultPhpNamingMethod());
+        $this->assertSame('underscore', $database->getDefaultColumnNamingMethod());
         $this->assertEmpty($database->getTablePrefix());
         $this->assertNull($database->getParentSchema());
         $this->assertNull($database->getDomain('BOOLEAN'));
@@ -50,7 +50,7 @@ class DatabaseTest extends ModelTestCase
             'name'                   => 'bookstore',
             'baseClass'              => 'CustomBaseObject',
             'defaultIdMethod'        => 'native',
-            'defaultPhpNamingMethod' => 'underscore',
+            'defaultColumnNamingMethod' => 'underscore',
             'heavyIndexing'          => 'true',
             'tablePrefix'            => 'acme_',
             'defaultStringFormat'    => 'XML',
@@ -60,7 +60,7 @@ class DatabaseTest extends ModelTestCase
         $this->assertSame('CustomBaseObject', $database->getBaseClass());
         $this->assertSame('XML', $database->getDefaultStringFormat());
         $this->assertSame('native', $database->getDefaultIdMethod());
-        $this->assertSame('underscore', $database->getDefaultPhpNamingMethod());
+        $this->assertSame('underscore', $database->getDefaultColumnNamingMethod());
         $this->assertSame('acme_', $database->getTablePrefix());
         $this->assertTrue($database->isHeavyIndexing());
         $this->assertTrue($database->getHeavyIndexing());
@@ -410,9 +410,9 @@ class DatabaseTest extends ModelTestCase
     public function testSetDefaultPhpNamingMethodStrategy()
     {
         $database = new Database();
-        $database->setDefaultPhpNamingMethod('foo');
+        $database->setDefaultColumnNamingMethod('foo');
 
-        $this->assertSame('foo', $database->getDefaultPhpNamingMethod());
+        $this->assertSame('foo', $database->getDefaultColumnNamingMethod());
     }
 
     public function testAddTableWithSameNameOnDifferentSchema()

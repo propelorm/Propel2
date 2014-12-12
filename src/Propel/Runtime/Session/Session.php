@@ -26,7 +26,10 @@ class Session
      */
     protected $persistQueue = [];
 
-    protected $deleteQueue = [];
+    protected $removeQueue = [];
+
+    protected $persisted = [];
+    protected $removed = [];
 
     function __construct(Configuration $configuration)
     {
@@ -42,8 +45,18 @@ class Session
     }
 
     /**
+     * @param string $splId
+     *
+     * @return object
+     */
+    public function getEntityById($splId)
+    {
+        return $this->persistQueue[$splId];
+    }
+
+    /**
      * @param object $entity
-     * @param boolean $deep If all attached entities(relations) should be persisted too.
+     * @param boolean $deep Whether all attached entities(relations) should be persisted too.
      */
     public function persist($entity, $deep = false)
     {
@@ -51,7 +64,6 @@ class Session
 
         $event = new PersistEvent($this, $entity);
         $this->configuration->getEventDispatcher()->dispatch(Events::PRE_PERSIST, $event);
-
 
         if (!isset($this->persistQueue[$id])) {
             $this->persistQueue[$id] = $entity;
@@ -62,7 +74,26 @@ class Session
             }
         }
 
+        unset($this->removeQueue[$id]);
+
         $this->configuration->getEventDispatcher()->dispatch(Events::PERSIST, $event);
+    }
+
+    public function remove($entity)
+    {
+        $id = spl_object_hash($entity);
+
+        if (isset($this->removed[$id])) {
+            throw new \InvalidArgumentException('Entity has already been removed.');
+        }
+
+        //if new object and has not been persisted yet, we can not delete it.
+        if (!($entity instanceof EntityProxyInterface) && !isset($this->persisted[$id])) {
+            throw new \InvalidArgumentException('New entity has not been persisted yet.');
+        }
+
+        $this->removeQueue[$id] = $entity;
+        unset($this->persistQueue[$id]);
     }
 
     public function commit()
@@ -70,6 +101,42 @@ class Session
         $event = new CommitEvent($this);
         $this->configuration->getEventDispatcher()->dispatch(Events::PRE_COMMIT, $event);
 
+        $this->doDelete();
+        $this->doPersist();
+
+        $this->configuration->getEventDispatcher()->dispatch(Events::COMMIT, $event);
+    }
+
+    /**
+     * Proxies all queued entities to be deleted to its persister class.
+     */
+    protected function doDelete()
+    {
+        $removeGroups = [];
+        $persisterMap = [];
+
+        foreach ($this->removeQueue as $entity) {
+            $entityClass = get_class($entity);
+
+            if (!isset($persisterMap[$entityClass])) {
+                $persister = $this->configuration->getEntityPersisterForEntity($this, $entity);
+                $persisterMap[$entityClass] = $persister;
+            }
+
+            $removeGroups[$entityClass][] = $entity;
+        }
+
+        foreach ($removeGroups as $entities) {
+            $entityClass = get_class($entities[0]);
+            $persisterMap[$entityClass]->remove($entities);
+        }
+    }
+
+    /**
+     * Proxies all queued entities to be saved to its persister class.
+     */
+    protected function doPersist()
+    {
         $dependencyGraph = new DependencyGraph($this);
         foreach ($this->persistQueue as $entity) {
             $this
@@ -94,14 +161,13 @@ class Session
             foreach ($entityIds as $entityId) {
                 $entity = $this->persistQueue[$entityId];
                 $entities[] = $entity;
+                $this->persisted[$entityId] = true;
             }
 
             $persister->persist($entities);
         }
 
-        $this->configuration->getEventDispatcher()->dispatch(Events::COMMIT, $event);
-
         $this->persistQueue = [];
-        $this->deleteQueue = [];
+        $this->removeQueue = [];
     }
 }

@@ -110,6 +110,11 @@ abstract class BuildComponent
         return $method;
     }
 
+    protected function addConstructorBody($bodyPart)
+    {
+        $this->getDefinition()->addConstructorBody($bodyPart);
+    }
+
     /**
      * @param string $identifier
      *

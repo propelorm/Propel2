@@ -5,6 +5,7 @@ namespace Propel\Generator\Builder\Om\Component\EntityMap;
 
 use gossi\docblock\tags\TagFactory;
 use Propel\Generator\Builder\Om\Component\BuildComponent;
+use Propel\Generator\Builder\Om\Component\CrossRelationTrait;
 use Propel\Generator\Builder\Om\Component\NamingTrait;
 use Propel\Generator\Builder\Om\Component\RelationTrait;
 use Propel\Runtime\Session\DependencyGraph;
@@ -16,8 +17,7 @@ use Propel\Runtime\Session\DependencyGraph;
  */
 class PopulateDependencyGraphMethod extends BuildComponent
 {
-    use NamingTrait;
-    use RelationTrait;
+    use CrossRelationTrait;
 
     public function process()
     {
@@ -34,6 +34,29 @@ if (\$dep = \$reader(\$entity, '$relationName')) {
 }
             ";
         }
+//
+//        foreach ($this->getEntity()->getReferrers() as $relation) {
+//            $relationName = $this->getRefRelationCollVarName($relation);
+//            $body .= "
+//if (\$deps = \$reader(\$entity, '$relationName')) {
+//    foreach (\$deps as \$dep) {
+//        \$dependencies[] = \$dep;
+//    }
+//}
+//            ";
+//        }
+
+
+//        foreach ($this->getEntity()->getCrossRelations() as $crossRelation) {
+//            $relationName = $this->getCrossRelationVarName($crossRelation);
+//            $body .= "
+//if (\$deps = \$reader(\$entity, '$relationName')) {
+//    foreach (\$deps as \$dep) {
+//        \$dependencies[] = \$dep;
+//    }
+//}
+//";
+//        }
 
         $body .= '
 $dependencyGraph->add($entity, $dependencies);

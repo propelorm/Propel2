@@ -34,5 +34,8 @@ class QueryBuilder extends AbstractBuilder
 
         $this->applyComponent('Query\\Constructor');
         $this->applyComponent('Query\\JoinMethods');
+        $this->applyComponent('Query\\FilterByFieldMethods');
+        $this->applyComponent('Query\\FilterByRelationMethods');
+        $this->applyComponent('Query\\FilterByPrimaryKeyMethod');
     }
 }

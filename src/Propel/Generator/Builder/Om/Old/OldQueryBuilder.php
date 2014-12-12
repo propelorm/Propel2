@@ -210,12 +210,14 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
         $this->addFindPks($script);
         $this->addFilterByPrimaryKey($script);
         $this->addFilterByPrimaryKeys($script);
+
         foreach ($this->getTable()->getColumns() as $col) {
             $this->addFilterByCol($script, $col);
             if ($col->getType() === PropelTypes::PHP_ARRAY && $col->isNamePlural()) {
                 $this->addFilterByArrayCol($script, $col);
             }
         }
+
         foreach ($this->getTable()->getForeignKeys() as $fk) {
             $this->addFilterByFK($script, $fk);
             $this->addJoinFk($script, $fk);

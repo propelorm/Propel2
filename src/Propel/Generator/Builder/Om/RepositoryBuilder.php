@@ -49,7 +49,9 @@ class RepositoryBuilder extends AbstractBuilder
 
         $this->applyComponent('Repository\\IsNewMethod');
         $this->applyComponent('Repository\\SaveMethod');
+        $this->applyComponent('Repository\\RemoveMethod');
         $this->applyComponent('Repository\\FindMethod');
+        $this->applyComponent('Repository\\LoadMethod');
         $this->applyComponent('Repository\\CreateObjectMethod');
         $this->applyComponent('Repository\\CreateQueryMethod');
         $this->applyComponent('Repository\\CreateProxyMethod');

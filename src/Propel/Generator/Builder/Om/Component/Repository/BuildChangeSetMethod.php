@@ -25,16 +25,19 @@ $reader = $this->getEntityMap()->getPropReader();
 $isset = $this->getEntityMap()->getPropIsset();
 $id = spl_object_hash($entity);
 if (!$this->hasKnownValues($id)) {
-    throw new \Propel\Runtime\Exception\RuntimeException("Can not compute a change set on a unknown entity." . $id);
+    return false;
+//    throw new \Propel\Runtime\Exception\RuntimeException("Can not compute a change set from an unknown entity." . $id);
 }
 $originValues = $this->getLastKnownValues($id);
 ';
 
         foreach ($this->getEntity()->getFields() as $field){
             if ($field->isImplementationDetail()) continue;
+            if ($field->isRelation()) continue;
             $fieldName = $field->getName();
 
             $body .= "
+// field {$field->getName()}
 \$different = null;
 ";
 
@@ -76,6 +79,7 @@ if (\$different) {
             $fieldName = $relation->getField();
             $foreignEntityClass = $relation->getForeignEntity()->getFullClassName();
             $body .= "
+// relation {$relation->getField()}
 if (\$foreignEntity = \$reader(\$entity, '$fieldName')) {
     \$foreignEntityReader = \$this->getConfiguration()->getEntityMap('$foreignEntityClass')->getPropReader();
 ";

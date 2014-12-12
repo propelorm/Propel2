@@ -8,7 +8,7 @@
 
 <!--
 
-defaultPhpNamingMethod determines how a table or column name,
+defaultColumnNamingMethod determines how a table or column name,
 from the name attribute in the xml database file, is converted to a
 PHP class or method name.
 

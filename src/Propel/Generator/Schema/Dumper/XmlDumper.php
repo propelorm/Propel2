@@ -112,8 +112,8 @@ class XmlDumper implements DumperInterface
             $databaseNode->setAttribute('baseClass', $baseClass);
         }
 
-        if ($defaultNamingMethod = $database->getDefaultPhpNamingMethod()) {
-            $databaseNode->setAttribute('defaultPhpNamingMethod', $defaultNamingMethod);
+        if ($defaultNamingMethod = $database->getDefaultColumnNamingMethod()) {
+            $databaseNode->setAttribute('defaultColumnNamingMethod', $defaultNamingMethod);
         }
 
         $defaultAccessorVisibility = $database->getDefaultAccessorVisibility();

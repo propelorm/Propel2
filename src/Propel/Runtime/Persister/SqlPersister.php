@@ -65,15 +65,37 @@ class SqlPersister
         return $this->session;
     }
 
+    public function remove($entities)
+    {
+        $whereClauses = [];
+        $params = [];
+        foreach ($entities as $entity) {
+            $whereClauses = '(' . $this->entityMap->buildSqlRemoveWhereClause($entity, $params) . ')';
+        }
+
+        $query = sprintf('DELETE %s WHERE ', $this->entityMap->getTableName(), implode(' OR ', $whereClauses));
+
+        $connection = $this->getSession()->getConfiguration()->getConnectionManager($this->entityMap->getDatabaseName());
+        $connection = $connection->getWriteConnection();
+
+        $stmt = $connection->prepare($query);
+        try {
+            $stmt->execute($params);
+        } catch (\Exception $e) {
+            throw new RuntimeException(sprintf('Could not execute query %s', $query), 0, $e);
+        }
+    }
     public function persist($entities)
     {
-        $inserts = [];
-        $updates = [];
+        $changeSets = $inserts = $updates = [];
         foreach ($entities as $entity) {
             if ($this->repository->isNew($entity)) {
                 $inserts[] = $entity;
             } else {
-                $updates[] = $entity;
+                if ($changeSet = $this->getRepository()->buildChangeSet($entity)) {
+                    $updates[] = $entity;
+                    $changeSets[spl_object_hash($entity)] = $changeSet;
+                }
             }
         }
 
@@ -88,7 +110,7 @@ class SqlPersister
 //        );
 
         $this->doInsert($inserts);
-        $this->doUpdates($updates);
+        $this->doUpdates($updates, $changeSets);
 
         $this->getSession()->getConfiguration()->getEventDispatcher()->dispatch(Events::SAVE, $event);
     }
@@ -174,7 +196,11 @@ EOF;
             $sql .= $this->entityMap->buildSqlBulkInsertPart($entity, $params);
         }
 
-//        var_dump($sql);
+        $paramsReplace = $params;
+        $readable = preg_replace_callback('/\?/', function() use (&$paramsReplace) {
+            return var_export(array_shift($paramsReplace), true);
+        }, $sql);
+        echo "sql-insert: $readable\n";
 
         try {
             $stmt = $connection->prepare($sql);
@@ -197,7 +223,7 @@ EOF;
         $this->getSession()->getConfiguration()->getEventDispatcher()->dispatch(Events::INSERT, $event);
     }
 
-    protected function doUpdates($updates)
+    protected function doUpdates($updates, $changeSets)
     {
         $event = new UpdateEvent($this->getSession(), $this->entityMap, $updates);
         $this->getSession()->getConfiguration()->getEventDispatcher()->dispatch(Events::PRE_UPDATE, $event);
@@ -215,7 +241,7 @@ EOF;
         $connection = $connection->getWriteConnection();
 
         foreach($updates as $entity) {
-            $changeSet = $this->getRepository()->buildChangeSet($entity);
+            $changeSet = $changeSets[spl_object_hash($entity)]; //$this->getRepository()->buildChangeSet($entity);
             if ($changeSet) {
                 $params = [];
                 $sets = [];
@@ -233,6 +259,13 @@ EOF;
                 }
 
                 $query = $sqlStart . ' SET ' . implode(', ', $sets).$where;
+
+                $paramsReplace = $params;
+                $readable = preg_replace_callback('/\?/', function() use (&$paramsReplace) {
+                    return var_export(array_shift($paramsReplace), true);
+                }, $query);
+                echo "sql-update: $readable\n";
+
                 $stmt = $connection->prepare($query);
                 try {
                     $stmt->execute($params);

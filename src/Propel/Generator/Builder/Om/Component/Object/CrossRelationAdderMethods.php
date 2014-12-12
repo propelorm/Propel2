@@ -32,7 +32,7 @@ class CrossRelationAdderMethods extends BuildComponent
         foreach ($crossRelation->getRelations() as $relation) {
             $relSingleNamePlural = $this->getRelationPhpName($relation, $plural = true);
             $relSingleName = $this->getRelationPhpName($relation, $plural = false);
-            $collSingleName = $this->getRelationPhpName($relation, true);
+            $collSingleName = $this->getRelationVarName($relation, true);
 
             $relCombineNamePlural = $this->getCrossRelationPhpName($crossRelation, $plural = true);
             $relCombineName = $this->getCrossRelationPhpName($crossRelation, $plural = false);

@@ -190,7 +190,7 @@ class Entity extends ScopedMappingModel implements IdMethod
 
         // retrieves the method for converting from specified name to a PHP name.
         // find a better, more abstract way to define and use naming strategies.
-//        $this->phpNamingMethod = $this->getAttribute('phpNamingMethod', $this->database->getDefaultPhpNamingMethod());
+//        $this->phpNamingMethod = $this->getAttribute('phpNamingMethod', $this->database->getDefaultColumnNamingMethod());
 
         $this->idMethod = $this->getAttribute('idMethod', $this->database->getDefaultIdMethod());
         $this->allowPkInsert = $this->booleanValue($this->getAttribute('allowPkInsert'));

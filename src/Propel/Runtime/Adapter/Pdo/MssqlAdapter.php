@@ -100,7 +100,7 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
      * @param  string $entity
      * @return string
      */
-    public function quoteIdentifierEntity($entity)
+    public function quoteTableIdentifier($entity)
     {
         // e.g. 'database.entity alias' should be escaped as '[database].[entity] [alias]'
         return '[' . strtr($entity, array('.' => '].[', ' ' => '] [')) . ']';

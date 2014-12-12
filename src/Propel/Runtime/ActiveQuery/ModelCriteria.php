@@ -1370,7 +1370,7 @@ class ModelCriteria extends BaseModelCriteria
         $affectedRows = 0; // initialize this in case the next loop has no iterations.
 
         try {
-            $entityName = $this->quoteIdentifierEntity($entityName);
+            $entityName = $this->quoteTableIdentifierForEntity($entityName);
             $sql = "DELETE FROM " . $entityName;
             $stmt = $con->prepare($sql);
 
