@@ -473,7 +473,10 @@ class PgsqlSchemaParser extends AbstractSchemaParser
 
                 $row2 = $stmt2->fetch(\PDO::FETCH_ASSOC);
 
-                $indexes[$name]->addColumn($table->getColumn($row2['attname']));
+                $indexes[$name]->setTable($table);
+                $indexes[$name]->addColumn([
+                    "name" => $row2['attname']
+                ]);
 
             }
         }
