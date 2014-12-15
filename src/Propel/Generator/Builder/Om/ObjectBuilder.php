@@ -2122,7 +2122,11 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             if (\$rehydrate) {
                 \$this->ensureConsistency();
             }
+";
 
+        $this->applyBehaviorModifier('postHydrate', $script, "            ");
+
+        $script .= "
             return \$startcol + $n; // $n = ".$this->getTableMapClass()."::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception \$e) {
