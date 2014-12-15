@@ -1968,6 +1968,20 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals(1, $nbBooks, 'count() returns the number of results in the query');
     }
 
+    public function testExists()
+    {
+        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book', 'b');
+        $c->where('b.Title = ?', 'foo');
+        $booksExists = $c->exists();
+        $this->assertFalse($booksExists, 'exists() returns false when there are are matching results');
+
+        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book', 'b');
+        $c->join('b.Author a');
+        $c->where('a.FirstName = ?', 'Neal');
+        $booksExists = $c->exists();
+        $this->assertTrue($booksExists, 'exists() returns true when there are matching results');
+    }
+
     public function testPaginate()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book', 'b');

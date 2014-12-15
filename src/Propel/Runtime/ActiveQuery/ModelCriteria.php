@@ -1250,6 +1250,39 @@ class ModelCriteria extends BaseModelCriteria
     }
 
     /**
+     * Issue an existence check on the current ModelCriteria
+     *
+     * @param ConnectionInterface $con an optional connection object
+     *
+     * @return bool column existence
+     */
+    public function exists(ConnectionInterface $con = null)
+    {
+        if (null === $con) {
+            $con = Propel::getServiceContainer()->getReadConnection($this->getDbName());
+        }
+
+        $this->basePreSelect($con);
+        $criteria = $this->isKeepQuery() ? clone $this : $this;
+        $criteria->setDbName($this->getDbName()); // Set the correct dbName
+        $criteria->clearOrderByColumns(); // ORDER BY will do nothing but slow down the query
+        $criteria->clearSelectColumns(); // We are not retrieving data
+        $criteria->addSelectColumn('1');
+        $criteria->limit(1);
+
+        // We need to set the primary table name, since in the case that there are no WHERE columns
+        // it will be impossible for the createSelectSql() method to determine which
+        // tables go into the FROM clause.
+        $criteria->setPrimaryTableName(constant($this->modelTableMapName . '::TABLE_NAME'));
+
+        $dataFetcher = $criteria->doSelect($con);
+        $exists = (boolean) $dataFetcher->fetchColumn(0);
+        $dataFetcher->close();
+
+        return $exists;
+    }
+
+    /**
      * Issue a SELECT query based on the current ModelCriteria
      * and uses a page and a maximum number of results per page
      * to compute an offset and a limit.
