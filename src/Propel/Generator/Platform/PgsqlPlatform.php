@@ -16,7 +16,6 @@ use Propel\Generator\Model\Database;
 use Propel\Generator\Model\Diff\TableDiff;
 use Propel\Generator\Model\Domain;
 use Propel\Generator\Model\Index;
-use Propel\Generator\Model\IdMethod;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Model\Unique;
@@ -114,7 +113,7 @@ class PgsqlPlatform extends DefaultPlatform
     public function getSequenceName(Table $table)
     {
         $result = null;
-        if ($table->getIdMethod() == IdMethod::NATIVE) {
+        if ($table->isNativeIdMethod()) {
             $idMethodParams = $table->getIdMethodParameters();
             if (empty($idMethodParams)) {
                 $result = null;
@@ -136,8 +135,7 @@ class PgsqlPlatform extends DefaultPlatform
 
     protected function getAddSequenceDDL(Table $table)
     {
-        if ($table->getIdMethod() == IdMethod::NATIVE
-         && $table->getIdMethodParameters() != null) {
+        if ($table->isNativeIdMethod() && null !== $table->getIdMethodParameters()) {
             $pattern = "
 CREATE SEQUENCE %s;
 ";
@@ -150,8 +148,7 @@ CREATE SEQUENCE %s;
 
     protected function getDropSequenceDDL(Table $table)
     {
-        if ($table->getIdMethod() == IdMethod::NATIVE
-         && $table->getIdMethodParameters() != null) {
+        if ($table->isNativeIdMethod() && null !== $table->getIdMethodParameters()) {
             $pattern = "
 DROP SEQUENCE %s;
 ";
@@ -348,7 +345,7 @@ DROP TABLE IF EXISTS %s CASCADE;
         $ddl = array($this->quoteIdentifier($col->getName()));
         $sqlType = $domain->getSqlType();
         $table = $col->getTable();
-        if ($col->isAutoIncrement() && $table && $table->getIdMethodParameters() == null) {
+        if ($col->isAutoIncrement() && $table && null === $table->getIdMethodParameters()) {
             $sqlType = $col->getType() === PropelTypes::BIGINT ? 'bigserial' : 'serial';
         }
         if ($this->hasSize($sqlType) && $col->isDefaultSqlType($this)) {
@@ -466,7 +463,7 @@ ALTER TABLE %s ALTER COLUMN %s;
             $colPlainName = $toColumn->getName();
             $seqName = "{$tableName}_{$colPlainName}_seq";
 
-            if ($toColumn->isAutoIncrement() && $table && $table->getIdMethodParameters() == null) {
+            if ($toColumn->isAutoIncrement() && $table && null === $table->getIdMethodParameters()) {
 
                 $defaultValue = "nextval('$seqName'::regclass)";
                 $toColumn->setDefaultValue($defaultValue);

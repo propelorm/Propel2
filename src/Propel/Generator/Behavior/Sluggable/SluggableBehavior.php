@@ -287,7 +287,7 @@ protected function makeSlugUnique(\$slug, \$separator = '" . $this->getParameter
     } else {
         \$slug2 = \$slug . \$separator;";
 
-        if (null == $this->getParameter('slug_pattern')) {
+        if (null === $this->getParameter('slug_pattern')) {
             $script .= "
 
         \$count = " . $this->builder->getStubQueryBuilder()->getClassname() . "::create()
@@ -341,7 +341,7 @@ protected function makeSlugUnique(\$slug, \$separator = '" . $this->getParameter
     ->findOne();
 
     // First duplicate slug
-    if (null == \$object) {
+    if (null === \$object) {
         return \$slug2 . '1';
     }
 

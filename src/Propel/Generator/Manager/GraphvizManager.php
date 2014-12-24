@@ -10,8 +10,6 @@
 
 namespace Propel\Generator\Manager;
 
-use Propel\Generator\Exception\BuildException;
-
 /**
  * Manager for Graphviz representation.
  *
@@ -22,7 +20,6 @@ class GraphvizManager extends AbstractManager
     public function build()
     {
         $count = 0;
-
         foreach ($this->getDatabases() as $database) {
             $dotSyntax = "digraph G {\n";
 

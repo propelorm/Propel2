@@ -5521,7 +5521,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             $params = $table->getIdMethodParameters();
             $imp = $params[0];
             $primaryKeyMethodInfo = $imp->getValue();
-        } elseif ($table->getIdMethod() == IdMethod::NATIVE && ($platform->getNativeIdMethod() == PlatformInterface::SEQUENCE || $platform->getNativeIdMethod() == PlatformInterface::SERIAL)) {
+        } elseif ($table->isNativeIdMethod() && ($platform->getNativeIdMethod() == PlatformInterface::SEQUENCE || $platform->getNativeIdMethod() == PlatformInterface::SERIAL)) {
             $primaryKeyMethodInfo = $platform->getSequenceName($table);
         }
         $query = 'INSERT INTO ' . $this->quoteIdentifier($table->getName()) . ' (%s) VALUES (%s)';

@@ -277,7 +277,7 @@ class Table extends ScopedMappingModel implements IdMethod
                 $anyAutoInc = true;
             }
         }
-        if (IdMethod::NATIVE === $this->getIdMethod() && !$anyAutoInc) {
+        if ($this->isNativeIdMethod() && !$anyAutoInc) {
             $this->setIdMethod(IdMethod::NO_ID_METHOD);
         }
     }
@@ -1204,6 +1204,17 @@ class Table extends ScopedMappingModel implements IdMethod
     public function getIdMethod()
     {
         return $this->idMethod;
+    }
+
+    /**
+     * Returns whether or not the table uses the native ID method to generate
+     * primary keys.
+     *
+     * @return bool
+     */
+    public function isNativeIdMethod()
+    {
+        return self::NATIVE === $this->idMethod;
     }
 
     /**

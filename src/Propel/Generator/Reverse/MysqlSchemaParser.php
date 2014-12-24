@@ -135,7 +135,6 @@ class MysqlSchemaParser extends AbstractSchemaParser
         $dataFetcher = $this->dbh->query($sql);
 
         // First load the tables (important that this happen before filling out details of tables)
-        $tables = array();
         foreach ($dataFetcher as $row) {
             $name = $row[0];
             $type = $row[1];
@@ -150,7 +149,6 @@ class MysqlSchemaParser extends AbstractSchemaParser
                 $table->setSchema($filterTable->getSchema());
             }
             $database->addTable($table);
-            $tables[] = $table;
         }
     }
 
@@ -328,8 +326,8 @@ class MysqlSchemaParser extends AbstractSchemaParser
 
                 $localColumns = array();
                 $foreignColumns = array();
-                if ($table->guessSchemaName() != $database->getSchema() && false == strpos($ftbl, $database->getPlatform()->getSchemaDelimiter())) {
-                    $ftbl = $table->guessSchemaName() . $database->getPlatform()->getSchemaDelimiter() . $ftbl;
+                if ($table->guessSchemaName() != $database->getSchema() && false === strpos($ftbl, $database->getSchemaDelimiter())) {
+                    $ftbl = $table->guessSchemaName() . $database->getSchemaDelimiter() . $ftbl;
                 }
 
                 $foreignTable = $database->getTable($ftbl, true);

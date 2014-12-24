@@ -15,7 +15,6 @@ use Propel\Generator\Model\Column;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\Domain;
 use Propel\Generator\Model\ForeignKey;
-use Propel\Generator\Model\IdMethod;
 use Propel\Generator\Model\Index;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Model\Table;
@@ -173,7 +172,7 @@ CREATE SEQUENCE %s
         $ret = "
 DROP TABLE " . $this->quoteIdentifier($table->getName(), $table) . " CASCADE CONSTRAINTS;
 ";
-        if ($table->getIdMethod() == IdMethod::NATIVE) {
+        if ($table->isNativeIdMethod()) {
             $ret .= "
 DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
 ";
