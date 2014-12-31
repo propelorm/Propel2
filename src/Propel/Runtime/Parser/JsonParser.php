@@ -26,7 +26,28 @@ class JsonParser extends AbstractParser
      */
     public function fromArray($array, $rootKey = null)
     {
+        $this->convertDateTimesToString($array);
         return json_encode($rootKey === null ? $array : [$rootKey => $array]);
+    }
+
+    /**
+     * PHP's `json_encode` will transform `\DateTime` instances to a custom
+     * encoded format, e.g. `{"date":"2014-10-01 15:32:26","timezone_type":3,"timezone":"Europe\/Rome"}`
+     * which is hard to parse with javascript and other languages.
+     *
+     * To make parsing the JSON easier we will avoid this and format all `\DateTime` instances
+     * as ISO 8601 strings before passing the array to `json_encode`.
+     *
+     * @param $array
+     */
+    private function convertDateTimesToString(&$array)
+    {
+        array_walk_recursive($array, function(&$value) {
+            if ($value instanceof \DateTime) {
+                $value->setTimezone(new \DateTimeZone('UTC'));
+                $value = $value->format('Y-m-d\TH:i:s\Z');
+            }
+        });
     }
 
     /**
